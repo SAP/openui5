@@ -5,7 +5,7 @@
       {
         "id": "6657e51f2ce2456faeb7e3fb1985c501b83ca84b",
         "type": "FEATURE",
-        "text": "PlanningCalendar-accessibility for special dates & appointments",
+        "text": "PlanningCalendar-accessibility for special dates \u0026 appointments",
         "references": []
       },
       {
@@ -101,7 +101,7 @@
       {
         "id": "a3a5722f891643510e4de089485475dbebd36f5f",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar - appointment row focus outline covers all 4 sides for High Contrast Black & High Contrast White themes.",
+        "text": "sap.m.PlanningCalendar - appointment row focus outline covers all 4 sides for High Contrast Black \u0026 High Contrast White themes.",
         "references": [
           {
             "type": "BCP",
@@ -233,6 +233,576 @@
           {
             "type": "BCP",
             "reference": "002075129500004589552017"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.2": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "da986a51d44a2bcea2de0a9f271fa009cf86e0e7",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarUtils: getFirstDateOfWeek when end/begin of year.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770534428"
+          }
+        ]
+      },
+      {
+        "id": "16882c5f6366e2a4a85fab0d7978eb4d256f4501",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Enable scrolling on iOS devices",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1735"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780403555"
+          }
+        ]
+      },
+      {
+        "id": "14af6992aeb9e585a513887c8375905e5f4abcd8",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Remove scrollbar from IE when it is not needed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770585760"
+          }
+        ]
+      },
+      {
+        "id": "9af2193f818cfd528a529213f57eaeefda5ff128",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: qunit tests fixed on combi devices",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770560529"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.3": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "f759ceaaa872c4b8c9adc7f15aa5091b826d3f4d",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: days aligned correctly in RTL",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780414532"
+          }
+        ]
+      },
+      {
+        "id": "8c4a82e88dc75e4386027b0766687ff202c8cc89",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Select month and year corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780443549"
+          }
+        ]
+      },
+      {
+        "id": "c199e3ab265b31925bc8e4ad6c5e4476d897a335",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: select date on mouseup when used on touch device",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1750"
+          },
+          {
+            "type": "BCP",
+            "reference": "002028376500005552752017"
+          }
+        ]
+      },
+      {
+        "id": "fbe09698b2822206d1d068b25f676bed8c8613ec",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: remove scrollbar in context menu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770591276"
+          }
+        ]
+      },
+      {
+        "id": "698fa0a8dc4256ee8875a1dc8c66c2b6cf032779",
+        "type": "FIX",
+        "text": "unified.ShellOverlay: Avoid ACC announcement of full content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770546858"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.4": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "af851d8f0c83399d54bb9b9c027063f74d43b0af",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarDateInterval: hide content overlay properly",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1830"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780521519"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.5": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "383394649ccd0363a2efeba49736dd1bf17f73a7",
+        "type": "FIX",
+        "text": "Control: refactor fnHandleInteraction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770370091"
+          }
+        ]
+      },
+      {
+        "id": "502ccce5c7be63414fc198a364bf3b2e001fb61e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Fix day names in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880056186"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.6": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "e0ef4b72a95fcd5450fd0d9cc92b5a0df1351723",
+        "type": "FIX",
+        "text": "sap.m: instanceof Date in public methods corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880065660"
+          }
+        ]
+      },
+      {
+        "id": "5f5d25980c8fd489e8f4ca9c1940169422486591",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: align currency labels properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880111590"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.8": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "7fb160fe302461280e5cc88ac4cedbe522437d15",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: No double focus outline on Belize on IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880240603"
+          }
+        ]
+      },
+      {
+        "id": "1ea8d869851c0fb6c52d485cb8eef16993ccc117",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Selecting day header or week number does not throw an error",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1885"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880151681"
+          }
+        ]
+      },
+      {
+        "id": "13374df21728b1f18e1525e4668ad6b2a0e8e7b1",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: focus clearly visible in IE for HCB and HCW",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880222599"
+          }
+        ]
+      },
+      {
+        "id": "a143b8b26f0f63952d46cc8c021af951323ec77f",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: nonWorkingDays now can have another type when set using specialDates aggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880072218"
+          }
+        ]
+      },
+      {
+        "id": "2e2ac2a2fe68fe7e10306b4dd743b07ae92443a7",
+        "type": "FIX",
+        "text": "sap.ui.unified.ColorPicker: Sample is now scrollable on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880197597"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.9": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "0e2f39213120fc43854d5b81c31fb98f6c659f9c",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Now in IE the week numbers are visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376600002416582018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.10": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "df114377a25e3a3a040e72f57641660ae48ed91c",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Navigation in one month view works propperly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770572211"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770572146"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770543942"
+          }
+        ]
+      },
+      {
+        "id": "415f4a0617c6c04162b4c59eda26fbe4cda4268b",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: closes when switch from one submenu to another",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003736822017"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400000480702018"
+          }
+        ]
+      },
+      {
+        "id": "cf3232a87a09e18402580c7b6aeeb70f07fbf198",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: resize handler is removed on exit.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870035773"
+          }
+        ]
+      },
+      {
+        "id": "71a213c6044317e57290672396bd51b095d9cbc5",
+        "type": "FIX",
+        "text": "unified.FileUploader: accessing length of undefined fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870033998"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.12": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "c652c91c0cb1b4a67b9d6bcec51616e3b3f3144d",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: tests no longer fail on IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870107305"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.13": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "f5f8c8f7e6548de6c2463e7011d89d892172c2a1",
+        "type": "FIX",
+        "text": "sap.ui.commons.Menu: MenuTextFieldItem can now be focused on hover opened from IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870234443"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.16": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "e2512bad158dec480895be4f92e9ce842c61b37b",
+        "type": "FIX",
+        "text": "FileUploader: Accessing upload iframe adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001676212018"
+          }
+        ]
+      },
+      {
+        "id": "bf91962a6c50950e07e7a46f6fe69feb8ba60b17",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: pressing of ESCAPE is now propagated to the parent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880332317"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.17": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "8863ab7a76b499aef6f04b8f7f6dc6f1a16a5731",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarRow: Minimal width of appointments now corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880307332"
+          }
+        ]
+      },
+      {
+        "id": "e207d619e22e988792d844e63c190a405527bcfb",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: now has correct active state of semantic buttons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880391291"
+          }
+        ]
+      },
+      {
+        "id": "2860d73988450d5ae27b6a58c5da55ea1808040f",
+        "type": "FIX",
+        "text": "ui.unified.FileUploader: Documentation improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003320162018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.18": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "b28c9a4c719703e52f0c71fbd81c5cbec7f0c3c7",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: returns empty string now when file has no extension",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880468008"
+          }
+        ]
+      },
+      {
+        "id": "e3b4675e6f59f4e12a7d85c8b5b850b3cbbe6267",
+        "type": "FIX",
+        "text": "unified.ColorPicker: Hue value of 360 is the same as 0",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880490034"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.19": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "956f71b77cad5128fe3117b0a2e5edebec9ed8b9",
+        "type": "FIX",
+        "text": "PlanningCalendar: Spaces in internal aria-label are removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870391389"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.21": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "29415847c23c68b75bcd8af0cd27715541e306bb",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarTimeInterval: navigates to the correct date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005182132018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.23": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "cb05a99ab1e7e24a69995daaf2330f41fe99e5a2",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Menu works correctly on combi devices",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2289"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880727749"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.27": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "2a3e0144e0dd8b499478e8f4bdab8da5a73c9e16",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarTimeInterval: Navigates to the correct date",
+        "references": []
+      }
+    ]
+  },
+  "1.52.29": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "f86f45f9da8dba60483d20b51ad764b18d88bac0",
+        "type": "FIX",
+        "text": " CLDR: Added new Japanese era name",
+        "references": []
+      }
+    ]
+  },
+  "1.52.31": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "3ab97bea237c8863e85abc1df0a2e190d505e9ec",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: XHR Upload on Safari restored",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980283288"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770523801"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.35": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "e8fe19ef4578361aa39ff92529348dd11bc0f219",
+        "type": "FIX",
+        "text": " FileUploader: include filetype into input accept attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "536576"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970125350"
           }
         ]
       }

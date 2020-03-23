@@ -5,37 +5,37 @@
       {
         "id": "b32bc9c96f1f9bb866bc05295526cf58271f934c",
         "type": "FIX",
-        "text": "sap.ui.dt - AggregationOverlay fixed timing issue",
+        "text": " sap.ui.dt - AggregationOverlay fixed timing issue",
         "references": []
       },
       {
         "id": "9535e28c055581d8615b548a0bc3a277e1b93b38",
         "type": "FIX",
-        "text": "sap.ui.dt - AggregationOverlay timing issue",
+        "text": " sap.ui.dt - AggregationOverlay timing issue",
         "references": []
       },
       {
         "id": "0138b0c3414a73113176be4ba67f28e5dec797c8",
         "type": "FIX",
-        "text": "sap.ui.dt - DomUtilRtl test description changed",
+        "text": " sap.ui.dt - DomUtilRtl test description changed",
         "references": []
       },
       {
         "id": "fc730538be8d24f51ed35fd2d93cee978acd7ea8",
         "type": "FIX",
-        "text": "sap.ui.dt - MutationObserver test fixed",
+        "text": " sap.ui.dt - MutationObserver test fixed",
         "references": []
       },
       {
         "id": "508a27e2e7b1cf35ee65db09c9f5d72c07cff01c",
         "type": "FIX",
-        "text": "sap.ui.dt - cleaned up table test",
+        "text": " sap.ui.dt - cleaned up table test",
         "references": []
       },
       {
         "id": "7ebbce09ed0aeca0773b0841f9af80c6f7671665",
         "type": "FIX",
-        "text": "sap.ui.dt - rtl test fixed",
+        "text": " sap.ui.dt - rtl test fixed",
         "references": []
       }
     ]

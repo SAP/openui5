@@ -56,25 +56,20 @@
       {
         "id": "2559b7b59fc479b0d00d264be054bd00d0c63132",
         "type": "FEATURE",
-        "text": "sap_fiori_3_hcb for sap.m controls",
+        "text": " sap_fiori_3_hcb for sap.m controls",
         "references": []
       },
       {
         "id": "5a26eae4b449fdbf02ca0ed9a81563f8b7cc8919",
         "type": "FEATURE",
-        "text": "sap_fiori_3_hcw for sap.m controls",
+        "text": " sap_fiori_3_hcw for sap.m controls",
         "references": []
       },
       {
         "id": "b259d44d3ff0e570e66119a17bf737ed850499d1",
         "type": "FIX",
-        "text": "sap.m.RadioButton: Styles adjustments",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970235794"
-          }
-        ]
+        "text": " sap.m.RadioButton: Styles adjustments",
+        "references": []
       }
     ]
   }

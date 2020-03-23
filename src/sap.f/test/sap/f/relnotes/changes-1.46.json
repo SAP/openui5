@@ -5,31 +5,65 @@
       {
         "id": "47e90f52b80cd79417ca2ff45daf22d533505762",
         "type": "FEATURE",
-        "text": "sap.f.Avatar: new control added",
+        "text": " sap.f.Avatar: new control added",
         "references": []
       },
       {
         "id": "faf3438651cb89c84fa520eefd91cf0787e77c64",
         "type": "FEATURE",
-        "text": "sap.f.FlexibleColumnLayout: implement screen reader support",
+        "text": " sap.f.FlexibleColumnLayout: implement screen reader support",
         "references": []
       },
       {
         "id": "8ae309fe9632a09925127c7394fd8b176b6f1be2",
         "type": "FEATURE",
-        "text": "sap.f.semantic.SemanticPage: New control added",
+        "text": " sap.f.semantic.SemanticPage: New control added",
         "references": []
       },
       {
         "id": "4a4b7bfb7ae5568ea7b3c67454cbcb4ad76dd629",
         "type": "FIX",
-        "text": "sap.f.Avatar: change sample's images",
+        "text": " sap.f.Avatar: change sample\u0027s images",
         "references": []
       },
       {
         "id": "3648ffc86f31721596d4345047b51e3b8753d06b",
         "type": "FIX",
-        "text": "sap.f.DynamicPage fitContent property added",
+        "text": " sap.f.DynamicPage fitContent property added",
+        "references": []
+      }
+    ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "a1a3e25d5f82d07c1cd3ce130fc569593d2e0b7d",
+        "type": "FEATURE",
+        "text": " sap.ui.core.routing: \u0027beforeMatched\u0027 and \u0027beforeRouteMatched\u0027 events",
+        "references": []
+      },
+      {
+        "id": "7cd67012e1a69fbc1a7e50005691a48182577801",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle border-bottom fixed",
+        "references": []
+      },
+      {
+        "id": "4338ea14de30b2cbca125e5fe8a5ee30f7c53375",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Toolbar bottom border repaired",
+        "references": []
+      }
+    ]
+  },
+  "1.46.6": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "ff0b49efa345a2259dab7212ba8d63e1ed311aba",
+        "type": "FEATURE",
+        "text": " sap.f.SemanticPage: saveAsTileAction aggregation added",
         "references": []
       }
     ]

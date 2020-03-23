@@ -55,59 +55,44 @@
       {
         "id": "ca579aa058712ec98ff970aa0099948b02e91279",
         "type": "FEATURE",
-        "text": "sap.f.DynamicPageTitle: snapped/expanded content redesign",
+        "text": " sap.f.DynamicPageTitle: snapped/expanded content redesign",
         "references": []
       },
       {
         "id": "3588421dec14c9d97eec0cea4931e6df8ca43912",
         "type": "FEATURE",
-        "text": "sap.f.ShellBar: Accessibility enablement",
+        "text": " sap.f.ShellBar: Accessibility enablement",
         "references": []
       },
       {
         "id": "47fbc9bc4c59ccafd21c46e11bad7b6235f96f17",
         "type": "FEATURE",
-        "text": "sap.f.ShellBar: Created notifications badge element",
+        "text": " sap.f.ShellBar: Created notifications badge element",
         "references": []
       },
       {
         "id": "c41c4affdd52c29076e6830ffd7f2773a88af4cd",
         "type": "FEATURE",
-        "text": "sap.ui.layout.cssgrid.CSSGrid: Enable CSSGrid for drop configuration",
+        "text": " sap.ui.layout.cssgrid.CSSGrid: Enable CSSGrid for drop configuration",
         "references": []
       },
       {
         "id": "b08c8d120c8c88b7a656e00f0c8f1c529a19da9a",
         "type": "FIX",
-        "text": "sap.f.DynamicPageTitle: Improved keyboard handling",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980029214"
-          }
-        ]
+        "text": " sap.f.DynamicPageTitle: Improved keyboard handling",
+        "references": []
       },
       {
         "id": "0ff71e8acc208f8ffe1d4f666c5115539e2a062f",
         "type": "FIX",
-        "text": "sap.f.FlexibleColumnLayout: Fixed focus in hidden columns",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980006195"
-          }
-        ]
+        "text": " sap.f.FlexibleColumnLayout: Fixed focus in hidden columns",
+        "references": []
       },
       {
         "id": "3caba82c6a289fc546de57b382aa5e60da5438a0",
         "type": "FIX",
-        "text": "sap.f.FlexibleColumnLayout: Fixed fullscreen button in end column",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980052686"
-          }
-        ]
+        "text": " sap.f.FlexibleColumnLayout: Fixed fullscreen button in end column",
+        "references": []
       }
     ]
   }

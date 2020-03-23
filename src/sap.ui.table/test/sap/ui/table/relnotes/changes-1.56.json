@@ -5,237 +5,259 @@
       {
         "id": "0162e96c5452e5045751e400739f7a07d96c7732",
         "type": "FEATURE",
-        "text": "Core: DragInfo/DropInfo are added to configure drag-and-drop",
+        "text": " Core: DragInfo/DropInfo are added to configure drag-and-drop",
         "references": []
       },
       {
         "id": "6e5c4af6172369f245eebb535ec1fbf3a0ae2ff4",
         "type": "FIX",
-        "text": "QUnit Designtime Library tests in Firefox",
+        "text": " QUnit Designtime Library tests in Firefox",
         "references": []
       },
       {
         "id": "d9e75779444d717800aa857a591d401495224679",
         "type": "FIX",
-        "text": "TreeTable: Outline offset of tree icon in zoom levels < 100%",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880073947"
-          }
-        ]
+        "text": " TreeTable: Outline offset of tree icon in zoom levels \u003c 100%",
+        "references": []
       },
       {
         "id": "964f990699939f33c47044823f0222f1d74412e1",
         "type": "FIX",
-        "text": "GridTable: Color contrast of Information Highlight fixed in HCB/W",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770561123"
-          }
-        ]
+        "text": " GridTable: Color contrast of Information Highlight fixed in HCB/W",
+        "references": []
       },
       {
         "id": "a73a2443094c0bd2e428a9d94c091cb96ce4352b",
         "type": "FIX",
-        "text": "GridTable: Fix update of firstVisibleRow on scrolling",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880172426"
-          },
-          {
-            "type": "BCP",
-            "reference": "1880150479"
-          },
-          {
-            "type": "BCP",
-            "reference": "1880202834"
-          },
-          {
-            "type": "BCP",
-            "reference": "1880109366"
-          }
-        ]
+        "text": " GridTable: Fix update of firstVisibleRow on scrolling",
+        "references": []
       },
       {
         "id": "8d2a3caaf2a2539e9ebd1461ff4b7343735a4bd1",
         "type": "FIX",
-        "text": "GridTable: Scrollbar styling in base theme",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880229317"
-          }
-        ]
+        "text": " GridTable: Scrollbar styling in base theme",
+        "references": []
       },
       {
         "id": "d7107838933ef324c87a99d732fd4c092b99841a",
         "type": "FIX",
-        "text": "GridTable: Fix up/down navigation with arrow keys",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870020326"
-          }
-        ]
+        "text": " GridTable: Fix up/down navigation with arrow keys",
+        "references": []
       },
       {
         "id": "a7065e379c9302573cddce834def7e80de2b59ca",
         "type": "FIX",
-        "text": "GridTable: Move before/after tab elements out of scrollable CCnt",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770275775"
-          }
-        ]
+        "text": " GridTable: Move before/after tab elements out of scrollable CCnt",
+        "references": []
       },
       {
         "id": "618ab18a3b7170347c1653cfbe5022b395526730",
         "type": "FIX",
-        "text": "Table: Removed setBusy handling for \"Auto\" row count mode",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870014514"
-          }
-        ]
+        "text": " Table: Removed setBusy handling for \"Auto\" row count mode",
+        "references": []
       },
       {
         "id": "e2a80ae0ebf1d2551ba39ea0985cc9423fbd255d",
         "type": "FIX",
-        "text": "Table: Scroll position stabilized",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880194466"
-          }
-        ]
+        "text": " Table: Scroll position stabilized",
+        "references": []
       },
       {
         "id": "731989ed01a94bc30cce9fba12a87e14b41eaf90",
         "type": "FIX",
-        "text": "GridTable: Attribute headers for gridcell corrected",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880221690"
-          }
-        ]
+        "text": " GridTable: Attribute headers for gridcell corrected",
+        "references": []
       },
       {
         "id": "ef9bf614657bfa890d1fa62255501e8ed3416330",
         "type": "FIX",
-        "text": "Table: Correct number of rows in visibleRowCountMode=Auto",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770572342"
-          }
-        ]
+        "text": " Table: Correct number of rows in visibleRowCountMode\u003dAuto",
+        "references": []
       },
       {
         "id": "ff963b1155ce98c7baf7b10efdb9fad9b44f5c67",
         "type": "FIX",
-        "text": "AnalyticalTable: Sum Row indent and hover effect corrected",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770584241"
-          }
-        ]
+        "text": " AnalyticalTable: Sum Row indent and hover effect corrected",
+        "references": []
       },
       {
         "id": "69489ac64644a73a091268888fc75db504e2dfb1",
         "type": "FIX",
-        "text": "GridTable: Avoid refocus of cell while scrolling for ACC",
+        "text": " GridTable: Avoid refocus of cell while scrolling for ACC",
         "references": []
       },
       {
         "id": "73fc28de950ff7057390feea1b11356771811597",
         "type": "FIX",
-        "text": "GridTable: Disable visibility menu item of last visible column",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880228660"
-          }
-        ]
+        "text": " GridTable: Disable visibility menu item of last visible column",
+        "references": []
       },
       {
         "id": "6736bd4b8122912d2504a910469aea108d4983cb",
         "type": "FIX",
-        "text": "GridTable: Ensure getFixColumnCount to return the property value",
+        "text": " GridTable: Ensure getFixColumnCount to return the property value",
         "references": []
       },
       {
         "id": "d17fdac9dbc1fc0b58b2346972b36638e00981c6",
         "type": "FEATURE",
-        "text": "sap.ui.core.dnd: dragEnd and dragOver events are added",
+        "text": " sap.ui.core.dnd: dragEnd and dragOver events are added",
         "references": []
       },
       {
         "id": "8ab042ebe772e118cf4762604461248ca1de8095",
         "type": "FIX",
-        "text": "GridTable: Leave action mode on horizontal scroll",
+        "text": " GridTable: Leave action mode on horizontal scroll",
         "references": []
       },
       {
         "id": "05e8a6a5dd139c2eec283587e449012d2c523820",
         "type": "FIX",
-        "text": "Table: Layout correction with row actions",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870039144"
-          }
-        ]
+        "text": " Table: Layout correction with row actions",
+        "references": []
       },
       {
         "id": "6b0b5935a32778d61c9149d38f02282f6f118199",
         "type": "FIX",
-        "text": "GridTable: applyFocusInfo handling corrected",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870153705"
-          }
-        ]
+        "text": " GridTable: applyFocusInfo handling corrected",
+        "references": []
       },
       {
         "id": "b92f72b681410bc177d7ce6362af79c769725543",
         "type": "FIX",
-        "text": "TreeBindingAdapter: Correct selected row index calculation for collapse operations",
-        "references": [
-          {
-            "type": "GitHub",
-            "reference": "1998"
-          }
-        ]
+        "text": " TreeBindingAdapter: Correct selected row index calculation for collapse operations",
+        "references": []
       },
       {
         "id": "2a2a090279fe93d5e363819795f4e8242e9d69e6",
         "type": "FIX",
-        "text": "Table: Correctly update the visibility of the NoData overlay",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770364678"
-          }
-        ]
+        "text": " Table: Correctly update the visibility of the NoData overlay",
+        "references": []
       },
       {
         "id": "3378b10ff6db9318caf1a3ce69e562ce5623c501",
         "type": "FIX",
-        "text": "sap.ui.table.TablePersoController: Add stable IDs for Dialog",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770537612"
-          }
-        ]
+        "text": " sap.ui.table.TablePersoController: Add stable IDs for Dialog",
+        "references": []
+      }
+    ]
+  },
+  "1.56.2": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "fab3e0d80350e9495d2bc9f12159245d9bafd6e4",
+        "type": "FIX",
+        "text": " Table: Avoid invalidation if NoData text string wasn\u0027t changed",
+        "references": []
+      },
+      {
+        "id": "8f6cf32f6a3087f4fd84faaa9ffb2291f88adff7",
+        "type": "FIX",
+        "text": " Table: Correct positioning of the action column",
+        "references": []
+      }
+    ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "f481efa41733b3c7da0a8991f94de801bf6e7425",
+        "type": "FIX",
+        "text": " GridTable: NoData handling for $expand(ed) lists corrected",
+        "references": []
+      },
+      {
+        "id": "8fd51b3528f26a4884749c5e7400519a82187ad5",
+        "type": "FIX",
+        "text": " Table: Avoid infinite re-rendering if fixed columns are available",
+        "references": []
+      },
+      {
+        "id": "9008b174d83f22cedb969f2679484723bd5a037b",
+        "type": "FIX",
+        "text": " Table: Avoid layout and row updates if the table is invisible",
+        "references": []
+      },
+      {
+        "id": "b5d9e18806e203ef051c3f873a5cc0f7fdeb1a3b",
+        "type": "FIX",
+        "text": " TreeTable: Hide tree icon on leafs for screenreaders",
+        "references": []
+      }
+    ]
+  },
+  "1.56.4": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "3f51c73568b079f280fd084ce09e3648777f46f9",
+        "type": "FIX",
+        "text": " Table: Edit mode navigation with sap.m.Select repaired",
+        "references": []
+      }
+    ]
+  },
+  "1.56.6": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "aaca2b7a9a9a50f562b19c7139bea32ce2cc4ee6",
+        "type": "FIX",
+        "text": " Table: Avoid horizontal scrolling of cell content on focus in rtl",
+        "references": []
+      },
+      {
+        "id": "d6274faa97f288378db68f710b123eea3ff2ff82",
+        "type": "FIX",
+        "text": " Table: Scrolling to last row with mouse wheel",
+        "references": []
+      }
+    ]
+  },
+  "1.56.7": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "e1e8bdf7f894a20f7d5d421f126f28559a937c96",
+        "type": "FIX",
+        "text": " Table: Clicking on the column resizer no longer causes scrolling",
+        "references": []
+      }
+    ]
+  },
+  "1.56.13": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "13bb009aea14012e63be3aa7b8a2e3e92c7449d1",
+        "type": "FIX",
+        "text": " Table: Update the scroll position when setting firstVisibleRow",
+        "references": []
+      }
+    ]
+  },
+  "1.56.17": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "b2eacd9f2e45d8909c51b21b5e14939651410c93",
+        "type": "FIX",
+        "text": " Table: Avoid infinite rendering loop with fixed columns in Edge 44",
+        "references": []
+      },
+      {
+        "id": "1ae8266198f2a074c439cc6abc9589722dd729d3",
+        "type": "FIX",
+        "text": " Table: Fixed column layout corrected",
+        "references": []
+      },
+      {
+        "id": "bc8acb5d3116b0ef1cbd3b018fd2115e0e74ecf4",
+        "type": "FIX",
+        "text": " Table: Vertical scrollbar not visible in table with OData model",
+        "references": []
       }
     ]
   }

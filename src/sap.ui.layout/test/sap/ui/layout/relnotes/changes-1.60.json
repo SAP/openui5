@@ -38,7 +38,7 @@
       {
         "id": "d4e6ac9540c723ddf158f017a8093ee6ecb4599f",
         "type": "FIX",
-        "text": "HideSimpleForm change handler doesn't perform revert after restart",
+        "text": "HideSimpleForm change handler doesn\u0027t perform revert after restart",
         "references": [
           {
             "type": "BCP",
@@ -117,6 +117,118 @@
         "type": "FIX",
         "text": "sap.ui.layout.VerticalLayout: Minor QUnit fix",
         "references": []
+      }
+    ]
+  },
+  "1.60.1": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "2b5787d8a970db03cc882d6cd410a23a2dcd932d",
+        "type": "FIX",
+        "text": "SimpleForm: Layout rendered wrong if set late",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880610321"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "5784e7f6d95b8c2ba5e77bc44b8f5072ad88853c",
+        "type": "FIX",
+        "text": "ColumnElementData and ColumnContainerData @since wrong",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2287"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880718434"
+          }
+        ]
+      },
+      {
+        "id": "ca7ae87d6010087bd0fddff5eef8f80cf1061e92",
+        "type": "FIX",
+        "text": "Form: use stable IDs for labels created by FormElement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880706126"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.6": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "6c9f7ce1a030c2cac964308a4f863c3bbe6cd187",
+        "type": "FIX",
+        "text": "sap.ui.layout.BlockLayout: Correctly displayed in a Dialog in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870570415"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.11": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "a2899f2b902fb9dead0a4fc2dde07753d35ba0c9",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayout: Layouting in IE11 was fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.60.12": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "cefa55627062e80b00d47575f0da4c44c11486c5",
+        "type": "FIX",
+        "text": " sap.ui.rta: fix cut\u0026paste in SimpleForm",
+        "references": []
+      }
+    ]
+  },
+  "1.60.14": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "f37bd464514815ae8679b621b07bffcdfecc2c98",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayout: Width of the cells is now set properly in IE",
+        "references": []
+      }
+    ]
+  },
+  "1.60.18": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "52c20ddb21e8d56895f511315f078402da267d76",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: Pagination tap handling improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "468371"
+          }
+        ]
       }
     ]
   }

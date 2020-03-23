@@ -5,179 +5,225 @@
       {
         "id": "d65568800f1091e8448174d08f8679b5617b684d",
         "type": "FEATURE",
-        "text": "sap.m.DatePicker - new \"navigate\" event added",
+        "text": " sap.m.DatePicker - new \"navigate\" event added",
         "references": []
       },
       {
         "id": "6a4cec969a036e342ebbbeb743e7ec79620863ca",
         "type": "FEATURE",
-        "text": "sap.m.PlanningCalendar - Improved text truncation for the calendar appointment",
+        "text": " sap.m.PlanningCalendar - Improved text truncation for the calendar appointment",
         "references": []
       },
       {
         "id": "87770cc210c8875864e3ca086c09139822e84d6f",
         "type": "FEATURE",
-        "text": "sap.m.PlanningCalendar: One Month view for desktop.",
+        "text": " sap.m.PlanningCalendar: One Month view for desktop.",
         "references": []
       },
       {
         "id": "0f7c6b93eb67b02afa66c6939bcd8401388a9fc1",
         "type": "FEATURE",
-        "text": "sap.m.PlanningCalendar: custom color for appointments and legend items",
+        "text": " sap.m.PlanningCalendar: custom color for appointments and legend items",
         "references": []
       },
       {
         "id": "dbd3a248d066dc7716b3295eddddacbc508f4600",
         "type": "FEATURE",
-        "text": "sap.ui.unified.CalendarLegend: The possibility of adding long text",
+        "text": " sap.ui.unified.CalendarLegend: The possibility of adding long text",
         "references": []
       },
       {
         "id": "5a24c241d9f412286e5540097c91abdaa41b9a1b",
         "type": "FIX",
-        "text": "General shadow fix",
+        "text": " General shadow fix",
         "references": []
       },
       {
         "id": "dee4e44fa1415aee99159fa941efba46f9fc9f1a",
         "type": "FIX",
-        "text": "fix font-size of sap.ui.unified.Menu",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680271373"
-          }
-        ]
+        "text": " fix font-size of sap.ui.unified.Menu",
+        "references": []
       },
       {
         "id": "b2fa4fe37661c8926e10112165a8f7b1bd4b2bc4",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar - switching year in week view for negative time zones is corrected.",
+        "text": " sap.m.PlanningCalendar - switching year in week view for negative time zones is corrected.",
         "references": []
       },
       {
         "id": "f2a408cb8a74bb9e7f345f73d97e8ec74f90e693",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar: Displayed correctly in RTL",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680288698"
-          }
-        ]
+        "text": " sap.m.PlanningCalendar: Displayed correctly in RTL",
+        "references": []
       },
       {
         "id": "24d54b1400fc2b3b981d4501a7cc14004eb4244c",
         "type": "FIX",
-        "text": "sap.ui.unified.Calendar: Day selection drag threshold added",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129500003905172016"
-          }
-        ]
+        "text": " sap.ui.unified.Calendar: Day selection drag threshold added",
+        "references": []
       },
       {
         "id": "9b7baba78ec8c8df3305137d0e4607cd6b869cd6",
         "type": "FIX",
-        "text": "sap.ui.unified.Calendar: Day selection drag threshold reverted",
+        "text": " sap.ui.unified.Calendar: Day selection drag threshold reverted",
         "references": []
       },
       {
         "id": "5c71d94d3c0d659ea45f632fd021e94e9c90b9f3",
         "type": "FIX",
-        "text": "sap.ui.unified.Calendar: Used short format for the week names when there is not enough space",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670471691"
-          },
-          {
-            "type": "BCP",
-            "reference": "1670387751"
-          }
-        ]
+        "text": " sap.ui.unified.Calendar: Used short format for the week names when there is not enough space",
+        "references": []
       },
       {
         "id": "5bf6c58156d0fcecf94441740e0e95cb8add5ea7",
         "type": "FIX",
-        "text": "sap.ui.unified.Calendar: multiple selection when multiple months is now consistent with the single selection",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670539427"
-          }
-        ]
+        "text": " sap.ui.unified.Calendar: multiple selection when multiple months is now consistent with the single selection",
+        "references": []
       },
       {
         "id": "ac904e9c454da27fa37cfba356c7be4943775b24",
         "type": "FIX",
-        "text": "sap.ui.unified.CalendarLegend: Legend responsiveness is now similar across browsers",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680337346"
-          }
-        ]
+        "text": " sap.ui.unified.CalendarLegend: Legend responsiveness is now similar across browsers",
+        "references": []
       },
       {
         "id": "2c3ff6ac452029a5f61dd8a1a8f67ce66dfd2374",
         "type": "FIX",
-        "text": "sap.ui.unified.CalendarUtils: Week number calculated correctly for all \"en-US\" locales",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129400003882912016"
-          }
-        ]
+        "text": " sap.ui.unified.CalendarUtils: Week number calculated correctly for all \"en-US\" locales",
+        "references": []
       },
       {
         "id": "7c3264b23cfc67a6e9cb34790836936dc4e49449",
         "type": "FIX",
-        "text": "sap.ui.unified.Currency: Correct aligned in table",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670528009"
-          }
-        ]
+        "text": " sap.ui.unified.Currency: Correct aligned in table",
+        "references": []
       },
       {
         "id": "439c4dc33854b3d925d4d69302d6f6f764ce8ed7",
         "type": "FIX",
-        "text": "sap.ui.unified.MenuTextFieldItem: Process enter key on keyup like for other Menuitems instead of keydown",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670541155"
-          }
-        ]
+        "text": " sap.ui.unified.MenuTextFieldItem: Process enter key on keyup like for other Menuitems instead of keydown",
+        "references": []
       },
       {
         "id": "ad4d7c49d245914655873e8305caba6ea1f5ee9a",
         "type": "FIX",
-        "text": "sap.ui.unified.Shell/sap.m.Toolbar: Fix focus contrast issues in IE/Edge",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680344097"
-          },
-          {
-            "type": "BCP",
-            "reference": "1680344152"
-          }
-        ]
+        "text": " sap.ui.unified.Shell/sap.m.Toolbar: Fix focus contrast issues in IE/Edge",
+        "references": []
       },
       {
         "id": "b5b751c6858c168615f33b7077a21dc0879ac5cf",
         "type": "FIX",
-        "text": "sap.ui.unified.Shell: Avoid URL announcement of Screenreader",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680344362"
-          }
-        ]
+        "text": " sap.ui.unified.Shell: Avoid URL announcement of Screenreader",
+        "references": []
+      }
+    ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "e93c01e9c76827ec09e75970836be14523982e0f",
+        "type": "FIX",
+        "text": " sap.m.Planning Calendar: Selected state of appointment is read",
+        "references": []
+      },
+      {
+        "id": "2d33c0812a255a89f35f18c75e50240e97d31381",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
+        "references": []
+      },
+      {
+        "id": "4c7b6d0aa3cb29dec41658472ad06b7884b91f9e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: 1 month view for S and M sizes is usable now.",
+        "references": []
+      },
+      {
+        "id": "b91c719adc9bfd76cf7cae248a6ea11a842e1c22",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Invalidate Months only if they exist",
+        "references": []
+      }
+    ]
+  },
+  "1.46.4": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "bfca944b9779890636a30adbbb2b29663dd4a8e7",
+        "type": "FIX",
+        "text": " sap.m.Month - Adding special dates to the month does not move the focus from other elements on the page",
+        "references": []
+      },
+      {
+        "id": "a0e761b7b5c994552cf86a5b25c2e4c1a6c5f909",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar.MonthPicker - onThemeChanged before control is rendered was throwing an error",
+        "references": []
+      }
+    ]
+  },
+  "1.46.7": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "202eb3ce7a4d1c65aa8345c80f7b6e0ac57e363e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: corrected checks for detecting Japanese and Chinese",
+        "references": []
+      },
+      {
+        "id": "7efc998ff03d4e4c46e49c83d3293926b9ffed1c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: displayed correctly in Japanese and Chinese",
+        "references": []
+      },
+      {
+        "id": "00e8971558fcd9ba2141413ef68985f7b9c744db",
+        "type": "FIX",
+        "text": ": sap.ui.unified.calendar controls. - focused item is preserved after rerendering.",
+        "references": []
+      }
+    ]
+  },
+  "1.46.8": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "ab4ad9b19bd0c6180b061722eb3a43c2db742881",
+        "type": "FIX",
+        "text": " sap.m.Menu: Item separator position and height corrected",
+        "references": []
+      },
+      {
+        "id": "103d34e4bf173769ac18904689979e2142bed16c",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.CalendarDateInterval: setStartDate to min/max date no longer throws an error.",
+        "references": []
+      }
+    ]
+  },
+  "1.46.9": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "5f7a71f6467f90667d4f0abb43f7f0a57d8c0010",
+        "type": "FIX",
+        "text": " m.Menu: Header border and menu padding are fixed for phone",
+        "references": []
+      },
+      {
+        "id": "6772eb18dea9630bcf36a855cec1fc40ac5c5547",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: opening as a context menu improved for RTL",
+        "references": []
+      },
+      {
+        "id": "3931e85187432795a29c59851762cae3840c3621",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Header: Previous and next buttons have aria info",
+        "references": []
       }
     ]
   }

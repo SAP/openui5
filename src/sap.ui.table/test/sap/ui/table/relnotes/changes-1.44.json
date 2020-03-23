@@ -330,5 +330,1115 @@
         "references": []
       }
     ]
+  },
+  "1.44.1": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "24777b33b91e726053d692eb72aa7e0b945ff123",
+        "type": "FEATURE",
+        "text": "sap.ui.table.Column: New property minWidth",
+        "references": []
+      },
+      {
+        "id": "0f9524df35fac410940028db066826559a9605b8",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter: Build tree for selection changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680241403"
+          }
+        ]
+      },
+      {
+        "id": "fa3d804fb03e862865817da7b8b48557b89d7bab",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Avoid exception when opening the cell context menu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670544802"
+          }
+        ]
+      },
+      {
+        "id": "ce940d25a0785e6370a29503c0928b84f5c25923",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Exception while column reordering when dummy column exists",
+        "references": []
+      },
+      {
+        "id": "95211a871bcdbc43a8682cedd50ad3f73f5f9c58",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Smaller fixes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670521194"
+          }
+        ]
+      },
+      {
+        "id": "3a45652a486a30a4c98ad46839d3f4e700867b41",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Group Header Menu Buttons should only appear on tablets/phones",
+        "references": []
+      },
+      {
+        "id": "d50364062bf3a3c078c2a6f6822895f824dba8a7",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Mousewheel scrolling",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1076"
+          },
+          {
+            "type": "BCP",
+            "reference": "1680189517"
+          }
+        ]
+      },
+      {
+        "id": "825481942398ea2a5255b5f00368d6bdeffb627e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable/AnalyticalTable: Clear select all state before execute selectAll command",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670522742"
+          }
+        ]
+      },
+      {
+        "id": "3c63f0f4693da0e82c183ad0887697bb6fe1c5e6",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: Fix Row selection in SelectionMode \"Single\" and \"None\".",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670520690"
+          }
+        ]
+      },
+      {
+        "id": "6c215b6a40057b3fc09e9abfb3b6974e8e971573",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: Screenreader Announcement of tree icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670343457"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.2": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "e2c612c837e73aace66d872b925fff09d476c70e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Handle Cell click also when MatrixLayout is used in cell",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670514018"
+          }
+        ]
+      },
+      {
+        "id": "33e0ff62a055cac3eb5b08dc99c9d5371d22f742",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Hide selection tooltip on row header of empty rows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670569861"
+          }
+        ]
+      },
+      {
+        "id": "031326c96da454d7c7a60a002ed04ef1b05b6e3d",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Position Resize Bar initially out of visible area",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680186101"
+          }
+        ]
+      },
+      {
+        "id": "2dc4e778e71d5712707bc861e95d23048b834047",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Restore focus on row (e.g. tree icon) after rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670571284"
+          }
+        ]
+      },
+      {
+        "id": "802a0bfe586f7199667cc1557ba17a9fa4f3554a",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Horizontal scroll position is restored after rerendering.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670402465"
+          }
+        ]
+      },
+      {
+        "id": "bbc349584708686319b99341459c539c6bce349c",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: incorrect horizontal scroll position in RTL mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670571605"
+          }
+        ]
+      },
+      {
+        "id": "c9e7611410be7a97c4ddac17f12f1787593af83f",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: scrollLeft is reset after vertical resize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680143982"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.3": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "2b4491985fc6228f6a0dcbecca7daa1e437318f8",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: resize bar not visible in RTL mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680271263"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.5": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "f645a68188d5d73372f2b16c89742a0aab30de0e",
+        "type": "FIX",
+        "text": "TreeBindingAdapter: SelectAll",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670522742"
+          }
+        ]
+      },
+      {
+        "id": "a9a1fb2dd00596ea8604e17281e90e8a0b0e2b6f",
+        "type": "FIX",
+        "text": "sap.m.Link / sap.m.Text: Bold style in AnalyticalTable summary row",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670056773"
+          }
+        ]
+      },
+      {
+        "id": "2a710b63f0b358054f7b497c47b3edd5e440f4b0",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Apply padding for touch group header menu button only for non-desktop devices",
+        "references": []
+      },
+      {
+        "id": "603787911ed32b9d49c9083ef52fc2c2fd56de7c",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Fire cellClick event before",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670276488"
+          },
+          {
+            "type": "BCP",
+            "reference": "1680280667"
+          }
+        ]
+      },
+      {
+        "id": "5c0e55baf7dc25ad680891ebf5b64cd8cda8ad24",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Fix content height when custom row height is defined",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004105692016"
+          }
+        ]
+      },
+      {
+        "id": "567ed33bef1db5cc38a585d3e2a7a9606631b8d0",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Fix row content flash on vertical scrolling.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670387219"
+          }
+        ]
+      },
+      {
+        "id": "03a489dff2595d03aa0d684313f71e363766892c",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Fix tooltip of select all button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680261208"
+          }
+        ]
+      },
+      {
+        "id": "09a6824fa1e98822a6183aeaee0d140e5f0d4bef",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Focus visualization of table cells",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680344363"
+          }
+        ]
+      },
+      {
+        "id": "61f58886d35d435459f2cd1c3d41bd7e8774437a",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Screenreader announcement of column header menu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680344340"
+          }
+        ]
+      },
+      {
+        "id": "0a7322092c5dbf1908cd7326ad0494390d3875a6",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Workaround sub-pixel problems when zooming is not 100% in Chrome",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680144204"
+          }
+        ]
+      },
+      {
+        "id": "22b71758c8ada43a70a4faea2b7597dde2f2df41",
+        "type": "FIX",
+        "text": "sap.ui.table.*: fixes that bindRows was not called when table was bound via XML view",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680246545"
+          }
+        ]
+      },
+      {
+        "id": "a75bde4d1b283470a18ad8ad5ad5743eb439ab9a",
+        "type": "FIX",
+        "text": "sap.ui.table.Table with VisibleRowCountMode.Auto: incorrect number of rows",
+        "references": []
+      },
+      {
+        "id": "58ba85f881464a4dd361cbed43160588eca466b8",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Ignore the additional empty row at the end in the vertical scrolling feature.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680285544"
+          }
+        ]
+      },
+      {
+        "id": "8cb3fe785defe8424222087bf3f627b11f8d0133",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: The resize handler is registered in a promise instead of a timeout.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680244364"
+          }
+        ]
+      },
+      {
+        "id": "84c89d29693565da5788e1b3d290b017133fbe54",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: context menu for a column header with span has incorrect position",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680305331"
+          }
+        ]
+      },
+      {
+        "id": "191d0271cf89575c629379eaecb3a9b55bfbbc6a",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: exception \"Cannot read property \u0027_onTableResize\u0027 of undefined\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680367654"
+          }
+        ]
+      },
+      {
+        "id": "9e35e190967fb74d82091f68e91bc1e9b31c00c1",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: incorrect column width by hidden column headers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680346025"
+          }
+        ]
+      },
+      {
+        "id": "cb50a413fb6b5b0942fbfd02dce44f816f7fa598",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: minimal column width is not taken into account",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680315288"
+          }
+        ]
+      },
+      {
+        "id": "18426978362e56b037e99d2e251303eeede5eb2f",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: uncorrect column header widths",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680355615"
+          }
+        ]
+      },
+      {
+        "id": "e7a8f7c1836643d867da368154d7e00b9de5641b",
+        "type": "FIX",
+        "text": "sap.ui.table.TableACCExtension: Various fixes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680261208"
+          }
+        ]
+      },
+      {
+        "id": "872cc64517a48d69419531c46582b92f2f5e8c1d",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: fixes toggleOpenState event for leaves",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670569862"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.6": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "98e22d366a35ce9a3a14bd4470ba81d53b11eba0",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Accessibility - Improve labeling in multi header case",
+        "references": []
+      },
+      {
+        "id": "a68b2212a8e220ca7070885dacac44f0a89e3a97",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Always update the top position of the vertical scrollbar after rendering.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780015120"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780018589"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500000171132017"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.7": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "74168b99bcdc4b8b08e546bf63a1f1817573f67b",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Scrolling to the last row when zoomed in/out in Chrome.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780067174"
+          }
+        ]
+      },
+      {
+        "id": "fa15b56ef418c95965020c75d667ebb4a6f56e39",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Tabbing in action mode when invisible columns exist.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780083072"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.10": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "32501b34670e965c5214da9fa043bcbf32ff697a",
+        "type": "FIX",
+        "text": "Table: Resizing in interactive mode on touch devices",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780137626"
+          }
+        ]
+      },
+      {
+        "id": "ff67c0cb3e7a5846baf51b4e36010209af99c558",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Avoid error while reorder columns via D\u0026D",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770096587"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.11": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "067ed969d6465face56db888e56d4c36c2dc4f65",
+        "type": "FIX",
+        "text": "Table: Issues with zooming in Chrome",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770010981"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780114381"
+          }
+        ]
+      },
+      {
+        "id": "9ed82075da2aa4b06f42c6972155b75245f74ea2",
+        "type": "FIX",
+        "text": "Table: Navigation while the busy indicator is shown",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1349"
+          }
+        ]
+      },
+      {
+        "id": "0290c60922e1142c7c51441a59d81c2c59a3fb7c",
+        "type": "FIX",
+        "text": "Table: The firstVisibleRow property can no longer be less than 0",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770132794"
+          }
+        ]
+      },
+      {
+        "id": "36dc1b177f9cfc231117e5254482752e81366eec",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Avoid error when cell control does not provide an accessibility info.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770112155"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.12": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "35df21673f9baecc409ccbbd6e43da9645d90cbd",
+        "type": "FIX",
+        "text": "Table: Prevent scrolling and a second request on a binding refresh",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770149276"
+          }
+        ]
+      },
+      {
+        "id": "817228ce9e2eef039918500c8f3f53d1a54dc8f4",
+        "type": "FIX",
+        "text": "sap.ui.table.Table - CSS corrections for column headers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001441792017"
+          }
+        ]
+      },
+      {
+        "id": "9efef0a7592bf0207082bdd7cacd373dad39fd1a",
+        "type": "FIX",
+        "text": "sap.ui.table.Table - column header spans in XLM views",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770168156"
+          }
+        ]
+      },
+      {
+        "id": "e778369cec7e6b59f66f42a086dbdc993257a56a",
+        "type": "FIX",
+        "text": "sap.ui.table.Table - row selection column is too wide in IE/Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770076948"
+          }
+        ]
+      },
+      {
+        "id": "b6cf7facaf0f8908aec1a6a9fd6953689ff33de9",
+        "type": "FIX",
+        "text": "sap.ui.table.Table - sort and filter icons in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770179109"
+          }
+        ]
+      },
+      {
+        "id": "a60db56a3a0295f68f0001292d4d2bab42b1a4bc",
+        "type": "FIX",
+        "text": "sap.ui.table.Table - touch scrolling in IE and Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500001074942017"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.13": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "59e937866a82ac65752cbb128c664c7325ebd957",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Ensure visibility of scrollbars in IE on Win 10",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500000464272017"
+          }
+        ]
+      },
+      {
+        "id": "83fbaaecd24160f846e7b1a948186c457483f247",
+        "type": "FIX",
+        "text": "sap.ui.table.Table - column header spans in XML view",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770168156"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.14": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "545733434a02aff94436ca6edb5d1bda4cb63439",
+        "type": "FIX",
+        "text": "Table: Avoid null pointer exception when last row was removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770232079"
+          }
+        ]
+      },
+      {
+        "id": "35e1f62dc19f58700168337ca33f2b124fed8bad",
+        "type": "FIX",
+        "text": "Table: Null pointer exception on dummy column click in the header",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770219081"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.15": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "d8b1ccadaa4e7b690127dd1c1c9ce65fa2b0053f",
+        "type": "FIX",
+        "text": "Table: Management of the column template clone stack",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1502"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780167361"
+          }
+        ]
+      },
+      {
+        "id": "29722f0bebc74cbd0f5240305cc243987e29e90b",
+        "type": "FIX",
+        "text": "Table: Select text of input fields in edit mode navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500001790292017"
+          }
+        ]
+      },
+      {
+        "id": "fe4c582f296d551457c6cd0d06521541e1abff81",
+        "type": "FIX",
+        "text": "TreeTable: Expand/Collapse with OData v1 models",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770235126"
+          }
+        ]
+      },
+      {
+        "id": "74991ab9b855acef96615bc260ec95891a133397",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Suppress select all on empty table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770135253"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770240574"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.16": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "aa3204ff183adefac808f16ec30d168e268bde7f",
+        "type": "FIX",
+        "text": "Table: Column parameter of the ColumnSelect event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002757702017"
+          }
+        ]
+      },
+      {
+        "id": "98caf59d5c91a08767633b40c98229970bfd45d3",
+        "type": "FIX",
+        "text": "Table: Tooltip of SelectAll cell when manually selecting all rows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780156976"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.18": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "9bc2e7f985b137112b0c6bfccf76a48b76eab26f",
+        "type": "FIX",
+        "text": "Table: Correctly initialize the keyboard navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780236969"
+          }
+        ]
+      },
+      {
+        "id": "ced7eb2c6ecb8bc166c41049ebe003e0ff067925",
+        "type": "FIX",
+        "text": "Table: Correctly update the NoData text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780155383"
+          }
+        ]
+      },
+      {
+        "id": "15d0f6fc2b8f6831660a8ad52d103514155aa86d",
+        "type": "FIX",
+        "text": "TreeTable: Leaf icons are no longer in the tab chain",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770169436"
+          }
+        ]
+      },
+      {
+        "id": "757bc255b8805d924bfc734de6de26bc5429cd59",
+        "type": "FIX",
+        "text": "TreeTable: Position of the TreeIcon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770305620"
+          }
+        ]
+      },
+      {
+        "id": "16afd0d434505a78166744db9f10bd0d0ec1818f",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Ensure visible scrollbars on Safari / iOS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780262258"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.19": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "d303ee8a436bc4558e74d4a17470cb885561f97b",
+        "type": "FIX",
+        "text": "Table: Correctly set the checked state of the SelectAll checkbox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003581222017"
+          }
+        ]
+      },
+      {
+        "id": "28f80fef9cf35610c3abdbbfc2f9d77fd500c94a",
+        "type": "FIX",
+        "text": "Table: No more infinite re-renderings if zoomed in Chrome",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780274409"
+          }
+        ]
+      },
+      {
+        "id": "cd0b5c9ff33842e50c640e8555694839e30c7f2c",
+        "type": "FIX",
+        "text": "Table: The column resizer bar stays underneath the scroll bar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075125800003425242017"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.20": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "d226ec8642f5928e16b97478ddb92b526431c670",
+        "type": "FIX",
+        "text": "core.ClientTreeBinding: Fix for relative treebinding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004304552017"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.21": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "10ee7d34939794e764fe40dbdaefb41b34d04f5c",
+        "type": "FIX",
+        "text": "sap.ui.table.Table - vertical scrollbar is not updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770318915"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.23": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "c954c35d27d051b340c238b65ec0682f8b4f11e8",
+        "type": "FIX",
+        "text": "Table: Correct height adjustment when used inside a splitter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770446860"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.24": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "6c96d5a18a4f50f42c81c85bcb467fb524ec7598",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Table renders even if column was destroyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770533228"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.25": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "fb31379b5af4eceee39b8e8f3d7f27ad8b075643",
+        "type": "FIX",
+        "text": "Table: Vertical scrollbar becomes visible if height is decreased",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770578177"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.26": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "a29144dfd9cb783ac36093fa8abe9f7934c91b25",
+        "type": "FIX",
+        "text": "Table: Horizontal scrolling with the touchpad",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006225252017"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.27": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "bb9e007c97524a06d5f8f194a0daf74cde88e20d",
+        "type": "FIX",
+        "text": "Control: refactor fnHandleInteraction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770370091"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.29": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "689272a9552ac2d88238e6b7325ced00ceba9350",
+        "type": "FIX",
+        "text": "GridTable: Scrollbar styling in base theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880229317"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.31": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "46fac3ba902aa9a3fd54766fccbc519902d30660",
+        "type": "FIX",
+        "text": "GridTable: applyFocusInfo handling corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870153705"
+          }
+        ]
+      },
+      {
+        "id": "f6346197366173188d2f7c92e4e3600e0cbae50c",
+        "type": "FIX",
+        "text": "Table: Prevent scrolling to top on binding refresh",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001210312018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.33": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "8cfcd35d13026a94388282df2d5da566ac33a9cb",
+        "type": "FIX",
+        "text": "Table: Avoid infinite re-rendering if fixed columns are available",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880301265"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.38": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "e3aa9a11fb60a0eee4a289cc779a8cc70d2c309a",
+        "type": "FIX",
+        "text": "Table: Apply input values when scrolling by edit mode navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005540862018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.39": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "53844a6dff6d20cdb1a597ca66075cc52beecfbc",
+        "type": "FIX",
+        "text": "Table: Avoid infinite rendering loop with fixed columns in Edge 44",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2334"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400006440602018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.42": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "77fad31f2ba903a0d92008334eedfeb017157024",
+        "type": "FIX",
+        "text": " Table: Vertical Scrollbar position",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "270038"
+          }
+        ]
+      },
+      {
+        "id": "87ccbcc6ba287cdebe10bc7d2ea25be3d3762bde",
+        "type": "FIX",
+        "text": " TreeTable: Expand/Collapse nodes when pressing the expander icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "247720"
+          }
+        ]
+      }
+    ]
   }
 }

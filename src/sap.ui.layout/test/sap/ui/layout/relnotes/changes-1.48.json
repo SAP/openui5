@@ -5,146 +5,97 @@
       {
         "id": "1382fe94356f08ae4780c60c5cb0efb6a832b0de",
         "type": "FEATURE",
-        "text": "Form: always show colons at Label",
+        "text": " Form: always show colons at Label",
         "references": []
       },
       {
         "id": "200be57c675dd0d6d112329bbfbe36b064a24d0e",
         "type": "FIX",
-        "text": "FormElement: Required not shown for readonly fields",
+        "text": " FormElement: Required not shown for readonly fields",
         "references": []
       },
       {
         "id": "6f7eca0bacb9f32347cf0a2d16d00fc5743e945d",
         "type": "FIX",
-        "text": "FormElement: destroyLabel does not remove rendering label",
+        "text": " FormElement: destroyLabel does not remove rendering label",
         "references": []
       },
       {
         "id": "2984a94ad722bab5414f11490bb4dba62e8bae0e",
         "type": "FIX",
-        "text": "Link in Form: focus outline too large",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780131982"
-          }
-        ]
+        "text": " Link in Form: focus outline too large",
+        "references": []
       },
       {
         "id": "0d981833a3c1a66beb0dde0565fcd063db31f185",
         "type": "FIX",
-        "text": "sap.m.ResponsiveSplitter: Overlapping text and navigation CSS issue fixed",
+        "text": " sap.m.ResponsiveSplitter: Overlapping text and navigation CSS issue fixed",
         "references": []
       },
       {
         "id": "b9d238b31ccb6568c2e980cd924d22bb6339f5e6",
         "type": "FIX",
-        "text": "sap.ui.dt: corrections on SimpleForm change handlers",
+        "text": " sap.ui.dt: corrections on SimpleForm change handlers",
         "references": []
       },
       {
         "id": "2c53f8ab40664eaf54f12a80ce262067637d88b1",
         "type": "FIX",
-        "text": "sap.ui.layout.BlockLayoutCell - When title is centered the content is no longer centered",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780123804"
-          }
-        ]
+        "text": " sap.ui.layout.BlockLayoutCell - When title is centered the content is no longer centered",
+        "references": []
       },
       {
         "id": "0fdafae8205359dc411ef12c121cb2e7719e465f",
         "type": "FIX",
-        "text": "sap.ui.layout.BlockLayoutCell: Prevents longer elements from breaking the layout",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770070505"
-          }
-        ]
+        "text": " sap.ui.layout.BlockLayoutCell: Prevents longer elements from breaking the layout",
+        "references": []
       },
       {
         "id": "825f4a6bd948ce98dd67adcb56670db5f842b95a",
         "type": "FIX",
-        "text": "sap.ui.layout.FixFlex When minFlexSize is not set, the flexible part doesn't have scrolling any more",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129500001427302017"
-          }
-        ]
+        "text": " sap.ui.layout.FixFlex When minFlexSize is not set, the flexible part doesn\u0027t have scrolling any more",
+        "references": []
       },
       {
         "id": "509d3e414b5abdb541fa3848cefa3181a9c99a21",
         "type": "FIX",
-        "text": "sap.ui.layout.ResponsiveSplitter: Calcuation after resizing is wrong",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780072291"
-          },
-          {
-            "type": "BCP",
-            "reference": "1780027116"
-          }
-        ]
+        "text": " sap.ui.layout.ResponsiveSplitter: Calcuation after resizing is wrong",
+        "references": []
       },
       {
         "id": "54a6cdebdb38aa79bc344198378237648ecbd4ff",
         "type": "FIX",
-        "text": "sap.ui.layout.ResponsiveSplitter: Prevents the browser from handling the splitter bar's handle dragging",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770116491"
-          }
-        ]
+        "text": " sap.ui.layout.ResponsiveSplitter: Prevents the browser from handling the splitter bar\u0027s handle dragging",
+        "references": []
       },
       {
         "id": "2ed8279b2c839158504daff133d79cbbe5ba7477",
         "type": "FIX",
-        "text": "sap.ui.layout.Splitter: HCB and HCW styles fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770002704"
-          }
-        ]
+        "text": " sap.ui.layout.Splitter: HCB and HCW styles fixed",
+        "references": []
       },
       {
         "id": "f5b2a551508d87d9e8edaedce5c7d35eeeb68afc",
         "type": "FIX",
-        "text": "sap.ui.layout.form.Form: error with too many fields",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780005688"
-          }
-        ]
+        "text": " sap.ui.layout.form.Form: error with too many fields",
+        "references": []
       },
       {
         "id": "1e8e6b87109348245cc8e15b342a25de95aa758f",
         "type": "FIX",
-        "text": "sap.ui.layout.form.SimpleForm: Docu fix",
+        "text": " sap.ui.layout.form.SimpleForm: Docu fix",
         "references": []
       },
       {
         "id": "e5a1cea8ca747490a8a9e7e84874bb0b260b4859",
         "type": "FIX",
-        "text": "sap.ui.layout.form.SimpleForm: renders twice",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680291727"
-          }
-        ]
+        "text": " sap.ui.layout.form.SimpleForm: renders twice",
+        "references": []
       },
       {
         "id": "017227a5d08ccf8370d2266b7a1058b55e0cdb58",
         "type": "FIX",
-        "text": "sap.ui.layout: fixed changeHandler for HideSimpleForm",
+        "text": " sap.ui.layout: fixed changeHandler for HideSimpleForm",
         "references": []
       },
       {
@@ -163,6 +114,165 @@
         "id": "33d859e4a82632cfd71ff833e2ef89d168f92e85",
         "type": "FIX",
         "text": ": simpleform fix editable titles (DT-part-2)",
+        "references": []
+      }
+    ]
+  },
+  "1.48.1": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "77ca030a28e989af5f5231cb9b9b6431a77ae1d0",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.BlockLayoutCell - added 2 new properties for predefined themable colors also added contrast container capabilities",
+        "references": []
+      },
+      {
+        "id": "3a1a56281da6d493abbd236382a21b107093b2dd",
+        "type": "FIX",
+        "text": " sap.ui.layout.Form: Enables createContainer",
+        "references": []
+      },
+      {
+        "id": "ced8051b821a0e465bc92447bf617d78378b82af",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: PaneContainer\u0027s content is now properly resized and rendered.",
+        "references": []
+      }
+    ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "5483a4acc33d00082fad5de09674eea011165095",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: IE fialing tests fixed.",
+        "references": []
+      },
+      {
+        "id": "3cec496f2e80fa888125dc7eec2b1234b8542e76",
+        "type": "FIX",
+        "text": " simpleform getIndex",
+        "references": []
+      }
+    ]
+  },
+  "1.48.3": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "9cad083d3726721833d74aeca5b4f1bfd39322e2",
+        "type": "FIX",
+        "text": " Form: Link in Toolbar is not aligned",
+        "references": []
+      },
+      {
+        "id": "ee1d5912e86f99a68899f22bfb52a10b8f09238e",
+        "type": "FIX",
+        "text": " sap.ui.BlockLayout: Endless switching between breakpoints is now fixed.",
+        "references": []
+      },
+      {
+        "id": "4c67fed51b0b680c226b04e01b7d7c6b61f2be13",
+        "type": "FIX",
+        "text": " sap.ui.layout.AssociaveSplitter: Fixes size calculations",
+        "references": []
+      }
+    ]
+  },
+  "1.48.4": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "177134ec66f723fd88f3c623e431b4d8ef9ac431",
+        "type": "FEATURE",
+        "text": " Form: adapt vertical alignment to current design",
+        "references": []
+      },
+      {
+        "id": "7dd05cf57020fe114c876cc962c10eff0851812c",
+        "type": "FIX",
+        "text": " sap.ui.fl changeHandler needs to store dependencies",
+        "references": []
+      }
+    ]
+  },
+  "1.48.5": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "0a90b7fe1a70f4d539cd1c58a461da16e6e74267",
+        "type": "FIX",
+        "text": " SimpleForm removing Label creates empty container",
+        "references": []
+      },
+      {
+        "id": "a9958fddf7ea62cbc0b2c3d96972ce366823f303",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: Inserting PaneConainers in a selected index is now working",
+        "references": []
+      }
+    ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "acd155fefd80dee8ad226960b0c0a5fd30a75cc0",
+        "type": "FIX",
+        "text": " SimpleForm: Removing last field and label of container",
+        "references": []
+      },
+      {
+        "id": "8a112ec487a3491e2cb4e5d7298b7b7fe58e1046",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Layout is now correct on MS Edge browser",
+        "references": []
+      }
+    ]
+  },
+  "1.48.7": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "05694412dfd0f9cb5baff7e5703f66f847b02a09",
+        "type": "FIX",
+        "text": " FormContainer: render role\u003d\"form\" only if title exist",
+        "references": []
+      }
+    ]
+  },
+  "1.48.9": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "ed0db3c487a71ecacef9ea1cfbd1fcdf40f85c8e",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: sideContentVisibility works correct with containerQuery now",
+        "references": []
+      }
+    ]
+  },
+  "1.48.11": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "d330a1581566be75cb8802b674d125319d069faa",
+        "type": "FIX",
+        "text": " Form: don\u0027t close FormContainer if focus on Input field",
+        "references": []
+      },
+      {
+        "id": "94df32f91e1eacf9887954ad8887a5bde7d3ed89",
+        "type": "FIX",
+        "text": " sap.ui.fl Correctly apply changes on xml views",
+        "references": []
+      },
+      {
+        "id": "2818e51ba47a52c71b138cb2ef3df5d1e0c153cd",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Focus in HCB under IE is now correct",
         "references": []
       }
     ]

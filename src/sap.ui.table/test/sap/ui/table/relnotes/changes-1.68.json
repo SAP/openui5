@@ -11,13 +11,8 @@
       {
         "id": "136cd4078e08ec0ce5b904597a2388bb44e072a3",
         "type": "FIX",
-        "text": "TreeBindingAdapter: correctly clear selectAllMode",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970285916"
-          }
-        ]
+        "text": " TreeBindingAdapter: correctly clear selectAllMode",
+        "references": []
       }
     ]
   }

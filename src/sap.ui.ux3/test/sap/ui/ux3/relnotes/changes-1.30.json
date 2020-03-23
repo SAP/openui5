@@ -1,124 +1,173 @@
 {
-	"1.30.0": {
-		"date": "April 2015",
-		"notes": [
-			{
-				"id": "79f6fadff8a8af07e64842b9b15831f3a42ad432",
-				"type": "FIX",
-				"text": "DataSet: Fixed updating Items when doing multiple setData calls",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580005797"
-					}
-				]
-			},
-			{
-				"id": "3091a5245e3fa2097a56d577b9d8951c051a8ea9",
-				"type": "FIX",
-				"text": "Ensured existence of namespace during Core.initLibrary()",
-				"references": []
-			},
-			{
-				"id": "49d3529654d39bc33d77bb5bc71fd92d56bb8bf6",
-				"type": "FIX",
-				"text": "core.Popup: Setting focus in Internet Explorer after opening fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570034466"
-					}
-				]
-			},
-			{
-				"id": "b31b7d60e1c851e54d2f3aad3c55137a20da55f8",
-				"type": "FIX",
-				"text": "Overlay: Focus restored correctly when closing Overlay",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580009871"
-					}
-				]
-			},
-			{
-				"id": "411b70dee72ebfd3454c1571f97ab52536ad77a3",
-				"type": "FIX",
-				"text": "ThingViewer: Added ellipsis for long subtitle in header (Internet Explorer)",
-				"references": []
-			},
-			{
-				"id": "ef0aecdb5517ea77a077b88cb3a6803d3adcc495",
-				"type": "FIX",
-				"text": "ToolPopup commons.Dialog: Fixed focusable elements",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1482020238"
-					}
-				]
-			},
-			{
-				"id": "b0165489c41d4081ddf11ed44fe956919702c9cc",
-				"type": "FIX",
-				"text": "ToolPopup: Fixed popup position after changing its size",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002028376500010011972015"
-					}
-				]
-			},
-			{
-				"id": "144726d39fecbb39ad7f00e2f9a94e973f952214",
-				"type": "FIX",
-				"text": "ToolPopup: Overflow when ToolPopup exceeds window fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580022325"
-					}
-				]
-			},
-			{
-				"id": "d53dc0e325b7a183a7852d2fe482a8fb2f283490",
-				"type": "FIX",
-				"text": "ToolPopup: ToolPopup made aware when content re-renders",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002028376500010009482015"
-					}
-				]
-			},
-			{
-				"id": "52b7ce3039e0a5669755969419d9998d4e09dda7",
-				"type": "FIX",
-				"text": "ToolPopup: Constant increase in height for the control triggered by first resize corrected",
-				"references": []
-			},
-			{
-				"id": "7cb4cb4d1defd0ec6f398e05f1831e238592ebc3",
-				"type": "FIX",
-				"text": "DataSetSimpleView: View update suppressed if not rendered",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002028376500000107722015"
-					}
-				]
-			}
-		]
-	},
-	"1.30.1": {
-		"date": "June 2015",
-		"notes": [
-			{
-				"id": "9fdcf23bd2678e0b7ba32fdce8ad90da12ecb129",
-				"type": "FIX",
-				"text": "sap.ui.ux3.ToolPopup: Resize functionality now works under jQuery 1.7.1",
-				"references": []
-			}
-		]
-	}
+  "1.30.0": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "79f6fadff8a8af07e64842b9b15831f3a42ad432",
+        "type": "FIX",
+        "text": "DataSet: Fixed updating Items when doing multiple setData calls",
+        "references": []
+      },
+      {
+        "id": "3091a5245e3fa2097a56d577b9d8951c051a8ea9",
+        "type": "FIX",
+        "text": "Ensured existence of namespace during Core.initLibrary()",
+        "references": []
+      },
+      {
+        "id": "49d3529654d39bc33d77bb5bc71fd92d56bb8bf6",
+        "type": "FIX",
+        "text": "core.Popup: Setting focus in Internet Explorer after opening fixed",
+        "references": []
+      },
+      {
+        "id": "b31b7d60e1c851e54d2f3aad3c55137a20da55f8",
+        "type": "FIX",
+        "text": "Overlay: Focus restored correctly when closing Overlay",
+        "references": []
+      },
+      {
+        "id": "411b70dee72ebfd3454c1571f97ab52536ad77a3",
+        "type": "FIX",
+        "text": "ThingViewer: Added ellipsis for long subtitle in header (Internet Explorer)",
+        "references": []
+      },
+      {
+        "id": "ef0aecdb5517ea77a077b88cb3a6803d3adcc495",
+        "type": "FIX",
+        "text": "ToolPopup commons.Dialog: Fixed focusable elements",
+        "references": []
+      },
+      {
+        "id": "b0165489c41d4081ddf11ed44fe956919702c9cc",
+        "type": "FIX",
+        "text": "ToolPopup: Fixed popup position after changing its size",
+        "references": []
+      },
+      {
+        "id": "144726d39fecbb39ad7f00e2f9a94e973f952214",
+        "type": "FIX",
+        "text": "ToolPopup: Overflow when ToolPopup exceeds window fixed",
+        "references": []
+      },
+      {
+        "id": "d53dc0e325b7a183a7852d2fe482a8fb2f283490",
+        "type": "FIX",
+        "text": "ToolPopup: ToolPopup made aware when content re-renders",
+        "references": []
+      },
+      {
+        "id": "52b7ce3039e0a5669755969419d9998d4e09dda7",
+        "type": "FIX",
+        "text": "ToolPopup: Constant increase in height for the control triggered by first resize corrected",
+        "references": []
+      },
+      {
+        "id": "7cb4cb4d1defd0ec6f398e05f1831e238592ebc3",
+        "type": "FIX",
+        "text": "DataSetSimpleView: View update suppressed if not rendered",
+        "references": []
+      }
+    ]
+  },
+  "1.30.1": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "9fdcf23bd2678e0b7ba32fdce8ad90da12ecb129",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: Resize functionality now works under jQuery 1.7.1",
+        "references": []
+      }
+    ]
+  },
+  "1.30.3": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "0a901de58b6ac2bed2eeea05b1f860ebaaae6b7e",
+        "type": "FIX",
+        "text": "ux3.ToolPopup: Remove DOM when hiding ToolPopup",
+        "references": []
+      }
+    ]
+  },
+  "1.30.4": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "1f3349328a0e6faa4d49f3d5537c386b305b5985",
+        "type": "FIX",
+        "text": "ux3.Shell \u0026 NotificationBar: Reducing the z-index if NotificationBar is minimized",
+        "references": []
+      },
+      {
+        "id": "0523abe54b8adce240c1f0d7cfaa74cb85906e46",
+        "type": "FIX",
+        "text": "ux3.Shell: Set a static z-index for NotificationBar",
+        "references": []
+      }
+    ]
+  },
+  "1.30.7": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "51e1ac882171a71925124ca48bb21c090fd5c5a7",
+        "type": "FIX",
+        "text": "sap.ui.ux3.OverlayDialog: Close is now red when focus is changed",
+        "references": []
+      }
+    ]
+  },
+  "1.30.8": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "1f16a72434740b89851939c0b5c78fd44132be33",
+        "type": "FIX",
+        "text": "Respect \"themeroots\" when resolving img URLs in Controls",
+        "references": []
+      }
+    ]
+  },
+  "1.30.9": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "51356babf75848674c0a9842946113a0282d05cc",
+        "type": "FIX",
+        "text": "ux3.NavigationBar: Explicitly define focus outline in HCB theme",
+        "references": []
+      }
+    ]
+  },
+  "1.30.10": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "316b06a7dc41cffd94d47ac217bc171c452dab8b",
+        "type": "FIX",
+        "text": "sap.ui.ux3.NavigationBar - late style application would cause a bug in the ux3.Shell",
+        "references": []
+      },
+      {
+        "id": "5f805be61b554ed7a2d3bc4361c528958cfe3d62",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: Control is now properly sized in sap_goldreflection theme",
+        "references": []
+      }
+    ]
+  },
+  "1.30.11": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "5d1d49f07f889b27eb6edf15afeeca7de1cd6b2d",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: Content focus issue solved",
+        "references": []
+      }
+    ]
+  }
 }
