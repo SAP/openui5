@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/testrecorder/CommunicationBus",
 	"sap/ui/testrecorder/CommunicationChannels",
-	"sap/ui/testrecorder/inspector/DOMMutation",
+	"sap/ui/testrecorder/mutationObservers/AppMutationObserver",
+	"sap/ui/testrecorder/mutationObservers/ElementMutationObserver",
 	"sap/ui/support/supportRules/ui/external/Highlighter",
 	"sap/ui/test/_ControlFinder",
 	"sap/ui/testrecorder/inspector/ControlAPI",
@@ -20,7 +21,7 @@ sap.ui.define([
 	"sap/ui/testrecorder/codeSnippets/RawSnippetUtil",
 	"sap/ui/testrecorder/codeSnippets/CodeSnippetProvider",
 	"sap/ui/testrecorder/ui/models/SharedModel"
-], function (BaseObject, $, CommunicationBus, CommunicationChannels, DOMMutation, Highlighter, _ControlFinder, ControlAPI, ControlInspectorRepo, constants,
+], function (BaseObject, $, CommunicationBus, CommunicationChannels, AppMutationObserver, ElementMutationObserver, Highlighter, _ControlFinder, ControlAPI, ControlInspectorRepo, constants,
 	DialectRegistry, Dialects, ControlSelectorGenerator, POMethodUtil, RawSnippetUtil, CodeSnippetProvider, SharedModel) {
 	"use strict";
 
@@ -37,7 +38,8 @@ sap.ui.define([
 			// better to be singleton because of the mutation observer
 			if (!oControlInspector) {
 				Object.apply(this, arguments);
-				this._mutation = new DOMMutation(this.getAllControlData);
+				this._appObserver = new AppMutationObserver(this.getAllControlData.bind(this));
+				this._selectedElementObserver = new ElementMutationObserver(this.getControlData.bind(this));
 			} else {
 				return oControlInspector;
 			}
@@ -48,7 +50,7 @@ sap.ui.define([
 	 * initialize listeners for DOM changes and for events from the test recorder frame
 	 */
 	ControlInspector.prototype.init = function () {
-		this._mutation.start();
+		this._appObserver.start();
 
 		CommunicationBus.subscribe(CommunicationChannels.REQUEST_ALL_CONTROLS_DATA, this.getAllControlData.bind(this));
 		CommunicationBus.subscribe(CommunicationChannels.REQUEST_CONTROL_DATA, this.getControlData.bind(this));
@@ -79,6 +81,10 @@ sap.ui.define([
 	 * @param {string} mData.domElementId ID of a dom element from which the control is found (e.g. dom ref)
 	 */
 	ControlInspector.prototype.getControlData = function (mData) {
+		var oDomElement = mData.domElementId ? document.getElementById(mData.domElementId) : sap.ui.getCore().byId(mData.controlId).getDomRef();
+		this._selectedElementObserver.stop();
+		this._selectedElementObserver.start(oDomElement); // observe future updates in the control's properties
+
 		var mControlData = ControlAPI.getControlData(mData);
 		CommunicationBus.publish(CommunicationChannels.RECEIVE_CONTROL_DATA, mControlData);
 	};
@@ -210,7 +216,8 @@ sap.ui.define([
 	 * stop listening for changes in the app
 	 */
 	ControlInspector.prototype.stop = function () {
-		this._mutation.stop();
+		this._appObserver.stop();
+		this._selectedElementObserver.stop();
 	};
 
 	function _isAnySet(mData, vKey) {
