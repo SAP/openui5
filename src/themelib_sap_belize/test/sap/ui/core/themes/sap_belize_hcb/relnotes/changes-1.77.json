@@ -12,6 +12,17 @@
             "reference": "2070059338"
           }
         ]
+      },
+      {
+        "id": "99f68338efc81029af481d11a51653db60b87c08",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar - fixed visual glitches",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070003471"
+          }
+        ]
       }
     ]
   }

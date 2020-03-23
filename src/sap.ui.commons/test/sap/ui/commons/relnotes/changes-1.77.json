@@ -1,0 +1,18 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "82bd37444fb01be79ee8a57c6975874cde1ed5d8",
+        "type": "FIX",
+        "text": " RenderManager: preserve the DOM for no-longer rendered controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070060501"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -108,6 +108,87 @@
             "reference": "2080095199"
           }
         ]
+      },
+      {
+        "id": "d7bc4656d1a5d48f958c3ed7fd25b1e89bfac11d",
+        "type": "FIX",
+        "text": " sap.m.Bar: content aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070076896"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070073104"
+          }
+        ]
+      },
+      {
+        "id": "29ec1991702f65170d56091f82c6dac96c4edd02",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: does not close on opened picker and F4 pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980266388"
+          }
+        ]
+      },
+      {
+        "id": "aae78bdd1896c61034f86e2a27ae9d1c13cef6a9",
+        "type": "FIX",
+        "text": " sap.m.Page: Scrolling in Firefox fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970531823"
+          }
+        ]
+      },
+      {
+        "id": "73e3cb833fd6a4971d47bfa732c716f00fb13a2e",
+        "type": "FIX",
+        "text": " sap.m.Select: Corrected title assignment when in IconOnly mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070058650"
+          }
+        ]
+      },
+      {
+        "id": "a96aa26de5dcc3b9fb8613639170421e9438399c",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Selection count is now read when dialog opens",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070059335"
+          }
+        ]
+      },
+      {
+        "id": "dce6223d92d132b363eca044efd880d77ca43784",
+        "type": "FIX",
+        "text": " sap.m.Slider: SliderTooltipContainer aligned properly with responsive paddings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070084503"
+          }
+        ]
+      },
+      {
+        "id": "1896b33593ee14361de91ecaccc3e9eb7ef66011",
+        "type": "FIX",
+        "text": " sap.ui.unified.DatePicker: picker buttons adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070082435"
+          }
+        ]
       }
     ]
   }
