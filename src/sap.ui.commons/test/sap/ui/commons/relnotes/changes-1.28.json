@@ -1,1428 +1,1079 @@
 {
-	"1.28.0": {
-		"date": "January 2015",
-		"notes": [
-			{
-				"id": "768cbaa57e79114aae500021260123f59ebf38ca",
-				"type": "FEATURE",
-				"text": "commons/BorderLayoutArea: Visible property moved to Control\"",
-				"references": []
-			},
-			{
-				"id": "235d8a89419f0a25532dbcb59b6e33b0b276d496",
-				"type": "FIX",
-				"text": "DropdownBox: Error on blur when selected item doesn't exist\"",
-				"references": []
-			},
-			{
-				"id": "79f822e3ae64341aff91d6a6a8e1867485da9945",
-				"type": "FEATURE",
-				"text": "CSS classes implementation for Container Padding Concept",
-				"references": []
-			},
-			{
-				"id": "d155d504c5446f22cf36a318626345db4936c618",
-				"type": "FEATURE",
-				"text": "commons/AbsoluteLayout: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "1643fcdbcbd08a92350e4ffa8a5e7ee6d8a07528",
-				"type": "FEATURE",
-				"text": "commons/BorderLayoutArea: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "38b0a822936d1112db9b8eff88516bb418773bc8",
-				"type": "FEATURE",
-				"text": "commons/Button: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "3e1faa15ec792070d9340683e30b96062bcaa160",
-				"type": "FEATURE",
-				"text": "commons/CheckBox: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "189ec291c19e60ba583d91d2b7e978094fef641e",
-				"type": "FEATURE",
-				"text": "commons/FormattedTextView: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "95c86ce0f2448973eb997185ccfcae1df6ab93ae",
-				"type": "FEATURE",
-				"text": "commons/HorizontalDivider: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "f897b3a8fe2fdb4a7c24f95053b50c703b3d2db6",
-				"type": "FEATURE",
-				"text": "commons/Image: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "3666592f7439940fbe7a0492aa9959db28b5e2f9",
-				"type": "FEATURE",
-				"text": "commons/Label: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "f1bc101f030f8ea8b69e8003d02499143c3a1cbf",
-				"type": "FEATURE",
-				"text": "commons/ListBox: Invisible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "30de642a812936592b9e0f06b55b97972ea82336",
-				"type": "FEATURE",
-				"text": "commons/MatrixLayout: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "4858f38530e0578fbe47f61baa407f491287f9ec",
-				"type": "FEATURE",
-				"text": "commons/MenuBar: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "667073dad521507eb264cc96174ca340f4f16365",
-				"type": "FEATURE",
-				"text": "commons/Panel: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "7d8975ba55913a0ad4b3476e601b42d27950f5e6",
-				"type": "FEATURE",
-				"text": "commons/ProgressIndicator: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "9eb48107bc5b061765169a11d8eca369d3d5e02e",
-				"type": "FEATURE",
-				"text": "commons/RadioButton: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "1590baa030a4f7da2cad910f7b6981458b26c61a",
-				"type": "FEATURE",
-				"text": "commons/RadioButtonGroup: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "a9bd189baa0473c90836e0f73c9631fb557bb791",
-				"type": "FEATURE",
-				"text": "commons/RatingIndicator: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "769ee5c3b3b5a566b8f1037d32546ce4cc5fdb3b",
-				"type": "FEATURE",
-				"text": "commons/RoadMap: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "695b48e53ae959a398349dd76edf66f855998a4e",
-				"type": "FEATURE",
-				"text": "commons/RowRepeater: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "f5287a160b49163bc645790e699fa851ba381263",
-				"type": "FEATURE",
-				"text": "commons/SearchField: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "713b653d88d7b542c2f42768947dd7c97f0c3be0",
-				"type": "FEATURE",
-				"text": "commons/SegmentedButton: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "671e8770401ce7b8b9f140e4df4548f134e708c6",
-				"type": "FEATURE",
-				"text": "commons/Slider: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "824f6c37b140f63aae854a6dfe3a8176114c633f",
-				"type": "FEATURE",
-				"text": "commons/Splitter: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "d7b634b6745cb3c376ace906ba7e8c1a43f1e4cb",
-				"type": "FEATURE",
-				"text": "commons/TextField: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "348f4080f19e837407875b941b549a6d1a767bd8",
-				"type": "FEATURE",
-				"text": "commons/TextView: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "ead17b50f5a8ec26bb0349e666f3c1d38cf82b4c",
-				"type": "FEATURE",
-				"text": "commons/Toolbar: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "0ecddf2f7304724963f102a60fc3f9103839949e",
-				"type": "FEATURE",
-				"text": "commons/TriStateCheckBox: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "c3750d45938c28b82efa608c38bc42af6300af0c",
-				"type": "FEATURE",
-				"text": "sap.ui.core.LabelEnablement: Provided common functionality for labels",
-				"references": []
-			},
-			{
-				"id": "1cd6a73ad8d529b00bca80c121224659d23b26b1",
-				"type": "FIX",
-				"text": "ComboBox on Internet Explorer fires change event while opening",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1482029160"
-					}
-				]
-			},
-			{
-				"id": "9c5d48190592ac04b6579ac4bf868cb114484eea",
-				"type": "FIX",
-				"text": "DropdownBox: Error on blur when selected item doesn't exist",
-				"references": []
-			},
-			{
-				"id": "3ecda50f1c433f03da16e17dccab47c3c6eabe08",
-				"type": "FIX",
-				"text": "DropdownBox: Select text on mouseup event",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100011814072014"
-					}
-				]
-			},
-			{
-				"id": "30231d4398033d24e662742d665f05333fb31d8e",
-				"type": "FIX",
-				"text": "Fix copyright headers LESS/CSS resources",
-				"references": []
-			},
-			{
-				"id": "b426e42648571f632b171e1f0bbe887c387d0acb",
-				"type": "FIX",
-				"text": "FormContainer: JSDoc",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "241"
-					}
-				]
-			},
-			{
-				"id": "a2383336b4d0b54d781772dcf666c11a281d484c",
-				"type": "FIX",
-				"text": "InPlaceEdit undo button not removes on Esc",
-				"references": []
-			},
-			{
-				"id": "a031490d51e9118fd6aa0215891659cdf86516c9",
-				"type": "FIX",
-				"text": "ListBox / DropdownBox: scrollTop issue (zoom != 100% in Chrome)",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1482025218"
-					}
-				]
-			},
-			{
-				"id": "cfbadbec2a1168f31e1751141c33cee560bb2135",
-				"type": "FIX",
-				"text": "ListBox in ComboBox within Popup (Chrome)",
-				"references": []
-			},
-			{
-				"id": "4c5944529f116f625b17a23710c1a7f515fca112",
-				"type": "FIX",
-				"text": "ListBox: Issue with DropdownBox inside Popup",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1482019919"
-					}
-				]
-			},
-			{
-				"id": "a453b89fcfff3caa78cae096a339f82a18a206f5",
-				"type": "FIX",
-				"text": "RadioButton in HCB (High-Contrast-Black) theme in Internet Explorer 11 checked only on second click",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1482004855"
-					}
-				]
-			},
-			{
-				"id": "ac2fc7def9f0894b46ba5b03efaf5c7830e6c1b0",
-				"type": "FIX",
-				"text": "RowRepeater: Implement refreshRows to avoid unnecessary rendering",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1482011832"
-					}
-				]
-			},
-			{
-				"id": "976b4905e1ffda1c648eafb3c95fdb10c86eb88a",
-				"type": "FIX",
-				"text": "TexField no change and liveChange event",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1482010273"
-					}
-				]
-			},
-			{
-				"id": "6595a8364d446492916cfa963f2d9c7069bc73c6",
-				"type": "FIX",
-				"text": "Toolbar: Opened overflow popup is not closed on overflow-button click.",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1482029157 2014."
-					}
-				]
-			},
-			{
-				"id": "4b1b1e2bc5f4552b362277284b7b9ad55a82d322",
-				"type": "FIX",
-				"text": "Tree: Behavior extended to select and deselect notes via API",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "271291"
-					}
-				]
-			},
-			{
-				"id": "94a3f803b6107601003ed33adc9006a26b3c33c1",
-				"type": "FIX",
-				"text": "Tree: Fix selectionChange event parameter and single selection",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1472012012"
-					}
-				]
-			},
-			{
-				"id": "f0a484efed0949aa040e001a5cad55265bebdba1",
-				"type": "FIX",
-				"text": "Tree: Improved performance",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1472021612"
-					}
-				]
-			},
-			{
-				"id": "a445c6c0c09ff662b0504611ce3e58d0e8384168",
-				"type": "FIX",
-				"text": "commons.Dialog: Fixed Docu for Closed-Event",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1472007167"
-					}
-				]
-			},
-			{
-				"id": "8f324d02dd1541c30eff7d91a1cf64d87629a9fd",
-				"type": "FIX",
-				"text": "commons.Dialog: Removed Overflow at Root-Element",
-				"references": []
-			},
-			{
-				"id": "9ebe19a1a11602f645b85e66bd49299b0caf86f0",
-				"type": "FIX",
-				"text": "commons.SearchField: Close Popup When Clicked on Search Icon",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002007974700010348982014"
-					}
-				]
-			},
-			{
-				"id": "fde293568fb72cfd4402f14df935f27ae6de3228",
-				"type": "FIX",
-				"text": "sap.ui.commons.ColorPicker: Accessability (added tooltips)",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1472000541"
-					}
-				]
-			},
-			{
-				"id": "e25d1dcae109bdc351d5a9c2cd80fe333a5f379a",
-				"type": "FIX",
-				"text": "sap.ui.commons.SearchField: Fix Screenreader Announcement",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1472015221"
-					}
-				]
-			},
-			{
-				"id": "f132bca0c70116cf21a27d7cb165585ffff3f508",
-				"type": "FIX",
-				"text": "ux3.ToolPopup: TabChaining with TabStrip\"",
-				"references": []
-			},
-			{
-				"id": "ba39374233379e03b22750cfb92e22724e83cdfd",
-				"type": "FIX",
-				"text": "RangeSlider: Issues with vertical slider and RTL (Right-To-Left) fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100011659852014"
-					}
-				]
-			},
-			{
-				"id": "82a0eee708a582c1edf3d34b181ababc7dfbb96b",
-				"type": "FIX",
-				"text": "Slider: Corrected aria-orientation for vertical slider",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1472014715"
-					}
-				]
-			},
-			{
-				"id": "8d9aa761da91d56e75547ea94e675c68a86b3a33",
-				"type": "FIX",
-				"text": "commons.Dialog: Removed unnecessary CSS-class",
-				"references": []
-			},
-			{
-				"id": "5b02dfea5a1050a2ba7860752135f4e66b0e5e2f",
-				"type": "FIX",
-				"text": "sap.ui.commons.ValueHelpField: Fixed hover for disabled/readonly Icon in HCB (High-Contrast-Black) theme",
-				"references": []
-			},
-			{
-				"id": "66b38c46797897d8443811b3466e0cab628a0aba",
-				"type": "FIX",
-				"text": "ux3.ToolPopup: TabChaining with TabStrip",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1482020289"
-					}
-				]
-			}
-		]
-	},
-	"1.28.1": {
-		"date": "March 2015",
-		"notes": [
-			{
-				"id": "57ffaa03d91c5a06750b03e436212c982184105e",
-				"type": "FIX",
-				"text": "sap.m.DatePicker, sap.ui.commons.DatePicker: Keyboard navigation issues",
-				"references": []
-			}
-		]
-	},
-	"1.28.2": {
-		"date": "March 2015",
-		"notes": [
-			{
-				"id": "12096b51a9772d1b31ebbb0b9b3bc96f48772edb",
-				"type": "FEATURE",
-				"text": "sap.ui.table.Table: Added cozy mode",
-				"references": []
-			}
-		]
-	},
-	"1.28.3": {
-		"date": "March 2015",
-		"notes": [
-			{
-				"id": "aa4f726946641f66143b98fad9b47f834a13a52d",
-				"type": "FIX",
-				"text": "HCB-Theme: Outline-color for focus changed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570023279"
-					}
-				]
-			},
-			{
-				"id": "47c4d60cceb7f52b8ccce89bfa6c5d162e480e55",
-				"type": "FIX",
-				"text": "Dialog: Inital setting of focus corrected",
-				"references": []
-			},
-			{
-				"id": "950129ac028b5bcda26ab5fc6f1006e343232e62",
-				"type": "FIX",
-				"text": "core.Popup: Saving of \"_followOfHandler\" corrected",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570004618"
-					}
-				]
-			},
-			{
-				"id": "3ef18fbc4817746ffdf8ab5973c259322e39ddde",
-				"type": "FIX",
-				"text": "RoadMap: Error is now avoided when scrolling to first visible step and the step is not yet rendered",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580025209"
-					}
-				]
-			},
-			{
-				"id": "a119a32261073b541a83448e5e13ef912c885e81",
-				"type": "FIX",
-				"text": "TextField, ComboBox, DropdownBox: liveChange event corrected",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570023952"
-					}
-				]
-			},
-			{
-				"id": "8fb9e6f2f92d9101e58afc22610dc8789c3f8355",
-				"type": "FIX",
-				"text": "Toolbar: Updating toolbar during rendering phase ignored",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580016791"
-					}
-				]
-			},
-			{
-				"id": "d7c01dc45d13d9d8faedc05280aa804b64f06f17",
-				"type": "FIX",
-				"text": "ux3.SegmentedButton: No longer focusable when disabled",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "172678"
-					}
-				]
-			},
-			{
-				"id": "2fd792d8ca75c75bd5c2eb55892e955e0951fba3",
-				"type": "FIX",
-				"text": "ux3.ToolPopup, commons.Dialog: Focusable elements corrected",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1482020238"
-					}
-				]
-			}
-		]
-	},
-	"1.28.4": {
-		"date": "April 2015",
-		"notes": [
-			{
-				"id": "4a24f074c81329196f3a2051e603ba4df88a3bca",
-				"type": "FIX",
-				"text": "Tree: Selection after model change restored",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570022137"
-					}
-				]
-			}
-		]
-	},
-	"1.28.5": {
-		"date": "April 2015",
-		"notes": [
-			{
-				"id": "743eae05583196577c213af99ea3ec8d922ba4a8",
-				"type": "FIX",
-				"text": "MatrixLayoutCell: Alignment fixed",
-				"references": []
-			},
-			{
-				"id": "b1927835fc1e223ce49d3cb8fadb8592547d2707",
-				"type": "FIX",
-				"text": "MatrixLayoutCell: Alignment fixed in Chrome",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "367"
-					},
-					{
-						"type": "BCP",
-						"reference": "1570035703"
-					}
-				]
-			},
-			{
-				"id": "dbd0cc7ac9e2a56eb10c075e2e38ecd11d85cfca",
-				"type": "FIX",
-				"text": "MatrixLayoutCell: hAlign fixed",
-				"references": []
-			},
-			{
-				"id": "d1155953d31536d76cec280666021f3ce40e4f12",
-				"type": "FIX",
-				"text": "Tree: onThemeChanged checks for existance of buttons",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570041583"
-					}
-				]
-			},
-			{
-				"id": "d40e887a59ff7f63fea36219b95d55094c8510de",
-				"type": "FIX",
-				"text": "sap.ui.commons.DatePicker: Change event on mobile device added",
-				"references": []
-			},
-			{
-				"id": "d3cb70b17eb0c0d4b71153a3c2938d4a98ac02c5",
-				"type": "FIX",
-				"text": "sap.ui.commons.DropdownBox: Input now possible on mobile devices",
-				"references": []
-			},
-			{
-				"id": "da0d8b8ae63cac403b50e92c2b2ecc8667121295",
-				"type": "FIX",
-				"text": "sap.ui.table.Table: Text view in sap.m context created",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570136773"
-					}
-				]
-			},
-			{
-				"id": "7b91c6bc328417d9a786ebed559d07b3f78de683",
-				"type": "FIX",
-				"text": "sap.ui.commons.ComboBox, sap.ui.commons.DatePicker: Combi device",
-				"references": []
-			}
-		]
-	},
-	"1.28.6": {
-		"date": "May 2015",
-		"notes": [
-			{
-				"id": "252ede5397ff16fe99276835473ed723b20631e1",
-				"type": "FEATURE",
-				"text": "sap.ui-unified.Calendar, sap.m.DatePicker: Islamic calendar support added",
-				"references": []
-			},
-			{
-				"id": "9f895fb08971121030ed1f1524a006b37419735b",
-				"type": "FIX",
-				"text": "Existence of namespace ensured during Core.initLibrary()",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570295165"
-					}
-				]
-			},
-			{
-				"id": "a2923c77e654e1df28e91967d28c87abe57f0a82",
-				"type": "FIX",
-				"text": "MatrixLayout: Does not inherit text-align",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570306069"
-					}
-				]
-			},
-			{
-				"id": "3cb5821eb731e70ee1a1310bb42d2430a6f68341",
-				"type": "FIX",
-				"text": "Tree: Support for binding on named models added",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570175276"
-					}
-				]
-			},
-			{
-				"id": "2b18699a708a3d832b85a359f98110691a6c1ae8",
-				"type": "FIX",
-				"text": "commons.Dialog: Invalidation of dialog stopped if dialog isn't open",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570010296"
-					}
-				]
-			},
-			{
-				"id": "c62e6eb9d5cb58aae7a4a02f922ca9821e0d337c",
-				"type": "FIX",
-				"text": "sap.ui.Carousel: Carousel in vertical mode reads correctly with JAWS 16",
-				"references": []
-			},
-			{
-				"id": "ae67319c13b246bf7cd951949f0fa7f767eb9324",
-				"type": "FIX",
-				"text": "sap.ui.Carousel: Carousel items in vertical mode are displayed correctly",
-				"references": []
-			},
-			{
-				"id": "afbcc9051a934a1b1f4e3b12cb01c8747f39bfe7",
-				"type": "FIX",
-				"text": "sap.ui.commons.Carousel: Carousel items are displayed correctly with jQuery 1.8.1",
-				"references": []
-			},
-			{
-				"id": "d34af6c1536221f5317a32144f5283677e937c31",
-				"type": "FIX",
-				"text": "sap.ui.commons.Carousel: Fixed bug in keyboard navigation",
-				"references": []
-			},
-			{
-				"id": "0f7ce32c021afdfe8eb28b694d37980b3e17f4d2",
-				"type": "FIX",
-				"text": "sap.ui.commons.RadioButtonGroup: Binding issues fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570156057"
-					}
-				]
-			},
-			{
-				"id": "384b834d7fd3481e5b9d0a4234d3eeca3e7deb89",
-				"type": "FIX",
-				"text": "sap.ui.commons.Roadmap: Default step tooltips suppressed when RichTooltip is used",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580010409"
-					}
-				]
-			},
-			{
-				"id": "4c7898bdd251010df8d56d85b7bda621f7c52bb1",
-				"type": "FIX",
-				"text": "sap.ui.commons.SearchField: Suggestion triggered correctly when Ctrl+A is pressed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570032167"
-					}
-				]
-			},
-			{
-				"id": "0cf049da759a24e1d7d796426036903f1690c239",
-				"type": "FIX",
-				"text": "sap.ui.commons.SearchField: Showing invalid suggestions avoided",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580010405"
-					}
-				]
-			},
-			{
-				"id": "39c1ca03443d157cb5eb6a737a5121cca91bc733",
-				"type": "FIX",
-				"text": "sap.ui.commons.TextArea: Fixed arrow up/down event in edit mode",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570308428"
-					}
-				]
-			},
-			{
-				"id": "49b1d2eb592b5acf6c1474d9d9b74ac511252c89",
-				"type": "FIX",
-				"text": "sap.ui.commons.Toolbar: Items in the overflow popup are now properly removed upon re-rendering while the popup is open.",
-				"references": []
-			},
-			{
-				"id": "4a973f77e7673d74b24a423f331fad43da8bffc1",
-				"type": "FIX",
-				"text": "ux3.ToolPopup: ToolPopup is made aware when content rerenders",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002028376500010009482015"
-					}
-				]
-			}
-		]
-	},
-	"1.28.7": {
-		"date": "May 2015",
-		"notes": [
-			{
-				"id": "e7e86e51803b88dd2ad0607630f3ff112dcc4ff9",
-				"type": "FIX",
-				"text": "ProgressIndicator: Screen reader improved",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1482020564"
-					}
-				]
-			}
-		]
-	},
-	"1.28.8": {
-		"date": "May 2015",
-		"notes": [
-			{
-				"id": "d85fe1ce1b15c2adc9542b868a76eb81415a797b",
-				"type": "FIX",
-				"text": "Element: Added additional documentation for event delegates",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570042356"
-					}
-				]
-			},
-			{
-				"id": "5dbbfd271bb9304f0980dc658913364e4fea1e59",
-				"type": "FIX",
-				"text": "sap.ui.commons.RadioButton: Selecting more than one RadioButton in the same group fixed",
-				"references": []
-			},
-			{
-				"id": "f4c28646f79e4396de5da58fb8072c41f6ccf20a",
-				"type": "FIX",
-				"text": "sap.ui.commons.Toolbar: Opening the overflow popup is not causing a toolbar resize when the toolbar is nested inside sap.ui.layout.HorizontalLayout.",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100002105562015"
-					}
-				]
-			}
-		]
-	},
-	"1.28.9": {
-		"date": "June 2015",
-		"notes": [
-			{
-				"id": "06355ec6bef54ba91c9f583e3149d86c0baf3701",
-				"type": "FIX",
-				"text": "sap.ui.commons.Toolbar: Keyboard navigation when invisible item(s) exist is now supported.",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1472017078"
-					}
-				]
-			}
-		]
-	},
-	"1.28.10": {
-		"date": "June 2015",
-		"notes": [
-			{
-				"id": "bbe66693fd59223562a6b30f04fe21b9fbe009ce",
-				"type": "FIX",
-				"text": "sap.ui.commons.Dialog: Fixes Dialog resizing beyond minimum size",
-				"references": []
-			},
-			{
-				"id": "3edb22fd9ff50110a90f68492fd00b6297aa8df1",
-				"type": "FIX",
-				"text": "sap.ui.commons.SearchField: Fix suggestion event in case of empty value and startSuggestion=0",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570463827"
-					}
-				]
-			},
-			{
-				"id": "df0411983860fb75d688972956eb7b03feb01f8a",
-				"type": "FIX",
-				"text": "sap.ui.commons.Toolbar: Tab indexes on the right toolbar items are now correctly retained upon updating item navigation",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580009795"
-					}
-				]
-			}
-		]
-	},
-	"1.28.11": {
-		"date": "July 2015",
-		"notes": [
-			{
-				"id": "fad1e08ee0f925a100f2d60c851eb9406cb9201f",
-				"type": "FIX",
-				"text": "commons.Dialog: Remove DOM when hiding dialog",
-				"references": []
-			}
-		]
-	},
-	"1.28.12": {
-		"date": "July 2015",
-		"notes": [
-			{
-				"id": "21d0ca777d0627f6923f899e01e4973f2bd2d9e3",
-				"type": "FIX",
-				"text": "commons.Dialog: In modal mode can be dragged properly in scrolled page",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100005576772015"
-					}
-				]
-			},
-			{
-				"id": "64e9c9aa4e035b3af0493d05daf29b96b076d380",
-				"type": "FIX",
-				"text": "sap.ui.commons.SearchField: Implement F2 keyboard handling",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570295680"
-					}
-				]
-			},
-			{
-				"id": "7c7ae3215304132e39783276408a1917365b6c77",
-				"type": "FIX",
-				"text": "sap.ui.commons.TextField, ComboBox, DropdownBox: Wrong tooltip",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570525721"
-					}
-				]
-			}
-		]
-	},
-	"1.28.13": {
-		"date": "August 2015",
-		"notes": [
-			{
-				"id": "f81faeb31efb53e6cb1e5d54c72f8dd286ae2c19",
-				"type": "FIX",
-				"text": "core.Popup: De-Registration of Child Popups Fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580000848"
-					},
-					{
-						"type": "BCP",
-						"reference": "1570149997"
-					}
-				]
-			},
-			{
-				"id": "1ac97c2f96877b70e1b13caf6d274a8d139592c0",
-				"type": "FIX",
-				"text": "sap.ui.commons.Button: Contrast for semantic color buttons in High Contrast Black mode is now correct",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570534804"
-					}
-				]
-			},
-			{
-				"id": "b8f6eb96063582ff3eca713b74cd68b252dd6bda",
-				"type": "FIX",
-				"text": "sap.ui.commons.ListBox: Use native scrolling on touch devices",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570302505"
-					}
-				]
-			},
-			{
-				"id": "6fdabfc4af90f8f2bdc8e6e2f930c69a32b70248",
-				"type": "FIX",
-				"text": ": sap.ui.commons.InPlaceEdit: Alignment of button in HCB",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570684770"
-					}
-				]
-			}
-		]
-	},
-	"1.28.14": {
-		"date": "August 2015",
-		"notes": [
-			{
-				"id": "afffe6b14e1ec1b525db6871d38bae26b903fe4d",
-				"type": "FIX",
-				"text": "sap.ui.commons.InPlaceEdit: syntax error if no content",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570760067"
-					}
-				]
-			},
-			{
-				"id": "f5424043f00d0cf4960d43d68fae4c3ce4cc1b08",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570445096"
-					}
-				]
-			}
-		]
-	},
-	"1.28.16": {
-		"date": "August 2015",
-		"notes": [
-			{
-				"id": "d7c706da41457d6e99cc2be94fd07b1e6e24450a",
-				"type": "FIX",
-				"text": "sap.ui.commons.Dialog: The close button has proper name when read by JAWS",
-				"references": []
-			},
-			{
-				"id": "d4f4b3d26c4a19ca48410bc853c8be60124574c9",
-				"type": "FIX",
-				"text": "sap.ui.commons.TabStrip: Tabs set to non-visible now disappear",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "554"
-					}
-				]
-			}
-		]
-	},
-	"1.28.17": {
-		"date": "August 2015",
-		"notes": [
-			{
-				"id": "23ef3655870725c09a4571012398f32ac08429cd",
-				"type": "FIX",
-				"text": "sap.ui.commons.ApplicationHeader: Placement of the colon fixed in RTL mode",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570816068"
-					}
-				]
-			},
-			{
-				"id": "e1b3390b0177383ae11731d54e3c63f180dcc74b",
-				"type": "FIX",
-				"text": "sap.ui.commons.ComboBox: screen reader don't read additional text",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570788860"
-					}
-				]
-			},
-			{
-				"id": "c18fc8c47068150a7cb344ef76382444bc99c49a",
-				"type": "FIX",
-				"text": "sap.ui.commons.RangeSlider: Grips not visible if invalid values",
-				"references": []
-			},
-			{
-				"id": "b91f71d9cc758413662948a90581330a7d5355a3",
-				"type": "FIX",
-				"text": "sap.ui.commons.TabStrip: Fix selectedIndex when disable selected tab",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570763592"
-					}
-				]
-			}
-		]
-	},
-	"1.28.18": {
-		"date": "September 2015",
-		"notes": [
-			{
-				"id": "0e4dbbb8ba97d0354d76283bc2fb874bcf71bd28",
-				"type": "FIX",
-				"text": "Respect \"themeroots\" when resolving img URLs in Controls",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100003930322015"
-					}
-				]
-			},
-			{
-				"id": "9fc1e4c4b6537999299dfc75d1d9d4e7f6fd5b96",
-				"type": "FIX",
-				"text": "sap.ui.commons.ComboBox: error if sap.ui.core.Item is used",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580065184"
-					}
-				]
-			},
-			{
-				"id": "883c038e8f242f4293bd8b27ceba21cf057436f2",
-				"type": "FIX",
-				"text": "sap.ui.commons.TextField: Allow \"AltGr+z\" as input",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100007314652015"
-					}
-				]
-			}
-		]
-	},
-	"1.28.19": {
-		"date": "September 2015",
-		"notes": [
-			{
-				"id": "c70b9f18a85ce0f8f9ad425336974db7e42691c1",
-				"type": "FIX",
-				"text": "Popup: Using FocusInfo Fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002028376500000070992015"
-					},
-					{
-						"type": "BCP",
-						"reference": "002028376600000450972015"
-					}
-				]
-			},
-			{
-				"id": "83ddd6703b57dc31e7f73648e1a6b585a3a7bfa5",
-				"type": "FIX",
-				"text": "sap.ui.commons.Toolbar: Overflowing inside sap.ui.layout.Splitter is now possible.",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580050699"
-					}
-				]
-			}
-		]
-	},
-	"1.28.20": {
-		"date": "October 2015",
-		"notes": [
-			{
-				"id": "244a86b2e03a483241ec50480e7126dd83d8e8fd",
-				"type": "FIX",
-				"text": "sap.ui.commons.TextField in IE onInput called",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580111123"
-					}
-				]
-			},
-			{
-				"id": "57cbcf0e346f3ff9de89b7087cd3d9421eda6b2d",
-				"type": "FIX",
-				"text": "sap.ui.commons.TextField: after enabling still readonly",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002028376600001085732015"
-					}
-				]
-			}
-		]
-	},
-	"1.28.21": {
-		"date": "October 2015",
-		"notes": [
-			{
-				"id": "9d673708e9010608bfc9f158b47bc28f923e8378",
-				"type": "FIX",
-				"text": "sap.ui.commons.TabStrip: focusOut is triggered when switching tabs",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "637"
-					},
-					{
-						"type": "BCP",
-						"reference": "1580145814"
-					}
-				]
-			}
-		]
-	},
-	"1.28.22": {
-		"date": "November 2015",
-		"notes": [
-			{
-				"id": "95a1fe8131f6251da1b11fd4b7564cf50ada19a7",
-				"type": "FIX",
-				"text": "sap.ui.commons.DropdowmBox: cursor moves 2 characters on backspace",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "686"
-					},
-					{
-						"type": "BCP",
-						"reference": "1580197535"
-					}
-				]
-			},
-			{
-				"id": "3d6a6b2e8839fd050e3cf4fd0984357a7a88c4a6",
-				"type": "FIX",
-				"text": "sap.ui.commons.TextView: default ARIA role \"Document\" is removed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580071390"
-					}
-				]
-			},
-			{
-				"id": "e993e923a8798ba75662b8c665969f323d99360c",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.Form: use Label style only for direct labels",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580178200"
-					}
-				]
-			}
-		]
-	},
-	"1.28.25": {
-		"date": "December 2015",
-		"notes": [
-			{
-				"id": "e03c564f23871db020cc708511b5789eaf8c893f",
-				"type": "FIX",
-				"text": "sap.ui.commons.Dialog: Minium size is properly calculated when there is no size constraint",
-				"references": []
-			},
-			{
-				"id": "86739646f41d02068e074cc43c5a7794f0f59e3d",
-				"type": "FIX",
-				"text": "sap.ui.commons.Tree: Expand and collapse performance improved",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580198908"
-					}
-				]
-			}
-		]
-	},
-	"1.28.26": {
-		"date": "January 2016",
-		"notes": [
-			{
-				"id": "929f9e7c3df1e5a9b968163dec955f7ed5668282",
-				"type": "FIX",
-				"text": "sap.ui.commons.RadioButtonGroup: Fixed text truncation",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570894564"
-					}
-				]
-			}
-		]
-	},
-	"1.28.27": {
-		"date": "January 2016",
-		"notes": [
-			{
-				"id": "84ffd8dfe7b64865b8f6a7c9c7f36c63ee096ac1",
-				"type": "FIX",
-				"text": "sap.ui.commons.TriStateCheckBox scroll trigger fixed",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "775"
-					}
-				]
-			}
-		]
-	},
-	"1.28.28": {
-		"date": "February 2016",
-		"notes": [
-			{
-				"id": "40a7fcdaeb5004b79e664aa3a079ba6979cff076",
-				"type": "FIX",
-				"text": "commons.Dialog: Trigger Re-Rendering for Setting Title",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670053490"
-					}
-				]
-			},
-			{
-				"id": "cdf5003552d0bff16c8c08eea0ca46c51fafcba5",
-				"type": "FIX",
-				"text": "sap.m.DatePicker: if date is deleted open calendar on today",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100000591562016"
-					}
-				]
-			}
-		]
-	},
-	"1.28.29": {
-		"date": "February 2016",
-		"notes": [
-			{
-				"id": "63596fba8090d697ea6012f003a2ba39ac7907e4",
-				"type": "FIX",
-				"text": "commons.TabStrip: Scroll position is fixed",
-				"references": []
-			}
-		]
-	},
-	"1.28.30": {
-		"date": "March 2016",
-		"notes": [
-			{
-				"id": "27c6c82a8df89b68cdefdbb24c236373836b4832",
-				"type": "FIX",
-				"text": "sap.ui.commons.TabStrip: Event flow is now correct",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002007974700001276222016"
-					}
-				]
-			}
-		]
-	},
-	"1.28.31": {
-		"date": "March 2016",
-		"notes": [
-			{
-				"id": "1b977160484350466f512f3d413e769eea051341",
-				"type": "FIX",
-				"text": "sap.ui.commons.TabStrip: Closing tab is now fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100001790872016"
-					}
-				]
-			}
-		]
-	},
-	"1.28.33": {
-		"date": "April 2016",
-		"notes": [
-			{
-				"id": "2536066ef3945407048ec8709b598ff2e1278b18",
-				"type": "FIX",
-				"text": "sap.ui.commons.TabStrip: Hiding the last visible tab no longer throws an exception",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002007974700000811722016"
-					}
-				]
-			}
-		]
-	},
-	"1.28.35": {
-		"date": "June 2016",
-		"notes": [
-			{
-				"id": "858845f0e8b4b83b8f685007a9ce16ce0dfbafe6",
-				"type": "FIX",
-				"text": "commons.Accordion: Width issue is fixed",
-				"references": []
-			},
-			{
-				"id": "b9330830eae1513a610da19056420f22f1d5208e",
-				"type": "FIX",
-				"text": "sap.ui.commons.ColorPicker: set size of cursor and colorBox inline",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670250635"
-					}
-				]
-			},
-			{
-				"id": "3d2bb18815ff022e0688f1dc522b77f5f561f0e5",
-				"type": "FIX",
-				"text": "sap.ui.core.TooltipBase: Tooltip should not be open if visibility is set to false",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670206055"
-					}
-				]
-			}
-		]
-	},
-	"1.28.36": {
-		"date": "July 2016",
-		"notes": [
-			{
-				"id": "677e0263683725c46e75d06160f6c93c540cea8e",
-				"type": "FIX",
-				"text": "commons.Accordion: Right border is fixed",
-				"references": []
-			}
-		]
-	}
+  "1.28.0": {
+    "date": "January 2015",
+    "notes": [
+      {
+        "id": "768cbaa57e79114aae500021260123f59ebf38ca",
+        "type": "FEATURE",
+        "text": "commons/BorderLayoutArea: Visible property moved to Control\"",
+        "references": []
+      },
+      {
+        "id": "235d8a89419f0a25532dbcb59b6e33b0b276d496",
+        "type": "FIX",
+        "text": "DropdownBox: Error on blur when selected item doesn\u0027t exist\"",
+        "references": []
+      },
+      {
+        "id": "79f822e3ae64341aff91d6a6a8e1867485da9945",
+        "type": "FEATURE",
+        "text": "CSS classes implementation for Container Padding Concept",
+        "references": []
+      },
+      {
+        "id": "d155d504c5446f22cf36a318626345db4936c618",
+        "type": "FEATURE",
+        "text": "commons/AbsoluteLayout: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "1643fcdbcbd08a92350e4ffa8a5e7ee6d8a07528",
+        "type": "FEATURE",
+        "text": "commons/BorderLayoutArea: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "38b0a822936d1112db9b8eff88516bb418773bc8",
+        "type": "FEATURE",
+        "text": "commons/Button: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "3e1faa15ec792070d9340683e30b96062bcaa160",
+        "type": "FEATURE",
+        "text": "commons/CheckBox: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "189ec291c19e60ba583d91d2b7e978094fef641e",
+        "type": "FEATURE",
+        "text": "commons/FormattedTextView: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "95c86ce0f2448973eb997185ccfcae1df6ab93ae",
+        "type": "FEATURE",
+        "text": "commons/HorizontalDivider: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "f897b3a8fe2fdb4a7c24f95053b50c703b3d2db6",
+        "type": "FEATURE",
+        "text": "commons/Image: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "3666592f7439940fbe7a0492aa9959db28b5e2f9",
+        "type": "FEATURE",
+        "text": "commons/Label: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "f1bc101f030f8ea8b69e8003d02499143c3a1cbf",
+        "type": "FEATURE",
+        "text": "commons/ListBox: Invisible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "30de642a812936592b9e0f06b55b97972ea82336",
+        "type": "FEATURE",
+        "text": "commons/MatrixLayout: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "4858f38530e0578fbe47f61baa407f491287f9ec",
+        "type": "FEATURE",
+        "text": "commons/MenuBar: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "667073dad521507eb264cc96174ca340f4f16365",
+        "type": "FEATURE",
+        "text": "commons/Panel: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "7d8975ba55913a0ad4b3476e601b42d27950f5e6",
+        "type": "FEATURE",
+        "text": "commons/ProgressIndicator: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "9eb48107bc5b061765169a11d8eca369d3d5e02e",
+        "type": "FEATURE",
+        "text": "commons/RadioButton: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "1590baa030a4f7da2cad910f7b6981458b26c61a",
+        "type": "FEATURE",
+        "text": "commons/RadioButtonGroup: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "a9bd189baa0473c90836e0f73c9631fb557bb791",
+        "type": "FEATURE",
+        "text": "commons/RatingIndicator: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "769ee5c3b3b5a566b8f1037d32546ce4cc5fdb3b",
+        "type": "FEATURE",
+        "text": "commons/RoadMap: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "695b48e53ae959a398349dd76edf66f855998a4e",
+        "type": "FEATURE",
+        "text": "commons/RowRepeater: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "f5287a160b49163bc645790e699fa851ba381263",
+        "type": "FEATURE",
+        "text": "commons/SearchField: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "713b653d88d7b542c2f42768947dd7c97f0c3be0",
+        "type": "FEATURE",
+        "text": "commons/SegmentedButton: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "671e8770401ce7b8b9f140e4df4548f134e708c6",
+        "type": "FEATURE",
+        "text": "commons/Slider: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "824f6c37b140f63aae854a6dfe3a8176114c633f",
+        "type": "FEATURE",
+        "text": "commons/Splitter: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "d7b634b6745cb3c376ace906ba7e8c1a43f1e4cb",
+        "type": "FEATURE",
+        "text": "commons/TextField: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "348f4080f19e837407875b941b549a6d1a767bd8",
+        "type": "FEATURE",
+        "text": "commons/TextView: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "ead17b50f5a8ec26bb0349e666f3c1d38cf82b4c",
+        "type": "FEATURE",
+        "text": "commons/Toolbar: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "0ecddf2f7304724963f102a60fc3f9103839949e",
+        "type": "FEATURE",
+        "text": "commons/TriStateCheckBox: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "c3750d45938c28b82efa608c38bc42af6300af0c",
+        "type": "FEATURE",
+        "text": "sap.ui.core.LabelEnablement: Provided common functionality for labels",
+        "references": []
+      },
+      {
+        "id": "1cd6a73ad8d529b00bca80c121224659d23b26b1",
+        "type": "FIX",
+        "text": "ComboBox on Internet Explorer fires change event while opening",
+        "references": []
+      },
+      {
+        "id": "9c5d48190592ac04b6579ac4bf868cb114484eea",
+        "type": "FIX",
+        "text": "DropdownBox: Error on blur when selected item doesn\u0027t exist",
+        "references": []
+      },
+      {
+        "id": "3ecda50f1c433f03da16e17dccab47c3c6eabe08",
+        "type": "FIX",
+        "text": "DropdownBox: Select text on mouseup event",
+        "references": []
+      },
+      {
+        "id": "30231d4398033d24e662742d665f05333fb31d8e",
+        "type": "FIX",
+        "text": "Fix copyright headers LESS/CSS resources",
+        "references": []
+      },
+      {
+        "id": "b426e42648571f632b171e1f0bbe887c387d0acb",
+        "type": "FIX",
+        "text": "FormContainer: JSDoc",
+        "references": []
+      },
+      {
+        "id": "a2383336b4d0b54d781772dcf666c11a281d484c",
+        "type": "FIX",
+        "text": "InPlaceEdit undo button not removes on Esc",
+        "references": []
+      },
+      {
+        "id": "a031490d51e9118fd6aa0215891659cdf86516c9",
+        "type": "FIX",
+        "text": "ListBox / DropdownBox: scrollTop issue (zoom !\u003d 100% in Chrome)",
+        "references": []
+      },
+      {
+        "id": "cfbadbec2a1168f31e1751141c33cee560bb2135",
+        "type": "FIX",
+        "text": "ListBox in ComboBox within Popup (Chrome)",
+        "references": []
+      },
+      {
+        "id": "4c5944529f116f625b17a23710c1a7f515fca112",
+        "type": "FIX",
+        "text": "ListBox: Issue with DropdownBox inside Popup",
+        "references": []
+      },
+      {
+        "id": "a453b89fcfff3caa78cae096a339f82a18a206f5",
+        "type": "FIX",
+        "text": "RadioButton in HCB (High-Contrast-Black) theme in Internet Explorer 11 checked only on second click",
+        "references": []
+      },
+      {
+        "id": "ac2fc7def9f0894b46ba5b03efaf5c7830e6c1b0",
+        "type": "FIX",
+        "text": "RowRepeater: Implement refreshRows to avoid unnecessary rendering",
+        "references": []
+      },
+      {
+        "id": "976b4905e1ffda1c648eafb3c95fdb10c86eb88a",
+        "type": "FIX",
+        "text": "TexField no change and liveChange event",
+        "references": []
+      },
+      {
+        "id": "6595a8364d446492916cfa963f2d9c7069bc73c6",
+        "type": "FIX",
+        "text": "Toolbar: Opened overflow popup is not closed on overflow-button click.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1482029157 2014."
+          }
+        ]
+      },
+      {
+        "id": "4b1b1e2bc5f4552b362277284b7b9ad55a82d322",
+        "type": "FIX",
+        "text": "Tree: Behavior extended to select and deselect notes via API",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "271291"
+          }
+        ]
+      },
+      {
+        "id": "94a3f803b6107601003ed33adc9006a26b3c33c1",
+        "type": "FIX",
+        "text": "Tree: Fix selectionChange event parameter and single selection",
+        "references": []
+      },
+      {
+        "id": "f0a484efed0949aa040e001a5cad55265bebdba1",
+        "type": "FIX",
+        "text": "Tree: Improved performance",
+        "references": []
+      },
+      {
+        "id": "a445c6c0c09ff662b0504611ce3e58d0e8384168",
+        "type": "FIX",
+        "text": "commons.Dialog: Fixed Docu for Closed-Event",
+        "references": []
+      },
+      {
+        "id": "8f324d02dd1541c30eff7d91a1cf64d87629a9fd",
+        "type": "FIX",
+        "text": "commons.Dialog: Removed Overflow at Root-Element",
+        "references": []
+      },
+      {
+        "id": "9ebe19a1a11602f645b85e66bd49299b0caf86f0",
+        "type": "FIX",
+        "text": "commons.SearchField: Close Popup When Clicked on Search Icon",
+        "references": []
+      },
+      {
+        "id": "fde293568fb72cfd4402f14df935f27ae6de3228",
+        "type": "FIX",
+        "text": "sap.ui.commons.ColorPicker: Accessability (added tooltips)",
+        "references": []
+      },
+      {
+        "id": "e25d1dcae109bdc351d5a9c2cd80fe333a5f379a",
+        "type": "FIX",
+        "text": "sap.ui.commons.SearchField: Fix Screenreader Announcement",
+        "references": []
+      },
+      {
+        "id": "f132bca0c70116cf21a27d7cb165585ffff3f508",
+        "type": "FIX",
+        "text": "ux3.ToolPopup: TabChaining with TabStrip\"",
+        "references": []
+      },
+      {
+        "id": "ba39374233379e03b22750cfb92e22724e83cdfd",
+        "type": "FIX",
+        "text": "RangeSlider: Issues with vertical slider and RTL (Right-To-Left) fixed",
+        "references": []
+      },
+      {
+        "id": "82a0eee708a582c1edf3d34b181ababc7dfbb96b",
+        "type": "FIX",
+        "text": "Slider: Corrected aria-orientation for vertical slider",
+        "references": []
+      },
+      {
+        "id": "8d9aa761da91d56e75547ea94e675c68a86b3a33",
+        "type": "FIX",
+        "text": "commons.Dialog: Removed unnecessary CSS-class",
+        "references": []
+      },
+      {
+        "id": "5b02dfea5a1050a2ba7860752135f4e66b0e5e2f",
+        "type": "FIX",
+        "text": "sap.ui.commons.ValueHelpField: Fixed hover for disabled/readonly Icon in HCB (High-Contrast-Black) theme",
+        "references": []
+      },
+      {
+        "id": "66b38c46797897d8443811b3466e0cab628a0aba",
+        "type": "FIX",
+        "text": "ux3.ToolPopup: TabChaining with TabStrip",
+        "references": []
+      }
+    ]
+  },
+  "1.28.1": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "57ffaa03d91c5a06750b03e436212c982184105e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker, sap.ui.commons.DatePicker: Keyboard navigation issues",
+        "references": []
+      }
+    ]
+  },
+  "1.28.2": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "12096b51a9772d1b31ebbb0b9b3bc96f48772edb",
+        "type": "FEATURE",
+        "text": "sap.ui.table.Table: Added cozy mode",
+        "references": []
+      }
+    ]
+  },
+  "1.28.3": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "aa4f726946641f66143b98fad9b47f834a13a52d",
+        "type": "FIX",
+        "text": "HCB-Theme: Outline-color for focus changed",
+        "references": []
+      },
+      {
+        "id": "47c4d60cceb7f52b8ccce89bfa6c5d162e480e55",
+        "type": "FIX",
+        "text": "Dialog: Inital setting of focus corrected",
+        "references": []
+      },
+      {
+        "id": "950129ac028b5bcda26ab5fc6f1006e343232e62",
+        "type": "FIX",
+        "text": "core.Popup: Saving of \"_followOfHandler\" corrected",
+        "references": []
+      },
+      {
+        "id": "3ef18fbc4817746ffdf8ab5973c259322e39ddde",
+        "type": "FIX",
+        "text": "RoadMap: Error is now avoided when scrolling to first visible step and the step is not yet rendered",
+        "references": []
+      },
+      {
+        "id": "a119a32261073b541a83448e5e13ef912c885e81",
+        "type": "FIX",
+        "text": "TextField, ComboBox, DropdownBox: liveChange event corrected",
+        "references": []
+      },
+      {
+        "id": "8fb9e6f2f92d9101e58afc22610dc8789c3f8355",
+        "type": "FIX",
+        "text": "Toolbar: Updating toolbar during rendering phase ignored",
+        "references": []
+      },
+      {
+        "id": "d7c01dc45d13d9d8faedc05280aa804b64f06f17",
+        "type": "FIX",
+        "text": "ux3.SegmentedButton: No longer focusable when disabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "172678"
+          }
+        ]
+      },
+      {
+        "id": "2fd792d8ca75c75bd5c2eb55892e955e0951fba3",
+        "type": "FIX",
+        "text": "ux3.ToolPopup, commons.Dialog: Focusable elements corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.28.4": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "4a24f074c81329196f3a2051e603ba4df88a3bca",
+        "type": "FIX",
+        "text": "Tree: Selection after model change restored",
+        "references": []
+      }
+    ]
+  },
+  "1.28.5": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "743eae05583196577c213af99ea3ec8d922ba4a8",
+        "type": "FIX",
+        "text": "MatrixLayoutCell: Alignment fixed",
+        "references": []
+      },
+      {
+        "id": "b1927835fc1e223ce49d3cb8fadb8592547d2707",
+        "type": "FIX",
+        "text": "MatrixLayoutCell: Alignment fixed in Chrome",
+        "references": []
+      },
+      {
+        "id": "dbd0cc7ac9e2a56eb10c075e2e38ecd11d85cfca",
+        "type": "FIX",
+        "text": "MatrixLayoutCell: hAlign fixed",
+        "references": []
+      },
+      {
+        "id": "d1155953d31536d76cec280666021f3ce40e4f12",
+        "type": "FIX",
+        "text": "Tree: onThemeChanged checks for existance of buttons",
+        "references": []
+      },
+      {
+        "id": "d40e887a59ff7f63fea36219b95d55094c8510de",
+        "type": "FIX",
+        "text": "sap.ui.commons.DatePicker: Change event on mobile device added",
+        "references": []
+      },
+      {
+        "id": "d3cb70b17eb0c0d4b71153a3c2938d4a98ac02c5",
+        "type": "FIX",
+        "text": "sap.ui.commons.DropdownBox: Input now possible on mobile devices",
+        "references": []
+      },
+      {
+        "id": "da0d8b8ae63cac403b50e92c2b2ecc8667121295",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Text view in sap.m context created",
+        "references": []
+      },
+      {
+        "id": "7b91c6bc328417d9a786ebed559d07b3f78de683",
+        "type": "FIX",
+        "text": "sap.ui.commons.ComboBox, sap.ui.commons.DatePicker: Combi device",
+        "references": []
+      }
+    ]
+  },
+  "1.28.6": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "252ede5397ff16fe99276835473ed723b20631e1",
+        "type": "FEATURE",
+        "text": "sap.ui-unified.Calendar, sap.m.DatePicker: Islamic calendar support added ",
+        "references": []
+      },
+      {
+        "id": "9f895fb08971121030ed1f1524a006b37419735b",
+        "type": "FIX",
+        "text": "Existence of namespace ensured during Core.initLibrary()",
+        "references": []
+      },
+      {
+        "id": "a2923c77e654e1df28e91967d28c87abe57f0a82",
+        "type": "FIX",
+        "text": "MatrixLayout: Does not inherit text-align",
+        "references": []
+      },
+      {
+        "id": "3cb5821eb731e70ee1a1310bb42d2430a6f68341",
+        "type": "FIX",
+        "text": "Tree: Support for binding on named models added",
+        "references": []
+      },
+      {
+        "id": "2b18699a708a3d832b85a359f98110691a6c1ae8",
+        "type": "FIX",
+        "text": "commons.Dialog: Invalidation of dialog stopped if dialog isn\u0027t open",
+        "references": []
+      },
+      {
+        "id": "c62e6eb9d5cb58aae7a4a02f922ca9821e0d337c",
+        "type": "FIX",
+        "text": "sap.ui.Carousel: Carousel in vertical mode reads correctly with JAWS 16",
+        "references": []
+      },
+      {
+        "id": "ae67319c13b246bf7cd951949f0fa7f767eb9324",
+        "type": "FIX",
+        "text": "sap.ui.Carousel: Carousel items in vertical mode are displayed correctly",
+        "references": []
+      },
+      {
+        "id": "afbcc9051a934a1b1f4e3b12cb01c8747f39bfe7",
+        "type": "FIX",
+        "text": "sap.ui.commons.Carousel: Carousel items are displayed correctly with jQuery 1.8.1",
+        "references": []
+      },
+      {
+        "id": "d34af6c1536221f5317a32144f5283677e937c31",
+        "type": "FIX",
+        "text": "sap.ui.commons.Carousel: Fixed bug in keyboard navigation",
+        "references": []
+      },
+      {
+        "id": "0f7ce32c021afdfe8eb28b694d37980b3e17f4d2",
+        "type": "FIX",
+        "text": "sap.ui.commons.RadioButtonGroup: Binding issues fixed",
+        "references": []
+      },
+      {
+        "id": "384b834d7fd3481e5b9d0a4234d3eeca3e7deb89",
+        "type": "FIX",
+        "text": "sap.ui.commons.Roadmap: Default step tooltips suppressed when RichTooltip is used",
+        "references": []
+      },
+      {
+        "id": "4c7898bdd251010df8d56d85b7bda621f7c52bb1",
+        "type": "FIX",
+        "text": "sap.ui.commons.SearchField: Suggestion triggered correctly when Ctrl+A is pressed",
+        "references": []
+      },
+      {
+        "id": "0cf049da759a24e1d7d796426036903f1690c239",
+        "type": "FIX",
+        "text": "sap.ui.commons.SearchField: Showing invalid suggestions avoided",
+        "references": []
+      },
+      {
+        "id": "39c1ca03443d157cb5eb6a737a5121cca91bc733",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextArea: Fixed arrow up/down event in edit mode",
+        "references": []
+      },
+      {
+        "id": "49b1d2eb592b5acf6c1474d9d9b74ac511252c89",
+        "type": "FIX",
+        "text": "sap.ui.commons.Toolbar: Items in the overflow popup are now properly removed upon re-rendering while the popup is open.",
+        "references": []
+      },
+      {
+        "id": "4a973f77e7673d74b24a423f331fad43da8bffc1",
+        "type": "FIX",
+        "text": "ux3.ToolPopup: ToolPopup is made aware when content rerenders",
+        "references": []
+      }
+    ]
+  },
+  "1.28.7": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "e7e86e51803b88dd2ad0607630f3ff112dcc4ff9",
+        "type": "FIX",
+        "text": "ProgressIndicator: Screen reader improved",
+        "references": []
+      }
+    ]
+  },
+  "1.28.8": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "d85fe1ce1b15c2adc9542b868a76eb81415a797b",
+        "type": "FIX",
+        "text": "Element: Added additional documentation for event delegates",
+        "references": []
+      },
+      {
+        "id": "5dbbfd271bb9304f0980dc658913364e4fea1e59",
+        "type": "FIX",
+        "text": "sap.ui.commons.RadioButton: Selecting more than one RadioButton in the same group fixed",
+        "references": []
+      },
+      {
+        "id": "f4c28646f79e4396de5da58fb8072c41f6ccf20a",
+        "type": "FIX",
+        "text": "sap.ui.commons.Toolbar: Opening the overflow popup is not causing a toolbar resize when the toolbar is nested inside sap.ui.layout.HorizontalLayout.",
+        "references": []
+      }
+    ]
+  },
+  "1.28.9": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "06355ec6bef54ba91c9f583e3149d86c0baf3701",
+        "type": "FIX",
+        "text": "sap.ui.commons.Toolbar: Keyboard navigation when invisible item(s) exist is now supported.",
+        "references": []
+      }
+    ]
+  },
+  "1.28.10": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "bbe66693fd59223562a6b30f04fe21b9fbe009ce",
+        "type": "FIX",
+        "text": "sap.ui.commons.Dialog: Fixes Dialog resizing beyond minimum size",
+        "references": []
+      },
+      {
+        "id": "3edb22fd9ff50110a90f68492fd00b6297aa8df1",
+        "type": "FIX",
+        "text": "sap.ui.commons.SearchField: Fix suggestion event in case of empty value and startSuggestion\u003d0",
+        "references": []
+      },
+      {
+        "id": "df0411983860fb75d688972956eb7b03feb01f8a",
+        "type": "FIX",
+        "text": "sap.ui.commons.Toolbar: Tab indexes on the right toolbar items are now correctly retained upon updating item navigation",
+        "references": []
+      }
+    ]
+  },
+  "1.28.11": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "fad1e08ee0f925a100f2d60c851eb9406cb9201f",
+        "type": "FIX",
+        "text": "commons.Dialog: Remove DOM when hiding dialog",
+        "references": []
+      }
+    ]
+  },
+  "1.28.12": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "21d0ca777d0627f6923f899e01e4973f2bd2d9e3",
+        "type": "FIX",
+        "text": "commons.Dialog: In modal mode can be dragged properly in scrolled page",
+        "references": []
+      },
+      {
+        "id": "64e9c9aa4e035b3af0493d05daf29b96b076d380",
+        "type": "FIX",
+        "text": "sap.ui.commons.SearchField: Implement F2 keyboard handling",
+        "references": []
+      },
+      {
+        "id": "7c7ae3215304132e39783276408a1917365b6c77",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField, ComboBox, DropdownBox: Wrong tooltip",
+        "references": []
+      }
+    ]
+  },
+  "1.28.13": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "f81faeb31efb53e6cb1e5d54c72f8dd286ae2c19",
+        "type": "FIX",
+        "text": "core.Popup: De-Registration of Child Popups Fixed",
+        "references": []
+      },
+      {
+        "id": "1ac97c2f96877b70e1b13caf6d274a8d139592c0",
+        "type": "FIX",
+        "text": "sap.ui.commons.Button: Contrast for semantic color buttons in High Contrast Black mode is now correct",
+        "references": []
+      },
+      {
+        "id": "b8f6eb96063582ff3eca713b74cd68b252dd6bda",
+        "type": "FIX",
+        "text": "sap.ui.commons.ListBox: Use native scrolling on touch devices",
+        "references": []
+      },
+      {
+        "id": "6fdabfc4af90f8f2bdc8e6e2f930c69a32b70248",
+        "type": "FIX",
+        "text": ": sap.ui.commons.InPlaceEdit: Alignment of button in HCB",
+        "references": []
+      }
+    ]
+  },
+  "1.28.14": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "afffe6b14e1ec1b525db6871d38bae26b903fe4d",
+        "type": "FIX",
+        "text": "sap.ui.commons.InPlaceEdit: syntax error if no content",
+        "references": []
+      },
+      {
+        "id": "f5424043f00d0cf4960d43d68fae4c3ce4cc1b08",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
+        "references": []
+      }
+    ]
+  },
+  "1.28.16": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "d7c706da41457d6e99cc2be94fd07b1e6e24450a",
+        "type": "FIX",
+        "text": "sap.ui.commons.Dialog: The close button has proper name when read by JAWS",
+        "references": []
+      },
+      {
+        "id": "d4f4b3d26c4a19ca48410bc853c8be60124574c9",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Tabs set to non-visible now disappear",
+        "references": []
+      }
+    ]
+  },
+  "1.28.17": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "23ef3655870725c09a4571012398f32ac08429cd",
+        "type": "FIX",
+        "text": "sap.ui.commons.ApplicationHeader: Placement of the colon fixed in RTL mode",
+        "references": []
+      },
+      {
+        "id": "e1b3390b0177383ae11731d54e3c63f180dcc74b",
+        "type": "FIX",
+        "text": "sap.ui.commons.ComboBox: screen reader don\u0027t read additional text",
+        "references": []
+      },
+      {
+        "id": "c18fc8c47068150a7cb344ef76382444bc99c49a",
+        "type": "FIX",
+        "text": "sap.ui.commons.RangeSlider: Grips not visible if invalid values",
+        "references": []
+      },
+      {
+        "id": "b91f71d9cc758413662948a90581330a7d5355a3",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Fix selectedIndex when disable selected tab",
+        "references": []
+      }
+    ]
+  },
+  "1.28.18": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "0e4dbbb8ba97d0354d76283bc2fb874bcf71bd28",
+        "type": "FIX",
+        "text": "Respect \"themeroots\" when resolving img URLs in Controls",
+        "references": []
+      },
+      {
+        "id": "9fc1e4c4b6537999299dfc75d1d9d4e7f6fd5b96",
+        "type": "FIX",
+        "text": "sap.ui.commons.ComboBox: error if sap.ui.core.Item is used",
+        "references": []
+      },
+      {
+        "id": "883c038e8f242f4293bd8b27ceba21cf057436f2",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField: Allow \"AltGr+z\" as input",
+        "references": []
+      }
+    ]
+  },
+  "1.28.19": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "c70b9f18a85ce0f8f9ad425336974db7e42691c1",
+        "type": "FIX",
+        "text": "Popup: Using FocusInfo Fixed",
+        "references": []
+      },
+      {
+        "id": "83ddd6703b57dc31e7f73648e1a6b585a3a7bfa5",
+        "type": "FIX",
+        "text": "sap.ui.commons.Toolbar: Overflowing inside sap.ui.layout.Splitter is now possible.",
+        "references": []
+      }
+    ]
+  },
+  "1.28.20": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "244a86b2e03a483241ec50480e7126dd83d8e8fd",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField in IE onInput called",
+        "references": []
+      },
+      {
+        "id": "57cbcf0e346f3ff9de89b7087cd3d9421eda6b2d",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField: after enabling still readonly",
+        "references": []
+      }
+    ]
+  },
+  "1.28.21": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "9d673708e9010608bfc9f158b47bc28f923e8378",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: focusOut is triggered when switching tabs",
+        "references": []
+      }
+    ]
+  },
+  "1.28.22": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "95a1fe8131f6251da1b11fd4b7564cf50ada19a7",
+        "type": "FIX",
+        "text": "sap.ui.commons.DropdowmBox: cursor moves 2 characters on backspace",
+        "references": []
+      },
+      {
+        "id": "3d6a6b2e8839fd050e3cf4fd0984357a7a88c4a6",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextView: default ARIA role \"Document\" is removed",
+        "references": []
+      },
+      {
+        "id": "e993e923a8798ba75662b8c665969f323d99360c",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: use Label style only for direct labels",
+        "references": []
+      }
+    ]
+  },
+  "1.28.25": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "e03c564f23871db020cc708511b5789eaf8c893f",
+        "type": "FIX",
+        "text": "sap.ui.commons.Dialog: Minium size is properly calculated when there is no size constraint",
+        "references": []
+      },
+      {
+        "id": "86739646f41d02068e074cc43c5a7794f0f59e3d",
+        "type": "FIX",
+        "text": "sap.ui.commons.Tree: Expand and collapse performance improved",
+        "references": []
+      }
+    ]
+  },
+  "1.28.26": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "929f9e7c3df1e5a9b968163dec955f7ed5668282",
+        "type": "FIX",
+        "text": "sap.ui.commons.RadioButtonGroup: Fixed text truncation",
+        "references": []
+      }
+    ]
+  },
+  "1.28.27": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "84ffd8dfe7b64865b8f6a7c9c7f36c63ee096ac1",
+        "type": "FIX",
+        "text": "sap.ui.commons.TriStateCheckBox scroll trigger fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.28.28": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "40a7fcdaeb5004b79e664aa3a079ba6979cff076",
+        "type": "FIX",
+        "text": "commons.Dialog: Trigger Re-Rendering for Setting Title",
+        "references": []
+      },
+      {
+        "id": "cdf5003552d0bff16c8c08eea0ca46c51fafcba5",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: if date is deleted open calendar on today",
+        "references": []
+      }
+    ]
+  },
+  "1.28.29": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "63596fba8090d697ea6012f003a2ba39ac7907e4",
+        "type": "FIX",
+        "text": "commons.TabStrip: Scroll position is fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.28.30": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "27c6c82a8df89b68cdefdbb24c236373836b4832",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Event flow is now correct",
+        "references": []
+      }
+    ]
+  },
+  "1.28.31": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "1b977160484350466f512f3d413e769eea051341",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Closing tab is now fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.28.33": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "2536066ef3945407048ec8709b598ff2e1278b18",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Hiding the last visible tab no longer throws an exception",
+        "references": []
+      }
+    ]
+  },
+  "1.28.35": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "858845f0e8b4b83b8f685007a9ce16ce0dfbafe6",
+        "type": "FIX",
+        "text": "commons.Accordion: Width issue is fixed",
+        "references": []
+      },
+      {
+        "id": "b9330830eae1513a610da19056420f22f1d5208e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ColorPicker: set size of cursor and colorBox inline",
+        "references": []
+      },
+      {
+        "id": "3d2bb18815ff022e0688f1dc522b77f5f561f0e5",
+        "type": "FIX",
+        "text": "sap.ui.core.TooltipBase: Tooltip should not be open if visibility is set to false",
+        "references": []
+      }
+    ]
+  },
+  "1.28.36": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "677e0263683725c46e75d06160f6c93c540cea8e",
+        "type": "FIX",
+        "text": "commons.Accordion: Right border is fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.28.37": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "0b8a38bc8e7405cc82a9abcc8ceee49cea3b58d8",
+        "type": "FIX",
+        "text": "sap.ui.commons.DropdownBox: select text by opening",
+        "references": []
+      }
+    ]
+  },
+  "1.28.40": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "8b88846289d80088a2bf7fe5e191d1e93dda35a4",
+        "type": "FIX",
+        "text": "sap.commons.Dialog: setInitialFocus is fixed",
+        "references": []
+      },
+      {
+        "id": "fe2ca8efe7bed24c3a74f04bb2adaa8bfb6e9cc7",
+        "type": "FIX",
+        "text": "sap.ui.commons.DropDownBox: Selecting text and focusing does not cycle anymore.",
+        "references": []
+      }
+    ]
+  },
+  "1.28.41": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "20de399b3b2758713e49b3996c0c085d4039c395",
+        "type": "FIX",
+        "text": "sap.ui.commons.Paginator: onsapenter is now handled",
+        "references": []
+      },
+      {
+        "id": "7492066f2443d4b32258974905594bcf0f680bf1",
+        "type": "FIX",
+        "text": "sap.ui.commons.DropDownBox: Selection of the ListBox items work onclick.",
+        "references": []
+      }
+    ]
+  },
+  "1.28.49": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "72f5dbe6b86041b3bc651a11dda37ba1ce52a2f4",
+        "type": "FIX",
+        "text": " sap.ui.commons.TextField - paste of text with line endings on IE works.",
+        "references": []
+      }
+    ]
+  }
 }

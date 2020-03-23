@@ -5,30 +5,20 @@
       {
         "id": "dc0334749bee2f56eaae3607c523dca8b9ae183d",
         "type": "FEATURE",
-        "text": "sap.ui.ux3: Shared configuration for test pages",
+        "text": " sap.ui.ux3: Shared configuration for test pages",
         "references": []
       },
       {
         "id": "cb9de63fc2d40949a97264f47519c58a487077a6",
         "type": "FIX",
-        "text": "sap.ui.ux3.FeedChunk: tools button icon missing",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680314587"
-          }
-        ]
+        "text": " sap.ui.ux3.FeedChunk: tools button icon missing",
+        "references": []
       },
       {
         "id": "767cbb56ec5024e06917b7060881590ed55f2a5d",
         "type": "FIX",
-        "text": "sap.ui.ux3.OverlayDialog: Corrected positioning values",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680283946"
-          }
-        ]
+        "text": " sap.ui.ux3.OverlayDialog: Corrected positioning values",
+        "references": []
       }
     ]
   }

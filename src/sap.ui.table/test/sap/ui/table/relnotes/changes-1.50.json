@@ -5,227 +5,277 @@
       {
         "id": "29f4469ca8bd6b7c801c65d8c972660d3b0b573d",
         "type": "FEATURE",
-        "text": "Table: RadioButton visualization in single selection mode",
+        "text": " Table: RadioButton visualization in single selection mode",
         "references": []
       },
       {
         "id": "d0d3be3ee8333d38aac6a7b43b8ba6df4e9d32c8",
         "type": "FIX",
-        "text": "AnalyticalTable: Consider groups on initial numberOfExpandedLevels",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770294131"
-          }
-        ]
+        "text": " AnalyticalTable: Consider groups on initial numberOfExpandedLevels",
+        "references": []
       },
       {
         "id": "5e09d128a3515b8bda6a56b4079fe1074ec0b1dd",
         "type": "FIX",
-        "text": "AnalyticalTable: Ungrouping via the group header menu",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770051801"
-          }
-        ]
+        "text": " AnalyticalTable: Ungrouping via the group header menu",
+        "references": []
       },
       {
         "id": "35847319218700ad82e5eef6de42d22474685df9",
         "type": "FIX",
-        "text": "Corrected shared-config.js path",
+        "text": " Corrected shared-config.js path",
         "references": []
       },
       {
         "id": "02b4d11996e038ca3da78557f5721b19f65d4696",
         "type": "FIX",
-        "text": "Table: Avoid null pointer exception when last row was removed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770232079"
-          }
-        ]
+        "text": " Table: Avoid null pointer exception when last row was removed",
+        "references": []
       },
       {
         "id": "e9cbd34909caf84dcd917fbef67928126a604220",
         "type": "FIX",
-        "text": "Table: Column parameter of the ColumnSelect event",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129500002757702017"
-          }
-        ]
+        "text": " Table: Column parameter of the ColumnSelect event",
+        "references": []
       },
       {
         "id": "ad2464e623ccf2464b854e0afd3a549d3626b737",
         "type": "FIX",
-        "text": "Table: Correctly initialize the keyboard navigation",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780236969"
-          }
-        ]
+        "text": " Table: Correctly initialize the keyboard navigation",
+        "references": []
       },
       {
         "id": "a08208926ab379551b2ef110471d9f4842a02cf1",
         "type": "FIX",
-        "text": "Table: Do not overwrite binding event listeners of other parties",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770254503"
-          }
-        ]
+        "text": " Table: Do not overwrite binding event listeners of other parties",
+        "references": []
       },
       {
         "id": "0a55de3c9d1836ac0b99c19b7332d0b60cf97506",
         "type": "FIX",
-        "text": "Table: Management of the column template clone stack",
-        "references": [
-          {
-            "type": "GitHub",
-            "reference": "1502"
-          }
-        ]
+        "text": " Table: Management of the column template clone stack",
+        "references": []
       },
       {
         "id": "67c841e54ef72122b6032d314ea0bdce373ec842",
         "type": "FIX",
-        "text": "Table: No more infinite re-renderings if zoomed in Chrome",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780274409"
-          }
-        ]
+        "text": " Table: No more infinite re-renderings if zoomed in Chrome",
+        "references": []
       },
       {
         "id": "97d00dfc4ce591d6d5ba2792ddcec5bfc434040a",
         "type": "FIX",
-        "text": "Table: Select text of input fields in edit mode navigation",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002028376500001790292017"
-          }
-        ]
+        "text": " Table: Select text of input fields in edit mode navigation",
+        "references": []
       },
       {
         "id": "b878b43b33c2b5affda7a98a1b3f6ed27a24137d",
         "type": "FIX",
-        "text": "Table: Tooltip of SelectAll cell when manually selecting all rows",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780156976"
-          }
-        ]
+        "text": " Table: Tooltip of SelectAll cell when manually selecting all rows",
+        "references": []
       },
       {
         "id": "0a1d85cf1bafe00189e6bf7ac7467d91476902f9",
         "type": "FIX",
-        "text": "TreeBindingAdapter: Fire selectionChange event when collapsing",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770240093"
-          }
-        ]
+        "text": " TreeBindingAdapter: Fire selectionChange event when collapsing",
+        "references": []
       },
       {
         "id": "f111251ba060b423982d121f53b81e4d83a80a5d",
         "type": "FIX",
-        "text": "TreeTable: Expand/Collapse with OData v1 models",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770235126"
-          }
-        ]
+        "text": " TreeTable: Expand/Collapse with OData v1 models",
+        "references": []
       },
       {
         "id": "682eb375891431148a9369d488d4d330cf36bd76",
         "type": "FIX",
-        "text": "sap.ui.table.*: ACC - Selection mode announcement",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780151668"
-          }
-        ]
+        "text": " sap.ui.table.*: ACC - Selection mode announcement",
+        "references": []
       },
       {
         "id": "22860621fbc36eeec3ffa2d58682aa0bbfda1fe0",
         "type": "FIX",
-        "text": "sap.ui.table.*: ACC Announcement of Selection on RowHeaders",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770301001"
-          }
-        ]
+        "text": " sap.ui.table.*: ACC Announcement of Selection on RowHeaders",
+        "references": []
       },
       {
         "id": "6ac2da16ed2d300736a80585cebe28431747de8f",
         "type": "FIX",
-        "text": "sap.ui.table.*: Screenreader Support Adaptations",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770262538"
-          },
-          {
-            "type": "BCP",
-            "reference": "1770262539"
-          }
-        ]
+        "text": " sap.ui.table.*: Screenreader Support Adaptations",
+        "references": []
       },
       {
         "id": "ca8569ab2f4a28fdd5da8ccd3c1eb25d82fd5607",
         "type": "FIX",
-        "text": "sap.ui.table.Table - infinite rerendering",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770248293"
-          }
-        ]
+        "text": " sap.ui.table.Table - infinite rerendering",
+        "references": []
       },
       {
         "id": "8f8474a78378e8310959b4cc226df43c9329ea9c",
         "type": "FIX",
-        "text": "sap.ui.table.Table: Ensure visible scrollbars on Safari / iOS",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780262258"
-          }
-        ]
+        "text": " sap.ui.table.Table: Ensure visible scrollbars on Safari / iOS",
+        "references": []
       },
       {
         "id": "2006c08c513494d468d69032b4a142b010ff6c9a",
         "type": "FIX",
-        "text": "sap.ui.table.Table: rendering issue with invisible fixed columns",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770292977"
-          }
-        ]
+        "text": " sap.ui.table.Table: rendering issue with invisible fixed columns",
+        "references": []
       },
       {
         "id": "3eca5dcd91fe11964d2b5a00d3234fa594f950bf",
         "type": "FIX",
-        "text": "Table: Text will be properly deselected in edit mode navigation",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780159285"
-          }
-        ]
+        "text": " Table: Text will be properly deselected in edit mode navigation",
+        "references": []
+      }
+    ]
+  },
+  "1.50.1": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "88a48c8a0847a3411b83562e3cdbea3e7f0ffdfc",
+        "type": "FIX",
+        "text": " Table: Correctly set the checked state of the SelectAll checkbox",
+        "references": []
+      },
+      {
+        "id": "c80edd46d4d5364d82919deedcb30941f9a47ba6",
+        "type": "FIX",
+        "text": " core.ClientTreeBinding: Fix for relative treebinding",
+        "references": []
+      },
+      {
+        "id": "ab34014b71d3437f218191f6281652dc9f750134",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - filter is not set",
+        "references": []
+      }
+    ]
+  },
+  "1.50.2": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "31905d48ddabeac59408d2eaa8e7fa3f9582fe1a",
+        "type": "FIX",
+        "text": " Table: Avoid text selection in Edge, if selecting with Shift+Click",
+        "references": []
+      },
+      {
+        "id": "0d785d1f6a38865c93bdf539e42d7a9f4a97ec44",
+        "type": "FIX",
+        "text": " Table: Correctly process focus events related to the edit mode",
+        "references": []
+      },
+      {
+        "id": "5f1cab0ae4bf7ceed12cc7710bd34d47e9313bff",
+        "type": "FIX",
+        "text": " ODataTreeBindingAdapter: Encode slashes in property values when calculation group IDs",
+        "references": []
+      }
+    ]
+  },
+  "1.50.3": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "a9eae0806934ef108c4fc7f3a7a9244883146d75",
+        "type": "FIX",
+        "text": " AnalyticalTable: Sort and move group up/down",
+        "references": []
+      },
+      {
+        "id": "1df1ba9f1575efab7e1e7a8de3262e53c373f6a5",
+        "type": "FIX",
+        "text": " Table: Arrow key navigation if the cell content is not rendered",
+        "references": []
+      },
+      {
+        "id": "daf782286238ba0a97fc79e0af6e28a806f67d81",
+        "type": "FIX",
+        "text": " Table: Correctly update the vertical scrollbar",
+        "references": []
+      },
+      {
+        "id": "40e0ade6ef5b1e33fa6bfa742838cd338943c9a5",
+        "type": "FIX",
+        "text": " Table: Edit mode navigation with input elements with non-text type",
+        "references": []
+      },
+      {
+        "id": "e6a7e0042deb9542b6b5d0809a94f62767b1b15f",
+        "type": "FIX",
+        "text": " Table: Prevent page scrolling on keyboard navigation in the table",
+        "references": []
+      },
+      {
+        "id": "95e06eca3c57a25b46a5e51e74b7f9350ff1438e",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - space key is suppressed in the toolbar",
+        "references": []
+      }
+    ]
+  },
+  "1.50.5": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "9ca737caea650cb5715c1265d917d5fb515f4b0d",
+        "type": "FIX",
+        "text": " Table: Correct height adjustment when used inside a splitter",
+        "references": []
+      },
+      {
+        "id": "243b79b1a43b498025a45f9f05cf028a5cc26aba",
+        "type": "FIX",
+        "text": " Table: Improved busy handling in case of parallel requests",
+        "references": []
+      }
+    ]
+  },
+  "1.50.6": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "131cac695e377ba7ec4bcd31acaa7b8f1554b0e0",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Table renders even if column was destroyed",
+        "references": []
+      }
+    ]
+  },
+  "1.50.7": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "ec1b157979ddc37c478ad9324b83673e4e692d65",
+        "type": "FIX",
+        "text": " Table: Vertical scrollbar becomes visible if height is decreased",
+        "references": []
+      }
+    ]
+  },
+  "1.50.9": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "8edacc9136469f2d261839161aebb511d8af4392",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "389bf7b46297ee305fb12a1e5e3d0ce26fdbed99",
+        "type": "FIX",
+        "text": " Table: Horizontal scrolling with the touchpad",
+        "references": []
+      },
+      {
+        "id": "c58df2c25da8edec7e088b462287aa6c5d7d0635",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - wrong number of displayed rows",
+        "references": []
       }
     ]
   }

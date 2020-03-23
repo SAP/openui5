@@ -49,12 +49,12 @@
         "text": "sap.f.DynamicPage: corrected width of the footer with custom sap.m.Bar",
         "references": [
           {
-            "type": "GitHub",
-            "reference": "1596"
-          },
-          {
             "type": "BCP",
             "reference": "1780292951"
+          },
+          {
+            "type": "GitHub",
+            "reference": "1596"
           }
         ]
       },
@@ -77,6 +77,92 @@
           {
             "type": "BCP",
             "reference": "1780353682"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.12": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "687a1dd744c5877c4220e54d2fb673940dcc9386",
+        "type": "FIX",
+        "text": "sap.f.Avatar: DetailBox opens when avatar used with list binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880004603"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.14": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "ee459a3b1b52980859ae48684f465add58b049fc",
+        "type": "FEATURE",
+        "text": "sap.f.DynamicPage: Added class for content alignment",
+        "references": []
+      },
+      {
+        "id": "76971dd6ea8f60544f8536d1579d6a9e2d0014df",
+        "type": "FIX",
+        "text": "sap.f.DynamicPageTitle: Expand button appearance corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870217219"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.15": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "272edbdff37a14f471334618e63a4b81d55643cd",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Visual indicator visibility corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880210976"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.17": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "dd634162cef727fded4e4a0d0436c25a50acc7a2",
+        "type": "FIX",
+        "text": "sap.f.DynamicPageTitle: Clone now includes actions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880376764"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.35": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "c81620950e07698559f45ddd2131fe266dd7da82",
+        "type": "FIX",
+        "text": " sap.f.Avatar: encoding fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "472005"
           }
         ]
       }

@@ -1,6 +1,5 @@
 {
   "1.52.0": {
-    "data": "November 2017",
     "notes": [
       {
         "id": "6c930aa98f401c8fc8c6c774010601cafe5d3600",
@@ -65,6 +64,287 @@
         "type": "FIX",
         "text": "Flexibility: ObjectPageLayoutSection not movable to header",
         "references": []
+      }
+    ]
+  },
+  "1.52.3": {
+    "notes": [
+      {
+        "id": "218eacad301eb621dd50cb9886aaebcb0cd08edd",
+        "type": "FIX",
+        "text": "uxap.ObjectPageLayout: Expand header button behavior fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770560595"
+          }
+        ]
+      },
+      {
+        "id": "28b8d09fe477a3726fa233229a194dfd4c3ab644",
+        "type": "FIX",
+        "text": "uxap.ObjectPageLayout: Find closest scrolled section fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780468527"
+          }
+        ]
+      },
+      {
+        "id": "fd3b398e6798e026ec03fc33a4d8473b777cf7a1",
+        "type": "FIX",
+        "text": "uxap.ObjectPageLayout: Closest section check fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780435324"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.6": {
+    "notes": [
+      {
+        "id": "86070cd8be4e850ae9c0d250a4b44912bcb3d9b5",
+        "type": "FIX",
+        "text": "uxap.ObjectPageLayout: Ensured setting selectedSection is correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780508217"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.8": {
+    "notes": [
+      {
+        "id": "84de8bd5d13e4835c163b5aaa097ddacd189bbcb",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSubSection: Fixed JS error in removeAggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780191583"
+          }
+        ]
+      },
+      {
+        "id": "5d4ea86c9edbd463b0a703df14282e13c9af0935",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Flickering issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880028962"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.10": {
+    "notes": [
+      {
+        "id": "ab7cdb841187b9242c424294e14a2e5e06e75a65",
+        "type": "FIX",
+        "text": "uxap.ObjectPage: _headerContent aggregation cloning fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001260892018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.15": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "5a7bf6aff541d0ad8c47a25c90794a905e62fbf2",
+        "type": "FIX",
+        "text": "ObjectPageLayout: Infinity resizing loop fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870298358"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.16": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "1e2a084f2609c91a7aa9bec1b724374e66c89f12",
+        "type": "FIX",
+        "text": "ObjectPageHeader: Action Buttons behavior with resizing is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880369225"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.17": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "4fcdefe860f6bd29b7223ff3e8bb26cc59fdf538",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: ScrollEnablement now has latest DOMref",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870201875"
+          }
+        ]
+      },
+      {
+        "id": "b82f3d3961a4a989e0658a9faee467c4cb378e6b",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: SelectedSection can now be unset",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880274042"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.18": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "5758dda8e71833bf105a457b1b11894a4efdd665",
+        "type": "FIX",
+        "text": "uxap.ObjectPageLayout: APICreation qUnit fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880453353"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.20": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "3cdf3ad33161418a3235eebffe915ed5258936c2",
+        "type": "FIX",
+        "text": "ObjectPage: AnchorBar submenu buttons accessibility improvement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880418471"
+          }
+        ]
+      },
+      {
+        "id": "696f96be17d0826f0ea84af0c69edb2089bb8d16",
+        "type": "FIX",
+        "text": "ObjectPageHeader: Long titles are now truncated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880423844"
+          }
+        ]
+      },
+      {
+        "id": "26cc82438913eb116144d6ab9e07c4067ec03004",
+        "type": "FIX",
+        "text": "ObjectPageSubSection: Aligned SimpleForm Toolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870425815"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.22": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "d82a9c2f127a00f82e2ed3584781355d13e98396",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Additional reading removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870031991"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.24": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "dfddb78c4eefc1008c41435c44a03416bfc89b36",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader: updateRootAriaLabel parent call fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870565896"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.25": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "26755e85fc79c20dd38eddb9ef81cfab067d2fff",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Non existing sub-section is now handled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970039639"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.28": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "b440012e3bb9f5c2e78cbfeb84d85c506471cfe3",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: RTA Header editing is now possible",
+        "references": []
+      }
+    ]
+  },
+  "1.52.35": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "206fb074cefd0cda2bcc21652251695ebd523fe5",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevented iOS scroll issue on overflow change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "587571"
+          }
+        ]
       }
     ]
   }

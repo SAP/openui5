@@ -5,91 +5,106 @@
       {
         "id": "6e5c4af6172369f245eebb535ec1fbf3a0ae2ff4",
         "type": "FIX",
-        "text": "QUnit Designtime Library tests in Firefox",
+        "text": " QUnit Designtime Library tests in Firefox",
         "references": []
       },
       {
         "id": "dc7d64f01f180ae73fe93175b1f0021234626cc5",
         "type": "FIX",
-        "text": "sap.ui.layout: MoveSimpleForm and AddSimpleFormGroup ChangeHandler",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880170818"
-          }
-        ]
+        "text": " sap.ui.layout: MoveSimpleForm and AddSimpleFormGroup ChangeHandler",
+        "references": []
       },
       {
         "id": "5e3c12dd3890894e2762bc8cf22c45fbd106832c",
         "type": "FEATURE",
-        "text": "Form: new column-based layout",
+        "text": " Form: new column-based layout",
         "references": []
       },
       {
         "id": "ca42d07d2c68bad5da762509454514fcfa9cd215",
         "type": "FIX",
-        "text": "sap.ui.layout - domRef function fixed",
+        "text": " sap.ui.layout - domRef function fixed",
         "references": []
       },
       {
         "id": "d1d44f6e85fbd2ca51c619e9d583f70631a34a51",
         "type": "FIX",
-        "text": "ui.layout.Grid: Control visibility properties behavior fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1830101988"
-          }
-        ]
+        "text": " ui.layout.Grid: Control visibility properties behavior fixed",
+        "references": []
       },
       {
         "id": "2c6036dabb601eb6c2235d61929b929ecec62351",
         "type": "FIX",
-        "text": "BLockLayoutCell: border added",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870087428"
-          }
-        ]
+        "text": " BLockLayoutCell: border added",
+        "references": []
       },
       {
         "id": "712029a17e3e3fe9fe66a76e613cbbc9dff6f7ba",
         "type": "FIX",
-        "text": "sap.ui.layout.BlockLayout: Cell border in belize_hcw and belize_hcb themes added",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870087428"
-          }
-        ]
+        "text": " sap.ui.layout.BlockLayout: Cell border in belize_hcw and belize_hcb themes added",
+        "references": []
       },
       {
         "id": "02229494457c841ea6a8205592c2304552a54a0e",
         "type": "FIX",
-        "text": "sap.ui.layout.VerticalLayout: Unwanted scroll removed in IE",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870056479"
-          }
-        ]
+        "text": " sap.ui.layout.VerticalLayout: Unwanted scroll removed in IE",
+        "references": []
       },
       {
         "id": "c7845fc31b824bf40f2682fce321703df59c1641",
         "type": "FIX",
-        "text": "SimpleForm: Error if layout is set after content",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870185439"
-          }
-        ]
+        "text": " SimpleForm: Error if layout is set after content",
+        "references": []
       },
       {
         "id": "b3d750377b13859bdecd92e7dcd3af960b7a78f4",
         "type": "FEATURE",
-        "text": "sap.ui.layout.BlockLayout: BlockLayoutCell now supports link as title",
+        "text": " sap.ui.layout.BlockLayout: BlockLayoutCell now supports link as title",
+        "references": []
+      }
+    ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "8071b95ab0e92b5c7f750e24d2fc4ba14f22be62",
+        "type": "FIX",
+        "text": "sap.ui.layout - SimpleForm rename undo issue",
+        "references": []
+      }
+    ]
+  },
+  "1.56.5": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "7cb22654c9499326d0c658dcacda164df8fd22d6",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: Uncaught error fixed",
+        "references": []
+      },
+      {
+        "id": "4771d720eed310cccc22f47c0ea073d2ae673337",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: incorrect arrangement of items fixed",
+        "references": []
+      },
+      {
+        "id": "4de27bbfee59fac33691764943a3da7a55d497c0",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Pane width is now correct",
+        "references": []
+      }
+    ]
+  },
+  "1.56.16": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "006945076ceeec7b3cdf6879e6c1103c0dc40a2b",
+        "type": "FIX",
+        "text": " ColumnElementData and ColumnContainerData @since wrong",
         "references": []
       }
     ]

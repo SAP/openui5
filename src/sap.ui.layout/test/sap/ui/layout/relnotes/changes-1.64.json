@@ -22,23 +22,14 @@
       {
         "id": "c41c4affdd52c29076e6830ffd7f2773a88af4cd",
         "type": "FEATURE",
-        "text": "sap.ui.layout.cssgrid.CSSGrid: Enable CSSGrid for drop configuration",
+        "text": " sap.ui.layout.cssgrid.CSSGrid: Enable CSSGrid for drop configuration",
         "references": []
       },
       {
         "id": "7d9d509c8beac117e6d0afb4f04e4feb592d6da1",
         "type": "FIX",
-        "text": "sap.ui.layout.BlockLayout: Layouting in IE11 was fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980039451"
-          },
-          {
-            "type": "BCP",
-            "reference": "1980049632"
-          }
-        ]
+        "text": " sap.ui.layout.BlockLayout: Layouting in IE11 was fixed",
+        "references": []
       }
     ]
   }
