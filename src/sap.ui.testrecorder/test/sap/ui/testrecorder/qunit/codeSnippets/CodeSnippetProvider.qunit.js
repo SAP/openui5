@@ -61,14 +61,14 @@ sap.ui.define([
 		ControlSnippetProvider.getSnippet({
 			controlSelector: this.mSelector
 		}).then(function (sResult) {
-			assert.ok(sResult.startsWith("{\n    id:"), "Should not add prefix");
-			assert.ok(!sResult.match("actions: "), "Should not include empty action");
+			assert.ok(sResult.startsWith("{\n    \"id\":"), "Should not add prefix");
+			assert.ok(!sResult.match("\"actions\": "), "Should not include empty action");
 			return ControlSnippetProvider.getSnippet({
 				controlSelector: this.mSelector,
 				action: "PRESS"
 			});
 		}.bind(this)).then(function (sResult) {
-			assert.ok(!sResult.match("actions: "), "Should not include action even if given as arg");
+			assert.ok(!sResult.match("\"actions\": "), "Should not include action even if given as arg");
 		}).finally(fnDone);
 	});
 });

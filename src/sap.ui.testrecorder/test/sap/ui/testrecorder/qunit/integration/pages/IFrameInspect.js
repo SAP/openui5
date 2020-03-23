@@ -1,6 +1,6 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/testrecorder/integration/pages/Common",
+	"sap/ui/testrecorder/qunit/integration/pages/Common",
 	"sap/ui/testrecorder/fixture/treeAPI",
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/Properties",
