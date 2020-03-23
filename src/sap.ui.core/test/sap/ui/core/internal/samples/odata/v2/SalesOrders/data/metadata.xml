@@ -925,6 +925,20 @@
 					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In"
 						MaxLength="10" />
 				</FunctionImport>
+				<FunctionImport Name="SalesOrderItem_FixQuantity"
+					ReturnType="GWSAMPLE_BASIC.SalesOrderLineItem" EntitySet="SalesOrderLineItemSet"
+					m:HttpMethod="POST" sap:action-for="GWSAMPLE_BASIC.SalesOrderLineItem">
+					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In"
+						MaxLength="10" />
+					<Parameter Name="ItemPosition" Type="Edm.String" Mode="In"
+						MaxLength="10" />
+				</FunctionImport>
+				<FunctionImport Name="SalesOrderItem_FixAllQuantities"
+					ReturnType="GWSAMPLE_BASIC.CT_String" m:HttpMethod="POST"
+					sap:action-for="GWSAMPLE_BASIC.SalesOrder">
+					<Parameter Name="SalesOrderID" Type="Edm.String" Mode="In"
+						MaxLength="10" />
+				</FunctionImport>
 			</EntityContainer>
 		</Schema>
 	</edmx:DataServices>

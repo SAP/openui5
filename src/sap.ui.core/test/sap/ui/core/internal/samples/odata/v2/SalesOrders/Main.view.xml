@@ -43,10 +43,20 @@
 					<Input editable="false" value="{SalesOrderID}" width="8em" />
 					<Label text="Note" />
 					<Input value="{Note}" />
+					<Label text="Gross Amount" />
+					<Input editable="false" value="{
+							parts : ['GrossAmount', 'CurrencyCode'],
+							type : 'sap.ui.model.odata.Currency'
+						}" width="12em" />
+					<Label text="Changed At" />
+					<Input editable="false" value="{
+							path : 'ChangedAt',
+							type : 'sap.ui.model.odata.type.DateTime'
+						}" width="12em" />
 				</form:SimpleForm>
 				<t:Table id="ToLineItems" rowActionCount="1" rows="{
-						path : 'ToLineItems',
-						parameters : {transitionMessagesOnly : true}
+						parameters : {transitionMessagesOnly : true},
+						path : 'ToLineItems'
 					}" threshold="0" visibleRowCount="4">
 					<t:dependents>
 						<plugins:DataStateIndicator />
@@ -59,6 +69,7 @@
 								</layoutData>
 							</Title>
 							<ToolbarSpacer/>
+							<Button press="onFixAllQuantities" text="Fix Quantities" />
 							<ToggleButton press="onTransitionMessagesOnly" pressed="true"
 								text="Transition Messages Only"
 								tooltip="Message handling is done by the parent entity" />
@@ -137,6 +148,14 @@
 								<Input value="{Note}" />
 							</t:template>
 						</t:Column>
+						<t:Column width="4em">
+							<Label text="Actions" />
+							<t:template>
+								<Button enabled="{= ${ProductID} === 'HT-1000'}"
+									press="onFixQuantity" text="Fix" tooltip="Fix quantity issues"
+								/>
+							</t:template>
+						</t:Column>
 					</t:columns>
 				</t:Table>
 			</VBox>
@@ -165,10 +184,10 @@
 						<MessagePopover activeTitlePress="onMessageSelected"
 							afterClose="onMessagePopoverClosed" id="messagePopover"
 							items="{
-								path : 'messages>/',
 								events : {
 									change : '.updateMessageCount'
-								}
+								},
+								path : 'messages>/'
 							}">
 							<MessageItem activeTitle="true" description="{messages>message}"
 								subtitle="{messages>additionalText}" title="{messages>message}"

@@ -20,9 +20,14 @@ sap.ui.define([
 		},
 
 		init: function () {
+			var oModel;
+
 			UIComponent.prototype.init.apply(this, arguments);
 
-			this.getModel().setMessageScope(MessageScope.BusinessObject);
+			oModel = this.getModel();
+			oModel.setDeferredGroups(["changes", "FixQuantity"]);
+			oModel.setMessageScope(MessageScope.BusinessObject);
+
 			this.setModel(new JSONModel({
 				messageCount : 0,
 				salesOrderID : "0500000005"

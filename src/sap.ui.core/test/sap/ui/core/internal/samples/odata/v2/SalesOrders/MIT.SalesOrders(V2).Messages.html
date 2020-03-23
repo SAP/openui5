@@ -196,7 +196,28 @@
 					product is out of maintenance.
 			</li>
 		</ol>
-		<h3>(III) Transition Messages Only</h3>
+		<h3>(III) Message Lifecycle - Side-Effects</h3>
+		Search for a sales order with more than 4 items and with an item for the product
+		<code>HT-1000</code> with a quantity less than 2 at the 5th (or later) position in the sales
+		order and note down the sales order ID.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.<br />
+				<b>Check:</b> Even if the item for product <code>HT-1000</code> is not visible there
+					is a warning that at least <code>2 EA</code> of that product has to be ordered.
+			</li>
+			<li>Press the <code>Fix Quantities</code> button.<br />
+				<b>Check:</b> The warning message has been removed from then message popover.
+			</li>
+			<li>Scroll to the end of the sales order line items table.<br />
+				<b>Check:</b> All items for <code>HT-1000</code> have at least a quantity of 2.
+					<br />
+				<b>Check:</b> No item has a quantity of 0.<br />
+			</li>
+		</ol>
+		<h3>(IV) Transition Messages Only</h3>
 		If a table is embedded into an object page, all messages for the table need to be displayed.
 		If the application starts with a table, only the messages for the table rows which are on
 		the client have to be displayed. The framework is not able to detect these scenarios
