@@ -3,6 +3,9 @@
 /* Belize theme                  */
 /* ============================= */
 
+@_sap_m_Dialog_NoStateHeaderShadow: inset 0 -0.0625rem darken(@sapUiGroupContentBackground, 8);
+
+// This parameter is used in sap.m.Select. TODO: remove it when it is removed from there.
 @_sap_m_Dialog_HeaderShadowColor: darken(@sapUiGroupContentBackground, 8);
 
 .sapMDialog.sapMPopup-CTX > header .sapMHeader-CTX,
@@ -10,18 +13,8 @@
 	background-color: @sapUiGroupContentBackground;
 }
 
-.sapMDialog.sapMDialogWithSubHeader > header > .sapMIBar,
-.sapMDialog > header > .sapMIBar {
-	box-shadow: none;
-}
-
-.sapMDialog:not(.sapMDialogWithSubHeader) > header > .sapMIBar,
-.sapMDialog > header:last-of-type .sapMIBar {
-  	box-shadow: inset 0 -1px @_sap_m_Dialog_HeaderShadowColor;
-}
-
 .sapMDialog.sapMMessageDialog > .sapMDialogTitle .sapMIBar {
-  	box-shadow: inset 0 -0.125rem @_sap_m_Dialog_HeaderShadowColor;
+	box-shadow: inset 0 -0.125rem darken(@sapUiGroupContentBackground, 8);
 }
 
 .sapMDialog > header.sapMDialogTitle .sapMDialogIcon.sapUiIcon {
