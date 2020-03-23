@@ -1015,9 +1015,8 @@
 					"$ref": "#/definitions/ContentType.Calendar.SpecialDate"
 				},
 				"date": {
-					"description": "The initial date of the calendar which appointments are initially shown",
+					"description": "The initial date of the calendar which appointments are initially shown. The accepted date format is ISO 8601.",
 					"oneOf": [
-						{ "type": "number" },
 						{ "type": "string" },
 						{ "$ref": "#/definitions/simpleBinding" }
 					]
@@ -1085,16 +1084,14 @@
 					]
 				},
 				"startDate": {
-					"description": "The start date of the item.",
+					"description": "The start date of the item. The accepted date format is ISO 8601.",
 					"oneOf": [
-						{ "type": "number" },
 						{ "type": "string" }
 					]
 				},
 				"endDate": {
-					"description": "The end date of the item.",
+					"description": "The end date of the item. The accepted date format is ISO 8601.",
 					"oneOf": [
-						{ "type": "number" },
 						{ "type": "string" }
 					]
 				},
@@ -1222,16 +1219,14 @@
 			"additionalProperties": false,
 			"properties": {
 				"startDate": {
-					"description": "The start date of the special date.",
+					"description": "The start date of the special date. The accepted date format is ISO 8601.",
 					"oneOf": [
-						{ "type": "number" },
 						{ "type": "string" }
 					]
 				},
 				"endDate": {
-					"description": "The end date of the special date.",
+					"description": "The end date of the special date. The accepted date format is ISO 8601.",
 					"oneOf": [
-						{ "type": "number" },
 						{ "type": "string" }
 					]
 				},
