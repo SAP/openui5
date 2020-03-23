@@ -21,7 +21,7 @@
 		<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js" data-sap-ui-cover-only="sap/ui/model/controltree"></script>
 		<script src="ManagedObjectModel.qunit.js"></script>
 	</head>
-	
+
 	<script id="view" type="application/xml">
 		<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" id="view"
 			displayBlock="true" unknownProperty="true">
@@ -30,11 +30,27 @@
 					<Button text="Button" id="button1" />
 					<Button text="Text of button 2" id="button2" />
 					<Text text="Text" id="text" />
+                    <Panel id="innerPanel">
+                        <content>
+                            <Input value="The inner input" id="input" />
+                        </content>
+                    </Panel>
 				</content>
 			</Panel>
+            <Panel id="neighborPanel">
+                <content>
+                    <Input value="the neighbor" id="neighborInput" />
+                </content>
+            </Panel>
+            <Select id="list">
+                <items>
+                    <core:Item key="a" text="a" id="listA"/>
+                    <core:Item key="b" text="b" id="listB"/>
+                </items>
+            </Select>
 		</mvc:View>
 	</script>
-	
+
 
 	<body class="sapUiBody">
 		<h1 id="qunit-header">QUnit tests: sap.ui.model.base.ManagedObjectModel</h1>
