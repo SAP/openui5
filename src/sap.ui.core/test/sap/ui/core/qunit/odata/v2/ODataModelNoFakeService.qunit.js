@@ -906,4 +906,39 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("createBindingContext calls #read with updateAggregatedMessages", function (assert) {
+		var fnCallBack = function () {},
+			oModel = {
+				createCustomParams : function () {},
+				_isCanonicalRequestNeeded : function () {},
+				_isReloadNeeded : function () {},
+				read : function () {},
+				resolve : function () {},
+				resolveDeep : function () {}
+			};
+
+		this.mock(oModel).expects("_isCanonicalRequestNeeded").withExactArgs(undefined)
+			.returns("bCanonical");
+		this.mock(oModel).expects("resolve").withExactArgs("path", "context", "bCanonical")
+			.returns("sResolvedPath");
+		this.mock(oModel).expects("resolveDeep").withExactArgs("path", "context")
+			.returns("sDeepPath");
+		this.mock(oModel).expects("createCustomParams").withExactArgs(undefined)
+			.returns(undefined);
+		this.mock(oModel).expects("read").withExactArgs("path", {
+			canonicalRequest : "bCanonical",
+			context : "context",
+			error : sinon.match.func,
+			groupId : undefined,
+			success : sinon.match.func,
+			updateAggregatedMessages : true,
+			urlParameters : []
+		});
+
+		// code under test
+		ODataModel.prototype.createBindingContext.call(oModel, "path", "context",
+			/*mParameters*/undefined, fnCallBack, /*bReload*/true);
+	});
 });

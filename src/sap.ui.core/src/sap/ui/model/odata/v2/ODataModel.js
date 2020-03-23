@@ -2076,7 +2076,15 @@ sap.ui.define([
 				if (mParameters && (mParameters.batchGroupId || mParameters.groupId)) {
 					sGroupId = mParameters.groupId || mParameters.batchGroupId;
 				}
-				this.read(sPath, {groupId: sGroupId, urlParameters: aParams, success: handleSuccess, error: handleError, context: oContext, canonicalRequest: bCanonical});
+				this.read(sPath, {
+					canonicalRequest : bCanonical,
+					context : oContext,
+					error : handleError,
+					groupId : sGroupId,
+					success : handleSuccess,
+					updateAggregatedMessages : true,
+					urlParameters : aParams
+				});
 			} else {
 				fnCallBack(null); // error - notify to recreate contexts
 			}

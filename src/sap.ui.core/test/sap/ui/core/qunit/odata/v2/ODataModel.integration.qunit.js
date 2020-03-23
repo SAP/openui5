@@ -3364,4 +3364,62 @@ usePreliminaryContext : false}}">\
 	});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: Show entity with sub entities in same business object. Both have massages. Refresh
+	// of entity should also lead to update of aggregated messages for the sub entities.
+	// JIRA: CPOUI5MODELS-151
+	QUnit.test("ODataModel#createBindingContext with updateAggregatedMessages", function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({preliminaryContext : true}),
+			oSalesOrderNoteError = this.createResponseMessage("Note"),
+			oSalesOrderToItem10NoteError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+			oSalesOrderItem10NoteError = cloneODataMessage(oSalesOrderToItem10NoteError,
+				"(SalesOrderID='1',ItemPosition='10~0~')/Note"),
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest({
+				deepPath : "/SalesOrderSet('1')",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				__metadata : {uri : "SalesOrderSet('1')"},
+				SalesOrderID : "1"
+			}, {
+				"sap-message" : getMessageHeader(
+					[oSalesOrderNoteError, oSalesOrderToItem10NoteError])
+			})
+			.expectChange("salesOrderID", null)
+			.expectChange("salesOrderID", "1")
+			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/")
+			.expectMessage(oSalesOrderItem10NoteError, "/SalesOrderLineItemSet",
+				"/SalesOrderSet('1')/ToLineItems");
+		oModel.setMessageScope(MessageScope.BusinessObject);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					deepPath : "/SalesOrderSet('1')",
+					headers : {"sap-message-scope" : "BusinessObject"},
+					method : "GET",
+					requestUri : "SalesOrderSet('1')"
+				}, {
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1"
+				}, {
+					"sap-message" : getMessageHeader([oSalesOrderNoteError])
+				})
+				.expectMessages([])
+				.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/");
+
+			// code under test
+			that.oView.byId("form").getObjectBinding().refresh();
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
