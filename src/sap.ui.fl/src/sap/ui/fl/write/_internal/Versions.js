@@ -126,7 +126,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Property Bag
 	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
-	 * @param {string} mPropertyBag.appComponent - Component of the app
+	 * @param {string} mPropertyBag.appVersion - Version of the app
 	 * @param {boolean} [mPropertyBag.updateState=false] - Flag if the state should be updated
 	 * @returns {Promise<boolean>} Promise resolving with a flag if a discarding took place;
 	 * rejects if an error occurs or the layer does not support draft handling
@@ -135,11 +135,9 @@ sap.ui.define([
 		return Versions.getVersions(mPropertyBag).then(function (aVersions) {
 			var bDirtyChangesExistsAndDiscarded = false;
 
-			if (mPropertyBag.updateState && mPropertyBag.appComponent) {
-				var oManifest = mPropertyBag.appComponent.getManifest();
-				var sAppVersion = Utils.getAppVersionFromManifest(oManifest);
+			if (mPropertyBag.updateState) {
 				// remove all dirty changes
-				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference, sAppVersion);
+				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference, mPropertyBag.appVersion);
 				var aDirtyChanges = oChangePersistence.getDirtyChanges();
 				bDirtyChangesExistsAndDiscarded = aDirtyChanges.length > 0;
 				// TODO: the handling should move to the FlexState as soon as it is ready

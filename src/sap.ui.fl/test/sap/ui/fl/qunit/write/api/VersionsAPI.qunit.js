@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/core/Control",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -14,6 +15,7 @@ sap.ui.define([
 	FlexState,
 	Layer,
 	Utils,
+	ManifestUtils,
 	Control,
 	sinon
 ) {
@@ -283,6 +285,22 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given VersionsAPI.discardDraft is called", {
+		beforeEach: function() {
+			this.oAppComponent = {
+				getManifest: function () {
+					return {};
+				},
+				getId: function () {
+					return "sComponentId";
+				},
+				getComponentData: function () {
+					return {
+						startupParameters: ["sap-app-id"]
+					};
+				}
+			};
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+		},
 		afterEach: function() {
 			sandbox.restore();
 		}
@@ -325,7 +343,7 @@ sap.ui.define([
 			};
 
 			var sReference = "com.sap.app";
-			sandbox.stub(Utils, "getComponentClassName").returns(sReference);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
 			var oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves(true);
 
 			return VersionsAPI.discardDraft(mPropertyBag)
@@ -339,32 +357,25 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a AppComponent was found", function(assert) {
-			var sComponentId = "comSapApp";
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				selector: new Control(),
 				updateState: true
 			};
-
-			var oAppComponent = {
-				getManifest: function () {
-					return {};
-				},
-				getId: function () {
-					return sComponentId;
-				}
-			};
-
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
+			var sAppVersion = "1.0.0";
+			sandbox.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
 
 			var sReference = "com.sap.app";
-			sandbox.stub(Utils, "getComponentClassName").returns(sReference);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
 			var oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves(true);
 
 			return VersionsAPI.discardDraft(mPropertyBag)
 				.then(function(oResult) {
 					assert.equal(oResult, true, "then result was returned");
-					assert.deepEqual(oDiscardStub.getCall(0).args[0].appComponent, oAppComponent, "the oAppComponent was passed");
+					assert.deepEqual(oDiscardStub.getCall(0).args[0].appVersion, sAppVersion, "the app version was passed");
+					assert.deepEqual(oDiscardStub.getCall(0).args[0].reference, sReference, "the reference was passed");
+					assert.deepEqual(oDiscardStub.getCall(0).args[0].layer, Layer.CUSTOMER, "the layer was passed");
+					assert.deepEqual(oDiscardStub.getCall(0).args[0].updateState, true, "the update was passed and set to true");
 				});
 		});
 	});
