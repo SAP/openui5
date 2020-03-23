@@ -97,6 +97,9 @@ sap.ui.define([
 			}
 		});
 
+		/**
+		 * @inheritdoc
+		 */
 		AlignedFlowLayout.prototype.init = function() {
 
 			// resize observer feature detection
@@ -118,6 +121,9 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * @inheritdoc
+		 */
 		AlignedFlowLayout.prototype.exit = function() {
 
 			// resize observer cleanup
@@ -155,20 +161,29 @@ sap.ui.define([
 			this.reflow({ domRef: oDomRef, endItemDomRef: oEndItemDomRef });
 		};
 
+		/**
+		 * @inheritdoc
+		 */
 		AlignedFlowLayout.prototype.onBeforeRendering = function() {
 			this.disconnectResizeObserver();
 			this.disconnectResizeHandlerForEndItem();
 		};
 
+		/**
+		 * @inheritdoc
+		 */
 		AlignedFlowLayout.prototype.onAfterRendering = function() {
 			this.observeSizeChangesIfRequired();
 			this.onAfterRenderingOrThemeChanged();
 		};
 
+		/**
+		 * @inheritdoc
+		 */
 		AlignedFlowLayout.prototype.onThemeChanged = AlignedFlowLayout.prototype.onAfterRenderingOrThemeChanged;
 
-		// this resize handler needs to be called on after rendering, theme change, and whenever the width of this
-		// control changes
+		// this resize handler needs to be called on after rendering, theme change,
+		// and whenever the width of this control changes
 		AlignedFlowLayout.prototype.onResizeHandler = function(oEvent) {
 
 			// avoid cyclic dependencies and infinite resizing callback loops
@@ -443,6 +458,7 @@ sap.ui.define([
 			} else if (sMinItemWidth.lastIndexOf("px") !== -1) {
 				fMinItemWidth = parseFloat(sMinItemWidth);
 			}
+
 			// else, the CSS unit is not in rem or px, in this case a conversion to px is not made and
 			// more spacers are rendered (worst case, but unusual in UI5)
 
