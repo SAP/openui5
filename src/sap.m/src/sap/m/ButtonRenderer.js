@@ -106,6 +106,7 @@ sap.ui.define([
 			case ButtonType.Accept:
 			case ButtonType.Reject:
 			case ButtonType.Emphasized:
+			case ButtonType.Attention:
 				oRm.class("sapMBtnInverted");
 				break;
 			default: // No need to do anything for other button types
@@ -283,6 +284,7 @@ sap.ui.define([
 	var mARIATextKeys = {
 		Accept: "BUTTON_ARIA_TYPE_ACCEPT",
 		Reject: "BUTTON_ARIA_TYPE_REJECT",
+		Attention: "BUTTON_ARIA_TYPE_ATTENTION",
 		Emphasized: "BUTTON_ARIA_TYPE_EMPHASIZED",
 		Critical: "BUTTON_ARIA_TYPE_CRITICAL",
 		Negative: "BUTTON_ARIA_TYPE_NEGATIVE",
