@@ -720,7 +720,7 @@ sap.ui.define([
 					oEvent.preventDefault();
 
 					// Assert
-					assert.ok(oCardLContent.hasStyleClass("sapFCardClickable"), "Card Content is clickable");
+					assert.ok(oCardLContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
 					assert.ok(oActionSpy.callCount === 1, "Card Content is clicked and action event is fired");
 
 					// Cleanup
@@ -755,8 +755,8 @@ sap.ui.define([
 					oCardHeader =  oCard.getCardHeader();
 
 				// Assert
-				assert.ok(oCardLContent.hasStyleClass("sapFCardClickable"), "Card Content is clickable");
-				assert.ok(oCardHeader.hasStyleClass("sapFCardClickable"), "Card Header is clickable");
+				assert.ok(oCardLContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
+				assert.ok(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header is clickable");
 
 				//Act
 				oCardLContent.firePress();
@@ -802,7 +802,8 @@ sap.ui.define([
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
 				var oCardHeader = this.oCard.getCardHeader();
-				assert.ok(oCardHeader.hasStyleClass("sapFCardClickable"), "Card Header has a clickable style is added");
+
+				assert.ok(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header has a clickable style is added");
 
 				this.oCard.attachAction(function () {
 					// Assert
@@ -837,7 +838,7 @@ sap.ui.define([
 				Core.applyChanges();
 
 				var oCardHeader = this.oCard.getCardHeader();
-				assert.ok(oCardHeader.hasStyleClass("sapFCardClickable"), "Card Header has a  clickable style is added");
+				assert.ok(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header has a  clickable style is added");
 				//Act
 				oCardHeader.firePress();
 				Core.applyChanges();
@@ -1221,7 +1222,7 @@ sap.ui.define([
 				Core.applyChanges();
 
 				// Assert
-				assert.ok(oCardLContent.hasStyleClass("sapFCardClickable"), "Card Content is clickable");
+				assert.ok(oCardLContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
 				assert.ok(oActionSpy.callCount === 0, "Card Content is clicked and action event is fired");
 
 				// Cleanup

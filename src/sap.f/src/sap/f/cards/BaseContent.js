@@ -68,6 +68,11 @@ sap.ui.define([
 			oRm.writeElementData(oCardContent);
 			oRm.addClass(sClass);
 			oRm.addClass("sapFCardBaseContent");
+
+			if (oCardContent.hasListeners("press")) {
+				oRm.addClass("sapFCardClickable");
+			}
+
 			oRm.writeClasses();
 
 			if (oCard && oCard.isA("sap.f.ICard") && oCard.getHeight() === "auto") { // if there is no height specified the default value is "auto"
@@ -447,5 +452,28 @@ sap.ui.define([
 
 		return !oLoadingProvider.getDataProviderJSON() && (oLoadingProvider.getLoadingState() || oCard.isLoading());
 	};
+
+	BaseContent.prototype.attachPress = function () {
+		var aMyArgs = Array.prototype.slice.apply(arguments);
+		aMyArgs.unshift("press");
+
+		Control.prototype.attachEvent.apply(this, aMyArgs);
+
+		this.invalidate();
+
+		return this;
+	};
+
+	BaseContent.prototype.detachPress = function() {
+		var aMyArgs = Array.prototype.slice.apply(arguments);
+		aMyArgs.unshift("press");
+
+		Control.prototype.detachEvent.apply(this, aMyArgs);
+
+		this.invalidate();
+
+		return this;
+	};
+
 	return BaseContent;
 });
