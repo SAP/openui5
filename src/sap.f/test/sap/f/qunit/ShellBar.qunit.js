@@ -617,6 +617,22 @@ function (
 
 	});
 
+	QUnit.test("Sizes are cought when the theme is loaded", function (assert) {
+			// asert
+			var oInitResizeSpy = sinon.spy(this.oSB._oResponsiveHandler, "_initResize");
+			var oHandleResizeSpy = sinon.spy(this.oSB._oResponsiveHandler, "_handleResize");
+
+			// act
+			this.oSB.onThemeChanged();
+
+			// asert
+			assert.strictEqual(oInitResizeSpy.callCount, 1, "_initResize is called when the theme is applied");
+			assert.strictEqual(oHandleResizeSpy.callCount, 1, "_handleResize is called when the theme is applied and the values are cought");
+
+			oInitResizeSpy.restore();
+			oHandleResizeSpy.restore();
+	});
+
 	QUnit.test("ResponsiveHandler phone/regular transformation test", function (assert) {
 
 		// Arrange

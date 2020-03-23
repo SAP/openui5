@@ -3,11 +3,13 @@
  */
 sap.ui.define([
 	"sap/m/OverflowToolbarLayoutData",
+	"sap/ui/core/Core",
 	"sap/ui/Device",
 	"sap/ui/core/theming/Parameters",
 	"sap/m/library"
 ], function (
 	OverflowToolbarLayoutData,
+	Core,
 	Device,
 	Parameters,
 	library
@@ -33,6 +35,9 @@ sap.ui.define([
 		this._iDoubleChildControlMargin = this._iChildControlMargin * 2;
 		this._iCoPilotWidth = parseInt(Parameters.get("_sap_f_ShellBar_CoPilotWidth")) + this._iDoubleChildControlMargin;
 		this._iHalfCoPilotWidth = this._iCoPilotWidth / 2;
+		this._iStaticWidth = 0;
+		this._iMBWidth = 0;
+		this._iStaticWidthForSearch = 0;
 
 		// Delegate used to attach on ShellBar lifecycle events
 		this._oDelegate = {
@@ -93,8 +98,10 @@ sap.ui.define([
 			this._transformTitleControlMobile();
 		}
 
-		this._initResize();
-		this._handleResize();
+		if (Core.isThemeApplied()) {
+			this._initResize();
+			this._handleResize();
+		}
 	};
 
 	/**
