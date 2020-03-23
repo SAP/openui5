@@ -137,7 +137,7 @@ sap.ui.define([
 			/**
 			 * Determines the progressive loading. When set to <code>true</code>, enables the growing feature of the control to load more items by requesting from the bound model.
 			 * <b>Note:</b> This feature only works when an <code>items</code> aggregation is bound. Growing must not be used together with two-way binding.
-			 * <b>Note:</b> If the property is set to true, the features <code>selected count</code> in info bar, <code>search</code> and <code>select/deselect all</code>, if present, work only for the currently loaded items.
+			 * <b>Note:</b> If the property is set to true, the features <code>selected count</code> in info bar and <code>select/deselect all</code>, if present, work only for the currently loaded items.
 			 * To make sure that all items in the table are loaded at once and the above features work properly, we recommend setting the <code>growing</code> property to false.
 			 * @since 1.56
 			 */
