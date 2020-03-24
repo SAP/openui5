@@ -20,6 +20,7 @@
 		},
 		"config": {
 			"sample": {
+				"stretch": true,
 				"files": [
 					"ToolPage.view.xml",
 					"ToolPage.controller.js",

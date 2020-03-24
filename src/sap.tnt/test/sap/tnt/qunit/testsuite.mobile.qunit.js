@@ -91,6 +91,21 @@ sap.ui.define(function () {
 					"xx-componentPreload": "off"
 				},
 				autostart: false
+			},
+
+			// -------------------------------------------------------------------------------
+			// Designtime tests:
+			// -------------------------------------------------------------------------------
+
+			"Designtime-NavigationListItem": {
+				group: "Designtime",
+				sinon: false,
+				module: "./designtime/NavigationListItem.qunit"
+			},
+			"Designtime-Library": {
+				group: "Designtime",
+				sinon: false,
+				module: "./designtime/Library.qunit"
 			}
 		}
 	};
