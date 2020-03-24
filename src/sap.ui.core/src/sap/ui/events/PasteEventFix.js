@@ -45,5 +45,7 @@ sap.ui.define(function() {
 			oEvent.preventDefault();
 		}
 
-	});
+	}, /* capturing phase */ true);
+	// use capturing phase because the additional event handler for the "paste" event may change the focused element
+	// which affects the way that processes the event here
 });
