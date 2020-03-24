@@ -155,6 +155,27 @@ sap.ui.define([
 					 */
 					selectedKeys : {type : "object"}
 				}
+			},
+
+			/**
+			 * Triggered after the Search button is pressed or by pressing Enter in search input field.
+			 *
+			 * The default filtering behavior of the control can be prevented by calling <code>sap.ui.base.Event.prototype.preventDefault</code>
+			 * function in the <code>search</code> event handler function.
+			 * Preventing the default behavior is useful in cases when items aggregation could be taking long time fetching from the OData model.
+			 * As a result, no list items are loaded initially.
+			 * If the default filtering behavior is prevented then filtering behavior has to be defined at application level
+			 * inside the <code>search</code> event handler function.
+			 * @since 1.76
+			 */
+			search: {
+				allowPreventDefault : true,
+				parameters : {
+					/**
+					 * Value received as user input in the <code>sap.m.SearchField</code>, and taken as a JavaScript string object.
+					 */
+					term: {type: "string"}
+				}
 			}
 		}
 	}});
@@ -203,11 +224,15 @@ sap.ui.define([
 	};
 
 	FacetFilterList.prototype._applySearch = function() {
-		var searchVal = this._getSearchValue();
-		if (searchVal != null) {
-			this._search(searchVal, true);
-			this._updateSelectAllCheckBox();
+		var sSearchVal = this._getSearchValue();
+
+		if (sSearchVal === null) {
+			return;
 		}
+
+		this._bSearchEventDefaultBehavior && this._search(sSearchVal, true);
+
+		this._updateSelectAllCheckBox();
 	};
 
 	/**
@@ -411,6 +436,7 @@ sap.ui.define([
 	 */
 	FacetFilterList.prototype.init = function(){
 		this._firstTime = true;
+		this._bSearchEventDefaultBehavior = true;
 		this._saveBindInfo;
 
 
@@ -489,7 +515,7 @@ sap.ui.define([
 	 * This presents a dilemma for applications that load items from a listOpen event handler by setting the model. In
 	 * that scenario it would be impossible to restore selections from a variant since selected keys must be set outside
 	 * of the listOpen handler (otherwise the facet button or summary bar would not display pre-selected items until after
-	 * the list was opened and then closed).
+	 * the list was opened and then closed`).
 	 *
 	 * @private
 	 */
@@ -497,7 +523,7 @@ sap.ui.define([
 
 		if (this.isBound("items")) {
 
-			this._searchValue = ""; // Clear the search value since items are being reinitialized
+			this._setSearchValue(""); // Clear the search value since items are being reinitialized
 			this._allowRemoveSelections = false;
 			List.prototype._resetItemsBinding.apply(this, arguments);
 			this._allowRemoveSelections = true;
@@ -545,10 +571,17 @@ sap.ui.define([
 	FacetFilterList.prototype._handleSearchEvent = function(oEvent) {
 
 		var sSearchVal = oEvent.getParameters()["query"];
+
 		if (sSearchVal === undefined) {
 			sSearchVal = oEvent.getParameters()["newValue"];
 		}
-		this._search(sSearchVal);
+
+		this._bSearchEventDefaultBehavior = this.fireSearch({
+			term: sSearchVal,
+			clearButtonPressed: oEvent.getParameters()["clearButtonPressed"]
+		});
+
+		this._bSearchEventDefaultBehavior ? this._search(sSearchVal) : this._setSearchValue(sSearchVal);
 
 		// If search was cleared and a selected item is made visible, make sure to set the
 		// checkbox accordingly.
@@ -859,6 +892,16 @@ sap.ui.define([
 
 	FacetFilterList.prototype._preserveOriginalActiveState = function () {
 		this._bOriginalActiveState = this.getActive();
+	};
+
+	FacetFilterList.prototype._showBusyIndicator = function() {
+		List.prototype._showBusyIndicator.apply(this, arguments);
+		this.fireEvent("listItemsChange");
+	};
+
+	FacetFilterList.prototype._hideBusyIndicator = function() {
+		List.prototype._hideBusyIndicator.apply(this, arguments);
+		this.fireEvent("listItemsChange");
 	};
 
 	return FacetFilterList;

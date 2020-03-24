@@ -242,6 +242,10 @@ sap.ui.define([
 
 			/**
 			 * Fired when the Reset button is pressed to inform that all FacetFilterLists need to be reset.
+			 *
+			 * The default filtering behavior of the sap.m.FacetFilterList can be prevented by calling <code>sap.ui.base.Event.prototype.preventDefault</code> function
+			 * in the <code>search</code> event handler function. If the default filtering behavior is prevented then filtering behavior has to be defined at application level
+			 * inside the <code>search</code> and <code>reset</code> event handler functions.
 			 */
 			reset : {},
 
@@ -381,8 +385,23 @@ sap.ui.define([
 		if (this._displayedList) {
 			aLists.splice(this._listAggrIndex, 0, this._displayedList);
 		}
+
+		aLists.forEach(function(oList) {
+			if (!oList.hasListeners("listItemsChange")) {
+				oList.attachEvent("listItemsChange", _listItemsChangeHandler.bind(this));
+			}
+		}.bind(this));
+
 		return aLists;
 	};
+
+
+	function _listItemsChangeHandler(oEvent) {
+		var oList = oEvent.getSource();
+		if (this._oAllCheckBoxBar) {
+			this._oAllCheckBoxBar.setVisible(Boolean(oList.getItems(true).length));
+		}
+	}
 
 	/*
 	 * Removes the specified FacetFilterList by cleaning up facet buttons.
@@ -516,6 +535,10 @@ sap.ui.define([
 				}
 			});
 			this._aOwnedLabels = null;
+		}
+
+		if (this._oAllCheckBoxBar) {
+			this._oAllCheckBoxBar = undefined;
 		}
 	};
 
@@ -1001,11 +1024,10 @@ sap.ui.define([
 
 			// Popover allowing the user to view, select, and search filter items
 			oPopover = new sap.m.Popover({
-
 				placement: PlacementType.Bottom,
 				beforeOpen: function(oEvent) {
 					if (that._displayedList) {
-						that._displayedList._setSearchValue("");
+						that._displayedList._bSearchEventDefaultBehavior && that._displayedList._setSearchValue("");
 					}
 
 					this.setCustomHeader(that._createFilterItemsSearchFieldBar(that._displayedList));
@@ -1146,7 +1168,7 @@ sap.ui.define([
 			oList._applySearch();
 		}
 		return this;
-	};
+};
 
 
 	/**
@@ -1546,7 +1568,7 @@ sap.ui.define([
 							that._bCheckForAddListBtn = true;
 						}
 						oList._fireListCloseEvent();
-						oList._search("");
+						oList._bSearchEventDefaultBehavior && oList._search("");
 					}
 
 					// Destroy the nav container and all it contains so that the dialog content is initialized new each
@@ -1718,7 +1740,9 @@ sap.ui.define([
 		// checkbox.  See the selection change handler on FacetFilterList.
 		oList.setAssociation("allcheckbox", oCheckbox);
 
-		var oBar = new sap.m.Bar();
+		var oBar = new sap.m.Bar({
+			visible: Boolean(oList.getItems(true).length)
+		});
 
 		// Bar does not support the tap event, so create a delegate to handle tap and set the state of the select all checkbox.
 		oBar.addEventDelegate({
@@ -1731,6 +1755,8 @@ sap.ui.define([
 
 		oBar.addContentLeft(oCheckbox);
 		oBar.addStyleClass("sapMFFCheckbar");
+
+		this._oAllCheckBoxBar = oBar;
 
 		return oBar;
 	};
@@ -1802,7 +1828,7 @@ sap.ui.define([
 			oList._updateActiveState();
 		}
 		oList._fireListCloseEvent();
-		oList._search("");
+		oList._bSearchEventDefaultBehavior && oList._search("");
 		this._selectedFacetItem.setCounter(oList.getAllCount());
 		oNavContainer.backToTop();
 	};
@@ -1949,7 +1975,7 @@ sap.ui.define([
 				//clear search value when 'reset' button clicked
 				var aLists = that.getLists();
 				for (var i = 0; i < aLists.length; i++) {
-					aLists[i]._searchValue = "";
+					aLists[i]._setSearchValue("");
 					aLists[i]._applySearch();
 					var oFirstItemInList = aLists[i].getItems()[0];
 					if (oFirstItemInList){

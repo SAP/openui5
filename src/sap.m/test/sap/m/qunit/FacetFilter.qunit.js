@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/FacetFilter",
 	"sap/m/FacetFilterList",
+	"sap/ui/model/Filter",
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
 	"jquery.sap.global",
@@ -18,6 +19,7 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/m/HBox",
 	"sap/ui/core/InvisibleText",
+	"sap/ui/base/EventProvider",
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"jquery.sap.keycodes"
@@ -26,6 +28,7 @@ sap.ui.define([
 	createAndAppendDiv,
 	FacetFilter,
 	FacetFilterList,
+	Filter,
 	mobileLibrary,
 	JSONModel,
 	jQuery,
@@ -39,9 +42,12 @@ sap.ui.define([
 	Sorter,
 	HBox,
 	InvisibleText,
+	EventProvider,
 	GroupHeaderListItem,
 	waitForThemeApplied
 ) {
+	"use strict";
+
 	// shortcut for sap.m.ToolbarDesign
 	var ToolbarDesign = mobileLibrary.ToolbarDesign;
 
@@ -177,7 +183,7 @@ sap.ui.define([
 
 	QUnit.test("FacetFilter.init", function(assert) {
 
-		var oFF = new FacetFilter();
+		var oFF = new FacetFilter(),
 		oFFS = oFF._enableTouchSupport();
 		// Verify the add facet button is created
 		var oAddFacetButton = oFF.getAggregation("addFacetButton");
@@ -1372,8 +1378,7 @@ sap.ui.define([
 		oFFL.destroy();
 	});
 
-
-	QUnit.test("FacetFilter searchValue of the list is reset when FacetFilter _navFromFilterItemsPage is called", function (assert) {
+	QUnit.test("FacetFilter searchValue of the list when FacetFilter _navFromFilterItemsPage is called", function (assert) {
 		// arrange
 		var oFF = new FacetFilter(),
 			oFFL = new FacetFilterList(),
@@ -1384,7 +1389,19 @@ sap.ui.define([
 			oNavContainer = {
 				getPages: function () { return [new Page()];},
 				backToTop: function () {}
+			},
+			oFakeEvent = {
+				getParameters: function () {
+					return {
+						query: ""
+					};
+				}
 			};
+
+		oFFL.attachEventOnce("search", function(oEvent) {
+			oEvent.preventDefault();
+		});
+
 		oFF._selectedFacetItem = { setCounter: function () {} };
 
 		// act
@@ -1393,6 +1410,13 @@ sap.ui.define([
 		// assert
 		assert.ok(oSearchSpy.calledWith(""), "_search method is called with empty string when navigation out of list is performed");
 		assert.equal(oFFL._getSearchValue(), "", "Search value should be set correctly");
+
+		// act
+		oFFL._handleSearchEvent(oFakeEvent);
+		oFF._navFromFilterItemsPage(oNavContainer);
+
+		// assert
+		assert.notOk(oSearchSpy.calledTwice, "_search method was not called when default filtering behavour of the FacetFilterList is prevented");
 
 		// cleanup
 		oSearchSpy.restore();
@@ -1428,14 +1452,233 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("FacetFilterList searchValue not reset when FacetFilter dialog is closed and default filtering behavior is prevented", function (assert) {
+		// arrange
+		var done = assert.async(),
+			oFF = new FacetFilter(),
+			oFFL = new FacetFilterList(),
+			oFakeEvent = {
+				getParameters: function () {
+					return {
+						query: ""
+					};
+				}
+			},
+			oSearchSpy = this.spy(oFFL, "_search");
+
+		oFFL.attachEventOnce("search", function(oEvent) {
+			oEvent.preventDefault();
+		});
+
+		oFF.addList(oFFL);
+
+		// act
+		oFFL._handleSearchEvent(oFakeEvent);
+		oFF.openFilterDialog();
+		var oDialog = oFF.getAggregation("dialog"),
+			oNavContainer = oDialog.getContent()[0];
+
+		oFF._navToFilterItemsPage(oNavContainer.getPages()[0].getContent()[0].getItems()[0]);
+		oNavContainer.attachEventOnce("afterNavigate", function () {
+			oFF._closeDialog();
+		});
+
+		oDialog.attachEventOnce("afterClose", function () {
+			// assert
+			assert.notOk(oSearchSpy.called, "_search function not called when default filtering behavior of the list is prevented");
+
+			// cleanup
+			oFFL.destroy();
+			oSearchSpy.restore();
+			done();
+		});
+	});
+
+	QUnit.test("FacetFilterList.prototype._applySearch - default filtering prevented", function(assert) {
+		// arrange
+		var oList = new FacetFilterList(),
+			oFakeEvent = {
+				getParameters: function () {
+					return {
+						query: ""
+					};
+				}
+			},
+			fnSearchSpy = this.spy(oList, "_search");
+
+		oList.attachEventOnce("search", function(oEvent) {
+			oEvent.preventDefault();
+		});
+
+		// act
+		oList._handleSearchEvent(oFakeEvent);
+		oList._applySearch();
+
+		// assert
+		assert.ok(fnSearchSpy.notCalled, "_search function was not called");
+
+		// clean
+		fnSearchSpy.restore();
+		oList.destroy();
+	});
+
+	QUnit.test("FacetFilter.prototype._openPopover - default filtering prevented", function(assert) {
+		// arrange
+		var done = assert.async(),
+			oFacetFilter = new FacetFilter({
+				lists: [new FacetFilterList()]
+			}),
+			oTargetList = oFacetFilter.getLists()[0],
+			oButtonOpener = oFacetFilter._getButtonForList(oTargetList),
+			oPopover = oFacetFilter._getPopover(),
+			oFakeEvent = {
+				getParameters: function () {
+					return {
+						query: ""
+					};
+				}
+			},
+			fnSetSearchValueSpy = this.spy(oTargetList, "_setSearchValue");
+
+		oTargetList.attachEventOnce("search", function(oEvent) {
+			oEvent.preventDefault();
+		});
+
+		oFacetFilter.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oTargetList._handleSearchEvent(oFakeEvent);
+		oFacetFilter._openPopover(oPopover, oButtonOpener);
+
+		// assert
+		oPopover.attachEventOnce("afterOpen", function(oEvent) {
+			assert.ok(fnSetSearchValueSpy.calledOnce, "_setSearchValue function was called once");
+			assert.notOk(this.getSubHeader().getVisible(), "allCheckBoxBar is invisible");
+
+			// clean
+			fnSetSearchValueSpy.restore();
+			oFacetFilter.destroy();
+			done();
+		});
+	});
+
+	QUnit.test("FacetFilter allCheckboxBar - visibility ajdustment", function(assert) {
+		// arrange
+		var done = assert.async(),
+			oFacetFilter = new FacetFilter({
+				lists: [new FacetFilterList()]
+			}),
+			oTargetList = oFacetFilter.getLists()[0],
+			oButtonOpener = oFacetFilter._getButtonForList(oTargetList),
+			aValues = [{key : 'k1',text : "a"}, {key : 'k2',text : "ba"}, {key : 'k3',text : "c"}],
+			oModel = new JSONModel({
+				values : aValues
+			}),
+			oPopover = oFacetFilter._getPopover(),
+			oFakeEvent = {
+				getParameters: function () {
+					return {
+						query: ""
+					};
+				}
+			};
+
+		oFacetFilter.setModel(oModel);
+		oFacetFilter.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oTargetList.attachEvent("search", function(oEvent) {
+			var sSearchString = oEvent.getParameters()["term"];
+
+			this.bindItems({
+				path : "/values",
+				template : new FacetFilterItem({
+					text : "{text}",
+					key : "{key}"
+				}),
+				filters: [new Filter("text", 'Contains', sSearchString.toLowerCase())]
+			});
+
+			oEvent.preventDefault();
+		});
+
+		// act
+		oFacetFilter._openPopover(oPopover, oButtonOpener);
+
+		oPopover.attachEventOnce("afterOpen", function(oEvent) {
+			// act
+			oTargetList._handleSearchEvent(oFakeEvent);
+
+			// assert
+			assert.equal(oTargetList.getBinding("items").getLength(), 3, "There three items in the list");
+			assert.ok(oPopover.getSubHeader().getVisible(), "AllCheckBoxBar is visibile");
+
+			// act
+			oFakeEvent = {
+				getParameters: function () {
+					return {
+						query: "test"
+					};
+				}
+			};
+			oTargetList._handleSearchEvent(oFakeEvent);
+
+			// assert
+			assert.equal(oTargetList.getBinding("items").getLength(), 0, "There are no items in the list");
+			assert.notOk(oPopover.getSubHeader().getVisible(), "AllCheckBoxBar is not visibile");
+
+			// clean
+			oFacetFilter.destroy();
+			done();
+		});
+	});
+
+	QUnit.test("FacetFilterList.listItemsChange", function(assert) {
+		// arrange
+		var done = assert.async(),
+			oFacetFilter = new FacetFilter({
+				// We add to FacetFilterLists in order to trigger "FacetFilter.prototype.getLists" function twice
+				// and after that check if event with ID "listItemsChange" is attached only once to every list
+				lists: [new FacetFilterList(), new FacetFilterList()]
+			}),
+			oList = oFacetFilter.getLists()[0],
+			aValues = [{key : 'k1',text : "a"}, {key : 'k2',text : "ba"}, {key : 'k3',text : "c"}],
+			oModel = new JSONModel({
+				values : aValues
+			}),
+			fnFireEventSpy = this.spy(oList, "fireEvent");
+
+		oFacetFilter.setModel(oModel);
+		oList.bindItems({
+			path : "/values",
+			template : new FacetFilterItem({
+				text : "{text}",
+				key : "{key}"
+			})
+		});
+
+		// assert
+		oList.attachEventOnce("updateFinished", function() {
+
+			// assert
+			assert.ok(fnFireEventSpy.calledWith("listItemsChange"), "listItemsChange private event is fired");
+			assert.equal(EventProvider.getEventList(this)["listItemsChange"].length, 1, "Event with ID 'listItemsChange' is attached only once to the FacetFilterList instance");
+
+			// clean
+			fnFireEventSpy.restore();
+			oFacetFilter.destroy();
+			done();
+		});
+	});
 
 	QUnit.test("FacetFilterList._updateSelectAllCheckBox", function(assert) {
 		var done = assert.async();
 
-			var aValues = [{key : 'k1',text : "a"}, {key : 'k2',text : "ba"}, {key : 'k3',text : "c"}];
-			oModel = new JSONModel({
-				values : aValues
-			});
+			var aValues = [{key : 'k1',text : "a"}, {key : 'k2',text : "ba"}, {key : 'k3',text : "c"}],
+				oModel = new JSONModel({
+					values : aValues
+				});
 
 			var oFFL = new FacetFilterList();
 			oFFL.bindAggregation("items", {
@@ -2134,6 +2377,38 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("FacetFilterList.search - default filtering prevented", function(assert) {
+		// arrange
+		var oList = this.oFacetFilter.getLists()[0],
+			oFakeEvent = {
+				getParameters: function () {
+					return {
+						query: ""
+					};
+				}
+			},
+			fnFireSearchSpy = this.spy(oList, "fireSearch"),
+			fnSearchSpy = this.spy(oList, "_search"),
+			fnSetSearchValueSpy = this.spy(oList, "_setSearchValue");
+
+		oList.attachEventOnce("search", function(oEvent) {
+			oEvent.preventDefault();
+		});
+
+		// act
+		oList._handleSearchEvent(oFakeEvent);
+
+		// assert
+		assert.ok(fnFireSearchSpy.calledOnce, "fireSearch function was called once");
+		assert.ok(fnSearchSpy.notCalled, "_search function was not called");
+		assert.ok(fnSetSearchValueSpy.calledOnce, "_setSearchValue function was called once");
+
+		// clean
+		fnFireSearchSpy.restore();
+		fnSearchSpy.restore();
+		fnSetSearchValueSpy.restore();
+	});
+
 	QUnit.test("FacetFilterList.listOpen", function(assert) {
 		var done = assert.async();
 		var oListOpenEvent = null;
@@ -2715,7 +2990,7 @@ sap.ui.define([
 				sequence : 3,
 				retainListSequence : false
 			}));
-			aSequencedLists = oFF._getSequencedLists();
+			var aSequencedLists = oFF._getSequencedLists();
 			assert.equal(aSequencedLists.length, 1, "There should be one sequenced list");
 			assert.strictEqual(aSequencedLists[0].getRetainListSequence(), false,"List sequence should not be retained by default when list is inactive and made active again");
 			assert.equal(aSequencedLists[0].getSequence(), 5, "Sequence of the list should be 5");
@@ -3852,7 +4127,7 @@ sap.ui.define([
 		});
 		oFFL.setModel(oFFL.getModel());
 
-		oKeys = oFFL.getSelectedKeys();
+		var oKeys = oFFL.getSelectedKeys();
 		assert.strictEqual(oFFL.getItems()[1].getSelected(), true, "FacetFilterItem with key '2' is selected");
 		assert.equal(Object.getOwnPropertyNames(oKeys).length, 1, "There is one key selected");
 		assert.strictEqual(oKeys["2"], "Val2", "Key '2' is selected");
@@ -3868,7 +4143,7 @@ sap.ui.define([
 		});
 
 		oFFL._search("Val2");
-		oKeys = oFFL.getSelectedKeys();
+		var oKeys = oFFL.getSelectedKeys();
 		assert.equal(Object.getOwnPropertyNames(oKeys).length, 1, "There is one key selected");
 		assert.strictEqual(oKeys["3"], "Val3", "Key '3' is selected");
 
@@ -4358,10 +4633,10 @@ sap.ui.define([
 
 	QUnit.module('Group Headers', {
 		beforeEach: function () {
-			oFF = new FacetFilter({
+			this.oFF = new FacetFilter({
 				showPersonalization: true
 			});
-			oFFL = new FacetFilterList({
+			this.oFFL = new FacetFilterList({
 				title: "Group List Sample",
 				showRemoveFacetIcon:false,
 				items: {
@@ -4381,7 +4656,7 @@ sap.ui.define([
 				key:"FilterListWithGroupsKey"
 			});
 
-			oFFL.setModel(new JSONModel({
+			this.oFFL.setModel(new JSONModel({
 				values: [
 					{key : "A01", text : "A1", selected : true, group: "A"},
 					{key : "A02", text : "A2", selected : true, group: "A"},
@@ -4389,13 +4664,13 @@ sap.ui.define([
 					{key : "B02", text : "B2", selected : true, group: "B"}
 				]
 			}));
-			oFF.addList(oFFL);
-			oFF.placeAt("content");
+			this.oFF.addList(this.oFFL);
+			this.oFF.placeAt("content");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
-			oFF.destroy();
-			oFFL.destroy();
+			this.oFF.destroy();
+			this.oFFL.destroy();
 		}
 	});
 
@@ -4405,7 +4680,7 @@ sap.ui.define([
 		var oPopover, oCheckbox, oSpy;
 
 		//act
-		oPopover = oFF._getPopover();
+		oPopover = this.oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function(oEvent) {
 			oCheckbox = getPopoverSelectAllCheckBox(oPopover);
 			//assert
@@ -4413,7 +4688,7 @@ sap.ui.define([
 
 			//act
 			oSpy = sinon.spy(oCheckbox,"setSelected");
-			oFFL._updateSelectAllCheckBox();
+			this.oFFL._updateSelectAllCheckBox();
 
 			//assert
 			assert.ok(oSpy.calledWith(false),
@@ -4423,17 +4698,17 @@ sap.ui.define([
 			oCheckbox.ontap(new jQuery.Event());
 			//assert
 			assert.equal(oCheckbox.getSelected(), true, "Select all checkbox should be checked");
-			assert.equal(oFFL.getSelectedItems().length, 4, "All items are selected also");
+			assert.equal(this.oFFL.getSelectedItems().length, 4, "All items are selected also");
 
 			//act
-			oFFL._updateSelectAllCheckBox();
+			this.oFFL._updateSelectAllCheckBox();
 
 			//assert
 			assert.equal(oSpy.calledWith(true), true,
 					"oCheckbox is called with setSelected(true) because the selected items = items.length");
 			done();
-		});
-		openPopover(oFF, 0);
+		}.bind(this));
+		openPopover(this.oFF, 0);
 	});
 
 	QUnit.test("Only items could be selected, not headers", function (assert) {
@@ -4441,10 +4716,10 @@ sap.ui.define([
 		var oSpy, counter = 0;
 
 		//act
-		oSpy = sinon.spy(oFFL, "_isItemSelected");
-		oFFL._selectItemsByKeys();
-		for (var i = 0; i < oFFL.getAggregation("items").length; i++){
-			if (!oFFL.getAggregation("items")[i]._bGroupHeader){
+		oSpy = sinon.spy(this.oFFL, "_isItemSelected");
+		this.oFFL._selectItemsByKeys();
+		for (var i = 0; i < this.oFFL.getAggregation("items").length; i++){
+			if (!this.oFFL.getAggregation("items")[i]._bGroupHeader){
 				counter++;
 			}
 		}
