@@ -179,6 +179,9 @@ sap.ui.define(function() {
 					'testdata/core/Element_sourceInfo.qunit'
 				]
 			},
+			"events/PasteEventFix": {
+				title: "sap.ui.events.PasteEventFix"
+			},
 			Fragment: {
 				title: "sap.ui.core.Fragment",
 				ui5: {
