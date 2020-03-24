@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/base/ManagedObject",
-	"sap/m/delegate/ValueStateMessage",
 	"sap/ui/rta/command/CompositeCommand",
 	"sap/base/Log"
 ], function(
@@ -29,7 +28,6 @@ sap.ui.define([
 	Layer,
 	VariantManagement,
 	ManagedObject,
-	ValueStateMessage,
 	CompositeCommand,
 	Log
 ) {
@@ -376,7 +374,7 @@ sap.ui.define([
 
 			oVariantManagementControl.getTitle().setText(sCustomTextForDuplicate);
 
-			if (oVariantManagementOverlay.hasStyleClass("sapUiRtaErrorBg")) {
+			if (oVariantManagementOverlay.hasStyleClass(RenameHandler.errorStyleClass)) {
 				fnHandleStartEdit();
 			} else {
 				oVariantManagementOverlay.attachEventOnce("geometryChanged", function() {
@@ -390,7 +388,7 @@ sap.ui.define([
 
 	ControlVariant.prototype.stopEdit = function (bRestoreFocus) {
 		if (this._oEditedOverlay._triggerDuplicate) {
-			if (!this._oEditedOverlay.hasStyleClass("sapUiRtaErrorBg")) {
+			if (!this._oEditedOverlay.hasStyleClass(RenameHandler.errorStyleClass)) {
 				delete this._oEditedOverlay._triggerDuplicate;
 			}
 		}
@@ -423,18 +421,7 @@ sap.ui.define([
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		var sCurrentVariantReference = oModel.getCurrentVariantReference(sVariantManagementReference);
 
-		//Remove border
-		oOverlay.removeStyleClass("sapUiRtaErrorBg");
-
-		//Close valueStateMessage
-		if (this._oValueStateMessage) {
-			this._oValueStateMessage.getPopup().attachEventOnce("closed", function() {
-				oRenamedElement.$().css("z-index", 1);
-				this._oValueStateMessage.destroy();
-				delete this._oValueStateMessage;
-			}, this);
-			this._oValueStateMessage.close();
-		}
+		oOverlay.removeStyleClass(RenameHandler.errorStyleClass);
 
 		//Check for real change before creating a command and pass if warning text already set
 		if (sText === '\xa0') { //Empty string
@@ -485,34 +472,24 @@ sap.ui.define([
 			return Promise.resolve();
 		}
 
-
 		if (sErrorText) {
 			// Order of calling:
 			// -> Open message box
 			// 		-> Close message box
 			// 			-> Stop edit on overlay
-			// 				-> Show value state message
-			// 					-> Start edit on overlay
+			// 				-> Start edit on overlay
 			var sValueStateText = oResourceBundle.getText(sErrorText);
 			this._prepareOverlayForValueState(oOverlay, sValueStateText);
 
 			//Border
-			oOverlay.addStyleClass("sapUiRtaErrorBg");
+			oOverlay.addStyleClass(RenameHandler.errorStyleClass);
 
-			return Promise.resolve(Utils._showMessageBox("ERROR", "BLANK_DUPLICATE_TITLE_TEXT", sErrorText)
-				.then(function () {
-					var fnErrorHandler = function() {
-						//valueStateMessage
-						this._oValueStateMessage = new ValueStateMessage(oOverlay);
-						this._oValueStateMessage.getPopup().attachEventOnce("opened", function (oEvent) {
-							oEvent.getSource()._deactivateFocusHandle();
-						});
-						this._oValueStateMessage.open();
-						this.startEdit(oOverlay);
-					}.bind(this);
-					return fnErrorHandler;
-				}.bind(this))
-			);
+			return Utils._showMessageBox("ERROR", "BLANK_DUPLICATE_TITLE_TEXT", sErrorText)
+			.then(function () {
+				return function() {
+					this.startEdit(oOverlay);
+				}.bind(this);
+			}.bind(this));
 		}
 	};
 

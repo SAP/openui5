@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/ControlVariant",
 	"sap/ui/dt/plugin/ToolHooks",
 	"sap/ui/rta/plugin/RenameHandler",
-	'sap/ui/core/Manifest',
+	"sap/ui/core/Manifest",
 	"sap/m/Button",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
@@ -25,7 +25,6 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
-	"sap/m/delegate/ValueStateMessage",
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -53,7 +52,6 @@ sap.ui.define([
 	Page,
 	VariantManagement,
 	VariantModel,
-	ValueStateMessage,
 	RtaUtils,
 	sinon
 ) {
@@ -86,7 +84,7 @@ sap.ui.define([
 		assert.strictEqual(this.oControlVariantPlugin._getVariantTitleForCopy(sTitleToBeCopied, "varMgtKey", this.oModel.getData()), sExpectedTitle, "then correct title returned for duplicate");
 	};
 
-	var fnCheckErrorRequirements = function(assert, oOverlay, fnMessageBoxShowStub, fnValueStateMessageOpenStub, oPlugin, sTextKey, bShowError, bCheckHandlerEdit) {
+	var fnCheckErrorRequirements = function(assert, oOverlay, fnMessageBoxShowStub, oPlugin, sTextKey, bShowError, bCheckHandlerEdit) {
 		assert.strictEqual(oPlugin._createSetTitleCommand.callCount, 0, "then _createSetTitleCommand() was not called");
 		assert.strictEqual(oPlugin._createDuplicateCommand.callCount, 0, "then _createDuplicateCommand() was not called");
 		assert.ok(oPlugin.stopEdit.calledOnce, "then stopEdit() was called once");
@@ -96,21 +94,11 @@ sap.ui.define([
 			assert.ok(oPlugin.startEdit.calledOnce, "then startEdit() was called once");
 			assert.ok(oPlugin.stopEdit.calledBefore(oPlugin.startEdit), "then startEdit() was called after stopEdit() was called");
 			assert.ok(fnMessageBoxShowStub.calledOnce, "then RtaUtils._showMessageBox was called once");
-			assert.ok(fnValueStateMessageOpenStub.calledOnce, "then ValueStateMessage.open was called once");
-			assert.ok(oPlugin._oValueStateMessage instanceof ValueStateMessage, "then value state message initialized for plugin");
-			assert.equal(typeof oOverlay.getValueState, "function", "then getValueState function set for VariantManagement control overlay");
-			assert.equal(typeof oOverlay.getValueStateText, "function", "then getValueStateText function set for VariantManagement control overlay");
-			assert.equal(oOverlay.getValueStateText(), getText(sTextKey), "then getValueStateText function set for VariantManagement control overlay");
-			assert.equal(typeof oOverlay.getDomRefForValueStateMessage, "function", "then getValueStateText function set for VariantManagement control overlay");
 			if (bCheckHandlerEdit) {
 				assert.ok(RenameHandler.startEdit.calledOnce, "then startEdit of the RenameHandler was called once");
 			}
 		}
 	};
-
-	function getText(sKey) {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText(sKey);
-	}
 
 	QUnit.module("Given a designTime and ControlVariant plugin are instantiated", {
 		beforeEach: function (assert) {
@@ -328,19 +316,17 @@ sap.ui.define([
 			this.oVariantManagementOverlay.setSelectable(true);
 
 			var done = assert.async();
-			var fnDone = assert.async();
+			var done2 = assert.async();
 
-			sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.ControlVariant.startEdit', function (sChannel, sEvent, mParams) {
-				if (mParams.overlay === this.oVariantManagementOverlay) {
-					assert.strictEqual(this.oVariantManagementOverlay.getSelected(), true, "then the overlay is still selected");
-					this.oControlVariantPlugin._$oEditableControlDomRef.text("Test");
-					this.oControlVariantPlugin._$editableField.text(this.oControlVariantPlugin._$oEditableControlDomRef.text());
-					var $Event = jQuery.Event("keydown"); // eslint-disable-line new-cap
-					$Event.keyCode = jQuery.sap.KeyCodes.ENTER;
-					this.oControlVariantPlugin._$editableField.trigger($Event);
-					sap.ui.getCore().applyChanges();
-					fnDone();
-				}
+			sap.ui.getCore().getEventBus().subscribeOnce("sap.ui.rta", "plugin.ControlVariant.startEdit", function () {
+				assert.strictEqual(this.oVariantManagementOverlay.getSelected(), true, "then the overlay is still selected");
+				this.oControlVariantPlugin._$oEditableControlDomRef.text("Test");
+				this.oControlVariantPlugin._$editableField.text(this.oControlVariantPlugin._$oEditableControlDomRef.text());
+				var $Event = jQuery.Event("keydown"); // eslint-disable-line new-cap
+				$Event.keyCode = jQuery.sap.KeyCodes.ENTER;
+				this.oControlVariantPlugin._$editableField.trigger($Event);
+				sap.ui.getCore().applyChanges();
+				done2();
 			}, this);
 
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
@@ -357,7 +343,7 @@ sap.ui.define([
 			var done = assert.async();
 			var aChanges = ["change1", "change2"];
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
-			sandbox.stub(this.oModel, "manageVariants").returns(Promise.resolve(aChanges));
+			sandbox.stub(this.oModel, "manageVariants").resolves(aChanges);
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
 				assert.ok(oEvent, "then fireElementModified is called once");
@@ -630,7 +616,8 @@ sap.ui.define([
 		QUnit.test("when _handlePostRename is called two times back to back", function(assert) {
 			sap.ui.getCore().applyChanges();
 
-			sandbox.stub(this.oControlVariantPlugin, "_emitLabelChangeEvent").returns(Promise.resolve());
+			sandbox.stub(this.oControlVariantPlugin, "_emitLabelChangeEvent").resolves();
+			sandbox.stub(RenameHandler, "_validateNewText");
 			sandbox.stub(this.oControlVariantPlugin, "stopEdit");
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
@@ -648,8 +635,7 @@ sap.ui.define([
 
 		QUnit.test("when variant is RENAMED and DUPLICATED with an EXISTING VARIANT TITLE, after which _handlePostRename is called", function (assert) {
 			var sNewVariantTitle = "Existing Variant Title";
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve());
-			var fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
@@ -676,7 +662,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
-				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, fnValueStateMessageOpenStub, this.oControlVariantPlugin, "DUPLICATE_ERROR_TEXT", true, true));
+				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, this.oControlVariantPlugin, "DUPLICATE_ERROR_TEXT", true, true));
 		});
 
 		QUnit.test("when variant is RENAMED with the TITLE OF ANOTHER INVISIBLE VARIANT, after which _handlePostRename is called", function(assert) {
@@ -713,8 +699,7 @@ sap.ui.define([
 
 		QUnit.test("when variant is RENAMED with a BLANK TITLE", function(assert) {
 			var sExistingVariantTitle = "Existing Variant Title";
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve());
-			var fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
@@ -740,12 +725,11 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
-				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, fnValueStateMessageOpenStub, this.oControlVariantPlugin, "BLANK_ERROR_TEXT", true));
+				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, this.oControlVariantPlugin, "BLANK_ERROR_TEXT", true));
 		});
 
 		QUnit.test("when variant is RENAMED with the SAME TEXT AS SOURCE, after which _handlePostRename is called", function(assert) {
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve());
-			var fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
@@ -758,12 +742,11 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
-				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, fnValueStateMessageOpenStub, this.oControlVariantPlugin, "DUPLICATE_ERROR_TEXT"));
+				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, this.oControlVariantPlugin, "DUPLICATE_ERROR_TEXT"));
 		});
 
 		QUnit.test("when variant is DUPLICATED and RENAMED with the SAME TEXT AS SOURCE, after which _handlePostRename is called", function(assert) {
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve());
-			var fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
@@ -778,12 +761,11 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
-				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, fnValueStateMessageOpenStub, this.oControlVariantPlugin, "DUPLICATE_ERROR_TEXT", true, true));
+				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, this.oControlVariantPlugin, "DUPLICATE_ERROR_TEXT", true, true));
 		});
 
 		QUnit.test("when variant RENAMED with the an EXISTING VARIANT TITLE, after which _handlePostRename is called", function(assert) {
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve());
-			var fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
 			var sExistingVariantTitle = "Existing Variant Title";
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
@@ -807,15 +789,14 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
-				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, fnValueStateMessageOpenStub, this.oControlVariantPlugin, "DUPLICATE_ERROR_TEXT", true));
+				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, this.oControlVariantPlugin, "DUPLICATE_ERROR_TEXT", true));
 		});
 
 		QUnit.test("when variant is RENAMED with a new variant title and NO PREVIOUS EXISTENCE, after which _handlePostRename is called", function(assert) {
-			assert.expect(9);
+			assert.expect(7);
 			var sExistingVariantTitle = "Existing Variant Title";
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve());
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
 			var fnCreateSetTitleCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
-			var fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
 
 			this.oModel.setData({
 				varMgtKey : {
@@ -842,21 +823,18 @@ sap.ui.define([
 				assert.equal(oCommand.getElement(), this.oVariantManagementControl, "then command has the correct control");
 
 				assert.notOk(this.oVariantManagementOverlay.hasStyleClass("sapUiRtaErrorBg"), "then error border not added to VariantManagement control overlay");
-				assert.notOk(this.oControlVariantPlugin._oValueStateMessage, "then no value state message exists for plugin");
 				assert.equal(fnMessageBoxShowStub.callCount, 0, "then RtaUtils._showMessageBox never called");
-				assert.equal(fnValueStateMessageOpenStub.callCount, 0, "then ValueStateMessage.open never called");
 			}.bind(this));
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin);
 		});
 
 		QUnit.test("when variant is RENAMED and DUPLICATED with an UNCHANGED TITLE, after which _handlePostRename is called", function(assert) {
-			assert.expect(12);
+			assert.expect(10);
 
 			var sExistingVariantTitle = "Existing Variant Title";
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve());
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
 			var fnCreateDuplicateCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
-			var fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
 
 			this.oModel.setData({
 				varMgtKey : {
@@ -892,22 +870,19 @@ sap.ui.define([
 				assert.equal(oDuplicateCommand.getSourceVariantReference(), "varMgtKey", "then command has correct variant management reference");
 
 				assert.notOk(this.oVariantManagementOverlay.hasStyleClass("sapUiRtaErrorBg"), "then error border not added to VariantManagement control overlay");
-				assert.notOk(this.oControlVariantPlugin._oValueStateMessage, "then no value state message exists for plugin");
 				assert.equal(fnMessageBoxShowStub.callCount, 0, "then RtaUtils._showMessageBox never called");
-				assert.equal(fnValueStateMessageOpenStub.callCount, 0, "then ValueStateMessage.open never called");
 			}.bind(this));
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin);
 		});
 
 		QUnit.test("when variant is RENAMED and DUPLICATED with a CHANGED TITLE, after which _handlePostRename is called", function(assert) {
-			assert.expect(16);
+			assert.expect(14);
 
 			var sExistingVariantTitle = "Source Variant Title";
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve());
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
 			var fnCreateDuplicateCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
 			var fnCreateSetTitleCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
-			var fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
 
 			this.oModel.setData({
 				varMgtKey : {
@@ -948,9 +923,7 @@ sap.ui.define([
 				assert.equal(oDuplicateCommand.getSourceVariantReference(), "varMgtKey", "then duplicate command has correct variant management reference");
 
 				assert.notOk(this.oVariantManagementOverlay.hasStyleClass("sapUiRtaErrorBg"), "then error border not added to VariantManagement control overlay");
-				assert.notOk(this.oControlVariantPlugin._oValueStateMessage, "then no value state message exists for plugin");
 				assert.equal(fnMessageBoxShowStub.callCount, 0, "then RtaUtils._showMessageBox never called");
-				assert.equal(fnValueStateMessageOpenStub.callCount, 0, "then ValueStateMessage.open never called");
 			}.bind(this));
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin);
@@ -1269,7 +1242,7 @@ sap.ui.define([
 				"sap.ui.fl.variants.VariantManagement": {}
 			};
 
-			this.oVariantManagementControl.placeAt('qunit-fixture');
+			this.oVariantManagementControl.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
