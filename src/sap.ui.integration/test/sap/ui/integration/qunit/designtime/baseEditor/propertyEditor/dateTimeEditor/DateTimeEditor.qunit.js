@@ -2,14 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes",
+	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	BaseEditor,
-	QUnitUtils,
-	KeyCodes,
+	EditorQunitUtils,
 	DateFormat,
 	sinon
 ) {
@@ -85,9 +83,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oDateTimeEditorElement.$("inner").val(sCurrentDateTimeString);
-			QUnitUtils.triggerEvent("input", this.oDateTimeEditorElement.getDomRef());
-			QUnitUtils.triggerKeydown(this.oDateTimeEditorElement.getDomRef(), KeyCodes.ENTER);
+			EditorQunitUtils.setCustomComboBoxValue(this.oDateTimeEditorElement, sCurrentDateTimeString);
 		});
 	});
 

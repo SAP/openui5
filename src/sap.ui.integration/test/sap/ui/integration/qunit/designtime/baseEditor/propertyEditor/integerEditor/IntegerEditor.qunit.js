@@ -2,11 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
-	"sap/ui/qunit/QUnitUtils",
+	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/core/format/NumberFormat"
 ], function (
 	BaseEditor,
-	QUnitUtils,
+	EditorQunitUtils,
 	NumberFormat
 ) {
 	"use strict";
@@ -68,13 +68,11 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oIntegerEditorElement.setValue("43");
-			QUnitUtils.triggerEvent("input", this.oIntegerEditorElement.getDomRef());
+			EditorQunitUtils.setInputValue(this.oIntegerEditorElement, "43");
 		});
 
 		QUnit.test("When a float value is provided", function (assert) {
-			this.oIntegerEditorElement.setValue(NumberFormat.getFloatInstance().format(3.14));
-			QUnitUtils.triggerEvent("input", this.oIntegerEditorElement.getDomRef());
+			EditorQunitUtils.setInputValue(this.oIntegerEditorElement, NumberFormat.getFloatInstance().format(3.14).toString());
 
 			assert.strictEqual(this.oIntegerEditorElement.getValueState(), "Error", "Then the error is displayed");
 			assert.strictEqual(this.oIntegerEditor.getValue(), 42, "Then the editor value is not updated");

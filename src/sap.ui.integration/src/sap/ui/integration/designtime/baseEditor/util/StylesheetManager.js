@@ -65,7 +65,10 @@ sap.ui.define([
 		var mStoreNext = Object.assign({}, mStore);
 		var mConfig = mStoreNext[sFilePath];
 
-		document.getElementById(mConfig.id).remove();
+		var oElementToRemove = document.getElementById(mConfig.id);
+		if (oElementToRemove && oElementToRemove.parentNode) {
+			oElementToRemove.parentNode.removeChild(oElementToRemove);
+		}
 		delete mStoreNext[sFilePath];
 
 		mStore = mStoreNext;
@@ -128,6 +131,8 @@ sap.ui.define([
 		/**
 		 * Removes CSS file from the page.
 		 * **Note:** the file may not be removed immediately in case there are other consumers of the same CSS file.
+		 *
+		 * @param {string} sModulePath - Module path
 		 */
 		remove: function (sModulePath) {
 			var sFilePath = getFilePath(sModulePath);

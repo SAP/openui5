@@ -2,18 +2,22 @@
 
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor",
-	"sap/ui/model/json/JSONModel",
+	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	JsonEditor,
-	JSONModel,
+	EditorQunitUtils,
 	QUnitUtils,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
+
+	function setCodeEditorValue (oCodeEditor, sInput) {
+		oCodeEditor.setValue(sInput);
+	}
 
 	QUnit.module("JSON Data Editor: Given an editor config", {
 		before: function () {
@@ -84,8 +88,9 @@ sap.ui.define([
 						fnDone();
 					} else {
 						this.bOpenedBefore = true;
-						oDialog.getContent()[1].setValue("");
-						QUnitUtils.triggerEvent("input", oDialog.getContent()[1].getDomRef());
+
+						EditorQunitUtils.setInputValue(oDialog.getContent()[1], "");
+
 						QUnitUtils.triggerEvent("tap", oDialog.getEndButton().getDomRef());
 						QUnitUtils.triggerEvent("click", this.oJsonEditorElement.$("vhi"));
 					}
@@ -149,8 +154,7 @@ sap.ui.define([
 		QUnit.test("When a value is incorrectly changed in the inline editor", function (assert) {
 			var fnDone = assert.async();
 
-			this.oJsonEditorElement.setValue("[{\"name\": John}]");
-			QUnitUtils.triggerEvent("input", this.oJsonEditorElement.getDomRef());
+			EditorQunitUtils.setInputValue(this.oJsonEditorElement, "[{\"name\": John}]");
 
 			assert.strictEqual(this.oJsonEditorElement.getValueState(), "Error", "Then the error is displayed");
 			assert.deepEqual(this.oJsonEditor.getValue(), this.oValue, "Then the editor value is not updated");
@@ -184,11 +188,10 @@ sap.ui.define([
 				assert.strictEqual(this.oJsonEditorElement.getValueState(), "None", "No error is displayed");
 				fnDone();
 			}.bind(this));
-			this.oJsonEditorElement.setValue(JSON.stringify([{
+			EditorQunitUtils.setInputValue(this.oJsonEditorElement, JSON.stringify([{
 				name: "John Foo",
 				age: 48
 			}]));
-			QUnitUtils.triggerEvent("input", this.oJsonEditorElement.getDomRef());
 		});
 
 		QUnit.test("When a value is incorrectly changed in the editor dialog", function (assert) {
@@ -196,11 +199,8 @@ sap.ui.define([
 
 			this.oJsonEditorElement.attachValueHelpRequest(function () {
 				this.oJsonEditor._openJsonEditor.returnValues[0].then(function (oDialog) {
-					oDialog.getContent()[1].setValue("{\"msg\": Hello World}");
-					QUnitUtils.triggerEvent("input", oDialog.getContent()[1].getDomRef());
-
+					setCodeEditorValue(oDialog.getContent()[1], "{\"msg\": Hello World}");
 					assert.strictEqual(oDialog.getBeginButton().getEnabled(), false, "Then the changes cannot be saved");
-
 					fnDone();
 				});
 			}.bind(this));
@@ -213,10 +213,9 @@ sap.ui.define([
 
 			this.oJsonEditorElement.attachValueHelpRequest(function () {
 				this.oJsonEditor._openJsonEditor.returnValues[0].then(function (oDialog) {
-					oDialog.getContent()[1].setValue(JSON.stringify({
+					setCodeEditorValue(oDialog.getContent()[1], JSON.stringify({
 						msg: "Hello World"
 					}));
-					QUnitUtils.triggerEvent("input", oDialog.getContent()[1].getDomRef());
 					QUnitUtils.triggerEvent("tap", oDialog.getBeginButton().getDomRef());
 				});
 			}.bind(this));
@@ -234,8 +233,7 @@ sap.ui.define([
 
 			this.oJsonEditorElement.attachValueHelpRequest(function () {
 				this.oJsonEditor._openJsonEditor.returnValues[0].then(function (oDialog) {
-					oDialog.getContent()[1].setValue("{\"msg\":\n\n\t\"Hello World\"}");
-					QUnitUtils.triggerEvent("input", oDialog.getContent()[1].getDomRef());
+					setCodeEditorValue(oDialog.getContent()[1], "{\"msg\":\n\n\t\"Hello World\"}");
 					QUnitUtils.triggerEvent("tap", oDialog.getCustomHeader().getContentLeft()[0].getDomRef());
 
 					assert.strictEqual(

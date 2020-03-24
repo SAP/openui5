@@ -16,7 +16,10 @@ sap.ui.define(function () {
 				noConflict: true,
 				// preload: "auto",
 				"xx-waitForTheme": "init",
-				"xx-supportedLanguages": ""
+				"xx-supportedLanguages": "",
+				resourceroots: {
+					"qunit": "test-resources/sap/ui/integration/qunit/"
+				}
 			},
 			coverage: {
 				only: ["sap/ui/integration"]

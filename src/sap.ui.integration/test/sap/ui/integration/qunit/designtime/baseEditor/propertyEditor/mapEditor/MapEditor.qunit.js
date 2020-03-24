@@ -3,13 +3,13 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/base/util/ObjectPath",
-	"sap/ui/events/KeyCodes"
+	"qunit/designtime/EditorQunitUtils",
+	"sap/base/util/ObjectPath"
 ], function (
 	BaseEditor,
 	QUnitUtils,
-	ObjectPath,
-	KeyCodes
+	EditorQunitUtils,
+	ObjectPath
 ) {
 	"use strict";
 
@@ -163,8 +163,7 @@ sap.ui.define([
 					);
 					fnDone();
 				});
-				this.aItems[0].key.setValue("foo2");
-				QUnitUtils.triggerEvent("input", this.aItems[0].key.getDomRef());
+				EditorQunitUtils.setInputValue(this.aItems[0].key, "foo2");
 			}, this);
 			QUnitUtils.triggerEvent("tap", this.oAddButton.getDomRef());
 		});
@@ -173,8 +172,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 			this.oMapEditor.attachEventOnce("valueChange", function () {
 				this.oMapEditorContent = getMapEditorContent(this.oMapEditor);
-				this.aItems[0].key.setValue("key");
-				QUnitUtils.triggerEvent("input", this.aItems[0].key.getDomRef());
+				EditorQunitUtils.setInputValue(this.aItems[0].key, "key");
 
 				assert.deepEqual(
 					this.oMapEditor.getValue(),
@@ -200,9 +198,7 @@ sap.ui.define([
 			}, this);
 
 			var oTypeSelector = this.aItems[0].type;
-			oTypeSelector.getDomRef().value = oTypeSelector.getItemByKey("number").getText();
-			QUnitUtils.triggerEvent("input", oTypeSelector.getDomRef());
-			QUnitUtils.triggerKeydown(oTypeSelector.getDomRef(), KeyCodes.ENTER);
+			EditorQunitUtils.selectComboBoxValue(oTypeSelector, "number");
 		});
 
 		QUnit.test("When a value is updated and the new value is valid", function (assert) {
@@ -227,14 +223,12 @@ sap.ui.define([
 			}, this);
 
 			var oInput = this.aItems[0].value._getPropertyEditors()[0].getContent();
-			oInput.setValue("baz");
-			QUnitUtils.triggerEvent("input", oInput.getDomRef());
+			EditorQunitUtils.setInputValue(oInput, "baz");
 		});
 
 		QUnit.test("When a value is updated and the new value is not valid", function (assert) {
 			var oInput = this.aItems[0].value._getPropertyEditors()[0].getContent();
-			oInput.setValue("{someInvalidBindingString");
-			QUnitUtils.triggerEvent("input", oInput.getDomRef());
+			EditorQunitUtils.setInputValue(oInput, "{someInvalidBindingString");
 
 			assert.deepEqual(
 				this.oMapEditor.getValue(),
@@ -443,8 +437,7 @@ sap.ui.define([
 				var aItems = oMapEditorContent.items;
 
 				sap.ui.getCore().applyChanges();
-				aItems[0].key.setValue("foo");
-				QUnitUtils.triggerEvent("input", aItems[0].key.getDomRef());
+				EditorQunitUtils.setInputValue(aItems[0].key, "foo");
 
 				assert.deepEqual(
 					oMapEditor.getValue(),

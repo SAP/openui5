@@ -3,12 +3,12 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes",
+	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	BaseEditor,
 	QUnitUtils,
-	KeyCodes,
+	EditorQunitUtils,
 	sinon
 ) {
 	"use strict";
@@ -81,9 +81,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oListEditorElement.setValue("foobar");
-			QUnitUtils.triggerEvent("input", this.oListEditorElement.getDomRef());
-			QUnitUtils.triggerKeydown(this.oListEditorElement.getDomRef(), KeyCodes.ENTER);
+			EditorQunitUtils.addToMultiInput(this.oListEditorElement, "foobar");
 		});
 
 		QUnit.test("When an item is removed in the editor", function (assert) {
@@ -114,9 +112,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oListEditorElement.setValue("{foobarPath}");
-			QUnitUtils.triggerEvent("input", this.oListEditorElement.getDomRef());
-			QUnitUtils.triggerKeydown(this.oListEditorElement.getDomRef(), KeyCodes.ENTER);
+			EditorQunitUtils.addToMultiInput(this.oListEditorElement, "{foobarPath}");
 		});
 
 		QUnit.test("When a binding path is provided as the editor value", function (assert) {
@@ -132,9 +128,7 @@ sap.ui.define([
 			var oSpy = sandbox.spy();
 			this.oListEditor.attachValueChange(oSpy);
 
-			this.oListEditorElement.setValue("{brokenBindingString");
-			QUnitUtils.triggerEvent("input", this.oListEditorElement.getDomRef());
-			QUnitUtils.triggerKeydown(this.oListEditorElement.getDomRef(), KeyCodes.ENTER);
+			EditorQunitUtils.addToMultiInput(this.oListEditorElement, "{brokenBindingString");
 
 			assert.strictEqual(this.oListEditorElement.getValueState(), "Error", "Then the error is displayed");
 
@@ -153,9 +147,7 @@ sap.ui.define([
 			var oSpy = sandbox.spy();
 			this.oListEditor.attachValueChange(oSpy);
 
-			this.oListEditorElement.setValue("bar");
-			QUnitUtils.triggerEvent("input", this.oListEditorElement.getDomRef());
-			QUnitUtils.triggerKeydown(this.oListEditorElement.getDomRef(), KeyCodes.ENTER);
+			EditorQunitUtils.addToMultiInput(this.oListEditorElement, "bar");
 
 			assert.strictEqual(this.oListEditorElement.getValueState(), "Error", "Then the error is displayed");
 

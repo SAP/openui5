@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/base/util/restricted/_debounce"
+	"sap/base/util/restricted/_debounce",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	BaseEditor,
 	QUnitUtils,
-	_debounce
+	_debounce,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -133,8 +135,7 @@ sap.ui.define([
 					type: "string"
 				}
 			});
-			this.aItems[0].key.setValue("foo2");
-			QUnitUtils.triggerEvent("input", this.aItems[0].key.getDomRef());
+			EditorQunitUtils.setInputValue(this.aItems[0].key, "foo2");
 		});
 
 		QUnit.test("When an element key is changed to an unique value", function (assert) {
@@ -154,8 +155,7 @@ sap.ui.define([
 				);
 				fnDone();
 			});
-			this.aItems[0].key.setValue("foo2");
-			QUnitUtils.triggerEvent("input", this.aItems[0].key.getDomRef());
+			EditorQunitUtils.setInputValue(this.aItems[0].key, "foo2");
 		});
 
 		QUnit.test("When the label is changed in the editor", function (assert) {
@@ -175,8 +175,7 @@ sap.ui.define([
 				);
 				fnDone();
 			});
-			this.aItems[0].label.setValue("Changed Label");
-			QUnitUtils.triggerEvent("input", this.aItems[0].label.getDomRef());
+			EditorQunitUtils.setInputValue(this.aItems[0].label, "Changed Label");
 		});
 	});
 
@@ -323,9 +322,7 @@ sap.ui.define([
 			}, this);
 
 			var oInput = this.oParametersEditor.getContent()._getPropertyEditors()[1].getContent();
-			oInput.setValue("baz value");
-			QUnitUtils.triggerEvent("input", oInput.getDomRef());
-
+			EditorQunitUtils.setInputValue(oInput, "baz value");
 		});
 	});
 
