@@ -88,6 +88,7 @@ sap.ui.define([
 					encodeURL(oView.getModel("ui").getProperty("/salesOrderID")), "Edm.String"),
 				sContextPath = "/SalesOrderSet(" +  sSalesOrder + ")";
 
+			oView.byId("objectPage").unbindElement();
 			oView.byId("objectPage").bindElement(sContextPath);
 			oView.byId("messagePopover").getBinding("items")
 				.filter(new Filter("fullTarget", FilterOperator.StartsWith, sContextPath));
@@ -96,13 +97,14 @@ sap.ui.define([
 		onTransitionMessagesOnly : function (oEvent) {
 			var oView = this.getView();
 
+			oView.byId("objectPage").unbindElement();
 			oView.byId("ToLineItems").bindRows({
 				path : "ToLineItems",
 				parameters : {
 					transitionMessagesOnly : oEvent.getSource().getPressed()
 				}
 			});
-			oView.getModel().refresh();
+			this.onSelectSalesOrder();
 		},
 
 		/**
