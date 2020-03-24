@@ -274,13 +274,15 @@ function(
 		},
 		afterEach: function () {
 			this.oComponent.destroy();
-			this.oControl.destroy();
+			if (this.oControl) {
+				this.oControl.destroy();
+			}
 			sandbox.restore();
 		}
 	}, function () {
 
 		QUnit.test("when the modifier retrieves the change handler module for a control with instance-specific change handler module", function(assert){
-			var sDummyModulePath = '/dummy/path/to/dummy/file.flexibility';
+			var sDummyModulePath = 'dummy/path/to/dummy/file.flexibility';
 
 			var mCustomData = {
 					'key' : 'sap-ui-custom-settings',
@@ -306,6 +308,75 @@ function(
 			var sChangeHandlerModulePath = JsControlTreeModifier.getChangeHandlerModulePath(this.oControl);
 
 			assert.equal(sChangeHandlerModulePath, undefined, "then 'undefined' is returned");
+		});
+
+		function _getDelegate(mCustomData) {
+			this.oControl = JsControlTreeModifier.createControl("sap.m.Button", this.oComponent, undefined, "myButton", {
+				text: "ButtonInHeading",
+				customData : mCustomData
+			});
+
+			return JsControlTreeModifier.getFlexDelegate(this.oControl);
+		}
+
+		QUnit.test("when getFlexDelegate() is called to retrieve the delegate info for a control with delegate info", function(assert){
+			var mDummyDelegateInfo = {
+				name: "dummy/path/to/dummy/file"
+			};
+			var mCustomData = {
+				"key" : "sap-ui-custom-settings",
+				"value" : {
+					"sap.ui.fl" : {
+						"delegate" : JSON.stringify(mDummyDelegateInfo)
+					}
+				}
+			};
+			var mDelegateInfo = _getDelegate.call(this, mCustomData);
+			assert.deepEqual(mDelegateInfo, {
+				name: mDummyDelegateInfo.name,
+				payload: {}
+			}, "then the correct delegate info is returned");
+		});
+
+		QUnit.test("when getFlexDelegate() is called to retrieve the delegate info for a control with an incorrect format", function(assert){
+			var mIncorrectDelegateInfo = {
+				name: "dummy/path/to/dummy/file"
+			};
+			var mCustomData = {
+				"key" : "sap-ui-custom-settings",
+				"value" : {
+					"sap.ui.fl" : {
+						"delegate" : mIncorrectDelegateInfo
+					}
+				}
+			};
+			var mDelegateInfo = _getDelegate.call(this, mCustomData);
+			assert.deepEqual(mDelegateInfo, undefined, "then an undefined value is returned");
+		});
+
+		QUnit.test("when getFlexDelegate() is called to retrieve the delegate info for a control with an broken format", function(assert){
+			var mCustomData = {
+				"key" : "sap-ui-custom-settings",
+				"value" : {
+					"sap.ui.fl" : {
+						"delegate" : "{ name : foo}" //missing quotation marks in json
+					}
+				}
+			};
+			var mDelegateInfo = _getDelegate.call(this, mCustomData);
+			assert.deepEqual(mDelegateInfo, undefined, "then an undefined value is returned");
+		});
+
+
+
+		QUnit.test("when getFlexDelegate() is called to retrieve the delegate info for a control, with no custom data", function(assert){
+			var mDelegateInfo = _getDelegate.call(this, undefined);
+			assert.deepEqual(mDelegateInfo, undefined, "then an undefined value is returned");
+		});
+
+		QUnit.test("when getFlexDelegate() is called to retrieve the delegate info without control", function(assert){
+			var mDelegateInfo = JsControlTreeModifier.getFlexDelegate(undefined);
+			assert.strictEqual(mDelegateInfo, undefined, "then an undefined value is returned");
 		});
 
 		QUnit.test("applySettings", function(assert){

@@ -611,14 +611,11 @@ sap.ui.define([
 			}
 		},
 
-		/**
-		 * @inheritDoc
-		 */
-		getChangeHandlerModulePath: function(oControl) {
+		_getFlexCustomData: function(oControl, sType) {
 			if (!oControl){
 				return undefined;
 			}
-			return oControl.getAttributeNS("sap.ui.fl", "flexibility");
+			return oControl.getAttributeNS("sap.ui.fl", sType);
 		},
 
 		/**
