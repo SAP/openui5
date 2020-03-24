@@ -1,19 +1,31 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/integration/widgets/Card",
-	"sap/ui/integration/cards/AdaptiveContent",
-	"sap/ui/integration/thirdparty/adaptivecards",
-	"sap/ui/core/Core"
-],
+		"sap/ui/integration/library",
+		"sap/ui/integration/widgets/Card",
+		"sap/ui/integration/Host",
+		"sap/ui/integration/cards/AdaptiveContent",
+		"sap/ui/integration/util/RequestDataProvider",
+		"sap/ui/integration/util/CardActions",
+		"sap/ui/integration/thirdparty/adaptivecards",
+		"sap/ui/core/library",
+		"sap/ui/core/Core"
+	],
 	function (
+		library,
 		Card,
+		Host,
 		AdaptiveContent,
+		RequestDataProvider,
+		CardActions,
 		AdaptiveCards,
+		coreLibrary,
 		Core
 	) {
 		"use strict";
 
 		var DOM_RENDER_LOCATION = "qunit-fixture";
+		// shortcut for sap.ui.core.MessageType
+		var MessageType = coreLibrary.MessageType;
 
 		var oManifest = {
 			"sap.card": {
@@ -300,6 +312,40 @@ sap.ui.define([
 			}
 		};
 
+		var mActionSubmitManifest = {
+			"sap.card": {
+				"configuration": {
+					"actionHandlers": {
+						"submit": {
+							"url": "https://my-fake.url",
+							"method": "POST"
+						}
+					}
+				},
+				"type": "AdaptiveCard",
+				"content": {
+					"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+					"type": "AdaptiveCard",
+					"version": "1.0",
+					"body": [
+						{
+							"type": "Input.Text",
+							"placeholder": "Name",
+							"style": "text",
+							"id": "inputValue",
+							"value": "My Text"
+						}
+					],
+					"actions": [{
+						"type": "Action.Submit",
+						"title": "Action.Submit"
+					}]
+				}
+			}
+		};
+
+		QUnit.module("Adaptive Card Initialization");
+
 		QUnit.test("Adaptive Card with inline MS JSON descriptor", function (assert) {
 			var done = assert.async();
 			var oCard = new Card({
@@ -327,7 +373,6 @@ sap.ui.define([
 				done();
 			});
 		});
-
 
 		QUnit.test("Adaptive Card with dynamically loaded MS JSON descriptor", function (assert) {
 			var done = assert.async();
@@ -416,6 +461,8 @@ sap.ui.define([
 				done();
 			});
 		});
+
+		QUnit.module("Adaptive Card Templating");
 
 		QUnit.test("Templating with data feature on content level - inline json", function (assert) {
 			var done = assert.async();
@@ -724,6 +771,8 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.module("Adaptive Card Markdown Support");
+
 		QUnit.test("Markdown support - enableMarkdown: true", function (assert) {
 			var done = assert.async();
 			var oCard = new Card({
@@ -762,6 +811,47 @@ sap.ui.define([
 				// Cleanup
 				oCard.destroy();
 				done();
+			});
+		});
+
+		QUnit.module("Adaptive Card Action.Submit Handling");
+
+		QUnit.test("getSubmitActionHandler evaluate Success execution", function (assert) {
+			var oAdaptiveContent,
+				done = assert.async(),
+				oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
+				oCard = new Card({
+					manifest: mActionSubmitManifest
+				}).placeAt(DOM_RENDER_LOCATION);
+
+			Core.applyChanges();
+
+
+			oCard.attachEvent("_ready", function () {
+				oAdaptiveContent = oCard.getCardContent();
+
+				// Act
+				CardActions.fireAction({
+					card: oCard,
+					host: null,
+					action: {type: library.CardActionType.Submit},
+					parameters: {configuration: {}, data: {foo: "bar"}},
+					source: oCard.getCardContent()
+				});
+
+				// Assert
+				setTimeout(function () { // .getData() returns a Promise and MessageStrip's manipulations are executed in then()'s callbacks
+					assert.ok(oStubRequest.called, "DataProvider's _fetch should have been called");
+					assert.strictEqual(oAdaptiveContent.getAggregation("_content").getItems()[0].getType(), MessageType.Success,
+						"The success execution should put the state of the MessageStrip to Success");
+
+					assert.ok(oAdaptiveContent.getAggregation("_content").getItems()[0].getVisible(),
+						"The execution of data fetching should make the MessageStrip visible");
+
+					// Cleanup
+					oCard.destroy();
+					done();
+				});
 			});
 		});
 	}

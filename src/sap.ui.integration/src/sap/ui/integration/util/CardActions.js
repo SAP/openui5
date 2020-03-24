@@ -6,12 +6,14 @@ sap.ui.define([
 		"sap/ui/integration/library",
 		"sap/ui/base/ManagedObject",
 		"sap/base/Log",
-		"sap/ui/integration/util/BindingResolver"],
+		"sap/ui/integration/util/BindingResolver",
+		"sap/ui/integration/util/DataProviderFactory"],
 	function (mLibrary,
 			  library,
 			  ManagedObject,
 			  Log,
-			  BindingResolver) {
+			  BindingResolver,
+			  DataProviderFactory) {
 		"use strict";
 
 		function _getServiceName(vService) {
@@ -341,17 +343,19 @@ sap.ui.define([
 
 		CardActions.prototype.fireAction = function (oSource, sType, mParameters) {
 			var oHost = this._getHostInstance(),
-				oCard = this.getCard();
+				oCard = this.getCard(),
+				oActionHandlingConfiguration = this._extractActionConfigurations(oCard, mParameters),
+				oEventData = {
+					card: oCard,
+					host: oHost,
+					action: {
+						type: sType
+					},
+					parameters: oActionHandlingConfiguration,
+					source: oSource
+				};
 
-			CardActions.fireAction({
-				card: oCard,
-				host: oHost,
-				action: {
-					type: sType
-				},
-				parameters: mParameters,
-				source: oSource
-			});
+			CardActions.fireAction(oEventData);
 		};
 
 		CardActions.fireAction = function (mConfig) {
@@ -401,7 +405,77 @@ sap.ui.define([
 						fnAction(mConfig.card, mConfig.source);
 					}
 					break;
+				case CardActionType.Submit:
+					if (mConfig.source && mConfig.source.isA("sap.ui.integration.cards.BaseContent")) {
+						CardActions.handleSubmitAction(mConfig);
+					}
+					break;
 			}
+		};
+
+		/**
+		 * Handles Submit action
+		 *
+		 * @param mConfig
+		 * @private
+		 * @static
+		 */
+		CardActions.handleSubmitAction = function (mConfig) {
+			var oDataProvider,
+				oCard = mConfig.card,
+				oDataProviderFactory = oCard._oDataProviderFactory,
+				oBaseContentInstance = mConfig.source,
+				oActionParameters = mConfig.parameters;
+
+			if (!oActionParameters.configuration) {
+				return;
+			}
+
+			oBaseContentInstance.onActionSubmitStart(oActionParameters);
+
+			oDataProvider = oDataProviderFactory.create({request: oActionParameters.configuration});
+
+			oDataProvider.getData()
+				.then(function (oResponse) {
+					oBaseContentInstance.onActionSubmitEnd(oResponse, null);
+				}, function (oError) {
+					Log.error(oError);
+					oBaseContentInstance.onActionSubmitEnd(null, {error: oError});
+				})
+				.finally(function () {
+					// Cleanup the data provider
+					oDataProviderFactory.remove(oDataProvider);
+				});
+		};
+
+		/**
+		 * Resolves manifest configurations for the Actions
+		 *
+		 * @param oCard {sap.ui.integration.widgets.Card}
+		 * @param mParameters {Object}
+		 * @returns {Object}
+		 * @private
+		 */
+		CardActions.prototype._extractActionConfigurations = function (oCard, mParameters) {
+			var oRequestConfig = oCard && oCard.getManifestEntry("/sap.card/configuration/actionHandlers/submit");
+
+			if (!oRequestConfig) {
+				return mParameters;
+			}
+
+			return {
+				data: mParameters,
+				configuration: {
+					"mode": oRequestConfig.mode || "cors",
+					"url": oRequestConfig.url,
+					"method": oRequestConfig.method || "POST",
+					"parameters": Object.assign({}, mParameters, oRequestConfig.parameters),
+					"headers": oRequestConfig.headers,
+					"xhrFields": {
+						"withCredentials": !!oRequestConfig.withCredentials
+					}
+				}
+			};
 		};
 
 		return CardActions;
