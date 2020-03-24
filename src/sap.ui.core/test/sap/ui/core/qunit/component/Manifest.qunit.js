@@ -196,4 +196,62 @@ sap.ui.define([
 		);
 	});
 
+	QUnit.test("Replace text placeholders in Manifest", function (assert) {
+		this.oManifest = new Manifest({
+			"sap.app": {
+				"id": "sap.ui.test.terminologies",
+				"type": "application",
+				"i18n": "i18n.properties",
+				"title": "{{appTitle}}",
+				"description": "{{appDescription}}",
+				"applicationVersion": {
+					"version": "1.0.0"
+				}
+			},
+			"sap.ui5": {}
+		}, {
+			url: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/textReplacement/manifest.json"
+		});
+		var oJson = this.oManifest.getJson();
+		assert.equal(oJson["sap.app"].title, "Some Application Title", "Title should be correct");
+		assert.equal(oJson["sap.app"].description, "Some application description", "App description should be correct");
+	});
+
+	QUnit.skip("Replace text placeholders with content from Terminologies", function (assert) {
+		this.oManifest = new Manifest({
+			"sap.app": {
+				"id": "sap.ui.test.terminologies",
+				"type": "application",
+				"i18n": {
+					"bundleUrl": "i18n.properties",
+					"fallbackLocale": "de",
+					"supportedLocales": ["de"],
+					"terminologies": {
+						"oil": {
+							"bundleUrl": "i18n.terminologies.oil.properties",
+							"bundleUrlRelativeTo": "manifest",
+							"supportedLocales": ["de"]
+						},
+						"retail": {
+							"bundleUrl": "i18n.terminologies.retail.properties",
+							"bundleUrlRelativeTo": "manifest",
+							"supportedLocales": ["de"]
+						}
+					}
+				},
+				"title": "{{appTitle}}",
+				"description": "{{appDescription}}",
+				"applicationVersion": {
+					"version": "1.0.0"
+				}
+			},
+			"sap.ui5": {}
+		}, {
+			activeTerminologies: ["oil", "retail"],
+			url: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/textReplacement/manifest.json"
+		});
+		var oJson = this.oManifest.getJson();
+		assert.equal(oJson["sap.app"].title, "Zhell Fuel Station", "Title should be correct");
+		assert.equal(oJson["sap.app"].description, "Cheap oil prices guaranteed", "App description should be correct");
+	});
 });

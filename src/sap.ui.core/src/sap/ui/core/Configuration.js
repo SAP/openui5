@@ -136,8 +136,9 @@ sap.ui.define([
 					"whitelistService"      : { type : "string",   defaultValue : null,      noUrl: true }, // url/to/service
 					"frameOptions"          : { type : "string",   defaultValue : "default", noUrl: true }, // default/allow/deny/trusted (default => allow)
 					"frameOptionsConfig"    : { type : "object",   defaultValue : undefined, noUrl:true },  // advanced frame options configuration
-					"support"               : { type : "string[]",  defaultValue : null },
-					"testRecorder"            : { type : "string[]",  defaultValue : null },
+					"support"               : { type : "string[]", defaultValue : null },
+					"testRecorder"          : { type : "string[]", defaultValue : null },
+					"activeTerminologies"   : { type : "string[]", defaultValue: undefined},
 					"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
 					"xx-appCacheBusterMode" : { type : "string",   defaultValue : "sync" },
 					"xx-appCacheBusterHooks": { type : "object",   defaultValue : undefined, noUrl:true }, // e.g.: { handleURL: fn, onIndexLoad: fn, onIndexLoaded: fn }
@@ -1494,6 +1495,17 @@ sap.ui.define([
 		 */
 		getHyphenation : function() {
 			return this["xx-hyphenation"];
+		},
+
+		/**
+		 * Returns the list of active terminologies defined via the Configuration.
+		 *
+		 * @returns {string[]} if no active terminologies are set, the default value <code>undefined</code> is returned.
+		 * @since 1.77.0
+		 * @public
+		 */
+		getActiveTerminologies : function() {
+			return this["activeTerminologies"];
 		},
 
 		/**
