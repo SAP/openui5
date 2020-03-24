@@ -401,10 +401,10 @@ sap.ui.define([
 			Log.error(this + " : " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
 			return;
 		}
-		oObject.detachValidationSuccess(this._handleSuccess);
-		oObject.detachValidationError(this._handleError);
-		oObject.detachParseError(this._handleError);
-		oObject.detachFormatError(this._handleError);
+		oObject.detachValidationSuccess(this._handleSuccess, this);
+		oObject.detachValidationError(this._handleError, this);
+		oObject.detachParseError(this._handleError, this);
+		oObject.detachFormatError(this._handleError, this);
 	};
 
 	/**
