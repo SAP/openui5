@@ -23,6 +23,7 @@ sap.ui.define([
 	var CLASS_ICON = ".sapMMsgStripIcon";
 	var CLASS_FORMATTED_TEXT = ".sapMFT";
 	var CLASS_TEXT = ".sapMText";
+	var nAnimationLengthTimeout = 300;
 
 	QUnit.module("API", {
 		beforeEach: function() {
@@ -288,10 +289,17 @@ sap.ui.define([
 			this.oMessageStrip.placeAt(DOM_RENDER_LOCATION);
 
 			sap.ui.getCore().applyChanges();
+
+			this.oButton = this.oMessageStrip.getAggregation("_closeButton");
 		},
 		afterEach: function() {
 			if (this.oMessageStrip) {
 				this.oMessageStrip.destroy();
+				this.oMessageStrip = null;
+			}
+			if (this.oButton) {
+				this.oButton.destroy();
+				this.oButton = null;
 			}
 		}
 	});
@@ -306,8 +314,8 @@ sap.ui.define([
 		});
 
 		setTimeout(function() {
-			sap.ui.test.qunit.triggerEvent("tap", jQuery(CLASS_CLOSE_BUTTON)[0]);
-		}, 300);
+			sap.ui.test.qunit.triggerEvent("tap", this.oButton);
+		}.bind(this), nAnimationLengthTimeout);
 
 	});
 
@@ -321,9 +329,9 @@ sap.ui.define([
 		});
 
 		setTimeout(function() {
-			jQuery(CLASS_CLOSE_BUTTON)[0].focus();
-			sap.ui.test.qunit.triggerKeydown(jQuery(CLASS_CLOSE_BUTTON)[0], KeyCodes.ENTER);
-		}, 300);
+			this.oButton.focus();
+			sap.ui.test.qunit.triggerKeydown(this.oButton, KeyCodes.ENTER);
+		}.bind(this), nAnimationLengthTimeout);
 	});
 
 	QUnit.test("Pressing space on close button", function(assert) {
@@ -336,9 +344,9 @@ sap.ui.define([
 		});
 
 		setTimeout(function() {
-			jQuery(CLASS_CLOSE_BUTTON)[0].focus();
-			sap.ui.test.qunit.triggerKeydown(jQuery(CLASS_CLOSE_BUTTON)[0], KeyCodes.SPACE);
-		}, 300);
+			this.oButton.focus();
+			sap.ui.test.qunit.triggerKeyup(this.oButton, KeyCodes.SPACE);
+		}.bind(this), nAnimationLengthTimeout);
 	});
 
 	QUnit.module("ARIA Support", {

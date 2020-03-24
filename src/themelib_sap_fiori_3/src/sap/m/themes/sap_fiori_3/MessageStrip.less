@@ -7,47 +7,6 @@
 	border-radius: @sapUiElementBorderCornerRadius;
 }
 
-.sapMMsgStripCloseButton {
-	/* TODO remove after the end of support for Internet Explorer */
-	// centering the content of the ::after element
-	// does not work in IE if directly set on ::after
-	// 1.75rem - 4px (1px border and 1px offset per side)
-	line-height: 1.35rem;
-	border-radius: @sapUiElementBorderCornerRadius;
-	background-color: @sapUiButtonLiteBackground;
-	border: @sapUiButtonBorderWidth solid @sapUiButtonLiteBorderColor;
-	color: @sapUiButtonLiteTextColor;
-
-	&:focus::after {
-		border-color: @sapUiContentFocusColor;
-	}
-
-	&::after {
-		top: 1px;
-		left: 1px;
-		bottom: 1px;
-		right: 1px;
-		border: @sapUiButtonBorderWidth dotted transparent;
-	}
-
-	&:hover {
-		background-color: @sapUiButtonLiteHoverBackground;
-		border-color: @sapUiButtonLiteHoverBorderColor;
-	}
-
-	&:active {
-		background-color: @sapUiButtonLiteActiveBackground;
-		border-color: @sapUiButtonLiteActiveBorderColor;
-		color: @sapUiButtonActiveTextColor;
-	}
-
-	&:focus:active::after {
-		// we need white color in both light and
-		// dark versions when close button is active
-		border-color: @sapUiContentContrastFocusColor;
-	}
-}
-
 .sapMMsgStripInformation {
 	background-color: @sapInformationBackground;
 	border-color: @sapInformationBorderColor;
@@ -56,4 +15,8 @@
 	& .sapMMsgStripIcon {
 		color: @sapInformativeElementColor;
 	}
+}
+
+.sapMMsgStripCloseButton {
+	top: -0.4375rem;
 }

@@ -57,12 +57,6 @@ sap.ui.define(function () {
 		return sAriaText;
 	};
 
-	MessageStripUtilities.handleMSCloseButtonInteraction = function (oEvent) {
-		if (MessageStripUtilities.isMSCloseButtonPressed(oEvent.target)) {
-			this.close();
-		}
-	};
-
 	MessageStripUtilities.isMSCloseButtonPressed = function (oTarget) {
 		return oTarget.className.indexOf(MessageStripUtilities.CLASSES.CLOSE_BUTTON) !== -1 ||
 			oTarget.parentNode.className.indexOf(MessageStripUtilities.CLASSES.CLOSE_BUTTON) !== -1;
