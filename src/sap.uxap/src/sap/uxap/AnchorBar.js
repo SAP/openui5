@@ -241,15 +241,8 @@ sap.ui.define([
 		var aContent = this.getContent() || [],
 			bUpperCase = this.getUpperCase();
 
-		//rebuild select items
-		this._oSelect.removeAllItems();
 		this._oSelect.setUpperCase(bUpperCase);
 		this.toggleStyleClass("sapUxAPAnchorBarUpperCase", bUpperCase);
-
-		//create responsive equivalents of the provided controls
-		aContent.forEach(function (oButton) {
-			this._createSelectItem(oButton);
-		}, this);
 
 		if (aContent.length > 0 && this._sSelectedKey) {
 			this._oSelect.setSelectedKey(this._sSelectedKey);
@@ -257,21 +250,22 @@ sap.ui.define([
 	};
 
 	AnchorBar.prototype.addContent = function (oButton, bInvalidate) {
+		var bIsSecondLevel = oButton.data("secondLevel") === true || oButton.data("secondLevel") === "true";
 		oButton.addStyleClass("sapUxAPAnchorBarButton");
 		oButton.removeAllAriaDescribedBy();
 
-		if (this._bHasButtonsBar && (oButton.data("secondLevel") === true || oButton.data("secondLevel") === "true")) {
+		this._createSelectItem(oButton, bIsSecondLevel);
 
-			//attach handler on the scrolling mechanism
-			oButton.attachPress(this._handleDirectScroll, this);
+		if (bIsSecondLevel) {
+			oButton.destroy();
+		} else {
+			this.addAggregation("content", oButton, bInvalidate);
 		}
 
-		return this.addAggregation("content", oButton, bInvalidate);
+		return this;
 	};
 
-	AnchorBar.prototype._createSelectItem = function (oButton) {
-		var bIsSecondLevel = oButton.data("secondLevel") === true || oButton.data("secondLevel") === "true";
-
+	AnchorBar.prototype._createSelectItem = function (oButton, bIsSecondLevel) {
 		//create the phone equivalent item if the button has some visible text (UX rule)
 		if (oButton.getText().trim() != "" && (!bIsSecondLevel || oButton.data("bTitleVisible") === true)) {
 			var oPhoneItem = new Item({
@@ -286,10 +280,6 @@ sap.ui.define([
 			});
 
 			this._oSelect.addItem(oPhoneItem);
-		}
-		if (bIsSecondLevel) {
-			this.removeContent(oButton);
-			oButton.destroy();
 		}
 	};
 
@@ -960,6 +950,7 @@ sap.ui.define([
 
 	AnchorBar.prototype._resetControl = function () {
 		this.destroyAggregation('content');
+		this._oSelect.destroyAggregation("items", true);
 
 		return this;
 	};

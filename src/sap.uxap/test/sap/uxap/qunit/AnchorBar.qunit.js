@@ -665,5 +665,60 @@ sap.ui.define([
 		assert.expect(2);
 		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
 		this.oObjectPage.placeAt("qunit-fixture");
-    });
+	});
+
+	QUnit.module("Content", {
+		beforeEach: function () {
+			this.NUMBER_OF_SECTIONS = 2;
+			this.NUMBER_OF_SUB_SECTIONS = 2;
+			this.oObjectPage = utils.helpers.generateObjectPageWithSubSectionContent(utils.oFactory, this.NUMBER_OF_SECTIONS, this.NUMBER_OF_SUB_SECTIONS, true);
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("AnchorBar has correct number of items", function (assert) {
+		var oPage = this.oObjectPage,
+			iExpectedTotalSections = this.NUMBER_OF_SECTIONS,
+			iExpectedTotalSubSections = this.NUMBER_OF_SECTIONS * this.NUMBER_OF_SUB_SECTIONS,
+			done = assert.async(),
+			oAnchorBar,
+			fnOnDomReady = function() {
+				oAnchorBar = oPage.getAggregation("_anchorBar");
+				assert.equal(oAnchorBar.getContent().length, iExpectedTotalSections);
+				assert.equal(oAnchorBar._oSelect.getItems().length, iExpectedTotalSections + iExpectedTotalSubSections);
+				done();
+			};
+
+		assert.expect(2);
+		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
+		this.oObjectPage.placeAt("qunit-fixture");
+	});
+
+	QUnit.test("AnchorBar content is correctly updated", function (assert) {
+		var oPage = this.oObjectPage,
+			oSubSection1,
+			oSubSection2,
+			iTotalSections = this.NUMBER_OF_SECTIONS,
+			iTotalSubSections = this.NUMBER_OF_SECTIONS * this.NUMBER_OF_SUB_SECTIONS,
+			done = assert.async(),
+			oAnchorBar,
+			fnOnInitRendering = function() {
+				oSubSection1 = utils.oFactory.getSubSection(1, [new sap.m.Text()]);
+				oSubSection2 = utils.oFactory.getSubSection(2, [new sap.m.Text()]);
+				oPage.addSection(utils.oFactory.getSection(2, "H2", [oSubSection1, oSubSection2]));
+				iTotalSections += 1;
+				iTotalSubSections += 2;
+				oPage._requestAdjustLayoutAndUxRules(true);
+				oAnchorBar = oPage.getAggregation("_anchorBar");
+				assert.equal(oAnchorBar.getContent().length, iTotalSections);
+				assert.equal(oAnchorBar._oSelect.getItems().length, iTotalSections + iTotalSubSections);
+				done();
+			};
+
+		assert.expect(2);
+		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnInitRendering);
+		this.oObjectPage.placeAt("qunit-fixture");
+	});
 });
