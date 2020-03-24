@@ -457,6 +457,18 @@ sap.ui.define([
 		fnClearSpy.restore();
 	});
 
+	QUnit.test("method: change() event", function(assert) {
+
+		var fnFireChangeSpy = this.spy(this.oSearchField, "fireChange");
+
+		// act
+		sap.ui.test.qunit.triggerCharacterInput(this.oSearchField.getFocusDomRef(), "a");
+		this.oSearchField.onChange();
+
+		// assertions
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
+	});
+
 	QUnit.module("Suggestions on mobile phone", {
 		beforeEach: function () {
 			this.isPhone = Device.system.phone;
