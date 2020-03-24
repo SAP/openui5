@@ -21,6 +21,17 @@ sap.ui.define(['sap/m/Token','sap/ui/core/mvc/Controller','sap/ui/model/json/JSO
 				}
 				return null;
 			});
+
+			var oMultiInput3 = oView.byId("multiInput3");
+			oMultiInput3.addValidator(function(args){
+				if (args.suggestionObject){
+					var key = args.suggestionObject.getCells()[0].getText();
+					var text = key + "(" + args.suggestionObject.getCells()[3].getText() + ")";
+
+					return new Token({key: key, text: text});
+				}
+				return null;
+			});
 		}
 	});
 });

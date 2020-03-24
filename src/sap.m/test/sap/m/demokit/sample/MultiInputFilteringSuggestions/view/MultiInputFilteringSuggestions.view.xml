@@ -5,7 +5,8 @@
 			<items>
 
 			<Label text="MultiInput with suggestion list items" labelFor="multiInput4" class="sapUiSmallMarginTop"/>
-			<MultiInput id="multiInput4"
+			<MultiInput class="sapUiSmallMarginBottom"
+						id="multiInput4"
 						width="100%"
 						showValueHelp="false"
 						suggestionItems="{
@@ -16,7 +17,7 @@
 			</MultiInput>
 
 			<Label text="MultiInput with suggestion table" labelFor="multiInput2" class="sapUiSmallMarginTop"/>
-			<MultiInput
+			<MultiInput  class="sapUiSmallMarginBottom"
 				id="multiInput2"
 				width="100%"
 				placeholder="Enter Product ..."
@@ -67,6 +68,67 @@
 					</cells>
 					</ColumnListItem>
 				</suggestionRows>
+			</MultiInput>
+
+			<Label text="MultiInput with suggestion table and value state message containing formatted text with link" labelFor="multiInput3" class="sapUiSmallMarginTop"/>
+			<MultiInput
+				id="multiInput3"
+				width="100%"
+				placeholder="Enter Product ..."
+				showSuggestion="true"
+				showValueHelp="false"
+				valueState="Information"
+				valueStateText="Information message. Extra long text used as a information message. Extra long text used as a information message - 2. Extra long text used as a information message - 3."
+				suggestionRows="{/ProductCollection}">
+				<suggestionColumns>
+					<Column
+						hAlign="Begin"
+						popinDisplay="Inline"
+						demandPopin="true">
+						<Label text="Name"/>
+					</Column>
+					<Column
+						hAlign="Center"
+						popinDisplay="Inline"
+						demandPopin="true"
+						minScreenWidth="Tablet">
+						<Label text="Product ID"/>
+					</Column>
+					<Column
+						hAlign="Center"
+						popinDisplay="Inline"
+						demandPopin="false"
+						minScreenWidth="Tablet">
+						<Label text="Supplier Name"/>
+					</Column>
+					<Column
+						hAlign="End"
+						popinDisplay="Inline"
+						demandPopin="true">
+						<Label text="Price"/>
+					</Column>
+				</suggestionColumns>
+				<suggestionRows>
+					<ColumnListItem>
+					<cells>
+						<Label text="{Name}"/>
+						<Label text="{ProductId}"/>
+						<Label text="{SupplierName}"/>
+						<Label text="{
+								parts:[{path:'Price'},{path:'CurrencyCode'}],
+								type: 'sap.ui.model.type.Currency',
+								formatOptions: {showMeasure: true}
+								}"/>
+					</cells>
+					</ColumnListItem>
+				</suggestionRows>
+				<formattedValueStateText>
+					<FormattedText htmlText="Information message with sap.m.FormattedText containing a %%0.">
+						<controls>
+							<Link text="link" href="#" target="_blank"/>
+						</controls>
+					</FormattedText>
+				</formattedValueStateText>
 			</MultiInput>
 		</items>
 	</VBox>

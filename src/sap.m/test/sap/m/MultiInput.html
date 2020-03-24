@@ -324,19 +324,7 @@
 			}]
 		};
 
-		var oTabularSuggestMultiInput = new sap.m.MultiInput("tabularSuggestMI", {
-			width: "60%",
-			tokens:[
- 			        new sap.m.Token({text: "Token 1", key: "0001"}),
- 				    new sap.m.Token({text: "Token 2", key: "0002"}),
- 					new sap.m.Token({text: "Token 3", key: "0003"}),
- 					new sap.m.Token({text: "Token 4", key: "0004"}),
- 					new sap.m.Token({text: "Token 5", key: "0005"}),
- 					new sap.m.Token({text: "Token 6", key: "0006"})
-			],
-			placeholder: "Tabular suggest with JSON binding (starts with H)",
-			valueHelpRequest: fValueHelpRequested,
-			suggestionColumns : [
+		var aSuggestionColumns =  [
 				new sap.m.Column({
 					styleClass : "name",
 					hAlign : "Left",
@@ -376,6 +364,156 @@
 					demandPopin : true
 				})
 			]
+		var aMoreSuggestionColumns = [
+			new sap.m.Column({
+				styleClass : "name",
+				hAlign : "Left",
+				header : new sap.m.Label({
+					text : "Name"
+				})
+			}),
+			new sap.m.Column({
+				hAlign : "Center",
+				styleClass : "qty",
+				popinDisplay : "Inline",
+				header : new sap.m.Label({
+					text : "Qty"
+				}),
+				minScreenWidth : "Tablet",
+				demandPopin : true
+			}),
+			new sap.m.Column({
+				hAlign : "Center",
+				styleClass : "limit",
+				width : "30%",
+				header : new sap.m.Label({
+					text : "Value"
+				}),
+				minScreenWidth : "XXSmall",
+				demandPopin : true
+			}),
+			new sap.m.Column({
+				hAlign : "Right",
+				styleClass : "price",
+				width : "30%",
+				popinDisplay : "Inline",
+				header : new sap.m.Label({
+					text : "Price"
+				}),
+				minScreenWidth : "400px",
+				demandPopin : true
+			})
+		];
+		var aEvenMoreSuggestionColumns = [
+			new sap.m.Column({
+				styleClass : "name",
+				hAlign : "Left",
+				header : new sap.m.Label({
+					text : "Name"
+				})
+			}),
+			new sap.m.Column({
+				hAlign : "Center",
+				styleClass : "qty",
+				popinDisplay : "Inline",
+				header : new sap.m.Label({
+					text : "Qty"
+				}),
+				minScreenWidth : "Tablet",
+				demandPopin : true
+			}),
+			new sap.m.Column({
+				hAlign : "Center",
+				styleClass : "limit",
+				width : "30%",
+				header : new sap.m.Label({
+					text : "Value"
+				}),
+				minScreenWidth : "XXSmall",
+				demandPopin : true
+			}),
+			new sap.m.Column({
+				hAlign : "Right",
+				styleClass : "price",
+				width : "30%",
+				popinDisplay : "Inline",
+				header : new sap.m.Label({
+					text : "Price"
+				}),
+				minScreenWidth : "400px",
+				demandPopin : true
+			})
+		];
+
+		var oTabularSuggestMultiInput = new sap.m.MultiInput("tabularSuggestMI", {
+			width: "60%",
+			tokens:[
+ 			        new sap.m.Token({text: "Token 1", key: "0001"}),
+ 				    new sap.m.Token({text: "Token 2", key: "0002"}),
+ 					new sap.m.Token({text: "Token 3", key: "0003"}),
+ 					new sap.m.Token({text: "Token 4", key: "0004"}),
+ 					new sap.m.Token({text: "Token 5", key: "0005"}),
+ 					new sap.m.Token({text: "Token 6", key: "0006"})
+			],
+			placeholder: "Tabular suggest with JSON binding (starts with H)",
+			valueHelpRequest: fValueHelpRequested,
+			suggestionColumns : aSuggestionColumns
+		});
+
+		var oMultiInputValueStateLink = new sap.m.MultiInput("mIFVSWarning", {
+			placeholder: "Warning value message text with link",
+			valueState: "Warning",
+			valueHelpRequest: fValueHelpRequested,
+			width: "33%",
+			suggestionColumns : aMoreSuggestionColumns,
+			formattedValueStateText: new sap.m.FormattedText({
+				htmlText: "Warning value state message with formatted text containing %%0",
+				controls: [
+					new sap.m.Link({
+						text: "link",
+						href: "#",
+						target: "_blank"
+					})
+				]
+			}),
+		});
+
+		var oMultiInputValueStateErrorLinks = new sap.m.MultiInput("mIFVSError", {
+			placeholder: "Error value message text with multiple links",
+			valueState: "Error",
+			valueHelpRequest: fValueHelpRequested,
+			width: "33%",
+			suggestionColumns : aEvenMoreSuggestionColumns,
+			formattedValueStateText: new sap.m.FormattedText({
+				htmlText: "Warning value state message with formatted text containing %%0 %%1",
+				controls: [new sap.m.Link({
+					text: "multiple",
+					href: "#",
+					target: "_blank"
+				}),
+				new sap.m.Link({
+					text: "links",
+					href: "#",
+					target: "_blank"
+				})]
+			}),
+		});
+
+		var oMultiInputValueStateSuccessLinks = new sap.m.MultiInput("mIFVSSuccess", {
+			placeholder: "Success value state",
+			valueState: "Success",
+			valueHelpRequest: fValueHelpRequested,
+			width: "33%",
+			formattedValueStateText: new sap.m.FormattedText({
+				htmlText: "Success value state message with formatted text containing %%0",
+				controls: [
+					new sap.m.Link({
+						text: "link",
+						href: "#",
+						target: "_blank"
+					})
+				]
+			}),
 		});
 
 		oTabularSuggestMultiInput.addValidator(function(args){
@@ -422,7 +560,11 @@
 		oTabularSuggestMultiInput.setModel(oModel);
 		oTabularSuggestMultiInput.bindAggregation("suggestionRows", "/tabularSuggestionItems", oTableItemTemplate);
 
+		oMultiInputValueStateErrorLinks.setModel(oModel);
+		oMultiInputValueStateErrorLinks.bindAggregation("suggestionRows", "/tabularSuggestionItems", oTableItemTemplate);
 
+		oMultiInputValueStateLink.setModel(oModel);
+		oMultiInputValueStateLink.bindAggregation("suggestionRows", "/tabularSuggestionItems", oTableItemTemplate);
 
 		//*******************************
 		var oTabularSuggestMultiInputML = new sap.m.MultiInput({
@@ -1219,6 +1361,9 @@
 						valueHelpRequest: fValueHelpRequested,
 						width: "33%"
 					}),
+					oMultiInputValueStateLink,
+					oMultiInputValueStateErrorLinks,
+					oMultiInputValueStateSuccessLinks,
 					new sap.m.Label({labelFor: oMultiInput4.getId(), text: "MultiInput.editable = false", width:"100%"}),
 					oMultiInput4,
 					new sap.m.VBox({items: [new sap.m.Button({text: "Open Popup", press: openDialog})]}),
