@@ -260,6 +260,17 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/storageResultDisassemble"]
 				}
 			},
+			"apply/_internal/extensionPoint/Processor": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/extensionPointProcessor"]
+				},
+				ui5: {
+					resourceroots: {
+						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
+					}
+				}
+			},
 			"write/api/ChangesWriteAPI": {
 				group: "Write API",
 				coverage: {
@@ -429,9 +440,9 @@ sap.ui.define([
 				group: "Descriptor related APIs",
 				coverage: {
 					only: [
-						"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
+						"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 						"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
-						"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory"
+						"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory"
 					]
 				}
 			},
@@ -441,6 +452,16 @@ sap.ui.define([
 					only: [
 						"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 						"sap/ui/fl/write/_internal/appVariant/AppVariant"
+					]
+				}
+			},
+			"write/_internal/appVariant/AppVariantInlineChangeFactory": {
+				group: "Internal app variant inline change related APIs",
+				coverage: {
+					only: [
+						"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
+						"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
+						"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChange"
 					]
 				}
 			},
@@ -925,6 +946,12 @@ sap.ui.define([
 				group: "registry",
 				coverage: {
 					only: ["sap/ui/fl/registry/ChangeTypeMetadata"]
+				}
+			},
+			"registry/ExtensionPointRegistry": {
+				group: "registry",
+				coverage: {
+					only: ["sap/ui/fl/registry/ExtensionPointRegistry"]
 				}
 			},
 			"registry/Settings": {

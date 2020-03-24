@@ -435,12 +435,14 @@ sap.ui.define([
 	 *   Relative path to drill-down into
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate a request for late properties with
+	 * @param {boolean} [bCreateOnDemand]
+	 *   Whether to create missing objects on demand, in order to avoid drill-down errors
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved with the result matching to <code>sPath</code>
 	 *
 	 * @private
 	 */
-	Cache.prototype.drillDown = function (oData, sPath, oGroupLock) {
+	Cache.prototype.drillDown = function (oData, sPath, oGroupLock, bCreateOnDemand) {
 		var oDataPromise = SyncPromise.resolve(oData),
 			oEntity,
 			iEntityPathLength,
@@ -520,7 +522,7 @@ sap.ui.define([
 		aSegments = sPath.split("/");
 		return aSegments.reduce(function (oPromise, sSegment, i) {
 			return oPromise.then(function (vValue) {
-				var aMatches, oParentValue;
+				var vIndex, aMatches, oParentValue;
 
 				if (sSegment === "$count") {
 					return Array.isArray(vValue) ? vValue.$count : invalidSegment(sSegment);
@@ -535,7 +537,7 @@ sap.ui.define([
 					// object
 					return invalidSegment(sSegment);
 				}
-				if (_Helper.getPrivateAnnotation(vValue, "predicate")) {
+				if (_Helper.hasPrivateAnnotation(vValue, "predicate")) {
 					oEntity = vValue;
 					iEntityPathLength = i;
 				}
@@ -550,7 +552,13 @@ sap.ui.define([
 						vValue = vValue.$byPredicate[aMatches[2]]; // search the key predicate
 					}
 				} else {
-					vValue = vValue[Cache.from$skip(sSegment, vValue)];
+					vIndex = Cache.from$skip(sSegment, vValue);
+					if (bCreateOnDemand && vIndex === sSegment
+							&& (vValue[sSegment] === undefined || vValue[sSegment] === null)) {
+						// create on demand for (navigation) properties only, not for indices
+						vValue[sSegment] = {};
+					}
+					vValue = vValue[vIndex];
 				}
 				// missing advertisement or annotation is not an error
 				return vValue === undefined && sSegment[0] !== "#" &&  sSegment[0] !== "@"
@@ -1206,10 +1214,11 @@ sap.ui.define([
 	Cache.prototype.setProperty = function (sPropertyPath, vValue, sEntityPath) {
 		var that = this;
 
-		return this.fetchValue(_GroupLock.$cached, sEntityPath).then(function (oEntity) {
-			_Helper.updateSelected(that.mChangeListeners, sEntityPath, oEntity,
-				Cache.makeUpdateData(sPropertyPath.split("/"), vValue));
-		});
+		return this.fetchValue(_GroupLock.$cached, sEntityPath, null, null, true)
+			.then(function (oEntity) {
+				_Helper.updateSelected(that.mChangeListeners, sEntityPath, oEntity,
+					Cache.makeUpdateData(sPropertyPath.split("/"), vValue));
+			});
 	};
 
 	/**
@@ -1717,6 +1726,8 @@ sap.ui.define([
 	 *   An optional change listener that is added for the given path. Its method
 	 *   <code>onChange</code> is called with the new value if the property at that path is modified
 	 *   via {@link #update} later.
+	 * @param {boolean} [bCreateOnDemand]
+	 *   Whether to create missing objects on demand, in order to avoid drill-down errors
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the requested data.
 	 *
@@ -1726,7 +1737,7 @@ sap.ui.define([
 	 * @public
 	 */
 	CollectionCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested,
-			oListener) {
+			oListener, bCreateOnDemand) {
 		var aElements,
 			sFirstSegment = sPath.split("/")[0],
 			oSyncPromise,
@@ -1755,7 +1766,7 @@ sap.ui.define([
 			// register afterwards to avoid that updateExisting fires updates before the first
 			// response
 			that.registerChange(sPath, oListener);
-			return that.drillDown(that.aElements, sPath, oGroupLock);
+			return that.drillDown(that.aElements, sPath, oGroupLock, bCreateOnDemand);
 		});
 	};
 
@@ -2335,18 +2346,25 @@ sap.ui.define([
 	 *   An optional change listener that is added for the given path. Its method
 	 *   <code>onChange</code> is called with the new value if the property at that path is modified
 	 *   via {@link #update} later.
+	 * @param {boolean} [bCreateOnDemand]
+	 *   Unsupported
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the element.
 	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
 	 *   arrives.
 	 * @throws {Error}
-	 *   If group ID is '$cached'. The error has a property <code>$cached = true</code>
+	 *   If <code>bCreateOnDemand</code> is set or if group ID is '$cached' (the error
+	 *   has a property <code>$cached = true</code> then)
 	 *
 	 * @public
 	 */
-	PropertyCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested, oListener) {
+	PropertyCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested, oListener,
+			bCreateOnDemand) {
 		var that = this;
 
+		if (bCreateOnDemand) {
+			throw new Error("Unsupported argument: bCreateOnDemand");
+		}
 		if (this.oPromise) {
 			oGroupLock.unlock();
 		} else {
@@ -2434,8 +2452,8 @@ sap.ui.define([
 	 *   An optional change listener that is added for the given path. Its method
 	 *   <code>onChange</code> is called with the new value if the property at that path is modified
 	 *   via {@link #update} later.
-	 * @param {string} [bFetchIfMissing]
-	 *   If true, the property may be fetched if missing in the cache
+	 * @param {boolean} [bCreateOnDemand]
+	 *   Whether to create missing objects on demand, in order to avoid drill-down errors
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the element.
 	 *
@@ -2447,7 +2465,8 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	SingleCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested, oListener) {
+	SingleCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested, oListener,
+			bCreateOnDemand) {
 		var sResourcePath = this.sResourcePath + this.sQueryString,
 			that = this;
 
@@ -2473,7 +2492,7 @@ sap.ui.define([
 				throw new Error("Cannot read a deleted entity");
 			}
 			that.registerChange(sPath, oListener);
-			return that.drillDown(oResult, sPath, oGroupLock);
+			return that.drillDown(oResult, sPath, oGroupLock, bCreateOnDemand);
 		});
 	};
 

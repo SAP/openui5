@@ -1,0 +1,46 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "7fdca64d1df473c8a2abcc7b04627ccc5dc60013",
+        "type": "FEATURE",
+        "text": " sap.ui.fl Support Extension Points",
+        "references": []
+      },
+      {
+        "id": "a09610a8c09d02e70c45641278c585b58c31b903",
+        "type": "FIX",
+        "text": " Fixing the package info for SmartBuiness create and update",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070026836"
+          }
+        ]
+      },
+      {
+        "id": "9ef75352940658a709b74c2321f9098750a62526",
+        "type": "FIX",
+        "text": " Fixing changeTypes which needs hostingId to be set in",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070026836"
+          }
+        ]
+      },
+      {
+        "id": "8624894ea22f75907a5f7dee5007ee5d98bc53da",
+        "type": "FIX",
+        "text": " Fixing that the descriptor changes does not get published on Save",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070003827"
+          }
+        ]
+      }
+    ]
+  }
+}

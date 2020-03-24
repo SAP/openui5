@@ -18,21 +18,21 @@ sap.ui.define([
 				iSelectDialect: function (sDialect) {
 					this.waitFor({
 						matchers: function () {
-							return this._getRecorderInFrame().__opaPlugin__._getFilteredControls({
+							return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
 								controlType: "sap.m.Select"
 							});
-						}.bind(this),
+						},
 						actions: new Press("arrow"),
 						success: function () {
 							return this.waitFor({
 								matchers: function () {
-									return this._getRecorderInFrame().__opaPlugin__._getFilteredControls({
+									return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
 										controlType: "sap.ui.core.Item",
 										matchers: new Properties({
 											key: sDialect
 										})
 									});
-								}.bind(this),
+								},
 								actions: new Press(),
 								errorMessage: "Cannot select the " + sDialect + " dropdown item"
 							});
@@ -43,13 +43,13 @@ sap.ui.define([
 				iOpenTheSettingsDialog: function () {
 					this.waitFor({
 						matchers: function () {
-							return this._getRecorderInFrame().__opaPlugin__._getFilteredControls({
+							return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
 								controlType: "sap.ui.core.Icon",
 								matchers: new Properties({
 									src: "sap-icon://settings"
 								})
 							});
-						}.bind(this),
+						},
 						actions: new Press(),
 						errorMessage: "Cannot open the settings dialog"
 					});
@@ -63,25 +63,25 @@ sap.ui.define([
 				iSelectSettingCheckBox: function (sLabel, sPreference) {
 					this.waitFor({
 						matchers: function () {
-							return this._getRecorderInFrame().__opaPlugin__._getFilteredControls({
+							return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
 								controlType: "sap.m.CheckBox",
 								searchOpenDialogs: true,
 								matchers: new Properties({
 									text: sLabel
 								})
 							});
-						}.bind(this),
+						},
 						actions: new Press(),
 						success: function () {
 							return this.waitFor({
 								matchers: function () {
-									return this._getRecorderInFrame().__opaPlugin__._getFilteredControls({
+									return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
 										controlType: "sap.m.Button",
 										matchers: new Properties({
 											text: "Close"
 										})
 									});
-								}.bind(this),
+								},
 								actions: new Press(),
 								errorMessage: "Cannot press the close button"
 							});
@@ -92,13 +92,13 @@ sap.ui.define([
 				iClearSnippets: function () {
 					this.waitFor({
 						matchers: function () {
-							return this._getRecorderInFrame().__opaPlugin__._getFilteredControls({
+							return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
 								controlType: "sap.m.Button",
 								properties: {
 									text: "Clear"
 								}
 							});
-						}.bind(this),
+						},
 						actions: new Press(),
 						errorMessage: "Cannot press the clear snippets button"
 					});
@@ -106,10 +106,10 @@ sap.ui.define([
 				iSwitchMultiple: function () {
 					this.waitFor({
 						matchers: function () {
-							return this._getRecorderInFrame().__opaPlugin__._getFilteredControls({
+							return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
 								controlType: "sap.m.Switch"
 							});
-						}.bind(this),
+						},
 						actions: new Press(),
 						errorMessage: "Cannot press the switch for multi snippets"
 					});
@@ -122,7 +122,7 @@ sap.ui.define([
 					var mData = testTreeAPI.getMockData(sId);
 					this.waitFor({
 						matchers: function () {
-							return this._getRecorderInFrame().__opaPlugin__._getFilteredControls({
+							return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
 								controlType: "sap.ui.codeeditor.CodeEditor",
 								matchers: [
 									new Properties({
@@ -131,7 +131,7 @@ sap.ui.define([
 									})
 								]
 							});
-						}.bind(this),
+						},
 						success: function (aTables) {
 							Opa5.assert.ok(true, "Code snippet is visible");
 						},
@@ -142,7 +142,7 @@ sap.ui.define([
 					var mData = testTreeAPI.getMockData(sId);
 					this.waitFor({
 						matchers: function () {
-							return this._getRecorderInFrame().__opaPlugin__._getFilteredControls({
+							return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
 								controlType: "sap.m.Table",
 								matchers: [
 									new AggregationLengthEquals({
@@ -154,12 +154,12 @@ sap.ui.define([
 									})
 								]
 							});
-						}.bind(this),
+						},
 						success: function (aTables) {
 							Opa5.assert.ok(true, "Own Properties table is filled");
 							return this.waitFor({
 								matchers: function () {
-									return this._getRecorderInFrame().__opaPlugin__._getFilteredControls({
+									return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
 										controlType: "sap.m.Text",
 										matchers: [
 											new Properties({
@@ -168,7 +168,7 @@ sap.ui.define([
 											new Ancestor(aTables[0])
 										]
 									});
-								}.bind(this),
+								},
 								success: function () {
 									Opa5.assert.ok(true, "Own property value is visible");
 								},

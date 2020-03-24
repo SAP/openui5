@@ -1,0 +1,628 @@
+{
+  "listTest": {
+	"sap.app": {
+	  "type": "card"
+	},
+	"sap.card": {
+	  "type": "List",
+	  "header": {
+		"data": {
+		  "request": {
+			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/listData1.json"
+		  },
+		  "path": "/header"
+		},
+		"title": "{title}",
+		"subTitle": "{subTitle}",
+		"icon": {
+		  "src": "sap-icon://newspaper"
+		}
+	  },
+	  "content": {
+		"maxItems": 3,
+		"data": {
+		  "request": {
+			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/listData1.json"
+		  },
+		  "path": "/content"
+		},
+		"item": {
+		  "title": {
+			"label": "{{title_label}}",
+			"value": "{Name}"
+		  },
+		  "icon": {
+			"src": "{icon}"
+		  },
+		  "highlight": "{state}",
+		  "info": {
+			"value": "{info}",
+			"state": "{infoState}"
+		  }
+		}
+	  }
+	}
+  },
+  "list": {
+	"sap.app": {
+	  "type": "card"
+	},
+	"sap.card": {
+	  "type": "List",
+	  "header": {
+		"data": {
+		  "request": {
+			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/listData2.json"
+		  },
+		  "path": "/header"
+		},
+		"title": "{title}",
+		"subTitle": "Subtitle",
+		"status": {
+		  "text": "2 of {count}"
+		},
+		"icon": {
+		  "src": "{src}"
+		}
+
+	  },
+	  "content": {
+		"maxItems": 8,
+		"data": {
+		  "request": {
+			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/someitems.json"
+		  }
+		},
+		"item": {
+		  "title": {
+			"label": "{{title_label}}",
+			"value": "{Name}"
+		  },
+		  "highlight": "{state}",
+		  "info": {
+			"value": "{info}",
+			"state": "{infoState}"
+		  }
+		}
+	  }
+	}
+  },
+  "error": {
+	"sap.app": {
+	  "type": "card"
+	},
+	"sap.card": {
+	  "type": "List",
+	  "header": {
+		"data": {
+		  "request": {
+			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifest/listData2.json"
+		  },
+		  "path": "/header"
+		},
+		"title": "Error Test Case ",
+		"subTitle": "Unable to fetch data",
+		"icon": {
+		  "src": "{src}"
+		}
+
+	  },
+	  "content": {
+		"data": {
+		  "request": {
+			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifest/listDat2.json"
+		  },
+		  "path": "/content"
+		},
+		"item": {
+		  "title": {
+			"label": "{{title_label}}",
+			"value": "{Name}"
+		  },
+		  "icon": {
+			"src": "{icon}"
+		  },
+		  "description": {
+			"value": "{Name}"
+		  }
+		}
+	  }
+	}
+  },
+  "all": {
+	"sap.app": {
+	  "type": "card"
+	},
+	"sap.card": {
+	  "type": "List",
+	  "header": {
+		"data": {
+		  "request": {
+			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/listData2.json"
+		  },
+		  "path": "/header"
+		},
+		"title": "{title}",
+		"subTitle": "Subtitle",
+		"status": {
+		  "text": "3 of {count}"
+		},
+		"icon": {
+		  "src": "{src}"
+		}
+
+	  },
+	  "content": {
+		"data": {
+		  "request": {
+			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/listData2.json"
+		  },
+		  "path": "/content"
+		},
+		"item": {
+		  "title": {
+			"label": "{{title_label}}",
+			"value": "{Name}"
+		  },
+		  "icon": {
+			"src": "{icon}"
+		  },
+		  "description": {
+			"value": "{Name}"
+		  }
+		}
+	  }
+	}
+  },
+  "descriptionTitle": {
+	"sap.app": {
+	  "type": "card"
+	},
+	"sap.card": {
+	  "type": "List",
+	  "header": {
+		"data": {
+		  "request": {
+			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/listData2.json"
+		  },
+		  "path": "/header"
+		},
+		"title": "{title}",
+		"subTitle": "Subtitle",
+		"status": {
+		  "text": "3 of {count}"
+		},
+		"icon": {
+		  "src": "{src}"
+		}
+
+	  },
+	  "content": {
+		"maxItems": 8,
+		"data": {
+		  "request": {
+			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/someitems.json"
+		  }
+		},
+		"item": {
+		  "title": {
+			"label": "{{title_label}}",
+			"value": "{Name}"
+		  },
+		  "description": {
+			"value": "{Name}"
+		  }
+		}
+	  }
+	}
+  },
+  "iconTitle": {
+	"sap.app": {
+	  "type": "card"
+	},
+	"sap.card": {
+	  "type": "List",
+	  "header": {
+		"data": {
+		  "request": {
+			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/listData2.json"
+		  },
+		  "path": "/header"
+		},
+		"title": "{title}",
+		"subTitle": "Subtitle",
+		"status": {
+		  "text": "2 of {count}"
+		},
+		"icon": {
+		  "src": "{src}"
+		}
+
+	  },
+	  "content": {
+		"data": {
+		  "request": {
+			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/listData2.json"
+		  },
+		  "path": "/content"
+		},
+		"item": {
+		  "title": {
+			"label": "{{title_label}}",
+			"value": "{Name}"
+		  },
+		  "icon": {
+			"src": "{icon}"
+		  }
+		}
+	  }
+	}
+  },
+  "table": {
+	"sap.app": {
+	  "type": "card"
+	},
+	"sap.card": {
+	  "data": {
+		"request": {
+		  "url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/tableData.json"
+		}
+	  },
+	  "type": "Table",
+	  "header": {
+		"type": "Numeric",
+		"data": {
+		  "path": "/header"
+		},
+		"title": "Table Card ",
+		"subTitle": "{revenue}",
+		"unitOfMeasurement": "EUR",
+		"mainIndicator": {
+		  "number": "{number}",
+		  "unit": "{unit}",
+		  "trend": "{trend}",
+		  "state": "{state}"
+		},
+		"details": "{details}",
+		"sideIndicators": [
+		  {
+			"title": "Target",
+			"number": "{target/number}",
+			"unit": "{target/unit}"
+		  },
+		  {
+			"title": "Deviation",
+			"number": "{deviation/number}",
+			"unit": "%"
+		  }
+		],
+		"status": {
+		  "text": "9 of {count}"
+		}
+	  },
+	  "content": {
+		"data": {
+
+		  "path": "/content"
+		},
+		"maxItems": 9,
+		"row": {
+		  "columns": [
+			{
+			  "title": "Sales Order",
+			  "value": "{salesOrder}",
+			  "identifier": true
+			},
+			{
+			  "title": "Customer",
+			  "value": "{name}"
+			},
+			{
+			  "title": "Net Amount",
+			  "value": "{netAmount}"
+			},
+			{
+			  "title": "Status",
+			  "value": "{status}",
+			  "state": "{statusState}"
+			}
+		  ]
+		}
+	  }
+	}
+  },
+  "analytical": {
+	"sap.app": {
+	  "type": "card"
+	},
+	"sap.card": {
+	  "type": "Analytical",
+	  "header": {
+		"type": "Numeric",
+		"data": {
+		  "request": {
+			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/analitycalData.json"
+		  },
+		  "path": "/header"
+		},
+		"title": "{details}",
+		"subTitle": "Analytical Card",
+		"unitOfMeasurement": "EUR",
+		"mainIndicator": {
+		  "number": "{number}",
+		  "unit": "{unit}",
+		  "trend": "{trend}",
+		  "state": "{state}"
+		},
+		"details": "{details}",
+		"sideIndicators": [
+		  {
+			"title": "Target",
+			"number": "{target/number}",
+			"unit": "{target/unit}"
+		  },
+		  {
+			"title": "Deviation",
+			"number": "{deviation/number}",
+			"unit": "%"
+		  }
+		]
+	  },
+	  "content": {
+		"chartType": "Line",
+		"legend": {
+		  "visible": "{legend/visible}",
+		  "position": "{legend/position}",
+		  "alignment": "{legend/alignment}"
+		},
+		"plotArea": {
+		  "dataLabel": {
+			"visible": true
+		  },
+		  "categoryAxisText": {
+			"visible": false
+		  },
+		  "valueAxisText": {
+			"visible": false
+		  }
+		},
+		"title": {
+		  "text": "Line chart",
+		  "visible": true,
+		  "alignment": "Left"
+		},
+		"measureAxis": "valueAxis",
+		"dimensionAxis": "categoryAxis",
+		"data": {
+		  "request": {
+			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/analitycalData.json"
+		  },
+		  "path": "/list"
+		},
+		"dimensions": [
+		  {
+			"label": "{dimensions/weekLabel}",
+			"value": "{Week}"
+		  }
+		],
+		"measures": [
+		  {
+			"label": "{measures/revenueLabel}",
+			"value": "{Revenue}"
+		  },
+		  {
+			"label": "{measures/costLabel}",
+			"value": "{Cost}"
+		  }
+		]
+	  }
+	}
+  },
+  "calendar": {
+	"sap.app": {
+	  "type": "card"
+	},
+	"sap.card": {
+	  "type": "Calendar",
+	  "data": {
+		"request": {
+		  "url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/calendarData.json"
+		}
+	  },
+	  "header": {
+		"title": "My calendar",
+		"subTitle": "Team Balkan",
+		"status": {
+		  "text":  {
+			"format": {
+			  "translationKey": "i18n>CARD.COUNT_X_OF_Y",
+			  "parts": [
+				"parameters>/visibleItems",
+				"parameters>/allItems"
+			  ]
+			}
+		  }
+		}
+	  },
+	  "content": {
+		"date": "2019-9-2",
+		"maxItems": 5,
+		"maxLegendItems": 3,
+		"noItemsText": "You have nothing planned for that day",
+		"item": {
+		  "template": {
+			"visualization": "{visualization}",
+			"startDate": "{start}",
+			"endDate": "{end}",
+			"title": "{title}",
+			"text": "{text}",
+			"icon": {
+			  "src": "{icon}"
+			},
+			"type": "{type}"
+		  },
+		  "path": "/item"
+		},
+		"specialDate": {
+		  "template": {
+			"startDate": "{start}",
+			"endDate": "{end}",
+			"type": "{type}"
+		  },
+		  "path": "/specialDate"
+		},
+		"legendItem": {
+		  "template": {
+			"category": "{category}",
+			"text": "{text}",
+			"type": "{type}"
+		  },
+		  "path": "/legendItem"
+		},
+		"moreItems": {
+		  "actions": [
+			{
+			  "type": "Navigation",
+			  "enabled": true,
+			  "url": "http://sap.com"
+			}
+		  ]
+		}
+	  }
+	}
+  },
+  "object": {
+	"sap.app": {
+	  "type": "card"
+	},
+	"sap.card": {
+	  "type": "Object",
+	  "data": {
+		"request": {
+		  "url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/employee.json"
+		}
+	  },
+	  "header": {
+		"icon": {
+		  "src": "{photo}"
+		},
+		"title": "Object Card",
+		"subTitle": "{position}"
+	  },
+	  "content": {
+		"groups": [
+		  {
+			"title": "Contact Details",
+			"items": [
+			  {
+				"label": "First Name",
+				"value": "{firstName}"
+			  },
+			  {
+				"label": "Last Name",
+				"value": "{lastName}"
+			  },
+			  {
+				"label": "Phone",
+				"value": "{phone}"
+			  }
+			]
+		  },
+		  {
+			"title": "Organizational Details",
+			"items": [
+			  {
+				"label": "Direct manager",
+				"value": "{manager/firstName} {manager/lastName}",
+				"icon": {
+				  "src": "{manager/photo}"
+				}
+			  }
+			]
+		  },
+		  {
+			"title": "Company Details",
+			"items": [
+			  {
+				"label": "Company Name",
+				"value": "{company/name}"
+			  },
+			  {
+				"label": "{address}",
+				"value": "{company/address}"
+			  },
+			  {
+				"label": "{website}",
+				"link": "{company/website}"
+			  }
+			]
+		  }
+		]
+	  }
+	}
+  },
+  "timeline": {
+	"_version": "1.15.0",
+	"sap.app": {
+	  "id": "card.explorer.members.timeline.card",
+	  "type": "card",
+	  "title": "Sample of a Members Timeline",
+	  "subTitle": "Sample of a Members Timeline",
+	  "applicationVersion": {
+		"version": "1.0.0"
+	  },
+	  "shortTitle": "A short title for this Card",
+	  "info": "Additional information about this Card",
+	  "description": "A long description for this Card",
+	  "tags": {
+		"keywords": [
+		  "Timeline",
+		  "Card",
+		  "Sample"
+		]
+	  }
+	},
+	"sap.ui": {
+	  "technology": "UI5",
+	  "icons": {
+		"icon": "sap-icon://activity-individual"
+	  }
+	},
+	"sap.card": {
+	  "type": "Timeline",
+	  "header": {
+		"title": "New Team Members",
+		"icon": {
+		  "src": "sap-icon://group"
+		}
+	  },
+	  "content": {
+		"data": {
+		  "request": {
+			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/timelineData.json"
+		  }
+		},
+		"item": {
+		  "dateTime": {
+			"value": "{HireDate}"
+		  },
+		  "description": {
+			"value": "{JobResponsibilities}"
+		  },
+		  "title": {
+			"value": "{JobTitle}"
+		  },
+		  "owner": {
+			"value": "{Name}"
+		  },
+		  "ownerImage": {
+			"value": "{Photo}"
+		  },
+		  "icon": {
+			"src": "{Icon}"
+		  }
+		}
+	  }
+	}
+  }
+}

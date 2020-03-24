@@ -3,12 +3,14 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
+	"sap/ui/integration/designtime/baseEditor/PropertyEditor",
 	"sap/ui/integration/designtime/baseEditor/util/findClosestInstance",
 	"sap/ui/integration/designtime/baseEditor/util/createPromise",
 	"sap/base/util/restricted/_intersection",
 	"sap/base/util/restricted/_omit"
 ], function (
 	Control,
+	PropertyEditor,
 	findClosestInstance,
 	createPromise,
 	_intersection,
@@ -298,39 +300,13 @@ sap.ui.define([
 		}
 	};
 
-	PropertyEditors.prototype.destroy = function () {
-		if (this._fnCancelInit) {
-			this._fnCancelInit().then(this._removeEditorsInCreation.bind(this));
-		}
-		this._removePropertyEditors();
-		Control.prototype.destroy.apply(this, arguments);
-	};
-
-	PropertyEditors.prototype._removeEditorsInCreation = function (aEditors) {
-		if (this._sCreatedBy === CREATED_BY_CONFIG) {
-			aEditors.forEach(function (oEditorInCreation) {
-				oEditorInCreation.destroy();
-			});
-		}
-	};
-
 	PropertyEditors.prototype._removePropertyEditors = function () {
 		var aPropertyEditors = this.removeAllAggregation("propertyEditors");
 
 		if (aPropertyEditors.length) {
 			aPropertyEditors.forEach(function (oPropertyEditor) {
-				oPropertyEditor.detachReady(this._onPropertyEditorReady, this);
-				switch (this._sCreatedBy) {
-					case CREATED_BY_CONFIG:
-						oPropertyEditor.destroy();
-						break;
-					case CREATED_BY_TAGS:
-						// Need to manually as there is a bug in removeAllAggregation()
-						// when aggregation marked as "multiple: false"
-						oPropertyEditor.setParent(null);
-						break;
-				}
-			}, this);
+				oPropertyEditor.destroy();
+			});
 
 			this._sCreatedBy = null;
 			this.firePropertyEditorsChange({
@@ -394,53 +370,47 @@ sap.ui.define([
 		) {
 			this._sState = STATUS_SYNCING;
 			var oEditor = this.getEditor();
-			// Cancel previous async process if any
-			if (this._fnCancelInit) {
-				this._fnCancelInit().then(this._removeEditorsInCreation.bind(this));
-				delete this._fnCancelInit;
+			var aConfigs;
+
+			if (this.getConfig()) {
+				aConfigs = this.getConfig();
+				this._sCreatedBy = CREATED_BY_CONFIG;
+			} else {
+				var aTags = this.getTags().split(",");
+				aConfigs = oEditor.getConfigsByTag(aTags);
+				this._sCreatedBy = CREATED_BY_TAGS;
 			}
 
-			var mPromise = createPromise(function (fnResolve, fnReject) {
-				if (this.getConfig()) {
-					Promise.all(this.getConfig().map(function (mItemConfig) {
-						var oPropertyEditor = oEditor._createPropertyEditor(mItemConfig);
-						return oPropertyEditor;
-					})).then(fnResolve).catch(fnReject);
-					this._sCreatedBy = CREATED_BY_CONFIG;
-				} else {
-					var aTags = this.getTags().split(",");
-					oEditor.getPropertyEditorsByTag(aTags).then(fnResolve).catch(fnReject);
-					this._sCreatedBy = CREATED_BY_TAGS;
-				}
-			}.bind(this));
-			this._fnCancelInit = mPromise.cancel;
-
-			mPromise.promise.then(function (aPropertyEditors) {
-				var bRenderLabels = this.getRenderLabels();
-				if (bRenderLabels !== undefined) {
-					aPropertyEditors.forEach(function (oPropertyEditor) {
-						oPropertyEditor.setRenderLabel(bRenderLabels);
-					});
-				}
-
-				var aPreviousPropertyEditors = (this.getAggregation("propertyEditors") || []).slice();
-
-				aPropertyEditors.forEach(function (oPropertyEditor) {
-					this.addAggregation("propertyEditors", oPropertyEditor);
-					oPropertyEditor.attachReady(this._onPropertyEditorReady, this);
-				}, this);
-
-				this._sState = STATUS_READY;
-				if (this.isReady()) {
-					this.fireReady();
-				}
-
-				this.firePropertyEditorsChange({
-					previousPropertyEditors: aPreviousPropertyEditors,
-					propertyEditors: (this.getAggregation("propertyEditors") || []).slice()
+			var bRenderLabels = this.getRenderLabels();
+			var aPropertyEditors = aConfigs.map(function (mPropertyEditorConfig) {
+				var oPropertyEditor = new PropertyEditor({
+					editor: oEditor
 				});
-				delete this._fnCancelInit;
-			}.bind(this));
+				if (bRenderLabels !== undefined) {
+					oPropertyEditor.setRenderLabel(bRenderLabels);
+				}
+				oPropertyEditor.setValue(mPropertyEditorConfig.value);
+				oPropertyEditor.setConfig(_omit(mPropertyEditorConfig, "value"));
+				oPropertyEditor.attachReady(this._onPropertyEditorReady, this);
+				return oPropertyEditor;
+			}, this);
+
+			var aPreviousPropertyEditors = (this.getAggregation("propertyEditors") || []).slice();
+
+			aPropertyEditors.forEach(function (oPropertyEditor) {
+				this.addAggregation("propertyEditors", oPropertyEditor);
+			}, this);
+
+			this._sState = STATUS_READY;
+
+			if (this.isReady()) {
+				this.fireReady();
+			}
+
+			this.firePropertyEditorsChange({
+				previousPropertyEditors: aPreviousPropertyEditors,
+				propertyEditors: (this.getAggregation("propertyEditors") || []).slice()
+			});
 		}
 	};
 

@@ -203,8 +203,16 @@ html[data-sap-ui-browser^="ff"].sap-desktop .sapUiCalNoNameLine > .sapUiCalItems
 	line-height: 0.85rem;
 }
 
+html.sap-desktop .sapUiSizeCompact .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem:focus > .sapUiCalDayName{
+	line-height: 1.75rem;
+}
+
 .sapUiCalItemNow > .sapUiCalItemText > .sapUiCalItemTextAmPm{
 	line-height: 2.4rem;
+}
+
+.sapUiCalItem:focus > .sapUiCalItemText > .sapUiCalItemTextAmPm{
+	line-height: 2.65rem;
 }
 
 /* 2 calendar types */
@@ -243,7 +251,7 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalMonthSecType > .sapUiCalIte
 
 html.sap-desktop .sapUiSizeCompact .sapUiCalItem:hover > .sapUiCalItemText,
 html.sap-desktop .sapUiSizeCompact .sapUiCalItem:focus > .sapUiCalItemText{
-	line-height: 1.75rem;
+	line-height: inherit;
 }
 
 html.sap-desktop .sapUiSizeCompact .sapUiCalItemNow > .sapUiCalItemText,
@@ -260,6 +268,14 @@ html[data-sap-ui-browser^="ff"].sap-desktop .sapUiSizeCompact .sapUiCalNoNameLin
 
 .sapUiSizeCompact .sapUiCalItemNow > .sapUiCalItemText > .sapUiCalItemTextAmPm{
 	line-height: 1.4rem;
+}
+
+.sapUiSizeCompact .sapUiCalItem:hover > .sapUiCalItemText > .sapUiCalItemTextAmPm{
+	line-height: 1.75rem;
+}
+
+.sapUiSizeCompact .sapUiCalItem:focus > .sapUiCalItemText > .sapUiCalItemTextAmPm{
+	line-height: 1.65rem;
 }
 
 /* 2 calendar types */

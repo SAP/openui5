@@ -328,7 +328,7 @@ sap.ui.define([
 		}
 		return this.withCache(function (oCache, sCachePath, oBinding) {
 			return oBinding.doSetProperty(sCachePath, vValue, oGroupLock)
-				|| oMetaModel.fetchUpdateData(sPath, that).then(function (oResult) {
+				|| oMetaModel.fetchUpdateData(sPath, that, !oGroupLock).then(function (oResult) {
 					var sEntityPath = _Helper.getRelativePath(oResult.entityPath,
 							that.oModel.resolve(oBinding.sPath, oBinding.oContext)),
 						// If a PATCH is merged into a POST request, firePatchSent is not called,

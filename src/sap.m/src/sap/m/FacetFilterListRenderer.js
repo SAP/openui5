@@ -14,6 +14,7 @@ sap.ui.define(['./ListRenderer', 'sap/ui/core/Renderer'],
 	 * @alias sap.m.FacetFilterListRenderer
 	 */
 	var FacetFilterListRenderer = Renderer.extend(ListRenderer);
+	FacetFilterListRenderer.apiVersion = 2;
 
 	return FacetFilterListRenderer;
 

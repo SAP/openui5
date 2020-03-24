@@ -11,7 +11,6 @@ function(
 	OverlayRegistry
 ) {
 	"use strict";
-
 	/**
 	 * Constructor for a new Plugin.
 	 *
@@ -332,24 +331,40 @@ function(
 	 * @return {object[]} Returns an array with the object containing the required data for a context menu item
 	 */
 	Plugin.prototype._getMenuItems = function (aElementOverlays, mPropertyBag) {
-		var aResponsibleElementOverlays = aElementOverlays.map(function(oElementOverlay) {
-			return this.getResponsibleElementOverlay(oElementOverlay);
-		}.bind(this));
-		var oElementOverlay = aResponsibleElementOverlays[0]; // by default we get menu items only for the first overlay
-		var mAction = this.getAction(oElementOverlay);
-		if (!mAction || !this.isAvailable(aResponsibleElementOverlays)) {
-			return [];
-		}
-
-		return [{
+		var oMenuItem = this.enhanceItemWithResponsibleElement({
 			id: mPropertyBag.pluginId,
-			text: this.getActionText(aResponsibleElementOverlays[0], mAction, mPropertyBag.pluginId),
 			handler: this.handler.bind(this),
 			enabled: this.isEnabled.bind(this),
 			rank: mPropertyBag.rank,
 			icon: mPropertyBag.icon,
 			group: mPropertyBag.group
-		}];
+		}, aElementOverlays);
+
+		var aResponsibleElementOverlays = oMenuItem.responsible || aElementOverlays;
+		var oResponsibleElementOverlay = aResponsibleElementOverlays[0];
+
+		var mAction = this.getAction(oResponsibleElementOverlay);
+		if (!mAction || !this.isAvailable(aResponsibleElementOverlays)) {
+			return [];
+		}
+
+		oMenuItem.text = this.getActionText(oResponsibleElementOverlay, mAction, mPropertyBag.pluginId);
+		return [oMenuItem];
+	};
+
+	/**
+	 * Returns true if the plugin action from a responsible element is available on the element overlay
+	 *
+	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - Element overlay
+	 * @param {string} [sActionName] - Action name
+	 * @return {boolean} Indicates if the action is enabled
+	 */
+	Plugin.prototype.isResponsibleElementActionAvailable = function (oElementOverlay, sActionName) {
+		var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
+		if (oDesignTimeMetadata) {
+			return oDesignTimeMetadata.isResponsibleActionAvailable(sActionName || this.getActionName());
+		}
+		return false;
 	};
 
 	/**
@@ -373,6 +388,26 @@ function(
 			}
 		}
 		return oElementOverlay;
+	};
+
+	/**
+	 * Enhances a context menu item with the responsible element overlay if applicable
+	 *
+	 * @param {object} oMenuItem - Menu item
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Source element overlays
+	 * @param {string[]} [aActionNames] - Action names
+	 * @return {object} Enhanced menu item
+	 */
+	Plugin.prototype.enhanceItemWithResponsibleElement = function(oMenuItem, aElementOverlays, aActionNames) {
+		var aResponsibleElementOverlays = [];
+		var aActionsFromResponsibleElement = aActionNames || [this.getActionName()];
+		var bEnhanceMenuItem = aActionsFromResponsibleElement.some(function (sActionName) {
+			if (this.isResponsibleElementActionAvailable(aElementOverlays[0], sActionName)) {
+				aResponsibleElementOverlays = aElementOverlays.map(this.getResponsibleElementOverlay.bind(this));
+				return true;
+			}
+		}.bind(this));
+		return Object.assign(oMenuItem, bEnhanceMenuItem && {responsible: aResponsibleElementOverlays});
 	};
 
 	return Plugin;

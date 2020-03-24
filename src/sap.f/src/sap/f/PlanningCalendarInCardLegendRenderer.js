@@ -12,6 +12,7 @@ sap.ui.define(['sap/m/PlanningCalendarLegendRenderer', 'sap/ui/core/Renderer'],
 		 * @namespace
 		 */
 		var PlanningCalendarInCardLegendRenderer = Renderer.extend(PlanningCalendarLegendRenderer);
+		PlanningCalendarInCardLegendRenderer.apiVersion = 2;
 
 		/**
 		 * Renders a header for the <code>items</code> list.

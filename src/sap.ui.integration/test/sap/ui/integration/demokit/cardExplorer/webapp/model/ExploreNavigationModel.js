@@ -39,6 +39,24 @@ sap.ui.define([
 								title: 'Templating',
 								key: 'templating',
 								manifestUrl: '/samples/adaptive/templating.json'
+							},
+							{
+								title: 'Data & Templating',
+								key: 'data',
+								files: [
+									{
+										url: '/samples/adaptive/data.json',
+										name: 'manifest.json',
+										key: 'manifest.json',
+										content: ''
+									},
+									{
+										url: '/samples/adaptive/data-json.json',
+										name: 'data.json',
+										key: 'data.json',
+										content: ''
+									}
+								]
 							}
 						]
 					},
@@ -94,17 +112,81 @@ sap.ui.define([
 							{
 								title: 'Media',
 								key: 'media',
-								manifestUrl: '/samples/component/cardContent/manifest.json'
+								files: [
+									{
+										url: '/samples/component/cardContent/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json',
+										content: ''
+									},
+									{
+										url: '/samples/component/cardContent/Component.js',
+										name: 'Component.js',
+										key: 'Component.js',
+										content: ''
+									},
+									{
+										url: '/samples/component/cardContent/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml',
+										content: ''
+									}
+								]
 							},
 							{
 								title: 'Media, header at bottom',
 								key: 'mediaBottom',
-								manifestUrl: '/samples/component/cardContentHeaderBottom/manifest.json'
+								files: [
+									{
+										url: '/samples/component/cardContentHeaderBottom/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json',
+										content: ''
+									},
+									{
+										url: '/samples/component/cardContentHeaderBottom/Component.js',
+										name: 'Component.js',
+										key: 'Component.js',
+										content: ''
+									},
+									{
+										url: '/samples/component/cardContentHeaderBottom/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml',
+										content: ''
+									}
+								]
 							},
 							{
 								title: 'Buy bus ticket',
 								key: 'busTicket',
-								manifestUrl: '/samples/component/cardContentControls/manifest.json'
+								files: [
+
+									{
+										url: '/samples/component/cardContentControls/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json',
+										content: ''
+									},
+									{
+										url: '/samples/component/cardContentControls/Component.js',
+										name: 'Component.js',
+										key: 'Component.js',
+										content: ''
+									},
+									{
+										url: '/samples/component/cardContentControls/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml',
+										content: ''
+									},
+									{
+										url: '/samples/component/cardContentControls/Card.controller.js',
+										name: 'Card.controller.js',
+										key: 'Card.controller.js',
+										content: ''
+									}
+								]
 							}
 						]
 					},
@@ -199,6 +281,7 @@ sap.ui.define([
 						key: 'htmlConsumption',
 						target: 'exploreSamples',
 						title: 'Consumption in HTML',
+						useIFrame: true,
 						files: [
 							{
 								url: '/samples/htmlConsumption/indexTemplate.html',
@@ -276,6 +359,50 @@ sap.ui.define([
 						manifestUrl: '/samples/dateRange.json'
 					},
 					{
+						key: 'destinations',
+						target: 'exploreSamples',
+						title: 'Destinations',
+						useIFrame: true,
+						files: [
+							{
+								url: '/samples/destinations/index.html',
+								name: 'index.html',
+								key: 'index.html',
+								content: ''
+							},
+							{
+								url: '/samples/destinations/cardManifest.json',
+								name: 'cardManifest.json',
+								key: 'cardManifest.json',
+								content: ''
+							},
+							{
+								url: '/samples/destinations/Destinations.view.xml',
+								name: 'Destinations.view.xml',
+								key: 'Destinations.view.xml',
+								content: ''
+							},
+							{
+								url: '/samples/destinations/Destinations.controller.js',
+								name: 'Destinations.controller.js',
+								key: 'Destinations.controller.js',
+								content: ''
+							},
+							{
+								url: '/samples/destinations/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								content: ''
+							},
+							{
+								url: '/samples/destinations/Component.js',
+								name: 'Component.js',
+								key: 'Component.js',
+								content: ''
+							}
+						]
+					},
+					{
 						key: 'dynamicCounter',
 						target: 'exploreSamples',
 						title: 'Dynamic Counter',
@@ -285,6 +412,7 @@ sap.ui.define([
 						key: 'hostActions',
 						target: 'exploreSamples',
 						title: 'Host Actions',
+						useIFrame: true,
 						files: [
 							{
 								url: '/samples/hostActions/index.html',

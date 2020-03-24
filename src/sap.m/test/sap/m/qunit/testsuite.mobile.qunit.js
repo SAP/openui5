@@ -1,9 +1,11 @@
 sap.ui.define([
-	"sap/ui/Device"
-], function(Device) {
+	"sap/ui/Device",
+	"sap/base/util/merge",
+	"sap/base/Log"
+], function(Device, merge, Log) {
 
 	"use strict";
-	return {
+	var mConfig = {
 		name: "QUnit TestSuite for sap.m",
 		defaults: {
 			bootCore: true,
@@ -1603,12 +1605,6 @@ sap.ui.define([
 			WizardStep: {
 				title: "QUnit Page for sap.m.WizardStep"
 			},
-			"changeHandler/AddTableColumn": {
-				title: "QUnit - sap.m.changeHandler.AddTableColumn",
-				ui5: {
-					libs: "sap.m,sap.ui.fl"
-				}
-			},
 			"changeHandler/MoveTableColumns": {
 				title: "QUnit - sap.m.changeHandler.MoveTableColumns",
 				ui5: {
@@ -2169,4 +2165,41 @@ sap.ui.define([
 			}
 		}
 	};
+
+	var bCompAvailable = false;
+	var oXhr = new XMLHttpRequest();
+	oXhr.onreadystatechange = function() {
+		if (this.readyState === 4) {
+			switch (this.status) {
+				case 200:
+				case 304:
+					bCompAvailable = JSON.parse(this.responseText).libraries.some(function (mLibrary) {
+						return mLibrary.name === 'sap.ui.comp';
+					});
+					break;
+				default:
+					Log.info("Sorry, can't find file with library versions ¯\\_(ツ)_/¯");
+			}
+		}
+	};
+
+	oXhr.open("GET", sap.ui.require.toUrl("sap-ui-version.json"), false);
+	oXhr.send();
+
+	if (bCompAvailable) {
+		mConfig = merge({}, mConfig, {
+			tests: {
+				"changeHandler/AddTableColumn": {
+					title: "QUnit - sap.m.changeHandler.AddTableColumn",
+					ui5: {
+						libs: "sap.m,sap.ui.fl"
+					}
+				}
+			}
+		});
+	} else {
+		Log.info("sap.ui.comp not available", "enabling tests are skipped, ensure sap.ui.comp from sapui5.runtime is loaded to execute them");
+	}
+
+	return mConfig;
 });

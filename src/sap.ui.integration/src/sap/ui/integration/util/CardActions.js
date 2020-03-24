@@ -211,10 +211,6 @@ sap.ui.define([
 			}
 		};
 
-		CardActions.prototype._addClickableClass = function () {
-			this._oAreaControl.addStyleClass("sapFCardClickable");
-		};
-
 		CardActions.prototype._fireActionReady = function () {
 			var bHeader = this.getAreaType() === AreaType.Header;
 			var sEventName = bHeader ? "_actionHeaderReady" : "_actionContentReady";
@@ -258,10 +254,6 @@ sap.ui.define([
 		};
 
 		CardActions.prototype._attachPressEvent = function (oActionControl, oAction, bSingleAction) {
-
-			if (bSingleAction) {
-				this._addClickableClass();
-			}
 
 			oActionControl.attachPress(function (oEvent) {
 				var oSource = oEvent.getSource();

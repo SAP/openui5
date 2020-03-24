@@ -1,73 +1,74 @@
 {
-  "sap.app": {
-	"type": "card"
-  },
-  "sap.card": {
-	"type": "Calendar",
-	"data": {
-	  "request": {
-		"url": "./cardcontent/delayedLoading/calendarData.json"
-	  }
+	"sap.app": {
+		"id": "cardsdemo.samples.calendar1",
+		"type": "card"
 	},
-	"header": {
-	  "title": "My calendar",
-	  "subTitle": "Team Balkan",
-	  "status": {
-		"text":  {
-		  "format": {
-			"translationKey": "i18n>CARD.COUNT_X_OF_Y",
-			"parts": [
-			  "parameters>/visibleItems",
-			  "parameters>/allItems"
-			]
-		  }
+	"sap.card": {
+		"type": "Calendar",
+		"data": {
+			"request": {
+				"url": "./cardcontent/delayedLoading/calendarData.json"
+			}
+		},
+		"header": {
+			"title": "My calendar",
+			"subTitle": "Team Balkan",
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"parameters>/allItems"
+						]
+					}
+				}
+			}
+		},
+		"content": {
+			"date": "2019-9-2",
+			"maxItems": 5,
+			"maxLegendItems": 3,
+			"noItemsText": "You have nothing planned for that day",
+			"item": {
+				"template": {
+					"visualization": "{visualization}",
+					"startDate": "{start}",
+					"endDate": "{end}",
+					"title": "{title}",
+					"text": "{text}",
+					"icon": {
+						"src": "{icon}"
+					},
+					"type": "{type}"
+				},
+				"path": "/item"
+			},
+			"specialDate": {
+				"template": {
+					"startDate": "{start}",
+					"endDate": "{end}",
+					"type": "{type}"
+				},
+				"path": "/specialDate"
+			},
+			"legendItem": {
+				"template": {
+					"category": "{category}",
+					"text": "{text}",
+					"type": "{type}"
+				},
+				"path": "/legendItem"
+			},
+			"moreItems": {
+				"actions": [
+					{
+						"type": "Navigation",
+						"enabled": true,
+						"url": "http://sap.com"
+					}
+				]
+			}
 		}
-	  }
-	},
-	"content": {
-	  "date": "2019-9-2",
-	  "maxItems": 5,
-	  "maxLegendItems": 3,
-	  "noItemsText": "You have nothing planned for that day",
-	  "item": {
-		"template": {
-		  "visualization": "{visualization}",
-		  "startDate": "{start}",
-		  "endDate": "{end}",
-		  "title": "{title}",
-		  "text": "{text}",
-		  "icon": {
-			"src": "{icon}"
-		  },
-		  "type": "{type}"
-		},
-		"path": "/item"
-	  },
-	  "specialDate": {
-		"template": {
-		  "startDate": "{start}",
-		  "endDate": "{end}",
-		  "type": "{type}"
-		},
-		"path": "/specialDate"
-	  },
-	  "legendItem": {
-		"template": {
-		  "category": "{category}",
-		  "text": "{text}",
-		  "type": "{type}"
-		},
-		"path": "/legendItem"
-	  },
-	  "moreItems": {
-		"actions": [
-		  {
-			"type": "Navigation",
-			"enabled": true,
-			"url": "http://sap.com"
-		  }
-		]
-	  }
 	}
-  }
 }

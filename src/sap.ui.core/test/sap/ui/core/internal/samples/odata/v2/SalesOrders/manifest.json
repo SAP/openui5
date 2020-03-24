@@ -48,8 +48,7 @@
 				"settings" : {
 					"canonicalRequests" : true,
 					"defaultBindingMode" : "TwoWay",
-					"defaultCountMode" : "None",
-					"useBatch" : false
+					"defaultCountMode" : "None"
 				},
 				"type" : "sap.ui.model.odata.v2.ODataModel"
 			}

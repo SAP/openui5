@@ -54,6 +54,7 @@ sap.ui.define([
 							return oPage.getBusy();
 						},
 						autoWait: false,
+						pollingInterval: 100,
 						success : function (oPage) {
 							Opa5.assert.ok(oPage.getBusy(), "The object view is busy");
 						},

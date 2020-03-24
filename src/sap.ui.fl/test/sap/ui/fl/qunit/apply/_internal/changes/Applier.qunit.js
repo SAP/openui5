@@ -133,6 +133,45 @@ function(
 			}.bind(this));
 		});
 
+		QUnit.test("synchronously add the changes to the queue", function(assert) {
+			this.oApplyChangeOnControlStub.restore();
+			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl").resolves({success: true});
+			var oChange0 = new Change(getLabelChangeContent("a"));
+			var fnGetChangesMap = function() {
+				return getInitialChangesMap({
+					mChanges: {
+						someId: [oChange0]
+					}
+				});
+			};
+
+			var oPromise = Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, this.oControl);
+			assert.ok(oChange0.isQueuedForApply(), "the change is already queued for apply, but not applied");
+			return oPromise.then(function() {
+				assert.equal(this.oApplyChangeOnControlStub.callCount, 1, "the change was applied");
+			}.bind(this));
+		});
+
+		QUnit.test("does not add to queue and apply the changes to the queue if _ignoreOnce is set", function(assert) {
+			this.oApplyChangeOnControlStub.restore();
+			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl").resolves({success: true});
+			var oChange0 = new Change(getLabelChangeContent("a"));
+			oChange0._ignoreOnce = true;
+			var fnGetChangesMap = function() {
+				return getInitialChangesMap({
+					mChanges: {
+						someId: [oChange0]
+					}
+				});
+			};
+
+			var oPromise = Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, this.oControl);
+			assert.notOk(oChange0.isQueuedForApply(), "the change is not queued for apply");
+			return oPromise.then(function() {
+				assert.equal(this.oApplyChangeOnControlStub.callCount, 0, "the change was not applied");
+			}.bind(this));
+		});
+
 		QUnit.test("updates change status if change was already applied (viewCache)", function(assert) {
 			var oChange0 = new Change(getLabelChangeContent("a"));
 			var oChange1 = new Change(getLabelChangeContent("a"));
@@ -456,11 +495,11 @@ function(
 
 			this.oApplyChangeOnControlStub.restore();
 			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl")
-			.onCall(0).returns(Promise.resolve({success: true}))
+			.onCall(0).resolves({success: true})
 			.onCall(1).returns(new Utils.FakePromise({success: true}))
-			.onCall(2).returns(Promise.resolve({success: true}))
+			.onCall(2).resolves({success: true})
 			.onCall(3).returns(new Utils.FakePromise({success: true}))
-			.onCall(4).returns(Promise.resolve({success: true}));
+			.onCall(4).resolves({success: true});
 
 			return Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, oControlField2)
 			.then(Applier.applyAllChangesForControl.bind(Applier, fnGetChangesMap, this.oAppComponent, this.oFlexController, oControlField1))
@@ -492,11 +531,11 @@ function(
 
 			this.oApplyChangeOnControlStub.restore();
 			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl")
-				.onCall(0).returns(Promise.resolve({success: true}))
+				.onCall(0).resolves({success: true})
 				.onCall(1).returns(new Utils.FakePromise({success: true}))
-				.onCall(2).returns(Promise.resolve({success: true}))
+				.onCall(2).resolves({success: true})
 				.onCall(3).returns(new Utils.FakePromise({success: true}))
-				.onCall(4).returns(Promise.resolve({success: true}));
+				.onCall(4).resolves({success: true});
 
 			return Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, oControlField2)
 			.then(Applier.applyAllChangesForControl.bind(Applier, fnGetChangesMap, this.oAppComponent, this.oFlexController, oControlField1))

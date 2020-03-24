@@ -91,7 +91,8 @@ sap.ui.define([
 					oEvent.getParameter("value"),
 					{
 						"foo2": {
-							"value": "bar"
+							"value": "bar",
+							"type": "string"
 						}
 					},
 					"Then the key is updated"
@@ -100,6 +101,53 @@ sap.ui.define([
 			});
 			this.aItems[0].key.setValue("foo2");
 			QUnitUtils.triggerEvent("input", this.aItems[0].key.getDomRef());
+		});
+	});
+
+	QUnit.module("Configuration options", {
+		beforeEach: function () {
+			this.oBaseEditor = new BaseEditor();
+			this.oBaseEditor.placeAt("qunit-fixture");
+		},
+		afterEach: function () {
+			this.oBaseEditor.destroy();
+		}
+	}, function () {
+		QUnit.test("When invalid entries should be filtered and a non-string value without a type is set", function (assert) {
+			this.oBaseEditor.setConfig({
+				"properties": {
+					"sampleParameters": {
+						"path": "/sampleParameters",
+						"type": "parameters",
+						"includeInvalidEntries": false,
+						"allowedTypes": ["string", "number"]
+					}
+				},
+				"propertyEditors": {
+					"parameters": "sap/ui/integration/designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor",
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
+				}
+			});
+
+			this.oBaseEditor.setJson({
+				sampleParameters: {
+					"invalidProperty": {
+						value: 123
+					},
+					"validProperty": {
+						value: "Valid"
+					}
+				}
+			});
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleParameters").then(function (aPropertyEditor) {
+				this.oParametersEditor = aPropertyEditor[0];
+				var oParametersEditorContent = getParameterEditorContent(this.oParametersEditor);
+				this.aItems = oParametersEditorContent.items;
+
+				assert.strictEqual(this.aItems.length, 1, "Then the invalid value is not included");
+			}.bind(this));
 		});
 	});
 

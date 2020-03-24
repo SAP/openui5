@@ -7,10 +7,10 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/PropertyEditor",
 	"sap/ui/integration/designtime/baseEditor/util/binding/resolveBinding",
 	"sap/ui/integration/designtime/baseEditor/util/binding/ObjectBinding",
+	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString",
 	"sap/ui/core/Control",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/base/util/ObjectPath",
-	"sap/base/util/merge",
 	"sap/base/util/each",
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual",
@@ -22,18 +22,18 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/i18n/ResourceBundle",
-	"sap/ui/base/BindingParser",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/integration/designtime/baseEditor/util/unset"
 ], function (
 	createPromise,
 	PropertyEditorFactory,
 	PropertyEditor,
 	resolveBinding,
 	ObjectBinding,
+	isValidBindingString,
 	Control,
 	ResourceModel,
 	ObjectPath,
-	merge,
 	each,
 	deepClone,
 	deepEqual,
@@ -45,8 +45,8 @@ sap.ui.define([
 	_omit,
 	JSONModel,
 	ResourceBundle,
-	BindingParser,
-	Log
+	Log,
+	unset
 ) {
 	"use strict";
 
@@ -143,15 +143,11 @@ sap.ui.define([
 				 *   config.i18n {string|array} Module path or array of paths for i18n property files. i18n binding, for example, <code>{i18n>key}</code> is available in the <code>/properties<code> section, e.g. for <code>label</code>
 				 */
 				"config": {
-					type: "object"
-				},
-
-				"_defaultConfig": {
 					type: "object",
-					visibility: "hidden",
-					// do not override during inheritance, use this.addDefaultConfig instead!
 					defaultValue: {
-						i18n: "sap/ui/integration/designtime/baseEditor/i18n/i18n.properties"
+						"i18n": [
+							"sap/ui/integration/designtime/baseEditor/i18n/i18n.properties"
+						]
 					}
 				}
 			},
@@ -283,37 +279,35 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * To be used only in constructor when inheriting from <code>BaseEditor</code> to add additional default configuration.
-	 * @param  {object} oConfig - To merge with previous default
-	 */
-	BaseEditor.prototype.addDefaultConfig = function (oConfig) {
-		this.setProperty("_defaultConfig",
-			this._mergeConfig(this.getProperty("_defaultConfig"), oConfig)
+	BaseEditor.prototype.setConfig = function (oConfig) {
+		PropertyEditorFactory.deregisterAllTypes();
+		PropertyEditorFactory.registerTypes(oConfig.propertyEditors);
+
+		// Backwards compatibility. If no i18n configuration specified, we use default one.
+		var oTarget = {};
+		if (!oConfig.i18n) {
+			oTarget.i18n = this.getMetadata().getProperty("config").getDefaultValue().i18n;
+		}
+
+		this.setProperty(
+			"config",
+			this._mergeConfig(oTarget, oConfig),
+			false
 		);
-		this.setConfig(this._oUnmergedConfig || {});
-		return this;
+		this._initialize();
 	};
 
-	BaseEditor.prototype.setConfig = function (oConfig) {
-		this._oUnmergedConfig = oConfig;
-		return this._setConfig(
-			this._mergeConfig(this.getProperty("_defaultConfig"), oConfig)
+	BaseEditor.prototype.addConfig = function (oConfig) {
+		return this.setConfig(
+			this._mergeConfig(this.getConfig(), oConfig)
 		);
 	};
 
 	BaseEditor.prototype._mergeConfig = function (oTarget, oSource) {
-		var oResult = merge({}, oTarget, oSource);
+		var oResult = _merge({}, oTarget, oSource);
 		// concat i18n properties to avoid override
 		oResult.i18n = [].concat(oTarget.i18n || [], oSource.i18n || []);
 		return oResult;
-	};
-
-	BaseEditor.prototype._setConfig = function (oConfig) {
-		PropertyEditorFactory.registerTypes(oConfig.propertyEditors);
-		var vReturn = this.setProperty("config", oConfig, false);
-		this._initialize();
-		return vReturn;
 	};
 
 	BaseEditor.prototype._reset = function () {
@@ -402,7 +396,6 @@ sap.ui.define([
 				}.bind(this));
 		}
 	};
-
 
 	BaseEditor.prototype._createDataModel = function () {
 		var oModel = new JSONModel();
@@ -633,7 +626,7 @@ sap.ui.define([
 	};
 
 	BaseEditor.prototype._createPropertyEditor = function (oPropertyConfig) {
-		var oBindingInfo = typeof oPropertyConfig.value === "string" && BindingParser.complexParser(oPropertyConfig.value);
+		var oBindingInfo = typeof oPropertyConfig.value === "string" && isValidBindingString(oPropertyConfig.value, false);
 
 		// Avoid passing values containing binding string to constructor, otherwise
 		// there will be interpret by ManagedObject as bindings automatically.
@@ -715,6 +708,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns list of configurations for properties which match the specified list of the tags.
+	 * @param {string|string[]} vTag - Tag or an array of tags.
+	 * @returns {object[]} Array of the configuration objects which match all the specified tags
+	 */
+	BaseEditor.prototype.getConfigsByTag = function (vTag) {
+		var aProperties = this.getConfig().properties;
+
+		return Object.keys(aProperties)
+			.filter(function (sPropertyName) {
+				return hasTag(aProperties[sPropertyName], vTag);
+			})
+			.map(function (sPropertyName) {
+				return aProperties[sPropertyName];
+			});
+	};
+
+	/**
 	 * Returns a list of property editors corresponding to a specified list of tags.
 	 * @param {string|string[]} vTag - List of tags
 	 * @returns {sap.ui.integration.designtime.baseEditor.PropertyEditor[]|sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor[]|null} List of property editors for the specified tags
@@ -753,20 +763,6 @@ sap.ui.define([
 
 		return sContext;
 	};
-
-	function unset(aParts, oObject) {
-		var mContainer = ObjectPath.get(aParts.slice(0, -1), oObject);
-		if (mContainer) {
-			delete mContainer[aParts[aParts.length - 1]];
-
-			return (
-				Array.isArray(mContainer) && mContainer.length === 0
-				|| isPlainObject(mContainer) && isEmptyObject(mContainer)
-					? unset(aParts.slice(0, -1), oObject)
-					: oObject
-			);
-		}
-	}
 
 	BaseEditor.prototype._onValueChange = function (oEvent) {
 		var oPropertyEditor = oEvent.getSource();

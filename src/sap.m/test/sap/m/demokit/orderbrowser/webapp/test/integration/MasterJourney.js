@@ -24,12 +24,13 @@ sap.ui.define([
 		When.onTheMasterPage.iSearchFor(sSearch);
 
 		// Assertions
-		Then.onTheMasterPage.theListShowsOnlyObjectsWithTheSearchString(sSearch);
+		Then.onTheMasterPage.theListShowsOnlyObjectsContaining(sSearch);
 	});
 
 	opaTest("Entering something that cannot be found into search field and pressing search field's refresh should leave the list as it was", function (Given, When, Then) {
 		//Actions
-		When.onTheMasterPage.iTypeSomethingInTheSearchThatCannotBeFoundAndTriggerRefresh();
+		When.onTheMasterPage.iSearchForNotFound()
+			.and.iClearTheSearch();
 
 		// Assertions
 		Then.onTheMasterPage.theListHasEntries();
@@ -37,10 +38,10 @@ sap.ui.define([
 
 	opaTest("Entering something that cannot be found into search field and pressing 'search' should display the list's 'not found' message", function (Given, When, Then) {
 		//Actions
-		When.onTheMasterPage.iSearchForSomethingWithNoResults();
+		When.onTheMasterPage.iSearchForNotFound();
 
 		// Assertions
-		Then.onTheMasterPage.iShouldSeeTheNoDataTextForNoSearchResults().
+		Then.onTheMasterPage.iShouldSeeTheNoDataText().
 			and.theListHeaderDisplaysZeroHits();
 	});
 
@@ -62,9 +63,7 @@ sap.ui.define([
 
 	opaTest("MasterList remove filter should display all items", function(Given, When, Then) {
 		// Action
-		When.onTheMasterPage.iOpenViewSettingsDialog().
-			and.iPressResetInViewSelectionDialog().
-			and.iPressOKInViewSelectionDialog();
+		When.onTheMasterPage.iResetFilters();
 
 		// Assertion
 		Then.onTheMasterPage.theListShouldHaveAllEntries();
@@ -80,7 +79,7 @@ sap.ui.define([
 
 	opaTest("Remove grouping from MasterList delivers initial list", function(Given, When, Then) {
 		// Action
-		When.onTheMasterPage.iRemoveListGrouping();
+		When.onTheMasterPage.iResetGrouping();
 
 		// Assertion
 		Then.onTheMasterPage.theListShouldNotContainGroupHeaders().

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global location */
+/*global location, XMLHttpRequest */
 sap.ui.define([
 	"sap/ui/documentation/sdk/controller/BaseController",
 	"sap/ui/thirdparty/URI"
@@ -19,61 +19,78 @@ sap.ui.define([
 			this._codeCache = {};
 		},
 
-		fetchSourceFile: function (sRef, sFile) {
-			var that = this,
-				sUrl = sRef + "/" + sFile,
-				fnSuccess = function (result) {
-					that._codeCache[sUrl] = result;
-				},
-				fnError = function (result) {
-					that._codeCache[sUrl] = "not found: '" + sUrl + "'";
-				};
+		fetchSourceFile: function (sUrl) {
+			return new Promise(function(resolve, reject) {
+				var oReq,
+					fnSuccess,
+					fnError;
 
-			if (!(sUrl in this._codeCache)) {
+				if (sUrl in this._codeCache) {
+					resolve(this._codeCache[sUrl]);
+					return;
+				}
+
+				fnSuccess = function (oEvent) {
+					var sResult = oEvent.target.responseText;
+					this._codeCache[sUrl] = sResult;
+					resolve(sResult);
+				}.bind(this);
+
+				fnError = function () {
+					this._codeCache[sUrl] = "not found: '" + sUrl + "'";
+					reject();
+				}.bind(this);
+
 				this._codeCache[sUrl] = "";
-				jQuery.ajax(sUrl, {
-					async: false,
-					dataType: "text",
-					success: fnSuccess,
-					error: fnError
-				});
-			}
 
-			return that._codeCache[sUrl];
+				oReq = new XMLHttpRequest();
+				oReq.open("GET", sUrl, true);
+				oReq.onload = fnSuccess;
+				oReq.onerror = fnError;
+
+				oReq.send();
+			}.bind(this));
 		},
 		onDownload: function () {
 			sap.ui.require([
 				"sap/ui/thirdparty/jszip",
 				"sap/ui/core/util/File"
 			], function (JSZip, File) {
-				var oZipFile = new JSZip();
+				var oZipFile = new JSZip(),
+					sRef = sap.ui.require.toUrl((this._sId).replace(/\./g, "/")),
+					oData = this.oModel.getData(),
+					aExtraFiles = oData.includeInDownload || [],
+					bHasManifest,
+					aPromises = [],
+					fnAddMockFileToZip = function(sRawFile) {
+						var aMockFilePromises = [];
+						for (var j = 0; j < this._aMockFiles.length; j++) {
+							var sMockFileName = this._aMockFiles[j];
+							if (sRawFile.indexOf(sMockFileName) > -1) {
+								aMockFilePromises.push(this._addFileToZip({
+									name: "mockdata/" + sMockFileName,
+									url: MOCK_DATA_REF + "/" + sMockFileName,
+									formatter: this._formatMockFile
+								}, oZipFile));
+							}
+						}
+						return Promise.all(aMockFilePromises);
+					};
 
 				// zip files
-				var oData = this.oModel.getData();
 				for (var i = 0; i < oData.files.length; i++) {
 					var oFile = oData.files[i],
-						sRawFileContent = oFile.raw;
-
+						sUrl = sRef + "/" + oFile.name,
 					// change the bootstrap URL to the current server for all HTML files of the sample
-					if (oFile.name && (oFile.name === oData.iframe || oFile.name.split(".").pop() === "html")) {
-						sRawFileContent = this._changeIframeBootstrapToCloud(sRawFileContent);
-					}
+					bChangeBootstrap = oFile.name && (oFile.name === oData.iframe || oFile.name.split(".").pop() === "html");
+					aPromises.push(this._addFileToZip({
+						name: oFile.name,
+						url: sUrl,
+						formatter:  bChangeBootstrap ? this._changeIframeBootstrapToCloud : undefined
+					}, oZipFile));
 
-					oZipFile.file(oFile.name, sRawFileContent);
-
-					// mock files
-					for (var j = 0; j < this._aMockFiles.length; j++) {
-						var sMockFile = this._aMockFiles[j];
-						if (oFile.raw.indexOf(sMockFile) > -1) {
-							oZipFile.file("mockdata/" + sMockFile, this.downloadMockFile(sMockFile));
-						}
-					}
+					aPromises.push(this.fetchSourceFile(sUrl).then(fnAddMockFileToZip.bind(this)));
 				}
-
-				var sRef = sap.ui.require.toUrl((this._sId).replace(/\./g, "/")),
-					aExtraFiles = oData.includeInDownload || [],
-					that = this,
-					bHasManifest;
 
 				// iframe examples have a separate index file and a component file to describe it
 				if (!oData.iframe) {
@@ -81,57 +98,81 @@ sap.ui.define([
 						return oFile.name === "manifest.json";
 					});
 
-					oZipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));
-					oZipFile.file("index.html", this._changeIframeBootstrapToCloud(this._createIndexHtmlFile(oData, bHasManifest)));
+
+					aPromises.push(this._addFileToZip({
+						name: "Component.js",
+						url: sRef + "/" + "Component.js"
+					}, oZipFile));
+
+
+					aPromises.push(this._addFileToZip({
+						name: "index.html",
+						url: TMPL_REF + "/" + (bHasManifest ? "indexevo.html.tmpl" : "index.html.tmpl"),
+						formatter: function(sIndexFile) {
+							return this._changeIframeBootstrapToCloud(this._formatIndexHtmlFile(sIndexFile, oData));
+						}.bind(this)
+					}, oZipFile));
+
 
 					if (!bHasManifest) {
-						oZipFile.file("index.js", this._changeIframeBootstrapToCloud(this._createIndexJsFile(oData)));
+						aPromises.push(this._addFileToZip({
+							name: "index.js",
+							url: TMPL_REF + "/" + "index.js.tmpl",
+							formatter: function(sIndexJsFile) {
+								return this._changeIframeBootstrapToCloud(this._formatIndexJsFile(sIndexJsFile, oData));
+							}.bind(this)
+						}, oZipFile));
 					}
 				}
 
+
 				// add extra download files
 				aExtraFiles.forEach(function (sFileName) {
-					oZipFile.file(sFileName, that.fetchSourceFile(sRef, sFileName));
+					aPromises.push(this._addFileToZip({
+						name: sFileName,
+						url: sRef + "/" + sFileName
+					}, oZipFile));
 				});
 
+
 				// add generic license and notice file
-				oZipFile.file("LICENSE.txt", this.fetchSourceFile(TMPL_REF, "LICENSE.txt"));
-				oZipFile.file("NOTICE.txt", this.fetchSourceFile(TMPL_REF, "NOTICE.txt"));
+				aPromises.push(this._addFileToZip({
+					name: "LICENSE.txt",
+					url: TMPL_REF + "/" + "LICENSE.txt"
+				}, oZipFile));
 
-				var oContent = oZipFile.generate({ type: "blob" });
 
-				// save and open generated file
-				File.save(oContent, this._sId, "zip", "application/zip");
+				aPromises.push(this._addFileToZip({
+					name: "NOTICE.txt",
+					url: TMPL_REF + "/" + "NOTICE.txt"
+				}, oZipFile));
+
+
+				Promise.all(aPromises).then(function() {
+					var oContent = oZipFile.generate({ type: "blob" });
+
+					// save and open generated file
+					File.save(oContent, this._sId, "zip", "application/zip");
+				}.bind(this));
 			}.bind(this));
 		},
 
-		_createIndexHtmlFile: function (oData, bHasManifest) {
-			var sFile = this.fetchSourceFile(TMPL_REF, bHasManifest ? "indexevo.html.tmpl" : "index.html.tmpl");
+		_addFileToZip: function  (oFileInfo, oZipFile) {
+			var sFileName = oFileInfo.name,
+				sUrl = oFileInfo.url,
+				fnFileFormatter = oFileInfo.formatter;
 
-			sFile = this._formatIndexHtmlFile(sFile, oData);
-
-			return sFile;
-		},
-
-		_createIndexJsFile: function (oData) {
-			var sFile = this.fetchSourceFile(TMPL_REF, "index.js.tmpl");
-
-			sFile = this._formatIndexJsFile(sFile, oData);
-
-			return sFile;
-		},
-
-		downloadMockFile: function (sFile) {
-			var sMockData = this.fetchSourceFile(MOCK_DATA_REF, sFile);
-
-			if (sMockData) {
-				sMockData = this._formatMockFile(sMockData);
-			}
-
-			return sMockData;
+			return this.fetchSourceFile(sUrl)
+				.then(function(vRawFile) {
+					if (fnFileFormatter) {
+						vRawFile = fnFileFormatter(vRawFile);
+					}
+					oZipFile.file(sFileName, vRawFile);
+				});
 		},
 
 		_formatIndexHtmlFile: function (sFile, oData) {
+
 			return sFile.replace(/{{TITLE}}/g, oData.name)
 				.replace(/{{SAMPLE_ID}}/g, oData.id);
 		},

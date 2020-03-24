@@ -1,0 +1,195 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "0e2fdde7d2a8b4b74d589e3d7e2c32007a26f02e",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Filtering now clears previously selectedKey",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2030117603"
+          }
+        ]
+      },
+      {
+        "id": "9fd52f8f0b5261c83265c531c882c4943e0254ae",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: doesn\u0027t throw error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070025682"
+          }
+        ]
+      },
+      {
+        "id": "d76b04d87799f6b23b37d7ce1e6755fc9f5ed00d",
+        "type": "FIX",
+        "text": " sap.m.FacetFilterList: items binding using factory function is now working",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070068276"
+          }
+        ]
+      },
+      {
+        "id": "4de3689a8f5346c9036a52aaf1f2b0944190bad6",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Remove Responsive Paddings overstyling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070064295"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070067867"
+          }
+        ]
+      },
+      {
+        "id": "4dac1b7d364ce9f67322f736ef48a47cf486a495",
+        "type": "FIX",
+        "text": " sap.m.Link: Href placement fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070055617"
+          }
+        ]
+      },
+      {
+        "id": "ca4bf08cc2581bd6803aedfbee6871b1f6c81011",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: ResizeHandler is no longer triggered in onResize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080085987"
+          }
+        ]
+      },
+      {
+        "id": "f5a902fd6cc5547d00eccae57705d08b24aae7c9",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: Fix calculation for icon size",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070072391"
+          }
+        ]
+      },
+      {
+        "id": "8fababcd4f04fce1e0db6f906b0a928bb9e4142e",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Initial focus in dialog works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070059338"
+          }
+        ]
+      },
+      {
+        "id": "d8eae6f9b9b832e72e1c9900a1948dc96d196cb4",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: test stabilised",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070073637"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080095199"
+          }
+        ]
+      },
+      {
+        "id": "d7bc4656d1a5d48f958c3ed7fd25b1e89bfac11d",
+        "type": "FIX",
+        "text": " sap.m.Bar: content aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070076896"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070073104"
+          }
+        ]
+      },
+      {
+        "id": "29ec1991702f65170d56091f82c6dac96c4edd02",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: does not close on opened picker and F4 pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980266388"
+          }
+        ]
+      },
+      {
+        "id": "aae78bdd1896c61034f86e2a27ae9d1c13cef6a9",
+        "type": "FIX",
+        "text": " sap.m.Page: Scrolling in Firefox fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970531823"
+          }
+        ]
+      },
+      {
+        "id": "73e3cb833fd6a4971d47bfa732c716f00fb13a2e",
+        "type": "FIX",
+        "text": " sap.m.Select: Corrected title assignment when in IconOnly mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070058650"
+          }
+        ]
+      },
+      {
+        "id": "a96aa26de5dcc3b9fb8613639170421e9438399c",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Selection count is now read when dialog opens",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070059335"
+          }
+        ]
+      },
+      {
+        "id": "dce6223d92d132b363eca044efd880d77ca43784",
+        "type": "FIX",
+        "text": " sap.m.Slider: SliderTooltipContainer aligned properly with responsive paddings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070084503"
+          }
+        ]
+      },
+      {
+        "id": "1896b33593ee14361de91ecaccc3e9eb7ef66011",
+        "type": "FIX",
+        "text": " sap.ui.unified.DatePicker: picker buttons adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070082435"
+          }
+        ]
+      }
+    ]
+  }
+}

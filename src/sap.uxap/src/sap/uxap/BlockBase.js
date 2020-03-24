@@ -630,9 +630,9 @@ sap.ui.define([
 
 		BlockBase._PARENT_GRID_SIZE = 12;
 
-		BlockBase.prototype._computeFormAdjustmentFields = function (oView, sFormAdjustment, oParentColumns) {
+		BlockBase.prototype._computeFormAdjustmentFields = function (sFormAdjustment, oParentColumns) {
 
-			if (oView && sFormAdjustment && oParentColumns) {
+			if (sFormAdjustment && oParentColumns) {
 
 				return sFormAdjustment === BlockBaseFormAdjustment.BlockColumns ?
 					jQuery.extend({}, BlockBase._FORM_ADJUSTMENT_CONST, {columns: oParentColumns}) :
@@ -645,61 +645,58 @@ sap.ui.define([
 			var sFormAdjustment = this.getFormAdjustment(),
 				oView = this._getSelectedViewContent(),
 				oParent = this._oParentObjectPageSubSection,
-				oFormAdjustmentFields,
-				oColumnLayout,
-				oLayout;
+				oFormAdjustmentFields;
 
-			if (sFormAdjustment && (sFormAdjustment !== BlockBaseFormAdjustment.None)
-				&& oView && oParent) {
+			if ((sFormAdjustment !== BlockBaseFormAdjustment.None) && oView && oParent) {
 
-				var oParentColumns = oParent._oLayoutConfig;
+				oFormAdjustmentFields = this._computeFormAdjustmentFields(sFormAdjustment, oParent._oLayoutConfig);
 
 				oView.getContent().forEach(function (oItem) {
-					if (oItem.getMetadata().getName() === "sap.ui.layout.form.SimpleForm") {
+					this._adjustForm(oItem, oFormAdjustmentFields);
+				}.bind(this));
+			}
+		};
 
-						oItem.setLayout(SimpleFormLayout.ColumnLayout);
+		BlockBase.prototype._adjustForm = function (oForm, oFormAdjustmentFields) {
 
-						if (!oFormAdjustmentFields) {
-							oFormAdjustmentFields = this._computeFormAdjustmentFields(oView, sFormAdjustment, oParentColumns);
-						}
+			var oColumnLayout,
+				oLayout;
 
-						oLayout = oItem.getAggregation("form").getLayout();
+			if (oForm.getMetadata().getName() === "sap.ui.layout.form.SimpleForm") {
 
-						oLayout._iBreakPointTablet -= BlockBase.FORM_ADUSTMENT_OFFSET;
-						oLayout._iBreakPointDesktop -= BlockBase.FORM_ADUSTMENT_OFFSET;
-						oLayout._iBreakPointLargeDesktop -= BlockBase.FORM_ADUSTMENT_OFFSET;
+				oForm.setLayout(SimpleFormLayout.ColumnLayout);
 
-						oItem.setLabelSpanL(oFormAdjustmentFields.labelSpan.L);
-						oItem.setEmptySpanL(oFormAdjustmentFields.emptySpan.L);
-						this._applyFormAdjustmentFields(oFormAdjustmentFields, oItem);
+				oLayout = oForm.getAggregation("form").getLayout();
 
-						oItem.setWidth("100%");
-					} else if (oItem.getMetadata().getName() === "sap.ui.layout.form.Form") {
+				oLayout._iBreakPointTablet -= BlockBase.FORM_ADUSTMENT_OFFSET;
+				oLayout._iBreakPointDesktop -= BlockBase.FORM_ADUSTMENT_OFFSET;
+				oLayout._iBreakPointLargeDesktop -= BlockBase.FORM_ADUSTMENT_OFFSET;
 
-						oLayout = oItem.getLayout();
+				oForm.setLabelSpanL(oFormAdjustmentFields.labelSpan.L);
+				oForm.setEmptySpanL(oFormAdjustmentFields.emptySpan.L);
+				this._applyFormAdjustmentFields(oFormAdjustmentFields, oForm);
 
-						if (oLayout && oLayout.getMetadata().getName() === "sap.ui.layout.form.ColumnLayout") {
-							oColumnLayout = oLayout; // existing ColumnLayout must be reused, otherwise an error is thrown in the existing implementation
-						} else {
-							oColumnLayout = new ColumnLayout();
-							oItem.setLayout(oColumnLayout);
-						}
+				oForm.setWidth("100%");
+			} else if (oForm.getMetadata().getName() === "sap.ui.layout.form.Form") {
 
-						if (!oFormAdjustmentFields) {
-							oFormAdjustmentFields = this._computeFormAdjustmentFields(oView, sFormAdjustment, oParentColumns);
-						}
+				oLayout = oForm.getLayout();
 
-						oColumnLayout._iBreakPointTablet -= BlockBase.FORM_ADUSTMENT_OFFSET;
-						oColumnLayout._iBreakPointDesktop -= BlockBase.FORM_ADUSTMENT_OFFSET;
-						oColumnLayout._iBreakPointLargeDesktop -= BlockBase.FORM_ADUSTMENT_OFFSET;
+				if (oLayout && oLayout.getMetadata().getName() === "sap.ui.layout.form.ColumnLayout") {
+					oColumnLayout = oLayout; // existing ColumnLayout must be reused, otherwise an error is thrown in the existing implementation
+				} else {
+					oColumnLayout = new ColumnLayout();
+					oForm.setLayout(oColumnLayout);
+				}
 
-						oColumnLayout.setLabelCellsLarge(oFormAdjustmentFields.labelSpan.L);
-						oColumnLayout.setEmptyCellsLarge(oFormAdjustmentFields.emptySpan.L);
-						this._applyFormAdjustmentFields(oFormAdjustmentFields, oColumnLayout);
+				oColumnLayout._iBreakPointTablet -= BlockBase.FORM_ADUSTMENT_OFFSET;
+				oColumnLayout._iBreakPointDesktop -= BlockBase.FORM_ADUSTMENT_OFFSET;
+				oColumnLayout._iBreakPointLargeDesktop -= BlockBase.FORM_ADUSTMENT_OFFSET;
 
-						oItem.setWidth("100%");
-					}
-				}, this);
+				oColumnLayout.setLabelCellsLarge(oFormAdjustmentFields.labelSpan.L);
+				oColumnLayout.setEmptyCellsLarge(oFormAdjustmentFields.emptySpan.L);
+				this._applyFormAdjustmentFields(oFormAdjustmentFields, oColumnLayout);
+
+				oForm.setWidth("100%");
 			}
 		};
 

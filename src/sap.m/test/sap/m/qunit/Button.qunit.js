@@ -5,23 +5,25 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/library",
 	"sap/m/Button",
+	"sap/m/ButtonRenderer",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/library",
 	"sap/ui/Device",
-	"jquery.sap.global",
 	"sap/m/Label",
-	"jquery.sap.keycodes"
+	"sap/ui/core/dnd/DragInfo",
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
 	mobileLibrary,
 	Button,
+	ButtonRenderer,
 	IconPool,
 	coreLibrary,
 	Device,
-	jQuery,
 	Label,
-	DragInfo
+	DragInfo,
+	KeyCodes
 ) {
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
@@ -264,14 +266,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("TextDirectionRtlOk", function(assert) {
-		var $btnText = jQuery(b13.getDomRef()).find('.sapMBtnContent');
+		var $btnText = b13.$().find('.sapMBtnContent');
 		assert.equal($btnText.attr("dir"), "rtl", "Control text has 'dir' property set to right-to-left");
 		var $btnBDITag = document.getElementById('b13-content').firstChild.nodeName.toLowerCase() === "bdi";
 		assert.ok(!$btnBDITag, "Control doesn't have bidi tag set when it has explicitly set direction");
 	});
 
 	QUnit.test("TextDirectionLtrOk", function(assert) {
-		var $btnText = jQuery(b14.getDomRef()).find('.sapMBtnContent');
+		var $btnText = b14.$().find('.sapMBtnContent');
 		assert.equal($btnText.attr("dir"), "ltr", "Control text has 'dir' property set to left-to-right");
 		var $btnBDITag = document.getElementById('b14-content').firstChild.nodeName.toLowerCase() === "bdi";
 		assert.ok(!$btnBDITag, "Control doesn't have bidi tag set when it has explicitly set direction");
@@ -324,7 +326,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Visibility", function(assert) {
-		assert.ok(!jQuery.sap.domById("b12"), "Button12 should not be rendered");
+		assert.ok(!b12.getDomRef(), "Button12 should not be rendered");
 	});
 
 	function hoverableTestCase (oTestDescription) {
@@ -419,7 +421,7 @@ sap.ui.define([
 		oRenderSpy = this.spy(oButton, "fireTap");
 
 		// Act
-		oButton.ontap({ setMarked:  jQuery.noop });
+		oButton.ontap({ setMarked:  this.stub() });
 
 		// Assert
 		assert.strictEqual(oRenderSpy.callCount, 0, "Tap event not fired");
@@ -440,7 +442,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Act
-		oButton.ontouchstart({ setMarked: jQuery.noop, preventDefault: jQuery.noop, targetTouches: { length: 1 }, originalEvent: { type: "mousedown" }, target: { id: 'fake-button-id' }});
+		oButton.ontouchstart({ setMarked: this.stub(), preventDefault: this.stub(), targetTouches: { length: 1 }, originalEvent: { type: "mousedown" }, target: { id: 'fake-button-id' }});
 		this.clock.tick(1000);
 
 		// Assert
@@ -618,7 +620,7 @@ sap.ui.define([
 		oButton.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		sTextId = sap.m.ButtonRenderer.getButtonTypeAriaLabelId(sButtonTypeAccept);
+		sTextId = ButtonRenderer.getButtonTypeAriaLabelId(sButtonTypeAccept);
 		sTooltipId = "B1-tooltip";
 		assert.equal(oButton.$().attr("aria-describedby"), sTooltipId + " " + sTextId, "Both type and tooltip are added in aria-describedby");
 
@@ -635,7 +637,7 @@ sap.ui.define([
 
 		sap.ui.getCore().applyChanges();
 
-		sTextId = sap.m.ButtonRenderer.getButtonTypeAriaLabelId(sButtonTypeCritical);
+		sTextId = ButtonRenderer.getButtonTypeAriaLabelId(sButtonTypeCritical);
 		assert.equal(oButton.$().attr("aria-describedby"), sTooltipId + " " + sTextId, "Both type and tooltip are added in aria-describedby");
 
 		oButton.destroy();
@@ -651,7 +653,7 @@ sap.ui.define([
 
 		sap.ui.getCore().applyChanges();
 
-		sTextId = sap.m.ButtonRenderer.getButtonTypeAriaLabelId(sButtonTypeNegative);
+		sTextId = ButtonRenderer.getButtonTypeAriaLabelId(sButtonTypeNegative);
 		assert.equal(oButton.$().attr("aria-describedby"), sTooltipId + " " + sTextId, "Both type and tooltip are added in aria-describedby");
 
 		oButton.destroy();
@@ -667,7 +669,7 @@ sap.ui.define([
 
 		sap.ui.getCore().applyChanges();
 
-		sTextId = sap.m.ButtonRenderer.getButtonTypeAriaLabelId(sButtonTypeSuccess);
+		sTextId = ButtonRenderer.getButtonTypeAriaLabelId(sButtonTypeSuccess);
 		assert.equal(oButton.$().attr("aria-describedby"), sTooltipId + " " + sTextId, "Both type and tooltip are added in aria-describedby");
 
 		oButton.destroy();
@@ -728,7 +730,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Action
-		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(oButton.getDomRef(), KeyCodes.ENTER);
 
 		// Assert
 		assert.equal(pressSpy.callCount, 1, "Press event should be fired once");
@@ -747,7 +749,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Action
-		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeyup(oButton.getDomRef(), KeyCodes.ENTER);
 
 		// Assert
 		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
@@ -766,7 +768,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Action
-		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oButton.getDomRef(), KeyCodes.SPACE);
 
 		// Assert
 		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
@@ -785,7 +787,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Action
-		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeyup(oButton.getDomRef(), KeyCodes.SPACE);
 
 		// Assert
 		assert.equal(pressSpy.callCount, 1, "Press event should be fired once");
@@ -805,10 +807,10 @@ sap.ui.define([
 
 		// Action
 		// first keydown on SPACE, keydown on ESCAPE, release SPACE then release ESCAPE
-		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
-		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
-		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
-		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oButton.getDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeydown(oButton.getDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oButton.getDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeyup(oButton.getDomRef(), KeyCodes.ESCAPE);
 
 		// Assert
 		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
@@ -828,10 +830,10 @@ sap.ui.define([
 
 		// Action
 		// first keydown on SPACE, keydown on ESCAPE, release ESCAPE then release SPACE
-		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
-		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
-		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
-		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oButton.getDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeydown(oButton.getDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oButton.getDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oButton.getDomRef(), KeyCodes.SPACE);
 
 		// Assert
 		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
@@ -848,9 +850,9 @@ sap.ui.define([
 
 		// Action
 		// first keydown on SPACE, keydown on ESCAPE, release ESCAPE then the flag should be set to false
-		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
-		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
-		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oButton.getDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeydown(oButton.getDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oButton.getDomRef(), KeyCodes.ESCAPE);
 
 		// Assert
 		assert.ok(!oButton._bPressedSpace, "_bPressedSpace is set to false once the escape is released");
@@ -870,10 +872,10 @@ sap.ui.define([
 
 		// Action
 		// first keydown on SPACE, keydown on SHIFT, release SPACE then release SHIFT
-		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
-		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SHIFT);
-		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
-		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.SHIFT);
+		qutils.triggerKeydown(oButton.getDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeydown(oButton.getDomRef(), KeyCodes.SHIFT);
+		qutils.triggerKeyup(oButton.getDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeyup(oButton.getDomRef(), KeyCodes.SHIFT);
 
 		// Assert
 		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
@@ -893,10 +895,10 @@ sap.ui.define([
 
 		// Action
 		// first keydown on SPACE, keydown on SHIFT, release ESCAPE then release SHIFT
-		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
-		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SHIFT);
-		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.SHIFT);
-		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oButton.getDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeydown(oButton.getDomRef(), KeyCodes.SHIFT);
+		qutils.triggerKeyup(oButton.getDomRef(), KeyCodes.SHIFT);
+		qutils.triggerKeyup(oButton.getDomRef(), KeyCodes.SPACE);
 
 		// Assert
 		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
@@ -907,19 +909,20 @@ sap.ui.define([
 
 	QUnit.test("All keys should be ignored when Space is pressed", function(assert) {
 		// System under Test
-		var oEvent = new jQuery.Event(),
-			oSpyEvtPreventDefault = this.spy(oEvent, "preventDefault"),
+		var oEvent = {
+				preventDefault: this.spy()
+			},
 			oButton = new Button().placeAt("qunit-fixture");
 
 		sap.ui.getCore().applyChanges();
 
 		// Action
 		// first keydown on SPACE, keydown on ESCAPE, release ESCAPE then release SPACE
-		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oButton.getDomRef(), KeyCodes.SPACE);
 		oButton.onkeydown(oEvent);
 
 		// Assert
-		assert.equal(oSpyEvtPreventDefault.callCount, 1, "PreventDefault is called");
+		assert.equal(oEvent.preventDefault.callCount, 1, "PreventDefault is called");
 
 		// Cleanup
 		oButton.destroy();
@@ -989,7 +992,7 @@ sap.ui.define([
 
 	QUnit.test("Types Negative, Critical, Success, Neutral implied icon is applied", function() {
 		// arrange
-		var oButton = new sap.m.Button({
+		var oButton = new Button({
 			text: "button"
 		});
 		oButton.placeAt("qunit-fixture");
@@ -1048,7 +1051,7 @@ sap.ui.define([
 
 	QUnit.test("Icon is preferred over the type's implied icon", function() {
 		// arrange
-		var oButton = new sap.m.Button({
+		var oButton = new Button({
 			text: "button",
 			icon: "sap-icon://message-information"
 		});

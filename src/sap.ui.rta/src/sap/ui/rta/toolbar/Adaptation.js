@@ -109,6 +109,8 @@ function(
 
 	var DEVICE_SET = "sapUiRtaToolbar";
 
+	var ACCENT_COLOR = "sapUiRtaVersionAccent1";
+
 	Adaptation.prototype.init = function() {
 		Device.media.attachHandler(this._onSizeChanged, this, DEVICE_SET);
 		Base.prototype.init.apply(this, arguments);
@@ -279,7 +281,19 @@ function(
 
 	Adaptation.prototype.setVersionLabel = function (sText) {
 		this.setProperty("versionLabel", sText, true);
-		this.getControl("versionLabel").setText(sText);
+		var oVersionLabel = this.getControl("versionLabel");
+		oVersionLabel.setText(sText);
+		// to ensure that a text which is to long to be displayed can be read by the user
+		oVersionLabel.setTooltip(sText);
+	};
+
+	Adaptation.prototype.setVersionLabelAccentColor = function (bIsAccentColor) {
+		var oVersionLabel = this.getControl("versionLabel");
+		if (bIsAccentColor) {
+			oVersionLabel.addStyleClass(ACCENT_COLOR);
+		} else {
+			oVersionLabel.removeStyleClass(ACCENT_COLOR);
+		}
 	};
 
 	Adaptation.prototype.setVersioningVisible = function (bVisible) {

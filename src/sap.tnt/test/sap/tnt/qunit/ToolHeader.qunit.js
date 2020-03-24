@@ -7,8 +7,6 @@ sap.ui.define([
 	'sap/m/Button',
 	'sap/m/OverflowToolbarLayoutData',
 	'sap/m/ToolbarSpacer',
-	'sap/m/IconTabHeader',
-	'sap/m/IconTabFilter',
 	'sap/tnt/ToolHeader',
 	'sap/tnt/ToolHeaderUtilitySeparator',
 	'sap/ui/qunit/utils/waitForThemeApplied'
@@ -19,8 +17,6 @@ sap.ui.define([
 	Button,
 	OverflowToolbarLayoutData,
 	ToolbarSpacer,
-	IconTabHeader,
-	IconTabFilter,
 	ToolHeader,
 	ToolHeaderUtilitySeparator,
 	waitForThemeApplied) {
@@ -221,65 +217,6 @@ sap.ui.define([
 		overflowButton.trigger('tap');
 
 		assert.ok(jQuery('.sapMOTAPopover').length > 0, "Popover is rendered");
-	});
-
-
-	QUnit.module("ToolHeader with IconTabHeader", {
-		beforeEach: function () {
-			this.oApp = new App("myApp", { initialPage: "toolHeaderPage" });
-			this.oPage = new Page("toolHeaderPage", { title: "Tool Header" });
-			this.oApp.placeAt("qunit-fixture");
-			this.oApp.addPage(this.oPage);
-
-			this.isDesktop = sap.ui.Device.system.desktop;
-			sap.ui.Device.system.desktop = false;
-
-			var tabItems = [];
-			for (var i = 0; i < 30; i++) {
-				tabItems.push(new IconTabFilter({
-					key: i.toString(),
-					text: 'Tab ' + i
-				}));
-			}
-
-			var iconTabHeader = new IconTabHeader({
-				showOverflowSelectList: true,
-				items: tabItems,
-				selectedKey: 'invalidKey',
-				layoutData: new OverflowToolbarLayoutData({
-					priority: sap.m.OverflowToolbarPriority.NeverOverflow,
-					shrinkable: true
-				})
-			});
-
-			var toolHeader = new ToolHeader({
-				content: [
-					iconTabHeader
-				]
-			});
-
-			this.iconTabHeader = iconTabHeader;
-			this.toolHeader = toolHeader;
-
-			this.oPage.addContent(toolHeader);
-
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach: function () {
-			sap.ui.Device.system.desktop = this.isDesktop;
-			this.oApp.destroy();
-			this.oApp = null;
-			this.oPage = null;
-			this.toolHeader = null;
-		}
-	});
-
-	QUnit.test("Tabs visibility", function (assert) {
-		this.iconTabHeader.$().width('300px');
-		this.iconTabHeader._afterIscroll();
-		sap.ui.getCore().applyChanges();
-
-		assert.ok(this.iconTabHeader.$().find('.sapMITBFilterHidden').length > 0, 'Some tabs are hidden');
 	});
 
 	return waitForThemeApplied();

@@ -33,6 +33,30 @@
 
 			var model = new sap.ui.model.json.JSONModel(dynamicContentDialogData);
 
+			var oDialogWithHeaderAndSubHeader = new sap.m.Dialog({
+				title: "Header",
+				showHeader: true,
+				subHeader: new sap.m.Bar({
+					contentMiddle: [
+						new sap.m.Text({
+							text: "Subheader ...",
+						})
+					]
+				}),
+				icon: "sap-icon://employee",
+				ariaDescribedBy: "p1",
+				content: [
+					new sap.ui.core.HTML({content: '<p id="p1" style="margin:0; padding: 16px;">Do you want to start a new world domination campaign?</p>'})
+				],
+			});
+
+			var oButtonToOpenDialogWithHeaderAndSubHeader = new sap.m.Button({
+					text: "With Header and Subheader",
+					press: function () {
+						oDialogWithHeaderAndSubHeader.open();
+					}
+				});
+
 			var oDialog1 = new sap.m.Dialog("dialog1", {
 				title: "World Domination",
 				icon: "sap-icon://employee",
@@ -1358,6 +1382,7 @@
 							$("body").toggleClass("sapUiSizeCompact");
 						}
 					}).addStyleClass("sapUiSmallMarginEnd"),
+					oButtonToOpenDialogWithHeaderAndSubHeader,
 					new sap.m.Button('simpleDialogButton', {
 						text: "Simple Dialog",
 						width: _buttonWidth,
@@ -1521,36 +1546,6 @@
 							oDialogWithCustomHeader.open();
 						}
 					}),
-					new sap.m.Button('dialogWithStateButton', {
-						text: "With State",
-						width: _buttonWidth,
-						press: function () {
-							oDialog1.open();
-						}
-					}),
-					new sap.m.Button('dialogWithErrorStateButton', {
-						text: "With Error State",
-						width: _buttonWidth,
-						press: function () {
-							oDialogErrorState.open();
-						}
-					}),
-					new sap.m.Button('dialogWithSuccessStateButton', {
-						text: "With Success State",
-						width: _buttonWidth,
-						press: function () {
-							oDialogSuccessState.open();
-						}
-					}),
-
-					new sap.m.Button('dialogWithInformationStateButton', {
-						text: "With Information State",
-						width: _buttonWidth,
-						press: function () {
-							oDialogInformationState.open();
-						}
-					}),
-
 					new sap.ui.core.HTML({content: "<br>"}),
 					new sap.m.Button({
 						text: "Stretched on Mobile (depricated)",
@@ -1651,6 +1646,38 @@
 						}
 					}),
 					new sap.ui.core.HTML({content: "<br>"}),
+
+					new sap.ui.core.HTML({content: "<h1>States</h1>"}),
+					new sap.ui.core.HTML({content: "<br>"}),
+					new sap.m.Button('dialogWithSuccessStateButton', {
+						text: "With Success State",
+						width: _buttonWidth,
+						press: function () {
+							oDialogSuccessState.open();
+						}
+					}),
+					new sap.m.Button('dialogWithErrorStateButton', {
+						text: "With Error State",
+						width: _buttonWidth,
+						press: function () {
+							oDialogErrorState.open();
+						}
+					}),
+					new sap.m.Button('dialogWithInformationStateButton', {
+						text: "With Information State",
+						width: _buttonWidth,
+						press: function () {
+							oDialogInformationState.open();
+						}
+					}),
+					new sap.m.Button('dialogWithStateButton', {
+						text: "With Warning State",
+						width: _buttonWidth,
+						press: function () {
+							oDialog1.open();
+						}
+					}),
+
 					new sap.ui.core.HTML({content: "<h1>Real use cases</h1>"}),
 					new sap.m.Button({
 						text: "No scrollars with splitter",

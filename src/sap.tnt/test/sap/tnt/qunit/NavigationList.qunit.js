@@ -46,6 +46,7 @@ sap.ui.define([
 			items: [
 				new NavigationListItem({
 					text: 'Root 1',
+					key: 'rootChild1',
 					icon: 'sap-icon://employee',
 					items: [
 						new NavigationListItem({
@@ -266,7 +267,7 @@ sap.ui.define([
 
 	QUnit.module("Tab navigation and ARIA settings", {
 		beforeEach: function () {
-			this.navigationList = getNavigationList();
+			this.navigationList = getNavigationList('rootChild1');
 			oPage.addContent(this.navigationList);
 
 			sap.ui.getCore().applyChanges();
@@ -316,9 +317,12 @@ sap.ui.define([
 			assert.equal(item.getAttribute('aria-level'), '2', jQuery(item).text() + ' has ARIA attributes.');
 		});
 
-		//aria-expanded
+		// aria-expanded
 		var currentItem = this.navigationList.$().find('div.sapTntNavLIGroup')[0];
 		assert.equal(currentItem.getAttribute('aria-expanded'), 'true', jQuery(currentItem).text() + ' has ARIA attribute expanded true.');
+
+		// aria-selected
+		assert.equal(currentItem.getAttribute('aria-selected'), 'true', jQuery(currentItem).text() + ' has ARIA attribute selected true.');
 
 		this.navigationList.getItems()[0].setExpanded(false);
 		sap.ui.getCore().applyChanges();
@@ -332,9 +336,26 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		var currentItemCollapsed = this.navigationList.$().find('div.sapTntNavLIGroup')[2];
 		assert.notOk(currentItemCollapsed.getAttribute('aria-expanded'), 'Root 2 has no ARIA attribute expanded when NavigationList is collapsed.');
+
+		this.navigationList.getItems()[2]._select();
+		assert.notOk(currentItemCollapsed.parentElement.getAttribute('aria-pressed'), 'Root 2 has no ARIA attribute pressed when NavigationList is collapsed.');
+		assert.ok(currentItemCollapsed.getAttribute('aria-selected'), 'aria-selected is set.');
 	});
 
-	QUnit.test('ARIA - Accessibility Text', function (assert) {
+	QUnit.module("ARIA - Accessibility Text", {
+		beforeEach: function () {
+			this.navigationList = getNavigationList();
+			oPage.addContent(this.navigationList);
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.navigationList.destroy();
+			this.navigationList = null;
+		}
+	});
+
+	QUnit.test('Accessibility Text', function (assert) {
 		var invisibleText = NavigationListItem._getInvisibleText();
 		assert.equal(invisibleText.getText(), '', "accessibility text is initially empty");
 
@@ -577,7 +598,7 @@ sap.ui.define([
 
 		this.navigationList.attachItemSelect(fnEventSpy);
 
-		assert.notOk(jQuery(this.navigationList.$().children()[0].children[1]).hasClass('sapTntNavLIItemSelected'), "sapTntNavLIItemSelected class is not set");
+		assert.notOk(jQuery(this.navigationList.$().children()[0].children[1].firstChild).hasClass('sapTntNavLIItemSelected'), "sapTntNavLIItemSelected class is not set");
 
 		var $group = jQuery('.sapTntNavLI li div').first();
 
@@ -588,7 +609,7 @@ sap.ui.define([
 		// wait 500ms
 		this.clock.tick(500);
 
-		assert.ok(jQuery(this.navigationList.$().children()[0]).hasClass('sapTntNavLIItemSelected'), "sapTntNavLIItemSelected class is set");
+		assert.ok(jQuery(this.navigationList.$().children()[0].firstChild).hasClass('sapTntNavLIItemSelected'), "sapTntNavLIItemSelected class is set");
 
 		assert.strictEqual(fnEventSpy.callCount, 1, "should fire select event once");
 		assert.strictEqual(bPassedArg.getText(), 'Root 1', "should pass the first item as argument");

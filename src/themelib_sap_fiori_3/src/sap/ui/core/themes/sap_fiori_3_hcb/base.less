@@ -83,6 +83,8 @@
 
 @sapLink_InvertedColor: @sapLinkColor;
 
+@sapLink_SubtleColor: @sapLinkColor;
+
 // [Label "Company Logo"]
 // [Description "The URI to the logo of your company"]
 // [Tags "Quick", "Base", "URI", "Image"]
@@ -528,7 +530,7 @@
 // [Label "Content Badge Background"]
 // [Description "The background color of badges."]
 // [Tags "Base", "Content", "Color"]
-@sapContent_BadgeBackground: @sapHighlightColor;
+@sapContent_BadgeBackground: @sapBackgroundColor;
 
 @sapContent_BadgeTextColor: contrast(@sapContent_BadgeBackground, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
@@ -541,14 +543,14 @@
 @sapContent_Selected_Hover_Background: @sapHighlightColor;
 
 /* Content Illustrative Colors */
-@sapContent_Illustrative_Color1: #0a6ed1;
-@sapContent_Illustrative_Color2: #72b5f8;
-@sapContent_Illustrative_Color3: #ffba10;
-@sapContent_Illustrative_Color4: #4a5055;
-@sapContent_Illustrative_Color5: #9da4aa;
-@sapContent_Illustrative_Color6: #c6cace;
-@sapContent_Illustrative_Color7: #e7e9ea;
-@sapContent_Illustrative_Color8: #fff;
+@sapContent_Illustrative_Color1: #212628;
+@sapContent_Illustrative_Color2: #62737c;
+@sapContent_Illustrative_Color3: #62737c;
+@sapContent_Illustrative_Color4: #030303;
+@sapContent_Illustrative_Color5: #88979e;
+@sapContent_Illustrative_Color6: #88979e;
+@sapContent_Illustrative_Color7: #212628;
+@sapContent_Illustrative_Color8: #dbdbdb;
 
 // [Label "Shell Background Color"]
 // [Description "The background color of the shell."]
@@ -629,7 +631,7 @@
 // [Label "Button Corner Radius"]
 // [Description "Defines whether a button has rounded corners."]
 // [Tags "Base", "Button", "Dimension"]
-@sapButton_BorderCornerRadius: 0.25 * @sapContent_GridSize;
+@sapButton_BorderCornerRadius: 0.375 * @sapContent_GridSize;
 
 // [Label "Button Background Color"]
 // [Description "The background color of buttons."]
@@ -659,7 +661,7 @@
 // [Label "Button Hover Text Color"]
 // [Description "The color of texts on buttons on hover."]
 // [Tags "Base", "Button", "Color", "Font"]
-@sapButton_Hover_TextColor: contrast(@sapButton_Hover_Background, @sapButton_TextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Hover_TextColor: contrast(@sapButton_Hover_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapButton_IconColor: @sapButton_TextColor;
 
@@ -667,7 +669,7 @@
 
 @sapButton_Active_BorderColor: @sapButton_BorderColor;
 
-@sapButton_Active_TextColor: contrast(@sapButton_Active_Background, @sapButton_TextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Active_TextColor: contrast(@sapButton_Active_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Emphasized Button Background Color"]
 // [Description "The background color of emphasized buttons."]
@@ -683,13 +685,13 @@
 // [Label "Emphasized Button Text Color"]
 // [Description "The color of texts on emphasized buttons."]
 // [Tags "Base", "Button", "Color", "Font"]
-@sapButton_Emphasized_TextColor: contrast(@sapButton_Emphasized_Background, @sapButton_TextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Emphasized_TextColor: contrast(@sapButton_Emphasized_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapButton_Emphasized_Hover_Background: @sapButton_Hover_Background;
 
 @sapButton_Emphasized_Hover_BorderColor: @sapButton_Hover_BorderColor;
 
-@sapButton_Emphasized_Hover_TextColor: contrast(@sapButton_Emphasized_Hover_Background , @sapButton_TextColor , @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Emphasized_Hover_TextColor: contrast(@sapButton_Emphasized_Hover_Background , @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapButton_Emphasized_Active_Background: @sapButton_Active_Background;
 
@@ -706,13 +708,13 @@
 
 @sapButton_Reject_BorderColor: @sapButton_BorderColor;
 
-@sapButton_Reject_TextColor: contrast(@sapButton_Reject_Background, @sapButton_TextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Reject_TextColor: contrast(@sapButton_Reject_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapButton_Reject_Hover_Background: @sapButton_Hover_Background;
 
 @sapButton_Reject_Hover_BorderColor: @sapButton_Hover_BorderColor;
 
-@sapButton_Reject_Hover_TextColor: contrast(@sapButton_Reject_Hover_Background, @sapButton_TextColor , @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Reject_Hover_TextColor: contrast(@sapButton_Reject_Hover_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapButton_Reject_Active_Background: @sapButton_Active_Background;
 
@@ -735,13 +737,13 @@
 
 @sapButton_Accept_BorderColor: @sapButton_BorderColor;
 
-@sapButton_Accept_TextColor: contrast(@sapButton_Accept_Background, @sapButton_TextColor , @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Accept_TextColor: contrast(@sapButton_Accept_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapButton_Accept_Hover_Background: @sapButton_Hover_Background;
 
 @sapButton_Accept_Hover_BorderColor: @sapButton_Hover_BorderColor;
 
-@sapButton_Accept_Hover_TextColor: contrast(@sapButton_Accept_Hover_Background, @sapButton_TextColor , @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Accept_Hover_TextColor: contrast(@sapButton_Accept_Hover_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapButton_Accept_Active_Background: @sapButton_Active_Background;
 
@@ -777,7 +779,7 @@
 
 @sapButton_Selected_BorderColor: @sapButton_BorderColor;
 
-@sapButton_Selected_TextColor: contrast(@sapButton_Selected_Background, @sapButton_TextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Selected_TextColor: contrast(@sapButton_Selected_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapButton_Selected_Hover_Background: @sapButton_Hover_Background;
 
@@ -787,13 +789,13 @@
 
 @sapButton_Attention_BorderColor: @sapButton_BorderColor;
 
-@sapButton_Attention_TextColor: contrast(@sapButton_Attention_Background, @sapButton_TextColor , @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Attention_TextColor: contrast(@sapButton_Attention_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapButton_Attention_Hover_Background: @sapButton_Hover_Background;
 
 @sapButton_Attention_Hover_BorderColor: @sapButton_Hover_BorderColor;
 
-@sapButton_Attention_Hover_TextColor: contrast( @sapButton_Attention_Hover_Background, @sapButton_TextColor , @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Attention_Hover_TextColor: contrast(@sapButton_Attention_Hover_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapButton_Attention_Active_Background: @sapButton_Active_Background;
 
@@ -1094,7 +1096,7 @@
 
 @sapList_Active_Background: @sapActiveColor;
 
-@sapList_Active_TextColor: contrast(@sapList_Active_Background, @sapList_TextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapList_Active_TextColor: contrast(@sapList_Active_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "List Highlight Color"]
 // [Description "The color of highlighted elements in lists."]
@@ -1238,12 +1240,12 @@
 // [Label "Tile Title Text Color"]
 // [Description "The color of title texts on tiles."]
 // [Tags "Base", "Tile", "Color", "Font"]
-@sapTile_TitleTextColor: contrast(@sapTile_Background, @sapTile_TextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapTile_TitleTextColor: contrast(@sapTile_Background, @sapTitleColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Tile Text Color"]
 // [Description "The color of texts on tiles."]
 // [Tags "Base", "Tile", "Color", "Font"]
-@sapTile_TextColor: contrast(@sapTile_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapTile_TextColor: contrast(@sapTile_Background, @sapContent_LabelColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Tile Icon Color"]
 // [Description "The color of icons on tiles."]

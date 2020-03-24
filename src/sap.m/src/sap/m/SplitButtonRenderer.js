@@ -46,7 +46,8 @@ sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText"],
 			if (sType === ButtonType.Accept
 				|| sType === ButtonType.Reject
 				|| sType === ButtonType.Emphasized
-				|| sType === ButtonType.Transparent) {
+				|| sType === ButtonType.Transparent
+				|| sType === ButtonType.Attention) {
 				oRm.addClass(SplitButtonRenderer.CSS_CLASS + sType);
 			}
 

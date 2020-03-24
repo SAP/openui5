@@ -1677,7 +1677,7 @@ sap.ui.define([
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "Change event should not be fired during the rendering");
 
 		// in test environment focus can leave the test page
-		if (document.activeElement == oInput.getFocusDomRef()) {
+		if (document.activeElement === oInput.getFocusDomRef() && !Device.browser.safari) {
 			assert.strictEqual(jQuery(oInput.getFocusDomRef()).cursorPos(), sTestCurPos, "Cursor position reverted to the last know position after rendering.");
 		}
 
@@ -1714,7 +1714,7 @@ sap.ui.define([
 		assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), sTestValue, "InputBase respected setProperty value call and did not revert the dom value.");
 
 		// in test environment focus can leave the test page
-		if (document.activeElement == oInput.getFocusDomRef()) {
+		if (document.activeElement === oInput.getFocusDomRef() && !Device.browser.safari) { // Safari has issues with the cursor when the page is not "manually" focused
 			assert.strictEqual(jQuery(oInput.getFocusDomRef()).cursorPos(), sTestCurPos, "Cursor position reverted to the last know position after rendering.");
 		}
 

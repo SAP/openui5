@@ -603,7 +603,7 @@ sap.ui.define([
 					} else {
 						fnFormatter = select;
 					}
-				} else if (vEmbeddedBinding.path) {
+				} else if ("path" in vEmbeddedBinding) {
 					aParts.push(vEmbeddedBinding);
 					fnFormatter = select;
 				}

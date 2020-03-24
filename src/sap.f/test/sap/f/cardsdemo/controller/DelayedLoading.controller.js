@@ -2,33 +2,80 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/f/cards/RequestDataProvider",
-	"sap/ui/thirdparty/sinon-4"
-], function (Controller, JSONModel, RequestDataProvider, sinon) {
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/integration/widgets/Card",
+	"sap/f/GridContainerItemLayoutData"
+], function (Controller, JSONModel, RequestDataProvider, sinon, Card, GridContainerItemLayoutData) {
 	"use strict";
 
-	var mCards = {
-		listCard1:		"./cardcontent/delayedLoading/listManifest1.json",
-		listCard2:		"./cardcontent/delayedLoading/listManifest2.json",
-		listCard3:		"./cardcontent/delayedLoading/listManifestAll.json",
-		listCard4:		"./cardcontent/delayedLoading/listManifestDescriptionTitle.json",
-		listCard5:		"./cardcontent/delayedLoading/listManifestIconTitle.json",
-		listCard6:		"./cardcontent/delayedLoading/listManifestTitle.json",
-		tableCard1: 	"./cardcontent/delayedLoading/tableManifest.json",
-		analyticalCard: "./cardcontent/delayedLoading/analyticalManifest.json",
-		objectCard1:	"./cardcontent/delayedLoading/objectManifest.json",
-		calendarCard: "./cardcontent/delayedLoading/calendarManifest1.json",
-		listError: "./cardcontent/delayedLoading/listManifestError.json"
-	};
+	var aSamples = [
+		{
+			"key": "list1",
+			"columns": 6,
+			"manifest": "./cardcontent/delayedLoading/listManifest1.json"
+		},
+		{
+			"key": "list2",
+			"columns": 6,
+			"manifest": "./cardcontent/delayedLoading/listManifest2.json"
+		},
+		{
+			"key": "list3",
+			"columns": 5,
+			"manifest": "./cardcontent/delayedLoading/listManifestAll.json"
+		},
+		{
+			"key": "list4",
+			"columns": 4,
+			"manifest": "./cardcontent/delayedLoading/listManifestDescriptionTitle.json"
+		},
+		{
+			"key": "list5",
+			"columns": 3,
+			"manifest": "./cardcontent/delayedLoading/listManifestIconTitle.json"
+		},
+		{
+			"key": "list6",
+			"columns": 2,
+			"manifest": "./cardcontent/delayedLoading/listManifestTitle.json"
+		},
+		{
+			"key": "table1",
+			"columns": 4,
+			"manifest": "./cardcontent/delayedLoading/tableManifest.json"
+		},
+		{
+			"key": "analytical1",
+			"columns": 6,
+			"manifest": "./cardcontent/delayedLoading/analyticalManifest.json"
+		},
+		{
+			"key": "object1",
+			"columns": 6,
+			"manifest": "./cardcontent/delayedLoading/objectManifest.json"
+		},
+		{
+			"key": "calendar1",
+			"columns": 5,
+			"manifest": "./cardcontent/delayedLoading/calendarManifest1.json"
+		},
+		{
+			"key": "listError",
+			"columns": 5,
+			"manifest": "./cardcontent/delayedLoading/listManifestError.json"
+		}
+	];
 
 	return Controller.extend("sap.f.cardsdemo.controller.DelayedLoading", {
 		onInit: function () {
-			var sPath,
+			var oView = this.getView(),
+				oSample,
 				that = this;
 
-			// create named json model for each card
-			for (var sId in mCards) {
-				sPath = mCards[sId];
-				this.getView().setModel(new JSONModel(sPath), sId);
+			// preload manifests
+			for (var iInd in aSamples) {
+				oSample = aSamples[iInd];
+				oView.setModel(new JSONModel(oSample.manifest), oSample.key);
 			}
 
 			// create delayed get data method
@@ -44,34 +91,36 @@ sap.ui.define([
 			this._fnGetDataStub.restore();
 		},
 
-		onSetManifestsPress: function () {
-			var sPath;
-
-			// give each card a path to manifest
-			for (var sId in mCards) {
-				sPath = mCards[sId];
-				this.getView().byId(sId).setManifest(sPath);
-			}
-		},
-
-		onSetPreloadedManifestsPress: function () {
-			var oView = this.getView();
-
-			// use already created json models to set data immediately
-			for (var sId in mCards) {
-				this.getView().byId(sId).setManifest(oView.getModel(sId).getData());
-			}
-		},
-
 		onFormSubmit: function () {
-			for (var sId in mCards) {
-				var oCard = this.getView().byId(sId);
+			this._generateCards();
+		},
 
-				if (oCard.getManifest()) {
-					oCard.refresh();
+		_generateCards: function () {
+			var oView = this.getView(),
+				iNumberOfCards = parseInt(this.byId("numberOfCards").getValue()),
+				oContainer = this.byId("cardsContainer"),
+				bPreloadManifests = this.byId("preloadManifests").getSelected(),
+				oSample,
+				vManifest;
+
+			oContainer.destroyItems();
+
+			for (var i = 0; i < iNumberOfCards; i++) {
+				oSample = aSamples[i % aSamples.length];
+
+				if (bPreloadManifests) {
+					vManifest = oView.getModel(oSample.key).getData();
 				} else {
-					oCard.setManifest(mCards[sId]);
+					vManifest = oSample.manifest;
 				}
+
+				oContainer.addItem(new Card({
+					baseUrl: "./",
+					manifest: vManifest,
+					layoutData: new GridContainerItemLayoutData({
+						columns: oSample.columns
+					})
+				}));
 			}
 		},
 

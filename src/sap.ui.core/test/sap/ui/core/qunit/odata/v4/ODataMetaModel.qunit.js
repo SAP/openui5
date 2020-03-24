@@ -537,8 +537,8 @@ sap.ui.define([
 				"EMPLOYEES" : {
 					"$kind" : "EntitySet",
 					"$NavigationPropertyBinding" : {
-						"EMPLOYEE_2_TEAM" : "T€AMS",
-						"EMPLOYEE_2_EQUIPM€NTS" : "EQUIPM€NTS"
+						"EMPLOYEE_2_EQUIPM€NTS" : "EQUIPM€NTS",
+						"EMPLOYEE_2_TEAM" : "T€AMS"
 					},
 					"$Type" : "tea_busi.Worker"
 				},
@@ -550,6 +550,10 @@ sap.ui.define([
 				"GetEmployeeMaxAge" : {
 					"$kind" : "FunctionImport",
 					"$Function" : "tea_busi.FuGetEmployeeMaxAge"
+				},
+				"MANAGERS" : {
+					"$kind" : "EntitySet",
+					"$Type" : "tea_busi.MANAGER"
 				},
 				"Me" : {
 					"$kind" : "Singleton",
@@ -574,8 +578,9 @@ sap.ui.define([
 				"TEAMS" : {
 					"$kind" : "EntitySet",
 					"$NavigationPropertyBinding" : {
+						"TEAM_2_CONTAINED_S/S_2_EMPLOYEE" : "EMPLOYEES",
 						"TEAM_2_EMPLOYEES" : "EMPLOYEES",
-						"TEAM_2_CONTAINED_S/S_2_EMPLOYEE" : "EMPLOYEES"
+						"TEAM_2_MANAGER" : "MANAGERS"
 					},
 					"$Type" : "tea_busi.TEAM"
 				},
@@ -672,6 +677,22 @@ sap.ui.define([
 					"$Type" : "Edm.String"
 				}
 			},
+			"tea_busi.MANAGER" : {
+				"$kind" : "EntityType",
+				"$Key" : ["ID"],
+				"ID" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String",
+					"$Nullable" : false,
+					"$MaxLength" : 4
+				},
+				"TEAM_ID" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String",
+					"$Nullable" : false,
+					"$MaxLength" : 10
+				}
+			},
 			"tea_busi.TEAM" : {
 				"$kind" : "EntityType",
 				"$Key" : ["Team_Id"],
@@ -686,6 +707,10 @@ sap.ui.define([
 					"$Type" : "Edm.String",
 					"$Nullable" : false,
 					"$MaxLength" : 40
+				},
+				"TEAM_2_MANAGER" : {
+					"$kind" : "NavigationProperty",
+					"$Type" : "tea_busi.MANAGER"
 				},
 				"TEAM_2_EMPLOYEES" : {
 					"$kind" : "NavigationProperty",
@@ -1135,8 +1160,8 @@ sap.ui.define([
 			this.oLogMock.expects("error").never();
 
 			this.oModel = {
-				reportError : function () {
-					throw new Error("Unsupported operation");
+				reportError : function (sLogMessage, sReportingClassName, oError) {
+					throw oError;
 				},
 				resolve : ODataModel.prototype.resolve
 			};
@@ -3307,8 +3332,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("fetchUpdateData: transient entity", function (assert) {
-		var oContext = Context.create(this.oModel, undefined, "/TEAMS($uid=id-1-23)"),
-			sPropertyPath = "Name";
+		var oContext = Context.create(this.oModel, undefined, "/TEAMS($uid=id-1-23)");
 
 		this.oMetaModelMock.expects("fetchEntityContainer").twice()
 			.returns(SyncPromise.resolve(mScope));
@@ -3316,13 +3340,34 @@ sap.ui.define([
 			.returns(SyncPromise.resolve({"@$ui5._" : {"transient" : "update"}}));
 
 		// code under test
-		return this.oMetaModel.fetchUpdateData(sPropertyPath, oContext).then(function (oResult) {
+		return this.oMetaModel.fetchUpdateData("Name", oContext).then(function (oResult) {
 			assert.deepEqual(oResult, {
 				entityPath : "/TEAMS($uid=id-1-23)",
 				editUrl : undefined,
 				propertyPath : "Name"
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchUpdateData: bNoEditUrl", function (assert) {
+		var oContext = Context.create(this.oModel, undefined, "/TEAMS('42')");
+
+		this.oMetaModelMock.expects("fetchEntityContainer").twice()
+			.returns(SyncPromise.resolve(mScope));
+		this.mock(oContext).expects("fetchValue").withExactArgs("/TEAMS('42')/TEAM_2_MANAGER")
+			.returns(SyncPromise.resolve(null));
+
+		return this.oMetaModel
+			// code under test
+			.fetchUpdateData("/TEAMS('42')/TEAM_2_MANAGER/TEAM_ID", oContext, true)
+			.then(function (oResult) {
+				assert.deepEqual(oResult, {
+					entityPath : "/TEAMS('42')/TEAM_2_MANAGER",
+					editUrl : undefined,
+					propertyPath : "TEAM_ID"
+				});
+			});
 	});
 
 	//*********************************************************************************************
@@ -4019,6 +4064,7 @@ sap.ui.define([
 			"/EMPLOYEES",
 			"/EQUIPM€NTS",
 			"/GetEmployeeMaxAge",
+			"/MANAGERS",
 			"/Me",
 			"/OverloadedAction",
 			"/OverloadedFunctionImport",

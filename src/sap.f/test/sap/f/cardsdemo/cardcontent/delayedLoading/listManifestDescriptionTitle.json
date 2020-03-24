@@ -1,5 +1,6 @@
 {
   "sap.app": {
+    "id": "cardsdemo.samples.list4",
     "type": "card"
   },
   "sap.card": {
@@ -14,12 +15,11 @@
       "title": "{title}",
       "subTitle": "Subtitle",
       "status": {
-		"text": "2 of {count}"
-	  },
+        "text": "2 of {count}"
+      },
       "icon": {
         "src": "{src}"
       }
-
     },
     "content": {
       "maxItems": 8,
@@ -30,7 +30,7 @@
       },
       "item": {
         "title": {
-          "label": "{{title_label}}",
+          "label": "Title",
           "value": "{Name}"
         },
         "description": {

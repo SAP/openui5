@@ -31,9 +31,9 @@
 					<ToggleButton pressed="{path: 'stateModel>/legendShown'}" icon="sap-icon://legend"/>
 				</actions>
 				<views>
-					<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
-					<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
 					<SinglePlanningCalendarDayView key="DayView" title="Day" />
+					<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
+					<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
 				</views>
 				<specialDates>
 					<unified:DateTypeRange

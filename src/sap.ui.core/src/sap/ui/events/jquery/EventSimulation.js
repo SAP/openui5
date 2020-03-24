@@ -101,27 +101,23 @@ sap.ui.define([
 	 * @private
 	 */
 	oEventSimulation._handleMouseToTouchEvent = function(oEvent, oConfig) {
-		var $DomRef = jQuery(oConfig.domRef);
 		// Suppress the delayed mouse events simulated on touch enabled device
 		// the mark is done within jquery-mobile-custom.js
 		if (oEvent.isMarked("delayedMouseEvent")) {
 			return;
 		}
 
+		var $DomRef = jQuery(oConfig.domRef),
+			oControl = jQuery.fn.control ? jQuery(oEvent.target).control(0) : null,
+			sTouchStartControlId = $DomRef.data("__touchstart_control"),
+			oTouchStartControlDOM = sTouchStartControlId && window.document.getElementById(sTouchStartControlId);
+
 		// Checks if the mouseout event should be handled, the mouseout of the inner dom shouldn't be handled when the mouse cursor
 		// is still inside the control's root dom node
-		if (!(oEvent.type != "mouseout" || (oEvent.type === "mouseout" && checkMouseEnterOrLeave(oEvent, oConfig.domRef)))) {
-			var bSkip = true;
-			var sControlId = $DomRef.data("__touchstart_control");
-			if (sControlId) {
-				var oCtrlDom = window.document.getElementById(sControlId);
-				if (oCtrlDom && checkMouseEnterOrLeave(oEvent, oCtrlDom)) {
-					bSkip = false;
-				}
-			}
-			if (bSkip) {
-				return;
-			}
+		if (oEvent.type === "mouseout" && !checkMouseEnterOrLeave(oEvent, oConfig.domRef)
+			&& (!oTouchStartControlDOM || !checkMouseEnterOrLeave(oEvent, oTouchStartControlDOM))
+		) {
+			return;
 		}
 
 		var oNewEvent = jQuery.event.fix(oEvent.originalEvent || oEvent);
@@ -148,6 +144,11 @@ sap.ui.define([
 
 		switch (oConfig.eventName) {
 			case "touchstart":
+				// save the control id in case of touchstart event
+				if (oControl) {
+					$DomRef.data("__touchstart_control", oControl.getId());
+				}
+				// fall through
 			case "touchmove":
 				oNewEvent.touches = oNewEvent.changedTouches = oNewEvent.targetTouches = aTouches;
 				break;
@@ -161,10 +162,6 @@ sap.ui.define([
 
 		if (oConfig.eventName === "touchstart" || $DomRef.data("__touch_in_progress")) {
 			$DomRef.data("__touch_in_progress", "X");
-			var oControl = jQuery.fn.control ? jQuery(oEvent.target).control(0) : null;
-			if (oControl) {
-				$DomRef.data("__touchstart_control", oControl.getId());
-			}
 
 			// When saptouchend event is generated from mouseout event, it has to be marked for being correctly handled inside UIArea.
 			// for example, when sap.m.Image control is used inside sap.m.Button control, the following situation can happen:
@@ -177,6 +174,14 @@ sap.ui.define([
 			// inside the current target. Executing the corresponding logic only when the target is out of the current target.
 			if (oEvent.type === "mouseout") {
 				oNewEvent.setMarked("fromMouseout");
+			}
+
+			// touchstart event is always forwarded to the control without any check
+			// other events are checked with the touchstart control id in UIArea.js and we save the touchstart control
+			// id to the event. In UIArea, the event is dispatched to a UI5 element only when the root DOM of that UI5
+			// element contains or equals the touchstart control DOM
+			if (oConfig.eventName !== "touchstart" && (!oControl || oControl.getId() !== sTouchStartControlId)) {
+				oNewEvent.setMark("scopeCheckId", sTouchStartControlId);
 			}
 
 			// dragstart event is only used to determine when to stop the touch process and shouldn't trigger any event

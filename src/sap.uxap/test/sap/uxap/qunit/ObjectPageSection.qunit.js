@@ -294,6 +294,77 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 			"On Desktop you can override the default behaviour and show only High priorities");
 	});
 
+	QUnit.test("Updating visibility of Section DOM element", function(assert) {
+		// Arrange
+		var oObjectPageLayout = new ObjectPageLayout(),
+			oObjectPageSection = new ObjectPageSection(),
+			oToggleSpy = sinon.spy(),
+			jQueryObject = {
+				children: sinon.stub().returns({
+					toggle: oToggleSpy
+				})
+			},
+			ojQueryStub = sinon.stub(oObjectPageSection, "$").returns(jQueryObject),
+			oRequestAdjustLayoutSpy = sinon.spy(oObjectPageLayout, "_requestAdjustLayout");
+
+		oObjectPageLayout.addSection(oObjectPageSection);
+
+		// Act
+		oObjectPageSection._updateShowHideState(false);
+
+		// Assert
+		assert.ok(oToggleSpy.notCalled, "toggling visibility function is not called when there is no change in Section's visibility");
+		assert.ok(oRequestAdjustLayoutSpy.notCalled, "_requestAdjustLayout is not called when there is no change in Section's visibility");
+
+		// Act
+		oObjectPageSection._updateShowHideState(true);
+
+		// Assert
+		assert.ok(oToggleSpy.calledOnce, "toggling visibility function is called when there is change in Section's visibility");
+		assert.ok(oRequestAdjustLayoutSpy.calledOnce, "_requestAdjustLayout is called when there is change in Section's visibility");
+
+		// Clean-up
+		oObjectPageSection.destroy();
+		ojQueryStub.restore();
+	});
+
+	QUnit.test("Updating visibility of SubSection DOM element", function(assert) {
+		// Arrange
+		var oObjectPageLayout = new ObjectPageLayout(),
+			oObjectPageSubSection = new ObjectPageSubSection(),
+			oObjectPageSection = new ObjectPageSection({
+				subSections: [oObjectPageSubSection]
+			}),
+			oToggleSpy = sinon.spy(),
+			jQueryObject = {
+				children: sinon.stub().returns({
+					toggle: oToggleSpy
+				})
+			},
+			ojQueryStub = sinon.stub(oObjectPageSubSection, "$").returns(jQueryObject),
+			oRequestAdjustLayoutSpy = sinon.spy(oObjectPageLayout, "_requestAdjustLayout");
+
+		oObjectPageLayout.addSection(oObjectPageSection);
+
+		// Act
+		oObjectPageSubSection._updateShowHideState(false);
+
+		// Assert
+		assert.ok(oToggleSpy.notCalled, "toggling visibility function is not called when there is no change in Section's visibility");
+		assert.ok(oRequestAdjustLayoutSpy.notCalled, "_requestAdjustLayout is not called when there is no change in Section's visibility");
+
+		// Act
+		oObjectPageSubSection._updateShowHideState(true);
+
+		// Assert
+		assert.ok(oToggleSpy.calledTwice, "toggling visibility function is called twice (for SeeMore and sapUxAPBlock containers) when there is change in SubSection's visibility");
+		assert.ok(oRequestAdjustLayoutSpy.calledOnce, "_requestAdjustLayout is called when there is change in SubSection's visibility");
+
+		// Clean-up
+		oObjectPageSubSection.destroy();
+		ojQueryStub.restore();
+	});
+
 	QUnit.test("Updating the show/hide state", function (assert) {
 		var toggleSpy = sinon.spy(),
 			jQueryObject = {

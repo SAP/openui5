@@ -1,3 +1,11 @@
+/* ================================== */
+/* CSS for control sap.f/CardLoading  */
+/* Base theme          */
+/* ================================== */
+@_sap_f_Card_FocusBorderWidth: 1px;
+@sap_f_Card_Background_Placeholder_Color: @sapContent_Placeholderloading_Background;
+@sap_f_Card_Placeholder_Gradient: linear-gradient(to right, @sapContent_Placeholderloading_Background 0%, @sapContent_Placeholderloading_Background 35%, darken(@sapContent_Placeholderloading_Background, 5) 50%, @sapContent_Placeholderloading_Background 65%, @sapContent_Placeholderloading_Background 100%);
+
 .sapFCard {
   .sapFCardHeader.sapFCardHeaderLoading {
 
@@ -32,8 +40,8 @@
 	  animation-iteration-count: infinite;
 	  animation-name: placeHolderShimmer;
 	  animation-timing-function: linear;
-	  background-color:#e0e0e0 !important;
-	  background-image: linear-gradient(to right, #e0e0e0 0%, #e0e0e0 35%, #d3d3d3 50%, #e0e0e0 65%, #e0e0e0 100%);
+	  background-color: @sap_f_Card_Background_Placeholder_Color;
+	  background-image: @sap_f_Card_Placeholder_Gradient;
 	  background-repeat: no-repeat;
 	  background-size: 800px 144px;
 	  position: absolute;
@@ -62,8 +70,32 @@
 	}
   }
 
-
   .sapFCardContent  {
+
+
+	.sapFCardBaseContent .sapFCardContentHidden {
+	  visibility: hidden;
+	}
+
+	.sapFCardContentPlaceholder {
+	  outline: none;
+	}
+
+	.sapFCardContentPlaceholder:focus::before {
+	  content: '';
+	  display: block;
+	  position: absolute;
+	  left: 1px;
+	  bottom: 1px;
+	  right: 1px;
+	  top: 1px;
+	  border: @_sap_f_Card_FocusBorderWidth dotted @sapUiContentFocusColor;
+	  pointer-events: none;
+	}
+
+	html[data-sap-ui-browser^="ie"] .sapFCardContentPlaceholder:focus::before {
+	  border: @_sap_f_Card_FocusBorderWidth dashed @sapUiContentFocusColor;
+	}
 
 	.sapFCardContentGenericPlaceholder {
 	  display: flex;
@@ -118,8 +150,8 @@
 	  animation-iteration-count: infinite;
 	  animation-name: placeHolderShimmer;
 	  animation-timing-function: linear;
-	  background-color:#e0e0e0 !important;
-	  background-image: linear-gradient(to right, #e0e0e0 0%, #e0e0e0 35%, #d3d3d3 50%, #e0e0e0 65%, #e0e0e0 100%);
+	  background-color: @sap_f_Card_Background_Placeholder_Color;
+	  background-image: @sap_f_Card_Placeholder_Gradient;
 	  background-repeat: no-repeat;
 	  background-size: 800px 144px;
 	  position: relative;

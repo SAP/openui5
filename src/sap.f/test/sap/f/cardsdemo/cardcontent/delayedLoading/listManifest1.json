@@ -1,5 +1,6 @@
 {
 	"sap.app": {
+		"id": "cardsdemo.samples.list1",
 		"type": "card"
 	},
 	"sap.card": {
@@ -14,7 +15,7 @@
 			"title": "{title}",
 			"subTitle": "{subTitle}",
 			"icon": {
-			  "src": "sap-icon://newspaper"
+			  "src": "sap-icon://list"
 			}
 		},
 		"content": {
@@ -27,7 +28,7 @@
 			},
 			"item": {
 				"title": {
-					"label": "{{title_label}}",
+					"label": "Title",
 					"value": "{Name}"
 				},
 				"icon": {

@@ -93,6 +93,11 @@ sap.ui.define([
 	 * @return {Promise} Promise resolving with the initially passed result
 	 */
 	function checkForRtaStartOnDraftAndReturnResult(oResult, oComponent) {
+		// Dont check for RTA start in ushell scenario
+		if (Utils.getUshellContainer()) {
+			return Promise.resolve(oResult);
+		}
+
 		var sRestartingComponent = window.sessionStorage.getItem("sap.ui.rta.restart." + Layer.CUSTOMER);
 		if (sRestartingComponent) {
 			var sComponentId = Utils.getComponentClassName(oComponent);

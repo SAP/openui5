@@ -1,4 +1,4 @@
-<mvc:View controllerName="appMock.view.Main"
+<mvc:View controllerName="sap.ui.testrecorder.appMock.view.Main"
 		  xmlns="sap.m"
 		  xmlns:f="sap.ui.layout.form"
 		  xmlns:mvc="sap.ui.core.mvc">

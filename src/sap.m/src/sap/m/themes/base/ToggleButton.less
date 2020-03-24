@@ -30,6 +30,11 @@ html.sap-desktop .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed,
 		border-color: @sapUiButtonAcceptActiveBorderColor;
 		color: contrast(@sapUiButtonAcceptActiveBackground, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);;
 	}
+	&.sapMBtnAttention {
+		background-color: @sapUiButtonAttentionActiveBackground;
+		border-color: @sapUiButtonAttentionActiveBorderColor;
+		color: contrast(@sapUiButtonAttentionActiveBackground, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);;
+	}
 }
 
 /*hover and down on toggled*/
@@ -74,5 +79,10 @@ html.sap-desktop .sapMToggleBtnPressed.sapMBtnTransparent > .sapMBtnIcon {
 		background-color: darken(@sapUiButtonAcceptActiveBackground, 5);
 		border-color: @sapUiButtonAcceptActiveBorderColor;
 		color: contrast(lighten(@sapUiButtonAcceptActiveBackground, 5), @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+	}
+	&.sapMBtnAttention {
+		background-color: darken(@sapUiButtonAttentionActiveBackground, 5);
+		border-color: @sapUiButtonAttentionActiveBorderColor;
+		color: contrast(lighten(@sapUiButtonAttentionActiveBackground, 5), @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 	}
 }

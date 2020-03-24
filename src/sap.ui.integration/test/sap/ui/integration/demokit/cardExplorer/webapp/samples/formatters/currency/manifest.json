@@ -37,7 +37,7 @@
 				"src": "sap-icon://desktop-mobile"
 			},
 			"status": {
-				"text": "5 of 20"
+				"text": "4 of 5"
 			}
 		},
 		"content": {
@@ -70,6 +70,7 @@
 					}
 				]
 			},
+			"maxItems": "4",
 			"item": {
 				"title": "{Name}",
 				"description": "Total price:",

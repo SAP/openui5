@@ -374,10 +374,11 @@ function(
 		if (!sControlWidth) {
 			// Modify whole control width if needed
 			if ((iMaxWidth * iButtonsCount) > iParentWidth) {
-				this.$().css("width", "100%");
+				this.addStyleClass("sapMSegBFit");
 			} else if (iMaxWidth > 0) {
 				// Here we add 1px to compensate for the border which is taken within the calculation of max width
 				this.$().width((iMaxWidth * iButtonsCount) + 1);
+				this.removeStyleClass("sapMSegBFit");
 			}
 			// Modify button widths
 			i = 0;

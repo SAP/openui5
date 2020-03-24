@@ -6,7 +6,7 @@ sap.ui.define([
 		"sap/f/library",
 		"sap/ui/base/ManagedObject",
 		"sap/m/Table",
-		"sap/f/cards/BaseContent",
+		"sap/f/cards/BaseListContent",
 		"sap/m/Column",
 		"sap/m/ColumnListItem",
 		"sap/m/Text",
@@ -24,7 +24,7 @@ sap.ui.define([
 		library,
 		ManagedObject,
 		ResponsiveTable,
-		BaseContent,
+		BaseListContent,
 		Column,
 		ColumnListItem,
 		Text,
@@ -68,7 +68,7 @@ sap.ui.define([
 		 *
 		 * <h3>Responsive Behavior</h3>
 		 *
-		 * @extends sap.f.cards.BaseContent
+		 * @extends sap.f.cards.BaseListContent
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -78,12 +78,12 @@ sap.ui.define([
 		 * @since 1.65
 		 * @alias sap.f.cards.TableContent
 		 */
-		var TableContent = BaseContent.extend("sap.f.cards.TableContent", {
+		var TableContent = BaseListContent.extend("sap.f.cards.TableContent", {
 			renderer: {}
 		});
 
 		TableContent.prototype.exit = function () {
-			BaseContent.prototype.exit.apply(this, arguments);
+			BaseListContent.prototype.exit.apply(this, arguments);
 
 			if (this._oItemTemplate) {
 				this._oItemTemplate.destroy();
@@ -118,7 +118,7 @@ sap.ui.define([
 		 * @returns {sap.f.cards.TableContent} Pointer to the control instance to allow method chaining.
 		 */
 		TableContent.prototype.setConfiguration = function (oConfiguration) {
-			BaseContent.prototype.setConfiguration.apply(this, arguments);
+			BaseListContent.prototype.setConfiguration.apply(this, arguments);
 
 			if (!oConfiguration) {
 				return this;
@@ -134,6 +134,13 @@ sap.ui.define([
 			}
 
 			return this;
+		};
+
+		/**
+		 * Handler for when data is changed.
+		 */
+		TableContent.prototype.onDataChanged = function () {
+			this._checkHiddenNavigationItems(this.getConfiguration().row);
 		};
 
 		/**
@@ -168,6 +175,7 @@ sap.ui.define([
 			var oBindingInfo = {
 				template: this._oItemTemplate
 			};
+			this._filterHiddenNavigationItems(oRow, oBindingInfo);
 			this._bindAggregation("items", oTable, oBindingInfo);
 		};
 

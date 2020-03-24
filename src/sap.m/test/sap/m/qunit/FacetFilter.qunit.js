@@ -1321,7 +1321,7 @@ sap.ui.define([
 				}),
 				oFF = new FacetFilter({lists: [oFFL]});
 
-		sap.ui.getCore().setModel(oModel, "m");
+		oFF.setModel(oModel, "m");
 		oFF.placeAt("content");
 
 		// Act
@@ -1330,6 +1330,38 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oFFL.getItems().length, 1, "One item should match");
 		assert.equal(oFFL.getItems()[0].getText(), "c", ".. and this should be the third one");
+
+		// Cleanup
+		oFF.destroy();
+	});
+
+	QUnit.test("FacetFilterList._search with facotory function items binding", function (assert) {
+		// Arrange
+		var oModel = new JSONModel({
+			values: [{"text": "One"}, {"text": "Two"}, {"text": "Three"}]}),
+			oFFL = new FacetFilterList(),
+			oFF = new FacetFilter({lists: [oFFL]}),
+			aResult;
+
+		oFFL.bindItems({
+			path : "/values",
+			factory: function() {
+				return new FacetFilterItem({
+					text: "{text}"
+				});
+			}
+		});
+
+		oFF.setModel(oModel);
+		oFF.placeAt("qunit-fixture");
+
+		// Act
+		oFFL._search("Two");
+
+		// Assert
+		aResult = oFFL.getItems();
+		assert.equal(aResult.length, 1, "Matched one item");
+		assert.equal(aResult[0].getText(), "Two", "Correct item is fetched");
 
 		// Cleanup
 		oFF.destroy();
@@ -1994,7 +2026,6 @@ sap.ui.define([
 		var oModel = new JSONModel({
 			values: aItemsData
 		});
-		sap.ui.getCore().setModel(oModel);
 
 		var oFF = new FacetFilter();
 		var oFFL = new FacetFilterList({
@@ -2015,6 +2046,7 @@ sap.ui.define([
 		});
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
+		oFF.setModel(oModel);
 		sap.ui.getCore().applyChanges();
 
 		oFFL.setSelectedKeys({"1": "Val1", "2": "Val2"});

@@ -342,7 +342,7 @@ sap.ui.define([
 		//marker, controlled from the DatePicker & checked in the CalendarRenderer
 		//when used in a DatePicker, in mobile there is no cancel button
 		this._bSkipCancelButtonRendering = false;
-		this._bIsSecondHeaderButtonAction = false;
+		this._bActionTriggeredFromSecondHeader = false;
 	};
 
 	Calendar.prototype.exit = function(){
@@ -903,7 +903,7 @@ sap.ui.define([
 	 */
 	Calendar.prototype._getActiveHeaderAggregation = function(){
 
-		if (this._bIsSecondHeaderButtonAction && this._isTwoMonthsInOneColumn()) {
+		if (this._bActionTriggeredFromSecondHeader && this._isTwoMonthsInOneColumn()) {
 			return this.getAggregation("secondMonthHeader");
 		} else {
 			return this.getAggregation("header");
@@ -914,9 +914,9 @@ sap.ui.define([
 	Calendar.prototype._setIsSecondHeaderButtonAction = function(oEvent){
 
 		if (oEvent.getSource().sParentAggregationName === "secondMonthHeader" || oEvent.sId === "pressButton3" || oEvent.sId === "pressButton4") {
-			this._bIsSecondHeaderButtonAction = true;
+			this._bActionTriggeredFromSecondHeader = true;
 		} else {
-			this._bIsSecondHeaderButtonAction = false;
+			this._bActionTriggeredFromSecondHeader = false;
 		}
 	};
 
@@ -1127,8 +1127,9 @@ sap.ui.define([
 	};
 
 	Calendar.prototype.onsapshow = function(oEvent){
+		var iKC = oEvent.which || oEvent.keyCode;
 
-		if (this._bPoupupMode) {
+		if (this._bPoupupMode && iKC !== KeyCodes.F4) {
 			this._closedPickers();
 			this.fireCancel();
 
@@ -1144,12 +1145,25 @@ sap.ui.define([
 			bShift = oEvent.shiftKey;
 
 		// if there is a popup for picking dates, we should not handle F4
-		if (this._getSucessorsPickerPopup() || iKC !== KeyCodes.F4) {
+		if (iKC !== KeyCodes.F4) {
 			return;
 		}
 
 		oEvent.preventDefault(); //ie expands the address bar on F4
-		bShift ? this._showYearPicker() : this._showMonthPicker();
+		if (bShift) {
+			switch (this._iMode) {
+				case 0:
+				case 1:
+					this._showYearPicker();
+					break;
+				case 2:
+					this._showYearRangePicker();
+					break;
+				default:
+			}
+		} else {
+			this._showMonthPicker();
+		}
 	};
 
 
@@ -1854,11 +1868,11 @@ sap.ui.define([
 		this._iMode === 2 && this._hideYearPicker(true);
 
 		// hide month button
-		this._updateActiveHeaderMonthButtonVisibility();
+		this._updateMonthButtonVisibility();
 
 		this._renderPicker(oMonthPicker);
 
-		if (this._bIsSecondHeaderButtonAction) {
+		if (this._bActionTriggeredFromSecondHeader) {
 			oSecondDate.setDate(1);
 			oSecondDate.setMonth(oSecondDate.getMonth() + 1);
 			oMonthPicker._setYear(oSecondDate.getYear());
@@ -1868,7 +1882,7 @@ sap.ui.define([
 
 		this._showOverlay();
 
-		if (!bSkipFocus && this._bIsSecondHeaderButtonAction) {
+		if (!bSkipFocus && this._bActionTriggeredFromSecondHeader) {
 			oMonthPicker.setMonth(oSecondDate.getMonth());
 			this._setDisabledMonths(oSecondDate.getYear(), oMonthPicker);
 		} else if (!bSkipFocus){
@@ -1927,7 +1941,7 @@ sap.ui.define([
 		// show again hidden month button
 		this._updateHeadersButtons();
 		this._togglePrevNext(this._getFocusedDate(), true);
-		this._bIsSecondHeaderButtonAction = false;
+		this._bActionTriggeredFromSecondHeader = false;
 
 	};
 
@@ -1973,7 +1987,7 @@ sap.ui.define([
 			this._updateHeadersButtons();
 		}
 
-		if (this._bIsSecondHeaderButtonAction && this.getAggregation("month")[1].getDate().getFullYear() > this._getFocusedDate().getYear()) {
+		if (this._bActionTriggeredFromSecondHeader && this.getAggregation("month")[1].getDate().getFullYear() > this._getFocusedDate().getYear()) {
 			var oSecondHeaderDate = oDate.toLocalJSDate();
 			oSecondHeaderDate.setFullYear(oSecondHeaderDate.getFullYear() + 1);
 			oYearPicker.setDate(oSecondHeaderDate);
@@ -2017,7 +2031,7 @@ sap.ui.define([
 		this._updateActiveHeaderYearButtonVisibility();
 
 		this._togglePrevNext(this._getFocusedDate(), true);
-		this._bIsSecondHeaderButtonAction = false;
+		this._bActionTriggeredFromSecondHeader = false;
 	};
 
 	/**
@@ -2227,7 +2241,7 @@ sap.ui.define([
 				oSecondDate = new CalendarDate(this._getFocusedDate()._oUDate.getFullYear(),iMonth - 1,1);
 			}
 
-			if (this._bIsSecondHeaderButtonAction && oSecondDate.getYear() >= CalendarUtils._minDate().getYear()) {
+			if (this._bActionTriggeredFromSecondHeader && oSecondDate.getYear() >= CalendarUtils._minDate().getYear()) {
 				oFocusedDate.setYear(oSecondDate.getYear());
 				oFocusedDate.setMonth(oSecondDate.getMonth());
 				iMonth = oFocusedDate.getMonth();
@@ -2269,7 +2283,7 @@ sap.ui.define([
 		var oDate = CalendarDate.fromLocalJSDate(oYearPicker.getDate(), this.getPrimaryCalendarType());
 
 		// to keep day and month stable also for islamic date
-		if (!this._bIsSecondHeaderButtonAction){
+		if (!this._bActionTriggeredFromSecondHeader){
 			oDate.setMonth(oFocusedDate.getMonth(), oFocusedDate.getDate());
 		} else {
 			oDate.setYear(oDate.getYear() - 1);
@@ -2328,7 +2342,7 @@ sap.ui.define([
 		this._iMode = 0;
 		this.getAggregation("yearRangePicker").$().css("display", "none");
 		this._hideOverlay();
-		this._bIsSecondHeaderButtonAction = false;
+		this._bActionTriggeredFromSecondHeader = false;
 	};
 
 	Calendar.prototype._showOverlay = function () {
@@ -2366,14 +2380,14 @@ sap.ui.define([
 	 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
 	 * @private
 	 */
-	Calendar.prototype._updateActiveHeaderMonthButtonVisibility = function(){
+	Calendar.prototype._updateMonthButtonVisibility = function(){
 		var oHeader = this._getActiveHeaderAggregation();
-		if (this._bIsSecondHeaderButtonAction) {
+		if (this._bActionTriggeredFromSecondHeader) {
 			this._isTwoMonthsInOneColumn() ?
 				oHeader.setVisibleButton1(!oHeader.getVisibleButton1()) : oHeader._setVisibleButton3(!oHeader._getVisibleButton3());
 
 		} else {
-			oHeader.setVisibleButton1(!oHeader.getVisibleButton1());
+			oHeader.setVisibleButton1(false);
 		}
 		return this;
 	};
@@ -2386,7 +2400,7 @@ sap.ui.define([
 	 */
 	Calendar.prototype._updateActiveHeaderYearButtonVisibility = function(){
 		var oHeader = this._getActiveHeaderAggregation();
-		if (this._bIsSecondHeaderButtonAction) {
+		if (this._bActionTriggeredFromSecondHeader) {
 			this._isTwoMonthsInOneColumn() ?
 				oHeader.setVisibleButton1(!oHeader.getVisibleButton1()) : oHeader._setVisibleButton3(!oHeader._getVisibleButton3());
 		} else {
@@ -2438,13 +2452,13 @@ sap.ui.define([
 			// and show third and fourth buttons of the first
 			oSecondMonthHeader.setVisible(false);
 			if (this._iMode === 2) {
-				this._bIsSecondHeaderButtonAction ?
+				this._bActionTriggeredFromSecondHeader ?
 					this._updateHeadersButtonsHelper(true, true, false, true) :
 					this._updateHeadersButtonsHelper(false, true, true, true);
 			} else if (this._iMode === 3) {
 				this._updateHeadersButtonsHelper(false, false, false, false);
 			} else if (this._iMode === 1) {
-				this._bIsSecondHeaderButtonAction ?
+				this._bActionTriggeredFromSecondHeader ?
 					this._updateHeadersButtonsHelper(true, true, false, true) :
 					this._updateHeadersButtonsHelper(false, true, true, true);
 			} else {
@@ -2555,7 +2569,7 @@ sap.ui.define([
 				sFirstYear = this._oYearFormat.format(UniversalDate.getInstance(oFirstDate.toUTCJSDate(), oFirstDate.getCalendarType()), true);
 				sSecondYear = this._oYearFormat.format(UniversalDate.getInstance(oSecondDate.toUTCJSDate(), oSecondDate.getCalendarType()), true);
 
-				if (this._bIsSecondHeaderButtonAction) {
+				if (this._bActionTriggeredFromSecondHeader) {
 					sSecondHeaderText = sFirstYear + " - " + sSecondYear;
 				} else {
 					sFirstHeaderText = sFirstYear + " - " + sSecondYear;

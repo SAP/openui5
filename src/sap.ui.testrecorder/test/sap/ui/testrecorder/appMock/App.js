@@ -12,7 +12,7 @@ sap.ui.define([
 		new Shell('Shell', {
 			title: 'Mocked Application for testing Test Recorder tool',
 			app: new ComponentContainer({
-				name: 'appMock'
+				name: 'sap.ui.testrecorder.appMock'
 			})
 		}).placeAt('content');
 	});

@@ -210,6 +210,8 @@ sap.ui.define([
 		this._aToolbarOnlyControls = []; // Controls that can't go to the Popover (inputs, labels, buttons with special layout, etc...)
 		this._aPopoverOnlyControls = []; // Controls that are forced to stay in the Popover (buttons with layout)
 		this._aAllCollections = [this._aMovableControls, this._aToolbarOnlyControls, this._aPopoverOnlyControls];
+
+		this.addStyleClass("sapMOTB");
 	};
 
 	OverflowToolbar.prototype.exit = function () {
@@ -254,8 +256,6 @@ sap.ui.define([
 			this._bControlsInfoCached = false;
 			this._bContentVisibilityChanged = false;
 		}
-
-		this._markFirstLastVisibleItems(".sapMBarChild:not(.sapMTBHiddenElement):visible");
 
 		// Unlike toolbar, we don't set flexbox classes here, we rather set them on a later stage only if needed
 
@@ -929,8 +929,7 @@ sap.ui.define([
 	OverflowToolbar.prototype._getOverflowButtonClone = function () {
 		if (!this._oOverflowToolbarButtonClone) {
 			this._oOverflowToolbarButtonClone = this._getToggleButton("-overflowButtonClone")
-				.addStyleClass("sapMTBHiddenElement")
-				.addStyleClass("sapMBarLastVisibleChild");
+				.addStyleClass("sapMTBHiddenElement");
 		}
 
 		return this._oOverflowToolbarButtonClone;

@@ -4,12 +4,12 @@
 /*global Error */
 
 sap.ui.define([
-	"sap/ui/fl/write/_internal/CompatibilityConnector",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Utils",
 	"sap/base/util/UriParameters",
 	"sap/base/Log"
 ], function(
-	CompatibilityConnector,
+	Storage,
 	Utils,
 	UriParameters,
 	Log
@@ -108,7 +108,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Settings._loadSettings = function() {
-		var oLoadingPromise = CompatibilityConnector.loadSettings().then(function (oSettings) {
+		var oLoadingPromise = Storage.loadFeatures().then(function (oSettings) {
 			if (!oSettings) {
 				Log.error("The request for flexibility settings failed; A default response is generated and returned to consuming APIs");
 				// in case the back end cannot respond resolve with a default response

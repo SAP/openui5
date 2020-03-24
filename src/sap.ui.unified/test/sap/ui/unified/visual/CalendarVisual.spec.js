@@ -302,6 +302,11 @@ describe("sap.ui.unified.CalendarVisual", function() {
 			}
 		});
 
+		it("sap.ui.unified.calendar.Header looks OK when chinese language is set", function() {
+			_initCalendar("70");
+			expect(takeScreenshot(oCal)).toLookAs("1040_month_displayed");
+		});
+
 		it("sap.ui.unified.calendar.Header looks OK when chinese language is set and calendar has two months", function() {
 			_initCalendar("7");
 			expect(takeScreenshot(oCal)).toLookAs("104_month_displayed");

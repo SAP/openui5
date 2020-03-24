@@ -213,7 +213,7 @@ sap.ui.define([
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
 		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
 		var oSelectionChangeSpy = sinon.spy();
-		var iSelectableCount = oSelectionPlugin.getSelectableCount();
+		var iHighestSelectableIndex = oSelectionPlugin._getHighestSelectableIndex();
 
 		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
 
@@ -226,7 +226,7 @@ sap.ui.define([
 			assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
 
 		}).then(function() {
-			sinon.stub(oSelectionPlugin, "getSelectableCount").returns(0);
+			sinon.stub(oSelectionPlugin, "_getHighestSelectableIndex").returns(-1);
 			fnGetContexts.reset();
 			oSelectionChangeSpy.reset();
 			return oSelectionPlugin.addSelectionInterval(0, 0).then(function() {
@@ -236,13 +236,13 @@ sap.ui.define([
 				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
 				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
 				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
-				oSelectionPlugin.getSelectableCount.restore();
+				oSelectionPlugin._getHighestSelectableIndex.restore();
 			});
 
 		}).then(function() {
 			fnGetContexts.reset();
 			oSelectionChangeSpy.reset();
-			return oSelectionPlugin.addSelectionInterval(iSelectableCount, iSelectableCount).then(function() {
+			return oSelectionPlugin.addSelectionInterval(iHighestSelectableIndex + 1, iHighestSelectableIndex + 1).then(function() {
 				assert.ok(false, "The promise should have been rejected because the indices are out of range");
 			}).catch(function(oError) {
 				assert.equal(oError.toString(), "Error: Out of range", "Promise rejected with Error: Out of range");
@@ -453,7 +453,7 @@ sap.ui.define([
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
 		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
 		var oSelectionChangeSpy = sinon.spy();
-		var iSelectableCount = oSelectionPlugin.getSelectableCount();
+		var iHighestSelectableIndex = oSelectionPlugin._getHighestSelectableIndex();
 
 		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
 
@@ -466,7 +466,7 @@ sap.ui.define([
 			assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
 
 		}).then(function() {
-			sinon.stub(oSelectionPlugin, "getSelectableCount").returns(0);
+			sinon.stub(oSelectionPlugin, "_getHighestSelectableIndex").returns(-1);
 			fnGetContexts.reset();
 			oSelectionChangeSpy.reset();
 			return oSelectionPlugin.setSelectionInterval(0, 0).then(function() {
@@ -476,13 +476,13 @@ sap.ui.define([
 				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
 				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
 				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
-				oSelectionPlugin.getSelectableCount.restore();
+				oSelectionPlugin._getHighestSelectableIndex.restore();
 			});
 
 		}).then(function() {
 			fnGetContexts.reset();
 			oSelectionChangeSpy.reset();
-			return oSelectionPlugin.setSelectionInterval(iSelectableCount, iSelectableCount).then(function() {
+			return oSelectionPlugin.setSelectionInterval(iHighestSelectableIndex + 1, iHighestSelectableIndex + 1).then(function() {
 				assert.ok(false, "The promise should have been rejected because the indices are out of range");
 			}).catch(function(oError) {
 				assert.equal(oError.toString(), "Error: Out of range", "Promise rejected with Error: Out of range");
@@ -596,7 +596,7 @@ sap.ui.define([
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
 		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
 		var oSelectionChangeSpy = sinon.spy();
-		var iSelectableCount = oSelectionPlugin.getSelectableCount();
+		var iHighestSelectableIndex = oSelectionPlugin._getHighestSelectableIndex();
 
 		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
 
@@ -609,7 +609,7 @@ sap.ui.define([
 			assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
 
 		}).then(function() {
-			sinon.stub(oSelectionPlugin, "getSelectableCount").returns(0);
+			sinon.stub(oSelectionPlugin, "_getHighestSelectableIndex").returns(-1);
 			fnGetContexts.reset();
 			oSelectionChangeSpy.reset();
 			return oSelectionPlugin.setSelectedIndex(0).then(function() {
@@ -619,13 +619,13 @@ sap.ui.define([
 				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
 				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
 				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
-				oSelectionPlugin.getSelectableCount.restore();
+				oSelectionPlugin._getHighestSelectableIndex.restore();
 			});
 
 		}).then(function() {
 			fnGetContexts.reset();
 			oSelectionChangeSpy.reset();
-			return oSelectionPlugin.setSelectedIndex(iSelectableCount).then(function() {
+			return oSelectionPlugin.setSelectedIndex(iHighestSelectableIndex + 1).then(function() {
 				assert.ok(false, "The promise should have been rejected because the indices are out of range");
 			}).catch(function(oError) {
 				assert.equal(oError.toString(), "Error: Out of range", "Promise rejected with Error: Out of range");

@@ -1458,7 +1458,7 @@ sap.ui.define([
 		(aCachePaths || [""]).forEach(function (sCachePath) {
 			var sPath = _Helper.buildPath(sDataBindingPath, sCachePath);
 
-			Object.keys(that.mMessages || {}).forEach(function (sMessageTarget) {
+			Object.keys(that.mMessages).forEach(function (sMessageTarget) {
 				if (sMessageTarget === sPath
 						|| sMessageTarget.startsWith(sPath + "/")
 						|| sMessageTarget.startsWith(sPath + "(")) {

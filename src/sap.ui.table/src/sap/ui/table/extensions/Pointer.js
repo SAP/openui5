@@ -154,10 +154,12 @@ sap.ui.define([
 			}
 
 			oTable._bIsColumnResizerMoving = true;
+			oTable._bColumnResizerMoved = false;
+			oTable._iColumnResizeStart = ExtensionHelper._getEventPosition(oEvent, oTable).x;
 			oTable.$().toggleClass("sapUiTableResizing", true);
 
-			var $Document = jQuery(document),
-				bTouch = oTable._isTouchEvent(oEvent);
+			var $Document = jQuery(document);
+			var bTouch = oTable._isTouchEvent(oEvent);
 
 			oTable._$colResize = oTable.$("rsz");
 
@@ -177,11 +179,11 @@ sap.ui.define([
 			var oColumn = this._getVisibleColumns()[this._iLastHoveredVisibleColumnIndex];
 			var $RelevantColumnElement = this.$().find("th[data-sap-ui-colid=\"" + oColumn.getId() + "\"]"); // Consider span and multi-header
 			var iColumnWidth = $RelevantColumnElement[0].offsetWidth;
-			var iDeltaX = iLocationX - ($RelevantColumnElement.offset().left + iColumnWidth);
+			var iDeltaX = iLocationX - ($RelevantColumnElement.offset().left + (this._bRtlMode ? 0 : iColumnWidth));
 			var iCalculatedColumnWidth = Math.round(iColumnWidth + iDeltaX * (this._bRtlMode ? -1 : 1));
 			var iNewColumnWidth = Math.max(iCalculatedColumnWidth, TableUtils.Column.getMinColumnWidth());
 
-			ColumnResizeHelper._resizeColumn(this, this._iLastHoveredVisibleColumnIndex, iNewColumnWidth);
+			ColumnResizeHelper._resizeColumn(this, this._iLastHoveredVisibleColumnIndex, this._bColumnResizerMoved ? iNewColumnWidth : null);
 		},
 
 		/*
@@ -191,6 +193,10 @@ sap.ui.define([
 			var iLocationX = ExtensionHelper._getEventPosition(oEvent, this).x;
 			var iRszOffsetLeft = this.$().find(".sapUiTableCnt").offset().left;
 			var iRszLeft = Math.floor(iLocationX - iRszOffsetLeft);
+
+			if (!this._bColumnResizerMoved && Math.abs(iLocationX - this._iColumnResizeStart) >= 5) {
+				this._bColumnResizerMoved = true;
+			}
 
 			this._$colResize.css("left", iRszLeft + "px");
 			this._$colResize.toggleClass("sapUiTableColRszActive", true);
@@ -229,7 +235,9 @@ sap.ui.define([
 
 			if (iColIndex >= 0 && iColIndex < aVisibleColumns.length) {
 				oColumn = aVisibleColumns[iColIndex];
-				TableUtils.Column.resizeColumn(oTable, oTable.indexOfColumn(oColumn), iNewWidth);
+				if (iNewWidth != null) {
+					TableUtils.Column.resizeColumn(oTable, oTable.indexOfColumn(oColumn), iNewWidth);
+				}
 			}
 
 			ColumnResizeHelper._cleanupColumResizing(oTable);
@@ -752,7 +760,8 @@ sap.ui.define([
 					return;
 				}
 
-				if (!oEvent.shiftKey && window.getSelection().toString().length > 0) {
+				var sSelectedText = window.getSelection().toString();
+				if (!oEvent.shiftKey && sSelectedText.length > 0 && sSelectedText !== "\n") {
 					Log.debug("DOM Selection detected -> Click event on table skipped, Target: " + oEvent.target);
 					return;
 				}

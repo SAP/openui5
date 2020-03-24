@@ -40,10 +40,10 @@ function (
 			TwoColumnsMidExpanded: 2
 		};
 
-	var fnCreatePage = function (sId) {
+	var fnCreatePage = function (sId, oContent) {
 		return new Page(sId, {
 			title: "Page: " + sId,
-			content: [
+			content: oContent || [
 				new Button({text: "Button"})
 			]
 		});
@@ -158,7 +158,7 @@ function (
 	QUnit.test("Layout: OneColumn", function (assert) {
 
 		this.oFCL = oFactory.createFCL({
-			Layout: LT.OneColumn
+			layout: LT.OneColumn
 		});
 		assertColumnsVisibility(assert, this.oFCL, 1, 0, 0);
 	});
@@ -1042,6 +1042,30 @@ function (
 		}.bind(this), iAnimationDelay);
 	});
 
+	QUnit.test("FCL does not have animations with animationMode=minimal", function(assert){
+		// arrange
+		var oSpy = this.spy(this.oFCL, "_adjustColumnAfterAnimation"),
+			fnDone = assert.async(),
+			oConfiguration = sap.ui.getCore().getConfiguration(),
+			sOriginalAnimationMode = oConfiguration.getAnimationMode();
+
+		oConfiguration.setAnimationMode("minimal");
+		assert.expect(1);
+
+		// act
+		this.oFCL.setLayout(LT.ThreeColumnsMidExpanded);
+
+		setTimeout(function() {
+			// assert
+			assert.ok(oSpy.notCalled, "_adjustColumnAfterAnimation is not called when animationMode=minimal");
+
+			// clean-up
+			oConfiguration.setAnimationMode(sOriginalAnimationMode);
+			oSpy.restore();
+			fnDone();
+		}, COLUMN_RESIZING_ANIMATION_DURATION);
+	});
+
 	QUnit.module("ScreenReader supprot", {
 		beforeEach: function () {
 			this.oFCL = oFactory.createFCL();
@@ -1404,6 +1428,126 @@ function (
 			setTimeout(fnCallback.bind(this), COLUMN_RESIZING_ANIMATION_DURATION);
 		});
 	}
+
+	QUnit.module("Focus handling with enabled 'restoreFocusOnBackNavigation' property", {
+		beforeEach: function () {
+
+			// Arrange
+			this.oBtn1 = new Button({text: "Button1"});
+			this.oBtn2 = new Button({text: "Button2"});
+			this.oBtn3 = new Button({text: "Button3"});
+
+			this.oPage1 = oFactory.createPage("page1", this.oBtn1);
+			this.oPage2 = oFactory.createPage("page2", this.oBtn2);
+			this.oPage3 = oFactory.createPage("page3", this.oBtn3);
+
+			this.oFCL = oFactory.createFCL({
+				beginColumnPages: this.oPage1,
+				midColumnPages: this.oPage2,
+				endColumnPages: this.oPage3,
+				layout: LT.OneColumn,
+				initialBeginColumnPage: "page1",
+				restoreFocusOnBackNavigation: true
+			});
+			this.iPreviousFixtureWidth = $("#" + sQUnitFixture).width();
+			$("#" + sQUnitFixture).width(DESKTOP_SIZE);
+			this.oClock = sinon.useFakeTimers();
+		},
+		afterEach: function () {
+
+			// Clean Up
+			this.oFCL.destroy();
+			this.oClock.restore();
+			$("#" + sQUnitFixture).width(this.iPreviousFixtureWidth);
+		}
+	});
+
+	QUnit.test("Should restore focus on back navigation", function (assert) {
+		// Act
+		this.oBtn1.$().focus();
+
+		// Assert
+		assert.strictEqual(this.oBtn1.$().is(":focus"), true, "Focus is in begin column");
+
+		// Act
+		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
+		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
+		this.oBtn2.$().focus();
+
+		// Assert
+		assert.strictEqual(this.oBtn2.$().is(":focus"), true, "Focus is in mid column");
+
+		// Act
+		this.oFCL.setLayout(LT.OneColumn);
+		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
+
+		// Assert
+		assert.strictEqual(this.oBtn1.$().is(":focus"), true, "Focus is restored to begin column");
+	});
+
+	QUnit.test("Should preserve existing focus in previous of current column on back navigation", function (assert) {
+		// Act
+		this.oBtn1.$().focus();
+
+		// Assert
+		assert.strictEqual(this.oBtn1.$().is(":focus"), true, "Focus is in begin column");
+
+		// Act
+		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
+		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
+		this.oBtn2.$().focus();
+
+		// Assert
+		assert.strictEqual(this.oBtn2.$().is(":focus"), true, "Focus is in mid column");
+
+		// Act
+		this.oFCL.setLayout(LT.ThreeColumnsEndExpanded);
+		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
+		this.oBtn3.$().focus();
+
+		// Assert
+		assert.strictEqual(this.oBtn3.$().is(":focus"), true, "Focus is in end column");
+
+		// Act
+		this.oBtn1.$().focus();
+
+		// Assert
+		assert.strictEqual(this.oBtn1.$().is(":focus"), true, "Focus is in begin column");
+
+		// Act
+		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
+		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
+
+		// Assert
+		assert.strictEqual(this.oBtn1.$().is(":focus"), true,
+			"Focus is preserved to begin column after navigating back from end to mid");
+	});
+
+	QUnit.test("Should restore focus after exiting full screen", function (assert) {
+		// Act
+		this.oFCL.setLayout(LT.TwoColumnsBeginExpanded);
+		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
+		this.oBtn1.$().focus();
+
+		// Assert
+		assert.strictEqual(this.oBtn1.$().is(":focus"), true, "Focus is in begin column");
+
+		// Act
+		this.oFCL.setLayout(LT.MidColumnFullScreen);
+		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
+		this.oBtn2.$().focus();
+
+		// Assert
+		assert.strictEqual(this.oBtn2.$().is(":focus"), true, "Focus is in mid column");
+
+		// Act
+		this.oFCL.setLayout(LT.OneColumn);
+		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
+
+		// Assert
+		assert.strictEqual(this.oBtn1.$().is(":focus"), true,
+			"Focus is restored to begin column after exiting from mid's fullscreen.");
+	});
 
 	QUnit.module("Column width calculations", {
 		beforeEach: function () {

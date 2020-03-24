@@ -5,6 +5,7 @@
 	xmlns="sap.m"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:plugins="sap.m.plugins"
 	xmlns:t="sap.ui.table">
 <App>
 	<Page id="page" floatingFooter="true" showHeader="false">
@@ -29,27 +30,43 @@
 					editable="true" labelSpanM="2" layout="ResponsiveGridLayout">
 					<form:toolbar>
 						<Toolbar design="Transparent">
-							<Title id="objectPageTitle" text="Sales Order Details" level="H2" />
+							<Title id="objectPageTitle" level="H2" text="Sales Order Details" />
 						</Toolbar>
 					</form:toolbar>
 					<Toolbar design="Transparent">
-						<Title text="Sales Order" level="H2" />
+						<Title level="H2" text="Sales Order" />
 					</Toolbar>
 					<Label text="Sales Order ID" />
-					<Input value="{SalesOrderID}" editable="false" width="8em"/>
+					<Input editable="false" value="{SalesOrderID}" width="8em" />
 					<Label text="Note" />
 					<Input value="{Note}" />
 				</form:SimpleForm>
-				<t:Table id="ToLineItems" rows="{ToLineItems}" visibleRowCount="7">
+				<t:Table id="ToLineItems" rowActionCount="1" rows="{ToLineItems}" threshold="0"
+					visibleRowCount="4">
+					<t:dependents>
+						<plugins:DataStateIndicator />
+					</t:dependents>
 					<t:extension>
 						<Toolbar>
-							<Title text="Sales Order Items" level="H2">
+							<Title level="H2" text="Sales Order Items">
 								<layoutData>
 									<ToolbarLayoutData shrinkable="false" />
 								</layoutData>
 							</Title>
+							<ToolbarSpacer/>
+							<ToggleButton press="onTransitionMessagesOnly"
+								text="Transition Messages Only"
+								tooltip="Message handling is done by the parent entity" />
 						</Toolbar>
 					</t:extension>
+					<t:rowSettingsTemplate>
+						<t:RowSettings id="rowsettings" />
+					</t:rowSettingsTemplate>
+					<t:rowActionTemplate>
+						<t:RowAction>
+							<t:RowActionItem press="onShowProductDetails" type="Navigation" />
+						</t:RowAction>
+					</t:rowActionTemplate>
 					<t:columns>
 						<t:Column width="8em">
 							<Label text="Sales Order ID" />
@@ -118,15 +135,35 @@
 					</t:columns>
 				</t:Table>
 			</VBox>
+			<VBox>
+				<dependents>
+					<Dialog binding="{ToProduct}" id="productDetailsDialog" title="Product Details">
+						<buttons>
+							<Button press="onCloseProductDetails" text="Close" type="Accept" />
+						</buttons>
+						<form:SimpleForm editable="true" layout="ResponsiveGridLayout">
+							<Label text="Product ID" />
+							<Input value="{ProductID}" />
+							<Label text="Name" />
+							<Input value="{Name}" />
+						</form:SimpleForm>
+					</Dialog>
+				</dependents>
+			</VBox>
 		</content>
 		<footer>
 			<OverflowToolbar>
 				<Button icon="sap-icon://message-popup" id="messagePopoverButton"
-					press="onMessagePopoverPress" text="{=${messages>/}.length}" type="Emphasized">
+					press="onMessagePopoverPress" text="{ui>/messageCount}" type="Emphasized">
 					<dependents>
 						<MessagePopover activeTitlePress="onMessageSelected"
 							afterClose="onMessagePopoverClosed" id="messagePopover"
-							items="{messages>/}">
+							items="{
+								path : 'messages>/',
+								events : {
+									change : '.updateMessageCount'
+								}
+							}">
 							<MessageItem activeTitle="true" description="{messages>message}"
 								subtitle="{messages>additionalText}" title="{messages>message}"
 								type="{messages>type}" />
@@ -135,7 +172,7 @@
 				</Button>
 				<ToolbarSpacer />
 				<Button press="onSaveSalesOrder" text="Save" type="Emphasized" />
-				<Button press="onResetChanges" text="Rest Changes" />
+				<Button press="onResetChanges" text="Reset Changes" />
 			</OverflowToolbar>
 		</footer>
 	</Page>

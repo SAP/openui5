@@ -2,7 +2,7 @@
 	"_version": "1.12.0",
 
 	"sap.app": {
-		"id": "appMock",
+		"id": "sap.ui.testrecorder.appMock",
 		"type": "application",
 		"applicationVersion": {
 			"version": "1.0.0"
@@ -11,7 +11,7 @@
 
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "appMock.view.Main",
+			"viewName": "sap.ui.testrecorder.appMock.view.Main",
 			"type": "XML",
 			"id": "main"
 		},
@@ -26,7 +26,7 @@
 			"config": {
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
-				"viewPath": "appMock.view",
+				"viewPath": "sap.ui.testrecorder.appMock.view",
 				"controlId": "app",
 				"controlAggregation": "pages"
 			},

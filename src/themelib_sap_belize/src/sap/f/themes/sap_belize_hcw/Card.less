@@ -1,26 +1,35 @@
 /* ============================= */
-/* CSS for control sap.f/Card  */
+/* CSS for control sap.f/Card    */
 /* High Contrast White theme     */
 /* ============================= */
 
-@_sap_f_Card_HeaderHoverColor: @sapUiTileHoverBackground;
-@_sap_f_Card_HeaderActiveColor: @sapUiTileActiveBackground;
+@_sap_f_card_BottomHeaderBorder: 1px solid @sapUiTileBorderColor;
+@_sap_f_card_BoxShadow: none;
+@_sap_f_Card_HeaderIconColor: @sapUiContentIconColor;
+@_sap_f_Card_HeaderBorderBottom: 1px solid @sapUiTileBorderColor;
+@_sap_f_card_HeaderBoxShadow: none;
 @_sap_f_Card_FocusBorderWidth: 0.125rem;
 
-.sapFCard .sapFCardHeader {
-  border-bottom: 1px solid @sapUiTileBorderColor;
-
-  .sapFCardHeaderMainIndicator  {
-	.sapMNCValue,
-	.sapMNCIndicator,
-	.sapMNCScale {
-	  color: @sapUiContentContrastTextColor;
+.sapFCard .sapFCardHeader.sapFCardClickable {
+	&:hover {
+		.sapFCardHeaderMainIndicator {
+			.sapMNCValue,
+			.sapMNCIndicator,
+			.sapMNCScale,
+			.sapMNCIndIcon {
+				color: @sapUiContentContrastTextColor;
+			}
+		}
 	}
-  }
 
-  .sapFCardIcon.sapFAvatar{
-	.sapUiIcon {
-	  color: @sapUiContentIconColor;
+	&:active {
+		.sapFCardHeaderMainIndicator {
+			.sapMNCValue,
+			.sapMNCIndicator,
+			.sapMNCScale,
+			.sapMNCIndIcon {
+				color: @sapUiContentContrastTextColor;
+			}
+		}
 	}
-  }
 }

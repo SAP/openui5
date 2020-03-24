@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
-	"sap/ui/fl/write/_internal/CompatibilityConnector",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/Control",
 	"sap/ui/fl/registry/Settings",
@@ -24,7 +24,7 @@ sap.ui.define([
 	Utils,
 	LayerUtils,
 	SmartVariantManagementApplyAPI,
-	CompatibilityConnector,
+	Storage,
 	UIComponent,
 	Control,
 	Settings,
@@ -140,7 +140,7 @@ sap.ui.define([
 				isAtoAvailable: true
 			};
 
-			sandbox.stub(CompatibilityConnector, "loadSettings").returns(Promise.resolve(oSetting));
+			sandbox.stub(Storage, "loadFeatures").returns(Promise.resolve(oSetting));
 
 			assert.ok(Settings, "Settings loaded");
 			var isVariantSharingEnabledSpy = sandbox.spy(SmartVariantManagementApplyAPI, "isVariantSharingEnabled");

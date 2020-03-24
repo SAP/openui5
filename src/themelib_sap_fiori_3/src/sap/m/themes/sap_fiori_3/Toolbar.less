@@ -2,7 +2,6 @@
 /* CSS for control sap.m/Toolbar  */
 /* Fiori 3 theme                  */
 /* ============================== */
-@_sap_m_Toolbar_MarginRight: 0;
 
 html.sap-desktop .sapMTBActive:focus {
 	outline: 0.0625rem dotted @sapUiContentFocusColor;
@@ -11,8 +10,14 @@ html.sap-desktop .sapMTBActive:focus {
 
 .sapMTB {
 	height: 2.75rem;
-	padding: 0 0.5rem;
+	padding: 0 0.5rem 0 0.25rem;
 	background: @sapUiToolbarBackground;
+}
+
+
+/* Transparent Toolbar Context */
+.sapMTB-Transparent-CTX.sapMTB {
+	padding: 0 0.5rem 0 0.75rem;
 }
 
 /* Solid Toolbar Context */
@@ -46,22 +51,6 @@ html.sap-desktop .sapMTBActive:focus {
 		> .sapUiIcon {
 			color: inherit;
 		}
-	}
-}
-
-.sapMIBar.sapMTB .sapMBarChild {
-	margin: 0 0.25rem;
-
-	&.sapMBarFirstVisibleChild {
-		margin: 0 0.25rem 0 0;
-	}
-
-	&.sapMBarLastVisibleChild {
-		margin: 0 @_sap_m_Toolbar_MarginRight 0 0.25rem;
-	}
-
-	&.sapMBarLastVisibleChild.sapMBarFirstVisibleChild {
-		margin: 0;
 	}
 }
 

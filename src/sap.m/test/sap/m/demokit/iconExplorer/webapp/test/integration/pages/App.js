@@ -11,6 +11,7 @@ sap.ui.define([
 					return this.waitFor({
 						//increase OPA polling because the message toast is only shown for a brief moment
 						pollingInterval: 100,
+						autoWait: false,
 						check: function() {
 							return !!document.getElementsByClassName("sapMMessageToast").length;
 						},

@@ -1,5 +1,6 @@
 {
   "sap.app": {
+    "id": "cardsdemo.samples.list5",
     "type": "card"
   },
   "sap.card": {
@@ -16,18 +17,17 @@
       "icon": {
         "src": "{src}"
       }
-
     },
     "content": {
       "data": {
         "request": {
-          "url": "./cardcontent/delayedLoading/listDat2.json"
+          "url": "./cardcontent/delayedLoading/listData2.json"
         },
         "path": "/content"
       },
       "item": {
         "title": {
-          "label": "{{title_label}}",
+          "label": "Title",
           "value": "{Name}"
         },
         "icon": {

@@ -1,0 +1,79 @@
+{
+	"title": "JSON schema for SAP.WIDGET Namespace",
+	"description": "Represents general widget attributes",
+	"type": "object",
+	"additionalProperties": false,
+	"properties": {
+		"_version": {
+			"description": "Represents SAP.WIDGET attributes format version. It is managed by namespace owner",
+			"type": "string",
+			"enum": [
+				"1.1.0"
+			]
+		},
+		"designtime": {
+			"description": "Path to the designtime used for this widget",
+			"type": "string"
+		},
+		"configuration": {
+			"description": "Represents configuration with parameters, which can be used inside the widget",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"settings": {
+					"description": "Settings, which can be used throughout the widget",
+					"type": "object"
+				},
+				"parameters": {
+					"description": "Map of parameters.",
+					"type": "object",
+					"additionalProperties": {
+						"$ref": "#/definitions/Configuration.Parameter"
+					}
+				},
+				"destinations": {
+					"description": "Describes what destinations are used by the widget.",
+					"type": "object",
+					"additionalProperties": {
+						"$ref": "#/definitions/Configuration.Destinations"
+					}
+				}
+			}
+		}
+	},
+	"definitions": {
+		"Configuration.Parameter": {
+			"description": "Represents configuration parameter.",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"value": {
+					"description": "The value of the parameter."
+				},
+				"type": {
+					"description": "The type of the value for the parameter.",
+					"type": "string",
+					"enum": [
+						"string",
+						"integer",
+						"number",
+						"boolean",
+						"date",
+						"datetime"
+					]
+				}
+			}
+		},
+		"Configuration.Destinations": {
+			"description": "Represents a configuration for a cloud platform destination.",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"name": {
+					"description": "The name of the destination. Use the same name which is used in Cloud Platform.",
+					"type": "string"
+				}
+			}
+		}
+	}
+}

@@ -4,11 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/LrepConnector",
-	"sap/ui/fl/write/_internal/CompatibilityConnector",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Change"
 ], function(
 	LrepConnector,
-	CompatibilityConnector,
+	Storage,
 	Change
 ) {
 	"use strict";
@@ -87,7 +87,11 @@ sap.ui.define([
 				aPreparedChanges.push(Change.createInitialFileContent(oChange));
 			});
 
-			return CompatibilityConnector.create(aPreparedChanges, mOptions.transportId);
+			return Storage.write({
+				layer: aPreparedChanges[0].layer,
+				transport: mOptions.transportId,
+				flexObjects: aPreparedChanges
+			});
 		},
 
 		/**

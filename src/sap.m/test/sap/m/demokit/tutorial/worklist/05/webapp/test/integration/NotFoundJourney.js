@@ -24,7 +24,6 @@ sap.ui.define([
 
 	opaTest("Clicking the 'Show my worklist' link on the 'Resource not found' page should bring me back to the worklist", function (Given, When, Then) {
 		//Actions
-		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
 		When.onTheNotFoundPage.iPressTheNotFoundShowWorklistLink();
 
 		// Assertions
@@ -61,7 +60,6 @@ sap.ui.define([
 
 	opaTest("Clicking the 'Show my worklist' link on the 'Object not found' page should bring me back to the worklist", function (Given, When, Then) {
 		//Actions
-		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
 		When.onTheNotFoundPage.iPressTheObjectNotFoundShowWorklistLink();
 
 		// Assertions

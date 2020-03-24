@@ -31,6 +31,20 @@
 	box-sizing: border-box;
 	background: @sapUiObjectHeaderBackground;
 
+	.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainInner {
+		.sapFDynamicPageTitleMainContent {
+			padding-left: 1rem;
+
+			.sapMTB {
+				padding-right: 0.5rem;
+			}
+		}
+
+		.sapFDynamicPageTitleMainActions {
+			padding-left: 0.5rem;
+		}
+	}
+
 	html.sap-desktop & {
 		&.sapFDynamicPageTitleFocus {
 			outline: 0.0625rem dotted @sapUiContentFocusColor;
@@ -108,12 +122,13 @@
 	}
 }
 
-.sapFDynamicPageTitle .sapFDynamicPageTitleMainContent .sapMTB .sapMBarChild {
-	&.sapMBarLastVisibleChild,
-	&.sapMBarFirstVisibleChild {
-	   margin: 0 0.25rem;
-	}
+ .sapFDynamicPageTitleMainNavigationAreaInner .sapMIBar.sapMTB .sapMBarChild:first-child {
+	 margin-left: 0.25rem;
  }
+
+ .sapFDynamicPageTitleMainContent .sapMIBar.sapMTB .sapMBarChild:first-child {
+	margin-left: 0;
+}
 
 /* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser^="ie"].sap-desktop,
@@ -185,7 +200,7 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 		-webkit-flex-direction: column;
 		justify-content: space-between;
 		-webkit-justify-content: space-between;
-		min-width: 48px;
+		min-width: 0;
 
 		.sapFDynamicPageTitleMainHeadingInner,
 		.sapFDynamicPageTitleMainHeadingSnappedExpandContent {
@@ -222,13 +237,13 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	}
 
 	.sapFDynamicPageTitleMainContent {
-		min-width: 48px;
+		min-width: 0;
 		padding: 0 0 0.5rem 0.5rem;
 	}
 
 	.sapFDynamicPageTitleMainActions {
 		margin-left: auto;
-		min-width: 48px;
+		min-width: 0;
 
 	.sapFDynamicPageTitleActionsBar .sapMLabel.sapMLabelMaxWidth,
 	.sapFDynamicPageTitleActionsBar .sapMLnk.sapMLnkMaxWidth {

@@ -486,11 +486,6 @@ sap.ui.define([
 		//Act
 		parent.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		sut.setDisplayViaMedia(jQuery("table")[0]);
-
-		//Assert
-		assert.strictEqual(parent.$().find("td").css("display"), "table-cell");
-		assert.strictEqual(parent.$().find("th").eq(1).css("display"), "table-cell");
 
 		//Act
 		sut.setDisplay(jQuery("table")[0], false);

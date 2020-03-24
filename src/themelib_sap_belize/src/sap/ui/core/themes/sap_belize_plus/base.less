@@ -4,7 +4,8 @@
 @sapBackgroundColor: @sapPrimary1;
 @sapTextColor: @sapPrimary5;
 @sapLinkColor: #7ed0ff;
-@sapLink_InvertedColor: #0070b1; // taken from sap_belize sapLinkColor
+@sapLink_InvertedColor: #0070b1;
+@sapLink_SubtleColor: lighten(@sapLinkColor, 20);
 
 @sapErrorBackground: darken(@sapErrorColor, 60); // #550000
 @sapWarningBackground: darken(@sapWarningColor, 50); // #5c3803
@@ -53,8 +54,6 @@
 @sapContent_BadgeTextColor: contrast(@sapContent_BadgeBackground, lighten(@sapTextColor, 2), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapContent_Selected_Hover_Background: darken(@sapContent_Selected_Background, 3);
 @sapContent_UnratedColor: lighten(@sapContent_ForegroundColor, 25);
-@sapContent_Illustrative_Color1: #427cac;
-@sapContent_Illustrative_Color2: #93b7d6;
 
 @sapShell_Background: lighten(saturate(@sapBaseColor, 4), 20.3);
 @sapShell_BackgroundImage: linear-gradient(to bottom, darken(saturate(@sapShell_Background, 15), 24), lighten(saturate(@sapShell_Background, 24), 22.7));

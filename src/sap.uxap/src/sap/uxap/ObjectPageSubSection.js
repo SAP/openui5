@@ -88,6 +88,16 @@ sap.ui.define([
 
 			library: "sap.uxap",
 			properties: {
+				/**
+				 * Determines whether to display the <code>SubSection</code> title or not.
+				 *
+				 * <b>Note:</b> If a subsection is the only one (or the only one visible) within a section, its title is
+				 * displayed instead of the section title even if this property is set to <code>false</code>.
+				 * To hide the title of a subsection which is the only one (or the only one visible), you need to set the
+				 * <code>showTitle</code> properties to <code>false</code> for both the section and its subsection.
+				 * @since 1.77
+				 */
+				showTitle: {type: "boolean", group: "Appearance", defaultValue: true},
 
 				/**
 				 * A mode property that will be passed to the controls in the blocks and moreBlocks aggregations. Only relevant if these aggregations use Object page blocks.
@@ -1019,6 +1029,10 @@ sap.ui.define([
 	};
 
 	ObjectPageSubSection.prototype._updateShowHideState = function (bHide) {
+		if (this._getIsHidden() === bHide) {
+			return this;
+		}
+
 		this.$().children(this._sMoreContainerSelector).toggle(!bHide);
 
 		return ObjectPageSectionBase.prototype._updateShowHideState.call(this, bHide);

@@ -764,6 +764,10 @@ sap.ui.define([
 
 		sValue = (typeof sValue == "undefined") ? this._$input.val() : sValue.toString();
 
+		if (!sValue) {
+			return "";
+		}
+
 		var aDates = this._parseValue(sValue);
 		sValue = this._formatValue( aDates[0], aDates[1]);
 

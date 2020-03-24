@@ -3517,11 +3517,13 @@ sap.ui.define([
 			oBinding = oBindingInfo.binding;
 			if (oBinding) {
 				oBinding.detachChange(oBindingInfo.modelChangeHandler);
+				oBinding.detachEvents(oBindingInfo.events);
+				oBinding.destroy();
+				/* to reset messages on a control we need to detach the datastate handler after destroy,
+				   as binding destroy clears up validation messages */
 				if (this.refreshDataState) {
 					oBinding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
 				}
-				oBinding.detachEvents(oBindingInfo.events);
-				oBinding.destroy();
 			}
 
 			if (this._observer) {
@@ -3847,7 +3849,9 @@ sap.ui.define([
 			oBinding,
 			oAggregationInfo = this.getMetadata().getAggregation(sName),
 			fnModelChangeHandler = function(oEvent){
-				oAggregationInfo.update(that, oEvent.getParameter("reason"));
+				oAggregationInfo.update(that, oEvent.getParameter("reason"), {
+					detailedReason: oEvent.getParameter("detailedReason")
+				});
 			},
 			fnModelRefreshHandler = function(oEvent){
 				oAggregationInfo.refresh(that, oEvent.getParameter("reason"));
@@ -3961,16 +3965,22 @@ sap.ui.define([
 	 *
 	 * In case a managed object needs special handling for an aggregation binding, it can create
 	 * a named update method (e.g. <code>update<i>Rows</i></code> for an aggregation <code>rows</code>)
-	 * which then will be called by the framework instead of this generic method.
+	 * which then will be called by the framework instead of this generic method. THe method will be
+	 * called with two arguments <code>sChangeReason</code> and <code>oEventInfo</code>.
 	 *
 	 * Subclasses should call this method only in the implementation of such a named update method
 	 * and for no other purposes. The framework might change the conditions under which the method
 	 * is called and the method implementation might rely on those conditions.
 	 *
-	 * @param {string} sName name of the aggregation to update
+	 * @param {string} sName Name of the aggregation to update
+	 * @param {sap.ui.model.ChangeReason} sChangeReason One of the predefined reasons for the change event
+	 * @param {object} oEventInfo Additional information about the change event
+	 * @param {string} [oEventInfo.detailedReason] A non-standardized string that further classifies the
+	 *   change event. Model implementations should document any value that they might provide as detailed
+	 *   reason, and describe under what circumstances each value will be used.
 	 * @protected
 	 */
-	ManagedObject.prototype.updateAggregation = function(sName) {
+	ManagedObject.prototype.updateAggregation = function(sName, sChangeReason, oEventInfo) {
 		var oBindingInfo = this.mBindingInfos[sName],
 			oBinding = oBindingInfo.binding,
 			fnFactory = oBindingInfo.factory,

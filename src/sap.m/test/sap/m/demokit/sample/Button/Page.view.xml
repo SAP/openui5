@@ -52,7 +52,15 @@
 					<layoutData>
 						<FlexItemData growFactor="1" />
 					</layoutData>
-			    </Button>
+				</Button>
+				<Button type="Attention"
+						text="Attention"
+						press="onPress"
+						ariaDescribedBy="attentionButtonDescription genericButtonDescription">
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
 				<Button text="Coming Soon"
 						press="onPress"
 						ariaDescribedBy="comingSoonButtonDescription genericButtonDescription"
@@ -71,7 +79,7 @@
 			<core:InvisibleText id="acceptButtonDescription" text="Description of accept button goes here."/>
 			<core:InvisibleText id="rejectButtonDescription" text="Description of reject button goes here."/>
 			<core:InvisibleText id="comingSoonButtonDescription" text="This feature is not active just now."/>
-
+			<core:InvisibleText id="attentionButtonDescription" text="Description of attention button goes here."/>
 			<!-- These labels exist only to provide targets for the ARIA label on the Edit and Action buttons -->
 			<core:InvisibleText id="editButtonLabel" text="Edit Button Label"/>
 			<core:InvisibleText id="actionButtonLabel" text="Action Button Label"/>

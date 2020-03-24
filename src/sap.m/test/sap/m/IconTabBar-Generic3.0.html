@@ -1,0 +1,500 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>IconTabBar 3.0</title>
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.ui.core, sap.ui.layout, sap.m">
+		</script>
+	<style>
+		.label {
+			font-weight: bold;
+			padding: 2rem 1rem 1rem;
+			width: auto;
+			white-space: normal;
+		}
+	</style>
+	<script>
+		sap.ui.getCore().attachInit(function () {
+			sap.ui.require([
+				"sap/ui/core/Core",
+				"sap/m/App",
+				"sap/m/Page",
+				"sap/m/Label",
+				"sap/m/Input",
+				"sap/m/Text",
+				"sap/m/RatingIndicator",
+				"sap/m/IconTabBar",
+				"sap/m/IconTabFilter"
+			], function (Core, App, Page, Label, Input, Text, RatingIndicator, IconTabBar, IconTabFilter) {
+				"use strict";
+
+				var app = new App("myApp", { initialPage: "page1" });
+
+				var label1 = new Label({
+					text: "Text only IconTabBar with sub filters"
+				});
+				label1.addStyleClass("label");
+
+				var label2 = new Label({
+					text: "Drag and Drop IconTabBar"
+				});
+				label2.addStyleClass("label");
+
+				var itb1 = new IconTabBar("itb1", {
+					upperCase: true,
+					selectedKey: "mid",
+					items: [
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "1.Filter",
+							key: "first",
+							content: [
+								new Label({
+									text: "info info info"
+								})
+							],
+							items: [
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "1.1.Filter",
+									content: [
+										new RatingIndicator({
+											value: 1
+										})
+									]
+								}),
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "1.2.Filter",
+									content: [
+										new RatingIndicator({
+											value: 2
+										})
+									],
+									items: [
+										new IconTabFilter({
+											iconColor: sap.ui.core.IconColor.Default,
+											text: "1.2.1.Filter",
+											content: [
+												new RatingIndicator({
+													value: 3
+												})
+											],
+											items: [
+												new IconTabFilter({
+													iconColor: sap.ui.core.IconColor.Default,
+													text: "1.2.1.1.Filter",
+													content: [
+														new RatingIndicator({
+															value: 4
+														})
+													]
+												}),
+												new IconTabFilter({
+													iconColor: sap.ui.core.IconColor.Default,
+													text: "1.2.1.2.Filter",
+													content: [
+														new RatingIndicator({
+															value: 5
+														})
+													]
+												})
+											]
+										}),
+										new IconTabFilter({
+											iconColor: sap.ui.core.IconColor.Default,
+											text: "1.2.2.Filter",
+											content: [
+												new RatingIndicator({
+													value: 0
+												})
+											]
+										})
+									]
+								}),
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "1.3.Filter",
+									content: [
+										new RatingIndicator({
+											value: 5
+										})
+									]
+								}),
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "2.Filter",
+							content: [
+								new Input({
+									placeholder: "input placeholder"
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "3.Filter",
+							enabled: false,
+							content: [
+								new RatingIndicator({
+									value: 0
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "4.Filter",
+							content: [
+								new RatingIndicator({
+									value: 3
+								})
+							],
+							items: [
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "4.1.Filter",
+									content: [
+										new RatingIndicator({
+											value: 1
+										})
+									]
+								}),
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "4.2.Filter",
+									content: [
+										new RatingIndicator({
+											value: 2
+										})
+									]
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "5.Filter",
+							content: [
+								new RatingIndicator({
+									value: 2
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "6.Filter",
+							content: [
+								new RatingIndicator({
+									value: 4
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "7.Filter",
+							content: [
+								new RatingIndicator({
+									value: 0
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "8.Filter",
+							content: [
+								new RatingIndicator({
+									value: 1
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "9.Filter",
+							content: [
+								new RatingIndicator({
+									value: 5
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "10.Filter",
+							content: [
+								new RatingIndicator({
+									value: 4
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "11.Filter",
+							content: [
+								new RatingIndicator({
+									value: 3
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "12.Filter",
+							content: [
+								new RatingIndicator({
+									value: 2
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "13.Filter",
+							content: [
+								new RatingIndicator({
+									value: 1
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "14.Filter",
+							content: [
+								new RatingIndicator({
+									value: 0
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "15.Filter",
+							content: [
+								new RatingIndicator({
+									value: 5
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "16.The Long Text Filter",
+							key: "mid",
+							content: [
+								new RatingIndicator({
+									value: 3
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "17.Filter",
+							content: [
+								new RatingIndicator({
+									value: 4
+								})
+							],
+							items: [
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "17.1.Filter",
+									content: [
+										new RatingIndicator({
+											value: 1
+										})
+									]
+								}),
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "17.2.Filter",
+									content: [
+										new RatingIndicator({
+											value: 2
+										})
+									],
+									items: [
+										new IconTabFilter({
+											iconColor: sap.ui.core.IconColor.Default,
+											text: "17.2.1.Filter",
+											content: [
+												new RatingIndicator({
+													value: 3
+												})
+											],
+											items: [
+												new IconTabFilter({
+													iconColor: sap.ui.core.IconColor.Default,
+													text: "17.2.1.1.Filter",
+													content: [
+														new RatingIndicator({
+															value: 4
+														})
+													]
+												}),
+												new IconTabFilter({
+													iconColor: sap.ui.core.IconColor.Default,
+													text: "17.2.1.2.Filter",
+													content: [
+														new RatingIndicator({
+															value: 5
+														})
+													]
+												})
+											]
+										}),
+										new IconTabFilter({
+											iconColor: sap.ui.core.IconColor.Default,
+											text: "17.2.2.Filter",
+											content: [
+												new RatingIndicator({
+													value: 0
+												})
+											]
+										})
+									]
+								}),
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "17.3.Filter",
+									content: [
+										new RatingIndicator({
+											value: 5
+										})
+									]
+								}),
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "18.Filter",
+							content: [
+								new RatingIndicator({
+									value: 1
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "19.Filter",
+							content: [
+								new RatingIndicator({
+									value: 2
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "20.Filter",
+							content: [
+								new RatingIndicator({
+									value: 0
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "21.Filter",
+							content: [
+								new RatingIndicator({
+									value: 1
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "22.Filter",
+							content: [
+								new RatingIndicator({
+									value: 3
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "23.Filter",
+							content: [
+								new RatingIndicator({
+									value: 2
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "24.Filter",
+							content: [
+								new RatingIndicator({
+									value: 5
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "25.Filter",
+							key: "end",
+							content: [
+								new RatingIndicator({
+									value: 1
+								})
+							]
+						})
+					]
+				});
+
+				var lotsOfTabs = [];
+				for (var i = 1; i <= 60; i++) {
+					lotsOfTabs.push(new IconTabFilter({
+						key: i,
+						text: 'Tab ' + i,
+						content: new Text({ text: 'Content ' + i })
+					}));
+				}
+				lotsOfTabs.splice(14, 1, new IconTabFilter({
+					key: "long",
+					text: "Tab 15. With The Longest Label",
+					content: new Text({ text: 'Content 15' })
+				}));
+
+				var itb2 = new IconTabBar("itb2", {
+					enableTabReordering: true,
+					items: lotsOfTabs
+				});
+
+				// Checkbox for Compact Content Density for the page
+				var cbCompactContentDensity  = new sap.m.CheckBox("densityModeBox", {
+					selected: false,
+					select: function (oEvent) {
+						var bSelectedValue = oEvent.getSource().getSelected();
+						document.body.classList.toggle("sapUiSizeCompact", bSelectedValue);
+						Core.notifyContentDensityChanged();
+					}
+				});
+
+				var oLabelCompactContentDensity  = new sap.m.Label({
+					text: "Compact Content Density for the page:",
+					labelFor: cbCompactContentDensity
+				}).addStyleClass("cozyLabel");
+
+
+				var page = new Page("page1", {
+					headerContent: [
+						oLabelCompactContentDensity,
+						cbCompactContentDensity,
+					],
+					content: [
+						label1,
+						itb1,
+						label2,
+						itb2
+					]
+				});
+
+				app.addPage(page);
+				app.placeAt("body");
+
+			})
+		});
+	</script>
+</head>
+
+<body id="body" class="sapUiBody" role="application">
+</body>
+
+</html>

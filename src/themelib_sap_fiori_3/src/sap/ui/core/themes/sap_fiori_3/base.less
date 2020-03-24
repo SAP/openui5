@@ -83,6 +83,8 @@
 
 @sapLink_InvertedColor: lighten(@sapLinkColor,48);
 
+@sapLink_SubtleColor: darken(@sapLinkColor, 15);
+
 // [Label "Company Logo"]
 // [Description "The URI to the logo of your company"]
 // [Tags "Quick", "Base", "URI", "Image"]
@@ -640,7 +642,7 @@
 
 @sapButton_Active_BorderColor: @sapButton_Active_Background;
 
-@sapButton_Active_TextColor: contrast(@sapButton_Active_Background, @sapButton_TextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Active_TextColor: contrast(@sapButton_Active_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Emphasized Button Background Color"]
 // [Description "The background color of emphasized buttons."]
@@ -685,7 +687,7 @@
 
 @sapButton_Reject_Hover_BorderColor: @sapButton_Reject_BorderColor;
 
-@sapButton_Reject_Hover_TextColor: @sapButton_Reject_TextColor;
+@sapButton_Reject_Hover_TextColor: contrast(@sapButton_Reject_Hover_Background, @sapNegativeTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapButton_Reject_Active_Background: darken(@sapNegativeElementColor, 5);
 
@@ -714,7 +716,7 @@
 
 @sapButton_Accept_Hover_BorderColor: @sapButton_Accept_BorderColor;
 
-@sapButton_Accept_Hover_TextColor: @sapButton_Accept_TextColor;
+@sapButton_Accept_Hover_TextColor: contrast(@sapButton_Accept_Hover_Background, @sapPositiveTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapButton_Accept_Active_Background: darken(@sapPositiveElementColor, 5);
 
@@ -750,7 +752,7 @@
 
 @sapButton_Selected_BorderColor: @sapButton_Selected_Background;
 
-@sapButton_Selected_TextColor: contrast(@sapButton_Selected_Background, @sapButton_TextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Selected_TextColor: contrast(@sapButton_Selected_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapButton_Selected_Hover_Background: lighten(@sapButton_Selected_Background, 3);
 
@@ -1067,7 +1069,7 @@
 
 @sapList_Active_Background: @sapHighlightColor;
 
-@sapList_Active_TextColor: contrast(@sapList_Active_Background, @sapList_TextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapList_Active_TextColor: contrast(@sapList_Active_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "List Highlight Color"]
 // [Description "The color of highlighted elements in lists."]
@@ -1100,17 +1102,17 @@
 
 @sapList_GroupHeaderBorderColor: darken(@sapList_BorderColor, 4.9);
 
-@sapList_GroupHeaderTextColor: @sapList_TextColor;
+@sapList_GroupHeaderTextColor: contrast(@sapList_GroupHeaderBackground, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapList_FooterBackground: darken(@sapList_Background, 2);
 
-@sapList_FooterTextColor: @sapList_TextColor;
+@sapList_FooterTextColor: contrast(@sapList_FooterBackground, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapList_TableGroupHeaderBackground: darken(@sapList_Background, 6.1);
 
 @sapList_TableGroupHeaderBorderColor: darken(@sapList_BorderColor, 4.9);
 
-@sapList_TableGroupHeaderTextColor: contrast(@sapList_TableGroupHeaderBackground, @sapList_TextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapList_TableGroupHeaderTextColor: contrast(@sapList_TableGroupHeaderBackground, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapList_TableFooterBorder: darken(@sapList_BorderColor, 4.9);
 

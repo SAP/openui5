@@ -21,6 +21,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var oLastPromise = new FlUtils.FakePromise();
+
 	function _checkControlAndDependentSelectorControls(oChange, mPropertyBag) {
 		var oSelector = oChange.getSelector && oChange.getSelector();
 		if (!oSelector || (!oSelector.id && !oSelector.name)) {
@@ -216,29 +218,39 @@ sap.ui.define([
 		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Resolves as soon as all changes for the control are applied
 		 */
 		applyAllChangesForControl: function(fnGetChangesMap, oAppComponent, oFlexController, oControl) {
-			var aPromiseStack = [];
-			var sControlId = oControl.getId();
+			// the changes have to be queued synchronously
 			var mChangesMap = fnGetChangesMap();
-			var aChangesForControl = mChangesMap.mChanges[sControlId] || [];
-			var mPropertyBag = {
-				modifier: JsControlTreeModifier,
-				appComponent: oAppComponent,
-				view: FlUtils.getViewForControl(oControl)
-			};
-			var bControlWithDependencies;
-
-			if (mChangesMap.mControlsWithDependencies[sControlId]) {
-				DependencyHandler.removeControlsDependencies(mChangesMap, sControlId);
-				bControlWithDependencies = true;
-			}
-
+			var aChangesForControl = mChangesMap.mChanges[oControl.getId()] || [];
 			aChangesForControl.forEach(function (oChange) {
-				mChangesMap = _checkAndAdjustChangeStatus(oControl, oChange, mChangesMap, oFlexController, mPropertyBag);
-				if (oChange.isApplyProcessFinished()) {
-					DependencyHandler.removeChangeFromDependencies(mChangesMap, oChange.getId());
-				} else {
+				if (!oChange.isApplyProcessFinished() && !oChange._ignoreOnce) {
 					oChange.setQueuedForApply();
-					if (!mChangesMap.mDependencies[oChange.getId()]) {
+				}
+			});
+
+			// make sure that the current control waits for the previous control to be processed
+			oLastPromise = oLastPromise.then(function(oControl) {
+				var aPromiseStack = [];
+				var sControlId = oControl.getId();
+				var aChangesForControl = mChangesMap.mChanges[sControlId] || [];
+				var mPropertyBag = {
+					modifier: JsControlTreeModifier,
+					appComponent: oAppComponent,
+					view: FlUtils.getViewForControl(oControl)
+				};
+				var bControlWithDependencies;
+
+				if (mChangesMap.mControlsWithDependencies[sControlId]) {
+					DependencyHandler.removeControlsDependencies(mChangesMap, sControlId);
+					bControlWithDependencies = true;
+				}
+
+				aChangesForControl.forEach(function (oChange) {
+					mChangesMap = _checkAndAdjustChangeStatus(oControl, oChange, mChangesMap, oFlexController, mPropertyBag);
+					if (oChange._ignoreOnce) {
+						delete oChange._ignoreOnce;
+					} else if (oChange.isApplyProcessFinished()) {
+						DependencyHandler.removeChangeFromDependencies(mChangesMap, oChange.getId());
+					} else if (!mChangesMap.mDependencies[oChange.getId()]) {
 						aPromiseStack.push(function() {
 							return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag).then(function() {
 								DependencyHandler.removeChangeFromDependencies(mChangesMap, oChange.getId());
@@ -248,15 +260,16 @@ sap.ui.define([
 						var fnCallback = Applier.applyChangeOnControl.bind(Applier, oChange, oControl, mPropertyBag);
 						DependencyHandler.addChangeApplyCallbackToDependency(mChangesMap, oChange.getId(), fnCallback);
 					}
-				}
-			});
-
-			if (aChangesForControl.length || bControlWithDependencies) {
-				return FlUtils.execPromiseQueueSequentially(aPromiseStack).then(function () {
-					return DependencyHandler.processDependentQueue(mChangesMap, oAppComponent);
 				});
-			}
-			return new FlUtils.FakePromise();
+
+				if (aChangesForControl.length || bControlWithDependencies) {
+					return FlUtils.execPromiseQueueSequentially(aPromiseStack).then(function () {
+						return DependencyHandler.processDependentQueue(mChangesMap, oAppComponent);
+					});
+				}
+			}.bind(null, oControl));
+
+			return oLastPromise;
 		},
 
 		/**

@@ -3,6 +3,8 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/library",
 	"sap/ui/core/Element",
+	"sap/ui/core/HTML",
+	"sap/ui/core/RenderManager",
 	"sap/ui/commons/Panel",
 	"sap/ui/commons/ListBox",
 	"sap/ui/thirdparty/jquery",
@@ -10,11 +12,14 @@ sap.ui.define([
 	"sap/ui/commons/Title",
 	"sap/ui/commons/Button",
 	"sap/ui/Device",
-	"sap/ui/commons/library"
+	"sap/ui/commons/library",
+	"sap/ui/commons/layout/VerticalLayout"
 ], function(
 	createAndAppendDiv,
 	coreLibrary,
 	Element,
+	HTML,
+	RenderManager,
 	Panel,
 	ListBox,
 	jQuery,
@@ -22,7 +27,8 @@ sap.ui.define([
 	Title,
 	Button,
 	Device,
-	commonsLibrary
+	commonsLibrary,
+	VerticalLayout
 ) {
 	"use strict";
 
@@ -301,7 +307,7 @@ sap.ui.define([
 			assert.equal($cont.css("top"), headerHeight + "px", "Panel content should be postioned exactly below the header");
 			done();
 		}, 500);
-});
+	});
 
 
 
@@ -403,5 +409,62 @@ sap.ui.define([
 		assert.ok(n < Element.registry.size, "Clone 2 created");
 		oClone2.destroy();
 		assert.equal(Element.registry.size, n, "Clone 2 destroyed");
+	});
+
+	QUnit.test("Preserved Content & Collapse", function(assert) {
+		var oHtml1 = new HTML({content: "<div></div>"}),
+			oHtml2 = new HTML({content: "<div></div>"}),
+			oPanel = new Panel({
+			content: [
+				oHtml1,
+				new VerticalLayout({content: [oHtml2]})
+			]
+		});
+
+		// initial rendering
+		oPanel.placeAt("uiArea1");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oHtml1.getDomRef() && !RenderManager.isPreservedContent(oHtml1.getDomRef()));
+		assert.equal(oHtml1.$().children().length, 0);
+		assert.ok(oHtml2.getDomRef() && !RenderManager.isPreservedContent(oHtml2.getDomRef()));
+		assert.equal(oHtml2.$().children().length, 0);
+
+		// act: modify dynamically
+		oHtml1.$().append("<span/>"); // do some modification so that preserved content differs from static content
+		oHtml1.$().append("<span/>");
+		oHtml2.$().append("<span/>"); // do some modification so that preserved content differs from static content
+		oHtml2.$().append("<span/>");
+		oHtml2.$().append("<span/>");
+
+		// assert: modifications
+		assert.equal(oHtml1.$().children().length, 2);
+		assert.equal(oHtml2.$().children().length, 3);
+
+		// act: collapse
+		oPanel.setCollapsed(true);
+		oPanel.invalidate(); // enforce rerendering
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oHtml1.getDomRef() && RenderManager.isPreservedContent(oHtml1.getDomRef()));
+		assert.equal(oHtml1.$().children().length, 2);
+		assert.ok(oHtml2.getDomRef() && RenderManager.isPreservedContent(oHtml2.getDomRef()));
+		assert.equal(oHtml2.$().children().length, 3);
+
+		// act: expand
+		oPanel.setCollapsed(false);
+		oPanel.invalidate(); // enforce rerendering
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oHtml1.getDomRef() && !RenderManager.isPreservedContent(oHtml1.getDomRef()));
+		assert.equal(oHtml1.$().children().length, 2);
+		assert.ok(oHtml2.getDomRef() && !RenderManager.isPreservedContent(oHtml2.getDomRef()));
+		assert.equal(oHtml2.$().children().length, 3);
+
+		// cleanup
+		oPanel.destroy();
 	});
 });

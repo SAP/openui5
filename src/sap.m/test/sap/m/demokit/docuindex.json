@@ -136,7 +136,7 @@
 				"ref": "test-resources/sap/m/demokit/iconExplorer/webapp/index.html",
 				"links": {
 					"View Documentation": "#docs/guide/21ea0ea94614480d9a910b2e93431291.html",
-					"Run Integration Tests": "test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests.qunit.html",
+					"Run Integration Tests": "test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests1.qunit.html",
 					"Run Unit Tests": "test-resources/sap/m/demokit/iconExplorer/webapp/test/unit/unitTests.qunit.html"
 				},
 				"category": "Tool",

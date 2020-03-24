@@ -18,6 +18,7 @@
 .sapUiIcon:focus {
 	outline-width: 1px;
 	outline-style: dotted;
+	outline-color: @sapUiContentFocusColor;
 }
 
 .sapUiIcon::before {
@@ -45,8 +46,7 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
 }
 
 /**
- * The Default color for Icon which always points to the variable across themes.
- * Therefore it's defined in the base theme.
+ * The Default color and the semantic colors for Icon which always points to the variable across themes.
  */
 .sapUiIconColorDefault {
 	color: @sapUiContentIconColor;
@@ -54,4 +54,64 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
 
 .sapUiIconColorContrast {
 	color: @sapUiContentContrastIconColor;
+}
+
+.sapUiIconColorNeutral {
+	color: @sapUiNeutralElement;
+}
+
+.sapUiIconColorCritical {
+	color: @sapUiCriticalElement;
+}
+
+.sapUiIconColorPositive {
+	color: @sapUiPositiveElement;
+}
+
+.sapUiIconColorNegative {
+	color: @sapUiNegativeElement;
+}
+
+.sapUiIconColorNonInteractive {
+	color: @sapUiContentNonInteractiveIconColor;
+}
+
+.sapUiIconColorTile {
+	color: @sapUiTileIconColor;
+}
+
+.sapUiIconColorMarker {
+	color: @sapUiContentMarkerIconColor;
+}
+
+.sapUiIconBGColorContrast {
+	background-color: @sapUiContentIconColor;
+}
+
+.sapUiIconBGColorNeutral {
+	background-color: @sapUiNeutralElement;
+}
+
+.sapUiIconBGColorCritical {
+	background-color: @sapUiCriticalElement;
+}
+
+.sapUiIconBGColorPositive {
+	background-color: @sapUiPositiveElement;
+}
+
+.sapUiIconBGColorNegative {
+	background-color: @sapUiNegativeElement;
+}
+
+.sapUiIconBGColorNonInteractive {
+	color: @sapUiContentNonInteractiveIconColor;
+}
+
+.sapUiIconBGColorTile {
+	color: @sapUiTileIconColor;
+}
+
+.sapUiIconBGColorMarker {
+	color: @sapUiContentMarkerIconColor;
 }

@@ -48,7 +48,7 @@ sap.ui.define([
 	};
 
 	CustomMonthPicker.prototype.onAfterRendering = function () {
-		this._showMonthPicker();
+		this._showMonthPicker(undefined, true);
 	};
 
 	CustomMonthPicker.prototype._selectYear = function () {

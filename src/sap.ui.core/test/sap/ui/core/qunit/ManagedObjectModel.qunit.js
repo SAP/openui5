@@ -1,6 +1,10 @@
 sap.ui.define([
-	"sap/ui/model/base/ManagedObjectModel", "sap/ui/model/json/JSONModel", "sap/m/Text", "sap/m/Input", "sap/m/List", "sap/m/Select", "sap/m/ColumnListItem", "sap/m/DatePicker", "sap/ui/model/type/Date", "sap/ui/model/Context", "sap/m/VBox"
-], function (ManagedObjectModel, JSONModel, Text, Input, List, Select, ColumnListItem, DatePicker, DateType, Context, VBox) {
+	"sap/ui/model/base/ManagedObjectModel", "sap/ui/model/json/JSONModel", "sap/m/Text",
+	"sap/m/Input", "sap/m/List", "sap/m/Select", "sap/m/ColumnListItem", "sap/m/DatePicker",
+	"sap/ui/model/type/Date", "sap/ui/model/Context", "sap/m/VBox", "sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator"
+], function (ManagedObjectModel, JSONModel, Text, Input, List, Select, ColumnListItem, DatePicker,
+			 DateType, Context, VBox, Filter, FilterOperator) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -930,7 +934,110 @@ sap.ui.define([
 		assert.equal(iListChangeCount, 1, "content list binding change was fired");
 		oPanel.addContent(oButton2);
 		assert.equal(iListChangeCount, 2, "content list binding change was fired");
+	});
 
+	QUnit.test("BCP: 002075129400001541162020", function (assert) {
+		var oManagedObjectModel
+				= new ManagedObjectModel(sap.ui.xmlview({viewContent : jQuery('#view').html()})),
+			oButton = oManagedObjectModel.getProperty("/#button2"),
+			oContentBinding = oManagedObjectModel.bindList("/#panel/content"),
+			iContentChangeCount = 0,
+			oInput = oManagedObjectModel.getProperty("/#input"),
+			oInnerContentBinding = oManagedObjectModel.bindList("/#innerPanel/content"),
+			iInnerContentChangeCount = 0,
+			oInnerPanel = oManagedObjectModel.getProperty("/#innerPanel"),
+			oNeighborContentBinding = oManagedObjectModel.bindList("/#neighborPanel/content"),
+			iNeighborContentChangeCount = 0,
+			oNeighborInput = oManagedObjectModel.getProperty("/#neighborInput");
+
+		oContentBinding.attachChange(function () {
+			iContentChangeCount = iContentChangeCount + 1;
+		});
+		oInnerContentBinding.attachChange(function () {
+			iInnerContentChangeCount = iInnerContentChangeCount + 1;
+		});
+		oNeighborContentBinding.attachChange(function () {
+			iNeighborContentChangeCount = iNeighborContentChangeCount + 1;
+		});
+
+		// code under test - a single list binding is changed
+		oButton.setText("changed if child");
+		assert.strictEqual(iContentChangeCount, 1, "content list binding change was fired");
+		assert.strictEqual(iInnerContentChangeCount, 0, "inner list binding not affected");
+		assert.strictEqual(iNeighborContentChangeCount, 0, "neighbor list binding not affected");
+
+		// code under test - a list binding inside an hierarchy is changed
+		oInput.setValue("Changed");
+		assert.strictEqual(iContentChangeCount, 2, "content list binding change was fired");
+		assert.strictEqual(iInnerContentChangeCount, 1, "inner list binding change");
+		assert.strictEqual(iNeighborContentChangeCount, 0, "neighbor list binding not affected");
+
+		// code under test - only the relevant binding is changed
+		oNeighborInput.setValue("Neighbor Changed");
+		assert.strictEqual(iContentChangeCount, 2, "content list binding not affected");
+		assert.strictEqual(iInnerContentChangeCount, 1, "inner list not affected");
+		assert.strictEqual(iNeighborContentChangeCount, 1, "neighbor list binding change was fired");
+
+		// code under test - check for empty content
+		oInnerPanel.removeContent(oInput);
+		assert.strictEqual(iContentChangeCount, 2, "content list binding not affected");
+		assert.strictEqual(iInnerContentChangeCount, 2, "inner list binding change");
+		assert.strictEqual(iNeighborContentChangeCount, 1, "neighbor list binding not affected");
+	});
+
+	QUnit.test("BCP: 002075129400001541162020 (with filtered bindings)", function (assert) {
+		var oManagedObjectModel
+				= new ManagedObjectModel(sap.ui.xmlview({viewContent: jQuery('#view').html()})),
+			oBinding = oManagedObjectModel.bindList("/#list/items"),
+			iBindingChangeCount = 0,
+			oBindingEmpty = oManagedObjectModel
+				.bindList("/#list/items", null, null, [new Filter("text", FilterOperator.EQ, "c")]),
+			iBindingEmptyChangeCount = 0,
+			oBindingEQa = oManagedObjectModel
+				.bindList("/#list/items", null, null, [new Filter("text", FilterOperator.EQ, "a")]),
+			iBindingEQaChangeCount = 0,
+			oBindingNEa = oManagedObjectModel
+				.bindList("/#list/items", null, null, [new Filter("text", FilterOperator.NE, "a")]),
+			iBindingNEaChangeCount = 0,
+			oItemA = oManagedObjectModel.getProperty("/#listA");
+
+		oBinding.attachChange( function () {
+			iBindingChangeCount = iBindingChangeCount + 1;
+		});
+		oBindingEmpty.attachChange( function () {
+			iBindingEmptyChangeCount = iBindingEmptyChangeCount + 1;
+		});
+		oBindingEQa.attachChange( function () {
+			iBindingEQaChangeCount = iBindingEQaChangeCount + 1;
+		});
+		oBindingNEa.attachChange( function () {
+			iBindingNEaChangeCount = iBindingNEaChangeCount + 1;
+		});
+
+		assert.strictEqual(oBinding.getLength(), 2);
+		assert.strictEqual(oBindingEmpty.getLength(), 0);
+		assert.strictEqual(oBindingEQa.getLength(), 1);
+		assert.strictEqual(oBindingNEa.getLength(), 1);
+
+		// code under test - filtering not affected
+		oItemA.setKey("c");
+		assert.strictEqual(iBindingChangeCount, 1);
+		assert.strictEqual(iBindingEmptyChangeCount, 1);
+		assert.strictEqual(iBindingEQaChangeCount, 1);
+		assert.strictEqual(iBindingNEaChangeCount, 1);
+
+		assert.strictEqual(oBindingEmpty.getLength(), 0);
+
+		// code under test - filtering affected
+		oItemA.setText("c");
+		assert.strictEqual(iBindingChangeCount, 2);
+		assert.strictEqual(iBindingEmptyChangeCount, 2);
+		assert.strictEqual(iBindingEQaChangeCount, 2);
+		assert.strictEqual(iBindingNEaChangeCount, 2);
+
+		assert.strictEqual(oBindingEmpty.getLength(), 1);
+		assert.strictEqual(oBindingEQa.getLength(), 0);
+		assert.strictEqual(oBindingNEa.getLength(), 2);
 	});
 
 	QUnit.test("Check Update with binding test function", function (assert) {

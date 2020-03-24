@@ -13,6 +13,7 @@ sap.ui.define([
 	 * @namespace
 	 */
 	var PlanningCalendarInCardRenderer = Renderer.extend(PlanningCalendarRenderer);
+	PlanningCalendarInCardRenderer.apiVersion = 2;
 
 	/**
 	 * Includes additional class, specific for the control.

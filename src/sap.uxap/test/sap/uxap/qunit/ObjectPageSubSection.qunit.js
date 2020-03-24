@@ -1121,6 +1121,13 @@ function($, Core, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, Obj
 		assert.ok(oChildrenSpy.calledWith(".sapUxAPSubSectionSeeMoreContainer"),
 			"Visibility of children with .sapUxAPSubSectionSeeMoreContainer is toggled");
 		assert.ok(oSectionBaseSpy.calledWith(true), "_updateShowHideState method of ObjectPageSectionBase is called");
+
+		oChildrenSpy.reset();
+
+		// Act
+		oSubSection._updateShowHideState(true);
+		assert.ok(oChildrenSpy.notCalled,
+			"Visibility of children with .sapUxAPSubSectionSeeMoreContainer is not toggled when there is no change in visibility");
 	});
 
 	QUnit.test(".sapUxAPObjectPageSubSectionWithSeeMore is applied to SubSections correctly", function(assert) {
@@ -1315,48 +1322,6 @@ function($, Core, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, Obj
 				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop);
 			assert.ok(oSubSection.$().height(), iExpectedSubSectionHeight, "_setHeight is called");
 			done();
-		}, this);
-	});
-
-	QUnit.test("sapUxAPObjectPageSubSectionFitContainer expands the subSection with padding to fit the container", function (assert) {
-		var oPage = this.oObjectPage,
-			oSection = this.oObjectPage.getSections()[0],
-			oSubSection = oSection.getSubSections()[0],
-			sOrigTheme = Core.getConfiguration().getTheme(),
-			sTargetTheme = "sap_fiori_3",
-			done = assert.async();
-
-		//act
-		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
-
-
-		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-			//check
-			var iViewportHeight = oPage._getScrollableViewportHeight(false),
-				iOffsetTop = oSubSection.$().position().top,
-				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop);
-
-			function checkHeight() {
-				assert.strictEqual(oSubSection.getDomRef().offsetHeight, iExpectedSubSectionHeight, "correct height");
-			}
-
-			function onTargetThemeApplied() {
-				checkHeight();
-				// cleanup
-				Core.detachEvent("ThemeChanged", onTargetThemeApplied);
-				Core.applyTheme(sOrigTheme); // restore original theme
-				done();
-			}
-
-			if (sOrigTheme === sTargetTheme) {
-				checkHeight();
-				done();
-			} else {
-				// ensure target theme is applied
-				Core.attachEvent("ThemeChanged", onTargetThemeApplied);
-				Core.applyTheme(sTargetTheme);
-			}
-
 		}, this);
 	});
 
@@ -1566,4 +1531,39 @@ function($, Core, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, Obj
 		this.oObjectPageLayout._applyUxRules(true);
 	});
 
+	QUnit.module("SubSection title visibility", {
+		beforeEach: function() {
+			this.oObjectPage = new ObjectPageLayout({
+				sections: new ObjectPageSection({
+					subSections: [
+						new ObjectPageSubSectionClass({
+							title: "Title",
+							showTitle: false,
+							blocks: [new Text({text: "test"})]
+						}),
+						new ObjectPageSubSectionClass({
+							title: "Title",
+							showTitle: false,
+							blocks: [new Text({text: "test"})]
+						})
+					]
+				})
+			});
+
+			this.oObjectPage.placeAt('qunit-fixture');
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("SubSection without title has no title", function (assert) {
+		var $section;
+
+		$section = this.oObjectPage.getSections()[0].getSubSections()[0].$();
+		assert.strictEqual($section.find('.sapUxAPObjectPageSubSectionHeader').length, 0, "subsection has no title");
+
+		this.oObjectPage.destroy();
+	});
 });

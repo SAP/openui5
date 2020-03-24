@@ -999,6 +999,10 @@ sap.ui.define([
 	/**
 	 * Set the controls busy state.
 	 *
+	 * <b>Note:</b> The busy state can't be set on controls (e.g. sap.m.ColumnListItem)
+	 * which renderings have the following tags as DOM root element:
+	 * area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr|tr
+	 *
 	 * @param {boolean} bBusy The new busy state to be set
 	 * @return {sap.ui.core.Control} <code>this</code> to allow method chaining
 	 * @public

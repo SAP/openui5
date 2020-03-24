@@ -1849,6 +1849,7 @@ sap.ui.define([
 		assert.ok(jQuery("#" + oDP.getId() + "-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "CustomYearPicker is visible");
 		assert.ok(oDP._getCalendar() instanceof CustomMonthPicker, "Calendar is of type CustomMonthPicker");
+		assert.equal(oDP._getCalendar().getAggregation("header").getVisibleButton1(), false, "month button in the CustomMonthPicker is hidden");
 
 		// Clean
 		oDP.destroy();
@@ -2671,5 +2672,23 @@ sap.ui.define([
 		assert.ok(this.fnIncreaseDateSpy.notCalled, "_increaseDate was not called");
 	});
 
+	QUnit.test("F4 does not close the popup when it is opened", function(assert) {
+		// prepare
+		var oSpy;
+		this.oDRS.setDisplayFormat("yyyy-MM-dd");
+		this.oFakeEvent.which = 115;
+
+		// act
+		this.oDRS.toggleOpen();
+		oSpy = sinon.spy(this.oDRS._getCalendar(), "_closedPickers");
+		this.oDRS._getCalendar().onsapshow(this.oFakeEvent);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oSpy.notCalled, "the month picker is opened");
+
+		// clean
+		oSpy.restore();
+	});
 
 });

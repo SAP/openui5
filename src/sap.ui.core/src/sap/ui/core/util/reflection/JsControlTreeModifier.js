@@ -509,17 +509,8 @@ sap.ui.define([
 			var oViewNode = (oView._xContent) ? oView._xContent : oView;
 			var oExtensionPointInfo = XmlTreeModifier.getExtensionPointInfo(sExtensionPointName, oViewNode);
 			if (oExtensionPointInfo) {
-				var aChildren = XmlTreeModifier.getAggregation(oExtensionPointInfo.parent, oExtensionPointInfo.aggregationName);
-				var iExtensionPoints = 0;
-				aChildren.some(function (oChild) {
-					if (XmlTreeModifier._isExtensionPoint(oChild)) {
-						iExtensionPoints++;
-						if (oChild.getAttribute("name") === sExtensionPointName) {
-							return true;
-						}
-					}
-				});
-				oExtensionPointInfo.index = oExtensionPointInfo.index - iExtensionPoints;
+				// decrease the index by 1 to get the index of the extension point itself for js-case
+				oExtensionPointInfo.index--;
 				oExtensionPointInfo.parent = oExtensionPointInfo.parent && this._byId(oView.createId(oExtensionPointInfo.parent.getAttribute("id")));
 				oExtensionPointInfo.defaultContent = oExtensionPointInfo.defaultContent
 					.map(function (oNode) {

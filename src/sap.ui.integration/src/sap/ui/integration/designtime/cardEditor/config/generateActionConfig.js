@@ -49,6 +49,7 @@ sap.ui.define([
 				"parameters": {
 					"label": "{i18n>CARD_EDITOR.ACTION.PARAMETERS}",
 					"type": "map",
+					"allowedTypes": ["string", "number", "boolean"],
 					"path": "parameters",
 					"visible": "{= !!${enabled}}"
 				},

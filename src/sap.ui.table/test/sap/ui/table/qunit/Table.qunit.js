@@ -427,6 +427,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("VisibleRowCount", function(assert) {
+		var done = assert.async();
 		var fnError = sinon.spy(Log, "error");
 		oTable.setVisibleRowCount(8);
 		assert.equal(oTable.getVisibleRowCount(), 8, "Visible Row Count is set correct!");
@@ -440,6 +441,17 @@ sap.ui.define([
 			"setVisibleRowCount was ignored as visibleRowCountMode = Auto, error message must have been logged");
 		assert.equal(fnError.args[0][0], "VisibleRowCount will be ignored since VisibleRowCountMode is set to Auto", "Error was logged");
 		fnError.restore(); // restoring original Log.error() method, else exception is thrown
+
+		var $TableParent = oTable.$().parent();
+		setTimeout(function() {
+			$TableParent.height(0);
+
+			setTimeout(function() {
+				assert.equal(oTable.getVisibleRowCount(), 5, "visibleRowCount is set correctly after table resize.");
+				$TableParent.height("");
+				done();
+			}, 500);
+		}, 500);
 	});
 
 	QUnit.test("MinAutoRowCount", function(assert) {

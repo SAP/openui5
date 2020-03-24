@@ -316,10 +316,10 @@ sap.ui.define([
 		if (this._oControl._oHomeIcon) {
 			// If we have MegaMenu we should get back the Icon and restore it's text
 			if (this._oControl._oMegaMenu) {
-				this._oControl._oMegaMenu.setWidth("auto").setText(this._oControl._sTitle).setIcon("");
+				this._oControl._oMegaMenu.setText(this._oControl._sTitle).setIcon("");
 			}
 			if (this._oControl._oPrimaryTitle) {
-				this._oControl._oPrimaryTitle.setWidth("auto").setText(this._oControl._sTitle);
+				this._oControl._oPrimaryTitle.setVisible(true);
 			}
 			if (this.bIsMegaMenuConfigured) {
 				this._oControl._oHomeIcon.setVisible(true);
@@ -343,16 +343,19 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveHandler.prototype._transformTitleControlMobile = function (){
+
+		var bIsSearchOpen = this._oControl._oManagedSearch && this._oControl._oManagedSearch.getIsOpen();
 		// Home icon should not be visible
 		if (this._oControl._oHomeIcon) {
 			// We should inject the homeIcon in the MegaMenu and remove the text
 			if (this._oControl._oMegaMenu) {
-				this._oControl._oMegaMenu.setWidth("auto").setText("").setIcon(this._oControl.getHomeIcon());
+				bIsSearchOpen ? this._oControl._oMegaMenu.setVisible(false) :
+					this._oControl._oMegaMenu.setWidth("auto").setText("").setIcon(this._oControl.getHomeIcon());
 			}
 			if (this._oControl._oPrimaryTitle) {
-				this._oControl._oPrimaryTitle.setWidth("0").setText("");
+				this._oControl._oPrimaryTitle.setVisible(false);
 			}
-			this._oControl._oHomeIcon.setVisible(!this.bIsMegaMenuConfigured);
+			this._oControl._oHomeIcon.setVisible(!this.bIsMegaMenuConfigured && !bIsSearchOpen);
 		}
 	};
 

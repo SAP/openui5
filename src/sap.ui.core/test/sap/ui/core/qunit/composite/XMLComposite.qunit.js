@@ -2,13 +2,14 @@ sap.ui.define([
 	"jquery.sap.global", "sap/ui/qunit/QUnitUtils", "sap/ui/core/Core",
 	"sap/ui/core/util/XMLPreprocessor", "sap/ui/core/XMLComposite", "sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel", "sap/ui/core/Item", "sap/m/Text", "composites/SimpleText",
-	"composites/TextButton", "composites/TextList", "composites/ForwardText", "composites/Field",
-	"composites/HiddenMetadata", "composites/TemplateTest", "composites/ChildOfAbstract",
-	"composites/TextToggleButton", "composites/TextToggleButtonNested",
-	"composites/TextToggleButtonForwarded", "composites/WrapperLayouter",
-	"composites/TranslatableText", "composites/TranslatableTextLib", "composites/TranslatableTextBundle"
+	"composites/SortedList", "composites/TextButton", "composites/TextList",
+	"composites/ForwardText", "composites/Field", "composites/HiddenMetadata",
+	"composites/TemplateTest", "composites/ChildOfAbstract", "composites/TextToggleButton",
+	"composites/TextToggleButtonNested", "composites/TextToggleButtonForwarded",
+	"composites/WrapperLayouter", "composites/TranslatableText", "composites/TranslatableTextLib",
+	"composites/TranslatableTextBundle"
 ], function (jQuery, QUnitUtils, Core, XMLPreprocessor, XMLComposite, Controller, JSONModel, Item,
-			 Text, SimpleText, TextButton, TextList, ForwardText, Field, HiddenMetadata,
+			 Text, SimpleText, SortedList, TextButton, TextList, ForwardText, Field, HiddenMetadata,
 			 TemplateTest, ChildOfAbstract, TextToggleButton, TextToggleButtonNested,
 			 TextToggleButtonForwarded, WrapperLayouter, TranslatableText, TranslatableTextLib,
 			 TranslatableTextBundle) {
@@ -1038,5 +1039,40 @@ sap.ui.define([
 		assert.equal(oField.getFocusDomRef().id, "accessible--focus", "FocusDomRef");
 		assert.equal(jQuery("#label").attr("for"), "accessible--focus", "Label points to focusable DomRef");
 		assert.equal(jQuery("#accessible").attr("aria-labelledby"), "label additional", "The focusable dom ref is also labelled by the additional label");
+	});
+
+	QUnit.test("BCP: 002075129400001541162020", function (assert) {
+		var aItems,
+			oModel,
+			oSortedList;
+
+		// preparation
+		oModel = new JSONModel({
+			data : [{key : 2, text : "2"}, {key : 1, text : "1"}, {key : 3, text : "3"}]
+		});
+
+		oSortedList = new SortedList({
+			sortedItems : {
+				path : '/data',
+				template : new Item({text : {path : "text", key : "key"}})
+			}
+		});
+		oSortedList.setModel(oModel);
+
+		// code under test - data sorted in the inner control
+		aItems = oSortedList.byId("sorted").getItems();
+		assert.strictEqual(aItems.length, 3);
+		assert.strictEqual(aItems[0].getTitle(), "1");
+		assert.strictEqual(aItems[1].getTitle(), "2");
+		assert.strictEqual(aItems[2].getTitle(), "3");
+
+		// code under test - now simulate data change
+		oModel.setProperty("/data", [{key : 1, text : "1"}, {key : 3, text : "3"}]);
+		aItems = oSortedList.byId("sorted").getItems();
+
+		// code under test - data still sorted in the inner control
+		assert.strictEqual(aItems.length, 2);
+		assert.strictEqual(aItems[0].getTitle(), "1");
+		assert.strictEqual(aItems[1].getTitle(), "3");
 	});
 });

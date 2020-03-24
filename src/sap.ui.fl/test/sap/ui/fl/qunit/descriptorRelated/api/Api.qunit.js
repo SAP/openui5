@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/write/_internal/CompatibilityConnector",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/transport/TransportSelection",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
@@ -18,7 +18,7 @@ sap.ui.define([
 	DescriptorVariantFactory,
 	DescriptorChangeFactory,
 	WriteUtils,
-	CompatibilityConnector,
+	Storage,
 	TransportSelection,
 	Settings,
 	Layer,
@@ -1909,9 +1909,9 @@ sap.ui.define([
 			this.sCreateResponse = JSON.stringify({
 				reference: "a.reference"
 			});
-			// required since we store changes via changepersistence --> CompatibilityConnector
+			// required since we store changes via ChangePersistence --> Storage
 			sandbox.stub(Cache, "addChange");
-			sandbox.stub(CompatibilityConnector, "create").resolves(this.sCreateResponse);
+			sandbox.stub(Storage, "write").resolves(this.sCreateResponse);
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:false,
@@ -1925,76 +1925,12 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("setPackage - default", function(assert) {
+		QUnit.test("default package", function(assert) {
 			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
 			}).then(function(oDescriptorChange) {
-				assert.equal(oDescriptorChange._getChangeToSubmit().getPackage(), "$TMP");
+				assert.equal(oDescriptorChange._getChangeToSubmit().getPackage(), "");
 			});
-		});
-
-		QUnit.test("setPackage", function(assert) {
-			var _oDescriptorChange;
-			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
-				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
-			}).then(function(oDescriptorChange) {
-				_oDescriptorChange = oDescriptorChange;
-				return oDescriptorChange.setPackage('/ABC/DEF_GHIJ_123445');
-			}).then(function() {
-				assert.equal(_oDescriptorChange._getChangeToSubmit().getPackage(), "/ABC/DEF_GHIJ_123445");
-			});
-		});
-
-		QUnit.test("setPackage", function(assert) {
-			var _oDescriptorChange;
-			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
-				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
-			}).then(function(oDescriptorChange) {
-				_oDescriptorChange = oDescriptorChange;
-				return oDescriptorChange.setPackage('/ABC/DEF_GHIJ_123445');
-			}).then(function() {
-				assert.equal(_oDescriptorChange._getChangeToSubmit().getPackage(), "/ABC/DEF_GHIJ_123445");
-			});
-		});
-
-		QUnit.test("setPackage - wrong format - error expected", function(assert) {
-			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
-				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
-			}).then(function(oDescriptorChange) {
-				return oDescriptorChange.setPackage('Wrong Format');
-			}).then(
-				function() {
-					assert.ok(false, "error expected, success function not supposed to be called");
-				},
-				function(oError) {
-					assert.notEqual(oError, null);
-				}
-			);
-		});
-
-		QUnit.test("setTransportRequest", function(assert) {
-			var _oDescriptorChange;
-			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
-				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
-			}).then(function(oDescriptorChange) {
-				_oDescriptorChange = oDescriptorChange;
-				return oDescriptorChange.setTransportRequest("XYZ12345");
-			}).then(function() {
-				assert.equal(_oDescriptorChange._getChangeToSubmit().getRequest(), "XYZ12345");
-			});
-		});
-
-		QUnit.test("setTransportRequest - wrong format - error expected", function(assert) {
-			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
-				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
-			}).then(function(oDescriptorChange) {
-				return oDescriptorChange.setTransportRequest("Wrong Format");
-			}).then(function() {
-				assert.ok(false, "error expected, success function not supposed to be called");
-			},
-				function(oError) {
-					assert.notEqual(oError, null);
-				});
 		});
 
 		QUnit.test("submit", function(assert) {
@@ -2080,7 +2016,7 @@ sap.ui.define([
 								fileType:	"change",
 								layer: Layer.CUSTOMER,
 								namespace: "apps/a.reference/changes/",
-								packageName: "$TMP",
+								packageName: "",
 								changeType: "changeType",
 								content: {
 									param:"value"
@@ -2467,7 +2403,7 @@ sap.ui.define([
 			}).then(function(oDescriptorChange) {
 				_oDescriptorChange = oDescriptorChange;
 				assert.equal(_oDescriptorChange._mChangeFile.layer, 'CUSTOMER');
-				assert.equal(_oDescriptorChange._getChangeToSubmit().getRequest(), 'ATO_NOTIFICATION');
+				assert.equal(_oDescriptorChange._getChangeToSubmit().getRequest(), '');
 			});
 		});
 
@@ -2478,7 +2414,7 @@ sap.ui.define([
 			}).then(function(oDescriptorChange) {
 				_oDescriptorChange = oDescriptorChange;
 				assert.equal(_oDescriptorChange._mChangeFile.layer, 'CUSTOMER_BASE');
-				assert.equal(_oDescriptorChange._getChangeToSubmit().getRequest(), 'ATO_NOTIFICATION');
+				assert.equal(_oDescriptorChange._getChangeToSubmit().getRequest(), '');
 			});
 		});
 	});

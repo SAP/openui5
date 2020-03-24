@@ -713,7 +713,8 @@
 				</ReferentialConstraint>
 			</Association>
 			<EntityContainer Name="GWSAMPLE_BASIC_Entities"
-				m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+				m:IsDefaultEntityContainer="true" sap:message-scope-supported="true"
+				sap:supported-formats="atom json xlsx">
 				<EntitySet Name="BusinessPartnerSet" EntityType="GWSAMPLE_BASIC.BusinessPartner"
 					sap:content-version="1" />
 				<EntitySet Name="ProductSet" EntityType="GWSAMPLE_BASIC.Product"
@@ -925,12 +926,6 @@
 						MaxLength="10" />
 				</FunctionImport>
 			</EntityContainer>
-			<atom:link rel="self"
-				href="http://ldciqal.wdf.sap.corp:50026/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/$metadata"
-				xmlns:atom="http://www.w3.org/2005/Atom" />
-			<atom:link rel="latest-version"
-				href="http://ldciqal.wdf.sap.corp:50026/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/$metadata"
-				xmlns:atom="http://www.w3.org/2005/Atom" />
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>

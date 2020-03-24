@@ -278,6 +278,17 @@ sap.ui.define([
 	});
 
 	QUnit.module("Calling the Storage: Given Versions.discardDraft is called", {
+		before: function() {
+			this.sComponentId = "sComponentId";
+			this.oAppComponent = {
+				getManifest: function () {
+					return {};
+				},
+				getId: function () {
+					return this.sComponentId;
+				}
+			};
+		},
 		beforeEach: function () {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{connector : "KeyUserConnector", layers : [Layer.CUSTOMER], url: "/flexKeyUser"}
@@ -292,7 +303,8 @@ sap.ui.define([
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
 				layer : Layer.CUSTOMER,
-				reference : sReference
+				reference : sReference,
+				appComponent: this.oAppComponent
 			};
 
 			var oFirstVersion = {
@@ -325,7 +337,8 @@ sap.ui.define([
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				reference: sReference
+				reference: sReference,
+				appComponent: this.oAppComponent
 			};
 
 			var oFirstVersion = {
@@ -351,7 +364,8 @@ sap.ui.define([
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: sReference,
-				updateState: true
+				updateState: true,
+				appComponent: this.oAppComponent
 			};
 
 			var oFirstVersion = {
@@ -377,7 +391,8 @@ sap.ui.define([
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				reference: sReference
+				reference: sReference,
+				appComponent: this.oAppComponent
 			};
 
 			var oFirstVersion = {
@@ -404,7 +419,8 @@ sap.ui.define([
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: sReference,
-				updateState: true
+				updateState: true,
+				appComponent: this.oAppComponent
 			};
 
 			var oFirstVersion = {

@@ -132,22 +132,28 @@ sap.ui.define([
 		var aMenuItems = [];
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		var sIframeGroupText = oTextResources.getText("CTX_ADDIFRAME_GROUP");
-		if (this.isAvailable(true, aElementOverlays)) {
-			var oAction = this.getCreateAction(true, aElementOverlays[0]);
+
+		var oSiblingMenuItem = this.enhanceItemWithResponsibleElement({}, aElementOverlays);
+		var aResponsibleElementOverlays = oSiblingMenuItem.responsible || aElementOverlays;
+
+		if (this.isAvailable(true, aResponsibleElementOverlays)) {
+			var oAction = this.getCreateAction(true, aResponsibleElementOverlays[0]);
 			if (oAction) {
-				aMenuItems.push(this.buildMenuItem({
+				oSiblingMenuItem = this.buildMenuItem(Object.assign({
 					isSibling: true,
-					action: oAction,
 					id: "CTX_CREATE_SIBLING_IFRAME",
 					icon: "sap-icon://add-product",
 					rank: iBaseRank,
-					group: sIframeGroupText
-				}));
+					group: sIframeGroupText,
+					action: oAction
+				}, oSiblingMenuItem));
+				aMenuItems.push(oSiblingMenuItem);
 				iBaseRank += 10;
 			}
 		}
-		if (this.isAvailable(false, aElementOverlays)) {
-			aMenuItems = aMenuItems.concat(this.getCreateActions(false, aElementOverlays[0])
+
+		if (this.isAvailable(false, aResponsibleElementOverlays)) {
+			aMenuItems = aMenuItems.concat(this.getCreateActions(false, aResponsibleElementOverlays[0])
 				.map(function (oAction, iIndex) {
 					return this.buildMenuItem({
 						isSibling: false,
@@ -156,7 +162,7 @@ sap.ui.define([
 						icon: "sap-icon://add-product",
 						rank: iBaseRank + 10 * iIndex,
 						group: sIframeGroupText
-					});
+					}, aElementOverlays);
 				}, this)
 			);
 		}

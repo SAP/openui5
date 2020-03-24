@@ -14,32 +14,47 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 	var newToken = "newToken";
 
-	function _returnData(oServer, sData) {
-		sandbox.server.respondWith([200, { "X-CSRF-Token": newToken, "Content-Type": "application/json" }, sData]);
+	function mockResponse(sData, sResponseType) {
+		this.xhr.onCreate = function(oRequest) {
+			oRequest.addEventListener("loadstart", function(oEvent) {
+				oEvent.target.responseType = sResponseType || "";
+				this.oXHR = oRequest;
+				this.oXHRLoadSpy = sandbox.spy(oRequest, "onload");
+				oEvent.target.respond(200, { "X-CSRF-Token": newToken, "Content-Type": "application/json" }, sData);
+			}.bind(this));
+		}.bind(this);
 	}
 
-	QUnit.module("Connector", {
+	QUnit.module("Given Personalization connector with a fake XHR", {
 		beforeEach : function () {
-			this.xhr = sinon.fakeServer.create();
-			sandbox.useFakeServer();
-			sandbox.server.autoRespond = true;
-			_returnData(this.xhr, '{"changes": []}');
+			this.xhr = sandbox.useFakeXMLHttpRequest();
+			mockResponse.call(this, '{"changes":[]}');
 		},
 		afterEach: function() {
 			PersonalizationConnector.xsrfToken = undefined;
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("given no static changes-bundle.json placed for 'reference' resource roots and a mock server, when loading flex data is triggered and an empty response is returned", function (assert) {
+		QUnit.test("when no static changes-bundle.json is placed, loading flex data is triggered and an empty response as 'json' is returned", function (assert) {
+			var oMockResponse = {changes:[]};
+			mockResponse.call(this, JSON.stringify(oMockResponse), "json");
 			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference", appVersion: "1.0.0"}).then(function (oResult) {
-				assert.deepEqual(oResult, {changes: []}, "the default response resolves the request Promise");
-			});
+				assert.deepEqual(this.oXHRLoadSpy.firstCall.args[0].target.response, oMockResponse, "then xhr.onLoad was called with the right response");
+				assert.deepEqual(oResult, oMockResponse, "then the default response is returned");
+			}.bind(this));
+		});
+
+		QUnit.test("when no static changes-bundle.json is placed, loading flex data is triggered and an empty response as default is returned", function (assert) {
+			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference", appVersion: "1.0.0"}).then(function (oResult) {
+				assert.strictEqual(this.oXHRLoadSpy.firstCall.args[0].target.response, JSON.stringify(oResult), "then xhr.onLoad was called with the right response");
+				assert.deepEqual(oResult, {changes: []}, "then the default response is returned");
+			}.bind(this));
 		});
 
 		QUnit.test("given a mock server, when loading flex data is triggered with the correct url", function (assert) {
 			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference", appVersion: "1.0.0"}).then(function () {
-				assert.equal(sandbox.server.getRequest(0).url, "/flexPersonalization/flex/personalization/v1/data/reference?appVersion=1.0.0", "url is correct");
-			});
+				assert.equal(this.oXHR.url, "/flexPersonalization/flex/personalization/v1/data/reference?appVersion=1.0.0", "url is correct");
+			}.bind(this));
 		});
 
 		QUnit.test("loadFlexData also requests and stores an xsrf token", function (assert) {

@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/base/EventProvider",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Control",
-	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
+	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -22,7 +22,7 @@ function(
 	EventProvider,
 	JsControlTreeModifier,
 	Control,
-	DescriptorInlineChangeFactory,
+	DescriptorChangeTypes,
 	jQuery,
 	sinon
 ) {
@@ -155,10 +155,10 @@ function(
 			var oPromise2 = oChange.addChangeProcessingPromise(Change.operations.REVERT);
 
 			Promise.all([oPromise, oPromise2])
-			.then(function() {
-				assert.ok(true, "the function resolves");
-				done();
-			});
+				.then(function() {
+					assert.ok(true, "the function resolves");
+					done();
+				});
 
 			oChange.markFinished();
 			oChange.markRevertFinished();
@@ -171,10 +171,10 @@ function(
 			var oPromise2 = oChange.addChangeProcessingPromise(Change.operations.REVERT);
 
 			Promise.all([oPromise, oPromise2])
-			.then(function() {
-				assert.ok(true, "the promises were resolved");
-				done();
-			});
+				.then(function() {
+					assert.ok(true, "the promises were resolved");
+					done();
+				});
 
 			oChange.markFinished();
 			oChange.markRevertFinished();
@@ -190,10 +190,10 @@ function(
 			assert.equal(aPromises.length, 2, "two promises got added");
 
 			Promise.all(aPromises)
-			.then(function() {
-				assert.ok(true, "the function resolves");
-				done();
-			});
+				.then(function() {
+					assert.ok(true, "the function resolves");
+					done();
+				});
 
 			oChange.markFinished();
 			oChange.markRevertFinished();
@@ -468,7 +468,7 @@ function(
 				service: "someService",
 				reference: "smartFilterBar.Component",
 				componentName: "smartFilterBar",
-				changeType: DescriptorInlineChangeFactory.getDescriptorChangeTypes()[5],
+				changeType: DescriptorChangeTypes.getChangeTypes()[5],
 				texts: {
 					variantName: {
 						type: "myTextType",

@@ -581,6 +581,57 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 		QUtils.triggerEvent(sEventType, oTarget, oParams);
 	};
 
+	/**
+	 * Performs a "SelectAll" also known as CTRL + A on the whole browser window
+	 *
+	 * @public
+	 */
+	QUtils.triggerSelectAll = function(){
+		document.getSelection().selectAllChildren(document.body);
+	};
+
+	/**
+	 * Checks if the given <code>sText</code> is equal with the selected text. If no <code>sText</code> is given, its checked if the there is any text selected
+	 *
+	 * @param {string} [sText] The given text
+	 * @returns {boolean} If the selected text is equal with the given <code>sText</code>
+	 * @public
+	 */
+	QUtils.isSelectedTextEqual = function(sText){
+		var sSelectedText = QUtils.getSelectedText();
+		return sText ? sText === sSelectedText : !!sSelectedText;
+	};
+
+	/**
+	 * Checks if the given <code>sText</code> is included in the selected text. If no <code>sText</code> is given, its checked if the there is any text selected
+	 *
+	 * @param {string | string[]} [vText] The given text or an array of string
+	 * @returns {boolean} If the selected text contains the given <code>sText</code>
+	 * @public
+	 */
+	QUtils.includesSelectedText = function(vText){
+		var sSelectedText = QUtils.getSelectedText();
+		if (!vText){
+			return !!sSelectedText;
+		}
+		if (!Array.isArray(vText)){
+			vText = [vText];
+		}
+		return vText.every(function(sText){
+			return sSelectedText.indexOf(sText) > -1;
+		});
+	};
+
+	/**
+	 * Determines the selected text, if no text is selected an empty string is returned
+	 *
+	 * @returns {string} The selected text
+	 * @public
+	 */
+	QUtils.getSelectedText = function(){
+		return document.getSelection().toString().replace(/\n/g, "");
+	};
+
 	// --------------------------------------------------------------------------------------------------
 
 	var FONT_WEIGHTS = {

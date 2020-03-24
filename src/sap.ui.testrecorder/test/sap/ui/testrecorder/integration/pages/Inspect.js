@@ -138,12 +138,14 @@ sap.ui.define([
 					var mData = testTreeAPI.getMockData(sId);
 					this.waitFor({
 						controlType: "sap.m.Table",
-						matchers: [new AggregationLengthEquals({
-							name: "items",
-							length: 1
-						}), new Properties({
-							headerText: "Binding Context"
-						})],
+						matchers: [
+							new AggregationLengthEquals({
+								name: "items",
+								length: 1
+							}), new Properties({
+								headerText: "Binding Context"
+							})
+						],
 						success: function (aTables) {
 							Opa5.assert.ok(true, "Binding context table is filled");
 							this.waitFor({

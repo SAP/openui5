@@ -8,9 +8,8 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/ChangesController",
-	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
+	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/write/_internal/SaveAs",
 	"sap/base/Log",
 	"sap/ui/fl/Layer"
 ], function(
@@ -19,9 +18,8 @@ sap.ui.define([
 	JsControlTreeModifier,
 	FlexCustomData,
 	ChangesController,
-	DescriptorInlineChangeFactory,
+	DescriptorChangeTypes,
 	FeaturesAPI,
-	SaveAs,
 	Log,
 	Layer
 ) {
@@ -36,8 +34,8 @@ sap.ui.define([
 	 */
 	function isDescriptorChange(oChange) {
 		return (oChange._getMap
-			&& includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange._getMap().changeType))
-			|| (oChange.getChangeType && includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange.getChangeType()));
+			&& includes(DescriptorChangeTypes.getChangeTypes(), oChange._getMap().changeType))
+			|| (oChange.getChangeType && includes(DescriptorChangeTypes.getChangeTypes(), oChange.getChangeType()));
 	}
 
 	/**

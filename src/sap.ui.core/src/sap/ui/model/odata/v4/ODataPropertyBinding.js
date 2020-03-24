@@ -685,7 +685,8 @@ sap.ui.define([
 	 *   <ul>
 	 *   <li> The binding's root binding is suspended.
 	 *   <li> The new value is not primitive.
-	 *   <li> No value has been read before.
+	 *   <li> No value has been read before and the binding does not have the parameter
+	 *     <code>$$noPatch</code>.
 	 *   <li> The binding is not relative to a {@link sap.ui.model.odata.v4.Context}.
 	 *   <li> The binding has the parameter <code>$$noPatch</code> and a group ID has been given.
 	 *   </ul>
@@ -715,7 +716,7 @@ sap.ui.define([
 		if (typeof vValue === "function" || (vValue && typeof vValue === "object")) {
 			throw reportError(new Error("Not a primitive value"));
 		}
-		if (this.vValue === undefined) {
+		if (!this.bNoPatch && this.vValue === undefined) {
 			throw reportError(new Error("Must not change a property before it has been read"));
 		}
 

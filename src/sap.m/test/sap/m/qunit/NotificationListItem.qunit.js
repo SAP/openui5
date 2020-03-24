@@ -419,6 +419,17 @@ sap.ui.define([
 		assert.strictEqual(buttons[0].getLayoutData().getPriority(), OverflowToolbarPriority.AlwaysOverflow, 'button overflow priority is ok');
 	});
 
+	QUnit.test('Close button destruction', function(assert) {
+
+		var notificationListItem = createNotificatoinListItem();
+		notificationListItem.placeAt(RENDER_LOCATION);
+		var closeButton = notificationListItem._getCloseButton();
+		var closeButtonId = closeButton.sId;
+
+		notificationListItem.destroy();
+		assert.strictEqual(sap.ui.getCore().byId(closeButtonId), undefined, "close button is destroyed");
+	});
+
 	QUnit.module('Action and close buttons - mobile', {
 		beforeEach: function() {
 

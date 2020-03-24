@@ -1,20 +1,21 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/test/matchers/PropertyStrictEquals"
-], function(Opa5, PropertyStrictEquals) {
+	"sap/ui/test/matchers/Properties"
+], function (Opa5, Properties) {
 	"use strict";
 
-	var sViewName = "App",
-		sAppControl = "app";
+	// var sViewName = "App";
 
 	Opa5.createPageObjects({
-		onTheAppPage : {
+		onTheAppPage: {
+			viewName: "App",
 
-			actions : {
-				iCloseTheMessageBox : function () {
+			actions: {
+				// TODO - destroy() ?
+				iCloseTheMessageBox: function () {
 					return this.waitFor({
 						id: "serviceErrorMessageBox",
-						autoWait: false,
+						searchOpenDialogs: true,
 						success: function (oMessageBox) {
 							oMessageBox.destroy();
 							Opa5.assert.ok(true, "The MessageBox was closed");
@@ -23,29 +24,15 @@ sap.ui.define([
 				}
 			},
 
-			assertions : {
+			assertions: {
 
-				iShouldSeeTheBusyIndicator : function () {
-					return this.waitFor({
-						id : sAppControl,
-						viewName : sViewName,
-						matchers: new PropertyStrictEquals({
-							name: "busy",
-							value: true
-						}),
-						autoWait: false,
-						success : function () {
-							Opa5.assert.ok(true, "The app is busy");
-						},
-						errorMessage : "The app is not busy"
-					});
-				},
-
-				iShouldSeeTheMessageBox : function () {
+				iShouldSeeTheMessageBox: function () {
 					return this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.Dialog",
-						matchers : new PropertyStrictEquals({ name: "type", value: "Message"}),
+						matchers: new Properties({
+							type: "Message"
+						}),
 						success: function () {
 							Opa5.assert.ok(true, "The correct MessageBox was shown");
 						}
@@ -54,13 +41,15 @@ sap.ui.define([
 
 				theAppShowsFCLDesign: function (sLayout) {
 					return this.waitFor({
-						id : "layout",
-						viewName : sViewName,
-						matchers : new PropertyStrictEquals({name: "layout", value: sLayout}),
-						success : function () {
-							Opa5.assert.ok(true, "the app shows " + sLayout + " layout");
+						id: "layout",
+						// viewName: sViewName,
+						matchers: new Properties({
+							layout: sLayout
+						}),
+						success: function () {
+							Opa5.assert.ok(true, "The app shows " + sLayout + " layout");
 						},
-						errorMessage : "The app doesn't show " + sLayout + " layout"
+						errorMessage: "The app doesn't show " + sLayout + " layout"
 					});
 				}
 

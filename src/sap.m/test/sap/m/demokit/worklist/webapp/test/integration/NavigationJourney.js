@@ -10,8 +10,6 @@ sap.ui.define([
 ], function (opaTest, Device) {
 	"use strict";
 
-	var iDelay = (Device.browser.msie || Device.browser.edge) ? 1500 : 1000;
-
 	QUnit.module("Navigation");
 
 	opaTest("Should see the objects list", function (Given, When, Then) {
@@ -28,8 +26,7 @@ sap.ui.define([
 		When.onTheBrowser.iChangeTheHashToTheRememberedItem();
 
 		// Assertions
-		Then.onTheObjectPage.iShouldSeeTheRememberedObject().
-			and.theViewIsNotBusyAnymore();
+		Then.onTheObjectPage.iShouldSeeTheRememberedObject();
 	});
 
 	opaTest("Should go back to the TablePage", function (Given, When, Then) {
@@ -71,7 +68,7 @@ sap.ui.define([
 	opaTest("Start the App and simulate metadata error: MessageBox should be shown", function (Given, When, Then) {
 		//Arrangement
 		Given.iStartMyApp({
-			delay: iDelay,
+			delay: 2000,
 			metadataError: true
 		});
 
@@ -88,7 +85,7 @@ sap.ui.define([
 	opaTest("Start the App and simulate bad request error: MessageBox should be shown", function (Given, When, Then) {
 		//Arrangement
 		Given.iStartMyApp({
-			delay: iDelay,
+			delay: 2000,
 			errorType: "serverError"
 		});
 

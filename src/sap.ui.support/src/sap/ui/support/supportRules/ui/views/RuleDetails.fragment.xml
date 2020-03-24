@@ -8,20 +8,24 @@
 		xmlns:tools="sap.ui.codeeditor">
 	<m:Page id="ruleDetailsPage" showHeader="false" visible="{/showRuleProperties}">
 		<m:Bar>
-			<m:contentLeft >
-				<m:Title text="{= ${/selectedRule/libName} + ' > ' + ${/selectedRule/title}}" visible="{= ${/selectedRule} !== undefined &amp;&amp; ${/selectedSetPreviewKey} !== 'additionalRulesets'}" titleStyle="H6" class="customMarginLeft" />
+			<m:contentLeft>
+				<m:HBox fitContainer="true" renderType="Bare" class="customHBox">
+					<m:Title text="{= ${/selectedRule/libName} + ' > ' + ${/selectedRule/title}}" visible="{= ${/selectedRule} !== undefined &amp;&amp; ${/selectedSetPreviewKey} !== 'additionalRulesets'}" titleStyle="H6" class="customMarginLeft" />
+					<m:IconTabHeader
+							selectedKey="{/selectedRulePreviewKey}"
+							class="customIconTabHeader">
+						<m:layoutData>
+							<m:FlexItemData growFactor="1" minWidth="0">
+							</m:FlexItemData>
+						</m:layoutData>
+						<m:items>
+							<m:IconTabFilter enabled="{= ${/selectedRule} !== undefined}" key="ruleProperties" text="Rule properties" />
+							<m:IconTabFilter enabled="{= ${/selectedRule} !== undefined}" key="checkFunction" text="Check function" />
+							<m:IconTabFilter enabled="{= ${/selectedRule} !== undefined}" key="jsonOutput" text="Code" />
+						</m:items>
+					</m:IconTabHeader>
+				</m:HBox>
 			</m:contentLeft>
-			<m:contentMiddle>
-				<m:IconTabHeader
-						selectedKey="{/selectedRulePreviewKey}"
-						class="customIconTabHeader">
-					<m:items>
-						<m:IconTabFilter enabled="{= ${/selectedRule} !== undefined}" key="ruleProperties" text="Rule properties" />
-						<m:IconTabFilter enabled="{= ${/selectedRule} !== undefined}" key="checkFunction" text="Check function" />
-						<m:IconTabFilter enabled="{= ${/selectedRule} !== undefined}" key="jsonOutput" text="Code" />
-					</m:items>
-				</m:IconTabHeader>
-			</m:contentMiddle>
 		</m:Bar>
 		<f:SimpleForm
 				visible="{= ${/selectedRule/type} !== 'library'  &amp;&amp; ${/selectedRulePreviewKey} === 'ruleProperties' &amp;&amp; ${/selectedRule} !== undefined &amp;&amp; ${/selectedSetPreviewKey} !== 'additionalRulesets'}">

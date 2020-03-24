@@ -185,6 +185,29 @@ function(
 
 			assert.equal(this.oScrollbarSynchronizer.getTargets().length, 0, "then the function getTargets returns an empty array");
 		});
+
+		QUnit.test("when listeners are re-attached properly via refreshLisneters()", function(assert) {
+			var fnDone = assert.async();
+
+			this.oScrollbarSynchronizer.attachEventOnce('synced', function () {
+				this.$Panel2.off();
+
+				this.oScrollbarSynchronizer.attachEventOnce('synced', function () {
+					assert.equal(this.$Panel1.scrollTop(), 40, "then vertical scrolling on Panel2 is reflected on Panel1");
+					assert.equal(this.$Panel1.scrollLeft(), 60, "then horizontal scrolling on Panel2 is reflected on Panel1");
+					fnDone();
+				}, this);
+
+				this.oScrollbarSynchronizer.refreshListeners();
+				this.$Panel2.scrollTop(40);
+				this.$Panel2.scrollLeft(60);
+			}, this);
+
+			this.$Panel1.scrollTop(20);
+			this.$Panel1.scrollLeft(30);
+			this.oScrollbarSynchronizer.addTarget(this.$Panel1[0]);
+			this.oScrollbarSynchronizer.addTarget(this.$Panel2[0]);
+		});
 	});
 
 	QUnit.done(function() {

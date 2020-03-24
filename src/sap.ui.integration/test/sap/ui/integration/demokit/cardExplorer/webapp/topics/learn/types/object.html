@@ -36,6 +36,7 @@
 					<th>Required</th>
 					<th>Description</th>
 					<th>Schema Version</th>
+					<th>Since</th>
 				</tr>
 				<tr>
 					<td>title</td>
@@ -43,6 +44,7 @@
 					<td>Yes</td>
 					<td>Defines language-dependent title of the object group.</td>
 					<td>1.15.0</td>
+					<td>1.64</td>
 				</tr>
 				<tr>
 					<td>items</td>
@@ -50,6 +52,7 @@
 					<td>Yes</td>
 					<td>Represents items of information.</td>
 					<td>1.15.0</td>
+					<td>1.64</td>
 				</tr>
 			</table>
 		</div>
@@ -64,6 +67,7 @@
 					<th>Required</th>
 					<th>Description</th>
 					<th>Schema Version</th>
+					<th>Since</th>
 				</tr>
 				<tr>
 					<td>icon</td>
@@ -71,6 +75,7 @@
 					<td>No</td>
 					<td>Defines the icon of the item.</td>
 					<td>1.15.0</td>
+					<td>1.64</td>
 				</tr>
 				<tr>
 					<td>label</td>
@@ -78,6 +83,7 @@
 					<td>Yes</td>
 					<td>Defines the label of the item.</td>
 					<td>1.15.0</td>
+					<td>1.64</td>
 				</tr>
 				<tr>
 					<td>value</td>
@@ -85,6 +91,7 @@
 					<td>Yes</td>
 					<td>Represents the text, which is associated with the label.</td>
 					<td>1.15.0</td>
+					<td>1.64</td>
 				</tr>
 				<tr>
 					<td>type</td>
@@ -92,6 +99,7 @@
 					<td>No</td>
 					<td>Defines the type of the displayed information. It can be - 'text', 'link', 'email' or 'phone'.</td>
 					<td>1.15.0</td>
+					<td>1.64</td>
 				</tr>
 				<tr>
 					<td>url</td>
@@ -99,6 +107,7 @@
 					<td>No</td>
 					<td>Defines the URL string. Works only with items of type 'link'.</td>
 					<td>1.15.0</td>
+					<td>1.64</td>
 				</tr>
 				<tr>
 					<td>target</td>
@@ -107,6 +116,7 @@
 					<td>Specifies the target of the link - it works like the target property of the HTML 'a' tag. Works only with items of type 'link'.
 					</td>
 					<td>1.15.0</td>
+					<td>1.64</td>
 				</tr>
 				<tr>
 					<td>emailSubject</td>
@@ -114,6 +124,7 @@
 					<td>No</td>
 					<td>Represents the subject of the email. Works only with item of type 'email'.</td>
 					<td>1.15.0</td>
+					<td>1.64</td>
 				</tr>
 			</table>
 		</div>
@@ -229,7 +240,10 @@
 	"sap.app": {
 		"id": "card.explorer.object.card",
 		"type": "card",
-		"i18n": "i18n/i18n.properties"
+		"i18n": "i18n/i18n.properties",
+		"applicationVersion": {
+		  "version": "1.0.0"
+		}
 	},
 	"sap.card": {
 		"type": "Object",
