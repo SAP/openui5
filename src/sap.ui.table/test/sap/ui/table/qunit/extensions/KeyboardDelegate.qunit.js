@@ -38,8 +38,8 @@ sap.ui.define([
 	// Helper Functions
 	//************************************************************************
 
-	var TestInputControl = TableQUnitUtils.getTestInputControl();
-	var TestControl = TableQUnitUtils.getTestControl();
+	var TestInputControl = TableQUnitUtils.TestInputControl;
+	var TestControl = TableQUnitUtils.TestControl;
 
 	function checkDelegateType(sExpectedType) {
 		var oTbl = new Table();
@@ -3969,7 +3969,7 @@ sap.ui.define([
 				visibleRowCountMode: VisibleRowCountMode.Fixed,
 				visibleRowCount: 3,
 				rows: {path: "/"},
-				models: new JSONModel(new Array(100))
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
 			}, function(oTable) {
 				oTable.addColumn(new Column({
 					label: new this.TestControl({text: "ColA"}),
@@ -3981,12 +3981,12 @@ sap.ui.define([
 				}));
 			}.bind(this));
 
-			return this.oTable.qunit.whenInitialRenderingFinished();
+			return this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
 		},
-		TestControl: TableQUnitUtils.getTestControl()
+		TestControl: TableQUnitUtils.TestControl
 	});
 
 	QUnit.test("Add column", function(assert) {

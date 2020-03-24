@@ -94,7 +94,7 @@ sap.ui.define([
 		var $SelectAll = oTable.$("selall");
 		var oSelectionPlugin = oTable._getSelectionPlugin();
 
-		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.ok($SelectAll.attr("aria-disabled"), "Before bindRows: aria-disabled is set to true");
 			assert.ok($SelectAll.hasClass("sapUiTableSelAllDisabled"), "Before bindRows: Deselect All is disabled");
 

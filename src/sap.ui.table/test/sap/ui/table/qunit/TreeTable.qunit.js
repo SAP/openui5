@@ -667,7 +667,7 @@ sap.ui.define([
 		var that = this;
 		var oTable = this.createTable();
 
-		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTable.attachEvent("_rowsUpdated", function(oEvent) {
 				aFiredReasons.push(oEvent.getParameter("reason"));
 			});
@@ -684,7 +684,7 @@ sap.ui.define([
 		var that = this;
 		var oTable = this.createTable();
 
-		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			oTable.attachEvent("_rowsUpdated", function(oEvent) {

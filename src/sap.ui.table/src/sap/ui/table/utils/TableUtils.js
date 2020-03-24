@@ -1576,7 +1576,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Adds a delegate that listens to the events that are fired on an element.
+		 * Adds a delegate that listens to the events of an element.
 		 *
 		 * @param {sap.ui.core.Element} oElement The element to add the delegate to.
 		 * @param {object} oDelegate The delegate object.

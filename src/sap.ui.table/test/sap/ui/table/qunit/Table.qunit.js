@@ -125,7 +125,7 @@ sap.ui.define([
 		aData[i].lastName += " - " + i;
 	}
 
-	var HeightTestControl = TableQUnitUtils.getHeightTestControl();
+	var HeightTestControl = TableQUnitUtils.HeightTestControl;
 
 	function createTable(oConfig, fnCreateColumns, sModelName) {
 		var sBindingPrefix = (sModelName ? sModelName + ">" : "");
@@ -1397,7 +1397,7 @@ sap.ui.define([
 				visibleRowCountMode: sVisibleRowCountMode,
 				rows: {path: "/"},
 				rowHeight: 50,
-				models: new JSONModel(new Array(100))
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
 			});
 
 			return this.oTable;
@@ -1408,7 +1408,7 @@ sap.ui.define([
 		var oTable = this.createTable(VisibleRowCountMode.Fixed);
 		var oGetContextsSpy = this.oGetContextsSpy;
 
-		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");  // render
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"All calls to Binding#getContexts consider the visible row count");
@@ -1419,7 +1419,7 @@ sap.ui.define([
 		var oTable = this.createTable(VisibleRowCountMode.Interactive);
 		var oGetContextsSpy = this.oGetContextsSpy;
 
-		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");  // render
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"All calls to Binding#getContexts consider the visible row count");
@@ -1430,7 +1430,7 @@ sap.ui.define([
 		var oTable = this.createTable(VisibleRowCountMode.Auto);
 		var oGetContextsSpy = this.oGetContextsSpy;
 
-		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.strictEqual(oGetContextsSpy.callCount, 2, "Binding#getContexts was called 2 times");  // updateRows, render
 			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
 				"The first call to Binding#getContexts considers the device height for the length");
@@ -1443,7 +1443,7 @@ sap.ui.define([
 		var oTable = this.createTable(VisibleRowCountMode.Auto);
 		var oGetContextsSpy = this.oGetContextsSpy;
 
-		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			oGetContextsSpy.reset();
 		}).then(oTable.qunit.$resize({height: "756px"})).then(function() {
 			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");
@@ -1782,7 +1782,7 @@ sap.ui.define([
 
 	QUnit.module("Fixed top and bottom rows and columns", {
 		beforeEach: function() {
-			var TestControl = TableQUnitUtils.getTestControl();
+			var TestControl = TableQUnitUtils.TestControl;
 
 			createTable({
 				fixedRowCount: 2,
@@ -2917,7 +2917,7 @@ sap.ui.define([
 			this.oTable = TableQUnitUtils.createTable({
 				rows: bWithBinding !== false ? "{/}" : "",
 				visibleRowCountMode: sVisibleRowCountMode,
-				models: new JSONModel(new Array(100)),
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
 				columns: [
 					new Column({
 						label: new Label({text: "Last Name"}),
@@ -3325,7 +3325,7 @@ sap.ui.define([
 			return oTable.qunit.whenRenderingFinished();
 		}
 
-		return this.oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			aFiredReasons = [];
 			oTable.invalidate();
 			sap.ui.getCore().applyChanges();
@@ -3367,7 +3367,7 @@ sap.ui.define([
 			return oTable.qunit.whenRenderingFinished();
 		}
 
-		return this.oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			aFiredReasons = [];
 			return that.setQUnitFixtureDisplay("none");
 		}).then(function() {
@@ -3439,7 +3439,7 @@ sap.ui.define([
 			return oTable.qunit.whenNextRowsUpdated();
 		}
 
-		return this.oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			aFiredReasons = [];
 			oTable.invalidate();
 			sap.ui.getCore().applyChanges();
@@ -3489,7 +3489,7 @@ sap.ui.define([
 			return oTable.qunit.whenRenderingFinished();
 		}
 
-		return this.oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			aFiredReasons = [];
 			return that.setQUnitFixtureDisplay("none");
 		}).then(function() {
@@ -3602,7 +3602,7 @@ sap.ui.define([
 				oTable.setVisibleRowCount(iVisibleRowCount);
 			});
 
-			return oTable.qunit.whenInitialRenderingFinished().then(function() {
+			return oTable.qunit.whenRenderingFinished().then(function() {
 				if (iVisibleRowCount == null) {
 					iVisibleRowCount = oTable.getVisibleRowCount();
 				}
@@ -3684,7 +3684,7 @@ sap.ui.define([
 				aFiredReasons.push(oEvent.getParameter("reason"));
 			});
 
-			return oTable.qunit.whenInitialRenderingFinished().then(function() {
+			return oTable.qunit.whenRenderingFinished().then(function() {
 				aFiredReasons = [];
 				oTable.sort(oTable.getColumns()[0], "Ascending");
 
@@ -3747,7 +3747,7 @@ sap.ui.define([
 				aFiredReasons.push(oEvent.getParameter("reason"));
 			});
 
-			return oTable.qunit.whenInitialRenderingFinished().then(function() {
+			return oTable.qunit.whenRenderingFinished().then(function() {
 				aFiredReasons = [];
 				oTable.filter(oTable.getColumns()[0], "test");
 
@@ -3812,7 +3812,7 @@ sap.ui.define([
 			aFiredReasons.push(oEvent.getParameter("reason"));
 		});
 
-		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			TableUtils.Grouping.toggleGroupHeader(oTable, 0, false);
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			aFiredReasons = [];
@@ -3837,7 +3837,7 @@ sap.ui.define([
 			aFiredReasons.push(oEvent.getParameter("reason"));
 		});
 
-		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			aFiredReasons = [];
 			TableUtils.Grouping.toggleGroupHeader(oTable, 0, false);
 
@@ -3856,7 +3856,7 @@ sap.ui.define([
 			aFiredReasons.push(oEvent.getParameter("reason"));
 		});
 
-		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			aFiredReasons = [];
 			oTable.unbindRows();
 
@@ -3876,7 +3876,7 @@ sap.ui.define([
 			aFiredReasons.push(oEvent.getParameter("reason"));
 		});
 
-		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTable.unbindRows();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			aFiredReasons = [];
@@ -3931,7 +3931,7 @@ sap.ui.define([
 			aFiredReasons.push(oEvent.getParameter("reason"));
 		});
 
-		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			aFiredReasons = [];
 			oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 100;
 
@@ -3950,7 +3950,7 @@ sap.ui.define([
 			aFiredReasons.push(oEvent.getParameter("reason"));
 		});
 
-		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			aFiredReasons = [];
 			oTable.setFirstVisibleRow(1);
 
@@ -3970,7 +3970,7 @@ sap.ui.define([
 			aFiredReasons.push(oEvent.getParameter("reason"));
 		});
 
-		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			aFiredReasons = [];
 			oTable.getDomRef().parentElement.style.height = "500px";
 
@@ -3996,7 +3996,7 @@ sap.ui.define([
 			aFiredReasons.push(oEvent.getParameter("reason"));
 		});
 
-		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			aFiredReasons = [];
 			var oPersoController = new TablePersoController({
 				persoService: {
@@ -4056,7 +4056,7 @@ sap.ui.define([
 			aFiredReasons.push(oEvent.getParameter("reason"));
 		});
 
-		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			aFiredReasons = [];
 			oTable.setProperty("rowHeight", 30, true);
 			fireTransitionEndEvent();
@@ -4108,7 +4108,7 @@ sap.ui.define([
 			aFiredReasons.push(oEvent.getParameter("reason"));
 		});
 
-		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			aFiredReasons = [];
 			oTable.onThemeChanged();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
@@ -5033,7 +5033,7 @@ sap.ui.define([
 				assert.strictEqual(oTable.getRows().length, 0, "Before rendering without binding: The table has no rows");
 			});
 
-			return oTable.qunit.whenInitialRenderingFinished().then(function() {
+			return oTable.qunit.whenRenderingFinished().then(function() {
 				assert.strictEqual(oTable.getRows().length, 0, "After rendering without binding: The table has no rows");
 
 				oTable.destroy();
@@ -5042,11 +5042,11 @@ sap.ui.define([
 					visibleRowCountMode: sVisibleRowCountMode,
 					visibleRowCount: 5,
 					rows: {path: "/"},
-					models: new JSONModel(new Array(100))
+					models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
 				}, function(oTable) {
 					assert.strictEqual(oTable.getRows().length, 0, "Before rendering with binding: The table has no rows");
 				});
-			}).then(oTable.qunit.whenInitialRenderingFinished).then(function() {
+			}).then(oTable.qunit.whenRenderingFinished).then(function() {
 				assert.strictEqual(oTable.getRows().length, 5, "After rendering with binding: The table has the correct number of rows");
 
 				oTable.unbindRows();
@@ -5063,7 +5063,7 @@ sap.ui.define([
 					visibleRowCountMode: sVisibleRowCountMode,
 					visibleRowCount: 5,
 					rows: {path: "/"},
-					models: new JSONModel(new Array(100)),
+					models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
 					placeAt: false
 				});
 			}).then(oTable.qunit.whenBindingChange).then(TableQUnitUtils.$wait(100)).then(function() {
@@ -5086,7 +5086,7 @@ sap.ui.define([
 			assert.strictEqual(oTable.getRows().length, 0, "Before rendering without binding: The table has no rows");
 		});
 
-		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.strictEqual(oTable.getRows().length, 0, "After rendering without binding: The table has no rows");
 
 		}).then(function() {
@@ -5095,11 +5095,11 @@ sap.ui.define([
 			oTable = TableQUnitUtils.createTable({
 				visibleRowCountMode: VisibleRowCountMode.Auto,
 				rows: {path: "/"},
-				models: new JSONModel(new Array(100))
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
 			}, function(oTable) {
 				assert.strictEqual(oTable.getRows().length, 0, "Before rendering with binding: The table has no rows");
 			});
-		}).then(oTable.qunit.whenInitialRenderingFinished).then(function() {
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.ok(oTable.getRows().length > 0, "After rendering with binding: The table has rows");
 		}).then(function() {
 			oTable.unbindRows();
@@ -5115,7 +5115,7 @@ sap.ui.define([
 			oTable = TableQUnitUtils.createTable({
 				visibleRowCountMode: VisibleRowCountMode.Auto,
 				rows: {path: "/"},
-				models: new JSONModel(new Array(100)),
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
 				placeAt: false
 			});
 		}).then(oTable.qunit.whenBindingChange).then(TableQUnitUtils.$wait(100)).then(function() {
