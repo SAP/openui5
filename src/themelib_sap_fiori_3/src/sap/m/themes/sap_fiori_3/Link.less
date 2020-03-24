@@ -4,9 +4,10 @@
 /* =========================== */
 
 @_sap_m_Link_TextShadowColor: none;
+@sapUiLinkSubtleColor: darken(@sapUiLink, 15);
 
 .sapMLnkDsbl {
-	opacity: 0.4;
+	opacity: @sapUiContentDisabledOpacity;
 	outline: none;
 	cursor: default;
 }
@@ -17,7 +18,7 @@
 }
 
 .sapMLnkSubtle {
-	color: darken(@sapUiLink,15);
+	color: @sapUiLinkSubtleColor;
 }
 
 .sapMLnkSubtle:focus {
