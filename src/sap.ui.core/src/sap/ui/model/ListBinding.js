@@ -424,49 +424,5 @@ sap.ui.define(['./Binding', './Filter', './Sorter', 'sap/base/util/array/diff'],
 		return null;
 	};
 
-	/**
-	 * Checks whether an update of the data state of this binding is required.
-	 *
-	 * @param {map} mPaths A Map of paths to check if update needed
-	 * @private
-	 * @since 1.58
-	 */
-	ListBinding.prototype.checkDataState = function(mPaths) {
-		var sResolvedPath = this.oModel ? this.oModel.resolve(this.sPath, this.oContext) : null,
-		oDataState = this.getDataState();
-
-		if (!mPaths || sResolvedPath && sResolvedPath in mPaths) {
-			if (sResolvedPath) {
-				oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath));
-			}
-			this._fireDateStateChange(oDataState);
-
-		}
-	};
-
-	ListBinding.prototype._fireDateStateChange = function(oDataState){
-		var that = this;
-		function fireChange() {
-			that.fireEvent("AggregatedDataStateChange", { dataState: oDataState });
-			oDataState.changed(false);
-			that._sDataStateTimout = null;
-		}
-
-		if (oDataState && oDataState.changed()) {
-			if (this.mEventRegistry["DataStateChange"]) {
-				this.fireEvent("DataStateChange", { dataState: oDataState });
-			}
-			if (this.bIsBeingDestroyed) {
-				fireChange();
-			} else if (this.mEventRegistry["AggregatedDataStateChange"]) {
-				if (!this._sDataStateTimout) {
-					this._sDataStateTimout = setTimeout(fireChange, 0);
-				}
-			}
-		}
-	};
-
-
 	return ListBinding;
-
 });

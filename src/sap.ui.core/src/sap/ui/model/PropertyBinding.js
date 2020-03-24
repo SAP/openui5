@@ -14,7 +14,6 @@ sap.ui.define([
 	function(Binding, SimpleType, DataState, SyncPromise, Log, assert) {
 	"use strict";
 
-
 	/**
 	 * Constructor for PropertyBinding
 	 *
@@ -353,54 +352,6 @@ sap.ui.define([
 	PropertyBinding.prototype.resume = function() {
 		this.bSuspended = false;
 		this.checkUpdate(true);
-	};
-
-	/**
-	 * Checks whether an update of the data state of this binding is required.
-	 *
-	 * @param {map} mPaths A Map of paths to check if update needed
-	 * @private
-	 */
-	PropertyBinding.prototype.checkDataState = function(mPaths) {
-		var sResolvedPath = this.oModel ? this.oModel.resolve(this.sPath, this.oContext) : null;
-
-		this._checkDataState(sResolvedPath, mPaths);
-	};
-
-	/**
-	 * Checks whether an update of the data state of this binding is required with the given path.
-	 *
-	 * @param {string} sResolvedPath With help of the connected model resolved path
-	 * @param {map} mPaths A Map of paths to check if update needed
-	 * @private
-	 */
-	PropertyBinding.prototype._checkDataState = function(sResolvedPath, mPaths) {
-		var that = this;
-		if (!mPaths || sResolvedPath && sResolvedPath in mPaths) {
-			var oDataState = this.getDataState();
-
-			var fireChange = function() {
-				that.fireEvent("AggregatedDataStateChange", { dataState: oDataState });
-				oDataState.changed(false);
-				that._sDataStateTimout = null;
-			};
-
-			if (sResolvedPath) {
-				oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath));
-			}
-			if (oDataState && oDataState.changed()) {
-				if (this.mEventRegistry["DataStateChange"]) {
-					this.fireEvent("DataStateChange", { dataState: oDataState });
-				}
-				if (this.bIsBeingDestroyed) {
-					fireChange();
-				} else if (this.mEventRegistry["AggregatedDataStateChange"]) {
-					if (!this._sDataStateTimout) {
-						this._sDataStateTimout = setTimeout(fireChange, 0);
-					}
-				}
-			}
-		}
 	};
 
 	return PropertyBinding;

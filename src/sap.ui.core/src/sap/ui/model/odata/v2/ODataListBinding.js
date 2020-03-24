@@ -1506,15 +1506,9 @@ sap.ui.define([
 	};
 
 	/** @inheritdoc */
-	ODataListBinding.prototype.checkDataState = function(mPaths) {
-		var oDataState = this.getDataState();
-
-		ListBinding.prototype.checkDataState.apply(this, arguments);
-		// set messages for the deep path only if the binding is resolved, that means this.sDeepPath
-		// is set
-		if (this.sDeepPath) {
+	ODataListBinding.prototype._checkDataStateMessages = function(oDataState, sResolvedPath) {
+		if (sResolvedPath) {
 			oDataState.setModelMessages(this.oModel.getMessagesByPath(this.sDeepPath, true));
-			ListBinding.prototype._fireDateStateChange.call(this, oDataState);
 		}
 	};
 

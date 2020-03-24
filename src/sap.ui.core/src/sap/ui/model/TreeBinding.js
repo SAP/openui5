@@ -183,43 +183,6 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	};
 
 	/**
-	 * Checks whether an update of the data state of this binding is required.
-	 *
-	 * @param {map} mPaths A Map of paths to check if update needed
-	 * @private
-	 * @since 1.58
-	 */
-	TreeBinding.prototype.checkDataState = function(mPaths) {
-		var oDataState = this.getDataState(),
-			sResolvedPath = this.oModel ? this.oModel.resolve(this.sPath, this.oContext) : null,
-			that = this;
-
-		function fireChange() {
-			that.fireEvent("AggregatedDataStateChange", { dataState: oDataState });
-			oDataState.changed(false);
-			that._sDataStateTimout = null;
-		}
-
-		if (!mPaths || sResolvedPath && sResolvedPath in mPaths) {
-			if (sResolvedPath) {
-				oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath));
-			}
-			if (oDataState && oDataState.changed()) {
-				if (this.mEventRegistry["DataStateChange"]) {
-					this.fireEvent("DataStateChange", { dataState: oDataState });
-				}
-				if (this.bIsBeingDestroyed) {
-					fireChange();
-				} else if (this.mEventRegistry["AggregatedDataStateChange"]) {
-					if (!this._sDataStateTimout) {
-						this._sDataStateTimout = setTimeout(fireChange, 0);
-					}
-				}
-			}
-		}
-	};
-
-	/**
 	 * Return the filter information as an AST. The default implementation checks for this.oCombinedFilter,
 	 * models not using this member may override the method.
 	 * Consumers must not rely on the origin information to be available, future filter implementations will
