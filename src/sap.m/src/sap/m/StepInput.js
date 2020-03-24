@@ -1516,7 +1516,7 @@ function(
 						if (oEvent.button === 0) {
 							this._bDelayedEventFire = undefined;
 							this._btndown = false;
-							_resetSpinValues.call(this);
+							this._resetSpinValues();
 							if (this._bSpinStarted) {
 								this._changeValue();
 							}
@@ -1525,8 +1525,8 @@ function(
 					onmouseout: function (oEvent) {
 						if (this._btndown) {
 							this._bDelayedEventFire = undefined;
+							this._resetSpinValues();
 							if (this._bSpinStarted) {
-								_resetSpinValues.call(this);
 								this._changeValue();
 							}
 						}
@@ -1590,13 +1590,11 @@ function(
 		/*
 		 * Resets timeouts and speed to initial values.
 		 */
-		function _resetSpinValues() {
-			if (this._btndown) {
-				clearTimeout(this._spinTimeoutId);
-				this._waitTimeout = 500;
-				this._speed = 120;
-			}
-		}
+		StepInput.prototype._resetSpinValues = function() {
+			clearTimeout(this._spinTimeoutId);
+			this._waitTimeout = 500;
+			this._speed = 120;
+		};
 
 		return StepInput;
 	});
