@@ -176,6 +176,8 @@ sap.ui.define([
 		}.bind(this));
 
 		this._oLoadingProvider = new LoadingProvider();
+
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 
 	NumericHeader.prototype.exit = function () {
@@ -570,8 +572,8 @@ sap.ui.define([
 
 	NumericHeader.prototype.isLoading = function () {
 		var oLoadingProvider = this._oLoadingProvider,
-            oCard = this.getParent(),
-		    cardLoading = oCard.getMetadata()._sClassName === 'sap.ui.integration.widgets.Card' ? oCard.isLoading() : false;
+			oCard = this.getParent(),
+			cardLoading = oCard.getMetadata()._sClassName === 'sap.ui.integration.widgets.Card' ? oCard.isLoading() : false;
 
 		return !oLoadingProvider.getDataProviderJSON() && (oLoadingProvider.getLoadingState() || cardLoading);
 	};

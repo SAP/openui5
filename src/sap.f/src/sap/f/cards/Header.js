@@ -148,6 +148,8 @@ sap.ui.define([
 		}.bind(this));
 
 		this._oLoadingProvider = new LoadingProvider();
+
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 
 	Header.prototype.exit = function () {
