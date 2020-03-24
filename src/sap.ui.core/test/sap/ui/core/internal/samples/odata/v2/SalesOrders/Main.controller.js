@@ -3,18 +3,90 @@
  */
 sap.ui.define([
 	"sap/base/security/encodeURL",
+	"sap/m/MessageBox",
+	"sap/m/MessageToast",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/ODataUtils"
-], function (encodeURL, Core, Element, Controller, Filter, FilterOperator, ODataUtils) {
+], function (encodeURL, MessageBox, MessageToast, Core, Element, Controller, Filter, FilterOperator,
+		ODataUtils) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.internal.samples.odata.v2.SalesOrders.Main", {
+		defaultErrorHandler : function (oError) {
+			var sCode = "unknown",
+				oErrorDetails,
+				sMessage = "unknown";
+
+			try {
+				oErrorDetails = JSON.parse(oError.responseText);
+				sCode = oErrorDetails.error.code;
+				sMessage = oErrorDetails.error.message.value;
+			} catch (error) {/*ignore errors while parsing the response*/}
+			MessageBox.error("Service request failed: " + sMessage + " (" + sCode + ").");
+		},
+
 		onCloseProductDetails : function () {
 			this.byId("productDetailsDialog").close();
+		},
+
+		onFixAllQuantities : function (oEvent) {
+			var oView = this.getView(),
+				oModel = oView.getModel(),
+				sSalesOrderID = oEvent.getSource().getBindingContext().getProperty("SalesOrderID");
+
+			oModel.callFunction("/SalesOrderItem_FixAllQuantities", {
+				error : this.defaultErrorHandler,
+				groupId : "FixQuantity",
+				method : "POST",
+				success : function () {
+					MessageToast.show("Successfully fixed all quantities for sales order "
+						+ sSalesOrderID);
+				},
+				urlParameters : {
+					SalesOrderID : encodeURL(sSalesOrderID)
+				}
+			});
+			// read requests for side-effects
+			// use refresh instead of ODataModel#read to read only items needed by the table
+			oView.byId("ToLineItems").getBinding("rows").refresh(undefined, "FixQuantity");
+			this.readSalesOrder("FixQuantity");
+
+			oModel.submitChanges({
+				error : this.defaultErrorHandler,
+				groupId : "FixQuantity"
+			});
+		},
+
+		onFixQuantity : function (oEvent) {
+			var oBindingContext = oEvent.getSource().getBindingContext(),
+				sItemPosition = oBindingContext.getProperty("ItemPosition"),
+				oModel = this.getView().getModel(),
+				sSalesOrderID = oBindingContext.getProperty("SalesOrderID");
+
+			oModel.callFunction("/SalesOrderItem_FixQuantity", {
+				error : this.defaultErrorHandler,
+				groupId : "FixQuantity",
+				method : "POST",
+				refreshAfterChange : false,
+				success : function () {
+					MessageToast.show("Successfully fixed the quantity for item " + sItemPosition);
+				},
+				urlParameters : {
+					ItemPosition : encodeURL(sItemPosition),
+					SalesOrderID : encodeURL(sSalesOrderID)
+				}
+			});
+			// read requests for side-effects
+			this.readSalesOrder("FixQuantity");
+
+			oModel.submitChanges({
+				error : this.defaultErrorHandler,
+				groupId : "FixQuantity"
+			});
 		},
 
 		onInit : function () {
@@ -60,10 +132,8 @@ sap.ui.define([
 		},
 
 		onRequestComplete : function (oEvent) {
-			var oView = this.getView();
-
 			if (!oEvent.getParameter("success")) {
-				oView.byId("messagePopover").toggle(oView.byId("messagePopoverButton"));
+				this.defaultErrorHandler(oEvent.getParameter("response"));
 			}
 		},
 
@@ -72,7 +142,31 @@ sap.ui.define([
 		},
 
 		onSaveSalesOrder : function () {
-			this.getView().getModel().submitChanges();
+			var oView = this.getView(),
+				sSalesOrder = oView.getModel("ui").getProperty("/salesOrderID");
+
+			// ensure that the read request is in the same batch
+			this.readSalesOrder("changes");
+			oView.getModel().submitChanges({
+				error : this.defaultErrorHandler,
+				success : function () {
+					MessageToast.show("Successfully saved the sales order '" + sSalesOrder + "'");
+				}
+			});
+		},
+
+		onSelectSalesOrder : function () {
+			var oView = this.getView(),
+				sSalesOrder = ODataUtils.formatValue(
+					encodeURL(oView.getModel("ui").getProperty("/salesOrderID")), "Edm.String"),
+				sContextPath = "/SalesOrderSet(" +  sSalesOrder + ")";
+
+			// do unbind first to ensure that the sales order is read again even if sales order ID
+			// did not change
+			oView.byId("objectPage").unbindElement();
+			oView.byId("objectPage").bindElement(sContextPath);
+			oView.byId("messagePopover").getBinding("items")
+				.filter(new Filter("fullTarget", FilterOperator.StartsWith, sContextPath));
 		},
 
 		onShowProductDetails : function (oEvent) {
@@ -82,29 +176,33 @@ sap.ui.define([
 			oDialog.open();
 		},
 
-		onSelectSalesOrder : function () {
-			var oView = this.getView(),
-				sSalesOrder = ODataUtils.formatValue(
-					encodeURL(oView.getModel("ui").getProperty("/salesOrderID")), "Edm.String"),
-				sContextPath = "/SalesOrderSet(" +  sSalesOrder + ")";
-
-			oView.byId("objectPage").unbindElement();
-			oView.byId("objectPage").bindElement(sContextPath);
-			oView.byId("messagePopover").getBinding("items")
-				.filter(new Filter("fullTarget", FilterOperator.StartsWith, sContextPath));
-		},
-
 		onTransitionMessagesOnly : function (oEvent) {
 			var oView = this.getView();
 
+			// first unbind element to ensure request order; header data need to be read before
+			// item data to show different behaviour based on transitionMessagesOnly
 			oView.byId("objectPage").unbindElement();
 			oView.byId("ToLineItems").bindRows({
-				path : "ToLineItems",
 				parameters : {
 					transitionMessagesOnly : oEvent.getSource().getPressed()
-				}
+				},
+				path : "ToLineItems"
 			});
 			this.onSelectSalesOrder();
+		},
+
+		readSalesOrder : function (sGroupId) {
+			var oView = this.getView();
+
+			oView.getModel().read("", {
+				context : oView.byId("objectPage").getBindingContext(),
+				groupId : sGroupId,
+				updateAggregatedMessages : true,
+				urlParameters : {
+					// key property and properties that might be affected by side effects
+					$select : ["ChangedAt", "GrossAmount", "SalesOrderID"]
+				}
+			});
 		},
 
 		/**
