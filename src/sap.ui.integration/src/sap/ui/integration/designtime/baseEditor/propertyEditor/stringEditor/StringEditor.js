@@ -3,10 +3,12 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
-	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString"
+	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString",
+	"sap/base/util/isPlainObject"
 ], function (
 	BasePropertyEditor,
-	isValidBindingString
+	isValidBindingString,
+	isPlainObject
 ) {
 	"use strict";
 
@@ -51,7 +53,7 @@ sap.ui.define([
 	});
 
 	StringEditor.prototype.setValue = function (vValue) {
-		if (vValue != null) {
+		if (vValue != null && !isPlainObject(vValue)) {
 			vValue = vValue.toString();
 		}
 		BasePropertyEditor.prototype.setValue.call(this, vValue);
