@@ -1316,6 +1316,28 @@ function (
 		oFCL.destroy();
 	});
 
+	QUnit.test("Event delegates of nav containers should be removed on destroy of the FCL", function (assert) {
+		// Arrange
+		var oFCL = oFactory.createFCL(),
+			sSpyName;
+
+		FlexibleColumnLayout.COLUMN_ORDER.forEach(function(sColumnName){
+			this["_" + sColumnName + "ColumnRemoveEventDelegateSpy"] = this.spy(oFCL._getColumnByStringName(sColumnName), "removeEventDelegate");
+		}, this);
+
+		// Act
+		oFCL.destroy();
+
+		// Assert
+		FlexibleColumnLayout.COLUMN_ORDER.forEach(function(sColumnName){
+			sSpyName = "_" + sColumnName + "ColumnRemoveEventDelegateSpy";
+			assert.strictEqual(this[sSpyName].calledOnce, true,"removeEventDelegate is called only once on " + sColumnName + " column.");
+			assert.strictEqual(this[sSpyName].calledWithExactly(oFCL["_" + sColumnName + "ColumnFocusOutDelegate"]), true,
+				"removeEventDelegate is called with the exact: _" + sColumnName + "ColumnFocusOutDelegate function.");
+			this[sSpyName] = null;
+		}, this);
+	});
+
 	QUnit.module("columnResize", {
 		beforeEach: function () {
 			this.oFCL = new FlexibleColumnLayout();
