@@ -1366,6 +1366,28 @@ sap.ui.define([
 			testContentInitialization(oManifest_TableCard, assert);
 		});
 
+		QUnit.module("Methods");
+
+		QUnit.test("createManifest called twice", function (assert) {
+			var done = assert.async(),
+				oCard = new Card({
+					width: "600px"
+				}),
+				oStub = sinon.stub(oCard, "_setCardContent").callsFake(function () {
+					assert.ok("_setCardContent is called only once and error is not thrown.");
+
+					oCard.destroy();
+					oStub.restore();
+
+					done();
+				});
+
+			oCard.createManifest(oManifest_ListCard);
+
+			oCard.destroyManifest();
+			oCard.createManifest(oManifest_ListCard);
+		});
+
 		QUnit.module("Card headers", {
 			beforeEach: function () {
 				this.oCard = new Card("somecard", {

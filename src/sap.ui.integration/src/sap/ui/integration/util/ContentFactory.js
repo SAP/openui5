@@ -39,26 +39,35 @@ sap.ui.define([
 		}
 	});
 
-	ContentFactory.prototype.create = function (sType, oConfiguration, oServiceManager, oDataProviderFactory, sAppId) {
+	ContentFactory.prototype.create = function (mConfig) {
 
-		var oCard = this._oCard;
+		var oCard = this._oCard,
+			sType = mConfig.cardType;
 
 		return new Promise(function (resolve, reject) {
 			var fnCreateContentInstance = function (Content) {
+
+				if ((mConfig.cardManifest && mConfig.cardManifest.isDestroyed()) ||
+					(mConfig.dataProviderFactory && mConfig.dataProviderFactory.isDestroyed())) {
+					// reject creating of the content if a new manifest is loaded meanwhile
+					reject();
+					return;
+				}
+
 				var oContent = new Content(),
 					oActions = new CardActions({
 						card: oCard
 					});
 
-				oContent._sAppId = sAppId;
-				oContent.setServiceManager(oServiceManager);
-				oContent.setDataProviderFactory(oDataProviderFactory);
+				oContent._sAppId = mConfig.appId;
+				oContent.setServiceManager(mConfig.serviceManager);
+				oContent.setDataProviderFactory(mConfig.dataProviderFactory);
 				oContent.setActions(oActions);
 
 				if (sType.toLowerCase() !== "adaptivecard") {
-					oContent.setConfiguration(BindingHelper.createBindingInfos(oConfiguration), sType);
+					oContent.setConfiguration(BindingHelper.createBindingInfos(mConfig.contentManifest), sType);
 				} else {
-					oContent.setConfiguration(oConfiguration);
+					oContent.setConfiguration(mConfig.contentManifest);
 				}
 
 				resolve(oContent);

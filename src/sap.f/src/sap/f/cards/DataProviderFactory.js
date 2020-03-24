@@ -42,6 +42,17 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider) {
 
 			this._aDataProviders = null;
 		}
+
+		this._bIsDestroyed = true;
+	};
+
+	/**
+	 * Returns if this factory is destroyed.
+	 *
+	 * @returns {boolean} if this manifest is destroyed
+	 */
+	DataProviderFactory.prototype.isDestroyed = function () {
+		return this._bIsDestroyed;
 	};
 
 	/**

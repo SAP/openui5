@@ -147,6 +147,17 @@ sap.ui.define([
 		if (this._oManifest) {
 			this._oManifest.destroy();
 		}
+
+		this._bIsDestroyed = true;
+	};
+
+	/**
+	 * Returns if this manifest is destroyed.
+	 *
+	 * @returns {boolean} if this manifest is destroyed
+	 */
+	Manifest.prototype.isDestroyed = function () {
+		return this._bIsDestroyed;
 	};
 
 	/**
