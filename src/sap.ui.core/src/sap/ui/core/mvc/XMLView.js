@@ -380,12 +380,12 @@ sap.ui.define([
 		}
 
 		function getCacheKeyPrefixes(oView, oRootComponent) {
-				var sComponentName = oRootComponent && oRootComponent.getMetadata().getName();
-				return [
-					sComponentName || window.location.host + window.location.pathname,
-					oView.getId(),
-					sap.ui.getCore().getConfiguration().getLanguageTag()
-				];
+			var sComponentName = oRootComponent && oRootComponent.getMetadata().getName();
+			return [
+				sComponentName || window.location.host + window.location.pathname,
+				oView.getId(),
+				sap.ui.getCore().getConfiguration().getLanguageTag()
+			].concat(oRootComponent && oRootComponent.getActiveTerminologies() || []);
 		}
 
 		function getCacheKeyProviders(oView) {
