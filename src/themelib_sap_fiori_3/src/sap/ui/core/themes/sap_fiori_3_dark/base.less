@@ -77,7 +77,7 @@
 
 @sapLink_Visited_Color: @sapLinkColor;
 
-@sapLink_InvertedColor: lighten(@sapLinkColor,48);
+@sapLink_InvertedColor: lighten(@sapLinkColor, 14);
 
 // [Label "Company Logo"]
 // [Description "The URI to the logo of your company"]
@@ -125,39 +125,39 @@
 
 
 /* ACCENT COLORS */
-@sapAccentColor1: #e78e16;
-@sapAccentColor2: #d04343;
-@sapAccentColor3: #db1f77;
-@sapAccentColor4: #c949aa;
-@sapAccentColor5: #787ce2;
-@sapAccentColor6: #a9d4ff;
-@sapAccentColor7: #0f828f;
-@sapAccentColor8: #7ca10c;
-@sapAccentColor9: #925ace;
-@sapAccentColor10: #647987;
+@sapAccentColor1: #ffc847;
+@sapAccentColor2: #e7a1a1;
+@sapAccentColor3: #f37aa2;
+@sapAccentColor4: #e269c9;
+@sapAccentColor5: #8ca7d5;
+@sapAccentColor6: #6bd3ff;
+@sapAccentColor7: #7fc6c6;
+@sapAccentColor8: #b2e484;
+@sapAccentColor9: #b995e0;
+@sapAccentColor10: #b0bcc5;
 
 
 /* LEGEND COLORS */
-@sapLegendColor1: #d58215;
-@sapLegendColor2: #dc5b5b;
-@sapLegendColor3: #ea2e86;
-@sapLegendColor4: #c16161;
-@sapLegendColor5: #cf5db3;
-@sapLegendColor6: #478fd6;
-@sapLegendColor7: #1193a2;
-@sapLegendColor8: #8b9668;
-@sapLegendColor9: #6c8298;
-@sapLegendColor10: #bc5ca4;
-@sapLegendColor11: #917959;
-@sapLegendColor12: #da4e4e;
-@sapLegendColor13: #db3a85;
-@sapLegendColor14: #937957;
-@sapLegendColor15: #7778a7;
-@sapLegendColor16: #597da1;
-@sapLegendColor17: #58888d;
-@sapLegendColor18: #70823b;
-@sapLegendColor19: #4f7faf;
-@sapLegendColor20: #7073dc;
+@sapLegendColor1: #f0b25f;
+@sapLegendColor2: #f58c4b;
+@sapLegendColor3: #d88b8b;
+@sapLegendColor4: #bd8969;
+@sapLegendColor5: #de54c1;
+@sapLegendColor6: #5c9cdb;
+@sapLegendColor7: #21c4c4;
+@sapLegendColor8: #afd645;
+@sapLegendColor9: #38c3ff;
+@sapLegendColor10: #bb8aaf;
+@sapLegendColor11: #d1b575;
+@sapLegendColor12: #ffb98d;
+@sapLegendColor13: #ffa1a1;
+@sapLegendColor14: #d5b39e;
+@sapLegendColor15: #b7a8b3;
+@sapLegendColor16: #bbbcd2;
+@sapLegendColor17: #a2c2c2;
+@sapLegendColor18: #aabc78;
+@sapLegendColor19: #a9d4ff;
+@sapLegendColor20: #c3c5fd;
 
 
 /* Semantic Background Colors */
@@ -339,7 +339,7 @@
 // [Label "Marker Text Color"]
 // [Description "The color of Marker Texts."]
 // [Tags "Base", "Content", "Color", "Font"]
-@sapContent_MarkerTextColor: lighten(@sapAccentColor7, 30);
+@sapContent_MarkerTextColor: @sapAccentColor7;
 
 // [Label "Image Placeholder Background Color"]
 // [Description "The background color of Image Placeholders."]
@@ -394,7 +394,7 @@
 // [Label "Content Search Result Highlight Color"]
 // [Description "The color of found search results in the content."]
 // [Tags "Base", "Content", "Color"]
-@sapContent_SearchHighlightColor: #d4f7db;
+@sapContent_SearchHighlightColor: #058088;
 
 // [Label "Content Help Indication Color"]
 // [Description "The color which indicates that the element has help content."]
@@ -448,7 +448,7 @@
 // [Label "Content Badge Background"]
 // [Description "The background color of badges."]
 // [Tags "Base", "Content", "Color"]
-@sapContent_BadgeBackground: @sapAccentColor2;
+@sapContent_BadgeBackground: darken(saturate(@sapAccentColor2, 1), 23);
 
 @sapContent_DragAndDropActiveColor: @sapActiveColor;
 
@@ -526,7 +526,7 @@
 
 @sapShell_Navigation_TextColor: @sapShell_GroupTitleTextColor;
 
-@sapShell_Shadow: 0 0 0.5rem 0 fade(@sapContent_ShadowColor, 30), inset 0 -0.0625rem 0 0 fade(@sapContent_ShadowColor, 8);
+@sapShell_Shadow: 0 0 0.5rem 0 fade(@sapContent_ShadowColor, 80), inset 0 -0.0625rem 0 0 fade(@sapContent_ShadowColor, 20);
 
 // [Label "Button Border Thickness"]
 // [Description "The thickness of button borders."]
@@ -574,27 +574,27 @@
 
 @sapButton_Active_BorderColor: @sapButton_Active_Background;
 
-@sapButton_Active_TextColor: contrast(@sapButton_Active_Background, @sapButton_TextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapButton_Active_TextColor: contrast(@sapButton_Active_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Emphasized Button Background Color"]
 // [Description "The background color of emphasized buttons."]
 // [Tags "Base", "Button", "Color"]
-@sapButton_Emphasized_Background: darken(@sapBrandColor, 33);
+@sapButton_Emphasized_Background: darken(@sapBrandColor, 25);
 
 // [Label "Emphasized Button Border Color"]
 // [Description "The border color of emphasized buttons."]
 // [TranslationKey "sapButton_Emphasized_BorderCol"]
 // [Tags "Base", "Button", "Color"]
-@sapButton_Emphasized_BorderColor: lighten(@sapButton_Emphasized_Background, 20);
+@sapButton_Emphasized_BorderColor: @sapButton_Emphasized_Background;
 
 // [Label "Emphasized Button Text Color"]
 // [Description "The color of texts on emphasized buttons."]
 // [Tags "Base", "Button", "Color", "Font"]
 @sapButton_Emphasized_TextColor: contrast(@sapButton_Emphasized_Background, lighten(@sapPrimary2, 30), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
-@sapButton_Emphasized_Hover_Background: darken(@sapButton_Emphasized_Background, 7);
+@sapButton_Emphasized_Hover_Background: lighten(@sapButton_Emphasized_Background, 4);
 
-@sapButton_Emphasized_Hover_BorderColor: @sapButton_Emphasized_BorderColor;
+@sapButton_Emphasized_Hover_BorderColor: @sapButton_Emphasized_Hover_Background;
 
 @sapButton_Emphasized_Hover_TextColor: contrast(@sapButton_Emphasized_Hover_Background, lighten(@sapPrimary2, 30), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
@@ -613,7 +613,7 @@
 
 @sapButton_Reject_BorderColor: @sapNegativeElementColor;
 
-@sapButton_Reject_Hover_Background: lighten(@sapErrorBackground, 5);
+@sapButton_Reject_Hover_Background: @sapErrorBackground;
 
 @sapButton_Reject_Hover_BorderColor: @sapButton_Reject_BorderColor;
 
@@ -632,7 +632,7 @@
 
 @sapButton_Accept_BorderColor: @sapPositiveElementColor;
 
-@sapButton_Accept_Hover_Background: lighten(@sapSuccessBackground, 5);
+@sapButton_Accept_Hover_Background: @sapSuccessBackground;
 
 @sapButton_Accept_Hover_BorderColor: @sapButton_Accept_BorderColor;
 
@@ -753,7 +753,7 @@
 // [Label "Required Field Color"]
 // [Description "The color of the asterisk next to required input fields."]
 // [Tags "Base", "Field", "Color"]
-@sapField_RequiredColor: lighten(@sapAccentColor2, 14);
+@sapField_RequiredColor: @sapAccentColor2;
 
 // [Label "Invalid Field Color"]
 // [Description "The base color of input fields with an invalid value."]
@@ -803,7 +803,7 @@
 // [Label "Group Title Border Color"]
 // [Description "The color of the borders of the group header area."]
 // [Tags "Base", "Group", "Color"]
-@sapGroup_TitleBorderColor: lighten(@sapBaseColor, 20);
+@sapGroup_TitleBorderColor: lighten(@sapBaseColor, 15);
 
 // [Label "Group Title Text Color"]
 // [Description "The text color of the group title. The text color of the title of a group."]
@@ -879,7 +879,7 @@
 
 @sapList_Active_Background: @sapActiveColor;
 
-@sapList_Active_TextColor: contrast(@sapList_Active_Background, @sapList_TextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapList_Active_TextColor: contrast(@sapList_Active_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "List Highlight Color"]
 // [Description "The color of highlighted elements in lists."]
@@ -894,7 +894,7 @@
 
 @sapList_SelectionBorderColor: @sapSelectedColor;
 
-@sapList_Hover_SelectionBackground: contrast(@sapList_SelectionBackgroundColor,darken(@sapList_SelectionBackgroundColor, 3), lighten(@sapList_SelectionBackgroundColor, 3));
+@sapList_Hover_SelectionBackground: contrast(@sapList_SelectionBackgroundColor ,darken(@sapList_SelectionBackgroundColor, 3), lighten(@sapList_SelectionBackgroundColor, 3));
 
 // [Label "List Background Color"]
 // [Description "The background color of lists."]
@@ -910,7 +910,7 @@
 
 @sapList_GroupHeaderBorderColor: lighten(@sapList_BorderColor, 20);
 
-@sapList_GroupHeaderTextColor: @sapList_TextColor;
+@sapList_GroupHeaderTextColor: contrast(@sapList_GroupHeaderBackground, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapList_FooterBackground: darken(@sapList_Background, 2);
 
@@ -920,7 +920,7 @@
 
 @sapList_TableGroupHeaderBorderColor: lighten(@sapList_BorderColor, 15);
 
-@sapList_TableGroupHeaderTextColor: contrast(@sapList_TableGroupHeaderBackground, @sapList_TextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapList_TableGroupHeaderTextColor: contrast(@sapList_TableGroupHeaderBackground, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapList_TableFooterBorder: lighten(@sapList_BorderColor, 8);
 
@@ -929,12 +929,12 @@
 // [Label "Scrollbar Face Color"]
 // [Description "The color of the surface of a scrollbar."]
 // [Tags "Base", "Scrollbar", "Color"]
-@sapScrollBar_FaceColor: lighten(@sapBaseColor, 15);
+@sapScrollBar_FaceColor: lighten(@sapBaseColor, 34);
 
 // [Label "Scrollbar Track Color"]
 // [Description "The color of the track of a scrollbar."]
 // [Tags "Base", "Scrollbar", "Color"]
-@sapScrollBar_TrackColor: darken(@sapBaseColor, 4);
+@sapScrollBar_TrackColor: darken(@sapBaseColor, 15);
 
 // [Label "Scrollbar Border Color"]
 // [Description "The color of the borders of a scrollbar."]
@@ -974,7 +974,7 @@
 // [Label "Page Footer Background Color"]
 // [Description "The background color of page footers."]
 // [Tags "Base", "Page", "Color"]
-@sapPageFooter_Background: darken(@sapShellColor, 5);
+@sapPageFooter_Background: lighten(saturate(@sapBaseColor, 11.7), 4.75);
 
 @sapPageFooter_BorderColor: lighten(@sapPageFooter_Background, 8);
 
@@ -988,9 +988,9 @@
 // [Tags "Base", "Page", "Color"]
 @sapInfobar_Background: @sapAccentColor7;
 
-@sapInfobar_Hover_Background: lighten(@sapInfobar_Background, 5);
+@sapInfobar_Hover_Background: darken(@sapInfobar_Background, 3);
 
-@sapInfobar_Active_Background: lighten(@sapInfobar_Background, 10);
+@sapInfobar_Active_Background: darken(@sapInfobar_Background, 11);
 
 // [Label "Object Header Background Color"]
 // [Description "The background color of object headers."]
@@ -1031,7 +1031,7 @@
 // [Label "Tile Icon Color"]
 // [Description "The color of icons on tiles."]
 // [Tags "Base", "Content", "Color"]
-@sapTile_IconColor: contrast(@sapTile_Background, lighten(@sapShellColor ,35), @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold);
+@sapTile_IconColor: contrast(@sapTile_Background, lighten(@sapShellColor, 35), @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Chart Ordered Color 1"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
