@@ -413,6 +413,15 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/baseEditor/util/unset": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/util/unset"
+					]
+				},
+				sinon: false
+			},
 			"designtime/cardEditor/CardEditor": {
 				group: "Card DesignTime Editor",
 				coverage: {

@@ -201,7 +201,7 @@ sap.ui.define([
 			typeof vValue === "undefined"
 			|| deepEqual(vValue, oPropertyEditor.getConfig().defaultValue)
 		) {
-			unset(aParts, aEditorValue);
+			unset(aEditorValue, aParts, aParts.length - 2);
 		}
 
 		this.setValue(aEditorValue);
