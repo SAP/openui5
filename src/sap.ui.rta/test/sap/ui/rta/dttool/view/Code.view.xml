@@ -10,7 +10,6 @@
 	<IconTabHeader
 		id="tabHead"
 		items="{/files}"
-		showOverflowSelectList="true"
 		select="onTabSelect"
 		selectedKey="{/fileName}">
 		<items>

@@ -4,7 +4,7 @@
 /* =========================================== */
 
 @_sap_m_IconTabBar_SelectListItem_PaddingLeft: 0.5rem;
-@_sap_m_IconTabBar_SelectListItem_PaddingLeftAdditional: 0rem;
+@_sap_m_IconTabBar_SelectListItem_PaddingLeftAdditional: 0;
 
 .sapMITBSelectList {
 	margin: 0;
@@ -43,16 +43,16 @@
 	user-select: none;
 }
 
-.sapMITBSelectItem .sapMText {
+.sapMITBSelectItem .sapMITBText {
 	width: 100%;
 	display: block;
 	padding: 0 1rem 0 0;
 	pointer-events: none;
 	flex: 1;
-	min-width:0;  // chrome flex overflow issue
+	min-width: 0;  // chrome flex overflow issue
 }
 
-.sapMITBSelectListTextOnly .sapMITBSelectItem .sapMText {
+.sapMITBSelectListTextOnly .sapMITBSelectItem .sapMITBText {
 	padding-left: 1rem;
 }
 
@@ -69,12 +69,12 @@
 		height: 2rem;
 	}
 
-	.sapMITBSelectItem .sapMText {
+	.sapMITBSelectItem .sapMITBText {
 		padding: 0 0.5rem 0 0;
 		font-size: @sapMFontSmallSize;
 	}
 
-	.sapMITBSelectListTextOnly .sapMITBSelectItem .sapMText {
+	.sapMITBSelectListTextOnly .sapMITBSelectItem .sapMITBText {
 		padding-left: 0.5rem;
 	}
 
@@ -87,8 +87,18 @@
 }
 
 .sapMITBSelectItem {
-	border-bottom: 1px solid @sapUiListBorderColor;
 	background-color: @sapUiListBackground;
+}
+
+.sapMITBSelectItem {
+	&.sapMITBFilterNeutral,
+	&.sapMITBFilterNegative,
+	&.sapMITBFilterPositive,
+	&.sapMITBFilterCritical {
+		.sapMITBText {
+			color: inherit;
+		}
+	}
 }
 
 .sapMITBSelectItem:not(.sapMITHUnselectable):hover {
@@ -101,7 +111,7 @@
 	&.sapMITBSelectItemSelected:not(.sapUiDnDDragging):active {
 		background-color: @sapUiListActiveBackground;
 
-		& > .sapMText {
+		& > .sapMITBText {
 			color: @sapUiListActiveTextColor;
 		}
 
