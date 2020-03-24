@@ -46,9 +46,9 @@
 				</l:BlockLayoutRow>
 			</l:BlockLayout>
 		</Panel>
-		<l:Grid defaultSpan="XL4 L6 M6 S12" class="toolpageResponsiveMargins">
+		<l:Grid defaultSpan="XL3 L4 M4 S12" class="toolpageResponsiveMargins">
 			<!-- WebIDE -->
-			<f:Card height="25rem">
+			<f:Card class="threeColumnLayoutCard">
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin">
@@ -94,7 +94,7 @@
 				</f:content>
 			</f:Card>
 			<!-- UI Theme Designer -->
-			<f:Card height="25rem">
+			<f:Card class="threeColumnLayoutCard">
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin">
@@ -140,10 +140,7 @@
 				</f:content>
 			</f:Card>
 			<!-- UI5 Tooling -->
-			<f:Card class="threeColumnLayoutCard">
-				<f:layoutData>
-					<l:GridData spanM="4" spanL="4"/>
-				</f:layoutData>
+			<f:Card class="threeColumnLayoutCard">	
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin">
@@ -189,10 +186,10 @@
 				</f:content>
 			</f:Card>
 			<!-- UI5 Inspector -->
-			<f:Card class="threeColumnLayoutCard">
+			<f:Card height="25rem">
 				<f:layoutData>
-					<l:GridData spanM="4" spanL="4"/>
-				</f:layoutData>
+					<l:GridData spanM="6" spanL="6"/>
+				</f:layoutData>	
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin">
@@ -231,11 +228,61 @@
 					</VBox>
 				</f:content>
 			</f:Card>
+			<!-- Card Explorer -->
+			<f:Card height="25rem">
+				<f:layoutData>
+					<l:GridData spanM="6" spanL="6"/>
+				</f:layoutData>
+				<f:content>
+					<VBox justifyContent="SpaceBetween">
+						<VBox class="sapUiSmallMargin">
+							<custom:TitleLink
+								level="H1"
+								titleStyle="H1"
+								text="Card Explorer"
+								href="test-resources/sap/ui/integration/demokit/cardExplorer/index.html"
+								target="_blank"
+								class="sapUiSmallMarginBottom"/>
+							<Text class="sapUiSmallMarginBottom" text="Integration Cards are new way to provide and consume widget-like cards for home page or dashboard." />
+							<HBox wrap="Wrap">
+								<Link text="View Documentation"
+									target="_blank"
+									href="test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html"
+									class="sapUiMediumMarginEnd"/>
+								<Link text="Explore Samples"
+									target="_blank"
+									href="test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html#/explore/list"/>
+							</HBox>
+						</VBox>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/CardExplorer.png" class="toolsPageImage"/>
+					</VBox>
+				</f:content>
+			</f:Card>
+			<!-- Support Assistant -->
+			<f:Card class="threeColumnLayoutCard">
+				<f:content>
+					<VBox justifyContent="SpaceBetween">
+						<VBox class="sapUiSmallMargin">
+							<custom:TitleLink
+									level="H1"
+									titleStyle="H1"
+									text="Support Assistant"
+									class="sapUiSmallMarginBottom"
+									href="topic/57ccd7d7103640e3a187ed55e1d2c163"
+									target="_blank"/>
+							<Text class="sapUiSmallMarginBottom" text="The Support Assistant enables developers to check whether their apps are built according to the SAPUI5 best practices and guidelines." />
+							<HBox wrap="Wrap">
+								<Link text="View Documentation"
+									target="_blank"
+									href="topic/57ccd7d7103640e3a187ed55e1d2c163"/>
+							</HBox>
+						</VBox>
+						<Image src="./resources/sap/ui/documentation/sdk/images/tools/SupportAssistant.png" class="toolsPageImage"  alt="Picture showing Support Assistant in action"/>
+					</VBox>
+				</f:content>
+			</f:Card>
 			<!-- Icon Explorer -->
 			<f:Card class="threeColumnLayoutCard">
-				<f:layoutData>
-					<l:GridData spanM="4" spanL="4"/>
-				</f:layoutData>
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin">
@@ -265,35 +312,8 @@
 					</VBox>
 				</f:content>
 			</f:Card>
-			<!-- Card Explorer -->
-			<f:Card height="25rem">
-				<f:content>
-					<VBox justifyContent="SpaceBetween">
-						<VBox class="sapUiSmallMargin">
-							<custom:TitleLink
-								level="H1"
-								titleStyle="H1"
-								text="Card Explorer"
-								href="test-resources/sap/ui/integration/demokit/cardExplorer/index.html"
-								target="_blank"
-								class="sapUiSmallMarginBottom"/>
-							<Text class="sapUiSmallMarginBottom" text="Integration Cards are new way to provide and consume widget-like cards for home page or dashboard." />
-							<HBox wrap="Wrap">
-								<Link text="View Documentation"
-									target="_blank"
-										href="test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html"
-									class="sapUiMediumMarginEnd"/>
-								<Link text="Explore Samples"
-									target="_blank"
-									href="test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html#/explore/list"/>
-							</HBox>
-						</VBox>
-						<Image src="./resources/sap/ui/documentation/sdk/images/tools/CardExplorer.png" class="toolsPageImage"/>
-					</VBox>
-				</f:content>
-			</f:Card>
 			<!-- Theme Parameter Toolbox -->
-			<f:Card height="25rem">
+			<f:Card class="threeColumnLayoutCard">
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin">
@@ -307,75 +327,6 @@
 							<Text class="sapUiSmallMarginBottom" text="Search, filter and preview semantic theme parameters." />
 						</VBox>
 						<Image src="./resources/sap/ui/documentation/sdk/images/tools/ThemeParameterToolbox.png" class="toolsPageImage" alt="Picture showing Theme Parameter Toolbox"/>
-					</VBox>
-				</f:content>
-			</f:Card>
-			<!-- Support Assistant -->
-			<f:Card height="25rem">
-				<f:content>
-					<VBox justifyContent="SpaceBetween">
-						<VBox class="sapUiSmallMargin">
-							<custom:TitleLink
-									level="H1"
-									titleStyle="H1"
-									text="Support Assistant"
-									class="sapUiSmallMarginBottom"
-									href="topic/57ccd7d7103640e3a187ed55e1d2c163"
-									target="_blank"/>
-							<Text class="sapUiSmallMarginBottom" text="The Support Assistant enables developers to check whether their apps are built according to the SAPUI5 best practices and guidelines." />
-							<HBox wrap="Wrap">
-								<Link text="View Documentation"
-									target="_blank"
-									href="topic/57ccd7d7103640e3a187ed55e1d2c163"/>
-							</HBox>
-						</VBox>
-						<Image src="./resources/sap/ui/documentation/sdk/images/tools/SupportAssistant.png" class="toolsPageImage"  alt="Picture showing Support Assistant in action"/>
-					</VBox>
-				</f:content>
-			</f:Card>
-			<!-- Build -->
-			<f:Card height="25rem">
-				<f:content>
-					<VBox justifyContent="SpaceBetween">
-						<VBox class="sapUiSmallMargin">
-							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
-								<custom:TitleLink
-										level="H1"
-										titleStyle="H1"
-										text="Build"
-										href="https://www.build.me"
-										target="_blank"/>
-								<Image
-									src="./resources/sap/ui/documentation/sdk/images/link-external.png"
-									tooltip="Information published on SAP site"
-									width="1.25rem"
-									press="onDisclaimerLinkPress"/>
-							</html:div>
-							<Text class="sapUiSmallMarginBottom" text="Everything you need to design beautiful apps in one set of cloud-based tools." />
-							<HBox wrap="Wrap">
-								<html:div class="sapUIDisclaimerLink">
-									<Link text="View Documentation"
-										target="_blank"
-										href="http://sap.github.io/BUILD_User_Assistance/build/external/"/>
-									<Image
-										src="./resources/sap/ui/documentation/sdk/images/link-external.png"
-										tooltip="Information published on SAP site"
-										width="1.25rem"
-										press="onDisclaimerLinkPress"/>
-								</html:div>
-								<html:div class="sapUIDisclaimerLink">
-									<Link text="View Source Code"
-										target="_blank"
-										href="https://www.github.com/SAP/BUILD"/>
-									<Image
-										src="./resources/sap/ui/documentation/sdk/images/link-external.png"
-										tooltip="Information published on SAP site"
-										width="1.25rem"
-										press="onDisclaimerLinkPress"/>
-								</html:div>
-							</HBox>
-						</VBox>
-						<Image src="./resources/sap/ui/documentation/sdk/images/tools/Build.png" class="toolsPageImage"  alt="Picture showing SAP UI5 Build in action"/>
 					</VBox>
 				</f:content>
 			</f:Card>
