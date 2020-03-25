@@ -584,7 +584,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	/**
 	 * Performs a "SelectAll" also known as CTRL + A on the whole browser window
 	 *
-	 * @public
+	 * @protected
 	 */
 	QUtils.triggerSelectAll = function(){
 		document.getSelection().selectAllChildren(document.body);
@@ -595,7 +595,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	 *
 	 * @param {string} [sText] The given text
 	 * @returns {boolean} If the selected text is equal with the given <code>sText</code>
-	 * @public
+	 * @protected
 	 */
 	QUtils.isSelectedTextEqual = function(sText){
 		var sSelectedText = QUtils.getSelectedText();
@@ -607,7 +607,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	 *
 	 * @param {string | string[]} [vText] The given text or an array of string
 	 * @returns {boolean} If the selected text contains the given <code>sText</code>
-	 * @public
+	 * @protected
 	 */
 	QUtils.includesSelectedText = function(vText){
 		var sSelectedText = QUtils.getSelectedText();
@@ -626,7 +626,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	 * Determines the selected text, if no text is selected an empty string is returned
 	 *
 	 * @returns {string} The selected text
-	 * @public
+	 * @protected
 	 */
 	QUtils.getSelectedText = function(){
 		return document.getSelection().toString().replace(/\n/g, "");
