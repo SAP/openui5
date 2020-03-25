@@ -939,7 +939,7 @@ sap.ui.define([
 
 			// no expectedAnnotationsV4 so there is no need for $annotations at the schema
 			if (!oFixture.expectedAnnotationsV4) {
-				delete oExpectedResult["GWSAMPLE_BASIC.0001."]["$Annotations"];
+				delete oExpectedResult["GWSAMPLE_BASIC.0001."].$Annotations;
 			}
 			testConversion(assert, sXML, oExpectedResult);
 		});
@@ -1521,7 +1521,7 @@ sap.ui.define([
 
 			// no expectedAnnotationsV4 so there is no need for $annotations at the schema
 			if (!oFixture.expectedAnnotationsV4) {
-				delete oExpectedResult["GWSAMPLE_BASIC."]["$Annotations"];
+				delete oExpectedResult["GWSAMPLE_BASIC."].$Annotations;
 			}
 			if (oFixture.message) {
 				this.oLogMock.expects("warning")

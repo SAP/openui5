@@ -244,7 +244,7 @@ sap.ui.define([
 	 * Deregisters the given change listener from the given path.
 	 *
 	 * @param {string} sPath
-	 *   The path
+	 *   The path relative to the binding
 	 * @param {object} oListener
 	 *   The change listener
 	 *
@@ -470,7 +470,7 @@ sap.ui.define([
 
 		sContextPath = oContext.getPath();
 		bCanonicalPath = oContext.fetchCanonicalPath
-			&& (this.mParameters && this.mParameters["$$canonicalPath"]
+			&& (this.mParameters && this.mParameters.$$canonicalPath
 				|| rIndexOrTransientPredicate.test(sContextPath));
 		oContextPathPromise = bCanonicalPath
 			? oContext.fetchCanonicalPath()
@@ -522,7 +522,7 @@ sap.ui.define([
 	 * "/foo" -> undefined
 	 *
 	 * @param {string} sPath
-	 *   A path
+	 *   A path (absolute or relative to this binding)
 	 * @returns {string}
 	 *   The given path, if it is already relative; otherwise the path relative to the binding's
 	 *   resolved path or return value context path; <code>undefined</code> if the path does not
@@ -632,7 +632,7 @@ sap.ui.define([
 	 * be inherited from the parent).
 	 *
 	 * @param {string} sPath
-	 *   The path
+	 *   The path (absolute or relative to this binding)
 	 * @returns {boolean}
 	 *   <code>true</code> if there are pending changes for the path
 	 *
@@ -906,7 +906,7 @@ sap.ui.define([
 	 * the parent).
 	 *
 	 * @param {string} sPath
-	 *   The path
+	 *   The path (absolute or relative to this binding)
 	 * @param {sap.ui.base.SyncPromise[]} aPromises
 	 *   List of promises which is extended for each call to {@link #resetChangesForPath}
 	 * @throws {Error}

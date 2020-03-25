@@ -2953,13 +2953,16 @@ sap.ui.define([
 	{$expand : {Nav : {}}}
 ].forEach(function (mParentQueryOptions, i) {
 	QUnit.test("getQueryOptionsFromParameters: $$inheritExpandSelect #" + i, function (assert) {
-		var oContext = Context.create(this.oModel, {
-				mCacheQueryOptions : mParentQueryOptions
-			}, "/SalesOrderList('4711')"),
+		var oParentBinding = {
+				getCacheQueryOptions : function () {}
+			},
+			oContext = Context.create(this.oModel, oParentBinding, "/SalesOrderList('4711')"),
 			oBinding = this.bindContext("bound.Operation(...)", oContext,
 				{foo : "bar", $$inheritExpandSelect : true}),
 			mQueryOptions = {};
 
+		this.mock(oParentBinding).expects("getCacheQueryOptions").withExactArgs()
+			.returns(mParentQueryOptions);
 		this.mock(Object).expects("assign")
 			.withExactArgs({}, sinon.match.same(oBinding.mQueryOptions))
 			.returns(mQueryOptions);
