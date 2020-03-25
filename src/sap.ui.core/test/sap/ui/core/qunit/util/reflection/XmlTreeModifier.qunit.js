@@ -470,7 +470,7 @@ function(
 			assert.deepEqual(oValueBefore, oControl.getAttribute("crossAppNavCallback"), "the property was not changed");
 		});
 
-		function getVisibleLabel(oXmlView){
+		function getVisibleLabel(oXmlView) {
 			var oVBox = XmlTreeModifier._children(oXmlView)[0];
 			var aChildNodes = XmlTreeModifier._children(oVBox);
 
@@ -743,8 +743,8 @@ function(
 			assert.notOk(oExtensionPointInfo, "then nothing is returned");
 		});
 
-		function _getDelegate(mControlsDelegateInfo){
-			var oControl = XmlTreeModifier._byId("hbox2",this.oXmlView2);
+		function _getDelegate(mControlsDelegateInfo) {
+			var oControl = XmlTreeModifier._byId("hbox2", this.oXmlView2);
 			if (mControlsDelegateInfo) {
 				oControl.setAttributeNS("sap.ui.fl","delegate", JSON.stringify(mControlsDelegateInfo));
 			}
