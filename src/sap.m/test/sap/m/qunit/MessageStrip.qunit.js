@@ -68,6 +68,15 @@ sap.ui.define([
 		assert.strictEqual(this.oMessageStrip.getType(), "Information", "should forward to Information");
 	});
 
+	QUnit.test("Setting undefined as type", function(assert) {
+		// act
+		this.oMessageStrip.setType(undefined);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.strictEqual(this.oMessageStrip.getType(), "Information", "should forward to Information");
+	});
+
 	QUnit.test("Setting custom icon on Error state", function(assert) {
 		// act
 		this.oMessageStrip.setType("Error");

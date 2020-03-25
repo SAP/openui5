@@ -198,7 +198,7 @@ sap.ui.define([
 	 * @returns {sap.m.MessageStrip} this to allow method chaining
 	 */
 	MessageStrip.prototype.setType = function (sType) {
-		if (sType === MessageType.None) {
+		if (!sType || sType === MessageType.None) {
 			Log.warning(MSUtils.MESSAGES.TYPE_NOT_SUPPORTED);
 			sType = MessageType.Information;
 		}
