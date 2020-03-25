@@ -25,7 +25,7 @@ sap.ui.define([
 	var ExtensionPointRegistry = function() {
 		this._bEnabledObserver = sap.ui.getCore().getConfiguration().getDesignMode();
 		this._mObservers = {};
-		this._mExtensionPointsByParent = [];
+		this._aExtensionPointsByParent = [];
 		this._mExtensionPointsByViewId = {};
 	};
 
@@ -52,7 +52,7 @@ sap.ui.define([
 	 */
 	ExtensionPointRegistry.prototype._spotExtensionPointsInAggregation = function(sParentId) {
 		var mAggregations = {};
-		this._mExtensionPointsByParent[sParentId].forEach(function(oExtensionPoint) {
+		this._aExtensionPointsByParent[sParentId].forEach(function(oExtensionPoint) {
 			if (!mAggregations[oExtensionPoint.aggregationName]) {
 				mAggregations[oExtensionPoint.aggregationName] = [];
 			}
@@ -74,7 +74,7 @@ sap.ui.define([
 		var sAggregationName;
 		var iOffset;
 
-		this._mExtensionPointsByParent[sParentId].forEach(function(oExtensionPoint) {
+		this._aExtensionPointsByParent[sParentId].forEach(function(oExtensionPoint) {
 			sAggregationName = oExtensionPoint.aggregationName;
 			if (sAggregationName === oEvent.name) {
 				// Internally the XML nodes of an aggregation are used where the extension points are available. This
@@ -148,14 +148,14 @@ sap.ui.define([
 		});
 
 		var sParentId = oParent.getId();
-		if (!this._mExtensionPointsByParent[sParentId]) {
-			this._mExtensionPointsByParent[sParentId] = [];
+		if (!this._aExtensionPointsByParent[sParentId]) {
+			this._aExtensionPointsByParent[sParentId] = [];
 		}
 		if (!this._mExtensionPointsByViewId[sViewId]) {
 			this._mExtensionPointsByViewId[sViewId] = {};
 		}
 		mExtensionPointInfo.aggregation = aControlIds;
-		this._mExtensionPointsByParent[sParentId].push(mExtensionPointInfo);
+		this._aExtensionPointsByParent[sParentId].push(mExtensionPointInfo);
 		this._mExtensionPointsByViewId[sViewId][mExtensionPointInfo.name] = mExtensionPointInfo;
 	};
 
@@ -172,13 +172,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the extension point information by parentId name.
+	 * Returns the extension point information by parent id.
 	 *
 	 * @param {string} sParentId - Id of the extension point parent control
-	 * @returns {object} mExtensionPointInfo - Map of extension point information
+	 * @returns {array} of extension point informations.
 	 */
 	ExtensionPointRegistry.prototype.getExtensionPointInfoByParentId = function (sParentId) {
-		return this._mExtensionPointsByParent[sParentId] || [];
+		return this._aExtensionPointsByParent[sParentId] || [];
 	};
 
 	/**
@@ -190,7 +190,7 @@ sap.ui.define([
 			this._mObservers[sParentId].observer.destroy();
 		}.bind(this));
 		this._mObservers = {};
-		this._mExtensionPointsByParent = [];
+		this._aExtensionPointsByParent = [];
 		this._mExtensionPointsByViewId = {};
 		ExtensionPointRegistry._instance = undefined;
 	};
