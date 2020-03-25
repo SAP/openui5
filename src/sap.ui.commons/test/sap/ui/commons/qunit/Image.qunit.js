@@ -153,7 +153,7 @@ sap.ui.define([
 			assert.equal(oDomRef.offsetWidth, 292, "i2.offsetWidth should equal 292");
 			assert.equal(oDomRef.offsetHeight, 144, "i2.offsetHeight should equal 144");
 			done();
-		}, 100);
+		}, 200);
 	});
 
 	QUnit.test("Original Width", function(assert) {
