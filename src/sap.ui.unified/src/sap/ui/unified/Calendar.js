@@ -2305,10 +2305,11 @@ sap.ui.define([
 			sPrimaryCalendarType = this.getPrimaryCalendarType(),
 			oStartDate = CalendarDate.fromLocalJSDate(oYearRangePicker.getDate(), sPrimaryCalendarType),
 			oEndDate = new CalendarDate(oStartDate.getYear() + iRangeSize - 1, 0, 1, sPrimaryCalendarType),
-			oFocusedDate = new CalendarDate(oStartDate.getYear() + Math.floor(iRangeSize / 2), 0, 1, sPrimaryCalendarType),
+			oFocusedDate = this._getFocusedDate(),
 			sStartDate, sEndDate;
 
 		oStartDate.setMonth(0, 1); // always use the first of the month to have stable year in Japanese calendar
+		oFocusedDate.setYear(oStartDate.getYear() + Math.floor(iRangeSize / 2));
 		this._setFocusedDate(oFocusedDate);
 
 		this._hideYearRangePicker();
