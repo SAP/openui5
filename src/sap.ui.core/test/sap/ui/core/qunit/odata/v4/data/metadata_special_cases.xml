@@ -18,7 +18,7 @@
 				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="Messages" />
 				<NavigationProperty Name="DraftAdministrativeData" Type="special.cases.DraftAdministrativeDataType"/>
 				<NavigationProperty Name="BestPublication" Type="special.cases.PublicationsType" />
-				<NavigationProperty Name="_Publication" Type="Collection(special.cases.PublicationsType)" />
+				<NavigationProperty Name="_Publication" Type="Collection(special.cases.PublicationsType)" Partner="_Artist"/>
 				<NavigationProperty Name="BestFriend" Type="special.cases.ArtistsType" />
 				<NavigationProperty Name="_Friend" Type="Collection(special.cases.ArtistsType)" />
 			</EntityType>
@@ -39,7 +39,7 @@
 				<Property Name="Messages" Type="Collection(special.cases.Message)" />
 				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="Messages" />
 				<NavigationProperty Name="DraftAdministrativeData" Type="special.cases.DraftAdministrativeDataType"/>
-				<NavigationProperty Name="_Artist" Type="special.cases.ArtistsType"/>
+				<NavigationProperty Name="_Artist" Type="special.cases.ArtistsType" Partner="_Publication"/>
 			</EntityType>
 			<EntityType Name="EntityWithComplexKey">
 				<Key>
