@@ -131,7 +131,7 @@ sap.ui.define([
 			assert.equal(oCtrl.iItemDomRefCount, 11, "There should be 11 items considered navigable by the ItemNavigation (6 Left items + 1 overflow button + 4 right items)");
 			assert.equal(oCtrl.getRightItems().length, 6, "4 buttons + 2 Separators on the right side");
 			done();
-		}, 500);
+		}, 1200);
 	});
 
 	// ==================================================
