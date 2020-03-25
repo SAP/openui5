@@ -135,7 +135,7 @@ function(
 			},
 			headerContent : {
 				domRef : function(oElement) {
-					return oElement._getHeaderContent() ? oElement._getHeaderContent().getDomRef() : null;
+					return oElement._getHeaderContentDomRef();
 				},
 				childNames : {
 					singular : function(){

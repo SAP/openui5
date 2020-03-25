@@ -3750,6 +3750,19 @@ sap.ui.define([
 		return this.getAggregation("_headerContent");
 	};
 
+	/**
+	 * Helper function needed for configuring the ObjectPageLayout's designtime.
+	 * The function returns the Dom Ref of the ObjectPageLayout's headerContent
+	 * aggregation and ensures that a safe-check for its existence is made.
+	 * If headerContent doesn't exist, null is returned.
+	 *
+	 * @private
+	 */
+	ObjectPageLayout.prototype._getHeaderContentDomRef = function () {
+		var oHeaderContent = this._getHeaderContent();
+		return oHeaderContent && oHeaderContent.getDomRef();
+	};
+
 	ObjectPageLayout.prototype._connectModelsForSections = function (aSections) {
 		aSections = aSections || [];
 		aSections.forEach(function (oSection) {

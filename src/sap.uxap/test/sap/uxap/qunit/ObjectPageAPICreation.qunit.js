@@ -2956,6 +2956,29 @@ function (
 		oObjectPage.destroy();
 	});
 
+	QUnit.test("_getHeaderContentDomRef works as expected", function (assert) {
+
+		// Arrange
+		var oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar();
+
+		oObjectPage.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oObjectPage._getHeaderContentDomRef(), oObjectPage._getHeaderContent().getDomRef(),
+			"The new '_getHeaderContentDomRef' method is returning the Dom Ref of headerContent as expected.");
+
+		// Act - remove header content
+		oObjectPage.setAggregation("_headerContent", null);
+
+		// Assert
+		assert.strictEqual(oObjectPage._getHeaderContentDomRef(), null,
+			"The new '_getHeaderContentDomRef' method is returning null, when there is no headerContent available.");
+
+		// Cleanup
+		oObjectPage.destroy();
+	});
+
 	QUnit.test("_obtainSnappedTitleHeight does not change element overflow", function (assert) {
 
 		// Arrange
