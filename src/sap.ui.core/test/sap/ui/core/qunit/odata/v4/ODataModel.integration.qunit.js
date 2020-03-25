@@ -24603,8 +24603,15 @@ sap.ui.define([
 			.expectChange("note", ["Note 1"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oTable = that.oView.byId("table");
+			var oTable = that.oView.byId("table"),
+				oHeaderContext = oTable.getBinding("items").getHeaderContext();
 
+			// Note: "$tail" does not yield a red test here, it's created only on demand
+			["$byPredicate", "$created", "length"].forEach(function (sProperty) {
+				that.oLogMock.expects("error").withArgs("Failed to drill-down into " + sProperty
+					+ ", invalid segment: " + sProperty);
+				assert.strictEqual(oHeaderContext.getObject(sProperty), undefined);
+			});
 			that.expectRequest("SalesOrderList?$count=true&" + sSelect + "$skip=1&$top=1", {
 					"@odata.count" : "23",
 					value : [{Note : "Note 2"}]
@@ -24617,15 +24624,13 @@ sap.ui.define([
 				// code under test
 				oTable.getItems()[0].getBindingContext().getProperty("Note"),
 				"Note 1");
-			assert.strictEqual(
-				// code under test
-				oTable.getBinding("items").getHeaderContext().getProperty("$count"),
-				42);
+			// code under test
+			assert.strictEqual(oHeaderContext.getProperty("$count"), 42);
 
 			return Promise.all([
 					// code under test
-					oTable.getBinding("items").getHeaderContext().requestProperty("1/Note"),
-					oTable.getBinding("items").getHeaderContext().requestProperty("$count"),
+					oHeaderContext.requestProperty("1/Note"),
+					oHeaderContext.requestProperty("$count"),
 					that.waitForChanges(assert)
 				]);
 		}).then(function (aResults) {
