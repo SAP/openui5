@@ -214,7 +214,7 @@ sap.ui.define([
 			});
 
 			aCoveredChanges.forEach(function(sChangeId) {
-				DependencyHandler.removeChangeFromDependencies(mChangesMap, sChangeId);
+				DependencyHandler.resolveDependenciesForChange(mChangesMap, sChangeId);
 			});
 
 			return !!aCoveredChanges.length;
@@ -335,12 +335,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes the change from the dependencies
+	 * Resolves the dependency from the dependent changes;
+	 * Loops over all the dependent changes and removes the dependency to this change
 	 *
 	 * @param {object} mChangesMap - Changes Map
 	 * @param {string} sChangeKey - Key of the change which dependencies have to be resolved
 	 */
-	DependencyHandler.removeChangeFromDependencies = function(mChangesMap, sChangeKey) {
+	DependencyHandler.resolveDependenciesForChange = function(mChangesMap, sChangeKey) {
 		var mDependentChangesOnMe = mChangesMap.mDependentChangesOnMe[sChangeKey];
 		if (mDependentChangesOnMe) {
 			mDependentChangesOnMe.forEach(function (sKey) {
@@ -357,6 +358,47 @@ sap.ui.define([
 			});
 			delete mChangesMap.mDependentChangesOnMe[sChangeKey];
 		}
+	};
+
+	/**
+	 * Removes the change from the maps;
+	 * Should be called together with DependencyHandler.removeChangeFromDependencies to also resolve dependencies
+	 *
+	 * @param {object} mChangesMap - Changes Map
+	 * @param {string} sChangeKey - Key of the change which dependencies have to be resolved
+	 */
+	DependencyHandler.removeChangeFromMap = function(mChangesMap, sChangeKey) {
+		Object.keys(mChangesMap.mChanges).some(function(sCurrentControlId) {
+			var aChanges = mChangesMap.mChanges[sCurrentControlId];
+			var iIndexInMapElement = aChanges.map(function(oExistingChange) {
+				return oExistingChange.getId();
+			}).indexOf(sChangeKey);
+
+			if (iIndexInMapElement !== -1) {
+				aChanges.splice(iIndexInMapElement, 1);
+				return true;
+			}
+		});
+
+		var iIndex = mChangesMap.aChanges.map(function(oExistingChange) {
+			return oExistingChange.getId();
+		}).indexOf(sChangeKey);
+
+		if (iIndex !== -1) {
+			mChangesMap.aChanges.splice(iIndex, 1);
+		}
+	};
+
+	/**
+	 * Resolves all the dependencies of the current change and then removes it from the dependencies;
+	 * This does not trigger applying of changes that might now be free of dependencies
+	 *
+	 * @param {object} mChangesMap - Changes Map
+	 * @param {string} sChangeKey - Key of the change which dependencies have to be resolved
+	 */
+	DependencyHandler.removeChangeFromDependencies = function(mChangesMap, sChangeKey) {
+		DependencyHandler.resolveDependenciesForChange(mChangesMap, sChangeKey);
+		delete mChangesMap.mDependencies[sChangeKey];
 	};
 
 	/**

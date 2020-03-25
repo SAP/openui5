@@ -978,56 +978,8 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype._deleteChangeInMap = function (oChange, bRunTimeCreatedChange) {
 		var sChangeKey = oChange.getId();
-		var mChanges = this._mChanges.mChanges;
-		var mMapForDependencies = bRunTimeCreatedChange ? this._mChangesInitial : this._mChanges;
-		var mDependencies = mMapForDependencies.mDependencies;
-		var mDependentChangesOnMe = mMapForDependencies.mDependentChangesOnMe;
-
-		//mChanges
-		Object.keys(mChanges).some(function (key) {
-			var aChanges = mChanges[key];
-			var nIndexInMapElement = aChanges
-				.map(function(oExistingChange) {
-					return oExistingChange.getId();
-				}).indexOf(oChange.getId());
-			if (nIndexInMapElement !== -1) {
-				aChanges.splice(nIndexInMapElement, 1);
-				return true;
-			}
-		});
-
-		//mDependencies
-		Object.keys(mDependencies).forEach(function(key) {
-			if (key === sChangeKey) {
-				delete mDependencies[key];
-			} else if (mDependencies[key].dependencies
-				&& Array.isArray(mDependencies[key].dependencies)
-				&& mDependencies[key].dependencies.indexOf(sChangeKey) !== -1) {
-				mDependencies[key].dependencies.splice(mDependencies[key].dependencies.indexOf(sChangeKey), 1);
-				if (mDependencies[key].dependencies.length === 0) {
-					delete mDependencies[key];
-				}
-			}
-		});
-
-		//mDependentChangesOnMe
-		Object.keys(mDependentChangesOnMe).forEach(function(key) {
-			if (key === sChangeKey) {
-				delete mDependentChangesOnMe[key];
-			} else if (Array.isArray(mDependentChangesOnMe[key])
-				&& mDependentChangesOnMe[key].indexOf(sChangeKey) !== -1) {
-				mDependentChangesOnMe[key].splice(mDependentChangesOnMe[key].indexOf(sChangeKey), 1);
-				if (mDependentChangesOnMe[key].length === 0) {
-					delete mDependentChangesOnMe[key];
-				}
-			}
-		});
-
-		//aChanges
-		var iIndex = this._mChanges.aChanges.indexOf(oChange);
-		if (iIndex !== -1) {
-			this._mChanges.aChanges.splice(iIndex, 1);
-		}
+		DependencyHandler.removeChangeFromMap(this._mChanges, sChangeKey);
+		DependencyHandler.removeChangeFromDependencies(bRunTimeCreatedChange ? this._mChangesInitial : this._mChanges, sChangeKey);
 	};
 
 	/**

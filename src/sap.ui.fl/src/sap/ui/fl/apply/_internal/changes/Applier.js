@@ -249,11 +249,11 @@ sap.ui.define([
 					if (oChange._ignoreOnce) {
 						delete oChange._ignoreOnce;
 					} else if (oChange.isApplyProcessFinished()) {
-						DependencyHandler.removeChangeFromDependencies(mChangesMap, oChange.getId());
+						DependencyHandler.resolveDependenciesForChange(mChangesMap, oChange.getId());
 					} else if (!mChangesMap.mDependencies[oChange.getId()]) {
 						aPromiseStack.push(function() {
 							return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag).then(function() {
-								DependencyHandler.removeChangeFromDependencies(mChangesMap, oChange.getId());
+								DependencyHandler.resolveDependenciesForChange(mChangesMap, oChange.getId());
 							});
 						});
 					} else {
