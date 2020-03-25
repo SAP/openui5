@@ -655,6 +655,13 @@ Licensor: Microsoft
 Website: https://github.com/microsoft/AdaptiveCards
 License: MIT License
 
+Component: Markdown-it
+Licensor: Vitaly Puzrin, Alex Kocharin
+Website: https://github.com/markdown-it/markdown-it
+License: MIT License
+<year> = 2014
+<copyright holders> = Vitaly Puzrin, Alex Kocharin
+
 Component: UI5 Web Components
 Licensor: SAP
 Website: https://sap.github.io/ui5-webcomponents/

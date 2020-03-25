@@ -20,6 +20,9 @@
 			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
 			"type": "AdaptiveCard",
 			"version": "1.0",
+			"configuration": {
+				"enableMarkdown": true
+			},
 			"body": [
 				{
 				"type": "ColumnSet",
@@ -313,6 +316,39 @@
 									"value": "false",
 									"valueOn": "false",
 									"valueOff": "Falsy value"
+								}
+							]
+						}
+					]
+				},
+				{
+					"type": "Column",
+					"items": [
+						{
+							"type": "Container",
+							"spacing": "default",
+							"items": [
+								{
+									"type": "TextBlock",
+									"text": "This is some **bold** text"
+								},
+								{
+									"type": "TextBlock",
+									"text": "This is some _italic_ text"
+								},
+								{
+									"type": "TextBlock",
+									"text": "- Bullet \r- List \r",
+									"wrap": true
+								},
+								{
+									"type": "TextBlock",
+									"text": "1. Numbered\r2. List\r",
+									"wrap": true
+								},
+								{
+									"type": "TextBlock",
+									"text": "Check out [Adaptive Cards](http://adaptivecards.io)"
 								}
 							]
 						}

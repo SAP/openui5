@@ -39,15 +39,19 @@
 		</p>
 		<h2 id="properties">Usage</h2>
 		<ul>
-			<li>
-				<b>Loading</b> - The JSON-serialized card object model of a MS Adaptive Card could be added inline or dynamically, requested as a JSON file in the content area of an Integration Card.</li>
+			<li><b>Loading</b> - The JSON-serialized card object model of a MS Adaptive Card could be added inline or dynamically, requested as a JSON file in the content area of an Integration Card.</li>
 			<li>
 				<b>Templating</b> - Templating enables the separation of data from the layout in an MS Adaptive Card. To provide data directly within the card content, simply add a <code>$data</code> attribute to your Adaptive Card JSON card model, as shown in the
-				<a target="_blank" href="https://sapui5untested.int.sap.hana.ondemand.com/test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html#/explore/adaptive/templating">templating example</a>. Data could be provided also by using
+				<a target="_blank" href="https://sapui5untested.int.sap.hana.ondemand.com/test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html#/explore/adaptive/templating">Templating example</a>. Data could be provided also by using
 				the <a target="_blank" href="https://sapui5untested.int.sap.hana.ondemand.com/test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html#/learn/features/data">data</a>
 				feature of the Integration Card on both card and content level. This way the data could also be included directly in the manifest, or loaded dynamically from a separated JSON file.
 				As this is a feature of the MS Adaptive Card the templating syntax may differ from UI5 binding syntax. For more information, see
 				<a target="_blank" href="https://docs.microsoft.com/en-us/adaptive-cards/templating/">Adaptive Cards Templating</a>.
+			</li>
+			<li><b>Markdown</b> - To support inline markup, MS Adaptive Card supports a
+				<a target="_blank" href="https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features">subset of Markdown syntax</a>.
+				In order to enable this feature, set the <code>enableMarkdown</code> boolean property to <code>true</code> and add it in the configuration object on content level of the manifest. See the
+				<a target="_blank" href="https://sapui5untested.int.sap.hana.ondemand.com/test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html#/explore/adaptive/markdown">Markdown example</a>.
 			</li>
 			<li>
 				<b>Actions</b> - The <code>Action.OpenUrl</code> and <code>Action.Submit</code> event parameters could be accessed when attached to the <code>action</code> event of the Integration Card. The following parameters will be received:
