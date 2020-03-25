@@ -775,7 +775,7 @@ sap.ui.define([
 	 * Returns all the items of an IconTabFilter and its sub-items recursively.
 	 *
 	 * @private
-	 * @returns {sap.m.IconTabFilter[]|[]} All filters
+	 * @returns {sap.m.IconTabFilter[]} All filters
 	 */
 	IconTabFilter.prototype._getAllSubFilters = function () {
 		var aResult = [];
