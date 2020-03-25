@@ -790,8 +790,11 @@ sap.ui.define([
 			metadata: {
 				library: "sap.ui.core"
 			},
-			renderer: function(oRM, oControl) {
-				oRM.text(""); // onAfterRendering is only called if control produces output
+			renderer: {
+				apiVersion: 2,
+				render: function(oRM, oControl) {
+					oRM.text(""); // onAfterRendering is only called if control produces output
+				}
 			}
 		});
 
