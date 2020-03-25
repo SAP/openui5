@@ -3227,8 +3227,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup._markAsUserSelectable = function($Ref, bForce){
-		/* In IE11 the user-select feature does not work as expected, so in IE11 the whole screen is user selectable */
-		if (!Device.browser.internet_explorer){
+		/* In IE11 and EdgeHTML-based Edge the user-select feature does not work as expected, so in IE11 and EdgeHTML-based Edge the whole screen is user selectable */
+		if (!(Device.browser.msie || Device.browser.edge)){
 			$Ref.removeClass("sapUiNotUserSelectable");
 			if (bForce){
 				$Ref.addClass("sapUiUserSelectable");
@@ -3244,8 +3244,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup._markAsNotUserSelectable = function($Ref, bForce){
-		/* In IE11 the user-select feature does not work as expected, so in IE11 the whole screen is user selectable */
-		if (!Device.browser.internet_explorer){
+		/* In IE11 and EdgeHTML-based Edge the user-select feature does not work as expected, so in IE11 and EdgeHTML-based Edge the whole screen is user selectable */
+		if (!(Device.browser.msie || Device.browser.edge)){
 			$Ref.removeClass("sapUiUserSelectable");
 			if (bForce){
 				$Ref.addClass("sapUiNotUserSelectable");
