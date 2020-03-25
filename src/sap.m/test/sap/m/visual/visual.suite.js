@@ -79,6 +79,7 @@ module.exports = [
 	"StepInput.spec.js",
 	"Switch.spec.js",
 	"Toolbar.spec.js",
+	"TabContainerVisual.spec.js",
 	"TableSelectDialog.spec.js",
 	"TabStrip.spec.js",
 	"Text.spec.js",

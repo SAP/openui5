@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"jquery.sap.keycodes",
 	"sap/ui/Device",
+	"sap/ui/core/Element",
 	"jquery.sap.global",
 	"jquery.sap.mobile"
 ], function(
@@ -18,7 +19,8 @@ sap.ui.define([
 	mobileLibrary,
 	Button,
 	jQuery,
-	Device
+	Device,
+	Element
 ) {
 	"use strict";
 
@@ -87,6 +89,48 @@ sap.ui.define([
 		assert.strictEqual(oTS.getAggregation('_select').getSelectedItem().getText(), oItem2.getText(), "Correct default selectedItem property value");
 
 		oTS.destroy();
+	});
+
+	QUnit.test("setSelectedItem on mobile", function (assert) {
+		// prepare
+		var oSandbox = sinon.sandbox.create(),
+			oItem2 = new TabStripItem({
+				text: "Tab 2"
+			}),
+			oTS = new TabStrip({
+			items: [
+				new TabStripItem({
+					text: "Tab 1"
+				}),
+				oItem2
+			]
+		}),
+		oInvalidateSpy = sinon.spy(oTS, "invalidate"),
+		oUpdateAriaSelectedAttributesSpy = sinon.spy(oTS, "_updateAriaSelectedAttributes"),
+		oUpdateSelectedItemClassesSpy = sinon.spy(oTS, "_updateSelectedItemClasses"),
+		oScrollIntoViewSpy = sinon.spy(oTS, "_scrollIntoView");
+
+		preparePhonePlatform(oSandbox);
+		oTS.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oTS.setSelectedItem(oItem2);
+
+		// aseet
+		assert.ok(oInvalidateSpy.calledOnce, "TabStrip gets invalidated");
+		assert.ok(oUpdateAriaSelectedAttributesSpy.notCalled, "TabStrip gets invalidated");
+		assert.ok(oUpdateSelectedItemClassesSpy.notCalled, "TabStrip gets invalidated");
+		assert.ok(oScrollIntoViewSpy.notCalled, "TabStrip gets invalidated");
+
+		// clean
+		oTS.destroy();
+		oInvalidateSpy.restore();
+		oUpdateAriaSelectedAttributesSpy.restore();
+		oUpdateSelectedItemClassesSpy.restore();
+		oScrollIntoViewSpy.restore();
+		oSandbox.restore();
+		jQuery('body').removeClass('sap-phone');
 	});
 
 	QUnit.test("DOM", function (assert) {
@@ -685,48 +729,90 @@ sap.ui.define([
 
 
 	QUnit.module("TabSelect PHONE", {
+		beforeEach: function() {
+			this.sandbox = sinon.sandbox.create();
+			preparePhonePlatform(this.sandbox);
+		},
 		afterEach: function () {
 			this.oTS.destroy();
 			this.oTS = null;
+
+			jQuery('body').removeClass('sap-phone');
+			this.sandbox.restore();
 		}
 	});
 
 	QUnit.test("Rendering", function (assert) {
-		var stubs = preparePhonePlatform.call(this);
+		// preapre
 		this.oTS = new TabStrip({
 			hasSelect: true,
 			items: [
-				new TabStripItem({key: "0", text: "01234567890123456789012345"}),
-				new TabStripItem({key: "1", text: "item 1"}),
-				new TabStripItem({key: "2", text: "item 2"})
+				new TabStripItem({key: "0", text: "item 0"}),
+				new TabStripItem({key: "1", text: "item 1"})
 			]
 		});
 
 		this.oTS.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
+		// act
+		// assert
 		assert.strictEqual(this.oTS.$("leftOverflowButtons").length, 0, "Left overflow buttons are not rendered");
 		assert.strictEqual(this.oTS.$("rightflowButtons").length, 0, "Right overflow buttons are not rendered");
-		assert.strictEqual(this.oTS.$("tabsContainer").length, 0, "Tab container is not rendered");
 
 		assert.strictEqual(jQuery(this.oTS.$()).find('.sapMSltLabel').length, 1, 'Label is rendered');
-		assert.strictEqual(jQuery(this.oTS.$()).find('.sapMSltArrow').length, 1, 'Arrow is rendered');
-		jQuery('body').removeClass('sap-phone');
-		stubs.forEach(function(item){item.restore();}); // restore stubs
 	});
 
+	QUnit.test("Rendering: only the selected tab is rendered", function (assert) {
+		// prepare
+		this.oTS = new TabStrip({
+			items: [
+				new TabStripItem("tabOne", {key: "0", text: "item 0"}),
+				new TabStripItem("tabTwo", {key: "1", text: "item 1"})
+			]
+		});
 
-	function preparePhonePlatform() {
+		this.oTS.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		// assert
+		assert.equal(Element.registry.get("tabOne").id, this.oTS.getSelectedItem(), "Selected item is renndered");
+		assert.equal(Element.registry.get("tabTwo").id, undefined, "Second tab is not rendered");
+
+		//clean
+		jQuery('body').removeClass('sap-phone');
+	});
+
+	QUnit.test("Rendering: sapUiSelectable", function (assert) {
+		// prepare
+		this.oTS = new TabStrip({
+			items: [
+				new TabStripItem("tabOne", {key: "0", text: "item 0"}),
+				new TabStripItem("tabTwo", {key: "1", text: "item 1"})
+			]
+		});
+
+		this.oTS.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		// assert
+		assert.ok(this.oTS.getDomRef().classList.contains("sapUiSelectable"), "sapUiSelectable class is added when more than one tab is present");
+
+		//clean
+		jQuery('body').removeClass('sap-phone');
+	});
+
+	function preparePhonePlatform(oSandbox) {
 		var oSystem = {
 			desktop : false,
 			phone : true,
 			tablet : false
 		};
-		var stubs = [];
-		stubs.push(this.stub(Device, "system", oSystem));
-		stubs.push(this.stub(jQuery.device, "is", oSystem));
+		oSandbox.stub(Device, "system", oSystem);
+		oSandbox.stub(jQuery.device, "is", oSystem);
 		jQuery('body').addClass('sap-phone');
-		return stubs;
 	}
 
 	QUnit.module("Selection", {
@@ -806,7 +892,9 @@ sap.ui.define([
 
 	QUnit.test("No Overflow Buttons on phone", function (assert) {
 		//arrange
-		var stubs = preparePhonePlatform.call(this);
+		var oSandbox = sinon.sandbox.create();
+		preparePhonePlatform(oSandbox);
+
 		this.sut = new TabStrip({
 			hasSelect: true,
 			items: [
@@ -827,8 +915,9 @@ sap.ui.define([
 		assert.ok(!this.sut.$().hasClass(this.sut.getRenderer().LEFT_OVERRFLOW_BTN_CLASS_NAME), "No left button placeholder");
 		assert.ok(!this.sut.$().hasClass(this.sut.getRenderer().RIGHT_OVERRFLOW_BTN_CLASS_NAME), "No right button placeholder");
 
+		//clean
+		oSandbox.restore();
 		jQuery('body').removeClass('sap-phone');
-		stubs.forEach(function(item){item.restore();}); // restore stubs
 	});
 
 	QUnit.module("Tablet platform tests", {

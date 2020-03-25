@@ -11,9 +11,10 @@ sap.ui.define([
 	'./TabContainerRenderer',
 	'./TabStrip',
 	'./TabStripItem',
-	'./Button'
+	'./Button',
+	'sap/ui/Device'
 ],
-	function(library, Control, IconPool, ResponsivePaddingsEnablement, TabContainerRenderer, TabStrip, TabStripItem, Button) {
+	function(library, Control, IconPool, ResponsivePaddingsEnablement, TabContainerRenderer, TabStrip, TabStripItem, Button, Device) {
 		"use strict";
 
 		// shortcut for sap.m.ButtonType
@@ -398,7 +399,8 @@ sap.ui.define([
 		 * @public
 		 */
 		TabContainer.prototype.removeItem = function(vItem) {
-			var bIsSelected;
+			var oTabStrip = this._getTabStrip(),
+				bIsSelected, oTab;
 
 			if (typeof vItem === "undefined" || vItem === null) {
 				return null;
@@ -406,9 +408,16 @@ sap.ui.define([
 
 			//Remove the corresponding TabContainerItem
 			vItem = this.removeAggregation("items", vItem);
+
 			// The selection flag of the removed item
 			bIsSelected = vItem.getId() === this.getSelectedItem();
-			this._getTabStrip().removeItem(this._toTabStripItem(vItem));
+
+			oTab = this._toTabStripItem(vItem);
+			if (oTab.getId() === oTabStrip.getSelectedItem()) {
+				oTabStrip.removeAllAssociation("selectedItem", true);
+			}
+			oTabStrip.removeItem(oTab);
+
 			// Perform selection switch
 			this._moveToNextItem(bIsSelected);
 
@@ -554,12 +563,22 @@ sap.ui.define([
 		 * @override
 		 */
 		TabContainer.prototype.setShowAddNewButton = function (bShowButton) {
+			var oTabStrip;
 			this.setProperty("showAddNewButton", bShowButton, true);
 
-			var oTabStrip = this._getTabStrip();
-			if (oTabStrip) {
-				oTabStrip.setAddButton(bShowButton ? this._getAddNewTabButton() : null);
+			if (Device.system.phone) {
+				bShowButton ? this.addStyleClass("sapUiShowAddNewButton") : this.removeStyleClass("sapUiShowAddNewButton");
 			}
+
+			if (!bShowButton) {
+				return this;
+			}
+
+			oTabStrip = this._getTabStrip();
+			if (oTabStrip) {
+				oTabStrip.setAddButton(this._getAddNewTabButton());
+			}
+
 			return this;
 		};
 
