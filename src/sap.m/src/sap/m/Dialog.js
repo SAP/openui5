@@ -1581,6 +1581,19 @@ function(
 
 		// The public setters and getters should not be documented via JSDoc because they will appear in the documentation
 
+		Dialog.prototype.setSubHeader = function (oControl) {
+			this.setAggregation("subHeader", oControl);
+
+			if (oControl) {
+				oControl.setVisible = function (isVisible) {
+					oControl.setProperty("visible", isVisible);
+					this.invalidate();
+				}.bind(this);
+			}
+
+			return this;
+		};
+
 		Dialog.prototype.setLeftButton = function (vButton) {
 			if (typeof vButton === "string") {
 				vButton = sap.ui.getCore().byId(vButton);
