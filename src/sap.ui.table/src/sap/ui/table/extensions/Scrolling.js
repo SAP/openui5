@@ -140,7 +140,7 @@ sap.ui.define([
 					aListeners[i]();
 				}
 
-				log("Process was cancelled: " + oProcessInfo.id);
+				log("Process cancelled: " + oProcessInfo.id);
 			},
 			isCancelled: function() {
 				return bCancelled;
@@ -171,9 +171,9 @@ sap.ui.define([
 
 		pCancellablePromise.then(function() {
 			if (oProcessInterface.isCancelled()) {
-				log("Process has finished due to cancellation: " + oProcessInfo.id);
+				log("Process finished due to cancellation: " + oProcessInfo.id);
 			} else {
-				log("Process has finished: " + oProcessInfo.id);
+				log("Process finished: " + oProcessInfo.id);
 			}
 			bRunning = false;
 		});
@@ -1202,8 +1202,10 @@ sap.ui.define([
 			}
 
 			log("VerticalScrollingHelper.scrollViewport: Scroll from " + oViewport.scrollTop + " to " + iScrollTop, oTable);
-			oViewport.scrollTop = iScrollTop;
-			oViewport._scrollTop = oViewport.scrollTop;
+			if (oViewport.scrollTop !== iScrollTop) {
+				oViewport.scrollTop = iScrollTop;
+				oViewport._scrollTop = oViewport.scrollTop;
+			}
 
 			return Promise.resolve();
 		},
@@ -1802,7 +1804,6 @@ sap.ui.define([
 				if (!oScrollExtension.isVerticalScrollbarVisible() || bScrolledToEnd) {
 					return;
 				}
-
 				oEvent.preventDefault();
 				oEvent.stopPropagation();
 
@@ -2225,9 +2226,7 @@ sap.ui.define([
 		 * @returns {string} The name of this extension.
 		 */
 		_init: function(oTable, sTableType, mSettings) {
-			this._delegate = ExtensionDelegate;
-			TableUtils.addDelegate(oTable, this._delegate, oTable);
-
+			TableUtils.addDelegate(oTable, ExtensionDelegate, oTable);
 			return "ScrollExtension";
 		},
 
@@ -2262,8 +2261,7 @@ sap.ui.define([
 		destroy: function() {
 			var oTable = this.getTable();
 
-			TableUtils.removeDelegate(oTable, this._delegate);
-			this._delegate = null;
+			TableUtils.removeDelegate(oTable, ExtensionDelegate);
 			this._clearCache();
 
 			if (internal(oTable).pVerticalScrollUpdateProcess) {

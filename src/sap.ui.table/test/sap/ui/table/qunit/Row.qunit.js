@@ -13,14 +13,14 @@ sap.ui.define([
 	var destroyTables = window.destroyTables;
 	var initRowActions = window.initRowActions;
 
-	var TestControl = TableQUnitUtils.getTestControl();
+	var TestControl = TableQUnitUtils.TestControl;
 
 	QUnit.module("Cells", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
 				visibleRowCount: 1,
 				rows: {path: "/"},
-				models: new JSONModel(new Array(1))
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
 			}, function(oTable) {
 				oTable.addColumn(new Column());
 				oTable.addColumn(new Column({template: new TestControl({text: "Column2"})}));
@@ -29,7 +29,7 @@ sap.ui.define([
 			});
 
 			sap.ui.getCore().applyChanges();
-			return this.oTable.qunit.whenInitialRenderingFinished();
+			return this.oTable.qunit.whenRenderingFinished();
 		},
 		assertCells: function(assert) {
 			var aActualCells = this.oTable.getRows()[0].getCells().map(function(oCell) {

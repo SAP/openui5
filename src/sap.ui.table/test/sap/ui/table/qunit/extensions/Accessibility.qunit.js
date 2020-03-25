@@ -5,12 +5,13 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/table/Column",
 	"sap/ui/table/RowSettings",
 	"sap/ui/table/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
 	"sap/ui/core/library"
-], function(TableQUnitUtils, qutils, TableUtils, ManagedObject, RowSettings, Library, JSONModel, Device, coreLibrary) {
+], function(TableQUnitUtils, qutils, TableUtils, ManagedObject, Column, RowSettings, Library, JSONModel, Device, coreLibrary) {
 	"use strict";
 
 	var SelectionMode = Library.SelectionMode;
@@ -48,11 +49,11 @@ sap.ui.define([
 		}
 	});
 
-	var TestControl = TableQUnitUtils.getTestControl();
-	var TestInputControl = TableQUnitUtils.getTestInputControl();
+	var TestControl = TableQUnitUtils.TestControl;
+	var TestInputControl = TableQUnitUtils.TestInputControl;
 
 	TestControl.prototype.getAccessibilityInfo = function() {
-		var iMode = this.getIndex();
+		var iMode = Column.ofCell(this).getIndex();
 		switch (iMode) {
 			case 0:
 				return {
@@ -158,7 +159,7 @@ sap.ui.define([
 		var oColumn = oTable._getVisibleColumns()[iCol];
 		var oRow = oTable.getRows()[iRow];
 		var oCell = oRow.getCells()[iCol];
-		var iIndex = oCell.getIndex();
+		var iIndex = Column.ofCell(oCell).getIndex();
 
 		if (bGroup) {
 			aLabels.push(oTable.getId() + "-ariarowgrouplabel");
@@ -228,7 +229,7 @@ sap.ui.define([
 		var oColumn = oTable._getVisibleColumns()[iCol];
 		var oRow = oTable.getRows()[iRow];
 		var oCell = oRow.getCells()[iCol];
-		var iIndex = oCell.getIndex();
+		var iIndex = Column.ofCell(oCell).getIndex();
 
 		aLabels.push(oColumn.getId() + "-inner");
 		if (iIndex == 0) {
@@ -252,7 +253,7 @@ sap.ui.define([
 		var mParams = mParams || {};
 		var oRow = oTable.getRows()[iRow];
 		var oCell = oRow.getCells()[iCol];
-		var iIndex = oCell.getIndex();
+		var iIndex = Column.ofCell(oCell).getIndex();
 		var aExpected = [];
 
 		var sText = jQuery.sap.byId(oTable.getId() + "-cellacc").text().trim();
@@ -280,7 +281,7 @@ sap.ui.define([
 		var aDescriptions = [];
 		var oRow = oTable.getRows()[iRow];
 		var oCell = oRow.getCells()[iCol];
-		var iIndex = oCell.getIndex();
+		var iIndex = Column.ofCell(oCell).getIndex();
 
 		if (!bGroup) {
 			if (iIndex === 0 || iIndex === 2 || iIndex === 4) {

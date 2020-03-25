@@ -14,7 +14,7 @@ sap.ui.define([
 	"use strict";
 
 	var VisibleRowCountMode = library.VisibleRowCountMode;
-	var HeightTestControl = TableQUnitUtils.getHeightTestControl();
+	var HeightTestControl = TableQUnitUtils.HeightTestControl;
 
 	QUnit.module("Legacy support", {
 		beforeEach: function() {
@@ -82,11 +82,11 @@ sap.ui.define([
 			rowActionCount: 1,
 			rowActionTemplate: new RowAction(),
 			rows: {path: "/"},
-			models: new JSONModel(new Array(1))
+			models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
 		}, function(oTable) {
 			oTable.setRowMode(new InteractiveRowMode());
 		});
-		var sequence = oTable.qunit.whenInitialRenderingFinished();
+		var sequence = oTable.qunit.whenRenderingFinished();
 
 		/* BCP: 1880420532 (IE), 1880455493 (Edge) */
 		if (Device.browser.msie || Device.browser.edge) {
@@ -198,11 +198,11 @@ sap.ui.define([
 			rowActionCount: 1,
 			rowActionTemplate: new RowAction(),
 			rows: {path: "/"},
-			models: new JSONModel(new Array(1))
+			models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
 		}, function(oTable) {
 			oTable.setRowMode(new InteractiveRowMode());
 		});
-		var sequence = oTable.qunit.whenInitialRenderingFinished();
+		var sequence = oTable.qunit.whenRenderingFinished();
 		var iPadding = 14;
 
 		/* BCP: 1880420532 (IE), 1880455493 (Edge) */

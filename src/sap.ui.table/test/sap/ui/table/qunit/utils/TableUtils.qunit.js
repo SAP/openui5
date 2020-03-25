@@ -30,8 +30,8 @@ sap.ui.define([
 	var iNumberOfRows = window.iNumberOfRows;
 	var initRowActions = window.initRowActions;
 
-	var TestControl = TableQUnitUtils.getTestControl();
-	var TestInputControl = TableQUnitUtils.getTestInputControl();
+	var TestControl = TableQUnitUtils.TestControl;
+	var TestInputControl = TableQUnitUtils.TestInputControl;
 
 	// loading CreationRow indirectly installed the sap.m variant of the TableHelper
 	TableQUnitUtils.setDummyTableHelper();

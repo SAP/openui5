@@ -12,15 +12,15 @@ sap.ui.define([
 ], function(CreationRow, Column, TableQUnitUtils, QUnitUtils, KeyCodes, Control, JSONModel, Toolbar) {
 	"use strict";
 
-	var TestControl = TableQUnitUtils.getTestControl();
-	var TestInputControl = TableQUnitUtils.getTestInputControl();
+	var TestControl = TableQUnitUtils.TestControl;
+	var TestInputControl = TableQUnitUtils.TestInputControl;
 
 	QUnit.module("Public API", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
 				visibleRowCount: 1,
 				rows: {path: "/"},
-				models: new JSONModel(new Array(1))
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
 			}, function(oTable) {
 				oTable.addColumn(new Column({
 					id: "column1",
@@ -65,7 +65,7 @@ sap.ui.define([
 			this.oTable = TableQUnitUtils.createTable({
 				visibleRowCount: 1,
 				rows: {path: "/"},
-				models: new JSONModel(new Array(1))
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
 			}, function(oTable) {
 				oTable.addColumn(new Column({
 					id: "column1",
@@ -169,7 +169,7 @@ sap.ui.define([
 				visibleRowCount: 1,
 				fixedColumnCount: 1,
 				rows: {path: "/"},
-				models: new JSONModel(new Array(1))
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
 			}, function(oTable) {
 				oTable.addColumn(new Column({
 					id: "column1",
@@ -225,7 +225,7 @@ sap.ui.define([
 				visibleRowCount: 1,
 				fixedColumnCount: 1,
 				rows: {path: "/"},
-				models: new JSONModel(new Array(1))
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
 			}, function(oTable) {
 				oTable.addColumn(new Column({
 					id: "column1",
@@ -272,7 +272,7 @@ sap.ui.define([
 		}
 
 		function expectKeyboardEventMarked(bExpectMarked) {
-			TableQUnitUtils.addEventDelegateOnce(oTable, "onsapentermodifiers", function(oEvent) {
+			TableQUnitUtils.addDelegateOnce(oTable, "onsapentermodifiers", function(oEvent) {
 				assert.strictEqual(oEvent.isMarked(), bExpectMarked, "The event is" + (bExpectMarked ? " " : " not ") + "marked");
 			});
 		}
@@ -327,7 +327,7 @@ sap.ui.define([
 			this.oTable = TableQUnitUtils.createTable({
 				visibleRowCount: 1,
 				rows: {path: "/"},
-				models: new JSONModel(new Array(1))
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
 			}, function(oTable) {
 				oTable.addColumn(new Column());
 				oTable.addColumn(new Column()

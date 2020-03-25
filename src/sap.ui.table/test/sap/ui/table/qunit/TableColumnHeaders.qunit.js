@@ -14,7 +14,7 @@ sap.ui.define([
 ], function(Label, Text, TableQUnitUtils, qutils, TableUtils, Column, JSONModel, Table, tableLibrary, coreLibrary) {
 	"use strict";
 
-	var TestControl = TableQUnitUtils.getTestControl();
+	var TestControl = TableQUnitUtils.TestControl;
 
 	var aData = [];
 	for (var i = 0; i < 10; i++) {

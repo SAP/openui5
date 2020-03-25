@@ -19,7 +19,7 @@ sap.ui.define([
 
 	// Shortcuts
 	var ColumnUtils = TableUtils.Column;
-	var TestControl = TableQUnitUtils.getTestControl();
+	var TestControl = TableQUnitUtils.TestControl;
 
 	//************************************************************************
 	// Test Code

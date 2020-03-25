@@ -84,7 +84,7 @@ sap.ui.define([
 			this.oTable = TableQUnitUtils.createTable({
 				visibleRowCount: 3,
 				rows: {path: "/"},
-				models: new JSONModel(new Array(10))
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
 			});
 		},
 		afterEach: function() {
@@ -361,7 +361,7 @@ sap.ui.define([
 			this.oTable = TableQUnitUtils.createTable({
 				visibleRowCount: 3,
 				rows: {path: "/"},
-				models: new JSONModel(new Array(10))
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
 			});
 		},
 		afterEach: function() {
@@ -555,7 +555,7 @@ sap.ui.define([
 		}
 
 		return oTable
-			.qunit.whenInitialRenderingFinished()
+			.qunit.whenRenderingFinished()
 			.then(function() {
 				return oTable._enableSynchronization().then(function(oSyncInterface) {
 					oSyncInterface.registerVerticalScrolling({

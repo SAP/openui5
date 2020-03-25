@@ -26,7 +26,7 @@ sap.ui.define([
 	var initRowActions = window.initRowActions;
 	var setFocusOutsideOfTable = window.setFocusOutsideOfTable;
 
-	var TestControl = TableQUnitUtils.getTestControl();
+	var TestControl = TableQUnitUtils.TestControl;
 
 	QUnit.module("Initialization", {
 		beforeEach: function() {
