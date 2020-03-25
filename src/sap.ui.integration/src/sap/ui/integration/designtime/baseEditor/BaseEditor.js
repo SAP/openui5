@@ -675,7 +675,7 @@ sap.ui.define([
 	/**
 	 * Checks if the property editor configuration matches the specified list of tags
 	 * @param {object} mConfig - Property editor configuration
-	 * @param {string, string[]} vTag - Tags for validation
+	 * @param {string|string[]} vTag - Tags for validation
 	 * @returns {boolean} <code>true</code> is config fulfills specified tags
 	 */
 	function hasTag(mConfig, vTag) {
