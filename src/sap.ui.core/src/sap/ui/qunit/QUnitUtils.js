@@ -582,6 +582,17 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	};
 
 	/**
+	 * Removes any kind of whitespaces from the given <code>sText</code>
+	 *
+	 * @param {string} sText The text
+	 * @returns {string} The text without any kind of whitespaces
+	 * @private
+	 */
+	QUtils._removeAllWhitespaces = function(sText){
+		return sText.replace(/\s/g, "");
+	};
+
+	/**
 	 * Performs a "SelectAll" also known as CTRL + A on the whole browser window
 	 *
 	 * @protected
@@ -625,11 +636,14 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	/**
 	 * Determines the selected text, if no text is selected an empty string is returned
 	 *
+	 * Any kind of whitespaces are removed, because depending on OS and/or browser type different
+	 *  types and amount of whitespaces are determined by the Selection-API
+	 *
 	 * @returns {string} The selected text
 	 * @protected
 	 */
 	QUtils.getSelectedText = function(){
-		return document.getSelection().toString().replace(/\n/g, "");
+		return QUtils._removeAllWhitespaces(document.getSelection().toString());
 	};
 
 	// --------------------------------------------------------------------------------------------------
