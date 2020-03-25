@@ -275,6 +275,9 @@ sap.ui.define(function() {
 					"testdata/core/performance/trace/Passport.qunit"
 				]
 			},
+			"events/PasteEventFix": {
+				title: "sap.ui.events.PasteEventFix"
+			},
 			FESR: {
 				title: "sap.ui.core: FESR",
 				qunit: {
