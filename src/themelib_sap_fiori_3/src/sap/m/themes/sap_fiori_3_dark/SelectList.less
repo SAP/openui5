@@ -5,7 +5,7 @@
 
 @_sap_m_SelectListItem_Height: 2.5rem;
 @_sap_m_SelectListItem_CompactHeight: 2rem;
-@_sap_m_SelectListItemBelizeFocus_Height: 4px; // 2 borders * 1px + 2 offsets (top and bottom) * 1px
+@_sap_m_SelectListItemBelizeFocus_Height: 0.25rem; // 2 borders * 0.0625rem + 2 offsets (top and bottom) * 0.0625rem
 
 /* selected */
 .sapMSelectListItemBaseSelected {
@@ -20,13 +20,13 @@
 
 .sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
 .sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -2px;
+	outline: 0.0625rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.125rem;
 }
 
 /* pressed */
 html.sap-desktop .sapMSelectListItemBase.sapMSelectListItemBasePressed:focus {
-	outline: 1px dotted @sapUiContentContrastFocusColor;
+	outline: 0.0625rem dotted @sapUiContentContrastFocusColor;
 }
 
 .sapMSelectListItemBase.sapMSelectListItemBasePressed .sapMSelectListItemIcon {
@@ -40,8 +40,8 @@ html.sap-desktop .sapMSelectListItemBase.sapMSelectListItemBasePressed:focus {
 
 /* focus */
 html.sap-desktop .sapMSelectListItemBase:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -2px;
+	outline:  0.0625rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.125rem;
 }
 
 /* TODO remove after the end of support for Internet Explorer */
@@ -49,13 +49,13 @@ html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 
 	.sapMSelectListItemBase:not(.sapMSelectListRow):focus::before {
-		border: 1px dotted @sapUiContentFocusColor;
+		border: 0.0625rem dashed @sapUiContentFocusColor;
 	}
 
 	.sapMSltPicker-CTX,
 	.sapMComboBoxBasePicker-CTX {
 		.sapMSelectListItemBaseSelected:not(.sapMSelectListRow)::before {
-			border: 1px dotted @sapUiContentFocusColor;
+			border: 0.0625rem dashed @sapUiContentFocusColor;
 		}
 	}
 
@@ -63,17 +63,17 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
 	.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
 		.sapMSelectListCell::before {
-			border-top: 1px dotted @sapUiContentFocusColor;
-			border-bottom: 1px dotted @sapUiContentFocusColor;
+			border-top: 0.0625rem dashed @sapUiContentFocusColor;
+			border-bottom: 0.0625rem dashed @sapUiContentFocusColor;
 			height: calc(@_sap_m_SelectListItem_Height ~" - " @_sap_m_SelectListItemBelizeFocus_Height);
 		}
 
 		.sapMSelectListFirstCell.sapMSelectListCell::before {
-			border-left: 1px dotted @sapUiContentFocusColor;
+			border-left: 0.0625rem dashed @sapUiContentFocusColor;
 		}
 
 		.sapMSelectListLastCell.sapMSelectListCell::before {
-			border-right: 1px dotted @sapUiContentFocusColor;
+			border-right: 0.0625rem dashed @sapUiContentFocusColor;
 		}
 	}
 
