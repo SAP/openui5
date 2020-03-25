@@ -310,7 +310,7 @@ sap.ui.define([
 	Table.prototype.onBeforeRendering = function() {
 		ListBase.prototype.onBeforeRendering.call(this);
 
-		if (this.getAutoPopinMode() && this.getItems().length) {
+		if (this.getAutoPopinMode()) {
 			this._configureAutoPopin();
 		}
 
@@ -911,44 +911,82 @@ sap.ui.define([
 		});
 	};
 
-	Table.prototype.onColumnRecalculateAutoPopin = function() {
+	Table.prototype.onColumnRecalculateAutoPopin = function(oColumn, bRecalculate) {
 		if (this.getAutoPopinMode()) {
-			this._configureAutoPopin();
+			this._configureAutoPopin(bRecalculate);
 		}
+	};
+
+	/**
+	 * Returns a boolean indicating whether recalcultation is necessary for the auto pop-in mode.
+	 *
+	 * @param {Array} aVisibleColumns visible columns
+	 * @returns {boolean} returns true if recalculation if necessary else false
+	 * @private
+	 */
+	Table.prototype._requireAutoPopinRecalculation = function(aVisibleColumns) {
+		if (aVisibleColumns.length !== this._aVisibleColumns.length) {
+			return true;
+		}
+
+		for (var i = 0; i < aVisibleColumns.length; i++) {
+			if (aVisibleColumns[i] !== this._aVisibleColumns[i]) {
+				return true;
+			}
+		}
+
+		return false;
 	};
 
 	/**
 	 * Function for configuring the autoPopinMode of the table control.
 	 *
+	 * @param {boolean} bRecalculate Recalculation for the auto pop-in mode
 	 * @function
 	 * @name _configureAutoPopin
 	 * @private
 	 */
-	Table.prototype._configureAutoPopin = function() {
+	Table.prototype._configureAutoPopin = function(bRecalculate) {
 		var aVisibleColumns = this.getColumns(true).filter(function(oColumn) {
 			return oColumn.getVisible();
 		});
-		var aItems = this.getItems();
-		var aHighCols = [];
-		var aMedCols = [];
-		var aLowCols = [];
 
-		// divide table columns by importance
-		for (var i = 0; i < aVisibleColumns.length; i++) {
-			var sImportance = aVisibleColumns[i].getImportance();
-			if (sImportance === "Medium" || sImportance === "None") {
-				aMedCols.push(aVisibleColumns[i]);
-			} else if (sImportance === "High") {
-				aHighCols.push(aVisibleColumns[i]);
-			} else {
-				aLowCols.push(aVisibleColumns[i]);
+		if (!aVisibleColumns.length) {
+			return;
+		}
+
+		if (!this._aVisibleColumns || !bRecalculate && this._requireAutoPopinRecalculation(aVisibleColumns)) {
+			this._aVisibleColumns = aVisibleColumns;
+			if (!bRecalculate) {
+				bRecalculate = true;
 			}
 		}
 
-		var fAccumulatedWidth = this._getInitialAccumulatedWidth(aItems);
-		fAccumulatedWidth = Table._updateAccumulatedWidth(aHighCols, aHighCols.length > 0, fAccumulatedWidth);
-		fAccumulatedWidth = Table._updateAccumulatedWidth(aMedCols, aHighCols.length === 0 && aMedCols.length > 0, fAccumulatedWidth);
-		Table._updateAccumulatedWidth(aLowCols, aHighCols.length === 0 && aMedCols.length === 0 && aLowCols.length > 0, fAccumulatedWidth);
+		if (bRecalculate) {
+			var aItems = this.getItems();
+			var aHighCols = [];
+			var aMedCols = [];
+			var aLowCols = [];
+
+			// divide table columns by importance
+			for (var i = 0; i < aVisibleColumns.length; i++) {
+				var sImportance = aVisibleColumns[i].getImportance();
+				if (sImportance === "Medium" || sImportance === "None") {
+					aMedCols.push(aVisibleColumns[i]);
+				} else if (sImportance === "High") {
+					aHighCols.push(aVisibleColumns[i]);
+				} else {
+					aLowCols.push(aVisibleColumns[i]);
+				}
+			}
+
+			// 6.5 is a fallback in case items are not found initially
+			// selectionControl + navCol + HighlightCol + NavigatedIndicatorCol = ~6.5rem
+			var fAccumulatedWidth = this._getInitialAccumulatedWidth(aItems) || 6.5;
+			fAccumulatedWidth = Table._updateAccumulatedWidth(aHighCols, aHighCols.length > 0, fAccumulatedWidth);
+			fAccumulatedWidth = Table._updateAccumulatedWidth(aMedCols, aHighCols.length === 0 && aMedCols.length > 0, fAccumulatedWidth);
+			Table._updateAccumulatedWidth(aLowCols, aHighCols.length === 0 && aMedCols.length === 0 && aLowCols.length > 0, fAccumulatedWidth);
+		}
 	};
 
 	/**

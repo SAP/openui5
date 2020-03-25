@@ -1849,8 +1849,8 @@ sap.ui.define([
 		assert.ok(aColumns[0].getWidth() === "8rem", "Width for column[0] is set to 8rem");
 		assert.notOk(aColumns[1].getVisible(), "Visibility for column[1] is set to false");
 		assert.ok(aColumns[2].getImportance() === "High", "Importance of column[2] is 'High'");
-		assert.ok(aColumns[3].getAutoPopinWidth() === 10, "AutPopinWidth of column[3] is set to 8");
-		assert.ok(fnConfigureAutoPopin.getCalls().length === 4, "Function _configureAutoPopin has been called 4 times");
+		assert.ok(aColumns[3].getAutoPopinWidth() === 10, "AutPopinWidth of column[3] is set to 10");
+		assert.strictEqual(fnConfigureAutoPopin.callCount, 4, "Function _configureAutoPopin has been called 4 times");
 	});
 
 	QUnit.test("Spy on _configureAutoPopin - II", function (assert) {
