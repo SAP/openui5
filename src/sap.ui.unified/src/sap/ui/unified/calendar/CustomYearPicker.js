@@ -34,6 +34,11 @@ sap.ui.define([
 		oHeader.attachEvent("pressPrevious", this._handlePrevious, this);
 		oHeader.attachEvent("pressNext", this._handleNext, this);
 		oHeader.attachEvent("pressButton2", this._handleButton2, this);
+
+		this._afterHeaderRenderAdjustCSS = this._createOnAfterRenderingDelegate(oHeader);
+
+		oHeader.addDelegate(this._afterHeaderRenderAdjustCSS);
+
 		this.setAggregation("header",oHeader);
 	};
 

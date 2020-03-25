@@ -379,21 +379,25 @@ sap.ui.define([
 		oHeader.attachEvent("pressButton3", this._handleButton1, this);
 		oHeader.attachEvent("pressButton4", this._handleButton2, this);
 
-		this._afterHeaderRenderAdjustCSS = {
-			onAfterRendering: function() {
-				if (!oHeader.getVisibleButton1()) {
-					oHeader.$().find(".sapUiCalHeadB2").addClass("sapUiCalSingleYearButton");
-				}
-
-				if (!oHeader._getVisibleButton3()) {
-					this._isTwoMonthsInTwoColumns() && oHeader.$().find(".sapUiCalHeadB4").addClass("sapUiCalSingleYearButton");
-				}
-			}.bind(this)
-		};
+		this._afterHeaderRenderAdjustCSS = this._createOnAfterRenderingDelegate(oHeader);
 
 		oHeader.addDelegate(this._afterHeaderRenderAdjustCSS);
 
 		this.setAggregation("header",oHeader);
+	};
+
+	Calendar.prototype._createOnAfterRenderingDelegate = function(oHeader) {
+		return {
+			onAfterRendering: function() {
+				if (oHeader.getVisible() && !oHeader.getVisibleButton1()) {
+					oHeader.$().find(".sapUiCalHeadB2").addClass("sapUiCalSingleYearButton");
+				}
+
+				if (oHeader.getVisible() && !oHeader._getVisibleButton3()) {
+					this._isTwoMonthsInTwoColumns() && oHeader.$().find(".sapUiCalHeadB4").addClass("sapUiCalSingleYearButton");
+				}
+			}.bind(this)
+		};
 	};
 
 	Calendar.prototype._initializeSecondMonthHeader = function() {
@@ -407,17 +411,7 @@ sap.ui.define([
 		oSecondMonthHeader.attachEvent("pressButton1", this._handleButton1, this);
 		oSecondMonthHeader.attachEvent("pressButton2", this._handleButton2, this);
 
-		this._afterSecondHeaderRenderAdjustCSS = {
-			onAfterRendering: function() {
-				if (oSecondMonthHeader.getVisible() && !oSecondMonthHeader.getVisibleButton1()) {
-					oSecondMonthHeader.$().find(".sapUiCalHeadB2").addClass("sapUiCalSingleYearButton");
-				}
-
-				if (oSecondMonthHeader.getVisible() && !oSecondMonthHeader._getVisibleButton3()) {
-					this._isTwoMonthsInTwoColumns() && oSecondMonthHeader.$().find(".sapUiCalHeadB4").addClass("sapUiCalSingleYearButton");
-				}
-			}.bind(this)
-		};
+		this._afterSecondHeaderRenderAdjustCSS = this._createOnAfterRenderingDelegate(oSecondMonthHeader);
 
 		oSecondMonthHeader.addDelegate(this._afterSecondHeaderRenderAdjustCSS);
 
