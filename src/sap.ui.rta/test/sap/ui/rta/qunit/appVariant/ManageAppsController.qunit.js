@@ -125,26 +125,19 @@ sap.ui.define([
 
 			sandbox.stub(oManageAppsController, "getOwnerComponent").returns(fnSimulatedOwnerComponent);
 
-			var highlightAppVariantSpy = sandbox.stub(oManageAppsController, "_highlightNewCreatedAppVariant").resolves();
-
 			var aAppVariantOverviewAttributes = [];
-
+			var highlightAppVariantSpy = sandbox.stub(oManageAppsController, "_highlightNewCreatedAppVariant").resolves();
 			var showMessageWhenNoAppVariantsSpy = sandbox.spy(oManageAppsController, "_showMessageWhenNoAppVariantsExist");
-
-			var utilsShowMessageBoxSpy = sandbox.spy(RtaUtils, "_showMessageBox");
-
-			var messageBoxPromiseStub = sandbox.stub(RtaUtils, "_messageBoxPromise");
-
+			var utilsShowMessageBoxSpy = sandbox.stub(RtaUtils, "showMessageBox");
 			var getAppVariantOverviewSpy = sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
-
 
 			return oManageAppsController.onInit().then(function() {
 				assert.notOk(highlightAppVariantSpy.calledOnce, "the _highlightNewCreatedAppVariant method is not called");
 				assert.ok(getAppVariantOverviewSpy.calledOnce, "the getAppVariantOverview method is called once");
 				assert.ok(showMessageWhenNoAppVariantsSpy.calledOnce, "the showMessageWhenNoAppVariantsSpy method is called once");
 				assert.ok(utilsShowMessageBoxSpy.calledOnce, "the utilsShowMessageBoxSpy method is called once");
-				assert.notEqual(messageBoxPromiseStub.args[0][1], "MSG_APP_VARIANT_OVERVIEW_SAP_DEVELOPER", "the messageBoxPromise method displays message value correctly");
-				assert.notEqual(messageBoxPromiseStub.args[0][2], "TITLE_APP_VARIANT_OVERVIEW_SAP_DEVELOPER", "the messageBoxPromise method displays message title correctly");
+				assert.equal(utilsShowMessageBoxSpy.args[0][1], "MSG_APP_VARIANT_OVERVIEW_SAP_DEVELOPER", "the messageBoxPromise method displays message value correctly");
+				assert.equal(utilsShowMessageBoxSpy.args[0][2].titleKey, "TITLE_APP_VARIANT_OVERVIEW_SAP_DEVELOPER", "the messageBoxPromise method displays message title correctly");
 			});
 		});
 
@@ -172,7 +165,7 @@ sap.ui.define([
 
 			var showMessageWhenNoAppVariantsSpy = sandbox.stub(oManageAppsController, "_showMessageWhenNoAppVariantsExist");
 
-			sandbox.stub(RtaUtils, "_showMessageBox").resolves(true);
+			sandbox.stub(RtaUtils, "showMessageBox").resolves();
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
 			var getAppVariantOverviewSpy = sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.reject("Server error"));
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Server error").returns();

@@ -28,7 +28,7 @@ sap.ui.define([
 	Layer,
 	Log,
 	FlexUtils,
-	RtaFlexUtils,
+	Utils,
 	RuntimeAuthoring,
 	CommandFactory,
 	Remove,
@@ -151,8 +151,8 @@ sap.ui.define([
 	}
 
 	function whenUserConfirmsMessage(sExpectedMessageKey, assert) {
-		sandbox.stub(RtaFlexUtils, "_showMessageBox").callsFake(
-			function(oMessageType, sTitleKey, sMessageKey) {
+		sandbox.stub(Utils, "showMessageBox").callsFake(
+			function(oMessageType, sMessageKey) {
 				assert.equal(sMessageKey, sExpectedMessageKey, "then expected message is shown");
 				return Promise.resolve();
 			}
@@ -953,40 +953,41 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when _onDiscardDraft is called ", function(assert) {
+		QUnit.test("when _onDiscardDraft is called", function(assert) {
+			var oDiscardDraftStub = sandbox.stub(VersionsAPI, "discardDraft").resolves();
+			var oHandleDiscardDraftStub = sandbox.spy(this.oRta, "_handleDiscard");
+			var oHandleDraftParameterStub = sandbox.spy(this.oRta, "_handleDraftParameter");
+			var oRemoveAllCommandsStub = sandbox.stub(this.oRta.getCommandStack(), "removeAllCommands");
+			var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves("MessageBox.Action.CANCEL");
+			var oStopStub = sandbox.stub(this.oRta, "stop");
 			var mParsedHash = {
 				params: {
 					"sap-ui-fl-version": [Layer.CUSTOMER]
 				}
 			};
-
-			var done = assert.async();
-
-			sandbox.stub(MessageBox, "confirm").callsFake(function(sMessage, mParameters) {
-				assert.equal(sMessage, this.oRta._getTextResources().getText("MSG_DRAFT_DISCARD_DIALOG"), "then the message is correct");
-				mParameters.onClose("OK");
-				assert.equal(oDiscardDraftStub.callCount, 1, "then the discardDraft() method is called once");
-				mParameters.onClose("notOK");
-				assert.equal(oDiscardDraftStub.callCount, 1, "then discardDraft() was not called");
-				done();
-			}.bind(this));
-
-			this.oRta.bInitialDraftAvailable = true;
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
-			var oHandleDiscardDraftStub = sandbox.spy(this.oRta, "_handleDiscard");
-			var oStopStub = sandbox.stub(this.oRta, "stop");
-			var oRemoveAllCommandsStub = sandbox.stub(this.oRta.getCommandStack(), "removeAllCommands");
-			var oHandleDraftParameterSpy = sandbox.spy(this.oRta, "_handleDraftParameter");
-			var oDiscardDraftStub = sandbox.stub(VersionsAPI, "discardDraft").returns(Promise.resolve(true));
 
+			this.oRta.bInitialDraftAvailable = true;
 			return this.oRta.start()
-			.then(this.oRta._onDiscardDraft(false))
+			.then(this.oRta._onDiscardDraft.bind(this.oRta, false))
 			.then(function() {
-				assert.equal(oHandleDiscardDraftStub.callCount, 1, "then _handleDiscard was called");
-				assert.equal(oHandleDraftParameterSpy.callCount, 1, "then _handleDraftParameter was called");
-				assert.equal(oHandleDraftParameterSpy.getCall(0).args[0], mParsedHash, "then _handleDraftParameter was called with the correct parameters");
+				assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown");
+				assert.equal(oHandleDiscardDraftStub.callCount, 0, "then _handleDiscard was not called");
+				assert.equal(oDiscardDraftStub.callCount, 0, "then VersionsAPI was not called");
+				assert.equal(oHandleDraftParameterStub.callCount, 0, "then _handleDraftParameter was not called");
 
+				oShowMessageBoxStub.reset();
+				oShowMessageBoxStub.resolves(MessageBox.Action.OK);
+				return this.oRta._onDiscardDraft(false);
+			}.bind(this))
+			.then(function() {
+				assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown");
+				assert.equal(oShowMessageBoxStub.lastCall.args[1], "MSG_DRAFT_DISCARD_DIALOG", "then the message is correct");
+				assert.equal(oDiscardDraftStub.callCount, 1, "then the discardDraft() method is called once");
+				assert.equal(oHandleDiscardDraftStub.callCount, 1, "then _handleDiscard was called");
+				assert.equal(oHandleDraftParameterStub.callCount, 1, "then _handleDraftParameter was called");
+				assert.equal(oHandleDraftParameterStub.getCall(0).args[0], mParsedHash, "then _handleDraftParameter was called with the correct parameters");
 				var oDiscardCallPropertyBag = oDiscardDraftStub.getCall(0).args[0];
 				assert.equal(oDiscardCallPropertyBag.selector, this.oRta.getRootControlInstance(), "with the correct selector");
 				assert.equal(oDiscardCallPropertyBag.layer, this.oRta.getLayer(), "and layer");

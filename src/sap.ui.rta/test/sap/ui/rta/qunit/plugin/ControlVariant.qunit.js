@@ -93,7 +93,7 @@ sap.ui.define([
 			assert.notOk(oPlugin._bBlurOrKeyDownStarted, "then flag for blur / keydown is unset");
 			assert.ok(oPlugin.startEdit.calledOnce, "then startEdit() was called once");
 			assert.ok(oPlugin.stopEdit.calledBefore(oPlugin.startEdit), "then startEdit() was called after stopEdit() was called");
-			assert.ok(fnMessageBoxShowStub.calledOnce, "then RtaUtils._showMessageBox was called once");
+			assert.ok(fnMessageBoxShowStub.calledOnce, "then RtaUtils.showMessageBox was called once");
 			if (bCheckHandlerEdit) {
 				assert.ok(RenameHandler.startEdit.calledOnce, "then startEdit of the RenameHandler was called once");
 			}
@@ -635,7 +635,7 @@ sap.ui.define([
 
 		QUnit.test("when variant is RENAMED and DUPLICATED with an EXISTING VARIANT TITLE, after which _handlePostRename is called", function (assert) {
 			var sNewVariantTitle = "Existing Variant Title";
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
@@ -699,7 +699,7 @@ sap.ui.define([
 
 		QUnit.test("when variant is RENAMED with a BLANK TITLE", function(assert) {
 			var sExistingVariantTitle = "Existing Variant Title";
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
@@ -729,7 +729,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when variant is RENAMED with the SAME TEXT AS SOURCE, after which _handlePostRename is called", function(assert) {
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
@@ -746,7 +746,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when variant is DUPLICATED and RENAMED with the SAME TEXT AS SOURCE, after which _handlePostRename is called", function(assert) {
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
@@ -765,7 +765,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when variant RENAMED with the an EXISTING VARIANT TITLE, after which _handlePostRename is called", function(assert) {
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
 			var sExistingVariantTitle = "Existing Variant Title";
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
@@ -795,7 +795,7 @@ sap.ui.define([
 		QUnit.test("when variant is RENAMED with a new variant title and NO PREVIOUS EXISTENCE, after which _handlePostRename is called", function(assert) {
 			assert.expect(7);
 			var sExistingVariantTitle = "Existing Variant Title";
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
 			var fnCreateSetTitleCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 
 			this.oModel.setData({
@@ -823,7 +823,7 @@ sap.ui.define([
 				assert.equal(oCommand.getElement(), this.oVariantManagementControl, "then command has the correct control");
 
 				assert.notOk(this.oVariantManagementOverlay.hasStyleClass("sapUiRtaErrorBg"), "then error border not added to VariantManagement control overlay");
-				assert.equal(fnMessageBoxShowStub.callCount, 0, "then RtaUtils._showMessageBox never called");
+				assert.equal(fnMessageBoxShowStub.callCount, 0, "then RtaUtils.showMessageBox never called");
 			}.bind(this));
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin);
@@ -833,7 +833,7 @@ sap.ui.define([
 			assert.expect(10);
 
 			var sExistingVariantTitle = "Existing Variant Title";
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
 			var fnCreateDuplicateCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
 
 			this.oModel.setData({
@@ -870,7 +870,7 @@ sap.ui.define([
 				assert.equal(oDuplicateCommand.getSourceVariantReference(), "varMgtKey", "then command has correct variant management reference");
 
 				assert.notOk(this.oVariantManagementOverlay.hasStyleClass("sapUiRtaErrorBg"), "then error border not added to VariantManagement control overlay");
-				assert.equal(fnMessageBoxShowStub.callCount, 0, "then RtaUtils._showMessageBox never called");
+				assert.equal(fnMessageBoxShowStub.callCount, 0, "then RtaUtils.showMessageBox never called");
 			}.bind(this));
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin);
@@ -880,7 +880,7 @@ sap.ui.define([
 			assert.expect(14);
 
 			var sExistingVariantTitle = "Source Variant Title";
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
 			var fnCreateDuplicateCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
 			var fnCreateSetTitleCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 
@@ -923,7 +923,7 @@ sap.ui.define([
 				assert.equal(oDuplicateCommand.getSourceVariantReference(), "varMgtKey", "then duplicate command has correct variant management reference");
 
 				assert.notOk(this.oVariantManagementOverlay.hasStyleClass("sapUiRtaErrorBg"), "then error border not added to VariantManagement control overlay");
-				assert.equal(fnMessageBoxShowStub.callCount, 0, "then RtaUtils._showMessageBox never called");
+				assert.equal(fnMessageBoxShowStub.callCount, 0, "then RtaUtils.showMessageBox never called");
 			}.bind(this));
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin);

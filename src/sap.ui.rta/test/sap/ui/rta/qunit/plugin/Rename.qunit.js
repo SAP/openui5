@@ -285,7 +285,7 @@ function(
 				commandFactory: new CommandFactory()
 			});
 
-			this.oShowMessageBoxStub = sandbox.stub(Utils, "_showMessageBox").resolves();
+			this.oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves();
 
 			this.oButton = new Button({text: "Button", id: "button"});
 			this.oLabel = new Label({text: "Label", id: "label"});
@@ -449,8 +449,8 @@ function(
 			}.bind(this))
 			.then(function() {
 				assert.equal(this.oShowMessageBoxStub.callCount, 1, "the error was shown");
-				assert.equal(this.oShowMessageBoxStub.lastCall.args[1], "RENAME_ERROR_TITLE", "the correct error text was passed");
-				assert.equal(this.oShowMessageBoxStub.lastCall.args[2], oResourceBundle.getText("RENAME_EMPTY_ERROR_TEXT"), "the correct error text was passed");
+				assert.equal(this.oShowMessageBoxStub.lastCall.args[1], oResourceBundle.getText("RENAME_EMPTY_ERROR_TEXT"), "the correct error text was passed");
+				assert.equal(this.oShowMessageBoxStub.lastCall.args[2].titleKey, "RENAME_ERROR_TITLE", "the correct error text was passed");
 				assert.ok(this.oLayoutOverlay.hasStyleClass(RenameHandler.errorStyleClass), "the error style class is set");
 			}.bind(this));
 		});
@@ -468,8 +468,8 @@ function(
 			}.bind(this))
 			.then(function() {
 				assert.equal(this.oShowMessageBoxStub.callCount, 1, "the error was shown");
-				assert.equal(this.oShowMessageBoxStub.lastCall.args[1], "RENAME_ERROR_TITLE", "the correct error text was passed");
-				assert.equal(this.oShowMessageBoxStub.lastCall.args[2], oResourceBundle.getText("RENAME_EMPTY_ERROR_TEXT"), "the correct error text was passed");
+				assert.equal(this.oShowMessageBoxStub.lastCall.args[1], oResourceBundle.getText("RENAME_EMPTY_ERROR_TEXT"), "the correct error text was passed");
+				assert.equal(this.oShowMessageBoxStub.lastCall.args[2].titleKey, "RENAME_ERROR_TITLE", "the correct error text was passed");
 				assert.ok(this.oButtonOverlay.hasStyleClass(RenameHandler.errorStyleClass), "the error style class is set");
 			}.bind(this));
 		});
@@ -491,8 +491,8 @@ function(
 			}.bind(this))
 			.then(function() {
 				assert.equal(this.oShowMessageBoxStub.callCount, 1, "the error was shown");
-				assert.equal(this.oShowMessageBoxStub.lastCall.args[1], "RENAME_ERROR_TITLE", "the correct error text was passed");
-				assert.equal(this.oShowMessageBoxStub.lastCall.args[2], "invalid", "the correct error text was passed");
+				assert.equal(this.oShowMessageBoxStub.lastCall.args[1], "invalid", "the correct error text was passed");
+				assert.equal(this.oShowMessageBoxStub.lastCall.args[2].titleKey, "RENAME_ERROR_TITLE", "the correct error text was passed");
 				assert.ok(this.oLayoutOverlay.hasStyleClass(RenameHandler.errorStyleClass), "the error style class is set");
 			}.bind(this));
 		});

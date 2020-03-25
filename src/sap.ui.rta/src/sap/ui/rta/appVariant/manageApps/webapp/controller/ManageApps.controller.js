@@ -72,10 +72,9 @@ sap.ui.define([
 		},
 
 		_showMessageWhenNoAppVariantsExist: function() {
-			return RtaUtils._showMessageBox(
-				MessageBox.Icon.INFORMATION,
-				"TITLE_APP_VARIANT_OVERVIEW_SAP_DEVELOPER",
-				"MSG_APP_VARIANT_OVERVIEW_SAP_DEVELOPER");
+			return RtaUtils.showMessageBox(MessageBox.Icon.INFORMATION, "MSG_APP_VARIANT_OVERVIEW_SAP_DEVELOPER", {
+				titleKey: "TITLE_APP_VARIANT_OVERVIEW_SAP_DEVELOPER"
+			});
 		},
 
 		_highlightNewCreatedAppVariant: function(aAppVariantOverviewAttributes) {
