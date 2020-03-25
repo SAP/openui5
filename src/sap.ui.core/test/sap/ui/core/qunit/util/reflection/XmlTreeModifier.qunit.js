@@ -99,7 +99,7 @@ function(
 			this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
 
 			this.oXmlString2 =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
+				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:fl="sap.ui.fl" xmlns:core="sap.ui.core" xmlns="sap.m" >' +
 				'<HBox id="hbox1">' +
 					'<items>' +
 						'<Button id="button1" text="Button1" />' +
@@ -743,6 +743,42 @@ function(
 			assert.notOk(oExtensionPointInfo, "then nothing is returned");
 		});
 
+		function _getDelegate(mControlsDelegateInfo){
+			var oControl = XmlTreeModifier._byId("hbox2",this.oXmlView2);
+			if (mControlsDelegateInfo) {
+				oControl.setAttributeNS("sap.ui.fl","delegate", JSON.stringify(mControlsDelegateInfo));
+			}
+			return XmlTreeModifier.getFlexDelegate(oControl);
+		}
+
+		QUnit.test("when getFlexDelegate is called for a control without a delegate", function (assert) {
+			var mDelegateInfo = _getDelegate.call(this);
+			assert.notOk(mDelegateInfo, "then nothing is returned");
+		});
+
+		QUnit.test("when getFlexDelegate is called for a control delegate and payload", function (assert) {
+			var mControlsDelegateInfo = {
+				name : "some/Delegate",
+				payload : {
+					path : "/foo",
+					modelName : "bar",
+					custom : "prop"
+				}
+			};
+			var mDelegateInfo = _getDelegate.call(this, mControlsDelegateInfo);
+			assert.deepEqual(mDelegateInfo, mControlsDelegateInfo, "then everything is returned as json structure");
+		});
+
+		QUnit.test("when getFlexDelegate is called for a control delegate without payload", function (assert) {
+			var mControlsDelegateInfo = {
+				name : "some/Delegate"
+			};
+			var mDelegateInfo = _getDelegate.call(this, mControlsDelegateInfo);
+			assert.deepEqual(mDelegateInfo, {
+				name : "some/Delegate",
+				payload : {}
+			}, "then an empty payload is returned");
+		});
 	});
 
 	QUnit.module("Events", {

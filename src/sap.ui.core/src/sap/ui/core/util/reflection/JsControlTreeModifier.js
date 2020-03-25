@@ -21,6 +21,7 @@ sap.ui.define([
 	merge
 ) {
 
+
 	"use strict";
 	/**
 	 * Static utility class to access ManagedObjects in a harmonized way with XMLNodes.
@@ -447,16 +448,11 @@ sap.ui.define([
 			oControl.destroy(bSuppressInvalidate);
 		},
 
-		/**
-		 * @inheritDoc
-		 */
-		getChangeHandlerModulePath: function(oControl) {
-			if (typeof oControl === "object" && typeof oControl.data === "function"
-					&& oControl.data("sap-ui-custom-settings") && oControl.data("sap-ui-custom-settings")["sap.ui.fl"]){
-				return oControl.data("sap-ui-custom-settings")["sap.ui.fl"].flexibility;
-			} else {
-				return undefined;
-			}
+		_getFlexCustomData: function(oControl, sType) {
+			var oCustomData = typeof oControl === "object"
+				&& typeof oControl.data === "function"
+				&& oControl.data("sap-ui-custom-settings");
+			return ObjectPath.get(["sap.ui.fl", sType], oCustomData);
 		},
 
 		/**

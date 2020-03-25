@@ -744,7 +744,43 @@ sap.ui.define([
 		 * @returns {string} Module path
 		 * @public
 		 */
-		getChangeHandlerModulePath: function(vControl) {},
+		getChangeHandlerModulePath: function(vControl) {
+			return this._getFlexCustomData(vControl, "flexibility");
+		},
+
+		/**
+		 * Object containing delegate information.
+		 *
+		 * @typedef {object} sap.ui.core.util.reflection.FlexDelegateInfo
+		 * @property {string} name Module name of the delegate
+		 * @property {object} payload Additional information for the delegate
+		 * @property {string} [payload.path] Relative/absolute path to a node in a UI5 model, optional if it can be derived by the delegate, e.g. from binding context
+		 * @property {string} [payload.modelName] Runtime model name, optional if default model is used (allows to support named models)
+		 * @property {any} [payload.something] Payload can contain additional delegate-specific keys and values (not just "something" as a key, the key can be defined as well as the values)
+		 */
+
+		/**
+		 * Gets the flexibility delegate information placed at a control.
+		 *
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @returns {sap.ui.core.util.reflection.FlexDelegateInfo} Delegate information
+		 * @public
+		 */
+		getFlexDelegate: function(vControl) {
+			var mDelegateInfo;
+			var sDelegate = this._getFlexCustomData(vControl, "delegate");
+			if (typeof sDelegate === "string") {
+				try {
+					mDelegateInfo = JSON.parse(sDelegate);
+					if (mDelegateInfo.payload === undefined){
+						mDelegateInfo.payload = {};
+					}
+				} catch (oError) {
+					Log.error("Flex Delegate for control " + this.getId(vControl) + " is malformed", oError.message);
+				}
+			}
+			return mDelegateInfo;
+		},
 
 		/**
 		 * Attaches event on the specified <code>ManagedObject</code>.
