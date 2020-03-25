@@ -7,31 +7,31 @@ sap.ui.define([
 	'sap/ui/fl/changeHandler/ChangeHandlerMediator',
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/layout/form/Form'
-], function(
+], function (
 	ChangeHandlerMediator,
 	jQuery,
 	Form
 ) {
 	"use strict";
 
-	function _allFormElementsInvisible(oFormContainer){
-		return oFormContainer.getFormElements().every(function(oFormElement){
+	function _allFormElementsInvisible(oFormContainer) {
+		return oFormContainer.getFormElements().every(function (oFormElement) {
 			return oFormElement.getVisible() === false;
 		});
 	}
 
-	function fnFindForm(oElement){
-		if (oElement && !(oElement instanceof Form)){
-			 return fnFindForm(oElement.getParent());
+	function fnFindForm(oElement) {
+		if (oElement && !(oElement instanceof Form)) {
+			return fnFindForm(oElement.getParent());
 		}
 		return oElement;
 	}
 
-	function fnIsLayoutSupported(oFormContainer){
+	function fnIsLayoutSupported(oFormContainer) {
 		var oForm = fnFindForm(oFormContainer);
 		if (oForm &&
 			oForm.getLayout() &&
-			oForm.getLayout().getMetadata().getName() === "sap.ui.layout.form.GridLayout"){
+			oForm.getLayout().getMetadata().getName() === "sap.ui.layout.form.GridLayout") {
 			return false;
 		}
 		return true;
@@ -44,12 +44,12 @@ sap.ui.define([
 				svg: "sap/ui/layout/designtime/form/FormContainer.icon.svg"
 			}
 		},
-		isVisible: function(oFormContainer) {
+		isVisible: function (oFormContainer) {
 			return oFormContainer.isVisible();
 		},
 		actions: {
-			remove: function(oFormContainer){
-				if (fnIsLayoutSupported(oFormContainer)){
+			remove: function (oFormContainer) {
+				if (fnIsLayoutSupported(oFormContainer)) {
 					return {
 						changeType: "hideControl"
 					};
@@ -57,18 +57,18 @@ sap.ui.define([
 					return null;
 				}
 			},
-			rename: function(oFormContainer) {
-				if (fnIsLayoutSupported(oFormContainer)){
+			rename: function (oFormContainer) {
+				if (fnIsLayoutSupported(oFormContainer)) {
 					return {
 						changeType: "renameGroup",
 						domRef: function (oFormContainer) {
-							if (!oFormContainer.getRenderedDomRef()){
+							if (!oFormContainer.getRenderedDomRef()) {
 								var oTitleOrToolbar = oFormContainer.getTitle() || oFormContainer.getToolbar();
 								return oTitleOrToolbar.getDomRef();
 							}
 							return jQuery(oFormContainer.getRenderedDomRef()).find(".sapUiFormTitle")[0];
 						},
-						isEnabled : function (oFormContainer) {
+						isEnabled: function (oFormContainer) {
 							return !(oFormContainer.getToolbar() || !oFormContainer.getTitle());
 						}
 					};
@@ -77,11 +77,11 @@ sap.ui.define([
 				}
 			}
 		},
-		aggregations : {
-			formElements : {
-				childNames : {
-					singular : "FIELD_CONTROL_NAME",
-					plural : "FIELD_CONTROL_NAME_PLURAL"
+		aggregations: {
+			formElements: {
+				childNames: {
+					singular: "FIELD_CONTROL_NAME",
+					plural: "FIELD_CONTROL_NAME_PLURAL"
 				},
 				domRef: function (oFormContainer) {
 					var oDomRef = oFormContainer.getRenderedDomRef();
@@ -100,24 +100,34 @@ sap.ui.define([
 					return undefined;
 				},
 				actions: {
-					move: function(oFormContainer){
-						if (fnIsLayoutSupported(oFormContainer)){
+					move: function (oFormContainer) {
+						if (fnIsLayoutSupported(oFormContainer)) {
 							return {
-								changeType : "moveControls"
+								changeType: "moveControls"
 							};
 						} else {
 							return null;
 						}
 					},
-					addODataProperty : function(oFormContainer){
-						if (fnIsLayoutSupported(oFormContainer)){
-							var mChangeHandlerSettings = ChangeHandlerMediator.getAddODataFieldWithLabelSettings(oFormContainer);
-
-							if (mChangeHandlerSettings){
+					add: {
+						delegate: function (oFormContainer) {
+							if (fnIsLayoutSupported(oFormContainer)) {
 								return {
 									changeType: "addFormField",
-									changeOnRelevantContainer : true,
-									changeHandlerSettings : mChangeHandlerSettings
+									changeOnRelevantContainer: true
+								};
+							}
+						}
+					},
+					addODataProperty: function (oFormContainer) {
+						if (fnIsLayoutSupported(oFormContainer)) {
+							var mChangeHandlerSettings = ChangeHandlerMediator.getAddODataFieldWithLabelSettings(oFormContainer);
+
+							if (mChangeHandlerSettings) {
+								return {
+									changeType: "addFormField",
+									changeOnRelevantContainer: true,
+									changeHandlerSettings: mChangeHandlerSettings
 								};
 							}
 						} else {
@@ -126,7 +136,7 @@ sap.ui.define([
 					}
 				}
 			},
-			toolbar : {
+			toolbar: {
 				domRef: function (oFormContainer) {
 					var oToolbar = oFormContainer.getToolbar();
 					if (oToolbar) {

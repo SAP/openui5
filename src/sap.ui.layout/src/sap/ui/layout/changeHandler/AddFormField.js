@@ -1,19 +1,81 @@
 /*!
  * ${copyright}
  */
-
 sap.ui.define([
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/changeHandler/ChangeHandlerMediator",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
-], function(
+	"sap/base/util/merge"
+], function (
 	Base,
 	ChangeHandlerMediator,
 	Log,
-	jQuery
+	merge
 ) {
 	"use strict";
+
+	function getChangeHandlerCreateFunction(mChangeHandlerSettings) {
+		return mChangeHandlerSettings
+			&& mChangeHandlerSettings.content
+			&& mChangeHandlerSettings.content.createFunction;
+	}
+
+	function checkChangeDefinition(oChangeDefinition, mChangeHandlerSettings) {
+		var bContentPresent = oChangeDefinition.content;
+		if (bContentPresent) {
+			return oChangeDefinition.content.newFieldSelector
+				&& (oChangeDefinition.content.newFieldIndex !== undefined)
+				&& oChangeDefinition.content.bindingPath
+				&& oChangeDefinition.content.oDataServiceVersion
+				&& !!getChangeHandlerCreateFunction(mChangeHandlerSettings);
+		}
+		return false;
+	}
+
+	function getControlsFromDelegate(mDelegate, mPropertyBag) {
+		return new Promise(function (resolve) {
+			sap.ui.require([mDelegate.name], resolve);
+		}).then(function (oDelegate) {
+			var mDelegatePropertyBag = merge({
+				aggregationName: "formElements",
+				payload: mDelegate.payload
+			}, mPropertyBag);
+
+			return oDelegate.createControlForProperty(mDelegatePropertyBag).then(function (mField) {
+				var sNewFieldId = mPropertyBag.modifier.getId(mField.control);
+				mDelegatePropertyBag.labelFor = sNewFieldId;
+
+				return oDelegate.createLabel(mDelegatePropertyBag).then(function (oLabel) {
+					//harmonize return values for mediator create function and delegate:
+					return {
+						label: oLabel,
+						control: mField.control,
+						valueHelp: mField.valueHelp
+					};
+				});
+			});
+		});
+	}
+
+	function getControlsFromChangeHandlerCreateFunction(oChangeDefinition, mPropertyBag) {
+		return ChangeHandlerMediator.getChangeHandlerSettings({
+			"scenario": "addODataFieldWithLabel",
+			"oDataServiceVersion": oChangeDefinition.content && oChangeDefinition.content.oDataServiceVersion
+		})
+			.then(function (mChangeHandlerSettings) {
+				if (checkChangeDefinition(oChangeDefinition, mChangeHandlerSettings)) {
+					var fnChangeHandlerCreateFunction = getChangeHandlerCreateFunction(mChangeHandlerSettings);
+					return fnChangeHandlerCreateFunction(mPropertyBag.modifier, mPropertyBag);
+				} else {
+					Log.error("Change does not contain sufficient information to be applied or ChangeHandlerMediator could not be retrieved: [" + oChangeDefinition.layer + "]"
+						+ oChangeDefinition.namespace + "/"
+						+ oChangeDefinition.fileName + "."
+						+ oChangeDefinition.fileType);
+					//however subsequent changes should be applied
+				}
+			});
+	}
+
 
 	/**
 	 * Change handler for adding a SmartField to a Form
@@ -30,12 +92,11 @@ sap.ui.define([
 	 *               changed in future.
 	 */
 	var AddFormField = {};
-
 	/**
 	 * Adds a smart field
 	 *
 	 * @param {sap.ui.fl.Change} oChange Change wrapper object with instructions to be applied to the control map
-	 * @param {sap.ui.layout.form.FormContainer} oFormContainer FormContainer that matches the change selector for applying the change
+	 * @param {sap.ui.layout.form.Form} oForm Form that matches the change selector for applying the change
 	 * @param {object} mPropertyBag Property bag containing the modifier, the appComponent and the view
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
 	 * @param {object} mPropertyBag.appComponent Component in which the change should be applied
@@ -43,76 +104,54 @@ sap.ui.define([
 	 * @return {boolean} True if successful
 	 * @public
 	 */
-	AddFormField.applyChange = function(oChange, oFormContainer, mPropertyBag) {
+	AddFormField.applyChange = function (oChange, oForm, mPropertyBag) {
 		var oChangeDefinition = oChange.getDefinition();
 		var oView = mPropertyBag.view;
 		var iIndex = oChangeDefinition.content.newFieldIndex;
-		var oModifier = mPropertyBag.modifier;
-		var oParentFormContainer = oChange.getDependentControl("parentFormContainer", mPropertyBag);
-		var oCreatedControls, oCreatedFormElement;
 		var oAppComponent = mPropertyBag.appComponent;
-		var getChangeHandlerCreateFunction = function(mChangeHandlerSettings) {
-			return mChangeHandlerSettings
-				&& mChangeHandlerSettings.content
-				&& mChangeHandlerSettings.content.createFunction;
+		var oChangeContent = oChangeDefinition.content;
+		var mFieldSelector = oChangeContent.newFieldSelector;
+		var mSmartFieldSelector = merge({}, oChangeContent.newFieldSelector);
+		mSmartFieldSelector.id = mSmartFieldSelector.id + "-field";
+		var sBindingPath = oChangeContent.bindingPath;
+		var mCreateProperties = {
+			appComponent: mPropertyBag.appComponent,
+			view: mPropertyBag.view,
+			fieldSelector: mSmartFieldSelector,
+			bindingPath: sBindingPath,
+			modifier: mPropertyBag.modifier
 		};
-		var fnCheckChangeDefinition = function(oChangeDefinition, mChangeHandlerSettings) {
-			var bContentPresent = oChangeDefinition.content;
-			if (bContentPresent) {
-				return oChangeDefinition.content.newFieldSelector
-				&& (oChangeDefinition.content.newFieldIndex !== undefined)
-				&& oChangeDefinition.content.bindingPath
-				&& oChangeDefinition.content.oDataServiceVersion
-				&& !!getChangeHandlerCreateFunction(mChangeHandlerSettings);
-			}
-			return false;
+		// Check if the change is applicable
+		if (mPropertyBag.modifier.bySelector(mFieldSelector, oAppComponent)) {
+			return Base.markAsNotApplicable("Control to be created already exists:" + mFieldSelector);
+		}
+		var oRevertData = {
+			newFieldSelector: mFieldSelector
 		};
 
-		return ChangeHandlerMediator.getChangeHandlerSettings({
-			"scenario" : "addODataFieldWithLabel",
-			"oDataServiceVersion" : oChangeDefinition.content && oChangeDefinition.content.oDataServiceVersion
-		})
-		.then(function(mChangeHandlerSettings) {
-			if (fnCheckChangeDefinition(oChangeDefinition, mChangeHandlerSettings)) {
-				var oChangeContent = oChangeDefinition.content;
+		var mDelegate = mPropertyBag.modifier.getFlexDelegate(oForm);
 
-				var mFieldSelector = oChangeContent.newFieldSelector;
-				var mSmartFieldSelector = jQuery.extend({}, oChangeContent.newFieldSelector);
-				mSmartFieldSelector.id = mSmartFieldSelector.id + "-field";
-				var sBindingPath = oChangeContent.bindingPath;
-				oChange.setRevertData({newFieldSelector: mFieldSelector});
+		var oWaitForInnerControls = mDelegate
+			? getControlsFromDelegate(mDelegate, mCreateProperties)
+			: getControlsFromChangeHandlerCreateFunction(oChangeDefinition, mCreateProperties);
 
-				var mCreateProperties = {
-					"appComponent" : mPropertyBag.appComponent,
-					"view" : mPropertyBag.view,
-					"fieldSelector" : mSmartFieldSelector,
-					"bindingPath" : sBindingPath
-				};
+		return oWaitForInnerControls
+				.then(function (mInnerControls) {
+					var oCreatedFormElement = mPropertyBag.modifier.createControl("sap.ui.layout.form.FormElement", oAppComponent, oView, mFieldSelector);
+					mPropertyBag.modifier.insertAggregation(oCreatedFormElement, "label", mInnerControls.label, 0, oView);
+					mPropertyBag.modifier.insertAggregation(oCreatedFormElement, "fields", mInnerControls.control, 0, oView);
+					var oParentFormContainer = oChange.getDependentControl("parentFormContainer", mPropertyBag);
+					mPropertyBag.modifier.insertAggregation(oParentFormContainer, "formElements", oCreatedFormElement, iIndex, oView);
 
-				// Check if the change is applicable
-				if (oModifier.bySelector(mFieldSelector, oAppComponent)) {
-					return Base.markAsNotApplicable("Control to be created already exists:" + mFieldSelector);
-				}
-				var fnChangeHandlerCreateFunction = getChangeHandlerCreateFunction(mChangeHandlerSettings);
-				oCreatedControls = fnChangeHandlerCreateFunction(oModifier, mCreateProperties);
-				oCreatedFormElement = oModifier.createControl("sap.ui.layout.form.FormElement", oAppComponent, oView, mFieldSelector);
-
-				oModifier.insertAggregation(oCreatedFormElement, "label", oCreatedControls.label, 0, oView);
-				oModifier.insertAggregation(oCreatedFormElement, "fields", oCreatedControls.control, 0, oView);
-
-				oModifier.insertAggregation(oParentFormContainer, "formElements", oCreatedFormElement, iIndex, oView);
-
-				return true;
-			} else {
-				Log.error("Change does not contain sufficient information to be applied or ChangeHandlerMediator could not be retrieved: [" + oChangeDefinition.layer + "]"
-					+ oChangeDefinition.namespace + "/"
-					+ oChangeDefinition.fileName + "."
-					+ oChangeDefinition.fileType);
-				//however subsequent changes should be applied
-			}
-		});
+					if (mInnerControls.valueHelp) {
+						mPropertyBag.modifier.insertAggregation(oParentFormContainer, "dependents", mInnerControls.valueHelp, 0, oView);
+						var oValueHelpSelector = mPropertyBag.modifier.getSelector(mPropertyBag.modifier.getId(mInnerControls.valueHelp), oAppComponent);
+						oRevertData.valueHelpSelector = oValueHelpSelector;
+					}
+					oChange.setRevertData(oRevertData);
+					return true;
+				});
 	};
-
 	/**
 	 * Completes the change by adding change handler specific content
 	 *
@@ -129,51 +168,43 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.view Application view
 	 * @public
 	 */
-	AddFormField.completeChangeContent = function(oChange, oSpecificChangeInfo, mPropertyBag) {
-
+	AddFormField.completeChangeContent = function (oChange, oSpecificChangeInfo, mPropertyBag) {
 		var oAppComponent = mPropertyBag.appComponent;
 		var oChangeDefinition = oChange.getDefinition();
-
 		if (!oChangeDefinition.content) {
 			oChangeDefinition.content = {};
 		}
-
-		if (oSpecificChangeInfo.parentId){
+		if (oSpecificChangeInfo.parentId) {
 			oChange.addDependentControl(oSpecificChangeInfo.parentId, "parentFormContainer", mPropertyBag);
 		} else {
 			throw new Error("oSpecificChangeInfo.parentId attribute required");
 		}
-
 		if (oSpecificChangeInfo.bindingPath) {
 			oChangeDefinition.content.bindingPath = oSpecificChangeInfo.bindingPath;
 		} else {
 			throw new Error("oSpecificChangeInfo.bindingPath attribute required");
 		}
-
 		if (oSpecificChangeInfo.newControlId) {
 			oChangeDefinition.content.newFieldSelector = mPropertyBag.modifier.getSelector(oSpecificChangeInfo.newControlId, oAppComponent);
 		} else {
 			throw new Error("oSpecificChangeInfo.newControlId attribute required");
 		}
-
 		if (oSpecificChangeInfo.index === undefined) {
 			throw new Error("oSpecificChangeInfo.targetIndex attribute required");
 		} else {
 			oChangeDefinition.content.newFieldIndex = oSpecificChangeInfo.index;
 		}
-
 		if (oSpecificChangeInfo.oDataServiceVersion === undefined) {
 			throw new Error("oSpecificChangeInfo.oDataServiceVersion attribute required");
 		} else {
 			oChangeDefinition.content.oDataServiceVersion = oSpecificChangeInfo.oDataServiceVersion;
 		}
 	};
-
 	/**
 	 * Reverts the applied change
 	 *
 	 * @param {sap.ui.fl.Change} oChange Change wrapper object with instructions to be applied to the control map
-	 * @param {sap.ui.layout.form.FormContainer} oFormContainer FormContainer that matches the change selector for applying the change
+	 * @param {sap.ui.layout.form.Form} oForm Form that matches the change selector for applying the change
 	 * @param {object} mPropertyBag Property bag containing the modifier, the appComponent and the view
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
 	 * @param {object} mPropertyBag.appComponent Component in which the change should be applied
@@ -181,20 +212,27 @@ sap.ui.define([
 	 * @return {boolean} True if successful
 	 * @public
 	 */
-	AddFormField.revertChange = function (oChange, oFormContainer, mPropertyBag) {
+	AddFormField.revertChange = function (oChange, oForm, mPropertyBag) {
 		var oAppComponent = mPropertyBag.appComponent;
 		var oView = mPropertyBag.view;
 		var oModifier = mPropertyBag.modifier;
 		var mFieldSelector = oChange.getRevertData().newFieldSelector;
+		var mValueHelpSelector = oChange.getRevertData().valueHelpSelector;
 
 		var oFormElement = oModifier.bySelector(mFieldSelector, oAppComponent, oView);
-		oModifier.removeAggregation(oFormContainer, "formElements", oFormElement);
+		var oParentFormContainer = oChange.getDependentControl("parentFormContainer", mPropertyBag);
+		oModifier.removeAggregation(oParentFormContainer, "formElements", oFormElement);
 		oModifier.destroy(oFormElement);
-		oChange.resetRevertData();
 
+		if (mValueHelpSelector) {
+			var oValueHelp = oModifier.bySelector(mValueHelpSelector, oAppComponent, oView);
+			oModifier.removeAggregation(oParentFormContainer, "dependents", oValueHelp);
+			oModifier.destroy(oValueHelp);
+		}
+
+		oChange.resetRevertData();
 		return true;
 	};
-
 	return AddFormField;
 },
 /* bExport= */true);

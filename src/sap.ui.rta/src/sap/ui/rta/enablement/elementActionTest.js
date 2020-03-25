@@ -175,6 +175,7 @@ function (
 				} else {
 					this.oControl = this.oView.byId(mOptions.action.controlId);
 				}
+				var sCommandName = mOptions.action.name;
 				return this.oControl.getMetadata().loadDesignTime(this.oControl)
 					.then(function () {
 						if (mOptions.action.parameter) {
@@ -198,6 +199,7 @@ function (
 								this.oControlOverlay = OverlayRegistry.getOverlay(this.oControl);
 								oElementDesignTimeMetadata = this.oControlOverlay.getDesignTimeMetadata();
 								var oResponsibleElement = oElementDesignTimeMetadata.getAction("getResponsibleElement", this.oControl);
+								var oAggregationOverlay;
 
 								if (mOptions.action.name === "move") {
 									var oElementOverlay = OverlayRegistry.getOverlay(mParameter.movedElements[0].element);
@@ -207,8 +209,14 @@ function (
 								} else if (mOptions.action.name === "addODataProperty") {
 									var aAddODataPropertyActions = oElementDesignTimeMetadata.getActionDataFromAggregations("addODataProperty", this.oControl);
 									assert.equal(aAddODataPropertyActions.length, 1, "there should be only one aggregation with the possibility to do addODataProperty action");
-									var oAggregationOverlay = this.oControlOverlay.getAggregationOverlay(aAddODataPropertyActions[0].aggregation);
+									oAggregationOverlay = this.oControlOverlay.getAggregationOverlay(aAddODataPropertyActions[0].aggregation);
 									oElementDesignTimeMetadata = oAggregationOverlay.getDesignTimeMetadata();
+								} else if (Array.isArray(mOptions.action.name)) {
+									var aAddActions = oElementDesignTimeMetadata.getActionDataFromAggregations(mOptions.action.name[0], this.oControl, undefined, mOptions.action.name[1]);
+									assert.equal(aAddActions.length, 1, "there should be only one aggregation with the possibility to do an add " + mOptions.action.name[1] + " action");
+									oAggregationOverlay = this.oControlOverlay.getAggregationOverlay(aAddActions[0].aggregation);
+									oElementDesignTimeMetadata = oAggregationOverlay.getDesignTimeMetadata();
+									sCommandName = "addODataProperty"; //TODO cleanup
 								} else if (oResponsibleElement) {
 									if (mOptions.action.name === "reveal") {
 										this.oControl = mOptions.action.revealedElement(this.oView);
@@ -232,7 +240,7 @@ function (
 								layer: mOptions.layer || Layer.CUSTOMER
 							}
 						});
-						return oCommandFactory.getCommandFor(this.oControl, mOptions.action.name, mParameter, oElementDesignTimeMetadata)
+						return oCommandFactory.getCommandFor(this.oControl, sCommandName, mParameter, oElementDesignTimeMetadata)
 							.then(function (oCommand) {
 								this.oCommand = oCommand;
 								assert.ok(oCommand, "then the registration for action to change type, the registration for change and control type to change handler is available and " + mOptions.action.name + " is a valid action");
