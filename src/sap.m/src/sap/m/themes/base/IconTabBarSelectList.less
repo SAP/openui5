@@ -29,8 +29,8 @@
 
 	cursor: pointer;
 
-	& > span {
-		cursor: pointer;
+	&.sapMITHUnselectable {
+		cursor: default;
 	}
 }
 
@@ -88,20 +88,23 @@
 	background-color: @sapUiListBackground;
 }
 
-.sapMITBSelectItem:hover {
+.sapMITBSelectItem:not(.sapMITHUnselectable):hover {
 	background-color: @sapUiListHoverBackground;
 }
 
-.sapMITBSelectList .sapMITBSelectItem:not(.sapUiDnDDragging):active,
-.sapMITBSelectList .sapMITBSelectItem.sapMITBSelectItemSelected:not(.sapUiDnDDragging):active {
-	background-color: @sapUiListActiveBackground;
+.sapMITBSelectList .sapMITBSelectItem:not(.sapMITHUnselectable) {
 
-	& > .sapMText {
-		color: @sapUiListActiveTextColor;
-	}
+	&:not(.sapUiDnDDragging):active,
+	&.sapMITBSelectItemSelected:not(.sapUiDnDDragging):active {
+		background-color: @sapUiListActiveBackground;
 
-	& > .sapUiIcon {
-		color: @sapUiListActiveTextColor;
+		& > .sapMText {
+			color: @sapUiListActiveTextColor;
+		}
+
+		& > .sapUiIcon {
+			color: @sapUiListActiveTextColor;
+		}
 	}
 }
 

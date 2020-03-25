@@ -426,10 +426,15 @@ sap.ui.define([
 				.class("sapMITBFilter" + oIconColor);
 		}
 
+		if (oIconTabHeader._isUnselectable(this)) {
+			oRM.class("sapMITHUnselectable");
+		}
+
 		if (!this.getEnabled()) {
 			oRM.class("sapMITBDisabled")
 				.attr("aria-disabled", true);
 		}
+
 
 		oRM.attr("aria-selected", false);
 
@@ -576,10 +581,15 @@ sap.ui.define([
 			oRM.attr("title", sTooltip);
 		}
 
+		if (oIconTabHeader._isUnselectable(this)) {
+			oRM.class("sapMITHUnselectable");
+		}
+
 		if (!this.getEnabled()) {
 			oRM.class("sapMITBDisabled")
 				.attr("aria-disabled", true);
 		}
+
 
 		oRM.class("sapMITBSelectItem");
 
@@ -791,6 +801,22 @@ sap.ui.define([
 		return this._getAllSubFilters()
 			.filter(function (oSubItem) { return Boolean(oSubItem._getRealTab().getDomRef()); })
 			.map(function (oSubItem) { return oSubItem._getRealTab().getDomRef(); });
+	};
+
+	/**
+	 * @private
+	 * @returns {sap.m.IconTabFilter} Returns first available SubFilter that is visible and has content
+	 */
+	IconTabFilter.prototype._getFirstAvailableSubFilter = function () {
+		var aItems = this._getAllSubFilters();
+		for (var i = 0; i < aItems.length; i++) {
+			var oItem = aItems[i];
+			if (oItem.getContent().length && oItem.getVisible()) {
+				return oItem;
+			}
+		}
+		// no inner items available
+		return this;
 	};
 
 	IconTabFilter.prototype._isParentOf = function (oChild) {

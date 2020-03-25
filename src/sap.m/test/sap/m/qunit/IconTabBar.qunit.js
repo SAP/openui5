@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/CustomListItem",
 	"sap/ui/core/library",
-	"jquery.sap.keycodes",
+	"sap/ui/events/KeyCodes",
 	"sap/m/library",
 	"sap/ui/core/HTML",
 	"sap/ui/core/Core",
@@ -35,7 +35,7 @@ sap.ui.define([
 	List,
 	CustomListItem,
 	coreLibrary,
-	jQuery,
+	KeyCodes,
 	mobileLibrary,
 	HTML,
 	Core,
@@ -2285,7 +2285,6 @@ sap.ui.define([
 
 		Core.applyChanges();
 
-		// var selectItems = document.querySelectorAll(".sapMITBSelectItem");
 		var selectItems = document.querySelectorAll(".sapMITBSelectList .sapMITBSelectItem");
 
 		// Act
@@ -3285,6 +3284,118 @@ sap.ui.define([
 		oITB.destroy();
 	});
 
+	QUnit.module("Unselectable tabs");
+
+	QUnit.test("On initial rendering, an ITB with a 'unselectable' tab as first tab should render it's first available child item", function (assert) {
+		// Arrange
+		var oTab = new IconTabFilter({
+			text: "unselectable area tab",
+			content: [], // explicitly has no content
+			items: [
+				new IconTabFilter({ text: "child 1", content: new Text({ text: "text 1" })}),
+				new IconTabFilter({ text: "child 2", content: new Text({ text: "text 2" })})
+			]
+		});
+
+		var oITB = new IconTabBar({
+			content: [], // explicitly has no content
+			items: oTab
+		});
+
+		oITB.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oITB.getSelectedKey(), oTab.getItems()[0].getId(), "Selected item is first available child that has content");
+
+		// Clean-up
+		oITB.destroy();
+	});
+
+	QUnit.test("Selecting on a tab that has no content set, but has child items, opens its overflow list", function (assert) {
+		// Arrange
+		var oTab = new IconTabFilter({
+			text: "unselectable tab",
+			content: [], // explicitly has no content
+			items: [
+				new IconTabFilter({ text: "child 1", content: new Text({ text: "text 1" })}),
+				new IconTabFilter({ text: "child 2", content: new Text({ text: "text 2" })})
+			]
+		});
+
+		var oITB = new IconTabBar({
+			content: [], // explicitly has no content
+			items: oTab
+		});
+
+		oITB.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerKeydown(oTab.$(), KeyCodes.ENTER);
+
+		// Assert
+		assert.strictEqual(oTab._oPopover.isOpen(), true, "Tab's popover has been opened");
+		assert.ok(oTab._oPopover.$().find(".sapMITBSelectList").length, "Tab has its select list shown");
+
+		// Clean-up
+		oITB.destroy();
+	});
+
+	QUnit.test("Choosing an unselectable item from IconTabBarSelectList doesn't change anything", function (assert) {
+		// Arrange
+		var aTabs = [];
+		for (var i = 1; i < 100; i++) {
+			aTabs.push(new IconTabFilter({
+				text: "Tab " + i,
+				key: i,
+				content: new Text({ text: "Content " + i})
+			}));
+		}
+		var oUnselectableTab = new IconTabFilter({
+			text: "unselectable tab",
+			key: "unselectable",
+			content: [], // explicitly has no content
+			items: [
+				new IconTabFilter({ text: "child 1", content: new Text({ text: "text 1" })}),
+				new IconTabFilter({ text: "child 2", content: new Text({ text: "text 2" })})
+			]
+		});
+		aTabs.push(oUnselectableTab);
+
+		var oITB = new IconTabBar({
+			content: [], // explicitly has no content
+			items: aTabs
+		});
+		oITB.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		var oITH = oITB._getIconTabHeader();
+		var oSetSelectedItemSpy = this.spy(oITH, "setSelectedItem");
+		var oFireSelectionChangeSpy = this.spy(oITH._getSelectList(), "fireSelectionChange");
+		// open overflow
+		qutils.triggerEvent("tap", oITH.$("overflowButton"));
+
+		// Assert
+		assert.strictEqual(oITH._oPopover.isOpen(), true, "ITB's popover has been opened");
+		assert.ok(oITH._oPopover.$().find(".sapMITBSelectList").length, "ITB has its overflow select list shown");
+		assert.strictEqual(oITB.getSelectedKey(), "1", "At start, first tab is selected");
+
+		var oSelectList = oITH._getSelectList().getItems();
+		assert.deepEqual(oSelectList[oSelectList.length - 1].getKey(), oUnselectableTab.getKey(), "Last item in overflow is the unselectable item");
+
+		// Act
+		qutils.triggerEvent("tap", oSelectList[oSelectList.length - 1].$());
+
+		assert.strictEqual(oITB.getSelectedKey(), "1", "Selected item should not have changed");
+		assert.strictEqual(oFireSelectionChangeSpy.callCount, 0, "IconTabBarSelectList#fireSelectionChange should not have been called");
+		assert.strictEqual(oSetSelectedItemSpy.callCount, 0, "IconTabHeader#setSelectedItem should not have been called");
+
+		// Clean-up
+		oFireSelectionChangeSpy.restore();
+		oSetSelectedItemSpy.restore();
+		oITB.destroy();
+	});
 
 	QUnit.module("Drag&Drop: RTL", {
 		beforeEach: function() {
@@ -3417,7 +3528,7 @@ sap.ui.define([
 		this.oIconTabHeader._handleDragAndDrop(this.oMockEvent);
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Second tab", "In 'First tab' position is 'Second tab'");
-		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "First tab", "'Firs tab' is at the middle");
+		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "First tab", "'First tab' is at the middle");
 	});
 
 	QUnit.test("Drag&Drop accessibility: RTL", function(assert) {
