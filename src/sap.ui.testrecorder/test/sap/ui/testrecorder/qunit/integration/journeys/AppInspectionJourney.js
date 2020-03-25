@@ -4,9 +4,9 @@ sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"sap/ui/testrecorder/Dialects",
 	"sap/ui/util/Storage",
-	"sap/ui/testrecorder/integration/pages/IFrameTree",
-	"sap/ui/testrecorder/integration/pages/IFrameInspect",
-	"sap/ui/testrecorder/integration/pages/App"
+	"sap/ui/testrecorder/qunit/integration/pages/IFrameTree",
+	"sap/ui/testrecorder/qunit/integration/pages/IFrameInspect",
+	"sap/ui/testrecorder/qunit/integration/pages/App"
 ], function (opaTest, Dialects, Storage) {
 	"use strict";
 

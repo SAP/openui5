@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/testrecorder/integration/pages/Common"
+	"sap/ui/testrecorder/qunit/integration/pages/Common"
 ], function(Opa5, jQuery, Common) {
 	"use strict";
 

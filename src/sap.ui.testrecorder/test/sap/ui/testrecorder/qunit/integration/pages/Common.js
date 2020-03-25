@@ -4,7 +4,7 @@ sap.ui.define([
 ], function(Opa5, jQuery) {
 	"use strict";
 
-	return Opa5.extend("sap.ui.testrecorder.integration.pages.Common", {
+	return Opa5.extend("sap.ui.testrecorder.qunit.integration.pages.Common", {
 		iStartMyMockRecorder: function () {
 			return this.iStartMyAppInAFrame({
 				source: jQuery.sap.getModulePath("sap/ui/testrecorder/recorderMock") + "/overlay.html",

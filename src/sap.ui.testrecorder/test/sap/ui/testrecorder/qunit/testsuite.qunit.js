@@ -5,29 +5,29 @@ sap.ui.define([
 	"use strict";
 
 	var oTests = {
-		"qunit/inspector/ControlAPI": {
+		"inspector/ControlAPI": {
 			title: "QUnit Page for sap.ui.testrecorder.inspector.ControlAPI",
-			module: "./qunit/inspector/ControlAPI.qunit"
+			module: "./inspector/ControlAPI.qunit"
 		},
-		"qunit/controlSelectors/ControlSelectorGenerator": {
+		"inspector/ControlInspector": {
+			title: "QUnit Page for sap.ui.testrecorder.inspector.ControlInspector",
+			module: "./inspector/ControlInspector.qunit"
+		},
+		"inspector/ControlInspectorRepo": {
+			title: "QUnit Page for sap.ui.testrecorder.inspector.ControlInspectorRepo",
+			module: "./inspector/ControlInspectorRepo.qunit"
+		},
+		"controlSelectors/ControlSelectorGenerator": {
 			title: "QUnit Page for sap.ui.testrecorder.controlSelectors.ControlSelectorGenerator",
-			module: "./qunit/controlSelectors/ControlSelectorGenerator.qunit"
+			module: "./controlSelectors/ControlSelectorGenerator.qunit"
 		},
-		"qunit/codeSnippets/POMethodUtil": {
-			title: "QUnit Page for sap.ui.testrecorder.controlSelectors.POMethodUtil",
-			module: "./qunit/codeSnippets/POMethodUtil.qunit"
+		"codeSnippets/POMethodUtil": {
+			title: "QUnit Page for sap.ui.testrecorder.codeSnippets.POMethodUtil",
+			module: "./codeSnippets/POMethodUtil.qunit"
 		},
-		"qunit/codeSnippets/CodeSnippetProvider": {
-			title: "QUnit Page for sap.ui.testrecorder.controlSelectors.CodeSnippetProvider",
-			module: "./qunit/codeSnippets/CodeSnippetProvider.qunit"
-		},
-		"qunit/inspector/ControlInspector": {
-			title: "QUnit Page for sap.ui.testrecorder.controlSelectors.ControlInspector",
-			module: "./qunit/inspector/ControlInspector.qunit"
-		},
-		"qunit/inspector/ControlInspectorRepo": {
-			title: "QUnit Page for sap.ui.testrecorder.controlSelectors.ControlInspectorRepo",
-			module: "./qunit/inspector/ControlInspectorRepo.qunit"
+		"codeSnippets/CodeSnippetProvider": {
+			title: "QUnit Page for sap.ui.testrecorder.codeSnippets.CodeSnippetProvider",
+			module: "./codeSnippets/CodeSnippetProvider.qunit"
 		}
 	};
 
@@ -48,15 +48,18 @@ sap.ui.define([
 		},
 		tests: {
 			"integration/opaTests": {
-				page: "test-resources/sap/ui/testrecorder/integration/opaTests.qunit.html?noglobals=true&sap-ui-animation=false",
+				module: "./integration/opaTests.qunit",
 				title: "QUnit Page for sap.ui.testrecorder OPA tests",
 				loader: {
 					paths: {
-						"sap/ui/testrecorder/integration": "test-resources/sap/ui/testrecorder/integration",
+						"sap/ui/testrecorder/qunit/integration": "test-resources/sap/ui/testrecorder/qunit/integration",
 						"sap/ui/testrecorder/recorderMock": "test-resources/sap/ui/testrecorder/recorderMock",
 						"sap/ui/testrecorder/appMock": "test-resources/sap/ui/testrecorder/appMock",
 						"sap/ui/testrecorder/fixture": "test-resources/sap/ui/testrecorder/fixture"
 					}
+				},
+				qunit: {
+					noglobals: true
 				},
 				autostart: false
 			}
