@@ -533,7 +533,7 @@ sap.ui.define([
 			oSyncPromise = SyncPromise.resolve({});
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("getPath").withExactArgs("bar").returns("~");
+		this.mock(_Helper).expects("buildPath").withExactArgs("/foo", "bar").returns("~");
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, true)
 			.returns(oSyncPromise);
 
@@ -621,7 +621,7 @@ sap.ui.define([
 				oSyncPromiseValue = SyncPromise.resolve(1234);
 
 			this.mock(oBinding).expects("checkSuspended").withExactArgs();
-			this.mock(oContext).expects("getPath").withExactArgs("bar").returns("~");
+			this.mock(_Helper).expects("buildPath").withExactArgs("/foo", "bar").returns("~");
 			this.mock(oContext).expects("fetchValue").withExactArgs("bar", null, true)
 				.returns(oSyncPromiseValue);
 			this.mock(oMetaModel).expects("fetchUI5Type").withExactArgs("~")

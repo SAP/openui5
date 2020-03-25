@@ -1321,6 +1321,7 @@ sap.ui.define([
 			var oPromise,
 				that = this;
 
+			iTimeout = iTimeout || 3000;
 			oPromise = new SyncPromise(function (resolve) {
 				that.resolve = resolve;
 				that.bNullOptional = bNullOptional;
@@ -1333,7 +1334,7 @@ sap.ui.define([
 								+ " (" + iTimeout + " ms)");
 						resolve();
 					}
-				}, iTimeout || 3000);
+				}, iTimeout);
 				that.checkFinish(assert);
 			}).then(function () {
 				var sControlId, aExpectedValuesPerRow, i, j;
@@ -15594,6 +15595,160 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Fiori Elements Safeguard - Test 1 (Edit/Activate)
+	//   Edit / Activate action bound to entity
+	//   Return Value Context with $$inheritExpandSelect
+	//   Message property in $select of the hidden binding
+	//   Creation Row Binding (a binding that should not request data, not be refreshed).
+	//   The Creation Row Binding is relative to the context of the object, i.e. the RVC.
+	//   requestSideEffects called on RVC
+	// CPOUI5ODATAV4-189
+	QUnit.test("Fiori Elements Safeguard: Test 1 (Edit/Activate)", function (assert) {
+		var oCreationRowBinding,
+			oHiddenBinding,
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oObjectPage,
+			oReturnValueContext,
+			sView = '\
+<Table id="table" items="{path : \'/Artists\', parameters : {$filter : \'IsActiveEntity\'}}">\
+	<ColumnListItem>\
+		<Text id="listId" text="{ArtistID}"/>\
+	</ColumnListItem>\
+</Table>\
+<FlexBox id="objectPage" >\
+	<Text id="id" text="{ArtistID}" />\
+	<Text id="isActive" text="{IsActiveEntity}" />\
+	<Text id="name" text="{Name}" />\
+</FlexBox>\
+<FlexBox id="creationRow">\
+	<Text id="price" text="{Price}" />\
+</FlexBox>',
+			that = this;
+
+		/*
+		 * Executes the given action (ActivationAction or EditAction) on Artist ID 42.
+		 * Sets the object page to its return value context and waits for the expected changes.
+		 *
+		 * @param {string} sAction - The name of the action
+		 * @returns {Promise} - A promise that waits for the expected changes
+		 */
+		function action(sAction) {
+			var bIsActive = sAction === "ActivationAction", // The resulting artist's bIsActive
+				oEntityContext = oObjectPage.getBindingContext(),
+				oAction = that.oModel.bindContext("special.cases." + sAction + "(...)",
+					oEntityContext, {$$inheritExpandSelect : true});
+
+			that.expectRequest({
+					method : "POST",
+					url : "Artists(ArtistID='42',IsActiveEntity=" + !bIsActive
+						+ ")/special.cases." + sAction
+						+ "?$select=ArtistID,IsActiveEntity,Messages,Name",
+					payload : {}
+				}, {
+					ArtistID : "42",
+					IsActiveEntity : bIsActive,
+					Name : "The Beatles",
+					Messages: []
+				});
+
+			// code under test
+			return Promise.all([
+				oAction.execute(),
+				that.waitForChanges(assert)
+			]).then(function (aPromiseResults) {
+				oReturnValueContext = aPromiseResults[0];
+				that.expectChange("isActive", bIsActive ? "Yes" : "No");
+
+				// code under test
+				oObjectPage.setBindingContext(oReturnValueContext);
+
+				return that.waitForChanges(assert);
+			});
+		}
+
+		this.expectRequest("Artists?$filter=IsActiveEntity&$select=ArtistID,IsActiveEntity"
+			+ "&$skip=0&$top=100", {
+				value : [{ArtistID : "42", IsActiveEntity: true}]
+			})
+			.expectChange("listId", ["42"])
+			.expectChange("id")
+			.expectChange("isActive")
+			.expectChange("name")
+			.expectChange("price");
+
+		return this.createView(assert, sView, oModel).then(function () {
+
+			// create the hidden binding when creating the controller
+			oHiddenBinding = that.oModel.bindContext("", undefined,
+				{$$patchWithoutSideEffects : true, $select : "Messages"});
+			oObjectPage = that.oView.byId("objectPage");
+
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)" +
+				"?$select=ArtistID,IsActiveEntity,Messages,Name", {
+					ArtistID : "42",
+					IsActiveEntity : true,
+					Name : "The Beatles",
+					Messages:  []
+				})
+				.expectChange("id", "42")
+				.expectChange("isActive", "Yes")
+				.expectChange("name", "The Beatles");
+
+			// start with the row context of the list
+			oHiddenBinding.setContext(that.oView.byId("table").getItems()[0].getBindingContext());
+			// code under test
+			oObjectPage.setBindingContext(oHiddenBinding.getBoundContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			return action("EditAction");
+		}).then(function () {
+			var oCreatedRow;
+
+			oCreationRowBinding = that.oModel.bindList("_Publication", oReturnValueContext,
+				undefined, undefined, {$$updateGroupId : "doNotSubmit"});
+
+			that.expectChange("price", "47");
+
+			// code under test
+			oCreatedRow = oCreationRowBinding.create({Price : "47"});
+			oCreatedRow.created().catch(function () {
+				// prevent Uncaught (in promise)
+			});
+			that.oView.byId("creationRow").setBindingContext(oCreatedRow);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
+				+ "?$select=ArtistID,IsActiveEntity,Messages,Name", {
+					ArtistID : "42",
+					IsActiveEntity : false,
+					Name : "The Beatles",
+					Messages : []
+				});
+
+			return Promise.all([
+				// code under test
+				oObjectPage.getBindingContext()
+					.requestSideEffects([{$PropertyPath : "*"}]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			return action("ActivationAction");
+		}).then(function () {
+			that.expectChange("price", null);
+
+			return Promise.all([
+				// reset creation row binding in order to prevent error:
+				// 'setContext on relative binding is forbidden if a transient entity exists'
+				// when the view is destroyed and the creation row parent context becomes undefined
+				oCreationRowBinding.resetChanges(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Object page bound to an active entity and its navigation property is $expand'ed via
 	// an own request. Trigger "Edit" bound action to start editing using a return value context and
 	// modify a property in the entity referenced by the navigation property. Activate the inactive
@@ -16171,6 +16326,125 @@ sap.ui.define([
 			var oInactiveArtistContext = aPromiseResults[0];
 
 			assert.strictEqual(oInactiveArtistContext.getProperty("IsActiveEntity"), false);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Execute bound action; the parent binding has an empty path, but does not have a
+	// cache, so that $$inheritExpandSelect must search the query options in the parent's parent.
+	// JIRA: CPOUI5ODATAV4-189
+	QUnit.test("bound operation: $$inheritExpandSelect and parent w/o cache #1", function (assert) {
+		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'Messages\'}}">\
+	<ColumnListItem>\
+		<Text id="listId" text="{SalesOrderID}" />\
+	</ColumnListItem>\
+</Table>\
+<FlexBox id="objectPage" binding="{}">\
+	<Text id="objectId" text="{SalesOrderID}" />\
+	<FlexBox id="action" binding="{path : \'' + sAction + '(...)\', \
+		parameters : {$$inheritExpandSelect : true}}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Messages,SalesOrderID&$skip=0&$top=100",
+				{value : [{SalesOrderID : "1"}]})
+			.expectChange("listId", ["1"])
+			.expectChange("objectId");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("objectId", "1");
+
+			that.oView.byId("objectPage").setBindingContext(
+				that.oView.byId("table").getItems()[0].getBindingContext()
+			);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList('1')/" + sAction + "?$select=Messages,SalesOrderID",
+					payload : {}
+				}, {
+					SalesOrderID : "1"
+				});
+
+			return Promise.all([
+				that.oView.byId("action").getObjectBinding().execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0].getPath(), "/SalesOrderList('1')");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Execute bound action; the parent binding has a non-empty path, but does not have a
+	// cache, so that $$inheritExpandSelect must search the query options in the parent's parent.
+	// JIRA: CPOUI5ODATAV4-189
+	QUnit.test("bound operation: $$inheritExpandSelect and parent w/o cache #2", function (assert) {
+		var sAction = "special.cases.EditAction",
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/Artists\',\
+		parameters : {$select : \'BestFriend/Messages\'}}">\
+	<ColumnListItem>\
+		<Text id="artists" text="{ArtistID}" />\
+		<Text id="bestFriends" text="{BestFriend/ArtistID}" />\
+	</ColumnListItem>\
+</Table>\
+<FlexBox id="objectPage" binding="{BestFriend}">\
+	<Text id="bestFriend" text="{ArtistID}" />\
+	<FlexBox id="action" binding="{path : \'' + sAction + '(...)\', \
+		parameters : {$$inheritExpandSelect : true}}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Artists?$select=ArtistID,IsActiveEntity"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Messages)"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : true,
+					BestFriend : {
+						ArtistID : "2",
+						IsActiveEntity : true
+					}
+				}]
+			})
+			.expectChange("artists", ["1"])
+			.expectChange("bestFriends", ["2"])
+			.expectChange("bestFriend");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("bestFriend", "2");
+
+			that.oView.byId("objectPage").setBindingContext(
+				that.oView.byId("table").getItems()[0].getBindingContext()
+			);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "Artists(ArtistID='1',IsActiveEntity=true)/BestFriend/" + sAction
+						+ "?$select=ArtistID,IsActiveEntity,Messages",
+					payload : {}
+				}, {
+					ArtistID : "2",
+					IsActiveEntity : false
+				});
+
+			return Promise.all([
+				that.oView.byId("action").getObjectBinding().execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aResults) {
+			// TODO return value context not supported here
+			// assert.strictEqual(aResults[0].getPath(),
+			// 	"Artists(ArtistID='2',IsActiveEntity=false)");
 		});
 	});
 
@@ -24310,4 +24584,72 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Get a property value from an ODataListBinding bound to a sap.m.Table while the
+	// table is reading data to grow. W/o autoExpandSelect, we just drop the key property from the
+	// response in order to use indices instead of key predicates in context paths.
+	// JIRA: CPOUI5ODATAV4-115
+[false, true].forEach(function (bAutoExpandSelect) {
+	var oSalesOrder = bAutoExpandSelect
+			? {SalesOrderID : "01", Note : "Note 1"}
+			: {Note : "Note 1"},
+		sSelect = bAutoExpandSelect ? "$select=Note,SalesOrderID&" : "",
+		sTitle = "Context#getProperty while table is reading, autoExpandSelect = "
+			+ bAutoExpandSelect,
+		sView = '\
+<Table id="table" growing="true" growingThreshold="1"\
+		items="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
+	<ColumnListItem>\
+		<Text id="note" text="{Note}" />\
+	</ColumnListItem>\
+</Table>';
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : bAutoExpandSelect}),
+			that = this;
+
+		this.expectRequest("SalesOrderList?$count=true&" + sSelect + "$skip=0&$top=1", {
+				"@odata.count" : "42",
+				value : [oSalesOrder]
+			})
+			.expectChange("note", ["Note 1"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oTable = that.oView.byId("table"),
+				oHeaderContext = oTable.getBinding("items").getHeaderContext();
+
+			// Note: "$tail" does not yield a red test here, it's created only on demand
+			["$byPredicate", "$created", "length"].forEach(function (sProperty) {
+				that.oLogMock.expects("error").withArgs("Failed to drill-down into " + sProperty
+					+ ", invalid segment: " + sProperty);
+				assert.strictEqual(oHeaderContext.getObject(sProperty), undefined);
+			});
+			that.expectRequest("SalesOrderList?$count=true&" + sSelect + "$skip=1&$top=1", {
+					"@odata.count" : "23",
+					value : [{Note : "Note 2"}]
+				})
+				.expectChange("note", [, "Note 2"]);
+
+			that.oView.byId("table-trigger").firePress(); // show more items
+
+			assert.strictEqual(
+				// code under test
+				oTable.getItems()[0].getBindingContext().getProperty("Note"),
+				"Note 1");
+			// code under test
+			assert.strictEqual(oHeaderContext.getProperty("$count"), 42);
+
+			return Promise.all([
+					// code under test
+					oHeaderContext.requestProperty("1/Note"),
+					oHeaderContext.requestProperty("$count"),
+					that.waitForChanges(assert)
+				]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0], "Note 2");
+			assert.strictEqual(aResults[1], 23);
+		});
+	});
+});
 });

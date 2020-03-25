@@ -739,7 +739,8 @@ sap.ui.define([
 					"null" : null,
 					zero : 0
 				}
-			}];
+			}],
+			that = this;
 
 		function drillDown(sPath, bCreateOnDemand) {
 			return oCache.drillDown(oData, sPath, null, bCreateOnDemand).getResult();
@@ -753,6 +754,7 @@ sap.ui.define([
 			"('1')" : oData[0].foo.list[3]
 		};
 		oData[0].foo.list.$count = 10;
+		oData[0].foo.list.$tail = {};
 
 		assert.strictEqual(drillDown(""), oData, "empty path");
 		assert.strictEqual(drillDown("0"), oData[0], "0");
@@ -832,6 +834,14 @@ sap.ui.define([
 			oCache.toString(), sClassName);
 
 		assert.strictEqual(drillDown("0/foo/list/bar"), undefined, "0/foo/list/bar");
+
+		["$byPredicate", "$created", "$tail", "length"].forEach(function (sProperty) {
+			that.oLogMock.expects("error").withExactArgs("Failed to drill-down into 0/foo/list/"
+				+ sProperty + ", invalid segment: " + sProperty, oCache.toString(), sClassName);
+
+			assert.strictEqual(drillDown("0/foo/list/" + sProperty), undefined,
+				"0/foo/list/" + sProperty);
+		});
 
 		oCacheMock.expects("from$skip")
 			.withExactArgs("foo", sinon.match.same(oData[0])).returns("foo");
@@ -5213,7 +5223,7 @@ sap.ui.define([
 			bCreateOnDemand = "bCreateOnDemand",
 			oGroupLock = {unlock : function () {}},
 			oResult,
-			oSyncPromiseAll = Promise.resolve(),
+			oSyncPromiseAll = SyncPromise.resolve(Promise.resolve()),
 			that = this;
 
 		assert.strictEqual(oCache.oSyncPromiseAll, undefined);
@@ -5239,6 +5249,7 @@ sap.ui.define([
 			});
 
 		assert.strictEqual(oCache.oSyncPromiseAll, oSyncPromiseAll);
+		assert.strictEqual(oResult.isPending(), true);
 
 		// code under test (simulate an error)
 		oCache.fill(undefined, 0, 3);
@@ -5248,47 +5259,118 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#fetchValue without $tail", function (assert) {
+	QUnit.test("CollectionCache#fetchValue without $tail, undefined element", function (assert) {
 		var oCache = this.createCache("Employees"),
 			bCreateOnDemand = "bCreateOnDemand",
-			oGroupLock = {unlock : function () {}};
+			oGroupLock = {unlock : function () {}},
+			oResult,
+			oSyncPromiseAll = SyncPromise.resolve(Promise.resolve()),
+			that = this;
 
+		assert.strictEqual(oCache.oSyncPromiseAll, undefined);
+		// Note: this may happen as a result of that.fill(undefined, ...);
+		oCache.aElements.push(undefined);
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
 		this.mock(SyncPromise).expects("all")
 			.withExactArgs(sinon.match.same(oCache.aElements))
-			.returns(SyncPromise.resolve());
-		this.mock(oCache).expects("drillDown")
-			.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key",
-				sinon.match.same(oGroupLock), bCreateOnDemand)
-			.returns(SyncPromise.resolve("c"));
+			.returns(oSyncPromiseAll);
+		oSyncPromiseAll.then(function () {
+			that.mock(oCache).expects("drillDown")
+				.withExactArgs(sinon.match.same(oCache.aElements), "0/key",
+					sinon.match.same(oGroupLock), bCreateOnDemand)
+				.returns(SyncPromise.resolve("c"));
+		});
 
 		// code under test
-		return oCache.fetchValue(oGroupLock, "('c')/key", null, null, bCreateOnDemand)
+		oResult = oCache.fetchValue(oGroupLock, "0/key", null, null, bCreateOnDemand)
 			.then(function (sResult) {
 				assert.strictEqual(sResult, "c");
 			});
+
+		assert.strictEqual(oCache.oSyncPromiseAll, oSyncPromiseAll);
+		assert.strictEqual(oResult.isPending(), true);
+
+		return oResult;
 	});
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#fetchValue without $tail, oSyncPromiseAll", function (assert) {
 		var oCache = this.createCache("Employees"),
 			bCreateOnDemand = "bCreateOnDemand",
-			oGroupLock = {unlock : function () {}};
+			oGroupLock = {unlock : function () {}},
+			oResult,
+			oSyncPromiseAll = SyncPromise.resolve(Promise.resolve()),
+			that = this;
 
-		oCache.oSyncPromiseAll = SyncPromise.resolve();
+		oCache.oSyncPromiseAll = oSyncPromiseAll;
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
 		this.mock(SyncPromise).expects("all").never();
-		this.mock(oCache).expects("drillDown")
-			.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key",
-				sinon.match.same(oGroupLock), bCreateOnDemand)
-			.returns(SyncPromise.resolve("c"));
+		oSyncPromiseAll.then(function () {
+			that.mock(oCache).expects("drillDown")
+				.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key",
+					sinon.match.same(oGroupLock), bCreateOnDemand)
+				.returns(SyncPromise.resolve("c"));
+		});
 
 		// code under test
-		return oCache.fetchValue(oGroupLock, "('c')/key", null, null, bCreateOnDemand)
+		oResult = oCache.fetchValue(oGroupLock, "('c')/key", null, null, bCreateOnDemand)
 			.then(function (sResult) {
 				assert.strictEqual(sResult, "c");
 			});
+
+		assert.strictEqual(oCache.oSyncPromiseAll, oSyncPromiseAll);
+		assert.strictEqual(oResult.isPending(), true);
+
+		return oResult;
 	});
+
+	//*********************************************************************************************
+[{
+	fnArrange : function (oCache) {
+		oCache.aElements.$byPredicate["('c')"] = {};
+	},
+	oGroupLock : {unlock : function () {}},
+	sPath : "('c')/note",
+	sTitle : "CollectionCache#fetchValue sync via key predicate"
+}, {
+	fnArrange : function (oCache) {
+		oCache.aElements.push({});
+	},
+	oGroupLock : {unlock : function () {}},
+	sPath : "0/note",
+	sTitle : "CollectionCache#fetchValue sync via index"
+}, {
+	fnArrange : function (oCache) {
+		oCache.aElements.$count = 0;
+	},
+	oGroupLock : _GroupLock.$cached,
+	sPath : "$count",
+	sTitle : "CollectionCache#fetchValue sync via $count"
+}].forEach(function (oFixture) {
+	QUnit.test(oFixture.sTitle, function (assert) {
+		var oCache = this.createCache("Employees"),
+			bCreateOnDemand = "bCreateOnDemand",
+			fnDataRequested = null,
+			oGroupLock = oFixture.oGroupLock,
+			oListener = {},
+			sPath = oFixture.sPath;
+
+		oFixture.fnArrange(oCache);
+		this.mock(oGroupLock).expects("unlock").withExactArgs();
+		this.mock(oCache).expects("registerChange")
+			.withExactArgs(sPath, sinon.match.same(oListener));
+		this.mock(oCache).expects("drillDown")
+			.withExactArgs(sinon.match.same(oCache.aElements), sPath, sinon.match.same(oGroupLock),
+				bCreateOnDemand)
+			.returns(SyncPromise.resolve("Note 1"));
+		this.mock(SyncPromise).expects("all").never();
+
+		assert.strictEqual(
+			// code under test
+			oCache.fetchValue(oGroupLock, sPath, fnDataRequested, oListener, bCreateOnDemand)
+				.getResult(), "Note 1");
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#read(-1, 1)", function (assert) {

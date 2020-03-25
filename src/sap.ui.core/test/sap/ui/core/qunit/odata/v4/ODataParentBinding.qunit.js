@@ -3506,6 +3506,26 @@ sap.ui.define([
 				}
 			}),
 			oPromise,
+			mQueryOptions = {$select : ["foo"]};
+
+		this.mock(oBinding).expects("getQueryOptionsFromParameters").withExactArgs()
+			.returns(mQueryOptions);
+
+		// code under test
+		oPromise = oBinding.fetchResolvedQueryOptions();
+
+		assert.strictEqual(oPromise.getResult(), mQueryOptions);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchResolvedQueryOptions: no $select", function (assert) {
+		var oBinding = new ODataParentBinding({
+				getQueryOptionsFromParameters : function () {},
+				oModel : {
+					bAutoExpandSelect : true
+				}
+			}),
+			oPromise,
 			mQueryOptions = {};
 
 		this.mock(oBinding).expects("getQueryOptionsFromParameters").withExactArgs()
@@ -3531,8 +3551,16 @@ sap.ui.define([
 				sPath : "/path"
 			}),
 			oContext = {},
+			oHelperMock = this.mock(_Helper),
+			bProcessedBar = false,
+			bProcessedFoo = false,
+			bProcessedQualifiedName = false,
 			oPromise,
-			mQueryOptionsFromParameters = {},
+			mQueryOptionsFromParameters = {
+				$select : ["foo", "bar", "qualified.Name"],
+				$expand : {}
+			},
+			mQueryOptionsAsString = JSON.stringify(mQueryOptionsFromParameters),
 			mResolvedQueryOptions = {};
 
 		this.mock(oBinding).expects("getQueryOptionsFromParameters").withExactArgs()
@@ -3541,16 +3569,67 @@ sap.ui.define([
 			.withExactArgs(oBinding.sPath, sinon.match.same(oContext))
 			.returns("/resolved/path");
 		this.mock(_Helper).expects("getMetaPath").withExactArgs("/resolved/path")
-			.returns("/metapath");
-		this.mock(_Helper).expects("fetchResolvedSelect")
-			.withExactArgs("fnFetchMetadata", "/metapath",
-				sinon.match.same(mQueryOptionsFromParameters))
-			.returns(SyncPromise.resolve(mResolvedQueryOptions));
+			.returns("/meta/path");
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, sinon.match.same(mQueryOptionsFromParameters), {$select : []})
+			.returns(mResolvedQueryOptions);
+		oHelperMock.expects("fetchPropertyAndType")
+			.withExactArgs("fnFetchMetadata", "/meta/path/foo")
+			.returns(Promise.resolve().then(function () {
+				var mChildQueryOptions = {};
+
+				oHelperMock.expects("wrapChildQueryOptions")
+					.withExactArgs("/meta/path", "foo", {}, "fnFetchMetadata")
+					.returns(mChildQueryOptions);
+				oHelperMock.expects("aggregateQueryOptions")
+					.withExactArgs(sinon.match.same(mResolvedQueryOptions),
+						sinon.match.same(mChildQueryOptions))
+					.callsFake(function () {
+						bProcessedFoo = true;
+					});
+			}));
+		oHelperMock.expects("fetchPropertyAndType")
+			.withExactArgs("fnFetchMetadata", "/meta/path/bar")
+			.returns(Promise.resolve().then(function () {
+				var mChildQueryOptions = {};
+
+				oHelperMock.expects("wrapChildQueryOptions")
+					.withExactArgs("/meta/path", "bar", {}, "fnFetchMetadata")
+					.returns(mChildQueryOptions);
+				oHelperMock.expects("aggregateQueryOptions")
+					.withExactArgs(sinon.match.same(mResolvedQueryOptions),
+						sinon.match.same(mChildQueryOptions))
+					.callsFake(function () {
+						bProcessedBar = true;
+					});
+			}));
+		oHelperMock.expects("fetchPropertyAndType")
+			.withExactArgs("fnFetchMetadata", "/meta/path/qualified.Name")
+			.returns(Promise.resolve().then(function () {
+				oHelperMock.expects("wrapChildQueryOptions")
+					.withExactArgs("/meta/path", "qualified.Name", {},
+						"fnFetchMetadata")
+					.returns(undefined);
+				oHelperMock.expects("addToSelect")
+					.withExactArgs(sinon.match.same(mResolvedQueryOptions), ["qualified.Name"])
+					.callsFake(function () {
+						bProcessedQualifiedName = true;
+					});
+			}));
 
 		// code under test
 		oPromise = oBinding.fetchResolvedQueryOptions(oContext);
 
-		assert.strictEqual(oPromise.getResult(), mResolvedQueryOptions);
+		assert.strictEqual(oPromise.isPending(), true);
+
+		return oPromise.then(function (oResult) {
+			assert.strictEqual(oResult, mResolvedQueryOptions);
+			assert.strictEqual(bProcessedBar, true);
+			assert.strictEqual(bProcessedFoo, true);
+			assert.strictEqual(bProcessedQualifiedName, true);
+			assert.strictEqual(JSON.stringify(mQueryOptionsFromParameters), mQueryOptionsAsString,
+				"original query options unchanged");
+		});
 	});
 
 	//*********************************************************************************************
@@ -3562,6 +3641,45 @@ sap.ui.define([
 		assert.strictEqual(asODataParentBinding.prototype.destroy, oBinding.destroy);
 		assert.strictEqual(asODataParentBinding.prototype.hasPendingChangesForPath,
 			oBinding.hasPendingChangesForPath);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCacheQueryOptions: own mCacheQueryOptions", function (assert) {
+		var oBinding = new ODataParentBinding({
+				mCacheQueryOptions : {}
+			});
+
+		assert.strictEqual(
+			// code under test
+			oBinding.getCacheQueryOptions(),
+			oBinding.mCacheQueryOptions
+		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCacheQueryOptions: mCacheQueryOptions from parent", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oContext : {
+					getBinding : function() {}
+				},
+				sPath : "~path~"
+			}),
+			mCacheQueryOptions = {},
+			mCacheQueryOptionsForPath = {},
+			oParentBinding = new ODataParentBinding();
+
+		this.mock(oBinding.oContext).expects("getBinding").withExactArgs().returns(oParentBinding);
+		this.mock(oParentBinding).expects("getCacheQueryOptions").withExactArgs()
+			.returns(mCacheQueryOptions);
+		this.mock(_Helper).expects("getQueryOptionsForPath")
+			.withExactArgs(sinon.match.same(mCacheQueryOptions), "~path~")
+			.returns(mCacheQueryOptionsForPath);
+
+		assert.strictEqual(
+			// code under test
+			oBinding.getCacheQueryOptions(),
+			mCacheQueryOptionsForPath
+		);
 	});
 });
 //TODO Fix issue with ODataModel.integration.qunit

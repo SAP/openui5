@@ -123,9 +123,11 @@ sap.ui.define([
 		},
 
 		/**
-		 * Builds a relative path from the given arguments. Iterates over the arguments and appends
-		 * them to the path if defined and non-empty. The arguments are expected to be strings or
-		 * integers, but this is not checked.
+		 * Builds a path from the given arguments (absolute or relative depending on the first
+		 * non-empty argument). Iterates over the arguments and appends them to the path if defined
+		 * and non-empty. The arguments are expected to be strings or integers, but this is not
+		 * checked. If any but the first non-empty argument starts with a "/", the result is
+		 * invalid.
 		 *
 		 * Examples:
 		 * buildPath() --> ""
@@ -136,6 +138,7 @@ sap.ui.define([
 		 * buildPath("base", 42, "relative") --> "base/42/relative"
 		 * buildPath("base", 0, "relative") --> "base/0/relative"
 		 * buildPath("base", "('predicate')") --> "base('predicate')"
+		 * buildPath("/base", "('predicate')") --> "/base('predicate')"
 		 *
 		 * @returns {string} a composite path built from all arguments
 		 */
@@ -475,44 +478,6 @@ sap.ui.define([
 					});
 				}
 				return oProperty;
-			});
-		},
-
-		/**
-		 * Resolves all paths in $select containing navigation properties and converts them into
-		 * appropriate $expand.
-		 *
-		 * @param {function} fnFetchMetadata Function which fetches metadata for a given meta path
-		 * @param {string} sMetaPath The meta path of the binding having these query options
-		 * @param {object} mQueryOptions The query options to resolve
-		 * @returns {sap.ui.base.SyncPromise<object>} A promise that resolves with the converted
-		 *   query options when all paths in $select have been processed; mQueryOptions remains
-		 *   unchanged
-		 */
-		fetchResolvedSelect : function (fnFetchMetadata, sMetaPath, mQueryOptions) {
-			var mConvertedQueryOptions;
-
-			if (!mQueryOptions.$select) {
-				return SyncPromise.resolve(mQueryOptions);
-			}
-
-			mConvertedQueryOptions = Object.assign({}, mQueryOptions);
-			mConvertedQueryOptions.$select = [];
-			return SyncPromise.all(mQueryOptions.$select.map(function (sSelectPath) {
-				return _Helper.fetchPropertyAndType(
-					fnFetchMetadata, sMetaPath + "/" + sSelectPath
-				).then(function () {
-					var mWrappedQueryOptions = _Helper.wrapChildQueryOptions(
-							sMetaPath, sSelectPath, {}, fnFetchMetadata);
-
-					if (mWrappedQueryOptions) {
-						_Helper.aggregateQueryOptions(mConvertedQueryOptions, mWrappedQueryOptions);
-					} else {
-						_Helper.addToSelect(mConvertedQueryOptions, [sSelectPath]);
-					}
-				});
-			})).then(function () {
-				return mConvertedQueryOptions;
 			});
 		},
 

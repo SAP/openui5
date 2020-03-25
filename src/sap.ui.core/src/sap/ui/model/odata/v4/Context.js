@@ -22,7 +22,7 @@ sap.ui.define([
 	 * Fetches and formats the primitive value at the given path.
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oContext The context
-	 * @param {string} sPath The requested path
+	 * @param {string} sPath The requested path relative to this context
 	 * @param {boolean} [bExternalFormat=false]
 	 *   If <code>true</code>, the value is returned in external format using a UI5 type for the
 	 *   given property path that formats corresponding to the property's EDM type and constraints.
@@ -33,7 +33,7 @@ sap.ui.define([
 	function fetchPrimitiveValue(oContext, sPath, bExternalFormat, bCached) {
 		var oError,
 			aPromises = [oContext.fetchValue(sPath, null, bCached)],
-			sResolvedPath = oContext.getPath(sPath);
+			sResolvedPath = _Helper.buildPath(oContext.getPath(), sPath);
 
 		if (bExternalFormat) {
 			aPromises.push(
@@ -303,7 +303,7 @@ sap.ui.define([
 	 * Sets the new current value and updates the cache.
 	 *
 	 * @param {string} sPath
-	 *   A relative path within the JSON structure
+	 *   A path relative to this context
 	 * @param {any} vValue
 	 *   The new value which must be primitive
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
@@ -537,7 +537,7 @@ sap.ui.define([
 	 * Use {@link #requestObject} for asynchronous access.
 	 *
 	 * @param {string} [sPath=""]
-	 *   A relative path within the JSON structure
+	 *   A path relative to this context
 	 * @returns {any}
 	 *   The requested value
 	 * @throws {Error}
@@ -559,7 +559,7 @@ sap.ui.define([
 	 * for asynchronous access.
 	 *
 	 * @param {string} sPath
-	 *   A relative path within the JSON structure
+	 * 	 A path relative to this context
 	 * @param {boolean} [bExternalFormat=false]
 	 *   If <code>true</code>, the value is returned in external format using a UI5 type for the
 	 *   given property path that formats corresponding to the property's EDM type and constraints.
@@ -655,7 +655,7 @@ sap.ui.define([
 	 * Returns <code>undefined</code> if the data is not (yet) available; no request is triggered.
 	 *
 	 * @param {string} [sPath=""]
-	 *   A relative path within the JSON structure
+	 *   A path relative to this context
 	 * @returns {any}
 	 *   The requested value
 	 * @throws {Error}
@@ -812,7 +812,7 @@ sap.ui.define([
 	 * If you want {@link #requestObject} to read fresh data, call {@link #refresh} first.
 	 *
 	 * @param {string} [sPath=""]
-	 *   A relative path within the JSON structure
+	 *   A path relative to this context
 	 * @returns {Promise}
 	 *   A promise on the requested value
 	 * @throws {Error}
@@ -835,7 +835,7 @@ sap.ui.define([
 	 * is expected to point to a structural property with primitive type.
 	 *
 	 * @param {string} [sPath]
-	 *   A relative path within the JSON structure
+	 *   A path relative to this context
 	 * @param {boolean} [bExternalFormat=false]
 	 *   If <code>true</code>, the value is returned in external format using a UI5 type for the
 	 *   given property path that formats corresponding to the property's EDM type and constraints.
@@ -1097,7 +1097,7 @@ sap.ui.define([
 	 * context and is expected to point to a structural property with primitive type.
 	 *
 	 * @param {string} sPath
-	 *   A relative path within the JSON structure
+	 *   A path relative to this context
 	 * @param {any} vValue
 	 *   The new value which must be primitive
 	 * @param {string} [sGroupId]

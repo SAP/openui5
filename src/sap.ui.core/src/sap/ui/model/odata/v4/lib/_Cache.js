@@ -466,7 +466,7 @@ sap.ui.define([
 		 * @returns {any} The value if it could be determined or undefined otherwise
 		 */
 		function missingValue(oValue, sSegment, iPathLength) {
-			var sPropertyPath = sPath.split("/").slice(0, iPathLength).join("/"),
+			var sPropertyPath = aSegments.slice(0, iPathLength).join("/"),
 				sReadLink,
 				sServiceUrl;
 
@@ -532,7 +532,8 @@ sap.ui.define([
 					// property of a complex type which is null
 					return undefined;
 				}
-				if (typeof vValue !== "object" || sSegment === "@$ui5._") {
+				if (typeof vValue !== "object" || sSegment === "@$ui5._"
+					|| Array.isArray(vValue) && (sSegment[0] === "$" || sSegment === "length")) {
 					// Note: protect private namespace against read access just like any missing
 					// object
 					return invalidSegment(sSegment);
@@ -924,11 +925,11 @@ sap.ui.define([
 					= Object.assign({}, _Helper.getQueryOptionsForPath(that.mQueryOptions, sPath));
 
 			// drop collection related system query options
-			delete mQueryOptions["$apply"];
-			delete mQueryOptions["$count"];
-			delete mQueryOptions["$filter"];
-			delete mQueryOptions["$orderby"];
-			delete mQueryOptions["$search"];
+			delete mQueryOptions.$apply;
+			delete mQueryOptions.$count;
+			delete mQueryOptions.$filter;
+			delete mQueryOptions.$orderby;
+			delete mQueryOptions.$search;
 			sReadUrl += that.oRequestor.buildQueryString(that.sMetaPath, mQueryOptions, false,
 				that.bSortExpandSelect);
 
@@ -982,13 +983,13 @@ sap.ui.define([
 				sPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate"),
 				mQueryOptions
 					= Object.assign({}, _Helper.getQueryOptionsForPath(that.mQueryOptions, sPath)),
-				sFilterOptions = mQueryOptions["$filter"],
+				sFilterOptions = mQueryOptions.$filter,
 				sReadUrl = _Helper.buildPath(that.sResourcePath, sPath),
 				mTypeForMetaPath = aResults[1];
 
-			delete mQueryOptions["$count"];
-			delete mQueryOptions["$orderby"];
-			mQueryOptions["$filter"] = (sFilterOptions ? "(" + sFilterOptions + ") and " : "")
+			delete mQueryOptions.$count;
+			delete mQueryOptions.$orderby;
+			mQueryOptions.$filter = (sFilterOptions ? "(" + sFilterOptions + ") and " : "")
 				+ _Helper.getKeyFilter(oEntity, that.sMetaPath, mTypeForMetaPath);
 
 			sReadUrl += that.oRequestor.buildQueryString(that.sMetaPath, mQueryOptions, false,
@@ -1711,7 +1712,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a promise to be resolved with an OData object for the requested data.
+	 * Returns a promise to be resolved (synchronously if possible) with an OData object for the
+	 * requested data.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the request with; unused in CollectionCache since no
@@ -1738,18 +1740,30 @@ sap.ui.define([
 	CollectionCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested,
 			oListener, bCreateOnDemand) {
 		var aElements,
+			sFirstSegment = sPath.split("/")[0],
+			oSyncPromise,
 			that = this;
 
 		oGroupLock.unlock();
-		if (!this.oSyncPromiseAll) {
-			// wait for all reads to be finished, this is essential for $count and for finding the
-			// index of a key predicate
-			aElements = this.aElements.$tail
-				? this.aElements.concat(this.aElements.$tail)
-				: this.aElements;
-			this.oSyncPromiseAll = SyncPromise.all(aElements);
+		if (this.aElements.$byPredicate[sFirstSegment]) {
+			oSyncPromise = SyncPromise.resolve(); // sync access possible
+		} else if ((oGroupLock === _GroupLock.$cached || sFirstSegment !== "$count")
+				&& this.aElements[sFirstSegment] !== undefined) {
+			// sync access might be possible
+			oSyncPromise = SyncPromise.resolve(this.aElements[sFirstSegment]);
+		} else {
+			if (!this.oSyncPromiseAll) {
+				// wait for all reads to be finished, this is essential for a new $count and for
+				// finding the index of an unknown key predicate
+				aElements = this.aElements.$tail
+					? this.aElements.concat(this.aElements.$tail)
+					: this.aElements;
+				this.oSyncPromiseAll = SyncPromise.all(aElements);
+			}
+			oSyncPromise = this.oSyncPromiseAll;
 		}
-		return this.oSyncPromiseAll.then(function () {
+
+		return oSyncPromise.then(function () {
 			// register afterwards to avoid that updateExisting fires updates before the first
 			// response
 			that.registerChange(sPath, oListener);
@@ -1802,7 +1816,7 @@ sap.ui.define([
 		var mQueryOptions = Object.assign({}, this.mQueryOptions),
 			oElement,
 			sExclusiveFilter,
-			sFilterOptions = mQueryOptions["$filter"],
+			sFilterOptions = mQueryOptions.$filter,
 			i,
 			sKeyFilter,
 			aKeyFilters = [],
@@ -1824,7 +1838,7 @@ sap.ui.define([
 		if (aKeyFilters.length) {
 			sExclusiveFilter = "not (" + aKeyFilters.join(" or ") + ")";
 			if (sFilterOptions) {
-				mQueryOptions["$filter"] = "(" + sFilterOptions + ") and " + sExclusiveFilter;
+				mQueryOptions.$filter = "(" + sFilterOptions + ") and " + sExclusiveFilter;
 				sQueryString = this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions,
 					false, this.bSortExpandSelect);
 			} else {

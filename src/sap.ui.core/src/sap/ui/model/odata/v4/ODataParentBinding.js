@@ -73,7 +73,7 @@ sap.ui.define([
 	 * Handles exceptional cases of setting the property with the given path to the given value.
 	 *
 	 * @param {string} sPath
-	 *   A relative path within the JSON structure
+	 *   A path (absolute or relative to this binding)
 	 * @param {any} vValue
 	 *   The new value which must be primitive
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
@@ -780,15 +780,35 @@ sap.ui.define([
 	 * @see #getQueryOptionsFromParameters
 	 */
 	ODataParentBinding.prototype.fetchResolvedQueryOptions = function (oContext) {
-		var oModel = this.oModel,
+		var fnFetchMetadata,
+			mConvertedQueryOptions,
+			sMetaPath,
+			oModel = this.oModel,
 			mQueryOptions = this.getQueryOptionsFromParameters();
 
-		if (!oModel.bAutoExpandSelect) {
+		if (!(oModel.bAutoExpandSelect && mQueryOptions.$select)) {
 			return SyncPromise.resolve(mQueryOptions);
 		}
 
-		return _Helper.fetchResolvedSelect(oModel.oInterface.fetchMetadata,
-			_Helper.getMetaPath(oModel.resolve(this.sPath, oContext)), mQueryOptions);
+		fnFetchMetadata = oModel.oInterface.fetchMetadata;
+		sMetaPath = _Helper.getMetaPath(oModel.resolve(this.sPath, oContext));
+		mConvertedQueryOptions = Object.assign({}, mQueryOptions, {$select : []});
+		return SyncPromise.all(mQueryOptions.$select.map(function (sSelectPath) {
+			return _Helper.fetchPropertyAndType(
+				fnFetchMetadata, sMetaPath + "/" + sSelectPath
+			).then(function () {
+				var mWrappedQueryOptions = _Helper.wrapChildQueryOptions(
+						sMetaPath, sSelectPath, {}, fnFetchMetadata);
+
+				if (mWrappedQueryOptions) {
+					_Helper.aggregateQueryOptions(mConvertedQueryOptions, mWrappedQueryOptions);
+				} else {
+					_Helper.addToSelect(mConvertedQueryOptions, [sSelectPath]);
+				}
+			});
+		})).then(function () {
+			return mConvertedQueryOptions;
+		});
 	};
 
 	/**
@@ -814,6 +834,19 @@ sap.ui.define([
 			}
 		}
 		return this.oModel.resolve(this.sPath, this.oContext);
+	};
+
+	/**
+	 * Returns the query options used in the cache.
+	 *
+	 * @returns {object} The query options
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.getCacheQueryOptions = function () {
+		return this.mCacheQueryOptions
+			|| _Helper.getQueryOptionsForPath(
+				this.oContext.getBinding().getCacheQueryOptions(), this.sPath);
 	};
 
 	/**
