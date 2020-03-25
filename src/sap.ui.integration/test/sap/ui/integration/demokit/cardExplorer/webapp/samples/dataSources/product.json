@@ -4,6 +4,16 @@
 		"type": "card",
 		"i18n": "i18n/i18n.properties",
 		"title": "Sample of a Card with Data Source",
+		"applicationVersion": {
+		  "version": "1.0.0"
+		},
+		"tags": {
+		  "keywords": [
+			"Data",
+			"Card",
+			"Sample"
+		  ]
+		},
 		"dataSources": {
 			"products": {
 				"uri": "./SEPMRA_PROD_MAN",

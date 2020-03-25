@@ -267,7 +267,7 @@ sap.ui.define([
 
 		oCache.fetchValue = function () {};
 		this.mock(oCache).expects("fetchValue")
-			.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to/entity")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to/entity", null, null, true)
 			.returns(SyncPromise.resolve(oEntityPromise));
 		oEntityPromise.then(function () {
 			that.mock(_Cache).expects("makeUpdateData")
@@ -734,14 +734,16 @@ sap.ui.define([
 			oData = [{
 				foo : {
 					bar : 42,
+					empty : "",
 					list : [{/*created*/}, {/*created*/}, {}, {}],
-					"null" : null
+					"null" : null,
+					zero : 0
 				}
 			}],
 			that = this;
 
-		function drillDown(sPath) {
-			return oCache.drillDown(oData, sPath).getResult();
+		function drillDown(sPath, bCreateOnDemand) {
+			return oCache.drillDown(oData, sPath, null, bCreateOnDemand).getResult();
 		}
 
 		oCache.sResourcePath = "Employees?$select=foo";
@@ -860,8 +862,21 @@ sap.ui.define([
 			.withExactArgs("list", sinon.match.same(oData[0].foo)).returns("list");
 		oCacheMock.expects("from$skip")
 			.withExactArgs("5", sinon.match.same(oData[0].foo.list)).returns(7);
-		assert.strictEqual(drillDown("('a')/foo/list/5"), undefined,
+		// Note: even bCreateOnDemand does not change this!
+		assert.strictEqual(drillDown("('a')/foo/list/5", true), undefined,
 			"('a')/foo/list/5: index 7 out of range in ('a')/foo/list");
+
+		oCacheMock.expects("from$skip")
+			.withExactArgs("foo", sinon.match.same(oData[0])).returns("foo");
+		oCacheMock.expects("from$skip")
+			.withExactArgs("empty", sinon.match.same(oData[0].foo)).returns("empty");
+		assert.strictEqual(drillDown("('a')/foo/empty", /*bCreateOnDemand*/true), "");
+
+		oCacheMock.expects("from$skip")
+			.withExactArgs("foo", sinon.match.same(oData[0])).returns("foo");
+		oCacheMock.expects("from$skip")
+			.withExactArgs("zero", sinon.match.same(oData[0].foo)).returns("zero");
+		assert.strictEqual(drillDown("('a')/foo/zero", /*bCreateOnDemand*/true), 0);
 	});
 
 	//*********************************************************************************************
@@ -1013,6 +1028,33 @@ sap.ui.define([
 			assert.strictEqual(sResult, undefined);
 		});
 	});
+
+	//*********************************************************************************************
+[
+	[{"@$ui5._" : {predicate : ("('42')")}}], // PRODUCT_2_BP : undefined
+	[{"@$ui5._" : {predicate : ("('42')")}, PRODUCT_2_BP : null}]
+].forEach(function (oData, i) {
+	QUnit.test("_Cache#drillDown: bCreateOnDemand, " + i, function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products"),
+			oGroupLock = {};
+
+		oData.$byPredicate = {"('42')" : oData[0]};
+		// Note: expect no call to missingValue()
+		this.oModelInterfaceMock.expects("fetchMetadata").never();
+		this.mock(oCache).expects("fetchLateProperty").never();
+
+		// code under test
+		// Note: we assume bCreateOnDemand is only set in case of an "entity path"!
+		return oCache.drillDown(oData, "('42')/PRODUCT_2_BP", oGroupLock, /*bCreateOnDemand*/true)
+			.then(function (oResult) {
+				assert.strictEqual(oResult, oData[0].PRODUCT_2_BP);
+				assert.deepEqual(oData, [{
+					"@$ui5._" : {predicate : ("('42')")},
+					PRODUCT_2_BP : {}
+				}]);
+			});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#drillDown: stream property", function (assert) {
@@ -5128,6 +5170,7 @@ sap.ui.define([
 		var sResourcePath = "Employees",
 			oCache = this.createCache(sResourcePath),
 			oCacheMock = this.mock(oCache),
+			bCreateOnDemand = "bCreateOnDemand",
 			oGroupLock0 = {
 				unlock : function () {}
 			},
@@ -5144,14 +5187,14 @@ sap.ui.define([
 			.withExactArgs("('c')/key", sinon.match.same(oListener));
 		oCacheMock.expects("drillDown")
 			.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key",
-				sinon.match.same(oGroupLock0))
+				sinon.match.same(oGroupLock0), bCreateOnDemand)
 			.returns(SyncPromise.resolve("c"));
 
 		return Promise.all([
 			oReadPromise,
 
 			// code under test
-			oCache.fetchValue(oGroupLock0, "('c')/key", {}, oListener)
+			oCache.fetchValue(oGroupLock0, "('c')/key", {}, oListener, bCreateOnDemand)
 				.then(function (sResult) {
 					var oGroupLock1 = {
 							unlock : function () {}
@@ -5160,14 +5203,15 @@ sap.ui.define([
 					assert.strictEqual(sResult, "c");
 
 					that.mock(oGroupLock1).expects("unlock").withExactArgs();
-					oCacheMock.expects("registerChange").withExactArgs("('c')/key", undefined);
+					oCacheMock.expects("registerChange").withExactArgs("('c')/key", null);
 					oCacheMock.expects("drillDown")
 						.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key",
-							sinon.match.same(oGroupLock1))
+							sinon.match.same(oGroupLock1), false)
 						.returns(SyncPromise.resolve("c"));
 
 					// code under test: now it must be delivered synchronously
-					assert.strictEqual(oCache.fetchValue(oGroupLock1, "('c')/key", {}).getResult(),
+					assert.strictEqual(
+						oCache.fetchValue(oGroupLock1, "('c')/key", null, null, false).getResult(),
 						"c");
 				})
 		]);
@@ -5176,6 +5220,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#fetchValue includes $tail", function (assert) {
 		var oCache = this.createCache("Employees"),
+			bCreateOnDemand = "bCreateOnDemand",
 			oGroupLock = {unlock : function () {}},
 			oResult,
 			oSyncPromiseAll = SyncPromise.resolve(Promise.resolve()),
@@ -5193,14 +5238,15 @@ sap.ui.define([
 		oSyncPromiseAll.then(function () {
 			that.mock(oCache).expects("drillDown")
 				.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key",
-					sinon.match.same(oGroupLock))
+					sinon.match.same(oGroupLock), bCreateOnDemand)
 				.returns(SyncPromise.resolve("c"));
 		});
 
 		// code under test
-		oResult = oCache.fetchValue(oGroupLock, "('c')/key").then(function (sResult) {
-			assert.strictEqual(sResult, "c");
-		});
+		oResult = oCache.fetchValue(oGroupLock, "('c')/key", null, null, bCreateOnDemand)
+			.then(function (sResult) {
+				assert.strictEqual(sResult, "c");
+			});
 
 		assert.strictEqual(oCache.oSyncPromiseAll, oSyncPromiseAll);
 		assert.strictEqual(oResult.isPending(), true);
@@ -5215,6 +5261,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#fetchValue without $tail, undefined element", function (assert) {
 		var oCache = this.createCache("Employees"),
+			bCreateOnDemand = "bCreateOnDemand",
 			oGroupLock = {unlock : function () {}},
 			oResult,
 			oSyncPromiseAll = SyncPromise.resolve(Promise.resolve()),
@@ -5230,14 +5277,15 @@ sap.ui.define([
 		oSyncPromiseAll.then(function () {
 			that.mock(oCache).expects("drillDown")
 				.withExactArgs(sinon.match.same(oCache.aElements), "0/key",
-					sinon.match.same(oGroupLock))
+					sinon.match.same(oGroupLock), bCreateOnDemand)
 				.returns(SyncPromise.resolve("c"));
 		});
 
 		// code under test
-		oResult = oCache.fetchValue(oGroupLock, "0/key").then(function (sResult) {
-			assert.strictEqual(sResult, "c");
-		});
+		oResult = oCache.fetchValue(oGroupLock, "0/key", null, null, bCreateOnDemand)
+			.then(function (sResult) {
+				assert.strictEqual(sResult, "c");
+			});
 
 		assert.strictEqual(oCache.oSyncPromiseAll, oSyncPromiseAll);
 		assert.strictEqual(oResult.isPending(), true);
@@ -5248,6 +5296,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#fetchValue without $tail, oSyncPromiseAll", function (assert) {
 		var oCache = this.createCache("Employees"),
+			bCreateOnDemand = "bCreateOnDemand",
 			oGroupLock = {unlock : function () {}},
 			oResult,
 			oSyncPromiseAll = SyncPromise.resolve(Promise.resolve()),
@@ -5259,14 +5308,15 @@ sap.ui.define([
 		oSyncPromiseAll.then(function () {
 			that.mock(oCache).expects("drillDown")
 				.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key",
-					sinon.match.same(oGroupLock))
+					sinon.match.same(oGroupLock), bCreateOnDemand)
 				.returns(SyncPromise.resolve("c"));
 		});
 
 		// code under test
-		oResult = oCache.fetchValue(oGroupLock, "('c')/key").then(function (sResult) {
-			assert.strictEqual(sResult, "c");
-		});
+		oResult = oCache.fetchValue(oGroupLock, "('c')/key", null, null, bCreateOnDemand)
+			.then(function (sResult) {
+				assert.strictEqual(sResult, "c");
+			});
 
 		assert.strictEqual(oCache.oSyncPromiseAll, oSyncPromiseAll);
 		assert.strictEqual(oResult.isPending(), true);
@@ -5299,6 +5349,8 @@ sap.ui.define([
 }].forEach(function (oFixture) {
 	QUnit.test(oFixture.sTitle, function (assert) {
 		var oCache = this.createCache("Employees"),
+			bCreateOnDemand = "bCreateOnDemand",
+			fnDataRequested = null,
 			oGroupLock = oFixture.oGroupLock,
 			oListener = {},
 			sPath = oFixture.sPath;
@@ -5308,13 +5360,14 @@ sap.ui.define([
 		this.mock(oCache).expects("registerChange")
 			.withExactArgs(sPath, sinon.match.same(oListener));
 		this.mock(oCache).expects("drillDown")
-			.withExactArgs(sinon.match.same(oCache.aElements), sPath, sinon.match.same(oGroupLock))
+			.withExactArgs(sinon.match.same(oCache.aElements), sPath, sinon.match.same(oGroupLock),
+				bCreateOnDemand)
 			.returns(SyncPromise.resolve("Note 1"));
 		this.mock(SyncPromise).expects("all").never();
 
 		assert.strictEqual(
 			// code under test
-			oCache.fetchValue(oGroupLock, sPath, /*fnDataRequested*/null, oListener)
+			oCache.fetchValue(oGroupLock, sPath, fnDataRequested, oListener, bCreateOnDemand)
 				.getResult(), "Note 1");
 	});
 });
@@ -7288,6 +7341,7 @@ sap.ui.define([
 	QUnit.test("SingleCache#fetchValue", function (assert) {
 		var oCache,
 			oCacheMock,
+			bCreateOnDemand = "bCreateOnDemand",
 			fnDataRequested1 = {},
 			fnDataRequested2 = {},
 			oExpectedResult = {},
@@ -7330,11 +7384,11 @@ sap.ui.define([
 					sinon.match.same(oListener1));
 				oCacheMock.expects("drillDown")
 					.withExactArgs(sinon.match.same(oExpectedResult), undefined,
-						sinon.match.same(oGroupLock1))
+						sinon.match.same(oGroupLock1), bCreateOnDemand)
 					.returns(SyncPromise.resolve(oExpectedResult));
 				oCacheMock.expects("drillDown")
 					.withExactArgs(sinon.match.same(oExpectedResult), "foo",
-						sinon.match.same(oGroupLock2))
+						sinon.match.same(oGroupLock2), bCreateOnDemand)
 					.returns(SyncPromise.resolve("bar"));
 				oCacheMock.expects("drillDown")
 					.withExactArgs(sinon.match.same(oExpectedResult), "foo",
@@ -7346,7 +7400,7 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oCache.getValue("foo"), undefined, "before fetchValue");
 		aPromises = [
-			oCache.fetchValue(oGroupLock1, undefined, fnDataRequested1, oListener1)
+			oCache.fetchValue(oGroupLock1, undefined, fnDataRequested1, oListener1, bCreateOnDemand)
 				.then(function (oResult) {
 					assert.strictEqual(oResult, oExpectedResult);
 				})
@@ -7361,7 +7415,7 @@ sap.ui.define([
 
 		// code under test
 		aPromises.push(
-			oCache.fetchValue(oGroupLock2, "foo", fnDataRequested2, oListener2)
+			oCache.fetchValue(oGroupLock2, "foo", fnDataRequested2, oListener2, bCreateOnDemand)
 				.then(function (oResult) {
 					assert.strictEqual(oResult, "bar");
 					assert.strictEqual(oCache.getValue("foo"), "bar", "data available");
@@ -7396,6 +7450,7 @@ sap.ui.define([
 	QUnit.test("SingleCache#fetchValue, bFetchOperationReturnType=true", function (assert) {
 		var oCache,
 			oCacheMock,
+			bCreateOnDemand = "bCreateOnDemand",
 			oGroupLock = {},
 			fnDataRequested1 = {},
 			oExpectedResult = {},
@@ -7424,13 +7479,13 @@ sap.ui.define([
 				oCacheMock.expects("checkActive");
 				oCacheMock.expects("drillDown")
 					.withExactArgs(sinon.match.same(oExpectedResult), "foo",
-						sinon.match.same(oGroupLock))
+						sinon.match.same(oGroupLock), bCreateOnDemand)
 					.returns(SyncPromise.resolve("bar"));
 				return oExpectedResult;
 			}));
 
 		// code under test
-		return oCache.fetchValue(oGroupLock, "foo", fnDataRequested1)
+		return oCache.fetchValue(oGroupLock, "foo", fnDataRequested1, null, bCreateOnDemand)
 				.then(function (oResult) {
 					assert.strictEqual(oResult, "bar");
 				});
@@ -8035,6 +8090,16 @@ sap.ui.define([
 			// code under test
 			oCache.requestSideEffects({/*group lock*/}, aPaths, mNavigationPropertyPaths);
 		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("PropertyCache#fetchValue: unsupported bCreateOnDemand", function (assert) {
+		var oCache = _Cache.createProperty(this.oRequestor, "Employees('1')");
+
+		assert.throws(function () {
+			// Note: other arguments must not matter here
+			oCache.fetchValue(null, "", null, null, true);
+		}, new Error("Unsupported argument: bCreateOnDemand"));
 	});
 
 	//*********************************************************************************************

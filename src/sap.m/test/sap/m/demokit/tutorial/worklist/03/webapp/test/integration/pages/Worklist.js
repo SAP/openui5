@@ -265,17 +265,6 @@ sap.ui.define([
 						"Table has no entries which can be checked for their formatting");
 				},
 
-				iShouldSeeTheWorklistViewsBusyIndicator : function () {
-					return this.waitFor({
-						id : "page",
-						viewName : sViewName,
-						success : function (oPage) {
-							Opa5.assert.ok(oPage.getParent().getBusy(), "The worklist view is busy");
-						},
-						errorMessage : "The worklist view is not busy"
-					});
-				},
-
 				iShouldSeeTheWorklistTableBusyIndicator : function () {
 					return this.waitFor({
 						id : "table",
@@ -285,6 +274,7 @@ sap.ui.define([
 							value: true
 						}),
 						autoWait : false,
+						pollingInterval: 100,
 						success : function () {
 							Opa5.assert.ok(true, "The worklist table is busy");
 						},

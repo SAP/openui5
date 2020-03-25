@@ -10,7 +10,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Factory for app variants
+	 * Factory for app variants.
 	 * @namespace
 	 * @alias sap.ui.fl.descriptorRelated.api.DescriptorVariantFactory
 	 * @author SAP SE
@@ -22,7 +22,7 @@ sap.ui.define([
 	var DescriptorVariantFactory = {};
 
 	/**
-	 * Creates a new app variant
+	 * Creates a new app variant.
 	 *
 	 * @param {object} mParameters Parameters
 	 * @param {string} mParameters.reference Proposed referenced descriptor or app variant ID (might be overwritten by the back end)

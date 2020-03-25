@@ -5175,7 +5175,7 @@ sap.ui.define([
 
 		// assert
 		setTimeout(function(){
-			assert.ok(oSpy.calledOnce, "Tokenizer's scrollToEnd should be called one onfocusin.");
+			assert.notOk(oSpy.called, "Tokenizer's scrollToEnd should not be called on focusining a token.");
 			done();
 			oMultiComboBox.destroy();
 		}, 0);
@@ -5491,6 +5491,25 @@ sap.ui.define([
 
 		// assert
 		assert.notOk(oSelectItemStub.called, "selection should not be called");
+	});
+
+	QUnit.test("onsaptabprevious should select the highlighted item", function (assert) {
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.getSelectedKeys().length, 0, "No items should be selected");
+
+		// Act
+		this.oMultiComboBox.open();
+		this.oMultiComboBox.focus();
+		this.oMultiComboBox.setValue("Item1");
+		this.oMultiComboBox.onkeydown({});
+
+		this.oMultiComboBox.onsaptabprevious();
+
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.getSelectedKeys().length, 1, "The first item should be selected");
+		assert.strictEqual(this.oMultiComboBox.getSelectedItems()[0].getText(), "Item1", "The first item should be selected");
 	});
 
 	QUnit.module("Mobile mode (dialog)");
@@ -6496,7 +6515,7 @@ sap.ui.define([
 
 	QUnit.module("Collapsed state (N-more)", {
 		beforeEach : function() {
-			var aItems = [new Item({text: "XXXX"}),
+			var aItems = [new Item("firstItem", {text: "XXXX"}),
 				new Item({text: "XXXX"}),
 				new Item({text: "XXXX"}),
 				new Item({text: "XXXX"})];
@@ -6518,13 +6537,7 @@ sap.ui.define([
 	QUnit.test("onfocusin", function(assert) {
 		var oIndicator = this.oMCB1.$().find(".sapMTokenizerIndicator"),
 			oEventMock = {
-				target : {
-					classList: {
-						contains: function () {
-							return false;
-						}
-					}
-				}
+				target : this.oMCB1.getFocusDomRef()
 			};
 
 		//assert
@@ -6534,6 +6547,17 @@ sap.ui.define([
 		this.oMCB1.onfocusin(oEventMock);
 		// assert
 		assert.ok(oIndicator.hasClass("sapUiHidden"), "The n-more label is hidden on focusin.");
+	});
+
+	QUnit.test("Focus on a token", function(assert) {
+		// arrange
+		var oIndicator = this.oMCB1.$().find(".sapMTokenizerIndicator");
+
+		// act
+		this.oMCB1._oTokenizer.getTokens()[2].focus();
+
+		// assert
+		assert.notOk(oIndicator.hasClass("sapUiHidden"), "The n-more label is not hidden on focusin.");
 	});
 
 	QUnit.test("SelectedItems Popover's interaction", function(assert) {

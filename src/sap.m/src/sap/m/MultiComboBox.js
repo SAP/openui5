@@ -524,6 +524,8 @@ function(
 		}
 	};
 
+	MultiComboBox.prototype.onsaptabprevious = MultiComboBox.prototype.onsaptabnext;
+
 	/* =========================================================== */
 	/* Event handlers */
 	/* =========================================================== */
@@ -589,7 +591,7 @@ function(
 			bPreviousFocusInDropdown = oPickerDomRef && jQuery.contains(oPickerDomRef, oEvent.relatedTarget);
 		}
 
-		if (this.getEditable()) {
+		if (this.getEditable() && oEvent.target === this.getDomRef("inner")) {
 			this._oTokenizer._useCollapsedMode(false);
 			this._oTokenizer.scrollToEnd();
 		}
@@ -2017,7 +2019,7 @@ function(
 			onfocusin: function (oEvent) {
 
 				// if a token is selected, the tokenizer should not scroll
-				if (this.getEditable() && jQuery(oEvent.target).hasClass("sapMToken")) {
+				if (this.getEditable() && (!oEvent.target.classList.contains("sapMToken"))) {
 					oTokenizer._useCollapsedMode(false);
 				}
 			}

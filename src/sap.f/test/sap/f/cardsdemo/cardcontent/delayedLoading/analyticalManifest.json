@@ -1,90 +1,91 @@
 {
-  "sap.app": {
-	"type": "card"
-  },
-  "sap.card": {
-	"type": "Analytical",
-	"header": {
-	  "type": "Numeric",
-	  "data": {
-		"request": {
-		  "url": "https://newsapi.org/v2/everything?from={{parameters.TODAY_ISO}}&q={{parameters.city}}&sortBy=relevancy&apiKey=da959b2d34334e1db76c53f54a1303aa&language=en&pageSize=10"
-		},
-		"path": "/articles"
-	  },
-	  "title": "{details}",
-	  "subTitle": "Analytical Card",
-	  "unitOfMeasurement": "EUR",
-	  "mainIndicator": {
-		"number": "{number}",
-		"unit": "{unit}",
-		"trend": "{trend}",
-		"state": "{state}"
-	  },
-	  "details": "{details}",
-	  "status": {
-		"text": "2 of {count}"
-	  },
-	  "sideIndicators": [
-		{
-		  "title": "Target",
-		  "number": "{target/number}",
-		  "unit": "{target/unit}"
-		},
-		{
-		  "title": "Deviation",
-		  "number": "{deviation/number}",
-		  "unit": "%"
-		}
-	  ]
+	"sap.app": {
+		"id": "cardsdemo.samples.analytical1",
+		"type": "card"
 	},
-	"content": {
-	  "chartType": "Line",
-	  "legend": {
-		"visible": "{legend/visible}",
-		"position": "{legend/position}",
-		"alignment": "{legend/alignment}"
-	  },
-	  "plotArea": {
-		"dataLabel": {
-		  "visible": true
+	"sap.card": {
+		"type": "Analytical",
+		"header": {
+			"type": "Numeric",
+			"data": {
+				"request": {
+					"url": "https://newsapi.org/v2/everything?from={{parameters.TODAY_ISO}}&q={{parameters.city}}&sortBy=relevancy&apiKey=da959b2d34334e1db76c53f54a1303aa&language=en&pageSize=10"
+				},
+				"path": "/articles"
+			},
+			"title": "{details}",
+			"subTitle": "Analytical Card",
+			"unitOfMeasurement": "EUR",
+			"mainIndicator": {
+				"number": "{number}",
+				"unit": "{unit}",
+				"trend": "{trend}",
+				"state": "{state}"
+			},
+			"details": "{details}",
+			"status": {
+				"text": "2 of {count}"
+			},
+			"sideIndicators": [
+				{
+					"title": "Target",
+					"number": "{target/number}",
+					"unit": "{target/unit}"
+				},
+				{
+					"title": "Deviation",
+					"number": "{deviation/number}",
+					"unit": "%"
+				}
+			]
 		},
-		"categoryAxisText": {
-		  "visible": false
-		},
-		"valueAxisText": {
-		  "visible": false
+		"content": {
+			"chartType": "Line",
+			"legend": {
+				"visible": "{legend/visible}",
+				"position": "{legend/position}",
+				"alignment": "{legend/alignment}"
+			},
+			"plotArea": {
+				"dataLabel": {
+					"visible": true
+				},
+				"categoryAxisText": {
+					"visible": false
+				},
+				"valueAxisText": {
+					"visible": false
+				}
+			},
+			"title": {
+				"text": "Line chart",
+				"visible": true,
+				"alignment": "Left"
+			},
+			"measureAxis": "valueAxis",
+			"dimensionAxis": "categoryAxis",
+			"data": {
+				"request": {
+					"url": "./cardcontent/delayedLoading/analitycalData.json"
+				},
+				"path": "/list"
+			},
+			"dimensions": [
+				{
+					"label": "{dimensions/weekLabel}",
+					"value": "{Week}"
+				}
+			],
+			"measures": [
+				{
+					"label": "{measures/revenueLabel}",
+					"value": "{Revenue}"
+				},
+				{
+					"label": "{measures/costLabel}",
+					"value": "{Cost}"
+				}
+			]
 		}
-	  },
-	  "title": {
-		"text": "Line chart",
-		"visible": true,
-		"alignment": "Left"
-	  },
-	  "measureAxis": "valueAxis",
-	  "dimensionAxis": "categoryAxis",
-	  "data": {
-		"request": {
-		  "url": "./cardcontent/delayedLoading/analitycalData.json"
-		},
-		"path": "/list"
-	  },
-	  "dimensions": [
-		{
-		  "label": "{dimensions/weekLabel}",
-		  "value": "{Week}"
-		}
-	  ],
-	  "measures": [
-		{
-		  "label": "{measures/revenueLabel}",
-		  "value": "{Revenue}"
-		},
-		{
-		  "label": "{measures/costLabel}",
-		  "value": "{Cost}"
-		}
-	  ]
 	}
-  }
 }

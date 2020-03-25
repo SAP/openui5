@@ -88,11 +88,11 @@ sap.ui.define([
 				 * ]
 				 * </pre>
 				 *
-				 * @experimental Since 1.76
+				 * @experimental Since 1.76 This api might be removed when a permanent solution for flexibility changes is implemented.
 				 * @since 1.76
 				 */
 				manifestChanges: {
-					type: "array"
+					type: "object[]"
 				}
 			},
 			aggregations: {
@@ -206,11 +206,6 @@ sap.ui.define([
 	};
 
 	Widget.prototype.setManifestChanges = function (aValue) {
-		if (!Array.isArray(aValue)) { // @todo remove this when the validation for property of type array is fixed.
-			Log.error("The value for manifestChanges must be an array. The given value is: " + aValue, "sap.ui.integration.Widget");
-			return this;
-		}
-
 		this.setProperty("manifestChanges", aValue);
 		this._bApplyManifest = true;
 		return this;
@@ -234,6 +229,23 @@ sap.ui.define([
 			return jQuery.extend(true, {}, vValue);
 		}
 		return vValue;
+	};
+
+	/**
+	 * Returns a clone of the original manifest with all changes from the manifestChanges property applied on top.
+	 *
+	 * Use during designtime.
+	 *
+	 * @experimental Since 1.76 This api might be removed when a permanent solution for flexibility changes is implemented.
+	 * @returns {Object} A Clone of the manifest with applied changes.
+	 */
+	Widget.prototype.getManifestWithMergedChanges = function () {
+		if (!this._oWidgetManifest || !this._oWidgetManifest._oManifest) {
+			Log.error("The manifest is not ready. Consider using the 'manifestReady' event.", "sap.ui.integration.Widget");
+			return {};
+		}
+
+		return jQuery.extend(true, {}, this._oWidgetManifest._oManifest.getRawJson());
 	};
 
 	/**

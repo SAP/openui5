@@ -137,6 +137,20 @@
 					}
 				});
 
+				var oButton70 = new Button("B70", {
+					text : "Chinese calendar",
+					press : function() {
+						Core.getConfiguration().setLanguage("zh-CN");
+						oCalendar1 && oCalendar1.destroy();
+						oCalendar1 = fnCalendarFactory();
+						oCalendar1.setLocale("zh_CN");
+						oCalendar1.destroySelectedDates();
+						oPage.insertContent(oCalendar1, 0);
+						Core.applyChanges();
+						oCalendar1.focusDate(new Date(2015, 0, 2));
+					}
+				});
+
 				var oButton7 = new Button("B7", {
 					text : "2 Months Chinese calendar",
 					press : function() {
@@ -177,6 +191,7 @@
 						oButton4,
 						oButton5,
 						oButton6,
+						oButton70,
 						oButton7,
 						oButton8
 					]

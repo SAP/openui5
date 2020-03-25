@@ -1,0 +1,13 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "aac04638384c9c92a5ecf11aca8dc58da7aca588",
+        "type": "FEATURE",
+        "text": " sap.f.cards.AdaptiveContent: Support data on card level",
+        "references": []
+      }
+    ]
+  }
+}

@@ -29,26 +29,24 @@ sap.ui.define([
 
 	QUnit.module("Map Editor: Given an editor config", {
 		beforeEach: function (assert) {
-			var fnDone = assert.async();
 			var mConfig = {
 				"properties": {
 					"sampleMap": {
 						"path": "/sampleMap",
-						"type": "map"
+						"type": "map",
+						"allowedTypes": ["string", "number", "boolean"]
 					}
 				},
 				"propertyEditors": {
 					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-					"json": "sap/ui/integration/designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor"
+					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
+					"boolean": "sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor"
 				}
 			};
 			var mJson = {
 				sampleMap: {
-					"foo": "bar",
-					"complex": {
-						"complexChild": "childValue"
-					}
+					"foo": "bar"
 				}
 			};
 
@@ -58,13 +56,12 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			this.oBaseEditor.getPropertyEditorsByName("sampleMap").then(function (aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleMap").then(function (aPropertyEditor) {
 				sap.ui.getCore().applyChanges();
 				this.oMapEditor = aPropertyEditor[0];
 				var oMapEditorContent = getMapEditorContent(this.oMapEditor);
 				this.oAddButton = oMapEditorContent.addButton;
 				this.aItems = oMapEditorContent.items;
-				fnDone();
 			}.bind(this));
 		},
 		afterEach: function () {
@@ -72,9 +69,10 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("When a MapEditor is created", function (assert) {
-			assert.ok(this.oMapEditor.getDomRef() instanceof HTMLElement, "Then it is rendered correctly (1/3)");
-			assert.ok(this.oMapEditor.getDomRef() && this.oMapEditor.getDomRef().offsetHeight > 0, "Then it is rendered correctly (2/3)");
-			assert.ok(this.oMapEditor.getDomRef() && this.oMapEditor.getDomRef().offsetWidth > 0, "Then it is rendered correctly (3/3)");
+			var oMapEditorDomRef = this.oMapEditor.getDomRef();
+			assert.ok(oMapEditorDomRef instanceof HTMLElement, "Then it is rendered correctly (1/3)");
+			assert.ok(oMapEditorDomRef.offsetHeight > 0, "Then it is rendered correctly (2/3)");
+			assert.ok(oMapEditorDomRef.offsetWidth > 0, "Then it is rendered correctly (3/3)");
 		});
 
 		QUnit.test("When a value is set", function (assert) {
@@ -92,10 +90,10 @@ sap.ui.define([
 		QUnit.test("When an element is added", function (assert) {
 			var fnDone = assert.async();
 			this.oMapEditor.attachValueChange(function (oEvent) {
-				assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 3, "Then editor contains three keys");
+				assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 2, "Then editor contains two keys");
 				assert.strictEqual(
 					Object.keys(ObjectPath.get(["sampleMap"], this.oBaseEditor.getJson())).length,
-					3,
+					2,
 					"Then the base editor JSON is updated"
 				);
 				fnDone();
@@ -109,7 +107,7 @@ sap.ui.define([
 				assert.ok(oEvent.getParameter("value").hasOwnProperty("key"), "Then a new key is added");
 
 				this.oMapEditor.attachValueChange(function (oEvent) {
-					assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 4, "Then editor contains four keys");
+					assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 3, "Then editor contains three keys");
 					fnDone();
 				});
 				QUnitUtils.triggerEvent("tap", this.oAddButton.getDomRef());
@@ -121,10 +119,10 @@ sap.ui.define([
 			var fnDone = assert.async();
 			this.oMapEditor.attachValueChange(function (oEvent) {
 				assert.notOk(oEvent.getParameter("value").hasOwnProperty("foo"), "Then the property is removed");
-				assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 1, "Then editor contains one key");
+				assert.strictEqual(Object.keys(oEvent.getParameter("value")).length, 0, "Then editor contains no more keys");
 				assert.strictEqual(
 					Object.keys(ObjectPath.get(["sampleMap"], this.oBaseEditor.getJson())).length,
-					1,
+					0,
 					"Then the base editor JSON is updated"
 				);
 				fnDone();
@@ -158,9 +156,6 @@ sap.ui.define([
 					assert.deepEqual(
 						oEvent.getParameter("value"),
 						{
-							complex: {
-								complexChild: "childValue"
-							},
 							foo2: "bar",
 							key: ""
 						},
@@ -184,9 +179,6 @@ sap.ui.define([
 				assert.deepEqual(
 					this.oMapEditor.getValue(),
 					{
-						complex: {
-							complexChild: "childValue"
-						},
 						foo: "bar",
 						key: ""
 					},
@@ -203,14 +195,14 @@ sap.ui.define([
 			assert.strictEqual(this.aItems[0].value.getConfig()[0].type, "string", "Then the initial type is set");
 
 			this.aItems[0].value.attachEventOnce("configChange", function () {
-				assert.strictEqual(this.aItems[0].value.getConfig()[0].type, "json", "Then the change is reflected in the nested editor config");
+				assert.strictEqual(this.aItems[0].value.getConfig()[0].type, "number", "Then the change is reflected in the nested editor config");
 				fnDone();
 			}, this);
 
-			var oTypeSelector = this.aItems[0].type.getDomRef();
-			oTypeSelector.value = "Object";
-			QUnitUtils.triggerEvent("input", oTypeSelector);
-			QUnitUtils.triggerKeydown(oTypeSelector, KeyCodes.ENTER);
+			var oTypeSelector = this.aItems[0].type;
+			oTypeSelector.getDomRef().value = oTypeSelector.getItemByKey("number").getText();
+			QUnitUtils.triggerEvent("input", oTypeSelector.getDomRef());
+			QUnitUtils.triggerKeydown(oTypeSelector.getDomRef(), KeyCodes.ENTER);
 		});
 
 		QUnit.test("When a value is updated and the new value is valid", function (assert) {
@@ -219,9 +211,6 @@ sap.ui.define([
 			assert.deepEqual(
 				this.oMapEditor.getValue(),
 				{
-					complex: {
-						complexChild: "childValue"
-					},
 					foo: "bar"
 				}
 			);
@@ -230,9 +219,6 @@ sap.ui.define([
 				assert.deepEqual(
 					this.oMapEditor.getValue(),
 					{
-						complex: {
-							complexChild: "childValue"
-						},
 						foo: "baz"
 					},
 					"Then the value is updated"
@@ -253,14 +239,223 @@ sap.ui.define([
 			assert.deepEqual(
 				this.oMapEditor.getValue(),
 				{
-					complex: {
-						complexChild: "childValue"
-					},
 					foo: "bar"
 				},
 				"Then the value is not updated"
 			);
 			assert.strictEqual(oInput.getValueState(), "Error", "Then the error is displayed");
+		});
+	});
+
+	QUnit.module("Configuration options", {
+		beforeEach: function () {
+			this.oBaseEditor = new BaseEditor();
+			this.oBaseEditor.placeAt("qunit-fixture");
+		},
+		afterEach: function () {
+			this.oBaseEditor.destroy();
+		}
+	}, function () {
+		QUnit.test("When the supported value types are restricted", function (assert) {
+			this.oBaseEditor.setConfig({
+				"properties": {
+					"restrictedMap": {
+						"path": "/restrictedMap",
+						"type": "map",
+						"allowedTypes": ["string", "number"]
+					}
+				},
+				"propertyEditors": {
+					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
+				}
+			});
+
+			this.oBaseEditor.setJson({
+				restrictedMap: {
+					"validProperty": "bar"
+				}
+			});
+
+			return this.oBaseEditor.getPropertyEditorsByName("restrictedMap").then(function (aPropertyEditor) {
+				this.oMapEditor = aPropertyEditor[0];
+				var oMapEditorContent = getMapEditorContent(this.oMapEditor);
+				var aItems = oMapEditorContent.items;
+
+				var oTypeSelector = aItems[0].type;
+				assert.strictEqual(oTypeSelector.getItems().length, 2, "Then only the provided types are available");
+			}.bind(this));
+		});
+
+		QUnit.test("When changing the key is restricted", function (assert) {
+			this.oBaseEditor.setConfig({
+				"properties": {
+					"restrictedMap": {
+						"path": "/restrictedMap",
+						"type": "map",
+						"allowKeyChange": false
+					}
+				},
+				"propertyEditors": {
+					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			});
+
+			this.oBaseEditor.setJson({
+				restrictedMap: {
+					"validProperty": "bar"
+				}
+			});
+
+			return this.oBaseEditor.getPropertyEditorsByName("restrictedMap").then(function (aPropertyEditor) {
+				this.oMapEditor = aPropertyEditor[0];
+				var oMapEditorContent = getMapEditorContent(this.oMapEditor);
+				var aItems = oMapEditorContent.items;
+
+				var oTypeSelector = aItems[0].key;
+				assert.notOk(oTypeSelector.getEnabled(), "Then the key field is disabled");
+			}.bind(this));
+		});
+
+		QUnit.test("When changing the type is restricted", function (assert) {
+			this.oBaseEditor.setConfig({
+				"properties": {
+					"restrictedMap": {
+						"path": "/restrictedMap",
+						"type": "map",
+						"allowTypeChange": false
+					}
+				},
+				"propertyEditors": {
+					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			});
+
+			this.oBaseEditor.setJson({
+				restrictedMap: {
+					"validProperty": "bar"
+				}
+			});
+
+			return this.oBaseEditor.getPropertyEditorsByName("restrictedMap").then(function (aPropertyEditor) {
+				this.oMapEditor = aPropertyEditor[0];
+				var oMapEditorContent = getMapEditorContent(this.oMapEditor);
+				var aItems = oMapEditorContent.items;
+
+				var oTypeSelector = aItems[0].type;
+				assert.notOk(oTypeSelector.getVisible(), "Then the type field is hidden");
+			}.bind(this));
+		});
+
+
+		QUnit.test("When adding and removing items is disabled", function (assert) {
+			this.oBaseEditor.setConfig({
+				"properties": {
+					"sampleMap": {
+						"path": "/sampledMap",
+						"type": "map",
+						"allowAddAndRemove": false
+					}
+				},
+				"propertyEditors": {
+					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			});
+
+			this.oBaseEditor.setJson({
+				sampledMap: {
+					"sampleProperty": "bar"
+				}
+			});
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleMap").then(function (aPropertyEditor) {
+				this.oMapEditor = aPropertyEditor[0];
+				var oMapEditorContent = getMapEditorContent(this.oMapEditor);
+				var aItems = oMapEditorContent.items;
+
+				assert.notOk(aItems[0].deleteButton.getVisible(), "Then the remove buttons are hidden");
+				assert.notOk(oMapEditorContent.addButton.getVisible(), "Then the add button is hidden");
+			}.bind(this));
+		});
+
+		QUnit.test("When invalid entries should be filtered and an invalid type is set", function (assert) {
+			this.oBaseEditor.setConfig({
+				"properties": {
+					"sampleMap": {
+						"path": "/sampleMap",
+						"type": "map",
+						"includeInvalidEntries": false,
+						"allowedTypes": ["number"]
+					}
+				},
+				"propertyEditors": {
+					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
+					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
+				}
+			});
+
+			this.oBaseEditor.setJson({
+				sampleMap: {
+					"validProperty": 123,
+					"invalidProperty": "invalid"
+				}
+			});
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleMap").then(function (aPropertyEditor) {
+				this.oMapEditor = aPropertyEditor[0];
+				var oMapEditorContent = getMapEditorContent(this.oMapEditor);
+				var aItems = oMapEditorContent.items;
+
+				assert.strictEqual(aItems.length, 1, "Then the invalid value is not included");
+			}.bind(this));
+		});
+
+		QUnit.test("When a key is changed in a map with invalid filtered items", function (assert) {
+			this.oBaseEditor.setConfig({
+				"properties": {
+					"sampleMap": {
+						"path": "/sampleMap",
+						"type": "map",
+						"includeInvalidEntries": false,
+						"allowedTypes": ["number"]
+					}
+				},
+				"propertyEditors": {
+					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
+					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
+				}
+			});
+
+			this.oBaseEditor.setJson({
+				sampleMap: {
+					"foo": "bar",
+					"key": 123
+				}
+			});
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleMap").then(function (aPropertyEditor) {
+				var oMapEditor = aPropertyEditor[0];
+				var oMapEditorContent = getMapEditorContent(oMapEditor);
+				var aItems = oMapEditorContent.items;
+
+				sap.ui.getCore().applyChanges();
+				aItems[0].key.setValue("foo");
+				QUnitUtils.triggerEvent("input", aItems[0].key.getDomRef());
+
+				assert.deepEqual(
+					oMapEditor.getValue(),
+					{
+						foo: "bar",
+						key: 123
+					},
+					"Then the key is not updated"
+				);
+				assert.strictEqual(aItems[0].key.getValueState(), "Error", "Then the error is displayed");
+			});
 		});
 	});
 

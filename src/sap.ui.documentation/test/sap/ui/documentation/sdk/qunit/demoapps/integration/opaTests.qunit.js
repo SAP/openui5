@@ -84,8 +84,8 @@ sap.ui.getCore().attachInit(function() {
 						viewName: sViewName,
 						controlType: "sap.ui.core.Icon",
 						matchers: [
-							Ancestor(oCell),
-							Properties({src: "sap-icon://" + oData.icon})
+							new Ancestor(oCell),
+							new Properties({src: "sap-icon://" + oData.icon})
 						],
 						success: function () {
 							Opa5.assert.ok(true, "The icon \"" + oData.icon + "\" is displayed correctly");
@@ -97,8 +97,8 @@ sap.ui.getCore().attachInit(function() {
 						viewName: sViewName,
 						controlType: "sap.m.Title",
 						matchers: [
-							Ancestor(oCell),
-							Properties({text: oData.name})
+							new Ancestor(oCell),
+							new Properties({text: oData.name})
 						],
 						success: function () {
 							Opa5.assert.ok(true, "The title \"" + oData.name + "\" is displayed correctly");
@@ -110,8 +110,8 @@ sap.ui.getCore().attachInit(function() {
 						viewName: sViewName,
 						controlType: "sap.m.Text",
 						matchers: [
-							Ancestor(oCell),
-							Properties({text: oData.desc})
+							new Ancestor(oCell),
+							new Properties({text: oData.desc})
 						],
 						success: function () {
 							Opa5.assert.ok(true, "The description \"" + oData.desc + "\" is displayed correctly");
@@ -123,8 +123,8 @@ sap.ui.getCore().attachInit(function() {
 						viewName: sViewName,
 						controlType: "sap.ui.documentation.sdk.controls.TitleLink",
 						matchers: [
-							Ancestor(oCell),
-							Properties({
+							new Ancestor(oCell),
+							new Properties({
 								text: oData.name,
 								href: oData.ref
 							})
@@ -141,8 +141,8 @@ sap.ui.getCore().attachInit(function() {
 							viewName: sViewName,
 							controlType: "sap.m.Link",
 							matchers: [
-								Ancestor(oCell),
-								Properties({
+								new Ancestor(oCell),
+								new Properties({
 									text: oData.links[i].name,
 									href: oData.links[i].ref
 								})
@@ -160,7 +160,7 @@ sap.ui.getCore().attachInit(function() {
 						viewName: sViewName,
 						controlType: "sap.m.List",
 						matchers: [
-							Ancestor(oCell)
+							new Ancestor(oCell)
 						],
 						success: function () {
 							Opa5.assert.ok(true, "The teaser \"" + oData.teaser + "\" is displayed correctly");
@@ -172,8 +172,8 @@ sap.ui.getCore().attachInit(function() {
 						viewName: sViewName,
 						controlType: "sap.m.Link",
 						matchers: [
-							Ancestor(oCell),
-							Properties({text: oData.lib})
+							new Ancestor(oCell),
+							new Properties({text: oData.lib})
 						],
 						success: function () {
 							Opa5.assert.ok(true, "The library link \"" + oData.lib + "\" is displayed correctly");

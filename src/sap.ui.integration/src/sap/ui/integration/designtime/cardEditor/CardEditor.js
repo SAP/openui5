@@ -26,7 +26,7 @@ sap.ui.define([
 	var CardEditor = BaseEditor.extend("sap.ui.integration.designtime.cardEditor.CardEditor", {
 		constructor: function() {
 			BaseEditor.prototype.constructor.apply(this, arguments);
-			this.addDefaultConfig(oDefaultCardConfig);
+			this.addConfig(oDefaultCardConfig);
 		},
 		renderer: BaseEditor.getMetadata().getRenderer()
 	});
@@ -42,8 +42,9 @@ sap.ui.define([
 	}
 
 	function getCardConfigurationDeltaForChange(oJson, oInitialJson) {
-		var oConfiguration = ObjectPath.get(["sap.card", "configuration"], oJson);
-		var oInitialConfiguration = ObjectPath.get(["sap.card", "configuration"], oInitialJson);
+		var sNamespace = oJson.hasOwnProperty("sap.card") ? "sap.card" : "sap.widget";
+		var oConfiguration = ObjectPath.get([sNamespace, "configuration"], oJson);
+		var oInitialConfiguration = ObjectPath.get([sNamespace, "configuration"], oInitialJson);
 
 		if (deepEqual(oConfiguration, oInitialConfiguration)) {
 			return undefined;

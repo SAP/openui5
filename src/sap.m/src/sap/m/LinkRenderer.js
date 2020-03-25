@@ -71,7 +71,8 @@
 		/* set href only if link is enabled - BCP incident 1570020625 */
 		if (bIsValid && bEnabled) {
 			oRm.attr("href", sHref);
-		} else {
+		} else if (oControl.getText()) {
+			// Add href only if there's text. Otherwise virtual cursor would stop on the empty link. BCP 2070055617
 			oRm.attr("href", "");
 		}
 

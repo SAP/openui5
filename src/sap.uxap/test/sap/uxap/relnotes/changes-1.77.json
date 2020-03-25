@@ -1,0 +1,13 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "4b089230f80b1cc9618da73e972ac8a00d424bb1",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageSubSection: Show/hide title implemented",
+        "references": []
+      }
+    ]
+  }
+}

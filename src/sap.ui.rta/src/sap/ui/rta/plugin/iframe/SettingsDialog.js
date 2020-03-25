@@ -28,6 +28,8 @@ sap.ui.define([
 	var _oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 	var _mText = {
 		dialogTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_TITLE"),
+		dialogCreateTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_TITLE"),
+		dialogUpdateTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_UPDATE_TITLE"),
 		sectionTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_SECTION_TITLE"),
 		newSectionLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_NEW_SECTION_LABEL"),
 		nameLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_NAME_LABEL"),
@@ -41,7 +43,12 @@ sap.ui.define([
 		urlBuilderText: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_BUTTON_URL_BUILDER")
 	};
 
-	function _createJSONModel() {
+	function _createJSONModel(bSetUpdateTitle) {
+		if (bSetUpdateTitle) {
+			_mText.dialogTitle = _mText.dialogUpdateTitle;
+		} else {
+			_mText.dialogTitle = _mText.dialogCreateTitle;
+		}
 		return new JSONModel({
 			text: _mText,
 			section: {
@@ -127,7 +134,12 @@ sap.ui.define([
 	 * @private
 	 */
 	SettingsDialog.prototype._createDialog = function (mSettings) {
-		this._oJSONModel = _createJSONModel();
+		// set the correct title
+		var bSetUpdateTitle = false;
+		if (mSettings) {
+			bSetUpdateTitle = mSettings.updateMode ? mSettings.updateMode : false;
+		}
+		this._oJSONModel = _createJSONModel(bSetUpdateTitle);
 		this._oController = new SettingsDialogController(this._oJSONModel, mSettings);
 		Fragment.load({
 			name: "sap.ui.rta.plugin.iframe.SettingsDialog",

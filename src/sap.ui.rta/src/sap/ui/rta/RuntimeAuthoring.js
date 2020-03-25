@@ -539,8 +539,7 @@ function(
 
 
 	RuntimeAuthoring.prototype._initVersioning = function() {
-		var oUriParameters = new UriParameters(window.location.href);
-		var sUseVersioning = oUriParameters.get("sap-ui-rta-xx-versioning");
+		var sUseVersioning = !!FlexUtils.getUshellContainer();
 		if (sUseVersioning) {
 			return FeaturesAPI.isVersioningEnabled(this.getLayer())
 			.then(function (bVersioningEnabled) {
@@ -767,6 +766,7 @@ function(
 	RuntimeAuthoring.prototype._setVersionLabel = function(bDraftEnabled) {
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		if (bDraftEnabled) {
+			this.getToolbar().setVersionLabelAccentColor(true);
 			return this.getToolbar().setVersionLabel(oTextResources.getText("LBL_DRAFT"));
 		}
 		return VersionsAPI.getVersions({
@@ -774,18 +774,23 @@ function(
 			layer: this.getLayer()
 		})
 		.then(function(aVersions) {
+			// When there are changes before the draft is available set label to "Version 1"
+			var sLabel = oTextResources.getText("LBL_VERSION_1");
+			var bAccentColor = false;
+
+			// When there is no content in the version request set label to "Original App"
+			// Otherwise just need to have a look at the first entry in versions
+			// If the title is not set and the versionNumber is zero, set the label to "Draft"
 			if (aVersions.length === 0) {
-				return oTextResources.getText("LBL_ORIGNINAL_APP");
+				sLabel = oTextResources.getText("LBL_ORIGNINAL_APP");
+			} else if (aVersions[0].title) {
+				sLabel = aVersions[0].title;
+			} else if (aVersions[0].versionNumber === 0) {
+				bAccentColor = true;
+				sLabel = oTextResources.getText("LBL_DRAFT");
 			}
-			if (aVersions[0].title) {
-				return aVersions[0].title;
-			}
-			if (aVersions[0].versionNumber === 0) {
-				return oTextResources.getText("LBL_DRAFT");
-			}
-			return oTextResources.getText("LBL_VERSION_1");
-		})
-		.then(function(sLabel) {
+
+			this.getToolbar().setVersionLabelAccentColor(bAccentColor);
 			return this.getToolbar().setVersionLabel(sLabel);
 		}.bind(this));
 	};
@@ -914,11 +919,13 @@ function(
 				.then(this._closeToolbar.bind(this))
 				.then(function() {
 					this.fireStop();
-					this._handleParametersOnExit(true).then(function (mParsedHash) {
-						this._triggerCrossAppNavigation(mParsedHash);
-					}.bind(this));
-					if (sReload === this._RESTART.RELOAD_PAGE) {
-						this._reloadPage();
+					if (sReload !== this._RESTART.NOT_NEEDED) {
+						this._handleParametersOnExit(true).then(function (mParsedHash) {
+							this._triggerCrossAppNavigation(mParsedHash);
+							if (sReload === this._RESTART.RELOAD_PAGE) {
+								this._reloadPage();
+							}
+						}.bind(this));
 					}
 				}.bind(this));
 			}.bind(this))
@@ -1042,22 +1049,64 @@ function(
 		return this._serializeAndSave()
 		.then(
 			VersionsAPI.activateDraft.bind(undefined, {
-				layer : this.getLayer(),
-				selector : this.getRootControlInstance(),
+				layer: this.getLayer(),
+				selector: this.getRootControlInstance(),
 				title: oEvent.getParameter("versionTitle")
 			})
 		).then(function () {
 			this._showMessageToast("MSG_DRAFT_ACTIVATION_SUCCESS");
 			this.bInitialDraftAvailable = false;
+			this.getToolbar().setRestoreEnabled(true);
 			return this._handleVersionToolbar(false);
+		}.bind(this))
+		.catch(function (oError) {
+			Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_ERROR", "MSG_DRAFT_ACTIVATION_FAILED", oError);
+		});
+	};
+
+	RuntimeAuthoring.prototype._handleDiscard = function(bHardReload) {
+		var mParsedHash = FlexUtils.getParsedURLHash();
+		var oRootControl = this.getRootControlInstance();
+		var sLayer = this.getLayer();
+		return this._handleDraftParameter(mParsedHash).then(function (mParsedHash) {
+			// clears FlexState and triggers reloading of the flex data without blocking
+			// it is actually not loading the draft, because we just discarded it
+			VersionsAPI.loadDraftForApplication({
+				selector: oRootControl,
+				layer: sLayer
+			});
+			this.getCommandStack().removeAllCommands();
+			this._triggerCrossAppNavigation(mParsedHash);
+			RuntimeAuthoring.enableRestart(sLayer, oRootControl);
+			if (bHardReload) {
+				this._reloadPage();
+			} else {
+				return this.stop(true, true);
+			}
 		}.bind(this));
 	};
 
 	RuntimeAuthoring.prototype._onDiscardDraft = function() {
 		return VersionsAPI.discardDraft({
 			layer: this.getLayer(),
-			selector: this.getRootControlInstance()
-		});
+			selector: this.getRootControlInstance(),
+			updateState: true
+		}).then(function () {
+			var fnConfirmDiscardAllDraftChanges = function (sAction) {
+				if (sAction === "OK") {
+					return this._handleDiscard(false);
+				}
+			}.bind(this);
+
+			var sMessage = this._getTextResources().getText("MSG_DRAFT_DISCARD_DIALOG");
+
+			MessageBox.confirm(sMessage, {
+				icon: MessageBox.Icon.WARNING,
+				title : "Discard",
+				onClose : fnConfirmDiscardAllDraftChanges,
+				styleClass: Utils.getRtaStyleClassName()
+			});
+		}.bind(this));
 	};
 
 	RuntimeAuthoring.prototype._createToolsMenu = function(aButtonsVisibility) {
@@ -1227,24 +1276,21 @@ function(
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._deleteChanges = function() {
-		var oRootControl = this.getRootControlInstance();
-		var oAppComponent = FlexUtils.getAppComponentForControl(oRootControl);
-
 		return PersistenceWriteAPI.reset({
-			selector: oAppComponent,
+			selector: FlexUtils.getAppComponentForControl(this.getRootControlInstance()),
 			layer: this.getLayer(),
 			generator: "Change.createInitialFileContent"
-		})
-			.then(function () {
-				var mParsedHash = this._handleParametersOnExit(false);
+		}).then(function () {
+			return this._handleParametersOnExit(false).then(function (mParsedHash) {
 				this._triggerCrossAppNavigation(mParsedHash);
 				this._reloadPage();
-			}.bind(this))
-			.catch(function (oError) {
-				if (oError !== "cancel") {
-					Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
-				}
-			});
+			}.bind(this));
+		}.bind(this))
+		.catch(function (oError) {
+			if (oError !== "cancel") {
+				Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
+			}
+		});
 	};
 
 	/**
@@ -1313,16 +1359,19 @@ function(
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._onRestore = function() {
-		var sMessage = this.getLayer() === Layer.USER
+		var sLayer = this.getLayer();
+		var sMessage = sLayer === Layer.USER
 			? this._getTextResources().getText("FORM_PERS_RESET_MESSAGE_PERSONALIZATION")
 			: this._getTextResources().getText("FORM_PERS_RESET_MESSAGE");
-		var sTitle = this.getLayer() === Layer.USER
+		var sTitle = sLayer === Layer.USER
 			? this._getTextResources().getText("BTN_RESTORE")
 			: this._getTextResources().getText("FORM_PERS_RESET_TITLE");
 
 		var fnConfirmDiscardAllChanges = function (sAction) {
 			if (sAction === "OK") {
-				RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
+				//this.bInitialDraftAvailable = false; maybe no need
+				//this.getToolbar().setDraftEnabled(false);
+				RuntimeAuthoring.enableRestart(sLayer, this.getRootControlInstance());
 				this._deleteChanges();
 				this.getCommandStack().removeAllCommands();
 			}
@@ -1515,6 +1564,19 @@ function(
 	};
 
 	/**
+	 * Check if the given parameter has a false value
+	 *
+	 * @param  {map} mParsedHash The parsed URL hash
+	 * @param  {string} sParameterName The parameter for which the layer should be checked
+	 * @return {boolean} True if the parameter value is false
+	 */
+	RuntimeAuthoring.prototype._hasDraftFalseParameter = function(mParsedHash, sParameterName) {
+		return mParsedHash.params &&
+			mParsedHash.params[sParameterName] &&
+			mParsedHash.params[sParameterName][0] === "false";
+	};
+
+	/**
 	 * Reload the app inside FLP adding the parameter to skip personalization changes
 	 *
 	 * @param  {map} mParsedHash URL Parsed hash
@@ -1550,18 +1612,28 @@ function(
 		if (FlexUtils.getUshellContainer() && this.getLayer() !== Layer.USER) {
 			var oCrossAppNav = FlexUtils.getUshellContainer().getService("CrossApplicationNavigation");
 			oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
+			return Promise.resolve(true);
 		}
 	};
 
 	RuntimeAuthoring.prototype._handleDraftParameter = function(mParsedHash) {
+		if (!FlexUtils.getUshellContainer() || this.getLayer() === Layer.USER) {
+			return Promise.resolve();
+		}
 		return this._isDraftAvailable().then(function (bDraftAvailable) {
 			if (this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM)) {
 				delete mParsedHash.params[LayerUtils.FL_DRAFT_PARAM];
-				// only add the draft = false flag when versioning and draft is available
-			} else if (bDraftAvailable) {
+			} else if (this._hasDraftFalseParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM)) {
+				/*
+				In case we discarded our draft we add the false flag there, thats why we need to
+				remove it on exit again to trigger the CrossAppNavigation
+				*/
+				delete mParsedHash.params[LayerUtils.FL_DRAFT_PARAM];
+			} else if (bDraftAvailable) { // only add the draft = false flag when versioning and draft is available
+
 				/*
 				In case we entered RTA without a draft and created dirty changes,
-				we need to add sap-ui-fl-draft=false, to trigger the CrossAppNavigation on exit.
+				we need to add sap-ui-fl-version=false, to trigger the CrossAppNavigation on exit.
 				*/
 				mParsedHash.params[LayerUtils.FL_DRAFT_PARAM] = ["false"];
 			}
@@ -1581,7 +1653,7 @@ function(
 	 * Reload the app inside FLP by removing max layer / draft parameter;
 	 *
 	 * @param {boolean} bDeleteMaxLayer - Indicates if max layer parameter should be removed or not (reset / exit)
-	 * @return {Promise<map>} resolving to the parsedHash
+	 * @return {Promise<map>} Resolving to the parsedHash
 	 */
 	RuntimeAuthoring.prototype._handleParametersOnExit = function(bDeleteMaxLayer) {
 		if (!FlexUtils.getUshellContainer() || this.getLayer() === Layer.USER) {
@@ -1703,6 +1775,8 @@ function(
 			sReason = "MSG_RELOAD_WITHOUT_DRAFT";
 		} else if (oReloadInfo.changesNeedReload) {
 			sReason = "MSG_RELOAD_NEEDED";
+		} else if (oReloadInfo.hasDraftParameter) {
+			sReason = "MSG_RELOAD_REMOVE_DRAFT_PARAMETER";
 		}
 
 		return Utils._showMessageBox(
@@ -1732,9 +1806,12 @@ function(
 			var oReloadInfo = {
 				changesNeedReload: aArgs[0],
 				hasHigherLayerChanges: aArgs[1],
-				hasDraftChanges: aArgs[2]
+				hasDraftChanges: aArgs[2],
+				hasDraftParameter: this._hasParameter(FlexUtils.getParsedURLHash(), LayerUtils.FL_DRAFT_PARAM)
 			};
-			if (oReloadInfo.changesNeedReload || oReloadInfo.hasHigherLayerChanges || oReloadInfo.hasDraftChanges) {
+			if (oReloadInfo.changesNeedReload || oReloadInfo.hasHigherLayerChanges || oReloadInfo.hasDraftChanges
+				// If a draft was initially available, the url parameter must be removed on exit - which triggers a soft reload
+				|| oReloadInfo.hasDraftParameter) {
 				var sRestart = this._RESTART.RELOAD_PAGE;
 				// always try cross app navigation (via hash); we only need a hard reload because of appdescr changes (changesNeedReload = true)
 				if (!oReloadInfo.changesNeedReload && FlexUtils.getUshellContainer()) {

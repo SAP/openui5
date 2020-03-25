@@ -8,10 +8,11 @@
 	"info": "27.45 EUR",
 	"infoState": "Success",
 	"url": "https://www.sap.com",
-	"someparam": "somekey1"
+	"someparam": "somekey1",
+	"hidden": false
 },
 {
-	"Name": "Notebook Basic 17",
+	"Name": "Notebook Basic 16",
 	"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
 	"Id": "HT-1001",
 	"SubCategoryId": "Notebooks",
@@ -19,10 +20,11 @@
 	"state": "Success",
 	"info": "27.45 EUR",
 	"infoState": "Success",
-	"someparam": "somekey2"
+	"someparam": "somekey2",
+	"hidden": false
 },
 {
-	"Name": "Notebook Basic 18",
+	"Name": "Notebook Basic 17",
 	"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
 	"Id": "HT-1002",
 	"SubCategoryId": "Notebooks",
@@ -31,7 +33,8 @@
 	"info": "9.45 EUR",
 	"infoState": "Error",
 	"url": "https://www.sap.com/products.html",
-	"someparam": "somekey3"
+	"someparam": "somekey3",
+	"hidden": false
 },
 {
 	"Name": "Notebook Basic 18",
@@ -43,10 +46,11 @@
 	"info": "9.45 EUR",
 	"infoState": "Error",
 	"url": "",
-	"someparam": "somekey4"
+	"someparam": "somekey4",
+	"hidden": true
 },
 {
-	"Name": "Notebook Basic 18",
+	"Name": "Notebook Basic 19",
 	"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
 	"Id": "HT-1002",
 	"SubCategoryId": "Notebooks",
@@ -54,6 +58,7 @@
 	"state": "Warning",
 	"info": "9.45 EUR",
 	"infoState": "Error",
-	"url": true,
-	"someparam": "somekey5"
+	"url": "https://www.sap.com/products.html",
+	"someparam": "somekey5",
+	"hidden": true
 }]

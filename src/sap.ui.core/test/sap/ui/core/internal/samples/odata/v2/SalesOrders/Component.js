@@ -9,8 +9,9 @@
  */
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/model/json/JSONModel"
-], function (UIComponent, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/MessageScope"
+], function (UIComponent, JSONModel, MessageScope) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.core.internal.samples.odata.v2.SalesOrders.Component", {
@@ -19,11 +20,14 @@ sap.ui.define([
 		},
 
 		init: function () {
-			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
 
-			// set the ui model
-			this.setModel(new JSONModel({salesOrderID : "0500000000"}), "ui");
+			this.getModel().setMessageScope(MessageScope.BusinessObject);
+			this.setModel(new JSONModel({
+				messageCount : 0,
+				salesOrderID : "0500000005"
+			}), "ui");
+			this.setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "messageModel");
 		}
 	});
 });

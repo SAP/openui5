@@ -319,7 +319,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("Aria-live attribute of the InfoToolBar should be set to 'polite'", function (assert) {
+		QUnit.test("Aria-live attribute of the InfoToolBar should be set to 'polite' and added to the dialog aria-labelledby", function (assert) {
 			var that = this;
 			this.oSelectDialog.setMultiSelect(true);
 			bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
@@ -327,6 +327,8 @@ sap.ui.define([
 			this.oSelectDialog.open();
 			sap.ui.getCore().applyChanges();
 			assert.strictEqual(that.oSelectDialog._oList.getInfoToolbar().$().attr("aria-live"), "polite", "The aria-live attribute is set to polite");
+
+			assert.ok(that.oSelectDialog.$().attr("aria-labelledby").indexOf(that.oSelectDialog._oList.getInfoToolbar().getId()) > -1, "the info toolbar id is added to the dialog aria-labelledby");
 		});
 
 		QUnit.test("No InfoToolbar should be shown in single select mode even if there is a selected option", function (assert) {

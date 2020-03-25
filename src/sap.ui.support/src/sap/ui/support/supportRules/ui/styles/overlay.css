@@ -66,7 +66,13 @@ body {
 	padding-bottom: 0.125rem;
 }
 
+.customHBox {
+	min-width: 0;
+	flex: 1;
+}
+
 .customIconTabHeader {
+	text-align: left;
 	display: inline-block;
 	height: 1.96rem;
 }
@@ -92,11 +98,6 @@ body {
 .customIconTabHeader {
 	border-bottom: none !important;
 	box-shadow: none !important;
-}
-
-.customIconTabHeader .sapMITHScrollContainer, .sapMITBHead {
-	padding: 0 !important;
-	padding-left: 1px !important;
 }
 
 .customMargin {

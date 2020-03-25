@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/test/matchers/AggregationContainsPropertyEqual",
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/BindingPath",
-	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/actions/Press"
 ], function (
 	Opa5,
@@ -18,7 +17,6 @@ sap.ui.define([
 	AggregationContainsPropertyEqual,
 	AggregationLengthEquals,
 	BindingPath,
-	Ancestor,
 	Press) {
 	"use strict";
 
@@ -125,7 +123,7 @@ sap.ui.define([
 				iShouldSeeAnEmptyCart : function () {
 					return this.waitFor({
 						id : "entryList",
-						matchers : new AggregationLengthEquals({name : "items", length: 0}),
+						matchers : new AggregationEmpty({name : "items"}),
 						success : function () {
 							Opa5.assert.ok(true, "The cart has no entries");
 						},

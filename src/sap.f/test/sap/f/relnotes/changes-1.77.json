@@ -1,0 +1,63 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "c2c0d868f6f04ac406402528e9951bf76538a3f7",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Corrected F6 fast navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070018356"
+          }
+        ]
+      },
+      {
+        "id": "1e1a7b165466cc7ceae4ca3ca91be9e8196515cb",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Unneeded truncation of heading is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070041919"
+          }
+        ]
+      },
+      {
+        "id": "64b2287070c2f14785f1cd3a4f1840ec63394321",
+        "type": "FEATURE",
+        "text": " sap.f.FlexibleColumnLayout: Restore focus on back navigation",
+        "references": []
+      },
+      {
+        "id": "aac04638384c9c92a5ecf11aca8dc58da7aca588",
+        "type": "FEATURE",
+        "text": " sap.f.cards.AdaptiveContent: Support data on card level",
+        "references": []
+      },
+      {
+        "id": "d6bc822f5a7bb20933208e11d7279768ef9adbc5",
+        "type": "FIX",
+        "text": " sap.f.Card: Tooltip is now rendered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970388173"
+          }
+        ]
+      },
+      {
+        "id": "8290f75c5546f1141aa0ee0f5f94998685e7ecef",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Fixed appearing of home button on open search",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980450733"
+          }
+        ]
+      }
+    ]
+  }
+}

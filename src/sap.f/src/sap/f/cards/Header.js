@@ -249,6 +249,8 @@ sap.ui.define([
 		this._getAvatar().setDisplayShape(this.getIconDisplayShape());
 		this._getAvatar().setSrc(this.getIconSrc());
 		this._getAvatar().setInitials(this.getIconInitials());
+
+		this._setAccessibilityAttributes();
 	};
 
 	/**
@@ -358,17 +360,16 @@ sap.ui.define([
 	 * Sets accessibility to the header to the header.
 	 *
 	 * @private
-	 * @param {object} mConfiguration A map containing the header configuration options, which are already parsed.
 	 */
-	Header.prototype._setAccessibilityAttributes = function (mConfiguration) {
-		if (!mConfiguration.actions) {
-			this._sAriaRole = 'heading';
-			this._sAriaHeadingLevel = '3';
-			this._sAriaRoleDescritoion = this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER");
-		} else {
+	Header.prototype._setAccessibilityAttributes = function () {
+		if (this.hasListeners("press")) {
 			this._sAriaRole = 'button';
 			this._sAriaHeadingLevel = undefined;
 			this._sAriaRoleDescritoion = this._oRb.getText("ARIA_ROLEDESCRIPTION_INTERACTIVE_CARD_HEADER");
+		} else {
+			this._sAriaRole = 'heading';
+			this._sAriaHeadingLevel = '3';
+			this._sAriaRoleDescritoion = this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER");
 		}
 	};
 
@@ -386,6 +387,28 @@ sap.ui.define([
 			cardLoading = oCard.getMetadata()._sClassName === 'sap.ui.integration.widgets.Card' ? oCard.isLoading() : false;
 
 		return !oLoadingProvider.getDataProviderJSON() && (oLoadingProvider.getLoadingState() || cardLoading);
+	};
+
+	Header.prototype.attachPress = function () {
+		var aMyArgs = Array.prototype.slice.apply(arguments);
+		aMyArgs.unshift("press");
+
+		Control.prototype.attachEvent.apply(this, aMyArgs);
+
+		this.invalidate();
+
+		return this;
+	};
+
+	Header.prototype.detachPress = function() {
+		var aMyArgs = Array.prototype.slice.apply(arguments);
+		aMyArgs.unshift("press");
+
+		Control.prototype.detachEvent.apply(this, aMyArgs);
+
+		this.invalidate();
+
+		return this;
 	};
 
 	return Header;

@@ -5,145 +5,125 @@ sap.ui.define([
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/AggregationFilled",
-	"sap/ui/test/matchers/PropertyStrictEquals"
-], function(Opa5, Press, Common, EnterText, AggregationLengthEquals, AggregationFilled, PropertyStrictEquals) {
+	"sap/ui/test/matchers/Properties"
+], function(Opa5, Press, Common, EnterText, AggregationLengthEquals, AggregationFilled, Properties) {
 	"use strict";
 
-	var sViewName = "Master",
-		sSomethingThatCannotBeFound = "*#-Q@@||";
-
 	Opa5.createPageObjects({
-		onTheMasterPage : {
-			baseClass : Common,
+		onTheMasterPage: {
+			baseClass: Common,
+			viewName: "Master",
 
-			actions : {
+			actions: {
 
-				iWaitUntilTheListIsLoaded : function () {
+				iWaitUntilTheListIsLoaded: function () {
 					return this.waitFor({
-						id : "list",
-						viewName : sViewName,
-						matchers : new AggregationFilled({name : "items"}),
-						errorMessage : "The master list has not been loaded"
+						id: "list",
+						matchers: new AggregationFilled({
+							name: "items"
+						}),
+						errorMessage: "The master list has not been loaded"
 					});
 				},
 
-				iRememberTheSelectedItem : function () {
+				iRememberTheSelectedItem: function () {
 					return this.waitFor({
-						id : "list",
-						viewName : sViewName,
-						matchers : function (oList) {
+						id: "list",
+						matchers: function (oList) {
 							return oList.getSelectedItem();
 						},
-						success : function (oListItem) {
+						success: function (oListItem) {
 							this.iRememberTheListItem(oListItem);
 						},
-						errorMessage : "The list does not have a selected item so nothing can be remembered"
+						errorMessage: "The list does not have a selected item so nothing can be remembered"
 					});
 				},
 
-				iRememberTheIdOfListItemAtPosition : function (iPosition) {
+				iRememberTheIdOfListItemAtPosition: function (iPosition) {
 					return this.waitFor({
-						id : "list",
-						viewName : sViewName,
-						matchers : function (oList) {
+						id: "list",
+						matchers: function (oList) {
 							return oList.getItems()[iPosition];
 						},
-						success : function (oListItem) {
+						success: function (oListItem) {
 							this.iRememberTheListItem(oListItem);
 						},
-						errorMessage : "The list does not have an item at the index " + iPosition
+						errorMessage: "The list does not have an item at the index " + iPosition
 					});
 				},
 
-				iRememberAnIdOfAnObjectThatsNotInTheList : function () {
-					return this.waitFor(this.createAWaitForAnEntitySet({
-						entitySet : "Orders",
-						success : function (aEntityData) {
-							this.waitFor({
-								id : "list",
-								viewName : sViewName,
-								matchers : new AggregationFilled({name: "items"}),
-								success : function (oList) {
-									var sCurrentId,
-										aItemsNotInTheList = aEntityData.filter(function (oObject) {
-											return !oList.getItems().some(function (oListItem) {
-												return oListItem.getBindingContext().getProperty("OrderID") === oObject.OrderID;
-											});
-										});
-
-									if (!aItemsNotInTheList.length) {
-										// Not enough items all of them are displayed so we take the last one
-										sCurrentId = aEntityData[aEntityData.length - 1].OrderID;
-									} else {
-										sCurrentId = aItemsNotInTheList[0].OrderID;
-									}
-
-									var oCurrentItem = this.getContext().currentItem;
-									// Construct a binding path since the list item is not created yet and we only have the id.
-									oCurrentItem.bindingPath = "/" + oList.getModel().createKey("Orders", {
-										OrderID : sCurrentId
+				iRememberAnIdOfAnObjectThatsNotInTheList: function () {
+					var aEntityData = this.getEntitySet("Orders");
+					return this.waitFor({
+						id: "list",
+						matchers: new AggregationFilled({
+							name: "items"
+						}),
+						success: function (oList) {
+							var sCurrentId,
+								aItemsNotInTheList = aEntityData.filter(function (oObject) {
+									return !oList.getItems().some(function (oListItem) {
+										return oListItem.getBindingContext().getProperty("OrderID") === oObject.OrderID;
 									});
-									oCurrentItem.id = sCurrentId;
-								},
-								errorMessage : "the model does not have a item that is not in the list"
+								});
+
+							if (!aItemsNotInTheList.length) {
+								// Not enough items all of them are displayed so we take the last one
+								sCurrentId = aEntityData[aEntityData.length - 1].OrderID;
+							} else {
+								sCurrentId = aItemsNotInTheList[0].OrderID;
+							}
+
+							var oCurrentItem = this.getContext().currentItem;
+							// Construct a binding path since the list item is not created yet and we only have the id.
+							oCurrentItem.bindingPath = "/" + oList.getModel().createKey("Orders", {
+								OrderID: sCurrentId
 							});
-						}
-					}));
+							oCurrentItem.id = sCurrentId;
+						},
+						errorMessage: "the model does not have a item that is not in the list"
+					});
 				},
 
-				iPressOnTheObjectAtPosition : function (iPositon) {
+				iPressOnTheObjectAtPosition: function (iPositon) {
 					return this.waitFor({
-						id : "list",
-						viewName : sViewName,
-						matchers : function (oList) {
+						id: "list",
+						matchers: function (oList) {
 							return oList.getItems()[iPositon];
 						},
-						actions : new Press(),
-						errorMessage : "List 'list' in view '" + sViewName + "' does not contain an ObjectListItem at position '" + iPositon + "'"
+						actions: new Press(),
+						errorMessage: "List 'list' in view 'Master' does not contain an ObjectListItem at position '" + iPositon + "'"
 					});
 				},
 
-				iSearchFor : function (sSearch){
+				iSearchFor: function (sSearch){
 					return this.waitFor({
-						id : "list",
-						viewName : sViewName,
-						matchers: new AggregationFilled({name : "items"}),
-						success : function () {
-							return this.iSearchForValue(new EnterText({text: sSearch}), new Press());
-						},
-						errorMessage : "Did not find list items while trying to search for " + sSearch
+						id: "searchField",
+						actions: [
+							new EnterText({
+								text: sSearch
+							}),
+							new Press()
+						],
+						errorMessage: "Can't search for " + sSearch
 					});
 				},
 
-				iTypeSomethingInTheSearchThatCannotBeFoundAndTriggerRefresh : function () {
-					return this.iSearchForValue(function (oSearchField) {
-						oSearchField.setValue(sSomethingThatCannotBeFound);
-						oSearchField.fireSearch({refreshButtonPressed : true});
-					});
+				iSearchForNotFound: function () {
+					return this.iSearchFor("*#-Q@@||");
 				},
 
-				iSearchForValue : function (aActions) {
+				iClearTheSearch: function () {
 					return this.waitFor({
-						id : "searchField",
-						viewName : sViewName,
-						actions: aActions,
-						errorMessage : "Failed to find search field in Master view.'"
+						id: "searchField",
+						actions: new Press({
+							idSuffix: "reset"
+						}),
+						errorMessage: "Failed to clear the search in master list"
 					});
 				},
 
-				iClearTheSearch : function () {
-					//can not use 'EnterText' action to enter empty strings (yet)
-					var fnClearSearchField = function(oSearchField) {
-						oSearchField.clear();
-					};
-					return this.iSearchForValue([fnClearSearchField]);
-				},
-
-				iSearchForSomethingWithNoResults : function () {
-					return this.iSearchForValue([new EnterText({text: sSomethingThatCannotBeFound}), new Press()]);
-				},
-
-				iRememberTheListItem : function (oListItem) {
+				iRememberTheListItem: function (oListItem) {
 					var oBindingContext = oListItem.getBindingContext();
 					this.getContext().currentItem = {
 						bindingPath: oBindingContext.getPath(),
@@ -152,270 +132,247 @@ sap.ui.define([
 					};
 				},
 
-				iFilterTheListOn : function (sField) {
-					return this.iMakeASelection("filterButton", "Orders", sField);
+				iFilterTheListOn: function (sOption) {
+					return this.waitFor({
+						id: "filterButton",
+						actions: new Press(),
+						success: function () {
+							this.waitFor({
+								searchOpenDialogs: true,
+								controlType: "sap.m.StandardListItem",
+								matchers: new Properties({
+									title: "Orders"
+								}),
+								actions: new Press(),
+								success: function () {
+									this.waitFor({
+										searchOpenDialogs: true,
+										controlType: "sap.m.StandardListItem",
+										matchers: new Properties({
+											title: sOption
+										}),
+										actions: new Press(),
+										success: function () {
+											this.waitFor({
+												searchOpenDialogs: true,
+												controlType: "sap.m.Button",
+												matchers: new Properties({
+													text: "OK"
+												}),
+												actions: new Press(),
+												errorMessage: "The OK button in the filter dialog could not be pressed"
+											});
+										},
+										errorMessage: "Did not find the " +  sOption + " option in Orders"
+									});
+								},
+								errorMessage: "Did not find the Orders in filter dialog"
+							});
+						},
+						errorMessage: "Did not find the filter button"
+					});
 				},
 
-				iMakeASelection : function (sSelect, sItem, sOption) {
+				iResetFilters: function () {
 					return this.waitFor({
-						id : sSelect,
-						viewName : sViewName,
-						actions : new Press(),
-						success : function () {
+						id: "filterButton",
+						actions: new Press(),
+						success: function () {
+							return this.waitFor({
+								searchOpenDialogs: true,
+								controlType: "sap.m.Button",
+								matchers: new Properties({
+									text: "Reset"
+								}),
+								actions: new Press(),
+								success: function () {
+									return this.waitFor({
+										searchOpenDialogs: true,
+										controlType: "sap.m.Button",
+										matchers:  new Properties({
+											text: "OK"
+										}),
+										actions: new Press(),
+										errorMessage: "Did not find the ViewSettingDialog's 'OK' button."
+									});
+								},
+								errorMessage: "Did not find the ViewSettingDialog's 'Reset' button."
+							});
+						},
+						errorMessage: "Did not find the 'filter' button."
+					});
+				},
+
+				iGroupTheList: function () {
+					return this.iChooseGrouping("Group by Customer");
+				},
+
+				iResetGrouping: function () {
+					return this.iChooseGrouping("None");
+				},
+
+				iChooseGrouping: function (sGroupBy) {
+					return this.waitFor({
+						id: "groupButton",
+						actions: new Press(),
+						success: function () {
 							this.waitFor({
 								controlType: "sap.m.StandardListItem",
-								matchers: new PropertyStrictEquals({name: "title", value: sItem}),
+								matchers: new Properties({
+									title: sGroupBy
+								}),
 								searchOpenDialogs: true,
 								actions: new Press(),
 								success: function () {
 									this.waitFor({
-										controlType: "sap.m.StandardListItem",
-										matchers : new PropertyStrictEquals({name: "title", value: sOption}),
-										searchOpenDialogs: true,
-										actions : new Press(),
-										success: function () {
-											this.waitFor({
-												controlType: "sap.m.Button",
-												matchers: new PropertyStrictEquals({name: "text", value: "OK"}),
-												searchOpenDialogs: true,
-												actions: new Press(),
-												errorMessage: "The ok button in the dialog was not found and could not be pressed"
-											});
-										},
-										errorMessage : "Did not find the" +  sOption + "in" + sItem
-									});
-								},
-								errorMessage : "Did not find the " + sItem + " element in select"
-							});
-						},
-						errorMessage : "Did not find the " + sSelect + " select"
-					});
-				},
-
-				iOpenViewSettingsDialog : function () {
-					return this.waitFor({
-						id : "filterButton",
-						viewName : sViewName,
-						actions : new Press(),
-						errorMessage : "Did not find the 'filter' button."
-					});
-				},
-
-				iPressResetInViewSelectionDialog : function () {
-					return this.waitFor({
-						searchOpenDialogs : true,
-						controlType : "sap.m.Button",
-						matchers: new Opa5.matchers.PropertyStrictEquals({name: "text", value: "Reset"}),
-						actions : new Press(),
-						errorMessage : "Did not find the ViewSettingDialog's 'Reset' button."
-					});
-				},
-
-				iPressOKInViewSelectionDialog : function () {
-					return this.waitFor({
-						searchOpenDialogs : true,
-						controlType : "sap.m.Button",
-						matchers :  new Opa5.matchers.PropertyStrictEquals({name : "text", value : "OK"}),
-						actions : new Press(),
-						errorMessage : "Did not find the ViewSettingDialog's 'OK' button."
-					});
-				},
-
-				iGroupTheList : function () {
-					return this.iChooseASorter("groupButton", "Group by Customer");
-				},
-
-				iRemoveListGrouping : function () {
-					return this.iChooseASorter("groupButton", "None");
-				},
-
-				iChooseASorter: function (sSelect, sSort) {
-					return this.waitFor({
-						id : sSelect,
-						viewName : sViewName,
-						actions : new Press(),
-						success : function () {
-							this.waitFor({
-								controlType: "sap.m.StandardListItem",
-								matchers : new PropertyStrictEquals({name: "title", value: sSort}),
-								searchOpenDialogs: true,
-								actions : new Press(),
-								success : function () {
-									this.waitFor({
 										controlType: "sap.m.Button",
-										matchers: new PropertyStrictEquals({name: "text", value: "OK"}),
+										matchers: new Properties({
+											text: "OK"
+										}),
 										searchOpenDialogs: true,
 										actions: new Press(),
-										errorMessage: "The ok button in the dialog was not found and could not be pressed"
+										errorMessage: "The ok button in the grouping dialog could not be pressed"
 									});
 								},
-								errorMessage : "Did not find the" +  sSort + " element in select"
+								errorMessage: "Did not find the" +  sGroupBy + " element in grouping dialog"
 							});
 						},
-						errorMessage : "Did not find the " + sSelect + " select"
+						errorMessage: "Did not find the group button"
 					});
 				}
 			},
 
-			assertions : {
+			assertions: {
 
-				iShouldSeeTheBusyIndicator : function () {
+				theListHeaderDisplaysZeroHits: function () {
+					return this.theHeaderShouldDisplayOrders(0);
+				},
+
+				theListHasEntries: function () {
 					return this.waitFor({
 						id: "list",
-						viewName: sViewName,
-						matchers: new PropertyStrictEquals({
-							name: "busy",
-							value: true
+						matchers: new AggregationFilled({
+							name: "items"
 						}),
-						autoWait: false,
-						success : function () {
-							Opa5.assert.ok(true, "The master list is busy");
+						success: function () {
+							Opa5.assert.ok(true, "The master list has items");
 						},
-						errorMessage : "The master list is not busy."
+						errorMessage: "The maste list has no items"
 					});
 				},
 
-				theListHeaderDisplaysZeroHits : function () {
+				iShouldSeeTheList: function () {
 					return this.waitFor({
-						viewName : sViewName,
-						id : "masterHeaderTitle",
-						matchers : new PropertyStrictEquals({name : "text", value : "Orders (0)"}),
-						success : function () {
-							Opa5.assert.ok(true, "The list header displays zero hits");
+						id: "list",
+						success: function (oList) {
+							Opa5.assert.ok(oList, "Found the master List");
 						},
-						errorMessage : "The list header still has items"
+						errorMessage: "Can't find the master list."
 					});
 				},
 
-				theListHasEntries : function () {
-					return this.waitFor({
-						viewName : sViewName,
-						id : "list",
-						matchers : new AggregationFilled({
-							name : "items"
-						}),
-						success : function () {
-							Opa5.assert.ok(true, "The list has items");
-						},
-						errorMessage : "The list had no items"
-					});
-				},
-
-				iShouldSeeTheList : function () {
-					return this.waitFor({
-						id : "list",
-						viewName : sViewName,
-						success : function (oList) {
-							Opa5.assert.ok(oList, "Found the object List");
-						},
-						errorMessage : "Can't see the master list."
-					});
-				},
-
-				theListShowsOnlyObjectsWithTheSearchString : function (sSearch) {
+				theListShowsOnlyObjectsContaining: function (sSearch) {
 					this.waitFor({
-						id : "list",
-						viewName : sViewName,
-						matchers : new AggregationFilled({name : "items"}),
-						check : function(oList) {
+						id: "list",
+						matchers: new AggregationFilled({
+							name: "items"
+						}),
+						check: function(oList) {
 							var bEveryItemContainsTheTitle = oList.getItems().every(function (oItem) {
 									return oItem.getAttributes()[0].getText().indexOf(sSearch) !== -1;
 								});
 							return bEveryItemContainsTheTitle;
 						},
-						success : function () {
-							Opa5.assert.ok(true, "Every item did contain the title");
+						success: function () {
+							Opa5.assert.ok(true, "Every item in the master list contains the text " + sSearch);
 						},
-						errorMessage : "The list did not have items"
+						errorMessage: "Not all items in the master list contain the text " + sSearch
 					});
 				},
 
-				theListShouldHaveAllEntries : function () {
-					var aAllEntities,
-						iExpectedNumberOfItems;
-					// retrieve all Orders to be able to check for the total amount
-					this.waitFor(this.createAWaitForAnEntitySet({
-						entitySet : "Orders",
-						success : function (aEntityData) {
-							aAllEntities = aEntityData;
-						}
-					}));
-
+				theListShouldHaveAllEntries: function () {
+					var	iExpectedNumberOfItems;
 					return this.waitFor({
-						id : "list",
-						viewName : sViewName,
-						matchers : function (oList) {
-							// If there are less items in the list than the growingThreshold, only check for this number.
+						id: "list",
+						success: function (oList) {
+							var aAllEntities = this.getEntitySet("Orders");
 							iExpectedNumberOfItems = Math.min(oList.getGrowingThreshold(), aAllEntities.length);
-							return new AggregationLengthEquals({name : "items", length : iExpectedNumberOfItems}).isMatching(oList);
-						},
-						success : function (oList) {
-							Opa5.assert.strictEqual(oList.getItems().length, iExpectedNumberOfItems, "The growing list displays all items");
-						},
-						errorMessage : "List does not display all entries."
+							return this.waitFor({
+								id: "list",
+								matchers: new AggregationLengthEquals({
+									name: "items",
+									length: iExpectedNumberOfItems
+								}),
+								success: function () {
+									Opa5.assert.ok(true, "The master list displays all items up to the growing threshold");
+								},
+								errorMessage: "The master list does not display all items up to the growing threshold"
+							});
+						}.bind(this)
 					});
 				},
 
-				iShouldSeeTheNoDataTextForNoSearchResults : function () {
+				iShouldSeeTheNoDataText: function () {
 					return this.waitFor({
-						id : "list",
-						viewName : sViewName,
-						success : function (oList) {
+						id: "list",
+						success: function (oList) {
 							Opa5.assert.strictEqual(oList.getNoDataText(), oList.getModel("i18n").getProperty("masterListNoDataWithFilterOrSearchText"), "the list should show the no data text for search and filter");
 						},
-						errorMessage : "list does not show the no data text for search and filter"
+						errorMessage: "list does not show the no data text for search and filter"
 					});
 				},
 
-				theHeaderShouldDisplayAllEntries : function () {
+				theHeaderShouldDisplayAllEntries: function () {
 					return this.waitFor({
-						id : "list",
-						viewName : sViewName,
-						success : function (oList) {
+						id: "list",
+						success: function (oList) {
 							var iExpectedLength = oList.getBinding("items").getLength();
-							this.waitFor({
-								id : "masterHeaderTitle",
-								viewName : sViewName,
-								matchers : new PropertyStrictEquals({name : "text", value : "Orders (" + iExpectedLength + ")"}),
-								success : function () {
-									Opa5.assert.ok(true, "The master page header displays " + iExpectedLength + " items");
-								},
-								errorMessage : "The  master page header does not display " + iExpectedLength + " items."
-							});
+							return this.theHeaderShouldDisplayOrders(iExpectedLength);
 						},
-						errorMessage : "Header does not display the number of items in the list"
+						errorMessage: "Can't find the master list"
 					});
 				},
 
-				theListShouldHaveNoSelection : function () {
+				theHeaderShouldDisplayOrders: function (iOrders) {
 					return this.waitFor({
-						id : "list",
-						viewName : sViewName,
-						matchers : function(oList) {
+						id: "masterHeaderTitle",
+						matchers: new Properties({
+							text: "Orders (" + iOrders + ")"
+						}),
+						success: function () {
+							Opa5.assert.ok(true, "The master page header displays " + iOrders + " orders");
+						},
+						errorMessage: "The  master page header does not display " + iOrders + " orders."
+					});
+				},
+
+				theListShouldHaveNoSelection: function () {
+					return this.waitFor({
+						id: "list",
+						matchers: function(oList) {
 							return !oList.getSelectedItem();
 						},
-						success : function (oList) {
+						success: function (oList) {
 							Opa5.assert.strictEqual(oList.getSelectedItems().length, 0, "The list selection is removed");
 						},
-						errorMessage : "List selection was not removed"
+						errorMessage: "List selection was not removed"
 					});
 				},
 
-				theRememberedListItemShouldBeSelected : function () {
+				theRememberedListItemShouldBeSelected: function () {
 					this.waitFor({
-						id : "list",
-						viewName : sViewName,
-						matchers : function (oList) {
+						id: "list",
+						matchers: function (oList) {
 							return oList.getSelectedItem();
 						},
-						success : function (oSelectedItem) {
+						success: function (oSelectedItem) {
 							Opa5.assert.strictEqual(oSelectedItem.getTitle(), "Order " + this.getContext().currentItem.title, "The list selection is incorrect");
 						},
-						errorMessage : "The list has no selection"
+						errorMessage: "The list has no selection"
 					});
 				},
 
-				theListShouldBeFilteredOnShippedOrders : function () {
+				theListShouldBeFilteredOnShippedOrders: function () {
 					function fnCheckFilter (oList){
 						var fnIsFiltered = function (oElement) {
 							if (!oElement.getBindingContext()) {
@@ -434,42 +391,39 @@ sap.ui.define([
 					}
 
 					return this.waitFor({
-						viewName : sViewName,
-						id : "list",
-						matchers : fnCheckFilter,
-						success : function() {
+						id: "list",
+						matchers: fnCheckFilter,
+						success: function() {
 							Opa5.assert.ok(true, "Master list has been filtered correctly");
 						},
-						errorMessage : "Master list has not been filtered correctly"
+						errorMessage: "Master list has not been filtered correctly"
 					});
 				},
 
-				theListShouldContainAGroupHeader : function () {
+				theListShouldContainAGroupHeader: function () {
 					return this.waitFor({
-						controlType : "sap.m.GroupHeaderListItem",
-						viewName : sViewName,
-						success : function () {
+						controlType: "sap.m.GroupHeaderListItem",
+						success: function () {
 							Opa5.assert.ok(true, "Master list is grouped");
 						},
-						errorMessage : "Master list is not grouped"
+						errorMessage: "Master list is not grouped"
 					});
 				},
 
-				theListShouldNotContainGroupHeaders : function () {
+				theListShouldNotContainGroupHeaders: function () {
 					function fnIsGroupHeader (oElement) {
 						return oElement.getMetadata().getName() === "sap.m.GroupHeaderListItem";
 					}
 
 					return this.waitFor({
-						viewName : sViewName,
-						id : "list",
-						matchers : function (oList) {
+						id: "list",
+						matchers: function (oList) {
 							return !oList.getItems().some(fnIsGroupHeader);
 						},
-						success : function() {
+						success: function() {
 							Opa5.assert.ok(true, "Master list does not contain a group header");
 						},
-						errorMessage : "Master list still contains a group header although grouping has been removed."
+						errorMessage: "Master list still contains a group header although grouping has been removed."
 					});
 				}
 			}

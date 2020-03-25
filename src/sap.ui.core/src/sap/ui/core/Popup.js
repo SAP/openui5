@@ -832,7 +832,7 @@ sap.ui.define([
 	};
 
 	Popup.prototype._getDomRefToFocus = function() {
-		var $Ref = this._$(/* force rendering */false, /* getter only */true),
+		var $Ref = this._$(/* bForceReRender */false, /* bGetOnly */true),
 			oDomRefToFocus,
 			oControl;
 
@@ -871,7 +871,7 @@ sap.ui.define([
 		// internal status that any animation has been finished should set to true;
 		this.bOpen = true;
 
-		var $Ref = this._$(/* force rendering */false, /* getter only */true);
+		var $Ref = this._$(/* bForceReRender */false, /* bGetOnly */true);
 		if ($Ref[0] && $Ref[0].style) {
 			$Ref[0].style.display = "block";
 		}
@@ -919,9 +919,12 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype._duringOpen = function(bOpenAnimated) {
-		var $Ref = this._$(/* force rendering */false, /* getter only */true),
+		var $Ref = this._$(/* bForceReRender */false, /* bGetOnly */true),
 			oStaticArea = sap.ui.getCore().getStaticAreaRef(),
 			oFirstFocusableInStaticArea = document.getElementById(oStaticArea.id + "-firstfe");
+
+		Popup._clearSelection();
+		this._setupUserSelection();
 
 		// shield layer is needed for mobile devices whose browser fires the mouse
 		// events with delay after touch events to prevent the delayed mouse events
@@ -1326,11 +1329,15 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype._closed = function() {
+		var $Ref = this._$(/* bForceReRender */false, /* bGetOnly */true);
+
 		if (this._bModal) {
 			this._hideBlockLayer();
 		}
 
-		var $Ref = this._$(/* force rendering */false, /* getter only */true);
+		Popup._clearSelection();
+		this._restoreUserSelection();
+
 		if ($Ref.length) {
 			var oDomRef = $Ref.get(0);
 
@@ -1906,24 +1913,26 @@ sap.ui.define([
 		this._bModal = bModal;
 		this._sModalCSSClass = sModalCSSClass;
 
-		//update the blocklayer and autoclose handler when the popup is open
+		// update the blocklayer and autoclose handler when the popup is open
 		if (this.isOpen()) {
 			if (bOldModal !== bModal) {
+				Popup._clearSelection();
+
 				if (bModal) {
+					this._setupUserSelection();
 					this._showBlockLayer();
 				} else {
 					this._hideBlockLayer();
+					this._restoreUserSelection();
 				}
 
 				if (this.touchEnabled && this._bAutoClose) {
 					if (!bModal) {
-
-						//register the autoclose handler when modal is set to false
-					jQuery(document).on("touchstart mousedown", jQuery.proxy(this._fAutoCloseHandler, this));
+						// register the autoclose handler when modal is set to false
+						jQuery(document).on("touchstart mousedown", jQuery.proxy(this._fAutoCloseHandler, this));
 					} else {
-
-						//deregister the autoclose handler when modal is set to true
-					jQuery(document).off("touchstart mousedown", this._fAutoCloseHandler);
+						// deregister the autoclose handler when modal is set to true
+						jQuery(document).off("touchstart mousedown", this._fAutoCloseHandler);
 					}
 				}
 			}
@@ -2341,7 +2350,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype._removeFocusEventListeners = function(sChannel, sEvent, oEventData) {
-		var $PopupRoot = this._$(/* force rendering */false, /* getter only */true);
+		var $PopupRoot = this._$(/* bForceReRender */false, /* bGetOnly */true);
 
 		// if popup's content isn't rendered yet, focus vent listeners don't need to be removed
 		if (!$PopupRoot.length) {
@@ -2653,8 +2662,8 @@ sap.ui.define([
 	Popup.prototype._hideBlockLayer = function() {
 		// a dialog was closed so pop his z-index from the stack
 		var oLastPopup = Popup.blStack.pop();
-
 		var $oBlockLayer = jQuery("#sap-ui-blocklayer-popup");
+
 		if ($oBlockLayer.length) {
 			// if there are more z-indices this means there are more dialogs stacked
 			// up. So redisplay the block layer (with new z-index) under the new
@@ -3146,6 +3155,103 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Marks the popup instance as user selectable
+	 *
+	 * @private
+	 */
+	Popup.prototype._setupUserSelection = function(){
+
+		var $Ref = this._$(/* bForceReRender */false, /* bGetOnly */true);
+
+		// mark the popup as user selectable
+		Popup._markAsUserSelectable($Ref, /* bForce */this._bModal || Popup.blStack.length > 0);
+
+		if (this._bModal){
+			if (Popup.blStack.length > 0){
+				// mark the last popup in the stack as not user selectable
+				var oLastPopup = Popup.blStack[Popup.blStack.length - 1];
+				Popup._markAsNotUserSelectable(oLastPopup.popup._$(false, true), /* bForce */true);
+			} else {
+				// freeze the whole screen
+				Popup._markAsNotUserSelectable(jQuery("html"), /* bForce */true);
+
+				// mark the external content as user selectable
+				Popup._markExternalContentAsUserSelectable(true);
+			}
+		}
+	};
+
+	/**
+	 * Marks the popup instance as not user selectable
+	 *
+	 * @private
+	 */
+	Popup.prototype._restoreUserSelection = function(){
+
+		var $Ref = this._$(/* bForceReRender */false, /* bGetOnly */true);
+
+		// mark this popup as not longer forced user selectable
+		Popup._markAsNotUserSelectable($Ref, /* bForce */false);
+
+		if (Popup.blStack.length > 0) {
+			// mark the next popup in the stack as user selectable
+			Popup._markAsUserSelectable(Popup.blStack[Popup.blStack.length - 1].popup._$(false, true), /* bForce */true);
+		} else {
+			// unfreeze the whole document
+			Popup._markAsUserSelectable(jQuery("html"), /* bForce */false);
+
+			// mark the external content as not longer forced user selectable
+			Popup._markExternalContentAsNotUserSelectable(false);
+		}
+	};
+
+	/**
+	 * Removes all selections from the window except if the selection is collapsed
+	 *
+	 * @private
+	 */
+	Popup._clearSelection = function(){
+		// only clear the selection if it isn't collapsed e.g. the range contains only the cursor position
+		var oSelection = document.getSelection();
+		if (!oSelection.isCollapsed) {
+			oSelection.removeAllRanges();
+		}
+	};
+
+	/**
+	 * Marks the given <code>$Ref</code> as user selectable
+	 *
+	 * @param {jQuery} $Ref The jQuery reference
+	 * @param {boolean} bForce If the element should be marked explicitly as user selectable
+	 * @private
+	 */
+	Popup._markAsUserSelectable = function($Ref, bForce){
+		/* In IE11 the user-select feature does not work as expected, so in IE11 the whole screen is user selectable */
+		if (!Device.browser.internet_explorer){
+			$Ref.removeClass("sapUiNotUserSelectable");
+			if (bForce){
+				$Ref.addClass("sapUiUserSelectable");
+			}
+		}
+	};
+
+	/**
+	 * Marks the given <code>$Ref</code> as not selectable
+	 *
+	 * @param {jQuery} $Ref The jQuery reference
+	 * @param {boolean} bForce If the element should be marked explicitly as not user selectable
+	 * @private
+	 */
+	Popup._markAsNotUserSelectable = function($Ref, bForce){
+		/* In IE11 the user-select feature does not work as expected, so in IE11 the whole screen is user selectable */
+		if (!Device.browser.internet_explorer){
+			$Ref.removeClass("sapUiUserSelectable");
+			if (bForce){
+				$Ref.addClass("sapUiNotUserSelectable");
+			}
+		}
+	};
 
 	var oPopupExtraContentSelectorSet = new Set(),
 		sDefaultSeletor = "[data-sap-ui-integration-popup-content]";
@@ -3165,15 +3271,22 @@ sap.ui.define([
 	 *  </ul>
 	 *
 	 * @param {string[]|string} vSelectors One query selector or an array of query selectors to be added
+	 * @param {boolean} [bMarkAsSelectable] Whether the external content should be marked instantly as user selectable.
+	 * 	If the external content which matches the given or default selector is added after a modal popup is opened,
+	 *  this parameter needs to be set to <code>true</code> to make the external content user selectable.
 	 * @public
 	 * @since 1.75
 	 */
-	Popup.addExternalContent = function(vSelectors) {
+	Popup.addExternalContent = function(vSelectors, bMarkAsSelectable) {
 		if (!Array.isArray(vSelectors)) {
 			vSelectors = [vSelectors];
 		}
 
 		vSelectors.forEach(Set.prototype.add.bind(oPopupExtraContentSelectorSet));
+
+		if (bMarkAsSelectable){
+			Popup.markExternalContentAsSelectable();
+		}
 	};
 
 	/**
@@ -3182,12 +3295,19 @@ sap.ui.define([
 	 * The default query selector <code>[data-sap-ui-integration-popup-content]</code> can't be deleted.
 	 *
 	 * @param {string[]|string} vSelectors One query selector or an array of query selectors to be deleted
+	 * @param {boolean} [bMarkAsNotSelectable] Whether the external content should be marked instantly as not user selectable.
+	 * 	If the selector is removed while a modal popup is still open, this parameter needs to be set to <code>true</code>
+	 *  to make the external content not user selectable.
 	 * @public
 	 * @since 1.75
 	 */
-	Popup.removeExternalContent = function(vSelectors) {
+	Popup.removeExternalContent = function(vSelectors, bMarkAsNotSelectable) {
 		if (!Array.isArray(vSelectors)) {
 			vSelectors = [vSelectors];
+		}
+
+		if (bMarkAsNotSelectable){
+			Popup.markExternalContentAsNotSelectable();
 		}
 
 		vSelectors.forEach(function(sSelector) {
@@ -3195,6 +3315,77 @@ sap.ui.define([
 			if (sSelector !== sDefaultSeletor) {
 				oPopupExtraContentSelectorSet.delete(sSelector);
 			}
+		});
+	};
+
+	/**
+	 * Marks the external content as user selectable
+	 *
+	 * @public
+	 * @since 1.77
+	 */
+	Popup.markExternalContentAsSelectable = function() {
+		Popup._clearSelection();
+		if (Popup.blStack.length > 0){
+			Popup._markExternalContentAsUserSelectable(true);
+		}
+	};
+
+	/**
+	 * Marks the external content as not user selectable
+	 *
+	 * @public
+	 * @since 1.77
+	 */
+	Popup.markExternalContentAsNotSelectable = function() {
+		Popup._clearSelection();
+		if (Popup.blStack.length > 0){
+			Popup._markExternalContentAsNotUserSelectable(false);
+		}
+	};
+
+	/**
+	 * Determines the external content which is associated to the UI5 popups
+	 *
+	 * @returns {jQuery[]} The array containing the jQuery references of all DOM elements which are marked as external content to the UI5 popups
+	 * @private
+	 */
+	Popup._getExternalContent = function(){
+		var aExternalContent = [];
+		if (oPopupExtraContentSelectorSet.size > 0){
+			oPopupExtraContentSelectorSet.forEach(function(sSelector){
+				var $Ref = jQuery(sSelector);
+				if ($Ref.length > 0){
+					aExternalContent.push($Ref);
+				}
+			});
+		}
+		return aExternalContent;
+	};
+
+	/**
+	 * Marks the external content as user selectable
+	 *
+	 * @param {boolean} bForce If the external content should be marked activly as user selectable
+	 * @private
+	 */
+	Popup._markExternalContentAsUserSelectable = function(bForce){
+		var aExternalContent = Popup._getExternalContent();
+		aExternalContent.forEach(function($IntegratedPopupContent){
+			Popup._markAsUserSelectable($IntegratedPopupContent, bForce);
+		});
+	};
+
+	/**
+	 * Marks the external content as not user selectable
+	 *
+	 * @param {boolean} bForce If the external content should be marked activly as not user selectable
+	 * @private
+	 */
+	Popup._markExternalContentAsNotUserSelectable = function(bForce){
+		var aExternalContent = Popup._getExternalContent();
+		aExternalContent.forEach(function($IntegratedPopupContent){
+			Popup._markAsNotUserSelectable($IntegratedPopupContent, bForce);
 		});
 	};
 

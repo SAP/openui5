@@ -32,25 +32,29 @@ sap.ui.define([
 				},
 				iSelectActionWithItem: function (sText, sAction) {
 					this.waitFor({
-						matchers: [function () {
-							return Opa5.getJQuery()("tag:contains(" + sText + ")");
-						}, function ($item) {
-							// workaround for limitations for right click in iframe
-							Opa5.getWindow().sap.ui.testrecorder.interaction.ContextMenu.show({
-								domElementId: $item.parent().attr("data-id"),
-								location: {
-									x: $item.offset().left,
-									y: $item.offset().top
-								},
-								withEvents: true,
-								items: {
-									highlight: false
-								}
-							});
-							return true;
-						}, function () {
-							return Opa5.getJQuery()("div:contains(" + sAction + "):last");
-						}],
+						matchers: [
+							function () {
+								return Opa5.getJQuery()("tag:contains(" + sText + ")");
+							},
+							function ($item) {
+								// workaround for limitations for right click in iframe
+								Opa5.getWindow().sap.ui.testrecorder.interaction.ContextMenu.show({
+									domElementId: $item.parent().attr("data-id"),
+									location: {
+										x: $item.offset().left,
+										y: $item.offset().top
+									},
+									withEvents: true,
+									items: {
+										highlight: false
+									}
+								});
+								return true;
+							},
+							function () {
+								return Opa5.getJQuery()("div:contains(" + sAction + "):last");
+							}
+						],
 						actions: function ($item) {
 							$item.click();
 						},
@@ -63,10 +67,11 @@ sap.ui.define([
 				iShouldSeeTheHighlightedItem: function (sText) {
 					this.waitFor({
 						matchers: function () {
-							return Opa5.getJQuery()("tag:contains(" + sText + ")");
+							var oTag = Opa5.getJQuery()("tag:contains(" + sText + ")");
+							return oTag.parent().attr("selected");
 						},
-						success: function (oElement) {
-							Opa5.assert.ok(oElement.parent().attr("selected"), "Item should be highlighted");
+						success: function (bSelected) {
+							Opa5.assert.ok(bSelected, "Item should be highlighted");
 						},
 						errorMessage: "Cannot find tree item"
 					});
@@ -87,6 +92,18 @@ sap.ui.define([
 							Opa5.assert.ok(oElement.parent().attr("selected"), "Item should be highlighted");
 						},
 						errorMessage: "Cannot find tree item from search"
+					});
+				},
+				iShouldSeeTheRecorder: function () {
+					this.waitFor({
+						check: function () {
+							var oTree = Opa5.getJQuery()("tree");
+							return oTree.length && oTree.is(":visible") && oTree.css("visibility") !== "hidden";
+						},
+						success: function () {
+							Opa5.assert.ok(true, "The recorder is loaded");
+						},
+						errorMessage: "Test recorder did not load"
 					});
 				}
 			}

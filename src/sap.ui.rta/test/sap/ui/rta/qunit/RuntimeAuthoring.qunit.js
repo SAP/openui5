@@ -270,10 +270,22 @@ function(
 			};
 
 			return this.oRta._isDraftAvailable()
-			.then(function(bDraftAvailable) {
-				assert.equal(bDraftAvailable, true, "then the 'isDraftAvailable' is true");
-				assert.deepEqual(oDraftAvailableStub.lastCall.args[0], oPropertyBag, "and the property bag was set correctly");
-			});
+				.then(function(bDraftAvailable) {
+					assert.equal(bDraftAvailable, true, "then the 'isDraftAvailable' is true");
+					assert.deepEqual(oDraftAvailableStub.lastCall.args[0], oPropertyBag, "and the property bag was set correctly");
+				});
+		});
+
+		QUnit.test("when RTA is started in the customer layer, and no uShell is available", function(assert) {
+			this.oRta._bVersioningEnabled = true;
+			var oDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable");
+			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
+
+			return this.oRta._initVersioning()
+				.then(function() {
+					assert.equal(this.oRta._bVersioningEnabled, false, "then the 'versioningEnabled' is false");
+					assert.deepEqual(oDraftAvailableStub.callCount, 0, "and the draft available was not checked");
+				}.bind(this));
 		});
 
 		QUnit.test("when RTA is started in the customer layer, the versioning is available, draft is not available, no changes yet done", function(assert) {
@@ -1551,11 +1563,14 @@ function(
 			this.oRta._bVersioningEnabled = true;
 			this.oRta.bInitialDraftAvailable = true;
 			var oSetDraftEnabledSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftEnabled");
+			var oSetVersionLabelAccentColorSpy = sandbox.spy(this.oRta.getToolbar(), "setVersionLabelAccentColor");
 			var oSetVersionLabelSpy = sandbox.spy(this.oRta, "_setVersionLabel");
 			var oHandleVersionToolbarSpy = sandbox.spy(this.oRta, "_handleVersionToolbar");
 			this.oRta._onStackModified(this.oRta.getFlexSettings());
 			assert.equal(oSetDraftEnabledSpy.callCount, 1, "the draft visibility was set");
 			assert.equal(oSetDraftEnabledSpy.getCall(0).args[0], true, "to true");
+			assert.equal(oSetVersionLabelAccentColorSpy.callCount, 1, "setVersionLabelAccentColor was set");
+			assert.equal(oSetVersionLabelAccentColorSpy.getCall(0).args[0], true, "to true");
 			assert.equal(oSetVersionLabelSpy.callCount, 1, "_setVersionLabel was called");
 			assert.equal(oSetVersionLabelSpy.getCall(0).args[0], true, "with bDraftEnabled true");
 			assert.equal(oHandleVersionToolbarSpy.callCount, 1, "_handleVersionToolbar was called");
@@ -1568,11 +1583,14 @@ function(
 			this.oRta._bVersioningEnabled = true;
 			sandbox.stub(this.oRta.getCommandStack(), "canUndo").returns(true);
 			var oSetDraftEnabledSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftEnabled");
+			var oSetVersionLabelAccentColorSpy = sandbox.spy(this.oRta.getToolbar(), "setVersionLabelAccentColor");
 			var oSetVersionLabelSpy = sandbox.spy(this.oRta, "_setVersionLabel");
 			var oHandleVersionToolbarSpy = sandbox.spy(this.oRta, "_handleVersionToolbar");
 			this.oRta._onStackModified(this.oRta.getFlexSettings());
 			assert.equal(oSetDraftEnabledSpy.callCount, 1, "the draft visibility was set");
 			assert.equal(oSetDraftEnabledSpy.getCall(0).args[0], true, "to true");
+			assert.equal(oSetVersionLabelAccentColorSpy.callCount, 1, "setVersionLabelAccentColor was set");
+			assert.equal(oSetVersionLabelAccentColorSpy.getCall(0).args[0], true, "to true");
 			assert.equal(oSetVersionLabelSpy.callCount, 1, "_setVersionLabel was not called");
 			assert.equal(oSetVersionLabelSpy.getCall(0).args[0], true, "with bDraftEnabled true");
 			assert.equal(oHandleVersionToolbarSpy.callCount, 1, "_handleVersionToolbar was called");
@@ -1598,7 +1616,7 @@ function(
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when the draft is activated", function (assert) {
+		QUnit.test("when the draft is activated success", function (assert) {
 			var done = assert.async();
 			var sVersionTitle = "VersionTitle";
 			var oEvent = {
@@ -1612,6 +1630,24 @@ function(
 
 				done();
 			}.bind(this));
+			sandbox.stub(this.oRta, "_handleVersionToolbar").returns(true);
+
+			this.oRta.getToolbar().fireEvent("activateDraft", oEvent);
+		});
+
+		QUnit.test("when the draft is activated failed", function (assert) {
+			var done = assert.async();
+			var sVersionTitle = "VersionTitle";
+			var oEvent = {
+				versionTitle: sVersionTitle
+			};
+			sandbox.stub(VersionsAPI, "activateDraft").rejects("Error");
+			sandbox.stub(RtaUtils, "_showMessageBox").callsFake(function(sIconType, sHeader, sMessage, sError) {
+				assert.equal(sError, "Error", "and a message box shows the error to the user");
+				assert.equal(sMessage, "MSG_DRAFT_ACTIVATION_FAILED", "the message is MSG_DRAFT_ACTIVATION_FAILED");
+				assert.equal(sHeader, "HEADER_ERROR", "the header is HEADER_ERROR");
+				done();
+			});
 
 			this.oRta.getToolbar().fireEvent("activateDraft", oEvent);
 		});

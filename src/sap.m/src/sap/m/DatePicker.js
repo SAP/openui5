@@ -265,7 +265,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The date string expected and returned in the <code>value</code> property uses this format. By default the short format of the used locale is used.
+	 * The date string expected and returned in the <code>value</code> property uses this format. By default the medium format of the used locale is used.
 	 *
 	 *
 	 * Supported format options are pattern-based on Unicode LDML Date Format notation. {@link http://unicode.org/reports/tr35/#Date_Field_Symbol_Table}

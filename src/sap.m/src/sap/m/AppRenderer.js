@@ -15,11 +15,9 @@ sap.ui.define(['./NavContainerRenderer', 'sap/ui/core/Renderer', 'sap/m/library'
 	 * App renderer.
 	 * @namespace
 	 */
-	var AppRenderer = {
-		apiVersion: 2
-	};
-
 	var AppRenderer = Renderer.extend(NavContainerRenderer);
+
+	AppRenderer.apiVersion = 2;
 
 	AppRenderer.renderAttributes = function(rm, oControl) {
 		BackgroundHelper.addBackgroundColorStyles(rm, oControl.getBackgroundColor(), oControl.getBackgroundImage());

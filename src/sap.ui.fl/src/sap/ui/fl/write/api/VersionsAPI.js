@@ -5,13 +5,16 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/write/_internal/Versions",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils"
 ], function(
 	FlexState,
 	Versions,
-	Utils
+	Utils,
+	ManifestUtils
 ) {
 	"use strict";
+
 	/**
 	 * Provides an API for tools like {@link sap.ui.rta} to activate, discard and retrieve versions.
 	 *
@@ -70,7 +73,7 @@ sap.ui.define([
 		}
 
 		return Versions.getVersions({
-			reference: sReference,
+			reference: Utils.normalizeReference(sReference),
 			layer: mPropertyBag.layer
 		});
 	};
@@ -138,7 +141,7 @@ sap.ui.define([
 		}
 
 		return Versions.activateDraft({
-			reference: sReference,
+			reference: Utils.normalizeReference(sReference),
 			layer: mPropertyBag.layer,
 			title: mPropertyBag.title
 		});
@@ -165,7 +168,12 @@ sap.ui.define([
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
-		var sReference = Utils.getComponentClassName(oAppComponent);
+		var oManifest = oAppComponent.getManifest();
+		var sReference = ManifestUtils.getFlexReference({
+			manifest: oManifest,
+			componentData: oAppComponent.getComponentData()
+		});
+		var sAppVersion = Utils.getAppVersionFromManifest(oManifest);
 
 		if (!sReference) {
 			return Promise.reject("The application ID could not be determined");
@@ -174,6 +182,7 @@ sap.ui.define([
 		return Versions.discardDraft({
 			reference: sReference,
 			layer: mPropertyBag.layer,
+			appVersion: sAppVersion,
 			updateState: mPropertyBag.updateState
 		});
 	};

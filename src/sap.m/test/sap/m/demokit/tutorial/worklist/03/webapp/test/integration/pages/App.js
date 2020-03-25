@@ -14,22 +14,6 @@ sap.ui.define([
 
 			actions : {
 
-				iWaitUntilTheAppBusyIndicatorIsGone : function () {
-					return this.waitFor({
-						id : sAppId,
-						viewName : sViewName,
-						matchers: new PropertyStrictEquals({
-							name: "busy",
-							value: false
-						}),
-						autoWait: false,
-						success : function () {
-							Opa5.assert.ok(true, "The app is not busy");
-						},
-						errorMessage : "The app is busy"
-					});
-				},
-
 				iCloseTheMessageBox : function () {
 					return this.waitFor({
 						id : "serviceErrorMessageBox",
@@ -53,6 +37,7 @@ sap.ui.define([
 							value : true
 						}),
 						autoWait: false,
+						pollingInterval: 100,
 						success : function () {
 							// we set the view busy, so we need to query the parent of the app
 							Opa5.assert.ok(true, "The app is busy");

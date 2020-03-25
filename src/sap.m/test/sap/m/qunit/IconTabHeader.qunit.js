@@ -13,44 +13,71 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var DOM_RENDER_LOCATION = "content",
-		SCROLL_ANIMATION_DURATION = 500;
+	var DOM_RENDER_LOCATION = "content";
 
 	createAndAppendDiv(DOM_RENDER_LOCATION);
 
-	function createHeaderWithItems() {
+	function createHeaderWithItems(iNum) {
+		var aItems = [];
+		for (var i = 0; i < iNum; i++) {
+			aItems.push(new IconTabFilter({
+				text: "Tab " + i,
+				key: i
+			}));
+		}
+
 		return new IconTabHeader({
-			items: [
-				new IconTabFilter({text: "tab1"}),
-				new IconTabFilter({text: "tab2"}),
-				new IconTabFilter({text: "tab3"}),
-				new IconTabFilter({text: "tab4"})
-			]
+			items: aItems
 		});
 	}
 
-	QUnit.module("Scrolling items");
+	QUnit.module("Resize");
 
-	QUnit.test("Selecting tab when there is enough space and no overflow button/arrows are shown", function(assert) {
+	QUnit.test("when there is not enough space, items should be hidden", function(assert) {
 		// arrange
-		var oITH = createHeaderWithItems(),
-			oFirstItem = oITH.getItems()[0],
+		var oITH = createHeaderWithItems(4),
 			oLastItem = oITH.getItems()[3];
 
-		oITH.isTouchScrollingDisabled = function () { return true; };
 		oITH.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
-		oITH.$().width("300px");
-		this.clock.tick(SCROLL_ANIMATION_DURATION);
 
-		// act
-		oITH.setSelectedItem(oLastItem);
-		this.clock.tick(SCROLL_ANIMATION_DURATION);
+		assert.notOk(oLastItem.$().hasClass("sapMITBFilterHidden"), "the last filter is visible");
+
+		oITH.$().width("200px");
+		Core.applyChanges();
+		this.clock.tick(300);
 
 		// assert
-		assert.notOk(oFirstItem.$().hasClass("sapMITBFilterHidden"), "There should be no hidden filters");
+		assert.ok(oLastItem.$().hasClass("sapMITBFilterHidden"), "the last filter is hidden");
 
 		// clean up
+		oITH.destroy();
+	});
+
+	QUnit.module("shifting behavior");
+
+	QUnit.test("selecting an overflown tab causes it to show up in the tab strip", function (assert) {
+		// Arrange
+		var oITH = createHeaderWithItems(100);
+		var oTargetTab = oITH.getItems()[99];
+		oITH.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Assert
+		var aVisibleTabs = oITH.$().find(".sapMITBItem:not(.sapMITBFilterHidden)").toArray();
+		assert.strictEqual(aVisibleTabs.indexOf(oTargetTab.getDomRef()), -1, "The target tab is not in the tab strip before it gets picked");
+		assert.strictEqual(oITH._getItemsInStrip().indexOf(oTargetTab), -1, "The target tab is not in the tab strip before it gets picked");
+
+		// Act
+		oITH.setSelectedKey("99");
+		Core.applyChanges();
+
+		// Assert
+		aVisibleTabs = oITH.$().find(".sapMITBItem:not(.sapMITBFilterHidden)").toArray();
+		assert.notStrictEqual(aVisibleTabs.indexOf(oTargetTab.getDomRef()), -1, "The target tab is not in the tab strip before it gets picked");
+		assert.notStrictEqual(oITH._getItemsInStrip().indexOf(oTargetTab), -1, "The target tab is now in the tab strip after it got selected");
+
+		// Clean-up
 		oITH.destroy();
 	});
 });

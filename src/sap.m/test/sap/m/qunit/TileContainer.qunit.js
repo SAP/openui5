@@ -476,13 +476,19 @@ sap.ui.define([
 
 	QUnit.module("Tile common dimension calculation", {
 		beforeEach: function () {
+			this.sandbox = sinon.sandbox.create();
+
+			this.sandbox.stub(Device.system, "tablet", false);
+			this.sandbox.stub(Device.system, "phone", false);
+			this.sandbox.stub(Device.system, "desktop", true);
+			this.sandbox.stub(Device.system, "combi", false);
 			this.prepare();
 		},
 		afterEach: function () {
 			this.clean();
+			this.sandbox.restore();
 		},
 		prepare : function() {
-			this.sandbox = sinon.sandbox.create();
 			this.sOriginalTheme = sap.ui.getCore().getConfiguration().getTheme();
 			// SUT
 			this.sut = new TileContainer('testOrder', {
@@ -493,9 +499,20 @@ sap.ui.define([
 			});
 		},
 		clean : function() {
-			sap.ui.getCore().applyTheme(this.sOriginalTheme);
-			this.sandbox.restore();
 			this.sut.destroy();
+
+			return new Promise(function(resolve /*, reject*/) {
+				sap.ui.getCore().applyTheme(this.sOriginalTheme);
+				if (core.isThemeApplied()) {
+					resolve();
+				} else {
+					var themeChanged = function() {
+						resolve();
+						core.detachThemeChanged(themeChanged);
+					};
+					core.attachThemeChanged(themeChanged);
+				}
+			}.bind(this));
 		},
 		mockElementWidthAndHeight : function (iWidth, iHeight) {
 			if (this.oStubWidth) {
@@ -512,61 +529,89 @@ sap.ui.define([
 				return iHeight;
 			});
 		},
-		callAndTest : function(oFnThatProvokesTileDimensionChanges, args, assert) {
-			var done = assert.async();
-			//mock
-			this.mockElementWidthAndHeight(3, 5);
-			// Act
-			this.sut.placeAt("qunit-fixture");
-			core.applyChanges();
-			setTimeout(function() {
-				var sRealTileDimension = this.sut._oTileDimensionCalculator.getLastCalculatedDimension();
-				assert.equal(3, sRealTileDimension.width, "Width check");
-				assert.equal(5, sRealTileDimension.height, "Height check");
 
-				// "change" the tile's dimension and verify they didn't take place unless an event that
-				// provokes change occurs
-				this.mockElementWidthAndHeight(30, 50);
-				sRealTileDimension = this.sut._oTileDimensionCalculator.getLastCalculatedDimension();
-				assert.equal(sRealTileDimension.width, 3, "Tile's width should retain the same as before");
-				assert.equal(sRealTileDimension.height, 5, "Tile's height should retain the same as before");
+		callAndTest: function(oFnThatProvokesTileDimensionChanges, args, assert) {
+			var sRealTileDimension;
 
-				//provoke real tile dimension change
+			return new Promise(function(resolve) {
+				var afterRenderDelegate = {
+					onAfterRendering: function () {
+						sRealTileDimension = this.sut._oTileDimensionCalculator.getLastCalculatedDimension();
+						assert.equal(3, sRealTileDimension.width, "Width check");
+						assert.equal(5, sRealTileDimension.height, "Height check");
 
-				oFnThatProvokesTileDimensionChanges.apply(this.sut, args);
-				setTimeout(function() {
-					sRealTileDimension = this.sut._oTileDimensionCalculator.getLastCalculatedDimension();
-					assert.equal(sRealTileDimension.width, 30, "Tile's width should be changed.");
-					assert.equal(sRealTileDimension.height, 50, "Tile's height should be changed.");
-					done();
-				}.bind(this), 1000);
-			}.bind(this), 1000);
+						// "change" the tile's dimension and verify they didn't take place unless an event that
+						// provokes change occurs
+						this.mockElementWidthAndHeight(30, 50);
+						sRealTileDimension = this.sut._oTileDimensionCalculator.getLastCalculatedDimension();
+						assert.equal(sRealTileDimension.width, 3, "Tile's width should retain the same as before");
+						assert.equal(sRealTileDimension.height, 5, "Tile's height should retain the same as before");
+
+						this.sut.removeDelegate(afterRenderDelegate);
+						resolve();
+					}.bind(this)
+				};
+
+				//mock
+				this.mockElementWidthAndHeight(3, 5);
+				this.sut.addDelegate(afterRenderDelegate);
+				this.sut.placeAt("qunit-fixture");
+			}.bind(this))
+			.then(function() {
+				return new Promise(function(resolve) {
+					oFnThatProvokesTileDimensionChanges.apply(this.sut, args);
+
+					var fnAssert = function() {
+						sRealTileDimension = this.sut._oTileDimensionCalculator.getLastCalculatedDimension();
+						assert.equal(sRealTileDimension.width, 30, "Tile's width should be changed.");
+						assert.equal(sRealTileDimension.height, 50, "Tile's height should be changed.");
+						resolve();
+					}.bind(this);
+
+					if (Device.system.tablet || Device.system.phone) {
+						fnAssert();
+					} else {
+						var afterRerenderDelegate = {
+							onAfterRendering: function () {
+								fnAssert();
+								this.sut.removeDelegate(afterRerenderDelegate);
+							}.bind(this)
+						};
+						this.sut.addDelegate(afterRerenderDelegate);
+					}
+				}.bind(this));
+			}.bind(this));
 		}
 	});
+
+
 	QUnit.test('Tile dimension gets updated upon orientation changes', function (assert) {
 		var done = assert.async();
-		//emulate device that supports orientation change
-		var bOrigTablet = Device.system.tablet;
-		var bOrigDesktop = Device.system.desktop;
-		sap.ui.Device.system.tablet = true;
-		sap.ui.Device.system.desktop = false;
 
-		this.clean();
-		this.prepare();
-		setTimeout(function(){
-			this.callAndTest(this.sut._fnOrientationChange, [], assert);
-			sap.ui.Device.system.tablet = bOrigTablet;
-			sap.ui.Device.system.desktop = bOrigDesktop;
-			done();
-		}.bind(this), delay);
+		//emulate device that supports orientation change
+		this.sandbox.stub(Device.system, "tablet", true);
+		this.sandbox.stub(Device.system, "desktop", false);
+
+		this.clean().then(function() {
+			this.prepare();
+			this.callAndTest(this.sut._fnOrientationChange, [], assert).then(function() {
+				done();
+			});
+		}.bind(this));
 	});
 
 	QUnit.test('Tile dimension gets updated upon themeChanges handler called', function (assert) {
-		this.callAndTest(this.sut.onThemeChanged, [], assert);
+		var done = assert.async();
+		this.callAndTest(this.sut.onThemeChanged, [], assert).then(function() {
+			done();
+		});
 	});
 
 	QUnit.test('Tile dimension gets updated upon real theme change', function (assert) {
-		this.callAndTest(sap.ui.getCore().applyTheme, ["sap_hcb"], assert);
+		var done = assert.async();
+		this.callAndTest(sap.ui.getCore().applyTheme, ["sap_hcb"], assert).then(function() {
+			done();
+		});
 	});
 
 	QUnit.module("Accessibility attributes", {

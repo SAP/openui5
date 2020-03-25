@@ -1,23 +1,7 @@
-.sapFCard {
-  .sapFCardHeader.sapFCardHeaderLoading {
-	.sapFCardHeaderItemBinded::after {
-	  background-color:#424F5E !important;
-	  background-image: linear-gradient(to right, #424F5E 0%, #424F5E 35%, #4d5c6d 50%, #424F5E 65%, #424F5E 100%);
-	}
-  }
+/* ================================== */
+/* CSS for control sap.f/CardLoading  */
+/* FIORI 3 Dark theme          */
+/* ================================== */
 
-  .sapFCardContent  {
-
-	.sapFCardContentGenericPlaceholder {
-	  .sapFCardSVG {
-		fill: @sapUiTileBackground;
-	  }
-	}
-
-	.sapFCardLoadingShimmer {
-	  background-color:#424F5E !important;
-	  background-image: linear-gradient(to right, #424F5E 0%, #424F5E 35%, #4d5c6d 50%, #424F5E 65%, #424F5E 100%);
-	}
-
-  }
-}
+@sap_f_Card_Background_Placeholder_Color: @sapContent_Placeholderloading_Background;
+@sap_f_Card_Placeholder_Gradient: linear-gradient(to right, @sapContent_Placeholderloading_Background 0%, @sapContent_Placeholderloading_Background 35%, lighten(@sapContent_Placeholderloading_Background, 5) 50%, @sapContent_Placeholderloading_Background 65%, @sapContent_Placeholderloading_Background 100%);

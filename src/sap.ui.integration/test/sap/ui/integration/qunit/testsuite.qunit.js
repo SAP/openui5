@@ -15,7 +15,8 @@ sap.ui.define(function () {
 				libs: ["sap.f", "sap.m", "sap.ui.integration"], // Libraries to load upfront in addition to the library which is tested, if null no libs are loaded
 				noConflict: true,
 				// preload: "auto",
-				"xx-waitForTheme": "init"
+				"xx-waitForTheme": "init",
+				"xx-supportedLanguages": ""
 			},
 			coverage: {
 				only: ["sap/ui/integration"]
@@ -39,6 +40,7 @@ sap.ui.define(function () {
 			},
 			"CalendarCard": {},
 			"AdaptiveCard": {},
+			"AnalyticalCard": {},
 			"UI5InputText": {
 				coverage: {
 					only: ["sap/f/cards/adaptivecards/elements/UI5InputText"]
@@ -267,6 +269,15 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/baseEditor/propertyEditor/integerEditor/IntegerEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/integerEditor/IntegerEditor"
+					]
+				},
+				sinon: false
+			},
 			"designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
@@ -308,6 +319,24 @@ sap.ui.define(function () {
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/propertyEditor/iconEditor/IconEditor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/propertyEditor/dateEditor/DateEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/dateEditor/DateEditor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/propertyEditor/dateTimeEditor/DateTimeEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/dateTimeEditor/DateTimeEditor"
 					]
 				},
 				sinon: false

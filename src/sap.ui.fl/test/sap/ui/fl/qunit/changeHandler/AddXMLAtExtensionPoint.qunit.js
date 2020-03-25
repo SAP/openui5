@@ -108,11 +108,13 @@ sap.ui.define([
 		});
 	}
 
-	function _createAsyncView(sViewName) {
-		return XMLView.create({
-			id: sViewName,
-			definition: sXmlString,
-			async: true
+	function _createAsyncView(sViewName, oComponent) {
+		return oComponent.runAsOwner(function () {
+			return XMLView.create({
+				id: sViewName,
+				definition: sXmlString,
+				async: true
+			});
 		});
 	}
 
@@ -275,7 +277,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 			this.oChangeHandler = AddXMLAtExtensionPoint;
 			this.oComponent = _createComponent();
-			_createAsyncView("myView").then(function (oXmlView) {
+			_createAsyncView("myView", this.oComponent).then(function (oXmlView) {
 				this.oXmlView = oXmlView;
 				this.oPropertyBag = {
 					modifier: JsControlTreeModifier,
@@ -381,7 +383,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 			this.oChangeHandler = AddXMLAtExtensionPoint;
 			this.oComponent = _createComponent();
-			_createAsyncView("myView").then(function (oXmlView) {
+			_createAsyncView("myView", this.oComponent).then(function (oXmlView) {
 				this.oXmlView = oXmlView;
 				this.oPropertyBag = {
 					modifier: JsControlTreeModifier,

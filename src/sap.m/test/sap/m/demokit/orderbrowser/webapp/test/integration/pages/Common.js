@@ -1,35 +1,13 @@
 sap.ui.define([
-	"sap/ui/test/Opa5"
-], function(Opa5) {
+	"sap/ui/test/Opa5",
+	"sap/ui/demo/orderbrowser/localService/mockserver"
+], function (Opa5, mockserver) {
 	"use strict";
 
 	return Opa5.extend("sap.ui.demo.orderbrowser.test.integration.pages.Common", {
 
-		createAWaitForAnEntitySet : function  (oOptions) {
-			return {
-				success: function () {
-					var aEntitySet;
-
-					var oMockServerInitialized = this.getMockServer().then(function (oMockServer) {
-						aEntitySet = oMockServer.getEntitySetData(oOptions.entitySet);
-					});
-
-					this.iWaitForPromise(oMockServerInitialized);
-					return this.waitFor({
-						success : function () {
-							oOptions.success.call(this, aEntitySet);
-						}
-					});
-				}
-			};
-		},
-
-		getMockServer : function () {
-			return new Promise(function (success) {
-				Opa5.getWindow().sap.ui.require(["sap/ui/demo/orderbrowser/localService/mockserver"], function (mockserver) {
-					success(mockserver.getMockServer());
-				});
-			});
+		getEntitySet: function  (sEntitySet) {
+			return mockserver.getMockServer().getEntitySetData(sEntitySet);
 		}
 	});
 

@@ -455,20 +455,32 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 				ariaProps = {
 					level: '1'
 				};
-				//checking if there are items level 2 in the NavigationListItem
-				//of yes - there is need of aria-expanded property
-				if (isListExpanded && this.getItems().length !== 0) {
-					ariaProps.expanded = isNavListItemExpanded;
-				}
 
+			//checking if there are items level 2 in the NavigationListItem
+			//of yes - there is need of aria-expanded property
+			if (isListExpanded && this.getItems().length !== 0) {
+				ariaProps.expanded = isNavListItemExpanded;
+			}
 
 			rm.openStart("div");
 
 			rm.class("sapTntNavLIItem");
 			rm.class("sapTntNavLIGroup");
+
+			if (control._selectedItem === this) {
+				ariaProps.selected = true;
+
+				rm.class("sapTntNavLIItemSelected");
+			}
+
+			if (!isListExpanded && this._hasSelectedChild(control._selectedItem)) {
+				rm.class("sapTntNavLIItemSelected");
+			}
+
 			if (isNavListItemExpanded && this.getItems().length !== 0) {
 				rm.class("sapTntNavLIGroupExpandedItems");
 			}
+
 			if (!this.getEnabled()) {
 				rm.class("sapTntNavLIItemDisabled");
 			} else {
@@ -568,11 +580,21 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 		 */
 		NavigationListItem.prototype.renderSecondLevelNavItem = function (rm, control) {
 
-			var group = this.getParent();
+			var group = this.getParent(),
+				ariaProps = {
+					role: control.hasStyleClass("sapTntNavLIPopup") ? 'menuitem' : 'treeitem',
+					level: '2'
+				};
 
 			rm.openStart('li', this);
 			rm.class("sapTntNavLIItem");
 			rm.class("sapTntNavLIGroupItem");
+
+			if (control._selectedItem === this) {
+				ariaProps.selected = true;
+
+				rm.class("sapTntNavLIItemSelected");
+			}
 
 			if (!this.getEnabled() || !group.getEnabled()) {
 				rm.class("sapTntNavLIItemDisabled");
@@ -588,10 +610,7 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 			}
 
 			// ARIA
-			rm.accessibilityState({
-				role: control.hasStyleClass("sapTntNavLIPopup") ? 'menuitem' : 'treeitem',
-				level: '2'
-			});
+			rm.accessibilityState(ariaProps);
 
 			rm.openEnd();
 
@@ -675,21 +694,20 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 				return;
 			}
 
-			$this.removeClass('sapTntNavLIItemSelected');
-
 			if (navList.getExpanded()) {
-
 				if (this.getLevel() === 0) {
 					$this = $this.find('.sapTntNavLIGroup');
 				}
-
-				$this.removeAttr('aria-selected');
 			} else {
-				$this.removeAttr('aria-pressed');
+				$this = $this.find('.sapTntNavLIGroup');
+
 				if (this.getParent().isA("sap.tnt.NavigationListItem")) {
-					this.getParent().$().removeClass('sapTntNavLIItemSelected');
+					this.getParent().$().find('.sapTntNavLIGroup').removeClass('sapTntNavLIItemSelected');
 				}
 			}
+
+			$this.removeClass('sapTntNavLIItemSelected');
+			$this.removeAttr('aria-selected');
 		};
 
 		/**
@@ -705,22 +723,22 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 					return;
 				}
 
-			$this.addClass('sapTntNavLIItemSelected');
-
 			if (navList.getExpanded()) {
-
 				if (this.getLevel() === 0) {
 					$this = $this.find('.sapTntNavLIGroup');
 				}
-
-				$this.attr('aria-selected', true);
 			} else {
-				$this.attr('aria-pressed', true);
+
+				$this = $this.find('.sapTntNavLIGroup');
+
 				if (this.getParent().isA("sap.tnt.NavigationListItem")) {
-					this.getParent().$().addClass('sapTntNavLIItemSelected');
+					this.getParent().$().find('.sapTntNavLIGroup').addClass('sapTntNavLIItemSelected');
 				}
 				navList._closePopover();
 			}
+
+			$this.addClass('sapTntNavLIItemSelected');
+			$this.attr('aria-selected', true);
 		};
 
 		/**
@@ -828,6 +846,24 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 			}
 
 			return $accItem;
+		};
+
+		/**
+		 * Returns if a child item is selected
+		 * @return {Boolean} if a child item is selected
+		 * @private
+		 */
+		NavigationListItem.prototype._hasSelectedChild =  function(selectedItem) {
+			var items = this.getItems(),
+				i;
+
+			for (i = 0; i < items.length; i++) {
+				if (items[i] === selectedItem) {
+					return true;
+				}
+			}
+
+			return false;
 		};
 
 		return NavigationListItem;

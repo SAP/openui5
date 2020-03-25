@@ -89,6 +89,7 @@ sap.ui.define([
 	};
 
 	Rename.prototype.handler = function (aElementOverlays) {
+		aElementOverlays = this.getSelectedOverlays() || aElementOverlays;
 		this.startEdit(aElementOverlays[0]);
 	};
 

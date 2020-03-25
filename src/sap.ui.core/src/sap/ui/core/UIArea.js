@@ -911,40 +911,49 @@ sap.ui.define([
 
 		// dispatch the event to the controls (callback methods: onXXX)
 		while (oElement instanceof Element && oElement.isActive() && !oEvent.isPropagationStopped()) {
+			var sScopeCheckId = oEvent.getMark("scopeCheckId"),
+				oScopeCheckDOM = sScopeCheckId && window.document.getElementById(sScopeCheckId),
+				oDomRef = oElement.getDomRef();
 
-			// for each event type call the callback method
-			// if the execution should be stopped immediately
-			// then no further callback method will be executed
-			for (var i = 0, is = aEventTypes.length; i < is; i++) {
-				var sType = aEventTypes[i];
-				oEvent.type = sType;
-				// ensure currenTarget is the DomRef of the handling Control
-				oEvent.currentTarget = oElement.getDomRef();
-				oElement._handleEvent(oEvent);
-				if (oEvent.isImmediatePropagationStopped()) {
+			// for events which are dependent on the scope DOM (the DOM on which the 'mousedown' event is fired), the
+			// event is dispatched to the element only when the element's root DOM contains or equals the scope check
+			// DOM, so that the simulated 'touchmove' and 'touchend' event is only dispatched to the element when the
+			// 'touchstart' also occurred on the same element
+			if (!oScopeCheckDOM || containsOrEquals(oDomRef, oScopeCheckDOM)) {
+				// for each event type call the callback method
+				// if the execution should be stopped immediately
+				// then no further callback method will be executed
+				for (var i = 0, is = aEventTypes.length; i < is; i++) {
+					var sType = aEventTypes[i];
+					oEvent.type = sType;
+					// ensure currenTarget is the DomRef of the handling Control
+					oEvent.currentTarget = oElement.getDomRef();
+					oElement._handleEvent(oEvent);
+					if (oEvent.isImmediatePropagationStopped()) {
+						break;
+					}
+				}
+				if (!bGroupChanged && !oEvent.isMarked("enterKeyConsumedAsContent")) {
+					bGroupChanged = this._handleGroupChange(oEvent,oElement);
+				}
+
+				// if the propagation is stopped do not bubble up further
+				if (oEvent.isPropagationStopped()) {
 					break;
 				}
-			}
-			if (!bGroupChanged && !oEvent.isMarked("enterKeyConsumedAsContent")) {
-				bGroupChanged = this._handleGroupChange(oEvent,oElement);
-			}
 
-			// if the propagation is stopped do not bubble up further
-			if (oEvent.isPropagationStopped()) {
-				break;
-			}
+				// Secret property on the element to allow to cancel bubbling of all events.
+				// This is a very special case, so there is no API method for this in the control.
+				if (oElement.bStopEventBubbling) {
+					break;
+				}
 
-			// Secret property on the element to allow to cancel bubbling of all events.
-			// This is a very special case, so there is no API method for this in the control.
-			if (oElement.bStopEventBubbling) {
-				break;
-			}
-
-			// This is the (not that common) situation that the element was deleted in its own event handler.
-			// i.e. the Element became 'inactive' (see Element#isActive())
-			var oDomRef = oElement.getDomRef();
-			if (!oDomRef) {
-				break;
+				// This is the (not that common) situation that the element was deleted in its own event handler.
+				// i.e. the Element became 'inactive' (see Element#isActive())
+				oDomRef = oElement.getDomRef();
+				if (!oDomRef) {
+					break;
+				}
 			}
 
 			// bubble up to the parent

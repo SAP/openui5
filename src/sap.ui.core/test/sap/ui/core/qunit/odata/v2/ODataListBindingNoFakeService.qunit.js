@@ -3,9 +3,10 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/model/ListBinding",
 	"sap/ui/model/odata/v2/ODataListBinding",
 	"sap/ui/test/TestUtils"
-], function (Log, ODataListBinding, TestUtils) {
+], function (Log, ListBinding, ODataListBinding, TestUtils) {
 	/*global QUnit,sinon*/
 	/*eslint no-warning-comments: 0*/
 	"use strict";
@@ -217,6 +218,41 @@ sap.ui.define([
 			oFixture.oIn.iLength, oFixture.oIn.iThreshold);
 
 		assert.deepEqual(oResult, oFixture.oOut);
+	});
+});
+
+	//*********************************************************************************************
+["deepPath", undefined].forEach(function (sDeepPath) {
+	QUnit.test("checkDataState: with model; deepPath: " + sDeepPath, function (assert) {
+		var oModel = {
+				getMessagesByPath : function () {}
+			},
+			oBinding = {
+				sDeepPath : sDeepPath,
+				oModel : oModel,
+				getDataState : function () {}
+			},
+			oDataState = {
+				setModelMessages : function () {}
+			},
+			aMessagesByPath = "aMessages",
+			mPaths = "mPaths";
+
+		this.mock(oBinding).expects("getDataState").withExactArgs().returns(oDataState);
+		this.mock(ListBinding.prototype).expects("checkDataState")
+			.on(oBinding).withExactArgs(mPaths);
+		this.mock(oModel).expects("getMessagesByPath").withExactArgs(sDeepPath, true)
+			.exactly(sDeepPath === "deepPath" ? 1 : 0)
+			.returns(aMessagesByPath);
+		this.mock(oDataState).expects("setModelMessages").withExactArgs(aMessagesByPath)
+			.exactly(sDeepPath === "deepPath" ? 1 : 0);
+		this.mock(ListBinding.prototype).expects("_fireDateStateChange")
+			.on(oBinding).withExactArgs(oDataState)
+			.exactly(sDeepPath === "deepPath" ? 1 : 0);
+
+		// code under test
+		ODataListBinding.prototype.checkDataState.call(oBinding, mPaths);
+
 	});
 });
 });

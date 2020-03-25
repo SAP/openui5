@@ -191,8 +191,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	SelectionModelSelection.prototype.isIndexSelectable = function(iIndex) {
-		var iCount = this._getLastIndex();
-		return iIndex >= 0 && iIndex <= iCount;
+		return iIndex >= 0 && iIndex <= this._getHighestSelectableIndex();
 	};
 
 	/**
@@ -221,7 +220,7 @@ sap.ui.define([
 		if (!this.oSelectionModel || this._getSelectionMode() === SelectionMode.None) {
 			return;
 		}
-		this.oSelectionModel.selectAll(this._getLastIndex());
+		this.oSelectionModel.selectAll(this._getHighestSelectableIndex());
 	};
 
 	/**
@@ -276,16 +275,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the last existing index of the binding
+	 * Returns the highest index that can be selected. Returns -1 if there is nothing to select.
 	 *
-	 * @return {int} the last index of the binding
+	 * @returns {int} The highest index that can be selected.
 	 * @private
 	 */
-	SelectionModelSelection.prototype._getLastIndex = function() {
-		if (!this.getTableBinding()) {
-			return 0;
-		}
-		return this.getTableBinding().getLength() - 1;
+	SelectionModelSelection.prototype._getHighestSelectableIndex = function() {
+		var oBinding = this.getTableBinding();
+		return oBinding ? oBinding.getLength() - 1 : -1;
 	};
 
 	/**

@@ -46,7 +46,8 @@ sap.ui.define([
 
 			_loadCode: function (oData) {
 				var sFileName = this._sFileName,
-					oSample = oData.samples[this._sId]; // retrieve sample object
+					oSample = oData.samples[this._sId], // retrieve sample object
+					aPromises = [];
 
 				// If there is no sample or the context from the URL is for the wrong sample we redirect to not found page
 				// If you modify this expression please check with both class and tutorial which won't have a context.
@@ -89,12 +90,10 @@ sap.ui.define([
 						var sRef = sap.ui.require.toUrl((oSample.id).replace(/\./g, "/"));
 						for (var i = 0 ; i < oConfig.sample.files.length ; i++) {
 							var sFile = oConfig.sample.files[i];
-							var sContent = this.fetchSourceFile(sRef, sFile);
+							aPromises.push(this._updateFileContent(sRef, sFile));
 
 							this._oData.files.push({
-								name : sFile,
-								raw : sContent,
-								code : this._convertCodeToHtml(sContent)
+								name : sFile
 							});
 							this._aFilesAvailable.push(sFile);
 						}
@@ -120,13 +119,28 @@ sap.ui.define([
 				}
 
 				// update <code>CodeEditor</code> content and the selected tab
-				this._updateCodeEditor(sFileName);
+				Promise.all(aPromises).then(function() {
+					this._updateCodeEditor(sFileName);
+				}.bind(this));
+
 				this._getTabHeader().setSelectedKey(sFileName);
 
 				// scroll to the top of the page
 				var page = this.byId("page");
 				page.scrollTo(0);
+			},
 
+			_updateFileContent: function(sRef, sFile) {
+				return this.fetchSourceFile(sRef + "/" + sFile).then(function(vContent) {
+					this._oData.files.some(function(oFile) {
+						if (oFile.name === sFile) {
+							oFile.raw = vContent;
+							oFile.code = this._convertCodeToHtml(vContent);
+							return true;
+						}
+					}, this);
+					this.oModel.setData(this._oData);
+				}.bind(this));
 			},
 
 			onAPIRefPress: function () {

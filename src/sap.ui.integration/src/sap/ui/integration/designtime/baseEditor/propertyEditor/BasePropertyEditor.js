@@ -134,7 +134,7 @@ sap.ui.define([
 			this._oDefaultModel = new JSONModel({
 				value: this.getValue(),
 				config: this.getConfig(),
-				displayValue: this.formatValue(deepClone(this.getValue()))
+				displayValue: this._formatValue(this.getValue())
 			});
 			this._oDefaultModel.setDefaultBindingMode("OneWay");
 			this.setBindingContext(this._oDefaultModel.getContext("/"));
@@ -163,7 +163,7 @@ sap.ui.define([
 				this._oDefaultModel.setData(
 					Object.assign({}, this._oDefaultModel.getData(), {
 						value: vValue,
-						displayValue: this.formatValue(deepClone(vValue))
+						displayValue: this._formatValue(vValue)
 					})
 				);
 
@@ -234,6 +234,10 @@ sap.ui.define([
 				value: vNextValue
 			});
 		}
+	};
+
+	BasePropertyEditor.prototype._formatValue = function (vValue) {
+		return this.formatValue(deepClone(vValue));
 	};
 
 	/**

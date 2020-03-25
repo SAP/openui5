@@ -35,7 +35,7 @@ sap.ui.define(function () {
 			*/
 			"sap/m/demokit/iconExplorer/webapp/test/integration/opaTests": {
 				group: "IconExplorer",
-				page: "test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests.qunit.html"
+				page: "test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests1.qunit.html"
 			},
 			"sap/m/demokit/iconExplorer/webapp/test/unit/unitTests": {
 				group: "IconExplorer",

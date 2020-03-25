@@ -2,8 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Control"
-], function (Control) {
+	"sap/ui/core/Control",
+	"sap/ui/core/Core"
+], function (Control, Core) {
 	"use strict";
 
 	/**
@@ -27,12 +28,21 @@ sap.ui.define([
 		metadata: {
 			library: "sap.f"
 		},
-		renderer: function (oRm, oCardContent) {
+		renderer: function (oRm, oControl) {
+			// set title for screen reader
+			var oResBundle = Core.getLibraryResourceBundle("sap.ui.core"),
+				sTitle = oResBundle.getText("BUSY_TEXT");
 			oRm.write("<div");
-			oRm.writeElementData(oCardContent);
+			oRm.writeElementData(oControl);
 			oRm.addClass("sapFCardContentPlaceholder");
 			oRm.addClass("sapFCardContentGenericPlaceholder");
 			oRm.attr("tabindex", "0");
+			oRm.attr("title", sTitle);
+			oRm.accessibilityState(oControl, {
+				role: "progressbar",
+				valuemin: "0",
+				valuemax: "100"
+			});
 			oRm.writeClasses();
 			oRm.write(">");
 			oRm.write("<div");

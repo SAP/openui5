@@ -3,13 +3,13 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/write/_internal/CompatibilityConnector",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	jQuery,
 	Settings,
-	CompatibilityConnector,
+	Storage,
 	Layer,
 	sinon
 ) {
@@ -151,7 +151,7 @@ sap.ui.define([
 				isAtoAvailable: true
 			};
 
-			sandbox.stub(CompatibilityConnector, "loadSettings").resolves(oSetting);
+			sandbox.stub(Storage, "loadFeatures").resolves(oSetting);
 			Settings._oLoadSettingsPromise = undefined;
 			return Settings.getInstance().then(function(oSettings) {
 				assert.equal(oSettings.isKeyUser(), true);
@@ -163,7 +163,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("get instance return default value when flex data promise failed to obtain settings value", function(assert) {
-			sandbox.stub(CompatibilityConnector, "loadSettings").resolves(undefined);
+			sandbox.stub(Storage, "loadFeatures").resolves(undefined);
 			Settings._oLoadSettingsPromise = undefined;
 			return Settings.getInstance().then(function(oSettings) {
 				assert.equal(oSettings.isKeyUser(), false);
@@ -197,7 +197,7 @@ sap.ui.define([
 				isKeyUser: true,
 				isAtoAvailable: true
 			};
-			sandbox.stub(CompatibilityConnector, "loadSettings").resolves(oSetting);
+			sandbox.stub(Storage, "loadFeatures").resolves(oSetting);
 			var oSettings0 = Settings.getInstanceOrUndef();
 			assert.ok(!oSettings0);
 			return Settings.getInstance().then(function(oSettings1) {
@@ -215,7 +215,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("a default response is resolving the request", function(assert) {
-			sandbox.stub(CompatibilityConnector, "loadSettings").resolves();
+			sandbox.stub(Storage, "loadFeatures").resolves();
 			return Settings.getInstance().then(function (oSettings) {
 				assert.ok(oSettings, "the settings instance is available");
 				assert.equal(oSettings.isKeyUser(), false);

@@ -27,7 +27,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 			config : oDemoAppMetadata.config,
 			teaser : oDemoAppMetadata.teaser,
 			category : oDemoAppMetadata.category,
-			ref : (oDemoAppMetadata.resolve === "lib" ? sLibUrl : "") + oDemoAppMetadata.ref,
+			ref : (oDemoAppMetadata.resolve === "lib" ? sLibUrl : "") + oDemoAppMetadata.ref + "?sap-ui-theme=sap_fiori_3",
 			links : aLinks
 		};
 

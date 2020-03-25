@@ -16,7 +16,8 @@
 				"formFactors": "-",
 				"samples": [
 					"sap.ui.integration.sample.CardExplorer",
-					"sap.ui.integration.sample.CardsLayout"
+					"sap.ui.integration.sample.CardsLayout",
+					"sap.ui.integration.sample.CardsLoading"
 				]
 			}
 		],
@@ -30,6 +31,11 @@
 				"id": "sap.ui.integration.sample.CardsLayout",
 				"name": "Home page with cards",
 				"description": "Different types of cards types arranged in a sap.f.GridContainer."
+			},
+			{
+			  "id": "sap.ui.integration.sample.CardsLoading",
+			  "name": "Home page with cards loading",
+			  "description": "Different types of cards types and their loading placeholder"
 			}
 		]
 	}

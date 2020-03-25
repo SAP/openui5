@@ -126,14 +126,38 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		helpers.renderObject(oObjectPage);
 	});
 
-	QUnit.module("scroll position within subSection", {
-		beforeEach: function (assert) {
+	QUnit.module("scroll position", {
+		beforeEach: function () {
 			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, 10);
 		},
 		afterEach: function () {
 			this.oObjectPage.destroy();
 			this.oObjectPage = null;
 		}
+	});
+
+	QUnit.test("correct scroll position of section with hidden title",function(assert) {
+		var oObjectPage = this.oObjectPage,
+			oFirstSection = oObjectPage.getSections()[0],
+			done = assert.async();
+
+		oObjectPage.addEventDelegate({
+			onBeforeRendering:function(){
+				oObjectPage._bStickyAnchorBar = true;//force init rendering with snapped header
+				oObjectPage._bHeaderExpanded = false;
+			}
+		});
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function(){
+			//act
+			var iPosTop = oObjectPage._computeScrollPosition(oFirstSection),
+			iOffsetTop = oFirstSection.getDomRef().offsetTop;
+
+			assert.strictEqual(iPosTop ,iOffsetTop ,"corrected scroll position");
+			done();
+		});
+
+		helpers.renderObject(oObjectPage);
 	});
 
 	QUnit.test("_restoreScrollPosition restores position within subSection", function (assert) {

@@ -6,8 +6,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function (
 	BaseEditor,
 	PropertyEditors,
 	PropertyEditorFactory,
@@ -44,7 +43,8 @@ function (
 			}
 		},
 		"propertyEditors": {
-			"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+			"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+			"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
 		}
 	};
 
@@ -243,23 +243,6 @@ function (
 			}, this);
 
 			this.oPropertyEditors.setTags("foo");
-		});
-
-		QUnit.test("when tags parameter is set several times at once (test for async flow cancellation)", function (assert) {
-			var fnDone = assert.async();
-
-			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				sap.ui.getCore().applyChanges();
-				assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "bar1 value", "then internal property editor has a correct value");
-				assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[1].getValue(), "bar2 value", "then internal property editor has a correct value");
-				fnDone();
-			}, this);
-
-			this.oPropertyEditors.setTags("foo");
-			this.oPropertyEditors.setTags("bar");
-			this.oPropertyEditors.setTags("foo");
-			this.oPropertyEditors.setTags("foo");
-			this.oPropertyEditors.setTags("bar");
 		});
 
 		QUnit.test("when config is set", function (assert) {
@@ -524,8 +507,14 @@ function (
 								sap.ui.getCore().applyChanges();
 								assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "foo1_2 value", "then internal editor re-rendered and received correct value from new editor");
 								assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[1].getValue(), "foo2_2 value", "then internal editor re-rendered and received correct value from new editor");
-								oBaseEditor2.destroy();
-								fnDone();
+
+								// Async destroy is needed to avoid error message in ManagedObject while destroying
+								// the instance in a sequence of "propagationListener" calls. "propertyEditorsChange" event
+								// is called in the middle of "addContent" operation, see ManagedObject@L2642-2672.
+								setTimeout(function () {
+									oBaseEditor2.destroy();
+									fnDone();
+								});
 							}.bind(this))
 					);
 
@@ -578,8 +567,14 @@ function (
 								sap.ui.getCore().applyChanges();
 								assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[0].getValue(), "foo1_2 value", "then internal editor re-rendered and received corrent value from new editor");
 								assert.strictEqual(this.oPropertyEditors.getAggregation("propertyEditors")[1].getValue(), "foo2_2 value", "then internal editor re-rendered and received corrent value from new editor");
-								oBaseEditor2.destroy();
-								fnDone();
+
+								// Async destroy is needed to avoid error message in ManagedObject while destroying
+								// the instance in a sequence of "propagationListener" calls. "propertyEditorsChange" event
+								// is called in the middle of "addContent" operation, see ManagedObject@L2642-2672.
+								setTimeout(function () {
+									oBaseEditor2.destroy();
+									fnDone();
+								});
 							}.bind(this))
 					);
 
@@ -708,8 +703,8 @@ function (
 				this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
 					sap.ui.getCore().applyChanges();
 					assert.ok(!this.oPropertyEditors.getAggregation("propertyEditors"), "then internal editor is removed");
-					assert.notOk(aPropertyEditors[0].bIsDestroyed, "then internal property editor is NOT destroyed");
-					assert.notOk(aPropertyEditors[1].bIsDestroyed, "then internal property editor is NOT destroyed");
+					assert.ok(aPropertyEditors[0].bIsDestroyed, "then internal property editor is destroyed");
+					assert.ok(aPropertyEditors[1].bIsDestroyed, "then internal property editor is destroyed");
 					fnDone();
 				}, this);
 
@@ -731,8 +726,8 @@ function (
 				this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
 					sap.ui.getCore().applyChanges();
 					assert.ok(!this.oPropertyEditors.getAggregation("propertyEditors"), "then internal editor is removed");
-					assert.notOk(aPropertyEditors[0].bIsDestroyed, "then internal property editor is NOT destroyed");
-					assert.notOk(aPropertyEditors[1].bIsDestroyed, "then internal property editor is NOT destroyed");
+					assert.ok(aPropertyEditors[0].bIsDestroyed, "then internal property editor is destroyed");
+					assert.ok(aPropertyEditors[1].bIsDestroyed, "then internal property editor is destroyed");
 					fnDone();
 				}, this);
 
@@ -862,8 +857,8 @@ function (
 
 				this.oPropertyEditors.destroy();
 
-				assert.notOk(aPropertyEditors[0].bIsDestroyed, "then internal property editor is NOT destroyed");
-				assert.notOk(aPropertyEditors[1].bIsDestroyed, "then internal property editor is NOT destroyed");
+				assert.ok(aPropertyEditors[0].bIsDestroyed, "then internal property editor is destroyed");
+				assert.ok(aPropertyEditors[1].bIsDestroyed, "then internal property editor is destroyed");
 
 				fnDone();
 			}, this);
@@ -887,6 +882,91 @@ function (
 
 				assert.strictEqual(aPropertyEditors[0].bIsDestroyed, true, "then custom property editor is destroyed");
 			}.bind(this));
+		});
+
+		QUnit.test("When setConfig is called again before the nested editors were created", function (assert) {
+			var fnDone = assert.async();
+
+			var oCreationStub = sandbox.stub(PropertyEditorFactory, "create");
+			var oDeletionStub = sandbox.stub(StringEditor.prototype, "destroy");
+
+			// Fallback if creation of editor 1 is never triggered
+			var iCreationTimeout = setTimeout(function() {
+				assert.strictEqual(oCreationStub.callCount, 1, "Then only one editor was created");
+				fnDone();
+			}, 100);
+
+			var oEditorInCreation;
+			oCreationStub.onFirstCall().callsFake(function (sType) {
+				var bIsStringEditor = sType === "string";
+				if (bIsStringEditor) {
+					clearTimeout(iCreationTimeout);
+				}
+				return PropertyEditorFactory.create.wrappedMethod.apply(this, arguments).then(function (oEditor) {
+					if (bIsStringEditor) {
+						oEditorInCreation = oEditor;
+					}
+					return oEditor;
+				});
+			});
+			oCreationStub.callThrough();
+			oDeletionStub.callsFake(function () {
+				StringEditor.prototype.destroy.wrappedMethod.apply(this, arguments);
+				if (oEditorInCreation && this.sId === oEditorInCreation.sId) {
+					assert.ok(true, "Then the created editor is cleaned up");
+					fnDone();
+				}
+			});
+
+			// Editor 1 - Should be cleaned up
+			this.oPropertyEditors.setConfig([{
+				"label": "Baz property",
+				"path": "/baz",
+				"type": "string"
+			}]);
+
+			// Editor 2
+			this.oPropertyEditors.setConfig([{
+				"label": "FooBar property",
+				"path": "/foobar",
+				"type": "number"
+			}]);
+		});
+
+		QUnit.test("When PropertyEditors is destroyed before the nested editors were created", function (assert) {
+			var fnDone = assert.async();
+
+			var oCreationStub = sandbox.stub(PropertyEditorFactory, "create");
+			var oDeletionStub = sandbox.stub(StringEditor.prototype, "destroy");
+
+			// Fallback if creation of editor is never triggered
+			var iCreationTimeout = setTimeout(function() {
+				assert.strictEqual(oCreationStub.callCount, 0, "Then no editor was created");
+				fnDone();
+			}, 100);
+
+			var oEditorInCreation;
+			oCreationStub.callsFake(function () {
+				clearTimeout(iCreationTimeout);
+				return PropertyEditorFactory.create.wrappedMethod.apply(this, arguments).then(function (oEditor) {
+					oEditorInCreation = oEditor;
+					return oEditor;
+				});
+			});
+			oDeletionStub.callsFake(function () {
+				StringEditor.prototype.destroy.wrappedMethod.apply(this, arguments);
+				if (oEditorInCreation && this.sId === oEditorInCreation.sId) {
+					assert.ok(true, "Then the created editor is cleaned up");
+					fnDone();
+				}
+			});
+
+			this.oPropertyEditors.setConfig([{
+				label: "Baz property",
+				path: "baz",
+				type: "string"
+			}]);
+			this.oBaseEditor.destroy();
 		});
 	});
 

@@ -41,6 +41,17 @@ sap.ui.define([
 	}
 
 	function addMapEntry(sSelectorId, oChange, mChangesMap) {
+		addChangeIntoSelectorList(mChangesMap, oChange, sSelectorId);
+		addChangeIntoList(mChangesMap, oChange);
+	}
+
+	function addChangeIntoList(mChangesMap, oChange) {
+		if (!includes(mChangesMap.aChanges, oChange)) {
+			mChangesMap.aChanges.push(oChange);
+		}
+	}
+
+	function addChangeIntoSelectorList(mChangesMap, oChange, sSelectorId) {
 		if (!mChangesMap.mChanges[sSelectorId]) {
 			mChangesMap.mChanges[sSelectorId] = [];
 		}
@@ -48,51 +59,79 @@ sap.ui.define([
 		if (!includes(mChangesMap.mChanges[sSelectorId], oChange)) {
 			mChangesMap.mChanges[sSelectorId].push(oChange);
 		}
-
-		if (!includes(mChangesMap.aChanges, oChange)) {
-			mChangesMap.aChanges.push(oChange);
-		}
 	}
 
 	function addChangeIntoMap(oChange, oAppComponent, mChangesMap) {
 		var oSelector = oChange.getSelector();
-		if (oSelector && oSelector.id) {
-			var sSelectorId = getCompleteIdFromSelector(oSelector, oAppComponent);
+		if (oSelector) {
+			if (oSelector.id) {
+				var sSelectorId = getCompleteIdFromSelector(oSelector, oAppComponent);
 
-			addMapEntry(sSelectorId, oChange, mChangesMap);
+				addMapEntry(sSelectorId, oChange, mChangesMap);
 
-			// if the localId flag is missing and the selector has a component prefix that is not matching the
-			// application component, adds the change for a second time replacing the component ID prefix with
-			// the application component ID prefix
-			if (oSelector.idIsLocal === undefined && sSelectorId.indexOf("---") !== -1) {
-				var sComponentPrefix = sSelectorId.split("---")[0];
+				// if the localId flag is missing and the selector has a component prefix that is not matching the
+				// application component, adds the change for a second time replacing the component ID prefix with
+				// the application component ID prefix
+				if (oSelector.idIsLocal === undefined && sSelectorId.indexOf("---") !== -1) {
+					var sComponentPrefix = sSelectorId.split("---")[0];
 
-				if (sComponentPrefix !== oAppComponent.getId()) {
-					sSelectorId = sSelectorId.split("---")[1];
-					sSelectorId = oAppComponent.createId(sSelectorId);
-					addMapEntry(sSelectorId, oChange, mChangesMap);
+					if (sComponentPrefix !== oAppComponent.getId()) {
+						sSelectorId = sSelectorId.split("---")[1];
+						sSelectorId = oAppComponent.createId(sSelectorId);
+						addMapEntry(sSelectorId, oChange, mChangesMap);
+					}
 				}
+			} else {
+				//If the selector id is not defined, add the change to the list to make sure it has the correct order
+				addChangeIntoList(mChangesMap, oChange);
 			}
 		}
 		return mChangesMap.aChanges;
 	}
 
-	function addDependencies(oChange, oAppComponent, aChanges, mChangesMap) {
-		var aDependentSelectorList = oChange.getDependentSelectorList();
-		addControlsDependencies(oChange, aDependentSelectorList, oAppComponent, mChangesMap);
+	function isSelectorInArray(aExistingDependentSelectorList, oDependentSelector) {
+		return aExistingDependentSelectorList.some(function(oExistingDependentSelector) {
+			return (oExistingDependentSelector.id === oDependentSelector.id && oExistingDependentSelector.idIsLocal === oDependentSelector.idIsLocal);
+		});
+	}
 
-		// start from last change in map, excluding the recently added change
-		aChanges.slice(0, aChanges.length - 1).reverse().forEach(function(oExistingChange) {
-			var aExistingDependentSelectorList = oExistingChange.getDependentSelectorList();
-			aDependentSelectorList.some(function(oDependentSelector) {
-				var iDependentIndex = Utils.indexOfObject(aExistingDependentSelectorList, oDependentSelector);
-				if (iDependentIndex > -1) {
-					var oDependentControlId = getCompleteIdFromSelector(oDependentSelector, oAppComponent);
-					addDependencyEntry(oChange, oExistingChange, oDependentControlId, mChangesMap);
-					return true;
+	function addChangesDependencies(oTargetChange, aDependentSelectorsOfTargetChange, oExistingChange, bCheckingOrder, oAppComponent, aChanges, mChangesMap) {
+		var aDependentSelectorsOfExistingChange = oExistingChange.getDependentSelectorList();
+		aDependentSelectorsOfTargetChange.some(function(oDependentSelector) {
+			// If 2 changes have the same dependent selector, they are depend on each other
+			if (isSelectorInArray(aDependentSelectorsOfExistingChange, oDependentSelector)) {
+				var sDependentControlId = getCompleteIdFromSelector(oDependentSelector, oAppComponent);
+				//If checking order is required, the target change and the existing change can be in revert order
+				var bIsChangesInRevertOrder = bCheckingOrder && aChanges.indexOf(oTargetChange) < aChanges.indexOf(oExistingChange);
+				if (bIsChangesInRevertOrder) {
+					addDependencyEntry(oExistingChange, oTargetChange, sDependentControlId, mChangesMap, true);
+				} else {
+					addDependencyEntry(oTargetChange, oExistingChange, sDependentControlId, mChangesMap);
+				}
+				return true;
+			}
+		});
+	}
+
+	function addDependencies(oTargetChange, oAppComponent, aChanges, mChangesMap) {
+		if (oTargetChange.isValidForDependencyMap()) {
+			var aDependentSelectors = oTargetChange.getDependentSelectorList();
+
+			addControlsDependencies(oTargetChange, aDependentSelectors, oAppComponent, mChangesMap);
+
+			// Find and add dependencies between the target change and other changes in map
+			// If the target change is not at the end of array, the order checking is required
+			var iIndexOfTargetChange = aChanges.indexOf(oTargetChange);
+			var bCheckingOrder = iIndexOfTargetChange < (aChanges.length - 1);
+
+			var aOtherChanges = aChanges.slice();
+			aOtherChanges.splice(iIndexOfTargetChange, 1);
+			aOtherChanges.reverse().forEach(function(oExistingChange) {
+				if (oExistingChange.isValidForDependencyMap()) {
+					addChangesDependencies(oTargetChange, aDependentSelectors, oExistingChange, bCheckingOrder, oAppComponent, aChanges, mChangesMap);
 				}
 			});
-		});
+		}
 	}
 
 	function addControlsDependencies(oDependentChange, aDependentSelectorList, oAppComponent, mChangesMap) {
@@ -113,10 +152,12 @@ sap.ui.define([
 		}
 	}
 
-	function addDependencyEntry(oDependentChange, oChange, oDependentControlId, mChangesMap) {
-		if (isDependencyNeeded(oDependentChange, oChange, oDependentControlId, mChangesMap)) {
+	function addDependencyEntry(oDependentChange, oChange, sDependentControlId, mChangesMap, bIsChangesInRevertOrder) {
+		if (isDependencyNeeded(oDependentChange, oChange, sDependentControlId, mChangesMap, bIsChangesInRevertOrder)) {
 			mChangesMap.mDependencies[oDependentChange.getId()].dependencies.push(oChange.getId());
-			mChangesMap.mDependencies[oDependentChange.getId()].dependentIds.push(oDependentControlId);
+			if (!includes(mChangesMap.mDependencies[oDependentChange.getId()].dependentIds, sDependentControlId)) {
+				mChangesMap.mDependencies[oDependentChange.getId()].dependentIds.push(sDependentControlId);
+			}
 
 			if (!mChangesMap.mDependentChangesOnMe[oChange.getId()]) {
 				mChangesMap.mDependentChangesOnMe[oChange.getId()] = [];
@@ -125,8 +166,8 @@ sap.ui.define([
 		}
 	}
 
-	function isDependencyNeeded(oDependentChange, oChange, oDependentControlId, mChangesMap) {
-		var bSelectorAlreadyThere = includes(mChangesMap.mDependencies[oDependentChange.getId()].dependentIds, oDependentControlId);
+	function isDependencyNeeded(oDependentChange, oChange, sDependentControlId, mChangesMap, bIsChangesInRevertOrder) {
+		var bSelectorAlreadyThere = !bIsChangesInRevertOrder && includes(mChangesMap.mDependencies[oDependentChange.getId()].dependentIds, sDependentControlId);
 		var bIndirectDependency = false;
 		if (mChangesMap.mDependentChangesOnMe[oChange.getId()]) {
 			mChangesMap.mDependentChangesOnMe[oChange.getId()].some(function(sChangeId) {
@@ -319,13 +360,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks the dependencies map for any unresolved dependencies belonging to the given control
-	 * Returns true as soon as the first dependency is found, otherwise false
+	 * Checks the dependencies map for any unresolved dependencies belonging to the given control.
+	 * Returns <code>true</code> as soon as the first dependency is found, otherwise <code>false</code>
 	 *
-	 * @param {object} mChangesMap - Changes Map
+	 * @param {object} mChangesMap - Map with changes and dependencies
 	 * @param {object} sId - ID of the control
 	 * @param {sap.ui.core.Component} oAppComponent - Application component instance that is currently loading
-	 * @returns {boolean} Returns true if there are open dependencies
+	 * @returns {boolean} <code>true</code> if there are open dependencies
 	 */
 	DependencyHandler.checkForOpenDependenciesForControl = function(mChangesMap, sId, oAppComponent) {
 		return Object.keys(mChangesMap.mDependencies).some(function(sKey) {

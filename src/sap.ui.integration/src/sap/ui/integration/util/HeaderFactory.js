@@ -175,7 +175,6 @@ sap.ui.define([
 		oHeader.setServiceManager(oServiceManager);
 		oHeader.setDataProviderFactory(oDataProviderFactory);
 		oHeader._setData(mConfiguration.data);
-		oHeader._setAccessibilityAttributes(mConfiguration);
 
 		oActions.attach(mConfiguration, oHeader);
 		oHeader._oActions = oActions;

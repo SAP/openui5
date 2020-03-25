@@ -2,7 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/util/each", '../base/Object', "sap/base/util/deepEqual"], function(each, BaseObject, deepEqual) {
+sap.ui.define([
+	"sap/base/util/deepEqual",
+	"sap/base/util/each",
+	"sap/ui/base/Object",
+	"sap/ui/core/message/Message"
+], function(deepEqual, each, BaseObject, Message) {
 	"use strict";
 
 	/**
@@ -76,20 +81,6 @@ sap.ui.define(["sap/base/util/each", '../base/Object', "sap/base/util/deepEqual"
 		}
 	});
 
-
-	/**
-	 * Sort messages by type 'Error', 'Warning', 'Success', 'Info'.
-	 *
-	 * @param {sap.ui.core.message.Message[]} aMessages - Array of messages
-	 * @private
-	 */
-	DataState.prototype._sortMessages = function(aMessages) {
-		var mSortOrder = {'Error': 0,'Warning':1,'Success':2,'Info':3};
-		aMessages.sort(function(a, b){
-			return mSortOrder[a.type] - mSortOrder[b.type];
-		});
-	};
-
 	/**
 	 * Updates the given property with the given value.
 	 *
@@ -135,39 +126,45 @@ sap.ui.define(["sap/base/util/each", '../base/Object', "sap/base/util/deepEqual"
 	};
 
 	/**
-	 * Returns the array of all state messages combining the model and control messages.
+	 * Returns the array of this data state's messages combining the model and control messages.
+	 * The array is sorted descendingly by message severity.
 	 *
-	 * @returns {sap.ui.core.Message[]} The array of all messages
+	 * @returns {sap.ui.core.Message[]} The sorted array of all messages
 	 * @public
 	 */
-	DataState.prototype.getMessages = function() {
-		var aMessages = [],
-			aControlMessages = this.mChangedProperties['controlMessages'],
-			aModelMessages = this.mChangedProperties['modelMessages'];
-
-		if (aModelMessages || aControlMessages) {
-			aMessages = aMessages.concat(aModelMessages ? aModelMessages : [],
-				aControlMessages ? aControlMessages : []);
-			this._sortMessages(aMessages);
-		}
-		return aMessages;
+	DataState.prototype.getMessages = function () {
+		return DataState.getMessagesForProperties(this.mChangedProperties);
 	};
 
 	/**
-	 * Returns the array of all old state messages combining the model and control messages.
+	 * Returns the array of this data state's old messages combining the model and control messages.
+	 * The array is sorted descendingly by message severity.
 	 *
-	 * @returns {sap.ui.core.Message[]} The array of all old messages
+	 * @returns {sap.ui.core.Message[]} The sorted array of all old messages
 	 * @private
 	 */
 	DataState.prototype._getOldMessages = function() {
+		return DataState.getMessagesForProperties(this.mProperties);
+	};
+
+	/**
+	 * Returns the array of the messages in the given object combining the model and control
+	 * messages. The array is sorted descendingly by message severity.
+	 *
+	 * @param {object} mProperties
+	 *   Object with properties <code>controlMessages</code> and <code>modelMessages</code> which
+	 *   are both arrays of <code>sap.ui.core.Message</code> objects
+	 * @returns {sap.ui.core.Message[]} The sorted array of messages
+	 * @private
+	 */
+	DataState.getMessagesForProperties = function (mProperties) {
 		var aMessages = [],
-			aControlMessages = this.mProperties['controlMessages'],
-			aModelMessages = this.mProperties['modelMessages'];
+			aControlMessages = mProperties.controlMessages,
+			aModelMessages = mProperties.modelMessages;
 
 		if (aModelMessages || aControlMessages) {
-			aMessages = aMessages.concat(aModelMessages ? aModelMessages : [],
-				aControlMessages ? aControlMessages : []);
-			this._sortMessages(aMessages);
+			aMessages = aMessages.concat(aModelMessages || [], aControlMessages || []);
+			aMessages.sort(Message.compare);
 		}
 		return aMessages;
 	};

@@ -2238,7 +2238,8 @@ sap.ui.define([
 		var fnDone = oAssert.async(),
 			oNavContainer = this.oNavC,
 			oPopover = this.oPopover,
-			transitionComplete = false;
+			transitionComplete = false,
+			oCurrentPage = nc.getCurrentPage();
 
 		var oFocusable1 = new sap.m.Button({text: "focusable1"}),
 			oFocusable2 = new sap.m.Button({text: "focusable2"});
@@ -2255,6 +2256,7 @@ sap.ui.define([
 				// Check
 				assert.strictEqual(this.spy.called, false, "parent popup is not closed");
 				fnDone();
+				oCurrentPage.removeContent(this.oOpeningBtn);
 			}, this);
 		}, this);
 
@@ -2275,7 +2277,8 @@ sap.ui.define([
 		};
 
 		// Act
-		this.oOpeningBtn.placeAt("content");
+		oCurrentPage.addContent(this.oOpeningBtn);
+		Core.applyChanges();
 
 	});
 

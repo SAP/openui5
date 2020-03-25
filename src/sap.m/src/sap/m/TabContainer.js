@@ -214,7 +214,7 @@ sap.ui.define([
 		};
 
 		ResponsivePaddingsEnablement.call(TabContainer.prototype, {
-			header: {selector: ".sapMTabStribContainer"}
+			header: {selector: ".sapMTabStripContainer"}
 		});
 
 		/**

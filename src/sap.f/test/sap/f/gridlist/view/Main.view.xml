@@ -5,8 +5,8 @@
     displayBlock="true">
 
     <App>
-        <Page title="GridList Demo">
-            <IconTabBar showOverflowSelectList="true">
+        <Page title="GridList Demo" id="page">
+            <IconTabBar id="itb">
                 <items>
                     <IconTabFilter id="GridList1" text="GridList" key="GridList1">
                         <mvc:XMLView viewName="sap.f.gridlist.view.examples.General" />

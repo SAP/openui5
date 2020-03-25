@@ -64,6 +64,7 @@ sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log", "
 		"sap.m.ColumnHeaderPopover",
 		"sap.m.FacetFilterItem",
 		"sap.m.internal.NumericInput",
+		"sap.m.IconTabBarSelectList",
 		"sap.m.LightBox",
 		"sap.m.Menu",
 		"sap.m.NotificationListBase",

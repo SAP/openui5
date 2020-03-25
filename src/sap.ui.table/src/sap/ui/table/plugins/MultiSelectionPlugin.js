@@ -301,32 +301,32 @@ sap.ui.define([
 	/**
 	 * Calculates the correct start and end index for the range selection and loads the corresponding contexts.
 	 *
-	 * @param {sap.ui.table.plugins.MultiSelectionPlugin} oMultiSelectionPlugin The selection plugin.
+	 * @param {sap.ui.table.plugins.MultiSelectionPlugin} oPlugin The selection plugin.
 	 * @param {int} iIndexFrom The start index of the range selection.
 	 * @param {int} iIndexTo The end index of the range selection.
 	 * @param {boolean} [bAddSelection=false] Whether to prepare for adding or setting the selection.
 	 * @return {Promise|Promise<{indexTo: int, indexFrom: int}>} A promise that resolves with the corrected start and end index when the contexts are
 	 * loaded. The Promise is rejected if the index is out of range.
 	 */
-	function prepareSelection(oMultiSelectionPlugin, iIndexFrom, iIndexTo, bAddSelection) {
-		var iSelectableCount = oMultiSelectionPlugin.getSelectableCount();
+	function prepareSelection(oPlugin, iIndexFrom, iIndexTo, bAddSelection) {
+		var iHighestSelectableIndex = oPlugin._getHighestSelectableIndex();
 
-		if (iIndexFrom < 0 && iIndexTo < 0 || iIndexFrom >= iSelectableCount && iIndexTo >= iSelectableCount) {
+		if (iIndexFrom < 0 && iIndexTo < 0 || iIndexFrom > iHighestSelectableIndex && iIndexTo > iHighestSelectableIndex) {
 			// Selection is not possible if the index range it completely out of the selectable range.
 			return Promise.reject(new Error("Out of range"));
 		}
 
 		// Restrict indices to boundaries.
-		iIndexFrom = Math.min(Math.max(0, iIndexFrom), iSelectableCount - 1);
-		iIndexTo = Math.min(Math.max(0, iIndexTo), iSelectableCount - 1);
+		iIndexFrom = Math.min(Math.max(0, iIndexFrom), iHighestSelectableIndex);
+		iIndexTo = Math.min(Math.max(0, iIndexTo), iHighestSelectableIndex);
 
-		var iLimit = oMultiSelectionPlugin.getLimit();
+		var iLimit = oPlugin.getLimit();
 		var bReverse = iIndexTo < iIndexFrom; // Indicates whether the selection is made from bottom to top.
 		var iGetContextsStartIndex = bReverse ? iIndexTo : iIndexFrom;
 		var iGetContextsLength;
 
 		// If the start index is already selected, the range starts from the next index.
-		if (bAddSelection && oMultiSelectionPlugin.isIndexSelected(iIndexFrom)) {
+		if (bAddSelection && oPlugin.isIndexSelected(iIndexFrom)) {
 			if (bReverse) {
 				iIndexFrom--;
 			} else if (iIndexFrom !== iIndexTo) {
@@ -337,10 +337,10 @@ sap.ui.define([
 
 		iGetContextsLength = Math.abs(iIndexTo - iIndexFrom) + 1;
 
-		if (!oMultiSelectionPlugin._bLimitDisabled) {
-			oMultiSelectionPlugin.setLimitReached(iGetContextsLength > iLimit);
+		if (!oPlugin._bLimitDisabled) {
+			oPlugin.setLimitReached(iGetContextsLength > iLimit);
 
-			if (oMultiSelectionPlugin.isLimitReached()) {
+			if (oPlugin.isLimitReached()) {
 				if (bReverse) {
 					iIndexTo = iIndexFrom - iLimit + 1;
 				} else {
@@ -353,7 +353,7 @@ sap.ui.define([
 			}
 		}
 
-		return loadMultipleContexts(oMultiSelectionPlugin.getTableBinding(), iGetContextsStartIndex, iGetContextsLength).then(function () {
+		return loadMultipleContexts(oPlugin.getTableBinding(), iGetContextsStartIndex, iGetContextsLength).then(function () {
 			return {indexFrom: iIndexFrom, indexTo: iIndexTo};
 		});
 	}
@@ -707,14 +707,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the last existing index of the binding.
+	 * Returns the highest index that can be selected. Returns -1 if there is nothing to select.
 	 *
-	 * @return {int} Last index of the binding
+	 * @returns {int} The highest index that can be selected.
 	 * @private
 	 */
-	MultiSelectionPlugin.prototype._getLastIndex = function() {
+	MultiSelectionPlugin.prototype._getHighestSelectableIndex = function() {
 		if (this.oInnerSelectionPlugin) {
-			return this.oInnerSelectionPlugin._getLastIndex();
+			return this.oInnerSelectionPlugin._getHighestSelectableIndex();
 		}
 		return 0;
 	};

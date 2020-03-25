@@ -87,6 +87,28 @@ sap.ui.define([
 					}
 				}
 			};
+			this.oDescrChangeSpecificData2 = {
+				changeType: 'appdescr_app_setTitle',
+				content: {
+					type: "XTIT",
+					maxLength: 20,
+					comment: "example",
+					value: {
+						"": "Title example default text",
+						en: "Title example text in en",
+						de: "Titel Beispieltext in de",
+						en_US: "Title example text in en_US"
+					}
+				},
+				fileName: "id_1584608199136_1961_appdescr_app_setTitle",
+				fileType: "change",
+				moduleName: "",
+				reference: "reference.app",
+				namespace: "apps/reference.app/changes/",
+				projectId: "reference.app",
+				creation: "",
+				originalLanguage: "EN"
+			};
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -106,7 +128,14 @@ sap.ui.define([
 					return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
 				})
 				.then(function() {
-					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
+					return SmartBusinessWriteAPI.createDescriptorInlineChanges({changeSpecificData: this.oDescrChangeSpecificData2, appId: "reference.app"});
+				}.bind(this))
+				.then(function(oDescriptorInlineChange) {
+					// Adds a descriptor change to its own persistence
+					return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "reference.app"});
+				})
+				.then(function() {
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 2, "then 2 Descriptor changes have been added to the persistence");
 					return SmartBusinessWriteAPI.create({
 						selector: {
 							appId: "reference.app"
@@ -124,9 +153,24 @@ sap.ui.define([
 					assert.strictEqual(oAppVariant.packageName, "TEST_PACKAGE", "then the app variant will be saved with a provided package");
 					assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
 					assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the reference app id is correct");
-					assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
+					assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then it is a correct changetype");
+					assert.strictEqual(oAppVariant.content[1].changeType, "appdescr_app_setTitle", "then it is a correct changetype");
+					assert.deepEqual(oAppVariant.content[1].content, {}, "then content is empty for setTitle change");
+					Object.keys(oAppVariant.content[1]).forEach(function(sKey) {
+						if (
+							sKey === "changeType"
+							|| sKey === "content"
+							|| sKey === "texts"
+						) {
+							assert.ok("Correct properties being passed");
+						} else {
+							assert.notOk("Test should not succeed!");
+						}
+					});
+					var sTextKey = oAppVariant.id + "_sap.app.title";
+					assert.deepEqual(oAppVariant.content[1].texts[sTextKey], this.oDescrChangeSpecificData2.content, "then texts are correct for setTitle change");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?changelist=U1YK123456", "POST"), "then backend call is triggered with correct parameters");
-				});
+				}.bind(this));
 		});
 
 		QUnit.test("(S4/Hana Cloud system) when create is called to save an app variant in CUSTOMER with descriptor change already added into own persistence", function(assert) {
@@ -357,21 +401,6 @@ sap.ui.define([
 				appId: "customer.reference.app.id"
 			};
 
-			var oDescrChangeSpecificData = {
-				changeType: 'appdescr_app_setTitle',
-				content: {
-					type: "XTIT",
-					maxLength: 20,
-					comment: "example",
-					value: {
-						"": "Title example default text",
-						en: "Title example text in en",
-						de: "Titel Beispieltext in de",
-						en_US: "Title example text in en_US"
-					}
-				}
-			};
-
 			var mAppVariant = {
 				response: {
 					id: "customer.reference.app.id",
@@ -395,7 +424,7 @@ sap.ui.define([
 			fnNewConnectorCall.onSecondCall().resolves(); // Update call to backend
 
 			// Creates a first descriptor change
-			return SmartBusinessWriteAPI.createDescriptorInlineChanges({changeSpecificData: oDescrChangeSpecificData, appId: "customer.reference.app.id"})
+			return SmartBusinessWriteAPI.createDescriptorInlineChanges({changeSpecificData: this.oDescrChangeSpecificData2, appId: "customer.reference.app.id"})
 				.then(function(oDescriptorInlineChange) {
 					// Adds a first descriptor change to its own persistence
 					return SmartBusinessWriteAPI.add({change: oDescriptorInlineChange, appId: "customer.reference.app.id"});
@@ -406,9 +435,24 @@ sap.ui.define([
 					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
 					var oRequestPayload = JSON.parse(fnNewConnectorCall.getCall(1).args[2].payload);
+					assert.strictEqual(oRequestPayload.content[1].changeType, "appdescr_app_setTitle", "then it is a correct changetype");
+					assert.deepEqual(oRequestPayload.content[1].content, {}, "then content is empty for setTitle change");
+					var sTextKey = oRequestPayload.id + "_sap.app.title";
+					assert.deepEqual(oRequestPayload.content[1].texts[sTextKey], this.oDescrChangeSpecificData2.content, "then texts are correct for setTitle change");
+					Object.keys(oRequestPayload.content[1]).forEach(function(sKey) {
+						if (
+							sKey === "changeType"
+							|| sKey === "content"
+							|| sKey === "texts"
+						) {
+							assert.ok("Correct properties being passed");
+						} else {
+							assert.notOk("Test should not succeed!");
+						}
+					});
 					assert.equal(oRequestPayload.content.length, 2, "then the app variant will be updated with 2 inline changes");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION&skipIam=true", "PUT"), "then the parameters are correct");
-				});
+				}.bind(this));
 		});
 
 		QUnit.test("(S4/Hana onPremise system) when update is called to update a local app variant ($TMP) in CUSTOMER layer", function(assert) {

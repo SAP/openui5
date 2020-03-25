@@ -12,6 +12,7 @@
 @_sap_m_Dialog_InfoDesignBarCompactHeight: 2rem;
 
 @_sap_m_Dialog_Padding: 1rem;
+@_sap_m_Dialog_NoStateHeaderShadow: inset 0 -0.0625rem @sapUiPageHeaderBorderColor;
 @_sap_m_Dialog_SuccessHeaderShadow: inset 0 -0.125rem @sapUiSuccessBorder;
 @_sap_m_Dialog_ErrorHeaderShadow: inset 0 -0.125rem @sapUiErrorBorder;
 @_sap_m_Dialog_WarningHeaderShadow: inset 0 -0.125rem @sapUiWarningBorder;
@@ -517,6 +518,12 @@ html[data-sap-ui-animation='off'] .sapMDialog {
 	background: @sapUiGroupContentBackground;
 }
 
+.sapMDialog > header {
+	&:last-of-type .sapMIBar {
+		box-shadow: @_sap_m_Dialog_NoStateHeaderShadow;
+	}
+}
+
 .sapMDialogWarning > header {
 	&.sapMDialogTitle .sapMDialogIcon.sapUiIcon {
 		color: @sapUiCriticalElement;
@@ -562,4 +569,8 @@ html[data-sap-ui-animation='off'] .sapMDialog {
 .sapMDialog .sapMDialogFirstFE,
 .sapMDialog .sapMDialogLastFE {
 	font-size: 0;
+}
+
+.sapMDialog.sapMDialogWithSubHeader .sapMDialogTitle .sapMIBar {
+	box-shadow: none;
 }

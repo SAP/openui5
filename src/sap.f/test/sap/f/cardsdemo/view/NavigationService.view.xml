@@ -29,6 +29,15 @@
 						<w:Card class="sapUiMediumMargin" action="onActionLog" manifest="./cardcontent/navigationService/manifest_navigationService4.json" width="400px" height="auto"/>
 					</HBox>
 					<VBox class="sapUiMediumMarginLeft">
+						<Text text="Cards using navigation service with hidden items. - List, Table and TimeLine Content"/>
+					</VBox>
+					<HBox>
+						<w:Card class="sapUiMediumMargin" action="onActionLog" manifest="./cardcontent/navigationService/hiddenItems/manifest_navigation_hidden_list.json" width="400px" height="auto"/>
+						<w:Card class="sapUiMediumMargin" action="onActionLog" manifest="./cardcontent/navigationService/hiddenItems/manifest_navigation_hidden_table.json" width="400px" height="auto"/>
+						<w:Card class="sapUiMediumMargin" action="onActionLog" manifest="./cardcontent/navigationService/hiddenItems/manifest_navigation_hidden_timeline.json" width="400px" height="auto"/>
+
+					</HBox>
+					<VBox class="sapUiMediumMarginLeft">
 						<Text text="Cards using navigation service. - Analytical Content"/>
 					</VBox>
 					<HBox>

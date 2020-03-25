@@ -124,7 +124,7 @@ sap.ui.define([
 			var oPopoverExpanded = new Popover(sPopExpId, {
 				showHeader: false,
 				showArrow: false,
-				verticalScrolling: false,
+				verticalScrolling: true,
 				horizontalScrolling: false,
 				content: new VBox(sPopExpId + "ContentBox", {
 					renderType: "Bare"
@@ -361,14 +361,10 @@ sap.ui.define([
 			// get Dimensions of Popover
 			var oPopoverDimensions = this._getPopoverDimensions(!bContextMenu);
 
-			// check if vertical scrolling should be done
+			// check if vertical size is too big (not bigger than 2/3 of the viewport)
 			if (oPopoverDimensions.height >= oViewportDimensions.height * 2 / 3) {
-				this.getPopover().setVerticalScrolling(true);
 				oPopoverDimensions.height = (oViewportDimensions.height * 2 / 3).toFixed(0);
 				this.getPopover().setContentHeight(oPopoverDimensions.height + "px");
-			} else {
-				this.getPopover().setVerticalScrolling(false);
-				this.getPopover().setContentHeight(undefined);
 			}
 
 			// check if horizontal size is too big
@@ -601,7 +597,9 @@ sap.ui.define([
 			function handler() {
 				fnContextMenuHandler(this);
 			}
-
+			if (oButtonItem.responsible) {
+				aElementOverlays = oButtonItem.responsible;
+			}
 			var sText = typeof oButtonItem.text === "function" ? oButtonItem.text(aElementOverlays[0]) : oButtonItem.text;
 			var bEnabled = typeof oButtonItem.enabled === "function" ? oButtonItem.enabled(aElementOverlays) : oButtonItem.enabled;
 			var oButtonOptions = {

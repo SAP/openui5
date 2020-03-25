@@ -17,7 +17,7 @@ sap.ui.define([
 			INSERT_BEFORE = "insertBefore",
 			INSERT_AFTER = "insertAfter",
 			sInsertAfterBeforePosition,
-		    DRAG_DROP_GROUP_NAME = "IconTabReorder";
+			DRAG_DROP_GROUP_NAME = "IconTabReorder";
 
 		var IconTabBarDragAndDropUtil = {
 
@@ -205,18 +205,15 @@ sap.ui.define([
 				var oDroppedListControl,
 					oDraggedListControl,
 					sItemId,
-					sDroppedControlId,
-					sDraggedControlId;
-
-				sDraggedControlId = oDraggedControl._tabFilter ? oDraggedControl._tabFilter.getId() : oDraggedControl.getId();
-				sDroppedControlId = oDroppedControl._tabFilter ? oDroppedControl._tabFilter.getId() : oDroppedControl.getId();
-
+					sDraggedControlId = oDraggedControl.getId(),
+					sDroppedControlId = oDroppedControl.getId();
 
 				if (!aItems && !oDraggedControl && !oDroppedControl) {
-					return;
+					return null;
 				}
+
 				aItems.forEach(function (oItem) {
-					sItemId = oItem._tabFilter.getId();
+					sItemId = oItem.getId();
 					if (!sItemId) {
 						return;
 					}
@@ -228,7 +225,10 @@ sap.ui.define([
 					}
 				});
 
-				return {oDraggedControlFromList: oDraggedListControl, oDroppedControlFromList: oDroppedListControl};
+				return {
+					oDraggedControlFromList: oDraggedListControl,
+					oDroppedControlFromList: oDroppedListControl
+				};
 			},
 
 			/**
@@ -237,7 +237,7 @@ sap.ui.define([
 			 * @param {string} sDropLayout Depending on the control we are dragging in, it could be Vertical or Horizontal
 			 */
 			setDragDropAggregations: function (context, sDropLayout) {
-				var oIconTabHeader = context._iconTabHeader ? context._iconTabHeader : context;
+				var oIconTabHeader = context._oIconTabHeader ? context._oIconTabHeader : context;
 				var sIconTabHeaderId = oIconTabHeader.getId();
 				//Adding Drag&Drop configuration to the dragDropConfig aggregation if needed
 				context.addDragDropConfig(new DragInfo({

@@ -10,7 +10,7 @@ sap.ui.define([
 ], function (opaTest, Device) {
 	"use strict";
 
-	var iDelay = (Device.browser.msie || Device.browser.edge) ? 1500 : 1000;
+	var iDelay = 100;
 
 	QUnit.module("Navigation");
 
@@ -28,8 +28,7 @@ sap.ui.define([
 		When.onTheBrowser.iChangeTheHashToTheRememberedItem();
 
 		// Assertions
-		Then.onTheObjectPage.iShouldSeeTheRememberedObject().
-			and.theViewIsNotBusyAnymore();
+		Then.onTheObjectPage.iShouldSeeTheRememberedObject();
 	});
 
 	opaTest("Should go back to the TablePage", function (Given, When, Then) {

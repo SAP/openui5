@@ -75,6 +75,10 @@ sap.ui.define(
             return vElements.length;
         }
 
+        function _createBuilder(vMatchers, vActions) {
+            return new OpaBuilder().has(vMatchers).do(vActions);
+        }
+
         QUnit.module("Static Methods");
 
         QUnit.test("Should get default options", function(assert) {
@@ -510,6 +514,77 @@ sap.ui.define(
             oActionSpy.reset();
         });
 
+        QUnit.test("Should execute functions on child elements when using 'doOnChildren'", function(assert) {
+            var oOpaBuilder = new OpaBuilder(),
+                oDummyControl1 = { match: false},
+                oDummyControl2 = { match: true},
+                oDummyParent = { dummyParent: true },
+                oAncestorSpy = this.spy(OpaBuilder.Matchers.TRUE),
+                oAncestorStub = this.stub(OpaBuilder.Matchers, "ancestor", oAncestorSpy),
+                oMatcherSpy = this.spy(function(oObject) {
+                    return oObject.match;
+                }),
+                oActionSpy = this.spy(function(oObject) {
+                    return oObject;
+                }),
+                oGetMatchingControlsSpy = this.spy(function (oOptions) {
+                    if ("children" in oOptions) {
+                        return oOptions.children;
+                    }
+                    return [oDummyControl1];
+                }),
+                oGetPluginSpy = this.spy(function () {
+                    return {
+                        getMatchingControls: oGetMatchingControlsSpy
+                    };
+                }),
+                oPluginStub = this.stub(Opa5, "getPlugin", oGetPluginSpy),
+                oWaitForSpy = this.spy(),
+                oWaitForStub = this.stub(Opa5.prototype, "waitFor", oWaitForSpy);
+
+            assert.strictEqual(oOpaBuilder.doOnChildren(oMatcherSpy, oActionSpy, true), oOpaBuilder, "builder instance returned");
+            oOpaBuilder.build().actions[0](oDummyParent);
+            assert.strictEqual(oGetPluginSpy.callCount, 1);
+            assert.strictEqual(oGetMatchingControlsSpy.callCount, 1);
+            assert.strictEqual(oAncestorSpy.callCount, 1);
+            assert.ok(oAncestorSpy.calledWith(oDummyParent, true), "ancestor matcher added");
+            assert.strictEqual(oMatcherSpy.callCount, 1);
+            assert.ok(oMatcherSpy.calledWith(oDummyControl1));
+            assert.strictEqual(oActionSpy.callCount, 0);
+            assert.strictEqual(oWaitForSpy.callCount, 0, "not using waitFor");
+            oGetPluginSpy.reset();
+            oGetMatchingControlsSpy.reset();
+            oMatcherSpy.reset();
+            oActionSpy.reset();
+            oWaitForSpy.reset();
+            oAncestorSpy.reset();
+
+            // test with OpaBuilder parameter
+            oOpaBuilder = new OpaBuilder();
+            assert.strictEqual(oOpaBuilder.doOnChildren(_createBuilder(oMatcherSpy, oActionSpy).options({ children: [oDummyControl1, oDummyControl2] }), true), oOpaBuilder, "using OpaBuilder as parameter");
+            oOpaBuilder.build().actions[0](oDummyParent);
+            assert.strictEqual(oGetPluginSpy.callCount, 1);
+            assert.strictEqual(oGetMatchingControlsSpy.callCount, 1);
+            assert.strictEqual(oAncestorSpy.callCount, 1);
+            assert.ok(oAncestorSpy.calledWith(oDummyParent, true), "ancestor matcher added");
+            assert.strictEqual(oMatcherSpy.callCount, 2);
+            assert.ok(oMatcherSpy.calledWith(oDummyControl1));
+            assert.ok(oMatcherSpy.calledWith(oDummyControl2));
+            assert.strictEqual(oActionSpy.callCount, 1);
+            assert.ok(oActionSpy.calledWith(oDummyControl2));
+            assert.strictEqual(oWaitForSpy.callCount, 0, "not using waitFor");
+            oGetPluginSpy.reset();
+            oGetMatchingControlsSpy.reset();
+            oMatcherSpy.reset();
+            oActionSpy.reset();
+            oWaitForSpy.reset();
+            oAncestorSpy.reset();
+
+            oPluginStub.restore();
+            oWaitForStub.restore();
+            oAncestorStub.restore();
+        });
+
         QUnit.test("Should call 'Opa5.waitFor' with the defined options when using 'execute'", function(assert) {
             var oOpaBuilder = new OpaBuilder(),
                 oWaitForSpy = this.spy(),
@@ -628,6 +703,102 @@ sap.ui.define(
                     text: "i18nTest>IAM_A_TOKEN"
                 }
             });
+        });
+
+        QUnit.test("'children' return a matcher that returns an array of children filtered by given matchers", function(assert) {
+            var fnChildren,
+                oDummyControl1 = { match: false},
+                oDummyControl2 = { match: true},
+                oDummyParent = { dummyParent: true },
+                oAncestorSpy = this.spy(OpaBuilder.Matchers.TRUE),
+                oAncestorStub = this.stub(OpaBuilder.Matchers, "ancestor", oAncestorSpy),
+                oMatcherSpy = this.spy(function(oObject) {
+                    return oObject.match;
+                }),
+                oActionSpy = this.spy(function(oObject) {
+                    return oObject;
+                }),
+                oGetMatchingControlsSpy = this.spy(function (oOptions) {
+                    if ("children" in oOptions) {
+                        return oOptions.children;
+                    }
+                    return [oDummyControl1];
+                }),
+                oGetPluginSpy = this.spy(function () {
+                    return {
+                        getMatchingControls: oGetMatchingControlsSpy
+                    };
+                }),
+                oPluginStub = this.stub(Opa5, "getPlugin", oGetPluginSpy);
+
+            fnChildren = OpaBuilder.Matchers.children(oMatcherSpy, true);
+            assert.deepEqual(fnChildren(oDummyParent), []);
+            assert.strictEqual(oGetPluginSpy.callCount, 1);
+            assert.strictEqual(oGetMatchingControlsSpy.callCount, 1);
+            assert.strictEqual(oAncestorSpy.callCount, 1);
+            assert.ok(oAncestorSpy.calledWith(oDummyParent, true), "ancestor matcher added");
+            assert.strictEqual(oMatcherSpy.callCount, 1);
+            assert.ok(oMatcherSpy.calledWith(oDummyControl1));
+            assert.strictEqual(oActionSpy.callCount, 0, "actions are not executed - its a matcher!");
+            oGetPluginSpy.reset();
+            oGetMatchingControlsSpy.reset();
+            oMatcherSpy.reset();
+            oAncestorSpy.reset();
+
+            // test with OpaBuilder parameter
+            fnChildren = OpaBuilder.Matchers.children(_createBuilder(oMatcherSpy, oActionSpy).options({ children: [oDummyControl1, oDummyControl2] }), true);
+            assert.deepEqual(fnChildren(oDummyParent), [oDummyControl2]);
+            assert.strictEqual(oGetPluginSpy.callCount, 1);
+            assert.strictEqual(oGetMatchingControlsSpy.callCount, 1);
+            assert.strictEqual(oAncestorSpy.callCount, 1);
+            assert.ok(oAncestorSpy.calledWith(oDummyParent, true), "ancestor matcher added");
+            assert.strictEqual(oMatcherSpy.callCount, 2);
+            assert.ok(oMatcherSpy.calledWith(oDummyControl1));
+            assert.ok(oMatcherSpy.calledWith(oDummyControl2));
+            assert.strictEqual(oActionSpy.callCount, 0, "actions are not executed - its a matcher!");
+            oGetPluginSpy.reset();
+            oGetMatchingControlsSpy.reset();
+            oMatcherSpy.reset();
+            oAncestorSpy.reset();
+
+            oPluginStub.restore();
+            oAncestorStub.restore();
+        });
+
+        QUnit.test("'childrenMatcher' return a matcher that returns whether 'children' has at least one match", function(assert) {
+            var fnChildMatcher,
+                oDummyControl1 = { match: false},
+                oDummyControl2 = { match: true},
+                oDummyParent = { dummyParent: true },
+                oAncestorSpy = this.spy(OpaBuilder.Matchers.TRUE),
+                oAncestorStub = this.stub(OpaBuilder.Matchers, "ancestor", oAncestorSpy),
+                oMatcherSpy = this.spy(function(oObject) {
+                    return oObject.match;
+                }),
+                oActionSpy = this.spy(function(oObject) {
+                    return oObject;
+                }),
+                oGetMatchingControlsSpy = this.spy(function (oOptions) {
+                    if ("children" in oOptions) {
+                        return oOptions.children;
+                    }
+                    return [oDummyControl1];
+                }),
+                oGetPluginSpy = this.spy(function () {
+                    return {
+                        getMatchingControls: oGetMatchingControlsSpy
+                    };
+                }),
+                oPluginStub = this.stub(Opa5, "getPlugin", oGetPluginSpy);
+
+            fnChildMatcher = OpaBuilder.Matchers.childrenMatcher(oMatcherSpy, true);
+            assert.strictEqual(fnChildMatcher(oDummyParent), false);
+
+            fnChildMatcher = OpaBuilder.Matchers.childrenMatcher(_createBuilder(oMatcherSpy, oActionSpy).options({ children: [oDummyControl1, oDummyControl2] }), true);
+            assert.deepEqual(fnChildMatcher(oDummyParent), true);
+
+            oPluginStub.restore();
+            oAncestorStub.restore();
         });
 
         QUnit.test("'aggregation' should return a matcher that returns an array of aggregation items filtered by given matchers", function(assert) {
@@ -1003,6 +1174,49 @@ sap.ui.define(
             assert.strictEqual(oFailureAction.callCount, 1);
             oSuccessAction.reset();
             oFailureAction.reset();
+        });
+
+        QUnit.test("'executor' should return a function that executes given actions on given controls", function(assert) {
+            var fnAction1 = this.spy(function(oObject) {
+                    return oObject;
+                }),
+                fnAction2 = this.spy(function(oObject) {
+                    return oObject;
+                }),
+                oDummyObject1 = { dummy: true },
+                oDummyObject2 = { anotherDummy: true },
+                oExecutor;
+
+            oExecutor = OpaBuilder.Actions.executor(fnAction1);
+            oExecutor(oDummyObject1);
+            assert.strictEqual(fnAction1.callCount, 1);
+            assert.ok(fnAction1.calledWith(oDummyObject1));
+            fnAction1.reset();
+
+            oExecutor([oDummyObject1, oDummyObject2]);
+            assert.strictEqual(fnAction1.callCount, 2);
+            assert.ok(fnAction1.calledWith(oDummyObject1));
+            assert.ok(fnAction1.calledWith(oDummyObject2));
+            fnAction1.reset();
+
+            oExecutor = OpaBuilder.Actions.executor([fnAction1, fnAction2]);
+            oExecutor(oDummyObject1);
+            assert.strictEqual(fnAction1.callCount, 1);
+            assert.strictEqual(fnAction2.callCount, 1);
+            assert.ok(fnAction1.calledWith(oDummyObject1));
+            assert.ok(fnAction2.calledWith(oDummyObject1));
+            fnAction1.reset();
+            fnAction2.reset();
+
+            oExecutor([oDummyObject1, oDummyObject2]);
+            assert.strictEqual(fnAction1.callCount, 2);
+            assert.strictEqual(fnAction2.callCount, 2);
+            assert.ok(fnAction1.calledWith(oDummyObject1));
+            assert.ok(fnAction1.calledWith(oDummyObject2));
+            assert.ok(fnAction2.calledWith(oDummyObject1));
+            assert.ok(fnAction2.calledWith(oDummyObject2));
+            fnAction1.reset();
+            fnAction2.reset();
         });
     }
 );

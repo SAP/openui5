@@ -3,27 +3,35 @@
 /* Quartz High Contrast Black theme        */
 /* ======================================= */
 
+@_sap_ui_layout_Splitter_BarColor: @sapUiHcReducedAltForeground;
+@_sap_ui_layout_Splitter_BarHoverColor: @sapUiBaseBG;
+
 .sapUiLoSplitter {
 	background-color: @sapUiHcStandardBackground;
+}
+
+html.sap-desktop .sapUiLoSplitterH.sapUiLoSplitter > .sapUiLoSplitterBar,
+html.sap-desktop .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
+	height: 100%;
+	width: 0.25rem;
+}
+
+html.sap-desktop .sapUiLoSplitterV.sapUiLoSplitter > .sapUiLoSplitterBar,
+html.sap-desktop .sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
+	width: 100%;
+	height: 0.25rem;
+}
+
+.sapUiLoSplitter > .sapUiLoSplitterBar {
+	background-color:@_sap_ui_layout_Splitter_BarColor;
 }
 
 .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
 	background-color: @sapUiGlobalBackgroundColor;
 }
 
-
-.sapUiLoSplitterH > .sapUiLoSplitterBar > .sapUiIcon.sapUiLoSplitterBarIcon::before,
-.sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar > .sapUiIcon.sapUiLoSplitterBarIcon::before,
-.sapUiLoSplitterV > .sapUiLoSplitterBar > .sapUiIcon.sapUiLoSplitterBarIcon::before,
-.sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar > .sapUiIcon.sapUiLoSplitterBarIcon::before,
-.sapUiLoSplitterV > .sapUiLoSplitterBar > .sapUiIcon.sapUiLoSplitterBarIcon::after,
-.sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar > .sapUiIcon.sapUiLoSplitterBarIcon::after {
-	content: "";
-}
-
-.sapUiLoSplitter > .sapUiLoSplitterBar,
-.sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-  background-color: @sapUiHcReducedAltForeground;
+.sapUiLoSplitterBarIcon {
+	display: none;
 }
 
 .sapUiLoSplitter > .sapUiLoSplitterBar:hover,
@@ -31,12 +39,8 @@
 	background-color: @sapUiHcStandardForeground;
 }
 
-/*********************************** Focus outline**********************************/
+/*********************************** IE Focus outline workaround **********************************/// TODO remove after the end of support for Internet Explorer
 
-.sapUiLoSplitter > .sapUiLoSplitterBar:focus::before {
-	border-width: 2px;
-	top: -1px;
-	bottom: -1px;
-	left: -1px;
-	right: -1px;
+html[data-sap-ui-browser^=ie] .sapUiLoSplitterH > .sapUiLoSplitterBar:focus::after {
+	top: 0;
 }

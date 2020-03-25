@@ -730,6 +730,11 @@ sap.ui.define([
 
 	ObjectPageHeader.prototype.onAfterRendering = function () {
 		var $objectImage = this._lazyLoadInternalAggregation("_objectImage").$();
+
+		if (this._adaptLayoutTimeout) {
+			clearTimeout(this._adaptLayoutTimeout);
+		}
+
 		this._adaptLayout();
 
 		this._clearImageNotFoundHandler();
@@ -762,12 +767,12 @@ sap.ui.define([
 			if (oAction instanceof Button) {
 				var oActionSheetButton = this._oActionSheetButtonMap[oAction.getId()];
 				if (bAttach) {
-					oAction.attachEvent("_change", this._adaptLayout, this);
+					oAction.attachEvent("_change", this._adaptLayoutDelayed, this);
 					if (oActionSheetButton) {
 						oActionSheetButton.attachEvent("_change", this._adaptOverflow, this);
 					}
 				} else {
-					oAction.detachEvent("_change", this._adaptLayout, this);
+					oAction.detachEvent("_change", this._adaptLayoutDelayed, this);
 					if (oActionSheetButton) {
 						oActionSheetButton.detachEvent("_change", this._adaptOverflow, this);
 					}
@@ -840,6 +845,23 @@ sap.ui.define([
 	ObjectPageHeader.prototype._adaptLayout = function (oEvent) {
 
 		this._adaptLayoutForDomElement(null, oEvent);
+	};
+
+	/**
+	 * Adapts title/subtitle container and action buttons and overflow button with a delay.
+	 * As this method may be called multiple times in one JavaScript tick, every time it clears
+	 * the previous timeout, if any, and sets a new one, so it will be executed only once.
+	 * @private
+	 */
+	ObjectPageHeader.prototype._adaptLayoutDelayed = function () {
+		if (this._adaptLayoutTimeout) {
+			clearTimeout(this._adaptLayoutTimeout);
+		}
+
+		this._adaptLayoutTimeout = setTimeout(function() {
+			this._adaptLayoutTimeout = null;
+			this._adaptLayout();
+		}.bind(this), 0);
 	};
 
 	/**

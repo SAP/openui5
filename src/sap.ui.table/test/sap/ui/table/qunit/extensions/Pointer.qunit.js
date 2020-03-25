@@ -24,6 +24,22 @@ sap.ui.define([
 	var checkFocus = window.checkFocus;
 	var fakeSumRow = window.fakeSumRow;
 
+	function createPointerEvent(sEventType) {
+		var oEvent;
+
+		if (typeof window.PointerEvent === "function") {
+			oEvent = new window.PointerEvent(sEventType, {
+				bubbles: true,
+				cancelable: true
+			});
+		} else { // IE
+			oEvent = document.createEvent("Event");
+			oEvent.initEvent(sEventType, true, true);
+		}
+
+		return oEvent;
+	}
+
 	QUnit.module("Initialization", {
 		beforeEach: function() {
 			createTables();
@@ -159,53 +175,61 @@ sap.ui.define([
 	});
 
 	QUnit.test("Automatic Column Resize via Double Click", function(assert) {
-		var done = assert.async();
 		Device.system.desktop = true;
 
 		function triggerDoubleClick(bExpect, iIndex) {
+			var oResizer = oTable.getDomRef("rsz");
+
 			// Move resizer to correct column
 			moveResizer(oColumn, assert, bExpect, iIndex);
-			// Double Click on resizer
-			qutils.triggerMouseEvent(oTable.$("rsz"), "dblclick");
+
+			// Simulate double click on resizer
+			return new Promise(function(resolve) {
+				oResizer.dispatchEvent(createPointerEvent("mousedown"));
+				oResizer.dispatchEvent(createPointerEvent("mouseup"));
+				oResizer.dispatchEvent(createPointerEvent("click"));
+				setTimeout(resolve, 50);
+			}).then(function() {
+				return new Promise(function(resolve) {
+					oResizer.dispatchEvent(createPointerEvent("mousedown"));
+					oResizer.dispatchEvent(createPointerEvent("mouseup"));
+					oResizer.dispatchEvent(createPointerEvent("click"));
+					oResizer.dispatchEvent(createPointerEvent("dblclick"));
+					setTimeout(resolve, 50);
+				});
+			});
 		}
 
 		var oColumn = this.oColumn;
 		var iWidth = oColumn.$().width();
 
 		assert.ok(Math.abs(iWidth - 100) < 10, "check column width before resize: " + iWidth);
-		triggerDoubleClick(false, 0);
 
-		setTimeout(function() {
+		return triggerDoubleClick(false, 0).then(function() {
 			assert.equal(oColumn.$().width(), iWidth, "check column width after resize: " + iWidth);
 			oColumn.setAutoResizable(true);
 			sap.ui.getCore().applyChanges();
 			assert.ok(oColumn.getAutoResizable(), "Column is autoresizable");
 			assert.ok(!oColumn.getResizable(), "Column is not yet resizable");
-			triggerDoubleClick(false, 0);
+			return triggerDoubleClick(false, 0);
+		}).then(function() {
+			assert.equal(oColumn.$().width(), iWidth, "check column width after resize: " + iWidth);
+			oColumn.setResizable(true);
+			sap.ui.getCore().applyChanges();
+			assert.ok(oColumn.getAutoResizable(), "Column is autoresizable");
+			assert.ok(oColumn.getResizable(), "Column is resizable");
+			Device.system.desktop = false;
+			return triggerDoubleClick(true, 1);
+		}).then(function() {
+			assert.equal(oColumn.$().width(), iWidth, "check column width after resize: " + iWidth);
 
-			setTimeout(function() {
-				assert.equal(oColumn.$().width(), iWidth, "check column width after resize: " + iWidth);
-				oColumn.setResizable(true);
-				sap.ui.getCore().applyChanges();
-				assert.ok(oColumn.getAutoResizable(), "Column is autoresizable");
-				assert.ok(oColumn.getResizable(), "Column is resizable");
-				Device.system.desktop = false;
-				triggerDoubleClick(true, 1);
-
-				setTimeout(function() {
-					assert.equal(oColumn.$().width(), iWidth, "check column width after resize: " + iWidth);
-
-					Device.system.desktop = true;
-					triggerDoubleClick(true, 1);
-
-					setTimeout(function() {
-						iWidth = oColumn.$().width();
-						assert.ok(Math.abs(iWidth - 270) < 40, "check column width after resize: " + iWidth);
-						done();
-					}, 50);
-				}, 50);
-			}, 50);
-		}, 50);
+			Device.system.desktop = true;
+			window.breaky = true;
+			return triggerDoubleClick(true, 1);
+		}).then(function() {
+			iWidth = oColumn.$().width();
+			assert.ok(Math.abs(iWidth - 270) < 40, "check column width after resize: " + iWidth);
+		});
 	});
 
 	QUnit.test("Automatic Column Resize via API", function(assert) {

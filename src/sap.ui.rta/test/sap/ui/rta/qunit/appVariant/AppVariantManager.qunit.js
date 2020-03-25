@@ -19,7 +19,7 @@ sap.ui.define([
 	"sap/ui/core/Manifest",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
-	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
+	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/base/util/includes",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -42,7 +42,7 @@ function (
 	Manifest,
 	ChangesWriteAPI,
 	AppVariantWriteAPI,
-	DescriptorInlineChangeFactory,
+	DescriptorChangeTypes,
 	includes,
 	sinon
 ) {
@@ -197,7 +197,7 @@ function (
 					assert.equal(fnCreateChangesSpy.callCount, aAllInlineChanges.length, "then ChangesWriteAPI.create method is called " + fnCreateChangesSpy.callCount + " times");
 					aAllInlineChanges.forEach(function(oInlineChange) {
 						var sChangeType = oInlineChange._oInlineChange.getMap().changeType;
-						assert.equal(includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), sChangeType), true, "then inline change " + sChangeType + " got successfully created");
+						assert.equal(includes(DescriptorChangeTypes.getChangeTypes(), sChangeType), true, "then inline change " + sChangeType + " got successfully created");
 					});
 				});
 		});

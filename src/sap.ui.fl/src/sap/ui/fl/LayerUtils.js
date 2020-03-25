@@ -38,10 +38,11 @@ function(
 	 * @version ${version}
 	 */
 	var LayerUtils = {
-		_mLayersIndex : mLayersIndex,
-		_sTopLayer : aLayers[aLayers.length - 1],
+		_mLayersIndex: mLayersIndex,
+		_sTopLayer: aLayers[aLayers.length - 1],
 		FL_MAX_LAYER_PARAM: "sap-ui-fl-max-layer",
-		FL_DRAFT_PARAM:"sap-ui-fl-draft",
+		// TODO change to FL_VERSION_PARAM
+		FL_DRAFT_PARAM: "sap-ui-fl-version",
 
 		/**
 		 * Indicates if the VENDOR is selected.

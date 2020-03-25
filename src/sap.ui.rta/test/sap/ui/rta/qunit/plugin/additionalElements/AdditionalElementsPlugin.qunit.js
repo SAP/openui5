@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/base/Log",
 	"sap/base/util/uid",
+	"sap/base/util/isEmptyObject",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	AdditionalElementsPlugin,
@@ -41,6 +42,7 @@ sap.ui.define([
 	Settings,
 	Log,
 	uid,
+	isEmptyObject,
 	sinon
 ) {
 	"use strict";
@@ -125,6 +127,7 @@ sap.ui.define([
 
 	var ON_SIBLING = "SIBLING";
 	var ON_CHILD = "CHILD";
+	var ON_CONTAINER = "CONTAINER";
 	var ON_IRRELEVANT = "IRRELEVANT";
 
 	QUnit.module("Context Menu Operations: Given a plugin whose dialog always close with OK", {
@@ -223,6 +226,28 @@ sap.ui.define([
 			},
 			sibling : false,
 			msg : " when the control's dt metadata has an add action with a custom sub-action"
+		},
+		{
+			dtMetadata : {
+				add : {
+					custom: {
+						getItems: getCustomItemsInPromise.bind(null, 2)
+					}
+				}
+			},
+			sibling : true,
+			msg : " when the control's dt metadata has an add action with a custom sub-action returning a promise"
+		},
+		{
+			dtMetadata : {
+				add : {
+					custom: {
+						getItems: getCustomItemsInPromise.bind(null, 2)
+					}
+				}
+			},
+			sibling : false,
+			msg : " when the control's dt metadata has an add action with a custom sub-action returning a promise"
 		}].forEach(function(test) {
 			var sPrefix = test.sibling ? "On sibling: " : "On child: ";
 			var sOverlayType = test.sibling ? ON_SIBLING : ON_CHILD;
@@ -509,15 +534,16 @@ sap.ui.define([
 					}.bind(this));
 			});
 
-			QUnit.test(sPrefix + "when the control's dt metadata has a custom add action with 2 items, one with stable id and another with randomly generated stable id, and NO addODataProperty and reveal actions", function (assert) {
+			QUnit.test(sPrefix + "when the control's dt metadata has only a custom add action resolving to 2 items, one with a stable ID and the other with a randomly generated ID", function (assert) {
 				var done = assert.async();
-				var aCompleteChangeContentArgs = [];
+				// to preserve sorting done in AdditionalElementsPlugin._createCommands()
+				var aCustomItems = getCustomItems(2).reverse();
 				sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves(oDummyChangeHandler);
 				sandbox.spy(oDummyChangeHandler, "completeChangeContent");
+
 				this.oPlugin.attachEventOnce("elementModified", function(oEvent) {
 					var oCompositeCommand = oEvent.getParameter("command");
 					var aCommands = oCompositeCommand.getCommands();
-					var aCustomItems = getCustomItems(2).reverse(); // to preserve sorting done in AdditionalElementsPlugin._createCommands()
 					var sAggregationName = "contentLeft";
 					var sChangeType = "customAdd";
 
@@ -531,7 +557,7 @@ sap.ui.define([
 							assert.deepEqual(oCommand.getAddElementInfo(), aCustomItems[iIndex].changeSpecificData.content, "then the customAdd command has the correct additional element info");
 							assert.strictEqual(oCommand.getAggregationName(), sAggregationName, "then the customAdd command has the correct aggregation");
 
-							aCompleteChangeContentArgs = oDummyChangeHandler.completeChangeContent.getCall(iIndex).args;
+							var aCompleteChangeContentArgs = oDummyChangeHandler.completeChangeContent.getCall(iIndex).args;
 							assert.deepEqual(aCompleteChangeContentArgs[1].addElementInfo, aCustomItems[iIndex].changeSpecificData.content, "then the correct addElementInfo was passed to changeHandler.completeChangeContent()");
 							assert.deepEqual(aCompleteChangeContentArgs[1].index, oCommand.getIndex(), "then the correct index was passed to changeHandler.completeChangeContent()");
 							assert.deepEqual(aCompleteChangeContentArgs[1].changeType, sChangeType, "then the correct changeType was passed to changeHandler.completeChangeContent()");
@@ -550,11 +576,54 @@ sap.ui.define([
 					);
 					done();
 				});
-				var aCustomItems = getCustomItems(2);
 
-				aCustomItems[0].selected = true; // item selected
-				aCustomItems[1].selected = true; // tem selected
-				aCustomItems[1].changeSpecificData.changeOnRelevantContainer = true; // to mock change on relevant container
+				// mock item selection from add dialog
+				aCustomItems[1].selected = true;
+				aCustomItems[0].selected = true;
+				aCustomItems[0].changeSpecificData.changeOnRelevantContainer = true; // to mock change on relevant container
+
+				return test.overlay.call(this,
+					{
+						add : {
+							custom:  {
+								getItems: sandbox.stub().resolves(aCustomItems)
+							}
+						}
+					},
+					test.sibling ? ON_SIBLING : ON_CHILD
+				)
+
+					.then(function(oCreatedOverlay) {
+						return this.oPlugin.showAvailableElements(test.sibling, [oCreatedOverlay]);
+					}.bind(this))
+
+					.then(function() {
+						assert.ok(this.fnGetCustomAddItemsSpy.calledOnce, "then the analyzer is called to return the custom add elements");
+						assert.ok(this.fnEnhanceInvisibleElementsStub.notCalled, "then the analyzer is NOT called to return the invisible elements");
+						assert.ok(this.fnGetUnboundODataPropertiesStub.notCalled, "then the analyzer is NOT called to return the unbound odata properties");
+						assertDialogModelLength.call(this, assert, 2, "then both custom add elements are part of the dialog model");
+						assert.equal(this.oPlugin.getDialog().getElements()[0].label, aCustomItems[0].label, "then the first element is a custom add item");
+						assert.equal(this.oPlugin.getDialog().getElements()[1].label, aCustomItems[1].label, "then the second element is a custom add item");
+					}.bind(this));
+			});
+
+			QUnit.test(sPrefix + "when the control's dt metadata has only a custom add action returning 2 items, one with a stable ID and the other with a randomly generated ID", function (assert) {
+				var done = assert.async();
+				// to preserve sorting done in AdditionalElementsPlugin._createCommands()
+				var aCustomItems = getCustomItems(2).reverse();
+
+				sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves(oDummyChangeHandler);
+
+				this.oPlugin.attachEventOnce("elementModified", function(oEvent) {
+					var oCompositeCommand = oEvent.getParameter("command");
+					var aCommands = oCompositeCommand.getCommands();
+					assert.strictEqual(aCommands.length, 2, "then two commands ware created");
+					done();
+				});
+
+				// mock item selection from add dialog
+				aCustomItems[1].selected = true;
+				aCustomItems[0].selected = true;
 
 				return test.overlay.call(this,
 					{
@@ -567,14 +636,11 @@ sap.ui.define([
 					test.sibling ? ON_SIBLING : ON_CHILD
 				)
 
-					.then(function(oOverlay) {
-						return this.oPlugin.showAvailableElements(test.sibling, [oOverlay]);
+					.then(function(oCreatedOverlay) {
+						return this.oPlugin.showAvailableElements(test.sibling, [oCreatedOverlay]);
 					}.bind(this))
 
 					.then(function() {
-						assert.ok(this.fnGetCustomAddItemsSpy.calledOnce, "then the analyzer is called to return the custom add elements");
-						assert.ok(this.fnEnhanceInvisibleElementsStub.notCalled, "then the analyzer is NOT called to return the invisible elements");
-						assert.ok(this.fnGetUnboundODataPropertiesStub.notCalled, "then the analyzer is NOT called to return the unbound odata properties");
 						assertDialogModelLength.call(this, assert, 2, "then both custom add elements are part of the dialog model");
 						assert.equal(this.oPlugin.getDialog().getElements()[0].label, aCustomItems[0].label, "then the first element is a custom add item");
 						assert.equal(this.oPlugin.getDialog().getElements()[1].label, aCustomItems[1].label, "then the second element is a custom add item");
@@ -706,39 +772,134 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("when the control's dt metadata has a reveal and move action on a responsible element and we call showAvailableElements", function (assert) {
-			var done = assert.async();
-			this.oPlugin.attachEventOnce("elementModified", function(oEvent) {
-				var oCompositeCommand = oEvent.getParameter("command");
-				assert.equal(oCompositeCommand.getCommands().length, 2, "then one command is created");
-				assert.equal(oCompositeCommand.getCommands()[0].getName(), "reveal", "then one reveal command is created");
-				assert.equal(oCompositeCommand.getCommands()[0].getChangeType(), "unhideControl", "then the reveal command has the right changeType");
-				assert.equal(oCompositeCommand.getCommands()[1].getName(), "move", "then one move command is created");
-				assert.equal(oCompositeCommand.getCommands()[1].getMovedElements()[0].targetIndex, 1, "then the move command goes to the right position");
-				done();
-			});
-
+		QUnit.test("when the control's dt metadata has a reveal action on a responsible element and getMenuItems() is called", function (assert) {
+			sandbox.stub(this.oPlugin, "isAvailable").callsFake(function() {
+				if (arguments[1][0] === this.oPseudoPublicParentOverlay) {
+					return true;
+				}
+			}.bind(this));
 			return createOverlayWithAggregationActions.call(this,
 				{
+					reveal : {
+						changeType : "unhideControl",
+						changeOnRelevantContainer: true
+					},
+					responsibleElement: {
+						target: this.oSibling,
+						source: this.oPseudoPublicParent,
+						actionsFromResponsibleElement: ["reveal"]
+					}
+				},
+				ON_CONTAINER
+			)
+				.then(function(oCreatedOverlay) {
+					return this.oPlugin.getMenuItems([oCreatedOverlay]);
+				}.bind(this)).then(function(aMenuItems) {
+					assert.equal(aMenuItems[0].id, "CTX_ADD_ELEMENTS_AS_SIBLING", "there is an entry for add elements as sibling");
+					assert.deepEqual(aMenuItems[0].responsible[0], this.oSiblingOverlay, "then the responsible element overlay is set as a menu item property");
+					assert.equal(aMenuItems[1].id, "CTX_ADD_ELEMENTS_AS_CHILD", "there is an entry for add elements as child");
+					assert.deepEqual(aMenuItems[1].responsible[0], this.oSiblingOverlay, "then the responsible element overlay is set as a menu item property");
+				}.bind(this));
+		});
+
+		QUnit.test("when the control's dt metadata has a disabled reveal action along with an enabled reveal action on the responsible element and _getActions() is called", function (assert) {
+			sandbox.stub(this.oPlugin, "isAvailable").callsFake(function() {
+				if (arguments[1][0] === this.oPseudoPublicParentOverlay) {
+					return true;
+				}
+			}.bind(this));
+			return createOverlayWithAggregationActions.call(this,
+				{
+					addODataProperty : {
+						changeType : "addFields"
+					},
 					reveal : {
 						changeType : "unhideControl"
 					},
 					responsibleElement: {
 						target: this.oSibling,
 						source: this.oPseudoPublicParent
-					},
-					move : "moveControls"
+					}
 				},
-				ON_SIBLING
+				ON_CONTAINER
 			)
-				.then(function () {
-					return this.oPlugin.showAvailableElements(true, [this.oPseudoPublicParentOverlay]);
-				}.bind(this))
-				.then(function() {
-					assertDialogModelLength.call(this, assert, 2, "then all invisible elements are part of the dialog model");
-					assert.equal(this.oPlugin.getDialog().getElements()[0].label, "Invisible1", "then the first element is the responsible element's sibling");
-					assert.equal(this.oPlugin.getDialog().getElements()[1].label, "Invisible2", "then the second element is the responsible element's sibling");
-				}.bind(this));
+				.then(function(oCreatedOverlay) {
+					return this.oPlugin._getActions(true, oCreatedOverlay);
+				}.bind(this)).then(function(mActions) {
+					assert.ok(isEmptyObject(mActions), "then no actions were returned");
+				});
+		});
+
+		QUnit.test("when the control's dt metadata has a reveal and addODataProperty action on the responsible element and _getActions() is called", function (assert) {
+			return createOverlayWithAggregationActions.call(this,
+				{
+					addODataProperty : {
+						changeType : "addFields"
+					},
+					reveal : {
+						changeType : "unhideControl"
+					},
+					responsibleElement: {
+						target: this.oSibling,
+						source: this.oPseudoPublicParent,
+						actionsFromResponsibleElement: ["reveal"]
+					}
+				},
+				ON_CONTAINER
+			)
+				.then(function(oCreatedOverlay) {
+					return this.oPlugin._getActions(true, oCreatedOverlay);
+				}.bind(this)).then(function(mActions) {
+					assert.equal(mActions.reveal.elements.length, 2, "then the reveal actions has two elements from the responsible element");
+					assert.equal(mActions.addODataProperty.action.changeType, "addFields", "then the addOData action was retrieved from the responsible element");
+					assert.equal(mActions.aggregation, "contentLeft", "then the reveal actions has the correct aggregation name from the responsible element");
+				});
+		});
+
+		QUnit.test("when the control's dt metadata has a custom add action on the responsible element and _getActions() is called", function (assert) {
+			return createOverlayWithAggregationActions.call(this,
+				{
+					add: {
+						custom : {
+							getItems: getCustomItems.bind(null, 2)
+						}
+					},
+					responsibleElement: {
+						target: this.oSibling,
+						source: this.oPseudoPublicParent,
+						actionsFromResponsibleElement: ["custom"]
+					}
+				},
+				ON_CONTAINER
+			)
+				.then(function(oCreatedOverlay) {
+					return this.oPlugin._getActions(true, oCreatedOverlay);
+				}.bind(this)).then(function(mActions) {
+					assert.equal(mActions.custom.items.length, 2, "then the custom add action has two elements from the responsible element");
+					assert.ok(typeof mActions.custom.action.getItems === "function", "then the custom add action was retrieved from the responsible element");
+					assert.equal(mActions.custom.action.aggregation, "contentLeft", "then the custom add action has the correct aggregation name from the responsible element");
+				});
+		});
+
+		QUnit.test("when the control's dt metadata has an addODataProperty action on the responsible element and _getActions() is called", function (assert) {
+			return createOverlayWithAggregationActions.call(this,
+				{
+					addODataProperty : {
+						changeType : "addFields"
+					},
+					responsibleElement: {
+						target: this.oSibling,
+						source: this.oPseudoPublicParent,
+						actionsFromResponsibleElement: ["addODataProperty"]
+					}
+				},
+				ON_CONTAINER
+			)
+				.then(function(oCreatedOverlay) {
+					return this.oPlugin._isEditableCheck(oCreatedOverlay, true);
+				}.bind(this)).then(function(bEditable) {
+					assert.equal(bEditable, true, "then the editable property is set from the responsible element overlays");
+				});
 		});
 
 		QUnit.test("when the control's dt metadata has addODataProperty, a reveal and a custom add actions", function(assert) {
@@ -762,8 +923,10 @@ sap.ui.define([
 				reveal : {
 					changeType : "unhideControl"
 				},
-				custom : {
-					getItems: getCustomItems.bind(null, 2)
+				add: {
+					custom : {
+						getItems: getCustomItems.bind(null, 2)
+					}
 				}
 			},
 			ON_CHILD
@@ -1408,7 +1571,7 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("when retrieving the contextmenu items for the additional elements plugin,", function(assert) {
+		QUnit.test("when retrieving the contextmenu items for the additional elements plugin", function(assert) {
 			var bCheckValue = true;
 			var bIsAvailable = true;
 			var bFirstCall = true;
@@ -1754,13 +1917,15 @@ sap.ui.define([
 
 				if (mActions.responsibleElement) {
 					var oSourceElementOverlay = OverlayRegistry.getOverlay(mActions.responsibleElement.source);
-					oSourceElementOverlay.setDesignTimeMetadata({
-						actions: {
-							getResponsibleElement: function() {
-								return mActions.responsibleElement.target;
-							}
-						}
-					});
+					var oActions = Object.assign({
+						getResponsibleElement: function () {
+							return mActions.responsibleElement.target;
+						},
+						actionsFromResponsibleElement: mActions.responsibleElement.actionsFromResponsibleElement || []
+					}, mActions.responsibleElement.actions);
+					oSourceElementOverlay.setDesignTimeMetadata(Object.assign(
+						oSourceElementOverlay.getDesignTimeMetadata().getData(), { actions: oActions}
+					));
 				}
 				resolve();
 			}.bind(this));
@@ -1771,6 +1936,7 @@ sap.ui.define([
 			switch (sOverlayType) {
 				case ON_SIBLING : return this.oSiblingOverlay;
 				case ON_CHILD : return this.oParentOverlay;
+				case ON_CONTAINER : return this.oPseudoPublicParentOverlay;
 				case ON_IRRELEVANT : return this.oIrrelevantOverlay;
 				default : return undefined;
 			}
@@ -1844,6 +2010,10 @@ sap.ui.define([
 			}
 		});
 		return aCustomItems;
+	}
+
+	function getCustomItemsInPromise(iNumber) {
+		return Promise.resolve(getCustomItems(iNumber));
 	}
 
 	QUnit.done(function () {

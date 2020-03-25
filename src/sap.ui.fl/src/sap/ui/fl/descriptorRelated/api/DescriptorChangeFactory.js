@@ -4,18 +4,12 @@
 sap.ui.define([
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/descriptorRelated/internal/Utils",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/LayerUtils",
 	"sap/base/util/merge"
 ], function(
 	ChangePersistenceFactory,
 	Change,
-	Utils,
-	Settings,
 	FlexUtils,
-	LayerUtils,
 	fnBaseMerge
 ) {
 	"use strict";
@@ -45,7 +39,6 @@ sap.ui.define([
 	 *
 	 * @param {object} mChangeFile change file
 	 * @param {sap.ui.fl.descriptorRelated.api.DescriptorInlineChange} oInlineChange inline change object
-	 * @param {sap.ui.fl.registry.Settings} oSettings settings
 	 *
 	 * @constructor
 	 * @alias sap.ui.fl.descriptorRelated.api.DescriptorChange
@@ -54,55 +47,10 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
-	var DescriptorChange = function(mChangeFile, oInlineChange, oSettings) { //so far, parameter correspond to inline change format
+	var DescriptorChange = function(mChangeFile, oInlineChange) { //so far, parameter correspond to inline change format
 		this._mChangeFile = mChangeFile;
-		this._mChangeFile.packageName = '$TMP';
+		this._mChangeFile.packageName = '';
 		this._oInlineChange = oInlineChange;
-		this._sTransportRequest = null;
-		this._oSettings = oSettings;
-	};
-
-	/**
-	 * Set transport request (for ABAP Backend)
-	 *
-	 * @param {string} sTransportRequest transport request
-	 *
-	 * @return {Promise} resolving when setting of transport request was successful
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.rta, smart business
-	 */
-	DescriptorChange.prototype.setTransportRequest = function(sTransportRequest) {
-		try {
-			//partial check: length le 20, alphanumeric, upper case, no space not underscore - data element in ABAP: TRKORR, CHAR20
-			Utils.checkTransportRequest(sTransportRequest);
-		} catch (oError) {
-			return Promise.reject(oError);
-		}
-
-		this._sTransportRequest = sTransportRequest;
-		return Promise.resolve();
-	};
-
-	/**
-	 * Set package (for ABAP Backend)
-	 *
-	 * @param {string} sPackage package
-	 *
-	 * @return {Promise} resolving when setting of package was successful
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.rta, smart business
-	 */
-	DescriptorChange.prototype.setPackage = function(sPackage) {
-		try {
-			//partial check: length le 30, alphanumeric, upper case, / for namespace, no space, no underscore - data element in ABAP: DEVCLASS, CHAR30
-			Utils.checkPackage(sPackage);
-		} catch (oError) {
-			return Promise.reject(oError);
-		}
-		this._mChangeFile.packageName = sPackage;
-		return Promise.resolve();
 	};
 
 	/**
@@ -149,12 +97,6 @@ sap.ui.define([
 	DescriptorChange.prototype._getChangeToSubmit = function() {
 		//create Change
 		var oChange = new Change(this._getMap());
-
-		if (this._sTransportRequest) {
-			oChange.setRequest(this._sTransportRequest);
-		} else if (this._oSettings.isAtoEnabled() && LayerUtils.isCustomerDependentLayer(this._mChangeFile.layer)) {
-			oChange.setRequest('ATO_NOTIFICATION');
-		}
 		return oChange;
 	};
 
@@ -240,9 +182,8 @@ sap.ui.define([
 		mPropertyBag.layer = sLayer || 'CUSTOMER';
 
 		var mChangeFile = Change.createInitialFileContent(mPropertyBag);
-		return Settings.getInstance().then(function(oSettings) {
-			return Promise.resolve(new DescriptorChange(mChangeFile, oInlineChange, oSettings));
-		});
+
+		return Promise.resolve(new DescriptorChange(mChangeFile, oInlineChange));
 	};
 
 	return DescriptorChangeFactory;

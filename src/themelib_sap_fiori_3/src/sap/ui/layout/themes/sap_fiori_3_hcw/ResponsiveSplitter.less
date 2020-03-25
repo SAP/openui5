@@ -3,23 +3,50 @@
 /* Quartz High Contrast White theme                  */
 /* ================================================= */
 
+// ==========================================================================
+// Variables overriding
+// ==========================================================================
+
+@_sap_ui_layout_ResponsiveSplitter_PaginatorHeight: 2.75rem;
+@_sap_ui_layout_ResponsiveSplitter_PaginatorButtonWidth: 2.25rem;
+@_sap_ui_layout_ResponsiveSplitter_PaginatorButtonHeight: 2.25rem;
+@_sap_ui_layout_ResponsiveSplitter_PaginatorButtonFocusWidth: 1.875rem;
+@_sap_ui_layout_ResponsiveSplitter_PaginatorButtonFocusHeight: 2rem;
+
+// ==========================================================================
+// Variables
+// ==========================================================================
+
+@_sap_ui_layout_ResponsiveSplitter_PaginatorButtonColor: @sapUiHcReducedAltForeground;
+@_sap_ui_layout_ResponsiveSplitter_CircleColor: @sapUiHcStandardBackground;
+@_sap_ui_layout_ResponsiveSplitter_CircleBorderColor: @sapUiHcStandardForeground;
+
 .sapUiResponsiveSplitterPaginatorButton {
 	background-color: transparent;
+	position: relative;
+	top: 0.1875rem;
 
 	&:after {
-		background-color: @sapUiHcReducedAltForeground;
+		background-color: @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonColor;
 	}
 
 	&:hover {
-		background-color: @sapUiHcHighlightBackground;
+		background-color: @sapUiButtonLiteHoverBackground;
 
 		&:after {
-			background-color: @sapUiHcStandardForeground;
+			background-color: @sapUiContentContrastIconColor;
+		}
+	}
+
+	&:active {
+		background-color: @sapUiButtonLiteActiveBackground;
+
+		&:after {
+			background-color: @sapUiContentContrastIconColor;
 		}
 	}
 
 	&:focus {
-
 		&:before {
 			border: 1px dotted @sapUiContentFocusColor;
 		}
@@ -28,23 +55,37 @@
 
 .sapUiResponsiveSplitterPaginatorSelectedButton {
 	&:after {
-		background-color: @sapUiHcStandardForeground;
+		background-color: @sapUiContentContrastIconColor;
+	}
+
+	&:hover {
+		background-color: @sapUiButtonLiteHoverBackground;
+
+		&:after {
+			background-color: @sapUiContentContrastIconColor;
+		}
 	}
 }
+
+
 
 html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
 html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
 html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar,
 html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
 	& .sapUiLoSplitterBarIcon:after {
-		background-color: @sapUiHcStandardBackground;
-		border-color: @sapUiHcStandardForeground;
+		background-color: @_sap_ui_layout_ResponsiveSplitter_CircleColor;
+		border-color: @_sap_ui_layout_ResponsiveSplitter_CircleBorderColor;
 	}
 }
 
 html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar,
 html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
 	& .sapUiLoSplitterBarIcon:after {
-		background-color: @sapUiHcHighlightBackground;
+		background-color:  @sapUiButtonLiteHoverBackground;
 	}
+}
+
+.sapUiLoSplitter > .sapUiLoSplitterBar:focus {
+	background-color:  @sapUiHcStandardBackground;
 }

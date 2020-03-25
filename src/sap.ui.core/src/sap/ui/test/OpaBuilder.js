@@ -6,6 +6,7 @@ sap.ui.define(
     [
         "sap/base/util/merge",
         "sap/base/strings/capitalize",
+        "sap/base/Log",
         "sap/ui/test/Opa5",
         "sap/ui/test/actions/Action",
         "sap/ui/test/actions/Press",
@@ -18,6 +19,7 @@ sap.ui.define(
     function (
         mergeObjects,
         capitalize,
+        Log,
         Opa5,
         Action,
         Press,
@@ -122,6 +124,11 @@ sap.ui.define(
         }
 
         function _createSuccessFunction(vSuccess) {
+            if (_isOfType(vSuccess, OpaBuilder)) {
+                return function () {
+                    return vSuccess.execute();
+                };
+            }
             if (!_isOfType(vSuccess, Function)) {
                 return function () {
                     Opa5.assert.ok(true, vSuccess || "Success");
@@ -573,21 +580,20 @@ sap.ui.define(
         };
 
         /**
-         * Add an action to be performed on all matched controls. When providing an OpaBuilder, the action will execute it.
+         * Add an action to be performed on all matched controls.
          *
-         * @param {sap.ui.test.actions.Action | function | Array | sap.ui.test.OpaBuilder}
-         *            vActionsOrBuilder the action(s) to be performed on matched controls
+         * @param {sap.ui.test.actions.Action | function | Array}
+         *            vActions the action(s) to be performed on matched controls
          * @param {boolean} [bReplace] true to replace all previous defined actions, false to add it (default)
          * @returns {sap.ui.test.OpaBuilder} this OpaBuilder instance
          * @public
          */
-        OpaBuilder.prototype.do = function (vActionsOrBuilder, bReplace) {
-            if (_isOfType(vActionsOrBuilder, OpaBuilder)) {
-                return this.do(function () {
-                    return vActionsOrBuilder.execute();
-                });
+        OpaBuilder.prototype.do = function (vActions, bReplace) {
+            if (_isOfType(vActions, OpaBuilder)) {
+                Log.error("(deprecated) OpaBuilder instance is incorrectly used in .do function - use .success instead");
+                return this.success(vActions);
             }
-            return this.options({actions: bReplace ? vActionsOrBuilder : _pushToArray(vActionsOrBuilder, this._oOptions.actions)});
+            return this.options({actions: bReplace ? vActions : _pushToArray(vActions, this._oOptions.actions)});
         };
 
         /**
@@ -595,15 +601,19 @@ sap.ui.define(
          *
          * @param {sap.ui.test.matchers.Matcher | function | Array | Object}
          *            vConditions target control is checked against these given conditions
-         * @param {sap.ui.test.actions.Action | function | Array | sap.ui.test.OpaBuilder}
-         *            vSuccessBuilderOrOptions the actions to be performed when conditions are fulfilled
-         * @param {sap.ui.test.actions.Action | function | Array | sap.ui.test.OpaBuilder}
-         *            [vElseBuilderOptions] the action(s) to be performed when conditions are not fulfilled
+         * @param {sap.ui.test.actions.Action | function | Array}
+         *            vSuccessActions the actions to be performed when conditions are fulfilled
+         * @param {sap.ui.test.actions.Action | function | Array}
+         *            [vElseActions] the action(s) to be performed when conditions are not fulfilled
          * @returns {sap.ui.test.OpaBuilder} this OpaBuilder instance
          * @public
          */
-        OpaBuilder.prototype.doConditional = function (vConditions, vSuccessBuilderOrOptions, vElseBuilderOptions) {
-            return this.do(OpaBuilder.Actions.conditional(vConditions, vSuccessBuilderOrOptions, vElseBuilderOptions));
+        OpaBuilder.prototype.doConditional = function (vConditions, vSuccessActions, vElseActions) {
+            if (_isOfType(vSuccessActions, OpaBuilder) || _isOfType(vElseActions, OpaBuilder)) {
+                Log.error("(deprecated) OpaBuilder instance is incorrectly used in .doConditional function - use .success instead");
+                return this.success(OpaBuilder.Actions.conditional(vConditions, vSuccessActions, vElseActions));
+            }
+            return this.do(OpaBuilder.Actions.conditional(vConditions, vSuccessActions, vElseActions));
         };
 
         /**
@@ -659,26 +669,30 @@ sap.ui.define(
          * Executes a builder with matching controls being descendants of matching target control(s).
          * Children are any controls in the control tree beneath this target control(s).
          *
-         * @param {object | sap.ui.test.OpaBuilder} vChildBuilder the child builder or options
+         * @param {sap.ui.test.matchers.Matcher | function | Array | Object | sap.ui.test.OpaBuilder} [vChildBuilderOrMatcher] the child builder or child matcher
+         * @param {sap.ui.test.actions.Action | function | Array}
+         *                [vActions] the actions to be performed on matching child items
          * @param {boolean} [bDirect] specifies if the ancestor should be a direct ancestor (parent)
          * @returns {sap.ui.test.OpaBuilder} this OpaBuilder instance
          * @public
          */
-        OpaBuilder.prototype.doOnChildren = function (vChildBuilder, bDirect) {
-            if (!_isOfType(vChildBuilder, OpaBuilder)) {
-                vChildBuilder = new OpaBuilder(this._getOpaInstance(), vChildBuilder);
+        OpaBuilder.prototype.doOnChildren = function (vChildBuilderOrMatcher, vActions, bDirect) {
+            var aArguments = _parseArguments([[Matcher, Function, Array, Object, OpaBuilder], [Action , Function, Array], Boolean], vChildBuilderOrMatcher, vActions, bDirect);
+            vChildBuilderOrMatcher = aArguments[0];
+            vActions = aArguments[1];
+            bDirect = aArguments[2];
+            if (!_isOfType(vChildBuilderOrMatcher, OpaBuilder)) {
+                vChildBuilderOrMatcher = new OpaBuilder(this._getOpaInstance()).has(aArguments[0]);
+            }
+            if (vActions) {
+                vChildBuilderOrMatcher.do(vActions);
             }
 
-            return this.do(
-                function (oControl) {
-                    // operate on options object directly instead of vChildBuilder to not change original state
-                    var oParentOptions = this.build(),
-                        oChildOptions = vChildBuilder.build();
-                    oChildOptions.searchOpenDialogs = oParentOptions.searchOpenDialogs;
-                    oChildOptions.matchers = _pushToArray(OpaBuilder.Matchers.ancestor(oControl, bDirect), oChildOptions.matchers, true);
-                    return vChildBuilder._getOpaInstance().waitFor(oChildOptions);
-                }.bind(this)
-            );
+            return this.do(function(oControl) {
+                var oChildOptions = vChildBuilderOrMatcher.build(),
+                    vControls = OpaBuilder.Matchers.children(vChildBuilderOrMatcher, bDirect)(oControl);
+                return OpaBuilder.Actions.executor(oChildOptions.actions)(vControls);
+            });
         };
 
         /**
@@ -693,15 +707,15 @@ sap.ui.define(
         };
 
         /**
-         * Adds a success message or function.
+         * Adds a success message or function. When providing an OpaBuilder, the action will execute it.
          *
-         * @param {string | function} vSuccessMessage the message that will be shown (or function executed) on success
+         * @param {string | function | sap.ui.test.OpaBuilder} vSuccess the message that will be shown (or function executed) on success
          * @param {boolean} [bReplace] true to replace all previous defined success functions, false to add it (default)
          * @returns {sap.ui.test.OpaBuilder} this OpaBuilder instance
          * @public
          */
-        OpaBuilder.prototype.success = function (vSuccessMessage, bReplace) {
-            var fnSuccess = _createSuccessFunction(vSuccessMessage);
+        OpaBuilder.prototype.success = function (vSuccess, bReplace) {
+            var fnSuccess = _createSuccessFunction(vSuccess);
             return this.options({success: bReplace ? fnSuccess : _chainFunctions(fnSuccess, this._oOptions.success)});
         };
 
@@ -738,7 +752,7 @@ sap.ui.define(
          * Executes the definition on the given or previously defined Opa5 instance.
          *
          * @param {sap.ui.test.Opa5} [oOpaInstance] the Opa5 instance to call {@link sap.ui.test.Opa5#waitFor} on
-         * @returns {sap.ui.test.OpaBuilder} this OpaBuilder instance
+         * @returns {object} an object extending a jQuery promise, corresponding to the result of {@link sap.ui.test.Opa5#waitFor}
          * @public
          */
         OpaBuilder.prototype.execute = function (oOpaInstance) {
@@ -960,6 +974,51 @@ sap.ui.define(
                         key: oModelPath.path,
                         parameters: aParameters
                     }
+                };
+            },
+
+            /**
+             * Creates a matcher function that returns all children fulfilling given matcher(s).
+             * The result will always be an array, even if only one child was found.
+             *
+             * @param {sap.ui.test.matchers.Matcher | function | Array | Object | sap.ui.test.OpaBuilder}
+             *                [vBuilderOrMatcher] the matchers to filter aggregation items
+             * @param {boolean} [bDirect] specifies if the ancestor should be a direct ancestor (parent)
+             * @returns {function} matcher function returning all matching children
+             * @public
+             * @static
+             */
+            children: function(vBuilderOrMatcher, bDirect) {
+                var aArguments = _parseArguments([[Matcher, Function, Array, Object, OpaBuilder], Boolean], vBuilderOrMatcher, bDirect);
+                vBuilderOrMatcher = aArguments[0];
+                bDirect = aArguments[1];
+                if (!_isOfType(vBuilderOrMatcher, OpaBuilder)) {
+                    vBuilderOrMatcher = new OpaBuilder().has(vBuilderOrMatcher);
+                }
+
+                return function (oControl) {
+                    // operate on options object directly instead of builder instance to not alter its states
+                    var oChildOptions = vBuilderOrMatcher.build(),
+                        vControls = Opa5.getPlugin().getMatchingControls(oChildOptions),
+                        aMatchers = _pushToArray(OpaBuilder.Matchers.ancestor(oControl, bDirect), oChildOptions.matchers, true);
+                    return OpaBuilder.Matchers.filter(aMatchers)(vControls);
+                };
+            },
+
+            /**
+             * Creates a matcher function that checks whether one children fulfilling given matcher(s).
+             *
+             * @param {sap.ui.test.matchers.Matcher | function | Array | Object | sap.ui.test.OpaBuilder}
+             *                [vBuilderOrMatcher] the matchers to filter aggregation items
+             * @param {boolean} [bDirect] specifies if the ancestor should be a direct ancestor (parent)
+             * @returns {function} matcher function
+             * @public
+             * @static
+             */
+            childrenMatcher: function(vBuilderOrMatcher, bDirect) {
+                var fnChildren = OpaBuilder.Matchers.children(vBuilderOrMatcher, bDirect);
+                return function (oControl) {
+                    return fnChildren(oControl).length > 0;
                 };
             },
 
@@ -1263,6 +1322,29 @@ sap.ui.define(
                     } else if (fnElse) {
                         return _executeActions(fnElse, oControl);
                     }
+                };
+            },
+
+            /**
+             * Creates an action function that executes all given actions on a single or an array of controls.
+             * This method can be used as a helper for handling the different kinds of action definitions and inputs.
+             *
+             * @param {sap.ui.test.actions.Action | function | Array} vActions the actions to be executed
+             * @returns {function} an action function
+             * @public
+             * @static
+             */
+            executor: function (vActions) {
+                return function (vControls) {
+                    if (!vControls) {
+                        return;
+                    }
+                    if (_isOfType(vControls, Array)) {
+                        return vControls.map(function (oControl) {
+                            return _executeActions(vActions, oControl);
+                        });
+                    }
+                    return _executeActions(vActions, vControls);
                 };
             }
         };

@@ -138,12 +138,21 @@ sap.ui.define([
 		QUnit.test("When SettingsDialog gets initialized and open is called,", function (assert) {
 			this.oSettingsDialog.attachOpened(function () {
 				assert.ok(true, "then dialog pops up,");
-				assert.strictEqual(this.oSettingsDialog._oDialog.getTitle(), oTextResources.getText("IFRAME_SETTINGS_DIALOG_TITLE"), "then the title is set");
+				assert.strictEqual(this.oSettingsDialog._oDialog.getTitle(), oTextResources.getText("IFRAME_SETTINGS_DIALOG_TITLE"), "then the correct title is set");
 				assert.strictEqual(this.oSettingsDialog._oDialog.getContent().length, 3, "then 3 SimpleForms are added ");
 				assert.strictEqual(this.oSettingsDialog._oDialog.getButtons().length, 3, "then 3 buttons are added");
 				clickOnCancel();
 			}, this);
 			return this.oSettingsDialog.open();
+		});
+
+		QUnit.test("When SettingsDialog gets initialized and open is called in Update Mode,", function (assert) {
+			this.oSettingsDialog.attachOpened(function () {
+				assert.ok(true, "then dialog pops up,");
+				assert.strictEqual(this.oSettingsDialog._oDialog.getTitle(), oTextResources.getText("IFRAME_SETTINGS_DIALOG_UPDATE_TITLE"), "then the correct title is set");
+				clickOnCancel();
+			}, this);
+			return this.oSettingsDialog.open({updateMode: true});
 		});
 
 		QUnit.test("When SettingsDialog is opened then there should be no error value state", function (assert) {

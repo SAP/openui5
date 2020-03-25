@@ -195,6 +195,7 @@ function(
 	 * @private
 	 */
 	NotificationListGroup.prototype.exit = function() {
+		NotificationListBase.prototype.exit.apply(this, arguments);
 		if (this._groupTitleInvisibleText) {
 			this._groupTitleInvisibleText.destroy();
 			this._groupTitleInvisibleText = null;

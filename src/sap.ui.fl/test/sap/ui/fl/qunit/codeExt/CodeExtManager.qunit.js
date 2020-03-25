@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/codeExt/CodeExtManager",
-	"sap/ui/fl/write/_internal/CompatibilityConnector",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CodeExtManager,
-	CompatibilityConnector,
+	Storage,
 	Utils,
 	Layer,
 	LayerUtils,
@@ -203,8 +203,10 @@ sap.ui.define([
 				codeRef: sCodeRef
 			};
 
-			var aExpectedPayload = [
-				{
+			var aExpectedPayload = {
+				layer: "VENDOR",
+				transport: "myTransportId",
+				flexObjects: [{
 					appDescriptorChange: false,
 					fileName: sGeneratedId,
 					fileType: "change",
@@ -237,8 +239,7 @@ sap.ui.define([
 					validAppVersions: {},
 					jsOnly: false,
 					variantReference: ""
-				},
-				{
+				}, {
 					appDescriptorChange: false,
 					fileName: sGeneratedId,
 					fileType: "change",
@@ -271,19 +272,18 @@ sap.ui.define([
 					validAppVersions: {},
 					jsOnly: false,
 					variantReference: ""
-				}
-			];
+				}]
+			};
 
-			var oConnectorCreateStub = sandbox.stub(CompatibilityConnector, "create");
+			var oConnectorCreateStub = sandbox.stub(Storage, "write");
 
 			CodeExtManager.createCodeExtChanges(aChanges, mOptions);
 
-			assert.ok(oConnectorCreateStub.calledOnce, "the sending was initiated");
+			assert.equal(oConnectorCreateStub.callCount, 1, "the sending was initiated");
 
 			var oCallArguments = oConnectorCreateStub.getCall(0).args;
 
 			assert.deepEqual(oCallArguments[0], aExpectedPayload, "the payload was built correctly");
-			assert.equal(oCallArguments[1], mOptions.transportId, "the transportId was sent correctly");
 		});
 
 		QUnit.test("deleteCodeExtChange throws an error if the passed object is not an code extension", function(assert) {

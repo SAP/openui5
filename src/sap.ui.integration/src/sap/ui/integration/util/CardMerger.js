@@ -6,12 +6,11 @@ sap.ui.define(["sap/base/util/merge"], function(merge) {
 
 	var CardMerger = {
 		mergeCardDelta: function(oManifest, aChanges) {
-			var oInitialManifest = merge({}, oManifest);
+			var oInitialManifest = merge({}, oManifest),
+				sSection = oInitialManifest["sap.card"] ? "sap.card" : "sap.widget";
+
 			aChanges.forEach(function(oChange) {
-				var oManifestDelta = {
-					"sap.card": oChange.content
-				};
-				merge(oInitialManifest, oManifestDelta);
+				merge(oInitialManifest[sSection], oChange.content);
 			});
 			return oInitialManifest;
 		}

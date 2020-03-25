@@ -47,10 +47,16 @@ sap.ui.define(function() {
 		});
 	});
 
-	QUnit.test("Complex test: load sap.viz", function(assert){
-		return requireP(["sap/ui/core/Core"]).then(function(imports) {
-			sap.ui.getCore().boot();
-			return sap.ui.getCore().loadLibrary("sap.viz", { async: true })
+	QUnit.test("Complex test: load sap.viz", function(assert) {
+		return requireP(["sap/ui/core/Core", "sap/ui/thirdparty/jquery"]).then(function(imports) {
+			return Promise.resolve(
+				imports[1].ajax({
+					url: sap.ui.require.toUrl("sap/viz/library.js"),
+					method: "HEAD"
+				})
+			).then(function() {
+				sap.ui.getCore().boot();
+				return sap.ui.getCore().loadLibrary("sap.viz", { async: true })
 				.then(function() {
 					return new Promise(function(resolve, reject) {
 						require(["css"], function(css) {
@@ -59,6 +65,9 @@ sap.ui.define(function() {
 						}, reject);
 					});
 				});
+			}).catch(function() {
+				assert.ok(true, "sap.viz is not available in the current environment.");
+			});
 		});
 	});
 

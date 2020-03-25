@@ -131,6 +131,12 @@ sap.ui.define([
 						experimental: true
 					},
 					{
+						title: 'Destinations',
+						target: 'learnDetail',
+						key: 'destinations',
+						topicTitle: 'Integration Card Features'
+					},
+					{
 						title: 'Dynamic Counter',
 						target: 'learnDetail',
 						key: 'dynamicCounter',

@@ -27,11 +27,6 @@
 				<IconTabFilter text="Demo Apps" />
 			</items>
 		</IconTabHeader>
-		<ToolbarSpacer>
-			<layoutData>
-				<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="16px" />
-			</layoutData>
-		</ToolbarSpacer>
 		<Button icon="sap-icon://search" type="Transparent">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="NeverOverflow" />

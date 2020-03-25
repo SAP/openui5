@@ -1,0 +1,34 @@
+[
+  {
+	"Name": "Laurent Dubois",
+	"JobTitle": "Accounts Payable Manager",
+	"Photo": "./images/Laurent_Dubois.png",
+	"Icon": "sap-icon://activity-individual",
+	"JobResponsibilities": "I am Laurent. I put great attention to detail.",
+	"HireDate": "Date(1371020400000)"
+  },
+  {
+	"Name": "Sabine Mayer",
+	"JobTitle": "Configuration Expert",
+	"Photo": "./images/Sabine_Mayer.png",
+	"Icon": "sap-icon://settings",
+	"JobResponsibilities": "I am Sabine. And can't wait to get to know the team.",
+	"HireDate": "Date(1376290800000)"
+  },
+  {
+	"Name": "Alain Chevalier",
+	"JobTitle": "Credit Analyst",
+	"Photo": "./images/Alain_Chevalier.png",
+	"Icon": "sap-icon://manager-insight",
+	"JobResponsibilities": "I am Alain. I put great attention to detail.",
+	"HireDate": "Date(1332403200000)"
+  },
+  {
+	"Name": "Monique Legrand",
+	"JobTitle": "Accountant Manager",
+	"Photo": "./images/Monique_Legrand.png",
+	"JobResponsibilities": "I am Monique. And i am the new head of Accounting.",
+	"Icon": "sap-icon://account",
+	"HireDate": "Date(1422777600000)"
+  }
+]

@@ -17,22 +17,28 @@
 						showSubHeader="{= ${/selectedSetPreviewKey} === 'availableRules' }">
 					<m:headerContent>
 						<m:Bar>
-							<m:contentLeft>
-								<m:IconTabHeader
-										id="ruleSetsView"
-										select="onSelectedRuleSets"
-										selectedKey="{/selectedSetPreviewKey}"
-										class="customIconTabHeader">
+							<m:contentMiddle>
+								<m:HBox fitContainer="true" renderType="Bare" class="customHBox">
 									<m:items>
-										<m:IconTabFilter id="availableRulesId" key="availableRules" text="Available Rulesets" />
-										<m:IconTabFilter key="additionalRulesets" text="Additional Rulesets" />
+										<m:IconTabHeader
+												id="ruleSetsView"
+												select="onSelectedRuleSets"
+												selectedKey="{/selectedSetPreviewKey}"
+												class="customIconTabHeader">
+											<m:layoutData>
+												<m:FlexItemData growFactor="1" minWidth="0">
+												</m:FlexItemData>
+											</m:layoutData>
+											<m:items>
+												<m:IconTabFilter id="availableRulesId" key="availableRules" text="Available Rulesets" />
+												<m:IconTabFilter key="additionalRulesets" text="Additional Rulesets" />
+											</m:items>
+										</m:IconTabHeader>
+										<m:Button class="supportAnalyzeButton" text="Analyze" press="onAnalyze" type="Emphasized"/>
+										<m:Button class="supportSettingsButton" icon="sap-icon://settings" press="onAnalyzeSettings" type="Emphasized"/>
 									</m:items>
-								</m:IconTabHeader>
-							</m:contentLeft>
-							<m:contentRight >
-								<m:Button class="supportAnalyzeButton" text="Analyze" press="onAnalyze" type="Emphasized"/>
-								<m:Button class="supportSettingsButton" icon="sap-icon://settings" press="onAnalyzeSettings" type="Emphasized"/>
-							</m:contentRight>
+								</m:HBox>
+							</m:contentMiddle>
 						</m:Bar>
 					</m:headerContent>
 						<m:subHeader>

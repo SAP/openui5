@@ -12,27 +12,18 @@
 @_sap_m_Dialog_SubHeaderHeight: 2.75rem;
 @_sap_m_Dialog_InfoDesignBarHeight: 2.75rem;
 
-@_sap_m_Dialog_HeaderShadow: 0 0 0.25rem 0 fade(@sapUiContentShadowColor, 15), inset 0 -0.0625rem 0 0 @sapUiPageHeaderBorderColor;
-@_sap_m_Dialog_SuccessHeaderShadow: inset 0 -0.0625rem @sapUiSuccessBorder, @_sap_m_Dialog_HeaderShadow;
-@_sap_m_Dialog_ErrorHeaderShadow: inset 0 -0.0625rem @sapUiErrorBorder, @_sap_m_Dialog_HeaderShadow;
-@_sap_m_Dialog_WarningHeaderShadow: inset 0 -0.0625rem @sapUiWarningBorder, @_sap_m_Dialog_HeaderShadow;
-@_sap_m_Dialog_InformationHeaderShadow: inset 0 -0.0625rem @sapHighlightColor, @_sap_m_Dialog_HeaderShadow;
+@_sap_m_Dialog_NoStateHeaderShadow: @sapUiShadowHeader;
+@_sap_m_Dialog_SuccessHeaderShadow: inset 0 -0.0625rem @sapUiSuccessBorder, @sapUiShadowHeader;
+@_sap_m_Dialog_ErrorHeaderShadow: inset 0 -0.0625rem @sapUiErrorBorder, @sapUiShadowHeader;
+@_sap_m_Dialog_WarningHeaderShadow: inset 0 -0.0625rem @sapUiWarningBorder, @sapUiShadowHeader;
+@_sap_m_Dialog_InformationHeaderShadow: inset 0 -0.0625rem @sapUiInformationBorder, @sapUiShadowHeader;
 
+// This parameter is used in sap.m.Select. TODO: remove it when it is removed from there.
 @_sap_m_Dialog_HeaderShadowColor: darken(@sapUiGroupContentBackground, 8);
 
 .sapMDialog.sapMPopup-CTX > header .sapMHeader-CTX,
 .sapMDialog.sapMPopup-CTX > header .sapMSubHeader-CTX {
 	background-color: @sapUiGroupContentBackground;
-}
-
-.sapMDialog.sapMDialogWithSubHeader > header > .sapMIBar,
-.sapMDialog > header > .sapMIBar {
-	box-shadow: none;
-}
-
-.sapMDialog:not(.sapMDialogWithSubHeader) > header > .sapMIBar,
-.sapMDialog > header:last-of-type .sapMIBar {
-	box-shadow: @_sap_m_Dialog_HeaderShadow;
 }
 
 .sapMDialog > header.sapMDialogTitle .sapMDialogIcon.sapUiIcon {
@@ -46,6 +37,10 @@
 
 .sapMDialogBeginButton, .sapMDialogEndButton {
 	min-width: 4rem;
+}
+
+.sapMDialogTitle {
+	z-index: 3; // to hide the shadow from the header when there is sub-header
 }
 
 // buttons on phone must be to the right side (in LTR mode)

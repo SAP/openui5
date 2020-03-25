@@ -214,9 +214,15 @@ sap.ui.define([
 	 * Handling of documentation link clicks - some times only scrolling is needed without navigation
 	 */
 	DocumentationRouter.prototype.linkClickHandler = function (oEvent) {
+		if (oEvent.defaultPrevented) {
+			oEvent.preventDefault();
+			return;
+		}
+
 		var oElement = oEvent.target,
 			$Element = jQuery(oElement),
 			oAnchorElement,
+			bCtrlHold = oEvent.ctrlKey || oEvent.metaKey,
 			sTarget;
 
 		if (!oElement) {
@@ -232,6 +238,12 @@ sap.ui.define([
 				oEvent.preventDefault();
 			}
 			return; // This is handled in the SubApiDetail controller
+		}
+
+		if (bCtrlHold) {
+			// if ctrl or command is pressed we want
+			// the default browser behavior (open in new tab)
+			return;
 		}
 
 		oAnchorElement = getClosestParentLink(oElement);
@@ -275,6 +287,7 @@ sap.ui.define([
 		var iPressedButton = oEvent.buttons,
 			oTarget = oEvent.target,
 			oAnchorElement = getClosestParentLink(oTarget),
+			bCtrlHold = oEvent.ctrlKey || oEvent.metaKey,
 			sTargetHref;
 
 		if (oAnchorElement) {
@@ -287,8 +300,9 @@ sap.ui.define([
 		}
 
 		// When context menu of the Browser is opened or when the aux button is clicked,
+		// or if the ctrl is hold and left mouse button is clicked
 		// we change the href of the anchor element
-		if (iPressedButton === 2 || iPressedButton === 4) {
+		if (iPressedButton === 2 || iPressedButton === 4 || (bCtrlHold && iPressedButton === 1)) {
 			sTargetHref = this.convertToStaticFormat(sTargetHref);
 			oAnchorElement.setAttribute("href", sTargetHref);
 		}
@@ -306,7 +320,7 @@ sap.ui.define([
 
 	DocumentationRouter.prototype.attachGlobalLinkHandler = function () {
 		if (!this._bGlobalHandlerAttached) {
-			document.body.addEventListener("click", this.linkClickHandler.bind(this), true);
+			document.body.addEventListener("click", this.linkClickHandler.bind(this));
 			window['sap-ui-documentation-static'] && document.body.addEventListener("mousedown", this.mouseDownClickHandler.bind(this), true);
 			this._bGlobalHandlerAttached = true;
 		}

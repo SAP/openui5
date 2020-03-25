@@ -475,28 +475,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Display or hide the column from given table via checking media query changes
-	 *
-	 * @param {Object} oTableDomRef Table DOM reference
-	 * @protected
-	 */
-	Column.prototype.setDisplayViaMedia = function(oTableDomRef) {
-		var oParent = this.getParent(),
-			bDisplay = this._media && this._media.matches;
-
-		if (!this.getDemandPopin() && this._screen && oParent && oParent.setTableHeaderVisibility) {
-			// this means CSS media queries already change the column visibility
-			// let the parent know the visibility change
-			// make it sure rendering phase is done with timeout
-			setTimeout(function() {
-				oParent.setTableHeaderVisibility(bDisplay);
-			}, 0);
-		} else {
-			this.setDisplay(oTableDomRef, bDisplay);
-		}
-	};
-
 	Column.prototype.setWidth = function(sWidth) {
 		var oTable = this.getTable();
 		if (!oTable) {

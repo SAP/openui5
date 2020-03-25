@@ -18,11 +18,12 @@
 				"1.5.0",
 				"1.6.0",
 				"1.7.0",
-				"1.8.0"
+				"1.8.0",
+				"1.9.0"
 			]
 		},
 		"configuration": {
-			"description": "Represents configuration with parameters, which can be used inside the Card",
+			"description": "Represents configuration with parameters and destinations, which can be used inside the card",
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
@@ -30,7 +31,14 @@
 					"description": "Map of parameters.",
 					"type": "object",
 					"additionalProperties": {
-						"$ref": "#/definitions/configurationParameter"
+						"$ref": "#/definitions/Configuration.Parameter"
+					}
+				},
+				"destinations": {
+					"description": "Describes what destinations are used by the card.",
+					"type": "object",
+					"additionalProperties": {
+						"$ref": "#/definitions/Configuration.Destinations"
 					}
 				}
 			}
@@ -1262,9 +1270,7 @@
 		},
 		"ContentType.AdaptiveCard": {
 			"description": "Represents AdaptiveCard content",
-			"allOf": [
-				{ "$ref": "http://adaptivecards.io/schemas/adaptive-card.json#/definitions/AdaptiveCard" }
-			]
+			"$ref": "http://adaptivecards.io/schemas/adaptive-card.json#/definitions/AdaptiveCard"
 		},
 		"progressIndicator": {
 			"description": "Represents progress indicator attributes",
@@ -1620,7 +1626,7 @@
 				}
 			]
 		},
-		"configurationParameter": {
+		"Configuration.Parameter": {
 			"description": "Represents configuration parameter.",
 			"type": "object",
 			"additionalProperties": false,
@@ -1639,6 +1645,17 @@
 						"date",
 						"datetime"
 					]
+				}
+			}
+		},
+		"Configuration.Destinations": {
+			"description": "Represents a configuration for a cloud platform destination.",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"name": {
+					"description": "The name of the destination. Use the same name which is used in Cloud Platform.",
+					"type": "string"
 				}
 			}
 		}

@@ -634,7 +634,6 @@ sap.ui.define([
 			content: [oSplitter]
 		});
 
-		// var done = assert.async();
 		var oResizeSpy = sinon.spy(oSplitter, "_resize");
 		var done = assert.async();
 
@@ -647,8 +646,8 @@ sap.ui.define([
 			assert.strictEqual(oResizeSpy.callCount, 2, "Should not call resize infinite times.");
 
 			// Clean up
-			// oPanel.destroy();
+			oPanel.destroy();
 			done();
-		}, 1000);
+		}, 200);
 	});
 });

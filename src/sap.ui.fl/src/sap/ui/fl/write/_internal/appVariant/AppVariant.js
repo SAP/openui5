@@ -20,7 +20,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * App variant API
+	 * App variant.
 	 *
 	 * @param {object} mPropertyBag Parameters
 	 * @param {string} mPropertyBag.id ID of the app variant to be provided for a new app variant and for deleting an app variant
@@ -185,7 +185,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a copy of the JSON object of the app variant
+	 * Returns a copy of the JSON object of the app variant.
 	 *
 	 * @return {object} Copy of JSON object of the app variant
 	 *
@@ -205,7 +205,7 @@ sap.ui.define([
 					fileType: "appdescr_variant",
 					namespace: this.getNamespace(),
 					layer: this._oDefinition.layer,
-					packageName: this._oDefinition.package ? this._oDefinition.package : "",
+					packageName: this._oDefinition.packageName ? this._oDefinition.packageName : "",
 					reference: this._oDefinition.reference,
 					id: this._oDefinition.id,
 					content: this._oDefinition.content || []
@@ -223,7 +223,7 @@ sap.ui.define([
 					fileType: this._oDefinition.fileType,
 					namespace: this._oDefinition.namespace,
 					layer: this._oDefinition.layer,
-					packageName: this._oDefinition.package,
+					packageName: this._oDefinition.packageName,
 					reference: this._oDefinition.reference,
 					id: this._oDefinition.id,
 					content: this._oDefinition.content

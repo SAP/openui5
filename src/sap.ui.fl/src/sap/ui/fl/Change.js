@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/Settings",
 	"sap/base/Log",
-	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
+	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/base/util/includes"
 ], function (
 	jQuery,
@@ -20,7 +20,7 @@ sap.ui.define([
 	LayerUtils,
 	Settings,
 	Log,
-	DescriptorInlineChangeFactory,
+	DescriptorChangeTypes,
 	includes
 ) {
 	"use strict";
@@ -49,6 +49,7 @@ sap.ui.define([
 			this._bUserDependent = (oFile.layer === Layer.USER);
 			this._vRevertData = null;
 			this._aUndoOperations = null;
+			this._oExtensionPointInfo = null;
 			this.setState(Change.states.NEW);
 			this.setModuleName(oFile.moduleName);
 			this.setInitialApplyState();
@@ -119,7 +120,17 @@ sap.ui.define([
 
 	Change.prototype.setInitialApplyState = function() {
 		this._aQueuedProcesses = [];
+		delete this._ignoreOnce;
 		this.setApplyState(Change.applyState.INITIAL);
+	};
+
+	Change.prototype.isInInitialState = function() {
+		return (this._aQueuedProcesses.length === 0) && (this.getApplyState() === Change.applyState.INITIAL);
+	};
+
+	Change.prototype.isValidForDependencyMap = function() {
+		//Change without id in selector should be skipped from adding dependencies process
+		return this._oDefinition.selector && this._oDefinition.selector.id;
 	};
 
 	Change.prototype.startApplying = function() {
@@ -452,6 +463,10 @@ sap.ui.define([
 	 */
 	Change.prototype.getSelector = function () {
 		return this._oDefinition.selector;
+	};
+
+	Change.prototype.setSelector = function (oSelector) {
+		this._oDefinition.selector = oSelector;
 	};
 
 	/**
@@ -973,6 +988,14 @@ sap.ui.define([
 		this._aUndoOperations = aData;
 	};
 
+	Change.prototype.getExtensionPointInfo = function() {
+		return this._oExtensionPointInfo;
+	};
+
+	Change.prototype.setExtensionPointInfo = function(oExtensionPointInfo) {
+		this._oExtensionPointInfo = oExtensionPointInfo;
+	};
+
 	/**
 	 * Resets the undo operations
 	 * @public
@@ -1057,7 +1080,7 @@ sap.ui.define([
 			jsOnly: oPropertyBag.jsOnly || false,
 			variantReference: oPropertyBag.variantReference || "",
 			// since not all storage implementations know about all app descriptor change types, we store a flag if this change type changes a descriptor
-			appDescriptorChange: includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oPropertyBag.changeType)
+			appDescriptorChange: includes(DescriptorChangeTypes.getChangeTypes(), oPropertyBag.changeType)
 		};
 
 		return oNewFile;

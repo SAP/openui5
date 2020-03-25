@@ -1064,7 +1064,28 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 		 * Contrast color.
 		 * @public
 		 */
-		Contrast : "Contrast"
+		Contrast : "Contrast",
+
+		/**
+		 * Color that indicates an icon which isn't interactive
+		 * @public
+		 * @since 1.76
+		 */
+		NonInteractive : "NonInteractive",
+
+		/**
+		 * Color for icon used in a Tile
+		 * @public
+		 * @since 1.76
+		 */
+		Tile : "Tile",
+
+		/**
+		 * Color for icon used as a marker
+		 * @public
+		 * @since 1.76
+		 */
+		Marker : "Marker"
 
 	};
 
@@ -1122,6 +1143,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	 * @enum {string}
 	 * @public
 	 * @since 1.62.0
+	 * @see {@link fiori:/how-to-use-semantic-colors/ Semantic Colors}
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.IndicationColor = {
@@ -1708,6 +1730,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	 *
 	 * @enum {string}
 	 * @public
+	 * @see {@link fiori:/how-to-use-semantic-colors/ Semantic Colors}
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @since 1.0
 	 */

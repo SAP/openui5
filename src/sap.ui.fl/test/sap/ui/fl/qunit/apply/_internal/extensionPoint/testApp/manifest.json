@@ -1,0 +1,38 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.ui.fl.qunit.extensionPoint.testApp",
+		"type": "application",
+		"title": "fl lib test extensionPoint component",
+		"description": "",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"ach": "",
+		"crossNavigation": {
+			"inbounds": {}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.fl.qunit.extensionPoint.testApp.view.Main",
+			"type": "XML",
+			"id": "mainView"
+		},
+		"dependencies": {
+			"minUI5Version": "1.46",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.layout": {}
+			}
+		}
+	}
+}

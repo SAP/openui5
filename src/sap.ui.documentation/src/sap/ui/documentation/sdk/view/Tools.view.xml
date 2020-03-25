@@ -254,7 +254,7 @@
 									class="sapUiMediumMarginEnd"/>
 								<Link text="Run Integration Tests"
 									target="_blank"
-									href="test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests.qunit.html"
+									href="test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests1.qunit.html"
 									class="sapUiMediumMarginEnd"/>
 								<Link text="Run Unit Tests"
 									target="_blank"

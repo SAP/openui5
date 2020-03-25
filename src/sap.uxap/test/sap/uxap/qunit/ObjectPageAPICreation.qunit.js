@@ -615,65 +615,54 @@ function (
 		var oObjectPage = this.oObjectPage,
 			oFirstSection = this.oObjectPage.getSections()[0],
 			oSecondSection = this.oSecondSection,
-			oSecondPage = new Page("page2"),
-			oNavCont = new NavContainer({ pages: [oObjectPage, oSecondPage]}),
+			oSpy = sinon.spy(oObjectPage, "_scrollTo"),
+			sOrigDisplay,
 			oExpected,
 			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
 
+		oObjectPage.setUseIconTabBar(false);
+		oObjectPage.setHeaderTitle(oFactory.getObjectPageDynamicHeaderTitle());
+		oObjectPage.addHeaderContent(oFactory.getHeaderContent());
+
 		// add header content
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
-			setTimeout(function () {
-				oObjectPage.setUseIconTabBar(false);
-				oObjectPage.setHeaderTitle(oFactory.getHeaderTitle());
-				oObjectPage.addHeaderContent(oFactory.getHeaderContent());
-			}, 500);
-		});
-
-		setTimeout(function () {
-
 			// initially, the second section is selected (from the module setup)
 			oExpected = {
 				oSelectedSection: oSecondSection,
 				sSelectedTitle: oSecondSection.getSubSections()[0].getTitle()
 			};
 			sectionIsSelected(oObjectPage, assert, oExpected);
+			assert.equal(oObjectPage._bHeaderExpanded, false, "Header is snapped");
+			sOrigDisplay = oObjectPage.getDomRef().style.display;
 
-			setTimeout(function() {
-				assert.equal(oObjectPage._bHeaderExpanded, false, "Header is snapped");
-			}, 100);
+			// Act
+			oObjectPage.getDomRef().style.display = "none";
+			oObjectPage.setSelectedSection(null);
 
-			// hide the objectPage (navigate to another page)
-			oNavCont.to("page2");
-			oNavCont.attachEventOnce("afterNavigate", function() {
-
-				setTimeout(function() { // allow the ResizeHandler to detect the change
-					// Act: unset the currently selected section (while the page is hidden)
-					oObjectPage.setSelectedSection(null);
-
-					// return to show the objectpage again (to check if selectedSection was reset to the first visible section)
-					oNavCont.back();
-					oNavCont.attachEventOnce("afterNavigate", function() {
-						setTimeout(function() { // allow the ResizeHandler to detect the change
-							// Check: the selection moved to the first visible section
-							oExpected = {
-								oSelectedSection: oFirstSection,
-								sSelectedTitle: oFirstSection.getSubSections()[0].getTitle() //subsection is promoted
-							};
-							sectionIsSelected(oObjectPage, assert, oExpected);
-							assert.equal(oObjectPage._bHeaderExpanded, true, "Header is expnded");
-							assert.equal(oObjectPage._$opWrapper.scrollTop(), 0, "page is scrolled to top");
-
-							// cleanup
-							oNavCont.destroy();
-							done();
-						}, 500);
-					});
-				}, 500);
+			// Restore the page visibility
+			oSpy.reset();
+			oObjectPage.getDomRef().style.display = sOrigDisplay;
+			oObjectPage._onUpdateScreenSize({ // mock resize handler call after size restored
+				size: { width: 1000, height: 1000 },
+				oldSize: { width: 0, height: 0 }
 			});
+			setTimeout(function() {
+				// Check: the selection moved to the first visible section
+				oExpected = {
+					oSelectedSection: oFirstSection,
+					sSelectedTitle: oFirstSection.getSubSections()[0].getTitle() //subsection is promoted
+				};
+				sectionIsSelected(oObjectPage, assert, oExpected);
+				assert.strictEqual(oObjectPage._bHeaderExpanded, true, "Header is expnded");
+				assert.ok(oSpy.calledWith(0, 0), "page is scrolled to top");
 
-		}, this.iLoadingDelay);
+				// cleanup
+				oObjectPage.destroy();
+				done();
+			}, oObjectPage._getDOMCalculationDelay());
+		});
 
-		helpers.renderObject(oNavCont);
+		helpers.renderObject(oObjectPage);
 	});
 
 	QUnit.test("unset selected section before layout adjusted", function (assert) {

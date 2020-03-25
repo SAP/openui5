@@ -369,11 +369,11 @@ sap.ui.define([
 		switch (true) {
 			case (iPxIconSize >= 32):
 				return "L";
-			case (this._iPxIconSize >= 22):
+			case (iPxIconSize >= 22):
 				return "M";
-			case (this._iPxIconSize >= 16):
+			case (iPxIconSize >= 16):
 				return "S";
-			case (this._iPxIconSize >= 12):
+			case (iPxIconSize >= 12):
 				return "XS";
 			default:
 				return "M";

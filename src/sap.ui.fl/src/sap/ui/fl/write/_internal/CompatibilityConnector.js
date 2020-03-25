@@ -4,27 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/Storage",
-	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/FakeLrepConnector"
+	"sap/ui/fl/write/_internal/Storage"
 ], function(
 	ApplyStorage,
-	WriteStorage,
-	FakeLrepConnector
+	WriteStorage
 ) {
 	"use strict";
-
-	/**
-	 * Checks if the FakeLrepConnector has a set function for the given name which should be called instead of the default
-	 * functionality in the flow.
-	 *
-	 * @param sMethodName Name of the function in the FakeLrepConnector.prototype
-	 * @returns {boolean} Flag if the method was overwritten
-	 * @private
-	 */
-	function _isMethodOverwritten(sMethodName) {
-		return !!FakeLrepConnector.prototype[sMethodName];
-	}
-
 	function _formatFlexData(mFlexData) {
 		return {
 			changes: mFlexData,
@@ -65,10 +50,6 @@ sap.ui.define([
 	CompatibilityConnector.loadChanges = function(mComponent, mPropertyBag) {
 		mPropertyBag = mPropertyBag || {};
 
-		if (_isMethodOverwritten("loadChanges")) {
-			return FakeLrepConnector.prototype.loadChanges(mComponent, mPropertyBag);
-		}
-
 		if (mPropertyBag.partialFlexData) {
 			return ApplyStorage.completeFlexData({
 				reference: mComponent.name,
@@ -95,9 +76,6 @@ sap.ui.define([
 	 * @returns {Promise} Returns a Promise with the settings response
 	 */
 	CompatibilityConnector.loadSettings = function() {
-		if (_isMethodOverwritten("loadSettings")) {
-			return FakeLrepConnector.prototype.loadSettings();
-		}
 		return WriteStorage.loadFeatures();
 	};
 
@@ -113,10 +91,6 @@ sap.ui.define([
 	 * @returns {Promise} Resolve if successful, rejects with errors
 	 */
 	CompatibilityConnector.create = function(vFlexObjects, sChangelist, bIsVariant, bDraft) {
-		if (_isMethodOverwritten("create")) {
-			return FakeLrepConnector.prototype.create(vFlexObjects, sChangelist, bIsVariant);
-		}
-
 		var aFlexObjects = vFlexObjects;
 		if (!Array.isArray(aFlexObjects)) {
 			aFlexObjects = [vFlexObjects];
@@ -141,10 +115,6 @@ sap.ui.define([
 	 * @returns {Promise<object>} Returns the result from the request
 	 */
 	CompatibilityConnector.update = function(oFlexObject, sChangeList) {
-		if (_isMethodOverwritten("update")) {
-			return FakeLrepConnector.prototype.update(oFlexObject, sChangeList);
-		}
-
 		return WriteStorage.update({
 			flexObject: oFlexObject,
 			layer: oFlexObject.layer,
@@ -163,10 +133,6 @@ sap.ui.define([
 	 * @returns {Promise<object>} Returns the result from the request
 	 */
 	CompatibilityConnector.deleteChange = function(oFlexObject, sChangeList) {
-		if (_isMethodOverwritten("deleteChange")) {
-			return FakeLrepConnector.prototype.deleteChange(oFlexObject, sChangeList);
-		}
-
 		return WriteStorage.remove({
 			flexObject: oFlexObject,
 			layer: oFlexObject.layer,
@@ -187,10 +153,6 @@ sap.ui.define([
 	 * @returns {Promise<object>} Promise resolves as soon as the writing was completed
 	 */
 	CompatibilityConnector.getFlexInfo = function(mPropertyBag) {
-		if (_isMethodOverwritten("getFlexInfo")) {
-			return FakeLrepConnector.prototype.getFlexInfo(mPropertyBag);
-		}
-
 		return WriteStorage.getFlexInfo(mPropertyBag);
 	};
 
@@ -211,9 +173,6 @@ sap.ui.define([
 	 * @returns {Promise<object>} Returns the result from the request
 	 */
 	CompatibilityConnector.resetChanges = function(mParameters) {
-		if (_isMethodOverwritten("resetChanges")) {
-			return FakeLrepConnector.prototype.resetChanges(mParameters);
-		}
 		return WriteStorage.reset(mParameters);
 	};
 

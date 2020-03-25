@@ -1,5 +1,6 @@
 {
 	"sap.app": {
+		"id": "cardsdemo.samples.list2",
 		"type": "card"
 	},
 	"sap.card": {
@@ -30,7 +31,7 @@
 			},
 			"item": {
 				"title": {
-					"label": "{{title_label}}",
+					"label": "Title",
 					"value": "{Name}"
 				},
 				"highlight": "{state}",

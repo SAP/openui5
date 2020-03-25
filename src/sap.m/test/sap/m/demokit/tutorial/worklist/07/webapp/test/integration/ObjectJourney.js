@@ -28,11 +28,8 @@ sap.ui.define([
 	opaTest("Should start the app with remembered item", function (Given, When, Then) {
 		// Arrangements
 		Given.iRestartTheAppWithTheRememberedItem({
-			delay: 1000,
-			autoWait: false
+			delay: 1000
 		});
-		//Actions
-		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
 
 		// Assertions
 		Then.onTheObjectPage.iShouldSeeTheObjectViewsBusyIndicator().

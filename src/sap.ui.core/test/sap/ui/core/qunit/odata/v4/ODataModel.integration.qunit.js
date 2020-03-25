@@ -23943,6 +23943,7 @@ sap.ui.define([
 	// Additionally we show that it is possible to prevent a PATCH request by a binding parameter
 	// $$noPatch: true
 	// JIRA: CPOUI5ODATAV4-53
+	// BCP: 2070052679 - allow to set a value for a property beneath a null :1 navigation property
 	QUnit.test("CPOUI5ODATAV4-14", function (assert) {
 		var oBinding,
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
@@ -23950,16 +23951,21 @@ sap.ui.define([
 <FlexBox binding="{/TEAMS(\'42\')}" id="form">\
 	<Input id="name" value="{Name}"/>\
 	<Input id="budget" value="{path : \'Budget\', parameters : {$$noPatch : true}}" />\
+	<Input id="teamId"\
+		value="{path : \'TEAM_2_MANAGER/TEAM_ID\', parameters : {$$noPatch : true}}" />\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("TEAMS('42')?$select=Budget,Name,Team_Id", {
+		this.expectRequest("TEAMS('42')?$select=Budget,Name,Team_Id"
+				+ "&$expand=TEAM_2_MANAGER($select=ID,TEAM_ID)", {
 				Budget : 1234,
 				Name : "Team #1",
-				Team_Id : "42"
+				Team_Id : "42",
+				TEAM_2_MANAGER : null
 			})
 			.expectChange("budget", "1,234")
-			.expectChange("name", "Team #1");
+			.expectChange("name", "Team #1")
+			.expectChange("teamId", null);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oBinding = that.oView.byId("form").getObjectBinding();
@@ -23973,10 +23979,12 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectRequest("TEAMS('42')?$select=Budget,Name,Team_Id", {
+			that.expectRequest("TEAMS('42')?$select=Budget,Name,Team_Id"
+					+ "&$expand=TEAM_2_MANAGER($select=ID,TEAM_ID)", {
 					Budget : 1234,
 					Name : "Team #1",
-					Team_Id : "42"
+					Team_Id : "42",
+					TEAM_2_MANAGER : null
 				})
 				.expectChange("name", "Team #1");
 
@@ -23997,22 +24005,27 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectChange("budget", "54,321");
+			that.expectChange("budget", "54,321")
+				.expectChange("teamId", "42");
 			// expect no PATCH request!
 
 			return Promise.all([
 				// code under test
 				// JIRA: CPOUI5ODATAV4-53
 				that.oView.byId("budget").getBinding("value").setValue(54321),
+				that.oView.byId("teamId").getBinding("value").setValue("42"),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectRequest("TEAMS('42')?$select=Budget,Name,Team_Id", {
+			that.expectRequest("TEAMS('42')?$select=Budget,Name,Team_Id"
+					+ "&$expand=TEAM_2_MANAGER($select=ID,TEAM_ID)", {
 					Budget : 1234,
 					Name : "Team #1",
-					Team_Id : "42"
+					Team_Id : "42",
+					TEAM_2_MANAGER : null
 				})
-				.expectChange("budget", "1,234");
+				.expectChange("budget", "1,234")
+				.expectChange("teamId", null);
 
 			oBinding.refresh();
 

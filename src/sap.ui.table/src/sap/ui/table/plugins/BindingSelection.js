@@ -301,6 +301,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the highest index that can be selected. Returns -1 if there is nothing to select.
+	 *
+	 * @returns {int} The highest index that can be selected.
+	 * @private
+	 */
+	BindingSelection.prototype._getHighestSelectableIndex = function() {
+		var oBinding = this.getTableBinding();
+		return oBinding ? oBinding.getLength() - 1 : -1;
+	};
+
+	/**
 	 * @inheritDoc
 	 */
 	BindingSelection.prototype.onTableRowsBound = function(oBinding) {

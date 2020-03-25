@@ -1,42 +1,42 @@
 {
-  "sap.app": {
-	"type": "card"
-  },
-  "sap.card": {
-	"type": "List",
-	"header": {
-	  "data": {
-		"request": {
-		  "url": "./cardcontent/delayedLoading/listData2.json"
-		},
-		"path": "/header"
-	  },
-	  "title": "{title}",
-	  "subTitle": "Subtitle",
-	  "status": {
-		"text": "2 of {count}"
-	  },
-	  "icon": {
-		"src": "{src}"
-	  }
-
+	"sap.app": {
+		"id": "cardsdemo.samples.list6",
+		"type": "card"
 	},
-	"content": {
-	  "data": {
-		"request": {
-		  "url": "./cardcontent/delayedLoading/listData2.json"
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"data": {
+				"request": {
+					"url": "./cardcontent/delayedLoading/listData2.json"
+				},
+				"path": "/header"
+			},
+			"title": "{title}",
+			"subTitle": "Subtitle",
+			"status": {
+				"text": "2 of {count}"
+			},
+			"icon": {
+				"src": "{src}"
+			}
 		},
-		"path": "/content"
-	  },
-	  "item": {
-		"title": {
-		  "label": "{{title_label}}",
-		  "value": "{Name}"
-		},
-		"icon": {
-		  "src": "{icon}"
+		"content": {
+			"data": {
+				"request": {
+					"url": "./cardcontent/delayedLoading/listData2.json"
+				},
+				"path": "/content"
+			},
+			"item": {
+				"title": {
+					"label": "Title",
+					"value": "{Name}"
+				},
+				"icon": {
+					"src": "{icon}"
+				}
+			}
 		}
-	  }
 	}
-  }
 }

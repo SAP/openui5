@@ -937,6 +937,21 @@ function (
 			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scroll(_scrollHandler.bind(this, assert, done, mInitialValues));
 			this.oSimpleScrollControlOverlay.getScrollContainerById(0).scrollTop(100);
 		});
+
+		QUnit.test("when the control is re-rendered (with removal of all events) and then scrolled", function(assert) {
+			var done = assert.async();
+			var mInitialValues = _createInitialScrollHandlerValues.call(this);
+			this.oSimpleScrollControlOverlay.attachEventOnce("scrollSynced", _scrollHandler.bind(this, assert, done, mInitialValues));
+			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").off();
+			var oDelegate = {
+				onAfterRendering: function () {
+					this.oSimpleScrollControl.removeEventDelegate(oDelegate);
+					this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scrollTop(100);
+				}
+			};
+			this.oSimpleScrollControl.addEventDelegate(oDelegate, this);
+			this.oSimpleScrollControl.invalidate();
+		});
 	});
 
 	QUnit.module("Postponed an aggregation overlay rendering", {

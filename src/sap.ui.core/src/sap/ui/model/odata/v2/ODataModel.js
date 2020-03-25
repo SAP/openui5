@@ -12,73 +12,56 @@
 
 //Provides class sap.ui.model.odata.v2.ODataModel
 sap.ui.define([
-	'sap/ui/thirdparty/URI',
-	'sap/ui/model/BindingMode',
-	'sap/ui/model/Context',
-	'sap/ui/model/Model',
-	'sap/ui/model/odata/v2/ODataAnnotations',
-	'sap/ui/model/odata/ODataUtils',
-	'sap/ui/model/odata/CountMode',
-	'sap/ui/model/odata/UpdateMethod',
-	'sap/ui/model/odata/OperationMode',
-	'sap/ui/model/odata/MessageScope',
-	'./ODataContextBinding',
-	'./ODataListBinding',
-	'sap/ui/model/odata/ODataMetadata',
-	'sap/ui/model/odata/ODataPropertyBinding',
-	'./ODataTreeBinding',
-	'sap/ui/model/FilterProcessor',
-	'sap/ui/model/odata/ODataMetaModel',
-	'sap/ui/core/message/MessageParser',
-	'sap/ui/model/odata/ODataMessageParser',
-	'sap/ui/thirdparty/datajs',
-	"sap/base/Log",
+	"./ODataAnnotations",
+	"./ODataContextBinding",
+	"./ODataListBinding",
+	"./ODataTreeBinding",
 	"sap/base/assert",
+	"sap/base/Log",
+	"sap/base/security/encodeURL",
+	"sap/base/util/deepEqual",
+	"sap/base/util/each",
+	"sap/base/util/isEmptyObject",
+	"sap/base/util/isPlainObject",
+	"sap/base/util/merge",
 	"sap/base/util/uid",
 	"sap/base/util/UriParameters",
-	"sap/base/util/deepEqual",
-	"sap/base/util/merge",
-	"sap/base/security/encodeURL",
+	"sap/ui/core/library",
+	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageParser",
+	"sap/ui/model/BindingMode",
+	"sap/ui/model/Context",
+	"sap/ui/model/FilterProcessor",
+	"sap/ui/model/Model",
+	"sap/ui/model/odata/CountMode",
+	"sap/ui/model/odata/MessageScope",
+	"sap/ui/model/odata/ODataMetadata",
+	"sap/ui/model/odata/ODataMetaModel",
+	"sap/ui/model/odata/ODataMessageParser",
+	"sap/ui/model/odata/ODataPropertyBinding",
+	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/odata/OperationMode",
+	"sap/ui/model/odata/UpdateMethod",
+	"sap/ui/thirdparty/datajs",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/util/isPlainObject",
-	"sap/base/util/each",
-	"sap/base/util/isEmptyObject"
-], function(
-	URI,
-	BindingMode,
-	Context,
-	Model,
-	ODataAnnotations,
-	ODataUtils,
-	CountMode,
-	UpdateMethod,
-	OperationMode,
-	MessageScope,
-	ODataContextBinding,
-	ODataListBinding,
-	ODataMetadata,
-	ODataPropertyBinding,
-	ODataTreeBinding,
-	FilterProcessor,
-	ODataMetaModel,
-	MessageParser,
-	ODataMessageParser,
-	OData,
-	Log,
-	assert,
-	uid,
-	UriParameters,
-	deepEqual,
-	merge,
-	encodeURL,
-	jQuery,
-	isPlainObject,
-	each,
-	isEmptyObject
+	"sap/ui/thirdparty/URI"
+], function(ODataAnnotations, ODataContextBinding, ODataListBinding, ODataTreeBinding, assert, Log,
+		encodeURL, deepEqual, each, isEmptyObject, isPlainObject, merge, uid, UriParameters,
+		coreLibrary, Message, MessageParser, BindingMode, Context, FilterProcessor, Model,
+		CountMode, MessageScope, ODataMetadata, ODataMetaModel, ODataMessageParser,
+		ODataPropertyBinding, ODataUtils, OperationMode, UpdateMethod, OData, jQuery, URI
 ) {
 
 	"use strict";
 
+	var MessageType = coreLibrary.MessageType,
+		mMessageType2Severity = {};
+
+	mMessageType2Severity[MessageType.Error] = 0;
+	mMessageType2Severity[MessageType.Warning] = 1;
+	mMessageType2Severity[MessageType.Success] = 2;
+	mMessageType2Severity[MessageType.Information] = 3;
+	mMessageType2Severity[MessageType.None] = 4;
 
 	/**
 	 * Constructor for a new ODataModel.
@@ -6922,6 +6905,63 @@ sap.ui.define([
 		} else {
 			return !!this.bCanonicalRequests;
 		}
+	};
+
+	/**
+	 * Returns an array of messages for the given message target matching the given resolved binding
+	 * path prefix. Use <code>fullTarget</code> to determine whether a message matches the resolved
+	 * binding path prefix.
+	 *
+	 * @param {string} sMessageTarget
+	 *   The messages target used as key in <code>this.mMessages</code>
+	 * @param {string} sPathPrefix
+	 *   The resolved binding path prefix
+	 * @returns {sap.ui.core.message.Message[]}
+	 *   The matching message objects, or an empty array, if no messages match.
+	 *
+	 * @private
+	 */
+	// @override
+	ODataModel.prototype.filterMatchingMessages = function (sMessagePath, sPathPrefix) {
+		var that = this;
+
+		return this.mMessages[sMessagePath].filter(function (oMessage) {
+			return that.isMessageMatching(oMessage, sPathPrefix);
+		});
+	};
+
+	/**
+	 * Whether the given message object's <code>fullTarget</code> starts with the given resolved
+	 * binding path prefix.
+	 *
+	 * @param {sap.ui.core.message.Message} oMessage
+	 *   The message object to be checked
+	 * @param {string} sPathPrefix
+	 *   The resolved binding path prefix
+	 * @returns {boolean}
+	 *   Whether the given message object's <code>fullTarget</code> starts with the given resolved
+	 *   binding path prefix
+	 *
+	 * @pivate
+	 */
+	ODataModel.prototype.isMessageMatching = function (oMessage, sPathPrefix) {
+		var sFullTarget = oMessage.fullTarget,
+			iPrefixLength = sPathPrefix.length;
+
+		return sFullTarget === sPathPrefix
+			|| sFullTarget.startsWith(sPathPrefix)
+				&& (sPathPrefix === "/"
+					|| sFullTarget[iPrefixLength] === "/"
+					|| sFullTarget[iPrefixLength] === "(");
+	};
+
+	// @override
+	// @public
+	// @see sap.ui.model.Model#getMessages
+	// @since 1.76.0
+	ODataModel.prototype.getMessages = function (oContext) {
+		return this.getMessagesByPath(oContext.sDeepPath, /*bPrefixMatch*/true)
+			.sort(Message.compare);
 	};
 
 	return ODataModel;

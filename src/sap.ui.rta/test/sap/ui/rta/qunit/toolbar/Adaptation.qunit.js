@@ -217,18 +217,35 @@ function(
 			var sDraftTitleNew = "new draft titel";
 
 			assert.equal(this.oToolbar.getControl("versionLabel").getText(), "", "the draft title is empty");
+			assert.equal(this.oToolbar.getControl("versionLabel").getTooltip(), null, "the draft tooltip is empty");
 
 			this.oToolbar.setVersionLabel(sDraftTitle);
 			assert.equal(this.oToolbar.getControl("versionLabel").getText(), sDraftTitle, "the draft title is equal");
+			assert.equal(this.oToolbar.getControl("versionLabel").getTooltip(), sDraftTitle, "the draft tooltip is equal");
 
 			this.oToolbar.setVersionLabel(sDraftTitleNew);
 			assert.equal(this.oToolbar.getControl("versionLabel").getText(), sDraftTitleNew, "the new draft title is equal");
+			assert.equal(this.oToolbar.getControl("versionLabel").getTooltip(), sDraftTitleNew, "the draft tooltip is equal");
 
 			this.oToolbar.setDraftEnabled(false);
 			assert.ok(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is visible");
 
 			this.oToolbar.setVersioningVisible(false);
 			assert.notOk(this.oToolbar.getControl("versionLabel").getVisible(), "the version label is hidden");
+		});
+
+		QUnit.test("setVersionLabelAccentColor", function(assert) {
+			this.oToolbar.setVersioningVisible(true);
+			var sVersionAccent = "sapUiRtaVersionAccent1";
+
+			this.oToolbar.setVersionLabelAccentColor();
+			assert.equal(this.oToolbar.getControl("versionLabel").hasStyleClass(sVersionAccent), false, "the label color is not accent as default");
+
+			this.oToolbar.setVersionLabelAccentColor(true);
+			assert.equal(this.oToolbar.getControl("versionLabel").hasStyleClass(sVersionAccent), true, "the label color is accent");
+
+			this.oToolbar.setVersionLabelAccentColor(false);
+			assert.equal(this.oToolbar.getControl("versionLabel").hasStyleClass(sVersionAccent), false, "the label color is not accent");
 		});
 	});
 

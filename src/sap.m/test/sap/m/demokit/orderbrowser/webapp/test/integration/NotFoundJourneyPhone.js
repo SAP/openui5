@@ -11,7 +11,7 @@ sap.ui.define([
 
 	opaTest("Should see the not found page if the hash is something that matches no route", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartMyApp({hash : "somethingThatDoesNotExist"});
+		Given.iStartMyApp({hash: "somethingThatDoesNotExist"});
 
 		// Assertions
 		Then.onTheNotFoundPage.iShouldSeeTheNotFoundPage().
@@ -31,7 +31,7 @@ sap.ui.define([
 
 	opaTest("Should see the not found detail page if an invalid object id has been called", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartMyApp({ hash : "/Orders/SomeInvalidObjectId" });
+		Given.iStartMyApp({ hash: "/Orders/SomeInvalidObjectId" });
 
 		// Assertions
 		Then.onTheNotFoundPage.iShouldSeeTheObjectNotFoundPage().
@@ -54,10 +54,10 @@ sap.ui.define([
 		Given.iStartMyApp();
 
 		// Actions
-		When.onTheMasterPage.iSearchForSomethingWithNoResults();
+		When.onTheMasterPage.iSearchForNotFound();
 
 		// Assertions
-		Then.onTheMasterPage.iShouldSeeTheNoDataTextForNoSearchResults();
+		Then.onTheMasterPage.iShouldSeeTheNoDataText();
 
 		// Cleanup
 		Then.iTeardownMyApp();

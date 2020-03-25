@@ -113,17 +113,13 @@ sap.ui.define([
 			}
 		};
 
-		CalendarContent.prototype.onAfterRendering = function () {
-			var oCard;
-			// todo
-			if (!this._bIsDataReady) {
-				oCard = this.getParent();
-				if (oCard.isReady()) {
-					this._setParameters();
-				} else {
-					oCard.attachEventOnce("_ready", this._setParametersInModel, this);
-				}
-			}
+		CalendarContent.prototype.onDataChanged = function () {
+			this._setParameters();
+		};
+
+		CalendarContent.prototype.onBeforeRendering = function () {
+			this.getModel("parameters").setProperty("/visibleItems", this._iVisibleItems);
+			this.getModel("parameters").setProperty("/allItems", this._iAllItems);
 		};
 
 		/**
@@ -220,9 +216,13 @@ sap.ui.define([
 				iVisibleAppointmentsAndBlockersForTheDay = iMaxItems;
 			}
 
-			this._bIsDataReady = true;
-			this.getModel("parameters").setProperty("/visibleItems", iVisibleAppointmentsAndBlockersForTheDay);
-			this.getModel("parameters").setProperty("/allItems", iTotalAppointmentsAndBlockersForTheDay);
+			this._iVisibleItems = iVisibleAppointmentsAndBlockersForTheDay;
+			this._iAllItems = iTotalAppointmentsAndBlockersForTheDay;
+
+			if (this.getModel("parameters")) {
+				this.getModel("parameters").setProperty("/visibleItems", this._iVisibleItems);
+				this.getModel("parameters").setProperty("/allItems", this._iAllItems);
+			}
 		};
 
 		/**

@@ -1,0 +1,61 @@
+{
+  "1.77.0": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "e56c725eba5f816af0ab62f753b142e6f4e69207",
+        "type": "FIX",
+        "text": " core.EventSimulation: check control id before firing event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970016344"
+          }
+        ]
+      },
+      {
+        "id": "838f43e8672b79dbf46ef82623e80fba66f47d25",
+        "type": "FEATURE",
+        "text": " ResourceBundle: Locale fallback and supported Locales",
+        "references": []
+      },
+      {
+        "id": "baf3bc54303a98eb3440e6b447a6b143431299bc",
+        "type": "FIX",
+        "text": " ManagedObject: propagate detailedReason to update methods",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970516747"
+          }
+        ]
+      },
+      {
+        "id": "82bd37444fb01be79ee8a57c6975874cde1ed5d8",
+        "type": "FIX",
+        "text": " RenderManager: preserve the DOM for no-longer rendered controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070060501"
+          }
+        ]
+      },
+      {
+        "id": "1ea0c99607c3a80290b0c714becb0a4ce187d57b",
+        "type": "FIX",
+        "text": " routing.HashChanger: correct the call order between history and router",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070047882"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070024865"
+          }
+        ]
+      }
+    ]
+  }
+}

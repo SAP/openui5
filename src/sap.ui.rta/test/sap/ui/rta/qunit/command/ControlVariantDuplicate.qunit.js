@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/variants/VariantController",
-	"test-resources/sap/ui/fl/qunit/write/test/TestChangesUtil",
+	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/thirdparty/sinon-4",
 	// needs to be included so that the ElementOverlay prototype is enhanced
 	"sap/ui/rta/plugin/ControlVariant"
@@ -32,10 +32,10 @@ function (
 	VariantManagement,
 	VariantModel,
 	VariantController,
-	TestChangesUtil,
+	FlexTestAPI,
 	sinon
 ) {
-	'use strict';
+	"use strict";
 
 	var sandbox = sinon.sandbox.create();
 
@@ -173,7 +173,7 @@ function (
 					assert.equal(oDuplicateVariant.getTitle(), "variant A" + " Copy", "then variant reference correctly duplicated");
 					assert.equal(oDuplicateVariant.getControlChanges().length, 2, "then 2 changes duplicated");
 					assert.equal(oDuplicateVariant.getControlChanges()[0].getDefinition().support.sourceChangeFileName, this.oVariant.controlChanges[0].getDefinition().fileName, "then changes duplicated with source filenames in Change.support.sourceChangeFileName");
-					iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oMockedAppComponent}).length;
+					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
 					assert.strictEqual(iDirtyChangesCount, 3, "then there are three dirty changes in the flex persistence");
 					return oControlVariantDuplicateCommand.undo();
 				}.bind(this))
@@ -181,7 +181,7 @@ function (
 					oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
 					aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
 					assert.notOk(aPreparedChanges, "then no prepared changes are available after undo");
-					iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oMockedAppComponent}).length;
+					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
 					assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 					assert.notOk(oDuplicateVariant, "then duplicate variant from command unset");
 					assert.notOk(oControlVariantDuplicateCommand._oVariantChange, "then _oVariantChange property was unset for the command");
@@ -191,7 +191,7 @@ function (
 					assert.ok(true, "then by default a Promise.resolve() is returned on undo(), even if no changes exist for the command");
 				})
 				.catch(function (oError) {
-					assert.ok(false, 'catch must never be called - Error: ' + oError);
+					assert.ok(false, "catch must never be called - Error: " + oError);
 				});
 		});
 	});

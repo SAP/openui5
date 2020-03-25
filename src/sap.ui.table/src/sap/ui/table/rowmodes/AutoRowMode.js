@@ -466,7 +466,7 @@ sap.ui.define([
 
 		// If the table is invisible, it might get visible without re-rendering, which is basically the same as a resize.
 		// We need to react on that, but not adjust the row count now.
-		if (oTableDomRef.offsetWidth === 0) {
+		if (oTableDomRef.scrollHeight === 0) {
 			if (bStartAutomaticAdjustment) {
 				this.registerResizeHandler(!this.bTableIsFlexItem);
 				this.bRowCountAutoAdjustmentActive = true;
@@ -486,6 +486,10 @@ sap.ui.define([
 
 		this.setProperty("rowCount", iNewRowCount, true);
 		iNewComputedRowCount = this.getComputedRowCounts().count;
+
+		if (this.bLegacy) {
+			oTable.setProperty("visibleRowCount", iNewComputedRowCount, true);
+		}
 
 		if (iOldComputedRowCount !== iNewComputedRowCount) {
 			this.updateTable(sReason);

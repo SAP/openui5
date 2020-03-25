@@ -59,7 +59,7 @@ sap.ui.define([
 				propertyEditors: {
 					"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
 					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
 				}
 			};
@@ -449,7 +449,7 @@ sap.ui.define([
 				type: "array",
 				itemLabel: "Item",
 				template: {
-					parentItems: {
+					childItems: {
 						label: "Nested Array Level 2",
 						type: "array",
 						path: "childItems",
@@ -517,8 +517,8 @@ sap.ui.define([
 				var aValue = oEvent.getParameter("value");
 				var mLastChild = aValue.slice().pop();
 
-				assert.ok(Array.isArray(mLastChild.parentItems), "then nested array is initialized with an empty array value by default");
-				assert.strictEqual(mLastChild.parentItems.length, 0, "then nested array doesn't contain any items by default");
+				assert.ok(Array.isArray(mLastChild.childItems), "then nested array is initialized with an empty array value by default");
+				assert.strictEqual(mLastChild.childItems.length, 0, "then nested array doesn't contain any items by default");
 
 				fnDone();
 			});
@@ -527,6 +527,98 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Custom configuration", {
+		beforeEach: function (assert) {
+			var mJson = {
+				"testValues": [
+					{
+						"foo": "bar"
+					},
+					{
+						"foo": "baz"
+					}
+				]
+			};
+
+			this.oBaseEditor = new BaseEditor({
+				json: mJson
+			});
+
+			this.oBaseEditor.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oBaseEditor.destroy();
+		}
+	}, function () {
+		QUnit.test("When adding/removing items is forbidden", function (assert) {
+			this.oBaseEditor.setConfig({
+				"properties": {
+					"sampleArray": {
+						path: "/testValues",
+						type: "array",
+						template: {
+							foo: {
+								type: "string",
+								path: "foo"
+							}
+						},
+						allowAddAndRemove: false
+					}
+				},
+				"propertyEditors": {
+					"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			});
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleArray").then(function (aPropertyEditor) {
+				var oArrayEditor = aPropertyEditor[0];
+				assert.notOk(
+					oArrayEditor.getContent().getItems()[1].getVisible(),
+					"Then the add button is disabled"
+				);
+				assert.notOk(
+					_getArrayEditorElements(oArrayEditor)[0].getItems()[0].getContentRight()[2].getVisible(),
+					"Then the remove buttons are disabled"
+				);
+			}, this);
+		});
+
+		QUnit.test("When changing the order of items is forbidden", function (assert) {
+			this.oBaseEditor.setConfig({
+				"properties": {
+					"sampleArray": {
+						path: "/testValues",
+						type: "array",
+						template: {
+							foo: {
+								type: "string",
+								path: "foo"
+							}
+						},
+						allowSorting: false
+					}
+				},
+				"propertyEditors": {
+					"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			});
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleArray").then(function (aPropertyEditor) {
+				var oArrayEditor = aPropertyEditor[0];
+				assert.notOk(
+					_getArrayEditorElements(oArrayEditor)[0].getItems()[0].getContentRight()[0].getVisible(),
+					"Then the move up buttons are disabled"
+				);
+				assert.notOk(
+					_getArrayEditorElements(oArrayEditor)[0].getItems()[0].getContentRight()[1].getVisible(),
+					"Then the move down buttons are disabled"
+				);
+			}, this);
+		});
+	});
 
 	QUnit.module("Integration with BaseEditor", {
 		beforeEach: function (assert) {

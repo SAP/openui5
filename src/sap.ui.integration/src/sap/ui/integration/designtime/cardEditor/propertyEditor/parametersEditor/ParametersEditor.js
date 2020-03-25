@@ -3,39 +3,50 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
-	"sap/base/util/deepClone",
-	"sap/base/util/isPlainObject"
+	"sap/base/util/includes"
 ], function (
 	MapEditor,
-	deepClone,
-	isPlainObject
+	includes
 ) {
 	"use strict";
 
 	/**
-	 * @constructor
+	* @class
+	 * Constructor for a new <code>ParametersEditor</code> for editing key-value pairs with primitive values and persisted type information.
+	 *
+	 * <h3>Configuration</h3>
+	 *
+	 * Configuration is inherited from {@link sap.ui.integration.designtime.baseEditor.propertyEditor.mapEditor.MapEditor}
+	 *
+	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.mapEditor.MapEditor
+	 * @alias sap.ui.integration.designtime.cardEditor.propertyEditor.parametersEditor.ParametersEditor
+	 * @author SAP SE
+	 * @since 1.70
+	 * @version ${version}
+	 *
 	 * @private
-	 * @experimental
+	 * @experimental 1.70
+	 * @ui5-restricted
 	 */
 	var ParametersEditor = MapEditor.extend("sap.ui.integration.designtime.cardEditor.propertyEditor.parametersEditor.ParametersEditor", {
 		formatInputValue: function(oValue) {
-			return (oValue || {}).value;
-		},
-
-		setValue: function (mValue) {
-			var mFormattedParams = {};
-			Object.keys(mValue || {}).forEach(function (sKey) {
-				mFormattedParams[sKey] = this._formatOutputValue(deepClone(mValue[sKey]));
-			}, this);
-			MapEditor.prototype.setValue.call(this, mFormattedParams);
-		},
-
-		_formatOutputValue: function(oValue) {
-			// Parameters that are retrieved from the manifest arrive as key-value-pairs and thus must be converted
-			if (!isPlainObject(oValue) || !oValue.hasOwnProperty("value")) {
-				oValue = {value: oValue};
-			}
 			return oValue;
+		},
+
+		formatOutputValue: function(oValue) {
+			return oValue;
+		},
+
+		_isValidItem: function(oItem, oOriginalItem) {
+			// If invalid entries should be excluded, only keep items which have a type in the manifest or have a string value
+			var sType = oOriginalItem.type;
+			var vValue = oOriginalItem.value;
+			var aAllowedTypes = this._getAllowedTypes();
+
+			return (
+				sType && aAllowedTypes.indexOf(sType) >= 0 ||
+				typeof vValue === "string" && includes(aAllowedTypes, "string")
+			);
 		},
 
 		renderer: MapEditor.getMetadata().getRenderer().render

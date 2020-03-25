@@ -16,13 +16,19 @@
 	height: @_sap_tnt_ToolHeader_Height;
 }
 
-.sapTntToolHeader .sapMITH {
-	height: 3rem;
+// ==========================================================================
+// sap.m.IconTabHeader overriding
+// ==========================================================================
+
+.sapMIBar.sapTntToolHeader .sapMBarChild.sapMITH {
+	height: @_sap_tnt_ToolHeader_Height;
 	box-shadow: none;
+	padding: 0 1rem;
+	flex: 1;
+	min-width: 0; // fixes Chrome flex issue
 
 	.sapMITBHead {
 		margin: 0;
-		padding: 0 1px;
 
 		.sapMITBText  {
 			font-size: @sapMFontLargeSize;
@@ -31,15 +37,6 @@
 		.sapMITBFilter .sapMITBText + .sapMITBContentArrow  {
 			height: 0.75rem;
 		}
-	}
-
-	.sapMITHWrapper {
-		padding: 0 3.25rem 0 0.75rem;
-	}
-
-	.sapMITBArrowScroll {
-		padding: 0;
-		visibility: hidden;
 	}
 }
 

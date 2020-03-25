@@ -521,7 +521,7 @@ sap.ui.define([
 			});
 
 			if (!hasPopin) {
-				oColumn.setDisplayViaMedia(this.getTableDomRef());
+				oColumn.setDisplay(this.getTableDomRef(), !oColumn.isHidden());
 				return;
 			}
 		}

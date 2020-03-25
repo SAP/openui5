@@ -24,7 +24,6 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	.sapMBtnIcon {
 		color: @sapUiButtonEmphasizedHoverTextColor;
 	}
-
 }
 
 /* --------------------- */
@@ -32,18 +31,15 @@ span.sapMBtnInner.sapMBtnEmphasized {
 /* --------------------- */
 .sapMBtnInner {
 	font-size: @sapMFontMediumSize;
-
 	height: 2.25rem;
 	min-width: 2.25rem;
 	margin: 0;
 	padding: 0;
 	text-align: center;
 	position: relative;
-
-	border-radius: 0.25rem;
+	border-radius: @sapUiButtonBorderCornerRadius;
 	text-shadow: none;
 }
-
 
 /* ------------------- */
 /* Button Icon         */
@@ -53,7 +49,6 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	font-size: 1rem;
 	line-height: 2.125rem;
 }
-
 
 .sapMBtnInner.sapMBtnText .sapMBtnIcon:before {
 	width: 1rem;
@@ -72,6 +67,7 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	height: 2.25rem;
 	width: auto;
 }
+
 /* ------------------- */
 /* Content area        */
 /* ------------------- */
@@ -117,7 +113,6 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	border: 0.0625rem solid @sapUiButtonBorderColor;
 	background: @sapUiButtonLiteBackground;
 }
-
 
 .sapMBtnGhost.sapMBtnHoverable.sapMBtnActive {
 	color: @sapUiButtonActiveTextColor;
@@ -186,7 +181,6 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	}
 }
 
-
 /* ---------------------------------------------------------------------*/
 /* Custom focus outline:                                                */
 /* ---------------------------------------------------------------------*/
@@ -212,7 +206,7 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMBtnEmphasized.sapMFocusable
 	outline-color:    @sapUiContentContrastFocusColor;
 }
 
-.sapMTB-Transparent-CTX .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive):not(.sapMBtnGhost) {
+.sapMTB-Transparent-CTX .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnAttention):not(.sapMBtnReject):not(.sapMBtnActive):not(.sapMBtnGhost) {
 	border-color: @sapUiButtonLiteBorderColor;
 }
 /* ---------------------------------------------------------------------*/
@@ -284,6 +278,10 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnAccept {
 	border-color: @sapUiButtonAcceptBorderColor;
 }
 
+html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnAttention {
+	border-color: @sapUiButtonAttentionBorderColor;
+}
+
 html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 	border-color: @sapUiButtonRejectBorderColor;
 }
@@ -304,7 +302,7 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 }
 
 .sap-desktop .sapMIBar-CTX, .sap-desktop .sapMTB-Transparent-CTX {
-	.sapMBtn:not(.sapMBtnDisabled):hover > .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive):not(.sapMBtnGhost):not(.sapMBtnCritical):not(.sapMBtnNegative):not(.sapMBtnNeutral):not(.sapMBtnSuccess) {
+	.sapMBtn:not(.sapMBtnDisabled):hover > .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnAttention):not(.sapMBtnReject):not(.sapMBtnActive):not(.sapMBtnGhost):not(.sapMBtnCritical):not(.sapMBtnNegative):not(.sapMBtnNeutral):not(.sapMBtnSuccess) {
 		border-color: @sapUiButtonHoverBorderColor;
 	}
 }

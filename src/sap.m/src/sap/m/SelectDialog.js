@@ -420,6 +420,9 @@ function(
 				oPromiseWrapper.resolve();
 			}
 		}).addStyleClass("sapMSelectDialog");
+
+		this._oDialog.addAriaLabelledBy(this._oList.getInfoToolbar());
+
 		// for downward compatibility reasons
 		this._dialog = this._oDialog;
 		this.setAggregation("_dialog", this._oDialog);
@@ -1169,13 +1172,23 @@ function(
 	 */
 	SelectDialog.prototype._updateSelectionIndicator = function () {
 		var iSelectedContexts = this._oList.getSelectedContextPaths(true).length,
-			oInfoBar = this._oList.getInfoToolbar();
+			oInfoBar = this._oList.getInfoToolbar(),
+			bVisible = !!iSelectedContexts && this.getMultiSelect();
 
 		if (this.getShowClearButton() && this._oClearButton) {
 			this._oClearButton.setEnabled(iSelectedContexts > 0);
 		}
 		// update the selection label
-		oInfoBar.setVisible(!!iSelectedContexts && this.getMultiSelect());
+		if (oInfoBar.getVisible() !== bVisible) {
+			oInfoBar.setVisible(bVisible);
+
+			if (bVisible) {
+				// force immediate rerendering, so JAWS can read the text inside,
+				// when it become visible
+				oInfoBar.rerender();
+			}
+		}
+
 		oInfoBar.getContent()[0].setText(this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [iSelectedContexts]));
 	};
 

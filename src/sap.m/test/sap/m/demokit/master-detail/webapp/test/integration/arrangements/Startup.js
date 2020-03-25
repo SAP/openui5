@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/demo/masterdetail/localService/mockserver",
 	"sap/ui/model/odata/v2/ODataModel"
-], function(Opa5, mockserver, ODataModel) {
+], function (Opa5, mockserver, ODataModel) {
 	"use strict";
 
 	return Opa5.extend("sap.ui.demo.masterdetail.test.integration.arrangements.Startup", {
@@ -14,7 +14,7 @@ sap.ui.define([
 		 * @param {string} [oOptionsParameter.hash] The in-app hash can also be passed separately for better readability in tests
 		 * @param {boolean} [oOptionsParameter.autoWait=true] Automatically wait for pending requests while the application is starting up
 		 */
-		iStartMyApp : function (oOptionsParameter) {
+		iStartMyApp: function (oOptionsParameter) {
 			var oOptions = oOptionsParameter || {};
 
 			this._clearSharedData();
@@ -23,9 +23,7 @@ sap.ui.define([
 			oOptions.delay = oOptions.delay || 1;
 
 			// configure mock server with the current options
-			var oMockServerInitialized = mockserver.init(oOptions);
-
-			this.iWaitForPromise(oMockServerInitialized);
+			this.iWaitForPromise(mockserver.init(oOptions));
 			// start the app UI component
 			this.iStartMyUIComponent({
 				componentConfig: {
@@ -38,7 +36,11 @@ sap.ui.define([
 		},
 		_clearSharedData: function () {
 			// clear shared metadata in ODataModel to allow tests for loading the metadata
-			ODataModel.mSharedData = { server: {}, service: {}, meta: {} };
+			ODataModel.mSharedData = {
+				server: {},
+				service: {},
+				meta: {}
+			};
 		}
 	});
 });

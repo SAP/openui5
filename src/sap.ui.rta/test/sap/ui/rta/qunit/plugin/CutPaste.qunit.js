@@ -46,47 +46,79 @@ function(
 		}
 	}, function () {
 		QUnit.test('When retrieving the context menu items', function (assert) {
+			assert.expect(10);
 			var bIsAvailable = true;
+			var oMockOverlay = {
+				getDesignTimeMetadata: function() {}
+			};
 
 			//Cut
 			sandbox.stub(this.CutPastePlugin, "cut").callsFake(function (oOverlay) {
-				assert.equal(oOverlay, "dummyOverlay", "the 'cut' method is called with the right overlay");
+				assert.equal(oOverlay, oMockOverlay, "the 'cut' method is called with the right overlay");
 			});
-			sandbox.stub(this.CutPastePlugin, "isAvailable").callsFake(function (oOverlay) {
-				assert.equal(oOverlay, "dummyOverlay", "the 'available' function calls isAvailable with the correct overlay");
+			sandbox.stub(this.CutPastePlugin, "isAvailable").callsFake(function (aOverlays) {
+				assert.equal(aOverlays[0], oMockOverlay, "the 'available' function calls isAvailable with the correct overlay");
 				return bIsAvailable;
 			});
 			sandbox.stub(this.CutPastePlugin, "_isPasteEditable").callsFake(function (oOverlay) {
-				assert.equal(oOverlay, "dummyOverlay", "the 'available' function calls _isEditable when isAvailable is false, with the correct overlay");
-				return Promise.resolve(false);
+				assert.equal(oOverlay, oMockOverlay, "the 'available' function calls _isEditable when isAvailable is false, with the correct overlay");
+				return Promise.resolve(true);
 			});
 
 			//Paste
 			sandbox.stub(this.CutPastePlugin, "paste").callsFake(function (oOverlay) {
-				assert.equal(oOverlay, "dummyOverlay", "the 'cut' method is called with the right overlay");
+				assert.equal(oOverlay, oMockOverlay, "the 'cut' method is called with the right overlay");
 			});
 			sandbox.stub(this.CutPastePlugin, "isElementPasteable").callsFake(function (oOverlay) {
-				assert.equal(oOverlay, "dummyOverlay", "the 'enabled' function calls isElementPasteable with the correct overlay");
+				assert.equal(oOverlay, oMockOverlay, "the 'enabled' function calls isElementPasteable with the correct overlay");
+				return Promise.resolve(true);
 			});
 
-			return Promise.resolve(this.CutPastePlugin.getMenuItems(["dummyOverlay"]))
+			var aMenuItems = this.CutPastePlugin.getMenuItems([oMockOverlay]);
+			assert.equal(aMenuItems[0].id, "CTX_CUT", "'getMenuItems' returns a context menu item for 'cut'");
+			aMenuItems[0].handler([oMockOverlay]);
+			assert.equal(aMenuItems[0].enabled([oMockOverlay]), true, "the 'enabled' function returns true for single selection");
+			assert.equal(aMenuItems[1].id, "CTX_PASTE", "'getMenuItems' returns a context menu item for 'paste'");
+			aMenuItems[1].handler([oMockOverlay]);
+			aMenuItems[1].enabled([oMockOverlay]);
+			bIsAvailable = false;
+			return this.CutPastePlugin.getMenuItems([oMockOverlay])
 				.then(function(aMenuItems) {
-					assert.equal(aMenuItems[0].id, "CTX_CUT", "'getMenuItems' returns a context menu item for 'cut'");
-					aMenuItems[0].handler(["dummyOverlay"]);
-					assert.equal(aMenuItems[0].enabled(["dummyOverlay"]), true, "the 'enabled' function returns true for single selection");
-					assert.equal(aMenuItems[1].id, "CTX_PASTE", "'getMenuItems' returns a context menu item for 'paste'");
-					aMenuItems[1].handler(["dummyOverlay"]);
-					aMenuItems[1].enabled(["dummyOverlay"]);
-					bIsAvailable = false;
-					return this.CutPastePlugin.getMenuItems(["dummyOverlay"]);
-				}.bind(this))
-				.then(function(aMenuItems) {
-					assert.equal(
-						aMenuItems.length,
-						0,
-						"and if plugin is not available for the overlay, no menu items are returned"
-					);
+					assert.equal(aMenuItems.length, 1, "then one menu item is returned when only paste is available");
 				});
+		});
+
+		QUnit.test('When retrieving the context menu items and a responsible element is available', function (assert) {
+			assert.expect(7);
+			var oMockOverlay = {
+				getDesignTimeMetadata: function() {}
+			};
+			var oResponsibleElementOverlay = {type: "responsibleElementOverlay"};
+
+			sandbox.stub(this.CutPastePlugin, "isResponsibleElementActionAvailable").returns(true);
+			sandbox.stub(this.CutPastePlugin, "getResponsibleElementOverlay").returns(oResponsibleElementOverlay);
+			sandbox.stub(this.CutPastePlugin, "isAvailable").callsFake(function (aOverlays) {
+				assert.equal(aOverlays[0], oResponsibleElementOverlay, "then isAvailable() is called with the responsible element overlay");
+				return true;
+			});
+			sandbox.stub(this.CutPastePlugin, "_isPasteEditable").callsFake(function (oOverlay) {
+				assert.equal(oOverlay, oResponsibleElementOverlay, "then _isPasteEditable() is called with the responsible element overlay");
+				return Promise.resolve(false);
+			});
+
+			sandbox.stub(this.CutPastePlugin, "isElementPasteable").callsFake(function (oOverlay) {
+				assert.equal(oOverlay, oResponsibleElementOverlay, "the enabled() for paste was called with the correct overlay");
+			});
+
+			var aMenuItems = this.CutPastePlugin.getMenuItems([oMockOverlay]);
+			assert.equal(aMenuItems[0].id, "CTX_CUT", "then getMenuItems() returns a context menu item for cut");
+			assert.equal(aMenuItems[0].enabled([oMockOverlay]), true, "the enabled() returns true for single selection");
+			assert.deepEqual(aMenuItems[0].responsible[0], oResponsibleElementOverlay,
+				"then the cut menu item was enhanced with the responsible element overlay");
+			assert.equal(aMenuItems[1].id, "CTX_PASTE", "then getMenuItems() returns a context menu item for cut");
+			aMenuItems[1].enabled([oResponsibleElementOverlay]);
+			assert.deepEqual(aMenuItems[1].responsible[0], oResponsibleElementOverlay,
+				"then the paste menu item was enhanced with the responsible element overlay");
 		});
 	});
 
