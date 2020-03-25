@@ -2,13 +2,15 @@
 sap.ui.define([
 	'sap/m/Input',
 	'sap/ui/model/Model',
+	'sap/ui/model/type/Integer',
 	'sap/ui/core/message/Message',
+	'sap/ui/core/message/MessageManager',
 	'sap/ui/core/library',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/core/UIComponent',
 	'sap/ui/qunit/utils/createAndAppendDiv'
-], function(Input, Model, Message, library, ComponentContainer, JSONModel, UIComponent, createAndAppendDiv){
+], function(Input, Model, Integer, Message, MessageManager, library, ComponentContainer, JSONModel, UIComponent, createAndAppendDiv){
 	"use strict";
 
 	// create content div
@@ -370,6 +372,7 @@ sap.ui.define([
 		oModel.setMessages();
 		assert.equal(oCheckMessagesSpy.callCount, 2, "Changes detected - Check messages");
 		assert.deepEqual(oModel.mMessages, {}, "Model messages cleared");
+		oCheckMessagesSpy.restore();
 	});
 
 	QUnit.test("Model: Refresh with force update", function(assert) {
@@ -382,6 +385,35 @@ sap.ui.define([
 			done();
 		});
 		oModel.refresh(true);
+	});
+
+	QUnit.test("MessageManager:register/unregisterObject", function(assert) {
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oHandlererrorSpy = sinon.spy(MessageManager.prototype, "_handleError");
+		var oModel = new JSONModel(
+			{
+				data: {
+					value: 2
+				}
+			}
+		);
+		var oInput = new Input(
+			{
+				value: {
+					path: "/dayta/value",
+					type: new Integer()
+				},
+				models: oModel
+			}
+		);
+		oMessageManager.registerObject(oInput);
+		oInput.setValue("abc");
+		assert.equal(oHandlererrorSpy.callCount, 1, "Changes detected - _handleError");
+		oInput.setValue("2");
+		oMessageManager.unregisterObject(oInput);
+		oInput.setValue("abc");
+		assert.equal(oHandlererrorSpy.callCount, 1, "No Changes detected - _handleError");
+		oHandlererrorSpy.restore();
 	});
 
 });
