@@ -4,12 +4,10 @@
 
 sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/base/util/each"
+	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
 	ManagedObjectObserver,
-	JsControlTreeModifier,
-	each
+	JsControlTreeModifier
 ) {
 	"use strict";
 
@@ -27,7 +25,7 @@ sap.ui.define([
 	var ExtensionPointRegistry = function() {
 		this._bEnabledObserver = sap.ui.getCore().getConfiguration().getDesignMode();
 		this._mObservers = {};
-		this._mExtensionPointsByParent = {};
+		this._mExtensionPointsByParent = [];
 		this._mExtensionPointsByViewId = {};
 	};
 
@@ -54,12 +52,12 @@ sap.ui.define([
 	 */
 	ExtensionPointRegistry.prototype._spotExtensionPointsInAggregation = function(sParentId) {
 		var mAggregations = {};
-		each(this._mExtensionPointsByParent[sParentId], function(sExtensionPointName, oExtensionPoint) {
+		this._mExtensionPointsByParent[sParentId].forEach(function(oExtensionPoint) {
 			if (!mAggregations[oExtensionPoint.aggregationName]) {
 				mAggregations[oExtensionPoint.aggregationName] = [];
 			}
 			mAggregations[oExtensionPoint.aggregationName].push({
-				name: sExtensionPointName,
+				name: oExtensionPoint.name,
 				index: oExtensionPoint.index
 			});
 			mAggregations[oExtensionPoint.aggregationName].sort(function(o1, o2) {
@@ -76,7 +74,7 @@ sap.ui.define([
 		var sAggregationName;
 		var iOffset;
 
-		each(this._mExtensionPointsByParent[sParentId], function(sExtensionPointName, oExtensionPoint) {
+		this._mExtensionPointsByParent[sParentId].forEach(function(oExtensionPoint) {
 			sAggregationName = oExtensionPoint.aggregationName;
 			if (sAggregationName === oEvent.name) {
 				// Internally the XML nodes of an aggregation are used where the extension points are available. This
@@ -85,7 +83,7 @@ sap.ui.define([
 				iOffset = 0;
 				mAggregations[sAggregationName].some(function(oExtensionPointLocation, index) {
 					iOffset = index;
-					return oExtensionPointLocation.name === sExtensionPointName;
+					return oExtensionPointLocation.name === oExtensionPoint.name;
 				});
 
 				var aControlIds = JsControlTreeModifier.getAggregation(oEvent.object, sAggregationName).map(function(oControl) {
@@ -96,10 +94,8 @@ sap.ui.define([
 					if (aControlIds.indexOf(oEvent.child.getId()) < oExtensionPoint.index - iOffset) {
 						oExtensionPoint.index++;
 					}
-				} else {
-					if (oExtensionPoint.aggregation.indexOf(oEvent.child.getId()) < oExtensionPoint.index - iOffset) {
-						oExtensionPoint.index--;
-					}
+				} else if (oExtensionPoint.aggregation.indexOf(oEvent.child.getId()) < oExtensionPoint.index - iOffset) {
+					oExtensionPoint.index--;
 				}
 
 				oExtensionPoint.aggregation = aControlIds;
@@ -153,13 +149,13 @@ sap.ui.define([
 
 		var sParentId = oParent.getId();
 		if (!this._mExtensionPointsByParent[sParentId]) {
-			this._mExtensionPointsByParent[sParentId] = {};
+			this._mExtensionPointsByParent[sParentId] = [];
 		}
 		if (!this._mExtensionPointsByViewId[sViewId]) {
 			this._mExtensionPointsByViewId[sViewId] = {};
 		}
 		mExtensionPointInfo.aggregation = aControlIds;
-		this._mExtensionPointsByParent[sParentId][mExtensionPointInfo.name] = mExtensionPointInfo;
+		this._mExtensionPointsByParent[sParentId].push(mExtensionPointInfo);
 		this._mExtensionPointsByViewId[sViewId][mExtensionPointInfo.name] = mExtensionPointInfo;
 	};
 
@@ -176,6 +172,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the extension point information by parentId name.
+	 *
+	 * @param {string} sParentId - Id of the extension point parent control
+	 * @returns {object} mExtensionPointInfo - Map of extension point information
+	 */
+	ExtensionPointRegistry.prototype.getExtensionPointInfoByParentId = function (sParentId) {
+		return this._mExtensionPointsByParent[sParentId] || [];
+	};
+
+	/**
 	 * Destroys the registered observers and initializes the registry.
 	 */
 	ExtensionPointRegistry.prototype.exit = function() {
@@ -184,7 +190,7 @@ sap.ui.define([
 			this._mObservers[sParentId].observer.destroy();
 		}.bind(this));
 		this._mObservers = {};
-		this._mExtensionPointsByParent = {};
+		this._mExtensionPointsByParent = [];
 		this._mExtensionPointsByViewId = {};
 		ExtensionPointRegistry._instance = undefined;
 	};
