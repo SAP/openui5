@@ -1966,6 +1966,31 @@ sap.ui.define([
 		this.oDialog.destroy();
 	});
 
+	QUnit.test("Toolbar visibility", function(assert) {
+		this.oDialog = new Dialog({
+			title: "Header",
+			subHeader: this.subheader = new Toolbar({
+				design:"Info",
+				content: new Text({ text: "Sub header" }),
+				visible: false
+			}),
+			content: new Text({ text: "Content" })
+		});
+
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		// assert
+		assert.notOk(this.oDialog.$().hasClass("sapMDialogWithSubHeader"), "Dialog subheader should not be visible");
+
+		this.subheader.setVisible(true);
+		this.clock.tick(500);
+
+		// assert
+		assert.ok(this.oDialog.$().hasClass("sapMDialogWithSubHeader"), "Dialog subheader should be visible");
+		this.oDialog.destroy();
+	});
+
 	QUnit.module("Dialog sizing", {
 		beforeEach: function() {
 			this.oDialog = new Dialog({
