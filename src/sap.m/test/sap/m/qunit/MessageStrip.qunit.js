@@ -358,6 +358,22 @@ sap.ui.define([
 		}.bind(this), nAnimationLengthTimeout);
 	});
 
+	QUnit.test("close method is called", function(assert) {
+		assert.expect(1);
+		var done = assert.async(),
+			that = this;
+
+		this.oMessageStrip.attachClose(function() {
+			assert.notOk(that.oMessageStrip.getVisible(), "Button is pressed");
+			done();
+		});
+
+		setTimeout(function() {
+			this.oMessageStrip.close();
+			sap.ui.getCore().applyChanges();
+		}.bind(this), nAnimationLengthTimeout);
+	});
+
 	QUnit.module("ARIA Support", {
 		beforeEach: function() {
 			this.oMessageStrip = new MessageStrip({

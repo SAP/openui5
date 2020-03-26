@@ -208,6 +208,27 @@ sap.ui.define([
 		return this.setProperty("type", sType);
 	};
 
+
+	/**
+	 * Closes the MessageStrip.
+	 * This method sets the visible property of the MessageStrip to false.
+	 * The MessageStrip can be shown again by setting the visible property to true.
+	 * @public
+	 */
+	MessageStrip.prototype.close = function () {
+		var fnClosed = function () {
+			this.setVisible(false);
+			this.fireClose();
+		}.bind(this);
+
+		if (!Core.getConfiguration().getAnimation()) {
+			fnClosed();
+			return;
+		}
+
+		MSUtils.closeTransitionWithCSS.call(this, fnClosed);
+	};
+
 	MessageStrip.prototype.setEnableFormattedText = function (bEnable) {
 		var oFormattedText  = this.getAggregation("_formattedText");
 
@@ -263,28 +284,15 @@ sap.ui.define([
 	 */
 	MessageStrip.prototype._initCloseButton = function () {
 		var oRb = Core.getLibraryResourceBundle("sap.m"),
-			bHasAnimation = Core.getConfiguration().getAnimation(),
-			oCloseButton = this.getAggregation("_closeButton"),
-			fnClosed;
+			oCloseButton = this.getAggregation("_closeButton");
 
 			if (!oCloseButton) {
-				fnClosed = function () {
-					this.fireClose();
-					this.setVisible(false);
-				}.bind(this);
 
 				var oButton = new Button({
 					type: ButtonType.Transparent,
 					tooltip: oRb.getText("MESSAGE_STRIP_TITLE"),
 					icon: "sap-icon://decline",
-					press: function() {
-						if (!bHasAnimation) {
-							fnClosed();
-							return;
-						}
-
-						MSUtils.closeTransitionWithCSS.call(this, fnClosed);
-					}.bind(this)
+					press: this.close.bind(this)
 				}).addStyleClass(MSUtils.CLASSES.CLOSE_BUTTON).addStyleClass("sapUiSizeCompact");
 
 				this.setAggregation("_closeButton", oButton);
