@@ -527,7 +527,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds Overflow button and updates iContentSize
+	 * Adds Overflow button and updates iContentSize, if it hasn't been added so far
 	 * @private
 	 */
 	OverflowToolbar.prototype._addOverflowButton = function () {
@@ -604,6 +604,11 @@ sap.ui.define([
 				vMovableControl.forEach(this._addToPopoverArrAndUpdateContentSize, this);
 			} else { // when vMovableControl is a single element
 				this._addToPopoverArrAndUpdateContentSize(vMovableControl);
+			}
+
+			// Add the overflow button only if there is at least one control, which will be shown in the Popover.
+			if (this._getControlPriority(vMovableControl) !== OverflowToolbarPriority.Disappear) {
+				this._addOverflowButton();
 			}
 
 			if (this._iCurrentContentSize <= iToolbarSize) {
@@ -736,11 +741,6 @@ sap.ui.define([
 
 		if (this._aMovableControls.length) {
 
-			// There is at least one button that will go to the Popover - add the overflow button, but only if it wasn't added already
-			if (this._hasControlsToBeShownInPopover()) {
-				this._addOverflowButton();
-			}
-
 			aAggregatedMovableControls = this._aggregateMovableControls();
 
 			// Define the overflow order, depending on items` priority and index.
@@ -749,18 +749,6 @@ sap.ui.define([
 			// Hide controls or groups while iContentSize <= iToolbarSize/
 			this._extractControlsToMoveToOverflow(aAggregatedMovableControls, iToolbarSize);
 		}
-	};
-
-	/**
-	 * Indicates whether there are controls in the Popover which can be shown
-	 * (e.g. they do not have Disappear OverflowToolbarPriority)
-	 * @returns {boolean}
-	 * @private
-	 */
-	OverflowToolbar.prototype._hasControlsToBeShownInPopover = function () {
-		return this._aMovableControls.some(function (oControl) {
-			return this._getControlPriority(oControl) !== OverflowToolbarPriority.Disappear;
-		}, this);
 	};
 
 	/*
