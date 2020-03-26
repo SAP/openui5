@@ -18686,11 +18686,6 @@ sap.ui.define([
 					<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
 				</t:template>\
 			</t:Column>\
-			<t:Column>\
-				<t:template>\
-					<Text id="name" text="{_Artist/Name}" />\
-				</t:template>\
-			</t:Column>\
 		</t:Table>\
 	</FlexBox>\
 </FlexBox>',
@@ -18707,20 +18702,17 @@ sap.ui.define([
 				+ "?sap-client=123&$count=true&$filter=CurrencyCode eq 'EUR'"
 				+ "&$orderby=PublicationID&$select=CurrencyCode,Price,PublicationID"
 				+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)"
-				+ ",_Artist($select=ArtistID,IsActiveEntity,Name)&$skip=1&$top=2", {
+				+ "&$skip=1&$top=2", {
 				"@odata.count" : "10",
 				value : [{
-					_Artist : {
-						ArtistID : "42",
-//						IsActiveEntity : true,
-						Name : "Hour Frustrated"
-					},
 					CurrencyCode : "EUR",
-					DraftAdministrativeData : null,
+					DraftAdministrativeData : {
+						DraftID : "42-1-A",
+						InProcessByUser : "Charlie Brown"
+					},
 					Price : "9.11", // Note: 9.ii for old value at index i, 7.ii for new value
 					PublicationID : "42-1"
 				}, {
-					_Artist : null,
 					CurrencyCode : "EUR",
 					DraftAdministrativeData : null,
 					Price : "9.22",
@@ -18731,8 +18723,7 @@ sap.ui.define([
 			.expectChange("id", "42")
 			.expectChange("price", [, "9.11", "9.22"])
 			.expectChange("currency", [, "EUR", "EUR"])
-			.expectChange("inProcessByUser")
-			.expectChange("name", [, "Hour Frustrated"]);
+			.expectChange("inProcessByUser", [, "Charlie Brown"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectChange("count", "10"); // must not be affected by side effects below!
@@ -18745,16 +18736,15 @@ sap.ui.define([
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend/_Publication"
 					+ "?sap-client=123"
 					+ "&$filter=PublicationID eq '42-1' or PublicationID eq '42-2'"
-					+ "&$select=Price,PublicationID&$expand=_Artist($select=Name)", {
+					+ "&$select=Price,PublicationID"
+					+ "&$expand=DraftAdministrativeData($select=InProcessByUser)", {
 					value : [{
-						_Artist : null, // side effect
+						DraftAdministrativeData : null, // side effect
 						Price : "7.11", // side effect
 						PublicationID : "42-1"
 					}, {
-						_Artist : { // side effect
-							ArtistID : "42a",
-//							IsActiveEntity : true,
-							Name : "Minute Frustrated"
+						DraftAdministrativeData : { // side effect
+							InProcessByUser : "John Doe"
 						},
 						Messages : [{ // side effect: reported, even if not selected
 							code : "23",
@@ -18767,7 +18757,7 @@ sap.ui.define([
 					}]
 				})
 				.expectChange("price", [, "7.11", "7.22"])
-				.expectChange("name", [, null, "Minute Frustrated"])
+				.expectChange("inProcessByUser", [, null, "John Doe"])
 				.expectMessages([{
 					code : "23",
 					message : "This looks pretty cheap now",
@@ -18783,7 +18773,8 @@ sap.ui.define([
 				that.oView.byId("form").getBindingContext().requestSideEffects([{
 					$PropertyPath : "BestFriend/_Publication/Price"
 				}, {
-					$PropertyPath : "BestFriend/_Publication/_Artist/Name"
+					$PropertyPath :
+						"BestFriend/_Publication/DraftAdministrativeData/InProcessByUser"
 				}]),
 				that.waitForChanges(assert)
 			]);
@@ -18796,16 +18787,14 @@ sap.ui.define([
 					+ "?sap-client=123&$count=true&$filter=CurrencyCode eq 'EUR'"
 					+ "&$orderby=PublicationID&$select=CurrencyCode,Price,PublicationID"
 					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)"
-					+ ",_Artist($select=ArtistID,IsActiveEntity,Name)&$skip=7&$top=2", {
+					+ "&$skip=7&$top=2", {
 					"@odata.count" : "10",
 					value : [{
-						_Artist : null,
 						CurrencyCode : "EUR",
 						DraftAdministrativeData : null,
 						Price : "7.77",
 						PublicationID : "42-7"
 					}, {
-						_Artist : null,
 						CurrencyCode : "EUR",
 						DraftAdministrativeData : null,
 						Price : "7.88",
@@ -18818,8 +18807,8 @@ sap.ui.define([
 				// "currency" temporarily loses its binding context and thus fires a change event
 				.expectChange("currency", null, null)
 				.expectChange("currency", null, null)
-				// "name" temporarily loses its binding context and thus fires a change event
-				.expectChange("name", null, null)
+				// "inProcessByUser" temporarily loses its binding context and thus fires a change
+				.expectChange("inProcessByUser", null, null)
 				.expectChange("price", [,,,,,,, "7.77", "7.88"])
 				.expectChange("currency", [,,,,,,, "EUR", "EUR"]);
 
@@ -18853,16 +18842,14 @@ sap.ui.define([
 					+ "?sap-client=123&$count=true&$filter=CurrencyCode eq 'EUR'"
 					+ "&$orderby=PublicationID&$select=CurrencyCode,Price,PublicationID"
 					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)"
-					+ ",_Artist($select=ArtistID,IsActiveEntity,Name)&$skip=1&$top=2", {
+					+ "&$skip=1&$top=2", {
 					"@odata.count" : "10",
 					value : [{
-						_Artist : null,
 						CurrencyCode : "EUR",
 						DraftAdministrativeData : null,
 						Price : "5.11",
 						PublicationID : "42-1"
 					}, {
-						_Artist : null,
 						CurrencyCode : "EUR",
 						DraftAdministrativeData : null,
 						Price : "5.22",
