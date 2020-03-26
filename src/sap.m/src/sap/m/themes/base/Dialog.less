@@ -518,8 +518,14 @@ html[data-sap-ui-animation='off'] .sapMDialog {
 	background: @sapUiGroupContentBackground;
 }
 
-.sapMDialog > header {
-	&:last-of-type .sapMIBar {
+.sapMDialog.sapMDialogWithSubHeader > header {
+	&:last-of-type .sapMIBar{
+		box-shadow: @_sap_m_Dialog_NoStateHeaderShadow;
+	}
+}
+
+.sapMDialog:not(.sapMDialogWithSubHeader) > header {
+	&:first-of-type .sapMIBar{
 		box-shadow: @_sap_m_Dialog_NoStateHeaderShadow;
 	}
 }
