@@ -1566,4 +1566,41 @@ function($, Core, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, Obj
 
 		this.oObjectPage.destroy();
 	});
+	QUnit.module("See more / see less", {
+		beforeEach: function() {
+			this.oObjectPage = new ObjectPageLayout({
+				sections: new ObjectPageSection({
+					subSections: [
+						new ObjectPageSubSectionClass({
+							title: "Title",
+							showTitle: false,
+							blocks: [new sap.m.Text({text: "Test"})],
+							moreBlocks: [new sap.m.Text({text: "Test"})]
+						})
+					]
+				})
+			});
+
+			this.oObjectPage.placeAt('qunit-fixture');
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("Focus handling when see more / see less button is selected", function (assert) {
+		assert.expect(1);
+		// setup
+		var oSubSection = this.oObjectPage.getSections()[0].getSubSections()[0],
+			done = assert.async();
+
+		oSubSection.addEventDelegate({ onAfterRendering: function() {
+			// assert
+			assert.equal(document.activeElement, oSubSection._oSeeLessButton.getDomRef(), "See less button is focused correctly");
+			done();
+		}});
+		// act
+		oSubSection._oSeeMoreButton.firePress();
+	});
 });

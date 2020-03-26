@@ -123,6 +123,7 @@ sap.ui.define(function () {
 		oRm.openEnd();
 
 		oRm.renderControl(oControl._getSeeMoreButton());
+		oRm.renderControl(oControl._getSeeLessButton());
 		oRm.close("div");
 
 		oRm.close("div");

@@ -447,6 +447,13 @@ sap.ui.define([
 			this._oSeeMoreButton = null;
 		}
 
+		if (this._oSeeLessButton) {
+			this._oSeeLessButton.destroy();
+			this._oSeeLessButton = null;
+		}
+
+		this._oCurrentlyVisibleSeeMoreLessButton = null;
+
 		this._cleanProxiedAggregations();
 
 		if (ObjectPageSectionBase.prototype.exit) {
@@ -466,6 +473,11 @@ sap.ui.define([
 		}
 
 		this._$spacer = jQuery(document.getElementById(oObjectPageLayout.getId() + "-spacer"));
+
+		if (this._bShouldFocusSeeMoreLessButton) {
+			this._bShouldFocusSeeMoreLessButton = false;
+			this._oCurrentlyVisibleSeeMoreLessButton.focus();
+		}
 	};
 
 	ObjectPageSubSection.prototype.onBeforeRendering = function () {
@@ -542,8 +554,7 @@ sap.ui.define([
 
 	ObjectPageSubSection.prototype.refreshSeeMoreVisibility = function () {
 		var oSeeMoreControl = this._getSeeMoreButton(),
-			$seeMoreControl = oSeeMoreControl.$(),
-			$this = this.$();
+			oSeeLessControl = this._getSeeLessButton();
 
 		this._bBlockHasMore = !!this.getMoreBlocks().length;
 		if (!this._bBlockHasMore) {
@@ -557,18 +568,10 @@ sap.ui.define([
 			});
 		}
 
-		//if the subsection is already rendered, don't rerender it all for showing a more button
-		if ($this.length) {
-			$this.toggleClass("sapUxAPObjectPageSubSectionWithSeeMore", this._bBlockHasMore);
-		}
-
 		this.toggleStyleClass("sapUxAPObjectPageSubSectionWithSeeMore", this._bBlockHasMore);
 
-		if ($seeMoreControl.length) {
-			$seeMoreControl.toggleClass("sapUxAPSubSectionSeeMoreButtonVisible", this._bBlockHasMore);
-		}
-
 		oSeeMoreControl.toggleStyleClass("sapUxAPSubSectionSeeMoreButtonVisible", this._bBlockHasMore);
+		oSeeLessControl.toggleStyleClass("sapUxAPSubSectionSeeMoreButtonVisible", this._bBlockHasMore);
 
 		return this._bBlockHasMore;
 	};
@@ -913,7 +916,7 @@ sap.ui.define([
 	 ************************************************************************************/
 
 	/**
-	 * build the control that will used internally for the see more / see less
+	 * Builds the control that is used internally for the see more / see less button
 	 * @private
 	 */
 	ObjectPageSubSection.prototype._getSeeMoreButton = function () {
@@ -921,11 +924,29 @@ sap.ui.define([
 			this._oSeeMoreButton = new Button(this.getId() + "--seeMore", {
 				type: ButtonType.Transparent,
 				iconFirst: false,
+				text: ObjectPageSubSection._getLibraryResourceBundle().getText("SHOW_MORE"),
 				ariaLabelledBy: this.getId()
 			}).addStyleClass("sapUxAPSubSectionSeeMoreButton").attachPress(this._seeMoreLessControlPressHandler, this);
 		}
 
 		return this._oSeeMoreButton;
+	};
+
+	/**
+	 * Builds the control that is used internally for the see more / see less button
+	 * @private
+	 */
+	ObjectPageSubSection.prototype._getSeeLessButton = function () {
+		if (!this._oSeeLessButton) {
+			this._oSeeLessButton = new Button(this.getId() + "--seeLess", {
+				type: ButtonType.Transparent,
+				iconFirst: false,
+				text: ObjectPageSubSection._getLibraryResourceBundle().getText("SHOW_LESS"),
+				ariaLabelledBy: this.getId()
+			}).addStyleClass("sapUxAPSubSectionSeeMoreButton").attachPress(this._seeMoreLessControlPressHandler, this);
+		}
+
+		return this._oSeeLessButton;
 	};
 
 	/**
@@ -953,14 +974,7 @@ sap.ui.define([
 		}
 		this._switchSubSectionMode(sTargetMode);
 
-		//in case of the last subsection of an objectpage we need to compensate its height change while rerendering)
-		if (this._$spacer.length > 0) {
-			this._$spacer.height(this._$spacer.height() + this.$().height());
-		}
-
-		//need to re-render the subsection in order to render all the blocks with the appropriate mode & layout
-		//0000811842 2014
-		this.rerender();
+		this._bShouldFocusSeeMoreLessButton = true;
 	};
 
 	/**
@@ -972,11 +986,13 @@ sap.ui.define([
 		sSwitchToMode = this.validateProperty("mode", sSwitchToMode);
 
 		if (sSwitchToMode === ObjectPageSubSectionMode.Collapsed) {
-			this.setProperty("mode", ObjectPageSubSectionMode.Collapsed, true);
-			this._getSeeMoreButton().setText(ObjectPageSubSection._getLibraryResourceBundle().getText("SHOW_MORE"));
+			this.setProperty("mode", ObjectPageSubSectionMode.Collapsed);
+			this._oCurrentlyVisibleSeeMoreLessButton = this._getSeeMoreButton().setVisible(true);
+			this._getSeeLessButton().setVisible(false);
 		} else {
-			this.setProperty("mode", ObjectPageSubSectionMode.Expanded, true);
-			this._getSeeMoreButton().setText(ObjectPageSubSection._getLibraryResourceBundle().getText("SHOW_LESS"));
+			this.setProperty("mode", ObjectPageSubSectionMode.Expanded);
+			this._getSeeMoreButton().setVisible(false);
+			this._oCurrentlyVisibleSeeMoreLessButton = this._getSeeLessButton().setVisible(true);
 		}
 	};
 
