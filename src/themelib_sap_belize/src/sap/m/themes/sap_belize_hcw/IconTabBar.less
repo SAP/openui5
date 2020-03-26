@@ -134,7 +134,10 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll {
 .sapMITBFilterCritical .sapMITBText:before,
 .sapMITBVertical.sapMITBFilterPositive > .sapMITBFilterWrapper > .sapMITBTab:after,
 .sapMITBVertical.sapMITBFilterNegative > .sapMITBFilterWrapper > .sapMITBTab:after,
-.sapMITBVertical.sapMITBFilterCritical > .sapMITBFilterWrapper > .sapMITBTab:after {
+.sapMITBVertical.sapMITBFilterCritical > .sapMITBFilterWrapper > .sapMITBTab:after,
+.sapMITBSelectItem.sapMITBFilterPositive .sapMITBText:before,
+.sapMITBSelectItem.sapMITBFilterNegative .sapMITBText:before,
+.sapMITBSelectItem.sapMITBFilterCritical .sapMITBText:before {
 	font-family: 'SAP-icons';
 	font-size: 0.75rem;
 	margin-right: 0.5rem;
@@ -144,21 +147,24 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll {
 
 .sapMITBHorizontal.sapMITBFilterPositive .sapMITBText:before,
 .sapMITBTextOnly .sapMITBFilterPositive .sapMITBText:before,
-.sapMITBVertical.sapMITBFilterPositive > .sapMITBFilterWrapper > .sapMITBTab:after {
+.sapMITBVertical.sapMITBFilterPositive > .sapMITBFilterWrapper > .sapMITBTab:after,
+.sapMITBSelectItem.sapMITBFilterPositive .sapMITBText:before {
 	color: @sapUiPositiveElement;
 	content: "\e1ab";
 }
 
 .sapMITBHorizontal.sapMITBFilterNegative .sapMITBText:before,
 .sapMITBTextOnly .sapMITBFilterNegative .sapMITBText:before,
-.sapMITBVertical.sapMITBFilterNegative > .sapMITBFilterWrapper > .sapMITBTab:after {
+.sapMITBVertical.sapMITBFilterNegative > .sapMITBFilterWrapper > .sapMITBTab:after,
+.sapMITBSelectItem.sapMITBFilterNegative .sapMITBText:before {
 	color: @sapUiNegativeElement;
 	content: "\e1ac";
 }
 
 .sapMITBHorizontal.sapMITBFilterCritical .sapMITBText:before,
 .sapMITBTextOnly .sapMITBFilterCritical .sapMITBText:before,
-.sapMITBVertical.sapMITBFilterCritical > .sapMITBFilterWrapper > .sapMITBTab:after {
+.sapMITBVertical.sapMITBFilterCritical > .sapMITBFilterWrapper > .sapMITBTab:after,
+.sapMITBSelectItem.sapMITBFilterCritical .sapMITBText:before {
 	color: @sapUiCriticalElement;
 	content: "\e1ae";
 }
@@ -185,4 +191,33 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll {
 .sapMITBHorizontal.sapMITBFilterNegative .sapMITBText:before,
 .sapMITBHorizontal.sapMITBFilterCritical .sapMITBText:before {
 	margin-right: 0.25rem;
+}
+
+// Semantic icons in Select List
+.sapMITBSelectItem {
+	.sapMITBText::before {
+		position: absolute;
+		margin-left: -3.6rem;
+	}
+}
+
+.sapMITBSelectListTextOnly .sapMITBSelectItem {
+	.sapMITBText::before {
+		margin-left: -1.2rem;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMITBSelectItem {
+		.sapMITBText::before {
+			position: absolute;
+			margin-left: -2.6rem;
+		}
+	}
+
+	.sapMITBSelectListTextOnly .sapMITBSelectItem {
+		.sapMITBText::before {
+			margin-left: -1rem;
+		}
+	}
 }

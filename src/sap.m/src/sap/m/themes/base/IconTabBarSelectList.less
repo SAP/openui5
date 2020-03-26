@@ -3,7 +3,8 @@
 /* Base theme                                  */
 /* =========================================== */
 
-@_sap_m_IconTabBar_SelectItemInPopover_PaddingLeft: 0.5rem;
+@_sap_m_IconTabBar_SelectListItem_PaddingLeft: 0.5rem;
+@_sap_m_IconTabBar_SelectListItem_PaddingLeftAdditional: 0rem;
 
 .sapMITBSelectList {
 	margin: 0;
@@ -47,6 +48,8 @@
 	display: block;
 	padding: 0 1rem 0 0;
 	pointer-events: none;
+	flex: 1;
+	min-width:0;  // chrome flex overflow issue
 }
 
 .sapMITBSelectListTextOnly .sapMITBSelectItem .sapMText {
