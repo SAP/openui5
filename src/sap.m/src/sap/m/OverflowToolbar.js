@@ -354,6 +354,11 @@ sap.ui.define([
 					fnAddToActionSheetArrAndUpdateContentSize.call(this, vMovableControl);
 				}
 
+				// Add the overflow button only if there is at least one control, which will be shown in the Popover and isn't added already.
+				if (OverflowToolbar._getControlPriority(vMovableControl) !== OverflowToolbarPriority.Disappear) {
+					iContentSize = fnAddOverflowButton.call(this, iContentSize);
+				}
+
 				if (iContentSize <= iToolbarSize) {
 					return true;
 				}
@@ -412,8 +417,6 @@ sap.ui.define([
 		// If there are buttons that can be moved, start moving them to the action sheet until there is no more overflow left
 		if (this._aMovableControls.length) {
 
-			// There is at least one button that will go to the action sheet - add the overflow button, but only if it wasn't added already
-			iContentSize = fnAddOverflowButton.call(this, iContentSize);
 			aAggregatedMovableControls = fnAggregateMovableControls.call(this, this._aMovableControls);
 
 			// Define the overflow order, depending on items` priority and index.
