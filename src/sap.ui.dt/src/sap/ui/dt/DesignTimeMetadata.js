@@ -22,6 +22,17 @@ function(
 ) {
 	"use strict";
 
+	function evaluateAction(vAction, oElement) {
+		if (typeof (vAction) === "function") {
+			vAction = vAction(oElement);
+		}
+
+		if (typeof (vAction) === "string") {
+			return { changeType : vAction };
+		}
+		return vAction;
+	}
+
 	/**
 	 * Constructor for a new DesignTimeMetadata.
 	 *
@@ -144,22 +155,17 @@ function(
 	 * Returns action sAction part of designTime metadata (object or changeType string)
 	 * @param  {string} sAction action name
 	 * @param  {object} oElement element instance
+	 * @param {string} [sSubAction] Sub-action
 	 * @return {map} part of designTimeMetadata, which describes sAction in a map format
 	 * @public
 	 */
-	DesignTimeMetadata.prototype.getAction = function(sAction, oElement) {
+	DesignTimeMetadata.prototype.getAction = function(sAction, oElement, sSubAction) {
 		var mData = this.getData();
-		if (mData.actions && mData.actions[sAction]) {
-			var vAction = mData.actions[sAction];
-			if (typeof (vAction) === "function") {
-				vAction = vAction(oElement);
-			}
-
-			if (typeof (vAction) === "string") {
-				return { changeType : vAction };
-			}
-			return vAction;
+		var aActionPath = ["actions", sAction];
+		if (sSubAction) {
+			aActionPath.push(sSubAction);
 		}
+		return evaluateAction(ObjectPath.get(aActionPath, mData), oElement);
 	};
 
 	/**

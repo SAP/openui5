@@ -28,15 +28,29 @@ function(
 		beforeEach: function() {
 			this.oDesignTimeMetadata = new DesignTimeMetadata({
 				data: {
-					testField : "testValue",
-					domRef : "domRef",
-					actions : {
-						action1 : "firstChangeType",
-						action2 : {
-							changeType : "secondChangeType"
+					testField: "testValue",
+					domRef: "domRef",
+					actions: {
+						action1: "firstChangeType",
+						action2: {
+							changeType: "secondChangeType"
 						},
-						action3 : function(oElement) {
-							return {changeType: oElement.name};
+						action3: function (oElement) {
+							return {
+								changeType: oElement.name
+							};
+						},
+						actionWithASubAction: {
+							subAction: {
+								changeType: "subActionChangeType"
+							}
+						},
+						actionWithASubActionInsideFunction: {
+							subAction: function (oElement) {
+								return {
+									changeType: oElement.name
+								};
+							}
 						}
 					}
 				}
@@ -57,6 +71,12 @@ function(
 			assert.propEqual(this.oDesignTimeMetadata.getAction("action1"), {changeType : "firstChangeType"}, "...for string action, the string is returned");
 			assert.propEqual(this.oDesignTimeMetadata.getAction("action2"), {changeType : "secondChangeType"}, "...for object action, the object is returned");
 			assert.propEqual(this.oDesignTimeMetadata.getAction("action3", {name:"thirdChangeType"}), {changeType : "thirdChangeType"}, "...for function action, the correct string is returned");
+		});
+
+		QUnit.test("when getAction is called for a sub action", function(assert) {
+			assert.propEqual(this.oDesignTimeMetadata.getAction("actionWithASubAction", undefined, "subAction"), {changeType : "subActionChangeType"}, "then the sub action was returned");
+			assert.strictEqual(this.oDesignTimeMetadata.getAction("actionWithASubAction", undefined, "InvalidSubAction"), undefined, "then for an invalid sub action undefined is returned");
+			assert.propEqual(this.oDesignTimeMetadata.getAction("actionWithASubActionInsideFunction", {name:"subActionChangeType"}, "subAction"), {changeType : "subActionChangeType"}, "then the sub action was returned for a function action");
 		});
 
 		QUnit.test("when getLibraryText is called", function(assert) {

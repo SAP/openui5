@@ -7,7 +7,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Add new OData property to a control
+	 * Add new OData / delegate property to a control
 	 *
 	 * @class
 	 * @extends sap.ui.rta.command.FlexCommand
@@ -15,12 +15,12 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @since 1.44
-	 * @alias sap.ui.rta.command.AddODataProperty
-	 * @experimental Since 1.44. This class is experimental and provides only limited functionality. Also the API might be
+	 * @since 1.78
+	 * @alias sap.ui.rta.command.AddProperty
+	 * @experimental Since 1.78. This class is experimental and provides only limited functionality. Also the API might be
 	 *               changed in future.
 	 */
-	var AddODataProperty = FlexCommand.extend("sap.ui.rta.command.AddODataProperty", {
+	var AddProperty = FlexCommand.extend("sap.ui.rta.command.AddProperty", {
 		metadata : {
 			library : "sap.ui.rta",
 			properties : {
@@ -53,7 +53,7 @@ sap.ui.define([
 		}
 	});
 
-	AddODataProperty.prototype._getChangeSpecificData = function() {
+	AddProperty.prototype._getChangeSpecificData = function() {
 		// general format
 		return {
 			changeType: this.getChangeType(),
@@ -70,5 +70,5 @@ sap.ui.define([
 		};
 	};
 
-	return AddODataProperty;
+	return AddProperty;
 }, /* bExport= */true);

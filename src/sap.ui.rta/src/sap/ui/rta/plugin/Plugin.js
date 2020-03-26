@@ -284,17 +284,18 @@ function(
 
 	/**
 	 * Checks the Aggregations on the Overlay for a specific Action
-	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay to be checked for action
-	 * @param {string} sAction action to be checked
-	 * @param {string} [sParentAggregationName] the aggregation in the parent where the element is
-	 * @return {boolean} whether the Aggregation has a valid Action
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay Overlay to be checked for action
+	 * @param {string} sAction Action to be checked
+	 * @param {string} [sParentAggregationName] The aggregation in the parent where the element is
+	 * @param {string} [sSubAction] Sub action
+	 * @return {boolean} Whether the Aggregation has a valid action
 	 * @protected
 	 */
-	BasePlugin.prototype.checkAggregationsOnSelf = function (oOverlay, sAction, sParentAggregationName) {
+	BasePlugin.prototype.checkAggregationsOnSelf = function (oOverlay, sAction, sParentAggregationName, sSubAction) {
 		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 		var oElement = oOverlay.getElement();
 
-		var aActionData = oDesignTimeMetadata.getActionDataFromAggregations(sAction, oOverlay.getElement());
+		var aActionData = oDesignTimeMetadata.getActionDataFromAggregations(sAction, oElement, undefined, sSubAction);
 		var oAction = aActionData.filter(function(oActionData) {
 			if (oActionData && sParentAggregationName) {
 				return oActionData.aggregation === sParentAggregationName;
