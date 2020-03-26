@@ -1,10 +1,10 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/rowmodes/RowMode",
-	"sap/ui/table/Table",
-	"sap/ui/table/qunit/TableQUnitUtils"
-], function(RowMode, Table, TableQUnitUtils) {
+	"sap/ui/table/Table"
+], function(TableQUnitUtils, RowMode, Table) {
 	"use strict";
 
 	var RowModeSubclass = RowMode.extend("sap.ui.table.test.RowModeSubClass", {

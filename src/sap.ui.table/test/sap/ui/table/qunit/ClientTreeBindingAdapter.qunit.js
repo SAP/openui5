@@ -2,12 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/model/ClientTreeBindingAdapter",
-	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter"
-], function(ClientTreeBindingAdapter, TableUtils, JSONModel, Filter, FilterOperator, Sorter) {
+], function(ClientTreeBindingAdapter, JSONModel, Filter, FilterOperator, Sorter) {
 	"use strict";
 
 	var oModel, oBinding;

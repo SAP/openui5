@@ -1,6 +1,7 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
@@ -24,10 +25,9 @@ sap.ui.define([
 	"sap/m/HBox",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
-	"sap/ui/table/TreeTable",
-	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(TableUtils, JSONModel, Device, UriParameters, Control, Text, Label, ObjectStatus, Icon, Button, Input, DatePicker, Select, ComboBox,
-			MultiComboBox, CheckBox, Link, Currency, ProgressIndicator, RatingIndicator, HBox, Table, Column, TreeTable, waitForThemeApplied) {
+	"sap/ui/table/TreeTable"
+], function(TableQUnitUtils, TableUtils, JSONModel, Device, UriParameters, Control, Text, Label, ObjectStatus, Icon, Button, Input, DatePicker, Select, ComboBox,
+			MultiComboBox, CheckBox, Link, Currency, ProgressIndicator, RatingIndicator, HBox, Table, Column, TreeTable) {
 	"use strict";
 
 	var bExecuteAllTests = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-table-testall") === "true";
@@ -197,8 +197,8 @@ sap.ui.define([
 	function getElementHeight(oElement) {
 		var iHeight = oElement.getBoundingClientRect().height;
 
-		// IE, Edge and PhantomJS can return float values. We need integers.
-		if (Device.browser.msie || Device.browser.edge || Device.browser.phantomJS) {
+		// IE and Edge can return float values. We need integers.
+		if (Device.browser.msie || Device.browser.edge) {
 			iHeight = Math.round(iHeight);
 		}
 
@@ -272,120 +272,6 @@ sap.ui.define([
 					+ " - The row has at least the default height of " + iExpectedRowHeight + "px"
 					+ " and not more than the maximum default row height of " + iMaxDefaultRowHeight + "px"
 					+ " (Actual height: " + iActualRowHeight + "px)"
-				);
-			}
-		},
-		_assertContentRowHeightInCrappyPhantomJS: function(assert, iActualRowHeight, iExpectedRowHeight, sContentDensity, sControlName) {
-			if (!Device.browser.phantomJS) {
-				return;
-			}
-
-			var iPhantomJSRowHeight = null;
-			var iMaxDefaultRowHeight = TableUtils.DEFAULT_ROW_HEIGHT[aContentDensities[0]]; // sapUiSizeCozy;
-
-			switch (sContentDensity) {
-				case "sapUiSizeCozy":
-					switch (sControlName) {
-						case "sap.m.ProgressIndicator":
-						case "sap.m.HBox[sap.m.Button,sap.m.Button]":
-						case "sap.m.HBox[sap.m.Input,sap.m.Input]":
-							iPhantomJSRowHeight = 68;
-							break;
-						default:
-					}
-					break;
-				case "sapUiSizeCompact":
-					switch (sControlName) {
-						case "sap.m.ObjectStatus":
-							iPhantomJSRowHeight = 39;
-							break;
-						case "sap.m.HBox[sap.m.Link,sap.m.Text]":
-							iPhantomJSRowHeight = 44;
-							break;
-						case "sap.m.ProgressIndicator":
-						case "sap.m.HBox[sap.m.Button,sap.m.Button]":
-						case "sap.m.HBox[sap.m.Input,sap.m.Input]":
-							iPhantomJSRowHeight = 52;
-							break;
-						default:
-					}
-					break;
-				case "sapUiSizeCondensed":
-					switch (sControlName) {
-						case "sap.ui.unified.Currency":
-							iPhantomJSRowHeight = 26;
-							break;
-						case "sap.m.Text":
-						case "sap.m.Label":
-						case "sap.m.Link":
-							iPhantomJSRowHeight = 28;
-							break;
-						case "sap.m.ObjectStatus":
-						case "sap.m.ProgressIndicator":
-							iPhantomJSRowHeight = 49;
-							break;
-						case "sap.m.HBox[sap.m.Link,sap.m.Text]":
-							iPhantomJSRowHeight = 50;
-							break;
-						case "sap.m.HBox[sap.m.Button,sap.m.Button]":
-						case "sap.m.HBox[sap.m.Input,sap.m.Input]":
-							iPhantomJSRowHeight = 47;
-							break;
-						default:
-					}
-					break;
-				case undefined:
-					switch (sControlName) {
-						case "sap.m.ProgressIndicator":
-						case "sap.m.HBox[sap.m.Button,sap.m.Button]":
-						case "sap.m.HBox[sap.m.Input,sap.m.Input]":
-							iPhantomJSRowHeight = 68;
-							break;
-						default:
-					}
-					break;
-				default:
-			}
-
-			var sTestParameters = "Density: " + sContentDensity + ", Control: " + sControlName;
-			var sPhantomJSInfo = "Please run these tests in all supported browsers to verify."
-								 + " In case the tests fail only in PhantomJS please contact the sap.ui.table responsibles.";
-
-			if (sContentDensity != null) {
-				if (iPhantomJSRowHeight === null) {
-					assert.strictEqual(iActualRowHeight, iExpectedRowHeight,
-						sTestParameters
-						+ " - The row has the default height (" + iExpectedRowHeight + "px)"
-						+ " (Actual height: " + iActualRowHeight + "px)"
-						+ " - " + sPhantomJSInfo
-					);
-				} else {
-					assert.ok(
-						iActualRowHeight >= iExpectedRowHeight && iActualRowHeight <= iPhantomJSRowHeight,
-						sTestParameters
-						+ " - The row has the default height (" + iExpectedRowHeight + "px)"
-						+ " or the PhantomJS specific height for this control (" + iPhantomJSRowHeight + "px)"
-						+ " (Actual height: " + iActualRowHeight + "px)"
-						+ " - " + sPhantomJSInfo
-					);
-				}
-			} else if (iPhantomJSRowHeight === null) {
-				assert.ok(
-					iActualRowHeight >= iExpectedRowHeight && iActualRowHeight <= iMaxDefaultRowHeight,
-					sTestParameters
-					+ " - The row has at least the default height of " + iExpectedRowHeight + "px"
-					+ " and not more than the maximum default row height of " + iMaxDefaultRowHeight + "px"
-					+ " (Actual height: " + iActualRowHeight + "px)"
-					+ " - " + sPhantomJSInfo
-				);
-			} else {
-				assert.ok(
-					iActualRowHeight >= iExpectedRowHeight && iActualRowHeight <= iPhantomJSRowHeight,
-					sTestParameters
-					+ " - The row has at least the default height of " + iExpectedRowHeight + "px"
-					+ " and not more than the PhantomJS specific maximum row height of " + iPhantomJSRowHeight + "px for this control"
-					+ " (Actual height: " + iActualRowHeight + "px)"
-					+ " - " + sPhantomJSInfo
 				);
 			}
 		}
@@ -538,18 +424,4 @@ sap.ui.define([
 			}
 		});
 	}
-
-	//// Simplify access in the browser console.
-	//window.createTables = function() {
-	//	createTables();
-	//	window.oTable = oTable;
-	//	window.oTreeTable = oTreeTable;
-	//};
-	//window.destroyTables = function() {
-	//	destroyTables();
-	//	window.oTable = oTable;
-	//	window.oTreeTable = oTreeTable;
-	//};
-
-	return waitForThemeApplied();
 });

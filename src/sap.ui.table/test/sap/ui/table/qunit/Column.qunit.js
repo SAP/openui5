@@ -1,14 +1,13 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/table/Table",
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/Column",
+	"sap/ui/table/Table",
 	"sap/ui/table/CreationRow",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/unified/Menu",
-	"sap/m/Label",
-	"sap/m/Text"
-], function(Table, Column, CreationRow, JSONModel, Menu, Label, Text) {
+	"sap/ui/unified/Menu"
+], function(TableQUnitUtils, Column, Table, CreationRow, JSONModel, Menu) {
 	"use strict";
 
 	QUnit.module("Basics");
@@ -75,7 +74,7 @@ sap.ui.define([
 		assert.notEqual(oLabel, null, "Added label by passing a string");
 		assert.strictEqual(oLabel.getText(), "labelstring", "The text of the label is correct");
 
-		var oNewLabel = new Label({text: "labelinstance"});
+		var oNewLabel = new TableQUnitUtils.TestControl({text: "labelinstance"});
 		this._oColumn.setLabel(oNewLabel);
 		assert.notEqual(oNewLabel, null, "Added label by passing a sap.m.Label instance");
 		assert.notEqual(oLabel, oNewLabel, "The column has a new label");
@@ -90,7 +89,7 @@ sap.ui.define([
 		assert.notEqual(oTemplate, null, "Added template by passing a string");
 		assert.strictEqual(oTemplate.getBindingPath("text"), "bindingpath", "The binding path of the template is correct");
 
-		var oNewTemplate = new Text({text: "{anotherbindingpath}"});
+		var oNewTemplate = new TableQUnitUtils.TestControl({text: "{anotherbindingpath}"});
 		this._oColumn.setTemplate(oNewTemplate);
 		assert.notEqual(oNewTemplate, null, "Added template by passing a sap.m.Text instance");
 		assert.notEqual(oTemplate, oNewTemplate, "The column has a new template");
@@ -340,7 +339,7 @@ sap.ui.define([
 		var oInvalidateRowsAggregationSpy = sinon.spy(this.oTable, "invalidateRowsAggregation");
 		var oTableInvalidateSpy = sinon.spy(this.oTable, "invalidate");
 
-		this.oColumn.setTemplate(new Text());
+		this.oColumn.setTemplate(new TableQUnitUtils.TestControl());
 		assert.strictEqual(oInvalidateRowsAggregationSpy.callCount, 1,
 			"Table#invalidateRowsAggregation called after setting the template");
 		assert.strictEqual(oTableInvalidateSpy.callCount, 1,
@@ -367,7 +366,7 @@ sap.ui.define([
 		this.oColumn.setVisible(false);
 		oInvalidateRowsAggregationSpy.reset();
 		oTableInvalidateSpy.reset();
-		this.oColumn.setTemplate(new Text());
+		this.oColumn.setTemplate(new TableQUnitUtils.TestControl());
 		assert.strictEqual(oInvalidateRowsAggregationSpy.callCount, 0,
 			"Table#invalidateRowsAggregation NOT called after setting the template for invisible column");
 		assert.strictEqual(oTableInvalidateSpy.callCount, 0,
@@ -387,7 +386,7 @@ sap.ui.define([
 		var oCreationRowUpdateSpy = sinon.spy(this.oCreationRow, "_update");
 		var oTableInvalidateSpy = sinon.spy(this.oTable, "invalidate");
 
-		this.oColumn.setCreationTemplate(new Text());
+		this.oColumn.setCreationTemplate(new TableQUnitUtils.TestControl());
 		assert.strictEqual(oCreationRowUpdateSpy.callCount, 1,
 			"CreationRow#_update called after setting the template");
 		assert.strictEqual(oTableInvalidateSpy.callCount, 0,
@@ -414,7 +413,7 @@ sap.ui.define([
 		this.oColumn.setVisible(false);
 		oCreationRowUpdateSpy.reset();
 		oTableInvalidateSpy.reset();
-		this.oColumn.setCreationTemplate(new Text());
+		this.oColumn.setCreationTemplate(new TableQUnitUtils.TestControl());
 		assert.strictEqual(oCreationRowUpdateSpy.callCount, 0,
 			"CreationRow#_update NOT called after setting the template for invisible column");
 		assert.strictEqual(oTableInvalidateSpy.callCount, 0,
@@ -506,7 +505,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getTemplateClone: No parameters passed", function(assert) {
-		this.oColumn.setTemplate(new Text());
+		this.oColumn.setTemplate(new TableQUnitUtils.TestControl());
 
 		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
 		var oTemplateClone = this.oColumn.getTemplateClone();
@@ -517,7 +516,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getTemplateClone: No type information passed", function(assert) {
-		this.oColumn.setTemplate(new Text({text: "Standard"}));
+		this.oColumn.setTemplate(new TableQUnitUtils.TestControl({text: "Standard"}));
 
 		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
 		var oTemplateClone = this.oColumn.getTemplateClone(0);
@@ -530,7 +529,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getTemplateClone: Wrong type information passed", function(assert) {
-		this.oColumn.setTemplate(new Text());
+		this.oColumn.setTemplate(new TableQUnitUtils.TestControl());
 		var oTemplateClone = this.oColumn.getTemplateClone(0, "not a template type");
 		assert.strictEqual(this.getTemplateCloneCount(), 0, "No template clone exists");
 		assert.strictEqual(oTemplateClone, null, "Returned null");
@@ -538,7 +537,7 @@ sap.ui.define([
 
 	QUnit.test("getTemplateClone: No index passed", function(assert) {
 		for (var j = 0; j < this.aTemplateTypes.length; j++) {
-			this.setTemplate(this.aTemplateTypes[j], new Text());
+			this.setTemplate(this.aTemplateTypes[j], new TableQUnitUtils.TestControl());
 		}
 
 		var oGetFreeTemplateCloneSpy = sinon.spy(this.oColumn, "_getFreeTemplateClone");
@@ -577,7 +576,7 @@ sap.ui.define([
 		for (var j = 0; j < this.aTemplateTypes.length; j++) {
 			sTemplateType = this.aTemplateTypes[j];
 
-			var oTemplate = new Text({text: sTemplateType});
+			var oTemplate = new TableQUnitUtils.TestControl({text: sTemplateType});
 
 			this.setTemplate(sTemplateType, oTemplate);
 			mTemplateCloneFunctionSpies[sTemplateType] = sinon.spy(oTemplate, "clone");
@@ -617,7 +616,7 @@ sap.ui.define([
 		for (var j = 0; j < this.aTemplateTypes.length; j++) {
 			sTemplateType = this.aTemplateTypes[j];
 
-			var oTemplate = new Text({text: sTemplateType});
+			var oTemplate = new TableQUnitUtils.TestControl({text: sTemplateType});
 
 			this.setTemplate(sTemplateType, oTemplate);
 			sinon.stub(this.oColumn.getTemplateClone(0, sTemplateType), "getParent").returns("i have a parent");
@@ -659,7 +658,7 @@ sap.ui.define([
 		var mFreeTemplateClones = {};
 
 		for (var j = 0; j < this.aTemplateTypes.length; j++) {
-			var oTemplate = new Text();
+			var oTemplate = new TableQUnitUtils.TestControl();
 
 			sTemplateType = this.aTemplateTypes[j];
 			this.setTemplate(sTemplateType, oTemplate);
@@ -776,7 +775,7 @@ sap.ui.define([
 		for (var i = 0; i < this.aTemplateTypes.length; i++) {
 			var sTemplateType = this.aTemplateTypes[i];
 
-			this.setTemplate(sTemplateType, new Text());
+			this.setTemplate(sTemplateType, new TableQUnitUtils.TestControl());
 			assert.ok(oDestroyTemplateClonesSpy.calledOnce,
 				sTemplateType + " type: Column#_destroyTemplateClones was called once when setting a template");
 			assert.ok(oDestroyTemplateClonesSpy.calledWithExactly(sTemplateType),
@@ -793,7 +792,7 @@ sap.ui.define([
 		// Column#destroy*Template
 
 		for (i = 0; i < this.aTemplateTypes.length; i++) {
-			this.setTemplate(this.aTemplateTypes[i], new Text());
+			this.setTemplate(this.aTemplateTypes[i], new TableQUnitUtils.TestControl());
 		}
 
 		var oDestroyTemplateClonesSpy = sinon.spy(this.oColumn, "_destroyTemplateClones");
@@ -813,7 +812,7 @@ sap.ui.define([
 		// Control#destroy
 
 		for (i = 0; i < this.aTemplateTypes.length; i++) {
-			this.setTemplate(this.aTemplateTypes[i], new Text());
+			this.setTemplate(this.aTemplateTypes[i], new TableQUnitUtils.TestControl());
 		}
 
 		oDestroyTemplateClonesSpy.reset();
@@ -858,13 +857,13 @@ sap.ui.define([
 			this._oTable.setShowColumnVisibilityMenu(true);
 
 			this._oColumn1 = new Column({
-				template: new Text({text: "col1value"}),
-				label: new Text({text: "col1header"})
+				template: new TableQUnitUtils.TestControl({text: "col1value"}),
+				label: new TableQUnitUtils.TestControl({text: "col1header"})
 			});
 
 			this._oColumn2 = new Column({
-				template: new Text({text: "col2value"}),
-				label: new Text({text: "col2header"})
+				template: new TableQUnitUtils.TestControl({text: "col2value"}),
+				label: new TableQUnitUtils.TestControl({text: "col2header"})
 			});
 
 			this._oTable.addColumn(this._oColumn1);
@@ -898,8 +897,8 @@ sap.ui.define([
 		this._oTable.addColumn(this._oColumn1);
 		this._oTable.addColumn(this._oColumn2);
 		this._oColumn3 = new Column({
-			template: new Text({text: "col3value"}),
-			label: new Text({text: "col3header"})
+			template: new TableQUnitUtils.TestControl({text: "col3value"}),
+			label: new TableQUnitUtils.TestControl({text: "col3header"})
 		});
 		this._oTable.addColumn(this._oColumn3);
 		this._oColumn1._openMenu();
@@ -955,18 +954,18 @@ sap.ui.define([
 		this._oTable2.setShowColumnVisibilityMenu(true);
 
 		this._oColumn21 = new Column({
-			template: new Text({text: "col1value"}),
-			label: new Text({text: "col1header"})
+			template: new TableQUnitUtils.TestControl({text: "col1value"}),
+			label: new TableQUnitUtils.TestControl({text: "col1header"})
 		});
 
 		this._oColumn22 = new Column({
-			template: new Text({text: "col2value"}),
-			label: new Text({text: "col2header"})
+			template: new TableQUnitUtils.TestControl({text: "col2value"}),
+			label: new TableQUnitUtils.TestControl({text: "col2header"})
 		});
 
 		this._oColumn23 = new Column({
-			template: new Text({text: "col3value"}),
-			label: new Text({text: "col3header"})
+			template: new TableQUnitUtils.TestControl({text: "col3value"}),
+			label: new TableQUnitUtils.TestControl({text: "col3header"})
 		});
 
 		this._oTable2.addColumn(this._oColumn21);

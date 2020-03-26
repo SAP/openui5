@@ -1,11 +1,9 @@
 /*global QUnit, oTable */
 
 sap.ui.define([
-	"sap/ui/table/Column",
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/core/Control",
-	"sap/ui/model/json/JSONModel"
-], function(Column, TableQUnitUtils, Control, JSONModel) {
+	"sap/ui/table/Column"
+], function(TableQUnitUtils, Column) {
 	"use strict";
 
 	// mapping of global function calls

@@ -1,11 +1,12 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/table/utils/TableUtils",
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/table/Table",
-	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/odata/v2/ODataModel"
-], function(MockServer, Table, TableUtils, ODataModel) {
+], function(TableUtils, TableQUnitUtils, MockServer, Table, ODataModel) {
 	"use strict";
 
 	var sServiceURI = "/service/";

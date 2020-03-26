@@ -6,16 +6,13 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/extensions/KeyboardDelegate",
 	"sap/ui/Device",
-	"sap/m/Menu",
-	"sap/m/MenuItem",
 	"sap/ui/events/F6Navigation",
 	"sap/ui/table/library",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel"
-], function(TableQUnitUtils, qutils, TableUtils, KeyboardDelegate, Device, MenuM, MenuItemM, F6Navigation, tableLibrary, Table, Column,
-			KeyCodes, JSONModel) {
+], function(TableQUnitUtils, qutils, TableUtils, KeyboardDelegate, Device, F6Navigation, tableLibrary, Table, Column, KeyCodes, JSONModel) {
 	"use strict";
 
 	// mapping of global function calls

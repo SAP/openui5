@@ -1,5 +1,7 @@
 
 sap.ui.define([
+	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/table/AnalyticalTable",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/model/odata/ODataModel",
@@ -7,7 +9,6 @@ sap.ui.define([
 	"sap/ui/core/qunit/analytics/o4aMetadata",
 	"sap/ui/core/qunit/analytics/TBA_ServiceDocument",
 	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts",
-	"sap/ui/table/AnalyticalTable",
 	"sap/ui/model/analytics/ODataModelAdapter",
 	"sap/ui/model/analytics/AnalyticalTreeBindingAdapter",
 	"sap/ui/model/TreeAutoExpandMode",
@@ -15,10 +16,10 @@ sap.ui.define([
 	"sap/ui/model/type/Float",
 	"sap/ui/table/Row",
 	"sap/ui/table/library",
-	"sap/m/Label",
 	"sap/ui/core/TooltipBase"
-], function(TableUtils, qutils, ODataModel, ODataModelV2, o4aFakeService, TBA_ServiceDocument, ATBA_Batch_Contexts, AnalyticalTable, ODataModelAdapter, AnalyticalTreeBindingAdapter,
-			TreeAutoExpandMode, AnalyticalColumn, FloatType, Row, library, Label, TooltipBase) {
+], function(TableQUnitUtils, AnalyticalTable, TableUtils, qutils, ODataModel, ODataModelV2,
+			o4aFakeService, TBA_ServiceDocument, ATBA_Batch_Contexts, ODataModelAdapter, AnalyticalTreeBindingAdapter,
+			TreeAutoExpandMode, AnalyticalColumn, FloatType, Row, library, TooltipBase) {
 	/*global QUnit,sinon*/
 	"use strict";
 
@@ -71,11 +72,10 @@ sap.ui.define([
 			grouped: mSettings.grouped || false,
 			summed: mSettings.summed || false,
 			visible: true,
-			template: new Label({
+			template: new TableQUnitUtils.TestControl({
 				text: {
 					path: mSettings.name
-				},
-				textAlign: "End"
+				}
 			}),
 			sortProperty: mSettings.name,
 			filterProperty: mSettings.name,

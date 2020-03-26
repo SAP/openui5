@@ -1,13 +1,14 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/Column",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/thirdparty/sinon-qunit" /*Sinon itself already part of MockServer*/
-], function(TreeTable, Column, ODataModel, TableUtils, MockServer, SinonQUnit) {
+], function(TableQUnitUtils, TreeTable, Column, ODataModel, TableUtils, MockServer, SinonQUnit) {
 	"use strict";
 
 	//MockServer for use with annotated tree
