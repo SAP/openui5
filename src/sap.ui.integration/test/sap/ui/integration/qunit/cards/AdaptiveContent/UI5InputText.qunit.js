@@ -1,8 +1,8 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/f/cards/AdaptiveContent",
-	"sap/f/cards/adaptivecards/elements/UI5InputText",
+	"sap/ui/integration/cards/AdaptiveContent",
+	"sap/ui/integration/cards/adaptivecards/elements/UI5InputText",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
 ],

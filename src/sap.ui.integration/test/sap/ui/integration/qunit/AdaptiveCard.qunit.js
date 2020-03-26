@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/f/cards/AdaptiveContent",
+	"sap/ui/integration/cards/AdaptiveContent",
 	"sap/ui/integration/thirdparty/adaptivecards",
 	"sap/ui/core/Core"
 ],

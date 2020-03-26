@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @private
-	 * @alias sap.f.cards.Utils
+	 * @alias sap.ui.integration.cards.Utils
 	 */
 	var Utils = {};
 

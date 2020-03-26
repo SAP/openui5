@@ -3,17 +3,17 @@
  */
 
 sap.ui.define([
-	"sap/f/library",
-	"sap/f/cards/BaseContent",
+	"sap/ui/integration/library",
+	"sap/ui/integration/cards/BaseContent",
 	"sap/ui/core/HTML",
-	"sap/f/cards/BindingResolver"
+	"sap/ui/integration/cards/BindingResolver"
 ], function (library, BaseContent, HTML, BindingResolver) {
 		"use strict";
 
 		/**
 		 * Actions area type enumeration
 		 */
-		var AreaType = library.cards.AreaType;
+		var AreaType = library.AreaType;
 
 		/**
 		 * Constructor for a new <code>AnalyticsCloudContent</code>.
@@ -26,7 +26,7 @@ sap.ui.define([
 		 *
 		 * <b>Note:</b> In order to use this content, the Highcharts library must be preloaded on the page. And <code>window.Highcharts</code> must be available.
 		 *
-		 * @extends sap.f.cards.BaseContent
+		 * @extends sap.ui.integration.cards.BaseContent
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -34,9 +34,9 @@ sap.ui.define([
 		 * @constructor
 		 * @private
 		 * @since 1.73
-		 * @alias sap.f.cards.AnalyticsCloudContent
+		 * @alias sap.ui.integration.cards.AnalyticsCloudContent
 		 */
-		var AnalyticsCloudContent = BaseContent.extend("sap.f.cards.AnalyticsCloudContent", {
+		var AnalyticsCloudContent = BaseContent.extend("sap.ui.integration.cards.AnalyticsCloudContent", {
 			renderer: {}
 		});
 

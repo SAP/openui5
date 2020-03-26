@@ -44,37 +44,6 @@ sap.ui.define(function () {
 					only: ["sap/f/Card"]
 				}
 			},
-			"BindingHelper": {
-				coverage: {
-					only: ["sap/f/cards/BindingHelper"]
-				}
-			},
-			"BindingResolver": {
-				coverage: {
-					only: ["sap/f/cards/BindingResolver"]
-				}
-			},
-			"Card-BindingFeatures-DateRange": {
-				coverage: {
-					only: ["sap/f/cards/bindingFeatures/DateRange"]
-				},
-				module: [
-					'./cards/bindingFeatures/DateRange.qunit'
-				]
-			},
-			"DataProvider": {
-				coverage: {
-					only: [
-						"sap/f/cards/DataProviderFactory",
-						"sap/f/cards/DataProvider",
-						"sap/f/cards/RequestDataProvider",
-						"sap/f/cards/ServiceDataProvider"
-					]
-				},
-				sinon: {
-					version: "edge"
-				}
-			},
 			"DynamicPage": {
 				coverage: {
 					only: ["sap/f/DynamicPage"]

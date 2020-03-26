@@ -3,10 +3,10 @@
  */
 
 sap.ui.define([
-		"sap/f/library",
+		"sap/ui/integration/library",
 		"sap/ui/base/ManagedObject",
 		"sap/m/Table",
-		"sap/f/cards/BaseListContent",
+		"sap/ui/integration/cards/BaseListContent",
 		"sap/m/Column",
 		"sap/m/ColumnListItem",
 		"sap/m/Text",
@@ -14,11 +14,11 @@ sap.ui.define([
 		"sap/m/ProgressIndicator",
 		"sap/m/ObjectIdentifier",
 		"sap/m/ObjectStatus",
-		"sap/f/Avatar",
+		"sap/m/Avatar",
 		"sap/ui/core/library",
 		"sap/m/library",
-		"sap/f/cards/BindingResolver",
-		"sap/f/cards/BindingHelper",
+		"sap/ui/integration/cards/BindingResolver",
+		"sap/ui/integration/cards/BindingHelper",
 		"sap/f/cards/IconFormatter"
 	], function (
 		library,
@@ -42,7 +42,7 @@ sap.ui.define([
 		"use strict";
 
 		// shortcut for sap.f.AvatarSize
-		var AvatarSize = library.AvatarSize;
+		var AvatarSize = mobileLibrary.AvatarSize;
 
 		// shortcut for sap.ui.core.VerticalAlign
 		var VerticalAlign = coreLibrary.VerticalAlign;
@@ -51,7 +51,7 @@ sap.ui.define([
 		var ListSeparators = mobileLibrary.ListSeparators;
 		var ListType = mobileLibrary.ListType;
 
-		var AreaType = library.cards.AreaType;
+		var AreaType = library.AreaType;
 
 		/**
 		 * Constructor for a new <code>TableContent</code>.
@@ -68,7 +68,7 @@ sap.ui.define([
 		 *
 		 * <h3>Responsive Behavior</h3>
 		 *
-		 * @extends sap.f.cards.BaseListContent
+		 * @extends sap.ui.integration.cards.BaseListContent
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -76,9 +76,9 @@ sap.ui.define([
 		 * @constructor
 		 * @private
 		 * @since 1.65
-		 * @alias sap.f.cards.TableContent
+		 * @alias sap.ui.integration.cards.TableContent
 		 */
-		var TableContent = BaseListContent.extend("sap.f.cards.TableContent", {
+		var TableContent = BaseListContent.extend("sap.ui.integration.cards.TableContent", {
 			renderer: {}
 		});
 
@@ -111,11 +111,11 @@ sap.ui.define([
 		};
 
 		/**
-		 * Setter for configuring a <code>sap.f.cards.TableContent</code>.
+		 * Setter for configuring a <code>sap.ui.integration.cards.TableContent</code>.
 		 *
 		 * @public
 		 * @param {Object} oConfiguration Configuration object used to create the internal table.
-		 * @returns {sap.f.cards.TableContent} Pointer to the control instance to allow method chaining.
+		 * @returns {sap.ui.integration.cards.TableContent} Pointer to the control instance to allow method chaining.
 		 */
 		TableContent.prototype.setConfiguration = function (oConfiguration) {
 			BaseListContent.prototype.setConfiguration.apply(this, arguments);

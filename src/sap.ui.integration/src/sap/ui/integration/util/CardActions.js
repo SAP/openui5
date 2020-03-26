@@ -3,13 +3,11 @@
  */
 sap.ui.define([
 		"sap/m/library",
-		"sap/f/library",
 		"sap/ui/integration/library",
 		"sap/ui/base/ManagedObject",
 		"sap/base/Log",
-		"sap/f/cards/BindingResolver"],
+		"sap/ui/integration/cards/BindingResolver"],
 	function (mLibrary,
-			  fLibrary,
 			  library,
 			  ManagedObject,
 			  Log,
@@ -24,7 +22,7 @@ sap.ui.define([
 			return vService;
 		}
 
-		var AreaType = fLibrary.cards.AreaType,
+		var AreaType = library.AreaType,
 			CardActionType = library.CardActionType,
 			ListType = mLibrary.ListType;
 
@@ -52,7 +50,7 @@ sap.ui.define([
 				library: "sap.ui.integration",
 				properties: {
 					card: {type: "object"},
-					areaType: {type: "sap.f.cards.AreaType", defaultValue: AreaType.None}
+					areaType: {type: "sap.ui.integration.AreaType", defaultValue: AreaType.None}
 				}
 			}
 		});

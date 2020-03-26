@@ -3,9 +3,9 @@
  */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/f/library",
+	"sap/ui/integration/library",
 	"sap/ui/base/Object",
-	"sap/f/cards/BindingHelper",
+	"sap/ui/integration/cards/BindingHelper",
 	"sap/f/cards/NumericHeader",
 	"sap/f/cards/Header",
 	"sap/f/cards/NumericSideIndicator",
@@ -15,7 +15,7 @@ sap.ui.define([
 	"./CardActions"
 ], function (
 	jQuery,
-	fLibrary,
+	library,
 	BaseObject,
 	BindingHelper,
 	NumericHeader,
@@ -28,7 +28,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var AreaType = fLibrary.cards.AreaType;
+	var AreaType = library.AreaType;
 
 	/**
 	 * Binds the statusText of a header to the provided format configuration.

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-		"sap/f/library",
-		"sap/f/cards/BaseContent",
+		"sap/ui/integration/library",
+		"sap/ui/integration/cards/BaseContent",
 		"sap/m/HBox",
 		"sap/m/VBox",
 		"sap/m/Text",
@@ -14,12 +14,12 @@ sap.ui.define([
 		"sap/ui/core/ResizeHandler",
 		"sap/ui/layout/AlignedFlowLayout",
 		"sap/ui/dom/units/Rem",
-		"sap/f/cards/BindingHelper",
+		"sap/ui/integration/cards/BindingHelper",
 		"sap/f/cards/IconFormatter"
 	], function (library, BaseContent, HBox, VBox, Text, Title, Avatar, Link , Label, ResizeHandler, AlignedFlowLayout, Rem, BindingHelper, IconFormatter) {
 		"use strict";
 
-		var AreaType = library.cards.AreaType;
+		var AreaType = library.AreaType;
 
 		/**
 		 * Constructor for a new <code>ObjectContent</code>.
@@ -30,7 +30,7 @@ sap.ui.define([
 		 * @class
 		 * Displays the basic details for an object, for example, a person or a sales order.
 		 *
-		 * @extends sap.f.cards.BaseContent
+		 * @extends sap.ui.integration.cards.BaseContent
 		 * @author SAP SE
 		 * @version ${version}
 		 *
@@ -38,9 +38,9 @@ sap.ui.define([
 		 * @experimental
 		 * @since 1.64
 		 * @see {@link TODO Card}
-		 * @alias sap.f.cards.ObjectContent
+		 * @alias sap.ui.integration.cards.ObjectContent
 		 */
-		var ObjectContent = BaseContent.extend("sap.f.cards.ObjectContent", {
+		var ObjectContent = BaseContent.extend("sap.ui.integration.cards.ObjectContent", {
 			renderer: {}
 		});
 

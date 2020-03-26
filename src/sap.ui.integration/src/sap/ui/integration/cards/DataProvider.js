@@ -15,7 +15,7 @@ sap.ui.define(["sap/ui/base/ManagedObject"], function (ManagedObject) {
 	 * Hides the complexity of working with different data providers like:
 	 *  - static JSON data
 	 * 	- data services which implements the interface <code>sap.ui.integration.services.Data</code> class
-	 *  - AJAX calls like <code>sap.f.cards.Data</code> class
+	 *  - AJAX calls like <code>sap.ui.integration.cards.Data</code> class
 	 * Allows for an extensible way to add more data providers.
 	 *
 	 * @extends sap.ui.base.ManagedObject
@@ -26,9 +26,9 @@ sap.ui.define(["sap/ui/base/ManagedObject"], function (ManagedObject) {
 	 * @constructor
 	 * @private
 	 * @since 1.65
-	 * @alias sap.f.cards.DataProvider
+	 * @alias sap.ui.integration.cards.DataProvider
 	 */
-	var DataProvider = ManagedObject.extend("sap.f.cards.DataProvider", {
+	var DataProvider = ManagedObject.extend("sap.ui.integration.cards.DataProvider", {
 		metadata: {
 			events: {
 

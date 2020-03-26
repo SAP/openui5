@@ -8,8 +8,8 @@ sap.ui.define([
 	"sap/ui/integration/util/Manifest",
 	"sap/ui/integration/util/ServiceManager",
 	"sap/base/Log",
-	"sap/f/cards/DataProviderFactory",
-	"sap/f/cards/BaseContent",
+	"sap/ui/integration/cards/DataProviderFactory",
+	"sap/ui/integration/cards/BaseContent",
 	"sap/m/HBox",
 	"sap/m/VBox",
 	"sap/ui/core/Icon",
@@ -900,7 +900,7 @@ sap.ui.define([
 	 * Sets a card content.
 	 *
 	 * @private
-	 * @param {sap.f.cards.BaseContent} oContent The card content instance to be configured.
+	 * @param {sap.ui.integration.cards.BaseContent} oContent The card content instance to be configured.
 	 */
 	Card.prototype._setCardContent = function (oContent) {
 

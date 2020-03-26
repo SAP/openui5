@@ -2,9 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-		"sap/f/library",
-		"sap/f/cards/BaseContent",
-		"sap/f/cards/BindingResolver",
+		"sap/ui/integration/library",
+		"sap/ui/integration/cards/BaseContent",
+		"sap/ui/integration/cards/BindingResolver",
 		"sap/viz/ui5/controls/VizFrame",
 		"sap/viz/ui5/controls/common/feeds/FeedItem",
 		"sap/viz/ui5/data/FlattenedDataset",
@@ -52,7 +52,7 @@ sap.ui.define([
 			"Donut": "donut"
 		};
 
-		var AreaType = library.cards.AreaType;
+		var AreaType = library.AreaType;
 
 		/**
 		 * Constructor for a new <code>AnalyticalContent</code>.
@@ -64,7 +64,7 @@ sap.ui.define([
 		 * A control that is a wrapper around sap.viz library and allows the creation of analytical
 		 * controls (like charts) based on object configuration.
 		 *
-		 * @extends sap.f.cards.BaseContent
+		 * @extends sap.ui.integration.cards.BaseContent
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -72,9 +72,9 @@ sap.ui.define([
 		 * @constructor
 		 * @private
 		 * @since 1.62
-		 * @alias sap.f.cards.AnalyticalContent
+		 * @alias sap.ui.integration.cards.AnalyticalContent
 		 */
-		var AnalyticalContent = BaseContent.extend("sap.f.cards.AnalyticalContent", {
+		var AnalyticalContent = BaseContent.extend("sap.ui.integration.cards.AnalyticalContent", {
 			renderer: {}
 		});
 

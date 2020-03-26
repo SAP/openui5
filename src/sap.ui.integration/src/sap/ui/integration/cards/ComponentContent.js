@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/f/cards/BaseContent",
+	"sap/ui/integration/cards/BaseContent",
 	"sap/ui/core/ComponentContainer"
 ], function (
 	BaseContent,
@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @class
 	 * A control that allows a Component to be put inside a card content
 	 *
-	 * @extends sap.f.cards.BaseContent
+	 * @extends sap.ui.integration.cards.BaseContent
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -28,9 +28,9 @@ sap.ui.define([
 	 * @experimental
 	 * @constructor
 	 * @private
-	 * @alias sap.f.cards.ComponentContent
+	 * @alias sap.ui.integration.cards.ComponentContent
 	 */
-	var ComponentContent = BaseContent.extend("sap.f.cards.ComponentContent", {
+	var ComponentContent = BaseContent.extend("sap.ui.integration.cards.ComponentContent", {
 		renderer: {}
 	});
 

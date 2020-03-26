@@ -2,18 +2,18 @@
  * ${copyright}
  */
 sap.ui.define([
-		"sap/f/library",
-		"sap/f/cards/BaseListContent",
+		"sap/ui/integration/library",
+		"sap/ui/integration/cards/BaseListContent",
 		"sap/m/List",
 		"sap/m/StandardListItem",
 		"sap/ui/base/ManagedObject",
 		"sap/f/cards/IconFormatter",
-		"sap/f/cards/BindingHelper"
+		"sap/ui/integration/cards/BindingHelper"
 	],
 	function (library, BaseListContent, sapMList, StandardListItem, ManagedObject, IconFormatter, BindingHelper) {
 		"use strict";
 
-		var AreaType = library.cards.AreaType;
+		var AreaType = library.AreaType;
 
 		/**
 		 * Constructor for a new <code>ListContent</code>.
@@ -24,7 +24,7 @@ sap.ui.define([
 		 * @class
 		 * A control that is a wrapper of a <code>sap.m.List</code> and allows its creation based on a configuration.
 		 *
-		 * @extends sap.f.cards.BaseListContent
+		 * @extends sap.ui.integration.cards.BaseListContent
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -32,9 +32,9 @@ sap.ui.define([
 		 * @constructor
 		 * @private
 		 * @since 1.62
-		 * @alias sap.f.cards.ListContent
+		 * @alias sap.ui.integration.cards.ListContent
 		 */
-		var ListContent = BaseListContent.extend("sap.f.cards.ListContent", {
+		var ListContent = BaseListContent.extend("sap.ui.integration.cards.ListContent", {
 			renderer: {}
 		});
 
@@ -101,11 +101,11 @@ sap.ui.define([
 		};
 
 		/**
-		 * Setter for configuring a <code>sap.f.cards.ListContent</code>.
+		 * Setter for configuring a <code>sap.ui.integration.cards.ListContent</code>.
 		 *
 		 * @public
 		 * @param {Object} oConfiguration Configuration object used to create the internal list.
-		 * @returns {sap.f.cards.ListContent} Pointer to the control instance to allow method chaining.
+		 * @returns {sap.ui.integration.cards.ListContent} Pointer to the control instance to allow method chaining.
 		 */
 		ListContent.prototype.setConfiguration = function (oConfiguration) {
 			BaseListContent.prototype.setConfiguration.apply(this, arguments);

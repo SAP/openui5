@@ -3,7 +3,7 @@
 sap.ui.define([
 		"sap/ui/integration/library",
 		"sap/ui/integration/widgets/Card",
-		"sap/f/cards/ListContent",
+		"sap/ui/integration/cards/ListContent",
 		"sap/ui/core/Core",
 		"sap/f/cards/NumericHeader",
 		"sap/f/cards/NumericSideIndicator",
