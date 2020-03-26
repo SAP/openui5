@@ -80,6 +80,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} mPropertyBag.content.card Card to be created according to descriptor schema
 	 * @param {object} [mPropertyBag.content.model] UI5 model to be created according to descriptor schema
 	 * @param {object} [mPropertyBag.content.dataSource] Data sources to be created according to descriptor schema (either not provided or of type <code>OData</code> or of type <code>OData</code> and <code>ODataAnnotation</code>
@@ -100,6 +101,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {string} mPropertyBag.content.cardId ID of the card to be removed
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -117,6 +119,7 @@ sap.ui.define([
      *
      * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
      * @param {string} mPropertyBag.content.cardId ID of the card to be changed
      * @param {object|array} mPropertyBag.content.entityPropertyChange Entity property change or an array of multiple changes
      * @param {object} mPropertyBag.content.entityPropertyChange.propertyPath Property path inside the card (e.g. '/settings/title').
@@ -140,6 +143,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} mPropertyBag.content.inbound Inbound to be created according to descriptor schema
 	 * @param {object} [mPropertyBag.texts] Texts for the inline change
 	 *
@@ -158,6 +162,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {string} mPropertyBag.content.inboundId ID of the inbound to be removed
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -175,6 +180,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {string} mPropertyBag.content.inboundId ID of the inbound that should be preserved
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -192,6 +198,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {string} mPropertyBag.content.inboundId ID of the inbound to be changed
 	 * @param {object|array} mPropertyBag.content.entityPropertyChange Entity property change or an array of multiple changes
 	 * @param {object} mPropertyBag.content.entityPropertyChange.propertyPath Property path inside the inbound.
@@ -216,6 +223,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} mPropertyBag.content.outbound Outbound to be created according to descriptor schema
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -233,6 +241,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {string} mPropertyBag.content.outboundId ID of the outbound to be removed
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -250,6 +259,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {string} mPropertyBag.content.outboundId ID of the outbound to be changed
 	 * @param {object|array} mPropertyBag.content.entityPropertyChange Entity property change or an array of multiple changes
 	 * @param {object} mPropertyBag.content.entityPropertyChange.propertyPath Property path inside the outbound.
@@ -273,6 +283,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} mPropertyBag.content.dataSource Data source to be created according to descriptor schema (either one data source or one of type <code>OData</code> and one of type <code>ODataAnnotation</code>)
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -290,6 +301,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {string} mPropertyBag.content.dataSourceId ID of the data source to be removed
 	 * @param {boolean} [mPropertyBag.content.removeUnusedODataAnnotation] Option to remove also no longer referenced <code>dataSources</code> of type <code>ODataAnnotion</code>
 	 *
@@ -308,6 +320,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {string} mPropertyBag.content.dataSourceId ID of the data source to be changed
 	 * @param {object|array} mPropertyBag.content.entityPropertyChange Entity property change or an array of multiple changes
 	 * @param {object} mPropertyBag.content.entityPropertyChange.propertyPath Property path inside the data source
@@ -349,6 +362,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {string} mPropertyBag.content.dataSourceId ID of the data source to be changed by adding annotations from annotations parameter
 	 * @param {array} mPropertyBag.content.annotations Array with IDs of data sources of type <code>ODataAnnotation</code> that should be added to the data source to be changed
 	 * @param {sap.ui.fl.descriptorRelated.api.AnnotationsInsertPositionType} [mPropertyBag.content.annotationsInsertPosition] Position at which the annotations should be added to the annotations of the data source to be changed (BEGINNING/END, default BEGINNING)
@@ -371,6 +385,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Map of text
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} [mPropertyBag.content.maxLength] Maximum length of title
 	 * @param {object} [mPropertyBag.content.type='XTIT'] Type of title
 	 * @param {object} [mPropertyBag.content.comment] Comment for additional information
@@ -393,6 +408,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Map of text
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} [mPropertyBag.content.maxLength] Maximum length of sub title
 	 * @param {object} [mPropertyBag.content.type='XTIT'] Type of sub title
 	 * @param {object} [mPropertyBag.content.comment] Comment for additional information
@@ -416,6 +432,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Map of text properties
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} [mPropertyBag.content.maxLength] Maximum length of sub title
 	 * @param {object} [mPropertyBag.content.type='XTIT'] Type of short title
 	 * @param {object} [mPropertyBag.content.comment] Comment for additional information
@@ -440,6 +457,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Map of text properties
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} [mPropertyBag.content.maxLength] Maximum length of description
 	 * @param {object} [mPropertyBag.content.type='XTIT'] Type of description
 	 * @param {object} [mPropertyBag.content.comment] Comment for additional information
@@ -464,6 +482,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Map of text properties
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} [mPropertyBag.content.maxLength] Maximum length of info
 	 * @param {object} [mPropertyBag.content.type='XTIT'] Type of info
 	 * @param {object} [mPropertyBag.content.comment] Comment for additional information
@@ -488,6 +507,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} mPropertyBag.content.ach ACH component
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -505,6 +525,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} mPropertyBag.content.destination Destination
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -523,6 +544,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {array} mPropertyBag.content.keywords Keywords
 	 * @param {object} [mPropertyBag.texts] Texts for the inline change
 	 *
@@ -541,6 +563,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {array} mPropertyBag.content.technicalAttributes <code>TechnicalAttributes</code>
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -558,6 +581,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {array} mPropertyBag.content.technicalAttributes <code>TechnicalAttributes</code>
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -575,6 +599,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {array} mPropertyBag.content.cdsViews <code>CdsViews</code>
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -592,6 +617,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {array} mPropertyBag.content.cdsViews <code>CdsViews</code>
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -609,6 +635,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {array} mPropertyBag.content.config Config settings
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -626,6 +653,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} mPropertyBag.content.model UI5 model to be created according to descriptor schema
 	 * @param {object} [mPropertyBag.content.dataSource] Data sources to be created according to descriptor schema (either not provided or of arbitrary type or two provided of type <code>OData</code> and of type <code>OData</code> and <code>ODataAnnotation</code>)
 	 *
@@ -644,6 +672,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {string} mPropertyBag.content.modelId ID of the UI5 model to be removed
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -661,6 +690,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {string} mPropertyBag.content.modelId UI5 model ID to be enhanced
 	 * @param {object} mPropertyBag.texts i18n properties file path
 	 *
@@ -679,6 +709,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} mPropertyBag.content.componentUsageId UI5 component usage ID to be created
 	 * @param {object} mPropertyBag.content.componentUsage UI5 component usage data to replace the old one according to descriptor schema
 	 *
@@ -698,6 +729,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} mPropertyBag.content.libraries Library to be added
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -715,6 +747,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {string} mPropertyBag.content.minUI5Version UI5 Version to be updated
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -732,6 +765,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} mPropertyBag.content.smartBusinessApp Smart business app to be created according to descriptor schema
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -749,6 +783,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} mPropertyBag.content.smartBusinessApp Smart business app to be changed according to descriptor schema
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -766,6 +801,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} mPropertyBag.content.page Page to be created according to descriptor schema
 	 * @param {object} [mPropertyBag.texts] Texts for the inline change
 	 *
@@ -784,6 +820,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} mPropertyBag.content.icon Icon string
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -801,6 +838,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} mPropertyBag.content.deviceTypes Device types
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -818,6 +856,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} mPropertyBag.content.uri URI string
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
@@ -835,6 +874,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} mPropertyBag.content.registrationIds Array of <code>registrationId</code> strings
 	 *
 	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
