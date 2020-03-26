@@ -513,7 +513,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds Overflow button and updates iContentSize
+	 * Adds Overflow button and updates iContentSize, if it hasn't been added so far
 	 * @private
 	 */
 	OverflowToolbar.prototype._addOverflowButton = function () {
@@ -590,6 +590,11 @@ sap.ui.define([
 				vMovableControl.forEach(this._addToPopoverArrAndUpdateContentSize, this);
 			} else { // when vMovableControl is a single element
 				this._addToPopoverArrAndUpdateContentSize(vMovableControl);
+			}
+
+			// Add the overflow button only if there is at least one control, which will be shown in the Popover.
+			if (OverflowToolbar._getControlPriority(vMovableControl) !== OverflowToolbarPriority.Disappear) {
+				this._addOverflowButton();
 			}
 
 			if (this._iCurrentContentSize <= iToolbarSize) {
@@ -723,7 +728,6 @@ sap.ui.define([
 		if (this._aMovableControls.length) {
 
 			// There is at least one button that will go to the Popover - add the overflow button, but only if it wasn't added already
-			this._addOverflowButton();
 			aAggregatedMovableControls = this._aggregateMovableControls();
 
 			// Define the overflow order, depending on items` priority and index.
