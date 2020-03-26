@@ -117,25 +117,25 @@ sap.ui.define([
 
 		QUnit.test("given a control containing two extension points in an aggregation", function(assert) {
 			var mExtensionPointInfo2 = _createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
-			_createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName3, this.oPanel, "content", 2);
+			_createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName3, this.oPanel, "content", 1);
 			var sParentId = mExtensionPointInfo2.targetControl.getId();
 			var oLabel3 = new Label("newLabel1");
 			var oLabel4 = new Label("newLabel2");
 
 			assert.equal(this.oExtensionPointRegistry._aExtensionPointsByParent[sParentId][0].index, 0, "the index is '0' for the first extension point at the beginning");
-			assert.equal(this.oExtensionPointRegistry._aExtensionPointsByParent[sParentId][1].index, 2, "the index is '2' for the second extension point at the beginning");
+			assert.equal(this.oExtensionPointRegistry._aExtensionPointsByParent[sParentId][1].index, 1, "the index is '2' for the second extension point at the beginning");
 			mExtensionPointInfo2.targetControl.addContent(oLabel3);
 			assert.equal(this.oExtensionPointRegistry._aExtensionPointsByParent[sParentId][0].index, 0, "the index is the same as before when a control is added at a higher index");
-			assert.equal(this.oExtensionPointRegistry._aExtensionPointsByParent[sParentId][1].index, 2, "the index is the same as before when a control is added at a higher index");
+			assert.equal(this.oExtensionPointRegistry._aExtensionPointsByParent[sParentId][1].index, 1, "the index is the same as before when a control is added at a higher index");
 			mExtensionPointInfo2.targetControl.insertContent(oLabel4, 0);
 			assert.equal(this.oExtensionPointRegistry._aExtensionPointsByParent[sParentId][0].index, 0, "the index is the same as before when a control is added at the same index");
-			assert.equal(this.oExtensionPointRegistry._aExtensionPointsByParent[sParentId][1].index, 3, "the index is increased when a control is added at a lower index");
+			assert.equal(this.oExtensionPointRegistry._aExtensionPointsByParent[sParentId][1].index, 2, "the index is increased when a control is added at a lower index");
 			mExtensionPointInfo2.targetControl.removeContent(oLabel3);
 			assert.equal(this.oExtensionPointRegistry._aExtensionPointsByParent[sParentId][0].index, 0, "the index is the same as before when a control is removed from a higher index");
-			assert.equal(this.oExtensionPointRegistry._aExtensionPointsByParent[sParentId][1].index, 3, "the index is the same as before when a control is removed from a higher index");
+			assert.equal(this.oExtensionPointRegistry._aExtensionPointsByParent[sParentId][1].index, 2, "the index is the same as before when a control is removed from a higher index");
 			mExtensionPointInfo2.targetControl.removeContent(oLabel4);
 			assert.equal(this.oExtensionPointRegistry._aExtensionPointsByParent[sParentId][0].index, 0, "the index is the same as before when a control is removed from the same index");
-			assert.equal(this.oExtensionPointRegistry._aExtensionPointsByParent[sParentId][1].index, 2, "the index is decreased when a control is removed from a lower index");
+			assert.equal(this.oExtensionPointRegistry._aExtensionPointsByParent[sParentId][1].index, 1, "the index is decreased when a control is removed from a lower index");
 		});
 
 		QUnit.test("given a control containing an two extension points in two aggregations", function(assert) {
@@ -178,7 +178,7 @@ sap.ui.define([
 		QUnit.test("when calling 'getExtensionPointInfo' with a given ExtensionPointRegistry", function(assert) {
 			var mExtensionPointInfo1 = _createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName1, this.oHBox, "items", 1);
 			var mExtensionPointInfo2 = _createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
-			var mExtensionPointInfo3 = _createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName3, this.oPanel, "content", 2);
+			var mExtensionPointInfo3 = _createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName3, this.oPanel, "content", 1);
 			var mExtensionPointInfo4 = _createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName4, this.oHBox, "dependents", 1);
 
 			assert.deepEqual(this.oExtensionPointRegistry.getExtensionPointInfo(sExtensionPointName1, this.oXMLView), mExtensionPointInfo1, "the correct extension point info is returned");
@@ -205,7 +205,7 @@ sap.ui.define([
 
 		QUnit.test("when calling 'getExtensionPointInfoByParentId' with valid parameters", function(assert) {
 			var mExtensionPointInfo2 = _createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
-			var mExtensionPointInfo3 = _createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName3, this.oPanel, "content", 2);
+			var mExtensionPointInfo3 = _createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName3, this.oPanel, "content", 1);
 			var sParentId = mExtensionPointInfo2.targetControl.getId();
 			assert.deepEqual(this.oExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId), [mExtensionPointInfo2, mExtensionPointInfo3], "the correct extension point info into an array is returned");
 		});
