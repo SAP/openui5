@@ -198,8 +198,16 @@ sap.ui.define([
 		_bEditorAutoDetect: false,
 		_sCreatedBy: null, // possible values: null | propertyName | config
 
-		constructor: function() {
-			Control.prototype.constructor.apply(this, escapeParameter(arguments, "config"));
+		constructor: function () {
+			Control.prototype.constructor.apply(
+				this,
+				escapeParameter(arguments, function (oValue, sPropertyName) {
+					return (
+						sPropertyName === "config"
+						&& PropertyEditorFactory.hasType(oValue.type)
+					);
+				})
+			);
 
 			if (!this.getEditor()) {
 				// FIXME: if set later manually => this detection should be disabled

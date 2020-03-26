@@ -2,7 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define([
+	"sap/base/util/includes"
+], function (
+	includes
+) {
 	"use strict";
 
 	/**
@@ -28,7 +32,7 @@ sap.ui.define(function() {
 	* Registers classes for the given editor types. If an editor type is already registered,
 	* it will be skipped and must first be deregistered using the <code>PropertyEditorFactory.deregisterType</code>
 	* function.
-	* @param {map} mTypes - Map containing pairs of editor type and the path to load the class from
+	* @param {Object<string, string>} mTypes - Map containing pairs of editor type and the path to load the class from
 	* @public
 	* @function
 	* @name sap.ui.integration.designtime.baseEditor.propertyEditor.PropertyEditorFactory.registerTypes
@@ -73,7 +77,7 @@ sap.ui.define(function() {
 	/**
 	* Creates a new <code>BasePropertyEditor</code> instance of the given editor type.
 	* @param {string} sPropertyType - Type of the property editor to create
-	* @returns {Promise} Promise resolving to the created editor
+	* @returns {Promise<sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor>} Promise resolving to the created editor
 	* @public
 	* @function
 	* @name sap.ui.integration.designtime.baseEditor.propertyEditor.PropertyEditorFactory.create
@@ -94,6 +98,26 @@ sap.ui.define(function() {
 					return reject(vError);
 				});
 		});
+	};
+
+	/**
+	 * Retrieves all registered types.
+	 * @returns {Object<string, Promise<sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor>>} List of registered types
+	 */
+	PropertyEditorFactory.getTypes = function () {
+		return Object.assign({}, oPropertyEditorClasses);
+	};
+
+	/**
+	 * Checks if specified type is registered already in the factory.
+	 * @param {string} sPropertyType - Property editor type, e.g. "string" / "icon" / etc.
+	 * @returns {boolean} <code>true</code> if the specified type is registered
+	 */
+	PropertyEditorFactory.hasType = function (sPropertyType) {
+		return includes(
+			Object.keys(PropertyEditorFactory.getTypes()),
+			sPropertyType
+		);
 	};
 
 	return PropertyEditorFactory;
