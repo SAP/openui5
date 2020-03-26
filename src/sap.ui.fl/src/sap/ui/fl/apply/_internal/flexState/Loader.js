@@ -4,14 +4,22 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/write/_internal/CompatibilityConnector",
+	"sap/ui/fl/apply/_internal/Storage",
 	"sap/ui/fl/Utils"
 ], function(
 	ManifestUtils,
-	CompatibilityConnector,
+	ApplyStorage,
 	Utils
 ) {
 	"use strict";
+
+	function _formatFlexData(mFlexData) {
+		// TODO: rename "changes" everywhere to avoid oResponse.changes.changes calls
+		return {
+			changes: mFlexData,
+			cacheKey: mFlexData.cacheKey
+		};
+	}
 
 	/**
 	 * Class for loading Flex Data from the backend via the Connectors.
@@ -38,20 +46,25 @@ sap.ui.define([
 		 * @returns {Promise<object>} resolves with the change file for the given component from the Storage
 		 */
 		loadFlexData: function (mPropertyBag) {
-			var mComponent = {
-				name: mPropertyBag.reference,
-				appVersion: Utils.getAppVersionFromManifest(mPropertyBag.manifest) || Utils.DEFAULT_APP_VERSION
-			};
-			var mProperties = {
-				appName: ManifestUtils.getBaseComponentNameFromManifest(mPropertyBag.manifest),
+			var sComponentName = ManifestUtils.getBaseComponentNameFromManifest(mPropertyBag.manifest);
+
+			if (mPropertyBag.partialFlexData) {
+				return ApplyStorage.completeFlexData({
+					reference: mPropertyBag.reference,
+					componentName: sComponentName,
+					partialFlexData: mPropertyBag.partialFlexData
+				}).then(_formatFlexData);
+			}
+
+			return ApplyStorage.loadFlexData({
+				reference: mPropertyBag.reference,
+				appVersion: Utils.getAppVersionFromManifest(mPropertyBag.manifest) || Utils.DEFAULT_APP_VERSION,
+				componentName: sComponentName,
 				cacheKey: ManifestUtils.getCacheKeyFromAsyncHints(mPropertyBag.asyncHints, mPropertyBag.reference),
 				siteId: Utils.getSiteIdByComponentData(mPropertyBag.componentData),
 				appDescriptor: mPropertyBag.manifest.getRawJson ? mPropertyBag.manifest.getRawJson() : mPropertyBag.manifest,
-				draftLayer: mPropertyBag.draftLayer,
-				partialFlexData: mPropertyBag.partialFlexData
-			};
-
-			return CompatibilityConnector.loadChanges(mComponent, mProperties);
+				draftLayer: mPropertyBag.draftLayer
+			}).then(_formatFlexData);
 		}
 	};
 });

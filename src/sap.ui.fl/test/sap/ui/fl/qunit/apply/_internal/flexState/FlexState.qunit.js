@@ -512,7 +512,6 @@ sap.ui.define([
 			this.oAppComponent = new UIComponent(sComponentId);
 
 			this.oLoaderSpy = sandbox.spy(Loader, "loadFlexData");
-			this.oCompatibilityConnectorSpy = sandbox.spy(CompatibilityConnector, "loadChanges");
 			this.oApplyStorageLoadFlexDataSpy = sandbox.spy(Storage, "loadFlexData");
 			this.oApplyStorageCompleteFlexDataSpy = sandbox.spy(Storage, "completeFlexData");
 		},
@@ -529,7 +528,6 @@ sap.ui.define([
 				partialFlexState: true
 			}).then(function() {
 				assert.equal(this.oLoaderSpy.callCount, 1, "loader is called once");
-				assert.equal(this.oCompatibilityConnectorSpy.callCount, 1, "compatibility connector is called once");
 				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is called once");
 				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 0, "storage completeFlexData is not called");
 			}.bind(this))
@@ -539,7 +537,6 @@ sap.ui.define([
 			}))
 			.then(function() {
 				assert.equal(this.oLoaderSpy.callCount, 2, "loader is called twice");
-				assert.equal(this.oCompatibilityConnectorSpy.callCount, 2, "compatibility connector is called twice");
 				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is called once");
 				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 1, "storage completeFlexData is called for the first time");
 			}.bind(this))
@@ -549,7 +546,6 @@ sap.ui.define([
 			}))
 			.then(function() {
 				assert.equal(this.oLoaderSpy.callCount, 2, "loader is not called again");
-				assert.equal(this.oCompatibilityConnectorSpy.callCount, 2, "compatibility connector is not called again");
 				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is not called again");
 				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 1, "storage completeFlexData is not called again");
 			}.bind(this));
@@ -562,7 +558,6 @@ sap.ui.define([
 				partialFlexState: true
 			}).then(function() {
 				assert.equal(this.oLoaderSpy.callCount, 1, "loader is called once");
-				assert.equal(this.oCompatibilityConnectorSpy.callCount, 1, "compatibility connector is called once");
 				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is called once");
 				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 0, "storage completeFlexData is not called");
 			}.bind(this))
@@ -573,7 +568,6 @@ sap.ui.define([
 			}))
 			.then(function() {
 				assert.equal(this.oLoaderSpy.callCount, 1, "loader is called not called again");
-				assert.equal(this.oCompatibilityConnectorSpy.callCount, 1, "compatibility connector is not called again");
 				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is not called again");
 				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 0, "storage completeFlexData is not called");
 			}.bind(this))
@@ -583,7 +577,6 @@ sap.ui.define([
 			}))
 			.then(function() {
 				assert.equal(this.oLoaderSpy.callCount, 2, "loader is not called again");
-				assert.equal(this.oCompatibilityConnectorSpy.callCount, 2, "compatibility connector is not called again");
 				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is not called again");
 				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 1, "storage completeFlexData is called for the first time");
 			}.bind(this));

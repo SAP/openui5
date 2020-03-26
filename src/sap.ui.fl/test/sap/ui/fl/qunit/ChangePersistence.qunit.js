@@ -1858,7 +1858,7 @@ function (
 			sandbox.stub(FlexState, "initialize").resolves();
 			sandbox.stub(VariantManagementState, "loadInitialChanges").returns([]);
 			var oBackendResponse = {changes: StorageUtils.getEmptyFlexDataResponse()};
-			this.oLoadChangeStub = sandbox.stub(FlexState, "getFlexObjectsFromStorageResponse").returns(oBackendResponse.changes);
+			this.oGetFlexObjectsFromStorageResponseStub = sandbox.stub(FlexState, "getFlexObjectsFromStorageResponse").returns(oBackendResponse.changes);
 			this._mComponentProperties = {
 				name : "saveChangeScenario",
 				appVersion : "1.2.3"
@@ -1869,7 +1869,6 @@ function (
 
 			this.oCreateStub = sandbox.stub(CompatibilityConnector, "create").resolves();
 			this.oDeleteChangeStub = sandbox.stub(CompatibilityConnector, "deleteChange").resolves();
-			this.oLoadChangeStub = sandbox.stub(CompatibilityConnector, "loadChanges").resolves(oBackendResponse);
 			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 
 			this.oServer = sinon.fakeServer.create();
@@ -2267,7 +2266,7 @@ function (
 			var oRaisedError = {messages: [{severity : "Error", text : "Error"}]};
 
 			// this test requires a slightly different setup
-			this.oLoadChangeStub.restore();
+			this.oGetFlexObjectsFromStorageResponseStub.restore();
 			sandbox.stub(CompatibilityConnector, "loadChanges").returns(Promise.resolve({changes: {changes: [oChangeContent]}}));
 			this.oCreateStub.restore();
 			sandbox.stub(CompatibilityConnector, "create").returns(Promise.reject(oRaisedError));
@@ -2320,8 +2319,8 @@ function (
 			};
 
 			// this test requires a slightly different setup
-			this.oLoadChangeStub.restore();
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [oChangeContent]}}));
+			this.oGetFlexObjectsFromStorageResponseStub.resolves({changes: this.oBackendResponse});
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({changes: {changes: [oChangeContent]}});
 
 			return this.oChangePersistence.getChangesForComponent().then(function(aChanges) {
 				this.oChangePersistence.deleteChange(aChanges[0]);

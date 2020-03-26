@@ -3,21 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/Storage",
 	"sap/ui/fl/write/_internal/Storage"
 ], function(
-	ApplyStorage,
 	WriteStorage
 ) {
 	"use strict";
-	function _formatFlexData(mFlexData) {
-		return {
-			changes: mFlexData,
-			cacheKey: mFlexData.cacheKey,
-			loadModules: false
-			//TODO check other return values build in LrepConnector.prototype._onChangeResponseReceived
-		};
-	}
 
 	/**
 	 * Adapts the existing @see sap.ui.fl.LrepConnector API to the new apply/write.Storage API
@@ -32,42 +22,6 @@ sap.ui.define([
 
 	var CompatibilityConnector = function() {};
 
-	/**
-	 * Maps the existing API to the new API
-	 * @see sap.ui.fl.LrepConnector.prototype.loadChanges
-	 * @see sap.ui.fl.apply._internal.Storage.loadFlexData
-	 * @param {object} mComponent Contains component data needed for reading changes
-	 * @param {string} mComponent.name Name of component
-	 * @param {string} [mComponent.appVersion] Current running version of application
-	 * @param {string} [mPropertyBag.appName] Component name of the current application which may differ in case of an app variant
-	 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to actual component
-	 * @param {string} [mPropertyBag.draftLayer] - Layer for which the draft should be loaded
-	 * @param {string} [mPropertyBag.siteId] <code>sideId</code> that belongs to actual component
-	 * @param {string} [mPropertyBag.cacheKey] Pre-calculated cache key of the component
-	 * @param {object} [mPropertyBag.partialFlexData] Contains partial FlexState if reload of bundles is needed
-	 * @returns {Promise} Returns a Promise with the changes response
-	 */
-	CompatibilityConnector.loadChanges = function(mComponent, mPropertyBag) {
-		mPropertyBag = mPropertyBag || {};
-
-		if (mPropertyBag.partialFlexData) {
-			return ApplyStorage.completeFlexData({
-				reference: mComponent.name,
-				componentName: mPropertyBag.appName,
-				partialFlexData: mPropertyBag.partialFlexData
-			}).then(_formatFlexData);
-		}
-
-		return ApplyStorage.loadFlexData({
-			reference: mComponent.name,
-			appVersion: mComponent.appVersion,
-			componentName: mPropertyBag.appName,
-			cacheKey: mPropertyBag.cacheKey,
-			siteId: mPropertyBag.siteId,
-			appDescriptor: mPropertyBag.appDescriptor,
-			draftLayer: mPropertyBag.draftLayer
-		}).then(_formatFlexData);
-	};
 
 	/**
 	 * Maps the existing API to the new API
