@@ -1876,6 +1876,7 @@ function(
 
 			// configuration
 			oPicker.setHorizontalScrolling(false)
+					.setVerticalScrolling(false)
 					.addStyleClass(CSS_CLASS + "Picker")
 					.addStyleClass(CSS_CLASS + "Picker-CTX")
 					.addStyleClass("sapUiNoContentPadding")
