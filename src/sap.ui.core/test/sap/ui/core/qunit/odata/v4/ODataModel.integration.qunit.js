@@ -3946,17 +3946,28 @@ sap.ui.define([
 	// used bind the parameters so that you have the type information already available before the
 	// controls are created.
 	// JIRA: CPOUI5ODATAV4-28
+	//
+	// Format options and binding parameters are passed to @@format and @@value.
+	// JIRA: CPOUI5ODATAV4-121
 	testXMLTemplating("Operation parameters with sap.ui.model.odata.v4.AnnotationHelper.format",
 		{models : {meta : createTeaBusiModel().getMetaModel()}},
 '<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
+<template:alias name="value" value="sap.ui.model.odata.v4.AnnotationHelper.value">\
 	<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
 		<FlexBox binding="{$Parameter}">\
 			<template:repeat list="{meta>/ChangeTeamBudgetByID/$Action/0/$Parameter}" var="param">\
 				<Input id="{param>$Name}" value="{param>@@format}"/>\
 			</template:repeat>\
-			<Input value="{meta>/ChangeTeamBudgetByID/TeamID@@format}"/>\
+			<Input\
+				value="{meta>/ChangeTeamBudgetByID/TeamID@@format({$$noPatch : true$))}"/>\
+			<Input\
+				value="{meta>/ChangeTeamBudgetByID/Budget@@format({$$noPatch : true$), null)}"/>\
+			<Text text="{meta>/ChangeTeamBudgetByID/Budget@@format(null, $(shortLimit : 1000,\
+				style : \'short\'$))}"/>\
+			<Input value="{meta>/ChangeTeamBudgetByID/TeamID@@value($($$noPatch : true$))}"/>\
 		</FlexBox>\
 	</FlexBox>\
+</template:alias>\
 </template:alias>',
 '<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
 	<FlexBox binding="{$Parameter}">\
@@ -3967,7 +3978,15 @@ sap.ui.define([
 			constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 		<Input value="{path:\'TeamID\',type:\'sap.ui.model.odata.type.String\',\
 			constraints:{\'maxLength\':10,\'nullable\':false},\
-			formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
+			formatOptions:{\'parseKeepsEmptyString\':true},\
+			parameters:{\'$$noPatch\':true}}"/>\
+		<Input value="{path:\'Budget\',type:\'sap.ui.model.odata.type.Decimal\',\
+			constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false},\
+			parameters:{\'$$noPatch\':true}}"/>\
+		<Text text="{path:\'Budget\',type:\'sap.ui.model.odata.type.Decimal\',\
+			constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false},\
+			formatOptions:{\'shortLimit\':1000,\'style\':\'short\'}}"/>\
+		<Input value="{path:\'TeamID\',parameters:{\'$$noPatch\':true}}"/>\
 	</FlexBox>\
 </FlexBox>');
 

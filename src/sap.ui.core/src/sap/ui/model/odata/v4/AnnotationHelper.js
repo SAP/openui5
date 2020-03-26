@@ -197,10 +197,22 @@ sap.ui.define([
 			 * and the data binding evaluates to the <code>SupplierIdentifier</code> property of the
 			 * entity the operation is called on.
 			 *
+			 * Since 1.77.0, binding parameters and format options can be given. The usage
+			 * <pre>
+			 * &lt;Input value="{meta>/ChangeTeamBudgetByID/Budget@@sap.ui.model.odata.v4.AnnotationHelper.format($($$noPatch : true$), $(groupingEnabled : false$))}" />
+			 * </pre>
+			 * results in a data binding with the given binding parameters and format options. Note
+			 * how, for an object notation, curly brackets must be replaced by <code>$(</code> and
+			 * <code>$)</code> respectively. Use <code>null</code>, not <code>undefined</code>, in
+			 * case no binding parameters are needed.
+			 *
 			 * @param {any} vRawValue
 			 *   The raw value from the meta model
 			 * @param {object} oDetails
 			 *   The details object
+			 * @param {any[]} [oDetails.arguments]
+			 *  Optional arguments: first an optional map of binding parameters, then an optional
+			 *  map of format options; both will be added to each resulting data binding
 			 * @param {sap.ui.model.Context} oDetails.context
 			 *   Points to the given raw value, that is
 			 *   <code>oDetails.context.getProperty("") === vRawValue</code>
@@ -237,11 +249,13 @@ sap.ui.define([
 					return Expression.getExpression({
 							asExpression : false,
 							complexBinding : true,
+							formatOptions : oDetails.arguments && oDetails.arguments[1],
 							ignoreAsPrefix : oDetails.overload && oDetails.overload.$IsBound
 								&& !sPath.includes("/$Parameter/")
 								? oDetails.overload.$Parameter[0].$Name + "/"
 								: "",
 							model : oModel,
+							parameters : oDetails.arguments && oDetails.arguments[0],
 							path : sPath,
 							prefix : sPrefix, // prefix for computing paths
 							value : vRawValue,
@@ -646,10 +660,21 @@ sap.ui.define([
 			 * parameter context of the operation binding (see
 			 * {@link sap.ui.model.odata.v4.ODataContextBinding#getParameterContext}).
 			 *
+			 * Since 1.77.0, binding parameters can be given. The usage
+			 * <pre>
+			 * &lt;Input value="{meta>/ChangeTeamBudgetByID/Budget@@sap.ui.model.odata.v4.AnnotationHelper.value($($$noPatch : true$))}" />
+			 * </pre>
+			 * results in a data binding with the given binding parameters. Note how, for an object
+			 * notation, curly brackets must be replaced by <code>$(</code> and <code>$)</code>
+			 * respectively.
+			 *
 			 * @param {any} vRawValue
 			 *   The raw value from the meta model
 			 * @param {object} oDetails
 			 *   The details object
+			 * @param {any[]} [oDetails.arguments]
+			 *  Optional arguments: an optional map of binding parameters; this will be added to
+			 *  each resulting data binding
 			 * @param {sap.ui.model.Context} oDetails.context
 			 *   Points to the given raw value, that is
 			 *   <code>oDetails.context.getProperty("") === vRawValue</code>
@@ -681,6 +706,7 @@ sap.ui.define([
 							? oDetails.overload.$Parameter[0].$Name + "/"
 							: "",
 						model : oDetails.context.getModel(),
+						parameters : oDetails.arguments && oDetails.arguments[0],
 						path : sPath,
 						prefix : "",
 						value : vRawValue,

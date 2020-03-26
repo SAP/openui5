@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/util/JSTokenizer",
 	"sap/base/util/uid",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/BindingMode",
@@ -26,10 +27,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
-], function (Log, uid, SyncPromise, BindingMode, ChangeReason, ClientListBinding, BaseContext,
-		ContextBinding, Filter, FilterOperator, MetaModel, PropertyBinding, Sorter, OperationMode,
-		Int64, Raw, AnnotationHelper, Context, ODataMetaModel, ODataModel, ValueListType, _Helper,
-		TestUtils, URI) {
+], function (Log, JSTokenizer, uid, SyncPromise, BindingMode, ChangeReason, ClientListBinding,
+		BaseContext, ContextBinding, Filter, FilterOperator, MetaModel, PropertyBinding, Sorter,
+		OperationMode, Int64, Raw, AnnotationHelper, Context, ODataMetaModel, ODataModel,
+		ValueListType, _Helper, TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0 */
 	"use strict";
@@ -2195,7 +2196,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bWarn) {
-		QUnit.test("fetchObject: " + "...@@... throws", function (assert) {
+		QUnit.test("fetchObject: ...@@... throws, bWarn = " + bWarn, function (assert) {
 			var oError = new Error("This call failed intentionally"),
 				sPath = "/@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple",
 				oSyncPromise;
@@ -2247,6 +2248,91 @@ sap.ui.define([
 			+ ",type:'sap.ui.model.odata.type.String'"
 			+ ",constraints:{'maxLength':40,'nullable':false}"
 			+ ",formatOptions:{'parseKeepsEmptyString':true}}");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("@@computedAnnotation with arguments", function (assert) {
+		var aArguments = [],
+			oScope = {
+				computedAnnotation : function () {}
+			},
+			oSyncPromise;
+
+		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+			.returns(SyncPromise.resolve(mScope));
+		// Note: we check that $( and $) are replaced globally, but otherwise treat "parseJS" as a
+		// blackbox known to be able to parse JSON (and more) --> see integration test
+		this.mock(JSTokenizer).expects("parseJS").withExactArgs("[ 'abc}def{...}{xyz' ]")
+			.returns(aArguments);
+		this.mock(oScope).expects("computedAnnotation")
+			.withExactArgs(sinon.match.same(oTeamData), sinon.match({
+				$$valueAsPromise : undefined,
+				arguments : sinon.match.same(aArguments),
+				context : sinon.match({
+					oModel : this.oMetaModel,
+					sPath : "/T€AMS/"
+				}),
+				overload : undefined,
+				schemaChildName : "tea_busi.TEAM"
+			})).returns("~");
+
+		// code under test
+		oSyncPromise = this.oMetaModel.fetchObject(
+			"/T€AMS/@@computedAnnotation( 'abc$)def$(...$)$(xyz' )", null, {scope : oScope});
+
+		assert.strictEqual(oSyncPromise.isFulfilled(), true);
+		assert.strictEqual(oSyncPromise.getResult(), "~");
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bWarn) {
+	QUnit.test("@@computedAnnotation with invalid arguments, bWarn = " + bWarn, function (assert) {
+		var oError = {
+				at : 2,
+				message : "Unexpected 'u'",
+				name : "SyntaxError",
+				text : "[undefined]"
+			},
+			sPath = "/T€AMS/@@computedAnnotation(undefined)",
+			oSyncPromise;
+
+		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+			.returns(SyncPromise.resolve(mScope));
+		this.mock(JSTokenizer).expects("parseJS").withExactArgs("[undefined]")
+			.throws(oError);
+		this.oLogMock.expects("isLoggable")
+			.withExactArgs(Log.Level.WARNING, sODataMetaModel).returns(bWarn);
+		this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
+			.withExactArgs("Unexpected 'u': u<--ndefined", sPath, sODataMetaModel);
+
+		// code under test
+		oSyncPromise = this.oMetaModel.fetchObject(sPath);
+
+		assert.strictEqual(oSyncPromise.isFulfilled(), true);
+		assert.strictEqual(oSyncPromise.getResult(), undefined);
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bWarn) {
+	QUnit.test("@@computedAnnotation with wrong ), bWarn = " + bWarn, function (assert) {
+		var sPath = "/T€AMS/@@computedAnnotation() ",
+			oSyncPromise;
+
+		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+			.returns(SyncPromise.resolve(mScope));
+		this.mock(JSTokenizer).expects("parseJS").never();
+		this.oLogMock.expects("isLoggable")
+			.withExactArgs(Log.Level.WARNING, sODataMetaModel).returns(bWarn);
+		this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
+			.withExactArgs("Expected ')' instead of ' '", sPath, sODataMetaModel);
+
+		// code under test
+		oSyncPromise = this.oMetaModel.fetchObject(sPath);
+
+		assert.strictEqual(oSyncPromise.isFulfilled(), true);
+		assert.strictEqual(oSyncPromise.getResult(), undefined);
 	});
 });
 
@@ -3599,6 +3685,7 @@ sap.ui.define([
 
 		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
 
+		this.mock(SyncPromise.prototype).expects("unwrap").never();
 		this.oMetaModelMock.expects("fetchObject")
 			.withExactArgs(sPath, sinon.match.same(oContext), sinon.match.same(mParameters))
 			.returns(oPromise);
@@ -3695,6 +3782,27 @@ sap.ui.define([
 			assert.strictEqual(oResult, oValue);
 			assert.strictEqual(oBinding.getValue(), oValue);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ODataMetaPropertyBinding#checkUpdate: promise rejected", function (assert) {
+		var oBinding,
+			oContext = {},
+			oError = new Error("This call intentionally failed"),
+			sPath = "foo",
+			oSyncPromise = SyncPromise.reject(oError);
+
+		oBinding = this.oMetaModel.bindProperty(sPath, oContext);
+
+		this.oMetaModelMock.expects("fetchObject")
+			.withExactArgs(sPath, sinon.match.same(oContext), undefined)
+			.returns(oSyncPromise);
+		this.mock(oBinding).expects("_fireChange").never();
+
+		assert.throws(function () {
+			// code under test - calls oBinding.checkUpdate(true)
+			oBinding.initialize();
+		}, oError);
 	});
 
 	//*********************************************************************************************
