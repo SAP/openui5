@@ -281,7 +281,7 @@ function(
 		}
 	}, function () {
 
-		QUnit.test("when the modifier retrieves the change handler module for a control with instance-specific change handler module", function(assert){
+		QUnit.test("when the modifier retrieves the change handler module for a control with instance-specific change handler module", function(assert) {
 			var sDummyModulePath = 'dummy/path/to/dummy/file.flexibility';
 
 			var mCustomData = {
@@ -301,7 +301,7 @@ function(
 			assert.equal(sChangeHandlerModulePath, sDummyModulePath, "then the correct module is returned");
 		});
 
-		QUnit.test("when the modifier tries to retrieve the change handler module for a control without instance-specific change handler module", function(assert){
+		QUnit.test("when the modifier tries to retrieve the change handler module for a control without instance-specific change handler module", function(assert) {
 			this.oControl = JsControlTreeModifier.createControl('sap.m.Button', this.oComponent, undefined, "myButton",
 					{'text' : 'ButtonInHeading'});
 
@@ -319,7 +319,7 @@ function(
 			return JsControlTreeModifier.getFlexDelegate(this.oControl);
 		}
 
-		QUnit.test("when getFlexDelegate() is called to retrieve the delegate info for a control with delegate info", function(assert){
+		QUnit.test("when getFlexDelegate() is called to retrieve the delegate info for a control with delegate info", function(assert) {
 			var mDummyDelegateInfo = {
 				name: "dummy/path/to/dummy/file"
 			};
@@ -338,7 +338,7 @@ function(
 			}, "then the correct delegate info is returned");
 		});
 
-		QUnit.test("when getFlexDelegate() is called to retrieve the delegate info for a control with an incorrect format", function(assert){
+		QUnit.test("when getFlexDelegate() is called to retrieve the delegate info for a control with an incorrect format", function(assert) {
 			var mIncorrectDelegateInfo = {
 				name: "dummy/path/to/dummy/file"
 			};
@@ -354,7 +354,7 @@ function(
 			assert.deepEqual(mDelegateInfo, undefined, "then an undefined value is returned");
 		});
 
-		QUnit.test("when getFlexDelegate() is called to retrieve the delegate info for a control with an broken format", function(assert){
+		QUnit.test("when getFlexDelegate() is called to retrieve the delegate info for a control with an broken format", function(assert) {
 			var mCustomData = {
 				"key" : "sap-ui-custom-settings",
 				"value" : {
@@ -367,19 +367,17 @@ function(
 			assert.deepEqual(mDelegateInfo, undefined, "then an undefined value is returned");
 		});
 
-
-
-		QUnit.test("when getFlexDelegate() is called to retrieve the delegate info for a control, with no custom data", function(assert){
+		QUnit.test("when getFlexDelegate() is called to retrieve the delegate info for a control, with no custom data", function(assert) {
 			var mDelegateInfo = _getDelegate.call(this, undefined);
 			assert.deepEqual(mDelegateInfo, undefined, "then an undefined value is returned");
 		});
 
-		QUnit.test("when getFlexDelegate() is called to retrieve the delegate info without control", function(assert){
+		QUnit.test("when getFlexDelegate() is called to retrieve the delegate info without control", function(assert) {
 			var mDelegateInfo = JsControlTreeModifier.getFlexDelegate(undefined);
 			assert.strictEqual(mDelegateInfo, undefined, "then an undefined value is returned");
 		});
 
-		QUnit.test("applySettings", function(assert){
+		QUnit.test("applySettings", function(assert) {
 			this.oControl = new Button();
 
 			JsControlTreeModifier.applySettings(this.oControl, { text: "Test", enabled: false});
@@ -388,13 +386,13 @@ function(
 			assert.equal(JsControlTreeModifier.getProperty(this.oControl, "text"), "Test", "the buttons text is set from applySettings");
 		});
 
-		QUnit.test("isPropertyInitial", function(assert){
+		QUnit.test("isPropertyInitial", function(assert) {
 			this.oControl = new Button( { text: "Test"  });
 			assert.equal(JsControlTreeModifier.isPropertyInitial(this.oControl, "enabled"), true, "the enabled property of the button is initial");
 			assert.equal(JsControlTreeModifier.isPropertyInitial(this.oControl, "text"), false, "the text property of the button is not initial");
 		});
 
-		QUnit.test("when getStashed is called for non-stash control with visible property true", function(assert){
+		QUnit.test("when getStashed is called for non-stash control with visible property true", function(assert) {
 			this.oControl = new Button({ text: "Test"  });
 			this.oControl.getStashed = function () { };
 			var fnGetVisibleSpy = sandbox.spy(this.oControl, "getVisible");
@@ -402,7 +400,7 @@ function(
 			assert.ok(fnGetVisibleSpy.calledOnce, "then getVisible is called once");
 		});
 
-		QUnit.test("when getStashed is called for a stashed control", function(assert){
+		QUnit.test("when getStashed is called for a stashed control", function(assert) {
 			this.oControl = new Button({ text: "Test"  });
 			this.oControl.getStashed = function () {
 				return true;
@@ -412,7 +410,7 @@ function(
 			assert.strictEqual(fnGetVisibleSpy.callCount, 0, "then getVisible is not called");
 		});
 
-		QUnit.test("when setStashed is called for an already unstashed control", function(assert){
+		QUnit.test("when setStashed is called for an already unstashed control", function(assert) {
 			this.oControl = new Button({ text: "Test"  });
 			this.oControl.getStashed = function () { };
 			this.oControl.setStashed = function () {
@@ -426,7 +424,7 @@ function(
 			assert.strictEqual(this.oControl.getVisible(), false, "then visible property of control is set to false");
 		});
 
-		QUnit.test("when setStashed is called for stash control and no new control is created", function(assert){
+		QUnit.test("when setStashed is called for stash control and no new control is created", function(assert) {
 			var done = assert.async();
 			this.oControl = new Page("pageId");
 			var oStashedControl = StashedControlSupport.createStashedControl("stashedControlId", { sParentId: "pageId" });
@@ -441,7 +439,7 @@ function(
 			oStashedControl.destroy();
 		});
 
-		QUnit.test("when setStashed is called for stash control and a new control is created", function(assert){
+		QUnit.test("when setStashed is called for stash control and a new control is created", function(assert) {
 			this.oControl = new Page("pageId");
 			var oStashedControl = StashedControlSupport.createStashedControl("stashedControlId", { sParentId: "pageId" });
 
@@ -473,7 +471,7 @@ function(
 			JsControlTreeModifier.setProperty(this.oControl, "crossAppNavCallback", aData);
 			assert.deepEqual(this.oControl.getCrossAppNavCallback(), aData, "then serializable data (array) can be passed");
 
-			assert.throws(function(){
+			assert.throws(function() {
 				JsControlTreeModifier.setProperty(this.oControl, "crossAppNavCallback", oSomeObject);
 			},
 			/TypeError/,

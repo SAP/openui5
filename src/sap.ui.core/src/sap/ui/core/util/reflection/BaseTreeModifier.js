@@ -749,6 +749,15 @@ sap.ui.define([
 		},
 
 		/**
+		 * Gets the "sap.ui.fl" namespaced special settings in the custom data.
+		 *
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @protected The method is not to be used directly, but to be implemented by modifiers
+		 * @abstract
+		 */
+		_getFlexCustomData : function(vControl) {},
+
+		/**
 		 * Object containing delegate information.
 		 *
 		 * @typedef {object} sap.ui.core.util.reflection.FlexDelegateInfo
