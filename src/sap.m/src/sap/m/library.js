@@ -3815,7 +3815,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * States of the upload process for {@link sap.m.UploadCollectionItem}.
+	 * States of the upload process of {@link sap.m.UploadCollectionItem}.
 	 *
 	 * @enum {string}
 	 * @public
@@ -3823,7 +3823,7 @@ sap.ui.define([
 	 */
 	thisLib.UploadState = {
 		/**
-		 * The file has been uploaded successfuly.
+		 * The file has been uploaded successfully.
 		 * @public
 		 */
 		Complete: "Complete",
