@@ -54,11 +54,10 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt:focus {
 
 .sapMSlt.sapMSltIconOnly.sapMSltHoverable:hover {
 	background: @sapUiButtonLiteHoverBackground;
-}
 
-.sapMSlt.sapMSltIconOnly:focus.sapMSltHoverable:hover {
-	background: @sapUiButtonLiteHoverBackground;
-	border-color: transparent;
+	&:not(.sapMSltPressed):focus {
+		border-color: transparent;
+	}
 }
 
 /* FIX: IconOnly mode - IE and Edge do not support css outline-offset */
@@ -83,17 +82,9 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	}
 }
 
-/* pressed */
-
-html.sap-desktop .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
-	border-color: transparent;
-}
-
 /* pressed and hover */
-
 .sapMSltIconOnly.sapMSltPressed.sapMSltHoverable:hover {
 	background: @sapUiToggleButtonPressedHoverBackground;
-	border-color: transparent;
 }
 
 /* value state */
