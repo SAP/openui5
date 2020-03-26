@@ -229,11 +229,15 @@ sap.ui.define([
 			path:"/elements",
 			template: oListItem,
 			sorter: oSorter,
+			templateShareable: false,
+			//Extended Change Detection via "key" property see docs: #/topic/7cdff73f308b4b10bdf7d83b7aba72e7 -
 			key: function (oContext) {
 				switch (oContext.getProperty("type")) {
 					case "invisible":
 						return oContext.getProperty("elementId");
 					case "odata":
+						return oContext.getProperty("name");
+					case "delegate":
 						return oContext.getProperty("name");
 					case "custom":
 						return oContext.getProperty("key");
