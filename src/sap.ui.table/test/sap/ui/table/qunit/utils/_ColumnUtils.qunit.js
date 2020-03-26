@@ -7,10 +7,8 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/core/Control",
-	"sap/ui/Device",
-	"sap/m/Label",
-	"sap/m/HBox"
-], function(TableQUnitUtils, qutils, TableUtils, Table, Column, Control, Device, Label, HBox) {
+	"sap/ui/Device"
+], function(TableQUnitUtils, qutils, TableUtils, Table, Column, Control, Device) {
 	"use strict";
 
 	// mapping of global function calls
@@ -933,24 +931,24 @@ sap.ui.define([
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, oTable.getColumns().length), null, "Returned null: Column index out of bound");
 
 		oTable.removeAllColumns();
-		oTable.addColumn(new Column("c1"));
-		oTable.addColumn(new Column("c2", {
-			label: new HBox(),
+		oTable.addColumn(new Column());
+		oTable.addColumn(new Column({
+			label: new TableQUnitUtils.HeightTestControl(), // has no text property
 			headerSpan: [1, 1]
 		}));
-		oTable.addColumn(new Column("c3", {
+		oTable.addColumn(new Column({
 			label: "Label1",
 			headerSpan: [2, 1]
 		}));
-		oTable.addColumn(new Column("c4", {
+		oTable.addColumn(new Column({
 			label: "Label2",
 			headerSpan: [1, 1],
-			multiLabels: [new Label({text: "Column2Label1"}), new Label({text: "Column2Label2"})]
+			multiLabels: [new TableQUnitUtils.TestControl({text: "Column2Label1"}), new TableQUnitUtils.TestControl({text: "Column2Label2"})]
 		}));
-		oTable.addColumn(new Column("c5", {
+		oTable.addColumn(new Column({
 			label: "Label3",
 			headerSpan: [1, 1],
-			multiLabels: [new Label({text: "Column3Label1"}), new Label({text: "Column3Label2"})],
+			multiLabels: [new TableQUnitUtils.TestControl({text: "Column3Label1"}), new TableQUnitUtils.TestControl({text: "Column3Label2"})],
 			name: "Name"
 		}));
 
