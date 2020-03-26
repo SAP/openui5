@@ -1537,5 +1537,41 @@ sap.ui.define([
 		return aSegments.join("/");
 	};
 
+	/**
+	 * Returns an array of property names for the keys of the entity referenced by the given
+	 * absolute data path, e.g. "/Categories(1)/Products(1)/Category".
+	 *
+	 * @param {string} sPath
+	 *   The absolute data path
+	 * @returns {string[]}
+	 *   The names of the key properties, or <code>undefined</code> if the given path does not
+	 *   reference an entity type or a collection of entity types
+	 * @private
+	 */
+	ODataMetadata.prototype.getKeyPropertyNamesByPath = function (sPath) {
+		var oAssociation,
+			oEntityType,
+			iIndex = sPath.lastIndexOf("/");
+
+		if (iIndex > 0) {
+			// check that last segment is a navigation property and set oEntityType accordingly
+			oEntityType = this._getEntityTypeByPath(sPath.slice(0, iIndex));
+			if (oEntityType) {
+				oAssociation = this._getEntityAssociationEnd(oEntityType,
+					sPath.slice(iIndex + 1).split("(")[0]);
+				oEntityType = oAssociation
+					? this._getEntityTypeByName(oAssociation.type)
+					: undefined; // sPath references a property or a complex type
+			}
+		} else { // EntitySet or FunctionImport
+			oEntityType = this._getEntityTypeByPath(sPath);
+		}
+		if (oEntityType) {
+			return oEntityType.key.propertyRef.map(function (oKey) {
+				return oKey.name;
+			});
+		}
+	};
+
 	return ODataMetadata;
 });
