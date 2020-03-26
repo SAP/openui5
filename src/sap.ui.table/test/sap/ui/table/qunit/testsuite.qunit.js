@@ -263,7 +263,10 @@ sap.ui.define([
 			"MultiSelectionPlugin": {
 				group: "Plugins",
 				module: "./plugins/{name}.qunit",
-				sinon: false /*uses Mockserver*/
+				sinon: false, /*uses Mockserver*/
+				ui5: {
+					libs: ["sap.ui.table", "sap.m"]
+				}
 			},
 
 			"Support of external plugins": {
