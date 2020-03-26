@@ -221,7 +221,20 @@ sap.ui.define([
 			},
 
 			/**
-			 * This event is fired when the value of the search field is changed by a user - e.g. at each key press. Do not invalidate or re-render a focused search field, especially during the liveChange event.
+			 * This event is fired when the user changes the value of the search field. Unlike the <code>liveChange</code> event, the <code>change</code> event is not fired for each key press.
+			 */
+			change: {
+				parameters: {
+
+					/**
+					 The new value of the control.
+					 */
+					value: { type: "string" }
+				}
+			},
+
+			/**
+			 * This event is fired each time when the value of the search field is changed by the user - e.g. at each key press. Do not invalidate or re-render a focused search field, especially during the liveChange event.
 			 * @since 1.9.1
 			 */
 			liveChange : {
@@ -321,6 +334,7 @@ sap.ui.define([
 		jQuery(inputElement)
 			.on("input", this.onInput.bind(this))
 			.on("search", this.onSearch.bind(this))
+			.on("change", this.onChange.bind(this))
 			.on("focus", this.onFocus.bind(this))
 			.on("blur", this.onBlur.bind(this));
 
@@ -528,12 +542,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Process the change event. Update value and do not fire any control events
-	 * because the user has focused another control on the page without intention to do a search.
+	 * Process the <code>change</code> event - update value and fire the event
 	 * @private
 	 */
 	SearchField.prototype.onChange = function(event) {
-		this.setValue(this.getInputElement().value);
+		this.fireChange({value: this.getInputElement().value});
 	};
 
 	/**
