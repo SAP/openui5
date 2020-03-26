@@ -284,7 +284,7 @@ sap.ui.define([
 			assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4],
 				"Range selection is possible for number of items below limit");
-			assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+			assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
 
 		}).then(function() {
 			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
@@ -298,7 +298,7 @@ sap.ui.define([
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5],
 					"Multiple selections are possible. When indexFrom is already selected, the selection starts from the next index");
-				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
 			});
 
 		}).then(function() {
@@ -329,7 +329,7 @@ sap.ui.define([
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5, iSelectableCount - 1],
 					"Range selection is possible for number of items below limit");
-				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
 			});
 
 		}).then(function() {
@@ -421,7 +421,7 @@ sap.ui.define([
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5],
 					"Selection is cut down to the possible limit. The first index was already selected, 5 new indices are added to the selection.");
 				assert.equal(oTable.getFirstVisibleRow(), 4, "The firstVisibleRow is correct");
-				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
 				assert.ok(oFirstVisibleRowChangedSpy.calledOnce, "The \"firstVisibleRowChanged\" event was fired");
 				assert.ok(oRowsUpdatedSpy.calledOnce, "The \"_rowsUpdated\" event was fired");
 			});
@@ -442,7 +442,7 @@ sap.ui.define([
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
 					"Selection is cut down to the possible limit. The first index was already selected, 5 new indices are added to the selection.");
 				assert.equal(oTable.getFirstVisibleRow(), 9, "The firstVisibleRow is correct");
-				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
 				assert.ok(oFirstVisibleRowChangedSpy.calledOnce, "The \"firstVisibleRowChanged\" event was fired");
 				assert.ok(oRowsUpdatedSpy.calledOnce, "The \"_rowsUpdated\" event was fired");
 			});
@@ -514,18 +514,18 @@ sap.ui.define([
 
 		oSelectionPlugin.setLimit(5);
 		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
-
 		oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
 			assert.deepEqual(oEvent.getParameters().rowIndices, [0, 1, 2, 3, 4], "selectionChange event: \"rowIndices\" parameter is correct");
 			assert.ok(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
 		});
 		fnGetContexts.reset();
 		oSelectionChangeSpy.reset();
+
 		return oSelectionPlugin.setSelectionInterval(-1, 10).then(function() {
 			assert.ok(fnGetContexts.calledWithExactly(0, 6), "getContexts was called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4], "Selection is cut down to the possible limit");
-			assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+			assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
 
 		}).then(function() {
 			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
@@ -539,7 +539,7 @@ sap.ui.define([
 				assert.ok(fnGetContexts.calledWithExactly(5, 6), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5, 6, 7, 8, 9], "Selection is cut down to the possible limit");
-				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
 			});
 
 		}).then(function() {
@@ -582,7 +582,7 @@ sap.ui.define([
 				assert.ok(fnGetContexts.calledWithExactly(iSelectableCount - 1, 1), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [iSelectableCount - 1], "The correct index is selected");
-				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
 			});
 
 		}).then(function() {
@@ -665,7 +665,7 @@ sap.ui.define([
 			assert.ok(fnGetContexts.calledWithExactly(3, 1), "getContexts was called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [3], "The selection is correct");
-			assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+			assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
 
 		}).then(function() {
 			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
@@ -678,7 +678,7 @@ sap.ui.define([
 				assert.ok(fnGetContexts.calledWithExactly(5, 1), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5], "The selection is correct");
-				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
 			});
 
 		}).then(function() {
@@ -926,7 +926,7 @@ sap.ui.define([
 			assert.ok(fnGetContexts.calledWithExactly(0, iSelectableCount), "getContexts was called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 			assert.deepEqual(oSelectionPlugin.getSelectedIndices().length, iSelectableCount, "The correct indices are selected");
-			assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired");
+			assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
 
 		}).then(function() {
 			oSelectionPlugin.setLimit(5);
@@ -1092,51 +1092,80 @@ sap.ui.define([
 	});
 
 	QUnit.test("Limit notification", function(assert) {
-		var done = assert.async(),
-			iLimit = 5,
-			oTable = this.oTable,
-			oSelectionPlugin = this.oTable._oSelectionPlugin;
+		var iLimit = 5;
+		var oTable = this.oTable;
+		var oSelectionPlugin = this.oTable._oSelectionPlugin;
+		var oPopoverOpenBySpy;
+		var oPopoverCloseSpy;
 
 		assert.notOk(oSelectionPlugin._oNotificationPopover, "Notification popover does not exist");
 
 		oSelectionPlugin.setEnableNotification(true);
 
 		// Ensures that the Popover control is loaded and initialized
-		this.oTable._oSelectionPlugin._showNotificationPopoverAtIndex(0).then(function() {
-			var oPopover = oSelectionPlugin._oNotificationPopover;
+		return this.oTable._oSelectionPlugin._showNotificationPopoverAtIndex(0).then(function() {
+			assert.ok(oSelectionPlugin._oNotificationPopover, "Notification popover was created");
 
-			assert.ok(oPopover, "Notification popover was created");
-			oPopover.close();
-
-			var oPopoverOpenBySpy = sinon.spy(oPopover, "openBy");
-			var oPopoverCloseSpy = sinon.spy(oPopover, "close");
-
+			oSelectionPlugin._oNotificationPopover.close();
+			oPopoverOpenBySpy = sinon.spy(oSelectionPlugin._oNotificationPopover, "openBy");
+			oPopoverCloseSpy = sinon.spy(oSelectionPlugin._oNotificationPopover, "close");
 			oSelectionPlugin.setLimit(iLimit);
 			oSelectionPlugin.setEnableNotification(false);
-			oSelectionPlugin.setSelectionInterval(0, iLimit);
 
-			setTimeout(function() {
-				assert.ok(oPopoverOpenBySpy.notCalled, "Popover.openBy is not called because enableNotification is false");
+			return oSelectionPlugin.setSelectionInterval(0, iLimit);
 
-				oSelectionPlugin.setEnableNotification(true);
-				oSelectionPlugin.setSelectionInterval(0, iLimit - 1);
-				setTimeout(function() {
-					assert.ok(oPopoverOpenBySpy.notCalled, "Popover.openBy is not called because the limit is not reached");
+		}).then(function() {
+			assert.ok(oPopoverOpenBySpy.notCalled, "Popover.openBy is not called because enableNotification is false");
 
-					oSelectionPlugin.setSelectionInterval(0, iLimit);
+			oSelectionPlugin.setEnableNotification(true);
+			oPopoverOpenBySpy.reset();
+			oPopoverCloseSpy.reset();
 
-					oPopover.attachEventOnce("afterOpen", function () {
+			return oSelectionPlugin.setSelectionInterval(0, iLimit - 1);
+
+		}).then(function() {
+			assert.ok(oPopoverOpenBySpy.notCalled, "Popover.openBy is not called because the limit is not reached");
+
+			oPopoverOpenBySpy.reset();
+			oPopoverCloseSpy.reset();
+
+			return Promise.all([
+				oSelectionPlugin.setSelectionInterval(0, iLimit),
+				new Promise(function(resolve) {
+					oSelectionPlugin._oNotificationPopover.attachEventOnce("afterOpen", function() {
 						assert.ok(oPopoverOpenBySpy.calledOnce, "Popover.openBy is called");
 						assert.ok(oPopoverOpenBySpy.calledWithExactly(oTable.getRows()[iLimit - 1].getDomRefs().rowSelector),
 							"Popover.openBy is called with the correct parameters");
 
+						oPopoverOpenBySpy.reset();
+						oPopoverCloseSpy.reset();
 						oTable.setFirstVisibleRow(oTable.getFirstVisibleRow() + 1);
 						assert.ok(oPopoverCloseSpy.calledOnce, "Notification closes");
-
-						done();
+						resolve();
 					});
-				}, 100);
-			}, 100);
+				})
+			]);
+
+		}).then(function() {
+			oPopoverOpenBySpy.reset();
+			oPopoverCloseSpy.reset();
+
+			return Promise.all([
+				oSelectionPlugin.addSelectionInterval(iLimit, iLimit + iLimit),
+				new Promise(function(resolve) {
+					oSelectionPlugin._oNotificationPopover.attachEventOnce("afterOpen", function() {
+						assert.ok(oPopoverOpenBySpy.calledOnce, "Popover.openBy is called");
+						assert.ok(oPopoverOpenBySpy.calledWithExactly(oTable.getRows().slice(-2)[0].getDomRefs().rowSelector),
+							"Popover.openBy is called with the correct parameters");
+
+						oPopoverOpenBySpy.reset();
+						oPopoverCloseSpy.reset();
+						oTable.setFirstVisibleRow(oTable.getFirstVisibleRow() + 1);
+						assert.ok(oPopoverCloseSpy.calledOnce, "Notification closes");
+						resolve();
+					});
+				})
+			]);
 		});
 	});
 });
