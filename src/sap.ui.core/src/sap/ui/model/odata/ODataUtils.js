@@ -554,6 +554,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * Parses a given Edm type value to a value as it is stored in the
+	 * {@link sap.ui.model.odata.v2.ODataModel}. The value to parse must be a valid Edm type literal
+	 * as defined in chapter 2.2.2 "Abstract Type System" of the OData V2 specification.
+	 *
+	 * @param {string} sValue The value to parse
+	 * @return {any} The parsed value
+	 * @throws {Error} If the given value is not of an Edm type defined in the specification
+	 * @private
+	 */
+	ODataUtils.parseValue = function (sValue) {
+		if (sValue[0] === "'") { // "Edm.String"
+			return sValue.slice(1, -1).replace(/''/g, "'");
+		} else if (sValue.startsWith("guid'")) { // "Edm.Guid"
+			return sValue.slice(5, -1);
+		} else if (sValue === "true" || sValue === "false") { // "Edm.Boolean"
+			return sValue === "true";
+		} else if (sValue === "null") { // null
+			return null;
+		} else if (sValue.startsWith("binary'")) { // "Edm.Binary"
+			return sValue.slice(7, -1);
+		}
+		throw new Error("Cannot parse value '" + sValue + "', no Edm type found");
+	};
+
+	/**
 	 * Compares the given values using <code>===</code> and <code>></code>.
 	 *
 	 * @param {any} vValue1
