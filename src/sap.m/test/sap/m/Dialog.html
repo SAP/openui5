@@ -776,7 +776,7 @@
 			});
 
 			var oDialogWithSubheader = new sap.m.Dialog('subheaderDialog', {
-				title: "Dialog with SubHeader",
+				title: "Dialog with invisible SubHeader",
 				content: new sap.m.Button('triggerSubheaderButton', {
 					text: 'trigger',
 					tap: function() {
@@ -1390,26 +1390,26 @@
 							oDialogSimple.open();
 						}
 					}),
-                    new sap.m.Button('dialogNoHeaderButton', {
-                        text: "Dialog No Header",
-                        width: _buttonWidth,
-                        press: function () {
-                            oDialogNoHeader.open();
-                        }
-                    }),
-                    new sap.m.Button('dialogWithSubheaderButton', {
-                        text: "With SubHeader",
-                        width: _buttonWidth,
-                        press: function () {
-                            oDialogWithSubheader.open();
-                        }
-                    }),
-                    new sap.m.Button('stretchedDialogButton', {
-                        text: "Stretched",
-                        width: _buttonWidth,
-                        press: function () {
-                            oDialogStretched.open();
-                        }
+					new sap.m.Button('dialogNoHeaderButton', {
+						text: "Dialog No Header",
+						width: _buttonWidth,
+						press: function () {
+							oDialogNoHeader.open();
+						}
+					}),
+					new sap.m.Button('dialogWithSubheaderButton', {
+						text: "With invisible SubHeader",
+						width: _buttonWidth,
+						press: function () {
+							oDialogWithSubheader.open();
+						}
+					}),
+					new sap.m.Button('stretchedDialogButton', {
+						text: "Stretched",
+						width: _buttonWidth,
+						press: function () {
+							oDialogStretched.open();
+						}
 					}),
 					new sap.m.Button('stretchedDialogWithContentSizeButton', {
 						text: "Stretched with Content Size",
@@ -1418,34 +1418,34 @@
 							oDialogStretchedWithContentSize.open();
 						}
 					}),
-                    new sap.m.Button("textareaDialogButton", {
-                        text: "Textarea in Dialog",
-                        width: _buttonWidth,
-                        press: function () {
-                            oTextAreaDialog.open();
-                        }
-                    }),
-                    new sap.m.Button('resizeDialogButton', {
-                        text: "Resize Enabled",
-                        width: _buttonWidth,
-                        press: function () {
-                            oDialogResize.open();
-                        }
-                    }),
-                    new sap.m.Button('dialogWithFixedSizeContentButton', {
-                        text : "Dialog with fixed size content",
-                        width: _buttonWidth,
-                        press: function() {
-                            dialogWithFixedSizeContent.open();
-                        }
-                    }),
-                    new sap.m.Button('dialogWithCustomHeadersButton', {
-                        text : "Dialog with 3 custom headers",
-                        width: _buttonWidth,
-                        press: function() {
-                            dialogWithCustomHeaders.open();
-                        }
-                    }),
+					new sap.m.Button("textareaDialogButton", {
+						text: "Textarea in Dialog",
+						width: _buttonWidth,
+						press: function () {
+							oTextAreaDialog.open();
+						}
+					}),
+					new sap.m.Button('resizeDialogButton', {
+						text: "Resize Enabled",
+						width: _buttonWidth,
+						press: function () {
+							oDialogResize.open();
+						}
+					}),
+					new sap.m.Button('dialogWithFixedSizeContentButton', {
+						text : "Dialog with fixed size content",
+						width: _buttonWidth,
+						press: function() {
+							dialogWithFixedSizeContent.open();
+						}
+					}),
+					new sap.m.Button('dialogWithCustomHeadersButton', {
+						text : "Dialog with 3 custom headers",
+						width: _buttonWidth,
+						press: function() {
+							dialogWithCustomHeaders.open();
+						}
+					}),
 					new sap.m.Button({
 						text: "Message Dialog",
 						width: _buttonWidth,
