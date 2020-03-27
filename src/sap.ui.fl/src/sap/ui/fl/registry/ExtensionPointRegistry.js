@@ -94,12 +94,13 @@ sap.ui.define([
 	/**
 	 * Registration of extension points for observing the aggregation to track the index.
 	 *
-	 * @param {object} mExtensionPointInfo - Map of extension point information
-	 * @param {object} mExtensionPointInfo.view - View object
+	 * @param {Object} mExtensionPointInfo - Map of extension point information
+	 * @param {Object} mExtensionPointInfo.view - View object
 	 * @param {string} mExtensionPointInfo.name - Name of the extension point
-	 * @param {object} mExtensionPointInfo.targetControl - Parent control of the extension point
+	 * @param {Object} mExtensionPointInfo.targetControl - Parent control of the extension point
 	 * @param {string} mExtensionPointInfo.aggregationName - Name of the aggregation where the extension point is
 	 * @param {number} mExtensionPointInfo.index - Index of the extension point
+	 * @param {Array} mExtensionPointInfo.defaultContent - Array of control ids which belong to the default aggregation
 	 */
 	ExtensionPointRegistry.prototype.registerExtensionPoints = function(mExtensionPointInfo) {
 		var oParent = mExtensionPointInfo.targetControl;
@@ -127,8 +128,8 @@ sap.ui.define([
 	 * Returns the extension point information.
 	 *
 	 * @param {string} sExtensionPointName - Name of the extension point
-	 * @param {object} oView - View object
-	 * @returns {object} mExtensionPointInfo - Map of extension point information
+	 * @param {Object} oView - View object
+	 * @returns {Object} mExtensionPointInfo - Map of extension point information
 	 */
 	ExtensionPointRegistry.prototype.getExtensionPointInfo = function (sExtensionPointName, oView) {
 		return this._mExtensionPointsByViewId[oView.getId()]
@@ -139,7 +140,7 @@ sap.ui.define([
 	 * Returns the extension point information by parent id.
 	 *
 	 * @param {string} sParentId - Id of the extension point parent control
-	 * @returns {array} of extension point informations.
+	 * @returns {Array} of extension point informations.
 	 */
 	ExtensionPointRegistry.prototype.getExtensionPointInfoByParentId = function (sParentId) {
 		return this._aExtensionPointsByParent[sParentId] || [];

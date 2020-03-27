@@ -952,6 +952,12 @@ sap.ui.define([
 				group: "registry",
 				coverage: {
 					only: ["sap/ui/fl/registry/ExtensionPointRegistry"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent",
+						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
+					}
 				}
 			},
 			"registry/Settings": {
