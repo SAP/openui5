@@ -754,13 +754,16 @@ function(
 	MultiComboBox.prototype.oninput = function(oEvent) {
 		ComboBoxBase.prototype.oninput.apply(this, arguments);
 		var oInput = oEvent.srcControl,
-			oPickerTextField = this.getPickerTextField();
+			bIsPickerDialog = this.isPickerDialog(),
+			oInputField = bIsPickerDialog ? this.getPickerTextField() : this,
+			sValueState = oInputField.getValueState(),
+			sValueStateText = oInputField.getValueStateText(),
+			sAlreadySelectedText = this._oRbM.getText("VALUE_STATE_ERROR_ALREADY_SELECTED");
 
 		// reset the value state
-		if (this.isPickerDialog() && oPickerTextField.getValueState() === ValueState.Error) {
-			oPickerTextField.setValueState(ValueState.None);
-		} else if (this.getValueState() === ValueState.Error) {
-			this.setValueState(ValueState.None);
+		if (sValueState === ValueState.Error && sValueStateText === sAlreadySelectedText) {
+				oInputField.setValueState(this._sInitialValueState);
+				oInputField.setValueStateText(this._sOriginalValueStateText);
 		}
 
 		if (!this.getEnabled() || !this.getEditable()) {
@@ -896,26 +899,25 @@ function(
 	 */
 	MultiComboBox.prototype._showAlreadySelectedVisualEffect = function() {
 		var bIsPickerDialog = this.isPickerDialog(),
-			oPickerTextField = this.getPickerTextField(),
-			sValueState = bIsPickerDialog ? oPickerTextField.getValueState() : this.getValueState(),
+			oInputField = bIsPickerDialog ? this.getPickerTextField() : this,
+			sValueState = oInputField.getValueState(),
 			sValue = this.getValue().toLowerCase(),
 			aText = this.getSelectedItems().map(function(oItem) {
 				return oItem.getText().toLowerCase();
 			}),
 			sAlreadySelected = this._oRbM.getText("VALUE_STATE_ERROR_ALREADY_SELECTED");
-		if (aText.indexOf(sValue) > -1 && sValueState !== ValueState.Error && !this.isComposingCharacter()) {
 
-			if (bIsPickerDialog) {
-				oPickerTextField.setValueState(ValueState.Error);
-				oPickerTextField.setValueStateText(sAlreadySelected);
-				oPickerTextField.selectText(0, this.getValue().length);
-			} else {
-				this.setValueState(ValueState.Error);
-				this.setValueStateText(sAlreadySelected);
-				this.selectText(0, this.getValue().length);
-			}
+		if (sValueState !== ValueState.Error) {
+			this._sInitialValueState = this.getValueState();
+		}
+
+		if (aText.indexOf(sValue) > -1 && sValueState !== ValueState.Error && !this.isComposingCharacter()) {
+				oInputField.setValueState(ValueState.Error);
+				oInputField.setValueStateText(sAlreadySelected);
+				oInputField.selectText(0, this.getValue().length);
 		} else {
-			bIsPickerDialog ? oPickerTextField.setValueState(ValueState.None) : this.setValueState(ValueState.None);
+				oInputField.setValueState(this._sInitialValueState);
+				oInputField.setValueStateText(this._sOriginalValueStateText);
 		}
 	};
 
@@ -2111,6 +2113,7 @@ function(
 		ComboBoxBase.prototype.onAfterRendering.apply(this, arguments);
 		this._oTokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
 		this._registerResizeHandler();
+		this._sInitialValueState = this.getValueState();
 	};
 
 	/**
@@ -2126,7 +2129,8 @@ function(
 
 		// reset the value state
 		if (this.getValueState() === ValueState.Error && this.getValueStateText() === this._oRbM.getText("VALUE_STATE_ERROR_ALREADY_SELECTED")) {
-			this.setValueState(ValueState.None);
+			this.setValueState(this._sInitialValueState);
+			this.setValueStateText(this._sOriginalValueStateText);
 		}
 
 		ComboBoxBase.prototype.onfocusout.apply(this, arguments);
@@ -3268,6 +3272,8 @@ function(
 				that[sControlName] = null;
 			}
 		});
+
+		this._sInitialValueState = null;
 	};
 
 	/**
