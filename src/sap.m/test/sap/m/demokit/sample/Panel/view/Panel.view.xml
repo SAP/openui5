@@ -5,7 +5,7 @@
 	xmlns="sap.m">
 	<Panel width="auto" class="sapUiResponsiveMargin" accessibleRole="Region">
 		<headerToolbar>
-			<OverflowToolbar height="3rem">
+			<OverflowToolbar>
 				<Title text="Panel with picture"/>
 			</OverflowToolbar>
 		</headerToolbar>
@@ -18,7 +18,7 @@
 	</Panel>
 	<Panel width="auto" class="sapUiResponsiveMargin">
 		<headerToolbar>
-			<OverflowToolbar height="3rem">
+			<OverflowToolbar>
 				<Title text="Header"/>
 				<ToolbarSpacer />
 				<Button icon="sap-icon://settings" />
