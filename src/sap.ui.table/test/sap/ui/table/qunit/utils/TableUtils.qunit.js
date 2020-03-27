@@ -1,9 +1,8 @@
 /*global QUnit, sinon, oTable, oTreeTable */
 
 sap.ui.define([
-	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/table/CreationRow",
@@ -13,7 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/table/RowSettings",
 	"sap/ui/base/Object"
-], function(TableUtils, TableQUnitUtils, qutils, Table, Column, CreationRow, RowAction, TableLibrary, CoreLibrary, Control, RowSettings, BaseObject) {
+], function(TableQUnitUtils, TableUtils, Table, Column, CreationRow, RowAction, TableLibrary, CoreLibrary, Control, RowSettings, BaseObject) {
 	"use strict";
 
 	// Shortcuts

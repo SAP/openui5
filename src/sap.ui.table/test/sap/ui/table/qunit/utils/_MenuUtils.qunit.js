@@ -1,16 +1,15 @@
 /*global QUnit, sinon, oTable */
 
 sap.ui.define([
-	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
 	"sap/ui/Device",
 	"sap/ui/core/Popup"
-], function(TableUtils, TableQUnitUtils, qutils, MenuUnified, MenuItemUnified, MenuM, MenuItemM, Device, Popup) {
+], function(TableQUnitUtils, TableUtils, MenuUnified, MenuItemUnified, MenuM, MenuItemM, Device, Popup) {
 	"use strict";
 
 	// mapping of global function calls

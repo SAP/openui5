@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Toolbar"
-], function(TableQUnitUtils, CreationRow, Column, QUnitUtils, KeyCodes, Control, JSONModel, Toolbar) {
+], function(TableQUnitUtils, CreationRow, Column, qutils, KeyCodes, Control, JSONModel, Toolbar) {
 	"use strict";
 
 	var TestControl = TableQUnitUtils.TestControl;
@@ -290,7 +290,7 @@ sap.ui.define([
 
 		test(function() {
 			expectKeyboardEventMarked(true);
-			QUnitUtils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, true);
+			qutils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, true);
 		}, function() {
 			assert.ok(oFireApplySpy.calledOnce, "CreationRow#_fireApply was called once");
 			assert.deepEqual(aEvents, ["sapfocusleave", "focusin"], "The events on the form element were correctly fired");
@@ -301,7 +301,7 @@ sap.ui.define([
 					oEvent.preventDefault();
 				});
 				expectKeyboardEventMarked(true);
-				QUnitUtils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, true);
+				qutils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, true);
 			}, function() {
 				assert.ok(oFireApplySpy.calledOnce, "CreationRow#_fireApply was called once");
 				assert.deepEqual(aEvents, ["sapfocusleave", "focusin"], "The events on the form element were correctly fired");
@@ -312,7 +312,7 @@ sap.ui.define([
 			return test(function() {
 				oCreationRow.setApplyEnabled(false);
 				expectKeyboardEventMarked(false);
-				QUnitUtils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, true);
+				qutils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, true);
 			}, function() {
 				assert.ok(oFireApplySpy.notCalled, "CreationRow#_fireApply was not called");
 				assert.deepEqual(aEvents, [], "The events on the form element were correctly fired");

@@ -2,13 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/core/Control",
 	"sap/ui/Device"
-], function(TableQUnitUtils, qutils, TableUtils, Table, Column, Control, Device) {
+], function(TableQUnitUtils, TableUtils, Table, Column, Control, Device) {
 	"use strict";
 
 	// mapping of global function calls

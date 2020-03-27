@@ -2,13 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/extensions/ExtensionBase",
 	"sap/ui/table/Table",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/AnalyticalTable",
 	"sap/ui/base/Object"
-], function(TableQUnitUtils, qutils, ExtensionBase, Table, TreeTable, AnalyticalTable, BaseObject) {
+], function(TableQUnitUtils, ExtensionBase, Table, TreeTable, AnalyticalTable, BaseObject) {
 	"use strict";
 
 	//************************************************************************
