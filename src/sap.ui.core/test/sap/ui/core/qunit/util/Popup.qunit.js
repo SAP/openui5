@@ -1256,7 +1256,7 @@ sap.ui.define([
 		var fnOpened3 = function(){
 			assert.notOk(QUnitUtils.isSelectedTextEqual(), "There should not be any text selected.");
 
-			if (Device.browser.internet_explorer){
+			if (Device.browser.msie || Device.browser.edge){
 				assert.notOk(jQuery(oPopup3DomRef).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oPopup3.getId() + " should not be marked explicitly as user selectable.");
 				assert.notOk(jQuery("html").hasClass("sapUiNotUserSelectable"), "The content of the whole html document should not be marked explicitly as not user selectable.");
 			} else {
@@ -1267,7 +1267,7 @@ sap.ui.define([
 
 			QUnitUtils.triggerSelectAll();
 
-			if (Device.browser.internet_explorer){
+			if (Device.browser.msie || Device.browser.edge){
 				assert.ok(QUnitUtils.includesSelectedText(["Open Popup", "QUnit tests 'Popup' of suite 'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("Open Popup"), "The selected text should be correct 'Open Popup'.");
@@ -1293,7 +1293,7 @@ sap.ui.define([
 		var fnOpened4 = function(){
 			assert.notOk(QUnitUtils.isSelectedTextEqual(), "There should not be any text selected.");
 
-			if (Device.browser.internet_explorer){
+			if (Device.browser.msie || Device.browser.edge){
 				assert.notOk(jQuery(oPopup4DomRef).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oPopup4.getId() + " should not be marked explicitly as user selectable.");
 				assert.notOk(jQuery(oPopup3DomRef).hasClass("sapUiNotUserSelectable"), "The content of popup with ID: " + oPopup3.getId() + " should not be marked explicitly as not user selectable.");
 				assert.notOk(jQuery("html").hasClass("sapUiNotUserSelectable"), "The content of the whole html document should not be marked explicitly as not user selectable.");
@@ -1307,7 +1307,7 @@ sap.ui.define([
 
 			QUnitUtils.triggerSelectAll();
 
-			if (Device.browser.internet_explorer){
+			if (Device.browser.msie || Device.browser.edge){
 				assert.ok(QUnitUtils.includesSelectedText(["Button", "QUnit tests 'Popup' of suite 'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("Button"), "The selected text should be correct 'Button'.");
@@ -1322,7 +1322,7 @@ sap.ui.define([
 			assert.notOk(jQuery(oPopup4DomRef).hasClass("sapUiNotUserSelectable"), "The content of popup with ID: " + oPopup4.getId() + " should not be marked explicitly as not user selectable.");
 			assert.notOk(jQuery(oPopup3DomRef).hasClass("sapUiNotUserSelectable"), "The content of popup with ID: " + oPopup3.getId() + " should not be marked explicitly as not user selectable.");
 
-			if (Device.browser.internet_explorer){
+			if (Device.browser.msie || Device.browser.edge){
 				assert.notOk(jQuery(oPopup3DomRef).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oPopup3.getId() + " should not be marked explicitly as user selectable.");
 				assert.notOk(jQuery("html").hasClass("sapUiNotUserSelectable"), "The content of the whole html document should not be marked explicitly as not user selectable.");
 			} else {
@@ -1360,7 +1360,7 @@ sap.ui.define([
 			assert.notOk(QUnitUtils.isSelectedTextEqual(), "There should not be any text selected.");
 			assert.notOk(jQuery(oPopup3DomRef).hasClass("sapUiNotUserSelectable"), "The content of popup with ID: " + oPopup3.getId() + " should not be marked explicitly as not user selectable.");
 
-			if (Device.browser.internet_explorer){
+			if (Device.browser.msie || Device.browser.edge){
 				assert.notOk(jQuery(oPopup3DomRef).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oPopup3.getId() + " should not be marked explicitly as user selectable.");
 				assert.notOk(jQuery("html").hasClass("sapUiNotUserSelectable"), "The content of the whole html document should not be marked explicitly as not user selectable.");
 
@@ -1371,7 +1371,7 @@ sap.ui.define([
 
 			QUnitUtils.triggerSelectAll();
 
-			if (Device.browser.internet_explorer){
+			if (Device.browser.msie || Device.browser.edge){
 				assert.ok(QUnitUtils.includesSelectedText(["Open Popup", "QUnit tests 'Popup' of suite 'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("Open Popup"), "The selected text should be correct 'Open Popup'.");
@@ -1398,7 +1398,7 @@ sap.ui.define([
 			assert.notOk(QUnitUtils.isSelectedTextEqual(), "There should not be any text selected.");
 			assert.notOk(jQuery(oPopup3DomRef).hasClass("sapUiNotUserSelectable"), "The content of popup with ID: " + oPopup3.getId() + " should not be marked explicitly as not user selectable.");
 
-			if (Device.browser.internet_explorer){
+			if (Device.browser.msie || Device.browser.edge){
 				assert.notOk(jQuery(oPopup4DomRef).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oPopup4.getId() + " should not be marked explicitly as user selectable.");
 				assert.notOk(jQuery(oPopup3DomRef).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oPopup3.getId() + " should not be marked explicitly as user selectable.");
 				assert.notOk(jQuery("html").hasClass("sapUiNotUserSelectable"), "The content of the whole html document should not be marked explicitly as not user selectable.");
@@ -1410,7 +1410,7 @@ sap.ui.define([
 
 			QUnitUtils.triggerSelectAll();
 
-			if (Device.browser.internet_explorer){
+			if (Device.browser.msie || Device.browser.edge){
 				assert.ok(QUnitUtils.includesSelectedText(["Open Popup", "Button", "QUnit tests 'Popup' of suite 'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("Open PopupButton"), "The selected text should be correct 'Open PopupButton'.");
@@ -1423,7 +1423,7 @@ sap.ui.define([
 			assert.notOk(jQuery(oPopup4DomRef).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oPopup4.getId() + " should not be marked explicitly as user selectable.");
 			assert.notOk(jQuery(oPopup4DomRef).hasClass("sapUiNotUserSelectable"), "The content of popup with ID: " + oPopup4.getId() + " should not be marked explicitly as not user selectable.");
 			assert.notOk(jQuery(oPopup3DomRef).hasClass("sapUiNotUserSelectable"), "The content of popup with ID: " + oPopup3.getId() + " should not be marked explicitly as not user selectable.");
-			if (Device.browser.internet_explorer){
+			if (Device.browser.msie || Device.browser.edge){
 				assert.notOk(jQuery(oPopup3DomRef).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oPopup3.getId() + " should not be marked explicitly as user selectable.");
 				assert.notOk(jQuery("html").hasClass("sapUiNotUserSelectable"), "The content of the whole html document should not be marked explicitly as not user selectable.");
 			} else {
@@ -1485,7 +1485,7 @@ sap.ui.define([
 			assert.notOk(jQuery(oPopup3DomRef).hasClass("sapUiNotUserSelectable"), "The content of popup with ID: " + oPopup3.getId() + " should not be marked explicitly as not user selectable.");
 			assert.notOk(jQuery(oPopup3DomRef).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oPopup3.getId() + " should not be marked explicitly as user selectable.");
 
-			if (Device.browser.internet_explorer) {
+			if (Device.browser.msie || Device.browser.edge) {
 				assert.notOk(jQuery(oPopup4DomRef).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oPopup4.getId() + " should not be marked explicitly as user selectable.");
 				assert.notOk(jQuery("html").hasClass("sapUiNotUserSelectable"), "The content of the whole html document should not be marked as not user selectable.");
 			} else {
@@ -1495,7 +1495,7 @@ sap.ui.define([
 
 			QUnitUtils.triggerSelectAll();
 
-			if (Device.browser.internet_explorer) {
+			if (Device.browser.msie || Device.browser.edge) {
 				assert.ok(QUnitUtils.includesSelectedText(["Button", "QUnit tests 'Popup' of suite 'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("Button"), "The selected text should be correct 'Button'.");
@@ -1619,7 +1619,7 @@ sap.ui.define([
 			oPopup3.setModal(true);
 
 			assert.notOk(QUnitUtils.isSelectedTextEqual(), "There should not be any text selected.");
-			if (Device.browser.internet_explorer) {
+			if (Device.browser.msie || Device.browser.edge) {
 				assert.notOk(jQuery(oPopup3DomRef).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oPopup3.getId() + " should not be marked explicitly as user selectable.");
 				assert.notOk(jQuery("html").hasClass("sapUiNotUserSelectable"), "The content of the whole html document should not be marked explicitly as not user selectable.");
 			} else {
@@ -1630,7 +1630,7 @@ sap.ui.define([
 
 			QUnitUtils.triggerSelectAll();
 
-			if (Device.browser.internet_explorer) {
+			if (Device.browser.msie || Device.browser.edge) {
 				assert.ok(QUnitUtils.includesSelectedText(["Open Popup", "QUnit tests 'Popup' of suite 'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("Open Popup"), "The selected text should be correct 'Open Popup'.");
@@ -1660,7 +1660,7 @@ sap.ui.define([
 
 		var fnOpened4 = function(){
 			assert.notOk(QUnitUtils.isSelectedTextEqual(), "There should not be any text selected.");
-			if (Device.browser.internet_explorer){
+			if (Device.browser.msie || Device.browser.edge){
 				assert.notOk(jQuery(oPopup4DomRef).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oPopup4.getId() + " should not be marked explicitly as user selectable.");
 				assert.notOk(jQuery("html").hasClass("sapUiNotUserSelectable"), "The content of the whole html document should be marked explicitly as not user selectable.");
 			} else {
@@ -1672,7 +1672,7 @@ sap.ui.define([
 
 			QUnitUtils.triggerSelectAll();
 
-			if (Device.browser.internet_explorer) {
+			if (Device.browser.msie || Device.browser.edge) {
 				assert.ok(QUnitUtils.includesSelectedText(["Button", "QUnit tests 'Popup' of suite 'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("Button"), "The selected text should be correct 'Button'.");
@@ -1694,7 +1694,7 @@ sap.ui.define([
 			assert.notOk(QUnitUtils.isSelectedTextEqual(), "There should not be any text selected.");
 			assert.notOk(jQuery(oPopup4DomRef).hasClass("sapUiNotUserSelectable"), "The content of popup with ID: " + oPopup4.getId() + " should not be marked explicitly as not user selectable.");
 
-			if (Device.browser.internet_explorer) {
+			if (Device.browser.msie || Device.browser.edge) {
 				assert.notOk(jQuery(oPopup4DomRef).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oPopup4.getId() + " should not be marked explicitly as user selectable.");
 				assert.notOk(jQuery("html").hasClass("sapUiNotUserSelectable"), "The content of the whole html document should not be marked explicitly as not user selectable.");
 			} else {
@@ -1704,7 +1704,7 @@ sap.ui.define([
 
 			QUnitUtils.triggerSelectAll();
 
-			if (Device.browser.internet_explorer) {
+			if (Device.browser.msie || Device.browser.edge) {
 				assert.ok(QUnitUtils.includesSelectedText(["Button", "QUnit tests 'Popup' of suite 'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("Button"), "The selected text should be correct 'Button'.");
@@ -1764,7 +1764,7 @@ sap.ui.define([
 
 		var fnOpened3 = function(){
 			assert.notOk(QUnitUtils.isSelectedTextEqual(), "There should not be any text selected.");
-			if (Device.browser.internet_explorer) {
+			if (Device.browser.msie || Device.browser.edge) {
 				assert.notOk(jQuery(oCustomDialogFirst).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oCustomDialogFirst.id + " should not be marked explicitly as user selectable.");
 			} else {
 				assert.ok(jQuery(oCustomDialogFirst).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oCustomDialogFirst.id + " should be marked explicitly as user selectable.");
@@ -1777,7 +1777,7 @@ sap.ui.define([
 			assert.ok(QUnitUtils.isSelectedTextEqual(), "There should be any text selected.");
 
 			Popup.addExternalContent("[data-custom-popup-content-2]", true);
-			if (Device.browser.internet_explorer) {
+			if (Device.browser.msie || Device.browser.edge) {
 				assert.notOk(jQuery(oCustomDialogFirst).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oCustomDialogFirst.id + " should not be marked explicitly as user selectable.");
 				assert.notOk(jQuery(oCustomDialogSecond).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oCustomDialogSecond.id + " should not be marked explicitly as user selectable.");
 			} else {
@@ -1848,7 +1848,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		var fnOpened3 = function(){
-			if (Device.browser.internet_explorer) {
+			if (Device.browser.msie || Device.browser.edge) {
 				assert.notOk(jQuery(oPopup3DomRef).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oPopup3.getId() + " should not be marked explicitly as user selectable.");
 				assert.notOk(jQuery(oCustomDialogFirst).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oCustomDialogFirst.id + " should not be marked explicitly as user selectable.");
 				assert.notOk(jQuery(oCustomDialogSecond).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oCustomDialogSecond.id + " should not be marked explicitly as user selectable.");
