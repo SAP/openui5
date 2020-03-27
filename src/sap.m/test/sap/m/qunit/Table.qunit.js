@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/TablePersoDialog",
 	"sap/ui/events/KeyCodes",
@@ -21,7 +22,7 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/ScrollContainer",
 	"sap/m/library"
-], function(qutils, TablePersoDialog, KeyCodes, JSONModel, Device, Filter, Sorter, PasteHelper, InvisibleText, Table, Column, Label, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library) {
+], function(Core, qutils, TablePersoDialog, KeyCodes, JSONModel, Device, Filter, Sorter, PasteHelper, InvisibleText, Table, Column, Label, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library) {
 	"use strict";
 
 	var oTable;
@@ -168,7 +169,7 @@ sap.ui.define([
 		});
 
 		oTable.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 	}
 
 	function destroyBiggerTable() {
@@ -183,7 +184,7 @@ sap.ui.define([
 	QUnit.test("Basic Properties", function(assert) {
 		var sut = createSUT('idBasicPropertiesTable');
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Check if table has been added to dom tree
 		assert.ok(sut.$().length > 0, "Table in DOM tree");
@@ -192,11 +193,11 @@ sap.ui.define([
 
 		assert.ok(!sut.$().children().hasClass("sapMTableOverlay"), "Table overlay is not rendered as showOverlay=false");
 		sut.setShowOverlay(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(sut.$().children().hasClass("sapMTableOverlay"), "Table overlay is rendered as showOverlay=true");
 
 		sut.setVisible(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(sut.$().length === 0, "Table has been removed from DOM");
 
 		assert.equal(sut.getItemsContainerDomRef(), sut.$("tblBody")[0]);
@@ -210,7 +211,7 @@ sap.ui.define([
 			labelFilter = 'th>.sapMColumnHeader>.sapMLabel',
 			aLabels;
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Check table columns (should be three)
 		aLabels = sut.$().find(labelFilter);
@@ -221,7 +222,7 @@ sap.ui.define([
 
 		//Remove first column
 		var oFirstColumn = sut.removeColumn("__column0");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Check table columns (should be two)
 		aLabels = sut.$().find(labelFilter);
@@ -230,7 +231,7 @@ sap.ui.define([
 
 		//Insert column again
 		sut.insertColumn(oFirstColumn, 1);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Check table columns and their positions
 		aLabels = sut.$().find(labelFilter);
@@ -241,7 +242,7 @@ sap.ui.define([
 
 		//remove all columns
 		sut.removeAllColumns();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		aLabels = sut.$().find(labelFilter);
 		assert.ok(aLabels.length === 0, "Table has no more columns rendered");
 
@@ -252,7 +253,7 @@ sap.ui.define([
 	QUnit.test("Header Toolbar Display", function(assert) {
 		var sut = createSUT('idHeaderToolbarDisplayTable', true, true);
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Check if header toolbar is in DOM
 		var oToolBar = sut.getHeaderToolbar();
@@ -266,7 +267,7 @@ sap.ui.define([
 	QUnit.test("Empty Table", function(assert) {
 		var sut = createSUT('idEmptyTable', true, true);
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 
 		//Check if header toolbar is in DOM
@@ -276,7 +277,7 @@ sap.ui.define([
 			cols: ["Name", "Color", "Number"]
 		};
 		sut.setModel(new JSONModel(oData));
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var aNoDataRow = sut.$().find("#" + sut.getId() + "-nodata");
 
@@ -284,7 +285,7 @@ sap.ui.define([
 		assert.equal(aNoDataRow.text(), sut.getNoDataText());
 
 		sut.removeAllColumns();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.notEqual(aNoDataRow.text(), sut.getNoDataText()); // no columns message will be shown
 
 		//clean up
@@ -294,13 +295,13 @@ sap.ui.define([
 	QUnit.test("Fixed Layout", function(assert) {
 		var sut = createSUT('FixedLayoutTestTable');
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// check initial rendering
 		assert.strictEqual(sut.$().find("table").css("table-layout"), "fixed", "Table has fixed layout after initial rendering");
 
 		sut.setFixedLayout(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(sut.$().find("table").css("table-layout"), "auto", "Table has correct layout after disabling fix layout.");
 
 		//clean up
@@ -313,7 +314,7 @@ sap.ui.define([
 		oColumn.setDemandPopin(true);
 		oColumn.setMinScreenWidth("48000px");
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oItem = sut.getItems()[0];
 		var oItemPopin = oItem.hasPopin();
@@ -323,11 +324,11 @@ sap.ui.define([
 
 		assert.notOk(oItem.getDomRef().classList.contains("sapMPopinHovered"), "sapMPopinHovered class not added to the item yet as there is no mouseover");
 		oItemPopin.$().trigger("mouseenter");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(oItem.getDomRef().classList.contains("sapMPopinHovered"), "sapMPopinHovered class added to the ItemDomRef as popin is hovered");
 
 		oItemPopin.$().trigger("mouseleave");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.notOk(oItem.getDomRef().classList.contains("sapMPopinHovered"), "sapMPopinHovered class removed as mouse is out of the popin");
 
 		sut.destroy();
@@ -337,9 +338,9 @@ sap.ui.define([
 
 	QUnit.test("MultiSelect", function(assert) {
 		var sut = createSUT('idMultiSelectTable', true, true, "MultiSelect");
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oBundle = Core.getLibraryResourceBundle("sap.m");
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Check if multiselect checkboxes are visible
 		var aSelectionChecks = sut.$().find(".sapMCb");
@@ -355,7 +356,7 @@ sap.ui.define([
 
 		//Check if 'selectAll' marks all rows as selected
 		sut.selectAll();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		aSelectionChecksMarked = sut.$().find(".sapMCbMarkChecked");
 		assert.ok(aSelectionChecksMarked.length === 4, "Selection checkboxes ALL checked");
@@ -368,13 +369,13 @@ sap.ui.define([
 		var sut = createSUT('idRangeSelection', true, false, "MultiSelect");
 		sut.placeAt("qunit-fixture");
 		var fnFireSelectionChangeEvent = this.spy(sut, "_fireSelectionChangeEvent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// test for table header row
 		sut.getVisibleItems()[1].focus();
 		// select the item
 		qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(fnFireSelectionChangeEvent.callCount, 1, "selectionChange event fired");
 
 		// trigger shift keydown so that sut._mRangeSelection object is available
@@ -400,11 +401,11 @@ sap.ui.define([
 		sut.getItems().forEach(function(oItem) {
 			oItem.setSelected(false);
 		});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// test for table footer row
 		sut.getColumns()[2].setFooter(new Text({text: "4.758"}));
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		fnFireSelectionChangeEvent.reset();
 
 		assert.ok(!sut._mRangeSelection, "rangeSelection object not available");
@@ -412,7 +413,7 @@ sap.ui.define([
 		sut.getVisibleItems()[1].focus();
 		// select the item
 		qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(fnFireSelectionChangeEvent.callCount, 1, "selectionChange event fired");
 
 		// trigger shift keydown so that sut._mRangeSelection object is available
@@ -454,7 +455,7 @@ sap.ui.define([
 
 		// Act
 		oContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$();
 
@@ -493,38 +494,38 @@ sap.ui.define([
 	QUnit.test("TypeColumn visibility should updated correctly", function(assert) {
 		var oTable = createSUT('idTypeTable', true);
 		oTable.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.notOk(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is not visible by default");
 		assert.strictEqual(oTable.$().find("th").last().attr("aria-hidden"), "true", "Aria hidden set correctly");
 
 		oTable.getItems()[0].setType("Navigation");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible when an item type is Navigation");
 
 		oTable.getItems()[0].setType("Active");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.notOk(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is not visible since Active type does not need column");
 
 		oTable.getItems()[0].setType("Detail");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible when an item type is Detail");
 
 		oTable.getItems()[0].setVisible(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.notOk(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is not visible since item is not visible");
 
 		var oClone = oTable.getItems()[1].clone().setType("DetailAndActive");
 		oTable.addItem(oClone);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible because new type is DetailAndActive");
 
 		oClone.destroy();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.notOk(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is not visible since new item is destroyed");
 
 		oTable.getItems()[0].setVisible(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(oTable.$().find("table").hasClass("sapMListTblHasNav"), "Type column is visible because first item with type detail is visible again");
 
 		oTable.rerender();
@@ -541,7 +542,7 @@ sap.ui.define([
 			oSecondItem = oTable.getItems()[1];
 		oTable.placeAt("qunit-fixture");
 		oFirstItem.setNavigated(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(oTable.$().find("table").hasClass("sapMListNavigated"), "Navigated class added");
 		var $oNavigatedCol = oTable.$().find(".sapMListTblNavigatedCol");
@@ -558,7 +559,7 @@ sap.ui.define([
 		assert.equal(oSecondItem.$().find(".sapMListTblNavigatedCell").children().length, 0, "navigated indicator not added as navigated property is not enabled for the item");
 
 		oFirstItem.setNavigated(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.notOk(oTable.$().find("table").hasClass("sapMListNavigated"), "Navigated column is removed");
 
@@ -574,7 +575,7 @@ sap.ui.define([
 		var oLastColumn = oTable.getColumns()[oTable.getColumns().length - 1];
 		oLastColumn.setDemandPopin(true);
 		oLastColumn.setMinScreenWidth("48000px");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oNavigatedIndicator = oFirstItem.getPopin().getDomRef().childNodes[2];
 		assert.equal(oNavigatedIndicator.getAttribute("role"), "presentation", "presentation role is set correctly");
@@ -589,7 +590,7 @@ sap.ui.define([
 	QUnit.test("SelectAll in selectionChange event", function(assert) {
 		var sut = createSUT('idMultiSelectTable', true, true, "MultiSelect");
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		sut.attachEventOnce("selectionChange", function(e) {
 			assert.ok(e.getParameter("selectAll"), "selectAll parameter is true when the 'selectAll' checkbox is pressed");
@@ -610,7 +611,7 @@ sap.ui.define([
 	QUnit.test("Test for removeAllItems", function(assert) {
 		var sut = createSUT("idTableRemoveAllItems", true, true);
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(sut.getItems().length > 0, "Table contains items");
 		sut.removeAllItems();
@@ -622,7 +623,7 @@ sap.ui.define([
 	QUnit.test("Test for destroyItems", function(assert) {
 		var sut = createSUT("idTableDestroyItems", true, true);
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(sut.getItems().length > 0, "Table contains items");
 		sut.destroyItems();
@@ -644,7 +645,7 @@ sap.ui.define([
 
 		// The table needs to be rendered for the column media object to be initialized
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oColumn._notifyResize({from: 600}); // this is the default value for minScreenWidth="phone"
 		this.clock.tick(1);
@@ -662,7 +663,7 @@ sap.ui.define([
 	QUnit.test("Test for onItemSelectedChange", function(assert) {
 		var sut = createSUT("idTableSelectedChange", true, false, "MultiSelect");
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var fnOnItemSelectedChange = sinon.spy(sut, "onItemSelectedChange");
 
 		var oItem = sut.getItems()[0];
@@ -678,8 +679,8 @@ sap.ui.define([
 		var oBinding = sut.getBinding("items");
 		oColumn.setFooter(new Label({text: "Greetings"}));
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		Core.applyChanges();
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
 		// accessibility role
 		assert.equal(sut.getAccessibilityType(), oResourceBundle.getText("ACC_CTR_TYPE_TABLE"), "Accessilitiy role correctly set");
@@ -696,7 +697,7 @@ sap.ui.define([
 
 		// noDataText test
 		oBinding.filter([new Filter("name", "Contains", "xxx")]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		sut.$("nodata").focus();
 		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("LIST_NO_DATA"), "Text correctly assinged for screen reader announcement");
 
@@ -709,7 +710,7 @@ sap.ui.define([
 		sut.getItems()[0].setType("Navigation");
 		sut.getItems()[0].setHighlight("Error");
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(sut.$().length > 0, "Table in DOM tree");
 
@@ -746,7 +747,7 @@ sap.ui.define([
 		var fnIsFooterRowEvent = sinon.spy(sut, "isFooterRowEvent");
 		oColumn.setFooter(new Label({text: "Greetings"}));
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// saptabnext event on tblHeader
 		var $tblHeader = sut.$("tblHeader").focus();
@@ -766,7 +767,7 @@ sap.ui.define([
 		sut.setGrowing(true);
 		sut.setGrowingThreshold(5);
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var $tblHeader = sut.$("tblHeader").focus();
 		// shift-tab on header row
@@ -848,7 +849,7 @@ sap.ui.define([
 		}));
 
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var fnCheckGrowingFromScratch = sinon.spy(sut, "checkGrowingFromScratch");
 
@@ -866,7 +867,7 @@ sap.ui.define([
 	QUnit.test("Test onsapspace on SelectAll checkbox", function(assert) {
 		var sut = createSUT("idTblSelectAllEvents", true, false, "MultiSelect");
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var $tblHeader = sut.$('tblHeader').focus();
 
@@ -884,7 +885,7 @@ sap.ui.define([
 		var sut = createSUT("idAlternateRowColors", true);
 		sut.setAlternateRowColors(true);
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(sut.$("tblBody").hasClass("sapMListTblAlternateRowColors"), "Alternate row color class added to tbody element of the table");
 
@@ -898,7 +899,7 @@ sap.ui.define([
 		var oColumn = sut.getColumns()[1];
 		oColumn.setDemandPopin(true);
 		oColumn.setMinScreenWidth("480000px");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(sut.$("tblBody").hasClass("sapMListTblAlternateRowColorsPopin"), "Popin class for alternate row colors added to tbody element of table");
 
 		// alternate row colors when grouping is enabled
@@ -909,7 +910,7 @@ sap.ui.define([
 			};
 		});
 		sut.getBinding("items").sort(oGrouping);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(sut.$("tblBody").hasClass("sapMListTblAlternateRowColorsGrouped"), "Grouping class for alternate row colors added to tbody element of table");
 
 		sut.destroy();
@@ -951,7 +952,7 @@ sap.ui.define([
 			oColumn.setDemandPopin(true);
 			oColumn.setMinScreenWidth("400000px");
 			sut.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.equal(sut.getPopinLayout(), "GridSmall", sMessagePrefix + "popinLayout=GridSmall, property is set correctly");
 			if (aBrowsers[i].supported) {
@@ -962,7 +963,7 @@ sap.ui.define([
 			}
 
 			sut.setPopinLayout(library.PopinLayout.GridLarge);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.equal(sut.getPopinLayout(), "GridLarge", sMessagePrefix + "popinLayout=GridLarge, property is set correctly");
 			if (aBrowsers[i].supported) {
@@ -973,7 +974,7 @@ sap.ui.define([
 			}
 
 			sut.setPopinLayout(library.PopinLayout.Block);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.equal(sut.getPopinLayout(), "Block", sMessagePrefix + "popinLayout=Block, property is set correctly");
 			assert.equal(jQuery(".sapMListTblSubCntGridSmall").length, 0, sMessagePrefix + "GridSmall style class not added");
@@ -990,13 +991,13 @@ sap.ui.define([
 	QUnit.test("Sticky Column Headers property check", function(assert) {
 		var sut = createSUT("idStickyColHdr", true);
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(!sut.getSticky(), "No stickiness");
 		assert.equal(sut.$().find(".sapMSticky").length, 0, "Sticky column header style class not rendered");
 
 		sut.setSticky(["ColumnHeaders"]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(sut.getSticky().length, 1, "Property set correctly");
 		assert.equal(sut.getSticky()[0], "ColumnHeaders", "Stickiness set on ColumnHeaders");
 
@@ -1010,7 +1011,7 @@ sap.ui.define([
 			var sut = createSUT("idStickyVisibility");
 			sut.placeAt("qunit-fixture");
 			sut.setSticky(["ColumnHeaders"]);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.ok(!sut.getDomRef().classList.contains("sapMSticky4"), "Sticky column header class not added as columns are not available");
 
@@ -1042,11 +1043,11 @@ sap.ui.define([
 			sut.setHeaderToolbar(oHeaderToolbar);
 
 			sut.setSticky(["ColumnHeaders", "InfoToolbar", "HeaderToolbar"]);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.ok(sut.getDomRef().classList.contains("sapMSticky3"), "Only sticky infoToolbar style class added");
 			sut.getInfoToolbar().setVisible(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(sut.getDomRef().classList.contains("sapMSticky1"), "sticky infoToolbar style class removed as infoToolbar is not visible");
 
 			sut.destroy();
@@ -1067,7 +1068,7 @@ sap.ui.define([
 			});
 			sut.setSticky(["ColumnHeaders"]);
 			oScrollContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			var aClassList = sut.$()[0].classList;
 			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky4"), "Sticky class added for sticky column headers only");
@@ -1136,18 +1137,18 @@ sap.ui.define([
 			});
 			sut.setSticky(["InfoToolbar"]);
 			oScrollContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			var aClassList = sut.$()[0].classList;
 			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky class added for sticky infoToolbar only");
 
 			sut.getInfoToolbar().setVisible(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			aClassList = sut.$()[0].classList;
 			assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky2"), "Sticky classes removed");
 
 			sut.getInfoToolbar().setVisible(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			aClassList = sut.$()[0].classList;
 			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky classes added");
 
@@ -1209,18 +1210,18 @@ sap.ui.define([
 			});
 			sut.setSticky(["HeaderToolbar"]);
 			oScrollContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			var aClassList = sut.$()[0].classList;
 			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky1"), "Sticky class added for sticky headerToolbar only");
 
 			sut.getHeaderToolbar().setVisible(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			aClassList = sut.$()[0].classList;
 			assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky1"), "Sticky classes removed as no element is sticky");
 
 			sut.getHeaderToolbar().setVisible(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			aClassList = sut.$()[0].classList;
 			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky1"), "Sticky classes added");
 
@@ -1307,24 +1308,24 @@ sap.ui.define([
 			});
 			sut.setSticky(["HeaderToolbar", "InfoToolbar", "ColumnHeaders"]);
 			oScrollContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			var aClassList = sut.$()[0].classList;
 			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky7"), "Sticky class added for sticky headerToolbar, infoToolbar and column headers");
 
 			sut.getHeaderToolbar().setVisible(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			aClassList = sut.$()[0].classList;
 			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky6"), "Sticky class updated for sticky infoToolbar and column headers");
 
 			sut.getInfoToolbar().setVisible(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			aClassList = sut.$()[0].classList;
 			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky4"), "Sticky class updated for column headers");
 
 			sut.getHeaderToolbar().setVisible(true);
 			sut.getInfoToolbar().setVisible(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			aClassList = sut.$()[0].classList;
 			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky7"), "Sticky class added for sticky headerToolbar, infoToolbar and column headers");
 
@@ -1396,21 +1397,21 @@ sap.ui.define([
 		var oColumn2 = new Column({ header: oHeader2, hAlign: "Center" });
 		var oTable = new Table({ columns: [oColumn1, oColumn2] });
 		oTable.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// column alignment in LTR mode
 		assert.equal(oColumn1.getDomRef().firstChild.style.justifyContent, "flex-start", "Column header content is aligned to the left");
 		assert.equal(oColumn2.getDomRef().firstChild.style.justifyContent, "center", "Center text alignment style class applied");
 
 		// column alignment in RTL mode
-		sap.ui.getCore().getConfiguration().setRTL(true);
-		sap.ui.getCore().applyChanges();
+		Core.getConfiguration().setRTL(true);
+		Core.applyChanges();
 		assert.equal(oColumn1.getDomRef().firstChild.style.justifyContent, "flex-end", "Column header content is aligned to the right");
 		assert.equal(oColumn2.getDomRef().firstChild.style.justifyContent, "center", "Center text alignment style class applied");
 
 		// clean up
 		oTable.destroy();
-		sap.ui.getCore().getConfiguration().setRTL(false);
+		Core.getConfiguration().setRTL(false);
 	});
 
 	QUnit.test("Active Headers", function(assert) {
@@ -1424,7 +1425,7 @@ sap.ui.define([
 
 		oTable.bActiveHeaders = true;
 		oTable.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(oColumn1.$().attr("role"), "columnheader", "role=columnheader applied to the columns");
 		assert.equal(oColumn2.$().attr("role"), "columnheader", "role=columnheader applied to the columns");
@@ -1482,7 +1483,7 @@ sap.ui.define([
 		var oTableResizeSpy = sinon.spy(sut, "_onResize");
 
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(sut.getContextualWidth(), "Inherit", "ContextualWidth with initial size has been applied.");
 		assert.equal(jQuery(".sapMListTblSubRow").length, 0, "by default no popin for table");
@@ -1490,7 +1491,7 @@ sap.ui.define([
 		// CSS size
 		sut.setContextualWidth("200px");
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(sut.getContextualWidth(), "200px", "ContextualWidth with css size has been applied.");
 		assert.ok(jQuery(".sapMListTblSubRow").length > 0, "popin is correct when contextualWidth is set to fixed pixel value.");
@@ -1499,7 +1500,7 @@ sap.ui.define([
 		sut.setContextualWidth("auto");
 
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(sut.getContextualWidth(), "auto", "ContextualWidth with auto has been applied.");
 
@@ -1508,7 +1509,7 @@ sap.ui.define([
 		// inherit
 		sut.setContextualWidth("Inherit");
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(sut.getContextualWidth(), "Inherit", "ContextualWidth with inherit has been applied.");
 		assert.equal(jQuery(".sapMListTblSubCntGridSmall").length, 0, "no popin for table when contextualWidth is set to inherit");
@@ -1535,7 +1536,7 @@ sap.ui.define([
 			})
 		});
 		table.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var sTest = "Aa\tBb b\nCc\tDd";
 		var aTestResult = [["Aa", "Bb b"],["Cc", "Dd"]];
@@ -1555,7 +1556,7 @@ sap.ui.define([
 		assert.expect(1);
 		var sut = createSUT('pasteInIETable');
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var onPasteSpy = sinon.spy(sut, "onkeydown");
 		var oStub = this.stub(Device, "browser", { msie: true });
@@ -1581,7 +1582,7 @@ sap.ui.define([
 			});
 
 		table.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.notOk(sut.hasPopin(), "Item do not have a popin even though the column is configured to be shown as popin");
@@ -1595,7 +1596,7 @@ sap.ui.define([
 			header: new Text({text: "Column1"})
 		});
 		table.addColumn(column1);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(sut.hasPopin(), "Item now has popin");
@@ -1610,7 +1611,7 @@ sap.ui.define([
 			header: new Text({text: "Column2"})
 		});
 		table.addColumn(column2);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(sut.hasPopin(), "Item still has popin");
@@ -1709,7 +1710,7 @@ sap.ui.define([
 	QUnit.test("Set table autoPopinMode", function (assert) {
 		assert.strictEqual(oTable.getAutoPopinMode(), false, "Default value for autoPopinMode property is false");
 		oTable.setAutoPopinMode(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
 	});
 
@@ -1718,7 +1719,7 @@ sap.ui.define([
 
 		oTable.setContextualWidth("Desktop");
 		oTable.setAutoPopinMode(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oTable.getColumns().forEach(function(oColumn) {
 			assert.strictEqual(oColumn.getImportance(), "None", "column importance=None by default");
@@ -1746,7 +1747,7 @@ sap.ui.define([
 
 		oTable.setAutoPopinMode(true);
 		oTable.setContextualWidth("Tablet");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
 
 		var oColumnsInfo = this.groupColumnsInfo(aColumns);
@@ -1762,7 +1763,7 @@ sap.ui.define([
 
 		oTable.setAutoPopinMode(true);
 		oTable.setContextualWidth("Phone");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
 
 		var oColumnsInfo = this.groupColumnsInfo(aColumns);
@@ -1787,7 +1788,7 @@ sap.ui.define([
 
 		oTable.setContextualWidth("Small");
 		oTable.setAutoPopinMode(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(oTable.getAutoPopinMode(), true, "autoPopinMode is set to true");
 
 		assert.notOk(oTable.getColumns()[0].isPopin(), "First column is not in the popin area");
@@ -1810,7 +1811,7 @@ sap.ui.define([
 				]
 			})
 		});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var aColumns = oTable.getColumns();
 		var aItems = oTable.getItems();
 
@@ -1830,7 +1831,7 @@ sap.ui.define([
 
 		oTable.setContextualWidth("Desktop");
 		oTable.setAutoPopinMode(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// set random property 'importance' on table columns
 		var aImportance = [ "None", "Low", "Medium", "High" ];
@@ -1850,14 +1851,16 @@ sap.ui.define([
 		assert.notOk(aColumns[1].getVisible(), "Visibility for column[1] is set to false");
 		assert.ok(aColumns[2].getImportance() === "High", "Importance of column[2] is 'High'");
 		assert.ok(aColumns[3].getAutoPopinWidth() === 10, "AutPopinWidth of column[3] is set to 10");
-		assert.strictEqual(fnConfigureAutoPopin.callCount, 4, "Function _configureAutoPopin has been called 4 times");
+		window.setTimeout(function() {
+			assert.strictEqual(fnConfigureAutoPopin.callCount, 4, "Function _configureAutoPopin has been called 4 times");
+		}, 0);
 	});
 
 	QUnit.test("Spy on _configureAutoPopin - II", function (assert) {
 		var aColumns = oTable.getColumns();
 
 		oTable.setContextualWidth("Desktop");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// set random property 'importance' on table columns
 		var aImportance = [ "None", "Low", "Medium", "High" ];
@@ -1878,5 +1881,33 @@ sap.ui.define([
 		assert.ok(aColumns[2].getImportance() === "High", "Importance of column[2] is 'High'");
 		assert.ok(aColumns[3].getAutoPopinWidth() === 10, "AutPopinWidth of column[3] is set to 8");
 		assert.ok(fnConfigureAutoPopin.getCalls().length === 0, "Function _configureAutoPopin has been called zero times");
+	});
+
+	QUnit.test("Spy on _requireAutoPopinRecalculation", function(assert) {
+		var fnRequireAutoPopinRecalculation = sinon.spy(oTable, "_requireAutoPopinRecalculation");
+		assert.notOk(oTable._bAutoPopinMode, "oTable._bAutoPopinMode=false as autoPopinMode=false");
+		assert.ok(fnRequireAutoPopinRecalculation.notCalled, "_requireAutoPopinRecalculation function not called yet");
+
+		oTable.setAutoPopinMode(true);
+		Core.applyChanges();
+
+		assert.ok(oTable._bAutoPopinMode, "oTable._bAutoPopinMode=true as autoPopinMode=true");
+		assert.ok(fnRequireAutoPopinRecalculation.notCalled, "_requireAutoPopinRecalculation function not called for initial autoPopinMode=true");
+
+		oTable.setAutoPopinMode(false);
+		Core.applyChanges();
+		assert.notOk(oTable._bAutoPopinMode, "oTable._bAutoPopinMode=false as autoPopinMode=false");
+		assert.ok(fnRequireAutoPopinRecalculation.notCalled, "_requireAutoPopinRecalculation function not called as autoPopinMode=false");
+
+		oTable.setAutoPopinMode(true);
+		Core.applyChanges();
+		assert.strictEqual(fnRequireAutoPopinRecalculation.callCount, 1, "_requireAutoPopinRecalculation function called when the autoPopinMode=true again");
+		assert.ok(fnRequireAutoPopinRecalculation.returned(true), "_requireAutoPopinRecalculation returns true, which indicates recalculation was performed");
+
+		var oColumn = new Column();
+		oTable.addColumn(oColumn);
+		Core.applyChanges();
+		assert.strictEqual(fnRequireAutoPopinRecalculation.callCount, 2, "_requireAutoPopinRecalculation function called as new columns are added to the table");
+		assert.ok(fnRequireAutoPopinRecalculation.returned(true), "_requireAutoPopinRecalculation returns true, which indicates recalculation was performed");
 	});
 });
