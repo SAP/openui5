@@ -24,6 +24,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	// this key is used as replacement for an empty string to not break anything. It's the same as &nbsp (no-break space)
+	var sEmptyTextKey = "\xa0";
+
 	/**
 	 * Provides Rename handling functionality
 	 *
@@ -38,6 +41,18 @@ sap.ui.define([
 	 * changed in future.
 	 */
 	var RenameHandler = {
+
+		errorStyleClass: "sapUiRtaErrorBg",
+
+		validators: {
+			noEmptyText: {
+				validatorFunction: function(sNewText) {
+					return sNewText !== sEmptyTextKey;
+				},
+				errorMessage: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("RENAME_EMPTY_ERROR_TEXT")
+			}
+		},
+
 		/**
 		 * @override
 		 */
@@ -126,7 +141,7 @@ sap.ui.define([
 
 			DOMUtil.copyComputedStyle(this._$oEditableControlDomRef, this._$editableField);
 			this._$editableField.children().remove();
-			this._$editableField.css('visibility', 'hidden');
+			this._$editableField.css("visibility", "hidden");
 
 			this._$editableField.css({
 				"-moz-user-modify": "read-write",
@@ -168,12 +183,12 @@ sap.ui.define([
 				_$oWrapper.offset({left: this._$oEditableControlDomRef.offset().left});
 				this._$editableField.offset({left: this._$oEditableControlDomRef.offset().left});
 				this._$editableField.offset({top: this._$oEditableControlDomRef.offset().top});
-				this._$editableField.css('visibility', '');
+				this._$editableField.css("visibility", "");
 				this._$editableField.focus();
 
 				// keep Overlay selected while renaming
 				mPropertyBag.overlay.setSelected(true);
-				sap.ui.getCore().getEventBus().publish('sap.ui.rta', mPropertyBag.pluginMethodName, {
+				sap.ui.getCore().getEventBus().publish("sap.ui.rta", mPropertyBag.pluginMethodName, {
 					overlay: mPropertyBag.overlay,
 					editableField: this._$editableField
 				});
@@ -270,7 +285,7 @@ sap.ui.define([
 			delete this._oEditedOverlay;
 			delete this._bBlurOrKeyDownStarted;
 
-			sap.ui.getCore().getEventBus().publish('sap.ui.rta', sPluginMethodName, {
+			sap.ui.getCore().getEventBus().publish("sap.ui.rta", sPluginMethodName, {
 				overlay: oOverlay
 			});
 		},
@@ -290,20 +305,65 @@ sap.ui.define([
 		 */
 		_handlePostRename : function (bRestoreFocus, oEvent) {
 			if (!this._bBlurOrKeyDownStarted) {
+				this._oEditedOverlay.removeStyleClass(RenameHandler.errorStyleClass);
 				this._bBlurOrKeyDownStarted = true;
 				if (oEvent) {
 					RenameHandler._preventDefault.call(this, oEvent);
 					RenameHandler._stopPropagation.call(this, oEvent);
 				}
-				return this._emitLabelChangeEvent()
-					.then(function (fnErrorHandler) {
-						this.stopEdit(bRestoreFocus);
-						if (typeof fnErrorHandler === "function") {
-							fnErrorHandler(); // contains startEdit() and valueStateMessage
-						}
-					}.bind(this));
+				return Promise.resolve()
+				.then(RenameHandler._validateNewText.bind(this))
+				.then(this._emitLabelChangeEvent.bind(this))
+				.then(function (fnErrorHandler) {
+					this.stopEdit(bRestoreFocus);
+					// ControlVariant rename handles the validation itself
+					if (typeof fnErrorHandler === "function") {
+						fnErrorHandler(); // contains startEdit()
+					}
+				}.bind(this))
+				.catch(function(oError) {
+					return RenameHandler._handleInvalidRename.call(this, oError.message, bRestoreFocus);
+				}.bind(this));
 			}
 			return Promise.resolve();
+		},
+
+		_handleInvalidRename: function(sErrorMessage, bRestoreFocus) {
+			return Utils._showMessageBox("ERROR", "RENAME_ERROR_TITLE", sErrorMessage)
+			.then(function() {
+				var oOverlay = this._oEditedOverlay;
+				oOverlay.addStyleClass(RenameHandler.errorStyleClass);
+				this.stopEdit(bRestoreFocus);
+				this.startEdit(oOverlay);
+			}.bind(this));
+		},
+
+		_validateNewText: function() {
+			var sErrorText;
+			var sNewText = RenameHandler._getCurrentEditableFieldText.call(this);
+			var oResponsibleOverlay = this.getResponsibleElementOverlay(this._oEditedOverlay);
+			var oRenameAction = this.getAction(oResponsibleOverlay);
+			var aValidators = oRenameAction && oRenameAction.validators || [];
+			aValidators.some(function(vValidator) {
+				var oValidator;
+				if (
+					typeof vValidator === "string"
+					&& RenameHandler.validators[vValidator]
+				) {
+					oValidator = RenameHandler.validators[vValidator];
+				} else {
+					oValidator = vValidator;
+				}
+
+				if (!oValidator.validatorFunction(sNewText)) {
+					sErrorText = oValidator.errorMessage;
+					return true;
+				}
+			});
+
+			if (sErrorText) {
+				throw Error(sErrorText);
+			}
 		},
 
 		/**
@@ -315,6 +375,7 @@ sap.ui.define([
 				case KeyCodes.ENTER:
 					return RenameHandler._handlePostRename.call(this, true, oEvent);
 				case KeyCodes.ESCAPE:
+					this._oEditedOverlay.removeStyleClass(RenameHandler.errorStyleClass);
 					this.stopEdit(true);
 					RenameHandler._preventDefault.call(this, oEvent);
 					break;
@@ -334,9 +395,8 @@ sap.ui.define([
 		_getCurrentEditableFieldText : function () {
 			// Rename to empty string should not be possible
 			// to prevent issues with disappearing elements
-			// '\xa0' = non-breaking space (&nbsp)
 			var sText = this._$editableField.text().trim();
-			return sText === "" ? '\xa0' : sText;
+			return sText === "" ? sEmptyTextKey : sText;
 		},
 
 		/**
