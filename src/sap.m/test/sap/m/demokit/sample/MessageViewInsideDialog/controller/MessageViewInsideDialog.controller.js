@@ -107,8 +107,8 @@ sap.ui.define([
 					],
 					contentLeft: [oBackButton]
 				}),
-				contentHeight: "300px",
-				contentWidth: "500px",
+				contentHeight: "50%",
+				contentWidth: "50%",
 				verticalScrolling: false
 			});
 		},

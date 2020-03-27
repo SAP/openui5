@@ -110,8 +110,8 @@ sap.ui.define([
 
 			this._oPopover = new ResponsivePopover({
 				customHeader: oPopoverBar,
-				contentWidth: "440px",
-				contentHeight: "440px",
+				contentWidth: "20%",
+				contentHeight: "40%",
 				verticalScrolling: false,
 				modal: true,
 				content: [this.oMessageView],
