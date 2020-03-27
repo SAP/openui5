@@ -289,6 +289,17 @@ function(
 					},
 
 					/**
+					 * Modifies the behavior of the <code>setSelectedKey</code> method so that
+					 * the selected item is cleared when a provided selected key is missing.
+					 * @since 1.77
+					 */
+					resetOnMissingKey: {
+						type: "boolean",
+						group: "Behavior",
+						defaultValue: false
+					},
+
+					/**
 					 * Indicates whether the selection is restricted to one of the items in the list.
 					 * <b>Note:</b> We strongly recommend that you always set this property to <code>false</code> and bind
 					 * the <code>selectedKey</code> property to the desired value for better interoperability with data binding.
@@ -2545,6 +2556,20 @@ function(
 		};
 
 		/**
+		 * Return true if sKey has a corresponding item in the list
+		 *
+		 * @param {string} sKey selectedKey value
+		 * @returns {boolean} result of check for this key in the items collection
+		 */
+		Select.prototype._isKeyAvailable = function (sKey) {
+			var aAvailableKeys = this._oList.getItems().map(function (item) {
+				return item.getKey();
+			});
+
+			return aAvailableKeys.indexOf(sKey) > -1;
+		};
+
+		/**
 		 * Sets property <code>selectedKey</code>.
 		 *
 		 * Default value is an empty string <code>""</code> or <code>undefined</code>.
@@ -2565,10 +2590,14 @@ function(
 			sKey = this.validateProperty("selectedKey", sKey);
 			var bDefaultKey = (sKey === "");
 
+			if (!bDefaultKey && !this._isKeyAvailable(sKey) && this.getResetOnMissingKey()) {
+				bDefaultKey = true;
+			}
+
 			if (!this.getForceSelection() && bDefaultKey) {
 				this.setSelection(null);
 				this.setValue("");
-				return this;
+				return this.setProperty("selectedKey", sKey);
 			}
 
 			var oItem = this.getItemByKey(sKey);
