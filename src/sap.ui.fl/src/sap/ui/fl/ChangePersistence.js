@@ -22,9 +22,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/includes",
 	"sap/base/util/merge",
-	"sap/base/util/isEmptyObject",
 	"sap/base/Log",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState"
 ], function(
 	DependencyHandler,
@@ -46,9 +44,7 @@ sap.ui.define([
 	jQuery,
 	includes,
 	merge,
-	isEmptyObject,
 	Log,
-	FlexState,
 	VariantManagementState
 ) {
 	"use strict";
@@ -138,6 +134,7 @@ sap.ui.define([
 		}
 		return oChange;
 	}
+
 	/**
 	 * Return the name of the SAPUI5 component. All changes are assigned to 1 SAPUI5 component. The SAPUI5 component also serves as authorization
 	 * object.

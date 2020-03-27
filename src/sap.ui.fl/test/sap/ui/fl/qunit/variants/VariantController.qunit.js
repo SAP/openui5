@@ -1050,7 +1050,7 @@ sap.ui.define([
 					})
 						.then(this.oFlexController._oChangePersistence.loadChangesMapForComponent.bind(this.oFlexController._oChangePersistence, this.oComponent, this.mPropertyBag))
 						.then(function() {
-							var oData = this.oFlexController.getVariantModelData();
+							var oData = this.oFlexController._oChangePersistence._oVariantController.fillVariantModel();
 							this.oModel = new VariantModel(oData, this.oFlexController, this.oComponent);
 							sandbox.stub(this.oComponent, "getModel").returns(this.oModel);
 							this.oModelRemoveChangeStub = sandbox.stub(this.oModel, "removeChange");

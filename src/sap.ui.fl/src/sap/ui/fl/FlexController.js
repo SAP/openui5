@@ -57,17 +57,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the component name of the FlexController
-	 *
-	 * @param {String} sComponentName The name of the component
-	 * @public
-	 */
-	FlexController.prototype.setComponentName = function (sComponentName) {
-		this._sComponentName = sComponentName;
-		this._createChangePersistence();
-	};
-
-	/**
 	 * Returns the component name of the FlexController
 	 *
 	 * @returns {String} the name of the component
@@ -85,23 +74,6 @@ sap.ui.define([
 	 */
 	FlexController.prototype.getAppVersion = function () {
 		return this._sAppVersion;
-	};
-
-	/**
-	 * Returns the variant model object
-	 *
-	 * @returns {Object} Variant Model Object
-	 * @public
-	 */
-	FlexController.prototype.getVariantModelData = function () {
-		var oData;
-		if (this._oChangePersistence &&
-				this._oChangePersistence._oVariantController._mVariantManagement &&
-				Object.keys(this._oChangePersistence._oVariantController._mVariantManagement).length > 0) {
-			oData = this._oChangePersistence._oVariantController.fillVariantModel();
-		}
-
-		return oData;
 	};
 
 	/**
@@ -389,8 +361,8 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	FlexController.prototype._checkDependencies = function(oChange, mDependencies, mChanges, oAppComponent, aRelevantChanges) {
-		var bResult = this._canChangePotentiallyBeApplied(oChange, oAppComponent);
+	function checkDependencies(oChange, mDependencies, mChanges, oAppComponent, aRelevantChanges) {
+		var bResult = canChangePotentiallyBeApplied(oChange, oAppComponent);
 		if (!bResult) {
 			return [];
 		}
@@ -399,7 +371,7 @@ sap.ui.define([
 		var aDependentChanges = mDependencies[sDependencyKey] && mDependencies[sDependencyKey].dependencies || [];
 		for (var i = 0, n = aDependentChanges.length; i < n; i++) {
 			var oDependentChange = Utils.getChangeFromChangesMap(mChanges, aDependentChanges[i]);
-			bResult = this._checkDependencies(oDependentChange, mDependencies, mChanges, oAppComponent, aRelevantChanges);
+			bResult = checkDependencies(oDependentChange, mDependencies, mChanges, oAppComponent, aRelevantChanges);
 			if (bResult.length === 0) {
 				aRelevantChanges = [];
 				break;
@@ -407,16 +379,16 @@ sap.ui.define([
 			delete mDependencies[sDependencyKey];
 		}
 		return aRelevantChanges;
-	};
+	}
 
-	FlexController.prototype._canChangePotentiallyBeApplied = function(oChange, oAppComponent) {
+	function canChangePotentiallyBeApplied(oChange, oAppComponent) {
 		// is control available
 		var aSelectors = oChange.getDependentControlSelectorList();
 		aSelectors.push(oChange.getSelector());
 		return !aSelectors.some(function(oSelector) {
 			return !JsControlTreeModifier.bySelector(oSelector, oAppComponent);
 		});
-	};
+	}
 
 	/**
 	 * Resolves with a promise after all the changes for all controls that are passed have been processed.
@@ -459,13 +431,13 @@ sap.ui.define([
 		var oAppComponent = vSelector.appComponent || Utils.getAppComponentForControl(oControl);
 		var aRelevantChanges = [];
 		aNotYetProcessedChanges.forEach(function(oChange) {
-			var aChanges = this._checkDependencies(oChange, mDependencies, mChangesMap.mChanges, oAppComponent, []);
+			var aChanges = checkDependencies(oChange, mDependencies, mChangesMap.mChanges, oAppComponent, []);
 			aChanges.forEach(function(oDependentChange) {
 				if (aRelevantChanges.indexOf(oDependentChange) === -1) {
 					aRelevantChanges.push(oDependentChange);
 				}
 			});
-		}.bind(this));
+		});
 
 		// attach promises to the relevant Changes and wait for them to be applied
 		aRelevantChanges.forEach(function(oChange) {
@@ -530,13 +502,6 @@ sap.ui.define([
 	FlexController.prototype._handlePromiseChainError = function (oView, oError) {
 		Log.error("Error processing view " + oError + ".");
 		return oView;
-	};
-
-	FlexController.prototype._getSelectorOfChange = function (oChange) {
-		if (!oChange || !oChange.getSelector) {
-			return undefined;
-		}
-		return oChange.getSelector();
 	};
 
 	/**
@@ -668,54 +633,6 @@ sap.ui.define([
 					}
 				}
 			});
-	};
-
-	/**
-	 * Discard changes on the server.
-	 *
-	 * @param {array} aChanges array of {sap.ui.fl.Change} to be discarded
-	 * @param {boolean} bDiscardPersonalization - (optional) specifies that only changes in the USER layer are discarded
-	 * @returns {Promise} Promise that resolves without parameters
-	 */
-	FlexController.prototype.discardChanges = function (aChanges, bDiscardPersonalization) {
-		var sActiveLayer = LayerUtils.getCurrentLayer(!!bDiscardPersonalization);
-		var iIndex = 0;
-		var iLength;
-		var oChange;
-
-		iLength = aChanges.length;
-		while (iIndex < aChanges.length) {
-			oChange = aChanges[iIndex];
-			if (oChange && oChange.getLayer && oChange.getLayer() === sActiveLayer) {
-				this._oChangePersistence.deleteChange(oChange);
-			}
-			//the array may change during this loop, so if the length is the same, the index must increase
-			//otherwise the same index should be used (same index but different element in the array)
-			if (iLength === aChanges.length) {
-				iIndex++;
-			} else {
-				iLength = aChanges.length;
-			}
-		}
-
-		return this._oChangePersistence.saveDirtyChanges();
-	};
-
-	/**
-	 * Discard changes on the server for a specific selector ID.
-	 *
-	 * @param {string} sId for which the changes should be deleted
-	 * @param {boolean} bDiscardPersonalization - (optional) specifies that only changes in the USER layer are discarded
-	 * @returns {Promise} Promise that resolves without parameters
-	 */
-	FlexController.prototype.discardChangesForId = function (sId, bDiscardPersonalization) {
-		if (!sId) {
-			return Promise.resolve();
-		}
-
-		var oChangesMap = this._oChangePersistence.getChangesMapForComponent();
-		var aChanges = oChangesMap.mChanges[sId] || [];
-		return this.discardChanges(aChanges, bDiscardPersonalization);
 	};
 
 	/**
