@@ -26,20 +26,15 @@
 			</OverflowToolbar>
 		</headerToolbar>
 		<columns>
-			<Column
-				sortProperty="Name"
-				filterProperty="Name">
+			<Column>
 				<Text text="Product Name" />
 			</Column>
-			<Column
-				sortProperty="Category"
-				filterProperty="Category">
+			<Column>
 				<Text text="Category" />
 			</Column>
 			<Column
 				hAlign="End"
-				width="6rem"
-				sortProperty="Quantity">
+				width="6rem">
 				<Text text="Quantity" />
 			</Column>
 		</columns>

@@ -1,15 +1,15 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
+		"sap/ui/core/syncStyleClass",
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Fragment, Controller, JSONModel) {
+	], function(Fragment, Controller, syncStyleClass, JSONModel) {
 	"use strict";
 
 	var TableController = Controller.extend("sap.m.sample.TableLayout.Table", {
 
 		onInit: function () {
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
 		},
 
@@ -26,7 +26,7 @@ sap.ui.define([
 			}
 
 			// toggle compact style for the dialog
-			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this.oDialog);
+			syncStyleClass("sapUiSizeCompact", this.getView(), this.oDialog);
 			this.oDialog.open();
 		},
 

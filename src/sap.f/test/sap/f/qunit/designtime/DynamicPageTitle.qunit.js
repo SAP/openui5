@@ -51,7 +51,7 @@ function (
 			type: "sap.f.DynamicPageTitle (with snapped/expanded heading)",
 			create: function () {
 				return new DynamicPageTitle({
-					snappedHeading : [new Title({text: "This is title"})],
+					snappedHeading : new Title({text: "This is title"}),
 					expandedHeading : [
 						new Title({text: "This is title"}),
 						new Title({text: "This is title 0.1"})

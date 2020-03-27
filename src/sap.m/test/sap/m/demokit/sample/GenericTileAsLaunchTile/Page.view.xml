@@ -1,5 +1,5 @@
 <mvc:View controllerName="sap.m.sample.GenericTileAsLaunchTile.Page"
-	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml">
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Sales Fulfillment Application Title"
 		subheader="Subtitle" press="press">
 		<TileContent unit="EUR" footer="Current Quarter">

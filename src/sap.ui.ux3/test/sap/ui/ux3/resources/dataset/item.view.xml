@@ -1,4 +1,4 @@
-<core:View xmlns:core="sap.ui.core" xmlns:l="sap.ui.commons.layout"
+<mvc:View xmlns:core="sap.ui.core" xmlns:l="sap.ui.commons.layout"
 	xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.commons" xmlns:html="http://www.w3.org/1999/xhtml">
 	<html:style type="text/css">
 		tr {border:1px solid black;}
@@ -24,4 +24,4 @@
 			</l:MatrixLayoutCell>
 		</l:MatrixLayoutRow>
 	</l:MatrixLayout>
-</core:View>
+</mvc:View>

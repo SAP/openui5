@@ -1,5 +1,5 @@
-<core:View
-		xmlns:core="sap.ui.core"
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.uxap"
 		xmlns:sample="sap.uxap.testblocks.multiview"
 		xmlns:m="sap.m"
@@ -110,4 +110,4 @@
 			</ObjectPageSection>
 		</sections>
 	</ObjectPageLayout>
-</core:View>
+</mvc:View>

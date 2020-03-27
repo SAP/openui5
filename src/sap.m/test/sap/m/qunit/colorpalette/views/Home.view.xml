@@ -47,6 +47,6 @@
 		<Input
 			id="colorSelectEventInput"
 			placeholder="colorSelect event parameters"
-			text=""/>
+			value=""/>
 	</Panel>
 </mvc:View>

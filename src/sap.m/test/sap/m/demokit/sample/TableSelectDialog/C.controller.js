@@ -4,16 +4,17 @@ sap.ui.define([
 	'sap/ui/core/Fragment',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/Filter',
+	'sap/ui/model/FilterOperator',
 	'sap/ui/model/json/JSONModel',
 	"sap/ui/core/syncStyleClass"
-], function (MessageToast, Formatter, Fragment, Controller, Filter, JSONModel, syncStyleClass) {
+], function (MessageToast, Formatter, Fragment, Controller, Filter, FilterOperator, JSONModel, syncStyleClass) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.TableSelectDialog.C", {
 
 		onInit: function () {
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
 		},
 
@@ -80,7 +81,7 @@ sap.ui.define([
 
 		handleSearch: function (oEvent) {
 			var sValue = oEvent.getParameter("value");
-			var oFilter = new Filter("Name", sap.ui.model.FilterOperator.Contains, sValue);
+			var oFilter = new Filter("Name", FilterOperator.Contains, sValue);
 			var oBinding = oEvent.getSource().getBinding("items");
 			oBinding.filter([oFilter]);
 		},

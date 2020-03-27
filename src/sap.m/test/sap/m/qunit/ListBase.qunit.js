@@ -2110,7 +2110,6 @@ sap.ui.define([
 					title: "oListItem1"
 				}),
 				oListItem2 = new CustomListItem({
-					title: "oListItem1",
 					highlight: "Warning"
 				}),
 				oList = new List({
@@ -2205,7 +2204,6 @@ sap.ui.define([
 				title: "oListItem1"
 			}),
 			oListItem2 = new CustomListItem({
-				title: "oListItem1",
 				highlight: "Warning"
 			}),
 			oList = new List({

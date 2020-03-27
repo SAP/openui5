@@ -134,7 +134,7 @@
 									</m:items>
 								</m:Select>
 								<m:Label text="Web"/>
-								<m:Input type="orl"/>
+								<m:Input type="Url"/>
 								<m:Label text="Twitter"/>
 								<m:Input/>
 								<m:Label text="Email"/>

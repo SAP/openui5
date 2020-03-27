@@ -97,15 +97,15 @@
 								<layout:Grid
 										defaultSpan="L6 M6 S10"
 										hSpacing="2">
-									<Label text="Beneficiary Name" design="bold" />
+									<Label text="Beneficiary Name" design="Bold" />
 									<Label text="Singapore Hardware e-Commerce LTD" />
-									<Label text="Beneficiary Bank" design="bold" />
+									<Label text="Beneficiary Bank" design="Bold" />
 									<Label text="CITY BANK, SINGAPORE BRANCH" />
-									<Label text="Beneficiary Account Number" design="bold" />
+									<Label text="Beneficiary Account Number" design="Bold" />
 									<Label text="06110702027218" />
-									<Label text="Bank Phone Number" design="bold" />
+									<Label text="Bank Phone Number" design="Bold" />
 									<Label text="+65-6224-2622" />
-									<Label text="Bank Email Address" design="bold" />
+									<Label text="Bank Email Address" design="Bold" />
 									<Label text="customerservice@citybank.com" />
 								</layout:Grid>
 							</Panel>

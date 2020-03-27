@@ -22,7 +22,6 @@
 					"Table.view.xml",
 					"Table.controller.js",
 					"Formatter.js",
-					"DemoPersoService.js",
 					"manifest.json"
 				]
 			}

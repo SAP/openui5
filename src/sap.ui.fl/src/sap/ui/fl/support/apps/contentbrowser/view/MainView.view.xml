@@ -1,6 +1,4 @@
-<core:View xmlns:core="sap.ui.core"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m"
-	xmlns:html="http://www.w3.org/1999/xhtml">
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
 	<SplitApp id="splitApp"/>
-</core:View>
+</mvc:View>

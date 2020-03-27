@@ -10,12 +10,12 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Sorter",
-	"jquery.sap.keycodes",
 	"sap/ui/core/ListItem",
 	"sap/ui/base/ObjectPool",
 	"sap/m/Column",
 	"sap/m/Label",
 	"sap/m/ColumnListItem",
+	"sap/m/GroupHeaderListItem",
 	"sap/m/library",
 	"sap/m/InputRenderer",
 	"sap/m/DialogRenderer",
@@ -28,7 +28,10 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/Toolbar",
 	"sap/m/FormattedText",
-	"jquery.sap.global"
+	"jquery.sap.global",
+	"jquery.sap.strings", // provides jQuery.sap.startsWithIgnoreCase
+	"jquery.sap.mobile", // fills jQuery.device
+	"sap/ui/dom/jquery/zIndex" // provides jQuery.fn.zIndex
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -39,12 +42,12 @@ sap.ui.define([
 	Item,
 	JSONModel,
 	Sorter,
-	jQuery,
 	ListItem,
 	ObjectPool,
 	Column,
 	Label,
 	ColumnListItem,
+	GroupHeaderListItem,
 	mobileLibrary,
 	InputRenderer,
 	DialogRenderer,
@@ -56,7 +59,8 @@ sap.ui.define([
 	KeyCodes,
 	Link,
 	Toolbar,
-	FormattedText
+	FormattedText,
+	jQuery
 ) {
 	// shortcut for sap.m.InputTextFormatMode
 	var InputTextFormatMode = mobileLibrary.InputTextFormatMode;
@@ -273,7 +277,7 @@ sap.ui.define([
 		oPopup = oInput._oSuggPopover._oPopover;
 
 		oInput.$().trigger("focusout");
-		sap.ui.test.qunit.triggerTouchEvent("tap", getPopupItemsContent(oPopup).getItems()[1].getDomRef());
+		qutils.triggerTouchEvent("tap", getPopupItemsContent(oPopup).getItems()[1].getDomRef());
 		this.clock.tick(300);
 
 		oInput.destroy();
@@ -289,14 +293,14 @@ sap.ui.define([
 		i8.setValueLiveUpdate(false);
 		i8.setValue("");
 		i8.focus();
-		sap.ui.test.qunit.triggerCharacterInput(i8.getFocusDomRef(), "a");
-		sap.ui.test.qunit.triggerEvent("input", i8.getFocusDomRef());
+		qutils.triggerCharacterInput(i8.getFocusDomRef(), "a");
+		qutils.triggerEvent("input", i8.getFocusDomRef());
 
 		assert.equal(oModel.getProperty("/testValue"),"" , "no valueLiveUpdate, no model value update");
 		assert.equal(i8.getValue()                   ,"a", "no valueLiveUpdate, new value");
 		assert.equal(fnFireChangeSpy.callCount       , 0 , "no valueLiveUpdate, no change event");
 
-		sap.ui.test.qunit.triggerKeydown(i8.getFocusDomRef(), "ENTER");
+		qutils.triggerKeydown(i8.getFocusDomRef(), "ENTER");
 
 		assert.equal(i8.getValue()                   ,"a", "no valueLiveUpdate, Enter, same new value");
 		assert.equal(oModel.getProperty("/testValue"),"a", "no valueLiveUpdate, Enter, model value update");
@@ -305,13 +309,13 @@ sap.ui.define([
 		i8.setValueLiveUpdate(true);
 		i8.setValue("");
 		fnFireChangeSpy.reset();
-		sap.ui.test.qunit.triggerCharacterInput(i8.getFocusDomRef(), "a");
-		sap.ui.test.qunit.triggerEvent("input", i8.getFocusDomRef());
+		qutils.triggerCharacterInput(i8.getFocusDomRef(), "a");
+		qutils.triggerEvent("input", i8.getFocusDomRef());
 		assert.equal(oModel.getProperty("/testValue"),"a", "valueLiveUpdate, no model value update");
 		assert.equal(i8.getValue()                   ,"a", "valueLiveUpdate, new value");
 		assert.equal(fnFireChangeSpy.callCount       , 0,  "valueLiveUpdate, stil no change event");
 
-		sap.ui.test.qunit.triggerKeydown(i8.getFocusDomRef(), "ENTER");
+		qutils.triggerKeydown(i8.getFocusDomRef(), "ENTER");
 
 		assert.equal(oModel.getProperty("/testValue"),"a", "valueLiveUpdate, no model value update");
 		assert.equal(i8.getValue()                   ,"a", "no valueLiveUpdate, Enter, change");
@@ -488,7 +492,7 @@ sap.ui.define([
 			sEvents = "";
 			sValue = "";
 			sap.ui.getCore().applyChanges();
-			sap.ui.test.qunit.triggerKeydown(oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ENTER);
+			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ENTER);
 			assert.equal(sEvents, e, sText + ": Correct number of events fired and order correct: " + e.length + (e.length > 0 ? "/" + e : ""));
 			if (bSubmitExpected) {
 				if (sExpectedValue) {
@@ -535,7 +539,7 @@ sap.ui.define([
 			this.clock.tick(300);
 
 			assert.ok(oInput._oSuggPopover && oInput._oSuggPopover._oPopover.isOpen && oInput._oSuggPopover._oPopover.isOpen(), "Suggestion Popup is open now");
-			sap.ui.test.qunit.triggerKeydown(oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ARROW_DOWN);
+			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
 			checkSubmit("Enter pressed on open Suggestions", true, true, "abcTom");
 			assert.ok(oInput._oSuggPopover && oInput._oSuggPopover._oPopover.isOpen && !oInput._oSuggPopover._oPopover.isOpen(), "Suggestion Popup should be closed");
 		}
@@ -568,9 +572,9 @@ sap.ui.define([
 			oInput._$input.focus().val(" ").trigger("input");
 			this.clock.tick(300);
 
-			sap.ui.test.qunit.triggerKeydown(oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ARROW_DOWN);
+			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
 			sap.ui.getCore().applyChanges();
-			sap.ui.test.qunit.triggerKeydown(oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ENTER);
+			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ENTER);
 			assert.equal(sValue, sSuggestion, ": Correct parameter 'value' in enter event");
 		}
 
@@ -724,8 +728,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Act
-		sap.ui.test.qunit.triggerCharacterInput(oInput.getFocusDomRef(), "a");
-		sap.ui.test.qunit.triggerEvent("input", oInput.getFocusDomRef());
+		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "a");
+		qutils.triggerEvent("input", oInput.getFocusDomRef());
 
 		// Assert- before escape
 		assert.strictEqual(oInput.getValue(), sNewValue, "Before escape - getValue should return the NEW value.");
@@ -733,7 +737,7 @@ sap.ui.define([
 		assert.strictEqual(oInput.getProperty("value"), sNewValue, "Before escape - getProperty(value) should return the NEW value.");
 
 		// Act
-		sap.ui.test.qunit.triggerKeyboardEvent(oInput.getFocusDomRef(), "ESCAPE");
+		qutils.triggerKeyboardEvent(oInput.getFocusDomRef(), "ESCAPE");
 
 		// Assert - after escape
 		assert.strictEqual(oInput.getValue(), sInitValue, "After escape - getValue should return the INITIAL value.");
@@ -898,7 +902,7 @@ sap.ui.define([
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.focus().val("abc").trigger("input");
 		// Enter key is pressed directly after typing "abc"
-		sap.ui.test.qunit.triggerKeyboardEvent(oInput._$input[0], jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeyboardEvent(oInput._$input[0], KeyCodes.ENTER);
 
 		this.clock.tick(300);
 
@@ -945,7 +949,7 @@ sap.ui.define([
 		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
-		sap.ui.test.qunit.triggerKeyboardEvent(oInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeyboardEvent(oInput.getDomRef(), KeyCodes.ENTER);
 		assert.ok(!oPopup.isOpen(), "Suggestion Popup should be closed");
 
 		oInput.destroy();
@@ -1197,18 +1201,18 @@ sap.ui.define([
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Two Value Suggestion Popup is still open now");
 
-		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ARROW_DOWN);
 		assert.ok(oInput._oSuggPopover._oList.getItems()[0].$().hasClass("sapMLIBSelected"), "The first item is selected after pressing keyDown once");
 
-		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ARROW_DOWN);
 		assert.ok(oInput._oSuggPopover._oList.getItems()[2].$().hasClass("sapMLIBSelected"), "The third item is selected after pressing keyDown twice");
 		assert.ok(!oInput._oSuggPopover._oList.getItems()[1].$().hasClass("sapMLIBSelected"), "The second item is not selected because it is disabled");
 
-		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ARROW_DOWN);
 		assert.ok(oInput._oSuggPopover._oList.getItems()[2].$().hasClass("sapMLIBSelected"), "The third item is still selected after pressing keyDown three times");
 		assert.ok(!oInput._oSuggPopover._oList.getItems()[3].$().hasClass("sapMLIBSelected"), "The fourth item is not selected because it is disabled");
 
-		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ARROW_UP);
 		assert.ok(oInput._oSuggPopover._oList.getItems()[0].$().hasClass("sapMLIBSelected"), "The first item is now selected after pressing keyUp once");
 		assert.ok(!oInput._oSuggPopover._oList.getItems()[1].$().hasClass("sapMLIBSelected"), "The second item is not selected because it is disabled");
 
@@ -1331,19 +1335,19 @@ sap.ui.define([
 		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
-		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ARROW_DOWN);
 		assert.ok(oInput._oSuggPopover._oList.getItems()[0].$().hasClass("sapMLIBSelected"), "The first item is selected after pressing keyDown once");
 
-		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ARROW_DOWN);
 		assert.ok(oInput._oSuggPopover._oList.getItems()[1].$().hasClass("sapMLIBSelected"), "The second item is selected after pressing keyDown twice");
 
-		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ARROW_DOWN);
 		assert.ok(oInput._oSuggPopover._oList.getItems()[2].$().hasClass("sapMLIBSelected"), "The third item is selected after pressing keyDown three times");
 
-		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ARROW_UP);
 		assert.ok(oInput._oSuggPopover._oList.getItems()[1].$().hasClass("sapMLIBSelected"), "The second item is selected after pressing keyUp once");
 
-		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ARROW_UP);
 		assert.ok(oInput._oSuggPopover._oList.getItems()[0].$().hasClass("sapMLIBSelected"), "The first item is selected after pressing keyUp twice");
 
 		//close the popoup when nothing is typed in input
@@ -1417,7 +1421,7 @@ sap.ui.define([
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
 
-		sap.ui.test.qunit.triggerTouchEvent("tap", getPopupItemsContent(oPopup).getItems()[1].getDomRef());
+		qutils.triggerTouchEvent("tap", getPopupItemsContent(oPopup).getItems()[1].getDomRef());
 		this.clock.tick(500);
 		assert.ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 		assert.equal(oInput.getValue(), aNames[1], "Value is set to originalInput");
@@ -1473,7 +1477,7 @@ sap.ui.define([
 
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
-		sap.ui.test.qunit.triggerTouchEvent("tap", getPopupItemsContent(oPopup).getItems()[1].getDomRef());
+		qutils.triggerTouchEvent("tap", getPopupItemsContent(oPopup).getItems()[1].getDomRef());
 		this.clock.tick(500);
 		assert.equal(oInput.getValue(), "newValue", "Value is last modified by the suggestionItemSelected event listener");
 
@@ -1542,7 +1546,7 @@ sap.ui.define([
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
 
-		sap.ui.test.qunit.triggerTouchEvent("tap", getPopupItemsContent(oPopup).getItems()[1].getDomRef());
+		qutils.triggerTouchEvent("tap", getPopupItemsContent(oPopup).getItems()[1].getDomRef());
 		this.clock.tick(500);
 		assert.ok(!oPopup.isOpen(), "Two value Suggestion Popup is closed");
 		assert.equal(oInput.getValue(), aNames[1], "Value is set to originalInput");
@@ -3468,7 +3472,8 @@ sap.ui.define([
 			},
 			suggestionRows: {
 				path: '/tabularSuggestionItems',
-				template: oTableItemTemplate
+				template: oTableItemTemplate,
+				templateShareable: false
 			},
 			suggestionColumns: [
 				new Column({
@@ -3559,8 +3564,8 @@ sap.ui.define([
 		oInput._$input.focus().val("Au").trigger("input");
 		this.clock.tick(300);
 
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, "40"); // bottom (arrow)
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, "ENTER");
+		qutils.triggerKeydown(document.activeElement, "40"); // bottom (arrow)
+		qutils.triggerKeydown(document.activeElement, "ENTER");
 
 		assert.equal(fnChangeCallback.callCount, 1, "change event is fired once");
 		assert.equal(fnSuggestionItemSelectedCallback.callCount, 1, "suggestionItemSelected event is fired once");
@@ -3583,7 +3588,7 @@ sap.ui.define([
 		oInput._$input.focus().val("Au").trigger("input");
 		this.clock.tick(300);
 
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, "40"); // bottom (arrow)
+		qutils.triggerKeydown(document.activeElement, "40"); // bottom (arrow)
 
 		// simulate focus out
 		oInput._oSuggPopover._oPopover.close();
@@ -3978,7 +3983,7 @@ sap.ui.define([
 				content: [
 					new Input({
 						showSuggestion: true,
-						suggestions: [
+						suggestionItems: [
 							new SuggestionItem()
 						]
 					})
@@ -4171,7 +4176,7 @@ sap.ui.define([
 		assert.strictEqual(oInput._oSuggestionPopup.getContent()[0].getItems()[2].getSelected(), true, "Correct item in the Suggestions list is selected.");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oInput._$input, KeyCodes.ENTER);
+		qutils.triggerKeydown(oInput._$input, KeyCodes.ENTER);
 
 		// assert
 		assert.strictEqual(oInput.getValue(), "Greece", "Pressing 'enter' should finalize autocompletion.");
@@ -4179,7 +4184,7 @@ sap.ui.define([
 
 		// act
 		oInput._$input.focus().val("gre").trigger("input");
-		sap.ui.test.qunit.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
+		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
 		this.clock.tick(300);
 
 		// assert
@@ -4270,7 +4275,7 @@ sap.ui.define([
 		assert.strictEqual(oPopover._oPopover.getContent()[1].getItems()[2].getSelected(), true, "Correct item in the Suggested list is selected");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oPopupInput._$input, KeyCodes.ENTER);
+		qutils.triggerKeydown(oPopupInput._$input, KeyCodes.ENTER);
 		this.clock.tick(300);
 
 		// assert
@@ -4996,7 +5001,7 @@ sap.ui.define([
 		assert.equal(this.oInput.getValue() ,"U21", "Value is set");
 		assert.equal(fnFireChangeSpy.callCount , 0 , "Change event should not be fired");
 
-		sap.ui.test.qunit.triggerKeydown(this.oInput.getFocusDomRef(), "ENTER");
+		qutils.triggerKeydown(this.oInput.getFocusDomRef(), "ENTER");
 		this.clock.tick(300);
 		assert.equal(fnFireChangeSpy.callCount , 1 , "Change event should be fired");
 	});
@@ -5048,9 +5053,9 @@ sap.ui.define([
 		oInput._$input.focus().val("u").trigger("input");
 		this.clock.tick(300);
 
-		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
 		sap.ui.getCore().applyChanges();
-		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ENTER);
 
 		assert.ok(true, 'there is no endless loop');
 
@@ -5142,9 +5147,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_configureListItem", function () {
-		var oListItem = new sap.m.GroupHeaderListItem({
-			enabled: true
-		}), oItem = new Item(),
+		var oListItem = new GroupHeaderListItem(), oItem = new Item(),
 			oResultItem = this.oInput._configureListItem(oItem, oListItem);
 
 		assert.strictEqual(oListItem._oItem, oItem, "The core item is attached to the header group item.");
@@ -5169,7 +5172,7 @@ sap.ui.define([
 		oGroupHeader = aVisibleItems[0];
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(this.oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
 		sap.ui.getCore().applyChanges();
 
 		// assert
@@ -5179,7 +5182,7 @@ sap.ui.define([
 
 		// act
 		// go to the next list item
-		sap.ui.test.qunit.triggerKeydown(this.oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
 		sap.ui.getCore().applyChanges();
 
 		// assert

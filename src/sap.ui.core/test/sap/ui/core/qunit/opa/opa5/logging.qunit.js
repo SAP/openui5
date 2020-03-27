@@ -24,7 +24,7 @@ sap.ui.define([
 	QUnit.module("Logging", {
 		beforeEach: function () {
 			var sView = [
-				'<core:View xmlns:core="sap.ui.core" xmlns="sap.ui.commons">',
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.commons">',
 				'<Button id="foo">',
 				'</Button>',
 				'<Button id="bar">',
@@ -32,7 +32,7 @@ sap.ui.define([
 				'<Button id="baz">',
 				'</Button>',
 				'<Image id="boo"></Image>',
-				'</core:View>'
+				'</mvc:View>'
 			].join('');
 
 			this.oView = sap.ui.xmlview({id: "myViewWithAb", viewContent : sView });

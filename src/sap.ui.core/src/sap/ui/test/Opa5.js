@@ -446,7 +446,7 @@ sap.ui.define([
 		 * The view that is searched in:
 		 * <pre>
 		 *     <code>
-		 *         &lt;core:View xmlns:core="sap.ui.core" xmlns="sap.m"&gt;
+		 *         &lt;mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"&gt;
 		 *             &lt;Button id="myButton"&gt;
 		 *             &lt;/Button&gt;
 		 *             &lt;Button id="bar"&gt;
@@ -454,7 +454,7 @@ sap.ui.define([
 		 *             &lt;Button id="baz"&gt;
 		 *             &lt;/Button&gt;
 		 *             &lt;Image id="myImage"&gt;&lt;/Image&gt;
-		 *         &lt;/core:View&gt;
+		 *         &lt;/mvc:View&gt;
 		 *     </code>
 		 * </pre>
 		 *

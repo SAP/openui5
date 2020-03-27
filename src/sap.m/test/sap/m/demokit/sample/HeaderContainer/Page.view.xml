@@ -23,7 +23,7 @@
 		<NumericContent size="S" scale="M" value="0.57" valueColor="Error" indicator="Down" press="press" />
 		<NumericContent value="1762" icon="sap-icon://line-charts"/>
 		<NumericContent value="1762" icon="sap-icon://area-chart"/>
-		<NumericContent size="S" scale="M" value="1.04" valueColor="Normal" indicator="Up" press="press" />
+		<NumericContent size="S" scale="M" value="1.04" valueColor="Neutral" indicator="Up" press="press" />
 		<NumericContent size="S" scale="M" value="3.65" valueColor="Good" indicator="Up" press="press" />
 		<NumericContent value="1762" icon="sap-icon://bar-chart"/>
 		<NumericContent size="S" scale="M" value="0.73" valueColor="Error" indicator="Down" press="press" />

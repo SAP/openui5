@@ -6,6 +6,11 @@
 		}
 	},
 	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.TableAlternateRowColors.Table",
+			"type": "XML",
+			"async": true
+		},
 		"dependencies": {
 			"libs": {
 				"sap.ui.layout": {}

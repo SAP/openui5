@@ -184,7 +184,7 @@ sap.ui.define([
 
 	function createXmlView(sViewName) {
 		var sView = [
-			'<core:View xmlns:core="sap.ui.core" xmlns="sap.m">',
+			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">',
 			'<Button id="foo">',
 			'</Button>',
 			'<Button id="bar">',
@@ -192,7 +192,7 @@ sap.ui.define([
 			'<Button id="baz">',
 			'</Button>',
 			'<Image id="boo"></Image>',
-			'</core:View>'
+			'</mvc:View>'
 		].join('');
 		var oView;
 
@@ -310,9 +310,9 @@ sap.ui.define([
 	QUnit.module("waitFor", {
 		beforeEach: function () {
 			var sView = [
-				'<core:View xmlns:core="sap.ui.core" xmlns="sap.ui.commons">',
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.commons">',
 				'<Button id="foo"/>',
-				'</core:View>'
+				'</mvc:View>'
 			].join('');
 
 			this.oView = sap.ui.xmlview({id: "globalId", viewContent: sView});
@@ -399,9 +399,9 @@ sap.ui.define([
 	QUnit.module("Config and waitFor",{
 		beforeEach: function () {
 			var sView = [
-				'<core:View xmlns:core="sap.ui.core" xmlns="sap.ui.commons">',
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.commons">',
 					'<Button id="foo"/>',
-				'</core:View>'
+				'</mvc:View>'
 			].join('');
 
 			this.oView = sap.ui.xmlview({id: "myView", viewContent: sView});

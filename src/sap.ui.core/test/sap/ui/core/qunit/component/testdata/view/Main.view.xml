@@ -1,3 +1,3 @@
-<core:View controllerName="sap.ui.test.view.Main" xmlns:commons="sap.ui.commons" xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml">
+<mvc:View controllerName="sap.ui.test.view.Main" xmlns:commons="sap.ui.commons" xmlns:mvc="sap.ui.core.mvc">
 	<commons:Label id="HelloWorld" text="HelloWorld" />
-</core:View>
+</mvc:View>

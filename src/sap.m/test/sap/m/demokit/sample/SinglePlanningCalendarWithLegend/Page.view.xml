@@ -9,8 +9,7 @@
 		class="sapUiDSCExplored sapUiContentPadding"
 		sideContentVisibility="AlwaysShow"
 		showSideContent="{path: 'stateModel>/legendShown'}"
-		containerQuery="true"
-		breakpointChanged="updateToggleButtonState">
+		containerQuery="true">
 		<VBox>
 			<SinglePlanningCalendar
 				id="SPC1"
@@ -19,9 +18,6 @@
 				startHour="8"
 				endHour="20"
 				fullDay="false"
-				appointmentSelect="handleAppointmentSelect"
-				headerDateSelect="handleHeaderDateSelect"
-				startDateChange="handleStartDateChange"
 				startDate="{path: '/startDate'}"
 				appointments="{path: '/appointments'}"
 				specialDates="{path: '/specialDates'}"

@@ -239,7 +239,6 @@ sap.ui.define([
 	QUnit.module("step precision in sliders", {
 		beforeEach: function() {
 			this.oSliders = new TimePickerSliders({
-				format: "hh mm ss",
 				labelText: "label",
 				minutesStep: this.STEP
 			});

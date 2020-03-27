@@ -9,7 +9,7 @@ sap.ui.define([
 		onInit: function () {
 
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			var oGroupingModel = new JSONModel({ hasGrouping: false});
 			this.getView().setModel(oModel);
 			this.getView().setModel(oGroupingModel, 'Grouping');

@@ -1,7 +1,7 @@
-<core:View xmlns:core="sap.ui.core"
-		   xmlns="sap.uxap"
-		   height="100%"
-		   controllerName="sap.uxap.component.ObjectPageLayoutUXDrivenFactory"
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+		  xmlns="sap.uxap"
+		  height="100%"
+		  controllerName="sap.uxap.component.ObjectPageLayoutUXDrivenFactory"
 >
 	<ObjectPageLayout id="ObjectPageLayout"
 					  subSectionLayout="{objectPageLayoutMetadata>/subSectionLayout}"
@@ -53,4 +53,4 @@
 		<!-- template for objectPageSection -->
 	</ObjectPageLayout>
 
-</core:View>
+</mvc:View>

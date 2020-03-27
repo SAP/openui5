@@ -1,2 +1,2 @@
-<core:View xmlns:core="sap.ui.core.mvc"  controllerName="sap.ui.fl.PreprocessorImpl.testResources.view2">
-</core:View>
+<mvc:View xmlns:mvc="sap.ui.core.mvc"  controllerName="sap.ui.fl.PreprocessorImpl.testResources.view2">
+</mvc:View>

@@ -61,9 +61,10 @@ sap.ui.define([
 		"}";
 	document.head.appendChild(styleElement);
 	var sObjectPageView =
-		"<core:View" +
+		"<mvc:View" +
 		"        xmlns=\"sap.uxap\"" +
 		"        xmlns:core=\"sap.ui.core\"" +
+		"        xmlns:mvc=\"sap.ui.core.mvc\"" +
 		"        xmlns:layout=\"sap.ui.layout\"" +
 		"        xmlns:m=\"sap.m\"" +
 		"        xmlns:f=\"sap.ui.layout.form\"" +
@@ -75,12 +76,10 @@ sap.ui.define([
 		"                              headerDesign=\"Light\"" +
 		"                              objectTitle=\"Long title that wraps and goes over more lines\"" +
 		"                              showTitleSelector=\"true\"" +
-		"                              titleSelectorPress=\"handleTitleSelectorPress\"" +
 		"                              showMarkers=\"true\"" +
 		"                              markFavorite=\"true\"" +
 		"                              markLocked=\"true\"" +
 		"                              markFlagged=\"true\"" +
-		"                              markLockedPress=\"handleMarkLockedPress\"" +
 		"                              objectSubtitle=\"Long subtitle that wraps and goes over more lines\"" +
 		"                              objectImageShape=\"Circle\"" +
 		"                              objectImageURI=\"./images/imageID_275314.png\">" +
@@ -103,8 +102,8 @@ sap.ui.define([
 		"                    <ObjectPageHeaderActionButton icon=\"sap-icon://attachment\" text=\"attach\"/>" +
 		"                </actions>" +
 		"                <breadCrumbsLinks>" +
-		"                    <m:Link text=\"Page 1 a very long link\" press=\"handleLink1Press\"/>" +
-		"                    <m:Link text=\"Page 2 long link\" press=\"handleLink2Press\"/>" +
+		"                    <m:Link text=\"Page 1 a very long link\"/>" +
+		"                    <m:Link text=\"Page 2 long link\"/>" +
 		"                </breadCrumbsLinks>" +
 		"            </ObjectPageHeader>" +
 		"        </headerTitle>" +
@@ -250,18 +249,14 @@ sap.ui.define([
 		"        </sections>" +
 		"    </ObjectPageLayout>" +
 		"    </m:App>" +
-		"</core:View>",
+		"</mvc:View>",
 
 
 		sEmptyView =
-			"<core:View" +
-			"        xmlns=\"sap.uxap\"" +
-			"        xmlns:core=\"sap.ui.core\"" +
-			"        xmlns:layout=\"sap.ui.layout\"" +
-			"        xmlns:m=\"sap.m\"" +
-			"        xmlns:f=\"sap.ui.layout.form\"" +
+			"<mvc:View" +
+			"        xmlns:mvc=\"sap.ui.core.mvc\"" +
 			"        height=\"100%\">" +
-			"</core:View>";
+			"</mvc:View>";
 
 
 

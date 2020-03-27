@@ -1,11 +1,11 @@
-<core:View xmlns:core="sap.ui.core"
-		   xmlns="sap.uxap"
-		   xmlns:c="sap.uxap.sample.Headers.HeaderExtension"
-		   xmlns:layout="sap.ui.layout"
-		   xmlns:m="sap.m"
-		   xmlns:cl="sap.uxap.testblocks.data.Collection"
-		   xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
-		   height="100%"
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+		  xmlns="sap.uxap"
+		  xmlns:c="sap.uxap.sample.Headers.HeaderExtension"
+		  xmlns:layout="sap.ui.layout"
+		  xmlns:m="sap.m"
+		  xmlns:cl="sap.uxap.testblocks.data.Collection"
+		  xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
+		  height="100%"
 >
 	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true">
 		<headerTitle>
@@ -169,4 +169,4 @@
 
 		</sections>
 	</ObjectPageLayout>
-</core:View>
+</mvc:View>

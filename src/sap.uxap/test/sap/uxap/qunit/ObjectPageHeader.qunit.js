@@ -473,7 +473,7 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 	QUnit.module("Private API", {
 		beforeEach: function (assert) {
 			var done = assert.async(),
-				sViewXML = '<core:View xmlns:core="sap.ui.core" xmlns="sap.uxap" xmlns:layout="sap.ui.layout" xmlns:m="sap.m" height="100%">' +
+				sViewXML = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap" xmlns:layout="sap.ui.layout" xmlns:m="sap.m" height="100%">' +
 				'<m:App>' +
 					'<ObjectPageLayout id="objectPageLayout" subSectionLayout="TitleOnLeft">' +
 						'<headerTitle>' +
@@ -487,7 +487,7 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 						'</headerTitle>' +
 					'</ObjectPageLayout>' +
 				'</m:App>' +
-				'</core:View>';
+				'</mvc:View>';
 			XMLView.create({
 				definition: sViewXML
 			}).then(function (oView) {

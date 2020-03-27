@@ -1,4 +1,4 @@
-<core:View xmlns:core="sap.ui.core"
+<mvc:View xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
@@ -6,7 +6,7 @@
 	controllerName="dt.view.SimpleForm">
 	<Page title="Title" id="Page" showFooter="true">
 		<content>
-		    <f:SimpleForm editable="false" layout="ResponsiveGridLayout" id="SimpleForm">
+			<f:SimpleForm editable="false" layout="ResponsiveGridLayout" id="SimpleForm">
 				<f:content id="FormContent">
 				<core:Title text="Title"/>
 					<Label text="Label 1" id="Label1"/>
@@ -18,4 +18,4 @@
 			</f:SimpleForm>
 		</content>
 	</Page>
-</core:View>
+</mvc:View>

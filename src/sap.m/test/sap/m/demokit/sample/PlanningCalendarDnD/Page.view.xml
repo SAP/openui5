@@ -9,8 +9,7 @@
 				id="PC1"
 				startDate="{path: '/startDate'}"
 				rows="{path: '/people'}"
-				appointmentsVisualization="Filled"
-				appointmentSelect="handleAppointmentSelect">
+				appointmentsVisualization="Filled">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
 				<Label text="Logged in as" />
