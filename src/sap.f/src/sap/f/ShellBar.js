@@ -569,6 +569,11 @@ function(
 		return this._oMegaMenu;
 	};
 
+	ShellBar.prototype.onThemeChanged = function () {
+		this._oResponsiveHandler._initResize();
+		this._oResponsiveHandler._handleResize();
+	};
+
 	ShellBar.prototype._getOverflowToolbar = function () {
 		return this._oOverflowToolbar;
 	};
