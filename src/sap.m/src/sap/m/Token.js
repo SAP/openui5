@@ -368,6 +368,15 @@ sap.ui.define([
 		}
 	};
 
+	Token.prototype.onThemeChanged = function () {
+		var bSysCancelIconUsed = Parameters.get("_sap_m_Token_Sys_Cancel_Icon") === "true",
+			sSrcIcon = bSysCancelIconUsed ? "sap-icon://sys-cancel" : "sap-icon://decline";
+
+		if (this._deleteIcon.getSrc() !== sSrcIcon) {
+			this._deleteIcon.setSrc(sSrcIcon);
+		}
+	};
+
 	return Token;
 
 });
