@@ -86,6 +86,9 @@ function(
 		oRta.getPopupManager().setRta(oRta);
 	};
 
+	//RTA Toolbar needs RTA Mode settings
+	jQuery("body").addClass("sapUiRtaMode");
+
 	QUnit.module("Given PopupManager exists", {
 		beforeEach : function() {
 			this.fnAddPopupFilterStub = sandbox.stub(ZIndexManager, "addPopupFilter");
@@ -818,6 +821,7 @@ function(
 	});
 
 	QUnit.done(function () {
+		jQuery("body").removeClass("sapUiRtaMode");
 		jQuery("#qunit-fixture").hide();
 	});
 });

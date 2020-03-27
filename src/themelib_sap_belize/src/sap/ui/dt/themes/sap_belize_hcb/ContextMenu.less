@@ -1,22 +1,17 @@
 /******************************************************************
 	Style of the DT Contextmenu - sap_belize_hcb Theme
 *******************************************************************/
-@_sap_ui_dt_ContextMenu_BorderColor: @sapUiWhite; // #ffffff
-
+@_sap_ui_dt_ContextMenu_BorderColor: @sapUiWhite; //#ffffff
 
 .sapUiDtContextMenu {
 
 	&.sapMPopoverArr, .sapMPopoverArr {
 		&:after {
-			box-shadow: 0px 0px 0px 1px @_sap_ui_dt_ContextMenu_BorderColor;
+			box-shadow: 0 0 0 1px @_sap_ui_dt_ContextMenu_BorderColor;
 			border: none;
 		}
 	}
-}
-
-html.sap-desktop .sapUiDtContextMenu .sapMBtn:focus > .sapMFocusable,
-html.sap-desktop .sapUiDtContextMenu.sapMBtn:focus > .sapMFocusable {
-	border-color: transparent;
-	outline: 2px dotted @_sap_ui_dt_ContextMenu_BorderColor;
-	outline-offset: -2px;
+	.sapMBtn.sapMBtnDisabled {
+		opacity: 1.0;
+	}
 }

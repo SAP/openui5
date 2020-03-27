@@ -18,6 +18,9 @@ function(
 	 * BASIC FUNCTIONALITY
 	 ********************************************************************************************************/
 
+	//RTA Toolbar needs RTA Mode settings
+	jQuery("body").addClass("sapUiRtaMode");
+
 	QUnit.module('Basic functionality', {
 		beforeEach: function() {
 			this.oToolbar = new BaseToolbar();
@@ -230,6 +233,7 @@ function(
 	});
 
 	QUnit.done(function () {
+		jQuery("body").removeClass("sapUiRtaMode");
 		jQuery("#qunit-fixture").hide();
 	});
 });

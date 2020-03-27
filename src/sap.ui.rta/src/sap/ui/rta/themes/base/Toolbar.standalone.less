@@ -1,14 +1,14 @@
 /******************************************************************
 	Style of the RTA Standalone Toolbar - base Theme
 *******************************************************************/
-@_sap_ui_rta_Toolbar_Standalone_TextColor: @sapUiWhite;												// #fff
-@_sap_ui_rta_Toolbar_Standalone_BaseColor : darken(desaturate(@sapChart_OrderedColor_1, 48%), 14%);	// #435060
+@_sap_ui_rta_Toolbar_Standalone_TextColor: @sapUiWhite; //#fff
+@_sap_ui_rta_Toolbar_Standalone_BaseColor: darken(desaturate(@sapChart_OrderedColor_1, 48%), 14%);	//#435060
 
 .sapUiRtaToolbar.type_standalone.color_default {
 	background-color: @_sap_ui_rta_Toolbar_Standalone_BaseColor;
-	top: -50px;
+	top: -3.125rem; //50px;
 	transition: top 0.25s ease-out;
-	height: 48px;
+	height: 3rem; //48p
 
 	&.is_visible {
 		top: 0;
@@ -16,6 +16,6 @@
 
 	.sapMBtn:focus .sapMFocusable {
 		outline: none;
-		border: 1px dotted @_sap_ui_rta_Toolbar_Standalone_TextColor;
+		border: 0.0625rem dotted @_sap_ui_rta_Toolbar_Standalone_TextColor; //1px
 	}
 }

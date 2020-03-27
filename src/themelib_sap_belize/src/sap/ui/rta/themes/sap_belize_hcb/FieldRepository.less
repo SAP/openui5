@@ -1,13 +1,20 @@
 /*****************************************************************************
-	Style of the RTA FieldRepository  - sap_belize_hcb Theme
+	Style of the RTA Add Fields Dialog  - sap_belize_hcb Theme
 ******************************************************************************/
-@_sap_ui_rta_FieldRepository_BGColor: @sapHC_HighlightBackground; // #7a5100;
+@_sap_ui_rta_FieldRepository_BGColor: @sapHC_HighlightBackground; //#7a5100;
 
 .sapUiRtaMode {
+
 	.sapUIRtaFieldRepositoryDialog {
 		.sapMBtn:hover {
 			> .sapMBtnHoverable {
-				background-color: @_sap_ui_rta_FieldRepository_BGColor;
+				outline: none;
+			}
+		}
+
+		.sapMLIBHoverable {
+			&:hover {
+				background: @sap_ui_rta_FieldRepository_ListHoverBG;
 			}
 		}
 	}
