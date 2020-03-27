@@ -43,58 +43,22 @@ sap.ui.define([
 		return ExtensionPointRegistry._instance;
 	};
 
-	/**
-	 * Returns a map containing an array with extension point names and their indices sorted by their appearance for
-	 * each aggregation of a given parent control id.
-	 *
-	 * @param {string} sParentId - Parent control id.
-	 * @returns {object} mAggregations - Map of aggregations with information about the order of the containing extension points.
-	 */
-	ExtensionPointRegistry.prototype._spotExtensionPointsInAggregation = function(sParentId) {
-		var mAggregations = {};
-		this._aExtensionPointsByParent[sParentId].forEach(function(oExtensionPoint) {
-			if (!mAggregations[oExtensionPoint.aggregationName]) {
-				mAggregations[oExtensionPoint.aggregationName] = [];
-			}
-			mAggregations[oExtensionPoint.aggregationName].push({
-				name: oExtensionPoint.name,
-				index: oExtensionPoint.index
-			});
-			mAggregations[oExtensionPoint.aggregationName].sort(function(o1, o2) {
-				return o1.index - o2.index;
-			});
-		});
-
-		return mAggregations;
-	};
-
 	ExtensionPointRegistry.prototype._observeIndex = function(oEvent) {
 		var sParentId = oEvent.object.getId();
-		var mAggregations = this._spotExtensionPointsInAggregation(sParentId);
 		var sAggregationName;
-		var iOffset;
 
 		this._aExtensionPointsByParent[sParentId].forEach(function(oExtensionPoint) {
 			sAggregationName = oExtensionPoint.aggregationName;
 			if (sAggregationName === oEvent.name) {
-				// Internally the XML nodes of an aggregation are used where the extension points are available. This
-				// registry works with JS controls, therefore an offset is needed for each additional extension point
-				// which is located before the monitored extension point (multiple extension points in one aggregation).
-				iOffset = 0;
-				mAggregations[sAggregationName].some(function(oExtensionPointLocation, index) {
-					iOffset = index;
-					return oExtensionPointLocation.name === oExtensionPoint.name;
-				});
-
 				var aControlIds = JsControlTreeModifier.getAggregation(oEvent.object, sAggregationName).map(function(oControl) {
 					return oControl.getId();
 				});
 
 				if (oEvent.mutation === "insert") {
-					if (aControlIds.indexOf(oEvent.child.getId()) < oExtensionPoint.index - iOffset) {
+					if (aControlIds.indexOf(oEvent.child.getId()) < oExtensionPoint.index) {
 						oExtensionPoint.index++;
 					}
-				} else if (oExtensionPoint.aggregation.indexOf(oEvent.child.getId()) < oExtensionPoint.index - iOffset) {
+				} else if (oExtensionPoint.aggregation.indexOf(oEvent.child.getId()) < oExtensionPoint.index) {
 					oExtensionPoint.index--;
 				}
 
