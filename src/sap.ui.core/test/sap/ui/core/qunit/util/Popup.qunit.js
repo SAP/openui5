@@ -1268,9 +1268,9 @@ sap.ui.define([
 			QUnitUtils.triggerSelectAll();
 
 			if (Device.browser.msie || Device.browser.edge){
-				assert.ok(QUnitUtils.includesSelectedText(["Open Popup", "QUnit tests 'Popup' of suite 'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
+				assert.ok(QUnitUtils.includesSelectedText(["OpenPopup", "QUnittests'Popup'ofsuite'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
 			} else {
-				assert.ok(QUnitUtils.isSelectedTextEqual("Open Popup"), "The selected text should be correct 'Open Popup'.");
+				assert.ok(QUnitUtils.isSelectedTextEqual("OpenPopup"), "The selected text should be correct 'OpenPopup'.");
 			}
 
 			oPopup4.open();
@@ -1286,6 +1286,8 @@ sap.ui.define([
 				assert.notOk(jQuery("html").hasClass("sapUiUserSelectable"), "The content of the whole html document should not be marked explicitly as user selectable.");
 				assert.notOk(jQuery("html").hasClass("sapUiNotUserSelectable"), "The content of the whole html document should not be marked explicitly as not user selectable.");
 				assert.notOk(QUnitUtils.isSelectedTextEqual(), "There should not be any text selected.");
+				oPopup3.destroy();
+				oPopup4.destroy();
 				done();
 			}, 0);
 		};
@@ -1308,7 +1310,7 @@ sap.ui.define([
 			QUnitUtils.triggerSelectAll();
 
 			if (Device.browser.msie || Device.browser.edge){
-				assert.ok(QUnitUtils.includesSelectedText(["Button", "QUnit tests 'Popup' of suite 'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
+				assert.ok(QUnitUtils.includesSelectedText(["Button", "QUnittests'Popup'ofsuite'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("Button"), "The selected text should be correct 'Button'.");
 			}
@@ -1372,9 +1374,9 @@ sap.ui.define([
 			QUnitUtils.triggerSelectAll();
 
 			if (Device.browser.msie || Device.browser.edge){
-				assert.ok(QUnitUtils.includesSelectedText(["Open Popup", "QUnit tests 'Popup' of suite 'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
+				assert.ok(QUnitUtils.includesSelectedText(["OpenPopup", "QUnittests'Popup'ofsuite'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
 			} else {
-				assert.ok(QUnitUtils.isSelectedTextEqual("Open Popup"), "The selected text should be correct 'Open Popup'.");
+				assert.ok(QUnitUtils.isSelectedTextEqual("OpenPopup"), "The selected text should be correct 'OpenPopup'.");
 			}
 
 			oPopup4.open();
@@ -1390,6 +1392,8 @@ sap.ui.define([
 				assert.notOk(jQuery("html").hasClass("sapUiUserSelectable"), "The content of the whole html document should not be marked explicitly as user selectable.");
 				assert.notOk(jQuery("html").hasClass("sapUiNotUserSelectable"), "The content of the whole html document should not be marked explicitly as not user selectable.");
 				assert.notOk(QUnitUtils.isSelectedTextEqual(), "There should not be any text selected.");
+				oPopup3.destroy();
+				oPopup4.destroy();
 				done();
 			}, 0);
 		};
@@ -1411,9 +1415,9 @@ sap.ui.define([
 			QUnitUtils.triggerSelectAll();
 
 			if (Device.browser.msie || Device.browser.edge){
-				assert.ok(QUnitUtils.includesSelectedText(["Open Popup", "Button", "QUnit tests 'Popup' of suite 'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
+				assert.ok(QUnitUtils.includesSelectedText(["OpenPopup", "Button", "QUnittests'Popup'ofsuite'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
 			} else {
-				assert.ok(QUnitUtils.isSelectedTextEqual("Open PopupButton"), "The selected text should be correct 'Open PopupButton'.");
+				assert.ok(QUnitUtils.isSelectedTextEqual("OpenPopupButton"), "The selected text should be correct 'Open PopupButton'.");
 			}
 			oPopup4.close();
 		};
@@ -1476,6 +1480,8 @@ sap.ui.define([
 				assert.notOk(jQuery("html").hasClass("sapUiUserSelectable"), "The content of the whole html document should not be marked explicitly as user selectable.");
 				assert.notOk(jQuery("html").hasClass("sapUiNotUserSelectable"), "The content of the whole html document should not be marked explicitly as not user selectable.");
 				assert.notOk(QUnitUtils.isSelectedTextEqual(), "There should not be any text selected.");
+				oPopup3.destroy();
+				oPopup4.destroy();
 				done();
 			}, 0);
 		};
@@ -1496,7 +1502,7 @@ sap.ui.define([
 			QUnitUtils.triggerSelectAll();
 
 			if (Device.browser.msie || Device.browser.edge) {
-				assert.ok(QUnitUtils.includesSelectedText(["Button", "QUnit tests 'Popup' of suite 'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
+				assert.ok(QUnitUtils.includesSelectedText(["Button", "QUnittests'Popup'ofsuite'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("Button"), "The selected text should be correct 'Button'.");
 			}
@@ -1559,6 +1565,8 @@ sap.ui.define([
 				assert.notOk(jQuery("html").hasClass("sapUiUserSelectable"), "The content of the whole html document should not be marked explicitly as user selectable.");
 				assert.notOk(jQuery("html").hasClass("sapUiNotUserSelectable"), "The content of the whole html document should not be marked explicitly as not user selectable.");
 				assert.notOk(QUnitUtils.isSelectedTextEqual(), "There should not be any text selected.");
+				oPopup3.destroy();
+				oPopup4.destroy();
 				done();
 			}, 0);
 		};
@@ -1631,9 +1639,9 @@ sap.ui.define([
 			QUnitUtils.triggerSelectAll();
 
 			if (Device.browser.msie || Device.browser.edge) {
-				assert.ok(QUnitUtils.includesSelectedText(["Open Popup", "QUnit tests 'Popup' of suite 'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
+				assert.ok(QUnitUtils.includesSelectedText(["OpenPopup", "QUnittests'Popup'ofsuite'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
 			} else {
-				assert.ok(QUnitUtils.isSelectedTextEqual("Open Popup"), "The selected text should be correct 'Open Popup'.");
+				assert.ok(QUnitUtils.isSelectedTextEqual("OpenPopup"), "The selected text should be correct 'OpenPopup'.");
 			}
 
 			// switch to non modal state
@@ -1673,7 +1681,7 @@ sap.ui.define([
 			QUnitUtils.triggerSelectAll();
 
 			if (Device.browser.msie || Device.browser.edge) {
-				assert.ok(QUnitUtils.includesSelectedText(["Button", "QUnit tests 'Popup' of suite 'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
+				assert.ok(QUnitUtils.includesSelectedText(["Button", "QUnittests'Popup'ofsuite'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("Button"), "The selected text should be correct 'Button'.");
 			}
@@ -1705,7 +1713,7 @@ sap.ui.define([
 			QUnitUtils.triggerSelectAll();
 
 			if (Device.browser.msie || Device.browser.edge) {
-				assert.ok(QUnitUtils.includesSelectedText(["Button", "QUnit tests 'Popup' of suite 'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
+				assert.ok(QUnitUtils.includesSelectedText(["Button", "QUnittests'Popup'ofsuite'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("Button"), "The selected text should be correct 'Button'.");
 			}
@@ -1717,6 +1725,8 @@ sap.ui.define([
 			assert.notOk(jQuery(oPopup4DomRef).hasClass("sapUiUserSelectable"), "The content of popup with ID: " + oPopup4.getId() + " should not be marked explicitly as user selectable.");
 			assert.notOk(jQuery(oPopup4DomRef).hasClass("sapUiNotUserSelectable"), "The content of popup with ID: " + oPopup4.getId() + " should not be marked explicitly as not user selectable.");
 			assert.notOk(jQuery("html").hasClass("sapUiNotUserSelectable"), "The content of the whole html document should not be marked explicitly as not user selectable.");
+			oPopup3.destroy();
+			oPopup4.destroy();
 			done();
 		};
 
@@ -1814,6 +1824,7 @@ sap.ui.define([
 			assert.notOk(jQuery(oCustomDialogSecond).hasClass("sapUiNotUserSelectable"), "The content of popup with ID: " + oCustomDialogSecond.id + " should not be marked explicitly as not user selectable.");
 			setTimeout(function(){
 				assert.notOk(jQuery("html").hasClass("sapUiNotUserSelectable"), "The content of the whole html document should not be marked explicitly as not user selectable.");
+				oPopup3.destroy();
 				done();
 			}, 0);
 		};
@@ -1884,6 +1895,7 @@ sap.ui.define([
 
 			oCustomDialogFirst.removeAttribute("data-sap-ui-integration-popup-content");
 			oCustomDialogSecond.removeAttribute("data-custom-popup-content-2");
+			oPopup3.destroy();
 			done();
 		};
 
