@@ -124,8 +124,8 @@ sap.ui.define([
 
 			this.oDialog = new Dialog({
 				content: this.oMessageView,
-				contentHeight: "440px",
-				contentWidth: "640px",
+				contentHeight: "50%",
+				contentWidth: "50%",
 				endButton: new Button({
 					text: "Close",
 					press: function() {
