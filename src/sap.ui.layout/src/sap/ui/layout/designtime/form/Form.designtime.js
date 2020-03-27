@@ -39,6 +39,7 @@ sap.ui.define([
 				}
 			},
 			formContainers : {
+				propagateRelevantContainer: true,
 				childNames : {
 					singular : "GROUP_CONTROL_NAME",
 					plural : "GROUP_CONTROL_NAME_PLURAL"
