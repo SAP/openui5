@@ -27,37 +27,16 @@ sap.ui.define([
 	var VersionsAPI = /** @lends sap.ui.fl.write.api.VersionsAPI */ {};
 
 	/**
-	 * Returns a flag if a draft exists for the current application and layer.
+	 * Initializes the versions for a given selector and layer.
 	 *
 	 * @param {object} mPropertyBag - Property Bag
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 *
-	 * @return {Promise<boolean>} Promise resolving with a flag if a draft is available;
-	 * rejects if an error occurs or the layer does not support draft handling
+	 * @returns {Promise<sap.ui.fl.Version[]>} List of versions if available;
+	 * Rejects if not all parameters were passed or the application could not be determined
 	 */
-	VersionsAPI.isDraftAvailable = function (mPropertyBag) {
-		return VersionsAPI.getVersions(mPropertyBag)
-			.then(function (aVersions) {
-				var oDraft = aVersions.find(function (oVersion) {
-					return oVersion.versionNumber === 0;
-				});
-
-				return !!oDraft;
-			});
-	};
-
-	/**
-	 * Returns a list of versions.
-	 *
-	 * @param {object} mPropertyBag - Property Bag
-	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
-	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
-	 *
-	 * @returns {Promise<sap.ui.fl.Version[]>} Promise resolving with a list of versions if available;
-	 * rejects if an error occurs or the layer does not support draft handling
-	 */
-	VersionsAPI.getVersions = function (mPropertyBag) {
+	VersionsAPI.initialize = function (mPropertyBag) {
 		if (!mPropertyBag.selector) {
 			return Promise.reject("No selector was provided");
 		}
@@ -70,6 +49,56 @@ sap.ui.define([
 
 		if (!sReference) {
 			return Promise.reject("The application ID could not be determined");
+		}
+
+		return Versions.initialize({
+			reference: Utils.normalizeReference(sReference),
+			layer: mPropertyBag.layer
+		});
+	};
+
+	/**
+	 * Returns a flag if a draft exists for the current application and layer.
+	 *
+	 * @param {object} mPropertyBag - Property Bag
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
+	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
+	 *
+	 * @return {boolean} Flag if a draft is available;
+	 * Throws an error in case no initialization took place upfront
+	 */
+	VersionsAPI.isDraftAvailable = function (mPropertyBag) {
+		var aVersions = VersionsAPI.getVersions(mPropertyBag);
+		var oDraft = aVersions.find(function (oVersion) {
+			return oVersion.versionNumber === 0;
+		});
+
+		return !!oDraft;
+	};
+
+	/**
+	 * Returns a list of versions.
+	 *
+	 * @param {object} mPropertyBag - Property Bag
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
+	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
+	 *
+	 * @returns {sap.ui.fl.Version[]} List of versions if available;
+	 * Throws an error in case no initialization took place upfront
+	 */
+	VersionsAPI.getVersions = function (mPropertyBag) {
+		if (!mPropertyBag.selector) {
+			throw Error("No selector was provided");
+		}
+		if (!mPropertyBag.layer) {
+			throw Error("No layer was provided");
+		}
+
+		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
+		var sReference = Utils.getComponentClassName(oAppComponent);
+
+		if (!sReference) {
+			throw Error("The application ID could not be determined");
 		}
 
 		return Versions.getVersions({

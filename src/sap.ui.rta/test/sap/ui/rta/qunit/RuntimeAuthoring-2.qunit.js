@@ -343,7 +343,7 @@ sap.ui.define([
 
 		QUnit.test("when RTA is started and _determineReload returns true", function(assert) {
 			assert.expect(4);
-			sandbox.stub(this.oRta, "_determineReload").returns(Promise.resolve(true));
+			sandbox.stub(this.oRta, "_determineReload").resolves(true);
 			var oFireFailedStub = sandbox.stub(this.oRta, "fireFailed");
 			var fnRemovePopupFilterStub = sandbox.spy(ZIndexManager, "removePopupFilter");
 			return this.oRta.start()
@@ -434,7 +434,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when draft changes are available, RTA is started and user exists", function(assert) {
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
-			sandbox.stub(this.oRta, "_isDraftAvailable").resolves(true);
+			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
 			sandbox.stub(FlexUtils, "getUshellContainer").returns({
 				getService: function () {
 					return {
@@ -495,7 +495,7 @@ sap.ui.define([
 			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub);
 			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(this.oRta._RESTART.VIA_HASH);
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
-			sandbox.stub(this.oRta, "_isDraftAvailable").resolves(true);
+			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
 
 			return this.oRta.stop().then(function() {
 				assert.equal(this.fnHandleParametersOnExitSpy.callCount,
@@ -509,7 +509,7 @@ sap.ui.define([
 			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub);
 			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(this.oRta._RESTART.VIA_HASH);
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
-			sandbox.stub(this.oRta, "_isDraftAvailable").resolves(false);
+			sandbox.stub(this.oRta, "_isDraftAvailable").returns(false);
 
 			return this.oRta.stop().then(function() {
 				assert.equal(this.fnHandleParametersOnExitSpy.callCount,
@@ -744,7 +744,7 @@ sap.ui.define([
 
 		QUnit.test("when _handleReloadOnExit() is called and draft changes are available", function(assert) {
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
-			sandbox.stub(this.oRta, "_isDraftAvailable").resolves(true);
+			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
 
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITHOUT_DRAFT", assert);
 
@@ -928,7 +928,7 @@ sap.ui.define([
 
 			return oRta.start().then(function () {
 				oRta.bInitialDraftAvailable = true;
-				oActivateDraftStub = sandbox.stub(VersionsAPI, "activateDraft").returns(Promise.resolve(true));
+				oActivateDraftStub = sandbox.stub(VersionsAPI, "activateDraft").resolves(true);
 				oShowMessageToastStub = sandbox.stub(oRta, "_showMessageToast");
 				oRemoveAllCommandsSpy = sandbox.spy(oRta.getCommandStack(), "removeAllCommands");
 				oSetVersionLabelStub = sandbox.stub(oRta, "_setVersionLabel");
@@ -982,12 +982,12 @@ sap.ui.define([
 				done();
 			}.bind(this));
 
-			sandbox.stub(oRta, "_isDraftAvailable").returns(Promise.resolve(true));
+			sandbox.stub(oRta, "_isDraftAvailable").returns(true);
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
 
 			return oRta.start().then(function () {
 				oRta.bInitialDraftAvailable = true;
-				oDiscardDraftStub = sandbox.stub(VersionsAPI, "discardDraft").returns(Promise.resolve(true));
+				oDiscardDraftStub = sandbox.stub(VersionsAPI, "discardDraft").resolves(true);
 				oRemoveAllCommandsSpy = sandbox.spy(oRta.getCommandStack(), "removeAllCommands");
 				oHandleDiscardDraftStub = sandbox.spy(oRta, "_handleDiscard");
 				oHandleDraftParameterStub = sandbox.spy(oRta, "_handleDraftParameter");
@@ -1006,12 +1006,9 @@ sap.ui.define([
 
 	function _mockStateCallIsDraftAvailableAndCheckResult(assert, oRta, bIsVersioningEnabled, bIsDraftAvailable, bCanUndo, bExpectedResult) {
 		oRta._bVersioningEnabled = bIsVersioningEnabled;
-		sandbox.stub(VersionsAPI, "isDraftAvailable").resolves(bIsDraftAvailable);
+		sandbox.stub(VersionsAPI, "isDraftAvailable").returns(bIsDraftAvailable);
 		sandbox.stub(oRta, "canUndo").returns(bCanUndo);
-		return oRta._isDraftAvailable()
-		.then(function (bResult) {
-			assert.equal(bResult, bExpectedResult);
-		});
+		assert.equal(oRta._isDraftAvailable(), bExpectedResult);
 	}
 
 	QUnit.module("Given that RuntimeAuthoring wants to determine if a draft is available", {
