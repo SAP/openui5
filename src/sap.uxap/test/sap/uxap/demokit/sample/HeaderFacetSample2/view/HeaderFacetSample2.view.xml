@@ -1,0 +1,151 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:layout="sap.ui.layout"
+	xmlns:m="sap.m"
+    xmlns:core="sap.ui.core"
+	height="100%">
+
+	<ObjectPageLayout id="ObjectPageLayout"
+		subSectionLayout="TitleOnLeft"
+		showTitleInHeaderContent="true">
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle>
+				<expandedHeading>
+					<m:Title text="Header Facet Sample 2" wrapping="true" />
+				</expandedHeading>
+
+				<snappedHeading>
+						<m:FlexBox fitContainer="true" alignItems="Center" >
+							<m:Avatar src="./test-resources/sap/uxap/images/imageID_275314.png" class="sapUiTinyMarginEnd" />
+							<m:Title text="Header Facet Sample 2" wrapping="true"/>
+						</m:FlexBox>
+				</snappedHeading>
+
+				<expandedContent>
+					<m:Text text="Example of an ObjectPage with header facet."/>
+				</expandedContent>
+
+				<snappedContent>
+					<m:Text text="Example of an ObjectPage with header facet."/>
+				</snappedContent>
+
+				<snappedTitleOnMobile>
+					<m:Title text="Header Title On Phone"/>
+				</snappedTitleOnMobile>
+
+				<actions>
+					<m:OverflowToolbarButton icon="sap-icon://pull-down" text="show section" type="Emphasized" tooltip="pull-down"/>
+					<m:OverflowToolbarButton icon="sap-icon://show" text="show state" type="Emphasized" tooltip="show"/>
+				</actions>
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+
+		<headerContent>
+        <layout:VerticalLayout>
+            <m:FlexBox wrap="Wrap" fitContainer="true">
+                <m:Avatar src="./test-resources/sap/uxap/images/imageID_275314.png" class="sapUiLargeMarginEnd" displaySize="L"/>
+
+                <m:VBox class="sapUiLargeMarginEnd sapUiTinyMarginBottom">
+                    <m:Title text="Order Details"/>
+
+                    <m:HBox>
+                        <m:Label text="Manufacturer:" class="sapUiTinyMarginEnd"/>
+                        <m:Text text=" Robotech"/>
+                    </m:HBox>
+
+                    <m:HBox>
+                        <m:Label text="Factory:" class="sapUiTinyMarginEnd"/>
+                        <m:Text text=" Florida, OL"/>
+                    </m:HBox>
+
+                    <m:HBox>
+                        <m:Label text="Supplier:" class="sapUiTinyMarginEnd"/>
+                        <m:Link text="Robotech (234242343)"/>
+                    </m:HBox>
+                </m:VBox>
+
+                <m:VBox class="sapUiLargeMarginEnd sapUiTinyMarginBottom">
+                    <m:Title text="Contact Information"/>
+
+                    <m:HBox>
+                        <core:Icon src="sap-icon://account"/>
+                        <m:Link text=" John Miller" class="sapUiTinyMarginBegin"/>
+                    </m:HBox>
+
+                    <m:HBox>
+                        <core:Icon src="sap-icon://outgoing-call"/>
+                        <m:Link text=" +1 234 5678" class="sapUiTinyMarginBegin"/>
+                    </m:HBox>
+
+                    <m:HBox>
+                        <core:Icon src="sap-icon://email"/>
+                        <m:Link text="john.miller@company.com" class="sapUiTinyMarginBegin"/>
+                    </m:HBox>
+                </m:VBox>
+
+                <m:VBox class="sapUiLargeMarginEnd sapUiTinyMarginBottom">
+                    <m:HBox>
+                        <m:Label text="Created By:" class="sapUiTinyMarginEnd"/>
+                        <m:Link text="Julie Armstrong"/>
+                    </m:HBox>
+
+                    <m:HBox>
+                        <m:Label text="Created On:" class="sapUiTinyMarginEnd"/>
+                        <m:Text text=" February 20, 2020"/>
+                    </m:HBox>
+
+                    <m:HBox>
+                        <m:Label text="Changed By:" class="sapUiTinyMarginEnd"/>
+                        <m:Link text="John Miller"/>
+                    </m:HBox>
+
+                    <m:HBox>
+                        <m:Label text="Changed By:" class="sapUiTinyMarginEnd"/>
+                        <m:Text text=" February 20, 2020"/>
+                    </m:HBox>
+                </m:VBox>
+
+                <m:VBox width="450px" class="sapUiTinyMarginBottom">
+                    <m:Title text="Product Description"/>
+                    <m:Text text="Top-design high-quality coffee mug - ideal for a comforting moment; Pack: 6; material: Porcelain - durable dishwasher and microwave-safe porcelain that cleans easily and is ideal for everyday service. Comes in two bright colors."/>
+                </m:VBox>
+
+                <m:HBox class="sapUiLargeMarginEnd sapUiTinyMarginBottom">
+                    <m:VBox class="sapUiMediumMarginEnd">
+                        <m:Title text="Delivery:"/>
+                        <m:ObjectStatus text="Delivery" state="Success" class="sapMObjectStatusLarge"/>
+                    </m:VBox>
+
+                    <m:VBox class="sapUiMediumMarginEnd sapUiTinyMarginBottom">
+                        <m:Title text="Delivery Time:"/>
+                        <m:ObjectStatus text="12 Days" icon="sap-icon://shipping-status" class="sapMObjectStatusLarge"/>
+                    </m:VBox>
+
+                    <m:VBox class="sapUiMediumMarginEnd sapUiTinyMarginBottom">
+                        <m:Title text="Assembly Option:"/>
+                        <m:ObjectStatus text="To Be Selected" state="Error" class="sapMObjectStatusLarge"/>
+                    </m:VBox>
+
+                    <m:VBox class="sapUiTinyMarginBottom">
+                        <m:Title text="Price:"/>
+                        <m:ObjectStatus text="579 EUR" class="sapMObjectStatusLarge"/>
+                    </m:VBox>
+                </m:HBox>
+
+                <m:VBox>
+                    <m:Title text="Average User Rating"/>
+                    <m:Label text="6 Reviews"/>
+                    <m:RatingIndicator value="4" iconSize="32px" />
+                    <m:VBox alignItems="End">
+                        <m:Text text="4.1 out of 5"/>
+                    </m:VBox>
+                </m:VBox>
+            </m:FlexBox>
+            </layout:VerticalLayout>
+        </headerContent>
+
+        <sections>
+			<core:Fragment fragmentName="sap.uxap.sample.HeaderFacetSample1.view.fragments.SupplierDetails" type="XML"/>
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>

@@ -55,7 +55,9 @@
 		  "sap.uxap.sample.ObjectPageHeaderExpanded",
 		  "sap.uxap.sample.ObjectPageHeaderContentPriorities",
 		  "sap.uxap.sample.ObjectPageFormLayout",
-		  "sap.uxap.sample.ObjectPageFormFocusableInput"
+		  "sap.uxap.sample.ObjectPageFormFocusableInput",
+		  "sap.uxap.sample.HeaderFacetSample1",
+		  "sap.uxap.sample.HeaderFacetSample2"
 		]
 	  },
 	  {
@@ -287,6 +289,16 @@
 		"id": "sap.uxap.sample.ObjectPageBlockViewTypes",
 		"name": "Object Page with blocks of different view types",
 		"description": "ObjectPage sample with blocks that use different view types"
+	  },
+	  {
+		"id": "sap.uxap.sample.HeaderFacetSample1",
+		"name": "Header Facet Sample 1",
+		"description": "ObjectPage sample with header content arranged using containers, called facets, ProgressIndicator and RatingIndicator."
+	  },
+	  {
+		"id": "sap.uxap.sample.HeaderFacetSample2",
+		"name": "Header Facet Sample 2",
+		"description": "ObjectPage sample with header content arranged using containers, called facets, Links, RatingIndicator and ObjectStatus."
 	  }
 	]
   }
