@@ -2654,6 +2654,33 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
+	QUnit.test("Size of Overflow Button is not getting cached if it's not visible", function (assert) {
+		// Arrange
+		var aDefaultContent = [
+			getButton('1'),
+			getButton('2'),
+			getButton('3')
+		],
+		oOverflowTB = createOverflowToolbar({}, aDefaultContent),
+		oStubWidth = this.stub(oOverflowTB._getOverflowButtonClone(), "$", function () {
+			return {
+				width: function () { return 0; },
+				outerWidth: function () { return 8; }
+			};
+		});
+
+		// Act
+		oOverflowTB.onThemeChanged();
+
+		// Assert
+		assert.strictEqual(oOverflowTB._iOverflowToolbarButtonSize, 0,
+			"Size of Overflow Button should be calculated as 0");
+
+		// Clean
+		oStubWidth.restore();
+		oOverflowTB.destroy();
+	});
+
 	QUnit.test("Recalculation is not triggered after caching overflow button size", function (assert) {
 		// Arrange
 		var oOverflowTB = new OverflowToolbar({content: [new sap.m.Button({ text: "test button"})]}),

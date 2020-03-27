@@ -1564,8 +1564,14 @@ sap.ui.define([
 	};
 
 	OverflowToolbar.prototype._recalculateOverflowButtonSize = function () {
-		if (!this._iOverflowToolbarButtonSize) {
-			var iOTBtnSize = this._getOverflowButtonClone().$().outerWidth(true);
+		var $OTBtn = this._getOverflowButtonClone().$(),
+			iOTBtnSize;
+
+		// When a parent element is with display=block, but visibility: hidden, the overflow button does not have width,
+		// but it still has left margin. In this case .outerWidth(true) returns the margin, and a wrong width value is set.
+		// When the OFT is not visible, the value of the _iOverflowToolbarButtonSize property should be 0.
+		if (!this._getOverflowButtonSize() && $OTBtn.width() > 0) {
+			iOTBtnSize = $OTBtn.outerWidth(true);
 
 			this._iOverflowToolbarButtonSize = iOTBtnSize ? iOTBtnSize : 0;
 		}
