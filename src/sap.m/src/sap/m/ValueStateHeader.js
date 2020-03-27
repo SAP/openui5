@@ -36,7 +36,6 @@ sap.ui.define(
 					 * Text to be displayed in the value state
 					 */
 					text: { type: "string", defaultValue: "" },
-
 					/**
 					 * Visualizes the validation state of the control, e.g. <code>Error</code>, <code>Warning</code>, <code>Success</code>.
 					 */
@@ -45,7 +44,13 @@ sap.ui.define(
 						defaultValue: ValueState.None
 					}
 				},
-
+				aggregations: {
+					/**
+					 * <code>sap.m.FormattedText</code> text, can contain links. If this aggregation and
+					 * the text property are both set the formatted text will be displayed.
+					 */
+					formattedText: { type: "sap.m.FormattedText", multiple: false }
+				},
 				associations: {
 					/**
 					 * Associated Popup to the ValueStateHeader.
@@ -65,16 +70,20 @@ sap.ui.define(
 						Information: "sapMValueStateHeaderInformation"
 					};
 
-					oRM.openStart("div", oControl);
-					oRM.class("sapMValueStateHeaderRoot");
-					oRM.class(
-						mapValueStateToClass[oControl.getValueState()]
-					);
-					oRM.openEnd();
-					oRM.openStart("span", oControl.getId() + "-inner");
-					oRM.class("sapMValueStateHeaderText");
-					oRM.openEnd();
-					oRM.text(oControl.getText());
+					oRM.openStart("div", oControl)
+						.class("sapMValueStateHeaderRoot")
+						.class(mapValueStateToClass[oControl.getValueState()])
+						.openEnd();
+
+					oRM.openStart("span", oControl.getId() + "-inner")
+						.class("sapMValueStateHeaderText")
+						.openEnd();
+					if (oControl.getFormattedText()) {
+						oRM.renderControl(oControl.getFormattedText());
+					} else {
+						oRM.text(oControl.getText());
+					}
+
 					oRM.close("span");
 					oRM.close("div");
 				}

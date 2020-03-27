@@ -740,6 +740,47 @@
 			placeholder: "Warning Input"
 		});
 
+		var oFormattedValueStateInput = new sap.m.Input("fvsinput", {
+			valueState: "Warning",
+			valueStateText: "Plain text warning message",
+			placeholder: "Warning value state message with formatted text containing link",
+			formattedValueStateText: new sap.m.FormattedText({
+				htmlText: "Warning value state message with formatted text containing %%0",
+				controls: [new sap.m.Link({
+					text: "Link",
+					href: "#",
+					target: "_blank"
+				})]
+			})
+		});
+
+		var oFormattedValueStateInput2 = new sap.m.Input("fvsinput2", {
+			valueState: "Error",
+			valueStateText: "Plain text error message",
+			placeholder: "Input with suggestions (countries) and error value state message with formatted text containing multiple links",
+			showSuggestion: true,
+			suggestionItems: [
+				new sap.ui.core.Item({text: "Argentina"}),
+				new sap.ui.core.Item({text: "Bulgaria"}),
+				new sap.ui.core.Item({text: "Brazil"}),
+				new sap.ui.core.Item({text: "Canada"}),
+				new sap.ui.core.Item({text: "Denmark"})
+			],
+			formattedValueStateText: new sap.m.FormattedText({
+				htmlText: "Error value state message with formatted text containing %%0 %%1",
+				controls: [new sap.m.Link({
+					text: "multiple",
+					href: "#",
+					target: "_blank"
+				}),
+				new sap.m.Link({
+					text: "links",
+					href: "#",
+					target: "_blank"
+				})]
+			})
+		});
+
 		var oValueStateInput3 = new sap.m.Input("vsinput3", {
 			valueState: "Information",
 			valueStateText: "Information Message!!!!!!!!!",
@@ -845,6 +886,8 @@
 					oValueStateInput2,
 					oValueStateInput3,
 					oValueStateInput4,
+					oFormattedValueStateInput,
+					oFormattedValueStateInput2,
 					oLongValueStateInput,
 					new sap.m.Input({
 						value: "10",

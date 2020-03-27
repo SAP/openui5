@@ -4,14 +4,34 @@
 	xmlns:l="sap.ui.layout">
 	<l:VerticalLayout class="sapUiContentPadding" width="100%">
 		<l:content>
-			<Input valueState="None" value="Value state None"/>
-			<Input valueState="Success" value="Value state Success"/>
-			<Input
+			<Input valueState="None" value="Value state None" class="sapUiSmallMargin"/>
+			<Input valueState="Success" value="Value state Success" class="sapUiSmallMargin"/>
+			<Input class="sapUiSmallMargin"
 				valueState="Warning"
 				valueStateText="Warning message. Extra long text used as a warning message. Extra long text used as a warning message - 2. Extra long text used as a warning message - 3. Extra long text used as a warning message - 4. Extra long text used as a warning message - 5."
 				value="Value state Warning."/>
-			<Input valueState="Error" value="Value state Error"/>
-			<Input valueState="Information" value="Value state Information"/>
+			<Input valueState="Warning" value="Value state Warning with message containing a link." class="sapUiSmallMargin">
+				<formattedValueStateText>
+					<FormattedText htmlText="Warning message with sap.m.FormattedText containing %%0.">
+						<controls>
+							<Link text="a link" href="#" target="_blank"/>
+						</controls>
+					</FormattedText>
+				</formattedValueStateText>
+			</Input>
+			<Input valueState="Error" value="Value state Error" class="sapUiSmallMargin"/>
+			<Input valueState="Error" value="Value state Error with message containing multiple links." class="sapUiSmallMargin">
+				<formattedValueStateText>
+					<FormattedText htmlText="Error message with sap.m.FormattedText containing %%0 %%1.">
+						<controls>
+							<Link text="multiple" href="#" target="_blank"/>
+							<Link text="links" href="#" target="_blank"/>
+						</controls>
+					</FormattedText>
+				</formattedValueStateText>
+			</Input>
+
+			<Input valueState="Information" value="Value state Information" class="sapUiSmallMargin"/>
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>
