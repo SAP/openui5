@@ -4,20 +4,16 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
-	"sap/ui/fl/apply/_internal/Storage",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/FakeLrepConnector",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CompatibilityConnector,
 	JsObjectConnector,
 	ObjectStorageUtils,
-	ApplyStorage,
 	WriteStorage,
 	Layer,
-	FakeLrepConnector,
 	jQuery,
 	sinon
 ) {
@@ -54,40 +50,6 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("and static preload when loading flex data, get name/reference from mComponent", function (assert) {
-			// simulate a component-preload
-			jQuery.sap.registerPreloadedModules({
-				version : "2.0",
-				name : "test.app",
-				modules : {
-					"test/app/changes/changes-bundle.json" : '[{"dummy":true}]'
-				}
-			})
-			;
-			return CompatibilityConnector.loadChanges({name: "test.app", appVersion: "1.0.0"}).then(function (oResult) {
-				assert.equal(oResult.changes.changes.length, 1, "one change was loaded");
-				var oChange = oResult.changes.changes[0];
-				assert.equal(oChange.dummy, true, "the change dummy data is correctly loaded");
-			});
-		});
-
-		QUnit.test("and static preload when loading flex data, get appName/componentName from mPropertyBag", function (assert) {
-			// simulate a component-preload
-			jQuery.sap.registerPreloadedModules({
-				version : "2.0",
-				name : "test.app",
-				modules : {
-					"test/app/changes/changes-bundle.json" : '[{"dummy":true}]'
-				}
-			})
-			;
-			return CompatibilityConnector.loadChanges({name: "NOTHING", appVersion: "1.0.0"}, {appName: "test.app"}).then(function (oResult) {
-				assert.equal(oResult.changes.changes.length, 1, "one change was loaded");
-				var oChange = oResult.changes.changes[0];
-				assert.equal(oChange.dummy, true, "the change dummy data is correctly loaded");
-			});
-		});
-
 		QUnit.test("when settings are requested", function (assert) {
 			return CompatibilityConnector.loadSettings()
 			.then(function (mSettings) {
@@ -190,32 +152,6 @@ sap.ui.define([
 				assert.equal(mFlexInfo.isResetEnabled, false, "value for reset availability is returned");
 				assert.equal(mFlexInfo.isPublishEnabled, undefined, "default value for publish availability is returned");
 			});
-		});
-	});
-
-	QUnit.module("CompatibilityConnector.loadChanges", {
-		beforeEach: function() {
-			this.oStorageCompleteFlexDataStub = sandbox.spy(ApplyStorage, "completeFlexData");
-			this.oStorageLoadFlexDataStub = sandbox.spy(ApplyStorage, "loadFlexData");
-		},
-		afterEach: function () {
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("when 'loadChanges' is called to with partialFlexData", function (assert) {
-			return CompatibilityConnector.loadChanges({name: "test.app", appVersion: "1.0.0"}, {appName: "test.app", partialFlexData: {}})
-				.then(function () {
-					assert.equal(this.oStorageCompleteFlexDataStub.callCount, 1, "and Storage.completeFlexData was called");
-					assert.equal(this.oStorageLoadFlexDataStub.callCount, 0, "and the Storage.loadFlexData function was NOT called");
-				}.bind(this));
-		});
-
-		QUnit.test("when 'loadChanges' is called without partialFlexData", function (assert) {
-			return CompatibilityConnector.loadChanges({name: "test.app", appVersion: "1.0.0"})
-				.then(function () {
-					assert.equal(this.oStorageCompleteFlexDataStub.callCount, 0, "and Storage.completeFlexData was NOT called");
-					assert.equal(this.oStorageLoadFlexDataStub.callCount, 1, "and Storage.loadFlexData was called");
-				}.bind(this));
 		});
 	});
 
