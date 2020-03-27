@@ -1,16 +1,15 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/table/plugins/MultiSelectionPlugin",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/table/Table",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/table/library",
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/table/plugins/MultiSelectionPlugin"
-], function(MockServer, Table, TableUtils, ODataModel, tableLibrary, qutils, TableQUnitUtils, KeyCodes, MultiSelectionPlugin) {
+	"sap/ui/qunit/QUnitUtils"
+], function(TableQUnitUtils, MultiSelectionPlugin, MockServer, Table, TableUtils, ODataModel, tableLibrary, qutils) {
 	"use strict";
 
 	var sServiceURI = "/service/";

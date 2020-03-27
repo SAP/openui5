@@ -1,11 +1,11 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/rowmodes/RowMode",
-	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/model/json/JSONModel"
-], function(Table, RowMode, TableQUnitUtils, JSONModel) {
+], function(TableQUnitUtilsTable, RowMode, JSONModel) {
 	"use strict";
 
 	QUnit.module("Placeholder", {

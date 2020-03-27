@@ -1,8 +1,6 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/m/Label",
-	"sap/m/Text",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/utils/TableUtils",
@@ -11,7 +9,7 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/library",
 	"sap/ui/core/library"
-], function(Label, Text, TableQUnitUtils, qutils, TableUtils, Column, JSONModel, Table, tableLibrary, coreLibrary) {
+], function(TableQUnitUtils, qutils, TableUtils, Column, JSONModel, Table, tableLibrary, coreLibrary) {
 	"use strict";
 
 	var TestControl = TableQUnitUtils.TestControl;
@@ -63,8 +61,8 @@ sap.ui.define([
 			// 3rd column with multilabels
 			oTable.addColumn(new Column({
 				multiLabels: [
-					new Label({text: "Row:1, Column:3 - long text"}),
-					new Text({text: "Row:2, Column:3"})
+					new TestControl({text: "Row:1, Column:3 - long text"}),
+					new TestControl({text: "Row:2, Column:3"})
 				],
 				template: new TestControl({text: "{text}"}),
 				sortProperty: "text",
@@ -77,7 +75,7 @@ sap.ui.define([
 
 			// Other columns
 			oTable.addColumn(new Column({
-				label: new Label({text: "Header"}),
+				label: new TestControl({text: "Header"}),
 				headerSpan: "2",
 				template: new TestControl({text: "{text}"}),
 				hAlign: coreLibrary.HorizontalAlign.Center,
@@ -88,7 +86,7 @@ sap.ui.define([
 			}));
 
 			oTable.addColumn(new Column({
-				label: new Label({text: "Some Header"}),
+				label: new TestControl({text: "Some Header"}),
 				template: new TestControl({text: "{text}"}),
 				width: "100px",
 				flexible: false,
@@ -97,7 +95,7 @@ sap.ui.define([
 			}));
 
 			oTable.addColumn(new Column({
-				label: new Label({text: "Some other header"}),
+				label: new TestControl({text: "Some other header"}),
 				template: new TestControl({text: "{text}"}),
 				width: "100px",
 				flexible: false,
@@ -106,7 +104,7 @@ sap.ui.define([
 			}));
 
 			oTable.addColumn(new Column({
-				label: new Label({text: "Just another header"}),
+				label: new TestControl({text: "Just another header"}),
 				template: new TestControl({text: "{text}"}),
 				width: "100px",
 				flexible: false,

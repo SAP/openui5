@@ -1,9 +1,9 @@
 /*global QUnit, sinon, oTable, oTreeTable */
 
 sap.ui.define([
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/table/CreationRow",
@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/table/RowSettings",
 	"sap/ui/base/Object"
-], function(TableQUnitUtils, qutils, TableUtils, Table, Column, CreationRow, RowAction, TableLibrary, CoreLibrary, Control, RowSettings, BaseObject) {
+], function(TableUtils, TableQUnitUtils, qutils, Table, Column, CreationRow, RowAction, TableLibrary, CoreLibrary, Control, RowSettings, BaseObject) {
 	"use strict";
 
 	// Shortcuts
@@ -32,9 +32,6 @@ sap.ui.define([
 
 	var TestControl = TableQUnitUtils.TestControl;
 	var TestInputControl = TableQUnitUtils.TestInputControl;
-
-	// loading CreationRow indirectly installed the sap.m variant of the TableHelper
-	TableQUnitUtils.setDummyTableHelper();
 
 	QUnit.module("TableUtils", {
 		beforeEach: function() {

@@ -1,15 +1,15 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/CreationRow",
 	"sap/ui/table/Column",
-	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Toolbar"
-], function(CreationRow, Column, TableQUnitUtils, QUnitUtils, KeyCodes, Control, JSONModel, Toolbar) {
+], function(TableQUnitUtils, CreationRow, Column, QUnitUtils, KeyCodes, Control, JSONModel, Toolbar) {
 	"use strict";
 
 	var TestControl = TableQUnitUtils.TestControl;

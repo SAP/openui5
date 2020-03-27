@@ -1,8 +1,8 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/table/ColumnMenu",
@@ -40,7 +40,7 @@ sap.ui.define([
 	"sap/m/MenuItem",
 	"sap/base/Log",
 	"sap/m/library"
-], function(qutils, TableQUnitUtils, Table, Column, ColumnMenu, ColumnMenuRenderer, AnalyticalColumnMenuRenderer, TablePersoController, RowAction,
+], function(TableQUnitUtils, qutils, Table, Column, ColumnMenu, ColumnMenuRenderer, AnalyticalColumnMenuRenderer, TablePersoController, RowAction,
 			RowActionItem, RowSettings, TableUtils, TableLibrary, SelectionPlugin,
 			CoreLibrary, Control, MockServer, PasteHelper, Device, JSONModel, ODataModel, Sorter, Filter, FloatType,
 			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, Menu, MenuItem, MenuM, MenuItemM, Log, MLibrary) {

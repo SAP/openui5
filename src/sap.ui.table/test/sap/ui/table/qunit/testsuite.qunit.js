@@ -88,12 +88,14 @@ sap.ui.define([
 				},
 				sinon: false, /*uses Mockserver*/
 				ui5: {
-					libs: ["sap.ui.table", "sap.m"]
+					// Test has dependencies to sap.ui.unified and sap.m modules
+					libs: ["sap.ui.table", "sap.ui.unified", "sap.m"]
 				}
 			},
 			"Column": {
 				ui5: {
-					libs: ["sap.ui.table", "sap.m"]
+					// Test has dependencies to sap.ui.unified modules
+					libs: ["sap.ui.table", "sap.ui.unified"]
 				}
 			},
 			"Row": {
@@ -103,46 +105,54 @@ sap.ui.define([
 			"RowSettings": {
 			},
 			"CreationRow": {
+				ui5: {
+					// The test and sap.ui.table.CreationRow have dependencies to sap.m modules
+					libs: ["sap.ui.table", "sap.m"]
+				}
 			},
 			"TablePersoController": {
 				ui5: {
+					// sap.ui.table.TablePersoController requires sap.m.TablePersoDialog
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
 			"TreeTable": {
-				ui5: {
-					libs: ["sap.ui.table", "sap.m"]
-				}
 			},
 			"TreeTableOData": {
-				ui5: {
-					libs: ["sap.ui.table", "sap.m"]
-				},
 				sinon: false, /*uses Mockserver*/
 				coverage: {
 					only: null /*full report*/
 				}
 			},
 			"AnalyticalTable": {
-				ui5: {
-					libs: ["sap.ui.table", "sap.m"]
-				}
 			},
 			"TableColumnHeaders": {
-				ui5: {
-					libs: ["sap.ui.table", "sap.m"]
-				}
 			},
-			/*"ControlsUsedInTable": {
+			"ControlsUsedInTable (sap_belize)": {
 				ui5: {
-					libs: ["sap.ui.table", "sap.m"]
-				}
-			},*/
+					// Test has dependencies to sap.ui.unified and sap.m modules
+					libs: ["sap.ui.table", "sap.ui.unified", "sap.m"],
+					theme: "sap_belize"
+				},
+				module: "./ControlsUsedInTable.qunit"
+			},
+			"ControlsUsedInTable (sap_fiori_3)": {
+				ui5: {
+					// Test has dependencies to sap.ui.unified and sap.m modules
+					libs: ["sap.ui.table", "sap.ui.unified", "sap.m"],
+					theme: "sap_fiori_3"
+				},
+				module: "./ControlsUsedInTable.qunit"
+			},
 
 			// Utils
 			"TableUtils": {
 				group: "Utils",
-				module: "./utils/{name}.qunit"
+				module: "./utils/{name}.qunit",
+				ui5: {
+					// Test has indirect dependencies to sap.m modules through sap.ui.table.CreationRow
+					libs: ["sap.ui.table", "sap.m"]
+				}
 			},
 			"ColumnUtils": {
 				group: "Utils",
@@ -156,6 +166,10 @@ sap.ui.define([
 				},
 				sinon: {
 					version: "edge"
+				},
+				ui5: {
+					// Test has dependencies to sap.ui.unified and sap.m modules
+					libs: ["sap.ui.table", "sap/ui/unified", "sap.m"]
 				}
 			},
 			"GroupingUtils": {
@@ -265,13 +279,18 @@ sap.ui.define([
 				module: "./plugins/{name}.qunit",
 				sinon: false, /*uses Mockserver*/
 				ui5: {
+					// sap.ui.table.plugins.MultiSelectionPlugin requires sap.m modules
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
 
 			"Support of external plugins": {
 				group: "Plugins",
-				module: "./plugins/SupportOfExternalPlugins.qunit"
+				module: "./plugins/SupportOfExternalPlugins.qunit",
+				ui5: {
+					// Test has dependencies to sap.m modules
+					libs: ["sap.ui.table", "sap.m"]
+				}
 			}
 		}
 	};

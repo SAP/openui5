@@ -157,7 +157,7 @@ sap.ui.define([
 		return Promise.race([pTimeout, pAction]);
 	};
 
-	var oTableHelper = sap.ui.table.TableHelper = {
+	sap.ui.table.TableHelper = {
 		createLabel: function(mConfig) {
 			return new TestControl(mConfig);
 		},
@@ -721,10 +721,6 @@ sap.ui.define([
 			oTable._getKeyboardExtension()._suspendItemNavigation();
 		};
 	}
-
-	TableQUnitUtils.setDummyTableHelper = function() {
-		sap.ui.table.TableHelper = oTableHelper;
-	};
 
 	TableQUnitUtils.TestControl = TestControl;
 	TableQUnitUtils.TestInputControl = TestInputControl;

@@ -1,14 +1,14 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/Column",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/library"
-], function(qutils, TableQUnitUtils, TreeTable, Column, TableUtils, JSONModel, library) {
+], function(TableQUnitUtils, qutils, TreeTable, Column, TableUtils, JSONModel, library) {
 	"use strict";
 
 	// Shortcuts

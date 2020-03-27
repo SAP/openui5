@@ -1,16 +1,16 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/rowmodes/AutoRowMode",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
-	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device"
-], function(AutoRowMode, Table, Column, RowAction, TableUtils, library, TableQUnitUtils, JSONModel, Device) {
+], function(TableQUnitUtils, AutoRowMode, Table, Column, RowAction, TableUtils, library, JSONModel, Device) {
 	"use strict";
 
 	var VisibleRowCountMode = library.VisibleRowCountMode;

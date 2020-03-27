@@ -1,13 +1,13 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/table/TablePersoController",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
-	"sap/ui/table/TablePersoController",
-	"sap/ui/model/json/JSONModel",
-	"sap/m/Label"
-], function(qutils, Table, Column, TablePersoController, JSONModel, Label) {
+	"sap/ui/model/json/JSONModel"
+], function(TableQUnitUtils, TablePersoController, qutils, Table, Column, JSONModel) {
 	"use strict";
 
 	var oController = null, oTable = null;
@@ -31,9 +31,9 @@ sap.ui.define([
 		mTableSettings.showColumnVisibilityMenu = true;
 		mTableSettings.columns = jQuery.map(oData.cols, function(colname) {
 			var oAggregations = {
-				label: new Label({text: colname}),
+				label: new TableQUnitUtils.TestControl({text: colname}),
 				visible: colname === "Color" ? false : true, // Color column should be invisible by default
-				template: new Label({
+				template: new TableQUnitUtils.TestControl({
 					text: {
 						path: colname.toLowerCase()
 					}
@@ -41,8 +41,8 @@ sap.ui.define([
 			};
 			if (colname !== "Number") {
 				oAggregations.multiLabels = [
-					new Label({text: "First level header"}),
-					new Label({text: colname + " - Second level header"})
+					new TableQUnitUtils.TestControl({text: "First level header"}),
+					new TableQUnitUtils.TestControl({text: colname + " - Second level header"})
 				];
 			}
 			return new Column(colname, oAggregations);

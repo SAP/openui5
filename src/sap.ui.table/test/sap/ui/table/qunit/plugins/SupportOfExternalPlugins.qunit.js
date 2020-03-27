@@ -1,9 +1,10 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/Table",
 	"sap/m/plugins/DataStateIndicator"
-], function(Table, DataStateIndicator) {
+], function(TableQUniUtils, Table, DataStateIndicator) {
 	"use strict";
 
 	QUnit.module("sap.m.DataStateIndicator");
