@@ -186,8 +186,8 @@ span.sapMBtnInner.sapMBtnEmphasized {
 /* ---------------------------------------------------------------------*/
 
 html.sap-desktop .sapMBtn:focus > .sapMFocusable {
-	outline:          0.0625rem dotted @sapUiContentFocusColor;
-	outline-offset:   -0.1875rem;
+	outline:          @sapUiContentFocusWidth dotted @sapUiContentFocusColor;
+	outline-offset:   -0.25rem;
 }
 
 html.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMFocusable {
@@ -228,13 +228,13 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMBtnEmphasized.sapMFocusable
 	border-radius:    0;
 }
 
-.sapMBtnInner.sapMBtnEmphasized{
+.sapMBtnEmphasized{
 	border: 0.125rem solid;
 }
 
 html.sap-desktop .sapMFooter-CTX .sapMBtn:focus .sapMBtnFocusDiv,
 .sapMBtn:focus .sapMBtnFocusDiv {
-	border:           0.0625rem dashed @sapUiContentFocusColor;
+	border:           @sapUiContentFocusWidth dashed @sapUiContentFocusColor;
 }
 
 html.sap-desktop .sapMFooter-CTX .sapMBtn:focus > .sapMBtnActive > .sapMBtnFocusDiv,
@@ -288,7 +288,7 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 
 /* Background and text colors for different states */
 .sapMTB-Info-CTX > .sapUiIcon:focus {
-	outline: 0.0625rem dotted @sapUiContentContrastFocusColor;
+	outline: @sapUiContentFocusWidth dotted @sapUiContentContrastFocusColor;
 }
 
 .sapMBar-CTX,
@@ -302,7 +302,7 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 }
 
 .sap-desktop .sapMIBar-CTX, .sap-desktop .sapMTB-Transparent-CTX {
-	.sapMBtn:not(.sapMBtnDisabled):hover > .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnAttention):not(.sapMBtnReject):not(.sapMBtnActive):not(.sapMBtnGhost):not(.sapMBtnCritical):not(.sapMBtnNegative):not(.sapMBtnNeutral):not(.sapMBtnSuccess) {
+	.sapMBtn:not(.sapMBtnDisabled):hover > .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive):not(.sapMBtnGhost):not(.sapMBtnCritical):not(.sapMBtnNegative):not(.sapMBtnNeutral):not(.sapMBtnSuccess) {
 		border-color: @sapUiButtonHoverBorderColor;
 	}
 }
