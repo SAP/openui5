@@ -3160,7 +3160,7 @@ sap.ui.define([
 				// current section/subsection is inside the view port
 				if (oInfo.positionTop <= iScrollPageBottom && iScrollTop <= oInfo.positionBottom) {
 					// scrolling position is over current section/subsection
-					if (oInfo.positionTop <= iScrollTop && oInfo.positionBottom >= iScrollTop) {
+					if (oInfo.positionTop <= iScrollTop && oInfo.positionBottom > iScrollTop) {
 						sClosestId = sId;
 						return false;
 					}

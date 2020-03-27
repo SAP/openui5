@@ -778,6 +778,14 @@ function (
 			oHhtmBlock,
 			oFirstSection = oObjectPage.getSections()[0],
 			oSecondSection = oObjectPage.getSections()[1],
+			oBlockDomElement,
+			iScrollTopBefore,
+			iScrollTopAfter,
+			iBlockHeightBefore,
+			iBlockHeightAfter,
+			iHeightDiff = 40,
+			oAdjustLayoutSpy = sinon.spy(oObjectPage, "_requestAdjustLayout"),
+			oUpdateSelectionSpy = sinon.spy(oObjectPage, "_updateSelectionOnScroll"),
 			done = assert.async();
 
 		// setup step1: add content with defined height
@@ -789,15 +797,38 @@ function (
 
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
 
-			// Act: change height without invalidating any control => on the the resize handler will be responsible for re-adjusting the selection
-			Core.byId("b1").getDomRef().style.height = "250px";
+			oBlockDomElement = oHhtmBlock.getDomRef();
 
-			setTimeout(function() {
+			iBlockHeightBefore = oBlockDomElement.offsetHeight;
+			iScrollTopBefore = oObjectPage._$opWrapper.scrollTop();
+
+			iBlockHeightAfter = iBlockHeightBefore - iHeightDiff;
+			iScrollTopAfter = iScrollTopBefore - iHeightDiff;
+
+			oAdjustLayoutSpy.reset();
+			oUpdateSelectionSpy.reset();
+
+
+			// Act: change height without invalidating any control => on the the resize handler will be responsible for re-adjusting the selection
+			oBlockDomElement.style.height = iBlockHeightAfter + "px";
+
+			// mock the (1) scroll and (2) resize listeners that will be fired
+			// as a result of the resize of the content:
+			// (1) call the scroll listener synchronously to speed-up the test
+			oObjectPage._onScroll({target: { scrollTop:  iScrollTopAfter }});
+			// (2) call the resize listener synchronously to speed up the test
+			oObjectPage._onUpdateContentSize();
+
+
+			// Check
+			assert.equal(oAdjustLayoutSpy.callCount, 1, "layout adjustment is called");
+			oObjectPage._requestAdjustLayout().then(function() {
+				assert.ok(oUpdateSelectionSpy.called, "update selection is called");
 				assert.equal(oObjectPage.getSelectedSection(), oSecondSection.getId(), "selected section is correct");
 				done();
-			}, this.iLoadingDelay);
+			});
 
-		}.bind(this));
+		});
 
 		helpers.renderObject(oObjectPage);
 	});
