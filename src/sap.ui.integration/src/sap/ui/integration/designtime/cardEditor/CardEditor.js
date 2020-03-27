@@ -99,7 +99,7 @@ sap.ui.define([
 					reject("No Change");
 				}
 
-				mParameters.changeType = "appdescr_card";
+				mParameters.changeType = oCurrentJson.hasOwnProperty("sap.card") ? "appdescr_card" : "appdescr_widget";
 				mParameters.creation = new Date().toISOString();
 				mParameters.generator = "CardEditor";
 				mParameters.selector = {};
