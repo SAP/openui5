@@ -834,10 +834,21 @@ sap.ui.define([
 		 * @private
 		 */
 		ComboBoxBase.prototype._updateSuggestionsPopoverValueState = function() {
-			var oSuggestionsPopover = this._getSuggestionsPopover();
-			if (oSuggestionsPopover) {
-				oSuggestionsPopover.updateValueState(this.getValueState(), this.getValueStateText(), this.getShowValueStateMessage());
+			var oSuggestionsPopover = this._getSuggestionsPopover(),
+				sValueState = this.getValueState(),
+				vValueStateMessage;
+
+			if (!oSuggestionsPopover) {
+				return;
 			}
+
+			if (this._oFormattedValueStateHeader) {
+				vValueStateMessage = this._oFormattedValueStateHeader;
+			} else {
+				vValueStateMessage = this.getValueStateText();
+			}
+
+			oSuggestionsPopover.updateValueState(sValueState, vValueStateMessage, this.getShowValueStateMessage());
 		};
 
 		/**
@@ -871,7 +882,27 @@ sap.ui.define([
 		};
 
 		/**
-		 * Sets whether the value state message should be shown or not
+		 * Sets <code>sap.m.FormattedText</code> value state message and creates
+		 * a cloned object for aggregation of <code>sap.m.ValueStateHeader</code>.
+		 *
+		 * @param {object} [oFormattedValueStateText] The new value state formatted text
+		 * @returns {sap.m.InputBase} this for chaining
+		 *
+		 * @public
+		 */
+		ComboBoxBase.prototype.setFormattedValueStateText = function(oFormattedValueStateText) {
+			ComboBoxTextField.prototype.setFormattedValueStateText.apply(this, arguments);
+
+			if (oFormattedValueStateText) {
+				this._oFormattedValueStateHeader = oFormattedValueStateText.clone();
+			}
+
+			this._updateSuggestionsPopoverValueState();
+			return this;
+		};
+
+		/**
+		 * Sets whether the value state message should be shown or not.
 		 *
 		 * @param {boolean} [bShow] The new value state text
 		 * @returns {sap.m.InputBase} this for chaining
@@ -1133,6 +1164,19 @@ sap.ui.define([
 		 */
 		ComboBoxBase.prototype._getSuggestionsPopover = function() {
 			return this._oSuggestionPopover;
+		};
+
+		/**
+		 *
+		 * @return {array} <code>sap.m.FormattedText</code> links in the value state message
+		 * @private
+		 */
+		ComboBoxBase.prototype.getValueStateLinks = function() {
+			var bHasFormattedTextValueState = this.getPicker() && this.getPicker().getCustomHeader() && typeof this.getPicker().getCustomHeader().getFormattedText === "function",
+				oFormattedTextValueState = bHasFormattedTextValueState && this.getPicker().getCustomHeader().getFormattedText(),
+				aValueStateLinks = oFormattedTextValueState && oFormattedTextValueState.getControls();
+
+			return aValueStateLinks || [];
 		};
 
 		/**

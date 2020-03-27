@@ -9,6 +9,8 @@ sap.ui.define([
 	"sap/m/Select",
 	"sap/m/StandardListItem",
 	"sap/m/GroupHeaderListItem",
+	"sap/m/Link",
+	"sap/m/FormattedText",
 	"sap/ui/core/Item",
 	"sap/ui/core/ListItem",
 	"sap/ui/core/SeparatorItem",
@@ -45,6 +47,8 @@ sap.ui.define([
 	Select,
 	StandardListItem,
 	GroupHeaderListItem,
+	Link,
+	FormattedText,
 	Item,
 	ListItem,
 	SeparatorItem,
@@ -3857,6 +3861,7 @@ sap.ui.define([
 		// Cleanup
 		oErrorComboBox.destroy();
 	});
+
 
 	QUnit.module("destroy()");
 
@@ -12814,4 +12819,157 @@ sap.ui.define([
 		// clean up
 		oComboBox.destroy();
 	});
+
+	QUnit.module("setFormattedValueStateText()", {
+		beforeEach: function () {
+			this.oFormattedValueStateText = new FormattedText({
+				htmlText: "Value state message containing a %%0",
+				controls: new Link({
+					text: "link",
+					href: "#"
+				})
+			});
+
+			this.oErrorComboBox = new ComboBox("error-combobox", {
+				valueState: "Error",
+				formattedValueStateText: this.oFormattedValueStateText,
+				items: [
+					new Item({
+						key: "DZ",
+						text: "Algeria"
+					}),
+					new Item({
+						key: "GER",
+						text: "Germany"
+					}),
+					new Item({
+						key: "CU",
+						text: "Cuba"
+					})
+				]
+			});
+
+			this.oErrorComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oErrorComboBox.destroy();
+			this.oErrorComboBox = null;
+			this.oFormattedValueStateText = null;
+		}
+	});
+
+	QUnit.test("Value state message and value state header with sap.m.FormattedText", function (assert) {
+		// Arrange
+		var oFormattedValueStateText;
+
+		// Act
+		this.oErrorComboBox.focus();
+		this.clock.tick();
+
+		assert.strictEqual(document.querySelector("#" + this.oErrorComboBox.getValueStateMessageId() + " div").textContent, "Value state message containing a link", "Formatted text value state message popup is displayed on focus");
+		assert.strictEqual(document.querySelectorAll("#" + this.oErrorComboBox.getValueStateMessageId() + " a").length, 1, "Value state message link is rendered");
+
+		// Act
+		this.oErrorComboBox.open();
+
+		oFormattedValueStateText = this.oErrorComboBox._oSuggestionPopover._oValueStateHeader.getFormattedText();
+
+		// Assert
+		assert.strictEqual(oFormattedValueStateText.$().text(), "Value state message containing a link", "Formatted text value state message containing a link is displayed in the suggestion popover");
+		assert.strictEqual(document.querySelectorAll("#" + oFormattedValueStateText.getId() + " a").length, 1, "Value state message link in suggestion popover header is displayed");
+	});
+
+	QUnit.test("Arrow up when the first item is selected should place visible pseudo focus on value state header", function (assert) {
+		// Arrange
+		this.stub(Device, "browser", {
+			msie: false
+		});
+
+		var oFakeEvent = {
+			getEnabled: function () { return true; },
+			setMarked: function () { },
+			srcControl: this.oErrorComboBox,
+			preventDefault: function() { return false; }
+		};
+
+		// Act
+		this.oErrorComboBox.focus();
+		this.clock.tick();
+
+		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.ARROW_DOWN, false, true);
+		this.oErrorComboBox.onsapup(oFakeEvent);
+
+		// Assert
+		assert.ok(this.oErrorComboBox.getPicker().getCustomHeader().$().hasClass("sapMPseudoFocus"), "Pseudo focus is on value state header");
+		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), this.oErrorComboBox.getPicker().getCustomHeader().getFormattedText().getId(), "Area attribute of input is the ID of the formatted value state text");
+	});
+
+	QUnit.test("Arrow up when the first item is selected should place visible pseudo focus on the formatted text value state message DOM on IE", function (assert) {
+		this.stub(Device, "browser", {
+			msie: true
+		});
+
+		// Arrange
+		var oFakeEvent = {
+			getEnabled: function () { return true; },
+			setMarked: function () { },
+			srcControl: this.oErrorComboBox,
+			preventDefault: function() { return false; }
+		};
+
+		// Act
+		this.oErrorComboBox.focus();
+		this.clock.tick();
+
+		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.ARROW_DOWN, false, true);
+		this.oErrorComboBox.onsapup(oFakeEvent);
+		this.clock.tick();
+
+		// Assert
+		assert.ok(this.oErrorComboBox.getPicker().getCustomHeader().getFormattedText().$().hasClass("sapMPseudoFocus"), "Pseudo focus is on formatted text value state message");
+		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), this.oErrorComboBox.getPicker().getCustomHeader().getFormattedText().getId(), "Area attribute of input is the ID of the formatted value state text");
+	});
+
+	QUnit.test("Arrow down when the formatted state value text is selected should set the first item", function (assert) {
+		// Arrange
+		var oFakeEvent = {
+			getEnabled: function () { return true; },
+			setMarked: function () { },
+			srcControl: this.oErrorComboBox,
+			preventDefault: function() { return false; }
+		};
+
+		// Act
+		this.oErrorComboBox.focus();
+		this.clock.tick();
+
+		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.ARROW_DOWN, false, true);
+		this.oErrorComboBox.onsapup(oFakeEvent);
+		this.oErrorComboBox.onsapdown(oFakeEvent);
+
+		// Assert
+		assert.ok(this.oErrorComboBox.getListItem(this.oErrorComboBox.getItems()[0]).$().hasClass("sapMLIBFocused"), "The visual pseudo focus is on the first item");
+		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), this.oErrorComboBox.getListItem(this.oErrorComboBox.getItems()[0]).getId(), "Area attribute of input is the ID of the formatted value state text");
+	});
+
+	QUnit.test("Arrow down when the visible focus is on the input should move it to the first suggested item", function (assert) {
+		// Arrange
+		var oFakeEvent = {
+			getEnabled: function () { return true; },
+			setMarked: function () { },
+			srcControl: this.oErrorComboBox,
+			preventDefault: function() { return false; }
+		};
+
+		// Act
+		this.oErrorComboBox.open();
+		this.oErrorComboBox.onsapdown(oFakeEvent);
+		this.clock.tick();
+
+		// Assert
+		assert.ok(this.oErrorComboBox.getListItem(this.oErrorComboBox.getItems()[0]).$().hasClass("sapMLIBFocused"), "The visual pseudo focus is on the first item");
+		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"),this.oErrorComboBox.getListItem(this.oErrorComboBox.getItems()[0]).getId(), "Area attribute of input is the ID of the formatted value state text");
+	});
+
 });

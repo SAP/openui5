@@ -669,6 +669,47 @@
 			}
 		});
 
+		var oComboBoxWithFormattedValueStateText  = new sap.m.ComboBox("box_formattedValueState",{
+			placeholder: "Choose your country",
+			valueState: "Warning",
+			formattedValueStateText: new sap.m.FormattedText({
+				htmlText: "Warning value state message with formatted text containing %%0",
+				controls: [new sap.m.Link({
+					text: "link",
+					href: "#",
+					target: "_blank"
+				})]
+			}),
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
+		var oComboBoxWithValueStateTextMultipleLinks  = new sap.m.ComboBox("box_formattedValueStateErr",{
+			placeholder: "Choose your country",
+			valueState: "Error",
+			formattedValueStateText: new sap.m.FormattedText({
+				htmlText: "Warning value state message with formatted text containing %%0 and a %%1",
+				controls: [
+					new sap.m.Link({
+						text: "link",
+						href: "#",
+						target: "_blank"
+					}),
+					new sap.m.Link({
+						text: "second link",
+						href: "#",
+						target: "_blank"
+					})
+				]
+			}),
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
 		var oComboBoxDisabled  = new sap.m.ComboBox("box_disabled",{
 			enabled: false,
 			placeholder: "Choose your country",
@@ -869,6 +910,14 @@
 
 				new sap.ui.core.HTML({ content: "<h3>Long value state message</h3>" }),
 				oComboBoxWithLongValueStateText,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Formatted value state message</h3>" }),
+				oComboBoxWithFormattedValueStateText,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Formatted value state message with multiple links</h3>" }),
+				oComboBoxWithValueStateTextMultipleLinks,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
 				new sap.ui.core.HTML("title_error",{ content: "<h3>Error state</h3>" }),
