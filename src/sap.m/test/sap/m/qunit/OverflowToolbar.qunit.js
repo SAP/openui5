@@ -582,11 +582,39 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oOverflowTB._getOverflowButton().$().is(":visible"), false, "The overflow button is not visible");
-		assert.strictEqual(oOverflowTB._hasControlsToBeShownInPopover(), false, "_hasControlsToBeShownInPopover returns false");
 
 		// Clean up
 		oOverflowTB.destroy();
 	});
+
+	QUnit.test("When there is not enough space for a button with 'Disapear' priority, the overflow button should not be shown",
+		function (assert) {
+			// Arrange
+			var aDefaultContent = [
+						getButton('1'),
+						getButton('2', OverflowToolbarPriority.Disappear)
+					],
+					oOverflowTB = createOverflowToolbar({
+						width: "180px"
+					}, aDefaultContent);
+
+			// Assert
+			assert.strictEqual(oOverflowTB._getOverflowButton().$().is(":visible"), false, "The overflow button is not visible");
+			assert.strictEqual(oOverflowTB._iCurrentContentSize, oOverflowTB.getContent()[0].$().outerWidth(true),
+				"The width of the overflow button is not included in the current content size of the OFT, when it is not visible");
+
+			// Act
+			oOverflowTB.addContent(getButton('3'));
+			this.clock.tick(1000);
+
+			// Assert
+			assert.ok(oOverflowTB._getOverflowButton().$().is(":visible"), "The overflow button is visible");
+			assert.strictEqual(oOverflowTB._iCurrentContentSize, oOverflowTB.getContent()[0].$().outerWidth(true) + oOverflowTB._iOverflowToolbarButtonSize,
+				"The width of the overflow button is included in the current content size of the OFT, when it is visible");
+
+			// Clean up
+			oOverflowTB.destroy();
+		});
 
 	QUnit.test("Changing piority from Low to High should move the button from the overflow area back to the toolbar", function (assert) {
 
