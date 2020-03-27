@@ -2,9 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/Table",
-	"sap/ui/table/TreeTable",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
 	"sap/ui/table/rowmodes/FixedRowMode",
@@ -18,7 +16,7 @@ sap.ui.define([
 	"sap/ui/model/Context",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/thirdparty/jquery"
-], function(TableQUnitUtils, qutils, Table, TreeTable, RowAction, RowActionItem, FixedRowMode, AutoRowMode, TableUtils, Device, tableLibrary, Column,
+], function(TableQUnitUtils, Table, RowAction, RowActionItem, FixedRowMode, AutoRowMode, TableUtils, Device, tableLibrary, Column,
 			Control, JSONModel, Context, ChangeReason, jQuery) {
 	"use strict";
 

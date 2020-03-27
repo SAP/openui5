@@ -2,14 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Column",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/Table",
 	"sap/ui/table/library",
 	"sap/ui/core/library"
-], function(TableQUnitUtils, qutils, TableUtils, Column, JSONModel, Table, tableLibrary, coreLibrary) {
+], function(TableQUnitUtils, TableUtils, Column, JSONModel, Table, tableLibrary, coreLibrary) {
 	"use strict";
 
 	var TestControl = TableQUnitUtils.TestControl;

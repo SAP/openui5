@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/AnalyticalTable",
 	"sap/ui/table/utils/TableUtils",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/qunit/analytics/o4aMetadata",
@@ -17,7 +16,7 @@ sap.ui.define([
 	"sap/ui/table/Row",
 	"sap/ui/table/library",
 	"sap/ui/core/TooltipBase"
-], function(TableQUnitUtils, AnalyticalTable, TableUtils, qutils, ODataModel, ODataModelV2,
+], function(TableQUnitUtils, AnalyticalTable, TableUtils, ODataModel, ODataModelV2,
 			o4aFakeService, TBA_ServiceDocument, ATBA_Batch_Contexts, ODataModelAdapter, AnalyticalTreeBindingAdapter,
 			TreeAutoExpandMode, AnalyticalColumn, FloatType, Row, library, TooltipBase) {
 	/*global QUnit,sinon*/

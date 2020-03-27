@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/table/Column",
@@ -11,7 +10,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
 	"sap/ui/core/library"
-], function(TableQUnitUtils, qutils, TableUtils, ManagedObject, Column, RowSettings, Library, JSONModel, Device, coreLibrary) {
+], function(TableQUnitUtils, TableUtils, ManagedObject, Column, RowSettings, Library, JSONModel, Device, coreLibrary) {
 	"use strict";
 
 	var SelectionMode = Library.SelectionMode;
