@@ -1463,4 +1463,70 @@ sap.ui.define([
 			assert.strictEqual(fnFireSelectSpy.args[0][0].clearButtonPressed, true, 'Search event is fired with the correct clearButtonPressed value');
 		});
 	});
+
+	QUnit.module("Search", {
+		beforeEach: function() {
+
+			 var _handleValueHelpSearch =  function (evt) {
+				var sValue = evt.getParameter("value");
+				var oFilter = new Filter(
+					"Title",
+					FilterOperator.Contains,
+					sValue
+				);
+				evt.getSource().getBinding("items").filter([oFilter]);
+			};
+			// arrange
+			this.oSelectDialog = new SelectDialog("clearButtonSelectDialog1", {
+				title: "Very title",
+				multiSelect : true,
+				rememberSelections: true,
+				contentWidth: "200px",
+				search: _handleValueHelpSearch
+			});
+
+			bindItems(this.oSelectDialog, { oData: {
+				items : [
+					{
+						Title : "Title1",
+						Description: "Description4",
+						Selected: true
+					}, {
+						Title : "Test",
+						Description: "Description4",
+						Selected: false
+					}, {
+						Title : "Title3",
+						Description: "Description4",
+						Selected: false
+					}
+				]
+			}, path: "/items", template: createTemplateListItem() });
+		}, afterEach: function() {
+			// cleanup
+			this.oSelectDialog.destroy();
+		}
+	});
+
+	QUnit.test("Selected items after search have to be all the selected items", function (assert) {
+		// Arrange
+		var that = this,
+			done = assert.async();
+
+		this.oSelectDialog.attachConfirm(function (oEvent) {
+			var aSelectedItems = oEvent.getParameter("selectedItems");
+
+			assert.strictEqual(aSelectedItems.length, 2, '2 items where selected');
+			done();
+		});
+
+		jQuery.when(this.oSelectDialog.open()).then(function () {
+			// Act
+			that.oSelectDialog._executeSearch("Tes", false, "search");
+			that.oSelectDialog.getItems()[0].setSelected(true);
+			that.oSelectDialog._getOkButton().firePress();
+		});
+
+
+	});
 });
