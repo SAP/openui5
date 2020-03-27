@@ -52,7 +52,7 @@ sap.ui.define(['sap/ui/performance/trace/Passport'], function(Passport) {
 
 	QUnit.test("getTransactionId", function(assert) {
 		var oReq = new XMLHttpRequest();
-		oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
+		oReq.open("GET", "../../../../../resources/ui5loader.js?noCache=" + Date.now(), false);
 		var sTransactionId1 = Passport.getTransactionId();
 
 		assert.equal(typeof Passport.getTransactionId(), "string", "Returns a string");
@@ -60,7 +60,7 @@ sap.ui.define(['sap/ui/performance/trace/Passport'], function(Passport) {
 		assert.strictEqual(Passport.getTransactionId(), Passport.getTransactionId(), "RootID is stable");
 
 		oReq = new XMLHttpRequest();
-		oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
+		oReq.open("GET", "../../../../../resources/ui5loader.js?noCache=" + Date.now(), false);
 		var sTransactionId2 = Passport.getTransactionId();
 
 		assert.notEqual(sTransactionId1, sTransactionId2, "TransactionID gets updated per request");
@@ -70,7 +70,7 @@ sap.ui.define(['sap/ui/performance/trace/Passport'], function(Passport) {
 		var spy = sinon.spy(window.XMLHttpRequest.prototype, "setRequestHeader");
 
 		var oReq = new XMLHttpRequest();
-		oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
+		oReq.open("GET", "../../../../../resources/ui5loader.js?noCache=" + Date.now(), false);
 
 		assert.ok(spy.calledWith("SAP-PASSPORT"), "Request header should be set");
 

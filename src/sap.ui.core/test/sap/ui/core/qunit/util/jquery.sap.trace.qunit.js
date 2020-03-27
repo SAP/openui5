@@ -48,14 +48,14 @@ sap.ui.define([
 		jQuery.sap.interaction.notifyStepStart(null, true);
 		var oReq = new XMLHttpRequest();
 		// first request without FESR header
-		oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+		oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 		oReq.send();
 		jQuery.sap.interaction.notifyStepEnd();
 		jQuery.sap.interaction.notifyStepStart(null, true);
 		spy = this.spy(window.XMLHttpRequest.prototype, "setRequestHeader");
 		oReq = new XMLHttpRequest();
 		// second request with FESR header belonging to first interaction
-		oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+		oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 		oReq.send();
 		jQuery.sap.interaction.notifyStepEnd();
 		// assertions
@@ -71,7 +71,7 @@ sap.ui.define([
 		jQuery.sap.passport.setActive(true);
 		var spy = this.spy(window.XMLHttpRequest.prototype, "setRequestHeader");
 		var oReq = new XMLHttpRequest();
-		oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+		oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 		oReq.send();
 		// assertions
 		sinon.assert.calledWith(spy, "SAP-PASSPORT");
@@ -85,7 +85,7 @@ sap.ui.define([
 		jQuery.sap.interaction.notifyStepStart(null, true);
 		var oReq = new XMLHttpRequest();
 		// first request without FESR header
-		oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+		oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 		oReq.setRequestHeader("test","test");
 		oReq.send();
 		jQuery.sap.interaction.notifyStepEnd();
@@ -108,7 +108,7 @@ sap.ui.define([
 		jQuery.sap.passport.setActive(true);
 		var spy = this.spy(window.XMLHttpRequest.prototype, "setRequestHeader");
 		var oReq = new XMLHttpRequest();
-		oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+		oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 		oReq.send();
 		// assertions
 		assert.ok((spy.args[0][1].length === 608) || (spy.args[0][1].length === 460), "SAP PP header length " + Math.floor(spy.args[0][1].length / 2) + " is compliant");
@@ -141,13 +141,13 @@ sap.ui.define([
 				jQuery.sap.interaction.notifyStepStart(null, true);
 				this.oReq = new XMLHttpRequest();
 				// first request without FESR header
-				this.oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+				this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 				this.oReq.send();
 				jQuery.sap.interaction.notifyStepEnd();
 				jQuery.sap.interaction.notifyStepStart(null, true);
 				this.oReq = new XMLHttpRequest();
 				// second request with FESR header belonging to first interaction
-				this.oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+				this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 				this.oReq.send();
 				jQuery.sap.interaction.notifyStepEnd();
 			};
@@ -322,13 +322,13 @@ sap.ui.define([
 			jQuery.sap.interaction.notifyStepStart(null, true);
 			this.oReq = new XMLHttpRequest();
 			// first request without FESR header
-			this.oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+			this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 			this.oReq.send();
 			jQuery.sap.interaction.notifyStepEnd();
 			jQuery.sap.interaction.notifyStepStart(null, true);
 			this.oReq = new XMLHttpRequest();
 			// second request with FESR header belonging to first interaction
-			this.oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+			this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 			this.oReq.send();
 		}, afterEach: function() {
 			jQuery.sap.interaction.notifyStepEnd();
@@ -349,7 +349,7 @@ sap.ui.define([
 
 		var oReq = new XMLHttpRequest();
 		var spy = this.spy(oReq, "setRequestHeader");
-		oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now());
+		oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now());
 		oReq.send();
 		var iBusyDurationRequest = parseInt(getHeaderContent(spy.args, "SAP-Perf-FESRec-opt").split(",")[14]);
 		assert.ok(iBusyDurationRequest + 1 >= oMeasurement.busyDuration && iBusyDurationRequest - 1 <= oMeasurement.busyDuration,
@@ -372,7 +372,7 @@ sap.ui.define([
 
 			var oReq = new XMLHttpRequest();
 			var spy = fnSpy(oReq, "setRequestHeader");
-			oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now());
+			oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now());
 			oReq.send();
 			var iBusyDurationRequest = parseInt(getHeaderContent(spy.args, "SAP-Perf-FESRec-opt").split(",")[14]);
 			assert.ok(iBusyDurationRequest + 1 >= oMeasurement.busyDuration && iBusyDurationRequest - 1 <= oMeasurement.busyDuration,
@@ -388,13 +388,13 @@ sap.ui.define([
 			jQuery.sap.interaction.notifyStepStart(null, true);
 			this.oReq = new XMLHttpRequest();
 			// first request without FESR header
-			this.oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+			this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 			this.oReq.send();
 			jQuery.sap.interaction.notifyStepEnd();
 			jQuery.sap.interaction.notifyStepStart(null, true);
 			this.oReq = new XMLHttpRequest();
 			// second request with FESR header belonging to first interaction
-			this.oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+			this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 			this.oReq.send();
 			jQuery.sap.interaction.notifyStepEnd();
 		}, afterEach: function() {
@@ -417,7 +417,7 @@ sap.ui.define([
 		var fnSpy = this.spy;
 		var done = assert.async();
 		var oReq = new XMLHttpRequest();
-		oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+		oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 		oReq.send();
 
 		// we need to use the timeout here, as the request-timing is not found otherwise
@@ -431,7 +431,7 @@ sap.ui.define([
 
 			oReq = new XMLHttpRequest();
 			var spy = fnSpy(oReq, "setRequestHeader");
-			oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+			oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 			oReq.send();
 
 			var aHeaderValues = getHeaderContent(spy.args, "SAP-Perf-FESRec-opt").split(",");

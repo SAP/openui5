@@ -14,7 +14,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		},
 		dummyRequest: function() {
 			var xhr = new XMLHttpRequest();
-			xhr.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now() + "-" + (++requestCounter), false);
+			xhr.open("GET", "resources/ui5loader.js?noCache=" + Date.now() + "-" + (++requestCounter), false);
 			xhr.send();
 			return xhr;
 		}

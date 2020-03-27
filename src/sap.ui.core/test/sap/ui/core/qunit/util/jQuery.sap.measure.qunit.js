@@ -467,7 +467,7 @@ sap.ui.define([
 	QUnit[sMethod]("Performance API depending measures", function(assert) {
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		var oReq = new XMLHttpRequest();
-		oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+		oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 		oReq.send();
 		jQuery.sap.measure.endInteraction(true);
 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
@@ -486,7 +486,7 @@ sap.ui.define([
 	QUnit[sMethod]("Request depending measures", function(assert) {
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		var oReq = new XMLHttpRequest();
-		oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
+		oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 		oReq.send();
 		jQuery.sap.measure.endInteraction(true);
 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
