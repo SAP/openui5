@@ -230,7 +230,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 	CalendarRowRenderer.writeCustomAttributes = function (oRm, oRow) {
 	};
 
-	CalendarRowRenderer.renderInterval = function(oRm, oRow, iInterval, iWidth,  aIntervalHeaders, aNonWorkingItems, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax, bFirstOfType, bLastOfType){
+	CalendarRowRenderer.renderInterval = function(oRm, oRow, iInterval, iWidth,  aIntervalHeaders, aNonWorkingItems, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax, bFirstOfType, bLastOfType, sAdditionalNonWorkingClass){
 
 		var sId = oRow.getId() + "-AppsInt" + iInterval;
 		var i;
@@ -240,6 +240,9 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 
 		oRm.openStart("div", sId);
 		oRm.class("sapUiCalendarRowAppsInt");
+		if (sAdditionalNonWorkingClass) {
+			oRm.class(sAdditionalNonWorkingClass);
+		}
 		oRm.style("width", iWidth + "%");
 
 		if (iInterval >= iDaysLength && oRow.getIntervalType() === CalendarIntervalType.OneMonth){
