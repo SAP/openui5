@@ -19,7 +19,7 @@ sap.ui.define([
 
 		initSampleProductsModel: function() {
 			var oData = jQuery.sap.sjax({
-				url: sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json",
+				url: sap.ui.require.toUrl("sap/ui/demo/mock/products.json"),
 				dataType: "json"
 			}).data;
 

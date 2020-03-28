@@ -54,11 +54,11 @@ sap.ui.define([
 	// error
 	QUnit.test("Error in template - no default aggregation defined", function(assert) {
 		var sXml = [
-				'<core:View xmlns:core="sap.ui.core" xmlns:m="sap.m" xmlns="http://www.w3.org/1999/xhtml">',
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">',
 				'	<m:Button>',
 				'		<m:Error/>',
 				'	</m:Button>',
-				'</core:View>'
+				'</mvc:View>'
 			].join(''),
 			sError = "Cannot add direct child without default aggregation defined for control sap.m.Button";
 		var sId = "erroneous_view_1";
@@ -71,11 +71,11 @@ sap.ui.define([
 
 	QUnit.test("Error in template - text in aggregation", function(assert) {
 		var sXml = [
-			'<core:View xmlns:core="sap.ui.core" xmlns:m="sap.m" xmlns="http://www.w3.org/1999/xhtml">',
+			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">',
 			'	<m:Button>',
 			'		Error',
 			'	</m:Button>',
-			'</core:View>'
+			'</mvc:View>'
 			].join(''),
 			sError = "Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: Error";
 		var sId = "erroneous_view_2";
@@ -88,8 +88,8 @@ sap.ui.define([
 
 	QUnit.test("Error in controller", function(assert) {
 		var sXml = [
-				'<core:View controllerName="example.mvc.test.error" xmlns:core="sap.ui.core">',
-				'</core:View>'
+				'<mvc:View controllerName="example.mvc.test.error" xmlns:mvc="sap.ui.core.mvc">',
+				'</mvc:View>'
 			].join('');
 		var sId = "erroneous_view_3";
 
@@ -127,9 +127,9 @@ sap.ui.define([
 			});
 
 			var xmlWithBindings = [
-				'<core:View xmlns:core="sap.ui.core" xmlns:m="sap.m">',
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">',
 				'  <m:Button id="btn" enabled="{/booleanValue}" text="{/stringValue}" width="{/integerValue}" />',
-				'</core:View>'
+				'</mvc:View>'
 			].join('');
 
 			XMLView.create({definition:xmlWithBindings}).then(function (oViewWithBindings1) {

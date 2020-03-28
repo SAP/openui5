@@ -1,11 +1,10 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/m/TablePersoController',
 		'./DemoPersoService',
 		'./Formatter',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, TablePersoController, DemoPersoService, Formatter, Controller, JSONModel) {
+	], function(TablePersoController, DemoPersoService, Formatter, Controller, JSONModel) {
 	"use strict";
 
 	var TableController = Controller.extend("sap.m.sample.TablePerso.Table", {
@@ -13,7 +12,7 @@ sap.ui.define([
 		onInit: function () {
 
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			var oGroupingModel = new JSONModel({ hasGrouping: false});
 			this.getView().setModel(oModel);
 			this.getView().setModel(oGroupingModel, 'Grouping');

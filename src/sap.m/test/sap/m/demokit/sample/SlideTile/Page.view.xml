@@ -1,5 +1,5 @@
-<core:View controllerName="sap.m.sample.SlideTile.Page"
-	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout">
+<mvc:View controllerName="sap.m.sample.SlideTile.Page"
+	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:l="sap.ui.layout">
 	<l:VerticalLayout>
 		<SlideTile class="sapUiTinyMarginBegin sapUiTinyMarginTop">
 			<GenericTile
@@ -42,4 +42,4 @@
 			</GenericTile>
 		</SlideTile>
 	</l:VerticalLayout>
-</core:View>
+</mvc:View>

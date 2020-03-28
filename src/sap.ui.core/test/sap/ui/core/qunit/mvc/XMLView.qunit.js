@@ -49,7 +49,7 @@ sap.ui.define([
 	// run the full testset for a view created from a string
 	testsuite(oConfig, "XMLView creation via XML string", function() {
 		// load the XML without parsing
-		var xml = jQuery.sap.syncGetText(sap.ui.require.toUrl("example/mvc/test.view.xml"), null, undefined); // '<core:View controllerName="example.mvc.test" xmlns:phx="sap.ui.commons" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml">	<table id="localTableId" border="5">		<tr><td>Hello</td><td>Hello</td><td>Hello</td></tr>		<tr><td>Hello</td><td>Hello</td><td><phx:Button id="Button1" text="HEY!" press="doIt"></phx:Button></td></tr>	</table>	plain text node as direct child of view	<phx:Panel>		<phx:Button id="Button2" text="HEY default aggregation!" tooltip="hello tooltip" press="doIt"></phx:Button>		<div style="border:1px solid red;background-color:yellow;width:200px;height:10px;">text node in nested HTML in default aggregation</div>		<phx:content>			<div style="border:1px solid red;background-color:blue;width:200px;height:10px;">text node in HTML in named aggregation</div>			<phx:Button id="Button3" text="HEY named aggregation!" press="doIt"></phx:Button>			<mvc:JSONView id="MyJSONView" viewName="example.mvc.test2"></mvc:JSONView>			<mvc:JSView id="MyJSView" viewName="example.mvc.test2"></mvc:JSView>		</phx:content>	</phx:Panel></core:View>';
+		var xml = jQuery.sap.syncGetText(sap.ui.require.toUrl("example/mvc/test.view.xml"), null, undefined);
 		// let the XMLView parse it
 		return sap.ui.xmlview({viewContent:xml});
 	});
@@ -57,7 +57,7 @@ sap.ui.define([
 	// run the full testset for a view created from a XML document
 	testsuite(oConfig, "XMLView creation via XML document", function() {
 		// load the XML without parsing
-		var xml = jQuery.sap.syncGetText(sap.ui.require.toUrl("example/mvc/test.view.xml"), null, undefined); // '<core:View controllerName="example.mvc.test" xmlns:phx="sap.ui.commons" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml">	<table id="localTableId" border="5">		<tr><td>Hello</td><td>Hello</td><td>Hello</td></tr>		<tr><td>Hello</td><td>Hello</td><td><phx:Button id="Button1" text="HEY!" press="doIt"></phx:Button></td></tr>	</table>	plain text node as direct child of view	<phx:Panel>		<phx:Button id="Button2" text="HEY default aggregation!" tooltip="hello tooltip" press="doIt"></phx:Button>		<div style="border:1px solid red;background-color:yellow;width:200px;height:10px;">text node in nested HTML in default aggregation</div>		<phx:content>			<div style="border:1px solid red;background-color:blue;width:200px;height:10px;">text node in HTML in named aggregation</div>			<phx:Button id="Button3" text="HEY named aggregation!" press="doIt"></phx:Button>			<mvc:JSONView id="MyJSONView" viewName="example.mvc.test2"></mvc:JSONView>			<mvc:JSView id="MyJSView" viewName="example.mvc.test2"></mvc:JSView>		</phx:content>	</phx:Panel></core:View>';
+		var xml = jQuery.sap.syncGetText(sap.ui.require.toUrl("example/mvc/test.view.xml"), null, undefined);
 		// parse it and pass the XML document
 		return sap.ui.xmlview({
 			viewContent: jQuery.sap.parseXML(xml)
@@ -67,7 +67,7 @@ sap.ui.define([
 	// run the full testset for a view created from a XML document
 	testsuite(oConfig, "XMLView creation via XML node", function() {
 		// load the XML without parsing
-		var xml = jQuery.sap.syncGetText(sap.ui.require.toUrl("example/mvc/test.view.xml"), null, undefined); // '<core:View controllerName="example.mvc.test" xmlns:phx="sap.ui.commons" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml">	<table id="localTableId" border="5">		<tr><td>Hello</td><td>Hello</td><td>Hello</td></tr>		<tr><td>Hello</td><td>Hello</td><td><phx:Button id="Button1" text="HEY!" press="doIt"></phx:Button></td></tr>	</table>	plain text node as direct child of view	<phx:Panel>		<phx:Button id="Button2" text="HEY default aggregation!" tooltip="hello tooltip" press="doIt"></phx:Button>		<div style="border:1px solid red;background-color:yellow;width:200px;height:10px;">text node in nested HTML in default aggregation</div>		<phx:content>			<div style="border:1px solid red;background-color:blue;width:200px;height:10px;">text node in HTML in named aggregation</div>			<phx:Button id="Button3" text="HEY named aggregation!" press="doIt"></phx:Button>			<mvc:JSONView id="MyJSONView" viewName="example.mvc.test2"></mvc:JSONView>			<mvc:JSView id="MyJSView" viewName="example.mvc.test2"></mvc:JSView>		</phx:content>	</phx:Panel></core:View>';
+		var xml = jQuery.sap.syncGetText(sap.ui.require.toUrl("example/mvc/test.view.xml"), null, undefined);
 		// parse it and pass the XML document
 		return sap.ui.xmlview({
 			xmlNode: jQuery.sap.parseXML(xml).documentElement
@@ -519,11 +519,11 @@ sap.ui.define([
 	// error
 	QUnit.test("Error in template - no default aggregation defined", function(assert) {
 		var sXml = [
-				'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib" xmlns="http://www.w3.org/1999/xhtml">',
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns="http://www.w3.org/1999/xhtml">',
 				'	<test:TestButton>',
 				'		<test:Error/>',
 				'	</test:TestButton>',
-				'</core:View>'
+				'</mvc:View>'
 			].join(''),
 			sError = "Cannot add direct child without default aggregation defined for control sap.ui.testlib.TestButton";
 
@@ -534,11 +534,11 @@ sap.ui.define([
 
 	QUnit.test("Error in template - text in aggregation", function(assert) {
 		var sXml = [
-				'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib" xmlns="http://www.w3.org/1999/xhtml">',
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns="http://www.w3.org/1999/xhtml">',
 				'	<test:TestButton>',
 				'		Error',
 				'	</test:TestButton>',
-				'</core:View>'
+				'</mvc:View>'
 			].join(''),
 			sError = "Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: Error";
 
@@ -549,8 +549,8 @@ sap.ui.define([
 
 	QUnit.test("Error in controller", function(assert) {
 		var sXml = [
-				'<core:View controllerName="example.mvc.test.error" xmlns:core="sap.ui.core">',
-				'</core:View>'
+				'<mvc:View controllerName="example.mvc.test.error" xmlns:mvc="sap.ui.core.mvc">',
+				'</mvc:View>'
 			].join('');
 
 		// define erroneous controller
@@ -568,14 +568,14 @@ sap.ui.define([
 	QUnit.test("Encoding", function(assert) {
 
 		var xmlWithHTMLFragment = [
-			'<core:View xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml">',
+			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="http://www.w3.org/1999/xhtml">',
 			'  <div title="&quot;&gt;&lt;span id=&quot;broken1&quot;&gt;broken1&lt;/span&gt;&lt;x y=&quot;">',
 			'    <span id="valid1"></span>',
 			'    <span id="valid2">',
 			'      &lt;span id=&quot;broken2&quot;&gt;broken2&lt;/span&gt;',
 			'    </span>',
 			'  </div>',
-			'</core:View>'
+			'</mvc:View>'
 		].join('');
 
 		var view = sap.ui.xmlview("view", {viewContent:xmlWithHTMLFragment});
@@ -608,30 +608,30 @@ sap.ui.define([
 		});
 
 		var xmlWithBindings = [
-			'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib">',
+			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib">',
 			'  <test:TestButton id="btn" enabled="{/booleanValue}" text="{/stringValue}" width="{/integerValue}" />',
-			'</core:View>'
+			'</mvc:View>'
 		].join('');
 
 		var xmlWithNamedBindings = [
-			'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib">',
+			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib">',
 			'  <test:TestButton id="btn" enabled="{model2>/booleanValue}" text="{model1>/stringValue}" width="{/integerValue}" />',
-			'</core:View>'
+			'</mvc:View>'
 		].join('');
 
 		var xmlWithElementBinding = [
-			'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib">',
+			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib">',
 			'  <test:TestButton id="btn" binding="{/data}" enabled="{booleanValue}" text="{stringValue}" width="{integerValue}" />',
-			'</core:View>'
+			'</mvc:View>'
 		].join('');
 
 		var xmlWithoutBindings = [
-			'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib">',
+			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib">',
 			'  <test:TestButton id="btn1" enabled="true" text="The following set is empty: \\{\\}" width="67" />',
 			'  <test:TestButton id="btn2" enabled="false" text="\\{\\} is an empty set" width="42" />',
 			'  <test:TestButton id="btn3" enabled="true" text="The following array is empty: []" width="67" />',
 			'  <test:TestButton id="btn4" enabled="false" text="[] is an empty array" width="42" />',
-			'</core:View>'
+			'</mvc:View>'
 		].join('');
 
 		var oViewWithBindings1 = sap.ui.xmlview({viewContent:xmlWithBindings});
@@ -677,9 +677,9 @@ sap.ui.define([
 		});
 
 		var xmlWithBindings = [
-			'<core:View controllerName="example.mvc.test" xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">',
+			'<mvc:View controllerName="example.mvc.test" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">',
 			'  <test:TestButton id="btn" app:myKey1="myValue1" app:myKey2="{/value}" app:myKey3="{path: \'/value\', formatter:\'.valueFormatter\'}" />',
-			'</core:View>'
+			'</mvc:View>'
 		].join('');
 
 		var oView = sap.ui.xmlview({viewContent:xmlWithBindings});

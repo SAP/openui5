@@ -48,10 +48,12 @@
 					<content>
 						<mvc:XMLView
 							id="wizardViewLinear"
+							async="true"
 							visible="{= ${/selectedShowCase} === 'linear' }"
 							viewName="sap.m.sample.WizardCurrentStep.view.Linear" />
 						<mvc:XMLView
 							id="wizardViewBranching"
+							async="true"
 							visible="{= ${/selectedShowCase} === 'branching' }"
 							viewName="sap.m.sample.WizardCurrentStep.view.Branching" />
 					</content>

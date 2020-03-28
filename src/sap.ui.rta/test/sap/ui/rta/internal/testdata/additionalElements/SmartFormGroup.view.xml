@@ -1,7 +1,6 @@
-<core:View xmlns:core="sap.ui.core" xmlns="sap.m"
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
 	xmlns:smartField="sap.ui.comp.smartfield" xmlns:smartForm="sap.ui.comp.smartform"
 	xmlns:form="sap.ui.layout.form" xmlns:smartTable="sap.ui.comp.smarttable"
-	xmlns:html="http://www.w3.org/1999/xhtml"
 	xmlns:sap.ui.layout="sap.ui.layout"
 	xmlns:sap.ui.rta="sap.ui.rta"
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
@@ -46,4 +45,4 @@
 			</sap.ui.layout:VerticalLayout>
 		</content>
 	</Page>
-</core:View>
+</mvc:View>

@@ -77,7 +77,6 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 		assert(oInstance instanceof Object, "In sap.m.InstanceManager.removeInstance method, the parameter oInstance should be an object");
 
 		if (!aCategory) {
-			Log.warning("Can't remove control from a non-managed category id: " + sCategoryId);
 			return null;
 		}
 

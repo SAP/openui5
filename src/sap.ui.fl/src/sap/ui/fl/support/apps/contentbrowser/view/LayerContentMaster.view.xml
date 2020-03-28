@@ -1,14 +1,12 @@
-<core:View xmlns:core="sap.ui.core"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m" controllerName="sap.ui.fl.support.apps.contentbrowser.controller.LayerContentMaster"
-	xmlns:html="http://www.w3.org/1999/xhtml">
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m" controllerName="sap.ui.fl.support.apps.contentbrowser.controller.LayerContentMaster">
 	<Page
 			showNavButton="true"
 			navButtonPress=".navBack">
 		<subHeader>
 			<Toolbar>
 				<SearchField
-                    id="search"
+					id="search"
 					liveChange="onSearch"
 					width="100%" />
 			</Toolbar>
@@ -43,4 +41,4 @@
 			</Toolbar>
 		</footer>
 	</Page>
-</core:View>
+</mvc:View>

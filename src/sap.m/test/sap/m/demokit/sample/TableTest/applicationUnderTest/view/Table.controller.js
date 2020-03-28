@@ -5,9 +5,12 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	'sap/m/Button',
 	'sap/m/Dialog',
-	'sap/m/Text'
-],	function(jQuery, Formatter, Controller, JSONModel, Button, Dialog, Text) {
+	'sap/m/Text',
+	'sap/m/library'
+],	function(jQuery, Formatter, Controller, JSONModel, Button, Dialog, Text, mobileLibrary) {
 	"use strict";
+
+	var PopinLayout = mobileLibrary.PopinLayout;
 
 	var TableController = Controller.extend("view.Table", {
 
@@ -27,16 +30,16 @@ sap.ui.define([
 			var sPopinLayout = oComboBox.getSelectedKey();
 			switch (sPopinLayout) {
 				case "Block":
-					oTable.setPopinLayout(sap.m.PopinLayout.Block);
+					oTable.setPopinLayout(PopinLayout.Block);
 					break;
 				case "GridLarge":
-					oTable.setPopinLayout(sap.m.PopinLayout.GridLarge);
+					oTable.setPopinLayout(PopinLayout.GridLarge);
 					break;
 				case "GridSmall":
-					oTable.setPopinLayout(sap.m.PopinLayout.GridSmall);
+					oTable.setPopinLayout(PopinLayout.GridSmall);
 					break;
 				default:
-					oTable.setPopinLayout(sap.m.PopinLayout.Block);
+					oTable.setPopinLayout(PopinLayout.Block);
 					break;
 			}
 		},

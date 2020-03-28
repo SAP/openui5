@@ -13,7 +13,7 @@
 							title="{title}"
 							showCloseButton="{showCloseButton}"
 							showEmptyGroup="{showEmptyGroup}"
-							close="{onGroupClose}"
+							close="onGroupClose"
 							items="{path: 'groupItems', templateShareable : true}"
 							buttons="{path: 'groupButtons', templateShareable : true}">
 							<NotificationListItem
@@ -23,18 +23,18 @@
 									datetime="{creationDate}"
 									unread="{unread}"
 									priority="{priority}"
-									close="{onItemClose}"
-									press="{onListItemPress}"
+									close="onItemClose"
+									press="onListItemPress"
 									authorPicture="{authorPicture}"
 									authorInitials="{authorInitials}"
 									authorAvatarColor="{authorAvatarColor}"
 									buttons="{path: 'itemButtons', templateShareable : true}">
 								<buttons>
-									<Button text="{text}" press="{onButtonPress}"/>
+									<Button text="{text}" press="onItemButtonPress"/>
 								</buttons>
 							</NotificationListItem>
 						<buttons>
-							<Button text="{text}" press="{onButtonPress}"/>
+							<Button text="{text}" press="onGroupButtonPress"/>
 						</buttons>
 					</NotificationListGroup>
 			</List>

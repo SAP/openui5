@@ -12,7 +12,6 @@
 						title="Notification Group"
 						showCloseButton="true"
 						collapsed="false"
-						onCollapse="loadNotifications"
 						close="onItemClose"
 						showEmptyGroup="true"
 						enableCollapseButtonWhenEmpty="true">

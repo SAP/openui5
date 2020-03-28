@@ -1,21 +1,18 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/m/TablePersoController',
 		'sap/m/MessageBox',
-		'./DemoPersoService',
 		'./Formatter',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/core/util/Export',
 		'sap/ui/core/util/ExportTypeCSV',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, TablePersoController, MessageBox, DemoPersoService, Formatter, Controller, Export, ExportTypeCSV, JSONModel) {
+	], function(MessageBox, Formatter, Controller, Export, ExportTypeCSV, JSONModel) {
 	"use strict";
 
 	var TableController = Controller.extend("sap.m.sample.TableExport.Table", {
 
 		onInit : function() {
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
 
 		},

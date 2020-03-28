@@ -8,7 +8,7 @@ sap.ui.define([
 	var TableController = Controller.extend("sap.m.sample.TableColumnWidth.Table", {
 
 		onInit: function () {
-			this.oProductModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			this.oProductModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.oProductModel.setSizeLimit(3);
 
 			this.oColumnModel = new JSONModel();

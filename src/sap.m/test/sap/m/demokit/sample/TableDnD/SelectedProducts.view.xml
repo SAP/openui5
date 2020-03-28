@@ -16,7 +16,7 @@
 			filters: {path: 'Rank', operator: 'GT', value1: '0'},
 			sorter: {path: 'Rank', descending: true}
 		}"
-		noData="Please drag-and-drop products here.">
+		noDataText="Please drag-and-drop products here.">
 		<contextMenu>
 			<Menu>
 				<MenuItem text="Move to Available Products" press="moveToAvailableProductsTable" />

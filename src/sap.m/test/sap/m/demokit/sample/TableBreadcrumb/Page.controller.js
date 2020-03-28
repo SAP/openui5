@@ -1,5 +1,4 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/m/Label',
 		'sap/m/Link',
 		'sap/m/MessageToast',
@@ -8,7 +7,7 @@ sap.ui.define([
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Label, Link, MessageToast, Text, Formatter, Fragment, Controller, JSONModel) {
+	], function(Label, Link, MessageToast, Text, Formatter, Fragment, Controller, JSONModel) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.m.sample.TableBreadcrumb.Page", {
@@ -29,7 +28,7 @@ sap.ui.define([
 		onInit: function (oEvent) {
 
 			// set demo model on this sample
-			var sPath = sap.ui.require.toUrl("sap/m/sample/TableBreadcrumb") + "/productHierarchy.json";
+			var sPath = sap.ui.require.toUrl("sap/m/sample/TableBreadcrumb/productHierarchy.json");
 			var oModel = new JSONModel(sPath);
 			this.getView().setModel(oModel);
 			this.getView().setModel(new JSONModel(this.mInitialOrderState), "Order");
@@ -82,7 +81,7 @@ sap.ui.define([
 			var oCrumbToolbar = this.byId("idCrumbToolbar");
 			oCrumbToolbar.destroyContent();
 
-			aPaths.forEach(jQuery.proxy(function (sPath, iPathIndex) {
+			aPaths.forEach(function (sPath, iPathIndex) {
 
 				var bIsFirst = iPathIndex === 0;
 				var bIsLast = iPathIndex === aPaths.length - 1;
@@ -113,7 +112,7 @@ sap.ui.define([
 					oCrumbToolbar.addContent(oArrow);
 				}
 
-			}, this));
+			}, this);
 		},
 
 

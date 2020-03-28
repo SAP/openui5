@@ -1,10 +1,9 @@
-<core:View xmlns:core="sap.ui.core"
-	xmlns:mvc="sap.ui.core.mvc"
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	xmlns:l="sap.ui.layout">
 	<Page title="Title" id="Page" showFooter="true">
 		<content>
-		    <l:VerticalLayout id="VerticalLayout0">
+			<l:VerticalLayout id="VerticalLayout0">
 				<l:content>
 					<Label text="Label 1" id="Label1"/>
 					<Input width="100%" id="Input1" value="Input 1" enabled="false"/>
@@ -14,4 +13,4 @@
 			</l:VerticalLayout>
 		</content>
 	</Page>
-</core:View>
+</mvc:View>

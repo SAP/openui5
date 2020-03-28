@@ -489,8 +489,7 @@ sap.ui.define([
 				intro : "On behalf of John Smith",
 				title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
 				number : "5.624",
-				numberUnit : "EUR",
-				active: false
+				numberUnit : "EUR"
 			});
 
 		list.addItem(imageOLI1);

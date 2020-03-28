@@ -1,9 +1,8 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/Filter',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Controller, Filter, JSONModel) {
+	], function(Controller, Filter, JSONModel) {
 	"use strict";
 
 	var TableController = Controller.extend("sap.m.sample.TableOutdated.Table", {
@@ -11,7 +10,7 @@ sap.ui.define([
 	    onInit: function() {
 
 	        // set explored app's demo model on this sample
-	        var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+	        var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 	        this.getView().setModel(oModel);
 	        // reuse table sample component
 	        var oComp = sap.ui.getCore().createComponent({

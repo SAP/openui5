@@ -1,7 +1,7 @@
 <mvc:View xmlns="sap.f" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" controllerName="sap.f.sample.FlexibleColumnLayoutSimple.controller.FlexibleColumnLayout" height="100%">
 	<FlexibleColumnLayout id="fcl">
 		<beginColumnPages>
-			<mvc:XMLView id="beginView" viewName="sap.f.sample.FlexibleColumnLayoutSimple.view.Master" backgroundDesign="Translucent" />
+			<mvc:XMLView id="beginView" viewName="sap.f.sample.FlexibleColumnLayoutSimple.view.Master"/>
 		</beginColumnPages>
 	</FlexibleColumnLayout>
 </mvc:View>

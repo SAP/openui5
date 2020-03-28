@@ -25,16 +25,12 @@ sap.ui.define([
 								"authorName": "Michael Muller",
 								"authorPicture": "sap-icon://person-placeholder",
 								"authorAvatarColor": "Accent2",
-								"onItemClose": "onItemClose",
-								"onListItemPress": "onListItemPress",
 								"itemButtons": [
 									{
-										"text": 'Accept',
-										"press": "onAcceptPress"
+										"text": 'Accept'
 									},
 									{
-										"text": 'Reject',
-										"press": "onRejectPress"
+										"text": 'Reject'
 									}
 								]
 
@@ -47,12 +43,10 @@ sap.ui.define([
 								"unread": true,
 								"itemButtons": [
 									{
-										"text": 'Accept',
-										"press": "onAcceptPress"
+										"text": 'Accept'
 									},
 									{
-										"text": 'Reject',
-										"press": "onRejectPress"
+										"text": 'Reject'
 									}
 								]
 
@@ -60,13 +54,12 @@ sap.ui.define([
 						],
 						"groupButtons": [
 							{
-								"text": 'Accept All',
-								"press": "onAcceptPress"
+								"text": 'Accept All'
 							}
 						]
 					},
 					{
-						"title": "New order (#2526)",
+						"title": "New order (#2527)",
 						"creationDate": "1 hour ago",
 						"showEmptyGroup": true,
 						"showCloseButton": true,
@@ -74,12 +67,10 @@ sap.ui.define([
 						],
 						"groupButtons": [
 							{
-								"text": 'Accept All',
-								"press": "onAcceptPress"
+								"text": 'Accept All'
 							},
 							{
-								"text": 'Reject All',
-								"press": "onRejectPress"
+								"text": 'Reject All'
 							}
 						]
 					}
@@ -89,16 +80,20 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		},
 
+		onGroupClose: function(oEvent) {
+			MessageToast.show('Group Closed: ' + oEvent.getSource().getTitle());
+		},
+
 		onListItemPress: function (oEvent) {
 			MessageToast.show('Item Pressed: ' + oEvent.getSource().getTitle());
 		},
 
-		onRejectPress: function () {
-			MessageToast.show('Reject Button Pressed');
+		onItemButtonPress: function (oEvent) {
+			MessageToast.show('Item Button \'' + oEvent.getSource().getText() + '\' Pressed');
 		},
 
-		onAcceptPress: function () {
-			MessageToast.show('Accept Button Pressed');
+		onGroupButtonPress: function (oEvent) {
+			MessageToast.show('Group Button \'' + oEvent.getSource().getText() + '\' Pressed');
 		},
 
 		onItemClose: function (oEvent) {

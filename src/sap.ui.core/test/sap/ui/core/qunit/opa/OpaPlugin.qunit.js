@@ -728,14 +728,14 @@ sap.ui.define([
 	QUnit.module("OpaPlugin - controls in an open dialog with view parent", {
 		beforeEach: function () {
 			var sViewContent = [
-				'<core:View xmlns:core="sap.ui.core" xmlns="sap.m">',
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">',
 				'<Dialog id="myDialog">',
 				'<Button id="fooInDialog">',
 				'</Button>',
 				'</Dialog>',
 				'<Button id="foo">',
 				'</Button>',
-				'</core:View>'
+				'</mvc:View>'
 			].join('');
 			this.oView = sap.ui.xmlview({id: "viewWithDialog", viewContent: sViewContent});
 			this.oView.setViewName("testView");
@@ -1077,11 +1077,11 @@ sap.ui.define([
 	QUnit.module("OpaPlugin - fragmentId in static area", {
 		beforeEach: function () {
 			var sView = [
-				'<core:View xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns="sap.m">',
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns="sap.m">',
 				'<Dialog id="myDialog">',
 				'<core:Fragment id="testFragment" fragmentName="fixture.OpaPlugin" type="JS"/>',
 				'</Dialog>',
-				'</core:View>'
+				'</mvc:View>'
 			].join('');
 			this.oView = sap.ui.xmlview({id: "myView", viewContent: sView});
 			this.oView.placeAt("qunit-fixture");

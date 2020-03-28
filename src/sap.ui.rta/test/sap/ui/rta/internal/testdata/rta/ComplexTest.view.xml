@@ -1,13 +1,13 @@
-<core:View xmlns:core="sap.ui.core" xmlns="sap.m"
-		   xmlns:smartField="sap.ui.comp.smartfield" xmlns:smartForm="sap.ui.comp.smartform" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
-		   xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
-		   xmlns:form="sap.ui.layout.form" xmlns:smartTable="sap.ui.comp.smarttable"
-		   xmlns:smartLink="sap.ui.comp.navpopover"
-		   xmlns:html="http://www.w3.org/1999/xhtml"
-		   xmlns:sap.ui.layout="sap.ui.layout"
-		   xmlns:sap.ui.dt="sap.ui.dt"
-		   xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
-		   controllerName="sap.ui.rta.test.ComplexTest">
+<mvc:View xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc"
+		  xmlns:smartField="sap.ui.comp.smartfield" xmlns:smartForm="sap.ui.comp.smartform" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+		  xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+		  xmlns:form="sap.ui.layout.form" xmlns:smartTable="sap.ui.comp.smarttable"
+		  xmlns:smartLink="sap.ui.comp.navpopover"
+		  xmlns:html="http://www.w3.org/1999/xhtml"
+		  xmlns:sap.ui.layout="sap.ui.layout"
+		  xmlns:sap.ui.dt="sap.ui.dt"
+		  xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+		  controllerName="sap.ui.rta.test.ComplexTest">
 
 	<Page title="{i18n>appTitle}" id="mainPage">
 		<headerContent>
@@ -514,4 +514,4 @@
 
 		</content>
 	</Page>
-</core:View>
+</mvc:View>

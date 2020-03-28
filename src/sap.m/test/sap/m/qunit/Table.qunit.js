@@ -149,8 +149,8 @@ sap.ui.define([
 				new Text({text : "{lastName}", wrapping : false}),
 				new Text({text : "{name}", wrapping : false}),
 				new Text({text : "{checked}"}),
-				new Text({text: "{linkText}"}),
-				new Text({value: "{rating}"}),
+				new Text({text : "{linkText}"}),
+				new Text({text : "{rating}"}),
 				new Text({text : "{birthday}"}),
 				new Text({text : "{money} EUR"})
 			]

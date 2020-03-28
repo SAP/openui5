@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/uxap/BlockBase",
 	"sap/uxap/ObjectPageLayout",
 	"sap/m/Label",
-	"sap/m/Button"],
-function($, Core, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, Label, Button) {
+	"sap/m/Button",
+	"sap/m/Text"],
+function($, Core, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, Label, Button, Text) {
 	"use strict";
 
 	var aStandardModeConfig = [{
@@ -862,7 +863,7 @@ function($, Core, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, Obj
 
 	QUnit.test("addAggregation", function (assert) {
 		var oSubSection = new ObjectPageSubSectionClass({
-				blocks: [new sap.m.Text({text: "sample"})]
+				blocks: [new Text({text: "sample"})]
 			}),
 			opl = new ObjectPageLayout({
 				sections: [
@@ -1574,8 +1575,8 @@ function($, Core, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, Obj
 						new ObjectPageSubSectionClass({
 							title: "Title",
 							showTitle: false,
-							blocks: [new sap.m.Text({text: "Test"})],
-							moreBlocks: [new sap.m.Text({text: "Test"})]
+							blocks: [new Text({text: "Test"})],
+							moreBlocks: [new Text({text: "Test"})]
 						})
 					]
 				})

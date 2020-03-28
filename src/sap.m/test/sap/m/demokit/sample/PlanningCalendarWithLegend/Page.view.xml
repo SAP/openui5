@@ -9,8 +9,7 @@
 			class="sapUiDSCExplored sapUiContentPadding"
 			sideContentVisibility="AlwaysShow"
 			showSideContent="{path: 'stateModel>/legendShown'}"
-			containerQuery="true"
-			breakpointChanged="updateToggleButtonState">
+			containerQuery="true">
 		<VBox>
 			<PlanningCalendar
 					id="PC1"

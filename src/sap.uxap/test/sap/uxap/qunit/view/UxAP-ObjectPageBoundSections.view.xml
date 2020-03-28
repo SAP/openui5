@@ -1,9 +1,9 @@
-<core:View
+<mvc:View
 	xmlns="sap.m"
 	xmlns:u="sap.uxap"
 	xmlns:l="sap.ui.layout"
 	xmlns:f="sap.ui.layout.form"
-	xmlns:core="sap.ui.core">
+	xmlns:mvc="sap.ui.core.mvc">
 	<u:ObjectPageLayout 
 		id="PartProfileObjectPage" 
 		enableLazyLoading="false" 
@@ -73,4 +73,4 @@
 			
 		</u:sections>
 	</u:ObjectPageLayout>
-</core:View>
+</mvc:View>

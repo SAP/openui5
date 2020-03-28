@@ -19,8 +19,7 @@
 		emptySpanS="0"
 		columnsXL="2"
 		columnsL="2"
-		columnsM="2"
-		columnsS="2">
+		columnsM="2">
 		<Label text="Wrapping" />
 		<Switch state="true" change=".onWrappingChange" />
 		<Label text="RenderWhitespace" />

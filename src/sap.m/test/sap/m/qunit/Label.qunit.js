@@ -246,7 +246,12 @@ sap.ui.define([
 		setTimeout(function() {
 			if (!fnIsHyphenated()) {
 				// try again after a while if not yet hyphenatated
-				setTimeout(fnIsHyphenated, 1000);
+				setTimeout(function() {
+					if ( !fnIsHyphenated() ) {
+						assert.ok(false);
+						done();
+					}
+				}, 1000);
 			}
 		}, 500);
 	});
