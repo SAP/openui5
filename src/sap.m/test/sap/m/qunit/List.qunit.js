@@ -39,7 +39,9 @@ sap.ui.define([
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
 
+	// app
 	var app = new App("myApp");
+
 	//alert((app.isLandscape() ? "Landscape" : "Portrait"));
 
 	/*
@@ -296,6 +298,15 @@ sap.ui.define([
 			})]
 		})]
 	});
+
+	var backgroundDesignPage = new Page("backgroundDesignPage", {
+			title : "List Test Page",
+			showNavButton : true,
+			navButtonText : "Back",
+			navButtonPress : function() {
+				app.back();
+			}
+		});
 
 	/*
 	// ================================================================================
@@ -937,7 +948,7 @@ sap.ui.define([
 
 	app.addPage(listOverview).addPage(detailPage).addPage(standardListThumb).addPage(standardListIcon).addPage(standardListTitle).addPage(standardListNoImage)
 			.addPage(displayList).addPage(inputList).addPage(customList).addPage(groupedList).addPage(groupedNoHeaderList)
-			.addPage(selectionList).addPage(invisibleList).addPage(noDataList).addPage(swipeContentPage);
+			.addPage(selectionList).addPage(invisibleList).addPage(noDataList).addPage(swipeContentPage).addPage(backgroundDesignPage);
 	app.setInitialPage("listOverview");
 	app.placeAt("content");
 	Core.applyChanges();
@@ -1618,6 +1629,63 @@ sap.ui.define([
 		oStdLI.ontouchend(oTouchEnd);
 
 		assert.strictEqual(oIcon.getSrc(), sActiveIcon, "Active icon is changed with the previous state after active handling");
+	});
+
+	QUnit.test("setBackgroundDesign", function(assert) {
+		var oListItem = new StandardListItem({
+				title : "Title",
+				description: "Description"
+			}),
+			oList = new List({
+				backgroundDesign: library.BackgroundDesign.Solid,
+				items: [oListItem]
+			}),
+			$list,
+			oRenderSpy;
+
+		// add item to page & render
+		backgroundDesignPage.addContent(oList);
+
+		app.back();
+		app.to("backgroundDesignPage", "show");
+		Core.applyChanges();
+
+		$list = oList.$();
+		oRenderSpy = this.spy(oList.getRenderer(), "render");
+
+		// call method & do tests
+		assert.strictEqual(oList.getBackgroundDesign(), library.BackgroundDesign.Solid, 'The property "backgroundDesign" is "Solid" on ' + oList);
+		assert.ok($list.hasClass("sapMListBGSolid"), 'The HTML div container for the list has class "sapMListBGSolid" on ' + oList);
+		assert.ok(!$list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list does not have class "sapMListBGTransparent" on ' + oList);
+		assert.ok(!$list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list does not have class "sapMListBGTranslucent" on ' + oList);
+
+		assert.strictEqual(oList.setBackgroundDesign(library.BackgroundDesign.Transparent).getBackgroundDesign(), library.BackgroundDesign.Transparent, 'The property "backgroundDesign" is "Transparent" on ' + oList);
+		sap.ui.getCore().applyChanges();
+		$list = oList.$();
+		assert.ok(!$list.hasClass("sapMListBGSolid"), 'The HTML div container for the list does not have class "sapMListBGSolid" on ' + oList);
+		assert.ok($list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list has class "sapMListBGTransparent" on ' + oList);
+		assert.ok(!$list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list does not have class "sapMListBGTranslucent" on ' + oList);
+
+		assert.strictEqual(oList.setBackgroundDesign(library.BackgroundDesign.Translucent).getBackgroundDesign(), library.BackgroundDesign.Translucent, 'The property "backgroundDesign" is "Translucent" on ' + oList);
+		sap.ui.getCore().applyChanges();
+		$list = oList.$();
+		assert.ok(!$list.hasClass("sapMListBGSolid"), 'The HTML div container for the list does not have class "sapMListBGSolid" on ' + oList);
+		assert.ok(!$list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list does not have class "sapMListBGTransparent" on ' + oList);
+		assert.ok($list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list has class "sapMListBGTranslucent" on ' + oList);
+
+		assert.throws(function () {
+			oList.setBackgroundDesign("DoesNotExist");
+		}, "Throws a type exception");
+		assert.strictEqual(oList.getBackgroundDesign(), library.BackgroundDesign.Translucent, 'The property "backgroundDesign" is still "sap.m.BackgroundDesign.Translucent" after setting mode "DoesNotExist" on ' + oList);
+
+		// standard setter tests
+		assert.strictEqual(oList.setBackgroundDesign(), oList, 'Method returns this pointer on ' + oList);
+		assert.strictEqual(oRenderSpy.callCount, 2, "The list should be rerendered in this method");
+
+		// cleanup
+		backgroundDesignPage.removeAllContent();
+		oRenderSpy.restore();
+		oList.destroy();
 	});
 
 	QUnit.module("StandartListItem RTL attributes");
