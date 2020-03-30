@@ -4741,5 +4741,32 @@
         ]
       }
     ]
+  },
+  "1.52.39": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "03cc7114bd4409253910ae6d6a9aded5951ff7db",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: doesn\u0027t throw error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070025682"
+          }
+        ]
+      },
+      {
+        "id": "62cffa9274410815d6563ff9f1bf217e542c217e",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: pre-renders tiles in both directions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007904862019"
+          }
+        ]
+      }
+    ]
   }
 }

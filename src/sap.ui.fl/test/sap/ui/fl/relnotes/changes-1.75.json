@@ -37,5 +37,21 @@
         ]
       }
     ]
+  },
+  "1.75.1": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "2cdb0d0efb43fcc857bb593ffb7c44f5ae458250",
+        "type": "FIX",
+        "text": " Fixing UI2PersonalizationApplyAPI and",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007400752019"
+          }
+        ]
+      }
+    ]
   }
 }

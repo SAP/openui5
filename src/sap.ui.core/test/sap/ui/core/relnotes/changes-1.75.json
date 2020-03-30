@@ -196,5 +196,79 @@
         ]
       }
     ]
+  },
+  "1.75.1": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "a23cc9596ebd752bce0a1df68d0a14c6ffc811ac",
+        "type": "FIX",
+        "text": " CommandExecution: Uncaught exception - setProperty of undefined",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070027386"
+          }
+        ]
+      },
+      {
+        "id": "aaccad53d84400940581695ac57577b1fa644254",
+        "type": "FIX",
+        "text": " FESR: field length does not match backend length",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002024211800000084052020"
+          }
+        ]
+      },
+      {
+        "id": "51365e18bf424e7a0329a175b6d8027ee1e7862c",
+        "type": "FIX",
+        "text": " Indication Color Fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070006509"
+          }
+        ]
+      },
+      {
+        "id": "9f79408866e65f3b6dea2ac40c3f49c19248791d",
+        "type": "FIX",
+        "text": " core.LocalBusyIndicator: correctly remove the event prevention after rerendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080080676"
+          }
+        ]
+      },
+      {
+        "id": "3dcfd84c5e03dda3f9ba182fc781c723813e7c1e",
+        "type": "FIX",
+        "text": " routing.HashChanger: correct the call order between history and router",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070047882"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070024865"
+          }
+        ]
+      },
+      {
+        "id": "f9ae192bce053f24546388f8f2d8d128bc7895b3",
+        "type": "FIX",
+        "text": " sap.ui.Device: doc adaptation for Microsoft Edge (Chromium)",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      }
+    ]
   }
 }
