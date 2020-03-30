@@ -108,7 +108,8 @@ sap.ui.define([
 		var sAggregationName = mExtensionPointInfo.aggregationName;
 		this._startObserver(oParent, sAggregationName);
 
-		var aControlIds = (JsControlTreeModifier.getAggregation(oParent, sAggregationName) || []).map(function(oControl) {
+		var vAggregation = JsControlTreeModifier.getAggregation(oParent, sAggregationName);
+		var aControlIds = [].concat(vAggregation || []).map(function(oControl) {
 			return oControl.getId();
 		});
 
