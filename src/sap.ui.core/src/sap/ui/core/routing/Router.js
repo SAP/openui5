@@ -268,9 +268,11 @@ sap.ui.define([
 
 				this._oRouter.bypassed.add(jQuery.proxy(this._onBypassed, this));
 
-				if (oRouterHashChanger) {
-					this.setHashChanger(oRouterHashChanger);
+				if (!oRouterHashChanger) {
+					oRouterHashChanger = HashChanger.getInstance().createRouterHashChanger();
 				}
+
+				this.setHashChanger(oRouterHashChanger);
 			},
 
 			/**
@@ -316,10 +318,6 @@ sap.ui.define([
 			 */
 			initialize : function (bIgnoreInitialHash) {
 				var that = this;
-
-				if (!this.oHashChanger) {
-					this.oHashChanger = HashChanger.getInstance().createRouterHashChanger();
-				}
 
 				if (this._bIsInitialized) {
 					Log.warning("Router is already initialized.", this);

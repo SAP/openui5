@@ -60,6 +60,38 @@ sap.ui.define([
 		router.destroy();
 	});
 
+	QUnit.test("Should get the hash from browser after the router is initialized", function(assert) {
+		var hash = "foobar",
+			hashChanger = new HashChanger(),
+			router, parseSpy;
+
+		// destroy the previous hash changer
+		HashChanger.getInstance().destroy();
+
+		// replace the global hash changer with a new one
+		HashChanger.replaceHashChanger(hashChanger);
+
+		// create the router
+		router = new Router({}, {}, null, {});
+		parseSpy = this.spy(router, "parse");
+
+		// change the browser hash
+		hasher.setHash(hash);
+
+		// init the hash changer to listen to the browser hash change
+		HashChanger.getInstance().init();
+
+		// Act
+		router.initialize();
+
+		// Assert
+		assert.equal(parseSpy.callCount, 1, "did notify after initialized");
+		assert.equal(parseSpy.getCall(0).args[0], hash, "the correct hash is parsed");
+
+		// Cleanup
+		router.destroy();
+	});
+
 	QUnit.test("Should stop the router instance", function(assert) {
 		//Arrange
 		var parseSpy,
