@@ -905,8 +905,6 @@ sap.ui.define([
 		var $this = this.$(this._sBusySection);
 
 		$this.removeClass('sapUiLocalBusy');
-		//Unset the actual DOM Element´s 'aria-busy'
-		$this.removeAttr('aria-busy');
 
 		if (this._sBlockSection === this._sBusySection) {
 			if (!this.getBlocked() && !this.getBusy()) {

@@ -161,8 +161,6 @@ sap.ui.define([
 			oDomRef.focus();
 		}
 
-		jQuery("body").attr("aria-busy", true);
-
 		// allow an event handler to do something with the indicator
 		// and fire it after everything necessary happened
 		this.fireOpen({
@@ -285,8 +283,6 @@ sap.ui.define([
 		bi.bOpenRequested = false;
 
 		if (bi.oDomRef) { // only if the BusyIndicator was shown before!
-			jQuery("body").removeAttr("aria-busy");
-
 			// setting the BusyIndicator's DOM to invisible is not
 			// necessary here - it will be done by the Popup in 'oPopup.close(0)'
 
