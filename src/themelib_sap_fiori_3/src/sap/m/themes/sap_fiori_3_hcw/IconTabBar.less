@@ -1,6 +1,6 @@
 /* ================================= */
 /* CSS for control sap.m/IconTabBar  */
-/* Quartz High Contrast Black theme  */
+/* Quartz High Contrast White theme  */
 /* ================================= */
 
 // ==========================================================================
@@ -232,6 +232,12 @@
 	border: 0.125rem solid @sapUiObjectHeaderBorderColor;
 }
 
+.sapMITBContainerContent {
+	&.sapMITBContentClosed {
+		border-bottom: 0.125rem solid @sapUiObjectHeaderBorderColor;
+	}
+}
+
 .sapMITB.sapMITBNoContentPadding > .sapMITBContainerContent, /* legacy class */
 .sapMITB.sapUiNoContentPadding > .sapMITBContainerContent {
 	border-bottom: 0;
@@ -455,6 +461,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll {
 .sapMITBSelectListTextOnly .sapMITBSelectItem {
 	.sapMITBText::before {
 		margin-left: -1.2rem;
+		margin-top: 0.0625rem;
 	}
 }
 
@@ -469,6 +476,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll {
 	.sapMITBSelectListTextOnly .sapMITBSelectItem {
 		.sapMITBText::before {
 			margin-left: -1rem;
+			margin-top: 0;
 		}
 	}
 }
