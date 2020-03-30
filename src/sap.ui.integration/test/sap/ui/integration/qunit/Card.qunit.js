@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/f/cards/ListContent",
+	"sap/ui/integration/cards/ListContent",
 	"sap/ui/core/Core",
 	"sap/f/cards/NumericHeader",
 	"sap/f/cards/NumericSideIndicator",
@@ -1899,7 +1899,7 @@ sap.ui.define([
 				assert.ok(aCells[2].isA("sap.m.ObjectStatus"), "Column with a 'state' should be of type 'ObjectStatus'");
 				assert.ok(aCells[3].isA("sap.m.Link"), "Column with an 'url' should be of type 'Link'");
 				assert.ok(aCells[4].isA("sap.m.ProgressIndicator"), "Column with a 'progressIndicator' should be of type 'ProgressIndicator'");
-				assert.ok(aCells[5].isA("sap.f.Avatar"), "Column with an 'icon' should be of type 'Avatar'");
+				assert.ok(aCells[5].isA("sap.m.Avatar"), "Column with an 'icon' should be of type 'Avatar'");
 				assert.ok(aCells[6].isA("sap.m.ObjectIdentifier"), "Column with 'identifier' as an object should be of type 'ObjectIdentifier'");
 
 				// Column properties

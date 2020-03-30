@@ -2,12 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-		"sap/f/cards/BaseListContent",
+		"sap/ui/integration/cards/BaseListContent",
 		"sap/suite/ui/commons/Timeline",
 		"sap/suite/ui/commons/library",
 		"sap/suite/ui/commons/TimelineItem",
 		'sap/ui/base/ManagedObject',
-		"sap/f/cards/BindingHelper",
+		"sap/ui/integration/cards/BindingHelper",
 		"sap/f/cards/IconFormatter"
 	], function (
 		BaseListContent,
@@ -29,7 +29,7 @@ sap.ui.define([
 		 * @class
 		 * Displays time-related content.
 		 *
-		 * @extends sap.f.cards.BaseListContent
+		 * @extends sap.ui.integration.cards.BaseListContent
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -38,11 +38,11 @@ sap.ui.define([
 		 * @experimental
 		 * @since 1.61
 		 * @see {@link TODO Card}
-		 * @alias sap.f.cards.TimelineContent
+		 * @alias sap.ui.integration.cards.TimelineContent
 		 *
 		 *
 		 */
-		var TimelineContent = BaseListContent.extend("sap.f.cards.TimelineContent", {
+		var TimelineContent = BaseListContent.extend("sap.ui.integration.cards.TimelineContent", {
 			renderer: {}
 		});
 
@@ -84,11 +84,11 @@ sap.ui.define([
 		};
 
 		/**
-		 * Setter for configuring a <code>sap.f.cards.TimelineContent</code>.
+		 * Setter for configuring a <code>sap.ui.integration.cards.TimelineContent</code>.
 		 *
 		 * @public
 		 * @param {Object} oConfiguration Configuration object used to create the internal list.
-		 * @returns {sap.f.cards.TimelineContent} Pointer to the control instance to allow method chaining.
+		 * @returns {sap.ui.integration.cards.TimelineContent} Pointer to the control instance to allow method chaining.
 		 */
 		TimelineContent.prototype.setConfiguration = function (oConfiguration) {
 			BaseListContent.prototype.setConfiguration.apply(this, arguments);
@@ -121,7 +121,7 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @param {Object} mItem The item template of the configuration object
-		 * @returns {sap.f.cards.TimelineContent} <code>this</code> for chaining
+		 * @returns {sap.ui.integration.cards.TimelineContent} <code>this</code> for chaining
 		 */
 		TimelineContent.prototype._setItem = function (mItem) {
 			var mSettings = {

@@ -2,11 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-		"sap/f/library",
-		"sap/f/cards/BaseContent",
+		"sap/ui/integration/library",
+		"sap/ui/integration/cards/BaseContent",
 		"sap/f/cards/IconFormatter",
-		"sap/f/cards/BindingHelper",
-		"sap/f/cards/BindingResolver",
+		"sap/ui/integration/cards/BindingHelper",
+		"sap/ui/integration/cards/BindingResolver",
 		"sap/f/PlanningCalendarInCard",
 		"sap/f/PlanningCalendarInCardRow",
 		"sap/f/PlanningCalendarInCardLegend",
@@ -21,7 +21,7 @@ sap.ui.define([
 	function (library, BaseContent, IconFormatter, BindingHelper, BindingResolver, PlanningCalendarInCard, PlanningCalendarInCardRow, PlanningCalendarInCardLegend, mLibrary, PlanningCalendar, Filter, FilterOperator, CalendarAppointment, DateTypeRange, CalendarLegendItem) {
 		"use strict";
 
-		var AreaType = library.cards.AreaType,
+		var AreaType = library.AreaType,
 			PlanningCalendarBuiltInView = mLibrary.PlanningCalendarBuiltInView;
 		/**
 		 * Constructor for a new <code>CalendarContent</code>.
@@ -37,7 +37,7 @@ sap.ui.define([
 		 * setting will make sure that the calendar is displayed properly and that the user has enough space to interact
 		 * with the card.
 		 *
-		 * @extends sap.f.cards.BaseContent
+		 * @extends sap.ui.integration.cards.BaseContent
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -46,9 +46,9 @@ sap.ui.define([
 		 * @private
 		 * @since 1.74
 		 * @experimental Since 1.74.
-		 * @alias sap.f.cards.CalendarContent
+		 * @alias sap.ui.integration.cards.CalendarContent
 		 */
-		var CalendarContent = BaseContent.extend("sap.f.cards.CalendarContent", {
+		var CalendarContent = BaseContent.extend("sap.ui.integration.cards.CalendarContent", {
 			renderer: {}
 		});
 
@@ -123,11 +123,11 @@ sap.ui.define([
 		};
 
 		/**
-		 * Setter for configuring a <code>sap.f.cards.CalendarContent</code>.
+		 * Setter for configuring a <code>sap.ui.integration.cards.CalendarContent</code>.
 		 *
 		 * @public
 		 * @param {Object} oConfiguration Configuration object used to create the internal calendar.
-		 * @returns {sap.f.cards.CalendarContent} Pointer to the control instance to allow method chaining.
+		 * @returns {sap.ui.integration.cards.CalendarContent} Pointer to the control instance to allow method chaining.
 		 */
 		CalendarContent.prototype.setConfiguration = function (oConfiguration) {
 			BaseContent.prototype.setConfiguration.apply(this, arguments);

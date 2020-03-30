@@ -35,7 +35,7 @@ sap.ui.define([
 		 * @version ${version}
 		 *
 		 * @private
-		 * @alias sap.f.cards.BindingHelper
+		 * @alias sap.ui.integration.cards.BindingHelper
 		 */
 		var BindingHelper = {};
 

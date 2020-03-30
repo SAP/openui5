@@ -31,11 +31,10 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @since 1.63
-	 * @alias sap.f.cards.BaseContent
+	 * @alias sap.ui.integration.cards.BaseContent
 	 */
-	var BaseContent = Control.extend("sap.f.cards.BaseContent", {
+	var BaseContent = Control.extend("sap.ui.integration.cards.BaseContent", {
 		metadata: {
-			library: "sap.f",
 			aggregations: {
 
 				/**
@@ -54,43 +53,47 @@ sap.ui.define([
 				press: {}
 			}
 		},
-		renderer: function (oRm, oCardContent) {
-			// Add class the simple way. Add renderer hooks only if needed.
-			var sClass = "sapFCard";
-			var sLibrary = oCardContent.getMetadata().getLibraryName();
-			var sName = oCardContent.getMetadata().getName();
-			var sType = sName.slice(sLibrary.length + 1, sName.length);
-			var oCard = oCardContent.getParent(),
-				oContent = oCardContent.getAggregation("_content");
-			sClass += sType;
+		renderer: {
+			render: function (oRm, oCardContent) {
+				// Add class the simple way. Add renderer hooks only if needed.
+				var sClass = "sapFCard";
 
-			oRm.write("<div");
-			oRm.writeElementData(oCardContent);
-			oRm.addClass(sClass);
-			oRm.addClass("sapFCardBaseContent");
+				var sLibrary = oCardContent.getMetadata().getLibraryName();
+				var sName = oCardContent.getMetadata().getName();
+				var sType = sName.slice(sLibrary.length + 1, sName.length);
+				var oCard = oCardContent.getParent(),
+					bIsCardValid = oCard && oCard.isA("sap.f.ICard"),
+					oContent = oCardContent.getAggregation("_content");
+				sClass += sType;
 
-			if (oCardContent.hasListeners("press")) {
-				oRm.addClass("sapFCardClickable");
-			}
+				oRm.write("<div");
+				oRm.writeElementData(oCardContent);
+				oRm.addClass(sClass);
+				oRm.addClass("sapFCardBaseContent");
 
-			oRm.writeClasses();
-
-			if (oCard && oCard.isA("sap.f.ICard") && oCard.getHeight() === "auto") { // if there is no height specified the default value is "auto"
-				var sHeight = BaseContent.getMinHeight(sType, oCardContent.getConfiguration(), oCardContent);
-				oRm.addStyle("min-height", sHeight);
-			}
-
-			oRm.writeStyles();
-			oRm.write(">");
-			if (sType !== 'AdaptiveContent' && oCardContent.isLoading()) {
-				oRm.renderControl(oCardContent._oLoadingPlaceholder);
-				//Removing content from the tab chain
-				if (sType !== 'AnalyticalContent' && sType !== 'TimelineContent') {
-					oContent.addStyleClass("sapFCardContentHidden");
+				if (oCardContent.hasListeners("press")) {
+					oRm.addClass("sapFCardClickable");
 				}
+
+				oRm.writeClasses();
+
+				if (bIsCardValid && oCard.getHeight() === "auto") { // if there is no height specified the default value is "auto"
+					var sHeight = BaseContent.getMinHeight(sType, oCardContent.getConfiguration(), oCardContent);
+					oRm.addStyle("min-height", sHeight);
+				}
+
+				oRm.writeStyles();
+				oRm.write(">");
+				if (sType !== 'AdaptiveContent' && bIsCardValid && oCardContent.isLoading()) {
+					oRm.renderControl(oCardContent._oLoadingPlaceholder);
+					//Removing content from the tab chain
+					if (sType !== 'AnalyticalContent' && sType !== 'TimelineContent') {
+						oContent.addStyleClass("sapFCardContentHidden");
+					}
+				}
+				oRm.renderControl(oContent);
+				oRm.write("</div>");
 			}
-			oRm.renderControl(oContent);
-			oRm.write("</div>");
 		}
 	});
 

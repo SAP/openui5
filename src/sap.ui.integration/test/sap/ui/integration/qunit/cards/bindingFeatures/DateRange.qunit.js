@@ -1,7 +1,7 @@
 /* global QUnit */
 sap.ui.define([
 	"sap/ui/core/date/UniversalDateUtils",
-	"sap/f/cards/bindingFeatures/DateRange",
+	"sap/ui/integration/cards/bindingFeatures/DateRange",
 	"sap/base/Log"
 ],
 function (

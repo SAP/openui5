@@ -1,7 +1,7 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/f/cards/BindingHelper"
+	"sap/ui/integration/cards/BindingHelper"
 ],
 function (
 	BindingHelper

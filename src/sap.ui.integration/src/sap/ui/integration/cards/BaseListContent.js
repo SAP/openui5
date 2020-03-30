@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/f/cards/BaseContent",
-	"sap/f/cards/BindingResolver",
+	"sap/ui/integration/cards/BaseContent",
+	"sap/ui/integration/cards/BindingResolver",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/base/Log"
@@ -25,7 +25,7 @@ sap.ui.define([
 	 * @class
 	 * A base control for all list contents.
 	 *
-	 * @extends sap.f.cards.BaseContent
+	 * @extends sap.ui.integration.cards.BaseContent
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -33,9 +33,9 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @since 1.76
-	 * @alias sap.f.cards.BaseContent
+	 * @alias sap.ui.integration.cards.BaseContent
 	 */
-	var BaseListContent = BaseContent.extend("sap.f.cards.BaseListContent", {
+	var BaseListContent = BaseContent.extend("sap.ui.integration.cards.BaseListContent", {
 		renderer: {}
 	});
 

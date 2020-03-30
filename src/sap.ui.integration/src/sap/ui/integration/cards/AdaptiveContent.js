@@ -3,24 +3,23 @@
  */
 sap.ui.define([
 		"sap/ui/integration/library",
-		"sap/f/library",
 		"sap/ui/dom/includeScript",
-		"sap/f/cards/BaseContent",
+		"sap/ui/integration/cards/BaseContent",
 		"sap/ui/integration/thirdparty/adaptivecards",
 		"sap/ui/integration/thirdparty/adaptivecards-templating",
 		"sap/ui/integration/thirdparty/markdown-it",
-		"sap/f/cards/adaptivecards/elements/UI5InputText",
-		"sap/f/cards/adaptivecards/elements/UI5InputNumber",
-		"sap/f/cards/adaptivecards/elements/UI5InputChoiceSet",
-		"sap/f/cards/adaptivecards/elements/UI5InputTime",
-		"sap/f/cards/adaptivecards/elements/UI5InputDate",
-		"sap/f/cards/adaptivecards/elements/UI5InputToggle",
-		"sap/f/cards/adaptivecards/overwrites/ActionRender",
-		"sap/f/cards/adaptivecards/elements/hostConfig",
+		"sap/ui/integration/cards/adaptivecards/elements/UI5InputText",
+		"sap/ui/integration/cards/adaptivecards/elements/UI5InputNumber",
+		"sap/ui/integration/cards/adaptivecards/elements/UI5InputChoiceSet",
+		"sap/ui/integration/cards/adaptivecards/elements/UI5InputTime",
+		"sap/ui/integration/cards/adaptivecards/elements/UI5InputDate",
+		"sap/ui/integration/cards/adaptivecards/elements/UI5InputToggle",
+		"sap/ui/integration/cards/adaptivecards/overwrites/ActionRender",
+		"sap/ui/integration/cards/adaptivecards/elements/hostConfig",
 		"sap/ui/model/json/JSONModel",
 		"sap/base/Log"
 	],
-	function (integrationLibrary, fLibrary, includeScript, BaseContent, AdaptiveCards, ACData, Markdown, UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, UI5InputToggle, ActionRender, HostConfig, JSONModel, Log) {
+	function (library, includeScript, BaseContent, AdaptiveCards, ACData, Markdown, UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, UI5InputToggle, ActionRender, HostConfig, JSONModel, Log) {
 		"use strict";
 
 		/**
@@ -32,7 +31,7 @@ sap.ui.define([
 		 * @class
 		 * A control that is a wrapper of Microsoft's AdaptiveCard and allows its creation based on a configuration.
 		 *
-		 * @extends sap.f.cards.BaseContent
+		 * @extends sap.ui.integration.cards.BaseContent
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -40,9 +39,9 @@ sap.ui.define([
 		 * @constructor
 		 * @private
 		 * @since 1.74
-		 * @alias sap.f.cards.AdaptiveContent
+		 * @alias sap.ui.integration.cards.AdaptiveContent
 		 */
-		var AdaptiveContent = BaseContent.extend("sap.f.cards.AdaptiveContent", {
+		var AdaptiveContent = BaseContent.extend("sap.ui.integration.cards.AdaptiveContent", {
 			renderer: {
 				apiVersion: 2,
 				render: function (oRm, oControl) {
@@ -62,7 +61,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Setter for configuring a <code>sap.f.cards.AdaptiveContent</code>.
+		 * Setter for configuring a <code>sap.ui.integration.cards.AdaptiveContent</code>.
 		 *
 		 * @public
 		 * @param {Object} oConfiguration Configuration object used to create the internal list.
@@ -185,10 +184,10 @@ sap.ui.define([
 					oPayload = {
 						url:  oAction.url
 					};
-					sType = integrationLibrary.CardActionType.Navigation;
+					sType = library.CardActionType.Navigation;
 				} else if (oAction instanceof AdaptiveCards.SubmitAction) {
 					oPayload = oAction.data;
-					sType = integrationLibrary.CardActionType.Submit;
+					sType = library.CardActionType.Submit;
 				} else {
 					// The other types of actions are entirely internal
 					// and would not make sense to be bubbled outside the Card.

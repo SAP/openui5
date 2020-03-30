@@ -2,8 +2,8 @@
 
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
-	"sap/f/cards/BindingResolver",
-	"sap/f/cards/BindingHelper"
+	"sap/ui/integration/cards/BindingResolver",
+	"sap/ui/integration/cards/BindingHelper"
 ],
 function (JSONModel, BindingResolver, BindingHelper) {
 	"use strict";

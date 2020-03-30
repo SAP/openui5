@@ -108,6 +108,18 @@ sap.ui.define(["sap/ui/base/DataType",
 			Inactive: "Inactive"
 		};
 
-		return thisLib;
+		/*
+		 * Specifies different card area types.
+		 *
+		 * @private
+		 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		thisLib.AreaType = {
+			None: 'None',
+			ContentItem: 'ContentItem',
+			Content: 'Content',
+			Header: 'Header'
+		};
 
+		return thisLib;
 	});

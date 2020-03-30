@@ -4,7 +4,7 @@
 sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/date/UniversalDate",
-	"sap/f/cards/Utils"
+	"sap/ui/integration/cards/Utils"
 ], function (
 	DateFormat,
 	UniversalDate,

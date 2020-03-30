@@ -4,7 +4,7 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/base/Object",
-	"sap/f/cards/BindingHelper",
+	"sap/ui/integration/cards/BindingHelper",
 	"./CardActions"
 ], function (
 	Core,
@@ -76,47 +76,47 @@ sap.ui.define([
 			try {
 				switch (sType.toLowerCase()) {
 					case "list":
-						sap.ui.require(["sap/f/cards/ListContent"], fnCreateContentInstance);
+						sap.ui.require(["sap/ui/integration/cards/ListContent"], fnCreateContentInstance);
 						break;
 					case "calendar":
-						sap.ui.require(["sap/f/cards/CalendarContent"], fnCreateContentInstance);
+						sap.ui.require(["sap/ui/integration/cards/CalendarContent"], fnCreateContentInstance);
 						break;
 					case "table":
-						sap.ui.require(["sap/f/cards/TableContent"], fnCreateContentInstance);
+						sap.ui.require(["sap/ui/integration/cards/TableContent"], fnCreateContentInstance);
 						break;
 					case "object":
-						sap.ui.require(["sap/f/cards/ObjectContent"], fnCreateContentInstance);
+						sap.ui.require(["sap/ui/integration/cards/ObjectContent"], fnCreateContentInstance);
 						break;
 					case "analytical":
 						Core.loadLibrary("sap.viz", {
 							async: true
 						})
 							.then(function () {
-								sap.ui.require(["sap/f/cards/AnalyticalContent"], fnCreateContentInstance);
+								sap.ui.require(["sap/ui/integration/cards/AnalyticalContent"], fnCreateContentInstance);
 							})
 							.catch(function () {
 								reject("Analytical content type is not available with this distribution.");
 							});
 						break;
 					case "analyticscloud":
-						sap.ui.require(["sap/f/cards/AnalyticsCloudContent"], fnCreateContentInstance);
+						sap.ui.require(["sap/ui/integration/cards/AnalyticsCloudContent"], fnCreateContentInstance);
 						break;
 					case "timeline":
 						Core.loadLibrary("sap.suite.ui.commons", {
 							async: true
 						})
 							.then(function() {
-								sap.ui.require(["sap/f/cards/TimelineContent"], fnCreateContentInstance);
+								sap.ui.require(["sap/ui/integration/cards/TimelineContent"], fnCreateContentInstance);
 							})
 							.catch(function () {
 								reject("Timeline content type is not available with this distribution.");
 							});
 						break;
 					case "component":
-						sap.ui.require(["sap/f/cards/ComponentContent"], fnCreateContentInstance);
+						sap.ui.require(["sap/ui/integration/cards/ComponentContent"], fnCreateContentInstance);
 						break;
 					case "adaptivecard":
-						sap.ui.require(["sap/f/cards/AdaptiveContent"], fnCreateContentInstance);
+						sap.ui.require(["sap/ui/integration/cards/AdaptiveContent"], fnCreateContentInstance);
 						break;
 					default:
 						reject(sType.toUpperCase() + " content type is not supported.");

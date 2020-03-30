@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/m/Text",
-	"sap/f/cards/BaseContent",
+	"sap/ui/integration/cards/BaseContent",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ],
