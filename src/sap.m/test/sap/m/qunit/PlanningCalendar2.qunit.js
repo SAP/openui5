@@ -83,15 +83,6 @@ sap.ui.define([
 	// shortcut for sap.ui.core.CalendarType
 	var CalendarType = coreLibrary.CalendarType;
 
-	// shortcut for sap.m.ScreenSize
-	var ScreenSize = mobileLibrary.ScreenSize;
-
-	// shortcut for sap.ui.unified.CalendarAppointmentVisualization
-	var CalendarAppointmentVisualization = unifiedLibrary.CalendarAppointmentVisualization;
-
-	// shortcut for sap.m.ListMode
-	var ListMode = mobileLibrary.ListMode;
-
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
 
@@ -284,52 +275,8 @@ sap.ui.define([
 		return oTC;
 	};
 
-	var initPlanningCalendar = function(sID, sSearchFieldId, sButtonId) {
-		var oTC = sap.ui.getCore().byId(sID);
-		var oUIArea;
-		if (oTC) {
-			oTC.removeAllToolbarContent();
-			oUIArea = oTC.getUIArea();
-			oTC.destroy();
-		}
-
-		if (!sap.ui.getCore().byId(sSearchFieldId)) {
-			var oSearchField1 = new SearchField(sSearchFieldId, {
-				width: "10rem",
-				search: function() {
-					alert("Search!"); // eslint-disable-line no-alert
-				}
-			});
-
-			var oButton1 = new Button(sButtonId, {
-				icon: "sap-icon://sap-ui5",
-				type: ButtonType.Transparent,
-				press: function() {
-					alert("UI5 Button pressed"); // eslint-disable-line no-alert
-				}
-			});
-		}
-
-		oTC = createPlanningCalendar(sID, oSearchField1, oButton1);
-
-		if (oUIArea) {
-			oTC.placeAt(oUIArea.getId());
-		}
-
-		sap.ui.getCore().applyChanges();
-
-		return oTC;
-
-	};
-
 	var _getListItem = function(oRow) {
 		return sap.ui.getCore().byId(oRow.getId() + "-CLI");
-	};
-
-	var _getRowHeader = function(oRow) {
-		var oListItem = _getListItem(oRow);
-
-		return oListItem ? oListItem.getHeader() : null;
 	};
 
 	var _getRowTimeline = function(oRow) {
@@ -416,18 +363,6 @@ sap.ui.define([
 		}
 	};
 
-	/*	var _switchToMonth = function(oPC, iMonth) {
-			var oMonthPicker = oPC.getAggregation("table").getAggregation("infoToolbar").getContent()[1].getAggregation("monthPicker");
-			oMonthPicker.setMonth(iMonth);
-			oMonthPicker.fireSelect();
-		};
-
-		var _switchToYear = function(oPC, iYear) {
-			var oYearPicker = oPC.getAggregation("table").getAggregation("infoToolbar").getContent()[1].getAggregation("yearPicker");
-			oYearPicker.setYear(iYear);
-			oYearPicker.fireSelect();
-		};*/
-
 	var _clickTodayButton = function(oPC) {
 		var sTodayButtonId = _getTodayButton.call(this, oPC).getId();
 		qutils.triggerEvent("tap", sTodayButtonId);
@@ -436,36 +371,6 @@ sap.ui.define([
 
 	var _getTodayButton = function(oPC) {
 		return sap.ui.getCore().byId(oPC.getId() + "-Header-NavToolbar-TodayBtn");
-	};
-
-	var _getChangeMonthButtonText = function(oPC) {
-		return jQuery("#" + oPC.getId() + "-Header-NavToolbar-PickerBtn").text();
-	};
-
-	//Verifies that given dates are "displayed" in the Planning Calendar
-	//and month name(s) in the button is as expected
-	var _assertDatesAreVisible = function(aDates, oPC, sMessagePrefix) {
-		var sDaysSelector = oPC.getId() + "-" + _getIntervalId.call(this, oPC) + "-days",
-			iAvailableDays = jQuery('#' + sDaysSelector).children().length,
-			oFirstDate = aDates[0],
-			oLastDate = aDates[aDates.length - 1],
-			sExpectedDateRange = _formatDate.call(this, oFirstDate) + "-" + _formatDate.call(this, oLastDate),
-			oDateDateFormat = DateFormat.getDateInstance({pattern: "d"}),
-			oMonthDateFormat = DateFormat.getDateInstance({pattern: "MMMM"}),
-			oYearDateFormat = DateFormat.getDateInstance({pattern: "YYYY"}),
-			sResult;
-
-		sMessagePrefix += ": expected dates: " + sExpectedDateRange;
-
-		assert.equal(iAvailableDays, aDates.length, sMessagePrefix + ": Planning Calendar should show certain amount of days: ");
-		sResult = DateFormat.getDateInstance({format: "yMMMMd"}).format(oFirstDate) + " - " + DateFormat.getDateInstance({format: "yMMMMd"}).format(oLastDate);
-
-		assert.equal(_getChangeMonthButtonText.call(this, oPC), sResult, sMessagePrefix + ": Change month button should have certain text of " +
-			sResult + ", current text: " + _getChangeMonthButtonText.call(this, oPC));
-
-		aDates.forEach(function (oDate) {
-			_assertDateIsVisible.call(this, oDate, oPC, sMessagePrefix);
-		}.bind(this));
 	};
 
 	//Verifies that given Date is "displayed" in the Planning Calendar
@@ -480,40 +385,8 @@ sap.ui.define([
 		assert.equal(jQuery("#" + sDayId).length, 1, sMessagePrefix + ": Date " + _formatDate.call(this, oDate) + " should be visible (" + sDayId + ")");
 	};
 
-	//Verifies that given hour for given date is "displayed" in the Planning Calendar
-	var _assertHourIsVisible = function(oDate, oPC, sMessagePrefix) {
-		var that = this;
-
-		function convertHourInDate2DomId(oDate, sPrefix) {
-			return sPrefix + "-" + oDate.getFullYear() + _padTo10.call(that, oDate.getMonth() + 1) + _padTo10.call(that, oDate.getDate()) + _padTo10.call(that, oDate.getHours()) + "00";
-		}
-
-		var sHourInDayId = convertHourInDate2DomId(oDate, oPC.getId() + "-" + _getIntervalId.call(this, oPC));
-		assert.equal(jQuery("#" + sHourInDayId).length, 1, sMessagePrefix + ": Hour " + _formatDateHour.call(this, oDate) + " should be visible (" + sHourInDayId + ")");
-	};
-
-	var _assertHoursAreVisible = function(aDates, oPC, sMessagePrefix) {
-		var iAvailableDays = jQuery('#' + oPC.getId() + "-" + _getIntervalId.call(this, oPC) + "-times").children().length,
-			sExpectedDateRange = _formatDateHour.call(this, aDates[0]) + "-" + _formatDateHour.call(this, aDates[aDates.length - 1]);
-
-		sMessagePrefix += ": expected hours: " + sExpectedDateRange;
-		assert.equal(iAvailableDays, aDates.length, sMessagePrefix + ": Planning Calendar should show certain amount of hours: ");
-
-		aDates.forEach(function (oDate) {
-			_assertHourIsVisible.call(this, oDate, oPC, sMessagePrefix);
-		}.bind(this));
-	};
-
-	var _assertFocus = function(oTarget) {
-		assert.strictEqual(document.activeElement.id, oTarget && oTarget.id, "Element with id: " + oTarget.id + " should be focused");
-	};
-
 	var _formatDate = function(oDate) {
 		return DateFormat.getDateInstance({pattern: "dd.MM.yyyy"}).format(oDate);
-	};
-
-	var _formatDateHour = function(oDate) {
-		return DateFormat.getDateInstance({pattern: "dd.MM.yyyy hh:mm"}).format(oDate);
 	};
 
 	var _padTo10 = function(i) {
@@ -551,18 +424,6 @@ sap.ui.define([
 		var  sIdForwardButton = oPC.getId() + "-Header-NavToolbar-NextBtn";
 		qutils.triggerEvent("tap", sIdForwardButton);
 		sap.ui.getCore().applyChanges();
-	};
-
-	var _navFocusPrev = function(oTarget) {
-		qutils.triggerKeydown(oTarget.id, "ARROW_LEFT");
-		sap.ui.getCore().applyChanges();
-		return this.oPC2Interval._oItemNavigation.getFocusedDomRef();
-	};
-
-	var _navFocusNext = function(oTarget) {
-		qutils.triggerKeydown(oTarget.id, "ARROW_RIGHT");
-		sap.ui.getCore().applyChanges();
-		return this.oPC2Interval._oItemNavigation.getFocusedDomRef();
 	};
 
 	/**
@@ -1082,19 +943,18 @@ sap.ui.define([
 	QUnit.test("'_handleCalendarSelect()' event handler adjust the startDate to the 1st day of month", function (assert) {
 		//arrange
 		var oHandleCalendarSelectSpy = this.spy(PlanningCalendar.prototype, "_handleCalendarSelect"),
-			oPCInterval,
-			oPCIntervalMonth;
+			oPCInterval;
 
 		this._createCalendar();
 		oPCInterval = this._oPC.getAggregation('table').getAggregation('infoToolbar').getContent()[1];
-		var $EventTarget = oPCInterval.$('days').children().eq(0),
-			oEvent = { clientX: 100, clientY: 100, target: $EventTarget.children().get(0) },
-			oMouseDownEvent = jQuery.Event("mousedown", oEvent),
-			oMouseUpEvent = jQuery.Event("mouseup", oEvent);
+		var oEventTarget = oPCInterval.getDomRef().querySelectorAll(".sapUiCalItem")[0],
+			oEventDetails = { clientX: 100, clientY: 100 },
+			oMouseDownEvent = jQuery.Event("mousedown", oEventDetails),
+			oMouseUpEvent = jQuery.Event("mouseup", oEventDetails);
 
 		//Calendar selection is implemented on 'mouseup' event so to test this you have to simulate 'mousedown' + 'mouseup' event sequence
-		$EventTarget.trigger(oMouseDownEvent);
-		$EventTarget.trigger(oMouseUpEvent);
+		jQuery(oEventTarget).trigger(oMouseDownEvent);
+		jQuery(oEventTarget).trigger(oMouseUpEvent);
 		sap.ui.getCore().applyChanges();
 		//assert
 		assert.strictEqual(oHandleCalendarSelectSpy.callCount, 1, "'_handleStartDateChange()' event handler is called once");

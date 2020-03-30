@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/unified/calendar/CalendarDate"],
-	function(CalendarDate) {
+sap.ui.define(["sap/ui/unified/calendar/CalendarDate", 'sap/ui/core/InvisibleText'],
+	function(CalendarDate, InvisibleText) {
 	"use strict";
 
 
@@ -56,7 +56,8 @@ sap.ui.define(["sap/ui/unified/calendar/CalendarDate"],
 			role: "grid",
 			readonly: "true",
 			multiselectable: oMP.getIntervalSelection(),
-			label: sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("MONTH_PICKER")
+			label: sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("MONTH_PICKER"),
+			describedby: oMP._bCalendar ? InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_YEAR_PICKER_OPEN_HINT") : ""
 		});
 
 		oRm.openEnd(); // div element

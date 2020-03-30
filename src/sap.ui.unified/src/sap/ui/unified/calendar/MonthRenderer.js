@@ -3,8 +3,8 @@
  */
 
 sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/CalendarLegend', 'sap/ui/unified/CalendarLegendRenderer',
-	'sap/ui/core/library', 'sap/ui/unified/library', "sap/base/Log"],
-	function(CalendarUtils, CalendarDate, CalendarLegend, CalendarLegendRenderer, coreLibrary, library, Log) {
+	'sap/ui/core/library', 'sap/ui/unified/library', "sap/base/Log", 'sap/ui/core/InvisibleText'],
+	function(CalendarUtils, CalendarDate, CalendarLegend, CalendarLegendRenderer, coreLibrary, library, Log, InvisibleText) {
 	"use strict";
 
 
@@ -31,12 +31,13 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 	 */
 	MonthRenderer.render = function(oRm, oMonth){
 
-		var oDate = this.getStartDate(oMonth);
-		var sTooltip = oMonth.getTooltip_AsString();
-		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
-		var sId = oMonth.getId();
-		var oAriaLabel = {value: sId + "-Descr", append: true};
-		var sWidth = oMonth.getWidth();
+		var oDate = this.getStartDate(oMonth),
+			sTooltip = oMonth.getTooltip_AsString(),
+			rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
+			sId = oMonth.getId(),
+			oAriaLabel = {value: "", append: true},
+			sDescribedBy = "",
+			sWidth = oMonth.getWidth();
 
 		oRm.openStart("div", oMonth);
 		this.getClass(oRm, oMonth).forEach(function (sClass) {
@@ -56,23 +57,24 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 			oAriaLabel.value = oAriaLabel.value + " " + sId + "-Head";
 		}
 
+		if (oMonth._bCalendar) {
+			sDescribedBy += " " + InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_MONTH_PICKER_OPEN_HINT") +
+				" " + InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_YEAR_PICKER_OPEN_HINT");
+		}
+
 		if (sWidth) {
 			oRm.style("width", sWidth);
 		}
 
 		oRm.accessibilityState(oMonth, {
 			role: "grid",
+			roledescription: rb.getText("CALENDAR_DIALOG"),
 			multiselectable: !oMonth.getSingleSelection() || oMonth.getIntervalSelection(),
-			labelledby: oAriaLabel
+			labelledby: oAriaLabel,
+			describedby: sDescribedBy
 		});
 
 		oRm.openEnd(); // div element
-
-		oRm.openStart("span", sId + "-Descr");
-		oRm.style("display", "none");
-		oRm.openEnd();
-		oRm.text(rb.getText("CALENDAR_DIALOG"));
-		oRm.close("span");
 
 		if (oMonth.getIntervalSelection()) {
 			oRm.openStart("span", sId + "-Start");
@@ -127,20 +129,10 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The date which month and year will be set to the header
 	 */
 	MonthRenderer.renderMonth = function(oRm, oMonth, oDate){
-
-		var sId = oMonth.getId();
-
 		// header line
 		this.renderHeader(oRm, oMonth, oDate);
-
 		// days
-		oRm.openStart("div", sId + "-days"); // extra DIV around the days to allow rerendering only it's content
-		oRm.attr("role", "row");
-		oRm.class("sapUiCalItems");
-		oRm.openEnd();
 		this.renderDays(oRm, oMonth, oDate);
-		oRm.close("div");
-
 	};
 
 	/**
@@ -152,18 +144,9 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 
 		var oLocaleData = oMonth._getLocaleData();
 		var iFirstDayOfWeek = oMonth._getFirstDayOfWeek();
-		var sId = oMonth.getId();
-		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 
 		// header
 		this.renderHeaderLine(oRm, oMonth, oLocaleData, oDate);
-
-		oRm.openStart("div", sId + "-CW");
-		oRm.style("display", "none");
-		oRm.accessibilityState(null, {role: "columnheader"});
-		oRm.openEnd(); // div
-		oRm.text(rb.getText("CALENDAR_WEEK"));
-		oRm.close("div");
 
 		oRm.openStart("div");
 		oRm.accessibilityState(null, {role: "row"});
@@ -214,6 +197,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		}
 		var aWeekDaysWide = oLocaleData.getDaysStandAlone("wide", sCalendarType);
 
+		this.renderDummyCell(oRm, "sapUiCalWH", "columnheader");
+
 		for ( var i = 0; i < iDays; i++) {
 			if (bDayNumberAsId) {
 				// month mode -> use the day number as ID
@@ -249,7 +234,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 			aDays,
 			iLength,
 			oHelper,
-			i, iTimestamp,
+			i,
+			iTimestamp,
 			bShowWeekNumbers;
 
 		CalendarUtils._checkCalendarDate(oDate);
@@ -274,11 +260,26 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 
 		iLength = aDays.length;
 		for (i = 0; i < iLength; i++) {
+			if (i % 7 === 0) {
+				oRm.openStart("div");
+				oRm.attr("role", "row");
+				oRm.openEnd();
+
+				if (bWeekNum) {
+					this._renderWeekNumber(oRm, aDays[i], oHelper);
+				}
+			}
+
 			this.renderDay(oRm, oMonth, aDays[i], oHelper, true, bWeekNum, -1);
+
+			if (i % 7 === 6) {
+				oRm.close("div");
+			}
 		}
+
 		if (iLength === 28) {
 			// there are only 4 full weeks (28 days), add one hidden 'day' div in order to open space for 5-th week
-			this.renderDummyDay(oRm);
+			this.renderDummyCell(oRm, "sapUiCalItem", "");
 		}
 	};
 
@@ -287,9 +288,10 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 	 * @private
 	 */
-	MonthRenderer.renderDummyDay = function(oRm) {
+	MonthRenderer.renderDummyCell = function(oRm, sClassName, sRole) {
 		oRm.openStart("div");
-		oRm.class("sapUiCalItem");
+		oRm.class(sClassName);
+		oRm.attr("role", sRole);
 		oRm.style("visibility", "hidden");
 		oRm.attr("tabindex", "-1");
 		oRm.openEnd();
@@ -375,22 +377,6 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		// Days before 0001.01.01 should be disabled.
 		if (bBeforeFirstYear) {
 			bEnabled = false;
-		}
-
-		var iWeekNumber = 0;
-		if (bWeekNum) {
-			iWeekNumber = CalendarUtils.calculateWeekNumber(oDay.toUTCJSDate(), oHelper.iYear, oHelper.sLocale, oHelper.oLocaleData);
-			mAccProps["describedby"] = oHelper.sId + "-CW" + " " + oHelper.sId + "-WNum-" +  iWeekNumber;
-		}
-
-		if (!bDayName) {
-			var sWHId = "";
-			if (iNumber < 0) {
-				sWHId = oHelper.sId + "-WH" + iWeekDay;
-			} else {
-				sWHId = oHelper.sId + "-WH" + iNumber;
-			}
-			mAccProps["describedby"] = mAccProps["describedby"] + " " + sWHId;
 		}
 
 		oRm.openStart("div", oHelper.sId + "-" + sYyyymmdd);
@@ -513,16 +499,6 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		}
 		oRm.close("span");
 
-		if (bWeekNum && iWeekDay === oHelper.iFirstDayOfWeek) {
-			// add week number - inside first day of the week to allow better position and make it easier for ItemNavigation
-			oRm.openStart("span", oHelper.sId + "-WNum-" +  iWeekNumber);
-			oRm.class("sapUiCalWeekNum");
-			oRm.accessibilityState(null, {role: "rowheader", desribedby: oHelper.sId + "-CW"});
-			oRm.openEnd(); // span
-			oRm.text(iWeekNumber);
-			oRm.close("span");
-		}
-
 		if (bDayName) {
 			oRm.openStart("span");
 			oRm.class("sapUiCalDayName");
@@ -541,6 +517,19 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 
 		oRm.close("div");
 
+	};
+
+	MonthRenderer._renderWeekNumber = function(oRm, oDay, oHelper) {
+		var iWeekNumber = CalendarUtils.calculateWeekNumber(oDay.toUTCJSDate(), oHelper.iYear, oHelper.sLocale, oHelper.oLocaleData),
+			sId = oHelper.sId + "-WNum-" + iWeekNumber;
+
+		// add week number - inside first day of the week to allow better position and make it easier for ItemNavigation
+		oRm.openStart("div", sId);
+		oRm.class("sapUiCalWeekNum");
+		oRm.accessibilityState(null, { role: "rowheader", labelledby: InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_WEEK") + " " +  sId});
+		oRm.openEnd(); // span
+		oRm.text(iWeekNumber);
+		oRm.close("div");
 	};
 
 	return MonthRenderer;

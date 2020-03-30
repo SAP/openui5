@@ -8,19 +8,15 @@
 .sapMSinglePCColumnHeader {
 	padding-left: @_sap_m_SinglePlanningCalendarGrid_RowHeadersWidth;
 
-	.sapUiCalItems {
-		display: block;
-		overflow: hidden;
+	overflow: hidden;
 
-		// TODO: Consider refactoring of the CSS of PlanningCalendar DatesRow CSS and fix the styles in one place
-		// for sapUiCalItems
-		.sapUiCalItem:focus {
-			outline: 0.0625rem dotted;
-			outline-offset: -3px;
+	// TODO: Consider refactoring of the CSS of PlanningCalendar DatesRow CSS and fix the styles in one place
+	.sapUiCalItem:focus {
+		outline: 0.0625rem dotted;
+		outline-offset: -3px;
 
-			.sapUiCalItemText {
-				outline: none;
-			}
+		.sapUiCalItemText {
+			outline: none;
 		}
 	}
 
@@ -430,23 +426,22 @@ html[data-sap-ui-browser^=ie] .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps 
 	border-right: 2px solid @sapUiContentForegroundBorderColor;
 }
 
-.sapMSinglePCColumnHeader.sapUiCalRow .sapUiCalItems,
-.sapMSinglePCColumnHeader.sapUiCalRow .sapUiCalItems > .sapUiCalItem {
+.sapMSinglePCColumnHeader.sapUiCalRow,
+.sapMSinglePCColumnHeader.sapUiCalRow .sapUiCalItem {
 	height: 2.75rem;
 }
 
-.sapMSinglePC .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText {
+.sapMSinglePC .sapUiCalNoNameLine .sapUiCalItem > .sapUiCalItemText {
 	padding-top: 0.75rem;
 }
 
 .sapUiSizeCompact {
-	.sapMSinglePCColumnHeader.sapUiCalRow .sapUiCalItems,
-	.sapMSinglePCColumnHeader.sapUiCalRow .sapUiCalItems > .sapUiCalItem {
+	.sapMSinglePCColumnHeader.sapUiCalRow,
+	.sapMSinglePCColumnHeader.sapUiCalRow .sapUiCalItem {
 		height:2rem;
 	}
 	// TODO: Consider refactoring of the CSS of PlanningCalendar DatesRow CSS and fix the styles in one place
-	// for sapUiCalItems
-	.sapMSinglePCColumnHeader .sapUiCalItems {
+	.sapMSinglePCColumnHeader {
 		.sapUiCalItem {
 			display: flex;
 			flex-direction: row-reverse;

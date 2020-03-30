@@ -117,6 +117,7 @@ sap.ui.define([
 
 	CalendarDateInterval.prototype._initilizeMonthPicker = function() {
 		var oMonthPicker = this._createMonthPicker();
+		oMonthPicker._bCalendar = true;
 		this.setAggregation("monthPicker", oMonthPicker);
 
 		oMonthPicker._setSelectedDatesControlOrigin(this);
@@ -124,6 +125,7 @@ sap.ui.define([
 
 	CalendarDateInterval.prototype._initilizeYearPicker = function() {
 		var oYearPicker =  this._createYearPicker();
+		oYearPicker._bCalendar = true;
 		this.setAggregation("yearPicker", oYearPicker);
 
 		oYearPicker._setSelectedDatesControlOrigin(this);
@@ -372,6 +374,7 @@ sap.ui.define([
 	CalendarDateInterval.prototype._createMonth = function(sId){
 
 		var oMonth = new DatesRow(sId);
+		oMonth._bCalendar = true;
 
 		return oMonth;
 

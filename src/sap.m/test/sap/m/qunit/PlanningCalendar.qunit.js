@@ -80,9 +80,6 @@ sap.ui.define([
 	// shortcut for sap.m.PlanningCalendarBuiltInView
 	var PlanningCalendarBuiltInView = mobileLibrary.PlanningCalendarBuiltInView;
 
-	// shortcut for sap.ui.core.CalendarType
-	var CalendarType = coreLibrary.CalendarType;
-
 	// shortcut for sap.m.ScreenSize
 	var ScreenSize = mobileLibrary.ScreenSize;
 
@@ -368,66 +365,6 @@ sap.ui.define([
 		oViewSwitch.fireChange({ selectedItem: aItemsToSelect[0] });
 	};
 
-	var _switchToDate = function(oPC, oInterval, iDay, iMonth, iYear) {
-		var bWizardUsesDaysPicker = (oPC.getViewKey() === "Days" || oPC.getViewKey() === "1 Week" || oPC.getViewKey() === "Hours"),
-			sCalendarPickerId =  oPC._getHeader().getAggregation("_calendarPicker").getId(),
-			sMonthPickerId =  oPC._getHeader().getAggregation("_monthPicker").getId(),
-			sYearPickerId =  oPC._getHeader().getAggregation("_yearPicker").getId(),
-			sCalendarPickerYearId = sCalendarPickerId + "--YP",
-			sCalendarPickerMonthId = sCalendarPickerId + "--MP",
-			sDate,
-			$Date;
-
-		qutils.triggerEvent("tap", oPC.getId() + "-Header-NavToolbar-PickerBtn");
-
-		if (iYear !== undefined) {
-			// click on Year button inside current picker
-			qutils.triggerEvent("click", sMonthPickerId + "--Head-B2");
-
-			// click on the wanted year
-			$Date = jQuery("#" + sMonthPickerId + "--YP-y" + iYear + "0101");
-			$Date.focus();
-			oPC._getHeader().getAggregation("_monthPicker").getAggregation("monthPicker")._oItemNavigation.setFocusedIndex(iYear);
-			sap.ui.getCore().applyChanges();
-			qutils.triggerKeydown($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
-		}
-
-		if (iMonth !== undefined) {
-			if (bWizardUsesDaysPicker) { //we want to choose month, but the day picker is opened. Click on the month button atop
-				// click on Month button inside calendar picker
-				qutils.triggerEvent("tap", sMonthPickerId + "--Head-B1");
-			}
-
-			// click on the wanted month
-			$Date = jQuery("#" + sMonthPickerId + "--MP-m" + iMonth);
-			$Date.focus();
-			// sets February
-			oPC._getHeader().getAggregation("_monthPicker").getAggregation("monthPicker")._oItemNavigation.setFocusedIndex(iMonth);
-			sap.ui.getCore().applyChanges();
-			qutils.triggerKeydown($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
-		}
-
-		if (bWizardUsesDaysPicker && iDay != undefined) {
-			// click on 14 of September
-			sDate = DateFormat().getInstance({pattern: "yyyymmdd"}).format(new Date(iYear, iMonth, iDay));
-			$Date = jQuery("#" + sCalendarPickerId + "--Month0-" + sDate);
-			$Date.focus();
-			qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
-		}
-	};
-
-	/*	var _switchToMonth = function(oPC, iMonth) {
-			var oMonthPicker = oPC.getAggregation("table").getAggregation("infoToolbar").getContent()[1].getAggregation("monthPicker");
-			oMonthPicker.setMonth(iMonth);
-			oMonthPicker.fireSelect();
-		};
-
-		var _switchToYear = function(oPC, iYear) {
-			var oYearPicker = oPC.getAggregation("table").getAggregation("infoToolbar").getContent()[1].getAggregation("yearPicker");
-			oYearPicker.setYear(iYear);
-			oYearPicker.fireSelect();
-		};*/
-
 	var _clickTodayButton = function(oPC) {
 		var sTodayButtonId = _getTodayButton.call(this, oPC).getId();
 		qutils.triggerEvent("tap", sTodayButtonId);
@@ -445,7 +382,7 @@ sap.ui.define([
 	//Verifies that given dates are "displayed" in the Planning Calendar
 	//and month name(s) in the button is as expected
 	var _assertDatesAreVisible = function(aDates, oPC, sMessagePrefix) {
-		var sDaysSelector = oPC.getId() + "-" + _getIntervalId.call(this, oPC) + "-days",
+		var sDaysSelector = oPC.getId() + "-" + _getIntervalId.call(this, oPC),
 			iAvailableDays = jQuery('#' + sDaysSelector).children().length,
 			oFirstDate = aDates[0],
 			oLastDate = aDates[aDates.length - 1],
@@ -563,130 +500,6 @@ sap.ui.define([
 		qutils.triggerKeydown(oTarget.id, "ARROW_RIGHT");
 		sap.ui.getCore().applyChanges();
 		return this.oPC2Interval._oItemNavigation.getFocusedDomRef();
-	};
-
-	/**
-	 * Creates special dates, based on the view type (@CalendarIntervalType) by using CalendarDayType in the range
-	 * provided by [@iTypeBegin, @iTypeEnd].
-	 * @returns For Hours View: Special dates for as mucch hours as the range of types provides, each with 59 mins.
-	 * For Days, 1Week and 1 Month -
-	 **/
-	function _createSpecialDates(iTypeBegin, iTypeEnd, sCalendarIntervalType, oStartDate) {
-		var sTypeName = "",
-			oSpecialDateStart,
-			oSpecialDateEnd,
-			aResult = [];
-
-		oSpecialDateStart = new Date(oStartDate.getTime());
-		oSpecialDateEnd = createEndDate(sCalendarIntervalType, oSpecialDateStart);
-
-		for (var i = iTypeBegin; i <= iTypeEnd; i++) {
-			sTypeName = i.toString();
-			sTypeName = sTypeName.length === 1 ? "0" + sTypeName : sTypeName;
-			sTypeName = "Type" + sTypeName;
-			if (!CalendarDayType[sTypeName]) {
-				throw "Test error: invalid type " + sTypeName;
-			}
-			sTypeName = CalendarDayType[sTypeName];
-			aResult.push(new DateTypeRange({
-				type: sTypeName,
-				startDate: new Date(oSpecialDateStart.getTime()),
-				endDate: new Date(oSpecialDateEnd.getTime())
-			}));
-
-			oSpecialDateStart = getNextStartDate(sCalendarIntervalType, oSpecialDateStart);
-			oSpecialDateEnd = createEndDate(sCalendarIntervalType, oSpecialDateStart);
-		}
-
-		function getNextStartDate(sCalendarIntervalType, oDate1) {
-			var oTempDate = new Date(oDate1.getTime());
-
-			switch (sCalendarIntervalType) {
-				case CalendarIntervalType.Hour:
-				{
-					oTempDate.setHours(oTempDate.getHours() + 1);
-					break;
-				}
-				case CalendarIntervalType.Day:
-				case CalendarIntervalType.Week:
-				case CalendarIntervalType.OneMonth:
-				{
-					oTempDate.setDate(oTempDate.getDate() + 1);
-					break;
-				}
-				case CalendarIntervalType.Month:
-				{
-					oTempDate.setMonth(oTempDate.getMonth() + 1);
-					break;
-				}
-				default: throw "Invalid CalendarIntervalType: " + sCalendarIntervalType;
-			}
-			return oTempDate;
-		}
-		function createEndDate(sCalendarIntervalType, oStartDate) {
-			var oEndDate = new Date(oStartDate.getTime());
-
-			switch (sCalendarIntervalType) {
-				case CalendarIntervalType.Hour:
-				{
-					oEndDate.setMinutes(59);
-					break;
-				}
-				case CalendarIntervalType.Day:
-				case CalendarIntervalType.Week:
-				case CalendarIntervalType.OneMonth:
-				{
-					oEndDate.setHours(23, 59, 59);
-					break;
-				}
-				case CalendarIntervalType.Month:
-				{
-					oEndDate.setDate(getLastMonthDate(oStartDate));
-					break;
-				}
-				default: throw "Invalid CalendarIntervalType: " + sCalendarIntervalType;
-			}
-			return oEndDate;
-		}
-
-		function getLastMonthDate(oDate) {
-			var oTempDate = new Date(oDate.getTime());
-			oTempDate.setMonth(oTempDate.getMonth() + 1);
-			oTempDate.setDate(0);
-			return oTempDate.getDate();
-		}
-		return aResult;
-	}
-
-
-	var _createAppointmentsOfTypes = function(iTypeBegin, iTypeEnd, oStartDate) {
-		var sTypeName = "",
-			oAppStartDate,
-			oAppEndDate,
-			aResult = [];
-
-		oAppStartDate = new Date(oStartDate.getTime());
-		oAppEndDate = new Date(oAppStartDate.getTime());
-		oAppEndDate.setMinutes(oAppStartDate.getMinutes() + 10);  //appointments duration
-
-		for (var i = iTypeBegin; i <= iTypeEnd; i++) {
-			sTypeName = i.toString();
-			sTypeName = sTypeName.length === 1 ? "0" + sTypeName : sTypeName;
-			sTypeName = "Type" + sTypeName;
-			if (!CalendarDayType[sTypeName]) {
-				throw "Test error: invalid type " + sTypeName;
-			}
-			sTypeName = CalendarDayType[sTypeName];
-			aResult.push(new CalendarAppointment({
-				type: sTypeName,
-				startDate: new Date(oAppStartDate.getTime()),
-				endDate: new Date(oAppEndDate.getTime())
-			}));
-			oAppStartDate.setMinutes(oAppStartDate.getMinutes() + 30);// 2appointments per hour
-			oAppEndDate = new Date(oAppStartDate.getTime());
-			oAppEndDate.setMinutes(oAppStartDate.getMinutes() + 10); //appointments duration
-		}
-		return aResult;
 	};
 
 	var oSearchField1 = new SearchField("SF1", {
@@ -1048,7 +861,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.equal(this.oPC.$().outerWidth(), "600", "width is set to 600px"); // this is only for check that width of the screen is set to 600 px
-		assert.equal(jQuery("#PC3-DatesRow-days .sapUiCalItem").length , 7, "days are 7");
+		assert.equal(jQuery("#PC3-DatesRow .sapUiCalItem").length , 7, "days are 7");
 	});
 
 	QUnit.test("checks for the number of days on big screen on Days View", function(assert) {
@@ -1059,7 +872,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.equal(this.oPC.$().outerWidth(), "1024", "width is set to 1024 px"); // this is only for check that width of the screen is set to 1024 px
-		assert.equal(jQuery("#PC3-DatesRow-days .sapUiCalItem").length , 14, "days are 14");
+		assert.equal(jQuery("#PC3-DatesRow .sapUiCalItem").length , 14, "days are 14");
 	});
 
 	QUnit.module("rendering - Months View", {
@@ -1129,7 +942,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.equal(this.oPC.$().outerWidth(), "600", "width is set to 600px"); // this is only for check that width of the screen is set to 600 px
-		assert.equal(jQuery("#PC3-WeeksRow-days .sapUiCalItem").length , 7, "days are 7");
+		assert.equal(jQuery("#PC3-WeeksRow .sapUiCalItem").length , 7, "days are 7");
 	});
 
 	QUnit.test("checks for the number of days on big screen on 1Week View", function(assert) {
@@ -1140,7 +953,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.equal(this.oPC.$().outerWidth(), "1024", "width is set to 1024 px");  // this is only for check that width of the screen is set to 1024 px
-		assert.equal(jQuery("#PC3-WeeksRow-days .sapUiCalItem").length , 7, "days are 7");
+		assert.equal(jQuery("#PC3-WeeksRow .sapUiCalItem").length , 7, "days are 7");
 	});
 	QUnit.module("rendering - 1Month View", {
 		beforeEach: function () {
@@ -1164,7 +977,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.equal(this.oPC.$().outerWidth(), "600", "width is set to 600px"); // this is only for check that width of the screen is set to 600 px
-		assert.equal(jQuery("#PC3-OneMonthsRow-days .sapUiCalItem").length , 35, "days are 35");
+		assert.equal(jQuery("#PC3-OneMonthsRow .sapUiCalItem").length , 35, "days are 35");
 	});
 
 	QUnit.test("checks for the number of days on big screen", function(assert) {
@@ -1175,7 +988,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.equal(this.oPC.$().outerWidth(), "1024", "width is set to 1024 px"); // this is only for check that width of the screen is set to 1024 px
-		assert.equal(jQuery("#PC3-OneMonthsRow-days .sapUiCalItem").length , 31, "days are 31");
+		assert.equal(jQuery("#PC3-OneMonthsRow .sapUiCalItem").length , 31, "days are 31");
 	});
 
 	QUnit.module("Setters", {
@@ -2589,10 +2402,12 @@ sap.ui.define([
 		oPC1.setViewKey(CalendarIntervalType.OneMonth);
 		sap.ui.getCore().applyChanges();
 		bStartDateChange = false;
-		var oPC1Interval = oPC1.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
-		var aDays = oPC1Interval.$("days").children();
-		var $02Mar = aDays[30];
-		jQuery($02Mar).focus();
+
+		var oPC1Interval = oPC1.getAggregation("table").getAggregation("infoToolbar").getContent()[1],
+			aDays = oPC1Interval.getDomRef().querySelectorAll(".sapUiCalItem"),
+			$02Mar = aDays[30];
+
+		$02Mar.focus();
 		sap.ui.getCore().applyChanges();
 		assert.ok(bStartDateChange, "selected day from next month must fire startDateChange");
 		oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
@@ -2715,7 +2530,7 @@ sap.ui.define([
 		//prepare
 		var oCalendarSelectSpy = this.spy(this.sutInterval, 'fireSelect'),
 			oPlanningCalendarIntervalSelectSpy = this.spy(this.sut, 'fireIntervalSelect'),
-			aIntervalDomChilds = this.sutInterval.$('days').children(),
+			aIntervalDomChilds = this.sutInterval.getDomRef().querySelectorAll(".sapUiCalItem"),
 			oFirstCalendarIntervalItem = aIntervalDomChilds[0],
 			oStartDate = this.sut.getStartDate(),
 			oEndDate = new Date(oStartDate.getTime());
@@ -2943,7 +2758,7 @@ sap.ui.define([
 		// Get days
 		this.oPC2Interval = this.oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
 
-		aDays = this.oPC2Interval.$("days").children();
+		aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem");
 		$30Sep = aDays[29];
 		$1stOct = aDays[30];
 
@@ -2955,7 +2770,7 @@ sap.ui.define([
 		_navFocusNext.call(this, $1stOct);
 
 		// Assert
-		aDays = this.oPC2Interval.$("days").children();
+		aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem");
 		$1stOct = aDays[0];
 
 		assert.ok(oApp1stOct2016.getDomRef(), "Once moved to October, the 1st appoint. should be visible");
@@ -3120,14 +2935,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Navigation backward via keyboard left arrow (outside the current visible area)", function(assert) {
-		var $Days = this.oPC2Interval.$("days"),
-			aDays = $Days.children(),
+		var aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem"),
 			oNextTarget = aDays[0],
 			oSelf = this,
 			fnDone = assert.async();
 		//Focus 29th of Aug (week 29 Aug - 4 Sep), 2016 and move left via keyboard 4 times, expect 22 -28 Aug 2016
 		//act
-		aDays.eq(0).focus();
+		aDays[0].focus();
 		sap.ui.getCore().applyChanges();
 		setTimeout(function() {
 			oNextTarget = _navFocusPrev.call(oSelf, oNextTarget);
@@ -3163,7 +2977,6 @@ sap.ui.define([
 		//prepare
 		var oOriginalFormatLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
 			sOriginalFormatLocale = oOriginalFormatLocale.getLanguage() + "_" +  oOriginalFormatLocale.getRegion(),
-			$Days,
 			aDays,
 			oNextTarget,
 			oSelf = this,
@@ -3173,12 +2986,11 @@ sap.ui.define([
 		this.oPC2.setStartDate(new Date("2014", "10", "5", "08", "00"));
 		this.oPC2.rerender();
 
-		$Days = this.oPC2Interval.$("days");
-		aDays = $Days.children();
+		aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem");
 		oNextTarget = aDays[0];
 
 		//Act - focus 2nd of Nov (week 02 Nov - 8 Nov), 2014 and move left via keyboard once, expect 26 Oct - 1 Nov 2014
-		aDays.eq(0).focus();
+		oNextTarget.focus();
 		sap.ui.getCore().applyChanges();
 		setTimeout(function() {
 			oNextTarget = _navFocusPrev.call(oSelf, oNextTarget);
@@ -3228,14 +3040,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Navigation forward via keyboard right (outside the current visible area)", function(assert) {
-		var $Days = this.oPC2Interval.$("days"),
-			aDays = $Days.children(),
+		var aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem"),
 			oNextTarget = aDays[aDays.length - 1],
 			oSelf = this,
 			fnDone = assert.async();
 		//Focus 4th of Sep, 2016 (week 29 Aug-4 Sep) and move right via keyboard 4 times, expect 5 -11 Sep 2016
 		//act
-		aDays.eq(aDays.length - 1).focus();
+		aDays[aDays.length - 1].focus();
 		sap.ui.getCore().applyChanges();
 
 		setTimeout(function() {
@@ -3317,8 +3128,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Navigation forward in week view where next week starts at 1st January (locale en_US)", function(assert) {
-		var $Days,
-			aDays,
+		var aDays,
 			oNextTarget,
 			oSelf = this,
 			fnDone = assert.async(),
@@ -3329,12 +3139,11 @@ sap.ui.define([
 		this.oPC2.setStartDate(new Date(2016, 11, 31));
 		this.oPC2.setViewKey(CalendarIntervalType.Week);
 
-		$Days = this.oPC2Interval.$("days");
-		aDays = $Days.children();
+		aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem");
 		oNextTarget = aDays[aDays.length - 1];
 
 		//act
-		aDays.eq(aDays.length - 1).focus();
+		aDays[aDays.length - 1].focus();
 		sap.ui.getCore().applyChanges();
 
 		_navFocusNext.call(this, oNextTarget);
@@ -3445,7 +3254,7 @@ sap.ui.define([
 			qutils.triggerKeyboardEvent($Day.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 			this.oPC2Interval = oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
-			aDays = this.oPC2Interval.$("days").children();
+			aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem");
 			$FirstInterval = aDays[0];
 
 			setTimeout(function(){
@@ -3486,7 +3295,7 @@ sap.ui.define([
 			qutils.triggerKeyboardEvent($Day.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 			this.oPC2Interval = oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
-			aDays = this.oPC2Interval.$("days").children();
+			aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem");
 			$FirstInterval = aDays[0];
 
 			setTimeout(function(){

@@ -37,11 +37,11 @@
 }
 
 .sapUiSizeCompact {
-	.sapMPlanCal .sapUiCalNoNameLine>.sapUiCalItems>.sapUiCalItem {
+	.sapMPlanCal .sapUiCalNoNameLine .sapUiCalItem {
 		height: 2rem;
 	}
 
-	.sapMPlanCal .sapUiCalOneMonthDatesRow.sapUiCalNoNameLine>.sapUiCalItems>.sapUiCalItem {
+	.sapMPlanCal .sapUiCalOneMonthDatesRow.sapUiCalNoNameLine .sapUiCalItem {
 		height: 3rem;
 	}
 
@@ -58,27 +58,27 @@
 		height: 6rem;
 	}
 
-	.sapMPlanCal .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText{
+	.sapMPlanCal .sapUiCalNoNameLine .sapUiCalItem > .sapUiCalItemText{
 		padding-top: 0;
 		padding-left: 50%;
 		line-height: inherit;
 		text-align: start;
 	}
 
-	.sapMPlanCal .sapUiCalOneMonthDatesRow.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText{
+	.sapMPlanCal .sapUiCalOneMonthDatesRow.sapUiCalNoNameLine .sapUiCalItem > .sapUiCalItemText{
 		padding-top: 1rem;
 		padding-left: 0;
 		text-align: center;
 	}
 
 	.sapMPlanCal .sapUiCalItemNow > .sapUiCalItemText,
-	.sapMPlanCal .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText,
-	.sapMPlanCal.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText,
-	.sapMPlanCal .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText{
+	.sapMPlanCal .sapUiCalNoNameLine .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText,
+	.sapMPlanCal.sapUiCalNoNameLine .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText,
+	.sapMPlanCal .sapUiCalNoNameLine .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText{
 		line-height: 1.725rem;
 	}
 
-	.sapMPlanCal .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
+	.sapMPlanCal .sapUiCalNoNameLine .sapUiCalItem > .sapUiCalDayName{
 		left: 0;
 		height: 100%;
 		width: 50%;
@@ -89,7 +89,7 @@
 		box-sizing: border-box;
 	}
 
-	.sapMPlanCal .sapUiCalOneMonthDatesRow.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
+	.sapMPlanCal .sapUiCalOneMonthDatesRow.sapUiCalNoNameLine .sapUiCalItem > .sapUiCalDayName{
 		left: 0;
 		height: 100%;
 		width: 100%;
@@ -148,10 +148,6 @@
 	padding-left: 0;
 	padding-right: 0;
 	padding-bottom: 0;
-}
-
-html[data-sap-ui-browser^="ie"].sap-desktop .sapMPlanCal .sapUiCalRow:not(.sapUiCalNoNameLine) > .sapUiCalItems {
-	display: block;
 }
 
 .sapMPlanCal > .sapMList .sapMListInfoTBar > .sapUiCalRow > .sapUiCalContent >.sapUiCalContentOver{
@@ -294,10 +290,6 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapMPlanCal .sapUiCalRow:not(.sapUi
 		}
 	}
 
-	.sapUiCalItems {
-		display: block;
-	}
-
 	.sapUiCalTimesRow,
 	.sapUiCalDatesRow,
 	.sapUiCalMonthsRow {
@@ -349,21 +341,25 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapMPlanCal .sapUiCalRow:not(.sapUi
 }
 
 html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
-	.sapUiSizeCompact .sapMPlanCal .sapUiCalNoNameLine:not(.sapUiCalOneMonthDatesRow) > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText{
+	.sapUiSizeCompact .sapMPlanCal .sapUiCalNoNameLine:not(.sapUiCalOneMonthDatesRow) .sapUiCalItem > .sapUiCalItemText{
 		text-align: left;
 	}
 
-	.sapUiSizeCompact .sapMPlanCal .sapUiCalNoNameLine:not(.sapUiCalOneMonthDatesRow) > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
+	.sapUiSizeCompact .sapMPlanCal .sapUiCalNoNameLine:not(.sapUiCalOneMonthDatesRow) .sapUiCalItem > .sapUiCalDayName{
 		text-align: right;
 	}
 }
 
 html[dir=rtl][data-sap-ui-browser ^= "ie"], html[dir=rtl][data-sap-ui-browser^="ed"] {
-	.sapUiSizeCompact .sapMPlanCal .sapUiCalNoNameLine:not(.sapUiCalOneMonthDatesRow) > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText{
+	.sapUiSizeCompact .sapMPlanCal .sapUiCalNoNameLine:not(.sapUiCalOneMonthDatesRow) .sapUiCalItem > .sapUiCalItemText{
 		text-align: right;
 	}
 
-	.sapUiSizeCompact .sapMPlanCal .sapUiCalNoNameLine:not(.sapUiCalOneMonthDatesRow) > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
+	.sapUiSizeCompact .sapMPlanCal .sapUiCalNoNameLine:not(.sapUiCalOneMonthDatesRow) .sapUiCalItem > .sapUiCalDayName{
 		text-align: left;
 	}
+}
+
+.sapMPlanCal .sapUiCalMonthView .sapUiCalWeekNum {
+	text-align: center;
 }

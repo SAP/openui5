@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/UniversalDate'],
-	function(CalendarDate, UniversalDate) {
+sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText'],
+	function(CalendarDate, UniversalDate, InvisibleText) {
 	"use strict";
 
 	/*
@@ -26,7 +26,6 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 	 * @param {sap.ui.unified.calendar.YearPicker} oYP an object representation of the control that should be rendered
 	 */
 	YearPickerRenderer.render = function(oRm, oYP){
-
 		var sTooltip = oYP.getTooltip_AsString();
 
 		oRm.openStart("div", oYP);
@@ -51,7 +50,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 			role: "grid",
 			readonly: "true",
 			multiselectable: oYP.getIntervalSelection(),
-			label: sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("YEAR_PICKER")
+			label: sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("YEAR_PICKER"),
+			describedby: oYP._bCalendar ? InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_YEAR_RANGE_PICKER_OPEN_HINT") : ""
 		};
 	};
 
