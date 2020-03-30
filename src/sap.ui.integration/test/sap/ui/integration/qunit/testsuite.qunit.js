@@ -454,6 +454,15 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/baseEditor/util/hasTag": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/util/hasTag"
+					]
+				},
+				sinon: false
+			},
 			"designtime/cardEditor/CardEditor": {
 				group: "Card DesignTime Editor",
 				coverage: {

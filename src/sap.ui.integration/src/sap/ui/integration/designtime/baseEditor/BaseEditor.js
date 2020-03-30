@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/util/binding/resolveBinding",
 	"sap/ui/integration/designtime/baseEditor/util/binding/ObjectBinding",
 	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString",
+	"sap/ui/integration/designtime/baseEditor/util/hasTag",
 	"sap/ui/core/Control",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/base/util/ObjectPath",
@@ -31,6 +32,7 @@ sap.ui.define([
 	resolveBinding,
 	ObjectBinding,
 	isValidBindingString,
+	hasTag,
 	Control,
 	ResourceModel,
 	ObjectPath,
@@ -671,23 +673,6 @@ sap.ui.define([
 		var aList = this._mPropertyEditors[sPropertyName];
 		return Array.isArray(aList) && aList.slice() || null;
 	};
-
-	/**
-	 * Checks if the property editor configuration matches the specified list of tags
-	 * @param {object} mConfig - Property editor configuration
-	 * @param {string|string[]} vTag - Tags for validation
-	 * @returns {boolean} <code>true</code> is config fulfills specified tags
-	 */
-	function hasTag(mConfig, vTag) {
-		var aTags = [].concat(vTag);
-
-		return (
-			Array.isArray(mConfig.tags)
-			&& aTags.every(function (sTag) {
-				return includes(mConfig.tags, sTag);
-			})
-		);
-	}
 
 	/**
 	 * Returns a list of property editors corresponding to a specified list of tags.
