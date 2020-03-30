@@ -223,7 +223,6 @@ function(
 	 * Retrieve the action name related to the plugin
 	 * Method to be overwritten by the different plugins
 	 *
-	 * @override
 	 * @public
 	 */
 	Plugin.prototype.getActionName = function() {};

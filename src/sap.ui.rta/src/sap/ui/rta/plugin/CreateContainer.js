@@ -41,6 +41,19 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * Returns true if create container action is enabled for the selected element overlays
+	 * @param {boolean} bSibling Indicator for a sibling action
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays Array of selected element overlays
+	 * @return {boolean} Indicates if action is enabled
+	 * @override
+	 */
+	CreateContainer.prototype.isEnabled = function(bSibling, aElementOverlays) {
+		var oElementOverlay = aElementOverlays[0];
+		var oAction = this.getCreateAction(bSibling, oElementOverlay);
+		return this.isActionEnabled(oAction, bSibling, oElementOverlay);
+	};
+
 	CreateContainer.prototype.getCreateContainerText = function(bSibling, oOverlay) {
 		var vAction = this.getCreateAction(bSibling, oOverlay);
 		var oParentOverlay = this._getParentOverlay(bSibling, oOverlay);
