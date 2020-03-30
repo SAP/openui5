@@ -435,6 +435,20 @@ sap.ui.define([
 						 */
 						subSection: {type: "sap.uxap.ObjectPageSubSection"}
 					}
+				},
+
+				/**
+				 * Fired when the visibility of subsections is changed.
+				 * @since 1.77
+				 */
+				subSectionVisibilityChange: {
+					parameters: {
+
+						/**
+						 * Object whose keys are the visible SubSection IDs and their values are the SubSection instances
+						 */
+						visibleSubSections: {type: "object"}
+					}
 				}
 			},
 			dnd: { draggable: false, droppable: true },
@@ -1623,7 +1637,7 @@ sap.ui.define([
 
 		if (diff(Object.keys((this._oVisibleSubSections)), Object.keys(oVisibleSubSections)).length) {
 			this._oVisibleSubSections = oVisibleSubSections;
-			this.fireEvent("_subSectionVisibilityChange", {visibleSubSections: oVisibleSubSections});
+			this.fireEvent("subSectionVisibilityChange", {visibleSubSections: oVisibleSubSections});
 		}
 	};
 
