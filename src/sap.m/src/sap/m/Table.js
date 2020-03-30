@@ -335,6 +335,10 @@ sap.ui.define([
 	Table.prototype.onAfterRendering = function() {
 		ListBase.prototype.onAfterRendering.call(this);
 		this.updateSelectAllCheckbox();
+		// force IE repaint in fixed layout mode
+		if (this.getFixedLayout()) {
+			this._forceStyleChange();
+		}
 		this._renderOverlay();
 	};
 
