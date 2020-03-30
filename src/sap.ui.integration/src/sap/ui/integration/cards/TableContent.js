@@ -17,8 +17,8 @@ sap.ui.define([
 		"sap/m/Avatar",
 		"sap/ui/core/library",
 		"sap/m/library",
-		"sap/ui/integration/cards/BindingResolver",
-		"sap/ui/integration/cards/BindingHelper",
+		"sap/ui/integration/util/BindingResolver",
+		"sap/ui/integration/util/BindingHelper",
 		"sap/f/cards/IconFormatter"
 	], function (
 		library,

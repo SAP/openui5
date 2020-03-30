@@ -3,9 +3,9 @@
  */
 sap.ui.define([
 	"sap/ui/base/Object",
-	"sap/ui/integration/cards/ServiceDataProvider",
-	"sap/ui/integration/cards/RequestDataProvider",
-	"sap/ui/integration/cards/DataProvider"
+	"sap/ui/integration/util/ServiceDataProvider",
+	"sap/ui/integration/util/RequestDataProvider",
+	"sap/ui/integration/util/DataProvider"
 ],
 function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider) {
 "use strict";
@@ -20,9 +20,9 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider) {
 	 *
 	 * @private
 	 * @since 1.65
-	 * @alias sap.ui.integration.cards.DataProviderFactory
+	 * @alias sap.ui.integration.util.DataProviderFactory
 	 */
-	var DataProviderFactory = BaseObject.extend("sap.ui.integration.cards.DataProviderFactory", {
+	var DataProviderFactory = BaseObject.extend("sap.ui.integration.util.DataProviderFactory", {
 		constructor: function (oDestinations) {
 			BaseObject.call(this);
 			this._oDestinations = oDestinations;
@@ -60,7 +60,7 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider) {
 	 *
 	 * @param {Object} oDataSettings The data settings.
 	 * @param {sap.ui.integration.util.ServiceManager} oServiceManager A reference to the service manager.
-	 * @returns {sap.ui.integration.cards.DataProvider|null} A data provider instance used for data retrieval.
+	 * @returns {sap.ui.integration.util.DataProvider|null} A data provider instance used for data retrieval.
 	 */
 	DataProviderFactory.prototype.create = function (oDataSettings, oServiceManager) {
 		var oDataProvider;
@@ -82,7 +82,7 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider) {
 		oDataProvider.setDestinations(this._oDestinations);
 		oDataProvider.setSettings(oDataSettings);
 
-		if (oDataProvider.isA("sap.ui.integration.cards.IServiceDataProvider")) {
+		if (oDataProvider.isA("sap.ui.integration.util.IServiceDataProvider")) {
 			oDataProvider.createServiceInstances(oServiceManager);
 		}
 

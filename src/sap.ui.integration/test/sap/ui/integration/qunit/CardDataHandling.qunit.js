@@ -2,8 +2,8 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/integration/cards/RequestDataProvider",
-	"sap/ui/integration/cards/ServiceDataProvider",
+	"sap/ui/integration/util/RequestDataProvider",
+	"sap/ui/integration/util/ServiceDataProvider",
 	"sap/f/cards/Header",
 	"sap/ui/integration/cards/BaseContent",
 	"sap/ui/core/Core"

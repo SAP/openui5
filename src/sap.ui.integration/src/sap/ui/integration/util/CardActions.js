@@ -6,7 +6,7 @@ sap.ui.define([
 		"sap/ui/integration/library",
 		"sap/ui/base/ManagedObject",
 		"sap/base/Log",
-		"sap/ui/integration/cards/BindingResolver"],
+		"sap/ui/integration/util/BindingResolver"],
 	function (mLibrary,
 			  library,
 			  ManagedObject,

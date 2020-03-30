@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/integration/cards/DataProvider"], function (DataProvider) {
+sap.ui.define(["sap/ui/integration/util/DataProvider"], function (DataProvider) {
 	"use strict";
 
 	/**
@@ -12,7 +12,7 @@ sap.ui.define(["sap/ui/integration/cards/DataProvider"], function (DataProvider)
 	 *
 	 * @class
 	 *
-	 * @extends sap.ui.integration.cards.DataProvider
+	 * @extends sap.ui.integration.util.DataProvider
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -20,11 +20,11 @@ sap.ui.define(["sap/ui/integration/cards/DataProvider"], function (DataProvider)
 	 * @constructor
 	 * @private
 	 * @since 1.65
-	 * @alias sap.ui.integration.cards.ServiceDataProvider
+	 * @alias sap.ui.integration.util.ServiceDataProvider
 	 */
-	var ServiceDataProvider = DataProvider.extend("sap.ui.integration.cards.ServiceDataProvider", {
+	var ServiceDataProvider = DataProvider.extend("sap.ui.integration.util.ServiceDataProvider", {
 		metadata: {
-			interfaces: ["sap.ui.integration.cards.IServiceDataProvider"]
+			interfaces: ["sap.ui.integration.util.IServiceDataProvider"]
 		}
 	});
 

@@ -14,7 +14,7 @@ sap.ui.define([
 		"sap/ui/core/ResizeHandler",
 		"sap/ui/layout/AlignedFlowLayout",
 		"sap/ui/dom/units/Rem",
-		"sap/ui/integration/cards/BindingHelper",
+		"sap/ui/integration/util/BindingHelper",
 		"sap/f/cards/IconFormatter"
 	], function (library, BaseContent, HBox, VBox, Text, Title, Avatar, Link , Label, ResizeHandler, AlignedFlowLayout, Rem, BindingHelper, IconFormatter) {
 		"use strict";

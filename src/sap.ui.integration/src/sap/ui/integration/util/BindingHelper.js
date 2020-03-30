@@ -4,9 +4,9 @@
 sap.ui.define([
 	"sap/ui/base/BindingParser",
 	"sap/base/util/extend",
-	"./formatters/DateTimeFormatter",
-	"./formatters/NumberFormatter",
-	"./bindingFeatures/DateRange"
+	"sap/ui/integration/formatters/DateTimeFormatter",
+	"sap/ui/integration/formatters/NumberFormatter",
+	"sap/ui/integration/bindingFeatures/DateRange"
 	], function (
 		BindingParser,
 		extend,
@@ -35,7 +35,7 @@ sap.ui.define([
 		 * @version ${version}
 		 *
 		 * @private
-		 * @alias sap.ui.integration.cards.BindingHelper
+		 * @alias sap.ui.integration.util.BindingHelper
 		 */
 		var BindingHelper = {};
 

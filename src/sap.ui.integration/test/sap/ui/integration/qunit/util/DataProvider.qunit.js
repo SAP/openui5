@@ -1,10 +1,10 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/integration/cards/DataProviderFactory",
-	"sap/ui/integration/cards/ServiceDataProvider",
-	"sap/ui/integration/cards/DataProvider",
-	"sap/ui/integration/cards/RequestDataProvider"
+	"sap/ui/integration/util/DataProviderFactory",
+	"sap/ui/integration/util/ServiceDataProvider",
+	"sap/ui/integration/util/DataProvider",
+	"sap/ui/integration/util/RequestDataProvider"
 ],
 function (DataProviderFactory, ServiceDataProvider, DataProvider, RequestDataProvider) {
 	"use strict";
@@ -79,7 +79,7 @@ function (DataProviderFactory, ServiceDataProvider, DataProvider, RequestDataPro
 
 		// Assert
 		assert.ok(oDataProvider, "Should have created a DataProvider instance.");
-		assert.ok(oDataProvider.isA("sap.ui.integration.cards.RequestDataProvider"), "Should have created a DataProvider instance of type RequestDataProvider.");
+		assert.ok(oDataProvider.isA("sap.ui.integration.util.RequestDataProvider"), "Should have created a DataProvider instance of type RequestDataProvider.");
 		assert.ok(DataProvider.prototype.setSettings.calledOnce, "Should have called setSettings.");
 		assert.ok(DataProvider.prototype.setSettings.getCall(0).calledWith(oDataSettings), "Should have called setSettings with correct arguments.");
 	});
@@ -99,7 +99,7 @@ function (DataProviderFactory, ServiceDataProvider, DataProvider, RequestDataPro
 
 		// Assert
 		assert.ok(oDataProvider, "Should have created a DataProvider instance.");
-		assert.ok(oDataProvider.isA("sap.ui.integration.cards.ServiceDataProvider"), "Should have created a DataProvider instance of type ServiceDataProvider.");
+		assert.ok(oDataProvider.isA("sap.ui.integration.util.ServiceDataProvider"), "Should have created a DataProvider instance of type ServiceDataProvider.");
 		assert.ok(DataProvider.prototype.setSettings.calledOnce, "Should have called setSettings.");
 		assert.ok(DataProvider.prototype.setSettings.getCall(0).calledWith(oDataSettings), "Should have called setSettings with correct arguments.");
 		assert.ok(ServiceDataProvider.prototype.createServiceInstances.calledOnce, "Should have called createServiceInstances.");
@@ -127,7 +127,7 @@ function (DataProviderFactory, ServiceDataProvider, DataProvider, RequestDataPro
 		assert.ok(DataProvider.prototype.setSettings.getCall(0).calledWith(oDataSettings), "Should have called setSettings with correct arguments.");
 		assert.ok(DataProvider.prototype.setUpdateInterval.calledOnce, "Should have called setUpdateInterval.");
 		assert.ok(oDataProvider, "Should have created a DataProvider instance.");
-		assert.ok(oDataProvider.isA("sap.ui.integration.cards.DataProvider"), "Should have created a DataProvider instance.");
+		assert.ok(oDataProvider.isA("sap.ui.integration.util.DataProvider"), "Should have created a DataProvider instance.");
 
 		// Cleanup
 		fnSpy.restore();

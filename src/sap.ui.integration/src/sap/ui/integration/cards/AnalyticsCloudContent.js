@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/ui/integration/cards/BaseContent",
 	"sap/ui/core/HTML",
-	"sap/ui/integration/cards/BindingResolver"
+	"sap/ui/integration/util/BindingResolver"
 ], function (library, BaseContent, HTML, BindingResolver) {
 		"use strict";
 

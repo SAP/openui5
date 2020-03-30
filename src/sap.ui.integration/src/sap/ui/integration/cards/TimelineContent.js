@@ -7,7 +7,7 @@ sap.ui.define([
 		"sap/suite/ui/commons/library",
 		"sap/suite/ui/commons/TimelineItem",
 		'sap/ui/base/ManagedObject',
-		"sap/ui/integration/cards/BindingHelper",
+		"sap/ui/integration/util/BindingHelper",
 		"sap/f/cards/IconFormatter"
 	], function (
 		BaseListContent,

@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/integration/library",
 	"sap/ui/base/Object",
-	"sap/ui/integration/cards/BindingHelper",
+	"sap/ui/integration/util/BindingHelper",
 	"sap/f/cards/NumericHeader",
 	"sap/f/cards/Header",
 	"sap/f/cards/NumericSideIndicator",

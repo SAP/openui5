@@ -4,7 +4,7 @@
 sap.ui.define([
 		"sap/ui/integration/library",
 		"sap/ui/integration/cards/BaseContent",
-		"sap/ui/integration/cards/BindingResolver",
+		"sap/ui/integration/util/BindingResolver",
 		"sap/viz/ui5/controls/VizFrame",
 		"sap/viz/ui5/controls/common/feeds/FeedItem",
 		"sap/viz/ui5/data/FlattenedDataset",

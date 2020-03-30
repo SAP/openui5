@@ -2,8 +2,8 @@
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core",
-	"sap/ui/integration/cards/formatters/DateTimeFormatter",
-	"sap/ui/integration/cards/formatters/NumberFormatter"
+	"sap/ui/integration/formatters/DateTimeFormatter",
+	"sap/ui/integration/formatters/NumberFormatter"
 ],
 function (
 	Card,

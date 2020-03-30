@@ -8,7 +8,7 @@ sap.ui.define([
 		"sap/m/StandardListItem",
 		"sap/ui/base/ManagedObject",
 		"sap/f/cards/IconFormatter",
-		"sap/ui/integration/cards/BindingHelper"
+		"sap/ui/integration/util/BindingHelper"
 	],
 	function (library, BaseListContent, sapMList, StandardListItem, ManagedObject, IconFormatter, BindingHelper) {
 		"use strict";

@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/integration/util/ContentFactory",
 	"sap/ui/integration/util/CardActions",
-	"./services/SampleServices"
+	"../services/SampleServices"
 	],
 	function (
 		Card,
