@@ -12,6 +12,28 @@
             "reference": "2070060501"
           }
         ]
+      },
+      {
+        "id": "e370637bb12d3160280634f5a1a4630a56f59f97",
+        "type": "FIX",
+        "text": " sap.ui.commons.Image: Karma Runner test stabilized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070056366"
+          }
+        ]
+      },
+      {
+        "id": "1c52315c7e0ad3a39948f7bd5c4058860038edbd",
+        "type": "FIX",
+        "text": " sap.ui.commons.ToolbarRightItems: Karma Runner test stabilized.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070056369"
+          }
+        ]
       }
     ]
   }

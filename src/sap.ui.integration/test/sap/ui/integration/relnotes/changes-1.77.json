@@ -7,6 +7,34 @@
         "type": "FEATURE",
         "text": " sap.f.cards.AdaptiveContent: Support data on card level",
         "references": []
+      },
+      {
+        "id": "982687a62a3ab303a3ae1738231331fa9ccae2f3",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Added Markdown support for Adaptive type",
+        "references": []
+      },
+      {
+        "id": "668323e057934d38f994aefbde7bdd709282bceb",
+        "type": "FIX",
+        "text": " Integration Cards: Re-setting manifest is now working correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070014808"
+          }
+        ]
+      },
+      {
+        "id": "b939f6fc3004c1ad57330f1ff4977942174f0060",
+        "type": "FIX",
+        "text": " sap.f.cards.Header: Header roles are now correctly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070082181"
+          }
+        ]
       }
     ]
   }

@@ -189,6 +189,176 @@
             "reference": "2070082435"
           }
         ]
+      },
+      {
+        "id": "1cb24ef3b0192616937dcc54cc0cb9d7c2e2a009",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Introducing Attention button type",
+        "references": []
+      },
+      {
+        "id": "808cdc5e3b0298f329a8e314418471fba6b7aad2",
+        "type": "FEATURE",
+        "text": " sap.m.SearchField: Change event is enabled",
+        "references": []
+      },
+      {
+        "id": "e746dacef49271fdd3701d15c4cc8ebe5243f095",
+        "type": "FIX",
+        "text": " sap.m.Button: Sample alignment",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "f52abf7bf2076ab801daa6087978109a54a43df6",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: popover now correctly on mobile",
+        "references": []
+      },
+      {
+        "id": "9b675adc933fefae39ba3158b6e0eeabc53d0280",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Subheader setVisible works as expected now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070101219"
+          }
+        ]
+      },
+      {
+        "id": "f86fc729606a1579625d7dcb24eb8c01317dff56",
+        "type": "FIX",
+        "text": " sap.m.MessagaStrip: Handling of invalid \u0027type\u0027 property value fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070106604"
+          }
+        ]
+      },
+      {
+        "id": "bd8601f33b0fcb9bc414992c9836fe8453103a61",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Close method added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070108994"
+          }
+        ]
+      },
+      {
+        "id": "d63e84feeb373eab52186b415e8215120b314341",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Samples adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070101611"
+          }
+        ]
+      },
+      {
+        "id": "6aaa67844fdb1fbcb0b218727c6ad1d8ac8020c5",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Value state handling adjustment",
+        "references": []
+      },
+      {
+        "id": "17ba2b7fb4c41fddca02fa03bf394e175a690bc8",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: Tests are now passing on IE11",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070068167"
+          }
+        ]
+      },
+      {
+        "id": "73c5aad45dccc345f90aad6b66db63680b93fa97",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Empty Popover is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070107682"
+          }
+        ]
+      },
+      {
+        "id": "b2a7b99afeaf7fd7519611e180af273fbe1a9ce6",
+        "type": "FIX",
+        "text": " sap.m.Panel: Expand/Collapse button positioning adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070100322"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070075187"
+          }
+        ]
+      },
+      {
+        "id": "976b3c43d21199ceee62bfd5bc7c09e011fbbb6b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: rendering of a style class fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070103144"
+          }
+        ]
+      },
+      {
+        "id": "01430133e46bdc792413126b7e9d5417a2bffbbf",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Suggestions no longer auto open on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001755142020"
+          }
+        ]
+      },
+      {
+        "id": "f36a9729b8fa125d52cd34d326f720e7b480a09c",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: samples made by guidelines",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070096747"
+          }
+        ]
+      },
+      {
+        "id": "b3180c538cb8f98d736a1e9a0d67d305ae0d0f3c",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Auto-spin values stops on mouse out",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070032164"
+          }
+        ]
+      },
+      {
+        "id": "227f06f52e5507a44c87429ed9bf4456fd01434c",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog: Documanetation for growing property is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070083133"
+          }
+        ]
       }
     ]
   }

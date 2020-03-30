@@ -55,6 +55,68 @@
             "reference": "2070024865"
           }
         ]
+      },
+      {
+        "id": "b066517f7ed42c17b2ae2fbb164a634002037d4a",
+        "type": "FEATURE",
+        "text": " Enhance Component factory to handle terminologies",
+        "references": []
+      },
+      {
+        "id": "3c9b5a69ca37cb1cc00d9fbbaac12f8f7952d612",
+        "type": "FEATURE",
+        "text": " Extend ViewCache with terminologies",
+        "references": []
+      },
+      {
+        "id": "115b9ad8c48c0ec4d2365015ea98837d79bc4bc2",
+        "type": "FIX",
+        "text": " Remove Messages on Controls when rebinding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980347458"
+          }
+        ]
+      },
+      {
+        "id": "20fb66007ea3ccc7e9bab8af06adbfa3cc2c1261",
+        "type": "FIX",
+        "text": " enable text selection only of open popup",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680187013"
+          }
+        ]
+      },
+      {
+        "id": "09688db62064b293447b224293d4ef86a6c10db7",
+        "type": "FIX",
+        "text": " events.PasteEventFix: use capturing phase to avoid focus change in between",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070103149"
+          }
+        ]
+      },
+      {
+        "id": "f06dabfd9263f67cf1b80d75d398ed1df92a1fe6",
+        "type": "FIX",
+        "text": " sap.ui.core.Popup: disable user selection functionality on EdgeHTML-based Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070106440"
+          }
+        ]
+      },
+      {
+        "id": "efe6cb04bf7e31e78f659e5a80bae82ae9315317",
+        "type": "FIX",
+        "text": " sap.ui.core.message.MessageManager: Detach of validation events corrected",
+        "references": []
       }
     ]
   }

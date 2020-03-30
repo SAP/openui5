@@ -34,6 +34,23 @@
             "reference": "2070082435"
           }
         ]
+      },
+      {
+        "id": "976b3c43d21199ceee62bfd5bc7c09e011fbbb6b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: rendering of a style class fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070103144"
+          }
+        ]
+      },
+      {
+        "id": "99732b1f1332d3d81edda59f57597b68461253c5",
+        "type": "FIX",
+        "text": " ui.unified.CalendarDateInterval: error not thrown now",
+        "references": []
       }
     ]
   }

@@ -40,6 +40,12 @@
             "reference": "2070003827"
           }
         ]
+      },
+      {
+        "id": "1af72a97fb8304c9c882059483bdcc3fe18d1271",
+        "type": "FIX",
+        "text": " Fix the JSDocs for AppVariantInlineChangeFactory",
+        "references": []
       }
     ]
   }
