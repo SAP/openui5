@@ -79,6 +79,34 @@ sap.ui.define([
 		sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Gregorian);
 	});
 
+	//*********************************************************************************************
+	QUnit.test("parseValue", function(assert) {
+		// v: value to format; r: expected result; d: test description
+		[
+			{v: "'test'", r: "test", d: "Edm.String - simple text"},
+			{v: "'te''st'", r: "te'st", d: "Edm.String - text with single quote"},
+			{
+				v: "guid'936DA01F-9ABD-4D9D-80C7-02AF85C822A8'",
+				r: "936DA01F-9ABD-4D9D-80C7-02AF85C822A8",
+				d: "Edm.Guid"
+			},
+			{
+				v: "binary'1qkYNhtk/P5uvZ0N2zAUsiScDJA='",
+				r: "1qkYNhtk/P5uvZ0N2zAUsiScDJA=",
+				d: "Edm.Binary"
+			},
+			{v: "true", r: true, d: "Edm.Boolean - 'true'"},
+			{v: "false", r: false, d: "Edm.Boolean - 'false'"},
+			{v: "null", r: null, d: "'null' value"}
+		].forEach(function (oFixture) {
+			assert.strictEqual(ODataUtils.parseValue(oFixture.v), oFixture.r, oFixture.d);
+		});
+
+		assert.throws(function () {
+			ODataUtils.parseValue("dummy");
+		}, new Error("Cannot parse value 'dummy', no Edm type found"));
+	});
+
 	QUnit.test("compare", function (assert) {
 		var iDate1 = Date.UTC(2015, 4, 26),
 			iDate2 = Date.UTC(2015, 4, 30),
