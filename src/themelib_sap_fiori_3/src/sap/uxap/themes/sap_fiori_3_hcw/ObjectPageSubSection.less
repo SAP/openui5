@@ -3,19 +3,20 @@
 /* Quartz High Contrast White theme               */
 /* ============================================== */
 
-.sapUxAPObjectPageSubSection:focus {
-	outline: 0.125rem dotted @sapUiContentFocusColor;
-	outline-offset: -0.125rem;
-	border-color: transparent;
-	border-radius: 0;
+.sapUxAPObjectPageSubSectionHeaderTitle {
+	font-size: @sapMFontHeader5Size;
+	color: @sapUiGroupTitleTextColor;
+	padding-bottom: 0.5rem;
+	line-height: normal;
 }
 
-/* IE ignores outline-offset. Use an overlay: */
-/* TODO remove after the end of support for Internet Explorer */
-html[data-sap-ui-browser^="ie"].sap-desktop {
-	.sapUxAPObjectPageSubSection:focus:before {
-		border-width: 0.125rem;
-	}
+.sapUxAPObjectPageSubSectionHeaderTitleUppercase {
+	text-transform: uppercase;
+}
+
+.sapUxAPObjectPageSubSection:focus {
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline-offset: -0.1875rem;
 }
 
 .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer,
@@ -29,5 +30,9 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 	.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainer,
 	.sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer{
 		padding-bottom: 1rem;
+	}
+	.sapUxAPObjectPageSubSectionHeaderTitle {
+		height: 1.125rem;
+		line-height: normal;
 	}
 }
