@@ -143,6 +143,17 @@ sap.ui.define([
 					]
 				}
 			},
+			"plugin/AddXMLAtExtensionPoint": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/AddXMLAtExtensionPoint"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/rta/qunit/testComponent"
+					}
+				}
+			},
 			"plugin/Combine": {
 				group: "Plugin",
 				coverage: {
