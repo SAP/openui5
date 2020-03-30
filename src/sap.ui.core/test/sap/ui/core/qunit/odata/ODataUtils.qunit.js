@@ -83,6 +83,7 @@ sap.ui.define([
 	QUnit.test("parseValue", function(assert) {
 		// v: value to format; r: expected result; d: test description
 		[
+			// simple types
 			{v: "'test'", r: "test", d: "Edm.String - simple text"},
 			{v: "'te''st'", r: "te'st", d: "Edm.String - text with single quote"},
 			{
@@ -97,7 +98,24 @@ sap.ui.define([
 			},
 			{v: "true", r: true, d: "Edm.Boolean - 'true'"},
 			{v: "false", r: false, d: "Edm.Boolean - 'false'"},
-			{v: "null", r: null, d: "'null' value"}
+			{v: "null", r: null, d: "'null' value"},
+			// numeric types
+			{v: "3.46m", r: "3.46", d: "Edm.Decimal"},
+			{v: "67", r: 67, d: "Edm.Byte"},
+			{v: "4567", r: 4567, d: "Edm.Int16"},
+			{v: "34567", r: 34567, d: "Edm.Int32"},
+			{v: "234567l", r: "234567", d: "Edm.Int64"},
+			{v: "-67", r: -67, d: "Edm.SByte"},
+			{v: "3.46d", r: "3.46", d: "Edm.Double"},
+			{v: "3.46f", r: "3.46", d: "Edm.Single"}
+			//TODO Edm.Binary with "X'"", should not occur due to normalization
+			//TODO Edm.Binary with case insensitive "bInAry'"
+			//TODO Edm.Boolean with "0"/"1" cannot be distingushed from number types without knowing
+			// the type
+			//TODO Capital letters for Decimal, Double, Int64 and Single shoud not occur due to
+			// normalization
+			//TODO "Nan", "-INF" and "INF" can occur in Single and Double according to
+			// 2.2.2 Abstract Type Szstem in OData V2 spec
 		].forEach(function (oFixture) {
 			assert.strictEqual(ODataUtils.parseValue(oFixture.v), oFixture.r, oFixture.d);
 		});

@@ -564,15 +564,23 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataUtils.parseValue = function (sValue) {
-		if (sValue[0] === "'") { // "Edm.String"
+		var sFirstChar = sValue[0],
+			sLastChar = sValue[sValue.length - 1];
+
+		if (sFirstChar === "'") { // Edm.String
 			return sValue.slice(1, -1).replace(/''/g, "'");
-		} else if (sValue.startsWith("guid'")) { // "Edm.Guid"
+		} else if (sValue.startsWith("guid'")) { // Edm.Guid
 			return sValue.slice(5, -1);
-		} else if (sValue === "true" || sValue === "false") { // "Edm.Boolean"
-			return sValue === "true";
 		} else if (sValue === "null") { // null
 			return null;
-		} else if (sValue.startsWith("binary'")) { // "Edm.Binary"
+		} else if (sLastChar === "m" || sLastChar === "l" // Edm.Decimal, Edm.Int64
+				|| sLastChar === "d" || sLastChar === "f") { // Edm.Double, Edm.Single
+			return sValue.slice(0, -1);
+		} else if (!isNaN(sFirstChar) || sFirstChar === "-") { // Edm.Byte, Edm.Int16/32, Edm.SByte
+			return parseInt(sValue);
+		} else if (sValue === "true" || sValue === "false") { // Edm.Boolean
+			return sValue === "true";
+		} else if (sValue.startsWith("binary'")) { // Edm.Binary
 			return sValue.slice(7, -1);
 		}
 		throw new Error("Cannot parse value '" + sValue + "', no Edm type found");
