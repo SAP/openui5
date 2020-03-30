@@ -14,7 +14,9 @@ sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText"],
 		 * <code>SplitButton</code> renderer.
 		 * @namespace
 		 */
-		var SplitButtonRenderer = {};
+		var SplitButtonRenderer = {
+			apiVersion: 2
+		};
 
 		SplitButtonRenderer.CSS_CLASS = "sapMSB";
 
@@ -35,55 +37,49 @@ sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText"],
 				sTitleAttribute = oButton.getTitleAttributeValue();
 
 			//write root DOM element
-			oRm.write("<div");
-			oRm.writeControlData(oButton);
+			oRm.openStart("div", oButton)
+				.class(SplitButtonRenderer.CSS_CLASS);
 
-			//classes
-			oRm.addClass(SplitButtonRenderer.CSS_CLASS);
 			if (oButton.getIcon()) {
-				oRm.addClass(SplitButtonRenderer.CSS_CLASS + "HasIcon");
+				oRm.class(SplitButtonRenderer.CSS_CLASS + "HasIcon");
 			}
 			if (sType === ButtonType.Accept
 				|| sType === ButtonType.Reject
 				|| sType === ButtonType.Emphasized
 				|| sType === ButtonType.Transparent
 				|| sType === ButtonType.Attention) {
-				oRm.addClass(SplitButtonRenderer.CSS_CLASS + sType);
+				oRm.class(SplitButtonRenderer.CSS_CLASS + sType);
 			}
 
-			oRm.writeClasses();
-
 			this.writeAriaAttributes(oRm, oButton);
-			oRm.writeAttribute("tabindex", bEnabled ? "0" : "-1");
+			oRm.attr("tabindex", bEnabled ? "0" : "-1");
 
 			// add tooltip if available
 			if (sTitleAttribute) {
-				oRm.writeAttributeEscaped("title", sTitleAttribute);
+				oRm.attr("title", sTitleAttribute);
 			}
 
 			// set user defined width
 			if (sWidth != "" || sWidth.toLowerCase() === "auto") {
-				oRm.addStyle("width", sWidth);
-				oRm.writeStyles();
+				oRm.style("width", sWidth);
 			}
 
-			oRm.write(">");
+			oRm.openEnd();
 
-			oRm.write("<div");
-			oRm.addClass("sapMSBInner");
+			oRm.openStart("div")
+				.class("sapMSBInner");
 
 			if (!bEnabled) {
-				oRm.addClass("sapMSBInnerDisabled");
+				oRm.class("sapMSBInnerDisabled");
 			}
 
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openEnd();
 
 			oRm.renderControl(oButton._getTextButton());
 			oRm.renderControl(oButton._getArrowButton());
 
-			oRm.write("</div>");
-			oRm.write("</div>");
+			oRm.close("div");
+			oRm.close("div");
 		};
 
 		SplitButtonRenderer.writeAriaAttributes = function(oRm, oButton) {
@@ -92,7 +88,7 @@ sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText"],
 			this.writeAriaRole(oButton, mAccProps);
 			this.writeAriaLabelledBy(oButton, mAccProps);
 
-			oRm.writeAccessibilityState(oButton, mAccProps);
+			oRm.accessibilityState(oButton, mAccProps);
 		};
 
 		SplitButtonRenderer.writeAriaRole = function(oButton, mAccProperties) {
