@@ -57,26 +57,33 @@
 			<ObjectPageSection id="samples" title="Samples ({/count/samples})" visible="{= ${/count/samples} > 0 }">
 				<subSections>
 					<ObjectPageSubSection>
-						<m:Table
-								class="myTable sapUxAPObjectPageSubSectionAlignContent"
-								width="auto"
-								id="table"
-								items="{/entity/samples}"
-								fixedLayout="false"
-								showSeparators="Inner" >
-							<m:columns>
-								<m:Column><m:Label text="Name" /></m:Column>
-								<m:Column minScreenWidth="Tablet"><m:Label text="Description" /></m:Column>
-							</m:columns>
-							<m:items>
-								<m:ColumnListItem type="Navigation" press="onNavToSample" vAlign="Middle">
-									<m:cells>
-										<m:Text text="{name}" class="entitySampleName" wrapping="false" />
-										<m:FormattedText htmlText="{= ${path: 'description'} ? ${path: 'description'} : ''}" />
-									</m:cells>
-								</m:ColumnListItem>
-							</m:items>
-						</m:Table>
+						<m:VBox>
+							<m:MessageStrip
+									class="sapUiSmallMarginBottom sapUiSmallNegativeMarginBeginEnd"
+									text="{/deprecatedMark}"
+									type="Error"
+									visible="{= ${/deprecated} === 'true'}"/>
+							<m:Table
+									class="myTable sapUxAPObjectPageSubSectionAlignContent"
+									width="auto"
+									id="table"
+									items="{/entity/samples}"
+									fixedLayout="false"
+									showSeparators="Inner" >
+								<m:columns>
+									<m:Column><m:Label text="Name" /></m:Column>
+									<m:Column minScreenWidth="Tablet"><m:Label text="Description" /></m:Column>
+								</m:columns>
+								<m:items>
+									<m:ColumnListItem type="Navigation" press="onNavToSample" vAlign="Middle">
+										<m:cells>
+											<m:Text text="{name}" class="entitySampleName" wrapping="false" />
+											<m:FormattedText htmlText="{= ${path: 'description'} ? ${path: 'description'} : ''}" />
+										</m:cells>
+									</m:ColumnListItem>
+								</m:items>
+							</m:Table>
+						</m:VBox>
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>

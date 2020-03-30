@@ -270,7 +270,7 @@ sap.ui.define([
 					// Create oEntityDoc
 					oEntityDoc = {
 						baseType: oEntity.extends,
-						deprecation: oEntity.deprecated ? oEntity.deprecated.text : null,
+						deprecation: oEntity.deprecatedText ? oEntity.deprecatedText : null,
 						doc: oEntity.description,
 						module: oEntity.module,
 						name: oEntity.name,
