@@ -1,7 +1,7 @@
 {
 	"_version": "1.15.0",
 	"sap.app": {
-		"id": "sap.ui.demo.cardExplorer.samples.component.cardContentControls",
+		"id": "my.component.sample.cardContentControls",
 		"type": "card",
 		"title": "Sample of a Component Content with Form",
 		"subTitle": "Sample of a Component Content with Form",
@@ -27,7 +27,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.ui.demo.cardExplorer.samples.component.cardContentControls.View",
+			"viewName": "my.component.sample.cardContentControls.View",
 			"type": "XML",
 			"async": true,
 			"id": "app"

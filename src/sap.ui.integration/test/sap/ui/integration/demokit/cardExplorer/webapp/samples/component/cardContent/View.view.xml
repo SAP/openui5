@@ -1,7 +1,8 @@
 <mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
-          xmlns="sap.m" xmlns:html="http://www.w3.org/1999/xhtml"
-          width="100%"
-          displayBlock="true">
+		  xmlns="sap.m" xmlns:html="http://www.w3.org/1999/xhtml"
+		  width="100%"
+		  displayBlock="true"
+		  controllerName="my.component.sample.cardContent.Main">
 
-    <Image width="100%" src="./images/Image_1.png"></Image>
+	<Image id="img" width="100%"></Image>
 </mvc:View>

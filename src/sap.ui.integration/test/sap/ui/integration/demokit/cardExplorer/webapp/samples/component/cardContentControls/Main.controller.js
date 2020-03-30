@@ -1,11 +1,10 @@
 sap.ui.define([
-	"sap/m/MessageToast",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel"
-], function (MessageToast, Controller, JSONModel) {
+], function (Controller, JSONModel) {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.cardExplorer.samples.component.cardContentControls.Card", {
+	return Controller.extend("my.component.sample.cardContentControls.Main", {
 		onInit: function () {
 			var oModel = new JSONModel({
 				"cities": [
