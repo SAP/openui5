@@ -288,6 +288,7 @@ sap.ui.define([
 			this.aBindableResponseHeaders = aBindableResponseHeaders ? aBindableResponseHeaders : null;
 			this.bPreliminaryContext = bPreliminaryContext || false;
 			this.mMetadataUrlParams = mMetadataUrlParams || {};
+			this.mChangedEntities4checkUpdate = {};
 
 			if (oMessageParser) {
 				oMessageParser.setProcessor(this);
@@ -1781,19 +1782,29 @@ sap.ui.define([
 	};
 
 	/**
-	 * Private method iterating the registered bindings of this model instance and initiating their check for update
+	 * Calls {@link sap.ui.model.Binding#checkUpdate} on all active bindings of this model like
+	 * {@link sap.ui.model.Model#checkUpdate}. Additionally, multiple asynchronous calls to this
+	 * function lead to a single synchronous call where <code>mChangedEntities</code> is the union
+	 * of all <code>mChangedEntities</Code> from the asynchronous calls.
 	 *
-	 * @param {boolean} bForceUpdate Force update of bindings
-	 * @param {boolean} bAsync Asynchronous execution
-	 * @param {map} mChangedEntities Map of changed entities
-	 * @param {boolean} bMetaModelOnly Update metamodel bindings only
+	 * @param {boolean} bForceUpdate
+	 *   The parameter <code>bForceUpdate</code> for the <code>checkUpdate</code> call on the
+	 *   bindings
+	 * @param {boolean} bAsync
+	 *   Whether this function is called in a new task via <code>setTimeout</code>
+	 * @param {map} mChangedEntities
+	 *   Map of changed entities
+	 * @param {boolean} bMetaModelOnly
+	 *   Whether to only update metamodel bindings
 	 * @private
 	 */
 	ODataModel.prototype.checkUpdate = function(bForceUpdate, bAsync, mChangedEntities, bMetaModelOnly) {
 		if (bAsync) {
+			this.bForceUpdate = this.bForceUpdate || bForceUpdate;
+			Object.assign(this.mChangedEntities4checkUpdate, mChangedEntities);
 			if (!this.sUpdateTimer) {
 				this.sUpdateTimer = setTimeout(function() {
-					this.checkUpdate(bForceUpdate, false, mChangedEntities);
+					this.checkUpdate(this.bForceUpdate, false, this.mChangedEntities4checkUpdate);
 				}.bind(this), 0);
 			}
 			return;
@@ -1801,6 +1812,8 @@ sap.ui.define([
 		if (this.sUpdateTimer) {
 			clearTimeout(this.sUpdateTimer);
 			this.sUpdateTimer = null;
+			this.bForceUpdate = undefined;
+			this.mChangedEntities4checkUpdate = {};
 		}
 		var aBindings = this.getBindings();
 		aBindings.forEach(function(oBinding) {

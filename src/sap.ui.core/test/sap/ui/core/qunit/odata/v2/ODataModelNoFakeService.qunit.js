@@ -941,4 +941,85 @@ sap.ui.define([
 		ODataModel.prototype.createBindingContext.call(oModel, "path", "context",
 			/*mParameters*/undefined, fnCallBack, /*bReload*/true);
 	});
+
+	//*********************************************************************************************
+	// BCP: 1970052240
+[false, true].forEach(function (bForceUpdate0, i) {
+	[false, true].forEach(function (bForceUpdate1, j) {
+		[{
+			call0 : {"/path/A" : false, "/path/B" : true},
+			call1 : {"/path/A" : true, "/path/C" : false},
+			result : {"/path/A" : true, "/path/B" : true, "/path/C" : false}
+		}, {
+			call0 : {"/path/A" : false, "/path/B" : true},
+			call1 : undefined,
+			result : {"/path/A" : false, "/path/B" : true}
+		}, {
+			call0 : {"/path/A" : false, "/path/B" : true},
+			call1 : {},
+			result : {"/path/A" : false, "/path/B" : true}
+		}].forEach(function (oChangedEntities, k) {
+	QUnit.test("checkUpdate async (" + i + ", " + j + ", " + k + ")", function (assert) {
+		var done = assert.async(),
+			bForceUpdate2 = bForceUpdate0 || bForceUpdate1,
+			oModel = {
+				checkUpdate : function () {},
+				mChangedEntities4checkUpdate : {},
+				sUpdateTimer : null
+			},
+			sUpdateTimer;
+
+		this.mock(oModel).expects("checkUpdate")
+			.withExactArgs(bForceUpdate2, /*bAsync*/false, oChangedEntities.result)
+			.callsFake(function () {
+				done();
+			});
+
+		// code under test
+		ODataModel.prototype.checkUpdate.call(oModel, bForceUpdate0, true, oChangedEntities.call0);
+
+		sUpdateTimer = oModel.sUpdateTimer;
+		assert.notStrictEqual(sUpdateTimer, null);
+
+		// code under test
+		ODataModel.prototype.checkUpdate.call(oModel, bForceUpdate1, true, oChangedEntities.call1);
+
+		assert.strictEqual(oModel.sUpdateTimer, sUpdateTimer);
+	});
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// BCP: 1970052240
+[false, true].forEach(function (bForceUpdate, i) {
+	QUnit.test("checkUpdate sync (" + i + ")", function (assert) {
+		var oBinding = {
+				checkUpdate : function () {}
+			},
+			aBindings = [oBinding],
+			mChangedEntities = "changedEntities",
+			oModel = {
+				checkUpdate : function () {},
+				getBindings : function () {},
+				_processAfterUpdate : function () {},
+				// test data
+				sUpdateTimer : "updateTimer",
+				bForceUpdate : "forceUpdate",
+				mChangedEntities4checkUpdate : "commulatedChangedEntities"
+			};
+
+		this.mock(window).expects("clearTimeout").withExactArgs("updateTimer");
+		this.mock(oModel).expects("getBindings").returns(aBindings);
+		this.mock(oBinding).expects("checkUpdate").withExactArgs(bForceUpdate, mChangedEntities);
+		this.mock(oModel).expects("_processAfterUpdate").withExactArgs();
+
+		// code under test
+		ODataModel.prototype.checkUpdate.call(oModel, bForceUpdate, false, mChangedEntities);
+
+		assert.deepEqual(oModel.mChangedEntities4checkUpdate, {});
+		assert.strictEqual(oModel.bForceUpdate, undefined);
+		assert.strictEqual(oModel.sUpdateTimer, null);
+	});
+});
 });
