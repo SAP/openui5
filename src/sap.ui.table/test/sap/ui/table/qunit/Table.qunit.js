@@ -197,7 +197,6 @@ sap.ui.define([
 					sortProperty: "money",
 					filterProperty: "money",
 					filterType: floatType,
-
 					width: "100px"
 				}));
 			};

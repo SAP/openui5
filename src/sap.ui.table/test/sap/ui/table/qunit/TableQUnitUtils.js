@@ -1086,7 +1086,6 @@ sap.ui.define([
 		if (bInputElement) {
 			oTemplate = new TestInputControl({
 				text: bBindText ? "{" + sText + "}" : sText,
-				index: oTable.getColumns().length,
 				visible: true,
 				tabbable: bTabbable,
 				type: sInputType
@@ -1094,7 +1093,6 @@ sap.ui.define([
 		} else {
 			oTemplate = new TestControl({
 				text: bBindText ? "{" + sText + "}" : sText,
-				index: oTable.getColumns().length,
 				visible: true,
 				focusable: bFocusable,
 				tabbable: bFocusable && bTabbable
@@ -1170,7 +1168,6 @@ sap.ui.define([
 						tooltip: j == 2 ? aFields[j] + "_TOOLTIP" : null,
 						template: new TestControl({
 							text: "{" + aFields[j] + "}",
-							index: j,
 							visible: j != 3,
 							tabbable: !!bFocusableCellTemplates
 						})
@@ -1180,7 +1177,6 @@ sap.ui.define([
 						width: "100px",
 						template: new TestControl({
 							text: "{" + aFields[j] + "}",
-							index: j,
 							tabbable: !!bFocusableCellTemplates
 						})
 					}));
