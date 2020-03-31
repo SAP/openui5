@@ -93,6 +93,17 @@ sap.ui.define([
 	};
 
 	var ExtensionDelegate = {
+		onBeforeRendering: function(oEvent) {
+			var oSyncExtension = this._getSyncExtension();
+			var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
+			var oContentDomRef = this.getDomRef("tableCCnt");
+
+			if (!bRenderedRows && oContentDomRef && oSyncExtension._onTableContainerScrollEventHandler) {
+				oContentDomRef.removeEventListener("scroll", oSyncExtension._onTableContainerScrollEventHandler);
+				delete oSyncExtension._onTableContainerScrollEventHandler;
+			}
+		},
+
 		onAfterRendering: function(oEvent) {
 			var oScrollExtension = this._getScrollExtension();
 			var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
@@ -105,14 +116,16 @@ sap.ui.define([
 				oScrollExtension.updateVerticalScrollHeight();
 			}
 
-			// Temporarily handled by this extension. A change of the inner vertical scroll position by focus change is currently not handled.
-			// As soon as this works, synchronization of the inner vertical scroll position should be triggered by the scroll extension, not by the
-			// sync extension.
-			// BLI: CPOUIFTEAMB-667
 			if (!bRenderedRows) {
-				oContentDomRef.addEventListener("scroll", function(oEvent) {
-					this._getSyncExtension().syncInnerVerticalScrollPosition(oEvent.target.scrollTop);
-				}.bind(this));
+				var oSyncExtension = this._getSyncExtension();
+
+				if (!oSyncExtension._onTableContainerScrollEventHandler) {
+					oSyncExtension._onTableContainerScrollEventHandler = function(oEvent) {
+						oSyncExtension.syncInnerVerticalScrollPosition(oEvent.target.scrollTop);
+					};
+				}
+
+				oContentDomRef.addEventListener("scroll", oSyncExtension._onTableContainerScrollEventHandler);
 			}
 		}
 	};

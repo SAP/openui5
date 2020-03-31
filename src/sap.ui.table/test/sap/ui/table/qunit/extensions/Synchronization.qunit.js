@@ -86,6 +86,8 @@ sap.ui.define([
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
 			});
+
+			return this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -94,29 +96,23 @@ sap.ui.define([
 
 	QUnit.test("No sync when initializing synchronization", function(assert) {
 		var oTable = this.oTable;
+		var oSyncInterface;
 
-		return oTable._enableSynchronization().then(function(oSyncInterface) {
+		return oTable._enableSynchronization().then(function(_oSyncInterface) {
+			oSyncInterface = _oSyncInterface;
 			oSyncInterface.rowCount = sinon.spy();
 			oSyncInterface.rowSelection = sinon.spy();
 			oSyncInterface.rowHover = sinon.spy();
 			oSyncInterface.rowHeights = sinon.spy();
 			oSyncInterface.innerVerticalScrollPosition = sinon.spy();
 			oSyncInterface.layout = sinon.spy();
-
-			return oSyncInterface;
-		}).then(function(oSyncInterface) {
-			return new Promise(function(resolve) {
-				setTimeout(function() {
-					assert.ok(oSyncInterface.rowCount.notCalled, "The row count was not synced");
-					assert.ok(oSyncInterface.rowSelection.notCalled, "The row selection was not synced");
-					assert.ok(oSyncInterface.rowHover.notCalled, "The row hover state was not synced");
-					assert.ok(oSyncInterface.rowHeights.notCalled, "The row heights were not synced");
-					assert.ok(oSyncInterface.innerVerticalScrollPosition.notCalled, "The inner vertical scroll position was not synced");
-					assert.ok(oSyncInterface.layout.notCalled, "The layout was not synced");
-
-					resolve();
-				}, 0);
-			});
+		}).then(TableQUnitUtils.$wait(0)).then(function() {
+			assert.ok(oSyncInterface.rowCount.notCalled, "The row count was not synced");
+			assert.ok(oSyncInterface.rowSelection.notCalled, "The row selection was not synced");
+			assert.ok(oSyncInterface.rowHover.notCalled, "The row hover state was not synced");
+			assert.ok(oSyncInterface.rowHeights.notCalled, "The row heights were not synced");
+			assert.ok(oSyncInterface.innerVerticalScrollPosition.notCalled, "The inner vertical scroll position was not synced");
+			assert.ok(oSyncInterface.layout.notCalled, "The layout was not synced");
 		});
 	});
 
@@ -329,7 +325,7 @@ sap.ui.define([
 			oTable.invalidate();
 			sap.ui.getCore().applyChanges();
 
-		}).then(oTable.qunit.whenRenderingFinished).then(oTable.qunit.$scrollVSbTo(23)).then(function() {
+		}).then(oTable.qunit.whenRenderingFinished).then(oTable.qunit.$scrollVSbTo(23)).then(oTable.qunit.whenViewportScrolled).then(function() {
 			assert.ok(oSyncInterface.innerVerticalScrollPosition.calledWithExactly(23), "The inner vertical scroll position was correctly synced");
 			assert.strictEqual(oSyncInterface.innerVerticalScrollPosition.callCount, 1, "The inner vertical scroll position was synced once");
 		});
@@ -643,11 +639,7 @@ sap.ui.define([
 			assert.ok(oTableInvalidate.notCalled, "The table was not invalidated");
 			assert.equal(Div.firstElementChild, oOldExternalVSb, "The new external and the old external scrollbars are the same elements");
 
-			return new Promise(function(resolve) {
-				window.setTimeout(resolve, 100);
-			});
-
-		}).then(function() {
+		}).then(TableQUnitUtils.$wait(100)).then(function() {
 			var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
 			assert.strictEqual(oVSb.scrollTop, oTable._getBaseRowHeight() * 2, "The scrollbar has the correct scroll position");
 
