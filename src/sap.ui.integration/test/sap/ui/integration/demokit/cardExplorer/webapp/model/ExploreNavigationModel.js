@@ -47,14 +47,12 @@ sap.ui.define([
 									{
 										url: '/samples/adaptive/data.json',
 										name: 'manifest.json',
-										key: 'manifest.json',
-										content: ''
+										key: 'manifest.json'
 									},
 									{
 										url: '/samples/adaptive/data-json.json',
 										name: 'data.json',
-										key: 'data.json',
-										content: ''
+										key: 'data.json'
 									}
 								]
 							},
@@ -121,32 +119,27 @@ sap.ui.define([
 									{
 										url: '/samples/component/cardContent/manifest.json',
 										name: 'manifest.json',
-										key: 'manifest.json',
-										content: ''
+										key: 'manifest.json'
 									},
 									{
 										url: '/samples/component/cardContent/Component.js',
 										name: 'Component.js',
-										key: 'Component.js',
-										content: ''
+										key: 'Component.js'
 									},
 									{
 										url: '/samples/component/cardContent/Main.controller.js',
 										name: 'Main.controller.js',
-										key: 'Main.controller.js',
-										content: ''
+										key: 'Main.controller.js'
 									},
 									{
 										url: '/samples/component/cardContent/View.view.xml',
 										name: 'View.view.xml',
-										key: 'View.view.xml',
-										content: ''
+										key: 'View.view.xml'
 									},
 									{
 										url: '/samples/component/cardContent/Image.png',
 										name: 'Image.png',
-										key: 'Image.png',
-										content: ''
+										key: 'Image.png'
 									}
 								]
 							},
@@ -157,32 +150,27 @@ sap.ui.define([
 									{
 										url: '/samples/component/cardContentHeaderBottom/manifest.json',
 										name: 'manifest.json',
-										key: 'manifest.json',
-										content: ''
+										key: 'manifest.json'
 									},
 									{
 										url: '/samples/component/cardContentHeaderBottom/Component.js',
 										name: 'Component.js',
-										key: 'Component.js',
-										content: ''
+										key: 'Component.js'
 									},
 									{
 										url: '/samples/component/cardContentHeaderBottom/Main.controller.js',
 										name: 'Main.controller.js',
-										key: 'Main.controller.js',
-										content: ''
+										key: 'Main.controller.js'
 									},
 									{
 										url: '/samples/component/cardContentHeaderBottom/View.view.xml',
 										name: 'View.view.xml',
-										key: 'View.view.xml',
-										content: ''
+										key: 'View.view.xml'
 									},
 									{
 										url: '/samples/component/cardContentHeaderBottom/Image.png',
 										name: 'Image.png',
-										key: 'Image.png',
-										content: ''
+										key: 'Image.png'
 									}
 								]
 							},
@@ -194,26 +182,22 @@ sap.ui.define([
 									{
 										url: '/samples/component/cardContentControls/manifest.json',
 										name: 'manifest.json',
-										key: 'manifest.json',
-										content: ''
+										key: 'manifest.json'
 									},
 									{
 										url: '/samples/component/cardContentControls/Component.js',
 										name: 'Component.js',
-										key: 'Component.js',
-										content: ''
+										key: 'Component.js'
 									},
 									{
 										url: '/samples/component/cardContentControls/View.view.xml',
 										name: 'View.view.xml',
-										key: 'View.view.xml',
-										content: ''
+										key: 'View.view.xml'
 									},
 									{
 										url: '/samples/component/cardContentControls/Main.controller.js',
 										name: 'Main.controller.js',
-										key: 'Main.controller.js',
-										content: ''
+										key: 'Main.controller.js'
 									}
 								]
 							}
@@ -315,26 +299,22 @@ sap.ui.define([
 							{
 								url: '/samples/htmlConsumption/indexTemplate.html',
 								name: 'index.html',
-								key: 'index.html',
-								content: ''
+								key: 'index.html'
 							},
 							{
 								url: '/samples/htmlConsumption/manifest.json',
 								name: 'manifest.json',
-								key: 'manifest.json',
-								content: ''
+								key: 'manifest.json'
 							},
 							{
 								url: '/samples/htmlConsumption/i18n/i18n.properties',
 								name: 'i18n/i18n.properties',
-								key: 'i18n/i18n.properties',
-								content: ''
+								key: 'i18n/i18n.properties'
 							},
 							{
 								url: '/samples/htmlConsumption/items.json',
 								name: 'items.json',
-								key: 'items.json',
-								content: ''
+								key: 'items.json'
 							}
 						]
 					},
@@ -364,14 +344,12 @@ sap.ui.define([
 									{
 										url: '/samples/dataSources/product.json',
 										name: 'manifest.json',
-										key: 'manifest.json',
-										content: ''
+										key: 'manifest.json'
 									},
 									{
 										url: '/samples/dataSources/i18n/i18n.properties',
 										name: 'i18n/i18n.properties',
-										key: 'i18n/i18n.properties',
-										content: ''
+										key: 'i18n/i18n.properties'
 									}
 								]
 							}
@@ -396,38 +374,32 @@ sap.ui.define([
 							{
 								url: '/samples/destinations/index.html',
 								name: 'index.html',
-								key: 'index.html',
-								content: ''
+								key: 'index.html'
 							},
 							{
 								url: '/samples/destinations/cardManifest.json',
 								name: 'cardManifest.json',
-								key: 'cardManifest.json',
-								content: ''
+								key: 'cardManifest.json'
 							},
 							{
 								url: '/samples/destinations/Destinations.view.xml',
 								name: 'Destinations.view.xml',
-								key: 'Destinations.view.xml',
-								content: ''
+								key: 'Destinations.view.xml'
 							},
 							{
 								url: '/samples/destinations/Destinations.controller.js',
 								name: 'Destinations.controller.js',
-								key: 'Destinations.controller.js',
-								content: ''
+								key: 'Destinations.controller.js'
 							},
 							{
 								url: '/samples/destinations/manifest.json',
 								name: 'manifest.json',
-								key: 'manifest.json',
-								content: ''
+								key: 'manifest.json'
 							},
 							{
 								url: '/samples/destinations/Component.js',
 								name: 'Component.js',
-								key: 'Component.js',
-								content: ''
+								key: 'Component.js'
 							}
 						]
 					},
@@ -446,38 +418,32 @@ sap.ui.define([
 							{
 								url: '/samples/hostActions/index.html',
 								name: 'index.html',
-								key: 'index.html',
-								content: ''
+								key: 'index.html'
 							},
 							{
 								url: '/samples/hostActions/cardManifest.json',
 								name: 'cardManifest.json',
-								key: 'cardManifest.json',
-								content: ''
+								key: 'cardManifest.json'
 							},
 							{
 								url: '/samples/hostActions/HostActions.view.xml',
 								name: 'HostActions.view.xml',
-								key: 'HostActions.view.xml',
-								content: ''
+								key: 'HostActions.view.xml'
 							},
 							{
 								url: '/samples/hostActions/HostActions.controller.js',
 								name: 'HostActions.controller.js',
-								key: 'HostActions.controller.js',
-								content: ''
+								key: 'HostActions.controller.js'
 							},
 							{
 								url: '/samples/hostActions/manifest.json',
 								name: 'manifest.json',
-								key: 'manifest.json',
-								content: ''
+								key: 'manifest.json'
 							},
 							{
 								url: '/samples/hostActions/Component.js',
 								name: 'Component.js',
-								key: 'Component.js',
-								content: ''
+								key: 'Component.js'
 							}
 						]
 					},
@@ -495,14 +461,12 @@ sap.ui.define([
 							{
 								url: '/samples/translation/manifest.json',
 								name: 'manifest.json',
-								key: 'manifest.json',
-								content: ''
+								key: 'manifest.json'
 							},
 							{
 								url: '/samples/translation/i18n/i18n.properties',
 								name: 'i18n/i18n.properties',
-								key: 'i18n/i18n.properties',
-								content: ''
+								key: 'i18n/i18n.properties'
 							}
 						]
 					}

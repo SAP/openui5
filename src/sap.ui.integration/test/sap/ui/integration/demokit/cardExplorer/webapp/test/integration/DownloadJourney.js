@@ -26,7 +26,7 @@ sap.ui.define([
 		}, null, "\t");
 
 		When.onTheExploreSamplesPage
-			.iChangeCodeEditorValue(sNewValue)
+			.iChangeFileEditorValue(sNewValue)
 			.and.iPressDownload("Manifest File");
 
 		Then.onTheExploreSamplesPage.iShouldHaveFile(sNewValue);
