@@ -3,6 +3,8 @@
 	"sap.app": {
 		"id": "sap.app.descriptor.test",
 		"type": "application",
+		"title": "{{appTitle}}",
+		"i18n": "i18n/i18n.properties",
 		"applicationVersion": {
 			"version": "1.2.2"
 		},

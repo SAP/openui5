@@ -522,6 +522,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns all texts.
+	 *
+	 * @returns {object} All texts
+	 *
+	 * @function
+	 */
+	Change.prototype.getTexts = function () {
+		return this._oDefinition.texts;
+	};
+
+	/**
 	 * Sets the new text for the given text ID.
 	 *
 	 * @param {string} sTextId - Text ID which was used as part of the <code>oTexts</code> object
