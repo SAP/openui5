@@ -1038,7 +1038,9 @@ function(
 			// in IE we should wait until the scroll ends
 			if (Device.browser.msie) {
 				setTimeout(function () {
-					this._oValueStateMessage.open();
+					if (!this.bIsDestroyed) {
+						this._oValueStateMessage.open();
+					}
 				}.bind(this), 0);
 			} else {
 				this._oValueStateMessage.open();
