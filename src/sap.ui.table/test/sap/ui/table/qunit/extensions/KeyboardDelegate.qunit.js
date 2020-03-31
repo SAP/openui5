@@ -135,7 +135,7 @@ sap.ui.define([
 	 * @param {string} sText The assertion message.
 	 */
 	function assertTextSelection(assert, oTextInputElement, bExpectSelected, sText) {
-		if (Device.browser.phantomJS || Device.browser.safari) {
+		if (Device.browser.safari) {
 			return;
 		}
 

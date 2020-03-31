@@ -11,7 +11,6 @@ sap.ui.define([
 	"./_HookUtils",
 	"../library",
 	"sap/ui/base/Object",
-	"sap/ui/core/Control",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/library",
 	"sap/ui/core/theming/Parameters",
@@ -25,7 +24,6 @@ sap.ui.define([
 	HookUtils,
 	library,
 	BaseObject,
-	Control,
 	ResizeHandler,
 	coreLibrary,
 	ThemeParameters,
@@ -361,27 +359,16 @@ sap.ui.define([
 			return iSelectableRowCount > 0 && iSelectableRowCount === iSelectedRowCount;
 		},
 
-		/**
-		 * Returns whether the {@link sap.ui.table.Table} has visible columns or not.
-		 *
-		 * @param {sap.ui.table.Table} oTable - Instance of the table
-		 * @returns {boolean} Table has visible columns
-		 */
-		isNoColumnsVisible: function(oTable) {
-			return TableUtils.getVisibleColumnCount(oTable) === 0;
-		},
-
         /**
-		 * Returns whether the no data text is currently shown or not.
-		 * Independently from the <code>showNoData</code> property if the table has no visible
-		 * columns the no visible columns text will be shown.
-		 * If true, also CSS class sapUiTableEmpty is set on the table root element.
+		 * Checks whether the "no data text" is shown. Pure API check, the actual DOM is not considered.
+		 * The "no data text" is shown if the table has no visible columns, or if the <code>showNoData</code> property is <code>true</code> and the
+		 * table has no data.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {boolean} Table has visible columns or whether the no data text is shown.
+		 * @returns {boolean} Whether the no data text is shown.
 		 */
 		isNoDataVisible: function(oTable) {
-			return oTable.getShowNoData() && !TableUtils.hasData(oTable) || TableUtils.isNoColumnsVisible(oTable);
+			return oTable.getShowNoData() && !TableUtils.hasData(oTable) || TableUtils.getVisibleColumnCount(oTable) === 0;
 		},
 
 		/**
@@ -553,22 +540,23 @@ sap.ui.define([
 		},
 
         /**
-		 * Returns the text to be displayed as no data message.
-		 * If a custom noData control is set null is returned.
+		 * Gets the text to be displayed as the "no data text".
+		 * If a control is set for the <code>noData</code> aggregation, <code>null</code> is returned.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {String | string | null} The no data text.
+		 * @returns {string | null} The no data text.
 		 */
 		getNoDataText: function(oTable) {
-			if (TableUtils.isNoColumnsVisible(oTable)) {
+			if (TableUtils.getVisibleColumnCount(oTable) === 0) {
 				return TableUtils.getResourceText("TBL_NO_COLUMNS");
 			}
 
-			var oNoData = oTable.getNoData();
-			if (oNoData instanceof Control) {
+			var vNoData = oTable.getNoData();
+
+			if (TableUtils.isA(vNoData, "sap.ui.core.Control")) {
 				return null;
-			} else if (typeof oNoData === "string" || oTable.getNoData() instanceof String) {
-				return oNoData;
+			} else if (typeof vNoData === "string") {
+				return vNoData;
 			} else {
 				return TableUtils.getResourceText("TBL_NO_DATA");
 			}

@@ -893,13 +893,13 @@ sap.ui.define([
 			rowSettingsTemplate: true
 		};
 
-		this._attachExtensions(); // Extensions are an inner part of the table must be initialized first, e.g. for correct delegate order.
+		// Extensions are part of the core of the table must be initialized first, for example for correct delegate order.
+		this._attachExtensions();
 
-		// create an information object which contains always required infos
+		/*
+		 * Flag indicating whether the text direction is RTL. If <code>false</code>, the text direction is LTR.
+		 */
 		this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
-
-		// Will be set to true in updateTableSizes, if the table is in a flex container (parent has "display: flex").
-		this._bIsFlexItem = false;
 
 		/*
 		 * Flag indicating whether the rows are currently being bound. This is the time between #bindRows and the actual instantiation of the
