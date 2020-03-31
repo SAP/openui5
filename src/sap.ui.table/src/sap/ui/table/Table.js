@@ -1714,16 +1714,21 @@ sap.ui.define([
 	 * Sets the first visible row property of the table, updates the rows, and fires the <code>firstVisibleRowChanged</code> event.
 	 *
 	 * @param {int} iRowIndex The new first visible row index.
-	 * @param {boolean} [bOnScroll=false] Whether the first visible row is changed by scrolling.
-	 * @param {boolean} [bSuppressEvent=false] Whether the <code>firstVisibleRowChanged</code> event should be fired.
-	 * @param {boolean} [bSuppressRendering=false] Whether the first visible row should only be set, without re-rendering the rows.
+	 * @param {Object} [mConfig] Config object.
+	 * @param {boolean} [mConfig.onScroll=false] Whether the first visible row is changed by scrolling.
+	 * @param {boolean} [mConfig.suppressEvent=false] Whether to suppress the <code>firstVisibleRowChanged</code> event.
+	 * @param {boolean} [mConfig.forceEvent=false] Whether to force the <code>firstVisibleRowChanged</code> event. Ignored if suppressed.
+	 * @param {boolean} [mConfig.suppressRendering=false] Whether the first visible row should only be set, without re-rendering the rows.
 	 * @returns {boolean} Whether the <code>_rowsUpdated</code> event will be fired.
 	 * @private
 	 */
-	Table.prototype._setFirstVisibleRowIndex = function(iRowIndex, bOnScroll, bSuppressEvent, bSuppressRendering) {
-		bOnScroll = bOnScroll === true;
-		bSuppressEvent = bSuppressEvent === true;
-		bSuppressRendering = bSuppressRendering === true;
+	Table.prototype._setFirstVisibleRowIndex = function(iRowIndex, mConfig) {
+		mConfig = Object.assign({
+			onScroll: false,
+			suppressEvent: false,
+			forceEvent: false,
+			suppressRendering: false
+		}, mConfig);
 
 		if (parseInt(iRowIndex) < 0) {
 			Log.error("The index of the first visible row must be greater than or equal to 0. The value has been set to 0.", this);
@@ -1734,7 +1739,7 @@ sap.ui.define([
 			var iMaxRowIndex = this._getMaxFirstVisibleRowIndex();
 
 			if (iMaxRowIndex < iRowIndex) {
-				if (!bOnScroll) {
+				if (!mConfig.onScroll) {
 					Log.warning(
 						"The index of the first visible row must be lesser or equal than the scrollable row count minus the visible row count." +
 						" The value has been set to " + iMaxRowIndex + ".", this);
@@ -1757,8 +1762,8 @@ sap.ui.define([
 			if (this.getBinding("rows")) {
 				var bFirstRenderedRowChanged = this._getFirstRenderedRowIndex() !== iOldFirstRenderedRowIndex;
 
-				if (bFirstRenderedRowChanged && !bSuppressRendering) {
-					var sReason = bOnScroll ? TableUtils.RowsUpdateReason.VerticalScroll : TableUtils.RowsUpdateReason.FirstVisibleRowChange;
+				if (bFirstRenderedRowChanged && !mConfig.suppressRendering) {
+					var sReason = mConfig.onScroll ? TableUtils.RowsUpdateReason.VerticalScroll : TableUtils.RowsUpdateReason.FirstVisibleRowChange;
 
 					if (this._bContextsAvailable) {
 						this.updateRows(sReason);
@@ -1769,20 +1774,28 @@ sap.ui.define([
 
 				// If changing the first visible row was initiated by a scroll action, the scroll position is already accurate.
 				// If the first visible row is set to the maximum row index, the table is scrolled to the bottom including the overflow.
-				if (!bOnScroll) {
+				if (!mConfig.onScroll) {
 					oScrollExtension.updateVerticalScrollPosition(bFirstRenderedRowChanged);
 				}
 			}
 
-			if (!bSuppressEvent) {
+			if (!mConfig.suppressEvent) {
 				this.fireFirstVisibleRowChanged({
 					firstVisibleRow: iRowIndex
 				});
 			}
-		} else if (!bOnScroll) {
-			// Even if the first visible row was not changed, this row may not be visible because of the inner scroll position. Therefore, the
-			// scroll position is adjusted to make it visible (by resetting the inner scroll position).
-			oScrollExtension.updateVerticalScrollPosition();
+		} else {
+			if (mConfig.forceEvent && !mConfig.suppressEvent) {
+				this.fireFirstVisibleRowChanged({
+					firstVisibleRow: iRowIndex
+				});
+			}
+
+			if (!mConfig.onScroll) {
+				// Even if the first visible row was not changed, this row may not be visible because of the inner scroll position. Therefore, the
+				// scroll position is adjusted to make it visible (by resetting the inner scroll position).
+				oScrollExtension.updateVerticalScrollPosition();
+			}
 		}
 
 		return bExpectRowsUpdatedEvent;

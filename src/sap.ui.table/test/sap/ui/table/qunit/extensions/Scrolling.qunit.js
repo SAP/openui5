@@ -332,7 +332,7 @@ sap.ui.define([
 			if (oVSb) {
 				assert.ok(oVSb.offsetWidth > 0 && oVSb.offsetHeight > 0, "Table content does not fit height -> Vertical scrollbar is visible");
 			}
-
+		}).finally(function() {
 			sap.ui.table.TableRenderer.apiVersion = iOriginalApiVersion;
 		});
 	});
@@ -1161,7 +1161,7 @@ sap.ui.define([
 
 			document.body.focus();
 
-			return oTable.qunit.scrollHSbTo(iInitialScrollLeft).then(TableQUnitUtils.$focus(oDomElementToFocus)).then(function() {
+			return oTable.qunit.scrollHSbTo(iInitialScrollLeft).then(oTable.qunit.$focus(oDomElementToFocus)).then(function() {
 				var iNewScrollLeft = bRTL ? $HSb.scrollLeftRTL() : oHSb.scrollLeft;
 
 				if (bScrollPositionShouldChange) {
@@ -1173,12 +1173,6 @@ sap.ui.define([
 					return TableQUnitUtils.wait(50).then(function() {
 						assert.strictEqual(iNewScrollLeft, iInitialScrollLeft, sTestTitle + ": The horizontal scroll position did not change");
 					});
-				}
-			}).catch(function(oError) {
-				if (oError instanceof TableQUnitUtils.TimeoutError) {
-					assert.ok(true, oError);
-				} else {
-					throw oError;
 				}
 			});
 		}
@@ -1234,7 +1228,7 @@ sap.ui.define([
 			return test("Focus data cell in column 4, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 3), 1150, false, false);
 		}).then(function() {
 			return test("Focus data cell in column 4, row 2 (scrollable column)", oTable.qunit.getDataCell(1, 3), 1150, false, false);
-		}).then(TableQUnitUtils.$changTextDirection(true)).then(function(){
+		}).then(TableQUnitUtils.$changeTextDirection(true)).then(function(){
 			oTable.getColumns()[1].setWidth("800px");
 			oTable.getColumns()[2].setWidth("100px");
 			oTable.getColumns()[3].setWidth("800px");
@@ -1283,7 +1277,7 @@ sap.ui.define([
 			return test("RTL: Focus data cell in column 4, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 3), 150, false, true);
 		}).then(function() {
 			return test("RTL: Focus data cell in column 4, row 2 (scrollable column)", oTable.qunit.getDataCell(1, 3), 150, false, true);
-		}).finally(TableQUnitUtils.$changTextDirection(false));
+		}).finally(TableQUnitUtils.$changeTextDirection(false));
 	});
 
 	QUnit.test("Restoration of the scroll position", function(assert) {
@@ -2007,6 +2001,117 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Initial scroll position if bound after rendering; Small data; Fixed row heights", function(assert) {
+		var that = this;
+		var pTestSequence = Promise.resolve();
+		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
+
+		function test(mConfig) {
+			var oTable = that.createTable({
+				models: undefined,
+				rowMode: mConfig.rowMode,
+				firstVisibleRow: mConfig.initialFirstVisibleRow
+			});
+
+			return oTable.qunit.whenRenderingFinished().then(function() {
+				that.assertPosition(assert, mConfig.initialFirstVisibleRow, 0, 0,
+					mConfig.rowMode + ", " + mConfig.title + "; Before binding created");
+				oTable.setModel(that.mDefaultOptions.models);
+			}).then(oTable.qunit.whenRenderingFinished).then(function() {
+				that.assertPosition(assert, mConfig.firstVisibleRow, mConfig.firstVisibleRow * that.iBaseRowHeight, 0,
+					mConfig.rowMode + ", " + mConfig.title + "; After binding created");
+			});
+		}
+
+		this.forEachTestedRowMode(function(oRowModeConfig) {
+			pTestSequence = pTestSequence.then(function() {
+				return test({
+					title: "FirstVisibleRow = 0",
+					rowMode: oRowModeConfig.rowMode,
+					initialFirstVisibleRow: 0,
+					firstVisibleRow: 0
+				});
+			}).then(function() {
+				return test({
+					title: "FirstVisibleRow = 5",
+					rowMode: oRowModeConfig.rowMode,
+					initialFirstVisibleRow: 5,
+					firstVisibleRow: 5
+				});
+			}).then(function() {
+				return test({
+					title: "FirstVisibleRow = MAX",
+					rowMode: oRowModeConfig.rowMode,
+					initialFirstVisibleRow: that.mDefaultOptions.bindingLength,
+					firstVisibleRow: iMaxFirstVisibleRow
+				});
+			});
+		});
+
+		return pTestSequence;
+	});
+
+	QUnit.test("Initial scroll position if bound after rendering; Small data; Variable row heights", function(assert) {
+		var that = this;
+		var pTestSequence = Promise.resolve();
+		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
+		var iMaxScrollTop = this.getMaxScrollTop(null, true);
+
+		function test(mConfig) {
+			var oTable = that.createTable({
+				models: undefined,
+				rowMode: mConfig.rowMode,
+				_bVariableRowHeightEnabled: true,
+				firstVisibleRow: mConfig.initialFirstVisibleRow
+			});
+
+			return oTable.qunit.whenRenderingFinished().then(function() {
+				that.assertPosition(assert, mConfig.initialFirstVisibleRow, 0, 0,
+					mConfig.rowMode + ", " + mConfig.title + "; Before binding created");
+				oTable.setModel(that.mDefaultOptions.models);
+			}).then(oTable.qunit.whenRenderingFinished).then(function() {
+				that.assertPosition(assert, mConfig.firstVisibleRow, mConfig.scrollTop, mConfig.innerScrollTop,
+					mConfig.rowMode + ", " + mConfig.title + "; After binding created");
+			});
+		}
+
+		this.forEachTestedRowMode(function(oRowModeConfig) {
+			if (oRowModeConfig.rowMode.isA("sap.ui.table.rowmodes.AutoRowMode")) {
+				return;
+			}
+			pTestSequence = pTestSequence.then(function() {
+				return test({
+					title: "FirstVisibleRow = 0",
+					rowMode: oRowModeConfig.rowMode,
+					initialFirstVisibleRow: 0,
+					firstVisibleRow: 0,
+					scrollTop: 0,
+					innerScrollTop: 0
+				});
+			}).then(function() {
+				return test({
+					title: "FirstVisibleRow = 5",
+					rowMode: oRowModeConfig.rowMode,
+					initialFirstVisibleRow: 5,
+					firstVisibleRow: 5,
+					scrollTop: 5 * that.iBaseRowHeight,
+					innerScrollTop: 0
+				});
+			}).then(function() {
+				return test({
+					title: "FirstVisibleRow = MAX",
+					rowMode: oRowModeConfig.rowMode,
+					initialFirstVisibleRow: that.mDefaultOptions.bindingLength,
+					firstVisibleRow: iMaxFirstVisibleRow,
+					scrollTop: iMaxScrollTop,
+					innerScrollTop: 655
+				});
+			});
+		});
+
+		return pTestSequence;
+	});
+
 	QUnit.test("Initial scroll position if binding length initialized after rendering; Small data; Fixed row heights", function(assert) {
 		var that = this;
 		var pTestSequence = Promise.resolve();
@@ -2487,16 +2592,10 @@ sap.ui.define([
 			});
 
 			return oTable.qunit.whenRenderingFinished().then(function() {
-				return new Promise(function(resolve) {
-					oTable.setFirstVisibleRow(1);
-					oTable.attachEventOnce("_rowsUpdated", function() {
-						setTimeout(function() {
-							oTable.rerender();
-							oTable.qunit.whenNextRenderingFinished().then(resolve);
-						}, 0);
-					});
-				});
-			}).then(function() {
+				oTable.setFirstVisibleRow(1);
+			}).then(oTable.qunit.whenNextRowsUpdated).then(TableQUnitUtils.$wait(0)).then(function() {
+				oTable.rerender();
+			}).then(oTable.qunit.whenRenderingFinished).then(function() {
 				that.assertPosition(assert, 1, 49, 0, mConfig.rowMode + ", FirstVisibleRow = 1");
 			}).then(oTable.qunit.$scrollVSbTo(98)).then(function() {
 				that.assertPosition(assert, 2, 98, 0, mConfig.rowMode + ", ScrollTop set to 98");
@@ -2524,14 +2623,10 @@ sap.ui.define([
 			});
 
 			return oTable.qunit.whenRenderingFinished().then(function() {
-				return new Promise(function(resolve) {
-					oTable.setFirstVisibleRow(1);
-					setTimeout(function() {
-						oTable.rerender();
-						oTable.qunit.whenRenderingFinished().then(resolve);
-					}, 0);
-				});
-			}).then(function() {
+				oTable.setFirstVisibleRow(1);
+			}).then(TableQUnitUtils.$wait(0)).then(function() {
+				oTable.rerender();
+			}).then(oTable.qunit.whenRenderingFinished).then(function() {
 				that.assertPosition(assert, 1, 49, 0, mConfig.rowMode + ", FirstVisibleRow = 1");
 			}).then(oTable.qunit.$scrollVSbTo(98)).then(function() {
 				that.assertPosition(assert, 2, 98, 0, mConfig.rowMode + ", ScrollTop set to 98");
@@ -3255,6 +3350,7 @@ sap.ui.define([
 			that.assertPosition(assert, iMaxFirstVisibleRow - 1, iMaxScrollTop - 30, 0, "Scrolled 30 pixels up");
 		}).then(function() {
 			endTouchScrolling();
+		}).finally(function() {
 			Device.support.pointer = bOriginalPointerSupport;
 			Device.support.touch = bOriginalTouchSupport;
 		});
@@ -3306,6 +3402,7 @@ sap.ui.define([
 			that.assertPosition(assert, 87, 4279, 49, "Scrolled 50 pixels up");
 		}).then(function() {
 			endTouchScrolling();
+		}).finally(function() {
 			Device.support.pointer = bOriginalPointerSupport;
 			Device.support.touch = bOriginalTouchSupport;
 		});
@@ -3356,6 +3453,7 @@ sap.ui.define([
 				"Scrolled 500000 pixels up");
 		}).then(function() {
 			endTouchScrolling();
+		}).finally(function() {
 			Device.support.pointer = bOriginalPointerSupport;
 			Device.support.touch = bOriginalTouchSupport;
 		});
@@ -3405,6 +3503,7 @@ sap.ui.define([
 			that.assertPosition(assert, 499754850, iMaxScrollTop - 500049, 42, "Scrolled 500000 pixels up");
 		}).then(function() {
 			endTouchScrolling();
+		}).finally(function() {
 			Device.support.pointer = bOriginalPointerSupport;
 			Device.support.touch = bOriginalTouchSupport;
 		});
@@ -3491,7 +3590,7 @@ sap.ui.define([
 				});
 			});
 
-			pTestSequence = pTestSequence.then(function() {
+			pTestSequence = pTestSequence.finally(function() {
 				Device.support.pointer = bOriginalPointerSupport;
 				Device.support.touch = bOriginalTouchSupport;
 				done();
@@ -3594,7 +3693,7 @@ sap.ui.define([
 				});
 			});
 
-			pTestSequence = pTestSequence.then(function() {
+			pTestSequence = pTestSequence.finally(function() {
 				Device.support.pointer = bOriginalPointerSupport;
 				Device.support.touch = bOriginalTouchSupport;
 				done();
@@ -5554,7 +5653,7 @@ sap.ui.define([
 		function test(sTitle, iColumnIndex) {
 			var oCellContent = oTable.getRows()[0].getCells()[iColumnIndex].getDomRef();
 
-			return TableQUnitUtils.focus(oCellContent).then(function() {
+			return oTable.qunit.focus(oCellContent).then(function() {
 				var $InnerCellElement = TableUtils.getCell(oTable, oCellContent).find(".sapUiTableCellInner");
 
 				if (oTable._bRtlMode) {
@@ -5565,12 +5664,6 @@ sap.ui.define([
 				}
 
 				assert.strictEqual($InnerCellElement[0].scrollTop, 0, sTitle + ": The cell content is not scrolled vertically");
-			}).catch(function(oError) {
-				if (oError instanceof TableQUnitUtils.TimeoutError) {
-					assert.ok(true, sTitle + ": " + oError);
-				} else {
-					throw oError;
-				}
 			});
 		}
 
@@ -5578,13 +5671,13 @@ sap.ui.define([
 			return test("Fixed column", 0);
 		}).then(function() {
 			return test("Scrollable column", 1);
-		}).then(TableQUnitUtils.$changTextDirection(true)).then(function() {
+		}).then(TableQUnitUtils.$changeTextDirection(true)).then(oTable.qunit.whenRenderingFinished).then(function() {
 			return test("Fixed column (RTL)", 0);
 		}).then(function() {
 			return test("Scrollable column (RTL)", 1);
-		}).then(TableQUnitUtils.$changTextDirection(false)).then(function() {
+		}).then(function() {
 			oTable.destroy();
-		});
+		}).finally(TableQUnitUtils.$changeTextDirection(false));
 	});
 
 	QUnit.module("Leave action mode on scrolling", {
@@ -5608,21 +5701,13 @@ sap.ui.define([
 		var oEvent;
 
 		// Horizontal
-		return TableQUnitUtils.focus(oTable.getRows()[0].getCells()[0].getDomRef()).then(function() {
+		return oTable.qunit.focus(oTable.getRows()[0].getCells()[0].getDomRef()).then(function() {
 			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
-
 			oEvent = document.createEvent('MouseEvents');
 			oEvent.initEvent("mousedown", true, true);
 			oTable.getDomRef("hsb").dispatchEvent(oEvent);
-
 			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Clicked on horizontal scrollbar -> Table is in Navigation Mode again");
 			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus now");
-		}).catch(function(oError) {
-			if (oError instanceof TableQUnitUtils.TimeoutError) {
-				assert.ok(true, oError);
-			} else {
-				throw oError;
-			}
 		});
 	});
 
@@ -5632,30 +5717,20 @@ sap.ui.define([
 		var oTableContainer = oTable.getDomRef("tableCCnt");
 		var oWheelEvent;
 
-		return TableQUnitUtils.focus(oCellContent).then(function() {
+		return oTable.qunit.focus(oCellContent).then(function() {
 			// Horizontal
 			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
-
 			oWheelEvent = createMouseWheelEvent(150, MouseWheelDeltaMode.PIXEL, true);
 			oTableContainer.dispatchEvent(oWheelEvent);
 			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled horizontally -> Table is in Navigation Mode again");
 			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus now");
-
-		}).then(TableQUnitUtils.$focus(oCellContent)).then(function() {
+		}).then(oTable.qunit.$focus(oCellContent)).then(function() {
 			// Vertical
 			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
-
 			oWheelEvent = createMouseWheelEvent(150, MouseWheelDeltaMode.PIXEL, false);
 			oTableContainer.dispatchEvent(oWheelEvent);
 			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled vertically -> Table is in Navigation Mode again");
 			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus now");
-
-		}).catch(function(oError) {
-			if (oError instanceof TableQUnitUtils.TimeoutError) {
-				assert.ok(true, oError);
-			} else {
-				throw oError;
-			}
 		});
 	});
 
@@ -5670,34 +5745,22 @@ sap.ui.define([
 		oTable.qunit.preventFocusOnTouch();
 		sap.ui.getCore().applyChanges();
 
-		return oTable.qunit.whenRenderingFinished().then(TableQUnitUtils.$focus(oTable.getRows()[0].getCells()[0].getDomRef())).then(function() {
+		return oTable.qunit.whenRenderingFinished().then(oTable.qunit.$focus(oTable.getRows()[0].getCells()[0].getDomRef())).then(function() {
 			// Horizontal
 			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
-
 			initTouchScrolling(oTable.getDomRef("tableCCnt"), 200);
 			doTouchScrolling(150);
 			endTouchScrolling();
-
 			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled horizontally -> Table is in Navigation Mode again");
 			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus now");
-
-		}).then(TableQUnitUtils.$focus(oTable.getRows()[0].getCells()[0].getDomRef())).then(function() {
+		}).then(oTable.qunit.$focus(oTable.getRows()[0].getCells()[0].getDomRef())).then(function() {
 			// Vertical
 			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
-
 			initTouchScrolling(oTable.getDomRef("tableCCnt"), 200);
 			doTouchScrolling(undefined, 150);
 			endTouchScrolling();
-
 			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled Vertically -> Table is in Navigation Mode again");
 			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus now");
-
-		}).catch(function(oError) {
-			if (oError instanceof TableQUnitUtils.TimeoutError) {
-				assert.ok(true, oError);
-			} else {
-				throw oError;
-			}
 		}).finally(function() {
 			Device.support.pointer = bOriginalPointerSupport;
 			Device.support.touch = bOriginalTouchSupport;
