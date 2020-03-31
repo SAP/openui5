@@ -16699,7 +16699,7 @@ sap.ui.define([
 //					IsActiveEntity : true
 			})
 			.expectChange("id", "42")
-			.expectChange("price", ["9.00", "9.11"])
+			.expectChange("price", ["9", "9.11"])
 			.expectChange("currency", ["EUR", "EUR"])
 			.expectChange("priceDetail")
 			.expectChange("currencyDetail")
@@ -16719,7 +16719,7 @@ sap.ui.define([
 					Price : "9.00",
 					PublicationID : "42-0"
 				})
-				.expectChange("priceDetail", "9.00")
+				.expectChange("priceDetail", "9")
 				.expectChange("currencyDetail", "EUR")
 				.expectChange("inProcessByUser", "JOHNDOE");
 
@@ -16745,9 +16745,9 @@ sap.ui.define([
 					DraftAdministrativeData : {InProcessByUser : "JANEDOE"},
 					Price : "7.00"
 				})
-				.expectChange("priceDetail", "7.00")
+				.expectChange("priceDetail", "7")
 				.expectChange("inProcessByUser", "JANEDOE")
-				.expectChange("price", ["7.00", "7.11"]);
+				.expectChange("price", ["7", "7.11"]);
 
 			return Promise.all([
 				// code under test

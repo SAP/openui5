@@ -134,6 +134,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[
+	{i : "1.10", o : "1.1"},
+	{i : "100", o : "100"},
+	{i : "1.00", o : "1"},
+	//FIXME some automated tests call formatValue with a number -> fix tests
+	//  for now, support number in order to keep the fix small
+	{i : 77, o : "77"}
+].forEach(function (oFixture, i) {
+	QUnit.test("BCP 188109/2020: format removes trailing zeroes, " + i, function (assert) {
+		var oType = new Decimal({minFractionDigits : 0, maxFractionDigits : 2});
+
+		// code under test
+		assert.strictEqual(oType.formatValue(oFixture.i, "string"), oFixture.o);
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("parse", function (assert) {
 		var oType = new Decimal(); // constraints do not matter
 
