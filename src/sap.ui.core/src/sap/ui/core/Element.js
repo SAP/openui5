@@ -1019,10 +1019,11 @@ sap.ui.define([
 	 * Contains the data modification logic
 	 */
 	function setCustomData(element, key, value, writeToDom) {
+		var dataObject;
 
 		// DELETE
 		if (value === null) { // delete this property
-			var dataObject = findCustomData(element, key);
+			dataObject = findCustomData(element, key);
 			if (!dataObject) {
 				return;
 			}
@@ -1037,14 +1038,22 @@ sap.ui.define([
 
 			// ADD or CHANGE
 		} else {
-			var dataObject = findCustomData(element, key);
+			dataObject = findCustomData(element, key);
 			if (dataObject) {
-				dataObject.setValue(value);
-				dataObject.setWriteToDom(writeToDom);
-			} else {
-				var dataObject = new CustomData({key:key,value:value, writeToDom:writeToDom});
-				element.addAggregation("customData", dataObject, true);
+				element.removeAggregation("customData", dataObject, true);
+				dataObject.destroy();
 			}
+
+			// Double escaping of curly brackets for string objects required,
+			// otherwise will be interpreted as binding update.
+			if (typeof value === "string" &&
+				value.charAt(0) === "{" && value.charAt(1) !== "/" && value.charAt(value.length - 1) === "}") {
+				value = value.slice(0, value.length - 1);
+				value = "\\" + value + "\\}";
+			}
+
+			dataObject = new CustomData({key:key,value:value, writeToDom:writeToDom});
+			element.addAggregation("customData", dataObject, true);
 		}
 	}
 

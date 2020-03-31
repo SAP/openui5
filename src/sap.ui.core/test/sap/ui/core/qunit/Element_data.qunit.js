@@ -23,8 +23,21 @@ sap.ui.define([
 
 	QUnit.test("New Element and its data", function(assert) {
 		var element = this.element;
+		var oModel = new JSONModel({
+			name: "someName",
+			age: 1
+		});
 		assert.equal(typeof element.data, "function", "element must have a 'data' function");
 		assert.deepEqual(element.data(), {}, "element data should be empty");
+
+		element.setModel(oModel);
+		assert.deepEqual(element.data("x"), null, "element data should be empty");
+
+		element.data("x", "{/name}");
+		assert.deepEqual(element.data("x"), "someName", "element data should be 'someName'");
+
+		element.data("x", "{/age}");
+		assert.deepEqual(element.data("x"), 1, "element data should be 'someName'");
 	});
 
 	QUnit.test("Adding and retrieving string data", function(assert) {
