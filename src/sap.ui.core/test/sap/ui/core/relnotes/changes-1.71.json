@@ -567,5 +567,21 @@
         ]
       }
     ]
+  },
+  "1.71.13": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "58dff7843cc8af415cd8b872100b566f024324a0",
+        "type": "FIX",
+        "text": " routing: create default hash changer in router\u0027s constructor",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001536532020"
+          }
+        ]
+      }
+    ]
   }
 }

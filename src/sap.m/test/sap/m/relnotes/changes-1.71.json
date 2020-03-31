@@ -1393,5 +1393,42 @@
         ]
       }
     ]
+  },
+  "1.71.13": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "39757a8d0ef3889e50ef53bf0122f44f0ea6d357",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: doesn\u0027t throw error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070025682"
+          }
+        ]
+      },
+      {
+        "id": "7b340f871992f0cf99044dad9618fba629cb05a9",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: initial data service query optimization option now added",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "6a2b865cceb98b2dae3141f4947ef5b924cf0aa6",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog - proper Back button vertical alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080026954"
+          }
+        ]
+      }
+    ]
   }
 }

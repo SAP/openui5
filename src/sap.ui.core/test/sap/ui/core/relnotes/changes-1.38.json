@@ -3628,5 +3628,21 @@
         ]
       }
     ]
+  },
+  "1.38.45": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "09777a39177eb22fea12d37b6f7d88ed48b5079c",
+        "type": "FIX",
+        "text": " handlebars: upgrading to version 4.4.3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970505257"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -129,5 +129,20 @@
         ]
       }
     ]
+  },
+  "1.71.13": {
+    "date": "March 2020",
+    "notes": [
+      {
+        "id": "15dee5befa33bbec44353e422c9ab4d8f87f27ae",
+        "type": "FIX",
+        "text": " sap.f.cards.Header: Fire press event on sapselect",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      }
+    ]
   }
 }
