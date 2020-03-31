@@ -1,42 +1,42 @@
 <mvc:View xmlns:core="sap.ui.core"
-          xmlns:mvc="sap.ui.core.mvc"
-          xmlns="sap.m"
-          xmlns:html="http://www.w3.org/1999/xhtml"
-          width="100%"
-          controllerName="sap.ui.demo.cardExplorer.samples.component.cardContentControls.Card">
-    <VBox
-        class="sapUiSmallMargin"
-        justifyContent="SpaceBetween">
-        <HBox justifyContent="SpaceBetween"
-              renderType="Bare">
-            <ComboBox
-                class="sapUiSmallMarginEnd"
-                placeholder="From City"
+		  xmlns:mvc="sap.ui.core.mvc"
+		  xmlns="sap.m"
+		  xmlns:html="http://www.w3.org/1999/xhtml"
+		  width="100%"
+		  controllerName="my.component.sample.cardContentControls.Main">
+	<VBox
+		class="sapUiSmallMargin"
+		justifyContent="SpaceBetween">
+		<HBox justifyContent="SpaceBetween"
+			  renderType="Bare">
+			<ComboBox
+				class="sapUiSmallMarginEnd"
+				placeholder="From City"
 				items="{
 					path: '/cities',
 					sorter: { path: 'text' }
 				}">
-                <layoutData>
-                    <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0"/>
-                </layoutData>
+				<layoutData>
+					<FlexItemData growFactor="1" shrinkFactor="1" baseSize="0"/>
+				</layoutData>
 				<core:Item key="{key}" text="{text}" />
 			</ComboBox>
-            <ComboBox
-                placeholder="To City"
+			<ComboBox
+				placeholder="To City"
 				items="{
 					path: '/cities',
 					sorter: { path: 'text' }
 				}">
-                <layoutData>
-                    <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0"/>
-                </layoutData>
+				<layoutData>
+					<FlexItemData growFactor="1" shrinkFactor="1" baseSize="0"/>
+				</layoutData>
 				<core:Item key="{key}" text="{text}" />
 			</ComboBox>
-        </HBox>
-        <DatePicker placeholder="Choose Date ..."/>
-        <Toolbar style="Clear" class="sapUiTinyMarginTop" >
-            <ToolbarSpacer/>
-            <Button text="Book" type="Emphasized" />
-        </Toolbar>
-    </VBox>
+		</HBox>
+		<DatePicker placeholder="Choose Date ..."/>
+		<Toolbar style="Clear" class="sapUiTinyMarginTop" >
+			<ToolbarSpacer/>
+			<Button text="Book" type="Emphasized" />
+		</Toolbar>
+	</VBox>
 </mvc:View>

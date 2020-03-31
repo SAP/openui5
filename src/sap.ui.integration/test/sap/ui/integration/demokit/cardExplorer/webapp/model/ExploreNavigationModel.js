@@ -131,9 +131,21 @@ sap.ui.define([
 										content: ''
 									},
 									{
+										url: '/samples/component/cardContent/Main.controller.js',
+										name: 'Main.controller.js',
+										key: 'Main.controller.js',
+										content: ''
+									},
+									{
 										url: '/samples/component/cardContent/View.view.xml',
 										name: 'View.view.xml',
 										key: 'View.view.xml',
+										content: ''
+									},
+									{
+										url: '/samples/component/cardContent/Image.png',
+										name: 'Image.png',
+										key: 'Image.png',
 										content: ''
 									}
 								]
@@ -155,9 +167,21 @@ sap.ui.define([
 										content: ''
 									},
 									{
+										url: '/samples/component/cardContentHeaderBottom/Main.controller.js',
+										name: 'Main.controller.js',
+										key: 'Main.controller.js',
+										content: ''
+									},
+									{
 										url: '/samples/component/cardContentHeaderBottom/View.view.xml',
 										name: 'View.view.xml',
 										key: 'View.view.xml',
+										content: ''
+									},
+									{
+										url: '/samples/component/cardContentHeaderBottom/Image.png',
+										name: 'Image.png',
+										key: 'Image.png',
 										content: ''
 									}
 								]
@@ -186,9 +210,9 @@ sap.ui.define([
 										content: ''
 									},
 									{
-										url: '/samples/component/cardContentControls/Card.controller.js',
-										name: 'Card.controller.js',
-										key: 'Card.controller.js',
+										url: '/samples/component/cardContentControls/Main.controller.js',
+										name: 'Main.controller.js',
+										key: 'Main.controller.js',
 										content: ''
 									}
 								]

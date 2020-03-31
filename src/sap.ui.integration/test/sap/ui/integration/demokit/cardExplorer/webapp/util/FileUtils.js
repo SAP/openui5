@@ -21,10 +21,14 @@ sap.ui.define([
 					oFolder = oZipFile.folder(sFolderName);
 
 				aFiles.forEach(function (oFile) {
-					oFolder.file(oFile.name, oFile.content);
+					if (oFileUtils.isBlob(oFile.name)) {
+						var sContent =  oFile.content.split(",")[1]; // erase the base64 prefix
+						oFolder.file(oFile.name, sContent, { base64: true });
+					} else {
+						oFolder.file(oFile.name, oFile.content);
+					}
 				});
 
-				// File.save(oZipFile.generate({ type: "blob" }), sFolderName, sExtension, "application/zip");
 				var blobData = oZipFile.generate({ type: "blob" });
 
 				oFileUtils.downloadFile(blobData, sFolderName, sExtension, "application/zip");
@@ -44,6 +48,45 @@ sap.ui.define([
 				"sap/ui/core/util/File"
 			], function (File) {
 				File.save(vData, sFileName, sFileExtension, sMimeType);
+			});
+		},
+
+		fetch: function (sUrl) {
+			if (oFileUtils.isBlob(sUrl)) {
+				return oFileUtils._fetchBlob(sUrl);
+			}
+
+			return new Promise(function (resolve, reject ) {
+				jQuery.ajax(sUrl, {
+					dataType: "text"
+				}).done(function (oData) {
+					resolve(oData);
+				}).fail(function (jqXHR, sTextStatus, sError) {
+					reject(sError);
+				});
+			});
+		},
+
+		isBlob: function (sName) {
+			return (sName.match(/\.(jpeg|jpg|gif|png)$/) !== null);
+		},
+
+		_fetchBlob: function (sUrl) {
+			return new Promise(function (resolve, reject) {
+				jQuery.ajax(sUrl, {
+					xhrFields: {
+						responseType: "blob"
+					}
+				}).done(function (oData) {
+					var oReader = new FileReader();
+					oReader.readAsDataURL(oData);
+					oReader.onloadend = function() {
+						var sBase64data = oReader.result;
+						resolve(sBase64data);
+					};
+				}).fail(function (jqXHR, sTextStatus, sError) {
+					reject(sError);
+				});
 			});
 		}
 	};

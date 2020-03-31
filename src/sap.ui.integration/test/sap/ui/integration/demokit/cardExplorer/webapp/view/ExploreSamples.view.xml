@@ -125,12 +125,12 @@
 							<IconTabFilter text="{extendedFileEditor>name}" key="{extendedFileEditor>key}"/>
 						</items>
 					</IconTabHeader>
+					<Image id="imageInFileEditor" width="100%" visible="false"/>
 					<editor:CodeEditor
 						id="editor"
 						visible="{= ${settings>/editorType} === 'text' }"
 						type="{settings>/codeEditorType}"
 						syntaxHints="false"
-						class="sapUiSmallMarginBegin"
 						height="100%"
 						editable="{settings>/editable}"
 						liveChange="onCodeEditorChange"

@@ -157,11 +157,21 @@ sap.ui.define([
 			exploreSettingsModel.setProperty("/editable", this._isFileEditable(sSelectedFileKey));
 			exploreSettingsModel.setProperty("/messageStripVisible", this._isMessageStripVisible(sSelectedFileKey));
 			exploreSettingsModel.setProperty("/codeEditorType", sFileExtension);
-			this._bPreventLiveChange = true;
-			// setValue would trigger 2 live change events - 1 delete and 1 insert. This will refresh the card several times, so prevent it
-			oEditor.setValue(oExtendedFileEditorModel.getProperty("/files/" + iSelectedFileIndex + "/content"));
-			this._bPreventLiveChange = false;
 
+			if (FileUtils.isBlob(sSelectedFileKey)) {
+				oEditor.setVisible(false);
+				this.byId("imageInFileEditor")
+					.setVisible(true)
+					.setSrc(oExtendedFileEditorModel.getProperty("/files/" + iSelectedFileIndex + "/content"));
+			} else {
+				// setValue would trigger 2 live change events - 1 delete and 1 insert. This will refresh the card several times, so prevent it
+				this._bPreventLiveChange = true;
+				this.byId("imageInFileEditor").setVisible(false);
+				oEditor
+					.setVisible(true)
+					.setValue(oExtendedFileEditorModel.getProperty("/files/" + iSelectedFileIndex + "/content"));
+				this._bPreventLiveChange = false;
+			}
 		},
 
 		onRunPressed: function (oEvent) {
@@ -310,6 +320,8 @@ sap.ui.define([
 
 			bUseExtendedEditor = !!oSample.files || !!(oSubSample && oSubSample.files);
 			exploreSettingsModel.setProperty("/useExtendedFileEditor", bUseExtendedEditor);
+			this.byId("editor").setVisible(true);
+			this.byId("imageInFileEditor").setVisible(false);
 
 			if (bUseExtendedEditor) {
 				this._showExtendedFileEditor(oSubSample || oSample);
@@ -445,12 +457,11 @@ sap.ui.define([
 
 			oExtendedFileEditorModel.setProperty("/files", oSample.files);
 
-			// fetch the initial content of the sample files for "consumption in html" example
 			var aPromises = oSample.files.map(function (oFile, iIndex) {
-					return jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/cardExplorer" + oFile.url), { dataType: "text" })
-						.done(function (oData) {
-							oExtendedFileEditorModel.setProperty("/files/" + iIndex + "/content", oData);
-						});
+				FileUtils.fetch(sap.ui.require.toUrl("sap/ui/demo/cardExplorer" + oFile.url))
+					.then(function (oData) {
+						oExtendedFileEditorModel.setProperty("/files/" + iIndex + "/content", oData);
+					});
 				});
 
 			// when the data is fetched we can set the code editor value
@@ -517,7 +528,7 @@ sap.ui.define([
 		 * @param {string} sValue The value of the manifest.json file.
 		 */
 		_updateSample: function (sValue) {
-			var oValue = oValue = JSON.parse(sValue);
+			var oValue = JSON.parse(sValue);
 
 			if (!sValue) {
 				// TODO hide the card or something like that. Currently it shows busy indicator which might be confusing
