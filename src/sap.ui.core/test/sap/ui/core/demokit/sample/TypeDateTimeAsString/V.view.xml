@@ -18,9 +18,10 @@
 		title="Date Input" >
 		<form:content>
 			<Label text="DateTime" />
-			<Input value="{
-				path: '/dtValue',
-				type: 'sap.ui.model.type.DateTime'}" />
+			<Input placeholder="{/dtPattern}"
+				value="{
+					path: '/dtValue',
+					type: 'sap.ui.model.type.DateTime'}" />
 		</form:content>
 	</form:SimpleForm>
 
