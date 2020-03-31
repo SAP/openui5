@@ -424,5 +424,33 @@ sap.ui.define(['./Binding', './Filter', './Sorter', 'sap/base/util/array/diff'],
 		return null;
 	};
 
+	/**
+	 * Requests a {@link sap.ui.model.Filter} object which can be used to filter the list binding by
+	 * entries with model messages. With the filter callback, you can define if a message is
+	 * considered when creating the filter for entries with messages.
+	 *
+	 * The resulting filter does not consider application or control filters specified for this list
+	 * binding in its constructor or in its {@link #filter} method; add filters which you want to
+	 * keep with the "and" conjunction to the resulting filter before calling {@link #filter}.
+	 *
+	 * The implementation of this method is optional for model specific implementations of
+	 * <code>sap.ui.model.ListBinding</code>. Check for existence of this function before calling
+	 * it.
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.ListBinding.prototype.requestFilterForMessages
+	 * @param {function(sap.ui.core.message.Message):boolean} [fnFilter]
+	 *   A callback function to filter only relevant messages. The callback returns whether the
+	 *   given {@link sap.ui.core.message.Message} is considered. If no callback function is given,
+	 *   all messages are considered.
+	 * @returns {Promise<sap.ui.model.Filter>}
+	 *   A Promise that resolves with a {@link sap.ui.model.Filter} representing the entries with
+	 *   messages; may be <code>null</code> if there is no message for any entry
+	 *
+	 * @protected
+	 * @since 1.77.0
+	 */
+
 	return ListBinding;
 });
