@@ -468,7 +468,7 @@ sap.ui.define([
 					cancelable: true,
 					touches: [oTouchObject]
 				});
-			} else { // Firefox, Edge, IE, PhantomJS
+			} else { // Firefox, Edge, IE
 				oTouchStartEvent = document.createEvent("Event");
 				oTouchStartEvent.touches = [
 					{
@@ -500,7 +500,7 @@ sap.ui.define([
 					cancelable: true,
 					touches: [oTouchObject]
 				});
-			} else { // Firefox, Edge, IE, PhantomJS
+			} else { // Firefox, Edge, IE
 				oTouchMoveEvent = document.createEvent("Event");
 				oTouchMoveEvent.touches = [
 					{

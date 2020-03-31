@@ -41,7 +41,7 @@ sap.ui.define([
 				bubbles: true,
 				cancelable: true
 			});
-		} else { // IE or PhantomJS
+		} else { // IE
 			oWheelEvent = document.createEvent("Event");
 			oWheelEvent.deltaY = bShift ? 0 : iScrollDelta;
 			oWheelEvent.deltaX = bShift ? iScrollDelta : 0;
@@ -96,7 +96,7 @@ sap.ui.define([
 				cancelable: true,
 				touches: [oTouchObject]
 			});
-		} else { // Firefox, Edge, IE, PhantomJS
+		} else { // Firefox, Edge, IE
 			oTouchEvent = document.createEvent("Event");
 			oTouchEvent.touches = [
 				{
@@ -131,7 +131,7 @@ sap.ui.define([
 				cancelable: true,
 				touches: [oTouchObject]
 			});
-		} else { // Firefox, Edge, IE, PhantomJS
+		} else { // Firefox, Edge, IE
 			oTouchEvent = document.createEvent("Event");
 			oTouchEvent.touches = [
 				{
@@ -182,7 +182,7 @@ sap.ui.define([
 				cancelable: true,
 				changedTouches: [oTouchObject]
 			});
-		} else { // Firefox, Edge, IE, PhantomJS
+		} else { // Firefox, Edge, IE
 			oTouchEvent = document.createEvent("Event");
 			oTouchEvent.changedTouches = [
 				{
