@@ -404,10 +404,7 @@ sap.ui.define([
 		}
 
 		delete this._resizeListeners;
-
-		if (!this.getContainerQuery()) {
-			Device.resize.detachHandler(this._resizeHandler);
-		}
+		Device.resize.detachHandler(this._resizeDeviceHandler);
 	};
 
 	/**
@@ -509,10 +506,9 @@ sap.ui.define([
 		this._itemsObserver.observe(this, {aggregations: ["items"]});
 
 		this._resizeHandler = this._resize.bind(this);
+		this._resizeDeviceHandler = this._resizeDevice.bind(this);
 
-		if (!this.getContainerQuery()) {
-			Device.resize.attachHandler(this._resizeHandler);
-		}
+		Device.resize.attachHandler(this._resizeDeviceHandler);
 
 		this._resizeItemHandler = this._resizeItem.bind(this);
 
@@ -647,7 +643,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handler for resize of the grid or the viewport
+	 * Handler for resize of the grid
 	 * @private
 	 */
 	GridContainer.prototype._resize = function () {
@@ -657,6 +653,16 @@ sap.ui.define([
 
 		var bSettingsAreChanged = this._detectActiveLayout();
 		this._applyLayout(bSettingsAreChanged);
+	};
+
+	/**
+	 * Handler for resize of the viewport
+	 * @private
+	 */
+	GridContainer.prototype._resizeDevice = function () {
+		if (!this.getContainerQuery()) {
+			this._resize();
+		}
 	};
 
 	/**
