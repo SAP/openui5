@@ -48,21 +48,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	// shortcut for sap.m.ToolbarDesign
-	var ToolbarDesign = mobileLibrary.ToolbarDesign;
-
-	// shortcut for sap.m.ButtonType
-	var ButtonType = mobileLibrary.ButtonType;
-
-	// shortcut for sap.m.ListType
-	var ListType = mobileLibrary.ListType;
-
-	// shortcut for sap.m.PlacementType
-	var PlacementType = mobileLibrary.PlacementType;
-
-	// shortcut for sap.m.FacetFilterListDataType
-	var FacetFilterListDataType = mobileLibrary.FacetFilterListDataType;
-
 	// shortcut for sap.m.ListMode
 	var ListMode = mobileLibrary.ListMode;
 
@@ -365,10 +350,10 @@ sap.ui.define([
 			assert.strictEqual(oSummaryBar.$().attr("aria-labelledby"),
 			oSummaryBarText.getId(), "aria-labelledby should consist of a filter's text");
 
-			testResetInSummaryBar(oFF, true);
+			testResetInSummaryBar(oFF, true, assert);
 
 			oFF.setShowReset(false);
-			testResetInSummaryBar(oFF, false);
+			testResetInSummaryBar(oFF, false, assert);
 			};
 		fnTestLight(oFFLight);
 
@@ -543,17 +528,17 @@ sap.ui.define([
 		oFF.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		testResetInSummaryBar(oFF, true);
+		testResetInSummaryBar(oFF, true, assert);
 
 		oFF.setShowReset(false);
 		sap.ui.getCore().applyChanges();
 
-		testResetInSummaryBar(oFF, false);
+		testResetInSummaryBar(oFF, false, assert);
 
 		 oFF.setShowReset(true);
 		sap.ui.getCore().applyChanges();
 
-		testResetInSummaryBar(oFF, true);
+		testResetInSummaryBar(oFF, true, assert);
 
 		destroyFF(oFF);
 	});
@@ -572,7 +557,7 @@ sap.ui.define([
 		var oSummaryBar = oFF.getAggregation("summaryBar");
 		assert.ok(oSummaryBar.getDomRef(), "Summary bar should be displayed");
 		assert.ok(!oSummaryBar.getActive(), "Summary bar should be inactive when type is Simple");
-		testResetInSummaryBar(oFF, true);
+		testResetInSummaryBar(oFF, true, assert);
 		oFF.setShowSummaryBar(false);
 		sap.ui.getCore().applyChanges();
 
@@ -580,13 +565,13 @@ sap.ui.define([
 		oFF.setShowReset(false);
 		sap.ui.getCore().applyChanges();
 
-		testResetInSummaryBar(oFF, false);
+		testResetInSummaryBar(oFF, false, assert);
 
 		oFF.setShowSummaryBar(true);
 		oFF.setShowReset(true);
 		sap.ui.getCore().applyChanges();
 
-		testResetInSummaryBar(oFF, true);
+		testResetInSummaryBar(oFF, true, assert);
 
 
 		destroyFF(oFF);
@@ -1629,7 +1614,7 @@ sap.ui.define([
 		}, 500);
 	});
 
-	module("Buttons for List");
+	QUnit.module("Buttons for List");
 
 	QUnit.test("_bCheckForAddListBtn should be set to true when the list is multiSelect", function(assert) {
 		var done = assert.async();
@@ -2015,9 +2000,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Facet filter list positioning - after removal of list(s)", function (assert) {
-		var aExpectedDescribedBy = [],
-				bAriaRemoveFacetFound = false,
-				oListToRemove = this.oFF.getLists()[2];
+		var oListToRemove = this.oFF.getLists()[2];
 
 		this.oFF.removeList(oListToRemove);
 		sap.ui.getCore().applyChanges();
@@ -2362,8 +2345,8 @@ sap.ui.define([
 			oModel = new JSONModel({
 				values: [{key: "1", text: "Val1"}]
 			}),
-			oEventGetParamSub = sinon.stub(sap.ui.base.Event.prototype, "getParameter");
-			oEventGetParamSub.withArgs("reason").returns("Refresh");
+			oEventGetParamStub = sinon.stub(sap.ui.base.Event.prototype, "getParameter");
+			oEventGetParamStub.withArgs("reason").returns("Refresh");
 
 		oFF.addList(oFFL);
 		oFFL.setModel(oModel);
@@ -2391,7 +2374,7 @@ sap.ui.define([
 
 				destroyFF(oFF);
 				done();
-				oEventGetParamSub.restore();
+				oEventGetParamStub.restore();
 			});
 		});
 
@@ -2598,16 +2581,6 @@ sap.ui.define([
 		qutils.triggerMouseEvent(getAddFacetCtrl(oFF), "tap");
 	}
 
-	function getDialogFacetSearchField(oFacetPage) {
-
-		return oFacetPage.getSubHeader().getContentMiddle()[0];
-	}
-
-	function getDialogFilterItemsSearchField(oFilterItemsPage) {
-
-		return oFilterItemsPage.getSubHeader().getContentMiddle()[0];
-	}
-
 	function getPopoverFilterItemsSearchField(oPopover) {
 
 		return oPopover.getCustomHeader().getContentMiddle()[0];
@@ -2657,11 +2630,10 @@ sap.ui.define([
 	function getDialogFacetSearch(oFF) {
 
 		var oFacetPage = getDialogFacetPage(oFF);
-		var oSearchField = oFacetPage.getSubHeader().getContentMiddle()[0];
 		return oFacetPage.getSubHeader().getContentMiddle()[0];
 	}
 
-	function testResetInSummaryBar(oFF, bDisplayed) {
+	function testResetInSummaryBar(oFF, bDisplayed, assert) {
 
 		var oSummaryBar = oFF.getAggregation("summaryBar");
 		if (bDisplayed) {

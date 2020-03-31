@@ -2669,7 +2669,6 @@ sap.ui.define([
 	QUnit.test("FacetFilter.reset (no summary bar)", function(assert) {
 		var done = assert.async();
 
-		var oResetEvent = null;
 		var oFF = new FacetFilter();
 
 		oFF.placeAt("content");
@@ -2936,33 +2935,14 @@ sap.ui.define([
 		return oFF._removeFacetIcons[oFF.getLists()[iIndex].getId()];
 	}
 
-	function getAddFacetCtrl(oFF) {
-		return sap.ui.getCore().byId(oFF.getId() + "-add");
-	}
-
 	function openPopover(oFF, iIndex) {
 
 		qutils.triggerMouseEvent(getButtonCtrl(oFF, iIndex), "tap");
 	}
 
-	function openDialogFromAddFacet(oFF) {
-
-		qutils.triggerMouseEvent(getAddFacetCtrl(oFF), "tap");
-	}
-
 	function getDialogFacetSearchField(oFacetPage) {
 
 		return oFacetPage.getSubHeader().getContentMiddle()[0];
-	}
-
-	function getDialogFilterItemsSearchField(oFilterItemsPage) {
-
-		return oFilterItemsPage.getSubHeader().getContentMiddle()[0];
-	}
-
-	function getPopoverFilterItemsSearchField(oPopover) {
-
-		return oPopover.getCustomHeader().getContentMiddle()[0];
 	}
 
 	function getPopoverSelectAllCheckBox(oPopover) {
@@ -3004,40 +2984,6 @@ sap.ui.define([
 		var oDialog = oFF.getAggregation("dialog");
 		var oNavCont = oDialog.getContent()[0];
 		return oNavCont.getPages()[0];
-	}
-
-	function getDialogFacetSearch(oFF) {
-
-		var oFacetPage = getDialogFacetPage(oFF);
-		var oSearchField = oFacetPage.getSubHeader().getContentMiddle()[0];
-		return oFacetPage.getSubHeader().getContentMiddle()[0];
-	}
-
-	function testResetInSummaryBar(oFF, bDisplayed) {
-
-		var oSummaryBar = oFF.getAggregation("summaryBar");
-		if (bDisplayed) {
-			assert.equal(oSummaryBar.getContent().length, 3,
-					"The summary bar should have 3 controls in its content when the reset button is displayed");
-			var oToolbarSpacer = oSummaryBar.getContent()[1];
-			assert.ok(
-					oToolbarSpacer instanceof sap.m.ToolbarSpacer,
-					"The second control in the summary bar content should be a spacer so that the reset button is displayed on the right side of the toolbar");
-			var oResetButton = oSummaryBar.getContent()[2];
-			assert.ok(oResetButton instanceof sap.m.Button, "The third control in the summary bar content should be a button");
-			assert.ok(oResetButton.$().hasClass("sapUiSizeCompact"), "The button should be in compact size");
-		} else {
-
-			assert.equal(oSummaryBar.getContent().length, 1,
-					"The summary bar should have 1 control in its content when the reset button is not displayed");
-		}
-	}
-
-	function getGroupHeader(oGroup) {
-		return new GroupHeaderListItem( {
-			title: "Group: " + oGroup.key,
-			upperCase: false
-		} );
 	}
 
 	/*
