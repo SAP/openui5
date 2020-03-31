@@ -61,7 +61,12 @@ sap.ui.define([
 		// Action
 		When.onTheAppPage.iPressTheWelcomeTabButton();
 		// Assertions
-		Then.onTheWelcomePage.iShouldSeeTheWelcomePage().and.iTeardownMyApp();
+		Then.onTheWelcomePage.iShouldSeeTheWelcomePage();
+	});
+
+	opaTest("Should teardown my app", function(Given, When, Then) {
+		expect(0); // eslint-disable-line no-undef
+		Then.iTeardownMyApp();
 	});
 
 });

@@ -28,20 +28,20 @@ sap.ui.define([
 
 	opaTest("Should Filter the tree", function (Given, When, Then) {
 		When.onTheApiMasterPage.iSearchFor("sap.ui.base.o");
-		Then.onTheApiMasterPage.iShouldSeeTheseItems(["sap.ui.base", "Object", "ObjectPool"]);
+		Then.onTheApiMasterPage.iShouldSeeTheseItems(["sap", "ui", "base", "Object", "ObjectPool"]);
 	});
 
 	opaTest("Should select an item from the filtered tree", function (Given, When, Then) {
 		Given.onTheApiMasterPage.iSearchFor("sap.ui.base.o");
 		When.onTheApiMasterPage.iSelectATreeNode("Object");
-		Then.onTheApiDetailPage.iShouldSeeTheApiDetailPage().
-		and.iShouldSeeTheApiDetailObjectPage();
+		Then.onTheApiDetailPage.iShouldSeeTheApiDetailPage();
+		Then.onTheSubApiDetailPage.iShouldSeeTheApiDetailObjectPage();
 	});
 
 	opaTest("Should see the details for the selected item (sap.ui.base.Object)", function (Given, When, Then) {
 		Given.onTheApiMasterPage.iSearchFor("sap.ui.base.o");
 		When.onTheApiMasterPage.iSelectATreeNode("Object");
-		Then.onTheApiDetailPage.iShouldSeeTheCorrectTitleAndSubtitle("abstract class sap.ui.base.Object", "").
+		Then.onTheSubApiDetailPage.iShouldSeeTheCorrectTitleAndSubtitle("abstract class sap.ui.base.Object", "").
 		and.iShouldSeeTheElementDetailsInHeaderContent().
 		and.iShouldSeeTheseSections("Overview", "Constructor", "Methods").
 		and.iShouldSeeTheCorrectSectionSelected("Overview");
@@ -50,16 +50,21 @@ sap.ui.define([
 	opaTest("Should scroll to section via section buttons", function (Given, When, Then) {
 		Given.onTheApiMasterPage.iSearchFor("sap.ui.base.o").
 		and.iSelectATreeNode("Object");
-		When.onTheApiDetailPage.iSelectASection("Constructor");
-		Then.onTheApiDetailPage.iShouldSeeTheCorrectSectionSelected("Constructor");
-		When.onTheApiDetailPage.iSelectASection("Methods").and.iSelectASection("Summary");
-		Then.onTheApiDetailPage.iShouldSeeTheCorrectSectionSelected("Methods");
+		When.onTheSubApiDetailPage.iSelectASection("Constructor");
+		Then.onTheSubApiDetailPage.iShouldSeeTheCorrectSectionSelected("Constructor");
+		When.onTheSubApiDetailPage.iSelectASectionWithSubsections("Methods").and.iSelectASubSectionFromTheMenu("Summary");
+		Then.onTheSubApiDetailPage.iShouldSeeTheCorrectSectionSelected("Methods");
 	});
 
 	opaTest("Should scroll to section via link", function (Given, When, Then) {
-		When.onTheApiDetailPage.iSelectALink("getInterface");
-		Then.onTheApiDetailPage.iShouldSeeTheCorrectSectionSelected("Methods").
-		and.iShouldSeeTheCorrectSubSectionOnTop("getInterface").and.iTeardownMyApp();
+		When.onTheSubApiDetailPage.iSelectALink("getInterface");
+		Then.onTheSubApiDetailPage.iShouldSeeTheCorrectSectionSelected("Methods").
+		and.iShouldSeeTheCorrectSubSectionOnTop("getInterface");
+	});
+
+	opaTest("Should teardown my app", function(Given, When, Then) {
+		expect(0); // eslint-disable-line no-undef
+		Then.iTeardownMyApp();
 	});
 
 });

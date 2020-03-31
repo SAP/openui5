@@ -148,9 +148,17 @@ sap.ui.define([
 					var oContent = oZipFile.generate({ type: "blob" });
 
 					// save and open generated file
-					File.save(oContent, this._sId, "zip", "application/zip");
+					this._openGeneratedFile(oContent, this._sId);
 				}.bind(this));
 			}.bind(this));
+		},
+
+		_openGeneratedFile : function(oContent, sId) {
+			sap.ui.require([
+				"sap/ui/core/util/File"
+			], function(File) {
+				File.save(oContent, sId, "zip", "application/zip");
+			});
 		},
 
 		_addFileToZip: function  (oFileInfo, oZipFile) {
