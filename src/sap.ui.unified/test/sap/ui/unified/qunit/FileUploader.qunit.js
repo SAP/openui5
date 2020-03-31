@@ -346,6 +346,29 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("dependency of submit and rendering", function (assert) {
+		// arrange
+		var oFileUploader = new FileUploader().placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oFileUploader.upload();
+
+		// assert
+		assert.strictEqual(oFileUploader._submitAfterRedering, false, "The submit is performed without a dependency of the rendering.");
+
+		// act
+		oFileUploader.setUploadUrl("test");
+		oFileUploader.upload();
+
+		// assert
+		assert.strictEqual(oFileUploader._submitAfterRedering, true, "The submit is performed after there is rendering caused by setter of uploadUrl.");
+
+		// cleanup
+		oFileUploader.destroy();
+	});
+
 	QUnit.module("File validation");
 	QUnit.test("Test file type validation - handlechange()", function (assert){
 		//setup

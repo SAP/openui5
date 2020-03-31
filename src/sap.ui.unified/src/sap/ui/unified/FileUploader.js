@@ -593,6 +593,7 @@ sap.ui.define([
 				this.oBrowse.addAriaDescribedBy(this.getId() + "-AccDescr");
 			}
 		}
+		this._submitAfterRedering = false;
 
 	};
 
@@ -896,6 +897,11 @@ sap.ui.define([
 
 		if (this.getValueState() == ValueState.Error) {
 			this.oBrowse.$().attr("aria-invalid", "true");
+		}
+
+		if (this._submitAfterRedering) {
+			this._submitAndResetValue();
+			this._submitAfterRedering = false;
 		}
 
 	};
@@ -1298,7 +1304,9 @@ sap.ui.define([
 		if (!this.getEnabled()) {
 			return;
 		}
-		var uploadForm = this.getDomRef("fu_form");
+		var uploadForm = this.getDomRef("fu_form"),
+			sActionAttr;
+
 		try {
 			this._bUploading = true;
 			if (this.getSendXHR() && window.File) {
@@ -1309,12 +1317,26 @@ sap.ui.define([
 					this._sendFilesWithXHR(aFiles);
 				}
 			} else if (uploadForm) {
-				uploadForm.submit();
-				this._resetValueAfterUploadStart();
+				// In order to do the submit, the action DOM attribute of the inner form should be accurate.
+				// If there is a change in the passed to the uploadUrl property string, we must ensure that it is
+				// applied in the DOM and the submit is performed after there is new rendering.
+				sActionAttr = uploadForm.getAttribute("action");
+				if (sActionAttr !== this.getUploadUrl()) {
+					this._submitAfterRedering = true;
+				} else {
+					this._submitAndResetValue();
+				}
 			}
 		} catch (oException) {
 			Log.error("File upload failed:\n" + oException.message);
 		}
+	};
+
+	FileUploader.prototype._submitAndResetValue = function() {
+		var uploadForm = this.getDomRef("fu_form");
+
+		uploadForm.submit();
+		this._resetValueAfterUploadStart();
 	};
 
 	/**
