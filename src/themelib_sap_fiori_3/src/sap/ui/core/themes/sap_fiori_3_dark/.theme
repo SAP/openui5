@@ -9,9 +9,9 @@
 	<documentation>SAPUI5 quartz dark black theme library.</documentation>
 
 	<appData>
-		<releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
+		<!-- <releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
 			url="../../../../../../test-resources/sap/ui/core/themes/sap_fiori_3_dark/relnotes/changes-{major}.{minor}.json"
-			resolve="lib" />
+			resolve="lib" />  -->
 	</appData>
 
 </theme>
