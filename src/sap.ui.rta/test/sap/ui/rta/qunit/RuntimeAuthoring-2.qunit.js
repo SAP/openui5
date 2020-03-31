@@ -943,6 +943,7 @@ sap.ui.define([
 				assert.equal(oActivationCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
 				assert.equal(oActivationCallPropertyBag.title, sVersionTitle, "and version title");
 				assert.equal(oRemoveAllCommandsSpy.callCount, 1, "and all commands were removed");
+				assert.equal(oRta.bInitialResetEnabled, true, "and the initialRestEnabled is true");
 				assert.equal(oRta.bInitialDraftAvailable, false, "and the initialDraftAvailable is removed");
 				assert.equal(oToolbarSetDraftEnabledSpy.callCount, 1, "and the draft info is set once");
 				assert.equal(oToolbarSetDraftEnabledSpy.getCall(0).args[0], false, "to false");

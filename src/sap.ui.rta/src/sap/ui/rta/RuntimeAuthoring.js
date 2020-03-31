@@ -1054,6 +1054,7 @@ function(
 		).then(function () {
 			this._showMessageToast("MSG_DRAFT_ACTIVATION_SUCCESS");
 			this.bInitialDraftAvailable = false;
+			this.bInitialResetEnabled = true;
 			this.getToolbar().setRestoreEnabled(true);
 			return this._handleVersionToolbar(false);
 		}.bind(this))
