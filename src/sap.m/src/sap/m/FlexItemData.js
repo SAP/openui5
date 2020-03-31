@@ -86,13 +86,13 @@ sap.ui.define(['./FlexBoxStylingHelper', './library', 'sap/ui/core/LayoutData'],
 			maxHeight : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
 
 			/**
-			 * The minimum height of the flex item.
+			 * The minimum width of the flex item.
 			 * @since 1.36.0
 			 */
 			minWidth : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : 'auto'},
 
 			/**
-			 * The maximum height of the flex item.
+			 * The maximum width of the flex item.
 			 * @since 1.36.0
 			 */
 			maxWidth : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
