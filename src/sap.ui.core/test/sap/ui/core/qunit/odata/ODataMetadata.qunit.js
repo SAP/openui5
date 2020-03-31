@@ -440,7 +440,7 @@ sap.ui.define([
 	QUnit.test("Set to true via parameter", fnTestHeaderRequest(true, true));
 	QUnit.test("Set to false via parameter", fnTestHeaderRequest(false, false));
 
-	QUnit.module("ODataMetadata: Nav property reference info", {
+	QUnit.module("ODataMetadata: Nav property reference info and getKeyPropertyNamesByPath", {
 		before : function () {
 			this.oServer = initServer(sServiceUri, "model/GWSAMPLE_BASIC.metadata.xml",
 				sDataRootPath);
@@ -683,6 +683,48 @@ sap.ui.define([
 			assert.strictEqual(oMetadata._fillElementCaches.callCount,
 				oFixture.iCacheItemReferencesCalls);
 			oMetadata._fillElementCaches.restore();
+		});
+	});
+});
+
+[
+	{sPath : "/SalesOrderSet('42')", aKeyNames : ["SalesOrderID"]},
+	{sPath : "/SalesOrderSet('42')/ToBusinessPartner", aKeyNames : ["BusinessPartnerID"]},
+	{sPath : "/SalesOrderSet('42')/ToLineItems", aKeyNames : ["SalesOrderID", "ItemPosition"]},
+	{
+		sPath : "/SalesOrderSet('42')/ToLineItems(SalesOrderID='42',ItemPosition='010')",
+		aKeyNames : ["SalesOrderID", "ItemPosition"]
+	},
+	{sPath : "/BusinessPartnerSet('42')/CompanyName", aKeyNames : undefined},
+	{sPath : "/BusinessPartnerSet('42')/Address", aKeyNames : undefined},
+	{
+		sPath : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')",
+		aKeyNames : ["SalesOrderID", "ItemPosition"]
+	}, {
+		sPath :  "/SalesOrder_Confirm(SalesOrderID='42')"
+			+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader/Note",
+		aKeyNames : undefined
+	}, {
+		sPath :  "/SalesOrder_Confirm(SalesOrderID='42')"
+			+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')/ToHeader",
+		aKeyNames : ["SalesOrderID"]
+	}, {
+		sPath :  "/SalesOrder_Confirm(SalesOrderID='42')"
+			+ "/ToLineItems(SalesOrderID='42',ItemPosition='10')",
+		aKeyNames : ["SalesOrderID", "ItemPosition"]
+	},
+	{sPath :  "/SalesOrder_Confirm(SalesOrderID='42')", aKeyNames : ["SalesOrderID"]},
+	{sPath : "/Foo", aKeyNames : undefined},
+	{sPath : "/Foo/bar", aKeyNames : undefined},
+	{sPath : "/Foo/bar/baz", aKeyNames : undefined}
+].forEach(function (oFixture) {
+	QUnit.test("getKeyPropertyNamesByPath: " + oFixture.sPath, function (assert) {
+		var oMetadata = this.oMetadata;
+
+		return oMetadata.loaded().then(function () {
+			// code under test
+			assert.deepEqual(oMetadata.getKeyPropertyNamesByPath(oFixture.sPath),
+				oFixture.aKeyNames);
 		});
 	});
 });
