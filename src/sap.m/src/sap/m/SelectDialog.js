@@ -1079,6 +1079,11 @@ function(
 			fnOKAfterClose = null;
 
 		fnOKAfterClose = function () {
+			//after searching we need all the items
+			var oBindings = that._oList.getBinding("items");
+			if (oBindings && oBindings.aFilters && oBindings.aFilters.length) {
+				oBindings.filter([]);
+			}
 			that._oSelectedItem = that._oList.getSelectedItem();
 			that._aSelectedItems = that._oList.getSelectedItems();
 
