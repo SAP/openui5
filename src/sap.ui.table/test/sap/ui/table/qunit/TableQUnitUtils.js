@@ -285,9 +285,9 @@ sap.ui.define([
 
 	function createTableConfig(TableClass, mOptions) {
 		var oMetadata = TableClass.getMetadata();
-		var aProperties = Object.keys(oMetadata.getAllProperties()).concat(Object.keys(oMetadata.getAllPrivateProperties()));
-		var aAggregations = Object.keys(oMetadata.getAllAggregations()).concat(Object.keys(oMetadata.getAllPrivateAggregations()));
-		var aAssociations = Object.keys(oMetadata.getAllAssociations()).concat(Object.keys(oMetadata.getAllPrivateAssociations()));
+		var aProperties = Object.keys(oMetadata.getAllProperties());
+		var aAggregations = Object.keys(oMetadata.getAllAggregations());
+		var aAssociations = Object.keys(oMetadata.getAllAssociations());
 		var aAdditionalKeys = ["models"];
 		var aAllMetadataKeys = aProperties.concat(aAggregations).concat(aAssociations).concat(aAdditionalKeys);
 
@@ -308,6 +308,7 @@ sap.ui.define([
 			}
 		}
 
+		// TODO: Remove this once "row modes" are public.
 		if ("rowMode" in mOptions) {
 			oTable.setRowMode(mOptions.rowMode);
 		}
