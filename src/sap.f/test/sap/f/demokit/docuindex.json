@@ -109,7 +109,7 @@
 			"samples": [
 				"sap.f.sample.ShellBar",
 				"sap.f.sample.ShellBarProductSwitch",
-				"sap.f.sample.ShellBarWIthMenuButton",
+				"sap.f.sample.ShellBarWithMenuButton",
 				"sap.f.sample.ShellBarWithSearch",
 				"sap.f.sample.ShellBarWithFlexibleColumnLayout",
 				"sap.f.sample.ShellBarWithSplitApp"
@@ -251,7 +251,7 @@
 		  "description": "Shell Bar example showing the control title as part of a mega menu, configurable by the app developer."
 		},
 		{
-		  "id": "sap.f.sample.ShellBarWIthMenuButton",
+		  "id": "sap.f.sample.ShellBarWithMenuButton",
 		  "name": "Shell Bar with menu button",
 		  "description": "Shell Bar example with a menu button and a plain title."
 		},

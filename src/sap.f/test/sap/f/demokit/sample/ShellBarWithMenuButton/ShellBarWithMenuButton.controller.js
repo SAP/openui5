@@ -4,7 +4,7 @@ sap.ui.define([
 ], function (MessageToast, Controller) {
 	"use strict";
 
-	return Controller.extend("sap.f.sample.ShellBarWIthMenuButton.ShellBarWIthMenuButton", {
+	return Controller.extend("sap.f.sample.ShellBarWithMenuButton.ShellBarWithMenuButton", {
 		handleHomeIconPress: function(oEvent) {
 			MessageToast.show("Home icon pressed");
 		}

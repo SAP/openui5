@@ -148,6 +148,7 @@ sap.ui.define([
 		],
 		interfaces: [
 			"sap.m.IBar",
+			"sap.m.IBadge",
 			"sap.m.IBreadcrumbs",
 			"sap.m.IconTab",
 			"sap.m.IScale",
@@ -1684,6 +1685,16 @@ sap.ui.define([
 	 *
 	 * @since 1.22
 	 * @name sap.m.IBar
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
+	 * Interface for controls which implement the notification badge concept.
+	 *
+	 * @since 1.80
+	 * @name sap.m.IBadge
 	 * @interface
 	 * @public
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel

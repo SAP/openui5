@@ -55,6 +55,11 @@ sap.ui.define([
 					only: ["sap/m/Avatar"]
 				}
 			},
+			BadgeEnabler: {
+				coverage: {
+					only: ["sap/m/BadgeEnabler"]
+				}
+			},
 			Bar: {
 				title: "QUnit Page for sap.m.Bar",
 				sinon: {
