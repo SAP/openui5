@@ -24,7 +24,6 @@
 	border: 0.0625rem solid @sapUiTileBorderColor;
 	width: 100%;
 	height: auto;
-	overflow: hidden;
 	font-family: @sapUiFontFamily;
 	font-size: @sapUiFontSize;
 	color: @sapUiGroupTitleTextColor;
@@ -179,6 +178,7 @@
 .sapFCard .sapFCardHeader.sapFCardNumericHeader {
 
 	.sapFCardHeaderContent {
+	  	overflow: hidden;
 		min-width: 0; // fixes Chrome issue
 		flex: 1;
 	}

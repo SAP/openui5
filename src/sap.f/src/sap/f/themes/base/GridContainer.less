@@ -2,9 +2,13 @@
 /* CSS for control sap.f/GridContainer  */
 /* Base theme          */
 /* ================================== */
+
+@_sap_f_GridItem_FocusBorderWidth: 1px;
+
 .sapFGridContainer {
 	position: relative;
 	display: grid;
+	outline: none;
 
 	&.sapFGridContainerDenseFill {
 		grid-auto-flow: row dense;
@@ -20,12 +24,36 @@
 
 	.sapFGridContainerItemWrapper {
 		min-width: 0;
+		outline: none;
 
 		&.sapFGridContainerInvisiblePlaceholder {
 			display: none;
 		}
 	}
 
+	.sapFGridContainerItemWrapper:focus .sapFGridContainerItemInnerWrapper::before {
+		content: '';
+		position: absolute;
+		left: -3px;
+		bottom: -3px;
+		right: -3px;
+		top: -3px;
+		border: @_sap_f_GridItem_FocusBorderWidth dotted @sapUiContentFocusColor;
+		pointer-events: none;
+	  	border-radius: 0.25rem;
+	}
+
+	.sapFGridContainerItemWrapper .sapFGridContainerItemInnerWrapper {
+		position: relative;
+	}
+
+  	.sapFGridContainerDummyArea {
+	  	position: fixed;
+	}
+
+	html[data-sap-ui-browser^="ie"] .sapFGridContainerItemWrapper:focus .sapFGridContainerItemInnerWrapper::before {
+	  border: @_sap_f_GridItem_FocusBorderWidth dashed @sapUiContentFocusColor;
+	}
 	.sapFCard.sapFCardAnalytical {
 		min-height: 100%;
 
