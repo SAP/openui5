@@ -5,6 +5,7 @@
 
 .sapMGT {
 	display: inline-block;
+	text-decoration: none;
 	border-radius: 0.25rem;
 	position: relative;
 	outline: none;
@@ -96,9 +97,9 @@
 
 .sapMGTHdrContent {
 	height: 3.625rem;
-	margin-top: 1rem;
-	margin-left: 1rem;
-	margin-right: 1rem;
+	padding-top: 1rem;
+	padding-left: 1rem;
+	padding-right: 1rem;
 }
 
 .sapMGTHdrIconImage {
@@ -142,7 +143,15 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 	}
 }
 
-.sapMGT.sapMGTScopeActions {
+.sapMGTLink {
+	display: block;
+	.sapMGTOverlayMixin(0px, 1);
+	pointer-events: unset;
+	text-decoration: none;
+	outline: none;
+}
+
+.sapMGT.sapMGTScopeActions, .sapMGT.sapMGTScopeSingleAction {
 
 	.sapMTileCntContent {
 		position: relative;
@@ -225,7 +234,7 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 	}
 }
 
-.sapMGT.sapMGTScopeActions.sapMGTBackgroundImage {
+.sapMGT.sapMGTScopeActions.sapMGTBackgroundImage, .sapMGT.sapMGTScopeSingleActions.sapMGTBackgroundImage {
 
 	.sapMTileCntContent {
 		&:after {
@@ -330,8 +339,32 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 		font-size: 1.375rem  !important;
 	}
 }
+
+.sapMGTLineMode .sapMGTActionsContainer:not(.sapMGTScopeSingleActionContainer) {
+	width: 4rem;
+
+	.sapMGTMoreIcon {
+		position: static;
+	}
+
+	.sapMGTRemoveButton {
+		position: static;
+		left: 2rem;
+	}
+}
+
+.sapMGTLineMode .sapMGTTouchArea .sapMGTScopeSingleActionContainer {
+	.sapMGTMoreIcon {
+		position: static;
+	}
+
+	.sapMGTRemoveButton {
+		position: static;
+	}
+}
+
 /* ActionsContainer Styles commonly shared with all screen sizes in compact and cozy */
-.sapMGTLineMode .sapMGTActionsContainer {
+.sapMGTLineMode .sapMGTActionsContainer, .sapMGTLineMode .sapMGTScopeSingleActionContainer{
 	.sapMGTFlexEntry;
 	display: -webkit-box;
 	display: -webkit-flex;
@@ -344,7 +377,6 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 	-webkit-box-align: center;
 
 	line-height: 1.375rem;
-	width: 4rem;
 
 	&, * {
 		pointer-events: auto;
@@ -352,20 +384,17 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 
 	.sapMGTMoreIcon {
 		display: block;
-		position: static;
-		right: 0px;
-		bottom: 0px;
+		right: 0;
+		bottom: 0;
 		width: 2rem;
 		height: 1.375rem;
 	}
 
 	.sapMGTRemoveButton {
 		display: block;
-		margin: 0px 0.3125rem;
-		left: 2rem;
-		position: static;
-		top: 0px;
-		right: 0px;
+		margin: 0 0.3125rem;
+		top: 0;
+		right: 0;
 		z-index: 0; // Remark: If increased, this will break FLP footer visualization.
 
 		&:before {
@@ -516,6 +545,12 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 	.sapMGTLineMode .sapMGTHdrTxt:last-of-type {
 		padding-right: 0.5rem;
 		margin-right: 0.5rem;
+	}
+
+	.sapMGTLineMode.sapMGTScopeSingleAction:not(.sapMGTDisabled) {
+		.sapMGTHdrTxt:last-of-type, .sapMGTSubHdrTxt {
+			padding-right: 2.25rem;
+		}
 	}
 
 	.sapMGTLineMode.sapMGTScopeActions:not(.sapMGTDisabled) {
@@ -712,14 +747,14 @@ html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-
 
 	.sapMGTHdrContent {
 		height: 3.25rem;
-		margin: 0.5rem 0.5rem 0 0.5rem;
+		padding: 0.5rem 0.5rem 0 0.5rem;
 	}
 
 	.sapMGTSubHdrTxt {
 		margin-top: 0;
 	}
 
-	.sapMGT.sapMGTScopeActions {
+	.sapMGT.sapMGTScopeActions, .sapMGT.sapMGTScopeSingleAction {
 		.sapMGTMoreIcon {
 			right: 0.5rem;
 			bottom: 0.313rem;
@@ -744,9 +779,9 @@ html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-
 }
 
 .sapTilePaddingTest .sapMGTHdrContent {
-	margin-top: 0.6875rem;
-	margin-left: 1rem;
-	margin-right: 1rem;
+	padding-top: 0.6875rem;
+	padding-left: 1rem;
+	padding-right: 1rem;
 }
 
 .sapTilePaddingTest .sapMTileCntFtrTxt {

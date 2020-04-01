@@ -1,6 +1,24 @@
 {
-	"actionsScope": false,
 	"sizeBehavior": "Responsive",
+	"scope": "Display",
+	"scopes": [
+		{
+			"key": "Display",
+			"text": "Display"
+		},
+		{
+			"key": "Actions",
+			"text": "Actions"
+		},
+		{
+			"key": "ActionMore",
+			"text": "ActionMore"
+		},
+		{
+			"key": "ActionRemove",
+			"text": "ActionRemove"
+		}
+	],
 	"tiles": [
 		{
 			"title": "Jessica Danielle Johnson ",
