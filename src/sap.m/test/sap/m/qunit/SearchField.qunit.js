@@ -589,4 +589,21 @@ sap.ui.define([
 			}, 500);
 		}, 300); // requires that timeout to work on IE
 	});
+
+	QUnit.test("When suggestions dialog is closed, suggestions are suppressed", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oSearchField.attachSearch(function () {
+			assert.ok(this.oSearchField._bSuggestionSuppressed, "suggestions are suspended");
+
+			done();
+		}.bind(this));
+
+		// open suggestions
+		this.oSearchField.suggest();
+
+		// tap on the 'OK' button
+		qutils.triggerTouchEvent("tap", jQuery(".sapMDialog .sapMDialogFooter .sapMBtn")[0]);
+	});
 });
