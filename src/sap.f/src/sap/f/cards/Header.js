@@ -8,11 +8,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/f/Avatar",
 	"sap/ui/Device",
-	'sap/ui/model/json/JSONModel',
 	"sap/f/cards/HeaderRenderer",
-	"sap/f/cards/IconFormatter",
-	"sap/ui/core/Core",
-	"sap/f/cards/loading/LoadingProvider"
+	"sap/ui/core/Core"
 ], function (
 	mLibrary,
 	library,
@@ -20,11 +17,8 @@ sap.ui.define([
 	Text,
 	Avatar,
 	Device,
-	JSONModel,
 	HeaderRenderer,
-	IconFormatter,
-	Core,
-	LoadingProvider
+	Core
 ) {
 	"use strict";
 
@@ -135,64 +129,11 @@ sap.ui.define([
 	 */
 	Header.prototype.init = function () {
 		this._oRb = Core.getLibraryResourceBundle("sap.f");
-		this._aReadyPromises = [];
-		this._bReady = false;
-
-		// So far the ready event will be fired when the data is ready. But this can change in the future.
-		this._awaitEvent("_dataReady");
-		this._awaitEvent("_actionHeaderReady");
-
-		Promise.all(this._aReadyPromises).then(function () {
-			this._bReady = true;
-			this.fireEvent("_ready");
-		}.bind(this));
-
-		this._oLoadingProvider = new LoadingProvider();
-
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 
 	Header.prototype.exit = function () {
-		this._oServiceManager = null;
-		this._oDataProviderFactory = null;
 		this._oRb = null;
-
-		if (this._oDataProvider) {
-			this._oDataProvider.destroy();
-			this._oDataProvider = null;
-		}
-
-		if (this._oActions) {
-			this._oActions.destroy();
-			this._oActions = null;
-		}
-
-		if (this._oLoadingProvider) {
-			this._oLoadingProvider.destroy();
-			this._oLoadingProvider = null;
-		}
-	};
-
-	/**
-	 * Await for an event which controls the overall "ready" state of the header.
-	 *
-	 * @private
-	 * @param {string} sEvent The name of the event
-	 */
-	Header.prototype._awaitEvent = function (sEvent) {
-		this._aReadyPromises.push(new Promise(function (resolve) {
-			this.attachEventOnce(sEvent, function () {
-				resolve();
-			});
-		}.bind(this)));
-	};
-
-	/**
-	 * @public
-	 * @returns {boolean} If the header is ready or not.
-	 */
-	Header.prototype.isReady = function () {
-		return this._bReady;
 	};
 
 	/**
@@ -304,60 +245,6 @@ sap.ui.define([
 		this.firePress();
 	};
 
-	Header.prototype.setServiceManager = function (oServiceManager) {
-		this._oServiceManager = oServiceManager;
-		return this;
-	};
-
-	Header.prototype.setDataProviderFactory = function (oDataProviderFactory) {
-		this._oDataProviderFactory = oDataProviderFactory;
-		return this;
-	};
-
-	/**
-	 * Sets a data provider to the header.
-	 *
-	 * @private
-	 * @param {object} oDataSettings The data settings
-	 */
-	Header.prototype._setData = function (oDataSettings) {
-		var sPath = "/";
-		if (oDataSettings && oDataSettings.path) {
-			sPath = oDataSettings.path;
-		}
-		this.bindObject(sPath);
-
-		if (this._oDataProvider) {
-			this._oDataProvider.destroy();
-		}
-
-		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
-
-		this._oLoadingProvider.createLoadingState(this._oDataProvider);
-
-		if (this._oDataProvider) {
-			// If a data provider is created use an own model. Otherwise bind to the one propagated from the card.
-			this.setModel(new JSONModel());
-
-			//TODO Designers to decide if we have to keep loading status when an error occured during loading
-			this._oDataProvider.attachDataChanged(function (oEvent) {
-				this._updateModel(oEvent.getParameter("data"));
-			}.bind(this));
-
-			this._oDataProvider.attachError(function (oEvent) {
-				this._handleError(oEvent.getParameter("message"));
-			}.bind(this));
-
-			this._oDataProvider.triggerDataUpdate().then(function () {
-				this.fireEvent("_dataReady");
-				this._oLoadingProvider.setLoading(false);
-				this._oLoadingProvider.removeHeaderPlaceholder(this);
-			}.bind(this));
-		} else {
-			this.fireEvent("_dataReady");
-		}
-	};
-
 	/**
 	 * Sets accessibility to the header to the header.
 	 *
@@ -375,20 +262,8 @@ sap.ui.define([
 		}
 	};
 
-	Header.prototype._updateModel = function (oData) {
-		this.getModel().setData(oData);
-	};
-
-	Header.prototype._handleError = function (sLogMessage) {
-		this.fireEvent("_error", { logMessage: sLogMessage });
-	};
-
 	Header.prototype.isLoading = function () {
-		var oLoadingProvider = this._oLoadingProvider,
-            oCard = this.getParent(),
-			cardLoading = oCard.getMetadata()._sClassName === 'sap.ui.integration.widgets.Card' ? oCard.isLoading() : false;
-
-		return !oLoadingProvider.getDataProviderJSON() && (oLoadingProvider.getLoadingState() || cardLoading);
+		return false;
 	};
 
 	Header.prototype.attachPress = function () {

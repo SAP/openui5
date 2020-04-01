@@ -4,7 +4,7 @@ sap.ui.define([
 		"sap/ui/integration/widgets/Card",
 		"sap/ui/integration/util/RequestDataProvider",
 		"sap/ui/core/Core",
-		"sap/f/cards/loading/LoadingProvider",
+		"sap/ui/integration/util/LoadingProvider",
 		"sap/ui/integration/cards/BaseContent"
 	],
 	function (

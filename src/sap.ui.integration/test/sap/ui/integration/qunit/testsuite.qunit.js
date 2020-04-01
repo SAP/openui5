@@ -44,14 +44,14 @@ sap.ui.define(function () {
 				},
 				coverage: {
 					only: [
-						"sap/f/cards/Header",
+						"sap/ui/integration/cards/Header",
 						"sap/f/cards/HeaderRenderer",
-						"sap/f/cards/IconFormatter",
-						"sap/f/cards/NumericHeader",
+						"sap/ui/integration/cards/NumericHeader",
 						"sap/f/cards/NumericHeaderRenderer",
 						"sap/f/cards/NumericSideIndicator",
 						"sap/f/cards/NumericSideIndicatorRenderer",
 						"sap/ui/integration/widgets/Card",
+						"sap/ui/integration/formatters/IconFormatter",
 						"sap/ui/integration/util/CardActions",
 						"sap/ui/integration/util/CardManifest",
 						"sap/ui/integration/util/ServiceManager",
@@ -94,14 +94,14 @@ sap.ui.define(function () {
 				},
 				coverage: {
 					only: [
-						"sap/f/cards/Header",
+						"sap/ui/integration/cards/Header",
 						"sap/f/cards/HeaderRenderer",
-						"sap/f/cards/NumericHeader",
+						"sap/ui/integration/cards/NumericHeader",
 						"sap/f/cards/NumericHeaderRenderer",
 						"sap/f/cards/NumericSideIndicator",
 						"sap/f/cards/NumericSideIndicatorRenderer",
 						"sap/ui/integration/cards/BaseContent",
-						"sap/ui/integration/cards/loading/LoadingProvider"
+						"sap/ui/integration/util/LoadingProvider"
 					]
 				},
 				module: [

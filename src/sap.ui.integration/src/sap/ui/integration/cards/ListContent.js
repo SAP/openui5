@@ -7,7 +7,7 @@ sap.ui.define([
 		"sap/m/List",
 		"sap/m/StandardListItem",
 		"sap/ui/base/ManagedObject",
-		"sap/f/cards/IconFormatter",
+		"sap/ui/integration/formatters/IconFormatter",
 		"sap/ui/integration/util/BindingHelper"
 	],
 	function (library, BaseListContent, sapMList, StandardListItem, ManagedObject, IconFormatter, BindingHelper) {
