@@ -94,15 +94,19 @@ sap.ui.define([
 		afterRedo : fnConfirmGroupelement1IsOn2ndPosition
 	});
 
-	var fnConfirmSection1IsOn2ndPosition = function(oAppComponent, oViewAfterAction, assert) {
-		assert.strictEqual( oViewAfterAction.byId("section").getId(),       // Id of element at first position in original view
-			oViewAfterAction.byId("layout").getSections()[1].getId(),   // Id of second element in group after change has been applied
-			"then the section has been moved to the right position");
+	var fnConfirmSection1IsOn3rdPosition = function(oAppComponent, oViewAfterAction, assert) {
+		assert.strictEqual(
+			oViewAfterAction.byId("layout").getSections()[2].getId(),   // Id of second element in group after change has been applied
+			oViewAfterAction.byId("section").getId(),       // Id of element at first position in original view
+			"then the section has been moved to the right position"
+		);
 	};
 	var fnConfirmSection1IsOn1stPosition = function(oAppComponent, oViewAfterAction, assert) {
-		assert.strictEqual( oViewAfterAction.byId("section").getId(),       // Id of element at first position in original view
+		assert.strictEqual(
 			oViewAfterAction.byId("layout").getSections()[0].getId(),   // Id of second element in group after change has been applied
-			"then the section has been moved to the previous position");
+			oViewAfterAction.byId("section").getId(),       // Id of element at first position in original view
+			"then the section has been moved to the previous position"
+		);
 	};
 
 	// Check moving sections
@@ -118,6 +122,13 @@ sap.ui.define([
 								'<m:Button text="Button" />' +
 							'</uxap:ObjectPageSubSection>' +
 							'<uxap:ObjectPageSubSection id="subSection1" title="Subsection empty">' +
+							'</uxap:ObjectPageSubSection>' +
+						'</uxap:subSections>' +
+					'</uxap:ObjectPageSection>' +
+					'<uxap:ObjectPageSection id="invisibleSection" visible="false">' +
+						'<uxap:subSections>' +
+							'<uxap:ObjectPageSubSection id="invisibleSubSection" title="Inviisble Subsection with button">' +
+								'<m:Button text="Button" />' +
 							'</uxap:ObjectPageSubSection>' +
 						'</uxap:subSections>' +
 					'</uxap:ObjectPageSection>' +
@@ -141,7 +152,7 @@ sap.ui.define([
 					movedElements : [{
 						element : oView.byId("section"),
 						sourceIndex : 0,
-						targetIndex : 1
+						targetIndex : 2
 					}],
 					source : {
 						aggregation: "sections",
@@ -155,9 +166,9 @@ sap.ui.define([
 			}
 		},
 		layer : "VENDOR",
-		afterAction : fnConfirmSection1IsOn2ndPosition,
+		afterAction : fnConfirmSection1IsOn3rdPosition,
 		afterUndo : fnConfirmSection1IsOn1stPosition,
-		afterRedo : fnConfirmSection1IsOn2ndPosition
+		afterRedo : fnConfirmSection1IsOn3rdPosition
 	});
 
 	// check moving anchors
@@ -173,6 +184,13 @@ sap.ui.define([
 								'<m:Button text="Button" />' +
 							'</uxap:ObjectPageSubSection>' +
 							'<uxap:ObjectPageSubSection id="subSection1" title="Subsection empty">' +
+							'</uxap:ObjectPageSubSection>' +
+						'</uxap:subSections>' +
+					'</uxap:ObjectPageSection>' +
+					'<uxap:ObjectPageSection id="invisibleSection" visible="false">' +
+						'<uxap:subSections>' +
+							'<uxap:ObjectPageSubSection id="invisibleSubSection" title="Inviisble Subsection with button">' +
+								'<m:Button text="Button" />' +
 							'</uxap:ObjectPageSubSection>' +
 						'</uxap:subSections>' +
 					'</uxap:ObjectPageSection>' +
@@ -211,9 +229,9 @@ sap.ui.define([
 				};
 			}
 		},
-		afterAction : fnConfirmSection1IsOn2ndPosition,
+		afterAction : fnConfirmSection1IsOn3rdPosition,
 		afterUndo : fnConfirmSection1IsOn1stPosition,
-		afterRedo : fnConfirmSection1IsOn2ndPosition
+		afterRedo : fnConfirmSection1IsOn3rdPosition
 	});
 
 	QUnit.module("Given ObjectPageLayout with Sections and headerContent,", {
