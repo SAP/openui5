@@ -1571,6 +1571,29 @@ function (
 			"Focus is restored to begin column after exiting from mid's fullscreen.");
 	});
 
+	QUnit.test("Should restore focus when navigating back on the first focusable element if no element was stored", function (assert) {
+		var oExpectedFocusedElement;
+
+		// Act
+		this.oFCL.setLayout(LT.TwoColumnsMidExpanded);
+		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
+
+		// should focus element in the current column, because of the check in
+		// _isFocusInSomeOfThePreviousColumns which if true, does not restore the focus
+		this.oBtn2.focus();
+
+		oExpectedFocusedElement = this.oFCL._getFirstFocusableElement('begin');
+
+		// Act
+		this.oFCL._oColumnFocusInfo.begin = {}; // reset if there is a stored element
+		this.oFCL.setLayout(LT.OneColumn);
+		this.oClock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
+
+		// Assert
+		assert.strictEqual(document.activeElement === oExpectedFocusedElement, true,
+			"Focus is restored to first focusable element, even if there are no store elements");
+	});
+
 	QUnit.module("Column width calculations", {
 		beforeEach: function () {
 			this.oFCL = new FlexibleColumnLayout();
