@@ -8,6 +8,7 @@
 	xmlns:editor="sap.ui.codeeditor"
 	xmlns:w="sap.ui.integration.widgets"
 	xmlns:cardEditor="sap.ui.integration.designtime.cardEditor"
+	xmlns:cardExplorer="sap.ui.demo.cardExplorer.controls"
 >
 	<l:ResponsiveSplitter id="splitView">
 		<l:PaneContainer orientation="Horizontal">
@@ -106,34 +107,11 @@
 							</contentRight>
 						</Bar>
 					</customHeader>
-					<MessageStrip id="errorMessageStrip" visible="false" type="Error" showIcon="true" />
-					<MessageStrip
-						visible="{= ${settings>/schemaValidation} &amp;&amp; !!${/schemaErrors}}"
-						type="Error"
-						showIcon="true"
-						text="{
-							path: '/schemaErrors',
-							formatter: '.formatter.formatSchemaErrors'
-						}"/>
-					<MessageStrip visible="{= ${settings>/messageStripVisible} }" showIcon="true" type="Warning" text="Only manifest.json file is editable." />
-					<IconTabHeader
-							selectedKey="{extendedFileEditor>/selectedFileKey}"
-							select="onFileSwitch"
-							visible="{= ${settings>/useExtendedFileEditor} }"
-							items="{path: 'extendedFileEditor>/files', templateShareable: false}">
-						<items>
-							<IconTabFilter text="{extendedFileEditor>name}" key="{extendedFileEditor>key}"/>
-						</items>
-					</IconTabHeader>
-					<Image id="imageInFileEditor" width="100%" visible="false"/>
-					<editor:CodeEditor
-						id="editor"
+					<cardExplorer:FileEditor
+						id="fileEditor"
+						manifestChange="onFileEditorManifestChange"
+						fileSwitch="onFileSwitch"
 						visible="{= ${settings>/editorType} === 'text' }"
-						type="{settings>/codeEditorType}"
-						syntaxHints="false"
-						height="100%"
-						editable="{settings>/editable}"
-						liveChange="onCodeEditorChange"
 					/>
 					<cardEditor:CardEditor
 						id="cardEditor"

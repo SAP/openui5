@@ -41,12 +41,12 @@ sap.ui.define([
 						}
 					});
 				},
-				iChangeCodeEditorValue: function (sValue) {
+				iChangeFileEditorValue: function (sValue) {
 					return this.waitFor({
 						viewName: sViewName,
-						id: "editor",
-						actions: function (oCodeEditor) {
-							oCodeEditor.setValue(sValue);
+						id: "fileEditor",
+						actions: function (oFileEditor) {
+							oFileEditor.setManifestContent(sValue);
 						},
 						errorMessage: "Could not edit CodeEditor"
 					});
