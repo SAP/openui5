@@ -1420,6 +1420,7 @@ sap.ui.define([
 		if (oIcon) {
 			oIcon.setSrc(bFlagged ? "sap-icon://favorite" : "sap-icon://unfavorite");
 			oIcon.setTooltip(this._oRb.getText(bFlagged ? "VARIANT_MANAGEMENT_FAV_DEL_TOOLTIP" : "VARIANT_MANAGEMENT_FAV_ADD_TOOLTIP"));
+			oIcon.setAlt(this._oRb.getText(bFlagged ? "VARIANT_MANAGEMENT_FAV_DEL_ACC" : "VARIANT_MANAGEMENT_FAV_ADD_ACC"));
 		}
 	};
 
