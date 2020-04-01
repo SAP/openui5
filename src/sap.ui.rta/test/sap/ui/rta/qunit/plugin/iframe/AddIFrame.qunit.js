@@ -556,7 +556,7 @@ function (
 				var oCommand = oEvent.getParameter("command");
 				assert.ok(oCommand, "then command is available");
 				assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.AddIFrame", "and command is of the correct type");
-				assert.ok(oEvent.getParameter("action"), "then the action is in the event");
+				assert.notOk(oEvent.getParameter("action"), "then the action is not in the event");
 				fnDone();
 			});
 			assert.ok(true, "then plugin addIFrame is called with this overlay");
@@ -601,7 +601,8 @@ function (
 			this.oAddIFrame.handleCreate({
 				isSibling: true,
 				action: {
-					aggregation: "sections"
+					aggregation: "sections",
+					getCreatedContainerId: function() {}
 				}
 			}, this.oNewObjectPageSectionOverlay);
 		});

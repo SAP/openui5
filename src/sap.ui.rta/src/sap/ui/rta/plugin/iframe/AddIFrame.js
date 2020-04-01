@@ -102,10 +102,12 @@ sap.ui.define([
 				return this._getAddIFrameCommand(oParent, mSettings, oDesignTimeMetadata, sVariantManagementReference);
 			}.bind(this))
 			.then(function (oCommand) {
+				// providing an action will trigger the rename plugin, which we only want in case of addIFrame as section
+				// in that case the function getCreatedContainerId has to be provided
 				this.fireElementModified({
 					command: oCommand,
 					newControlId: oCommand.getBaseId(),
-					action: vAction
+					action: vAction.getCreatedContainerId ? vAction : undefined
 				});
 			}.bind(this))
 			.catch(function(oMessage) {
