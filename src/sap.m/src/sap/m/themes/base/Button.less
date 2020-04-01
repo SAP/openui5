@@ -33,9 +33,14 @@
 	position: relative;
 }
 
-.sapMBtn .sapMBtnInner,
+.sapMBtn .sapMBtnInner {
+	display: flex;
+	justify-content: center;
+}
+
 .sapMBtn .sapMBtnContent {
-	display: block;
+	display: inline-block;
+	flex-shrink: 1;
 }
 
 /* --------------------- */
@@ -71,7 +76,7 @@
 html[data-sap-ui-browser*='ie'] .sapMBtnInner {
 	/* Buttons without inline content require
 		more vertical space than needed in IE */
-	display: inline-block;
+	display: flex;
 	width: 100%;
 }
 
@@ -88,22 +93,11 @@ html[data-sap-ui-browser*='ie'] .sapMBtnInner {
 	padding-left: 0.75rem;
 	padding-right: 0.75rem;
 }
-.sapMBtnInner.sapMBtnText.sapMBtnIconFirst,
-.sapMBtnInner.sapMBtnText.sapMBtnBack {
-	padding-left: 2.375rem;
-}
-.sapMBtnInner.sapMBtnText.sapMBtnBack.sapMBtnIconFirst {
-	padding-left: 4.750rem;
-}
-.sapMBtnInner.sapMBtnText.sapMBtnIconLast {
-	padding-right: 2.375rem;
-}
 
 /* ------------------- */
 /* Content area        */
 /* ------------------- */
 .sapMBtnContent {
-	display: block;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -113,10 +107,6 @@ html[data-sap-ui-browser*='ie'] .sapMBtnInner {
 /* unstyled button content line height should be normal on iOS devices to fit into the button */
 html[data-sap-ui-os^="iOS"] .sapMBtnBase:not(.sapMBtn) .sapMBtnContent {
 	line-height: normal;
-}
-
-html[data-sap-ui-browser*='ie'] .sapMBtnContentWithIcon {
-	display: inline;
 }
 
 /* ------------------- */
@@ -133,18 +123,7 @@ html[data-sap-ui-browser*='ie'] .sapMBtnContentWithIcon {
 	max-height:       2.375rem;
 	color:            @sapUiButtonIconColor;
 }
-.sapMBtnText > .sapMBtnIcon {
-	position:         absolute;
-	top:              0;
-	left:             0;
-}
-.sapMBtnText > .sapMBtnIconLeft + .sapMBtnIconLeft {
-	left: 2.375rem;
-}
-.sapMBtnText > .sapMBtnIconRight {
-	right: 0;
-	left: auto;
-}
+
 
 .sapMBtnInner .sapMBtnIcon.sapMImg {
 	height: 2.375rem;
@@ -186,16 +165,6 @@ html[data-sap-ui-browser*='ie'] .sapMBtnContentWithIcon {
 		padding-left: 0.4375rem;
 		padding-right: 0.4375rem;
 	}
-	.sapMBtnInner.sapMBtnText.sapMBtnIconFirst,
-	.sapMBtnInner.sapMBtnText.sapMBtnBack {
-		padding-left: 1.875rem;
-	}
-	.sapMBtnInner.sapMBtnText.sapMBtnBack.sapMBtnIconFirst {
-		padding-left: 3.75rem;
-	}
-	.sapMBtnInner.sapMBtnText.sapMBtnIconLast {
-		padding-right: 1.875rem;
-	}
 
 	.sapMBtnContent {
 		line-height:      1.500rem;
@@ -206,17 +175,8 @@ html[data-sap-ui-browser*='ie'] .sapMBtnContentWithIcon {
 		width:            1.000rem;
 		font-size:        1.000rem;
 		max-height:       1.500rem;
-		margin-left:      0.4375rem;
-		margin-right:     0.4375rem;
 	}
-	.sapMBtnIconLeft + .sapMBtnIconLeft {
-		left: 0;
-	}
-	.sapMBtnText {
-	  .sapMBtnIconLeft + .sapMBtnIconLeft {
-		left: 1.875rem;
-	  }
-	}
+
 	.sapMBtnInner > img {
 		height:           1.250rem;
 		width:            auto;
@@ -232,7 +192,7 @@ html[data-sap-ui-browser*='ie'] .sapMBtnContentWithIcon {
 
 .sapUiSizeCondensed .sapUiTableDataCell {
 	.sapMBtn {
-		height:           1.375rem;
+		height:           1.875rem;
 	}
 	.sapMBtnInner {
 		height:           1.375rem;
@@ -242,16 +202,7 @@ html[data-sap-ui-browser*='ie'] .sapMBtnContentWithIcon {
 		padding-left: 0.4375rem;
 		padding-right: 0.4375rem;
 	}
-	.sapMBtnInner.sapMBtnText.sapMBtnIconFirst,
-	.sapMBtnInner.sapMBtnText.sapMBtnBack {
-		padding-left: 1.75rem;
-	}
-	.sapMBtnInner.sapMBtnText.sapMBtnBack.sapMBtnIconFirst {
-		padding-left: 3.5rem;
-	}
-	.sapMBtnInner.sapMBtnText.sapMBtnIconLast {
-		padding-right: 1.75rem;
-	}
+
 	.sapMBtnInner > img {
 		height:           1.250rem;
 		width:            auto;
@@ -267,12 +218,9 @@ html[data-sap-ui-browser*='ie'] .sapMBtnContentWithIcon {
 		font-size:        1.000rem;
 		max-height:       1.250rem;
 		width:            1.000rem;
-		margin-left:      0.4375rem;
-		margin-right:     0.4375rem;
+		min-width:        1.000rem;
 	}
-	.sapMBtnIconLeft + .sapMBtnIconLeft {
-		left: 1.75rem;
-	}
+
 	.sapMBtnContent {
 		line-height:      1.250rem;
 	}
