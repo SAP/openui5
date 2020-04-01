@@ -8,7 +8,7 @@
 	  "header": {
 		"data": {
 		  "request": {
-			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/listData1.json"
+			"url": "sap/ui/integration/sample/CardsLoading/manifests/listData1.json"
 		  },
 		  "path": "/header"
 		},
@@ -22,7 +22,7 @@
 		"maxItems": 3,
 		"data": {
 		  "request": {
-			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/listData1.json"
+			"url": "sap/ui/integration/sample/CardsLoading/manifests/listData1.json"
 		  },
 		  "path": "/content"
 		},
@@ -52,7 +52,7 @@
 	  "header": {
 		"data": {
 		  "request": {
-			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/listData2.json"
+			"url": "sap/ui/integration/sample/CardsLoading/manifests/listData2.json"
 		  },
 		  "path": "/header"
 		},
@@ -70,7 +70,7 @@
 		"maxItems": 8,
 		"data": {
 		  "request": {
-			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/someitems.json"
+			"url": "sap/ui/integration/sample/CardsLoading/manifests/someitems.json"
 		  }
 		},
 		"item": {
@@ -96,7 +96,7 @@
 	  "header": {
 		"data": {
 		  "request": {
-			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifest/listData2.json"
+			"url": "sap/ui/integration/sample/CardsLoading/manifests/listData2.json"
 		  },
 		  "path": "/header"
 		},
@@ -110,7 +110,7 @@
 	  "content": {
 		"data": {
 		  "request": {
-			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifest/listDat2.json"
+			"url": "sap/ui/integration/sample/CardsLoading/manifests/listDat2.json"
 		  },
 		  "path": "/content"
 		},
@@ -138,7 +138,7 @@
 	  "header": {
 		"data": {
 		  "request": {
-			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/listData2.json"
+			"url": "sap/ui/integration/sample/CardsLoading/manifests/listData2.json"
 		  },
 		  "path": "/header"
 		},
@@ -155,7 +155,7 @@
 	  "content": {
 		"data": {
 		  "request": {
-			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/listData2.json"
+			"url": "sap/ui/integration/sample/CardsLoading/manifests/listData2.json"
 		  },
 		  "path": "/content"
 		},
@@ -183,7 +183,7 @@
 	  "header": {
 		"data": {
 		  "request": {
-			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/listData2.json"
+			"url": "sap/ui/integration/sample/CardsLoading/manifests/listData2.json"
 		  },
 		  "path": "/header"
 		},
@@ -201,7 +201,7 @@
 		"maxItems": 8,
 		"data": {
 		  "request": {
-			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/someitems.json"
+			"url": "sap/ui/integration/sample/CardsLoading/manifests/someitems.json"
 		  }
 		},
 		"item": {
@@ -225,7 +225,7 @@
 	  "header": {
 		"data": {
 		  "request": {
-			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/listData2.json"
+			"url": "sap/ui/integration/sample/CardsLoading/manifests/listData2.json"
 		  },
 		  "path": "/header"
 		},
@@ -242,7 +242,7 @@
 	  "content": {
 		"data": {
 		  "request": {
-			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/listData2.json"
+			"url": "sap/ui/integration/sample/CardsLoading/manifests/listData2.json"
 		  },
 		  "path": "/content"
 		},
@@ -265,7 +265,7 @@
 	"sap.card": {
 	  "data": {
 		"request": {
-		  "url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/tableData.json"
+		  "url": "sap/ui/integration/sample/CardsLoading/manifests/tableData.json"
 		}
 	  },
 	  "type": "Table",
@@ -341,7 +341,7 @@
 		"type": "Numeric",
 		"data": {
 		  "request": {
-			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/analitycalData.json"
+			"url": "sap/ui/integration/sample/CardsLoading/manifests/analitycalData.json"
 		  },
 		  "path": "/header"
 		},
@@ -395,7 +395,7 @@
 		"dimensionAxis": "categoryAxis",
 		"data": {
 		  "request": {
-			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/analitycalData.json"
+			"url": "sap/ui/integration/sample/CardsLoading/manifests/analitycalData.json"
 		  },
 		  "path": "/list"
 		},
@@ -426,7 +426,7 @@
 	  "type": "Calendar",
 	  "data": {
 		"request": {
-		  "url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/calendarData.json"
+		  "url": "sap/ui/integration/sample/CardsLoading/manifests/calendarData.json"
 		}
 	  },
 	  "header": {
@@ -499,7 +499,7 @@
 	  "type": "Object",
 	  "data": {
 		"request": {
-		  "url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/employee.json"
+		  "url": "sap/ui/integration/sample/CardsLoading/manifests/employee.json"
 		}
 	  },
 	  "header": {
@@ -599,7 +599,7 @@
 	  "content": {
 		"data": {
 		  "request": {
-			"url": "/testsuite/test-resources/sap/ui/integration/demokit/sample/CardsLoading/manifests/timelineData.json"
+			"url": "sap/ui/integration/sample/CardsLoading/manifests/timelineData.json"
 		  }
 		},
 		"item": {
