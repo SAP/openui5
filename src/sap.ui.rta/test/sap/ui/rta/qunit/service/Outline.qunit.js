@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/registry/ExtensionPointRegistry",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
 	"sap/m/Page",
@@ -17,6 +18,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/mvc/XMLView",
 	"testdata/StaticDesigntimeMetadata",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
@@ -26,6 +28,7 @@ sap.ui.define([
 	OverlayRegistry,
 	DesignTime,
 	PersistenceWriteAPI,
+	ExtensionPointRegistry,
 	VerticalLayout,
 	Button,
 	Page,
@@ -34,6 +37,7 @@ sap.ui.define([
 	ObjectPageSubSection,
 	UIComponent,
 	ComponentContainer,
+	XMLView,
 	StaticDesigntimeMetadata,
 	sinon
 ) {
@@ -571,6 +575,98 @@ sap.ui.define([
 					done();
 				}, this);
 			}.bind(this));
+		});
+	});
+
+	var sXmlString =
+	'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
+		'<Panel id="panel">' +
+			'<content>' +
+				'<core:ExtensionPoint name="ExtensionPoint1" />' +
+				'<Label id="label2" text="Panel with stable id" />' +
+				'<core:ExtensionPoint name="ExtensionPoint2">' +
+					'<Label id="ep2-label1" text="Extension point label1 - default content" />' +
+					'<Label id="ep2-label2" text="Extension point label2 - default content" />' +
+				'</core:ExtensionPoint>' +
+			'</content>' +
+		'</Panel>' +
+	'</mvc:View>';
+
+	function _createComponent() {
+		return sap.ui.getCore().createComponent({
+			name: "testComponent",
+			id: "testComponent",
+			metadata: {
+				manifest: "json"
+			}
+		});
+	}
+
+	function _createAsyncView(sViewName, oComponent) {
+		return oComponent.runAsOwner(function () {
+			return XMLView.create({
+				id: sViewName,
+				definition: sXmlString,
+				async: true
+			});
+		});
+	}
+
+	QUnit.module("Given that xmlView with extensionPoints, RuntimeAuthoring and Outline service are created ", {
+		beforeEach: function() {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
+			this.oComponent = _createComponent();
+			return _createAsyncView("myView", this.oComponent)
+				.then(function (oXmlView) {
+					this.oXmlView = oXmlView;
+					this.oPanel = oXmlView.getContent()[0];
+					oXmlView.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+
+					return new RuntimeAuthoring({
+						showToolbars: false,
+						rootControl: this.oXmlView
+					});
+				}.bind(this))
+				.then(function (oRta) {
+					this.oRta = oRta;
+					this.oRta.start();
+					return this.oRta.getService("outline");
+				}.bind(this))
+				.then(function (oService) {
+					this.oOutline = oService;
+				}.bind(this));
+		},
+		afterEach: function() {
+			this.oRta.destroy();
+			this.oComponent.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when get() is called", function (assert) {
+			var mExtensionPointOutlineItem = {
+				name: "ExtensionPoint2",
+				technicalName: "sap.ui.extensionpoint",
+				type: "extensionPoint",
+				id: "myView--panel",
+				icon: "sap/ui/core/designtime/Icon.icon.svg",
+				extensionPointInfo: {
+					defaultContent: [
+						"myView--ep2-label1",
+						"myView--ep2-label2"
+					]
+				}
+			};
+			return this.oOutline.get()
+				.then(function(aReceivedResponse) {
+					var aPanelContent = aReceivedResponse[0].elements[0].elements[0].elements[0].elements;
+					assert.strictEqual(aPanelContent[0].technicalName, "sap.ui.extensionpoint", "then in the panel content the first item is an ExtensionPoint");
+					assert.strictEqual(aPanelContent[1].technicalName, "sap.m.Label", "then in the panel content the second item is a Label");
+					assert.strictEqual(aPanelContent[2].technicalName, "sap.ui.extensionpoint", "then in the panel content the third item is an ExtensionPoint");
+					assert.strictEqual(aPanelContent[3].technicalName, "sap.m.Label", "then in the panel content the fourth item is a Label (default content)");
+					assert.strictEqual(aPanelContent[4].technicalName, "sap.m.Label", "then in the panel content the fifth item is a Label (default content)");
+					assert.deepEqual(aPanelContent[2], mExtensionPointOutlineItem, "then all properties of the extension point outline item are correct");
+				});
 		});
 	});
 
