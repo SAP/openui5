@@ -54,7 +54,7 @@ sap.ui.define([
 					multiple: false,
 					visibility: "hidden"
 				},
-				_editableWarningStrip: {
+				_readOnlyWarningStrip: {
 					type: "sap.ui.core.Control",
 					multiple: false,
 					visibility: "hidden"
@@ -98,7 +98,7 @@ sap.ui.define([
 
 			oRm.renderControl(oFileEditor._getErrorsStrip());
 			oRm.renderControl(oFileEditor._getSchemaErrorsStrip());
-			oRm.renderControl(oFileEditor._getEditableWarningStrip());
+			oRm.renderControl(oFileEditor._getReadOnlyWarningStrip());
 
 			if (oFileEditor.getFiles().length > 1) {
 				oRm.renderControl(oFileEditor._getHeader());
@@ -162,16 +162,17 @@ sap.ui.define([
 		return oEditor;
 	};
 
-	FileEditor.prototype._getEditableWarningStrip = function () {
-		var oStrip = this.getAggregation("_editableWarningStrip");
+	FileEditor.prototype._getReadOnlyWarningStrip = function () {
+		var oStrip = this.getAggregation("_readOnlyWarningStrip");
 
 		if (!oStrip) {
 			oStrip = new MessageStrip({
 				showIcon: true,
 				type: "Warning",
-				text: "Only manifest.json file is editable."
+				text: "This file is ready-only.",
+				visible: false
 			});
-			this.setAggregation("_editableWarningStrip", oStrip);
+			this.setAggregation("_readOnlyWarningStrip", oStrip);
 		}
 
 		return oStrip;
@@ -183,7 +184,8 @@ sap.ui.define([
 		if (!oStrip) {
 			oStrip = new MessageStrip({
 				showIcon: true,
-				type: "Error"
+				type: "Error",
+				visible: false
 			});
 			this.setAggregation("_errorsStrip", oStrip);
 		}
@@ -227,7 +229,7 @@ sap.ui.define([
 
 		sFileExtension = sFileExtension === 'js' ? 'javascript' : sFileExtension;
 
-		this._getEditableWarningStrip().setVisible(!this._isApplicationSample() && !sSelectedFileKey.endsWith(MANIFEST_FILE));
+		this._getReadOnlyWarningStrip().setVisible(!this._isFileEditable(sSelectedFileKey));
 
 		this._getErrorsStrip().setVisible(false);
 		this._getSchemaErrorsStrip().setVisible(false);
