@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/core/format/NumberFormat",
-	"sap/ui/integration/cards/Utils"
+	"sap/ui/integration/util/Utils"
 ], function (
 	NumberFormat,
 	Utils

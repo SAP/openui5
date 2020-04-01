@@ -12,7 +12,7 @@ sap.ui.define([
 		"sap/ui/core/ComponentContainer",
 		"sap/ui/integration/util/CardActions",
 		"sap/ui/qunit/QUnitUtils",
-		"./services/SampleServices"
+		"../services/SampleServices"
 	],
 	function (
 		library,

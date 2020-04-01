@@ -26,9 +26,9 @@ sap.ui.define(["sap/ui/base/ManagedObject"], function (ManagedObject) {
 	 * @constructor
 	 * @private
 	 * @since 1.65
-	 * @alias sap.ui.integration.cards.DataProvider
+	 * @alias sap.ui.integration.util.DataProvider
 	 */
-	var DataProvider = ManagedObject.extend("sap.ui.integration.cards.DataProvider", {
+	var DataProvider = ManagedObject.extend("sap.ui.integration.util.DataProvider", {
 		metadata: {
 			events: {
 

@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/integration/util/Manifest",
 	"sap/ui/integration/util/ServiceManager",
 	"sap/base/Log",
-	"sap/ui/integration/cards/DataProviderFactory",
+	"sap/ui/integration/util/DataProviderFactory",
 	"sap/ui/integration/cards/BaseContent",
 	"sap/m/HBox",
 	"sap/m/VBox",

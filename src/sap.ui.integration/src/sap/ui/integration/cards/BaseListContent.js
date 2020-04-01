@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/integration/cards/BaseContent",
-	"sap/ui/integration/cards/BindingResolver",
+	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/base/Log"

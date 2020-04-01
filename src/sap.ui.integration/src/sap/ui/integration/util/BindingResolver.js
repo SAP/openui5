@@ -11,7 +11,7 @@ sap.ui.define([
 		/**
 		 * Simple class used to resolved bindings.
 		 */
-		var SimpleControl = ManagedObject.extend("sap.ui.integration.cards.util.SimpleControl", {
+		var SimpleControl = ManagedObject.extend("sap.ui.integration.util.SimpleControl", {
 			metadata: {
 				properties: {
 					resolved: {
@@ -30,7 +30,7 @@ sap.ui.define([
 		 * @version ${version}
 		 *
 		 * @private
-		 * @alias sap.ui.integration.cards.BindingResolver
+		 * @alias sap.ui.integration.util.BindingResolver
 		 */
 		var BindingResolver = {};
 

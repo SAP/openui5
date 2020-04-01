@@ -4,7 +4,7 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/base/Object",
-	"sap/ui/integration/cards/BindingHelper",
+	"sap/ui/integration/util/BindingHelper",
 	"./CardActions"
 ], function (
 	Core,

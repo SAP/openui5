@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/integration/cards/RequestDataProvider",
+	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/integration/widgets/Card",
 	"sap/f/GridContainerItemLayoutData"

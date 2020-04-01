@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/integration/cards/DataProvider",
+	"sap/ui/integration/util/DataProvider",
 	"jquery.sap.global",
 	"sap/base/Log"
 ], function (DataProvider, jQuery, Log) {
@@ -19,7 +19,7 @@ sap.ui.define([
 	 *
 	 * @class
 	 *
-	 * @extends sap.ui.integration.cards.DataProvider
+	 * @extends sap.ui.integration.util.DataProvider
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -27,9 +27,9 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @since 1.65
-	 * @alias sap.ui.integration.cards.RequestDataProvider
+	 * @alias sap.ui.integration.util.RequestDataProvider
 	 */
-	var RequestDataProvider = DataProvider.extend("sap.ui.integration.cards.RequestDataProvider");
+	var RequestDataProvider = DataProvider.extend("sap.ui.integration.util.RequestDataProvider");
 
 	/**
 	 * @override
