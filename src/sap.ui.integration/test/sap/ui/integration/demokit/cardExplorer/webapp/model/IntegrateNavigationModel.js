@@ -25,6 +25,18 @@ sap.ui.define([
 				icon: 'sap-icon://header',
 				target: 'integrate',
 				key: 'api'
+			},
+			{
+				title: 'Destinations',
+				icon: 'sap-icon://connected',
+				target: 'integrate',
+				key: 'destinations'
+			},
+			{
+				title: 'Host Actions',
+				icon: 'sap-icon://overflow',
+				target: 'integrate',
+				key: 'hostActions'
 			}
 		]
 	});
