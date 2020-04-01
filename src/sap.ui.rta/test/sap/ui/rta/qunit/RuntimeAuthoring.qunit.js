@@ -1260,46 +1260,50 @@ function(
 		});
 
 		QUnit.test("When restore function is called in the CUSTOMER layer", function(assert) {
-			var done = assert.async();
-			sandbox.stub(MessageBox, "confirm").callsFake(function(sMessage, mParameters) {
-				assert.equal(sMessage, this.oRta._getTextResources().getText("FORM_PERS_RESET_MESSAGE"), "then the message is correct");
-				assert.equal(mParameters.title, this.oRta._getTextResources().getText("FORM_PERS_RESET_TITLE"), "then the message is correct");
+			var oShowMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox").resolves(MessageBox.Action.OK);
 
-				mParameters.onClose("OK");
+			return this.oRta.restore().then(function() {
+				assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown");
+				assert.equal(oShowMessageBoxStub.lastCall.args[1], this.oRta._getTextResources().getText("FORM_PERS_RESET_MESSAGE"), "then the message is correct");
+				assert.equal(oShowMessageBoxStub.lastCall.args[2].titleKey, this.oRta._getTextResources().getText("FORM_PERS_RESET_TITLE"), "then the message is correct");
 				assert.equal(this.oDeleteChangesStub.callCount, 1, "then _deleteChanges was called");
 				assert.equal(this.oEnableRestartSpy.callCount, 1, "then restart was enabled...");
 				assert.equal(this.oEnableRestartSpy.lastCall.args[0], Layer.CUSTOMER, "for the correct layer");
 
-				mParameters.onClose("notOK");
+				oShowMessageBoxStub.reset();
+				oShowMessageBoxStub.resolves(MessageBox.Action.CANCEL);
+				this.oRta.restore();
+			}.bind(this))
+			.then(function() {
+				assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown");
 				assert.equal(this.oDeleteChangesStub.callCount, 1, "then _deleteChanges was not called again");
 				assert.equal(this.oEnableRestartSpy.callCount, 1, "then restart was not  enabled again");
-				done();
 			}.bind(this));
-
-			this.oRta.restore();
 		});
 
 		QUnit.test("When restore function is called in the USER layer", function(assert) {
-			var done = assert.async();
+			var oShowMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox").resolves(MessageBox.Action.OK);
 			this.oRta.setFlexSettings({
 				layer: Layer.USER
 			});
-			sandbox.stub(MessageBox, "confirm").callsFake(function(sMessage, mParameters) {
-				assert.equal(sMessage, this.oRta._getTextResources().getText("FORM_PERS_RESET_MESSAGE_PERSONALIZATION"), "then the message is correct");
-				assert.equal(mParameters.title, this.oRta._getTextResources().getText("BTN_RESTORE"), "then the message is correct");
 
-				mParameters.onClose("OK");
+			return this.oRta.restore().then(function() {
+				assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown");
+				assert.equal(oShowMessageBoxStub.lastCall.args[1], this.oRta._getTextResources().getText("FORM_PERS_RESET_MESSAGE_PERSONALIZATION"), "then the message is correct");
+				assert.equal(oShowMessageBoxStub.lastCall.args[2].titleKey, this.oRta._getTextResources().getText("BTN_RESTORE"), "then the message is correct");
 				assert.equal(this.oDeleteChangesStub.callCount, 1, "then _deleteChanges was called");
 				assert.equal(this.oEnableRestartSpy.callCount, 1, "then restart was enabled...");
 				assert.equal(this.oEnableRestartSpy.lastCall.args[0], Layer.USER, "for the correct layer");
 
-				mParameters.onClose("notOK");
+				oShowMessageBoxStub.reset();
+				oShowMessageBoxStub.resolves(MessageBox.Action.CANCEL);
+				this.oRta.restore();
+			}.bind(this))
+			.then(function() {
+				assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown");
 				assert.equal(this.oDeleteChangesStub.callCount, 1, "then _deleteChanges was not called again");
 				assert.equal(this.oEnableRestartSpy.callCount, 1, "then restart was not  enabled again");
-				done();
 			}.bind(this));
-
-			this.oRta.restore();
 		});
 
 		QUnit.test("when calling '_deleteChanges' successfully", function(assert) {
@@ -1344,8 +1348,8 @@ function(
 
 			sandbox.stub(PersistenceWriteAPI, "reset").rejects("Error");
 
-			sandbox.stub(RtaUtils, "_showMessageBox").callsFake(function(sIconType, sHeader, sMessage, sError) {
-				assert.equal(sError, "Error", "and a message box shows the error to the user");
+			sandbox.stub(RtaUtils, "showMessageBox").callsFake(function(sMessageType, sMessage, mPropertyBag) {
+				assert.equal(mPropertyBag.error, "Error", "and a message box shows the error to the user");
 			});
 
 			return this.oRta._deleteChanges().then(function() {
@@ -1357,7 +1361,7 @@ function(
 			this.oDeleteChangesStub.restore();
 
 			sandbox.stub(PersistenceWriteAPI, "reset").returns(Promise.reject("cancel"));
-			var oStubShowError = sandbox.stub(RtaUtils, "_showMessageBox");
+			var oStubShowError = sandbox.stub(RtaUtils, "showMessageBox");
 
 			return this.oRta._deleteChanges().then(function() {
 				assert.equal(this.oReloadPageStub.callCount, 0, "then page reload is not triggered");
@@ -1368,7 +1372,7 @@ function(
 		QUnit.test("when calling '_handleElementModified' and the command fails because of dependencies", function(assert) {
 			assert.expect(2);
 			var oLogStub = sandbox.stub(Log, "error");
-			var oMessageBoxStub = sandbox.stub(RtaUtils, "_showMessageBox");
+			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox");
 			var oCommandStack = {
 				pushAndExecute: function() {
 					return Promise.reject(Error("Some stuff.... The following Change cannot be applied because of a dependency .... some other stuff"));
@@ -1392,7 +1396,7 @@ function(
 		QUnit.test("when calling '_handleElementModified' and the command fails, but not because of dependencies", function(assert) {
 			assert.expect(2);
 			var oLogStub = sandbox.stub(Log, "error");
-			var oMessageBoxStub = sandbox.stub(RtaUtils, "_showMessageBox");
+			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox");
 			var oCommandStack = {
 				pushAndExecute: function() {
 					return Promise.reject(Error("Some stuff........ some other stuff"));
@@ -1630,15 +1634,14 @@ function(
 
 		QUnit.test("when the draft is activated failed", function (assert) {
 			var done = assert.async();
-			var sVersionTitle = "VersionTitle";
 			var oEvent = {
-				versionTitle: sVersionTitle
+				versionTitle: "VersionTitle"
 			};
-			sandbox.stub(VersionsAPI, "activateDraft").rejects("Error");
-			sandbox.stub(RtaUtils, "_showMessageBox").callsFake(function(sIconType, sHeader, sMessage, sError) {
-				assert.equal(sError, "Error", "and a message box shows the error to the user");
+			sandbox.stub(VersionsAPI, "activateDraft").rejects("myFancyError");
+			sandbox.stub(RtaUtils, "showMessageBox").callsFake(function(sIconType, sMessage, mPropertyBag) {
+				assert.equal(sIconType, "error", "the error message box is used");
+				assert.equal(mPropertyBag.error, "myFancyError", "and a message box shows the error to the user");
 				assert.equal(sMessage, "MSG_DRAFT_ACTIVATION_FAILED", "the message is MSG_DRAFT_ACTIVATION_FAILED");
-				assert.equal(sHeader, "HEADER_ERROR", "the header is HEADER_ERROR");
 				done();
 			});
 

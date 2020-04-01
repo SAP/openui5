@@ -329,7 +329,9 @@ sap.ui.define([
 		},
 
 		_handleInvalidRename: function(sErrorMessage, bRestoreFocus) {
-			return Utils._showMessageBox("ERROR", "RENAME_ERROR_TITLE", sErrorMessage)
+			return Utils.showMessageBox("error", sErrorMessage, {
+				titleKey: "RENAME_ERROR_TITLE"
+			})
 			.then(function() {
 				var oOverlay = this._oEditedOverlay;
 				oOverlay.addStyleClass(RenameHandler.errorStyleClass);

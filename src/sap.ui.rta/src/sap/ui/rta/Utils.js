@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/dt/DOMUtil",
 	"sap/m/MessageBox",
 	"sap/ui/rta/util/BindingsExtractor",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/util/restricted/_omit"
 ],
 function(
 	jQuery,
@@ -24,7 +25,8 @@ function(
 	DOMUtil,
 	MessageBox,
 	BindingsExtractor,
-	Log
+	Log,
+	_omit
 ) {
 	"use strict";
 
@@ -559,34 +561,37 @@ function(
 	};
 
 	/**
-	 * Shows a message box.
-	 * @param  {sap.m.MessageBox.Icon|string} oMessageType The type of the message box (icon to be displayed)
-	 * @param  {string} sTitleKey The text key for the title of the message box
-	 * @param  {string} sMessageKey The text key for the message of the message box
-	 * @param  {any} oError Optional - If an error is passed on, the message box text is derived from it
-	 * @param  {string} [sAction] text key for the confirm button default @see sap.m.MessageBox.show
+	 * Shows a message box of the specified type; The message consists of the evaluated messagekey and an error text if provided;
+	 * The titlekey in the mPropertyBag is also evaluated, the rest is passed to the {@link sap.m.MessageBox} constructor.
+	 *
+	 * @param  {string} sMessageType - The type of the message box; See available types in {@link sap.m.MessageBox}
+	 * @param  {string} sMessageKey - The text key for the message of the message box
+	 * @param  {object} [mPropertyBag] - Object with additional information; error and titleKey are evaluated, the rest is passed as option to the MessageBox
+	 * @param  {any} [mPropertyBag.error] - If an error is passed on, the message box text is derived from it
+	 * @param  {string} [mPropertyBag.titleKey] - The text key for the title of the message box; if none is provided the default of the selectde MessageBox type  will be displayed
 	 * @return {Promise} Promise displaying the message box; resolves when it is closed
-	 * @private
 	 */
-	Utils._showMessageBox = function(oMessageType, sTitleKey, sMessageKey, oError, sAction) {
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-		var sMessage = oResourceBundle.getText(sMessageKey, oError ? [oError.userMessage || oError.message || oError] : undefined);
-		var sTitle = oResourceBundle.getText(sTitleKey);
-		var vAction = sAction ? oResourceBundle.getText(sAction) : MessageBox.Action.OK;
-		return Utils._messageBoxPromise(oMessageType, sMessage, sTitle, vAction);
-	};
+	Utils.showMessageBox = function(sMessageType, sMessageKey, mPropertyBag) {
+		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta", true)
+		.then(function(oResourceBundle) {
+			mPropertyBag = mPropertyBag || {};
+			var sMessage = oResourceBundle.getText(sMessageKey, mPropertyBag.error ? [mPropertyBag.error.userMessage || mPropertyBag.error.message || mPropertyBag.error] : undefined);
+			var sTitle = oResourceBundle.getText(mPropertyBag.titleKey);
 
-	Utils._messageBoxPromise = function(oMessageType, sMessage, sTitle, vAction) {
-		return new Promise(function(resolve) {
-			MessageBox.show(sMessage, {
-				icon: oMessageType,
-				title: sTitle,
-				onClose: resolve,
-				actions: vAction,
-				styleClass: Utils.getRtaStyleClassName()
-			});
+			var mOptions = _omit(mPropertyBag, ["titleKey", "error"]);
+			mOptions.title = sTitle;
+			mOptions.styleClass = Utils.getRtaStyleClassName();
+
+			return messageBoxPromise(sMessageType, sMessage, mOptions);
 		});
 	};
+
+	function messageBoxPromise(sMessageType, sMessage, mOptions) {
+		return new Promise(function(resolve) {
+			mOptions.onClose = resolve;
+			MessageBox[sMessageType](sMessage, mOptions);
+		});
+	}
 
 	/**
 	 * Checks the binding compatibility of source and target control. Absolute binding will not be considered

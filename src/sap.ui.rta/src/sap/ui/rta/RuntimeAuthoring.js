@@ -935,7 +935,7 @@ function(
 	};
 
 	RuntimeAuthoring.prototype.restore = function() {
-		this._onRestore();
+		return this._onRestore();
 	};
 
 	RuntimeAuthoring.prototype.transport = function() {
@@ -1059,7 +1059,7 @@ function(
 			return this._handleVersionToolbar(false);
 		}.bind(this))
 		.catch(function (oError) {
-			Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_ERROR", "MSG_DRAFT_ACTIVATION_FAILED", oError);
+			Utils.showMessageBox("error", "MSG_DRAFT_ACTIVATION_FAILED", {error: oError});
 		});
 	};
 
@@ -1079,28 +1079,20 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._onDiscardDraft = function() {
-		var oRootControl = this.getRootControlInstance();
-		var sLayer = this.getLayer();
-
-		function confirmDiscardAllDraftChanges(sAction) {
-			if (sAction === "OK") {
-				VersionsAPI.discardDraft({
-					layer: sLayer,
-					selector: oRootControl,
+		return Utils.showMessageBox("warning", "MSG_DRAFT_DISCARD_DIALOG", {
+			actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+			emphasizedAction: MessageBox.Action.OK
+		})
+		.then(function(sAction) {
+			if (sAction === MessageBox.Action.OK) {
+				return VersionsAPI.discardDraft({
+					layer: this.getLayer(),
+					selector: this.getRootControlInstance(),
 					updateState: true
-				}).then(function() {
-					return this._handleDiscard(false);
-				}.bind(this));
+				})
+				.then(this._handleDiscard.bind(this, false));
 			}
-		}
-		var sMessage = this._getTextResources().getText("MSG_DRAFT_DISCARD_DIALOG");
-
-		MessageBox.confirm(sMessage, {
-			icon: MessageBox.Icon.WARNING,
-			title : "Discard",
-			onClose : confirmDiscardAllDraftChanges.bind(this),
-			styleClass: Utils.getRtaStyleClassName()
-		});
+		}.bind(this));
 	};
 
 	RuntimeAuthoring.prototype._createToolsMenu = function(aButtonsVisibility) {
@@ -1281,7 +1273,7 @@ function(
 		}.bind(this))
 		.catch(function (oError) {
 			if (oError !== "cancel") {
-				Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
+				Utils.showMessageBox("error", "MSG_RESTORE_FAILED", {error: oError});
 			}
 		});
 	};
@@ -1360,24 +1352,21 @@ function(
 			? this._getTextResources().getText("BTN_RESTORE")
 			: this._getTextResources().getText("FORM_PERS_RESET_TITLE");
 
-		var fnConfirmDiscardAllChanges = function (sAction) {
-			if (sAction === "OK") {
+		this._handleStopCutPaste();
+
+		return Utils.showMessageBox("warning", sMessage, {
+			titleKey: sTitle,
+			actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+			emphasizedAction: MessageBox.Action.OK
+		}).then(function(sAction) {
+			if (sAction === MessageBox.Action.OK) {
 				//this.bInitialDraftAvailable = false; maybe no need
 				//this.getToolbar().setDraftEnabled(false);
 				RuntimeAuthoring.enableRestart(sLayer, this.getRootControlInstance());
 				this._deleteChanges();
 				this.getCommandStack().removeAllCommands();
 			}
-		}.bind(this);
-
-		this._handleStopCutPaste();
-
-		MessageBox.confirm(sMessage, {
-			icon: MessageBox.Icon.WARNING,
-			title : sTitle,
-			onClose : fnConfirmDiscardAllChanges,
-			styleClass: Utils.getRtaStyleClassName()
-		});
+		}.bind(this));
 	};
 
 	/**
@@ -1488,7 +1477,7 @@ function(
 			// Error handling when a command fails is done in the Stack
 			.catch(function(oError) {
 				if (oError && oError.message && oError.message.indexOf("The following Change cannot be applied because of a dependency") > -1) {
-					Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_DEPENDENCY_ERROR", "MSG_DEPENDENCY_ERROR", oError);
+					Utils.showMessageBox("error", "MSG_DEPENDENCY_ERROR", {error: oError});
 				}
 				Log.error("sap.ui.rta: " + oError.message);
 			});
@@ -1682,11 +1671,7 @@ function(
 		}
 
 		if (sReason) {
-			return Utils._showMessageBox(
-				MessageBox.Icon.INFORMATION,
-				"HEADER_PERSONALIZATION_EXISTS",
-				sReason
-			);
+			return Utils.showMessageBox("information", sReason);
 		}
 	};
 
@@ -1769,13 +1754,9 @@ function(
 			sReason = "MSG_RELOAD_REMOVE_DRAFT_PARAMETER";
 		}
 
-		return Utils._showMessageBox(
-			MessageBox.Icon.INFORMATION,
-			"HEADER_RELOAD_NEEDED",
-			sReason,
-			undefined,
-			"BUTTON_RELOAD_NEEDED"
-		);
+		return Utils.showMessageBox("information", sReason, {
+			titleKey: "HEADER_RELOAD_NEEDED"
+		});
 	};
 
 	/**
