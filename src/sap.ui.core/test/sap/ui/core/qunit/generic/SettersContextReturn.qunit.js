@@ -57,6 +57,7 @@ sap.ui.define([
 		"sap.ui.vk",
 		"sap.fiori",
 		"sap.ushell",
+		"sap.ushell_abap",
 		"sap.ui.dev",
 		"sap.ui.dev2",
 		"sap.ui.mdc",
