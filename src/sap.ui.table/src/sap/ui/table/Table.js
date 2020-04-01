@@ -1652,8 +1652,7 @@ sap.ui.define([
 		var oTitle = vTitle;
 		if (typeof (vTitle) === "string" || vTitle instanceof String) {
 			oTitle = library.TableHelper.createTextView({
-				text: vTitle,
-				width: "100%"
+				text: vTitle
 			});
 			oTitle.addStyleClass("sapUiTableHdrTitle");
 		}
@@ -1669,8 +1668,7 @@ sap.ui.define([
 		var oFooter = vFooter;
 		if (typeof (vFooter) === "string" || vFooter instanceof String) {
 			oFooter = library.TableHelper.createTextView({
-				text: vFooter,
-				width: "100%"
+				text: vFooter
 			});
 		}
 		this.setAggregation("footer", oFooter);
