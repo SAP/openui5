@@ -48,7 +48,7 @@ sap.ui.define([
 	 * @since 1.77
 	 * @private
 	 * @ui5-restricted
-	 * @property {Array} defaultContent - List of control ids which belong to the default conten of an extension point
+	 * @property {string[]} defaultContent - List of control IDs that belong to the default content of an extension point
 	 */
 
 	/**
@@ -66,7 +66,7 @@ sap.ui.define([
 	 * @property {string} [icon] - Icon path for the node
 	 * @property {string} type - Type of node
 	 * @property {boolean} [visible] - Visibility of node of type <code>element</code>
-	 * @property {sap.ui.rta.service.Outline.ExtensionPointInfo} [extensionPointInfo] - Additional extenstion point information
+	 * @property {sap.ui.rta.service.Outline.ExtensionPointInfo} [extensionPointInfo] - In case of an extension point additional extension point information is given.
 	 * @property {sap.ui.rta.service.Outline.OutlineObject[]} elements - Outline data for child nodes
 	 */
 
