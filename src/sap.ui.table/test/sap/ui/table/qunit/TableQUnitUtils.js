@@ -258,14 +258,7 @@ sap.ui.define([
 	};
 
 	[Table, TreeTable].forEach(function(TableClass) {
-		TableClass.prototype.qunit = Object.create(TableClass.prototype);
-		Object.defineProperty(TableClass.prototype.qunit, "columnCount", {
-			get: function() {
-				return this.getColumns().length;
-			}
-		});
-
-		// TODO: Replace with above method.
+		// TODO: Replace with a helper method in the "qunit" member of the table, or delete and replace with oTable#getColumns().length
 		Object.defineProperty(TableClass.prototype, "columnCount", {
 			get: function() {
 				return this.getColumns().length;
@@ -315,24 +308,6 @@ sap.ui.define([
 	}
 
 	function addAsyncHelpers(oTable, oHelperPlugin) {
-		oTable.qunit.fnResolveInitialRenderingFinished = null;
-		oTable.qunit.pInitialRenderingFinished = new Promise(function(resolve) {
-			oTable.qunit.fnResolveInitialRenderingFinished = resolve;
-		});
-		oTable.qunit.bInitialRenderingFinished = false;
-		oTable.qunit.pInitialRenderingFinished.then(function() {
-			oTable.qunit.bInitialRenderingFinished = true;
-		});
-		oTable.qunit.pRenderingFinished = null;
-
-		function waitForFinalDOMUpdates() {
-			return oHelperPlugin.whenTableUpdateFinished().then(function() {
-				return new Promise(function(resolve) {
-					window.requestAnimationFrame(resolve);
-				});
-			});
-		}
-
 		/**
 		 * Returns a promise that resolves when the next <code>_rowsUpdated</code> event is fired.
 		 *
@@ -346,18 +321,104 @@ sap.ui.define([
 			});
 		};
 
-		/**
-		 * Returns a promise that resolves when the next rendering is finished. Includes row updates.
-		 *
-		 * @returns {Promise<Object>} A promise. Resolves with the event parameters.
-		 */
-		oTable.qunit.whenNextRenderingFinished = function() {
+		function waitForFinalDOMUpdates() {
+			return oHelperPlugin.whenTableUpdateFinished().then(function() {
+				return new Promise(function(resolve) {
+					window.requestAnimationFrame(resolve);
+				});
+			});
+		}
+
+		function waitForRowsUpdatedAndFinalDomUpdates() {
 			return oTable.qunit.whenNextRowsUpdated().then(function(mParameters) {
 				return waitForFinalDOMUpdates().then(function() {
 					return mParameters;
 				});
 			});
+		}
+
+		function waitForFullRendering() {
+			if (oTable.getBinding("rows")) {
+				return waitForRowsUpdatedAndFinalDomUpdates();
+			}
+
+			// A table without binding does not fire _rowsUpdated events.
+			return new Promise(function(resolve) {
+				TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
+					if (oTable.getBinding("rows")) { // In case the table has been bound in the meanwhile.
+						waitForRowsUpdatedAndFinalDomUpdates().then(function(mParameters) {
+							resolve(mParameters);
+						});
+					} else {
+						waitForFinalDOMUpdates().then(resolve);
+					}
+				});
+			});
+		}
+
+		function initRenderingFinishedPromise(sID, fnWaitForRendering) {
+			if (oTable.qunit["pRenderingFinished" + sID] == null) {
+				oTable.qunit["pRenderingFinished" + sID] = new Promise(function(resolve) {
+					oTable.qunit["fnResolveRenderingFinished" + sID] = resolve;
+				});
+			}
+
+			if (oTable.qunit["fnResolveRenderingFinishedWrapper" + sID]) {
+				oTable.qunit["fnResolveRenderingFinishedWrapper" + sID].disable();
+			}
+
+			var bWrapperDisabled = false;
+			oTable.qunit["fnResolveRenderingFinishedWrapper" + sID] = function(mParameters) {
+				if (!bWrapperDisabled) {
+					oTable.qunit["fnResolveRenderingFinished" + sID](mParameters);
+					oTable.qunit["pRenderingFinished" + sID] = null;
+					delete oTable.qunit["fnResolveRenderingFinished" + sID];
+					delete oTable.qunit["fnResolveRenderingFinishedWrapper" + sID];
+				}
+			};
+			oTable.qunit["fnResolveRenderingFinishedWrapper" + sID].disable = function() {
+				bWrapperDisabled = true;
+			};
+
+			fnWaitForRendering().then(oTable.qunit["fnResolveRenderingFinishedWrapper" + sID]);
+		}
+
+		/**
+		 * Returns a promise that resolves when the next rendering is finished.
+		 *
+		 * @returns {Promise<Object>} A promise. Resolves with the event parameters.
+		 */
+		oTable.qunit.whenNextRenderingFinished = function() {
+			if (oTable.qunit.pRenderingFinishedNext == null) {
+				initRenderingFinishedPromise("Next", waitForFullRendering);
+			}
+			return oTable.qunit.pRenderingFinishedNext;
 		};
+		oTable.qunit.pRenderingFinishedNext = null;
+
+		oHelperPlugin.attachRenderingTriggered(function() {
+			if (oTable.qunit.pRenderingFinishedNext != null) {
+				initRenderingFinishedPromise("Next", waitForFullRendering);
+			}
+		});
+
+		/**
+		 * Returns a promise that resolves when no rendering is to be expected or when an ongoing rendering is finished.
+		 *
+		 * @returns {Promise} A promise.
+		 */
+		oTable.qunit.whenRenderingFinished = function() {
+			if (oTable.qunit.pRenderingFinishedCurrent == null) {
+				initRenderingFinishedPromise("Current", waitForFinalDOMUpdates);
+			}
+			return oTable.qunit.pRenderingFinishedCurrent;
+		};
+		oTable.qunit.pRenderingFinishedCurrent = null;
+
+		initRenderingFinishedPromise("Current", waitForFullRendering);
+		oHelperPlugin.attachRenderingTriggered(function() {
+			initRenderingFinishedPromise("Current", waitForFullRendering);
+		});
 
 		/**
 		 * Returns a promise that resolves when the initial rendering is finished.
@@ -367,62 +428,7 @@ sap.ui.define([
 		oTable.qunit.whenInitialRenderingFinished = function() {
 			return oTable.qunit.pInitialRenderingFinished;
 		};
-		if (oTable.getBinding("rows")) {
-			oTable.qunit.whenNextRenderingFinished().then(oTable.qunit.fnResolveInitialRenderingFinished);
-		} else {
-			// A table without binding does not fire _rowsUpdated events.
-			TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
-				if (!oTable.getBinding("rows")) {
-					waitForFinalDOMUpdates().then(oTable.qunit.fnResolveInitialRenderingFinished);
-				} else {
-					oTable.qunit.whenNextRenderingFinished().then(oTable.qunit.fnResolveInitialRenderingFinished);
-				}
-			});
-		}
-
-		/**
-		 * Returns a promise that resolves when no rendering is to be expected or when an ongoing rendering is finished. Includes row updates.
-		 *
-		 * @returns {Promise} A promise.
-		 */
-		oTable.qunit.whenRenderingFinished = function() {
-			if (!oTable.qunit.bInitialRenderingFinished) {
-				return oTable.qunit.whenInitialRenderingFinished();
-			} else if (oTable.qunit.pRenderingFinished != null) {
-				return oTable.qunit.pRenderingFinished;
-			} else if (oTable._getFirstRenderedRowIndex() !== oTable._iRenderedFirstVisibleRow) {
-				return oTable.qunit.whenNextRenderingFinished();
-			} else {
-				return waitForFinalDOMUpdates();
-			}
-		};
-
-		function initRenderingFinishedPromise() {
-			if (oTable.qunit.pRenderingFinished != null || !oTable.qunit.bInitialRenderingFinished) {
-				return;
-			}
-
-			if (oTable.getBinding("rows")) {
-				oTable.qunit.pRenderingFinished = oTable.qunit.whenNextRenderingFinished();
-			} else {
-				// A table without binding does not fire _rowsUpdated events.
-				oTable.qunit.pRenderingFinished = new Promise(function(resolve) {
-					TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
-						if (oTable.getBinding("rows")) {
-							oTable.qunit.whenNextRenderingFinished().then(resolve);
-						} else {
-							waitForFinalDOMUpdates().then(resolve);
-						}
-					});
-				});
-			}
-
-			oTable.qunit.pRenderingFinished = oTable.qunit.pRenderingFinished.then(function() {
-				oTable.qunit.pRenderingFinished = null;
-			});
-		}
-
-		oHelperPlugin.attachRenderingTriggered(initRenderingFinishedPromise);
+		oTable.qunit.pInitialRenderingFinished = oTable.qunit.whenRenderingFinished();
 
 		/**
 		 * Returns a promise that resolves when the next binding refresh event is fired.
@@ -885,6 +891,11 @@ sap.ui.define([
 		}
 
 		var oTable = new TableClass(createTableConfig(TableClass, mOptions));
+
+		Object.defineProperty(oTable, "qunit", {
+			value: {}
+		});
+
 		setExperimentalConfig(oTable, mOptions);
 		addAsyncHelpers(oTable, oHelperPlugin);
 		addHelpers(oTable);
