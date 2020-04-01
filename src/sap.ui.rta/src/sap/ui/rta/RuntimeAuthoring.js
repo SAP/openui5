@@ -1067,15 +1067,9 @@ function(
 		var oRootControl = this.getRootControlInstance();
 		var sLayer = this.getLayer();
 		var mParsedHash = this._handleDraftParameter(mParsedHash);
-		// clears FlexState and triggers reloading of the flex data without blocking
-		// it is actually not loading the draft, because we just discarded it
-		VersionsAPI.loadDraftForApplication({
-			selector: oRootControl,
-			layer: sLayer
-		});
+		RuntimeAuthoring.enableRestart(sLayer, oRootControl);
 		this.getCommandStack().removeAllCommands();
 		this._triggerCrossAppNavigation(mParsedHash);
-		RuntimeAuthoring.enableRestart(sLayer, oRootControl);
 		if (bHardReload) {
 			this._reloadPage();
 		} else {
@@ -1084,26 +1078,28 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._onDiscardDraft = function() {
-		return VersionsAPI.discardDraft({
-			layer: this.getLayer(),
-			selector: this.getRootControlInstance(),
-			updateState: true
-		}).then(function () {
-			var fnConfirmDiscardAllDraftChanges = function (sAction) {
-				if (sAction === "OK") {
+		var oRootControl = this.getRootControlInstance();
+		var sLayer = this.getLayer();
+
+		function confirmDiscardAllDraftChanges(sAction) {
+			if (sAction === "OK") {
+				VersionsAPI.discardDraft({
+					layer: sLayer,
+					selector: oRootControl,
+					updateState: true
+				}).then(function() {
 					return this._handleDiscard(false);
-				}
-			}.bind(this);
+				}.bind(this));
+			}
+		}
+		var sMessage = this._getTextResources().getText("MSG_DRAFT_DISCARD_DIALOG");
 
-			var sMessage = this._getTextResources().getText("MSG_DRAFT_DISCARD_DIALOG");
-
-			MessageBox.confirm(sMessage, {
-				icon: MessageBox.Icon.WARNING,
-				title : "Discard",
-				onClose : fnConfirmDiscardAllDraftChanges,
-				styleClass: Utils.getRtaStyleClassName()
-			});
-		}.bind(this));
+		MessageBox.confirm(sMessage, {
+			icon: MessageBox.Icon.WARNING,
+			title : "Discard",
+			onClose : confirmDiscardAllDraftChanges.bind(this),
+			styleClass: Utils.getRtaStyleClassName()
+		});
 	};
 
 	RuntimeAuthoring.prototype._createToolsMenu = function(aButtonsVisibility) {

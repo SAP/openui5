@@ -222,6 +222,21 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given VersionsAPI.activateDraft is called", {
+		before: function() {
+			this.oAppComponent = {
+				getManifest: function () {
+					return {};
+				},
+				getId: function () {
+					return "sComponentId";
+				},
+				getComponentData: function () {
+					return {
+						startupParameters: ["sap-app-id"]
+					};
+				}
+			};
+		},
 		afterEach: function() {
 			sandbox.restore();
 		}
@@ -263,6 +278,7 @@ sap.ui.define([
 				selector: new Control(),
 				title: "new Title"
 			};
+			sandbox.stub(ManifestUtils, "getFlexReference").returns(undefined);
 
 			return VersionsAPI.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
 				assert.equal(sErrorMessage, "The application ID could not be determined", "then an Error is thrown");
@@ -275,8 +291,8 @@ sap.ui.define([
 				selector: new Control(),
 				title: "new Title"
 			};
-
-			sandbox.stub(Utils, "getComponentClassName").returns("com.sap.app");
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var aReturnedVersions = [];
 			sandbox.stub(Versions, "activateDraft").resolves(aReturnedVersions);
 
@@ -341,13 +357,13 @@ sap.ui.define([
 		QUnit.test("when a selector, a layer and a flag to update the state were provided and the request returns a list of versions", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				selector: new Control(),
-				updateState: true
+				selector: new Control()
 			};
 
 			var sReference = "com.sap.app";
 			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
 			var oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves(true);
+			var oLoadDraftForApplicationStub = sandbox.stub(VersionsAPI, "loadDraftForApplication").resolves(true);
 
 			return VersionsAPI.discardDraft(mPropertyBag)
 				.then(function(oResult) {
@@ -355,15 +371,14 @@ sap.ui.define([
 					var oCallingPropertyBag = oDiscardStub.getCall(0).args[0];
 					assert.equal(oCallingPropertyBag.reference, sReference, "the reference was passed");
 					assert.equal(oCallingPropertyBag.layer, mPropertyBag.layer, "the layer was passed");
-					assert.equal(oCallingPropertyBag.updateState, mPropertyBag.updateState, "the flag for updating the state was passed");
+					assert.equal(oLoadDraftForApplicationStub.callCount, 1, "loadDraftForApplication was called");
 				});
 		});
 
 		QUnit.test("when a AppComponent was found", function(assert) {
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				selector: new Control(),
-				updateState: true
+				selector: new Control()
 			};
 			var sAppVersion = "1.0.0";
 			sandbox.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
@@ -371,6 +386,7 @@ sap.ui.define([
 			var sReference = "com.sap.app";
 			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
 			var oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves(true);
+			var oLoadDraftForApplicationStub = sandbox.stub(VersionsAPI, "loadDraftForApplication").resolves(true);
 
 			return VersionsAPI.discardDraft(mPropertyBag)
 				.then(function(oResult) {
@@ -378,7 +394,7 @@ sap.ui.define([
 					assert.deepEqual(oDiscardStub.getCall(0).args[0].appVersion, sAppVersion, "the app version was passed");
 					assert.deepEqual(oDiscardStub.getCall(0).args[0].reference, sReference, "the reference was passed");
 					assert.deepEqual(oDiscardStub.getCall(0).args[0].layer, Layer.CUSTOMER, "the layer was passed");
-					assert.deepEqual(oDiscardStub.getCall(0).args[0].updateState, true, "the update was passed and set to true");
+					assert.equal(oLoadDraftForApplicationStub.callCount, 1, "loadDraftForApplication was called");
 				});
 		});
 	});

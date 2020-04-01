@@ -15,6 +15,16 @@ sap.ui.define([
 
 	var _mInstances = {};
 
+	// TODO: the handling should move to the FlexState as soon as it is ready
+	function _removeDirtyChanges(mPropertyBag) {
+		// remove all dirty changes
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.nonNormalizedReference, mPropertyBag.appVersion);
+		var aDirtyChanges = oChangePersistence.getDirtyChanges().concat();
+		aDirtyChanges.forEach(function(oChange) {
+			oChangePersistence.deleteChange(oChange, true);
+		});
+		return aDirtyChanges.length > 0;
+	}
 
 	function _doesDraftExist(aVersions) {
 		return aVersions.some(function(oVersion) {
@@ -105,7 +115,9 @@ sap.ui.define([
 	 * Activates the draft for a given application and layer.
 	 *
 	 * @param {object} mPropertyBag - Property Bag
-	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested
+	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested (this reference must not contain the ".Component" suffix)
+	 * @param {string} mPropertyBag.nonNormalizedReference - ID of the application for which the versions are requested
+	 * @param {string} mPropertyBag.appVersion - Version of the app
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 * @param {string} mPropertyBag.title - Title of the to be activated version
 	 * @returns {Promise<sap.ui.fl.Version>} Promise resolving with the updated list of versions for the application
@@ -116,7 +128,7 @@ sap.ui.define([
 		var aVersions = Versions.getVersions(mPropertyBag);
 		var bDraftExists = _doesDraftExist(aVersions);
 
-		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference);
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.nonNormalizedReference, mPropertyBag.appVersion);
 		var bDirtyChangesExist = oChangePersistence.getDirtyChanges().length > 0;
 		var oSaveDirtyChangesPromise;
 		if (bDirtyChangesExist) {
@@ -141,35 +153,33 @@ sap.ui.define([
 	 * Discards the draft for a given application and layer; dirty changes are only.
 	 *
 	 * @param {object} mPropertyBag - Property Bag
-	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested
+	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested (this reference must not contain the ".Component" suffix)
+	 * @param {string} mPropertyBag.nonNormalizedReference - ID of the application for which the versions are requested
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
 	 * @param {string} mPropertyBag.appVersion - Version of the app
-	 * @param {boolean} [mPropertyBag.updateState=false] - Flag if the state should be updated
 	 * @returns {Promise<boolean>} Promise resolving with a flag if a discarding took place;
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
 	Versions.discardDraft = function(mPropertyBag) {
 		var aVersions = Versions.getVersions(mPropertyBag);
-		var bDirtyChangesExistsAndDiscarded = false;
 
-		if (mPropertyBag.updateState && mPropertyBag.appComponent) {
-			// remove all dirty changes
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference, mPropertyBag.appVersion);
-			var aDirtyChanges = oChangePersistence.getDirtyChanges();
-			bDirtyChangesExistsAndDiscarded = aDirtyChanges.length > 0;
-			// TODO: the handling should move to the FlexState as soon as it is ready
-			aDirtyChanges.forEach(oChangePersistence.deleteChange, oChangePersistence);
+		// check if a draft existed when starting RTA (draft was loaded from the backend)
+		if (_doesDraftExist(aVersions)) {
+			return Storage.versions.discardDraft(mPropertyBag)
+			.then(function () {
+				// removes the first entry of aVersions;
+				// because doesDraftExists returned true - this is always the draft
+				aVersions.shift();
+				// in case of a existing draft known by the backend;
+				// we remove dirty changes only after successful DELETE request
+				_removeDirtyChanges(mPropertyBag);
+				return true;
+			});
 		}
-
-		if (!_doesDraftExist(aVersions)) {
-			return bDirtyChangesExistsAndDiscarded;
-		}
-
-		return Storage.versions.discardDraft(mPropertyBag)
-		.then(function () {
-			aVersions.shift();
-			return true;
-		});
+		// if any kind of discarding took place (DELETE request and/or removing dirty changes);
+		// return true to trigger loadDraftForApplication which clears the flex state
+		var bDirtyChangesDiscarded = _removeDirtyChanges(mPropertyBag);
+		return Promise.resolve(bDirtyChangesDiscarded);
 	};
 
 	return Versions;
