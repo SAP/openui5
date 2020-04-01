@@ -2241,10 +2241,15 @@ sap.ui.define([
 			this.oCard.attachEvent("_ready", function () {
 
 				Core.applyChanges();
-				var oListItems = this.oCard.getCardContent()._getList().getItems();
+				var oListItems = this.oCard.getCardContent()._getList().getItems(),
+					oParameters = this.oCard.getCombinedParameters();
+
 				// Assert
 				assert.ok(oListItems[0].getDescription().indexOf("Sofia") > -1, "Card parameter 'city' should be replaced in rendered html  with 'Sofia'");
 				assert.ok(oListItems[0].getDescription().indexOf("Bulgaria") > -1, "Card parameter 'country' should be replaced in rendered html  with 'Bulgaria'");
+
+				assert.strictEqual(oParameters.city, "Sofia", "Card parameter 'city' is correct.");
+				assert.strictEqual(oParameters.country, "Bulgaria", "Card parameter 'country' is correct.");
 
 				done();
 			}.bind(this));
@@ -2270,10 +2275,15 @@ sap.ui.define([
 
 				Core.applyChanges();
 
-				var oListItems = this.oCard.getCardContent()._getList().getItems();
+				var oListItems = this.oCard.getCardContent()._getList().getItems(),
+					oParameters = this.oCard.getCombinedParameters();
+
 				// Assert
 				assert.ok(oListItems[0].getDescription().indexOf("Waldorf") > -1, "Card parameter 'city' should be replaced in rendered html with 'Waldorf'");
 				assert.ok(oListItems[0].getDescription().indexOf("Germany") > -1, "Card parameter 'country' should be replaced in rendered html  with 'Germany'");
+
+				assert.strictEqual(oParameters.city, "Waldorf", "Card parameter 'city' is correct.");
+				assert.strictEqual(oParameters.country, "Germany", "Card parameter 'country' is correct.");
 
 				done();
 			}.bind(this));
@@ -2627,6 +2637,23 @@ sap.ui.define([
 
 			// Act
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("getManifestEntry after 'manifestReady' event is fired.", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachManifestReady(function () {
+				// Assert
+				assert.deepEqual(this.oCard.getManifestEntry("/"), oManifest_ListCard, "getManifestEntry returns correct result for '/'");
+				assert.deepEqual(this.oCard.getManifestEntry("/sap.card"), oManifest_ListCard["sap.card"], "getManifestEntry returns correct result for '/sap.card'");
+				assert.strictEqual(this.oCard.getManifestEntry("/sap.card/header/title"), oManifest_ListCard["sap.card"]["header"]["title"], "getManifestEntry returns correct result for '/sap.card/header/title'");
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_ListCard);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 

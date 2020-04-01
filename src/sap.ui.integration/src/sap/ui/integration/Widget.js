@@ -62,7 +62,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * The parameters used in the manifest.
+				 * Overrides the default values of the parameters, which are defined in the manifest.
+				 * The value is an object containing parameters in format <code>{parameterKey: parameterValue}</code>.
 				 */
 				parameters: {
 					type: "object",
@@ -221,6 +222,9 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * @override
+	 */
 	Widget.prototype.setParameters = function (vValue) {
 		this.setProperty("parameters", vValue);
 		this._bApplyManifest = true;
@@ -268,6 +272,9 @@ sap.ui.define([
 	 */
 	Widget.prototype.createManifest = function (vManifest, sBaseUrl) {
 		var mOptions = {};
+
+		this._isManifestReady = false;
+
 		if (typeof vManifest === "string") {
 			mOptions.manifestUrl = vManifest;
 			vManifest = null;
@@ -282,6 +289,7 @@ sap.ui.define([
 		return this._oWidgetManifest
 			.load(mOptions)
 			.then(function () {
+				this._isManifestReady = true;
 				this.fireManifestReady();
 				this._applyManifest();
 			}.bind(this))
@@ -289,10 +297,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Overwrites getter for Widget parameters.
-	 *
-	 * @public
-	 * @returns {Object} A Clone of the parameters.
+	 * @override
 	 */
 	Widget.prototype.getParameters = function () {
 		var vValue = this.getProperty("parameters");
@@ -302,6 +307,62 @@ sap.ui.define([
 		return vValue;
 	};
 
+	/**
+	 * Gets values of manifest parameters combined with the parameters from <code>parameters</code> property.
+	 *
+	 * <b>Notes</b>
+	 *
+	 * - Use this method when the manifest is ready. Check <code>manifestReady</code> event.
+	 *
+	 * - Use this method inside your component.
+	 *
+	 * @public
+	 * @experimental Since 1.77
+	 * @returns {map} Object containing parameters in format <code>{parameterKey: parameterValue}</code>.
+	 */
+	Widget.prototype.getCombinedParameters = function () {
+		if (!this._isManifestReady) {
+			Log.error("The manifest is not ready. Consider using the 'manifestReady' event.", "sap.ui.integration.widgets.Card");
+			return null;
+		}
+
+		var oParams = this._oWidgetManifest.getProcessedParameters(this.getProperty("parameters")),
+			oResultParams = {},
+			sKey;
+
+		for (sKey in oParams) {
+			oResultParams[sKey] = oParams[sKey].value;
+		}
+
+		return oResultParams;
+	};
+
+	/**
+	 * Returns a value from the manifest based on the specified path.
+	 *
+	 * <b>Note</b> Use this method when the manifest is fully ready. Check <code>manifestReady</code> event.
+	 *
+	 * @public
+	 * @experimental Since 1.77
+	 * @param {string} sPath The path to return a value for.
+	 * @returns {Object} The value at the specified path.
+	 */
+	Widget.prototype.getManifestEntry = function (sPath) {
+		if (!this._isManifestReady) {
+			Log.error("The manifest is not ready. Consider using the 'manifestReady' event.", "sap.ui.integration.Widget");
+			return null;
+		}
+
+		return this._oWidgetManifest.get(sPath);
+	};
+
+	/**
+	 * Gets the instance of the <code>host</code> association.
+	 *
+	 * @public
+	 * @experimental Since 1.77
+	 * @returns {sap.ui.integration.Host} The host object associated with this widget.
+	 */
 	Widget.prototype.getHostInstance = function () {
 		var sHost = this.getHost();
 		if (!sHost) {

@@ -392,6 +392,10 @@ sap.ui.define([
 	 * @returns {*} The value at the specified path.
 	 */
 	function getObject(oObject, sPath) {
+		if (sPath === "/") {
+			return oObject;
+		}
+
 		// if the incoming sPath is a path we do a nested lookup in the
 		// manifest object and return the concrete value, e.g. "/sap.ui5/extends"
 		if (oObject && sPath && typeof sPath === "string" && sPath[0] === "/") {
@@ -448,9 +452,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the updated parameters and processes any translations and predefined parameters on top of them.
+	 *
+	 * @public
+	 * @param {Object} oParameters Parameters set in the card through <code>parameters</code> property.
+	 * @returns {Object} The updated parameters.
+	 */
+	Manifest.prototype.getProcessedParameters = function (oParameters) {
+		var oManifestParams = this.get(this.PARAMETERS),
+			oResultParameters = this._syncParameters(oParameters, oManifestParams);
+
+		process(oResultParameters, this.oResourceBundle, 0, 15, oParameters);
+
+		return oResultParameters;
+	};
+
+	/**
 	 * Syncs parameters from property.
 	 *
-	 * @param {Object} oParameters Parameters set in the card trough parameters property.
+	 * @param {Object} oParameters Parameters set in the card through parameters property.
 	 * @param {Object} oManifestParameters Parameters set in the manifest.
 	 * @private
 	 */
