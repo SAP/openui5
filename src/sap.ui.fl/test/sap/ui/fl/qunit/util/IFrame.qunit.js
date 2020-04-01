@@ -19,6 +19,7 @@ sap.ui.define([
 	XMLView
 ) {
 	var sBlankUrl = "about:blank";
+	var sTitle = "IFrame Title";
 	var sProtocol = "https";
 	var sFlavor = "openui5";
 	var sServer = "hana.ondemand.com";
@@ -34,7 +35,8 @@ sap.ui.define([
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
 				height: sDefaultSize,
-				url: sOpenUI5Url
+				url: sOpenUI5Url,
+				title: sTitle
 			});
 		},
 		afterEach : function () {
@@ -51,6 +53,10 @@ sap.ui.define([
 
 		QUnit.test("url", function (assert) {
 			assert.equal(this.oIFrame.getUrl(), sOpenUI5Url, "Url is correct using 'equals()'!");
+		});
+
+		QUnit.test("title", function (assert) {
+			assert.equal(this.oIFrame.getTitle(), sTitle, "Title is correct using 'equals()'!");
 		});
 	});
 
@@ -72,6 +78,28 @@ sap.ui.define([
 		QUnit.test("IFrame should not be rendered", function (assert) {
 			var $iframe = jQuery("#qunit-fixture iframe");
 			assert.strictEqual($iframe.length, 0, "No iframe is being rendered");
+		});
+	});
+
+	QUnit.module("Title Parameter of IFrame is set", {
+		beforeEach : function() {
+			this.oIFrame = new IFrame({
+				width: sDefaultSize,
+				height: sDefaultSize,
+				url: sOpenUI5Url,
+				title: sTitle
+			});
+			this.oIFrame.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oIFrame.destroy();
+		}
+	}, function () {
+		QUnit.test("Title is rendered", function (assert) {
+			var $iframe = jQuery("#qunit-fixture iframe");
+			var sFrameTitle = $iframe.get()[0].getAttribute("title");
+			assert.strictEqual(sFrameTitle, sTitle, "Title is being rendered correct");
 		});
 	});
 
