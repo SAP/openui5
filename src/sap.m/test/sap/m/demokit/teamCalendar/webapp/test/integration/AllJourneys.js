@@ -1,9 +1,7 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"./arrangements/Startup",
-	"./PlanningCalendarJourney",
-	"./SinglePlanningCalendarJourney",
-	"./NotFoundJourney"
+	"./MainJourney"
 ], function (Opa5, Startup) {
 	"use strict";
 

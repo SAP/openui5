@@ -27,14 +27,6 @@ sap.ui.define([
 				hash: oOptions.hash,
 				autoWait: oOptions.autoWait
 			});
-		},
-		iStartMyAppWithHash : function (oOptions, iMemberId) {
-			this.waitFor({
-				success : function() {
-					oOptions.hash = "memberCalendar/" + iMemberId;
-					this.iStartMyApp(oOptions);
-				}
-			});
 		}
 	});
 });
