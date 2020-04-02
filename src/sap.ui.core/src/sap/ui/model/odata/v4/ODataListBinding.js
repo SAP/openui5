@@ -941,7 +941,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   The context corresponding to the group node
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise that is resolved when the expand is succesful and rejected when it failed
+	 *   A promise that is resolved when the expand is succesful and rejected when it fails
 	 *
 	 * @private
 	 */

@@ -14019,7 +14019,7 @@ sap.ui.define([
 						]
 					})
 					.expectChange("isExpanded", [,,,,,,, false, false, false])
-					.expectChange("isTotal", [,,,,,,, true, true, true])
+					.expectChange("isTotal", [,,,,,,, false, false, false])
 					.expectChange("level", [,,,,,,, 1, 1, 1])
 					.expectChange("lifecycleStatus", [,,,,,,, "T", "S", "R"]);
 

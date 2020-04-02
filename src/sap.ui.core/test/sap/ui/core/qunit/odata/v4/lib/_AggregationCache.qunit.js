@@ -732,13 +732,41 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["", "~filteredOrderby~"].forEach(function (sFilteredOrderBy, i) {
-	[false, true].forEach(function (bParent) {
-		[false, true].forEach(function (bLeaf) {
-			var sTitle = "createGroupLevelCache: parent= " + bParent + ", $orderby="
-				+ sFilteredOrderBy + ", leaf=" + bLeaf;
-
-	QUnit.test(sTitle, function (assert) {
+	// Using PICT
+	//
+	// hasFilteredOrderby: false, true
+	// leaf: false, true
+	// parent: false, true
+	// total: false, true
+	//
+	// IF [leaf] = "true" THEN [total] = "false";
+[{
+	filteredOrderby : "",
+	leaf : true,
+	parent : true,
+	total : false
+}, {
+	filteredOrderby : "~filteredOrderby~",
+	leaf : false,
+	parent : false,
+	total : false
+}, {
+	filteredOrderby : "~filteredOrderby~",
+	leaf : false,
+	parent : true,
+	total : true
+}, {
+	filteredOrderby : "",
+	leaf : false,
+	parent : false,
+	total : true
+}, {
+	filteredOrderby : "~filteredOrderby~",
+	leaf : true,
+	parent : false,
+	total : false
+}].forEach(function (oFixture) {
+	QUnit.test("createGroupLevelCache: " + JSON.stringify(oFixture), function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group: {},
@@ -747,11 +775,12 @@ sap.ui.define([
 			oCache,
 			mCacheQueryOptions = {},
 			oFilteredAggregation = {
-				groupLevels : bLeaf ? [] : ["a", "b"],
+				groupLevels : oFixture.leaf ? [] : ["a", "b"],
+				aggregate : {},
 				$groupBy : [],
 				$missing : []
 			},
-			oGroupNode = bParent ? {
+			oGroupNode = oFixture.parent ? {
 					"@$ui5.node.level" : 2,
 					"@$ui5._" : {
 						filter : "~filter~"
@@ -762,19 +791,22 @@ sap.ui.define([
 				$orderby : "~orderby~"
 			},
 			oGroupLevelCache = {},
-			iLevel = bParent ? 3 : 1,
+			iLevel = oFixture.parent ? 3 : 1,
 			mQueryOptions = {
 				$orderby : "~orderby~"
 			};
 
 		oCache = _AggregationCache.create(this.oRequestor, "Foo", oAggregation, mQueryOptions);
 
+		if (oFixture.total) {
+			oFilteredAggregation.aggregate.x = {subtotal : true};
+		}
 		this.mock(_AggregationCache).expects("filterAggregation")
 			.withExactArgs(sinon.match.same(oCache.oAggregation), iLevel)
 			.returns(oFilteredAggregation);
 		this.mock(_AggregationCache).expects("filterOrderby")
 			.withExactArgs("~orderby~", sinon.match.same(oFilteredAggregation))
-			.returns(sFilteredOrderBy);
+			.returns(oFixture.filteredOrderby);
 		this.mock(Object).expects("assign")
 			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions))
 			.returns(mFilteredQueryOptions);
@@ -784,11 +816,11 @@ sap.ui.define([
 				}), sinon.match(function (o) {
 					return o === mFilteredQueryOptions
 						&& !("$count" in o)
-						&& (bParent
+						&& (oFixture.parent
 							? o.$$filterBeforeAggregate === "~filter~"
 							: !("$$filterBeforeAggregate" in o))
-						&& (sFilteredOrderBy
-							? o.$orderby === sFilteredOrderBy
+						&& (oFixture.filteredOrderby
+							? o.$orderby === oFixture.filteredOrderby
 							: !("$orderby" in o));
 				}))
 			.returns(mCacheQueryOptions);
@@ -803,7 +835,7 @@ sap.ui.define([
 		this.mock(_AggregationCache).expects("calculateKeyPredicate")
 		.withExactArgs(sinon.match.same(oGroupNode),
 			sinon.match.same(oFilteredAggregation.$groupBy),
-			sinon.match.same(oFilteredAggregation.$missing), bLeaf,
+			sinon.match.same(oFilteredAggregation.$missing), oFixture.leaf, oFixture.total,
 			sinon.match.same(oCache.aElements.$byPredicate), "~oElement~", "~mTypeForMetaPath~",
 			"~metapath~");
 
@@ -816,14 +848,11 @@ sap.ui.define([
 		// code under test (this normally happens inside the created cache's handleResponse method)
 		oGroupLevelCache.calculateKeyPredicate("~oElement~", "~mTypeForMetaPath~", "~metapath~");
 	});
-
-		});
-	});
 });
 	// TODO can there already be a $$filterBeforeAggregate when creating a group level cache?
 
 	//*********************************************************************************************
-[false, true].forEach(function (bLeaf, i) {
+[false, true].forEach(function (bLeaf) {
 	[false, true].forEach(function (bParent) {
 
 	QUnit.test("calculateKeyPredicate: leaf=" + bLeaf + ", parent=" + bParent, function (assert) {
@@ -836,7 +865,8 @@ sap.ui.define([
 				"@$ui5.node.level" : 2
 			},
 			aGroupBy = bParent ? ["p1", "p2"] : ["p2"],
-			oHelperMock = this.mock(_Helper);
+			oHelperMock = this.mock(_Helper),
+			bTotal = {/*false or true*/};
 
 		oHelperMock.expects("getKeyPredicate")
 			.withExactArgs(sinon.match(function (o) {
@@ -855,10 +885,11 @@ sap.ui.define([
 
 		// code under test
 		_AggregationCache.calculateKeyPredicate(bParent ? oGroupNode : undefined, aGroupBy,
-			["p3", "p4"], bLeaf, mByPredicate, oElement, "~mTypeForMetaPath~", "~sMetaPath~");
+			["p3", "p4"], bLeaf, bTotal, mByPredicate, oElement, "~mTypeForMetaPath~",
+			"~sMetaPath~");
 
-		assert.strictEqual(oElement["@$ui5.node.isExpanded"], i ? undefined : false);
-		assert.strictEqual(oElement["@$ui5.node.isTotal"], !i);
+		assert.strictEqual(oElement["@$ui5.node.isExpanded"], bLeaf ? undefined : false);
+		assert.strictEqual(oElement["@$ui5.node.isTotal"], bTotal);
 		assert.strictEqual(oElement["@$ui5.node.level"], bParent ? 3 : 1);
 		if (bParent) {
 			assert.strictEqual(oElement.p1, "v1");
@@ -887,7 +918,7 @@ sap.ui.define([
 
 		// code under test - simulate call on grandTotal
 		_AggregationCache.calculateKeyPredicate(undefined, ["group"], ["foo", "bar"],
-			true, {}, oElement, "~mTypeForMetaPath~", "~sMetaPath~");
+			true, false, {}, oElement, "~mTypeForMetaPath~", "~sMetaPath~");
 
 		assert.strictEqual(oElement["@$ui5.node.isExpanded"], true);
 		assert.strictEqual(oElement["@$ui5.node.isTotal"], true);
@@ -910,7 +941,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			_AggregationCache.calculateKeyPredicate(undefined, [], [], false, mByPredicate,
+			_AggregationCache.calculateKeyPredicate(undefined, [], [], false, false, mByPredicate,
 				oElement, "~mTypeForMetaPath~", "~sMetaPath~");
 		}, new Error("Multi-unit situation detected: "
 			+ '{"dimension":"A","measure":0,"unit":"USD"} vs. '

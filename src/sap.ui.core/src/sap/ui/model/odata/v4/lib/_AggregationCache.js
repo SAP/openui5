@@ -127,8 +127,8 @@ sap.ui.define([
 	 * @private
 	 */
 	_AggregationCache.prototype.createGroupLevelCache = function (oParentGroupNode) {
-		var oCache, oFilteredAggregation, sFilteredOrderby, aGroupBy, iLevel, aMissing,
-			mQueryOptions;
+		var oCache, oFilteredAggregation, sFilteredOrderby, aGroupBy, bLeaf, iLevel, aMissing,
+			mQueryOptions, bTotal;
 
 		iLevel = oParentGroupNode ? oParentGroupNode["@$ui5.node.level"] + 1 : 1;
 
@@ -158,9 +158,10 @@ sap.ui.define([
 
 		oCache = _Cache.create(this.oRequestor, this.sResourcePath, mQueryOptions, true);
 
+		bLeaf = !oFilteredAggregation.groupLevels.length;
+		bTotal = !bLeaf && Object.keys(oFilteredAggregation.aggregate).length > 0;
 		oCache.calculateKeyPredicate = _AggregationCache.calculateKeyPredicate.bind(null,
-			oParentGroupNode, aGroupBy, aMissing, !oFilteredAggregation.groupLevels.length,
-			this.aElements.$byPredicate);
+			oParentGroupNode, aGroupBy, aMissing, bLeaf, bTotal, this.aElements.$byPredicate);
 
 		return oCache;
 	};
@@ -383,6 +384,8 @@ sap.ui.define([
 	 *   they have to be nulled to avoid drill-down errors
 	 * @param {boolean} bLeaf
 	 *   Whether this element is a leaf
+	 * @param {boolean} bTotal
+	 *   Whether this element is a (sub)total
 	 * @param {object} mByPredicate A map of group nodes by key predicates, used to detect
 	 *   collisions
 	 * @param {object} oElement The element
@@ -395,7 +398,7 @@ sap.ui.define([
 	 * @private
 	 */
 	_AggregationCache.calculateKeyPredicate = function (oGroupNode, aGroupBy, aMissing,
-			bLeaf, mByPredicate, oElement, mTypeForMetaPath, sMetaPath) {
+			bLeaf, bTotal, mByPredicate, oElement, mTypeForMetaPath, sMetaPath) {
 		var sPredicate;
 
 		/*
@@ -433,7 +436,7 @@ sap.ui.define([
 		// set the node values - except for the grand total element
 		if (oElement["@$ui5.node.level"] !== 0) {
 			oElement["@$ui5.node.isExpanded"] = bLeaf ? undefined : false;
-			oElement["@$ui5.node.isTotal"] = !bLeaf;
+			oElement["@$ui5.node.isTotal"] = bTotal;
 			oElement["@$ui5.node.level"] = oGroupNode ? oGroupNode["@$ui5.node.level"] + 1 : 1;
 		}
 	};
