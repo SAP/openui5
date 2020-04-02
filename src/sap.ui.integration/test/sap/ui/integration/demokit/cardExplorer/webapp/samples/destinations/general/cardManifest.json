@@ -39,7 +39,8 @@
 			},
 			"parameters": {
 				"maxItems": {
-					"value": "7"
+					"value": 7,
+					"type": "integer"
 				}
 			}
 		},
@@ -50,7 +51,7 @@
 				"src": "sap-icon://compare-2"
 			},
 			"status": {
-			    "text": "top {{parameters.maxItems}}"
+				"text": "top {{parameters.maxItems}}"
 			}
 		},
 		"content": {
