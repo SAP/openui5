@@ -578,16 +578,18 @@ sap.ui.define([
 		},
 
 		getFilteredItemsList: function(aAnalyzerValues) {
-			// promise index 0: invisible, 1: addOData, 2: custom
+			// promise index 0: invisible, 1: addOData, 2: custom, 3: delegate
+			var aInvisibleElements = aAnalyzerValues[0];
 			var iCustomItemsIndex = 2;
-			if (aAnalyzerValues[iCustomItemsIndex]) {
-				var aInvisibleElementIds = aAnalyzerValues[0].map(
+			var aCustomItems = aAnalyzerValues[iCustomItemsIndex];
+			if (aCustomItems) {
+				var aInvisibleElementIds = aInvisibleElements.map(
 					function (oInvisibleItem) {
 						return oInvisibleItem.elementId;
 					}
 				);
-				// filter for hidden custom items
-				aAnalyzerValues[iCustomItemsIndex] = aAnalyzerValues[iCustomItemsIndex]
+				// filter for hidden custom items in the array
+				aAnalyzerValues[iCustomItemsIndex] = aCustomItems
 					.filter(function(oCustomItem) {
 						return !oCustomItem.itemId || aInvisibleElementIds.indexOf(oCustomItem.itemId) === -1;
 					});

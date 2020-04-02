@@ -710,37 +710,53 @@ function(
 				});
 		});
 
-		QUnit.test("when getFilteredItemsList is called with existing addODataProperty items, for filtering custom add items which also exist as invisible items", function(assert) {
-			var aInvisibleItems = [
+		function getFilteredItemsListTests(aInvisibleItems, aODataItems, aInvisibleCustomItems, aUniqueCustomItems, aDelegateItems, assert) {
+			var aAnalyzerValues = [
+				aInvisibleItems.concat([]),
+				aODataItems.concat([]),
+				aInvisibleCustomItems.concat(aUniqueCustomItems),
+				aDelegateItems.concat([])
+			];
+			var iExpectedLength = aInvisibleItems.length + aODataItems.length + aUniqueCustomItems.length + aDelegateItems.length;
+			var aExpectedValues = aInvisibleItems.concat(aODataItems, aUniqueCustomItems, aDelegateItems);
+
+			var aFilteredItems = AdditionalElementsAnalyzer.getFilteredItemsList(aAnalyzerValues);
+
+			assert.strictEqual(aFilteredItems.length, iExpectedLength, "then the filtered array has the correct length of items");
+			assert.deepEqual(aFilteredItems, aExpectedValues, "then the only the invisible custom items are filtered out");
+		}
+
+		QUnit.test("when getFilteredItemsList is called with existing addODataProperty items and no delegate items, for filtering custom add items which also exist as invisible items", function(assert) {
+			getFilteredItemsListTests(
 				[{ elementId: "invisibleElement1" }, { elementId: "invisibleElement2" }],
 				[{ property: "oDataProperty1" }],
-				[{ itemId: "invisibleElement1" }, { itemId: "customItem1" }, { itemId: "invisibleElement2" }]
-			];
-			var aFilteredItems = AdditionalElementsAnalyzer.getFilteredItemsList(aInvisibleItems, true);
-			assert.strictEqual(aFilteredItems.length, 4, "then the filtered array has the correct length of items");
-			assert.deepEqual(aFilteredItems, aInvisibleItems[0].concat(aInvisibleItems[1], aInvisibleItems[2]), "then the filtered array was returned");
+				[{ itemId: "invisibleElement1" }, { itemId: "invisibleElement2" }],
+				[{ itemId: "customItem1" }],
+				[],
+				assert
+			);
 		});
 
-		QUnit.test("when getFilteredItemsList is called without addODataProperty items, for filtering custom add items which also exist as invisible items", function(assert) {
-			var aInvisibleItems = [
+		QUnit.test("when getFilteredItemsList is called without addODataProperty items, with delegate items, for filtering custom add items which also exist as invisible items", function(assert) {
+			getFilteredItemsListTests(
 				[{ elementId: "invisibleElement1" }, { elementId: "invisibleElement2" }],
 				[],
-				[{ itemId: "invisibleElement1" }, { itemId: "customItem1" }, { itemId: "invisibleElement2" }]
-			];
-			var aFilteredItems = AdditionalElementsAnalyzer.getFilteredItemsList(aInvisibleItems, false);
-			assert.strictEqual(aFilteredItems.length, 3, "then the filtered array has the correct length of items");
-			assert.deepEqual(aFilteredItems, aInvisibleItems[0].concat(aInvisibleItems[1], aInvisibleItems[2]), "then the filtered array was returned");
+				[{ itemId: "invisibleElement1" }, { itemId: "invisibleElement2" }],
+				[{ itemId: "customItem1" }],
+				[{name: "fromDelegate"}],
+				assert
+			);
 		});
 
-		QUnit.test("when getFilteredItemsList is called without addODataProperty items, for filtering custom add items which do not exist as invisible items", function(assert) {
-			var aInvisibleItems = [
+		QUnit.test("when getFilteredItemsList is called without addODataProperty nor delegate items, for filtering custom add items which do not exist as invisible items", function(assert) {
+			getFilteredItemsListTests(
 				[{ elementId: "invisibleElement1" }, { elementId: "invisibleElement2" }],
 				[],
-				[{ itemId: "customItem1" }, { itemId: "customItem2" }]
-			];
-			var aFilteredItems = AdditionalElementsAnalyzer.getFilteredItemsList(aInvisibleItems, false);
-			assert.strictEqual(aFilteredItems.length, 4, "then the filtered array has the correct length if items");
-			assert.deepEqual(aFilteredItems, aInvisibleItems[0].concat(aInvisibleItems[1], aInvisibleItems[2]), "then the filtered array was returned");
+				[],
+				[{ itemId: "customItem1" }, { itemId: "customItem2" }],
+				[],
+				assert
+			);
 		});
 	});
 
