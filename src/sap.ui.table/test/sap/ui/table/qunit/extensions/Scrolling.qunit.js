@@ -1142,10 +1142,14 @@ sap.ui.define([
 	QUnit.test("Focus", function(assert) {
 		var oTable = this.oTable;
 
-		function isScrolledIntoView(oCell, bRTL) {
+		function getScrollLeft(bRTL) {
 			var oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
+			return bRTL ? jQuery(oHSb).scrollLeftRTL() : oHSb.scrollLeft;
+		}
+
+		function isScrolledIntoView(oCell, bRTL) {
 			var oRowContainer = oTable.getDomRef("sapUiTableCtrlScr");
-			var iScrollLeft = bRTL ? jQuery(oHSb).scrollLeftRTL() : oHSb.scrollLeft;
+			var iScrollLeft = getScrollLeft(bRTL);
 			var iRowContainerWidth = oRowContainer.clientWidth;
 			var iCellLeft = oCell.offsetLeft;
 			var iCellRight = iCellLeft + oCell.offsetWidth;
@@ -1155,23 +1159,25 @@ sap.ui.define([
 			return iOffsetLeft >= 0 && iOffsetRight <= 0;
 		}
 
-		function test(sTestTitle, oDomElementToFocus, iInitialScrollLeft, bScrollPositionShouldChange, bRTL) {
-			var oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
-			var $HSb = jQuery(oHSb);
+		function test(sTestTitle, oDomElementToFocus, iInitialScrollLeft, bScrollPositionShouldChange) {
+			var bRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 			document.body.focus();
 
 			return oTable.qunit.scrollHSbTo(iInitialScrollLeft).then(oTable.qunit.$focus(oDomElementToFocus)).then(function() {
-				var iNewScrollLeft = bRTL ? $HSb.scrollLeftRTL() : oHSb.scrollLeft;
-
 				if (bScrollPositionShouldChange) {
 					return oTable.qunit.whenHSbScrolled().then(function() {
-						assert.notStrictEqual(iNewScrollLeft, iInitialScrollLeft, sTestTitle + ": The horizontal scroll position did change");
+						assert.notStrictEqual(getScrollLeft(bRTL), iInitialScrollLeft, sTestTitle + ": The horizontal scroll position did change");
 						assert.ok(isScrolledIntoView(oDomElementToFocus, bRTL), sTestTitle + ": The focused cell is fully visible");
+
+						if (Device.browser.msie) {
+							// For some reason there are a couple of scroll events in IE. We need to wait until they are all processed.
+							return TableQUnitUtils.wait(0);
+						}
 					});
 				} else {
 					return TableQUnitUtils.wait(50).then(function() {
-						assert.strictEqual(iNewScrollLeft, iInitialScrollLeft, sTestTitle + ": The horizontal scroll position did not change");
+						assert.strictEqual(getScrollLeft(bRTL), iInitialScrollLeft, sTestTitle + ": The horizontal scroll position did not change");
 					});
 				}
 			});
@@ -1185,30 +1191,28 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			return test("Focus header cell in column 3 (scrollable column)", oTable.qunit.getColumnHeaderCell(2), 0, true, false);
+			return test("Focus header cell in column 3 (scrollable column)", oTable.qunit.getColumnHeaderCell(2), 0, true);
 		}).then(function() {
-			return test("Focus header cell in column 1 (fixed column)", oTable.qunit.getColumnHeaderCell(0), 70, false, false);
+			return test("Focus header cell in column 1 (fixed column)", oTable.qunit.getColumnHeaderCell(0), 70, false);
 		}).then(function() {
-			return test("Focus header cell in column 2 (scrollable column)", oTable.qunit.getColumnHeaderCell(1), 70, true, false);
+			return test("Focus header cell in column 2 (scrollable column)", oTable.qunit.getColumnHeaderCell(1), 70, true);
 		}).then(function() {
-			return test("Focus header cell in column 3 (scrollable column)", oTable.qunit.getColumnHeaderCell(2), 850, true, false);
+			return test("Focus header cell in column 3 (scrollable column)", oTable.qunit.getColumnHeaderCell(2), 850, true);
 		}).then(function() {
-			return test("Focus header cell in column 4 (scrollable column)", oTable.qunit.getColumnHeaderCell(3), 200, true, false);
+			return test("Focus header cell in column 4 (scrollable column)", oTable.qunit.getColumnHeaderCell(3), 200, true);
 		}).then(function() {
-			return test("Focus data cell in column 3, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 2), 0, true, false);
+			return test("Focus data cell in column 3, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 2), 0, true);
 		}).then(function() {
-			return test("Focus data cell in column 1, row 1 (fixed column)", oTable.qunit.getDataCell(0, 0), 70, false, false);
+			return test("Focus data cell in column 1, row 1 (fixed column)", oTable.qunit.getDataCell(0, 0), 70, false);
 		}).then(function() {
-			return test("Focus data cell in column 2, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 1), 70, true, false);
+			return test("Focus data cell in column 2, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 1), 70, true);
 		}).then(function() {
-			return test("Focus data cell in column 3, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 2), 850, true, false);
+			return test("Focus data cell in column 3, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 2), 850, true);
 		}).then(function() {
-			return test("Focus data cell in column 4, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 3), 200, true, false);
+			return test("Focus data cell in column 4, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 3), 200, true);
 		}).then(function() {
 			if (Device.browser.msie) {
-				// The following tests do not make sense in IE. IE scrolls when a cell that is wider than the row container is focused.
-				// Subsequent tests will be skipped until the catch.
-				return Promise.reject();
+				return Promise.reject("Skipped in IE");
 			}
 			oTable.getColumns()[1].setWidth("1000px");
 			oTable.getColumns()[2].setWidth("100px");
@@ -1217,17 +1221,17 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 			return oTable.qunit.whenRenderingFinished();
 		}).then(function() {
-			return test("Focus header cell in column 2 (scrollable column)", oTable.qunit.getColumnHeaderCell(1), 50, false, false);
+			return test("Focus header cell in column 2 (scrollable column)", oTable.qunit.getColumnHeaderCell(1), 50, false);
 		}).then(function() {
-			return test("Focus header cell in column 4 (scrollable column)", oTable.qunit.getColumnHeaderCell(3), 1150, false, false);
+			return test("Focus header cell in column 4 (scrollable column)", oTable.qunit.getColumnHeaderCell(3), 1150, false);
 		}).then(function() {
-			return test("Focus data cell in column 2, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 1), 50, false, false);
+			return test("Focus data cell in column 2, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 1), 50, false);
 		}).then(function() {
-			return test("Focus data cell in column 2, row 2 (scrollable column)", oTable.qunit.getDataCell(1, 1), 50, false, false);
+			return test("Focus data cell in column 2, row 2 (scrollable column)", oTable.qunit.getDataCell(1, 1), 50, false);
 		}).then(function() {
-			return test("Focus data cell in column 4, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 3), 1150, false, false);
+			return test("Focus data cell in column 4, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 3), 1150, false);
 		}).then(function() {
-			return test("Focus data cell in column 4, row 2 (scrollable column)", oTable.qunit.getDataCell(1, 3), 1150, false, false);
+			return test("Focus data cell in column 4, row 2 (scrollable column)", oTable.qunit.getDataCell(1, 3), 1150, false);
 		}).then(TableQUnitUtils.$changeTextDirection(true)).then(function(){
 			oTable.getColumns()[1].setWidth("800px");
 			oTable.getColumns()[2].setWidth("100px");
@@ -1235,30 +1239,26 @@ sap.ui.define([
 			oTable.getColumns()[4].setWidth("100px");
 			sap.ui.getCore().applyChanges();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			return test("RTL: Focus header cell in column 3 (scrollable column)", oTable.qunit.getColumnHeaderCell(2), 950, true, true);
+			return test("RTL: Focus header cell in column 3 (scrollable column)", oTable.qunit.getColumnHeaderCell(2), 950, true);
 		}).then(function() {
-			return test("RTL: Focus header cell in column 1 (fixed column)", oTable.qunit.getColumnHeaderCell(0), 880, false, true);
+			return test("RTL: Focus header cell in column 1 (fixed column)", oTable.qunit.getColumnHeaderCell(0), 880, false);
 		}).then(function() {
-			return test("RTL: Focus header cell in column 2 (scrollable column)", oTable.qunit.getColumnHeaderCell(1), 880, true, true);
+			return test("RTL: Focus header cell in column 2 (scrollable column)", oTable.qunit.getColumnHeaderCell(1), 880, true);
 		}).then(function() {
-			return test("RTL: Focus header cell in column 3 (scrollable column)", oTable.qunit.getColumnHeaderCell(2), 100, true, true);
+			return test("RTL: Focus header cell in column 3 (scrollable column)", oTable.qunit.getColumnHeaderCell(2), 100, true);
 		}).then(function() {
-			return test("RTL: Focus header cell in column 4 (scrollable column)", oTable.qunit.getColumnHeaderCell(3), 750, true, true);
+			return test("RTL: Focus header cell in column 4 (scrollable column)", oTable.qunit.getColumnHeaderCell(3), 750, true);
 		}).then(function() {
-			return test("RTL: Focus data cell in column 3, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 2), 950, true, true);
+			return test("RTL: Focus data cell in column 3, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 2), 950, true);
 		}).then(function() {
-			return test("RTL: Focus data cell in column 1, row 1 (fixed column)", oTable.qunit.getDataCell(0, 0), 880, false, true);
+			return test("RTL: Focus data cell in column 1, row 1 (fixed column)", oTable.qunit.getDataCell(0, 0), 880, false);
 		}).then(function() {
-			return test("RTL: Focus data cell in column 2, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 1), 880, true, true);
+			return test("RTL: Focus data cell in column 2, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 1), 880, true);
 		}).then(function() {
-			return test("RTL: Focus data cell in column 3, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 2), 100, true, true);
+			return test("RTL: Focus data cell in column 3, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 2), 100, true);
 		}).then(function() {
-			return test("RTL: Focus data cell in column 4, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 3), 750, true, true);
+			return test("RTL: Focus data cell in column 4, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 3), 750, true);
 		}).then(function() {
-			if (Device.browser.msie) {
-				// The following tests do not make sense in IE. IE scrolls when a cell that is wider than the row container is focused.
-				return Promise.reject();
-			}
 			oTable.getColumns()[1].setWidth("1000px");
 			oTable.getColumns()[2].setWidth("100px");
 			oTable.getColumns()[3].setWidth("1000px");
@@ -1266,17 +1266,21 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 			return oTable.qunit.whenRenderingFinished();
 		}).then(function() {
-			return test("RTL: Focus header cell in column 2 (scrollable column)", oTable.qunit.getColumnHeaderCell(1), 1250, false, true);
+			return test("RTL: Focus header cell in column 2 (scrollable column)", oTable.qunit.getColumnHeaderCell(1), 1250, false);
 		}).then(function() {
-			return test("RTL: Focus header cell in column 4 (scrollable column)", oTable.qunit.getColumnHeaderCell(3), 150, false, true);
+			return test("RTL: Focus header cell in column 4 (scrollable column)", oTable.qunit.getColumnHeaderCell(3), 150, false);
 		}).then(function() {
-			return test("RTL: Focus data cell in column 2, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 1), 1250, false, true);
+			return test("RTL: Focus data cell in column 2, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 1), 1250, false);
 		}).then(function() {
-			return test("RTL: Focus data cell in column 2, row 2 (scrollable column)", oTable.qunit.getDataCell(1, 1), 1250, false, true);
+			return test("RTL: Focus data cell in column 2, row 2 (scrollable column)", oTable.qunit.getDataCell(1, 1), 1250, false);
 		}).then(function() {
-			return test("RTL: Focus data cell in column 4, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 3), 150, false, true);
+			return test("RTL: Focus data cell in column 4, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 3), 150, false);
 		}).then(function() {
-			return test("RTL: Focus data cell in column 4, row 2 (scrollable column)", oTable.qunit.getDataCell(1, 3), 150, false, true);
+			return test("RTL: Focus data cell in column 4, row 2 (scrollable column)", oTable.qunit.getDataCell(1, 3), 150, false);
+		}).catch(function(vError) {
+			if (vError !== "Skipped in IE") {
+				throw vError;
+			}
 		}).finally(TableQUnitUtils.$changeTextDirection(false));
 	});
 
