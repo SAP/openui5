@@ -41,10 +41,17 @@ sap.ui.define([
 			return;
 		}
 
-		var oComponent = new ComponentContainer({
+		var oContainer = new ComponentContainer({
 			manifest: oConfiguration,
 			async: true,
-			componentCreated: function () {
+			componentCreated: function (oEvent) {
+				var oComponent = oEvent.getParameter("component"),
+					oCard = this.getParent();
+
+				if (oComponent.onCardReady) {
+					oComponent.onCardReady(oCard);
+				}
+
 				// TODO _updated event is always needed, so that the busy indicator knows when to stop. We should review this for contents which do not have data.
 				this.fireEvent("_actionContentReady");
 				this.fireEvent("_updated");
@@ -55,7 +62,7 @@ sap.ui.define([
 			}.bind(this)
 		});
 
-		this.setAggregation("_content", oComponent);
+		this.setAggregation("_content", oContainer);
 	};
 
 	return ComponentContent;

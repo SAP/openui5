@@ -322,8 +322,14 @@ sap.ui.define([
 
 			exploreSettingsModel.setProperty("/useIFrame", bUseIFrame);
 
+			this.oModel.setProperty("/sample", oSample);
+
+			if (oSubSample) {
+				this.oModel.setProperty("/subSample", oSubSample);
+			}
+
 			if (bUseIFrame) {
-				oFrameWrapperEl._sSample = oCurrentSample.key;
+				oFrameWrapperEl._sSample = oSubSample ? oSample.key + "/" + oSubSample.key : oSample.key;
 				oFrameWrapperEl.invalidate();
 			} else {
 				var sManifestUrl = this._fileEditor.getManifestFile().url,
@@ -334,12 +340,6 @@ sap.ui.define([
 					oCard = this.byId("cardSample");
 
 				oFrameWrapperEl._sSample = '';
-
-				this.oModel.setProperty("/sample", oSample);
-
-				if (oSubSample) {
-					this.oModel.setProperty("/subSample", oSubSample);
-				}
 
 				oLayoutSettings = Object.assign(oLayoutSettings, oCurrentSample.settings);
 
