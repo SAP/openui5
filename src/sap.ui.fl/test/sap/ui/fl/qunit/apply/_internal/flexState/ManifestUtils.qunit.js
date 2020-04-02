@@ -36,7 +36,6 @@ sap.ui.define([
 
 		QUnit.test("with an appvar id (raw manifest)", function (assert) {
 			var mPropertyBag = {
-				componentData: {},
 				manifest: {
 					"sap.ui5": {
 						appVariantId: "appVarId"
@@ -48,7 +47,6 @@ sap.ui.define([
 
 		QUnit.test("with sap.ui5 component name (raw manifest)", function (assert) {
 			var mPropertyBag = {
-				componentData: {},
 				manifest: {
 					"sap.ui5": {
 						componentName: "componentName"
@@ -61,7 +59,6 @@ sap.ui.define([
 		QUnit.test("without old or new appvar id or componentName (raw manifest)", function (assert) {
 			var oGetAppIdStub = sandbox.stub(Utils, "getAppIdFromManifest").returns("appId");
 			var mPropertyBag = {
-				componentData: {},
 				manifest: {
 					"sap-ui6": {
 						appVariantId: "appVarId"
@@ -74,7 +71,6 @@ sap.ui.define([
 
 		QUnit.test("with an appvar id (manifest object)", function (assert) {
 			var mPropertyBag = {
-				componentData: {},
 				manifest: new Manifest({
 					"sap.ui5": {
 						appVariantId: "appVarId"
@@ -86,7 +82,6 @@ sap.ui.define([
 
 		QUnit.test("with sap.ui5 component name (manifest object)", function (assert) {
 			var mPropertyBag = {
-				componentData: {},
 				manifest: new Manifest({
 					"sap.ui5": {
 						componentName: "componentName"
@@ -99,7 +94,6 @@ sap.ui.define([
 		QUnit.test("without old or new appvar id or componentName (manifest object)", function (assert) {
 			var oGetAppIdStub = sandbox.stub(Utils, "getAppIdFromManifest").returns("appId");
 			var mPropertyBag = {
-				componentData: {},
 				manifest: new Manifest({
 					"sap-ui6": {
 						appVariantId: "appVarId"
