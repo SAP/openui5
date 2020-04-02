@@ -78,6 +78,7 @@ sap.ui.define([
 		this.addEventDelegate(this._oItemNavigation);
 		this._oItemNavigation.setPageSize(10);
 		this._oIconTabHeader = null;
+		this._oTabFilter = null;
 	};
 
 	/**
@@ -88,6 +89,7 @@ sap.ui.define([
 		this._oItemNavigation.destroy();
 		this._oItemNavigation = null;
 		this._oIconTabHeader = null;
+		this._oTabFilter = null;
 	};
 
 	/**
@@ -238,10 +240,13 @@ sap.ui.define([
 			oDroppedControl = oEvent.getParameter("droppedControl");
 
 		IconTabBarDragAndDropUtil.handleDrop(this._oIconTabHeader, oDropPosition, oDraggedControl._getRealTab(), oDroppedControl._getRealTab(), true);
+
 		this._oIconTabHeader._setItemsForStrip();
 		this._oIconTabHeader._initItemNavigation();
-		this._oIconTabHeader._setSelectListItems();
+
+		this._oTabFilter._setSelectListItems();
 		this._initItemNavigation();
+
 		oDraggedControl.$().focus();
 	};
 

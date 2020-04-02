@@ -1275,10 +1275,6 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitIni
 	min-height: 7rem;
 }
 
-html.sap-phone .sapMITHOverflowList.tabHeaderNoLeftMargin .sapMITHScrollContainer {
-	margin-left: 0;
-}
-
 /* shrink image to 200px height on landscape phone mode */
 .phoneHeaderImageLandscape {
 	object-fit: cover;

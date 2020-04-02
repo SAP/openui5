@@ -32,7 +32,7 @@
 // All tabs
 @_sap_m_IconTabBar_AllTabHeight: 2.875rem;
 @_sap_m_IconTabBar_AllTabLineHeight: 2.875rem;
-@_sap_m_IconTabBar_AllTabMarginBottom: 0.2rem;
+@_sap_m_IconTabBar_AllTabMarginBottom: 0.375rem;
 
 // Horizontal tabs
 @_sap_m_IconTabBar_HorizontalFilterHeight: 3.75rem;
@@ -70,7 +70,6 @@
 
 @_sap_m_IconTabBar_HeaderBorderBottom: none;
 @_sap_m_IconTabBar_HeaderShadow: none;
-
 
 // Content
 @_sap_m_IconTabBar_ContentBackground: @sapUiBaseBG;
@@ -119,8 +118,8 @@
 // Content arrow
 @_sap_m_IconTabBar_Phone_ContentArrowHeight: 0.625rem;
 
-// Left and right arrows
-@_sap_m_IconTabBar_Phone_InLineArrowScrollPadding: 0.875rem 0;
+@_sap_m_IconTabBar_Phone_TextOnlyContentArrowHeight: 0.5rem;
+@_sap_m_IconTabBar_Phone_Compact_TextOnlyContentArrowHeight: 0.75rem;
 
 // ==========================================================================
 // Variables
@@ -137,20 +136,27 @@
 
 	.sapMITBHead {
 		margin-top: 0.875rem;
+	}
 
-		&.sapMITBNoText {
+	&.sapMITBNoText {
+
+		.sapMITBHead {
 			margin-top: 1rem;
-		}
-		&.sapMITBTextOnly {
-			margin-top: 0.875rem;
-		}
-		&.sapMITBInLine {
-			margin-top: 0;
 		}
 	}
 
-	.sapMITHOverflowButton {
-		right: 0;
+	&.sapMITBTextOnly {
+
+		.sapMITBHead {
+			margin-top: 0.875rem;
+		}
+	}
+
+	&.sapMITBInLine {
+
+		.sapMITBHead {
+			margin-top: 0;
+		}
 	}
 }
 
@@ -162,41 +168,53 @@
 		margin-top: 0.875rem;
 	}
 
-	.sapMITBHead.sapMITBTextOnly {
-		margin-top: 0.875rem;
+	&.sapMITBTextOnly {
+
+		.sapMITBHead {
+			margin-top: 0.875rem;
+		}
 	}
-	.sapMITBHead.sapMITBInLine {
-		margin-top: 0;
+
+	&.sapMITBInLine {
+
+		.sapMITBHead {
+			margin-top: 0;
+		}
 	}
 
 	/* Bottom borders on the currently selected tab - compact */
-	.sapMITBTextOnly > .sapMITBVertical.sapMITBFilter > .sapMITBFilterWrapper > .sapMITBText + .sapMITBContentArrow {
+	&.sapMITBTextOnly .sapMITBVertical.sapMITBFilter .sapMITBContentArrow {
 		height: 0.875rem;
 	}
-	.sapMITBInLine.sapMITBTextOnly > .sapMITBVertical.sapMITBFilter > .sapMITBFilterWrapper > .sapMITBText + .sapMITBContentArrow {
+
+	&.sapMITBInLine.sapMITBTextOnly .sapMITBVertical.sapMITBFilter .sapMITBContentArrow {
 		height: 0.875rem;
 	}
 
 	/* Tabs - compact*/
 	.sapMITBAll {
-		> .sapMITBFilterWrapper > .sapMITBTab {
+
+		.sapMITBTab {
 			margin-bottom: 0.3rem;
 			margin-top: 0.6rem;
 		}
 
-		> .sapMITBFilterWrapper > .sapMITBContentArrow {
+		.sapMITBContentArrow {
 			height: 1rem;
 		}
 	}
 
 	.sapMITBHorizontal {
-		&.sapMITBFilter > .sapMITBFilterWrapper > .sapMITBHorizontalWrapper > .sapMITBText {
+
+		&.sapMITBFilter .sapMITBHorizontalWrapper .sapMITBText {
 			padding-top: 4px;
 		}
-		&.sapMITBAll > .sapMITBFilterWrapper > .sapMITBTab {
+
+		&.sapMITBAll .sapMITBTab {
 			margin-bottom: 0.125rem;
-			margin-top: 0rem;
+			margin-top: 0;
 		}
+
 		+ .sapMITBSepLine {
 			margin-top: 0.125rem;
 		}
@@ -221,6 +239,7 @@
 
 .sapMITBHorizontal.sapMITBFilter {
 	margin-top: 0.125rem;
+
 	+ .sapMITBSep {
 		margin-top: 0.125rem;
 	}
@@ -245,7 +264,9 @@
 }
 
 /* Tab Filter Item */
+
 .sapMITBTextOnly {
+
 	.sapMITBFilterDefault:hover .sapMITBText {
 		color: @_sap_m_IconTabBar_TextHoverColor;
 	}
@@ -260,7 +281,8 @@
 }
 
 .sapMITBSelected {
-	> .sapMITBFilterWrapper > .sapMITBContentArrow::after {
+
+	.sapMITBContentArrow::after {
 		background: @_sap_m_IconTabBar_SelectedTextColor;
 	}
 
@@ -276,16 +298,24 @@
 
 /* Phone device */
 
-html.sap-phone.sap-ios .sapMITH.sapUiSizeCompact {
-	.sapMITBHead.sapMITBInLine.sapMITBTextOnly .sapMITBText + .sapMITBContentArrow {
-		height: 0.875rem;
+.sapUiMedia-Std-Phone .sapMITH.sapUiSizeCompact {
+
+	&.sapMITBInLine.sapMITBTextOnly {
+
+		.sapMITBHead .sapMITBContentArrow {
+			height: 0.875rem;
+		}
 	}
-	.sapMITBHead.sapMITBTextOnly .sapMITBText + .sapMITBContentArrow {
-		height: 0.75rem;
+
+	&.sapMITBTextOnly {
+
+		.sapMITBHead .sapMITBContentArrow {
+			height: 0.75rem;
+		}
 	}
 }
 
-.sapMITH .sapMITBHead.sapMITBNoText {
+.sapMITH.sapMITBNoText .sapMITBHead {
 	> .sapMITBSepLine {
 		margin: 0.25rem 0.25rem 0 0;
 	}
@@ -293,9 +323,9 @@ html.sap-phone.sap-ios .sapMITH.sapUiSizeCompact {
 
 .sapMITH.sapUiSizeCompact {
 
-	.sapMITBHead.sapMITBNoText {
+	&.sapMITBNoText .sapMITBHead {
 		> .sapMITBSepLine {
-			margin: 0rem 0.125rem 0 0.125rem;
+			margin: 0 0.125rem 0 0.125rem;
 		}
 	}
 
@@ -309,16 +339,11 @@ html.sap-phone.sap-ios .sapMITH.sapUiSizeCompact {
 .sapMITBAll {
 
 	.sapMITBTab {
-		display: inline-block;
-		height: 2.875rem;
-		line-height: 2.875rem;
-		width: auto;
 		margin-top: 0.4rem;
-		margin-bottom: 0.3rem;
 	}
 
 	&.sapMITBHorizontal {
-		> .sapMITBFilterWrapper > .sapMITBTab {
+		.sapMITBTab {
 			margin-top: 0;
 		}
 		+ .sapMITBSepLine {
@@ -339,12 +364,13 @@ html.sap-phone.sap-ios .sapMITH.sapUiSizeCompact {
 	}
 }
 
+/* Custom focus outline */
 html.sap-desktop {
 
-	/* Custom focus outline */
 	.sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBFilterIcon,
 	.sapMITBTextOnly .sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBText,
-	.sapMITBItem:not(.sapUiDnDDragging):focus.sapMITBAll {
+	.sapMITBItem:not(.sapUiDnDDragging):focus.sapMITBAll,
+	.sapMITHOverflow .sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBText {
 		&::after {
 			content: "";
 			position: absolute;
@@ -359,12 +385,13 @@ html.sap-desktop {
 
 	.sapMITBItem:not(.sapUiDnDDragging):focus.sapMITBAll {
 		&::after {
-			bottom: 1.75rem;
 			top: 0.75rem;
+			bottom: 1.75rem;
 		}
 	}
 
 	.sapMITH.sapUiSizeCompact {
+
 		.sapMITBItem:focus.sapMITBAll {
 			&::after {
 				bottom: 1.3rem;
@@ -373,16 +400,17 @@ html.sap-desktop {
 		}
 	}
 
-}
+	&[data-sap-ui-browser^="ie"],
+	&[data-sap-ui-browser^="ed"] {
 
-html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
-html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
-html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
-html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
-html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus.sapMITBAll,
-html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll {
-	&::after {
-		border: 1px dashed @sapUiContentFocusColor;
+		.sapMITBItem:focus .sapMITBFilterIcon,
+		.sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
+		.sapMITHOverflow .sapMITBItem:focus .sapMITBText,
+		.sapMITBItem:focus.sapMITBAll {
+			&::after {
+				border: 1px dashed @sapUiContentFocusColor;
+			}
+		}
 	}
 }
 
@@ -392,15 +420,9 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll {
 	position: relative;
 }
 
-.sapMITBFilterPositive .sapMITBText:before,
-.sapMITBFilterNegative .sapMITBText:before,
-.sapMITBFilterCritical .sapMITBText:before,
-.sapMITBVertical.sapMITBFilterPositive > .sapMITBFilterWrapper > .sapMITBTab:after,
-.sapMITBVertical.sapMITBFilterNegative > .sapMITBFilterWrapper > .sapMITBTab:after,
-.sapMITBVertical.sapMITBFilterCritical > .sapMITBFilterWrapper > .sapMITBTab:after,
-.sapMITBSelectItem.sapMITBFilterPositive .sapMITBText:before,
-.sapMITBSelectItem.sapMITBFilterNegative .sapMITBText:before,
-.sapMITBSelectItem.sapMITBFilterCritical .sapMITBText:before {
+.sapMITBFilter .sapMITBText:before,
+.sapMITBFilter.sapMITBVertical .sapMITBTab:after,
+.sapMITBSelectItem .sapMITBText:before {
 	font-family: 'SAP-icons';
 	font-size: 0.75rem;
 	margin-right: 0.5rem;
@@ -410,7 +432,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll {
 
 .sapMITBHorizontal.sapMITBFilterPositive .sapMITBText:before,
 .sapMITBTextOnly .sapMITBFilterPositive .sapMITBText:before,
-.sapMITBVertical.sapMITBFilterPositive > .sapMITBFilterWrapper > .sapMITBTab:after,
+.sapMITBVertical.sapMITBFilterPositive .sapMITBTab:after,
 .sapMITBSelectItem.sapMITBFilterPositive .sapMITBText:before {
 	color: @sapUiPositiveElement;
 	content: "\e1ab";
@@ -418,7 +440,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll {
 
 .sapMITBHorizontal.sapMITBFilterNegative .sapMITBText:before,
 .sapMITBTextOnly .sapMITBFilterNegative .sapMITBText:before,
-.sapMITBVertical.sapMITBFilterNegative > .sapMITBFilterWrapper > .sapMITBTab:after,
+.sapMITBVertical.sapMITBFilterNegative .sapMITBTab:after,
 .sapMITBSelectItem.sapMITBFilterNegative .sapMITBText:before {
 	color: @sapUiNegativeElement;
 	content: "\e1ac";
@@ -426,15 +448,13 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll {
 
 .sapMITBHorizontal.sapMITBFilterCritical .sapMITBText:before,
 .sapMITBTextOnly .sapMITBFilterCritical .sapMITBText:before,
-.sapMITBVertical.sapMITBFilterCritical > .sapMITBFilterWrapper > .sapMITBTab:after,
+.sapMITBVertical.sapMITBFilterCritical .sapMITBTab:after,
 .sapMITBSelectItem.sapMITBFilterCritical .sapMITBText:before {
 	color: @sapUiCriticalElement;
 	content: "\e1ae";
 }
 
-.sapMITBVertical.sapMITBFilterPositive > .sapMITBFilterWrapper > .sapMITBTab:after,
-.sapMITBVertical.sapMITBFilterNegative > .sapMITBFilterWrapper > .sapMITBTab:after,
-.sapMITBVertical.sapMITBFilterCritical > .sapMITBFilterWrapper > .sapMITBTab:after {
+.sapMITBVertical.sapMITBFilter .sapMITBTab:after {
 	bottom: 0;
 	margin-right: -1rem;
 	position: absolute;
@@ -444,39 +464,29 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll {
 	display: none;
 }
 
-.sapMITBHorizontal.sapMITBFilterPositive .sapMITBText:before,
-.sapMITBHorizontal.sapMITBFilterNegative .sapMITBText:before,
-.sapMITBHorizontal.sapMITBFilterCritical .sapMITBText:before {
+.sapMITBHorizontal.sapMITBFilter .sapMITBText:before {
 	margin-right: 0.25rem;
 }
 
 // Semantic icons in Select List
-.sapMITBSelectItem {
-	.sapMITBText::before {
-		position: absolute;
-		margin-left: -3.6rem;
-	}
+.sapMITBSelectItem .sapMITBText::before {
+	position: absolute;
+	margin-left: -3.6rem;
 }
 
-.sapMITBSelectListTextOnly .sapMITBSelectItem {
-	.sapMITBText::before {
-		margin-left: -1.2rem;
-		margin-top: 0.0625rem;
-	}
+.sapMITBSelectListTextOnly .sapMITBSelectItem .sapMITBText::before {
+	margin-left: -1.2rem;
+	margin-top: 0.0625rem;
 }
 
 .sapUiSizeCompact {
-	.sapMITBSelectItem {
-		.sapMITBText::before {
-			position: absolute;
-			margin-left: -2.6rem;
-		}
+	.sapMITBSelectItem .sapMITBText::before {
+		position: absolute;
+		margin-left: -2.6rem;
 	}
 
-	.sapMITBSelectListTextOnly .sapMITBSelectItem {
-		.sapMITBText::before {
-			margin-left: -1rem;
-			margin-top: 0;
-		}
+	.sapMITBSelectListTextOnly .sapMITBSelectItem .sapMITBText::before {
+		margin-left: -1rem;
+		margin-top: 0;
 	}
 }

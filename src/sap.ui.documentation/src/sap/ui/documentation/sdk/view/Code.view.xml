@@ -43,7 +43,6 @@
 				<l:fixContent>
 					<IconTabHeader
 							id="tabHeader"
-							showOverflowSelectList="true"
 							mode="Inline"
 							items="{/files}"
 							select="handleTabSelectEvent"
