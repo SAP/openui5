@@ -593,7 +593,7 @@ sap.ui.define([
 				this.oBrowse.addAriaDescribedBy(this.getId() + "-AccDescr");
 			}
 		}
-		this._submitAfterRedering = false;
+		this._submitAfterRendering = false;
 
 	};
 
@@ -899,9 +899,9 @@ sap.ui.define([
 			this.oBrowse.$().attr("aria-invalid", "true");
 		}
 
-		if (this._submitAfterRedering) {
+		if (this._submitAfterRendering) {
 			this._submitAndResetValue();
-			this._submitAfterRedering = false;
+			this._submitAfterRendering = false;
 		}
 
 	};
@@ -1322,7 +1322,7 @@ sap.ui.define([
 				// applied in the DOM and the submit is performed after there is new rendering.
 				sActionAttr = uploadForm.getAttribute("action");
 				if (sActionAttr !== this.getUploadUrl()) {
-					this._submitAfterRedering = true;
+					this._submitAfterRendering = true;
 				} else {
 					this._submitAndResetValue();
 				}

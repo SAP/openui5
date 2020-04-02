@@ -356,14 +356,14 @@ sap.ui.define([
 		oFileUploader.upload();
 
 		// assert
-		assert.strictEqual(oFileUploader._submitAfterRedering, false, "The submit is performed without a dependency of the rendering.");
+		assert.strictEqual(oFileUploader._submitAfterRendering, false, "The submit is performed without a dependency of the rendering.");
 
 		// act
 		oFileUploader.setUploadUrl("test");
 		oFileUploader.upload();
 
 		// assert
-		assert.strictEqual(oFileUploader._submitAfterRedering, true, "The submit is performed after there is rendering caused by setter of uploadUrl.");
+		assert.strictEqual(oFileUploader._submitAfterRendering, true, "The submit is performed after there is rendering caused by setter of uploadUrl.");
 
 		// cleanup
 		oFileUploader.destroy();
