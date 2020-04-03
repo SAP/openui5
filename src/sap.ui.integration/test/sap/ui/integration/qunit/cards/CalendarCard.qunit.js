@@ -30,38 +30,38 @@ sap.ui.define([
 				"type": "Calendar",
 				"data": {
 					"json": {
-						"date": 1567317600000,
+						"date": "2019-09-01T09:00",
 						"maxItems": 7,
 						"maxLegendItems": 3,
 						"noItemsText": "You have nothing planned for that day",
 						"appointment": [
 							{
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
 								"type": "Type05"
 							},
 							{
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
 								"type": "Type06"
 							},
 							{
-								"start": 1575010800000,
-								"end": 1575014400000,
+								"start": "2019-11-29T09:00",
+								"end": "2019-11-29T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
 								"type": "Type05"
 							},
 							{
-								"start": 1575050400000,
-								"end": 1575054000000,
+								"start": "2019-11-29T20:00",
+								"end": "2019-11-29T21:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -70,32 +70,32 @@ sap.ui.define([
 						],
 						"blocker": [
 							{
-								"start": 1567314000000,
-								"end": 1567321200000,
+								"start": "2019-09-01T08:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
 								"type": "Type05"
 							},
 							{
-								"start": 1567314000000,
-								"end": 1567321200000,
+								"start": "2019-09-01T08:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
 								"type": "Type06"
 							},
 							{
-								"start": 1567314000000,
-								"end": 1567321200000,
+								"start": "2019-09-01T08:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
 								"type": "Type05"
 							},
 							{
-								"start": 1567314000000,
-								"end": 1567321200000,
+								"start": "2019-09-01T08:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -104,13 +104,13 @@ sap.ui.define([
 						],
 						"specialDate": [
 							{
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"type": "Type13"
 							},
 							{
-								"start": 1567404000000,
-								"end": 1567407600000,
+								"start": "2019-09-02T09:00",
+								"end": "2019-09-02T10:00",
 								"type": "Type20"
 							}
 						],
@@ -234,15 +234,15 @@ sap.ui.define([
 				"type": "Calendar",
 				"data": {
 					"json": {
-						"date": 1567317600000,
+						"date": "2019-09-01T09:00",
 						"maxItems": 7,
 						"maxLegendItems": 3,
 						"noItemsText": "You have nothing planned for that day",
 						"item": [
 							{
 								"visualization": "appointment",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -250,8 +250,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "blocker",
-								"start": 1567314000000,
-								"end": 1567321200000,
+								"start": "2019-09-01T08:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -260,8 +260,8 @@ sap.ui.define([
 						],
 						"specialDate": [
 							{
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"type": "Type13"
 							}
 						],
@@ -351,13 +351,13 @@ sap.ui.define([
 				"type": "Calendar",
 				"data": {
 					"json": {
-						"date": 1567317600000,
+						"date": "2019-09-01T09:00",
 						"maxItems": 3,
 						"item": [
 							{
 								"visualization": "appointment",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -365,8 +365,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "appointment",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -374,8 +374,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "appointment",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -383,8 +383,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "appointment",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -392,8 +392,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "appointment",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -456,13 +456,13 @@ sap.ui.define([
 				"type": "Calendar",
 				"data": {
 					"json": {
-						"date": 1567317600000,
+						"date": "2019-09-01T09:00",
 						"maxItems": 3,
 						"item": [
 							{
 								"visualization": "appointment",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -470,8 +470,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "appointment",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -479,8 +479,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "appointment",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -543,13 +543,13 @@ sap.ui.define([
 				"type": "Calendar",
 				"data": {
 					"json": {
-						"date": 1567317600000,
+						"date": "2019-09-01T09:00",
 						"maxItems": 3,
 						"item": [
 							{
 								"visualization": "appointment",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -557,8 +557,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "appointment",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -621,13 +621,13 @@ sap.ui.define([
 				"type": "Calendar",
 				"data": {
 					"json": {
-						"date": 1567317600000,
+						"date": "2019-09-01T09:00",
 						"maxItems": 3,
 						"item": [
 							{
 								"visualization": "blocker",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -635,8 +635,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "blocker",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -644,8 +644,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "blocker",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -653,8 +653,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "blocker",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -662,8 +662,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "blocker",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -726,13 +726,13 @@ sap.ui.define([
 				"type": "Calendar",
 				"data": {
 					"json": {
-						"date": 1567317600000,
+						"date": "2019-09-01T09:00",
 						"maxItems": 3,
 						"item": [
 							{
 								"visualization": "blocker",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -740,8 +740,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "blocker",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -749,8 +749,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "blocker",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -813,13 +813,13 @@ sap.ui.define([
 				"type": "Calendar",
 				"data": {
 					"json": {
-						"date": 1567317600000,
+						"date": "2019-09-01T09:00",
 						"maxItems": 3,
 						"item": [
 							{
 								"visualization": "blocker",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -827,8 +827,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "blocker",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -891,13 +891,13 @@ sap.ui.define([
 				"type": "Calendar",
 				"data": {
 					"json": {
-						"date": 1567317600000,
+						"date": "2019-09-01T09:00",
 						"maxItems": 3,
 						"item": [
 							{
 								"visualization": "appointment",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -905,8 +905,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "appointment",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -914,8 +914,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "blocker",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -923,8 +923,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "blocker",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -932,8 +932,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "blocker",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -996,13 +996,13 @@ sap.ui.define([
 				"type": "Calendar",
 				"data": {
 					"json": {
-						"date": 1567317600000,
+						"date": "2019-09-01T09:00",
 						"maxItems": 3,
 						"item": [
 							{
 								"visualization": "appointment",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -1010,8 +1010,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "blocker",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -1019,8 +1019,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "blocker",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -1083,13 +1083,13 @@ sap.ui.define([
 				"type": "Calendar",
 				"data": {
 					"json": {
-						"date": 1567317600000,
+						"date": "2019-09-01T09:00",
 						"maxItems": 3,
 						"item": [
 							{
 								"visualization": "appointment",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -1097,8 +1097,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "blocker",
-								"start": 1567317600000,
-								"end": 1567321200000,
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
 								"title": "Appointment from JSON",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -1161,7 +1161,7 @@ sap.ui.define([
 				"type": "Calendar",
 				"data": {
 					"json": {
-						"date": 1567317600000,
+						"date": "2019-09-01T09:00",
 						"maxItems": 3
 					}
 				},
@@ -1210,8 +1210,8 @@ sap.ui.define([
 						"item": [
 							{
 								"visualization": "appointment",
-								"start": "2019-12-15/08:30",
-								"end": "2019-12-16/08:30",
+								"start": "2019-12-15T08:30",
+								"end": "2019-12-16T08:30",
 								"title": "from yesterday",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -1219,8 +1219,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "blocker",
-								"start": "2019-12-16/08:30",
-								"end": "2019-12-17/08:30",
+								"start": "2019-12-16T08:30",
+								"end": "2019-12-17T08:30",
 								"title": "until tomorrow",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -1228,8 +1228,8 @@ sap.ui.define([
 							},
 							{
 								"visualization": "blocker",
-								"start": "2019-12-15/08:30",
-								"end": "2019-12-17/08:30",
+								"start": "2019-12-15T08:30",
+								"end": "2019-12-17T08:30",
 								"title": "all day",
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
@@ -1331,7 +1331,7 @@ sap.ui.define([
 
 				// Assert
 				// Start date
-				assert.equal(oCalendar.getStartDate().getTime(), oManifestData.date, "Should have start date.");
+				assert.equal(oCalendar.getStartDate().getTime(), 1567328400000, "Should have start date.");
 
 				// maxItems
 				assert.equal(oCalendar.getRows()[0].getVisibleAppointmentsCount(), oManifestData.maxItems, "Should have visibleAppointmentsCount.");
@@ -1344,8 +1344,8 @@ sap.ui.define([
 
 				// Appointment
 				assert.equal(aAppointments.length, 1, "Should have 1 appointment.");
-				assert.equal(aAppointments[0].getStartDate().getTime(), oManifestData.item[0].start, "Should have appointment startDate");
-				assert.equal(aAppointments[0].getEndDate().getTime(), oManifestData.item[0].end, "Should have appointment endDate");
+				assert.equal(aAppointments[0].getStartDate().getTime(), 1567328400000, "Should have appointment startDate");
+				assert.equal(aAppointments[0].getEndDate().getTime(), 1567332000000, "Should have appointment endDate");
 				assert.equal(aAppointments[0].getTitle(), oManifestData.item[0].title, "Should have appointment title");
 				assert.equal(aAppointments[0].getText(), oManifestData.item[0].text, "Should have appointment text");
 				assert.equal(aAppointments[0].getType(), oManifestData.item[0].type, "Should have appointment type");
@@ -1353,8 +1353,8 @@ sap.ui.define([
 
 				// Blocker
 				assert.equal(aBlockers.length, 1, "Should have 1 blocker.");
-				assert.equal(aBlockers[0].getStartDate().getTime(), oManifestData.item[1].start, "Should have blocker startDate");
-				assert.equal(aBlockers[0].getEndDate().getTime(), oManifestData.item[1].end, "Should have blocker endDate");
+				assert.equal(aBlockers[0].getStartDate().getTime(), 1567324800000, "Should have blocker startDate");
+				assert.equal(aBlockers[0].getEndDate().getTime(), 1567332000000, "Should have blocker endDate");
 				assert.equal(aBlockers[0].getTitle(), oManifestData.item[1].title, "Should have blocker title");
 				assert.equal(aBlockers[0].getText(), oManifestData.item[1].text, "Should have blocker text");
 				assert.equal(aBlockers[0].getType(), oManifestData.item[1].type, "Should have blocker type");
@@ -1365,8 +1365,8 @@ sap.ui.define([
 
 				// Special date
 				assert.equal(aSpecialDates.length, 1, "Should have 1 special date.");
-				assert.equal(aSpecialDates[0].getStartDate().getTime(), oManifestData.specialDate[0].start, "Should have special date startDate");
-				assert.equal(aSpecialDates[0].getEndDate().getTime(), oManifestData.specialDate[0].end, "Should have special date endDate");
+				assert.equal(aSpecialDates[0].getStartDate().getTime(), 1567328400000, "Should have special date startDate");
+				assert.equal(aSpecialDates[0].getEndDate().getTime(), 1567332000000, "Should have special date endDate");
 				assert.equal(aSpecialDates[0].getType(), oManifestData.specialDate[0].type, "Should have special date type");
 
 				// Calendar legend item

@@ -12,13 +12,14 @@ sap.ui.define([
 		"sap/f/PlanningCalendarInCardLegend",
 		"sap/m/library",
 		"sap/m/PlanningCalendar",
+		'sap/ui/core/format/DateFormat',
 		"sap/ui/model/Filter",
 		"sap/ui/model/FilterOperator",
 		"sap/ui/unified/CalendarAppointment",
 		"sap/ui/unified/DateTypeRange",
 		"sap/ui/unified/CalendarLegendItem"
 	],
-	function (library, BaseContent, IconFormatter, BindingHelper, BindingResolver, PlanningCalendarInCard, PlanningCalendarInCardRow, PlanningCalendarInCardLegend, mLibrary, PlanningCalendar, Filter, FilterOperator, CalendarAppointment, DateTypeRange, CalendarLegendItem) {
+	function (library, BaseContent, IconFormatter, BindingHelper, BindingResolver, PlanningCalendarInCard, PlanningCalendarInCardRow, PlanningCalendarInCardLegend, mLibrary, PlanningCalendar, DateFormat, Filter, FilterOperator, CalendarAppointment, DateTypeRange, CalendarLegendItem) {
 		"use strict";
 
 		var AreaType = library.AreaType,
@@ -229,11 +230,15 @@ sap.ui.define([
 		 * Formats a given date to a JS date object.
 		 *
 		 * @public
-		 * @param {int} iTime the value to be formatted.
+		 * @param {int} sTime the value to be formatted.
 		 * @returns {object} a JS date object.
 		 */
-		CalendarContent.prototype.dateFormatter = function (iTime) {
-			return new Date(iTime);
+		CalendarContent.prototype.formatDate = function (sTime) {
+			var oDate = DateFormat.getDateTimeInstance({pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"}).parse(sTime);
+			if (!oDate) {
+				oDate = DateFormat.getInstance({pattern: "yyyy-MM-dd"}).parse(sTime);
+			}
+			return oDate;
 		};
 
 		/**
@@ -257,10 +262,10 @@ sap.ui.define([
 				},
 				oBlockerBindingInfo;
 			if (mItem.template.startDate) {
-				mAppointmentSettings.startDate = BindingHelper.formattedProperty(mItem.template.startDate, this.dateFormatter);
+				mAppointmentSettings.startDate = BindingHelper.formattedProperty(mItem.template.startDate, this.formatDate);
 			}
 			if (mItem.template.endDate) {
-				mAppointmentSettings.endDate = BindingHelper.formattedProperty(mItem.template.endDate, this.dateFormatter);
+				mAppointmentSettings.endDate = BindingHelper.formattedProperty(mItem.template.endDate, this.formatDate);
 			}
 			if (mItem.template.icon && mItem.template.icon.src) {
 				mAppointmentSettings.icon = BindingHelper.formattedProperty(mItem.template.icon.src, function (sValue) {
@@ -280,10 +285,10 @@ sap.ui.define([
 			this._bindAggregation("appointments", this._oCalendar.getRows()[0], oAppointmentBindingInfo);
 
 			if (mItem.template.startDate) {
-				mBlockerSettings.startDate = BindingHelper.formattedProperty(mItem.template.startDate, this.dateFormatter);
+				mBlockerSettings.startDate = BindingHelper.formattedProperty(mItem.template.startDate, this.formatDate);
 			}
 			if (mItem.template.endDate) {
-				mBlockerSettings.endDate = BindingHelper.formattedProperty(mItem.template.endDate, this.dateFormatter);
+				mBlockerSettings.endDate = BindingHelper.formattedProperty(mItem.template.endDate, this.formatDate);
 			}
 			if (mItem.template.icon && mItem.template.icon.src) {
 				mBlockerSettings.icon = BindingHelper.formattedProperty(mItem.template.icon.src, function (sValue) {
@@ -314,10 +319,10 @@ sap.ui.define([
 			var mSettings = mSpecialDate.template,
 				oBindingInfo;
 			if (mSettings.startDate) {
-				mSettings.startDate = BindingHelper.formattedProperty(mSettings.startDate, this.dateFormatter);
+				mSettings.startDate = BindingHelper.formattedProperty(mSettings.startDate, this.formatDate);
 			}
 			if (mSettings.endDate) {
-				mSettings.endDate = BindingHelper.formattedProperty(mSettings.endDate, this.dateFormatter);
+				mSettings.endDate = BindingHelper.formattedProperty(mSettings.endDate, this.formatDate);
 			}
 			this._oSpecialDateTemplate = new DateTypeRange(mSettings);
 			oBindingInfo = {
@@ -376,13 +381,13 @@ sap.ui.define([
 		 * Binds/Sets value to the inner startDate template based on the configuration object date template which is already parsed.
 		 *
 		 * @private
-		 * @param {Object} mTime The date template of the configuration object.
+		 * @param {Object} sTime The date template of the configuration object.
 		 */
-		CalendarContent.prototype._addDate = function (mTime) {
-			if (BindingResolver.isBindingInfo(mTime)) {
-				mTime && this._oCalendar.bindProperty("startDate", BindingHelper.formattedProperty(mTime, this.dateFormatter));
+		CalendarContent.prototype._addDate = function (sTime) {
+			if (BindingResolver.isBindingInfo(sTime)) {
+				sTime && this._oCalendar.bindProperty("startDate", BindingHelper.formattedProperty(sTime, this.formatDate));
 			} else {
-				this._oCalendar.setStartDate(this.dateFormatter(mTime));
+				this._oCalendar.setStartDate(this.formatDate(sTime));
 			}
 		};
 
