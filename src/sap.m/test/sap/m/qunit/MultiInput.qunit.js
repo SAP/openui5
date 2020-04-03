@@ -1546,6 +1546,7 @@ sap.ui.define([
 	QUnit.test("Change event is properly fired on different interactions", function (assert) {
 		//Setup
 		var oChangeFireSpy = this.spy(this.multiInput1, "fireChange"),
+			oEnterSpy = this.spy(this.multiInput1, "onsapenter"),
 			oValidatorSpy = this.spy(function (oParams) {
 				return new Token({
 					key: oParams.text,
@@ -1558,14 +1559,16 @@ sap.ui.define([
 		//Act
 		//Emulate use input
 		// Modify DOM's value as we don't want to go trough MultiInput's API.
+		this.multiInput1.focus();
 		this.multiInput1.$("inner").val("Test token");
-		this.multiInput1.onsapenter({});
+		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ENTER);
 		sap.ui.getCore().applyChanges();
 
 		//Assert
 		assert.ok(oChangeFireSpy.calledOnce, "Change is fired");
 		assert.ok(oValidatorSpy.calledOnce, "Validator is fired");
 		assert.ok(oChangeFireSpy.calledBefore(oValidatorSpy), "fireChange is fired before Validator");
+		assert.ok(oEnterSpy.args[0][0].isMarked(), "The change event should be marked, since a token is validated");
 
 		//Act
 		//Emulate use input
@@ -1579,6 +1582,23 @@ sap.ui.define([
 		assert.ok(oChangeFireSpy.calledTwice, "Change is fired");
 		assert.ok(oValidatorSpy.calledTwice, "Validator is fired");
 		assert.ok(oChangeFireSpy.calledBefore(oValidatorSpy), "fireChange is fired before Validator");
+	});
+
+
+	QUnit.test("Enter event, should not be marked, when there are no modifications", function (assert) {
+		// Setup
+		var oEnterSpy = this.spy(this.multiInput1, "onsapenter");
+
+		// Act
+		this.multiInput1.focus();
+		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ENTER);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(oEnterSpy.args[0][0].isMarked());
+
+		// Cleanup
+		oEnterSpy.restore();
 	});
 
 	QUnit.test("Selecting an item should not leave a text in the input", function (assert) {

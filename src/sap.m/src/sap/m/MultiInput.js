@@ -997,6 +997,10 @@ function(
 			this._validateCurrentText();
 		}
 
+		if (oEvent && oEvent.setMarked && this._bTokenIsValidated) {
+			oEvent.setMarked();
+		}
+
 		// Open popover with items if in readonly mode and has Nmore indicator
 		if (!this.getEditable() && this._tokenizer._hasMoreIndicator() && oEvent.target === this.getFocusDomRef()) {
 			this._handleIndicatorPress();

@@ -5850,9 +5850,12 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(fnEnterSpy.callCount, 1, "onsapenter() method was called exactly once");
+		assert.notOk(fnEnterSpy.args[0][0].isMarked(), "The event should not be marked, since there are no modifications");
 		assert.strictEqual(fnCloseSpy.callCount, 1, "close() method was called exactly once");
 
 		// cleanup
+		fnEnterSpy.restore();
+		fnCloseSpy.restore();
 		oComboBox.destroy();
 	});
 
@@ -5860,24 +5863,24 @@ sap.ui.define([
 
 		// system under test
 		var oComboBox = new ComboBox({
-			items: [
-				new Item({
-					text: "Algeria"
-				}),
+				items: [
+					new Item({
+						text: "Algeria"
+					}),
 
-				new Item({
-					text: "Argentina"
-				}),
+					new Item({
+						text: "Argentina"
+					}),
 
-				new Item({
-					text: "Australia"
-				}),
+					new Item({
+						text: "Australia"
+					}),
 
-				new Item({
-					text: "Germany"
-				})
-			]
-		});
+					new Item({
+						text: "Germany"
+					})
+				]
+			});
 
 		// arrange
 		oComboBox.placeAt("content");
