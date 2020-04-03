@@ -195,6 +195,22 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Resets the size (width or height) of each of the content areas.
+	 *
+	 * @public
+	 */
+	Splitter.prototype.resetContentAreasSizes = function () {
+		var aContentAreas = this._getContentAreas();
+		for (var i = 0; i < aContentAreas.length; i++) {
+			var oLD = aContentAreas[i].getLayoutData();
+			var bHasMinSize = oLD.getMinSize() != 0;
+			var sSize = bHasMinSize ? oLD.getMinSize() + "px" : "auto";
+			oLD.setSize(sSize);
+			this.$("content-" + i).css(this._sizeType, sSize);
+		}
+	};
+
 	//////////////////////////////////////// "Protected" Methods ///////////////////////////////////////
 
 	/**
@@ -792,7 +808,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Splitter.prototype._recalculateSizes = function() {
-		// TODO: (?) Use maxSize value from layoutData
 		var i, sSize, oLayoutData, iColSize, idx;
 
 		// Read all content sizes from the layout data
