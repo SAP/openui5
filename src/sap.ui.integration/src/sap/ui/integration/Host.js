@@ -79,7 +79,7 @@ sap.ui.define([
 			vReturn = fnResolveDestination(sDestinationName);
 
 			if (!vReturn) {
-				return Promise.reject("Destination '" + sDestinationName + "' not found.");
+				return Promise.reject("Destination '" + sDestinationName + "' could not be resolved.");
 			}
 
 			if (vReturn instanceof Promise) {
