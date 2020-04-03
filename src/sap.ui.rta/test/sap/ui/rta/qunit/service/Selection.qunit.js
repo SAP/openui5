@@ -68,6 +68,8 @@ function (
 				rootControl: this.oComponentContainer
 			});
 
+			sandbox.stub(this.oRta, "_determineReload").resolves(false);
+
 			return this.oRta.start().then(function () {
 				this.oRta._oDesignTime.getElementOverlays().forEach(function (oElementOverlay) {
 					oElementOverlay.setSelectable(true);

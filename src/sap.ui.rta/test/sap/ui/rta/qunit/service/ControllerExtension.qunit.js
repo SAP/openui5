@@ -86,6 +86,7 @@ function(
 				isResetEnabled: true,
 				isPublishEnabled: true
 			});
+			sandbox.stub(this.oRta, "_determineReload").resolves(false);
 			return this.oRta.start().then(function () {
 				return this.oRta.getService("controllerExtension").then(function(oService) {
 					this.oControllerExtension = oService;
@@ -180,6 +181,7 @@ function(
 				showToolbars: false,
 				rootControl: this.oComponentContainer
 			});
+			sandbox.stub(this.oRta, "_determineReload").resolves(false);
 			return this.oRta.start().then(function () {
 				return this.oRta.getService("controllerExtension").then(function(oService) {
 					this.oControllerExtension = oService;

@@ -389,6 +389,7 @@ function(
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 
 			this.oRta.setFlexSettings({layer: Layer.CUSTOMER});
+			sandbox.stub(RtaUtils, "hasUrlParameterWithValue").resolves(true);
 		},
 		afterEach : function() {
 			sandbox.restore();
