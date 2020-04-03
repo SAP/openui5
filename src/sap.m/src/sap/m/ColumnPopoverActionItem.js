@@ -58,6 +58,9 @@ sap.ui.define(['./ColumnPopoverItem', 'sap/m/Button'], function(ColumnPopoverIte
 						oCHPopover._oShownCustomContent = null;
 						oCHPopover._cleanSelection(this);
 					}
+					var oPopover = oCHPopover.getAggregation("_popover");
+					// close the popover first to prevent focus lost
+					oPopover.close();
 					this.firePress();
 				}, this
 			]
