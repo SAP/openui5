@@ -21,8 +21,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("formatValue", function(assert) {
-		var oTime = time(49646000),
-			oDateTime = new Date(Date.UTC(2015, 4, 30, 13, 47, 26));
+		var oDateTime = new Date(Date.UTC(2015, 4, 30, 13, 47, 26)),
+			oDateTimeMs = new Date(Date.UTC(2015, 4, 30, 13, 47, 26, 253)),
+			oTime = time(49646000);
 
 		[
 			// t: the tested type
@@ -36,6 +37,7 @@ sap.ui.define([
 			{t: "Edm.DateTime", v: "May 30, 2015 1:47:26 PM UTC", r: "datetime'2015-05-30T13:47:26'", d: "datetime as string"},
 			{t: "Edm.DateTime", v: "2015-05-30T13:47:26.253Z", r: "datetime'2015-05-30T13:47:26.253'", d: "datetime as string including milliseconds"},
 			{t: "Edm.DateTime", v: oDateTime, r: "datetime'2015-05-30T13:47:26'", d: "datetime as object"},
+			{t: "Edm.DateTime", v: oDateTimeMs, r: "datetime'2015-05-30T13:47:26.253'", d: "datetime as object including milliseconds"},
 			{t: "Edm.DateTimeOffset", v: "May 30, 2015 1:47:26 PM UTC", r: "datetimeoffset'2015-05-30T13:47:26Z'", d: "datetime as string"},
 			{t: "Edm.DateTimeOffset", v: oDateTime, r: "datetimeoffset'2015-05-30T13:47:26Z'", d: "datetime as object"},
 			{t: "Edm.Guid", v: "936DA01F-9ABD-4D9D-80C7-02AF85C822A8", r: "guid'936DA01F-9ABD-4D9D-80C7-02AF85C822A8'", d: ""},
@@ -56,10 +58,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("formatValue with different CalendarType", function(assert) {
-		var oTime = time(49646000),
-			oDateTime = new Date(Date.UTC(2015, 4, 30, 13, 47, 26));
+		var oDateTime = new Date(Date.UTC(2015, 4, 30, 13, 47, 26)),
+			sOldCalendarType = sap.ui.getCore().getConfiguration().getCalendarType(),
+			oTime = time(49646000);
 
-		ODataUtils.oDateTimeFormat = undefined;
 		sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
 		[
 			// t: the tested type
@@ -76,38 +78,52 @@ sap.ui.define([
 		].forEach(function (oFixture) {
 			assert.equal(ODataUtils.formatValue(oFixture.v, oFixture.t), oFixture.r, oFixture.t + " format " + oFixture.d);
 		});
-		sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Gregorian);
+		sap.ui.getCore().getConfiguration().setCalendarType(sOldCalendarType);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("parseValue", function(assert) {
-		// v: value to format; r: expected result; d: test description
+		var oDateTime = new Date(Date.UTC(2015, 4, 30, 13, 47, 26)),
+			oDateTimeMs = new Date(Date.UTC(2015, 4, 30, 13, 47, 26, 253)),
+			oTime = time(49646000);
+
+		// v: value to format; r: expected result; t: tested type; d: test description
 		[
 			// simple types
-			{v: "'test'", r: "test", d: "Edm.String - simple text"},
-			{v: "'te''st'", r: "te'st", d: "Edm.String - text with single quote"},
+			{v: "'test'", r: "test", t: "Edm.String", d: "- simple text"},
+			{v: "'te''st'", r: "te'st", t: "Edm.String", d: "- text with single quote"},
 			{
 				v: "guid'936DA01F-9ABD-4D9D-80C7-02AF85C822A8'",
 				r: "936DA01F-9ABD-4D9D-80C7-02AF85C822A8",
-				d: "Edm.Guid"
+				t: "Edm.Guid"
 			},
 			{
 				v: "binary'1qkYNhtk/P5uvZ0N2zAUsiScDJA='",
 				r: "1qkYNhtk/P5uvZ0N2zAUsiScDJA=",
-				d: "Edm.Binary"
+				t: "Edm.Binary"
 			},
-			{v: "true", r: true, d: "Edm.Boolean - 'true'"},
-			{v: "false", r: false, d: "Edm.Boolean - 'false'"},
-			{v: "null", r: null, d: "'null' value"},
+			{v: "true", r: true, t: "Edm.Boolean", d: "- 'true'"},
+			{v: "false", r: false, t: "Edm.Boolean", d: "- 'false'"},
+			{v: "null", r: null, t: "'null'", d: "value"},
 			// numeric types
-			{v: "3.46m", r: "3.46", d: "Edm.Decimal"},
-			{v: "67", r: 67, d: "Edm.Byte"},
-			{v: "4567", r: 4567, d: "Edm.Int16"},
-			{v: "34567", r: 34567, d: "Edm.Int32"},
-			{v: "234567l", r: "234567", d: "Edm.Int64"},
-			{v: "-67", r: -67, d: "Edm.SByte"},
-			{v: "3.46d", r: "3.46", d: "Edm.Double"},
-			{v: "3.46f", r: "3.46", d: "Edm.Single"}
+			{v: "3.46m", r: "3.46", t: "Edm.Decimal"},
+			{v: "67", r: 67, t: "Edm.Byte"},
+			{v: "4567", r: 4567, t: "Edm.Int16"},
+			{v: "34567", r: 34567, t: "Edm.Int32"},
+			{v: "234567l", r: "234567", t: "Edm.Int64"},
+			{v: "-67", r: -67, t: "Edm.SByte"},
+			{v: "3.46d", r: "3.46", t: "Edm.Double"},
+			{v: "3.46f", r: "3.46", t: "Edm.Single"},
+			// date / time types
+			{v: "time'PT13H47M26S'", r: oTime, t: "Edm.Time"},
+			{v: "datetime'2015-05-30T13:47:26'", r: oDateTime, t: "Edm.DateTime"},
+			{
+				v: "datetime'2015-05-30T13:47:26.253'",
+				r: oDateTimeMs,
+				t: "Edm.DateTime",
+				d: "with ms"
+			},
+			{v: "datetimeoffset'2015-05-30T13:47:26Z'", r: oDateTime, t: "Edm.DateTimeOffset"}
 			//TODO Edm.Binary with "X'"", should not occur due to normalization
 			//TODO Edm.Binary with case insensitive "bInAry'"
 			//TODO Edm.Boolean with "0"/"1" cannot be distingushed from number types without knowing
@@ -117,12 +133,44 @@ sap.ui.define([
 			//TODO "Nan", "-INF" and "INF" can occur in Single and Double according to
 			// 2.2.2 Abstract Type Szstem in OData V2 spec
 		].forEach(function (oFixture) {
-			assert.strictEqual(ODataUtils.parseValue(oFixture.v), oFixture.r, oFixture.d);
+			assert.deepEqual(ODataUtils.parseValue(oFixture.v), oFixture.r,
+				oFixture.t + " " + (oFixture.d || ""));
+			assert.deepEqual(ODataUtils.formatValue(ODataUtils.parseValue(oFixture.v), oFixture.t),
+				oFixture.v, oFixture.t + " " + (oFixture.d || ""));
 		});
 
 		assert.throws(function () {
 			ODataUtils.parseValue("dummy");
 		}, new Error("Cannot parse value 'dummy', no Edm type found"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parseValue with different CalendarType", function(assert) {
+		var oDateTime = new Date(Date.UTC(2015, 4, 30, 13, 47, 26)),
+			oDateTimeMs = new Date(Date.UTC(2015, 4, 30, 13, 47, 26, 253)),
+			sOldCalendarType = sap.ui.getCore().getConfiguration().getCalendarType(),
+			oTime = time(49646000);
+
+		sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+
+		// v: value to format; r: expected result; t: tested type; d: test description
+		[
+			{v: "time'PT13H47M26S'", r: oTime, t: "Edm.Time"},
+			{v: "datetime'2015-05-30T13:47:26'", r: oDateTime, t: "Edm.DateTime"},
+			{
+				v: "datetime'2015-05-30T13:47:26.253'",
+				r: oDateTimeMs,
+				t: "Edm.DateTime",
+				d: "with ms"
+			},
+			{v: "datetimeoffset'2015-05-30T13:47:26Z'", r: oDateTime, t: "Edm.DateTimeOffset"}
+		].forEach(function (oFixture) {
+			assert.deepEqual(ODataUtils.parseValue(oFixture.v), oFixture.r,
+				oFixture.t + " " + (oFixture.d || ""));
+			assert.deepEqual(ODataUtils.formatValue(ODataUtils.parseValue(oFixture.v), oFixture.t),
+				oFixture.v, oFixture.t + " " + (oFixture.d || ""));
+		});
+		sap.ui.getCore().getConfiguration().setCalendarType(sOldCalendarType);
 	});
 
 	QUnit.test("compare", function (assert) {
