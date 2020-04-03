@@ -797,6 +797,25 @@ sap.ui.define([
 					"then the page is reloaded");
 			}.bind(this));
 		});
+
+		QUnit.test("when _handleDiscard() is called", function(assert) {
+			var fnTriggerHardReloadStub = sandbox.stub(this.oRta, "_triggerHardReload");
+			this.oRta._handleDiscard();
+			assert.equal(fnTriggerHardReloadStub.callCount, 1, "then _triggerHardReload is called");
+			var oReloadInfo = fnTriggerHardReloadStub.getCall(0).args[0];
+			assert.equal(oReloadInfo.layer, Layer.CUSTOMER, "with CUSTOMER layer");
+			assert.equal(oReloadInfo.hasDraftChanges, false, "and with no draft change");
+		});
+
+		QUnit.test("when _deleteChanges() is called", function(assert) {
+			this.fnTriggerHardReloadStub = sandbox.stub(this.oRta, "_triggerHardReload");
+			return this.oRta._deleteChanges().then(function() {
+				assert.equal(this.fnTriggerHardReloadStub.callCount, 1, "then _triggerHardReload is called");
+				var oReloadInfo = this.fnTriggerHardReloadStub.getCall(0).args[0];
+				assert.equal(oReloadInfo.layer, Layer.CUSTOMER, "with CUSTOMER layer");
+				assert.equal(oReloadInfo.hasDraftChanges, false, "and with no draft change");
+			}.bind(this));
+		});
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl ...", {

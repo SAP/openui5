@@ -1064,12 +1064,18 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._handleDiscard = function() {
-		RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
-		this.getCommandStack().removeAllCommands();
+		var sLayer = this.getLayer();
+		RuntimeAuthoring.enableRestart(sLayer, this.getRootControlInstance());
 		if (!FlexUtils.getUshellContainer()) {
-			return this._reloadPage();
+			var oReloadInfo = {
+				hasHigherLayerChanges: false, // do not touch max-layer parameter in url on discard
+				hasDraftChanges: Utils.hasUrlParameterWithValue(LayerUtils.FL_DRAFT_PARAM, sLayer),
+				layer: sLayer
+			};
+			return this._triggerHardReload(oReloadInfo);
 		}
 		var mParsedHash = this._handleDraftParameter(FlexUtils.getParsedURLHash());
+		this.getCommandStack().removeAllCommands();
 		this._triggerCrossAppNavigation(mParsedHash);
 		return this.stop(true, true);
 	};
@@ -1258,14 +1264,20 @@ function(
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._deleteChanges = function() {
+		var sLayer = this.getLayer();
 		return PersistenceWriteAPI.reset({
 			selector: FlexUtils.getAppComponentForControl(this.getRootControlInstance()),
-			layer: this.getLayer(),
+			layer: sLayer,
 			generator: "Change.createInitialFileContent"
 		}).then(function () {
 			var mParsedHash = this._handleParametersOnExit(false);
 			this._triggerCrossAppNavigation(mParsedHash);
-			this._reloadPage();
+			var oReloadInfo = {
+				hasHigherLayerChanges: false, // do not touch max-layer parameter in url on reset
+				hasDraftChanges: Utils.hasUrlParameterWithValue(LayerUtils.FL_DRAFT_PARAM, sLayer),
+				layer: sLayer
+			};
+			return this._triggerHardReload(oReloadInfo);
 		}.bind(this))
 		.catch(function (oError) {
 			if (oError !== "cancel") {
