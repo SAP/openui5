@@ -26,8 +26,9 @@
 			return;
 		}
 
-		// find card and set manifest
-		var oCard = self.document.getElementById("cardCustomElement");
-		oCard._getControl().setManifest(JSON.parse(oData.manifest));
+		window.customElements.whenDefined("ui-integration-card").then(function () {
+			var oCard = window.document.getElementById("cardCustomElement");
+			oCard._getControl().setManifest(JSON.parse(oData.manifest));
+		});
 	});
 })();
