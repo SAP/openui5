@@ -543,6 +543,11 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Determines if the current variant is modified.
+	 * @public
+	 * @returns {boolean} If the current variant is modified <code>true</code>, otherwise <code>false</code>
+	 */
 	VariantManagement.prototype.getModified = function() {
 		var oModel = this.getModel(this._sModelName);
 		if (oModel && this.oContext) {
