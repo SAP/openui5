@@ -13,6 +13,51 @@
 	}
 }
 
+.sapMPersoDialog{
+	color: @sapUiBaseText;
+  }
+
+.sapMPersoDialog .sapMLIB.sapMLIBSelected,
+.sapMPersoDialog .sapMLIB.sapMLIBSelected > td {
+background-color: transparent;
+}
+
+.sapMPersoDialog .sapMTableTBody:not(.sapMListTblHasPopin) > .sapMLIBSelected,
+.sapMPersoDialog .sapMTableTBody.sapMListTblHasPopin > .sapMLIBSelected + .sapMListTblSubRow,
+.sapMPersoDialog .sapMTableTBody:not(.sapMListTblHasPopin) > .sapMLIBSelected:last-child {
+	box-shadow: inset 0px -0.0625rem @sapUiListHoverBackground;
+}
+
+
+.sapMPersoDialog .sapMListBGTranslucent .sapMLIB.sapMListTblRow.sapMPersoDialogItemSelected,
+.sapMPersoDialog .sapMListBGTranslucent .sapMLIB.sapMListTblRow.sapMPersoDialogItemSelected:focus,
+.sapMPersoDialog .sapMListBGTranslucent .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover).sapMListTblRow.sapMPersoDialogItemSelected,
+.sapMPersoDialog .sapMListBGTranslucent .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover).sapMListTblRow.sapMPersoDialogItemSelected:focus
+{
+	background-color: @sapUiListSelectionHoverBackground;
+	box-shadow: inset 0px -0.0625rem @sapUiListSelectionBorderColor;
+}
+
+.sapMPersoDialog .sapMLIBActive .sapMText,
+.sapMPersoDialog .sapMLIBActive .sapMListTblCell .sapMText {
+	color: @sapUiListTextColor;
+}
+
+.sapMPersoDialog .sapMLIBActive .sapMCbBg,
+.sapMPersoDialog .sapMLIBActive.sapMLIB,
+.sapMPersoDialog .sapMLIBActive.sapMLIB > td {
+	background-color: transparent;
+}
+
+.sapMPersoDialog .sapMLIBActive .sapMCbBg.sapMCbMarkChecked::before {
+	color: @sapUiSelected;
+}
+
+html.sap-desktop .sapMPersoDialog .sapMLIBSelected:not(.sapMLIBActive):not(.sapMALI):hover,
+html.sap-desktop .sapMPersoDialog .sapMLIBSelected:not(.sapMLIBActive):not(.sapMALI):hover > td {
+	background-color: @sapUiListSelectionHoverBackground;
+}
+
 .sapMPersoDialogFixedBar {
 	.sapMPersoDialogSelectAllCb > .sapMCbLabel {
 		font-size: 1.125rem;
@@ -26,11 +71,6 @@
 
 .sapUiSizeCompact .sapMTB-Transparent-CTX.sapMTB.sapMPersoDialogFixedBar > :first-child {
     margin-left: 1rem;
-}
-
-/* prevent that dialog is too wide when text is too long, but not on phone */
-.sapMPersoDialog:not(.sapMDialogPhone) .sapMDialogScroll {
-	max-width: 25rem;
 }
 
 .sapMPersoDialogLI .sapMILILabel {
