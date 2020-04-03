@@ -111,6 +111,9 @@ sap.ui.define(function() {
 					}
 				}
 			},
+			"util/InvisibleMessage": {
+				title : "sap.ui.core.InvisibleMessage"
+			},
 			"util/LabelEnablement": {
 				title: "sap.ui.core.LabelEnablement"
 			},
