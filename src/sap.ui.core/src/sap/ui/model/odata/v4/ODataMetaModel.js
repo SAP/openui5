@@ -1906,6 +1906,110 @@ sap.ui.define([
 	};
 
 	/**
+	 * Builds the completely reduced path or a list of all reductions of the given path based on
+	 * metadata. Removes adjacent partner navigation properties and reduces binding paths to
+	 * properties of an operation's binding parameter.
+	 *
+	 * Examples:
+	 * The reduced binding path for "/SalesOrderList(42)/SO_2_SOITEM(20)/SOITEM_2_SO/Note" is
+	 * "/SalesOrderList(42)/Note" iff "SO_2_SOITEM" and "SOITEM_2_SO" are marked as partners of each
+	 * other.
+	 * "/Employees(42)/name.space.AcIncreaseSalaryByFactor(...)/$Parameter/_it/Name" is reduced to
+	 * "/Employees(42)/Name" if "_it" is the binding parameter.
+	 *
+	 * The metadata for <code>sPath</code> must be available synchronously.
+	 *
+	 * @param {string} sPath
+	 *   The absolute data path to be reduced
+	 * @param {string} sBasePath
+	 *   The absolute base path of a binding beyond which reduction is not possible (e.g. the root
+	 *   binding), must be a prefix of <code>sPath</code>.
+	 * @param {boolean} [bSinglePath]
+	 *   If this flag is set, only the completely reduced path is returned (a single path)
+	 * @param {boolean} [bNoReduceBeforeCollection]
+	 *   If this flag is set, there is no reduction in the part of the path before a
+	 *   collection-valued (navigation) property
+	 * @returns {string|string[]}
+	 *   The completely reduced absolute path if bSinglePath is set; otherwise a list of all
+	 *   absolute paths in case multiple reductions are possible incl. the path itself; no path will
+	 *   be shorter than <code>sBasePath</code>
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.getAllPathReductions = function (sPath, sBasePath, bSinglePath,
+			bNoReduceBeforeCollection) {
+		var iBasePathLength = sBasePath.split("/").length,
+			aMetadataForPathPrefix,
+			mPaths = {},
+			aSegments = sPath.split("/"),
+			that = this;
+
+		// adds all reduced paths for the range iBasePathLength..iMaxIndex of the given segments
+		function reduce(aSegments0, aMetadataForPathPrefix0, iMaxIndex, bCopyOnWrite) {
+			var i, iPotentialPartner, aOverloadMetadata;
+
+			// A match has been found at i, allowing to reduce iLength segments. First try to
+			// find other matches in the unreduced path, then reduce and add the match.
+			function match(iLength) {
+				if (!bSinglePath) {
+					// try to find reductions in the path before w/o reducing here
+					reduce(aSegments0, aMetadataForPathPrefix0, i - 1, true);
+				}
+				if (bCopyOnWrite) {
+					aMetadataForPathPrefix0 = aMetadataForPathPrefix0.slice();
+					aSegments0 = aSegments0.slice();
+				}
+				aMetadataForPathPrefix0.splice(i, iLength);
+				aSegments0.splice(i, iLength);
+				if (!bSinglePath) {
+					mPaths[aSegments0.join("/")] = true;
+				}
+			}
+
+			for (i = iMaxIndex; i >= iBasePathLength; i -= 1) {
+				// if i + 1 is an index segment, the potential partner is in i + 2
+				iPotentialPartner = rNumber.test(aSegments0[i + 1]) ? i + 2 : i + 1;
+				if (iPotentialPartner < aSegments0.length
+						&& aMetadataForPathPrefix0[i].$Partner === aSegments0[iPotentialPartner]
+						&& !aMetadataForPathPrefix0[iPotentialPartner].$isCollection
+						&& aMetadataForPathPrefix0[iPotentialPartner].$Partner
+							=== aSegments0[i].replace(rPredicate, "")) {
+					match(iPotentialPartner - i + 1);
+				} else if (Array.isArray(aMetadataForPathPrefix0[i])
+						&& aSegments0[i + 1] === "$Parameter") {
+					// Filter via the binding parameter
+					aOverloadMetadata = that.getObject(
+						that.getMetaPath(aSegments0.slice(0, i + 1).join("/") + "/@$ui5.overload")
+					);
+					// Note: This must be a bound operation with a binding parameter; otherwise it
+					// would be in the first segment and the loop would not touch it due to
+					// iBasePathLength. So we have $Parameter[0].
+					if (aOverloadMetadata.length === 1
+							&& aOverloadMetadata[0].$Parameter[0].$Name === aSegments0[i + 2]) {
+						match(3);
+					}
+				} else if (bNoReduceBeforeCollection && aMetadataForPathPrefix0[i].$isCollection) {
+					break;
+				}
+			}
+		}
+
+		aMetadataForPathPrefix = aSegments.map(function (sSegment, j) {
+			return j < iBasePathLength || sSegment[0] === "#" || sSegment[0] === "@"
+					|| rNumber.test(sSegment) || sSegment === "$Parameter"
+				? {} // simply an object w/o $Partner and $isCollection
+				: that.getObject(that.getMetaPath(aSegments.slice(0, j + 1).join("/"))) || {};
+		});
+		mPaths[sPath] = true;
+		if (!(bNoReduceBeforeCollection
+				&& aMetadataForPathPrefix[aSegments.length - 1].$isCollection)) {
+			reduce(aSegments, aMetadataForPathPrefix, aSegments.length - 2);
+		}
+
+		return bSinglePath ? aSegments.join("/") : Object.keys(mPaths);
+	};
+
+	/**
 	 * Returns the type constraints for the given property.
 	 *
 	 * @param {object} oProperty
@@ -2143,58 +2247,16 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   The absolute data path to be reduced
-	 * @param {string} sRootPath
-	 *   The absolute data path to the root binding, must be a prefix of <code>sPath</code>
+	 * @param {string} sBasePath
+	 *   The absolute base path of a binding beyond which reduction is not possible (e.g. the root
+	 *   binding), must be a prefix of <code>sPath</code>.
 	 * @returns {string}
-	 *   The reduced absolute data path; it will not be shorter than <code>sRootPath</code>
+	 *   The reduced absolute data path; it will not be shorter than <code>sBasePath</code>
 	 *
 	 * @private
 	 */
-	ODataMetaModel.prototype.getReducedPath = function (sPath, sRootPath) {
-		var i,
-			aMetadataForPathPrefix,
-			aOverloadMetadata,
-			iPotentialPartner,
-			iRootPathLength = sRootPath.split("/").length,
-			aSegments = sPath.split("/"),
-			that = this;
-
-		aMetadataForPathPrefix = aSegments.map(function (sSegment, j) {
-			return j < iRootPathLength || sSegment[0] === "#" || sSegment[0] === "@"
-					|| rNumber.test(sSegment) || sSegment === "$Parameter"
-				? {} // simply an object w/o $Partner and $isCollection
-				: that.getObject(that.getMetaPath(aSegments.slice(0, j + 1).join("/"))) || {};
-		});
-		if (!aMetadataForPathPrefix[aSegments.length - 1].$isCollection) {
-			for (i = aSegments.length - 2; i >= iRootPathLength; i -= 1) {
-				// if i + 1 is an index segment, the potential partner is in i + 2
-				iPotentialPartner = rNumber.test(aSegments[i + 1]) ? i + 2 : i + 1;
-				if (iPotentialPartner < aSegments.length
-						&& aMetadataForPathPrefix[i].$Partner === aSegments[iPotentialPartner]
-						&& !aMetadataForPathPrefix[iPotentialPartner].$isCollection
-						&& aMetadataForPathPrefix[iPotentialPartner].$Partner
-							=== aSegments[i].replace(rPredicate, "")) {
-					aMetadataForPathPrefix.splice(i, iPotentialPartner - i + 1);
-					aSegments.splice(i, iPotentialPartner - i + 1);
-				} else if (Array.isArray(aMetadataForPathPrefix[i])
-						&& aSegments[i + 1] === "$Parameter") {
-					// Filter via the binding parameter
-					aOverloadMetadata = that.getObject(
-						that.getMetaPath(aSegments.slice(0, i + 1).join("/") + "/@$ui5.overload")
-					);
-					// Note: This must be a bound operation with a binding parameter; otherwise it
-					// would be in the first segment and the loop would not touch it due to
-					// iRootPathLength. So we have $Parameter[0].
-					if (aOverloadMetadata.length === 1
-							&& aOverloadMetadata[0].$Parameter[0].$Name === aSegments[i + 2]) {
-						aSegments.splice(i, 3);
-					}
-				} else if (aMetadataForPathPrefix[i].$isCollection) {
-					break;
-				}
-			}
-		}
-		return aSegments.join("/");
+	ODataMetaModel.prototype.getReducedPath = function (sPath, sBasePath) {
+		return this.getAllPathReductions(sPath, sBasePath, true, true);
 	};
 
 	/**

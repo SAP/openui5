@@ -980,7 +980,10 @@ sap.ui.define([
 	 * @since 1.61.0
 	 */
 	Context.prototype.requestSideEffects = function (aPathExpressions, sGroupId) {
-		var aPaths,
+		var oMetaModel = this.oModel.getMetaModel(),
+			aPaths,
+			oRootBinding,
+			sRootPath,
 			that = this;
 
 		/*
@@ -1015,6 +1018,8 @@ sap.ui.define([
 			throw new Error("Cannot request side effects of unresolved binding's context: " + this);
 		}
 
+		oRootBinding = this.oBinding.getRootBinding();
+		sRootPath = this.oModel.resolve(oRootBinding.getPath(), oRootBinding.getContext());
 		aPaths = aPathExpressions.map(function (oPath) {
 			if (oPath && typeof oPath === "object") {
 				if (isPropertyPath(oPath.$PropertyPath)) {
@@ -1027,7 +1032,10 @@ sap.ui.define([
 			}
 			throw new Error("Not an edm:(Navigation)PropertyPath expression: "
 				+ JSON.stringify(oPath));
-		});
+		}).reduce(function (aPaths0, sPath) {
+			return aPaths0.concat(oMetaModel.getAllPathReductions(
+				_Helper.buildPath(that.getPath(), sPath), sRootPath));
+		}, []);
 
 		sGroupId = sGroupId || this.getUpdateGroupId();
 
@@ -1049,12 +1057,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Finds the context to request side effects with, reduces the paths, checks whether these paths
-	 * are relative to this context and delegates them either to this context's binding or the
-	 * binding's parent context.
+	 * Finds the context to request side effects with, checks whether the given paths are relative
+	 * to this context and delegates them either to this context's binding or the binding's parent
+	 * context.
 	 *
-	 * @param {string[]} aPaths
-	 *   The paths to request side effects for, relative to this context
+	 * @param {string[]} aAbsolutePaths
+	 *   The absolute paths to request side effects for
 	 * @param {string} sGroupId
 	 *   The effective group ID
 	 * @returns {sap.ui.base.SyncPromise}
@@ -1063,19 +1071,15 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Context.prototype.requestSideEffectsInternal = function (aPaths, sGroupId) {
+	Context.prototype.requestSideEffectsInternal = function (aAbsolutePaths, sGroupId) {
 		var that = this,
-			sBaseForPathReduction,
 			oBinding,
 			oCandidate = /*consistent-this*/that,
 			oContext,
-			oMetaModel = this.oModel.getMetaModel(),
 			aOwnPaths = [],
 			oParentContext,
 			aParentPaths = [],
-			sParentPrefix,
 			sPath,
-			sPrefix = "",
 			aPromises = [];
 
 		for (;;) {
@@ -1092,39 +1096,23 @@ sap.ui.define([
 			if (!oBinding.getBoundContext) {
 				throw new Error("Not a context binding: " + oBinding);
 			}
-			sPrefix = _Helper.buildPath(sPath, sPrefix);
 			oCandidate = oParentContext;
-		}
-		if (sPrefix) {
-			aPaths = aPaths.map(function (sPath) {
-				return sPath ? sPrefix + "/" + sPath : sPrefix;
-			});
 		}
 
 		oBinding = oContext.getBinding();
-		sBaseForPathReduction = oBinding.getBaseForPathReduction();
 
-		aPaths.forEach(function (sPath) {
-			var sReducedPath = oMetaModel.getReducedPath(
-					_Helper.buildPath(oContext.getPath(), sPath), sBaseForPathReduction),
-				sReducedRelativePath = _Helper.getRelativePath(sReducedPath, oContext.getPath());
+		aAbsolutePaths.forEach(function (sAbsolutePath) {
+			var sRelativePath = _Helper.getRelativePath(sAbsolutePath, oContext.getPath());
 
-			if (sReducedRelativePath === undefined) {
+			if (sRelativePath === undefined) {
 				// reduced path is not relative to this context -> delegate up
-				aParentPaths.push(sPath);
+				aParentPaths.push(sAbsolutePath);
 			} else {
-				aOwnPaths.push(sReducedRelativePath);
+				aOwnPaths.push(sRelativePath);
 			}
 		});
 
 		if (aParentPaths.length) {
-			sParentPrefix =
-				_Helper.getRelativePath(oContext.getPath(), oBinding.getContext().getPath());
-
-			aParentPaths = aParentPaths.map(function (sPath) {
-				return _Helper.buildPath(sParentPrefix, sPath);
-			});
-
 			aPromises.push(
 				oBinding.getContext().requestSideEffectsInternal(aParentPaths, sGroupId));
 		}
