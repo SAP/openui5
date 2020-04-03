@@ -3,6 +3,7 @@
 	controllerName="sap.ui.core.internal.samples.odata.v2.SalesOrders.Main"
 	height="100%"
 	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:plugins="sap.m.plugins"
@@ -69,6 +70,18 @@
 								</layoutData>
 							</Title>
 							<ToolbarSpacer/>
+							<Label labelFor="itemFilter" text="Filter">
+								<layoutData>
+									<ToolbarLayoutData shrinkable="false" />
+								</layoutData>
+							</Label>
+							<Select change="onFilterMessages" id="itemFilter"
+								items="{ui>/itemFilter}" selectedKey="Show all">
+								<core:ListItem icon="{ui>icon}" key="{ui>type}" text="{ui>text}" />
+								<layoutData>
+									<ToolbarLayoutData shrinkable="false" />
+								</layoutData>
+							</Select>
 							<Button press="onFixAllQuantities" text="Fix Quantities" />
 							<ToggleButton press="onTransitionMessagesOnly" pressed="true"
 								text="Transition Messages Only"
