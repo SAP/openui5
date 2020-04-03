@@ -1,7 +1,7 @@
 /*
  * ! ${copyright}
  */
-sap.ui.define(['./ColumnPopoverItem'], function(ColumnPopoverItem) {
+sap.ui.define(['./ColumnPopoverItem', 'sap/m/Button'], function(ColumnPopoverItem, Button) {
 	"use strict";
 
 	/**
@@ -46,5 +46,26 @@ sap.ui.define(['./ColumnPopoverItem'], function(ColumnPopoverItem) {
 
 	});
 
+	ColumnPopoverActionItem.prototype._createButton = function(sId, oCHPopover) {
+		return new Button(sId, {
+			icon: this.getIcon(),
+			type: "Transparent",
+			tooltip: this.getText(),
+			visible: this.getVisible(),
+			press: [
+				function(oEvent) {
+					if (oCHPopover._oShownCustomContent) {
+						oCHPopover._oShownCustomContent.setVisible(false);
+						oCHPopover._oShownCustomContent = null;
+						oCHPopover._cleanSelection(this);
+					}
+					var oPopover = oCHPopover.getAggregation("_popover");
+					// close the popover first to prevent focus lost
+					oPopover.close();
+					this.firePress();
+				}, this
+			]
+		});
+	};
 	return ColumnPopoverActionItem;
 });

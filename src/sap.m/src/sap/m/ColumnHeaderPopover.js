@@ -183,26 +183,7 @@ sap.ui.define([
 	};
 
 	ColumnHeaderPopover.prototype._createActionItem = function(id, oItem) {
-		var that = this;
-
-		return new Button(id, {
-			icon: "{icon}",
-			tooltip: "{text}",
-			type: "Transparent",
-			visible: "{visible}",
-			press: function() {
-				var oPopover = that.getAggregation("_popover");
-
-				if (that._oShownCustomContent) {
-					that._oShownCustomContent.setVisible(false);
-					that._oShownCustomContent = null;
-
-					// set other buttons unpressed
-					that._cleanSelection(oPopover, this);
-				}
-				oItem.firePress();
-			}
-		});
+		return oItem._createButton(id, this);
 	};
 
 	ColumnHeaderPopover.prototype._createCustomItem = function(id, oItem) {
