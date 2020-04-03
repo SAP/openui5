@@ -6921,77 +6921,157 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getReducedPath", function (assert) {
+		this.oMetaModelMock.expects("getAllPathReductions")
+			.withExactArgs("/path", "/base", true, true)
+			.returns("/reduced/path");
+
+		assert.strictEqual(
+			// code under test
+			this.oMetaModel.getReducedPath("/path", "/base"),
+			"/reduced/path"
+		);
+	});
+
+	//*********************************************************************************************
 	// Tests that each key is reduced to the corresponding value. The root path is the part of the
 	// key until the "|".
 forEach({
-	"/As(1)|AValue" : "/As(1)/AValue",
-	"/As(1)|#reduce.path.Action" : "/As(1)/#reduce.path.Action",
-	"/As(1)|AtoB/BValue" : "/As(1)/AtoB/BValue",
-	"/As(1)|AtoB/BtoA" : "/As(1)",
-	"/As(1)|AtoB/BtoA/AValue" : "/As(1)/AValue",
-	"/As(1)|AtoC/CtoA/AValue" : "/As(1)/AtoC/CtoA/AValue", // potential backlink has no $Partner
-	"/As(1)|AtoDs(42)/DtoA/AValue" : "/As(1)/AValue",
-	"/As(1)|AtoDs(42)/DtoA/AtoC/CValue" : "/As(1)/AtoC/CValue",
-	"/Ds(1)|DtoA/AtoDs(42)/DValue" : "/Ds(1)/DtoA/AtoDs(42)/DValue", // backlink via collection
-	"/As(1)|AtoDs/42/DtoA/AValue" : "/As(1)/AValue", // using index
-	"/Ds(1)|DtoCs/42" : "/Ds(1)/DtoCs/42", // no partner, ends with index
-	// backlink via collection w/ index
-	"/Ds(1)|DtoA/AtoDs/42/DValue" : "/Ds(1)/DtoA/AtoDs/42/DValue",
-	"/As(1)/AtoB|BtoA/AValue" : "/As(1)/AtoB/BtoA/AValue", // reduced path not shorter than base
-	"/As(1)|AtoB/BtoC/CtoB/BtoA/AValue" : "/As(1)/AValue", // multiple reduction
-	"/As(1)|AtoDs/-2/DtoBs(7)/BtoD/DtoA/AValue" : "/As(1)/AValue", // multiple pairs w/ index
-	// a path to a collection property must not be reduced
-	"/As(1)|AtoB/BtoA/AtoDs(42)/DValue" : "/As(1)/AtoB/BtoA/AtoDs(42)/DValue",
-	// a path to a collection must not be reduced
-	"/As(1)|AtoB/BtoA/AtoDs" : "/As(1)/AtoB/BtoA/AtoDs",
-	"/As(1)|AtoDs(42)/DtoBs(7)/BtoD/DValue" : "/As(1)/AtoDs(42)/DValue", // following a collection
-	"/As(1)|AtoDs(42)/DtoA/AValue@Common.Label" : "/As(1)/AValue@Common.Label",
-	"/As(1)|AtoDs(42)/DtoA/@Common.Label" : "/As(1)/@Common.Label", // annotation at type A
-	// annotation at navigation property DtoA
-	"/As(1)|AtoDs(42)/DtoA@Common.Label" : "/As(1)/AtoDs(42)/DtoA@Common.Label",
+	"/As(1)|AValue" : [],
+	"/As(1)|#reduce.path.Action" : [],
+	"/As(1)|AtoB/BValue" : [],
+	"/As(1)|AtoB/BtoA" : ["/As(1)"],
+	"/As(1)|AtoB/BtoA/AValue" : ["/As(1)/AValue"],
+	"/As(1)|AtoC/CtoA/AValue" : [], // potential backlink has no $Partner
+	"/As(1)|AtoDs(42)/DtoA/AValue" : ["/As(1)/AValue"],
+	"/As(1)|AtoDs(42)/DtoA/AtoC/CValue" : ["/As(1)/AtoC/CValue"],
+	"/Ds(1)|DtoA/AtoDs(42)/DValue" : [], // backlink via collection
+	"/As(1)|AtoDs/42/DtoA/AValue" : ["/As(1)/AValue"], // using index
+	"/Ds(1)|DtoCs/42" : [], // no partner, ends with index
+	"/Ds(1)|DtoA/AtoDs/42/DValue" : [], // backlink via collection w/ index
+	"/As(1)|AtoDs(42)/DtoBs(7)/BtoD/DValue" : ["/As(1)/AtoDs(42)/DValue"], // following a collection
+	"/As(1)/AtoB|BtoA/AValue" : [], // reduced path not shorter than base
+	// multiple nested reduction
+	"/As(1)|AtoB/BtoC/CtoB/BtoA/AValue" : ["/As(1)/AtoB/BtoA/AValue", "/As(1)/AValue"],
+	// multiple non-nested reductions
+	"/As(1)|AtoB/BtoA/AtoDs(11)/DtoA/AValue" :
+		["/As(1)/AtoDs(11)/DtoA/AValue", "/As(1)/AtoB/BtoA/AValue", "/As(1)/AValue"],
+	// multiple pairs w/ index
+	"/As(1)|AtoDs/-2/DtoBs(7)/BtoD/DtoA/AValue" :
+		["/As(1)/AtoDs/-2/DtoA/AValue", "/As(1)/AValue"],
+	// avoid duplicates (1:1 navigation)
+	"/As(1)|AtoB/BtoA/AtoB/BtoA/AValue" : ["/As(1)/AtoB/BtoA/AValue", "/As(1)/AValue"],
+	// avoid duplicates (1:* navigation)
+	"/As(1)|AtoDs(2)/DtoA/AtoDs(2)/DtoA/AValue" : ["/As(1)/AtoDs(2)/DtoA/AValue", "/As(1)/AValue"],
+	"/As(1)|AtoDs(42)/DtoA/AValue@Common.Label" : ["/As(1)/AValue@Common.Label"],
+	"/As(1)|AtoDs(42)/DtoA/@Common.Label" : ["/As(1)/@Common.Label"], // annotation at type A
+	"/As(1)|AtoDs(42)/DtoA@Common.Label" : [], // annotation at navigation property DtoA
 	// UI5 runtime annotation at type A
-	"/As(1)|AtoDs(42)/DtoA/@$ui5._/predicate" : "/As(1)/@$ui5._/predicate",
+	"/As(1)|AtoDs(42)/DtoA/@$ui5._/predicate" : ["/As(1)/@$ui5._/predicate"],
 	// property of binding parameter at 1st overloaded bound action
-	"/As(1)|reduce.path.Action(...)/$Parameter/_it/Value" : "/As(1)/Value",
+	"/As(1)|reduce.path.Action(...)/$Parameter/_it/Value" : ["/As(1)/Value"],
 	// property of binding parameter at 2nd overloaded bound action
-	"/Ds(1)|reduce.path.Action(...)/$Parameter/Value/Value" : "/Ds(1)/Value",
+	"/Ds(1)|reduce.path.Action(...)/$Parameter/Value/Value" : ["/Ds(1)/Value"],
+	// path reduction within the operation parameter
+	"/As(1)|reduce.path.Action(...)/$Parameter/_it/AtoB/BtoA/Value" :
+		["/As(1)/AtoB/BtoA/Value", "/As(1)/reduce.path.Action(...)/$Parameter/_it/Value",
+			"/As(1)/Value"],
+	// path reduction before the operation
+	"/As(1)|AtoB/BtoA/reduce.path.Action(...)/$Parameter/_it/Value" :
+		["/As(1)/reduce.path.Action(...)/$Parameter/_it/Value", "/As(1)/AtoB/BtoA/Value",
+			"/As(1)/Value"],
+	// nested path reduction incl. an operation parameter
+	"/As(1)|AtoB/reduce.path.Action(...)/$Parameter/_it/BtoA/Property" :
+		["/As(1)/AtoB/BtoA/Property", "/As(1)/Property"],
 	// property of binding parameter at 2nd overloaded bound action, without "$Parameter"
-	"/Ds(1)|reduce.path.Action(...)/Value/Value" : "/Ds(1)/reduce.path.Action(...)/Value/Value",
+	"/Ds(1)|reduce.path.Action(...)/Value/Value" : [],
 	// property of other parameter at bound action
-	"/As(1)|reduce.path.Action(...)/$Parameter/foo" :
-		"/As(1)/reduce.path.Action(...)/$Parameter/foo",
+	"/As(1)|reduce.path.Action(...)/$Parameter/foo" : [],
 	// operation import
-	"/FunctionImport(...)|$Parameter/foo" : "/FunctionImport(...)/$Parameter/foo",
-	// binding parameter is collection (the URL is invalid)
-	"/Ds(1)|DtoBs/reduce.path.Action/$Parameter/_it/Value" :
-		"/Ds(1)/DtoBs/reduce.path.Action/$Parameter/_it/Value"
-}, function (sPath, sReducedPath, sRootPath) {
-	QUnit.test("getReducedPath: " + sPath, function (assert) {
+	"/FunctionImport(...)|$Parameter/foo" : []
+}, function (sPath, aReducedPaths, sRootPath) {
+	QUnit.test("getAllPathReductions: " + sPath, function (assert) {
+		aReducedPaths = [sPath].concat(aReducedPaths);
 		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(0)
 			.returns(SyncPromise.resolve(mReducedPathScope));
 
-		assert.strictEqual(this.oMetaModel.getReducedPath(sPath, sRootPath), sReducedPath);
+		assert.deepEqual(this.oMetaModel.getAllPathReductions(sPath, sRootPath),
+			aReducedPaths, "collection");
+
+		assert.deepEqual(this.oMetaModel.getAllPathReductions(sPath, sRootPath, true),
+			aReducedPaths.pop(), "single");
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("getReducedPath: invalid binding parameter", function (assert) {
+	// Tests that each key is reduced to the corresponding value iff bNoReduceBeforeCollection is
+	// false.
+forEach({
+	"/As(1)|AtoB/BtoA/AtoDs(42)/DValue" : "/As(1)/AtoDs(42)/DValue",
+	"/As(1)|AtoB/BtoA/AtoDs" : "/As(1)/AtoDs"
+}, function (sPath, sReducedPath, sRootPath) {
+	QUnit.test("getAllPathReductions: (collections) " + sPath, function (assert) {
+		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(0)
+			.returns(SyncPromise.resolve(mReducedPathScope));
+
+		assert.deepEqual(
+			this.oMetaModel.getAllPathReductions(sPath, sRootPath, true, true),
+			sPath
+		);
+
+		assert.deepEqual(
+			this.oMetaModel.getAllPathReductions(sPath, sRootPath, true),
+			sReducedPath
+		);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getAllPathReductions: binding parameter is collection", function (assert) {
+		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(0)
+			.returns(SyncPromise.resolve(mReducedPathScope));
+
+		// expect no reduction, the binding parameter is invalid
+		assert.deepEqual(
+			this.oMetaModel.getAllPathReductions(
+				"/Ds(1)/DtoBs/reduce.path.Action/$Parameter/_it/Value", "/Ds(1)", true, true),
+			"/Ds(1)/DtoBs/reduce.path.Action/$Parameter/_it/Value"
+		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getAllPathReductions: !bSingle, bNoReduceBeforeCollection", function (assert) {
+		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(0)
+			.returns(SyncPromise.resolve(mReducedPathScope));
+
+		assert.deepEqual(
+			this.oMetaModel.getAllPathReductions(
+				"/As(1)/AtoB/BtoA/AtoDs(42)/DtoBs(23)/BtoD/DValue", "/As(1)", false, true),
+			[
+				"/As(1)/AtoB/BtoA/AtoDs(42)/DtoBs(23)/BtoD/DValue",
+				"/As(1)/AtoB/BtoA/AtoDs(42)/DValue"
+			]
+		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getAllPathReductions: invalid binding parameter", function (assert) {
 		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(0)
 			.returns(SyncPromise.resolve(mReducedPathScope));
 		this.oLogMock.expects("isLoggable")
-					.withExactArgs(Log.Level.WARNING, sODataMetaModel).returns(true);
+			.withExactArgs(Log.Level.WARNING, sODataMetaModel).returns(true);
 		this.oLogMock.expects("warning").withExactArgs("Expected a single overload, but found 0",
 			"/As/AtoC/reduce.path.Action/$Parameter/_it", sODataMetaModel);
 
 		// checks that it runs through without an error
-		assert.strictEqual(
-			this.oMetaModel.getReducedPath("/As(1)/AtoC/reduce.path.Action(...)/$Parameter/_it",
-					"/As(1)"),
+		assert.deepEqual(
+			this.oMetaModel.getAllPathReductions(
+				"/As(1)/AtoC/reduce.path.Action(...)/$Parameter/_it", "/As(1)", true, true),
 			"/As(1)/AtoC/reduce.path.Action(...)/$Parameter/_it");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getReducedPath: multiple overloads", function (assert) {
+	QUnit.test("getAllPathReductions: multiple overloads", function (assert) {
 		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(0)
 			.returns(SyncPromise.resolve(mReducedPathScope));
 		this.oLogMock.expects("isLoggable")
@@ -7000,10 +7080,10 @@ forEach({
 			"/Ds/reduce.path.Function/$Parameter/_it", sODataMetaModel);
 
 		// checks that it runs through without an error
-		assert.strictEqual(
-			this.oMetaModel.getReducedPath("/Ds(1)/reduce.path.Function(...)/$Parameter/_it",
+		assert.deepEqual(
+			this.oMetaModel.getAllPathReductions("/Ds(1)/reduce.path.Function(...)/$Parameter/_it",
 				"/Ds(1)"),
-			"/Ds(1)/reduce.path.Function(...)/$Parameter/_it");
+			["/Ds(1)/reduce.path.Function(...)/$Parameter/_it"]);
 	});
 
 	//*********************************************************************************************

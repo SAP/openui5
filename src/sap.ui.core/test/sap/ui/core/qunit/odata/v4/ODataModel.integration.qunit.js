@@ -22743,6 +22743,8 @@ sap.ui.define([
 
 			// code under test
 			that.oView.byId("table").getBinding("items").sort(new Sorter("DValue"));
+
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -23657,26 +23659,35 @@ sap.ui.define([
 	// reduction via partner attributes. See that bubbling up is necessary again when processing the
 	// reduced path in the parent context.
 	// JIRA: CPOUI5ODATAV4-103
+	// Extended with a collection-valued structural property and a collection-valued navigation
+	// property.
+	// JIRA: CPOUI5ODATAV4-221
 	QUnit.test("requestSideEffects: path reduction", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
-<FlexBox binding="{/SalesOrderList(\'42\')}">\
+<FlexBox binding="{path : \'/SalesOrderList(\\\'42\\\')\', parameters : {$select : \'Messages\'}}">\
 	<FlexBox binding="{}">\
 		<Text id="note" text="{Note}" />\
-		<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
+		<Table id="items" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
 			<ColumnListItem>\
 				<Text id="position" text="{ItemPosition}" />\
 				<Text id="amount" text="{GrossAmount}" />\
+			</ColumnListItem>\
+		</Table>\
+		<Table id="schedules" items="{path : \'SO_2_SCHDL\', parameters : {$$ownRequest : true}}">\
+			<ColumnListItem>\
+				<Text id="key" text="{ScheduleKey}" />\
 			</ColumnListItem>\
 		</Table>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
+		this.expectRequest("SalesOrderList('42')?$select=Messages,Note,SalesOrderID", {
 				Note : "Note",
 				SalesOrderID : "42"
 			})
+			.expectChange("note", "Note")
 			.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=GrossAmount,ItemPosition"
 				+ ",SalesOrderID&$skip=0&$top=100", {
 				value : [
@@ -23684,14 +23695,17 @@ sap.ui.define([
 					{GrossAmount : "2.72", ItemPosition : "0020", SalesOrderID : "42"}
 				]
 			})
-			.expectChange("note", "Note")
 			.expectChange("position", ["0010", "0020"])
-			.expectChange("amount", ["3.14", "2.72"]);
+			.expectChange("amount", ["3.14", "2.72"])
+			.expectRequest("SalesOrderList('42')/SO_2_SCHDL?$select=ScheduleKey&$skip=0&$top=100",
+				{value : [{ScheduleKey : "A"}]})
+			.expectChange("key", ["A"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+			var oContext = that.oView.byId("items").getItems()[0].getBindingContext();
 
-			that.expectRequest("SalesOrderList('42')?$select=Note", {Note : "refreshed Note"})
+			that.expectRequest("SalesOrderList('42')?$select=Messages,Note",
+					{Note : "refreshed Note"})
 				.expectRequest("SalesOrderList('42')/SO_2_SOITEM?"
 					+ "$select=GrossAmount,ItemPosition,SalesOrderID"
 					+ "&$filter=SalesOrderID eq '42' and ItemPosition eq '0010'", {
@@ -23699,15 +23713,105 @@ sap.ui.define([
 						{GrossAmount : "1.41", ItemPosition : "0010", SalesOrderID : "42"}
 					]
 				})
+				.expectRequest("SalesOrderList('42')/SO_2_SCHDL?$select=ScheduleKey"
+					+ "&$skip=0&$top=100", {value : [{ScheduleKey : "B"}]})
 				.expectChange("note", "refreshed Note")
-				.expectChange("amount", ["1.41"]);
+				.expectChange("amount", ["1.41"])
+				.expectChange("key", ["B"]);
 
 			return Promise.all([
 				// code under test
 				oContext.requestSideEffects([
+					{$PropertyPath : "GrossAmount"},
+					{$PropertyPath : "SOITEM_2_SO/Messages"},
 					{$PropertyPath : "SOITEM_2_SO/Note"},
-					{$PropertyPath : "GrossAmount"}
+					{$NavigationPropertyPath : "SOITEM_2_SO/SO_2_SCHDL"}
 				]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Use requestSideEffects to refresh the property AValue in a parent cache of a list
+	// binding using a different API group ID. The table has a reference to this property via
+	// partner attributes. Due to the group ID mismatch, it cannot reuse the value, but has to
+	// request it again.
+	// Ensure that requestSideEffects refreshes both copies. (This proves that we must reduce
+	// collection-valued properties anywhere in the path. It also proves that we must refresh
+	// partially reduced paths: "/As(1)/AValue" and "/As(1)/AtoCs(2)/CtoA/AValue" from the original
+	// "/As(1)/AtoCs(2)/CtoD/DtoC/CtoA/AValue".
+	// JIRA: CPOUI5ODATAV4-221
+	QUnit.test("requestSideEffects: parent cache of a list binding", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true, updateGroupId : "update1"}),
+			sView = '\
+<FlexBox binding="{/As(1)}">\
+	<Text id="avalue::form" text="{AValue}"/>\
+	<Table id="table" items="{path : \'AtoCs\', parameters : {$$updateGroupId : \'update2\'}}">\
+		<ColumnListItem>\
+			<Text id="cid" text="{CID}"/>\
+			<Text id="avalue::table" text="{CtoA/AValue}"/>\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>\
+<FlexBox id="form" binding="{CtoD}">\
+	<Text id="dvalue" text="{DValue}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("As(1)?$select=AID,AValue", {
+				AID : 1,
+				AValue : 11
+			})
+			.expectChange("avalue::form", "11")
+			.expectRequest("As(1)/AtoCs?$select=CID&$expand=CtoA($select=AID,AValue)"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					CID : 2,
+					CtoA : {
+						AID : 1,
+						AValue : 11
+					},
+					CValue : 21
+				}]
+			})
+			.expectChange("avalue::table", "11")
+			.expectChange("cid", ["2"])
+			.expectChange("dvalue");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("As(1)/AtoCs(2)?$select=CID&$expand=CtoD($select=DID,DValue)", {
+					CID : 2,
+					CtoD : {
+						DID : 3,
+						DValue : 103
+					}
+				})
+				.expectChange("dvalue", "103");
+
+			that.oView.byId("form").setBindingContext(
+				that.oView.byId("table").getItems()[0].getBindingContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("As(1)?$select=AValue",
+					{AValue : 121}) // unrealistic, but shows the link between response and control
+				.expectChange("avalue::form", "121")
+				.expectRequest("As(1)/AtoCs?$select=CID&$expand=CtoA($select=AValue)"
+					+ "&$filter=CID eq 2", {
+					value : [{
+						CID : 2,
+						CtoA : {
+							AValue : 122 // unrealistic, see above
+						}
+					}]
+				})
+				.expectChange("avalue::table", "122");
+
+			// code under test
+			return Promise.all([
+				that.oView.byId("form").getBindingContext()
+					.requestSideEffects([{$PropertyPath : "DtoC/CtoA/AValue"}], "$auto"),
 				that.waitForChanges(assert)
 			]);
 		});
