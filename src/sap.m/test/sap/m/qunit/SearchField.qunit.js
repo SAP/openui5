@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/SearchField",
 	"sap/m/Label",
 	"sap/ui/Device",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/core/InvisibleText",
 	"sap/m/Button",
 	"sap/m/SuggestionItem"
@@ -19,6 +20,7 @@ sap.ui.define([
 	SearchField,
 	Label,
 	Device,
+	KeyCodes,
 	InvisibleText,
 	Button,
 	SuggestionItem
@@ -457,16 +459,26 @@ sap.ui.define([
 		fnClearSpy.restore();
 	});
 
-	QUnit.test("method: change() event", function(assert) {
+	QUnit.test("'change' and 'search' events", function(assert) {
 
 		var fnFireChangeSpy = this.spy(this.oSearchField, "fireChange");
+		var fnFireSearchSpy = this.spy(this.oSearchField, "fireSearch");
 
 		// act
 		sap.ui.test.qunit.triggerCharacterInput(this.oSearchField.getFocusDomRef(), "a");
-		this.oSearchField.onChange();
+		qutils.triggerKeydown(this.oSearchField.getDomRef("I"), KeyCodes.ENTER);
 
 		// assertions
+		assert.strictEqual(fnFireSearchSpy.callCount, 1, "The change event is fired");
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
+
+		this.oSearchField.onChange();
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event is not fired");
+
+		sap.ui.test.qunit.triggerCharacterInput(this.oSearchField.getFocusDomRef(), "ab");
+
+		this.oSearchField.onChange();
+		assert.strictEqual(fnFireChangeSpy.callCount, 2, "The change event is fired");
 	});
 
 	QUnit.module("Suggestions on mobile phone", {
