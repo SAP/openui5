@@ -2348,6 +2348,7 @@ sap.ui.define([
         }).then(function (oComponent) {
             this.oComponent = oComponent;
 
+			// Check Resource Model creation
             var oSettings = oCreateManifestModelsSpy.getCall(0).args[0].i18n.settings[0];
             assert.equal(oCreateManifestModelsSpy.callCount, 1, "_createManifestModels should be called for the i18n model");
             assert.equal(oSettings.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
@@ -2623,6 +2624,7 @@ sap.ui.define([
 				}
 			]
 		};
+
 		var oResourceBundleCreateStub = sinon.stub(ResourceBundle, "create").callsFake(function (mParams) {
 			if (mParams.async) {
 				assert.deepEqual(mParams, oExpected, "ResourceBundle.create should be called with the correct arguments");
@@ -2634,13 +2636,23 @@ sap.ui.define([
 				getText: function () { assert.ok(true, "ResourceBundle was stubbed successfully"); }
 			};
 		});
+		var oManifestI18nSpy = sinon.spy(Manifest.prototype, "_loadI18n");
+
 		return Component.create({
 			name: "testdata.terminologies.component3",
-			activeTerminologies: ["oil", "retail"],
-			manifest: false
+			activeTerminologies: ["oil", "retail"]
 		}).then(function (oComponent) {
 			this.oComponent = oComponent;
 			assert.ok(true, "assertions have been successful");
+
+			// check how many "data-loading" calls are made from the Manifest
+			// TODO: The number of loading calls will sink down to 1 with an additional optimization on ComponentMetadata.prototype._applyManifest
+			assert.equal(oManifestI18nSpy.args.length, 2, "Only two calls made to Manifest.prototype._loadI18n");
+			assert.ok(oManifestI18nSpy.args[0][0], "Manifest.prototype._loadI18n: 1st time called with async=true, after Component preload");
+			// TODO: This check can be enabled with an additional optimization on ComponentMetadata.prototype._applyManifest
+			//assert.ok(oManifestI18nSpy.args[0][1], "Manifest.prototype._loadI18n: 2nd time called with async=true");
+
+			oManifestI18nSpy.restore();
 			oResourceBundleCreateStub.restore();
 		}.bind(this));
 	});

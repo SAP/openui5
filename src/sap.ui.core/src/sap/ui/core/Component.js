@@ -3069,11 +3069,19 @@ sap.ui.define([
 
 					return pLoaded.then(function() {
 
-						// if manifest was defined in the component metadata
-						// we need to trigger the sap.app.i18n processing based on terminologies
-						// for this specific component instance
+						// The following processing of the sap.app/i18n resources happens under two conditions:
+						//    1. The manifest is defined in the component metadata (no Manifest object yet)
+						//    2. We have instance specific information (activeTerminologies)
+						// In case of a manifest-first approach (Manifest object exists already),
+						// the i18n processing has already happend and we skip this part.
+
+						// Why do we set the oManifest object here?
+						// > If we have instance specific information like "activeTerminologies", the resulting
+						//   Manifest instance differs from the Manifest that is stored on the ComponentMetadata.
+						//   The function prepareControllerClass() then creates a ComponentMetadata Proxy,
+						//   which encapsulates this single instance specific Manifest object.
 						var pProcessI18n = Promise.resolve();
-						if (mOptions.activeTerminologies) {
+						if (!oManifest && mOptions.activeTerminologies) {
 							oManifest = new Manifest(oMetadata.getManifestObject().getRawJson(), {
 								process: false,
 								activeTerminologies: aActiveTerminologies
