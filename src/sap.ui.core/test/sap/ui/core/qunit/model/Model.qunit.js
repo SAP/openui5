@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/model/Model",
 	"sap/ui/test/TestUtils"
 ], function (Log, Message, BindingMode, Model, TestUtils) {
-	/*global QUnit*/
+	/*global QUnit, Set*/
 	/*eslint max-nested-callbacks: 0*/
 	"use strict";
 
@@ -30,7 +30,8 @@ sap.ui.define([
 		var oModel = new Model();
 
 		assert.deepEqual(oModel.aBindings, []);
-		assert.deepEqual(oModel.aBindingsToRemove, []);
+		assert.ok(oModel.oBindingsToRemove instanceof Set);
+		assert.strictEqual(oModel.oBindingsToRemove.size, 0);
 		assert.deepEqual(oModel.mContexts, {});
 		assert.deepEqual(oModel.oData, {});
 		assert.strictEqual(oModel.sDefaultBindingMode, BindingMode.TwoWay);

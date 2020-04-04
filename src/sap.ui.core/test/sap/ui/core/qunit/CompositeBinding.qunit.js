@@ -596,15 +596,12 @@ sap.ui.define([
 			});
 			this.binding1 = this.model.bindProperty("/a");
 			this.binding1.setBindingMode(BindingMode.TwoWay);
-			this.model.addBinding(this.binding1);
 
 			this.binding2 = this.model.bindProperty("/b");
 			this.binding2.setBindingMode(BindingMode.OneWay);
-			this.model.addBinding(this.binding2);
 
 			this.binding3 = this.model.bindProperty("/c");
 			this.binding3.setBindingMode(BindingMode.OneTime);
-			this.model.addBinding(this.binding3);
 
 			this.composite = new CompositeBinding([this.binding1, this.binding2, this.binding3]);
 			this.composite.setBindingMode(BindingMode.TwoWay);
