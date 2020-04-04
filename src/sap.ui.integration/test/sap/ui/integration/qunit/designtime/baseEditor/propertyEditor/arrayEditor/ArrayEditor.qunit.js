@@ -792,7 +792,7 @@ sap.ui.define([
 				aWrappers.forEach(function (oWrapper, idx) {
 					assert.strictEqual(oWrapper._fnCancelInit, undefined, "Then each wrapper has finished initialization - Wrapper" + idx);
 					assert.strictEqual(
-						oWrapper.getAggregation("propertyEditors").filter(function (oNestedEditor) {
+						oWrapper._getPropertyEditors().filter(function (oNestedEditor) {
 							return oNestedEditor.isReady();
 						}).length,
 						3,
@@ -820,9 +820,9 @@ sap.ui.define([
 
 		QUnit.test("when editing item in the nested array, then no re-rendering should take place", function (assert) {
 			var oVWCarEditor = _getArrayEditorElements(this.oArrayEditor)[0];
-			var oOwnersEditor = oVWCarEditor.getItems()[1].getAggregation("propertyEditors")[2].getAggregation("propertyEditor");
+			var oOwnersEditor = oVWCarEditor.getItems()[1]._getPropertyEditors()[2].getAggregation("propertyEditor");
 			var aOwnersItems = _getArrayEditorElements(oOwnersEditor);
-			var oOwnerNameEditor = aOwnersItems[0].getItems()[1].getAggregation("propertyEditors")[0].getAggregation("propertyEditor");
+			var oOwnerNameEditor = aOwnersItems[0].getItems()[1]._getPropertyEditors()[0].getAggregation("propertyEditor");
 			var oOwnerInput = oOwnerNameEditor.getContent();
 
 			oOwnerInput.focus();

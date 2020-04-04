@@ -134,6 +134,24 @@ function (
 			this.oBaseEditor.addContent(oPropertyEditor);
 			this.oBaseEditor.placeAt("qunit-fixture");
 		});
+
+		QUnit.test("init event", function (assert) {
+			var fnDone = assert.async();
+			var oSpy = sandbox.spy();
+
+			var oPropertyEditor = new PropertyEditor({
+				propertyName: "foo",
+				init: oSpy
+			});
+
+			this.oBaseEditor.addContent(oPropertyEditor);
+			this.oBaseEditor.placeAt("qunit-fixture");
+
+			return oPropertyEditor.ready().then(function () {
+				assert.strictEqual(oSpy.callCount, 1, "init event was emitted once during the initialization");
+				fnDone();
+			});
+		});
 	});
 
 	QUnit.module("Initialisation via setters", {
@@ -148,6 +166,7 @@ function (
 			this.oPropertyEditor = new PropertyEditor();
 			this.oBaseEditor.addContent(this.oPropertyEditor);
 			this.oBaseEditor.placeAt("qunit-fixture");
+
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
@@ -822,7 +841,6 @@ function (
 		QUnit.test("when the property name changes", function (assert) {
 			var fnDone = assert.async();
 			var oSpy = sandbox.spy();
-			var oFooEditor = this.oBaseEditor.getPropertyEditorsByNameSync("foo")[0];
 
 			this.oPropertyEditor.attachReady(oSpy);
 
@@ -833,14 +851,8 @@ function (
 
 				this.oPropertyEditor.ready().then(function () {
 					assert.strictEqual(oSpy.callCount, 2);
-
-					oFooEditor.fireReady();
-
-					this.oPropertyEditor.ready().then(function () {
-						assert.strictEqual(oSpy.callCount, 2);
-						fnDone();
-					});
-				}.bind(this));
+					fnDone();
+				});
 			}.bind(this));
 
 			this.oPropertyEditor.setPropertyName("foo");

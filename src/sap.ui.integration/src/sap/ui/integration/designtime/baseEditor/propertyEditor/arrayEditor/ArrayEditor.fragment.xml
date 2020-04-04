@@ -4,7 +4,7 @@
 	xmlns:baseEditor="sap.ui.integration.designtime.baseEditor"
 >
 	<VBox>
-		<VBox items="{itemsModel>/}">
+		<VBox items="{ path: 'itemsModel>/', templateShareable: false}">
 			<VBox>
 				<Bar>
 					<contentLeft>

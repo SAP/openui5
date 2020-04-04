@@ -20,7 +20,7 @@ sap.ui.define([
 		var aComplexMapItems = oEditor.getContent().getItems()[0].getItems();
 		return aComplexMapItems.map(function (oComplexMap) {
 			var aNestedComplexMapEditors = {};
-			oComplexMap.getItems()[1].getAggregation("propertyEditors").forEach(function (oPropertyEditor) {
+			oComplexMap.getItems()[1]._getPropertyEditors().forEach(function (oPropertyEditor) {
 				var sPropertyName = oPropertyEditor.getConfig().path.split("/")[1];
 				aNestedComplexMapEditors[sPropertyName] = oPropertyEditor.getContent();
 			});

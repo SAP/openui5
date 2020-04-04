@@ -460,6 +460,15 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/baseEditor/layout/Form": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/layout/Form"
+					]
+				},
+				sinon: false
+			},
 			"designtime/cardEditor/CardEditor": {
 				group: "Card DesignTime Editor",
 				coverage: {

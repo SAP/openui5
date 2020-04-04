@@ -191,7 +191,12 @@ sap.ui.define([
 							type: "any"
 						}
 					}
-				}
+				},
+
+				/**
+				 * Fires when the wrapper is initialized.
+				 */
+				init: {}
 			}
 		},
 
@@ -248,6 +253,8 @@ sap.ui.define([
 
 		renderer: function (oRm, oControl) {
 			oRm.openStart("div", oControl);
+			oRm.addStyle("display", "inline-block");
+			oRm.addStyle("width", "100%");
 			oRm.openEnd();
 
 			oRm.renderControl(oControl.getAggregation("propertyEditor"));
@@ -255,6 +262,12 @@ sap.ui.define([
 			oRm.close("div");
 		}
 	});
+
+	PropertyEditor.prototype.init = function () {
+		Promise.resolve().then(function () {
+			this.fireInit();
+		}.bind(this));
+	};
 
 	PropertyEditor.prototype.getEditor = function () {
 		return sap.ui.getCore().byId(this.getAssociation("editor"));
@@ -396,9 +409,6 @@ sap.ui.define([
 			mPromise.promise.then(function (oPropertyEditor) {
 				oPropertyEditor.setModel(this.getEditor().getModel("i18n"), "i18n");
 				oPropertyEditor.setConfig(_omit(_merge({}, this._mConfig), "__propertyName")); // deep clone to avoid editor modifications to influence the outer config
-
-				// TODO: remove after Form layout BLI
-				oPropertyEditor.addStyleClass("sapUiTinyMargin");
 
 				oPropertyEditor.attachBeforeValueChange(function (oEvent) {
 					this.fireBeforeValueChange(_omit(oEvent.getParameters(), "id"));

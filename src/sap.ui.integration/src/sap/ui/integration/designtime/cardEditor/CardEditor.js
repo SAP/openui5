@@ -24,6 +24,14 @@ sap.ui.define([
 	 * @experimental
 	 */
 	var CardEditor = BaseEditor.extend("sap.ui.integration.designtime.cardEditor.CardEditor", {
+		metadata: {
+			properties: {
+				"layout": {
+					type: "string",
+					defaultValue: "form"
+				}
+			}
+		},
 		constructor: function() {
 			BaseEditor.prototype.constructor.apply(this, arguments);
 			this.addConfig(oDefaultCardConfig);

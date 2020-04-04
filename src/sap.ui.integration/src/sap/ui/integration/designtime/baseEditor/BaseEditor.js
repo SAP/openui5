@@ -4,7 +4,7 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/util/createPromise",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
-	"sap/ui/integration/designtime/baseEditor/PropertyEditor",
+	"sap/ui/integration/designtime/baseEditor/PropertyEditors",
 	"sap/ui/integration/designtime/baseEditor/util/binding/resolveBinding",
 	"sap/ui/integration/designtime/baseEditor/util/binding/ObjectBinding",
 	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString",
@@ -28,7 +28,7 @@ sap.ui.define([
 ], function (
 	createPromise,
 	PropertyEditorFactory,
-	PropertyEditor,
+	PropertyEditors,
 	resolveBinding,
 	ObjectBinding,
 	isValidBindingString,
@@ -151,14 +151,18 @@ sap.ui.define([
 							"sap/ui/integration/designtime/baseEditor/i18n/i18n.properties"
 						]
 					}
+				},
+
+				/**
+				 * Layout name. Standard layout types: list | form
+				 */
+				"layout": {
+					type: "string",
+					defaultValue: "list"
 				}
 			},
 			defaultAggregation : "content",
 			aggregations: {
-				"_propertyEditors": {
-					type: "sap.ui.core.Control",
-					visibility: "hidden"
-				},
 				content: {
 					type: "sap.ui.core.Control",
 					multiple : true
@@ -331,8 +335,6 @@ sap.ui.define([
 				this.deregisterPropertyEditor(oPropertyEditor, sPropertyName);
 			}, this);
 		}.bind(this));
-
-		this.destroyAggregation("_propertyEditors");
 	};
 
 	BaseEditor.prototype._initialize = function () {
@@ -394,7 +396,12 @@ sap.ui.define([
 						});
 					}, this);
 
-					return this._createEditors(this._oConfigObserver.getObject());
+					// If there is no custom layout, create default
+					if (this.getContent().length === 0) {
+						this._createEditors(this._oConfigObserver.getObject());
+					}
+
+					this._checkReady();
 				}.bind(this));
 		}
 	};
@@ -492,10 +499,24 @@ sap.ui.define([
 	 * Creates property editors wrappers for all configurable properties.
 	 */
 	BaseEditor.prototype._createEditors = function (mPropertiesConfig) {
-		each(mPropertiesConfig, function (sPropertyName, mPropertyConfig) {
-			var oPropertyEditor = this._createPropertyEditor(mPropertyConfig);
-			this.addAggregation("_propertyEditors", oPropertyEditor);
-		}.bind(this));
+		var vLayoutConfig = ObjectPath.get(["layout", this.getLayout()], this.getConfig());
+
+		if (isPlainObject(vLayoutConfig) || Array.isArray(vLayoutConfig)) {
+			vLayoutConfig = resolveBinding(
+				vLayoutConfig,
+				{
+					"i18n": this._oI18nModel
+				}
+			);
+		}
+
+		var oPropertyEditors = new PropertyEditors({
+			config: values(mPropertiesConfig),
+			layout: this.getLayout(),
+			layoutConfig: vLayoutConfig
+		});
+
+		this.addContent(oPropertyEditors);
 
 		return (
 			Promise.all(
@@ -593,9 +614,30 @@ sap.ui.define([
 	};
 
 	BaseEditor.prototype._checkReady = function () {
-		if (this.getPropertyEditorsSync().every(function (oEditor) {
-			return oEditor.isReady();
-		})) {
+		var aLayoutDependecies = this.getContent().filter(function (oEditor) {
+			return (
+				oEditor.isA("sap.ui.integration.designtime.baseEditor.PropertyEditors")
+				|| oEditor.isA("sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor")
+			);
+		});
+
+		// Workaround to support first-level of async dependencies of BaseEditor ¯\_(ツ)_/¯
+		aLayoutDependecies.forEach(function (oEditor) {
+			if (!sap.ui.base.EventProvider.hasListener(oEditor, "ready", this._checkReady, this)) {
+				oEditor.attachReady(this._checkReady, this);
+			}
+		}, this);
+
+		var aAsyncDependencies = [].concat(
+			aLayoutDependecies,
+			this.getPropertyEditorsSync()
+		);
+
+		if (
+			aAsyncDependencies.every(function (oEditor) {
+				return oEditor.isReady();
+			})
+		) {
 			// All property editors are ready
 			this.firePropertyEditorsReady({propertyEditors: this.getPropertyEditorsSync()});
 		}
@@ -625,25 +667,6 @@ sap.ui.define([
 			ObjectPath.get(sPropertyName, this._oConfigObserver.getObject()),
 			"value"
 		);
-	};
-
-	BaseEditor.prototype._createPropertyEditor = function (oPropertyConfig) {
-		var oBindingInfo = typeof oPropertyConfig.value === "string" && isValidBindingString(oPropertyConfig.value, false);
-
-		// Avoid passing values containing binding string to constructor, otherwise
-		// there will be interpret by ManagedObject as bindings automatically.
-		// Candidate to move into escape parameter inside wrapper itself.
-		var oPropertyEditor = new PropertyEditor({
-			config: _omit(oPropertyConfig, "value"),
-			value: oBindingInfo ? undefined : oPropertyConfig.value,
-			editor: this
-		});
-
-		if (oBindingInfo) {
-			oPropertyEditor.setValue(oPropertyConfig.value);
-		}
-
-		return oPropertyEditor;
 	};
 
 	/**
