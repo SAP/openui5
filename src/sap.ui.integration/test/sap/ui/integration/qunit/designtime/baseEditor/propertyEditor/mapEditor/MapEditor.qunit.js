@@ -215,7 +215,7 @@ sap.ui.define([
 				}
 			);
 
-			this.aItems[0].value.getAggregation("propertyEditors")[0].attachEventOnce("valueChange", function () {
+			this.aItems[0].value._getPropertyEditors()[0].attachEventOnce("valueChange", function () {
 				assert.deepEqual(
 					this.oMapEditor.getValue(),
 					{
@@ -226,13 +226,13 @@ sap.ui.define([
 				fnDone();
 			}, this);
 
-			var oInput = this.aItems[0].value.getAggregation("propertyEditors")[0].getContent();
+			var oInput = this.aItems[0].value._getPropertyEditors()[0].getContent();
 			oInput.setValue("baz");
 			QUnitUtils.triggerEvent("input", oInput.getDomRef());
 		});
 
 		QUnit.test("When a value is updated and the new value is not valid", function (assert) {
-			var oInput = this.aItems[0].value.getAggregation("propertyEditors")[0].getContent();
+			var oInput = this.aItems[0].value._getPropertyEditors()[0].getContent();
 			oInput.setValue("{someInvalidBindingString");
 			QUnitUtils.triggerEvent("input", oInput.getDomRef());
 

@@ -85,7 +85,7 @@ function (
 					type: "string"
 				}
 			};
-			var fnDone = assert.async(Object.keys(mPropertyConfig).length); // Wait for all editors to be created but not ready
+			var fnDone = assert.async(3); // Wait for all string editors are created but not ready
 			var mConfig = {
 				context: "/",
 				properties: mPropertyConfig,
@@ -116,19 +116,16 @@ function (
 			var that = this; // Required to keep the wrappedMethod context
 			var oAsyncInitStub = sandbox.stub(StringEditor.prototype, "asyncInit");
 			oAsyncInitStub.callsFake(function () {
-				return Promise.all([
+				var oResult = Promise.all([
 					StringEditor.prototype.asyncInit.wrappedMethod.apply(this, arguments),
 					new Promise(function (resolve) {
 						that.oResolveAsyncInitDelay[this.getId()] = resolve;
 					}.bind(this))
 				]);
-			});
 
-			// Wait until the main property editors were added to the aggregation but are not ready yet
-			var oAddPropertyEditorStub = sandbox.stub(BaseEditor.prototype, "addAggregation");
-			oAddPropertyEditorStub.withArgs("_propertyEditors").callsFake(function () {
-				BaseEditor.prototype.addAggregation.wrappedMethod.apply(this, arguments);
 				fnDone();
+
+				return oResult;
 			});
 		},
 		afterEach: function () {
@@ -161,7 +158,7 @@ function (
 			assert.strictEqual(oCarsEditor.isReady(), false, "Then it is not ready if the children are not ready yet");
 
 			var aNestedEditors = oCarsEditor._aEditorWrappers.map(function (oEditorWrapper) {
-				return oEditorWrapper.getAggregation("propertyEditors")[0].getAggregation("propertyEditor");
+				return oEditorWrapper._getPropertyEditors()[0].getAggregation("propertyEditor");
 			});
 			oCarsEditor.ready().then(function () {
 				assert.ok(
@@ -185,7 +182,7 @@ function (
 			var oCarsEditor = this.oBaseEditor.getPropertyEditorsByNameSync("cars")[0].getAggregation("propertyEditor");
 			var aWrappers = oCarsEditor._aEditorWrappers;
 			var aNestedEditors = aWrappers.map(function (oEditorWrapper) {
-				return oEditorWrapper.getAggregation("propertyEditors")[0].getAggregation("propertyEditor");
+				return oEditorWrapper._getPropertyEditors()[0].getAggregation("propertyEditor");
 			});
 			aNestedEditors.forEach(function (oNestedEditor) {
 				this.oResolveAsyncInitDelay[oNestedEditor.getId()]();
@@ -209,7 +206,7 @@ function (
 			var oCarsEditor = this.oBaseEditor.getPropertyEditorsByNameSync("cars")[0].getAggregation("propertyEditor");
 			var aWrappers = oCarsEditor._aEditorWrappers;
 			var aNestedEditors = aWrappers.map(function (oEditorWrapper) {
-				return oEditorWrapper.getAggregation("propertyEditors")[0].getAggregation("propertyEditor");
+				return oEditorWrapper._getPropertyEditors()[0].getAggregation("propertyEditor");
 			});
 			aNestedEditors.forEach(function (oNestedEditor) {
 				this.oResolveAsyncInitDelay[oNestedEditor.getId()]();
