@@ -1124,6 +1124,7 @@ sap.ui.define([
 		app.back();
 		assert.ok(jQuery.sap.domById("sapMList011-listUl"), "noDataList should be rendered");
 		assert.ok(jQuery.sap.domById("sapMList011-nodata-text").textContent == "Forgot something???", "noDataList custom text should be rendered");
+		assert.ok(jQuery.sap.byId("sapMList011-nodata").attr("role") == "option", "ARIA role of No Data Entry");
 		app.to("selectionList", "show");
 		sap.ui.getCore().applyChanges();
 	});
