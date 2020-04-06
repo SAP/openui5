@@ -76,7 +76,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 
 			oRm.openEnd();
 
-			var oButton = oControl._getButton();
+			var oButton = oControl._oExpandButton;
 
 			oControl._toggleButtonIcon(bIsExpanded);
 
