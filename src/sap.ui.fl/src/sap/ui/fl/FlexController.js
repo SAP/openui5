@@ -535,6 +535,9 @@ sap.ui.define([
 
 	/**
 	 * Retrieves the changes for the complete UI5 component
+	 *
+	 * also used by OVP!
+	 *
 	 * @param {map} mPropertyBag - (optional) contains additional data that are needed for reading of changes
 	 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to the current running component
 	 * @param {string} [mPropertyBag.siteId] ID of the site belonging to the current running component
@@ -633,6 +636,37 @@ sap.ui.define([
 					}
 				}
 			});
+	};
+
+	/**
+	 * Discard changes on the server. Still used by OVP
+	 *
+	 * @param {array} aChanges array of {sap.ui.fl.Change} to be discarded
+	 * @param {boolean} bDiscardPersonalization - (optional) specifies that only changes in the USER layer are discarded
+	 * @returns {Promise} Promise that resolves without parameters
+	 */
+	FlexController.prototype.discardChanges = function (aChanges, bDiscardPersonalization) {
+		var sActiveLayer = LayerUtils.getCurrentLayer(!!bDiscardPersonalization);
+		var iIndex = 0;
+		var iLength;
+		var oChange;
+
+		iLength = aChanges.length;
+		while (iIndex < aChanges.length) {
+			oChange = aChanges[iIndex];
+			if (oChange && oChange.getLayer && oChange.getLayer() === sActiveLayer) {
+				this._oChangePersistence.deleteChange(oChange);
+			}
+			//the array may change during this loop, so if the length is the same, the index must increase
+			//otherwise the same index should be used (same index but different element in the array)
+			if (iLength === aChanges.length) {
+				iIndex++;
+			} else {
+				iLength = aChanges.length;
+			}
+		}
+
+		return this._oChangePersistence.saveDirtyChanges();
 	};
 
 	/**
