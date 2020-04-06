@@ -130,9 +130,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 		}
 
 		// dummy keyboard handling area
-		if (bRenderItems || bShowNoData) {
-			this.renderDummyArea(rm, oControl, "before", -1);
-		}
+		this.renderDummyArea(rm, oControl, "before", -1);
 
 		// run hook method to start building list
 		this.renderListStartAttributes(rm, oControl);
@@ -184,9 +182,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 		this.renderListEndAttributes(rm, oControl);
 
 		// dummy keyboard handling area
-		if (bRenderItems || bShowNoData) {
-			this.renderDummyArea(rm, oControl, "after", iTabIndex);
-		}
+		this.renderDummyArea(rm, oControl, "after", iTabIndex);
 
 		// render bottom growing
 		if (!bUpwardGrowing) {
