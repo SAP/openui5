@@ -216,6 +216,18 @@ sap.ui.define([
 			binding : "{path}",
 			expression : "${path}"
 		}, {
+			value : {parameters : {}, result : "binding", value : "path"},
+			binding : "{path}",
+			expression : "${path}"
+		}, {
+			value : {parameters : null, result : "binding", value : "path"},
+			binding : "{path}",
+			expression : "${path}"
+		}, {
+			value : {parameters : {$$noPatch : true}, result : "binding", value : "path"},
+			binding : "{path:'path',parameters:{'$$noPatch':true}}",
+			expression : "${path:'path',parameters:{'$$noPatch':true}}"
+		}, {
 			value : {result : "binding", value : "{foo'bar}"},
 			binding : "{path:'{foo\\'bar}'}",
 			expression : "${path:'{foo\\'bar}'}"
@@ -301,7 +313,7 @@ sap.ui.define([
 			value : {type : "Edm.Byte", constraints : {nullable : false}},
 			binding : ",type:'sap.ui.model.odata.type.Byte',constraints:{'nullable':false}"
 		}, {
-			value : {type : "Edm.Date"},
+			value : {type : "Edm.Date", formatOptions : null},
 			binding : ",type:'sap.ui.model.odata.type.Date'"
 		}, {
 			value : {type : "Edm.DateTime", constraints : {displayFormat : "DateOnly"}},
@@ -322,10 +334,10 @@ sap.ui.define([
 			value : {type : "Edm.Float"},
 			binding : ",type:'sap.ui.model.odata.type.Single'"
 		}, {
-			value : {type : "Edm.Guid"},
-			binding : ",type:'sap.ui.model.odata.type.Guid'"
+			value : {type : "Edm.Guid", parameters : {$$noPatch : true}},
+			binding : ",type:'sap.ui.model.odata.type.Guid',parameters:{'$$noPatch':true}"
 		}, {
-			value : {type : "Edm.Int16"},
+			value : {type : "Edm.Int16", parameters : {}},
 			binding : ",type:'sap.ui.model.odata.type.Int16'"
 		}, {
 			value : {type : "Edm.Int32"},

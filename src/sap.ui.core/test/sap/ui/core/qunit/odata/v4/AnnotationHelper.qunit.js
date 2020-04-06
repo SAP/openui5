@@ -302,7 +302,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	["/my/path", "/my/path/"].forEach(function (sPath) {
 		QUnit.test("value", function (assert) {
-			var oMetaModel = {},
+			var aArguments = [{}],
+				oMetaModel = {},
 				oContext = new BaseContext(oMetaModel, sPath),
 				vRawValue = {},
 				sResult = "foo";
@@ -313,6 +314,7 @@ sap.ui.define([
 					complexBinding : false,
 					ignoreAsPrefix : "",
 					model : sinon.match.same(oMetaModel),
+					parameters : sinon.match.same(aArguments[0]),
 					path : "/my/path", // trailing slash removed!
 					prefix : "",
 					value : sinon.match.same(vRawValue),
@@ -320,7 +322,9 @@ sap.ui.define([
 				})
 				.returns(sResult);
 
-			assert.strictEqual(AnnotationHelper.value(vRawValue, {context : oContext}), sResult);
+			assert.strictEqual(
+				AnnotationHelper.value(vRawValue, {arguments : aArguments, context : oContext}),
+				sResult);
 		});
 	});
 
@@ -348,6 +352,7 @@ sap.ui.define([
 				complexBinding : false,
 				ignoreAsPrefix : "",
 				model : sinon.match.same(oModel),
+				parameters : undefined,
 				path : "/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value",
 				prefix : "",
 				value : sinon.match.same(vRawValue),
@@ -638,7 +643,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	["/my/path", "/my/path/"].forEach(function (sPath) {
 		QUnit.test("format", function (assert) {
-			var oMetaModel = {},
+			var aArguments = [{}, {}],
+				oMetaModel = {},
 				oContext = new BaseContext(oMetaModel, sPath),
 				vRawValue = {},
 				vResult = {/*string or Promise*/};
@@ -647,8 +653,10 @@ sap.ui.define([
 				.withExactArgs({
 					asExpression : false,
 					complexBinding : true,
+					formatOptions : sinon.match.same(aArguments[1]),
 					ignoreAsPrefix : "",
 					model : sinon.match.same(oMetaModel),
+					parameters : sinon.match.same(aArguments[0]),
 					path : "/my/path", // trailing slash removed!
 					prefix : "",
 					value : sinon.match.same(vRawValue),
@@ -656,7 +664,9 @@ sap.ui.define([
 				})
 				.returns(vResult);
 
-			assert.strictEqual(AnnotationHelper.format(vRawValue, {context : oContext}), vResult);
+			assert.strictEqual(
+				AnnotationHelper.format(vRawValue, {arguments : aArguments, context : oContext}),
+				vResult);
 		});
 	});
 
@@ -672,8 +682,10 @@ sap.ui.define([
 			.withExactArgs({
 				asExpression : false,
 				complexBinding : true,
+				formatOptions : undefined,
 				ignoreAsPrefix : "",
 				model : sinon.match.same(oMetaModel),
+				parameters : undefined,
 				path : sPath,
 				prefix : "",
 				value : sinon.match.same(vRawValue),
@@ -736,8 +748,10 @@ sap.ui.define([
 				.withExactArgs({
 					asExpression : false,
 					complexBinding : true,
+					formatOptions : undefined,
 					ignoreAsPrefix : "",
 					model : sinon.match.same(oMetaModel),
+					parameters : undefined,
 					path : oFixture.sPathForGetExpression || oFixture.sPath,
 					prefix : oFixture.sPrefix,
 					value : sinon.match.same(vRawValue),
@@ -812,8 +826,10 @@ sap.ui.define([
 		this.mock(Expression).expects("getExpression").withExactArgs({
 				asExpression : false,
 				complexBinding : true,
+				formatOptions : undefined,
 				ignoreAsPrefix : "",
 				model : sinon.match.same(oModel),
+				parameters : undefined,
 				path : "/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value",
 				prefix : "",
 				value : sinon.match.same(vRawValue),
@@ -853,8 +869,10 @@ sap.ui.define([
 			.withExactArgs({
 				asExpression : false,
 				complexBinding : true,
+				formatOptions : undefined,
 				ignoreAsPrefix : bIsBound ? "_it/" : "",
 				model : sinon.match.same(oMetaModel),
+				parameters : undefined,
 				path : sPath,
 				prefix : "",
 				value : sinon.match.same(vRawValue),
@@ -889,8 +907,10 @@ sap.ui.define([
 			.withExactArgs({
 				asExpression : false,
 				complexBinding : true,
+				formatOptions : undefined,
 				ignoreAsPrefix : "", // do not remove binding parameter name
 				model : sinon.match.same(oMetaModel),
+				parameters : undefined,
 				path : sPath,
 				prefix : "",
 				value : sinon.match.same(vRawValue),
@@ -931,6 +951,7 @@ sap.ui.define([
 				complexBinding : false,
 				ignoreAsPrefix : bIsBound ? "_it/" : "",
 				model : sinon.match.same(oMetaModel),
+				parameters : undefined,
 				path : sPath,
 				prefix : "",
 				value : sinon.match.same(vRawValue),
@@ -969,6 +990,7 @@ sap.ui.define([
 				complexBinding : false,
 				ignoreAsPrefix : "", // do not remove binding parameter name
 				model : sinon.match.same(oMetaModel),
+				parameters : undefined,
 				path : sPath,
 				prefix : "",
 				value : sinon.match.same(vRawValue),

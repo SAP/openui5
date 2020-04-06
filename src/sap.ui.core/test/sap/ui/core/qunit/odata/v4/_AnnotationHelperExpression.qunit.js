@@ -124,9 +124,39 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[{
+	input : undefined,
+	output : {
+		parseKeepsEmptyString : true // Note: default value
+	}
+}, {
+	input : {
+		shortLimit : 1000,
+		style : "short"
+	},
+	output : {
+		parseKeepsEmptyString : true, // Note: default value
+		shortLimit : 1000,
+		style : "short"
+	}
+}, {
+	input : {
+		parseKeepsEmptyString : false, // Note: will not be overruled
+		shortLimit : 1000,
+		style : "short"
+	},
+	output : {
+		parseKeepsEmptyString : false,
+		shortLimit : 1000,
+		style : "short"
+	}
+}].forEach(function (oFixture, i) {
 	[true, false].forEach(function (bComplexBinding) {
-		QUnit.test("path: sync; bComplexBinding = " + bComplexBinding, function (assert) {
+		var sTitle = "path: sync; bComplexBinding = " + bComplexBinding + ", " + i;
+
+		QUnit.test(sTitle, function (assert) {
 			var mConstraints = {},
+				sFormatOptions = JSON.stringify(oFixture.input),
 				oMetaModel = {
 					fetchObject : function () {},
 					getConstraints : function () {},
@@ -136,7 +166,9 @@ sap.ui.define([
 				sPath = "/BusinessPartnerList/@UI.LineItem/0/Value/$Path",
 				oPathValue = {
 					complexBinding : bComplexBinding,
+					formatOptions : oFixture.input,
 					model : oMetaModel,
+					parameters : {$$noPatch : true},
 					path : sPath,
 					prefix : "",
 					value : "BusinessPartnerID"
@@ -166,15 +198,16 @@ sap.ui.define([
 
 			assert.deepEqual(oResult, {
 				constraints : bComplexBinding ? mConstraints : undefined,
-				formatOptions : {
-					parseKeepsEmptyString : true
-				},
+				formatOptions : oFixture.output,
+				parameters : oPathValue.parameters,
 				result : "binding",
 				type : "Edm.String",
 				value : oPathValue.value
 			});
+			assert.strictEqual(JSON.stringify(oFixture.input), sFormatOptions, "unchanged");
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("fetchCurrencyOrUnit: neither unit nor currency", function (assert) {
@@ -382,6 +415,7 @@ sap.ui.define([
 				fetchObject : function () {}
 			},
 			oPathValue = {
+				formatOptions : {shortLimit : 1000, style : "short"},
 				model : oMetaModel,
 				path : "/BusinessPartnerList/@UI.LineItem/0/Value/$Path",
 				prefix : "",
@@ -399,7 +433,8 @@ sap.ui.define([
 
 		assert.deepEqual(oResult, {
 			constraints : undefined,
-			formatOptions : undefined,
+			formatOptions : oPathValue.formatOptions,
+			parameters : undefined,
 			result : "binding",
 			type : undefined, // "foo" not yet available
 			value : oPathValue.value
@@ -433,6 +468,7 @@ sap.ui.define([
 				assert.deepEqual(oResult, {
 					constraints : undefined,
 					formatOptions : undefined,
+					parameters : undefined,
 					result : "binding",
 					type : "Edm.Foo",
 					value : bWithPrefix ? "~prefix~/BusinessPartnerID" : "BusinessPartnerID"
@@ -495,6 +531,7 @@ sap.ui.define([
 			assert.deepEqual(oResult, {
 				constraints : mConstraints,
 				formatOptions : undefined,
+				parameters : undefined,
 				result : "binding",
 				type : "Edm.Foo",
 				value : oFixture.sOutputValue
