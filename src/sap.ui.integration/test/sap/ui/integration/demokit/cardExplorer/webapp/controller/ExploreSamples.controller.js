@@ -179,7 +179,13 @@ sap.ui.define([
 		},
 
 		onDownloadZip: function () {
-			this._onDownloadCompressed("card.zip");
+			var sZipName = "card.zip";
+
+			if (exploreSettingsModel.getProperty("/isApplication")) {
+				sZipName = "zip";
+			}
+
+			this._onDownloadCompressed(sZipName);
 		},
 
 		onSubSampleChange: function (oEvent) {
@@ -252,6 +258,7 @@ sap.ui.define([
 				content: ''
 			}]);
 
+			exploreSettingsModel.setProperty("/isApplication", !!oSubSampleOrSample.isApplication);
 			this._showSample(oSample, oSubSample);
 		},
 
@@ -378,6 +385,8 @@ sap.ui.define([
 
 		createFrame: function(sSample) {
 			var oFrameEl = document.createElement("iframe");
+			// index.html will load separate scripts to enable editing the manifest.
+			// in the file editor indexTemplate.html will be shown
 			oFrameEl.src = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/samples/" + sSample + "/index.html");
 			oFrameEl.width = "100%";
 			oFrameEl.className = "sapUiTopicsIframe";

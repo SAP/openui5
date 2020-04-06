@@ -134,7 +134,7 @@ sap.ui.define([
 						title: 'Destinations',
 						target: 'learnDetail',
 						key: 'destinations',
-						topicTitle: 'Integration Card Features'
+						topicTitle: 'Integration'
 					},
 					{
 						title: 'Dynamic Counter',
@@ -146,12 +146,6 @@ sap.ui.define([
 						title: 'Dynamic Parameters',
 						target: 'learnDetail',
 						key: 'dynamicParameters',
-						topicTitle: 'Integration Card Features'
-					},
-					{
-						title: 'Host Actions',
-						target: 'learnDetail',
-						key: 'hostActions',
 						topicTitle: 'Integration Card Features'
 					},
 					{

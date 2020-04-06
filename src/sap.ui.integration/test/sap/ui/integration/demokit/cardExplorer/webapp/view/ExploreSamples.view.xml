@@ -78,16 +78,14 @@
 								<MenuButton
 									id="downloadSampleButton"
 									icon="sap-icon://download"
-									enabled="true"
 									tooltip="Download"
 									text="Download"
 									type="Transparent"
-									visible="true"
 								>
 									<menu>
 										<Menu>
 											<MenuItem text="Manifest File" icon="sap-icon://document-text" press="onDownloadManifestFile" />
-											<MenuItem text="Bundle as card.zip" icon="sap-icon://attachment-zip-file" press="onDownloadZip" />
+											<MenuItem text="{= ${settings>/isApplication} ? 'All files as .zip' : 'Bundle as card.zip'}" icon="sap-icon://attachment-zip-file" press="onDownloadZip" />
 										</Menu>
 									</menu>
 								</MenuButton>

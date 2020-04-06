@@ -6,29 +6,26 @@ sap.ui.define([
 	"../util/FileUtils",
 	"../util/SchemaValidator",
 	"../model/formatter",
+	"sap/base/util/extend",
 	"sap/m/IconTabHeader",
 	"sap/m/IconTabFilter",
 	"sap/m/Image",
 	"sap/m/MessageStrip",
 	"sap/ui/codeeditor/CodeEditor",
-	"sap/ui/core/Control",
-	"sap/ui/core/routing/Router"
+	"sap/ui/core/Control"
 ], function(
 	FileUtils,
 	SchemaValidator,
 	formatter,
+	extend,
 	IconTabHeader,
 	IconTabFilter,
 	Image,
 	MessageStrip,
 	CodeEditor,
-	Control,
-	Router
+	Control
 ) {
 	"use strict";
-
-	var MANIFEST_FILE = "manifest.json";
-
 	var FileEditor = Control.extend("sap.ui.demo.cardExplorer.controls.FileEditor", {
 		metadata: {
 			properties: {
@@ -169,7 +166,7 @@ sap.ui.define([
 			oStrip = new MessageStrip({
 				showIcon: true,
 				type: "Warning",
-				text: "This file is ready-only.",
+				text: "This file is read-only.",
 				visible: false
 			});
 			this.setAggregation("_readOnlyWarningStrip", oStrip);
@@ -225,11 +222,12 @@ sap.ui.define([
 		var sSelectedFileKey = this._getHeader().getSelectedKey(),
 			sFileExtension = sSelectedFileKey.split('.').pop(),
 			iSelectedFileIndex = this._aFiles.findIndex(function (oEl) { return oEl.key === sSelectedFileKey; }),
-			oSelectedFile = this._aFiles[iSelectedFileIndex];
+			oSelectedFile = this._aFiles[iSelectedFileIndex],
+			bEditable = this._isFileEditable(oSelectedFile);
 
 		sFileExtension = sFileExtension === 'js' ? 'javascript' : sFileExtension;
 
-		this._getReadOnlyWarningStrip().setVisible(!this._isFileEditable(sSelectedFileKey));
+		this._getReadOnlyWarningStrip().setVisible(!bEditable);
 
 		this._getErrorsStrip().setVisible(false);
 		this._getSchemaErrorsStrip().setVisible(false);
@@ -243,7 +241,7 @@ sap.ui.define([
 		} else {
 			this._bPreventLiveChange = true;
 			this._getEditor()
-				.setEditable(this._isFileEditable(sSelectedFileKey))
+				.setEditable(bEditable)
 				.setType(sFileExtension)
 				.setValue(oSelectedFile.content)
 				.setVisible(true);
@@ -253,7 +251,7 @@ sap.ui.define([
 		}
 
 		this.fireFileSwitch({
-			editable: this._isFileEditable(sSelectedFileKey)
+			editable: bEditable
 		});
 	};
 
@@ -279,7 +277,7 @@ sap.ui.define([
 				}.bind(this));
 
 				this.fireManifestChange({
-					value: this._aFiles[this._findIndex(MANIFEST_FILE)].content
+					value: this.getManifestFile().content
 				});
 
 				this._getHeader().setSelectedKey(this._aFiles[0].key);
@@ -298,14 +296,12 @@ sap.ui.define([
 			return;
 		}
 
-		var iManifestIndex = this._findIndex(MANIFEST_FILE);
-
 		// for now only editing the manifest is allowed
-		if (this._findIndex(this._getHeader().getSelectedKey()) !== iManifestIndex) {
+		if (this._getHeader().getSelectedKey() !== this.getManifestFile().key) {
 			return;
 		}
 
-		this._aFiles[iManifestIndex].content = oEvent.getParameter("value");
+		this.getManifestFile().content = oEvent.getParameter("value");
 
 		this.fireManifestChange({
 			value: oEvent.getParameter("value")
@@ -313,23 +309,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {string} sFileName The name of the file.
+	 * There should be only 1 card manifest in sample, with name "manifest.json" or "cardManifest.json"
+	 *
+	 * @param {object} oFile The file with all properties.
 	 * @returns {boolean} Whether the file is editable.
 	 */
-	FileEditor.prototype._isFileEditable = function (sFileName) {
-		return !this._isApplicationSample() && sFileName.endsWith(MANIFEST_FILE);
-	};
-
-	/**
-	 * Checks if the current example is an example of a full application.
-	 * Then some features are not available.
-	 * @returns {boolean} True if it is an application example.
-	 */
-	FileEditor.prototype._isApplicationSample = function () {
-		var sCurrentHash = new Router().getHashChanger().getHash(),
-			bIsApplication = sCurrentHash.indexOf('hostActions') !== -1 || sCurrentHash.indexOf('destinations') !== -1;
-
-		return bIsApplication;
+	FileEditor.prototype._isFileEditable = function (oFile) {
+		return !oFile.isApplicationManifest
+				&& (oFile.name.endsWith("manifest.json") || oFile.name.endsWith("cardManifest.json"));
 	};
 
 	FileEditor.prototype._findIndex = function (sName) {
@@ -354,13 +341,10 @@ sap.ui.define([
 
 	FileEditor.prototype._createInternalFiles = function (aFiles) {
 		this._aFiles = aFiles.map(function (oFile) {
-			return {
-				key: oFile.key,
-				name: oFile.name,
-				content: oFile.content,
-				url: oFile.url,
+			return extend({}, oFile, {
+				content: "",
 				promise: null
-			};
+			});
 		});
 	};
 
@@ -385,20 +369,20 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolved with the manifest as string.
 	 */
 	FileEditor.prototype.getManifestContent = function () {
-		var iManifestIndex = this._findIndex(MANIFEST_FILE);
+		var oManifestFile = this.getManifestFile();
 
 		// always try to return the content first, in case it is already loaded and edited
-		if (this._aFiles[iManifestIndex].content) {
-			return Promise.resolve(this._aFiles[iManifestIndex].content);
+		if (oManifestFile.content) {
+			return Promise.resolve(oManifestFile.content);
 		} else {
-			return this._aFiles[iManifestIndex].promise;
+			return oManifestFile.promise;
 		}
 	};
 
 	FileEditor.prototype.getManifestFile = function () {
 		return this._aFiles.find(function (oFile) {
-			return oFile.name.endsWith(MANIFEST_FILE);
-		});
+			return this._isFileEditable(oFile);
+		}.bind(this));
 	};
 
 	FileEditor.prototype.setManifestContent = function (sValue) {

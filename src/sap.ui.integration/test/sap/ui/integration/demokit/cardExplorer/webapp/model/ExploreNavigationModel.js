@@ -277,7 +277,6 @@ sap.ui.define([
 				title: 'Card Features',
 				key: 'features',
 				target: 'exploreOverview',
-				targetKey: 'actions',
 				icon: 'sap-icon://activities',
 				hasExpander: false,
 				items: [
@@ -289,34 +288,6 @@ sap.ui.define([
 							columns: 3
 						},
 						manifestUrl: '/samples/cardActions.json'
-					},
-					{
-						key: 'htmlConsumption',
-						target: 'exploreSamples',
-						title: 'Consumption in HTML',
-						useIFrame: true,
-						files: [
-							{
-								url: '/samples/htmlConsumption/indexTemplate.html',
-								name: 'index.html',
-								key: 'index.html'
-							},
-							{
-								url: '/samples/htmlConsumption/manifest.json',
-								name: 'manifest.json',
-								key: 'manifest.json'
-							},
-							{
-								url: '/samples/htmlConsumption/i18n/i18n.properties',
-								name: 'i18n/i18n.properties',
-								key: 'i18n/i18n.properties'
-							},
-							{
-								url: '/samples/htmlConsumption/items.json',
-								name: 'items.json',
-								key: 'items.json'
-							}
-						]
 					},
 					{
 						key: 'data',
@@ -366,139 +337,10 @@ sap.ui.define([
 						manifestUrl: '/samples/dateRange.json'
 					},
 					{
-						key: 'destinations',
-						target: 'exploreSamples',
-						title: 'Destinations',
-						subSamples: [
-							{
-								title: 'General',
-								key: 'general',
-								useIFrame: true,
-								files: [
-									{
-										url: '/samples/destinations/general/index.html',
-										name: 'index.html',
-										key: 'index.html'
-									},
-									{
-										url: '/samples/destinations/general/cardManifest.json',
-										name: 'cardManifest.json',
-										key: 'cardManifest.json'
-									},
-									{
-										url: '/samples/destinations/general/Destinations.view.xml',
-										name: 'Destinations.view.xml',
-										key: 'Destinations.view.xml'
-									},
-									{
-										url: '/samples/destinations/general/Destinations.controller.js',
-										name: 'Destinations.controller.js',
-										key: 'Destinations.controller.js'
-									},
-									{
-										url: '/samples/destinations/general/manifest.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									},
-									{
-										url: '/samples/destinations/general/Component.js',
-										name: 'Component.js',
-										key: 'Component.js'
-									}
-								]
-							},
-							{
-								title: 'Component Card',
-								key: 'component',
-								useIFrame: true,
-								files: [
-									{
-										url: '/samples/destinations/component/index.html',
-										name: 'index.html',
-										key: 'index.html'
-									},
-									{
-										url: '/samples/destinations/component/Destinations.view.xml',
-										name: 'Destinations.view.xml',
-										key: 'Destinations.view.xml'
-									},
-									{
-										url: '/samples/destinations/component/Destinations.controller.js',
-										name: 'Destinations.controller.js',
-										key: 'Destinations.controller.js'
-									},
-									{
-										url: '/samples/destinations/component/manifest.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									},
-									{
-										url: '/samples/destinations/component/Component.js',
-										name: 'Component.js',
-										key: 'Component.js'
-									},
-									{
-										url: '/samples/destinations/component/sampleComponent/manifest.json',
-										name: 'sampleComponent/manifest.json',
-										key: 'sampleComponent/manifest.json'
-									},
-									{
-										url: '/samples/destinations/component/sampleComponent/Component.js',
-										name: 'sampleComponent/Component.js',
-										key: 'sampleComponent/Component.js'
-									},
-									{
-										url: '/samples/destinations/component/sampleComponent/Main.view.xml',
-										name: 'sampleComponent/Main.view.xml',
-										key: 'sampleComponent/Main.view.xml'
-									}
-								]
-							}
-						]
-					},
-					{
 						key: 'dynamicCounter',
 						target: 'exploreSamples',
 						title: 'Dynamic Counter',
 						manifestUrl: '/samples/dynamicCounter/manifest.json'
-					},
-					{
-						key: 'hostActions',
-						target: 'exploreSamples',
-						title: 'Host Actions',
-						useIFrame: true,
-						files: [
-							{
-								url: '/samples/hostActions/index.html',
-								name: 'index.html',
-								key: 'index.html'
-							},
-							{
-								url: '/samples/hostActions/cardManifest.json',
-								name: 'cardManifest.json',
-								key: 'cardManifest.json'
-							},
-							{
-								url: '/samples/hostActions/HostActions.view.xml',
-								name: 'HostActions.view.xml',
-								key: 'HostActions.view.xml'
-							},
-							{
-								url: '/samples/hostActions/HostActions.controller.js',
-								name: 'HostActions.controller.js',
-								key: 'HostActions.controller.js'
-							},
-							{
-								url: '/samples/hostActions/manifest.json',
-								name: 'manifest.json',
-								key: 'manifest.json'
-							},
-							{
-								url: '/samples/hostActions/Component.js',
-								name: 'Component.js',
-								key: 'Component.js'
-							}
-						]
 					},
 					{
 						key: 'parameters',
@@ -529,7 +371,6 @@ sap.ui.define([
 				title: 'Card Formatters',
 				key: 'formatters',
 				target: 'exploreOverview',
-				targetKey: 'formatters',
 				icon: 'sap-icon://text-formatting',
 				hasExpander: false,
 				items: [
@@ -568,6 +409,178 @@ sap.ui.define([
 						target: 'exploreSamples',
 						title: 'Unit of Measurement',
 						manifestUrl: "/samples/formatters/unit/manifest.json"
+					}
+				]
+			},
+			{
+				title: 'Integration',
+				icon: 'sap-icon://puzzle',
+				key: 'integration',
+				target: 'exploreOverview',
+				hasExpander: false,
+				items: [
+					{
+						key: 'htmlConsumption',
+						target: 'exploreSamples',
+						title: 'Consumption in HTML',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/htmlConsumption/indexTemplate.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/htmlConsumption/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							},
+							{
+								url: '/samples/htmlConsumption/i18n/i18n.properties',
+								name: 'i18n/i18n.properties',
+								key: 'i18n/i18n.properties'
+							},
+							{
+								url: '/samples/htmlConsumption/items.json',
+								name: 'items.json',
+								key: 'items.json'
+							}
+						]
+					},
+					{
+						key: 'destinations',
+						target: 'exploreSamples',
+						title: 'Destinations',
+						subSamples: [
+							{
+								title: 'General',
+								key: 'general',
+								useIFrame: true,
+								isApplication: true,
+								files: [
+									{
+										url: '/samples/destinations/general/indexTemplate.html',
+										name: 'index.html',
+										key: 'index.html'
+									},
+									{
+										url: '/samples/destinations/general/cardManifest.json',
+										name: 'cardManifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/destinations/general/Destinations.view.xml',
+										name: 'Destinations.view.xml',
+										key: 'Destinations.view.xml'
+									},
+									{
+										url: '/samples/destinations/general/Destinations.controller.js',
+										name: 'Destinations.controller.js',
+										key: 'Destinations.controller.js'
+									},
+									{
+										url: '/samples/destinations/general/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json',
+										isApplicationManifest: true
+									},
+									{
+										url: '/samples/destinations/general/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									}
+								]
+							},
+							{
+								title: 'Component Card',
+								key: 'component',
+								useIFrame: true,
+								isApplication: true,
+								files: [
+									{
+										url: '/samples/destinations/component/indexTemplate.html',
+										name: 'index.html',
+										key: 'index.html'
+									},
+									{
+										url: '/samples/destinations/component/Destinations.view.xml',
+										name: 'Destinations.view.xml',
+										key: 'Destinations.view.xml'
+									},
+									{
+										url: '/samples/destinations/component/Destinations.controller.js',
+										name: 'Destinations.controller.js',
+										key: 'Destinations.controller.js'
+									},
+									{
+										url: '/samples/destinations/component/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json',
+										isApplicationManifest: true
+									},
+									{
+										url: '/samples/destinations/component/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									},
+									{
+										url: '/samples/destinations/component/sampleComponent/manifest.json',
+										name: 'sampleComponent/manifest.json',
+										key: 'sampleComponent/manifest.json'
+									},
+									{
+										url: '/samples/destinations/component/sampleComponent/Component.js',
+										name: 'sampleComponent/Component.js',
+										key: 'sampleComponent/Component.js'
+									},
+									{
+										url: '/samples/destinations/component/sampleComponent/Main.view.xml',
+										name: 'sampleComponent/Main.view.xml',
+										key: 'sampleComponent/Main.view.xml'
+									}
+								]
+							}
+						]
+					},
+					{
+						key: 'hostActions',
+						target: 'exploreSamples',
+						title: 'Host Actions',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/hostActions/indexTemplate.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/hostActions/cardManifest.json',
+								name: 'cardManifest.json',
+								key: 'cardManifest.json'
+							},
+							{
+								url: '/samples/hostActions/HostActions.view.xml',
+								name: 'HostActions.view.xml',
+								key: 'HostActions.view.xml'
+							},
+							{
+								url: '/samples/hostActions/HostActions.controller.js',
+								name: 'HostActions.controller.js',
+								key: 'HostActions.controller.js'
+							},
+							{
+								url: '/samples/hostActions/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							},
+							{
+								url: '/samples/hostActions/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							}
+						]
 					}
 				]
 			}
