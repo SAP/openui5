@@ -1203,6 +1203,21 @@ QUnit.module("Misc");
 		oCalendar.destroy();
 	});
 
+	QUnit.test("Calendar in two months mode shows correct years in its header buttons when they differ", function(assert) {
+		var oCalendar = new Calendar({
+			months: 2
+		}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oCalendar._updateHeadersYearPrimaryText("2020", "2021");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oCalendar.getAggregation("header")._getTextButton4(), "2021", "Second button shows the next year");
+		assert.strictEqual(oCalendar.getAggregation("header")._getAriaLabelButton4(), "2021", "Aria label is correct too");
+
+		oCalendar.destroy();
+	});
+
 	QUnit.module("Focus", {
 		beforeEach: function () {
 			this.oCal = new Calendar().placeAt("qunit-fixture");

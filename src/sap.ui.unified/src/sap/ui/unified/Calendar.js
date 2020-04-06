@@ -2504,8 +2504,8 @@ sap.ui.define([
 				sSecondHeaderText = sFirstYear + " - " + sSecondYear;
 		}
 
-		oHeader._setTextButton4(sFirstHeaderText);
-		oHeader._setAriaLabelButton4(sFirstHeaderText);
+		oHeader._setTextButton4(sSecondHeaderText);
+		oHeader._setAriaLabelButton4(sSecondHeaderText);
 		oSecondMonthHeader.setTextButton2(sSecondHeaderText);
 		oSecondMonthHeader.setAriaLabelButton2(sSecondHeaderText);
 		oHeader.setTextButton2(sFirstHeaderText);
