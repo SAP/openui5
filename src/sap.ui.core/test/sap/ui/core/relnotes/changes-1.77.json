@@ -117,6 +117,28 @@
         "type": "FIX",
         "text": " sap.ui.core.message.MessageManager: Detach of validation events corrected",
         "references": []
+      },
+      {
+        "id": "9b86c9fd068c1947bbc906e45c8db79ac45fd436",
+        "type": "FIX",
+        "text": " Element: Using element data with binding path",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980426003"
+          }
+        ]
+      },
+      {
+        "id": "86f4e091ec7606ed76f7c95796cdb7e75dfcab8f",
+        "type": "FIX",
+        "text": " Reverts \"Element: Using element data with binding path\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070123259"
+          }
+        ]
       }
     ]
   }

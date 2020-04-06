@@ -359,6 +359,56 @@
             "reference": "2070083133"
           }
         ]
+      },
+      {
+        "id": "b1fe5a5cb18449896d02d1a5f02bb1650d2e7283",
+        "type": "FIX",
+        "text": " ColumnHeaderPopover: Set focus back on opener before press event fired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070055382"
+          }
+        ]
+      },
+      {
+        "id": "30a41a23e4c09b0672d7b0ffa6434c754b5b6aae",
+        "type": "FIX",
+        "text": " sap.m.Input: getValue documentation updated",
+        "references": []
+      },
+      {
+        "id": "85420f327e01cc38f8a7fafc3cff058c0ae2da7b",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Cutting of action buttons is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070009883"
+          }
+        ]
+      },
+      {
+        "id": "defb2ffa4ca06200a8b8f9fea3b56732e78bff5b",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: After search all selected items are returned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070085352"
+          }
+        ]
+      },
+      {
+        "id": "ce5516c2e4b9bbe70038430e2324622bf96b453c",
+        "type": "FIX",
+        "text": " sap.m.Token: Icon src attribute set correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070065440"
+          }
+        ]
       }
     ]
   }
