@@ -66,10 +66,16 @@ sap.ui.define([
 	/*
 	 * Whether the push state API should be used.
 	 *
-	 * The state information isn't used for IE because it doesn't clear the state after new hash is set
+	 * The state information isn't used when at least one of the following points is met:
+	 * <ul>
+	 * <li>Browser is IE: because it doesn't clear the state after new hash is set</li>
+	 * <li>Running in an iFrame: because browser doesn't update the history state correct after forward/backward
+	 * navigation</li>
+	 * </ul>
+	 *
 	 * @private
 	 */
-	History._bUsePushState = !Device.browser.msie;
+	History._bUsePushState = !Device.browser.msie && (window.self === window.top);
 
 	/**
 	 * Returns the length difference between the history state stored in browser's
