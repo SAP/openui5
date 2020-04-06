@@ -96,6 +96,28 @@
             "reference": "2070082181"
           }
         ]
+      },
+      {
+        "id": "9c360d2ce14f3a30688597f8a14ae51aa7cf6737",
+        "type": "FIX",
+        "text": " sap.f.AvatarGroup: ExploredSamples test now pass in IE11",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070068109"
+          }
+        ]
+      },
+      {
+        "id": "cfc3ff3838e5808968e5a250b3f1239fff0581bb",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Calendar card accepts only ISO-8601 date and time",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070086241"
+          }
+        ]
       }
     ]
   }

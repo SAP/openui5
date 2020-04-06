@@ -51,6 +51,21 @@
         "type": "FIX",
         "text": " ui.unified.CalendarDateInterval: error not thrown now",
         "references": []
+      },
+      {
+        "id": "65981c9cc6f521a4faa74788ca3fe53c0a099dc4",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: dependency between submit and rendering fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751294 0000177577 2020"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070117649"
+          }
+        ]
       }
     ]
   }
