@@ -42,14 +42,7 @@ sap.ui.define(['./BlockLayerUtils', "sap/ui/thirdparty/jquery"], //require of sa
 	};
 
 	function addAnimation(oContainer, sSizeClass) {
-
 		sSizeClass  = sSizeClass || "sapUiLocalBusyIndicatorAnimStandard";
-
-		// set title for screen reader
-		var oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core"),
-			sTitle = oResBundle.getText("BUSY_TEXT");
-
-		oContainer.setAttribute("title", sTitle);
 
 		// determine automation size class
 		var oAnimation = document.createElement("div");
@@ -126,8 +119,6 @@ sap.ui.define(['./BlockLayerUtils', "sap/ui/thirdparty/jquery"], //require of sa
 		if (sSize === BusyIndicatorSize.Auto) {
 			handleAutoAnimationSize(oBusyBlockState);
 		}
-		//Set the actual DOM Element to 'aria-busy'
-		jQuery(oParentDOM).attr('aria-busy', true);
 	};
 
 	/**

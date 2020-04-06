@@ -136,10 +136,14 @@ sap.ui.define([
 		var iChildren = $LB.children().length;
 
 		setTimeout(function() {
+			var oBusyIndicatorDOM = $LB.children('.sapUiLocalBusyIndicator')[0];
 			assert.equal($LB.children().length, iChildren + 1, 'Busy Indicator added to DOM tree');
-			assert.ok($LB[0].hasAttribute("aria-busy", true), 'ARIA busy is set to Control');
-			assert.ok($LB.children('.sapUiLocalBusyIndicator')[0].hasAttribute("role", "progressbar"),
-				'ARIA role "progressbar" is set to busy indicator');
+			assert.ok(!$LB[0].hasAttribute("aria-busy"), "ARIA busy isn't set to Control");
+			assert.equal(oBusyIndicatorDOM.getAttribute("role"), "progressbar", 'ARIA role "progressbar" is set to busy indicator');
+			assert.ok(oBusyIndicatorDOM.hasAttribute("title"), 'title is set to busy indicator');
+			assert.ok(oBusyIndicatorDOM.hasAttribute("aria-valuemin"), 'aria-valuemin is set to busy indicator');
+			assert.ok(oBusyIndicatorDOM.hasAttribute("aria-valuemax"), 'aria-valuemax is set to busy indicator');
+			assert.ok(oBusyIndicatorDOM.hasAttribute("aria-valuetext"), 'aria-valuetext is set to busy indicator');
 			done();
 		}, 1200);
 	});
