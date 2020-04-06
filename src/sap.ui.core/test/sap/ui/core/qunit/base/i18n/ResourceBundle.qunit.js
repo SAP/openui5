@@ -1,5 +1,10 @@
 /*global sinon, QUnit */
-sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Properties"], function(Log, ResourceBundle, Properties) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/base/i18n/ResourceBundle",
+	"sap/base/util/Properties",
+	"sap/base/util/merge"
+], function(Log, ResourceBundle, Properties, merge) {
 	"use strict";
 
 	QUnit.module("sap/base/i18n/ResourceBundle", {
@@ -36,16 +41,19 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 	});
 
 
-	function createFakeProperties(obj) {
+	function createFakeProperties(obj, oCallStub) {
 		return {
 			getProperty: function(sKey) {
+				if (oCallStub) {
+					oCallStub(obj);
+				}
 				return obj[sKey];
 			}
 		};
 	}
 
-	function createFakePropertiesPromise(obj) {
-		return Promise.resolve(createFakeProperties(obj));
+	function createFakePropertiesPromise(obj, oCallStub) {
+		return Promise.resolve(createFakeProperties(obj, oCallStub));
 	}
 
 	/**
@@ -150,15 +158,12 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 	});
 
 	QUnit.test("fallback locale: supportedLocales does not contain fallbackLocale", function(assert) {
-		var oLogErrorStub = this.oLogErrorStub;
-
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
-		return ResourceBundle.create({url: 'my.properties', locale: "de", async: true, supportedLocales: ["de", "fr"], fallbackLocale: "da"}).then(function() {
-			assert.equal(oLogErrorStub.callCount, 1);
-			assert.equal(oLogErrorStub.getCall(0).args[0],
-				"The fallback locale 'da' is not contained in the list of supported locales ['de', 'fr'] of the bundle 'my.properties' and will be ignored.");
-			oStub.restore();
-		});
+		var mParams = {url: 'my.properties', locale: "de", async: true, supportedLocales: ["de", "fr"], fallbackLocale: "da"};
+		assert.throws(function () {
+			ResourceBundle.create(mParams);
+		}, new Error("The fallback locale 'da' is not contained in the list of supported locales ['de', 'fr'] of the bundle 'my.properties' and will be ignored."));
+		oStub.restore();
 	});
 
 	QUnit.test("fallback locale: supportedLocales not defined, but configuration has supportedLocales", function(assert) {
@@ -211,7 +216,7 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 
 	});
 
-	QUnit.test("fallback locale: default fallback, en is not supported", function(assert) {
+	QUnit.test("fallback locale: default fallback, 'en' is not supported", function(assert) {
 		// fallback chain: -> de_CH (not supported) -> de (not supported) -> en (not supported) -> "" (not supported)
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
@@ -219,18 +224,16 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 			assert.equal(oStub.callCount, 0, "is not called because no locale from the fallback chain is supported");
 			oStub.restore();
 		});
-
 	});
 
 	QUnit.test("fallback locale: fallback with region not supported", function(assert) {
-		// fallback chain: -> de_CH (not supported) -> de (not supported) -> en_US (fallback, not supported) -> en  (fallback, not supported) -> "" (not supported)
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
-		return ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, supportedLocales: ["da"], fallbackLocale: "en_US"}).then(function() {
-			assert.equal(oStub.callCount, 0, "is not called because no locale from the fallback chain is supported");
-			oStub.restore();
-		});
-
+		assert.throws(function () {
+			ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, supportedLocales: ["da"], fallbackLocale: "en_US"});
+		}, new Error("The fallback locale 'en_US' is not contained in the list of supported locales ['da'] of the bundle 'my.properties' and will be ignored."));
+		assert.equal(oStub.callCount, 0, "is not called because no locale from the fallback chain is supported");
+		oStub.restore();
 	});
 
 	QUnit.test("fallback locale: default fallback, empty is supported", function(assert) {
@@ -242,7 +245,6 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 			assert.equal(oStub.getCall(0).args[0].url, "my.properties", "raw properties file is requested");
 			oStub.restore();
 		});
-
 	});
 
 	QUnit.test("fallback locale with supportedLocales (normalization)", function(assert) {
@@ -298,7 +300,7 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
-		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales}).then(function() {
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
 			oStub.restore();
@@ -316,7 +318,7 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
-		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales}).then(function() {
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
 			oStub.restore();
@@ -334,7 +336,7 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
-		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales}).then(function() {
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
 			oStub.restore();
@@ -352,7 +354,7 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
-		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales}).then(function() {
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
 			oStub.restore();
@@ -370,7 +372,7 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
-		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales}).then(function() {
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
 			oStub.restore();
@@ -388,7 +390,7 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
-		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales}).then(function() {
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
 			oStub.restore();
@@ -407,7 +409,7 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
-		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales}).then(function() {
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
 			oStub.restore();
@@ -425,7 +427,7 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
-		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales}).then(function() {
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
 			oStub.restore();
@@ -443,7 +445,7 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
-		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales}).then(function() {
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
 			oStub.restore();
@@ -461,7 +463,7 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
-		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales}).then(function() {
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
 			oStub.restore();
@@ -517,15 +519,27 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 		assert.deepEqual(ResourceBundle._getFallbackLocales('zh_HK', aSupportedLocales), ['zh_TW', 'en'], "fallback for zh_HK");
 
 		assert.deepEqual(ResourceBundle._getFallbackLocales('de', aSupportedLocales), ['en'], "default fallbackLocale supported");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('de', ['fr']), [], "nothing supported");
 		assert.deepEqual(ResourceBundle._getFallbackLocales('es', aSupportedLocales), ['es', 'en'], "fallback for es");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('de', ['fr']), [], "nothing supported");
 		assert.deepEqual(ResourceBundle._getFallbackLocales('es', ['fr', 'es']), ['es'], "fallback for es");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('zh-CN', ['zh_CN', 'zh'], 'zh_TW'), ['zh_CN', 'zh'], "fallback for zh_CN");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('zh-CN', ['zh-CN', 'zh'], 'zh_TW'), ['zh_CN', 'zh'], "fallback for zh_CN");
+
+		assert.deepEqual(ResourceBundle._getFallbackLocales('zh-CN', ['zh_CN', 'zh'], 'zh'), ['zh_CN', 'zh'], "fallback for zh_CN");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('zh-CN', ['zh-CN', 'zh'], 'zh'), ['zh_CN', 'zh'], "fallback for zh_CN");
+
 		assert.deepEqual(ResourceBundle._getFallbackLocales('zh', ['zh-CN', 'zh', 'zh-TW'], 'zh_TW'), ['zh', 'zh_TW'], "fallback for zh");
 		assert.deepEqual(ResourceBundle._getFallbackLocales('zh', ['zh-CN', 'zh', 'zh-TW'], 'zh-TW'), ['zh', 'zh_TW'], "fallback for zh");
 		assert.deepEqual(ResourceBundle._getFallbackLocales('zh-CN', ['zh_CN', 'zh', 'zh_TW'], 'zh_TW'), ['zh_CN', 'zh', 'zh_TW'], "fallback for zh_CN (no duplicates)");
 		assert.deepEqual(ResourceBundle._getFallbackLocales('zh-CN', ['zh_CN', 'zh', 'zh_TW'], 'zh'), ['zh_CN', 'zh'], "fallback for zh_CN");
+	});
+
+	QUnit.test("_getFallbackLocales fallbackLocale not contained", function (assert) {
+		assert.throws(function () {
+			ResourceBundle._getFallbackLocales('zh-CN', ['zh_CN', 'zh'], 'zh_TW');
+		}, new Error("The fallback locale 'zh_TW' is not contained in the list of supported locales ['zh_CN', 'zh'] and will be ignored."));
+
+		assert.throws(function () {
+			ResourceBundle._getFallbackLocales('zh-CN', ['zh-CN', 'zh'], 'zh_TW');
+		}, new Error("The fallback locale 'zh_TW' is not contained in the list of supported locales ['zh_CN', 'zh'] and will be ignored."));
 	});
 
 	QUnit.test("_getFallbackLocales (with modern ISO639 language code)", function (assert) {
@@ -537,20 +551,56 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 
 		// serbian modern: "sr"
 		// serbian legacy: "sh"
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sr_RS', ['sh'], 'es'), ['sh'], "fallback for sr_RS");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sr_RS', ['sr'], 'es'), ['sr'], "fallback for sr_RS");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sr_RS', ['sh_RS'], 'es'), ['sh_RS'], "fallback for sr_RS");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sr_RS', ['sr_RS'], 'es'), ['sr_RS'], "fallback for sr_RS");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('sr_RS', ['sh'], 'sh'), ['sh'], "fallback for sr_RS");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('sr_RS', ['sr'], 'sr'), ['sr'], "fallback for sr_RS");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('sr_RS', ['sh_RS'], 'sh_RS'), ['sh_RS'], "fallback for sr_RS");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('sr_RS', ['sr_RS'], 'sr_RS'), ['sr_RS'], "fallback for sr_RS");
 
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sh_RS', ['sh'], 'es'), ['sh'], "fallback for sh_RS");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sh_RS', ['sr'], 'es'), ['sr'], "fallback for sh_RS");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sh_RS', ['sh_RS'], 'es'), ['sh_RS'], "fallback for sh_RS");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sh_RS', ['sr_RS'], 'es'), ['sr_RS'], "fallback for sh_RS");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('sh_RS', ['sh'], 'sh'), ['sh'], "fallback for sh_RS");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('sh_RS', ['sr'], 'sr'), ['sr'], "fallback for sh_RS");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('sh_RS', ['sh_RS'], 'sh_RS'), ['sh_RS'], "fallback for sh_RS");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('sh_RS', ['sr_RS'], 'sr_RS'), ['sr_RS'], "fallback for sh_RS");
 
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sh', ['sh'], 'sr_RS'), ['sh'], "fallback for sh");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sr', ['sr'], 'sh_RS'), ['sr'], "fallback for sr");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('sh', ['sh'], 'sh'), ['sh'], "fallback for sh");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('sr', ['sr'], 'sh'), ['sr'], "fallback for sr");
 		assert.deepEqual(ResourceBundle._getFallbackLocales('sh', ['sh_RS'], 'sr_RS'), ['sh_RS'], "fallback for sh");
 		assert.deepEqual(ResourceBundle._getFallbackLocales('sr', ['sr_RS'], 'sh_RS'), ['sr_RS'], "fallback for sr");
+	});
+
+	QUnit.test("_getFallbackLocales (with modern ISO639 language code) not contained", function (assert) {
+		assert.throws(function () {
+			ResourceBundle._getFallbackLocales('sr_RS', ['sh'], 'es');
+		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['sh'] and will be ignored."));
+		assert.throws(function () {
+			ResourceBundle._getFallbackLocales('sr_RS', ['sr'], 'es');
+		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['sr'] and will be ignored."));
+		assert.throws(function () {
+			ResourceBundle._getFallbackLocales('sr_RS', ['sh_RS'], 'es');
+		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['sh_RS'] and will be ignored."));
+		assert.throws(function () {
+			ResourceBundle._getFallbackLocales('sr_RS', ['sr_RS'], 'es');
+		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['sr_RS'] and will be ignored."));
+
+
+		assert.throws(function () {
+			ResourceBundle._getFallbackLocales('sh_RS', ['sh'], 'es');
+		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['sh'] and will be ignored."));
+		assert.throws(function () {
+			ResourceBundle._getFallbackLocales('sh_RS', ['sr'], 'es');
+		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['sr'] and will be ignored."));
+		assert.throws(function () {
+			ResourceBundle._getFallbackLocales('sh_RS', ['sh_RS'], 'es');
+		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['sh_RS'] and will be ignored."));
+		assert.throws(function () {
+			ResourceBundle._getFallbackLocales('sh_RS', ['sr_RS'], 'es');
+		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['sr_RS'] and will be ignored."));
+
+		assert.throws(function () {
+			ResourceBundle._getFallbackLocales('sh', ['sh'], 'sr_RS');
+		}, new Error("The fallback locale 'sh_RS' is not contained in the list of supported locales ['sh'] and will be ignored."));
+		assert.throws(function () {
+			ResourceBundle._getFallbackLocales('sr', ['sr'], 'sh_RS');
+		}, new Error("The fallback locale 'sh_RS' is not contained in the list of supported locales ['sr'] and will be ignored."));
 	});
 
 	QUnit.test("getText (multiple resource bundles) checking that nextLocale is loaded", function(assert) {
@@ -603,7 +653,7 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		// fallback chain: -> de_CH -> de -> de_DE -> "" (supported)
-		return ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, supportedLocales: [""], fallbackLocale: "de_DE"}).then(function() {
+		return ResourceBundle.create({url: 'my.properties', locale: "de_CH", async: true, supportedLocales: [""], fallbackLocale: ""}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my.properties", "raw properties file is requested");
 			oStub.restore();
@@ -614,7 +664,7 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
 		// fallback chain: -> de -> de_DE -> "" (supported)
-		return ResourceBundle.create({url: 'my.properties', locale: "de", async: true, supportedLocales: [""], fallbackLocale: "de_DE"}).then(function() {
+		return ResourceBundle.create({url: 'my.properties', locale: "de", async: true, supportedLocales: [""], fallbackLocale: ""}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my.properties", "raw properties file is requested");
 			oStub.restore();
@@ -876,4 +926,668 @@ sap.ui.define(["sap/base/Log", "sap/base/i18n/ResourceBundle", "sap/base/util/Pr
 
 	});
 
+	var oTerminologies = {
+		activeTerminologies: [
+			"oil",
+			"retail"
+		],
+		fallbackLocale: "de",
+		supportedLocales: [
+			"en", "da", "de"
+		],
+		terminologies: {
+			oil: {
+				bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component3/i18n/terminologies.oil.i18n.properties",
+				supportedLocales: [
+					"da", "en", "de"
+				]
+			},
+			retail: {
+				bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component3/i18n/terminologies.retail.i18n.properties",
+				supportedLocales: [
+					"da", "de"
+				]
+			}
+		},
+		enhanceWith: [
+			{
+				bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n/i18n.properties",
+				bundleUrlRelativeTo: "manifest",
+				supportedLocales: [
+					"en", "da", "de"
+				],
+				fallbackLocale: "de",
+				terminologies: {
+					oil: {
+						bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n.terminologies.oil.i18n.properties",
+						supportedLocales: [
+							"da", "en", "de"
+						]
+					},
+					retail: {
+						bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n.terminologies.retail.i18n.properties",
+						supportedLocales: [
+							"da", "de"
+						],
+						bundleUrlRelativeTo: "manifest"
+					}
+				}
+			},
+			{
+				bundleName: "appvar2.i18n.i18n.properties",
+				supportedLocales: [
+					"en", "da", "de"
+				],
+				fallbackLocale: "de",
+				terminologies: {
+					oil: {
+						bundleName: "appvar2.i18n.terminologies.oil.i18n",
+						supportedLocales: [
+							"da", "en", "de"
+						]
+					},
+					retail: {
+						bundleName: "appvar2.i18n.terminologies.retail.i18n",
+						supportedLocales: [
+							"da", "de"
+						]
+					}
+				}
+			}
+		]
+	};
+
+	QUnit.module("sap/base/i18n/ResourceBundle: Terminologies", {
+		beforeEach: function () {
+			/*
+				configuration structure
+
+				default:
+					+ base de
+					+--- base retail de
+					+--- base oil de
+
+				enhanceWith:
+					+ appvar1path de
+					+--- appvar2 retail de
+					+--- appvar2 oil de
+					+ appvar2 de
+					+--- appvar1path retail de
+					+--- appvar1path oil de
+			*/
+			this.oCallChainStub = sinon.stub();
+
+			this.oPropertiesCreateStub = sinon.stub(Properties, "create");
+
+			this.oPropertiesCreateStub.rejects("Failed");
+
+			// base root
+			this.oPropertiesCreateStub.withArgs({
+				url: "my_de.properties",
+				headers: undefined,
+				async: true,
+				returnNullIfMissing: true
+			}).returns(createFakePropertiesPromise({name: "base de"}, this.oCallChainStub));
+
+			// 2 terminologies base
+			this.oPropertiesCreateStub.withArgs({
+				url:"test-resources/sap/ui/core/qunit/component/testdata/terminologies/component3/i18n/terminologies.retail.i18n_de.properties",
+				async: true,
+				headers: undefined,
+				returnNullIfMissing:true
+			}).returns(createFakePropertiesPromise({name: "base retail de"}, this.oCallChainStub));
+			this.oPropertiesCreateStub.withArgs({
+				url: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component3/i18n/terminologies.oil.i18n_de.properties",
+				async: true,
+				headers: undefined,
+				returnNullIfMissing: true
+			}).returns(createFakePropertiesPromise({name: "base oil de"}, this.oCallChainStub));
+
+			// appvar1 root
+			this.oPropertiesCreateStub.withArgs({
+				url: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n/i18n_de.properties",
+				headers: undefined,
+				async: true,
+				returnNullIfMissing: true
+			}).returns(createFakePropertiesPromise({name: "appvar1path de"}, this.oCallChainStub));
+
+
+			// 2 terminonologies appvar1
+			this.oPropertiesCreateStub.withArgs({
+				url: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n.terminologies.retail.i18n_de.properties",
+				headers: undefined,
+				async: true,
+				returnNullIfMissing: true
+			}).returns(createFakePropertiesPromise({name: "appvar1path retail de"}, this.oCallChainStub));
+
+			this.oPropertiesCreateStub.withArgs({
+				url: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n.terminologies.oil.i18n_de.properties",
+				headers: undefined,
+				async: true,
+				returnNullIfMissing: true
+			}).returns(createFakePropertiesPromise({name: "appvar1path oil de"}, this.oCallChainStub));
+
+			// appvar2 root
+			this.oPropertiesCreateStub.withArgs({
+				url: "resources/appvar2/i18n/i18n/properties_de.properties",
+				headers: undefined,
+				async: true,
+				returnNullIfMissing: true
+			}).returns(createFakePropertiesPromise({name: "appvar2 de"}, this.oCallChainStub));
+
+			// 2 terminonologies appvar2
+			this.oPropertiesCreateStub.withArgs({
+				url: "resources/appvar2/i18n/terminologies/retail/i18n_de.properties",
+				headers: undefined,
+				async: true,
+				returnNullIfMissing: true
+			}).returns(createFakePropertiesPromise({name: "appvar2 retail de"}, this.oCallChainStub));
+
+			this.oPropertiesCreateStub.withArgs({
+				url: "resources/appvar2/i18n/terminologies/oil/i18n_de.properties",
+				headers: undefined,
+				async: true,
+				returnNullIfMissing: true
+			}).returns(createFakePropertiesPromise({name: "appvar2 oil de"}, this.oCallChainStub));
+		},
+		afterEach: function () {
+			this.oPropertiesCreateStub.restore();
+		}
+	});
+
+	QUnit.test("terminologies with enhance in enhance", function(assert) {
+		var done = assert.async();
+		var that = this;
+
+		var oClonedTerminologies = merge({}, oTerminologies);
+		var mParams = {
+			url: 'my.properties',
+			locale: "de_CH",
+			async: true,
+			activeTerminologies: oClonedTerminologies.activeTerminologies,
+			terminologies: oClonedTerminologies.terminologies,
+			supportedLocales: oClonedTerminologies.supportedLocales,
+			enhanceWith: oClonedTerminologies.enhanceWith,
+			fallbackLocale: oClonedTerminologies.fallbackLocale
+		};
+
+		var oFirstEnhance = merge({}, mParams.enhanceWith[0]);
+
+		// enhance in enhance
+		mParams.enhanceWith[0].enhanceWith = [oFirstEnhance];
+
+		ResourceBundle.create(mParams).then(function() {
+			assert.equal(that.oPropertiesCreateStub.callCount, 9, "all stubs were called, additional enhance in enhance is not evaluated");
+			assert.ok(!that.oPropertiesCreateStub.exceptions.some(Boolean), "calls to Properties.create were successful");
+			done();
+		});
+	});
+
+	QUnit.test("terminologies no enhanceWith", function(assert) {
+		var done = assert.async();
+		var that = this;
+
+		var oClonedTerminologies = merge({}, oTerminologies);
+		var mParams = {
+			url: 'my.properties',
+			locale: "de_CH",
+			async: true,
+			activeTerminologies: oClonedTerminologies.activeTerminologies,
+			terminologies: oClonedTerminologies.terminologies,
+			supportedLocales: oClonedTerminologies.supportedLocales,
+			fallbackLocale: oClonedTerminologies.fallbackLocale
+		};
+		ResourceBundle.create(mParams).then(function(oResourceBundle) {
+			assert.equal(that.oPropertiesCreateStub.callCount, 3, "stubs were called");
+			assert.ok(!that.oPropertiesCreateStub.exceptions.some(Boolean), "calls to Properties.create were successful");
+
+			// call to "invalid" triggers the fallback chain
+			assert.equal(oResourceBundle.getText("invalid"), "invalid", "not found");
+
+			var aCallOrder = that.oCallChainStub.args.map(function (aArgs) {
+				return aArgs[0].name;
+			});
+
+			var aExpectedCallOrder = [
+				// default
+				"base oil de",
+				"base retail de",
+				"base de"
+			];
+
+			assert.equal(that.oCallChainStub.callCount, aExpectedCallOrder.length);
+			assert.deepEqual(aExpectedCallOrder, aCallOrder, "Correct order of calls");
+			done();
+		});
+	});
+
+	QUnit.test("terminologies called with entry found in first bundle", function(assert) {
+		var done = assert.async();
+		var that = this;
+
+		var oClonedTerminologies = merge({}, oTerminologies);
+		var mParams = {
+			url: 'my.properties',
+			locale: "de_CH",
+			async: true,
+			activeTerminologies: oClonedTerminologies.activeTerminologies,
+			terminologies: oClonedTerminologies.terminologies,
+			supportedLocales: oClonedTerminologies.supportedLocales,
+			enhanceWith: oClonedTerminologies.enhanceWith,
+			fallbackLocale: oClonedTerminologies.fallbackLocale
+		};
+		ResourceBundle.create(mParams).then(function(oResourceBundle) {
+			assert.equal(that.oPropertiesCreateStub.callCount, 9, "all stubs were called");
+			assert.ok(!that.oPropertiesCreateStub.exceptions.some(Boolean), "calls to Properties.create were successful");
+
+			assert.equal(oResourceBundle.getText("name"), "appvar2 oil de", "Found in last added custom bundle (custom bundle 2)");
+
+			assert.equal(that.oCallChainStub.callCount, 1, "call chain only called once because first bundle already has the text");
+
+			var aCallOrder = that.oCallChainStub.args.map(function (aArgs) {
+				return aArgs[0].name;
+			});
+
+			var aExpectedCallOrder = [
+				// app var 2
+				"appvar2 oil de"
+			];
+
+			assert.deepEqual(aExpectedCallOrder, aCallOrder, "Correct order of calls");
+			done();
+		});
+	});
+
+	QUnit.test("getText for terminologies call order", function(assert) {
+		var done = assert.async();
+		var that = this;
+
+		var oClonedTerminologies = merge({}, oTerminologies);
+		var mParams = {
+			url: 'my.properties',
+			locale: "de_CH",
+			async: true,
+			activeTerminologies: oClonedTerminologies.activeTerminologies,
+			terminologies: oClonedTerminologies.terminologies,
+			supportedLocales: oClonedTerminologies.supportedLocales,
+			enhanceWith: oClonedTerminologies.enhanceWith,
+			fallbackLocale: oClonedTerminologies.fallbackLocale
+		};
+		ResourceBundle.create(mParams).then(function(oResourceBundle) {
+			assert.equal(that.oPropertiesCreateStub.callCount, 9, "all stubs were called");
+			assert.ok(!that.oPropertiesCreateStub.exceptions.some(Boolean), "calls to Properties.create were successful");
+
+			// call to "invalid" triggers the fallback chain
+			assert.equal(oResourceBundle.getText("invalid"), "invalid", "not found");
+
+			var aCallOrder = that.oCallChainStub.args.map(function (aArgs) {
+				return aArgs[0].name;
+			});
+
+			var aExpectedCallOrder = [
+				// app var 2
+				"appvar2 oil de",
+				"appvar2 retail de",
+				"appvar2 de",
+
+				// app var 1
+				"appvar1path oil de",
+				"appvar1path retail de",
+				"appvar1path de",
+
+				// default
+				"base oil de",
+				"base retail de",
+				"base de"
+			];
+
+			assert.equal(that.oCallChainStub.callCount, aExpectedCallOrder.length);
+			assert.deepEqual(aExpectedCallOrder, aCallOrder, "Correct order of calls");
+			done();
+		});
+	});
+
+	QUnit.test("terminologies call order empty/no activeTerminologies", function(assert) {
+		var done = assert.async();
+		var that = this;
+
+		var oClonedTerminologies = merge({}, oTerminologies);
+		var mParams = {
+			url: 'my.properties',
+			locale: "de_CH",
+			async: true,
+			terminologies: oClonedTerminologies.terminologies,
+			supportedLocales: oClonedTerminologies.supportedLocales,
+			enhanceWith: oClonedTerminologies.enhanceWith,
+			fallbackLocale: oClonedTerminologies.fallbackLocale
+		};
+		ResourceBundle.create(mParams).then(function(oResourceBundle) {
+			assert.equal(that.oPropertiesCreateStub.callCount, 3, "stubs were called");
+			assert.ok(!that.oPropertiesCreateStub.exceptions.some(Boolean), "calls to Properties.create were successful");
+
+			// call to "invalid" triggers the fallback chain
+			assert.equal(oResourceBundle.getText("invalid"), "invalid", "not found");
+
+			var aCallOrder = that.oCallChainStub.args.map(function (aArgs) {
+				return aArgs[0].name;
+			});
+
+			var aExpectedCallOrder = [
+				// default
+				"appvar2 de",
+				"appvar1path de",
+				"base de"
+			];
+
+			assert.equal(that.oCallChainStub.callCount, aExpectedCallOrder.length);
+			assert.deepEqual(aExpectedCallOrder, aCallOrder, "Correct order of calls");
+			done();
+		});
+	});
+
+	QUnit.test("terminologies call order reverse activeTerminologies", function(assert) {
+		var done = assert.async();
+		var that = this;
+
+		var oClonedTerminologies = merge({}, oTerminologies);
+		var mParams = {
+			url: 'my.properties',
+			locale: "de_CH",
+			async: true,
+			activeTerminologies: oClonedTerminologies.activeTerminologies,
+			terminologies: oClonedTerminologies.terminologies,
+			supportedLocales: oClonedTerminologies.supportedLocales,
+			enhanceWith: oClonedTerminologies.enhanceWith,
+			fallbackLocale: oClonedTerminologies.fallbackLocale
+		};
+		mParams.activeTerminologies.reverse();
+		ResourceBundle.create(mParams).then(function(oResourceBundle) {
+			assert.equal(that.oPropertiesCreateStub.callCount, 9, "all stubs were called");
+			assert.ok(!that.oPropertiesCreateStub.exceptions.some(Boolean), "calls to Properties.create were successful");
+
+			// call to "invalid" triggers the fallback chain
+			assert.equal(oResourceBundle.getText("invalid"), "invalid", "not found");
+
+			var aCallOrder = that.oCallChainStub.args.map(function (aArgs) {
+				return aArgs[0].name;
+			});
+
+			var aExpectedCallOrder = [
+				// app var 2
+				"appvar2 retail de",
+				"appvar2 oil de",
+				"appvar2 de",
+
+				// app var 1
+				"appvar1path retail de",
+				"appvar1path oil de",
+				"appvar1path de",
+
+				// default
+				"base retail de",
+				"base oil de",
+				"base de"
+			];
+
+			assert.equal(that.oCallChainStub.callCount, aExpectedCallOrder.length);
+			assert.deepEqual(aExpectedCallOrder, aCallOrder, "Correct order of calls, retail comes before oil");
+			done();
+		});
+	});
+
+	QUnit.test("terminologies call order not all locales supported", function(assert) {
+		var done = assert.async();
+		var that = this;
+
+		var oClonedTerminologies = merge({}, oTerminologies);
+
+		var mParams = {
+			url: 'my.properties',
+			locale: "de_CH",
+			async: true,
+			activeTerminologies: oClonedTerminologies.activeTerminologies,
+			terminologies: oClonedTerminologies.terminologies,
+			supportedLocales: oClonedTerminologies.supportedLocales,
+			enhanceWith: oClonedTerminologies.enhanceWith,
+			fallbackLocale: oClonedTerminologies.fallbackLocale
+		};
+
+		// make not all terminologies support locale "de"
+		mParams.terminologies.retail.supportedLocales = ["da"];
+		mParams.enhanceWith[0].terminologies.oil.supportedLocales = ["da"];
+		mParams.enhanceWith[1].terminologies.retail.supportedLocales = ["de"];
+
+		// make enhanced 2 not support locale "de"
+		mParams.enhanceWith[1].supportedLocales = ["da"];
+		mParams.enhanceWith[1].fallbackLocale = "da";
+
+		ResourceBundle.create(mParams).then(function(oResourceBundle) {
+			assert.equal(that.oPropertiesCreateStub.callCount, 7, "stubs were called");
+			assert.ok(!that.oPropertiesCreateStub.exceptions.some(Boolean), "calls to Properties.create were successful");
+
+			// call to "invalid" triggers the fallback chain
+			assert.equal(oResourceBundle.getText("invalid"), "invalid", "not found");
+
+			var aCallOrder = that.oCallChainStub.args.map(function (aArgs) {
+				return aArgs[0].name;
+			});
+
+			var aExpectedCallOrder = [
+				// app var 2
+				"appvar2 oil de",
+				"appvar2 retail de",
+
+				// app var 1
+				"appvar1path retail de",
+				"appvar1path de",
+
+				// default
+				"base oil de",
+				"base de"
+			];
+
+			assert.equal(that.oCallChainStub.callCount, aExpectedCallOrder.length);
+			assert.deepEqual(aCallOrder, aExpectedCallOrder, "Correct order of calls");
+			done();
+		});
+	});
+
+	QUnit.test("terminologies call order not all terminologies available", function(assert) {
+		var done = assert.async();
+		var that = this;
+
+		var oClonedTerminologies = merge({}, oTerminologies);
+
+		var mParams = {
+			url: 'my.properties',
+			locale: "de_CH",
+			async: true,
+			activeTerminologies: oClonedTerminologies.activeTerminologies,
+			terminologies: oClonedTerminologies.terminologies,
+			supportedLocales: oClonedTerminologies.supportedLocales,
+			enhanceWith: oClonedTerminologies.enhanceWith,
+			fallbackLocale: oClonedTerminologies.fallbackLocale
+		};
+
+		// make not all terminologies in all layers present
+		delete mParams.terminologies.retail;
+		delete mParams.enhanceWith[0].terminologies.oil;
+		delete mParams.enhanceWith[1].terminologies.retail;
+
+
+		ResourceBundle.create(mParams).then(function(oResourceBundle) {
+			assert.equal(that.oPropertiesCreateStub.callCount, 6, "stubs were called");
+			assert.ok(!that.oPropertiesCreateStub.exceptions.some(Boolean), "calls to Properties.create were successful");
+
+			// call to "invalid" triggers the fallback chain
+			assert.equal(oResourceBundle.getText("invalid"), "invalid", "not found");
+
+			var aCallOrder = that.oCallChainStub.args.map(function (aArgs) {
+				return aArgs[0].name;
+			});
+
+			var aExpectedCallOrder = [
+				// app var 2
+				"appvar2 oil de",
+				"appvar2 de",
+
+				// app var 1
+				"appvar1path retail de",
+				"appvar1path de",
+
+				// default
+				"base oil de",
+				"base de"
+			];
+
+			assert.equal(that.oCallChainStub.callCount, aExpectedCallOrder.length);
+			assert.deepEqual(aCallOrder, aExpectedCallOrder, "Correct order of calls");
+			done();
+		});
+	});
+
+	QUnit.test("enhanceWith inherit parameters supportedLocales and fallbackLocale", function(assert) {
+		var done = assert.async();
+		var that = this;
+
+		var oClonedTerminologies = merge({}, oTerminologies);
+
+		var mParams = {
+			url: 'my.properties',
+			locale: "de_CH",
+			async: true,
+			activeTerminologies: oClonedTerminologies.activeTerminologies,
+			terminologies: oClonedTerminologies.terminologies,
+			supportedLocales: oClonedTerminologies.supportedLocales,
+			enhanceWith: oClonedTerminologies.enhanceWith,
+			fallbackLocale: oClonedTerminologies.fallbackLocale
+		};
+
+		// remove parameters supportedLocales and fallbackLocale
+		delete mParams.enhanceWith[0].supportedLocales;
+		delete mParams.enhanceWith[1].fallbackLocale;
+
+
+		ResourceBundle.create(mParams).then(function(oResourceBundle) {
+			assert.equal(that.oPropertiesCreateStub.callCount, 9, "all stubs were called");
+			assert.ok(!that.oPropertiesCreateStub.exceptions.some(Boolean), "calls to Properties.create were successful");
+
+			// call to "invalid" triggers the fallback chain
+			assert.equal(oResourceBundle.getText("invalid"), "invalid", "not found");
+
+			var aCallOrder = that.oCallChainStub.args.map(function (aArgs) {
+				return aArgs[0].name;
+			});
+
+			var aExpectedCallOrder = [
+				// app var 2
+				"appvar2 oil de",
+				"appvar2 retail de",
+				"appvar2 de",
+
+				// app var 1
+				"appvar1path oil de",
+				"appvar1path retail de",
+				"appvar1path de",
+
+				// default
+				"base oil de",
+				"base retail de",
+				"base de"
+			];
+
+			assert.equal(that.oCallChainStub.callCount, aExpectedCallOrder.length);
+			assert.deepEqual(aCallOrder, aExpectedCallOrder, "Correct order of calls");
+			done();
+		});
+	});
+
+	QUnit.module("sap/base/i18n/ResourceBundle: Terminologies integration");
+
+	QUnit.test("2 enhancements with 2 terminologies", function(assert) {
+		var oOriginalGetTextFromProperties = ResourceBundle.prototype._getTextFromProperties;
+		var aBundleUrlsInCallOrder = [];
+		var oResourceBundleSpy = sinon.stub(ResourceBundle.prototype, "_getTextFromProperties").callsFake(function () {
+			var oResult = oOriginalGetTextFromProperties.apply(this, arguments);
+			aBundleUrlsInCallOrder.push(this.oUrlInfo.url);
+			return oResult;
+		});
+		return ResourceBundle.create({
+			// specify url of the base .properties file
+			url : "test-resources/sap/ui/core/qunit/testdata/messages.properties",
+			async : true,
+			locale: "de_CH",
+			supportedLocales: ["de"],
+			fallbackLocale: "de",
+			terminologies: {
+				oil: {
+					bundleUrl: "test-resources/sap/ui/core/qunit/testdata/terminologies/oil/messages.properties",
+					supportedLocales: [
+						"de"
+					]
+				},
+				retail: {
+					bundleUrl: "test-resources/sap/ui/core/qunit/testdata/terminologies/retail/messages.properties",
+					supportedLocales: [
+						"de"
+					]
+				}
+			},
+			activeTerminologies: ["retail", "oil"],
+			enhanceWith: [
+				{
+					bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_custom.properties",
+					terminologies: {
+						oil: {
+							bundleUrl: "test-resources/sap/ui/core/qunit/testdata/terminologies/oil/messages_custom.properties",
+							supportedLocales: [
+								"de"
+							]
+						},
+						retail: {
+							bundleUrl: "test-resources/sap/ui/core/qunit/testdata/terminologies/retail/messages_custom.properties",
+							supportedLocales: [
+								"de"
+							]
+						}
+					}
+				},
+				{
+					bundleUrl: "test-resources/sap/ui/core/qunit/testdata/messages_other.properties",
+					terminologies: {
+						oil: {
+							bundleUrl: "test-resources/sap/ui/core/qunit/testdata/terminologies/oil/messages_other.properties",
+							supportedLocales: [
+								"de"
+							]
+						},
+						retail: {
+							bundleUrl: "test-resources/sap/ui/core/qunit/testdata/terminologies/retail/messages_other.properties",
+							supportedLocales: [
+								"de"
+							]
+						}
+					}
+				}
+			]
+		}).then(function(oResourceBundle){
+			oResourceBundle.getText("invalid");
+
+			// terminologies bundles before base bundle
+			// enhancement bundles before parent bundle
+
+			assert.deepEqual(aBundleUrlsInCallOrder, [
+				"test-resources/sap/ui/core/qunit/testdata/terminologies/retail/messages_other.properties",
+				"test-resources/sap/ui/core/qunit/testdata/terminologies/oil/messages_other.properties",
+				"test-resources/sap/ui/core/qunit/testdata/messages_other.properties",
+				"test-resources/sap/ui/core/qunit/testdata/terminologies/retail/messages_custom.properties",
+				"test-resources/sap/ui/core/qunit/testdata/terminologies/oil/messages_custom.properties",
+				"test-resources/sap/ui/core/qunit/testdata/messages_custom.properties",
+				"test-resources/sap/ui/core/qunit/testdata/terminologies/retail/messages.properties",
+				"test-resources/sap/ui/core/qunit/testdata/terminologies/oil/messages.properties",
+				"test-resources/sap/ui/core/qunit/testdata/messages.properties"
+			], "the value retrieval should be in correct order");
+			oResourceBundleSpy.restore();
+		});
+	});
 });

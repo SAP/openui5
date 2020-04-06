@@ -20,14 +20,117 @@ sap.ui.define([
 	function (BindingMode, Model, ResourcePropertyBinding, ResourceBundle, Log) {
 	"use strict";
 
+	/**
+	 * matches leading dots or slashes
+	 */
+	var rLeadingDotsOrSlashes = /^(?:\/|\.)*/;
 
 	/**
 	 * Constructor for a new ResourceModel.
+	 *
+	 * <h3>Declarative Usage</h3>
+	 * The ResourceModel can be created using configuration objects instead of
+	 * <code>ResourceBundle</code> instances.
+	 * This is the recommended way and enables:
+	 * <ul>
+	 * <li>use of terminologies in the bundle and in the enhancements</li>
+	 * <li>a guaranteed order of resolution</li>
+	 * </ul>
+	 *
+	 * <h3>Programmatic Usage</h3>
+	 * The ResourceModel can be created in a programmatic manner which means that
+	 * <code>ResourceBundle</code> instances are used instead of configurations.
+	 * Existing ResourceBundles can either be used in the <code>bundle</code> parameter or in the
+	 * <code>enhanceWith</code> array.
+	 * Runtime errors are thrown when <code>ResourceBundle</code> instances are used with
+	 * <code>terminologies</code>.
+	 * Also when using <code>ResourceModel#enhance</code> with <code>terminologies</code>.
+	 *
+	 * @example <caption>Use ResourceModel with configurations (declarative) and terminologies</caption>
+	 *
+	 * sap.ui.require(["sap/ui/model/resource/ResourceModel"], function(ResourceModel){
+	 *   // ...
+	 *   var oResourceModel = new ResourceModel({
+	 *      // specify url of the base .properties file
+	 *      bundleUrl : "i18n/messagebundle.properties",
+	 *      async : true,
+	 *      enhanceWith: [
+	 *          {
+	 *              bundleUrl: "appvar1/i18n/i18n.properties",
+	 *              terminologies: {
+	 *                  oil: {
+	 *                     bundleUrl: "appvar1/i18n/terminologies.oil.i18n.properties",
+	 *                     supportedLocales: ["de", "fr"]
+	 *                  }
+	 *              }
+	 *           },
+	 *           {
+	 *              bundleUrl: "appvar2/i18n/i18n.properties",
+	 *              terminologies: {
+	 *                  retail: {
+	 *                     bundleUrl: "appvar2/i18n/terminologies.retail.i18n.properties",
+	 *                     supportedLocales: ["de", "fr"]
+	 *                  }
+	 *              }
+	 *           }
+	 *      ],
+	 *      supportedLocales: ["de", "fr"],
+	 *      fallbackLocale: "de",
+	 *      terminologies: {
+	 *          oil: {
+	 *              bundleUrl: "i18n/terminologies.oil.i18n.properties",
+	 *              supportedLocales: ["de", "fr"]
+	 *          },
+	 *          retail: {
+	 *             bundleUrl: "i18n/terminologies.retail.i18n.properties",
+	 *             supportedLocales: ["de", "fr"]
+	 *          }
+	 *      },
+	 *      activeTerminologies: ["retail"]
+	 *   });
+	 *   // ...
+	 * });
+	 *
+	 *
+
+	 *
+	 * @example <caption>Use ResourceModel with existing ResourceBundles, terminologies not supported</caption>
+	 *
+	 * sap.ui.require(["sap/ui/model/resource/ResourceModel", "sap/base/i18n/ResourceBundle"], function(ResourceModel, ResourceBundle){
+	 *   // ...
+	 *   var oResourceModel = new ResourceModel({
+	 *      // specify url of the base .properties file
+	 *      bundle : ResourceBundle.create({
+	 *          bundleUrl: "i18n/messagebundle.properties",
+	 *          supportedLocales: ["de", "fr"]
+	 *      }),
+	 *      async : true,
+	 *      enhanceWith: [
+	 *          ResourceBundle.create({
+	 *              bundleUrl: "appvar1/i18n/i18n.properties",
+	 *              supportedLocales: ["de", "fr"]
+	 *           }),
+	 *          ResourceBundle.create({
+	 *              bundleUrl: "appvar2/i18n/i18n.properties",
+	 *              supportedLocales: ["de", "fr"]
+	 *           })
+	 *      ],
+	 *      supportedLocales: ["de", "fr"],
+	 *      fallbackLocale: "de"
+	 *   });
+	 *   // ...
+	 * });
 	 *
 	 * @param {object} oData
 	 *   Parameters used to initialize the <code>ResourceModel</code>; at least one of
 	 *   <code>bundle</code>, <code>bundleName</code> or <code>bundleUrl</code> must be set; if more
 	 *   than one property is set, they are evaluated in the mentioned order
+	 * @param {string[]} [oData.activeTerminologies]
+	 *   The list of active terminologies, e.g. <code>["oil", "retail"]</code>.
+	 *   This parameter is passed to the underlying ResourceBundle (see
+	 *   {@link module:sap/base/i18n/ResourceBundle.create}). This parameter is ignored when
+	 *   <code>bundle</code> is set. Will cause an error if <code>enhanceWith</code> contains
+	 *   instances of <code>ResourceBundle</code>. Supported since 1.77.0.
 	 * @param {boolean} [oData.async=false]
 	 *   Whether the language bundle should be loaded asynchronously
 	 * @param {module:sap/base/i18n/ResourceBundle} [oData.bundle]
@@ -37,6 +140,12 @@ sap.ui.define([
 	 *   current session locale changes, the corresponding <code>bundleName</code> or
 	 *   <code>bundleUrl</code> should be specified if known. Otherwise, the bundle is not updated
 	 *   on locale changes.
+	 *   Note: This parameter should not be used when using enhancements.
+	 *   Terminologies require enhancements with <code>bundleUrl</code>, <code>bundleName</code> and
+	 *   <code>bundleLocale</code> in combination with <code>enhanceWith</code> which contains a
+	 *   list of <code>ResourceBundleConfigurations</code>.
+	 *   Terminologies must be defined in a declarative way, with configurations and not with
+	 *   instances of <code>ResourceBundle</code>.
 	 * @param {string} [oData.bundleLocale]
 	 *   A locale in "BCP-47 language tag" notation specifying the locale in which to load the
 	 *   bundle; when not given, the current session locale of UI5 is used (recommended)
@@ -52,9 +161,44 @@ sap.ui.define([
 	 * @param {sap.ui.model.BindingMode} [oData.defaultBindingMode=OneWay]
 	 *   The default binding mode to use; it can be <code>OneWay</code> or <code>OneTime</code>
 	 *   (only when synchronous loading is used); the <code>TwoWay</code> mode is not supported
-	 * @param {module:sap/base/i18n/ResourceBundle[]} [oData.enhanceWith]
-	 *   Optional list of resource bundles that enhance the texts from the main bundle; intended for
-	 *   extensibility scenarios; also see the class documentation.
+	 * @param {module:sap/base/i18n/ResourceBundle[]|module:sap/base/i18n/ResourceBundleConfiguration[]} [oData.enhanceWith]
+	 *   A list of resource bundles or resource bundle configurations that enhance the texts from
+	 *   the main bundle; intended for extensibility scenarios; see also the class documentation.
+	 *   ResourceBundles use the ResourceModel's enhance mechanism and ResourceBundleConfigurations
+	 *   get passed to the underlying ResourceBundle (see
+	 *   {@link module:sap/base/i18n/ResourceBundle.create}). Supported since 1.77.0.
+	 * @param {string} [oData.fallbackLocale="en"]
+	 *   A fallback locale to be used after all locales derived from <code>bundleLocale</code> have
+	 *   been tried, but before the 'raw' bundle is used. Can either be a BCP47 language tag or a
+	 *   JDK compatible locale string (e.g. "en-GB", "en_GB" or "en").
+	 *
+	 *   To prevent a generic fallback, use the empty string (<code>""</code>). E.g. by providing
+	 *   <code>fallbackLocale: ""</code> and <code>supportedLocales: ["en"]</code>, only the bundle
+	 *   "en" is requested without any fallback. This parameter is passed to the underlying
+	 *   ResourceBundle (see {@link module:sap/base/i18n/ResourceBundle.create}). Supported since
+	 *   1.77.0.
+	 * @param {string[]} [oData.supportedLocales]
+	 *   List of supported locales (aka 'language tags') to restrict the fallback chain. Each entry
+	 *   in the array can either be a BCP47 language tag or a JDK compatible locale string (e.g.
+	 *   "en-GB", "en_GB" or "en"). An empty string (<code>""</code>) represents the 'raw' bundle.
+	 *
+	 *   <b>Note:</b> The given language tags can use modern or legacy ISO639 language codes.
+	 *   Whatever language code is used in the list of supported locales will also be used when
+	 *   requesting a file from the server. If the <code>bundleLocale</code> contains a legacy
+	 *   language code like "sh" and the <code>supportedLocales</code> contains [...,"sr",...], "sr"
+	 *   will be used in the URL. This mapping works in both directions. This parameter is passed to
+	 *   the underlying ResourceBundle (see {@link module:sap/base/i18n/ResourceBundle.create}).
+	 *   Supported since 1.77.0.
+	 * @param {Object<string,module:sap/base/i18n/ResourceBundleTerminologyConfiguration>} [oData.terminologies]
+	 *   An object, mapping a terminology identifier (e.g. "oil") to a
+	 *   <code>ResourceBundleTerminologyConfiguration</code>. A terminology is a resource bundle
+	 *   configuration for a specific use case (e.g. "oil"). It does neither have a
+	 *   <code>fallbackLocale</code> nor can it be enhanced with <code>enhanceWith</code>. This
+	 *   parameter is passed to the underlying ResourceBundle (see
+	 *   {@link module:sap/base/i18n/ResourceBundle.create}). This parameter is ignored when
+	 *   <code>bundle</code> is set. Will cause an error if <code>enhanceWith</code> contains
+	 *   instances of <code>ResourceBundle</code>.
+	 *   Supported since 1.77.0.
 	 *
 	 * @alias sap.ui.model.resource.ResourceModel
 	 * @author SAP SE
@@ -83,6 +227,8 @@ sap.ui.define([
 	var ResourceModel = Model.extend("sap.ui.model.resource.ResourceModel", /** @lends sap.ui.model.resource.ResourceModel.prototype */ {
 
 		constructor : function (oData) {
+			var bUseResourceModelEnhanceMechanism;
+
 			Model.apply(this, arguments);
 
 			this.aCustomBundles = [];
@@ -103,17 +249,37 @@ sap.ui.define([
 				Log.warning("Using binding mode OneTime for asynchronous ResourceModel is not supported!");
 			}
 
-			this.oData = oData;
+			this.oData = Object.assign({}, oData);
+
+			// the new ResourceBundle's enhance mechanism works only with
+			// ResourceBundleConfigurations; if there is a ResourceBundle in the enhanceWith
+			// parameter, use the ResourceModel's enhance mechanism to be backward compatible.
+			bUseResourceModelEnhanceMechanism = Array.isArray(this.oData.enhanceWith)
+				&& this.oData.enhanceWith.some(function (oEnhanceWith) {
+				return oEnhanceWith instanceof ResourceBundle;
+			});
 
 			if (oData && oData.bundle) {
 				this._oResourceBundle = oData.bundle;
+				bUseResourceModelEnhanceMechanism = true;
 			} else if (oData && (oData.bundleUrl || oData.bundleName)) {
+				if (bUseResourceModelEnhanceMechanism) {
+					delete this.oData.enhanceWith;
+
+					// terminologies and activeTerminologies are only supported when there are
+					// no ResourceBundles in the enhanceWith array
+					if (oData.terminologies || oData.activeTerminologies) {
+						throw new Error("'terminologies' parameter and 'activeTerminologies' parameter are not"
+							+ " supported in configuration when enhanceWith contains ResourceBundles");
+					}
+				}
 				_load(this);
 			} else {
 				throw new Error("At least bundle, bundleName or bundleUrl must be provided!");
 			}
 
-			if (oData && Array.isArray(oData.enhanceWith) && oData.enhanceWith.length > 0) {
+			// ResourceModel's enhance mechanism
+			if (bUseResourceModelEnhanceMechanism && Array.isArray(oData.enhanceWith)) {
 				if (this.bAsync) {
 					this._pEnhanced = oData.enhanceWith.reduce(function (chain, bundle) {
 						return chain.then(this.enhance.bind(this, bundle));
@@ -127,11 +293,35 @@ sap.ui.define([
 	});
 
 	/**
+	 * This method ensures that the bundleName does not contain leading slashes or dots by removing them.
+	 * @param {string} sBundleName the bundle's name, e.g. ".i18n.i18n"
+	 * @returns {string} sanitized bundleName without leading slashes or dots
+	 * @private
+	 */
+	ResourceModel._sanitizeBundleName = function(sBundleName) {
+		// Starting slashes or dots are removed to prevent a leading-slash error thrown through
+		// the sap.ui.require.toUrl function call
+		if (sBundleName && (sBundleName[0] === "/" || sBundleName[0] === ".")) {
+			Log.error('Incorrect resource bundle name "' + sBundleName + '"',
+				'Leading slashes or dots in resource bundle names are ignored, since such names are'
+				+ ' invalid UI5 module names. Please check whether the resource bundle "'
+				+ sBundleName + '" is actually needed by your application.',
+				"sap.base.i18n.ResourceBundle");
+			sBundleName = sBundleName.replace(rLeadingDotsOrSlashes, "");
+		}
+		return sBundleName;
+	};
+
+	/**
 	 * Returns the resource bundle or a promise resolving with the resource bundle.
 	 *
 	 * @param {object} oData
 	 *   Parameters used to load the resource bundle; see constructor of the
 	 *   {@link sap.ui.model.resource.ResourceModel}
+	 * @param {string[]} [oData.activeTerminologies]
+	 *   The list of active terminologies, e.g. <code>["oil", "retail"]</code>.
+	 *   This parameter is passed to the underlying ResourceBundle (see
+	 *   {@link module:sap/base/i18n/ResourceBundle.create}). Supported since 1.77.0.
 	 * @param {string} [oData.bundleLocale]
 	 *   A locale in "BCP-47 language tag" notation specifying the locale in which to load the
 	 *   bundle; when not given, the current session locale of UI5 is used (recommended)
@@ -139,7 +329,39 @@ sap.ui.define([
 	 *   UI5 module name in dot notation referring to the base ".properties" file
 	 * @param {string} [oData.bundleUrl]
 	 *   URL pointing to the base ".properties" file of a bundle
-	 * @param {object} bAsync
+	 * @param {module:sap/base/i18n/ResourceBundle[]|module:sap/base/i18n/ResourceBundleConfiguration[]} [oData.enhanceWith]
+	 *   A list of resource bundles or resource bundle configurations that enhance the texts from
+	 *   the main bundle; intended for extensibility scenarios; see also the class documentation.
+	 *   ResourceBundles use the ResourceModel's enhance mechanism and ResourceBundleConfigurations
+	 *   get passed to the underlying ResourceBundle (see
+	 *   {@link module:sap/base/i18n/ResourceBundle.create}). Supported since 1.77.0.
+	 * @param {string} [oData.fallbackLocale="en"]
+	 *   A fallback locale to be used after all locales derived from <code>bundleLocale</code> have
+	 *   been tried, but before the 'raw' bundle is used. Can either be a BCP47 language tag or a
+	 *   JDK compatible locale string (e.g. "en-GB", "en_GB" or "en").
+	 *
+	 *   To prevent a generic fallback, use the empty string (<code>""</code>). E.g. by providing
+	 *   <code>fallbackLocale: ""</code> and <code>supportedLocales: ["en"]</code>, only the bundle
+	 *   "en" is requested without any fallback. This parameter is passed to the underlying
+	 *   ResourceBundle (see {@link module:sap/base/i18n/ResourceBundle.create}).
+	 * @param {string[]} [oData.supportedLocales]
+	 *   List of supported locales (aka 'language tags') to restrict the fallback chain. Each entry
+	 *   in the array can either be a BCP47 language tag or a JDK compatible locale string (e.g.
+	 *   "en-GB", "en_GB" or "en"). An empty string (<code>""</code>) represents the 'raw' bundle.
+	 *   <b>Note:</b> The given language tags can use modern or legacy ISO639 language codes.
+	 *   Whatever language code is used in the list of supported locales will also be used when
+	 *   requesting a file from the server. If the <code>bundleLocale</code> contains a legacy
+	 *   language code like "sh" and the <code>supportedLocales</code> contains [...,"sr",...], "sr"
+	 *   will be used in the URL. This mapping works in both directions. This parameter is passed
+	 *   to the underlying ResourceBundle (see {@link module:sap/base/i18n/ResourceBundle.create}).
+	 * @param {Object<string,module:sap/base/i18n/ResourceBundleTerminologyConfiguration>} [oData.terminologies]
+	 *   An object mapping a terminology identifier (e.g. "oil") to a
+	 *   <code>ResourceBundleTerminologyConfiguration</code>. A terminology is a resource bundle
+	 *   configuration for a specific use case (e.g. "oil"). It does neither have a
+	 *   <code>fallbackLocale</code> nor can it be enhanced with <code>enhanceWith</code>. This
+	 *   parameter is passed to the underlying ResourceBundle (see
+	 *   {@link module:sap/base/i18n/ResourceBundle.create}). Supported since 1.77.0.
+	 * @param {boolean} bAsync
 	 *   Whether the resource bundle should be loaded asynchronously
 	 * @returns {module:sap/base/i18n/ResourceBundle|Promise<module:sap/base/i18n/ResourceBundle>}
 	 *   Loaded resource bundle or <code>Promise</code> resolving with the resource bundle in async
@@ -150,18 +372,23 @@ sap.ui.define([
 	 */
 	ResourceModel.loadResourceBundle = function (oData, bAsync) {
 		var oConfiguration = sap.ui.getCore().getConfiguration(),
-			sLocale = oData.bundleLocale;
+			sLocale = oData.bundleLocale,
+			mParams;
 
 		if (!sLocale) {
 			sLocale = oConfiguration.getLanguage();
 		}
 
-		return ResourceBundle.create({
+		// sanitize bundleName for backward compatibility
+		oData.bundleName = ResourceModel._sanitizeBundleName(oData.bundleName);
+
+		mParams = Object.assign({
 			async: bAsync,
 			includeInfo: oConfiguration.getOriginInfo(),
-			locale: sLocale,
-			url: _getUrl(oData.bundleUrl, oData.bundleName)
-		});
+			locale: sLocale
+		}, oData);
+
+		return ResourceBundle.create(mParams);
 	};
 
 	/**
@@ -193,8 +420,8 @@ sap.ui.define([
 	 *   URL pointing to the base ".properties" file of a bundle (".properties" file without any
 	 *   locale information, e.g. "../../i18n/mybundle.properties"); relative URLs are evaluated
 	 *   relative to the document.baseURI
-	 * @returns {Promise} A Promise resolving when the enhancement is finished or <code>null</code>
-	 *   if the <code>ResourceModel</code> is configured to act synchronously
+	 * @returns {Promise|null} A Promise resolving when the enhancement is finished or
+	 *   <code>null</code> if the <code>ResourceModel</code> is configured to act synchronously
 	 * @since 1.16.1
 	 * @public
 	 */
@@ -213,6 +440,10 @@ sap.ui.define([
 					fResolve(true);
 				}
 			} else {
+				if (oData.terminologies) {
+					throw new Error("'terminologies' parameter is not"
+						+ " supported for enhancement");
+				}
 				var bundle = ResourceModel.loadResourceBundle(oData, that.bAsync);
 
 				if (bundle instanceof Promise) {
@@ -339,7 +570,12 @@ sap.ui.define([
 		if (oData && (oData.bundleUrl || oData.bundleName)) {
 			var res = ResourceModel.loadResourceBundle(oData, oData.async);
 			if (res instanceof Promise) {
-				var oEventParam = {url: _getUrl(oData.bundleUrl, oData.bundleName), async: true};
+				// sanitize bundleName for backward compatibility
+				var oEventParam = {
+						url: ResourceBundle._getUrl(oData.bundleUrl,
+							ResourceModel._sanitizeBundleName(oData.bundleName)),
+						async: true
+					};
 				oModel.fireRequestSent(oEventParam);
 				oModel._oPromise = res;
 				oModel._oPromise.then(function (oBundle) {
@@ -357,41 +593,6 @@ sap.ui.define([
 		}
 	}
 
-	/**
-	 * Gets the URL either from the given resource bundle name or the given resource bundle URL.
-	 *
-	 * @param {string} [bundleUrl]
-	 *   URL pointing to the base ".properties" file of a bundle (".properties" file without any
-	 *   locale information, e.g. "../../i18n/mybundle.properties"); relative URLs are evaluated
-	 *   relative to the document.baseURI
-	 * @param {string} [bundleName]
-	 *   UI5 module name in dot notation referring to the base ".properties" file; this name is
-	 *   resolved to a path like the paths of normal UI5 modules and ".properties" is then
-	 *   appended (e.g. a name like "myapp.i18n.myBundle" can be given); relative module names are
-	 *   not supported
-	 * @returns {string}
-	 *   The resource bundle URL
-	 *
-	 * @private
-	 */
-	function _getUrl(bundleUrl, bundleName) {
-		var sUrl = bundleUrl;
-		if (bundleName) {
-			// Starting slashes or dots are removed to prevent a leading-slash error thrown through
-			// the sap.ui.require.toUrl function call
-			if (/^\/|^\./.test(bundleName)) {
-				Log.error('Incorrect resource bundle name "' + bundleName + '"',
-				'Leading slashes or dots in resource bundle names are ignored, since such names are'
-				+ ' invalid UI5 module names. Please check whether the resource model "'
-				+ bundleName + '" is actually needed by your application.',
-				"sap.ui.model.resource.ResourceModel");
-				bundleName = bundleName.replace(/^(?:\/|\.)*/, "");
-			}
-			bundleName = bundleName.replace(/\./g, "/");
-			sUrl = sap.ui.require.toUrl(bundleName) + ".properties";
-		}
-		return sUrl;
-	}
 	return ResourceModel;
 
 });

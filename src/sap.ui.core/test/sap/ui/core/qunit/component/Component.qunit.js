@@ -1711,25 +1711,25 @@ sap.ui.define([
 
 	QUnit.test("Relative URLs for ResourceModel (enhanceWith)", function(assert) {
 
-		var oModelConfigSpy = this.spy(Component, "_createManifestModelConfigurations");
+		var oResourceBundleCreateSpy = this.spy(ResourceBundle, "create");
 
 		// load the test component
 		return Component.create({
 			manifest : "anylocation/manifest.json"
 		}).then(function(oComponent) {
 
-			var aI18NCmpEnhanceWith = oModelConfigSpy.returnValues[0]["i18n-component"].settings[0].enhanceWith;
+			var aI18NCmpEnhanceWith = oResourceBundleCreateSpy.getCall(0).args[0].enhanceWith;
 			assert.strictEqual(aI18NCmpEnhanceWith[0].bundleUrl, "test-resources/sap/ui/core/samples/components/button/custom/i18n.properties", "Bundle URL of enhancing model must not be modified!");
 			assert.strictEqual(aI18NCmpEnhanceWith[1].bundleUrlRelativeTo, "manifest", "Bundle URL should be relative to manifest!");
 			assert.strictEqual(aI18NCmpEnhanceWith[1].bundleUrl, "anylocation/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
 
-			var aI18NMFEnhanceWith = oModelConfigSpy.returnValues[0]["i18n-manifest"].settings[0].enhanceWith;
+			var aI18NMFEnhanceWith = oResourceBundleCreateSpy.getCall(1).args[0].enhanceWith;
 			assert.strictEqual(aI18NMFEnhanceWith[0].bundleUrlRelativeTo, "manifest", "Bundle URL should be relative to manifest!");
 			assert.strictEqual(aI18NMFEnhanceWith[0].bundleUrl, "anylocation/custom/i18n.properties", "Bundle URL of enhancing model must be adopted relative to manifest!");
 			assert.strictEqual(aI18NMFEnhanceWith[1].bundleUrl, "test-resources/sap/ui/core/samples/components/button/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
 
 			oComponent.destroy();
-			oModelConfigSpy.restore();
+			oResourceBundleCreateSpy.restore();
 		});
 	});
 
@@ -2462,6 +2462,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Component1 with Terminologies defined in manifest.json file", function (assert) {
+		var oResourceBundleCreateSpy = sinon.spy(ResourceBundle, "create");
 		var oCreateManifestModelsSpy = sinon.spy(Component, "_createManifestModels");
 
 		return Component.create({
@@ -2471,16 +2472,13 @@ sap.ui.define([
 		}).then(function (oComponent) {
 			this.oComponent = oComponent;
 
-			var oSettings = oCreateManifestModelsSpy.getCall(0).args[0].i18n.settings[0];
-			assert.equal(oSettings.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component1/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
-			assert.equal(oSettings.terminologies.oil.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component1/i18n/terminologies.oil.i18n.properties", "The bundleUrl should be resolved correctly");
-			assert.equal(oSettings.terminologies.retail.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component1/i18n/terminologies.retail.i18n.properties", "The bundleUrl should be resolved correctly");
-			assert.ok(oSettings.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
-			assert.ok(oSettings.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
-
+			var oSettingsBeforeLoad = oResourceBundleCreateSpy.getCall(0).args[0];
+			assert.equal(oSettingsBeforeLoad.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component1/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.ok(oSettingsBeforeLoad.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
+			assert.ok(oSettingsBeforeLoad.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
 
 			// resolve bundle urls
-			var oEnhanceWith0 = oSettings.enhanceWith[0];
+			var oEnhanceWith0 = oSettingsBeforeLoad.enhanceWith[0];
 			assert.equal(oEnhanceWith0.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
 			assert.equal(oEnhanceWith0.terminologies.oil.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.oil.i18n.properties", "The bundleUrl should be resolved correctly");
 			assert.equal(oEnhanceWith0.terminologies.retail.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.retail.i18n.properties", "The bundleUrl should be resolved correctly");
@@ -2488,15 +2486,22 @@ sap.ui.define([
 			assert.ok(oEnhanceWith0.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
 
 			// bundle names shouldn't be resolved
-			var oEnhanceWith1 = oSettings.enhanceWith[1];
+			var oEnhanceWith1 = oSettingsBeforeLoad.enhanceWith[1];
 			assert.equal(oEnhanceWith1.bundleName, "appvar2.i18n.i18n.properties", "The bundleName should be correct");
 			assert.equal(oEnhanceWith1.terminologies.oil.bundleName, "appvar2.i18n.terminologies.oil.i18n", "The bundleName should be correct");
 			assert.equal(oEnhanceWith1.terminologies.retail.bundleName, "appvar2.i18n.terminologies.retail.i18n", "The bundleName should be correct");
 			assert.ok(oEnhanceWith1.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
 			assert.ok(oEnhanceWith1.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
 
+			// check if already processed properties have been removed when the ResourceModel constructor is called
+			var oSettingsAfterLoad = oCreateManifestModelsSpy.getCall(0).args[0].i18n.settings[0];
+			assert.notOk(oSettingsAfterLoad.enhanceWith, "enhanceWith was removed");
+			assert.notOk(oSettingsAfterLoad.terminologies, "terminologies was removed");
+			assert.notOk(oSettingsAfterLoad.activeTerminologies, "terminologies was removed");
+
 			assert.deepEqual(this.oComponent.getActiveTerminologies(), ["oil", "retail"], "The list of terminologies should be correct");
 
+			oResourceBundleCreateSpy.restore();
 			oCreateManifestModelsSpy.restore();
 		}.bind(this));
 	});
@@ -2507,7 +2512,7 @@ sap.ui.define([
 			async: true,
 			activeTerminologies: ["oil", "retail"],
 			supportedLocales: ["en", "de"],
-			fallbackLocale: "es",
+			fallbackLocale: "en",
 			terminologies: {
 				oil: {
 					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component2/i18n/terminologies.oil.i18n.properties",
@@ -2523,7 +2528,7 @@ sap.ui.define([
 					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n/i18n.properties",
 					bundleUrlRelativeTo: "manifest",
 					supportedLocales: ["en", "de"],
-					fallbackLocale: "es",
+					fallbackLocale: "en",
 					terminologies: {
 						oil: {
 							bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n.terminologies.oil.i18n.properties",
@@ -2539,7 +2544,7 @@ sap.ui.define([
 				{
 					bundleName: "appvar2.i18n.i18n.properties",
 					supportedLocales: ["en", "de"],
-					fallbackLocale: "es",
+					fallbackLocale: "en",
 					terminologies: {
 						oil: {
 							bundleName: "appvar2.i18n.terminologies.oil.i18n",
@@ -2663,7 +2668,7 @@ sap.ui.define([
 			async: true,
 			activeTerminologies: ["oil", "retail"],
 			supportedLocales: ["en", "de"],
-			fallbackLocale: "es",
+			fallbackLocale: "en",
 			terminologies: {
 				oil: {
 					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/terminologies.oil.i18n.properties",
@@ -2678,7 +2683,7 @@ sap.ui.define([
 				{
 					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n/i18n.properties",
 					supportedLocales: ["en", "de"],
-					fallbackLocale: "es",
+					fallbackLocale: "en",
 					terminologies: {
 						oil: {
 							bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.oil.i18n.properties",
@@ -2693,7 +2698,7 @@ sap.ui.define([
 				{
 					bundleName: "appvar2.i18n.i18n.properties",
 					supportedLocales: ["en", "de"],
-					fallbackLocale: "es",
+					fallbackLocale: "en",
 					terminologies: {
 						oil: {
 							bundleName: "appvar2.i18n.terminologies.oil.i18n",
