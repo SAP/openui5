@@ -1,7 +1,6 @@
 sap.ui.define([
-	"sap/ui/demo/cardExplorer/controller/BaseController",
-	'sap/ui/model/json/JSONModel',
-	"sap/ui/model/BindingMode",
+	"./BaseController",
+	"../Constants",
 	"../model/ExploreNavigationModel",
 	"../model/ExploreSettingsModel",
 	"../model/formatter",
@@ -13,13 +12,14 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/FormattedText",
 	"sap/f/GridContainerItemLayoutData",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/BindingMode",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/restricted/_debounce"
 ], function (
 	BaseController,
-	JSONModel,
-	BindingMode,
+	Constants,
 	exploreNavigationModel,
 	exploreSettingsModel,
 	formatter,
@@ -31,6 +31,8 @@ sap.ui.define([
 	library,
 	FormattedText,
 	GridContainerItemLayoutData,
+	JSONModel,
+	BindingMode,
 	Device,
 	jQuery,
 	_debounce
@@ -44,8 +46,8 @@ sap.ui.define([
 		formatter: formatter,
 
 		constructor: function () {
-			this.onFileEditorManifestChangeDebounced = _debounce(this.onFileEditorManifestChangeDebounced, 100);
-			this.onCardEditorChangeDebounced = _debounce(this.onCardEditorChangeDebounced, 100);
+			this.onFileEditorManifestChangeDebounced = _debounce(this.onFileEditorManifestChangeDebounced, Constants.DEBOUNCE_TIME);
+			this.onCardEditorChangeDebounced = _debounce(this.onCardEditorChangeDebounced, Constants.DEBOUNCE_TIME);
 			this._sEditSource = null;
 
 			BaseController.apply(this, arguments);
