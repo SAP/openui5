@@ -188,8 +188,8 @@ sap.ui.define([
 	IconTabHeader.prototype.init = function () {
 		this._aTabKeys = [];
 		this._oAriaHeadText = new InvisibleText({
-			id: this.getId() + "-ariaHeadText",
-			text: oResourceBundle.getText("ICONTABHEADER_DESCRIPTION")
+			id: this.getId() + "-ariaHeadText"
+			// text: oResourceBundle.getText("ICONTABHEADER_DESCRIPTION")
 		});
 	};
 

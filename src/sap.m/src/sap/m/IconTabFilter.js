@@ -443,6 +443,10 @@ sap.ui.define([
 			oRM.attr("title", sTooltip);
 		}
 
+		if (this._bIsOverflow || this.getItems().length) {
+			oRM.attr("aria-haspopup", "menu");
+		}
+
 		oRM.openEnd();
 
 		oRM.openStart("div")
@@ -521,7 +525,7 @@ sap.ui.define([
 		oRM.openStart("div").class("sapMITBContentArrow").openEnd().close("div");
 		oRM.close("div");
 
-		if (this._bIsOverflow || this.getItems() && this.getItems().length > 0) {
+		if (this._bIsOverflow || this.getItems().length > 0) {
 			oRM.openStart("span")
 				.accessibilityState({ role: "separator" })
 				.openEnd()
@@ -563,7 +567,7 @@ sap.ui.define([
 
 		oRM.openStart("li", this)
 			.attr("tabindex", "-1")
-			.attr("role", "treeitem");
+			.attr("role", "menuitem");
 
 		if (fPaddingValue) {
 			oRM.style("padding-left", fPaddingValue + "rem");
@@ -720,8 +724,7 @@ sap.ui.define([
 			oButton = new AccButton(this.getId() + "-expandButton", {
 				type: ButtonType.Transparent,
 				icon: IconPool.getIconURI("slim-arrow-down"),
-				tooltip: "More",
-				ariaHaspopup: "menu",
+				tooltip: Core.getLibraryResourceBundle("sap.m").getText("ICONTABHEADER_OVERFLOW_MORE"),
 				tabIndex: "-1",
 				press: this._expandButtonPress.bind(this)
 			}).addStyleClass("sapMITBFilterExpandBtn");
