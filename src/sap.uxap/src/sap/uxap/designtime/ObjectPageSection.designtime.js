@@ -50,7 +50,10 @@ sap.ui.define(["sap/uxap/library"],
 					domRef: ".sapUxAPObjectPageSectionTitle",
 					isEnabled: function (oElement) {
 						return oElement.$("title").get(0) != undefined;
-					}
+					},
+					validators: [
+						"noEmptyText"
+					]
 				};
 			}
 		},
