@@ -446,7 +446,8 @@ sap.ui.define(['./Binding', './Filter', './Sorter', 'sap/base/util/array/diff'],
 	 *   all messages are considered.
 	 * @returns {Promise<sap.ui.model.Filter>}
 	 *   A Promise that resolves with a {@link sap.ui.model.Filter} representing the entries with
-	 *   messages; may be <code>null</code> if there is no message for any entry
+	 *   messages; it resolves with <code>null</code> if the binding is not resolved or if the
+	 *   binding knows that there is no message for any entry
 	 *
 	 * @protected
 	 * @since 1.77.0
