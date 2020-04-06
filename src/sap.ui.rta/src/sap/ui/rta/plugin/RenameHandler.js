@@ -177,22 +177,19 @@ sap.ui.define([
 			this._$editableField.on("click", RenameHandler._stopPropagation.bind(this));
 			this._$editableField.on("mousedown", RenameHandler._stopPropagation.bind(this));
 
-			// BCP: 1780352883
-			setTimeout(function () {
-				this._$oEditableControlDomRef.css("visibility", "hidden");
-				_$oWrapper.offset({left: this._$oEditableControlDomRef.offset().left});
-				this._$editableField.offset({left: this._$oEditableControlDomRef.offset().left});
-				this._$editableField.offset({top: this._$oEditableControlDomRef.offset().top});
-				this._$editableField.css("visibility", "");
-				this._$editableField.focus();
+			this._$oEditableControlDomRef.css("visibility", "hidden");
+			_$oWrapper.offset({left: this._$oEditableControlDomRef.offset().left});
+			this._$editableField.offset({left: this._$oEditableControlDomRef.offset().left});
+			this._$editableField.offset({top: this._$oEditableControlDomRef.offset().top});
+			this._$editableField.css("visibility", "");
+			this._$editableField.focus();
 
-				// keep Overlay selected while renaming
-				mPropertyBag.overlay.setSelected(true);
-				sap.ui.getCore().getEventBus().publish("sap.ui.rta", mPropertyBag.pluginMethodName, {
-					overlay: mPropertyBag.overlay,
-					editableField: this._$editableField
-				});
-			}.bind(this), 0);
+			// keep Overlay selected while renaming
+			mPropertyBag.overlay.setSelected(true);
+			sap.ui.getCore().getEventBus().publish("sap.ui.rta", mPropertyBag.pluginMethodName, {
+				overlay: mPropertyBag.overlay,
+				editableField: this._$editableField
+			});
 		},
 
 		_setDesignTime : function (oDesignTime) {
