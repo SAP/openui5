@@ -1843,27 +1843,31 @@ sap.ui.define([
 	});
 
 	QUnit.test("StandardListItem infoText min-width test", function(assert) {
-		var oStdLI = new StandardListItem({
-			title: "This is the Title Text",
-			info: "Success"
-		});
+		if (!Device.browser.msie) {
+			var oStdLI = new StandardListItem({
+				title: "This is the Title Text",
+				info: "Success"
+			});
 
-		var oStdLI2 = new StandardListItem({
-			title: "This is the Title Text",
-			info: "This is a very very very long information text"
-		});
+			var oStdLI2 = new StandardListItem({
+				title: "This is the Title Text",
+				info: "This is a very very very long information text"
+			});
 
-		var oList = new List({
-			items : [oStdLI, oStdLI2]
-		});
+			var oList = new List({
+				items : [oStdLI, oStdLI2]
+			});
 
-		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
 
-		assert.ok(parseFloat(oStdLI.getDomRef("info").style.minWidth) < 7.5, "calculated info text width set as min-width");
-		assert.strictEqual(oStdLI2.getDomRef("info").style.minWidth, "7.5rem", "7.5rem min-width applied as the info text is long");
+			assert.ok(parseFloat(oStdLI.getDomRef("info").style.minWidth) < 7.5, "calculated info text width set as min-width");
+			assert.strictEqual(oStdLI2.getDomRef("info").style.minWidth, "7.5rem", "7.5rem min-width applied as the info text is long");
 
-		oList.destroy();
+			oList.destroy();
+		} else {
+			assert.ok(true);
+		}
 	});
 
 	QUnit.test("StandardListItem - test onThemeChanged", function(assert) {
