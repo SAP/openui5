@@ -75,6 +75,7 @@ sap.ui.define([
 	});
 
 	ArrayEditor.prototype.init = function () {
+		BasePropertyEditor.prototype.init.apply(this, arguments);
 		this._itemsModel = new JSONModel();
 		this._itemsModel.setDefaultBindingMode("OneWay");
 		this.setModel(this._itemsModel, "itemsModel");

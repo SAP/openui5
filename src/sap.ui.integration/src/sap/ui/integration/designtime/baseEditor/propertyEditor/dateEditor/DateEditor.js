@@ -40,7 +40,7 @@ sap.ui.define([
 		return this._formatDate(sValue);
 	};
 
-	DateEditor.prototype.asyncInit = function () {
+	DateEditor.prototype.onFragmentReady = function () {
 		var oDatePicker = this.getContent();
 		// Override to allow binding string input
 		oDatePicker.onkeypress = function(oEvent){
@@ -48,7 +48,6 @@ sap.ui.define([
 				return;
 			}
 		};
-		return Promise.resolve();
 	};
 
 	DateEditor.prototype._onChange = function (oEvent) {
@@ -93,13 +92,22 @@ sap.ui.define([
 	};
 
 	DateEditor.prototype._setInputState = function (bIsValid, sErrorMessage) {
-		var oInput = this.getContent();
-		if (bIsValid) {
-			oInput.setValueState("None");
+		var fnSetValueState = function () {
+			var oInput = this.getContent();
+			if (bIsValid) {
+				oInput.setValueState("None");
+			} else {
+				oInput.setValueState("Error");
+				oInput.setValueStateText(sErrorMessage || "Unknown Error");
+			}
+		}.bind(this, bIsValid, sErrorMessage);
+
+		if (this.isReady()) {
+			fnSetValueState();
 		} else {
-			oInput.setValueState("Error");
-			oInput.setValueStateText(sErrorMessage || "Unknown Error");
+			this.ready().then(fnSetValueState);
 		}
+
 	};
 
 	return DateEditor;

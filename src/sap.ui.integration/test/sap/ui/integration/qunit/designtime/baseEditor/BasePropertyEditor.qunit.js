@@ -3,12 +3,16 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
-	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
+	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+	"sap/ui/core/util/MockServer"
 ],
 function (
 	sinon,
 	BaseEditor,
-	StringEditor
+	BasePropertyEditor,
+	StringEditor,
+	MockServer
 ) {
 	"use strict";
 
@@ -227,6 +231,182 @@ function (
 						manufacturer: "Tesla"
 					})
 				);
+			});
+		});
+	});
+
+	QUnit.module("Dynamic fragment", {
+		before: function () {
+			this.sFragmentWithButton = [
+				'<core:FragmentDefinition',
+					'xmlns="sap.m"',
+					'xmlns:core="sap.ui.core"',
+				'>',
+					'<Button text="My Button" />',
+				'</core:FragmentDefinition>'
+			].join(" ");
+
+			this.sFragmentWithLabel = [
+				'<core:FragmentDefinition',
+					'xmlns="sap.m"',
+					'xmlns:core="sap.ui.core"',
+				'>',
+					'<Label text="My Label" />',
+				'</core:FragmentDefinition>'
+			].join(" ");
+
+			this.CustomEditorWithDefaultFragment = BasePropertyEditor.extend("CustomEditor", {
+				xmlFragment: "CustomEditor",
+				renderer: BasePropertyEditor.getMetadata().getRenderer()
+			});
+
+			this.createResponse = function (sFragmentName, sFragmentContent) {
+				return {
+					method: "GET",
+					path: sap.ui.require.toUrl(sFragmentName + ".fragment.xml"),
+					response: function (xhr) {
+						xhr.respondXML(200, null, sFragmentContent);
+					}
+				};
+			};
+		},
+		beforeEach: function () {
+			this.oMockServer = new MockServer();
+		},
+		afterEach: function () {
+			sandbox.restore();
+			this.oMockServer.destroy();
+			this.oCustomEditor.destroy();
+		}
+	}, function () {
+		QUnit.test("when default fragment is defined in a custom editor", function (assert) {
+			this.oMockServer.setRequests([
+				this.createResponse("CustomEditor", this.sFragmentWithButton)
+			]);
+			this.oMockServer.start();
+
+			var oFragmentReadySpy = sandbox.spy();
+			this.oCustomEditor = new this.CustomEditorWithDefaultFragment();
+			this.oCustomEditor.onFragmentReady = oFragmentReadySpy;
+
+			return this.oCustomEditor.ready().then(function () {
+				assert.strictEqual(oFragmentReadySpy.callCount, 1, "then onFragmentReady hook is called once");
+
+				var oControl = this.oCustomEditor.getContent();
+				assert.ok(oControl, "then fragment is added to editor");
+				assert.ok(oControl.isA("sap.m.Button"), "then the fragment contains button");
+				assert.strictEqual(oControl.getText(), "My Button", "then the button has a correct text");
+			}.bind(this));
+		});
+
+		QUnit.test("when setFragment() is called on a custom editor", function (assert) {
+			var oFragmentReadySpy = sandbox.spy();
+			this.oCustomEditor = new BasePropertyEditor();
+			this.oCustomEditor.onFragmentReady = oFragmentReadySpy;
+
+			this.oMockServer.setRequests([
+				this.createResponse("CustomEditor", this.sFragmentWithButton)
+			]);
+			this.oMockServer.start();
+
+			this.oCustomEditor.setFragment("CustomEditor");
+
+
+			return this.oCustomEditor.ready().then(function () {
+				assert.strictEqual(oFragmentReadySpy.callCount, 1, "then onFragmentReady hook is called once");
+
+				var oControl = this.oCustomEditor.getContent();
+				assert.ok(oControl, "then fragment is added to editor");
+				assert.ok(oControl.isA("sap.m.Button"), "then the fragment contains button");
+				assert.strictEqual(oControl.getText(), "My Button", "then the button has a correct text");
+			}.bind(this));
+		});
+
+		QUnit.test("when setFragment() is called on a custom editor with predefined xmlFragment (default fragment)", function (assert) {
+			this.oMockServer.setRequests([
+				this.createResponse("CustomEditor", this.sFragmentWithButton),
+				this.createResponse("AnotherFragment", this.sFragmentWithLabel)
+			]);
+			this.oMockServer.start();
+
+			this.oCustomEditor = new this.CustomEditorWithDefaultFragment();
+
+
+			return this.oCustomEditor.ready().then(function () {
+				var oFragmentReadySpy = sandbox.spy();
+				this.oCustomEditor.onFragmentReady = oFragmentReadySpy;
+				this.oCustomEditor.setFragment("AnotherFragment");
+
+				return this.oCustomEditor.ready().then(function () {
+					assert.strictEqual(oFragmentReadySpy.callCount, 1, "then onFragmentReady hook is called once");
+
+					var oControl = this.oCustomEditor.getContent();
+					assert.ok(oControl, "then fragment is added to editor");
+					assert.ok(oControl.isA("sap.m.Label"), "then the fragment contains button");
+					assert.strictEqual(oControl.getText(), "My Label", "then button has a correct text");
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("when setFragment() is called several times in a row", function (assert) {
+			var oFragmentReadySpy = sandbox.spy();
+			this.oCustomEditor = new BasePropertyEditor();
+			this.oCustomEditor.onFragmentReady = oFragmentReadySpy;
+
+			this.oMockServer.setRequests([
+				this.createResponse("CustomEditor", this.sFragmentWithButton),
+				this.createResponse("AnotherFragment", this.sFragmentWithLabel)
+			]);
+			this.oMockServer.start();
+
+			this.oCustomEditor.setFragment("CustomEditor");
+			this.oCustomEditor.setFragment("AnotherFragment");
+			this.oCustomEditor.setFragment("CustomEditor");
+			this.oCustomEditor.setFragment("AnotherFragment");
+			this.oCustomEditor.setFragment("CustomEditor");
+			this.oCustomEditor.setFragment("AnotherFragment");
+
+			return this.oCustomEditor.ready().then(function () {
+				assert.strictEqual(oFragmentReadySpy.callCount, 1, "then onFragmentReady hook is called once");
+
+				var oControl = this.oCustomEditor.getContent();
+				assert.ok(oControl, "then fragment is added to editor");
+				assert.ok(oControl.isA("sap.m.Label"), "then the fragment contains button");
+				assert.strictEqual(oControl.getText(), "My Label", "then button has a correct text");
+			}.bind(this));
+		});
+
+		QUnit.test("when BasePropertyEditor is destroyed before fragment is loaded", function (assert) {
+			var fnDone = assert.async();
+			var oFragmentReadySpy = sandbox.spy();
+			this.oCustomEditor = new BasePropertyEditor();
+			this.oCustomEditor.onFragmentReady = oFragmentReadySpy;
+
+			this.oMockServer.setRequests([
+				this.createResponse("CustomEditor", this.sFragmentWithButton)
+			]);
+			this.oMockServer.start();
+
+			this.oCustomEditor.setFragment("CustomEditor");
+			this.oCustomEditor.destroy();
+
+			setTimeout(function () {
+				assert.strictEqual(oFragmentReadySpy.callCount, 0, "then hook wasn't called");
+				fnDone();
+			}, 100);
+
+		});
+	});
+
+	QUnit.module("Events", function () {
+		QUnit.test("init event", function (assert) {
+			var fnDone = assert.async();
+			new BasePropertyEditor({
+				init: function () {
+					assert.ok(true, "init event is called properly");
+					this.destroy();
+					fnDone();
+				}
 			});
 		});
 	});
