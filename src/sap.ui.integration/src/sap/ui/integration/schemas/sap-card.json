@@ -1640,6 +1640,14 @@
 						"date",
 						"datetime"
 					]
+				},
+				"label": {
+					"description": "Label for the parameter for user-friendly visualization in the design-time editor.",
+					"type": "string"
+				},
+				"description": {
+					"description": "Description of the parameter for user-friendly visualization in the design-time editor.",
+					"type": "string"
 				}
 			}
 		},
@@ -1650,6 +1658,14 @@
 			"properties": {
 				"name": {
 					"description": "The name of the destination. Use the same name which is used in Cloud Platform.",
+					"type": "string"
+				},
+				"label": {
+					"description": "Label for the destination for user-friendly visualization in the design-time editor.",
+					"type": "string"
+				},
+				"description": {
+					"description": "Description of the destination for user-friendly visualization in the design-time editor.",
 					"type": "string"
 				}
 			}
