@@ -47,7 +47,8 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 		oRm.openStart("div", oControl);
 		oRm.class("sapMFF");
 		oRm.accessibilityState({
-			role: "toolbar"
+			role: "toolbar",
+			roledescription: oControl._bundle.getText("FACETFILTER_TITLE")
 		});
 
 		if (oControl._lastScrolling) {
