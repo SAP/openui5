@@ -19,7 +19,7 @@ sap.ui.define([
 		"sap/m/library",
 		"sap/ui/integration/util/BindingResolver",
 		"sap/ui/integration/util/BindingHelper",
-		"sap/f/cards/IconFormatter"
+	"sap/ui/integration/formatters/IconFormatter"
 	], function (
 		library,
 		ManagedObject,

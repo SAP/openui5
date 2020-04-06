@@ -4,7 +4,7 @@
 sap.ui.define([
 		"sap/ui/integration/library",
 		"sap/ui/integration/cards/BaseContent",
-		"sap/f/cards/IconFormatter",
+		"sap/ui/integration/formatters/IconFormatter",
 		"sap/ui/integration/util/BindingHelper",
 		"sap/ui/integration/util/BindingResolver",
 		"sap/f/PlanningCalendarInCard",

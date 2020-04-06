@@ -90,6 +90,26 @@ function (
 		assert.ok(fnPressHandler.calledOnce, "The press event is fired on sapselect");
 	});
 
+	QUnit.test("Numeric Header indicator truncation", function (assert) {
+
+		// Arrange
+		var sSampleNumber = "1234567812345678",
+			oHeader = new CardNumericHeader({
+				number: sSampleNumber
+			});
+
+		// Act
+		oHeader.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Assert
+
+		assert.strictEqual(oHeader.$("mainIndicator-value-inner").html().length, sSampleNumber.length, "The numeric content is not truncated");
+
+		// Clean up
+		oHeader.destroy();
+	});
+
 	QUnit.module("Headers ACC roles");
 
 	QUnit.test("Header", function (assert) {

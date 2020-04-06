@@ -22,7 +22,7 @@ sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/integration/util/Destinations",
-	"sap/f/cards/loading/LoadingProvider",
+	"sap/ui/integration/util/LoadingProvider",
 	"sap/ui/integration/util/HeaderFactory",
 	"sap/ui/integration/util/ContentFactory"
 ], function (

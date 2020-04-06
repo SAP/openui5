@@ -4,9 +4,9 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/cards/ListContent",
 	"sap/ui/core/Core",
-	"sap/f/cards/NumericHeader",
 	"sap/f/cards/NumericSideIndicator",
-	"sap/f/cards/Header",
+	"sap/ui/integration/cards/NumericHeader",
+	"sap/ui/integration/cards/Header",
 	"sap/base/Log",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/base/Event",
@@ -16,8 +16,8 @@ sap.ui.define([
 		Card,
 		ListContent,
 		Core,
-		NumericHeader,
 		NumericSideIndicator,
+		NumericHeader,
 		Header,
 		Log,
 		ComponentContainer,
@@ -1493,26 +1493,6 @@ sap.ui.define([
 			this.oCard.setManifest(oManifest_NumericHeader);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
-		});
-
-		QUnit.test("Numeric Header indicator truncation", function (assert) {
-
-			// Arrange
-			var sSampleNumber = "1234567812345678",
-				oHeader = new NumericHeader({
-					number: sSampleNumber
-				});
-
-			// Act
-			oHeader.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-
-			// Assert
-
-			assert.strictEqual(oHeader.$("mainIndicator-value-inner").html().length, sSampleNumber.length, "The numeric content is not truncated");
-
-			// Clean up
-			oHeader.destroy();
 		});
 
 		QUnit.test("Numeric Header main indicator with json data", function (assert) {

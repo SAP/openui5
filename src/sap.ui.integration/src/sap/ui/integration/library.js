@@ -27,6 +27,8 @@ sap.ui.define(["sap/ui/base/DataType",
 			controls: [
 				"sap.ui.integration.widgets.Card",
 				"sap.ui.integration.Widget",
+				"sap.ui.integration.cards.Header",
+				"sap.ui.integration.cards.NumericHeader",
 				"sap.ui.integration.host.HostConfiguration"
 			],
 			elements: [

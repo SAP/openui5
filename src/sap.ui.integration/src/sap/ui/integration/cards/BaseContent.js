@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/f/cards/loading/LoadingProvider"
+	"sap/ui/integration/util/LoadingProvider"
 ], function (Control,
 			JSONModel,
 			ManagedObjectObserver,
