@@ -24,7 +24,7 @@ function(
 	 * @author SAP SE
 	 * @version ${version}
 	 */
-	var Cache = function () {};
+	var Cache = function() {};
 
 	function _getChangeArray(sComponentName) {
 		return FlexState.getFlexObjectsFromStorageResponse(sComponentName).changes;
@@ -51,7 +51,7 @@ function(
 	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
-	Cache.clearEntries = function () {
+	Cache.clearEntries = function() {
 		// TODO remove.. (used in tests)
 		FlexState.clearState();
 	};
@@ -69,7 +69,7 @@ function(
 	 *
 	 * @public
 	 */
-	Cache.getChangesFillingCache = function (mComponent, mPropertyBag, bInvalidateCache) {
+	Cache.getChangesFillingCache = function(mComponent, mPropertyBag, bInvalidateCache) {
 		var oPromise = Promise.resolve();
 		if (bInvalidateCache) {
 			oPromise = FlexState.clearAndInitialize(mPropertyBag);
@@ -96,25 +96,25 @@ function(
 	 * @restricted sap.ui.fl
 	 *
 	 */
-	Cache.getCacheKey = function (mComponent, oAppComponent) {
+	Cache.getCacheKey = function(mComponent, oAppComponent) {
 		if (!mComponent || !mComponent.name || !oAppComponent) {
 			Log.warning("Not all parameters were passed to determine a flexibility cache key.");
 			return Promise.resolve(Cache.NOTAG);
 		}
 		return this.getChangesFillingCache(mComponent)
-		.then(function (oWrappedChangeFileContent) {
-			if (oWrappedChangeFileContent && oWrappedChangeFileContent.cacheKey) {
-				return _trimEtag(oWrappedChangeFileContent.cacheKey);
-			}
+			.then(function(oWrappedChangeFileContent) {
+				if (oWrappedChangeFileContent && oWrappedChangeFileContent.cacheKey) {
+					return _trimEtag(oWrappedChangeFileContent.cacheKey);
+				}
 
-			return Cache.NOTAG;
-		})
-		.then(function(sCacheKey) {
-			// concat current control variant ids to cachekey if available
-			var oVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
-			var aCurrentControlVariantIds = oVariantModel ? oVariantModel.getCurrentControlVariantIds() : [];
-			return _concatControlVariantIdWithCacheKey(sCacheKey, aCurrentControlVariantIds.join("-"));
-		});
+				return Cache.NOTAG;
+			})
+			.then(function(sCacheKey) {
+				// concat current control variant ids to cachekey if available
+				var oVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
+				var aCurrentControlVariantIds = oVariantModel ? oVariantModel.getCurrentControlVariantIds() : [];
+				return _concatControlVariantIdWithCacheKey(sCacheKey, aCurrentControlVariantIds.join("-"));
+			});
 	};
 
 	/**
@@ -126,7 +126,7 @@ function(
 	 * @param {object} oChange - The change in JSON format
 	 * @public
 	 */
-	Cache.addChange = function (oComponent, oChange) {
+	Cache.addChange = function(oComponent, oChange) {
 		var aChanges = _getChangeArray(oComponent.name);
 
 		if (!aChanges) {
@@ -144,7 +144,7 @@ function(
 	 * @param {object} oChange - The change in JSON format
 	 * @public
 	 */
-	Cache.updateChange = function (oComponent, oChange) {
+	Cache.updateChange = function(oComponent, oChange) {
 		var aChanges = _getChangeArray(oComponent.name);
 
 		if (!aChanges) {
@@ -168,7 +168,7 @@ function(
 	 * @param {object} oChangeDefinition - The change in JSON format
 	 * @public
 	 */
-	Cache.deleteChange = function (oComponent, oChangeDefinition) {
+	Cache.deleteChange = function(oComponent, oChangeDefinition) {
 		var aChanges = _getChangeArray(oComponent.name);
 
 		if (!aChanges) {
@@ -192,14 +192,14 @@ function(
 	 * @param {string[]} aChangeNames - Array of names of the changes to be deleted
 	 * @public
 	 */
-	Cache.removeChanges = function (oComponent, aChangeNames) {
+	Cache.removeChanges = function(oComponent, aChangeNames) {
 		var oEntry = FlexState.getFlexObjectsFromStorageResponse(oComponent.name);
 		oEntry.changes = oEntry.changes.filter(function(oChange) {
 			return aChangeNames.indexOf(oChange.fileName) === -1;
 		});
-		var oVariantSection = oEntry.variantSection;
-		Object.keys(oVariantSection).forEach(function(sId) {
-			oVariantSection[sId].variants.forEach(function(oVariant) {
+		var oVariantsState = FlexState.getVariantsState(oComponent.name);
+		Object.keys(oVariantsState).forEach(function(sId) {
+			oVariantsState[sId].variants.forEach(function(oVariant) {
 				oVariant.controlChanges = oVariant.controlChanges.filter(function(oChange) {
 					return aChangeNames.indexOf(oChange.getFileName()) === -1;
 				});

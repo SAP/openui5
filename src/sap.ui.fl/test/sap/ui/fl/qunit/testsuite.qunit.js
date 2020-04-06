@@ -212,6 +212,17 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/controlVariants/URLHandler"]
 				}
 			},
+			"apply/_internal/controlVariants/Utils": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/controlVariants/Utils"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+					}
+				}
+			},
 			"apply/_internal/flexState/changes/DependencyHandler": {
 				group: "Apply Internal",
 				coverage: {
@@ -704,12 +715,6 @@ sap.ui.define([
 			},
 
 			// Variant tests:
-			"variants/VariantController": {
-				group: "Variants",
-				coverage: {
-					only: ["sap/ui/fl/variants/VariantController"]
-				}
-			},
 			"variants/VariantManagement": {
 				group: "Variants",
 				coverage: {

@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/core/Component",
 	"sap/ui/fl/LayerUtils"
-], function (
+], function(
 	Utils,
 	ObjectPath,
 	Log,
@@ -36,7 +36,7 @@ sap.ui.define([
 	// ctrl_variant
 	function addVariants(oVariantsMap, aVariants) {
 		var oVariantsMapClone = merge({}, oVariantsMap);
-		aVariants.forEach(function (oVariant) {
+		aVariants.forEach(function(oVariant) {
 			oVariantsMapClone[oVariant.fileName] = {
 				content: oVariant,
 				controlChanges: [],
@@ -49,7 +49,7 @@ sap.ui.define([
 	// change
 	function addVariantDependentControlChanges(oVariantsMap, aVariantDependentChanges) {
 		var oVariantsMapClone = merge({}, oVariantsMap);
-		aVariantDependentChanges.forEach(function (oChange) {
+		aVariantDependentChanges.forEach(function(oChange) {
 			oVariantsMapClone[oChange.variantReference] = oVariantsMapClone[oChange.variantReference] || createStandardVariant(oChange.variantReference);
 			oVariantsMapClone[oChange.variantReference].controlChanges.push(oChange);
 		});
@@ -59,7 +59,7 @@ sap.ui.define([
 	// ctrl_variant_change
 	function addVariantChanges(oVariantsMap, aVariantChanges) {
 		var oVariantsMapClone = merge({}, oVariantsMap);
-		aVariantChanges.forEach(function (oChange) {
+		aVariantChanges.forEach(function(oChange) {
 			oVariantsMapClone[oChange.selector.id] = oVariantsMapClone[oChange.selector.id] || createStandardVariant(oChange.selector.id);
 			var aVariantChangesOfTheChangeType = oVariantsMapClone[oChange.selector.id].variantChanges[oChange.changeType] || [];
 			aVariantChangesOfTheChangeType.push(oChange);
@@ -134,15 +134,15 @@ sap.ui.define([
 
 	function createVariantManagementSection() {
 		return {
-			variantManagementChanges : {},
-			variants : []
+			variantManagementChanges: {},
+			variants: []
 		};
 	}
 
 	// add prepared variants to resultant variant section
 	function addVariantsToResult(oResult, oVariantsMap, aTechnicalParameters) {
 		var oResultClone = merge({}, oResult);
-		values(oVariantsMap).forEach(function (oVariant) {
+		values(oVariantsMap).forEach(function(oVariant) {
 			var sVariantManagementId = oVariant.content.variantManagementReference;
 			if (!oResultClone[sVariantManagementId]) {
 				oResultClone[sVariantManagementId] = createVariantManagementSection();
@@ -167,7 +167,7 @@ sap.ui.define([
 	// add variant management changes to resultant variant section
 	function addVariantManagementChangesToResult(oResult, aVariantManagementChanges) {
 		var oResultClone = merge({}, oResult);
-		aVariantManagementChanges.forEach(function (oChange) {
+		aVariantManagementChanges.forEach(function(oChange) {
 			var sVariantManagementId = oChange.selector.id;
 			if (!oResultClone[sVariantManagementId]) {
 				oResultClone[sVariantManagementId] = createVariantManagementSection();
@@ -186,8 +186,8 @@ sap.ui.define([
 	// add missing standard variants to resultant variant section
 	function addStandardVariants(oResult) {
 		var oResultClone = merge({}, oResult);
-		each(oResultClone, function (sVariantManagementId, oVariantManagement) {
-			var iStandardVariantIndex = oVariantManagement.variants.findIndex(function (oVariant) {
+		each(oResultClone, function(sVariantManagementId, oVariantManagement) {
+			var iStandardVariantIndex = oVariantManagement.variants.findIndex(function(oVariant) {
 				return oVariant.content.fileName === sVariantManagementId;
 			});
 
@@ -258,7 +258,7 @@ sap.ui.define([
 		var oVariantClone = merge({}, oVariant);
 		var mVariantChanges = oVariantClone.variantChanges;
 		var oActiveChange;
-		each(mVariantChanges, function (sChangeType, aChanges) {
+		each(mVariantChanges, function(sChangeType, aChanges) {
 			switch (sChangeType) {
 				case "setTitle":
 					oActiveChange = getActiveChange(aChanges);
@@ -359,9 +359,6 @@ sap.ui.define([
 
 		var oVariantsMap = getVariantsMap(mPropertyBag.storageResponse.changes);
 		oVariantsMap = assembleResult(oVariantsMap, mPropertyBag.storageResponse.changes.variantManagementChanges, aTechnicalParameters);
-		merge(mPropertyBag.unfilteredStorageResponse.changes, {
-			variantSection: oVariantsMap
-		});
 		return oVariantsMap;
 	};
 });

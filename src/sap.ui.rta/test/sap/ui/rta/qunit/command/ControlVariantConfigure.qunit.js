@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -22,6 +23,7 @@ function(
 	VariantManagement,
 	VariantModel,
 	FlexTestAPI,
+	VariantManagementState,
 	sinon
 ) {
 	"use strict";
@@ -29,7 +31,7 @@ function(
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a variant management control ...", {
-		before: function () {
+		before: function() {
 			var oManifestObj = {
 				"sap.app": {
 					id: "MyComponent",
@@ -42,8 +44,8 @@ function(
 			this.oManifest = new Manifest(oManifestObj);
 
 			this.oMockedAppComponent = {
-				getLocalId: function () {},
-				getModel: function () {
+				getLocalId: function() {},
+				getModel: function() {
 					return this.oModel;
 				}.bind(this),
 				getId: function() {
@@ -56,6 +58,7 @@ function(
 
 			this.oGetAppComponentForControlStub = sinon.stub(flUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
 			this.oGetComponentClassNameStub = sinon.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
+			sinon.stub(VariantManagementState, "getContent").returns({});
 
 			this.oData = {
 				variantMgmtId1: {
@@ -82,18 +85,18 @@ function(
 
 			this.oVariant = {
 				content: {
-					fileName:"variant0",
+					fileName: "variant0",
 					content: {
-						title:"variant A"
+						title: "variant A"
 					},
-					layer:Layer.CUSTOMER,
-					variantReference:"variant00",
+					layer: Layer.CUSTOMER,
+					variantReference: "variant00",
 					reference: "Dummy.Component"
 				},
-				controlChanges : []
+				controlChanges: []
 			};
 		},
-		after: function () {
+		after: function() {
 			this.oGetAppComponentForControlStub.restore();
 			this.oGetComponentClassNameStub.restore();
 			this.oModel.destroy();
@@ -104,7 +107,7 @@ function(
 			this.oVariantManagement.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 
 			var oDummyOverlay = {
-				getVariantManagement : function() {
+				getVariantManagement: function() {
 					return "idMain1--variantManagementOrdersTable";
 				}
 			};
@@ -115,36 +118,36 @@ function(
 			sandbox.restore();
 			this.oVariantManagement.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when calling command factory for configure and undo with setTitle, setFavorite and setVisible changes", function(assert) {
 			sandbox.stub(this.oModel, "getVariant").returns(this.oVariant);
-			sandbox.stub(this.oModel.oVariantController, "_setVariantData").returns(1);
-			sandbox.stub(this.oModel.oVariantController, "_updateChangesForVariantManagementInMap");
+			sandbox.stub(VariantManagementState, "setVariantData").returns(1);
+			sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap");
 
-			var oDesignTimeMetadata = new ElementDesignTimeMetadata({ data : {} });
+			var oDesignTimeMetadata = new ElementDesignTimeMetadata({data: {}});
 			var mFlexSettings = {layer: Layer.CUSTOMER};
 			var oTitleChange = {
-				appComponent : this.oMockedAppComponent,
-				changeType : "setTitle",
-				layer : Layer.CUSTOMER,
-				originalTitle : "variant A",
-				title : "test",
-				variantReference : "variant0"
+				appComponent: this.oMockedAppComponent,
+				changeType: "setTitle",
+				layer: Layer.CUSTOMER,
+				originalTitle: "variant A",
+				title: "test",
+				variantReference: "variant0"
 			};
 			var oFavoriteChange = {
-				appComponent : this.oMockedAppComponent,
-				changeType : "setFavorite",
-				favorite : false,
-				layer : Layer.CUSTOMER,
-				originalFavorite : true,
-				variantReference : "variant0"
+				appComponent: this.oMockedAppComponent,
+				changeType: "setFavorite",
+				favorite: false,
+				layer: Layer.CUSTOMER,
+				originalFavorite: true,
+				variantReference: "variant0"
 			};
 			var oVisibleChange = {
-				appComponent : this.oMockedAppComponent,
-				changeType : "setVisible",
-				layer : Layer.CUSTOMER,
-				variantReference : "variant0",
-				visible : false
+				appComponent: this.oMockedAppComponent,
+				changeType: "setVisible",
+				layer: Layer.CUSTOMER,
+				variantReference: "variant0",
+				visible: false
 			};
 			var aChanges = [oTitleChange, oFavoriteChange, oVisibleChange];
 			var oControlVariantConfigureCommand;
@@ -152,15 +155,15 @@ function(
 			var iDirtyChangesCount;
 
 			return CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
-				control : this.oVariantManagement,
-				changes : aChanges
+				control: this.oVariantManagement,
+				changes: aChanges
 			}, oDesignTimeMetadata, mFlexSettings)
-				.then(function (oCommand) {
+				.then(function(oCommand) {
 					oControlVariantConfigureCommand = oCommand;
 					assert.ok(oControlVariantConfigureCommand, "control variant configure command exists for element");
 					return oControlVariantConfigureCommand.execute();
 				})
-				.then(function () {
+				.then(function() {
 					var aConfigureChanges = oControlVariantConfigureCommand.getChanges();
 					aPreparedChanges = oControlVariantConfigureCommand.getPreparedChange();
 					assert.equal(aPreparedChanges.length, 3, "then the prepared changes are available");
@@ -172,7 +175,7 @@ function(
 					assert.strictEqual(iDirtyChangesCount, 3, "then there are three dirty changes in the flex persistence");
 					return oControlVariantConfigureCommand.undo();
 				}.bind(this))
-				.then(function () {
+				.then(function() {
 					aPreparedChanges = oControlVariantConfigureCommand.getPreparedChange();
 					assert.notOk(aPreparedChanges, "then no prepared changes are available after undo");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].title, oTitleChange.originalTitle, "then title is correctly reverted in model");
@@ -181,21 +184,19 @@ function(
 					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
 					assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 				}.bind(this))
-				.catch(function (oError) {
+				.catch(function(oError) {
 					assert.ok(false, "catch must never be called - Error: " + oError);
 				});
 		});
 
 		QUnit.test("when calling command factory for configure and undo with setDefault change", function(assert) {
 			sandbox.stub(this.oModel, "getVariant").returns(this.oVariant);
-			sandbox.stub(this.oModel.oVariantController, "_updateChangesForVariantManagementInMap");
-			this.oModel.oVariantController._mVariantManagement = {};
-			this.oModel.oVariantController._mVariantManagement["variantMgmtId1"] = {defaultVariant : this.oData["variantMgmtId1"].defaultVariant};
+			sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap");
 
-			var oDesignTimeMetadata = new ElementDesignTimeMetadata({ data : {} });
+			var oDesignTimeMetadata = new ElementDesignTimeMetadata({data: {}});
 			var mFlexSettings = {layer: Layer.CUSTOMER};
 			var oDefaultChange = {
-				appComponent : this.oMockedAppComponent,
+				appComponent: this.oMockedAppComponent,
 				changeType: "setDefault",
 				defaultVariant: "variantMgmtId1",
 				layer: Layer.CUSTOMER,
@@ -209,7 +210,7 @@ function(
 				control: this.oVariantManagement,
 				changes: aChanges
 			}, oDesignTimeMetadata, mFlexSettings)
-				.then(function (oCommand) {
+				.then(function(oCommand) {
 					oControlVariantConfigureCommand = oCommand;
 					assert.ok(oControlVariantConfigureCommand, "control variant configure command exists for element");
 					return oControlVariantConfigureCommand.execute();
@@ -229,13 +230,13 @@ function(
 					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
 					assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 				}.bind(this))
-				.catch(function (oError) {
+				.catch(function(oError) {
 					assert.ok(false, "catch must never be called - Error: " + oError);
 				});
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
 });
