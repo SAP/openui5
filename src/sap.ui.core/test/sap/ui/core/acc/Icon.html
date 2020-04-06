@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<title>Accessibility Test Page - sap.ui.core.Icon</title>
+
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-libs="sap.ui.core">
+
+</script>
+
+<style>
+	body {
+		margin: 10px !important;
+	}
+</style>
+
+<script>
+	sap.ui.require(["sap/ui/core/Icon", "sap/ui/core/InvisibleText"], function(Icon, InvisibleText) {
+		var oDecorativeIcon = new Icon({
+			src: "sap-icon://manager",
+			size: "32px",
+			decorative: true
+		});
+
+		oDecorativeIcon.placeAt("uiarea0");
+
+		// Icon with default label
+		var oIconDefaultLabel = new Icon({
+			src: "sap-icon://add-photo",
+			size: "32px",
+			decorative: false
+		});
+
+		oIconDefaultLabel.placeAt("uiarea1");
+
+		// Icon with overwritten label
+		var oIconNewLabel = new Icon({
+			decorative: false,
+			src: "sap-icon://activate",
+			size: "32px",
+			alt: "new alt text"
+		});
+
+		oIconNewLabel.placeAt("uiarea2")
+
+		// Icon with labelled by
+		var oLabelForIcon = new InvisibleText("labelForIcon", {
+			text: "label for the good icon"
+		});
+
+		oLabelForIcon.toStatic();
+
+		var oIconLabelledBy = new Icon({
+			decorative: false,
+			size: "32px",
+			ariaLabelledBy: "labelForIcon",
+			src: "sap-icon://exit-full-screen"
+		});
+
+		oIconLabelledBy.placeAt("uiarea3");
+
+		// Icon with handler
+		var oIconWithHandler = new Icon({
+			decorative: false,
+			size: "32px",
+			src: "sap-icon://expand-group",
+			press: function() {
+			}
+		});
+
+		oIconWithHandler.placeAt("uiarea4")
+
+	});
+
+
+</script>
+</head>
+<body class="sapUiBody">
+	<h1 id="header">
+		ACC Test Page for
+		<code>sap.ui.core.Icon</code>
+	</h1>
+
+	<span>Decorative Icon</span>
+	<div id="uiarea0"></div>
+	<hr />
+
+	<span>Icon with default Label</span>
+	<div id="uiarea1"></div>
+	<hr />
+
+	<span>Icon with new label</span>
+	<div id="uiarea2"></div>
+	<hr />
+
+	<span>Icon with labelledby</span>
+	<div id="uiarea3"></div>
+	<hr />
+
+	<span>Icon with handler</span>
+	<div id="uiarea4"></div>
+	<hr />
+</body>
+</html>
