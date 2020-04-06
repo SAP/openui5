@@ -1323,6 +1323,37 @@
 		}))
 		oCondensedTable.addStyleClass("sapUiSizeCondensed");
 
+		var aData = [
+			{
+				name: "Apple", group: "Fruits"
+			}, {
+				name: "Pineapple", group: "Fruits"
+			},{
+				name: "Apricot", group: "Fruits"
+			},{
+				name: "Banana", group: "Fruits"
+			},{
+				name: "Tomato", group: "Vegetables"
+			},{
+				name: "Asparagus", group: "Vegetables"
+			}
+		],
+		oSuggestionsMultiInput = new sap.m.MultiInput("mIWithSuggestions", {
+			ariaLabelledBy: "suggestionsLabel"
+		});
+
+		var oModel = new sap.ui.model.json.JSONModel();
+
+		oModel.setData(aData);
+		oSuggestionsMultiInput.setModel(oModel);
+		oSuggestionsMultiInput.bindAggregation("suggestionItems", {
+			path: "/",
+			sorter: [new sap.ui.model.Sorter('group', false, true)],
+			template: new sap.ui.core.Item({text: "{name}"})
+		});
+
+
+
 		var page1 = new sap.m.Page("page1", {
 			title:"Mobile MultiInput Control",
 			content : [
@@ -1382,7 +1413,10 @@
 					oMinWidthMultiInput,
 					new sap.m.Label({labelFor: multiInputWithDataBinding.getId(), text : "MultiInput with DataBinding", width: "100%"}),
 					multiInputWithDataBinding,
-					oCondensedTable
+					oCondensedTable,
+					new sap.m.Label("suggestionsLabel", {text: "MultiInput with suggestions", labelFor: "mIWithSuggestions"}),
+					oSuggestionsMultiInput
+
 			],
 			showNavButton: true,
 			navButtonPress: function(){ app.to("page2"); }

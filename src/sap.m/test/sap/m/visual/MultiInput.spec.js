@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect,browser*/
+/*global describe,it,element,by,takeScreenshot,expect,browser,protractor*/
 
 describe('sap.m.MultiInput', function() {
 	"use strict";
@@ -129,6 +129,26 @@ describe('sap.m.MultiInput', function() {
 	it("should invalidate the MultiInput, so all MI elements are there", function () {
 		browser.executeScript('sap.ui.getCore().byId("dataBoundMultiInput").getTokens()[1].setText("Lorem ipsulum")').then(function () {
 			expect(takeScreenshot(element(by.id("dataBoundMultiInput")))).toLookAs("token-update-text");
+		});
+	});
+
+	it("Should visualize input with suggestions", function () {
+		var oMultiInput = element(by.id("mIWithSuggestions"));
+		browser.executeScript("document.getElementById('mIWithSuggestions').scrollIntoView()").then(function() {
+			oMultiInput.click();
+			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_suggestions_focused");
+
+			browser.actions().sendKeys("A").perform();
+			expect(takeScreenshot(oMultiInput)).toLookAs("suggestions_visible");
+
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			expect(takeScreenshot(oMultiInput)).toLookAs("group_header_focused");
+
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			expect(takeScreenshot(oMultiInput)).toLookAs("first_suggestion_focused");
+
+			browser.actions().sendKeys("A").perform();
+			expect(takeScreenshot(oMultiInput)).toLookAs("input_field_focused");
 		});
 	});
 });

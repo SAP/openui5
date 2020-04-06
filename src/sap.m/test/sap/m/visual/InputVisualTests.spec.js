@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect,browser*/
+/*global describe,it,element,by,takeScreenshot,expect,browser, protractor*/
 
 describe("sap.m.InputVisualTests", function() {
 	"use strict";
@@ -53,6 +53,26 @@ describe("sap.m.InputVisualTests", function() {
 		var sf1 = element(by.id("sf"));
 		browser.executeScript("document.getElementById('sf').scrollIntoView()").then(function() {
 			expect(takeScreenshot(sf1)).toLookAs("15_Input_in_SimpleForm");
+		});
+	});
+
+	it("Should visualize input with suggestions", function () {
+		var oInput = element(by.id("inputWithSuggestions"));
+		browser.executeScript("document.getElementById('inputWithSuggestions').scrollIntoView()").then(function() {
+			oInput.click();
+			expect(takeScreenshot(oInput)).toLookAs("input_with_suggestions_focused");
+
+			browser.actions().sendKeys("A").perform();
+			expect(takeScreenshot(oInput)).toLookAs("suggestions_visible");
+
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			expect(takeScreenshot(oInput)).toLookAs("group_header_focused");
+
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			expect(takeScreenshot(oInput)).toLookAs("first_suggestion_focused");
+
+			browser.actions().sendKeys("A").perform();
+			expect(takeScreenshot(oInput)).toLookAs("input_field_focused");
 		});
 	});
 });

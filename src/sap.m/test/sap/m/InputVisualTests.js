@@ -3,7 +3,10 @@ sap.ui.require([
 	"sap/ui/layout/GridData",
 	"sap/ui/layout/form/GridElementData",
 	"sap/ui/layout/form/ColumnElementData",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
 	"sap/ui/core/VariantLayoutData",
+	"sap/ui/core/Item",
 	"sap/m/Title",
 	"sap/m/Label",
 	"sap/m/Input",
@@ -12,14 +15,19 @@ sap.ui.require([
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/m/HBox",
-	"sap/m/VBox"
+	"sap/m/VBox",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/json/JSONModel"
 	],
 	function(
 		SimpleForm,
 		GridData,
 		GridElementData,
 		ColumnElementData,
+		Column,
+		ColumnListItem,
 		VariantLayoutData,
+		Item,
 		Title,
 		Label,
 		Input,
@@ -28,7 +36,9 @@ sap.ui.require([
 		App,
 		Page,
 		HBox,
-		VBox
+		VBox,
+		Sorter,
+		JSONModel
 	){
 
 		"use strict";
@@ -110,6 +120,36 @@ sap.ui.require([
 
 		var app = new App("myApp", {initialPage: "inpPage"});
 		app.placeAt("body");
+
+		var aData = [
+			{
+				name: "Apple", group: "Fruits"
+			}, {
+				name: "Pineapple", group: "Fruits"
+			},{
+				name: "Apricot", group: "Fruits"
+			},{
+				name: "Banana", group: "Fruits"
+			},{
+				name: "Tomato", group: "Vegetables"
+			},{
+				name: "Asparagus", group: "Vegetables"
+			}
+		],
+		oSuggestionsInput = new Input("inputWithSuggestions", {
+			showSuggestion: true,
+			ariaLabelledBy: "suggestionsLabel"
+		});
+
+		var oModel = new JSONModel();
+
+		oModel.setData(aData);
+		oSuggestionsInput.setModel(oModel);
+		oSuggestionsInput.bindAggregation("suggestionItems", {
+			path: "/",
+			sorter: [new Sorter('group', false, true)],
+			template: new Item({text: "{name}"})
+		});
 
 		var initialPage = new Page("inpPage", {
 			showHeader: false,
@@ -205,6 +245,12 @@ sap.ui.require([
 								new ColumnElementData({cellsSmall: 2, cellsLarge: 2})
 							]})
 						})
+					]
+				}),
+				new VBox("suggestions", {
+					items: [
+						new Label("suggestionsLabel", {text: "Input with suggestions", labelFor: "inputWithSuggestions"}),
+						oSuggestionsInput
 					]
 				})
 
