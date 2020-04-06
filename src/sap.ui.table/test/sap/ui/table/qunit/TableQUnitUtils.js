@@ -322,11 +322,7 @@ sap.ui.define([
 		};
 
 		function waitForFinalDOMUpdates() {
-			return oHelperPlugin.whenTableUpdateFinished().then(function() {
-				return new Promise(function(resolve) {
-					window.requestAnimationFrame(resolve);
-				});
-			});
+			return oHelperPlugin.whenTableUpdateFinished().then(TableQUnitUtils.wait);
 		}
 
 		function waitForRowsUpdatedAndFinalDomUpdates() {

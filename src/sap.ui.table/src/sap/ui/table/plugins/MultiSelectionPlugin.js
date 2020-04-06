@@ -486,7 +486,7 @@ sap.ui.define([
 	 *
 	 * @param {number} iIndex - Index of the data context
 	 * @private
-	 * @returns {Promise} which resolves when the notification Popover has been initialised
+	 * @returns {Promise} A Promise that resolves after the notification popover has been opened
 	 */
 	MultiSelectionPlugin.prototype._showNotificationPopoverAtIndex = function(iIndex) {
 		var that = this;
@@ -533,12 +533,15 @@ sap.ui.define([
 
 				oTable.detachFirstVisibleRowChanged(that.onFirstVisibleRowChange, that);
 				oTable.attachFirstVisibleRowChanged(that.onFirstVisibleRowChange, that);
-				var oRowSelector = oRow.getDomRefs().rowSelector;
-				if (oRowSelector) {
-					oPopover.openBy(oRowSelector);
-				}
 
-				resolve();
+				var oRowSelector = oRow.getDomRefs().rowSelector;
+
+				if (oRowSelector) {
+					oPopover.attachEventOnce("afterOpen", resolve);
+					oPopover.openBy(oRowSelector);
+				} else {
+					resolve();
+				}
 			});
 		});
 	};
