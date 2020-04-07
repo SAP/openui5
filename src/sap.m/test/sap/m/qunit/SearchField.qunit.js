@@ -469,7 +469,7 @@ sap.ui.define([
 		qutils.triggerKeydown(this.oSearchField.getDomRef("I"), KeyCodes.ENTER);
 
 		// assertions
-		assert.strictEqual(fnFireSearchSpy.callCount, 1, "The change event is fired");
+		assert.strictEqual(fnFireSearchSpy.callCount, 1, "The search event is fired");
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
 
 		this.oSearchField.onChange();
