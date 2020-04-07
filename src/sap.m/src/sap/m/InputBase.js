@@ -803,30 +803,6 @@ function(
 	};
 
 	/**
-	 * Registers an event listener to the browser input event.
-	 *
-	 * @param {function} fnCallback Function to be called when the value of the input element is changed.
-	 * @deprecated Since 1.22. Instead, use event delegation(oninput) to listen input event.
-	 * @return {sap.m.InputBase} <code>this</code> to allow method chaining.
-	 * @protected
-	 */
-	InputBase.prototype.bindToInputEvent = function(fnCallback) {
-
-		// remove the previous event delegate
-		if (this._oInputEventDelegate) {
-			this.removeEventDelegate(this._oInputEventDelegate);
-		}
-
-		// generate new input event delegate
-		this._oInputEventDelegate = {
-			oninput : fnCallback
-		};
-
-		// add the input event delegate
-		return this.addEventDelegate(this._oInputEventDelegate);
-	};
-
-	/**
 	 * Sets the DOM value of the input field and handles placeholder visibility.
 	 *
 	 * @param {string} sValue value of the input field.
