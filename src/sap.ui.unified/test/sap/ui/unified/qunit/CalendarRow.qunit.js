@@ -924,7 +924,7 @@ sap.ui.define([
 
 	QUnit.test("keyboard arrow navigation", function(assert) {
 		initializeRow1();
-		jQuery("#App1").focus();
+		jQuery("#App1").trigger("focus");
 		assert.equal(document.activeElement.id, "App1", "Appointment1 focused");
 		assert.equal(jQuery("#App1").attr("tabindex"), "0", "Appointment1: tabindex 0 rendered");
 		assert.equal(jQuery("#App2").attr("tabindex"), "-1", "Appointment2: tabindex -1 rendered");
@@ -939,7 +939,7 @@ sap.ui.define([
 		assert.equal(oRow1.getFocusedAppointment().getId(), "App3", "Appointment3 returned by getFocusedAppointment");
 		assert.ok(!bStartDateChange, "StartDateChange event not fired");
 
-		jQuery("#App2").focus();
+		jQuery("#App2").trigger("focus");
 		assert.equal(document.activeElement.id, "App2", "Appointment2 focused");
 		assert.equal(jQuery("#App1").attr("tabindex"), "-1", "Appointment1: tabindex 0 rendered");
 		assert.equal(jQuery("#App2").attr("tabindex"), "0", "Appointment2: tabindex -1 rendered");
@@ -957,7 +957,7 @@ sap.ui.define([
 
 	QUnit.test("keyboard HOME/END navigation", function(assert) {
 		initializeRow1();
-		jQuery("#App1").focus();
+		jQuery("#App1").trigger("focus");
 		bStartDateChange = false;
 		qutils.triggerKeydown("App1", "HOME");
 		sap.ui.getCore().applyChanges();
@@ -979,7 +979,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("keyboard selection", function(assert) {
-		jQuery("#App0").focus();
+		jQuery("#App0").trigger("focus");
 		qutils.triggerKeydown("App0", "ENTER");
 		assert.equal(sSelectedAppointmentId, "App0", "Appointment 0: ENTER fires select event");
 		assert.ok(!bMultiSelect, "Appointment 0: no multiple selection");
@@ -990,7 +990,7 @@ sap.ui.define([
 	QUnit.test("keyboard leaveRow", function(assert) {
 		bLeaveRow = false;
 		sType = undefined;
-		jQuery("#App0").focus();
+		jQuery("#App0").trigger("focus");
 		qutils.triggerKeydown("App0", "ARROW_UP");
 		assert.ok(bLeaveRow, "LeaveRow event fired");
 		assert.equal(sType, "sapup", "LeaveRow event 'type' parameter set");
@@ -1007,7 +1007,7 @@ sap.ui.define([
 		assert.equal(sType, "saphome", "LeaveRow event 'type' parameter set");
 
 		bLeaveRow = false;
-		jQuery("#App1").focus();
+		jQuery("#App1").trigger("focus");
 		qutils.triggerKeydown("App1", "HOME");
 		assert.ok(!bLeaveRow, "No LeaveRow event fired");
 
@@ -1119,7 +1119,7 @@ QUnit.module("RTL", {
 	});
 
 QUnit.test("keyboard arrow navigation", function(assert) {
-	jQuery("#App1RTL").focus();
+	jQuery("#App1RTL").trigger("focus");
 	assert.equal(document.activeElement.id, "App1RTL", "Appointment1 focused");
 	assert.equal(jQuery("#App1RTL").attr("tabindex"), "0", "Appointment1: tabindex 0 rendered");
 	assert.equal(jQuery("#App2RTL").attr("tabindex"), "-1", "Appointment2: tabindex -1 rendered");
@@ -1132,7 +1132,7 @@ QUnit.test("keyboard arrow navigation", function(assert) {
 	assert.equal(jQuery("#App1RTL").attr("tabindex"), "-1", "Appointment1: tabindex -1 rendered");
 	assert.equal(this.oRowRTL.getFocusedAppointment().getId(), "App3RTL", "Appointment3 returned by getFocusedAppointment");
 
-	jQuery("#App2RTL").focus();
+	jQuery("#App2RTL").trigger("focus");
 	assert.equal(document.activeElement.id, "App2RTL", "Appointment2 focused");
 	assert.equal(jQuery("#App1RTL").attr("tabindex"), "-1", "Appointment1: tabindex 0 rendered");
 	assert.equal(jQuery("#App2RTL").attr("tabindex"), "0", "Appointment2: tabindex -1 rendered");

@@ -166,7 +166,7 @@ sap.ui.define([
 
 	MenuTextFieldItem.prototype.focus = function(oMenu){
 		if (this.getEnabled() && this.getVisible()) {
-			this.$("tf").focus();
+			this.$("tf").trigger("focus");
 		} else {
 			oMenu.focus();
 		}

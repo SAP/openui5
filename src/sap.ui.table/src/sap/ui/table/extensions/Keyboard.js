@@ -434,12 +434,12 @@ sap.ui.define([
 		if (oTable.getShowOverlay()) {
 			// The overlay is shown
 			if (containsOrEquals(oTable.getDomRef(), oPreviousFocusRef)) {
-				oTable.$("overlay").focus(); // Set focus on Overlay Container if it was somewhere in the table before
+				oTable.$("overlay").trigger("focus"); // Set focus on Overlay Container if it was somewhere in the table before
 			}
 		} else if (TableUtils.isNoDataVisible(oTable)) {
 			// The noData area is shown
 			if (containsOrEquals(oTable.getDomRef("sapUiTableCnt"), oPreviousFocusRef)) {
-				oTable.$("noDataCnt").focus(); // Set focus on NoData Container if it was on the content before
+				oTable.$("noDataCnt").trigger("focus"); // Set focus on NoData Container if it was on the content before
 			}
 		} else if (containsOrEquals(oTable.getDomRef("noDataCnt"), oPreviousFocusRef)
 				   || containsOrEquals(oTable.getDomRef("overlay"), oPreviousFocusRef)) {

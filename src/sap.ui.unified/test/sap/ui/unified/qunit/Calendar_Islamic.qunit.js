@@ -78,7 +78,7 @@ sap.ui.define([
 		function checkNav(iExpMonth) {
 			assert.equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpMonth - 1], "Islamic Month is correct before navigation: " + aMonthNames[iExpMonth - 1]);
 
-			oCal1.$("-Head-" + (bForwardNavigation ? "next" : "prev")).click();
+			oCal1.$("-Head-" + (bForwardNavigation ? "next" : "prev")).trigger("click");
 			sap.ui.getCore().applyChanges();
 
 			var iNextMonthIdx = bForwardNavigation ? iExpMonth : iExpMonth - 2;
@@ -102,7 +102,7 @@ sap.ui.define([
 
 	function checkMonthPicker(sSelectedDate, iExpectedMonth, assert) {
 		initializeCalendar(sSelectedDate);
-		oCal1.$("-Head-B1").click();
+		oCal1.$("-Head-B1").trigger("click");
 
 		var aMonths = oCal1.$("-MP").find(".sapUiCalItem"),
 			$Month,

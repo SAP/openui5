@@ -129,7 +129,7 @@ sap.ui.define([
 
 		// select May 2017
 		$Date = jQuery("#CalP--Cal--MP-m4");
-		$Date.focus();
+		$Date.trigger("focus");
 		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 		assert.equal(sap.ui.getCore().byId("CalP").getStartDate().getMonth(), 4, "start date is set correctly");
@@ -161,12 +161,12 @@ sap.ui.define([
 		qutils.triggerEvent("click", "CalP--Cal--Head-B2");
 		// click on 2016
 		$Date = jQuery("#CalP--Cal--YP-y20160101");
-		$Date.focus();
+		$Date.trigger("focus");
 		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 		// click on September
 		$Date = jQuery("#CalP--Cal--MP-m8");
-		$Date.focus();
+		$Date.trigger("focus");
 		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 		oCalStartDate = sap.ui.getCore().byId("CalP").getStartDate();
@@ -215,7 +215,7 @@ sap.ui.define([
 
 		// click on December
 		$Date = jQuery("#CalP--Cal--MP-m11");
-		$Date.focus();
+		$Date.trigger("focus");
 		qutils.triggerKeydown($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 

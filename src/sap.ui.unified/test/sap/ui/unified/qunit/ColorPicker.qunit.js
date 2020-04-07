@@ -215,7 +215,7 @@ sap.ui.define([
 			this.oCP.oAlphaField.focus();
 			jQuery("#cp-aF").find("input").val("0.5");
 			qutils.triggerKeyboardEvent("cp-aF-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-			jQuery("#cp-aF").find("input").change();
+			jQuery("#cp-aF").find("input").trigger("change");
 
 			// Assert
 			oAssert.strictEqual(this.oCP.oAlphaField2.getValue(), "0.5",
@@ -227,7 +227,7 @@ sap.ui.define([
 			this.oCP.oAlphaField.focus();
 			jQuery("#cp-aF2").find("input").val("0.3");
 			qutils.triggerKeyboardEvent("cp-aF2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-			jQuery("#cp-aF2").find("input").change();
+			jQuery("#cp-aF2").find("input").trigger("change");
 
 			// Assert
 			oAssert.strictEqual(this.oCP.oAlphaField.getValue(), "0.3",

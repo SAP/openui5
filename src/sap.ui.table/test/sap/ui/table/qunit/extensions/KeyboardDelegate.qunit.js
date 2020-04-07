@@ -70,7 +70,7 @@ sap.ui.define([
 			$Tabbables = jQuery.merge($Ref.parents(":sapTabbable"), $All.find(":sapTabbable").addBack(":sapTabbable"));
 		}
 
-		$Tabbables = jQuery.unique($Tabbables);
+		$Tabbables = jQuery.uniqueSort($Tabbables);
 		return $Tabbables.filter(function() {
 			return isContained(aScopes, this);
 		});

@@ -207,7 +207,7 @@ sap.ui.define([
 
 		ControlEvents.unbindAnyEvent(this.fAnyEventHandlerProxy);
 		if (this._bOrientationChangeBound) {
-			jQuery(window).unbind("orientationchange", this.fOrientationChangeHandler);
+			jQuery(window).off("orientationchange", this.fOrientationChangeHandler);
 			this._bOrientationChangeBound = false;
 		}
 
@@ -235,7 +235,7 @@ sap.ui.define([
 	 */
 	Menu.prototype.onBeforeRendering = function() {
 		this._resetDelayedRerenderItems();
-		this.$().unbind("mousemove");
+		this.$().off("mousemove");
 	};
 
 	/**
@@ -262,7 +262,7 @@ sap.ui.define([
 		}
 
 		checkAndLimitHeight(this);
-		this.$().bind("mousemove", this._focusMenuItem.bind(this));
+		this.$().on("mousemove", this._focusMenuItem.bind(this));
 	};
 
 	/**
@@ -438,7 +438,7 @@ sap.ui.define([
 
 		ControlEvents.bindAnyEvent(this.fAnyEventHandlerProxy);
 		if (Device.support.orientation && this.getRootMenu() === this) {
-			jQuery(window).bind("orientationchange", this.fOrientationChangeHandler);
+			jQuery(window).on("orientationchange", this.fOrientationChangeHandler);
 			this._bOrientationChangeBound = true;
 		}
 	};
@@ -550,7 +550,7 @@ sap.ui.define([
 
 		ControlEvents.unbindAnyEvent(this.fAnyEventHandlerProxy);
 		if (this._bOrientationChangeBound) {
-			jQuery(window).unbind("orientationchange", this.fOrientationChangeHandler);
+			jQuery(window).off("orientationchange", this.fOrientationChangeHandler);
 			this._bOrientationChangeBound = false;
 		}
 
@@ -748,7 +748,7 @@ sap.ui.define([
 		// focus menuItems
 		if (this.oHoveredItem && (jQuery(oEvent.target).prop("tagName") != "INPUT")) {
 			var oDomRef = this.oHoveredItem.getDomRef();
-			jQuery(oDomRef).focus();
+			jQuery(oDomRef).trigger("focus");
 		}
 
 		//like sapselect but on keyup:

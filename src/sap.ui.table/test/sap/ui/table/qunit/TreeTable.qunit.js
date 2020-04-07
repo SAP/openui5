@@ -536,9 +536,9 @@ sap.ui.define([
 		oTable.attachRowSelectionChange(fnHandler);
 
 		sTestCase = "userSelectAll";
-		jQuery(oTable.getDomRef("selall")).click();
+		jQuery(oTable.getDomRef("selall")).trigger("click");
 		sTestCase = "userClearSelectAll";
-		jQuery(oTable.getDomRef("selall")).click();
+		jQuery(oTable.getDomRef("selall")).trigger("click");
 
 		sTestCase = "APISelectAll";
 		oTable.selectAll();
@@ -546,9 +546,9 @@ sap.ui.define([
 		oTable.clearSelection();
 
 		sTestCase = "userSetSelectedIndex";
-		jQuery("#" + oTable.getId() + "-rowsel0").click();
+		jQuery("#" + oTable.getId() + "-rowsel0").trigger("click");
 		sTestCase = "userUnsetSelectedIndex";
-		jQuery("#" + oTable.getId() + "-rowsel0").click();
+		jQuery("#" + oTable.getId() + "-rowsel0").trigger("click");
 
 		sTestCase = "APISetSelectedIndex";
 		oTable.setSelectedIndex(0);
@@ -583,7 +583,7 @@ sap.ui.define([
 		});
 
 		assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
-		oTable.$("selall").click();
+		oTable.$("selall").trigger("click");
 	});
 
 	QUnit.test("TreeTable + JSONModel: Select entries synchronously", function(assert) {
