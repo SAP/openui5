@@ -89,6 +89,7 @@ sap.ui.define([
 		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.mapEditor.MapEditor",
 
 		init: function() {
+			BasePropertyEditor.prototype.init.apply(this, arguments);
 			this._itemsModel = new JSONModel();
 			this._itemsModel.setDefaultBindingMode("OneWay");
 			this.setModel(this._itemsModel, "itemsModel");
@@ -122,7 +123,7 @@ sap.ui.define([
 
 		_processValue: function(mValue) {
 			return Object.keys(mValue).map(function (sKey) {
-				var mFormattedValue = this.formatInputValue(deepClone(mValue[sKey]), sKey);
+				var mFormattedValue = this.processInputValue(deepClone(mValue[sKey]), sKey);
 				if (!mFormattedValue.type) {
 					mFormattedValue.type = this._mTypes[sKey] || this._getDefaultType(mFormattedValue.value);
 				}
@@ -182,7 +183,7 @@ sap.ui.define([
 		 * @param {object} oValue - Original map item value
 		 * @returns {object} Formatted map item value
 		 */
-		formatInputValue: function(oValue) {
+		processInputValue: function(oValue) {
 			return {
 				value: oValue
 			};
@@ -193,7 +194,7 @@ sap.ui.define([
 		 * @param {object} oValue - Original map item value
 		 * @returns {object} Formatted map item value
 		 */
-		formatOutputValue: function(oValue) {
+		processOutputValue: function(oValue) {
 			return oValue.value;
 		},
 
@@ -206,7 +207,7 @@ sap.ui.define([
 		_onAddElement: function() {
 			var mParams = _merge({}, this.getValue());
 			var sKey = this._getUniqueKey(mParams);
-			mParams[sKey] = this.formatOutputValue({
+			mParams[sKey] = this.processOutputValue({
 				value: "",
 				type: "string"
 			});
@@ -247,10 +248,7 @@ sap.ui.define([
 				if (sNewKey !== sOldKey) {
 					var oMap = {};
 					aItems.forEach(function (oItem) {
-						oMap[oItem.key] = this.formatOutputValue({
-							value: oItem.value[0].value,
-							type: oItem.value[0].type
-						});
+						oMap[oItem.key] = this.processOutputValue(_omit(oItem.value[0], 'path'));
 					}, this);
 					this._mTypes[sNewKey] = this._mTypes[sOldKey];
 					delete this._mTypes[sOldKey];
@@ -266,9 +264,9 @@ sap.ui.define([
 			var oEditorValue = _merge({}, this.getValue());
 			var sNewType =  oEvent.getParameter("selectedItem").getKey();
 
-			var oItemToEdit = this.formatInputValue(oEditorValue[sKey]);
+			var oItemToEdit = this.processInputValue(oEditorValue[sKey]);
 			oItemToEdit.type = sNewType;
-			oEditorValue[sKey] = this.formatOutputValue(oItemToEdit);
+			oEditorValue[sKey] = this.processOutputValue(oItemToEdit);
 
 			this._mTypes[sKey] = sNewType;
 			this.setValue(oEditorValue);
@@ -289,9 +287,9 @@ sap.ui.define([
 			var oEditorValue = _merge({}, this.getValue());
 			var sKey = oEvent.getParameter("path");
 
-			var oItemToEdit = this.formatInputValue(oEditorValue[sKey]);
+			var oItemToEdit = this.processInputValue(oEditorValue[sKey]);
 			oItemToEdit.value = oEvent.getParameter("value");
-			oEditorValue[sKey] = this.formatOutputValue(oItemToEdit);
+			oEditorValue[sKey] = this.processOutputValue(oItemToEdit);
 
 			this.setValue(oEditorValue);
 		},

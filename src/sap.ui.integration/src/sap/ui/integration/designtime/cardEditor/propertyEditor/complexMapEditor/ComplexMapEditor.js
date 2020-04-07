@@ -93,12 +93,12 @@ sap.ui.define([
 			}, this).filter(Boolean);
 
 			if (!aInvalidItems.length) {
-				this.setValue(this._formatOutputValue(aValue));
+				this.setValue(this._processOutputValue(aValue));
 			}
 		}, this);
 	};
 
-	ComplexMapEditor.prototype._formatInputValue = function (oValue) {
+	ComplexMapEditor.prototype._processInputValue = function (oValue) {
 		if (!oValue) {
 			oValue = {};
 		}
@@ -155,7 +155,7 @@ sap.ui.define([
 	};
 
 	ComplexMapEditor.prototype.setValue = function (oValue) {
-		var oFormattedValue = this._formatInputValue(oValue);
+		var oFormattedValue = this._processInputValue(oValue);
 
 		if (this.isReady()) {
 			this._oNestedArrayEditor.setValue(oFormattedValue);
@@ -168,7 +168,7 @@ sap.ui.define([
 		BasePropertyEditor.prototype.setValue.call(this, oValue);
 	};
 
-	ComplexMapEditor.prototype._formatOutputValue = function(aValue) {
+	ComplexMapEditor.prototype._processOutputValue = function(aValue) {
 		var oFormattedValue = {};
 		aValue.forEach(function (oValue) {
 			oFormattedValue[oValue.key] = _omit(oValue, "key");
