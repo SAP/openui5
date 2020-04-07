@@ -24,7 +24,8 @@
 		"configuration": {
 			"destinations": {
 				"myDestination": {
-					"name": "Northwind"
+					"name": "OtherNorthwind",
+					"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
 				}
 			},
 			"parameters": {
@@ -35,7 +36,7 @@
 		},
 		"header": {
 			"title": "Destinations sample 2",
-			"subTitle": "Data in body",
+			"subTitle": "Data in body. No host associated so defaultUrl is used",
 			"status": {
 			    "text": "top {{parameters.maxItems}}"
 			}
