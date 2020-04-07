@@ -247,11 +247,11 @@ sap.ui.define([
 		}
 
 		if (!StandardListItem._themeInfo.sFontStyleInfoStateInverted || bThemeChanged) {
-			StandardListItem._themeInfo.sFontStyleInfoStateInverted = "700 " + ThemeParameters.get("sapMFontSmallSize") + " " + StandardListItem._themeInfo.sFontFamily;
+			StandardListItem._themeInfo.sFontStyleInfoStateInverted = "bold " + parseFloat(ThemeParameters.get("sapMFontSmallSize")) * 16 + "px" + " " + StandardListItem._themeInfo.sFontFamily;
 		}
 
 		if (!StandardListItem._themeInfo.sFontStyle || bThemeChanged) {
-			StandardListItem._themeInfo.sFontStyle = ThemeParameters.get("sapMFontMediumSize") + " " + StandardListItem._themeInfo.sFontFamily;
+			StandardListItem._themeInfo.sFontStyle = parseFloat(ThemeParameters.get("sapMFontMediumSize")) * 16 + "px" + " " + StandardListItem._themeInfo.sFontFamily;
 		}
 
 		if (!StandardListItem._themeInfo.iBaseFontSize || bThemeChanged) {
