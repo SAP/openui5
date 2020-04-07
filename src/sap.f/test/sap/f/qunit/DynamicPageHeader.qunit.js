@@ -96,7 +96,7 @@ function (
 				$oDynamicPageHeader = oDynamicPage.getHeader().$(),
 				oDynamicPageTitle = oDynamicPage.getTitle(),
 				sAriaLabelledBy = oDynamicPageTitle.getHeading().getId(),
-				$oDynamicPageTitleSpan = oDynamicPageTitle._getFocusSpan().$(),
+				$oDynamicPageTitleSpan = oDynamicPageTitle._getFocusSpan(),
 				oPinButton = oDynamicPage.getHeader()._getPinButton(),
 				oFakeEvent = {
 					srcControl: oDynamicPageTitle

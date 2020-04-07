@@ -7,7 +7,8 @@ sap.ui.define([
 	"qunit/DynamicPageUtil",
 	"sap/ui/core/Core",
 	"sap/m/Link",
-	"sap/m/Title"
+	"sap/m/Title",
+	"sap/m/Text"
 ],
 function (
 	$,
@@ -17,7 +18,8 @@ function (
 	DynamicPageUtil,
 	Core,
 	Link,
-	Title
+	Title,
+	Text
 ) {
 	"use strict";
 
@@ -910,6 +912,24 @@ function (
 		assert.notOk($oDomRef.hasClass("sapFDynamicPageTitleTransparent"), "Should not have sapFDynamicPageTitleTransparent class");
 		assert.ok($oDomRef.hasClass("sapFDynamicPageTitleTranslucent"), "Should have sapFDynamicPageTitleTranslucent class");
 		assert.strictEqual(this.oDynamicPageTitle.getBackgroundDesign(), "Translucent", "Should have backgroundDesign property = 'Translucent'");
+	});
+
+	QUnit.test("ariaDescribedBy association", function (assert) {
+		var oTitle = this.oDynamicPage.getTitle(),
+			$focusSpan = oTitle._getFocusSpan(),
+			oText = new Text();
+
+		assert.strictEqual($focusSpan.attr("aria-describedby"), DynamicPageTitle.TOGGLE_HEADER_TEXT_ID, "aria-describedby attribute is rendered correctly.");
+
+		oTitle.addAriaDescribedBy(oText.getId());
+		Core.applyChanges();
+
+		assert.strictEqual($focusSpan.attr("aria-describedby"), DynamicPageTitle.TOGGLE_HEADER_TEXT_ID + " " + oText.getId(), "aria-describedby attribute is rendered correctly.");
+
+		oTitle.removeAriaDescribedBy(oText.getId());
+		Core.applyChanges();
+
+		assert.strictEqual($focusSpan.attr("aria-describedby"), DynamicPageTitle.TOGGLE_HEADER_TEXT_ID, "aria-describedby attribute is rendered correctly.");
 	});
 
 	QUnit.test("title clone includes actions", function (assert) {

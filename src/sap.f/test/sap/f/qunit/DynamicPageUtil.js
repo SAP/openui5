@@ -372,7 +372,7 @@ sap.ui.define([
 			sap.ui.Device.system.phone = false;
 		},
 		testExpandedCollapsedARIA: function (assert, oDynamicPage, bShouldBeExpanded, sAriaLabelledBy, sMessage) {
-			var	$oFocusSpan = oDynamicPage.getTitle()._getFocusSpan().$(),
+			var	$oFocusSpan = oDynamicPage.getTitle()._getFocusSpan(),
 					bAriaExpanded = $oFocusSpan.attr("aria-expanded"),
 					sAriaLabelledById = $oFocusSpan.attr("aria-labelledby");
 

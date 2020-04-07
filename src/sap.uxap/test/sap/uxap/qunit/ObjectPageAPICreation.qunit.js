@@ -2246,12 +2246,12 @@ function (
 		this.oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 			setTimeout(function () {
 				assert.notOk(helpers.exists(oObjectPage.getHeaderContent()), "The DynamicPage Header does not exist.");
-				assert.equal(oTitle._getFocusSpan().$().attr("tabindex"), undefined, "Focus span should be excluded from the tab chain");
+				assert.equal(oTitle._getFocusSpan().attr("tabindex"), undefined, "Focus span should be excluded from the tab chain");
 				assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayoutTitleClickEnabled"), "No ObjectPage Header content - sapUxAPObjectPageLayoutTitleClickEnabled not added");
 
 				oObjectPage.setToggleHeaderOnTitleClick(true);
 
-				assert.equal(oTitle._getFocusSpan().$().attr("tabindex"), undefined, "Focus span should still be excluded from the tab chain");
+				assert.equal(oTitle._getFocusSpan().attr("tabindex"), undefined, "Focus span should still be excluded from the tab chain");
 				assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayoutTitleClickEnabled"), "No ObjectPage Header content - sapUxAPObjectPageLayoutTitleClickEnabled not added");
 				done();
 			}, 0);
