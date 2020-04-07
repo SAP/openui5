@@ -2222,6 +2222,82 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("doSetProperty: return value context", function (assert) {
+		var oGroupLock = {},
+			oMetaModel = {
+				fetchUpdateData : function () {},
+				getReducedPath : function () {},
+				getUnitOrCurrencyPath : function () {}
+			},
+			oModel = {
+				getMetaModel : function () {
+					return oMetaModel;
+				},
+				resolve : function () {}
+			},
+			oContext = Context.create(oModel, {}, "/context/path"),
+			oFetchUpdateDataResult = {
+				editUrl : "/edit/url",
+				entityPath : "/entity/path",
+				propertyPath : "property/path"
+			},
+			that = this;
+
+		this.mock(oContext).expects("withCache")
+			.withExactArgs(sinon.match.func, "some/relative/path", /*bSync*/false,
+				/*bWithOrWithoutCache*/true)
+			.callsFake(function (fnProcessor) {
+				var oBinding = {
+						oContext : {},
+						doSetProperty : function () {},
+						isPatchWithoutSideEffects : function () {},
+						sPath : "binding/path",
+						oReturnValueContext : {
+							getPath : function () {}
+						}
+					},
+					oCache = {
+						update : function () {}
+					},
+					oHelperMock = that.mock(_Helper),
+					oModelMock = that.mock(oModel),
+					bPatchWithoutSideEffects = {/*false,true*/};
+
+				that.mock(oBinding).expects("doSetProperty")
+					.withExactArgs("some/relative/path", "new value", sinon.match.same(oGroupLock));
+				that.mock(oMetaModel).expects("fetchUpdateData")
+					.withExactArgs("some/relative/path", sinon.match.same(oContext), false)
+					.returns(SyncPromise.resolve(oFetchUpdateDataResult));
+				that.mock(oBinding.oReturnValueContext).expects("getPath").withExactArgs()
+					.returns("/return/value/context/path");
+				oHelperMock.expects("getRelativePath")
+					.withExactArgs("/entity/path", "/return/value/context/path")
+					.returns("helper/path");
+				oModelMock.expects("resolve")
+					.withExactArgs("some/relative/path", sinon.match.same(oContext))
+					.returns("/resolved/data/path");
+				that.mock(oBinding).expects("isPatchWithoutSideEffects")
+					.withExactArgs()
+					.returns(bPatchWithoutSideEffects);
+				that.mock(oMetaModel).expects("getUnitOrCurrencyPath")
+					.withExactArgs("/resolved/data/path")
+					.returns("unit/or/currency/path");
+
+				that.mock(oCache).expects("update")
+					.withExactArgs(sinon.match.same(oGroupLock), "property/path", "new value",
+						/*fnErrorCallback*/sinon.match.func, "/edit/url", "helper/path",
+						"unit/or/currency/path", sinon.match.same(bPatchWithoutSideEffects),
+						/*fnPatchSent*/sinon.match.func)
+					.resolves();
+
+				return fnProcessor(oCache, "some/relative/path", oBinding);
+			});
+
+		// code under test
+		return oContext.doSetProperty("some/relative/path", "new value", oGroupLock);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("doSetProperty: reduce path", function (assert) {
 		var oBinding = {
 				oContext : {},

@@ -98,20 +98,15 @@ sap.ui.define([
 		this.bActive = true;
 		this.mChangeListeners = {}; // map from path to an array of change listeners
 		this.fnGetOriginalResourcePath = fnGetOriginalResourcePath;
-		// the query options extended by $select for late properties
-		this.mLateQueryOptions = null;
 		this.mPatchRequests = {}; // map from path to an array of (PATCH) promises
 		// a promise with attached properties $count, $resolve existing while DELETEs or POSTs are
 		// being sent
 		this.oPendingRequestsPromise = null;
 		this.mPostRequests = {}; // map from path to an array of entity data (POST bodies)
-		// map from resource path to request Promise for pending late property requests
-		this.mPropertyRequestByPath = {};
 		this.oRequestor = oRequestor;
 		// whether a request has been sent and the query options are final
 		this.bSentRequest = false;
 		this.bSortExpandSelect = bSortExpandSelect;
-		this.oTypePromise = undefined;
 		this.setResourcePath(sResourcePath);
 		this.setQueryOptions(mQueryOptions);
 	}
@@ -792,9 +787,6 @@ sap.ui.define([
 			aPromises = [];
 			mTypeForMetaPath = {};
 			aPromises.push(this.fetchType(mTypeForMetaPath, this.sMetaPath));
-			if (this.bFetchOperationReturnType) {
-				aPromises.push(this.fetchType(mTypeForMetaPath, this.sMetaPath + "/$Type"));
-			}
 			fetchExpandedTypes(this.sMetaPath, this.mQueryOptions);
 			this.oTypePromise = SyncPromise.all(aPromises).then(function () {
 				return mTypeForMetaPath;
@@ -1243,7 +1235,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the given resource path and the corresponding meta path.
+	 * Sets the given resource path and the corresponding meta path. May only be called from outside
+	 * if the cache's resource is an operation and its return value a single entity. The new
+	 * resource path must be the canonical path of this entity. This path is then used for partial
+	 * requests on this entity (late property requests or single row refreshes in an aggregated
+	 * collection).
 	 *
 	 * @param {string} sResourcePath The new resource path
 	 *
@@ -1252,6 +1248,13 @@ sap.ui.define([
 	Cache.prototype.setResourcePath = function (sResourcePath) {
 		this.sResourcePath = sResourcePath;
 		this.sMetaPath = _Helper.getMetaPath("/" + sResourcePath);
+
+		this.oTypePromise = undefined;
+
+		// the query options extended by $select for late properties
+		this.mLateQueryOptions = null;
+		// map from resource path to request Promise for pending late property requests
+		this.mPropertyRequestByPath = {};
 	};
 
 	/**
@@ -2417,17 +2420,13 @@ sap.ui.define([
 	 *   requests for late properties. If <code>false<code>, {@link #post} throws an error.
 	 * @param {string} [sMetaPath]
 	 *   Optional meta path in case it cannot be derived from the given resource path
-	 * @param {boolean} [bFetchOperationReturnType]
-	 *   Whether the entity type of the operation return value must be fetched in
-	 *   {@link #fetchTypes}
 	 *
 	 * @private
 	 */
 	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			fnGetOriginalResourcePath, bPost, sMetaPath, bFetchOperationReturnType) {
+			fnGetOriginalResourcePath, bPost, sMetaPath) {
 		Cache.apply(this, arguments);
 
-		this.bFetchOperationReturnType = bFetchOperationReturnType;
 		this.sMetaPath = sMetaPath || this.sMetaPath; // overrides Cache c'tor
 		this.bPost = bPost;
 		this.bPosting = false;
@@ -2483,8 +2482,7 @@ sap.ui.define([
 					fnDataRequested, undefined, this.sMetaPath),
 				this.fetchTypes()
 			]).then(function (aResult) {
-				that.visitResponse(aResult[0], aResult[1],
-					that.bFetchOperationReturnType ? that.sMetaPath + "/$Type" : undefined);
+				that.visitResponse(aResult[0], aResult[1]);
 				return aResult[0];
 			});
 		}
@@ -2567,8 +2565,7 @@ sap.ui.define([
 				oEntity && {"If-Match" : oEntity}, oData),
 			this.fetchTypes()
 		]).then(function (aResult) {
-			that.visitResponse(aResult[0], aResult[1],
-				that.bFetchOperationReturnType ? that.sMetaPath + "/$Type" : undefined);
+			that.visitResponse(aResult[0], aResult[1]);
 
 			return aResult[0];
 		}).finally(function () {
@@ -2608,8 +2605,7 @@ sap.ui.define([
 			mQueryOptions = oOldValuePromise && _Helper.intersectQueryOptions(
 				this.mLateQueryOptions || this.mQueryOptions, aPaths,
 				this.oRequestor.getModelInterface().fetchMetadata,
-				this.sMetaPath + "/$Type", // add $Type because of return value context
-				mNavigationPropertyPaths),
+				this.sMetaPath, mNavigationPropertyPaths),
 			oResult,
 			that = this;
 
@@ -2727,18 +2723,15 @@ sap.ui.define([
 	 *   throws an error.
 	 * @param {string} [sMetaPath]
 	 *   Optional meta path in case it cannot be derived from the given resource path
-	 * @param {boolean} [bFetchOperationReturnType]
-	 *   Whether the entity type of the operation return value must be fetched in
-	 *   {@link #fetchTypes}
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 *
 	 * @public
 	 */
 	Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			fnGetOriginalResourcePath, bPost, sMetaPath, bFetchOperationReturnType) {
+			fnGetOriginalResourcePath, bPost, sMetaPath) {
 		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			fnGetOriginalResourcePath, bPost, sMetaPath, bFetchOperationReturnType);
+			fnGetOriginalResourcePath, bPost, sMetaPath);
 	};
 
 	/**
