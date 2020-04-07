@@ -234,8 +234,8 @@ sap.ui.define([
 				sap.ui.getCore().applyChanges();
 				var oNestedArrayEditor = oComplexMapEditor.getContent();
 				return oNestedArrayEditor.ready().then(function () {
-					var oKeyEditor = _getComplexMapEditors(oNestedArrayEditor)[0]["key"];
-					assert.notOk(oKeyEditor.getEnabled(), "Then the key field is disabled");
+					var mEditors = _getComplexMapEditors(oNestedArrayEditor)[0];
+					assert.notOk(mEditors.hasOwnProperty("key"), "Then the key field is disabled");
 				});
 			});
 		});

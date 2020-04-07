@@ -495,6 +495,15 @@ sap.ui.define(function () {
 					]
 				},
 				sinon: false
+			},
+			"designtime/cardEditor/propertyEditor/destinationsEditor/DestinationsEditor": {
+				group: "Card DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/cardEditor/propertyEditor/destinationsEditor/DestinationsEditor"
+					]
+				},
+				sinon: false
 			}
 		}
 	};
