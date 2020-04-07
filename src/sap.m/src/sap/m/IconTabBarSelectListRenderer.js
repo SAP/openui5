@@ -71,7 +71,7 @@ sap.ui.define([
 		}
 
 		oRM.openStart("ul", oSelectList)
-			.attr("role", "tree")
+			.attr("role", "menu")
 			.class("sapMITBSelectList");
 
 		if (bTextOnly) {
