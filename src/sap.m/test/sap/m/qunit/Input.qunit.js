@@ -1395,7 +1395,11 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().trigger("click");
+		oInput.ontap({
+			target: {
+				id: oInput.getId()
+			}
+		});
 		this.clock.tick(500);
 
 		oPopup = oInput._oSuggPopover._oPopover;
@@ -1468,7 +1472,11 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().trigger("click");
+		oInput.ontap({
+			target: {
+				id: oInput.getId()
+			}
+		});
 		this.clock.tick(500);
 
 		oPopup = oInput._oSuggPopover._oPopover;
@@ -1520,7 +1528,11 @@ sap.ui.define([
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		oInput._$input.focus().trigger("click");
+		oInput.ontap({
+			target: {
+				id: oInput.getId()
+			}
+		});
 		this.clock.tick(500);
 		oPopup = oInput._oSuggPopover._oPopover;
 
@@ -1580,7 +1592,11 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().trigger("click");
+		oInput.ontap({
+			target: {
+				id: oInput.getId()
+			}
+		});
 		this.clock.tick(500);
 
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
@@ -1621,7 +1637,11 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().trigger("click");
+		oInput.ontap({
+			target: {
+				id: oInput.getId()
+			}
+		});
 		this.clock.tick(500);
 		var oSpy = this.spy(oInput._oSuggPopover._oPopover, "invalidate");
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
@@ -2228,7 +2248,11 @@ sap.ui.define([
 		oDialogRendererSpy = sinon.spy(DialogRenderer, "render");
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().trigger("click");
+		oInput.ontap({
+			target: {
+				id: oInput.getId()
+			}
+		});
 		this.clock.tick(300);
 
 		oPopup = oInput._oSuggPopover._oPopover;

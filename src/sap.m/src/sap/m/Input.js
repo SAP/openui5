@@ -598,35 +598,9 @@ function(
 		}
 
 		!this.getWidth() && this.setWidth("100%");
-		// Unregister custom event handlers after migration to semantic rendering
-		this.$().off("click");
-	};
-
-	/**
-	 * Overwrites the onAfterRendering.
-	 *
-	 * @public
-	 */
-	Input.prototype.onAfterRendering = function() {
-
-		InputBase.prototype.onAfterRendering.call(this);
 
 		if (this._oSuggPopover) {
 			this._oSuggPopover._resetTypeAhead();
-		}
-
-		if (this._bUseDialog && this.getEditable() && this.getEnabled()) {
-			// click event has to be used in order to focus on the input in dialog
-			// do not open suggestion dialog by click over the value help icon
-			this.$().on("click", jQuery.proxy(function (oEvent) {
-				if (this._onclick) {
-					this._onclick(oEvent);
-				}
-
-				if (this.getShowSuggestion() && this._oSuggPopover && oEvent.target.id != this.getId() + "-vhi") {
-					this._openSuggestionsPopover();
-				}
-			}, this));
 		}
 	};
 
@@ -1091,6 +1065,15 @@ function(
 	Input.prototype.ontap = function(oEvent) {
 		InputBase.prototype.ontap.call(this, oEvent);
 		this._fireValueHelpRequestForValueHelpOnly();
+
+		if (this._bUseDialog
+			 && this.getEditable()
+			 && this.getEnabled()
+			 && this.getShowSuggestion()
+			 && this._oSuggPopover
+			 && oEvent.target.id != this.getId() + "-vhi") {
+				this._openSuggestionsPopover();
+		}
 	};
 
 	/**
