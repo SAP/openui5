@@ -105,7 +105,7 @@ sap.ui.define([
 				return;
 			}
 
-			this._handleMarkDown(oConfiguration);
+			this._handleMarkDown();
 			this._setupMSCardContent();
 		};
 
@@ -117,11 +117,15 @@ sap.ui.define([
 		 * Processes the markdown only if enableMarkdown is set to true
 		 *
 		 * @private
-		 * @param {Object} oConfiguration The Configuration object.
 		 */
-		AdaptiveContent.prototype._handleMarkDown = function (oConfiguration) {
+		AdaptiveContent.prototype._handleMarkDown = function () {
+			var that = this;
+
 			AdaptiveCards.AdaptiveCard.onProcessMarkdown = function (sText, oResult) {
-				if (oConfiguration.configuration && oConfiguration.configuration.enableMarkdown) {
+				var oCard = that.getParent(),
+					bEnableMarkdown = oCard.getManifestEntry("/sap.card/configuration/enableMarkdown");
+
+				if (bEnableMarkdown) {
 					oResult.outputHtml = new Markdown().render(sText);
 					oResult.didProcess = true;
 
@@ -145,7 +149,7 @@ sap.ui.define([
 					// set the data from the url as a card config
 					that._oCardConfig = Object.assign(that._oCardConfig, oData.getData());
 				}).then(function () {
-					that._handleMarkDown(that._oCardConfig);
+					that._handleMarkDown();
 					that._setupMSCardContent();
 				}).then(function () {
 					// destroy the data model, since it is not needed anymore
