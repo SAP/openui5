@@ -588,16 +588,21 @@ sap.ui.define([
 		 *   The absolute meta path of the given instance
 		 * @param {object} mTypeForMetaPath
 		 *   Maps meta paths to the corresponding entity or complex types
+		 * @param {(string|object)[]} [aKeyProperties]
+		 *   A list of key properties, either as a string or an object with one property (its name
+		 *   is the alias in the key predicate, its value is the path in the instance). If not
+		 *   given, the entity's key is used.
 		 * @returns {string}
 		 *   A filter using key properties, e.g. "Sector eq 'DevOps' and ID eq 42)", or undefined,
 		 *   if at least one key property is undefined
 		 * @throws {Error}
 		 *   In case the entity type has no key properties according to metadata
 		 */
-		getKeyFilter : function (oInstance, sMetaPath, mTypeForMetaPath) {
+		getKeyFilter : function (oInstance, sMetaPath, mTypeForMetaPath, aKeyProperties) {
 			var aFilters = [],
 				sKey,
-				mKey2Value = _Helper.getKeyProperties(oInstance, sMetaPath, mTypeForMetaPath);
+				mKey2Value = _Helper.getKeyProperties(oInstance, sMetaPath, mTypeForMetaPath,
+					aKeyProperties);
 
 			if (!mKey2Value) {
 				return undefined;
@@ -619,15 +624,23 @@ sap.ui.define([
 		 *   The absolute meta path of the given instance
 		 * @param {object} mTypeForMetaPath
 		 *   Maps meta paths to the corresponding entity or complex types
+		 * @param {(string|object)[]} [aKeyProperties]
+		 *   A list of key properties, either as a string or an object with one property (its name
+		 *   is the alias in the key predicate, its value is the path in the instance); if not
+		 *   given, the entity's key is used
+		 * @param {boolean} [bKeepSingleProperty]
+		 *   If true, the property name is not omitted if there is only one property
+		 *   (like "(ID='42')")
 		 * @returns {string}
 		 *   The key predicate, e.g. "(Sector='DevOps',ID='42')" or "('42')", or undefined, if at
 		 *   least one key property is undefined
 		 * @throws {Error}
 		 *   In case the entity type has no key properties according to metadata
 		 */
-		getKeyPredicate : function (oInstance, sMetaPath, mTypeForMetaPath) {
-			var aKeyProperties = [],
-				mKey2Value = _Helper.getKeyProperties(oInstance, sMetaPath, mTypeForMetaPath, true);
+		getKeyPredicate : function (oInstance, sMetaPath, mTypeForMetaPath, aKeyProperties,
+				bKeepSingleProperty) {
+			var mKey2Value = _Helper.getKeyProperties(oInstance, sMetaPath, mTypeForMetaPath,
+					aKeyProperties, true);
 
 			if (!mKey2Value) {
 				return undefined;
@@ -635,7 +648,9 @@ sap.ui.define([
 			aKeyProperties = Object.keys(mKey2Value).map(function (sAlias, iIndex, aKeys) {
 				var vValue = encodeURIComponent(mKey2Value[sAlias]);
 
-				return aKeys.length === 1 ? vValue : encodeURIComponent(sAlias) + "=" + vValue;
+				return bKeepSingleProperty || aKeys.length > 1
+					? encodeURIComponent(sAlias) + "=" + vValue
+					: vValue;
 			});
 
 			return "(" + aKeyProperties.join(",") + ")";
@@ -651,6 +666,10 @@ sap.ui.define([
 		 *   The absolute meta path of the given instance
 		 * @param {object} mTypeForMetaPath
 		 *   Maps meta paths to the corresponding entity or complex types
+		 * @param {(string|object)[]} [aKeyProperties]
+		 *   A list of key properties, either as a string or an object with one property (its name
+		 *   is the alias in the key predicate, its value is the path in the instance); if not
+		 *   given, the entity's key is used
 		 * @param {boolean} [bReturnAlias=false]
 		 *   Whether to return the aliases instead of the keys
 		 * @returns {object}
@@ -665,11 +684,13 @@ sap.ui.define([
 		 * @throws {Error}
 		 *   In case the entity type has no key properties according to metadata
 		 */
-		getKeyProperties : function (oInstance, sMetaPath, mTypeForMetaPath, bReturnAlias) {
+		getKeyProperties : function (oInstance, sMetaPath, mTypeForMetaPath, aKeyProperties,
+				bReturnAlias) {
 			var bFailed,
 				mKey2Value = {};
 
-			bFailed = mTypeForMetaPath[sMetaPath].$Key.some(function (vKey) {
+			aKeyProperties = aKeyProperties || mTypeForMetaPath[sMetaPath].$Key;
+			bFailed = aKeyProperties.some(function (vKey) {
 				var sKey, sKeyPath, aPath, sPropertyName, oType, vValue;
 
 				if (typeof vKey === "string") {

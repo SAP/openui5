@@ -919,6 +919,10 @@ sap.ui.define([
 		sKeyPredicate : "('4%2F2')",
 		mKeyProperties : {"ID" : "'4/2'"}
 	}, {
+		bKeepSingleProperty : true,
+		sKeyPredicate : "(ID='4%2F2')",
+		mKeyProperties : {"ID" : "'4/2'"}
+	}, {
 		sKeyPredicate : "(Bar=42,Fo%3Do='Walter%22s%20Win''s')",
 		mKeyProperties : {"Bar" : "42","Fo=o" : "'Walter\"s Win''s'"}
 	}, {
@@ -927,59 +931,81 @@ sap.ui.define([
 	}].forEach(function (oFixture) {
 		QUnit.test("getKeyPredicate: " + oFixture.sKeyPredicate, function (assert) {
 			var oEntityInstance = {},
+				aKeyProperties = [],
 				sMetaPath = "~path~",
 				mTypeForMetaPath = {};
 
 			this.mock(_Helper).expects("getKeyProperties")
 				.withExactArgs(sinon.match.same(oEntityInstance), sMetaPath,
-					sinon.match.same(mTypeForMetaPath), true)
+					sinon.match.same(mTypeForMetaPath), sinon.match.same(aKeyProperties), true)
 				.returns(oFixture.mKeyProperties);
 
 			// code under test
 			assert.strictEqual(
-				_Helper.getKeyPredicate(oEntityInstance, sMetaPath, mTypeForMetaPath),
+				_Helper.getKeyPredicate(oEntityInstance, sMetaPath, mTypeForMetaPath,
+					aKeyProperties, oFixture.bKeepSingleProperty),
 				oFixture.sKeyPredicate);
 		});
 	});
 
 	//*********************************************************************************************
 	[{
-		oEntityInstance : {"ID" : "42"},
+		oEntityInstance : {ID : "42"},
 		oEntityType : {
-			"$Key" : ["ID"],
-			"ID" : {
-				"$Type" : "Edm.String"
+			$Key : ["ID"],
+			ID : {
+				$Type : "Edm.String"
 			}
 		},
-		mKeyProperties : {"ID" : "'42'"}
+		mKeyProperties : {ID : "'42'"}
 	}, {
 		oEntityInstance : {
-			"Bar" : 42,
+			Bar : 42,
 			"Fo=o" : "Walter\"s Win's",
-			"Baz" : "foo"
+			Baz : "foo"
 		},
 		oEntityType : {
-			"$Key" : ["Bar", "Fo=o"],
-			"Bar" : {
-				"$Type" : "Edm.Int16"
+			$Key : ["Bar", "Fo=o"],
+			Bar : {
+				$Type : "Edm.Int16"
 			},
 			"Fo=o" : {
-				"$Type" : "Edm.String"
+				$Type : "Edm.String"
 			}
 		},
 		mKeyProperties : {
-			"Bar" : "42",
+			Bar : "42",
 			"Fo=o" : "'Walter\"s Win''s'"
 		}
 	}, {
 		oEntityInstance : {},
 		oEntityType : {
-			"$Key" : ["ID"],
-			"ID" : {
-				"$Type" : "Edm.String"
+			$Key : ["ID"],
+			ID : {
+				$Type : "Edm.String"
 			}
 		},
 		mKeyProperties : undefined
+	}, {
+		oEntityInstance : {
+			foo : "baz",
+			bar : "qux"
+		},
+		oEntityType : {
+			$Key : ["ID"],
+			bar : {
+				$Type : "Edm.String"
+			},
+			foo : {
+				$Type : "Edm.String"
+			}
+		},
+		mKeyProperties : {
+			foo : "'baz'",
+			bar : "'qux'"
+		},
+		aKeyProperties: ["foo", "bar"]
+
 	}].forEach(function (oFixture) {
 		QUnit.test("getKeyProperties: " + oFixture.mKeyProperties, function (assert) {
 			this.spy(_Helper, "formatLiteral");
@@ -988,7 +1014,7 @@ sap.ui.define([
 			assert.deepEqual(
 				_Helper.getKeyProperties(oFixture.oEntityInstance, "~path~", {
 					"~path~" : oFixture.oEntityType
-				}),
+				}, oFixture.aKeyProperties),
 				oFixture.mKeyProperties);
 
 			// check that formatPropertyAsLiteral() is called for each key property
@@ -1041,7 +1067,7 @@ sap.ui.define([
 
 			// code under test
 			assert.deepEqual(_Helper.getKeyProperties(oEntityInstance, sMetaPath, mTypeForMetaPath,
-				oFixture.bReturnAlias), oFixture.oResult);
+				undefined, oFixture.bReturnAlias), oFixture.oResult);
 		});
 	});
 
@@ -1059,37 +1085,38 @@ sap.ui.define([
 	QUnit.test("getKeyFilter", function (assert) {
 		var oHelperMock = this.mock(_Helper),
 			oInstance = {},
+			aKeyProperties = [],
 			sMetaPath = {/*meta path*/},
 			mTypeForMetaPath = {};
 
 		oHelperMock.expects("getKeyProperties")
 			.withExactArgs(sinon.match.same(oInstance), sinon.match.same(sMetaPath),
-				sinon.match.same(mTypeForMetaPath))
+				sinon.match.same(mTypeForMetaPath), sinon.match.same(aKeyProperties))
 			.returns({key : 42});
 
 		assert.strictEqual(
 			// code under test
-			_Helper.getKeyFilter(oInstance, sMetaPath, mTypeForMetaPath),
+			_Helper.getKeyFilter(oInstance, sMetaPath, mTypeForMetaPath, aKeyProperties),
 			"key eq 42");
 
 		oHelperMock.expects("getKeyProperties")
 			.withExactArgs(sinon.match.same(oInstance), sinon.match.same(sMetaPath),
-				sinon.match.same(mTypeForMetaPath))
+				sinon.match.same(mTypeForMetaPath), sinon.match.same(aKeyProperties))
 			.returns({key1 : "'a'", key2 : "'b'"});
 
 		assert.strictEqual(
 			// code under test
-			_Helper.getKeyFilter(oInstance, sMetaPath, mTypeForMetaPath),
+			_Helper.getKeyFilter(oInstance, sMetaPath, mTypeForMetaPath, aKeyProperties),
 			"key1 eq 'a' and key2 eq 'b'");
 
 		oHelperMock.expects("getKeyProperties")
 			.withExactArgs(sinon.match.same(oInstance), sinon.match.same(sMetaPath),
-				sinon.match.same(mTypeForMetaPath))
+				sinon.match.same(mTypeForMetaPath), sinon.match.same(aKeyProperties))
 			.returns(undefined); // at least one key property is undefined
 
 		assert.strictEqual(
 			// code under test
-			_Helper.getKeyFilter(oInstance, sMetaPath, mTypeForMetaPath),
+			_Helper.getKeyFilter(oInstance, sMetaPath, mTypeForMetaPath, aKeyProperties),
 			undefined);
 	});
 

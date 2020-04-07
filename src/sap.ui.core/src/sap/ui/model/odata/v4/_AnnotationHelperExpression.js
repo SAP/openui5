@@ -752,8 +752,11 @@ sap.ui.define([
 				return oCurrencyOrUnitPromise || {
 					constraints : mConstraints,
 					formatOptions : sType === "Edm.String"
-						? {parseKeepsEmptyString : true}
-						: undefined,
+						&& !(oPathValue.formatOptions
+							&& "parseKeepsEmptyString" in oPathValue.formatOptions)
+						? Object.assign({parseKeepsEmptyString : true}, oPathValue.formatOptions)
+						: oPathValue.formatOptions,
+					parameters : oPathValue.parameters,
 					result : "binding",
 					type : sType,
 					value : oPathValue.prefix + sValue
