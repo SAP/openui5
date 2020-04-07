@@ -149,7 +149,9 @@ sap.ui.define([
 				},
 
 				/**
-				 * The parameters used in the manifest.
+				 * Overrides the default values of the parameters, which are defined in the manifest.
+				 * The value is an object containing parameters in format <code>{parameterKey: parameterValue}</code>.
+				 *
 				 * @experimental Since 1.65. This property might be changed in future.
 				 */
 				parameters: {
@@ -387,6 +389,9 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * @override
+	 */
 	Card.prototype.setParameters = function (vValue) {
 		this.setProperty("parameters", vValue);
 		this._bApplyManifest = true;
@@ -412,6 +417,9 @@ sap.ui.define([
 	 */
 	Card.prototype.createManifest = function (vManifest, sBaseUrl) {
 		var mOptions = {};
+
+		this._isManifestReady = false;
+
 		if (typeof vManifest === "string") {
 			mOptions.manifestUrl = vManifest;
 			vManifest = null;
@@ -427,6 +435,7 @@ sap.ui.define([
 		this._oCardManifest
 			.load(mOptions)
 			.then(function () {
+				this._isManifestReady = true;
 				this.fireManifestReady();
 				this._applyManifest();
 			}.bind(this))
@@ -607,10 +616,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Overwrites getter for card parameters.
-	 *
-	 * @public
-	 * @returns {Object} A Clone of the parameters.
+	 * @override
 	 */
 	Card.prototype.getParameters = function () {
 		var vValue = this.getProperty("parameters");
@@ -618,6 +624,55 @@ sap.ui.define([
 			return jQuery.extend(true, {}, vValue);
 		}
 		return vValue;
+	};
+
+	/**
+	 * Gets values of manifest parameters combined with the parameters from <code>parameters</code> property.
+	 *
+	 * <b>Notes</b>
+	 *
+	 * - Use this method when the manifest is ready. Check <code>manifestReady</code> event.
+	 *
+	 * - Use when developing a Component card.
+	 *
+	 * @public
+	 * @experimental Since 1.77
+	 * @returns {map} Object containing parameters in format <code>{parameterKey: parameterValue}</code>.
+	 */
+	Card.prototype.getCombinedParameters = function () {
+		if (!this._isManifestReady) {
+			Log.error("The manifest is not ready. Consider using the 'manifestReady' event.", "sap.ui.integration.widgets.Card");
+			return null;
+		}
+
+		var oParams = this._oCardManifest.getProcessedParameters(this.getProperty("parameters")),
+			oResultParams = {},
+			sKey;
+
+		for (sKey in oParams) {
+			oResultParams[sKey] = oParams[sKey].value;
+		}
+
+		return oResultParams;
+	};
+
+	/**
+	 * Returns a value from the Manifest based on the specified path.
+	 *
+	 * <b>Note</b> Use this method when the manifest is ready. Check <code>manifestReady</code> event.
+	 *
+	 * @public
+	 * @experimental Since 1.77
+	 * @param {string} sPath The path to return a value for.
+	 * @returns {Object} The value at the specified path.
+	 */
+	Card.prototype.getManifestEntry = function (sPath) {
+		if (!this._isManifestReady) {
+			Log.error("The manifest is not ready. Consider using the 'manifestReady' event.", "sap.ui.integration.widgets.Card");
+			return null;
+		}
+
+		return this._oCardManifest.get(sPath);
 	};
 
 	/**
@@ -808,6 +863,13 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Gets the instance of the <code>host</code> association.
+	 *
+	 * @public
+	 * @experimental Since 1.77
+	 * @returns {sap.ui.integration.Host} The host object associated with this card.
+	 */
 	Card.prototype.getHostInstance = function () {
 		var sHost = this.getHost();
 		if (!sHost) {
