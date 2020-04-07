@@ -70,7 +70,7 @@ sap.ui.define([
 		beforeEach: function (assert) {
 			var done = assert.async();
 			this.oButton1 = new Button("button1");
-			this.oButton2 = new Button();
+			this.oButton2 = new Button("button2", {text: "Button 2 text"});
 			this.oButtonUnselectable = new Button();
 			this.oLayout = new VerticalLayout({
 				content: [
@@ -233,6 +233,45 @@ sap.ui.define([
 			this.clock.tick(50);
 
 			assert.equal(oOpenStub.callCount, 1, "the open function was only called once");
+		});
+
+		QUnit.test("When context menu is opened and an item is selected", function(assert) {
+			var done = assert.async();
+			var oMenuItemHandlerStub = sandbox.stub();
+			var sMenuItemText = "Rename for button 2";
+
+			this.oContextMenuPlugin.attachEventOnce("openedContextMenu", function(oEvent) {
+				var oContextMenuControl = oEvent.getSource().oContextMenuControl;
+				var aButtons = oContextMenuControl.getButtons();
+				var oButtonFromMenuItem = aButtons[aButtons.length - 1];
+
+				assert.strictEqual(oButtonFromMenuItem.getText(), sMenuItemText, "then the required menu item is at the last position");
+
+				// triggers menu item handler()
+				oButtonFromMenuItem.firePress();
+				assert.ok(oContextMenuControl.isPopupOpen(), "then context menu control is open");
+				assert.equal(oMenuItemHandlerStub.callCount, 0, "then menu item handler() was not called since context menu control is open");
+
+				oContextMenuControl.fireClosed();
+				assert.equal(oMenuItemHandlerStub.callCount, 1, "then menu item handler() was called after context menu control was closed");
+				done();
+			});
+
+			sandbox.stub(this.oRenamePlugin, "getMenuItems")
+				.callThrough()
+				.withArgs([this.oButton2Overlay])
+				.returns([
+					{
+						id: "CTX_RENAME_BUTTON_2",
+						text: sMenuItemText,
+						rank: 999,
+						handler: oMenuItemHandlerStub
+					}
+				]);
+
+			this.oButton2Overlay.setSelected(true);
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+			this.clock.tick(50);
 		});
 
 		QUnit.test("Reopen the ContextMenu on another overlay", function (assert) {
@@ -690,6 +729,7 @@ sap.ui.define([
 					assert.deepEqual(aSelection[0], this.oButton1Overlay, "then the responsible element was passed to the handler");
 				}.bind(this);
 				oContextMenuControl.getFlexbox().getItems()[0].firePress();
+				oContextMenuControl.fireClosed();
 			}.bind(this));
 		});
 

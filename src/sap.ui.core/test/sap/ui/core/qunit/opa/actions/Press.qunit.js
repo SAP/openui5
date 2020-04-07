@@ -483,7 +483,7 @@ function(Press,
 
 		var oPressAction = new Press();
 
-		$("a").click(function () {
+		$("a").on("click", function () {
 			assert.ok(true, "Executed press action on link");
 			done();
 		});
@@ -501,13 +501,13 @@ function(Press,
 		var oPressAction = new Press();
 		var that = this;
 
-		$(".sapMObjectIdentifierTitle").click(function () {
+		$(".sapMObjectIdentifierTitle").on("click", function () {
 			assert.ok(true, "Executed press action on title");
 
 			that.oObjectIdentifier.setTitle(null);
 			sap.ui.getCore().applyChanges();
 
-			$(".sapMObjectIdentifierText").click(function () {
+			$(".sapMObjectIdentifierText").on("click", function () {
 				assert.ok(true, "Executed press action on text");
 				done();
 			});
@@ -522,7 +522,7 @@ function(Press,
 		var done = assert.async();
 		var oPressAction = new Press();
 
-		$(".sapMObjectIdentifier").click(function () {
+		$(".sapMObjectIdentifier").on("click", function () {
 			assert.ok(true, "Executed press action on link");
 			done();
 		});
@@ -546,7 +546,7 @@ function(Press,
 		var done = assert.async();
 		var oPressAction = new Press();
 
-		$("div[title='Search']").click(function () {
+		$("div[title='Search']").on("click", function () {
 			assert.ok(true, "Executed press action on search icon");
 			done();
 		});
@@ -561,7 +561,7 @@ function(Press,
 		this.oSearchField.setShowSearchButton(false);
 		sap.ui.getCore().applyChanges();
 
-		$("input[type='search']").mousedown(function () {
+		$("input[type='search']").on("mousedown", function () {
 			assert.ok(true, "Executed press action on search input field (focus DOM ref)");
 			done();
 		});
@@ -577,7 +577,7 @@ function(Press,
 
 		var oPressAction = new Press({idSuffix: "reset"});
 
-		$("div[title='Search']").click(function () {
+		$("div[title='Search']").on("click", function () {
 			assert.ok(true, "Executed press action on search button");
 			done();
 		});

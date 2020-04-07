@@ -28,7 +28,7 @@ sap.ui.define([
 	Layer,
 	Log,
 	FlexUtils,
-	RtaFlexUtils,
+	Utils,
 	RuntimeAuthoring,
 	CommandFactory,
 	Remove,
@@ -151,8 +151,8 @@ sap.ui.define([
 	}
 
 	function whenUserConfirmsMessage(sExpectedMessageKey, assert) {
-		sandbox.stub(RtaFlexUtils, "_showMessageBox").callsFake(
-			function(oMessageType, sTitleKey, sMessageKey) {
+		sandbox.stub(Utils, "showMessageBox").callsFake(
+			function(oMessageType, sMessageKey) {
 				assert.equal(sMessageKey, sExpectedMessageKey, "then expected message is shown");
 				return Promise.resolve();
 			}
@@ -700,6 +700,7 @@ sap.ui.define([
 			whenNoAppDescriptorChangesExist(this.oRta);
 
 			this.fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
+			this.fnHandleUrlParameterStub = sandbox.stub(Utils, "handleUrlParameter");
 			this.fnHandleParametersOnExitSpy =
 				sandbox.spy(this.oRta, "_handleParametersOnExit");
 			this.fnReloadWithMaxLayerOrDraftParam =
@@ -718,6 +719,32 @@ sap.ui.define([
 				assert.equal(this.fnHandleParametersOnExitSpy.callCount,
 					0,
 					"then _handleParametersOnExit() is not called");
+			}.bind(this));
+		});
+
+		QUnit.test("when the _determineReload() method is called with draft", function(assert) {
+			this.oRta._bVersioningEnabled = true;
+			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
+			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
+			var fnHasUrlParameterWithValueSpy = sandbox.spy(Utils, "hasUrlParameterWithValue");
+			this.fnHandleUrlParameterStub.returns(document.location.search);
+			return this.oRta._determineReload().then(function() {
+				assert.equal(fnHasUrlParameterWithValueSpy.callCount, 2, "hasUrlParameterWithValue is called");
+				assert.equal(this.fnHandleUrlParameterStub.callCount, 1, "handleUrlParameter is called");
+				assert.equal(this.fnReloadWithMaxLayerOrDraftParam.callCount, 0, "not called reloadWithMaxLaywerOrDraftParm");
+			}.bind(this));
+		});
+
+		QUnit.test("when the _determineReload() method is called with draft but parameter already set", function(assert) {
+			this.oRta._bVersioningEnabled = true;
+			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
+			sandbox.stub(Utils, "hasUrlParameterWithValue").returns(true);
+			var fnHandleReloadMessageBoxOnStartSpy = sandbox.spy(this.oRta, "_handleReloadMessageBoxOnStart");
+			this.fnHandleUrlParameterStub.returns(document.location.search);
+			return this.oRta._determineReload().then(function() {
+				assert.equal(this.fnHandleUrlParameterStub.callCount, 0, "handleUrlParameter is not called");
+				assert.equal(this.fnReloadWithMaxLayerOrDraftParam.callCount, 0, "reloadWithMaxLaywerOrDraftParm is not called");
+				assert.equal(fnHandleReloadMessageBoxOnStartSpy.callCount, 0, "_handleReloadMessageBoxOnStart is not called");
 			}.bind(this));
 		});
 
@@ -753,6 +780,40 @@ sap.ui.define([
 					"then RTA restart will not be enabled");
 				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
 					"then the page is reloaded");
+			}.bind(this));
+		});
+
+		QUnit.test("when _handleReloadOnExit() is called and draft url parameter is set", function(assert) {
+			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
+			sandbox.stub(this.oRta, "_isDraftAvailable").returns(false);
+			sandbox.stub(Utils, "hasUrlParameterWithValue").returns(true);
+
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_REMOVE_DRAFT_PARAMETER", assert);
+
+			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
+				assert.equal(this.fnEnableRestartSpy.callCount, 0,
+					"then RTA restart will not be enabled");
+				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
+					"then the page is reloaded");
+			}.bind(this));
+		});
+
+		QUnit.test("when _handleDiscard() is called", function(assert) {
+			var fnTriggerHardReloadStub = sandbox.stub(this.oRta, "_triggerHardReload");
+			this.oRta._handleDiscard();
+			assert.equal(fnTriggerHardReloadStub.callCount, 1, "then _triggerHardReload is called");
+			var oReloadInfo = fnTriggerHardReloadStub.getCall(0).args[0];
+			assert.equal(oReloadInfo.layer, Layer.CUSTOMER, "with CUSTOMER layer");
+			assert.equal(oReloadInfo.hasDraftChanges, false, "and with no draft change");
+		});
+
+		QUnit.test("when _deleteChanges() is called", function(assert) {
+			this.fnTriggerHardReloadStub = sandbox.stub(this.oRta, "_triggerHardReload");
+			return this.oRta._deleteChanges().then(function() {
+				assert.equal(this.fnTriggerHardReloadStub.callCount, 1, "then _triggerHardReload is called");
+				var oReloadInfo = this.fnTriggerHardReloadStub.getCall(0).args[0];
+				assert.equal(oReloadInfo.layer, Layer.CUSTOMER, "with CUSTOMER layer");
+				assert.equal(oReloadInfo.hasDraftChanges, false, "and with no draft change");
 			}.bind(this));
 		});
 	});
@@ -943,6 +1004,7 @@ sap.ui.define([
 				assert.equal(oActivationCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
 				assert.equal(oActivationCallPropertyBag.title, sVersionTitle, "and version title");
 				assert.equal(oRemoveAllCommandsSpy.callCount, 1, "and all commands were removed");
+				assert.equal(oRta.bInitialResetEnabled, true, "and the initialRestEnabled is true");
 				assert.equal(oRta.bInitialDraftAvailable, false, "and the initialDraftAvailable is removed");
 				assert.equal(oToolbarSetDraftEnabledSpy.callCount, 1, "and the draft info is set once");
 				assert.equal(oToolbarSetDraftEnabledSpy.getCall(0).args[0], false, "to false");
@@ -953,53 +1015,45 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when _onDiscardDraft is called ", function(assert) {
-			var oDiscardDraftStub;
-			var oHandleDiscardDraftStub;
-			var oHandleDraftParameterStub;
-			var oRemoveAllCommandsSpy;
-			var oStopSpy;
-			var oRta = this.oRta;
+		QUnit.test("when _onDiscardDraft is called", function(assert) {
+			var oDiscardDraftStub = sandbox.stub(VersionsAPI, "discardDraft").resolves();
+			var oHandleDiscardDraftStub = sandbox.spy(this.oRta, "_handleDiscard");
+			var oHandleDraftParameterStub = sandbox.spy(this.oRta, "_handleDraftParameter");
+			var oRemoveAllCommandsStub = sandbox.stub(this.oRta.getCommandStack(), "removeAllCommands");
+			var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves("MessageBox.Action.CANCEL");
+			var oStopStub = sandbox.stub(this.oRta, "stop");
 			var mParsedHash = {
 				params: {
 					"sap-ui-fl-version": [Layer.CUSTOMER]
 				}
 			};
+			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
+			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
+			this.oRta.bInitialDraftAvailable = true;
+			return this.oRta.start()
+			.then(this.oRta._onDiscardDraft.bind(this.oRta, false))
+			.then(function() {
+				assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown");
+				assert.equal(oHandleDiscardDraftStub.callCount, 0, "then _handleDiscard was not called");
+				assert.equal(oDiscardDraftStub.callCount, 0, "then VersionsAPI was not called");
+				assert.equal(oHandleDraftParameterStub.callCount, 0, "then _handleDraftParameter was not called");
 
-			var done = assert.async();
-
-			sandbox.stub(MessageBox, "confirm").callsFake(function(sMessage, mParameters) {
-				assert.equal(sMessage, this.oRta._getTextResources().getText("MSG_DRAFT_DISCARD_DIALOG"), "then the message is correct");
-				mParameters.onClose("OK");
+				oShowMessageBoxStub.reset();
+				oShowMessageBoxStub.resolves(MessageBox.Action.OK);
+				return this.oRta._onDiscardDraft(false);
+			}.bind(this))
+			.then(function() {
+				assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown");
+				assert.equal(oShowMessageBoxStub.lastCall.args[1], "MSG_DRAFT_DISCARD_DIALOG", "then the message is correct");
 				assert.equal(oDiscardDraftStub.callCount, 1, "then the discardDraft() method is called once");
 				assert.equal(oHandleDiscardDraftStub.callCount, 1, "then _handleDiscard was called");
 				assert.equal(oHandleDraftParameterStub.callCount, 1, "then _handleDraftParameter was called");
 				assert.equal(oHandleDraftParameterStub.getCall(0).args[0], mParsedHash, "then _handleDraftParameter was called with the correct parameters");
-
-				mParameters.onClose("notOK");
-				assert.equal(oDiscardDraftStub.callCount, 1, "then _handleDiscard was not called again");
-				assert.equal(oHandleDraftParameterStub.callCount, 1, "then _handleDraftParameter was not called again");
-				done();
-			}.bind(this));
-
-			sandbox.stub(oRta, "_isDraftAvailable").returns(true);
-			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
-
-			return oRta.start().then(function () {
-				oRta.bInitialDraftAvailable = true;
-				oDiscardDraftStub = sandbox.stub(VersionsAPI, "discardDraft").resolves(true);
-				oRemoveAllCommandsSpy = sandbox.spy(oRta.getCommandStack(), "removeAllCommands");
-				oHandleDiscardDraftStub = sandbox.spy(oRta, "_handleDiscard");
-				oHandleDraftParameterStub = sandbox.spy(oRta, "_handleDraftParameter");
-				oStopSpy = sandbox.spy(oRta, "stop");
-			})
-			.then(oRta._onDiscardDraft.bind(oRta, false))
-			.then(function() {
 				var oDiscardCallPropertyBag = oDiscardDraftStub.getCall(0).args[0];
 				assert.equal(oDiscardCallPropertyBag.selector, this.oRta.getRootControlInstance(), "with the correct selector");
 				assert.equal(oDiscardCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
-				assert.equal(oRemoveAllCommandsSpy.callCount, 1, "and all commands were removed");
-				assert.equal(oStopSpy.callCount, 1, "then stop was called");
+				assert.equal(oRemoveAllCommandsStub.callCount, 1, "and all commands were removed");
+				assert.equal(oStopStub.callCount, 1, "then stop was called");
 			}.bind(this));
 		});
 	});
@@ -1075,7 +1129,7 @@ sap.ui.define([
 		QUnit.test("and versioning is available and a draft is available,", function(assert) {
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(this.mParsedHash);
 
-			var oHasParameterSpy = sandbox.spy(this.oRta, "_hasParameter");
+			var oHasParameterSpy = sandbox.spy(Utils, "hasUrlParameterWithValue");
 			var oHasHigherLayerChangesSpy = sandbox.spy(PersistenceWriteAPI, "hasHigherLayerChanges");
 			var oHandleReloadMessageBoxOnStart = sandbox.stub(this.oRta, "_handleReloadMessageBoxOnStart").returns(Promise.resolve());
 			var oReloadWithoutHigherLayerOrDraftChangesOnStart = sandbox.stub(this.oRta, "_reloadWithMaxLayerOrDraftParam").returns(Promise.resolve());
@@ -1085,9 +1139,7 @@ sap.ui.define([
 			return this.oRta._determineReload().then(function () {
 				assert.equal(oIsDraftAvailableStub.callCount, 1, "then isDraftAvailable is called once");
 
-				assert.equal(oHasParameterSpy.callCount, 2, "then _hasParameter is called twice");
-				assert.equal(oHasParameterSpy.lastCall.args[0], this.mParsedHash, "then _hasParameter is called with the parsed hash");
-
+				assert.equal(oHasParameterSpy.callCount, 2, "then hasUrlParameterWithValue is called twice");
 				assert.equal(oHasHigherLayerChangesSpy.callCount, 1, "then hasHigherLayerChanges is called once");
 				assert.deepEqual(oHasHigherLayerChangesSpy.lastCall.args[0], {
 					selector: this.oReloadInfo.selector,
@@ -1109,21 +1161,17 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(this.mParsedHash);
 			var oIsDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable");
 
-			var oHasParameterSpy = sandbox.spy(this.oRta, "_hasParameter");
+			var oHasParameterSpy = sandbox.spy(Utils, "hasUrlParameterWithValue");
 			var oHandleReloadMessageBoxOnStart = sandbox.stub(this.oRta, "_handleReloadMessageBoxOnStart").returns(Promise.resolve());
 			var oReloadWithoutHigherLayerOrDraftChangesOnStart = sandbox.stub(this.oRta, "_reloadWithMaxLayerOrDraftParam").returns(Promise.resolve());
 			this.oRta._bVersioningEnabled = false;
 
 			return this.oRta._determineReload().then(function () {
 				assert.equal(oIsDraftAvailableStub.callCount, 0, "then isDraftAvailable is not called");
-
-				assert.equal(oHasParameterSpy.callCount, 2, "then _hasParameter is called twice");
-				assert.deepEqual(oHasParameterSpy.lastCall.args[0], this.mParsedHash, "then _hasParameter is called with the parsed hash");
-
+				assert.equal(oHasParameterSpy.callCount, 2, "then hasUrlParameterWithValue is called twice");
 				assert.equal(oHandleReloadMessageBoxOnStart.callCount, 0, "then _handleReloadMessageBoxOnStart is not called");
-
 				assert.equal(oReloadWithoutHigherLayerOrDraftChangesOnStart.callCount, 0, "then _reloadWithMaxLayerOrDraftParam is not called");
-			}.bind(this));
+			});
 		});
 	});
 	QUnit.module("Given that a CrossAppNavigation is needed because of a draft", {
@@ -1222,7 +1270,7 @@ sap.ui.define([
 		QUnit.test("and a draft is available", function (assert) {
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(this.mParsedHash);
 
-			var oHasParameterSpy = sandbox.spy(this.oRta, "_hasParameter");
+			var oHasParameterSpy = sandbox.spy(Utils, "hasUrlParameterWithValue");
 			var oHasHigherLayerChangesSpy = sandbox.spy(PersistenceWriteAPI, "hasHigherLayerChanges");
 			var oHandleReloadMessageBoxOnStart = sandbox.stub(this.oRta, "_handleReloadMessageBoxOnStart").returns(Promise.resolve());
 			var oReloadWithoutHigherLayerOrDraftChangesOnStart = sandbox.stub(this.oRta, "_reloadWithMaxLayerOrDraftParam").returns(Promise.resolve());
@@ -1232,9 +1280,7 @@ sap.ui.define([
 			return this.oRta._determineReload().then(function () {
 				assert.equal(oIsDraftAvailableStub.callCount, 1, "then isDraftAvailable is called once");
 
-				assert.equal(oHasParameterSpy.callCount, 2, "then _hasParameter is called twice");
-				assert.equal(oHasParameterSpy.lastCall.args[0], this.mParsedHash, "then _hasParameter is called with the parsed hash");
-
+				assert.equal(oHasParameterSpy.callCount, 2, "then hasUrlParameterWithValue is called twice");
 				assert.equal(oHasHigherLayerChangesSpy.callCount, 1, "then hasHigherLayerChanges is called once");
 				assert.deepEqual(oHasHigherLayerChangesSpy.lastCall.args[0], {
 					selector: this.oReloadInfo.selector,
@@ -1243,7 +1289,6 @@ sap.ui.define([
 
 				assert.equal(oHandleReloadMessageBoxOnStart.callCount, 1, "then _handleReloadMessageBoxOnStart is called once");
 				assert.deepEqual(oHandleReloadMessageBoxOnStart.lastCall.args[0], this.oReloadInfo, "then _handleReloadMessageBoxOnStart is called with the correct reload info");
-
 				assert.equal(oReloadWithoutHigherLayerOrDraftChangesOnStart.callCount, 1, "then _reloadWithMaxLayerOrDraftParam is called once");
 
 				var oReloadTriggerCallArguments = oReloadWithoutHigherLayerOrDraftChangesOnStart.lastCall.args;

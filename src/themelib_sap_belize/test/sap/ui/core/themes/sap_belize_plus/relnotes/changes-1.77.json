@@ -23,6 +23,61 @@
             "reference": "2070003471"
           }
         ]
+      },
+      {
+        "id": "60c6ad8125ea551fc0822da3dc2b9b8a23ec7175",
+        "type": "FEATURE",
+        "text": " sap.f.cards.AdaptiveContent: Custom theming support",
+        "references": []
+      },
+      {
+        "id": "eefa894aa14650f18d2f7a80570c996c3528def4",
+        "type": "FEATURE",
+        "text": " sap.f.cards.AdaptiveContent: Custom theming support",
+        "references": []
+      },
+      {
+        "id": "1cb24ef3b0192616937dcc54cc0cb9d7c2e2a009",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Introducing Attention button type",
+        "references": []
+      },
+      {
+        "id": "b2a7b99afeaf7fd7519611e180af273fbe1a9ce6",
+        "type": "FIX",
+        "text": " sap.m.Panel: Expand/Collapse button positioning adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070100322"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070075187"
+          }
+        ]
+      },
+      {
+        "id": "f36a9729b8fa125d52cd34d326f720e7b480a09c",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: samples made by guidelines",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070096747"
+          }
+        ]
+      },
+      {
+        "id": "e02b9139e21069068c94baef5d3d3b2f07a67c16",
+        "type": "FIX",
+        "text": " sap.ui.unified.DatesRow: visual fix when date is focused",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070112408"
+          }
+        ]
       }
     ]
   }

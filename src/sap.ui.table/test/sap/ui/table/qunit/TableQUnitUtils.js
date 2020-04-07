@@ -1,4 +1,3 @@
-
 sap.ui.define([
 	"sap/ui/table/library",
 	"sap/ui/table/Table",
@@ -7,11 +6,14 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
+	"sap/ui/table/plugins/PluginBase",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Control",
 	"sap/ui/thirdparty/jquery"
-], function(TableLibrary, Table, TreeTable, AnalyticalTable, Column, RowAction, RowActionItem, TableUtils, JSONModel, Control, jQuery) {
+], function(
+	TableLibrary, Table, TreeTable, AnalyticalTable, Column, RowAction, RowActionItem, PluginBase, TableUtils, JSONModel, Control, jQuery
+) {
 	"use strict";
 
 	var TableQUnitUtils = {}; // TBD: Move global functions to this object
@@ -112,6 +114,90 @@ sap.ui.define([
 		}
 	});
 
+	// This plugin helps to add hooks to the table, including the ones that are called during initialization of the table.
+	var HelperPlugin = PluginBase.extend("sap.ui.table.test.HelperPlugin", {
+		metadata: {
+			events: {
+				renderingTriggered: {}
+			}
+		}
+	});
+
+	HelperPlugin.prototype.init = function() {
+		this.iTableUpdateProcesses = 0;
+		this.pTableUpdateFinished = Promise.resolve();
+		this.fnResolveTableUpdateFinished = null;
+		this.iFocusHandlingProcesses = 0;
+		this.pFocusHandlingFinished = Promise.resolve();
+		this.fnResolveFocusHandlingFinished = null;
+	};
+	HelperPlugin.prototype.hooks = {};
+
+	HelperPlugin.prototype.onActivate = function(oTable) {
+		TableUtils.Hook.install(oTable, this);
+
+		var wrapForRenderingDetection = function(oObject, sFunctionName) {
+			var fnOriginalFunction = oObject[sFunctionName];
+			oObject[sFunctionName] = function() {
+				this.fireRenderingTriggered();
+				fnOriginalFunction.apply(oObject, arguments);
+			}.bind(this);
+		}.bind(this);
+
+		// Add wrappers and hooks for functions that inevitably trigger a "_rowsUpdated" event.
+		wrapForRenderingDetection(oTable, "invalidate");
+		wrapForRenderingDetection(oTable, "rerender");
+	};
+	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Table.RefreshRows] = function() {this.fireRenderingTriggered();};
+	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Table.UpdateRows] = function() {this.fireRenderingTriggered();};
+	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Table.UnbindRows] = function() {this.fireRenderingTriggered();};
+
+	HelperPlugin.prototype.onDeactivate = function(oTable) {
+		TableUtils.Hook.uninstall(oTable, this);
+	};
+
+	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Test.StartAsyncTableUpdate] = function() {
+		if (this.iTableUpdateProcesses === 0) {
+			this.pTableUpdateFinished = new Promise(function(resolve) {
+				this.fnResolveTableUpdateFinished = resolve;
+			}.bind(this));
+		}
+		this.iTableUpdateProcesses++;
+	};
+
+	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Test.EndAsyncTableUpdate] = function() {
+		this.iTableUpdateProcesses--;
+		if (this.iTableUpdateProcesses === 0) {
+			this.fnResolveTableUpdateFinished();
+			this.pTableUpdateFinished = Promise.resolve();
+		}
+	};
+
+	HelperPlugin.prototype.whenTableUpdateFinished = function() {
+		return this.pTableUpdateFinished;
+	};
+
+	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Test.StartAsyncFocusHandling] = function() {
+		if (this.iFocusHandlingProcesses === 0) {
+			this.pFocusHandlingFinished = new Promise(function(resolve) {
+				this.fnResolveFocusHandlingFinished = resolve;
+			}.bind(this));
+		}
+		this.iFocusHandlingProcesses++;
+	};
+
+	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Test.EndAsyncFocusHandling] = function() {
+		this.iFocusHandlingProcesses--;
+		if (this.iFocusHandlingProcesses === 0) {
+			this.fnResolveFocusHandlingFinished();
+			this.pFocusHandlingFinished = Promise.resolve();
+		}
+	};
+
+	HelperPlugin.prototype.whenFocusHandlingFinished = function() {
+		return this.pFocusHandlingFinished;
+	};
+
 	function TimeoutError(iMilliseconds) {
 		var oError = new Error("Timed out" + (typeof iMilliseconds === "number" ? " after " + iMilliseconds + "ms" : ""));
 
@@ -125,6 +211,7 @@ sap.ui.define([
 
 		return oError;
 	}
+
 	TimeoutError.prototype = Object.create(Error.prototype, {
 		constructor: {
 			value: Error,
@@ -135,7 +222,7 @@ sap.ui.define([
 	});
 	Object.setPrototypeOf(TimeoutError, Error);
 
-	var ExpiringPromise = function(iTimeout, fnExecutor) {
+	function ExpiringPromise(iTimeout, fnExecutor) {
 		if (iTimeout == null || fnExecutor == null) {
 			throw new Error("Invalid arguments");
 		}
@@ -155,7 +242,7 @@ sap.ui.define([
 		});
 
 		return Promise.race([pTimeout, pAction]);
-	};
+	}
 
 	sap.ui.table.TableHelper = {
 		createLabel: function(mConfig) {
@@ -171,26 +258,29 @@ sap.ui.define([
 	};
 
 	[Table, TreeTable].forEach(function(TableClass) {
-		TableClass.prototype.qunit = Object.create(TableClass.prototype);
-		Object.defineProperty(TableClass.prototype.qunit, "columnCount", {
-			get: function() {
-				return this.getColumns().length;
-			}
-		});
-
-		// TODO: Replace with above method.
+		// TODO: Replace with a helper method in the "qunit" member of the table, or delete and replace with oTable#getColumns().length
 		Object.defineProperty(TableClass.prototype, "columnCount", {
 			get: function() {
 				return this.getColumns().length;
 			}
 		});
+
+		// TODO: Remove once the "plugins" aggregation is of type sap.ui.table.PluginBase
+		var fnOriginalValidateAggregation = TableClass.prototype.validateAggregation;
+		TableClass.prototype.validateAggregation = function(sAggregationName, oObject) {
+			if (sAggregationName === "plugins" && oObject.isA("sap.ui.table.test.HelperPlugin")) {
+				return oObject;
+			} else {
+				return fnOriginalValidateAggregation.apply(this, arguments);
+			}
+		};
 	});
 
 	function createTableConfig(TableClass, mOptions) {
 		var oMetadata = TableClass.getMetadata();
-		var aProperties = Object.keys(oMetadata.getAllProperties()).concat(Object.keys(oMetadata.getAllPrivateProperties()));
-		var aAggregations = Object.keys(oMetadata.getAllAggregations()).concat(Object.keys(oMetadata.getAllPrivateAggregations()));
-		var aAssociations = Object.keys(oMetadata.getAllAssociations()).concat(Object.keys(oMetadata.getAllPrivateAssociations()));
+		var aProperties = Object.keys(oMetadata.getAllProperties());
+		var aAggregations = Object.keys(oMetadata.getAllAggregations());
+		var aAssociations = Object.keys(oMetadata.getAllAssociations());
 		var aAdditionalKeys = ["models"];
 		var aAllMetadataKeys = aProperties.concat(aAggregations).concat(aAssociations).concat(aAdditionalKeys);
 
@@ -211,36 +301,13 @@ sap.ui.define([
 			}
 		}
 
+		// TODO: Remove this once "row modes" are public.
 		if ("rowMode" in mOptions) {
 			oTable.setRowMode(mOptions.rowMode);
 		}
 	}
 
-	function addAsyncHelpers(oTable) {
-		oTable.qunit.fnResolveInitialRenderingFinished = null;
-		oTable.qunit.pInitialRenderingFinished = new Promise(function(resolve) {
-			oTable.qunit.fnResolveInitialRenderingFinished = resolve;
-		});
-		oTable.qunit.bInitialRenderingFinished = false;
-		oTable.qunit.pInitialRenderingFinished.then(function() {
-			oTable.qunit.bInitialRenderingFinished = true;
-		});
-		oTable.qunit.pRenderingFinished = null;
-
-		function waitForUnpredictableEvents() {
-			return new Promise(function(resolve) {
-				window.requestAnimationFrame(function() {
-					if (TableUtils.isVariableRowHeightEnabled(oTable)) {
-						window.requestAnimationFrame(function() {
-							setTimeout(resolve, 0);
-						});
-					} else {
-						setTimeout(resolve, 0);
-					}
-				});
-			});
-		}
-
+	function addAsyncHelpers(oTable, oHelperPlugin) {
 		/**
 		 * Returns a promise that resolves when the next <code>_rowsUpdated</code> event is fired.
 		 *
@@ -254,18 +321,100 @@ sap.ui.define([
 			});
 		};
 
+		function waitForFinalDOMUpdates() {
+			return oHelperPlugin.whenTableUpdateFinished().then(TableQUnitUtils.wait);
+		}
+
+		function waitForRowsUpdatedAndFinalDomUpdates() {
+			return oTable.qunit.whenNextRowsUpdated().then(function(mParameters) {
+				return waitForFinalDOMUpdates().then(function() {
+					return mParameters;
+				});
+			});
+		}
+
+		function waitForFullRendering() {
+			if (oTable.getBinding("rows")) {
+				return waitForRowsUpdatedAndFinalDomUpdates();
+			}
+
+			// A table without binding does not fire _rowsUpdated events.
+			return new Promise(function(resolve) {
+				TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
+					if (oTable.getBinding("rows")) { // In case the table has been bound in the meanwhile.
+						waitForRowsUpdatedAndFinalDomUpdates().then(function(mParameters) {
+							resolve(mParameters);
+						});
+					} else {
+						waitForFinalDOMUpdates().then(resolve);
+					}
+				});
+			});
+		}
+
+		function initRenderingFinishedPromise(sID, fnWaitForRendering) {
+			if (oTable.qunit["pRenderingFinished" + sID] == null) {
+				oTable.qunit["pRenderingFinished" + sID] = new Promise(function(resolve) {
+					oTable.qunit["fnResolveRenderingFinished" + sID] = resolve;
+				});
+			}
+
+			if (oTable.qunit["fnResolveRenderingFinishedWrapper" + sID]) {
+				oTable.qunit["fnResolveRenderingFinishedWrapper" + sID].disable();
+			}
+
+			var bWrapperDisabled = false;
+			oTable.qunit["fnResolveRenderingFinishedWrapper" + sID] = function(mParameters) {
+				if (!bWrapperDisabled) {
+					oTable.qunit["fnResolveRenderingFinished" + sID](mParameters);
+					oTable.qunit["pRenderingFinished" + sID] = null;
+					delete oTable.qunit["fnResolveRenderingFinished" + sID];
+					delete oTable.qunit["fnResolveRenderingFinishedWrapper" + sID];
+				}
+			};
+			oTable.qunit["fnResolveRenderingFinishedWrapper" + sID].disable = function() {
+				bWrapperDisabled = true;
+			};
+
+			fnWaitForRendering().then(oTable.qunit["fnResolveRenderingFinishedWrapper" + sID]);
+		}
+
 		/**
-		 * Returns a promise that resolves when the next rendering is finished. Includes row updates.
+		 * Returns a promise that resolves when the next rendering is finished.
 		 *
 		 * @returns {Promise<Object>} A promise. Resolves with the event parameters.
 		 */
 		oTable.qunit.whenNextRenderingFinished = function() {
-			return oTable.qunit.whenNextRowsUpdated().then(function(mParameters) {
-				return waitForUnpredictableEvents().then(function() {
-					return mParameters;
-				});
-			});
+			if (oTable.qunit.pRenderingFinishedNext == null) {
+				initRenderingFinishedPromise("Next", waitForFullRendering);
+			}
+			return oTable.qunit.pRenderingFinishedNext;
 		};
+		oTable.qunit.pRenderingFinishedNext = null;
+
+		oHelperPlugin.attachRenderingTriggered(function() {
+			if (oTable.qunit.pRenderingFinishedNext != null) {
+				initRenderingFinishedPromise("Next", waitForFullRendering);
+			}
+		});
+
+		/**
+		 * Returns a promise that resolves when no rendering is to be expected or when an ongoing rendering is finished.
+		 *
+		 * @returns {Promise} A promise.
+		 */
+		oTable.qunit.whenRenderingFinished = function() {
+			if (oTable.qunit.pRenderingFinishedCurrent == null) {
+				initRenderingFinishedPromise("Current", waitForFinalDOMUpdates);
+			}
+			return oTable.qunit.pRenderingFinishedCurrent;
+		};
+		oTable.qunit.pRenderingFinishedCurrent = null;
+
+		initRenderingFinishedPromise("Current", waitForFullRendering);
+		oHelperPlugin.attachRenderingTriggered(function() {
+			initRenderingFinishedPromise("Current", waitForFullRendering);
+		});
 
 		/**
 		 * Returns a promise that resolves when the initial rendering is finished.
@@ -275,67 +424,7 @@ sap.ui.define([
 		oTable.qunit.whenInitialRenderingFinished = function() {
 			return oTable.qunit.pInitialRenderingFinished;
 		};
-		if (oTable.getBinding("rows")) {
-			oTable.qunit.whenNextRenderingFinished().then(oTable.qunit.fnResolveInitialRenderingFinished);
-		} else {
-			// A table without binding does not fire _rowsUpdated events.
-			TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
-				if (!oTable.getBinding("rows")) {
-					waitForUnpredictableEvents().then(oTable.qunit.fnResolveInitialRenderingFinished);
-				} else {
-					oTable.qunit.whenNextRenderingFinished().then(oTable.qunit.fnResolveInitialRenderingFinished);
-				}
-			});
-		}
-
-		/**
-		 * Returns a promise that resolves when no rendering is to be expected or when an ongoing rendering is finished. Includes row updates.
-		 *
-		 * @returns {Promise} A promise.
-		 */
-		oTable.qunit.whenRenderingFinished = function() {
-			if (!oTable.qunit.bInitialRenderingFinished) {
-				return oTable.qunit.whenInitialRenderingFinished();
-			} else if (oTable.qunit.pRenderingFinished != null) {
-				return oTable.qunit.pRenderingFinished;
-			} else if (oTable._getFirstRenderedRowIndex() !== oTable._iRenderedFirstVisibleRow) {
-				return oTable.qunit.whenNextRenderingFinished();
-			} else {
-				return waitForUnpredictableEvents();
-			}
-		};
-
-		function wrapForRenderingDetection(oObject, sFunctionName) {
-			var fnOriginalFunction = oObject[sFunctionName];
-			oObject[sFunctionName] = function() {
-				if (oTable.qunit.pRenderingFinished == null && oTable.qunit.bInitialRenderingFinished) {
-					if (oTable.getBinding("rows")) {
-						oTable.qunit.pRenderingFinished = oTable.qunit.whenNextRenderingFinished();
-					} else {
-						// A table without binding does not fire _rowsUpdated events.
-						oTable.qunit.pRenderingFinished = new Promise(function(resolve) {
-							TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
-								if (!oTable.getBinding("rows")) {
-									waitForUnpredictableEvents().then(resolve);
-								} else {
-									oTable.qunit.whenNextRenderingFinished().then(resolve);
-								}
-							});
-						});
-					}
-					oTable.qunit.pRenderingFinished = oTable.qunit.pRenderingFinished.then(function() {
-						oTable.qunit.pRenderingFinished = null;
-					});
-				}
-				fnOriginalFunction.apply(oObject, arguments);
-			};
-		}
-		// Wrap functions that inevitably trigger a "_rowsUpdated" event.
-		wrapForRenderingDetection(oTable, "invalidate");
-		wrapForRenderingDetection(oTable, "rerender");
-		wrapForRenderingDetection(oTable, "refreshRows");
-		wrapForRenderingDetection(oTable, "updateRows");
-		wrapForRenderingDetection(oTable, "unbindRows");
+		oTable.qunit.pInitialRenderingFinished = oTable.qunit.whenRenderingFinished();
 
 		/**
 		 * Returns a promise that resolves when the next binding refresh event is fired.
@@ -421,7 +510,6 @@ sap.ui.define([
 			if (oVSb.scrollTop === iOldScrollTop) {
 				return Promise.resolve();
 			} else {
-				// TODO: Make this work with large data scrolling.
 				return oTable.qunit.whenVSbScrolled().then(oTable.qunit.whenRenderingFinished);
 			}
 		};
@@ -598,6 +686,48 @@ sap.ui.define([
 				width: oTable.qunit.sContainerOriginalWidth
 			});
 		};
+
+		/**
+		 * Focuses an element. If no focus events are fired, for example because the tab or browser window is in the background,
+		 * artificial focus events are dispatched to the focused element.
+		 *
+		 * <b>Do not use this method is you need to check whether an element is focusable!</b>
+		 *
+		 * @param {HTMLElement} oElement The element to focus.
+		 * @returns {Promise} A Promise that resolves after the focus events are fired and processed.
+		 */
+		oTable.qunit.focus = function(oElement) {
+			var oEventListener;
+
+			return new ExpiringPromise(0, function(resolve) {
+				oEventListener = TableQUnitUtils.addEventListenerOnce(oElement, "focusin", function() {
+					oHelperPlugin.whenFocusHandlingFinished().then(resolve);
+				});
+				oElement.focus();
+			}).catch(function(oError) {
+				if (oError instanceof TimeoutError) {
+					// If the tab or browser are in the background, or the focus is in the dev tools, the are no focus events. To be able to continue
+					// with the test execution, fake the focus events.
+					oElement.dispatchEvent(TableQUnitUtils.createFocusEvent("focusin"));
+					oElement.dispatchEvent(TableQUnitUtils.createFocusEvent("focus"));
+					oEventListener.remove();
+					return oHelperPlugin.whenFocusHandlingFinished();
+				}
+				throw oError;
+			});
+		};
+
+		/**
+		 * Wrapper around #focus for easier promise chaining. Returns a function that returns a promise.
+		 *
+		 * @param {HTMLElement} oElement The element that is focused.
+		 * @returns {function(): Promise} Wrapper function.
+		 */
+		oTable.qunit.$focus = function(oElement) {
+			return function() {
+				return oTable.qunit.focus(oElement);
+			};
+		};
 	}
 
 	function addHelpers(oTable) {
@@ -748,9 +878,22 @@ sap.ui.define([
 		mOptions = Object.assign({}, mDefaultOptions, mOptions);
 		TableClass = TableClass == null ? Table : TableClass;
 
+		var oHelperPlugin = new HelperPlugin();
+
+		if ("plugins" in mOptions) {
+			mOptions.plugins.push(oHelperPlugin);
+		} else {
+			mOptions.plugins = [oHelperPlugin];
+		}
+
 		var oTable = new TableClass(createTableConfig(TableClass, mOptions));
+
+		Object.defineProperty(oTable, "qunit", {
+			value: {}
+		});
+
 		setExperimentalConfig(oTable, mOptions);
-		addAsyncHelpers(oTable);
+		addAsyncHelpers(oTable, oHelperPlugin);
 		addHelpers(oTable);
 
 		if (typeof fnBeforePlaceAt === "function") {
@@ -928,6 +1071,7 @@ sap.ui.define([
 	 * @param {string} sEventName The name of the event.
 	 * @param {Function} fnHandler The event handler.
 	 * @param {boolean} [bCallBefore=false] Whether the listener is called before the listener of the element.
+	 * @return {{remove: Function}} An object providing methods, for example to remove the delegate before it is called.
 	 */
 	TableQUnitUtils.addDelegateOnce = function(oElement, sEventName, fnHandler, bCallBefore) {
 		var oDelegate = {};
@@ -938,6 +1082,12 @@ sap.ui.define([
 		};
 
 		oElement.addDelegate(oDelegate, bCallBefore === true, oElement);
+
+		return {
+			remove: function() {
+				oElement.removeDelegate(oDelegate);
+			}
+		};
 	};
 
 	/**
@@ -946,12 +1096,19 @@ sap.ui.define([
 	 * @param {HTMLElement} oElement The element to add the listener to.
 	 * @param {string} sEventName The name of the event.
 	 * @param {Function} fnHandler The event handler.
+	 * @return {{remove: Function}} An object providing methods, for example to remove the listener before it is called.
 	 */
 	TableQUnitUtils.addEventListenerOnce = function(oElement, sEventName, fnHandler) {
 		oElement.addEventListener(sEventName, function(oEvent) {
 			oElement.removeEventListener(sEventName, fnHandler);
 			fnHandler.call(this, oEvent);
 		});
+
+		return {
+			remove: function() {
+				oElement.removeEventListener(sEventName, fnHandler);
+			}
+		};
 	};
 
 	/**
@@ -961,6 +1118,7 @@ sap.ui.define([
 	 * @param {string} sFunctionName The name of the function to wrap.
 	 * @param {Function} fnBefore This function is called before the wrapped function is executed.
 	 * @param {Function} fnAfter This function is called after the wrapped function is executed.
+	 * @return {{remove: Function}} An object providing methods, for example to remove the wrapper before it is called.
 	 */
 	TableQUnitUtils.wrapOnce = function(oObject, sFunctionName, fnBefore, fnAfter) {
 		var fnOriginalFunction = oObject[sFunctionName];
@@ -976,6 +1134,12 @@ sap.ui.define([
 
 			if (fnAfter) {
 				fnAfter.apply(oObject, arguments);
+			}
+		};
+
+		return {
+			remove: function() {
+				oObject[sFunctionName] = fnOriginalFunction;
 			}
 		};
 	};
@@ -1011,40 +1175,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Focuses an element.
-	 *
-	 * @param {HTMLElement} oElement The element that is focused.
-	 * @param {int} [iTimeout=100] The time in milliseconds to wait for the <code>focusin</code> event.
-	 * @returns {Promise} A Promise that resolves after the <code>focusin</code> event, or is rejected
-	 *                    with a TimeoutError if there is no event before the timeout.
-	 */
-	TableQUnitUtils.focus = function(oElement, iTimeout) {
-		return new ExpiringPromise(iTimeout === undefined ? 100 : iTimeout, function(resolve) {
-			TableQUnitUtils.addEventListenerOnce(oElement, "focusin", resolve);
-			oElement.focus();
-		});
-	};
-
-	/**
-	 * Wrapper around #focus for easier promise chaining. Returns a function that returns a promise.
-	 *
-	 * @param {HTMLElement} oElement The element that is focused.
-	 * @param {int} [iTimeout=100] The time in milliseconds to wait for the <code>focusin</code> event.
-	 * @returns {function(): Promise} Wrapper function.
-	 */
-	TableQUnitUtils.$focus = function(oElement, iTimeout) {
-		return function() {
-			return TableQUnitUtils.focus(oElement, iTimeout);
-		};
-	};
-
-	/**
 	 * Changes the text direction.
 	 *
 	 * @param {boolean} bRTL Whether to set the direction to RTL. If <code>false</code>, the direction is set to LTR.
 	 * @return {Promise} A Promise that resolves after text direction is changed.
 	 */
-	TableQUnitUtils.changTextDirection = function(bRTL) {
+	TableQUnitUtils.changeTextDirection = function(bRTL) {
 		sap.ui.getCore().getConfiguration().setRTL(bRTL);
 		sap.ui.getCore().applyChanges();
 
@@ -1052,10 +1188,23 @@ sap.ui.define([
 		return TableQUnitUtils.wait(1000).then(TableQUnitUtils.wait);
 	};
 
-	TableQUnitUtils.$changTextDirection = function(bRTL) {
+	TableQUnitUtils.$changeTextDirection = function(bRTL) {
 		return function() {
-			return TableQUnitUtils.changTextDirection(bRTL);
+			return TableQUnitUtils.changeTextDirection(bRTL);
 		};
+	};
+
+	TableQUnitUtils.createFocusEvent = function(sFocusEventType) {
+		var oFocusEvent;
+
+		if (typeof FocusEvent === "function") {
+			oFocusEvent = new FocusEvent(sFocusEventType);
+		} else { // IE
+			oFocusEvent = document.createEvent("FocusEvent");
+			oFocusEvent.initFocusEvent(sFocusEventType, true, false);
+		}
+
+		return oFocusEvent;
 	};
 
 	/***********************************
@@ -1086,7 +1235,6 @@ sap.ui.define([
 		if (bInputElement) {
 			oTemplate = new TestInputControl({
 				text: bBindText ? "{" + sText + "}" : sText,
-				index: oTable.getColumns().length,
 				visible: true,
 				tabbable: bTabbable,
 				type: sInputType
@@ -1094,7 +1242,6 @@ sap.ui.define([
 		} else {
 			oTemplate = new TestControl({
 				text: bBindText ? "{" + sText + "}" : sText,
-				index: oTable.getColumns().length,
 				visible: true,
 				focusable: bFocusable,
 				tabbable: bFocusable && bTabbable
@@ -1170,7 +1317,6 @@ sap.ui.define([
 						tooltip: j == 2 ? aFields[j] + "_TOOLTIP" : null,
 						template: new TestControl({
 							text: "{" + aFields[j] + "}",
-							index: j,
 							visible: j != 3,
 							tabbable: !!bFocusableCellTemplates
 						})
@@ -1180,7 +1326,6 @@ sap.ui.define([
 						width: "100px",
 						template: new TestControl({
 							text: "{" + aFields[j] + "}",
-							index: j,
 							tabbable: !!bFocusableCellTemplates
 						})
 					}));
@@ -1208,11 +1353,9 @@ sap.ui.define([
 		oTreeTable = null;
 	};
 
-
 	//************************************************************************
 	// Helper Functions
 	//************************************************************************
-
 
 	window.getCell = function(iRow, iCol, bFocus, assert, oTableInstance) {
 		if (oTableInstance == null) {

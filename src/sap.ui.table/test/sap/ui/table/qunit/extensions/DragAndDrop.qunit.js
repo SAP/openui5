@@ -31,7 +31,7 @@ sap.ui.define([
 				bubbles: true,
 				cancelable: true
 			});
-		} else { // IE, PhantomJS
+		} else { // IE
 			oNativeDragEvent = document.createEvent("Event");
 			oNativeDragEvent.initEvent(sDragEventType, true, true);
 		}

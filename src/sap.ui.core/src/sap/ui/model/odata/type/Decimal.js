@@ -15,7 +15,8 @@ sap.ui.define([
 		ODataType, jQuery) {
 	"use strict";
 
-	var rDecimal = /^[-+]?(\d+)(?:\.(\d+))?$/;
+	var rDecimal = /^[-+]?(\d+)(?:\.(\d+))?$/,
+		rTrailingZeroes = /(?:(\.[0-9]*[1-9]+)0+|\.0*)$/;
 
 	/**
 	 * Returns the formatter. Creates it lazily.
@@ -67,6 +68,21 @@ sap.ui.define([
 	 */
 	function getText(sKey, aParams) {
 		return sap.ui.getCore().getLibraryResourceBundle().getText(sKey, aParams);
+	}
+
+	/**
+	 * Removes trailing zeroes after the decimal point from the given value; in case there are only
+	 * zeroes after the decimal point, also removes the decimal point.
+	 *
+	 * @param {string} sValue The value, e.g. "1.000"
+	 * @returns {string} The value without trailing zeroes, e.g. "1"
+	 */
+	function removeTrailingZeroes(sValue) {
+		if (sValue.indexOf(".") >= 0) {
+			sValue = sValue.replace(rTrailingZeroes, "$1");
+		}
+
+		return sValue;
 	}
 
 	/**
@@ -251,7 +267,7 @@ sap.ui.define([
 		case "int":
 			return Math.floor(parseFloat(sValue));
 		case "string":
-			return getFormatter(this).format(sValue);
+			return getFormatter(this).format(removeTrailingZeroes(String(sValue)));
 		default:
 			throw new FormatException("Don't know how to format " + this.getName() + " to "
 				+ sTargetType);
@@ -291,9 +307,7 @@ sap.ui.define([
 					.getText("EnterNumber"));
 			}
 			// NumberFormat.parse does not remove trailing decimal zeroes and separator
-			if (sResult.indexOf(".") >= 0) {
-				sResult = sResult.replace(/0+$/, "").replace(/\.$/, "");
-			}
+			sResult = removeTrailingZeroes(sResult);
 			break;
 		case "int":
 		case "float":

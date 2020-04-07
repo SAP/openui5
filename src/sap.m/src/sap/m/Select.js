@@ -1756,7 +1756,7 @@ function(
 			}.bind(this), 100);
 
 			// note: in some circumstances IE browsers focus non-focusable elements
-			if (oEvent.target !== this.getFocusDomRef()) {	// whether an inner element is receiving the focus
+			if (Device.browser.msie && (oEvent.target !== this.getFocusDomRef())) {	// whether an inner element is receiving the focus
 
 				// force the focus to leave the inner element and set it back to the control's root element
 				this.focus();

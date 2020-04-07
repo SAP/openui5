@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/m/FlexItemData",
 	"sap/m/MessageBox",
 	"sap/ui/core/library",
+	"sap/ui/core/LocaleData",
 	"sap/ui/core/mvc/View", // sap.ui.view()
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/model/BindingMode",
@@ -16,8 +17,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (FlexItemData, MessageBox, library, View, BaseComponent, BindingMode, JSONModel,
-		ODataModelV2, ODataModelV4, TestUtils) {
+], function (FlexItemData, MessageBox, library, LocaleData, View, BaseComponent, BindingMode,
+		JSONModel, ODataModelV2, ODataModelV4, TestUtils) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -26,7 +27,8 @@ sap.ui.define([
 	return BaseComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component", {
 		metadata : "json",
 		createContent : function () {
-			var oModelV2,
+			var oLocaleData = new LocaleData(sap.ui.getCore().getConfiguration().getLocale()),
+				oModelV2,
 				oModelV4,
 				bRealOData = TestUtils.isRealOData(),
 				oRootView,
@@ -129,6 +131,17 @@ sap.ui.define([
 						sCode : "",
 						bCodeVisible : false,
 						iMessages : 0,
+						patterns : {
+							dateMedium : oLocaleData.getDatePattern("medium"),
+							dateShort : oLocaleData.getDatePattern("short"),
+							dateTimeLong :
+								oLocaleData.getCombinedDateTimePattern("long", "long"),
+							dateTimeMedium :
+								oLocaleData.getCombinedDateTimePattern("medium", "medium"),
+							timeLong : oLocaleData.getTimePattern("long"),
+							timeMedium : oLocaleData.getTimePattern("medium"),
+							timeShort : oLocaleData.getTimePattern("short")
+						},
 						realOData : bRealOData,
 						v2 : true,
 						v4 : false

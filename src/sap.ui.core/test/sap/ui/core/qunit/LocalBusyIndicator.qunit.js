@@ -38,7 +38,7 @@ sap.ui.define([
 			$Tabbables = jQuery.merge($Ref.parents(':sapTabbable'), $All.find(':sapTabbable').addBack(':sapTabbable'));
 		}
 
-		$Tabbables = jQuery.unique($Tabbables);
+		$Tabbables = jQuery.uniqueSort($Tabbables);
 		return $Tabbables.filter(function() {
 			return isContained(aScopes, this);
 		});
@@ -136,10 +136,14 @@ sap.ui.define([
 		var iChildren = $LB.children().length;
 
 		setTimeout(function() {
+			var oBusyIndicatorDOM = $LB.children('.sapUiLocalBusyIndicator')[0];
 			assert.equal($LB.children().length, iChildren + 1, 'Busy Indicator added to DOM tree');
-			assert.ok($LB[0].hasAttribute("aria-busy", true), 'ARIA busy is set to Control');
-			assert.ok($LB.children('.sapUiLocalBusyIndicator')[0].hasAttribute("role", "progressbar"),
-				'ARIA role "progressbar" is set to busy indicator');
+			assert.ok(!$LB[0].hasAttribute("aria-busy"), "ARIA busy isn't set to Control");
+			assert.equal(oBusyIndicatorDOM.getAttribute("role"), "progressbar", 'ARIA role "progressbar" is set to busy indicator');
+			assert.ok(oBusyIndicatorDOM.hasAttribute("title"), 'title is set to busy indicator');
+			assert.ok(oBusyIndicatorDOM.hasAttribute("aria-valuemin"), 'aria-valuemin is set to busy indicator');
+			assert.ok(oBusyIndicatorDOM.hasAttribute("aria-valuemax"), 'aria-valuemax is set to busy indicator');
+			assert.ok(oBusyIndicatorDOM.hasAttribute("aria-valuetext"), 'aria-valuetext is set to busy indicator');
 			done();
 		}, 1200);
 	});
@@ -224,7 +228,7 @@ sap.ui.define([
 		// our listener before the LBI registers its own listener.
 		// TODO consider using a capturing phase listener in LBI to make this more robust.
 		for (var i = 0; i < aPreventedEvents.length; i++) {
-			$LB.bind(aPreventedEvents[i], fnEventListener);
+			$LB.on(aPreventedEvents[i], fnEventListener);
 		}
 
 		setTimeout(function() {

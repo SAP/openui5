@@ -732,8 +732,8 @@ sap.ui.define([
 					// Everything else: drag scroll
 					$Container
 						.on("mouseup mouseleave", this._onMouseUp.bind(this))
-						.mousedown(this._onMouseDown.bind(this))
-						.mousemove(this._onMouseMove.bind(this));
+						.on("mousedown", this._onMouseDown.bind(this))
+						.on("mousemove", this._onMouseMove.bind(this));
 				}
 			},
 

@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Manifest",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
+	"sap/m/MessageBox",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	jQuery,
@@ -25,6 +26,7 @@ sap.ui.define([
 	Manifest,
 	ChangesWriteAPI,
 	AppVariantWriteAPI,
+	MessageBox,
 	sinon
 ) {
 	"use strict";
@@ -608,8 +610,8 @@ sap.ui.define([
 
 			var bSuccessful = true;
 			var oCopyIDStub = sandbox.stub(AppVariantUtils, "copyId");
-			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
-				mParameters.onClose("OK");
+			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
+				mParameters.onClose(MessageBox.Action.OK);
 			});
 
 			return AppVariantUtils.showRelevantDialog(oInfo, bSuccessful).then(function() {
@@ -628,7 +630,7 @@ sap.ui.define([
 			var bSuccessful = true;
 
 			var oCopyIDStub = sandbox.stub(AppVariantUtils, "copyId");
-			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
+			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
 				mParameters.onClose("Copy ID and Close");
 			});
 
@@ -644,7 +646,7 @@ sap.ui.define([
 				overviewDialog: true
 			};
 			var oCopyIDStub = sandbox.stub(AppVariantUtils, "copyId");
-			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
+			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
 				mParameters.onClose("Close");
 			});
 
@@ -660,7 +662,7 @@ sap.ui.define([
 				text: "Text"
 			};
 			var oCopyIDStub = sandbox.stub(AppVariantUtils, "copyId");
-			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
+			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
 				mParameters.onClose("Close");
 			});
 
@@ -677,7 +679,7 @@ sap.ui.define([
 				appVariantId: "Whatever!"
 			};
 
-			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
+			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
 				mParameters.onClose("Copy ID and Close");
 			});
 
@@ -692,8 +694,8 @@ sap.ui.define([
 				deleteAppVariant: true
 			};
 
-			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
-				mParameters.onClose("OK");
+			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
+				mParameters.onClose(MessageBox.Action.OK);
 			});
 
 			return AppVariantUtils.showRelevantDialog(oInfo).then(function() {
@@ -707,7 +709,7 @@ sap.ui.define([
 				deleteAppVariant: true
 			};
 
-			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
+			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
 				mParameters.onClose("Close");
 			});
 

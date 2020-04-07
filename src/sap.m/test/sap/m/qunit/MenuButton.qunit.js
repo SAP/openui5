@@ -235,17 +235,21 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var oInnerButton = this.sut._getButtonControl(),
+			oArrowButton = oInnerButton._getArrowButton(),
 			oTextButton = oInnerButton._getTextButton(),
-			oArrowButton = oInnerButton._getArrowButton();
+			sInnerButtonLabelledBy = oInnerButton.$().attr("aria-labelledby"),
+			sInternalTooltipId = oInnerButton.getId() + "-tooltip";
 
 		//assert
 		assert.strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
 		assert.ok(!oTextButton.getDomRef().hasAttribute("title"), "The inner '_textButton' button does not have and need DOM title property");
 		assert.ok(!oArrowButton.getDomRef().hasAttribute("title"), "The inner '_arrowButton' button does not have DOM title property set to its Icon name");
+		assert.ok(sInnerButtonLabelledBy.indexOf(sInternalTooltipId) !== -1, "The ID of the hidden SPAN with tooltip is added in aria-labelledby attribute");
+		assert.ok(oInnerButton.$("tooltip").length, "The hidden SPAN with tooltip as content exists");
 	});
 
 	QUnit.test("MenuButton IconOnly in Split mode", function (assert) {
-		var sIconName = "slim-arrow-down";
+		var sIconName = "add";
 		this.sut.setIcon("sap-icon://" + sIconName);
 		this.sut.setButtonMode(MenuButtonMode.Split);
 		sap.ui.getCore().applyChanges();
@@ -253,17 +257,17 @@ sap.ui.define([
 		var oInnerButton = this.sut._getButtonControl(),
 			oTextButton = oInnerButton._getTextButton(),
 			oArrowButton = oInnerButton._getArrowButton(),
+			sInternalTooltipId = oInnerButton.getId() + "-tooltip",
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
 			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
 			bAriaLabeledByHasCorrectValue = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT"));
 
-		// Log.info(aAriaLabelledByIds); // purely informational
-
 		//assert
 		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue, '"aria-labelledby" is present and has correct value');
-
 		assert.ok(!oTextButton.getDomRef().hasAttribute("title"), "The inner '_textButton' button do not have and need DOM title property");
 		assert.ok(!oArrowButton.getDomRef().hasAttribute("title"), "The inner '_arrowButton' button do not have DOM title property set to its Icon name");
+		assert.ok(aAriaLabelledByIds.indexOf(sInternalTooltipId) !== -1, "The ID of the hidden SPAN with tooltip is added in aria-labelledby attribute");
+		assert.ok(oInnerButton.$("tooltip").length, "The hidden SPAN with tooltip as content exists");
 	});
 
 	QUnit.test("MenuButton IconOnly with tooltip in Split mode", function (assert) {

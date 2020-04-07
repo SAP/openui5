@@ -503,8 +503,8 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// Assert
-		assert.ok(oIconTabBarNoText.$("-header-head").hasClass("sapMITBNoText"), "should have class for no-text version");
-		assert.ok(!oIconTabBarNoText.$("-header-head").hasClass("sapMITBTextOnly"), "should not have class for text-only version");
+		assert.ok(oIconTabBarNoText.$("-header").hasClass("sapMITBNoText"), "should have class for no-text version");
+		assert.ok(!oIconTabBarNoText.$("-header").hasClass("sapMITBTextOnly"), "should not have class for text-only version");
 
 		// Clean up
 		oIconTabBarNoText.destroy();
@@ -529,8 +529,8 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// Assert
-		assert.ok(!oIconTabBarTextOnly.$("-header-head").hasClass("sapMITBNoText"), "should not have class for no-text version");
-		assert.ok(oIconTabBarTextOnly.$("-header-head").hasClass("sapMITBTextOnly"), "should have class for text-only version");
+		assert.ok(!oIconTabBarTextOnly.$("-header").hasClass("sapMITBNoText"), "should not have class for no-text version");
+		assert.ok(oIconTabBarTextOnly.$("-header").hasClass("sapMITBTextOnly"), "should have class for text-only version");
 
 		// Clean up
 		oIconTabBarTextOnly.destroy();
@@ -783,7 +783,9 @@ sap.ui.define([
 		oList.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		assert.ok(jQuery('.sapMITBFilter').length > 0, 'IconTabFilters are rendered');
+		assert.ok(jQuery('.sapMITBHead .sapMITBFilter').length > 0, 'IconTabFilters are rendered');
+
+		oList.destroy();
 	});
 
 	QUnit.test("disabled tab", function(assert) {
@@ -807,7 +809,7 @@ sap.ui.define([
 
 		// Assert
 
-		var aTabs = oIconTabBar.$().find('.sapMITBFilter');
+		var aTabs = oIconTabBar.$().find('.sapMITBHead .sapMITBFilter');
 
 		assert.ok(!aTabs[0].hasAttribute('aria-disabled'), "First item is not disabled");
 		assert.ok(aTabs[1].hasAttribute('aria-disabled'), "Second item is disabled");
@@ -1058,6 +1060,7 @@ sap.ui.define([
 		// add IconTabSeparator
 		oIconTabFilter.setIconColor(IconColor.Positive);
 		oIconTabBar.addItem(new IconTabSeparator());
+		this.clock.tick(500);
 		Core.applyChanges();
 
 		// Assert
@@ -1301,8 +1304,8 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// Assert
-		assert.ok(oIconTabBar.$().find(".sapMITBCount").length == 3, '3 "counts" texts are displayed');
-		assert.ok(jQuery(oIconTabBar.$().find(".sapMITBText")[0]).text() == "Text 1", "The text is correct");
+		assert.ok(oIconTabBar.$().find(".sapMITBHead .sapMITBCount").length == 3, '3 "counts" texts are displayed');
+		assert.ok(jQuery(oIconTabBar.$().find(".sapMITBHead .sapMITBText")[0]).text() == "Text 1", "The text is correct");
 
 		oIconTabBar.setHeaderMode(IconTabHeaderMode.Inline);
 
@@ -1311,8 +1314,8 @@ sap.ui.define([
 		var bRtl = Core.getConfiguration().getRTL();
 		var sText = bRtl ? "(10) Text 1" : "Text 1 (10)";
 
-		assert.ok(oIconTabBar.$().find(".sapMITBCount").length == 0, '"counts" texts are not displayed');
-		assert.equal(jQuery(oIconTabBar.$().find(".sapMITBText")[0]).text(), sText, "The count is attached to the text");
+		assert.ok(oIconTabBar.$().find(".sapMITBHead .sapMITBCount").length == 0, '"counts" texts are not displayed');
+		assert.equal(jQuery(oIconTabBar.$().find(".sapMITBHead .sapMITBText")[0]).text(), sText, "The count is attached to the text");
 
 		// Clean up
 		oIconTabBar.destroy();
@@ -2068,13 +2071,14 @@ sap.ui.define([
 		// wait 500ms
 		this.clock.tick(500);
 
-		var $tab = oIconTabBar._getIconTabHeader().$().find('.sapMITBText').first();
+		var $tab = oIconTabBar._getIconTabHeader().$().find('.sapMITBHead .sapMITBText').first();
 
 		// Assert
 		assert.ok($tab.text() == sNewText, "the text is changed");
 
 		// Clean up
 		oIconTabBar.destroy();
+		oObjectHeader.destroy();
 	});
 
 	QUnit.test("change the current content when change IconTabFilter content aggregation", function(assert) {
@@ -2135,35 +2139,46 @@ sap.ui.define([
 	});
 
 	QUnit.test("IconTabHeader propagates properties to its child items", function(assert) {
-
 		// Arrange
-		var oIconTabHeader = new IconTabHeader({
-				showOverflowSelectList: true,
-				items: [
-					new IconTabFilter({
-						icon: "sap-icon://manager",
-						visible: "{/tabVisible}"
-					})
-				]
-			}),
-			bTabVisible = false;
+		var aTabs = [];
+		for (var i = 0; i < 100; i++) {
+			aTabs.push(new IconTabFilter({
+				icon: "sap-icon://collaborate"
+			}));
+		}
 
-		oIconTabHeader.setModel(new JSONModel({tabVisible: bTabVisible}));
+		aTabs.push(new IconTabFilter({
+			icon: "sap-icon://manager",
+			enabled: "{/tabEnabled}"
+		}));
+
+		var oITH = new IconTabHeader({ items: aTabs }),
+			bTabEnabled = false;
+
+		oITH.setModel(new JSONModel({ tabEnabled: bTabEnabled }));
+
+		oITH.placeAt("qunit-fixture");
+		Core.applyChanges();
 
 		// act
-		oIconTabHeader._overflowButtonPress();
+		var oButton = oITH.$().find('.sapMITHOverflow button');
+		oButton.trigger('tap');
 
 		// Assert
-		assert.strictEqual(oIconTabHeader._getSelectList().getItems()[0].getVisible(), bTabVisible, "property has propagated");
+		var oSelectList = oITH._getSelectList().getItems();
+		assert.strictEqual(oSelectList.pop().getEnabled(), bTabEnabled, "property has propagated");
 
 		// act (reopen)
-		oIconTabHeader._overflowButtonPress();
+		oButton = oITH.$().find('.sapMITHOverflow button');
+		oButton.trigger('tap');
+		Core.applyChanges();
 
 		// Assert
-		assert.strictEqual(oIconTabHeader._getSelectList().getItems()[0].getVisible(), bTabVisible, "property has propagated");
+		oSelectList = oITH._getSelectList().getItems();
+		assert.strictEqual(oSelectList.pop().getEnabled(), bTabEnabled, "property has propagated");
 
 		// Clean up
-		oIconTabHeader.destroy();
+		oITH.destroy();
 	});
 
 	QUnit.module("tabs");
@@ -2254,9 +2269,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Rendering", function (assert) {
-		assert.strictEqual(this.oIconTabBar.$().find('.sapMITHOverflowButton button').length, 1, "Overflow button is rendered");
+		assert.strictEqual(this.oIconTabBar.$().find('.sapMITHOverflow button').length, 1, "Overflow button is rendered");
 
-		var oButton = this.oIconTabBar.$().find('.sapMITHOverflowButton button');
+		var oButton = this.oIconTabBar.$().find('.sapMITHOverflow button');
 		oButton.trigger('tap');
 
 		Core.applyChanges();
@@ -2271,7 +2286,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// Act
-		this.oIconTabBar.$().find('.sapMITHOverflowButton button').trigger('tap');
+		this.oIconTabBar.$().find('.sapMITHOverflow button').trigger('tap');
 
 		Core.applyChanges();
 
@@ -2281,7 +2296,7 @@ sap.ui.define([
 
 	QUnit.test("Selection must result in the tab filter to show up in the strip", function (assert) {
 		// Arrange
-		this.oIconTabBar.$().find('.sapMITHOverflowButton button').trigger('tap');
+		this.oIconTabBar.$().find('.sapMITHOverflow button').trigger('tap');
 
 		Core.applyChanges();
 
@@ -2303,7 +2318,7 @@ sap.ui.define([
 	QUnit.test("Filters cloning", function (assert) {
 		// Arrange
 		var oIconTabHeader = this.oIconTabBar.getAggregation("_header"),
-			oOverflowButton = this.oIconTabBar.$().find('.sapMITHOverflowButton button'),
+			oOverflowButton = this.oIconTabBar.$().find('.sapMITHOverflow button'),
 			aItems = oIconTabHeader.getItems(),
 			aItemsInStrip = oIconTabHeader._getItemsInStrip(),
 			aClonedItems;
@@ -2339,20 +2354,21 @@ sap.ui.define([
 	QUnit.test("Posinset, Setsize, Level", function (assert) {
 		Core.applyChanges();
 
-		var $tabFilters = this.oIconTabBar.$().find('.sapMITBFilter');
+		var $tabFilters = this.oIconTabBar.$().find('.sapMITBHead .sapMITBFilter');
 
 		assert.strictEqual($tabFilters[1].getAttribute('aria-posinset'), "2", "posinset is set correctly");
 		assert.strictEqual($tabFilters[1].getAttribute('aria-setsize'), "29", "setsize is set correctly");
 		assert.strictEqual($tabFilters[1].getAttribute('aria-level'), null, "level is not set while tab is in tab strip");
 
-		this.oIconTabBar._getIconTabHeader().$("overflowButton").trigger("tap");
-
+		this.oIconTabBar.$().find('.sapMITHOverflow button').trigger('tap');
 		Core.applyChanges();
 
 		var $selectList = jQuery('.sapMITBSelectList');
 		var $selectItems = $selectList.find('.sapMITBSelectItem');
 
-		assert.strictEqual($selectItems[1].getAttribute('aria-posinset'), "15", "posinset is set correctly");
+		var iDelta = this.oIconTabBar._getIconTabHeader()._getItemsInStrip().length;
+
+		assert.strictEqual($selectItems[1].getAttribute('aria-posinset'), iDelta + 1 + "", "posinset is set correctly");
 		assert.strictEqual($selectItems[1].getAttribute('aria-setsize'), "29", "setsize is set correctly");
 		assert.strictEqual($selectItems[1].getAttribute('aria-level'), "1", "level is set correctly");
 	});
@@ -2534,12 +2550,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Remove Tab", function (assert) {
-		assert.strictEqual(this.oIconTabHeader.$().find('.sapMITBFilter').length, 2, "2 tabs are displayed");
+		assert.strictEqual(this.oIconTabHeader.$().find('.sapMITBHead .sapMITBFilter').length, 2, "2 tabs are displayed");
 
 		this.oIconTabHeader.getItems()[0].setVisible(false);
 		Core.applyChanges();
 
-		assert.strictEqual(this.oIconTabHeader.$().find('.sapMITBFilter').length, 1, "1 tab are displayed");
+		assert.strictEqual(this.oIconTabHeader.$().find('.sapMITBHead .sapMITBFilter').length, 1, "1 tab are displayed");
 	});
 
 	QUnit.module("IconTabHeader Tab density mode");
@@ -2855,7 +2871,10 @@ sap.ui.define([
 
 			this.oIconTabHeader = this.oIconTabBar.getAggregation("_header");
 			this.oSelectList = this.oIconTabHeader._getSelectList();
-			this.oIconTabHeader._overflowButtonPress();
+
+			var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
+			oButton.trigger('tap');
+
 			var selectListItems = this.oSelectList.getAggregation("items");
 
 			function getSelectListId (iElement) {
@@ -2908,64 +2927,86 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Drag&Drop dropPosition: 'After' (placing 'Tab 13' after 'Tab 15')", function(assert) {
+	QUnit.test("Drag&Drop dropPosition: 'After'", function(assert) {
 		// length of items in tab strip used to offset the index of items aggregation with
 		var iDelta = this.oIconTabHeader._getItemsInStrip().length;
 
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 0].getText(), "Tab 13", "Tab at index " + (iDelta + 0) + " in items aggregation is 'Tab 13'");
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 1].getText(), "Tab 14", "Tab at index " + (iDelta + 1) + " in items aggregation is 'Tab 14'");
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 2].getText(), "Tab 15", "Tab at index " + (iDelta + 2) + " in items aggregation is 'Tab 15'");
+		var aTabs = this.oIconTabBar.getItems(),
+			oTab0 = aTabs[iDelta + 0], // 12
+			oTab1 = aTabs[iDelta + 1], // 13
+			oTab2 = aTabs[iDelta + 2]; // 14
 
-		assert.strictEqual(this.oSelectList.getItems()[0].getText(), "Tab 13", "First Tab in Overflow is 'Tab 13'");
-		assert.strictEqual(this.oSelectList.getItems()[1].getText(), "Tab 14", "Second Tab in Overflow is 'Tab 14'");
-		assert.strictEqual(this.oSelectList.getItems()[2].getText(), "Tab 15", "Third Tab in Overflow is 'Tab 15'");
+		var aSelectListItems = this.oSelectList.getItems(),
+			oListItem0 = aSelectListItems[0],
+			oListItem1 = aSelectListItems[1],
+			oListItem2 = aSelectListItems[2];
+
+		// Assert
+		assert.strictEqual(oListItem0.getText(), oTab0.getText(), "First Tab in Overflow is - " + oTab0.getText());
+		assert.strictEqual(oListItem1.getText(), oTab1.getText(), "Second Tab in Overflow is - " + oTab1.getText());
+		assert.strictEqual(oListItem2.getText(), oTab2.getText(), "Third Tab in Overflow is - " + oTab2.getText());
 
 		// Act
 		this.oSelectList._handleDragAndDrop(this.oMockEvent);
-
 		this.clock.tick(500);
 		Core.applyChanges();
+
 		iDelta = this.oIconTabHeader._getItemsInStrip().length;
+		// Assert
+		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 0].getText(), oTab1.getText(), "Tab at index " + (iDelta + 0) + " in items aggregation is now - " + oTab1.getText());
+		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 1].getText(), oTab2.getText(), "Tab at index " + (iDelta + 1) + " in items aggregation is now - " + oTab2.getText());
+		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 2].getText(), oTab0.getText(), "Tab at index " + (iDelta + 2) + " in items aggregation is now - " + oTab0.getText());
+
+		aSelectListItems = this.oSelectList.getItems();
+		oListItem0 = aSelectListItems[0];
+		oListItem1 = aSelectListItems[1];
+		oListItem2 = aSelectListItems[2];
 
 		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 0].getText(), "Tab 14", "Tab at index " + (iDelta + 0) + " in items aggregation is position is 'Tab 14'");
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 1].getText(), "Tab 15", "Tab at index " + (iDelta + 1) + " in items aggregation is position is 'Tab 15'");
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 2].getText(), "Tab 13", "Tab at index " + (iDelta + 2) + " in items aggregation is position is 'Tab 13'");
-
-		assert.strictEqual(this.oSelectList.getItems()[0].getText(), "Tab 14", "First Tab in Overflow is 'Tab 14'");
-		assert.strictEqual(this.oSelectList.getItems()[1].getText(), "Tab 15", "Second Tab in Overflow is 'Tab 15'");
-		assert.strictEqual(this.oSelectList.getItems()[2].getText(), "Tab 13", "Third Tab in Overflow is 'Tab 13'");
+		assert.strictEqual(oListItem0.getText(), oTab1.getText(), "First Tab in Overflow is now - " + oTab1.getText());
+		assert.strictEqual(oListItem1.getText(), oTab2.getText(), "Second Tab in Overflow is now - " + oTab2.getText());
+		assert.strictEqual(oListItem2.getText(), oTab0.getText(), "Third Tab in Overflow is now - " + oTab0.getText());
 	});
 
-	QUnit.test("Drag&Drop dropPosition: 'Before' (placing 'Tab 13' before 'Tab 15')", function(assert) {
+	QUnit.test("Drag&Drop dropPosition: 'Before'", function(assert) {
+		// Arrange
+
 		// length of items in tab strip used to offset the index of items aggregation with
 		var iDelta = this.oIconTabHeader._getItemsInStrip().length;
 
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 0].getText(), "Tab 13", "Tab at index " + (iDelta + 0) + " in items aggregation is 'Tab 13'");
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 1].getText(), "Tab 14", "Tab at index " + (iDelta + 1) + " in items aggregation is 'Tab 14'");
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 2].getText(), "Tab 15", "Tab at index " + (iDelta + 2) + " in items aggregation is 'Tab 15'");
+		var aTabs = this.oIconTabBar.getItems(),
+			oTab0 = aTabs[iDelta + 0],
+			oTab1 = aTabs[iDelta + 1],
+			oTab2 = aTabs[iDelta + 2];
 
-		assert.strictEqual(this.oSelectList.getItems()[0].getText(), "Tab 13", "First Tab in Overflow is 'Tab 13'");
-		assert.strictEqual(this.oSelectList.getItems()[1].getText(), "Tab 14", "Second Tab in Overflow is 'Tab 14'");
-		assert.strictEqual(this.oSelectList.getItems()[2].getText(), "Tab 15", "Third Tab in Overflow is 'Tab 15'");
+		var aSelectListItems = this.oSelectList.getItems(),
+			oListItem0 = aSelectListItems[0],
+			oListItem1 = aSelectListItems[1],
+			oListItem2 = aSelectListItems[2];
+
+		// Assert
+		assert.strictEqual(oListItem0.getText(), oTab0.getText(), "First Tab in Overflow is - " + oTab0.getText());
+		assert.strictEqual(oListItem1.getText(), oTab1.getText(), "Second Tab in Overflow is - " + oTab1.getText());
+		assert.strictEqual(oListItem2.getText(), oTab2.getText(), "Third Tab in Overflow is - " + oTab2.getText());
 
 		// Act
 		this.oSelectList._handleDragAndDrop(this.oMockEvent2);
 		this.clock.tick(500);
 		Core.applyChanges();
 
-		iDelta = this.oIconTabHeader._getItemsInStrip().length;
-
 		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 0].getText(), "Tab 14", "Tab at index " + (iDelta + 0) + " in items aggregation is position is 'Tab 14'");
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 1].getText(), "Tab 13", "Tab at index " + (iDelta + 1) + " in items aggregation is position is 'Tab 13'");
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 2].getText(), "Tab 15", "Tab at index " + (iDelta + 2) + " in items aggregation is position is 'Tab 15'");
+		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 0].getText(), oTab1.getText(), "Tab at index " + (iDelta + 0) + " in items aggregation is now - " + oTab1.getText());
+		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 1].getText(), oTab0.getText(), "Tab at index " + (iDelta + 1) + " in items aggregation is now - " + oTab0.getText());
+		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 2].getText(), oTab2.getText(), "Tab at index " + (iDelta + 2) + " in items aggregation is now - " + oTab2.getText());
 
-		assert.strictEqual(this.oSelectList.getItems()[0].getText(), "Tab 14", "First Tab in Overflow is 'Tab 14'");
-		assert.strictEqual(this.oSelectList.getItems()[1].getText(), "Tab 13", "Second Tab in Overflow is 'Tab 13'");
-		assert.strictEqual(this.oSelectList.getItems()[2].getText(), "Tab 15", "Third Tab in Overflow is 'Tab 15'");
+		aSelectListItems = this.oSelectList.getItems();
+		oListItem0 = aSelectListItems[0];
+		oListItem1 = aSelectListItems[1];
+		oListItem2 = aSelectListItems[2];
+
+		assert.strictEqual(oListItem0.getText(), oTab1.getText(), "First Tab in Overflow is now - " + oTab1.getText());
+		assert.strictEqual(oListItem1.getText(), oTab0.getText(), "Second Tab in Overflow is now - " + oTab0.getText());
+		assert.strictEqual(oListItem2.getText(), oTab2.getText(), "Third Tab in Overflow is now - " + oTab2.getText());
 
 	});
 
@@ -2977,7 +3018,10 @@ sap.ui.define([
 
 			this.oIconTabHeader = this.oIconTabBar.getAggregation("_header");
 			this.oSelectList = this.oIconTabHeader._getSelectList();
-			this.oIconTabHeader._overflowButtonPress();
+
+			var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
+			oButton.trigger('tap');
+
 			var selectListItems = this.oSelectList.getAggregation("items");
 
 			function getSelectListId (iElement) {
@@ -3020,75 +3064,87 @@ sap.ui.define([
 	});
 
 	QUnit.test("Overflow button", function(assert) {
-		var oOverflowButton = this.oIconTabHeader._getOverflowButton();
-
+		var oOverflowButton = this.oIconTabHeader._getOverflow()._getExpandButton();
 		assert.ok(!oOverflowButton.$().hasClass("sapMBtnDragOver"), "Overflow button has default state");
+
 		this.oIconTabHeader._handleOnDragOver({preventDefault: function () {}});
+
 		assert.ok(oOverflowButton.$().hasClass("sapMBtnDragOver"), "Overflow button is in 'drag over' state ");
+
 		this.oIconTabHeader._handleOnDragLeave();
+
 		assert.ok(!oOverflowButton.$().hasClass("sapMBtnDragOver"), "Overflow button has default state");
 	});
 
-	QUnit.test("Drag&Drop dropPosition: 'After' (placing 'Tab 13' after 'Tab 3')", function(assert) {
+	QUnit.test("Drag&Drop dropPosition: 'After'", function(assert) {
 		// length of items in tab strip used to offset the index of items aggregation with
-		var iDelta = this.oIconTabHeader._getItemsInStrip().length;
+		var aTabsInStrip = this.oIconTabHeader._getItemsInStrip(),
+			iDelta = aTabsInStrip.length;
+
+		var aItems = this.oIconTabHeader.getItems(),
+			oTabInOverflow = aItems[iDelta + 0],
+			oTabInStrip3 = aItems[3],
+			oTabInStrip4 = aItems[4];
 
 		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 0].getText(), "Tab 13", "Tab at index " + (iDelta + 0) + " in items aggregation is 'Tab 13'");
-		assert.strictEqual(this.oIconTabBar.getItems()[3].getText(), "Tab 3", "Tab at index " + 3 + " in items aggregation is 'Tab 3'");
-		assert.strictEqual(this.oIconTabBar.getItems()[4].getText(), "Tab 4", "Tab at index " + 4 + " in items aggregation is 'Tab 4'");
-
-		assert.strictEqual(this.oSelectList.getItems()[0].getText(), "Tab 13", "First Tab in Overflow is 'Tab 13'");
-		assert.strictEqual(this.oIconTabHeader._getItemsInStrip()[3].getText(), "Tab 3", "Fourth tab in Tab Strip is 'Tab 3'");
-		assert.strictEqual(this.oIconTabHeader._getItemsInStrip()[4].getText(), "Tab 4", "Fifth tab in Tab Strip is 'Tab 4'");
+		assert.strictEqual(this.oSelectList.getItems()[0].getText(), oTabInOverflow.getText(), "First Tab in Overflow is - " + oTabInOverflow.getText());
+		assert.strictEqual(aTabsInStrip[3].getText(), oTabInStrip3.getText(), "Fourth tab in Tab Strip is - " + oTabInStrip3.getText());
+		assert.strictEqual(aTabsInStrip[4].getText(), oTabInStrip4.getText(), "Fifth tab in Tab Strip is - " + oTabInStrip4.getText());
 
 		// Act
 		this.oIconTabHeader._handleDragAndDrop(this.oMockEvent);
-
 		this.clock.tick(500);
 		Core.applyChanges();
-		iDelta = this.oIconTabHeader._getItemsInStrip().length;
+
+		aTabsInStrip = this.oIconTabHeader._getItemsInStrip();
 
 		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 0].getText(), "Tab 12", "Tab at index " + (iDelta + 0) + " in items aggregation is 'Tab 12'");
-		assert.strictEqual(this.oIconTabBar.getItems()[3].getText(), "Tab 3", "Tab at index " + (3) + " in items aggregation is 'Tab 3'");
-		assert.strictEqual(this.oIconTabBar.getItems()[4].getText(), "Tab 13", "Tab at index " + (4) + " in items aggregation is 'Tab 13'");
+		assert.strictEqual(this.oIconTabBar.getItems()[3].getText(), oTabInStrip3.getText(), "Tab at index " + (3) + " in items aggregation is now - " + oTabInStrip3.getText());
+		assert.strictEqual(this.oIconTabBar.getItems()[4].getText(), oTabInOverflow.getText(), "Tab at index " + (4) + " in items aggregation is now - " + oTabInOverflow.getText());
 
-		assert.notStrictEqual(this.oSelectList.getItems()[0].getText(), "Tab 13", "First Tab in Overflow is not 'Tab 13' after tab was moved");
+		// Arrange
+		var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
+		oButton.trigger('tap');
 
-		assert.strictEqual(this.oIconTabHeader._getItemsInStrip()[3].getText(), "Tab 3", "Fourth tab in Tab Strip is 'Tab 3'");
-		assert.strictEqual(this.oIconTabHeader._getItemsInStrip()[4].getText(), "Tab 13", "Fifth tab in Tab Strip is 'Tab 13'");
+		// Assert
+		assert.notStrictEqual(this.oSelectList.getItems()[0].getText(), oTabInOverflow.getText(), "First Tab in Overflow is not '" + oTabInOverflow.getText() + "' anymore after it was moved");
+		assert.strictEqual(aTabsInStrip[3].getText(), oTabInStrip3.getText(), "Fourth tab in Tab Strip is now - " + oTabInStrip3.getText());
+		assert.strictEqual(aTabsInStrip[4].getText(), oTabInOverflow.getText(), "Fifth tab in Tab Strip is now - " + oTabInOverflow.getText());
 	});
 
-	QUnit.test("Drag&Drop dropPosition: 'Before' (placing 'Tab 13' before 'Tab 3')", function(assert) {
-		// length of items in tab strip used to offset the index of items aggregation with
-		var iDelta = this.oIconTabHeader._getItemsInStrip().length;
+	QUnit.test("Drag&Drop dropPosition: 'Before'", function(assert) {
+		var aTabsInStrip = this.oIconTabHeader._getItemsInStrip(),
+			iDelta = aTabsInStrip.length;
+
+		var aItems = this.oIconTabHeader.getItems(),
+			oTabInOverflow = aItems[iDelta + 0],
+			oTabInStrip3 = aItems[3],
+			oTabInStrip4 = aItems[4];
 
 		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 0].getText(), "Tab 13", "Tab at index " + (iDelta + 0) + " in items aggregation is 'Tab 13'");
-		assert.strictEqual(this.oIconTabBar.getItems()[3].getText(), "Tab 3", "Tab at index " + 3 + " in items aggregation is 'Tab 3'");
-		assert.strictEqual(this.oIconTabBar.getItems()[4].getText(), "Tab 4", "Tab at index " + 4 + " in items aggregation is 'Tab 4'");
-
-		assert.strictEqual(this.oSelectList.getItems()[0].getText(), "Tab 13", "First Tab in Overflow is 'Tab 13'");
-		assert.strictEqual(this.oIconTabHeader._getItemsInStrip()[3].getText(), "Tab 3", "Fourth tab in Tab Strip is 'Tab 3'");
-		assert.strictEqual(this.oIconTabHeader._getItemsInStrip()[4].getText(), "Tab 4", "Fifth tab in Tab Strip is 'Tab 4'");
+		assert.strictEqual(this.oSelectList.getItems()[0].getText(), oTabInOverflow.getText(), "First Tab in Overflow is - " + oTabInOverflow.getText());
+		assert.strictEqual(aTabsInStrip[3].getText(), oTabInStrip3.getText(), "Fourth tab in Tab Strip is - " + oTabInStrip3.getText());
+		assert.strictEqual(aTabsInStrip[4].getText(), oTabInStrip4.getText(), "Fifth tab in Tab Strip is - " + oTabInStrip4.getText());
 
 		// Act
 		this.oIconTabHeader._handleDragAndDrop(this.oMockEvent2);
-
 		this.clock.tick(500);
 		Core.applyChanges();
-		iDelta = this.oIconTabHeader._getItemsInStrip().length;
+
+		aTabsInStrip = this.oIconTabHeader._getItemsInStrip();
 
 		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 0].getText(), "Tab 12", "Tab at index " + (iDelta + 0) + " in items aggregation is 'Tab 12'");
-		assert.strictEqual(this.oIconTabBar.getItems()[3].getText(), "Tab 13", "Tab at index " + (3) + " in items aggregation is 'Tab 13'");
-		assert.strictEqual(this.oIconTabBar.getItems()[4].getText(), "Tab 3", "Tab at index " + (4) + " in items aggregation is 'Tab 3'");
+		assert.strictEqual(this.oIconTabBar.getItems()[3].getText(), oTabInOverflow.getText(), "Tab at index " + (3) + " in items aggregation is now - " + oTabInOverflow.getText());
+		assert.strictEqual(this.oIconTabBar.getItems()[4].getText(), oTabInStrip3.getText(), "Tab at index " + (4) + " in items aggregation is now - " + oTabInStrip3.getText());
 
-		assert.notStrictEqual(this.oSelectList.getItems()[0].getText(), "Tab 13", "First Tab in Overflow is not 'Tab 13' after tab was moved");
+		// Arrange
+		var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
+		oButton.trigger('tap');
 
-		assert.strictEqual(this.oIconTabHeader._getItemsInStrip()[3].getText(), "Tab 13", "Fourth tab in Tab Strip is 'Tab 13'");
-		assert.strictEqual(this.oIconTabHeader._getItemsInStrip()[4].getText(), "Tab 3", "Fifth tab in Tab Strip is 'Tab 3'");
+		// Assert
+		assert.notStrictEqual(this.oSelectList.getItems()[0].getText(), oTabInOverflow.getText(), "First Tab in Overflow is not '" + oTabInOverflow.getText() + "' anymore after it was moved");
+		assert.strictEqual(aTabsInStrip[3].getText(), oTabInOverflow.getText(), "Fifth tab in Tab Strip is now - " + oTabInOverflow.getText());
+		assert.strictEqual(aTabsInStrip[4].getText(), oTabInStrip3.getText(), "Fourth tab in Tab Strip is now - " + oTabInStrip3.getText());
 	});
 
 	QUnit.module("Drag&Drop: From Tab Strip to Overflow list", {
@@ -3099,11 +3155,14 @@ sap.ui.define([
 
 			this.oIconTabHeader = this.oIconTabBar.getAggregation("_header");
 			this.oSelectList = this.oIconTabHeader._getSelectList();
-			this.oIconTabHeader._overflowButtonPress();
+
+			var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
+			oButton.trigger('tap');
+
 			var selectListItems = this.oSelectList.getAggregation("items");
 
 			function getSelectListId (iElement) {
-				return  selectListItems[iElement].sId;
+				return selectListItems[iElement].sId;
 			}
 
 			this.oMockEvent = {
@@ -3143,71 +3202,76 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Drag&Drop dropPosition: 'After' (placing 'Tab 2' after 'Tab 16')", function(assert) {
+	QUnit.test("Drag&Drop dropPosition: 'After'", function(assert) {
 		this.clock.tick(500);
 		Core.applyChanges();
 
 		// length of items in tab strip used to offset the index of items aggregation with
-		var iDelta = this.oIconTabHeader._getItemsInStrip().length;
+		var aTabsInStrip = this.oIconTabHeader._getItemsInStrip(),
+			iDelta = aTabsInStrip.length;
 
-		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Tab 2", "Tab at index " + 2 + " in items aggregation is 'Tab 2'");
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 3].getText(), "Tab 16", "Tab at index " + (iDelta + 3) + " in items aggregation is 'Tab 16'");
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 4].getText(), "Tab 17", "Tab at index " + (iDelta + 4) + " in items aggregation is 'Tab 17'");
+		var aItems = this.oIconTabHeader.getItems(),
+			oTabInStrip2 = aItems[2],
+			oTabInOverflow2 = aItems[iDelta + 2],
+			oTabInOverflow3 = aItems[iDelta + 3];
 
-		assert.strictEqual(this.oIconTabHeader._getItemsInStrip()[2].getText(), "Tab 2", "Third tab in Tab Strip is 'Tab 2'");
-		assert.strictEqual(this.oSelectList.getItems()[2].getText(), "Tab 15", "Third Tab in Overflow is 'Tab 15'");
-		assert.strictEqual(this.oSelectList.getItems()[3].getText(), "Tab 16", "Fourth Tab in Overflow is 'Tab 16'");
-		assert.strictEqual(this.oSelectList.getItems()[4].getText(), "Tab 17", "Fifth Tab in Overflow is 'Tab 17'");
+		assert.strictEqual(this.oIconTabHeader._getItemsInStrip()[2].getText(), oTabInStrip2.getText(), "Third tab in Tab Strip is - " + oTabInStrip2.getText());
+		assert.strictEqual(this.oSelectList.getItems()[2].getText(), oTabInOverflow2.getText(), "Third Tab in Overflow is - " + oTabInOverflow2.getText());
+		assert.strictEqual(this.oSelectList.getItems()[3].getText(), oTabInOverflow3.getText(), "Fourth Tab in Overflow is - " + oTabInOverflow3.getText());
 
 		// Act
 		this.oSelectList._handleDragAndDrop(this.oMockEvent);
-
 		this.clock.tick(500);
 		Core.applyChanges();
 
 		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Tab 3", "Tab at index " + (2) + " in items aggregation is now 'Tab 3'");
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 2].getText(), "Tab 16", "Tab at index " + (iDelta + 2) + " in items aggregation is 'Tab 16'");
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 3].getText(), "Tab 2", "Tab at index " + (iDelta + 3) + " in items aggregation is 'Tab 2'");
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 4].getText(), "Tab 17", "Tab at index " + (iDelta + 4) + " in items aggregation is 'Tab 17'");
+		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 2].getText(), oTabInOverflow3.getText(), "Tab at index " + (iDelta + 2) + " in items aggregation is now - " + oTabInOverflow3.getText());
+		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 3].getText(), oTabInStrip2.getText(), "Tab at index " + (iDelta + 3) + " in items aggregation is now - " + oTabInStrip2.getText());
 
-		assert.strictEqual(this.oIconTabHeader._getItemsInStrip()[2].getText(), "Tab 3", "Third Tab in Tab Strip is now 'Tab 3' after 'Tab 2' was moved");
-		assert.strictEqual(this.oSelectList.getItems()[2].getText(), "Tab 16", "Third Tab in Overflow is 'Tab 16'");
-		assert.strictEqual(this.oSelectList.getItems()[3].getText(), "Tab 2", "Fourth Tab in Overflow is 'Tab 2'");
-		assert.strictEqual(this.oSelectList.getItems()[4].getText(), "Tab 17", "Fifth Tab in Overflow is 'Tab 17'");
+		// Arrange
+		var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
+		oButton.trigger('tap');
+
+		// Assert
+		assert.notStrictEqual(this.oIconTabHeader._getItemsInStrip()[2].getText(), oTabInStrip2.getText(), "Third Tab in Tab Strip is not '" + oTabInStrip2.getText() + "' anymore after it was moved");
+		assert.strictEqual(this.oSelectList.getItems()[2].getText(), oTabInOverflow3.getText(), "Third Tab in Overflow is now - " + oTabInOverflow3.getText());
+		assert.strictEqual(this.oSelectList.getItems()[3].getText(), oTabInStrip2.getText(), "Fourth Tab in Overflow is now - " + oTabInStrip2.getText());
 	});
 
-	QUnit.test("Drag&Drop dropPosition: 'Before' (placing 'Tab 0' before 'Tab 16')", function(assert) {
+	QUnit.test("Drag&Drop dropPosition: 'Before'", function(assert) {
 		this.clock.tick(500);
 		Core.applyChanges();
 
 		// length of items in tab strip used to offset the index of items aggregation with
-		var iDelta = this.oIconTabHeader._getItemsInStrip().length;
+		var aTabsInStrip = this.oIconTabHeader._getItemsInStrip(),
+			iDelta = aTabsInStrip.length;
 
-		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Tab 2", "Tab at index " + 2 + " in items aggregation is 'Tab 2'");
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 2].getText(), "Tab 15", "Tab at index " + (iDelta + 2) + " in items aggregation is 'Tab 15'");
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 3].getText(), "Tab 16", "Tab at index " + (iDelta + 3) + " in items aggregation is 'Tab 16'");
+		var aItems = this.oIconTabHeader.getItems(),
+			oTabInStrip2 = aItems[2],
+			oTabInOverflow2 = aItems[iDelta + 2],
+			oTabInOverflow3 = aItems[iDelta + 3];
 
-		assert.strictEqual(this.oIconTabHeader._getItemsInStrip()[2].getText(), "Tab 2", "Third tab in Tab Strip is 'Tab 2'");
-		assert.strictEqual(this.oSelectList.getItems()[2].getText(), "Tab 15", "Third Tab in Overflow is 'Tab 15'");
-		assert.strictEqual(this.oSelectList.getItems()[3].getText(), "Tab 16", "Fourth Tab in Overflow is 'Tab 16'");
+		assert.strictEqual(this.oIconTabHeader._getItemsInStrip()[2].getText(), oTabInStrip2.getText(), "Third tab in Tab Strip is - " + oTabInStrip2.getText());
+		assert.strictEqual(this.oSelectList.getItems()[2].getText(), oTabInOverflow2.getText(), "Third Tab in Overflow is - " + oTabInOverflow2.getText());
+		assert.strictEqual(this.oSelectList.getItems()[3].getText(), oTabInOverflow3.getText(), "Fourth Tab in Overflow is - " + oTabInOverflow3.getText());
 
 		// Act
 		this.oSelectList._handleDragAndDrop(this.oMockEvent2);
-
 		this.clock.tick(500);
 		Core.applyChanges();
 
-		iDelta = this.oIconTabHeader._getItemsInStrip().length;
 		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Tab 3", "Tab at index " + (2) + " in items aggregation is now 'Tab 3'");
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 1].getText(), "Tab 15", "Tab at index " + (iDelta + 1) + " in items aggregation is 'Tab 15'");
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 2].getText(), "Tab 2", "Tab at index " + (iDelta + 2) + " in items aggregation is 'Tab 2'");
-		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 3].getText(), "Tab 16", "Tab at index " + (iDelta + 3) + " in items aggregation is 'Tab 16'");
+		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 2].getText(), oTabInStrip2.getText(), "Tab at index " + (iDelta + 2) + " in items aggregation is now - " + oTabInStrip2.getText());
+		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 3].getText(), oTabInOverflow3.getText(), "Tab at index " + (iDelta + 3) + " in items aggregation is now - " + oTabInOverflow3.getText());
 
-		assert.strictEqual(this.oIconTabHeader._getItemsInStrip()[2].getText(), "Tab 3", "Third Tab in Tab Strip is now 'Tab 3' after 'Tab 2' was moved");
-		assert.strictEqual(this.oSelectList.getItems()[2].getText(), "Tab 2", "Third Tab in Overflow is 'Tab 2'");
-		assert.strictEqual(this.oSelectList.getItems()[3].getText(), "Tab 16", "Fourth Tab in Overflow is 'Tab 16'");
+		// Arrange
+		var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
+		oButton.trigger('tap');
+
+		// Assert
+		assert.notStrictEqual(this.oIconTabHeader._getItemsInStrip()[2].getText(), oTabInStrip2.getText(), "Third Tab in Tab Strip is not '" + oTabInStrip2.getText() + "' anymore after it was moved");
+		assert.strictEqual(this.oSelectList.getItems()[2].getText(), oTabInStrip2.getText(), "Fourth Tab in Overflow is now - " + oTabInStrip2.getText());
+		assert.strictEqual(this.oSelectList.getItems()[3].getText(), oTabInOverflow3.getText(), "Third Tab in Overflow is now - " + oTabInOverflow3.getText());
 	});
 
 	QUnit.module("Sticky Content Support");
@@ -3372,13 +3436,16 @@ sap.ui.define([
 
 		var oITH = oITB._getIconTabHeader();
 		var oSetSelectedItemSpy = this.spy(oITH, "setSelectedItem");
-		var oFireSelectionChangeSpy = this.spy(oITH._getSelectList(), "fireSelectionChange");
+		var oOverflow = oITH._getOverflow();
+		var oFireSelectionChangeSpy = this.spy(oOverflow._getSelectList(), "fireSelectionChange");
 		// open overflow
-		qutils.triggerEvent("tap", oITH.$("overflowButton"));
+
+		var oButton = oITH.$().find('.sapMITHOverflow button');
+		oButton.trigger('tap');
 
 		// Assert
-		assert.strictEqual(oITH._oPopover.isOpen(), true, "ITB's popover has been opened");
-		assert.ok(oITH._oPopover.$().find(".sapMITBSelectList").length, "ITB has its overflow select list shown");
+		assert.strictEqual(oOverflow._oPopover.isOpen(), true, "ITB overflow's popover has been opened");
+		assert.ok(oOverflow._oPopover.$().find(".sapMITBSelectList").length, "ITB has its overflow select list shown");
 		assert.strictEqual(oITB.getSelectedKey(), "1", "At start, first tab is selected");
 
 		var oSelectList = oITH._getSelectList().getItems();

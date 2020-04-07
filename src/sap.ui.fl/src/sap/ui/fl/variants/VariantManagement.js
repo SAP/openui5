@@ -543,6 +543,11 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Determines if the current variant is modified.
+	 * @public
+	 * @returns {boolean} If the current variant is modified <code>true</code>, otherwise <code>false</code>
+	 */
 	VariantManagement.prototype.getModified = function() {
 		var oModel = this.getModel(this._sModelName);
 		if (oModel && this.oContext) {
@@ -1420,6 +1425,7 @@ sap.ui.define([
 		if (oIcon) {
 			oIcon.setSrc(bFlagged ? "sap-icon://favorite" : "sap-icon://unfavorite");
 			oIcon.setTooltip(this._oRb.getText(bFlagged ? "VARIANT_MANAGEMENT_FAV_DEL_TOOLTIP" : "VARIANT_MANAGEMENT_FAV_ADD_TOOLTIP"));
+			oIcon.setAlt(this._oRb.getText(bFlagged ? "VARIANT_MANAGEMENT_FAV_DEL_ACC" : "VARIANT_MANAGEMENT_FAV_ADD_ACC"));
 		}
 	};
 

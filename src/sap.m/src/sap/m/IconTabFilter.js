@@ -12,11 +12,11 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Control",
+	'sap/ui/Device',
 	"./AccButton",
 	"sap/m/Button",
 	"sap/m/ResponsivePopover",
-	"sap/m/IconTabBarSelectList",
-	'sap/ui/Device'
+	"sap/m/IconTabBarSelectList"
 ], function (
 	library,
 	coreLibrary,
@@ -26,11 +26,11 @@ sap.ui.define([
 	IconPool,
 	InvisibleText,
 	Control,
+	Device,
 	AccButton,
 	Button,
 	ResponsivePopover,
-	IconTabBarSelectList,
-	Device
+	IconTabBarSelectList
 ) {
 	"use strict";
 
@@ -43,6 +43,7 @@ sap.ui.define([
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
 
+	// shortcut for sap.m.PlacementType
 	var PlacementType = library.PlacementType;
 
 	// shortcut for sap.m.ImageHelper
@@ -307,7 +308,7 @@ sap.ui.define([
 	 * @private
 	 */
 	IconTabFilter.prototype._getRealTab = function () {
-		return this._tabFilter || this;
+		return this._oTabFilter || this;
 	};
 
 	/**
@@ -435,7 +436,6 @@ sap.ui.define([
 				.attr("aria-disabled", true);
 		}
 
-
 		oRM.attr("aria-selected", false);
 
 		var sTooltip = this.getTooltip_AsString();
@@ -521,7 +521,7 @@ sap.ui.define([
 		oRM.openStart("div").class("sapMITBContentArrow").openEnd().close("div");
 		oRM.close("div");
 
-		if (this.getItems() && this.getItems().length > 0) {
+		if (this._bIsOverflow || this.getItems() && this.getItems().length > 0) {
 			oRM.openStart("span")
 				.accessibilityState({ role: "separator" })
 				.openEnd()
@@ -705,10 +705,11 @@ sap.ui.define([
 				selectionChange: function (oEvent) {
 					var oTarget = oEvent.getParameter("selectedItem");
 					this._oIconTabHeader.setSelectedItem(oTarget._getRealTab());
-					this.getParent().close();
+					this._oTabFilter._closeOverflow();
 				}
 			});
 			this._oSelectList._oIconTabHeader = this.getParent();
+			this._oSelectList._oTabFilter = this;
 		}
 		return this._oSelectList;
 	};
@@ -736,7 +737,8 @@ sap.ui.define([
 	 * @private
 	 */
 	IconTabFilter.prototype._expandButtonPress = function () {
-		this.$().focus(); // prepare the next focus
+		// prepare the next focus if the select list gets closed if no item was selected
+		this.$().focus();
 
 		if (!this._oPopover) {
 			this._oPopover = new ResponsivePopover({
@@ -835,30 +837,54 @@ sap.ui.define([
 	};
 
 	/**
-	 * Closes the tree popover
+	 * Closes the popover
 	 * @private
 	 */
 	IconTabFilter.prototype._closeOverflow = function () {
 		if (this._oPopover) {
 			this._oPopover.close();
-			this._oPopover.destroyAllContent();
+			this._oPopover.removeAllContent();
+		}
+
+		if (this._bIsOverflow && this.getParent().oSelectedItem) {
+			(this.getParent()._oSelectedRootItem || this.getParent().oSelectedItem).$().focus();
 		}
 	};
 
+
+	/**
+	 * Populates the IconTabBarSelectList with the context of this instance's items
+	 *
+	 * @returns {boolean} True if a there is selected item in the list, false if the list has no selected items
+	 * @private
+	 */
 	IconTabFilter.prototype._setSelectListItems = function () {
-		var oSelectList = this._getSelectList(),
-			aSubFilters = this.getItems(),
-			oPrevSelectedItem = this.getParent().oSelectedItem,
-			bHasSelectedItem = false;
+		var oIconTabHeader = this.getParent(),
+			oSelectList = this._getSelectList(),
+			aTabFilters = this.getItems(),
+			oPrevSelectedItem = oIconTabHeader.oSelectedItem,
+			bHasSelectedItem = false,
+			aItemsInStrip;
+
+		if (this._bIsOverflow) {
+			aTabFilters = oIconTabHeader.getTabFilters();
+			aItemsInStrip = oIconTabHeader._getItemsInStrip();
+		}
 
 		oSelectList.destroyItems();
 		oSelectList.setSelectedItem(null);
-		for (var i = 0; i < aSubFilters.length; i++) {
-			var oSubFilter = aSubFilters[i];
 
-			var oListItem = oSubFilter.clone(undefined, undefined, { cloneChildren: false, cloneBindings: true });
-			oListItem._tabFilter = oSubFilter; // link list item to its underlying tab filter
+		for (var i = 0; i < aTabFilters.length; i++) {
+			var oTabFilter = aTabFilters[i];
 
+			// If tab is an overflow tab and oTabFilter is already in Tab Strip, do not add it to list
+			// on a mobile device, this behaviour doesn't occur, and all items are shown
+			if (this._bIsOverflow && !Device.system.phone && aItemsInStrip.indexOf(oTabFilter) > -1) {
+				continue;
+			}
+
+			var oListItem = oTabFilter.clone(undefined, undefined, { cloneChildren: false, cloneBindings: true });
+			oListItem._oTabFilter = oTabFilter; // link list item to its underlying tab filter
 			oSelectList.addItem(oListItem);
 
 			if (oListItem._getRealTab() === oPrevSelectedItem) {
@@ -877,10 +903,11 @@ sap.ui.define([
 	};
 
 	IconTabFilter.prototype.onsapdown = function (oEvent) {
-		if ((this._getNestedLevel() === 1 && this._getRealTab() === this)
-			&& this._getRealTab().getItems().length !== 0) {
-				oEvent.stopImmediatePropagation();
-				this._expandButtonPress();
+		if (this._bIsOverflow ||
+				((this._getNestedLevel() === 1 && this._getRealTab() === this) && this._getRealTab().getItems().length !== 0)) {
+
+					oEvent.stopImmediatePropagation();
+					this._expandButtonPress();
 		}
 	};
 

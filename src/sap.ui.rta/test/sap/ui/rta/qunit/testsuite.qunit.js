@@ -58,7 +58,8 @@ sap.ui.define([
 				},
 				ui5: {
 					resourceroots: {
-						testdata: "test-resources/sap/ui/rta/testdata/"
+						testdata: "test-resources/sap/ui/rta/testdata/",
+						testComponent: "test-resources/sap/ui/rta/qunit/testComponent"
 					}
 				}
 			},

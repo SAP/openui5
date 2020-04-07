@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/ExtensionPointRegistry",
-	"sap/ui/core/util/reflection/JsControlTreeModifier"
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/base/util/merge"
 ],
 function(
 	Log,
@@ -17,7 +18,8 @@ function(
 	Applier,
 	Utils,
 	ExtensionPointRegistry,
-	JsControlTreeModifier
+	JsControlTreeModifier,
+	merge
 ) {
 	'use strict';
 
@@ -41,13 +43,15 @@ function(
 			mPropertyBag.name = oExtensionPoint.name;
 
 			var oExtensionPointRegistry = ExtensionPointRegistry.getInstance();
-			oExtensionPointRegistry.registerExtensionPoints(oExtensionPoint);
+			var mExtensionPointInfo = merge({defaultContent: []}, oExtensionPoint);
+			oExtensionPointRegistry.registerExtensionPoints(mExtensionPointInfo);
 
 			return oChangePersistence.getChangesForExtensionPoint(mPropertyBag).then(function (aChanges) {
 				if (aChanges.length === 0) {
 					//default content
 					oExtensionPoint.createDefault().then(function (aControls) {
 						aControls.forEach(function(oNewControl, iIterator) {
+							mExtensionPointInfo.defaultContent.push(oNewControl.getId());
 							JsControlTreeModifier.insertAggregation(oExtensionPoint.targetControl, oExtensionPoint.aggregationName, oNewControl, oExtensionPoint.index + iIterator, oExtensionPoint.view);
 						});
 						oExtensionPoint.ready(aControls);

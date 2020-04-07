@@ -23,6 +23,61 @@ sap.ui.define([
 
 	return {
 		"context": "sap.card",
+		"layout": {
+			"form": {
+				"groups": [
+					{
+						"label": "{i18n>CARD_EDITOR.GROUP.METADATA}",
+						"items": [
+							{
+								type: "tag",
+								value: "app"
+							}
+						]
+					},
+					{
+						"label": "{i18n>CARD_EDITOR.GROUP.GENERALCONFIGURATION}",
+						"items": [
+							{
+								type: "tag",
+								value: "general"
+							}
+						]
+					},
+					{
+						"label": "{i18n>CARD_EDITOR.GROUP.DATA}",
+						"items": [
+							{
+								type: "propertyName",
+								value: "appDataSources"
+							},
+							{
+								type: "tag",
+								value: ["data", "content"]
+							}
+						]
+					},
+					{
+						"label": "{i18n>CARD_EDITOR.GROUP.HEADER}",
+						"items": [
+							{
+								type: "tag",
+								value: "header"
+							}
+						]
+					},
+					{
+						"label": "{i18n>CARD_EDITOR.GROUP.CONTENT}",
+						"items": [
+							{
+								type: "tag",
+								value: "content"
+							}
+						]
+					}
+				]
+			}
+		},
 		"properties" : Object.assign(
 			{},
 			AppConfig,

@@ -78,7 +78,7 @@ sap.ui.define([
 
 			if (bModal){
 				var oClose = jQuery("<button>Close</button>");
-				oClose.click(function(){
+				oClose.on("click", function(){
 					oPopup.close(0);
 				});
 				aAdditionalContent.push(nl());
@@ -94,7 +94,7 @@ sap.ui.define([
 			window["oPopup" + i] = oPopup;
 		}
 
-		$Button.text(sText).click(function(){
+		$Button.text(sText).on("click", function(){
 			var oPopup = window["oPopup" + i];
 
 			if (bModal) {

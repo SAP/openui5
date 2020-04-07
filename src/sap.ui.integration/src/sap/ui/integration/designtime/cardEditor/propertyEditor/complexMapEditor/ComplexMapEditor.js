@@ -138,7 +138,7 @@ sap.ui.define([
 		if (!oComplexMapItem || !oComplexMapItem._aEditorWrappers[iIndex]) {
 			return;
 		}
-		var oKeyInput = oComplexMapItem._aEditorWrappers[iIndex].getAggregation("propertyEditors")[0].getContent();
+		var oKeyInput = oComplexMapItem._aEditorWrappers[iIndex]._getPropertyEditors()[0].getContent();
 
 		if (bHasError) {
 			oKeyInput.setValueState("Error");

@@ -379,8 +379,8 @@ sap.ui.define([
 
 		QUnit.test("Focus", function (assert) { // actually tests jQuery itself
 			var oDomRef = jQuery.sap.domById('control3');
-			jQuery(oDomRef).focus();
-			assert.equal(document.activeElement, oDomRef, "jQuery().focus() failed");
+			jQuery(oDomRef).trigger("focus");
+			assert.equal(document.activeElement, oDomRef, "jQuery().trigger(\"focus\") failed");
 		});
 
 		QUnit.test("ScrollbarSize", function (assert) {

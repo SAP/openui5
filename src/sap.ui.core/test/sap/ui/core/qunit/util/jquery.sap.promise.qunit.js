@@ -514,7 +514,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/Core"], function(Device, Core) {
 			var done = assert.async();
 			var p = P.all([asyncAction(false, "X", 10, false), asyncAction(false, "Y", 10, false)]);
 			p.then(function(oVal){
-				assert.ok(jQuery.isArray(oVal), "Result is array");
+				assert.ok(Array.isArray(oVal), "Result is array");
 				assert.equal(oVal.length, 2, "Result has length 2");
 				assert.equal(oVal[0], "X", "Result[0] is 'X'");
 				assert.equal(oVal[1], "Y", "Result[1] is 'Y'");
@@ -589,7 +589,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/Core"], function(Device, Core) {
 		QUnit.test("Promise.all - non-promise array content", function(assert){
 			var done = assert.async();
 			P.all(["X", new P(function(resolve, reject){resolve("Y");})]).then(function(oVal){
-				assert.ok(jQuery.isArray(oVal), "Result is array");
+				assert.ok(Array.isArray(oVal), "Result is array");
 				assert.equal(oVal.length, 2, "Result has length 2");
 				assert.equal(oVal[0], "X", "Result[0] is 'X'");
 				assert.equal(oVal[1], "Y", "Result[1] is 'Y'");
@@ -1220,7 +1220,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/Core"], function(Device, Core) {
 
 			var p = P.all([asyncAction(false, "X", 10, false), p2]);
 			p.then(function(oVal){
-				assert.ok(jQuery.isArray(oVal), "Result is array");
+				assert.ok(Array.isArray(oVal), "Result is array");
 				assert.equal(oVal.length, 2, "Result has length 2");
 				assert.equal(oVal[0], "X", "Result[0] is 'X'");
 				assert.equal(oVal[1], "Y", "Result[1] is 'Y'");

@@ -32,7 +32,7 @@ sap.ui.define(['sap/ui/core/ComponentContainer', "sap/base/Log", 'sap/ui/core/Co
 			 * unlike the standard ComponentContainer, this ones exposes properties to the outside world and pass them on to the underlying component
 			 */
 			onBeforeRendering: function () {
-				this._oComponent = sap.ui.component("sap.uxap");
+				this._oComponent || (this._oComponent = sap.ui.component("sap.uxap"));
 				if (!this._oComponent) {
 					this._oComponent = sap.ui.component({
 						name: this.getName(),

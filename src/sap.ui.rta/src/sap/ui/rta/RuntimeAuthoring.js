@@ -539,9 +539,7 @@ function(
 
 
 	RuntimeAuthoring.prototype._initVersioning = function() {
-		var sUseVersioning = !!FlexUtils.getUshellContainer();
-		if (sUseVersioning) {
-			return FeaturesAPI.isVersioningEnabled(this.getLayer())
+		return FeaturesAPI.isVersioningEnabled(this.getLayer())
 			.then(function (bVersioningEnabled) {
 				this._bVersioningEnabled = bVersioningEnabled;
 				if (bVersioningEnabled) {
@@ -551,10 +549,6 @@ function(
 					});
 				}
 			}.bind(this));
-		}
-
-		this._bVersioningEnabled = false;
-		return Promise.resolve();
 	};
 
 	/**
@@ -922,7 +916,13 @@ function(
 						var mParsedHash = this._handleParametersOnExit(true);
 						this._triggerCrossAppNavigation(mParsedHash);
 						if (sReload === this._RESTART.RELOAD_PAGE) {
-							this._reloadPage();
+							var sLayer = this.getLayer();
+							var oReloadInfo = {
+								hasHigherLayerChanges: Utils.hasUrlParameterWithValue(LayerUtils.FL_MAX_LAYER_PARAM, sLayer),
+								hasDraftChanges: Utils.hasUrlParameterWithValue(LayerUtils.FL_DRAFT_PARAM, sLayer),
+								layer: sLayer
+							};
+							return this._triggerHardReload(oReloadInfo);
 						}
 					}
 				}.bind(this));
@@ -935,7 +935,7 @@ function(
 	};
 
 	RuntimeAuthoring.prototype.restore = function() {
-		this._onRestore();
+		return this._onRestore();
 	};
 
 	RuntimeAuthoring.prototype.transport = function() {
@@ -1054,55 +1054,46 @@ function(
 		).then(function () {
 			this._showMessageToast("MSG_DRAFT_ACTIVATION_SUCCESS");
 			this.bInitialDraftAvailable = false;
+			this.bInitialResetEnabled = true;
 			this.getToolbar().setRestoreEnabled(true);
 			return this._handleVersionToolbar(false);
 		}.bind(this))
 		.catch(function (oError) {
-			Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_ERROR", "MSG_DRAFT_ACTIVATION_FAILED", oError);
+			Utils.showMessageBox("error", "MSG_DRAFT_ACTIVATION_FAILED", {error: oError});
 		});
 	};
 
-	RuntimeAuthoring.prototype._handleDiscard = function(bHardReload) {
-		var mParsedHash = FlexUtils.getParsedURLHash();
-		var oRootControl = this.getRootControlInstance();
+	RuntimeAuthoring.prototype._handleDiscard = function() {
 		var sLayer = this.getLayer();
-		var mParsedHash = this._handleDraftParameter(mParsedHash);
-		// clears FlexState and triggers reloading of the flex data without blocking
-		// it is actually not loading the draft, because we just discarded it
-		VersionsAPI.loadDraftForApplication({
-			selector: oRootControl,
-			layer: sLayer
-		});
+		RuntimeAuthoring.enableRestart(sLayer, this.getRootControlInstance());
+		if (!FlexUtils.getUshellContainer()) {
+			var oReloadInfo = {
+				hasHigherLayerChanges: false, // do not touch max-layer parameter in url on discard
+				hasDraftChanges: Utils.hasUrlParameterWithValue(LayerUtils.FL_DRAFT_PARAM, sLayer),
+				layer: sLayer
+			};
+			return this._triggerHardReload(oReloadInfo);
+		}
+		var mParsedHash = this._handleDraftParameter(FlexUtils.getParsedURLHash());
 		this.getCommandStack().removeAllCommands();
 		this._triggerCrossAppNavigation(mParsedHash);
-		RuntimeAuthoring.enableRestart(sLayer, oRootControl);
-		if (bHardReload) {
-			this._reloadPage();
-		} else {
-			return this.stop(true, true);
-		}
+		return this.stop(true, true);
 	};
 
 	RuntimeAuthoring.prototype._onDiscardDraft = function() {
-		return VersionsAPI.discardDraft({
-			layer: this.getLayer(),
-			selector: this.getRootControlInstance(),
-			updateState: true
-		}).then(function () {
-			var fnConfirmDiscardAllDraftChanges = function (sAction) {
-				if (sAction === "OK") {
-					return this._handleDiscard(false);
-				}
-			}.bind(this);
-
-			var sMessage = this._getTextResources().getText("MSG_DRAFT_DISCARD_DIALOG");
-
-			MessageBox.confirm(sMessage, {
-				icon: MessageBox.Icon.WARNING,
-				title : "Discard",
-				onClose : fnConfirmDiscardAllDraftChanges,
-				styleClass: Utils.getRtaStyleClassName()
-			});
+		return Utils.showMessageBox("warning", "MSG_DRAFT_DISCARD_DIALOG", {
+			actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+			emphasizedAction: MessageBox.Action.OK
+		})
+		.then(function(sAction) {
+			if (sAction === MessageBox.Action.OK) {
+				return VersionsAPI.discardDraft({
+					layer: this.getLayer(),
+					selector: this.getRootControlInstance(),
+					updateState: true
+				})
+				.then(this._handleDiscard.bind(this));
+			}
 		}.bind(this));
 	};
 
@@ -1273,18 +1264,24 @@ function(
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._deleteChanges = function() {
+		var sLayer = this.getLayer();
 		return PersistenceWriteAPI.reset({
 			selector: FlexUtils.getAppComponentForControl(this.getRootControlInstance()),
-			layer: this.getLayer(),
+			layer: sLayer,
 			generator: "Change.createInitialFileContent"
 		}).then(function () {
 			var mParsedHash = this._handleParametersOnExit(false);
 			this._triggerCrossAppNavigation(mParsedHash);
-			this._reloadPage();
+			var oReloadInfo = {
+				hasHigherLayerChanges: false, // do not touch max-layer parameter in url on reset
+				hasDraftChanges: Utils.hasUrlParameterWithValue(LayerUtils.FL_DRAFT_PARAM, sLayer),
+				layer: sLayer
+			};
+			return this._triggerHardReload(oReloadInfo);
 		}.bind(this))
 		.catch(function (oError) {
 			if (oError !== "cancel") {
-				Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
+				Utils.showMessageBox("error", "MSG_RESTORE_FAILED", {error: oError});
 			}
 		});
 	};
@@ -1363,24 +1360,21 @@ function(
 			? this._getTextResources().getText("BTN_RESTORE")
 			: this._getTextResources().getText("FORM_PERS_RESET_TITLE");
 
-		var fnConfirmDiscardAllChanges = function (sAction) {
-			if (sAction === "OK") {
+		this._handleStopCutPaste();
+
+		return Utils.showMessageBox("warning", sMessage, {
+			titleKey: sTitle,
+			actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+			emphasizedAction: MessageBox.Action.OK
+		}).then(function(sAction) {
+			if (sAction === MessageBox.Action.OK) {
 				//this.bInitialDraftAvailable = false; maybe no need
 				//this.getToolbar().setDraftEnabled(false);
 				RuntimeAuthoring.enableRestart(sLayer, this.getRootControlInstance());
 				this._deleteChanges();
 				this.getCommandStack().removeAllCommands();
 			}
-		}.bind(this);
-
-		this._handleStopCutPaste();
-
-		MessageBox.confirm(sMessage, {
-			icon: MessageBox.Icon.WARNING,
-			title : sTitle,
-			onClose : fnConfirmDiscardAllChanges,
-			styleClass: Utils.getRtaStyleClassName()
-		});
+		}.bind(this));
 	};
 
 	/**
@@ -1491,7 +1485,7 @@ function(
 			// Error handling when a command fails is done in the Stack
 			.catch(function(oError) {
 				if (oError && oError.message && oError.message.indexOf("The following Change cannot be applied because of a dependency") > -1) {
-					Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_DEPENDENCY_ERROR", "MSG_DEPENDENCY_ERROR", oError);
+					Utils.showMessageBox("error", "MSG_DEPENDENCY_ERROR", {error: oError});
 				}
 				Log.error("sap.ui.rta: " + oError.message);
 			});
@@ -1685,11 +1679,7 @@ function(
 		}
 
 		if (sReason) {
-			return Utils._showMessageBox(
-				MessageBox.Icon.INFORMATION,
-				"HEADER_PERSONALIZATION_EXISTS",
-				sReason
-			);
+			return Utils.showMessageBox("information", sReason);
 		}
 	};
 
@@ -1701,11 +1691,6 @@ function(
 	 * @return {Promise<boolean>} Resolving to false means that reload is not necessary
 	 */
 	RuntimeAuthoring.prototype._determineReload = function() {
-		var oUshellContainer = FlexUtils.getUshellContainer();
-		if (!oUshellContainer) {
-			return Promise.resolve(false);
-		}
-
 		var oReloadInfo = {
 			hasHigherLayerChanges: false,
 			hasDraftChanges: false,
@@ -1713,23 +1698,22 @@ function(
 			selector: this.getRootControlInstance(),
 			ignoreMaxLayerParameter: false
 		};
-		var oHigherLayerChangesValidationPromise;
+		var oHigherLayerChangesValidationPromise = false;
 		var bDraftAvailable = false;
-		var mParsedHash = FlexUtils.getParsedURLHash();
 
-		if (!this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM) && oReloadInfo.layer !== Layer.USER) {
+		if (!Utils.hasUrlParameterWithValue(LayerUtils.FL_MAX_LAYER_PARAM, oReloadInfo.layer) && oReloadInfo.layer !== Layer.USER) {
 			oHigherLayerChangesValidationPromise = PersistenceWriteAPI.hasHigherLayerChanges({
 				selector: oReloadInfo.selector,
 				ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter
 			});
 		}
-		if (!this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM) && this._bVersioningEnabled) {
+
+		if (!Utils.hasUrlParameterWithValue(LayerUtils.FL_DRAFT_PARAM, oReloadInfo.layer) && this._bVersioningEnabled) {
 			bDraftAvailable = VersionsAPI.isDraftAvailable({
 				selector: oReloadInfo.selector,
 				layer: oReloadInfo.layer
 			});
 		}
-
 		return Promise.all([
 			oHigherLayerChangesValidationPromise,
 			bDraftAvailable
@@ -1737,16 +1721,43 @@ function(
 		.then(function(aReloadInfo) {
 			oReloadInfo.hasHigherLayerChanges = aReloadInfo[0];
 			oReloadInfo.hasDraftChanges = aReloadInfo[1];
-
 			if (oReloadInfo.hasHigherLayerChanges || oReloadInfo.hasDraftChanges) {
 				return this._handleReloadMessageBoxOnStart(oReloadInfo).then(function () {
-					var oCrossAppNav = oUshellContainer.getService("CrossApplicationNavigation");
-					if (oCrossAppNav.toExternal && mParsedHash) {
-						return this._reloadWithMaxLayerOrDraftParam(mParsedHash, oCrossAppNav, oReloadInfo);
+					var oUshellContainer = FlexUtils.getUshellContainer();
+					if (oUshellContainer) {
+						var oCrossAppNav = oUshellContainer.getService("CrossApplicationNavigation");
+						var mParsedHash = FlexUtils.getParsedURLHash();
+						if (oCrossAppNav.toExternal && mParsedHash) {
+							return this._reloadWithMaxLayerOrDraftParam(mParsedHash, oCrossAppNav, oReloadInfo);
+						}
+					} else {
+						RuntimeAuthoring.enableRestart(oReloadInfo.layer, oReloadInfo.selector);
+						this._triggerHardReload(oReloadInfo);
 					}
 				}.bind(this));
 			}
 		}.bind(this));
+	};
+
+	/**
+	 * Change url paramter if necessary, which will trigger a reload
+	 *
+	 * @param  {Object} oReloadInfo - Information to determine reload is needed
+	 * @return {Promise<boolean>} Resolving to false when there is no change in the url and reload will not trigger
+	 */
+	RuntimeAuthoring.prototype._triggerHardReload = function(oReloadInfo) {
+		var sUrl = document.location.search;
+		if (oReloadInfo.hasHigherLayerChanges) {
+			sUrl = Utils.handleUrlParameter(sUrl, LayerUtils.FL_MAX_LAYER_PARAM, oReloadInfo.layer);
+		}
+		if (oReloadInfo.hasDraftChanges) {
+			sUrl = Utils.handleUrlParameter(sUrl, LayerUtils.FL_DRAFT_PARAM, oReloadInfo.layer);
+		}
+		if (document.location.search !== sUrl) {
+			document.location.search = sUrl;
+			return Promise.resolve();
+		}
+		return this._reloadPage();
 	};
 
 	/**
@@ -1772,13 +1783,9 @@ function(
 			sReason = "MSG_RELOAD_REMOVE_DRAFT_PARAMETER";
 		}
 
-		return Utils._showMessageBox(
-			MessageBox.Icon.INFORMATION,
-			"HEADER_RELOAD_NEEDED",
-			sReason,
-			undefined,
-			"BUTTON_RELOAD_NEEDED"
-		);
+		return Utils.showMessageBox("information", sReason, {
+			titleKey: "HEADER_RELOAD_NEEDED"
+		});
 	};
 
 	/**
@@ -1799,13 +1806,14 @@ function(
 				changesNeedReload: aArgs[0],
 				hasHigherLayerChanges: aArgs[1],
 				hasDraftChanges: this._isDraftAvailable(),
-				hasDraftParameter: this._hasParameter(FlexUtils.getParsedURLHash(), LayerUtils.FL_DRAFT_PARAM)
+				hasDraftParameter: Utils.hasUrlParameterWithValue(LayerUtils.FL_DRAFT_PARAM, this.getLayer())
 			};
 			if (oReloadInfo.changesNeedReload || oReloadInfo.hasHigherLayerChanges || oReloadInfo.hasDraftChanges
 				// If a draft was initially available, the url parameter must be removed on exit - which triggers a soft reload
 				|| oReloadInfo.hasDraftParameter) {
 				var sRestart = this._RESTART.RELOAD_PAGE;
-				// always try cross app navigation (via hash); we only need a hard reload because of appdescr changes (changesNeedReload = true)
+				// always try cross app navigation (via hash)
+				// we only need a hard reload because of appdescr changes (changesNeedReload = true) and in standalone case
 				if (!oReloadInfo.changesNeedReload && FlexUtils.getUshellContainer()) {
 					sRestart = this._RESTART.VIA_HASH;
 				}

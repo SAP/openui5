@@ -38,43 +38,43 @@
 
 			<core:Title text="DateTime variants"/>
 			<Label text="DateRange" labelFor="I2"/>
-			<Input value="{parts: [{path: 'Date'}, {path: 'DateTimeOffset'}], type: 'sap.ui.model.type.DateInterval'}" id="I2"/>
+			<Input placeholder="{:= ${ui>/patterns/dateMedium} + ' - ' + ${ui>/patterns/dateMedium}}" value="{parts: [{path: 'Date'}, {path: 'DateTimeOffset'}], type: 'sap.ui.model.type.DateInterval'}" id="I2"/>
 			<DateRangeSelection value="{parts: [{path: 'Date'}, {path: 'DateTimeOffset'}], type: 'sap.ui.model.type.DateInterval'}"/>
 			<Label text="Date" visible="{ui>/v4}" labelFor="I3"/>
-			<Input value="{v4>Date}" visible="{ui>/v4}" id="I3"/>
+			<Input placeholder="{:= ${ui>/patterns/dateMedium}}" value="{v4>Date}" visible="{ui>/v4}" id="I3"/>
 			<DatePicker value="{v4>Date}" visible="{ui>/v4}"/>
 			<Label text="Date, bound property dateValue" visible="{ui>/v4}" labelFor="I54"/>
 			<DatePicker dateValue="{v4>Date}" visible="{ui>/v4}" id="I54"/>
 			<Label text="Date, nullable: false" visible="{ui>/v4}" labelFor="I4"/>
-			<Input value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', constraints: {nullable: false}}" visible="{ui>/v4}" id="I4"/>
+			<Input placeholder="{:= ${ui>/patterns/dateMedium}}" value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', constraints: {nullable: false}}" visible="{ui>/v4}" id="I4"/>
 			<DatePicker value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', constraints: {nullable: false}}" visible="{ui>/v4}"/>
 			<Label text="Date, style: &quot;short&quot;" visible="{ui>/v4}" labelFor="I5"/>
-			<Input value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', formatOptions: {style: 'short'}}" visible="{ui>/v4}" id="I5"/>
+			<Input placeholder="{:= ${ui>/patterns/dateShort}}" value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', formatOptions: {style: 'short'}}" visible="{ui>/v4}" id="I5"/>
 			<DatePicker value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', formatOptions: {style: 'short'}}" visible="{ui>/v4}"/>
 			<Label text="Date, relative: &quot;true&quot;" visible="{ui>/v4}" labelFor="I6"/>
-			<Input value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', formatOptions: {relative: 'true'}}" visible="{ui>/v4}" id="I6"/>
+			<Input placeholder="{:= ${ui>/patterns/dateMedium}}" value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', formatOptions: {relative: 'true'}}" visible="{ui>/v4}" id="I6"/>
 			<DatePicker value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', formatOptions: {relative: 'true'}}" visible="{ui>/v4}"/>
 
 			<Label text="DateTime" visible="{ui>/v2}" labelFor="I7"/>
-			<Input value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime'}" visible="{ui>/v2}" id="I7"/>
+			<Input placeholder="{:= ${ui>/patterns/dateTimeMedium}}" value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime'}" visible="{ui>/v2}" id="I7"/>
 			<DateTimePicker value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime'}" visible="{ui>/v2}"/>
 			<Label text="DateTime, nullable: false" visible="{ui>/v2}" labelFor="I8"/>
-			<Input value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime', constraints: {nullable: false}}" visible="{ui>/v2}" id="I8"/>
+			<Input placeholder="{:= ${ui>/patterns/dateTimeMedium}}" value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime', constraints: {nullable: false}}" visible="{ui>/v2}" id="I8"/>
 			<DateTimePicker value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime', constraints: {nullable: false}}" visible="{ui>/v2}"/>
 			<Label text="DateTime, style: &quot;long&quot;" visible="{ui>/v2}" labelFor="I9"/>
-			<Input value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'long'}}" visible="{ui>/v2}" id="I9"/>
+			<Input placeholder="{:= ${ui>/patterns/dateTimeLong}}" value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'long'}}" visible="{ui>/v2}" id="I9"/>
 			<DateTimePicker value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'long'}}" visible="{ui>/v2}"/>
 			<Label text="DateTime, style: &quot;long&quot;, UTC" visible="{ui>/v2}" labelFor="I10"/>
-			<Input value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'long', UTC: true}}" visible="{ui>/v2}"  id="I10"/>
+			<Input placeholder="{:= ${ui>/patterns/dateTimeLong}}" value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'long', UTC: true}}" visible="{ui>/v2}"  id="I10"/>
 			<DateTimePicker value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'long', UTC: true}}" visible="{ui>/v2}"/>
 			<Label text="DateTime, displayFormat: &quot;Date&quot;" visible="{ui>/v2}" labelFor="I11"/>
-			<Input value="{path: 'v2>Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date'}}" visible="{ui>/v2}"  id="I11"/>
+			<Input placeholder="{:= ${ui>/patterns/dateMedium}}" value="{path: 'v2>Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date'}}" visible="{ui>/v2}"  id="I11"/>
 			<DatePicker value="{path: 'v2>Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date'}}" visible="{ui>/v2}"/>
 			<Label text="DateTime, displayFormat: &quot;Date&quot;, nullable: false" visible="{ui>/v2}" labelFor="I12"/>
-			<Input value="{path: 'v2>Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date', nullable: false}}" visible="{ui>/v2}"  id="I12"/>
+			<Input placeholder="{:= ${ui>/patterns/dateMedium}}" value="{path: 'v2>Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date', nullable: false}}" visible="{ui>/v2}"  id="I12"/>
 			<DatePicker value="{path: 'v2>Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date', nullable: false}}" visible="{ui>/v2}"/>
 			<Label text="Date (wrong type, read-only), style: &quot;short&quot;" visible="{ui>/v2}" labelFor="I13"/>
-			<Input value="{path: 'v2>Date', type: 'sap.ui.model.odata.type.Date', formatOptions: {style: 'short'}}" visible="{ui>/v2}" id="I13"
+			<Input placeholder="{:= ${ui>/patterns/dateMedium}}" value="{path: 'v2>Date', type: 'sap.ui.model.odata.type.Date', formatOptions: {style: 'short'}}" visible="{ui>/v2}" id="I13"
 				tooltip="If using the V4 type sap.ui.model.odata.type.Date for a V2 service, it is only possible to display the value"/>
 			<Label text="Date (wrong type, read-only), bound property dateValue" visible="{ui>/v2}" labelFor="I55"/>
 			<DatePicker dateValue="{path: 'v2>Date', type: 'sap.ui.model.odata.type.Date'}" visible="{ui>/v2}" id="I55"
@@ -83,44 +83,44 @@
 			<DateTimePicker dateValue="{v2>DateTime}" visible="{ui>/v2}" id="I57"/>
 
 			<Label text="DateTimeOffset" labelFor="I14"/>
-			<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset'}" id="I14"/>
+			<Input placeholder="{:= ${ui>/patterns/dateTimeMedium}}" value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset'}" id="I14"/>
 			<DateTimePicker value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset'}"/>
 			<Label text="DateTimeOffset, nullable: false" labelFor="I15"/>
-			<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {nullable: false}}"  id="I15"/>
+			<Input placeholder="{:= ${ui>/patterns/dateTimeMedium}}" value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {nullable: false}}"  id="I15"/>
 			<DateTimePicker value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {nullable: false}}"/>
 			<Label text="DateTimeOffset, style: &quot;long&quot;" labelFor="I16"/>
-			<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', formatOptions: {style: 'long'}}"  id="I16"/>
+			<Input placeholder="{:= ${ui>/patterns/dateTimeLong}}" value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', formatOptions: {style: 'long'}}"  id="I16"/>
 			<DateTimePicker value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', formatOptions: {style: 'long'}}"/>
 			<Label text="DateTimeOffset, style: &quot;long&quot;, UTC" labelFor="I17"/>
-			<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', formatOptions: {style: 'long', UTC: true}}"  id="I17"/>
+			<Input placeholder="{:= ${ui>/patterns/dateTimeLong}}" value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', formatOptions: {style: 'long', UTC: true}}"  id="I17"/>
 			<DateTimePicker value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', formatOptions: {style: 'long', UTC: true}}"/>
 			<Label text="DateTimeOffset, bound property dateValue" labelFor="I56"/>
 			<DateTimePicker dateValue="{DateTimeOffset}" id="I56"/>
 
 			<Label text="Time" visible="{ui>/v2}" labelFor="I18"/>
-			<Input value="{path: 'v2>Time', type: 'sap.ui.model.odata.type.Time'}" visible="{ui>/v2}" id="I18"/>
+			<Input placeholder="{:= ${ui>/patterns/timeMedium}}" value="{path: 'v2>Time', type: 'sap.ui.model.odata.type.Time'}" visible="{ui>/v2}" id="I18"/>
 			<TimePicker value="{path: 'v2>Time', type: 'sap.ui.model.odata.type.Time'}" visible="{ui>/v2}"/>
 			<Label text="Time, nullable: false" visible="{ui>/v2}"  labelFor="I19"/>
-			<Input value="{path: 'v2>Time', type: 'sap.ui.model.odata.type.Time', constraints: {nullable: false}}" visible="{ui>/v2}" id="I19"/>
+			<Input placeholder="{:= ${ui>/patterns/timeMedium}}" value="{path: 'v2>Time', type: 'sap.ui.model.odata.type.Time', constraints: {nullable: false}}" visible="{ui>/v2}" id="I19"/>
 			<TimePicker value="{path: 'v2>Time', type: 'sap.ui.model.odata.type.Time', constraints: {nullable: false}}" visible="{ui>/v2}"/>
 			<Label text="Time, style: &quot;short&quot;" visible="{ui>/v2}" labelFor="I20"/>
-			<Input value="{path: 'v2>Time', type: 'sap.ui.model.odata.type.Time', formatOptions: {style: 'short'}}" visible="{ui>/v2}" id="I20"/>
+			<Input placeholder="{:= ${ui>/patterns/timeShort}}" value="{path: 'v2>Time', type: 'sap.ui.model.odata.type.Time', formatOptions: {style: 'short'}}" visible="{ui>/v2}" id="I20"/>
 			<TimePicker value="{path: 'v2>Time', type: 'sap.ui.model.odata.type.Time', formatOptions: {style: 'short'}}" visible="{ui>/v2}"/>
 
 			<Label text="TimeOfDay" visible="{ui>/v4}" labelFor="I21"/>
-			<Input value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay'}" visible="{ui>/v4}" id="I21"/>
+			<Input placeholder="{:= ${ui>/patterns/timeMedium}}" value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay'}" visible="{ui>/v4}" id="I21"/>
 			<TimePicker value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay'}" visible="{ui>/v4}"/>
 			<Label text="TimeOfDay, nullable: false, style: &quot;medium&quot;" visible="{ui>/v4}" labelFor="I22"/>
-			<Input value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', constraints: {nullable: false}, formatOptions: {style: 'medium'}}" visible="{ui>/v4}"  id="I22"/>
+			<Input placeholder="{:= ${ui>/patterns/timeMedium}}" value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', constraints: {nullable: false}, formatOptions: {style: 'medium'}}" visible="{ui>/v4}"  id="I22"/>
 			<TimePicker value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', constraints: {nullable: false}, formatOptions: {style: 'medium'}}" visible="{ui>/v4}"/>
 			<Label text="TimeOfDay, style: &quot;short&quot;" visible="{ui>/v4}" labelFor="I23"/>
-			<Input value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'short'}}" visible="{ui>/v4}" id="I23"/>
+			<Input placeholder="{:= ${ui>/patterns/timeShort}}" value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'short'}}" visible="{ui>/v4}" id="I23"/>
 			<TimePicker value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'short'}}" visible="{ui>/v4}"/>
 			<Label text="TimeOfDay, style: &quot;long&quot;" visible="{ui>/v4}" labelFor="I24"/>
-			<Input value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'long'}}" visible="{ui>/v4}" id="I24"/>
+			<Input placeholder="{:= ${ui>/patterns/timeLong}}" value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'long'}}" visible="{ui>/v4}" id="I24"/>
 			<TimePicker value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay'}" visible="{ui>/v4}"/>
 			<Label text="TimeOfDay, relative: &quot;true&quot;" visible="{ui>/v4}" labelFor="I25"/>
-			<Input value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {relative: 'true'}}" visible="{ui>/v4}" id="I25"/>
+			<Input placeholder="{:= ${ui>/patterns/timeMedium}}" value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {relative: 'true'}}" visible="{ui>/v4}" id="I25"/>
 			<TimePicker value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {relative: 'true'}}" visible="{ui>/v4}"/>
 			<Label text="TimeOfDay bound property dateValue" visible="{ui>/v4}" labelFor="I58"/>
 			<TimePicker dateValue="{v4>TimeOfDay}" visible="{ui>/v4}" id="I58"/>

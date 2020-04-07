@@ -130,9 +130,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 		}
 
 		// dummy keyboard handling area
-		if (bRenderItems || bShowNoData) {
-			this.renderDummyArea(rm, oControl, "before", -1);
-		}
+		this.renderDummyArea(rm, oControl, "before", -1);
 
 		// run hook method to start building list
 		this.renderListStartAttributes(rm, oControl);
@@ -184,9 +182,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 		this.renderListEndAttributes(rm, oControl);
 
 		// dummy keyboard handling area
-		if (bRenderItems || bShowNoData) {
-			this.renderDummyArea(rm, oControl, "after", iTabIndex);
-		}
+		this.renderDummyArea(rm, oControl, "after", iTabIndex);
 
 		// render bottom growing
 		if (!bUpwardGrowing) {
@@ -245,6 +241,15 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	 */
 	ListBaseRenderer.getAriaRole = function(oControl) {
 		return "listbox";
+	};
+
+	/**
+	 * Returns aria accessibility role for the no data entry.
+	 *
+	 * @returns {String}
+	 */
+	ListBaseRenderer.getNoDataAriaRole = function() {
+		return null;
 	};
 
 	/**
@@ -317,6 +322,10 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	ListBaseRenderer.renderNoData = function(rm, oControl) {
 		rm.openStart("li", oControl.getId("nodata"));
 		rm.attr("tabindex", oControl.getKeyboardMode() == ListKeyboardMode.Navigation ? -1 : 0);
+		var sAriaRole = this.getNoDataAriaRole();
+		if (sAriaRole) {
+			rm.attr("role", sAriaRole);
+		}
 		rm.class("sapMLIB").class("sapMListNoData").class("sapMLIBTypeInactive");
 		ListItemBaseRenderer.addFocusableClasses.call(ListItemBaseRenderer, rm);
 		rm.openEnd();

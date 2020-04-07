@@ -109,24 +109,24 @@ sap.ui.define([
 				log(that, aResult.join(""));
 			};
 
-			this.$("clear").bind("click", this._fClearHandler);
-			this.$("filter").bind("change", this._fFilterHandler);
-			this.$("loglevel").bind("change", this._fLogLevelHandler);
+			this.$("clear").on("click", this._fClearHandler);
+			this.$("filter").on("change", this._fFilterHandler);
+			this.$("loglevel").on("change", this._fLogLevelHandler);
 		};
 
 
 		Trace.prototype.exit = function(oSupportStub){
 			if (this.runsAsToolPlugin()) {
 				if (this._fClearHandler) {
-					this.$("clear").unbind("click", this._fClearHandler);
+					this.$("clear").off("click", this._fClearHandler);
 					this._fClearHandler = null;
 				}
 				if (this._fFilterHandler) {
-					this.$("filter").unbind("change", this._fFilterHandler);
+					this.$("filter").off("change", this._fFilterHandler);
 					this._fFilterHandler = null;
 				}
 				if (this._fLogLevelHandler) {
-					this.$("loglevel").unbind("change", this._fLogLevelHandler);
+					this.$("loglevel").off("change", this._fLogLevelHandler);
 					this._fLogLevelHandler = null;
 				}
 			} else {

@@ -32,12 +32,12 @@ sap.ui.define([
 
 				aDiff = [];
 				for (var i = 0; i < aIndicesBefore.length; i++) {
-					if ( jQuery.inArray(aIndicesBefore[i], aIndicesAfter) < 0 ) {
+					if ( aIndicesAfter.indexOf(aIndicesBefore[i]) < 0 ) {
 						aDiff.push(aIndicesBefore[i]);
 					}
 				}
 				for (var i = 0; i < aIndicesAfter.length; i++) {
-					if ( jQuery.inArray(aIndicesAfter[i], aIndicesBefore) < 0 ) {
+					if ( aIndicesBefore.indexOf(aIndicesAfter[i]) < 0 ) {
 						aDiff.push(aIndicesAfter[i]);
 					}
 				}

@@ -739,6 +739,17 @@ function (
 		}
 	});
 
+	QUnit.test("resize device after GidContainer is destroyed", function (assert) {
+		// Arrange
+		this.oGrid.destroy();
+
+		// Act
+		Device.resize._update();
+
+		// Assert
+		assert.ok(true, "There is no error when GridContainer is destroyed and the width is changed");
+	});
+
 	QUnit.test("resize container", function (assert) {
 
 		var fnApplyLayout = sinon.spy(this.oGrid, "_applyLayout");

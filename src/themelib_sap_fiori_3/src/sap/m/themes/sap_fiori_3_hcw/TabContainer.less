@@ -3,10 +3,22 @@
 /* Quartz High Contrast White theme    */
 /* =================================== */
 
-.sapMTabContainer {
-	.sapMTabContainerContent {
-		.sapMTabContainerInnerContent {
-			background-color: @sapUiGroupContentBackground;
-		}
+.sapMTabStripContainer{
+	border-bottom: 0.0625rem solid @sapUiObjectHeaderBorderColor;
+}
+.sapMTabStrip {
+	padding-top: 0.5rem;
+	height: 3.25rem;
+	.sapMTSLeftOverflowButtons,
+	.sapMTSTabsContainer,
+	.sapMTSRightOverflowButtons,
+	.sapMTSTouchArea {
+		height: 2.75rem;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMTabStrip {
+		height: 3.25rem;
 	}
 }

@@ -3,7 +3,7 @@ sap.ui.define(['sap/ui/test/Opa5'], function (Opa5) {
 
 	return Opa5.extend("sap.ui.documentation.sdk.test.arrangement.WellcomeJourneyArrangement", {
 		iStartMyApp : function (sAdditionalUrlParameters) {
-			var appRootURL = "../../../../../../../demokit/index.html";
+			var appRootURL = "../../../../../../../../../testsuite/documentation.html";
 
 			// if configuration file is used, appRootURL can be changed
 			// for local testing purposes. See opaTestsWithIFrame.qunit.html

@@ -278,6 +278,9 @@ sap.ui.define([
 
 	QUnit.test("GenericTile rendered", function (assert) {
 		this.fnWithRenderAsserts(assert);
+
+		var oLinkElements = document.getElementById("generic-tile").childNodes;
+		assert.notStrictEqual(oLinkElements.length, 1, "There is no tag wrapped around the tile.");
 	});
 
 	QUnit.test("GenericTile rendered with custom width", function (assert) {
@@ -285,6 +288,42 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		this.fnWithRenderAsserts(assert);
+	});
+
+	QUnit.test("GenericTile not rendered with link when in action mode", function (assert) {
+		//Arrange
+		var sLink = "http://localhost/myLink";
+		this.oGenericTile.setUrl(sLink);
+		this.oGenericTile.setScope(GenericTileScope.Actions);
+
+		//Act
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		var oTileElements = document.getElementById("generic-tile").childNodes;
+
+		this.fnWithRenderAsserts(assert);
+		assert.notStrictEqual(oTileElements[0].tagName, "A", "The node is not a link.");
+	});
+
+	QUnit.test("GenericTile rendered with link when not in action mode", function (assert) {
+		//Arrange
+		var sLink = "http://localhost/myLink";
+		this.oGenericTile.setUrl(sLink);
+		this.oGenericTile.setScope(GenericTileScope.Display);
+
+		//Act
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		var oTileElement = document.getElementById("generic-tile");
+
+		this.fnWithRenderAsserts(assert);
+		assert.strictEqual(oTileElement.tagName, "A", "The node is a link.");
+		assert.strictEqual(oTileElement.href, sLink, "The link is correctly set.");
+		assert.strictEqual(document.getElementById("generic-tile-content").parentNode, oTileElement, "The tile content is a child of the link.");
+		assert.strictEqual(document.getElementById("generic-tile-hover-overlay").parentNode, oTileElement, "The tile overlay is a child of the link.");
+		assert.strictEqual(document.getElementById("generic-tile-focus").parentNode, oTileElement, "The tile content is a child of the link.");
 	});
 
 	QUnit.test("GenericTile border rendered - blue crystal", function(assert) {
@@ -643,6 +682,28 @@ sap.ui.define([
 		assert.ok(this.oGenericTile.$("action-remove").length > 0, "Remove button has been rendered");
 		assert.ok(this.oGenericTile.$("failed-icon").length > 0, "Failed icon has been rendered");
 		assert.ok(this.oGenericTile.$("failed-text").length === 0, "Failed text has not been rendered");
+	});
+
+	QUnit.test("ActionMore scope in failed regular GenericTile", function(assert) {
+		//Arrange
+		this.oGenericTile.setScope(GenericTileScope.ActionMore);
+		this.oGenericTile.setState(library.LoadState.Loaded);
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.strictEqual(this.oGenericTile.$("action-more").length, 1, "More icon has been rendered");
+		assert.strictEqual(this.oGenericTile.$("action-remove").length, 0, "Remove button has not been rendered");
+	});
+
+	QUnit.test("ActionRemove scope in loaded regular GenericTile", function(assert) {
+		//Arrange
+		this.oGenericTile.setScope(GenericTileScope.ActionRemove);
+		this.oGenericTile.setState(library.LoadState.Loaded);
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.strictEqual(this.oGenericTile.$("action-remove").length, 1, "Remove button has been rendered");
+		assert.strictEqual(this.oGenericTile.$("action-more").length, 0, "More icon has not been rendered");
 	});
 
 	QUnit.test("Scope content is created on beforeRendering", function(assert) {

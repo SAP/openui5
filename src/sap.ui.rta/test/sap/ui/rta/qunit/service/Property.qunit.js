@@ -482,7 +482,7 @@ function(
 				showToolbars: false,
 				rootControl: oPage
 			});
-
+			sandbox.stub(oRta, "_determineReload").resolves(false);
 			oRta.start();
 
 			return oRta.getService("property").then(function (oService) {

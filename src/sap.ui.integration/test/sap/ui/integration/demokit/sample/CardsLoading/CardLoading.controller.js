@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/f/cards/RequestDataProvider",
+	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function (Controller, JSONModel, RequestDataProvider, sinon, Core) {
@@ -10,16 +10,17 @@ sap.ui.define([
 	return Controller.extend("sap.ui.integration.sample.CardsLoading.CardLoading", {
 		onInit: function () {
 			// create delayed get data method
-			this._fnGetDataStub = sinon.stub(RequestDataProvider.prototype, "getData");
-
-			this._fnGetDataStub.callsFake(function () {
-				var fnOriginal = that._fnGetDataStub.wrappedMethod.bind(this);
+			this._fnGetDataStub = sinon.stub(RequestDataProvider.prototype, "_fetch");
+			this._fnGetDataStub.callsFake(function (oRequestConfig) {
+				var oRequestConfigAdapted = {
+					"url": sap.ui.require.toUrl(oRequestConfig.url)
+				};
+				var fnOriginal = that._fnGetDataStub.wrappedMethod.bind(this, oRequestConfigAdapted);
 				return that._delayedGetData(fnOriginal);
 			});
 
 			var cardManifests = new JSONModel(sap.ui.require.toUrl("sap/ui/integration/sample/CardsLoading/manifests/cardManifests.json")),
 				that = this;
-
 			this.getView().setModel(cardManifests, "manifests");
 
 		},

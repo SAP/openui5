@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/write/_internal/Storage",
@@ -32,7 +31,6 @@ sap.ui.define([
 	Variant,
 	Utils,
 	LayerUtils,
-	CompatibilityConnector,
 	Cache,
 	Applier,
 	Storage,
@@ -481,7 +479,7 @@ sap.ui.define([
 	 * Saves/flushes all current changes of a smart variant to the backend.
 	 *
 	 * @returns {Promise} Promise resolving with an array of responses or rejecting with the first error
-	 * @public
+	 * @private
 	 */
 	ChangePersistence.prototype.saveAllChangesForVariant = function(sStableId) {
 		var aPromises = [];
@@ -489,7 +487,12 @@ sap.ui.define([
 			var sChangeId = oChange.getId();
 			switch (oChange.getPendingAction()) {
 				case "NEW":
-					aPromises.push(CompatibilityConnector.create(oChange.getDefinition(), oChange.getRequest(), oChange.isVariant()).then(function(result) {
+					var oCreatePromise = Storage.write({
+						flexObjects: [oChange.getDefinition()],
+						layer: oChange.getLayer(),
+						transport: oChange.getRequest(),
+						isLegacyVariant: oChange.isVariant()
+					}).then(function(result) {
 						if (result && result.response && result.response[0]) {
 							oChange.setResponse(result.response[0]);
 						} else {
@@ -497,10 +500,16 @@ sap.ui.define([
 						}
 						Cache.addChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
 						return result;
-					}.bind(this)));
+					}.bind(this));
+
+					aPromises.push(oCreatePromise);
 					break;
 				case "UPDATE":
-					aPromises.push(CompatibilityConnector.update(oChange.getDefinition(), oChange.getRequest()).then(function(result) {
+					var oUpdatePromise = Storage.update({
+						flexObject: oChange.getDefinition(),
+						layer: oChange.getLayer(),
+						transport: oChange.getRequest()
+					}).then(function(result) {
 						if (result && result.response) {
 							oChange.setResponse(result.response);
 						} else {
@@ -508,17 +517,25 @@ sap.ui.define([
 						}
 						Cache.updateChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
 						return result;
-					}.bind(this)));
+					}.bind(this));
+
+					aPromises.push(oUpdatePromise);
 					break;
 				case "DELETE":
-					aPromises.push(CompatibilityConnector.deleteChange(oChange.getDefinition(), oChange.getRequest()).then(function(result) {
+					var oDeletionPromise = Storage.remove({
+						flexObject: oChange.getDefinition(),
+						layer: oChange.getLayer(),
+						transport: oChange.getRequest()
+					}).then(function(result) {
 						var oChange = this._mVariantsChanges[sStableId][sChangeId];
 						if (oChange.getPendingAction() === "DELETE") {
 							delete this._mVariantsChanges[sStableId][sChangeId];
 						}
 						Cache.deleteChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
 						return result;
-					}.bind(this)));
+					}.bind(this));
+
+					aPromises.push(oDeletionPromise);
 					break;
 				default:
 					break;
@@ -820,8 +837,13 @@ sap.ui.define([
 		if (aPendingActions.length === 1 && aRequests.length === 1 && aPendingActions[0] === "NEW") {
 			var sRequest = aRequests[0];
 			var aPreparedDirtyChangesBulk = this._prepareDirtyChanges(aDirtyChanges);
-			return CompatibilityConnector.create(aPreparedDirtyChangesBulk, sRequest, undefined, bDraft)
-			.then(function(oResponse) {
+			return Storage.write({
+				layer : aPreparedDirtyChangesBulk[0].layer,
+				flexObjects : aPreparedDirtyChangesBulk,
+				transport : sRequest,
+				isLegacyVariant : false,
+				draft : bDraft
+			}).then(function(oResponse) {
 				this._massUpdateCacheAndDirtyState(aDirtyChangesClone, bSkipUpdateCache);
 				return oResponse;
 			}.bind(this));
@@ -851,11 +873,21 @@ sap.ui.define([
 	ChangePersistence.prototype._performSingleSaveAction = function (oDirtyChange, bDraft) {
 		return function() {
 			if (oDirtyChange.getPendingAction() === "NEW") {
-				return CompatibilityConnector.create(oDirtyChange.getDefinition(), oDirtyChange.getRequest(), undefined, bDraft);
+				return Storage.write({
+					layer : oDirtyChange.getLayer(),
+					flexObjects : [oDirtyChange.getDefinition()],
+					transport : oDirtyChange.getRequest(),
+					isLegacyVariant : oDirtyChange.isVariant(),
+					draft : bDraft
+				});
 			}
 
 			if (oDirtyChange.getPendingAction() === "DELETE") {
-				return CompatibilityConnector.deleteChange(oDirtyChange.getDefinition(), oDirtyChange.getRequest());
+				return Storage.remove({
+					flexObject: oDirtyChange.getDefinition(),
+					layer: oDirtyChange.getLayer(),
+					transport: oDirtyChange.getRequest()
+				});
 			}
 		};
 	};
@@ -1078,7 +1110,7 @@ sap.ui.define([
 				mParams.changeTypes = aChangeTypes;
 			}
 
-			return CompatibilityConnector.resetChanges(mParams);
+			return Storage.reset(mParams);
 		}.bind(this))
 		.then(function(oResponse) {
 			var aChangesToRevert = [];
@@ -1116,7 +1148,7 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} Resolves the information if the application has content that can be reset and/or published
 	 */
 	ChangePersistence.prototype.getResetAndPublishInfo = function(mPropertyBag) {
-		return CompatibilityConnector.getFlexInfo(mPropertyBag);
+		return Storage.getFlexInfo(mPropertyBag);
 	};
 
 	return ChangePersistence;

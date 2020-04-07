@@ -1,12 +1,10 @@
 sap.ui.define([
-	"sap/ui/demo/cardExplorer/controller/BaseController",
-	'sap/ui/model/json/JSONModel',
-	"sap/ui/model/BindingMode",
+	"./BaseController",
+	"../Constants",
 	"../model/ExploreNavigationModel",
 	"../model/ExploreSettingsModel",
 	"../model/formatter",
 	"../util/FileUtils",
-	"../util/SchemaValidator",
 	"../localService/SEPMRA_PROD_MAN/mockServer",
 	"sap/m/MessageToast",
 	"sap/m/Dialog",
@@ -14,18 +12,18 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/FormattedText",
 	"sap/f/GridContainerItemLayoutData",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/BindingMode",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/restricted/_debounce"
 ], function (
 	BaseController,
-	JSONModel,
-	BindingMode,
+	Constants,
 	exploreNavigationModel,
 	exploreSettingsModel,
 	formatter,
 	FileUtils,
-	SchemaValidator,
 	mockServer,
 	MessageToast,
 	Dialog,
@@ -33,6 +31,8 @@ sap.ui.define([
 	library,
 	FormattedText,
 	GridContainerItemLayoutData,
+	JSONModel,
+	BindingMode,
 	Device,
 	jQuery,
 	_debounce
@@ -46,8 +46,8 @@ sap.ui.define([
 		formatter: formatter,
 
 		constructor: function () {
-			this.onCodeEditorChangeDebounced = _debounce(this.onCodeEditorChangeDebounced, 100);
-			this.onCardEditorChangeDebounced = _debounce(this.onCardEditorChangeDebounced, 100);
+			this.onFileEditorManifestChangeDebounced = _debounce(this.onFileEditorManifestChangeDebounced, Constants.DEBOUNCE_TIME);
+			this.onCardEditorChangeDebounced = _debounce(this.onCardEditorChangeDebounced, Constants.DEBOUNCE_TIME);
 			this._sEditSource = null;
 
 			BaseController.apply(this, arguments);
@@ -68,25 +68,11 @@ sap.ui.define([
 			this.getView().setModel(this.oModel);
 			this.getView().setModel(exploreSettingsModel, "settings");
 
-			// model which is used when all files are shown in the editor (not only manifest.json)
-			this.getView().setModel(new JSONModel({
-				files: [],
-				selectedFileKey: "index.html"
-			}), "extendedFileEditor");
-
-			this._editor = this.byId("editor");
-			//This will prevent all auto complete and suggestions of the editor
-			this._editor._oEditor.completers = [];
-
-			//This catches any "json" validation errors that ware made inside the editor
-			this._editor._oEditor.session.on("changeAnnotation", this._onSyntaxError.bind(this));
+			this._fileEditor = this.byId("fileEditor");
 
 			//This catches any error that was produced by the card
 			this.byId("cardSample").attachEvent("_error", this._onCardError, this);
-
-			this._errorMessageStrip = this.getView().byId("errorMessageStrip");
 			this._registerResize();
-
 			this._initIFrameCreation();
 		},
 
@@ -98,7 +84,7 @@ sap.ui.define([
 		 * Syncs CodeEditor & CardEditor. Updates the manifest of the card, if autoRun is enabled. Validates the schema, if enabled.
 		 * @param {string} sValue Current value of the CodeEditor
 		 */
-		onCodeEditorChangeDebounced: function (sValue) {
+		onFileEditorManifestChangeDebounced: function (sValue) {
 			if (!this._sEditSource) {
 				this._sEditSource = "codeEditor";
 			}
@@ -108,22 +94,18 @@ sap.ui.define([
 			this._sEditSource = null;
 
 			if (exploreSettingsModel.getProperty("/schemaValidation")) {
-				this.validateManifest(JSON.parse(sValue));
+				this.validateManifest();
 			}
 
 			if (exploreSettingsModel.getProperty("/autoRun")) {
 				this._updateSample(sValue);
 			}
 		},
-		onCodeEditorChange: function (oEvent) {
 
-			if (this._bPreventLiveChange) {
-				return;
-			}
-
+		onFileEditorManifestChange: function (oEvent) {
 			if (this._sEditSource !== "cardEditor") {
 				var sValue = oEvent.getParameter("value");
-				this.onCodeEditorChangeDebounced(sValue);
+				this.onFileEditorManifestChangeDebounced(sValue);
 			}
 		},
 
@@ -133,7 +115,7 @@ sap.ui.define([
 			}
 
 			var sValue = JSON.stringify(mValue, '\t', 4);
-			this._editor.setValue(sValue);
+			this._fileEditor.setManifestContent(sValue);
 			this._updateSample(sValue);
 			this._sEditSource = null;
 		},
@@ -146,27 +128,11 @@ sap.ui.define([
 		},
 
 		onFileSwitch: function (oEvent) {
-			var oExtendedFileEditorModel = this.getView().getModel("extendedFileEditor"),
-				sSelectedFileKey = oEvent.getParameter("selectedKey"),
-				iSelectedFileIndex = oExtendedFileEditorModel.getProperty("/files/").findIndex(function (oEl) { return oEl.key === sSelectedFileKey;}),
-				sFileExtension = sSelectedFileKey.split('.').pop(),
-				oEditor = this.byId("editor");
-
-			sFileExtension = sFileExtension === 'js' ? 'javascript' : sFileExtension;
-
-			exploreSettingsModel.setProperty("/editable", this._isFileEditable(sSelectedFileKey));
-			exploreSettingsModel.setProperty("/messageStripVisible", this._isMessageStripVisible(sSelectedFileKey));
-			exploreSettingsModel.setProperty("/codeEditorType", sFileExtension);
-			this._bPreventLiveChange = true;
-			// setValue would trigger 2 live change events - 1 delete and 1 insert. This will refresh the card several times, so prevent it
-			oEditor.setValue(oExtendedFileEditorModel.getProperty("/files/" + iSelectedFileIndex + "/content"));
-			this._bPreventLiveChange = false;
-
+			exploreSettingsModel.setProperty("/editable", oEvent.getParameter("editable"));
 		},
 
 		onRunPressed: function (oEvent) {
-			var sValue = this.getView().byId("editor").getValue();
-			this._updateSample(sValue);
+			this._fileEditor.getManifestContent().then(this._updateSample.bind(this));
 		},
 
 		onChangeEditorClick: function() {
@@ -189,10 +155,9 @@ sap.ui.define([
 		 * Downloads only the manifest.json file.
 		 */
 		onDownloadManifestFile: function () {
-			var oManifestFile = this._getManifestFileAsJson(),
-				sJSON = JSON.stringify(oManifestFile, null, "\t");
-
-			FileUtils.downloadFile(sJSON, "manifest", "json", "application/json");
+			this._fileEditor.getManifestContent().then(function (sJSON) {
+				FileUtils.downloadFile(sJSON, "manifest", "json", "application/json");
+			});
 		},
 
 		/**
@@ -200,36 +165,27 @@ sap.ui.define([
 		 * @param {string} sExtension The archive extension.
 		 */
 		_onDownloadCompressed: function (sExtension) {
-			var oCardEditor = this.byId("cardEditor"),
-				aFiles,
-				oJSON,
-				sArchiveName = formatter.formatExampleName(this._getManifestFileAsJson());
+			Promise.all([
+				this._fileEditor.getManifestContent(),
+				this._fileEditor.getFilesWithContent()
+			]).then(function (aArgs) {
+				var MANIFEST = 0,
+					FILES = 1;
 
-			if (exploreSettingsModel.getProperty("/useExtendedFileEditor")) {
-				aFiles = this.getModel("extendedFileEditor").getProperty("/files");
-			} else {
-				oJSON = oCardEditor.getJson();
+				var sArchiveName = formatter.formatExampleName(JSON.parse(aArgs[MANIFEST]));
 
-				aFiles = [
-					{
-						name: "manifest.json",
-						content: JSON.stringify(oJSON, null, "\t")
-					}
-				];
-			}
-
-			FileUtils.downloadFilesCompressed(aFiles, sArchiveName, sExtension);
+				FileUtils.downloadFilesCompressed(aArgs[FILES], sArchiveName, sExtension);
+			});
 		},
 
 		onDownloadZip: function () {
-			this._onDownloadCompressed("card.zip");
-		},
+			var sZipName = "card.zip";
 
-		showError: function (sMessage) {
-			if (sMessage) {
-				this._errorMessageStrip.setVisible(true);
-				this._errorMessageStrip.setText(sMessage);
+			if (exploreSettingsModel.getProperty("/isApplication")) {
+				sZipName = "zip";
 			}
+
+			this._onDownloadCompressed(sZipName);
 		},
 
 		onSubSampleChange: function (oEvent) {
@@ -244,22 +200,8 @@ sap.ui.define([
 			);
 		},
 
-		_onSyntaxError: function () {
-			var aErrorAnnotations = this._editor._oEditor.session.$annotations,
-				sMessage = "";
-
-			if (aErrorAnnotations && aErrorAnnotations.length) {
-				aErrorAnnotations.forEach(function (oError) {
-					sMessage += "Line " + String(oError.row) + ": " + oError.text + '\n';
-				});
-				this.showError(sMessage);
-			} else {
-				this._errorMessageStrip.setVisible(false);
-			}
-		},
-
 		_onCardError: function (oEvent) {
-			this.showError(oEvent.getParameters().message);
+			this._fileEditor.showError(oEvent.getParameters().message);
 		},
 
 		_deregisterResize: function () {
@@ -286,8 +228,7 @@ sap.ui.define([
 				sSampleKey = oArgs["key"],
 				oSample = this._findSample(sSampleKey),
 				sSubSampleKey = oArgs["subSampleKey"],
-				oSubSample,
-				bUseExtendedEditor;
+				oSubSample;
 
 			// reset the model
 			this.oModel.setData({});
@@ -308,17 +249,16 @@ sap.ui.define([
 				return;
 			}
 
-			bUseExtendedEditor = !!oSample.files || !!(oSubSample && oSubSample.files);
-			exploreSettingsModel.setProperty("/useExtendedFileEditor", bUseExtendedEditor);
+			var oSubSampleOrSample = oSubSample || oSample;
 
-			if (bUseExtendedEditor) {
-				this._showExtendedFileEditor(oSubSample || oSample);
-			} else {
-				exploreSettingsModel.setProperty("/codeEditorType", "json");
-				exploreSettingsModel.setProperty("/editable", true);
-				exploreSettingsModel.setProperty("/messageStripVisible", false);
-			}
+			this._fileEditor.setFiles(oSubSampleOrSample.files || [{
+				url: oSubSampleOrSample.manifestUrl,
+				name: 'manifest.json',
+				key: 'manifest.json',
+				content: ''
+			}]);
 
+			exploreSettingsModel.setProperty("/isApplication", !!oSubSampleOrSample.isApplication);
 			this._showSample(oSample, oSubSample);
 		},
 
@@ -391,26 +331,24 @@ sap.ui.define([
 
 			exploreSettingsModel.setProperty("/useIFrame", bUseIFrame);
 
+			this.oModel.setProperty("/sample", oSample);
+
+			if (oSubSample) {
+				this.oModel.setProperty("/subSample", oSubSample);
+			}
+
 			if (bUseIFrame) {
-				oFrameWrapperEl._sSample = oCurrentSample.key;
+				oFrameWrapperEl._sSample = oSubSample ? oSample.key + "/" + oSubSample.key : oSample.key;
 				oFrameWrapperEl.invalidate();
 			} else {
-				var sManifestUrl = oCurrentSample.manifestUrl,
+				var sManifestUrl = this._fileEditor.getManifestFile().url,
 					oLayoutSettings = {
 						minRows: 1,
 						columns: 4
 					},
-					oCard = this.byId("cardSample"),
-					aFiles,
-					oManifestFile;
+					oCard = this.byId("cardSample");
 
 				oFrameWrapperEl._sSample = '';
-
-				this.oModel.setProperty("/sample", oSample);
-
-				if (oSubSample) {
-					this.oModel.setProperty("/subSample", oSubSample);
-				}
 
 				oLayoutSettings = Object.assign(oLayoutSettings, oCurrentSample.settings);
 
@@ -419,52 +357,9 @@ sap.ui.define([
 					this.byId("cardContainer").invalidate();
 				}
 
-				if (oCurrentSample.files) {
-					aFiles = oCurrentSample.files;
-					oManifestFile = aFiles.find(function (oFile) {
-						return oFile.name === "manifest.json";
-					});
-					sManifestUrl = oManifestFile.url;
-				}
-
-				if (!sManifestUrl) {
-					// TODO no manifest for the given sample or sub sample
-					return;
-				}
-
 				sManifestUrl = sap.ui.require.toUrl("sap/ui/demo/cardExplorer" + sManifestUrl);
-
-				this._loadManifest(sManifestUrl);
 				this._sSampleManifestUrl = sManifestUrl;
 			}
-		},
-
-		_showExtendedFileEditor: function (oSample) {
-			var oExtendedFileEditorModel = this.getView().getModel("extendedFileEditor"),
-				oEditor = this.byId("editor");
-
-			oExtendedFileEditorModel.setProperty("/files", oSample.files);
-
-			// fetch the initial content of the sample files for "consumption in html" example
-			var aPromises = oSample.files.map(function (oFile, iIndex) {
-					return jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/cardExplorer" + oFile.url), { dataType: "text" })
-						.done(function (oData) {
-							oExtendedFileEditorModel.setProperty("/files/" + iIndex + "/content", oData);
-						});
-				});
-
-			// when the data is fetched we can set the code editor value
-			Promise.all(aPromises)
-				.then(function (aData) {
-					var aFiles = oExtendedFileEditorModel.getProperty("/files/"),
-						sFileExtension = aFiles[0].name.split('.').pop();
-
-					oExtendedFileEditorModel.setProperty("/selectedFileKey", aFiles[0].key);
-					exploreSettingsModel.setProperty("/editable", this._isFileEditable(aFiles[0].key));
-					exploreSettingsModel.setProperty("/messageStripVisible", this._isMessageStripVisible(aFiles[0].key));
-					exploreSettingsModel.setProperty("/codeEditorType", sFileExtension);
-					oEditor.setValue(aData[0]);
-				}.bind(this));
 		},
 
 		_initIFrameCreation : function () {
@@ -490,6 +385,8 @@ sap.ui.define([
 
 		createFrame: function(sSample) {
 			var oFrameEl = document.createElement("iframe");
+			// index.html will load separate scripts to enable editing the manifest.
+			// in the file editor indexTemplate.html will be shown
 			oFrameEl.src = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/samples/" + sSample + "/index.html");
 			oFrameEl.width = "100%";
 			oFrameEl.className = "sapUiTopicsIframe";
@@ -497,27 +394,12 @@ sap.ui.define([
 			return oFrameEl;
 		},
 
-		_loadManifest: function (sManifestUrl) {
-			jQuery.ajax(sManifestUrl, {
-				async: true,
-				dataType: "text",
-				success: function (sValue) {
-					this.byId("editor").setValue(sValue);
-
-					// code editor's change event would trigger updateSample, so avoid calling it twice
-					if (!exploreSettingsModel.getProperty("/autoRun")) {
-						this._updateSample(sValue);
-					}
-				}.bind(this)
-			});
-		},
-
 		/**
 		 * Reflects changes in the code editor to the card.
 		 * @param {string} sValue The value of the manifest.json file.
 		 */
 		_updateSample: function (sValue) {
-			var oValue = oValue = JSON.parse(sValue);
+			var oValue = JSON.parse(sValue);
 
 			if (!sValue) {
 				// TODO hide the card or something like that. Currently it shows busy indicator which might be confusing
@@ -542,70 +424,9 @@ sap.ui.define([
 						.setBaseUrl(sBaseUrl)
 						.setManifest(oValue)
 						.refresh();
-					this._errorMessageStrip.setVisible(false);
 				} catch (oException) {
 					this.byId("cardSample").setManifest(null);
 				}
-			}
-
-			if (exploreSettingsModel.getProperty("/useExtendedFileEditor")) {
-				var oExtendedFileEditorModel = this.getView().getModel("extendedFileEditor"),
-					iManifestFileIndex = oExtendedFileEditorModel.getProperty("/files/").findIndex(function (oEl) { return oEl.key === "manifest.json";});
-
-				oExtendedFileEditorModel.setProperty("/files/" + iManifestFileIndex + "/content", sValue);
-			}
-		},
-
-		/**
-		 * @param {string} sFileName The name of the file.
-		 * @returns {boolean} Whether the file is editable.
-		 */
-		_isFileEditable: function (sFileName) {
-			return !this._isApplicationSample() && sFileName.endsWith("manifest.json");
-		},
-
-		/**
-		 * @param {string} sFileName The name of the file.
-		 * @returns {boolean} Whether the message strip is visible
-		 */
-		_isMessageStripVisible: function (sFileName) {
-			return !this._isApplicationSample() && !sFileName.endsWith("manifest.json");
-		},
-
-		/**
-		 * Checks if the current example is an example of a full application.
-		 * Then some features are not available.
-		 * @returns {boolean} True if it is an application example.
-		 */
-		_isApplicationSample: function() {
-			var sCurrentHash = this.getRouter().getHashChanger().getHash(),
-				bIsApplication = sCurrentHash.indexOf('hostActions') !== -1 || sCurrentHash.indexOf('destinations') !== -1;
-
-			return bIsApplication;
-		},
-
-		/**
-		 * Returns the manifest.json file of the current example in JSON format.
-		 * @return {object} The manifest.json.
-		 */
-		_getManifestFileAsJson: function () {
-			var sManifestFile = "manifest.json",
-				aFiles,
-				oManifestFile;
-
-			if (this._isApplicationSample()) {
-				sManifestFile = "cardManifest.json";
-			}
-
-			if (exploreSettingsModel.getProperty("/useExtendedFileEditor")) {
-				aFiles = this.getModel("extendedFileEditor").getProperty("/files");
-				oManifestFile = aFiles.find(function (oFile) {
-					return oFile.name === sManifestFile;
-				});
-
-				return JSON.parse(oManifestFile.content);
-			} else {
-				return JSON.parse(this._editor.getValue());
 			}
 		},
 
@@ -651,18 +472,10 @@ sap.ui.define([
 		},
 
 		/**
-		 * Validates the current manifest and shows errors, if any.
-		 * @param {object} oManifest Current manifest.
+		 * Validates the current [sap.card] manifest and shows errors, if any.
 		 */
-		validateManifest: function (oManifest) {
-			SchemaValidator
-				.validate(oManifest["sap.card"])
-				.then(function () {
-					this.oModel.setProperty("/schemaErrors", "");
-				}.bind(this))
-				.catch(function (vErrors) {
-					this.oModel.setProperty("/schemaErrors", vErrors);
-				}.bind(this));
+		validateManifest: function () {
+			this._fileEditor.validateManifest();
 		},
 
 		/**
@@ -671,7 +484,7 @@ sap.ui.define([
 		 */
 		onSchemaValidationCheck: function (oEvent) {
 			if (oEvent.getParameter("selected")) {
-				this.validateManifest(this.byId("cardSample").getManifest());
+				this.validateManifest();
 			}
 		}
 	});

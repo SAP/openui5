@@ -3,10 +3,13 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/ListBinding",
+	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v2/ODataListBinding",
 	"sap/ui/test/TestUtils"
-], function (Log, ListBinding, ODataListBinding, TestUtils) {
+], function (Log, Filter, FilterOperator, ListBinding, ODataUtils, ODataListBinding, TestUtils) {
 	/*global QUnit,sinon*/
 	/*eslint no-warning-comments: 0*/
 	"use strict";
@@ -244,6 +247,171 @@ sap.ui.define([
 
 		// code under test
 		ODataListBinding.prototype._checkDataStateMessages.call(oBinding, oDataState, sResolvedPath);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_getFilterForPredicate: keys for predicate known", function (assert) {
+		var oBinding = {},
+			oDataUtilsMock = this.mock(ODataUtils),
+			oExpectedFilter = new Filter({
+				and : true,
+				filters : [
+					new Filter("SalesOrderID", FilterOperator.EQ, "~42~"),
+					new Filter("ItemPosition", FilterOperator.EQ, "~10~")
+				]
+			}),
+			sPredicate = "(SalesOrderID='42',ItemPosition='10')";
+
+		oDataUtilsMock.expects("parseValue").withExactArgs("'10'").returns("~10~");
+		oDataUtilsMock.expects("parseValue").withExactArgs("'42'").returns("~42~");
+
+		// code under test
+		assert.deepEqual(
+			ODataListBinding.prototype._getFilterForPredicate.call(oBinding, sPredicate),
+			oExpectedFilter);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getFilterForPredicate: key for predicate unknown", function (assert) {
+		var oModel = {
+				oMetadata : {
+					getKeyPropertyNamesByPath : function () {}
+				}
+			},
+			oBinding = {
+				sDeepPath : "~deepPath~",
+				oModel : oModel
+			};
+
+		this.mock(oModel.oMetadata).expects("getKeyPropertyNamesByPath")
+			.withExactArgs("~deepPath~")
+			.returns(["SalesOrderID"]);
+		this.mock(ODataUtils).expects("parseValue").withExactArgs("'42'").returns("~42~");
+
+		// code under test
+		assert.deepEqual(ODataListBinding.prototype._getFilterForPredicate.call(oBinding, "('42')"),
+			new Filter("SalesOrderID", FilterOperator.EQ, "~42~"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestFilterForMessages: unresolved", function (assert) {
+		var oModel = {
+				getMessagesByPath : function () {},
+				resolve : function () {}
+			},
+			oBinding = {
+				oContext : "context",
+				sDeepPath : "deepPath",
+				oModel : oModel,
+				sPath : "path"
+			},
+			oPromise;
+
+		this.mock(oModel).expects("resolve")
+			.withExactArgs(oBinding.sPath, oBinding.oContext)
+			.returns(undefined);
+		this.mock(oModel).expects("getMessagesByPath").never();
+
+		// code under test
+		oPromise = ODataListBinding.prototype.requestFilterForMessages.call(oBinding);
+
+		assert.ok(oPromise instanceof Promise);
+
+		return oPromise.then(function (oFilter) {
+			assert.strictEqual(oFilter, null);
+		});
+	});
+
+	//*********************************************************************************************
+[true, false].forEach(function (bWithFilter) {
+	[{
+		aFilterForPredicate : [],
+		aMessages : [] // contains sap.ui.core.message.Message objects
+	}, {
+		aFilterForPredicate : bWithFilter ? [] : ["(~keyPredicate~)"],
+		aMessages : [{fullTarget : "~deepPath~(~keyPredicate~)", message : "out"}]
+	}, {
+		aFilterForPredicate : ["(~keyPredicate~)"],
+		aMessages : [{fullTarget : "~deepPath~(~keyPredicate~)", message : "in"}]
+	}, {
+		aFilterForPredicate : bWithFilter
+			? ["(~keyPredicate0~)", "(~keyPredicate2~)"]
+			: ["(~keyPredicate0~)", "(~keyPredicate1~)", "(~keyPredicate2~)", "(~keyPredicate3~)"],
+		aMessages : [
+			{fullTarget : "~deepPath~", message : "out"},
+			{fullTarget : "~deepPath~(~keyPredicate0~)/foo", message : "in"},
+			{fullTarget : "~deepPath~(~keyPredicate1~)", message : "out"},
+			{fullTarget : "~deepPath~(~keyPredicate2~)", message : "in"},
+			{fullTarget : "~deepPath~(~keyPredicate3~)", message : "out"}
+		]
+	}].forEach(function (oFixture, i) {
+	var sTitle = "requestFilterForMessages: with filter: " + bWithFilter + ", " + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCallback = {
+				fnFilter : function () {}
+			},
+			oCallbackMock = this.mock(oCallback),
+			aFilterForPredicate = oFixture.aFilterForPredicate,
+			aFilters = [],
+			aMessages = oFixture.aMessages,
+			oModel = {
+				getMessagesByPath : function () {},
+				resolve : function () {}
+			},
+			oBinding = {
+				oContext : "context",
+				sDeepPath : "~deepPath~",
+				oModel : oModel,
+				sPath : "path",
+				_getFilterForPredicate : function () {}
+			},
+			oBindingMock = this.mock(oBinding),
+			oPromise;
+
+		this.mock(oModel).expects("resolve")
+			.withExactArgs(oBinding.sPath, oBinding.oContext)
+			.returns("resolvedPath");
+		this.mock(oModel).expects("getMessagesByPath").withExactArgs("~deepPath~", true)
+			.returns(aMessages);
+		if (aMessages.length && bWithFilter) {
+			aMessages.forEach(function (oMessage) {
+				oCallbackMock.expects("fnFilter").withExactArgs(sinon.match.same(oMessage))
+					.returns(oMessage.message === "in");
+			});
+		} else {
+			oCallbackMock.expects("fnFilter").never();
+		}
+		if (aFilterForPredicate.length) {
+			aFilterForPredicate.forEach(function (sPredicate) {
+				var oFilter = new Filter("~property~", FilterOperator.EQ, "~value~");
+
+				oBindingMock.expects("_getFilterForPredicate").withExactArgs(sPredicate)
+					.returns(oFilter);
+				aFilters.push(oFilter);
+			});
+		} else {
+			oBindingMock.expects("_getFilterForPredicate").never();
+		}
+
+		// code under test
+		oPromise = ODataListBinding.prototype.requestFilterForMessages
+			.call(oBinding, bWithFilter ? oCallback.fnFilter : undefined);
+
+		assert.ok(oPromise instanceof Promise);
+
+		return oPromise.then(function (oFilter) {
+			if (aFilters.length === 0) {
+				assert.strictEqual(oFilter, null);
+			} else if (aFilters.length === 1) {
+				assert.deepEqual(oFilter, aFilters[0]);
+			} else {
+				assert.strictEqual(oFilter.bAnd, undefined);
+				assert.deepEqual(oFilter.aFilters, aFilters);
+			}
+		});
+	});
 	});
 });
 });

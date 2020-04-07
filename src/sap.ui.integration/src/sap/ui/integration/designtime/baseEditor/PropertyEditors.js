@@ -3,26 +3,59 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/ui/integration/designtime/baseEditor/PropertyEditor",
 	"sap/ui/integration/designtime/baseEditor/util/findClosestInstance",
 	"sap/ui/integration/designtime/baseEditor/util/createPromise",
+	"sap/ui/integration/designtime/baseEditor/util/isAggregationTemplate",
 	"sap/base/util/restricted/_intersection",
-	"sap/base/util/restricted/_omit"
+	"sap/base/util/restricted/_omit",
+	"sap/base/util/deepEqual",
+	"sap/ui/core/Fragment",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/base/ManagedObjectObserver"
 ], function (
 	Control,
-	PropertyEditor,
 	findClosestInstance,
 	createPromise,
+	isAggregationTemplate,
 	_intersection,
-	_omit
+	_omit,
+	deepEqual,
+	Fragment,
+	JSONModel,
+	ManagedObjectObserver
 ) {
 	"use strict";
 
 	var CREATED_BY_CONFIG = "config";
 	var CREATED_BY_TAGS = "tags";
-	var STATUS_CREATED = "created"; // Initial state: wrapper was just created, initialization was not executed yet
-	var STATUS_SYNCING = "syncing"; // Initialization in progress
-	var STATUS_READY = "ready"; // Initialization completed
+
+	var mLayouts = {
+		"list": {
+			module: "sap/ui/integration/designtime/baseEditor/layout/Form",
+			defaultConfig: {
+				responsiveGridLayout: {
+					labelSpanXL: 12,
+					labelSpanL: 12,
+					labelSpanM: 12,
+					labelSpanS: 12,
+					adjustLabelSpan: false,
+					emptySpanXL: 0,
+					emptySpanL: 0,
+					emptySpanM: 0,
+					emptySpanS: 0,
+					columnsXL: 1,
+					columnsL: 1,
+					columnsM: 1,
+					singleContainerFullSize: false
+				}
+			}
+		},
+		"form": {
+			module: "sap/ui/integration/designtime/baseEditor/layout/Form",
+			defaultConfig: {}
+		}
+	};
+
 
 	/**
 	 * @class
@@ -80,18 +113,34 @@ sap.ui.define([
 				 */
 				config: {
 					type: "array"
+				},
+
+				/**
+				 *
+				 */
+				layout: {
+					type: "string",
+					defaultValue: "list"
+				},
+
+				layoutConfig: {
+					type: "object"
 				}
 			},
 			aggregations: {
-				propertyEditors: {
-					type: "sap.ui.integration.designtime.baseEditor.PropertyEditor",
-					visibility: "hidden"
+				content: {
+					type: "sap.ui.core.Control",
+					multiple: false
 				}
 			},
 			associations: {
 				editor: {
 					type: "sap.ui.integration.designtime.baseEditor.BaseEditor",
 					multiple: false
+				},
+				propertyEditors: {
+					type: "sap.ui.integration.designtime.baseEditor.PropertyEditor",
+					visibility: "hidden"
 				}
 			},
 			events: {
@@ -160,16 +209,56 @@ sap.ui.define([
 				/**
 				 * Fires when the nested editors are ready
 				 */
-				ready: {}
+				ready: {},
+
+				/**
+				 * Fires when <code>layout</code> changes.
+				 */
+				layoutChange: {
+					parameters: {
+						previousLayout: {
+							type: "string"
+						},
+						layout: {
+							type: "string"
+						}
+					}
+				},
+
+				/**
+				 * Fires when <code>layoutConfig</code> changes.
+				 */
+				layoutConfigChange: {
+					parameters: {
+						previousLayoutConfig: {
+							type: "object"
+						},
+						layoutConfig: {
+							type: "object"
+						}
+					}
+				}
 			}
 		},
 
 		_bEditorAutoDetect: false,
 		_sCreatedBy: null, // possible values: null | propertyName | config
-		_sState: STATUS_CREATED,
+		_bLayoutReady: false,
 
-		constructor: function() {
+		constructor: function () {
+			this._iExpectedWrapperCount = 0;
+
+			// Ready state of the editor, will be evaluated when a value is set
+			this._setReady(false);
+
+			// List of dependencies
+			this._aEditorWrappers = [];
+			this._bInitFinished = false;
+
 			Control.prototype.constructor.apply(this, arguments);
+
+			var oModel = new JSONModel();
+			this.setModel(oModel);
 
 			if (!this.getEditor()) {
 				// FIXME: if set later manually => this detection should be disabled
@@ -203,16 +292,9 @@ sap.ui.define([
 					this._removePropertyEditors();
 					this._initPropertyEditors();
 				} else if (this._sCreatedBy) {
-					var aPropertyEditors = this.getAggregation("propertyEditors");
-					if (aPropertyEditors && aPropertyEditors.length > 0) {
-						aConfig.forEach(function (mConfig, iIndex) {
-							// workaround until PropertyEditor supports smart rendering
-							aPropertyEditors[iIndex].setConfig(_omit(mConfig, "value"));
-							if (!mConfig.path.startsWith("/")) {
-								aPropertyEditors[iIndex].setValue(mConfig.value);
-							}
-						});
-					}
+					var mData = this._prepareViewData(aConfig, this._getLayoutConfig());
+					this._iExpectedWrapperCount = mData.count;
+					this.getModel().setData(mData);
 				}
 			});
 
@@ -225,27 +307,60 @@ sap.ui.define([
 				}
 			});
 
-			// init
-			this._initPropertyEditors();
+			if (this.getMetadata().getProperty("layout").getDefaultValue() === this.getLayout()) {
+				this._initLayout(this.getLayout());
+			}
 		},
 
 		renderer: function (oRm, oControl) {
-			var aPropertyEditors = oControl.getAggregation("propertyEditors");
 			oRm.openStart("div", oControl);
 			oRm.openEnd();
-			if (Array.isArray(aPropertyEditors)) {
-				aPropertyEditors.forEach(function (oPropertyEditor) {
-					oRm.renderControl(oPropertyEditor);
-				});
-			}
+			oRm.renderControl(oControl.getContent());
 			oRm.close("div");
 		}
 	});
 
 	PropertyEditors.prototype.init = function () {
+		this.attachLayoutChange(function (oEvent) {
+			var sLayout = oEvent.getParameter("layout");
+			this._initLayout(sLayout);
+		}, this);
+
+		this.attachLayoutConfigChange(function () {
+			if (this._sCreatedBy) {
+				this._removePropertyEditors();
+			}
+			this._initPropertyEditors();
+		}, this);
+
 		Promise.resolve().then(function () {
+			this._bInitFinished = true;
 			this.fireInit();
 		}.bind(this));
+	};
+
+	PropertyEditors.prototype.destroy = function () {
+		if (this._fnCancelLayoutLoading) {
+			this._fnCancelLayoutLoading();
+		}
+		Control.prototype.destroy.apply(this, arguments);
+	};
+
+	PropertyEditors.prototype._loadFragment = function (sFilePath) {
+		return Fragment.load({
+			name: sFilePath,
+			controller: this
+		});
+	};
+
+	PropertyEditors.prototype._loadModule = function (sFilePath) {
+		return new Promise(function (fnResolve, fnReject) {
+			sap.ui.require(
+				[sFilePath],
+				fnResolve,
+				fnReject
+			);
+		});
 	};
 
 	PropertyEditors.prototype.getEditor = function () {
@@ -301,60 +416,20 @@ sap.ui.define([
 	};
 
 	PropertyEditors.prototype._removePropertyEditors = function () {
-		var aPropertyEditors = this.removeAllAggregation("propertyEditors");
+		var aPropertyEditors = this.removeAllAssociation("propertyEditors").map(function (sPropertyEditorId) {
+			return sap.ui.getCore().byId(sPropertyEditorId);
+		});
+
+		this._iExpectedWrapperCount = 0;
+		this.getModel().setData({});
+		this._sCreatedBy = null;
 
 		if (aPropertyEditors.length) {
-			aPropertyEditors.forEach(function (oPropertyEditor) {
-				oPropertyEditor.destroy();
-			});
-
-			this._sCreatedBy = null;
 			this.firePropertyEditorsChange({
 				previousPropertyEditors: aPropertyEditors,
 				propertyEditors: []
 			});
 		}
-	};
-
-	PropertyEditors.prototype.isReady = function () {
-		// The wrapper is ready when the initialization was executed and all nested editors are ready
-		return (
-			this._sState === STATUS_READY
-			&& (this.getAggregation("propertyEditors") || []).every(function (oNestedEditor) {
-				return oNestedEditor.isReady();
-			})
-		);
-	};
-
-	PropertyEditors.prototype._onPropertyEditorReady = function () {
-		if (this.isReady()) {
-			this.fireReady();
-		}
-	};
-
-	/**
-	 * Wait for the wrapper and its nested editors to be ready.
-	 * @returns {Promise} Promise which will resolve once all nested editors are ready. Resolves immediately if all nested editors are currently ready.
-	 */
-	PropertyEditors.prototype.ready = function () {
-		return new Promise(function (resolve) {
-			var fnCheckPropertyEditorsReady = function () {
-				Promise.all((this.getAggregation("propertyEditors") || []).map(function (oPropertyEditor) {
-					return oPropertyEditor.ready();
-				})).then(function () {
-					resolve();
-				});
-			}.bind(this);
-
-			if (this._sState !== STATUS_READY) {
-				// Wait for initialization of nested editors before checking their ready states
-				this.attachEventOnce("propertyEditorsChange", function () {
-					fnCheckPropertyEditorsReady();
-				});
-			} else {
-				fnCheckPropertyEditorsReady();
-			}
-		}.bind(this));
 	};
 
 	PropertyEditors.prototype._initPropertyEditors = function () {
@@ -367,8 +442,8 @@ sap.ui.define([
 					&& this.getTags()
 				)
 			)
+			&& this._bLayoutReady
 		) {
-			this._sState = STATUS_SYNCING;
 			var oEditor = this.getEditor();
 			var aConfigs;
 
@@ -381,37 +456,23 @@ sap.ui.define([
 				this._sCreatedBy = CREATED_BY_TAGS;
 			}
 
-			var bRenderLabels = this.getRenderLabels();
-			var aPropertyEditors = aConfigs.map(function (mPropertyEditorConfig) {
-				var oPropertyEditor = new PropertyEditor({
-					editor: oEditor
-				});
-				if (bRenderLabels !== undefined) {
-					oPropertyEditor.setRenderLabel(bRenderLabels);
-				}
-				oPropertyEditor.setValue(mPropertyEditorConfig.value);
-				oPropertyEditor.setConfig(_omit(mPropertyEditorConfig, "value"));
-				oPropertyEditor.attachReady(this._onPropertyEditorReady, this);
-				return oPropertyEditor;
-			}, this);
-
-			var aPreviousPropertyEditors = (this.getAggregation("propertyEditors") || []).slice();
-
-			aPropertyEditors.forEach(function (oPropertyEditor) {
-				this.addAggregation("propertyEditors", oPropertyEditor);
-			}, this);
-
-			this._sState = STATUS_READY;
-
-			if (this.isReady()) {
-				this.fireReady();
+			var aPreviousPropertyEditors = (this._getPropertyEditors() || []).slice();
+			var mData = this._prepareViewData(aConfigs, this._getLayoutConfig());
+			this._iExpectedWrapperCount = mData.count;
+			if (this._iExpectedWrapperCount > 0) {
+				this._setReady(false);
 			}
+			this.getModel().setData(mData);
 
-			this.firePropertyEditorsChange({
-				previousPropertyEditors: aPreviousPropertyEditors,
-				propertyEditors: (this.getAggregation("propertyEditors") || []).slice()
-			});
+			this.ready().then(function () {
+				this.firePropertyEditorsChange({
+					previousPropertyEditors: aPreviousPropertyEditors,
+					propertyEditors: (this._getPropertyEditors() || []).slice()
+				});
+			}.bind(this));
 		}
+
+		this._checkReadyState();
 	};
 
 	PropertyEditors.prototype._propagationListener = function () {
@@ -434,6 +495,209 @@ sap.ui.define([
 				this.addPropagationListener(this._propagationListener);
 			}
 		}
+	};
+
+	PropertyEditors.prototype.setLayout = function (sLayout) {
+		var sPreviousLayout = this.getLayout();
+
+		if (sPreviousLayout !== sLayout) {
+			this.setProperty("layout", sLayout);
+			this.fireLayoutChange({
+				previousLayout: sPreviousLayout,
+				layout: sLayout
+			});
+		}
+	};
+
+	PropertyEditors.prototype.setLayoutConfig = function (mLayoutConfig) {
+		var sPreviousLayoutConfig = this.getLayoutConfig();
+
+		if (!deepEqual(sPreviousLayoutConfig, mLayoutConfig)) {
+			this.setProperty("layoutConfig", mLayoutConfig);
+			this.fireLayoutConfigChange({
+				previousLayoutConfig: sPreviousLayoutConfig,
+				layoutConfig: mLayoutConfig
+			});
+		}
+	};
+
+	PropertyEditors.prototype._getLayoutConfig = function () {
+		var oLayoutConfig = this.getLayoutConfig();
+
+		var bRenderLabels = this.getRenderLabels();
+		var mRenderLabels;
+		if (typeof bRenderLabels === "boolean") {
+			mRenderLabels = {
+				renderLabels: bRenderLabels
+			};
+		}
+
+		if (!oLayoutConfig) {
+			var mLayout = mLayouts[this.getLayout()];
+			oLayoutConfig = mLayout && mLayout.defaultConfig || undefined;
+		}
+
+		// Prioritization (bottom wins):
+		// - default config
+		// - custom layout config
+		// - renderLabels property (if set)
+		return Object.assign({}, oLayoutConfig, mRenderLabels);
+	};
+
+	PropertyEditors.prototype._initLayout = function (sLayout) {
+		var sPath = mLayouts.hasOwnProperty(sLayout) ? mLayouts[sLayout].module : sLayout;
+
+		this._bLayoutReady = false;
+
+		if (this._sCreatedBy) {
+			this._removePropertyEditors();
+		}
+
+		if (this._fnCancelLayoutLoading) {
+			this._fnCancelLayoutLoading();
+		}
+
+		var mPromise = createPromise(function (fnResolve, fnReject) {
+			Promise.all([
+				this._loadFragment(sPath),
+				this._loadModule(sPath)
+			]).then(fnResolve, fnReject);
+		}.bind(this));
+
+		mPromise.promise.then(function (aResult) {
+			delete this._fnCancelLayoutLoading;
+
+			var oLayout = aResult[0];
+			this._prepareViewData = aResult[1];
+
+			// this.removeAllAggregation("content");
+			// this.addContent(oLayout);
+			this.setContent(oLayout);
+			this._bLayoutReady = true;
+			this._initPropertyEditors();
+		}.bind(this));
+
+		this._fnCancelLayoutLoading = mPromise.cancel;
+	};
+
+	PropertyEditors.prototype.ready = function () {
+		return new Promise(function (resolve) {
+			if (this.isReady()) {
+				// The editor is already ready, resolve immediately
+				resolve();
+			} else {
+				this.attachEventOnce("ready", resolve);
+			}
+		}.bind(this));
+	};
+
+	PropertyEditors.prototype.isReady = function () {
+		return !!this._bIsReady;
+	};
+
+	PropertyEditors.prototype._setReady = function (readyState) {
+		var bPreviousReadyState = this._bIsReady;
+		this._bIsReady = readyState;
+		if (bPreviousReadyState !== true && readyState === true) {
+			// If the editor was not ready before, fire the ready event
+			this.fireReady();
+		}
+	};
+
+	PropertyEditors.prototype._checkReadyState = function () {
+		if (this._mWrapperReadyCheck) {
+			// Cancel the old ready check as the nested wrappers have changed
+			this._mWrapperReadyCheck.cancel();
+		}
+		if (!this._bInitFinished) {
+			// The editor itself is not ready yet, no need to check nested editors
+			this._setReady(false);
+			return;
+		}
+		if (this._iExpectedWrapperCount === 0) {
+			// If no nested editors are expected the ready check resolves immediately
+			this._setReady(true);
+			return;
+		}
+
+		// Wait for the expected number of wrappers to report to the editor via _wrapperInit
+		// If all wrappers are initialized, execute the ready check
+		if (this._iExpectedWrapperCount === this._aEditorWrappers.length) {
+			if (
+				this._aEditorWrappers.every(function (oWrapper) {
+					return oWrapper.isReady();
+				})
+			) {
+				// Editors haven't changed and are still ready
+				this._setReady(true);
+			} else {
+				this._setReady(false);
+				this._mWrapperReadyCheck = createPromise(function (resolve) {
+					Promise.all(this._aEditorWrappers.map(function (oWrapper) {
+						return oWrapper.ready(); // Check the ready state of each nested editor
+					})).then(resolve);
+				}.bind(this));
+				this._mWrapperReadyCheck.promise.then(function () {
+					// All nested editors are ready
+					this._setReady(true);
+					delete this._mWrapperReadyCheck;
+				}.bind(this));
+			}
+		} else {
+			this._setReady(false);
+		}
+	};
+
+	/**
+	 * Method to be passed to the nested editor wrapper as a callback for the ready event.
+	 * Registers the source of the <code>oEvent</code> on the editor as an element to consider
+	 * for the ready check.
+	 *
+	 * @param {sap.ui.base.Event} oEvent - Init event of the nested editor
+	 */
+	PropertyEditors.prototype.wrapperInit = function (oEvent) {
+		var oWrapper = oEvent.getSource();
+		if (isAggregationTemplate(oWrapper)) {
+			// The element is part of the template of the aggregation binding
+			// and not a real wrapper
+			return;
+		}
+		if (!oWrapper.getEditor()) {
+			oWrapper.setEditor(this.getEditor());
+		}
+		this._aEditorWrappers.push(oWrapper);
+		this.addAssociation("propertyEditors", oWrapper);
+		oWrapper.attachReady(function () {
+			// If a nested editor got unready without a value change on the parent editor
+			// the ready state needs to be explicitly reevaluated to fire ready from the parent again
+			this._setReady(false);
+			this._checkReadyState();
+		}.bind(this));
+		// If the editor contains nested editors and setValue is called for the first time
+		// an observer is created to handle the destruction of nested wrappers
+		if (!this._oWrapperObserver) {
+			// Observe wrappers which are registered on the complex editor
+			// to remove them from the ready check list when they are destroyed
+			this._oWrapperObserver = new ManagedObjectObserver(function (mutation) {
+				this._aEditorWrappers = this._aEditorWrappers.filter(function (oEditorWrapper) {
+					return oEditorWrapper !== mutation.object;
+				});
+				this.removeAssociation("propertyEditors", mutation.object);
+			}.bind(this));
+		}
+		this._oWrapperObserver.observe(oWrapper, {
+			destroy: true
+		});
+		// A new nested editor wrapper was registered, therefore the ready state must be reevaluated
+		this._checkReadyState();
+	};
+
+	PropertyEditors.prototype._getPropertyEditors = function () {
+		var aPropertyEditors = (this.getAssociation("propertyEditors") || []).map(function (sId) {
+			return sap.ui.getCore().byId(sId);
+		});
+
+		return aPropertyEditors.length && aPropertyEditors || null; // returning null when empty array — backwards compatibility
 	};
 
 	return PropertyEditors;

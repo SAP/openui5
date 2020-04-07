@@ -55,7 +55,6 @@
 				</Select>
 				<IconTabHeader id="tabHeader"
 						selectedKey="home"
-						showOverflowSelectList="true"
 						backgroundDesign="Transparent"
 						mode="Inline"
 						select="navigateToSection"

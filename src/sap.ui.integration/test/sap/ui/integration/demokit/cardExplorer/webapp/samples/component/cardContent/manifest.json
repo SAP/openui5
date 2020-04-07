@@ -1,7 +1,7 @@
 {
 	"_version": "1.15.0",
 	"sap.app": {
-		"id": "sap.ui.demo.cardExplorer.samples.component.cardContent",
+		"id": "my.component.sample.cardContent",
 		"type": "card",
 		"title": "Sample of a Component Content",
 		"subTitle": "Sample of a Component Content",
@@ -27,7 +27,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.ui.demo.cardExplorer.samples.component.cardContent.View",
+			"viewName": "my.component.sample.cardContent.View",
 			"type": "XML",
 			"async": true,
 			"id": "app"

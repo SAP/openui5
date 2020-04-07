@@ -176,7 +176,7 @@
 					sLib, i;
 				for (i=0; i<aLibs.length; i++) {
 					sLib = aLibs[i].name;
-					if (jQuery.inArray(sLib, aResult) < 0) {
+					if (aResult.indexOf(sLib) < 0) {
 						aResult.push(sLib);
 					}
 				}
@@ -220,13 +220,13 @@
 						jQuery("#theme").append("<option value='" + aThemes[i] + "'>" + aThemes[i] + "</option>");
 					}
 
-					jQuery("#lib").change(onChange);
-					jQuery("#theme").change(onChange);
-					jQuery("#rtl").change(onChange);
-					jQuery("#avoidAriaApplicationRole").change(onChange);
-					jQuery("#filter").change(onChange);
+					jQuery("#lib").on("change", onChange);
+					jQuery("#theme").on("change", onChange);
+					jQuery("#rtl").on("change", onChange);
+					jQuery("#avoidAriaApplicationRole").on("change", onChange);
+					jQuery("#filter").on("change", onChange);
 					if (sap.ui.Device.browser.msie) {
-						jQuery("#filter").keyup(function(oEvent){
+						jQuery("#filter").on("keyup", function(oEvent){
 							if (oEvent.keyCode == jQuery.sap.KeyCodes.ENTER) {
 								onChange();
 							}

@@ -129,7 +129,7 @@
 				var oNewSampleDomRef = document.createElement("A");
 				oNewSampleDomRef.href = sUrl;
 				oNewSampleDomRef.setAttribute("ref",sUrl);
-				jQuery(oNewSampleDomRef).bind("click", jQuery.proxy(function(){
+				jQuery(oNewSampleDomRef).on("click", jQuery.proxy(function(){
 					return triggerLink(oNewSampleDomRef);
 				}));
 				oNewSampleDomRef.target = "sap-ui-ContentWindow";

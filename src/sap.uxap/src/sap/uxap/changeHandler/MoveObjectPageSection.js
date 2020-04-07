@@ -59,22 +59,27 @@ sap.ui.define(["sap/ui/fl/changeHandler/MoveControls", "sap/ui/core/Core", "sap/
 			oTargetControl = Core.byId(mSpecificChangeInfo.target.id);
 
 		if (oSourceControl.isA("sap.uxap.AnchorBar")
-			&& oTargetControl.isA("sap.uxap.AnchorBar")) {
-			this._mapAnchorsToSections(mSpecificChangeInfo);
+			&& oTargetControl.isA("sap.uxap.AnchorBar")
+		) {
+			this._mapAnchorsToSections(mSpecificChangeInfo, mPropertyBag);
 		}
 
 		return MoveControls.completeChangeContent.apply(this, arguments);
 	};
 
 	/**
-	 * Maps the moved anchor to its corresponding section
+	 * Maps the moved anchor to its corresponding section;
+	 * Also adjusts the index taking into consideration that there might be invisible sections
 	 *
-	 * @param {object} mSpecificChangeInfo
+	 * @param {object} mSpecificChangeInfo - Information needed to create the change
+	 * @param {object} mPropertyBag - Object additional properties like modifier or appComponent
 	 * @private
 	 */
-	MoveObjectPageSection._mapAnchorsToSections = function (mSpecificChangeInfo) {
-		var oSection,
-			oSectionParentInfo;
+	MoveObjectPageSection._mapAnchorsToSections = function (mSpecificChangeInfo, mPropertyBag) {
+		var oSection, oSectionParentInfo,
+			oModifier = mPropertyBag.modifier,
+			oLayout = oModifier.bySelector(mSpecificChangeInfo.selector, mPropertyBag.appComponent, mPropertyBag.view),
+			aAnchoredSections = oLayout._getVisibleSections(); // sections that have anchors
 
 		function getSectionForAnchor(sAnchorId) {
 			var oAnchor = Core.byId(sAnchorId),
@@ -82,7 +87,12 @@ sap.ui.define(["sap/ui/fl/changeHandler/MoveControls", "sap/ui/core/Core", "sap/
 			return Core.byId(sSectionId);
 		}
 
-		mSpecificChangeInfo.movedElements.forEach(function (oElement) {
+		mSpecificChangeInfo.movedElements.forEach(function(oElement) {
+			// adjust target index as invisible sections are not part of the anchor bar;
+			var oSectionAtTargetIndex = aAnchoredSections[oElement.targetIndex];
+			oElement.targetIndex = oModifier.findIndexInParentAggregation(oSectionAtTargetIndex);
+
+			// replace the anchorBar with the section
 			oSection = getSectionForAnchor(oElement.id);
 			if (!oSection || !oSection.getParent()) {
 				throw new Error("Cannot map anchor to section");

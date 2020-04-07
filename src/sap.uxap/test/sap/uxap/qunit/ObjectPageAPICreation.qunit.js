@@ -3360,6 +3360,40 @@ function (
 		oObjectPage.destroy();
 	});
 
+
+	QUnit.module("ObjectPageComponentContainer", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-27_ObjectPageConfig",
+				viewName: "view.UxAP-27_ObjectPageConfig"
+			}).then(function (oView) {
+				this.oView = oView;
+				this.oView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.oView.destroy();
+		}
+	});
+
+	QUnit.test("component instance", function (assert) {
+		var oComponentContainer = this.oView
+			.byId("objectPageContainer"),
+			oComponent = oComponentContainer._oComponent;
+
+		// assert init state
+		assert.ok(oComponent, "component is created");
+
+		// Act: mock rerendering of the component container
+		oComponentContainer.onBeforeRendering();
+
+		// Check
+		assert.strictEqual(oComponentContainer._oComponent, oComponent, "component instance is not changed");
+	});
+
 	function checkObjectExists(sSelector) {
 		var oObject = jQuery(sSelector);
 		return oObject.length !== 0;

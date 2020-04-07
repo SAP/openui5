@@ -24,6 +24,14 @@ sap.ui.define([
 	 * @experimental
 	 */
 	var CardEditor = BaseEditor.extend("sap.ui.integration.designtime.cardEditor.CardEditor", {
+		metadata: {
+			properties: {
+				"layout": {
+					type: "string",
+					defaultValue: "form"
+				}
+			}
+		},
 		constructor: function() {
 			BaseEditor.prototype.constructor.apply(this, arguments);
 			this.addConfig(oDefaultCardConfig);
@@ -99,7 +107,7 @@ sap.ui.define([
 					reject("No Change");
 				}
 
-				mParameters.changeType = "appdescr_card";
+				mParameters.changeType = oCurrentJson.hasOwnProperty("sap.card") ? "appdescr_card" : "appdescr_widget";
 				mParameters.creation = new Date().toISOString();
 				mParameters.generator = "CardEditor";
 				mParameters.selector = {};

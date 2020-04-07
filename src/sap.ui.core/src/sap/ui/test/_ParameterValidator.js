@@ -130,7 +130,7 @@ sap.ui.define([
 				+ fnValue + "' was passed";
 		},
 		array: function (aValue, sPropertyName) {
-			if (jQueryDOM.isArray(aValue)) {
+			if (Array.isArray(aValue)) {
 				return "";
 			}
 			return "the '" + sPropertyName + "' parameter needs to be an array but '"

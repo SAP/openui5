@@ -185,7 +185,7 @@ sap.ui.define(["sap/ui/core/Control"], function(Control){
 
 		var aUIRoots = jQuery(".presetup").root();
 		assert.strictEqual(aUIRoots.length, 2, "Two 'UI-roots' of the controls should be returned");
-		assert.ok(jQuery.inArray(oCore.getUIArea("uiAreaPreSetup1"), aUIRoots) >= 0, "pre setup UIArea 1 should be returned");
-		assert.ok(jQuery.inArray(oCore.getUIArea("uiAreaPreSetup2"), aUIRoots) >= 0, "pre setup UIArea 2 should be returned");
+		assert.ok(Array.prototype.indexOf.call(aUIRoots, oCore.getUIArea("uiAreaPreSetup1")) >= 0, "pre setup UIArea 1 should be returned");
+		assert.ok(Array.prototype.indexOf.call(aUIRoots, oCore.getUIArea("uiAreaPreSetup2")) >= 0, "pre setup UIArea 2 should be returned");
 	});
 });

@@ -177,7 +177,7 @@ sap.ui.define([
 			// TODO model this as a property as soon as write-once-during-init properties become available
 			this.mProperties["viewContent"] = mSettings.viewContent;
 			if (typeof mSettings.viewContent === "string") {
-				this._oJSONView = jQuery.parseJSON(mSettings.viewContent);
+				this._oJSONView = JSON.parse(mSettings.viewContent);
 				if (!this._oJSONView) { // would lead to errors later on
 					throw new Error("error when parsing viewContent: " + mSettings.viewContent);
 				}

@@ -465,7 +465,7 @@ sap.ui.define([
 				draftLayer: sDraftLayer
 			}).then(function () {
 				assert.equal(oStaticFileConnectorStub.getCall(0).args[0].draftLayer, undefined, "the StaticFileConnector has the draft flag NOT set");
-				assert.equal(oJsObjectConnectorStub.getCall(0).args[0].draftLayer, undefined, "the connector NOT in charge for draft layer has the draft flag NOT set");
+				assert.equal(oJsObjectConnectorStub.getCall(0).args[0].draftLayer, sDraftLayer, "the connector NOT in charge for draft layer has the draft flag NOT set");
 				assert.equal(oLrepConnectorStub.getCall(0).args[0].draftLayer, sDraftLayer, "the connector for draft layer has the draft flag NOT set");
 			});
 		});
@@ -509,7 +509,7 @@ sap.ui.define([
 				reference: "app.id"
 			}).then(function () {
 				assert.equal(oStaticFileConnectorStub.getCall(0).args[0].draftLayer, undefined, "the StaticFileConnector has the draft flag NOT set");
-				assert.equal(oJsObjectConnectorStub.getCall(0).args[0].draftLayer, undefined, "the connector NOT in charge for draft layer has the draft flag NOT set");
+				assert.equal(oJsObjectConnectorStub.getCall(0).args[0].draftLayer, sDraftLayer, "the connector NOT in charge for draft layer has the draft flag NOT set");
 				assert.equal(oLrepConnectorStub.getCall(0).args[0].draftLayer, sDraftLayer, "the connector for draft layer has the draft flag NOT set");
 			});
 		});

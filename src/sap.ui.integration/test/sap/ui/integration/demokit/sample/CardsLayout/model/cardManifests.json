@@ -521,24 +521,24 @@
 					"item": [
 						{
 							"visualization": "blocker",
-							"start": "2019-9-2/09:00",
-							"end": "2019-9-2/10:00",
+							"start": "2019-09-02T09:00",
+							"end": "2019-09-02T10:00",
 							"title": "Payment reminder",
 							"icon": "sap-icon://desktop-mobile",
 							"type": "Type06"
 						},
 						{
 							"visualization": "blocker",
-							"start": "2019-9-2/17:00",
-							"end": "2019-9-2/17:30",
+							"start": "2019-09-02T17:00",
+							"end": "2019-09-02T17:30",
 							"title": "Private appointment",
 							"icon": "sap-icon://desktop-mobile",
 							"type": "Type07"
 						},
 						{
 							"visualization": "appointment",
-							"start": "2019-9-2/12:00",
-							"end": "2019-9-2/13:00",
+							"start": "2019-09-02T12:00",
+							"end": "2019-09-02T13:00",
 							"title": "Lunch",
 							"text": "working",
 							"icon": "sap-icon://desktop-mobile",
@@ -546,8 +546,8 @@
 						},
 						{
 							"visualization": "appointment",
-							"start": "2019-9-1/08:30",
-							"end": "2019-9-3/17:30",
+							"start": "2019-09-01T08:30",
+							"end": "2019-09-03T17:30",
 							"title": "Workshop",
 							"text": "Out of office",
 							"icon": "sap-icon://sap-ui5",
@@ -555,16 +555,16 @@
 						},
 						{
 							"visualization": "appointment",
-							"start": "2019-9-2/14:00",
-							"end": "2019-9-2/16:30",
+							"start": "2019-09-02T14:00",
+							"end": "2019-09-02T16:30",
 							"title": "Discussion with clients",
 							"text": "working",
 							"icon": "sap-icon://desktop-mobile"
 						},
 						{
 							"visualization": "appointment",
-							"start": "2019-9-2/11:00",
-							"end": "2019-9-2/12:00",
+							"start": "2019-09-02T11:00",
+							"end": "2019-09-02T12:00",
 							"title": "Team meeting",
 							"text": "online meeting",
 							"icon": "sap-icon://sap-ui5",
@@ -572,16 +572,16 @@
 						},
                         {
                             "visualization": "blocker",
-                            "start": "2019-9-3/17:00",
-                            "end": "2019-9-3/17:30",
+                            "start": "2019-09-03T17:00",
+                            "end": "2019-09-03T17:30",
                             "title": "Private appointment",
                             "icon": "sap-icon://desktop-mobile",
                             "type": "Type07"
                         },
                         {
                             "visualization": "appointment",
-                            "start": "2019-9-3/12:00",
-                            "end": "2019-9-3/13:00",
+                            "start": "2019-09-03T12:00",
+                            "end": "2019-09-03T13:00",
                             "title": "Lunch",
                             "text": "working",
                             "icon": "sap-icon://desktop-mobile",
@@ -589,15 +589,15 @@
                         },
                         {
                             "visualization": "appointment",
-                            "start": "2019-9-3/10:00",
-                            "end": "2019-9-3/12:30",
+                            "start": "2019-09-03T10:00",
+                            "end": "2019-09-03T12:30",
                             "title": "Board meeting",
                             "icon": "sap-icon://desktop-mobile"
                         },
                         {
                             "visualization": "appointment",
-                            "start": "2019-9-4/12:00",
-                            "end": "2019-9-4/13:00",
+                            "start": "2019-09-04T12:00",
+                            "end": "2019-09-04T13:00",
                             "title": "Lunch",
                             "text": "working",
                             "icon": "sap-icon://desktop-mobile",
@@ -605,16 +605,16 @@
                         },
                         {
                             "visualization": "blocker",
-                            "start": "2019-9-4/17:00",
-                            "end": "2019-9-4/17:30",
+                            "start": "2019-09-04T17:00",
+                            "end": "2019-09-04T17:30",
                             "title": "Private appointment",
                             "icon": "sap-icon://desktop-mobile",
                             "type": "Type07"
                         },
                         {
                             "visualization": "appointment",
-                            "start": "2019-9-5/11:00",
-                            "end": "2019-9-5/12:00",
+                            "start": "2019-09-05T11:00",
+                            "end": "2019-09-05T12:00",
                             "title": "Team meeting",
                             "text": "online meeting",
                             "icon": "sap-icon://sap-ui5",
@@ -622,8 +622,8 @@
                         },
                         {
                             "visualization": "blocker",
-                            "start": "2019-9-6/09:00",
-                            "end": "2019-9-6/10:00",
+                            "start": "2019-09-06T09:00",
+                            "end": "2019-09-06T10:00",
                             "title": "Payment reminder",
                             "icon": "sap-icon://desktop-mobile",
                             "type": "Type06"
@@ -631,13 +631,13 @@
 					],
 					"specialDate": [
 						{
-							"start": "2019-9-13",
-							"end": "2019-9-14",
+							"start": "2019-09-13",
+							"end": "2019-09-14",
 							"type": "Type08"
 						},
 						{
-							"start": "2019-9-24",
-							"end": "2019-9-24",
+							"start": "2019-09-24",
+							"end": "2019-09-24",
 							"type": "Type13"
 						}
 					],
@@ -691,7 +691,7 @@
 				}
 			},
 			"content": {
-				"date": "2019-9-2",
+				"date": "2019-09-02",
 				"maxItems": 5,
 				"maxLegendItems": 3,
 				"noItemsText": "You have nothing planned for that day",

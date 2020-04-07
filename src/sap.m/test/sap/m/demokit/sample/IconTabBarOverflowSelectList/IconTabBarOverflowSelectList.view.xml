@@ -4,7 +4,6 @@
 	xmlns="sap.m">
 	<IconTabBar
 		id="idIconTabBar"
-		showOverflowSelectList="true"
 		class="sapUiResponsiveContentPadding">
 	</IconTabBar>
 </mvc:View>

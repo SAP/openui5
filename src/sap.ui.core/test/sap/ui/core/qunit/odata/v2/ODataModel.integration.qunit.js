@@ -931,8 +931,8 @@ sap.ui.define([
 		 * responses).
 		 *
 		 * @param {string|object} vRequest The request with the properties "method", "url" and
-		 *   "headers". A string is interpreted as URL with method "GET". Spaces inside the URL are
-		 *   percent-encoded automatically.
+		 *   "headers". A string is interpreted as URL with method "GET". Spaces inside the URL, and
+		 *   "'" and "~" inside the query string are percent-encoded automatically.
 		 * @param {object|Promise|Error} [oResponse] The response message to be returned from the
 		 *   requestor or a promise on it
 		 * @param {object} [mResponseHeaders] The response headers to be returned from the
@@ -940,6 +940,8 @@ sap.ui.define([
 		 * @returns {object} The test instance for chaining
 		 */
 		expectRequest : function (vRequest, oResponse, mResponseHeaders) {
+			var aUrlParts;
+
 			if (typeof vRequest === "string") {
 				vRequest = {
 					deepPath : "/" + vRequest.split("?")[0],
@@ -951,7 +953,11 @@ sap.ui.define([
 			vRequest.headers = vRequest.headers || {};
 			vRequest.responseHeaders = mResponseHeaders || {};
 			vRequest.response = oResponse || {/*null object pattern*/};
-			vRequest.requestUri = vRequest.requestUri.replace(/ /g, "%20");
+			aUrlParts = vRequest.requestUri.split("?");
+			if (aUrlParts[1]) {
+				vRequest.requestUri = aUrlParts[0] + "?"
+					+ aUrlParts[1].replace(/ /g, "%20").replace(/'/g, "%27").replace(/~/g, "%7e");
+			}
 			this.aRequests.push(vRequest);
 
 			return this;
@@ -3418,6 +3424,147 @@ usePreliminaryContext : false}}">\
 
 			// code under test
 			that.oView.byId("form").getObjectBinding().refresh();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: On an object page a sales order with its sales order items is displayed. Only a
+	// part of the sales order items are displayed. Some of the items have messages. Filter the
+	// items table by entries having messages.
+	// JIRA: CPOUI5MODELS-106
+	QUnit.test("Filter table by items with messages", function (assert) {
+		var oModel = createSalesOrdersModelMessageScope(),
+			oItemsBinding,
+			oSalesOrderNoteError = this.createResponseMessage("Note"),
+			oSalesOrderToItemsError = this.createResponseMessage("ToLineItems"),
+			oSalesOrderToItem10ToProductPriceError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+			oSalesOrderToItem20NoteWarning = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='20~1~')/Note", undefined, "warning"),
+			oSalesOrderToItem30NoteError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='30~1~')/Note"),
+			oSalesOrderItem10ToProductPriceError
+				= cloneODataMessage(oSalesOrderToItem10ToProductPriceError,
+					"(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+			oSalesOrderItem20NoteWarning = cloneODataMessage(oSalesOrderToItem20NoteWarning,
+				"(SalesOrderID='1',ItemPosition='20~1~')/Note"),
+			oSalesOrderItem30NoteError = cloneODataMessage(oSalesOrderToItem30NoteError,
+				"(SalesOrderID='1',ItemPosition='30~1~')/Note"),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Input id="note" value="{Note}" />\
+	<Table growing="true" growingThreshold="2" id="table" items="{\
+			path : \'ToLineItems\',\
+			parameters : {transitionMessagesOnly : true}\
+		}">\
+		<ColumnListItem>\
+			<Text id="itemPosition" text="{ItemPosition}" />\
+			<Input id="note::item" value="{Note}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest({
+				deepPath : "/SalesOrderSet('1')",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				Note : "Foo",
+				SalesOrderID : "1"
+			}, {
+				"sap-message" : getMessageHeader([
+					oSalesOrderNoteError,
+					oSalesOrderToItemsError,
+					oSalesOrderToItem10ToProductPriceError,
+					oSalesOrderToItem20NoteWarning,
+					oSalesOrderToItem30NoteError
+				])
+			})
+			.expectChange("note", null)
+			.expectChange("note", "Foo")
+			.expectChange("salesOrderID", null)
+			.expectChange("salesOrderID", "1")
+			.expectRequest({
+				deepPath : "/SalesOrderSet('1')/ToLineItems",
+				headers :
+					{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
+			}, {
+				results : [{
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					},
+					Note : "Bar",
+					ItemPosition : "10~0~",
+					SalesOrderID : "1"
+				}, {
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+					},
+					Note : "Baz",
+					ItemPosition : "20~1~",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("itemPosition", ["10~0~", "20~1~"])
+			.expectChange("note::item", ["Bar", "Baz"])
+			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/")
+			.expectMessage(oSalesOrderToItemsError, "/SalesOrderSet('1')/")
+			.expectMessage(oSalesOrderItem10ToProductPriceError, "/SalesOrderLineItemSet",
+				"/SalesOrderSet('1')/ToLineItems")
+			.expectMessage(oSalesOrderItem20NoteWarning, "/SalesOrderLineItemSet",
+				"/SalesOrderSet('1')/ToLineItems")
+			.expectMessage(oSalesOrderItem30NoteError, "/SalesOrderLineItemSet",
+				"/SalesOrderSet('1')/ToLineItems");
+
+		oModel.setMessageScope(MessageScope.BusinessObject);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			function filterErrors(oMessage) {
+				return oMessage.getType() === MessageType.Error;
+			}
+
+			// code under test
+			oItemsBinding = that.oView.byId("table").getBinding("items");
+
+			return oItemsBinding.requestFilterForMessages(filterErrors);
+		}).then(function (oFilter) {
+			that.expectRequest({
+					deepPath : "/SalesOrderSet('1')/ToLineItems",
+					headers :
+						{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
+					method : "GET",
+					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
+						+ "&$filter=(SalesOrderID eq '1' and ItemPosition eq '10~0~')"
+						+ " or (SalesOrderID eq '1' and ItemPosition eq '30~1~')"
+				}, {
+					results : [{
+						"__metadata" : {
+							"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						},
+						Note : "Bar",
+						ItemPosition : "10~0~",
+						SalesOrderID : "1"
+					}, {
+						"__metadata" : {
+							"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~1~')"
+						},
+						Note : "Qux",
+						ItemPosition : "30~1~",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectChange("itemPosition", "30~1~", 1)
+				.expectChange("note::item", "Qux", 1);
+
+			oItemsBinding.filter(oFilter);
 
 			return that.waitForChanges(assert);
 		});

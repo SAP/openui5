@@ -923,11 +923,11 @@ sap.ui.define([
 			assert.ok(oModel.getMetadata().isA("sap.ui.model.odata.v2.ODataModel"), "Model created");
 
 			var check = function(event, jqXHR, ajaxOptions){
-				jQuery(document).unbind("ajaxSuccess", check);
+				jQuery(document).off("ajaxSuccess", check);
 				assert.strictEqual(ajaxOptions.headers["sap-cancel-on-close"], bExpectedValue, "Header was set correctly.");
 				done();
 			};
-			jQuery(document).bind("ajaxSuccess", check);
+			jQuery(document).on("ajaxSuccess", check);
 		};
 	};
 

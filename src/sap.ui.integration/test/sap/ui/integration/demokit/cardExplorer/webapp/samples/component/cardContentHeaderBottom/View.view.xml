@@ -1,9 +1,10 @@
 <mvc:View xmlns:core="sap.ui.core"
-          xmlns:mvc="sap.ui.core.mvc"
-          xmlns="sap.m"
-          xmlns:html="http://www.w3.org/1999/xhtml"
-          width="100%"
-          displayBlock="true">
+		  xmlns:mvc="sap.ui.core.mvc"
+		  xmlns="sap.m"
+		  xmlns:html="http://www.w3.org/1999/xhtml"
+		  width="100%"
+		  displayBlock="true"
+		  controllerName="my.component.sample.cardContentHeaderBottom.Main">
 
-    <Image width="100%" src="./images/Image_2.png"></Image>
+	<Image id="img" width="100%"></Image>
 </mvc:View>

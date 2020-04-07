@@ -8,8 +8,8 @@ sap.ui.define([
 	"sap/ui/integration/util/Manifest",
 	"sap/ui/integration/util/ServiceManager",
 	"sap/base/Log",
-	"sap/f/cards/DataProviderFactory",
-	"sap/f/cards/BaseContent",
+	"sap/ui/integration/util/DataProviderFactory",
+	"sap/ui/integration/cards/BaseContent",
 	"sap/m/HBox",
 	"sap/m/VBox",
 	"sap/ui/core/Icon",
@@ -22,7 +22,7 @@ sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/integration/util/Destinations",
-	"sap/f/cards/loading/LoadingProvider",
+	"sap/ui/integration/util/LoadingProvider",
 	"sap/ui/integration/util/HeaderFactory",
 	"sap/ui/integration/util/ContentFactory"
 ], function (
@@ -61,7 +61,8 @@ sap.ui.define([
 		CONTENT: "/sap.card/content",
 		SERVICES: "/sap.ui5/services",
 		APP_TYPE: "/sap.app/type",
-		PARAMS: "/sap.card/configuration/parameters"
+		PARAMS: "/sap.card/configuration/parameters",
+		DESTINATIONS: "/sap.card/configuration/destinations"
 	};
 
 	var HeaderPosition = fLibrary.cards.HeaderPosition;
@@ -637,6 +638,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * Resolves the destination and returns its URL.
+	 * @param {string} sKey The destination's key used in the configuration.
+	 * @returns {Promise} A promise which resolves with the URL of the destination.
+	 */
+	Card.prototype.resolveDestination = function (sKey) {
+		return this._oDestinations.getUrl(sKey);
+	};
+
+	/**
 	 * Apply all manifest settings after the manifest is fully ready.
 	 * This includes service registration, header and content creation, data requests.
 	 *
@@ -652,7 +662,7 @@ sap.ui.define([
 			this._oDataProviderFactory.destroy();
 		}
 
-		this._oDestinations = new Destinations(this.getHostInstance(), this._oCardManifest);
+		this._oDestinations = new Destinations(this.getHostInstance(), this._oCardManifest.get(MANIFEST_PATHS.DESTINATIONS));
 		this._oDataProviderFactory = new DataProviderFactory(this._oDestinations);
 		this._oLoadingProvider = new LoadingProvider();
 
@@ -900,7 +910,7 @@ sap.ui.define([
 	 * Sets a card content.
 	 *
 	 * @private
-	 * @param {sap.f.cards.BaseContent} oContent The card content instance to be configured.
+	 * @param {sap.ui.integration.cards.BaseContent} oContent The card content instance to be configured.
 	 */
 	Card.prototype._setCardContent = function (oContent) {
 

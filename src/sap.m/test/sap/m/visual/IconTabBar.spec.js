@@ -28,6 +28,7 @@ describe("sap.m.IconTabBar", function() {
 				expect(takeScreenshot(itb1)).toLookAs(sType + "_1_semantic_colors");
 			});
 		});
+
 		// focus
 		it("should focus the second filter icon when I simulate click on it", function() {
 			var itb1 = element(by.id("itb1"));
@@ -36,6 +37,7 @@ describe("sap.m.IconTabBar", function() {
 				expect(takeScreenshot(itb1)).toLookAs(sType + "_2_filter_focus");
 			});
 		});
+
 		// check property expandable: false
 		it("should not collapse when filter icon is clicked again", function() {
 			var itb1 = element(by.id("itb1"));
@@ -45,7 +47,6 @@ describe("sap.m.IconTabBar", function() {
 			});
 		});
 
-
 		// check property selectedKey
 		it("key with key:'key13' must be selected", function() {
 			var itb2 = element(by.id("itb2"));
@@ -53,12 +54,21 @@ describe("sap.m.IconTabBar", function() {
 				expect(takeScreenshot(itb2)).toLookAs(sType + "_4_selectableKey");
 			});
 		});
+
 		// check property expandable: true
 		it("should collapse when filter is clicked", function() {
 			var itb2 = element(by.id("itb2"));
 			element(by.id("itf2")).click();
 			browser.executeScript("document.getElementById('itb2').scrollIntoView()").then(function() {
 				expect(takeScreenshot(itb2)).toLookAs(sType + "_5_expandable_true");
+			});
+		});
+
+		// check icon only ITB with semantic colors
+		it("should visualize icon only ITB with semantic colors", function() {
+			var itb2a = element(by.id("itb2a"));
+			browser.executeScript("document.getElementById('itb2a').scrollIntoView()").then(function() {
+				expect(takeScreenshot(itb2a)).toLookAs(sType + "_5a_icon_only_semantic");
 			});
 		});
 
@@ -102,7 +112,7 @@ describe("sap.m.IconTabBar", function() {
 			});
 		});
 
-		//  no parameters and no items
+		// no parameters and no items
 		it("should not have any parameters or items", function() {
 			var itb10 = element(by.id("itb10"));
 			browser.executeScript("document.getElementById('itb10').scrollIntoView()").then(function() {
@@ -110,7 +120,7 @@ describe("sap.m.IconTabBar", function() {
 			});
 		});
 
-		//  images as items
+		// images as items
 		it("should have images as items", function() {
 			var itb11 = element(by.id("itb11"));
 			browser.executeScript("document.getElementById('itb11').scrollIntoView()").then(function() {
@@ -118,8 +128,8 @@ describe("sap.m.IconTabBar", function() {
 			});
 		});
 
+		// Property stretchContentHeight: true, class sapUiResponsiveContentPadding, arrows
 		var itb12 = element(by.id("itb12"));
-		//  Property stretchContentHeight: true, class sapUiResponsiveContentPadding, arrows
 		it("should have images as items", function() {
 			browser.executeScript("document.getElementById('itb12').scrollIntoView()").then(function() {
 				expect(takeScreenshot(itb12)).toLookAs(sType + "_13_stretchContentHeight_resp_padd");

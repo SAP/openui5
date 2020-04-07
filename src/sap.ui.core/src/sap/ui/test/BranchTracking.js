@@ -736,11 +736,11 @@
 
 			jQuery("#qunit-modulefilter-dropdown-list").css("max-height", "none");
 
-			jQuery("#qunit-modulefilter-dropdown").click(function (oMouseEvent) {
+			jQuery("#qunit-modulefilter-dropdown").on("click", function (oMouseEvent) {
 				if (oMouseEvent.target.tagName === "LABEL") {
 					setTimeout(function () {
 						// click on label instead of checkbox triggers "Apply" automatically
-						jQuery("#qunit-modulefilter-actions").children().first().click();
+						jQuery("#qunit-modulefilter-actions").children().first().trigger("click");
 					});
 				}
 			});

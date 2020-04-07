@@ -646,19 +646,19 @@ sap.ui.define([
 				var oError = oEvent.originalEvent;
 				this.onWindowError(oError.message, oError.filename, oError.lineno);
 			}, this);
-			jQuery(window).bind("error", this._fnWindowErrorHandler);
+			jQuery(window).on("error", this._fnWindowErrorHandler);
 		}
 
 		// before unload handler (if exists)
 		if (this.onWindowBeforeUnload) {
 			this._fnWindowBeforeUnloadHandler = jQuery.proxy(this.onWindowBeforeUnload, this);
-			jQuery(window).bind("beforeunload", this._fnWindowBeforeUnloadHandler);
+			jQuery(window).on("beforeunload", this._fnWindowBeforeUnloadHandler);
 		}
 
 		// unload handler (if exists)
 		if (this.onWindowUnload) {
 			this._fnWindowUnloadHandler = jQuery.proxy(this.onWindowUnload, this);
-			jQuery(window).bind("unload", this._fnWindowUnloadHandler);
+			jQuery(window).on("unload", this._fnWindowUnloadHandler);
 		}
 
 	};
@@ -684,15 +684,15 @@ sap.ui.define([
 
 		// remove the event handlers
 		if (this._fnWindowErrorHandler) {
-			jQuery(window).unbind("error", this._fnWindowErrorHandler);
+			jQuery(window).off("error", this._fnWindowErrorHandler);
 			delete this._fnWindowErrorHandler;
 		}
 		if (this._fnWindowBeforeUnloadHandler) {
-			jQuery(window).unbind("beforeunload", this._fnWindowBeforeUnloadHandler);
+			jQuery(window).off("beforeunload", this._fnWindowBeforeUnloadHandler);
 			delete this._fnWindowBeforeUnloadHandler;
 		}
 		if (this._fnWindowUnloadHandler) {
-			jQuery(window).unbind("unload", this._fnWindowUnloadHandler);
+			jQuery(window).off("unload", this._fnWindowUnloadHandler);
 			delete this._fnWindowUnloadHandler;
 		}
 
@@ -2938,10 +2938,26 @@ sap.ui.define([
 								var mModelConfig = mModelConfigs.afterPreload[sModelName];
 								if (Array.isArray(mModelConfig.settings) && mModelConfig.settings.length > 0) {
 									var mModelSettings = mModelConfig.settings[0]; // first argument is the config map
+
+									// in order to load the whole ResourceBundle/terminologies closure upfront
+									// we need pass the active terminologies to the ResourceModel/-Bundle.
+									mModelSettings.activeTerminologies = mOptions.activeTerminologies;
+
 									return ResourceModel.loadResourceBundle(mModelSettings, true).then(function(oResourceBundle) {
 										// Extend the model settings with the preloaded bundle so that no sync request
 										// is triggered once the model gets created
 										mModelSettings.bundle = oResourceBundle;
+
+										/*
+										 * Compatibility concerning ResourceModel API:
+										 * If active terminologies were given we need to remove the "enhanceWith", "terminologies" and "activeTerminologies"
+										 * parameters from the model settings. The ResourceModel's constructor does not accept a mixed scenario
+										 * where a constructed bundle, as well as additional enhance bundles with terminologies, are given.
+										 */
+										delete mModelSettings.terminologies;
+										delete mModelSettings.activeTerminologies;
+										delete mModelSettings.enhanceWith;
+
 									}, function(err) {
 										Log.error("Component Manifest: Could not preload ResourceBundle for ResourceModel. " +
 											"The model will be skipped here and tried to be created on Component initialization.",
@@ -3069,11 +3085,19 @@ sap.ui.define([
 
 					return pLoaded.then(function() {
 
-						// if manifest was defined in the component metadata
-						// we need to trigger the sap.app.i18n processing based on terminologies
-						// for this specific component instance
+						// The following processing of the sap.app/i18n resources happens under two conditions:
+						//    1. The manifest is defined in the component metadata (no Manifest object yet)
+						//    2. We have instance specific information (activeTerminologies)
+						// In case of a manifest-first approach (Manifest object exists already),
+						// the i18n processing has already happend and we skip this part.
+
+						// Why do we set the oManifest object here?
+						// > If we have instance specific information like "activeTerminologies", the resulting
+						//   Manifest instance differs from the Manifest that is stored on the ComponentMetadata.
+						//   The function prepareControllerClass() then creates a ComponentMetadata Proxy,
+						//   which encapsulates this single instance specific Manifest object.
 						var pProcessI18n = Promise.resolve();
-						if (mOptions.activeTerminologies) {
+						if (!oManifest && mOptions.activeTerminologies) {
 							oManifest = new Manifest(oMetadata.getManifestObject().getRawJson(), {
 								process: false,
 								activeTerminologies: aActiveTerminologies

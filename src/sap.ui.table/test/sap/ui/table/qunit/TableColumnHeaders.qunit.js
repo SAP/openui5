@@ -28,8 +28,8 @@ sap.ui.define([
 			// 1st column with multilabels
 			oTable.addColumn(new Column({
 				multiLabels: [
-					new Text({text: "Row:1, Column:1 with a long description"}),
-					new Text({text: "Row:2, Column:1"})
+					new TestControl({text: "Row:1, Column:1 with a long description"}),
+					new TestControl({text: "Row:2, Column:1"})
 				],
 				headerSpan: [3, 1],
 				template: new TestControl({text: "{text}"}),
@@ -44,8 +44,8 @@ sap.ui.define([
 			// 2nd column with multilabels
 			oTable.addColumn(new Column({
 				multiLabels: [
-					new Text({text: "Row:1, Column:2 with a long description"}),
-					new Text({text: "Row:2, Column:2"})
+					new TestControl({text: "Row:1, Column:2 with a long description"}),
+					new TestControl({text: "Row:2, Column:2"})
 				],
 				headerSpan: [1, 2, 1],
 				template: new TestControl({text: "{text}"}),

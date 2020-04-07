@@ -304,7 +304,14 @@ sap.ui.define([
 				var mPropertiesBag = {};
 				mPropertiesBag.eventItem = oEventItem;
 				mPropertiesBag.contextElement = oContextElement;
-				oItem.handler(aSelection, mPropertiesBag);
+				var fnHandler = oItem.handler;
+				if (this.oContextMenuControl.isPopupOpen()) {
+					this.oContextMenuControl.attachEventOnce("Closed", function() {
+						fnHandler(aSelection, mPropertiesBag);
+					});
+				} else {
+					fnHandler(aSelection, mPropertiesBag);
+				}
 				oItem = null;
 				return true;
 			}

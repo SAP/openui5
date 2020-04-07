@@ -128,22 +128,6 @@ sap.ui.define([
 			},
 			"TableColumnHeaders": {
 			},
-			"ControlsUsedInTable (sap_belize)": {
-				ui5: {
-					// Test has dependencies to sap.ui.unified and sap.m modules
-					libs: ["sap.ui.table", "sap.ui.unified", "sap.m"],
-					theme: "sap_belize"
-				},
-				module: "./ControlsUsedInTable.qunit"
-			},
-			"ControlsUsedInTable (sap_fiori_3)": {
-				ui5: {
-					// Test has dependencies to sap.ui.unified and sap.m modules
-					libs: ["sap.ui.table", "sap.ui.unified", "sap.m"],
-					theme: "sap_fiori_3"
-				},
-				module: "./ControlsUsedInTable.qunit"
-			},
 
 			// Utils
 			"TableUtils": {

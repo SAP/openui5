@@ -62,7 +62,7 @@
 					}
 				]
 			},
-			"maxItems": "4",
+			"maxItems": 4,
 			"item": {
 				"title": "{Name}",
 				"description": "Discount:",

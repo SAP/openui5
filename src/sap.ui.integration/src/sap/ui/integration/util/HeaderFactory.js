@@ -3,32 +3,26 @@
  */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/f/library",
+	"sap/ui/integration/library",
 	"sap/ui/base/Object",
-	"sap/f/cards/BindingHelper",
-	"sap/f/cards/NumericHeader",
-	"sap/f/cards/Header",
-	"sap/f/cards/NumericSideIndicator",
-	"sap/f/cards/IconFormatter",
+	"sap/ui/integration/cards/NumericHeader",
+	"sap/ui/integration/cards/Header",
 	"sap/base/strings/formatMessage",
 	"sap/ui/integration/controls/ActionsToolbar",
 	"./CardActions"
 ], function (
 	jQuery,
-	fLibrary,
+	library,
 	BaseObject,
-	BindingHelper,
 	NumericHeader,
 	Header,
-	NumericSideIndicator,
-	IconFormatter,
 	formatMessage,
 	ActionsToolbar,
 	CardActions
 ) {
 	"use strict";
 
-	var AreaType = fLibrary.cards.AreaType;
+	var AreaType = library.AreaType;
 
 	/**
 	 * Binds the statusText of a header to the provided format configuration.
@@ -101,69 +95,24 @@ sap.ui.define([
 
 		var oHeader,
 			oCard = this._oCard,
-			oServiceManager = oCard._oServiceManager,
-			oDataProviderFactory = oCard._oDataProviderFactory,
-			sAppId = oCard._sAppId,
 			oActions = new CardActions({
 				card: oCard,
 				areaType: AreaType.Header
 			}),
-			mSettings = {
-				title: mConfiguration.title,
-				subtitle: mConfiguration.subTitle
-			},
-			oActionsToolbar;
-
-		if (mConfiguration.status && typeof mConfiguration.status.text === "string") {
-			mSettings.statusText = mConfiguration.status.text;
-		}
+			oActionsToolbar = this._createActionsToolbar();
 
 		switch (mConfiguration.type) {
 			case "Numeric":
-
-				jQuery.extend(mSettings, {
-					unitOfMeasurement: mConfiguration.unitOfMeasurement,
-					details: mConfiguration.details,
-					sideIndicators: mConfiguration.sideIndicators
-				});
-
-				if (mConfiguration.mainIndicator) {
-					mSettings.number = mConfiguration.mainIndicator.number;
-					mSettings.scale = mConfiguration.mainIndicator.unit;
-					mSettings.trend = mConfiguration.mainIndicator.trend;
-					mSettings.state = mConfiguration.mainIndicator.state; // TODO convert ValueState to ValueColor
-				}
-
-				mSettings = BindingHelper.createBindingInfos(mSettings);
-
-				if (mConfiguration.sideIndicators) {
-					mSettings.sideIndicators = mSettings.sideIndicators.map(function (mIndicator) { // TODO validate that it is an array and with no more than 2 elements
-						return new NumericSideIndicator(mIndicator);
-					});
-				}
-
-				oHeader = new NumericHeader(mSettings);
+				oHeader = new NumericHeader(mConfiguration, oActionsToolbar, oCard._sAppId);
 				break;
 			default:
-				if (mConfiguration.icon) {
-					mSettings.iconSrc = mConfiguration.icon.src;
-					mSettings.iconDisplayShape = mConfiguration.icon.shape;
-					mSettings.iconInitials = mConfiguration.icon.text;
-				}
-
-				mSettings = BindingHelper.createBindingInfos(mSettings);
-
-				if (mSettings.iconSrc) {
-					mSettings.iconSrc = BindingHelper.formattedProperty(mSettings.iconSrc, function (sValue) {
-						return IconFormatter.formatSrc(sValue, sAppId);
-					});
-				}
-
-				oHeader = new Header(mSettings);
+				oHeader = new Header(mConfiguration, oActionsToolbar, oCard._sAppId);
 				break;
 		}
 
-		if (mConfiguration.status && mConfiguration.status.text && mConfiguration.status.text.format) {
+		if (mConfiguration.status &&
+			mConfiguration.status.text &&
+			mConfiguration.status.text.format) {
 			if (mConfiguration.status.text.format.translationKey) {
 				oCard._loadDefaultTranslations();
 			}
@@ -171,18 +120,12 @@ sap.ui.define([
 			bindStatusText(mConfiguration.status.text.format, oHeader);
 		}
 
-		oHeader._sAppId = sAppId;
-		oHeader.setServiceManager(oServiceManager);
-		oHeader.setDataProviderFactory(oDataProviderFactory);
+		oHeader.setServiceManager(oCard._oServiceManager);
+		oHeader.setDataProviderFactory(oCard._oDataProviderFactory);
 		oHeader._setData(mConfiguration.data);
 
 		oActions.attach(mConfiguration, oHeader);
 		oHeader._oActions = oActions;
-
-		oActionsToolbar = this._createActionsToolbar();
-		if (oActionsToolbar) {
-			oHeader.setToolbar(oActionsToolbar);
-		}
 
 		return oHeader;
 	};

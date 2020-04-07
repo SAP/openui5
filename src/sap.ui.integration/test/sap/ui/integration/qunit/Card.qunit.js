@@ -2,23 +2,27 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/f/cards/ListContent",
+	"sap/ui/integration/cards/ListContent",
 	"sap/ui/core/Core",
-	"sap/f/cards/NumericHeader",
 	"sap/f/cards/NumericSideIndicator",
-	"sap/f/cards/Header",
+	"sap/ui/integration/cards/NumericHeader",
+	"sap/ui/integration/cards/Header",
 	"sap/base/Log",
-	"sap/ui/core/ComponentContainer"
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/base/Event",
+	"sap/ui/core/UIComponent"
 ],
 	function (
 		Card,
 		ListContent,
 		Core,
-		NumericHeader,
 		NumericSideIndicator,
+		NumericHeader,
 		Header,
 		Log,
-		ComponentContainer
+		ComponentContainer,
+		Event,
+		UIComponent
 	) {
 		"use strict";
 
@@ -1332,7 +1336,10 @@ sap.ui.define([
 			// Arrange
 			var done = assert.async(),
 				oStub = sinon.stub(ComponentContainer.prototype, "applySettings"),
-				oCard = new Card();
+				oCard = new Card(),
+				oStubEvent = new Event("componentCreated", this, {
+					component: new UIComponent()
+				});
 
 			assert.expect(1);
 			oStub.callsFake(function (mSettings) {
@@ -1342,7 +1349,7 @@ sap.ui.define([
 					"A ComponentContainer is created with expected settings"
 				);
 
-				mSettings.componentCreated();
+				mSettings.componentCreated(oStubEvent);
 
 				oStub.restore();
 				oCard.destroy();
@@ -1486,26 +1493,6 @@ sap.ui.define([
 			this.oCard.setManifest(oManifest_NumericHeader);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
-		});
-
-		QUnit.test("Numeric Header indicator truncation", function (assert) {
-
-			// Arrange
-			var sSampleNumber = "1234567812345678",
-				oHeader = new NumericHeader({
-					number: sSampleNumber
-				});
-
-			// Act
-			oHeader.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-
-			// Assert
-
-			assert.strictEqual(oHeader.$("mainIndicator-value-inner").html().length, sSampleNumber.length, "The numeric content is not truncated");
-
-			// Clean up
-			oHeader.destroy();
 		});
 
 		QUnit.test("Numeric Header main indicator with json data", function (assert) {
@@ -1899,7 +1886,7 @@ sap.ui.define([
 				assert.ok(aCells[2].isA("sap.m.ObjectStatus"), "Column with a 'state' should be of type 'ObjectStatus'");
 				assert.ok(aCells[3].isA("sap.m.Link"), "Column with an 'url' should be of type 'Link'");
 				assert.ok(aCells[4].isA("sap.m.ProgressIndicator"), "Column with a 'progressIndicator' should be of type 'ProgressIndicator'");
-				assert.ok(aCells[5].isA("sap.f.Avatar"), "Column with an 'icon' should be of type 'Avatar'");
+				assert.ok(aCells[5].isA("sap.m.Avatar"), "Column with an 'icon' should be of type 'Avatar'");
 				assert.ok(aCells[6].isA("sap.m.ObjectIdentifier"), "Column with 'identifier' as an object should be of type 'ObjectIdentifier'");
 
 				// Column properties

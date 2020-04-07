@@ -31,9 +31,21 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/Log"],
 						resolve(aResult);
 					},
 					error : function () {
-						Log.error("failed to load api-index.json");
-						oLibraryDataCache["index"] = [];
-						resolve([]);
+						jQuery.ajax({
+							async: true,
+							url : "../../../../../../docs/api/api-index.json",
+							dataType : 'json',
+							success : function(vResponse) {
+								var aResult = vResponse.symbols || [];
+								oLibraryDataCache["index"] = aResult;
+								resolve(aResult);
+							},
+							error : function () {
+								Log.error("failed to load api-index.json");
+								oLibraryDataCache["index"] = [];
+								resolve([]);
+							}
+						});
 					}
 				});
 			});

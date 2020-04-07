@@ -11,9 +11,9 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
-	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/apply/_internal/Storage",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/core/Component",
@@ -33,10 +33,10 @@ function (
 	LayerUtils,
 	Change,
 	Variant,
-	CompatibilityConnector,
 	Cache,
 	Settings,
-	Storage,
+	ApplyStorage,
+	WriteStorage,
 	StorageUtils,
 	Component,
 	Log,
@@ -101,7 +101,7 @@ function (
 				}
 			};
 
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+			sandbox.stub(Cache, "getChangesFillingCache").resolves(oMockedWrappedContent);
 
 			return this.oChangePersistence.getCacheKey(oMockedAppComponent).then(function (oCacheKeyResponse) {
 				assert.equal(oCacheKeyResponse, sChacheKey);
@@ -115,7 +115,7 @@ function (
 				status: "success"
 			};
 
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+			sandbox.stub(Cache, "getChangesFillingCache").resolves(oMockedWrappedContent);
 
 			return this.oChangePersistence.getCacheKey().then(function (oCacheKeyResponse) {
 				assert.equal(oCacheKeyResponse, Cache.NOTAG);
@@ -131,7 +131,7 @@ function (
 				}
 			};
 
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+			sandbox.stub(Cache, "getChangesFillingCache").resolves(oMockedWrappedContent);
 
 			return this.oChangePersistence.getChangesForComponent({ignoreMaxLayerParameter: true}).then(function (sResponse) {
 				assert.strictEqual(sResponse, this.oChangePersistence.HIGHER_LAYER_CHANGES_EXIST, "then the correct response is returned");
@@ -224,7 +224,7 @@ function (
 		QUnit.test("when getChangesForComponent is called without includeCtrlVariants, max layer and current layer parameters", function(assert) {
 			var fnGetCtrlVariantChangesSpy = sandbox.spy(this.oChangePersistence, "_getAllCtrlVariantChanges");
 
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(
+			sandbox.stub(Cache, "getChangesFillingCache").resolves(
 				{
 					changes: {
 						changes : [
@@ -238,17 +238,17 @@ function (
 						]
 					}
 				}
-			));
+			);
 			return this.oChangePersistence.getChangesForComponent().then(function() {
 				assert.equal(fnGetCtrlVariantChangesSpy.callCount, 1, "then  _getAllCtrlVariantChanges is called in all cases");
 			});
 		});
 
 		QUnit.test("getChangesForComponent shall not bind the messagebundle as a json model into app component if no VENDOR change is available", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({
 				changes: { changes: [] },
 				messagebundle: {i_123: "translatedKey"}
-			}));
+			});
 			var mPropertyBag = {};
 			mPropertyBag.component = this._oComponentInstance;
 			return this.oChangePersistence.getChangesForComponent(mPropertyBag).then(function() {
@@ -258,7 +258,7 @@ function (
 		});
 
 		QUnit.test("getChangesForComponent shall not bind the messagebundle as a json model into app component if no VENDOR change is available", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({
 				changes: { changes: [{
 					fileType: "change",
 					selector: {
@@ -267,7 +267,7 @@ function (
 					layer : Layer.VENDOR
 				}] },
 				messagebundle: {i_123: "translatedKey"}
-			}));
+			});
 			var mPropertyBag = {};
 			mPropertyBag.component = this._oComponentInstance;
 			return this.oChangePersistence.getChangesForComponent(mPropertyBag).then(function() {
@@ -277,7 +277,7 @@ function (
 		});
 
 		QUnit.test("getChangesForComponent shall return the changes for the component", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: []}}));
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({changes: {changes: []}});
 
 			return this.oChangePersistence.getChangesForComponent().then(function(changes) {
 				assert.ok(changes);
@@ -285,7 +285,7 @@ function (
 		});
 
 		QUnit.test("getChangesForComponent shall return the changes for the component when variantSection is empty", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(
+			sandbox.stub(Cache, "getChangesFillingCache").resolves(
 				{
 					changes: {
 						changes: [
@@ -298,7 +298,7 @@ function (
 							}]
 					},
 					variantSection : {}
-				}));
+				});
 
 			return this.oChangePersistence.getChangesForComponent().then(function(changes) {
 				assert.strictEqual(changes.length, 1, "Changes is an array of length one");
@@ -307,7 +307,7 @@ function (
 		});
 
 		QUnit.test("getChangesForComponent shall return the changes for the component, filtering changes with the current layer (CUSTOMER)", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({changes: {changes: [
 				{
 					fileName: "change1",
 					layer: Layer.VENDOR,
@@ -332,7 +332,7 @@ function (
 						id: "controlId2"
 					}
 				}
-			]}}));
+			]}});
 
 			return this.oChangePersistence.getChangesForComponent({currentLayer: Layer.CUSTOMER}).then(function(changes) {
 				assert.strictEqual(changes.length, 1, "1 change shall be returned");
@@ -341,7 +341,7 @@ function (
 		});
 
 		QUnit.test("getChangesForComponent shall return the changes for the component, not filtering changes with the current layer", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({changes: {changes: [
 				{
 					fileName: "change1",
 					layer: Layer.VENDOR,
@@ -366,7 +366,7 @@ function (
 						id: "controlId2"
 					}
 				}
-			]}}));
+			]}});
 
 			return this.oChangePersistence.getChangesForComponent().then(function(changes) {
 				assert.strictEqual(changes.length, 3, "all the 3 changes shall be returned");
@@ -374,7 +374,7 @@ function (
 		});
 
 		QUnit.test("After run getChangesForComponent without includeVariants parameter", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({changes: {changes: [
 				{
 					fileName: "file1",
 					fileType: "change",
@@ -419,7 +419,7 @@ function (
 				{
 					fileType: "somethingelse"
 				}
-			]}}));
+			]}});
 
 			return this.oChangePersistence.getChangesForComponent().then(function(changes) {
 				assert.strictEqual(changes.length, 2, "only standard UI changes were returned, smart variants were excluded");
@@ -431,7 +431,7 @@ function (
 		});
 
 		QUnit.test("After run getChangesForComponent with includeVariants parameter", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({changes: {changes: [
 				{
 					fileName: "file1",
 					fileType: "change",
@@ -488,7 +488,7 @@ function (
 					changeType: "appdescr_changes",
 					layer: Layer.CUSTOMER
 				}
-			]}}));
+			]}});
 
 			var fnWarningLogStub = sandbox.stub(Log, "warning");
 
@@ -674,7 +674,7 @@ function (
 		});
 
 		QUnit.test("getChangesForComponent shall ignore max layer parameter when current layer is set", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({changes: {changes: [
 				{
 					fileName:"change2",
 					fileType: "change",
@@ -703,7 +703,7 @@ function (
 					selector: { id: "controlId" },
 					dependentSelector: []
 				}
-			]}}));
+			]}});
 
 			sandbox.stub(LayerUtils, "getMaxLayer").returns(Layer.CUSTOMER);
 
@@ -715,7 +715,7 @@ function (
 
 		QUnit.test("getChangesForComponent shall also pass the returned data to the fl.Settings, but only if the data comes from the back end", function(assert) {
 			var oFileContent = {};
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFileContent));
+			sandbox.stub(Cache, "getChangesFillingCache").resolves(oFileContent);
 			var oSettingsStoreInstanceStub = sandbox.stub(Settings, "_storeInstance");
 
 			return this.oChangePersistence.getChangesForComponent().then(function() {
@@ -724,7 +724,7 @@ function (
 		});
 
 		QUnit.test("getChangesForComponent ignore filtering when ignoreMaxLayerParameter property is available", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({changes: {changes: [
 				{
 					fileName:"change1",
 					fileType: "change",
@@ -760,7 +760,7 @@ function (
 					selector: { id: "controlId" },
 					dependentSelector: []
 				}
-			]}}));
+			]}});
 
 			sandbox.stub(LayerUtils, "getMaxLayer").returns(Layer.CUSTOMER);
 
@@ -1463,12 +1463,12 @@ function (
 			var aMockLocalChanges = [oMockNewChange];
 			var aAppVariantDescriptors = [oAppVariantDescriptor];
 
-			var fnPublishStub = sandbox.stub(Storage, "publish").resolves();
-			var fnGetChangesForComponentStub = sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aMockLocalChanges));
+			var fnPublishStub = sandbox.stub(WriteStorage, "publish").resolves();
+			var fnGetChangesForComponentStub = sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves(aMockLocalChanges);
 
 			return this.oChangePersistence.transportAllUIChanges(oRootControl, sStyleClass, sLayer, aAppVariantDescriptors).then(function() {
-				assert.ok(fnGetChangesForComponentStub.calledOnce, "then getChangesForComponent called once");
-				assert.ok(fnPublishStub.calledOnce, "then publish called once");
+				assert.equal(fnGetChangesForComponentStub.callCount, 1, "then getChangesForComponent called once");
+				assert.equal(fnPublishStub.callCount, 1, "then publish called once");
 				assert.ok(fnPublishStub.calledWith({
 					transportDialogSettings: {
 						rootControl: oRootControl,
@@ -1527,15 +1527,15 @@ function (
 			});
 
 			var aChanges = [oVENDORChange1, oVENDORChange2];
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aChanges));
+			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves(aChanges);
 			var aDeletedChangeContentIds = {response : [{name: "1"}, {name: "2"}]};
 
-			var oResetChangesStub = sandbox.stub(CompatibilityConnector, "resetChanges").returns(Promise.resolve(aDeletedChangeContentIds));
+			var oResetChangesStub = sandbox.stub(WriteStorage, "reset").resolves(aDeletedChangeContentIds);
 			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
-			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(Promise.resolve());
+			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").resolves();
 
 			this.oChangePersistence.resetChanges(Layer.VENDOR, "Change.createInitialFileContent").then(function(aChanges) {
-				assert.ok(oResetChangesStub.calledOnce, "CompatibilityConnector.deleteChange is called once");
+				assert.equal(oResetChangesStub.callCount, 1, "Storage.reset is called once");
 				var oResetArgs = oResetChangesStub.getCall(0).args[0];
 				assert.equal(oResetArgs.reference, "MyComponent");
 				assert.equal(oResetArgs.appVersion, "1.2.3");
@@ -1585,24 +1585,24 @@ function (
 			});
 
 			var aChanges = [oVENDORChange1, oVENDORChange2];
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aChanges));
+			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves(aChanges);
 			var aDeletedChangeContentIds = {response: [{name: "1"}, {name: "2"}]};
 
-			var oResetChangesStub = sandbox.stub(CompatibilityConnector, "resetChanges").returns(Promise.resolve(aDeletedChangeContentIds));
+			var oResetChangesStub = sandbox.stub(WriteStorage, "reset").resolves(aDeletedChangeContentIds);
 			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
-			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(Promise.resolve());
+			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").resolves();
 
 			return this.oChangePersistence.resetChanges(Layer.VENDOR, "", ["abc123"], ["labelChange"]).then(function() {
-				assert.ok(oResetChangesStub.calledOnce, "CompatibilityConnector.deleteChange is called once");
+				assert.equal(oResetChangesStub.callCount, 1, "Storage.reset is called once");
 				var oResetArgs = oResetChangesStub.getCall(0).args[0];
 				assert.equal(oResetArgs.reference, "MyComponent");
 				assert.equal(oResetArgs.appVersion, "1.2.3");
 				assert.equal(oResetArgs.layer, Layer.VENDOR);
 				assert.deepEqual(oResetArgs.selectorIds, ["abc123"]);
 				assert.deepEqual(oResetArgs.changeTypes, ["labelChange"]);
-				assert.ok(oCacheRemoveChangesStub.calledOnce, "the Cache.removeChanges is called once");
+				assert.equal(oCacheRemoveChangesStub.callCount, 1, "the Cache.removeChanges is called once");
 				assert.deepEqual(oCacheRemoveChangesStub.args[0][1], ["1", "2"], "and with the correct names");
-				assert.ok(oGetChangesFromMapByNamesStub.calledOnce, "the getChangesFromMapByNames is called once");
+				assert.equal(oGetChangesFromMapByNamesStub.callCount, 1, "the getChangesFromMapByNames is called once");
 				assert.deepEqual(oGetChangesFromMapByNamesStub.args[0][0], ["1", "2"], "and with the correct names");
 			});
 		});
@@ -1710,7 +1710,7 @@ function (
 			var fnAddPropagationListenerStub = sandbox.spy(this.oChangePersistence, "_addPropagationListener");
 
 			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
-			assert.ok(fnAddPropagationListenerStub.calledOnce, "then _addPropagationListener is called once");
+			assert.equal(fnAddPropagationListenerStub.callCount, 1, "then _addPropagationListener is called once");
 			assert.notOk(fnAddPropagationListenerStub.calledWith(this._oAppComponentInstance), "then _addPropagationListener not called with the embedded component");
 		});
 
@@ -1864,8 +1864,8 @@ function (
 				name: "sap/ui/fl/qunit/integration/testComponentComplex"
 			});
 
-			this.oCreateStub = sandbox.stub(CompatibilityConnector, "create").resolves();
-			this.oDeleteChangeStub = sandbox.stub(CompatibilityConnector, "deleteChange").resolves();
+			this.oWriteStub = sandbox.stub(WriteStorage, "write").resolves();
+			this.oRemoveStub = sandbox.stub(WriteStorage, "remove").resolves();
 			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 
 			this.oServer = sinon.fakeServer.create();
@@ -1892,7 +1892,7 @@ function (
 			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
 			return this.oChangePersistence.saveDirtyChanges().then(function() {
-				assert.ok(this.oCreateStub.calledOnce);
+				assert.equal(this.oWriteStub.callCount, 1);
 			}.bind(this));
 		});
 
@@ -1912,8 +1912,8 @@ function (
 			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
 			return this.oChangePersistence.saveDirtyChanges(undefined, undefined, true).then(function() {
-				assert.equal(this.oCreateStub.callCount, 1, "the Connector was called once");
-				assert.equal(this.oCreateStub.getCall(0).args[3], true, "the draft flag was passed");
+				assert.equal(this.oWriteStub.callCount, 1, "the Connector was called once");
+				assert.equal(this.oWriteStub.getCall(0).args[0].draft, true, "the draft flag was passed");
 			}.bind(this));
 		});
 
@@ -1947,7 +1947,7 @@ function (
 			var oAddChangeSpy = sandbox.spy(Cache, "addChange");
 
 			return this.oChangePersistence.saveDirtyChanges(true).then(function() {
-				assert.ok(this.oCreateStub.calledOnce);
+				assert.equal(this.oWriteStub.callCount, 1);
 				assert.equal(oAddChangeSpy.callCount, 0, "then addChange was never called for the change related to app variants");
 			}.bind(this));
 		});
@@ -1965,8 +1965,8 @@ function (
 
 			assert.equal(this.oChangePersistence.getDirtyChanges().length, 1, "then one dirty change exists initially");
 			return this.oChangePersistence.saveDirtyChanges().then(function() {
-				assert.equal(this.oDeleteChangeStub.callCount, 1);
-				assert.equal(this.oCreateStub.callCount, 0);
+				assert.equal(this.oRemoveStub.callCount, 1);
+				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oChangePersistence.getDirtyChanges().length, 0, "then no dirty changes exist anymore");
 			}.bind(this));
 		});
@@ -1991,8 +1991,8 @@ function (
 
 			assert.equal(this.oChangePersistence.getDirtyChanges().length, 2, "then two dirty changes exists initially");
 			return this.oChangePersistence.saveDirtyChanges(false, [oChangeToBeSaved]).then(function() {
-				assert.equal(this.oDeleteChangeStub.callCount, 1);
-				assert.equal(this.oCreateStub.callCount, 0);
+				assert.equal(this.oRemoveStub.callCount, 1);
+				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oChangePersistence.getDirtyChanges().length, 1, "then one dirty change still exists");
 				assert.deepEqual(this.oChangePersistence.getDirtyChanges()[0], oChangeNotToBeSaved, "the the correct dirty change was not saved");
 			}.bind(this));
@@ -2017,9 +2017,9 @@ function (
 
 			assert.equal(this.oChangePersistence.getDirtyChanges().length, 2, "then two dirty changes exist initially");
 			return this.oChangePersistence.saveDirtyChanges().then(function() {
-				assert.ok(this.oCreateStub.calledOnce, "the create method of the connector is called once");
-				assert.deepEqual(this.oCreateStub.getCall(0).args[0][0], oChangeContent1, "the first change was processed first");
-				assert.deepEqual(this.oCreateStub.getCall(0).args[0][1], oChangeContent2, "the second change was processed afterwards");
+				assert.equal(this.oWriteStub.callCount, 1, "the create method of the connector is called once");
+				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[0], oChangeContent1, "the first change was processed first");
+				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[1], oChangeContent2, "the second change was processed afterwards");
 				assert.equal(this.oChangePersistence.getDirtyChanges(), 0, "then no dirty changes exist any more");
 			}.bind(this));
 		});
@@ -2044,7 +2044,7 @@ function (
 
 			assert.equal(this.oChangePersistence.getDirtyChanges().length, 2, "then two dirty changes exist initially");
 			return this.oChangePersistence.saveDirtyChanges(false, [oChangeToBeSaved]).then(function() {
-				assert.ok(this.oCreateStub.calledOnce, "the create method of the connector is called once");
+				assert.equal(this.oWriteStub.callCount, 1, "the create method of the connector is called once");
 				assert.equal(this.oChangePersistence.getDirtyChanges().length, 1, "then one dirty change still exists");
 				assert.deepEqual(this.oChangePersistence.getDirtyChanges()[0], oChangeNotToBeSaved, "then the correct change was not saved");
 			}.bind(this));
@@ -2089,9 +2089,9 @@ function (
 			this.oServer.autoRespond = true;
 
 			return this.oChangePersistence.saveDirtyChanges(true).then(function() {
-				assert.ok(this.oCreateStub.calledOnce, "the create method of the connector is called once");
-				assert.deepEqual(this.oCreateStub.getCall(0).args[0][0], oChangeContent1, "the first change was processed first");
-				assert.deepEqual(this.oCreateStub.getCall(0).args[0][1], oChangeContent2, "the second change was processed afterwards");
+				assert.equal(this.oWriteStub.callCount, 1, "the create method of the connector is called once");
+				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[0], oChangeContent1, "the first change was processed first");
+				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[1], oChangeContent2, "the second change was processed afterwards");
 			}.bind(this));
 		});
 
@@ -2164,7 +2164,8 @@ function (
 			function _checkVariantSyncCall() {
 				aSavedChanges.forEach(function (oSavedChange, iIndex) {
 					if (iIndex < 4) { // only first 4 changes are variant related
-						assert.ok(VariantManagementState.updateVariantsState.getCall(iIndex).calledWith(Object.assign(mPropertyBag, {changeToBeAddedOrDeleted: oSavedChange})), "then variant controller content was synced with the FlexState");
+						assert.ok(VariantManagementState.updateVariantsState.getCall(iIndex).calledWith(
+							Object.assign(mPropertyBag, {changeToBeAddedOrDeleted: oSavedChange})), "then variant controller content was synced with the FlexState");
 					}
 				});
 			}
@@ -2264,9 +2265,9 @@ function (
 
 			// this test requires a slightly different setup
 			this.oGetFlexObjectsFromStorageResponseStub.restore();
-			sandbox.stub(CompatibilityConnector, "loadChanges").returns(Promise.resolve({changes: {changes: [oChangeContent]}}));
-			this.oCreateStub.restore();
-			sandbox.stub(CompatibilityConnector, "create").returns(Promise.reject(oRaisedError));
+			sandbox.stub(Storage, "loadFlexData").resolves({changes: {changes: [oChangeContent]}});
+			this.oWriteStub.restore();
+			sandbox.stub(WriteStorage, "write").rejects(oRaisedError);
 
 			this._updateCacheAndDirtyStateSpy = sandbox.spy(this.oChangePersistence, "_updateCacheAndDirtyState");
 
@@ -2369,9 +2370,9 @@ function (
 			var aDirtyChanges = [this.oChangePersistence._aDirtyChanges[0], this.oChangePersistence._aDirtyChanges[2]];
 
 			return this.oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges).then(function() {
-				assert.equal(this.oCreateStub.callCount, 2, "the create method of the connector is called for each selected change");
-				assert.deepEqual(this.oCreateStub.getCall(0).args[0], oChangeContent1, "the first change was processed first");
-				assert.deepEqual(this.oCreateStub.getCall(1).args[0], oChangeContent3, "the second change was processed afterwards");
+				assert.equal(this.oWriteStub.callCount, 2, "the create method of the connector is called for each selected change");
+				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[0], oChangeContent1, "the first change was processed first");
+				assert.deepEqual(this.oWriteStub.getCall(1).args[0].flexObjects[0], oChangeContent3, "the second change was processed afterwards");
 			}.bind(this));
 		});
 
@@ -2416,11 +2417,11 @@ function (
 			var aDirtyChanges = [this.oChangePersistence._aDirtyChanges[0], this.oChangePersistence._aDirtyChanges[2]];
 
 			return this.oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges, undefined, true).then(function() {
-				assert.equal(this.oCreateStub.callCount, 2, "the create method of the connector is called for each selected change");
-				assert.deepEqual(this.oCreateStub.getCall(0).args[0], oChangeContent1, "the first change was processed first");
-				assert.equal(this.oCreateStub.getCall(0).args[3], true, "the draft flag was passed");
-				assert.deepEqual(this.oCreateStub.getCall(1).args[0], oChangeContent3, "the second change was processed afterwards");
-				assert.equal(this.oCreateStub.getCall(1).args[3], true, "the draft flag was passed");
+				assert.equal(this.oWriteStub.callCount, 2, "the create method of the connector is called for each selected change");
+				assert.deepEqual(this.oWriteStub.getCall(0).args[0].flexObjects[0], oChangeContent1, "the first change was processed first");
+				assert.equal(this.oWriteStub.getCall(0).args[0].draft, true, "the draft flag was passed");
+				assert.deepEqual(this.oWriteStub.getCall(1).args[0].flexObjects[0], oChangeContent3, "the second change was processed afterwards");
+				assert.equal(this.oWriteStub.getCall(1).args[0].draft, true, "the draft flag was passed");
 			}.bind(this));
 		});
 
@@ -2451,7 +2452,7 @@ function (
 			assert.equal(this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"].getPendingAction(), "NEW");
 		});
 
-		QUnit.test("saveAllChangesForVariant should use the CompatibilityConnector to create the change in the backend if pending action is NEW, update when pending action is UPDATE and delete the change if pending action is DELETE", function(assert) {
+		QUnit.test("saveAllChangesForVariant should use the Storage to create the change in the backend if pending action is NEW, update when pending action is UPDATE and delete the change if pending action is DELETE", function(assert) {
 			var mParameters = {
 				id: "changeId",
 				type: "filterBar",
@@ -2483,11 +2484,11 @@ function (
 			var oDeleteResponse = {};
 
 			// this test requires a slightly different setup
-			this.oCreateStub.restore();
-			sandbox.stub(CompatibilityConnector, "create").returns(Promise.resolve(oCreateResponse));
-			sandbox.stub(CompatibilityConnector, "update").returns(Promise.resolve(oUpdateResponse));
-			this.oDeleteChangeStub.restore();
-			this.oDeleteChangeStub = sandbox.stub(CompatibilityConnector, "deleteChange").returns(Promise.resolve(oDeleteResponse));
+			this.oWriteStub.restore();
+			sandbox.stub(WriteStorage, "write").resolves(oCreateResponse);
+			sandbox.stub(WriteStorage, "update").resolves(oUpdateResponse);
+			this.oRemoveStub.restore();
+			this.oRemoveStub = sandbox.stub(WriteStorage, "remove").resolves(oDeleteResponse);
 
 			return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function (aResults) {
 				assert.ok(Array.isArray(aResults));
@@ -2505,7 +2506,7 @@ function (
 						assert.ok(Array.isArray(aResults));
 						assert.equal(aResults.length, 1);
 						assert.strictEqual(aResults[0], oDeleteResponse);
-						assert.ok(this.oDeleteChangeStub.calledWith(oChange.getDefinition(), ""));
+						assert.equal(this.oRemoveStub.getCall(0).args[0].flexObject, oChange.getDefinition(), "the change was passed for deletion");
 						assert.deepEqual(this.oChangePersistence._mVariantsChanges["SmartFilterbar"], {});
 					}.bind(this));
 				}.bind(this));
@@ -2539,9 +2540,9 @@ function (
 			assert.equal(oChange.getPendingAction(), "NEW");
 
 			// this test requires a slightly different setup
-			this.oCreateStub.restore();
-			sandbox.stub(CompatibilityConnector, "create").resolves();
-			sandbox.stub(CompatibilityConnector, "update").resolves();
+			this.oWriteStub.restore();
+			sandbox.stub(WriteStorage, "write").resolves();
+			sandbox.stub(WriteStorage, "update").resolves();
 
 			return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function (aResults) {
 				assert.ok(Array.isArray(aResults));
@@ -2584,12 +2585,12 @@ function (
 
 
 			// this test requires a slightly different setup
-			this.oCreateStub.restore();
-			sandbox.stub(CompatibilityConnector, "create").returns(Promise.reject({
+			this.oWriteStub.restore();
+			sandbox.stub(WriteStorage, "write").rejects({
 				messages: [
 					{text: "Backend says: Boom"}
 				]
-			}));
+			});
 
 			return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar")['catch'](function(err) {
 				assert.equal(err.messages[0].text, "Backend says: Boom");
@@ -2600,7 +2601,7 @@ function (
 	QUnit.module("getResetAndPublishInfo", {
 		beforeEach: function () {
 			sandbox.stub(FlexState, "initialize").resolves();
-			sandbox.stub(CompatibilityConnector, "getFlexInfo").returns(
+			sandbox.stub(WriteStorage, "getFlexInfo").returns(
 				Promise.resolve({
 					isResetEnabled: true,
 					isPublishEnabled: true
