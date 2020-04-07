@@ -60,6 +60,11 @@ sap.ui.define([
 								title: 'Markdown',
 								key: 'markdown',
 								manifestUrl: '/samples/adaptive/markdown.json'
+							},
+							{
+								title: 'Submit Action',
+								key: 'adaptive-action-submit',
+								manifestUrl: '/samples/adaptive/action-submit.json'
 							}
 						]
 					},
