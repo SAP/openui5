@@ -132,6 +132,18 @@ sap.ui.define([
 	}
 
 	/**
+	 * Creates a V4 OData model for data aggregation tests.
+	 *
+	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
+	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
+	 *   synchronizationMode which are set by default
+	 * @returns {ODataModel} The model
+	 */
+	function createAggregationModel(mModelParameters) {
+		return createModel("/aggregation/", mModelParameters);
+	}
+
+	/**
 	 *  Create a view with a relative ODataListBinding which is ready to create a new entity.
 	 *
 	 * @param {object} oTest The QUnit test object
@@ -286,7 +298,9 @@ sap.ui.define([
 				"/special/CurrencyCode/$metadata"
 					: {source : "odata/v4/data/metadata_CurrencyCode.xml"},
 				"/special/Price/$metadata"
-					: {source : "odata/v4/data/metadata_Price.xml"}
+					: {source : "odata/v4/data/metadata_Price.xml"},
+				"/aggregation/$metadata"
+					: {source : "odata/v4/data/metadata_aggregation.xml"}
 			});
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
@@ -3946,17 +3960,28 @@ sap.ui.define([
 	// used bind the parameters so that you have the type information already available before the
 	// controls are created.
 	// JIRA: CPOUI5ODATAV4-28
+	//
+	// Format options and binding parameters are passed to @@format and @@value.
+	// JIRA: CPOUI5ODATAV4-121
 	testXMLTemplating("Operation parameters with sap.ui.model.odata.v4.AnnotationHelper.format",
 		{models : {meta : createTeaBusiModel().getMetaModel()}},
 '<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
+<template:alias name="value" value="sap.ui.model.odata.v4.AnnotationHelper.value">\
 	<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
 		<FlexBox binding="{$Parameter}">\
 			<template:repeat list="{meta>/ChangeTeamBudgetByID/$Action/0/$Parameter}" var="param">\
 				<Input id="{param>$Name}" value="{param>@@format}"/>\
 			</template:repeat>\
-			<Input value="{meta>/ChangeTeamBudgetByID/TeamID@@format}"/>\
+			<Input\
+				value="{meta>/ChangeTeamBudgetByID/TeamID@@format({$$noPatch : true$))}"/>\
+			<Input\
+				value="{meta>/ChangeTeamBudgetByID/Budget@@format({$$noPatch : true$), null)}"/>\
+			<Text text="{meta>/ChangeTeamBudgetByID/Budget@@format(null, $(shortLimit : 1000,\
+				style : \'short\'$))}"/>\
+			<Input value="{meta>/ChangeTeamBudgetByID/TeamID@@value($($$noPatch : true$))}"/>\
 		</FlexBox>\
 	</FlexBox>\
+</template:alias>\
 </template:alias>',
 '<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
 	<FlexBox binding="{$Parameter}">\
@@ -3967,7 +3992,15 @@ sap.ui.define([
 			constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 		<Input value="{path:\'TeamID\',type:\'sap.ui.model.odata.type.String\',\
 			constraints:{\'maxLength\':10,\'nullable\':false},\
-			formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
+			formatOptions:{\'parseKeepsEmptyString\':true},\
+			parameters:{\'$$noPatch\':true}}"/>\
+		<Input value="{path:\'Budget\',type:\'sap.ui.model.odata.type.Decimal\',\
+			constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false},\
+			parameters:{\'$$noPatch\':true}}"/>\
+		<Text text="{path:\'Budget\',type:\'sap.ui.model.odata.type.Decimal\',\
+			constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false},\
+			formatOptions:{\'shortLimit\':1000,\'style\':\'short\'}}"/>\
+		<Input value="{path:\'TeamID\',parameters:{\'$$noPatch\':true}}"/>\
 	</FlexBox>\
 </FlexBox>');
 
@@ -13898,7 +13931,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used (CPOUI5UISERVICESV3-1195)
 	//TODO support $filter : \'GrossAmount gt 0\',\
-	QUnit.test("Data Aggregation by V4: $$aggregation w/ groupLevels", function (assert) {
+	QUnit.test("Data Aggregation: $$aggregation w/ groupLevels, paging", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\',\
 		parameters : {\
@@ -14005,7 +14038,7 @@ sap.ui.define([
 						]
 					})
 					.expectChange("isExpanded", [,,,,,,, false, false, false])
-					.expectChange("isTotal", [,,,,,,, true, true, true])
+					.expectChange("isTotal", [,,,,,,, false, false, false])
 					.expectChange("level", [,,,,,,, 1, 1, 1])
 					.expectChange("lifecycleStatus", [,,,,,,, "T", "S", "R"]);
 
@@ -14033,7 +14066,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Data aggregation with grand total, but no visual grouping. Observe the node status.
 	// BCP: 2080089628
-	QUnit.test("Data Aggregation by V4: $$aggregation w/ grand total", function (assert) {
+	QUnit.test("Data Aggregation: $$aggregation w/ grand total", function (assert) {
 		var sView = '\
 <Table items="{path : \'/SalesOrderList\',\
 		parameters : {\
@@ -14075,11 +14108,111 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Table with aggregation and visual grouping. Expand the first group.
+	// JIRA: CPOUI5ODATAV4-162
+	QUnit.test("Data Aggregation: $$aggregation w/ groupLevels, expand", function (assert) {
+		var sView = '\
+<Table id="table" items="{path : \'/BusinessPartners\',\
+		parameters : {\
+			$$aggregation : {\
+				aggregate : {\
+					SalesAmount : {subtotals : true},\
+					SalesNumber : {}\
+				},\
+				group : {\
+					AccountResponsible : {}\
+				},\
+				groupLevels : [\'Region\']\
+			},\
+			$count : false,\
+			$orderby : \'Region desc,AccountResponsible\'\
+		}}">\
+	<ColumnListItem>\
+		<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }" />\
+		<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }" />\
+		<Text id="level" text="{= %{@$ui5.node.level} }" />\
+		<Text id="region" text="{Region}" />\
+		<Text id="accountResponsible" text="{AccountResponsible}" />\
+		<Text id="salesAmount" text="{= %{SalesAmount}}" />\
+		<Text id="salesNumber" text="{SalesNumber}" />\
+	</ColumnListItem>\
+</Table>',
+			oModel = createAggregationModel(),
+			oTable,
+			that = this;
+
+		this.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
+				+ "/orderby(Region desc)&$count=true&$skip=0&$top=100", {
+				"@odata.count" : "26",
+				value : [
+					{Region : "Z", SalesAmount : "100"},
+					{Region : "Y", SalesAmount : "200"},
+					{Region : "X", SalesAmount : "300"}
+				]
+			})
+			.expectChange("isExpanded", [false, false, false])
+			.expectChange("isTotal", [true, true, true])
+			.expectChange("level", [1, 1, 1])
+			.expectChange("salesAmount", ["100", "200", "300"])
+			.expectChange("region", ["Z", "Y", "X"])
+			.expectChange("accountResponsible", ["", "", ""])
+			.expectChange("salesNumber", [null, null, null]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Z')"
+					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
+					+ "/orderby(AccountResponsible)&$count=true&$skip=0&$top=100", {
+					"@odata.count" : 4,
+					value : [
+						{AccountResponsible : "a", SalesAmount : "10", SalesNumber : 1},
+						{AccountResponsible : "b", SalesAmount : "20", SalesNumber : 2},
+						{AccountResponsible : "c", SalesAmount : "30", SalesNumber : 3},
+						{AccountResponsible : "d", SalesAmount : "40", SalesNumber : 4}
+					]
+				})
+				.expectChange("isExpanded",
+					[true, undefined, undefined, undefined, undefined, false, false])
+				.expectChange("isTotal", [/*true*/, false, false, false, false, true, true])
+				.expectChange("level", [/*1*/, 2, 2, 2, 2, 1, 1])
+				.expectChange("salesAmount", [/*"10"*/, "10", "20", "30", "40", "200", "300"])
+				.expectChange("region", [/*"Z"*/, "Z", "Z", "Z", "Z", "Y", "X"])
+				.expectChange("accountResponsible", [/*""*/, "a", "b", "c", "d", "", ""])
+				.expectChange("salesNumber", [/*""*/, "1", "2", "3", "4", null, null]);
+
+			oTable = that.oView.byId("table");
+
+			// code under test
+			oTable.getItems()[0].getBindingContext().expand();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oListBinding = oTable.getBinding("items");
+
+			assert.deepEqual(
+				oListBinding.getCurrentContexts()
+					.slice(0, oListBinding.getLength()) // remove excess rows with undefined
+					.map(function (oContext) {
+						return oContext.getPath();
+					}),
+				[
+					"/BusinessPartners(Region='Z')",
+					"/BusinessPartners(Region='Z',AccountResponsible='a')",
+					"/BusinessPartners(Region='Z',AccountResponsible='b')",
+					"/BusinessPartners(Region='Z',AccountResponsible='c')",
+					"/BusinessPartners(Region='Z',AccountResponsible='d')",
+					"/BusinessPartners(Region='Y')",
+					"/BusinessPartners(Region='X')"
+				]
+			);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
 	// but a grand total row (CPOUI5UISERVICESV3-1418) which is fixed at the top; first visible
 	// row starts at 1 and then we scroll up; headerContext>$count is also used
 	[false, true].forEach(function (bCount) {
-		var sTitle = "Data Aggregation by V4: $$aggregation grandTotal w/o groupLevels; $count : "
+		var sTitle = "Data Aggregation: $$aggregation grandTotal w/o groupLevels; $count : "
 				+ bCount;
 
 		QUnit.test(sTitle, function (assert) {
@@ -14200,7 +14333,7 @@ sap.ui.define([
 	// but a grand total row (CPOUI5UISERVICESV3-1418) which is not fixed at the top; first visible
 	// row starts at 1 and then we scroll up; headerContext>$count is also used
 	[false, true].forEach(function (bCount) {
-		var sTitle = "Data Aggregation by V4: $$aggregation grandTotal w/o groupLevels; $count : "
+		var sTitle = "Data Aggregation: $$aggregation grandTotal w/o groupLevels; $count : "
 				+ bCount + "; grandTotal row not fixed";
 
 		QUnit.test(sTitle, function (assert) {
@@ -14315,7 +14448,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
 	// but a grand total row using with/as (CPOUI5UISERVICESV3-1418)
-	QUnit.test("Data Aggregation by V4: $$aggregation grandTotal w/o groupLevels using with/as",
+	QUnit.test("Data Aggregation: $$aggregation grandTotal w/o groupLevels using with/as",
 			function (assert) {
 		var sView = '\
 <t:Table rows="{path : \'/BusinessPartners\',\
@@ -14481,7 +14614,7 @@ sap.ui.define([
 	// Note: usage of min/max simulates a Chart, which would actually call ODLB#updateAnalyticalInfo
 	// Note: Key properties are omitted from response data to improve readability.
 	[false, true].forEach(function (bCount) {
-		var sTitle = "Data Aggregation by V4: $$aggregation, aggregate but no group; $count : "
+		var sTitle = "Data Aggregation: $$aggregation, aggregate but no group; $count : "
 				+ bCount;
 
 		QUnit.test(sTitle, function (assert) {
@@ -14669,9 +14802,9 @@ sap.ui.define([
 
 			that.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus))&$count=true"
 					+ "&$skip=0&$top=100", {
-					value : [{GrossAmount : 2, LifecycleStatus : "Y"}]
+					value : [{LifecycleStatus : "Y"}]
 				})
-				.expectChange("grossAmount", [2])
+				.expectChange("grossAmount", [null])
 				.expectChange("lifecycleStatus", ["Y"]);
 
 			// code under test
@@ -15596,32 +15729,58 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Fiori Elements Safeguard - Test 1 (Edit/Activate)
-	//   Edit / Activate action bound to entity
-	//   Return Value Context with $$inheritExpandSelect
-	//   Message property in $select of the hidden binding
-	//   Creation Row Binding (a binding that should not request data, not be refreshed).
-	//   The Creation Row Binding is relative to the context of the object, i.e. the RVC.
-	//   requestSideEffects called on RVC
+	// Test the following scenario twice with:
+	// a) a row context (sap.ui.model.odata.v4.Context) of an OData V4 list binding and
+	// b) a base context (sap.ui.model.Context):
+	//	1. Show the active version of an entity by using the given context
+	//	2. Within the binding hierarchy of the object page use a hidden binding with its own binding
+	//		parameters $$patchWithoutSideEffects=true and $select=Messages to request messages.
+	// 		The hidden binding is a binding that is independent of the object page. Before calling
+	// 		the edit action, its cache stores the Artist data and the $select query option is
+	// 		determined for this binding. The first call of the edit action is relative to the hidden
+	// 		binding's bound context. Hence the operation can request the necessary selection of the
+	// 		Artist data using $$inheritExpandSelect. This data is then available within the return
+	// 		value context which serves as a binding context of the object page and as the parent
+	// 		context for the following activate action.
+	//	3. Create an edit action with $$inheritExpandSelect=true to select all properties used in
+	//		the object page. Call the action and bind the object page to the return value context.
+	//	4. Patch the inactive entity to see that $$patchWithoutSideEffects works.
+	//	5. Show the creation row of a creation row binding (a binding that does not request data,
+	//		must not be refreshed) which is relative to the return value context of the inactive
+	//		version.
+	//	6. Request side effects for the return value context of the inactive version to see that the
+	//		creation row is untouched.
+	//	7. Switch back to the active version.
 	// CPOUI5ODATAV4-189
-	QUnit.test("Fiori Elements Safeguard: Test 1 (Edit/Activate)", function (assert) {
-		var oCreationRowBinding,
-			oHiddenBinding,
+[function () {
+	return this.oView.byId("table").getItems()[0].getBindingContext();
+}, function () {
+	return this.oModel.createBindingContext("/Artists(ArtistID='42',IsActiveEntity=true)");
+}].forEach(function (fnGetParentContext, i) {
+	var sTitle = "Fiori Elements Safeguard: Test 1 (Edit/Activate) " + (i ? "base" : "row")
+		+ " context";
+
+	QUnit.test(sTitle, function (assert) {
+		var oCreationRow,
+			oCreationRowContext,
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			oObjectPage,
 			oReturnValueContext,
-			sView = '\
-<Table id="table" items="{path : \'/Artists\', parameters : {$filter : \'IsActiveEntity\'}}">\
+			sTable = '\
+<Table id="table" items="{/Artists}">\
 	<ColumnListItem>\
 		<Text id="listId" text="{ArtistID}"/>\
 	</ColumnListItem>\
-</Table>\
+</Table>',
+			sView = '\
 <FlexBox id="objectPage" >\
 	<Text id="id" text="{ArtistID}" />\
 	<Text id="isActive" text="{IsActiveEntity}" />\
-	<Text id="name" text="{Name}" />\
-</FlexBox>\
-<FlexBox id="creationRow">\
-	<Text id="price" text="{Price}" />\
+	<Input id="name" value="{Name}" />\
+	<FlexBox id="creationRow">\
+		<Text id="price" text="{Price}" />\
+		<Text id="artistName" text="{_Artist/Name}" />\
+	</FlexBox>\
 </FlexBox>',
 			that = this;
 
@@ -15647,12 +15806,11 @@ sap.ui.define([
 				}, {
 					ArtistID : "42",
 					IsActiveEntity : bIsActive,
-					Name : "The Beatles",
-					Messages: []
+					Name : "The Beatles"
 				});
 
-			// code under test
 			return Promise.all([
+				// code under test
 				oAction.execute(),
 				that.waitForChanges(assert)
 			]).then(function (aPromiseResults) {
@@ -15666,85 +15824,300 @@ sap.ui.define([
 			});
 		}
 
-		this.expectRequest("Artists?$filter=IsActiveEntity&$select=ArtistID,IsActiveEntity"
-			+ "&$skip=0&$top=100", {
-				value : [{ArtistID : "42", IsActiveEntity: true}]
-			})
-			.expectChange("listId", ["42"])
-			.expectChange("id")
+		// Note: table is only needed for the first test with the row context
+		if (!i) {
+			sView = sTable + sView;
+			this.expectRequest("Artists?$select=ArtistID,IsActiveEntity"
+				+ "&$skip=0&$top=100", {
+					value : [{ArtistID : "42", IsActiveEntity : true}]
+				})
+				.expectChange("listId", ["42"]);
+		}
+
+		this.expectChange("id")
 			.expectChange("isActive")
 			.expectChange("name")
+			.expectChange("artistName")
 			.expectChange("price");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oHiddenBinding;
+			// 1. Start with the given context and show it within the object page
 
-			// create the hidden binding when creating the controller
-			oHiddenBinding = that.oModel.bindContext("", undefined,
-				{$$patchWithoutSideEffects : true, $select : "Messages"});
+			// 2. Within the controller code create the hidden binding
+			oHiddenBinding = that.oModel.bindContext("", fnGetParentContext.call(that),
+					{$$patchWithoutSideEffects : true, $select : "Messages"});
+
 			oObjectPage = that.oView.byId("objectPage");
+			oCreationRow = that.oView.byId("creationRow");
 
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)" +
 				"?$select=ArtistID,IsActiveEntity,Messages,Name", {
 					ArtistID : "42",
 					IsActiveEntity : true,
-					Name : "The Beatles",
-					Messages:  []
+					Name : "The Beatles"
 				})
 				.expectChange("id", "42")
 				.expectChange("isActive", "Yes")
 				.expectChange("name", "The Beatles");
 
-			// start with the row context of the list
-			oHiddenBinding.setContext(that.oView.byId("table").getItems()[0].getBindingContext());
-			// code under test
+			// set binding context for creationRow to "null" to skip inheriting the binding context
+			oCreationRow.setBindingContext(null);
+
 			oObjectPage.setBindingContext(oHiddenBinding.getBoundContext());
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			// 3. switch to the edit mode and show the inactive version
 			return action("EditAction");
 		}).then(function () {
-			var oCreatedRow;
+			// 4. Patch the inactive entity to see that $$patchWithoutSideEffects works.
 
-			oCreationRowBinding = that.oModel.bindList("_Publication", oReturnValueContext,
-				undefined, undefined, {$$updateGroupId : "doNotSubmit"});
+			that.expectChange("name", "The Beatles (modified)")
+				.expectRequest({
+					method : "PATCH",
+					url : "Artists(ArtistID='42',IsActiveEntity=false)",
+					payload : {Name : "The Beatles (modified)"},
+					response : {
+						ArtistID : "42",
+						IsActiveEntity : true,
+						Name : "The Beatles"
+					}
+				});
 
-			that.expectChange("price", "47");
-
-			// code under test
-			oCreatedRow = oCreationRowBinding.create({Price : "47"});
-			oCreatedRow.created().catch(function () {
-				// prevent Uncaught (in promise)
-			});
-			that.oView.byId("creationRow").setBindingContext(oCreatedRow);
+			that.oView.byId("name").getBinding("value").setValue("The Beatles (modified)");
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			// 5. Show the creation row of a creation row binding [...]
+
+			oCreationRowContext = that.oModel.bindList("_Publication", oReturnValueContext,
+				undefined, undefined, {$$updateGroupId : "doNotSubmit"}).create({Price : "47"});
+
+			that.expectChange("price", "47")
+				.expectChange("artistName", "The Beatles (modified)");
+
+			oCreationRow.setBindingContext(oCreationRowContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// 6. Request side effects for the return value context of the inactive version to see
+			// that the creation row is untouched.
+
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
 				+ "?$select=ArtistID,IsActiveEntity,Messages,Name", {
 					ArtistID : "42",
 					IsActiveEntity : false,
-					Name : "The Beatles",
-					Messages : []
+					Name : "The Beatles"
+				})
+				.expectChange("name", "The Beatles")
+				.expectChange("artistName", "The Beatles");
+
+			return Promise.all([
+				oReturnValueContext.requestSideEffects([
+					{$PropertyPath : "*"},
+					{$NavigationPropertyPath : "_Publication"}
+				]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// Delete creation row context before switching back to the active version
+
+			that.expectChange("price", null)
+			    .expectChange("artistName", null);
+
+			return Promise.all([
+				oCreationRowContext.delete(),
+				oCreationRowContext.created().catch(function (oError) {
+					// handle cancellation caused by .delete()
+					assert.ok(oError.canceled);
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// 7. Switch back to active version
+			return action("ActivationAction");
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Fiori Elements Safeguard - Test 2 (Create)
+	//	1. Call create action bound to collection with $select for Messages,
+	//		$$patchWithoutSideEffects but w/o $$inheritExpandSelect because nothing can be
+	//		inherited.
+	//	2. Bind object page to the return value context of the create action and see that structural
+	//		properties and properties via navigation properties are fetched as late properties.
+	//	3. Show the creation row of a creation row binding (a binding that does not request data,
+	//		is not be refreshed) which is relative to the return value context of the inactive
+	//		version.
+	//	4. Request side effects for the return value context of the inactive version to see that the
+	//		creation row is untouched.
+	//	5. Switch back to active version.
+	// CPOUI5ODATAV4-189
+	QUnit.test("Fiori Elements Safeguard: Test 2 (Create)", function (assert) {
+		var oCreationRow,
+			oModel = createSpecialCasesModel({autoExpandSelect : true, groupId : "$auto"}),
+			oReturnValueContext,
+			sView = '\
+<FlexBox id="objectPage" >\
+	<Text id="id" text="{ArtistID}" />\
+	<Text id="isActive" text="{IsActiveEntity}" />\
+	<Text id="name" text="{Name}" />\
+	<FlexBox id="bestFriend" binding="{BestFriend}" >\
+		<Text id="bestFriendName" text="{Name}" />\
+	</FlexBox>\
+	<FlexBox id="creationRow">\
+		<Text id="price" text="{Price}" />\
+		<Text id="artistName" text="{_Artist/Name}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("id")
+			.expectChange("isActive")
+			.expectChange("name")
+			.expectChange("bestFriendName")
+			.expectChange("price")
+			.expectChange("artistName");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oOperationBinding;
+			// 1. Call create action bound to collection
+
+			oOperationBinding = oModel.bindContext("special.cases.Create(...)",
+				oModel.bindList("/Artists").getHeaderContext(),
+					{$$patchWithoutSideEffects : true, $select : "Messages"});
+
+			that.expectRequest({
+				method : "POST",
+				payload : {},
+				url : "Artists/special.cases.Create?$select=Messages"
+			}, {
+				ArtistID : "23",
+				IsActiveEntity : false
+			});
+
+			return oOperationBinding.execute();
+		}).then(function (oReturnValueContext0) {
+			// 2. Bind object page to the return value context of the create action
+
+			oReturnValueContext = oReturnValueContext0;
+
+			that.expectRequest("Artists(ArtistID='23',IsActiveEntity=false)?"
+				+ "$select=ArtistID,IsActiveEntity,Name"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
+					ArtistID : "23",
+					IsActiveEntity : false,
+					Name : "DJ Bobo",
+					BestFriend : {
+						ArtistID : "32",
+						IsActiveEntity : true,
+						Name : "Robin Schulz"
+					}
+				})
+				.expectChange("id", "23")
+				.expectChange("isActive", "No")
+				.expectChange("name", "DJ Bobo")
+				.expectChange("bestFriendName", "Robin Schulz");
+
+			// set binding context for creationRow to "null" to skip inheriting the binding context
+			that.oView.byId("creationRow").setBindingContext(null);
+			that.oView.byId("objectPage").setBindingContext(oReturnValueContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// 3. Show the creation row of a creation row binding
+
+			oCreationRow = that.oModel.bindList("_Publication", oReturnValueContext,
+				undefined, undefined, {$$updateGroupId : "doNotSubmit"}).create({Price : "47"});
+			oCreationRow.created().catch(function () {
+				// handle cancellation caused by oCreationRow.delete below
+			});
+
+			that.expectChange("price", "47");
+			that.expectChange("artistName", "DJ Bobo");
+
+			that.oView.byId("creationRow").setBindingContext(oCreationRow);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// 4. Request side effects for the return value context of the inactive version to see
+			// that the creation row is untouched
+
+			that.expectRequest("Artists(ArtistID='23',IsActiveEntity=false)"
+				+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
+					ArtistID : "23",
+					IsActiveEntity : false,
+					Name : "DJ Bobo",
+					BestFriend : {
+						ArtistID : "32",
+						IsActiveEntity : true,
+						Name : "Robin Schulz"
+					}
 				});
 
 			return Promise.all([
-				// code under test
-				oObjectPage.getBindingContext()
-					.requestSideEffects([{$PropertyPath : "*"}]),
+				oReturnValueContext.requestSideEffects([
+					{$PropertyPath : "*"},
+					{$NavigationPropertyPath : "BestFriend"},
+					{$NavigationPropertyPath : "_Publication"}]),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			return action("ActivationAction");
-		}).then(function () {
+			// Delete creation row context before switch back to active version
+
 			that.expectChange("price", null);
+			that.expectChange("artistName", null);
 
 			return Promise.all([
-				// reset creation row binding in order to prevent error:
-				// 'setContext on relative binding is forbidden if a transient entity exists'
-				// when the view is destroyed and the creation row parent context becomes undefined
-				oCreationRowBinding.resetChanges(),
+				// before switching back to the active version, we hide the price deleting the
+				// creation row
+				oCreationRow.delete(),
 				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			// 5. Switch back to active version
+			var oAction = that.oModel.bindContext("special.cases.ActivationAction(...)",
+					oReturnValueContext, {$$inheritExpandSelect : true});
+
+			that.expectRequest({
+				method : "POST",
+				url : "Artists(ArtistID='23',IsActiveEntity=false)/special.cases.ActivationAction"
+					+ "?$select=Messages",
+				payload : {}
+			}, {
+				ArtistID : "23",
+				IsActiveEntity : true
+			});
+
+			return Promise.all([
+				oAction.execute(),
+				that.waitForChanges(assert)
+			]).then(function (aPromiseResults) {
+				// show active version, observe late properties request but only change for isActive
+
+				oReturnValueContext = aPromiseResults[0];
+
+				that.expectRequest("Artists(ArtistID='23',IsActiveEntity=true)?"
+					+ "$select=ArtistID,IsActiveEntity,Name"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
+						ArtistID : "23",
+						IsActiveEntity : true,
+						Name : "DJ Bobo",
+						BestFriend : {
+							ArtistID : "32",
+							IsActiveEntity : true,
+							Name : "Robin Schulz"
+						}
+					})
+					.expectChange("isActive", "Yes");
+
+				that.oView.byId("objectPage").setBindingContext(oReturnValueContext);
+
+				return that.waitForChanges(assert);
+			});
 		});
 	});
 
@@ -18686,11 +19059,6 @@ sap.ui.define([
 					<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
 				</t:template>\
 			</t:Column>\
-			<t:Column>\
-				<t:template>\
-					<Text id="name" text="{_Artist/Name}" />\
-				</t:template>\
-			</t:Column>\
 		</t:Table>\
 	</FlexBox>\
 </FlexBox>',
@@ -18707,20 +19075,17 @@ sap.ui.define([
 				+ "?sap-client=123&$count=true&$filter=CurrencyCode eq 'EUR'"
 				+ "&$orderby=PublicationID&$select=CurrencyCode,Price,PublicationID"
 				+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)"
-				+ ",_Artist($select=ArtistID,IsActiveEntity,Name)&$skip=1&$top=2", {
+				+ "&$skip=1&$top=2", {
 				"@odata.count" : "10",
 				value : [{
-					_Artist : {
-						ArtistID : "42",
-//						IsActiveEntity : true,
-						Name : "Hour Frustrated"
-					},
 					CurrencyCode : "EUR",
-					DraftAdministrativeData : null,
+					DraftAdministrativeData : {
+						DraftID : "42-1-A",
+						InProcessByUser : "Charlie Brown"
+					},
 					Price : "9.11", // Note: 9.ii for old value at index i, 7.ii for new value
 					PublicationID : "42-1"
 				}, {
-					_Artist : null,
 					CurrencyCode : "EUR",
 					DraftAdministrativeData : null,
 					Price : "9.22",
@@ -18731,8 +19096,7 @@ sap.ui.define([
 			.expectChange("id", "42")
 			.expectChange("price", [, "9.11", "9.22"])
 			.expectChange("currency", [, "EUR", "EUR"])
-			.expectChange("inProcessByUser")
-			.expectChange("name", [, "Hour Frustrated"]);
+			.expectChange("inProcessByUser", [, "Charlie Brown"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectChange("count", "10"); // must not be affected by side effects below!
@@ -18745,16 +19109,15 @@ sap.ui.define([
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend/_Publication"
 					+ "?sap-client=123"
 					+ "&$filter=PublicationID eq '42-1' or PublicationID eq '42-2'"
-					+ "&$select=Price,PublicationID&$expand=_Artist($select=Name)", {
+					+ "&$select=Price,PublicationID"
+					+ "&$expand=DraftAdministrativeData($select=InProcessByUser)", {
 					value : [{
-						_Artist : null, // side effect
+						DraftAdministrativeData : null, // side effect
 						Price : "7.11", // side effect
 						PublicationID : "42-1"
 					}, {
-						_Artist : { // side effect
-							ArtistID : "42a",
-//							IsActiveEntity : true,
-							Name : "Minute Frustrated"
+						DraftAdministrativeData : { // side effect
+							InProcessByUser : "John Doe"
 						},
 						Messages : [{ // side effect: reported, even if not selected
 							code : "23",
@@ -18767,7 +19130,7 @@ sap.ui.define([
 					}]
 				})
 				.expectChange("price", [, "7.11", "7.22"])
-				.expectChange("name", [, null, "Minute Frustrated"])
+				.expectChange("inProcessByUser", [, null, "John Doe"])
 				.expectMessages([{
 					code : "23",
 					message : "This looks pretty cheap now",
@@ -18783,7 +19146,8 @@ sap.ui.define([
 				that.oView.byId("form").getBindingContext().requestSideEffects([{
 					$PropertyPath : "BestFriend/_Publication/Price"
 				}, {
-					$PropertyPath : "BestFriend/_Publication/_Artist/Name"
+					$PropertyPath :
+						"BestFriend/_Publication/DraftAdministrativeData/InProcessByUser"
 				}]),
 				that.waitForChanges(assert)
 			]);
@@ -18796,16 +19160,14 @@ sap.ui.define([
 					+ "?sap-client=123&$count=true&$filter=CurrencyCode eq 'EUR'"
 					+ "&$orderby=PublicationID&$select=CurrencyCode,Price,PublicationID"
 					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)"
-					+ ",_Artist($select=ArtistID,IsActiveEntity,Name)&$skip=7&$top=2", {
+					+ "&$skip=7&$top=2", {
 					"@odata.count" : "10",
 					value : [{
-						_Artist : null,
 						CurrencyCode : "EUR",
 						DraftAdministrativeData : null,
 						Price : "7.77",
 						PublicationID : "42-7"
 					}, {
-						_Artist : null,
 						CurrencyCode : "EUR",
 						DraftAdministrativeData : null,
 						Price : "7.88",
@@ -18818,8 +19180,8 @@ sap.ui.define([
 				// "currency" temporarily loses its binding context and thus fires a change event
 				.expectChange("currency", null, null)
 				.expectChange("currency", null, null)
-				// "name" temporarily loses its binding context and thus fires a change event
-				.expectChange("name", null, null)
+				// "inProcessByUser" temporarily loses its binding context and thus fires a change
+				.expectChange("inProcessByUser", null, null)
 				.expectChange("price", [,,,,,,, "7.77", "7.88"])
 				.expectChange("currency", [,,,,,,, "EUR", "EUR"]);
 
@@ -18853,16 +19215,14 @@ sap.ui.define([
 					+ "?sap-client=123&$count=true&$filter=CurrencyCode eq 'EUR'"
 					+ "&$orderby=PublicationID&$select=CurrencyCode,Price,PublicationID"
 					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)"
-					+ ",_Artist($select=ArtistID,IsActiveEntity,Name)&$skip=1&$top=2", {
+					+ "&$skip=1&$top=2", {
 					"@odata.count" : "10",
 					value : [{
-						_Artist : null,
 						CurrencyCode : "EUR",
 						DraftAdministrativeData : null,
 						Price : "5.11",
 						PublicationID : "42-1"
 					}, {
-						_Artist : null,
 						CurrencyCode : "EUR",
 						DraftAdministrativeData : null,
 						Price : "5.22",

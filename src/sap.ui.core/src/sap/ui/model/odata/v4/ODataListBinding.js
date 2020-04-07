@@ -572,7 +572,9 @@ sap.ui.define([
 	 *
 	 * Note: After creation, the created entity is refreshed to ensure that the data specified in
 	 * this list binding's $expand is available; to skip this refresh, set <code>bSkipRefresh</code>
-	 * to <code>true</code>.
+	 * to <code>true</code>. To avoid errors you must skip this refresh when using
+	 * {@link sap.ui.model.odata.v4.Context#requestSideEffects} in the same $batch to refresh the
+	 * complete collection containing the newly created entity.
 	 *
 	 * Note: A deep create is not supported. The dependent entity has to be created using a second
 	 * list binding. Note that it is not supported to bind relative to a transient context.
@@ -933,6 +935,52 @@ sap.ui.define([
 		}
 
 		return ListBinding.prototype.enableExtendedChangeDetection.apply(this, arguments);
+	};
+
+	/**
+	 * Expands the group node that the given context points to.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   The context corresponding to the group node
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise that is resolved when the expand is succesful and rejected when it fails
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.expand = function (oContext) {
+		var bDataRequested = false,
+			that = this;
+
+		return this.oCache.expand(this.lockGroup(),
+			_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath()),
+			function () {
+				bDataRequested = true;
+				that.fireDataRequested();
+			}
+		).then(function (iCount) {
+			var aContexts = that.aContexts,
+				iModelIndex = oContext.getModelIndex(),
+				oMovingContext,
+				i;
+
+			for (i = aContexts.length - 1; i > iModelIndex; i -= 1) {
+				oMovingContext = aContexts[i];
+				oMovingContext.iIndex += iCount;
+				aContexts[i + iCount] = oMovingContext;
+				aContexts[i] = undefined;
+			}
+			that.iMaxLength += iCount;
+			that._fireChange({reason : ChangeReason.Change});
+			if (bDataRequested) {
+				that.fireDataReceived({});
+			}
+		}, function (oError) {
+			if (bDataRequested) {
+				that.fireDataReceived({error : oError});
+			}
+
+			throw oError;
+		});
 	};
 
 	/**

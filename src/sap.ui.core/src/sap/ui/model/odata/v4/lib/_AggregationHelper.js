@@ -144,6 +144,9 @@ sap.ui.define([
 		 * @param {string} [mQueryOptions.$filter]
 		 *   The value for a "$filter" system query option; it is removed from the returned map, but
 		 *   not from <code>mQueryOptions</code> itself
+		 * @param {string} [mQueryOptions.$$filterBeforeAggregate]
+		 *   The value for a filter which is applied before the aggregation; it is removed from the
+		 *   returned map, but not from <code>mQueryOptions</code> itself
 		 * @param {string} [mQueryOptions.$orderby]
 		 *   The value for a "$orderby" system query option; it is removed from the returned map,
 		 *   but not from <code>mQueryOptions</code> itself

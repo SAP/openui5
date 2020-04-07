@@ -2653,4 +2653,70 @@ sap.ui.define([
 
 		assert.strictEqual(oContext.sPath, "/foo(bar='($uid=1)')");
 	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bSuccess) {
+	QUnit.test("expand: success=" + bSuccess, function (assert) {
+		var oBinding = {
+				expand : function () {}
+			},
+			oModel = {
+				reportError : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/path"),
+			oError = new Error(),
+			oPromise = bSuccess ? Promise.resolve() : Promise.reject(oError);
+
+		this.mock(oContext).expects("isExpanded").withExactArgs().returns(false);
+		this.mock(oBinding).expects("expand").withExactArgs(sinon.match.same(oContext))
+			.returns(oPromise);
+		if (!bSuccess) {
+			this.mock(oModel).expects("reportError")
+				.withExactArgs("Failed to expand " + oContext, "sap.ui.model.odata.v4.Context",
+					sinon.match.same(oError));
+		}
+
+		// code under test
+		oContext.expand();
+
+		return oPromise.catch(function () {});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("expand: already expanded", function (assert) {
+		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
+
+		this.mock(oContext).expects("isExpanded").withExactArgs().returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oContext.expand();
+		}, new Error("Already expanded: " + oContext));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("expand: not expandable", function (assert) {
+		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
+
+		this.mock(oContext).expects("isExpanded").withExactArgs().returns({/*anything*/});
+
+		assert.throws(function () {
+			// code under test
+			oContext.expand();
+		}, new Error("Not expandable: " + oContext));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isExpanded", function (assert) {
+		var oBinding = {},
+			oContext = Context.create({/*oModel*/}, oBinding, "/path"),
+			oContextMock = this.mock(oContext);
+
+		oContextMock.expects("getProperty").withExactArgs("@$ui5.node.isExpanded")
+			.returns("~anything~");
+
+		// code under test
+		assert.strictEqual(oContext.isExpanded(), "~anything~");
+	});
 });

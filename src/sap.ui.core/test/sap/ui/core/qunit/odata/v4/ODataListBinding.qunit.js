@@ -6053,6 +6053,101 @@ sap.ui.define([
 			return oBinding.getDownloadUrl();
 		}, oError);
 	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bSuccess) {
+	[false, true].forEach(function (bRequest) {
+
+	QUnit.test("expand: success=" + bSuccess + ", request=" + bRequest, function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oContext = {
+				getModelIndex : function () {},
+				getPath : function () {},
+				toString: function() { return "~context~"; }
+			},
+			oChangeCall,
+			aContextsBefore,
+			oDataReceivedCall,
+			oError = new Error(),
+			oExpectation,
+			oGroupLock = {},
+			oPromise,
+			that = this;
+
+		oBinding.oCache = { // simulate an aggregation cache
+			expand : function () {}
+		};
+		oBinding.createContexts(0, 5, createData(5, 0, true, 5));
+		aContextsBefore = oBinding.aContexts.slice();
+
+		this.mock(oBinding).expects("lockGroup").withExactArgs().returns(oGroupLock);
+		this.mock(oContext).expects("getPath").withExactArgs().returns("~contextpath~");
+		this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs()
+			.returns("~bindingpath~");
+		this.mock(_Helper).expects("getRelativePath")
+			.withExactArgs("~contextpath~", "~bindingpath~").returns("~cachepath~");
+
+		oExpectation = this.mock(oBinding.oCache).expects("expand")
+			.withExactArgs(sinon.match.same(oGroupLock), "~cachepath~", sinon.match.func)
+			.returns(Promise.resolve().then(function () {
+				if (bSuccess) {
+					that.mock(oContext).expects("getModelIndex").withExactArgs().returns(1);
+					oChangeCall = that.mock(oBinding).expects("_fireChange")
+						.withExactArgs({reason : ChangeReason.Change});
+					oDataReceivedCall = that.mock(oBinding).expects("fireDataReceived")
+						.exactly(bRequest ? 1 : 0)
+						.withExactArgs({});
+
+					return 3;
+				} else {
+					that.mock(oBinding).expects("fireDataReceived").exactly(bRequest ? 1 : 0)
+						.withExactArgs({error : sinon.match.same(oError)});
+
+					throw oError;
+				}
+			}));
+
+		// code under test
+		oPromise = oBinding.expand(oContext).then(function () {
+			assert.ok(bSuccess);
+			assert.strictEqual(oBinding.aContexts[0], aContextsBefore[0], "0");
+			assert.strictEqual(oBinding.aContexts[1], aContextsBefore[1], "1");
+			assert.strictEqual(oBinding.aContexts[2], undefined, "2");
+			assert.strictEqual(oBinding.aContexts[3], undefined, "3");
+			assert.strictEqual(oBinding.aContexts[4], undefined, "4");
+			assert.strictEqual(oBinding.aContexts[5], aContextsBefore[2], "5");
+			assert.strictEqual(oBinding.aContexts[6], aContextsBefore[3], "6");
+			assert.strictEqual(oBinding.aContexts[7], aContextsBefore[4], "7");
+
+			assert.strictEqual(oBinding.aContexts[0].iIndex, 0);
+			assert.strictEqual(oBinding.aContexts[1].iIndex, 1);
+			assert.strictEqual(oBinding.aContexts[5].iIndex, 5);
+			assert.strictEqual(oBinding.aContexts[6].iIndex, 6);
+			assert.strictEqual(oBinding.aContexts[7].iIndex, 7);
+
+			assert.strictEqual(oBinding.getLength(), 8);
+
+			if (bRequest) {
+				sinon.assert.callOrder(oChangeCall, oDataReceivedCall);
+			}
+		}, function (oResult) {
+			assert.notOk(bSuccess);
+			assert.strictEqual(oResult, oError);
+		});
+
+		that.mock(oBinding).expects("fireDataRequested").exactly(bRequest ? 1 : 0)
+			.withExactArgs();
+		if (bRequest) {
+			oExpectation.args[0][2]();
+		}
+
+		return oPromise;
+	});
+	// TODO aContexts may be sparse
+
+	});
+});
+
 });
 
 //TODO integration: 2 entity sets with same $expand, but different $select

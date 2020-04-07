@@ -8,6 +8,7 @@ sap.ui.define([
 	"./lib/_Helper",
 	"sap/base/assert",
 	"sap/base/Log",
+	"sap/base/util/JSTokenizer",
 	"sap/base/util/ObjectPath",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/BindingMode",
@@ -37,7 +38,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/thirdparty/URI"
-], function (ValueListType, _Helper, assert, Log, ObjectPath, SyncPromise, BindingMode,
+], function (ValueListType, _Helper, assert, Log, JSTokenizer, ObjectPath, SyncPromise, BindingMode,
 		ChangeReason, ClientListBinding, BaseContext, ContextBinding, MetaModel, PropertyBinding,
 		OperationMode, Boolean, Byte, EdmDate, DateTimeOffset, Decimal, Double, Guid, Int16, Int32,
 		Int64, Raw, SByte, Single, Stream, String, TimeOfDay, URI) {
@@ -48,6 +49,7 @@ sap.ui.define([
 	var oCountType,
 		mCodeListUrl2Promise = new Map(),
 		DEBUG = Log.Level.DEBUG,
+		rLeftBraces = /\$\(/g,
 		rNumber = /^-?\d+$/,
 		ODataMetaContextBinding,
 		ODataMetaListBinding,
@@ -55,6 +57,7 @@ sap.ui.define([
 		ODataMetaPropertyBinding,
 		rPredicate = /\(.*\)$/,
 		oRawType = new Raw(),
+		rRightBraces = /\$\)/g,
 		mSharedModelByUrl = new Map(),
 		mSupportedEvents = {
 			messageChange : true
@@ -578,6 +581,8 @@ sap.ui.define([
 					.then(setValue);
 				if (this.mParameters && this.mParameters.$$valueAsPromise && oPromise.isPending()) {
 					setValue(oPromise.unwrap());
+				} else if (oPromise.isRejected()) {
+					oPromise.unwrap();
 				}
 			},
 
@@ -1044,6 +1049,8 @@ sap.ui.define([
 			 */
 			function computedAnnotation(sSegment, sPath) {
 				var fnAnnotation,
+					aArguments,
+					iLeftParenthesis,
 					iThirdAt = sSegment.indexOf("@", 2);
 
 				if (iThirdAt > -1) {
@@ -1051,6 +1058,24 @@ sap.ui.define([
 				}
 
 				sSegment = sSegment.slice(2);
+				iLeftParenthesis = sSegment.indexOf("(");
+				if (iLeftParenthesis > 0) {
+					if (!sSegment.endsWith(")")) {
+						return log(WARNING, "Expected ')' instead of '", sSegment.slice(-1), "'");
+					}
+					try {
+						aArguments = JSTokenizer.parseJS("["
+							+ sSegment.slice(iLeftParenthesis + 1, -1)
+								// restore *all* braces
+								.replace(rLeftBraces, "{").replace(rRightBraces, "}")
+							+ "]");
+					} catch (e) { // parse error
+						return log(WARNING, e.message, ": ", e.text.slice(1, e.at), "<--",
+							e.text.slice(e.at, -1));
+					}
+					sSegment = sSegment.slice(0, iLeftParenthesis);
+				}
+
 				fnAnnotation = sSegment[0] === "."
 					? ObjectPath.get(sSegment.slice(1), mParameters.scope)
 					: mParameters && ObjectPath.get(sSegment, mParameters.scope)
@@ -1066,6 +1091,7 @@ sap.ui.define([
 				try {
 					vResult = fnAnnotation(vResult, {
 						$$valueAsPromise : mParameters && mParameters.$$valueAsPromise,
+						arguments : aArguments,
 						context : new BaseContext(that, sPath),
 						schemaChildName : sSchemaChildName,
 						// Note: length === 1 implies Array.isArray(oSchemaChild)
@@ -2633,7 +2659,16 @@ sap.ui.define([
 	 *   computed annotation has been found
 	 * </ul>
 	 * Computed annotations cannot be iterated by "@". The path must not continue after a computed
-	 * annotation.
+	 * annotation. Since 1.77.0, arguments can be given to a computed annotation much like a
+	 * JavaScript function call. The left parenthesis must immediately follow the name and no
+	 * whitespace must follow the right parenthesis. In between, a comma separated list of JSON
+	 * values may be given (see <code>JSON.parse</code>); string literals may be enclosed in single
+	 * or double quotes; property names in object literals need not be quoted; curly brackets must
+	 * be replaced by <code>$(</code> and <code>$)</code> respectively, no matter where they appear,
+	 * and there is no escaping for <code>$(</code> and <code>$)</code> to prevent replacement back
+	 * to curly brackets before parsing; as usual, <code>null</code> is supported while
+	 * <code>undefined</code> is not. Example: "@@AH.format($(style : 'short'$)))" or
+	 * "@@AH.format(null, $($$noPatch : true$)))".
 	 *
 	 * A segment which represents an OData qualified name is looked up in the global scope ("scope
 	 * lookup") and thus determines a schema child which is used later on. Unknown qualified names
