@@ -2675,7 +2675,7 @@
 	    {
 		  "id": "sap.m.sample.TableAutoPopin",
 		  "name": "Table - Auto popin of the table columns",
-		  "description": "This example demonstrates the automatic pop-in behavior of the table."
+		  "description": "This example demonstrates the automatic pop-in behavior of the table and hiding columns instead of moving them into the pop-in depending on their importance."
 	    },
 		{
 		  "id": "sap.m.sample.ActionListItem",

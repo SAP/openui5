@@ -17,9 +17,10 @@ sap.ui.define([
 		onSliderMoved: function(oEvent) {
 			var fValue = oEvent.getParameter("value");
 			this.byId("idProductsTable").setWidth(fValue + "%");
+		},
+
+		onSelectionFinish: function(oEvent) {
+			this.byId("idProductsTable").setHiddenInPopin(oEvent.getSource().getSelectedKeys());
 		}
-
-
 	});
-
 });
