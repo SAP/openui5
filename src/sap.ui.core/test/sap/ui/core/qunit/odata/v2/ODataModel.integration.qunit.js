@@ -127,6 +127,19 @@ sap.ui.define([
 	}
 
 	/**
+	 * Creates a V2 OData model for the RMT sample flight service.
+	 *
+	 * @param {object} [mModelParameters]
+	 *   Map of parameters for model construction. The default parameters are set in the createModel
+	 *   function.
+	 * @returns {sap.ui.model.odata.v2.ODataModel}
+	 *   The model
+	 */
+	function createRMTSampleFlightModel(mModelParameters) {
+		return createModel("/sap/opu/odata/IWBEP/RMTSAMPLEFLIGHT", mModelParameters);
+	}
+
+	/**
 	 * Creates a V2 OData model for <code>GWSAMPLE_BASIC</code>.
 	 *
 	 * @param {object} [mModelParameters]
@@ -273,7 +286,9 @@ sap.ui.define([
 				"/SalesOrderSrv/$metadata"
 					: {source : "testdata/SalesOrder/metadata.xml"},
 				"/sap/opu/odata/sap/PP_WORKCENTER_GROUP_SRV/$metadata"
-					: {source : "model/PP_WORKCENTER_GROUP_SRV.metadata.xml"}
+					: {source : "model/PP_WORKCENTER_GROUP_SRV.metadata.xml"},
+				"/sap/opu/odata/IWBEP/RMTSAMPLEFLIGHT/$metadata"
+					: {source : "model/RMTSAMPLEFLIGHT.withMessageScope.metadata.xml"}
 			});
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
@@ -3563,6 +3578,110 @@ usePreliminaryContext : false}}">\
 				})
 				.expectChange("itemPosition", "30~1~", 1)
 				.expectChange("note::item", "Qux", 1);
+
+			oItemsBinding.filter(oFilter);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: On an object page a carrier with its flights is displayed. Only a part of the
+	// flights are displayed. All of the flights have messages. Use client-side-filtering to filter
+	// the flights table by entries with "warning" messages.
+	// JIRA: CPOUI5MODELS-106
+	QUnit.test("Filter table by items with messages - client side filtering", function (assert) {
+		var oItemsBinding,
+			oModel = createRMTSampleFlightModel({defaultOperationMode : "Client"}),
+			oCarrierToFlight10PriceError = this.createResponseMessage(
+				"carrierFlights(carrid='1',connid='10~0~',"
+				+ "fldate=datetime'2015-05-30T13:47:26.253')/PRICE"),
+			oCarrierToFlight20PriceWarning = this.createResponseMessage(
+				"carrierFlights(carrid='1',connid='20~0~',"
+				+ "fldate=datetime'2015-06-30T13:47:26.253')/PRICE", undefined, "warning"),
+			oFlight10PriceError = cloneODataMessage(oCarrierToFlight10PriceError,
+				"(carrid='1',connid='10~0~',fldate=datetime'2015-05-30T13:47:26.253')/PRICE"),
+			oFlight20PriceWarning = cloneODataMessage(oCarrierToFlight20PriceWarning,
+				"(carrid='1',connid='20~0~',fldate=datetime'2015-06-30T13:47:26.253')/PRICE"),
+			sView = '\
+<FlexBox binding="{/CarrierCollection(\'1\')}">\
+	<Text id="carrierID" text="{carrid}" />\
+	<Table growing="true" growingThreshold="1" id="table" items="{\
+			path : \'carrierFlights\',\
+			parameters : {transitionMessagesOnly : true}\
+		}">\
+		<ColumnListItem>\
+			<Text id="connectionID" text="{connid}" />\
+			<Text id="flightDate" text="{\
+				path:\'fldate\',\
+				type: \'sap.ui.model.odata.type.DateTime\',\
+				formatOptions: {style:\'short\'}\
+			}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest({
+				deepPath : "/CarrierCollection('1')",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "CarrierCollection('1')"
+			}, {
+				"__metadata" : {"uri" : "CarrierCollection('1')"},
+				carrid : "1"
+			}, {
+				"sap-message" : getMessageHeader([
+					oCarrierToFlight10PriceError,
+					oCarrierToFlight20PriceWarning
+				])
+			})
+			.expectChange("carrierID", null)
+			.expectChange("carrierID", "1")
+			.expectRequest({
+				deepPath : "/CarrierCollection('1')/carrierFlights",
+				headers :
+					{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
+				method : "GET",
+				requestUri : "CarrierCollection('1')/carrierFlights"
+			}, {
+				results : [{
+					"__metadata" : {
+						"uri" : "FlightCollection(carrid='1',connid='10~0~',"
+							+ "fldate=datetime'2015-05-30T13:47:26.253')"
+					},
+					carrid : "1",
+					connid : "10~0~",
+					fldate : new Date(1432993646253)
+				}, {
+					"__metadata" : {
+						"uri" : "FlightCollection(carrid='1',connid='20~0~',"
+							+ "fldate=datetime'2015-06-30T13:47:26.253')"
+					},
+					carrid : "1",
+					connid : "20~0~",
+					fldate : new Date(1435672046253)
+				}]
+			})
+			.expectChange("connectionID", ["10~0~"])
+			.expectChange("flightDate", ["5/30/15, 3:47 PM"])
+			.expectMessage(oFlight10PriceError, "/FlightCollection",
+				"/CarrierCollection('1')/carrierFlights")
+			.expectMessage(oFlight20PriceWarning, "/FlightCollection",
+				"/CarrierCollection('1')/carrierFlights");
+
+		oModel.setMessageScope(MessageScope.BusinessObject);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oItemsBinding = that.oView.byId("table").getBinding("items");
+
+			// code under test
+			return oItemsBinding.requestFilterForMessages(function (oMessage) {
+				return oMessage.getType() === MessageType.Warning;
+			});
+		}).then(function (oFilter) {
+			that.expectChange("connectionID", ["20~0~"])
+				.expectChange("flightDate", ["6/30/15, 3:47 PM"]);
 
 			oItemsBinding.filter(oFilter);
 
