@@ -244,11 +244,11 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"designtime/baseEditor/BasePropertyEditor": {
+			"designtime/baseEditor/propertyEditor/BasePropertyEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/baseEditor/BasePropertyEditor"
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor"
 					]
 				},
 				sinon: false
@@ -457,6 +457,20 @@ sap.ui.define(function () {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/util/hasTag"
 					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/util/StylesheetManager": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/util/StylesheetManager"
+					]
+				},
+				loader:{
+					paths:{
+						"mockdata": "test-resources/sap/ui/integration/qunit/designtime/baseEditor/util"
+					}
 				},
 				sinon: false
 			},
