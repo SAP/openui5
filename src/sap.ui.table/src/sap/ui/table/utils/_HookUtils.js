@@ -45,6 +45,17 @@ sap.ui.define([], function() {
 			/* Called when the table needs to know whether menu items will be added on the Table.OpenMenu hook.
 			 * Arguments: function():boolean */
 			MenuItemNotification: "Column.MenuItemNotification"
+		}),
+
+		// Only for tests!
+		// These hooks can be used to determine when certain processes are completed. Each hook that indicates that a process has started has a
+		// counterpart. For example, 2 hooks that indicate that a process has started require 2 hooks that indicate that this process has ended.
+		// Only then can the process be considered complete.
+		Test: Object.freeze({
+			StartAsyncTableUpdate: "Test.StartAsyncTableUpdate",
+			EndAsyncTableUpdate: "Test.EndAsyncTableUpdate",
+			StartAsyncFocusHandling: "Test.StartAsyncFocusHandling",
+			EndAsyncFocusHandling: "Test.EndAsyncFocusHandling"
 		})
 	});
 

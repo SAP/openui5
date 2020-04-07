@@ -554,7 +554,7 @@ sap.ui.define([
 
 		var oResult = oModel.getAggregation("/subObjects");
 		assert.equal(oResult.length, 0, "Access a multi aggregation that is not set is empty array");
-		assert.equal(jQuery.isArray(oResult), true, "Access a multi aggregation that is not set is empty array");
+		assert.equal(Array.isArray(oResult), true, "Access a multi aggregation that is not set is empty array");
 	});
 
 	QUnit.test("ManagedObject Model  - Aggregations with altType", function (assert) {

@@ -96,7 +96,8 @@ sap.ui.define([
 						}
 					}
 				}
-			}
+			},
+			renderer: WheelSliderRenderer
 		});
 
 		var SCROLL_ANIMATION_DURATION = sap.ui.getCore().getConfiguration().getAnimation() ? 200 : 0;

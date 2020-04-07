@@ -104,7 +104,7 @@ sap.ui.define([
 			oParameterization = oQueryResult.getParameterization(),
 			aParameterNames = oParameterization.getAllParameterNames();
 
-		assert.ok(jQuery.isArray(aParameterNames), "Parameter names were loaded.");
+		assert.ok(Array.isArray(aParameterNames), "Parameter names were loaded.");
 		assert.strictEqual(aParameterNames.length, 3, "Number of Parameters should be 3.");
 	});
 
@@ -140,7 +140,7 @@ sap.ui.define([
 		var oQueryResult = this.oModel.findQueryResultByName("ActualPlannedCostsResults"),
 			aDimensionNames = oQueryResult.getAllDimensionNames();
 
-		assert.ok(jQuery.isArray(aDimensionNames), "getAllDimensionNames returned an Array.");
+		assert.ok(Array.isArray(aDimensionNames), "getAllDimensionNames returned an Array.");
 		assert.strictEqual(aDimensionNames.length, 13);
 		assert.strictEqual(aDimensionNames[0], "ControllingArea",
 			"Access to the dimension array returns the expected values (1/2).");
@@ -175,7 +175,7 @@ sap.ui.define([
 			oDimensionByName = oQueryResult.findDimensionByName("ControllingArea"),
 			aDimensionAttributeNames = oDimensionByName.getAllAttributeNames();
 
-		assert.ok(jQuery.isArray(aDimensionAttributeNames),
+		assert.ok(Array.isArray(aDimensionAttributeNames),
 			"Attribute names Array could be retrieved.");
 
 		assert.strictEqual(aDimensionAttributeNames[0], "ControllingAreaText",
@@ -195,7 +195,7 @@ sap.ui.define([
 		var oQueryResult = this.oModel.findQueryResultByName("ActualPlannedCostsResults"),
 			aMeasureNames = oQueryResult.getAllMeasureNames();
 
-		assert.ok(jQuery.isArray(aMeasureNames), "getAllMeasureNames returned an Array.");
+		assert.ok(Array.isArray(aMeasureNames), "getAllMeasureNames returned an Array.");
 		assert.strictEqual(aMeasureNames.length, 4, "Number of Measures should be '4'.");
 		assert.strictEqual(aMeasureNames[0], "ActualCosts",
 			"Access to the dimension array returns the expected values (1/2).");
@@ -230,7 +230,7 @@ sap.ui.define([
 			oDimension = oQueryResult.findDimensionByName("ControllingArea"),
 			aAttributeNames = oDimension.getAllAttributeNames();
 
-		assert.ok(jQuery.isArray(aAttributeNames), "getAllAttributeNames returned an Array.");
+		assert.ok(Array.isArray(aAttributeNames), "getAllAttributeNames returned an Array.");
 		assert.strictEqual(aAttributeNames.length, 1, "Number of Attributes should be '3'.");
 		assert.strictEqual(aAttributeNames[0], "ControllingAreaText",
 			"Access to the dimension array returns the expected values.");
@@ -297,7 +297,7 @@ sap.ui.define([
 		var oQueryResult = this.oModel.findQueryResultByName("ActualPlannedCostsResults");
 
 		var aHierPropNames = oQueryResult.getEntityType().getAllHierarchyPropertyNames();
-		assert.ok(jQuery.isArray(aHierPropNames) && typeof aHierPropNames[0] === "string",
+		assert.ok(Array.isArray(aHierPropNames) && typeof aHierPropNames[0] === "string",
 				"Hierarchy property names correctly fetched.");
 		var oHierarchy = oQueryResult.getEntityType().getHierarchy("ControllingArea");
 		assert.ok(!!oHierarchy, "Hierarchy correctly fetched.");

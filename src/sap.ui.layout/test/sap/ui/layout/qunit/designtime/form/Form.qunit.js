@@ -198,7 +198,7 @@ sap.ui.define([
 		}
 
 		function buildViewContentForAddDelegate(sDelegate) {
-			return '<mvc:View id="view" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:mdc="sap.ui.mdc"  xmlns:fl="sap.ui.fl" >' +
+			return '<mvc:View id="view" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns="sap.m" xmlns:fl="sap.ui.fl">' +
 					sDelegate +
 						'<f:layout>' +
 							'<f:ResponsiveGridLayout/>' +
@@ -206,14 +206,14 @@ sap.ui.define([
 						'<f:formContainers>' +
 							'<f:FormContainer id="group" title="Online">' +
 									'<f:formElements>' +
-										'<f:FormElement id="fe-price" label="Web page of the contact">' +
+										'<f:FormElement id="labelId1" label="Form Element 1">' +
 											'<f:fields>' +
-												'<mdc:Field value="{price}" editMode="{= \${view>/editMode} ? \'Editable\' : \'Display\'}" />' +
+												'<Text id="textId1" text="Form Text 1" />' +
 											'</f:fields>' +
 										'</f:FormElement>' +
-										'<f:FormElement id="fe-cc" label="Twitter account of the contact">' +
+										'<f:FormElement id="labelId2" label="Form Element 2">' +
 											'<f:fields>' +
-												'<mdc:Field value="{currency_code}" editMode="{= \${view>/editMode} ? \'Editable\' : \'Display\'}" />' +
+												'<Text id="textId2" text="Form Text 2" />' +
 											'</f:fields>' +
 										'</f:FormElement>' +
 									'</f:formElements>' +

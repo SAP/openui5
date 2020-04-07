@@ -1,7 +1,6 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/FlexController",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
@@ -25,12 +24,12 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/write/_internal/Versions",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/base/util/deepClone",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
-	CompatibilityConnector,
 	FlexController,
 	Change,
 	Layer,
@@ -54,6 +53,7 @@ function (
 	ChangeUtils,
 	Reverter,
 	Versions,
+	Storage,
 	deepClone,
 	jQuery,
 	sinon
@@ -204,7 +204,7 @@ function (
 		QUnit.test("if no instance specific change handler exists, _getChangeHandler shall retrieve the ChangeTypeMetadata and extract the change handler", function (assert) {
 			var sControlType = "sap.ui.core.Control";
 			var fChangeHandler = "dummyChangeHandler";
-			sinon.stub(this.oFlexController, "_getChangeRegistry").returns({getChangeHandler: sinon.stub().resolves(fChangeHandler)});
+			sandbox.stub(this.oFlexController, "_getChangeRegistry").returns({getChangeHandler: sandbox.stub().resolves(fChangeHandler)});
 			return this.oFlexController._getChangeHandler(this.oChange, sControlType, this.oControl, JsControlTreeModifier)
 
 			.then(function(fChangeHandlerActual) {
@@ -217,10 +217,10 @@ function (
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 
-			var fChangeHandler = sinon.stub();
-			fChangeHandler.applyChange = sinon.stub();
-			fChangeHandler.completeChangeContent = sinon.stub();
-			sinon.stub(this.oFlexController, "_getChangeHandler").resolves(fChangeHandler);
+			var fChangeHandler = sandbox.stub();
+			fChangeHandler.applyChange = sandbox.stub();
+			fChangeHandler.completeChangeContent = sandbox.stub();
+			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves(fChangeHandler);
 
 			sandbox.stub(Utils, "getAppDescriptor").returns({
 				"sap.app":{
@@ -425,10 +425,10 @@ function (
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 
-			var fChangeHandler = sinon.stub();
-			fChangeHandler.applyChange = sinon.stub();
-			fChangeHandler.completeChangeContent = sinon.stub();
-			sinon.stub(this.oFlexController, "_getChangeHandler").resolves(fChangeHandler);
+			var fChangeHandler = sandbox.stub();
+			fChangeHandler.applyChange = sandbox.stub();
+			fChangeHandler.completeChangeContent = sandbox.stub();
+			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves(fChangeHandler);
 
 			//Call CUT
 			return this.oFlexController.addChange({}, oControl)
@@ -436,14 +436,14 @@ function (
 					assert.ok(oChange);
 
 					var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
-					var oCreateStub = sandbox.stub(CompatibilityConnector, "create").returns(Promise.resolve());
+					var oCreateStub = sandbox.stub(Storage, "write").returns(Promise.resolve());
 
-					sinon.stub(oChangePersistence, "_massUpdateCacheAndDirtyState").returns(undefined);
+					sandbox.stub(oChangePersistence, "_massUpdateCacheAndDirtyState").returns(undefined);
 
 					oChangePersistence.saveDirtyChanges();
 
-					assert.equal(oCreateStub.getCall(0).args[0][0].validAppVersions.creation, "1.2.3");
-					assert.equal(oCreateStub.getCall(0).args[0][0].validAppVersions.from, "1.2.3");
+					assert.equal(oCreateStub.getCall(0).args[0].flexObjects[0].validAppVersions.creation, "1.2.3");
+					assert.equal(oCreateStub.getCall(0).args[0].flexObjects[0].validAppVersions.from, "1.2.3");
 					oControl.destroy();
 				}.bind(this));
 		});
@@ -453,10 +453,10 @@ function (
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 
-			var fChangeHandler = sinon.stub();
-			fChangeHandler.applyChange = sinon.stub();
-			fChangeHandler.completeChangeContent = sinon.stub();
-			sinon.stub(this.oFlexController, "_getChangeHandler").resolves(fChangeHandler);
+			var fChangeHandler = sandbox.stub();
+			fChangeHandler.applyChange = sandbox.stub();
+			fChangeHandler.completeChangeContent = sandbox.stub();
+			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves(fChangeHandler);
 
 			sandbox.stub(Utils, "getAppDescriptor").returns({
 				"sap.app":{
@@ -489,10 +489,10 @@ function (
 			var oControl = new Control("mockControl2");
 			this.oFlexController._sComponentName = "myComponent";
 			var oChangeParameters = { transport: "testtransport", packageName: "testpackage" };
-			var fChangeHandler = sinon.stub();
-			fChangeHandler.applyChange = sinon.stub();
-			fChangeHandler.completeChangeContent = sinon.stub();
-			sinon.stub(this.oFlexController, "_getChangeHandler").resolves(fChangeHandler);
+			var fChangeHandler = sandbox.stub();
+			fChangeHandler.applyChange = sandbox.stub();
+			fChangeHandler.completeChangeContent = sandbox.stub();
+			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves(fChangeHandler);
 			sandbox.stub(Utils, "getAppDescriptor").returns({
 				"sap.app":{
 					id: "myComponent",
@@ -529,7 +529,7 @@ function (
 			.catch(function(oError) {
 				assert.equal(oError.message, "myError", "the error was passed correctly");
 				assert.strictEqual(this.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "Change persistence should have no dirty changes");
-				assert.ok(this.oFlexController._oChangePersistence.deleteChange.calledWith(sinon.match.any, true), "then ChangePersistence.deleteChange was called with the correct parameters");
+				assert.ok(this.oFlexController._oChangePersistence.deleteChange.calledWith(sandbox.match.any, true), "then ChangePersistence.deleteChange was called with the correct parameters");
 			}.bind(this));
 		});
 

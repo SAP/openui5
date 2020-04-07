@@ -434,7 +434,7 @@ sap.ui.define([
 	 * @private
 	 */
 	AvatarGroup.prototype._getWidth = function () {
-		return this.$().width();
+		return Math.ceil(this.$().width());
 	};
 
 	/**

@@ -317,6 +317,11 @@ function(
 					duplicateComplexName: true,
 					referencedComplexPropertyName: "Same Complex Type Property with label"
 				}, "the unbound complex property with a custom name is found");
+				assert.equal(aAdditionalElements[3].bindingPath, "EntityType02_SameComplexType/ComplexProperty02");
+				assert.equal(aAdditionalElements[4].bindingPath, "EntityType02_SameComplexType/ComplexProperty03");
+				assert.equal(aAdditionalElements[5].bindingPath, "EntityType02_OtherComplexTypeSameComplexProperties/ComplexProperty01");
+				assert.equal(aAdditionalElements[6].bindingPath, "EntityType02_OtherComplexTypeSameComplexProperties/ComplexProperty02");
+				assert.equal(aAdditionalElements[7].bindingPath, "EntityType02_OtherComplexTypeSameComplexProperties/ComplexProperty03");
 				assert.deepEqual(aAdditionalElements[8], {
 					selected : false,
 					label : "ComplexProperty 05",
@@ -329,6 +334,7 @@ function(
 					duplicateComplexName: false,
 					referencedComplexPropertyName: "EntityType02_OtherComplexTypeSameComplexProperties"
 				}, "the unbound complex property with a custom name is found");
+				assert.equal(aAdditionalElements[9].bindingPath, "EntityType02_Property07_with_implicit_nav");
 			});
 		});
 
@@ -658,13 +664,13 @@ function(
 			oGroupElement1.setLabel(sRenamedLabel);
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.strictEqual(oGroupElement1.fieldLabel, aAdditionalElements[0].label, "then first invisible element has fieldLabel property set");
+				assert.strictEqual(oGroupElement1.label, aAdditionalElements[0].label, "then first invisible element has label property set");
 				assert.strictEqual(oGroupElement1.renamedLabel, true, "then first invisible element has the renamedLabel property set");
-				assert.strictEqual(oGroupElement1.quickInfo, oActionsObject.custom.items[0].tooltip, "then first invisible element has the correct quickInfo property");
+				assert.strictEqual(oGroupElement1.tooltip, oActionsObject.custom.items[0].tooltip, "then first invisible element has the correct tooltip property");
 
-				assert.strictEqual(oGroupElement2.fieldLabel, aAdditionalElements[1].label, "then second invisible element has fieldLabel property set");
+				assert.strictEqual(oGroupElement2.label, aAdditionalElements[1].label, "then second invisible element has label property set");
 				assert.notOk(oGroupElement2.renamedlabel, "then second invisible element has no renamedLabel property");
-				assert.strictEqual(oGroupElement2.quickInfo, oActionsObject.custom.items[1].tooltip, "then second invisible element has the correct quickInfo property");
+				assert.strictEqual(oGroupElement2.tooltip, oActionsObject.custom.items[1].tooltip, "then second invisible element has the correct tooltip property");
 
 				assert.equal(aAdditionalElements.length, 2, "then the 2 invisible elements with oData are returned");
 
@@ -710,37 +716,53 @@ function(
 				});
 		});
 
-		QUnit.test("when getFilteredItemsList is called with existing addODataProperty items, for filtering custom add items which also exist as invisible items", function(assert) {
-			var aInvisibleItems = [
+		function getFilteredItemsListTests(aInvisibleItems, aODataItems, aInvisibleCustomItems, aUniqueCustomItems, aDelegateItems, assert) {
+			var aAnalyzerValues = [
+				aInvisibleItems.concat([]),
+				aODataItems.concat([]),
+				aInvisibleCustomItems.concat(aUniqueCustomItems),
+				aDelegateItems.concat([])
+			];
+			var iExpectedLength = aInvisibleItems.length + aODataItems.length + aUniqueCustomItems.length + aDelegateItems.length;
+			var aExpectedValues = aInvisibleItems.concat(aODataItems, aUniqueCustomItems, aDelegateItems);
+
+			var aFilteredItems = AdditionalElementsAnalyzer.getFilteredItemsList(aAnalyzerValues);
+
+			assert.strictEqual(aFilteredItems.length, iExpectedLength, "then the filtered array has the correct length of items");
+			assert.deepEqual(aFilteredItems, aExpectedValues, "then the only the invisible custom items are filtered out");
+		}
+
+		QUnit.test("when getFilteredItemsList is called with existing addODataProperty items and no delegate items, for filtering custom add items which also exist as invisible items", function(assert) {
+			getFilteredItemsListTests(
 				[{ elementId: "invisibleElement1" }, { elementId: "invisibleElement2" }],
 				[{ property: "oDataProperty1" }],
-				[{ itemId: "invisibleElement1" }, { itemId: "customItem1" }, { itemId: "invisibleElement2" }]
-			];
-			var aFilteredItems = AdditionalElementsAnalyzer.getFilteredItemsList(aInvisibleItems, true);
-			assert.strictEqual(aFilteredItems.length, 4, "then the filtered array has the correct length of items");
-			assert.deepEqual(aFilteredItems, aInvisibleItems[0].concat(aInvisibleItems[1], aInvisibleItems[2]), "then the filtered array was returned");
+				[{ itemId: "invisibleElement1" }, { itemId: "invisibleElement2" }],
+				[{ itemId: "customItem1" }],
+				[],
+				assert
+			);
 		});
 
-		QUnit.test("when getFilteredItemsList is called without addODataProperty items, for filtering custom add items which also exist as invisible items", function(assert) {
-			var aInvisibleItems = [
+		QUnit.test("when getFilteredItemsList is called without addODataProperty items, with delegate items, for filtering custom add items which also exist as invisible items", function(assert) {
+			getFilteredItemsListTests(
 				[{ elementId: "invisibleElement1" }, { elementId: "invisibleElement2" }],
 				[],
-				[{ itemId: "invisibleElement1" }, { itemId: "customItem1" }, { itemId: "invisibleElement2" }]
-			];
-			var aFilteredItems = AdditionalElementsAnalyzer.getFilteredItemsList(aInvisibleItems, false);
-			assert.strictEqual(aFilteredItems.length, 3, "then the filtered array has the correct length of items");
-			assert.deepEqual(aFilteredItems, aInvisibleItems[0].concat(aInvisibleItems[1], aInvisibleItems[2]), "then the filtered array was returned");
+				[{ itemId: "invisibleElement1" }, { itemId: "invisibleElement2" }],
+				[{ itemId: "customItem1" }],
+				[{name: "fromDelegate"}],
+				assert
+			);
 		});
 
-		QUnit.test("when getFilteredItemsList is called without addODataProperty items, for filtering custom add items which do not exist as invisible items", function(assert) {
-			var aInvisibleItems = [
+		QUnit.test("when getFilteredItemsList is called without addODataProperty nor delegate items, for filtering custom add items which do not exist as invisible items", function(assert) {
+			getFilteredItemsListTests(
 				[{ elementId: "invisibleElement1" }, { elementId: "invisibleElement2" }],
 				[],
-				[{ itemId: "customItem1" }, { itemId: "customItem2" }]
-			];
-			var aFilteredItems = AdditionalElementsAnalyzer.getFilteredItemsList(aInvisibleItems, false);
-			assert.strictEqual(aFilteredItems.length, 4, "then the filtered array has the correct length if items");
-			assert.deepEqual(aFilteredItems, aInvisibleItems[0].concat(aInvisibleItems[1], aInvisibleItems[2]), "then the filtered array was returned");
+				[],
+				[{ itemId: "customItem1" }, { itemId: "customItem2" }],
+				[],
+				assert
+			);
 		});
 	});
 
@@ -758,6 +780,9 @@ function(
 
 			return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, oActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 3, "then the correct amount of ODataProperties has been returned");
+				assert.equal(aAdditionalElements[0].bindingPath, "EntityTypeNav_Property04");
+				assert.equal(aAdditionalElements[1].bindingPath, "EntityTypeNav_Property05");
+				assert.equal(aAdditionalElements[2].bindingPath, "NavProperty");
 			});
 		});
 	});
@@ -776,6 +801,10 @@ function(
 
 			return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, oActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 4, "then the correct amount of ODataProperties has been returned");
+				assert.equal(aAdditionalElements[0].bindingPath, "id");
+				assert.equal(aAdditionalElements[1].bindingPath, "EntityTypeNav_Property01");
+				assert.equal(aAdditionalElements[2].bindingPath, "EntityTypeNav_Property05");
+				assert.equal(aAdditionalElements[3].bindingPath, "NavProperty");
 			});
 		});
 	});

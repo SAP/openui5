@@ -17,6 +17,10 @@ sap.ui.define(["sap/ui/core/Renderer", "./ListBaseRenderer"],
 	var ListRenderer = Renderer.extend(ListBaseRenderer);
 	ListRenderer.apiVersion = 2;
 
+	ListRenderer.getNoDataAriaRole = function() {
+		return "option";
+	};
+
 	return ListRenderer;
 
 }, /* bExport= */ true);

@@ -1,0 +1,24 @@
+{
+	"tests" : [
+		{
+			"control": "sap.ui.core.Icon",
+			"url": "Icon.html",
+			"appComponent": "CA-UI5-COR"
+		},
+		{
+			"control": "sap.ui.core.TooltipBase",
+			"url": "TooltipBase.html",
+			"appComponent": "CA-UI5-COR"
+		},
+		{
+			"control": "sap.ui.core.LocalBusyIndicator",
+			"url": "../LocalBusyIndicator.html",
+			"appComponent": "CA-UI5-COR"
+		},
+		{
+			"control": "sap.ui.core.BusyIndicator",
+			"url": "../BusyIndicator.html",
+			"appComponent": "CA-UI5-COR"
+		}
+	]
+}

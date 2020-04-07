@@ -1633,6 +1633,29 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("opening value state message popup in IE should be canceled on control destruction", function(assert) {// TODO remove after the end of support for Internet Explorer
+		// system under test
+		var oInput = new InputBase();
+
+		// arrange
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		try {
+			oInput.focus();
+			oInput.setValueState("Error");
+			oInput.destroy();
+			this.clock.tick(500);
+		} catch (vError) {
+			assert.ok(false, "some error happened after destroying the control");
+			throw vError;
+		}
+
+		// assertion
+		assert.ok(true, "opening the message popup is canceled");
+	});
+
 	/* =========================================================== */
 	/* Focus And Cursor Position Module                            */
 	/* =========================================================== */

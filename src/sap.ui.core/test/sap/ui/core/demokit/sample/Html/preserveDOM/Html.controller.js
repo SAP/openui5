@@ -43,7 +43,7 @@ sap.ui.define([
 					afterRendering : function(oEvent) {
 						if ( !oEvent.getParameters()["isPreservedDOM"] ) {
 							var $DomRef = oEvent.getSource().$();
-							$DomRef.click(function(oEvent) {
+							$DomRef.on("click", function(oEvent) {
 								this.addColorBlockAtCursor($DomRef, oEvent, 64, 8);
 							}.bind(this));
 						}

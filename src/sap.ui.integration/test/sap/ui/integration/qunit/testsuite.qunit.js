@@ -35,15 +35,82 @@ sap.ui.define(function () {
 					'./Card.qunit',
 					'./CardDataHandling.qunit',
 					'./CardDesigntime.qunit',
-					'./CardFormatters.qunit'
+					'./util/CardFormatters.qunit'
 				]
 			},
-			"CalendarCard": {},
-			"AdaptiveCard": {},
-			"AnalyticalCard": {},
+			"AllCards": {
+				ui5: {
+					libs: ["sap.ui.integration"]
+				},
+				coverage: {
+					only: [
+						"sap/ui/integration/cards/Header",
+						"sap/f/cards/HeaderRenderer",
+						"sap/ui/integration/cards/NumericHeader",
+						"sap/f/cards/NumericHeaderRenderer",
+						"sap/f/cards/NumericSideIndicator",
+						"sap/f/cards/NumericSideIndicatorRenderer",
+						"sap/ui/integration/widgets/Card",
+						"sap/ui/integration/formatters/IconFormatter",
+						"sap/ui/integration/util/CardActions",
+						"sap/ui/integration/util/CardManifest",
+						"sap/ui/integration/util/ServiceManager",
+						"sap/ui/integration/customElements/",
+						"sap/ui/integration/cards/CalendarCard",
+						"sap/ui/integration/cards/AdaptiveCard",
+						"sap/ui/integration/cards/AnalyticalContent",
+						"sap/ui/integration/util/BindingHelper",
+						"sap/ui/integration/util/BindingResolver",
+						"sap/ui/integration/cards/ComponentContent",
+						"sap/ui/integration/util/DataProvider",
+						"sap/ui/integration/util/DataProviderFactory",
+						"sap/ui/integration/cards/ListContent",
+						"sap/ui/integration/cards/ObjectContent",
+						"sap/ui/integration/util/RequestDataProvider",
+						"sap/ui/integration/util/ServiceDataProvider",
+						"sap/ui/integration/cards/TableContent",
+						"sap/ui/integration/cards/BaseContent"
+					]
+				},
+				module: [
+					'./Card.qunit',
+					'./CardDataHandling.qunit',
+					'./util/CardManifest.qunit',
+					'./util/ServiceManager.qunit',
+					'./customElements/CustomElements.qunit',
+					'./util/BindingHelper.qunit',
+					'./util/BindingResolver.qunit',
+					'./util/DataProvider.qunit',
+					'./util/CardActions.qunit',
+					'./cardbundle/CardStaticResources.qunit',
+					'./util/CardFormatters.qunit',
+					'./cards/BaseContent.qunit',
+					'./bindingFeatures/DateRange.qunit'
+				]
+			},
+			"CardLoading": {
+				ui5: {
+					libs: ["sap.ui.integration"]
+				},
+				coverage: {
+					only: [
+						"sap/ui/integration/cards/Header",
+						"sap/f/cards/HeaderRenderer",
+						"sap/ui/integration/cards/NumericHeader",
+						"sap/f/cards/NumericHeaderRenderer",
+						"sap/f/cards/NumericSideIndicator",
+						"sap/f/cards/NumericSideIndicatorRenderer",
+						"sap/ui/integration/cards/BaseContent",
+						"sap/ui/integration/util/LoadingProvider"
+					]
+				},
+				module: [
+					'./loading/CardLoading.qunit'
+				]
+			},
 			"UI5InputText": {
 				coverage: {
-					only: ["sap/f/cards/adaptivecards/elements/UI5InputText"]
+					only: ["sap/ui/integration/cards/adaptivecards/elements/UI5InputText"]
 				},
 				module: [
 					'./cards/AdaptiveContent/UI5InputText.qunit'
@@ -51,7 +118,7 @@ sap.ui.define(function () {
 			},
 			"UI5InputNumber": {
 				coverage: {
-					only: ["sap/f/cards/adaptivecards/elements/UI5InputNumber"]
+					only: ["sap/ui/integration/cards/adaptivecards/elements/UI5InputNumber"]
 				},
 				module: [
 					'./cards/AdaptiveContent/UI5InputNumber.qunit'
@@ -59,7 +126,7 @@ sap.ui.define(function () {
 			},
 			"UI5InputToggle": {
 				coverage: {
-					only: ["sap/f/cards/adaptivecards/elements/UI5InputToggle"]
+					only: ["sap/ui/integration/cards/adaptivecards/elements/UI5InputToggle"]
 				},
 				module: [
 					'./cards/AdaptiveContent/UI5InputToggle.qunit'
@@ -67,7 +134,7 @@ sap.ui.define(function () {
 			},
 			"UI5InputDate": {
 				coverage: {
-					only: ["sap/f/cards/adaptivecards/elements/UI5InputDate"]
+					only: ["sap/ui/integration/cards/adaptivecards/elements/UI5InputDate"]
 				},
 				module: [
 					'./cards/AdaptiveContent/UI5InputDate.qunit'
@@ -75,7 +142,7 @@ sap.ui.define(function () {
 			},
 			"UI5InputChoiceSet": {
 				coverage: {
-					only: ["sap/f/cards/adaptivecards/elements/UI5InputChoiceSet"]
+					only: ["sap/ui/integration/cards/adaptivecards/elements/UI5InputChoiceSet"]
 				},
 				module: [
 					'./cards/AdaptiveContent/UI5InputChoiceSet.qunit'
@@ -83,7 +150,7 @@ sap.ui.define(function () {
 			},
 			"ActionRender": {
 				coverage: {
-					only: ["sap/f/cards/adaptivecards/overwrites/ActionRender"]
+					only: ["sap/ui/integration/cards/adaptivecards/overwrites/ActionRender"]
 				},
 				module: [
 					'./cards/AdaptiveContent/ActionRender.qunit'
@@ -95,7 +162,35 @@ sap.ui.define(function () {
 					'./cards/AdaptiveContent/AdaptiveContentIntegration.opa.qunit'
 				]
 			},
+			"bindingFeatures/DateRange": {
+				coverage: {
+					only: ["sap/ui/integration/bindingFeatures/DateRange"]
+				}
+			},
 			"cardbundle/CardStaticResources": {},
+			"cards/AdaptiveCard": { },
+			"cards/AnalyticalCard": { },
+			"cards/CalendarCard": { },
+			"customElements/CustomElements": {
+				ui5: {
+					libs: ["sap.ui.integration"]
+				},
+				coverage: {
+					only: [
+						"sap/ui/integration/customElements/"
+					]
+				}
+			},
+			"util/BindingHelper": {
+				coverage: {
+					only: ["sap/ui/integration/util/BindingHelper"]
+				}
+			},
+			"util/BindingResolver": {
+				coverage: {
+					only: ["sap/ui/integration/util/BindingResolver"]
+				}
+			},
 			"util/CardManifest": {
 				coverage: {
 					only: [
@@ -111,91 +206,25 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"util/DataProvider": {
+				coverage: {
+					only: [
+						"sap/ui/integration/util/DataProviderFactory",
+						"sap/ui/integration/util/DataProvider",
+						"sap/ui/integration/util/RequestDataProvider",
+						"sap/ui/integration/util/ServiceDataProvider"
+					]
+				},
+				sinon: {
+					version: "edge"
+				}
+			},
 			"util/ServiceManager": {
 				coverage: {
 					only: [
 						"sap/ui/integration/util/ServiceManager"
 					]
 				}
-			},
-			"CardLoading": {
-				ui5: {
-					libs: ["sap.ui.integration"]
-				},
-				coverage: {
-					only: [
-						"sap/f/cards/Header",
-						"sap/f/cards/HeaderRenderer",
-						"sap/f/cards/NumericHeader",
-						"sap/f/cards/NumericHeaderRenderer",
-						"sap/f/cards/NumericSideIndicator",
-						"sap/f/cards/NumericSideIndicatorRenderer",
-						"sap/f/cards/BaseContent",
-						"sap/f/cards/loading/LoadingProvider"
-					]
-				},
-				module: [
-					'./loading/CardLoading.qunit'
-				]
-			},
-			"customElements/CustomElements": {
-				ui5: {
-					libs: ["sap.ui.integration"]
-				},
-				coverage: {
-					only: [
-						"sap/ui/integration/customElements/"
-					]
-				}
-			},
-			"AllCards": {
-				ui5: {
-					libs: ["sap.ui.integration"]
-				},
-				coverage: {
-					only: [
-						"sap/ui/integration/widgets/Card",
-						"sap/ui/integration/util/CardActions",
-						"sap/ui/integration/util/CardManifest",
-						"sap/ui/integration/util/ServiceManager",
-						"sap/ui/integration/customElements/",
-						"sap/f/cards/CalendarCard",
-						"sap/f/cards/AdaptiveCard",
-						"sap/f/cards/AnalyticalContent",
-						"sap/f/cards/BindingHelper",
-						"sap/f/cards/BindingResolver",
-						"sap/f/cards/ComponentContent",
-						"sap/f/cards/DataProvider",
-						"sap/f/cards/DataProviderFactory",
-						"sap/f/cards/Header",
-						"sap/f/cards/HeaderRenderer",
-						"sap/f/cards/ListContent",
-						"sap/f/cards/NumericHeader",
-						"sap/f/cards/NumericHeaderRenderer",
-						"sap/f/cards/NumericSideIndicator",
-						"sap/f/cards/NumericSideIndicatorRenderer",
-						"sap/f/cards/ObjectContent",
-						"sap/f/cards/RequestDataProvider",
-						"sap/f/cards/ServiceDataProvider",
-						"sap/f/cards/TableContent",
-						"sap/f/cards/IconFormatter",
-						"sap/ui/integration/BaseContent"
-					]
-				},
-				module: [
-					'./Card.qunit',
-					'./CardDataHandling.qunit',
-					'./util/CardManifest.qunit',
-					'./util/ServiceManager.qunit',
-					'./customElements/CustomElements.qunit',
-					'test-resources/sap/f/qunit/BindingHelper.qunit',
-					'test-resources/sap/f/qunit/BindingResolver.qunit',
-					'test-resources/sap/f/qunit/DataProvider.qunit',
-					'./CardActions.qunit',
-					'./cardbundle/CardStaticResources.qunit',
-					'./CardFormatters.qunit',
-					'./BaseContent.qunit'
-				]
 			},
 			"designtime/baseEditor/integration/ReadyHandling": {
 				group: "Base DesignTime Editor",
@@ -418,6 +447,24 @@ sap.ui.define(function () {
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/util/unset"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/util/hasTag": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/util/hasTag"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/layout/Form": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/layout/Form"
 					]
 				},
 				sinon: false

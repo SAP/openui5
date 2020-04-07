@@ -43,7 +43,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("when called", function(assert) {
+	QUnit.test("when called and restart is not needed", function(assert) {
 		var done = assert.async();
 		setIsKeyUser(true);
 		var oRootControl = new Element("rootControl");
@@ -63,7 +63,7 @@ sap.ui.define([
 					done();
 				});
 				assert.strictEqual(oRta.getRootControl(), oAppComponent.getId(), "then correct root control was set");
-				sandbox.stub(oRta, "_handleReloadOnExit").resolves();
+				sandbox.stub(oRta, "_handleReloadOnExit").resolves(oRta._RESTART.NOT_NEEDED);
 				oRta.stop(true);
 			}.bind(this));
 	});

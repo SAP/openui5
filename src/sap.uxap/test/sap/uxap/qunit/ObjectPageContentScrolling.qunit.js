@@ -106,6 +106,25 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		oObjectPage.setSelectedSection(oSection);
 	});
 
+	QUnit.test("sectionChange event is fired with correct parameters", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oSection = oObjectPage.getSections()[9],
+			fnDone = assert.async();
+
+		sinon.stub(this.oObjectPage, "_getClosestScrolledSectionId", function(oSection) {
+			return oObjectPage.getSections()[9].getSubSections()[0].getId(); // return a subSection of the scrolled section
+		});
+
+		oObjectPage.attachSectionChange(function(oEvent) {
+			assert.equal(oEvent.getParameter("section").getId(), oSection.getId(), "correct section parameter");
+			fnDone();
+		});
+
+		// act
+		helpers.renderObject(oObjectPage);
+		oObjectPage.setSelectedSection(oSection);
+	});
+
 	QUnit.test("ObjectPage Content CustomScrollBar visibility", function (assert) {
 		var oObjectPage = this.oObjectPage,
 			fnDone = assert.async();

@@ -96,6 +96,11 @@ sap.ui.define(function() {
 			// contained in sap.ui.table/test/sap/ui/table/qunit/testsuite.qunit.js
 			AnalyticalTable : {
 				title : "sap.ui.table.qunit.AnalyticalTable.qunit",
+				loader : {
+					paths : {
+						"sap/ui/table/qunit" : "test-resources/sap/ui/table/qunit"
+					}
+				},
 				module : ["test-resources/sap/ui/table/qunit/AnalyticalTable.qunit"],
 				sinon : 1,
 				ui5 : {

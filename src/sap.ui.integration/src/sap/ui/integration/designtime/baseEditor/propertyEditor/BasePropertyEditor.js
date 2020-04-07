@@ -192,6 +192,8 @@ sap.ui.define([
 
 		renderer: function (oRm, oPropertyEditor) {
 			oRm.openStart("div", oPropertyEditor);
+			oRm.addStyle("display", "inline-block");
+			oRm.addStyle("width", "100%");
 			oRm.openEnd();
 
 			if (oPropertyEditor.getRenderLabel() && oPropertyEditor.getLabel()) {

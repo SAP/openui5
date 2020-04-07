@@ -30,7 +30,6 @@
 		</f:SimpleForm>
 		<IconTabBar
 				id="idIconTabBar0"
-				showOverflowSelectList="true"
 				enableTabReordering="true"
 				class="sapUiResponsiveContentPadding">
 		</IconTabBar>

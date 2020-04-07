@@ -46,6 +46,7 @@ sap.ui.define([
 		 *******************************************************************************/
 
 		// helper variables
+		var oList = null;
 		var iItemCount = 0,
 			data1 = { // 0 items
 				items : [ ]
@@ -323,14 +324,18 @@ sap.ui.define([
 		oApp.addPage(oPage).placeAt("content");
 
 		/********************************************************************************/
-		QUnit.module("Basic Control API checks");
+		QUnit.module("Basic Control API checks", {
+			beforeEach: function() {
+				oList = new List();
+			},
+			afterEach: function() {
+				oList.destroy();
+			}
+		});
 		/********************************************************************************/
 
-
-
 		QUnit.test("Properties", function(assert) {
-			var oList = new List({}),
-				oProperties = oList.getMetadata().getAllProperties();
+			var oProperties = oList.getMetadata().getAllProperties();
 
 			assert.ok(oProperties.inset, 'Property "inset" exists');
 			assert.ok(oProperties.visible, 'Property "visible" exists');
@@ -350,14 +355,10 @@ sap.ui.define([
 			assert.ok(oProperties.growingThreshold, 'Property "growingThreshold" exists');
 			assert.ok(oProperties.growingTriggerText, 'Property "growingTriggerText" exists');
 			assert.ok(oProperties.growingScrollToLoad, 'Property "growingScrollToLoad" exists');
-
-			// cleanup
-			oList.destroy();
 		});
 
 		QUnit.test("Events", function(assert) {
-			var oList = new List({}),
-				oEvents = oList.getMetadata().getAllEvents();
+			var oEvents = oList.getMetadata().getAllEvents();
 			bindListData(oList, data2, "/items", createTemplateListItem());
 
 			assert.ok(oEvents.select, 'Event "select" exists');
@@ -401,28 +402,19 @@ sap.ui.define([
 			oList.removeSelections();
 			oList.selectAll(true);
 			assert.strictEqual(oSelectionChangeSpy.callCount, 1, "selectAll is fired via true parameter call");
-
-			// cleanup
-			oList.destroy();
 		});
 
 		QUnit.test("Aggregations", function(assert) {
-			var oList = new List({}),
-				oAggregations = oList.getMetadata().getAllAggregations();
+			var oAggregations = oList.getMetadata().getAllAggregations();
 
 			assert.ok(oAggregations.items, 'Aggregation "items" exists');
 			assert.ok(oAggregations.swipeContent, 'Aggregation "swipeContent" exists');
 			assert.ok(oAggregations.headerToolbar, 'Aggregation "headerToolbar" exists');
 			assert.ok(oAggregations.infoToolbar, 'Aggregation "infoToolbar" exists');
 			assert.ok(oAggregations.contextMenu, 'Aggregation "contextMenu" exists');
-
-			// cleanup
-			oList.destroy();
 		});
 
 		QUnit.test("Methods", function(assert) {
-			var oList = new List({});
-
 			assert.ok(oList.getSelectedItem, 'Method "getSelectedItem" exists');
 			assert.ok(oList.setSelectedItem, 'Method "setSelectedItem" exists');
 			assert.ok(oList.getSelectedItems, 'Method "getSelectedItems" exists');
@@ -432,28 +424,28 @@ sap.ui.define([
 			assert.ok(oList.getSwipedItem, 'Method "getSwipedItem" exists');
 			assert.ok(oList.swipeOut, 'Method "swipeOut" exists');
 			assert.ok(oList.getGrowingInfo, 'Method "getGrowingInfo" exists');
-
-			// cleanup
-			oList.destroy();
 		});
 
 		/********************************************************************************/
-		QUnit.module("Initialization");
+		QUnit.module("Initialization", {
+			beforeEach: function() {
+				oList = new List();
+			},
+			afterEach: function() {
+				oList.destroy();
+			}
+		});
 		/********************************************************************************/
 
 		QUnit.test("Constructor behaviour", function(assert) {
-			var oList = new List({});
 
 			// TODO: decide if check on internal variables is needed (Cahit)
 			assert.strictEqual(oList.getSelectedContextPaths().length, 0, "Internal selected path array is empty after initialization of " + oList);
 			assert.strictEqual(oList._oGrowingDelegate, undefined, "Internal growingDelegate is null after initialization of " + oList);
-
-			oList.destroy();
 		});
 
 		QUnit.test("Default values", function(assert) {
 			var sAddText = " (state: before rendering)",
-				oList = new List({}),
 				fAssertions = function(sAddText) {
 					assert.strictEqual(oList.getInset(), false, 'The default value of property "inset" should be "false" on ' + oList + sAddText);
 					assert.strictEqual(oList.getVisible(), true, 'The default value of property "visible" should be "true" on ' + oList + sAddText);
@@ -488,15 +480,20 @@ sap.ui.define([
 
 			// cleanup
 			oPage.removeAllContent();
-			oList.destroy();
 		});
 
 		/********************************************************************************/
-		QUnit.module("Destruction");
+		QUnit.module("Destruction", {
+			beforeEach: function() {
+				oList = new List();
+			},
+			afterEach: function() {
+				oList.destroy();
+			}
+		});
 		/********************************************************************************/
 
 		QUnit.test("Destructor behaviour", function(assert) {
-			var oList = new List({});
 
 			// add item to page & render
 			oPage.addContent(oList);
@@ -525,12 +522,18 @@ sap.ui.define([
 		});
 
 		/********************************************************************************/
-		QUnit.module("Rendering");
+		QUnit.module("Rendering", {
+			beforeEach: function() {
+				oList = new List();
+			},
+			afterEach: function() {
+				oList.destroy();
+			}
+		});
 		/********************************************************************************/
 
 		QUnit.test("HTML Tags & CSS Classes for a list with default values and no items", function(assert) {
-			var oList = new List({}),
-				$list,
+			var $list,
 				$listUl,
 				$listLi;
 
@@ -559,14 +562,11 @@ sap.ui.define([
 
 			// cleanup
 			oPage.removeAllContent();
-			oList.destroy();
 		});
 
 		QUnit.test("Toolbar has style classes sapMTBHeader-CTX and sapMListHdrTBar", function(assert) {
 			var oToolbar = new Toolbar();
-			var oList = new List({
-				headerToolbar: oToolbar
-			});
+			oList.setHeaderToolbar(oToolbar);
 
 			// add item to page & render
 			oPage.addContent(oList);
@@ -577,18 +577,23 @@ sap.ui.define([
 
 			// cleanup
 			oPage.removeAllContent();
-			oList.destroy();
 		});
 
 		/********************************************************************************/
-		QUnit.module("Getter/Setter methods");
+		QUnit.module("Getter/Setter methods", {
+			beforeEach: function() {
+				oList = new List();
+			},
+			afterEach: function() {
+				oList.destroy();
+			}
+		});
 		/********************************************************************************/
 
 		/* setter */
 
 		QUnit.test("setInset", function(assert) {
 			var sAddText = " (state: before rendering)",
-				oList = new List({ inset: false}),
 				oRenderSpy = this.spy(oList.getRenderer(), "render"),
 				$list;
 
@@ -626,21 +631,15 @@ sap.ui.define([
 
 			// cleanup
 			oPage.removeAllContent();
-			oList.destroy();
+			oRenderSpy.restore();
 		});
 
 		QUnit.test("setMode", function(assert) {
 			var oListItem = createListItem().setSelected(true),
-				oList = new List({
-					mode: library.ListMode.None,
-
-					items: [
-						oListItem
-					]
-				}),
 				oRenderSpy = this.spy(oList.getRenderer(), "render");
 
 			// add item to page & render
+			oList.addItem(oListItem);
 			oPage.addContent(oList);
 			sap.ui.getCore().applyChanges();
 
@@ -677,12 +676,11 @@ sap.ui.define([
 
 			// cleanup
 			oPage.removeAllContent();
-			oList.destroy();
+			oRenderSpy.restore();
 		});
 
 		QUnit.test("setWidth", function(assert) {
-			var oList = new List(),
-				$list,
+			var $list,
 				oRenderSpy = this.spy(oList.getRenderer(), "render"),
 				sWidth,
 				sWidthPx,
@@ -770,12 +768,11 @@ sap.ui.define([
 
 			// cleanup
 			oPage.removeAllContent();
-			oList.destroy();
+			oRenderSpy.restore();
 		});
 
 		QUnit.test("setNoDataText", function(assert) {
-			var oList = new List(),
-				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+			var oRenderSpy = this.spy(oList.getRenderer(), "render"),
 				sText;
 
 			// add item to page & render
@@ -797,16 +794,15 @@ sap.ui.define([
 
 			// cleanup
 			oPage.removeAllContent();
-			oList.destroy();
+			oRenderSpy.restore();
 		});
 
 		QUnit.test("setGrowing", function(assert) {
-			var oList = new List({
-					growing: true,
-					growingThreshold: 5
-				}),
-				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+			var oRenderSpy = this.spy(oList.getRenderer(), "render"),
 				bGrowing;
+
+			oList.setGrowing(true);
+			oList.setGrowingThreshold(5);
 
 			bindListData(oList, data3, "/items", createTemplateListItem());
 
@@ -851,16 +847,15 @@ sap.ui.define([
 
 			// cleanup
 			oPage.removeAllContent();
-			oList.destroy();
+			oRenderSpy.restore();
 		});
 
 		QUnit.test("setGrowingThreshold", function(assert) {
-			var oList = new List({
-					growing: true,
-					growingThreshold: 5
-				}),
-				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+			var oRenderSpy = this.spy(oList.getRenderer(), "render"),
 				iThreshold;
+
+			oList.setGrowing(true);
+			oList.setGrowingThreshold(5);
 
 			bindListData(oList, data3, "/items", createTemplateListItem());
 
@@ -891,16 +886,15 @@ sap.ui.define([
 
 			// cleanup
 			oPage.removeAllContent();
-			oList.destroy();
+			oRenderSpy.restore();
 		});
 
 		QUnit.test("setGrowingTriggerText", function(assert) {
-			var oList = new List({
-					growing: true,
-					growingThreshold: 5
-				}),
-				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+			var oRenderSpy = this.spy(oList.getRenderer(), "render"),
 				sText;
+
+			oList.setGrowing(true);
+			oList.setGrowingThreshold(5);
 
 			bindListData(oList, data3, "/items", createTemplateListItem());
 
@@ -930,11 +924,10 @@ sap.ui.define([
 
 			// cleanup
 			oPage.removeAllContent();
-			oList.destroy();
+			oRenderSpy.restore();
 		});
 
 		QUnit.test("setEnableBusyIndicator", function(assert) {
-			var oList = new List();
 			oList.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			var oRenderSpy = this.spy(oList.getRenderer(), "render");
@@ -943,94 +936,60 @@ sap.ui.define([
 			oList.setEnableBusyIndicator(true);
 			sap.ui.getCore().applyChanges();
 			assert.strictEqual(oRenderSpy.callCount, 0, "The list should not be rerendered when enableBusyIndicator is changed");
-
-			// cleanup
-			oList.destroy();
 		});
 
 		window.IntersectionObserver && QUnit.test("BusyIndicator in the middle", function(assert) {
+			this.clock.restore();
 			createAndAppendDiv("uiArea1");
+
+			var oMutationObserver, observedDomRef;
 			var done = assert.async();
-			var oList = new List({
-				busyIndicatorDelay: 0
-			});
 			var oScrollContainer = new ScrollContainer({
 				vertical: true,
 				height: "300px",
 				content: [oList, new Toolbar({height: "100px"})]
 			});
+
+			oList.setBusyIndicatorDelay(0);
 			oScrollContainer.placeAt("uiArea1");
 			sap.ui.getCore().applyChanges();
 
-			// act
 			oList.getDomRef().style.height = "500px";
-			oList.setBusy(true);
-			this.clock.tick(0);
 
-			this.clock.restore();
-			setTimeout(function() {
-				assert.strictEqual(oList.getDomRef("busyIndicator").firstChild.style.position, "sticky");
+			new Promise(function(fnResolve) {
+				oList.setBusy(true);
 
-				oList.setBusy(false);
+				observedDomRef = oList.getDomRef("busyIndicator").firstChild;
+				oMutationObserver = new MutationObserver(function(aMutations) {
+					aMutations.forEach(function(oMutation) {
+						if (oMutation.attributeName == "style") {
+							assert.strictEqual(oList.getDomRef("busyIndicator").firstChild.style.position, "sticky", "Position sticky was applied correctly");
+
+							oList.setBusy(false);
+							oMutationObserver.disconnect();
+							fnResolve();
+						}
+					});
+				});
+				oMutationObserver.observe(observedDomRef, { attributes: true, childList: false, subtree: false });
+			}).then(function() {
 				oScrollContainer.scrollTo(0, 400);
 				oList.setBusy(true);
 
-				setTimeout(function() {
-					assert.strictEqual(oList.getDomRef("busyIndicator").firstChild.style.top, "20%");
-					oList.destroy();
-					done();
-				}, 100);
-			}, 100); // it is not guaranteed that the observer event is queued before the timeout 0
-		});
+				observedDomRef = oList.getDomRef("busyIndicator").firstChild;
+				oMutationObserver = new MutationObserver(function(aMutations) {
+					aMutations.forEach(function(oMutation) {
+						if (oMutation.attributeName == "style") {
+							assert.strictEqual(oList.getDomRef("busyIndicator").firstChild.style.top, "20%", "Style top 20% was applied correctly");
 
-		QUnit.test("setBackgroundDesign", function(assert) {
-			var oListItem = createListItem(),
-				oList = new List({
-					backgroundDesign: library.BackgroundDesign.Solid,
-					items: [
-						oListItem
-					]
-				}),
-				$list,
-				oRenderSpy = this.spy(oList.getRenderer(), "render");
-
-			// add item to page & render
-			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
-			$list = oList.$();
-
-			// call method & do tests
-			assert.strictEqual(oList.getBackgroundDesign(), library.BackgroundDesign.Solid, 'The property "backgroundDesign" is "Solid" on ' + oList);
-			assert.ok($list.hasClass("sapMListBGSolid"), 'The HTML div container for the list has class "sapMListBGSolid" on ' + oList);
-			assert.ok(!$list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list does not have class "sapMListBGTransparent" on ' + oList);
-			assert.ok(!$list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list does not have class "sapMListBGTranslucent" on ' + oList);
-
-			assert.strictEqual(oList.setBackgroundDesign(library.BackgroundDesign.Transparent).getBackgroundDesign(), library.BackgroundDesign.Transparent, 'The property "backgroundDesign" is "Transparent" on ' + oList);
-			sap.ui.getCore().applyChanges();
-			$list = oList.$();
-			assert.ok(!$list.hasClass("sapMListBGSolid"), 'The HTML div container for the list does not have class "sapMListBGSolid" on ' + oList);
-			assert.ok($list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list has class "sapMListBGTransparent" on ' + oList);
-			assert.ok(!$list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list does not have class "sapMListBGTranslucent" on ' + oList);
-
-			assert.strictEqual(oList.setBackgroundDesign(library.BackgroundDesign.Translucent).getBackgroundDesign(), library.BackgroundDesign.Translucent, 'The property "backgroundDesign" is "Translucent" on ' + oList);
-			sap.ui.getCore().applyChanges();
-			$list = oList.$();
-			assert.ok(!$list.hasClass("sapMListBGSolid"), 'The HTML div container for the list does not have class "sapMListBGSolid" on ' + oList);
-			assert.ok(!$list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list does not have class "sapMListBGTransparent" on ' + oList);
-			assert.ok($list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list has class "sapMListBGTranslucent" on ' + oList);
-
-			assert.throws(function () {
-				oList.setBackgroundDesign("DoesNotExist");
-			}, "Throws a type exception");
-			assert.strictEqual(oList.getBackgroundDesign(), library.BackgroundDesign.Translucent, 'The property "backgroundDesign" is still "sap.m.BackgroundDesign.Translucent" after setting mode "DoesNotExist" on ' + oList);
-
-			// standard setter tests
-			assert.strictEqual(oList.setBackgroundDesign(), oList, 'Method returns this pointer on ' + oList);
-			assert.strictEqual(oRenderSpy.callCount, 3, "The list should be rerendered in this method");
-
-			// cleanup
-			oPage.removeAllContent();
-			oList.destroy();
+							oList.setBusy(false);
+							oMutationObserver.disconnect();
+							done();
+						}
+					});
+				});
+				oMutationObserver.observe(observedDomRef, { attributes: true, childList: false, subtree: false });
+			});
 		});
 
 		QUnit.test("setShowSeparators", function(assert) {
@@ -1203,6 +1162,7 @@ sap.ui.define([
 				sText = oRB.getText("LIST_NO_DATA");
 
 			// add item to page & render
+			oList.setNoDataText();
 			oPage.addContent(oList);
 			sap.ui.getCore().applyChanges();
 
@@ -1222,13 +1182,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("getMaxItemsCount", function(assert) {
-			var oList = new List({
-					mode: library.ListMode.None
-				}),
-				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+			var oRenderSpy = this.spy(oList.getRenderer(), "render"),
 				iCounter;
 
 			// add item to page & render
+			oList.setMode(library.ListMode.None);
 			oPage.addContent(oList);
 			sap.ui.getCore().applyChanges();
 
@@ -1266,11 +1224,17 @@ sap.ui.define([
 
 			// cleanup
 			oPage.removeAllContent();
-			oList.destroy();
 		});
 
 		/********************************************************************************/
-		QUnit.module("Other API methods");
+		QUnit.module("Other API methods", {
+			beforeEach: function() {
+				oList = new List();
+			},
+			afterEach: function() {
+				oList.destroy();
+			}
+		});
 		/********************************************************************************/
 
 		QUnit.test("Function scrollToIndex", function(assert) {
@@ -1346,10 +1310,25 @@ sap.ui.define([
 		});
 
 		/********************************************************************************/
-		QUnit.module("Internal methods");
+		QUnit.module("Internal methods", {
+			beforeEach: function() {
+				oList = new List();
+			},
+			afterEach: function() {
+				oList.destroy();
+			}
+		});
 		/********************************************************************************/
 
-		QUnit.module("KeyboardHandling");
+		QUnit.module("KeyboardHandling", {
+			beforeEach: function() {
+				oList = new List();
+			},
+			afterEach: function() {
+				oList.destroy();
+			}
+		});
+
 		QUnit.test("Basics", function (assert) {
 			var fnDetailPressSpy = this.spy(),
 				fnItemPressSpy = this.spy(),
@@ -1519,9 +1498,8 @@ sap.ui.define([
 			});
 			var oListItem1 = oListItem0.clone();
 			var oListItem2 = oListItem0.clone();
-			var oList = new List({
-				items : [oListItem0, oListItem1, oListItem2]
-			});
+
+			oList.addItem(oListItem0).addItem(oListItem1).addItem(oListItem2);
 
 			// let the item navigation run for testing
 			this.stub(Device.system, "desktop", true);
@@ -1630,8 +1608,7 @@ sap.ui.define([
 
 		QUnit.test("Container Padding Classes", function (assert) {
 			// System under Test + Act
-			var oContainer = new List(),
-				sResponsiveSize,
+			var sResponsiveSize,
 				$containerContent;
 
 			if (Device.resize.width <= 599) {
@@ -1644,10 +1621,10 @@ sap.ui.define([
 			var aResponsiveSize = sResponsiveSize.split(" ");
 
 			// Act
-			oContainer.placeAt("content");
+			oList.placeAt("content");
 			sap.ui.getCore().applyChanges();
-			oContainer.addStyleClass("sapUiNoContentPadding");
-			$containerContent = oContainer.$();
+			oList.addStyleClass("sapUiNoContentPadding");
+			$containerContent = oList.$();
 
 			// Assert
 			assert.strictEqual($containerContent.css("padding-left"), "0px", "The container has no left content padding when class \"sapUiNoContentPadding\" is set");
@@ -1656,8 +1633,8 @@ sap.ui.define([
 			assert.strictEqual($containerContent.css("padding-bottom"), "0px", "The container has no bottom content padding when class \"sapUiNoContentPadding\" is set");
 
 			// Act
-			oContainer.removeStyleClass("sapUiNoContentPadding");
-			oContainer.addStyleClass("sapUiContentPadding");
+			oList.removeStyleClass("sapUiNoContentPadding");
+			oList.addStyleClass("sapUiContentPadding");
 
 			// Assert
 			assert.strictEqual($containerContent.css("padding-left"), "16px", "The container has 1rem left content padding when class \"sapUiContentPadding\" is set");
@@ -1666,8 +1643,8 @@ sap.ui.define([
 			assert.strictEqual($containerContent.css("padding-bottom"), "16px", "The container has 1rem bottom content padding when class \"sapUiContentPadding\" is set");
 
 			// Act
-			oContainer.removeStyleClass("sapUiContentPadding");
-			oContainer.addStyleClass("sapUiResponsiveContentPadding");
+			oList.removeStyleClass("sapUiContentPadding");
+			oList.addStyleClass("sapUiResponsiveContentPadding");
 
 			// Assert
 			assert.strictEqual($containerContent.css("padding-left"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]), "The container has " + sResponsiveSize + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
@@ -1675,8 +1652,6 @@ sap.ui.define([
 			assert.strictEqual($containerContent.css("padding-top"), aResponsiveSize[0], "The container has " + sResponsiveSize + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
 			assert.strictEqual($containerContent.css("padding-bottom"), aResponsiveSize[0], "The container has " + sResponsiveSize + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
 
-			// Cleanup
-			oContainer.destroy();
 		});
 
 		document.hasFocus() && QUnit.test("KeybordMode", function (assert) {
@@ -1785,7 +1760,6 @@ sap.ui.define([
 			assert.strictEqual(fnPressSpy.callCount, 0, "Press event is not called");
 
 			oContainer.destroy();
-
 		});
 
 		QUnit.test("Keyboard range selection", function (assert) {
@@ -2067,7 +2041,15 @@ sap.ui.define([
 			oList.destroy();
 		});
 
-		QUnit.module("Highlight");
+		QUnit.module("Highlight", {
+			beforeEach: function() {
+				oList = new List();
+			},
+			afterEach: function() {
+				oList.destroy();
+			}
+		});
+
 		QUnit.test("Highlight should be rendered", function (assert) {
 			var oLI = new StandardListItem({
 				title: "Title of the item"
@@ -2179,7 +2161,14 @@ sap.ui.define([
 			oThemeStub.restore();
 		});
 
-		QUnit.module("Navigated indicator");
+		QUnit.module("Navigated indicator", {
+			beforeEach: function() {
+				oList = new List();
+			},
+			afterEach: function() {
+				oList.destroy();
+			}
+		});
 
 		QUnit.test("Navigated indicator should be rendered", function(assert) {
 			var oLI = new StandardListItem({
@@ -2225,10 +2214,17 @@ sap.ui.define([
 			oList.destroy();
 		});
 
-		QUnit.module("Accessibility");
+		QUnit.module("Accessibility", {
+			beforeEach: function() {
+				oList = new List();
+			},
+			afterEach: function() {
+				oList.destroy();
+			}
+		});
 
 		QUnit.test("aria-labelledby association should only be in the DOM", function(assert) {
-			var oList = new List().placeAt("content");
+			oList.placeAt("content");
 			var oText1 = new Text({
 				text: "text1"
 			}).placeAt("content");
@@ -2243,7 +2239,6 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 			assert.ok(oList.getNavigationRoot().getAttribute("aria-labelledby") == null, "Accessibility info of text1 is removed from the dom");
 
-			oList.destroy();
 			oText1.destroy();
 		});
 
@@ -2310,11 +2305,16 @@ sap.ui.define([
 			oListItem1.destroy();
 		});
 
-		QUnit.module("Context Menu");
+		QUnit.module("Context Menu", {
+			beforeEach: function() {
+				oList = new List();
+			},
+			afterEach: function() {
+				oList.destroy();
+			}
+		});
 
 		QUnit.test("Context Menu", function(assert) {
-			var oList = new List();
-
 			var fnInvalidate = this.spy(oList, "invalidate");
 
 			// list should not be invalidated for setContextMenu
@@ -2347,7 +2347,6 @@ sap.ui.define([
 
 			//clean up
 			oMenu.destroy();
-			oList.destroy();
 		});
 
 		QUnit.test("Test context menu on interactive control", function(assert) {
@@ -2395,10 +2394,16 @@ sap.ui.define([
 			oList.destroy();
 		});
 
-		QUnit.module("Text Selection");
+		QUnit.module("Text Selection", {
+			beforeEach: function() {
+				oList = new List();
+			},
+			afterEach: function() {
+				oList.destroy();
+			}
+		});
 
 		QUnit.test("No press event on text selection", function(assert) {
-			var oList = new List();
 			var oListItem = new StandardListItem({
 				type: "Active",
 				title: "Hello World",
@@ -2433,12 +2438,16 @@ sap.ui.define([
 			oListItem.$().trigger("tap");
 			this.clock.tick(0);
 			assert.ok(fnPress.called, "Press event fired");
-
-			// clean up
-			oList.destroy();
 		});
 
-		QUnit.module("ListBase sticky feature");
+		QUnit.module("ListBase sticky feature", {
+			beforeEach: function() {
+				oList = new List();
+			},
+			afterEach: function() {
+				oList.destroy();
+			}
+		});
 
 		QUnit.test("Sticky chrome browser support", function(assert) {
 			// stub for Chrome
@@ -2674,6 +2683,7 @@ sap.ui.define([
 				oScrollContainer.destroy();
 				// reset stub
 				this.stub().reset();
+				this.clock.restore();
 			}
 		});
 
@@ -2773,6 +2783,7 @@ sap.ui.define([
 				oScrollContainer.destroy();
 				// reset stub
 				this.stub().reset();
+				this.clock.restore();
 			}
 		});
 
@@ -2891,6 +2902,7 @@ sap.ui.define([
 				oScrollContainer.destroy();
 				// reset stub
 				this.stub().reset();
+				this.clock.restore();
 			}
 		});
 
@@ -2966,7 +2978,14 @@ sap.ui.define([
 			assert.equal(oList._getStickyAreaHeight(), iHeaderToolbarHeight + iInfoToolbarHeight, "Correct height returned");
 		});
 
-		QUnit.module("Dependents Plugins");
+		QUnit.module("Dependents Plugins", {
+			beforeEach: function() {
+				oList = new List();
+			},
+			afterEach: function() {
+				oList.destroy();
+			}
+		});
 
 		QUnit.test("DataStateIndicator Plugin Support", function(assert) {
 			try {

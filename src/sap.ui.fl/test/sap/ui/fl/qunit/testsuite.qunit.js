@@ -331,18 +331,6 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/_internal/Storage"]
 				}
 			},
-			"write/_internal/CompatibilityConnector": {
-				group: "Write Internal",
-				coverage: {
-					only: ["sap/ui/fl/write/_internal/CompatibilityConnector"]
-				},
-				ui5: {
-					resourceroots: {
-						"test.app": "./test-resources/sap/ui/fl/qunit/testResources/"
-					},
-					flexibilityServices: '[{"connector": "JsObjectConnector", "layers": ["ALL"]}]'
-				}
-			},
 			"write/_internal/Versions": {
 				group: "Write Internal",
 				coverage: {
@@ -952,6 +940,12 @@ sap.ui.define([
 				group: "registry",
 				coverage: {
 					only: ["sap/ui/fl/registry/ExtensionPointRegistry"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent",
+						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
+					}
 				}
 			},
 			"registry/Settings": {

@@ -1015,9 +1015,8 @@
 					"$ref": "#/definitions/ContentType.Calendar.SpecialDate"
 				},
 				"date": {
-					"description": "The initial date of the calendar which appointments are initially shown",
+					"description": "The initial date of the calendar which appointments are initially shown. The accepted date format is ISO 8601.",
 					"oneOf": [
-						{ "type": "number" },
 						{ "type": "string" },
 						{ "$ref": "#/definitions/simpleBinding" }
 					]
@@ -1085,16 +1084,14 @@
 					]
 				},
 				"startDate": {
-					"description": "The start date of the item.",
+					"description": "The start date of the item. The accepted date format is ISO 8601.",
 					"oneOf": [
-						{ "type": "number" },
 						{ "type": "string" }
 					]
 				},
 				"endDate": {
-					"description": "The end date of the item.",
+					"description": "The end date of the item. The accepted date format is ISO 8601.",
 					"oneOf": [
-						{ "type": "number" },
 						{ "type": "string" }
 					]
 				},
@@ -1222,16 +1219,14 @@
 			"additionalProperties": false,
 			"properties": {
 				"startDate": {
-					"description": "The start date of the special date.",
+					"description": "The start date of the special date. The accepted date format is ISO 8601.",
 					"oneOf": [
-						{ "type": "number" },
 						{ "type": "string" }
 					]
 				},
 				"endDate": {
-					"description": "The end date of the special date.",
+					"description": "The end date of the special date. The accepted date format is ISO 8601.",
 					"oneOf": [
-						{ "type": "number" },
 						{ "type": "string" }
 					]
 				},
@@ -1645,6 +1640,14 @@
 						"date",
 						"datetime"
 					]
+				},
+				"label": {
+					"description": "Label for the parameter for user-friendly visualization in the design-time editor.",
+					"type": "string"
+				},
+				"description": {
+					"description": "Description of the parameter for user-friendly visualization in the design-time editor.",
+					"type": "string"
 				}
 			}
 		},
@@ -1655,6 +1658,14 @@
 			"properties": {
 				"name": {
 					"description": "The name of the destination. Use the same name which is used in Cloud Platform.",
+					"type": "string"
+				},
+				"label": {
+					"description": "Label for the destination for user-friendly visualization in the design-time editor.",
+					"type": "string"
+				},
+				"description": {
+					"description": "Description of the destination for user-friendly visualization in the design-time editor.",
 					"type": "string"
 				}
 			}

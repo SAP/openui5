@@ -2,11 +2,12 @@
 /* CSS for control sap.ui.unified/Calendar  */
 /* Fiori 3 theme                            */
 /* ======================================== */
-@_sap_ui_unified_Calendar_ItemColor: darken(@sapUiListBackground, 3);
-@_sap_ui_unified_Calendar_ItemHoverColor: darken(@sapUiListBackground, 15);
-@_sap_ui_unified_Calendar_ItemBorderColor: lighten(@sapUiListBorderColor, 10);
-@_sap_ui_unified_Calendar_ItemWeekEndColor: darken(@sapUiListBackground, 13);
-@_sap_ui_unified_Calendar_ItemWeekEndHoverColor: darken(@sapUiListBackground, 20);
+
+@_sap_ui_unified_Calendar_ItemColor: @sapUiLegendWorkingBackground;
+@_sap_ui_unified_Calendar_ItemHoverColor: @sapUiListHoverBackground;
+@_sap_ui_unified_Calendar_ItemBorderColor: @sapUiListBackground;
+@_sap_ui_unified_Calendar_ItemWeekEndColor: @sapUiLegendNonWorkingBackground;
+@_sap_ui_unified_Calendar_ItemWeekEndHoverColor: @sapUiListHoverBackground;
 @_sap_ui_unified_Calendar_ItemOtherMonthColor: lighten(@sapUiBaseText, 30);
 @_sap_ui_unified_Calendar_ItemSelBetweenColor: lighten(@sapUiSelected, 43);
 @_sap_ui_unified_Calendar_ItemSelBetweenHoverColor: lighten(@sapUiSelected, 35);
@@ -120,7 +121,7 @@ html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:active {
 }
 
 html.sap-desktop .sapUiCalItem:not(.sapUiCalItemSel):focus {
-	background-color: darken(@sapUiListBackground, 15);
+	background-color: @_sap_ui_unified_Calendar_ItemHoverColor;
 }
 
 /* hover and focus makes only sense on desktops. On mobile devices it's not needed */
@@ -144,11 +145,14 @@ html.sap-desktop .sapUiCalYearPicker .sapUiCalItem:focus {
 	outline-offset: -4px;
 }
 
-html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalItemText,
+html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalItemText {
+	color: @sapUiContentSelectedTextColor;
+}
+
 html.sap-desktop .sapUiCalMonthPicker .sapUiCalItemSel:focus,
 html.sap-desktop .sapUiCalYearPicker .sapUiCalItemSel:focus {
 	outline-color: @sapUiContentContrastFocusColor;
-	background-color: @sapUiActive;
+	background-color: @sapUiContentSelectedHoverBackground;
 }
 
 html.sap-desktop .sapUiSizeCompact .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalDayName {
@@ -243,7 +247,8 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 		position: relative;
 	}
 	&.sapUiCalItemNow {
-		border: 0.125rem solid @sapUiCalendarColorToday;
+		border: 0.125rem solid @sapUiLegendCurrentDateTime;
+		border-radius: @sapUiElementBorderCornerRadius;
 		&.sapUiCalItemSelBetween {
 			line-height: normal;
 		}
@@ -288,12 +293,15 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 
 html.sap-desktop .sapUiCalItemOtherMonth:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover,
 html.sap-desktop .sapUiCalItemOtherMonth:focus {
-	background-color: darken(@sapUiListBackground, 10);
+	background-color: @sapUiListHoverBackground;
 }
 
-.sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween),
+.sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween){
+	background-color: @sapUiContentSelectedBackground;
+}
 .sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemText {
-	background-color: @sapUiActive;
+	color: @sapUiContentSelectedTextColor;
+	background-color: @sapUiContentSelectedBackground;
 	border-radius: 0.25rem;
 }
 
@@ -330,8 +338,8 @@ html.sap-desktop .sapUiCalItemSelBetween:focus {
 }
 
 .sapUiCalItemNow:not(.sapUiCalItemSelBetween) > .sapUiCalItemText {
-	border: 1px solid @_sap_ui_unified_Calendar_ItemBorderColor;
-	border-radius: 0.125rem;
+	border: 0.0625rem solid @sapUiListBackground;
+	border-radius: (@sapUiElementBorderCornerRadius / 2);
 }
 
 .sapUiCalItemNow.sapUiCalItemSelBetween{
@@ -507,20 +515,20 @@ and (orientation: landscape) {
 .dayColorMixIn(@class, @color){
 	.@{class} > .sapUiCalSpecialDate {
 		background-color: @color;
-		border-top: 1px solid white;
+		border-top: 0.0625rem solid @sapUiListBackground;
 		border-bottom-left-radius: 0.25rem;
 		border-bottom-right-radius: 0.25rem;
 	}
 	.@{class}.sapUiCalItemNow > .sapUiCalSpecialDate {
 		height: 0.18rem;
-		border-bottom-left-radius: 0.125rem;
-		border-bottom-right-radius: 0.125rem;
+		border-bottom-left-radius: (@sapUiElementBorderCornerRadius / 2);
+		border-bottom-right-radius: (@sapUiElementBorderCornerRadius / 2);
 		width: 1.875rem;
-		border: 1px solid white;
+		border: 0.0625rem solid @sapUiListBackground;
 	}
 	.@{class}.sapUiCalItemSel.sapUiCalItemNow .sapUiCalItemText {
-		border-top-left-radius: 0.125rem;
-		border-top-right-radius: 0.125rem;
+		border-top-left-radius: (@sapUiElementBorderCornerRadius / 2);
+		border-top-right-radius: (@sapUiElementBorderCornerRadius / 2);
 	}
 	.sapUiSizeCompact .@{class}.sapUiCalItemNow > .sapUiCalSpecialDate {
 		width: 1.625rem;
@@ -528,7 +536,7 @@ and (orientation: landscape) {
 	html.sap-desktop .sapUiCal:not(.sapUiCalDateInt) .sapUiCalItem:not(.sapUiCalItemSel) {
 		&.@{class} > .sapUiCalSpecialDate:hover {
 			background-color: @color;
-			border-top: 1px solid white;
+			border-top: 0.0625rem solid @sapUiListBackground;
 			border-bottom-right-radius: 4px;
 			border-bottom-left-radius: 4px;
 			border-top-left-radius: 0;

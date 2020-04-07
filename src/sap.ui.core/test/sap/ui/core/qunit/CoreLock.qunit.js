@@ -37,13 +37,13 @@ sap.ui.define([
 		});
 
 		assert.ok(!pressed, "Button must not have fired 'press' yet");
-		jQuery("#button").focus().click();
+		jQuery("#button").trigger("focus").trigger("click");
 		assert.ok(!pressed, "Button still must not have fired 'press'");
 
 		sap.ui.getCore().unlock();
 
 		assert.ok(!pressed, "Button still must not have fired 'press'");
-		jQuery("#button").focus().trigger("tap");
+		jQuery("#button").trigger("focus").trigger("tap");
 		assert.ok(pressed, "Button should have fired 'press'");
 	});
 

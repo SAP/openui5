@@ -300,7 +300,7 @@ Mobify.UI.Carousel = (function($, Utils) {
 	    		sTransitionEvents = 'transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd';
 
 	    	var fnCleanUpTransition = function(){
-				$carouselInner.unbind(sTransitionEvents, fnCleanUpTransition);
+				$carouselInner.off(sTransitionEvents, fnCleanUpTransition);
 				$carouselInner.removeClass(sTransitionClass);
 				//Exexute callback function if there is one.
 				if(fnCallback) {
@@ -309,7 +309,7 @@ Mobify.UI.Carousel = (function($, Utils) {
 			}
 
 	    	$carouselInner.addClass(sTransitionClass);
-			$carouselInner.bind(sTransitionEvents, fnCleanUpTransition);
+			$carouselInner.on(sTransitionEvents, fnCleanUpTransition);
     	}
     }
 
@@ -549,7 +549,7 @@ Mobify.UI.Carousel = (function($, Utils) {
 
     // SAP MODIFICATION BEGIN
     Carousel.prototype.onTransitionComplete = function() {
-        this.$inner.unbind(this._sTransitionEvents, this.onTransitionComplete);
+        this.$inner.off(this._sTransitionEvents, this.onTransitionComplete);
 
 		var sActiveClass = this._getClass('active'),
 			i;

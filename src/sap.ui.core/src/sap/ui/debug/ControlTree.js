@@ -47,13 +47,13 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 			this.oSelectionHighlighter = new Highlighter("sap-ui-testsuite-SelectionHighlighter");
 			this.oHoverHighlighter = new Highlighter("sap-ui-testsuite-HoverHighlighter", true, '#c8f', 1);
 			var that = this;
-			jQuery(oParentDomRef).bind("click",function(evt) {
+			jQuery(oParentDomRef).on("click",function(evt) {
 				that.onclick(evt);
 			})
-			.bind("mouseover",function(evt) {
+			.on("mouseover",function(evt) {
 				that.onmouseover(evt);
 			})
-			.bind("mouseout",function(evt) {
+			.on("mouseout",function(evt) {
 				that.onmouseout(evt);
 			});
 			this.enableInplaceControlSelection();// see below...
@@ -78,8 +78,8 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 	 * @private
 	 */
 	ControlTree.prototype.exit = function() {
-		jQuery(document).unbind();
-		jQuery(this.oParentDomRef).unbind();
+		jQuery(document).off();
+		jQuery(this.oParentDomRef).off();
 	};
 
 	/**
@@ -376,7 +376,7 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 	 */
 	ControlTree.prototype.enableInplaceControlSelection = function() {
 		var that = this;
-		jQuery(document).bind("mouseover" , function (oEvt) {
+		jQuery(document).on("mouseover", function (oEvt) {
 			that.selectControlInTree(oEvt);
 		});
 	};

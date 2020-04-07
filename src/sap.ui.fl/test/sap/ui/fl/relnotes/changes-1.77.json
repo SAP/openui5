@@ -40,6 +40,23 @@
             "reference": "2070003827"
           }
         ]
+      },
+      {
+        "id": "1af72a97fb8304c9c882059483bdcc3fe18d1271",
+        "type": "FIX",
+        "text": " Fix the JSDocs for AppVariantInlineChangeFactory",
+        "references": []
+      },
+      {
+        "id": "ba4dd2621e7b11ad8fc832bdec3e54370aaf1ad2",
+        "type": "FIX",
+        "text": " fl.VariantManagement: enhance aria text for favorite icons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070059904"
+          }
+        ]
       }
     ]
   }

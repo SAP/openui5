@@ -150,7 +150,8 @@ sap.ui.define([
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
 				layer : Layer.CUSTOMER,
-				reference : sReference
+				reference : sReference,
+				nonNormalizedReference: sReference
 			};
 
 			var oFirstVersion = {
@@ -203,7 +204,8 @@ sap.ui.define([
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
 				layer : Layer.CUSTOMER,
-				reference : sReference
+				reference : sReference,
+				nonNormalizedReference: sReference
 			};
 
 			var oFirstVersion = {
@@ -237,7 +239,8 @@ sap.ui.define([
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
 				layer : Layer.CUSTOMER,
-				reference : sReference
+				reference : sReference,
+				nonNormalizedReference: sReference
 			};
 
 			var oFirstVersion = {
@@ -308,6 +311,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				layer : Layer.CUSTOMER,
 				reference : sReference,
+				nonNormalizedReference: sReference,
 				appComponent: this.oAppComponent
 			};
 
@@ -322,7 +326,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			var oSaveStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", [{}]);
+			var oSaveStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", []);
 			var oDiscardStub = sandbox.stub(KeyUserConnector.versions, "discardDraft").resolves();
 
 			return Versions.initialize(mPropertyBag)
@@ -343,6 +347,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: sReference,
+				nonNormalizedReference: sReference,
 				appComponent: this.oAppComponent
 			};
 
@@ -356,7 +361,7 @@ sap.ui.define([
 				oFirstVersion
 			];
 
-			_prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", [{}]);
+			_prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", []);
 
 			return Versions.initialize(mPropertyBag)
 				.then(Versions.discardDraft.bind(undefined, mPropertyBag))
@@ -371,7 +376,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: sReference,
-				updateState: true,
+				nonNormalizedReference: sReference,
 				appComponent: this.oAppComponent
 			};
 
@@ -396,11 +401,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("and a connector is configured and a draft does NOT exists but dirty changes exists " +
-			"while discard is called withOUT a flag to discard the dirty changes", function (assert) {
+			"while discard is called", function (assert) {
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: sReference,
+				nonNormalizedReference: sReference,
 				appComponent: this.oAppComponent
 			};
 
@@ -419,18 +425,18 @@ sap.ui.define([
 			return Versions.initialize(mPropertyBag)
 				.then(Versions.discardDraft.bind(undefined, mPropertyBag))
 				.then(function (bDiscardingTookPlace) {
-					assert.equal(bDiscardingTookPlace, false, "no discarding took place");
-					assert.equal(oDeleteStub.callCount, 0, "no changes were deleted");
+					assert.equal(bDiscardingTookPlace, true, "discarding took place");
+					assert.equal(oDeleteStub.callCount, 2, "two changes were deleted");
 				});
 		});
 
 		QUnit.test("and a connector is configured and a draft exists and dirty changes exists " +
-			"while discard is called with a flag to discard the dirty changes", function (assert) {
+			"while discard is called", function (assert) {
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: sReference,
-				updateState: true,
+				nonNormalizedReference: sReference,
 				appComponent: this.oAppComponent
 			};
 

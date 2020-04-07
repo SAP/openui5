@@ -24,9 +24,35 @@ sap.ui.define([
 	function(Sorter, FilterProcessor, DateFormat, Log, assert, jQuery, encodeURL, CalendarType ) {
 	"use strict";
 
-	var rDecimal = /^([-+]?)0*(\d+)(\.\d+|)$/,
+	var oDateTimeFormat,
+		oDateTimeFormatMs,
+		oDateTimeOffsetFormat,
+		rDecimal = /^([-+]?)0*(\d+)(\.\d+|)$/,
+		oTimeFormat,
 		rTrailingDecimal = /\.$/,
 		rTrailingZeroes = /0+$/;
+
+	function setDateTimeFormatter () {
+		// Lazy creation of format objects
+		if (!oDateTimeFormat) {
+			oDateTimeFormat = DateFormat.getDateInstance({
+				pattern: "'datetime'''yyyy-MM-dd'T'HH:mm:ss''",
+				calendarType: CalendarType.Gregorian
+			});
+			oDateTimeFormatMs = DateFormat.getDateInstance({
+				pattern: "'datetime'''yyyy-MM-dd'T'HH:mm:ss.SSS''",
+				calendarType: CalendarType.Gregorian
+			});
+			oDateTimeOffsetFormat = DateFormat.getDateInstance({
+				pattern: "'datetimeoffset'''yyyy-MM-dd'T'HH:mm:ss'Z'''",
+				calendarType: CalendarType.Gregorian
+			});
+			oTimeFormat = DateFormat.getTimeInstance({
+				pattern: "'time''PT'HH'H'mm'M'ss'S'''",
+				calendarType: CalendarType.Gregorian
+			});
+		}
+	}
 
 	// Static class
 
@@ -469,29 +495,10 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataUtils.formatValue = function(vValue, sType, bCaseSensitive) {
+		var oDate, sValue;
 
 		if (bCaseSensitive === undefined) {
 			bCaseSensitive = true;
-		}
-
-		// Lazy creation of format objects
-		if (!this.oDateTimeFormat) {
-			this.oDateTimeFormat = DateFormat.getDateInstance({
-				pattern: "'datetime'''yyyy-MM-dd'T'HH:mm:ss''",
-				calendarType: CalendarType.Gregorian
-			});
-			this.oDateTimeFormatMs = DateFormat.getDateInstance({
-				pattern: "'datetime'''yyyy-MM-dd'T'HH:mm:ss.SSS''",
-				calendarType: CalendarType.Gregorian
-			});
-			this.oDateTimeOffsetFormat = DateFormat.getDateInstance({
-				pattern: "'datetimeoffset'''yyyy-MM-dd'T'HH:mm:ss'Z'''",
-				calendarType: CalendarType.Gregorian
-			});
-			this.oTimeFormat = DateFormat.getTimeInstance({
-				pattern: "'time''PT'HH'H'mm'M'ss'S'''",
-				calendarType: CalendarType.Gregorian
-			});
 		}
 
 		// null values should return the null literal
@@ -499,8 +506,9 @@ sap.ui.define([
 			return "null";
 		}
 
+		setDateTimeFormatter();
+
 		// Format according to the given type
-		var sValue;
 		switch (sType) {
 			case "Edm.String":
 				// quote
@@ -509,23 +517,22 @@ sap.ui.define([
 				break;
 			case "Edm.Time":
 				if (typeof vValue === "object") {
-					sValue = this.oTimeFormat.format(new Date(vValue.ms), true);
+					sValue = oTimeFormat.format(new Date(vValue.ms), true);
 				} else {
 					sValue = "time'" + vValue + "'";
 				}
 				break;
 			case "Edm.DateTime":
-				var oDate = new Date(vValue);
-
+				oDate = vValue instanceof Date ? vValue : new Date(vValue);
 				if (oDate.getMilliseconds() > 0) {
-					sValue = this.oDateTimeFormatMs.format(oDate, true);
+					sValue = oDateTimeFormatMs.format(oDate, true);
 				} else {
-					sValue = this.oDateTimeFormat.format(oDate, true);
+					sValue = oDateTimeFormat.format(oDate, true);
 				}
 				break;
 			case "Edm.DateTimeOffset":
-				var oDate = new Date(vValue);
-				sValue = this.oDateTimeOffsetFormat.format(oDate, true);
+				oDate = vValue instanceof Date ? vValue : new Date(vValue);
+				sValue = oDateTimeOffsetFormat.format(oDate, true);
 				break;
 			case "Edm.Guid":
 				sValue = "guid'" + vValue + "'";
@@ -551,6 +558,55 @@ sap.ui.define([
 				break;
 		}
 		return sValue;
+	};
+
+	/**
+	 * Parses a given Edm type value to a value as it is stored in the
+	 * {@link sap.ui.model.odata.v2.ODataModel}. The value to parse must be a valid Edm type literal
+	 * as defined in chapter 2.2.2 "Abstract Type System" of the OData V2 specification.
+	 *
+	 * @param {string} sValue The value to parse
+	 * @return {any} The parsed value
+	 * @throws {Error} If the given value is not of an Edm type defined in the specification
+	 * @private
+	 */
+	ODataUtils.parseValue = function (sValue) {
+		var sFirstChar = sValue[0],
+			sLastChar = sValue[sValue.length - 1];
+
+		setDateTimeFormatter();
+
+		if (sFirstChar === "'") { // Edm.String
+			return sValue.slice(1, -1).replace(/''/g, "'");
+		} else if (sValue.startsWith("time'")) { // Edm.Time
+			return {
+				__edmType : "Edm.Time",
+				ms : oTimeFormat.parse(sValue, true).getTime()
+			};
+		} else if (sValue.startsWith("datetime'")) { // Edm.DateTime
+			if (sValue.indexOf(".") === -1) {
+				return oDateTimeFormat.parse(sValue, true);
+			} else { // Edm.DateTime with ms
+				return oDateTimeFormatMs.parse(sValue, true);
+			}
+		} else if (sValue.startsWith("datetimeoffset'")) { // Edm.DateTimeOffset
+			return oDateTimeOffsetFormat.parse(sValue, true);
+		} else if (sValue.startsWith("guid'")) { // Edm.Guid
+			return sValue.slice(5, -1);
+		} else if (sValue === "null") { // null
+			return null;
+		} else if (sLastChar === "m" || sLastChar === "l" // Edm.Decimal, Edm.Int64
+				|| sLastChar === "d" || sLastChar === "f") { // Edm.Double, Edm.Single
+			return sValue.slice(0, -1);
+		} else if (!isNaN(sFirstChar) || sFirstChar === "-") { // Edm.Byte, Edm.Int16/32, Edm.SByte
+			return parseInt(sValue);
+		} else if (sValue === "true" || sValue === "false") { // Edm.Boolean
+			return sValue === "true";
+		} else if (sValue.startsWith("binary'")) { // Edm.Binary
+			return sValue.slice(7, -1);
+		}
+
+		throw new Error("Cannot parse value '" + sValue + "', no Edm type found");
 	};
 
 	/**

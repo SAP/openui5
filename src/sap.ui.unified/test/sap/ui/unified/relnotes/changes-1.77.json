@@ -34,6 +34,38 @@
             "reference": "2070082435"
           }
         ]
+      },
+      {
+        "id": "976b3c43d21199ceee62bfd5bc7c09e011fbbb6b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: rendering of a style class fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070103144"
+          }
+        ]
+      },
+      {
+        "id": "99732b1f1332d3d81edda59f57597b68461253c5",
+        "type": "FIX",
+        "text": " ui.unified.CalendarDateInterval: error not thrown now",
+        "references": []
+      },
+      {
+        "id": "65981c9cc6f521a4faa74788ca3fe53c0a099dc4",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: dependency between submit and rendering fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751294 0000177577 2020"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070117649"
+          }
+        ]
       }
     ]
   }

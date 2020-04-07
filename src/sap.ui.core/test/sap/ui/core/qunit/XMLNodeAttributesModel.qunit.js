@@ -114,7 +114,7 @@ sap.ui.require([
 
 		var oPanelModel = new XMLNodeAttributesModel(oPanelNode, this.oVisitorStub, "panel");
 
-		var vContent = oPanelModel.getProperty("/content"), bArray = jQuery.isArray(vContent);
+		var vContent = oPanelModel.getProperty("/content"), bArray = Array.isArray(vContent);
 
 		assert.strictEqual(bArray, true, "The content of the panel is an array of controls");
 		assert.strictEqual(vContent.length, 2, "The panel has two children");

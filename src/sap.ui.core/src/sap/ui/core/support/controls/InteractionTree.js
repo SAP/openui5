@@ -146,7 +146,7 @@ sap.ui.define([
           this.gridContainer = jQuery('.sapUiInteractionTreeContainer .sapUiInteractionGridLinesContainer');
           this.gridContainerWidth = 0;
 
-          interactionTree.bind('click', function (event) {
+          interactionTree.on('click', function (event) {
 
              var $target = jQuery(event.target);
 
@@ -155,11 +155,11 @@ sap.ui.define([
              }
           });
 
-          this.gridContainer.resize(function (event) {
+          this.gridContainer.on("resize", function (event) {
              that.updateGridLines();
           });
 
-          jQuery(window).resize(function (event) {
+          jQuery(window).on("resize", function (event) {
              that.updateGridLines();
           });
 
@@ -686,7 +686,7 @@ sap.ui.define([
              }).addStyleClass('sapUiSupportPopover');
 
              oPopover.attachAfterOpen(function(oEvent){
-                oEvent.getSource().$().focus();
+                oEvent.getSource().$().trigger("focus");
              });
 
              return oPopover;
@@ -829,7 +829,7 @@ sap.ui.define([
              }).addStyleClass('sapUiSupportPopover');
 
              oPopover.attachAfterOpen(function(oEvent){
-                oEvent.getSource().$().focus();
+                oEvent.getSource().$().trigger("focus");
              });
              return oPopover;
           }

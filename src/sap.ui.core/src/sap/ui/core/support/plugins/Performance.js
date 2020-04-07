@@ -347,7 +347,7 @@ sap.ui.define([
 
 			window.addEventListener('keydown', _onArrowMove);
 			jQuery("#slideHandle").on('dblclick', _initSlider);
-			jQuery("#sapUiSupportPerfToggleRecordingBtn").click(_handlerTogglePlayButton).attr('data-state', 'Start recording');
+			jQuery("#sapUiSupportPerfToggleRecordingBtn").on("click", _handlerTogglePlayButton).attr('data-state', 'Start recording');
 		}
 
 		/* =============================================================================================================

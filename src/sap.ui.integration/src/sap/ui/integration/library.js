@@ -27,6 +27,8 @@ sap.ui.define(["sap/ui/base/DataType",
 			controls: [
 				"sap.ui.integration.widgets.Card",
 				"sap.ui.integration.Widget",
+				"sap.ui.integration.cards.Header",
+				"sap.ui.integration.cards.NumericHeader",
 				"sap.ui.integration.host.HostConfiguration"
 			],
 			elements: [
@@ -108,6 +110,18 @@ sap.ui.define(["sap/ui/base/DataType",
 			Inactive: "Inactive"
 		};
 
-		return thisLib;
+		/*
+		 * Specifies different card area types.
+		 *
+		 * @private
+		 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		thisLib.AreaType = {
+			None: 'None',
+			ContentItem: 'ContentItem',
+			Content: 'Content',
+			Header: 'Header'
+		};
 
+		return thisLib;
 	});

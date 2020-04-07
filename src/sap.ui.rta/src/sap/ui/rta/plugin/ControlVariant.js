@@ -484,7 +484,9 @@ sap.ui.define([
 			//Border
 			oOverlay.addStyleClass(RenameHandler.errorStyleClass);
 
-			return Utils._showMessageBox("ERROR", "BLANK_DUPLICATE_TITLE_TEXT", sErrorText)
+			return Utils.showMessageBox("error", sErrorText, {
+				titleKey: "BLANK_DUPLICATE_TITLE_TEXT"
+			})
 			.then(function () {
 				return function() {
 					this.startEdit(oOverlay);

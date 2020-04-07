@@ -218,7 +218,7 @@ sap.ui.define([
 			this.renderClasses();
 			this.renderMethods();
 
-			$('#sapUiSupportDebuggingClassInput').focus();
+			$('#sapUiSupportDebuggingClassInput').trigger("focus");
 		};
 
 		Debugging.prototype.onsapUiSupportDebuggingReceiveClassMethods = function(oEvent) {
@@ -236,7 +236,7 @@ sap.ui.define([
 			var $breakpoints = $('li[data-class-name="' + sClassName + '"] span.breakpoints');
 			$breakpoints.text(mBreakpointCount.active + " / " + mBreakpointCount.all).show();
 
-			$('#sapUiSupportDebuggingMethodInput').focus();
+			$('#sapUiSupportDebuggingMethodInput').trigger("focus");
 		};
 
 		Debugging.prototype._autoComplete = function(oEvent) {
@@ -299,7 +299,7 @@ sap.ui.define([
 			this._mAddedClasses[sClassName] = {};
 
 			this.renderClasses();
-			$('#sapUiSupportDebuggingClassInput').focus();
+			$('#sapUiSupportDebuggingClassInput').trigger("focus");
 		};
 
 		Debugging.prototype._onRemoveClass = function(oEvent) {
@@ -326,7 +326,7 @@ sap.ui.define([
 				this.renderMethods();
 			}
 
-			$('#sapUiSupportDebuggingClassInput').focus();
+			$('#sapUiSupportDebuggingClassInput').trigger("focus");
 		};
 
 		Debugging.prototype._onAddBreakpointClicked = function() {

@@ -51,7 +51,7 @@ sap.ui.define([
 			{
 				type: "action",
 				visible : true,
-				text: "action",
+				text: "action2",
 				icon: "sap-icon://add-photo"
 			},
 			{
@@ -207,24 +207,37 @@ QUnit.test("update item", function(assert){
 QUnit.module("ColumnPopoverItem");
 
 QUnit.test("ColumnPopoverActionItem", function(assert){
+	assert.expect(4);
+
 	var oPopover = createCHP("test3");
 
-	var oButton = new Button({
-		text : "open columnHeaderPopover",
-		press: function(){
-			oPopover.openBy(this);
-		}
-	});
+	var oButton = new Button({text : "open columnHeaderPopover"});
 
 	oButton.placeAt("content");
 	sap.ui.getCore().applyChanges();
 
+	oPopover.getItems()[2].attachPress(function() {
+		assert.ok(document.activeElement === oButton.getFocusDomRef(), "Focus is on the Button which opened the Popover before");
+		assert.ok(bPopoverClosed, "Popover closed");
+	});
+
+	oButton.getDomRef().focus();
 	oPopover.openBy(oButton);
+
+	var bPopoverClosed = false;
+	oPopover.getAggregation("_popover").attachBeforeClose(function() {
+		bPopoverClosed = true;
+	});
+
 	this.clock.tick(500);
 
 	var oRBPopover = oPopover.getAggregation("_popover");
-	var oActionButtonDom = oRBPopover.$().find("button")[1];
-	assert.equal(oActionButtonDom.title, "action", "property setting of text is correct");
+
+	var oActionButton = jQuery(oRBPopover.$().find("button")[1]).control(0);
+	assert.equal(oActionButton.getTooltip(), "action2", "property setting of text is correct");
+	assert.equal(oActionButton.getIcon(), "sap-icon://add-photo", "property setting of icon is correct");
+
+	oActionButton.firePress();
 
 	oButton.destroy();
 	oPopover.destroy();
@@ -314,6 +327,7 @@ QUnit.test("ColumnPopoverSortItem", function(assert){
 	oButton.placeAt("content");
 	sap.ui.getCore().applyChanges();
 
+	oButton.getFocusDomRef().focus();
 	oPopover.openBy(oButton);
 	this.clock.tick(500);
 
@@ -329,10 +343,12 @@ QUnit.test("ColumnPopoverSortItem", function(assert){
 	assert.equal(oSortButtonDom2.title, "Sort", "two sort items are rendered");
 
 	qutils.triggerEvent("tap", oSortButton1.getId());
+	assert.ok(document.activeElement === oButton.getFocusDomRef(), "Focus is on the Button which opened the Popover before");
 	this.clock.tick(500);
 
 	assert.equal($popover[0].style.display, "none", "columnHeaderPopover is closed");
 
+	oButton.getFocusDomRef().focus();
 	oPopover.openBy(oButton);
 	this.clock.tick(500);
 
@@ -347,6 +363,7 @@ QUnit.test("ColumnPopoverSortItem", function(assert){
 	qutils.triggerEvent("tap", oSortItem.getId());
 	this.clock.tick(500);
 
+	assert.ok(document.activeElement === oButton.getFocusDomRef(), "Focus is on the Button which opened the Popover before " + document.activeElement.id);
 	assert.ok(oSortEventSpy.calledOnce, "The SortEvent event was called once");
 	assert.equal(oSortEventSpy._mEventParameters.property, "item1", "sort parameter is correct");
 	assert.equal($popover[0].style.display, "none", "columnHeaderPopover is closed");

@@ -222,13 +222,13 @@ sap.ui.define([
 		var $oldContent = RenderManager.findPreservedContent(this.getId());
 		var $newContent;
 		var isPreservedDOM = false;
-		if ( /*this.getContent() && */ (!this.getPreferDOM() || $oldContent.size() == 0) ) {
+		if ( /*this.getContent() && */ (!this.getPreferDOM() || $oldContent.length == 0) ) {
 			// remove old, preserved content
 			$oldContent.remove();
 			// replace placeholder with content string
 			$newContent = new jQuery(this.getContent()); // TODO what if content is not HTML (e.g. #something)?
 			$placeholder.replaceWith($newContent);
-		} else if ( $oldContent.size() > 0 ) {
+		} else if ( $oldContent.length > 0 ) {
 			// replace dummy with old content
 			$placeholder.replaceWith($oldContent);
 			$newContent = $oldContent;
@@ -244,7 +244,7 @@ sap.ui.define([
 	};
 
 	HTML.prototype._postprocessNewContent = function($newContent) {
-		if ( $newContent && $newContent.size() > 0 ) {
+		if ( $newContent && $newContent.length > 0 ) {
 			if ( $newContent.length > 1 ) {
 				Log.warning("[Unsupported Feature]: " + this + " has rendered " + $newContent.length + " root nodes!");
 			} else {

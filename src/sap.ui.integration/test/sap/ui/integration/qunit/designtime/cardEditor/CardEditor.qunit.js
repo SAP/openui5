@@ -211,7 +211,7 @@ sap.ui.define([
 					}
 				};
 				assert.deepEqual(oChange.content, oExpectedContent, "the content is set correctly");
-				assert.equal(oChange.changeType, "appdescr_card", "the change type is set correctly");
+				assert.equal(oChange.changeType, "appdescr_widget", "the change type is set correctly");
 				assert.equal(oChange.fileType, "change", "the fileType is set correctly");
 				assert.ok(oChange.creation, "the creation is filled");
 				assert.equal(oChange.layer, this.oPropertyBag.layer, "the layer is set correctly");
@@ -263,7 +263,7 @@ sap.ui.define([
 					}
 				};
 				assert.deepEqual(oChange.content, oExpectedContent, "the content is set correctly");
-				assert.equal(oChange.changeType, "appdescr_card", "the change type is set correctly");
+				assert.equal(oChange.changeType, "appdescr_widget", "the change type is set correctly");
 				assert.equal(oChange.fileType, "change", "the fileType is set correctly");
 				assert.ok(oChange.creation, "the creation is filled");
 				assert.equal(oChange.layer, this.oPropertyBag.layer, "the layer is set correctly");

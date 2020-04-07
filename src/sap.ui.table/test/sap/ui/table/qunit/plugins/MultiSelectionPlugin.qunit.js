@@ -1097,6 +1097,11 @@ sap.ui.define([
 		var oPopoverOpenBySpy;
 		var oPopoverCloseSpy;
 
+		function resetSpies() {
+			oPopoverOpenBySpy.reset();
+			oPopoverCloseSpy.reset();
+		}
+
 		assert.notOk(oSelectionPlugin._oNotificationPopover, "Notification popover does not exist");
 
 		oSelectionPlugin.setEnableNotification(true);
@@ -1104,67 +1109,48 @@ sap.ui.define([
 		// Ensures that the Popover control is loaded and initialized
 		return this.oTable._oSelectionPlugin._showNotificationPopoverAtIndex(0).then(function() {
 			assert.ok(oSelectionPlugin._oNotificationPopover, "Notification popover was created");
-
-			oSelectionPlugin._oNotificationPopover.close();
+		}).then(function() {
+			return new Promise(function(resolve) {
+				oSelectionPlugin._oNotificationPopover.attachEventOnce("afterClose", function() {
+					resolve();
+				});
+				oSelectionPlugin._oNotificationPopover.close();
+			});
+		}).then(function() {
 			oPopoverOpenBySpy = sinon.spy(oSelectionPlugin._oNotificationPopover, "openBy");
 			oPopoverCloseSpy = sinon.spy(oSelectionPlugin._oNotificationPopover, "close");
+
+		}).then(function() {
 			oSelectionPlugin.setLimit(iLimit);
 			oSelectionPlugin.setEnableNotification(false);
-
-			return oSelectionPlugin.setSelectionInterval(0, iLimit);
+			return oSelectionPlugin.setSelectionInterval(0, iLimit).then(TableQUnitUtils.$wait(200)).then(function() {
+				assert.ok(oPopoverOpenBySpy.notCalled, "Popover.openBy is not called because enableNotification is false");
+				resetSpies();
+			});
 
 		}).then(function() {
-			assert.ok(oPopoverOpenBySpy.notCalled, "Popover.openBy is not called because enableNotification is false");
-
 			oSelectionPlugin.setEnableNotification(true);
-			oPopoverOpenBySpy.reset();
-			oPopoverCloseSpy.reset();
-
-			return oSelectionPlugin.setSelectionInterval(0, iLimit - 1);
-
-		}).then(function() {
-			assert.ok(oPopoverOpenBySpy.notCalled, "Popover.openBy is not called because the limit is not reached");
-
-			oPopoverOpenBySpy.reset();
-			oPopoverCloseSpy.reset();
-
-			return Promise.all([
-				oSelectionPlugin.setSelectionInterval(0, iLimit),
-				new Promise(function(resolve) {
-					oSelectionPlugin._oNotificationPopover.attachEventOnce("afterOpen", function() {
-						assert.ok(oPopoverOpenBySpy.calledOnce, "Popover.openBy is called");
-						assert.ok(oPopoverOpenBySpy.calledWithExactly(oTable.getRows()[iLimit - 1].getDomRefs().rowSelector),
-							"Popover.openBy is called with the correct parameters");
-
-						oPopoverOpenBySpy.reset();
-						oPopoverCloseSpy.reset();
-						oTable.setFirstVisibleRow(oTable.getFirstVisibleRow() + 1);
-						assert.ok(oPopoverCloseSpy.calledOnce, "Notification closes");
-						resolve();
-					});
-				})
-			]);
+			return oSelectionPlugin.setSelectionInterval(0, iLimit - 1).then(TableQUnitUtils.$wait(200)).then(function() {
+				assert.ok(oPopoverOpenBySpy.notCalled, "Popover.openBy is not called because the limit is not reached");
+				resetSpies();
+			});
 
 		}).then(function() {
-			oPopoverOpenBySpy.reset();
-			oPopoverCloseSpy.reset();
-
-			return Promise.all([
-				oSelectionPlugin.addSelectionInterval(iLimit, iLimit + iLimit),
-				new Promise(function(resolve) {
-					oSelectionPlugin._oNotificationPopover.attachEventOnce("afterOpen", function() {
-						assert.ok(oPopoverOpenBySpy.calledOnce, "Popover.openBy is called");
-						assert.ok(oPopoverOpenBySpy.calledWithExactly(oTable.getRows().slice(-2)[0].getDomRefs().rowSelector),
-							"Popover.openBy is called with the correct parameters");
-
-						oPopoverOpenBySpy.reset();
-						oPopoverCloseSpy.reset();
-						oTable.setFirstVisibleRow(oTable.getFirstVisibleRow() + 1);
-						assert.ok(oPopoverCloseSpy.calledOnce, "Notification closes");
-						resolve();
-					});
-				})
-			]);
+			return new Promise(function(resolve) {
+				oSelectionPlugin._oNotificationPopover.attachEventOnce("afterOpen", resolve);
+				oSelectionPlugin.setSelectionInterval(0, iLimit);
+			}).then(function() {
+				return new Promise(function(resolve) {
+					oSelectionPlugin._oNotificationPopover.attachEventOnce("afterClose", resolve);
+					oTable.setFirstVisibleRow(oTable.getFirstVisibleRow() + 1);
+				});
+			}).then(function() {
+				assert.equal(oPopoverOpenBySpy.callCount, 1, "Popover.openBy is called once");
+				assert.ok(oPopoverOpenBySpy.calledWithExactly(oTable.getRows()[iLimit - 1].getDomRefs().rowSelector),
+					"Popover.openBy is called with the correct parameters");
+				assert.ok(oPopoverCloseSpy.calledOnce, "Popover.close is called once");
+				resetSpies();
+			});
 		});
 	});
 });

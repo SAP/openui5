@@ -77,14 +77,14 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 					this._oRemoteWindow = window.parent;
 					this._sRemoteOrigin = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-support-origin");
 					this.openSupportTool();
-					jQuery(window).bind("unload", function(oEvent){
+					jQuery(window).on("unload", function(oEvent){
 						close(that._oOpenedWindow);
 					});
 					break;
 				case mTypes.TOOL:
 					this._oRemoteWindow = window.opener;
 					this._sRemoteOrigin = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-support-origin");
-					jQuery(window).bind("unload", function(oEvent){
+					jQuery(window).on("unload", function(oEvent){
 						that.sendEvent(mEvents.TEAR_DOWN);
 						Support.exitPlugins(that, true);
 					});
@@ -593,7 +593,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 				"</div>" +
 			"</div>");
 
-		oPlugin.$("PanelHeader").click(function(){
+		oPlugin.$("PanelHeader").on("click", function(){
 			var jHandleRef = oPlugin.$("PanelHandle");
 			if (jHandleRef.hasClass("sapUiSupportPnlHdrHdlClosed")) {
 				jHandleRef.removeClass("sapUiSupportPnlHdrHdlClosed");

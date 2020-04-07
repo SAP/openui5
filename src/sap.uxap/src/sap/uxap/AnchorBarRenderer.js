@@ -29,12 +29,13 @@ sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPage
 					rm.style("display", "none");
 				}
 				// ARIA attributes
-				rm.attr("aria-label", sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("ANCHOR_BAR_LABEL"))
-					.class("sapUxAPAnchorBarScrollContainer")
+				rm.class("sapUxAPAnchorBarScrollContainer")
 					.openEnd();
 
 				rm.openStart("div", oToolbar.getId() + "-scroll")
-					.attr("role", "menubar")
+					.attr("role", "listbox")
+					.attr("aria-describedby", oToolbar.getId() + "-desc")
+					.attr("aria-roledescription", sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("ANCHOR_BAR_ROLE_DESCRIPTION"))
 					.openEnd();
 
 				if (!oToolbar._bHideScrollContainer) {
@@ -42,6 +43,12 @@ sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPage
 				}
 
 				rm.close("div");
+
+				rm.openStart("span", oToolbar.getId() + "-desc")
+					.class("sapUiPseudoInvisibleText")
+					.openEnd();
+				rm.text(sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("ANCHOR_BAR_ARIA_LABEL_DESC"));
+				rm.close("span");
 
 				rm.close("div");
 

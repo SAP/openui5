@@ -85,8 +85,8 @@ sap.ui.define([
 				that._oPopup.close(0);
 			};
 
-			jPopupRef.bind("click", this._fCloseHandler);
-			jQuery(document).bind("mousedown", this._fSelectHandler);
+			jPopupRef.on("click", this._fCloseHandler);
+			jQuery(document).on("mousedown", this._fSelectHandler);
 
 		};
 
@@ -94,11 +94,11 @@ sap.ui.define([
 		Selector.prototype.exit = function(oSupportStub){
 			this._oPopup.close(0);
 			if (this._fCloseHandler) {
-				jQueryDOM(document.getElementById(this._sPopupId)).unbind("click", this._fCloseHandler);
+				jQueryDOM(document.getElementById(this._sPopupId)).off("click", this._fCloseHandler);
 				this._fCloseHandler = null;
 			}
 			if (this._fSelectHandler) {
-				jQuery(document).unbind("mousedown", this._fSelectHandler);
+				jQuery(document).off("mousedown", this._fSelectHandler);
 				this._fSelectHandler = null;
 			}
 			Plugin.prototype.exit.apply(this, arguments);

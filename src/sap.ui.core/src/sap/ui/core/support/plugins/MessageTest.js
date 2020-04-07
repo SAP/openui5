@@ -66,7 +66,7 @@ sap.ui.define([
 				report(that, that.getId() + "Msg", sVal, false);
 			};
 
-			this.$("send").bind("click", this._fSendHandler);
+			this.$("send").on("click", this._fSendHandler);
 			report(this, Support.EventType.SETUP, "", true);
 		};
 
@@ -74,7 +74,7 @@ sap.ui.define([
 		MessageTest.prototype.exit = function(oSupportStub){
 			report(this, Support.EventType.TEAR_DOWN, "", true);
 			if (this._fSendHandler) {
-				this.$("send").unbind("click", this._fSendHandler);
+				this.$("send").off("click", this._fSendHandler);
 				this._fSendHandler = null;
 			}
 			Plugin.prototype.exit.apply(this, arguments);

@@ -49,7 +49,7 @@ sap.ui.define([
 
 			this.fDestroyHandler = this.destroy.bind(this);
 
-			jQuery(window).bind("unload", this.fDestroyHandler);
+			jQuery(window).on("unload", this.fDestroyHandler);
 
 			ActivityDetection.attachActivate(initListener, this);
 		}
@@ -79,7 +79,7 @@ sap.ui.define([
 	 */
 	ResizeHandler.prototype.destroy = function(oEvent) {
 		ActivityDetection.detachActivate(initListener, this);
-		jQuery(window).unbind("unload", this.fDestroyHandler);
+		jQuery(window).off("unload", this.fDestroyHandler);
 		oCoreRef = null;
 		this.aResizeListeners = [];
 		this.aSuspendedDomRefs = [];

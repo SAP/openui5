@@ -106,6 +106,9 @@ sap.ui.define([
 	 * If needed the navigation between the message item and the source of the error can be created by the application.
 	 * This can be done by setting the <code>activeTitle</code> property to true and providing a handler for the <code>activeTitlePress</code> event.</li>
 	 * </ul>
+	 * <h3>Responsive Behavior</h3>
+	 * The responsiveness of the <code>MessageView</code> is determined by the container in which it is embedded. For that reason the control could not be visualized if the
+	 * container’s sizes are not defined.
 	 * @author SAP SE
 	 * @version ${version}
 	 *

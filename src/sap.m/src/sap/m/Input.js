@@ -1532,7 +1532,7 @@ function(
 		 * Gets the input value.
 		 *
 		 * @public
-		 * @return {sap.m.Input} Value of the input.
+		 * @returns {string} Value of the input.
 		 */
 		Input.prototype.getValue = function(){
 			return this.getDomRef("inner") && this._$input ? this.getDOMValue() : this.getProperty("value");

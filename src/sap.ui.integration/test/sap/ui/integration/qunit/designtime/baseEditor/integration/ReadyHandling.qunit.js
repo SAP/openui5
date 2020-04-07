@@ -79,7 +79,7 @@ sap.ui.define([
 				fnDone();
 			}, this);
 
-			var oArrayLevel2 = oArrayLevel1.getAggregation("propertyEditor")._aEditorWrappers[0].getAggregation("propertyEditors")[0];
+			var oArrayLevel2 = oArrayLevel1.getAggregation("propertyEditor")._aEditorWrappers[0]._getPropertyEditors()[0];
 			var oAddButton = oArrayLevel2.getAggregation("propertyEditor").getContent().getItems()[1];
 			QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
 		});

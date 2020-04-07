@@ -3083,14 +3083,18 @@ sap.ui.define([
 			}
 
 			if (sClosestSubSectionId !== this._sScrolledSubSectionId) {
+				var oSection = ObjectPageSection._getClosestSection(sClosestId),
+					oSubSection = this.oCore.byId(sClosestSubSectionId);
+
+
 				this._sScrolledSubSectionId = sClosestSubSectionId;
 				this.fireEvent("_sectionChange", {
-					section: this.oCore.byId(sClosestId),
-					subSection: this.oCore.byId(sClosestSubSectionId)
+					section: oSection,
+					subSection: oSubSection
 				});
 				this.fireEvent("sectionChange", {
-					section: this.oCore.byId(sClosestId),
-					subSection: this.oCore.byId(sClosestSubSectionId)
+					section: oSection,
+					subSection: oSubSection
 				});
 			}
 		}

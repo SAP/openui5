@@ -163,14 +163,23 @@ sap.ui.define([
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
-		var sReference = Utils.getComponentClassName(oAppComponent);
+		if (oAppComponent) {
+			var oManifest = oAppComponent.getManifest();
+			var sReference = ManifestUtils.getFlexReference({
+				manifest: oManifest,
+				componentData: oAppComponent.getComponentData()
+			});
+			var sAppVersion = Utils.getAppVersionFromManifest(oManifest);
+		}
 
 		if (!sReference) {
 			return Promise.reject("The application ID could not be determined");
 		}
 
 		return Versions.activateDraft({
+			nonNormalizedReference: sReference,
 			reference: Utils.normalizeReference(sReference),
+			appVersion: sAppVersion,
 			layer: mPropertyBag.layer,
 			title: mPropertyBag.title
 		});
@@ -184,7 +193,6 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Property Bag
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
-	 * @param {boolean} [mPropertyBag.updateState=false] - Flag if the state should be updated
 	 * @returns {Promise<boolean>} Promise resolving with a flag if a discarding took place;
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
@@ -197,22 +205,34 @@ sap.ui.define([
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
-		var oManifest = oAppComponent.getManifest();
-		var sReference = ManifestUtils.getFlexReference({
-			manifest: oManifest,
-			componentData: oAppComponent.getComponentData()
-		});
-		var sAppVersion = Utils.getAppVersionFromManifest(oManifest);
+		if (oAppComponent) {
+			var oManifest = oAppComponent.getManifest();
+			var sReference = ManifestUtils.getFlexReference({
+				manifest: oManifest,
+				componentData: oAppComponent.getComponentData()
+			});
+			var sAppVersion = Utils.getAppVersionFromManifest(oManifest);
+		}
 
 		if (!sReference) {
 			return Promise.reject("The application ID could not be determined");
 		}
 
 		return Versions.discardDraft({
-			reference: sReference,
+			nonNormalizedReference: sReference,
+			reference: Utils.normalizeReference(sReference),
 			layer: mPropertyBag.layer,
-			appVersion: sAppVersion,
-			updateState: mPropertyBag.updateState
+			appVersion: sAppVersion
+		}).then(function (bDiscarded) {
+			if (bDiscarded) {
+				// clears FlexState and triggers a new flex data request without blocking
+				// it is actually not loading the draft, because we just discarded it
+				VersionsAPI.loadDraftForApplication({
+					selector: mPropertyBag.selector,
+					layer: mPropertyBag.layer
+				});
+			}
+			return bDiscarded;
 		});
 	};
 

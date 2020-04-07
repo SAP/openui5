@@ -58,20 +58,20 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 			this.bEmbedded = top.window == oWindow; // check only with ==, not === as the test otherwise fails on IE8
 			this.mProperties = {};
 			var that = this;
-			jQuery(oParentDomRef).bind("click",function(evt) {
+			jQuery(oParentDomRef).on("click",function(evt) {
 				that.onclick(evt);
 			})
-			.bind("focusin",function(evt) {
+			.on("focusin",function(evt) {
 				that.onfocus(evt);
 			})
-			.bind("keydown",function(evt) {
+			.on("keydown",function(evt) {
 				that.onkeydown(evt);
 			});
 			if ( !this.bEmbedded ) {
-				jQuery(oParentDomRef).bind("mouseover",function(evt) {
+				jQuery(oParentDomRef).on("mouseover",function(evt) {
 					that.onmouseover(evt);
 				})
-				.bind("mouseout",function(evt) {
+				.on("mouseout",function(evt) {
 					that.onmouseout(evt);
 				});
 			}
@@ -87,7 +87,7 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 	 * @private
 	 */
 	PropertyList.prototype.exit = function() {
-		jQuery(this.oParentDomRef).unbind();
+		jQuery(this.oParentDomRef).off();
 	};
 
 	/**

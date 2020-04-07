@@ -58,6 +58,7 @@ sap.ui.define(function() {
 					useFakeTimers: true
 				}
 			},
+			"report/DataCollector": {},
 			"util/RuleValidator": {
 				module: "./util/RuleValidator.qunit"
 			},

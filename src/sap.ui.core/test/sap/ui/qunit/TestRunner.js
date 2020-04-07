@@ -267,10 +267,10 @@
 			var sHTML = fnTemplate(oContext);
 			var $testResult = jQuery(sHTML);
 			var $children = $testResult.children();
-			jQuery($children[0]).click(function() {
+			jQuery($children[0]).on("click", function() {
 				jQuery(this.nextSibling).toggle();
 			});
-			jQuery($children[1]).find("li.test > p").click(function() {
+			jQuery($children[1]).find("li.test > p").on("click", function() {
 				jQuery(this.parentElement.children[2]).toggle();
 			});
 			$testResult.appendTo("div.test-reporting");

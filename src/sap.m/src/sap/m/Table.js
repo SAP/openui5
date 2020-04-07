@@ -312,6 +312,9 @@ sap.ui.define([
 
 		if (this.getAutoPopinMode()) {
 			this._configureAutoPopin();
+			this._bAutoPopinMode = true;
+		} else {
+			this._bAutoPopinMode = false;
 		}
 
 		// for initial contextualWidth setting
@@ -332,6 +335,10 @@ sap.ui.define([
 	Table.prototype.onAfterRendering = function() {
 		ListBase.prototype.onAfterRendering.call(this);
 		this.updateSelectAllCheckbox();
+		// force IE repaint in fixed layout mode
+		if (this.getFixedLayout()) {
+			this._forceStyleChange();
+		}
 		this._renderOverlay();
 	};
 
@@ -925,6 +932,13 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._requireAutoPopinRecalculation = function(aVisibleColumns) {
+		var bAutoPopinMode = this.getAutoPopinMode();
+
+		if (this._bAutoPopinMode !== bAutoPopinMode) {
+			this._bAutoPopinMode = bAutoPopinMode;
+			return true;
+		}
+
 		if (aVisibleColumns.length !== this._aVisibleColumns.length) {
 			return true;
 		}

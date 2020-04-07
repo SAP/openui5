@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
                         "i18n": {
                             "bundleUrl": "i18n/i18n.properties",
                             "supportedLocales": ["en", "de"],
-                            "fallbackLocale": "es",
+                            "fallbackLocale": "en",
                             "terminologies": {
                                 "oil": {
                                     "bundleUrl": "i18n/terminologies.oil.i18n.properties",
@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
                                     "bundleUrl": "../appvar1path/i18n/i18n.properties",
                                     "bundleUrlRelativeTo": "manifest",
                                     "supportedLocales": ["en", "de"],
-                                    "fallbackLocale": "es",
+                                    "fallbackLocale": "en",
                                     "terminologies": {
                                         "oil": {
                                             "bundleUrl": "../appvar1path/i18n.terminologies.oil.i18n.properties",
@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
                                 {
                                     "bundleName": "appvar2.i18n.i18n.properties",
                                     "supportedLocales": ["en", "de"],
-                                    "fallbackLocale": "es",
+                                    "fallbackLocale": "en",
                                     "terminologies": {
                                         "oil": {
                                             "bundleName": "appvar2.i18n.terminologies.oil.i18n",

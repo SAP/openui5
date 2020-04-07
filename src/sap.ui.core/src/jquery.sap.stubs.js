@@ -199,7 +199,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/defineLazyProperty", "sap/ui/third
 			}
 		},
 		"jQuery Selector :": {
-			target: jQuery.expr[":"],
+			target: jQuery.expr.pseudos,
 			stubs: {
 				"sap/ui/dom/jquery/Selectors": [
 					"focusable",

@@ -1,7 +1,7 @@
 {
 	"_version": "1.15.0",
 	"sap.app": {
-		"id": "sap.ui.demo.cardExplorer.samples.component.cardContentHeaderBottom",
+		"id": "my.component.sample.cardContentHeaderBottom",
 		"type": "card",
 		"title": "Sample of a Component with a Bottom Header",
 		"subTitle": "Sample of a Component  with a Bottom Header",
@@ -27,7 +27,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.ui.demo.cardExplorer.samples.component.cardContentHeaderBottom.View",
+			"viewName": "my.component.sample.cardContentHeaderBottom.View",
 			"type": "XML",
 			"async": true,
 			"id": "app"

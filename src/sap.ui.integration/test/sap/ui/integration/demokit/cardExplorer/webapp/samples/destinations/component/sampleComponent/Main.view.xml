@@ -1,0 +1,12 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+          xmlns="sap.m"
+          xmlns:html="http://www.w3.org/1999/xhtml"
+          width="100%"
+          displayBlock="true">
+    <List
+        items="{
+            path: 'products>/value'
+        }" >
+        <StandardListItem title="{products>ProductName}"/>
+    </List>
+</mvc:View>

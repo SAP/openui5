@@ -1,0 +1,56 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "sap.ui.demo.cardExplorer.samples.Destinations.sampleComponent",
+		"type": "card",
+		"title": "Sample of a Component Content",
+		"subTitle": "Sample of a Component Content",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Component",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://technical-object"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.demo.cardExplorer.samples.Destinations.sampleComponent.Main",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.38",
+			"libs": {
+				"sap.m": {}
+			}
+		}
+	},
+	"sap.card": {
+		"type": "Component",
+		"configuration": {
+			"destinations": {
+				"myDestination": {
+					"name": "Northwind"
+				}
+			}
+		},
+		"header": {
+			"title": "Component card based on destinations (Experimental)",
+			"subTitle": "Top 5 products from Northwind"
+		}
+	}
+}

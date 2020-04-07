@@ -245,6 +245,7 @@ sap.ui.define([
 
 					/**
 					 * Specifies if the Popover should be set ARIA role 'application'.
+					 * This property does not respect the avoidAriaApplicationRole core configuration, because it is expected to be used explicitly when role application is required for a specific Popover instance, no matter if the application role is present on the html body.
 					 *
 					 * <b>Note:</b> If this property should become public in the future, the property will have to be set on a level that will encapsulate the header and the footer of the popover as well.
 					 * @since 1.77

@@ -1,7 +1,7 @@
 /*global QUnit*/
 sap.ui.define([
-	"sap/f/cards/AdaptiveContent",
-	"sap/f/cards/adaptivecards/elements/UI5InputDate",
+	"sap/ui/integration/cards/AdaptiveContent",
+	"sap/ui/integration/cards/adaptivecards/elements/UI5InputDate",
 	"sap/ui/core/Core"
 ],
 function (

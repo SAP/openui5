@@ -698,7 +698,7 @@ sap.ui.define([
 
 			this.selectTab(this._tab.breakpoints);
 
-			this.$().find('.sapUiSupportControlBreakpointInput').focus();
+			this.$().find('.sapUiSupportControlBreakpointInput').trigger("focus");
 		};
 
 		ControlTree.prototype.renderExportTab = function() {

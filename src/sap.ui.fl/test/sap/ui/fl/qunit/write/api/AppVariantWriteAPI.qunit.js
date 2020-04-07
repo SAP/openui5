@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/LrepConnector",
-	"sap/ui/fl/write/_internal/CompatibilityConnector",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
@@ -28,7 +28,7 @@ sap.ui.define([
 	Settings,
 	ChangeRegistry,
 	LrepConnector,
-	CompatibilityConnector,
+	Storage,
 	ApplyUtils,
 	WriteUtils,
 	TransportSelection,
@@ -253,7 +253,7 @@ sap.ui.define([
 				}
 			});
 
-			var fnCreateBackendCall = sandbox.stub(CompatibilityConnector, "create").resolves();
+			var fnCreateBackendCall = sandbox.stub(Storage, "write").resolves();
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 
@@ -514,7 +514,7 @@ sap.ui.define([
 				}
 			});
 
-			var fnCreateBackendCall = sandbox.stub(CompatibilityConnector, "create").resolves();
+			var fnCreateBackendCall = sandbox.stub(Storage, "write").resolves();
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 

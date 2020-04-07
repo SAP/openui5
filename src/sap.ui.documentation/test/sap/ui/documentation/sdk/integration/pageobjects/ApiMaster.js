@@ -2,11 +2,10 @@ sap.ui.define([
 	'sap/ui/test/Opa5',
 	'sap/ui/test/matchers/AggregationLengthEquals',
 	'sap/ui/test/matchers/AggregationFilled',
-	'sap/ui/test/matchers/Ancestor',
 	'sap/ui/test/matchers/Properties',
 	'sap/ui/test/actions/EnterText',
 	'sap/ui/test/actions/Press'
-], function (Opa5, AggregationLengthEquals, AggregationFilled, Ancestor, Properties, EnterText, Press) {
+], function (Opa5, AggregationLengthEquals, AggregationFilled, Properties, EnterText, Press) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -27,7 +26,7 @@ sap.ui.define([
 						id: "tree",
 						success: function() {
 							this.waitFor({
-								controlType: "sap.m.StandardTreeItem",
+								controlType: "sap.ui.documentation.sdk.controls.DemokitTreeItem",
 								matchers: new Properties({title: sNode}),
 								actions: new Press(),
 								errorMessage: "Cannot select " + sNode + " node."

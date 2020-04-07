@@ -50,7 +50,8 @@ sap.ui.define([
 				"appdescr_ui5_addLibraries",
 				"appdescr_url_setUri",
 				"appdescr_fiori_setRegistrationIds",
-				"appdescr_card"
+				"appdescr_card",
+				"appdescr_widget"
 			];
 		},
 		getCondensableChangeTypes: function() {

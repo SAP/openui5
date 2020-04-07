@@ -29,7 +29,7 @@ function(
 	var ManifestUtils = {
 		getFlexReference: function(mPropertyBag) {
 			var oManifest = mPropertyBag.manifest;
-			var oComponentData = mPropertyBag.componentData;
+			var oComponentData = mPropertyBag.componentData || {};
 
 			// support of old app variants
 			if (oComponentData.startupParameters) {

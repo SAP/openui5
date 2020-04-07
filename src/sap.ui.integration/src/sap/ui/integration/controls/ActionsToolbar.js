@@ -164,6 +164,16 @@ sap.ui.define([
 				buttons: aButtons
 			});
 
+			// Make an initial check for 'visible' and 'enabled' for the buttons
+			this._refreshButtons().then(function () {
+				var aButtons = this._oActionSheet.getButtons(),
+					aVisibleButtons = aButtons.filter(function (oButton) {
+						return oButton.getVisible();
+					});
+
+				this._getToolbar().setVisible(!!aVisibleButtons.length);
+			}.bind(this));
+
 			return true;
 		};
 

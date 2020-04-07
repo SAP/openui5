@@ -1711,25 +1711,25 @@ sap.ui.define([
 
 	QUnit.test("Relative URLs for ResourceModel (enhanceWith)", function(assert) {
 
-		var oModelConfigSpy = this.spy(Component, "_createManifestModelConfigurations");
+		var oResourceBundleCreateSpy = this.spy(ResourceBundle, "create");
 
 		// load the test component
 		return Component.create({
 			manifest : "anylocation/manifest.json"
 		}).then(function(oComponent) {
 
-			var aI18NCmpEnhanceWith = oModelConfigSpy.returnValues[0]["i18n-component"].settings[0].enhanceWith;
+			var aI18NCmpEnhanceWith = oResourceBundleCreateSpy.getCall(0).args[0].enhanceWith;
 			assert.strictEqual(aI18NCmpEnhanceWith[0].bundleUrl, "test-resources/sap/ui/core/samples/components/button/custom/i18n.properties", "Bundle URL of enhancing model must not be modified!");
 			assert.strictEqual(aI18NCmpEnhanceWith[1].bundleUrlRelativeTo, "manifest", "Bundle URL should be relative to manifest!");
 			assert.strictEqual(aI18NCmpEnhanceWith[1].bundleUrl, "anylocation/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
 
-			var aI18NMFEnhanceWith = oModelConfigSpy.returnValues[0]["i18n-manifest"].settings[0].enhanceWith;
+			var aI18NMFEnhanceWith = oResourceBundleCreateSpy.getCall(1).args[0].enhanceWith;
 			assert.strictEqual(aI18NMFEnhanceWith[0].bundleUrlRelativeTo, "manifest", "Bundle URL should be relative to manifest!");
 			assert.strictEqual(aI18NMFEnhanceWith[0].bundleUrl, "anylocation/custom/i18n.properties", "Bundle URL of enhancing model must be adopted relative to manifest!");
 			assert.strictEqual(aI18NMFEnhanceWith[1].bundleUrl, "test-resources/sap/ui/core/samples/components/button/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
 
 			oComponent.destroy();
-			oModelConfigSpy.restore();
+			oResourceBundleCreateSpy.restore();
 		});
 	});
 
@@ -1886,8 +1886,8 @@ sap.ui.define([
 
 	QUnit.module("Window Event Handler", {
 		beforeEach: function() {
-			this.jQueryBindSpy = this.spy(jQuery.prototype, "bind");
-			this.jQueryUnbindSpy = this.spy(jQuery.prototype, "unbind");
+			this.jQueryOnSpy = this.spy(jQuery.prototype, "on");
+			this.jQueryOffSpy = this.spy(jQuery.prototype, "off");
 		}
 	});
 
@@ -1899,8 +1899,8 @@ sap.ui.define([
 		this.oComponent = new MyOnWindowErrorComponent();
 
 		assert.equal(typeof this.oComponent._fnWindowErrorHandler, "function", "Handler has been created");
-		sinon.assert.calledWithExactly(this.jQueryBindSpy, "error", this.oComponent._fnWindowErrorHandler);
-		assert.equal(this.jQueryBindSpy.getCall(0).thisValue.get(0), window, "jQuery bind has been called on the window object");
+		sinon.assert.calledWithExactly(this.jQueryOnSpy, "error", this.oComponent._fnWindowErrorHandler);
+		assert.equal(this.jQueryOnSpy.getCall(0).thisValue.get(0), window, "jQuery bind has been called on the window object");
 
 		this.oComponent._fnWindowErrorHandler({
 			originalEvent: {
@@ -1919,8 +1919,8 @@ sap.ui.define([
 		this.oComponent.destroy();
 
 		assert.equal(this.oComponent._fnWindowErrorHandler, undefined, "Handler has been removed");
-		sinon.assert.calledWithExactly(this.jQueryUnbindSpy, "error", handler);
-		assert.equal(this.jQueryUnbindSpy.getCall(0).thisValue.get(0), window, "jQuery unbind has been called on the window object");
+		sinon.assert.calledWithExactly(this.jQueryOffSpy, "error", handler);
+		assert.equal(this.jQueryOffSpy.getCall(0).thisValue.get(0), window, "jQuery unbind has been called on the window object");
 	});
 
 	QUnit.test("onWindowBeforeUnload", function(assert) {
@@ -1931,8 +1931,8 @@ sap.ui.define([
 		this.oComponent = new MyOnWindowBeforeUnloadComponent();
 
 		assert.equal(typeof this.oComponent._fnWindowBeforeUnloadHandler, "function", "Handler has been created");
-		sinon.assert.calledWithExactly(this.jQueryBindSpy, "beforeunload", this.oComponent._fnWindowBeforeUnloadHandler);
-		assert.equal(this.jQueryBindSpy.getCall(0).thisValue.get(0), window, "jQuery bind has been called on the window object");
+		sinon.assert.calledWithExactly(this.jQueryOnSpy, "beforeunload", this.oComponent._fnWindowBeforeUnloadHandler);
+		assert.equal(this.jQueryOnSpy.getCall(0).thisValue.get(0), window, "jQuery bind has been called on the window object");
 
 		var oFakeEvent = {};
 		this.oComponent._fnWindowBeforeUnloadHandler(oFakeEvent);
@@ -1945,8 +1945,8 @@ sap.ui.define([
 		this.oComponent.destroy();
 
 		assert.equal(this.oComponent._fnWindowBeforeUnloadHandler, undefined, "Handler has been removed");
-		sinon.assert.calledWithExactly(this.jQueryUnbindSpy, "beforeunload", handler);
-		assert.equal(this.jQueryUnbindSpy.getCall(0).thisValue.get(0), window, "jQuery unbind has been called on the window object");
+		sinon.assert.calledWithExactly(this.jQueryOffSpy, "beforeunload", handler);
+		assert.equal(this.jQueryOffSpy.getCall(0).thisValue.get(0), window, "jQuery unbind has been called on the window object");
 	});
 
 	QUnit.test("onWindowUnload", function(assert) {
@@ -1957,8 +1957,8 @@ sap.ui.define([
 		this.oComponent = new MyOnWindowUnloadComponent();
 
 		assert.equal(typeof this.oComponent._fnWindowUnloadHandler, "function", "Handler has been created");
-		sinon.assert.calledWithExactly(this.jQueryBindSpy, "unload", this.oComponent._fnWindowUnloadHandler);
-		assert.equal(this.jQueryBindSpy.getCall(0).thisValue.get(0), window, "jQuery bind has been called on the window object");
+		sinon.assert.calledWithExactly(this.jQueryOnSpy, "unload", this.oComponent._fnWindowUnloadHandler);
+		assert.equal(this.jQueryOnSpy.getCall(0).thisValue.get(0), window, "jQuery bind has been called on the window object");
 
 		var oFakeEvent = {};
 		this.oComponent._fnWindowUnloadHandler(oFakeEvent);
@@ -1971,8 +1971,8 @@ sap.ui.define([
 		this.oComponent.destroy();
 
 		assert.equal(this.oComponent._fnWindowUnloadHandler, undefined, "Handler has been removed");
-		sinon.assert.calledWithExactly(this.jQueryUnbindSpy, "unload", handler);
-		assert.equal(this.jQueryUnbindSpy.getCall(0).thisValue.get(0), window, "jQuery unbind has been called on the window object");
+		sinon.assert.calledWithExactly(this.jQueryOffSpy, "unload", handler);
+		assert.equal(this.jQueryOffSpy.getCall(0).thisValue.get(0), window, "jQuery unbind has been called on the window object");
 	});
 
 	QUnit.module("Component Registry", {
@@ -2348,6 +2348,7 @@ sap.ui.define([
         }).then(function (oComponent) {
             this.oComponent = oComponent;
 
+			// Check Resource Model creation
             var oSettings = oCreateManifestModelsSpy.getCall(0).args[0].i18n.settings[0];
             assert.equal(oCreateManifestModelsSpy.callCount, 1, "_createManifestModels should be called for the i18n model");
             assert.equal(oSettings.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
@@ -2461,6 +2462,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Component1 with Terminologies defined in manifest.json file", function (assert) {
+		var oResourceBundleCreateSpy = sinon.spy(ResourceBundle, "create");
 		var oCreateManifestModelsSpy = sinon.spy(Component, "_createManifestModels");
 
 		return Component.create({
@@ -2470,16 +2472,13 @@ sap.ui.define([
 		}).then(function (oComponent) {
 			this.oComponent = oComponent;
 
-			var oSettings = oCreateManifestModelsSpy.getCall(0).args[0].i18n.settings[0];
-			assert.equal(oSettings.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component1/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
-			assert.equal(oSettings.terminologies.oil.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component1/i18n/terminologies.oil.i18n.properties", "The bundleUrl should be resolved correctly");
-			assert.equal(oSettings.terminologies.retail.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component1/i18n/terminologies.retail.i18n.properties", "The bundleUrl should be resolved correctly");
-			assert.ok(oSettings.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
-			assert.ok(oSettings.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
-
+			var oSettingsBeforeLoad = oResourceBundleCreateSpy.getCall(0).args[0];
+			assert.equal(oSettingsBeforeLoad.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component1/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
+			assert.ok(oSettingsBeforeLoad.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
+			assert.ok(oSettingsBeforeLoad.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
 
 			// resolve bundle urls
-			var oEnhanceWith0 = oSettings.enhanceWith[0];
+			var oEnhanceWith0 = oSettingsBeforeLoad.enhanceWith[0];
 			assert.equal(oEnhanceWith0.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
 			assert.equal(oEnhanceWith0.terminologies.oil.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.oil.i18n.properties", "The bundleUrl should be resolved correctly");
 			assert.equal(oEnhanceWith0.terminologies.retail.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.retail.i18n.properties", "The bundleUrl should be resolved correctly");
@@ -2487,15 +2486,22 @@ sap.ui.define([
 			assert.ok(oEnhanceWith0.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
 
 			// bundle names shouldn't be resolved
-			var oEnhanceWith1 = oSettings.enhanceWith[1];
+			var oEnhanceWith1 = oSettingsBeforeLoad.enhanceWith[1];
 			assert.equal(oEnhanceWith1.bundleName, "appvar2.i18n.i18n.properties", "The bundleName should be correct");
 			assert.equal(oEnhanceWith1.terminologies.oil.bundleName, "appvar2.i18n.terminologies.oil.i18n", "The bundleName should be correct");
 			assert.equal(oEnhanceWith1.terminologies.retail.bundleName, "appvar2.i18n.terminologies.retail.i18n", "The bundleName should be correct");
 			assert.ok(oEnhanceWith1.hasOwnProperty("supportedLocales"), "The property 'supportedLocales' should be available");
 			assert.ok(oEnhanceWith1.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
 
+			// check if already processed properties have been removed when the ResourceModel constructor is called
+			var oSettingsAfterLoad = oCreateManifestModelsSpy.getCall(0).args[0].i18n.settings[0];
+			assert.notOk(oSettingsAfterLoad.enhanceWith, "enhanceWith was removed");
+			assert.notOk(oSettingsAfterLoad.terminologies, "terminologies was removed");
+			assert.notOk(oSettingsAfterLoad.activeTerminologies, "terminologies was removed");
+
 			assert.deepEqual(this.oComponent.getActiveTerminologies(), ["oil", "retail"], "The list of terminologies should be correct");
 
+			oResourceBundleCreateSpy.restore();
 			oCreateManifestModelsSpy.restore();
 		}.bind(this));
 	});
@@ -2506,7 +2512,7 @@ sap.ui.define([
 			async: true,
 			activeTerminologies: ["oil", "retail"],
 			supportedLocales: ["en", "de"],
-			fallbackLocale: "es",
+			fallbackLocale: "en",
 			terminologies: {
 				oil: {
 					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component2/i18n/terminologies.oil.i18n.properties",
@@ -2522,7 +2528,7 @@ sap.ui.define([
 					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n/i18n.properties",
 					bundleUrlRelativeTo: "manifest",
 					supportedLocales: ["en", "de"],
-					fallbackLocale: "es",
+					fallbackLocale: "en",
 					terminologies: {
 						oil: {
 							bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/appvar1path/i18n.terminologies.oil.i18n.properties",
@@ -2538,7 +2544,7 @@ sap.ui.define([
 				{
 					bundleName: "appvar2.i18n.i18n.properties",
 					supportedLocales: ["en", "de"],
-					fallbackLocale: "es",
+					fallbackLocale: "en",
 					terminologies: {
 						oil: {
 							bundleName: "appvar2.i18n.terminologies.oil.i18n",
@@ -2623,6 +2629,7 @@ sap.ui.define([
 				}
 			]
 		};
+
 		var oResourceBundleCreateStub = sinon.stub(ResourceBundle, "create").callsFake(function (mParams) {
 			if (mParams.async) {
 				assert.deepEqual(mParams, oExpected, "ResourceBundle.create should be called with the correct arguments");
@@ -2634,13 +2641,23 @@ sap.ui.define([
 				getText: function () { assert.ok(true, "ResourceBundle was stubbed successfully"); }
 			};
 		});
+		var oManifestI18nSpy = sinon.spy(Manifest.prototype, "_loadI18n");
+
 		return Component.create({
 			name: "testdata.terminologies.component3",
-			activeTerminologies: ["oil", "retail"],
-			manifest: false
+			activeTerminologies: ["oil", "retail"]
 		}).then(function (oComponent) {
 			this.oComponent = oComponent;
 			assert.ok(true, "assertions have been successful");
+
+			// check how many "data-loading" calls are made from the Manifest
+			// TODO: The number of loading calls will sink down to 1 with an additional optimization on ComponentMetadata.prototype._applyManifest
+			assert.equal(oManifestI18nSpy.args.length, 2, "Only two calls made to Manifest.prototype._loadI18n");
+			assert.ok(oManifestI18nSpy.args[0][0], "Manifest.prototype._loadI18n: 1st time called with async=true, after Component preload");
+			// TODO: This check can be enabled with an additional optimization on ComponentMetadata.prototype._applyManifest
+			//assert.ok(oManifestI18nSpy.args[0][1], "Manifest.prototype._loadI18n: 2nd time called with async=true");
+
+			oManifestI18nSpy.restore();
 			oResourceBundleCreateStub.restore();
 		}.bind(this));
 	});
@@ -2651,7 +2668,7 @@ sap.ui.define([
 			async: true,
 			activeTerminologies: ["oil", "retail"],
 			supportedLocales: ["en", "de"],
-			fallbackLocale: "es",
+			fallbackLocale: "en",
 			terminologies: {
 				oil: {
 					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/terminologies.oil.i18n.properties",
@@ -2666,7 +2683,7 @@ sap.ui.define([
 				{
 					bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n/i18n.properties",
 					supportedLocales: ["en", "de"],
-					fallbackLocale: "es",
+					fallbackLocale: "en",
 					terminologies: {
 						oil: {
 							bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/appvar1path/i18n.terminologies.oil.i18n.properties",
@@ -2681,7 +2698,7 @@ sap.ui.define([
 				{
 					bundleName: "appvar2.i18n.i18n.properties",
 					supportedLocales: ["en", "de"],
-					fallbackLocale: "es",
+					fallbackLocale: "en",
 					terminologies: {
 						oil: {
 							bundleName: "appvar2.i18n.terminologies.oil.i18n",
