@@ -2,12 +2,13 @@
 	xmlns="sap.uxap"
 	xmlns:layout="sap.ui.layout"
 	xmlns:m="sap.m"
+	xmlns:ui="sap.ui.table"
 	xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
 	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
 	xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
 	controllerName="sap.uxap.sample.ObjectPageState.controller.ObjectPageState"
 	height="100%">
-	<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true" selectedSection="paymentSubSection">
+	<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true" selectedSection="paymentSubSection" useIconTabBar="true">
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>
 				<expandedHeading>
@@ -144,6 +145,49 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
+
+			<ObjectPageSection title="Table information">
+				<subSections>
+					<ObjectPageSubSection title="Personal Belongings">
+					<ui:Table id="idProductsTable"
+						visibleRowCountMode="Auto"
+						minAutoRowCount="2"
+						rows="{
+							path: 'TableModel>/ProductCollection',
+							sorter: {
+								path: 'Name'
+							}
+						}">
+						<ui:columns>
+							<ui:Column
+								label="Product">
+								<ui:template>
+									<m:Text text="{TableModel>ProductId}" />
+								</ui:template>
+							</ui:Column>
+							<ui:Column
+								label="Supplier">
+								<ui:template>
+									<m:Text text="{TableModel>SupplierName}" />
+								</ui:template>
+							</ui:Column>
+							<ui:Column
+								label="Category">
+								<ui:template>
+									<m:Text text="{TableModel>Category}" />
+								</ui:template>
+							</ui:Column>
+							<ui:Column label="Price">
+								<ui:template>
+									<m:Text text="{TableModel>Price}" />
+								</ui:template>
+							</ui:Column>
+						</ui:columns>
+					</ui:Table>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
 		</sections>
 	</ObjectPageLayout>
 </mvc:View>
