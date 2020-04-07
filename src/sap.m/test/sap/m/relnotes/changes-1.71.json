@@ -1430,5 +1430,32 @@
         ]
       }
     ]
+  },
+  "1.71.14": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "fa557daabf806b8477c8db360f2a92e750462963",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Duplicate tokens on mobile fixed.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002353582020"
+          }
+        ]
+      },
+      {
+        "id": "c78c68541513cdcbc4def22e5f181f692630f56f",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Suggestions no longer auto open on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001755142020"
+          }
+        ]
+      }
+    ]
   }
 }

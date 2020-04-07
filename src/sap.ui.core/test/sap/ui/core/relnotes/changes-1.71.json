@@ -583,5 +583,25 @@
         ]
       }
     ]
+  },
+  "1.71.14": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "e9827413603ef9b1b897304a1b72f9a664ff9f10",
+        "type": "FIX",
+        "text": " routing.HashChanger: correct the call order between history and router",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070047882"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070024865"
+          }
+        ]
+      }
+    ]
   }
 }
