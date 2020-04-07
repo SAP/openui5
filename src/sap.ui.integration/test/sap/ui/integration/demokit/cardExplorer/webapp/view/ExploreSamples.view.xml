@@ -115,6 +115,7 @@
 						id="cardEditor"
 						visible="{= ${settings>/editorType} === 'card' }"
 						jsonChange="onCardEditorChange"
+						class="sapUiSmallMargin"
 					/>
 				</Page>
 			</l:SplitPane>

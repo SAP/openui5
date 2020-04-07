@@ -1,0 +1,3 @@
+.sapUiForm.sapUiIntegrationBaseEditorFormLayoutNoPadding > .sapUiFormResGrid > div {
+    padding: 0;
+}
