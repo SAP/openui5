@@ -1363,18 +1363,11 @@ sap.ui.define([
 
 	Core.prototype._setBodyAccessibilityRole = function() {
 		var oConfig = this.oConfiguration,
-			body = document.body, sBodyRole, bAvoidAriaApplicationRole;
+			body = document.body;
 
 		//Add ARIA role 'application'
-		if (oConfig.getAccessibility() && oConfig.getAutoAriaBodyRole()) {
-			sBodyRole = body.getAttribute("role");
-			bAvoidAriaApplicationRole = oConfig.getAvoidAriaApplicationRole();
-
-			if (!sBodyRole && !bAvoidAriaApplicationRole) {
-				body.setAttribute("role", "application");
-			} else if (sBodyRole === "application" && bAvoidAriaApplicationRole) {
-				body.removeAttribute("role");
-			}
+		if (oConfig.getAccessibility() && oConfig.getAutoAriaBodyRole() && !body.getAttribute("role")) {
+			body.setAttribute("role", "application");
 		}
 	};
 
@@ -3291,11 +3284,6 @@ sap.ui.define([
 			}
 
 			oStaticArea.setAttribute("id", STATIC_UIAREA_ID);
-
-			if (document.body.getAttribute("role") != "application" && !oConfig.getAvoidAriaApplicationRole()) {
-				// Only set ARIA application role if not available on html body (see configuration entry "autoAriaBodyRole")
-				oStaticArea.setAttribute("role", "application");
-			}
 
 			Object.assign(oStaticArea.style, {
 				"height": "0",
