@@ -42,6 +42,7 @@ sap.ui.define([
 	 */
 	var BasePropertyEditor = Control.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor", {
 		metadata: {
+			interfaces : ["sap.ui.core.IFormContent"],
 			properties: {
 				"renderLabel" : {
 					type: "boolean",
@@ -524,6 +525,33 @@ sap.ui.define([
 		}
 
 		return oLabel;
+	};
+
+	BasePropertyEditor.prototype.enhanceAccessibilityState = function (oElement, mAriaProps) {
+		var oParent = this.getParent();
+
+		if (oParent && oParent.enhanceAccessibilityState) {
+			// use Field as control, but aria properties of rendered inner control.
+			oParent.enhanceAccessibilityState(this, mAriaProps);
+		}
+
+		return mAriaProps;
+	};
+
+	BasePropertyEditor.prototype.getFocusDomRef = function() {
+		var oControl = this.getContent();
+
+		if (oControl && oControl.isA("sap.ui.core.IFormContent")) {
+			return oControl.getFocusDomRef();
+		}
+	};
+
+	BasePropertyEditor.prototype.getIdForLabel = function() {
+		var oControl = this.getContent();
+
+		if (oControl && oControl.isA("sap.ui.core.IFormContent")) {
+			return oControl.getIdForLabel();
+		}
 	};
 
 	return BasePropertyEditor;
