@@ -31,7 +31,7 @@ sap.ui.define([
 	 * 	<td><code>allowKeyChange</code></td>
 	 *  <td><code>boolean</code></td>
 	 * 	<td><code>true</code></td>
-	 * 	<td>Whether to allow editing the key attribute of map entries</td>
+	 * 	<td>Whether to render an editor for the key attribute of map entries</td>
 	 * </tr>
 	 * <tr>
 	 * 	<td><code>allowAddAndRemove</code></td>
@@ -111,17 +111,28 @@ sap.ui.define([
 	};
 
 	ComplexMapEditor.prototype.setConfig = function (oConfig) {
-		var oArrayConfig = _merge({}, {
-			template: {
+		var oTemplate = {};
+
+		if (oConfig["allowKeyChange"] !== false) {
+			// Developer scenario
+
+			oTemplate = {
 				key: {
 					label: oConfig["keyLabel"] || this.getI18nProperty("CARD_EDITOR.COMPLEX_MAP.KEY"),
 					type: "string",
-					path: "key",
-					enabled: oConfig["allowKeyChange"] !== false
+					path: "key"
 				}
+			};
+		}
+
+		var oArrayConfig = _merge(
+			{},
+			{
+				template: oTemplate,
+				allowSorting: false
 			},
-			allowSorting: false
-		}, oConfig);
+			oConfig
+		);
 		oArrayConfig.type = "array";
 
 		// Avoid registration on BaseEditor

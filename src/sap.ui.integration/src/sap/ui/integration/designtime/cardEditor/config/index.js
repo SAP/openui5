@@ -110,22 +110,8 @@ sap.ui.define([
 					"label": "{i18n>CARD_EDITOR.DESTINATIONS}",
 					"itemLabel": "{i18n>CARD_EDITOR.DESTINATION}",
 					"path": "configuration/destinations",
-					"type": "complexMap",
-					"template": {
-						"name": {
-							"label": "{i18n>CARD_EDITOR.DESTINATION.NAME}",
-							"type": "enum",
-							"path": "name",
-							"enum": [],
-							"allowCustomValues": true,
-							"allowBindings": false
-						},
-						"defaultUrl": {
-							"label": "{i18n>CARD_EDITOR.DESTINATION.DEFAULT_URL}",
-							"type": "string",
-							"path": "defaultUrl"
-						}
-					}
+					"type": "destinations",
+					"allowedValues": ["Northwind", "JAM"]
 				}
 			},
 			HeaderConfig,
@@ -148,7 +134,8 @@ sap.ui.define([
 			"list": "sap/ui/integration/designtime/baseEditor/propertyEditor/listEditor/ListEditor",
 			"complexMap": "sap/ui/integration/designtime/cardEditor/propertyEditor/complexMapEditor/ComplexMapEditor",
 			"datetime": "sap/ui/integration/designtime/baseEditor/propertyEditor/dateTimeEditor/DateTimeEditor",
-			"date": "sap/ui/integration/designtime/baseEditor/propertyEditor/dateEditor/DateEditor"
+			"date": "sap/ui/integration/designtime/baseEditor/propertyEditor/dateEditor/DateEditor",
+			"destinations": "sap/ui/integration/designtime/cardEditor/propertyEditor/destinationsEditor/DestinationsEditor"
 		},
 		"i18n" : "sap/ui/integration/designtime/cardEditor/i18n/i18n.properties"
 	};

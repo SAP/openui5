@@ -88,7 +88,7 @@ sap.ui.define([
 				aValue.forEach(function(oValue, iIndex) {
 					var oValueCopy = deepClone(oValue);
 					var mItem = {
-						itemLabel: oConfig.itemLabel || this.getI18nProperty("BASE_EDITOR.ARRAY.ITEM_LABEL"),
+						itemLabel: oConfig.itemLabel,
 						index: iIndex,
 						total: aValue.length,
 						properties: Object.keys(oConfig.template).map(function (sKey) {
