@@ -88,6 +88,27 @@ sap.ui.define([
 							expand: "to_EntityType02Nav"
 						}
 					});
+				}),
+
+				new Promise(function (resolve) {
+					oView.byId("DelegateMainForm").bindElement({
+						path: "/EntityTypes2(EntityType02_Property01='EntityType02Property01Value')",
+						events: {
+							dataReceived: resolve
+						},
+						parameters: {
+							expand: "to_EntityType02Nav"
+						}
+					});
+				}),
+
+				new Promise(function (resolve) {
+					oView.byId("DelegateGroupEntityType01").bindElement({
+						path: "/EntityTypes(Property01='propValue01',Property02='propValue02',Property03='propValue03')",
+						events: {
+							dataReceived: resolve
+						}
+					});
 				})
 			);
 		},
@@ -107,18 +128,11 @@ sap.ui.define([
 
 		switchToAdaptionMode: function () {
 			sap.ui.require([
-				"sap/ui/rta/RuntimeAuthoring"
-			], function(RuntimeAuthoring) {
-				var oRta = new RuntimeAuthoring({
-					rootControl: this.getOwnerComponent(),
-					flexSettings: {
-						developerMode: false
-					}
+				"sap/ui/rta/api/startKeyUserAdaptation"
+			], function(startKeyUserAdaptation) {
+				startKeyUserAdaptation({
+					rootControl: this.getOwnerComponent()
 				});
-				oRta.attachEvent('stop', function() {
-					oRta.destroy();
-				});
-				oRta.start();
 			}.bind(this));
 		},
 

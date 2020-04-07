@@ -227,6 +227,33 @@ sap.ui.define([
 			}).then(_flattenProperties);
 	}
 
+	function _getAllPropertiesFromDelegate(oElement, sAggregationName, mAction) {
+		var mPropertyBag = {
+			element: oElement,
+			aggregationName: sAggregationName,
+			payload: mAction.delegateInfo.payload || {}
+		};
+		return mAction.delegateInfo.delegate.getPropertyInfo(mPropertyBag)
+			.then(_flattenProperties);
+	}
+
+	function _getAllPropertiesFromModels(oElement, sAggregationName, mActions) {
+		var mAddODataProperty = mActions.addODataProperty;
+		var mAddViaDelegate = mActions.addViaDelegate;
+		var fnGetAllProperties;
+		if (mAddViaDelegate) {
+			fnGetAllProperties = _getAllPropertiesFromDelegate.bind(null, oElement, sAggregationName, mAddViaDelegate);
+		} else if (mAddODataProperty) {
+			fnGetAllProperties = _getODataPropertiesOfModel.bind(null, oElement, sAggregationName);
+		} else {
+			fnGetAllProperties = Promise.resolve.bind(Promise, []);
+		}
+		return fnGetAllProperties() //arguments bound before
+			.then(function(aProperties) {
+				return _checkForComplexDuplicates(aProperties);
+			});
+	}
+
 	function _filterUnsupportedProperties(aProperties) {
 		return aProperties.filter(function(mProperty) {
 			//see _enrichProperty
@@ -243,19 +270,19 @@ sap.ui.define([
 		return oCustomItem;
 	}
 
-	function _oDataPropertyToAdditionalElementInfo (oODataProperty) {
+	function _oPropertyToAdditionalElementInfo (sType, oProperty) {
 		return {
 			selected : false,
-			label : oODataProperty.label || oODataProperty.name,
-			referencedComplexPropertyName: oODataProperty.referencedComplexPropertyName ? oODataProperty.referencedComplexPropertyName : "",
-			duplicateComplexName: oODataProperty.duplicateComplexName ? oODataProperty.duplicateComplexName : false,
-			tooltip :  oODataProperty.tooltip || oODataProperty.label,
+			label : oProperty.label || oProperty.name,
+			referencedComplexPropertyName: oProperty.referencedComplexPropertyName ? oProperty.referencedComplexPropertyName : "",
+			duplicateComplexName: oProperty.duplicateComplexName ? oProperty.duplicateComplexName : false,
+			tooltip :  oProperty.tooltip || oProperty.label,
 			originalLabel: "",
 			//command relevant data
-			type : "odata",
-			entityType : oODataProperty.entityType,
-			name : oODataProperty.name,
-			bindingPath : oODataProperty.bindingPath
+			type : sType,
+			entityType : oProperty.entityType,
+			name : oProperty.name,
+			bindingPath : oProperty.bindingPath
 		};
 	}
 
@@ -363,6 +390,52 @@ sap.ui.define([
 		}).pop();
 	}
 
+	function _vBindingToPath(vBinding) {
+		return (
+			jQuery.isPlainObject(vBinding)
+			? vBinding.parts[0].path //TODO what about complex bindings with multiple paths, this was not covered so far?
+			: !!vBinding.getPath && vBinding.getPath()
+		);
+	}
+
+	function _getUnrepresentedProperties(oElement, mAction, oModel, fnGetAllProperties, sType) {
+		var oDefaultAggregation = oElement.getMetadata().getAggregation();
+		var sAggregationName = oDefaultAggregation ? oDefaultAggregation.name : mAction.action.aggregation;
+		return Promise.resolve()
+			.then(function () {
+				return fnGetAllProperties(oElement, sAggregationName, mAction);
+			})
+			.then(function(aAllProperties) {
+				var aUnrepresentedProperties = _filterUnsupportedProperties(aAllProperties);
+				var aRelevantElements = _getRelevantElements(oElement, mAction.relevantContainer, sAggregationName);
+				var aBindingPaths = [];
+
+				aRelevantElements.forEach(function(oElement) {
+					aBindingPaths = aBindingPaths.concat(BindingsExtractor.getBindings(oElement, oModel)
+						.map(_vBindingToPath)
+					);
+				});
+
+				var fnFilter = mAction.action.filter ? mAction.action.filter : function() {return true;};
+
+				aUnrepresentedProperties = aUnrepresentedProperties.filter(function(oDataProperty) {
+					var bHasBindingPath = false;
+					if (aBindingPaths) {
+						bHasBindingPath = aBindingPaths.some(function(sBindingPath) {
+							return sBindingPath === oDataProperty.bindingPath;
+						});
+					}
+					return !bHasBindingPath && fnFilter(mAction.relevantContainer, oDataProperty);
+				});
+
+				aUnrepresentedProperties = _checkForComplexDuplicates(aUnrepresentedProperties);
+
+				return aUnrepresentedProperties;
+			}).then(function(aUnrepresentedProperties) {
+				return aUnrepresentedProperties.map(_oPropertyToAdditionalElementInfo.bind(null, sType));
+			});
+	}
+
 	/**
 	 * Enhance Invisible Element with extra data from OData property
 	 *
@@ -426,20 +499,19 @@ sap.ui.define([
 		 * @return {Promise} - returns a Promise which resolves with a list of hidden controls are available to display
 		 */
 		enhanceInvisibleElements : function(oElement, mActions) {
-			var oModel = oElement.getModel();
+			var oModel = oElement.getModel(); //TODO named model support
 			var mRevealData = mActions.reveal;
 			var mAddODataProperty = mActions.addODataProperty;
+			var mAddViaDelegate = mActions.addViaDelegate;
 			var mCustom = mActions.custom;
 			var oDefaultAggregation = oElement.getMetadata().getAggregation();
 			var sAggregationName = oDefaultAggregation ? oDefaultAggregation.name : mActions.aggregation;
 
 			return Promise.resolve()
 				.then(function () {
-					return _getODataPropertiesOfModel(oElement, sAggregationName);
+					return _getAllPropertiesFromModels(oElement, sAggregationName, mActions);
 				})
-				.then(function(aODataProperties) {
-					aODataProperties = _checkForComplexDuplicates(aODataProperties);
-
+				.then(function(aProperties) {
 					var aAllElementData = [];
 					var aInvisibleElements = mRevealData.elements || [];
 
@@ -451,20 +523,20 @@ sap.ui.define([
 						oInvisibleElement.label = ElementUtil.getLabelForElement(oInvisibleElement, mAction.getLabel);
 
 						// BCP: 1880498671
-						if (mAddODataProperty) {
+						if (mAddODataProperty || mAddViaDelegate) {
 							if (_getBindingPath(oElement, sAggregationName) === _getBindingPath(oInvisibleElement, sAggregationName)) {
 								//TODO fix with stashed type support
 								mBindingPathCollection = BindingsExtractor.collectBindingPaths(oInvisibleElement, oModel);
-								oInvisibleElement.duplicateComplexName = _checkForDuplicateLabels(oInvisibleElement, aODataProperties);
+								oInvisibleElement.duplicateComplexName = _checkForDuplicateLabels(oInvisibleElement, aProperties);
 
 								//Add information from the oDataProperty to the InvisibleProperty if available;
 								//if oData is available and the element is not present in it, do not include it
 								//Example use case: custom field which was hidden and then removed from system
 								//should not be available for adding after the removal
-								if (aODataProperties.length > 0) {
+								if (aProperties.length > 0) {
 									bIncludeElement = _checkAndEnhanceODataProperty(
 										oInvisibleElement,
-										aODataProperties,
+										aProperties,
 										mBindingPathCollection);
 								}
 							} else if (BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0) {
@@ -505,50 +577,33 @@ sap.ui.define([
 		 * @return {Promise} - returns a Promise which resolves with a list of available to display OData properties
 		 */
 		getUnboundODataProperties: function (oElement, mAction) {
-			var oDefaultAggregation = oElement.getMetadata().getAggregation();
-			var sAggregationName = oDefaultAggregation ? oDefaultAggregation.name : mAction.action.aggregation;
 			var oModel = oElement.getModel();
+			return _getUnrepresentedProperties(
+				oElement,
+				mAction,
+				oModel,
+				_getODataPropertiesOfModel,
+				"odata"
+			);
+		},
 
-			return Promise.resolve()
-				.then(function () {
-					return _getODataPropertiesOfModel(oElement, sAggregationName);
-				})
-				.then(function(aProperties) {
-					var aODataProperties = _filterUnsupportedProperties(aProperties);
-					var aRelevantElements = _getRelevantElements(oElement, mAction.relevantContainer, sAggregationName);
-					var aBindingPaths = [];
-
-					aRelevantElements.forEach(function(oElement) {
-						aBindingPaths = aBindingPaths.concat(BindingsExtractor.getBindings(oElement, oModel)
-							.map(function(vBinding) {
-								return (
-									jQuery.isPlainObject(vBinding)
-									? vBinding.parts[0].path //TODO what about complex bindings with multiple paths, this was not covered so far?
-									: !!vBinding.getPath && vBinding.getPath()
-								);
-							})
-						);
-					});
-
-					var fnFilter = mAction.action.filter ? mAction.action.filter : function() {return true;};
-
-					aODataProperties = aODataProperties.filter(function(oDataProperty) {
-						var bHasBindingPath = false;
-						if (aBindingPaths) {
-							bHasBindingPath = aBindingPaths.some(function(sBindingPath) {
-								return sBindingPath === oDataProperty.bindingPath;
-							});
-						}
-						return !bHasBindingPath && fnFilter(mAction.relevantContainer, oDataProperty);
-					});
-
-					aODataProperties = _checkForComplexDuplicates(aODataProperties);
-
-					return aODataProperties;
-				})
-				.then(function(aUnboundODataProperties) {
-					return aUnboundODataProperties.map(_oDataPropertyToAdditionalElementInfo);
-				});
+		/**
+		 * Retrieves available properties from the delegate
+		 *
+		 * @param {sap.ui.core.Control} oElement - Source element for which delegate we're looking for additional properties
+		 * @param {Object} mAction - Action descriptor
+		 *
+		 * @return {Promise} - returns a Promise which resolves with a list of available to display delegate properties
+		 */
+		getUnrepresentedDelegateProperties: function (oElement, mAction) {
+			var oModel = oElement.getModel(); //TODO named model from payload!
+			return _getUnrepresentedProperties(
+				oElement,
+				mAction,
+				oModel,
+				_getAllPropertiesFromDelegate,
+				"delegate"
+			);
 		},
 
 		getCustomAddItems: function(oElement, mAction) {
@@ -573,7 +628,7 @@ sap.ui.define([
 		},
 
 		getFilteredItemsList: function(aAnalyzerValues) {
-			// promise index 0: invisible, 1: addOData, 2: custom, 3: delegate
+			// promise index 0: invisible, 1: addViaOData/addViaDelegate, 2: custom
 			var aInvisibleElements = aAnalyzerValues[0];
 			var iCustomItemsIndex = 2;
 			var aCustomItems = aAnalyzerValues[iCustomItemsIndex];
