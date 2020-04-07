@@ -34,6 +34,21 @@ sap.ui.define([
 		 */
 		setModel : function (oModel, sName) {
 			return this.getView().setModel(oModel, sName);
+		},
+
+		/**
+		 * Returns a promises which resolves with the resource bundle value of the given key <code>sI18nKey</code>
+		 *
+		 * @public
+		 * @param {string} sI18nKey The key
+		 * @param {sap.ui.core.model.ResourceModel} oResourceModel The resource model
+		 * @param {string[]} [aPlaceholderValues] The values which will repalce the placeholders in the i18n value
+		 * @returns {Promise<string>} The promise
+		 */
+		getBundleTextByModel: function(sI18nKey, oResourceModel, aPlaceholderValues){
+			return oResourceModel.getResourceBundle().then(function(oBundle){
+				return oBundle.getText(sI18nKey, aPlaceholderValues);
+			});
 		}
 	});
 

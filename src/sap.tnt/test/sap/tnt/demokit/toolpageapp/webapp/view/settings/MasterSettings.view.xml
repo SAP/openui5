@@ -17,7 +17,7 @@
 			mode="SingleSelectMaster"
 			selectionChange=".onMasterPressed">
 			<StandardListItem
-				title="{side>title}"
+				title="{path: 'side>titleI18nKey', formatter: '.getBundleText'}"
 				type="Navigation"
 				selected="{= ${device>/system/phone} ? false : ${side>selected}}"/>
 		</List>

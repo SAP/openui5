@@ -86,57 +86,64 @@ sap.ui.define([
 				}
 				this.getRouter().navTo(sKey);
 			} else {
-				MessageToast.show(sKey);
+				this.getBundleText("clickHandlerMessage", [oItem.getText()]).then(function(sMessageText){
+					MessageToast.show(sMessageText);
+				});
 			}
 		},
 
 		onUserNamePress: function(oEvent) {
-			var oBundle = this.getModel("i18n").getResourceBundle();
-			// close message popover
-			var oMessagePopover = this.byId("errorMessagePopover");
-			if (oMessagePopover && oMessagePopover.isOpen()) {
-				oMessagePopover.destroy();
-			}
-			var fnHandleUserMenuItemPress = function (oEvent) {
-				MessageToast.show(oEvent.getSource().getText() + " was pressed");
-			};
-			var oActionSheet = new ActionSheet(this.getView().createId("userMessageActionSheet"), {
-				title: oBundle.getText("userHeaderTitle"),
-				showCancelButton: false,
-				buttons: [
-					new Button({
-						text: 'User Settings',
-						type: ButtonType.Transparent,
-						press: fnHandleUserMenuItemPress
-					}),
-					new Button({
-						text: "Online Guide",
-						type: ButtonType.Transparent,
-						press: fnHandleUserMenuItemPress
-					}),
-					new Button({
-						text: 'Feedback',
-						type: ButtonType.Transparent,
-						press: fnHandleUserMenuItemPress
-					}),
-					new Button({
-						text: 'Help',
-						type: ButtonType.Transparent,
-						press: fnHandleUserMenuItemPress
-					}),
-					new Button({
-						text: 'Logout',
-						type: ButtonType.Transparent,
-						press: fnHandleUserMenuItemPress
-					})
-				],
-				afterClose: function () {
-					oActionSheet.destroy();
+			var oSource = oEvent.getSource();
+			this.getModel("i18n").getResourceBundle().then(function(oBundle){
+				// close message popover
+				var oMessagePopover = this.byId("errorMessagePopover");
+				if (oMessagePopover && oMessagePopover.isOpen()) {
+					oMessagePopover.destroy();
 				}
-			});
-			// forward compact/cozy style into dialog
-			syncStyleClass(this.getView().getController().getOwnerComponent().getContentDensityClass(), this.getView(), oActionSheet);
-			oActionSheet.openBy(oEvent.getSource());
+				var fnHandleUserMenuItemPress = function (oEvent) {
+					this.getBundleText("clickHandlerMessage", [oEvent.getSource().getText()]).then(function(sClickHandlerMessage){
+						MessageToast.show(sClickHandlerMessage);
+					});
+				}.bind(this);
+				var oActionSheet = new ActionSheet(this.getView().createId("userMessageActionSheet"), {
+					title: oBundle.getText("userHeaderTitle"),
+					showCancelButton: false,
+					buttons: [
+						new Button({
+							text: '{i18n>userAccountUserSettings}',
+							type: ButtonType.Transparent,
+							press: fnHandleUserMenuItemPress
+						}),
+						new Button({
+							text: "{i18n>userAccountOnlineGuide}",
+							type: ButtonType.Transparent,
+							press: fnHandleUserMenuItemPress
+						}),
+						new Button({
+							text: '{i18n>userAccountFeedback}',
+							type: ButtonType.Transparent,
+							press: fnHandleUserMenuItemPress
+						}),
+						new Button({
+							text: '{i18n>userAccountHelp}',
+							type: ButtonType.Transparent,
+							press: fnHandleUserMenuItemPress
+						}),
+						new Button({
+							text: '{i18n>userAccountLogout}',
+							type: ButtonType.Transparent,
+							press: fnHandleUserMenuItemPress
+						})
+					],
+					afterClose: function () {
+						oActionSheet.destroy();
+					}
+				});
+				this.getView().addDependent(oActionSheet);
+				// forward compact/cozy style into dialog
+				syncStyleClass(this.getView().getController().getOwnerComponent().getContentDensityClass(), this.getView(), oActionSheet);
+				oActionSheet.openBy(oSource);
+			}.bind(this));
 		},
 
 		onSideNavButtonPress: function() {
@@ -148,30 +155,31 @@ sap.ui.define([
 
 		_setToggleButtonTooltip : function(bSideExpanded) {
 			var oToggleButton = this.byId('sideNavigationToggleButton');
-			if (bSideExpanded) {
-				oToggleButton.setTooltip('Large Size Navigation');
-			} else {
-				oToggleButton.setTooltip('Small Size Navigation');
-			}
+			this.getBundleText(bSideExpanded ? "expandMenuButtonText" : "collpaseMenuButtonText").then(function(sTooltipText){
+				oToggleButton.setTooltip(sTooltipText);
+			});
 		},
 
 		// Errors Pressed
 		onMessagePopoverPress: function (oEvent) {
+			var oMessagePopoverButton = oEvent.getSource();
 			if (!this.byId("errorMessagePopover")) {
-				var oMessagePopover = new MessagePopover(this.getView().createId("errorMessagePopover"), {
-					placement: VerticalPlacementType.Bottom,
-					items: {
-						path: 'alerts>/alerts/errors',
-						factory: this._createError
-					},
-					afterClose: function () {
-						oMessagePopover.destroy();
-					}
-				});
-				this.byId("app").addDependent(oMessagePopover);
-				// forward compact/cozy style into dialog
-				syncStyleClass(this.getView().getController().getOwnerComponent().getContentDensityClass(), this.getView(), oMessagePopover);
-				oMessagePopover.openBy(oEvent.getSource());
+				this.getModel("i18n").getResourceBundle().then(function(oBundle){
+					var oMessagePopover = new MessagePopover(this.getView().createId("errorMessagePopover"), {
+						placement: VerticalPlacementType.Bottom,
+						items: {
+							path: 'alerts>/alerts/errors',
+							factory: this._createError.bind(this, oBundle)
+						},
+						afterClose: function () {
+							oMessagePopover.destroy();
+						}
+					});
+					this.byId("app").addDependent(oMessagePopover);
+					// forward compact/cozy style into dialog
+					syncStyleClass(this.getView().getController().getOwnerComponent().getContentDensityClass(), this.getView(), oMessagePopover);
+					oMessagePopover.openBy(oMessagePopoverButton);
+				}.bind(this));
 			}
 		},
 
@@ -181,35 +189,37 @@ sap.ui.define([
 		 * @public
 		 */
 		onNotificationPress: function (oEvent) {
-			var oBundle = this.getModel("i18n").getResourceBundle();
-			// close message popover
-			var oMessagePopover = this.byId("errorMessagePopover");
-			if (oMessagePopover && oMessagePopover.isOpen()) {
-				oMessagePopover.destroy();
-			}
-			var oButton = new Button({
-				text: oBundle.getText("notificationButtonText"),
-				press: function () {
-					MessageToast.show("Show all Notifications was pressed");
+			var oSource = oEvent.getSource();
+			this.getModel("i18n").getResourceBundle().then(function(oBundle){
+				// close message popover
+				var oMessagePopover = this.byId("errorMessagePopover");
+				if (oMessagePopover && oMessagePopover.isOpen()) {
+					oMessagePopover.destroy();
 				}
-			});
-			var oNotificationPopover = new ResponsivePopover(this.getView().createId("notificationMessagePopover"), {
-				title: oBundle.getText("notificationTitle"),
-				contentWidth: "300px",
-				endButton : oButton,
-				placement: PlacementType.Bottom,
-				content: {
-					path: 'alerts>/alerts/notifications',
-					factory: this._createNotification
-				},
-				afterClose: function () {
-					oNotificationPopover.destroy();
-				}
-			});
-			this.byId("app").addDependent(oNotificationPopover);
-			// forward compact/cozy style into dialog
-			syncStyleClass(this.getView().getController().getOwnerComponent().getContentDensityClass(), this.getView(), oNotificationPopover);
-			oNotificationPopover.openBy(oEvent.getSource());
+				var oButton = new Button({
+					text: oBundle.getText("notificationButtonText"),
+					press: function (oEvent) {
+						MessageToast.show(oBundle.getText("clickHandlerMessage", [oEvent.getSource().getText()]));
+					}
+				});
+				var oNotificationPopover = new ResponsivePopover(this.getView().createId("notificationMessagePopover"), {
+					title: oBundle.getText("notificationTitle"),
+					contentWidth: "300px",
+					endButton : oButton,
+					placement: PlacementType.Bottom,
+					content: {
+						path: 'alerts>/alerts/notifications',
+						factory: this._createNotification.bind(this)
+					},
+					afterClose: function () {
+						oNotificationPopover.destroy();
+					}
+				});
+				this.byId("app").addDependent(oNotificationPopover);
+				// forward compact/cozy style into dialog
+				syncStyleClass(this.getView().getController().getOwnerComponent().getContentDensityClass(), this.getView(), oNotificationPopover);
+				oNotificationPopover.openBy(oSource);
+			}.bind(this));
 		},
 
 		/**
@@ -232,13 +242,16 @@ sap.ui.define([
 					aItems.splice(sIndex, 1);
 					oEvent.getSource().getModel("alerts").setProperty("/alerts/notifications", aItems);
 					oEvent.getSource().getModel("alerts").updateBindings("/alerts/notifications");
-					MessageToast.show("Notification has been deleted.");
-				},
+					this.getBundleText("notificationMessageDeleted").then(function(sMessageText){
+						MessageToast.show(sMessageText);
+					});
+				}.bind(this),
 				datetime: oBindingObject.date,
 				authorPicture: oBindingObject.icon,
 				press: function () {
-					var oBundle = this.getModel("i18n").getResourceBundle();
-					MessageToast.show(oBundle.getText("notificationItemClickedMessage", oBindingObject.title));
+					this.getModel("i18n").getResourceBundle().then(function(oBundle){
+						MessageToast.show(oBundle.getText("notificationItemClickedMessage", oBindingObject.title));
+					});
 				},
 				customData : [
 					new CustomData({
@@ -250,14 +263,17 @@ sap.ui.define([
 			return oNotificationItem;
 		},
 
-		_createError: function (sId, oBindingContext) {
+		_createError: function (oBundle, sId, oBindingContext) {
 			var oBindingObject = oBindingContext.getObject();
 			var oLink = new Link("moreDetailsLink", {
-				text: "More Details",
-				press: function() {
-					MessageToast.show("More Details was pressed");
-				}
+				text: oBundle.getText("moreDetailsButtonText"),
+				press: function(oEvent) {
+					this.getBundleText("clickHandlerMessage", [oEvent.getSource().getText()]).then(function(sClickHandlerMessage){
+						MessageToast.show(sClickHandlerMessage);
+					});
+				}.bind(this)
 			});
+
 			var oMessageItem = new MessagePopoverItem({
 				title: oBindingObject.title,
 				subtitle: oBindingObject.subTitle,
@@ -266,6 +282,18 @@ sap.ui.define([
 				link: oLink
 			});
 			return oMessageItem;
+		},
+
+		/**
+		 * Returns a promises which resolves with the resource bundle value of the given key <code>sI18nKey</code>
+		 *
+		 * @public
+		 * @param {string} sI18nKey The key
+		 * @param {string[]} [aPlaceholderValues] The values which will repalce the placeholders in the i18n value
+		 * @returns {Promise<string>} The promise
+		 */
+		getBundleText: function(sI18nKey, aPlaceholderValues){
+			return this.getBundleTextByModel(sI18nKey, this.getModel("i18n"), aPlaceholderValues);
 		}
 
 	});

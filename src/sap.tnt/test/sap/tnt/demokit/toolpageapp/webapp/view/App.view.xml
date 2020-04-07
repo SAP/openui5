@@ -13,7 +13,7 @@
 					icon="sap-icon://menu2"
 					type="Transparent"
 					press=".onSideNavButtonPress"
-					tooltip="{i18n>navigationToggleButtonTooltip}">
+					tooltip="{i18n>collpaseMenuButtonText}">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow"/>
 					</layoutData>
@@ -66,7 +66,7 @@
 						templateShareable: false
 					}">
 					<tnt:NavigationListItem
-						text="{side>title}"
+						text="{path: 'side>titleI18nKey', formatter: '.getBundleText'}"
 						icon="{side>icon}"
 						expanded="{side>expanded}"
 						items="{
@@ -75,7 +75,7 @@
 						}"
 						key="{side>key}">
 						<tnt:NavigationListItem
-							text="{side>title}"
+							text="{path: 'side>titleI18nKey', formatter: '.getBundleText'}"
 							key="{side>key}">
 						</tnt:NavigationListItem>
 					</tnt:NavigationListItem>
@@ -87,7 +87,7 @@
 							templateShareable: false
 						}">
 						<tnt:NavigationListItem
-							text="{side>title}"
+							text="{path: 'side>titleI18nKey', formatter: '.getBundleText'}"
 							icon="{side>icon}"
 							key="{side>key}">
 						</tnt:NavigationListItem>
