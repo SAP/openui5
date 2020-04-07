@@ -87,6 +87,8 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', '
 		}
 	};
 
+	DatesRowRenderer.renderDummyCell = function() {};
+
 	/**
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.unified.calendar.DatesRow} oDatesRow The row which will be rendered

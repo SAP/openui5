@@ -1170,8 +1170,10 @@ sap.ui.define([
 		assert.ok(jQuery("#DP3-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
 
-		var aDays = jQuery("#DP3-cal--Month0-days").find(".sapUiCalItem");
-		var oDay;
+		var aMonths = jQuery("#DP3-cal-content").children(".sapUiCalMonthView"),
+			aDays = jQuery(aMonths[0]).find(".sapUiCalItem"),
+			oDay;
+
 		for ( var i = 0; i < aDays.length; i++) {
 			oDay = aDays[i];
 			if (jQuery(oDay).attr("data-sap-day") == "20140410") {

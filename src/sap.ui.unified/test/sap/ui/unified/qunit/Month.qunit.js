@@ -9,9 +9,10 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/unified/library"
 ], function(Month, CalendarDate, CalendarLegend, CalendarLegendRenderer,
-	CalendarLegendItem, Button, DateRange, DateTypeRange, unifiedLibrary) {
+	CalendarLegendItem, Button, DateRange, DateTypeRange, InvisibleText, unifiedLibrary) {
 	"use strict";
 
 	(function () {
@@ -318,11 +319,12 @@ sap.ui.define([
 		// BCP: 1880151681
 		QUnit.test("Selecting a weeknumber does not throw an error", function (assert) {
 			// Arrange
-			var oTarget = document.createElement("span");
-			oTarget.classList.add("sapUiCalWeekNum");
-			var oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
-				deviceStub = this.stub(sap.ui.Device.support, "touch", true),
-				isValueInThresholdStub = this.stub(this.oM, "_isValueInThreshold", function () { return true; });
+			this.oM.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var oTarget = this.oM.getDomRef().querySelector(".sapUiCalWeekNum"),
+				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
+				deviceStub = this.stub(sap.ui.Device.support, "touch", true);
 
 			// Act
 			this.oM._oMousedownPosition = oMouseEvent;
@@ -332,17 +334,17 @@ sap.ui.define([
 			assert.ok(true, "onmouseup does not throw an exception when weeknum is selected");
 
 			deviceStub.restore();
-			isValueInThresholdStub.restore();
 		});
 
 		// BCP: 1880151681
 		QUnit.test("Selecting a day header does not throw an error", function (assert) {
 			// Arrange
-			var oTarget = document.createElement("span");
-			oTarget.classList.add("sapUiCalWH");
-			var oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
-				deviceStub = this.stub(sap.ui.Device.support, "touch", true),
-				isValueInThresholdStub = this.stub(this.oM, "_isValueInThreshold", function () { return true; });
+			this.oM.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var oTarget = this.oM.getDomRef().querySelector(".sapUiCalWH"),
+				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
+				deviceStub = this.stub(sap.ui.Device.support, "touch", true);
 
 			// Act
 			this.oM._oMousedownPosition = oMouseEvent;
@@ -352,7 +354,7 @@ sap.ui.define([
 			assert.ok(true, "onmouseup does not throw an exception when day header is selected");
 
 			deviceStub.restore();
-			isValueInThresholdStub.restore();
+			this.oM.destroy();
 		});
 
 		QUnit.test("Date can't be selected via mouse's right button click", function (assert) {
@@ -377,9 +379,11 @@ sap.ui.define([
 
 		QUnit.test("Selecting a week number in IE + touch does not cause day selection", function (assert) {
 			// Arrange
-			var oTarget = document.createElement("span");
-			oTarget.classList.add("sapUiCalWeekNum");
-			var oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
+			this.oM.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var oTarget = this.oM.getDomRef().querySelector(".sapUiCalWeekNum"),
+				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
 				isSelectedDaySpy = this.spy(this.oM, "_selectDay"),
 				oBrowserStub = this.stub(sap.ui.Device, "browser", { msie: true });
 
@@ -396,9 +400,11 @@ sap.ui.define([
 
 		QUnit.test("Selecting a week number in Edge + touch does not cause day selection", function (assert) {
 			// Arrange
-			var oTarget = document.createElement("span");
-			oTarget.classList.add("sapUiCalWeekNum");
-			var oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
+			this.oM.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var oTarget = this.oM.getDomRef().querySelector(".sapUiCalWeekNum"),
+				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
 				isSelectedDaySpy = this.spy(this.oM, "_selectDay"),
 				oBrowserStub = this.stub(sap.ui.Device, "browser", {edge: true});
 
@@ -511,6 +517,27 @@ sap.ui.define([
 			assert.notOk(this.oSut.$().attr("aria-readonly"), "Month doesn't have aria-readonly on it");
 		});
 
+		QUnit.test("First DOM element with role='rowheader' has week label set", function (assert) {
+			// Arrange
+			this.oSut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			var oRowHeader = this.oSut.$().find("[role='rowheader']")[0],
+				aAriaLabels = oRowHeader.getAttribute("aria-labelledby").split(" ");
+
+			// Assert
+			assert.equal(
+				aAriaLabels[0],
+				InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_WEEK"),
+				"Week row info is corretly added"
+			);
+
+			assert.equal(
+				aAriaLabels[1],
+				oRowHeader.id,
+				"Week row info is corretly added"
+			);
+		});
+
 		QUnit.test("Day cells have role gridcell", function (assert) {
 			// Arrange
 			this.oSut.placeAt('qunit-fixture');
@@ -526,7 +553,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			assert.equal(jQuery("#" + this.oSut.getId() + "-days").attr("role"), "row", "The day cell's wrapper has role row");
+			assert.equal(this.oSut.getDomRef().childNodes[1].getAttribute("role"), "row", "The day cell's wrapper has role row");
 		});
 
 		QUnit.test("Special Dates with legend", function (assert) {
@@ -537,15 +564,6 @@ sap.ui.define([
 			//Assert
 			assert.ok(jQuery("#" + this.oSut.getId() + "-20160101").attr("aria-label").indexOf("National Holidays") >= 0,
 					"The corresponding legend item's text is used as aria-label");
-		});
-
-		QUnit.test("Special Dates without legend", function (assert) {
-			//Act
-			this.oSut.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
-
-			assert.ok(jQuery("#" + this.oSut.getId() + "-20160102").attr("aria-describedby").indexOf(CalendarLegendRenderer.typeARIATexts[CalendarDayType.Type02].getId()),
-					"The corresponding CalendarDayType.Type02 text is used as aria-describedby");
 		});
 
 		QUnit.module("Unfinished range selection indication allowance", {
@@ -901,7 +919,6 @@ sap.ui.define([
 				this.oTarget = document.createElement("span");
 				this.oTargetParent = document.createElement("div");
 
-				this.oTarget.classList.add("sapUiCalWeekNum");
 				this.oTargetParent.setAttribute('data-sap-day', "20170101");
 				this.oTargetParent.appendChild(this.oTarget);
 
@@ -971,7 +988,7 @@ sap.ui.define([
 		QUnit.test("[Multiple day selection] Week number click on touch devices", function (assert) {
 			// Prepare
 			var oWeekNumberSelectSpy = this.spy(this.oM, "fireWeekNumberSelect"),
-				oMockEvent = { target: this.oTarget };
+				oMockEvent = { target: this.oM.getDomRef().querySelector(".sapUiCalWeekNum") };
 
 			this.stub(sap.ui.Device.support, "touch", true);
 			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
@@ -992,7 +1009,7 @@ sap.ui.define([
 		QUnit.test("[Multiple day selection] Week number click on non-touch devices", function (assert) {
 			// Prepare
 			var oWeekNumberSelectSpy = this.spy(this.oM, "fireWeekNumberSelect"),
-				oMockEvent = { target: this.oTarget };
+				oMockEvent = { target: this.oM.getDomRef().querySelector(".sapUiCalWeekNum") };
 
 			this.stub(sap.ui.Device.support, "touch", false);
 			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
@@ -1038,7 +1055,7 @@ sap.ui.define([
 		QUnit.test("[Single interval selection] Week number click on touch devices", function (assert) {
 			// Prepare
 			var oWeekNumberSelectSpy = this.spy(this.oM, "fireWeekNumberSelect"),
-				oMockEvent = { target: this.oTarget };
+				oMockEvent = { target: this.oM.getDomRef().querySelector(".sapUiCalWeekNum") };
 
 			this.stub(sap.ui.Device.support, "touch", true);
 			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
@@ -1058,7 +1075,7 @@ sap.ui.define([
 		QUnit.test("[Single interval selection] Week number click on non-touch devices", function (assert) {
 			// Prepare
 			var oWeekNumberSelectSpy = this.spy(this.oM, "fireWeekNumberSelect"),
-				oMockEvent = { target: this.oTarget };
+				oMockEvent = { target: this.oM.getDomRef().querySelector(".sapUiCalWeekNum") };
 
 			this.stub(sap.ui.Device.support, "touch", false);
 			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
