@@ -115,18 +115,40 @@ sap.ui.define([
 				 },
 
 				/**
+				 * Fires when fragment is changed
+				 */
+				 fragmentChange: {
+					parameters: {
+						previousFragment: {
+							type: "string"
+						},
+						fragment: {
+							type: "string"
+						}
+					}
+				 },
+
+				/**
 				 * Fired when the editor fragment was loaded and the <code>asyncInit</code> method was executed
 				 */
-				ready: {}
+				ready: {},
+
+				/**
+				 * Fires when init is finished
+				 */
+				init: {}
 			}
 		},
 		/**
 		 * Path to the fragment xml that should be loaded for an editor
 		 */
 		xmlFragment: null,
+		_currentXmlFragment: null,
+		_bFragmentReady: false,
 
 		constructor: function() {
 			this._iExpectedWrapperCount = 0;
+			this._currentXmlFragment = this.xmlFragment;
 
 			Control.prototype.constructor.apply(this, arguments);
 
@@ -178,16 +200,19 @@ sap.ui.define([
 				);
 			}, this);
 
-			// Start init process
-			this._loadFragment()
-				.then(this.asyncInit.bind(this))
-				.then(function () {
-					this._bInitFinished = true;
-					// When the expected wrapper count was already set, initialization finished after the editor
-					// value was set and the ready check might already have been executed and failed
-					// Therefore execute the check again
-					this._checkReadyState();
-				}.bind(this));
+			this.asyncInit().then(function () {
+				this._bInitFinished = true;
+				this.fireInit();
+
+				// When the expected wrapper count was already set, initialization finished after the editor
+				// value was set and the ready check might already have been executed and failed
+				// Therefore execute the check again
+				this._checkReadyState();
+			}.bind(this));
+
+			if (this.getFragment()) {
+				this._initFragment(this.getFragment());
+			}
 		},
 
 		renderer: function (oRm, oPropertyEditor) {
@@ -206,6 +231,25 @@ sap.ui.define([
 			oRm.close("div");
 		}
 	});
+
+	BasePropertyEditor.prototype.init = function () {
+		this.attachFragmentChange(function (oEvent) {
+			var sFragmentName = oEvent.getParameter("fragment");
+			this._initFragment(sFragmentName);
+		}, this);
+	};
+
+	/**
+	 * Override to execute async logic before init() event is executed.
+	 */
+	BasePropertyEditor.prototype.asyncInit = function () {
+		return Promise.resolve();
+	};
+
+	/**
+	 * Hook which is called when fragment is ready on initial start or when it's exchanged.
+	 */
+	BasePropertyEditor.prototype.onFragmentReady = function () {};
 
 	/**
 	 * Sets the editor value. If no value is provided, the default value provided
@@ -271,6 +315,10 @@ sap.ui.define([
 		}
 		if (!this._bInitFinished) {
 			// The editor itself is not ready yet, no need to check nested editors
+			this._setReady(false);
+			return;
+		}
+		if (!this._bFragmentReady) {
 			this._setReady(false);
 			return;
 		}
@@ -347,10 +395,10 @@ sap.ui.define([
 		this._checkReadyState();
 	};
 
-	BasePropertyEditor.prototype._setReady = function (readyState) {
+	BasePropertyEditor.prototype._setReady = function (bReadyState) {
 		var bPreviousReadyState = this._bIsReady;
-		this._bIsReady = readyState;
-		if (bPreviousReadyState !== true && readyState === true) {
+		this._bIsReady = bReadyState;
+		if (bPreviousReadyState !== true && bReadyState === true) {
 			// If the editor was not ready before, fire the ready event
 			this.fireReady();
 		}
@@ -375,23 +423,53 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	BasePropertyEditor.prototype._loadFragment = function () {
-		if (!this.xmlFragment) {
-			return Promise.resolve();
+	BasePropertyEditor.prototype.setFragment = function (sFragmentName) {
+		if (this._currentXmlFragment !== sFragmentName) {
+			var sPreviousFragmentName = this._currentXmlFragment;
+			this._currentXmlFragment = sFragmentName;
+			this.fireFragmentChange({
+				previousFragment: sPreviousFragmentName,
+				fragment: sFragmentName
+			});
 		}
-		return Fragment.load({
-			name: this.xmlFragment,
-			controller: this
-		}).then(function(oEditorControl) {
-			this.setContent(oEditorControl);
-		}.bind(this));
 	};
 
-	/**
-	 * Override to execute logic after the editor fragment was loaded
-	 */
-	BasePropertyEditor.prototype.asyncInit = function () {
-		return Promise.resolve();
+	BasePropertyEditor.prototype.getFragment = function () {
+		return this._currentXmlFragment;
+	};
+
+	BasePropertyEditor.prototype._initFragment = function (sFragmentName) {
+		this._setReady(false);
+		this._bFragmentReady = false;
+
+		if (this._fnCancelFragmentLoading) {
+			this._fnCancelFragmentLoading();
+		}
+
+		var oFragmentPromise = createPromise(function (fnResolve, fnReject) {
+			this._loadFragment(sFragmentName).then(fnResolve, fnReject);
+		}.bind(this));
+
+		this._fnCancelFragmentLoading = oFragmentPromise.cancel;
+
+		return oFragmentPromise.promise
+			.then(function (oFragment) {
+				delete this._fnCancelFragmentLoading;
+				this._bFragmentReady = true;
+				this.setContent(oFragment);
+				this.onFragmentReady();
+				// When the expected wrapper count was already set, initialization finished after the editor
+				// value was set and the ready check might already have been executed and failed
+				// Therefore execute the check again
+				this._checkReadyState();
+			}.bind(this));
+	};
+
+	BasePropertyEditor.prototype._loadFragment = function (sFragmentName) {
+		return Fragment.load({
+			name: sFragmentName,
+			controller: this
+		});
 	};
 
 	BasePropertyEditor.prototype.clone = function() {
@@ -411,6 +489,10 @@ sap.ui.define([
 
 		if (this._oWrapperObserver) {
 			this._oWrapperObserver.destroy();
+		}
+
+		if (this._fnCancelFragmentLoading) {
+			this._fnCancelFragmentLoading();
 		}
 	};
 

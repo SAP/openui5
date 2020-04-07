@@ -33,7 +33,7 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	DateTimeEditor.prototype.getFormatterInstance = function (sDate) {
+	DateTimeEditor.prototype.getFormatterInstance = function () {
 		return DateFormat.getDateTimeInstance();
 	};
 

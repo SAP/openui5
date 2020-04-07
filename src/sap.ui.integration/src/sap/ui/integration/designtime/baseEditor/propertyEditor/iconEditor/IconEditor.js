@@ -49,7 +49,7 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	IconEditor.prototype.asyncInit = function () {
+	IconEditor.prototype.onFragmentReady = function () {
 		var oInput = this.getContent();
 		this._oIconModel = this._getIconModel();
 		oInput.setModel(this._oIconModel, "icons");
@@ -57,7 +57,6 @@ sap.ui.define([
 			text: "{icons>path}",
 			additionalText: "{icons>name}"
 		}));
-		return Promise.resolve();
 	};
 
 	IconEditor.prototype._getIconModel = function () {

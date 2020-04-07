@@ -100,12 +100,20 @@ sap.ui.define([
 	};
 
 	NumberEditor.prototype._setValueState = function (bIsValid, sError) {
-		var oInput = this.getContent();
-		if (bIsValid) {
-			oInput.setValueState("None");
+		var fnSetValueState = function () {
+			var oInput = this.getContent();
+			if (bIsValid) {
+				oInput.setValueState("None");
+			} else {
+				oInput.setValueState("Error");
+				oInput.setValueStateText(sError);
+			}
+		}.bind(this, bIsValid, sError);
+
+		if (this.isReady()) {
+			fnSetValueState();
 		} else {
-			oInput.setValueState("Error");
-			oInput.setValueStateText(sError);
+			this.ready().then(fnSetValueState);
 		}
 	};
 
