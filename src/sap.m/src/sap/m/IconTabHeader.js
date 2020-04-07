@@ -239,19 +239,8 @@ sap.ui.define([
 	IconTabHeader.prototype.onAfterRendering = function () {
 		this._applyTabDensityMode();
 
-		var oParent = this.getParent();
-		var bIsParentIconTabBar = this._isInsideIconTabBar();
-
-		if (this.oSelectedItem &&
-			(!bIsParentIconTabBar || bIsParentIconTabBar && oParent.getExpanded())) {
-			this.oSelectedItem.$()
-				.addClass("sapMITBSelected")
-				.attr({ 'aria-selected': true });
-
-			if (this._oSelectedRootItem) {
-				this._oSelectedRootItem.$().addClass("sapMITBSelected");
-				this._oSelectedRootItem.$().attr({ "aria-selected": true });
-			}
+		if (this.oSelectedItem) {
+			this._applySelectionToFilters();
 		}
 
 		if (Core.isThemeApplied()) {
@@ -322,7 +311,7 @@ sap.ui.define([
 
 			iIndex++;
 
-			if ((this._oSelectedRootItem || this.oSelectedItem) == oItem) {
+			if ((this.oSelectedItem._getRootTab() || this.oSelectedItem) === oItem) {
 				break;
 			}
 		}
@@ -431,23 +420,18 @@ sap.ui.define([
 		return this;
 	};
 
-	/*
+	/**
 	 * Sets the selected item, updates the UI, and fires the select event.
 	 * @private
 	 * @param {sap.m.IconTabFilter} oItem The item to be selected
 	 * @param {Boolean} bAPIChange whether this function is called through the API
-	 * @return {sap.m.IconTabHeader} this pointer for chaining
+	 * @returns {sap.m.IconTabHeader} this pointer for chaining
 	 */
-	IconTabHeader.prototype.setSelectedItem = function (oItem, bAPIchange) {
+	IconTabHeader.prototype.setSelectedItem = function (oItem, bAPIChange) {
 		if (!oItem) {
 			if (this.oSelectedItem) {
-				this.oSelectedItem.$().removeClass("sapMITBSelected");
+				this._removeSelectionFromFilters();
 				this.oSelectedItem = null;
-
-				if (this._oSelectedRootItem) {
-					this._oSelectedRootItem.getDomRef().classList.remove("sapMITBSelected");
-					this._oSelectedRootItem = null;
-				}
 			}
 
 			return this;
@@ -470,26 +454,15 @@ sap.ui.define([
 
 		if (this.oSelectedItem &&
 			this.oSelectedItem.getVisible() &&
-			(!bAPIchange && bIsParentIconTabBar && oParent.getExpandable() || this.oSelectedItem !== oItem)) {
-			this.oSelectedItem.$()
-					.removeClass("sapMITBSelected")
-					.attr('aria-selected', false)
-					.removeAttr('aria-expanded');
-
-			if (this._oSelectedRootItem) {
-				this._oSelectedRootItem.$()
-					.removeClass("sapMITBSelected")
-					.attr('aria-selected', false)
-					.removeAttr('aria-expanded');
-			}
-
+			(!bAPIChange && bIsParentIconTabBar && oParent.getExpandable() || this.oSelectedItem !== oItem)) {
+			this._removeSelectionFromFilters();
 		}
 
 		if (oItem.getVisible()) {
 			//click on already selected item leads to expanding/collapsing of the content (if expandable enabled)
 			if (this.oSelectedItem === oItem) {
 				//if content is not expandable nothing should happen otherwise content will be expanded/collapsed
-				if (!bAPIchange && bIsParentIconTabBar && oParent.getExpandable()) {
+				if (!bAPIChange && bIsParentIconTabBar && oParent.getExpandable()) {
 					oParent._toggleExpandCollapse();
 				}
 			//click on other item leads to showing the right content of this item
@@ -501,33 +474,12 @@ sap.ui.define([
 
 				// set new item
 				this.oSelectedItem = oItem;
-				// find parent if item is a sub filter within a sap.m.IconTabFilter, set the root icontabfilter as this._oSelectedDomRef
-				if (this.oSelectedItem._getNestedLevel() !== 1) {
-					this._oSelectedRootItem = this.oSelectedItem._getRootTab();
-					this._oSelectedRootItem.$()
-						.addClass("sapMITBSelected")
-						.attr({ 'aria-selected': true });
-				} else {
-					this._oSelectedRootItem = null;
-				}
-
+				this._applySelectionToFilters();
 				this.setProperty("selectedKey", this.oSelectedItem._getNonEmptyKey(), true);
-
-				if (!bIsParentIconTabBar) {
-					this.oSelectedItem.$()
-							.addClass("sapMITBSelected")
-							.attr({ 'aria-selected': true });
-
-				}
 
 				//if the IconTabBar is not expandable and the content not expanded (which means content can never be expanded), we do not need
 				//to visualize the selection and we do not need to render the content
 				if (bIsParentIconTabBar && (oParent.getExpandable() || oParent.getExpanded())) {
-					// add selected styles
-					this.oSelectedItem.$()
-							.addClass("sapMITBSelected")
-							.attr({ 'aria-selected': true });
-
 					//if item has own content, this content is shown
 					var oSelectedItemContent = this.oSelectedItem.getContent();
 					if (oSelectedItemContent.length > 0) {
@@ -540,7 +492,7 @@ sap.ui.define([
 						}
 					}
 					//if content is not expanded, content will be expanded (first click on item always leads to expanding the right content)
-					if (!bAPIchange && oParent.getExpandable() && !oParent.getExpanded()) {
+					if (!bAPIChange && oParent.getExpandable() && !oParent.getExpanded()) {
 						oParent._toggleExpandCollapse(true);
 					}
 				}
@@ -556,7 +508,7 @@ sap.ui.define([
 			oParent.setProperty("selectedKey", sSelectedKey, true);
 		}
 
-		if (!bAPIchange) {
+		if (!bAPIChange) {
 			// fire event on iconTabBar
 			if (bIsParentIconTabBar) {
 				oParent.fireSelect({
@@ -592,25 +544,23 @@ sap.ui.define([
 	};
 
 	IconTabHeader.prototype._initItemNavigation = function () {
-		var that = this,
-			aItems = this.getItems(),
-			aTabDomRefs = [],
-			iSelectedDomIndex = -1;
+		var aTabDomRefs = [],
+			iSelectedDomIndex = -1,
+			oSelectedRootItem = this.oSelectedItem && this.oSelectedItem._getRootTab();
 
 		// find a collection of all tabs
-		aItems.forEach(function (oItem) {
-			if (oItem.isA("sap.m.IconTabFilter")) {
-				var oItemDomRef = that.getFocusDomRef(oItem);
-				if (!oItemDomRef) {
-					return;
-				}
-				oItemDomRef.setAttribute("tabindex", "-1");
-				aTabDomRefs.push(oItemDomRef);
-				if (oItem === that.oSelectedItem || oItem === that._oSelectedRootItem) {
-					iSelectedDomIndex = aTabDomRefs.indexOf(oItemDomRef);
-				}
+		this.getTabFilters().forEach(function (oItem) {
+			var oItemDomRef = this.getFocusDomRef(oItem);
+
+			if (!oItemDomRef) {
+				return;
 			}
-		});
+			oItemDomRef.setAttribute("tabindex", "-1");
+			aTabDomRefs.push(oItemDomRef);
+			if (oItem === oSelectedRootItem || oItem === this.oSelectedItem) {
+				iSelectedDomIndex = aTabDomRefs.indexOf(oItemDomRef);
+			}
+		}.bind(this));
 
 		if (this.$().hasClass("sapMITHOverflowList")) {
 			var oOverflowDomRef = this._getOverflow().getFocusDomRef();
@@ -905,7 +855,7 @@ sap.ui.define([
 		var iTabStripWidth = oTabStrip.offsetWidth,
 			oItem,
 			i,
-			oSelectedItemDomRef = (this._oSelectedRootItem || oSelectedItem).getDomRef(),
+			oSelectedItemDomRef = (oSelectedItem._getRootTab() || oSelectedItem).getDomRef(),
 			aItems = this.getItems()
 				.filter(function (oItem) { return oItem.getDomRef(); })
 				.map(function (oItem) { return oItem.getDomRef(); });
@@ -1129,31 +1079,18 @@ sap.ui.define([
 			bIsParentIconTabBar = this._isInsideIconTabBar(),
 			bIsParentToolHeader = oParent && oParent.isA("sap.tnt.ToolHeader");
 
-		if (aItems.length > 0) {
-			if (!this.oSelectedItem || sSelectedKey && sSelectedKey !== this.oSelectedItem._getNonEmptyKey()) {
-				if (sSelectedKey) {
-					// selected key was specified by API: set oSelectedItem to the item specified by key
-					for (; i < aItems.length; i++) {
-						if (!(aItems[i] instanceof IconTabSeparator) && aItems[i]._getNonEmptyKey() === sSelectedKey) {
-							this.oSelectedItem = aItems[i];
-							break;
-						}
-					}
-				}
+		if (!aItems.length) {
+			return;
+		}
 
-				// no key and no item, we set the first visible item as selected
-				if (!this.oSelectedItem && (bIsParentIconTabBar || !sSelectedKey)) {
-					for (i = 0; i < aItems.length; i++) { // tab item
-						if (!(aItems[i] instanceof IconTabSeparator) && aItems[i].getVisible()) {
-							this.oSelectedItem = aItems[i];
-							break;
-						}
-					}
-				}
+		if (!this.oSelectedItem || sSelectedKey && sSelectedKey !== this.oSelectedItem._getNonEmptyKey()) {
+			// selected key is specified by API: set oSelectedItem to the item specified by key
+			if (sSelectedKey) {
+				this.oSelectedItem = this._findItemByKey(sSelectedKey);
 			}
 
-			//in case the selected tab is not visible anymore, the selected tab will change to the first visible tab
-			if (!bIsParentToolHeader && this.oSelectedItem && !this.oSelectedItem.getVisible()) {
+			// no key and no item, we set the first visible item as selected
+			if (!this.oSelectedItem && (bIsParentIconTabBar || !sSelectedKey)) {
 				for (i = 0; i < aItems.length; i++) { // tab item
 					if (!(aItems[i] instanceof IconTabSeparator) && aItems[i].getVisible()) {
 						this.oSelectedItem = aItems[i];
@@ -1161,18 +1098,93 @@ sap.ui.define([
 					}
 				}
 			}
+		}
 
-			if (!this.oSelectedItem) {
-				return;
+		//in case the selected tab is not visible anymore, the selected tab will change to the first visible tab
+		if (!bIsParentToolHeader && this.oSelectedItem && !this.oSelectedItem.getVisible()) {
+			for (i = 0; i < aItems.length; i++) { // tab item
+				if (!(aItems[i] instanceof IconTabSeparator) && aItems[i].getVisible()) {
+					this.oSelectedItem = aItems[i];
+					break;
+				}
+			}
+		}
+
+		if (!this.oSelectedItem) {
+			return;
+		}
+
+		// if candidate selected item is unselectable, instead select its first available child item that has content
+		if (this._isUnselectable(this.oSelectedItem)) {
+			this.setSelectedItem(this.oSelectedItem._getFirstAvailableSubFilter(), true);
+			return;
+		}
+
+		this.setProperty("selectedKey", this.oSelectedItem._getNonEmptyKey(), true);
+	};
+
+	/**
+	 * Returns the item or nested item with the given key.
+	 * @private
+	 * @param {string} sKey The key to search with.
+	 * @returns {sap.m.IconTabFilter} The found item.
+	 */
+	IconTabHeader.prototype._findItemByKey = function (sKey) {
+		var aTabFilters = this.getTabFilters(),
+			aSubFilters;
+
+		for (var i = 0; i < aTabFilters.length; i++) {
+			if (aTabFilters[i]._getNonEmptyKey() === sKey) {
+				return aTabFilters[i];
 			}
 
-			// if candidate selected item is unselectable, instead select its first available child item that has content
-			if (this._isUnselectable(this.oSelectedItem)) {
-				this.setSelectedItem(this.oSelectedItem._getFirstAvailableSubFilter(), true);
-				return;
+			aSubFilters = aTabFilters[i]._getAllSubFilters();
+			for (var j = 0; j < aSubFilters.length; j++) {
+				if (aSubFilters[j]._getNonEmptyKey() === sKey) {
+					return aSubFilters[j];
+				}
 			}
+		}
+	};
 
-			this.setProperty("selectedKey", this.oSelectedItem._getNonEmptyKey(), true);
+	/**
+	 * Applies classes and attributes to the selected item.
+	 * If the item is nested, it also applies them to the root of the item.
+	 * @private
+	 */
+	IconTabHeader.prototype._applySelectionToFilters = function () {
+		if (this._isInsideIconTabBar() && !this.getParent().getExpanded()) {
+			return;
+		}
+
+		this.oSelectedItem.$()
+				.addClass("sapMITBSelected")
+				.attr({ 'aria-selected': true });
+
+		if (this.oSelectedItem._getNestedLevel() !== 1) {
+			var oSelectedRootItem = this.oSelectedItem._getRootTab();
+
+			oSelectedRootItem.$()
+				.addClass("sapMITBSelected")
+				.attr({ "aria-selected": true });
+		}
+	};
+
+	/**
+	 * Removes classes and attributes added by "_applySelectionToFilters"
+	 * @private
+	 */
+	IconTabHeader.prototype._removeSelectionFromFilters = function () {
+		this.oSelectedItem.$()
+				.removeClass("sapMITBSelected")
+				.attr({ 'aria-selected': false });
+
+		if (this.oSelectedItem._getNestedLevel() !== 1) {
+			var oSelectedRootItem = this.oSelectedItem._getRootTab();
+
+			oSelectedRootItem.$()
+				.removeClass("sapMITBSelected")
+				.attr({ "aria-selected": false });
 		}
 	};
 
@@ -1262,7 +1274,6 @@ sap.ui.define([
 
 		this._setItemsForStrip();
 		this._initItemNavigation();
-
 		this._getSelectList()._initItemNavigation();
 
 		oDraggedControl._getRealTab().$().focus();
