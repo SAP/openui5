@@ -423,6 +423,7 @@ function(
 			this._iRealPrecision = 0;
 			this._attachChange();
 			this._bPaste = false; //needed to indicate when a paste is made
+			this._bNeedsVerification = false; // the control needs verification of the value state
 			this._onmousewheel = this._onmousewheel.bind(this);
 			window.addEventListener("contextmenu", function(e) {
 				if (this._btndown === false && e.target.className.indexOf("sapMInputBaseIconContainer") !== -1) {
@@ -450,6 +451,10 @@ function(
 
 			this._disableButtons(vValue, fMax, fMin);
 			this.$().unbind(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
+			if (this._bNeedsVerification) {
+				this._verifyValue();
+				this._bNeedsVerification = false;
+			}
 		};
 
 		StepInput.prototype.onAfterRendering = function () {
@@ -702,6 +707,7 @@ function(
 				// long click, skip it
 				this._bSpinStarted = false;
 			}
+			this._bNeedsVerification = true;
 			return this;
 		};
 
@@ -736,7 +742,7 @@ function(
 			if (this._bDelayedEventFire) {
 				this._applyValue(fNewValue);
 				this._disableButtons(Number(this._getFormattedValue(fNewValue)), this._getMax(), this._getMin());
-				this._verifyValue();
+				this._bNeedsVerification = true;
 			}
 
 			return this;
@@ -876,7 +882,6 @@ function(
 				// save current value (for ESC restoring)
 				this._fOldValue = oValue;
 				oResult = this.setProperty("value", oValue);
-				this._verifyValue();
 			} else {
 				oResult = this;
 			}
@@ -1117,7 +1122,7 @@ function(
 		StepInput.prototype.onsapescape = function (oEvent) {
 			if (this._fOldValue !== this._fTempValue) {
 				this._applyValue(this._fOldValue);
-				this._verifyValue();
+				this._bNeedsVerification = true;
 			}
 		};
 
@@ -1150,8 +1155,8 @@ function(
 		 * @private
 		 */
 		StepInput.prototype._liveChange = function () {
-			this._verifyValue();
 			this._disableButtons(Number(this._getInput().getValue()), this._getMax(), this._getMin());
+			this._verifyValue();
 		};
 
 		/**
@@ -1173,6 +1178,7 @@ function(
 					this._bDelayedEventFire = false;
 					this._changeValueWithStep(0);
 					this._changeValue();
+					this._bNeedsVerification = true;
 				} else {
 					this._fTempValue = Number(this._getInput().getValue());
 				}
