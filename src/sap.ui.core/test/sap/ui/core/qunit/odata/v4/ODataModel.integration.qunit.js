@@ -3214,6 +3214,92 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Refresh single row in a list below a return value context. Ensure that
+	// refreshSingle is able to calculate the key predicates in its response and a subsequent PATCH
+	// is possible.
+	// BCP: 2070137560
+	QUnit.test("Context.refresh() in a list relative to a return value context", function (assert) {
+		var sView = '\
+<FlexBox binding="{/SalesOrderList(\'1\')}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<FlexBox id="action" binding="{\
+			path : \'com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm(...)\',\
+			parameters : {$expand : {SO_2_SOITEM : {$expand : {SOITEM_2_PRODUCT : null}}}}\
+		}"/>\
+</FlexBox>\
+<FlexBox id="rvc">\
+	<Table id="table" items="{SO_2_SOITEM}">\
+		<ColumnListItem>\
+			<Input id="name" value="{SOITEM_2_PRODUCT/Name}"/>\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')", {SalesOrderID : "1"})
+			.expectChange("id", "1")
+			.expectChange("name", []);
+
+		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList('1')/"
+						+ "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm"
+						+ "?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT)",
+					payload : {}
+				}, {
+					SalesOrderID : "1",
+					SO_2_SOITEM : [{
+						ItemPosition : "0010",
+						SalesOrderID : "1",
+						SOITEM_2_PRODUCT : {
+							Name : "Notebook Basic 15",
+							ProductID : "HT-1000"
+						}
+					}]
+			});
+
+			return Promise.all([
+				that.oView.byId("action").getObjectBinding().execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aResults) {
+			that.expectChange("name", ["Notebook Basic 15"]);
+
+			that.oView.byId("rvc").setBindingContext(aResults[0]);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',"
+					+ "ItemPosition='0010')?$expand=SOITEM_2_PRODUCT", {
+					ItemPosition : "0010",
+					SalesOrderID : "1",
+					SOITEM_2_PRODUCT : {
+						Name : "Notebook Basic 15.1",
+						ProductID : "HT-1000"
+					}
+				})
+				.expectChange("name", ["Notebook Basic 15.1"]);
+
+			that.oView.byId("table").getItems()[0].getBindingContext().refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("name", ["Notebook Basic 15.2"])
+				.expectRequest({
+					method : "PATCH",
+					url : "ProductList('HT-1000')",
+					payload : {Name : "Notebook Basic 15.2"}
+				});
+
+			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value")
+				.setValue("Notebook Basic 15.2");
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Refreshing (a single entry of) a table must not cause "failed to drill-down" errors
 	// if data of a dependent binding has been deleted in between.
 	// This scenario is similar to the deletion of a sales order line item in the SalesOrders
@@ -5148,7 +5234,7 @@ sap.ui.define([
 			that.expectChange("value", "changed")
 				.expectRequest({
 					method : "PATCH",
-					url : "EntityWithComplexKey(Key1='p1',Key2=2)",
+					url : "EntitiesWithComplexKey(Key1='p1',Key2=2)",
 					payload : {Value : "changed"}
 				});
 
@@ -15744,7 +15830,10 @@ sap.ui.define([
 	// 		context for the following activate action.
 	//	3. Create an edit action with $$inheritExpandSelect=true to select all properties used in
 	//		the object page. Call the action and bind the object page to the return value context.
-	//	4. Patch the inactive entity to see that $$patchWithoutSideEffects works.
+	//	4a. Patch the inactive entity to see that $$patchWithoutSideEffects works.
+	//  4b. Patch a property reachable via a navigation property (BCP: 2070137560)
+	//  4c. Try to patch a property via the wrong context (not the return value context)
+	//      (BCP: 2070137560)
 	//	5. Show the creation row of a creation row binding (a binding that does not request data,
 	//		must not be refreshed) which is relative to the return value context of the inactive
 	//		version.
@@ -15777,6 +15866,7 @@ sap.ui.define([
 	<Text id="id" text="{ArtistID}" />\
 	<Text id="isActive" text="{IsActiveEntity}" />\
 	<Input id="name" value="{Name}" />\
+	<Input id="bestFriend" value="{BestFriend/Name}" />\
 	<FlexBox id="creationRow">\
 		<Text id="price" text="{Price}" />\
 		<Text id="artistName" text="{_Artist/Name}" />\
@@ -15801,10 +15891,16 @@ sap.ui.define([
 					method : "POST",
 					url : "Artists(ArtistID='42',IsActiveEntity=" + !bIsActive
 						+ ")/special.cases." + sAction
-						+ "?$select=ArtistID,IsActiveEntity,Messages,Name",
+						+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
+						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)",
 					payload : {}
 				}, {
 					ArtistID : "42",
+					BestFriend : {
+						ArtistID : "23",
+						IsActiveEntity : true,
+						Name : bIsActive ? "Sgt. Pepper (modified)" : "Sgt. Pepper"
+					},
 					IsActiveEntity : bIsActive,
 					Name : "The Beatles"
 				});
@@ -15837,6 +15933,7 @@ sap.ui.define([
 		this.expectChange("id")
 			.expectChange("isActive")
 			.expectChange("name")
+			.expectChange("bestFriend")
 			.expectChange("artistName")
 			.expectChange("price");
 
@@ -15851,15 +15948,22 @@ sap.ui.define([
 			oObjectPage = that.oView.byId("objectPage");
 			oCreationRow = that.oView.byId("creationRow");
 
-			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)" +
-				"?$select=ArtistID,IsActiveEntity,Messages,Name", {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+				+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
 					ArtistID : "42",
+					BestFriend : {
+						ArtistID : "23",
+						IsActiveEntity : true,
+						Name : "Sgt. Pepper"
+					},
 					IsActiveEntity : true,
 					Name : "The Beatles"
 				})
 				.expectChange("id", "42")
 				.expectChange("isActive", "Yes")
-				.expectChange("name", "The Beatles");
+				.expectChange("name", "The Beatles")
+				.expectChange("bestFriend", "Sgt. Pepper");
 
 			// set binding context for creationRow to "null" to skip inheriting the binding context
 			oCreationRow.setBindingContext(null);
@@ -15871,23 +15975,54 @@ sap.ui.define([
 			// 3. switch to the edit mode and show the inactive version
 			return action("EditAction");
 		}).then(function () {
-			// 4. Patch the inactive entity to see that $$patchWithoutSideEffects works.
+			// 4a. Patch the inactive entity to see that $$patchWithoutSideEffects works.
 
 			that.expectChange("name", "The Beatles (modified)")
 				.expectRequest({
 					method : "PATCH",
 					url : "Artists(ArtistID='42',IsActiveEntity=false)",
-					payload : {Name : "The Beatles (modified)"},
-					response : {
-						ArtistID : "42",
-						IsActiveEntity : true,
-						Name : "The Beatles"
-					}
+					payload : {Name : "The Beatles (modified)"}
+				}, {
+					ArtistID : "42",
+					IsActiveEntity : true,
+					Name : "The Beatles"
 				});
 
 			that.oView.byId("name").getBinding("value").setValue("The Beatles (modified)");
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			// 4b. Patch a property reachable via a navigation property
+
+			that.expectChange("bestFriend", "Sgt. Pepper (modified)")
+				.expectRequest({
+					method : "PATCH",
+					url : "Artists(ArtistID='23',IsActiveEntity=true)",
+					payload : {Name : "Sgt. Pepper (modified)"}
+				});
+
+			that.oView.byId("bestFriend").getBinding("value").setValue("Sgt. Pepper (modified)");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oMessageManager = sap.ui.getCore().getMessageManager();
+			// 4c. Patching a property via the wrong context must not succeed
+			// We're not interested in the exact error, only in some failure
+
+			that.oLogMock.expects("error");
+
+			return oReturnValueContext.getBinding().getBoundContext()
+				.setProperty("BestFriend/Name", "n/a")
+				.then(function () {
+					assert.ok(false);
+				}, function () {
+					// expect one message and remove it again
+					assert.strictEqual(oMessageManager.getMessageModel().getObject("/").length, 1);
+					oMessageManager.removeAllMessages();
+
+					assert.strictEqual(oReturnValueContext.getProperty("BestFriend/Name"),
+						"Sgt. Pepper (modified)");
+				});
 		}).then(function () {
 			// 5. Show the creation row of a creation row binding [...]
 

@@ -160,10 +160,12 @@
 			</Function>
 			<EntityContainer Name="Container">
 				<EntitySet Name="EntitiesWithComplexKey" EntityType="special.cases.EntityWithComplexKey"/>
-				<EntitySet Name="Artists" EntityType="special.cases.ArtistsType"/>
+				<EntitySet Name="Artists" EntityType="special.cases.ArtistsType">
+					<NavigationPropertyBinding Path="BestFriend" Target="Artists"/>
+				</EntitySet>
 				<EntitySet Name="As" EntityType="special.cases.A">
 					<NavigationPropertyBinding Path="AtoEntityWithComplexKey"
-						Target="EntityWithComplexKey"/>
+						Target="EntitiesWithComplexKey"/>
 				</EntitySet>
 				<EntitySet Name="Bs" EntityType="special.cases.B"/>
 				<ActionImport Name="HirePerson" Action="special.cases.AcHirePerson"/>

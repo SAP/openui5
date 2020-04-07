@@ -644,10 +644,12 @@ sap.ui.define([
 		this.mCacheQueryOptions = this.computeOperationQueryOptions();
 		sPath = oRequestor.getPathAndAddQueryOptions(sPath, oOperationMetadata, mParameters,
 			this.mCacheQueryOptions, vEntity);
+		if (oOperationMetadata.$ReturnType
+				&& !oOperationMetadata.$ReturnType.$Type.startsWith("Edm.")) {
+			sMetaPath += "/$Type";
+		}
 		oCache = _Cache.createSingle(oRequestor, sPath, this.mCacheQueryOptions,
-			oModel.bAutoExpandSelect, getOriginalResourcePath, bAction, sMetaPath,
-			oOperationMetadata.$ReturnType
-				&& !oOperationMetadata.$ReturnType.$Type.startsWith("Edm."));
+			oModel.bAutoExpandSelect, getOriginalResourcePath, bAction, sMetaPath);
 		this.oCache = oCache;
 		this.oCachePromise = SyncPromise.resolve(oCache);
 		return bAction
