@@ -269,13 +269,18 @@
 
 	QUnit.module("Error Handling", {
 		beforeEach: function() {
-			QUnit.config.current.ignoreGlobalErrors = true;
+			// Ensure to ignore global errors
+			// Not using "QUnit.config.current.ignoreGlobalErrors = true;" as this
+			// would still cause some test runners like Karma to report an error
+			this.origOnError = window.onerror;
+			window.onerror = sinon.stub().returns(false);
+
 			return new Promise(function(resolve, reject) {
 				sap.ui.require(['jquery.sap.global'], resolve, reject);
 			});
 		},
 		afterEach: function() {
-			QUnit.config.current.ignoreGlobalErrors = false;
+			window.onerror = this.origOnError;
 		}
 	});
 
