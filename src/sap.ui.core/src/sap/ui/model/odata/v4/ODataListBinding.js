@@ -572,7 +572,9 @@ sap.ui.define([
 	 *
 	 * Note: After creation, the created entity is refreshed to ensure that the data specified in
 	 * this list binding's $expand is available; to skip this refresh, set <code>bSkipRefresh</code>
-	 * to <code>true</code>.
+	 * to <code>true</code>. To avoid errors you must skip this refresh when using
+	 * {@link sap.ui.model.odata.v4.Context#requestSideEffects} in the same $batch to refresh the
+	 * complete collection containing the newly created entity.
 	 *
 	 * Note: A deep create is not supported. The dependent entity has to be created using a second
 	 * list binding. Note that it is not supported to bind relative to a transient context.
