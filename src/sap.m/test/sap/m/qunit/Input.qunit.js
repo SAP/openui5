@@ -5190,6 +5190,29 @@ sap.ui.define([
 		assert.notOk(oGroupHeader.hasStyleClass("sapMInputFocusedHeaderGroup"), "Styling is removed from the unselected group header.");
 	});
 
+	QUnit.test("Selection of group header", function(assert) {
+		var aVisibleItems, oGroupHeader;
+
+		// act
+		this.oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		this.oInput._$input.focus().val("A").trigger("input");
+		this.clock.tick(300);
+
+		aVisibleItems = this.oInput._oSuggPopover._oList.getItems().filter(function(oItem){
+			return oItem.getVisible();
+		});
+		oGroupHeader = aVisibleItems[0];
+
+		// assert
+		assert.ok(oGroupHeader.isA("sap.m.GroupHeaderListItem"), "The first visible item is a group header");
+
+		//act
+		oGroupHeader.focus();
+
+		//assert
+		assert.strictEqual(document.activeElement, this.oInput.getFocusDomRef(), "The focus is in the input field");
+	});
+
 	QUnit.module("showItems functionality: List", {
 			beforeEach: function () {
 				var aData = [

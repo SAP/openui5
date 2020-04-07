@@ -704,6 +704,7 @@ sap.ui.define([
 		var bFirst = false,
 			oList = this._oList,
 			aListItems = oList.getItems(),
+			oSelectedItem = oList.getSelectedItem(),
 			iSelectedIndex = this._iPopupListSelectedIndex,
 			sNewValue,
 			oValueStateHeader = this._getValueStateHeader(),
@@ -723,18 +724,23 @@ sap.ui.define([
 				sDir = "up";
 				iItems = 1;
 				aListItems[iSelectedIndex].setSelected(false);
+				aListItems[iSelectedIndex].removeStyleClass("sapMLIBFocused");
 				iStopIndex = iSelectedIndex;
 				iSelectedIndex = aListItems.length - 1;
 				bFirst = true;
-			} else if (sDir == "up" && iSelectedIndex - iItems < 0){
+			} else if (sDir == "up" && iSelectedIndex - iItems < 0 && iSelectedIndex >= 0) {
 				sDir = "down";
 				iItems = 1;
 				aListItems[iSelectedIndex].setSelected(false);
+				aListItems[iSelectedIndex].removeStyleClass("sapMLIBFocused");
 				iStopIndex = iSelectedIndex;
 				iSelectedIndex = 0;
 				bFirst = true;
 			}
 		}
+
+		oInput.removeStyleClass("sapMFocus");
+		this._oList.addStyleClass("sapMListFocus");
 
 		// always select the first item from top when nothing is selected so far
 		if (iSelectedIndex === -1) {
@@ -752,6 +758,7 @@ sap.ui.define([
 		if (sDir === "down") {
 			while (iSelectedIndex < aListItems.length - 1 && (!bFirst || !this._isSuggestionItemSelectable(aListItems[iSelectedIndex]))) {
 				aListItems[iSelectedIndex].setSelected(false);
+				aListItems[iSelectedIndex].removeStyleClass("sapMLIBFocused");
 				iSelectedIndex = iSelectedIndex + iItems;
 				bFirst = true;
 				iItems = 1; // if wanted item is not selectable just search the next one
@@ -762,6 +769,7 @@ sap.ui.define([
 		} else {
 			while (iSelectedIndex > 0 && (!bFirst || !aListItems[iSelectedIndex].getVisible() || !this._isSuggestionItemSelectable(aListItems[iSelectedIndex]))) {
 				aListItems[iSelectedIndex].setSelected(false);
+				aListItems[iSelectedIndex].removeStyleClass("sapMLIBFocused");
 				iSelectedIndex = iSelectedIndex - iItems;
 				bFirst = true;
 				iItems = 1; // if wanted item is not selectable just search the next one
@@ -794,11 +802,13 @@ sap.ui.define([
 			if (iOldIndex >= 0) {
 				aListItems[iOldIndex].setSelected(true).updateAccessibilityState();
 				oInnerRef.attr("aria-activedescendant", aListItems[iOldIndex].getId());
+				aListItems[iOldIndex].addStyleClass("sapMLIBFocused");
 			}
 			return;
 		} else {
 			oListItem = aListItems[iSelectedIndex];
 			oListItem.setSelected(true).updateAccessibilityState();
+			oListItem.addStyleClass("sapMLIBFocused");
 
 			if (oListItem.isA("sap.m.GroupHeaderListItem")) {
 				oInnerRef.removeAttr("aria-activedescendant");
@@ -820,6 +830,7 @@ sap.ui.define([
 			if (aListItems[iSelectedIndex].isA("sap.m.GroupHeaderListItem")) {
 				sNewValue = "";
 				aListItems[iSelectedIndex].addStyleClass("sapMInputFocusedHeaderGroup");
+				oSelectedItem && oSelectedItem.setSelected(false);
 				this._oLastSelectedHeader = aListItems[iSelectedIndex];
 			} else if (aListItems[iSelectedIndex] instanceof DisplayListItem) {
 				// for two value suggestions we use the item label
