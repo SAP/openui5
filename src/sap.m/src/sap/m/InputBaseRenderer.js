@@ -139,10 +139,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/core/Label
 
 		}
 
-		if (LabelEnablement.isRequired(oControl)) {
-			oRm.attr("required", "required");
-		}
-
 		// check if textDirection property is not set to default "Inherit" and add "dir" attribute
 		if (sTextDir != TextDirection.Inherit) {
 			oRm.attr("dir", sTextDir.toLowerCase());
@@ -337,7 +333,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/core/Label
 		}
 		mAccessibilityState.disabled = null;
 		mAccessibilityState.readonly = null;
-		mAccessibilityState.required = null;
 
 		return mAccessibilityState;
 	};
