@@ -151,7 +151,9 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 
 	MenuItemBase.prototype.onsapshow = function(oEvent) {
 		if (this.getParent() && this.getParent().close) {
-			this.getParent().close();
+			// Call Menu.prototype.close with argument "true"
+			// in order not to ignore the opener DOM reference
+			this.getParent().close(true);
 		}
 		oEvent.preventDefault(); //IE focuses the address bar
 	};

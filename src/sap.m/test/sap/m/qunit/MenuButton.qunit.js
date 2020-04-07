@@ -1034,6 +1034,27 @@ sap.ui.define([
 
 	QUnit.module("Other");
 
+	QUnit.test("Focus is returned back the the opener DOM ref, when the menu is closed with F4", function(assert) {
+		//arrange
+		var oMenu = new sap.ui.unified.Menu(),
+			oMenuItem = new sap.ui.unified.MenuItemBase();
+
+		oMenuItem.setParent(oMenu);
+		oMenu.bOpen = true;
+
+		//act
+		oMenuItem.onsapshow({
+			preventDefault: function() {}
+		});
+
+		//assert
+		assert.equal(oMenu.bIgnoreOpenerDOMRef, undefined , "Focused is returned to the opener DOM ref");
+
+		//clean
+		oMenu.destroy();
+		oMenuItem.destroy();
+	});
+
 	QUnit.test("split mode default width", function(assert) {
 		//arrange
 		var mb = new MenuButton({
