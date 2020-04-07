@@ -1890,7 +1890,7 @@ sap.ui.define([
 		oExpectation = this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect),
-				sinon.match.func, false, "/FunctionImport/@$ui5.overload/0/$ReturnType", false)
+				sinon.match.func, false, "/FunctionImport/@$ui5.overload/0/$ReturnType")
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(oGroupLock)).returns(oPromise);
@@ -1938,7 +1938,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect),
 				sinon.match.func, false,
-				"/Entity/navigation/bound.Function/@$ui5.overload/0/$ReturnType", true)
+				"/Entity/navigation/bound.Function/@$ui5.overload/0/$ReturnType/$Type")
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(oGroupLock)).returns(oPromise);
@@ -1984,7 +1984,7 @@ sap.ui.define([
 		oExpectation = this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect),
-				sinon.match.func, true, "/ActionImport/@$ui5.overload/0/$ReturnType", undefined)
+				sinon.match.func, true, "/ActionImport/@$ui5.overload/0/$ReturnType")
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("post")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParameters), undefined)
@@ -2044,7 +2044,7 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 					sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect),
 					sinon.match.func, true,
-					"/Entity/navigation/bound.Action/@$ui5.overload/0/$ReturnType", true)
+					"/Entity/navigation/bound.Action/@$ui5.overload/0/$ReturnType/$Type")
 				.returns(oSingleCache);
 			this.mock(oSingleCache).expects("post")
 				.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParameters),
@@ -2167,7 +2167,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mExpectedQueryOptions), sinon.match.same(bAutoExpandSelect),
 				sinon.match.func, false,
-				"/Entity/navigation/bound.Function/@$ui5.overload/0/$ReturnType", true)
+				"/Entity/navigation/bound.Function/@$ui5.overload/0/$ReturnType/$Type")
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(oGroupLock)).returns(oPromise);
