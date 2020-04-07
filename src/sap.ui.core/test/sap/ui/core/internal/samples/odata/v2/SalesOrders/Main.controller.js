@@ -5,15 +5,17 @@ sap.ui.define([
 	"sap/base/security/encodeURL",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
+	"sap/ui/core/library",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/ODataUtils"
-], function (encodeURL, MessageBox, MessageToast, Core, Element, Controller, Filter, FilterOperator,
-		ODataUtils) {
+], function (encodeURL, MessageBox, MessageToast, coreLibrary, Core, Element, Controller, Filter,
+		FilterOperator, ODataUtils) {
 	"use strict";
+	var MessageType = coreLibrary.MessageType;
 
 	return Controller.extend("sap.ui.core.internal.samples.odata.v2.SalesOrders.Main", {
 		defaultErrorHandler : function (oError) {
@@ -31,6 +33,31 @@ sap.ui.define([
 
 		onCloseProductDetails : function () {
 			this.byId("productDetailsDialog").close();
+		},
+
+		onFilterMessages : function (oEvent) {
+			var oBinding = this.byId("ToLineItems").getBinding("rows"),
+				fnFilter,
+				oSelect = oEvent.getSource(),
+				sMessageType = oSelect.getSelectedKey();
+
+			if (sMessageType !== "Show all") {
+				if (sMessageType !== "With any message") {
+					fnFilter = function (oMessage) {
+						return oMessage.type === sMessageType;
+					};
+				}
+				oBinding.requestFilterForMessages(fnFilter).then(function (oFilter) {
+					if (!oFilter) {
+						MessageBox.information("There is no item with a message of type '"
+							+ sMessageType + "'; showing all items");
+						oSelect.setSelectedKey(MessageType.None);
+					}
+					oBinding.filter(oFilter);
+				});
+			} else {
+				oBinding.filter();
+			}
 		},
 
 		onFixAllQuantities : function (oEvent) {
@@ -164,6 +191,11 @@ sap.ui.define([
 			// do unbind first to ensure that the sales order is read again even if sales order ID
 			// did not change
 			oView.byId("objectPage").unbindElement();
+
+			// reset filter for items with messages
+			oView.byId("ToLineItems").getBinding("rows").filter();
+			oView.byId("itemFilter").setSelectedKey("Show all");
+
 			oView.byId("objectPage").bindElement(sContextPath);
 			oView.byId("messagePopover").getBinding("items")
 				.filter(new Filter("fullTarget", FilterOperator.StartsWith, sContextPath));

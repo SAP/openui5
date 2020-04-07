@@ -262,5 +262,24 @@
 				<b>Check:</b> The message for the 5th item is contained in the message popover.
 			</li>
 		</ol>
+		<h3>(V) Filter Sales Order Items by Items with Messages</h3>
+		Search for a sales order with items with and without messages. The messages should have a
+		different message severity.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.<br />
+				<b>Check:</b> There are items with and without messages.
+			</li>
+			<li>Change the <code>Filter</code> value in the <code>Sales Order Items</code> table
+				from <code>Show all</code> to any other value.<br />
+				<b>Check:</b> Only items that match the selected filter are displayed.<br />
+				<b>Check:</b> If there is no item matching the selected filter, you get a message
+					box with the information, that no item matches. The filter for the table has
+					been changed back to <code>Show all</code>.<br />
+			</li>
+			<li>Repeat the steps above with different filter values.</li>
+		</ol>
 	</body>
 </html>
