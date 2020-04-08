@@ -2468,39 +2468,33 @@ sap.ui.define([
 		assert.strictEqual(this.oIconTabHeader.$().find('.sapMITBSelected').length, 0, "No tab is selected");
 	});
 
-	QUnit.module("IconTabBar Selected Key",{
-		beforeEach: function () {
-
-			var aTabItems = [];
-			for (var i = 0; i < 30; i++) {
-				aTabItems.push(new IconTabFilter({
-					key: i.toString(),
-					text : 'Tab ' + i,
-					enabled: i % 10 != 0,
-					content: new Text({
-						text: 'Content ' + i
-					})
-				}));
-			}
-
-			var oIconTabBar = new IconTabBar({
-				items: aTabItems,
-				expandable: false,
-				selectedKey : 'invalidKey'
-			});
-
-			this.oIconTabBar = oIconTabBar;
-			this.oIconTabBar.placeAt('qunit-fixture');
-
-			Core.applyChanges();
-		},
-		afterEach: function () {
-			this.oIconTabBar.destroy();
-			this.oIconTabBar = null;
-		}
-	});
+	QUnit.module("IconTabBar Selected Key");
 
 	QUnit.test("Selection", function (assert) {
+		// arrange
+		var aTabItems = [];
+		for (var i = 0; i < 30; i++) {
+			aTabItems.push(new IconTabFilter({
+				key: i.toString(),
+				text : 'Tab ' + i,
+				enabled: i % 10 != 0,
+				content: new Text({
+					text: 'Content ' + i
+				})
+			}));
+		}
+
+		var oIconTabBar = new IconTabBar({
+			items: aTabItems,
+			expandable: false,
+			selectedKey : 'invalidKey'
+		});
+
+		this.oIconTabBar = oIconTabBar;
+		this.oIconTabBar.placeAt('qunit-fixture');
+		Core.applyChanges();
+
+		// assert
 		assert.strictEqual(this.oIconTabBar.$().find('.sapMITBSelected').length, 1, "A tab is selected");
 
 		this.oIconTabBar.setSelectedKey('');
@@ -2526,6 +2520,36 @@ sap.ui.define([
 		Core.applyChanges();
 
 		assert.strictEqual(this.oIconTabBar._getIconTabHeader().oSelectedItem.getText(), 'Tab 9' , "Disabled tab is not selected");
+
+		// clean up
+		this.oIconTabBar.destroy();
+		this.oIconTabBar = null;
+	});
+
+	QUnit.test("Initially set selectedKey to nested item", function (assert) {
+		// arrange
+		var oNestedItem = new IconTabFilter({ key: "nested" }),
+			oIconTabBar = new IconTabBar({
+			items: [
+				new IconTabFilter(),
+				new IconTabFilter({
+					items: [
+						new IconTabFilter(),
+						oNestedItem
+					]
+				})
+			],
+			selectedKey : "nested"
+		});
+
+		oIconTabBar.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oIconTabBar._getIconTabHeader().oSelectedItem, oNestedItem, "Nested item should be found and set as selected");
+
+		// clean up
+		oIconTabBar.destroy();
 	});
 
 	QUnit.module("IconTabHeader Tabs",{
