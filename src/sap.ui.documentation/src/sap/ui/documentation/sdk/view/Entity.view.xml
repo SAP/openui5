@@ -17,12 +17,12 @@
 					id="entityHeader"
 					objectTitle="{/name}">
 				<actions>
-					<ObjectPageHeaderActionButton id="entityBackToSearch" text="Back to search results" hideIcon="true" hideText="false" press="backToSearch" visible="false"/>
+					<ObjectPageHeaderActionButton id="entityBackToSearch" text="{i18n>ENTITY_BACK_BTN}" hideIcon="true" hideText="false" press="backToSearch" visible="false"/>
 					<ObjectPageHeaderActionButton
 							id="toggleFullScreenBtn"
 							visible="{device>/system/desktop}"
 							icon="sap-icon://full-screen"
-							tooltip="Show this sample in full screen mode"
+							tooltip="{i18n>ENTITY_FULLSCREEN_TOOLTIP}"
 							press="onToggleFullScreen" />
 				</actions>
 			</ObjectPageHeader>
@@ -37,7 +37,7 @@
 		</headerContent>
 
 		<sections>
-			<ObjectPageSection id="about" title="About">
+			<ObjectPageSection id="about" title="{i18n>ENTITY_ABOUT}">
 				<subSections>
 					<ObjectPageSubSection>
 
@@ -54,7 +54,14 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection id="samples" title="Samples ({/count/samples})" visible="{= ${/count/samples} > 0 }">
+			<ObjectPageSection id="samples" title="{
+					parts: [
+						'i18n>ENTITY_SAMPLES',
+						'/count/samples'
+					],
+					formatter: '.formatMessage'
+				}"
+				visible="{= ${/count/samples} > 0 }">
 				<subSections>
 					<ObjectPageSubSection>
 						<m:VBox>
@@ -71,8 +78,8 @@
 									fixedLayout="false"
 									showSeparators="Inner" >
 								<m:columns>
-									<m:Column><m:Label text="Name" /></m:Column>
-									<m:Column minScreenWidth="Tablet"><m:Label text="Description" /></m:Column>
+									<m:Column><m:Label text="{i18n>ENTITY_TABLE_NAME}" /></m:Column>
+									<m:Column minScreenWidth="Tablet"><m:Label text="{i18n>ENTITY_TABLE_DESCRIPTION}" /></m:Column>
 								</m:columns>
 								<m:items>
 									<m:ColumnListItem type="Navigation" press="onNavToSample" vAlign="Middle">

@@ -10,7 +10,7 @@
         class="liveEditor">
     <html:div class="editorWrapper">
         <html:div>
-            <Title text="Live Editor"/>
+            <Title text="{i18n>LIVE_EDITOR_TITLE}"/>
             <IconTabHeader selectedKey="{viewModel>/selectedFileName}" select="onFileSwitch">
                 <items>
                     <IconTabFilter text="App.view.xml" key="App.view.xml"/>
@@ -29,12 +29,12 @@
         </html:div>
 
         <VBox id="resultBox">
-            <Title text="Result"/>
+            <Title text="{i18n>LIVE_EDITOR_RESULT}"/>
             <Toolbar style="Clear" class="editorToolbar">
-                <Button text="Preview"
+                <Button text="{i18n>LIVE_EDITOR_PREVIEW_BTN}"
                         press="requestExecuteCurrentSrc"
                         enabled="{= !${viewModel>/autoPreview}}"/>
-                <CheckBox text="Auto-preview"
+                <CheckBox text="{i18n>LIVE_EDITOR_LIVE_PREVIEW_TEXT}"
                           selected="{viewModel>/autoPreview}"/>
             </Toolbar>
             <core:HTML id="outputWindowWrapper" content="&#x3C;div &#x3C;/div&#x3E;"/>

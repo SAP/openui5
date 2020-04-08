@@ -49,17 +49,13 @@ sap.ui.define([
 
 		//Act
 		var oControllerStub = {
-			getView : function () {
-				return {
-					getModel: function () {
-						return new FakeI18n({
-							"demoAppCategoryShowcase": 1,
-							"demoAppCategoryTutorial": 2,
-							"demoAppCategoryTemplate": 3,
-							"demoAppCategoryMisc": 4
-						});
-					}
-				};
+			getModel: function () {
+				return new FakeI18n({
+					"DEMO_APPS_CATEGORY_SHOWCASE": 1,
+					"DEMO_APPS_CATEGORY_TUTORIAL": 2,
+					"DEMO_APPS_CATEGORY_TEMPLATE": 3,
+					"DEMO_APPS_CATEGORY_MISC": 4
+				});
 			}
 		};
 		var fnStubbedFormatter = formatter.categoryName.bind(oControllerStub);

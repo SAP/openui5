@@ -19,7 +19,7 @@
 				<actions>
 					<m:Button
 							id="topicDetailBackToSearch"
-							text="Back to search results"
+							text="{i18n>TOPIC_DETAIL_BACK_BTN}"
 							type="Transparent"
 							press="backToSearch"
 							visible="false"/>
@@ -27,14 +27,14 @@
 							visible="{= ${versionData>/isOpenUI5}}"
 							icon="sap-icon://edit"
 							type="Transparent"
-							text="Edit on GitHub"
-							tooltip="Edit this page on GitHub"
+							text="{i18n>TOPIC_DETAIL_EDIT_GITHUB}"
+							tooltip="{i18n>TOPIC_DETAIL_EDIT_GITHUB_TOOLTIP}"
 							press="onEditGitHubPress"/>
 					<m:Button
 							visible="{device>/system/desktop}"
 							icon="sap-icon://full-screen"
 							type="Transparent"
-							tooltip="Show this document in full screen mode"
+							tooltip="{i18n>TOPIC_DETAIL_FULLSCREEN_TOOLTIP}"
 							press="onToggleFullScreen"/>
 				</actions>
 			</DynamicPageTitle>

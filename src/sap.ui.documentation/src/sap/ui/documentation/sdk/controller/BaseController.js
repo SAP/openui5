@@ -7,10 +7,12 @@ sap.ui.define([
 		"sap/ui/documentation/library",
 		"sap/ui/core/mvc/Controller",
 		"sap/ui/core/routing/History",
+		"sap/ui/model/resource/ResourceModel",
 		"sap/ui/Device",
 		"sap/m/library",
-		"sap/ui/documentation/sdk/controller/util/APIInfo"
-	], function (library, Controller, History, Device, mobileLibrary, APIInfo) {
+		"sap/ui/documentation/sdk/controller/util/APIInfo",
+		"sap/base/strings/formatMessage"
+	], function (library, Controller, History, ResourceModel, Device, mobileLibrary, APIInfo, formatMessage) {
 		"use strict";
 
 		// shortcut for sap.m.SplitAppMode
@@ -21,7 +23,14 @@ sap.ui.define([
 			// Prerequisites
 			_oCore: sap.ui.getCore(),
 
+			formatMessage: formatMessage,
+
 			onInit: function() {
+				var oMessageBundle = new ResourceModel({
+					bundleName: "sap.ui.documentation.messagebundle"
+				});
+
+				this.setModel(oMessageBundle, "i18n");
 				// Load <code>versionInfo</code> to ensure the <code>versionData</code> model is loaded.
 				if (Device.system.phone || Device.system.tablet) {
 					this.getOwnerComponent().loadVersionInfo(); // for Desktop is always loaded in <code>Component.js</code>
@@ -135,10 +144,12 @@ sap.ui.define([
 				var oSource = oEvent.getSource ? oEvent.getSource() : oEvent.target;
 
 				if (!this.oDisclaimerPopover) {
-
 					sap.ui.core.Fragment.load({
 						name: "sap.ui.documentation.sdk.view.LegalDisclaimerPopover"
 					}).then(function (oPopover) {
+						// connect dialog to the root view of this component (models, lifecycle)
+						this.getView().addDependent(oPopover);
+
 						this.oDisclaimerPopover = oPopover;
 						oPopover.openBy(oSource);
 					}.bind(this));

@@ -16,7 +16,7 @@
 					upperCaseAnchorBar="false">
 
 				<headerTitle>
-					<ObjectPageHeader objectTitle="Change Log"/>
+					<ObjectPageHeader objectTitle="{i18n>RELEASE_NOTES_TITLE}"/>
 				</headerTitle>
 
 				<headerContent>

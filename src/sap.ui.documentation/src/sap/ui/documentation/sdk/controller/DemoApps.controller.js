@@ -29,17 +29,16 @@ sap.ui.define([
 			 * @public
 			 */
 			onInit: function () {
-				// set i18n model on view
 				var oModel = new JSONModel(),
-					i18nModel = new ResourceModel({
-						bundleName: "sap.ui.documentation.sdk.i18n.i18n"
+					oMessageBundle = new ResourceModel({
+						bundleName: "sap.ui.documentation.messagebundle"
 					});
 
-				this.getView().setModel(i18nModel, "i18n");
 
 				// load demo app metadata from docuindex of all available libraries
 				libraryData.fillJSONModel(oModel);
 				this.setModel(oModel);
+				this.getView().setModel(oMessageBundle, "i18n");
 
 				this.getRouter().getRoute("demoapps").attachPatternMatched(this._onMatched, this);
 
