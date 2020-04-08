@@ -267,16 +267,20 @@ sap.ui.define([
 	 */
 	FacetFilter.prototype.setType = function(oType) {
 
-		var oSummaryBar = this.getAggregation("summaryBar");
+		var oSummaryBar,
+			bActive;
 
 		// Force light type if running on a phone
 		if (Device.system.phone) {
 			this.setProperty("type", FacetFilterType.Light);
-			oSummaryBar.setActive(true);
+			bActive = true;
 		} else {
 			this.setProperty("type", oType);
-			oSummaryBar.setActive(oType === FacetFilterType.Light);
+			bActive = (oType === FacetFilterType.Light);
 		}
+
+		oSummaryBar = this._getSummaryBar();
+		oSummaryBar.setActive(bActive);
 
 		if (oType === FacetFilterType.Light) {
 
@@ -299,7 +303,7 @@ sap.ui.define([
 	FacetFilter.prototype.setShowReset = function(bVal) {
 
 		this.setProperty("showReset", bVal);
-		var oSummaryBar = this.getAggregation("summaryBar");
+		var oSummaryBar = this._getSummaryBar();
 
 		if (bVal) {
 
@@ -328,7 +332,7 @@ sap.ui.define([
 
 		if (bVal) {
 
-			var oSummaryBar = this.getAggregation("summaryBar");
+			var oSummaryBar = this._getSummaryBar();
 
 			if (this.getShowReset()) {
 
@@ -500,7 +504,6 @@ sap.ui.define([
 		this._bPreviousScrollBack = false;
 
 		this._getAddFacetButton();
-		this._getSummaryBar();
 
 		// This is the reset button shown for Simple type (not the same as the button created for the summary bar)
 		this.setAggregation("resetButton", this._createResetButton());
@@ -549,7 +552,7 @@ sap.ui.define([
 
 		if (this.getShowSummaryBar() || this.getType() === FacetFilterType.Light) {
 
-			var oSummaryBar = this.getAggregation("summaryBar");
+			var oSummaryBar = this._getSummaryBar();
 			var oText = oSummaryBar.getContent()[0];
 			oText.setText(this._getSummaryText());
 		}
@@ -562,16 +565,27 @@ sap.ui.define([
 	 * @private
 	 */
 	FacetFilter.prototype.onAfterRendering = function() {
+		var bShowSummaryBar = this.getShowSummaryBar(),
+			sType = this.getType(),
+			oSummaryBar = this._getSummaryBar().$();
 
-		if (this.getType() !== FacetFilterType.Light && !Device.system.phone) {
+		if (sType !== FacetFilterType.Light && !Device.system.phone) {
 			// Attach an interval timer that periodically checks overflow of the "head" div in the event that the window is resized or the device orientation is changed. This is ultimately to
 			// see if carousel arrows should be displayed.
 			IntervalTrigger.addListener(this._checkOverflow, this);
 		}
 
-		if (this.getType() !== FacetFilterType.Light) {
+		if (sType !== FacetFilterType.Light) {
 			this._startItemNavigation();
 		}
+
+		if (sType === FacetFilterType.Light) {
+			oSummaryBar.attr("aria-roledescription", this._bundle.getText("FACETFILTER_ACTIVE_TITLE"));
+			oSummaryBar.attr("role", "group");
+		} else if (bShowSummaryBar) {
+			oSummaryBar.attr("aria-roledescription", this._bundle.getText("FACETFILTER_TITLE"));
+		}
+
 	};
 
 	/* Keyboard Handling */
@@ -1928,7 +1942,9 @@ sap.ui.define([
 	 */
 	FacetFilter.prototype._getSummaryBar = function() {
 
-		var oSummaryBar = this.getAggregation("summaryBar");
+		var oSummaryBar = this.getAggregation("summaryBar"),
+			sType = this.getType();
+
 		if (!oSummaryBar) {
 
 			var oText = new sap.m.Text({
@@ -1938,20 +1954,18 @@ sap.ui.define([
 			var that = this;
 			// create info bar without setting the height to "auto" (use default height)
 			// since we need the exact height of 2rem for both cozy and compact mode, which is set via css
+
 			oSummaryBar = new sap.m.Toolbar({
 				content : [ oText ], // Text is set before rendering
-				active : this.getType() === FacetFilterType.Light ? true : false,
+				active : sType === FacetFilterType.Light ? true : false,
 				design : ToolbarDesign.Info,
-				ariaLabelledBy : [
-					InvisibleText.getStaticId("sap.m", "FACETFILTER_TITLE"),
-					oText
-				],
+				ariaLabelledBy : oText,
 				press : function(oEvent) {
 						that.openFilterDialog();
 				}
 			});
 
-			oSummaryBar._setRootAccessibilityRole("button");
+			oSummaryBar._setRootAccessibilityRole("group");
 			this.setAggregation("summaryBar", oSummaryBar);
 		}
 		return oSummaryBar;

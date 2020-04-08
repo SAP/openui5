@@ -363,8 +363,7 @@ sap.ui.define([
 			assert.ok(oSummaryBarText.getText(), "There should be text in the summary bar");
 
 			assert.strictEqual(oSummaryBar.$().attr("aria-labelledby"),
-				InvisibleText.getStaticId("sap.m", "FACETFILTER_TITLE") + " " + oSummaryBarText.getId(),
-				"aria-labelledby should consist of a hidden 'Filter' label and the filter's text");
+			oSummaryBarText.getId(), "aria-labelledby should consist of a filter's text");
 
 			testResetInSummaryBar(oFF, true);
 
@@ -2011,10 +2010,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Facet filter role", function (assert) {
-		assert.equal(this.oFF.$().attr("role"), "toolbar", "The role of the FacetFilter is 'toolbar'");
-	});
-
 	QUnit.test("Facet filter list positioning - initial", function (assert) {
 		this.testFacetFilterList(5);
 	});
@@ -2030,6 +2025,61 @@ sap.ui.define([
 		this.testFacetFilterList(4);
 	});
 
+	QUnit.test("FacetFilter: type=Light", function(assert) {
+		// arrange
+		var oToolbar,
+			oFacetFilter = new FacetFilter();
+
+		oFacetFilter.setType("Light");
+		oFacetFilter.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oToolbar = oFacetFilter._getSummaryBar().$();
+
+		// assert
+		assert.equal(oToolbar.attr("role"), "group", "role attribute value is proper");
+		assert.equal(oToolbar.attr("aria-roledescription"), oFacetFilter._bundle.getText("FACETFILTER_ACTIVE_TITLE"), "aria-roledescription attribute value is proper");
+
+		// cleanup
+		oFacetFilter.destroy();
+	});
+
+	QUnit.test("FacetFilter: type=Simple, showSummaryBar=true", function(assert) {
+		// arrange
+		var oToolbar,
+			oFacetFilter = new FacetFilter();
+
+		oFacetFilter.setType("Simple");
+		oFacetFilter.setShowSummaryBar(true);
+		oFacetFilter.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oToolbar = oFacetFilter._getSummaryBar().$();
+
+		// assert
+		assert.equal(oToolbar.attr("role"), "group", "role attribute value is proper");
+		assert.equal(oToolbar.attr("aria-roledescription"), oFacetFilter._bundle.getText("FACETFILTER_TITLE"), "aria-roledescription attribute value is proper");
+
+		// cleanup
+		oFacetFilter.destroy();
+	});
+
+	QUnit.test("FacetFilter: type=Simple, showSummaryBar=false", function(assert) {
+		// arrange
+		var oFilter,
+			oFacetFilter = new FacetFilter();
+
+		oFacetFilter.setType("Simple");
+		oFacetFilter.setShowSummaryBar(false);
+		oFacetFilter.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oFilter = oFacetFilter.$();
+
+		// assert
+		assert.equal(oFilter.attr("role"), "toolbar", "role attribute value is proper");
+		assert.equal(oFilter.attr("aria-roledescription"), oFacetFilter._bundle.getText("FACETFILTER_TITLE"), "aria-roledescription attribute value is proper");
+
+		// cleanup
+		oFacetFilter.destroy();
+	});
 
 	QUnit.module("Other scenarios");
 
