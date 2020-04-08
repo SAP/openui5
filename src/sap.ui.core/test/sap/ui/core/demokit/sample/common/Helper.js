@@ -301,6 +301,56 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		},
 
 		/**
+		 * Executes the Press() action on the (one and only) sap.m.CustomListItem in the view
+		 *
+		 * @param {sap.ui.test.Opa5} oOpa5
+		 *  An instance of Opa5 to access the current page object
+		 * @param {string} sViewName
+		 *  The name of the view which contains the more button as a sap.m.CustomListItem
+		 * @returns {jQuery.promise}
+		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
+		 */
+		pressMoreButton : function (oOpa5, sViewName) {
+			return oOpa5.waitFor({
+				actions : new Press(),
+				controlType : "sap.m.CustomListItem",
+				success : function (aControls) {
+					Opa5.assert.ok(true, "Pressed more button: " + aControls[0].getId());
+				},
+				viewName : sViewName
+			});
+		},
+
+		/**
+		 * Selects the sap.m.ColumnListItem with the given <iIndex> in the view.
+		 *
+		 * Note: Works only within views with not more than one sap.m.Table
+		 *
+		 * @param {sap.ui.test.Opa5} oOpa5
+		 *  An instance of Opa5 to access the current page object
+		 * @param {string} sViewName
+		 *  The name of the view containing the collection of column list items
+		 * @param {number} iIndex
+		 *  The zero based index of the column list item within its collection
+		 * @returns {jQuery.promise}
+		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
+		 */
+		selectColumnListItem : function (oOpa5, sViewName, iIndex) {
+			return oOpa5.waitFor({
+				actions : new Press(),
+				controlType : "sap.m.ColumnListItem",
+				errorMessage : "Item: " + iIndex + " not found",
+				matchers : function (oControl) {
+					return oControl.getBindingContext().getIndex() === iIndex;
+				},
+				success : function (aControls) {
+					Opa5.assert.ok(true, "Selected item: " + aControls[0].getBindingContext());
+				},
+				viewName : sViewName
+			});
+		},
+
+		/**
 		 * Executes QUnit.module() with the given <code>sName</code>.
 		 * Sets the language fix to "en-US" and restores back to the language before.
 		 * For a given <code>iTestTimeout</code) and TestUtils.isRealOData() === true
