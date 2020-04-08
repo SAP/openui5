@@ -2,44 +2,20 @@
 * ${copyright}
 */
 
-sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/base/util/deepEqual", "sap/ui/core/Locale", "sap/ui/core/LocaleData"],
-function (ManagedObject, Log, deepEqual, Locale, LocaleData) {
+sap.ui.define([
+	"./HyphenationTestingWords",
+	"sap/ui/base/ManagedObject",
+	"sap/base/Log",
+	"sap/base/util/deepEqual",
+	"sap/ui/core/Locale"
+], function (
+	HyphenationTestingWords,
+	ManagedObject,
+	Log,
+	deepEqual,
+	Locale
+) {
 	"use strict";
-
-	/**
-	 * Words which are suitable for testing of browser-native hyphenation.
-	 * @type {Object<string,string>}
-	 * @private
-	 */
-	var oTestingWords = {
-		"bg": "непротивоконституционствувателствувайте",
-		"ca": "Psiconeuroimmunoendocrinologia",
-		"hr": "prijestolonasljednikovičičinima",
-		"cs": "nejnezdevětadevadesáteronásobitelnějšími",
-		"da": "Gedebukkebensoverogundergeneralkrigskommandersergenten",
-		"nl": "meervoudigepersoonlijkheidsstoornissen",
-		"en-us": "pneumonoultramicroscopicsilicovolcanoconiosis",
-		"et": "Sünnipäevanädalalõpupeopärastlõunaväsimus",
-		"fi": "kolmivaihekilowattituntimittari",
-		"fr": "hippopotomonstrosesquippedaliophobie",
-		"de": "Kindercarnavalsoptochtvoorbereidingswerkzaamhedenplan",
-		"el-monoton": "ηλεκτροεγκεφαλογράφημα", // no native css hyphenation by documentation, but will be tested
-		"hi": "किंकर्तव्यविमूढ़", // no native css hyphenation by documentation, but will be tested
-		"hu": "Megszentségteleníthetetlenségeskedéseitekért",
-		"it": "hippopotomonstrosesquippedaliofobia",
-		"lt": "nebeprisikiškiakopūstlapiaujančiuosiuose",
-		"nb-no": "supercalifragilisticexpialidocious",
-		"pl": "dziewięćdziesięciokilkuletniemu",
-		"pt": "pneumoultramicroscopicossilicovulcanoconiose",
-		"ru": "превысокомногорассмотрительствующий",
-		"sr": "Семпаравиливичинаверсаламилитипиковски",
-		"sl": "Dialektičnomaterialističen",
-		"es": "Electroencefalografistas",
-		"sv": "Realisationsvinstbeskattning",
-		"th": "ตัวอย่างข้อความที่จะใช้ในการยืนยันการถ่ายโอน", // no native css hyphenation by documentation, but will be tested
-		"tr": "Muvaffakiyetsizleştiricileştiriveremeyebileceklerimizdenmişsinizcesine",
-		"uk": "Нікотинамідаденіндинуклеотидфосфат"
-	};
 
 	/**
 	 * Flat list of languages that are supported by Hyphenopoly.
@@ -293,7 +269,7 @@ function (ManagedObject, Log, deepEqual, Locale, LocaleData) {
 		testDiv.lang = sLang;
 		testDiv.id = sLang;
 		testDiv.style.cssText = css;
-		testDiv.appendChild(document.createTextNode(oTestingWords[sLang]));
+		testDiv.appendChild(document.createTextNode(HyphenationTestingWords[sLang.toLowerCase()]));
 		fakeBody.appendChild(testDiv);
 	}
 
@@ -373,6 +349,21 @@ function (ManagedObject, Log, deepEqual, Locale, LocaleData) {
 		}
 
 		return sLanguage;
+	}
+
+	/**
+	 * The "lang" attribute of the "html" tag determines the behavior of the native hyphenation.
+	 *
+	 * @param {string} [sLang] The language to get. If left empty - the global application language will be returned
+	 * @returns {string} The language code
+	 * @private
+	 */
+	function getLanguageAsSetOnThePage(sLang) {
+		if (sLang) {
+			return new Locale(sLang).toString();
+		}
+
+		return sap.ui.getCore().getConfiguration().getLocale().toString();
 	}
 
 	/**
@@ -493,24 +484,25 @@ function (ManagedObject, Log, deepEqual, Locale, LocaleData) {
 
 	/**
 	 * Checks if native hyphenation works in the current browser for the given language.
+	 * This check is performed against the value of the "lang" HTML attribute of the page.
 	 *
 	 * @param {string} [sLang] For what language to check. The global application language is the default one
 	 * @returns {(boolean|null)} True if native hyphenation works for the given language. False if native hyphenation will not work. Null if the language is not known to the Hyphenation API
 	 * @public
 	 */
 	Hyphenation.prototype.canUseNativeHyphenation = function (sLang) {
-		var sLanguage = getLanguage(sLang);
+		var sLanguageOnThePage = getLanguageAsSetOnThePage(sLang);
 		var bCanUseNativeHyphenation;
 
 		if (!this.isLanguageSupported(sLang)) {
 			return null;
 		}
 
-		if (!oBrowserSupportCSS.hasOwnProperty(sLanguage)) {
-			createTest(sLanguage);
+		if (!oBrowserSupportCSS.hasOwnProperty(sLanguageOnThePage)) {
+			createTest(sLanguageOnThePage);
 			var testContainer = appendTests(document.documentElement);
 			if (testContainer !== null) {
-				var el = document.getElementById(sLanguage);
+				var el = document.getElementById(sLanguageOnThePage);
 				if (checkCSSHyphensSupport(el) && el.offsetHeight > 12) {
 					bCanUseNativeHyphenation = true;
 				} else {
@@ -518,21 +510,21 @@ function (ManagedObject, Log, deepEqual, Locale, LocaleData) {
 				}
 				clearTests();
 			}
-			oBrowserSupportCSS[sLanguage] = bCanUseNativeHyphenation;
+			oBrowserSupportCSS[sLanguageOnThePage] = bCanUseNativeHyphenation;
 
 			if (bCanUseNativeHyphenation) {
 				Log.info(
-					"[UI5 Hyphenation] Browser-native hyphenation can be used for language " + getLanguageDisplayName(sLanguage),
+					"[UI5 Hyphenation] Browser-native hyphenation can be used for language " + getLanguageDisplayName(sLanguageOnThePage),
 					"sap.ui.core.hyphenation.Hyphenation.canUseNativeHyphenation()"
 				);
 			} else {
 				Log.info(
-					"[UI5 Hyphenation] Browser-native hyphenation is not supported by current platform for language " + getLanguageDisplayName(sLanguage),
+					"[UI5 Hyphenation] Browser-native hyphenation is not supported by current platform for language " + getLanguageDisplayName(sLanguageOnThePage),
 					"sap.ui.core.hyphenation.Hyphenation.canUseNativeHyphenation()"
 				);
 			}
 		} else {
-			bCanUseNativeHyphenation = oBrowserSupportCSS[sLanguage];
+			bCanUseNativeHyphenation = oBrowserSupportCSS[sLanguageOnThePage];
 		}
 
 		return bCanUseNativeHyphenation;
@@ -590,7 +582,7 @@ function (ManagedObject, Log, deepEqual, Locale, LocaleData) {
 			bIsSupported;
 
 		if (!oSupportCheck.hasOwnProperty(sLanguage)) {
-			bIsSupported = oTestingWords.hasOwnProperty(sLanguage);
+			bIsSupported = HyphenationTestingWords.hasOwnProperty(sLanguage);
 
 			if (!bIsSupported) {
 				Log.info(
