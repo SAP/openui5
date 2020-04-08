@@ -19,6 +19,86 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	function getCreateMenuItemText(sAggregationName, sTextKey, oOverlay) {
+		var bSibling = !sAggregationName;
+		var vAction = this.getCreateAction(bSibling, oOverlay, sAggregationName);
+		var oParentOverlay = this._getParentOverlay(bSibling, oOverlay);
+		var oDesignTimeMetadata = oParentOverlay.getDesignTimeMetadata();
+		var oElement = oParentOverlay.getElement();
+		return this._getText(vAction, oElement, oDesignTimeMetadata, sTextKey);
+	}
+
+	function getAddIFrameCommand(oModifiedElement, mSettings, oDesignTimeMetadata, sVariantManagementKey) {
+		var oView = FlexUtils.getViewForControl(oModifiedElement);
+		var sBaseId = oView.createId(uid());
+		var sWidth;
+		var sHeight;
+		if (mSettings.frameWidth) {
+			sWidth = mSettings.frameWidth + mSettings.frameWidthUnit;
+		} else {
+			sWidth = "100%";
+		}
+		if (mSettings.frameHeight) {
+			sHeight = mSettings.frameHeight + mSettings.frameHeightUnit;
+		} else {
+			sHeight = "100%";
+		}
+		return this.getCommandFactory().getCommandFor(oModifiedElement, "addIFrame", {
+			targetAggregation: mSettings.aggregation,
+			baseId: sBaseId,
+			index: mSettings.index,
+			url: mSettings.frameUrl,
+			width: sWidth,
+			height: sHeight
+		}, oDesignTimeMetadata, sVariantManagementKey);
+	}
+
+	function handleCreate(sAggregationName, aElementOverlays) {
+		var oResponsibleElementOverlay = aElementOverlays[0];
+		var bIsSibling = !sAggregationName;
+		var oAction = this.getCreateAction(bIsSibling, oResponsibleElementOverlay, sAggregationName);
+		var oParentOverlay = this._getParentOverlay(bIsSibling, oResponsibleElementOverlay);
+		var oParent = oParentOverlay.getElement();
+		var oDesignTimeMetadata = oParentOverlay.getDesignTimeMetadata();
+		var iIndex = 0;
+
+		if (bIsSibling) {
+			var oSiblingElement = oResponsibleElementOverlay.getElement();
+			var fnGetIndex = oDesignTimeMetadata.getAggregation(oAction.aggregation).getIndex;
+			iIndex = this._determineIndex(oParent, oSiblingElement, oAction.aggregation, fnGetIndex);
+		}
+
+		var sVariantManagementReference = this.getVariantManagementReference(oParentOverlay);
+
+		var oIFrameSettingsDialog = new IFrameSettingsDialog();
+		var mDialogSettings = {
+			urlBuilderParameters: IFrameSettingsDialog.buildUrlBuilderParametersFor(oParent)
+		};
+		oIFrameSettingsDialog.open(mDialogSettings)
+			.then(function (mSettings) {
+				if (!mSettings) {
+					return Promise.reject(); // Cancel
+				}
+				mSettings.index = iIndex;
+				mSettings.aggregation = oAction.aggregation;
+				return getAddIFrameCommand.call(this, oParent, mSettings, oDesignTimeMetadata, sVariantManagementReference);
+			}.bind(this))
+			.then(function (oCommand) {
+				// providing an action will trigger the rename plugin, which we only want in case of addIFrame as section
+				// in that case the function getCreatedContainerId has to be provided
+				this.fireElementModified({
+					command: oCommand,
+					newControlId: oCommand.getBaseId(),
+					action: oAction.getCreatedContainerId ? oAction : undefined
+				});
+			}.bind(this))
+			.catch(function(oMessage) {
+				if (oMessage) {
+					throw DtUtil.createError("AddIFrame#handler", oMessage, "sap.ui.rta");
+				}
+			});
+	}
+
 	/**
 	 * Constructor for a new AddIFrame plugin.
 	 *
@@ -43,128 +123,69 @@ sap.ui.define([
 		}
 	});
 
-	AddIFrame.prototype._getAddIFrameCommand = function(oModifiedElement, mSettings, oDesignTimeMetadata, sVariantManagementKey) {
-		var oView = FlexUtils.getViewForControl(oModifiedElement);
-		var sBaseId = oView.createId(uid());
-		var sWidth;
-		var sHeight;
-		if (mSettings.frameWidth) {
-			sWidth = mSettings.frameWidth + mSettings.frameWidthUnit;
-		} else {
-			sWidth = "100%";
-		}
-		if (mSettings.frameHeight) {
-			sHeight = mSettings.frameHeight + mSettings.frameHeightUnit;
-		} else {
-			sHeight = "100%";
-		}
-		return this.getCommandFactory().getCommandFor(oModifiedElement, "addIFrame", {
-			targetAggregation: mSettings.aggregation,
-			baseId: sBaseId,
-			index: mSettings.index,
-			url: mSettings.frameUrl,
-			width: sWidth,
-			height: sHeight
-		}, oDesignTimeMetadata, sVariantManagementKey);
-	};
-
 	/**
-	 * Trigger the plugin execution.
+	 * Returns true if add iFrame action is enabled for the selected element overlays
+	 * @param {string|undefined} sAggregationName Aggregation name if action is available as parent
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays Array of selected element overlays
+	 * @return {boolean} Indicates if action is enabled
 	 * @override
 	 */
-	AddIFrame.prototype.handleCreate = function (oMenuItem, oOverlay) {
-		var vAction = oMenuItem.action;
-		var oParentOverlay = this._getParentOverlay(oMenuItem.isSibling, oOverlay);
-		var oParent = oParentOverlay.getElement();
-		var oDesignTimeMetadata = oParentOverlay.getDesignTimeMetadata();
-
-		var oSiblingElement;
-		if (oMenuItem.isSibling) {
-			oSiblingElement = oOverlay.getElement();
-		}
-
-		var fnGetIndex = oDesignTimeMetadata.getAggregation(vAction.aggregation).getIndex;
-		var iIndex = this._determineIndex(oParent, oSiblingElement, vAction.aggregation, fnGetIndex);
-
-		var sVariantManagementReference = this.getVariantManagementReference(oParentOverlay);
-
-		var oIFrameSettingsDialog = new IFrameSettingsDialog();
-		var mDialogSettings = {
-			urlBuilderParameters: IFrameSettingsDialog.buildUrlBuilderParametersFor(oParent)
-		};
-		oIFrameSettingsDialog.open(mDialogSettings)
-			.then(function (mSettings) {
-				if (!mSettings) {
-					return Promise.reject(); // Cancel
-				}
-				mSettings.index = iIndex;
-				mSettings.aggregation = vAction.aggregation;
-				return this._getAddIFrameCommand(oParent, mSettings, oDesignTimeMetadata, sVariantManagementReference);
-			}.bind(this))
-			.then(function (oCommand) {
-				// providing an action will trigger the rename plugin, which we only want in case of addIFrame as section
-				// in that case the function getCreatedContainerId has to be provided
-				this.fireElementModified({
-					command: oCommand,
-					newControlId: oCommand.getBaseId(),
-					action: vAction.getCreatedContainerId ? vAction : undefined
-				});
-			}.bind(this))
-			.catch(function(oMessage) {
-				if (oMessage) {
-					throw DtUtil.createError("AddIFrame#handler", oMessage, "sap.ui.rta");
-				}
-			});
-	};
-
-	AddIFrame.prototype.buildMenuItem = function (oMenuItem) {
-		return Object.assign({
-			text: this.getCreateMenuItemText.bind(this, oMenuItem, "CTX_ADDIFRAME"),
-			handler: this.handler.bind(this, oMenuItem),
-			enabled: this.isEnabled.bind(this, oMenuItem)
-		}, oMenuItem);
+	AddIFrame.prototype.isEnabled = function(sAggregationName, aElementOverlays) {
+		var oElementOverlay = aElementOverlays[0];
+		var bSibling = !sAggregationName;
+		var oAction = this.getCreateAction(bSibling, oElementOverlay, sAggregationName);
+		return this.isActionEnabled(oAction, bSibling, oElementOverlay);
 	};
 
 	/**
-	 * Retrieves the context menu item for the action.
+	 * Returns an array of add iFrame menu items for the selected element overlays
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays Array of selected element overlays
+	 * @return {array} Array of context menu items
 	 * @override
 	 */
 	AddIFrame.prototype.getMenuItems = function (aElementOverlays) {
+		function getCommonProperties(sAggregationName) {
+			var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			var sIframeGroupText = oTextResources.getText("CTX_ADDIFRAME_GROUP");
+			return {
+				text: getCreateMenuItemText.bind(this, sAggregationName, "CTX_ADDIFRAME"),
+				handler: handleCreate.bind(this, sAggregationName),
+				enabled: this.isEnabled.bind(this, sAggregationName),
+				isSibling: !sAggregationName,
+				icon: "sap-icon://add-product",
+				group: sIframeGroupText
+			};
+		}
+
 		var iBaseRank = 140;
 		var aMenuItems = [];
-		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-		var sIframeGroupText = oTextResources.getText("CTX_ADDIFRAME_GROUP");
 
-		var oSiblingMenuItem = this.enhanceItemWithResponsibleElement({}, aElementOverlays);
-		var aResponsibleElementOverlays = oSiblingMenuItem.responsible || aElementOverlays;
-
-		if (this.isAvailable(true, aResponsibleElementOverlays)) {
-			var oAction = this.getCreateAction(true, aResponsibleElementOverlays[0]);
+		var bIsSibling = true;
+		if (this.isAvailable(bIsSibling, aElementOverlays)) {
+			var oAction = this.getCreateAction(bIsSibling, aElementOverlays[0]);
 			if (oAction) {
-				oSiblingMenuItem = this.buildMenuItem(Object.assign({
-					isSibling: true,
+				var oSiblingMenuItem = Object.assign({
 					id: "CTX_CREATE_SIBLING_IFRAME",
-					icon: "sap-icon://add-product",
 					rank: iBaseRank,
-					group: sIframeGroupText,
 					action: oAction
-				}, oSiblingMenuItem));
-				aMenuItems.push(oSiblingMenuItem);
+				}, getCommonProperties.call(this));
+
+				aMenuItems.push(this.enhanceItemWithResponsibleElement(oSiblingMenuItem, aElementOverlays));
 				iBaseRank += 10;
 			}
 		}
 
-		if (this.isAvailable(false, aResponsibleElementOverlays)) {
-			aMenuItems = aMenuItems.concat(this.getCreateActions(false, aResponsibleElementOverlays[0])
+		bIsSibling = false;
+		if (this.isAvailable(bIsSibling, aElementOverlays)) {
+			aMenuItems = aMenuItems.concat(this.getCreateActions(bIsSibling, aElementOverlays[0])
 				.map(function (oAction, iIndex) {
-					return this.buildMenuItem({
-						isSibling: false,
+					var oParentMenuItem = Object.assign({
 						action: oAction,
 						id: "CTX_CREATE_CHILD_IFRAME_" + oAction.aggregation.toUpperCase(),
-						icon: "sap-icon://add-product",
-						rank: iBaseRank + 10 * iIndex,
-						group: sIframeGroupText
-					}, aElementOverlays);
+						rank: iBaseRank + 10 * iIndex
+					}, getCommonProperties.call(this, oAction.aggregation));
+
+					return this.enhanceItemWithResponsibleElement(oParentMenuItem, aElementOverlays);
 				}, this)
 			);
 		}
@@ -172,7 +193,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the name of the action related to this plugin.
+	 * Returns the action name for this plugin
 	 * @override
 	 */
 	AddIFrame.prototype.getActionName = function() {
