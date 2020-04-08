@@ -217,25 +217,29 @@ sap.ui.define([
 		assert.equal(oJson["sap.app"].description, "Some application description", "App description should be correct");
 	});
 
-	QUnit.skip("Replace text placeholders with content from Terminologies", function (assert) {
+	QUnit.test("Replace text placeholders with content from Terminologies", function (assert) {
+
+		var sOldLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		sap.ui.getCore().getConfiguration().setLanguage("en");
+
 		this.oManifest = new Manifest({
 			"sap.app": {
 				"id": "sap.ui.test.terminologies",
 				"type": "application",
 				"i18n": {
 					"bundleUrl": "i18n.properties",
-					"fallbackLocale": "de",
-					"supportedLocales": ["de"],
+					"fallbackLocale": "en",
+					"supportedLocales": ["en"],
 					"terminologies": {
 						"oil": {
 							"bundleUrl": "i18n.terminologies.oil.properties",
 							"bundleUrlRelativeTo": "manifest",
-							"supportedLocales": ["de"]
+							"supportedLocales": ["en"]
 						},
 						"retail": {
 							"bundleUrl": "i18n.terminologies.retail.properties",
 							"bundleUrlRelativeTo": "manifest",
-							"supportedLocales": ["de"]
+							"supportedLocales": ["en"]
 						}
 					}
 				},
@@ -251,7 +255,9 @@ sap.ui.define([
 			url: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/textReplacement/manifest.json"
 		});
 		var oJson = this.oManifest.getJson();
-		assert.equal(oJson["sap.app"].title, "Zhell Fuel Station", "Title should be correct");
+		assert.equal(oJson["sap.app"].title, "Octane Fuel Station", "Title should be correct");
 		assert.equal(oJson["sap.app"].description, "Cheap oil prices guaranteed", "App description should be correct");
+
+		sap.ui.getCore().getConfiguration().setLanguage(sOldLanguage);
 	});
 });
