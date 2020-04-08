@@ -2,50 +2,91 @@
  * ${copyright}
  */
 
-/*global location, XMLHttpRequest */
+/*global location, XMLHttpRequest, Uint8Array */
 sap.ui.define([
 	"sap/ui/documentation/sdk/controller/BaseController",
-	"sap/ui/thirdparty/URI"
-], function (BaseController, URI) {
+	"sap/ui/thirdparty/URI",
+	"sap/base/Log"
+], function (BaseController, URI, Log) {
 	"use strict";
 
 		var TMPL_REF = sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl"),
 			MOCK_DATA_REF = sap.ui.require.toUrl("sap/ui/demo/mock");
 
-	function _fetch(sUrl) {
-		return new Promise(function(resolve, reject) {
-			var oReq;
+		var AJAXUtils = {
 
-			function fnHandler(oEvent) {
-				// Note for a URL using file:// protocol, a status code of 0 is reported on success
-				if ( oEvent.type === "load" && (oReq.status === 200 || oReq.status === 0) ) {
-					resolve(oReq.responseText);
-				} else {
-					reject(new Error("could not fetch '" + sUrl + "': " + oReq.status));
+			_fetchPromises: {},
+
+			fetch: function (sUrl) {
+				if (!(sUrl in this._fetchPromises)) {
+					this._fetchPromises[sUrl] = this._fetch(sUrl);
 				}
+				return this._fetchPromises[sUrl];
+			},
+
+			_fetch: function(sUrl) {
+				return new Promise(function(resolve, reject) {
+					var oReq,
+						bSuccess,
+						sResponseType = this._getExpectedResponseType(sUrl);
+
+					function fnHandler(oEvent) {
+						// Note for a URL using file:// protocol, a status code of 0 is reported on success
+						bSuccess = oEvent.type === "load" && (oReq.status === 200 || oReq.status === 0);
+
+						if (!bSuccess) {
+							reject(new Error("could not fetch '" + sUrl + "': " + oReq.status));
+							return;
+						}
+
+						resolve(AJAXUtils._readResponse(oReq));
+					}
+
+					oReq = new XMLHttpRequest();
+					oReq.open("GET", sUrl, true);
+					oReq.responseType = sResponseType;
+					oReq.onload =
+					oReq.onerror = fnHandler;
+
+					oReq.send();
+				}.bind(this));
+			},
+
+			_readResponse: function(oReq) {
+				var sRespType = oReq.responseType,
+					oResult = (sRespType === "text") ? oReq.responseText : oReq.response;
+
+				if (sRespType === "arraybuffer") {
+					try {
+						oResult = new Uint8Array(oResult);
+					} catch (e) {
+						// IE11 does not support Uint8Array from response array,
+						// in that case it is enough to keep the raw response
+						// (to be able to add it to the download zip, if download is requested)
+					}
+				}
+
+				return oResult;
+			},
+
+			_getExpectedResponseType: function(sResourceUrl) {
+				if (sResourceUrl.match(/.+(.vds|.pdf)$/i)) { // supported binary types
+					return "arraybuffer";
+				}
+				return "text"; // default
 			}
 
-			oReq = new XMLHttpRequest();
-			oReq.open("GET", sUrl, true);
-			oReq.onload =
-			oReq.onerror = fnHandler;
+		};
 
-			oReq.send();
-		});
-	}
 
 	return BaseController.extend("sap.ui.documentation.sdk.controller.SampleBaseController", {
 		_aMockFiles: ["products.json", "supplier.json", "img.json"],
 
-		onInit: function() {
-			this._fetchPromises = {};
-		},
-
 		fetchSourceFile: function (sUrl) {
-			if (!(sUrl in this._fetchPromises)) {
-				this._fetchPromises[sUrl] = _fetch(sUrl);
-			}
-			return this._fetchPromises[sUrl];
+			return AJAXUtils.fetch(sUrl).catch(function (e) {
+				Log.warning(e);
+				return "File not loaded"; // substitute content to display in the editor
+			});
 		},
 		onDownload: function () {
 			sap.ui.require([
@@ -62,7 +103,7 @@ sap.ui.define([
 						var aMockFilePromises = [];
 						for (var j = 0; j < this._aMockFiles.length; j++) {
 							var sMockFileName = this._aMockFiles[j];
-							if (sRawFile.indexOf(sMockFileName) > -1) {
+							if ((typeof sRawFile === "string") && sRawFile.indexOf(sMockFileName) > -1) {
 								aMockFilePromises.push(this._addFileToZip({
 									name: "mockdata/" + sMockFileName,
 									url: MOCK_DATA_REF + "/" + sMockFileName,
