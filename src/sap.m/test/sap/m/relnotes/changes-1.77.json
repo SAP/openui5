@@ -409,6 +409,62 @@
             "reference": "2070065440"
           }
         ]
+      },
+      {
+        "id": "26d13c8c50460624d2646362641b8a4861dd7ebe",
+        "type": "FEATURE",
+        "text": " sap.m.Avatar: Visual Affordance on Avatar presented",
+        "references": []
+      },
+      {
+        "id": "2e99d89a2f1a5c3791020a909b9ca7faa4903a83",
+        "type": "FEATURE",
+        "text": " sap.m.Table: Hide columns based on their importance",
+        "references": []
+      },
+      {
+        "id": "7792bc52a329465717853b0b90a7866ae235642c",
+        "type": "FIX",
+        "text": " List: Add ARIA role option to No-Data entry",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070087381"
+          }
+        ]
+      },
+      {
+        "id": "d91912c7991e45d586dd3074b9bfba3ef34c05fe",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Required information is read out correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070058836"
+          }
+        ]
+      },
+      {
+        "id": "47e88006ef7ace3caadaa113cd339f3b03ce6b9c",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: pressing F4 to close the popup doesn\u0027t cause lose of focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070112392"
+          }
+        ]
+      },
+      {
+        "id": "81741299f4915f97036206dbec244b66cb3a87db",
+        "type": "FIX",
+        "text": " sap.m.StepInput: correct valueState when value is updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070120023"
+          }
+        ]
       }
     ]
   }

@@ -46,6 +46,12 @@
             "reference": "2070086241"
           }
         ]
+      },
+      {
+        "id": "e986732831c5cb7d9686fe307710bd705aaa0d86",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Handle Action.Submit",
+        "references": []
       }
     ]
   }

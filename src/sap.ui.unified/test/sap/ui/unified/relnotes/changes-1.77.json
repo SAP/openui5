@@ -66,6 +66,17 @@
             "reference": "2070117649"
           }
         ]
+      },
+      {
+        "id": "47e88006ef7ace3caadaa113cd339f3b03ce6b9c",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: pressing F4 to close the popup doesn\u0027t cause lose of focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070112392"
+          }
+        ]
       }
     ]
   }

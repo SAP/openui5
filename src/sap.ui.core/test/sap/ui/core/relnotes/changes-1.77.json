@@ -139,6 +139,46 @@
             "reference": "2070123259"
           }
         ]
+      },
+      {
+        "id": "43665bb71bb78c75384687e1194a1fc3bd9ab1e4",
+        "type": "FEATURE",
+        "text": " ResourceBundle: Support terminologies and enhanceWith",
+        "references": []
+      },
+      {
+        "id": "12157a8f63597054967c7c36e9c4409d57beaee1",
+        "type": "FEATURE",
+        "text": " core.(Local)BusyIndicator: acc prep for ARIA 1.1",
+        "references": []
+      },
+      {
+        "id": "a1f5ff026566da02133ec021d8a8bae98375ff6b",
+        "type": "FEATURE",
+        "text": " sap.ui.core.cache.CacheManager: Enable support for Firefox and Chrome Browser",
+        "references": []
+      },
+      {
+        "id": "c00ebeff0ae1351206e27b01b2d138e274f2b2c6",
+        "type": "FIX",
+        "text": " caja-html-sanitizer: avoid catastrophic backtracking in lexCss",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001766652020"
+          }
+        ]
+      },
+      {
+        "id": "66533a6b2c78894c12b790835e90e2a2cdc0e8c8",
+        "type": "FIX",
+        "text": " routing.History: turn off push state when runs in iframe",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000972652020"
+          }
+        ]
       }
     ]
   }
