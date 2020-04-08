@@ -1234,8 +1234,8 @@ sap.ui.define([
 
 	Month.prototype.onThemeChanged = function(){
 
-		if (this._bNoThemeChange) {
-			// already called from Calendar
+		if (this._bNoThemeChange || !this.getDomRef()) {
+			// already called from Calendar or not candidate for rendering yet
 			return;
 		}
 
