@@ -3615,7 +3615,7 @@ usePreliminaryContext : false}}">\
 			<Text id="flightDate" text="{\
 				path:\'fldate\',\
 				type: \'sap.ui.model.odata.type.DateTime\',\
-				formatOptions: {style:\'short\'}\
+				formatOptions: {style : \'short\', UTC : true}\
 			}" />\
 		</ColumnListItem>\
 	</Table>\
@@ -3664,7 +3664,7 @@ usePreliminaryContext : false}}">\
 				}]
 			})
 			.expectChange("connectionID", ["10~0~"])
-			.expectChange("flightDate", ["5/30/15, 3:47 PM"])
+			.expectChange("flightDate", ["5/30/15, 1:47 PM"])
 			.expectMessage(oFlight10PriceError, "/FlightCollection",
 				"/CarrierCollection('1')/carrierFlights")
 			.expectMessage(oFlight20PriceWarning, "/FlightCollection",
@@ -3681,7 +3681,7 @@ usePreliminaryContext : false}}">\
 			});
 		}).then(function (oFilter) {
 			that.expectChange("connectionID", ["20~0~"])
-				.expectChange("flightDate", ["6/30/15, 3:47 PM"]);
+				.expectChange("flightDate", ["6/30/15, 1:47 PM"]);
 
 			oItemsBinding.filter(oFilter);
 
