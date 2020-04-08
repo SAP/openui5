@@ -171,9 +171,10 @@
 								},
 								{
 									"type": "Input.Time",
-									"placeholder": "Start time",
 									"id": "TimeVal",
-									"value": "16:59"
+									"value": "13:59",
+									"min": "12:00",
+									"max": "17:00"
 								}
 							]
 						}

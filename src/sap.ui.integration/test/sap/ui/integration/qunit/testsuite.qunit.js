@@ -148,6 +148,14 @@ sap.ui.define(function () {
 					'./cards/AdaptiveContent/UI5InputChoiceSet.qunit'
 				]
 			},
+			"UI5InputTime": {
+				coverage: {
+					only: ["sap/ui/integration/cards/adaptivecards/elements/UI5InputTime"]
+				},
+				module: [
+					'./cards/AdaptiveContent/UI5InputTime.qunit'
+				]
+			},
 			"ActionRender": {
 				coverage: {
 					only: ["sap/ui/integration/cards/adaptivecards/overwrites/ActionRender"]
