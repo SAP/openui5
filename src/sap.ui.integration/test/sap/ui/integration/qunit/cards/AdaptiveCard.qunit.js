@@ -274,14 +274,14 @@ sap.ui.define([
 
 		var oMarkdownManifest1 = {
 			"sap.card": {
+				"configuration": {
+					"enableMarkdown": true
+				},
 				"type": "AdaptiveCard",
 				"content": {
 					"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
 					"type": "AdaptiveCard",
 					"version": "1.0",
-					"configuration": {
-						"enableMarkdown": true
-					},
 					"body": [
 						{
 							"type": "TextBlock",
@@ -294,14 +294,14 @@ sap.ui.define([
 
 		var oMarkdownManifest2 = {
 			"sap.card": {
+				"configuration": {
+					"enableMarkdown": false
+				},
 				"type": "AdaptiveCard",
 				"content": {
 					"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
 					"type": "AdaptiveCard",
 					"version": "1.0",
-					"configuration": {
-						"enableMarkdown": false
-					},
 					"body": [
 						{
 							"type": "TextBlock",
