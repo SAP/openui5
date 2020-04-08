@@ -272,6 +272,12 @@ sap.ui.define([
 						oVariantClone.content.content.favorite = oActiveChange.getContent().favorite;
 					}
 					break;
+				case "setExecuteOnSelect":
+					oActiveChange = getActiveChange(aChanges);
+					if (oActiveChange) {
+						oVariantClone.content.content.executeOnSelect = oActiveChange.getContent().executeOnSelect;
+					}
+					break;
 				case "setVisible":
 					oActiveChange = getActiveChange(aChanges);
 					if (oActiveChange) {
@@ -316,6 +322,9 @@ sap.ui.define([
 		}
 		if (!oVariantClone.content.content.visible) {
 			oVariantClone.content.content.visible = true;
+		}
+		if (!oVariantClone.content.content.executeOnSelect) {
+			oVariantClone.content.content.executeOnSelect = false;
 		}
 		var aTitleKeyMatch = oVariantClone.content.content.title.match(/.i18n>(\w+)./);
 		if (aTitleKeyMatch) {

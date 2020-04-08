@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/util/includes",
 	"sap/base/util/ObjectPath",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/base/util/isEmptyObject"
 ], function(
 	JSONModel,
@@ -32,7 +31,6 @@ sap.ui.define([
 	fnBaseMerge,
 	includes,
 	ObjectPath,
-	FlexState,
 	isEmptyObject
 ) {
 	"use strict";
@@ -246,6 +244,7 @@ sap.ui.define([
 						// persisting original properties, since they're changed in real time in sap.ui.fl.variants.VariantManagement
 						oVariant.originalTitle = oVariant.title;
 						oVariant.originalFavorite = oVariant.favorite;
+						oVariant.originalExecuteOnSelect = oVariant.executeOnSelect;
 						oVariant.originalVisible = oVariant.visible;
 					});
 					oData[sKey].originalCurrentVariant = oData[sKey].currentVariant;
@@ -453,6 +452,7 @@ sap.ui.define([
 			layer: mPropertyBag.layer,
 			title: oDuplicateVariantData.content.content.title,
 			originalTitle: oDuplicateVariantData.content.content.title,
+			originalExecuteOnSelect: oDuplicateVariantData.content.content.executeOnSelect,
 			favorite: true,
 			originalFavorite: true,
 			rename: true,
@@ -528,6 +528,16 @@ sap.ui.define([
 				};
 				aChanges.push(mPropertyBag);
 			}
+			if (oVariant.originalExecuteOnSelect !== oVariant.executeOnSelect) {
+				mPropertyBag = {
+					variantReference : oVariant.key,
+					changeType : "setExecuteOnSelect",
+					executeOnSelect : oVariant.executeOnSelect,
+					originalExecuteOnSelect : oVariant.originalExecuteOnSelect,
+					layer : sLayer
+				};
+				aChanges.push(mPropertyBag);
+			}
 			if (!oVariant.visible && oVariant.originalVisible) {
 				mPropertyBag = {
 					variantReference : oVariant.key,
@@ -585,6 +595,7 @@ sap.ui.define([
 	 * @param {String} [mPropertyBag.title] - New app title value for <code>setTitle</code> change type
 	 * @param {boolean} [mPropertyBag.visible] - New visible value for <code>setVisible</code> change type
 	 * @param {boolean} [mPropertyBag.favorite] - New favorite value for <code>setFavorite</code> change type
+	 * @param {boolean} [mPropertyBag.executeOnSelect] - New executeOnSelect value for <code>setExecuteOnSelect</code> change type
 	 * @param {String} [mPropertyBag.defaultVariant] - New default variant for <code>setDefault</code> change type
 	 * @param {sap.ui.fl.Change} [mPropertyBag.change] - Change to be deleted
 	 * @param {boolean} [bAddChange] - Indicates whether change needs to be added
@@ -616,6 +627,14 @@ sap.ui.define([
 				//Update Variant Model
 				oVariant.favorite = mPropertyBag.favorite;
 				oVariant.originalFavorite = oVariant.favorite;
+				break;
+			case "setExecuteOnSelect":
+				mAdditionalChangeContent.executeOnSelect = mPropertyBag.executeOnSelect;
+				if (oVariant) {
+					//Update Variant Model
+					oVariant.executeOnSelect = mPropertyBag.executeOnSelect;
+					oVariant.originalExecuteOnSelect = oVariant.executeOnSelect;
+				}
 				break;
 			case "setVisible":
 				mAdditionalChangeContent.visible = mPropertyBag.visible;
@@ -701,13 +720,10 @@ sap.ui.define([
 			//update VariantController and write change to ChangePersistence
 			this.oVariantController._updateChangesForVariantManagementInMap(oChange.getDefinition(), sVariantManagementReference, true);
 			this.oChangePersistence.addDirtyChange(oChange);
-		} else {
-			// delete change
-			if (mPropertyBag.change) {
-				//update VariantController and write change to ChangePersistence
-				this.oVariantController._updateChangesForVariantManagementInMap(mPropertyBag.change.getDefinition(), sVariantManagementReference, false);
-				this.oChangePersistence.deleteChange(mPropertyBag.change);
-			}
+		} else if (mPropertyBag.change) { // delete change
+			// update VariantController and write change to ChangePersistence
+			this.oVariantController._updateChangesForVariantManagementInMap(mPropertyBag.change.getDefinition(), sVariantManagementReference, false);
+			this.oChangePersistence.deleteChange(mPropertyBag.change);
 		}
 		// set data to variant model
 		this.setData(oData);
@@ -740,6 +756,8 @@ sap.ui.define([
 						originalTitle: this._oResourceBundle.getText("STANDARD_VARIANT_ORIGINAL_TITLE"),
 						favorite: true,
 						originalFavorite: true,
+						executeOnSelect: false,
+						originalExecuteOnSelect: false,
 						visible: true,
 						originalVisible: true,
 						author : this.oVariantController.DEFAULT_AUTHOR
@@ -766,7 +784,8 @@ sap.ui.define([
 							content: {
 								title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
 								favorite: true,
-								visible: true
+								visible: true,
+								executeOnSelect: false
 							}
 						},
 						controlChanges: [],
@@ -824,35 +843,32 @@ sap.ui.define([
 				oVariant.change = true;
 				oVariant.remove = fnRemove(oVariant, sVariantManagementReference, bDesignTimeModeToBeSet);
 			});
-		} else {
-			// Personalization settings
-			if (this.oData[sVariantManagementReference]._isEditable) {
-				oControl.attachManage({
-					variantManagementReference: sVariantManagementReference
-				}, this.fnManageClick, this);
+		} else if (this.oData[sVariantManagementReference]._isEditable) { // Personalization settings
+			oControl.attachManage({
+				variantManagementReference: sVariantManagementReference
+			}, this.fnManageClick, this);
 
-				this.oData[sVariantManagementReference].variantsEditable = true;
+			this.oData[sVariantManagementReference].variantsEditable = true;
 
-				// Properties for variant management control's internal model
-				this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
-					oVariant.remove = fnRemove(oVariant, sVariantManagementReference, bDesignTimeModeToBeSet);
-					// Check for end-user variant
-					if (oVariant.layer === LayerUtils.getCurrentLayer(true)) {
-						oVariant.rename = true;
-						oVariant.change = true;
-					} else {
-						oVariant.rename = false;
-						oVariant.change = false;
-					}
-				});
-			} else {
-				this.oData[sVariantManagementReference].variantsEditable = false;
-				this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
-					oVariant.remove = false;
+			// Properties for variant management control's internal model
+			this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
+				oVariant.remove = fnRemove(oVariant, sVariantManagementReference, bDesignTimeModeToBeSet);
+				// Check for end-user variant
+				if (oVariant.layer === LayerUtils.getCurrentLayer(true)) {
+					oVariant.rename = true;
+					oVariant.change = true;
+				} else {
 					oVariant.rename = false;
 					oVariant.change = false;
-				});
-			}
+				}
+			});
+		} else {
+			this.oData[sVariantManagementReference].variantsEditable = false;
+			this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
+				oVariant.remove = false;
+				oVariant.rename = false;
+				oVariant.change = false;
+			});
 		}
 	};
 
@@ -881,7 +897,8 @@ sap.ui.define([
 		var sVMReference = this.getLocalId(oVariantManagementControl.getId(), oAppComponent);
 
 		return _setVariantModelBusy(function(sVariantManagementReference, oAppComponent, mParameters) {
-			var bSetDefault = mParameters["def"];
+			var bSetDefault = mParameters.def;
+			var bSetExecuteOnSelect = mParameters.execute;
 
 			var sSourceVariantReference = this.getCurrentVariantReference(sVariantManagementReference);
 			var aSourceVariantChanges = this.oVariantController.getVariantChanges(sVariantManagementReference, sSourceVariantReference, true);
@@ -919,6 +936,18 @@ sap.ui.define([
 						};
 						var oSetDefaultChange = this.setVariantProperties(sVariantManagementReference, mPropertyBagSetDefault, true);
 						aCopiedVariantDirtyChanges.push(oSetDefaultChange);
+					}
+					if (bSetExecuteOnSelect) {
+						var mPropertyBagSetExecute = {
+							changeType: "setExecuteOnSelect",
+							executeOnSelect: true,
+							variantReference: sNewVariantReference,
+							appComponent: oAppComponent,
+							layer: LayerUtils.getCurrentLayer(true),
+							variantManagementReference: sVariantManagementReference
+						};
+						var oSetExecuteChange = this.setVariantProperties(sVariantManagementReference, mPropertyBagSetExecute, true);
+						aCopiedVariantDirtyChanges.push(oSetExecuteChange);
 					}
 					this.oData[sVariantManagementReference].modified = false;
 					this.checkUpdate(true);
