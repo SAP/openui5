@@ -597,15 +597,17 @@ sap.ui.define([
 	FacetFilterList.prototype._search = function(sSearchVal, force) {
 
 		var bindingInfoaFilters, aBindingParts, aUserFilters,
-			oUserFilter, sPath, sEncodedString,
+			oUserFilter, sPath,
 			oFinalFilter, oPartsFilters, oFacetFilterItem,
 			numberOfsPath = 0,
 			oBinding = this.getBinding("items"),
 			oBindingInfo = this.getBindingInfo("items");
 
-		//Checks whether given model is one of the OData Model(s)
+		// Checks whether given model is one of the OData Models
 		function isODataModel(oModel) {
-			return oModel instanceof sap.ui.model.odata.ODataModel || oModel instanceof sap.ui.model.odata.v2.ODataModel;
+			return oModel instanceof sap.ui.model.odata.ODataModel ||
+				oModel instanceof sap.ui.model.odata.v2.ODataModel ||
+				oModel instanceof sap.ui.model.odata.v4.ODataModel;
 		}
 
 		if (force || (sSearchVal !== this._searchValue)) {
@@ -620,33 +622,27 @@ sap.ui.define([
 					}
 				}
 			}
-			if (oBinding) { // There will be no binding if the items aggregation has not been bound to a model, so search is not
-				// possible
+
+			 // There will be no binding if the items aggregation has not been bound to a model, so search is not possible
+			if (oBinding) {
 				if (sSearchVal || numberOfsPath > 0) {
 					oFacetFilterItem = oBindingInfo.template ? oBindingInfo.template : oBindingInfo.factory();
 					aBindingParts = oFacetFilterItem.getBindingInfo("text").parts;
 					sPath = aBindingParts[0].path;
-					if (sPath || sPath === "") { // sPath="" will be resolved relativelly to the parent, i.e. actual path will match the parent's one.
-						oUserFilter = new Filter(sPath, FilterOperator.Contains, sSearchVal);
-						aUserFilters = [oUserFilter];
+					// sPath="" will be resolved relativelly to the parent, i.e. actual path will match the parent's one.
+					if (sPath || sPath === "") {
+						aUserFilters = [];
 
 						// Add Filters for every parts from the model except the first one because the array is already
 						// predefined with a first item the first binding part
-						for (var i = 1; i < aBindingParts.length; i++) {
-							aUserFilters.push(new Filter(aBindingParts[i].path, FilterOperator.Contains, sSearchVal));
-						}
+						aBindingParts.forEach(function(oBindingPart) {
+							aUserFilters.push(new Filter(oBindingPart.path, FilterOperator.Contains, sSearchVal));
+						});
 
 						if (this.getEnableCaseInsensitiveSearch() && isODataModel(oBinding.getModel())){
-							//notice the single quotes wrapping the value from the UI control!
-							sEncodedString = "'" + String(sSearchVal).replace(/'/g, "''") + "'";
-							sEncodedString = sEncodedString.toLowerCase();
-							oUserFilter = new Filter("tolower(" + sPath + ")", FilterOperator.Contains, sEncodedString);
-							aUserFilters = [oUserFilter];
-							// Add Filters for every parts from the model except the first one because the array is already
-							// predefined with a first item the first binding part
-							for (var i = 1; i < aBindingParts.length; i++) {
-								aUserFilters.push(new Filter("tolower(" + aBindingParts[i].path + ")", FilterOperator.Contains, sSearchVal));
-							}
+							aUserFilters.forEach(function(oFilter) {
+								oFilter.bCaseSensitive = false;
+							});
 						}
 						oPartsFilters = new Filter(aUserFilters, false);
 						if (numberOfsPath > 1) {
