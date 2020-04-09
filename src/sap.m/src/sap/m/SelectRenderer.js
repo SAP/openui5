@@ -351,6 +351,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				aLabels = [],
 				aAriaLabelledBy = [],
 				oAriaLabelledBy,
+				sActiveDescendant,
 				sDesc;
 
 			oSelect.getLabels().forEach(function (oLabel) {
@@ -358,6 +359,10 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 					aLabels.push(oLabel.getId());
 				}
 			});
+
+			if (oSelect.isOpen() && oSelectedItem && oSelectedItem.getDomRef()) {
+				sActiveDescendant = oSelectedItem.getId();
+			}
 
 			if (oSelectedItem && !oSelectedItem.getText() && oSelectedItem.getIcon && oSelectedItem.getIcon()) {
 				var oIconInfo = IconPool.getIconInfo(oSelectedItem.getIcon());
@@ -389,6 +394,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				expanded: oSelect.isOpen(),
 				invalid: (oSelect.getValueState() === ValueState.Error) ? true : undefined,
 				labelledby: (bIconOnly || oAriaLabelledBy.value === "") ? undefined : oAriaLabelledBy,
+				activedescendant: sActiveDescendant,
 				haspopup: "listbox"
 			});
 		};

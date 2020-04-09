@@ -9439,6 +9439,33 @@ sap.ui.define([
 
 		QUnit.module("Accessibility");
 
+		QUnit.test("Should have correct value for aria-activedescendant after invalidation", function (assert) {
+			var oItemA = new Item({key: "Item1", text: "Item1"}),
+				oItemB = new Item({key: "Item2", text: "Item2"}),
+				oIconOnlySelect = new Select("iconOnlySelect", {
+					icon: "sap-icon://search",
+					type: "IconOnly",
+					items: [oItemA, oItemB]
+				});
+
+			oIconOnlySelect.placeAt("content");
+			Core.applyChanges();
+
+			oIconOnlySelect.open();
+			oIconOnlySelect.setSelectedKey(oItemB.getKey());
+			Core.applyChanges();
+
+			assert.strictEqual(oIconOnlySelect.getFocusDomRef().getAttribute('aria-activedescendant'), oItemB.getId(),
+				"Correct aria-activedescendant value");
+
+			oIconOnlySelect.rerender();
+
+			assert.strictEqual(oIconOnlySelect.getFocusDomRef().getAttribute('aria-activedescendant'), oItemB.getId(),
+				"Correct aria-activedescendant value");
+
+			oIconOnlySelect.destroy();
+		});
+
 		QUnit.test("Label for IconOnly Select", function (assert) {
 			var aItems = [
 				new Item({key: "Item1", text: "Item1"}),
