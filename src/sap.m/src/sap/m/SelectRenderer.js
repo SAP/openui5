@@ -356,10 +356,15 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				oSelectedItem = oSelect.getSelectedItem(),
 				bIconOnly = oSelect.getType() === SelectType.IconOnly,
 				oAriaLabelledBy,
+				sActiveDescendant,
 				sDesc;
 
 			if (sValueState) {
 				sValueState = " " + sValueState;
+			}
+
+			if (oSelect.isOpen() && oSelectedItem && oSelectedItem.getDomRef()) {
+				sActiveDescendant = oSelectedItem.getId();
 			}
 
 			if (oSelectedItem && !oSelectedItem.getText() && oSelectedItem.getIcon && oSelectedItem.getIcon()) {
@@ -381,6 +386,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				expanded: oSelect.isOpen(),
 				invalid: (oSelect.getValueState() === ValueState.Error) ? true : undefined,
 				labelledby: bIconOnly ? undefined : oAriaLabelledBy,
+				activedescendant: sActiveDescendant,
 				haspopup: bIconOnly ? true : undefined
 			});
 		};
