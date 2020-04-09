@@ -94,6 +94,8 @@ sap.ui.define(["sap/ui/Device"],
 
 			// Sticky anchorBar placeholder
 			oRm.openStart("div", oControl.getId() + "-stickyAnchorBar");
+			oRm.attr("data-sap-ui-customfastnavgroup", true);
+
 			// write ARIA role
 			if (!bNavigationRoleSet) {
 				oRm.attr("role", "navigation");
@@ -139,6 +141,8 @@ sap.ui.define(["sap/ui/Device"],
 
 			// Anchor Bar
 			oRm.openStart("section", oControl.getId() + "-anchorBar");
+			oRm.attr("data-sap-ui-customfastnavgroup", true);
+
 			// write ARIA role
 			if (!bNavigationRoleSet) {
 				oRm.attr("role", "navigation");
@@ -179,6 +183,11 @@ sap.ui.define(["sap/ui/Device"],
 				});
 			}
 			oRm.close("section");
+
+			oRm.openStart("span", oControl.getId() + "-skipFastGroupAnchor")
+				.class("sapUiPseudoInvisibleText")
+				.openEnd()
+				.close("span");
 
 			// run hook method
 			this.renderFooterContent(oRm, oControl);

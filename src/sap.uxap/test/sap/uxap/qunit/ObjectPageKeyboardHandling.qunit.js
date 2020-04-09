@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/Device",
+	"sap/ui/events/F6Navigation",
 	"sap/ui/core/mvc/XMLView"],
-function($, Core, Configuration, KeyCodes, QUtils, Device, XMLView) {
+function($, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView) {
 	"use strict";
 
 	var sAnchorSelector = ".sapUxAPAnchorBarScrollContainer .sapUxAPAnchorBarButton";
@@ -15,6 +16,104 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, XMLView) {
 	function getAnchorBar() {
 		return Core.byId("UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar");
 	}
+
+	QUnit.module("F6/Group skipping", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-12-ObjectPageDynamicHeader",
+				viewName: "view.UxAP-12-ObjectPageDynamicHeader"
+			}).then(function (oView) {
+				this.oView = oView;
+				this.oObjectPage = oView.byId("ObjectPageLayout");
+				this.oObjectPage.setShowFooter(true);
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.oView.destroy();
+			this.oObjectPage = null;
+		}
+	});
+
+	QUnit.test("F6 - focus should to the first element in the tab chain of the next F6-group, no matter where it resides within the List of Sections", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oObjectPage = this.oObjectPage,
+			$oExpectedTarget,
+			oF6NavigationStub,
+			fnF6NavigationStub = function (oEvent, oSettings) {
+				// Assert
+				assert.strictEqual(oSettings.target, $oExpectedTarget[0],
+					"The correct dom ref is given for starting point, skipping the sections of OP");
+
+				// Clean up
+				oF6NavigationStub.restore();
+				done();
+			},
+			fnOnDomReady = function () {
+				// Arrange
+				// _$skipFastGroupAnchor the DOMNode which should be used as
+				// starting point to find the next DOMNode in the F6 chain.
+				$oExpectedTarget = oObjectPage._$skipFastGroupAnchor;
+
+				// Act
+				oObjectPage.getSections()[0].getDomRef().focus();
+				QUtils.triggerKeydown(oObjectPage.getDomRef(), KeyCodes.F6);
+			};
+
+		// Arrange
+		oF6NavigationStub = sinon.stub(F6Navigation, "handleF6GroupNavigation", fnF6NavigationStub);
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
+		this.oView.placeAt("qunit-fixture");
+		Core.applyChanges();
+	});
+
+	QUnit.test("F6/SHIFT+F6 - order should be correct", function (assert) {
+		assert.expect(10); //number of assertions
+		// Arrange
+		var $oEl,
+			fnDone = assert.async(),
+			oControl,
+			aTabChain,
+			aOrderList = ['headerTitle', '_headerContent', '_anchorBar', '_$sectionsContainer', 'footer'],
+			oObjectPage = this.oObjectPage,
+			fnCheckOrder = function (bForward) {
+				// Arrange
+				aTabChain = bForward ? aOrderList : aOrderList.reverse();
+
+				aTabChain.forEach(function (item) {
+					oControl = oObjectPage.getAggregation(item);
+					if (oControl) {
+						$oEl = oControl.$();
+					} else {
+						$oEl = oObjectPage[item];
+					}
+					// Act
+					QUtils.triggerKeydown(oObjectPage.getDomRef(), KeyCodes.F6, !bForward);
+
+					// Assert
+					assert.strictEqual(document.activeElement, $oEl.firstFocusableDomRef(), item + " focused correctly");
+				});
+			},
+			fnOnDomReady = function () {
+				fnCheckOrder(true);
+
+				// Act
+				// go one after footer so when pressing SHIFT+F6 focus comes back to footer first
+				QUtils.triggerKeydown(oObjectPage.getDomRef(), KeyCodes.F6);
+
+				fnCheckOrder(false);
+
+				// Clean up
+				fnDone();
+			};
+
+		// Arrange
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
+		this.oView.placeAt("qunit-fixture");
+		Core.applyChanges();
+	});
 
 	QUnit.module("AnchorBar", {
 		beforeEach: function (assert) {

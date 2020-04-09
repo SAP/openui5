@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/util/merge",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/events/F6Navigation",
 	"sap/ui/dom/getFirstEditableInput"
 ], function(
 	jQuery,
@@ -54,6 +55,7 @@ sap.ui.define([
 	assert,
 	merge,
 	KeyCodes,
+	F6Navigation,
 	getFirstEditableInput
 ) {
 	"use strict";
@@ -1048,7 +1050,22 @@ sap.ui.define([
 
 		this._ensureCorrectParentHeight();
 
+		if (this._$sectionsContainer) {
+			this._$sectionsContainer.off("focusout");
+			this._$sectionsContainer.off("focusin");
+		}
+
 		this._cacheDomElements();
+
+		if (this._$sectionsContainer) {
+			this._$sectionsContainer.focusin(function () {
+				this._skipToNextFastGroup = true;
+			}.bind(this));
+
+			this._$sectionsContainer.focusout(function () {
+				this._skipToNextFastGroup = false;
+			}.bind(this));
+		}
 
 		if (this._hasDynamicTitle()) {
 			this.addStyleClass("sapUxAPObjectPageHasDynamicTitle");
@@ -1403,6 +1420,7 @@ sap.ui.define([
 		this._$stickyHeaderContent = jQuery(document.getElementById(this.getId() + "-stickyHeaderContent"));
 		this._$contentContainer = jQuery(document.getElementById(this.getId() + "-scroll"));
 		this._$sectionsContainer = jQuery(document.getElementById(this.getId() + "-sectionsContainer"));
+		this._$skipFastGroupAnchor = jQuery(document.getElementById(this.getId() + "-skipFastGroupAnchor"));
 
 		// BCP 1870201875: explicitly set the latest scrollContainer dom ref
 		// (as the scroller obtains the latest scrollContainer dom ref in a LATER hook, which fails in conditions detailed in BCP 1870201875)
@@ -1651,6 +1669,37 @@ sap.ui.define([
 		}
 		this.setProperty("useIconTabBar", bValue);
 		return this;
+	};
+
+	/**
+	 * Handler for F6
+	 *
+	 * @param {Object} oEvent - The event object
+	 */
+	ObjectPageLayout.prototype.onsapskipforward = function(oEvent) {
+		if (this._skipToNextFastGroup) {
+			this._handleGroupNavigation(oEvent, true);
+		}
+	};
+
+	/**
+	 * Handler for Shift + F6
+	 *
+	 * @param {Object} oEvent - The event object
+	 */
+	ObjectPageLayout.prototype.onsapskipback = function(oEvent) {
+		if (this._skipToNextFastGroup) {
+			this._handleGroupNavigation(oEvent, false);
+		}
+	};
+
+	ObjectPageLayout.prototype._handleGroupNavigation = function (oEvent, bForward) {
+		var oSettings = {
+			target: bForward ? this._$skipFastGroupAnchor[0] : this._$sectionsContainer[0]
+		};
+
+		oEvent.type = "keydown";
+		F6Navigation.handleF6GroupNavigation(oEvent, oSettings);
 	};
 
 	/**
