@@ -660,8 +660,9 @@ sap.ui.define([
 		// Arrange
 			var done = assert.async();
 			oCard.attachManifestReady(function () {
-				oCard.addEventDelegate({
-					"onAfterRendering": function() {
+				var oDelegate = {
+					onAfterRendering: function() {
+						oCard.removeEventDelegate(oDelegate);
 						var oHeader = oCard.getCardHeader();
 						assert.strictEqual(oHeader.isLoading(), bLoading, "isLoading should be 'true'");
 						assert.strictEqual(oHeader.getDomRef().classList.contains("sapFCardHeaderLoading"), bLoading, "On header level there is a 'sapFCardHeaderLoading' CSS class");
@@ -672,7 +673,8 @@ sap.ui.define([
 						assert.strictEqual(oHeader.getDomRef().classList.contains("sapFCardHeaderLoading"), false, "On header level there no is a 'sapFCardHeaderLoading' CSS class");
 						done();
 					}
-				}, this);
+				};
+				oCard.addEventDelegate(oDelegate, this);
 			}.bind(this));
 
 			// Act
@@ -684,8 +686,9 @@ sap.ui.define([
 			// Arrange
 			var done = assert.async();
 			oCard.attachManifestReady(function () {
-				oCard.addEventDelegate({
-					"onAfterRendering": function() {
+				var oDelegate = {
+					onAfterRendering: function() {
+						oCard.removeEventDelegate(oDelegate);
 						var oHeader = oCard.getCardHeader();
 						assert.strictEqual(oHeader.isLoading(), bLoading, "isLoading should be 'true'");
 						assert.strictEqual(oHeader.getDomRef().classList.contains("sapFCardHeaderLoading"), bLoading, "On header level there is a 'sapFCardHeaderLoading' CSS class");
@@ -698,7 +701,9 @@ sap.ui.define([
 						assert.strictEqual(oHeader.getDomRef().classList.contains("sapFCardHeaderLoading"), false, "On header level there no is a 'sapFCardHeaderLoading' CSS class");
 						done();
 					}
-				}, this);
+				};
+
+				oCard.addEventDelegate(oDelegate, this);
 			}.bind(this));
 
 			// Act
@@ -711,15 +716,18 @@ sap.ui.define([
 			// Arrange
 			var done = assert.async();
 			oCard.attachManifestReady(function () {
-				oCard.addEventDelegate({
-					"onAfterRendering": function () {
+				var oDelegate = {
+					onAfterRendering: function () {
+						oCard.removeEventDelegate(oDelegate);
 						var oContent = oCard.getCardContent();
 						if (oContent) {
 							assert.strictEqual(jQuery(sCSSClass).length > 0, bExpected, sMassage);
 							done();
 						}
 					}
-				}, this);
+				};
+
+				oCard.addEventDelegate(oDelegate, this);
 			}.bind(this));
 
 			// Act
