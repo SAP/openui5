@@ -1571,6 +1571,54 @@ sap.ui.define([
 	});
 });
 
+//*********************************************************************************************
+	QUnit.test("fetchIfChildCanUseCache: non-deferred function", function (assert) {
+		var oMetaModel = {
+				getMetaPath : function (sPath) {
+					return _Helper.getMetaPath(sPath);
+				}
+			},
+			fnFetchMetadata = function () {},
+			oBinding = new ODataParentBinding({
+				doFetchQueryOptions : function () {},
+				oModel : {
+					getMetaModel : function () { return oMetaModel; },
+					oInterface : {
+						fetchMetadata : fnFetchMetadata
+					},
+					resolve : function () {}
+				},
+				sPath : "/Collection(42)"
+			}),
+			oBindingMock = this.mock(oBinding),
+			sChildPath = "Function(foo=42)",
+			oContext = Context.create(this.oModel, oBinding, "/Collection(42)"),
+			oModelMock = this.mock(oBinding.oModel),
+			oPromise;
+
+		oBindingMock.expects("getBaseForPathReduction")
+			.withExactArgs().returns("/base/path");
+		oModelMock.expects("resolve")
+			.withExactArgs("/Collection(42)", undefined)
+			.returns("/Collection(42)");
+		oModelMock.expects("resolve")
+			.withExactArgs(sChildPath, sinon.match.same(oContext))
+			.returns("/resolved/child/path");
+		this.mock(_Helper).expects("fetchPropertyAndType")
+			.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/child/path")
+			.returns(SyncPromise.resolve([{$isBound : true, $kind : "Function"}]));
+		oBindingMock.expects("doFetchQueryOptions").withExactArgs(undefined)
+			.returns(SyncPromise.resolve());
+
+		// code under test
+		oPromise = oBinding.fetchIfChildCanUseCache(oContext, sChildPath,
+			SyncPromise.resolve());
+
+		return oPromise.then(function (sReducedPath) {
+			assert.strictEqual(sReducedPath, undefined);
+		});
+	});
+
 	//*********************************************************************************************
 [undefined, true].forEach(function (bImmutable) {
 	var sTitle = "fetchIfChildCanUseCache: non-deferred function and 'value', bImmutable = "
