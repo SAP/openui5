@@ -1567,6 +1567,70 @@ sap.ui.define([
 		}, 10);
 	});
 
+	QUnit.test("Select of filter detail item without a key is disabled when Filter Details page is opened", function (assert) {
+		var	spyLogWarning = sinon.spy(Log, "warning"),
+			bItemInitiallySelected;
+
+		this.oVSD.setSelectedFilterKeys(this.oFilterState);
+		bItemInitiallySelected = this.oVSD.getFilterItems()[1].getItems()[0].getSelected();
+
+		this.oVSD.getFilterItems()[1].getItems()[0].setKey("");
+		this.oVSD.open();
+
+		jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+		this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[1]); // name details page
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(bItemInitiallySelected,  true, 'The first item is initially selected (before VSD opening)');
+		assert.strictEqual(this.oVSD._filterDetailList.getItems()[0].getSelected(),  false, 'The first item is deselected after opening of a Filter Details page');
+		assert.strictEqual(spyLogWarning.calledWithMatch("Missing key of a"), true, "A warning is logged");
+		spyLogWarning.restore();
+
+	});
+
+	QUnit.test("Select of filter detail item without a key is disabled when tap on it and tap on Select All", function (assert) {
+		var	done = assert.async(),
+			spyLogWarning = sinon.spy(Log, "warning"),
+			bItemInitiallySelected;
+
+		this.oVSD.setSelectedFilterKeys(this.oFilterState);
+		bItemInitiallySelected = this.oVSD.getFilterItems()[1].getItems()[0].getSelected();
+
+		this.oVSD.getFilterItems()[1].getItems()[0].setKey("");
+		this.oVSD.open();
+
+		jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+		this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[1]); // name details page
+
+		setTimeout(function () {
+			//Assert
+			assert.strictEqual(spyLogWarning.calledWithMatch("Missing key of a"), true, "A warning is logged on Filter Details page opening");
+			spyLogWarning.reset();
+
+			//Act - tap on item without a key
+			this.oVSD._filterDetailList.getItems()[0].$().trigger('tap');
+
+			setTimeout(function () {
+				//Assert
+				assert.strictEqual(bItemInitiallySelected,  true, 'The first item is initially selected (before VSD opening)');
+				assert.strictEqual(this.oVSD._filterDetailList.getItems()[0].getSelected(), false, 'The first item is not selected after tap');
+				assert.strictEqual(spyLogWarning.calledWithMatch("Missing key of a"), true, "A warning is logged on tap attempt");
+
+				spyLogWarning.reset();
+
+				//Act - simulate click on Select All checkbox
+				this.oVSD._selectAllCheckBox.fireSelect({selected: true});
+
+				assert.strictEqual(this.oVSD._filterDetailList.getItems()[0].getSelected(), false, 'The first item is not selected after Select All');
+				assert.strictEqual(spyLogWarning.calledWithMatch("Missing key of a"), true, "A warning is logged on Select All attempt");
+
+
+				spyLogWarning.restore();
+				done();
+			}.bind(this), 10);
+		}.bind(this), 10);
+	});
+
 	QUnit.test("Query filter search field works correctly", function (assert) {
 		var done = assert.async(),
 			that = this,
