@@ -1017,8 +1017,14 @@ sap.ui.define([
 			return;
 		}
 
+		var highlightedTexts = [];
+
 		for (i = 0; i < aItemsDomRef.length; i++) {
-			aItemsDomRef[i].innerHTML = this._createHighlightedText(aItemsDomRef[i], sInputValue, bWordMode);
+			highlightedTexts.push(this._createHighlightedText(aItemsDomRef[i], sInputValue, bWordMode));
+		}
+
+		for (i = 0; i < aItemsDomRef.length; i++) {
+			aItemsDomRef[i].innerHTML = highlightedTexts[i];
 		}
 	};
 
