@@ -519,6 +519,26 @@ sap.ui.define([
 		assert.strictEqual(library.WrappingType.Hyphenated, this.oGenericTile._oSubTitle.getWrappingType(), "Subtitle wrapping type should be Hyphenated");
 	});
 
+	QUnit.test("GenericTile is dragged", function (assert) {
+		if (Device.browser.phantomJS) {
+			assert.expect(0);
+			return;
+		}
+		this.oGenericTile.rerender();
+		//Style class which gets added when Generic Tile when it is Dragged.
+		this.oGenericTile.addStyleClass("sapMGTPressActive");
+		this.oGenericTile.addStyleClass("sapUiDnDDragging");
+		this.oGenericTile.addStyleClass("sapUiDnDGridControl");
+		//Style class for Generic Tile when it is dragged.
+		assert.ok(this.oGenericTile.hasStyleClass("sapMGTPressActive"), "Generic tile contains Press Active Style Class");
+		assert.ok(this.oGenericTile.hasStyleClass("sapUiDnDDragging"), "Generic tile contains Drag Style Class Style");
+		assert.ok(this.oGenericTile.hasStyleClass("sapUiDnDGridControl"), "Generic tile contains sapUiDnDGridControl Style Class");
+		//OnAfterRendering gets Retrigerredafter the Generic Tile is Dragged.
+		this.oGenericTile.onDragComplete();
+		//Style Classes for Generic Tile should be removed from hover Overlay, once Drag is completed.
+		assert.notOk(this.oGenericTile.hasStyleClass("sapMGTPressActive"), "Press state from Generic Tile is removed.");
+	});
+
 	QUnit.module("FrameType rendering tests", {
 		beforeEach: function() {
 			this.oGenericTile = new GenericTile({
