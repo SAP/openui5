@@ -3,13 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/Utils",
 	"sap/base/Log"
 ],
 function(
-	LrepConnector,
 	FlexState,
 	Utils,
 	Log

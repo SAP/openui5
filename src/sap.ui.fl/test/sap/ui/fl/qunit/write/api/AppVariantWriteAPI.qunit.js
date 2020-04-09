@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Manifest",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
@@ -339,7 +339,6 @@ sap.ui.define([
 			});
 
 
-			sandbox.stub(LrepConnector.prototype, "send").resolves();
 			sandbox.stub(WriteUtils, "sendRequest").rejects({message:"App variant failed to save"});
 
 			sandbox.stub(Log, "error").callThrough().withArgs("the app variant could not be created.", "App variant failed to save").returns();
@@ -421,7 +420,7 @@ sap.ui.define([
 				}
 			});
 
-			var oOldConnectorCall = sandbox.stub(LrepConnector.prototype, "send").rejects({message: "Dirty changes failed to save"});
+			var oConnectorCall = sandbox.spy(LrepConnector, "write");
 
 			sandbox.stub(WriteUtils, "sendRequest").resolves();
 
@@ -483,7 +482,7 @@ sap.ui.define([
 							assert.equal(oUIChange.getDefinition().validAppVersions.creation, "1.0.0", "the app variant creation version of UI Change has been changed");
 							assert.equal(oUIChange.getDefinition().validAppVersions.from, "1.0.0", "the app variant from version of UI Change has been changed");
 							assert.equal(oUIChange.getNamespace(), "apps/customer.reference.app.id/changes/", "the namespace of the UI Change has been changed");
-							assert.ok(oOldConnectorCall.calledWith("/sap/bc/lrep/changes/", "POST"), "then backend call is triggered with correct parameters");
+							assert.ok(oConnectorCall.calledWith("/sap/bc/lrep/changes/", "POST"), "then backend call is triggered with correct parameters");
 							assert.ok(fnDeleteAppVarSpy.calledWithExactly({referenceAppId: "customer.reference.app.id"}), "then deleteAppVar call is called with correct parameters");
 							// Delete the UI change from persistence
 							ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.deleteChange(oUIChange);

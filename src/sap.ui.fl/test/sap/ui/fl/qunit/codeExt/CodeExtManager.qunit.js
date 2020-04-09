@@ -88,8 +88,6 @@ sap.ui.define([
 
 			sandbox.stub(Utils, "createDefaultFileName").returns(sGeneratedId);
 
-			var sExpectedUrl = "/sap/bc/lrep/content/apps/component/changes/" + sGeneratedId + ".change?layer=CUSTOMER";
-
 			var oPropertyBag = {
 				componentName: "component",
 				fileName: "a.js",
@@ -103,30 +101,29 @@ sap.ui.define([
 				}
 			};
 
-			var oLrepConnectorSendStub = sandbox.stub(CodeExtManager._oLrepConnector, "send");
+			var oStorageWriteStub = sandbox.stub(Storage, "write");
 
-			CodeExtManager.createOrUpdateCodeExtChange(oPropertyBag);
+			CodeExtManager.createOrUpdateCodeExtChange(oPropertyBag, {});
 
-			assert.ok(oLrepConnectorSendStub.calledOnce, "the sending was initiated");
+			assert.ok(oStorageWriteStub.calledOnce, "the sending was initiated");
 
-			var oCallArguments = oLrepConnectorSendStub.getCall(0).args;
+			var oCallArguments = oStorageWriteStub.getCall(0).args;
 
-			assert.equal(oCallArguments[0], sExpectedUrl, "the url was build correct");
-			assert.equal(oCallArguments[1], "PUT", "the backend operation should be a writing");
-			assert.equal(oCallArguments[2].changeType, "codeExt", "the change type is codeExt");
-			assert.equal(oCallArguments[2].content.codeRef, sCodeRef, "the code reference property should be set in the content section");
-			assert.equal(oCallArguments[2].selector.id, sControllerName, "the controller name property should be set in the content section");
-			assert.equal(oCallArguments[2].fileName, sGeneratedId, "an ID was generated");
+			assert.equal(oCallArguments.length, 1, "one storage object");
+			assert.equal(oCallArguments[0].layer, "CUSTOMER", "that contains flex objects for the CUSTOMER layer");
+			assert.equal(oCallArguments[0].flexObjects.length, 1, "there is one flex object in the array");
+			assert.equal(oCallArguments[0].flexObjects[0].changeType, "codeExt", "that has the change type codeExt");
+			assert.equal(oCallArguments[0].flexObjects[0].content.codeRef, sCodeRef, "the code reference property should be set in the content section");
+			assert.equal(oCallArguments[0].flexObjects[0].selector.id, sControllerName, "the controller name property should be set in the content section");
+			assert.equal(oCallArguments[0].flexObjects[0].fileName, sGeneratedId, "an ID was generated");
 		});
 
-		QUnit.test("createOrUpdateCodeExtChange creates a new change with TransportInfor and calls the backend connection class to propagate the creation", function(assert) {
+		QUnit.test("createOrUpdateCodeExtChange creates a new change with Transport Information and calls the backend connection class to propagate the creation", function(assert) {
 			var sGeneratedId = "id_123_0";
 			var sCodeRef = "myCode/code.js";
 			var sControllerName = "controllerName";
 
 			sandbox.stub(Utils, "createDefaultFileName").returns(sGeneratedId);
-
-			var sExpectedUrl = "/sap/bc/lrep/content/apps/component/changes/" + sGeneratedId + ".change?layer=CUSTOMER&changelist=myTransportId&package=myPackageName";
 
 			var oPropertyBag = {
 				componentName: "component",
@@ -146,20 +143,22 @@ sap.ui.define([
 				packageName: "myPackageName"
 			};
 
-			var oLrepConnectorSendStub = sandbox.stub(CodeExtManager._oLrepConnector, "send");
+			var oStorageWriteStub = sandbox.stub(Storage, "write");
 
 			CodeExtManager.createOrUpdateCodeExtChange(oPropertyBag, mOptions);
 
-			assert.ok(oLrepConnectorSendStub.calledOnce, "the sending was initiated");
+			assert.ok(oStorageWriteStub.calledOnce, "the sending was initiated");
 
-			var oCallArguments = oLrepConnectorSendStub.getCall(0).args;
+			var oCallArguments = oStorageWriteStub.getCall(0).args;
 
-			assert.equal(oCallArguments[0], sExpectedUrl, "the url was build correct");
-			assert.equal(oCallArguments[1], "PUT", "the backend operation should be a writing");
-			assert.equal(oCallArguments[2].changeType, "codeExt", "the change type is codeExt");
-			assert.equal(oCallArguments[2].content.codeRef, sCodeRef, "the code reference property should be set in the content section");
-			assert.equal(oCallArguments[2].selector.id, sControllerName, "the controller name property should be set in the content section");
-			assert.equal(oCallArguments[2].fileName, sGeneratedId, "an ID was generated");
+			assert.equal(oCallArguments.length, 1, "one storage object");
+			assert.equal(oCallArguments[0].layer, "CUSTOMER", "that contains flex objects for the CUSTOMER layer");
+			assert.equal(oCallArguments[0].transport, "myTransportId", "and the specified transport Id");
+			assert.equal(oCallArguments[0].flexObjects.length, 1, "there is one flex object in the array");
+			assert.equal(oCallArguments[0].flexObjects[0].changeType, "codeExt", "that has the change type codeExt");
+			assert.equal(oCallArguments[0].flexObjects[0].content.codeRef, sCodeRef, "the code reference property should be set in the content section");
+			assert.equal(oCallArguments[0].flexObjects[0].selector.id, sControllerName, "the controller name property should be set in the content section");
+			assert.equal(oCallArguments[0].flexObjects[0].fileName, sGeneratedId, "an ID was generated");
 		});
 
 		QUnit.test("createCodeExtChanges creates new changes with transportId, packageName, codeRef and calls the backend connection class to propagate the creation", function(assert) {
@@ -323,7 +322,7 @@ sap.ui.define([
 			}, new Error("the extension does not contains a file name"), "an error was thrown");
 		});
 
-		QUnit.test("deleteCodeExtChange throws an error if the passed object has no namepsace property", function(assert) {
+		QUnit.test("deleteCodeExtChange throws an error if the passed object has no namespace property", function(assert) {
 			var oPropertyBag = {
 				changeType: "codeExt",
 				fileType: "change",
@@ -347,8 +346,6 @@ sap.ui.define([
 
 			sandbox.stub(Utils, "createDefaultFileName").returns(sFileName);
 
-			var sExpectedUrl = "/sap/bc/lrep/content/" + sNameSpace + sFileName + ".change?layer=VENDOR";
-
 			var oPropertyBag = {
 				changeType: "codeExt",
 				fileName: sFileName,
@@ -363,28 +360,26 @@ sap.ui.define([
 				layer: Layer.VENDOR
 			};
 
-			var oLrepConnectorSendStub = sandbox.stub(CodeExtManager._oLrepConnector, "send");
+			var oStorageWriteStub = sandbox.stub(Storage, "remove");
 
-			CodeExtManager.deleteCodeExtChange(oPropertyBag);
+			CodeExtManager.deleteCodeExtChange(oPropertyBag, {});
 
-			assert.ok(oLrepConnectorSendStub.calledOnce, "the sending was initiated");
+			assert.ok(oStorageWriteStub.calledOnce, "the sending was initiated");
 
-			var oCallArguments = oLrepConnectorSendStub.getCall(0).args;
+			var oCallArguments = oStorageWriteStub.getCall(0).args;
 
-			assert.equal(oCallArguments[0], sExpectedUrl, "the url was build correct");
-			assert.equal(oCallArguments[1], "DELETE", "the backend operation should be a deletion");
-			assert.equal(oCallArguments[2].fileName, sFileName, "the file name was taken over from the id property");
+			assert.equal(oCallArguments.length, 1, "one storage object");
+			assert.equal(oCallArguments[0].layer, "VENDOR", "that contains a flex object for the VENDOR layer");
+			assert.equal(oCallArguments[0].flexObject.fileName, sFileName, "the file name of the flex object was taken over from the id property");
 		});
 
-		QUnit.test("deleteCodeExtChange deletes a change with TranportInfor and calls the backend connection class to propagate the deletion", function(assert) {
+		QUnit.test("deleteCodeExtChange deletes a change with Transport Information and calls the backend connection class to propagate the deletion", function(assert) {
 			var sFileName = "id_123_0";
 			var sCodeRef = "myCode/code.js";
 			var sNameSpace = "apps/component/changes/";
 			var sControllerName = "controllerName";
 
 			sandbox.stub(Utils, "createDefaultFileName").returns(sFileName);
-
-			var sExpectedUrl = "/sap/bc/lrep/content/" + sNameSpace + sFileName + ".change?layer=VENDOR&changelist=myTransportId&package=myPackageName";
 
 			var oPropertyBag = {
 				changeType: "codeExt",
@@ -405,17 +400,18 @@ sap.ui.define([
 				packageName: "myPackageName"
 			};
 
-			var oLrepConnectorSendStub = sandbox.stub(CodeExtManager._oLrepConnector, "send");
+			var oStorageWriteStub = sandbox.stub(Storage, "remove");
 
 			CodeExtManager.deleteCodeExtChange(oPropertyBag, mOptions);
 
-			assert.ok(oLrepConnectorSendStub.calledOnce, "the sending was initiated");
+			assert.ok(oStorageWriteStub.calledOnce, "the sending was initiated");
 
-			var oCallArguments = oLrepConnectorSendStub.getCall(0).args;
+			var oCallArguments = oStorageWriteStub.getCall(0).args;
 
-			assert.equal(oCallArguments[0], sExpectedUrl, "the url was build correct");
-			assert.equal(oCallArguments[1], "DELETE", "the backend operation should be a deletion");
-			assert.equal(oCallArguments[2].fileName, sFileName, "the file name was taken over from the id property");
+			assert.equal(oCallArguments.length, 1, "one storage object");
+			assert.equal(oCallArguments[0].layer, "VENDOR", "that contains a flex object for the VENDOR layer");
+			assert.equal(oCallArguments[0].transport, "myTransportId", "and the specified transport Id");
+			assert.equal(oCallArguments[0].flexObject.fileName, sFileName, "the file name of the flex object was taken over from the id property");
 		});
 	});
 

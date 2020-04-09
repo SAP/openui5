@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/apply/_internal/flexState/UI2Personalization/UI2PersonalizationState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
@@ -63,7 +63,7 @@ sap.ui.define([
 			this.oGetPersStub = sandbox.stub(FlexState, "getUI2Personalization")
 				.withArgs(sReference)
 				.returns(this.oPersState);
-			this.oLrepConnectorSendStub = sandbox.stub(LrepConnector.prototype, "send");
+			this.oLrepConnectorCreateStub = sandbox.stub(LrepConnector.ui2Personalization, "create");
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -131,7 +131,7 @@ sap.ui.define([
 					containerKey: sContainerKey
 				}
 			};
-			this.oLrepConnectorSendStub.resolves(mResult);
+			this.oLrepConnectorCreateStub.resolves(mResult);
 			return UI2PersonalizationState.setPersonalization({
 				reference: "reference",
 				containerKey: "containerKey",
@@ -139,8 +139,13 @@ sap.ui.define([
 				content: "content"
 			})
 				.then(function() {
-					assert.equal(this.oLrepConnectorSendStub.callCount, 1, "the send method was called once");
-					assert.equal(this.oLrepConnectorSendStub.firstCall.args[0], "/sap/bc/lrep/ui2personalization/", "the passed url is correct");
+					assert.equal(this.oLrepConnectorCreateStub.callCount, 1, "the send method was called once");
+					assert.deepEqual(this.oLrepConnectorCreateStub.firstCall.args[0].flexObjects, {
+						containerKey: "containerKey",
+						content: "content",
+						itemName: "itemName",
+						reference: "reference"
+					}, "the data was passed correct");
 					assert.deepEqual(this.oPersState[sContainerKey].length, 3);
 					assert.deepEqual(this.oPersState[sContainerKey][2], mResult.response, "the correct object was set");
 				}.bind(this));
@@ -153,7 +158,7 @@ sap.ui.define([
 					containerKey: "sContainerKey"
 				}
 			};
-			this.oLrepConnectorSendStub.resolves(mResult);
+			this.oLrepConnectorCreateStub.resolves(mResult);
 			return UI2PersonalizationState.setPersonalization({
 				reference: "reference",
 				containerKey: "containerKey",
@@ -168,7 +173,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("with all information and LrepConnector rejecting", function(assert) {
-			this.oLrepConnectorSendStub.rejects("MyError");
+			this.oLrepConnectorCreateStub.rejects("MyError");
 			return UI2PersonalizationState.setPersonalization({
 				reference: "reference",
 				containerKey: "containerKey",
@@ -187,7 +192,7 @@ sap.ui.define([
 			this.oGetPersStub = sandbox.stub(FlexState, "getUI2Personalization")
 				.withArgs(sReference)
 				.returns(this.oPersState);
-			this.oLrepConnectorSendStub = sandbox.stub(LrepConnector.prototype, "send");
+			this.oLrepConnectorRemoveStub = sandbox.stub(LrepConnector.ui2Personalization, "remove");
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -215,18 +220,22 @@ sap.ui.define([
 		});
 
 		QUnit.test("with all information", function(assert) {
-			this.oLrepConnectorSendStub.resolves();
-			var sUrl = "/sap/bc/lrep/ui2personalization/?reference=" + sReference + "&containerkey=" + sContainerKey + "&itemname=item1";
+			this.oLrepConnectorRemoveStub.resolves();
 			return UI2PersonalizationState.deletePersonalization(sReference, sContainerKey, "item1")
 				.then(function() {
-					assert.equal(this.oLrepConnectorSendStub.callCount, 1, "the send method was called once");
-					assert.equal(this.oLrepConnectorSendStub.firstCall.args[0], sUrl, "the passed url is correct");
+					assert.equal(this.oLrepConnectorRemoveStub.callCount, 1, "the send method was called once");
+					assert.deepEqual(this.oLrepConnectorRemoveStub.firstCall.args[0],
+						{
+							containerKey: "container1",
+							itemName: "item1",
+							reference: "sap.ui.fl.Reference"
+						}, "the data was passed correct");
 					assert.equal(this.oPersState[sContainerKey].length, 1, "one object was deleted");
 				}.bind(this));
 		});
 
 		QUnit.test("with all information and LrepConnector rejecting", function(assert) {
-			this.oLrepConnectorSendStub.rejects("MyError");
+			this.oLrepConnectorRemoveStub.rejects("MyError");
 			return UI2PersonalizationState.deletePersonalization(sReference, sContainerKey, "item1")
 				.catch(function(oError) {
 					assert.equal(oError, "MyError", "the error is passed through");
