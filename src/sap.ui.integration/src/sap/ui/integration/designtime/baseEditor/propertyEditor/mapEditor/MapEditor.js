@@ -273,13 +273,17 @@ sap.ui.define([
 		},
 
 		_propertyEditorsChange: function (oEvent) {
-			var oPreviousPropertyEditor = oEvent.getParameter("previousPropertyEditors")[0];
-			var oPropertyEditor = oEvent.getParameter("propertyEditors")[0];
-			if (oPreviousPropertyEditor) {
-				oPreviousPropertyEditor.detachValueChange(this._onPropertyValueChange, this);
+			var aPreviousPropertyEditors = oEvent.getParameter("previousPropertyEditors");
+			var aPropertyEditors = oEvent.getParameter("propertyEditors");
+			if (Array.isArray(aPreviousPropertyEditors)) {
+				aPreviousPropertyEditors.forEach(function (oPreviousPropertyEditor) {
+					oPreviousPropertyEditor.detachValueChange(this._onPropertyValueChange, this);
+				}, this);
 			}
-			if (oPropertyEditor) {
-				oPropertyEditor.attachValueChange(this._onPropertyValueChange, this);
+			if (Array.isArray(aPropertyEditors)) {
+				aPropertyEditors.forEach(function (oPropertyEditor) {
+					oPropertyEditor.attachValueChange(this._onPropertyValueChange, this);
+				}, this);
 			}
 		},
 
