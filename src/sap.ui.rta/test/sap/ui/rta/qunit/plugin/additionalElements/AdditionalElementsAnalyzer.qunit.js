@@ -23,11 +23,14 @@ function(
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-
-	renderComplexView();
+	//Shared objects for all tests => Don't modify them, it will have side-effects on other tests!
 	var oGroup;
 	var mAddODataPropertyAction;
 	var oView;
+	var oDelegate;
+
+	renderComplexView();
+
 
 	function assertElementsEqual(mActualAdditionalElement, mExpected, msg, assert) {
 		assert.equal(mActualAdditionalElement.selected, mExpected.selected, msg + " -selected");
@@ -39,7 +42,8 @@ function(
 	}
 
 	function isFieldPresent(oControl, oInvisibleElement) {
-		return oInvisibleElement.label === oControl.getLabelText();
+		var sLabel = oControl.getLabelText && oControl.getLabelText() || oControl.getLabel();
+		return oInvisibleElement.label === sLabel;
 	}
 
 	function renderComplexView() {
@@ -51,11 +55,18 @@ function(
 			oViewInstance.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			oViewInstance.getController().isDataReady().then(function () {
-				oGroup = oViewInstance.byId("GroupEntityType01");
-				return oGroup.getMetadata().loadDesignTime().then(function (oDesignTime) {
-					mAddODataPropertyAction = oDesignTime.aggregations.formElements.actions.addODataProperty;
-					QUnit.start();
+			//assign shared objects
+				return new Promise(function(resolve) {
+					sap.ui.require(["sap/ui/rta/test/additionalElements/V2StackDelegate"], resolve);
 				});
+			}).then(function(oV2Delegate) {
+				oDelegate = oV2Delegate;
+			}).then(function() {
+				oGroup = oViewInstance.byId("GroupEntityType01");
+				return oGroup.getMetadata().loadDesignTime();
+			}).then(function (oDesignTime) {
+				mAddODataPropertyAction = oDesignTime.aggregations.formElements.actions.addODataProperty;
+				QUnit.start();
 			});
 		});
 	}
@@ -66,7 +77,7 @@ function(
 			sandbox.restore();
 		}
 	}, function () {
-		QUnit.test("checks if navigation and absolute binding works", function(assert) {
+		QUnit.test("checks if navigation and absolute binding work", function(assert) {
 			var oGroupElement1 = oView.byId("EntityType02.NavigationProperty"); // With correct navigation binding
 			var oGroupElement2 = oView.byId("EntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
 			var oGroupElement3 = oView.byId("EntityType02.AbsoluteBinding"); // Absolute binding
@@ -98,6 +109,45 @@ function(
 				assert.equal(aAdditionalElements[0].tooltip, oGroupElement1.getLabelText(), "the label is used as tooltip for elements with navigation binding");
 				assert.equal(aAdditionalElements[1].label, oGroupElement3.getLabelText(), "the element with absolute binding should be in the list");
 				assert.equal(aAdditionalElements[1].tooltip, oGroupElement3.getLabelText(), "the label is used as tooltip for elements with absolute binding");
+			});
+		});
+
+		QUnit.test("checks if navigation and absolute binding work with delegate", function(assert) {
+			var oGroupElement1 = oView.byId("DelegateEntityType02.NavigationProperty"); // With correct navigation binding
+			var oGroupElement2 = oView.byId("DelegateEntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
+			var oGroupElement3 = oView.byId("DelegateEntityType02.AbsoluteBinding"); // Absolute binding
+			sap.ui.getCore().applyChanges();
+
+			var oActionsObject = {
+				aggregation: "formElements",
+				reveal : {
+					elements : [{
+						element : oGroupElement1,
+						action : {} //nothing relevant for the analyzer tests
+					}, {
+						element : oGroupElement2,
+						action : {} //nothing relevant for the analyzer tests
+					}, {
+						element : oGroupElement3,
+						action : {} //nothing relevant for the analyzer tests
+					}]
+				},
+				addODataProperty : {
+					action: {}, //not relevant for test
+					delegateInfo: {
+						payload: {},
+						delegate: oDelegate
+					}
+				}
+			};
+
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroupElement1.getParent(), oActionsObject).then(function(aAdditionalElements) {
+				// We expect only one element to be returned with a correct navigation property
+				assert.equal(aAdditionalElements.length, 2, "then there are 1 additional Elements available");
+				assert.equal(aAdditionalElements[0].label, oGroupElement1.getLabel(), "the element with correct navigation binding should be in the list");
+				assert.equal(aAdditionalElements[0].tooltip, oGroupElement1.getLabel(), "the label is used as tooltip for elements with navigation binding");
+				assert.equal(aAdditionalElements[1].label, oGroupElement3.getLabel(), "the element with absolute binding should be in the list");
+				assert.equal(aAdditionalElements[1].tooltip, oGroupElement3.getLabel(), "the label is used as tooltip for elements with absolute binding");
 			});
 		});
 
@@ -153,7 +203,7 @@ function(
 
 		QUnit.test("when getting unbound elements for EntityType01 Group,", function(assert) {
 			var oGroup = oView.byId("GroupEntityType01");
-			var oActionObject = {
+			var mActionObject = {
 				action: {
 					aggregation: "formElements",
 					getLabel: mAddODataPropertyAction.getLabel
@@ -161,7 +211,7 @@ function(
 				relevantContainer: mAddODataPropertyAction.relevantContainer
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 3, "then 3 additional properties are available");
 				assert.deepEqual(aAdditionalElements[0], {
 					selected : false,
@@ -177,7 +227,7 @@ function(
 				}, "the unbound property is found");
 				assert.deepEqual(aAdditionalElements[1], {
 					selected : false,
-					label : "Entity1-Property07-ignored-unbound",
+					label : "Entity1-Property07-ignored-unbound", //available, because there is no ignore filtering implemented
 					tooltip : "Unbound Property7",
 					type : "odata",
 					entityType : "EntityType01",
@@ -202,10 +252,64 @@ function(
 			});
 		});
 
+		QUnit.test("when getting unrepresented elements from delegate for EntityType01 Group,", function(assert) {
+			var oGroup = oView.byId("DelegateGroupEntityType01");
+			var mActionObject = {
+				action: {
+					aggregation: "formElements",
+					getLabel: mAddODataPropertyAction.getLabel
+				},
+				delegateInfo: {
+					payload: {},
+					delegate: oDelegate
+				},
+				relevantContainer: mAddODataPropertyAction.relevantContainer
+			};
+
+			return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
+				assert.equal(aAdditionalElements.length, 3, "then 3 additional properties are available");
+				assert.deepEqual(aAdditionalElements[0], {
+					selected : false,
+					label : "Entity1-Property06-Unbound",
+					tooltip : "Unbound Property6",
+					type : "delegate",
+					entityType : "EntityType01",
+					name : "Property06",
+					bindingPath : "Property06",
+					originalLabel: "",
+					duplicateComplexName: false,
+					referencedComplexPropertyName: ""
+				}, "the unbound property is found");
+				assert.deepEqual(aAdditionalElements[1], {
+					selected : false,
+					label : "Entity1-Property07-ignored-unbound", //available, because there is no ignore filtering implemented
+					tooltip : "Unbound Property7",
+					type : "delegate",
+					entityType : "EntityType01",
+					name : "Property07",
+					bindingPath : "Property07",
+					originalLabel: "",
+					duplicateComplexName: false,
+					referencedComplexPropertyName: ""
+				}, "the 2nd unbound property is found");
+				assert.deepEqual(aAdditionalElements[2], {
+					selected : false,
+					label : "Property08",
+					tooltip : "Property without sap:label",
+					type : "delegate",
+					entityType : "EntityType01",
+					name : "Property08",
+					bindingPath : "Property08",
+					originalLabel: "",
+					duplicateComplexName: false,
+					referencedComplexPropertyName: ""
+				}, "the 3rd unbound property without sap:label is returned with technical name as label");
+			});
+		});
 		QUnit.test("when getting unbound elements for EntityType01 Group with a filter function,", function(assert) {
 			var oGroup = oView.byId("GroupEntityType01");
 			var oSmartForm = oView.byId("MainForm");
-			var oActionObject = {
+			var mActionObject = {
 				action: {
 					aggregation: "formElements",
 					getLabel: mAddODataPropertyAction.getLabel,
@@ -214,7 +318,7 @@ function(
 				relevantContainer: oSmartForm
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 2, "then 2 additional properties are available");
 				assert.deepEqual(aAdditionalElements[0], {
 					selected : false,
@@ -233,14 +337,14 @@ function(
 
 		QUnit.test("when getting unbound elements for EntityType01 Group without a relevant container,", function(assert) {
 			var oGroup = oView.byId("GroupEntityType01");
-			var oActionObject = {
+			var mActionObject = {
 				action: {
 					aggregation: "formElements",
 					getLabel: mAddODataPropertyAction.getLabel
 				}
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 3, "then all properties of EntityType01 are available, because the GroupElements are not bound to any of them");
 				assert.deepEqual(aAdditionalElements[0], {
 					selected : false,
@@ -268,10 +372,50 @@ function(
 				}, "the 2nd unbound property is found");
 			});
 		});
+		QUnit.test("when getting unrepresented elements from delegate for EntityType01 Group without a relevant container,", function(assert) {
+			var oGroup = oView.byId("DelegateGroupEntityType01");
+			var mActionObject = {
+				action: {
+					aggregation: "formElements",
+					getLabel: mAddODataPropertyAction.getLabel
+				},
+				delegateInfo: {
+					payload: {},
+					delegate: oDelegate
+				}
+			};
 
+			return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
+				assert.equal(aAdditionalElements.length, 3, "then all properties of EntityType01 are available, because the GroupElements are not bound to any of them");
+				assert.deepEqual(aAdditionalElements[0], {
+					selected : false,
+					label : "Entity1-Property06-Unbound",
+					tooltip : "Unbound Property6",
+					type : "delegate",
+					entityType : "EntityType01",
+					name : "Property06",
+					bindingPath : "Property06",
+					originalLabel: "",
+					duplicateComplexName: false,
+					referencedComplexPropertyName: ""
+				}, "the unbound property is found");
+				assert.deepEqual(aAdditionalElements[1], {
+					selected : false,
+					label : "Entity1-Property07-ignored-unbound",
+					tooltip : "Unbound Property7",
+					type : "delegate",
+					entityType : "EntityType01",
+					name : "Property07",
+					bindingPath : "Property07",
+					originalLabel: "",
+					duplicateComplexName: false,
+					referencedComplexPropertyName: ""
+				}, "the 2nd unbound property is found");
+			});
+		});
 		QUnit.test("when getting unbound elements for EntityType02 with complex properties and field control properties", function(assert) {
 			var oGroup = oView.byId("GroupEntityType02");
-			var oActionObject = {
+			var mActionObject = {
 				action: {
 					aggregation: "formElements",
 					getLabel: mAddODataPropertyAction.getLabel
@@ -279,7 +423,7 @@ function(
 				relevantContainer: mAddODataPropertyAction.relevantContainer
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 10, "then 10 additional properties are available");
 				assert.deepEqual(aAdditionalElements[0], {
 					selected : false,
@@ -337,10 +481,81 @@ function(
 				assert.equal(aAdditionalElements[9].bindingPath, "EntityType02_Property07_with_implicit_nav");
 			});
 		});
+		QUnit.test("when getting unrepresented elements from delegate for EntityType02 with complex properties and field control properties", function(assert) {
+			var oGroup = oView.byId("DelegateGroupEntityType02");
+			var mActionObject = {
+				action: {
+					aggregation: "formElements",
+					getLabel: mAddODataPropertyAction.getLabel
+				},
+				delegateInfo: {
+					payload: {},
+					delegate: oDelegate
+				},
+				relevantContainer: mAddODataPropertyAction.relevantContainer
+			};
 
+			return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
+				assert.equal(aAdditionalElements.length, 10, "then 10 additional properties are available");
+				assert.deepEqual(aAdditionalElements[0], {
+					selected : false,
+					label : "Entity2-Property01-Label",
+					tooltip : "Entity2-Property01-QuickInfo",
+					type : "delegate",
+					entityType : "EntityType02",
+					name : "EntityType02_Property01",
+					bindingPath : "EntityType02_Property01",
+					originalLabel: "",
+					duplicateComplexName: false,
+					referencedComplexPropertyName: ""
+				}, "the unbound normal property is found");
+				assert.deepEqual(aAdditionalElements[1], {
+					selected : false,
+					label : "ComplexProperty 03",
+					tooltip : "ComplexProperty 03-QuickInfo",
+					type : "delegate",
+					entityType : "EntityType02",
+					name : "ComplexProperty03",
+					bindingPath : "EntityType02_Complex/ComplexProperty03",
+					originalLabel: "",
+					duplicateComplexName: true,
+					referencedComplexPropertyName: "EntityType02_Complex"
+				}, "the unbound complex property is found");
+				assert.deepEqual(aAdditionalElements[2], {
+					selected : false,
+					label : "ComplexProperty 01",
+					tooltip : "ComplexProperty 01-QuickInfo",
+					type : "delegate",
+					entityType : "EntityType02",
+					name : "ComplexProperty01",
+					bindingPath : "EntityType02_SameComplexType/ComplexProperty01",
+					originalLabel: "",
+					duplicateComplexName: true,
+					referencedComplexPropertyName: "Same Complex Type Property with label"
+				}, "the unbound complex property with a custom name is found");
+				assert.equal(aAdditionalElements[3].bindingPath, "EntityType02_SameComplexType/ComplexProperty02");
+				assert.equal(aAdditionalElements[4].bindingPath, "EntityType02_SameComplexType/ComplexProperty03");
+				assert.equal(aAdditionalElements[5].bindingPath, "EntityType02_OtherComplexTypeSameComplexProperties/ComplexProperty01");
+				assert.equal(aAdditionalElements[6].bindingPath, "EntityType02_OtherComplexTypeSameComplexProperties/ComplexProperty02");
+				assert.equal(aAdditionalElements[7].bindingPath, "EntityType02_OtherComplexTypeSameComplexProperties/ComplexProperty03");
+				assert.deepEqual(aAdditionalElements[8], {
+					selected : false,
+					label : "ComplexProperty 05",
+					tooltip : "ComplexProperty 05-QuickInfo",
+					type : "delegate",
+					entityType : "EntityType02",
+					name : "ComplexProperty05",
+					bindingPath : "EntityType02_OtherComplexTypeSameComplexProperties/ComplexProperty05",
+					originalLabel: "",
+					duplicateComplexName: false,
+					referencedComplexPropertyName: "EntityType02_OtherComplexTypeSameComplexProperties"
+				}, "the unbound complex property with a custom name is found");
+				assert.equal(aAdditionalElements[9].bindingPath, "EntityType02_Property07_with_implicit_nav");
+			});
+		});
 		QUnit.test("when getting unbound elements for EntityTypeNav (which doesn't contain navigation properties)", function(assert) {
 			var oGroup = oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[0];
-			var oActionObject = {
+			var mActionObject = {
 				action: {
 					aggregation: "formContainers",
 					getLabel: mAddODataPropertyAction.getLabel
@@ -348,7 +563,7 @@ function(
 				relevantContainer: mAddODataPropertyAction.relevantContainer
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
 				assert.ok(aAdditionalElements.length > 0, "then the properties are found");
 			});
 		});
@@ -417,7 +632,7 @@ function(
 		QUnit.test("when getting invisible elements of a bound group containing an invisible field with bindings inside belonging to the same context", function(assert) {
 			var oGroup = oView.byId("GroupEntityType01");
 			var oGroupElement1 = oView.byId("EntityType01.Prop9");
-			var oGroupElement2 = oView.byId("EntityType01.Prop10");
+			var oGroupElement2 = oView.byId("EntityType01.Prop10"); //deleted custom field
 
 			var oActionsObject = {
 				aggregation: "formElements",
@@ -437,7 +652,38 @@ function(
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
 				assert.ok(aAdditionalElements.some(isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
-				assert.notOk(aAdditionalElements.some(isFieldPresent.bind(null, oGroupElement2)), "then the field is available on the dialog");
+				assert.notOk(aAdditionalElements.some(isFieldPresent.bind(null, oGroupElement2)), "then the field2 is not available on the dialog");
+			});
+		});
+
+		QUnit.test("when getting invisible elements of a bound group with delegate containing an invisible field with bindings inside belonging to the same context", function(assert) {
+			var oGroup = oView.byId("DelegateGroupEntityType01");
+			var oGroupElement1 = oView.byId("DelegateEntityType01.Prop9");
+			var oGroupElement2 = oView.byId("DelegateEntityType01.Prop10"); //deleted custom field
+
+			var oActionsObject = {
+				aggregation: "formElements",
+				reveal : {
+					elements : [{
+						element: oGroupElement1,
+						action : {} //not relevant for test
+					}, {
+						element: oGroupElement2,
+						action : {} //not relevant for test
+					}]
+				},
+				addViaDelegate : {
+					action : {}, //not relevant for test,
+					delegateInfo: {
+						payload: {},
+						delegate: oDelegate
+					}
+				}
+			};
+
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
+				assert.ok(aAdditionalElements.some(isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
+				assert.notOk(aAdditionalElements.some(isFieldPresent.bind(null, oGroupElement2)), "then the field2 is not available on the dialog");
 			});
 		});
 
@@ -480,6 +726,32 @@ function(
 				},
 				addODataProperty : {
 					action : {} //not relevant for test
+				}
+			};
+
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
+				assert.notOk(aAdditionalElements.some(isFieldPresent.bind(null, oGroupElement1)), "then the other field is not available on the dialog");
+			});
+		});
+
+		QUnit.test("when getting invisible elements of a bound group with delegate containing a field with the same property name as the one of an invisible field in a different entity", function(assert) {
+			var oGroup = oView.byId("DelegateGroupEntityType01");
+			var oGroupElement1 = oView.byId("DelegateEntityType02.CommonProperty");
+
+			var oActionsObject = {
+				aggregation: "formElements",
+				reveal : {
+					elements : [{
+						element: oGroupElement1,
+						action : {} //not relevant for test
+					}]
+				},
+				addViaDelegate : {
+					action : {}, //not relevant for test,
+					delegateInfo: {
+						payload: {},
+						delegate: oDelegate
+					}
 				}
 			};
 
@@ -561,7 +833,7 @@ function(
 		QUnit.test("when getting unbound elements for EntityType01 Group with a function to filter ignored SmartForm Fields", function(assert) {
 			var oGroup = oView.byId("GroupEntityType01");
 			var oSmartForm = oView.byId("MainForm");
-			var oActionObject = {
+			var mActionObject = {
 				action: {
 					aggregation: "formElements",
 					getLabel: mAddODataPropertyAction.getLabel,
@@ -570,14 +842,14 @@ function(
 				relevantContainer: oSmartForm
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 2, "then the ignored property is not part of the additional elements");
 			});
 		});
 
 		QUnit.test("when getting unbound elements with an element without model", function(assert) {
 			var oGroup = new sap.ui.comp.smartform.Group();
-			var oActionObject = {
+			var mActionObject = {
 				action: {
 					aggregation: "formElements",
 					getLabel: mAddODataPropertyAction.getLabel,
@@ -586,7 +858,7 @@ function(
 				relevantContainer: mAddODataPropertyAction.relevantContainer
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 0, "then there are no ODataProperties");
 			});
 		});
@@ -594,7 +866,7 @@ function(
 		QUnit.test("when getting unbound elements with an element with a json model", function(assert) {
 			var oGroup = new sap.ui.comp.smartform.Group();
 			oGroup.setModel(new JSONModel({elements: "foo"}));
-			var oActionObject = {
+			var mActionObject = {
 				action: {
 					aggregation: "formElements",
 					getLabel: mAddODataPropertyAction.getLabel,
@@ -603,7 +875,7 @@ function(
 				relevantContainer: mAddODataPropertyAction.relevantContainer
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 0, "then there are no ODataProperties");
 			});
 		});
@@ -611,14 +883,14 @@ function(
 		QUnit.test("when asking for the unbound elements of a simpleForm", function(assert) {
 			var oSimpleForm = oView.byId("SimpleForm");
 
-			var oActionObject = {
+			var mActionObject = {
 				action : {
 					aggregation: "form",
 					oRelevantContainer: mAddODataPropertyAction.relevantContainer
 				}
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(oSimpleForm, oActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(oSimpleForm, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 5, "then 5 unbound elements are available");
 			});
 		});
@@ -717,14 +989,15 @@ function(
 		});
 
 		function getFilteredItemsListTests(aInvisibleItems, aODataItems, aInvisibleCustomItems, aUniqueCustomItems, aDelegateItems, assert) {
+			var aPropertyItems = aODataItems || aDelegateItems;
+
 			var aAnalyzerValues = [
 				aInvisibleItems.concat([]),
-				aODataItems.concat([]),
-				aInvisibleCustomItems.concat(aUniqueCustomItems),
-				aDelegateItems.concat([])
+				aPropertyItems.concat([]),
+				aInvisibleCustomItems.concat(aUniqueCustomItems)
 			];
-			var iExpectedLength = aInvisibleItems.length + aODataItems.length + aUniqueCustomItems.length + aDelegateItems.length;
-			var aExpectedValues = aInvisibleItems.concat(aODataItems, aUniqueCustomItems, aDelegateItems);
+			var iExpectedLength = aInvisibleItems.length + aPropertyItems.length + aUniqueCustomItems.length;
+			var aExpectedValues = aInvisibleItems.concat(aPropertyItems, aUniqueCustomItems);
 
 			var aFilteredItems = AdditionalElementsAnalyzer.getFilteredItemsList(aAnalyzerValues);
 
@@ -773,12 +1046,12 @@ function(
 		}
 	}, function () {
 		QUnit.test("when getting unbound elements for table", function(assert) {
-			var oActionObject = {
+			var mActionObject = {
 				action : {},
 				relevantContainer: this.oTable
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, oActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 3, "then the correct amount of ODataProperties has been returned");
 				assert.equal(aAdditionalElements[0].bindingPath, "EntityTypeNav_Property04");
 				assert.equal(aAdditionalElements[1].bindingPath, "EntityTypeNav_Property05");
@@ -794,12 +1067,12 @@ function(
 		}
 	}, function () {
 		QUnit.test("when getting unbound elements for table", function(assert) {
-			var oActionObject = {
+			var mActionObject = {
 				action : {},
 				relevantContainer: this.oTable
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, oActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 4, "then the correct amount of ODataProperties has been returned");
 				assert.equal(aAdditionalElements[0].bindingPath, "id");
 				assert.equal(aAdditionalElements[1].bindingPath, "EntityTypeNav_Property01");
@@ -816,27 +1089,27 @@ function(
 		}
 	}, function () {
 		QUnit.test("when getting unbound elements for the list", function(assert) {
-			var oActionObject = {
+			var mActionObject = {
 				action : {
 					aggregation: "items"
 				},
 				relevantContainer: this.oList
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oList, oActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oList, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 16, "then the correct amount of ODataProperties has been returned");
 			});
 		});
 
 		QUnit.test("when getting unbound elements for the table", function(assert) {
-			var oActionObject = {
+			var mActionObject = {
 				action : {
 					aggregation: "items"
 				},
 				relevantContainer: this.oTable
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, oActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 16, "then the correct amount of ODataProperties has been returned");
 			});
 		});
@@ -846,14 +1119,14 @@ function(
 			this.oTable.setModel(oSomeNamedModel, "named");
 			this.oTable.bindItems("named>/foo", new ColumnListItem());
 
-			var oActionObject = {
+			var mActionObject = {
 				action : {
 					aggregation: "items"
 				},
 				relevantContainer: this.oTable
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, oActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 0, "then no ODataProperties are returned, as the scenario is not supported (but it doesn't break)");
 			});
 		});
