@@ -10409,31 +10409,33 @@ sap.ui.define([
 
 		QUnit.module("Select list width");
 
-		QUnit.test("it should set select list max width of 600px on desktop", function (assert) {
+		QUnit.test("it should set select list max width of 100% on desktop when wrapItemsText property is true", function (assert) {
 			fnToDesktopMode(); // Enter desktop mode
 
 			// system under test
 			var oSelect = new Select({
-				items: [ new Item({ key: "1", text: "item 1" }) ]
+				items: [ new Item({ key: "1", text: "item 1" }) ],
+				wrapItemsText: true
 			});
 
 			// assert
-			assert.strictEqual(oSelect._oList.getMaxWidth(), "600px", "Select List max width is correct");
+			assert.strictEqual(oSelect._oList.getMaxWidth(), "100%", "Select List max width is correct");
 
 			// cleanup
 			oSelect.destroy();
 		});
 
-		QUnit.test("it should set select list max width of 600px on tablet", function (assert) {
+		QUnit.test("it should set select list max width of 100% on tablet when wrapItemsText property is true", function (assert) {
 			fnToTabletMode(); // Enter tabled mode
 
 			// system under test
 			var oSelect = new Select({
-				items: [ new Item({ key: "1", text: "item 1" }) ]
+				items: [ new Item({ key: "1", text: "item 1" }) ],
+				wrapItemsText: true
 			});
 
 			// assert
-			assert.strictEqual(oSelect._oList.getMaxWidth(), "600px", "Select List max width is correct");
+			assert.strictEqual(oSelect._oList.getMaxWidth(), "100%", "Select List max width is correct");
 
 			// cleanup
 			oSelect.destroy();
@@ -10453,4 +10455,47 @@ sap.ui.define([
 			// cleanup
 			oSelect.destroy();
 		});
+
+		QUnit.test("it should set to select list`s picker class 'sapMPickerWrappedItems' on desktop when wrapItemsText property is true", function (assert) {
+			fnToDesktopMode(); // Enter desktop mode
+
+			// system under test
+			var oSelect = new Select({
+				items: [ new Item({ key: "1", text: "item 1" }) ],
+				wrapItemsText: true
+			});
+
+			//act
+			var oPicker = oSelect.getPicker();
+
+			// assert
+			assert.ok(oPicker.hasStyleClass("sapMPickerWrappedItems"), 'sapMPickerWrappedItems is set ');
+
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+
+		QUnit.test("it should not set to select list`s picker class 'sapMPickerWrappedItems' on phone when wrapItemsText property is true", function (assert) {
+			fnToMobileMode(); // Enter mobile mode
+
+			// system under test
+			var oSelect = new Select({
+				items: [ new Item({ key: "1", text: "item 1" }) ],
+				wrapItemsText: true
+			});
+
+			//act
+			var oPicker = oSelect.getPicker();
+
+			// assert
+			assert.notOk(oPicker.hasStyleClass("sapMPickerWrappedItems"), 'sapMPickerWrappedItems is not set');
+
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+
 	});

@@ -8,11 +8,8 @@
 /* ------------------------------ */
 
 .sapMSltPicker-CTX {
-	max-width: 600px;
-
 	.sapMSelectList {
 		.sapMSelectListRow {
-			max-width: 600px;
 			height: auto;
 			display: flex;
 			box-sizing: border-box;
@@ -22,13 +19,11 @@
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
-				width: 60%;
 				display: block;
 				box-sizing: border-box
 			}
 
 			.sapMSelectListLastCell {
-				width: 40%;
 				display: block;
 				box-sizing: border-box
 			}
@@ -60,6 +55,7 @@
 			}
 
 			.sapMSelectListRow {
+				display: table-row;
 				.sapMSelectListFirstCell {
 					white-space: normal;
 				}
@@ -67,7 +63,43 @@
 				.sapMSelectListLastCell {
 					vertical-align: top;
 				}
+
+				.sapMSelectListCell{
+					display: table-cell;
+				}
 			}
+		}
+	}
+}
+
+// sets max-width of 600px to selectList, only when wrapItemsText property is false
+.sapMSltPicker-CTX:not(.sapMPickerWrappedItems){
+	max-width: 600px;
+	.sapMSelectList:not(.sapMSelectListWrappedItems) {
+		max-width: 600px;
+			.sapMSelectListRow {
+				max-width: 600px;
+		}
+	}
+}
+
+// defines the ratio of columns inside selectList, when text is truncated
+.sapMSltPicker-CTX .sapMSelectList:not(.sapMSelectListWrappedItems){
+	.sapMSelectListFirstCell {
+		width: 60%;
+	}
+	.sapMSelectListLastCell {
+		width: 40%;
+	}
+}
+
+// sets max-width of 100% to selectList, only when wrapItemsText property is true
+.sapMSltPicker-CTX.sapMDialogPhone {
+	max-width: 100%;
+	.sapMSelectList:not(.sapMSelectListWrappedItems) {
+		max-width: 100%;
+			.sapMSelectListRow {
+				max-width: 100%;
 		}
 	}
 }
@@ -440,6 +472,15 @@ div.sapMSltPicker {
 
 div.sapMSltPicker .sapMDialogScrollCont {
 	padding: 0;
+}
+
+.sap-phone {
+	.sapMSelectListTableLayout {
+		display: inline;
+	}
+	.sapMSelectListWrappedItems.sapMSelectListTableLayout {
+		display: table;
+	}
 }
 
 /* ================================================================================== */
