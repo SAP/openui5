@@ -120,7 +120,7 @@ sap.ui.define([
 					"trace"                 : { type : "boolean",  defaultValue : false,     noUrl:true },
 					"modules"               : { type : "string[]", defaultValue : [],        noUrl:true },
 					"areas"                 : { type : "string[]", defaultValue : null,      noUrl:true },
-					// "libs"               : { type : "string[]", defaultValue : [],        noUrl:true }, deprecated, handled below
+					// "libs"               : { type : "string[]", defaultValue : [],        noUrl:true }, handled below
 					"onInit"                : { type : "code",     defaultValue : undefined, noUrl:true }, // could be either a reference to a JavaScript function, the name of a global function (string value) or the name of a module (indicated with prefix "module:")
 					"uidPrefix"             : { type : "string",   defaultValue : "__",      noUrl:true },
 					"ignoreUrlParams"       : { type : "boolean",  defaultValue : false,     noUrl:true },
