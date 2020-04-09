@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/actions/Press",
 	"sap/ui/core/util/File",
-	"sap/ui/thirdparty/jszip"
-], function(Opa5, Properties, Ancestor, Press, File, JSZip) {
+	"sap/ui/thirdparty/jszip",
+	"sap/ui/Device"
+], function(Opa5, Properties, Ancestor, Press, File, JSZip, Device) {
 	"use strict";
 
 	var sViewName = "ExploreSamples",
@@ -19,13 +20,16 @@ sap.ui.define([
 
 			actions: {
 				iPressDownload: function (sDownloadType) {
-					oFileSaveStub = sinon.stub(File, "save");
-					oJSZipFileStub = sinon.stub(JSZip.prototype, "file");
-
 					return this.waitFor({
 						viewName: sViewName,
 						id: "downloadSampleButton",
-						actions: new Press(),
+						actions: [
+							function () {
+								oFileSaveStub = sinon.stub(File, "save");
+								oJSZipFileStub = sinon.stub(JSZip.prototype, "file");
+							},
+							new Press()
+						],
 						errorMessage: "Could not find tab with name download sample menu",
 						success: function (oMenu) {
 							return this.waitFor({
@@ -52,6 +56,24 @@ sap.ui.define([
 					});
 				},
 				iChangeDropdownValue: function (sText) {
+					// on Internet Explorer opening the dropdown of the ComboBox by click is unreliable,
+					// so we have to do it programmatically
+					if (Device.browser.msie) {
+						return this.waitFor({
+							viewName: sViewName,
+							id: "subSample",
+							actions: function (oComboBox) {
+								var oItem = oComboBox.getItems().find(function (oItem) {
+									return oItem.getText() === sText;
+								});
+
+								oComboBox.fireSelectionChange({selectedItem: oItem});
+							},
+							errorMessage: "Could not open the ComboBox"
+						});
+					}
+
+					// on all other browsers interact with the ComboBox as a user would
 					return this.waitFor({
 						viewName: sViewName,
 						id: "subSample",
@@ -64,10 +86,10 @@ sap.ui.define([
 									new Properties({ title: sText})
 								],
 								actions: new Press(),
-								errorMessage: "Cannot select " + sText + " from the combo box"
+								errorMessage: "Cannot select " + sText + " from the ComboBox"
 							});
 						},
-						errorMessage: "Could not change the sub sample"
+						errorMessage: "Could not open the ComboBox"
 					});
 				}
 			},
