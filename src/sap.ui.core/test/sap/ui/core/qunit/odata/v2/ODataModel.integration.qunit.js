@@ -295,6 +295,8 @@ sap.ui.define([
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("fatal").never();
 
+			// Counter for batch requests
+			this.iBatchNo = 0;
 			// {map<string, string[]>}
 			// this.mChanges["id"] is a list of expected changes for the property "text" of the
 			// control with ID "id"
@@ -556,6 +558,10 @@ sap.ui.define([
 
 			/*
 			 * Checks that all requests in a batch are as expected and handles its response.
+
+			 * @param {object} oRequest The request object
+			 * @param {function} fnSuccess Success callback function
+			 * @param {function} fnError Error callback function
 			 */
 			function checkBatchRequest(oRequest, fnSuccess, fnError) {
 				/**
@@ -575,7 +581,8 @@ sap.ui.define([
 				 */
 				function processRequest(oRequest) {
 					// TODO: correct error handling
-					return checkSingleRequest(oRequest, fnCallbackHelper, fnCallbackHelper);
+					return checkSingleRequest(oRequest, fnCallbackHelper, fnCallbackHelper,
+						that.iBatchNo);
 				}
 
 				/**
@@ -600,15 +607,21 @@ sap.ui.define([
 					});
 				}
 
+				that.iBatchNo += 1;
+
 				return processRequests(oRequest);
 			}
 
 			/*
 			 * Checks that the expected request arrived and handles its response. This is used
 			 * individual for single requests or as reused part of batch requests.
+			 *
+			 * @param {object} oActualRequest The request object
+			 * @param {function} fnSuccess Success callback function
+			 * @param {function} fnError Error callback function
+			 * @param {number} [iBatchNo] The number of the batch to which the request belongs to
 			 */
-			function checkSingleRequest(oActualRequest, fnSuccess, fnError, oHandler, oHttpClient,
-					oMetadata) {
+			function checkSingleRequest(oActualRequest, fnSuccess, fnError, iBatchNo) {
 				var oExpectedRequest = that.consumeExpectedRequest(oActualRequest),
 					mHeaders,
 					sMethod = oActualRequest.method,
@@ -686,6 +699,9 @@ sap.ui.define([
 					delete oExpectedRequest.response;
 					mResponseHeaders = oExpectedRequest.responseHeaders;
 					delete oExpectedRequest.responseHeaders;
+					if ("batchNo" in oExpectedRequest) {
+						oActualRequest.batchNo = iBatchNo;
+					}
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
 					oResponse.headers = mResponseHeaders || {};
 				} else {
@@ -3450,7 +3466,10 @@ usePreliminaryContext : false}}">\
 	// items table by entries having messages.
 	// JIRA: CPOUI5MODELS-106
 	QUnit.test("Filter table by items with messages", function (assert) {
-		var oModel = createSalesOrdersModelMessageScope(),
+		var oModel = createSalesOrdersModelMessageScope({
+				preliminaryContext : true,
+				useBatch : true
+			}),
 			oItemsBinding,
 			oSalesOrderNoteError = this.createResponseMessage("Note"),
 			oSalesOrderToItemsError = this.createResponseMessage("ToLineItems"),
@@ -3483,7 +3502,9 @@ usePreliminaryContext : false}}">\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest({
+		this.expectHeadRequest()
+			.expectRequest({
+				batchNo : 1,
 				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
 				method : "GET",
@@ -3506,6 +3527,7 @@ usePreliminaryContext : false}}">\
 			.expectChange("salesOrderID", null)
 			.expectChange("salesOrderID", "1")
 			.expectRequest({
+				batchNo : 1,
 				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers :
 					{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
@@ -3552,6 +3574,7 @@ usePreliminaryContext : false}}">\
 			return oItemsBinding.requestFilterForMessages(filterErrors);
 		}).then(function (oFilter) {
 			that.expectRequest({
+					batchNo : 2,
 					deepPath : "/SalesOrderSet('1')/ToLineItems",
 					headers :
 						{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
