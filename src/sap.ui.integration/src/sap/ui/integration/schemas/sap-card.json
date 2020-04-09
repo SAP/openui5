@@ -44,6 +44,17 @@
 					"additionalProperties": {
 						"$ref": "#/definitions/Configuration.Destinations"
 					}
+				},
+				"actionHandlers": {
+					"description": "Holds configuration for the default action handlers.",
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"submit": {
+							"description": "Configuration for the submit action handler.",
+							"type": "object"
+						}
+					}
 				}
 			}
 		},
