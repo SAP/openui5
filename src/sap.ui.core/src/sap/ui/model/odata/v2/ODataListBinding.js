@@ -400,6 +400,8 @@ sap.ui.define([
 				Log.error("List Binding is not bound against a list for " + sResolvedPath);
 			}
 
+			// ensure that data state is updated with each change of the context
+			this.checkDataState();
 
 			// If path does not resolve or parent context is created, reset current list
 			if (!sResolvedPath || bCreated) {
@@ -959,7 +961,8 @@ sap.ui.define([
 		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && this.bInitial && !bCreatedRelative) {
 
 			if (!this._checkPathType()) {
-				Log.error("List Binding is not bound against a list for " + this.oModel.resolve(this.sPath, this.oContext));
+				Log.error("List Binding is not bound against a list for "
+					+ this.oModel.resolve(this.sPath, this.oContext));
 			}
 
 			this.bInitial = false;
@@ -971,6 +974,9 @@ sap.ui.define([
 					this._fireRefresh({reason: ChangeReason.Refresh});
 				}
 			}
+
+			// ensure that data state is updated after initialization
+			this.checkDataState();
 		}
 		return this;
 	};
