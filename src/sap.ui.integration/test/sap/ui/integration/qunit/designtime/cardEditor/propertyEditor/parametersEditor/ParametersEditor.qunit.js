@@ -28,7 +28,6 @@ sap.ui.define([
 
 	QUnit.module("Parameters Editor: Given an editor config", {
 		beforeEach: function (assert) {
-			var fnDone = assert.async();
 			var mConfig = {
 				"properties": {
 					"sampleParams": {
@@ -57,13 +56,12 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			this.oBaseEditor.getPropertyEditorsByName("sampleParams").then(function (aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleParams").then(function (aPropertyEditor) {
 				this.oEditor = aPropertyEditor[0];
 				sap.ui.getCore().applyChanges();
 				var oEditorContent = getParameterEditorContent(this.oEditor);
 				this.oAddButton = oEditorContent.addButton;
 				this.aItems = oEditorContent.items;
-				fnDone();
 			}.bind(this));
 		},
 		afterEach: function () {
@@ -263,6 +261,70 @@ sap.ui.define([
 					"Then the fragment for the configuration scenario is rendered"
 				);
 			});
+
+		});
+	});
+
+	QUnit.module("Given the editor is used in the configuration scenario", {
+		beforeEach: function () {
+			this.oBaseEditor = new BaseEditor({
+				config: {
+					"properties": {
+						"sampleParameters": {
+							"path": "/sampleParameters",
+							"type": "parameters",
+							"allowKeyChange": false,
+							"allowTypeChange": false
+						}
+					},
+					"propertyEditors": {
+						"parameters": "sap/ui/integration/designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor",
+						"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+					}
+				},
+				json: {
+					sampleParameters: {
+						foo: {
+							value: "foo value"
+						},
+						bar: {
+							value: "bar value"
+						}
+					}
+				}
+			});
+			this.oBaseEditor.placeAt("qunit-fixture");
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleParameters").then(function (aPropertyEditor) {
+				this.oParametersEditor = aPropertyEditor[0];
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.oBaseEditor.destroy();
+		}
+	}, function () {
+		QUnit.test("When a value is changed", function (assert) {
+			var fnDone = assert.async();
+
+			this.oParametersEditor.attachEventOnce("valueChange", function (oEvent) {
+				assert.deepEqual(
+					oEvent.getParameter("value"),
+					{
+						foo: {
+							value: "foo value"
+						},
+						bar: {
+							value: "baz value"
+						}
+					},
+					"Then the value is updated"
+				);
+				fnDone();
+			}, this);
+
+			var oInput = this.oParametersEditor.getContent()._getPropertyEditors()[1].getContent();
+			oInput.setValue("baz value");
+			QUnitUtils.triggerEvent("input", oInput.getDomRef());
 
 		});
 	});
