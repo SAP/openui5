@@ -3089,7 +3089,7 @@ sap.ui.define([
 						//    1. The manifest is defined in the component metadata (no Manifest object yet)
 						//    2. We have instance specific information (activeTerminologies)
 						// In case of a manifest-first approach (Manifest object exists already),
-						// the i18n processing has already happend and we skip this part.
+						// the i18n processing has already happened and we skip this part.
 
 						// Why do we set the oManifest object here?
 						// > If we have instance specific information like "activeTerminologies", the resulting
@@ -3114,7 +3114,7 @@ sap.ui.define([
 					return oControllerClass;
 				}
 
-				// Load all modules derived from "/sap.ui5" manifest entries asynchronously (if underlaying loader supports it)
+				// Load all modules derived from "/sap.ui5" manifest entries asynchronously (if underlying loader supports it)
 				// Note: this does not load modules declared / derived from parent manifests (e.g. extension scenario)
 				var aModuleNames = [];
 
