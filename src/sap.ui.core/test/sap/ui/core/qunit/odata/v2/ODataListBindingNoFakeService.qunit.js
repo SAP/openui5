@@ -3,13 +3,16 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/Context",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/ListBinding",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v2/ODataListBinding",
 	"sap/ui/test/TestUtils"
-], function (Log, Filter, FilterOperator, ListBinding, ODataUtils, ODataListBinding, TestUtils) {
+], function (Log, ChangeReason, Context, Filter, FilterOperator, ListBinding, ODataUtils,
+		ODataListBinding, TestUtils) {
 	/*global QUnit,sinon*/
 	/*eslint no-warning-comments: 0*/
 	"use strict";
@@ -414,4 +417,161 @@ sap.ui.define([
 	});
 	});
 });
+
+	//*********************************************************************************************
+[{
+	bInitial : true,
+	oMetadata : undefined,
+	bRelative : false
+}, {
+	bInitial : true,
+	oMetadata : {
+		isLoaded : function () { return false; }
+	},
+	bRelative : false
+}, {
+	bInitial : false,
+	oMetadata : {
+		isLoaded : function () { return true; }
+	},
+	bRelative : false
+}, {
+	oContext : {bCreated : true},
+	bInitial : true,
+	oMetadata : {
+		isLoaded : function () { return true; }
+	},
+	bRelative : true
+}].forEach(function (oFixture, i) {
+	QUnit.test("initialize: not yet ready for initialization, #" + i, function (assert) {
+		var oBinding = {
+				_checkPathType : function () {},
+				isRelative : function () {},
+				oContext : oFixture.oContext,
+				bInitial : oFixture.bInitial,
+				oModel : {
+					oMetadata : oFixture.oMetadata
+				}
+			};
+
+		this.mock(oBinding).expects("isRelative").withExactArgs().returns(oFixture.bRelative);
+		this.mock(oBinding).expects("_checkPathType").never();
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype.initialize.call(oBinding), oBinding);
+	});
+});
+
+	//*********************************************************************************************
+[{
+	bRelative : false
+}, {
+	//oContext : undefined
+	bRelative : true
+}, {
+	oContext : {bCreated : false},
+	bRelative : true
+}].forEach(function (oFixture, i) {
+	[true, false].forEach(function (bBoundToList) {
+		[true, false].forEach(function (bSuspended) {
+			[true, false].forEach(function (bDataAvailable) {
+	var sTitle = "initialize: initialize, #" + i + ", bound to a list: " + bBoundToList
+			+ ", suspended: " + bSuspended + ", data available: " + bDataAvailable;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = {
+				oContext : oFixture.oContext,
+				bDataAvailable : bDataAvailable,
+				bInitial : true,
+				oModel : {
+					oMetadata : {
+						isLoaded : function () {}
+					},
+					resolve : function () {}
+				},
+				sPath : "~path",
+				bSuspended : bSuspended,
+				_checkPathType : function () {},
+				_fireChange : function () {},
+				_fireRefresh : function () {},
+				_initSortersFilters : function () {},
+				checkDataState : function () {},
+				isRelative : function () {}
+			},
+			sResolvedPath = "~resolvedPath";
+
+		this.mock(oBinding).expects("isRelative").withExactArgs().returns(oFixture.bRelative);
+		this.mock(oBinding.oModel.oMetadata).expects("isLoaded").withExactArgs().returns(true);
+		this.mock(oBinding).expects("_checkPathType").withExactArgs().returns(bBoundToList);
+		this.mock(oBinding.oModel).expects("resolve")
+			.withExactArgs("~path", sinon.match.same(oBinding.oContext))
+			.exactly(bBoundToList ? 0 : 1)
+			.returns(sResolvedPath);
+		this.oLogMock.expects("error")
+			.withExactArgs("List Binding is not bound against a list for ~resolvedPath")
+			.exactly(bBoundToList ? 0 : 1);
+		this.mock(oBinding).expects("_initSortersFilters").withExactArgs();
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason: ChangeReason.Change})
+			.exactly(!bSuspended && bDataAvailable ? 1 : 0);
+		this.mock(oBinding).expects("_fireRefresh").withExactArgs({reason: ChangeReason.Refresh})
+			.exactly(!bSuspended && !bDataAvailable ? 1 : 0);
+		this.mock(oBinding).expects("checkDataState").withExactArgs();
+
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype.initialize.call(oBinding), oBinding);
+
+		assert.strictEqual(oBinding.bInitial, false);
+	});
+			});
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("setContext: calls checkDataState if context changes", function (assert) {
+		var oModel = {
+				resolve : function () {},
+				resolveDeep : function () {}
+			},
+			oBinding = {
+				oContext : "~oContext",
+				bInitial : false,
+				oModel : oModel,
+				sPath : "~sPath",
+				_checkPathType : function () {},
+				_initSortersFilters : function () {},
+				_refresh : function () {},
+				checkDataState : function () {},
+				checkExpandedList : function () {},
+				isRelative : function () {}
+			},
+			oContext = {
+				bCreated : false,
+				isPreliminary : function () { return false; },
+				isRefreshForced : function () { return false; },
+				isUpdated : function () { return false; }
+			};
+
+		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
+		this.mock(Context).expects("hasChanged")
+			.withExactArgs("~oContext", sinon.match.same(oContext))
+			.returns(true);
+		this.mock(oModel).expects("resolve")
+			.withExactArgs("~sPath", sinon.match.same(oContext))
+			.returns("~resolvedPath");
+		this.mock(oModel).expects("resolveDeep")
+			.withExactArgs("~sPath", sinon.match.same(oContext))
+			.returns("~resolvedDeepPath");
+		this.mock(oBinding).expects("_checkPathType").withExactArgs().returns(true);
+		this.mock(oBinding).expects("checkDataState").withExactArgs();
+		this.mock(oBinding).expects("_initSortersFilters").withExactArgs();
+		this.mock(oBinding).expects("checkExpandedList").withExactArgs().returns(false);
+		this.mock(oBinding).expects("_refresh").withExactArgs();
+
+		// code under test
+		ODataListBinding.prototype.setContext.call(oBinding, oContext);
+
+		assert.strictEqual(oBinding.oContext, oContext);
+	});
 });

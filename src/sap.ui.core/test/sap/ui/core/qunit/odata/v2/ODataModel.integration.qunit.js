@@ -3711,4 +3711,112 @@ usePreliminaryContext : false}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Data state of a list binding is up to date after initialization and after a
+	// relative list binding changes its context.
+	// BCP: 2070113436, 2070134258
+	QUnit.test("ODataListBinding: Correct data state after initialization or context switch",
+			function (assert) {
+		var oModel = createSalesOrdersModelMessageScope(),
+			oItemsBinding,
+			oSalesOrderToItem10ToProductPriceError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+			oSalesOrderItem10ToProductPriceError
+				= cloneODataMessage(oSalesOrderToItem10ToProductPriceError,
+					"(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Table growing="true" growingThreshold="20" id="table" items="{\
+			path : \'ToLineItems\',\
+			parameters : {transitionMessagesOnly : true},\
+			templateShareable : true\
+		}">\
+		<ColumnListItem>\
+			<Text id="itemPosition" text="{ItemPosition}" />\
+			<Input id="note::item" value="{Note}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest({
+				deepPath : "/SalesOrderSet('1')",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				Note : "Foo",
+				SalesOrderID : "1"
+			}, {
+				"sap-message" : getMessageHeader([oSalesOrderToItem10ToProductPriceError])
+			})
+			.expectRequest({
+				deepPath : "/SalesOrderSet('1')/ToLineItems",
+				headers :
+					{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=20"
+			}, {
+				results : [{
+					"__metadata" : {
+						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					},
+					Note : "Bar",
+					ItemPosition : "10~0~",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectMessage(oSalesOrderItem10ToProductPriceError, "/SalesOrderLineItemSet",
+				"/SalesOrderSet('1')/ToLineItems");
+
+		oModel.setMessageScope(MessageScope.BusinessObject);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oItemsBinding = that.oView.byId("table").getBinding("items");
+
+			// data state is up to date after changing the context for undefined to new context
+			assert.strictEqual(oItemsBinding.getDataState().getMessages().length, 1);
+
+			return that.waitForChanges(assert);
+		}).then(function (oFilter) {
+			var oTable = that.oView.byId("table"),
+				oBindingInfo = oTable.getBindingInfo("items");
+
+			oTable.unbindAggregation("items");
+
+			assert.strictEqual(oTable.getItems().length, 0);
+
+			that.expectRequest({
+					deepPath : "/SalesOrderSet('1')/ToLineItems",
+					headers :
+						{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
+					method : "GET",
+					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=20"
+				}, {
+					results : [{
+						"__metadata" : {
+							"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						},
+						Note : "Bar",
+						ItemPosition : "10~0~",
+						SalesOrderID : "1"
+					}]
+				});
+
+			// code under test - rebind the table; consider already available messages
+			oTable.bindItems(oBindingInfo);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oItemsBinding = that.oView.byId("table").getBinding("items");
+
+			// messages returned in the request for the sales order are considered after
+			// initializing the binding
+			assert.strictEqual(oItemsBinding.getDataState().getMessages().length, 1);
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
