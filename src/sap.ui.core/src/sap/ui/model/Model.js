@@ -14,6 +14,7 @@ sap.ui.define([
 	function(MessageProcessor, BindingMode, Context, Filter, deepEqual, each) {
 	"use strict";
 
+	/*global Set */
 
 	/**
 	 * The SAPUI5 Data Binding API.
@@ -57,7 +58,7 @@ sap.ui.define([
 			// Binding#attachChange
 			this.aBindings = [];
 			// bindings to be removed after a timeout
-			this.aBindingsToRemove = [];
+			this.oBindingsToRemove = new Set();
 			// maps the absolute binding path to a context instance
 			this.mContexts = {};
 			// the data
@@ -764,14 +765,12 @@ sap.ui.define([
 	 * Cleanup bindings.
 	 */
 	Model.prototype._cleanUpBindings = function() {
-		var that = this;
-		if (this.sRemoveTimer) {
+		var oBindingsToRemove = this.oBindingsToRemove;
+		if (oBindingsToRemove.size > 0) {
 			this.aBindings = this.aBindings.filter(function(oBinding) {
-				return that.aBindingsToRemove.indexOf(oBinding) === -1;
+				return !oBindingsToRemove.has(oBinding);
 			});
-			clearTimeout(this.sRemoveTimer);
-			this.sRemoveTimer = null;
-			this.aBindingsToRemove = [];
+			oBindingsToRemove.clear();
 		}
 	};
 
@@ -802,9 +801,12 @@ sap.ui.define([
 	 * @param {sap.ui.model.Binding} oBinding The binding to be removed
 	 */
 	Model.prototype.removeBinding = function(oBinding) {
-		this.aBindingsToRemove.push(oBinding);
-		if (!this.sRemoveTimer) {
-			this.sRemoveTimer = setTimeout(this._cleanUpBindings.bind(this), 0);
+		this.oBindingsToRemove.add(oBinding);
+		if (!this.sRemoveTimer ) {
+			this.sRemoveTimer = setTimeout(function() {
+				this.sRemoveTimer = null;
+				this._cleanUpBindings();
+			}.bind(this), 0);
 		}
 	};
 
@@ -1056,7 +1058,7 @@ sap.ui.define([
 		if (this.sRemoveTimer) {
 			clearTimeout(this.sRemoveTimer);
 			this.sRemoveTimer = null;
-			this.aBindingsToRemove = [];
+			this.oBindingsToRemove.clear();
 		}
 		if (this.sUpdateTimer) {
 			clearTimeout(this.sUpdateTimer);
