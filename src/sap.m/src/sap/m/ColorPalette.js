@@ -316,6 +316,19 @@ sap.ui.define([
 			this.invalidate();
 		};
 
+		/**
+		 * Sets a selected color for the ColorPicker control.
+		 * @param {sap.ui.core.CSSColor} color the selected color
+		 * @public
+		 * @return {sap.m.ColorPalette} <code>this</code> for method chaining
+		 */
+		ColorPalette.prototype.setColorPickerSelectedColor = function (color) {
+			if (!CSSColor.isValid(color)) {
+				throw new Error("Cannot set the selected color - invalid value: " + color);
+			}
+			this._getColorPicker().setColorString(color);
+			return this;
+		};
 
 		// Private methods -------------------------------------------------------------------------------------------
 		ColorPalette.prototype._createDefaultColorButton = function () {

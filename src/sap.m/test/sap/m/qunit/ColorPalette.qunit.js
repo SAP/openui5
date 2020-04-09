@@ -326,6 +326,39 @@ sap.ui.define([
 			oCP.destroy();
 		});
 
+		QUnit.test("setColorPickerSelectedColor - invalid value", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				spyCSSColorIsValid = this.spy(CSSColor, "isValid");
+
+			// Act & Assert
+			assert.throws(function () {
+					oCP.setColorPickerSelectedColor("mycolor");
+				}, Error("Cannot set the selected color - invalid value: mycolor"),
+				"Throws the right exception");
+			assert.equal(spyCSSColorIsValid.callCount, 1, "CSSColor validation is called");
+			assert.deepEqual(spyCSSColorIsValid.getCall(0).args, ["mycolor"], "The function is called with certain argument");
+
+			// Cleanup
+			spyCSSColorIsValid.restore();
+			oCP.destroy();
+		});
+
+		QUnit.test("setColorPickerSelectedColor - valid value", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette();
+
+			// Act & Assert
+			assert.deepEqual(oCP.setColorPickerSelectedColor("red"), oCP, "Setter return this");
+			assert.equal(oCP._getColorPicker().getColorString(), "red", "Works for named color");
+			oCP.setColorPickerSelectedColor("rgba(123,123,123,1)");
+			assert.equal(oCP._getColorPicker().getColorString(), "rgba(123,123,123,1)", "Works for rgba color");
+			oCP.setColorPickerSelectedColor("#123123");
+			assert.equal(oCP._getColorPicker().getColorString(), "#123123", "Works for hex color");
+			// Cleanup
+			oCP.destroy();
+		});
+
 		QUnit.test("_openColorPicker", function (assert) {
 			// Prepare
 			var oCP = new ColorPalette(),
@@ -1748,6 +1781,28 @@ sap.ui.define([
 				oStub_getPalette.restore();
 				oSpyCP_setShowMoreColorsButton.restore();
 				oSpyCPP_setShowMoreColorsButton.restore();
+				oCP.destroy();
+				oCPP.destroy();
+			});
+
+			QUnit.test("setColorPickerSelectedColor is called in ColorPalette", function (assert) {
+				// Prepare
+				var oCP = new ColorPalette(),
+					oCPP = new ColorPalettePopover(),
+					oStub_getPalette = this.stub(oCPP, "_getPalette").returns(oCP),
+					oSpyCP_setColorPickerSelectedColor = this.spy(oCP, "setColorPickerSelectedColor");
+
+				// Act
+				oCPP.setColorPickerSelectedColor("green");
+
+				// Assert
+				assert.equal(oSpyCP_setColorPickerSelectedColor.callCount, 1, "Should call the setColorPickerSelectedColor to the ColorPalette");
+				assert.ok(oSpyCP_setColorPickerSelectedColor.calledWith("green"),
+					"ColorPalette internal method setColorPickerSelectedColor is called with correct parameters");
+
+				// Cleanup
+				oStub_getPalette.restore();
+				oSpyCP_setColorPickerSelectedColor.restore();
 				oCP.destroy();
 				oCPP.destroy();
 			});
