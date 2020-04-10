@@ -197,3 +197,40 @@ html.sap-desktop .sapMPlanCalInCard .sapUiCalendarApp.sapUiCalendarAppSel:hover:
 html[data-sap-ui-browser^="ff"].sapMPlanCalInCard.sapMPCInCardTwoColumns.sapMListTbl {
 	width: max-content;
 }
+
+html[data-sap-ui-browser^="ie"] {
+	.sapUiUnifiedLegend.sapMPlanCalLegend.sapMBarChild {
+		width: 100%
+	}
+	.sapMPlanCalInCard {
+		.sapUiCalMonthView.sapMBarChild {
+			padding-right: 1rem;
+		}
+		.sapUiCalMonthPicker,
+		.sapUiCalYearPicker,
+		.sapUiCalMonthView.sapMBarChild {
+			width: 100%;
+		}
+		.sapMListInfoTBar {
+			border-bottom: 1px solid @sapUiGroupTitleBorderColor;
+		}
+	}
+	.sapMPlanCalInCard.sapMPCInCardTwoColumns {
+		.sapMListTbl {
+			width: 50%;
+			flex: 1;
+		}
+		.sapMListInfoTBarContainer {
+			width: 50%
+		}
+		.sapMListInfoTBar {
+			border-bottom: none;
+		}
+	}
+	.sapUiSizeCompact .sapMPlanCalInCard {
+	.sapUiCalMonthPicker,
+	.sapUiCalYearPicker {
+			width: 100%
+		}
+	}
+}
