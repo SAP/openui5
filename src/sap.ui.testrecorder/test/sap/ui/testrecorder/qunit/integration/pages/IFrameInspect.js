@@ -5,10 +5,10 @@ sap.ui.define([
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/Ancestor",
-	"sap/ui/test/matchers/LabelFor",
+	"sap/ui/test/matchers/Descendant",
 	"sap/ui/test/actions/Press",
 	"sap/ui/testrecorder/Dialects"
-], function(Opa5, Common, testTreeAPI, AggregationLengthEquals, Properties, Ancestor, LabelFor, Press, Dialects) {
+], function(Opa5, Common, testTreeAPI, AggregationLengthEquals, Properties, Ancestor, Descendant, Press, Dialects) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -176,6 +176,49 @@ sap.ui.define([
 							});
 						},
 						errorMessage: "Cannot find own properties table"
+					});
+				},
+				iShouldSeeItemProperty: function (sProperty, sValue) {
+					this.waitFor({
+						matchers: function () {
+							return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
+								controlType: "sap.m.Text",
+								matchers: new Properties({
+									text: sProperty
+								})
+							});
+						},
+						success: function (aTextWithProperty) {
+							Opa5.assert.ok(true, "There is a property " + sProperty);
+							// the text can be in either table - own or inherited props
+							this.waitFor({
+								matchers: function () {
+									return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
+										controlType: "sap.m.Table",
+										matchers: new Descendant(aTextWithProperty[0])
+									});
+								},
+								success: function (aTables) {
+									this.waitFor({
+										matchers: function () {
+											return Opa5.getContext().recorderOpaPlugin._getFilteredControls({
+												controlType: "sap.m.Text",
+												matchers: [
+													new Properties({
+														text: sValue
+													}),
+													new Ancestor(aTables[0])
+												]
+											});
+										},
+										success: function () {
+											Opa5.assert.ok(true, "There is a property " + sProperty + " with value " + sValue + " for the selected control");
+										},
+										errorMessage: "The selected item doesn't have a property " + sProperty + " with value " + sValue
+									});
+								}
+							});
+						}
 					});
 				}
 			}

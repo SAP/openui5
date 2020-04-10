@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/testrecorder/qunit/integration/pages/Common"
-], function(Opa5, jQuery, Common) {
+	"sap/ui/testrecorder/qunit/integration/pages/Common",
+	"sap/ui/test/actions/EnterText"
+], function(Opa5, jQuery, Common, EnterText) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -34,6 +35,14 @@ sap.ui.define([
 								errorMessage: "Cannot find context menu item"
 							});
 						}
+					}));
+				},
+				iEnterText: function (mSelector, sText) {
+					this.waitFor(jQuery.extend({}, mSelector, {
+						actions: new EnterText({
+							text: sText
+						}),
+						errorMessage: "Cannot find control with selector " + JSON.stringify(mSelector)
 					}));
 				}
 			},

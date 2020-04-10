@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/util/Storage",
 	"sap/ui/core/mvc/Controller",
@@ -19,7 +20,7 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/ui/support/supportRules/ui/external/ElementTree",
 	"sap/ui/testrecorder/interaction/ContextMenu"
-], function (Device, Storage, Controller, SharedModel, CommunicationBus, CommunicationChannels, JSONModel, ResourceModel,
+], function ($, Device, Storage, Controller, SharedModel, CommunicationBus, CommunicationChannels, JSONModel, ResourceModel,
 		Binding, MessageToast, Dialog, CheckBox, Button, VBox, ElementTree, ContextMenu) {
 	"use strict";
 
@@ -30,7 +31,7 @@ sap.ui.define([
 			this._treeSelectionId = null;
 			this._localStorage = new Storage(Storage.Type.local, "sap-ui-test-recorder");
 
-			jQuery.sap.includeStyleSheet("sap/ui/testrecorder/ui/styles/overlay.css");
+			$.sap.includeStyleSheet("sap/ui/testrecorder/ui/styles/overlay.css");
 
 			this.elementTree = new ElementTree(null, {
 				filter: {
@@ -50,7 +51,7 @@ sap.ui.define([
 		},
 		onAfterRendering: function () {
 			CommunicationBus.subscribe(CommunicationChannels.RECEIVE_ALL_CONTROLS_DATA, this._onUpdateAllControls.bind(this));
-			CommunicationBus.subscribe(CommunicationChannels.RECEIVE_CONTROL_DATA, this._onUpdateControlDetails.bind(this));
+			CommunicationBus.subscribe(CommunicationChannels.RECEIVE_CONTROL_DATA, this._onReceiveControlDetails.bind(this));
 			CommunicationBus.subscribe(CommunicationChannels.RECEIVE_CODE_SNIPPET, this._onUpdateCodeSnippet.bind(this));
 			CommunicationBus.subscribe(CommunicationChannels.SELECT_CONTROL_IN_TREE, this._onUpdateSelection.bind(this));
 			CommunicationBus.subscribe(CommunicationChannels.DIALECT_CHANGED, this._changeDialect.bind(this));
@@ -212,7 +213,7 @@ sap.ui.define([
 				});
 			}
 		},
-		_onUpdateControlDetails: function (mData) {
+		_onReceiveControlDetails: function (mData) {
 			// fill in data when a control is selected
 			if (mData.properties) {
 				this.getView().getModel("controls").setProperty("/properties", mData.properties);

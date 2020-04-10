@@ -179,6 +179,21 @@ sap.ui.define([
 		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet("multi", Dialects.UIVERI5, "Highlight");
 
 		When.onTheIFrameInspectPage.iSwitchMultiple();
+	});
+
+	opaTest("Should update properties of selected control", function (Given, When, Then) {
+		var mTestData = {
+			selector: {
+				controlType: "sap.m.Input"
+			},
+			prop: "value",
+			newValue: "Some Text"
+		};
+		When.onTheAppPage.iActOnControl(mTestData.selector, "Highlight");
+		Then.onTheIFrameInspectPage.iShouldSeeItemProperty(mTestData.prop, "");
+
+		When.onTheAppPage.iEnterText(mTestData.selector, mTestData.newValue);
+		Then.onTheIFrameInspectPage.iShouldSeeItemProperty(mTestData.prop, mTestData.newValue);
 
 		Then.iTeardownMyApp();
 	});
