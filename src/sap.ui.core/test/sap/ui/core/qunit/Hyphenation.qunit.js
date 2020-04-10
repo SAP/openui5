@@ -2,9 +2,10 @@
 
 sap.ui.define("sap/ui/core/qunit/Hyphenation.qunit", [
     "sap/ui/core/hyphenation/Hyphenation",
-    "sap/ui/Device",
-    "sap/base/Log"
-], function(Hyphenation, Device, Log) {
+    "sap/ui/core/hyphenation/HyphenationTestingWords",
+    "sap/base/Log",
+    "sap/ui/qunit/utils/createAndAppendDiv"
+], function(Hyphenation, HyphenationTestingWords, Log, createAndAppendDiv) {
     "use strict";
 
 var sSingleLangTest = "de",
@@ -99,6 +100,33 @@ var sSingleLangTest = "de",
             sLanguage = oLocale.getLanguage().toLowerCase();
 
         return sLanguage;
+    }
+
+    var oTestDiv = createAndAppendDiv('tst1');
+    oTestDiv.style.cssText = [
+        "-moz-hyphens:auto;",
+        "-webkit-hyphens:auto;",
+        "-ms-hyphens:auto;",
+        "hyphens:auto;",
+        "width:48px;",
+        "font-size:12px;",
+        "line-height:12px;",
+        "border:none;",
+        "padding:0;",
+        "word-wrap:normal"
+    ].join("");
+
+    function canUseNativeHyphenationRaw() {
+        var sCurrentLang = jQuery("html").attr("lang").toLowerCase();
+
+        // we don't have a word to test for this language
+        if (!HyphenationTestingWords[sCurrentLang]) {
+            return false;
+        }
+
+        oTestDiv.lang = sCurrentLang;
+        oTestDiv.innerText = HyphenationTestingWords[sCurrentLang];
+        return oTestDiv.offsetHeight > 12;
     }
 
     QUnit.module("Instance");
@@ -260,6 +288,10 @@ var sSingleLangTest = "de",
         aLanguagesWithNoThirdParty.forEach(function(sLang) {
             assert.strictEqual(that.oHyphenation.canUseThirdPartyHyphenation(sLang), false, sLang + " is not supported");
         });
+    });
+
+    QUnit.test("can use native hyphenation", function(assert) {
+        assert.strictEqual(canUseNativeHyphenationRaw(), this.oHyphenation.canUseNativeHyphenation(), "The Hyphenation instance should give the same result as the raw check.");
     });
 
     QUnit.test("change hyphen symbol", function(assert) {
