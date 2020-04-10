@@ -520,7 +520,14 @@
 								press: function () {
 									oCPPop2Colors.openBy(this);
 								}
-							})
+							}),
+							new Button({
+								text: "Set color to: ",
+								press: function () {
+									oCPPop2Colors.setColorPickerSelectedColor(sap.ui.getCore().byId("colorSelectInput").getValue());
+								}
+							}),
+							new Input({id:"colorSelectInput", placeholder: "Write a color.."}),
 						]
 					}),
 

@@ -191,6 +191,17 @@ sap.ui.define([
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
+		/**
+		 * Sets a selected color for the ColorPicker control.
+		 * @param {sap.ui.core.CSSColor} color the selected color
+		 * @public
+		 * @return {sap.m.ColorPalettePopover} <code>this</code> for method chaining
+		 */
+		ColorPalettePopover.prototype.setColorPickerSelectedColor = function (color) {
+			this._getPalette().setColorPickerSelectedColor(color);
+
+			return this;
+		};
 
 		// Private methods -------------------------------------------------------------------------------------------
 		ColorPalettePopover.prototype._getPalette = function () {
