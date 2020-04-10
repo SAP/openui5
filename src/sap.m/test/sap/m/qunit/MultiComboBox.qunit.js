@@ -2689,6 +2689,8 @@ sap.ui.define([
 		oTarget.value = "Algeriz";
 		qutils.triggerEvent("input", oTarget);
 
+		sap.ui.getCore().applyChanges();
+
 		// assertions
 		assert.strictEqual(fnOninputSpy.callCount, 1, "The oninput was called");
 		assert.strictEqual(fnOnkeyupSpy.callCount, 1, "The onkeyup was called");
@@ -2731,6 +2733,7 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeyup(oTarget, ''); // store old value
 		oTarget.value = "Azgeri";
 		qutils.triggerEvent("input", oTarget);
+		sap.ui.getCore().applyChanges();
 
 		// assertions
 		assert.strictEqual(fnOninputSpy.callCount, 1, "The oninput was called");
@@ -3422,6 +3425,7 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.ENTER);
 		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.ARROW_DOWN, false, true);
 		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.ARROW_UP, false, true);
+		sap.ui.getCore().applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem2]);
@@ -7317,6 +7321,8 @@ sap.ui.define([
 
 	QUnit.test("oninput the value state should be reset to the initial one", function(assert) {
 		this.oMultiComboBox.setValueState("Warning");
+		sap.ui.getCore().applyChanges();
+
 		var oFakeEvent = {
 			isMarked: function () {return false;},
 			setMarked: function () {},
@@ -7333,37 +7339,9 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		this.oMultiComboBox.oninput(oFakeEvent); // Fake input
+		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.Warning, "The value state is reset.");
-	});
-
-	QUnit.test("onbackspace should reset the value state", function(assert) {
-		// arrange
-		var oOnBackSpaceSpy = this.spy(this.oMultiComboBox, "_showAlreadySelectedVisualEffect");
-
-		// act
-		sap.ui.test.qunit.triggerCharacterInput(this.oMultiComboBox.getFocusDomRef(), "Brussel");
-		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getFocusDomRef(), KeyCodes.ENTER); //onsapenter
-		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getFocusDomRef(), KeyCodes.BACKSPACE); //onsapbackspace
-
-		// assert
-		assert.strictEqual(oOnBackSpaceSpy.callCount, 2, "_showAlreadySelectedVisualEffect() should be called and value state should be reset");
-		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.None, "The input value is valid");
-
-	});
-
-	QUnit.test("onsapdelete should reset the value state", function(assert) {
-		// arrange
-		var oOnBackSpaceSpy = this.spy(this.oMultiComboBox, "_showAlreadySelectedVisualEffect");
-
-		// act
-		sap.ui.test.qunit.triggerCharacterInput(this.oMultiComboBox.getFocusDomRef(), "Brussel");
-		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getFocusDomRef(), KeyCodes.ENTER);
-		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getFocusDomRef(), KeyCodes.DELETE);
-
-		// assert
-		assert.strictEqual(oOnBackSpaceSpy.callCount, 2, "_showAlreadySelectedVisualEffect() should be called and value state should be reset");
-		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.None, "The input value is valid");
 	});
 
 	QUnit.test("value state message should be opened if the input field is on focus", function(assert) {
@@ -7392,17 +7370,35 @@ sap.ui.define([
 
 		// act
 		this.oMultiComboBox.setValueStateText(sCustomText);
+		sap.ui.getCore().applyChanges();
+
+		var oFakeEvent = {
+			isMarked: function () { },
+			setMarked: function () { },
+			srcControl: this.oMultiComboBox,
+			target: {
+				value: "Roma"
+			}
+		};
+
+
 		this.oMultiComboBox.focus();
 		this.oMultiComboBox.open();
-		sap.ui.getCore().applyChanges();
 		this.clock.tick(500);
-		enterNewText(this.oMultiComboBox, "Roma");
+
+		this.oMultiComboBox.setValue(oFakeEvent.value);
+		this.oMultiComboBox.oninput(oFakeEvent);
+
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(this.oMultiComboBox.getValueStateText(), sCustomText, "Value State message is correct.");
 
 		// act
-		enterNewText(this.oMultiComboBox, "Brussel");
+		oFakeEvent.value = "Brussel";
+		this.oMultiComboBox.setValue(oFakeEvent.value);
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getFocusDomRef(), KeyCodes.ENTER);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(this.oMultiComboBox.getValueStateText(),
@@ -7410,7 +7406,11 @@ sap.ui.define([
 			"Already selected value message is correct.");
 
 		// act
-		enterNewText(this.oMultiComboBox, "Roma");
+		oFakeEvent.value = "Roma";
+
+		this.oMultiComboBox.setValue(oFakeEvent.value);
+		this.oMultiComboBox.oninput(oFakeEvent);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(this.oMultiComboBox.getValueStateText(), sCustomText, "Value State message is correct.");
@@ -7418,6 +7418,8 @@ sap.ui.define([
 
 	QUnit.test("onfocusout value should be deleted", function(assert) {
 		this.oMultiComboBox.setValueState("Success");
+		sap.ui.getCore().applyChanges();
+
 		// act
 		this.oMultiComboBox.open();
 		sap.ui.getCore().applyChanges();

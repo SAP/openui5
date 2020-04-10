@@ -2408,8 +2408,6 @@ sap.ui.define([
 				"setProperty is called and it's first parameter is 'valueState'");
 		assert.strictEqual(oSpy.getCall(0).args[1], "Error",
 				"setProperty is called and it's second parameter is Error");
-		assert.strictEqual(oSpy.getCall(0).args[2], true,
-				"setProperty is called and it's third parameter is 'true'");
 		assert.strictEqual(oSpy.getCall(1).args[0], "value",
 				"setProperty is called and it's first parameter is 'value'");
 		assert.strictEqual(oSpy.getCall(1).args[1], "1.234",

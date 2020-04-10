@@ -826,10 +826,10 @@ sap.ui.define([
 
 			// act
 			oInput.setValueState(mSettings.input);
+			sap.ui.getCore().applyChanges();
 
 			// assertions
 			assert.ok(oInput.$("content").hasClass(mSettings.output), "Input should have the class " + mSettings.output);
-			assert.strictEqual(fnRerenderSpy.callCount, 0, "Input is not rerendered with setValueState calls");
 
 			// cleanup
 			oInput.destroy();
@@ -863,9 +863,13 @@ sap.ui.define([
 		assert.strictEqual(oInput.getValueState(), ValueState.None, "Invalid value state before rendering is converted to default value.");
 
 		oInput.setValueState(ValueState.Error);
+		sap.ui.getCore().applyChanges();
+
 		assert.ok(oInput.$("content").hasClass("sapMInputBaseContentWrapperError"), "Input has the state class before testing the invalid value.");
 
 		oInput.setValueState(undefined);
+		sap.ui.getCore().applyChanges();
+
 		assert.strictEqual(oInput.getValueState(), ValueState.None, "Invalid value state is converted to default value.");
 		assert.ok(!oInput.$().hasClass("sapMInputBaseState"), "Input's state class is removed after setting the invalid value");
 
@@ -1207,22 +1211,27 @@ sap.ui.define([
 						switch (i % 5) {
 							case 0:
 								oValueStateInput.setValueState("None");
+								sap.ui.getCore().applyChanges();
 								break;
 
 							case 1:
 								oValueStateInput.setValueState("Warning");
+								sap.ui.getCore().applyChanges();
 								break;
 
 							case 2:
 								oValueStateInput.setValueState("Success");
+								sap.ui.getCore().applyChanges();
 								break;
 
 							case 3:
 								oValueStateInput.setValueState("Error");
+								sap.ui.getCore().applyChanges();
 								break;
 
 							case 4:
 								oValueStateInput.setValueState("Information");
+								sap.ui.getCore().applyChanges();
 								break;
 						}
 					}
@@ -1885,15 +1894,23 @@ sap.ui.define([
 		assert.strictEqual($Input.attr("aria-labelledby"), undefined, "No aria-labelledby set by default");
 
 		oInput.setValueState(ValueState.Warning);
+		sap.ui.getCore().applyChanges();
+
 		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Warning does not make control invalid");
 
 		oInput.setValueState(ValueState.Success);
+		sap.ui.getCore().applyChanges();
+
 		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Success does not make control invalid");
 
 		oInput.setValueState(ValueState.Information);
+		sap.ui.getCore().applyChanges();
+
 		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Information does not make control invalid");
 
 		oInput.setValueState(ValueState.Error);
+		sap.ui.getCore().applyChanges();
+
 		assert.strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error makes control invalid");
 
 		oInput.rerender();
