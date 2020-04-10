@@ -237,7 +237,6 @@ sap.ui.define([
 			aHeaderContent,
 			oFallbackIcon;
 
-		this.oQuickViewPage.setIcon("test-resources/sap/m/images/SAPLogo.jpg");
 		this.oQuickViewPage.setFallbackIcon("sap-icon://error");
 		this.oQuickViewPage.placeAt("qunit-fixture");
 		Core.applyChanges();
