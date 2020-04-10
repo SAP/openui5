@@ -343,6 +343,8 @@ function(
 		// note: prevent document scrolling when arrow keys are pressed
 		oEvent.preventDefault();
 
+		this.syncPickerContent();
+
 		if (this.isFocusInTokenizer()) {
 			return;
 		}

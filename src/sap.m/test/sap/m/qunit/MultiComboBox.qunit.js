@@ -5318,11 +5318,12 @@ sap.ui.define([
 	QUnit.module("Keyboard handling", {
 		beforeEach: function(){
 			this.oFirstItem = new Item({key: "Item1", text: "Item1"});
+			this.oLastItem = new Item({key: "Item3", text: "Item3"});
 			this.oMultiComboBox = new MultiComboBox({
 				items: [
 					this.oFirstItem,
 					new Item({key: "Item2", text: "Item2"}),
-					new Item({key: "Item3", text: "Item3"})
+					this.oLastItem
 				]
 			});
 			this.oTokenizer = this.oMultiComboBox._oTokenizer;
@@ -5478,6 +5479,13 @@ sap.ui.define([
 		this.clock.tick(100);
 
 		assert.strictEqual(this.oFirstItem.getText(), this.oMultiComboBox.getValue(), "Item's text should be the same as input's value");
+	});
+
+	QUnit.test("onsapup should update input's value with last item in the list, when input is empty", function (assert) {
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_UP);
+		this.clock.tick(100);
+
+		assert.strictEqual(this.oLastItem.getText(), this.oMultiComboBox.getValue(), "Item's text should be the same as input's value");
 	});
 
 	QUnit.test("onsapenter should not trigger invalidation if value is empty", function(assert) {
