@@ -1,0 +1,57 @@
+{
+  "1.78.0": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "331a1048f259916eb971d6f514c9759eda5df3b2",
+        "type": "FEATURE",
+        "text": " sap.m.ColorPalette: Added new public setter",
+        "references": []
+      },
+      {
+        "id": "cd223c07d90ac8434388c8e351310cbe0e3a98ae",
+        "type": "FIX",
+        "text": " sap.m.FacetFilterList: filtering is now performed corretly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070127802"
+          }
+        ]
+      },
+      {
+        "id": "7ace90823d62c3b1bbbcb738c909ff14a6e3e15f",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: selectedKey property now works with nested item",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070135711"
+          }
+        ]
+      },
+      {
+        "id": "2139aee6d24ca74b754926cdc74e8a1e1bfea125",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Arrow up now works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070147690"
+          }
+        ]
+      },
+      {
+        "id": "f171e8fde6491d40ed9d5ca0f5a30281fe5a2996",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: sap.m.IconTabBar alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070043278"
+          }
+        ]
+      }
+    ]
+  }
+}
