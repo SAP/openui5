@@ -388,13 +388,13 @@ sap.ui.define([
 			if (aSubSections.length === 1) {
 				oLastFocusedEl = oFirstSubSection._oLastFocusedControlF7;
 				if (oLastFocusedEl) {
-					oLastFocusedEl.$().focus();
+					oLastFocusedEl.$().trigger("focus");
 				} else {
 					oFirstSubSection.$().firstFocusableDomRef().focus();
 				}
 			} else {
 				if (oFirstSubSection.getActions().length) {
-					oFirstSubSection.getActions()[0].$().focus();
+					oFirstSubSection.getActions()[0].$().trigger("focus");
 				}
 			}
 		}

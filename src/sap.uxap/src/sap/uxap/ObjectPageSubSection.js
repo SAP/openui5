@@ -620,16 +620,16 @@ sap.ui.define([
 	ObjectPageSubSection.prototype._handleInteractiveElF7 = function () {
 		//If there are more sub sections focus current subsection otherwise focus the parent section
 		if (this.getParent().getSubSections().length > 1) {
-			this.$().focus();
+			this.$().trigger("focus");
 		} else {
-			this.getParent().$().focus();
+			this.getParent().$().trigger("focus");
 		}
 	};
 
 	//It's used when F7 key is pressed and the focus is on SubSection
 	ObjectPageSubSection.prototype._handleSubSectionF7 = function (oEvent) {
 		if (this._oLastFocusedControlF7) {
-			this._oLastFocusedControlF7.$().focus();
+			this._oLastFocusedControlF7.$().trigger("focus");
 		} else {
 			this.$().firstFocusableDomRef().focus();
 		}

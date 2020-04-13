@@ -233,7 +233,7 @@ sap.ui.define([
 		if (bAllowFocusMove && this._isScrollAnimationEnabled()) {
 			setTimeout(oSection.$()["focus"].bind(oSection.$()), iFocusMoveDelay);
 		} else if (bAllowFocusMove) {
-			oSection.$().focus();
+			oSection.$().trigger("focus");
 		}
 
 		// Handle the case of SubSection first rendering in IconTabBar mode
