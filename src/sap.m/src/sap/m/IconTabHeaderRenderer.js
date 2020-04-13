@@ -33,7 +33,8 @@ sap.ui.define([], function () {
 			bInLine = oControl._checkInLine(aItems) || oControl.isInlineMode();
 
 		var oIconTabBar = oControl.getParent(),
-			bUpperCase = oIconTabBar && oIconTabBar.isA('sap.m.IconTabBar') && oIconTabBar.getUpperCase();
+			bUpperCase = oIconTabBar && oIconTabBar.isA('sap.m.IconTabBar') && oIconTabBar.getUpperCase(),
+			oAriaTexts = oControl._oAriaTexts;
 
 		// render wrapper div
 		oRM.openStart("div", oControl)
@@ -64,21 +65,33 @@ sap.ui.define([], function () {
 
 		oRM.accessibilityState(oControl, {
 			role: "navigation"
-			// label: oRB.getText("ICONTABHEADER_LABEL")
 		});
+
+		if (oAriaTexts.headerLabel) {
+			oRM.accessibilityState(oControl, {
+				label: oAriaTexts.headerLabel
+			});
+		}
 
 		oRM.openEnd();
 
-		oRM.renderControl(oControl._oAriaHeadText);
+		if (oAriaTexts.headerDescription) {
+			oRM.renderControl(oControl._getInvisibleHeadText());
+		}
 
 		oRM.openStart("div", sId + "-head")
 			.class("sapMITBHead");
 
 		oRM.accessibilityState({
 			role: "tablist",
-			orientation: "horizontal",
-			describedby: oControl.getId() + "-ariaHeadText"
+			orientation: "horizontal"
 		});
+
+		if (oAriaTexts.headerDescription) {
+			oRM.accessibilityState({
+				describedby: oControl._getInvisibleHeadText().getId()
+			});
+		}
 
 		oRM.openEnd();
 

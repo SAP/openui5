@@ -1342,7 +1342,33 @@
 					new sap.m.Label({
 						text: "Contrast IconTabBar with transparent backgrounds"
 					}),
-					contrastPlusIconTabBar
+					contrastPlusIconTabBar,
+					new sap.m.Label({
+						text: "IconTabBar with specific accesibility decription: 'Available spaces'"
+					}),
+					new sap.m.IconTabBar({
+						ariaTexts: {
+							headerLabel: "Available spaces",
+							headerDescription: "Select tab to show a space"
+						},
+						items: [
+							new sap.m.IconTabFilter({
+								showAll: true,
+								count: "8",
+								text: "Orders Productive",
+								key: "All",
+								iconColor: sap.ui.core.IconColor.Neutral
+							}),
+							new sap.m.IconTabSeparator(),
+							new sap.m.IconTabFilter({
+								icon: "sap-icon://task",
+								iconColor: sap.ui.core.IconColor.Critical,
+								count: "3",
+								text: "Open",
+								key: "Open"
+							})
+						]
+					})
 				]
 			});
 

@@ -2352,8 +2352,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Posinset, Setsize, Level", function (assert) {
-		Core.applyChanges();
-
 		var $tabFilters = this.oIconTabBar.$().find('.sapMITBHead .sapMITBFilter');
 
 		assert.strictEqual($tabFilters[1].getAttribute('aria-posinset'), "2", "posinset is set correctly");
@@ -2373,6 +2371,22 @@ sap.ui.define([
 		assert.strictEqual($selectItems[1].getAttribute('aria-level'), "1", "level is set correctly");
 	});
 
+	QUnit.test("ariaTexts", function (assert) {
+		var oITH = this.oIconTabBar._getIconTabHeader();
+
+		assert.notOk(oITH.$().attr("aria-label"), "'aria-label' attribute should NOT be set.");
+		assert.notOk(oITH.$("head").attr("aria-describedby"), "'aria-describedby' attribute should NOT be set.");
+
+		this.oIconTabBar.setAriaTexts({
+			headerLabel: "Available spaces",
+			headerDescription: "Select tab to show a space"
+		});
+		Core.applyChanges();
+
+		assert.strictEqual(oITH.$().attr("aria-label"), "Available spaces", "'aria-label' attribute should be set");
+		assert.strictEqual(oITH.$("head").attr("aria-describedby"), oITH._getInvisibleHeadText().getId(), "'aria-describedby' attribute should be set.");
+	});
+
 	QUnit.module("Padding");
 
 	QUnit.test("Container Padding Classes", function (assert) {
@@ -2381,7 +2395,6 @@ sap.ui.define([
 			sContentSelector = ".sapMITBContainerContent > .sapMITBContent",
 			sResponsiveSize = (Device.resize.width <= 599 ? "0px" : (Device.resize.width <= 1023 ? "16px" : "16px 32px")), // eslint-disable-line no-nested-ternary
 			aResponsiveSize = sResponsiveSize.split(" "),
-			$container,
 			$containerContent;
 
 		// Act

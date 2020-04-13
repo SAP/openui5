@@ -187,10 +187,8 @@ sap.ui.define([
 
 	IconTabHeader.prototype.init = function () {
 		this._aTabKeys = [];
-		this._oAriaHeadText = new InvisibleText({
-			id: this.getId() + "-ariaHeadText"
-			// text: oResourceBundle.getText("ICONTABHEADER_DESCRIPTION")
-		});
+		this._oAriaHeadText = null;
+		this._oAriaTexts = {};
 	};
 
 	IconTabHeader.prototype.exit = function () {
@@ -219,8 +217,11 @@ sap.ui.define([
 			this._oOverflowEventDelegate = null;
 		}
 
-		this._oAriaHeadText.destroy();
-		this._oAriaHeadText = null;
+		if (this._oAriaHeadText) {
+			this._oAriaHeadText.destroy();
+			this._oAriaHeadText = null;
+		}
+		this._oAriaTexts = null;
 		this._bRtl = null;
 	};
 
@@ -290,6 +291,22 @@ sap.ui.define([
 		}
 
 		return oOverflow;
+	};
+
+	/**
+	 * Returns invisible text, used for the head.
+	 * @returns {sap.ui.core.InvisibleText} InvisibleText
+	 * @private
+	 */
+	IconTabHeader.prototype._getInvisibleHeadText = function () {
+		if (!this._oAriaHeadText) {
+			this._oAriaHeadText = new InvisibleText({
+				id: this.getId() + "-ariaHeadText"
+			});
+		}
+
+		this._oAriaHeadText.setText(this._oAriaTexts.headerDescription);
+		return this._oAriaHeadText;
 	};
 
 	IconTabHeader.prototype._onItemNavigationFocusLeave = function () {
@@ -1186,6 +1203,13 @@ sap.ui.define([
 				.removeClass("sapMITBSelected")
 				.attr({ "aria-selected": false });
 		}
+	};
+
+	/**
+	 * @private
+	 */
+	IconTabHeader.prototype._setAriaTexts = function (oAriaTexts) {
+		this._oAriaTexts = oAriaTexts || {};
 	};
 
 	/* =========================================================== */
