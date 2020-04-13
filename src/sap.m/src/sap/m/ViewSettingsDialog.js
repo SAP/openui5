@@ -1990,7 +1990,8 @@ function(
 					aEventListItems = oEvent.getParameter("listItems"),
 					aSubItems,
 					i = 0,
-					bNewValue;
+					bNewValue,
+					sKey;
 
 				that._clearPresetFilter();
 
@@ -2002,10 +2003,16 @@ function(
 				if (aEventListItems.length > 1 && bMultiSelectMode){
 					aSubItems = oItem.getItems();
 					for (; i < aSubItems.length; i++) {
-						for (var j = 0; j < aEventListItems.length; j++){
-							if (aSubItems[i].getKey() === aEventListItems[j].getCustomData()[0].getValue().getKey()){
-								aSubItems[i].setProperty('selected', aEventListItems[j].getSelected(), true);
+						sKey = aSubItems[i].getKey();
+						if (sKey !== "") {
+							for (var j = 0; j < aEventListItems.length; j++){
+								if (sKey === aEventListItems[j].getCustomData()[0].getValue().getKey()){
+									aSubItems[i].setProperty('selected', aEventListItems[j].getSelected(), true);
+								}
 							}
+						} else {
+							aSubItems[i].setProperty('selected', false, true);
+							Log.warning("ViewSettingsDialog " + that.getId() + " - Missing key of a filterItem '" + oItem.getText() + "' sub-item with text: '" + aSubItems[i].getText() + "'! This item cannot be checked!");
 						}
 					}
 				} else {
@@ -2023,6 +2030,10 @@ function(
 
 					bNewValue = oEvent.getParameter("listItem").getSelected();
 					if (oSubItem.getProperty('selected') !== bNewValue) {
+						if (bNewValue && oSubItem.getKey() === "") {
+							bNewValue = false;
+							Log.warning("ViewSettingsDialog " + this.getId() + " - Missing key of a filterItem '" + oItem.getText() + "' sub-item with text: '" + oSubItem.getText() + "'! This item cannot be checked!");
+						}
 						oSubItem.setProperty('selected', bNewValue, true);
 					}
 				}
@@ -2267,6 +2278,14 @@ function(
 
 		if (aFilterItems.length) {
 			aFilterItems.forEach(function(oItem) {
+				var aSubItems = oItem.getItems ? oItem.getItems() : [];
+				aSubItems.forEach(function(oSubItem) {
+					if (oSubItem.getKey() === "" && oSubItem.getSelected()) {
+						// unselect sub-item if there is no key
+						oSubItem.setSelected(false);
+						Log.warning("ViewSettingsDialog '" + this.getId() + "' - Missing key of a filterItem '" + oItem.getText() + "' sub-item with text '" + oSubItem.getText() + "'!", "", "This item cannot be selected!");
+					}
+				}.bind(this));
 				oListItem = new StandardListItem(
 					{
 						id: oItem.getId() + LIST_ITEM_SUFFIX,
@@ -2860,8 +2879,12 @@ function(
 					return oItem.getVisible();
 				}).forEach(function(oItem) {
 					var oVSDItem = oItem.data("item");
+					if (oVSDItem.getKey() === "") {
+						bSelected = false;
+						Log.warning("ViewSettingsDialog " + this.getId() + " - Missing key of a currently displayed filterItem sub-item with text '" + oVSDItem.getText() + "'!", "", "This item cannot be selected!");
+					}
 					oVSDItem.setSelected(bSelected);
-				});
+				}.bind(this));
 
 				// enable/disable reset button if necessary
 				this._checkResetStatus();
