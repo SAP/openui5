@@ -993,7 +993,7 @@ sap.ui.define([
 
 		// Assert
 		assert.equal(oIconTabFilter.getText(), "new text", "the text is changed");
-		assert.equal(oIconTabFilter.$("text").html(), "new text", "the new text is rendered");
+		assert.equal(document.getElementsByClassName("sapMITHTextContent")[0].textContent, "new text", "the new text is rendered");
 
 		// Clean up
 		oIconTabBar.destroy();
@@ -2164,16 +2164,14 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act
-		var oButton = oITH.$().find('.sapMITHOverflow button');
-		oButton.trigger('tap');
+		oITH._getOverflow()._expandButtonPress();
 
 		// Assert
 		var oSelectList = oITH._getSelectList().getItems();
 		assert.strictEqual(oSelectList.pop().getEnabled(), bTabEnabled, "property has propagated");
 
 		// act (reopen)
-		oButton = oITH.$().find('.sapMITHOverflow button');
-		oButton.trigger('tap');
+		oITH._getOverflow()._expandButtonPress();
 		Core.applyChanges();
 
 		// Assert
@@ -2272,12 +2270,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Rendering", function (assert) {
-		assert.strictEqual(this.oIconTabBar.$().find('.sapMITHOverflow button').length, 1, "Overflow button is rendered");
+		assert.strictEqual(this.oIconTabBar.$().find('.sapMITHOverflow .sapMITHShowSubItemsIcon').length, 1, "Overflow button is rendered");
 
-		var oButton = this.oIconTabBar.$().find('.sapMITHOverflow button');
-		oButton.trigger('tap');
-
-		Core.applyChanges();
+		this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 
 		assert.strictEqual(jQuery('.sapMITBSelectList').length, 1, "Select list is open");
 	});
@@ -2288,20 +2283,13 @@ sap.ui.define([
 
 		Core.applyChanges();
 
-		// Act
-		this.oIconTabBar.$().find('.sapMITHOverflow button').trigger('tap');
-
-		Core.applyChanges();
-
 		// Assert
 		assert.strictEqual(document.querySelector(".sapMITBSelectList .sapMITBSelectItemSelected"), null, "Selected item should not be in the overflow list");
 	});
 
 	QUnit.test("Selection must result in the tab filter to show up in the strip", function (assert) {
 		// Arrange
-		this.oIconTabBar.$().find('.sapMITHOverflow button').trigger('tap');
-
-		Core.applyChanges();
+		this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 
 		var selectItems = document.querySelectorAll(".sapMITBSelectList .sapMITBSelectItem");
 
@@ -2321,13 +2309,12 @@ sap.ui.define([
 	QUnit.test("Filters cloning", function (assert) {
 		// Arrange
 		var oIconTabHeader = this.oIconTabBar.getAggregation("_header"),
-			oOverflowButton = this.oIconTabBar.$().find('.sapMITHOverflow button'),
 			aItems = oIconTabHeader.getItems(),
 			aItemsInStrip = oIconTabHeader._getItemsInStrip(),
 			aClonedItems;
 
 		// Act
-		oOverflowButton.trigger('tap');
+		this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 		aClonedItems = oIconTabHeader._getSelectList().getItems();
 
 		var iOverflowListItems = aItems.length - aItemsInStrip.length; // delta
@@ -2385,8 +2372,7 @@ sap.ui.define([
 		assert.strictEqual($tabFilters[1].getAttribute('aria-setsize'), "29", "setsize is set correctly");
 		assert.strictEqual($tabFilters[1].getAttribute('aria-level'), null, "level is not set while tab is in tab strip");
 
-		this.oIconTabBar.$().find('.sapMITHOverflow button').trigger('tap');
-		Core.applyChanges();
+		this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 
 		var $selectList = jQuery('.sapMITBSelectList');
 		var $selectItems = $selectList.find('.sapMITBSelectItem');
@@ -2976,8 +2962,7 @@ sap.ui.define([
 			this.oIconTabHeader.setEnableTabReordering(true);
 			Core.applyChanges();
 
-			var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
-			oButton.trigger('tap');
+			this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 
 			var selectListItems = this.oSelectList.getAggregation("items");
 
@@ -3152,8 +3137,7 @@ sap.ui.define([
 			this.oIconTabHeader = this.oIconTabBar.getAggregation("_header");
 			this.oSelectList = this.oIconTabHeader._getSelectList();
 
-			var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
-			oButton.trigger('tap');
+			this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 
 			var selectListItems = this.oSelectList.getAggregation("items");
 
@@ -3196,17 +3180,19 @@ sap.ui.define([
 		}
 	});
 
+
 	QUnit.test("Overflow button", function(assert) {
 		var oOverflow = this.oIconTabHeader._getOverflow();
-		assert.ok(!oOverflow._getExpandButton().$().hasClass("sapMBtnDragOver"), "Overflow button has default state");
+		var oOverflowTrigger = this.oIconTabHeader._getOverflow()._getDragOverDomRef();
+		assert.ok(!oOverflowTrigger.classList.contains("sapMITHDragOver"), "Overflow button has default state");
 
 		oOverflow._handleOnDragOver({preventDefault: function () {}});
 
-		assert.ok(oOverflow._getExpandButton().$().hasClass("sapMBtnDragOver"), "Overflow button is in 'drag over' state ");
+		assert.ok(oOverflowTrigger.classList.contains("sapMITHDragOver"), "Overflow button is in 'drag over' state ");
 
 		oOverflow._handleOnDragLeave();
 
-		assert.ok(!oOverflow._getExpandButton().$().hasClass("sapMBtnDragOver"), "Overflow button has default state");
+		assert.ok(!oOverflowTrigger.classList.contains("sapMITHDragOver"), "Overflow button has default state");
 	});
 
 	QUnit.test("Drag&Drop dropPosition: 'After'", function(assert) {
@@ -3236,8 +3222,7 @@ sap.ui.define([
 		assert.strictEqual(this.oIconTabBar.getItems()[4].getText(), oTabInOverflow.getText(), "Tab at index " + (4) + " in items aggregation is now - " + oTabInOverflow.getText());
 
 		// Arrange
-		var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
-		oButton.trigger('tap');
+		this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 
 		// Assert
 		assert.notStrictEqual(this.oSelectList.getItems()[0].getText(), oTabInOverflow.getText(), "First Tab in Overflow is not '" + oTabInOverflow.getText() + "' anymore after it was moved");
@@ -3271,8 +3256,7 @@ sap.ui.define([
 		assert.strictEqual(this.oIconTabBar.getItems()[4].getText(), oTabInStrip3.getText(), "Tab at index " + (4) + " in items aggregation is now - " + oTabInStrip3.getText());
 
 		// Arrange
-		var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
-		oButton.trigger('tap');
+		this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 
 		// Assert
 		assert.notStrictEqual(this.oSelectList.getItems()[0].getText(), oTabInOverflow.getText(), "First Tab in Overflow is not '" + oTabInOverflow.getText() + "' anymore after it was moved");
@@ -3289,8 +3273,7 @@ sap.ui.define([
 			this.oIconTabHeader = this.oIconTabBar.getAggregation("_header");
 			this.oSelectList = this.oIconTabHeader._getSelectList();
 
-			var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
-			oButton.trigger('tap');
+			this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 
 			var selectListItems = this.oSelectList.getAggregation("items");
 
@@ -3361,10 +3344,6 @@ sap.ui.define([
 		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 2].getText(), oTabInOverflow3.getText(), "Tab at index " + (iDelta + 2) + " in items aggregation is now - " + oTabInOverflow3.getText());
 		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 3].getText(), oTabInStrip2.getText(), "Tab at index " + (iDelta + 3) + " in items aggregation is now - " + oTabInStrip2.getText());
 
-		// Arrange
-		var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
-		oButton.trigger('tap');
-
 		// Assert
 		assert.notStrictEqual(this.oIconTabHeader._getItemsInStrip()[2].getText(), oTabInStrip2.getText(), "Third Tab in Tab Strip is not '" + oTabInStrip2.getText() + "' anymore after it was moved");
 		assert.strictEqual(this.oSelectList.getItems()[2].getText(), oTabInOverflow3.getText(), "Third Tab in Overflow is now - " + oTabInOverflow3.getText());
@@ -3396,10 +3375,6 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 2].getText(), oTabInStrip2.getText(), "Tab at index " + (iDelta + 2) + " in items aggregation is now - " + oTabInStrip2.getText());
 		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 3].getText(), oTabInOverflow3.getText(), "Tab at index " + (iDelta + 3) + " in items aggregation is now - " + oTabInOverflow3.getText());
-
-		// Arrange
-		var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
-		oButton.trigger('tap');
 
 		// Assert
 		assert.notStrictEqual(this.oIconTabHeader._getItemsInStrip()[2].getText(), oTabInStrip2.getText(), "Third Tab in Tab Strip is not '" + oTabInStrip2.getText() + "' anymore after it was moved");
@@ -3507,18 +3482,17 @@ sap.ui.define([
 });
 
 	QUnit.test("Drag&Drop on expand button", function(assert) {
-
 		var oIconTabFilterWithChildren = this.oIconTabHeader.getItems()[0];
 		var oExpandButton = oIconTabFilterWithChildren._getExpandButton();
-		assert.ok(!oExpandButton.$().hasClass("sapMBtnDragOver"), "Expand button has default state");
+		assert.ok(!oExpandButton.$().hasClass("sapMITHDragOver"), "Expand button has default state");
 
 		oIconTabFilterWithChildren._handleOnDragOver({preventDefault: function () {}});
 
-		assert.ok(oExpandButton.$().hasClass("sapMBtnDragOver"), "Expand button is in 'drag over' state ");
+		assert.ok(oExpandButton.$().hasClass("sapMITHDragOver"), "Expand button is in 'drag over' state ");
 
 		oIconTabFilterWithChildren._handleOnDragLeave();
 
-		assert.ok(!oExpandButton.$().hasClass("sapMBtnDragOver"), "Expand button has default state");
+		assert.ok(!oExpandButton.$().hasClass("sapMITHDragOver"), "Expand button has default state");
 		assert.ok(!oIconTabFilterWithChildren._oPopover, "There is no popover before long drag over");
 
 		oIconTabFilterWithChildren._handleOnLongDragOver();
@@ -3729,8 +3703,7 @@ sap.ui.define([
 		var oFireSelectionChangeSpy = this.spy(oOverflow._getSelectList(), "fireSelectionChange");
 		// open overflow
 
-		var oButton = oITH.$().find('.sapMITHOverflow button');
-		oButton.trigger('tap');
+		oITB._getIconTabHeader()._getOverflow()._expandButtonPress();
 
 		// Assert
 		assert.strictEqual(oOverflow._oPopover.isOpen(), true, "ITB overflow's popover has been opened");

@@ -20,6 +20,7 @@ module.exports = [
 	"Dialog.spec.js",
 	"FacetFilter.spec.js",
 	"GenericTag.spec.js",
+	"IconTabBarGeneric3.spec.js",
 	"IconTabBar.spec.js",
 	"IconTabBarResponsivePaddings.spec.js",
 	"IconTabHeaderResponsivePaddings.spec.js",

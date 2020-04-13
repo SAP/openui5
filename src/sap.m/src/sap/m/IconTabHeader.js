@@ -279,6 +279,7 @@ sap.ui.define([
 			oOverflow._bIsOverflow = true;
 
 			oOverflow.addEventDelegate({ onsapnext: oOverflow.onsapdown }, oOverflow);
+			oOverflow.addEventDelegate({ onlongdragover: oOverflow._handleOnLongDragOver }, oOverflow);
 
 			this.setAggregation("_overflow", oOverflow);
 		}
@@ -919,7 +920,7 @@ sap.ui.define([
 					if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof IconTabSeparator)) {
 
 						if (this._isUnselectable(oControl)) {
-							if (oControl.getItems().length) {
+							if (oControl.getItems().length || oControl._bIsOverflow) {
 								oControl._expandButtonPress();
 							}
 							return;
@@ -936,7 +937,7 @@ sap.ui.define([
 					// select item if it is an iconTab but not a separator
 
 					if (this._isUnselectable(oControl)) {
-						if (oControl.getItems().length) {
+						if (oControl.getItems().length || oControl._bIsOverflow) {
 							oControl._expandButtonPress();
 						}
 						return;
@@ -954,7 +955,7 @@ sap.ui.define([
 				if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof IconTabSeparator)) {
 
 					if (this._isUnselectable(oControl)) {
-						if (oControl.getItems().length) {
+						if (oControl.getItems().length || oControl._bIsOverflow) {
 							oControl._expandButtonPress();
 						}
 						return;
@@ -996,7 +997,8 @@ sap.ui.define([
 		var oFilter = oIconTabFilter._getRealTab();
 
 		return !oFilter.getEnabled() || (this._isInsideIconTabBar() && !this.getParent().getContent().length &&
-			oFilter._getNestedLevel() === 1 && oFilter.getItems().length && !oFilter.getContent().length);
+			oFilter._getNestedLevel() === 1 && oFilter.getItems().length && !oFilter.getContent().length) ||
+			oFilter._bIsOverflow;
 	};
 
 	/**
