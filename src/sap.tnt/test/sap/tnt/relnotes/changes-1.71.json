@@ -30,5 +30,25 @@
         ]
       }
     ]
+  },
+  "1.71.15": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "52a519cb04f4500bd3422b2e91a1506662386f94",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationListItem: Improve collapse/expand with keyboard",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070125930"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980484878"
+          }
+        ]
+      }
+    ]
   }
 }

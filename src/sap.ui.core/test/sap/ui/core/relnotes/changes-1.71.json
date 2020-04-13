@@ -603,5 +603,21 @@
         ]
       }
     ]
+  },
+  "1.71.15": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "8ba79c4f07881b7fb61ab2aaa8bb23c591b0cd6f",
+        "type": "FIX",
+        "text": " caja-html-sanitizer: avoid catastrophic backtracking in lexCss",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001766652020"
+          }
+        ]
+      }
+    ]
   }
 }
