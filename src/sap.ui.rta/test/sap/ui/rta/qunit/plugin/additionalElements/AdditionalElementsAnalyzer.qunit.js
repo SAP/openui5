@@ -916,7 +916,7 @@ function(
 						action : {} //not relevant for test
 					}]
 				},
-				custom : {
+				addViaCustom : {
 					action : {}, //not relevant for test
 					items: [{
 						label: sGroupElement1OriginalLabel,
@@ -930,30 +930,30 @@ function(
 				}
 			};
 
-			sandbox.stub(oGroupElement1, "getId").returns(oGroup.getParent().getId() + "-" + oActionsObject.custom.items[0].id);
-			sandbox.stub(oGroupElement2, "getId").returns(oGroup.getParent().getId() + "-" + oActionsObject.custom.items[1].id);
+			sandbox.stub(oGroupElement1, "getId").returns(oGroup.getParent().getId() + "-" + oActionsObject.addViaCustom.items[0].id);
+			sandbox.stub(oGroupElement2, "getId").returns(oGroup.getParent().getId() + "-" + oActionsObject.addViaCustom.items[1].id);
 
 			oGroupElement1.setLabel(sRenamedLabel);
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
 				assert.strictEqual(oGroupElement1.label, aAdditionalElements[0].label, "then first invisible element has label property set");
 				assert.strictEqual(oGroupElement1.renamedLabel, true, "then first invisible element has the renamedLabel property set");
-				assert.strictEqual(oGroupElement1.tooltip, oActionsObject.custom.items[0].tooltip, "then first invisible element has the correct tooltip property");
+				assert.strictEqual(oGroupElement1.tooltip, oActionsObject.addViaCustom.items[0].tooltip, "then first invisible element has the correct tooltip property");
 
 				assert.strictEqual(oGroupElement2.label, aAdditionalElements[1].label, "then second invisible element has label property set");
 				assert.notOk(oGroupElement2.renamedlabel, "then second invisible element has no renamedLabel property");
-				assert.strictEqual(oGroupElement2.tooltip, oActionsObject.custom.items[1].tooltip, "then second invisible element has the correct tooltip property");
+				assert.strictEqual(oGroupElement2.tooltip, oActionsObject.addViaCustom.items[1].tooltip, "then second invisible element has the correct tooltip property");
 
 				assert.equal(aAdditionalElements.length, 2, "then the 2 invisible elements with oData are returned");
 
 				assert.equal(aAdditionalElements[0].label, sRenamedLabel, "then the first invisible item has the renamed label");
 				assert.equal(aAdditionalElements[0].originalLabel, sGroupElement1OriginalLabel, "then the first invisible item has the original label");
 				assert.equal(aAdditionalElements[0].type, "invisible", "then the first invisible item is if of type invisible");
-				assert.equal(aAdditionalElements[0].tooltip, oActionsObject.custom.items[0].tooltip, "then the first invisible item has the correct tooltip");
+				assert.equal(aAdditionalElements[0].tooltip, oActionsObject.addViaCustom.items[0].tooltip, "then the first invisible item has the correct tooltip");
 
 				assert.equal(aAdditionalElements[1].label, sGroupElement2OriginalLabel, "then the second invisible item has the correct label");
 				assert.equal(aAdditionalElements[1].type, "invisible", "then the second invisible item if of type invisible");
-				assert.equal(aAdditionalElements[1].tooltip, oActionsObject.custom.items[1].tooltip, "then the second invisible item has the correct tooltip");
+				assert.equal(aAdditionalElements[1].tooltip, oActionsObject.addViaCustom.items[1].tooltip, "then the second invisible item has the correct tooltip");
 			});
 		});
 

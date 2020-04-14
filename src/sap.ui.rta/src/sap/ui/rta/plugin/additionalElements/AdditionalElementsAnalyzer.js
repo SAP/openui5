@@ -503,7 +503,7 @@ sap.ui.define([
 			var mRevealData = mActions.reveal;
 			var mAddODataProperty = mActions.addODataProperty;
 			var mAddViaDelegate = mActions.addViaDelegate;
-			var mCustom = mActions.custom;
+			var mCustom = mActions.addViaCustom;
 			var oDefaultAggregation = oElement.getMetadata().getAggregation();
 			var sAggregationName = oDefaultAggregation ? oDefaultAggregation.name : mActions.aggregation;
 
