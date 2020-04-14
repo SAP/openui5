@@ -1,0 +1,12 @@
+<mvc:View displayBlock="true" controllerName="sap.m.TableScrollToIndex.controller.FlexibleColumnLayout" height="100%"
+	  xmlns="sap.f"
+	  xmlns:mvc="sap.ui.core.mvc">
+	<FlexibleColumnLayout
+	    columnResize="onColumnResize"
+		autoFocus="false"
+		id="fcl"
+		stateChange="onStateChanged"
+		restoreFocusOnBackNavigation="true"
+		layout="{/layout}"
+		backgroundDesign="Translucent"/>
+</mvc:View>

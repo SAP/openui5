@@ -2532,17 +2532,16 @@ function(
 	};
 
 	/**
-	 * Scrolls the <code>ListBase</code> so that the item with the given index is in the viewport.
-	 * If the index is -1 it will scroll to the end of the <code>ListBase</code> control. In case
-	 * of growing, it will scroll to the last item that is currently available.
+	 * Scrolls the list so that the item with the given index is in the viewport.
+	 * If the index is -1, it scrolls to the bottom of the list. If the growing feature is enabled,
+	 * the list is scrolled to the last available item.
 	 *
 	 * Growing in combination with <code>growingScrollToLoad=true</code> can result in loading of
-	 * new items when scrolling to the end of the <code>ListBase</code> control.
+	 * new items when scrolling to the bottom of the list.
 	 *
-	 * @param {number} iIndex Index of the item in the items aggregation that will be scrolled into the viewport
+	 * @param {number} iIndex The list item index that must be scrolled into the viewport
 	 *
-	 * @protected
-	 * @ui5-restricted sap.ui.mdc
+	 * @public
 	 */
 	ListBase.prototype.scrollToIndex = function(iIndex) {
 		var aItems, iRowCount, oItem, oScrollDelegate;
@@ -2565,12 +2564,13 @@ function(
 		}
 
 		oItem = aItems[iIndex];
-		oScrollDelegate.scrollToElement(oItem.getDomRef(), null, [0, this._getStickyAreaHeight() * -1]);
 
-		return;
+		// adding timeout of 0 ensures the DOM is ready in case of rerendering
+		setTimeout(function() {
+			oScrollDelegate.scrollToElement(oItem.getDomRef(), null, [0, this._getStickyAreaHeight() * -1]);
+		}.bind(this), 0);
+
 	};
-
-
 	/**
 	 * Returns the height of the sticky area in px. The height depends on the sticky configuration.
 	 *

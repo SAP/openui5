@@ -1238,6 +1238,7 @@ sap.ui.define([
 		/********************************************************************************/
 
 		QUnit.test("Function scrollToIndex", function(assert) {
+			this.clock = sinon.useFakeTimers();
 			var aListItems = [], i;
 
 			for (i = 0; i < 50; i++) {
@@ -1287,26 +1288,31 @@ sap.ui.define([
 				oSpy = sinon.spy(oScrollDelegate, "scrollToElement");
 
 			oList.scrollToIndex(0);
+			this.clock.tick(0);
 			assert.ok(oSpy.called, "The scroll delegate was called");
 			assert.ok(oSpy.calledOnce, "The scroll delegate was called exactly once");
 
 			oList.scrollToIndex(oList.getVisibleItems().length / 2);
 			oItem = oList.getVisibleItems()[oList.getVisibleItems().length / 2];
+			this.clock.tick(0);
 			assert.ok(oSpy.calledTwice, "The scroll delegate was called exactly twice");
 			assert.ok(oSpy.lastCall.calledWithExactly(oItem.getDomRef(), null, [0, 0]), "Scroll delegate was called with correct parameters");
 
 			oList.scrollToIndex(-1);
 			oItem = oList.getVisibleItems()[oList.getVisibleItems().length - 1];
+			this.clock.tick(0);
 			assert.ok(oSpy.calledThrice, "The scroll delegate was called exactly three times");
 			assert.ok(oSpy.lastCall.calledWithExactly(oItem.getDomRef(), null, [0, 0]), "Scroll delegate was called with correct parameters");
 
 			oList.setSticky(['HeaderToolbar']);
 			oList.scrollToIndex(0);
 			oItem = oList.getVisibleItems()[0];
+			this.clock.tick(0);
 			assert.ok(oSpy.lastCall.calledWithExactly(oItem.getDomRef(), null, [0, oList._getStickyAreaHeight() * -1]), "Scroll delegate was called with correct parameters");
 
 			oSpy.restore();
 			oScrollContainer.destroy();
+			this.clock.restore();
 		});
 
 		/********************************************************************************/
