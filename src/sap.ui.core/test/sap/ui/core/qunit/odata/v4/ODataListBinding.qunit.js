@@ -5436,12 +5436,12 @@ sap.ui.define([
 			oBindingMock.expects("removeCachesAndMessages").withExactArgs("");
 			oResetExpectation = oBindingMock.expects("reset").withExactArgs();
 			oFetchCacheExpectation = oBindingMock.expects("fetchCache")
-				.withExactArgs(sinon.match.same(oContext));
+				.withExactArgs(sinon.match.same(oContext), true);
 			oGetDependentBindingsExpectation1 = oBindingMock.expects("getDependentBindings")
 				.withExactArgs()
 				.returns([oDependent0, oDependent1]);
-			this.mock(oDependent0).expects("resumeInternal").withExactArgs(false);
-			this.mock(oDependent1).expects("resumeInternal").withExactArgs(false);
+			this.mock(oDependent0).expects("resumeInternal").withExactArgs(false, true);
+			this.mock(oDependent1).expects("resumeInternal").withExactArgs(false, true);
 			if (bInitial) {
 				oFireExpectation = oBindingMock.expects("_fireChange")
 					.withExactArgs({
@@ -5460,9 +5460,9 @@ sap.ui.define([
 			this.mock(oDependent3).expects("checkUpdate").withExactArgs();
 
 			// code under test
-			oBinding.resumeInternal();
+			oBinding.resumeInternal(true/*ignored*/);
 
-			assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
+			assert.strictEqual(oBinding.sResumeChangeReason, undefined);
 			assert.ok(oResetExpectation.calledAfter(oGetDependentBindingsExpectation1));
 			assert.ok(oFetchCacheExpectation.calledAfter(oResetExpectation));
 			assert.ok(oFireExpectation.calledAfter(oFetchCacheExpectation));
@@ -5490,6 +5490,44 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("resumeInternal: no sResumeChangeReason", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oDependent0 = {resumeInternal : function () {}},
+			oDependent1 = {resumeInternal : function () {}};
+
+		oBinding.sResumeChangeReason = undefined;
+
+		this.mock(oBinding).expects("removeCachesAndMessages").never();
+		this.mock(oBinding).expects("reset").never();
+		this.mock(oBinding).expects("fetchCache").never();
+		this.mock(oBinding).expects("getDependentBindings").withExactArgs()
+			.returns([oDependent0, oDependent1]);
+		this.mock(oDependent0).expects("resumeInternal").withExactArgs(true, false);
+		this.mock(oDependent1).expects("resumeInternal").withExactArgs(true, false);
+		this.mock(oBinding).expects("_fireRefresh").never();
+
+		// code under test
+		oBinding.resumeInternal(true/*ignored*/);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resumeInternal: no sResumeChangeReason but parent has", function (assert) {
+		var oContext = {},
+			oBinding = this.bindList("/EMPLOYEES", oContext);
+
+		oBinding.sResumeChangeReason = undefined;
+
+		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("");
+		this.mock(oBinding).expects("reset").withExactArgs();
+		this.mock(oBinding).expects("fetchCache")
+			.withExactArgs(sinon.match.same(oContext), false);
+		this.mock(oBinding).expects("_fireRefresh").never();
+
+		// code under test
+		oBinding.resumeInternal(true/*ignored*/, true);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("resumeInternal: suspend in change event of resume", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES");
 
@@ -5501,7 +5539,7 @@ sap.ui.define([
 			});
 
 		// code under test
-		oBinding.resumeInternal();
+		oBinding.resumeInternal(true/*ignored*/);
 
 		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Sort);
 	});

@@ -2342,27 +2342,27 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resumes this binding and all dependent bindings and fires a change or refresh event
-	 * afterwards.
-	 *
-	 * @param {boolean} bCheckUpdate
-	 *   Parameter is ignored; dependent property bindings of a list binding never call checkUpdate
-	 *
-	 * @private
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#resumeInternal
 	 */
-	ODataListBinding.prototype.resumeInternal = function () {
+	ODataListBinding.prototype.resumeInternal = function (bCheckUpdate, bParentHasChanges) {
 		var aBindings = this.getDependentBindings(),
-			sChangeReason = this.sResumeChangeReason;
+			sResumeChangeReason = this.sResumeChangeReason,
+			bRefresh = bParentHasChanges || sResumeChangeReason;
 
-		this.sResumeChangeReason = ChangeReason.Change;
+		this.sResumeChangeReason = undefined;
 
-		this.removeCachesAndMessages("");
-		this.reset();
-		this.fetchCache(this.oContext);
+		if (bRefresh) {
+			this.removeCachesAndMessages("");
+			this.reset();
+			// if the parent binding resumes but there are no changes in the parent binding
+			// ignore the parent cache and create an own cache
+			this.fetchCache(this.oContext, !bParentHasChanges);
+		}
 		aBindings.forEach(function (oDependentBinding) {
-			// do not call checkUpdate in dependent property bindings because the cache of this
+			// do not call checkUpdate in dependent property bindings if the cache of this
 			// binding is reset and the binding has not yet fired a change event
-			oDependentBinding.resumeInternal(false);
+			oDependentBinding.resumeInternal(!bRefresh, !!sResumeChangeReason);
 		});
 		if (this.sChangeReason === "AddVirtualContext") {
 			// In a refresh event the table would ignore the result -> no virtual context -> no
@@ -2370,10 +2370,10 @@ sap.ui.define([
 			// reason "RemoveVirtualContext".
 			this._fireChange({
 				detailedReason : this.sChangeReason,
-				reason : sChangeReason
+				reason : sResumeChangeReason
 			});
-		} else {
-			this._fireRefresh({reason : sChangeReason});
+		} else if (sResumeChangeReason) {
+			this._fireRefresh({reason : sResumeChangeReason});
 		}
 
 		// Update after the change event, otherwise $count is fetched before the request

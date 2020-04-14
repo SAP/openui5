@@ -436,6 +436,7 @@ sap.ui.define([
 		this.mParameters = mParameters; // store mParameters at binding after validation
 
 		if (this.isRootBindingSuspended()) {
+			this.sResumeChangeReason = sChangeReason || ChangeReason.Change;
 			return;
 		}
 
@@ -1268,30 +1269,27 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resumes this binding and all dependent bindings and fires a change event afterwards.
-	 *
-	 * @param {boolean} bCheckUpdate
-	 *   Whether dependent property bindings shall call <code>checkUpdateInternal</code>
-	 *
-	 * @private
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#resumeInternal
 	 */
-	ODataContextBinding.prototype.resumeInternal = function (bCheckUpdate) {
-		var sChangeReason = this.sResumeChangeReason;
+	ODataContextBinding.prototype.resumeInternal = function (bCheckUpdate, bParentHasChanges) {
+		var sResumeChangeReason = this.sResumeChangeReason;
 
-		this.sResumeChangeReason = ChangeReason.Change;
+		this.sResumeChangeReason = undefined;
 
 		if (!this.oOperation) {
-			this.mAggregatedQueryOptions = {};
-			this.bAggregatedQueryOptionsInitial = true;
-			this.removeCachesAndMessages("");
-			this.fetchCache(this.oContext);
+			if (bParentHasChanges || sResumeChangeReason) {
+				this.mAggregatedQueryOptions = {};
+				this.bAggregatedQueryOptionsInitial = true;
+				this.removeCachesAndMessages("");
+				this.fetchCache(this.oContext);
+			}
 			this.getDependentBindings().forEach(function (oDependentBinding) {
-				oDependentBinding.resumeInternal(bCheckUpdate);
+				oDependentBinding.resumeInternal(bCheckUpdate, !!sResumeChangeReason);
 			});
-			this._fireChange({reason : sChangeReason});
-		} else if (this.oOperation.bAction === false) {
-			// ignore returned promise, error handling takes place in execute
-			this.execute();
+			if (sResumeChangeReason) {
+				this._fireChange({reason : sResumeChangeReason});
+			}
 		}
 	};
 

@@ -2075,6 +2075,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("suspendInternal has empty implementation", function (assert) {
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
+
+		Object.freeze(oBinding); // ensures that suspendInternal does not change the binding
+
+		// code under test
+		assert.strictEqual(oBinding.suspendInternal(), undefined);
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************
 		QUnit.test("PATCH an entity", function (assert) {

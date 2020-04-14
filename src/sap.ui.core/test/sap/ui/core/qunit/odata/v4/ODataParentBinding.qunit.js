@@ -2447,11 +2447,14 @@ sap.ui.define([
 				toString : function () { return "~"; }
 			}),
 			oBindingMock = this.mock(oBinding),
-			oResult = {};
+			oRemoveReadGroupLock,
+			oResult = {},
+			oSuspendInternal;
 
 		oBindingMock.expects("isRoot").withExactArgs().returns(true);
 		oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
-		oBindingMock.expects("removeReadGroupLock").withExactArgs();
+		oRemoveReadGroupLock = oBindingMock.expects("removeReadGroupLock").withExactArgs();
+		oSuspendInternal = oBindingMock.expects("suspendInternal").withExactArgs();
 
 		// code under test
 		oBinding.suspend();
@@ -2461,6 +2464,7 @@ sap.ui.define([
 		oBinding.oResumePromise.$resolve(oResult);
 		assert.strictEqual(oBinding.oResumePromise.isPending(), false);
 		assert.strictEqual(oBinding.oResumePromise.getResult(), oResult);
+		assert.ok(oSuspendInternal.calledAfter(oRemoveReadGroupLock));
 
 		assert.throws(function () {
 			oBindingMock.expects("isRoot").withExactArgs().returns(true);
@@ -2477,6 +2481,9 @@ sap.ui.define([
 				toString : function () { return "~"; }
 			});
 
+		this.mock(oBinding).expects("removeReadGroupLock").never();
+		this.mock(oBinding).expects("suspendInternal").never();
+
 		assert.throws(function () {
 			// code under test
 			oBinding.suspend();
@@ -2490,6 +2497,8 @@ sap.ui.define([
 			});
 
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(false);
+		this.mock(oBinding).expects("removeReadGroupLock").never();
+		this.mock(oBinding).expects("suspendInternal").never();
 
 		assert.throws(function () {
 			// code under test
@@ -2505,6 +2514,8 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(true);
+		this.mock(oBinding).expects("removeReadGroupLock").never();
+		this.mock(oBinding).expects("suspendInternal").never();
 
 		assert.throws(function () {
 			// code under test
@@ -2614,6 +2625,56 @@ sap.ui.define([
 			// code under test
 			oBinding._resume(false);
 		}, new Error("Cannot resume a not suspended binding: ~"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("suspendInternal w/o dependent bindings", function (assert) {
+		var oBinding = new ODataParentBinding();
+
+		// implemented in base classes, returns at least a empty array
+		this.mock(oBinding).expects("getDependentBindings").withExactArgs().exactly(4).returns([]);
+
+		// initial state after creation
+		assert.strictEqual(oBinding.oCache, null);
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
+
+		// code under test
+		oBinding.suspendInternal();
+
+		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
+
+		oBinding.oCache = undefined; // unknown whether the binding has an own cache or not
+		// code under test
+		oBinding.suspendInternal();
+
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
+
+		oBinding.oCache = {/*a cache*/};
+		// code under test
+		oBinding.suspendInternal();
+
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
+
+		oBinding.oCache.bSentRequest = true;
+		// code under test
+		oBinding.suspendInternal();
+
+		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("suspendInternal delegates to dependent bindings", function (assert) {
+		var oBinding = new ODataParentBinding(),
+			oChild1 = {suspendInternal : function () {}},
+			oChild2 = {suspendInternal : function () {}};
+
+		this.mock(oBinding).expects("getDependentBindings").withExactArgs()
+			.returns([oChild1, oChild2]);
+		this.mock(oChild1).expects("suspendInternal").withExactArgs();
+		this.mock(oChild2).expects("suspendInternal").withExactArgs();
+
+		// code under test
+		oBinding.suspendInternal();
 	});
 
 	//*********************************************************************************************

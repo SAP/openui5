@@ -39,7 +39,9 @@ sap.ui.define([
 		this.mLateQueryOptions = undefined;
 		// the absolute binding path (possibly reduced if the binding uses a parent binding's cache)
 		this.sReducedPath = undefined;
-		// change reason to be used when the binding is resumed
+		// change reason to be used when the binding is resumed, defaults to "Change" for the case
+		// that the binding is created while its root binding is suspended; otherwise it is set
+		// accordingly in suspend
 		this.sResumeChangeReason = ChangeReason.Change;
 	}
 
@@ -259,10 +261,14 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context instance to be used, may be undefined for absolute bindings
+	 * @param {boolean} [bIgnoreParentCache]
+	 *   Whether the parent cache is ignored and a new cache shall be created. This is for example
+	 *   needed during the resume process in case this binding has changed but its parent
+	 *   binding has not (see {@link sap.ui.model.odata.v4.ODataListBinding#resumeInternal})
 	 *
 	 * @private
 	 */
-	ODataBinding.prototype.fetchCache = function (oContext) {
+	ODataBinding.prototype.fetchCache = function (oContext, bIgnoreParentCache) {
 		var oCachePromise,
 			oCallToken = {},
 			aPromises,
@@ -277,7 +283,10 @@ sap.ui.define([
 			this.oCache.setActive(false);
 		}
 		this.oCache = undefined;
-		aPromises = [this.fetchQueryOptionsForOwnCache(oContext), this.oModel.oRequestor.ready()];
+		aPromises = [
+			this.fetchQueryOptionsForOwnCache(oContext, bIgnoreParentCache),
+			this.oModel.oRequestor.ready()
+		];
 		this.mCacheQueryOptions = undefined;
 		this.mLateQueryOptions = undefined;
 		oCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
@@ -344,6 +353,9 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context instance to be used, must be undefined for absolute bindings
+	 * @param {boolean} [bIgnoreParentCache]
+	 *   Whether the query options of the parent cache shall be ignored and own query options are
+	 *   determined (see {@link #fetchCache})
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving with an object having two properties:
 	 *   {object} mQueryOptions - The query options to create the cache for this binding or
@@ -352,7 +364,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataBinding.prototype.fetchQueryOptionsForOwnCache = function (oContext) {
+	ODataBinding.prototype.fetchQueryOptionsForOwnCache = function (oContext, bIgnoreParentCache) {
 		var bHasNonSystemQueryOptions,
 			oQueryOptionsPromise,
 			sResolvedPath = this.oModel.resolve(this.sPath, oContext),
@@ -408,8 +420,9 @@ sap.ui.define([
 			});
 		}
 
-		// (quasi-)absolute binding
-		if (!this.bRelative || !oContext.fetchValue) {
+		// parent cache is ignored or (quasi-)absolute binding
+		if (bIgnoreParentCache || !this.bRelative || !oContext.fetchValue)  {
+			// the binding shall create its own cache
 			return wrapQueryOptions(oQueryOptionsPromise);
 		}
 
@@ -977,6 +990,14 @@ sap.ui.define([
 			this.sResumeChangeReason = sChangeReason;
 		}
 	};
+
+	/**
+	 * Suspends this binding and all dependent bindings.
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataBinding#suspendInternal
+	 * @private
+	 */
 
 	/**
 	 * Returns a string representation of this object including the binding path. If the binding is

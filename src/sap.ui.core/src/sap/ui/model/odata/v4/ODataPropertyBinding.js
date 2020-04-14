@@ -163,9 +163,7 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#adjustPredicate
 	 */
-	ODataPropertyBinding.prototype.adjustPredicate = function () {
-		// nothing to do here
-	};
+	ODataPropertyBinding.prototype.adjustPredicate = function () {};
 
 	// See class documentation
 	// @override
@@ -564,9 +562,7 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#resetChangesInDependents
 	 */
-	ODataPropertyBinding.prototype.resetChangesInDependents = function () {
-		// nothing to do
-	};
+	ODataPropertyBinding.prototype.resetChangesInDependents = function () {};
 
 	/**
 	 * A method to reset invalid data state, to be called by
@@ -751,6 +747,12 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.suspend = function () {
 		throw new Error("Unsupported operation: suspend");
 	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#suspendInternal
+	 */
+	ODataPropertyBinding.prototype.suspendInternal = function () {};
 
 	/**
 	 * @override
