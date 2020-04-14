@@ -199,16 +199,16 @@ sap.ui.define([
 	});
 
 	// Rename section with one subsection with title
-	function fnConfirmSubSectionRenamedWithOneSectionNewValue(oAppComponent, oViewAfterAction, assert) {
+	function confirmSectionRenameWithOneSubSectionApplied(oAppComponent, oViewAfterAction, assert) {
 		assert.strictEqual(oViewAfterAction.byId("subSection").getTitle(),
 			"SubSectionTitle 2",
-			"then the SubSection control has been renamed to the new value (SubSectionTitle 2)");
+			"then the SubSection's title has been renamed with the new value");
 	}
 
-	function fnConfirmSubSectionRenamedWithOneSectionOldValue(oAppComponent, oViewAfterAction, assert) {
+	function confirmSectionRenameWithOneSubSectionReverted(oAppComponent, oViewAfterAction, assert) {
 		assert.strictEqual(oViewAfterAction.byId("subSection").getTitle(),
 			"SubSectionTitle 1",
-			"then the SubSection control has been renamed to the old value (SubSectionTitle 1)");
+			"then the SubSection's title has been reverted to the old value");
 	}
 
 	elementActionTest("Checking the rename action for a Section with one SubSection with title", {
@@ -232,17 +232,60 @@ sap.ui.define([
 			controlId: "section",
 			parameter: function (oView) {
 				return {
-					newValue: 'SubSectionTitle 2',
+					newValue: "SubSectionTitle 2",
 					renamedElement: oView.byId("section")
 				};
 			}
 		},
-		afterAction: fnConfirmSubSectionRenamedWithOneSectionNewValue,
-		afterUndo: fnConfirmSubSectionRenamedWithOneSectionOldValue,
-		afterRedo: fnConfirmSubSectionRenamedWithOneSectionNewValue
+		afterAction: confirmSectionRenameWithOneSubSectionApplied,
+		afterUndo: confirmSectionRenameWithOneSubSectionReverted,
+		afterRedo: confirmSectionRenameWithOneSubSectionApplied
 	});
 
-	// Rename action of section with one subsection with title and layout parameter subSectionLayout="TitleOnLeft"
+	// Rename section with one subsection with title
+	function confirmSectionRenameWithOneSubSectionAppliedWithBinding(oAppComponent, oViewAfterAction, assert) {
+		var oTitleBindingInfo = oViewAfterAction.byId("subSection").getBindingInfo("title");
+		assert.notOk(oTitleBindingInfo, "then no binding info is present for the control's title");
+		assert.strictEqual(oViewAfterAction.byId("subSection").getTitle(), "SubSectionTitle 2", "then the SubSection's title has been renamed with the new value");
+	}
+
+	function confirmSectionRenameWithOneSubSectionRevertedWithBinding(oAppComponent, oViewAfterAction, assert) {
+		var oTitleBindingInfo = oViewAfterAction.byId("subSection").getBindingInfo("title");
+		assert.strictEqual(oTitleBindingInfo.parts[0].path, "propertyName", "then the binding path has been reverted");
+		assert.strictEqual(oTitleBindingInfo.parts[0].model, "modelName", "then the binding model has been reverted");
+	}
+	elementActionTest("Checking the rename action for a Section having one SubSection with title binding", {
+		xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
+		'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
+			'<uxap:ObjectPageLayout>' +
+				'<uxap:sections>' +
+					'<uxap:ObjectPageSection id="section" title="Title 1">' +
+						'<uxap:subSections>' +
+							'<uxap:ObjectPageSubSection id="subSection" title="{modelName>propertyName}">' +
+								'<m:Button text="Subsection UI adaptation" />' +
+							'</uxap:ObjectPageSubSection>' +
+						'</uxap:subSections>' +
+					'</uxap:ObjectPageSection>' +
+				'</uxap:sections>' +
+			'</uxap:ObjectPageLayout>' +
+		'</mvc:View>'
+		,
+		action: {
+			name: "rename",
+			controlId: "section",
+			parameter: function (oView) {
+				return {
+					newValue: "SubSectionTitle 2",
+					renamedElement: oView.byId("section")
+				};
+			}
+		},
+		afterAction: confirmSectionRenameWithOneSubSectionAppliedWithBinding,
+		afterUndo: confirmSectionRenameWithOneSubSectionRevertedWithBinding,
+		afterRedo: confirmSectionRenameWithOneSubSectionAppliedWithBinding
+	});
+
+	// Rename action of section with one subsection with title binding"
 	function fnConfirmSubSectionRenamedLayoutParameterNewValue(oAppComponent, oViewAfterAction, assert) {
 		assert.strictEqual(oViewAfterAction.byId("section").getTitle(),
 			"Title 2",

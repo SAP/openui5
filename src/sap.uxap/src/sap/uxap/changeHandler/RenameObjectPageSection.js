@@ -37,7 +37,7 @@ sap.ui.define([
 		// taken from its SubSection in case it is only one no matter if the Section has title itself.
 		if (aSubSections
 			&& aSubSections.length === 1
-			&& oModifier.getProperty(aSubSections[0], "title")
+			&& (oModifier.getPropertyBindingOrProperty(aSubSections[0], "title"))
 			&& oModifier.getProperty(oModifier.getParent(oControl), "subSectionLayout") === "TitleOnTop"
 		) {
 			return aSubSections[0];
