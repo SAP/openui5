@@ -484,7 +484,7 @@ sap.ui.define([
 			}
 			for (i = 0; i < this.aRequests.length; i += 1) {
 				oExpectedRequest = this.aRequests[i];
-				if (oExpectedRequest.url === oActualRequest.url) {
+				if (oExpectedRequest.requestUri === oActualRequest.requestUri) {
 					this.aRequests.splice(i, 1);
 					return oExpectedRequest;
 				}
@@ -622,7 +622,7 @@ sap.ui.define([
 			 * @param {number} [iBatchNo] The number of the batch to which the request belongs to
 			 */
 			function checkSingleRequest(oActualRequest, fnSuccess, fnError, iBatchNo) {
-				var oExpectedRequest = that.consumeExpectedRequest(oActualRequest),
+				var oExpectedRequest,
 					mHeaders,
 					sMethod = oActualRequest.method,
 					oResponse,
@@ -649,6 +649,12 @@ sap.ui.define([
 
 				oActualRequest = Object.assign({}, oActualRequest);
 				oActualRequest.headers = Object.assign({}, oActualRequest.headers);
+
+				if (sUrl.startsWith(that.oModel.sServiceUrl)) {
+					oActualRequest.requestUri = sUrl.slice(that.oModel.sServiceUrl.length + 1);
+				}
+				oExpectedRequest = that.consumeExpectedRequest(oActualRequest);
+
 				mHeaders = oActualRequest.headers;
 				delete mHeaders["Accept"];
 				delete mHeaders["Accept-Language"];
@@ -692,9 +698,6 @@ sap.ui.define([
 						}
 					}
 
-					if (sUrl.startsWith(that.oModel.sServiceUrl)) {
-						oActualRequest.requestUri = sUrl.slice(that.oModel.sServiceUrl.length + 1);
-					}
 					bWaitForResponse = !(oResponse && typeof oResponse.then === "function");
 					delete oExpectedRequest.response;
 					mResponseHeaders = oExpectedRequest.responseHeaders;
