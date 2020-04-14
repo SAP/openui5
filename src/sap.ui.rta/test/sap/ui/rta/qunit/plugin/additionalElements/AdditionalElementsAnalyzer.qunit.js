@@ -1,86 +1,31 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/core/mvc/XMLView",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/ColumnListItem",
 	"sap/ui/rta/util/BindingsExtractor",
 	"sap/ui/dt/ElementUtil",
 	"sap/base/Log",
-	"sap/ui/thirdparty/sinon-4"
+	"./TestUtils"
 ],
 function(
-	XMLView,
 	AdditionalElementsAnalyzer,
 	JSONModel,
 	ColumnListItem,
 	BindingsExtractor,
 	ElementUtil,
 	Log,
-	sinon
+	TestUtils
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
-	//Shared objects for all tests => Don't modify them, it will have side-effects on other tests!
-	var oGroup;
-	var mAddODataPropertyAction;
-	var oView;
-	var oDelegate;
-
-	renderComplexView();
-
-
-	function assertElementsEqual(mActualAdditionalElement, mExpected, msg, assert) {
-		assert.equal(mActualAdditionalElement.selected, mExpected.selected, msg + " -selected");
-		assert.equal(mActualAdditionalElement.label, mExpected.label, msg + " -label");
-		assert.equal(mActualAdditionalElement.tooltip, mExpected.tooltip, msg + " -tooltip");
-		assert.equal(mActualAdditionalElement.type, mExpected.type, msg + " -type");
-		assert.equal(mActualAdditionalElement.elementId, mExpected.elementId, msg + " -element id");
-		assert.deepEqual(mActualAdditionalElement.bindingPaths, mExpected.bindingPaths, msg + " -bindingPaths");
-	}
-
-	function isFieldPresent(oControl, oInvisibleElement) {
-		var sLabel = oControl.getLabelText && oControl.getLabelText() || oControl.getLabel();
-		return oInvisibleElement.label === sLabel;
-	}
-
-	function renderComplexView() {
-		return XMLView.create({
-			id: "idMain1",
-			viewName: "sap.ui.rta.test.additionalElements.ComplexTest"
-		}).then(function(oViewInstance) {
-			oView = oViewInstance;
-			oViewInstance.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-			oViewInstance.getController().isDataReady().then(function () {
-			//assign shared objects
-				return new Promise(function(resolve) {
-					sap.ui.require(["sap/ui/rta/test/additionalElements/V2StackDelegate"], resolve);
-				});
-			}).then(function(oV2Delegate) {
-				oDelegate = oV2Delegate;
-			}).then(function() {
-				oGroup = oViewInstance.byId("GroupEntityType01");
-				return oGroup.getMetadata().loadDesignTime();
-			}).then(function (oDesignTime) {
-				mAddODataPropertyAction = oDesignTime.aggregations.formElements.actions.addODataProperty;
-				QUnit.start();
-			});
-		});
-	}
-
-
-	QUnit.module("Given a test view", {
-		afterEach: function() {
-			sandbox.restore();
-		}
-	}, function () {
+	QUnit.module("Given a test view", TestUtils.commonHooks(),
+	function () {
 		QUnit.test("checks if navigation and absolute binding work", function(assert) {
-			var oGroupElement1 = oView.byId("EntityType02.NavigationProperty"); // With correct navigation binding
-			var oGroupElement2 = oView.byId("EntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
-			var oGroupElement3 = oView.byId("EntityType02.AbsoluteBinding"); // Absolute binding
+			var oGroupElement1 = this.oView.byId("EntityType02.NavigationProperty"); // With correct navigation binding
+			var oGroupElement2 = this.oView.byId("EntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
+			var oGroupElement3 = this.oView.byId("EntityType02.AbsoluteBinding"); // Absolute binding
 			sap.ui.getCore().applyChanges();
 
 			var oActionsObject = {
@@ -113,9 +58,9 @@ function(
 		});
 
 		QUnit.test("checks if navigation and absolute binding work with delegate", function(assert) {
-			var oGroupElement1 = oView.byId("DelegateEntityType02.NavigationProperty"); // With correct navigation binding
-			var oGroupElement2 = oView.byId("DelegateEntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
-			var oGroupElement3 = oView.byId("DelegateEntityType02.AbsoluteBinding"); // Absolute binding
+			var oGroupElement1 = this.oView.byId("DelegateEntityType02.NavigationProperty"); // With correct navigation binding
+			var oGroupElement2 = this.oView.byId("DelegateEntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
+			var oGroupElement3 = this.oView.byId("DelegateEntityType02.AbsoluteBinding"); // Absolute binding
 			sap.ui.getCore().applyChanges();
 
 			var oActionsObject = {
@@ -136,7 +81,7 @@ function(
 					action: {}, //not relevant for test
 					delegateInfo: {
 						payload: {},
-						delegate: oDelegate
+						delegate: this.oDelegate
 					}
 				}
 			};
@@ -152,21 +97,21 @@ function(
 		});
 
 		QUnit.test("when asking for the invisible sections of an object page layout", function(assert) {
-			var oObjectPageLayout = oView.byId("ObjectPageLayout");
+			var oObjectPageLayout = this.oView.byId("ObjectPageLayout");
 
 			var oActionsObject = {
 				aggregation: "sections",
 				reveal : {
 					elements : [
 						{
-							element : oView.byId("idMain1--ObjectPageSectionInvisible"),
+							element : this.oView.byId("idMain1--ObjectPageSectionInvisible"),
 							action : {} //not relevant for test
 						}, {
-							element : oView.byId("idMain1--ObjectPageSectionStashed1"),
+							element : this.oView.byId("idMain1--ObjectPageSectionStashed1"),
 							action : {} //not relevant for test
 						},
 						{
-							element : oView.byId("idMain1--ObjectPageSectionStashed2"),
+							element : this.oView.byId("idMain1--ObjectPageSectionStashed2"),
 							action : {} //not relevant for test
 						}
 					]
@@ -174,7 +119,7 @@ function(
 			};
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oObjectPageLayout, oActionsObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 3, "then 3 additional sections are available");
-				assertElementsEqual(aAdditionalElements[0], {
+				TestUtils.assertElementsEqual(aAdditionalElements[0], {
 					selected : false,
 					label : "Invisible ObjectPage Section",
 					tooltip : "Invisible ObjectPage Section",
@@ -182,7 +127,7 @@ function(
 					elementId : "idMain1--ObjectPageSectionInvisible",
 					bindingPaths: undefined
 				}, "the invisible section is found", assert);
-				assertElementsEqual(aAdditionalElements[1], {
+				TestUtils.assertElementsEqual(aAdditionalElements[1], {
 					selected : false,
 					label : "idMain1--ObjectPageSectionStashed1",
 					tooltip : "idMain1--ObjectPageSectionStashed1",
@@ -190,7 +135,7 @@ function(
 					elementId : "idMain1--ObjectPageSectionStashed1",
 					bindingPaths: undefined
 				}, "the 1. stashed section is found", assert);
-				assertElementsEqual(aAdditionalElements[2], {
+				TestUtils.assertElementsEqual(aAdditionalElements[2], {
 					selected : false,
 					label : "idMain1--ObjectPageSectionStashed2",
 					tooltip : "idMain1--ObjectPageSectionStashed2",
@@ -202,13 +147,13 @@ function(
 		});
 
 		QUnit.test("when getting unbound elements for EntityType01 Group,", function(assert) {
-			var oGroup = oView.byId("GroupEntityType01");
+			var oGroup = this.oView.byId("GroupEntityType01");
 			var mActionObject = {
 				action: {
 					aggregation: "formElements",
-					getLabel: mAddODataPropertyAction.getLabel
+					getLabel: this.mAddODataPropertyAction.getLabel
 				},
-				relevantContainer: mAddODataPropertyAction.relevantContainer
+				relevantContainer: this.mAddODataPropertyAction.relevantContainer
 			};
 
 			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
@@ -253,17 +198,17 @@ function(
 		});
 
 		QUnit.test("when getting unrepresented elements from delegate for EntityType01 Group,", function(assert) {
-			var oGroup = oView.byId("DelegateGroupEntityType01");
+			var oGroup = this.oView.byId("DelegateGroupEntityType01");
 			var mActionObject = {
 				action: {
 					aggregation: "formElements",
-					getLabel: mAddODataPropertyAction.getLabel
+					getLabel: this.mAddODataPropertyAction.getLabel
 				},
 				delegateInfo: {
 					payload: {},
-					delegate: oDelegate
+					delegate: this.oDelegate
 				},
-				relevantContainer: mAddODataPropertyAction.relevantContainer
+				relevantContainer: this.mAddODataPropertyAction.relevantContainer
 			};
 
 			return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
@@ -307,13 +252,13 @@ function(
 			});
 		});
 		QUnit.test("when getting unbound elements for EntityType01 Group with a filter function,", function(assert) {
-			var oGroup = oView.byId("GroupEntityType01");
-			var oSmartForm = oView.byId("MainForm");
+			var oGroup = this.oView.byId("GroupEntityType01");
+			var oSmartForm = this.oView.byId("MainForm");
 			var mActionObject = {
 				action: {
 					aggregation: "formElements",
-					getLabel: mAddODataPropertyAction.getLabel,
-					filter: mAddODataPropertyAction.filter
+					getLabel: this.mAddODataPropertyAction.getLabel,
+					filter: this.mAddODataPropertyAction.filter
 				},
 				relevantContainer: oSmartForm
 			};
@@ -336,11 +281,11 @@ function(
 		});
 
 		QUnit.test("when getting unbound elements for EntityType01 Group without a relevant container,", function(assert) {
-			var oGroup = oView.byId("GroupEntityType01");
+			var oGroup = this.oView.byId("GroupEntityType01");
 			var mActionObject = {
 				action: {
 					aggregation: "formElements",
-					getLabel: mAddODataPropertyAction.getLabel
+					getLabel: this.mAddODataPropertyAction.getLabel
 				}
 			};
 
@@ -373,15 +318,15 @@ function(
 			});
 		});
 		QUnit.test("when getting unrepresented elements from delegate for EntityType01 Group without a relevant container,", function(assert) {
-			var oGroup = oView.byId("DelegateGroupEntityType01");
+			var oGroup = this.oView.byId("DelegateGroupEntityType01");
 			var mActionObject = {
 				action: {
 					aggregation: "formElements",
-					getLabel: mAddODataPropertyAction.getLabel
+					getLabel: this.mAddODataPropertyAction.getLabel
 				},
 				delegateInfo: {
 					payload: {},
-					delegate: oDelegate
+					delegate: this.oDelegate
 				}
 			};
 
@@ -414,13 +359,13 @@ function(
 			});
 		});
 		QUnit.test("when getting unbound elements for EntityType02 with complex properties and field control properties", function(assert) {
-			var oGroup = oView.byId("GroupEntityType02");
+			var oGroup = this.oView.byId("GroupEntityType02");
 			var mActionObject = {
 				action: {
 					aggregation: "formElements",
-					getLabel: mAddODataPropertyAction.getLabel
+					getLabel: this.mAddODataPropertyAction.getLabel
 				},
-				relevantContainer: mAddODataPropertyAction.relevantContainer
+				relevantContainer: this.mAddODataPropertyAction.relevantContainer
 			};
 
 			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
@@ -482,17 +427,17 @@ function(
 			});
 		});
 		QUnit.test("when getting unrepresented elements from delegate for EntityType02 with complex properties and field control properties", function(assert) {
-			var oGroup = oView.byId("DelegateGroupEntityType02");
+			var oGroup = this.oView.byId("DelegateGroupEntityType02");
 			var mActionObject = {
 				action: {
 					aggregation: "formElements",
-					getLabel: mAddODataPropertyAction.getLabel
+					getLabel: this.mAddODataPropertyAction.getLabel
 				},
 				delegateInfo: {
 					payload: {},
-					delegate: oDelegate
+					delegate: this.oDelegate
 				},
-				relevantContainer: mAddODataPropertyAction.relevantContainer
+				relevantContainer: this.mAddODataPropertyAction.relevantContainer
 			};
 
 			return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
@@ -554,13 +499,13 @@ function(
 			});
 		});
 		QUnit.test("when getting unbound elements for EntityTypeNav (which doesn't contain navigation properties)", function(assert) {
-			var oGroup = oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[0];
+			var oGroup = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[0];
 			var mActionObject = {
 				action: {
 					aggregation: "formContainers",
-					getLabel: mAddODataPropertyAction.getLabel
+					getLabel: this.mAddODataPropertyAction.getLabel
 				},
-				relevantContainer: mAddODataPropertyAction.relevantContainer
+				relevantContainer: this.mAddODataPropertyAction.relevantContainer
 			};
 
 			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
@@ -569,11 +514,11 @@ function(
 		});
 
 		QUnit.test("when checking group elements to find original label in add dialog, after renaming custom label and removing group elements", function(assert) {
-			var oGroup = oView.byId("GroupEntityType02");
-			var oGroupElement1 = oView.byId("ComplexBindingCase");
+			var oGroup = this.oView.byId("GroupEntityType02");
+			var oGroupElement1 = this.oView.byId("ComplexBindingCase");
 			oGroupElement1.setLabel("Renamed Label");
 			oGroupElement1.setVisible(false);
-			var oGroupElement2 = oView.byId("EntityType02.CompProp1");
+			var oGroupElement2 = this.oView.byId("EntityType02.CompProp1");
 			oGroupElement2.setVisible(false);
 			sap.ui.getCore().applyChanges();
 
@@ -606,8 +551,8 @@ function(
 		});
 
 		QUnit.test("when getting invisible elements of a bound group containing a removed field with absolute binding pointing to another entity", function(assert) {
-			var oGroup = oView.byId("OtherGroup");
-			var oGroupElement1 = oView.byId("NavForm.EntityType01.Prop1");
+			var oGroup = this.oView.byId("OtherGroup");
+			var oGroupElement1 = this.oView.byId("NavForm.EntityType01.Prop1");
 			oGroupElement1.setVisible(false);
 			sap.ui.getCore().applyChanges();
 
@@ -625,14 +570,14 @@ function(
 			};
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.ok(aAdditionalElements.some(isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
+				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
 			});
 		});
 
 		QUnit.test("when getting invisible elements of a bound group containing an invisible field with bindings inside belonging to the same context", function(assert) {
-			var oGroup = oView.byId("GroupEntityType01");
-			var oGroupElement1 = oView.byId("EntityType01.Prop9");
-			var oGroupElement2 = oView.byId("EntityType01.Prop10"); //deleted custom field
+			var oGroup = this.oView.byId("GroupEntityType01");
+			var oGroupElement1 = this.oView.byId("EntityType01.Prop9");
+			var oGroupElement2 = this.oView.byId("EntityType01.Prop10"); //deleted custom field
 
 			var oActionsObject = {
 				aggregation: "formElements",
@@ -651,15 +596,15 @@ function(
 			};
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.ok(aAdditionalElements.some(isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
-				assert.notOk(aAdditionalElements.some(isFieldPresent.bind(null, oGroupElement2)), "then the field2 is not available on the dialog");
+				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
+				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement2)), "then the field2 is not available on the dialog");
 			});
 		});
 
 		QUnit.test("when getting invisible elements of a bound group with delegate containing an invisible field with bindings inside belonging to the same context", function(assert) {
-			var oGroup = oView.byId("DelegateGroupEntityType01");
-			var oGroupElement1 = oView.byId("DelegateEntityType01.Prop9");
-			var oGroupElement2 = oView.byId("DelegateEntityType01.Prop10"); //deleted custom field
+			var oGroup = this.oView.byId("DelegateGroupEntityType01");
+			var oGroupElement1 = this.oView.byId("DelegateEntityType01.Prop9");
+			var oGroupElement2 = this.oView.byId("DelegateEntityType01.Prop10"); //deleted custom field
 
 			var oActionsObject = {
 				aggregation: "formElements",
@@ -676,20 +621,20 @@ function(
 					action : {}, //not relevant for test,
 					delegateInfo: {
 						payload: {},
-						delegate: oDelegate
+						delegate: this.oDelegate
 					}
 				}
 			};
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.ok(aAdditionalElements.some(isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
-				assert.notOk(aAdditionalElements.some(isFieldPresent.bind(null, oGroupElement2)), "then the field2 is not available on the dialog");
+				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
+				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement2)), "then the field2 is not available on the dialog");
 			});
 		});
 
 		QUnit.test("when getting invisible elements of a bound group containing a removed field with other binding context without addODataProperty action", function(assert) {
-			var oGroup = oView.byId("OtherGroup");
-			var oGroupElement1 = oView.byId("NavForm.EntityType01.Prop1");
+			var oGroup = this.oView.byId("OtherGroup");
+			var oGroupElement1 = this.oView.byId("NavForm.EntityType01.Prop1");
 			oGroupElement1.setVisible(false);
 			sap.ui.getCore().applyChanges();
 
@@ -703,18 +648,18 @@ function(
 				}
 			};
 
-			sandbox.stub(oGroup, "getBindingContext").returns({ getPath: function() { return "/fake/binding/path/group"; }});
-			sandbox.stub(oGroupElement1, "getBindingContext").returns({ getPath: function() { return "/fake/binding/path/groupElement1"; }});
-			sandbox.stub(BindingsExtractor, "getBindings").returns(["fakeBinding"]);
+			this.sandbox.stub(oGroup, "getBindingContext").returns({ getPath: function() { return "/fake/binding/path/group"; }});
+			this.sandbox.stub(oGroupElement1, "getBindingContext").returns({ getPath: function() { return "/fake/binding/path/groupElement1"; }});
+			this.sandbox.stub(BindingsExtractor, "getBindings").returns(["fakeBinding"]);
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.ok(aAdditionalElements.some(isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
+				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
 			});
 		});
 
 		QUnit.test("when getting invisible elements of a bound group containing a field with the same property name as the one of an invisible field in a different entity", function(assert) {
-			var oGroup = oView.byId("GroupEntityType01");
-			var oGroupElement1 = oView.byId("EntityType02.CommonProperty");
+			var oGroup = this.oView.byId("GroupEntityType01");
+			var oGroupElement1 = this.oView.byId("EntityType02.CommonProperty");
 
 			var oActionsObject = {
 				aggregation: "formElements",
@@ -730,13 +675,13 @@ function(
 			};
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.notOk(aAdditionalElements.some(isFieldPresent.bind(null, oGroupElement1)), "then the other field is not available on the dialog");
+				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the other field is not available on the dialog");
 			});
 		});
 
 		QUnit.test("when getting invisible elements of a bound group with delegate containing a field with the same property name as the one of an invisible field in a different entity", function(assert) {
-			var oGroup = oView.byId("DelegateGroupEntityType01");
-			var oGroupElement1 = oView.byId("DelegateEntityType02.CommonProperty");
+			var oGroup = this.oView.byId("DelegateGroupEntityType01");
+			var oGroupElement1 = this.oView.byId("DelegateEntityType02.CommonProperty");
 
 			var oActionsObject = {
 				aggregation: "formElements",
@@ -750,18 +695,18 @@ function(
 					action : {}, //not relevant for test,
 					delegateInfo: {
 						payload: {},
-						delegate: oDelegate
+						delegate: this.oDelegate
 					}
 				}
 			};
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.notOk(aAdditionalElements.some(isFieldPresent.bind(null, oGroupElement1)), "then the other field is not available on the dialog");
+				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the other field is not available on the dialog");
 			});
 		});
 
 		QUnit.test("when renaming a smart element", function(assert) {
-			var oGroup = oView.byId("GroupEntityType02");
+			var oGroup = this.oView.byId("GroupEntityType02");
 			var oGroupElement1 = oGroup.getGroupElements()[3];
 			oGroupElement1.setVisible(false);
 			oGroupElement1.setLabel("RenamedLabel");
@@ -795,7 +740,7 @@ function(
 		});
 
 		QUnit.test("when asking for the invisible fields of a simpleForm", function(assert) {
-			var oSimpleForm = oView.byId("SimpleForm");
+			var oSimpleForm = this.oView.byId("SimpleForm");
 			var aFormElements = oSimpleForm.getAggregation("form").getFormContainers().reduce(function(aAllFormElements, oFormContainer) {
 				return aAllFormElements.concat(oFormContainer.getFormElements());
 			}, []).filter(function(oFormElement) {
@@ -831,13 +776,13 @@ function(
 		});
 
 		QUnit.test("when getting unbound elements for EntityType01 Group with a function to filter ignored SmartForm Fields", function(assert) {
-			var oGroup = oView.byId("GroupEntityType01");
-			var oSmartForm = oView.byId("MainForm");
+			var oGroup = this.oView.byId("GroupEntityType01");
+			var oSmartForm = this.oView.byId("MainForm");
 			var mActionObject = {
 				action: {
 					aggregation: "formElements",
-					getLabel: mAddODataPropertyAction.getLabel,
-					filter: mAddODataPropertyAction.filter
+					getLabel: this.mAddODataPropertyAction.getLabel,
+					filter: this.mAddODataPropertyAction.filter
 				},
 				relevantContainer: oSmartForm
 			};
@@ -852,10 +797,10 @@ function(
 			var mActionObject = {
 				action: {
 					aggregation: "formElements",
-					getLabel: mAddODataPropertyAction.getLabel,
-					filter: mAddODataPropertyAction.filter
+					getLabel: this.mAddODataPropertyAction.getLabel,
+					filter: this.mAddODataPropertyAction.filter
 				},
-				relevantContainer: mAddODataPropertyAction.relevantContainer
+				relevantContainer: this.mAddODataPropertyAction.relevantContainer
 			};
 
 			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
@@ -869,10 +814,10 @@ function(
 			var mActionObject = {
 				action: {
 					aggregation: "formElements",
-					getLabel: mAddODataPropertyAction.getLabel,
-					filter: mAddODataPropertyAction.filter
+					getLabel: this.mAddODataPropertyAction.getLabel,
+					filter: this.mAddODataPropertyAction.filter
 				},
-				relevantContainer: mAddODataPropertyAction.relevantContainer
+				relevantContainer: this.mAddODataPropertyAction.relevantContainer
 			};
 
 			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
@@ -881,12 +826,12 @@ function(
 		});
 
 		QUnit.test("when asking for the unbound elements of a simpleForm", function(assert) {
-			var oSimpleForm = oView.byId("SimpleForm");
+			var oSimpleForm = this.oView.byId("SimpleForm");
 
 			var mActionObject = {
 				action : {
 					aggregation: "form",
-					oRelevantContainer: mAddODataPropertyAction.relevantContainer
+					oRelevantContainer: this.mAddODataPropertyAction.relevantContainer
 				}
 			};
 
@@ -896,12 +841,12 @@ function(
 		});
 
 		QUnit.test("when checking group elements to find original label in add dialog, after renaming a custom add label and removing that group elements", function(assert) {
-			var oGroupElement1 = oView.byId("EntityType02.Prop2Button");
+			var oGroupElement1 = this.oView.byId("EntityType02.Prop2Button");
 			var sGroupElement1OriginalLabel = ElementUtil.getLabelForElement(oGroupElement1);
 			var sRenamedLabel = "Renamed Label";
 			oGroupElement1.setVisible(false);
 
-			var oGroupElement2 = oView.byId("EntityType02.CompProp1");
+			var oGroupElement2 = this.oView.byId("EntityType02.CompProp1");
 			var sGroupElement2OriginalLabel = ElementUtil.getLabelForElement(oGroupElement2);
 			oGroupElement2.setVisible(false);
 
@@ -929,9 +874,9 @@ function(
 					}]
 				}
 			};
-
-			sandbox.stub(oGroupElement1, "getId").returns(oGroup.getParent().getId() + "-" + oActionsObject.addViaCustom.items[0].id);
-			sandbox.stub(oGroupElement2, "getId").returns(oGroup.getParent().getId() + "-" + oActionsObject.addViaCustom.items[1].id);
+			var oGroup = this.oView.byId("GroupEntityType01");
+			this.sandbox.stub(oGroupElement1, "getId").returns(oGroup.getParent().getId() + "-" + oActionsObject.addViaCustom.items[0].id);
+			this.sandbox.stub(oGroupElement2, "getId").returns(oGroup.getParent().getId() + "-" + oActionsObject.addViaCustom.items[1].id);
 
 			oGroupElement1.setLabel(sRenamedLabel);
 
@@ -969,13 +914,13 @@ function(
 					label: "CustomItem3" // no id was given
 				}]
 			};
-			var oGroup = oView.byId("OtherGroup");
+			var oGroup = this.oView.byId("OtherGroup");
 
-			sandbox.stub(ElementUtil, "getElementInstance")
+			this.sandbox.stub(ElementUtil, "getElementInstance")
 				.callThrough()
 				.withArgs(oGroup.getParent().getId() + "-" + mAction.items[0].id).returns({sId: "ElementExists"})
 				.withArgs(oGroup.getParent().getId() + "-" + mAction.items[1].id); // element doesn't exist
-			sandbox.stub(Log, "error");
+			this.sandbox.stub(Log, "error");
 
 			return AdditionalElementsAnalyzer.getCustomAddItems(oGroup, mAction)
 				.then(function(aReturnValues) {
@@ -1037,42 +982,30 @@ function(
 				assert
 			);
 		});
-	});
 
-	QUnit.module("Given a test view with bound Table", {
-		beforeEach : function() {
-			this.oTable = oView.byId("table");
-			this.oColumn = this.oTable.getColumns()[0];
-		}
-	}, function () {
-		QUnit.test("when getting unbound elements for table", function(assert) {
+		QUnit.test("when getting unbound elements for a bound table", function(assert) {
+			var oTable = this.oView.byId("table");
 			var mActionObject = {
 				action : {},
-				relevantContainer: this.oTable
+				relevantContainer: oTable
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, mActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(oTable, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 3, "then the correct amount of ODataProperties has been returned");
 				assert.equal(aAdditionalElements[0].bindingPath, "EntityTypeNav_Property04");
 				assert.equal(aAdditionalElements[1].bindingPath, "EntityTypeNav_Property05");
 				assert.equal(aAdditionalElements[2].bindingPath, "NavProperty");
 			});
 		});
-	});
 
-	QUnit.module("Given a test view with bound Empty Table", {
-		beforeEach : function () {
-			this.oTable = oView.byId("emptyTable");
-			this.oColumn = this.oTable.getColumns()[0];
-		}
-	}, function () {
-		QUnit.test("when getting unbound elements for table", function(assert) {
+		QUnit.test("when getting unbound elements for bound empty table", function(assert) {
+			var oTable = this.oView.byId("emptyTable");
 			var mActionObject = {
 				action : {},
-				relevantContainer: this.oTable
+				relevantContainer: oTable
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, mActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(oTable, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 4, "then the correct amount of ODataProperties has been returned");
 				assert.equal(aAdditionalElements[0].bindingPath, "id");
 				assert.equal(aAdditionalElements[1].bindingPath, "EntityTypeNav_Property01");
@@ -1080,53 +1013,49 @@ function(
 				assert.equal(aAdditionalElements[3].bindingPath, "NavProperty");
 			});
 		});
-	});
 
-	QUnit.module("Given a test view with absolute bindings", {
-		beforeEach: function () {
-			this.oList = oView.byId("listWithAbsoluteBinding");
-			this.oTable = oView.byId("tableWithAbsoluteBinding");
-		}
-	}, function () {
-		QUnit.test("when getting unbound elements for the list", function(assert) {
+		QUnit.test("when getting unbound elements for the list with absolute bindings", function(assert) {
+			var oList = this.oView.byId("listWithAbsoluteBinding");
 			var mActionObject = {
 				action : {
 					aggregation: "items"
 				},
-				relevantContainer: this.oList
+				relevantContainer: oList
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oList, mActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(oList, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 16, "then the correct amount of ODataProperties has been returned");
 			});
 		});
 
-		QUnit.test("when getting unbound elements for the table", function(assert) {
+		QUnit.test("when getting unbound elements for the table with absolute bindings", function(assert) {
+			var oTable = this.oView.byId("tableWithAbsoluteBinding");
 			var mActionObject = {
 				action : {
 					aggregation: "items"
 				},
-				relevantContainer: this.oTable
+				relevantContainer: oTable
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, mActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(oTable, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 16, "then the correct amount of ODataProperties has been returned");
 			});
 		});
 
 		QUnit.test("when getting unbound elements for table with absolute binding in a named model", function(assert) {
+			var oTable = this.oView.byId("tableWithAbsoluteBinding");
 			var oSomeNamedModel = new JSONModel({ foo : [1, 2]});
-			this.oTable.setModel(oSomeNamedModel, "named");
-			this.oTable.bindItems("named>/foo", new ColumnListItem());
+			oTable.setModel(oSomeNamedModel, "named");
+			oTable.bindItems("named>/foo", new ColumnListItem());
 
 			var mActionObject = {
 				action : {
 					aggregation: "items"
 				},
-				relevantContainer: this.oTable
+				relevantContainer: oTable
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, mActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(oTable, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 0, "then no ODataProperties are returned, as the scenario is not supported (but it doesn't break)");
 			});
 		});
@@ -1134,8 +1063,6 @@ function(
 
 
 	QUnit.done(function () {
-		oGroup.destroy();
-		oView.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
 });

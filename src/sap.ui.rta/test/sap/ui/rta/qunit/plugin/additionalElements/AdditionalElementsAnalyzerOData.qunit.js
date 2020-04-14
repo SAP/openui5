@@ -3,51 +3,50 @@
 sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/layout/form/SimpleForm"
+	"sap/ui/layout/form/SimpleForm",
+	"sap/ui/rta/util/BindingsExtractor",
+	"./TestUtils"
 ],
 function(
 	AdditionalElementsAnalyzer,
 	JSONModel,
-	SimpleForm
+	SimpleForm,
+	BindingsExtractor,
+	TestUtils
 ) {
 	"use strict";
 
-	QUnit.module("enhanceInvisibleElements tests with OData", {
-		beforeEach : function(assert) {
-			this.oView = renderComplexView(assert);
-			var oGroup = this.oView.byId("GroupEntityType01");
-			return Promise.all([
-				this.oView.getController().isDataReady(),
-				oGroup.getMetadata().loadDesignTime().then(function(oDesignTime) {
-					this.mAddODataPropertyAction = oDesignTime.aggregations.formElements.actions.addODataProperty;
-				}.bind(this))
-			]);
-		},
-		afterEach : function () {
-			this.oView.getController().destroy();
-			this.oView.destroy();
-		}
-	}, function () {
+	function _createSimpleFormFakingFormElements(oView) {
+		var oNewSimpleForm = new SimpleForm();
+		var oSimpleForm = oView.byId("SimpleForm");
+		var aFormElementActionObjects = oSimpleForm.getAggregation("form").getFormContainers().reduce(function(aAllFormElements, oFormContainer) {
+			return aAllFormElements.concat(oFormContainer.getFormElements());
+		}, []).filter(function(oFormElement) {
+			return oFormElement.isVisible() === false;
+		}).map(function(oFormElement) {
+			return {
+				element : oFormElement,
+				action : {
+					//nothing relevant for the analyzer
+				}
+			};
+		});
+		return {
+			simpleForm: oNewSimpleForm,
+			formElementActionObjects: aFormElementActionObjects
+		};
+	}
+
+	QUnit.module("enhanceInvisibleElements tests with OData", TestUtils.commonHooks(),
+	function () {
 		QUnit.test("when getting invisible elements with a control without model", function(assert) {
-			var oSimpleFormWithoutModel = new SimpleForm();
-			var oSimpleForm = this.oView.byId("SimpleForm");
-			var aFormElements = oSimpleForm.getAggregation("form").getFormContainers().reduce(function(aAllFormElements, oFormContainer) {
-				return aAllFormElements.concat(oFormContainer.getFormElements());
-			}, []).filter(function(oFormElement) {
-				return oFormElement.isVisible() === false;
-			}).map(function(oFormElement) {
-				return {
-					element : oFormElement,
-					action : {
-						//nothing relevant for the analyzer
-					}
-				};
-			});
+			var mTestData = _createSimpleFormFakingFormElements(this.oView);
+			var oSimpleFormWithoutModel = mTestData.simpleForm;
 
 			var oActionsObject = {
 				aggregation: "formElements",
 				reveal : {
-					elements : aFormElements
+					elements : mTestData.formElementActionObjects
 				}
 			};
 
@@ -67,28 +66,17 @@ function(
 		});
 
 		QUnit.test("when getting invisible elements with an element with a json model", function(assert) {
-			var oSimpleFormWithJSONModel = new SimpleForm();
-			var oSimpleForm = this.oView.byId("SimpleForm");
-			var aFormElements = oSimpleForm.getAggregation("form").getFormContainers().reduce(function(aAllFormElements, oFormContainer) {
-				return aAllFormElements.concat(oFormContainer.getFormElements());
-			}, []).filter(function(oFormElement) {
-				return oFormElement.isVisible() === false;
-			}).map(function(oFormElement) {
-				return {
-					element : oFormElement,
-					action : {
-						//nothing relevant for the analyzer
-					}
-				};
-			});
-			oSimpleFormWithJSONModel.setModel(new JSONModel({elements: "foo"}));
+			var mTestData = _createSimpleFormFakingFormElements(this.oView);
+			var oSimpleFormWithJSONModel = mTestData.simpleForm;
 
 			var oActionsObject = {
 				aggregation: "formElements",
 				reveal : {
-					elements : aFormElements
+					elements : mTestData.formElementActionObjects
 				}
 			};
+			oSimpleFormWithJSONModel.setModel(new JSONModel({elements: "foo"}));
+
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oSimpleFormWithJSONModel, oActionsObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 5, "then there are 5 invisible Elements that are not enhanced with oDataProperty properties");
@@ -105,13 +93,6 @@ function(
 			});
 		});
 	});
-
-	function renderComplexView() {
-		var oView = sap.ui.xmlview("idMain1", "sap.ui.rta.test.additionalElements.ComplexTest");
-		oView.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-		return oView;
-	}
 
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
