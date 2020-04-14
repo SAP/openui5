@@ -130,6 +130,7 @@ function(
 				.then(function () {
 					var bParametersValid =
 						checkCommonParametersForControl(mPropertyBag)
+						&& (isAString(mPropertyBag.element, "nodeName") || mPropertyBag.element.isA("sap.ui.core.Element"))
 						&& isPlainObject(mPropertyBag.fieldSelector) && isAString(mPropertyBag.fieldSelector, "id");
 
 					if (bParametersValid) {
