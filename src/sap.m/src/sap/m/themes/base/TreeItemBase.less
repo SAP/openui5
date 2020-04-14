@@ -3,6 +3,8 @@
 /* Base theme                          */
 /* =================================== */
 
+@_sap_m_Tree_Children_Background: darken(@sapUiListBackground,2);
+
 .sapMTreeItemBase {
 	min-height: @sapUiElementHeight;
 	font-family: @sapUiFontFamily;
@@ -36,7 +38,7 @@
 }
 
 .sapMTreeItemBaseChildren {
-	background-color: darken(@sapUiListBackground,2);
+	background-color: @_sap_m_Tree_Children_Background;
 	border-bottom-color: transparent;
 }
 
