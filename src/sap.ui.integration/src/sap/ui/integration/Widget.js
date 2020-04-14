@@ -35,18 +35,20 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
+	 * @class
 	 * <h3>Overview</h3>
-	 * Widgets is a wrapper for @see{sap.ui.core.ComponentContainer}. They are configured via an app descriptor manifest.json file.
-	 * @extends sap.ui.core.Control
+	 * The Widget is a wrapper for {@link sap.ui.core.ComponentContainer}. It is configured via an app descriptor manifest.json file.
 	 *
+	 * @extends sap.ui.core.Control
 	 * @author SAP SE
 	 * @version ${version}
+	 *
 	 * @constructor
-	 * @since 1.70
+	 * @since 1.78
 	 * @alias sap.ui.integration.Widget
-	 *
-	 * @experimental since 1.70
-	 *
+	 * @public
+	 * @experimental Since 1.78
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Widget = Control.extend("sap.ui.integration.Widget", /** @lends sap.ui.integration.Widget.prototype */ {
 		metadata: {
@@ -83,7 +85,7 @@ sap.ui.define([
 				 *
 				 * This can be a list of flexibility changes generated during designtime.
 				 *
-				 * Each level of changes is an item in the list. The change has property "content" which contains the configuration, which will be merged on top of the original <code>sap.widget</code> section.
+				 * Each level of changes is an item in the list. The change has property "content" which contains the configuration, that will be merged on top of the original <code>sap.widget</code> section.
 				 *
 				 * Example:
 				 * <pre>
@@ -93,8 +95,8 @@ sap.ui.define([
 				 * ]
 				 * </pre>
 				 *
-				 * @experimental Since 1.76 This api might be removed when a permanent solution for flexibility changes is implemented.
-				 * @since 1.76
+				 * @experimental Since 1.78 This API might be removed when a permanent solution for flexibility changes is implemented.
+				 * @since 1.78
 				 */
 				manifestChanges: {
 					type: "object[]"
@@ -134,7 +136,7 @@ sap.ui.define([
 
 						/**
 						 * The manifest parameters related to the triggered action.
-						 * @deprecated Since 1.76 Use the <code>parameters</code> parameter instead.
+						 * @deprecated Since 1.78 Use the <code>parameters</code> parameter instead.
 						 */
 						manifestParameters: {
 							type: "object"
@@ -142,7 +144,6 @@ sap.ui.define([
 
 						/**
 						 * The parameters related to the triggered action.
-						 * @since 1.76
 						 */
 						parameters: {
 							type: "object"
@@ -152,7 +153,7 @@ sap.ui.define([
 
 				/**
 				 * Fired when the manifest is loaded.
-				 * @experimental since 1.72
+				 * @experimental since 1.78
 				 */
 				manifestReady: {
 					parameters: {
@@ -250,7 +251,7 @@ sap.ui.define([
 	 *
 	 * Use during designtime.
 	 *
-	 * @experimental Since 1.76 This api might be removed when a permanent solution for flexibility changes is implemented.
+	 * @experimental Since 1.78 This API might be removed when a permanent solution for flexibility changes is implemented.
 	 * @returns {Object} A Clone of the manifest with applied changes.
 	 */
 	Widget.prototype.getManifestWithMergedChanges = function () {
@@ -317,7 +318,7 @@ sap.ui.define([
 	 * - Use this method inside your component.
 	 *
 	 * @public
-	 * @experimental Since 1.77
+	 * @experimental Since 1.78
 	 * @returns {map} Object containing parameters in format <code>{parameterKey: parameterValue}</code>.
 	 */
 	Widget.prototype.getCombinedParameters = function () {
@@ -343,7 +344,7 @@ sap.ui.define([
 	 * <b>Note</b> Use this method when the manifest is fully ready. Check <code>manifestReady</code> event.
 	 *
 	 * @public
-	 * @experimental Since 1.77
+	 * @experimental Since 1.78
 	 * @param {string} sPath The path to return a value for.
 	 * @returns {Object} The value at the specified path.
 	 */
@@ -360,7 +361,7 @@ sap.ui.define([
 	 * Gets the instance of the <code>host</code> association.
 	 *
 	 * @public
-	 * @experimental Since 1.77
+	 * @experimental Since 1.78
 	 * @returns {sap.ui.integration.Host} The host object associated with this widget.
 	 */
 	Widget.prototype.getHostInstance = function () {
