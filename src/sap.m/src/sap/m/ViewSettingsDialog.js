@@ -24,6 +24,7 @@ sap.ui.define([
 	'./Page',
 	'./ViewSettingsItem',
 	'sap/ui/base/ManagedObject',
+	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/base/EventProvider',
 	'sap/ui/Device',
 	'sap/ui/core/InvisibleText',
@@ -55,6 +56,7 @@ function(
 	Page,
 	ViewSettingsItem,
 	ManagedObject,
+	ManagedObjectObserver,
 	EventProvider,
 	Device,
 	InvisibleText,
@@ -524,6 +526,9 @@ function(
 		if (this._oStringFilter) {
 			this._oStringFilter = null;
 		}
+		if (this._oSelectedFilterKeys) {
+			this._oSelectedFilterKeys = null;
+		}
 	};
 
 	ViewSettingsDialog.prototype._aggregationToListItems = function(sAggregationName, oItemPropertyMap, oItemAggregationMap, oListItemInitials, oListOptions) {
@@ -754,6 +759,10 @@ function(
 			this._attachItemEventHandlers(sAggregationName, oObject);
 		}
 
+		if (sAggregationName === "filterItems") {
+			this._observeItem(oObject);
+		}
+
 		return this;
 	};
 
@@ -788,6 +797,10 @@ function(
 			this._attachItemEventHandlers(sAggregationName, oObject);
 		}
 
+		if (sAggregationName === "filterItems") {
+			this._observeItem(oObject);
+		}
+
 		return this;
 	};
 
@@ -803,6 +816,13 @@ function(
 			var oRemovedListItem = oList.removeItem(oListItem);
 			oRemovedListItem.destroy();
 			this._detachItemPropertyChange(vRemovedObject);
+		}
+
+		if (sAggregationName === "filterItems") {
+			this._unobserveItem(vRemovedObject);
+			if (!this.getFilterItems().length) {
+				this._disconnectAndDestroyFilterItemsObserver();
+			}
 		}
 
 		return vRemovedObject;
@@ -829,6 +849,10 @@ function(
 			}, this);
 		}
 
+		if (sAggregationName === "filterItems") {
+			this._disconnectAndDestroyFilterItemsObserver();
+		}
+
 		return vRemovedObjects;
 	};
 
@@ -843,6 +867,10 @@ function(
 			if (oList) {
 				oList.destroyItems();
 			}
+		}
+
+		if (sAggregationName === "filterItems") {
+			this._disconnectAndDestroyFilterItemsObserver();
 		}
 
 		return this;
@@ -875,6 +903,60 @@ function(
 
 			oListItem.getMetadata().getAllProperties()[sListProp].set(oListItem, vListPropVal);
 		}, this);
+	};
+
+	/**
+	 * Returns the ManagedObjectObserver for the filterItems
+	 *
+	 * @return {sap.ui.base.ManagedObjectObserver} the filterItems observer object
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._getFilterItemsObserver = function () {
+		if (!this._oFilterItemsObserver) {
+			this._oFilterItemsObserver = new ManagedObjectObserver(function() {
+				if (this._oSelectedFilterKeys) {
+					this.setSelectedFilterCompoundKeys(this._oSelectedFilterKeys);
+				}
+			}.bind(this));
+		}
+		return this._oFilterItemsObserver;
+	};
+
+	/**
+	 * Observes the items aggregation of the passed filterItem
+	 *
+	 * @param {sap.m.ViewSettingsDialogFilterItem} oFilterItem the filterItem, which aggregation will be observed
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._observeItem = function (oFilterItem) {
+		this._getFilterItemsObserver().observe(oFilterItem, {
+			aggregations: ["items"]
+		});
+	};
+
+	/**
+	 * Unobserves the items aggregation of the passed filterItem
+	 *
+	 * @param {sap.m.ViewSettingsDialogFilterItem} oFilterItem the filterItem, which aggregation will be unobserved
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._unobserveItem = function (oFilterItem) {
+		this._getFilterItemsObserver().unobserve(oFilterItem, {
+			aggregations: ["items"]
+		});
+	};
+
+	/**
+	 * Disconnects and destroys the ManagedObjectObserver observing the used filterItem
+	 *
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._disconnectAndDestroyFilterItemsObserver = function () {
+		if (this._oFilterItemsObserver) {
+			this._oFilterItemsObserver.disconnect();
+			this._oFilterItemsObserver.destroy();
+			this._oFilterItemsObserver = null;
+		}
 	};
 
 	/**
@@ -1527,6 +1609,8 @@ function(
 
 			return oItem;
 		};
+
+		this._oSelectedFilterKeys = oSelectedFilterKeys;
 
 		// clear preset filters (only one mode is allowed, preset filters or filters)
 		if (Object.keys(oSelectedFilterKeys).length) {
