@@ -213,7 +213,7 @@ sap.ui.define([
 				 * ]
 				 * </pre>
 				 *
-				 * @experimental Since 1.76 This api might be removed when a permanent solution for flexibility changes is implemented.
+				 * @experimental Since 1.76 This API might be removed when a permanent solution for flexibility changes is implemented.
 				 * @since 1.76
 				 */
 				manifestChanges: {
@@ -680,7 +680,7 @@ sap.ui.define([
 	 *
 	 * Use during designtime.
 	 *
-	 * @experimental Since 1.76 This api might be removed when a permanent solution for flexibility changes is implemented.
+	 * @experimental Since 1.76 This API might be removed when a permanent solution for flexibility changes is implemented.
 	 * @returns {Object} A Clone of the manifest with applied changes.
 	 */
 	Card.prototype.getManifestWithMergedChanges = function () {
