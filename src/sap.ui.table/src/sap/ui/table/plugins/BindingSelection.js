@@ -147,6 +147,16 @@ sap.ui.define([
 	BindingSelection.prototype.getSelectedIndices = function() {
 		var oBinding = this.getTableBinding();
 
+		if (this._getSelectionMode() === SelectionMode.Single) {
+			var iSelectedIndex = this.getSelectedIndex();
+
+			if (iSelectedIndex === -1) {
+				return [];
+			}
+
+			return [iSelectedIndex];
+		}
+
 		if (oBinding && oBinding.findNode && oBinding.getSelectedIndices) {
 			return oBinding.getSelectedIndices();
 		} else {
@@ -205,6 +215,14 @@ sap.ui.define([
 	 */
 	BindingSelection.prototype.isIndexSelected = function(iIndex) {
 		var oBinding = this.getTableBinding();
+
+		if (this._getSelectionMode() === SelectionMode.Single) {
+			if (iIndex < 0) {
+				return false;
+			}
+
+			return iIndex === this.getSelectedIndex();
+		}
 
 		if (oBinding && oBinding.isIndexSelected) {
 			return oBinding.isIndexSelected(iIndex);

@@ -710,12 +710,139 @@ sap.ui.define([
 		this.table.setSelectionMode(SelectionMode.None);
 
 		this.table.setSelectedIndex(1);
-		assert.deepEqual(this.table.getSelectedIndices(), [], "setSelectedIndex does not select in SelectionMode=\"None\"");
+		assert.deepEqual(this.table.getSelectedIndices(), [], "setSelectedIndex does not select");
 
 		this.table.setSelectionInterval(1, 1);
-		assert.deepEqual(this.table.getSelectedIndices(), [], "setSelectionInterval does not select in SelectionMode=\"None\"");
+		assert.deepEqual(this.table.getSelectedIndices(), [], "setSelectionInterval does not select");
 
 		this.table.addSelectionInterval(1, 1);
-		assert.deepEqual(this.table.getSelectedIndices(), [], "addSelectionInterval does not select in SelectionMode=\"None\"");
+		assert.deepEqual(this.table.getSelectedIndices(), [], "addSelectionInterval does not select");
+	});
+
+	QUnit.test("SelectionMode = Single (collapseRecursive=true)", function(assert) {
+		this.table.setSelectionMode(SelectionMode.Single);
+		this.table.expand(0);
+
+		this.table.setSelectedIndex(1);
+		assert.deepEqual(this.table.getSelectedIndex(), 1, "setSelectedIndex(1) - getSelectedIndex returns 1");
+		assert.deepEqual(this.table.getSelectedIndices(), [1], "setSelectedIndex(1) - getSelectedIndices returns [1]");
+		assert.deepEqual(this.table.isIndexSelected(0), false, "setSelectedIndex(1) - isIndexSelected(0) returns false");
+		assert.deepEqual(this.table.isIndexSelected(1), true, "setSelectedIndex(1) - isIndexSelected(1) returns true");
+		assert.deepEqual(this.table.isIndexSelected(2), false, "setSelectedIndex(1) - isIndexSelected(2) returns false");
+		assert.deepEqual(this.table.isIndexSelected(3), false, "setSelectedIndex(1) - isIndexSelected(3) returns false");
+		assert.deepEqual(this.table.isIndexSelected(4), false, "setSelectedIndex(1) - isIndexSelected(4) returns false");
+
+		this.table.collapse(0);
+		assert.deepEqual(this.table.getSelectedIndex(), -1, "collapse(0) - getSelectedIndex returns -1");
+		assert.deepEqual(this.table.getSelectedIndices(), [], "collapse(0) - getSelectedIndices returns []");
+		assert.deepEqual(this.table.isIndexSelected(0), false, "collapse(0) - isIndexSelected(0) returns false");
+		assert.deepEqual(this.table.isIndexSelected(1), false, "collapse(0) - isIndexSelected(1) returns false");
+		assert.deepEqual(this.table.isIndexSelected(2), false, "collapse(0) - isIndexSelected(2) returns false");
+
+		this.table.expand(0);
+		assert.deepEqual(this.table.getSelectedIndex(), -1, "expand(0) - getSelectedIndex returns -1");
+		assert.deepEqual(this.table.getSelectedIndices(), [], "expand(0) - getSelectedIndices returns []");
+		assert.deepEqual(this.table.isIndexSelected(0), false, "expand(0) - isIndexSelected(0) returns false");
+		assert.deepEqual(this.table.isIndexSelected(1), false, "expand(0) - isIndexSelected(1) returns false");
+		assert.deepEqual(this.table.isIndexSelected(2), false, "expand(0) - isIndexSelected(2) returns false");
+		assert.deepEqual(this.table.isIndexSelected(3), false, "expand(0) - isIndexSelected(3) returns false");
+		assert.deepEqual(this.table.isIndexSelected(4), false, "expand(0) - isIndexSelected(4) returns false");
+
+		this.table.addSelectionInterval(1, 2);
+		assert.deepEqual(this.table.getSelectedIndex(), 2, "addSelectionInterval(1, 2) - getSelectedIndex returns 2");
+		assert.deepEqual(this.table.getSelectedIndices(), [2], "addSelectionInterval(1, 2) - getSelectedIndices returns [2]");
+		assert.deepEqual(this.table.isIndexSelected(0), false, "addSelectionInterval(1, 2) - isIndexSelected(0) returns false");
+		assert.deepEqual(this.table.isIndexSelected(1), false, "addSelectionInterval(1, 2) - isIndexSelected(1) returns false");
+		assert.deepEqual(this.table.isIndexSelected(2), true, "addSelectionInterval(1, 2) - isIndexSelected(2) returns true");
+		assert.deepEqual(this.table.isIndexSelected(3), false, "addSelectionInterval(1, 2) - isIndexSelected(3) returns false");
+		assert.deepEqual(this.table.isIndexSelected(4), false, "addSelectionInterval(1, 2) - isIndexSelected(4) returns false");
+
+		this.table.clearSelection();
+		assert.deepEqual(this.table.getSelectedIndex(), -1, "clearSelection() - getSelectedIndex returns -1");
+		assert.deepEqual(this.table.getSelectedIndices(), [], "clearSelection() - getSelectedIndices returns []");
+		assert.deepEqual(this.table.isIndexSelected(0), false, "clearSelection() - isIndexSelected(0) returns false");
+		assert.deepEqual(this.table.isIndexSelected(1), false, "clearSelection() - isIndexSelected(1) returns false");
+		assert.deepEqual(this.table.isIndexSelected(2), false, "clearSelection() - isIndexSelected(2) returns false");
+		assert.deepEqual(this.table.isIndexSelected(3), false, "clearSelection() - isIndexSelected(3) returns false");
+		assert.deepEqual(this.table.isIndexSelected(4), false, "clearSelection() - isIndexSelected(4) returns false");
+	});
+
+	QUnit.test("SelectionMode = Single (collapseRecursive=false)", function(assert) {
+		var bBindingInfo = this.table.getBindingInfo("rows");
+
+		bBindingInfo.parameters.collapseRecursive = false;
+		this.table.bindRows(bBindingInfo);
+		this.table.setSelectionMode(SelectionMode.Single);
+		this.table.expand(0);
+
+		this.table.setSelectedIndex(1);
+		assert.deepEqual(this.table.getSelectedIndex(), 1, "setSelectedIndex(1) - getSelectedIndex returns 1");
+		assert.deepEqual(this.table.getSelectedIndices(), [1], "setSelectedIndex(1) - getSelectedIndices returns [1]");
+		assert.deepEqual(this.table.isIndexSelected(0), false, "setSelectedIndex(1) - isIndexSelected(0) returns false");
+		assert.deepEqual(this.table.isIndexSelected(1), true, "setSelectedIndex(1) - isIndexSelected(1) returns true");
+		assert.deepEqual(this.table.isIndexSelected(2), false, "setSelectedIndex(1) - isIndexSelected(2) returns false");
+		assert.deepEqual(this.table.isIndexSelected(3), false, "setSelectedIndex(1) - isIndexSelected(3) returns false");
+		assert.deepEqual(this.table.isIndexSelected(4), false, "setSelectedIndex(1) - isIndexSelected(4) returns false");
+
+		this.table.collapse(0);
+		assert.deepEqual(this.table.getSelectedIndex(), -1, "collapse(0) - getSelectedIndex returns -1");
+		assert.deepEqual(this.table.getSelectedIndices(), [], "collapse(0) - getSelectedIndices returns []");
+		assert.deepEqual(this.table.isIndexSelected(0), false, "collapse(0) - isIndexSelected(0) returns false");
+		assert.deepEqual(this.table.isIndexSelected(1), false, "collapse(0) - isIndexSelected(1) returns false");
+		assert.deepEqual(this.table.isIndexSelected(2), false, "collapse(0) - isIndexSelected(2) returns false");
+		assert.deepEqual(this.table.isIndexSelected(3), false, "collapse(0) - isIndexSelected(3) returns false");
+		assert.deepEqual(this.table.isIndexSelected(4), false, "collapse(0) - isIndexSelected(4) returns false");
+
+		this.table.expand(0);
+		assert.deepEqual(this.table.getSelectedIndex(), 1, "expand(0) - getSelectedIndex returns 1");
+		assert.deepEqual(this.table.getSelectedIndices(), [1], "expand(0) - getSelectedIndices returns [1]");
+		assert.deepEqual(this.table.isIndexSelected(0), false, "expand(0) - isIndexSelected(0) returns false");
+		assert.deepEqual(this.table.isIndexSelected(1), true, "expand(0) - isIndexSelected(1) returns true");
+		assert.deepEqual(this.table.isIndexSelected(2), false, "expand(0) - isIndexSelected(2) returns false");
+		assert.deepEqual(this.table.isIndexSelected(3), false, "expand(0) - isIndexSelected(3) returns false");
+		assert.deepEqual(this.table.isIndexSelected(4), false, "expand(0) - isIndexSelected(4) returns false");
+
+		this.table.collapse(0);
+		this.table.setSelectedIndex(2);
+		assert.deepEqual(this.table.getSelectedIndex(), 2, "collapse(0), setSelectedIndex(2) - getSelectedIndex returns 1");
+		assert.deepEqual(this.table.getSelectedIndices(), [2], "collapse(0), setSelectedIndex(2) - getSelectedIndices returns [1]");
+		assert.deepEqual(this.table.isIndexSelected(0), false, "collapse(0), setSelectedIndex(2) - isIndexSelected(0) returns false");
+		assert.deepEqual(this.table.isIndexSelected(1), false, "collapse(0), setSelectedIndex(2) - isIndexSelected(1) returns false");
+		assert.deepEqual(this.table.isIndexSelected(2), true, "collapse(0), setSelectedIndex(2) - isIndexSelected(2) returns true");
+
+		this.table.expand(0);
+		assert.deepEqual(this.table.getSelectedIndex(), 4, "expand(0) - getSelectedIndex returns 4");
+		assert.deepEqual(this.table.getSelectedIndices(), [4], "expand(0) - getSelectedIndices returns [4]");
+		assert.deepEqual(this.table.isIndexSelected(0), false, "expand(0) - isIndexSelected(0) returns false");
+		assert.deepEqual(this.table.isIndexSelected(1), false, "expand(0) - isIndexSelected(1) returns false");
+		assert.deepEqual(this.table.isIndexSelected(2), false, "expand(0) - isIndexSelected(2) returns false");
+		assert.deepEqual(this.table.isIndexSelected(3), false, "expand(0) - isIndexSelected(3) returns false");
+		assert.deepEqual(this.table.isIndexSelected(4), true, "expand(0) - isIndexSelected(4) returns true");
+
+		this.table.addSelectionInterval(1, 2);
+		assert.deepEqual(this.table.getSelectedIndex(), 2, "addSelectionInterval(1, 2) - getSelectedIndex returns 2");
+		assert.deepEqual(this.table.getSelectedIndices(), [2], "addSelectionInterval(1, 2) - getSelectedIndices returns [2]");
+		assert.deepEqual(this.table.isIndexSelected(0), false, "addSelectionInterval(1, 2) - isIndexSelected(0) returns false");
+		assert.deepEqual(this.table.isIndexSelected(1), false, "addSelectionInterval(1, 2) - isIndexSelected(1) returns false");
+		assert.deepEqual(this.table.isIndexSelected(2), true, "addSelectionInterval(1, 2) - isIndexSelected(2) returns true");
+		assert.deepEqual(this.table.isIndexSelected(3), false, "addSelectionInterval(1, 2) - isIndexSelected(3) returns false");
+		assert.deepEqual(this.table.isIndexSelected(4), false, "addSelectionInterval(1, 2) - isIndexSelected(4) returns false");
+
+		this.table.collapse(0);
+		this.table.clearSelection();
+		assert.deepEqual(this.table.getSelectedIndex(), -1, "collapse(0), clearSelection() - getSelectedIndex returns -1");
+		assert.deepEqual(this.table.getSelectedIndices(), [], "collapse(0), clearSelection() - getSelectedIndices returns []");
+		assert.deepEqual(this.table.isIndexSelected(0), false, "collapse(0), clearSelection() - isIndexSelected(0) returns false");
+		assert.deepEqual(this.table.isIndexSelected(1), false, "collapse(0), clearSelection() - isIndexSelected(1) returns false");
+		assert.deepEqual(this.table.isIndexSelected(2), false, "collapse(0), clearSelection() - isIndexSelected(2) returns false");
+
+		this.table.expand(0);
+		assert.deepEqual(this.table.getSelectedIndex(), -1, "collapse(0), clearSelection() - getSelectedIndex returns -1");
+		assert.deepEqual(this.table.getSelectedIndices(), [], "collapse(0), clearSelection() - getSelectedIndices returns []");
+		assert.deepEqual(this.table.isIndexSelected(0), false, "collapse(0), clearSelection() - isIndexSelected(0) returns false");
+		assert.deepEqual(this.table.isIndexSelected(1), false, "collapse(0), clearSelection() - isIndexSelected(1) returns false");
+		assert.deepEqual(this.table.isIndexSelected(2), false, "collapse(0), clearSelection() - isIndexSelected(2) returns false");
+		assert.deepEqual(this.table.isIndexSelected(3), false, "collapse(0), clearSelection() - isIndexSelected(3) returns false");
+		assert.deepEqual(this.table.isIndexSelected(4), false, "collapse(0), clearSelection() - isIndexSelected(4) returns false");
 	});
 });
