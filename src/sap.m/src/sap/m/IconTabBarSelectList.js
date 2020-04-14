@@ -255,8 +255,7 @@ sap.ui.define([
 	/* =========================================================== */
 
 	/**
-	 * Handle keyboard drag&drop
-	 * Ctrl + Home
+	 * Handles keyboard drag&drop
 	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
@@ -264,14 +263,18 @@ sap.ui.define([
 		if (!this._oIconTabHeader.getEnableTabReordering()) {
 			return;
 		}
-		var oTabToBeMoved = oEvent.srcControl,
-			iKeyCode = oEvent.keyCode;
 
-		IconTabBarDragAndDropUtil.moveItem.call(this, oTabToBeMoved, iKeyCode);
+		var oTabToBeMoved = oEvent.srcControl,
+			iKeyCode = oEvent.keyCode,
+			iIndexBeforeMove = this.indexOfItem(oTabToBeMoved);
+
+		IconTabBarDragAndDropUtil.moveItem.call(this, oTabToBeMoved, iKeyCode, this.getItems().length - 1);
 		this._initItemNavigation();
 		oTabToBeMoved.$().focus();
 
-		this._oIconTabHeader._moveTab(oTabToBeMoved._getRealTab(), iKeyCode);
+		if (iIndexBeforeMove !== this.indexOfItem(oTabToBeMoved)) {
+			this._oIconTabHeader._moveTab(oTabToBeMoved._getRealTab(), iKeyCode, this._oIconTabHeader.getItems().length - 1);
+		}
 	};
 
 	/**
@@ -290,14 +293,14 @@ sap.ui.define([
 
 	/**
 	 * Moves tab for Drag&Drop keyboard handling
-	 * Ctrl + Left Right || Ctrl + Arrow Up
+	 * Modifier + Right Arrow || Modifier + Arrow Up
 	 * @param {jQuery.Event} oEvent
 	 */
 	IconTabBarSelectList.prototype.onsapincreasemodifiers = IconTabBarSelectList.prototype.ondragrearranging;
 
 	/**
 	 * Moves tab for Drag&Drop keyboard handling
-	 * Ctrl + Left Arrow || Ctrl + Arrow Down
+	 * Modifier + Left Arrow || Modifier + Arrow Down
 	 * @param {jQuery.Event} oEvent
 	 */
 	IconTabBarSelectList.prototype.onsapdecreasemodifiers = IconTabBarSelectList.prototype.ondragrearranging;

@@ -357,7 +357,6 @@ sap.ui.define([
 		var oIconTabHeader = this.getParent(),
 			oIconTabBar = oIconTabHeader.getParent(),
 			bHasIconTabBar = oIconTabHeader._isInsideIconTabBar(),
-			oRB = Core.getLibraryResourceBundle("sap.m"),
 			mAriaParams = { role: "tab" },
 			sId = this.getId(),
 			sCount = this.getCount(),
@@ -374,7 +373,7 @@ sap.ui.define([
 		}
 
 		if (this._getAllSubFilters().length) {
-			mAriaParams.roledescription = oRB.getText("ICONTABFILTER_SPLIT_TAB");
+			mAriaParams.roledescription = oResourceBundle.getText("ICONTABFILTER_SPLIT_TAB");
 		}
 
 		if (sText.length ||
@@ -463,7 +462,7 @@ sap.ui.define([
 					oRM.openStart("div", sId + "-iconColor")
 						.style("display", "none")
 						.openEnd()
-						.text(oRB.getText('ICONTABBAR_ICONCOLOR_' + oIconColor.toUpperCase()))
+						.text(oResourceBundle.getText('ICONTABBAR_ICONCOLOR_' + oIconColor.toUpperCase()))
 						.close("div");
 				}
 
@@ -558,8 +557,7 @@ sap.ui.define([
 
 		var bTextOnly = true,
 			bIconOnly = oSelectList._bIconOnly,
-			oIconTabHeader = oSelectList._oIconTabHeader,
-			oRB = Core.getLibraryResourceBundle('sap.m');
+			oIconTabHeader = oSelectList._oIconTabHeader;
 
 		if (oIconTabHeader) {
 			bTextOnly = oIconTabHeader._bTextOnly;
@@ -619,7 +617,7 @@ sap.ui.define([
 
 		if (bShouldReadIconColor) {
 			this._invisibleText = new InvisibleText({
-				text: oRB.getText('ICONTABBAR_ICONCOLOR_' + oIconColor.toUpperCase())
+				text: oResourceBundle.getText('ICONTABBAR_ICONCOLOR_' + oIconColor.toUpperCase())
 			});
 
 			aLabelledByIds.push(this._invisibleText.getId());
@@ -724,7 +722,7 @@ sap.ui.define([
 			oButton = new AccButton(this.getId() + "-expandButton", {
 				type: ButtonType.Transparent,
 				icon: IconPool.getIconURI("slim-arrow-down"),
-				tooltip: Core.getLibraryResourceBundle("sap.m").getText("ICONTABHEADER_OVERFLOW_MORE"),
+				tooltip: oResourceBundle.getText("ICONTABHEADER_OVERFLOW_MORE"),
 				tabIndex: "-1",
 				press: this._expandButtonPress.bind(this)
 			}).addStyleClass("sapMITBFilterExpandBtn");
@@ -780,7 +778,7 @@ sap.ui.define([
 
 		this._oPopover.removeAllContent();
 		this._oPopover.addContent(oSelectList)
-			.setInitialFocus(bHasSelectedItem ? oSelectList.getSelectedItem() : oSelectList.getItems()[0])
+			.setInitialFocus(bHasSelectedItem ? oSelectList.getSelectedItem() : oSelectList.getVisibleItems()[0])
 			.openBy(this._getExpandButton());
 	};
 
