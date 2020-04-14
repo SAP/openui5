@@ -123,7 +123,7 @@ sap.ui.define([
 				aMenuItems.push({
 					id: sPluginId,
 					text: this.getCreateContainerText.bind(this, bOverlayIsSibling),
-					handler: this.handler.bind(this, bOverlayIsSibling),
+					handler: this.handleCreate.bind(this, bOverlayIsSibling, aElementOverlays[0]),
 					enabled: this.isEnabled.bind(this, bOverlayIsSibling),
 					icon: "sap-icon://add-folder",
 					rank: iRank
