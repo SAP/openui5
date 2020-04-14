@@ -623,6 +623,7 @@ sap.ui.define([
 			 */
 			function checkSingleRequest(oActualRequest, fnSuccess, fnError, iBatchNo) {
 				var oExpectedRequest,
+					oExpectedResponse,
 					mHeaders,
 					sMethod = oActualRequest.method,
 					oResponse,
@@ -672,17 +673,18 @@ sap.ui.define([
 				delete oActualRequest["updateAggregatedMessages"];
 				delete oActualRequest["user"];
 				if (oExpectedRequest) {
-					if (oExpectedRequest.response === NO_CONTENT) {
+					oExpectedResponse = oExpectedRequest.response;
+					if (oExpectedResponse === NO_CONTENT) {
 						oResponse = {
 							statusCode : 204
 						};
-					} else if (oExpectedRequest.response.statusCode >= 400) {
+					} else if (oExpectedResponse && oExpectedResponse.statusCode >= 400) {
 						oResponse = {
-							response : oExpectedRequest.response
+							response : oExpectedResponse
 						};
 					} else {
 						oResponse = {
-							data : oExpectedRequest.response,
+							data : oExpectedResponse,
 							statusCode : 200
 						};
 
@@ -3505,7 +3507,7 @@ usePreliminaryContext : false}}">\
 </FlexBox>',
 			that = this;
 
-		this.expectHeadRequest()
+		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
 				batchNo : 1,
 				deepPath : "/SalesOrderSet('1')",
