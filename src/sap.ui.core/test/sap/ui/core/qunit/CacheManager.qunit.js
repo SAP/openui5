@@ -35,13 +35,11 @@ sap.ui.define([
 	});
 	aSupportedEnv.push({
 		system: Device.system.SYSTEMTYPE.TABLET,
-		os: Device.os.OS.MACINTOSH,
 		browserName: Device.browser.BROWSER.SAFARI,
 		browserVersion: 13
 	});
 	aSupportedEnv.push({
 		system: Device.system.SYSTEMTYPE.PHONE,
-		os: Device.os.OS.MACINTOSH,
 		browserName: Device.browser.BROWSER.SAFARI,
 		browserVersion: 13
 	});
