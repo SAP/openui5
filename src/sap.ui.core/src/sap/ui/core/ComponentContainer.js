@@ -137,9 +137,16 @@ sap.ui.define([
 			autoPrefixId : {type : "boolean", defaultValue: false},
 
 			/**
-			 * The component usage. If the ComponentContainer is used inside a
-			 * Component, this Component can define a usage which will be used for creating
-			 * the Component.
+			 * The name of a component usage as configured in the app descriptor of the component
+			 * owning this <code>ComponentContainer</code>.
+			 *
+			 * The configuration from the named usage will be used to create a component instance for this
+			 * <code>ComponentContainer</code>. If there's no owning component or if its app descriptor
+			 * does not contain a usage with the given name, an error will be logged.
+			 *
+			 * See {@link topic:346599f0890d4dfaaa11c6b4ffa96312 Using and Nesting Components} for more
+			 * information about component usages.
+			 *
 			 * This property can only be applied initially.
 			 */
 			usage : {type : "string", defaultValue : null},

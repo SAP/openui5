@@ -88,6 +88,30 @@ sap.ui.define([
 	 * This allows the definition of popup controls in declarative views and enables propagation of model
 	 * and context information to them.
 	 *
+	 *
+	 * <h3>Handling of Incoming Events</h3>
+	 *
+	 * The UI5 framework already registers generic listeners for common browser events, such as <code>click</code>
+	 * or <code>keydown</code>. When called, the generic listener first determines the corresponding target element
+	 * using {@link module:sap/ui/dom/query/control jQuery#control}. Then it checks whether the element has an
+	 * event handler method for the event. An event handler method by convention has the same name as the event,
+	 * but prefixed with "on": Method <code>onclick</code> is the handler for the <code>click</code> event, method
+	 * <code>onkeydown</code> the handler for the <code>keydown</code> event and so on. If there is such a method,
+	 * it will be called with the original event as the only parameter. If the element has a list of delegates
+	 * registered, their handler functions will be called the same way, where present. The set of implemented handlers
+	 * might differ between element and delegates. Not each handler implemented by an element has to be implemented
+	 * by its delegates, and delegates can implement handlers that the corresponding element doesn't implement.
+	 *
+	 * A list of browser events that are handled that way can be found in {@link module:sap/ui/events/ControlEvents}.
+	 * Additionally, the framework dispatches pseudo events ({@link module:sap/ui/events/PseudoEvents}) using the same
+	 * naming convention. Last but not least, some framework events are also dispatched that way, e.g.
+	 * <code>BeforeRendering</code>, <code>AfterRendering</code> and <code>ThemeChanged</code>.
+	 *
+	 * If further browser events are needed, controls can register listeners on the DOM using native APIs in their
+	 * <code>onAfterRendering</code> handler. If events might fire often (e.g. <code>mousemove</code>), it is best
+	 * practice to register them only while needed, and deregister afterwards. Any listeners must be cleaned up in
+	 * the <code>onBeforeRendering</code> and before destruction in the <code>exit</code> hook.
+	 *
 	 * @param {string} [sId] id for the new control; generated automatically if no non-empty id is given
 	 *      Note: this can be omitted, no matter whether <code>mSettings</code> will be given or not!
 	 * @param {object} [mSettings] optional map/JSON-object with initial property values, aggregated objects etc. for the new element
@@ -113,7 +137,28 @@ sap.ui.define([
 				/**
 				 * The tooltip that should be shown for this Element.
 				 *
-				 * Can either be an instance of a TooltipBase subclass or a simple string.
+				 * In the most simple case, a tooltip is a string that will be rendered by the control and
+				 * displayed by the browser when the mouse pointer hovers over the control's DOM. In this
+				 * variant, <code>tooltip</code> behaves like a simple control property.
+				 *
+				 * Controls need to explicitly support this kind of tooltip as they have to render it,
+				 * but most controls do. Exceptions will be documented for the corresponding controls
+				 * (e.g. <code>sap.ui.core.HTML</code> does not support tooltips).
+				 *
+				 * Alternatively, <code>tooltip</code> can act like a 0..1 aggregation and can be set to a
+				 * tooltip control (an instance of a subclass of <code>sap.ui.core.TooltipBase</code>). In
+				 * that case, the framework will take care of rendering the tooltip control in a popup-like
+				 * manner. Such a tooltip control can display arbitrary content, not only a string.
+				 *
+				 * UI5 currently does not provide a recommended implementation of <code>TooltipBase</code>
+				 * as the use of content-rich tooltips is discouraged by the Fiori Design Guidelines.
+				 * Existing subclasses of <code>TooltipBase</code> therefore have been deprecated.
+				 * However, apps can still subclass from <code>TooltipBase</code> and create their own
+				 * implementation when needed (potentially taking the deprecated implementations as a
+				 * starting point).
+				 *
+				 * See the section {@link fiori:https://experience.sap.com/fiori-design-web/using-tooltips Using Tooltips}
+				 * in the Fiori Design Guideline.
 				 */
 				tooltip : {name : "tooltip", type : "sap.ui.core.TooltipBase", altTypes : ["string"], multiple : false},
 
@@ -642,25 +687,37 @@ sap.ui.define([
 
 
 	/**
-	 * Adds a delegate that listens to the events that are fired on this element (as opposed to events which are fired BY this element).
+	 * Adds a delegate that can listen to the browser-, pseudo- and framework events that are handled by this
+	 * <code>Element</code> (as opposed to events which are fired by this <code>Element</code>).
 	 *
-	 * When this element is cloned, the same delegate will be added to all clones. This behavior is well-suited for applications which want to add delegates
-	 * that also work with templates in aggregation bindings.
-	 * For control development the internal "addDelegate" method which does not clone delegates by default may be more suitable, as typically each control instance takes care of its own delegates.
+	 * Delegates are simple objects that can have an arbitrary number of event handler methods. See the section
+	 * "Handling of Events" in the {@link #constructor} documentation to learn how events will be dispatched
+	 * and how event handler methods have to be named to be found.
 	 *
-	 * To avoid double registrations, all registrations of the given delegate are first
-	 * removed and then the delegate is added.
+	 * If multiple delegates are registered for the same element, they will be called in the order of their
+	 * registration. Double registrations are prevented. Before a delegate is added, all registrations of the same
+	 * delegate (no matter what value for <code>oThis</code> was used for their registration) are removed and only
+	 * then the delegate is added. Note that this might change the position of the delegate in the list of delegates.
 	 *
-	 * <strong>Important:</strong> If event delegates were added the delegate will still be called even if
+	 * When an element is cloned, all its event delegates will be added to the clone. This behavior is well-suited
+	 * for applications which want to add delegates that also work with templates in aggregation bindings.
+	 * For control development, the internal <code>addDelegate</code> method may be more suitable. Delegates added
+	 * via that method are not cloned automatically, as typically each control instance takes care of adding its
+	 * own delegates.
+	 *
+	 * <strong>Important:</strong> If event delegates were added, the delegate will still be called even if
 	 * the event was processed and/or cancelled via <code>preventDefault</code> by the Element or another event delegate.
 	 * <code>preventDefault</code> only prevents the event from bubbling.
 	 * It should be checked e.g. in the event delegate's listener whether an Element is still enabled via <code>getEnabled</code>.
 	 * Additionally there might be other things that delegates need to check depending on the event
 	 * (e.g. not adding a key twice to an output string etc.).
 	 *
-	 * @param {object} oDelegate the delegate object
-	 * @param {object} [oThis] if given, this object will be the "this" context in the listener methods; default is the delegate object itself
-	 * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
+	 * See {@link topic:bdf3e9818cd84d37a18ee5680e97e1c1 Event Handler Methods} for a general explanation of
+	 * event handling in controls.
+	 *
+	 * @param {object} oDelegate The delegate object
+	 * @param {object} [oThis] If given, this object will be the "this" context in the listener methods; default is the delegate object itself
+	 * @returns {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
 	 * @since 1.9.0
 	 * @public
 	 */
@@ -1277,7 +1334,9 @@ sap.ui.define([
 	/**
 	 * Allows the parent of a control to enhance the aria information during rendering.
 	 *
-	 * This function is called by the RenderManager's writeAccessibilityState method
+	 * This function is called by the RenderManager's
+	 * {@link sap.ui.core.RenderManager#accessibilityState accessibilityState} and
+	 * {@link sap.ui.core.RenderManager#writeAccessibilityState writeAccessibilityState} methods
 	 * for the parent of the currently rendered control - if the parent implements it.
 	 *
 	 * @function
