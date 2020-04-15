@@ -12,7 +12,7 @@ function (
 	"use strict";
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
-	var iTimeoutLength = 500;
+	var iTimeoutLength = 750;
 
 	var ValueState = {
 		None: "None",

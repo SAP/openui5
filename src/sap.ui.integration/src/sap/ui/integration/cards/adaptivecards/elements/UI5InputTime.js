@@ -2,10 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/integration/thirdparty/adaptivecards"
+	"sap/ui/integration/thirdparty/adaptivecards",
+	"sap/ui/core/format/DateFormat"
 ],
 	function (
-		AdaptiveCards
+		AdaptiveCards,
+		DateFormat
 	) {
 		"use strict";
 
@@ -19,6 +21,8 @@ sap.ui.define([
 			Error: "Error"
 		};
 
+		var sTimePattern = "HH:mm";
+
 		UI5InputTime.prototype = Object.create(AdaptiveCards.TimeInput.prototype);
 
 		UI5InputTime.prototype.internalRender = function () {
@@ -26,13 +30,11 @@ sap.ui.define([
 			this._timeInputElement = document.createElement(sWCElement);
 			this._timeInputElement.id = this.id;
 			this._timeInputElement.value = this.defaultValue || "";
-			this._timeInputElement.formatPattern = "HH:mm";
+			this._timeInputElement.formatPattern = sTimePattern;
 
-			// We should await the component to be ready before using his methods
-			window.customElements.whenDefined(sWCElement).then(function () {
-				this._handleMinMaxProps();
-				this._validateInput(this.value);
-			}.bind(this));
+			// Initial check
+			this._handleMinMaxProps();
+			this._validateInput(this.value);
 
 			this._timeInputElement.addEventListener("change", function (oEvent) {
 				this._validateInput(oEvent.target.value);
@@ -88,7 +90,7 @@ sap.ui.define([
 				return;
 			}
 
-			this._timeInputElement.isValid(sValue) ? this._validateInputRange(sValue) : this._setValueState(ValueState.Error);
+			this._isValidTime(sValue) ? this._validateInputRange(sValue) : this._setValueState(ValueState.Error);
 		};
 
 		/**
@@ -96,8 +98,8 @@ sap.ui.define([
 		 * @private
 		 */
 		UI5InputTime.prototype._handleMinMaxProps = function () {
-			this._isMinValid = this._min && this._timeInputElement.isValid(this._min);
-			this._isMaxValid = this._max && this._timeInputElement.isValid(this._max);
+			this._isMinValid = this._min && this._isValidTime(this._min);
+			this._isMaxValid = this._max && this._isValidTime(this._max);
 
 			if (this._isMinValid) {
 				this._aMinValue = this._min.split(":");
@@ -140,6 +142,17 @@ sap.ui.define([
 			// The web components doesn't support it yet
 			// There is feature request, so it should be available soon
 			this._timeInputElement.valueStateMessage = sMessage;
+		};
+
+		/**
+		 * Checks if the given time value is valid
+		 * @param {string} sValue Value to mecheckssage
+		 * @private
+		 */
+		UI5InputTime.prototype._isValidTime = function (sValue) {
+			var oTimeInstance = DateFormat.getTimeInstance({pattern: sTimePattern});
+
+			return sValue && oTimeInstance.parse(sValue);
 		};
 
 		return UI5InputTime;
