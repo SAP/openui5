@@ -236,10 +236,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the accessibleRole property of the control.
-	 * @param {sap.m.PanelAccessibleRole} sRole Defines the aria role of the control.
-	 * @returns {sap.m.Panel} Pointer to the control instance to allow method chaining.
-	 * @public
+	 * Called before the control is rendered.
+	 *
+	 * @private
 	 */
 	Panel.prototype.onBeforeRendering = function () {
 		if (this.getExpandable() && !this._oExpandButton) {
