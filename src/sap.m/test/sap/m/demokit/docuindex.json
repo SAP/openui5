@@ -1691,7 +1691,7 @@
 		{
 		  "id": "sap.m.sample.ActionSheet",
 		  "name": "Action Sheet",
-		  "description": "Action Sheet provides an easier way of showing a list of actions and allowing the user to select one. Title and cancel buttons can be shown or hidden. Without an icon the entry will still be aligned (see the last action in the list)."
+		  "description": "Action Sheet provides an easier way of showing a list of actions and allowing the user to select one. Title and Cancel button can be shown or hidden. Without an icon the entry will be left-aligned (see the last action in the list)."
 		},
 		{
 		  "id": "sap.m.sample.Button",
