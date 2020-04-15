@@ -37,10 +37,10 @@ sap.ui.define([
 		 * <code>sap.ui.core.MessageType</code>.
 		 */
 		mSeverityMap = {
-			"error" : MessageType.Error,
-			"warning" : MessageType.Warning,
-			"success" : MessageType.Success,
-			"info" : MessageType.Information
+			error : MessageType.Error,
+			warning : MessageType.Warning,
+			success : MessageType.Success,
+			info : MessageType.Information
 		};
 
 	/**
@@ -78,11 +78,11 @@ sap.ui.define([
 		return {
 			statusCode : iStatusCode,
 			body : JSON.stringify({
-				"error" : {
-					"message" : {
-						"value" : sMessage
+				error : {
+					message : {
+						value : sMessage
 					},
-					"code" : sMessageCode
+					code : sMessageCode
 				}
 			})
 		};
@@ -1171,7 +1171,7 @@ sap.ui.define([
 	<Text id="id" text="{SalesOrderID}" />\
 </FlexBox>',
 		{"SalesOrderSet('1')" : {SalesOrderID : "1"}},
-		[{"id" : null}, {"id" : "1"}]
+		[{id : null}, {id : "1"}]
 	);
 
 	//*********************************************************************************************
@@ -1836,14 +1836,14 @@ usePreliminaryContext : false}}">\
 			that = this;
 
 		this.expectRequest(sWCGroupRequest, {
-				"__metadata" : {"uri" : "/" + sWCGroupRequest},
+				__metadata : {uri : "/" + sWCGroupRequest},
 				HierarchyRootNode : "10000425",
 				HierarchyParentNode : "00000000",
 				HierarchyNode : "10000425",
 				HierarchyNodeType : "G"
 			})
 			.expectRequest(sWCGroupRequest + "/to_AdminData", {
-				"__metadata" : {"uri" : "/" + sAdminDataRequest},
+				__metadata : {uri : "/" + sAdminDataRequest},
 				ObjectTypeCode : "G",
 				ObjectInternalID : "10000425"
 			})
@@ -1854,7 +1854,7 @@ usePreliminaryContext : false}}">\
 				method : "GET",
 				requestUri : sAdminDataRequest + "/to_CreatedByUserContactCard?$select=FullName"
 			}, {
-				"__metadata" : {"uri" : "/I_UserContactCard('Smith')"},
+				__metadata : {uri : "/I_UserContactCard('Smith')"},
 				FullName : "Smith"
 			})
 			.expectRequest({
@@ -1864,7 +1864,7 @@ usePreliminaryContext : false}}">\
 				method : "GET",
 				requestUri : sAdminDataRequest + "/to_LastChangedByUserContactCard?$select=FullName"
 			}, {
-				"__metadata" : {"uri" : "/I_UserContactCard('Smith')"},
+				__metadata : {uri : "/I_UserContactCard('Smith')"},
 				FullName : "Smith"
 			})
 			.expectChange("id", null)
@@ -1876,14 +1876,14 @@ usePreliminaryContext : false}}">\
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest(sWCGroupRequest, {
-					"__metadata" : {"uri" : "/" + sWCGroupRequest},
+					__metadata : {uri : "/" + sWCGroupRequest},
 					HierarchyRootNode : "10000425",
 					HierarchyParentNode : "00000000",
 					HierarchyNode : "10000425",
 					HierarchyNodeType : "G"
 				})
 				.expectRequest(sWCGroupRequest + "/to_AdminData", {
-					"__metadata" : {"uri" : "/" + sAdminDataRequest},
+					__metadata : {uri : "/" + sAdminDataRequest},
 					ObjectTypeCode : "G",
 					ObjectInternalID : "10000425"
 				})
@@ -1894,7 +1894,7 @@ usePreliminaryContext : false}}">\
 					method : "GET",
 					requestUri : sAdminDataRequest + "/to_CreatedByUserContactCard?$select=FullName"
 				}, {
-					"__metadata" : {"uri" : "/I_UserContactCard('Smith')"},
+					__metadata : {uri : "/I_UserContactCard('Smith')"},
 					FullName : "Smith"
 				})
 				.expectRequest({
@@ -1905,7 +1905,7 @@ usePreliminaryContext : false}}">\
 					requestUri : sAdminDataRequest
 						+ "/to_LastChangedByUserContactCard?$select=FullName"
 				}, {
-					"__metadata" : {"uri" : "/I_UserContactCard('Muller')"},
+					__metadata : {uri : "/I_UserContactCard('Muller')"},
 					FullName : "Muller"
 				})
 				.expectChange("id", null)
@@ -1949,7 +1949,7 @@ usePreliminaryContext : false}}">\
 			that = this;
 
 		this.expectRequest("SalesOrderSet('1')", {
-				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				__metadata : {uri : "SalesOrderSet('1')"},
 				GrossAmount : "0.00",
 				SalesOrderID : "1"
 			}, {"sap-message" : getMessageHeader(oSalesOrderGrossAmountError)})
@@ -1959,8 +1959,8 @@ usePreliminaryContext : false}}">\
 			.expectChange("grossAmount", "0.00")
 			.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=100", {
 				results : [{
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
 					},
 					CurrencyCode : "EUR",
 					GrossAmount : "0.00",
@@ -1979,23 +1979,21 @@ usePreliminaryContext : false}}">\
 					= that.createResponseMessage("ToHeader/GrossAmount");
 
 			that.expectRequest({
-					"deepPath" : "/SalesOrderSet('1')"
+					deepPath : "/SalesOrderSet('1')"
 						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')",
-					"headers" : {},
-					"method" : "GET",
-					"requestUri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					headers : {},
+					method : "GET",
+					requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
 						+ "?$expand=ToHeader"
 				}, {
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
 					},
 					SalesOrderID : "1",
 					ItemPosition : "10~0~",
 					GrossAmount : "1000.00",
 					ToHeader : {
-						"__metadata" : {
-							"uri" : "SalesOrderSet('1')"
-						},
+						__metadata : {uri : "SalesOrderSet('1')"},
 						SalesOrderID : "1",
 						GrossAmount : "1000.00"
 					}
@@ -2014,7 +2012,7 @@ usePreliminaryContext : false}}">\
 			// code under test
 			oModel.read("", {
 				context : oContext,
-				urlParameters : {"$expand" : "ToHeader"}
+				urlParameters : {$expand : "ToHeader"}
 			});
 
 			return that.waitForChanges(assert);
@@ -2069,7 +2067,7 @@ usePreliminaryContext : false}}">\
 		return this.createView(assert, sView, oModel).then(function () {
 			// avoid MERGE on property change
 			oModel.setChangeGroups(
-				{"SalesOrderLineItem" : {groupId : "never"}},
+				{SalesOrderLineItem : {groupId : "never"}},
 				{"*" : {groupId : "change"}}
 			);
 			oModel.setDeferredGroups(["change", "never"]);
@@ -2156,14 +2154,14 @@ usePreliminaryContext : false}}">\
 			assert.strictEqual(oNoteInput.getValue(), "Bar");
 
 			that.expectMessages([{
-					"code" : undefined,
-					"descriptionUrl" : undefined,
-					"fullTarget" : "",
-					"message" : "Enter a text with a maximum of 3 characters and spaces",
-					"persistent" : false,
-					"target" : oNoteInput.getId() + "/value",
-					"technical" : false,
-					"type" : "Error"
+					code : undefined,
+					descriptionUrl : undefined,
+					fullTarget : "",
+					message : "Enter a text with a maximum of 3 characters and spaces",
+					persistent : false,
+					target : oNoteInput.getId() + "/value",
+					technical : false,
+					type : "Error"
 				}]);
 
 			// code under test - produce a validation error
@@ -2193,7 +2191,7 @@ usePreliminaryContext : false}}">\
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("SalesOrderSet('2')", {
-					"__metadata" : {"uri" : "SalesOrderSet('2')"},
+					__metadata : {uri : "SalesOrderSet('2')"},
 					// model value is not changed -> no change event is triggered for that property
 					Note : "Bar",
 					SalesOrderID : "2"
@@ -2259,7 +2257,7 @@ usePreliminaryContext : false}}">\
 				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
-				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				__metadata : {uri : "SalesOrderSet('1')"},
 				Note : "Foo",
 				SalesOrderID : "1"
 			}, {
@@ -2281,8 +2279,8 @@ usePreliminaryContext : false}}">\
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
 			}, {
 				results : [{
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
 					},
 					Note : "Bar",
 					ItemPosition : "10~0~",
@@ -2354,7 +2352,7 @@ usePreliminaryContext : false}}">\
 				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
-				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				__metadata : {uri : "SalesOrderSet('1')"},
 				Note : "Foo",
 				SalesOrderID : "1"
 			}, {
@@ -2376,15 +2374,15 @@ usePreliminaryContext : false}}">\
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 			}, {
 				results : [{
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
 					},
 					Note : "Bar",
 					ItemPosition : "10~0~",
 					SalesOrderID : "1"
 				}, {
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
 					},
 					Note : "Baz",
 					ItemPosition : "20~1~",
@@ -2416,15 +2414,15 @@ usePreliminaryContext : false}}">\
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=2&$top=2"
 			}, {
 				results : [{
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~2~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~2~')"
 					},
 					Note : "Qux",
 					ItemPosition : "30~2~",
 					SalesOrderID : "1"
 				}, {
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='40~3~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='40~3~')"
 					},
 					Note : "Quux",
 					ItemPosition : "40~3~",
@@ -2498,7 +2496,7 @@ usePreliminaryContext : false}}">\
 				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
-				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				__metadata : {uri : "SalesOrderSet('1')"},
 				Note : "Foo",
 				SalesOrderID : "1"
 			}, {
@@ -2521,15 +2519,15 @@ usePreliminaryContext : false}}">\
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 			}, {
 				results : [{
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
 					},
 					GrossAmount : "111.0",
 					ItemPosition : "10~0~",
 					SalesOrderID : "1"
 				}, {
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
 					},
 					GrossAmount : "42.0",
 					ItemPosition : "20~1~",
@@ -2563,15 +2561,15 @@ usePreliminaryContext : false}}">\
 						+ "&$filter=GrossAmount gt 100.0m"
 				}, {
 					results : [{
-						"__metadata" : {
-							"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
 						},
 						GrossAmount : "111.0",
 						ItemPosition : "10~0~",
 						SalesOrderID : "1"
 					}, {
-						"__metadata" : {
-							"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~1~')"
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~1~')"
 						},
 						GrossAmount : "222.0",
 						ItemPosition : "30~1~",
@@ -2658,7 +2656,7 @@ usePreliminaryContext : false}}">\
 				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
-				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				__metadata : {uri : "SalesOrderSet('1')"},
 				Note : "Foo",
 				SalesOrderID : "1"
 			}, {
@@ -2682,8 +2680,8 @@ usePreliminaryContext : false}}">\
 					+ "$filter=GrossAmount gt 100.0m"
 			}, {
 				results : [{
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
 					},
 					GrossAmount : "111.0",
 					ItemPosition : "10~0~",
@@ -2702,8 +2700,8 @@ usePreliminaryContext : false}}">\
 					+ "$filter=GrossAmount le 100.0m"
 			}, {
 				results : [{
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~0~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~0~')"
 					},
 					GrossAmount : "42.0",
 					ItemPosition : "20~0~",
@@ -2747,8 +2745,8 @@ usePreliminaryContext : false}}">\
 						+ "$filter=GrossAmount gt 100.0m"
 				}, {
 					results : [{
-						"__metadata" : {
-							"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~0~')"
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~0~')"
 						},
 						GrossAmount : "123.0",
 						ItemPosition : "30~0~",
@@ -2770,7 +2768,7 @@ usePreliminaryContext : false}}">\
 					method : "GET",
 					requestUri : "SalesOrderSet('1')?$select=SalesOrderID"
 				}, {
-					"__metadata" : {"uri" : "SalesOrderSet('1')"},
+					__metadata : {uri : "SalesOrderSet('1')"},
 					SalesOrderID : "1"
 				}, {
 					"sap-message" : getMessageHeader(bWithMessageScope
@@ -2858,7 +2856,7 @@ usePreliminaryContext : false}}">\
 				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
-				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				__metadata : {uri : "SalesOrderSet('1')"},
 				Note : "Foo",
 				SalesOrderID : "1"
 			}, {
@@ -2880,15 +2878,15 @@ usePreliminaryContext : false}}">\
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 			}, {
 				results : [{
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
 					},
 					Note : "Bar",
 					ItemPosition : "10~0~",
 					SalesOrderID : "1"
 				}, {
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
 					},
 					Note : "Baz",
 					ItemPosition : "20~1~",
@@ -2920,15 +2918,15 @@ usePreliminaryContext : false}}">\
 						+ "&$orderby=GrossAmount asc"
 				}, {
 					results : [{
-						"__metadata" : {
-							"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~0~')"
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~0~')"
 						},
 						Note : "Qux",
 						ItemPosition : "30~0~",
 						SalesOrderID : "1"
 					}, {
-						"__metadata" : {
-							"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='40~1~')"
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='40~1~')"
 						},
 						Note : "Quux",
 						ItemPosition : "40~1~",
@@ -3005,7 +3003,7 @@ usePreliminaryContext : false}}">\
 				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
-				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				__metadata : {uri : "SalesOrderSet('1')"},
 				Note : "Foo",
 				SalesOrderID : "1"
 			}, {
@@ -3028,15 +3026,15 @@ usePreliminaryContext : false}}">\
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 			}, {
 				results : [{
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
 					},
 					Note : "Bar",
 					ItemPosition : "10~0~",
 					SalesOrderID : "1"
 				}, {
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
 					},
 					Note : "Baz",
 					ItemPosition : "20~1~",
@@ -3069,8 +3067,8 @@ usePreliminaryContext : false}}">\
 				.expectRequest({
 					data : {
 						Note : "Qux",
-						"__metadata" : {
-							"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
 						}
 					},
 					deepPath :
@@ -3109,7 +3107,7 @@ usePreliminaryContext : false}}">\
 				.expectRequest({
 					data : {
 						Note : "Quxx",
-						"__metadata" : {"uri" : "SalesOrderSet('1')"}
+						__metadata : {uri : "SalesOrderSet('1')"}
 					},
 					deepPath :
 						"/SalesOrderSet('1')",
@@ -3190,7 +3188,7 @@ usePreliminaryContext : false}}">\
 				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
-				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				__metadata : {uri : "SalesOrderSet('1')"},
 				Note : "Foo",
 				SalesOrderID : "1"
 			}, {
@@ -3213,15 +3211,15 @@ usePreliminaryContext : false}}">\
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 			}, {
 				results : [{
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
 					},
 					Note : "Bar",
 					ItemPosition : "10~0~",
 					SalesOrderID : "1"
 				}, {
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
 					},
 					Note : "Baz",
 					ItemPosition : "20~1~",
@@ -3317,15 +3315,11 @@ usePreliminaryContext : false}}">\
 				requestUri : "SalesOrderSet?$skip=0&$top=2"
 			}, {
 				results : [{
-					"__metadata" : {
-						"uri" : "SalesOrderSet('1~0~')"
-					},
+					__metadata : {uri : "SalesOrderSet('1~0~')"},
 					Note : "Foo",
 					SalesOrderID : "1~0~"
 				}, {
-					"__metadata" : {
-						"uri" : "SalesOrderSet('2~1~')"
-					},
+					__metadata : {uri : "SalesOrderSet('2~1~')"},
 					Note : "Bar",
 					SalesOrderID : "2~1~"
 				}]
@@ -3356,17 +3350,15 @@ usePreliminaryContext : false}}">\
 						+ (bFilter ? "&$filter=GrossAmount gt 100.0m" : "")
 				}, {
 					results : [{
-						"__metadata" : {
-							"uri" : "SalesOrderSet('1~0~')"
-						},
+						__metadata : {uri : "SalesOrderSet('1~0~')"},
 						Note : "Foo",
 						SalesOrderID : "1~0~"
 					},
 					// "SalesOrderSet('2~1~')" has been filtered out, or in case of a refresh the
 					// entity has been removed in meantime
 					{
-						"__metadata" : {
-							"uri" : "SalesOrderSet('3~1~')"
+						__metadata : {
+							uri : "SalesOrderSet('3~1~')"
 						},
 						Note : "Baz",
 						SalesOrderID : "3~1~"
@@ -3513,7 +3505,7 @@ usePreliminaryContext : false}}">\
 				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
-				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				__metadata : {uri : "SalesOrderSet('1')"},
 				Note : "Foo",
 				SalesOrderID : "1"
 			}, {
@@ -3538,15 +3530,15 @@ usePreliminaryContext : false}}">\
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 			}, {
 				results : [{
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
 					},
 					Note : "Bar",
 					ItemPosition : "10~0~",
 					SalesOrderID : "1"
 				}, {
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20~1~')"
 					},
 					Note : "Baz",
 					ItemPosition : "20~1~",
@@ -3587,15 +3579,15 @@ usePreliminaryContext : false}}">\
 						+ " or (SalesOrderID eq '1' and ItemPosition eq '30~1~')"
 				}, {
 					results : [{
-						"__metadata" : {
-							"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
 						},
 						Note : "Bar",
 						ItemPosition : "10~0~",
 						SalesOrderID : "1"
 					}, {
-						"__metadata" : {
-							"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~1~')"
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30~1~')"
 						},
 						Note : "Qux",
 						ItemPosition : "30~1~",
@@ -3654,7 +3646,7 @@ usePreliminaryContext : false}}">\
 				method : "GET",
 				requestUri : "CarrierCollection('1')"
 			}, {
-				"__metadata" : {"uri" : "CarrierCollection('1')"},
+				__metadata : {uri : "CarrierCollection('1')"},
 				carrid : "1"
 			}, {
 				"sap-message" : getMessageHeader([
@@ -3672,16 +3664,16 @@ usePreliminaryContext : false}}">\
 				requestUri : "CarrierCollection('1')/carrierFlights"
 			}, {
 				results : [{
-					"__metadata" : {
-						"uri" : "FlightCollection(carrid='1',connid='10~0~',"
+					__metadata : {
+						uri : "FlightCollection(carrid='1',connid='10~0~',"
 							+ "fldate=datetime'2015-05-30T13:47:26.253')"
 					},
 					carrid : "1",
 					connid : "10~0~",
 					fldate : new Date(1432993646253)
 				}, {
-					"__metadata" : {
-						"uri" : "FlightCollection(carrid='1',connid='20~0~',"
+					__metadata : {
+						uri : "FlightCollection(carrid='1',connid='20~0~',"
 							+ "fldate=datetime'2015-06-30T13:47:26.253')"
 					},
 					carrid : "1",
@@ -3749,7 +3741,7 @@ usePreliminaryContext : false}}">\
 				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
-				"__metadata" : {"uri" : "SalesOrderSet('1')"},
+				__metadata : {uri : "SalesOrderSet('1')"},
 				Note : "Foo",
 				SalesOrderID : "1"
 			}, {
@@ -3763,8 +3755,8 @@ usePreliminaryContext : false}}">\
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=20"
 			}, {
 				results : [{
-					"__metadata" : {
-						"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
 					},
 					Note : "Bar",
 					ItemPosition : "10~0~",
@@ -3799,8 +3791,8 @@ usePreliminaryContext : false}}">\
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=20"
 				}, {
 					results : [{
-						"__metadata" : {
-							"uri" : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
 						},
 						Note : "Bar",
 						ItemPosition : "10~0~",
