@@ -824,6 +824,12 @@ sap.ui.define([
 
 		//Assert
 		assert.ok(oSpyButtonSetProperty.calledWith("enabled", false), "SplitButton's setProperty called for enabled property");
+
+		//Act
+		this.sut.setProperty("visible", false);
+
+		//Assert
+		assert.ok(oSpyButtonSetProperty.calledWith("visible", false), "SplitButton's setProperty called for visible property");
 	});
 
 	QUnit.test("_getFocusDomRef", function(assert) {
