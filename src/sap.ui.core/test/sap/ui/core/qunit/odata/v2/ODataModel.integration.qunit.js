@@ -2024,11 +2024,12 @@ usePreliminaryContext : false}}">\
 	});
 
 	//*********************************************************************************************
-	// Scenario: The ODataModel#create API is called with an object retrieved via
+	// Scenario: The ODataModel#create API is called with an object (partially) retrieved via
 	// ODataModel#getObject which may contain properties inside a __metadata property which are not
 	// specified by OData so that a request would fail on the server. The request payload is
 	// cleaned up before the request is sent.
 	// BCP: 002075129400000695502020
+	// BCP: 002075129500001965532020
 	QUnit.test("create payload only contains cleaned up __metadata", function (assert) {
 		var oModel = createSalesOrdersModel({tokenHandling : false}),
 			sView = '\
@@ -2089,17 +2090,14 @@ usePreliminaryContext : false}}">\
 			that.expectRequest({
 				created : true,
 				data : {
-					SalesOrderID : "1",
+					SalesOrderID : "2",
 					ToLineItems : [{
 						Note : "ItemNote Changed",
 						__metadata : {
 							uri: "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
+							// Note: Payload must not contain deepPath
 						}
-					}],
-					__metadata : {
-						uri: "SalesOrderSet('1')"
-						// Note: Payload must not contain deepPath
-					}
+					}]
 				},
 				deepPath : "/SalesOrderSet",
 				entityTypes : {
@@ -2112,7 +2110,7 @@ usePreliminaryContext : false}}">\
 			// code under test
 			oData = oModel.getObject("/SalesOrderSet('1')", null,
 				{select : "SalesOrderID,ToLineItems/Note", expand : "ToLineItems"});
-			oModel.create("/SalesOrderSet", oData);
+			oModel.create("/SalesOrderSet", {SalesOrderID : "2", ToLineItems : oData.ToLineItems});
 			oModel.submitChanges({groupId : "change"});
 
 			return that.waitForChanges(assert);

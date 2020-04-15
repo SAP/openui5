@@ -6891,7 +6891,7 @@ sap.ui.define([
 	 * Removes model internal metadata information from the given entity. This information is not
 	 * known and sometimes not accepted by the back-end.
 	 *
-	 * @param {object} The entity data
+	 * @param {object} [oEntityData] The entity data
 	 * @returns {map} Map containing the removed information for the "root" entity; the internal
 	 *   information is however also removed from entities contained in navigation properties
 	 * @private
@@ -6904,13 +6904,13 @@ sap.ui.define([
 			sDeepPath = oEntityData.__metadata.deepPath;
 			delete oEntityData.__metadata.created;
 			delete oEntityData.__metadata.deepPath;
-			for (sKey in oEntityData) {
-				vValue = oEntityData[sKey];
-				if (Array.isArray(vValue)) { // ..n navigation property value
-					vValue.forEach(ODataModel.prototype.removeInternalMetadata);
-				} else if (typeof vValue === "object") { // ..1 navigation property
-					ODataModel.prototype.removeInternalMetadata(vValue);
-				}
+		}
+		for (sKey in oEntityData) {
+			vValue = oEntityData[sKey];
+			if (Array.isArray(vValue)) { // ..n navigation property value
+				vValue.forEach(ODataModel.prototype.removeInternalMetadata);
+			} else if (typeof vValue === "object") { // ..1 navigation property
+				ODataModel.prototype.removeInternalMetadata(vValue);
 			}
 		}
 		return {created: sCreated, deepPath: sDeepPath};

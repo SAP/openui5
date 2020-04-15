@@ -723,6 +723,70 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("removeInternalMetadata, recursively", function (assert) {
+		var oEntityData = {
+				p : "p",
+				n1 : { // 0..1 navigation property
+					p1 : "p1",
+					__metadata : {
+						uri : "uri1",
+						created : "created1",
+						deepPath : "deepPath1"
+					},
+					x : {
+						p4 : "p4",
+						n3 : [{ // 0..n navigation property
+							p3 : "p3",
+							__metadata : {
+								uri : "uri3",
+								created : "created3",
+								deepPath : "deepPath3"
+							}
+						}]
+					}
+				},
+				n2 : [{ // 0..n navigation property
+					p2 : "p2",
+					__metadata : {
+						uri : "uri2",
+						created : "created2",
+						deepPath : "deepPath2"
+					}
+				}]
+			},
+			oResult;
+
+		// code under test
+		oResult = ODataModel.prototype.removeInternalMetadata(oEntityData);
+
+		assert.deepEqual(oEntityData, {
+			p : "p",
+			n1 : { // 0..1 navigation property
+				p1 : "p1",
+				__metadata : {
+					uri : "uri1"
+				},
+				x : {
+					p4 : "p4",
+					n3 : [{ // 0..n navigation property
+						p3 : "p3",
+						__metadata : {
+							uri : "uri3"
+						}
+					}]
+				}
+			},
+			n2 : [{ // 0..n navigation property
+				p2 : "p2",
+				__metadata : {
+					uri : "uri2"
+				}
+			}]
+		});
+		assert.deepEqual(oResult, {created : undefined, deepPath : undefined});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("_processRequestQueue: call #removeInternalMetadata, non-$batch", function (assert) {
 		var oModel = {
 				bUseBatch : false,
