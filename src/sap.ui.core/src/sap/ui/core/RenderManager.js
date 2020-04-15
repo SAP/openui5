@@ -1464,12 +1464,25 @@ sap.ui.define([
 	};
 
 	/**
-	 * Writes the accessibility state (see WAI-ARIA specification) of the provided element into the HTML
-	 * based on the element's properties and associations.
+	 * Collects accessibility related attributes for an <code>Element</code> and renders them as part of
+	 * the currently rendered DOM element.
 	 *
-	 * The ARIA properties are only written when the accessibility feature is activated in the UI5 configuration.
+	 * See the WAI-ARIA specification for a general description of the accessibility related attributes.
+	 * Attributes are only rendered when the accessibility feature is activated in the UI5 runtime configuration.
 	 *
-	 * The following properties/values to ARIA attribute mappings are done (if the element does have such properties):
+	 * The values for the attributes are collected from the following sources (last one wins):
+	 * <ol>
+	 * <li>from the properties and associations of the given <code>oElement</code>, using a heuristic mapping
+	 *     (described below)</li>
+	 * <li>from the <code>mProps</code> parameter, as provided by the caller</li>
+	 * <li>from the parent of the given <code>oElement</code>, if it has a parent and if the parent implements
+	 *     the method {@link sap.ui.core.Element#enhanceAccessibilityState enhanceAccessibilityState}</li>
+	 * </ol>
+	 * If no <code>oElement</code> is given, only <code>mProps</code> will be taken into account.
+	 *
+	 *
+	 * <h3>Heuristic Mapping</h3>
+	 * The following mapping from properties/values to ARIA attributes is used (if the element does have such properties):
 	 * <ul>
 	 * <li><code>editable===false</code> => <code>aria-readonly="true"</code></li>
 	 * <li><code>enabled===false</code> => <code>aria-disabled="true"</code></li>
@@ -1479,39 +1492,45 @@ sap.ui.define([
 	 * <li><code>checked===true</code> => <code>aria-checked="true"</code></li>
 	 * </ul>
 	 *
-	 * In case of the required attribute also the Label controls which referencing the given element in their 'for' relation
-	 * are taken into account to compute the <code>aria-required</code> attribute.
+	 * In case of the <code>required</code> property, all label controls which reference the given element
+	 * in their <code>labelFor</code> relation are additionally taken into account when determining the
+	 * value for the <code>aria-required</code> attribute.
 	 *
-	 * Additionally, the association <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code> are used to write
-	 * the ID lists of the ARIA attributes <code>aria-describedby</code> and <code>aria-labelledby</code>.
+	 * Additionally, the associations <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code> are used to
+	 * determine the lists of IDS for the ARIA attributes <code>aria-describedby</code> and
+	 * <code>aria-labelledby</code>.
 	 *
-	 * Label controls that reference the given element in their 'for' relation are automatically added to the
-	 * <code>aria-labelledby</code> attributes.
+	 * Label controls that reference the given element in their <code>labelFor</code> relation are automatically
+	 * added to the <code>aria-labelledby</code> attributes.
 	 *
 	 * Note: This function is only a heuristic of a control property to ARIA attribute mapping. Control developers
 	 * have to check whether it fulfills their requirements. In case of problems (for example the RadioButton has a
 	 * <code>selected</code> property but must provide an <code>aria-checked</code> attribute) the auto-generated
 	 * result of this function can be influenced via the parameter <code>mProps</code> as described below.
 	 *
-	 * The parameter <code>mProps</code> can be used to either provide additional attributes which should be added and/or
-	 * to avoid the automatic generation of single ARIA attributes. The 'aria-' prefix will be prepended automatically to the keys
-	 * (Exception: Attribute 'role' does not get the prefix 'aria-').
+	 * The parameter <code>mProps</code> can be used to either provide additional attributes which should be rendered
+	 * and/or to avoid the automatic generation of single ARIA attributes. The 'aria-' prefix will be prepended
+	 * automatically to the keys (Exception: Attribute <code>role</code> does not get the prefix 'aria-').
 	 *
-	 * Examples:
-	 * <code>{hidden : true}</code> results in <code>aria-hidden="true"</code> independent of the presence or absence of
-	 * the visibility property.
-	 * <code>{hidden : null}</code> ensures that no <code>aria-hidden</code> attribute is written independent of the presence
-	 * or absence of the visibility property.
+	 *
+	 * Examples:<br>
+	 * <code>{hidden : true}</code> results in <code>aria-hidden="true"</code> independent of the presence or
+	 * absence of the visibility property.<br>
+	 * <code>{hidden : null}</code> ensures that no <code>aria-hidden</code> attribute is written independent
+	 * of the presence or absence of the visibility property.<br>
+	 *
 	 * The function behaves in the same way for the associations <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code>.
-	 * To append additional values to the auto-generated <code>aria-describedby</code> and <code>aria-labelledby</code> attributes
-	 * the following format can be used:
-	 * <code>{describedby : {value: "id1 id2", append: true}}</code> => <code>aria-describedby="ida idb id1 id2"</code> (assuming that "ida idb"
-	 * is the auto-generated part based on the association <code>ariaDescribedBy</code>).
+	 * To append additional values to the auto-generated <code>aria-describedby</code> and <code>aria-labelledby</code>
+	 * attributes, the following format can be used:
+	 * <pre>
+	 *   {describedby : {value: "id1 id2", append: true}} =>  aria-describedby = "ida idb id1 id2"
+	 * </pre>
+	 * (assuming that "ida idb" is the auto-generated part based on the association <code>ariaDescribedBy</code>).
 	 *
 	 * @param {sap.ui.core.Element}
-	 *            [oElement] the element whose accessibility state should be rendered
-	 * @param {Object}
-	 *            [mProps] a map of properties that should be added additionally or changed.
+	 *            [oElement] The <code>Element</code> whose accessibility state should be rendered
+	 * @param {object}
+	 *            [mProps] A map of additional properties that should be added or changed.
 	 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
