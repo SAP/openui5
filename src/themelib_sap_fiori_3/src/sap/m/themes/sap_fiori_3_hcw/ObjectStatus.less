@@ -18,11 +18,26 @@
 	}
 }
 
+.sapMObjStatusInverted {
+	& .sapMObjStatusText,
+	& .sapMObjStatusIcon.sapMObjStatusIconOnly,
+	& .sapMObjStatusIcon .sapMObjStatusIconOnly,
+	& .sapMObjStatusLink .sapMObjStatusIcon.sapMObjStatusIconOnly,
+	& .sapMObjStatusLink .sapMObjStatusText {
+		border-radius: @sapUiElementBorderCornerRadius;
+	}
+	& .sapMObjStatusIcon {
+		border-radius: @sapUiElementBorderCornerRadius 0 0 @sapUiElementBorderCornerRadius;
+	}
+	& .sapMObjStatusIcon + .sapMObjStatusText {
+		border-radius: 0 @sapUiElementBorderCornerRadius @sapUiElementBorderCornerRadius 0;
+	}
+}
+
 .sapMObjStatusInverted.sapMObjStatusError .sapMObjStatusText,
 .sapMObjStatusInverted.sapMObjStatusError .sapMObjStatusIcon {
 	background-color: @sapUiBaseBG;
 	border: 0.0625rem solid @sapUiButtonNegativeBorderColor;
-	border-radius: ~"calc(@sapUiContentGridSize * 0.25)";
 }
 
 .sapMObjStatusInverted.sapMObjStatusError .sapMObjStatusLink:hover .sapMObjStatusText,
@@ -40,7 +55,6 @@
 .sapMObjStatusInverted.sapMObjStatusWarning .sapMObjStatusIcon {
 	background-color: @sapUiBaseBG;
 	border: 0.0625rem solid @sapUiButtonCriticalBorderColor;
-	border-radius: ~"calc(@sapUiContentGridSize * 0.25)";
 }
 
 .sapMObjStatusInverted.sapMObjStatusWarning .sapMObjStatusLink:hover .sapMObjStatusText,
@@ -75,7 +89,6 @@
 .sapMObjStatusInverted.sapMObjStatusInformation .sapMObjStatusIcon {
 	background-color: @sapUiInformationBG;
 	border: 0.0625rem solid @sapUiContentForegroundBorderColor;
-	border-radius: ~"calc(@sapUiContentGridSize * 0.25)";
 }
 
 .sapMObjStatusInverted.sapMObjStatusInformation .sapMObjStatusLink:hover .sapMObjStatusText,
@@ -93,7 +106,6 @@
 .sapMObjStatusInverted.sapMObjStatusNone .sapMObjStatusIcon {
 	border: 0.0625rem solid @sapUiButtonNeutralBorderColor;
 	background-color: @sapUiBaseBG;
-	border-radius: ~"calc(@sapUiContentGridSize * 0.25)";
 }
 
 .sapMObjStatusInverted.sapMObjStatusNone .sapMObjStatusLink:hover .sapMObjStatusText,
@@ -104,7 +116,7 @@
 
 .sapMObjStatusInverted.sapMObjStatusNone .sapMObjStatusLink:active .sapMObjStatusText,
 .sapMObjStatusInverted.sapMObjStatusNone .sapMObjStatusLink:active .sapMObjStatusIcon {
-	background-color: @sapUiButtonNeutralActiveBackground;;
+	background-color: @sapUiButtonNeutralActiveBackground;
 }
 
 .sapMObjStatus.sapMObjStatusInverted,
@@ -120,44 +132,6 @@
 	}
 }
 
-.sapMObjStatusInverted.sapMObjStatusIndication01 .sapMObjStatusLink:active .sapMObjStatusText,
-.sapMObjStatusInverted.sapMObjStatusIndication01 .sapMObjStatusLink:active .sapMObjStatusIcon,
-.sapMObjStatusInverted.sapMObjStatusIndication02 .sapMObjStatusLink:active .sapMObjStatusText,
-.sapMObjStatusInverted.sapMObjStatusIndication02 .sapMObjStatusLink:active .sapMObjStatusIcon,
-.sapMObjStatusInverted.sapMObjStatusIndication03 .sapMObjStatusLink:active .sapMObjStatusText,
-.sapMObjStatusInverted.sapMObjStatusIndication03 .sapMObjStatusLink:active .sapMObjStatusIcon,
-.sapMObjStatusInverted.sapMObjStatusIndication04 .sapMObjStatusLink:active .sapMObjStatusText,
-.sapMObjStatusInverted.sapMObjStatusIndication04 .sapMObjStatusLink:active .sapMObjStatusIcon,
-.sapMObjStatusInverted.sapMObjStatusIndication05 .sapMObjStatusLink:active .sapMObjStatusText,
-.sapMObjStatusInverted.sapMObjStatusIndication05 .sapMObjStatusLink:active .sapMObjStatusIcon,
-.sapMObjStatusInverted.sapMObjStatusIndication06 .sapMObjStatusLink:active .sapMObjStatusText,
-.sapMObjStatusInverted.sapMObjStatusIndication06 .sapMObjStatusLink:active .sapMObjStatusIcon,
-.sapMObjStatusInverted.sapMObjStatusIndication07 .sapMObjStatusLink:active .sapMObjStatusText,
-.sapMObjStatusInverted.sapMObjStatusIndication07 .sapMObjStatusLink:active .sapMObjStatusIcon,
-.sapMObjStatusInverted.sapMObjStatusIndication08 .sapMObjStatusLink:active .sapMObjStatusText,
-.sapMObjStatusInverted.sapMObjStatusIndication08 .sapMObjStatusLink:active .sapMObjStatusIcon {
-	background-color: @sapUiButtonActiveBackground;
-}
-
-.sapMObjStatusInverted.sapMObjStatusIndication01 .sapMObjStatusLink:hover .sapMObjStatusText,
-.sapMObjStatusInverted.sapMObjStatusIndication01 .sapMObjStatusLink:hover .sapMObjStatusIcon,
-.sapMObjStatusInverted.sapMObjStatusIndication02 .sapMObjStatusLink:hover .sapMObjStatusText,
-.sapMObjStatusInverted.sapMObjStatusIndication02 .sapMObjStatusLink:hover .sapMObjStatusIcon,
-.sapMObjStatusInverted.sapMObjStatusIndication03 .sapMObjStatusLink:hover .sapMObjStatusText,
-.sapMObjStatusInverted.sapMObjStatusIndication03 .sapMObjStatusLink:hover .sapMObjStatusIcon,
-.sapMObjStatusInverted.sapMObjStatusIndication04 .sapMObjStatusLink:hover .sapMObjStatusText,
-.sapMObjStatusInverted.sapMObjStatusIndication04 .sapMObjStatusLink:hover .sapMObjStatusIcon,
-.sapMObjStatusInverted.sapMObjStatusIndication05 .sapMObjStatusLink:hover .sapMObjStatusText,
-.sapMObjStatusInverted.sapMObjStatusIndication05 .sapMObjStatusLink:hover .sapMObjStatusIcon,
-.sapMObjStatusInverted.sapMObjStatusIndication06 .sapMObjStatusLink:hover .sapMObjStatusText,
-.sapMObjStatusInverted.sapMObjStatusIndication06 .sapMObjStatusLink:hover .sapMObjStatusIcon,
-.sapMObjStatusInverted.sapMObjStatusIndication07 .sapMObjStatusLink:hover .sapMObjStatusText,
-.sapMObjStatusInverted.sapMObjStatusIndication07 .sapMObjStatusLink:hover .sapMObjStatusIcon,
-.sapMObjStatusInverted.sapMObjStatusIndication08 .sapMObjStatusLink:hover .sapMObjStatusText,
-.sapMObjStatusInverted.sapMObjStatusIndication08 .sapMObjStatusLink:hover .sapMObjStatusIcon{
-	background-color: @sapUiButtonHoverBackground;
-}
-
 .sapMObjStatusInverted.sapMObjStatusIndication01 .sapMObjStatusText,
 .sapMObjStatusInverted.sapMObjStatusIndication01 .sapMObjStatusIcon,
 .sapMObjStatusInverted.sapMObjStatusIndication02 .sapMObjStatusText,
@@ -165,7 +139,7 @@
 .sapMObjStatusInverted.sapMObjStatusIndication03 .sapMObjStatusText,
 .sapMObjStatusInverted.sapMObjStatusIndication03 .sapMObjStatusIcon,
 .sapMObjStatusInverted.sapMObjStatusIndication04 .sapMObjStatusText,
-.sapMObjStatusInverted.sapMObjStatusIndication04 .sapMObjStatusIcon, 
+.sapMObjStatusInverted.sapMObjStatusIndication04 .sapMObjStatusIcon,
 .sapMObjStatusInverted.sapMObjStatusIndication05 .sapMObjStatusText,
 .sapMObjStatusInverted.sapMObjStatusIndication05 .sapMObjStatusIcon,
 .sapMObjStatusInverted.sapMObjStatusIndication06 .sapMObjStatusText,
@@ -176,7 +150,6 @@
 .sapMObjStatusInverted.sapMObjStatusIndication08 .sapMObjStatusIcon {
 	background-color: @sapUiBaseBG;
 	border: 0.0625rem solid @sapUiContentForegroundBorderColor;
-	border-radius: ~"calc(@sapUiContentGridSize * 0.25)";
 	color: @sapUiBaseText;
 }
 
