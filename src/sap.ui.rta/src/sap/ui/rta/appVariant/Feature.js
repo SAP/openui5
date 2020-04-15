@@ -299,10 +299,10 @@ sap.ui.define([
 								return fnTriggerPollingTileCreation(oIAMResponse, oAppVariantSaveClosure.id);
 							})
 							.then(function() {
+								fnS4HanaRemoveBrowserCloseWarning();
 								return fnShowCatalogAssignmentSuccessMessage();
 							})
 							.then(function() {
-								fnS4HanaRemoveBrowserCloseWarning();
 								return bSaveAsFromRta ? resolve() : fnTriggerActionFlow.call(this, bSaveAsFromRta, bIsS4HanaCloud, sCurrentLayer);
 							}.bind(this));
 					}
