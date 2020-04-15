@@ -29,18 +29,39 @@
 
 	<script>
 
-		// when documentation-config.js doesn't exist or doesn't define a configuration, probe for api-index.json
-		if ( window['sap-ui-documentation-config'] == null ) {
-			window['sap-ui-documentation-config'] = {};
-			jQuery.ajax({
-				method: "HEAD",
-				url: "docs/api/api-index.json",
-				async:false,
-				success: function() {
-					window['sap-ui-documentation-config'].apiInfoRoot = "test-resources";
-				}
-			});
-		}
+		(function completeConfiguration() {
+			// when documentation-config.js doesn't exist or doesn't define a configuration, probe default values
+			if ( window['sap-ui-documentation-config'] == null ) {
+				window['sap-ui-documentation-config'] = {};
+			}
+
+			if (!window['sap-ui-documentation-config'].demoKitResourceOrigin) {
+				window['sap-ui-documentation-config'].demoKitResourceOrigin = '.';
+			}
+
+			if (!window['sap-ui-documentation-config'].apiInfoRoot) {
+				// probe for api-index.json
+				jQuery.ajax({
+					method: "HEAD",
+					url: window['sap-ui-documentation-config'].demoKitResourceOrigin + "/docs/api/api-index.json",
+					async:false,
+					success: function() {
+						window['sap-ui-documentation-config'].apiInfoRoot = "./test-resources/";
+					}
+				});
+			}
+
+			if (!window['sap-ui-documentation-config'].docuPath) {
+				jQuery.ajax({
+					method: "HEAD",
+					url: window['sap-ui-documentation-config'].demoKitResourceOrigin + "/docs/topics/index.json",
+					async:false,
+					success: function() {
+						window['sap-ui-documentation-config'].docuPath = "./docs/topics/";
+					}
+				});
+			}
+		})();
 
 		sap.ui.getCore().attachInit(function () {
 
