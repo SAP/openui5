@@ -1401,6 +1401,51 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
+	 * Data should already be present, since prebuildTree already requested a big set
+	 */
+	QUnit.test("getSelectedIndex w/ recursive collapse", function(assert) {
+		var done = assert.async();
+		prebuildTree(function() {
+			oBinding.setSelectedIndex(2);
+			assert.equal(oBinding.getSelectedIndex(), 2, "Selected index is 2");
+
+			oBinding.collapse(1);
+			oBinding._buildTree(0, 1);
+			assert.equal(oBinding.getSelectedIndex(), -1, "Selected index could not be found (-1)");
+
+			oBinding.expand(1);
+			oBinding._buildTree(0, 1);
+			assert.equal(oBinding.getSelectedIndex(), -1,
+				"Selected index has not been restored because of recursive collapse mode");
+			done();
+		});
+	});
+
+	/**
+	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
+	 * Data should already be present, since prebuildTree already requested a big set
+	 */
+	QUnit.test("getSelectedIndex w/o recursive collapse", function(assert) {
+		var done = assert.async();
+		prebuildTree(function() {
+			oBinding.setCollapseRecursive(false);
+			oBinding.setSelectedIndex(2);
+			assert.equal(oBinding.getSelectedIndex(), 2, "Selected index is 2");
+
+			oBinding.collapse(1);
+			oBinding._buildTree(0, 1);
+			assert.equal(oBinding.getSelectedIndex(), -1, "Selected index could not be found (-1)");
+
+			oBinding.expand(1);
+			oBinding._buildTree(0, 1);
+			assert.equal(oBinding.getSelectedIndex(), 2, "Selected index 2 has been restored");
+
+			done();
+		});
+	});
+
 	QUnit.test("Add Selection Interval", function(assert) {
 		var done = assert.async();
 		prebuildTree(function() {
