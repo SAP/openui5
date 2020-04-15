@@ -59,7 +59,7 @@ function(
 	QUnit.module("sap.ui.fl.ChangePersistence", {
 		beforeEach: function() {
 			sandbox.stub(FlexState, "initialize").resolves();
-			sandbox.stub(VariantManagementState, "loadInitialChanges").returns([]);
+			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
 			this._mComponentProperties = {
 				name: "MyComponent",
 				appVersion: "1.2.3"
@@ -150,7 +150,7 @@ function(
 					oMockResponse.changes[sType].push(sType + "1", sType + "2");
 				}
 			});
-			VariantManagementState.loadInitialChanges.returns(oMockResponse.changes.variantDependentControlChanges);
+			VariantManagementState.getInitialChanges.returns(oMockResponse.changes.variantDependentControlChanges);
 			var aChangesForComponent = this.oChangePersistence._getAllCtrlVariantChanges(oMockResponse, false);
 			assert.equal(aChangesForComponent.length, 2, "then only current variant control changes were returned");
 			assert.equal(aChangesForComponent[0], "variantDependentControlChanges1");
@@ -556,7 +556,7 @@ function(
 			sandbox.stub(Cache, "getChangesFillingCache").resolves({
 				changes: oResponse
 			});
-			VariantManagementState.loadInitialChanges.returns([oResponse.variantDependentControlChanges[0]]);
+			VariantManagementState.getInitialChanges.returns([oResponse.variantDependentControlChanges[0]]);
 			return oVariant;
 		}
 
@@ -1471,7 +1471,7 @@ function(
 		beforeEach: function() {
 			sandbox.stub(FlexState, "initialize").resolves();
 			sandbox.stub(FlexState, "getAppDescriptorChanges").returns([]);
-			sandbox.stub(VariantManagementState, "loadInitialChanges").returns([]);
+			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
 			this._mComponentProperties = {
 				name: "saveChangeScenario",
 				appVersion: "1.2.3"
@@ -1717,7 +1717,7 @@ function(
 	QUnit.module("sap.ui.fl.ChangePersistence saveChanges", {
 		beforeEach: function() {
 			sandbox.stub(FlexState, "initialize").resolves();
-			sandbox.stub(VariantManagementState, "loadInitialChanges").returns([]);
+			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
 			var oBackendResponse = {changes: StorageUtils.getEmptyFlexDataResponse()};
 			this.oGetFlexObjectsFromStorageResponseStub = sandbox.stub(FlexState, "getFlexObjectsFromStorageResponse").returns(oBackendResponse.changes);
 			this._mComponentProperties = {

@@ -291,7 +291,7 @@ sap.ui.define([
 
 	ChangePersistence.prototype._getAllCtrlVariantChanges = function(oChangeFileContent, bIncludeCtrlVariants, fnFilter) {
 		if (!bIncludeCtrlVariants) {
-			return VariantManagementState.loadInitialChanges({reference: this._mComponent.name});
+			return VariantManagementState.getInitialChanges({reference: this._mComponent.name});
 		}
 		return ["variants", "variantChanges", "variantDependentControlChanges", "variantManagementChanges"]
 			.reduce(function(aResult, sVariantChangeType) {
