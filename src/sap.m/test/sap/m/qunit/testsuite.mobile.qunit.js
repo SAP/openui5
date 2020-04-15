@@ -1450,7 +1450,10 @@ sap.ui.define([
 				}
 			},
 			Title: {
-				title: "QUnit Page for sap.m.Title"
+				title: "QUnit Page for sap.m.Title",
+				ui5: {
+					language: "en"
+				}
 			},
 			TitlePropagationSupport: {
 				title: "QUnit Page for sap.m.TitlePropagationSupport"
