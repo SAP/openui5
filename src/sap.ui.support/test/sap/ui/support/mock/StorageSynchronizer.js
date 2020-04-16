@@ -22,6 +22,30 @@ sap.ui.define([
 		_sOpenerCookie: ""
 	};
 
+	// Serves as an interface for setting and getting document.cookie
+	var _mockedCookieInterface = {
+		_sCookie: "",
+		get cookie() {
+			return this._sCookie;
+		},
+		set cookie(sValue) {
+			var aCookies = this._sCookie.split(" "),
+				sCookieName = sValue.split("=").shift();
+
+			var iCookieIndex = aCookies.findIndex(function (sCookie) {
+				return sCookie.startsWith(sCookieName  + "=");
+			});
+
+			if (iCookieIndex > -1) {
+				aCookies[iCookieIndex] = sValue + ";";
+			} else if (sValue !== "") {
+				aCookies.push(sValue + ";");
+			}
+
+			this._sCookie = aCookies.join(' ').trim();
+		}
+	};
+
 	/**
 	 * To be called from the opening window
 	 */
@@ -76,7 +100,7 @@ sap.ui.define([
 				window.parent.postMessage({
 					id: CHANNELS.PRESERVE,
 					storage: Storage._getStorage()._mData,
-					cookie: Storage._getCookie()
+					cookie: Storage._getCookieInterface().cookie
 				}, window.parent.location.origin);
 			}
 		});
@@ -86,10 +110,12 @@ sap.ui.define([
 	 * To be called from the opened frame
 	 */
 	StorageSynchronizer.prepareInitFrame = function () {
+		Storage._setCookieInterface(_mockedCookieInterface);
+
 		window.addEventListener("message", function (event) {
 			if (event.data.id === CHANNELS.INIT) {
 				Storage._setStorage(new LocalStorageMock(event.data.storage));
-				Storage._setCookie(event.data.cookie);
+				Storage._getCookieInterface().cookie = event.data.cookie;
 				this._fnAfterInitFrame();
 			}
 		}.bind(this));
