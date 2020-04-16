@@ -2921,6 +2921,11 @@ sap.ui.define([
 		assert.strictEqual(oPendingRequestsPromise.getResult(), undefined);
 		assert.strictEqual(oPendingRequestsPromise.$count, 0);
 
+		// code under test
+		oCache.removePendingRequest();
+
+		assert.strictEqual(oCache.oPendingRequestsPromise, null);
+
 		return oPendingRequestsPromise;
 	});
 
@@ -5851,7 +5856,7 @@ sap.ui.define([
 
 			oCache.registerChange(sPathInCache + sTransientPredicate + "/Name", {
 				onChange : function () {
-					assert.notOk(true, "No change event for Name");
+					assert.ok(false, "No change event for Name");
 				}
 			});
 
@@ -5959,9 +5964,56 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(_Helper.removeByPath, sinon.match.same(oCache.mPostRequests),
 			sPathInCache, sinon.match.same(oEntityData));
 		return oCreatePromise.then(function () {
-			assert.notOk(true, "unexpected success");
+			assert.ok(false, "unexpected success");
 		}, function (oError) {
 			assert.strictEqual(oError.canceled, true);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#create: $metadata fails", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS"),
+			aCollection = [],
+			oCreatePromise,
+			oEntityData = {},
+			oError = new Error("This call intentionally failed"),
+			fnErrorCallback = this.spy(),
+			oGroupLock = {
+				getGroupId : function () { return "updateGroup"; }
+			},
+			oPostPathPromise = SyncPromise.resolve("TEAMS('0')/TEAM_2_EMPLOYEES");
+
+		aCollection.$created = 0;
+		this.mock(oCache).expects("getValue").withExactArgs("('0')/TEAM_2_EMPLOYEES")
+			.returns(aCollection);
+		this.mock(oCache).expects("fetchTypes").twice().withExactArgs()
+			.returns(SyncPromise.reject(oError));
+		this.mock(this.oRequestor).expects("request")
+			.withExactArgs("POST", "TEAMS('0')/TEAM_2_EMPLOYEES", sinon.match.same(oGroupLock),
+				null, /*oPayload*/sinon.match.object, /*fnSubmit*/sinon.match.func,
+				/*fnCancel*/sinon.match.func, undefined,
+				"TEAMS('0')/TEAM_2_EMPLOYEES($uid=id-1-23)");
+		this.mock(oCache).expects("removePendingRequest").withExactArgs();
+
+		// code under test
+		oCreatePromise = oCache.create(oGroupLock, oPostPathPromise, "('0')/TEAM_2_EMPLOYEES",
+			"($uid=id-1-23)", oEntityData, fnErrorCallback);
+
+		assert.deepEqual(aCollection, [{
+			"@$ui5._" : {
+				postBody : {},
+				"transient" : "updateGroup",
+				transientPredicate : "($uid=id-1-23)"
+			},
+			"@$ui5.context.isTransient" : true
+		}]);
+		assert.strictEqual(aCollection.$created, 1);
+		sinon.assert.calledWithExactly(fnErrorCallback, sinon.match.same(oError));
+
+		return oCreatePromise.then(function () {
+			assert.ok(false, "unexpected success");
+		}, function (oError0) {
+			assert.strictEqual(oError0, oError);
 		});
 	});
 
@@ -6284,7 +6336,7 @@ sap.ui.define([
 				fnRejectPost = reject;
 			}));
 		this.mock(oCache).expects("fetchTypes")
-			.exactly(2 /*create*/ + 1 /*update*/)
+			.exactly(2 /*create*/ + 1 /*update*/ + 1 /*catch handler*/)
 			.withExactArgs()
 			.returns(oFetchTypesPromise);
 
@@ -6374,7 +6426,7 @@ sap.ui.define([
 			this.mock(oCreateGroupLock).expects("getGroupId").withExactArgs()
 				.returns(sUpdateGroupId);
 			this.mock(oCache).expects("fetchTypes")
-				.exactly(2 /*create*/)
+				.exactly(2 /*create*/ + 1 /*catch handler*/)
 				.returns(oFetchTypesPromise);
 			this.oRequestorMock.expects("getGroupSubmitMode")
 				.withExactArgs(sUpdateGroupId).returns(mGroups[sUpdateGroupId]);
@@ -6633,7 +6685,7 @@ sap.ui.define([
 				null, sinon.match.same(oPostBody), sinon.match.func, sinon.match.func, undefined,
 				"Employees" + sTransientPredicate)
 			.rejects(oCanceledError); // avoid endless loop
-		this.mock(oCache).expects("fetchTypes").twice().withExactArgs()
+		this.mock(oCache).expects("fetchTypes").thrice().withExactArgs()
 			.returns(SyncPromise.resolve({}));
 
 		// code under test

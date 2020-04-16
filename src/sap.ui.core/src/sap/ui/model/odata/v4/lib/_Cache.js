@@ -370,6 +370,9 @@ sap.ui.define([
 				}
 				that.removePendingRequest();
 				fnErrorCallback(oError);
+				if (that.fetchTypes().isRejected()) {
+					throw oError;
+				}
 				return request(sPostPath, that.oRequestor.lockGroup(
 					that.oRequestor.getGroupSubmitMode(sPostGroupId) === "API" ?
 						sPostGroupId : "$parked." + sPostGroupId, that, true, true));
@@ -1075,10 +1078,12 @@ sap.ui.define([
 	 * @private
 	 */
 	Cache.prototype.removePendingRequest = function () {
-		this.oPendingRequestsPromise.$count -= 1;
-		if (!this.oPendingRequestsPromise.$count) {
-			this.oPendingRequestsPromise.$resolve();
-			this.oPendingRequestsPromise = null;
+		if (this.oPendingRequestsPromise) {
+			this.oPendingRequestsPromise.$count -= 1;
+			if (!this.oPendingRequestsPromise.$count) {
+				this.oPendingRequestsPromise.$resolve();
+				this.oPendingRequestsPromise = null;
+			}
 		}
 	};
 

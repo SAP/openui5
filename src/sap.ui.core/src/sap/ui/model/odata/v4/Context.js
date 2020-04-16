@@ -209,8 +209,9 @@ sap.ui.define([
 	 *   <code>oError.canceled === true</code> if the transient entity is deleted before it is
 	 *   created in the backend, for example via {@link sap.ui.model.odata.v4.Context#delete},
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#resetChanges} or
-	 *   {@link sap.ui.model.odata.v4.ODataModel#resetChanges}. Returns <code>undefined</code> if
-	 *   the context has not been created using
+	 *   {@link sap.ui.model.odata.v4.ODataModel#resetChanges}. It is rejected with an
+	 *   <code>Error</code> instance without <code>oError.canceled</code> if loading of $metadata
+	 *   fails. Returns <code>undefined</code> if the context has not been created using
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#create}.
 	 *
 	 * @public

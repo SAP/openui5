@@ -616,7 +616,7 @@ sap.ui.define([
 
 		/**
 		 * Returns the key predicate (see "4.3.1 Canonical URL") for the given entity using the
-		 * given meta data.
+		 * given metadata.
 		 *
 		 * @param {object} oInstance
 		 *   Entity instance runtime data
@@ -658,7 +658,7 @@ sap.ui.define([
 
 		/**
 		 * Returns the key properties mapped to values from the given entity using the given
-		 * meta data.
+		 * metadata.
 		 *
 		 * @param {object} oInstance
 		 *   Entity instance runtime data
@@ -673,7 +673,7 @@ sap.ui.define([
 		 * @param {boolean} [bReturnAlias=false]
 		 *   Whether to return the aliases instead of the keys
 		 * @returns {object}
-		 *   The key properties map. For the meta data
+		 *   The key properties map. For the metadata
 		 *   <Key>
 		 *    <PropertyRef Name="Info/ID" Alias="EntityInfoID"/>
 		 *   </Key>
@@ -1581,7 +1581,7 @@ sap.ui.define([
 		/**
 		 * Creates the query options for a child binding with the meta path given by its base
 		 * meta path and relative meta path. Adds the key properties to $select of all expanded
-		 * navigation properties. Requires that meta data for the meta path is already loaded so
+		 * navigation properties. Requires that metadata for the meta path is already loaded so
 		 * that synchronous access to all prefixes of the relative meta path is possible.
 		 * If the relative meta path contains segments which are not a structural property or a
 		 * navigation property, the child query options cannot be created and the method returns
