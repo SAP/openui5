@@ -395,7 +395,7 @@ sap.ui.define([
 					aDescriptions.push(sTableId + "-toggleedit");
 				}
 
-				if (TableUtils.Grouping.isTreeMode(oTable) && !!$Cell.parent().attr("aria-selected")) {
+				if (TableUtils.Grouping.isTreeMode(oTable) && $Cell.parent().attr("aria-selected") === "true") {
 					// aria-selected on the row seems not be enough for treegrids
 					aLabels.push(sTableId + "-ariarowselected");
 				}
