@@ -6,12 +6,26 @@ sap.ui.define([
 
 	return Controller.extend("sap.f.FlexibleColumnLayoutWithTwoColumnStart.controller.Detail", {
 		onInit: function () {
+			var oExitButton = this.getView().byId("exitFullScreenBtn"),
+				oEnterButton = this.getView().byId("enterFullScreenBtn");
+
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this.oModel = this.getOwnerComponent().getModel();
 
 			this.oRouter.getRoute("master").attachPatternMatched(this._onProductMatched, this);
 			this.oRouter.getRoute("detail").attachPatternMatched(this._onProductMatched, this);
 			this.oRouter.getRoute("detailDetail").attachPatternMatched(this._onProductMatched, this);
+
+			[oExitButton, oEnterButton].forEach(function (oButton) {
+				oButton.addEventDelegate({
+					onAfterRendering: function () {
+						if (this.bFocusFullScreenButton) {
+							this.bFocusFullScreenButton = false;
+							oButton.focus();
+						}
+					}.bind(this)
+				});
+			}, this);
 		},
 		handleItemPress: function (oEvent) {
 			var oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(2),
@@ -22,10 +36,12 @@ sap.ui.define([
 				product: this._product, supplier: supplier});
 		},
 		handleFullScreen: function () {
+			this.bFocusFullScreenButton = true;
 			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/fullScreen");
 			this.oRouter.navTo("detail", {layout: sNextLayout, product: this._product});
 		},
 		handleExitFullScreen: function () {
+			this.bFocusFullScreenButton = true;
 			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/exitFullScreen");
 			this.oRouter.navTo("detail", {layout: sNextLayout, product: this._product});
 		},

@@ -6,17 +6,33 @@ sap.ui.define([
 
 	return Controller.extend("sap.f.FlexibleColumnLayoutWithFullscreenPage.controller.DetailDetailDetail", {
 		onInit: function () {
+			var oExitButton = this.getView().byId("exitFullScreenBtn"),
+				oEnterButton = this.getView().byId("enterFullScreenBtn");
+
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this.oModel = this.getOwnerComponent().getModel();
 
 			this.oRouter.getRoute("detailDetail").attachPatternMatched(this._onSupplierMatched, this);
 			this.oRouter.getRoute("detailDetailDetail").attachPatternMatched(this._onSupplierMatched, this);
+
+			[oExitButton, oEnterButton].forEach(function (oButton) {
+				oButton.addEventDelegate({
+					onAfterRendering: function () {
+						if (this.bFocusFullScreenButton) {
+							this.bFocusFullScreenButton = false;
+							oButton.focus();
+						}
+					}.bind(this)
+				});
+			}, this);
 		},
 		handleFullScreen: function () {
+			this.bFocusFullScreenButton = true;
 			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/endColumn/fullScreen");
 			this.navigateToView(sNextLayout, "detailDetailDetail");
 		},
 		handleExitFullScreen: function () {
+			this.bFocusFullScreenButton = true;
 			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/endColumn/exitFullScreen");
 			this.navigateToView(sNextLayout, "detailDetailDetail");
 		},
