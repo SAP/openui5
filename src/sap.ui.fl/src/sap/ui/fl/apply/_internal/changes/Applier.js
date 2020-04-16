@@ -158,7 +158,7 @@ sap.ui.define([
 		 *
 		 * @param {Promise} oPromise - Promise which is resolved when precondition fulfilled
 		 */
-		setPreConditionForApplyAllChangesOnControl: function(oPromise) {
+		addPreConditionForInitialChangeApplying: function(oPromise) {
 			oLastPromise = oLastPromise.then(function () {
 				return oPromise;
 			});

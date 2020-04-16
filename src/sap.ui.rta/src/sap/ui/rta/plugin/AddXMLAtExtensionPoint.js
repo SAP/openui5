@@ -7,20 +7,36 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/registry/ExtensionPointRegistry"
+	"sap/ui/fl/write/api/ExtensionPointRegistryAPI"
 ], function(
 	Plugin,
 	DtUtil,
 	FlUtils,
 	ManifestUtils,
-	ExtensionPointRegistry
+	ExtensionPointRegistryAPI
 ) {
 	"use strict";
 
 	/**
+	 * Callback function responsible for fragment handling.
+	 *
+	 * The fragment handling function needs to be provided from outside of rta. It is called during the execution of the plugin handler
+	 * with the target overlay and a list of existing extension point informations related to the target overlay. The main responsibility
+	 * is to select an extensionPoint from the list an create a xml fragment as an extension for it. After the fragment is created the
+	 * fragment handler needs to resolve the returned promise with the information of the selected extension point name, the path and the
+	 * name of the created fragment. If no extension point selection is done into the fragment handler an empty object needs to be returned.
+	 *
+	 * @typedef {function} sap.ui.rta.plugin.AddXMLAtExtensionPoint.fragmentHandler
+	 * @since 1.78
+	 * @param {sap.ui.fl.ElementOverlay} oOverlay - Target overlay for the extension by fragment change
+	 * @param {object[]} aExtensionPointInfos - List available extension point informations for the target overlay
+	 * @returns {Promise<{extensionPointName: string, fragmentPath: string, fragment: string}>} Object wrapped in a promise containing addXMLAtExtensionPoint command relevant values
+	 */
+
+	/**
 	 * Constructor for a new AddXMLAtExtensionPoint plugin.
 	 * Adds the content of the XML fragment behind the ExtensionPoint which needs to be selected by the fragment handler.
-	 * The fragment handler is a callback function that needs to be passed on instantiation of the plugin or alternatively into the
+	 * The fragment handler <code>{@link sap.ui.rta.plugin.AddXMLAtExtensionPoint.fragmentHandler FragmentHandler}</code>  is a callback function that needs to be passed on instantiation of the plugin or alternatively into the
 	 * propertyBag when the handler function is called.
 	 *
 	 * @class
@@ -49,13 +65,9 @@ sap.ui.define([
 	var FLEX_CHANGE_TYPE = "addXMLAtExtensionPoint";
 	var APP_DESCRIPTOR_CHANGE_TYPE = "appdescr_ui5_setFlexExtensionPointEnabled";
 
-	function getExtensionPointInfo(oElement) {
-		var oExtensionPointRegistry = ExtensionPointRegistry.getInstance();
-		return oExtensionPointRegistry.getExtensionPointInfoByParentId(oElement.getId());
-	}
-
 	function hasExtensionPoints(oElement) {
-		return getExtensionPointInfo(oElement).length > 0;
+		var oElementId = oElement.getId();
+		return ExtensionPointRegistryAPI.getExtensionPointInfoByParentId({parentId: oElementId}).length > 0;
 	}
 
 	function isDesignMode() {
@@ -171,7 +183,7 @@ sap.ui.define([
 	 * Triggers the plugin execution.
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @param {Object} mPropertyBag - Property bag
-	 * @param {function} [mPropertyBag.fragmentHandler] - Handler function for fragment handling
+	 * @param {sap.ui.rta.plugin.AddXMLAtExtensionPoint.fragmentHandler} [mPropertyBag.fragmentHandler] - Handler function for fragment handling. The fragment handler is a callback function that needs to be passed here into the propertyBag or alternatively on instantiation of the plugin.
 	 * @returns {Promise} Resolves when handler is executed successfully
 	 */
 	AddXMLAtExtensionPoint.prototype.handler = function (aElementOverlays, mPropertyBag) {
@@ -182,8 +194,8 @@ sap.ui.define([
 					return Promise.reject("Fragment handler function is not available in the handler");
 				}
 				var oOverlay = aElementOverlays[0];
-				var oElement = oOverlay.getElement();
-				var aExtensionPointInfos = getExtensionPointInfo(oElement);
+				var oElementId = oOverlay.getElement().getId();
+				var aExtensionPointInfos = ExtensionPointRegistryAPI.getExtensionPointInfoByParentId({parentId: oElementId});
 				return fnFragmentHandler(oOverlay, aExtensionPointInfos);
 			}.bind(this))
 

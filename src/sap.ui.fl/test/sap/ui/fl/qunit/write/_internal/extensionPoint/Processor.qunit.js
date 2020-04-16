@@ -1,30 +1,26 @@
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/ExtensionPoint",
-	"sap/ui/fl/registry/ExtensionPointRegistry",
+	"sap/ui/fl/write/_internal/extensionPoint/Registry",
+	"sap/ui/fl/write/_internal/extensionPoint/Processor",
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
-	"sap/ui/fl/apply/_internal/extensionPoint/BaseProcessor",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Component,
 	ComponentContainer,
 	ExtensionPoint,
 	ExtensionPointRegistry,
-	ExtensionPointProcessor,
-	ExtensionPointBaseProcessor,
+	ExtensionPointWriteProcessor,
+	ExtensionPointApplyProcessor,
 	Loader,
 	ManifestUtils,
-	ChangePersistenceFactory,
-	AddXMLAtExtensionPoint,
 	sinon
 ) {
 	"use strict";
-	/*global QUnit */
 
 	// create content div
 	var oDIV = document.createElement("div");
@@ -37,12 +33,14 @@ sap.ui.define([
 	// UI Construction
 	var oComponent;
 	var oComponentContainer;
-	var oSpyApplyExtensionPoint;
-	var oSpyRegisterExtensionPoints;
+	var oSpyApplyProcessorExtensionPoint;
+	var oSpyWriteProcessorExtensionPoint;
+	var oSpyRegisterExtensionPoint;
 
 	function createComponentAndContainer(bSync) {
-		oSpyApplyExtensionPoint = sandbox.spy(ExtensionPointProcessor, "applyExtensionPoint");
-		oSpyRegisterExtensionPoints = sandbox.spy(ExtensionPointRegistry.getInstance(), "registerExtensionPoints");
+		oSpyApplyProcessorExtensionPoint = sandbox.spy(ExtensionPointApplyProcessor, "applyExtensionPoint");
+		oSpyWriteProcessorExtensionPoint = sandbox.spy(ExtensionPointWriteProcessor, "applyExtensionPoint");
+		oSpyRegisterExtensionPoint = sandbox.spy(ExtensionPointRegistry, "registerExtensionPoint");
 		if (bSync) {
 			sandbox.stub(Loader, "loadFlexData").resolves({changes: {changes: []}});
 			oComponent = sap.ui.component({
@@ -102,8 +100,9 @@ sap.ui.define([
 			assert.ok(ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
 			checkView("sync");
 			checkView("async");
-			assert.equal(oSpyApplyExtensionPoint.callCount, 0, "number of applyExtensionPoint called correct");
-			assert.equal(oSpyRegisterExtensionPoints.callCount, 6, "number of registerExtensionPoints called correct in the ExtensionPointRegistry");
+			assert.equal(oSpyApplyProcessorExtensionPoint.callCount, 0, "number of applyExtensionPoint called correct");
+			assert.equal(oSpyWriteProcessorExtensionPoint.callCount, 6, "number of applyExtensionPoint called correct");
+			assert.equal(oSpyRegisterExtensionPoint.callCount, 6, "number of registerExtensionPoint called correct in the ExtensionPointRegistry");
 
 			done();
 		};
@@ -126,10 +125,10 @@ sap.ui.define([
 			return createComponentAndContainer(SYNC);
 		},
 		after: destroyComponentAndContainer.bind(null, SYNC)
-	});
-
-	QUnit.test("When EPs and addXMLAtExtensionPoint are available in one sync views and one async view", function(assert) {
-		baseCheck(SYNC, assert);
+	}, function () {
+		QUnit.test("When EPs and addXMLAtExtensionPoint are available in one sync views and one async view", function(assert) {
+			baseCheck(SYNC, assert);
+		});
 	});
 
 	QUnit.module("ExtensionPoints with sync and async view when component is created async with 'flexExtensionPointEnabled: false'", {
@@ -139,9 +138,9 @@ sap.ui.define([
 			return createComponentAndContainer(ASYNC);
 		},
 		after: destroyComponentAndContainer.bind(null, ASYNC)
-	});
-
-	QUnit.test("When EPs and addXMLAtExtensionPoint are available in one sync views and one async view", function(assert) {
-		baseCheck(ASYNC, assert);
+	}, function () {
+		QUnit.test("When EPs and addXMLAtExtensionPoint are available in one sync views and one async view", function(assert) {
+			baseCheck(ASYNC, assert);
+		});
 	});
 });

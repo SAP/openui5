@@ -235,6 +235,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler"]
 				}
 			},
+			"apply/_internal/flexState/changes/ExtensionPointState": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/changes/ExtensionPointState"]
+				}
+			},
 			"apply/_internal/flexState/controlVariants/VariantManagementState": {
 				group: "Apply Internal",
 				coverage: {
@@ -323,18 +329,7 @@ sap.ui.define([
 			"apply/_internal/extensionPoint/Processor": {
 				group: "Apply Internal",
 				coverage: {
-					only: ["sap/ui/fl/extensionPoint/Processor"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
-					}
-				}
-			},
-			"apply/_internal/extensionPoint/BaseProcessor": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/extensionPoint/BaseProcessor"]
+					only: ["sap/ui/fl/apply/_internal/extensionPoint/Processor"]
 				},
 				ui5: {
 					resourceroots: {
@@ -406,6 +401,12 @@ sap.ui.define([
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/SmartVariantManagementWriteAPI"]
+				}
+			},
+			"write/api/ExtensionPointRegistryAPI": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/ExtensionPointRegistryAPI"]
 				}
 			},
 			"write/_internal/Storage": {
@@ -487,6 +488,29 @@ sap.ui.define([
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/connectors/KeyUserConnector"]
+				}
+			},
+			"write/_internal/extensionPoint/Registry": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/extensionPoint/Registry"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent",
+						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
+					}
+				}
+			},
+			"write/_internal/extensionPoint/Processor": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/extensionPoint/Processor"]
+				},
+				ui5: {
+					resourceroots: {
+						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
+					}
 				}
 			},
 			// Team Gravity tests
@@ -989,18 +1013,6 @@ sap.ui.define([
 				group: "registry",
 				coverage: {
 					only: ["sap/ui/fl/registry/ChangeTypeMetadata"]
-				}
-			},
-			"registry/ExtensionPointRegistry": {
-				group: "registry",
-				coverage: {
-					only: ["sap/ui/fl/registry/ExtensionPointRegistry"]
-				},
-				ui5: {
-					resourceroots: {
-						testComponent: "test-resources/sap/ui/fl/qunit/testComponent",
-						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
-					}
 				}
 			},
 			"registry/Settings": {
