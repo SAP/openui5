@@ -258,10 +258,10 @@ sap.ui.define([
 		}
 
 		if (this.getEnabled() && this.getVisible()) {
-			// Safari doesn't set the focus to the clicked button tag but to the nearest parent DOM which is focusable
+			// Safari and Firefox doesn't set the focus to the clicked button tag but to the nearest parent DOM which is focusable
 			// This behavior has to be stopped by calling prevent default when the original event is 'mousedown'
 			// and set the focus explicitly to the button.
-			if (Device.browser.safari && (oEvent.originalEvent && oEvent.originalEvent.type === "mousedown")) {
+			if ((Device.browser.safari || Device.browser.firefox) && (oEvent.originalEvent && oEvent.originalEvent.type === "mousedown")) {
 				this.focus();
 				oEvent.preventDefault();
 			}
