@@ -5702,16 +5702,42 @@ sap.ui.define([
 
 	QUnit.test("Scrollbar", function(assert) {
 		var oTable = this.oTable;
+		var oCellContent = oTable.getRows()[0].getCells()[0].getDomRef();
 		var oEvent;
 
-		// Horizontal
-		return oTable.qunit.focus(oTable.getRows()[0].getCells()[0].getDomRef()).then(function() {
+		return oTable.qunit.focus(oCellContent).then(function() {
+			// Horizontal
 			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 			oEvent = document.createEvent('MouseEvents');
 			oEvent.initEvent("mousedown", true, true);
-			oTable.getDomRef("hsb").dispatchEvent(oEvent);
-			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Clicked on horizontal scrollbar -> Table is in Navigation Mode again");
-			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus now");
+			oTable._getScrollExtension().getHorizontalScrollbar().dispatchEvent(oEvent);
+			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Clicked on horizontal scrollbar -> Table is in Navigation Mode");
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus");
+		}).then(oTable.qunit.$focus(oCellContent)).then(function() {
+			// Vertical
+			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+			oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 1;
+			return oTable.qunit.whenVSbScrolled().then(function() {
+				assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled the vertical scrollbar -> Table is in Navigation Mode");
+				assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus");
+			});
+		});
+	});
+
+	QUnit.test("Scrollbar; Large data scrolling", function(assert) {
+		var oTable = this.oTable;
+		var oCellContent = oTable.getRows()[0].getCells()[0].getDomRef();
+
+		oTable._bLargeDataScrolling = true;
+
+		return oTable.qunit.focus(oCellContent).then(function() {
+			// Vertical
+			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+			oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 1;
+			return oTable.qunit.whenVSbScrolled().then(function() {
+				assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled the vertical scrollbar -> Table is in Navigation Mode");
+				assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus");
+			});
 		});
 	});
 
@@ -5726,15 +5752,15 @@ sap.ui.define([
 			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 			oWheelEvent = createMouseWheelEvent(150, MouseWheelDeltaMode.PIXEL, true);
 			oTableContainer.dispatchEvent(oWheelEvent);
-			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled horizontally -> Table is in Navigation Mode again");
-			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus now");
+			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled horizontally -> Table is in Navigation Mode");
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus");
 		}).then(oTable.qunit.$focus(oCellContent)).then(function() {
 			// Vertical
 			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 			oWheelEvent = createMouseWheelEvent(150, MouseWheelDeltaMode.PIXEL, false);
 			oTableContainer.dispatchEvent(oWheelEvent);
 			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled vertically -> Table is in Navigation Mode again");
-			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus now");
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus");
 		});
 	});
 
@@ -5755,19 +5781,33 @@ sap.ui.define([
 			initTouchScrolling(oTable.getDomRef("tableCCnt"), 200);
 			doTouchScrolling(150);
 			endTouchScrolling();
-			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled horizontally -> Table is in Navigation Mode again");
-			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus now");
+			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled horizontally -> Table is in Navigation Mode");
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus");
 		}).then(oTable.qunit.$focus(oTable.getRows()[0].getCells()[0].getDomRef())).then(function() {
 			// Vertical
 			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 			initTouchScrolling(oTable.getDomRef("tableCCnt"), 200);
 			doTouchScrolling(undefined, 150);
 			endTouchScrolling();
-			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled Vertically -> Table is in Navigation Mode again");
-			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus now");
+			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled Vertically -> Table is in Navigation Mode");
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus");
 		}).finally(function() {
 			Device.support.pointer = bOriginalPointerSupport;
 			Device.support.touch = bOriginalTouchSupport;
+		});
+	});
+
+	QUnit.test("FirstVisibleRow", function(assert) {
+		var oTable = this.oTable;
+		var oCellContent = oTable.getRows()[0].getCells()[0].getDomRef();
+
+		return oTable.qunit.focus(oCellContent).then(function() {
+			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+			oTable.setFirstVisibleRow(1);
+			return oTable.qunit.whenRenderingFinished().then(function() {
+				assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Scrolled the vertical scrollbar -> Table is in Action Mode");
+				assert.strictEqual(document.activeElement, oCellContent, "Cell content has focus");
+			});
 		});
 	});
 });
