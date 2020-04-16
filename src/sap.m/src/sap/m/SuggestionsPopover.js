@@ -138,8 +138,10 @@ sap.ui.define([
 					this._onsaparrowkey(oEvent, "down", 5);
 				},
 				onsaphome: function(oEvent) {
+					var iItems;
 					if (this._oList) {
-						this._onsaparrowkey(oEvent, "up", this._oList.getItems().length);
+						iItems = this._oList.getItems().length ? this._oList.getItems().length - 1 : 0;
+						this._onsaparrowkey(oEvent, "up", iItems);
 					}
 				},
 				onsapend: function(oEvent) {
@@ -148,7 +150,8 @@ sap.ui.define([
 					}
 				},
 				onsapright: this._onsapright,
-				onsaptabnext: this._handleInputsTabNext
+				onsaptabnext: this._handleValueStateLinkNav,
+				onsaptabprevious: this._handleValueStateLinkNav
 			}, this);
 		},
 
@@ -622,7 +625,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	SuggestionsPopover.prototype.closePopoverDelegate = {
+	SuggestionsPopover.prototype._closePopoverDelegate = {
 		onsaptabnext: function(oEvent) {
 			this.bMessageValueStateActive = false;
 			this._oInput.onsapfocusleave(oEvent);
@@ -639,13 +642,44 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles tab key when pressed while the visual focus is on a value state message with <code>sap.m.FormattedText</code>
+	 * Moves the real focus to the input and the visual focus to the value state header
+	 * when saptabprevious is fired on the first link in a value state message
+	 * @private
+	 */
+	SuggestionsPopover.prototype._focusValueStateHeader = {
+		onsaptabprevious: function(oEvent) {
+			oEvent.preventDefault();
+			this._oInput.getFocusDomRef().focus();
+			this._getValueStateHeader().addStyleClass("sapMPseudoFocus");
+			this._oInput.removeStyleClass("sapMFocus");
+		}
+	};
+
+	/**
+	 * Event delegate that handles the arrow navigation of the links in the <code>sap.m.ValueStateHeader</code>.
+	 * Moves the real focus to the input and the visual focus to the first suggested item
+	 *
+	 * @private
+	 */
+	SuggestionsPopover.prototype._valueStateLinkArrowNav = {
+		onsapup: function(oEvent) {
+			this._oInput.getFocusDomRef().focus();
+			this._onsaparrowkey(oEvent, "up", 1);
+		},
+		onsapdown: function(oEvent) {
+			this._oInput.getFocusDomRef().focus();
+			this._onsaparrowkey(oEvent, "down", 1);
+		}
+	};
+
+	/**
+	 * Handles value state link navigation
 	 *
 	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
-	SuggestionsPopover.prototype._handleInputsTabNext = function(oEvent) {
-		if (!this.bMessageValueStateActive || !this.getValueStateLinks().length || (this.bMessageValueStateActive && document.activeElement.tagName === "A")) {
+	SuggestionsPopover.prototype._handleValueStateLinkNav = function(oEvent) {
+		if ((!this.bMessageValueStateActive || !this.getValueStateLinks().length) || (this.bMessageValueStateActive && document.activeElement.tagName === "A")) {
 			return;
 		}
 
@@ -660,7 +694,14 @@ sap.ui.define([
 		aValueStateLinks[0].focus();
 		this._getValueStateHeader().removeStyleClass("sapMPseudoFocus");
 
-		oLastValueStateLink.addDelegate(this.closePopoverDelegate, this);
+		aValueStateLinks.forEach(function(oLink) {
+			oLink.addDelegate(this._valueStateLinkArrowNav, this);
+		}, this);
+
+		// If saptabnext is fired on the last link of the value state - close the control
+		oLastValueStateLink.addDelegate(this._closePopoverDelegate	, this);
+		// If saptabprevious is fired on the first link move real focus on the input and the visual one back to the value state header
+		aValueStateLinks[0].addDelegate(this._focusValueStateHeader, this);
 	};
 
 	/**
@@ -715,6 +756,17 @@ sap.ui.define([
 		if (sDir == "down" && iSelectedIndex === aListItems.length - 1) {
 			//if key is 'down' and selected Item is last -> do nothing
 			return;
+		}
+
+		// If Value State Header contains links and it is focused - move the visual focus to the last item when on sapend
+		if (this.getValueStateLinks().length && this.bMessageValueStateActive && oEvent.type === "sapend") {
+			oPseudoFocusedElement.removeStyleClass("sapMPseudoFocus");
+			this._oList.addStyleClass("sapMListFocus");
+			// If the visual focus is on the value state header then the last selected suggested item was the first one
+			iOldIndex = 0;
+			iSelectedIndex = aListItems.length - 1;
+			aListItems[iSelectedIndex].addStyleClass("sapMLIBFocused");
+			this.bMessageValueStateActive = false;
 		}
 
 		var iStopIndex;
@@ -779,21 +831,24 @@ sap.ui.define([
 			}
 		}
 
-		// If there is a formatted text with link in value state header and the "focused" item
-		// is the first selectable item (if no further visible item can be found) - go to the value state message on arrow up.
-		if ((sDir === "up" && this.getValueStateLinks().length && !this.bMessageValueStateActive) && (!this._isSuggestionItemSelectable(aListItems[iSelectedIndex]) || iOldIndex === 0)) {
+		if ((this.getValueStateLinks().length && !this.bMessageValueStateActive && oEvent.type !== "sapend") &&
+			((sDir === "up" && (!this._isSuggestionItemSelectable(aListItems[iSelectedIndex]) || iOldIndex === 0)) || oEvent.type === "saphome")) {
+			/* If there is a formatted text with link in value state header and the "focused" item
+			is the first selectable item (if no further visible item can be found) - move the focus to the value state header on arrow up.
+			In case of saphome move the focus to the Value State Header, no matter the position of the old selected item */
 			oPseudoFocusedElement.addStyleClass(("sapMPseudoFocus"));
-			oInput.removeStyleClass("sapMFocus");
+			this._oList.removeStyleClass("sapMListFocus");
 			oInnerRef.attr("aria-activedescendant", oFormattedText.getId());
 			this.bMessageValueStateActive = true;
 			this._iPopupListSelectedIndex = -1;
+			this._scrollToItem(0);
 			return;
 		}
 
-		// Reset the pseudo focus outline of the sap.m.FormattedText in value state message, if links are present
+		// Remove the visual focus of the Value State Header, if links are present and arrow up/down is pressed
 		if ((this.getValueStateLinks().length && this.bMessageValueStateActive) && (sDir === "up" && iSelectedIndex === 0 || sDir === "down")) {
 			oPseudoFocusedElement.removeStyleClass("sapMPseudoFocus");
-			oInput.addStyleClass("sapMFocus");
+			this._oList.addStyleClass("sapMListFocus");
 			this.bMessageValueStateActive = false;
 		}
 
