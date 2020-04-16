@@ -58,17 +58,24 @@
 				<t:Table id="ToLineItems" rowActionCount="1" rows="{
 						parameters : {transitionMessagesOnly : true},
 						path : 'ToLineItems'
-					}" threshold="0" visibleRowCount="4">
+					}" rowSelectionChange="onSelectItem" selectionMode="Single" threshold="0"
+					visibleRowCount="4">
 					<t:dependents>
 						<plugins:DataStateIndicator />
 					</t:dependents>
 					<t:extension>
-						<Toolbar>
+						<Toolbar design="Transparent">
 							<Title level="H2" text="Sales Order Items">
 								<layoutData>
 									<ToolbarLayoutData shrinkable="false" />
 								</layoutData>
 							</Title>
+							<Button enabled="{= !!${SalesOrderID}}" icon="sap-icon://add"
+								press="onShowCreateItemDialog" tooltip="Create a sales order item"
+							/>
+							<Button enabled="{ui>/itemSelected}" icon="sap-icon://delete"
+								press="onDeleteItem" tooltip="Delete the selected sales order item"
+								/>
 							<ToolbarSpacer/>
 							<Label labelFor="itemFilter" text="Filter">
 								<layoutData>
@@ -174,6 +181,35 @@
 			</VBox>
 			<VBox>
 				<dependents>
+					<Dialog id="createSalesOrderItemDialog" title="Create a New Sales Order Item">
+						<buttons>
+							<Button text="OK" press="onCreateItem" type="Accept"/>
+							<Button text="Cancel" press="onCancelCreateItem" type="Reject"/>
+						</buttons>
+						<form:SimpleForm ariaLabelledBy="createSalesOrderItemDialog" editable="true"
+							layout="ResponsiveGridLayout">
+							<Label text="Sales Order ID"/>
+							<Input editable="false" value="{SalesOrderID}" width="8em"/>
+							<Label text="Product ID"/>
+							<Input value="{ui>/newItem/ProductID}"/>
+							<Label text="Quantity"/>
+							<Input value="{
+									constraints : {precision : 13, scale : 3},
+									path : 'ui>/newItem/Quantity',
+									type : 'sap.ui.model.odata.type.Decimal'
+								}"/>
+							<Label text="Unit"/>
+							<Input value="{ui>/newItem/QuantityUnit}"  width="4em"/>
+							<Label text="Delivery Date"/>
+							<DateTimePicker value="{
+									constraints : {precision : 7},
+									path : 'ui>/newItem/DeliveryDate',
+									type : 'sap.ui.model.odata.type.DateTime'
+								}"/>
+							<Label text="Note"/>
+							<Input value="{ui>/newItem/Note}"/>
+						</form:SimpleForm>
+					</Dialog>
 					<Dialog binding="{ToProduct}" id="productDetailsDialog" title="Product Details">
 						<buttons>
 							<Button press="onCloseProductDetails" text="Close" type="Accept" />
