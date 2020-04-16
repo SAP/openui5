@@ -369,7 +369,7 @@ function(
 	MultiComboBox.prototype.onsapshow = function(oEvent) {
 		var oItemToFocus, iItemToFocus, oCurrentFocusedControl,
 			oPicker, oList, aSelectableItems,
-			aSelectedItems, oItemNavigation;
+			aSelectedItems, oItemNavigation, sValue;
 
 		this.syncPickerContent();
 
@@ -378,12 +378,17 @@ function(
 		aSelectableItems = this.getSelectableItems();
 		aSelectedItems = this.getSelectedItems();
 		oItemNavigation = oList.getItemNavigation();
+		sValue = this.getValue();
 
 		oCurrentFocusedControl = jQuery(document.activeElement).control()[0];
 
 		if (oCurrentFocusedControl instanceof sap.m.Token) {
 			oItemToFocus = this._getItemByToken(oCurrentFocusedControl);
-		} else {
+		} else if (sValue) {
+			oItemToFocus = this._getItemByValue(sValue);
+		}
+
+		if (!oItemToFocus) {
 			// we need to take the list's first selected item not the first selected item by the combobox user
 			oItemToFocus = aSelectedItems.length ? this._getItemByListItem(this._getList().getSelectedItems()[0]) : aSelectableItems[0];
 		}
@@ -3271,6 +3276,19 @@ function(
 	 */
 	MultiComboBox.prototype._getItemByToken = function(oToken) {
 		return this._getItemBy(oToken, "Token");
+	};
+
+	/**
+	 * Gets item corresponding to given value.
+	 *
+	 * @param {string} sValue The given value
+	 * @return {sap.ui.core.Item} The corresponding item
+	 * @private
+	 */
+	MultiComboBox.prototype._getItemByValue = function (sValue) {
+		return this.getSelectableItems().find(function (oItem) {
+			return oItem.getText().toLowerCase() === sValue.toLowerCase();
+		});
 	};
 
 	/**
