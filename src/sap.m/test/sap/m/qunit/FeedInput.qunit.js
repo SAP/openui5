@@ -80,10 +80,14 @@ sap.ui.define([
 		assert.strictEqual(this.oFeedInput._getTextArea().getEnabled(), false, "enabled=false: TextArea should be disabled");
 		assert.strictEqual(this.oFeedInput._getPostButton().getEnabled(), false, "enabled=false: Button should be disabled");
 
+		assert.strictEqual(this.oFeedInput.$("outerContainer").hasClass("sapMFeedInDisabled"), true, "enabled=false: sapMFeedInDisabled should be disabled");
+
 		this.oFeedInput.setEnabled(true);
+
 		sap.ui.getCore().applyChanges();
 		assert.strictEqual(this.oFeedInput._getTextArea().getEnabled(), true, "enabled=true: TextArea should be enabled");
 		assert.strictEqual(this.oFeedInput._getPostButton().getEnabled(), false, "enabled=true, Value = '': Button should be disabled");
+		assert.strictEqual(this.oFeedInput.$("outerContainer").hasClass("sapMFeedInDisabled"), false, "enabled=true: sapMFeedInDisabled should be enabled");
 
 		this.oFeedInput.setValue(" ");
 		sap.ui.getCore().applyChanges();

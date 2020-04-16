@@ -379,6 +379,15 @@ sap.ui.define([
 
 	FeedInput.prototype.setEnabled = function (bEnabled) {
 		this.setProperty("enabled", bEnabled, true);
+
+	  //Dynamically adding or removing the css
+                if (this.getDomRef("outerContainer")) {
+		    if (bEnabled) {
+			this.getDomRef("outerContainer").classList.remove("sapMFeedInDisabled");
+		    } else {
+			this.getDomRef("outerContainer").classList.add("sapMFeedInDisabled");
+		    }
+		}
 		this._getTextArea().setEnabled(bEnabled);
 		this._enablePostButton();
 		return this;
