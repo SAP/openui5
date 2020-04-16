@@ -1866,6 +1866,7 @@ sap.ui.define([
 			this._setSelectedSectionId(sSelectedSectionId); //reselect the current section in the navBar (because the anchorBar was freshly rebuilt from scratch)
 			if (this.getUseIconTabBar()) {
 				this._setCurrentTabSection(oSelectedSection);
+				this._bAllContentFitsContainer = this._hasSingleVisibleFullscreenSubSection(oSelectedSection);
 			}
 			this._requestAdjustLayout(true)
 				.then(function (bSuccess) { // scrolling must be done after the layout adjustment is done (so the latest section positions are determined)
