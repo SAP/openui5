@@ -679,6 +679,7 @@ sap.ui.define([
 	FileUploader.prototype.setFileType = function(vTypes) {
 		// Compatibility issue: converting the given types to an array in case it is a string
 		var aTypes = this._convertTypesToArray(vTypes);
+		this._bShouldBeRebuilded = true;
 		this.setProperty("fileType", aTypes, false);
 		return this;
 	};
@@ -686,6 +687,7 @@ sap.ui.define([
 	FileUploader.prototype.setMimeType = function(vTypes) {
 		// Compatibility issue: converting the given types to an array in case it is a string
 		var aTypes = this._convertTypesToArray(vTypes);
+		this._bShouldBeRebuilded = true;
 		this.setProperty("mimeType", aTypes, false);
 		return this;
 	};
@@ -1832,7 +1834,7 @@ sap.ui.define([
 	 */
 	FileUploader.prototype.prepareFileUploadAndIFrame = function() {
 
-		if (!this.oFileUpload) {
+		if (!this.oFileUpload || this._bShouldBeRebuilded) {
 
 			// create the file uploader markup
 			var aFileUpload = [];
@@ -1884,19 +1886,14 @@ sap.ui.define([
 				}
 			}
 			if ((this.getMimeType() || this.getFileType()) && window.File) {
-				var aMimeTypes = this.getMimeType() || [];
-				var aFileTypes = this.getFileType() || [];
-				aFileTypes = aFileTypes.map(function(item) {
-					return item.indexOf(".") === 0 ? item : "." + item;
-				});
-				var sAcceptedTypes = aFileTypes.concat(aMimeTypes).join(",");
+				var sAcceptedTypes = this._getAcceptedTypes();
 				aFileUpload.push('accept="' + encodeXML(sAcceptedTypes) + '" ');
 			}
 			aFileUpload.push('>');
 
 			// add it into the control markup
 			this.oFileUpload = jQuery(aFileUpload.join("")).prependTo(this.$().find(".sapUiFupInputMask")).get(0);
-
+			this._bShouldBeRebuilded = false;
 		} else {
 
 			// move the file uploader from the static area to the control markup
@@ -1954,6 +1951,15 @@ sap.ui.define([
 			this.oBrowse.$().removeAriaDescribedBy(this.oFilePath.getId() + "-message");
 		}
 
+	};
+
+	FileUploader.prototype._getAcceptedTypes = function() {
+		var aMimeTypes = this.getMimeType() || [],
+			aFileTypes = this.getFileType() || [];
+		aFileTypes = aFileTypes.map(function(item) {
+			return item.indexOf(".") === 0 ? item : "." + item;
+		});
+		return aFileTypes.concat(aMimeTypes).join(",");
 	};
 
 	FileUploader.prototype._resetValueAfterUploadStart = function () {
