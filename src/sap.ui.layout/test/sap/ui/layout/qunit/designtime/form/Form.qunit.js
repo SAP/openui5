@@ -277,8 +277,7 @@ sap.ui.define([
 						index: 0,
 						newControlId: oView.createId("my_new_control"),
 						bindingString: "binding/path",
-						parentId: oView.createId("group"),
-						oDataServiceVersion: "4.0"
+						parentId: oView.createId("group")
 					};
 				}
 			},
@@ -303,8 +302,7 @@ sap.ui.define([
 						index: 0,
 						newControlId: oView.createId("my_new_control"),
 						bindingString: "binding/path",
-						parentId: oView.createId("group"),
-						oDataServiceVersion: "4.0"
+						parentId: oView.createId("group")
 					};
 				}
 			},

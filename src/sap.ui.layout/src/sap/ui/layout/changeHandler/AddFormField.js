@@ -163,7 +163,7 @@ sap.ui.define([
 	 * @param {string} oSpecificChangeInfo.bindingPath The binding path for the new control
 	 * @param {string} oSpecificChangeInfo.parentId FormContainer where the new control will be added
 	 * @param {number} oSpecificChangeInfo.index The index where the field will be added
-	 * @param {string} oSpecificChangeInfo.oDataServiceVersion The OData service version
+	 * @param {string} [oSpecificChangeInfo.oDataServiceVersion] The OData service version
 	 * @param {Object} mPropertyBag The property bag containing the App Component
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
 	 * @param {object} mPropertyBag.appComponent Application component
@@ -196,9 +196,7 @@ sap.ui.define([
 		} else {
 			oChangeDefinition.content.newFieldIndex = oSpecificChangeInfo.index;
 		}
-		if (oSpecificChangeInfo.oDataServiceVersion === undefined) {
-			throw new Error("oSpecificChangeInfo.oDataServiceVersion attribute required");
-		} else {
+		if (oSpecificChangeInfo.oDataServiceVersion) {
 			oChangeDefinition.content.oDataServiceVersion = oSpecificChangeInfo.oDataServiceVersion;
 		}
 	};
