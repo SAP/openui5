@@ -1590,13 +1590,12 @@ sap.ui.define([
 				},
 				sPath : "/Collection(42)"
 			}),
-			oBindingMock = this.mock(oBinding),
 			sChildPath = "Function(foo=42)",
 			oContext = Context.create(this.oModel, oBinding, "/Collection(42)"),
 			oModelMock = this.mock(oBinding.oModel),
 			oPromise;
 
-		oBindingMock.expects("getBaseForPathReduction")
+		this.mock(oBinding).expects("getBaseForPathReduction")
 			.withExactArgs().returns("/base/path");
 		oModelMock.expects("resolve")
 			.withExactArgs("/Collection(42)", undefined)
@@ -1607,7 +1606,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("fetchPropertyAndType")
 			.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/child/path")
 			.returns(SyncPromise.resolve([{$isBound : true, $kind : "Function"}]));
-		oBindingMock.expects("doFetchQueryOptions").withExactArgs(undefined)
+		this.mock(oBinding).expects("doFetchQueryOptions").withExactArgs(undefined)
 			.returns(SyncPromise.resolve());
 
 		// code under test
