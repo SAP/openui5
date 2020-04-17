@@ -517,9 +517,10 @@ function(Device, UIArea, jQuery) {
 	};
 
 	DnD.onbeforemousedown = function(oEvent) {
-		// text selection workaround for IE since preventDefault on dragstart does not help
+		// text selection workaround since preventDefault on dragstart does not help
 		// https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/10375756/
-		if (Device.browser.msie && isSelectableElement(oEvent.target)) {
+		// https://bugzilla.mozilla.org/show_bug.cgi?id=800050
+		if ((Device.browser.msie || Device.browser.firefox || Device.browser.edge) && isSelectableElement(oEvent.target)) {
 			oDraggableAncestorNode = jQuery(oEvent.target).closest("[data-sap-ui-draggable=true]").prop("draggable", false)[0];
 		}
 	};
