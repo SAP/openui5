@@ -13463,21 +13463,30 @@ sap.ui.define([
 	// Scenario: ODataContextBinding for non-deferred bound function call which returns a
 	// collection. A dependent list binding for "value" with auto-$expand/$select displays the
 	// result.
-	QUnit.test("Context: bound function returns coll., auto-$expand/$select", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
-			sFunctionName = "com.sap.gateway.default.iwbep.tea_busi.v0001"
+	// JIRA: CPOUI5UISERVICESV3-965
+	// BCP: 2070134549
+	QUnit.test("Rel. bound function, auto-$expand/$select (BCP 2070134549)", function (assert) {
+		var sFunctionName = "com.sap.gateway.default.iwbep.tea_busi.v0001"
 				+ ".__FAKE__FuGetEmployeesByManager",
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
-<FlexBox binding="{/MANAGERS(\'1\')/' + sFunctionName + '()}" id="function">\
-	<Table items="{value}">\
-		<ColumnListItem>\
-			<Text id="id" text="{ID}" />\
-			<Text id="name" text="{Name}" />\
-		</ColumnListItem>\
-	</Table>\
+<FlexBox binding="{/MANAGERS(\'1\')}" id="manager">\
+	<Text id="TEAM_ID" text="{TEAM_ID}" />\
+	<FlexBox binding="{' + sFunctionName + '()}" id="function">\
+		<Table items="{value}">\
+			<ColumnListItem>\
+				<Text id="id" text="{ID}" />\
+				<Text id="name" text="{Name}" />\
+			</ColumnListItem>\
+		</Table>\
+	</FlexBox>\
 </FlexBox>';
 
-		this.expectRequest("MANAGERS('1')/" + sFunctionName + "()?$select=ID,Name", {
+		this.expectRequest("MANAGERS('1')?$select=ID,TEAM_ID", {
+				ID : "1",
+				TEAM_ID : "TEAM_03"
+			})
+			.expectRequest("MANAGERS('1')/" + sFunctionName + "()?$select=ID,Name", {
 				value : [{
 					ID : "3",
 					Name : "Jonathan Smith"
@@ -13486,17 +13495,12 @@ sap.ui.define([
 					Name : "Susan Bay"
 				}]
 			})
+			.expectChange("TEAM_ID", "TEAM_03")
 			.expectChange("id", ["3", "6"])
 			.expectChange("name", ["Jonathan Smith", "Susan Bay"]);
 
 		return this.createView(assert, sView, oModel);
 	});
-	//TODO Gateway says "Expand/Select not supported for functions"!
-	//TODO Gateway says "System query options not supported for functions"!
-	// --> TripPinRESTierService is OK with both!
-	// http://services.odata.org/TripPinRESTierService/(S(...))/People('russellwhyte')/Trips(1)/
-	// Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetInvolvedPeople()
-	// ?$count=true&$select=UserName&$skip=1
 
 	//*********************************************************************************************
 	// Scenario: Delete an entity via a context binding and check that bindings to properties of
