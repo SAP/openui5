@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Variant",
-	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/base/Log",
@@ -25,7 +24,6 @@ sap.ui.define([
 	Change,
 	Layer,
 	Variant,
-	Component,
 	FlexState,
 	StorageUtils,
 	Log,
@@ -46,6 +44,7 @@ sap.ui.define([
 			return aChanges;
 		}, []);
 	}
+
 	QUnit.module("Given a backend response from storage", {
 		beforeEach: function() {
 			return Promise.all([

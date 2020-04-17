@@ -16,7 +16,8 @@
 					"content": {
 						"title": "Standard",
 						"favorite": true,
-						"visible": true
+						"visible": true,
+						"executeOnSelect": false
 					}
 				},
 				"controlChanges": [
@@ -80,7 +81,8 @@
 					"content": {
 						"title": "New Variant Title",
 						"favorite": false,
-						"visible": true
+						"visible": true,
+						"executeOnSelect": true
 					},
 					"layer": "VENDOR",
 					"texts": {
@@ -207,6 +209,47 @@
 							"layer": "CUSTOMER",
 							"variantReference": "variant0"
 						}
+					],
+					"setExecuteOnSelect": [
+						{
+							"fileName": "id_1507716136285_38_setExecuteOnSelect",
+							"fileType": "ctrl_variant_change",
+							"changeType": "setExecuteOnSelect",
+							"content": {
+								"executeOnSelect": true
+							},
+							"selector": {
+								"id": "variant0",
+								"idIsLocal": false
+							},
+							"layer": "CUSTOMER"
+						},
+						{
+							"fileName": "id_1507716136285_39_setExecuteOnSelect",
+							"fileType": "ctrl_variant_change",
+							"changeType": "setExecuteOnSelect",
+							"content": {
+								"executeOnSelect": false
+							},
+							"selector": {
+								"id": "variant0",
+								"idIsLocal": false
+							},
+							"layer": "CUSTOMER"
+						},
+						{
+							"fileName": "id_1507716136285_40_setExecuteOnSelect",
+							"fileType": "ctrl_variant_change",
+							"changeType": "setExecuteOnSelect",
+							"content": {
+								"executeOnSelect": true
+							},
+							"selector": {
+								"id": "variant0",
+								"idIsLocal": false
+							},
+							"layer": "CUSTOMER"
+						}
 					]
 				}
 			},
@@ -221,7 +264,8 @@
 					"content": {
 						"title": "variant AA",
 						"favorite": true,
-						"visible": false
+						"visible": false,
+						"executeOnSelect": false
 					},
 					"layer": "CUSTOMER",
 					"texts": {},
@@ -346,6 +390,34 @@
 							},
 							"texts": {}
 						}
+					],
+					"setExecuteOnSelect": [
+						{
+							"fileName": "id_1507716136285_41_setExecuteOnSelect",
+							"fileType": "ctrl_variant_change",
+							"changeType": "setExecuteOnSelect",
+							"content": {
+								"executeOnSelect": true
+							},
+							"selector": {
+								"id": "variant2",
+								"idIsLocal": false
+							},
+							"layer": "CUSTOMER"
+						},
+						{
+							"fileName": "id_1507716136285_41_setExecuteOnSelect",
+							"fileType": "ctrl_variant_change",
+							"changeType": "setExecuteOnSelect",
+							"content": {
+								"executeOnSelect": false
+							},
+							"selector": {
+								"id": "variant2",
+								"idIsLocal": false
+							},
+							"layer": "CUSTOMER"
+						}
 					]
 				}
 			}
@@ -380,7 +452,8 @@
 					"content": {
 						"title": "variant C",
 						"favorite": true,
-						"visible": true
+						"visible": true,
+						"executeOnSelect": false
 					},
 					"layer": "CUSTOMER",
 					"texts": {},
@@ -408,7 +481,8 @@
 					"content": {
 						"title": "variant A",
 						"favorite": true,
-						"visible": true
+						"visible": true,
+						"executeOnSelect": false
 					},
 					"layer": "CUSTOMER",
 					"texts": {},
@@ -483,7 +557,8 @@
 					"content": {
 						"title": "variant B",
 						"favorite": true,
-						"visible": true
+						"visible": true,
+						"executeOnSelect": false
 					},
 					"layer": "USER",
 					"texts": {},
@@ -620,7 +695,8 @@
 					"content": {
 						"favorite": false,
 						"title": "Standard",
-						"visible": false
+						"visible": false,
+						"executeOnSelect": false
 					},
 					"fileName": "nonExistingVariant1",
 					"support": {
@@ -676,7 +752,8 @@
 					"content": {
 						"favorite": true,
 						"title": "Standard",
-						"visible": true
+						"visible": true,
+						"executeOnSelect": false
 					},
 					"fileName": "nonExistingVariant2",
 					"support": {
