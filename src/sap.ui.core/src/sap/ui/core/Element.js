@@ -63,12 +63,6 @@ sap.ui.define([
 	 * of the control and its base classes. Note that for  0..n aggregations and associations this
 	 * usually is the plural name, whereas it is the singular name in case of 0..1 relations.
 	 *
-	 * If a key name is ambiguous for a specific control class (e.g. a property has the same
-	 * name as an event), then this method prefers property, aggregation, association and
-	 * event in that order. To resolve such ambiguities, the keys can be prefixed with
-	 * <code>aggregation:</code>, <code>association:</code> or <code>event:</code>.
-	 * In that case the keys must be quoted due to the ':'.
-	 *
 	 * Each subclass should document the set of supported names in its constructor documentation.
 	 *
 	 * <b>Valid Values:</b>
@@ -88,36 +82,46 @@ sap.ui.define([
 	 * This allows the definition of popup controls in declarative views and enables propagation of model
 	 * and context information to them.
 	 *
-	 *
-	 * <h3>Handling of Incoming Events</h3>
-	 *
-	 * The UI5 framework already registers generic listeners for common browser events, such as <code>click</code>
-	 * or <code>keydown</code>. When called, the generic listener first determines the corresponding target element
-	 * using {@link module:sap/ui/dom/query/control jQuery#control}. Then it checks whether the element has an
-	 * event handler method for the event. An event handler method by convention has the same name as the event,
-	 * but prefixed with "on": Method <code>onclick</code> is the handler for the <code>click</code> event, method
-	 * <code>onkeydown</code> the handler for the <code>keydown</code> event and so on. If there is such a method,
-	 * it will be called with the original event as the only parameter. If the element has a list of delegates
-	 * registered, their handler functions will be called the same way, where present. The set of implemented handlers
-	 * might differ between element and delegates. Not each handler implemented by an element has to be implemented
-	 * by its delegates, and delegates can implement handlers that the corresponding element doesn't implement.
-	 *
-	 * A list of browser events that are handled that way can be found in {@link module:sap/ui/events/ControlEvents}.
-	 * Additionally, the framework dispatches pseudo events ({@link module:sap/ui/events/PseudoEvents}) using the same
-	 * naming convention. Last but not least, some framework events are also dispatched that way, e.g.
-	 * <code>BeforeRendering</code>, <code>AfterRendering</code> and <code>ThemeChanged</code>.
-	 *
-	 * If further browser events are needed, controls can register listeners on the DOM using native APIs in their
-	 * <code>onAfterRendering</code> handler. If events might fire often (e.g. <code>mousemove</code>), it is best
-	 * practice to register them only while needed, and deregister afterwards. Any listeners must be cleaned up in
-	 * the <code>onBeforeRendering</code> and before destruction in the <code>exit</code> hook.
-	 *
 	 * @param {string} [sId] id for the new control; generated automatically if no non-empty id is given
 	 *      Note: this can be omitted, no matter whether <code>mSettings</code> will be given or not!
 	 * @param {object} [mSettings] optional map/JSON-object with initial property values, aggregated objects etc. for the new element
 	 *
 	 * @abstract
-	 * @class Base Class for Elements.
+	 *
+	 * @class Base Class for UI Elements.
+	 *
+	 * <code>Element</code> is the most basic building block for UI5 UIs. An <code>Element</code> has state like a
+	 * <code>ManagedObject</code>, it has a unique ID by which the framework remembers it. It can have associated
+	 * DOM, but it can't render itself. Only {@link sap.ui.core.Control Controls} can render themselves and also
+	 * take care of rendering <code>Elements</code> that they aggregate as children. If an <code>Element</code>
+	 * has been rendered, its related DOM gets the same ID as the <code>Element</code> and thereby can be retrieved
+	 * via API. When the state of an <code>Element</code> changes, it informs its parent <code>Control</code> which
+	 * usually re-renders then.
+	 *
+	 * <h3>Dispatching Events</h3>
+	 *
+	 * The UI5 framework already registers generic listeners for common browser events, such as <code>click</code>
+	 * or <code>keydown</code>. When called, the generic listener first determines the corresponding target element
+	 * using {@link jQuery#control}. Then it checks whether the element has an event handler method for the event.
+	 * An event handler method by convention has the same name as the event, but prefixed with "on": Method
+	 * <code>onclick</code> is the handler for the <code>click</code> event, method <code>onkeydown</code> the handler
+	 * for the <code>keydown</code> event and so on. If there is such a method, it will be called with the original
+	 * event as the only parameter. If the element has a list of delegates registered, their handler functions will
+	 * be called the same way, where present. The set of implemented handlers might differ between element and
+	 * delegates. Not each handler implemented by an element has to be implemented by its delegates, and delegates
+	 * can implement handlers that the corresponding element doesn't implement.
+	 *
+	 * A list of browser events that are handled that way can be found in {@link module:sap/ui/events/ControlEvents}.
+	 * Additionally, the framework dispatches pseudo events ({@link module:sap/ui/events/PseudoEvents}) using the same
+	 * naming convention. Last but not least, some framework events are also dispatched that way, e.g.
+	 * <code>BeforeRendering</code>, <code>AfterRendering</code> (only for controls) and <code>ThemeChanged</code>.
+	 *
+	 * If further browser events are needed, controls can register listeners on the DOM using native APIs in their
+	 * <code>onAfterRendering</code> handler. If needed, they can do this for their aggregated elements as well.
+	 * If events might fire often (e.g. <code>mousemove</code>), it is best practice to register them only while
+	 * needed, and deregister afterwards. Anyhow, any registered listeners must be cleaned up in the
+	 * <code>onBeforeRendering</code> listener and before destruction in the <code>exit</code> hook.
+	 *
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
 	 * @version ${version}
@@ -157,7 +161,7 @@ sap.ui.define([
 				 * implementation when needed (potentially taking the deprecated implementations as a
 				 * starting point).
 				 *
-				 * See the section {@link fiori:https://experience.sap.com/fiori-design-web/using-tooltips Using Tooltips}
+				 * See the section {@link https://experience.sap.com/fiori-design-web/using-tooltips/ Using Tooltips}
 				 * in the Fiori Design Guideline.
 				 */
 				tooltip : {name : "tooltip", type : "sap.ui.core.TooltipBase", altTypes : ["string"], multiple : false},

@@ -71,12 +71,6 @@ sap.ui.define([
 	 * of the current class and its base classes. Note that for 0..n aggregations and associations this
 	 * name usually is the plural name, whereas it is the singular name in case of 0..1 relations.
 	 *
-	 * If a key name is ambiguous for a specific managed object class (e.g. a property has the same
-	 * name as an event), then this method prefers property, aggregation, association and
-	 * event in that order. To resolve such ambiguities, the keys can be prefixed with
-	 * <code>aggregation:</code>, <code>association:</code> or <code>event:</code>
-	 * (such keys containing a colon (':') must be quoted to be valid Javascript).
-	 *
 	 * The possible values for a setting depend on its kind:
 	 * <ul>
 	 * <li>for simple properties, the value has to match the documented type of the property (no type conversion occurs)</li>
