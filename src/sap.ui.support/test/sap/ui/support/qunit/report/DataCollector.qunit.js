@@ -115,7 +115,7 @@ sap.ui.define([
 					return ["sap.m"];
 				},
 				_getThemePath: function(){
-					return "http://veui5infra.dhcp.wdf.sap.corp:8080/demokit/#/";
+					return "http://www.example.com/";
 				},
 				oConfiguration: {
 					theme: "fiori_3"
@@ -124,6 +124,6 @@ sap.ui.define([
 
 			// Assert
 			assert.equal(this.DataCollector.getTechInfoJSON().themePaths[0].theme, "fiori_3", "Theme string is correctly set");
-			assert.equal(this.DataCollector.getTechInfoJSON().themePaths[0].relativePath, "http://veui5infra.dhcp.wdf.sap.corp:8080/demokit/#/", "Theme path is correctly set");
+			assert.equal(this.DataCollector.getTechInfoJSON().themePaths[0].relativePath, "http://www.example.com/", "Theme path is correctly set");
 		});
 });
