@@ -588,7 +588,7 @@ sap.ui.define([
 		 *   The absolute meta path of the given instance
 		 * @param {object} mTypeForMetaPath
 		 *   Maps meta paths to the corresponding entity or complex types
-		 * @param {(string|object)[]} [aKeyProperties]
+		 * @param {Array<(string|object)>} [aKeyProperties]
 		 *   A list of key properties, either as a string or an object with one property (its name
 		 *   is the alias in the key predicate, its value is the path in the instance). If not
 		 *   given, the entity's key is used.
@@ -624,7 +624,7 @@ sap.ui.define([
 		 *   The absolute meta path of the given instance
 		 * @param {object} mTypeForMetaPath
 		 *   Maps meta paths to the corresponding entity or complex types
-		 * @param {(string|object)[]} [aKeyProperties]
+		 * @param {Array<(string|object)>} [aKeyProperties]
 		 *   A list of key properties, either as a string or an object with one property (its name
 		 *   is the alias in the key predicate, its value is the path in the instance); if not
 		 *   given, the entity's key is used
@@ -666,7 +666,7 @@ sap.ui.define([
 		 *   The absolute meta path of the given instance
 		 * @param {object} mTypeForMetaPath
 		 *   Maps meta paths to the corresponding entity or complex types
-		 * @param {(string|object)[]} [aKeyProperties]
+		 * @param {Array<(string|object)>} [aKeyProperties]
 		 *   A list of key properties, either as a string or an object with one property (its name
 		 *   is the alias in the key predicate, its value is the path in the instance); if not
 		 *   given, the entity's key is used
