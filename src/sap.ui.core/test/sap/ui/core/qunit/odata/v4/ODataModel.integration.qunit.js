@@ -25197,4 +25197,92 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: You want to use AnnotationHelper.value for a property in the following cases:
+	// 1. /Artists/Name - structural property of an entity type
+	// 2. /Artists/BestFriend/IsActiveEntity - structural property reached via navigation
+	// 3. /Artists/Address/ZIP - structural property of a complex type
+	// 4. /Artists/special.cases.SendAutograph/$Parameter/Address/ZIP - structural property of a
+	//   complex type used as operation parameter
+	// 5. /Artists/special.cases.SendAutograph/$Parameter/_it/Name - structural property of an
+	//  entity type reached via the binding parameter of an operation
+	// JIRA: CPOUI5ODATAV4-104
+	testXMLTemplating("AnnotationHelper#value on properties",
+		{models : {meta : createSpecialCasesModel().getMetaModel()}},
+		'<template:alias name="value" value="sap.ui.model.odata.v4.AnnotationHelper.value">\
+			<Input value="{meta>/Artists/Name@@value}"/>\
+			<Input value="{meta>/Artists/BestFriend/IsActiveEntity@@value}"/>\
+			<Input value="{meta>/Artists/Address/ZIP@@value}"/>\
+			<Input value="{meta>/Artists/special.cases.SendAutograph/$Parameter/Address/ZIP@@value}"/>\
+			<Input value="{meta>/Artists/special.cases.SendAutograph/$Parameter/_it/Name@@value}"/>\
+		</template:alias>',
+		'<Input value="{Name}"/>\
+		<Input value="{IsActiveEntity}"/>\
+		<Input value="{ZIP}"/>\
+		<Input value="{ZIP}"/>\
+		<Input value="{Name}"/>');
+
+	//*********************************************************************************************
+	// Scenario: You want to use AnnotationHelper.value inside a "14.5.12 Expression edm:Path" or
+	// "14.5.13 Expression edm:PropertyPath"
+	// JIRA: CPOUI5ODATAV4-104
+	testXMLTemplating("AnnotationHelper#value inside path object",
+		{models : {meta : createSpecialCasesModel().getMetaModel()}},
+		'<template:alias name="value" value="sap.ui.model.odata.v4.AnnotationHelper.value">\
+			<Input value="{meta>/Artists/@com.sap.vocabularies.UI.v1.SelectionFields/0/$PropertyPath@@value}"/>\
+			<Input value="{meta>/Artists/@com.sap.vocabularies.UI.v1.SelectionFields/1/$PropertyPath@@value}"/>\
+			<Input value="{meta>/Artists/ArtistID@com.sap.vocabularies.Common.v1.Text/$Path@@value}"/>\
+		</template:alias>',
+		'<Input value="{Name}"/>\
+		<Input value="{BestFriend/Name}"/>\
+		<Input value="{Name}"/>');
+
+	//*********************************************************************************************
+	// Scenario: You want to use AnnotationHelper.format for a property in the following cases:
+	// 1. /Artists/Name - structural property of an entity type
+	// 2. /Artists/BestFriend/IsActiveEntity - structural property reached via navigation
+	// 3. /Artists/Address/ZIP - structural property of a complex type
+	// 4. /Artists/special.cases.SendAutograph/$Parameter/Address/ZIP - structural property of a
+	//   complex type used as operation parameter
+	// 5. /Artists/special.cases.SendAutograph/$Parameter/_it/Name - structural property of an
+	//  entity type reached via the binding parameter of an operation
+	// JIRA: CPOUI5ODATAV4-104
+	testXMLTemplating("AnnotationHelper#format on properties",
+		{models : {meta : createSpecialCasesModel().getMetaModel()}},
+		'<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
+			<Input value="{meta>/Artists/Name@@format}"/>\
+			<Input value="{meta>/Artists/BestFriend/IsActiveEntity@@format}"/>\
+			<Input value="{meta>/Artists/Address/ZIP@@format}"/>\
+			<Input value="{meta>/Artists/special.cases.SendAutograph/$Parameter/Address/ZIP@@format}"/>\
+			<Input value="{meta>/Artists/special.cases.SendAutograph/$Parameter/_it/Name@@format}"/>\
+		</template:alias>',
+		'<Input value="{path:\'Name\',type:\'sap.ui.model.odata.type.String\',\
+			constraints:{\'maxLength\':255},formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
+		<Input value="{path:\'IsActiveEntity\',type:\'sap.ui.model.odata.type.Boolean\',\
+			constraints:{\'nullable\':false}}"/>\
+		<Input value="{path:\'ZIP\',type:\'sap.ui.model.odata.type.String\',\
+			constraints:{\'maxLength\':5},formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
+		<Input value="{path:\'ZIP\',type:\'sap.ui.model.odata.type.String\',\
+			constraints:{\'maxLength\':5},formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
+		<Input value="{path:\'Name\',type:\'sap.ui.model.odata.type.String\',\
+			constraints:{\'maxLength\':255},formatOptions:{\'parseKeepsEmptyString\':true}}"/>');
+
+	//*********************************************************************************************
+	// Scenario: You want to use AnnotationHelper.format inside a "14.5.12 Expression edm:Path" or
+	// "14.5.13 Expression edm:PropertyPath"
+	// JIRA: CPOUI5ODATAV4-104
+	testXMLTemplating("AnnotationHelper#format inside path object",
+		{models : {meta : createSpecialCasesModel().getMetaModel()}},
+		'<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
+			<Input value="{meta>/Artists/@com.sap.vocabularies.UI.v1.SelectionFields/0/$PropertyPath@@format}"/>\
+			<Input value="{meta>/Artists/@com.sap.vocabularies.UI.v1.SelectionFields/1/$PropertyPath@@format}"/>\
+			<Input value="{meta>/Artists/ArtistID@com.sap.vocabularies.Common.v1.Text/$Path@@format}"/>\
+		</template:alias>',
+		'<Input value="{path:\'Name\',type:\'sap.ui.model.odata.type.String\',\
+			constraints:{\'maxLength\':255},formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
+		<Input value="{path:\'BestFriend/Name\',type:\'sap.ui.model.odata.type.String\',\
+			constraints:{\'maxLength\':255},formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
+		<Input value="{path:\'Name\',type:\'sap.ui.model.odata.type.String\',\
+			constraints:{\'maxLength\':255},formatOptions:{\'parseKeepsEmptyString\':true}}"/>');
 });

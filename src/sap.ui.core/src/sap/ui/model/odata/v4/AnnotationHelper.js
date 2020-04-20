@@ -60,15 +60,16 @@ sap.ui.define([
 			 *   <li>dynamic "14.5.12 Expression edm:Path" and "14.5.13 Expression
 			 *   edm:PropertyPath": This is turned into a data binding relative to an entity,
 			 *   including type information and constraints as available from metadata,
-			 *   e.g. <code>"{path : 'Name', type : 'sap.ui.model.odata.type.String',
-			 *   constraints : {'maxLength':'255'}}"</code>.
-			 *   Depending on the used type, some additional constraints of this type are set:
+			 *   e.g. <code>"{path : 'Name', type : 'sap.ui.model.odata.type.String', constraints :
+			 *   {'maxLength' : 255}, formatOptions : {'parseKeepsEmptyString' : true}}"</code>.
+			 *   Depending on the used type, some additional constraints and format options of this
+			 *   type are set:
 			 *   <ul>
 			 *     <li>Edm.DateTime: The "displayFormat" constraint is set to the value of the
 			 *     "sap:display-format" annotation of the referenced property.
 			 *     <li>Edm.Decimal: The "precision" and "scale" constraints are set to the values
 			 *     of the corresponding attributes of the referenced property. The "minimum",
-			 *     "maximum", "minimumExclusive" and "maximumExlusive" constraints are set to the
+			 *     "maximum", "minimumExclusive", and "maximumExclusive" constraints are set to the
 			 *     values of the corresponding "Org.OData.Validation.V1" annotation of the
 			 *     referenced property; note that in this case only constant expressions are
 			 *     supported to determine the annotation value.
@@ -77,8 +78,10 @@ sap.ui.define([
 			 *     constraint is set to the value of the
 			 *     "com.sap.vocabularies.Common.v1.IsDigitSequence" annotation of the referenced
 			 *     property; note that in this case only constant expressions are supported to
-			 *     determine the annotation value.
+			 *     determine the annotation value. The "parseKeepsEmptyString" format option is set.
 			 *   </ul>
+			 *   Since 1.78.0, both "edm:Path" and "edm:PropertyPath" are also supported if
+			 *   <code>vRawValue</code> is the path itself, and not the object wrapping it.
 			 * </ul>
 			 *
 			 * If <code>oDetails.context.getPath()</code> contains a single "$AnnotationPath" or
@@ -157,7 +160,7 @@ sap.ui.define([
 			 * returns the following binding string which contains information about path, type and
 			 * constraints:
 			 * <pre>
-			 * &lt;Text text="{path:'TeamID',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':10,'nullable':false}" />
+			 * &lt;Text text="{path:'TeamID',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':10,'nullable':false},formatOptions:{'parseKeepsEmptyString':true}}" />
 			 * </pre>
 			 *
 			 * Since 1.71.0, for annotations on an operation or a parameter, the binding parameter's
@@ -206,6 +209,16 @@ sap.ui.define([
 			 * <code>$)</code> respectively. Use <code>null</code>, not <code>undefined</code>, in
 			 * case no binding parameters are needed.
 			 *
+			 * Since 1.78.0, this function can be used on a structural property and results in a
+			 * relative data binding, just like a "14.5.12 Expression edm:Path". The usage
+			 * <pre>
+			 * &lt;Input value="{meta>/Department/Name@@sap.ui.model.odata.v4.AnnotationHelper.format}"/>
+			 * </pre>
+			 * results in
+			 * <pre>
+			 * &lt; Input value="{path:'Name',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':40,'nullable':false},formatOptions:{'parseKeepsEmptyString':true}}"/>
+			 * </pre>
+			 *
 			 * @param {any} vRawValue
 			 *   The raw value from the meta model
 			 * @param {object} oDetails
@@ -242,7 +255,7 @@ sap.ui.define([
 					sPath = oDetails.context.getPath();
 
 				function getExpression(sPrefix) {
-					if (sPath.slice(-1) === "/") {
+					if (sPath.endsWith("/")) {
 						// cut off trailing slash, happens with computed annotations
 						sPath = sPath.slice(0, -1);
 					}
@@ -264,6 +277,14 @@ sap.ui.define([
 							// e.g. see sap.ui.model.odata.v4_AnnotationHelperExpression.operator
 							$$valueAsPromise : true
 						});
+				}
+
+				if (sPath.endsWith("/$Path")) {
+					sPath = sPath.slice(0, -6);
+					vRawValue = {$Path : vRawValue};
+				} else if (sPath.endsWith('/$PropertyPath')) {
+					sPath = sPath.slice(0, -14);
+					vRawValue = {$PropertyPath : vRawValue};
 				}
 
 				aMatches = rUnsupportedPathSegments.exec(sPath);
@@ -639,7 +660,8 @@ sap.ui.define([
 			 *   <code>null</code> value. It is ignored in <code>odata.concat</code>.
 			 *   <li>dynamic "14.5.12 Expression edm:Path" and "14.5.13 Expression
 			 *   edm:PropertyPath": This is turned into a simple data binding, e.g.
-			 *   <code>"{Name}"</code>.
+			 *   <code>"{Name}"</code>. Since 1.78.0, both are also supported if
+			 *   <code>vRawValue</code> is the path itself, and not the object wrapping it.
 			 * </ul>
 			 * Unsupported or incorrect values are turned into a string nevertheless, but indicated
 			 * as such. In such a case, an error describing the problem is logged to the console.
@@ -668,6 +690,9 @@ sap.ui.define([
 			 * notation, curly brackets must be replaced by <code>$(</code> and <code>$)</code>
 			 * respectively.
 			 *
+			 * Since 1.78.0, this function can be used on a structural property and results in a
+			 * relative data binding, just like a "14.5.12 Expression edm:Path".
+			 *
 			 * @param {any} vRawValue
 			 *   The raw value from the meta model
 			 * @param {object} oDetails
@@ -694,10 +719,17 @@ sap.ui.define([
 			value : function (vRawValue, oDetails) {
 				var sPath = oDetails.context.getPath();
 
-				if (sPath.slice(-1) === "/") {
+				if (sPath.endsWith("/")) {
 					// cut off trailing slash, happens with computed annotations
 					sPath = sPath.slice(0, -1);
+				} else if (sPath.endsWith("/$Path")) {
+					sPath = sPath.slice(0, -6);
+					vRawValue = {$Path : vRawValue};
+				} else if (sPath.endsWith('/$PropertyPath')) {
+					sPath = sPath.slice(0, -14);
+					vRawValue = {$PropertyPath : vRawValue};
 				}
+
 				return Expression.getExpression({
 						asExpression : false,
 						complexBinding : false,

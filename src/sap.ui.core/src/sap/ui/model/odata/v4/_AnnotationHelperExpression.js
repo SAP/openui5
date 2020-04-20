@@ -353,6 +353,11 @@ sap.ui.define([
 			} else {
 				Basics.expectType(oPathValue, "object");
 
+				if (oRawValue.$kind === "Property") {
+					oPathValue.value = oPathValue.model.getObject(oPathValue.path + "@sapui.name");
+					return Expression.path(oPathValue);
+				}
+
 				["$And", "$Apply", "$Date", "$DateTimeOffset", "$Decimal", "$Float", "$Eq",
 					"$Ge", "$Gt", "$Guid", "$If", "$Int", "$Le", "$Lt", "$Name", "$Ne", "$Not",
 					"$Null", "$Or", "$Path", "$PropertyPath", "$TimeOfDay", "$LabeledElement"

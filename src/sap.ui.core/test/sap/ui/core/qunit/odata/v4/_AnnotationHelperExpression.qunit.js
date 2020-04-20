@@ -564,6 +564,37 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("expression: $kind is 'Property'", function (assert) {
+		var oMetaModel = {
+				getObject : function () {}
+			},
+			oPathValue = {
+				foo : "bar",
+				model : oMetaModel,
+				path : "/SomeEntity/SomeProperty",
+				value : {
+					$kind : "Property"
+				}
+			},
+			oResult = {/*SyncPromise*/};
+
+		this.mock(oMetaModel).expects("getObject")
+			.withExactArgs("/SomeEntity/SomeProperty@sapui.name")
+			.returns("SomeProperty");
+		this.mock(Expression).expects("path")
+			.withExactArgs({
+				foo : "bar",
+				model : sinon.match.same(oMetaModel),
+				path : "/SomeEntity/SomeProperty",
+				value : "SomeProperty"
+			})
+			.returns(oResult);
+
+		// code under test
+		assert.strictEqual(Expression.expression(oPathValue), oResult);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("expression: error for $LabeledElement", function (assert) {
 		var oError = new SyntaxError(),
 			oPathValue = {
