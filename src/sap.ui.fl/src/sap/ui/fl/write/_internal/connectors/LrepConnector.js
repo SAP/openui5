@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/Utils",
 	"sap/ui/fl/Change",
 	"sap/ui/core/Component",
 	"sap/ui/core/BusyIndicator",
@@ -28,6 +29,7 @@ sap.ui.define([
 	Settings,
 	Layer,
 	LayerUtils,
+	Utils,
 	Change,
 	Component,
 	BusyIndicator,
@@ -46,7 +48,7 @@ sap.ui.define([
 		TOKEN: "/actions/getcsrftoken/",
 		APPVARIANTS: "/appdescr_variants/",
 		APPVARIANTS_OVERVIEW: "/app_variant_overview/",
-		UI2PERSONALIZATION: "/sap/bc/lrep/ui2personalization/"
+		UI2PERSONALIZATION: "/ui2personalization/"
 	};
 
 	/**
@@ -496,12 +498,22 @@ sap.ui.define([
 		},
 		ui2Personalization: {
 			create: function (mPropertyBag) {
-				mPropertyBag.applyConnector = this.applyConector;
-				return WriteUtils.sendRequest(ROUTES.UI2PERSONALIZATION, "PUT", mPropertyBag);
+				mPropertyBag.applyConnector = this.applyConnector;
+				var sPrefix = Utils.getLrepUrl();
+				var oRequestOptions = WriteUtils.getRequestOptions(
+					ApplyConnector,
+					sPrefix + ROUTES.TOKEN,
+					mPropertyBag.flexObjects || mPropertyBag.flexObject,
+					"application/json; charset=utf-8", "json"
+				);
+				var sUrl = sPrefix + ROUTES.UI2PERSONALIZATION;
+				return WriteUtils.sendRequest(sUrl, "PUT", oRequestOptions);
 			},
 			remove: function (mPropertyBag) {
-				mPropertyBag.applyConnector = this.applyConector;
+				mPropertyBag.applyConnector = this.applyConnector;
 				var sUrl = ApplyUtils.getUrl(ROUTES.UI2PERSONALIZATION, {
+					url: Utils.getLrepUrl()
+				}, {
 					reference: mPropertyBag.reference,
 					containerkey: mPropertyBag.containerKey,
 					itemname: mPropertyBag.itemName
