@@ -139,26 +139,34 @@ sap.ui.define([
 		};
 
 		AlignedFlowLayout.prototype.onAfterRenderingOrThemeChanged = function() {
-			var oDomRef = this.getDomRef(),
-				oEndItemDomRef = this.getDomRef("endItem"),
-				bEndItemAndContent = !!(this.hasContent() && oDomRef && oEndItemDomRef);
 
-			if (bEndItemAndContent) {
-				var oLayoutComputedStyle = window.getComputedStyle(oDomRef, null),
-					iLayoutPaddingTop = oLayoutComputedStyle.getPropertyValue("padding-top"),
-					mEndItemStyle = oEndItemDomRef.style;
+			window.requestAnimationFrame(function() {
+				var oDomRef = this.getDomRef(),
+					oEndItemDomRef = this.getDomRef("endItem"),
+					bEndItemAndContent = !!(this.hasContent() && oDomRef && oEndItemDomRef);
 
-				// adapt the position of the absolute-positioned end item in case a standard CSS class is added
-				if (Core.getConfiguration().getRTL()) {
-					mEndItemStyle.left = oLayoutComputedStyle.getPropertyValue("padding-left");
-				} else {
-					mEndItemStyle.right = oLayoutComputedStyle.getPropertyValue("padding-right");
+				if (bEndItemAndContent) {
+					var oLayoutComputedStyle = window.getComputedStyle(oDomRef, null),
+						iLayoutPaddingTop = oLayoutComputedStyle.getPropertyValue("padding-top"),
+						mEndItemStyle = oEndItemDomRef.style;
+
+					// adapt the position of the absolute-positioned end item in case a standard CSS class is added
+					if (Core.getConfiguration().getRTL()) {
+						mEndItemStyle.left = oLayoutComputedStyle.getPropertyValue("padding-left");
+					} else {
+						mEndItemStyle.right = oLayoutComputedStyle.getPropertyValue("padding-right");
+					}
+
+					mEndItemStyle.bottom = iLayoutPaddingTop;
 				}
 
-				mEndItemStyle.bottom = iLayoutPaddingTop;
-			}
+				var oDomRefs = {
+					domRef: oDomRef,
+					endItemDomRef: oEndItemDomRef
+				};
 
-			this.reflow({ domRef: oDomRef, endItemDomRef: oEndItemDomRef });
+				this.reflow(oDomRefs);
+			}.bind(this));
 		};
 
 		/**
@@ -371,10 +379,14 @@ sap.ui.define([
 		}
 
 		function resetCSS(oDomRef, oLastSpacerDomRef) {
-			var mLastSpacerStyle = oLastSpacerDomRef.style;
-			mLastSpacerStyle.width = "";
-			mLastSpacerStyle.height = "";
-			mLastSpacerStyle.display = "";
+			var mLastSpacerStyle = oLastSpacerDomRef && oLastSpacerDomRef.style;
+
+			if (mLastSpacerStyle) {
+				mLastSpacerStyle.width = "";
+				mLastSpacerStyle.height = "";
+				mLastSpacerStyle.display = "";
+			}
+
 			oDomRef.classList.remove(oDomRef.classList.item(0) + "OneLine");
 		}
 
