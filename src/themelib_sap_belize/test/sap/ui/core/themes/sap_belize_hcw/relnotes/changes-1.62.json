@@ -5,70 +5,50 @@
       {
         "id": "86e0875a2d7882987a9a909d76fc80a9e00c673f",
         "type": "FEATURE",
-        "text": "sap.m.GenericTag: Implemented new control",
+        "text": " sap.m.GenericTag: Implemented new control",
         "references": []
       },
       {
         "id": "8b3da3b345c01d459d18f653b5e23b1dcf618ce1",
         "type": "FEATURE",
-        "text": "sap.m.SinglePlanningCalendar: Appointments selection is introduced",
+        "text": " sap.m.SinglePlanningCalendar: Appointments selection is introduced",
         "references": []
       },
       {
         "id": "0f38fe4befcedbd5ba6ce69001e8890753bf359b",
         "type": "FIX",
-        "text": "Fix focus handling findings",
+        "text": " Fix focus handling findings",
         "references": []
       },
       {
         "id": "08ed8fcdf8d2496b2eb77606eec824bb1cf24999",
         "type": "FIX",
-        "text": "Font 72 loading issue",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129400003419012018"
-          }
-        ]
+        "text": " Font 72 loading issue",
+        "references": []
       },
       {
         "id": "f2bf95a4c513f87ffbc1f15027b264c1a43c1b96",
         "type": "FIX",
-        "text": "sap.f.DynamicPage: Fixed wrong CSS on pin/expand/collapse button",
+        "text": " sap.f.DynamicPage: Fixed wrong CSS on pin/expand/collapse button",
         "references": []
       },
       {
         "id": "e4c12abc474029e4dc5f614ad4ec691386001bf7",
         "type": "FIX",
-        "text": "sap.f.DynamicPageTitle: Removed hover effect on tablet/phone device",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870560918"
-          }
-        ]
+        "text": " sap.f.DynamicPageTitle: Removed hover effect on tablet/phone device",
+        "references": []
       },
       {
         "id": "bb5677151ce0704e0e0a676ad2478cf9117185f3",
         "type": "FIX",
-        "text": "sap.m.ColorPicker: Handles now have correct width & color",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970022321"
-          }
-        ]
+        "text": " sap.m.ColorPicker: Handles now have correct width \u0026 color",
+        "references": []
       },
       {
         "id": "f4f21f83d70338ef9002dcb2594c21efa3567e48",
         "type": "FIX",
-        "text": "sap.m.ComboBox: duplicated focus outline, spec implemented",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880494664"
-          }
-        ]
+        "text": " sap.m.ComboBox: duplicated focus outline, spec implemented",
+        "references": []
       }
     ]
   }

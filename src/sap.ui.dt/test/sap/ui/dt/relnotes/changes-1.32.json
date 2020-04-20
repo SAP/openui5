@@ -1,37 +1,37 @@
 {
-	"1.32.0": {
-		"date": "August 2015",
-		"notes": [
-			{
-				"id": "1d7880c6dbb82c431000891457ffdcf33b6f1c64",
-				"type": "FEATURE",
-				"text": "sap.ui.dt: Rename plugin to design time",
-				"references": []
-			},
-			{
-				"id": "963ac0e590fb83f8721a0fb76df8e1247773febb",
-				"type": "FEATURE",
-				"text": "sap.ui.dt : Added renaming to context menu",
-				"references": []
-			},
-			{
-				"id": "464a8c89b9d6fc0bc39a007c0a0c5977b175ae40",
-				"type": "FEATURE",
-				"text": "sap.ui.dt: Added safari support",
-				"references": []
-			},
-			{
-				"id": "0ff96e3df517fe0060ddc7d391707eb91fa11457",
-				"type": "FEATURE",
-				"text": "sap.ui.dt: Enabled Firefox support",
-				"references": []
-			},
-			{
-				"id": "e202a368e1a3ae4aba0dcf190683663b9fa93d9f",
-				"type": "FIX",
-				"text": "sap.ui.dt : Fixes renamed or deleted tests",
-				"references": []
-			}
-		]
-	}
+  "1.32.0": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "1d7880c6dbb82c431000891457ffdcf33b6f1c64",
+        "type": "FEATURE",
+        "text": "sap.ui.dt: Rename plugin to design time",
+        "references": []
+      },
+      {
+        "id": "963ac0e590fb83f8721a0fb76df8e1247773febb",
+        "type": "FEATURE",
+        "text": "sap.ui.dt : Added renaming to context menu",
+        "references": []
+      },
+      {
+        "id": "464a8c89b9d6fc0bc39a007c0a0c5977b175ae40",
+        "type": "FEATURE",
+        "text": "sap.ui.dt: Added safari support",
+        "references": []
+      },
+      {
+        "id": "0ff96e3df517fe0060ddc7d391707eb91fa11457",
+        "type": "FEATURE",
+        "text": "sap.ui.dt: Enabled Firefox support",
+        "references": []
+      },
+      {
+        "id": "e202a368e1a3ae4aba0dcf190683663b9fa93d9f",
+        "type": "FIX",
+        "text": "sap.ui.dt : Fixes renamed or deleted tests",
+        "references": []
+      }
+    ]
+  }
 }

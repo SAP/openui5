@@ -12,6 +12,17 @@
             "reference": "2070054781"
           }
         ]
+      },
+      {
+        "id": "5fd4dad396adaaa51e5095dea012d152fadad355",
+        "type": "FIX",
+        "text": ": RTA - Contextmenu Scrolling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070054781"
+          }
+        ]
       }
     ]
   }

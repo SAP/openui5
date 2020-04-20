@@ -1,482 +1,527 @@
 {
-	"1.40.0": {
-		"date": "June 2016",
-		"notes": [
-			{
-				"id": "426ca3d9500549414bc80e9c86caa30f87161e5c",
-				"type": "FEATURE",
-				"text": "sap.m.BackgroundDesign: new type Solid2\"",
-				"references": []
-			},
-			{
-				"id": "d4e23c57c0311674678f6cf543af44904225ae0e",
-				"type": "FEATURE",
-				"text": "enable Simpleform using afterHook functions",
-				"references": []
-			},
-			{
-				"id": "9869e1e5d2c90baf500d8af68e1d59e8feac3868",
-				"type": "FEATURE",
-				"text": "sap.m.BackgroundDesign: new type Solid2",
-				"references": []
-			},
-			{
-				"id": "1a1d469e9e649f28197cdc9606e1209a7c40d126",
-				"type": "FEATURE",
-				"text": "sap.m.DateTimePicker: new control",
-				"references": []
-			},
-			{
-				"id": "8ca0bbd80efa4bf265228ec568de166b3086dbc9",
-				"type": "FEATURE",
-				"text": "sap.m.FlexBox, sap.ui.layout.Grid,",
-				"references": []
-			},
-			{
-				"id": "68297b26e8c0330eadb656a5d115e7968ec11a6b",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.BlockLayout - titleLevel property added to BlockLayoutCell",
-				"references": []
-			},
-			{
-				"id": "42f80426dad0e8e311fa96a4abb5c84b3279bcd9",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.BlockLayout: Control implemented",
-				"references": []
-			},
-			{
-				"id": "d2249203a73896b871ece61ab4639a72833f0b44",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.DynamicSideContent: New property sideContentPosition added",
-				"references": []
-			},
-			{
-				"id": "0188cfab6e7c03959a8d85ed2a89e7654287751a",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.Form: support XL breakpoint in the ResponsiveGridLayout in the Form",
-				"references": []
-			},
-			{
-				"id": "23331d5bfaf5e6bd7504dd055b62907db8d646a0",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.ResponsiveSplitter: Aria support added",
-				"references": []
-			},
-			{
-				"id": "841652145843f20ea8d260264d82b2c9cac7f7f8",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.ResponsiveSplitter: Keyboard and focus handling",
-				"references": []
-			},
-			{
-				"id": "508b5963c95cb19172b7893c49a8baeedfeeace0",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.ResponsiveSplitter: New control implementation",
-				"references": []
-			},
-			{
-				"id": "1664b1ab8269d14e0ffe11332b073ef579b3c4b1",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.form.Form: allow Toolbars as Title",
-				"references": []
-			},
-			{
-				"id": "881d75b8a3eb298a4cc10be7fac68bb0ceee3dd2",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.form.Form: new backgroundDesign property",
-				"references": []
-			},
-			{
-				"id": "6d93689bab6e478e97df5f8fdb29510b3c681133",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.form.ResponsiveGridLayout single Container",
-				"references": []
-			},
-			{
-				"id": "7346d2cede300ca87ff0841df490a2fe3f800e03",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.form.ResponsiveGridLayout: alignLabelSpan",
-				"references": []
-			},
-			{
-				"id": "8f844317d55715c065a6f91317d0dc5bc4a98810",
-				"type": "FEATURE",
-				"text": ": DT - Enable Simple Controls",
-				"references": []
-			},
-			{
-				"id": "8c4f0f2be7b8a9276202c8f6894484beaeb67c58",
-				"type": "FIX",
-				"text": "Respect \"themeroots\" when resolving img URLs in Controls",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100003930322015"
-					}
-				]
-			},
-			{
-				"id": "c3b3460a4463f6c92840dc5b37c088714d8bcc6a",
-				"type": "FIX",
-				"text": "layout.Splitter: Don't Attempt Resize on Preserved DOM",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580131174"
-					}
-				]
-			},
-			{
-				"id": "d87bd654bd8791b515329937f3268ddd104675c4",
-				"type": "FIX",
-				"text": "sap.m.BlockLayout: add flex prefixes for IE 10",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570850712"
-					}
-				]
-			},
-			{
-				"id": "662ff98ab20ea1b7713a0f061e6e72b5c70fafb8",
-				"type": "FIX",
-				"text": "sap.m.ScrollContainer, sap.ui.layout.FixFlex: A tweak, causing issues in Internet Explorer is now removed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570902084"
-					}
-				]
-			},
-			{
-				"id": "47fa1a3ec30bfb46b35a594cbb9a6d673e592724",
-				"type": "FIX",
-				"text": "sap.ui.Layout.DynamicSideContent - Height is properly",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580200257"
-					}
-				]
-			},
-			{
-				"id": "ae0ca3d3ae8d5cbbc0e1fbe120e36e9cbdd6fe2a",
-				"type": "FIX",
-				"text": "sap.ui.core.layout.VerticalLayout: fix vertical-align in IE",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580197076"
-					}
-				]
-			},
-			{
-				"id": "99202f68d4af4f4c1d7f0735871dc500b2d3544b",
-				"type": "FIX",
-				"text": "sap.ui.layout.DynamicSideContent - Show and hide functionality now works correct when changing breakpoints",
-				"references": []
-			},
-			{
-				"id": "43e05c1d5c8994507e5349160f3a0b1f29cdf7a3",
-				"type": "FIX",
-				"text": "sap.ui.layout.DynamicSideContent: In samples slider does not appear for phones anymore",
-				"references": []
-			},
-			{
-				"id": "690963771ea5f3a12e2e7c59d3382a8c7bd6b83c",
-				"type": "FIX",
-				"text": "sap.ui.layout.DynamicSideContent: Side content visibility on invalidation solved",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570868474"
-					}
-				]
-			},
-			{
-				"id": "bbbc6db0bd74f293154ccb36e15dd3b0e256e2e9",
-				"type": "FIX",
-				"text": "sap.ui.layout.Form: default behaviour of linebreak if linebreakXL is not defined",
-				"references": []
-			},
-			{
-				"id": "fd6e463c48a8d60ed9a57dc3e54c36087059e7a0",
-				"type": "FIX",
-				"text": "sap.ui.layout.Form: linebreakXL support correction in Grid.",
-				"references": []
-			},
-			{
-				"id": "c2eb95ad5d5335196817a5f771466c885f486c5a",
-				"type": "FIX",
-				"text": "sap.ui.layout.ResponsiveFlowLayout - Cyclic re-rendering when the width is small solved",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "492"
-					},
-					{
-						"type": "BCP",
-						"reference": "1570801167"
-					}
-				]
-			},
-			{
-				"id": "38e8d9b215ba490e34a7809a537f802977c55495",
-				"type": "FIX",
-				"text": "sap.ui.layout.ResponsiveFlowLayout - On Internet Explorer the layout container does not occupy the whole width anymore",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570798440"
-					}
-				]
-			},
-			{
-				"id": "63c139d48199328d2801c3311f747d435259a8f0",
-				"type": "FIX",
-				"text": "sap.ui.layout.ResponsiveFlowLayout: when used in SimpleForm items' height is calculated consistent for all browsers.",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002075129500001241092016"
-					}
-				]
-			},
-			{
-				"id": "eeea61f756bd6d3869aae9d1ae4adbe5c4ecef0f",
-				"type": "FIX",
-				"text": "sap.ui.layout.Splitter Fix for IE11 when oData.domNode is an SVG element.",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680050402"
-					}
-				]
-			},
-			{
-				"id": "c0bee4cebb852c829c2881e7f92ae639f8d0d8cc",
-				"type": "FIX",
-				"text": "sap.ui.layout.Splitter RTL vertical resize fix",
-				"references": []
-			},
-			{
-				"id": "bcc72a3c14cb903015091a331f5168fa436b6129",
-				"type": "FIX",
-				"text": "sap.ui.layout.VerticalLayout: Prevent rerendering on width property change",
-				"references": []
-			},
-			{
-				"id": "52e76864f9feb2cb1bb634f8a12611684581ef59",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.Form: No padding between FormContainer if no Title",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670021664"
-					}
-				]
-			},
-			{
-				"id": "83b505a8191ff828ea30ecf158bde2564289d8c6",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.Form: double role \"form\" if only one container",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "908"
-					},
-					{
-						"type": "BCP",
-						"reference": "1670177663"
-					}
-				]
-			},
-			{
-				"id": "22a6d56c45f1ff0012b07221e0931d9cc8e4fbe1",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.Form: too much padding if only 1 container",
-				"references": []
-			},
-			{
-				"id": "2bae7babba64ba2fd4f68ce32177ce937bf7ca9d",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.Form: use Label style only for direct labels",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580178200"
-					}
-				]
-			},
-			{
-				"id": "47123cd5e9f74c2be76122de39a839d7af67939f",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670208916"
-					}
-				]
-			},
-			{
-				"id": "c2cae5cda5378743eda344d0d2b1f7794b59d756",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.GridLayout: missing paddings in sap.m",
-				"references": []
-			},
-			{
-				"id": "a2567b89ce2ddb03f0050ddf1ce34670729baa23",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.GridLayout: padding ar bottom missing in IE",
-				"references": []
-			},
-			{
-				"id": "92bdf170af91089ed3553815587ece66f38d3377",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.GridLayout: wrong tab sequence in RTL",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002007974700006423272015"
-					}
-				]
-			},
-			{
-				"id": "b050b347e4628f938060af72aa35f8ee17e18364",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.ResponsiveGridLayout: 1st container invisible",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670108114"
-					}
-				]
-			},
-			{
-				"id": "77175b448808ef45ef31704c22fad751558b71bb",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.ResponsiveLayout: Labels wrong aligned in Edge",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670153084"
-					}
-				]
-			},
-			{
-				"id": "33e0be96b148f514c2ebaed4ecaf9b0729f48e5e",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.ResponsiveLayout: change order of FormElement",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670301032"
-					}
-				]
-			},
-			{
-				"id": "a608106e829bb8a4e9be646977b6ad60481a8c57",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.SimpleForm: errors by changing content",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670231450"
-					},
-					{
-						"type": "BCP",
-						"reference": "1670244684"
-					}
-				]
-			},
-			{
-				"id": "8a84899cd550472d3a7431e5c7d51e9b95848afc",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.SimpleForm: improve documentation",
-				"references": []
-			}
-		]
-	},
-	"1.40.1": {
-		"date": "July 2016",
-		"notes": [
-			{
-				"id": "e28e73d77380e4d100f92b8e2e10c068d458a6da",
-				"type": "FIX",
-				"text": "fixes LREP change not applied when simpleform loaded; fixes missplacement when field moved to empty group; removes redundant info from serialized command (LREP change),",
-				"references": []
-			},
-			{
-				"id": "28d21216ce996db68e091f79c824be8ae52e069e",
-				"type": "FIX",
-				"text": "fixes changeType variants of SimpleFormMove",
-				"references": []
-			}
-		]
-	},
-	"1.40.2": {
-		"date": "July 2016",
-		"notes": [
-			{
-				"id": "23b8a0de4501bd91847962d0477aef6a2a42b02c",
-				"type": "FIX",
-				"text": "AssociativeSplitter: Overriding calculation functions to make the Splitter responsive",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670226583"
-					},
-					{
-						"type": "BCP",
-						"reference": "1680043748"
-					}
-				]
-			},
-			{
-				"id": "6eaf8e407b59036f4cb3c2ccebf0ff27c092a70b",
-				"type": "FIX",
-				"text": "fixes unhide/move problems",
-				"references": []
-			},
-			{
-				"id": "30a6080d6d51c00623f39120d6770d9ce66f7132",
-				"type": "FIX",
-				"text": "sap.ui.layout.FixFlex: Fix content size issue in IE9",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670162233"
-					}
-				]
-			},
-			{
-				"id": "cd14842e26dd8baccc661e2b4039646b6257e6b7",
-				"type": "FIX",
-				"text": "sap.ui.layout.FixFlex: The fixed and the flexible part are no longer overlapping in Chrome",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680105979"
-					}
-				]
-			}
-		]
-	},
-	"1.40.3": {
-		"date": "July 2016",
-		"notes": [
-			{
-				"id": "284db015db5964107c6d7c7dfb4a16d3db5952e8",
-				"type": "FIX",
-				"text": "sap.ui.layout.ResponsiveSplitter: Adding class to root element improved",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680133684"
-					}
-				]
-			}
-		]
-	}
+  "1.40.0": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "426ca3d9500549414bc80e9c86caa30f87161e5c",
+        "type": "FEATURE",
+        "text": "sap.m.BackgroundDesign: new type Solid2\"",
+        "references": []
+      },
+      {
+        "id": "d4e23c57c0311674678f6cf543af44904225ae0e",
+        "type": "FEATURE",
+        "text": "enable Simpleform using afterHook functions",
+        "references": []
+      },
+      {
+        "id": "9869e1e5d2c90baf500d8af68e1d59e8feac3868",
+        "type": "FEATURE",
+        "text": "sap.m.BackgroundDesign: new type Solid2",
+        "references": []
+      },
+      {
+        "id": "1a1d469e9e649f28197cdc9606e1209a7c40d126",
+        "type": "FEATURE",
+        "text": "sap.m.DateTimePicker: new control",
+        "references": []
+      },
+      {
+        "id": "8ca0bbd80efa4bf265228ec568de166b3086dbc9",
+        "type": "FEATURE",
+        "text": "sap.m.FlexBox, sap.ui.layout.Grid,",
+        "references": []
+      },
+      {
+        "id": "68297b26e8c0330eadb656a5d115e7968ec11a6b",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.BlockLayout - titleLevel property added to BlockLayoutCell",
+        "references": []
+      },
+      {
+        "id": "42f80426dad0e8e311fa96a4abb5c84b3279bcd9",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.BlockLayout: Control implemented",
+        "references": []
+      },
+      {
+        "id": "d2249203a73896b871ece61ab4639a72833f0b44",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.DynamicSideContent: New property sideContentPosition added",
+        "references": []
+      },
+      {
+        "id": "0188cfab6e7c03959a8d85ed2a89e7654287751a",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.Form: support XL breakpoint in the ResponsiveGridLayout in the Form",
+        "references": []
+      },
+      {
+        "id": "23331d5bfaf5e6bd7504dd055b62907db8d646a0",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.ResponsiveSplitter: Aria support added",
+        "references": []
+      },
+      {
+        "id": "841652145843f20ea8d260264d82b2c9cac7f7f8",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.ResponsiveSplitter: Keyboard and focus handling",
+        "references": []
+      },
+      {
+        "id": "508b5963c95cb19172b7893c49a8baeedfeeace0",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.ResponsiveSplitter: New control implementation",
+        "references": []
+      },
+      {
+        "id": "1664b1ab8269d14e0ffe11332b073ef579b3c4b1",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.form.Form: allow Toolbars as Title",
+        "references": []
+      },
+      {
+        "id": "881d75b8a3eb298a4cc10be7fac68bb0ceee3dd2",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.form.Form: new backgroundDesign property",
+        "references": []
+      },
+      {
+        "id": "6d93689bab6e478e97df5f8fdb29510b3c681133",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout single Container",
+        "references": []
+      },
+      {
+        "id": "7346d2cede300ca87ff0841df490a2fe3f800e03",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout: alignLabelSpan",
+        "references": []
+      },
+      {
+        "id": "8f844317d55715c065a6f91317d0dc5bc4a98810",
+        "type": "FEATURE",
+        "text": ": DT - Enable Simple Controls",
+        "references": []
+      },
+      {
+        "id": "8c4f0f2be7b8a9276202c8f6894484beaeb67c58",
+        "type": "FIX",
+        "text": "Respect \"themeroots\" when resolving img URLs in Controls",
+        "references": []
+      },
+      {
+        "id": "c3b3460a4463f6c92840dc5b37c088714d8bcc6a",
+        "type": "FIX",
+        "text": "layout.Splitter: Don\u0027t Attempt Resize on Preserved DOM",
+        "references": []
+      },
+      {
+        "id": "d87bd654bd8791b515329937f3268ddd104675c4",
+        "type": "FIX",
+        "text": "sap.m.BlockLayout: add flex prefixes for IE 10",
+        "references": []
+      },
+      {
+        "id": "662ff98ab20ea1b7713a0f061e6e72b5c70fafb8",
+        "type": "FIX",
+        "text": "sap.m.ScrollContainer, sap.ui.layout.FixFlex: A tweak, causing issues in Internet Explorer is now removed",
+        "references": []
+      },
+      {
+        "id": "47fa1a3ec30bfb46b35a594cbb9a6d673e592724",
+        "type": "FIX",
+        "text": "sap.ui.Layout.DynamicSideContent - Height is properly",
+        "references": []
+      },
+      {
+        "id": "ae0ca3d3ae8d5cbbc0e1fbe120e36e9cbdd6fe2a",
+        "type": "FIX",
+        "text": "sap.ui.core.layout.VerticalLayout: fix vertical-align in IE",
+        "references": []
+      },
+      {
+        "id": "99202f68d4af4f4c1d7f0735871dc500b2d3544b",
+        "type": "FIX",
+        "text": "sap.ui.layout.DynamicSideContent - Show and hide functionality now works correct when changing breakpoints",
+        "references": []
+      },
+      {
+        "id": "43e05c1d5c8994507e5349160f3a0b1f29cdf7a3",
+        "type": "FIX",
+        "text": "sap.ui.layout.DynamicSideContent: In samples slider does not appear for phones anymore",
+        "references": []
+      },
+      {
+        "id": "690963771ea5f3a12e2e7c59d3382a8c7bd6b83c",
+        "type": "FIX",
+        "text": "sap.ui.layout.DynamicSideContent: Side content visibility on invalidation solved",
+        "references": []
+      },
+      {
+        "id": "bbbc6db0bd74f293154ccb36e15dd3b0e256e2e9",
+        "type": "FIX",
+        "text": "sap.ui.layout.Form: default behaviour of linebreak if linebreakXL is not defined",
+        "references": []
+      },
+      {
+        "id": "fd6e463c48a8d60ed9a57dc3e54c36087059e7a0",
+        "type": "FIX",
+        "text": "sap.ui.layout.Form: linebreakXL support correction in Grid.",
+        "references": []
+      },
+      {
+        "id": "c2eb95ad5d5335196817a5f771466c885f486c5a",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveFlowLayout - Cyclic re-rendering when the width is small solved",
+        "references": []
+      },
+      {
+        "id": "38e8d9b215ba490e34a7809a537f802977c55495",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveFlowLayout - On Internet Explorer the layout container does not occupy the whole width anymore",
+        "references": []
+      },
+      {
+        "id": "63c139d48199328d2801c3311f747d435259a8f0",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveFlowLayout: when used in SimpleForm items\u0027 height is calculated consistent for all browsers.",
+        "references": []
+      },
+      {
+        "id": "eeea61f756bd6d3869aae9d1ae4adbe5c4ecef0f",
+        "type": "FIX",
+        "text": "sap.ui.layout.Splitter Fix for IE11 when oData.domNode is an SVG element.",
+        "references": []
+      },
+      {
+        "id": "c0bee4cebb852c829c2881e7f92ae639f8d0d8cc",
+        "type": "FIX",
+        "text": "sap.ui.layout.Splitter RTL vertical resize fix",
+        "references": []
+      },
+      {
+        "id": "bcc72a3c14cb903015091a331f5168fa436b6129",
+        "type": "FIX",
+        "text": "sap.ui.layout.VerticalLayout: Prevent rerendering on width property change",
+        "references": []
+      },
+      {
+        "id": "52e76864f9feb2cb1bb634f8a12611684581ef59",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: No padding between FormContainer if no Title",
+        "references": []
+      },
+      {
+        "id": "83b505a8191ff828ea30ecf158bde2564289d8c6",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: double role \"form\" if only one container",
+        "references": []
+      },
+      {
+        "id": "22a6d56c45f1ff0012b07221e0931d9cc8e4fbe1",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: too much padding if only 1 container",
+        "references": []
+      },
+      {
+        "id": "2bae7babba64ba2fd4f68ce32177ce937bf7ca9d",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: use Label style only for direct labels",
+        "references": []
+      },
+      {
+        "id": "47123cd5e9f74c2be76122de39a839d7af67939f",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
+        "references": []
+      },
+      {
+        "id": "c2cae5cda5378743eda344d0d2b1f7794b59d756",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: missing paddings in sap.m",
+        "references": []
+      },
+      {
+        "id": "a2567b89ce2ddb03f0050ddf1ce34670729baa23",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: padding ar bottom missing in IE",
+        "references": []
+      },
+      {
+        "id": "92bdf170af91089ed3553815587ece66f38d3377",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: wrong tab sequence in RTL",
+        "references": []
+      },
+      {
+        "id": "b050b347e4628f938060af72aa35f8ee17e18364",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout: 1st container invisible",
+        "references": []
+      },
+      {
+        "id": "77175b448808ef45ef31704c22fad751558b71bb",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveLayout: Labels wrong aligned in Edge",
+        "references": []
+      },
+      {
+        "id": "33e0be96b148f514c2ebaed4ecaf9b0729f48e5e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveLayout: change order of FormElement",
+        "references": []
+      },
+      {
+        "id": "a608106e829bb8a4e9be646977b6ad60481a8c57",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: errors by changing content",
+        "references": []
+      },
+      {
+        "id": "8a84899cd550472d3a7431e5c7d51e9b95848afc",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: improve documentation",
+        "references": []
+      }
+    ]
+  },
+  "1.40.1": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "e28e73d77380e4d100f92b8e2e10c068d458a6da",
+        "type": "FIX",
+        "text": "fixes LREP change not applied when simpleform loaded; fixes missplacement when field moved to empty group; removes redundant info from serialized command (LREP change),",
+        "references": []
+      },
+      {
+        "id": "28d21216ce996db68e091f79c824be8ae52e069e",
+        "type": "FIX",
+        "text": "fixes changeType variants of SimpleFormMove",
+        "references": []
+      }
+    ]
+  },
+  "1.40.2": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "23b8a0de4501bd91847962d0477aef6a2a42b02c",
+        "type": "FIX",
+        "text": "AssociativeSplitter: Overriding calculation functions to make the Splitter responsive",
+        "references": []
+      },
+      {
+        "id": "6eaf8e407b59036f4cb3c2ccebf0ff27c092a70b",
+        "type": "FIX",
+        "text": "fixes unhide/move problems",
+        "references": []
+      },
+      {
+        "id": "30a6080d6d51c00623f39120d6770d9ce66f7132",
+        "type": "FIX",
+        "text": "sap.ui.layout.FixFlex: Fix content size issue in IE9",
+        "references": []
+      },
+      {
+        "id": "cd14842e26dd8baccc661e2b4039646b6257e6b7",
+        "type": "FIX",
+        "text": "sap.ui.layout.FixFlex: The fixed and the flexible part are no longer overlapping in Chrome",
+        "references": []
+      }
+    ]
+  },
+  "1.40.3": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "284db015db5964107c6d7c7dfb4a16d3db5952e8",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveSplitter: Adding class to root element improved",
+        "references": []
+      }
+    ]
+  },
+  "1.40.4": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "f3bf16b63a109def8d2073332f212c88de300d1b",
+        "type": "FIX",
+        "text": "fixes move between not identical SimpleForms",
+        "references": []
+      },
+      {
+        "id": "5ea0bacfe3278a0378955bcddc61989336c43d4d",
+        "type": "FIX",
+        "text": "fixes move in SimpleForm with sap.m.Toolbar",
+        "references": []
+      },
+      {
+        "id": "7d4e77a701953ec91f9bf1b2a88816d85d8f43c7",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm getContent returns interanal array",
+        "references": []
+      },
+      {
+        "id": "289d419bcdcde9ed447eb4ed4ce6dcd85f3d3fdd",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: Toolbar disappears by invalidating",
+        "references": []
+      }
+    ]
+  },
+  "1.40.5": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "5bd62cf2f04dac42746c1e0008932bf08a342dbb",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm - insert Label before toolbar",
+        "references": []
+      },
+      {
+        "id": "cf61ee024678fecfc9c4d26119bfe32ee6290b6a",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm - insert field before toolbar",
+        "references": []
+      }
+    ]
+  },
+  "1.40.7": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "0d1cd01da94bc7d74cc7ed8d0072a874d1548eb4",
+        "type": "FIX",
+        "text": "sap.ui.layout.VerticalLayout - Vertical layout no longer cuts the outline and box-shadow of it\u0027s content controls",
+        "references": []
+      }
+    ]
+  },
+  "1.40.8": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "65112af83fd519929688337ffc29e11377230a87",
+        "type": "FIX",
+        "text": "sap.ui.layout.BlockLayout: AMD load of library.js",
+        "references": []
+      },
+      {
+        "id": "45646b597c627d4a58de4e365dd596f5d95f3f4d",
+        "type": "FIX",
+        "text": "sap.ui.layout.FixFlex: ScrollEnablement is now used for scrolling",
+        "references": []
+      },
+      {
+        "id": "da20ee213e7a3606ba437a5abd284c3439ddbe00",
+        "type": "FIX",
+        "text": "sap.ui.layout.Splitter: Splitter containers\u0027 sizes are now properly calculated",
+        "references": []
+      }
+    ]
+  },
+  "1.40.9": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "9f87298f9a75fb8a5f6c937b06a7ee38b3cbf4f6",
+        "type": "FIX",
+        "text": "sap.ui.layout.VerticalLayout: Vertical-align for all browsers adjusted to topD",
+        "references": []
+      }
+    ]
+  },
+  "1.40.10": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "d3b201e4ffb82cac7ebcd1027c59eb2de34d15b5",
+        "type": "FIX",
+        "text": "Theme image URLs in commons/ux3/layout libraries",
+        "references": []
+      },
+      {
+        "id": "cc046515e92dcb356894439a2d6a84e9a147cc85",
+        "type": "FIX",
+        "text": "sap.ui.layout.FixFlex: Scrollbars are now correctly displayed",
+        "references": []
+      },
+      {
+        "id": "8e0ccab71cd392de4a1d9a35579e020588deb0ef",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: moving content - wrong result",
+        "references": []
+      }
+    ]
+  },
+  "1.40.11": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "b22c666cf229e9a1d821a45c69c10b3597d95adc",
+        "type": "FIX",
+        "text": "Temporarily disable change handler tests for layout",
+        "references": []
+      }
+    ]
+  },
+  "1.40.13": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "15b5c6a94bf555c98aaff787c76a81527660e7bf",
+        "type": "FIX",
+        "text": " sap.ui.layout.form.SimpleForm adding content twice",
+        "references": []
+      }
+    ]
+  },
+  "1.40.14": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "6dda0a0afd4f6edb37464fd0db8fad8a57a807e8",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveFlowLayout: Destroy render manager only if it exists",
+        "references": []
+      }
+    ]
+  },
+  "1.40.15": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "395775778ea5d708b41d8f55ecb7159966317b2a",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Control no longer flickers",
+        "references": []
+      },
+      {
+        "id": "0154216955fb93388b242ca773b0d2f6a0d32edd",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Scrollbar is now correctly displayed",
+        "references": []
+      },
+      {
+        "id": "86eea085c3afb3cc6251675d5b636599d3afbf71",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Unwanted scrollbar is now removed",
+        "references": []
+      }
+    ]
+  },
+  "1.40.17": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "7d091b7b1024c15324ecaed14f0bf6635af5861b",
+        "type": "FIX",
+        "text": " sap.m.ResponsiveSplitter: Overlapping text and navigation CSS issue fixed",
+        "references": []
+      }
+    ]
+  }
 }

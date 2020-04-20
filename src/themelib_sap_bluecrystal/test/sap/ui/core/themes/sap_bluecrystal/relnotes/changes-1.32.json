@@ -1,765 +1,498 @@
 {
-	"1.32.0": {
-		"date": "August 2015",
-		"notes": [
-			{
-				"id": "1fce1c8750ea61fa6f074211401efc2c01d762ba",
-				"type": "FEATURE",
-				"text": "Bluecrystal Theme: Unify Background theming across different libraries",
-				"references": []
-			},
-			{
-				"id": "d77d44795b05b3d1b8675c95e91a170fe58021cb",
-				"type": "FEATURE",
-				"text": "BusyIndicator: New Animation",
-				"references": []
-			},
-			{
-				"id": "71beb115af2453b9301ea82fd6b0b235f3d02b76",
-				"type": "FEATURE",
-				"text": "new sap.ui.unified.MonthInterval: Initial version",
-				"references": []
-			},
-			{
-				"id": "cc1405cab14d381c7033a96f249b24f8124c0168",
-				"type": "FEATURE",
-				"text": "sap.m.RadioButton: Visual focus enhancements",
-				"references": []
-			},
-			{
-				"id": "45a89ebff3d8976ee7d559e8eb910590d19b93f3",
-				"type": "FEATURE",
-				"text": "sap.m.TimePicker: New control implemented",
-				"references": []
-			},
-			{
-				"id": "7182f665bd99f4ccc3552b4068d1c70d204d6fbd",
-				"type": "FEATURE",
-				"text": "sap.ui.unifield.CalendarTimeInterval: New control",
-				"references": []
-			},
-			{
-				"id": "f415d104e6738e74653af76d531eeee2ba7a6fe7",
-				"type": "FIX",
-				"text": "Microsoft Edge Support: Fix CSS text-align statements in",
-				"references": []
-			},
-			{
-				"id": "3ed5d4ebfcb2c3f383387966eb5dfb28b187ce9a",
-				"type": "FIX",
-				"text": "Toolbar and selected hover fix",
-				"references": []
-			},
-			{
-				"id": "5b120898d8bfa5c46c0e09f8931e1a88999cd518",
-				"type": "FIX",
-				"text": "sap.m.ComboBox: Fix custom placeholder alignment issue in Internet Explorer 10",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570749082"
-					}
-				]
-			},
-			{
-				"id": "0ae68e33454e045ebc6c910344b5f7806f5c0abf",
-				"type": "FIX",
-				"text": "sap.m.IconTabBar: Fix left paddings",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570158035"
-					}
-				]
-			},
-			{
-				"id": "613ff26327e606a9bcce42fd46a45419a423deee",
-				"type": "FIX",
-				"text": "sap.m.IconTabBar: UI Consistency on \"showAll\" filter with horizontal design is fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570071073"
-					}
-				]
-			},
-			{
-				"id": "29eb9276332d46517f6f258df21f5d11efdfd982",
-				"type": "FIX",
-				"text": "sap.m.ObjectNumber: Number unit position corrected",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570147815"
-					}
-				]
-			},
-			{
-				"id": "d6a76ff0715ef50d38dff37ed9d683226988e335",
-				"type": "FIX",
-				"text": "sap.m.SplitContainer: No separator between master and detail areas",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570764862"
-					}
-				]
-			},
-			{
-				"id": "fed48c6297f412b77dd9fb46ec5eb93adf38737c",
-				"type": "FIX",
-				"text": "sap.m.Switch: Fix border issue at zoom in < 100%",
-				"references": []
-			},
-			{
-				"id": "1b52d529f3e004c76446f9227f062b896c1504fc",
-				"type": "FIX",
-				"text": "sap.m.UploadCollection: Display of buttons for width equal 30rem corrected",
-				"references": []
-			},
-			{
-				"id": "702a22cfe9e9ad5da1a42d2aec17e36926e5ebec",
-				"type": "FIX",
-				"text": "sap.m.UploadCollection: Style of 'upload file' button corrected",
-				"references": []
-			},
-			{
-				"id": "671e631cd6f2add405da978eaa82e91a05ac70da",
-				"type": "FIX",
-				"text": "sap.m.searchField: Incorrect button state in Firefox",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580016637"
-					}
-				]
-			},
-			{
-				"id": "8014bbfeb999bb4cdf50707e52d7536f3c2409ee",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.ResponsiveGridLayout: Full size labels",
-				"references": []
-			},
-			{
-				"id": "c34e028843b0a2e978b89e9b245fc8397a15e84b",
-				"type": "FIX",
-				"text": "sap.ui.table.AnalyticalTable: Issue with grouping header of smart table",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570501086"
-					}
-				]
-			},
-			{
-				"id": "6198910664a72925eddd7776c3a6766b349caadd",
-				"type": "FIX",
-				"text": "sap.ui.table.Table: Enabled Fixed Column Indicator for Header",
-				"references": []
-			},
-			{
-				"id": "1054e860650b850f230d8f5582a331eabb1bbfa2",
-				"type": "FIX",
-				"text": "sap.ui.table.Table: Fixes for HCB (High Contrast Black) theme",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570033517"
-					}
-				]
-			},
-			{
-				"id": "52f93abf3e47b9b2b4216b6cea0736cc31ced19d",
-				"type": "FIX",
-				"text": "sap.ui.table.Table: General Fixes for Cozy and Touch mode",
-				"references": []
-			},
-			{
-				"id": "6fbed33b4d1891671ea3e023dc4d478a12f92886",
-				"type": "FIX",
-				"text": "sap.ui.table.Table: Header/Footer height issue",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570525422"
-					}
-				]
-			},
-			{
-				"id": "273d217fd8df54a38956544e6b9b5e293850ce2a",
-				"type": "FIX",
-				"text": "sap.ui.table.Table: Multiple Fixes for Table and Touch",
-				"references": []
-			},
-			{
-				"id": "f0920856fd76dce1561ff4898a881fcb69a76be0",
-				"type": "FIX",
-				"text": "sap.ui.table.Table: Sorting Indicator overlaps with column header text",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570521525"
-					}
-				]
-			},
-			{
-				"id": "c90b9201baf066ce4cef3208f36beae66c1fa5eb",
-				"type": "FIX",
-				"text": "sap.ui.table.Table: Missing line border for grouping header line",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570752596"
-					}
-				]
-			},
-			{
-				"id": "c0d6f83110cdc2bf6686698d85d7a31706b3b5ac",
-				"type": "FIX",
-				"text": "sap.ui.table.Table: Row header too small in cozy mode",
-				"references": []
-			}
-		]
-	},
-	"1.32.1": {
-		"date": "September 2015",
-		"notes": [
-			{
-				"id": "b7a45ed1b6b11d231ee07a8db96bbd0952bb1bc4",
-				"type": "FEATURE",
-				"text": "sap.m.BusyIndicator: Changed default animation",
-				"references": []
-			},
-			{
-				"id": "a92d616f9de81fd2ff73a0565dcb482581a28244",
-				"type": "FIX",
-				"text": "sap.m.GrowingEnablement: Grow button should be tabbable.",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570525301"
-					}
-				]
-			},
-			{
-				"id": "163c38ce95527759499f5fd82c0f8482b6f9c630",
-				"type": "FIX",
-				"text": "sap.m.Text in sap.ui.layout.form.SimpleForm is with display 'block' due to layout requirements",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580024576"
-					}
-				]
-			}
-		]
-	},
-	"1.32.2": {
-		"date": "September 2015",
-		"notes": [
-			{
-				"id": "0dd8e6d201d37fb66868382821e087db37af3782",
-				"type": "FIX",
-				"text": "sap.m.Table: Screen size limits should be included.",
-				"references": []
-			},
-			{
-				"id": "d0d1f21063a0242f4ef1cef8f1dbdf19086c4f50",
-				"type": "FIX",
-				"text": "sap.ui.TreeTable: node label alignment issue",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580092162"
-					}
-				]
-			},
-			{
-				"id": "486250e38a637acf6e51fe7f7b7bf463d18ace5c",
-				"type": "FIX",
-				"text": "sap.ui.table.AnalyticalTable: Touch Menu could overlay text",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570764825"
-					}
-				]
-			},
-			{
-				"id": "9d7bb9f61ea7006d885bfa6393127222031734ff",
-				"type": "FIX",
-				"text": "sap.ui.table.Table: Cleanup cell paddings",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570685384"
-					}
-				]
-			},
-			{
-				"id": "bd4472418db8981e53cedeecea1f7f86171e156c",
-				"type": "FIX",
-				"text": "sap.ui.table.Table: wrong font-size on <tr>",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580057504"
-					}
-				]
-			}
-		]
-	},
-	"1.32.4": {
-		"date": "October 2015",
-		"notes": [
-			{
-				"id": "2e37a772da2306904db716ab9f500a69571d22ba",
-				"type": "FIX",
-				"text": "sap.m.Page: SubHeader overlaps the content",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580140392"
-					}
-				]
-			},
-			{
-				"id": "435ecd802858cf48513c91399472a6cb5957a913",
-				"type": "FIX",
-				"text": "sap.m.Panel: Bottom border is no longer present on transparent Panel",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580128689"
-					}
-				]
-			}
-		]
-	},
-	"1.32.5": {
-		"date": "November 2015",
-		"notes": [
-			{
-				"id": "2db8ddfda9eec53b56b143803315116277dc80e9",
-				"type": "FIX",
-				"text": "sap.m.GrowingEnablement: Growing loading animation is should respect the specification.",
-				"references": []
-			},
-			{
-				"id": "10c444f9de260eae9bf49e84223c569872f1c8bf",
-				"type": "FIX",
-				"text": "sap.m.InputBase: Close valueState message synchronously.",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580149642"
-					},
-					{
-						"type": "BCP",
-						"reference": "1580095163"
-					},
-					{
-						"type": "BCP",
-						"reference": "1580075747"
-					}
-				]
-			}
-		]
-	},
-	"1.32.6": {
-		"date": "November 2015",
-		"notes": [
-			{
-				"id": "4418c82ced017e2f50b5f4670fc33fb6839927c8",
-				"type": "FIX",
-				"text": "Condensed mode CSS should only apply inside sap.ui.table tables",
-				"references": []
-			},
-			{
-				"id": "a91701329885b3cd015723874afbe72eb398fb12",
-				"type": "FIX",
-				"text": "sap.m.FacetFilterList: set min content width",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580216445"
-					}
-				]
-			},
-			{
-				"id": "4371f90c933f5180c5fe36ce874c282973125581",
-				"type": "FIX",
-				"text": "sap.m.MultiInput: fix indicator position in touch device",
-				"references": []
-			},
-			{
-				"id": "45d73a542f430411a57880e9dbfc242c8dbba4b0",
-				"type": "FIX",
-				"text": "sap.m.RadioButton: Focus outline is not cut off when used in SimpleForm",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580151725"
-					}
-				]
-			},
-			{
-				"id": "e991937fb8b99c19496fe6915cb33f6b1d41aac1",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.Form: use Label style only for direct labels",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580178200"
-					}
-				]
-			},
-			{
-				"id": "c9b1c5ac9606941ddf5457be60d908ea15b5f66b",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar: remove focus outline on windows phone",
-				"references": []
-			}
-		]
-	},
-	"1.32.8": {
-		"date": "December 2015",
-		"notes": [
-			{
-				"id": "30fa692a02a88b93b0bd191e39461241de447160",
-				"type": "FEATURE",
-				"text": "sap.m.DateTimeInput: Deprecated.",
-				"references": []
-			},
-			{
-				"id": "f79d2de0f94478ebfdad7cb11ca89807b24936bd",
-				"type": "FIX",
-				"text": "sap.m.IconTabBar: Arrows position in Win8 is correct now",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580193892"
-					}
-				]
-			},
-			{
-				"id": "a8a562cf9eaed22369e78d73e05da69470d5c346",
-				"type": "FIX",
-				"text": "sap.m.ObjectStatus: Vertical alignment inside forms corrected",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580155978"
-					}
-				]
-			},
-			{
-				"id": "ee57a1380c10f50d502c1c4582910449c37c87fd",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.Form: Label not visible on iOS devices",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100008088922015"
-					}
-				]
-			}
-		]
-	},
-	"1.32.9": {
-		"date": "December 2015",
-		"notes": [
-			{
-				"id": "155f8012a4e43a1d22655c119878a3b3a56561dc",
-				"type": "FIX",
-				"text": "sap.m.CustomListItem: Outline should be visible.",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570842956"
-					}
-				]
-			},
-			{
-				"id": "8cc50a72e607e262d8c8954ef6e24fc9c0f4de7f",
-				"type": "FIX",
-				"text": "sap.m.FeedInput: Css class improved",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570854081"
-					},
-					{
-						"type": "BCP",
-						"reference": "1570854082"
-					}
-				]
-			},
-			{
-				"id": "c4baa6a3b3628c15fa733a737d41ff38347e89e1",
-				"type": "FIX",
-				"text": "sap.m.ListItemBase: Focus outlines for items corrected for IE",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580142410"
-					}
-				]
-			}
-		]
-	},
-	"1.32.11": {
-		"date": "February 2016",
-		"notes": [
-			{
-				"id": "17c763c106f3031624e34d5a037e760a01894e6e",
-				"type": "FIX",
-				"text": "sap.m.Checkbox fixed position in form on compact size",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670056525"
-					}
-				]
-			},
-			{
-				"id": "fc8a350b42a43d3175c69aa10c131e8d09467704",
-				"type": "FIX",
-				"text": "sap.m.ComboBox: fix dropdown button alignment issue",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580238488"
-					},
-					{
-						"type": "BCP",
-						"reference": "1570752892"
-					},
-					{
-						"type": "BCP",
-						"reference": "002007974700000254572016"
-					}
-				]
-			},
-			{
-				"id": "294f7ebd4263c0cf72385cbc09b21ef53851a8d5",
-				"type": "FIX",
-				"text": "sap.m.Select: prevents actions from occurring when the control is disabled in IE11",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "797"
-					},
-					{
-						"type": "BCP",
-						"reference": "1670045141"
-					}
-				]
-			},
-			{
-				"id": "210b05b32e376a7313b0128022efe07759c009e8",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.Form: No padding between FormContainer if no Title",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670021664"
-					}
-				]
-			},
-			{
-				"id": "405644d1364616ae845304a3fb54d573f27c251f",
-				"type": "FIX",
-				"text": "ux3.Shell: Left and right part of the header do not overlap",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580210084"
-					}
-				]
-			}
-		]
-	},
-	"1.32.12": {
-		"date": "February 2016",
-		"notes": [
-			{
-				"id": "c8a17364c5ba55a8289e5ba039fb68c3a67b715b",
-				"type": "FIX",
-				"text": "sap.m.IconTabBar scroll arrow shows correct on phone",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670015602"
-					}
-				]
-			},
-			{
-				"id": "e42164644c26dd88b2e3f145c97e24131c250bb3",
-				"type": "FIX",
-				"text": "sap.m.TileContainer: Arrows' click behaviour in firefox is now handled properly",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "752"
-					},
-					{
-						"type": "BCP",
-						"reference": "1570891582"
-					}
-				]
-			}
-		]
-	},
-	"1.32.13": {
-		"date": "March 2016",
-		"notes": [
-			{
-				"id": "fa5407f2dec95546acff70ac4e914cb1002d5602",
-				"type": "FIX",
-				"text": "sap.m.Carousel: Fixed nav arrows on combi devices",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670121451"
-					}
-				]
-			},
-			{
-				"id": "8b0b7c1775d0aa297d04f966be08979ad415c93a",
-				"type": "FIX",
-				"text": "sap.m.SegmentedButton - Left padding on compact mode and buttons with icons is now correct",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680009097"
-					}
-				]
-			}
-		]
-	},
-	"1.32.14": {
-		"date": "March 2016",
-		"notes": [
-			{
-				"id": "a2bd14c77fc90977d4acc454f8558b33bd6fdbb2",
-				"type": "FIX",
-				"text": "sap.m.IconTaBar: count in RTL is right aligned",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670163085"
-					}
-				]
-			},
-			{
-				"id": "7d0560e32ff2191a1192275ef22703004e429222",
-				"type": "FIX",
-				"text": "sap.m.IconTaBar: scroll arrows in Text-only mode are aligned with the text now",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670015003"
-					}
-				]
-			},
-			{
-				"id": "00417b7c2ab9edd1ed29a1034e39c949369c1651",
-				"type": "FIX",
-				"text": "sap.m.IconTabBar: padding on phone fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670120798"
-					}
-				]
-			},
-			{
-				"id": "898b74f57000a2069f143822ab8681cf55d19f8e",
-				"type": "FIX",
-				"text": "sap.m: selectable elements should still be selectable on combi device",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670108106"
-					}
-				]
-			},
-			{
-				"id": "61b836dbfaea253d91e3b3291848928971ee43f6",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.ResponsiveLayout: Labels wrong aligned in Edge",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670153084"
-					}
-				]
-			}
-		]
-	},
-	"1.32.15": {
-		"date": "April 2016",
-		"notes": [
-			{
-				"id": "09bad64cd81cd6c67516f6603d09ce58f424f64b",
-				"type": "FIX",
-				"text": "m.IconTabBar: windows 10 rules added",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670168457"
-					}
-				]
-			},
-			{
-				"id": "09fe3ac6b60667647de44af866c1421ee8fc9de2",
-				"type": "FIX",
-				"text": "sap.m.SegmentedButton - width recalculation is more effective now.",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670169823"
-					},
-					{
-						"type": "BCP",
-						"reference": "1670061187"
-					}
-				]
-			},
-			{
-				"id": "98e42bc98274abc7fddc9265110792e27efd6599",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670208916"
-					}
-				]
-			},
-			{
-				"id": "941d1cac5e80304d518845ff6b0fc41c90df686e",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.ResponsiveGridLayout: too much padding bottom",
-				"references": []
-			}
-		]
-	},
-	"1.32.16": {
-		"date": "May 2016",
-		"notes": [
-			{
-				"id": "cf4632490f859f9860ebcd894c319edf78c0426c",
-				"type": "FIX",
-				"text": "sap.m.ActionListItem: Legacy outline offset fix for IE.",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670176785"
-					}
-				]
-			}
-		]
-	}
+  "1.32.0": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "1fce1c8750ea61fa6f074211401efc2c01d762ba",
+        "type": "FEATURE",
+        "text": "Bluecrystal Theme: Unify Background theming across different libraries",
+        "references": []
+      },
+      {
+        "id": "d77d44795b05b3d1b8675c95e91a170fe58021cb",
+        "type": "FEATURE",
+        "text": "BusyIndicator: New Animation",
+        "references": []
+      },
+      {
+        "id": "71beb115af2453b9301ea82fd6b0b235f3d02b76",
+        "type": "FEATURE",
+        "text": "new sap.ui.unified.MonthInterval: Initial version",
+        "references": []
+      },
+      {
+        "id": "cc1405cab14d381c7033a96f249b24f8124c0168",
+        "type": "FEATURE",
+        "text": "sap.m.RadioButton: Visual focus enhancements",
+        "references": []
+      },
+      {
+        "id": "45a89ebff3d8976ee7d559e8eb910590d19b93f3",
+        "type": "FEATURE",
+        "text": "sap.m.TimePicker: New control implemented",
+        "references": []
+      },
+      {
+        "id": "7182f665bd99f4ccc3552b4068d1c70d204d6fbd",
+        "type": "FEATURE",
+        "text": "sap.ui.unifield.CalendarTimeInterval: New control",
+        "references": []
+      },
+      {
+        "id": "f415d104e6738e74653af76d531eeee2ba7a6fe7",
+        "type": "FIX",
+        "text": "Microsoft Edge Support: Fix CSS text-align statements in",
+        "references": []
+      },
+      {
+        "id": "3ed5d4ebfcb2c3f383387966eb5dfb28b187ce9a",
+        "type": "FIX",
+        "text": "Toolbar and selected hover fix",
+        "references": []
+      },
+      {
+        "id": "5b120898d8bfa5c46c0e09f8931e1a88999cd518",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Fix custom placeholder alignment issue in Internet Explorer 10",
+        "references": []
+      },
+      {
+        "id": "0ae68e33454e045ebc6c910344b5f7806f5c0abf",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Fix left paddings",
+        "references": []
+      },
+      {
+        "id": "613ff26327e606a9bcce42fd46a45419a423deee",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: UI Consistency on \"showAll\" filter with horizontal design is fixed",
+        "references": []
+      },
+      {
+        "id": "29eb9276332d46517f6f258df21f5d11efdfd982",
+        "type": "FIX",
+        "text": "sap.m.ObjectNumber: Number unit position corrected",
+        "references": []
+      },
+      {
+        "id": "d6a76ff0715ef50d38dff37ed9d683226988e335",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: No separator between master and detail areas",
+        "references": []
+      },
+      {
+        "id": "fed48c6297f412b77dd9fb46ec5eb93adf38737c",
+        "type": "FIX",
+        "text": "sap.m.Switch: Fix border issue at zoom in \u003c 100%",
+        "references": []
+      },
+      {
+        "id": "1b52d529f3e004c76446f9227f062b896c1504fc",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Display of buttons for width equal 30rem corrected",
+        "references": []
+      },
+      {
+        "id": "702a22cfe9e9ad5da1a42d2aec17e36926e5ebec",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Style of \u0027upload file\u0027 button corrected",
+        "references": []
+      },
+      {
+        "id": "671e631cd6f2add405da978eaa82e91a05ac70da",
+        "type": "FIX",
+        "text": "sap.m.searchField: Incorrect button state in Firefox",
+        "references": []
+      },
+      {
+        "id": "8014bbfeb999bb4cdf50707e52d7536f3c2409ee",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout: Full size labels",
+        "references": []
+      },
+      {
+        "id": "c34e028843b0a2e978b89e9b245fc8397a15e84b",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Issue with grouping header of smart table",
+        "references": []
+      },
+      {
+        "id": "6198910664a72925eddd7776c3a6766b349caadd",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Enabled Fixed Column Indicator for Header",
+        "references": []
+      },
+      {
+        "id": "1054e860650b850f230d8f5582a331eabb1bbfa2",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fixes for HCB (High Contrast Black) theme",
+        "references": []
+      },
+      {
+        "id": "52f93abf3e47b9b2b4216b6cea0736cc31ced19d",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: General Fixes for Cozy and Touch mode",
+        "references": []
+      },
+      {
+        "id": "6fbed33b4d1891671ea3e023dc4d478a12f92886",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Header/Footer height issue",
+        "references": []
+      },
+      {
+        "id": "273d217fd8df54a38956544e6b9b5e293850ce2a",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Multiple Fixes for Table and Touch",
+        "references": []
+      },
+      {
+        "id": "f0920856fd76dce1561ff4898a881fcb69a76be0",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Sorting Indicator overlaps with column header text",
+        "references": []
+      },
+      {
+        "id": "c90b9201baf066ce4cef3208f36beae66c1fa5eb",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Missing line border for grouping header line",
+        "references": []
+      },
+      {
+        "id": "c0d6f83110cdc2bf6686698d85d7a31706b3b5ac",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Row header too small in cozy mode",
+        "references": []
+      }
+    ]
+  },
+  "1.32.1": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "b7a45ed1b6b11d231ee07a8db96bbd0952bb1bc4",
+        "type": "FEATURE",
+        "text": "sap.m.BusyIndicator: Changed default animation",
+        "references": []
+      },
+      {
+        "id": "a92d616f9de81fd2ff73a0565dcb482581a28244",
+        "type": "FIX",
+        "text": "sap.m.GrowingEnablement: Grow button should be tabbable.",
+        "references": []
+      },
+      {
+        "id": "163c38ce95527759499f5fd82c0f8482b6f9c630",
+        "type": "FIX",
+        "text": "sap.m.Text in sap.ui.layout.form.SimpleForm is with display \u0027block\u0027 due to layout requirements",
+        "references": []
+      }
+    ]
+  },
+  "1.32.2": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "0dd8e6d201d37fb66868382821e087db37af3782",
+        "type": "FIX",
+        "text": "sap.m.Table: Screen size limits should be included.",
+        "references": []
+      },
+      {
+        "id": "d0d1f21063a0242f4ef1cef8f1dbdf19086c4f50",
+        "type": "FIX",
+        "text": "sap.ui.TreeTable: node label alignment issue",
+        "references": []
+      },
+      {
+        "id": "486250e38a637acf6e51fe7f7b7bf463d18ace5c",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Touch Menu could overlay text",
+        "references": []
+      },
+      {
+        "id": "9d7bb9f61ea7006d885bfa6393127222031734ff",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Cleanup cell paddings",
+        "references": []
+      },
+      {
+        "id": "bd4472418db8981e53cedeecea1f7f86171e156c",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: wrong font-size on \u003ctr\u003e",
+        "references": []
+      }
+    ]
+  },
+  "1.32.4": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "2e37a772da2306904db716ab9f500a69571d22ba",
+        "type": "FIX",
+        "text": "sap.m.Page: SubHeader overlaps the content",
+        "references": []
+      },
+      {
+        "id": "435ecd802858cf48513c91399472a6cb5957a913",
+        "type": "FIX",
+        "text": "sap.m.Panel: Bottom border is no longer present on transparent Panel",
+        "references": []
+      }
+    ]
+  },
+  "1.32.5": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "2db8ddfda9eec53b56b143803315116277dc80e9",
+        "type": "FIX",
+        "text": "sap.m.GrowingEnablement: Growing loading animation is should respect the specification.",
+        "references": []
+      },
+      {
+        "id": "10c444f9de260eae9bf49e84223c569872f1c8bf",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Close valueState message synchronously.",
+        "references": []
+      }
+    ]
+  },
+  "1.32.6": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "4418c82ced017e2f50b5f4670fc33fb6839927c8",
+        "type": "FIX",
+        "text": "Condensed mode CSS should only apply inside sap.ui.table tables",
+        "references": []
+      },
+      {
+        "id": "a91701329885b3cd015723874afbe72eb398fb12",
+        "type": "FIX",
+        "text": "sap.m.FacetFilterList: set min content width",
+        "references": []
+      },
+      {
+        "id": "4371f90c933f5180c5fe36ce874c282973125581",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: fix indicator position in touch device",
+        "references": []
+      },
+      {
+        "id": "45d73a542f430411a57880e9dbfc242c8dbba4b0",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: Focus outline is not cut off when used in SimpleForm",
+        "references": []
+      },
+      {
+        "id": "e991937fb8b99c19496fe6915cb33f6b1d41aac1",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: use Label style only for direct labels",
+        "references": []
+      },
+      {
+        "id": "c9b1c5ac9606941ddf5457be60d908ea15b5f66b",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: remove focus outline on windows phone",
+        "references": []
+      }
+    ]
+  },
+  "1.32.8": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "30fa692a02a88b93b0bd191e39461241de447160",
+        "type": "FEATURE",
+        "text": "sap.m.DateTimeInput: Deprecated.",
+        "references": []
+      },
+      {
+        "id": "f79d2de0f94478ebfdad7cb11ca89807b24936bd",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Arrows position in Win8 is correct now",
+        "references": []
+      },
+      {
+        "id": "a8a562cf9eaed22369e78d73e05da69470d5c346",
+        "type": "FIX",
+        "text": "sap.m.ObjectStatus: Vertical alignment inside forms corrected",
+        "references": []
+      },
+      {
+        "id": "ee57a1380c10f50d502c1c4582910449c37c87fd",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: Label not visible on iOS devices",
+        "references": []
+      }
+    ]
+  },
+  "1.32.9": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "155f8012a4e43a1d22655c119878a3b3a56561dc",
+        "type": "FIX",
+        "text": "sap.m.CustomListItem: Outline should be visible.",
+        "references": []
+      },
+      {
+        "id": "8cc50a72e607e262d8c8954ef6e24fc9c0f4de7f",
+        "type": "FIX",
+        "text": "sap.m.FeedInput: Css class improved",
+        "references": []
+      },
+      {
+        "id": "c4baa6a3b3628c15fa733a737d41ff38347e89e1",
+        "type": "FIX",
+        "text": "sap.m.ListItemBase: Focus outlines for items corrected for IE",
+        "references": []
+      }
+    ]
+  },
+  "1.32.11": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "17c763c106f3031624e34d5a037e760a01894e6e",
+        "type": "FIX",
+        "text": "sap.m.Checkbox fixed position in form on compact size",
+        "references": []
+      },
+      {
+        "id": "fc8a350b42a43d3175c69aa10c131e8d09467704",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: fix dropdown button alignment issue",
+        "references": []
+      },
+      {
+        "id": "294f7ebd4263c0cf72385cbc09b21ef53851a8d5",
+        "type": "FIX",
+        "text": "sap.m.Select: prevents actions from occurring when the control is disabled in IE11",
+        "references": []
+      },
+      {
+        "id": "210b05b32e376a7313b0128022efe07759c009e8",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: No padding between FormContainer if no Title",
+        "references": []
+      },
+      {
+        "id": "405644d1364616ae845304a3fb54d573f27c251f",
+        "type": "FIX",
+        "text": "ux3.Shell: Left and right part of the header do not overlap",
+        "references": []
+      }
+    ]
+  },
+  "1.32.12": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "c8a17364c5ba55a8289e5ba039fb68c3a67b715b",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar scroll arrow shows correct on phone",
+        "references": []
+      },
+      {
+        "id": "e42164644c26dd88b2e3f145c97e24131c250bb3",
+        "type": "FIX",
+        "text": "sap.m.TileContainer: Arrows\u0027 click behaviour in firefox is now handled properly",
+        "references": []
+      }
+    ]
+  },
+  "1.32.13": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "fa5407f2dec95546acff70ac4e914cb1002d5602",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Fixed nav arrows on combi devices",
+        "references": []
+      },
+      {
+        "id": "8b0b7c1775d0aa297d04f966be08979ad415c93a",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton - Left padding on compact mode and buttons with icons is now correct",
+        "references": []
+      }
+    ]
+  },
+  "1.32.14": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "a2bd14c77fc90977d4acc454f8558b33bd6fdbb2",
+        "type": "FIX",
+        "text": "sap.m.IconTaBar: count in RTL is right aligned",
+        "references": []
+      },
+      {
+        "id": "7d0560e32ff2191a1192275ef22703004e429222",
+        "type": "FIX",
+        "text": "sap.m.IconTaBar: scroll arrows in Text-only mode are aligned with the text now",
+        "references": []
+      },
+      {
+        "id": "00417b7c2ab9edd1ed29a1034e39c949369c1651",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: padding on phone fixed",
+        "references": []
+      },
+      {
+        "id": "898b74f57000a2069f143822ab8681cf55d19f8e",
+        "type": "FIX",
+        "text": "sap.m: selectable elements should still be selectable on combi device",
+        "references": []
+      },
+      {
+        "id": "61b836dbfaea253d91e3b3291848928971ee43f6",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveLayout: Labels wrong aligned in Edge",
+        "references": []
+      }
+    ]
+  },
+  "1.32.15": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "09bad64cd81cd6c67516f6603d09ce58f424f64b",
+        "type": "FIX",
+        "text": "m.IconTabBar: windows 10 rules added",
+        "references": []
+      },
+      {
+        "id": "09fe3ac6b60667647de44af866c1421ee8fc9de2",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton - width recalculation is more effective now.",
+        "references": []
+      },
+      {
+        "id": "98e42bc98274abc7fddc9265110792e27efd6599",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
+        "references": []
+      },
+      {
+        "id": "941d1cac5e80304d518845ff6b0fc41c90df686e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout: too much padding bottom",
+        "references": []
+      }
+    ]
+  },
+  "1.32.16": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "cf4632490f859f9860ebcd894c319edf78c0426c",
+        "type": "FIX",
+        "text": "sap.m.ActionListItem: Legacy outline offset fix for IE.",
+        "references": []
+      }
+    ]
+  }
 }

@@ -1,151 +1,323 @@
 {
-	"1.34.0": {
-		"date": "November 2015",
-		"notes": [
-			{
-				"id": "1f7caa4a995870fb9e000c08b0a454e1fc9dfa00",
-				"type": "FEATURE",
-				"text": "Date: Japanese emperor calendar support",
-				"references": []
-			},
-			{
-				"id": "01c188f4ad53bf98258564964b46c3d9d6917de2",
-				"type": "FEATURE",
-				"text": "sap.m.TeamCalendar: new control",
-				"references": []
-			},
-			{
-				"id": "11dd132802c6b3d7b2d7bb355be13e5a7691bdd3",
-				"type": "FEATURE",
-				"text": "sap.ui.unified.Calendar: show 2 calendar types in one calendar",
-				"references": []
-			},
-			{
-				"id": "f999d9448a9d62f65a345bbb5e2de98db3dd1e43",
-				"type": "FEATURE",
-				"text": "sap.ui.unified.Calendar: support Japanese calendar",
-				"references": []
-			},
-			{
-				"id": "223d51e4b0f3d5895fa1df0230f6ae156d4ffd8d",
-				"type": "FIX",
-				"text": "sap.m.UploadCollection: fixed termination in case of multiple file uploads",
-				"references": []
-			},
-			{
-				"id": "6f008ac0637a7236e1752d84c6d9bde5b523dc7d",
-				"type": "FIX",
-				"text": "sap.ui.uinified.Calendar current day is wrong displayed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580153899"
-					}
-				]
-			},
-			{
-				"id": "4fc119ba089902450f04772953238eccb78126ac",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar Focus changes while rendering",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002007974700006951722015"
-					}
-				]
-			},
-			{
-				"id": "f5d700ed271d5377f5899b4e44ec6226ae6d0df2",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar: day navigated twice on touch device",
-				"references": []
-			},
-			{
-				"id": "b1eafd29a7198b9a1debd783a96bb6ceebc0e1ea",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar: focus lost after closing month picker or year picker",
-				"references": []
-			},
-			{
-				"id": "85ced3bf71074065f8a524efd5d546bb00ddea41",
-				"type": "FIX",
-				"text": "sap.ui.unified.DateRange return instance to allow method chaining",
-				"references": []
-			},
-			{
-				"id": "b0b7ccf9160943a855359866623fa9d796378e54",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: change event fixed",
-				"references": []
-			},
-			{
-				"id": "3ea2f9972a9dc8ba27ca011c5ee43aeee011c892",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: clear() function fixed.",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580072467"
-					}
-				]
-			},
-			{
-				"id": "890c15bcd44d0f0c2ea684e7dfbfcc645c408906",
-				"type": "FIX",
-				"text": "sap.ui.unified.Menu disabled field border color fix",
-				"references": []
-			},
-			{
-				"id": "277b934e5ccbd618cdbc0ceacf0fc6ccf1bf4b2f",
-				"type": "FIX",
-				"text": "sap.ui.unified.Menu: Avoid additional labelling the items with the menu labels",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580097573"
-					}
-				]
-			},
-			{
-				"id": "d9c71fe1b2a5553f46c0cb633effde4c257517c3",
-				"type": "FIX",
-				"text": "sap.ui.unified.Menu: Avoid focusing when Menu is not open",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570802311"
-					}
-				]
-			},
-			{
-				"id": "dd0faffb912ef124a8aeaaa6119db5e70db0c378",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar: HCB - selected day in other month not shown",
-				"references": []
-			},
-			{
-				"id": "23d7abb14542930a421079fe6dcad37618a0758d",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar: date is selected before mouseup",
-				"references": []
-			},
-			{
-				"id": "2e2afb716240b6acc0f5c80ba2f5ad79027bbea6",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar: mousemove inside same day switch month",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580163230"
-					}
-				]
-			},
-			{
-				"id": "e89086230bd6a49eb1bd3f66360dd20b30818ded",
-				"type": "FEATURE",
-				"text": "sap.ui.unified.CalendarDateInterval: hide day names line",
-				"references": []
-			}
-		]
-	}
+  "1.34.0": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "1f7caa4a995870fb9e000c08b0a454e1fc9dfa00",
+        "type": "FEATURE",
+        "text": "Date: Japanese emperor calendar support",
+        "references": []
+      },
+      {
+        "id": "01c188f4ad53bf98258564964b46c3d9d6917de2",
+        "type": "FEATURE",
+        "text": "sap.m.TeamCalendar: new control",
+        "references": []
+      },
+      {
+        "id": "11dd132802c6b3d7b2d7bb355be13e5a7691bdd3",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Calendar: show 2 calendar types in one calendar",
+        "references": []
+      },
+      {
+        "id": "f999d9448a9d62f65a345bbb5e2de98db3dd1e43",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Calendar: support Japanese calendar",
+        "references": []
+      },
+      {
+        "id": "223d51e4b0f3d5895fa1df0230f6ae156d4ffd8d",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: fixed termination in case of multiple file uploads",
+        "references": []
+      },
+      {
+        "id": "6f008ac0637a7236e1752d84c6d9bde5b523dc7d",
+        "type": "FIX",
+        "text": "sap.ui.uinified.Calendar current day is wrong displayed",
+        "references": []
+      },
+      {
+        "id": "4fc119ba089902450f04772953238eccb78126ac",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar Focus changes while rendering",
+        "references": []
+      },
+      {
+        "id": "f5d700ed271d5377f5899b4e44ec6226ae6d0df2",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: day navigated twice on touch device",
+        "references": []
+      },
+      {
+        "id": "b1eafd29a7198b9a1debd783a96bb6ceebc0e1ea",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: focus lost after closing month picker or year picker",
+        "references": []
+      },
+      {
+        "id": "85ced3bf71074065f8a524efd5d546bb00ddea41",
+        "type": "FIX",
+        "text": "sap.ui.unified.DateRange return instance to allow method chaining",
+        "references": []
+      },
+      {
+        "id": "b0b7ccf9160943a855359866623fa9d796378e54",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: change event fixed",
+        "references": []
+      },
+      {
+        "id": "3ea2f9972a9dc8ba27ca011c5ee43aeee011c892",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: clear() function fixed.",
+        "references": []
+      },
+      {
+        "id": "890c15bcd44d0f0c2ea684e7dfbfcc645c408906",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu disabled field border color fix",
+        "references": []
+      },
+      {
+        "id": "277b934e5ccbd618cdbc0ceacf0fc6ccf1bf4b2f",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Avoid additional labelling the items with the menu labels",
+        "references": []
+      },
+      {
+        "id": "d9c71fe1b2a5553f46c0cb633effde4c257517c3",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Avoid focusing when Menu is not open",
+        "references": []
+      },
+      {
+        "id": "dd0faffb912ef124a8aeaaa6119db5e70db0c378",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: HCB - selected day in other month not shown",
+        "references": []
+      },
+      {
+        "id": "23d7abb14542930a421079fe6dcad37618a0758d",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: date is selected before mouseup",
+        "references": []
+      },
+      {
+        "id": "2e2afb716240b6acc0f5c80ba2f5ad79027bbea6",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: mousemove inside same day switch month",
+        "references": []
+      },
+      {
+        "id": "e89086230bd6a49eb1bd3f66360dd20b30818ded",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.CalendarDateInterval: hide day names line",
+        "references": []
+      }
+    ]
+  },
+  "1.34.1": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "d8d4b4ea83cd348c36a1930c36adc1d8dd592140",
+        "type": "FEATURE",
+        "text": "sap.m.DatePicker: display 2 calendar types in calendar",
+        "references": []
+      },
+      {
+        "id": "94a7b91de6f7bae53f98f1527cc6cab80c96679c",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Calendar: startDateChange event added",
+        "references": []
+      },
+      {
+        "id": "9cacefdfdc46d7473f296c4f75863be80aa8a584",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: IE and FF error if date \u003c 0100.01.01",
+        "references": []
+      },
+      {
+        "id": "b5cb5ee18e09a53f8eb6b0992ae2b7ee6ae034fa",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Aria Text enhanced",
+        "references": []
+      },
+      {
+        "id": "06d21124e214b1f37e21698b5ac2e726122449da",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: setEnabled() method repaired",
+        "references": []
+      }
+    ]
+  },
+  "1.34.3": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "94b717e246c77cba92abac6dfd520bdcccebb2cd",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: several issues",
+        "references": []
+      },
+      {
+        "id": "b4d20d157798b4dfbb72ddd9ae6f6cddd1888625",
+        "type": "FIX",
+        "text": "sap.ui.unified.ShellHeadItem: Provide API to differentiate between toggle button mode and action button mode.",
+        "references": []
+      }
+    ]
+  },
+  "1.34.4": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "4f965623a919afafc358e4b46f72d0d252a5a1f6",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Appointment wrong positioned",
+        "references": []
+      },
+      {
+        "id": "276d916643cd7200247543416dd5be5a0e0c3713",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: appointments in new line if invisible",
+        "references": []
+      },
+      {
+        "id": "65cb5bffe3dd5b14db744fef299f7da21cd4e6ba",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: multi-month switch blocks",
+        "references": []
+      },
+      {
+        "id": "82dee423604cf3f9508574fb7191c6a765c55318",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarDateInterval: startDateChange event too early",
+        "references": []
+      },
+      {
+        "id": "54930664d3b7f5fbfc37362136bae800de8d13d3",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarDateInterval: wrong weekday names",
+        "references": []
+      },
+      {
+        "id": "98a748611a5c8a6c85d4f5be8cee8fd9c43990c4",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarLegend: rename \"normal Day\" to \"working day\"",
+        "references": []
+      },
+      {
+        "id": "d93aa41bc8b3e3dabf283ea00dd7343ae7f8036a",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: When \"maxPrecision\" is set to 0 only the base part is being displayed",
+        "references": []
+      },
+      {
+        "id": "494e2811a431fa628acba47bc76c4fccefc76a27",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Abort in case of parellel uploads corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.34.5": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "1c39cb501e8f43effef8340c829fa5fdf12f2729",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: HCB improvements",
+        "references": []
+      },
+      {
+        "id": "586a362e87021b9d09de22d9a614d0dbfe12c9a9",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: don\u0027t select row if in 1 row mode",
+        "references": []
+      },
+      {
+        "id": "c2054301e22940bdcfe6e804ffd220811d12ac20",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: error if secondaryCalendarType used",
+        "references": []
+      }
+    ]
+  },
+  "1.34.8": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "a5e07ddf46754e1bc3c2281d4a608ea72bb8ab96",
+        "type": "FIX",
+        "text": "sap.ui.unified.SplitContainer: Left-to-right - Right-to-Left mode switch not recognized after control initialization",
+        "references": []
+      }
+    ]
+  },
+  "1.34.9": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "68c63457edb5c68dfb08892a692e761df14bf422",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: calendar loose focus by keyboard navigation",
+        "references": []
+      },
+      {
+        "id": "5a6a7d73dfa587e910c65651310240acf92d6479",
+        "type": "FIX",
+        "text": "sap.ui.unified Explored Examples: Fix styling",
+        "references": []
+      },
+      {
+        "id": "1ab086eb8c2e79c36770c3fd030d6197587a90a5",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: improve sample pages - calendarType",
+        "references": []
+      },
+      {
+        "id": "8d00ffe5046e68509ad6a84bfcc4060f4642065e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Resore focus when click outside the menu",
+        "references": []
+      }
+    ]
+  },
+  "1.34.10": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "c6b57231867d459e25e3c3a674c43348c6d6b8cd",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: Calendar on phone in landscape design issues",
+        "references": []
+      },
+      {
+        "id": "b275971af61f3b5878c32bcc0d46cb281c4ce17b",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: click on appointment - no focus in IE",
+        "references": []
+      },
+      {
+        "id": "a1d7bde88d128d29ab892e73b7816c92ddf03387",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: upload of several files fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.34.12": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "d9e722b0520be9e9ebe648d11080dadc577e928a",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarRow: appointments wrong position if theme applied late",
+        "references": []
+      }
+    ]
+  }
 }

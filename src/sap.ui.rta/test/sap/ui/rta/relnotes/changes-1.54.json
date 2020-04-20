@@ -5,108 +5,68 @@
       {
         "id": "17d6cf1ec475a2690bea79096a17e3cc649130eb",
         "type": "FIX",
-        "text": "Combine on the wrong element",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770492991"
-          }
-        ]
+        "text": " Combine on the wrong element",
+        "references": []
       },
       {
         "id": "c24ba893b5cab7757730cdba59017896bdafed19",
         "type": "FIX",
-        "text": "Revision of Multiple Settings Action handling",
+        "text": " Revision of Multiple Settings Action handling",
         "references": []
       },
       {
         "id": "42fa4bd1e74d0e01302fc53e846feafe88da014c",
         "type": "FIX",
-        "text": "sap.ui.rta - Settings dialog don’t open",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770516043"
-          }
-        ]
+        "text": " sap.ui.rta - Settings dialog don’t open",
+        "references": []
       },
       {
         "id": "48d3d6eba62f9d49c27922c8a218b1708df7b80d",
         "type": "FIX",
-        "text": "sap.ui.rta - fix enhanced logic for detecting relevant overlays",
+        "text": " sap.ui.rta - fix enhanced logic for detecting relevant overlays",
         "references": []
       },
       {
         "id": "97ea1a07af3bc7ceb5af0bda2007149c264fad80",
         "type": "FIX",
-        "text": "sap.ui.rta: RTA StyleClass for mandatory field popup",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770492829"
-          }
-        ]
+        "text": " sap.ui.rta: RTA StyleClass for mandatory field popup",
+        "references": []
       },
       {
         "id": "c7f278c41f3734d610a6e3d27393520324483de9",
         "type": "FIX",
-        "text": "sap.ui.rta: Rename plugin correction",
+        "text": " sap.ui.rta: Rename plugin correction",
         "references": []
       },
       {
         "id": "4bdad18365692031319b00023969d1506937e25a",
         "type": "FIX",
-        "text": "sap.ui.rta: added missing detachElementModified in plugin",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770511413"
-          }
-        ]
+        "text": " sap.ui.rta: added missing detachElementModified in plugin",
+        "references": []
       },
       {
         "id": "e25378342ab3af22c9cc8fedc05c6ddf75d89f15",
         "type": "FIX",
-        "text": "sap.ui.rta: cleanup of move-command of reveal",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770493188"
-          }
-        ]
+        "text": " sap.ui.rta: cleanup of move-command of reveal",
+        "references": []
       },
       {
         "id": "52206fc60b06b6a0fbc1a28b7c14dfb43f931d10",
         "type": "FIX",
-        "text": "sap.ui.rta: enhanced logic for detecting relevant overlays",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770493102"
-          }
-        ]
+        "text": " sap.ui.rta: enhanced logic for detecting relevant overlays",
+        "references": []
       },
       {
         "id": "b793e4c387f5d5f0d787eb026be8e02ad942d360",
         "type": "FIX",
-        "text": "sap.ui.rta: error handling for command-creation",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770493188"
-          }
-        ]
+        "text": " sap.ui.rta: error handling for command-creation",
+        "references": []
       },
       {
         "id": "e2f8eb0888fe854ee00f338bd34d252aab806a06",
         "type": "FIX",
-        "text": "sap.ui.rta: no stableID check without DTMetadata",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770492680"
-          }
-        ]
+        "text": " sap.ui.rta: no stableID check without DTMetadata",
+        "references": []
       },
       {
         "id": "2b7d8227672d259c001fbb896a660c0e2a297f75",
@@ -117,42 +77,32 @@
       {
         "id": "28a9e201b6bc823426797ec98fc8273a3e99fdb7",
         "type": "FIX",
-        "text": "Fix issue in contructor of variantManagement Component",
+        "text": " Fix issue in contructor of variantManagement Component",
         "references": []
       },
       {
         "id": "bbd4ecb2110dd6f137a110e98ff56e0fd169afa8",
         "type": "FIX",
-        "text": "Fix several issues in Variant Management Control",
+        "text": " Fix several issues in Variant Management Control",
         "references": []
       },
       {
         "id": "3d98d50bd7ec65aa0416694df0daa7110f27d415",
         "type": "FIX",
-        "text": "sap.ui.rta: fixed movable check when child is destroyed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770538607"
-          }
-        ]
+        "text": " sap.ui.rta: fixed movable check when child is destroyed",
+        "references": []
       },
       {
         "id": "a02a75d0e36c66b795e3a6073c9d611492dae8c9",
         "type": "FIX",
-        "text": "Fix control variant issues",
+        "text": " Fix control variant issues",
         "references": []
       },
       {
         "id": "ee1cc217cdd851087299be5f54cc3f4969dc32be",
         "type": "FIX",
-        "text": "sap.ui.rta: skip start when reloading with pers. changes",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770566040"
-          }
-        ]
+        "text": " sap.ui.rta: skip start when reloading with pers. changes",
+        "references": []
       },
       {
         "id": "bb9b67d20409f5934914888a4704ac890d695f9e",
@@ -175,7 +125,7 @@
       {
         "id": "5da854c5e7f8be4129d58b9737fcb9e7dbd3664d",
         "type": "FIX",
-        "text": "sap.ui.rta: Minor refactoring ControlVariant plugin",
+        "text": " sap.ui.rta: Minor refactoring ControlVariant plugin",
         "references": []
       },
       {
@@ -187,13 +137,13 @@
       {
         "id": "6abc69f18b97d8f720db9c866c514cfab71c2db3",
         "type": "FIX",
-        "text": "Check complexType binding in AdditionalElementsAnalyzer",
+        "text": " Check complexType binding in AdditionalElementsAnalyzer",
         "references": []
       },
       {
         "id": "de39dec35e2482f40f790a7f542f3cd2e9f19450",
         "type": "FIX",
-        "text": "sap.ui.rta - Easy Add plugin missing i18n entry for button text",
+        "text": " sap.ui.rta - Easy Add plugin missing i18n entry for button text",
         "references": []
       },
       {
@@ -205,13 +155,8 @@
       {
         "id": "ca5b37dada47aa8e9e4b9d01491d4649253217d9",
         "type": "FIX",
-        "text": "Copy of variants doesn't copy name",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780482522"
-          }
-        ]
+        "text": " Copy of variants doesn\u0027t copy name",
+        "references": []
       },
       {
         "id": "001f63360ec7a9f2f1d25d03490f95ccb85416fe",
@@ -228,7 +173,7 @@
       {
         "id": "7b81ef78c54b5bee9ef2d49fe512bf8a1c53e6f8",
         "type": "FEATURE",
-        "text": "sap.m.MessagePage: Added new property and aggregation",
+        "text": " sap.m.MessagePage: Added new property and aggregation",
         "references": []
       },
       {
@@ -240,7 +185,7 @@
       {
         "id": "b548cbe1666b1cc3441484aebd3cee7677db85a1",
         "type": "FIX",
-        "text": "Control Variants duplicate fileName length exceeding 64",
+        "text": " Control Variants duplicate fileName length exceeding 64",
         "references": []
       },
       {
@@ -252,55 +197,147 @@
       {
         "id": "85944f8a13001d363ebb705e373c8e7d6f2e7230",
         "type": "FEATURE",
-        "text": "sap.ui.rta: Appvariant Overview dialog view for SAP developer",
+        "text": " sap.ui.rta: Appvariant Overview dialog view for SAP developer",
         "references": []
       },
       {
         "id": "839fe13ca5a455c6365174dffa661d6ab671427f",
         "type": "FIX",
-        "text": "Fix bug in Sorting and support deletion of variants",
+        "text": " Fix bug in Sorting and support deletion of variants",
         "references": []
       },
       {
         "id": "31e730cb5093bbadebe8818df063076adce39e5d",
         "type": "FIX",
-        "text": "Move variant title property to content of content of variant",
+        "text": " Move variant title property to content of content of variant",
         "references": []
       },
       {
         "id": "06093a0dc0e4bb8d92f131c659ab1e57003e07de",
         "type": "FIX",
-        "text": "sap.ui.rta Respect UI.Hidden annotation",
+        "text": " sap.ui.rta Respect UI.Hidden annotation",
         "references": []
       },
       {
         "id": "4a28dc3a82d76167020541044fb59f91a665376d",
         "type": "FIX",
-        "text": ": PopupManager test fix when document doesn't have focus",
+        "text": ": PopupManager test fix when document doesn\u0027t have focus",
         "references": []
       },
       {
         "id": "fa513022b2647b43e2eed9c88ee13b8a60b70323",
         "type": "FEATURE",
-        "text": "sap.ui.rta: Refactoring the unsaved changes which are booked",
+        "text": " sap.ui.rta: Refactoring the unsaved changes which are booked",
         "references": []
       },
       {
         "id": "9c0243bae76c0be70cd7feaa90a6f04d28622c9a",
         "type": "FIX",
-        "text": "Fixing the backend call 'Manifest supported' runtime in order to",
+        "text": " Fixing the backend call \u0027Manifest supported\u0027 runtime in order to",
         "references": []
       },
       {
         "id": "6d5cd2af90f83af669a07d34c2fe694938d7c245",
         "type": "FIX",
-        "text": "sap.ui.rta - contextMenu voter problem",
+        "text": " sap.ui.rta - contextMenu voter problem",
         "references": []
       },
       {
         "id": "3e4fc2be35157cb9e30ae7b7f5d5b051d7f9d54f",
         "type": "FIX",
         "text": ": DT - New Selection API",
+        "references": []
+      }
+    ]
+  },
+  "1.54.1": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "4f872471bec2c90923497f45374f54a184d9f21a",
+        "type": "FIX",
+        "text": " sap.ui.rta: Adjust overlay container in PopupManager._applyPopupPatch to new dt implementation",
+        "references": []
+      },
+      {
+        "id": "59cd232b3f318561cb1d381e32fbcc4e5825878f",
+        "type": "FIX",
+        "text": " sap.ui.rta: Support the layer switch for app variants from",
+        "references": []
+      },
+      {
+        "id": "38b13c4b083560ea54d9f6841f700efcd747cb8c",
+        "type": "FIX",
+        "text": "sap.ui.rta - Aggregation binding Overlay movable when not editable",
+        "references": []
+      },
+      {
+        "id": "4733088bc521802541e9e4ee1d383395da39dba9",
+        "type": "FIX",
+        "text": "sap.ui.rta - Handling of sync failed event + overlay creation error",
+        "references": []
+      },
+      {
+        "id": "0e864484cf4a9edaaa857b68120fd51d7446d674",
+        "type": "FIX",
+        "text": " Fix several issues in variant management control",
+        "references": []
+      },
+      {
+        "id": "720f460d91a89db6e848a65b53063a2abff19581",
+        "type": "FIX",
+        "text": " sap.ui.rta: RuntimeAurthoring test fix for IE11",
+        "references": []
+      }
+    ]
+  },
+  "1.54.2": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "c6c8c95b564e9e9ecfb807e5f5e031323bda6a4b",
+        "type": "FIX",
+        "text": " Add getPreparedChange to ctrl variant commands",
+        "references": []
+      },
+      {
+        "id": "fe12e435472c023ef5f11672fc6c173ed271fbaa",
+        "type": "FIX",
+        "text": " sap.ui.rta: Delete the app variant from the layered repository if",
+        "references": []
+      },
+      {
+        "id": "a7bd11cbc9ada7c8ff5e86c7705f16d1789defaf",
+        "type": "FIX",
+        "text": " sap.ui.rta: Getting rid of the feature toggle parameter.",
+        "references": []
+      },
+      {
+        "id": "2b3ecc4b2fa97faca73fd7428eb426eabb3914cb",
+        "type": "FIX",
+        "text": " sap.ui.rta: check geometry of overlay instead of original element",
+        "references": []
+      }
+    ]
+  },
+  "1.54.3": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "9a0c672a70f15e98c47e86c85fc65159a8fa4233",
+        "type": "FIX",
+        "text": "sap.ui.rta: Incorrect positioning of rename field on EDGE",
+        "references": []
+      }
+    ]
+  },
+  "1.54.6": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "f6e4ebd514beb1bc569f3168a584fa82eb0f83d0",
+        "type": "FIX",
+        "text": "sap.ui.rta - Retrieve control name with inter-library inheritance",
         "references": []
       }
     ]

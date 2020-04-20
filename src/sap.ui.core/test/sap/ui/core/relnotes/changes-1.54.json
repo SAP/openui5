@@ -93,7 +93,7 @@
       {
         "id": "8d6dfaeda6a6ffbe6824666fc1a4a0322a9aaeac",
         "type": "FEATURE",
-        "text": "Element: support 'selector' for properties and aggregations",
+        "text": "Element: support \u0027selector\u0027 for properties and aggregations",
         "references": []
       },
       {
@@ -187,12 +187,12 @@
         "text": "sap.ui.unified.Menu: Enable scrolling on iOS devices",
         "references": [
           {
-            "type": "GitHub",
-            "reference": "1735"
-          },
-          {
             "type": "BCP",
             "reference": "1780403555"
+          },
+          {
+            "type": "GitHub",
+            "reference": "1735"
           }
         ]
       },
@@ -277,7 +277,7 @@
       {
         "id": "23a88f99d5bfd03d62a6b6db001b93b3451e1664",
         "type": "FEATURE",
-        "text": "Add '72' font and use as default in all Belize themes",
+        "text": "Add \u002772\u0027 font and use as default in all Belize themes",
         "references": []
       },
       {
@@ -385,12 +385,12 @@
         "text": "v2.ODataModel createBindingContext",
         "references": [
           {
-            "type": "GitHub",
-            "reference": "1779"
-          },
-          {
             "type": "BCP",
             "reference": "1780415193"
+          },
+          {
+            "type": "GitHub",
+            "reference": "1779"
           }
         ]
       },
@@ -559,7 +559,7 @@
       {
         "id": "a06e0a96aea5413c682e666311ec9f73d42574ce",
         "type": "FIX",
-        "text": "sap.ui.model: fix documentation, visibility of Client- & JSONModel",
+        "text": "sap.ui.model: fix documentation, visibility of Client- \u0026 JSONModel",
         "references": []
       },
       {
@@ -568,12 +568,12 @@
         "text": "ClientTreeBinding: Incorrect filtering when using \"arrayNames\" constrain",
         "references": [
           {
-            "type": "GitHub",
-            "reference": "1822"
-          },
-          {
             "type": "BCP",
             "reference": "1780510685"
+          },
+          {
+            "type": "GitHub",
+            "reference": "1822"
           }
         ]
       },
@@ -621,7 +621,7 @@
       {
         "id": "d054bc161c0bac4e762c9e7c51e85ba59d1b2d43",
         "type": "FIX",
-        "text": "core.routing: wait for the root view in case it's loaded async",
+        "text": "core.routing: wait for the root view in case it\u0027s loaded async",
         "references": [
           {
             "type": "BCP",
@@ -682,16 +682,16 @@
         "text": "core: default implementations for life-cycle methods",
         "references": [
           {
+            "type": "BCP",
+            "reference": "1780419423"
+          },
+          {
             "type": "GitHub",
             "reference": "1786"
           },
           {
             "type": "GitHub",
             "reference": "1758"
-          },
-          {
-            "type": "BCP",
-            "reference": "1780419423"
           }
         ]
       },
@@ -799,7 +799,7 @@
       {
         "id": "5abc860bc0d8f75fa0d93c10b17584b30208b690",
         "type": "FIX",
-        "text": "sap.ui.model.analytics.AnalyticalBinding: avoid Error: Cannot read property 'getEntityType' of null",
+        "text": "sap.ui.model.analytics.AnalyticalBinding: avoid Error: Cannot read property \u0027getEntityType\u0027 of null",
         "references": [
           {
             "type": "BCP",
@@ -923,7 +923,7 @@
       {
         "id": "a6bf7dff0b90d172dd877a6a9ba67f0159c191c8",
         "type": "FIX",
-        "text": "jquery-mobile-custom: avoid duplicate 'tap' event (continued)",
+        "text": "jquery-mobile-custom: avoid duplicate \u0027tap\u0027 event (continued)",
         "references": [
           {
             "type": "BCP",
@@ -951,7 +951,7 @@
       {
         "id": "d20446c66f0547329de83acbd65ba1c747fc7cf1",
         "type": "FIX",
-        "text": "sap.ui.model.analytics.AnalyticalBinding: avoid Error: Cannot read property 'getEntityType' of null",
+        "text": "sap.ui.model.analytics.AnalyticalBinding: avoid Error: Cannot read property \u0027getEntityType\u0027 of null",
         "references": [
           {
             "type": "BCP",
@@ -963,6 +963,394 @@
         "id": "04590c9e4b830accbf64fc05a92b2ebfe9bdf855",
         "type": "FIX",
         "text": "ui.core.qunit.component.Models.qunit.js Removed debugger statement",
+        "references": []
+      }
+    ]
+  },
+  "1.54.1": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "e13a28decfd87abe4305749ff6dc5af59983dc9a",
+        "type": "FIX",
+        "text": "Binding: Forward bForceUpdate when _refresh is called",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880135170"
+          }
+        ]
+      },
+      {
+        "id": "c7e11b718c7e385daa17d5553d32e1b0203ab1e9",
+        "type": "FIX",
+        "text": "QUnit Designtime Library tests in Firefox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880133369"
+          }
+        ]
+      },
+      {
+        "id": "ac88fce7cc472a90bf212a8987d6313e6fe09c29",
+        "type": "FIX",
+        "text": "ThemeCheck: Fix Cross-Origin issues in theme fallback",
+        "references": []
+      },
+      {
+        "id": "68de5afd29b53fbb3e704a82265536502238b821",
+        "type": "FIX",
+        "text": "core.IconPool: register lazy stub for IconPool methods",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880129607"
+          }
+        ]
+      },
+      {
+        "id": "ba6259e542dec78b125f79426f777e62fc229f54",
+        "type": "FIX",
+        "text": "jquery.sap.global: configure ui5loader for debug mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880151185"
+          }
+        ]
+      },
+      {
+        "id": "945c5c03d9e53296b7cf5d0cb0c0edda12706b60",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.v4.ODataModel: support bound action overloads",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880129867"
+          }
+        ]
+      },
+      {
+        "id": "e824ddca1159c27ff8c40492c30b39972ea8727d",
+        "type": "FIX",
+        "text": "v2.oDataContextBinding: Null check for empty context",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880145828"
+          }
+        ]
+      },
+      {
+        "id": "e9d694c1bbd8fb78a65c5dc479d344e0e5ce8a0d",
+        "type": "FIX",
+        "text": "odata.v2.ODataContextBinding: Add Null Check for Preliminary Context",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880186163"
+          }
+        ]
+      },
+      {
+        "id": "08c0ee71131a99a11263ef37813862564c5c88c9",
+        "type": "FIX",
+        "text": "performance/Interaction: unsafe access to interaction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880187469"
+          }
+        ]
+      },
+      {
+        "id": "5a783569e7e402a2bf2dba3b1c690a05a4a3fe20",
+        "type": "FIX",
+        "text": "performance/Measurement: do not log for undefined measurements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880140389"
+          }
+        ]
+      },
+      {
+        "id": "53876cc23d8f4aa36e2c70127999ca8298ca2dca",
+        "type": "FIX",
+        "text": "sap.ui.core.cache.CacheManager: IE in privacy mode is disabled.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880137917"
+          }
+        ]
+      },
+      {
+        "id": "24bf28a85c0d68c6f9eb833df2ce187ca31c2d7b",
+        "type": "FIX",
+        "text": "sap.ui.core.dnd: Conflict with jquery-ui-draggable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880151662"
+          }
+        ]
+      }
+    ]
+  },
+  "1.54.2": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "47c7a33abf009b636b7c62a236b2bb3adb211b2d",
+        "type": "FIX",
+        "text": "Usage of different jQuery version (sap-ui-core-nojQuery.js)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880243449"
+          }
+        ]
+      },
+      {
+        "id": "916f17f14c3bdb0e0f2f7625bcc1936abc9329e1",
+        "type": "FIX",
+        "text": " core/AppCacheBuster: cache buster token for XHR",
+        "references": []
+      },
+      {
+        "id": "4732e0570678bd1eff2000d8dfe133dd36ca97eb",
+        "type": "FIX",
+        "text": "performance/Interaction: do not count cached requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880170185"
+          }
+        ]
+      }
+    ]
+  },
+  "1.54.3": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "07b9467b3c8c054e061fb0e81098d460d94d5674",
+        "type": "FIX",
+        "text": " Controller: wrong error log",
+        "references": []
+      },
+      {
+        "id": "39a98aef2257f65b6cd8c23c03d14bdd4dc0045f",
+        "type": "FIX",
+        "text": " Core#notifyContentDensityChanged: Missing \"theme\" event parameter",
+        "references": []
+      },
+      {
+        "id": "f12e3180e5bb642bad6d49f028a2c60077103721",
+        "type": "FIX",
+        "text": " ODataModel(V2) docs: add since information for invalidate* methods",
+        "references": []
+      },
+      {
+        "id": "43e978f21974119ec7c4f40eb39298eaca582d9e",
+        "type": "FIX",
+        "text": " ThemeCheck: Fix Cross-Origin issues (MS Edge)",
+        "references": []
+      },
+      {
+        "id": "95fc4a3242f2d0a67e855bb82abc1df67e2ce852",
+        "type": "FIX",
+        "text": " crossroads.js: correctly handle the parse of skipped optional param",
+        "references": []
+      },
+      {
+        "id": "712d1d82e82b55b5188b54b283ba0e2675b2e326",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: Edge button events",
+        "references": []
+      },
+      {
+        "id": "e00e7239d7af22ea7b77776aaf450c1b44dee44b",
+        "type": "FIX",
+        "text": " mvc/XMLView: expose errors from template parsing",
+        "references": []
+      },
+      {
+        "id": "0589f6b1bdc10a96a7baa3d85db2d3815e1a4380",
+        "type": "FIX",
+        "text": " mvc/XMLViewRenderer: create DOM string before dummy placeholders",
+        "references": []
+      },
+      {
+        "id": "8b9dde931adb4fda21dd69d334d9e261b0e95077",
+        "type": "FIX",
+        "text": " sap.ui.base.SyncPromise.all: support sparse arrays",
+        "references": []
+      },
+      {
+        "id": "2e3903442bc48f37f70120b1355975604b5cf5e9",
+        "type": "FIX",
+        "text": " sap.ui.core.LocaleData: CZK digits",
+        "references": []
+      },
+      {
+        "id": "f356e6f9bf3d4d5fa91e6bb1c8594cc066940952",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: Parsing name of day",
+        "references": []
+      },
+      {
+        "id": "47464fe4f3af4d794fe9d9cce46fcd83c2501319",
+        "type": "FIX",
+        "text": " v2.ODataContextBinding: Preliminary check for Propagated Contexts",
+        "references": []
+      },
+      {
+        "id": "a13236d685c3553078099e259a8b402ab671e5cc",
+        "type": "FIX",
+        "text": " v2.ODataModel: metadata url params missing",
+        "references": []
+      },
+      {
+        "id": "d92623c4b57272ab26f04cc6ed453b17c8069880",
+        "type": "FIX",
+        "text": " ComponentContainer: Convert \"manifest\" string to boolean",
+        "references": []
+      },
+      {
+        "id": "eaa2182b67f54a8aa41aa5ab82e0342c2aef661c",
+        "type": "FIX",
+        "text": " MessageManager: Memory leak",
+        "references": []
+      }
+    ]
+  },
+  "1.54.4": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "3b72d997d635f5ccdab96922fe91d06fcba55db3",
+        "type": "FIX",
+        "text": " CalendarType: user date format \u0027C\u0027 implies use of Persian calendar",
+        "references": []
+      },
+      {
+        "id": "c77025067264d33fd1a1b598365eba8dba7cff7c",
+        "type": "FIX",
+        "text": " sap.m.StepInput: do not create global NumericInput",
+        "references": []
+      },
+      {
+        "id": "e7ee9ca3c261127a21df79d986b04302ec8b3122",
+        "type": "FIX",
+        "text": " sap/base/utils/equal: Support for NaN values",
+        "references": []
+      },
+      {
+        "id": "4efc9c56f96a8592f445f160d76c0b540c83a6a6",
+        "type": "FIX",
+        "text": " sap/ui/dom/includeStylesheet: Correct comparison with existing href",
+        "references": []
+      }
+    ]
+  },
+  "1.54.5": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "94271a1ab50f2280b888687a5a381f66e034c45d",
+        "type": "FIX",
+        "text": " FESR: correctly set values for initial interaction",
+        "references": []
+      },
+      {
+        "id": "47e4fc930e7e4ee00fdcc6f9f90991994ae7987a",
+        "type": "FIX",
+        "text": " Fix synchronous document.activeElement access in iframes",
+        "references": []
+      },
+      {
+        "id": "cd34e48d9a3f26b2ebaa9cb9a4d441af959ec48c",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: Correct selected row index calculation for collapse operations",
+        "references": []
+      },
+      {
+        "id": "9242f500ba233f8c7c8c8fb656c753f405d4e582",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._Requestor: OData-Version Header is optional for DELETE responses",
+        "references": []
+      },
+      {
+        "id": "c74534a4c43daef0911056ca99d39cdcbd6de004",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Implicit casting for filter values",
+        "references": []
+      },
+      {
+        "id": "61d78dc71caa64d81a28d1143b32cdc9a6408804",
+        "type": "FIX",
+        "text": " v2.ODataModel: normalizeKey",
+        "references": []
+      }
+    ]
+  },
+  "1.54.6": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "9f2b794b24f6228893fa0f2a19100ff09dd970c2",
+        "type": "FIX",
+        "text": " Core: enable support for \"-\" and \".\" for initial modules",
+        "references": []
+      },
+      {
+        "id": "717fffca4abde99a15de80f71cab487d8e5e747f",
+        "type": "FIX",
+        "text": " JSONModel: Async loadData - Error handling",
+        "references": []
+      },
+      {
+        "id": "99200fedfb57ec97e267c26da47f77037f9a5bab",
+        "type": "FIX",
+        "text": " qunit-junit reporter: Add null-check for qunit DOM node",
+        "references": []
+      },
+      {
+        "id": "82d13080f9a5d48212120ef48aac91ffac76aa21",
+        "type": "FIX",
+        "text": " ui5loader: fix sync module loading on file protocol",
+        "references": []
+      }
+    ]
+  },
+  "1.54.7": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "b1cecf9b4bde65ffb34f42d933c7221d6d6c103f",
+        "type": "FIX",
+        "text": " ODataAnnotations: don\u0027t cache xml document",
+        "references": []
+      },
+      {
+        "id": "a14ba8173ba01cffef53181e750359706fbe76d1",
+        "type": "FIX",
+        "text": " model.Filter: Add new option \"caseSensitive\"",
+        "references": []
+      },
+      {
+        "id": "14eb57703e502e0ee2df385c8b16d274fe670bf8",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding#getDownloadUrl: ensure all spaces are encoded",
+        "references": []
+      },
+      {
+        "id": "570a3d59f84d5c613baf0d924eddd99ead351b1f",
+        "type": "FIX",
+        "text": " v2.ODataModel: filter \u0027toupper\u0027",
         "references": []
       }
     ]

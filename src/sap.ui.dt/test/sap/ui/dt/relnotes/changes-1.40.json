@@ -1,25 +1,25 @@
 {
-	"1.40.0": {
-		"date": "June 2016",
-		"notes": [
-			{
-				"id": "d4e23c57c0311674678f6cf543af44904225ae0e",
-				"type": "FEATURE",
-				"text": "enable Simpleform using afterHook functions",
-				"references": []
-			},
-			{
-				"id": "c5ac680bbb953a2fe89ef9ab812718d220ba1241",
-				"type": "FIX",
-				"text": "sap.ui.dt prevent cut for not movable overlays",
-				"references": []
-			},
-			{
-				"id": "590c934741e977aa9877caa17681342df57a0aac",
-				"type": "FIX",
-				"text": "DOMUtil.getSize to also support transition style on the control",
-				"references": []
-			}
-		]
-	}
+  "1.40.0": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "d4e23c57c0311674678f6cf543af44904225ae0e",
+        "type": "FEATURE",
+        "text": "enable Simpleform using afterHook functions",
+        "references": []
+      },
+      {
+        "id": "c5ac680bbb953a2fe89ef9ab812718d220ba1241",
+        "type": "FIX",
+        "text": "sap.ui.dt prevent cut for not movable overlays",
+        "references": []
+      },
+      {
+        "id": "590c934741e977aa9877caa17681342df57a0aac",
+        "type": "FIX",
+        "text": "DOMUtil.getSize to also support transition style on the control",
+        "references": []
+      }
+    ]
+  }
 }

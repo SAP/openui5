@@ -5,389 +5,428 @@
       {
         "id": "571552d4ae63f67fe8d0013d26ac0f8275ea284d",
         "type": "FEATURE",
-        "text": "Show the BusyIndicator in more scenarios",
+        "text": " Show the BusyIndicator in more scenarios",
         "references": []
       },
       {
         "id": "f9c849df7de3de7ca800020e044b2ae81f2252d7",
         "type": "FEATURE",
-        "text": "Table: Row highlights added",
+        "text": " Table: Row highlights added",
         "references": []
       },
       {
         "id": "2a175e738fdde8ffa9394d8a6a05544faf7399fe",
         "type": "FIX",
-        "text": "AnalyticalTable: Ungrouping in SmartTable via ViewSettings dialog",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770030438"
-          }
-        ]
+        "text": " AnalyticalTable: Ungrouping in SmartTable via ViewSettings dialog",
+        "references": []
       },
       {
         "id": "468296f2e5733a44949ebdf5f91b0611d7a5d391",
         "type": "FIX",
-        "text": "AnalyticalTable: Ungrouping using the column menu",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770030438"
-          },
-          {
-            "type": "BCP",
-            "reference": "1770049890"
-          }
-        ]
+        "text": " AnalyticalTable: Ungrouping using the column menu",
+        "references": []
       },
       {
         "id": "44342edcf992a9177ad053d2ce4abf935c660a3f",
         "type": "FIX",
-        "text": "ClientTreeBinding: Calculate correct selected nodes count when filtering",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770124220"
-          }
-        ]
+        "text": " ClientTreeBinding: Calculate correct selected nodes count when filtering",
+        "references": []
       },
       {
         "id": "51b0a3cfb840ccfd128c517f8bf666d92d2afb84",
         "type": "FIX",
-        "text": "Table: BusyIndicator and NoData handling",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770044976"
-          }
-        ]
+        "text": " Table: BusyIndicator and NoData handling",
+        "references": []
       },
       {
         "id": "c22fba338d4e694228e465c0d3b48a51e80bb732",
         "type": "FIX",
-        "text": "Table: Correctly update the NoData visibility",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770131972"
-          }
-        ]
+        "text": " Table: Correctly update the NoData visibility",
+        "references": []
       },
       {
         "id": "bea91e1a50e9edb46cddba3b0862cf25ffa7e006",
         "type": "FIX",
-        "text": "Table: Issues with zooming in Chrome",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770010981"
-          },
-          {
-            "type": "BCP",
-            "reference": "1780114381"
-          }
-        ]
+        "text": " Table: Issues with zooming in Chrome",
+        "references": []
       },
       {
         "id": "825de497e8814a4dd08817c859676baa4bd7089c",
         "type": "FIX",
-        "text": "Table: Navigation while the busy indicator is shown",
-        "references": [
-          {
-            "type": "GitHub",
-            "reference": "1349"
-          }
-        ]
+        "text": " Table: Navigation while the busy indicator is shown",
+        "references": []
       },
       {
         "id": "7d661d076712149c16da32fb5eeb3c2da5fb02a9",
         "type": "FIX",
-        "text": "Table: Resizing in interactive mode on touch devices",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780137626"
-          }
-        ]
+        "text": " Table: Resizing in interactive mode on touch devices",
+        "references": []
       },
       {
         "id": "b0932ec9273c86eeb3b8654b8fef6ea1d12945c4",
         "type": "FIX",
-        "text": "TreeBindingAdapter: Clear selectAllMode from all nodes on clearSelection()",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780040138"
-          }
-        ]
+        "text": " TreeBindingAdapter: Clear selectAllMode from all nodes on clearSelection()",
+        "references": []
       },
       {
         "id": "b514a43475c517531f1f4410a2b35e75f345ed83",
         "type": "FIX",
-        "text": "TreeBindingAdapter: Harmonize selection behavior when expanding nodes using setNumberOfExpandedLevels()",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780134367"
-          }
-        ]
+        "text": " TreeBindingAdapter: Harmonize selection behavior when expanding nodes using setNumberOfExpandedLevels()",
+        "references": []
       },
       {
         "id": "f40a5cfd44ee3c3bcf1f96caf19ab18595029beb",
         "type": "FIX",
-        "text": "TreeTable: Position of the TreeIcon",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770010981"
-          }
-        ]
+        "text": " TreeTable: Position of the TreeIcon",
+        "references": []
       },
       {
         "id": "84c1327fca0e62381f451d7dc372a51df0b559c2",
         "type": "FIX",
-        "text": "TreeTable: Property expandFirstLevel deprecated",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780107134"
-          }
-        ]
+        "text": " TreeTable: Property expandFirstLevel deprecated",
+        "references": []
       },
       {
         "id": "1854f16101f3c2e3d155d4a1851aeb5a322749a6",
         "type": "FIX",
-        "text": "TreeTable: Remove leaf icons from the tab chain in edit mode",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770132368"
-          }
-        ]
+        "text": " TreeTable: Remove leaf icons from the tab chain in edit mode",
+        "references": []
       },
       {
         "id": "ad38e561dbf372a05d69e628854c3a7c77cdf444",
         "type": "FIX",
-        "text": "sap.ui.table.*: Avoid error when cell control does not provide an accessibility info.",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770112155"
-          }
-        ]
+        "text": " sap.ui.table.*: Avoid error when cell control does not provide an accessibility info.",
+        "references": []
       },
       {
         "id": "17f17e6a09d75544d224bcfe0d3b193aae0b482e",
         "type": "FIX",
-        "text": "sap.ui.table.*: Avoid error while reorder columns via D&D",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770096587"
-          }
-        ]
+        "text": " sap.ui.table.*: Avoid error while reorder columns via D\u0026D",
+        "references": []
       },
       {
         "id": "d5e28b123a1bb56e7a2fec736bc6fd8efa289828",
         "type": "FIX",
-        "text": "sap.ui.table.*: Avoid focus outline issues in Internet Explorer",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780063815"
-          }
-        ]
+        "text": " sap.ui.table.*: Avoid focus outline issues in Internet Explorer",
+        "references": []
       },
       {
         "id": "d923c5dee8e8c2199433c58e65270dfa28248dd5",
         "type": "FIX",
-        "text": "sap.ui.table.*: Avoid no data visualization during refresh",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780079843"
-          }
-        ]
+        "text": " sap.ui.table.*: Avoid no data visualization during refresh",
+        "references": []
       },
       {
         "id": "4782cc292966729cb1adaf9d8eac0b8b149ac319",
         "type": "FIX",
-        "text": "sap.ui.table.*: Fix positioning of table content in IE/Edge in case of row actions",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780063120"
-          }
-        ]
+        "text": " sap.ui.table.*: Fix positioning of table content in IE/Edge in case of row actions",
+        "references": []
       },
       {
         "id": "14b0c359ceef5406032e2c238caab8a5a1439012",
         "type": "FIX",
-        "text": "sap.ui.table.*: Fix positioning of table content with row actions (no scrollbar case)",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780095860"
-          }
-        ]
+        "text": " sap.ui.table.*: Fix positioning of table content with row actions (no scrollbar case)",
+        "references": []
       },
       {
         "id": "8b7bcc097d848d9e2de5f76566fd9dda2b7b5a9d",
         "type": "FIX",
-        "text": "sap.ui.table.*: Fix scrollbar alignment on touch enabled laptops (combi devices)",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770045123"
-          }
-        ]
+        "text": " sap.ui.table.*: Fix scrollbar alignment on touch enabled laptops (combi devices)",
+        "references": []
       },
       {
         "id": "d530301b06449882bfdd8db6573fa4f39f502653",
         "type": "FIX",
-        "text": "sap.ui.table.*: Scrolling to the last row when zoomed in/out in Chrome.",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780067174"
-          }
-        ]
+        "text": " sap.ui.table.*: Scrolling to the last row when zoomed in/out in Chrome.",
+        "references": []
       },
       {
         "id": "c109e7ef8755b0a2a0f0b6177670063418db1c49",
         "type": "FIX",
-        "text": "sap.ui.table.*: Skip cellClick event in case of text selection",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780054498"
-          }
-        ]
+        "text": " sap.ui.table.*: Skip cellClick event in case of text selection",
+        "references": []
       },
       {
         "id": "23ce5ed5e195f97c5e60abe488a92d637fb22ccc",
         "type": "FIX",
-        "text": "sap.ui.table.*: Suppress select all on empty table",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770135253"
-          }
-        ]
+        "text": " sap.ui.table.*: Suppress select all on empty table",
+        "references": []
       },
       {
         "id": "396d46b2440cb0af320570d09e1c633e2010a5b0",
         "type": "FIX",
-        "text": "sap.ui.table.*: Tabbing in action mode when invisible columns exist.",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780083072"
-          }
-        ]
+        "text": " sap.ui.table.*: Tabbing in action mode when invisible columns exist.",
+        "references": []
       },
       {
         "id": "ea83daf551c1039aa672b7c5fa8679d925adc07c",
         "type": "FIX",
-        "text": "sap.ui.table.Table - CSS corrections for column headers",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129400001441792017"
-          }
-        ]
+        "text": " sap.ui.table.Table - CSS corrections for column headers",
+        "references": []
       },
       {
         "id": "d489294e988158c29eafd8d627c12a836bc3fd86",
         "type": "FIX",
-        "text": "sap.ui.table.Table - column header spans in XLM views",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770168156"
-          }
-        ]
+        "text": " sap.ui.table.Table - column header spans in XLM views",
+        "references": []
       },
       {
         "id": "cfb560462f1bb2a47c51ce40014138ffda80c50d",
         "type": "FIX",
-        "text": "sap.ui.table.Table - row selection column is too wide in IE/Edge",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770076948"
-          }
-        ]
+        "text": " sap.ui.table.Table - row selection column is too wide in IE/Edge",
+        "references": []
       },
       {
         "id": "68af49337c79fd0b6e89d795de2104897fefa054",
         "type": "FIX",
-        "text": "sap.ui.table.Table - sort and filter icons in IE",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770179109"
-          }
-        ]
+        "text": " sap.ui.table.Table - sort and filter icons in IE",
+        "references": []
       },
       {
         "id": "b138abbb3faeefc141a0a2201905df236ebbc052",
         "type": "FIX",
-        "text": "sap.ui.table.Table - touch scrolling in IE and Edge",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002028376500001074942017"
-          }
-        ]
+        "text": " sap.ui.table.Table - touch scrolling in IE and Edge",
+        "references": []
       },
       {
         "id": "5419805d98249d01b81241c09b6c0c84e9a6cab6",
         "type": "FIX",
-        "text": "sap.ui.table.Table: busy timeout made independent of rendering",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770085022"
-          }
-        ]
+        "text": " sap.ui.table.Table: busy timeout made independent of rendering",
+        "references": []
       },
       {
         "id": "26ce2e219331142cf015bd20ac7d278f3bf34c30",
         "type": "FIX",
-        "text": "sap.ui.table.Table: columns with minWidth disappear after window resize",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680315288"
-          }
-        ]
+        "text": " sap.ui.table.Table: columns with minWidth disappear after window resize",
+        "references": []
       },
       {
         "id": "65e0dc273dad24d63e79f35edcc147b54b778050",
         "type": "FIX",
-        "text": "sap.ui.table.Table: improper busy indicator & noData issue fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770044976"
-          },
-          {
-            "type": "BCP",
-            "reference": "1770041261"
-          }
-        ]
+        "text": " sap.ui.table.Table: improper busy indicator \u0026 noData issue fixed",
+        "references": []
       },
       {
         "id": "04b073ac0b4b6dd113899c45a1d068c157aad0d0",
         "type": "FIX",
-        "text": "sap.ui.table.*: Ensure visibility of scrollbars in IE on Win 10",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002028376500000464272017"
-          }
-        ]
+        "text": " sap.ui.table.*: Ensure visibility of scrollbars in IE on Win 10",
+        "references": []
+      }
+    ]
+  },
+  "1.48.1": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "c4bd78eea0fd5e0533763261b9a2f0c07e1c16b1",
+        "type": "FIX",
+        "text": " Table: Avoid null pointer exception when last row was removed",
+        "references": []
+      },
+      {
+        "id": "66747e3d072575e17281822d7dbc3302470e2eef",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - infinite rerendering",
+        "references": []
+      }
+    ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "7aaa73077051525d5c46a06dd70c3b1e06acdfa7",
+        "type": "FIX",
+        "text": " AnalyticalTable: Consider groups on initial numberOfExpandedLevels",
+        "references": []
+      },
+      {
+        "id": "0982ad552e823ff4ef5eebc2bc77a4f866e25edd",
+        "type": "FIX",
+        "text": " Table: Select text of input fields in edit mode navigation",
+        "references": []
+      },
+      {
+        "id": "33cac69194d687049a9231ca177b3dc93f736ea6",
+        "type": "FIX",
+        "text": " sap.ui.table.*: ACC Announcement of Selection on RowHeaders",
+        "references": []
+      },
+      {
+        "id": "3387c6c6ee93feac76f90772f102ff4e6493a5d4",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Screenreader Support Adaptations",
+        "references": []
+      },
+      {
+        "id": "89527109c4cdabd5626e20a929e9cc55d7baf7a9",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: rendering issue with invisible fixed columns",
+        "references": []
+      }
+    ]
+  },
+  "1.48.3": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "b555ae28ca65c1e0763d50a21caf0ff359cd6bc2",
+        "type": "FIX",
+        "text": " Table: Management of the column template clone stack",
+        "references": []
+      },
+      {
+        "id": "708d06103a2255d14b952f03fe317e37620956d5",
+        "type": "FIX",
+        "text": " TreeTable: Expand/Collapse with OData v1 models",
+        "references": []
+      },
+      {
+        "id": "bd26605d69c9527b47f779c1430f279c34f51033",
+        "type": "FIX",
+        "text": " sap.ui.table.*: ACC - Selection mode announcement",
+        "references": []
+      }
+    ]
+  },
+  "1.48.4": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "5ede7ee7d73a77a611aaa57964d97062c2c7827a",
+        "type": "FIX",
+        "text": " Table: Column parameter of the ColumnSelect event",
+        "references": []
+      },
+      {
+        "id": "f3d62e97a634537237624340cc7f7f25cef50a5a",
+        "type": "FIX",
+        "text": " Table: Tooltip of SelectAll cell when manually selecting all rows",
+        "references": []
+      }
+    ]
+  },
+  "1.48.5": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "7a2cdc11d363590a41dcab1341d8742e650655a0",
+        "type": "FIX",
+        "text": " Table: Correctly initialize the keyboard navigation",
+        "references": []
+      },
+      {
+        "id": "8fa3bdfcd9a47f75502ed7231d13121bb402032d",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Ensure visible scrollbars on Safari / iOS",
+        "references": []
+      }
+    ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "b023aa2e3372eda27f54132bce2c9951d50304ea",
+        "type": "FIX",
+        "text": " Table: Correctly process focus events related to the edit mode",
+        "references": []
+      },
+      {
+        "id": "dc8126df3223ad2cc715d9461ba9da7a7cf6f09a",
+        "type": "FIX",
+        "text": " Table: Correctly set the checked state of the SelectAll checkbox",
+        "references": []
+      },
+      {
+        "id": "749841eee33caab55ec52a2c1c8eeb8ede200975",
+        "type": "FIX",
+        "text": " Table: No more infinite re-renderings if zoomed in Chrome",
+        "references": []
+      },
+      {
+        "id": "5096ea8495a37d04c40947804a65cea6036d61d5",
+        "type": "FIX",
+        "text": " Table: Text will be properly deselected in edit mode navigation",
+        "references": []
+      },
+      {
+        "id": "79ebbc4c60c6dd633c4ffc756db02d169d1748cf",
+        "type": "FIX",
+        "text": " core.ClientTreeBinding: Fix for relative treebinding",
+        "references": []
+      }
+    ]
+  },
+  "1.48.10": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "c6b44467f7dd4e74df0c5708398b8b5a353515e9",
+        "type": "FIX",
+        "text": " Table: Avoid flickering of the busy indicator on initial data load",
+        "references": []
+      }
+    ]
+  },
+  "1.48.11": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "4c01d7427e85e497d017c7165f91bc9d8bfdff97",
+        "type": "FIX",
+        "text": " Table: Correct height adjustment when used inside a splitter",
+        "references": []
+      },
+      {
+        "id": "fc4e18e4ef9a77e979988f5792d3f8e6bc4e2f89",
+        "type": "FIX",
+        "text": " Table: Improved busy handling in case of parallel requests",
+        "references": []
+      }
+    ]
+  },
+  "1.48.13": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "08367c978b783a7a2888fba407492008ab5ab08b",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Table renders even if column was destroyed",
+        "references": []
+      }
+    ]
+  },
+  "1.48.14": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "98d78efb4ad291c0708acceb9c535961c69b89a9",
+        "type": "FIX",
+        "text": " Table: Vertical scrollbar becomes visible if height is decreased",
+        "references": []
+      }
+    ]
+  },
+  "1.48.17": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "9ec03838f92f126b83c3cc6c68dda3ca6ea6637c",
+        "type": "FIX",
+        "text": " Table: Horizontal scrolling with the touchpad",
+        "references": []
+      }
+    ]
+  },
+  "1.48.19": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "f0e209f44375e1c6fc3bc93456fb3cbee2aeb455",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
       }
     ]
   }

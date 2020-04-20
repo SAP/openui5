@@ -5,131 +5,196 @@
       {
         "id": "9d7f78d66bd0241895c6e071a44bdf252c677377",
         "type": "FEATURE",
-        "text": "sap.m.MessageView - generic control implementation",
+        "text": " sap.m.MessageView - generic control implementation",
         "references": []
       },
       {
         "id": "51f6234400ef60ce6bd64dbcfbe360a0d710389e",
         "type": "FEATURE",
-        "text": "sap.m.PlanningCalendar: 1 month view for S and M sizes",
+        "text": " sap.m.PlanningCalendar: 1 month view for S and M sizes",
         "references": []
       },
       {
         "id": "7979b89aa5a367d818b0b8a2af7e0bb89830c0dd",
         "type": "FEATURE",
-        "text": "sap.m.Popover: HCW and HCB arrow styling based on Belize",
+        "text": " sap.m.Popover: HCW and HCB arrow styling based on Belize",
         "references": []
       },
       {
         "id": "399e222145dda29e67eba27b7a39c63a16f6048a",
         "type": "FIX",
-        "text": "sap.m.Button: Focus outline visible for IE",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780096731"
-          }
-        ]
+        "text": " sap.m.Button: Focus outline visible for IE",
+        "references": []
       },
       {
         "id": "dc635f4e78da2e250cb6b71b00b747c460f6b399",
         "type": "FIX",
-        "text": "sap.m.Button: Text styling fixes for buttons in bars",
+        "text": " sap.m.Button: Text styling fixes for buttons in bars",
         "references": []
       },
       {
         "id": "210c960643f27e90f8d49a1502d3d85be57ffd6e",
         "type": "FIX",
-        "text": "sap.m.Button: Text styling fixes for buttons in bars.",
+        "text": " sap.m.Button: Text styling fixes for buttons in bars.",
         "references": []
       },
       {
         "id": "5a5ed7cedc8134b687d9810bbc61c54c25c23faf",
         "type": "FIX",
-        "text": "sap.m.Button: styling fixes",
+        "text": " sap.m.Button: styling fixes",
         "references": []
       },
       {
         "id": "d658e7d146d56eca7b151fd520eb9d5ff95b3447",
         "type": "FIX",
-        "text": "sap.m.InputBase: Focus in InputBase for Belize and HCB Fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670528641"
-          }
-        ]
+        "text": " sap.m.InputBase: Focus in InputBase for Belize and HCB Fixed",
+        "references": []
       },
       {
         "id": "1bfd7c9afb778c11ff6be433c5461a38d1729c70",
         "type": "FIX",
-        "text": "sap.m.MenuButton: Focus fixed for Belize",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680343825"
-          }
-        ]
+        "text": " sap.m.MenuButton: Focus fixed for Belize",
+        "references": []
       },
       {
         "id": "eb73f170f88d17616777a1fd60b6887d384f14db",
         "type": "FIX",
-        "text": "sap.m.ObjectAttribute: Focus clear visible on IE",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780009120"
-          }
-        ]
+        "text": " sap.m.ObjectAttribute: Focus clear visible on IE",
+        "references": []
       },
       {
         "id": "f80c8a4e574e9971963a398aa99ef06edbfa643d",
         "type": "FIX",
-        "text": "sap.m.Page: Footer border in HCB and bluecrystal corrected",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780115900"
-          }
-        ]
+        "text": " sap.m.Page: Footer border in HCB and bluecrystal corrected",
+        "references": []
       },
       {
         "id": "9dd3681db067b949bc0b6b8522ca38c37200e173",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129500004765332016"
-          }
-        ]
+        "text": " sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
+        "references": []
       },
       {
         "id": "08c6cb7424fcf2f88cb9a2ea0903a1aec7aa2ee2",
         "type": "FIX",
-        "text": "sap.m.Popover: Bluecrystal and HCB styles is now correct",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780115257"
-          }
-        ]
+        "text": " sap.m.Popover: Bluecrystal and HCB styles is now correct",
+        "references": []
       },
       {
         "id": "7c53c62b457210fe1c14a902be6d1e847c2b2789",
         "type": "FIX",
-        "text": "sap.m.QuickView: Title is displaying correctly",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770106810"
-          }
-        ]
+        "text": " sap.m.QuickView: Title is displaying correctly",
+        "references": []
       },
       {
         "id": "8493be88db25f845c16a86bcb025b9bbc5b2beb2",
         "type": "FIX",
-        "text": "sap.uxap.AnchorBar: AnchorBar Button hover fixed",
+        "text": " sap.uxap.AnchorBar: AnchorBar Button hover fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.48.1": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "0518fdbb10272ba696a6f275dc53e70a3bf93c72",
+        "type": "FIX",
+        "text": " unified.Calendar: On IE selected days focus outline is dashed",
+        "references": []
+      }
+    ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "f9951b351bc287263bad3195cc3f0edb43a6ad36",
+        "type": "FIX",
+        "text": " core.Icon: make the focus outline stay within the DOM area",
+        "references": []
+      }
+    ]
+  },
+  "1.48.5": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "19e51be36b4ea49e632e1b1432eab922c9dd0c96",
+        "type": "FIX",
+        "text": " sap.m.TileContent: Semantic color of footer corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "586acf428239e88d5ddb9e8862573e3e2dbe959e",
+        "type": "FIX",
+        "text": " core.Icon: simulate focus outline with negative offset for IE and Edge",
+        "references": []
+      }
+    ]
+  },
+  "1.48.8": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "e1e78d28f76fa139143f67f908b51b66237ba338",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: correct different height of the ObjectAttributeDiv between IE and Chrome",
+        "references": []
+      }
+    ]
+  },
+  "1.48.10": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "9988efe9dc5773734fd2a3ac2a71624e6a6502b9",
+        "type": "FIX",
+        "text": " sap.m.BarInPageEnabler: Bars no longer care about the context they\u0027re used in (i.e. header, footer, etc.)",
+        "references": []
+      }
+    ]
+  },
+  "1.48.11": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "b332cfde344e88283354e3a2a637594473e75cb2",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: minor visual fix in the header",
+        "references": []
+      }
+    ]
+  },
+  "1.48.13": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "6ea0945b1aab044ee25afb04ab92309f0673a5d6",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Moving of tiles fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.48.19": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "7ffa8f34c285e2189cc3052818c938e952366f36",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "95519ae8e3cf0c51209164fabd2b966e71d4575c",
+        "type": "FIX",
+        "text": " sap.m.Popover: correct header, subheader and footer DOM structure",
         "references": []
       }
     ]

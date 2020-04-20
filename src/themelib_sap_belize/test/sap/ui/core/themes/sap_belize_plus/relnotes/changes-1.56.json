@@ -5,223 +5,285 @@
       {
         "id": "ff75969dbd03279d90a0b5b263fa1e74ec2cb903",
         "type": "FIX",
-        "text": "sap.m.Dialog: correct padding of the subheader when Toolbar is used",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880134146"
-          }
-        ]
+        "text": " sap.m.Dialog: correct padding of the subheader when Toolbar is used",
+        "references": []
       },
       {
         "id": "d5fb02cda239b60c4fb94d6750050fe56b6821af",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar: appointments have correct legend colors now",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880161005"
-          }
-        ]
+        "text": " sap.m.PlanningCalendar: appointments have correct legend colors now",
+        "references": []
       },
       {
         "id": "2c10a012330cf8055bdb6680febacf2d6546b3e0",
         "type": "FIX",
-        "text": "sap.m.Button: Now the icons are with the correct color when Reject/Accept/Emphasized + Disabled",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880188519"
-          }
-        ]
+        "text": " sap.m.Button: Now the icons are with the correct color when Reject/Accept/Emphasized + Disabled",
+        "references": []
       },
       {
         "id": "bcbce8313b0694d6fdb5ef84fe8b92720cd0bf13",
         "type": "FIX",
-        "text": "sap.ui.unified.Menu: Focus outline fixed for HCB and HCW",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880169680"
-          }
-        ]
+        "text": " sap.ui.unified.Menu: Focus outline fixed for HCB and HCW",
+        "references": []
       },
       {
         "id": "a1c46cc22e724a6bb77fbbe8e8f0fa7ac70f50d6",
         "type": "FIX",
-        "text": "sap.f.FlexibleColumnLayout: Arrow buttons aligned with VD spec",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880193589"
-          }
-        ]
+        "text": " sap.f.FlexibleColumnLayout: Arrow buttons aligned with VD spec",
+        "references": []
       },
       {
         "id": "649f5b3dfb79962423b69fd6965bfe4a4f43714e",
         "type": "FIX",
-        "text": "sap.m.Button: Emphasized button has correct focus outline color on its down state in Belize",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880211223"
-          }
-        ]
+        "text": " sap.m.Button: Emphasized button has correct focus outline color on its down state in Belize",
+        "references": []
       },
       {
         "id": "d735d2312e3811075df9f37e2c0611a24a6e46bd",
         "type": "FIX",
-        "text": "sap.m.SegmentedButton: focus outline clearly visible in IE",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880222226"
-          }
-        ]
+        "text": " sap.m.SegmentedButton: focus outline clearly visible in IE",
+        "references": []
       },
       {
         "id": "fe28125b3307fb60ccb790152e8f5573c88b261f",
         "type": "FIX",
-        "text": "sap.ui.unified.Calendar: No double focus outline on Belize on IE",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880240603"
-          }
-        ]
+        "text": " sap.ui.unified.Calendar: No double focus outline on Belize on IE",
+        "references": []
       },
       {
         "id": "964f990699939f33c47044823f0222f1d74412e1",
         "type": "FIX",
-        "text": "GridTable: Color contrast of Information Highlight fixed in HCB/W",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770561123"
-          }
-        ]
+        "text": " GridTable: Color contrast of Information Highlight fixed in HCB/W",
+        "references": []
       },
       {
         "id": "8e730533d27231edb7a6b442fbc8349bea5e9f4a",
         "type": "FIX",
-        "text": "sap.m.ColorPalette: focus indication for IE, Edge in standard theme is fixed.",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880222189"
-          }
-        ]
+        "text": " sap.m.ColorPalette: focus indication for IE, Edge in standard theme is fixed.",
+        "references": []
       },
       {
         "id": "9e08dc98bb3a9fe92dc597f11cfa27d6a2d424e3",
         "type": "FIX",
-        "text": "sap.m.Toolbar: Focus indication for active toolbars fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880228436"
-          }
-        ]
+        "text": " sap.m.Toolbar: Focus indication for active toolbars fixed",
+        "references": []
       },
       {
         "id": "9bf315bec3750ae9aaf349dc550a2addb73a8c41",
         "type": "FIX",
-        "text": "sapContent_ContrastTextThreshold in sap_belize_plus 0.5",
+        "text": " sapContent_ContrastTextThreshold in sap_belize_plus 0.5",
         "references": []
       },
       {
         "id": "7d6a0dd4c77cd62d2b40ebd2f04293a2a0a9f4c2",
         "type": "FIX",
-        "text": "uxap.HierarchicalSelect: Alignment in FlexibleColumnLayout fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870032527"
-          }
-        ]
+        "text": " uxap.HierarchicalSelect: Alignment in FlexibleColumnLayout fixed",
+        "references": []
       },
       {
         "id": "68eb1b431da8c73d7ac3d430dd27fe291a40d730",
         "type": "FIX",
-        "text": "sap.m.Button, sap.m.MenuButton, sap.m.ToggleButton: press state inside Toolbar and List fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870088422"
-          },
-          {
-            "type": "BCP",
-            "reference": "1870088216"
-          }
-        ]
+        "text": " sap.m.Button, sap.m.MenuButton, sap.m.ToggleButton: press state inside Toolbar and List fixed",
+        "references": []
       },
       {
         "id": "b35ec2496e38bbcb0d44a8127e26616fb57da4ca",
         "type": "FIX",
-        "text": "sap.m.Input: Focus border is now correct",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870023192"
-          }
-        ]
+        "text": " sap.m.Input: Focus border is now correct",
+        "references": []
       },
       {
         "id": "d17fdac9dbc1fc0b58b2346972b36638e00981c6",
         "type": "FEATURE",
-        "text": "sap.ui.core.dnd: dragEnd and dragOver events are added",
+        "text": " sap.ui.core.dnd: dragEnd and dragOver events are added",
         "references": []
       },
       {
         "id": "6c485f3bdcab487467812306845b859e9ca16a9e",
         "type": "FEATURE",
-        "text": "sap.m.PlanningCalendar: Creating appointments with dragging is now possible",
+        "text": " sap.m.PlanningCalendar: Creating appointments with dragging is now possible",
         "references": []
       },
       {
         "id": "dc78c3bcb29599ac79dbe6c5c36499c7afecb27e",
         "type": "FEATURE",
-        "text": "sap.m.Table: enable sticky header toolbars",
+        "text": " sap.m.Table: enable sticky header toolbars",
         "references": []
       },
       {
         "id": "712029a17e3e3fe9fe66a76e613cbbc9dff6f7ba",
         "type": "FIX",
-        "text": "sap.ui.layout.BlockLayout: Cell border in belize_hcw and belize_hcb themes added",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870087428"
-          }
-        ]
+        "text": " sap.ui.layout.BlockLayout: Cell border in belize_hcw and belize_hcb themes added",
+        "references": []
       },
       {
         "id": "9656793fc72549dd07b3144ed27012ae2e1a79be",
         "type": "FEATURE",
-        "text": "f.DynamicPage, uxap.ObjectPageLayout: Collapse/Pin changed",
+        "text": " f.DynamicPage, uxap.ObjectPageLayout: Collapse/Pin changed",
         "references": []
       },
       {
         "id": "21543b66241833e19f91933716b63504e0de4adf",
         "type": "FEATURE",
-        "text": "sap.m.IconTabBar: tabDensityMode property implemented",
+        "text": " sap.m.IconTabBar: tabDensityMode property implemented",
         "references": []
       },
       {
         "id": "b5403b1a6ea2598a690e7d955364226ce6dc6bf5",
         "type": "FIX",
-        "text": "uxap.AnchorBar: HierarchicalSelect icon missalignment fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870038404"
-          }
-        ]
+        "text": " uxap.AnchorBar: HierarchicalSelect icon missalignment fixed",
+        "references": []
       },
       {
         "id": "b3d750377b13859bdecd92e7dcd3af960b7a78f4",
         "type": "FEATURE",
-        "text": "sap.ui.layout.BlockLayout: BlockLayoutCell now supports link as title",
+        "text": " sap.ui.layout.BlockLayout: BlockLayoutCell now supports link as title",
+        "references": []
+      }
+    ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "83ba9375c5e6bcb62c946bf925f90e2f52dc0525",
+        "type": "FIX",
+        "text": " m.App: Applied transparent bg in belize_plus",
+        "references": []
+      },
+      {
+        "id": "9708cf2c03acada182d87ad5c00d4ca9abf74820",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Selected text now has correct contrast",
+        "references": []
+      }
+    ]
+  },
+  "1.56.2": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "0d4c2b4c59d03f6cb1f69f361a780c90d98d73ec",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: right border of the last visible sub item is now displayed",
+        "references": []
+      }
+    ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "2cb7797097e092daa911782536d5f3d393ca17fe",
+        "type": "FIX",
+        "text": " CheckBox: right focus otline cut off fixed",
+        "references": []
+      },
+      {
+        "id": "bfe6a30402e14c3d2b49b18bbd5bfe93d7970ab8",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: headerBackgroundDesign now works correctly",
+        "references": []
+      },
+      {
+        "id": "8814ebdfa2caf9d82637b85320af0a5821da3f87",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar, CalendarLegend: contrast ratio is fixed",
+        "references": []
+      },
+      {
+        "id": "b96197cdf87d030e87101e0777cb97de4c54153b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: weekNumberSelect event now works correctly in IE and Edge",
+        "references": []
+      },
+      {
+        "id": "ba4788d820a686ccdd17dddeeb6189b021771cb7",
+        "type": "FIX",
+        "text": " sap_belize: @sapPositiveColor contrast ratio fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.56.5": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "29208eb6d06827e7debe4dde201e888948377dcc",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Selection now visible in print",
+        "references": []
+      }
+    ]
+  },
+  "1.56.6": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "121f122b502c8e201b24510dd8808a9ba6d96b1a",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Items\u0027 loading indicator returned back",
+        "references": []
+      }
+    ]
+  },
+  "1.56.7": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "fe8d2122698444bef6af6aa8c6ed940b2f98e105",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": []
+      }
+    ]
+  },
+  "1.56.9": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "7eb3c55fca84a6c3def91bd6ea26297909dbd847",
+        "type": "FIX",
+        "text": " Calendar: Picker\u0027s selected month/year style overriding focus in HC fixed",
+        "references": []
+      },
+      {
+        "id": "57e80f9ceddb5a1c5b0ad49f27ba0f35891345aa",
+        "type": "FIX",
+        "text": " sap.m.Input: Value help icon is now properly displayed in compact mode",
+        "references": []
+      }
+    ]
+  },
+  "1.56.12": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "b789285d201a09a6b1d777a9460fb09f05e04f34",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed header content transparency",
+        "references": []
+      }
+    ]
+  },
+  "1.56.16": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "72ae47a09882f929546d8f09cb395190915e0de1",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageHeader: Fixed background in Shell",
+        "references": []
+      }
+    ]
+  },
+  "1.56.17": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "c2d92a6af0a99a408190736948d0956b50488e96",
+        "type": "FIX",
+        "text": " Font 72 loading issue",
         "references": []
       }
     ]

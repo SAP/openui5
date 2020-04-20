@@ -29,7 +29,7 @@
       {
         "id": "a4274d35eb749eb57ddb303f392b4fef6c80cfa9",
         "type": "FIX",
-        "text": "Form: don't close FormContainer if focus on Input field",
+        "text": "Form: don\u0027t close FormContainer if focus on Input field",
         "references": [
           {
             "type": "BCP",
@@ -40,7 +40,7 @@
       {
         "id": "248a51aa9ea83f771f5ba242a9e518e6e5e77196",
         "type": "FIX",
-        "text": "FormContainer: render role=\"form\" only if title exist",
+        "text": "FormContainer: render role\u003d\"form\" only if title exist",
         "references": [
           {
             "type": "BCP",
@@ -105,6 +105,200 @@
           {
             "type": "BCP",
             "reference": "1770002704"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.1": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "463c44bc312310cae7255663a1a84713cd762d3e",
+        "type": "FIX",
+        "text": "Form: Toolbar wrong aligned",
+        "references": []
+      },
+      {
+        "id": "d4884f766dfec221545bf65c7dd8ec2565ec8f30",
+        "type": "FIX",
+        "text": "Form: icons inside of content controls not shown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770491576"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.2": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "2271c3eda969d4e1fea457127cd82e92202c1798",
+        "type": "FIX",
+        "text": "SimpleForm: resize handler active after changing layout",
+        "references": []
+      },
+      {
+        "id": "a5fd5f7b699dc49ecdf3d2a2e91b32c490a73152",
+        "type": "FIX",
+        "text": "sap.ui.dt:added isVisible function to designtime and visible check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770492781"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.3": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "615bc794d6b7ce88b2d91a6c331a11eb87edc8be",
+        "type": "FIX",
+        "text": "Form: using ResponsiveLayout text too much padding",
+        "references": []
+      }
+    ]
+  },
+  "1.52.7": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "5e8261b616cb1cd09ff7fcefb921fde81ce081dd",
+        "type": "FIX",
+        "text": "sap.ui.layout: MoveSimpleForm and AddSimpleFormGroup ChangeHandler",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880170818"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.12": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "5963abe34414d314e641b0337a597dbf10308c20",
+        "type": "FIX",
+        "text": "SimpleForm: Error if layout is set after content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870185439"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.13": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "6321559428d30ad09324bba276ec01480ecdf9f5",
+        "type": "FIX",
+        "text": "sap.ui.layout - Update of labels after undo of rename on SimpleForm",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870252596"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.16": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "1164a31f5f8024026a7b87a63b6dc75622e9759b",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveSplitter: Resize tooltips are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880313384"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.17": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "0fe3a1bd85708623d19358d565d8d0069e51e8b9",
+        "type": "FIX",
+        "text": "sap.ui.layout.Splitter: Pane width is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880405321"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.19": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "89b190c8e92ecfbfa10689f58dde1d9d25f814b5",
+        "type": "FIX",
+        "text": "ui.layout.Grid: Control visibility properties behavior fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870416296"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.30": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "f444280449dfc482c66a8446aa92106586ee3c56",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: shows side content on small screen",
+        "references": []
+      }
+    ]
+  },
+  "1.52.31": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "ba4107760d26f8bca646a3d22cce30a6844cfb81",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: Toggle on mobile is now working",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970185680"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.32": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "af170afa5469eb933efbe5a2764ede570a2a56c1",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: Pagination tap handling improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "468371"
           }
         ]
       }

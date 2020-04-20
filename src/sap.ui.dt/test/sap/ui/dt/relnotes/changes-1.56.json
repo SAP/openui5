@@ -11,7 +11,7 @@
       {
         "id": "012b33628fe2749a95df15befd5163769fbb71aa",
         "type": "FIX",
-        "text": "sap.ui.dt.MiniMenu - various bugfixes & cleaning (split1)",
+        "text": "sap.ui.dt.MiniMenu - various bugfixes \u0026 cleaning (split1)",
         "references": []
       },
       {
@@ -35,7 +35,7 @@
       {
         "id": "fa7705ba0d15be021cd22a7d7d7e5b9ce4f497f9",
         "type": "FIX",
-        "text": "ManagedObject: fix 'off by 1' bug in generated association methods",
+        "text": " ManagedObject: fix \u0027off by 1\u0027 bug in generated association methods",
         "references": []
       },
       {
@@ -47,79 +47,129 @@
       {
         "id": "eb2beffb9ab2f1302ef5a3219ca338479a1748cb",
         "type": "FIX",
-        "text": "add contextmenu styleclass to minimenu.less",
+        "text": " add contextmenu styleclass to minimenu.less",
         "references": []
       },
       {
         "id": "f87055853bdbbd0725d6648c2c4ec773f6515ed6",
         "type": "FIX",
-        "text": "sap.ui.dt: include sap.f.DynamicPage title handling in ElementUtil.getLabelForElement()",
+        "text": " sap.ui.dt: include sap.f.DynamicPage title handling in ElementUtil.getLabelForElement()",
         "references": []
       },
       {
         "id": "e3574de9dc79658e425b785107151d8f6e434482",
         "type": "FIX",
-        "text": "sap.ui.dt - compact contextMenu positioning",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870189292"
-          }
-        ]
+        "text": " sap.ui.dt - compact contextMenu positioning",
+        "references": []
       },
       {
         "id": "4976dcf99d3036d21471ee13103000365a11eb09",
         "type": "FIX",
-        "text": "sap.ui.dt - contextMenu issue with overlapped overlay",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870189292"
-          }
-        ]
+        "text": " sap.ui.dt - contextMenu issue with overlapped overlay",
+        "references": []
       },
       {
         "id": "2633a14b0f2095464ac04258fe8158bac650dcf4",
         "type": "FIX",
-        "text": "sap.ui.dt - contextMenu menuButton handling and icons",
+        "text": " sap.ui.dt - contextMenu menuButton handling and icons",
         "references": []
       },
       {
         "id": "d9c6d51ed6c6889316d2c9d18ba2ec554992eca6",
         "type": "FIX",
-        "text": "sap.ui.dt - contextMenu override popover animationDuration",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870189384"
-          },
-          {
-            "type": "BCP",
-            "reference": "1870189085"
-          }
-        ]
+        "text": " sap.ui.dt - contextMenu override popover animationDuration",
+        "references": []
       },
       {
         "id": "bfd445520bfafaf14153ad968a07a867596bb371",
         "type": "FIX",
-        "text": "sap.ui.dt - open submenu on contextMenu",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870201721"
-          }
-        ]
+        "text": " sap.ui.dt - open submenu on contextMenu",
+        "references": []
       },
       {
         "id": "2974c1fb6c7275bc2d5543745921705e62ff52a6",
         "type": "FIX",
-        "text": "sap.ui.dt - removed unused workaround",
+        "text": " sap.ui.dt - removed unused workaround",
         "references": []
       },
       {
         "id": "e33fe2dc012aef0e7d7c5fc6f1dbf59e43c98ba1",
         "type": "FIX",
         "text": "sap.ui.dt - Issue with RTL overlay positioning",
+        "references": []
+      }
+    ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "bcc3628f5997f37350c4722d34e2ff3bc7523498",
+        "type": "FIX",
+        "text": " sap.ui.dt - contextmenu overlaps rta-toolbar",
+        "references": []
+      },
+      {
+        "id": "d2603c50bc0fae06b162dd0037d43df34cfb5e66",
+        "type": "FIX",
+        "text": " sap.ui.dt - selection with contextMenu",
+        "references": []
+      },
+      {
+        "id": "fce992220639d297fc7837f4b39d28e4a37119fb",
+        "type": "FIX",
+        "text": " sap.ui.dt - wrong height calculation of exp. contextMenu",
+        "references": []
+      },
+      {
+        "id": "fa5f370dccf8c4643fc4a6742c0cacb12d661047",
+        "type": "FIX",
+        "text": "sap.ui.dt - Metadata propagation error",
+        "references": []
+      },
+      {
+        "id": "1e13d6c77bd20c7a6b6784748473fcc85f3dbd58",
+        "type": "FIX",
+        "text": "sap.ui.dt - Metadata propagation with multiple propagate functions",
+        "references": []
+      }
+    ]
+  },
+  "1.56.2": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "42acf8a12347d15ea425f7dce52d763879b5f3b9",
+        "type": "FIX",
+        "text": "sap.ui.dt - Removed overlays are still part of the selection",
+        "references": []
+      },
+      {
+        "id": "560f62e13d1a9deddb10262e51a7d7e874ef6ef9",
+        "type": "FIX",
+        "text": "sap.ui.dt - SelectionManager selection mode discrepancy with DT",
+        "references": []
+      }
+    ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "d58cd7befe102305de446a3a68dd76844a177ba9",
+        "type": "FIX",
+        "text": " sap.ui.dt  fix element overlay destroyed on recreation",
+        "references": []
+      }
+    ]
+  },
+  "1.56.7": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "4c711ff403476a91695ddbdb0233b735fdfe6def",
+        "type": "FIX",
+        "text": " Smartlink not selectable after combine",
         "references": []
       }
     ]

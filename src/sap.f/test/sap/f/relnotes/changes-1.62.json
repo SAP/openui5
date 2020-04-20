@@ -5,31 +5,26 @@
       {
         "id": "a28d1e1a51ac38a235dfd9640b06ad9a885e2242",
         "type": "FEATURE",
-        "text": "core/routing: support routing in nested components",
+        "text": " core/routing: support routing in nested components",
         "references": []
       },
       {
         "id": "e4a5d8cd01b194db81a7f5970f28983a9ef5f13b",
         "type": "FEATURE",
-        "text": "core/routing: support routing in nested components",
+        "text": " core/routing: support routing in nested components",
         "references": []
       },
       {
         "id": "86e0875a2d7882987a9a909d76fc80a9e00c673f",
         "type": "FEATURE",
-        "text": "sap.m.GenericTag: Implemented new control",
+        "text": " sap.m.GenericTag: Implemented new control",
         "references": []
       },
       {
         "id": "e4c12abc474029e4dc5f614ad4ec691386001bf7",
         "type": "FIX",
-        "text": "sap.f.DynamicPageTitle: Removed hover effect on tablet/phone device",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870560918"
-          }
-        ]
+        "text": " sap.f.DynamicPageTitle: Removed hover effect on tablet/phone device",
+        "references": []
       }
     ]
   }

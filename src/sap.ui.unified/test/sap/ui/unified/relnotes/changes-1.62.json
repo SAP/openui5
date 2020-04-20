@@ -5,143 +5,91 @@
       {
         "id": "f0ae681abffdbb9b5a273c4b1bbc6fb144b767f8",
         "type": "FIX",
-        "text": "sap.ui.unified.Calendar - month & year picker are now fully accessible",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870482172"
-          }
-        ]
+        "text": " sap.ui.unified.Calendar - month \u0026 year picker are now fully accessible",
+        "references": []
       },
       {
         "id": "1e82d15a24f8c61677070978d840baf5c6cbd2e6",
         "type": "FIX",
-        "text": "sap.ui.unified.ColorPicker: Accessibility improved",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880700903"
-          }
-        ]
+        "text": " sap.ui.unified.ColorPicker: Accessibility improved",
+        "references": []
       },
       {
         "id": "4834d334a3b17ff38036b9de75f516ddd000865b",
         "type": "FIX",
-        "text": "sap.ui.unified.ColorPicker: slider texts adjusted",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880701326"
-          }
-        ]
+        "text": " sap.ui.unified.ColorPicker: slider texts adjusted",
+        "references": []
       },
       {
         "id": "142841ef855a2c6b03775fc677d6d02c22a6aa19",
         "type": "FIX",
-        "text": "sap.ui.unified.Menu: Aria position is read now when an Item with text field is focused",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880701365"
-          }
-        ]
+        "text": " sap.ui.unified.Menu: Aria position is read now when an Item with text field is focused",
+        "references": []
       },
       {
         "id": "6b6649144bbc2f3cd18dd17ee867ba68d0faaf3e",
         "type": "FIX",
-        "text": "sap.ui.unified.Menu: Menu works correctly on combi devices",
-        "references": [
-          {
-            "type": "GitHub",
-            "reference": "2289"
-          },
-          {
-            "type": "BCP",
-            "reference": "1880727749"
-          }
-        ]
+        "text": " sap.ui.unified.Menu: Menu works correctly on combi devices",
+        "references": []
       },
       {
         "id": "8b3da3b345c01d459d18f653b5e23b1dcf618ce1",
         "type": "FEATURE",
-        "text": "sap.m.SinglePlanningCalendar: Appointments selection is introduced",
+        "text": " sap.m.SinglePlanningCalendar: Appointments selection is introduced",
         "references": []
       },
       {
         "id": "bb5677151ce0704e0e0a676ad2478cf9117185f3",
         "type": "FIX",
-        "text": "sap.m.ColorPicker: Handles now have correct width & color",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970022321"
-          }
-        ]
+        "text": " sap.m.ColorPicker: Handles now have correct width \u0026 color",
+        "references": []
       },
       {
         "id": "cd583b07396dbc53a6e7949b575ef1f3d5edf60f",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar: correct focus when picker is closed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880682033"
-          }
-        ]
+        "text": " sap.m.PlanningCalendar: correct focus when picker is closed",
+        "references": []
       },
       {
         "id": "426c07426696bb8a015fd75da3d149ea0a0b9e30",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar: overlay  is shown every time one Picker is open",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880681965"
-          }
-        ]
+        "text": " sap.m.PlanningCalendar: overlay  is shown every time one Picker is open",
+        "references": []
       },
       {
         "id": "e0dc2fbbc780b19e1f7c66b8649d61d2cea47f24",
         "type": "FIX",
-        "text": "sap.ui.unified.Calendar: remove tabindex from the root element",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880701048"
-          }
-        ]
+        "text": " sap.ui.unified.Calendar: remove tabindex from the root element",
+        "references": []
       },
       {
         "id": "609aa19bbfd8a8f4684717dc7bbef74fc36d9e57",
         "type": "FIX",
-        "text": "sap.ui.unified.CalendarDateInterval: fix failing build",
+        "text": " sap.ui.unified.CalendarDateInterval: fix failing build",
         "references": []
       },
       {
         "id": "b11ca328c6772a85dc475285049661d6c7c84e67",
         "type": "FIX",
-        "text": "ui.unified.CalendarDateInterval: Test page adjusted",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870534994"
-          }
-        ]
+        "text": " ui.unified.CalendarDateInterval: Test page adjusted",
+        "references": []
       },
       {
         "id": "e6914760d7e646f896f1d7baa2104cf0184156a2",
         "type": "FIX",
-        "text": "ui.unified.ColorPicker: Test page adjusted",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870534997"
-          },
-          {
-            "type": "BCP",
-            "reference": "1870534110"
-          }
-        ]
+        "text": " ui.unified.ColorPicker: Test page adjusted",
+        "references": []
+      }
+    ]
+  },
+  "1.62.1": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "b4aa87edd66a7a3666ca32740e3ac76ef945e5cd",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: month and year displayed in correct order in Japanese and Chinese when the calendar has more months",
+        "references": []
       }
     ]
   }

@@ -5,24 +5,14 @@
       {
         "id": "645315bd29235a4f4e05428017d36aeca7534842",
         "type": "FIX",
-        "text": "DynamicSideContent: Getters Always Return the Property States",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870526688"
-          }
-        ]
+        "text": " DynamicSideContent: Getters Always Return the Property States",
+        "references": []
       },
       {
         "id": "587b4250fc26b995372d1ca3c05668c0b240d5f1",
         "type": "FIX",
-        "text": "sap.ui.layout.library: Added CSSGrid layouts",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970018735"
-          }
-        ]
+        "text": " sap.ui.layout.library: Added CSSGrid layouts",
+        "references": []
       }
     ]
   }

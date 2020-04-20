@@ -5,208 +5,290 @@
       {
         "id": "ad4249468fce17cf9d45fe21d245b271c585bfe9",
         "type": "FIX",
-        "text": "Table: Correct height adjustment when used inside a splitter",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770446860"
-          }
-        ]
+        "text": " Table: Correct height adjustment when used inside a splitter",
+        "references": []
       },
       {
         "id": "5707ac3297b188580d8f473351fb3f0fa48bc4a0",
         "type": "FIX",
-        "text": "Table: Improved busy handling in case of parallel requests",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129500004287602017"
-          }
-        ]
+        "text": " Table: Improved busy handling in case of parallel requests",
+        "references": []
       },
       {
         "id": "10e3a315496ef76b5e063315ce8bc7280d51c412",
         "type": "FIX",
-        "text": "sap.ui.table.Table: Table renders even if column was destroyed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770533228"
-          }
-        ]
+        "text": " sap.ui.table.Table: Table renders even if column was destroyed",
+        "references": []
       },
       {
         "id": "9351c3d80a255ca500d169dacef6e673a4c4a9f1",
         "type": "FIX",
-        "text": "Table: Vertical scrollbar becomes visible if height is decreased",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770578177"
-          }
-        ]
+        "text": " Table: Vertical scrollbar becomes visible if height is decreased",
+        "references": []
       },
       {
         "id": "813ab53538037d1404f6ddffecf2ded9237cb42a",
         "type": "FEATURE",
-        "text": "TreeTable: API to expand/collapse multiple rows added",
+        "text": " TreeTable: API to expand/collapse multiple rows added",
         "references": []
       },
       {
         "id": "24fc46bad1077794eca6c5a4792f2e7bdb3f0921",
         "type": "FEATURE",
-        "text": "sap.ui.table.Table: new contextMenu aggregation added",
+        "text": " sap.ui.table.Table: new contextMenu aggregation added",
         "references": []
       },
       {
         "id": "7c957dba4c050b1b0bb77f521e4b8db10a522c6a",
         "type": "FIX",
-        "text": "AnalyticalTable: Remove limitations of SelectionMode/Behavior",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770617264"
-          }
-        ]
+        "text": " AnalyticalTable: Remove limitations of SelectionMode/Behavior",
+        "references": []
       },
       {
         "id": "52101ab82623837a04abc218ce623777b4dd21dc",
         "type": "FIX",
-        "text": "GridTable: Double top border removed",
+        "text": " GridTable: Double top border removed",
         "references": []
       },
       {
         "id": "c017ffff28ab3c313a6090b95d9d80759852827e",
         "type": "FIX",
-        "text": "Table: Correctly calculate the number of displayed rows",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770615846"
-          }
-        ]
+        "text": " Table: Correctly calculate the number of displayed rows",
+        "references": []
       },
       {
         "id": "5b6057f920ca654fb9e49e8e7666c7cd539d1cee",
         "type": "FIX",
-        "text": "GridTable: Hide Selection tooltip on empty rows",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780429261"
-          }
-        ]
+        "text": " GridTable: Hide Selection tooltip on empty rows",
+        "references": []
       },
       {
         "id": "e7f179b91b2ab8aeab10fce4b7a729b8dd5f3de5",
         "type": "FIX",
-        "text": "GridTable: Keyboard Behavior on RowActions",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780429522"
-          }
-        ]
+        "text": " GridTable: Keyboard Behavior on RowActions",
+        "references": []
       },
       {
         "id": "a3f54af48f75f6709c17d63ee8816bac3511b244",
         "type": "FIX",
-        "text": "TreeTable: ACC Anouncement of selection state on data cells",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770546860"
-          }
-        ]
+        "text": " TreeTable: ACC Anouncement of selection state on data cells",
+        "references": []
       },
       {
         "id": "96e35e6c3b69659bf1fc1945b363538bae6bfa64",
         "type": "FIX",
-        "text": "sap.ui.table.Table - wrong number of displayed rows",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770593977"
-          }
-        ]
+        "text": " sap.ui.table.Table - wrong number of displayed rows",
+        "references": []
       },
       {
         "id": "55b6b5889715c8f47ef3df265a959c6e42fa098a",
         "type": "FEATURE",
-        "text": "Tables/List/Tree: Apply header context CSS on toolbar",
+        "text": " Tables/List/Tree: Apply header context CSS on toolbar",
         "references": []
       },
       {
         "id": "c9aff73e69929441e6e27096912017d0b3ee13b2",
         "type": "FIX",
-        "text": "Control: refactor fnHandleInteraction",
+        "text": " Control: refactor fnHandleInteraction",
         "references": []
       },
       {
         "id": "5a9153f7edb24b0119ff002a9e26d70648688d41",
         "type": "FIX",
-        "text": "Table: Horizontal scrolling with the touchpad",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129400006225252017"
-          }
-        ]
+        "text": " Table: Horizontal scrolling with the touchpad",
+        "references": []
       },
       {
         "id": "d4b8c36ded9eb49d0be61d9def1afb132e5bae47",
         "type": "FIX",
-        "text": "Table: Role \"row\" added to tr elements in the table header",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "012005041000000475622017"
-          }
-        ]
+        "text": " Table: Role \"row\" added to tr elements in the table header",
+        "references": []
       },
       {
         "id": "2a956dedd3a112687b2f89bf39fedfb2f8f87e89",
         "type": "FIX",
-        "text": "GridTable: No event default prevention on non-table DOM elements",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780534163"
-          }
-        ]
+        "text": " GridTable: No event default prevention on non-table DOM elements",
+        "references": []
       },
       {
         "id": "a43f1c9a31d8db52f677282b3f991d7a319aa7af",
         "type": "FIX",
-        "text": "Table: Scroll position stability improved",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780241488"
-          }
-        ]
+        "text": " Table: Scroll position stability improved",
+        "references": []
       },
       {
         "id": "f35a6b9088079a65b7cb5c4efd55dd4237d8c4da",
         "type": "FIX",
-        "text": "Table: Selected checkbox not visible properly",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780424958"
-          }
-        ]
+        "text": " Table: Selected checkbox not visible properly",
+        "references": []
       },
       {
         "id": "e4cc91804bb1c66b81fe964b4a4e2f655fd05f5f",
         "type": "FIX",
-        "text": "ClientTreeBinding: selectAll + expand may result in incorrect selectedNodesCount",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770583952"
-          }
-        ]
+        "text": " ClientTreeBinding: selectAll + expand may result in incorrect selectedNodesCount",
+        "references": []
+      }
+    ]
+  },
+  "1.54.1": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "c7e11b718c7e385daa17d5553d32e1b0203ab1e9",
+        "type": "FIX",
+        "text": " QUnit Designtime Library tests in Firefox",
+        "references": []
+      },
+      {
+        "id": "09e08701875e63dbd7ff0b84c152d34e03ff8bb7",
+        "type": "FIX",
+        "text": " TreeTable: Outline offset of tree icon in zoom levels \u003c 100%",
+        "references": []
+      }
+    ]
+  },
+  "1.54.3": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "4c4fc65a89f419fdeb2b6a3c28f87fae3a606cc1",
+        "type": "FIX",
+        "text": " AnalyticalTable: Sum Row indent and hover effect corrected",
+        "references": []
+      },
+      {
+        "id": "cedbf4fba43b63b557720e34b62d968c4126c269",
+        "type": "FIX",
+        "text": " GridTable: Attribute headers for gridcell corrected",
+        "references": []
+      },
+      {
+        "id": "153f1b86c658ad113ed410cbca109b182c548d10",
+        "type": "FIX",
+        "text": " GridTable: Color contrast of Information Highlight fixed in HCB/W",
+        "references": []
+      },
+      {
+        "id": "cdee04d06d45e490b4d9429cdf5d397f1a82b066",
+        "type": "FIX",
+        "text": " GridTable: Disable visibility menu item of last visible column",
+        "references": []
+      },
+      {
+        "id": "501cb9a8c31e44d87431de5943245e921e6da703",
+        "type": "FIX",
+        "text": " GridTable: Fix up/down navigation with arrow keys",
+        "references": []
+      },
+      {
+        "id": "c18e79e39464eca95b3eadd73d6e4bdaf2368d28",
+        "type": "FIX",
+        "text": " GridTable: Fix update of firstVisibleRow on scrolling",
+        "references": []
+      },
+      {
+        "id": "aff5fb61e241593d6ba15bcebdffad8d997aaffe",
+        "type": "FIX",
+        "text": " GridTable: Move before/after tab elements out of scrollable CCnt",
+        "references": []
+      },
+      {
+        "id": "09c239c70f63c98790c9ac0dc1719c4ced0471ec",
+        "type": "FIX",
+        "text": " GridTable: Scrollbar styling in base theme",
+        "references": []
+      },
+      {
+        "id": "61a0232f0042023652aafd0b15b55136391c8e42",
+        "type": "FIX",
+        "text": " Table: Correct number of rows in visibleRowCountMode\u003dAuto",
+        "references": []
+      },
+      {
+        "id": "6c8715a00d0e5c318eec2f9073ebec27096c99c9",
+        "type": "FIX",
+        "text": " Table: Removed setBusy handling for \"Auto\" row count mode",
+        "references": []
+      },
+      {
+        "id": "87188c63698d65179797fb3a22d1467551999f42",
+        "type": "FIX",
+        "text": " Table: Scroll position stabilized",
+        "references": []
+      },
+      {
+        "id": "a0b087a7380ab64c9448e39ab5b9dc584b263583",
+        "type": "FIX",
+        "text": " Table: Stabilized scroll position on cell focus",
+        "references": []
+      }
+    ]
+  },
+  "1.54.4": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "33b97fe2e8ee952c0899ec651fe62058b18da271",
+        "type": "FIX",
+        "text": " GridTable: Avoid refocus of cell while scrolling for ACC",
+        "references": []
+      },
+      {
+        "id": "13c85f0c53ac6834d92c805163586da5eda91c91",
+        "type": "FIX",
+        "text": " Table: Layout correction with row actions",
+        "references": []
+      }
+    ]
+  },
+  "1.54.5": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "3467a8cca61c62c1e1a482ddc9303fa2aca43ecc",
+        "type": "FIX",
+        "text": " GridTable: applyFocusInfo handling corrected",
+        "references": []
+      },
+      {
+        "id": "12482a36c03d910e25d609c3bb0273803c20ff44",
+        "type": "FIX",
+        "text": " Table: Correctly update the visibility of the NoData overlay",
+        "references": []
+      },
+      {
+        "id": "cd34e48d9a3f26b2ebaa9cb9a4d441af959ec48c",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: Correct selected row index calculation for collapse operations",
+        "references": []
+      }
+    ]
+  },
+  "1.54.6": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "1163f1bc496d3a6aaf89a44e30e3c854f1352bb3",
+        "type": "FIX",
+        "text": " Table: Avoid invalidation if NoData text string wasn\u0027t changed",
+        "references": []
+      },
+      {
+        "id": "dad9a615c079c75610ddc436c483c5067a030d6d",
+        "type": "FIX",
+        "text": " Table: Correct positioning of the action column",
+        "references": []
+      }
+    ]
+  },
+  "1.54.7": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "ab3119c7eecf2e9be52c0890281e9b163089cc54",
+        "type": "FIX",
+        "text": " GridTable: NoData handling for $expand(ed) lists corrected",
+        "references": []
       }
     ]
   }

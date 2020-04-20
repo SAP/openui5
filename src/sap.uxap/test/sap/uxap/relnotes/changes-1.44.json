@@ -1,6 +1,5 @@
 {
   "1.44.0": {
-    "data": "November 2016",
     "notes": [
       {
         "id": "1207646db7488ad03e8f3bd6a264a8ab5915aa2b",
@@ -71,6 +70,199 @@
           {
             "type": "BCP",
             "reference": "1670355392"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.1": {
+    "notes": [
+      {
+        "id": "c01d37b0d32ccbe365a5be346779b9cb2aec8da7",
+        "type": "FIX",
+        "text": "sap.uxap.AnchorBar: anchors didn't have correct tab-index",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670524256"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.2": {
+    "notes": [
+      {
+        "id": "c4ac270e4cb146725514ca6a3fe949b20dfa537a",
+        "type": "FIX",
+        "text": "sap.uxap: Hybrid devices were incorrectly detected as tablets",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670532898"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.3": {
+    "notes": [
+      {
+        "id": "eb6a44c5fd0fad9beb940f3bffb97d60c4c8cc1f",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSectionBase: uncaught promise rejection leaked out of the ObjectPage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680295406"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.5": {
+    "notes": [
+      {
+        "id": "8013253c93a96cc2baa4c2b2db5df6f772feea6f",
+        "type": "FIX",
+        "text": "core.Popup: event handler should be moved to new DOM of autoclose area after rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570874378"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.6": {
+    "notes": [
+      {
+        "id": "613aa0b657cb9fc37077e123b9b41819c04f24f4",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: rendering performance",
+        "references": []
+      }
+    ]
+  },
+  "1.44.7": {
+    "notes": [
+      {
+        "id": "692792aa738a927356d4ab75e150b63a19b0b76f",
+        "type": "FIX",
+        "text": "sap.m.ObjectAttribute: displayed correctly in ObjectPage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780115432"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.20": {
+    "notes": [
+      {
+        "id": "5b984b168dec2ee21d450d370ac5a4d5feaf3284",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Control responsive behavior fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780382804"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.21": {
+    "notes": [
+      {
+        "id": "07c05a16dd830db32a58fd27e71124d6264a1a31",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Header expand on zoomed browser fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780309606"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.29": {
+    "notes": [
+      {
+        "id": "0cf84bd2b60d7e192cb0f1d2927df23b8d755e15",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSubSection: Fixed JS error in removeAggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780191583"
+          }
+        ]
+      },
+      {
+        "id": "832f11abe88b0e87e3d3fb06f04d68586c9dabfc",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Flickering issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880028962"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880212426"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.34": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "d6475fa2fc7b29f20306023c6161c028450c25db",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: ScrollEnablement now has latest DOMref",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870201875"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.37": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "ef4ae68087a822bf20a644005599c658946b700f",
+        "type": "FIX",
+        "text": "ObjectPageSubSection: Aligned SimpleForm Toolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870425815"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.38": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "cf73037fef27d6629bbfde13f488043ca9929f8e",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Additional reading removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1830583199"
           }
         ]
       }

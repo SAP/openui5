@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": ": RTA Variant Management App Border Fix",
         "references": []
+      },
+      {
+        "id": "d03985c6811ee2c07d19595d474fe25092667879",
+        "type": "FIX",
+        "text": ": RTA Variant Management App Border Fix",
+        "references": []
       }
     ]
   }
