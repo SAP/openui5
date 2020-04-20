@@ -679,7 +679,7 @@ sap.ui.define([
 				oProperty = aResult[1],
 				sReducedPath = oMetaModel.getReducedPath(sResolvedChildPath, sBaseForPathReduction);
 
-			if (sChildPath === "$count" || sChildPath.slice(-7) === "/$count"
+			if (sChildPath === "$count" || sChildPath.endsWith("/$count")
 					|| sChildPath[0] === "@") {
 				return SyncPromise.resolve(sReducedPath);
 			}

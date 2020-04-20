@@ -102,7 +102,7 @@ sap.ui.define([
 				if (sPath[0] !== "/") {
 					throw new Error("Not an absolute path: " + sPath);
 				}
-				if (sPath.slice(-1) === "/") {
+				if (sPath.endsWith("/")) {
 					throw new Error("Unsupported trailing slash: " + sPath);
 				}
 				BaseContext.call(this, oModel, sPath);

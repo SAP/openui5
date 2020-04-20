@@ -69,7 +69,7 @@ sap.ui.define([
 				// initialize mixin members
 				asODataBinding.call(this);
 
-				if (sPath.slice(-1) === "/") {
+				if (sPath.endsWith("/")) {
 					throw new Error("Invalid path: " + sPath);
 				}
 				if (mParameters) {

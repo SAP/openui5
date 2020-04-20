@@ -1739,7 +1739,7 @@ sap.ui.define([
 		} else if (oContext) {
 			sResolvedPath = oContext.getPath();
 			if (sPath) {
-				if (sResolvedPath.slice(-1) !== "/") {
+				if (!sResolvedPath.endsWith("/")) {
 					sResolvedPath += "/";
 				}
 				sResolvedPath += sPath;
