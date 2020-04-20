@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery", "sap/ui/core/Component"], function(Device, Log, jQuery, Component) {
+sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/base/util/extend", "sap/ui/core/Component"], function(Device, Log, extend, Component) {
 	"use strict";
 
 	/**
@@ -39,7 +39,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery", "sap
 			oRouter._oMatchedRoute = this;
 			oRouter._bMatchingProcessStarted = true;
 
-			oConfig = jQuery.extend({}, oRouter._oConfig, this._oConfig);
+			oConfig = extend({}, oRouter._oConfig, this._oConfig);
 
 			oTargets = oRouter.getTargets();
 			var sTitleName;
@@ -83,7 +83,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery", "sap
 
 
 			// make a copy of arguments and forward route config to target
-			oTargetData = jQuery.extend({}, oArguments);
+			oTargetData = Object.assign({}, oArguments);
 			oTargetData.routeConfig = oConfig;
 
 			oEventData = {

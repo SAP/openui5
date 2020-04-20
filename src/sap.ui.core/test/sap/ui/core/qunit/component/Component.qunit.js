@@ -1886,8 +1886,13 @@ sap.ui.define([
 
 	QUnit.module("Window Event Handler", {
 		beforeEach: function() {
-			this.jQueryOnSpy = this.spy(jQuery.prototype, "on");
-			this.jQueryOffSpy = this.spy(jQuery.prototype, "off");
+
+			this.addEventListenerSpy = this.spy(window, "addEventListener");
+			this.removeEventListenerSpy = this.spy(window, "removeEventListener");
+		},
+		afterEach: function () {
+			this.addEventListenerSpy.restore();
+			this.removeEventListenerSpy.restore();
 		}
 	});
 
@@ -1899,8 +1904,9 @@ sap.ui.define([
 		this.oComponent = new MyOnWindowErrorComponent();
 
 		assert.equal(typeof this.oComponent._fnWindowErrorHandler, "function", "Handler has been created");
-		sinon.assert.calledWithExactly(this.jQueryOnSpy, "error", this.oComponent._fnWindowErrorHandler);
-		assert.equal(this.jQueryOnSpy.getCall(0).thisValue.get(0), window, "jQuery bind has been called on the window object");
+
+		sinon.assert.calledWithExactly(this.addEventListenerSpy, "error", this.oComponent._fnWindowErrorHandler);
+		assert.equal(this.addEventListenerSpy.getCall(0).thisValue, window, "addEventListener has been called on the window object");
 
 		this.oComponent._fnWindowErrorHandler({
 			originalEvent: {
@@ -1919,8 +1925,8 @@ sap.ui.define([
 		this.oComponent.destroy();
 
 		assert.equal(this.oComponent._fnWindowErrorHandler, undefined, "Handler has been removed");
-		sinon.assert.calledWithExactly(this.jQueryOffSpy, "error", handler);
-		assert.equal(this.jQueryOffSpy.getCall(0).thisValue.get(0), window, "jQuery unbind has been called on the window object");
+		sinon.assert.calledWithExactly(this.removeEventListenerSpy, "error", handler);
+		assert.equal(this.removeEventListenerSpy.getCall(0).thisValue, window, "removeEventListener has been called on the window object");
 	});
 
 	QUnit.test("onWindowBeforeUnload", function(assert) {
@@ -1931,8 +1937,8 @@ sap.ui.define([
 		this.oComponent = new MyOnWindowBeforeUnloadComponent();
 
 		assert.equal(typeof this.oComponent._fnWindowBeforeUnloadHandler, "function", "Handler has been created");
-		sinon.assert.calledWithExactly(this.jQueryOnSpy, "beforeunload", this.oComponent._fnWindowBeforeUnloadHandler);
-		assert.equal(this.jQueryOnSpy.getCall(0).thisValue.get(0), window, "jQuery bind has been called on the window object");
+		sinon.assert.calledWithExactly(this.addEventListenerSpy, "beforeunload", this.oComponent._fnWindowBeforeUnloadHandler);
+		assert.equal(this.addEventListenerSpy.getCall(0).thisValue, window, "addEventListener has been called on the window object");
 
 		var oFakeEvent = {};
 		this.oComponent._fnWindowBeforeUnloadHandler(oFakeEvent);
@@ -1945,8 +1951,8 @@ sap.ui.define([
 		this.oComponent.destroy();
 
 		assert.equal(this.oComponent._fnWindowBeforeUnloadHandler, undefined, "Handler has been removed");
-		sinon.assert.calledWithExactly(this.jQueryOffSpy, "beforeunload", handler);
-		assert.equal(this.jQueryOffSpy.getCall(0).thisValue.get(0), window, "jQuery unbind has been called on the window object");
+		sinon.assert.calledWithExactly(this.removeEventListenerSpy, "beforeunload", handler);
+		assert.equal(this.removeEventListenerSpy.getCall(0).thisValue, window, "removeEventListener has been called on the window object");
 	});
 
 	QUnit.test("onWindowUnload", function(assert) {
@@ -1957,8 +1963,8 @@ sap.ui.define([
 		this.oComponent = new MyOnWindowUnloadComponent();
 
 		assert.equal(typeof this.oComponent._fnWindowUnloadHandler, "function", "Handler has been created");
-		sinon.assert.calledWithExactly(this.jQueryOnSpy, "unload", this.oComponent._fnWindowUnloadHandler);
-		assert.equal(this.jQueryOnSpy.getCall(0).thisValue.get(0), window, "jQuery bind has been called on the window object");
+		sinon.assert.calledWithExactly(this.addEventListenerSpy, "unload", this.oComponent._fnWindowUnloadHandler);
+		assert.equal(this.addEventListenerSpy.getCall(0).thisValue, window, "addEventListener has been called on the window object");
 
 		var oFakeEvent = {};
 		this.oComponent._fnWindowUnloadHandler(oFakeEvent);
@@ -1971,8 +1977,8 @@ sap.ui.define([
 		this.oComponent.destroy();
 
 		assert.equal(this.oComponent._fnWindowUnloadHandler, undefined, "Handler has been removed");
-		sinon.assert.calledWithExactly(this.jQueryOffSpy, "unload", handler);
-		assert.equal(this.jQueryOffSpy.getCall(0).thisValue.get(0), window, "jQuery unbind has been called on the window object");
+		sinon.assert.calledWithExactly(this.removeEventListenerSpy, "unload", handler);
+		assert.equal(this.removeEventListenerSpy.getCall(0).thisValue, window, "removeEventListener has been called on the window object");
 	});
 
 	QUnit.module("Component Registry", {

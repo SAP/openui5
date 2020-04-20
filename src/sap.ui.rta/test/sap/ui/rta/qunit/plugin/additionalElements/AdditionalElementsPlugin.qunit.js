@@ -789,6 +789,7 @@ sap.ui.define([
 						jsOnly: undefined,
 						oDataServiceUri: undefined,
 						oDataServiceVersion: undefined,
+						runtimeOnly: undefined,
 						selector: {
 							id: oElement.getId(),
 							appComponent: oMockedAppComponent,

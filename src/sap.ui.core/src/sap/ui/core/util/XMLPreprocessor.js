@@ -4,8 +4,8 @@
 
 // Provides object sap.ui.core.util.XMLPreprocessor
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
+	"sap/base/util/deepExtend",
 	"sap/base/util/JSTokenizer",
 	"sap/base/util/ObjectPath",
 	"sap/ui/base/BindingParser",
@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/model/CompositeBinding",
 	"sap/ui/model/Context",
 	"sap/ui/performance/Measurement"
-], function (jQuery, Log, JSTokenizer, ObjectPath, BindingParser, ManagedObject, SyncPromise,
+], function (Log, deepExtend, JSTokenizer, ObjectPath, BindingParser, ManagedObject, SyncPromise,
 		XMLTemplateProcessor, BindingMode, CompositeBinding, Context, Measurement) {
 	"use strict";
 
@@ -741,7 +741,7 @@ sap.ui.define([
 					 * @since 1.41.0
 					 */
 					getViewInfo : function () {
-						return jQuery.extend(true, {}, oViewInfo);
+						return deepExtend({}, oViewInfo);
 					},
 
 					/**
@@ -1923,8 +1923,8 @@ sap.ui.define([
 						context: oRootElement,
 						env: {
 							caller:"view",
-							viewinfo: jQuery.extend(true, {}, oViewInfo),
-							settings: jQuery.extend(true, {}, mSettings),
+							viewinfo: deepExtend({}, oViewInfo),
+							settings: deepExtend({}, mSettings),
 							clone: oRootElement.cloneNode(true),
 							type: "template"}
 					});
