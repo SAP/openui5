@@ -440,6 +440,8 @@ function(
 				var oForm = this.oSimpleFormWithTitles.getAggregation("form");
 				var oFormOverlay = OverlayRegistry.getOverlay(oForm);
 				var oContextMenuPlugin = this.oRta.getPlugins()["contextMenu"];
+				// required since this test simulates a context menu control
+				sandbox.stub(oContextMenuPlugin.oContextMenuControl, "isPopupOpen").returns(false);
 
 				sandbox.stub(oContextMenuPlugin.getDesignTime(), "getSelection").returns([oFormOverlay]);
 				var oEvent = {

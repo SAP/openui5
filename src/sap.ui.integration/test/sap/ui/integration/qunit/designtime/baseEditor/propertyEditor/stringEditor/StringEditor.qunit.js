@@ -2,16 +2,14 @@
 
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/base/i18n/ResourceBundle",
-	"sap/ui/model/resource/ResourceModel"
+	"sap/ui/model/resource/ResourceModel",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	StringEditor,
-	JSONModel,
-	QUnitUtils,
 	ResourceBundle,
-	ResourceModel
+	ResourceModel,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -60,8 +58,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oStringEditorElement.setValue("FooBar");
-			QUnitUtils.triggerEvent("input", this.oStringEditorElement.getDomRef());
+			EditorQunitUtils.setInputValue(this.oStringEditorElement, "FooBar");
 		});
 
 		QUnit.test("When a binding path is provided", function (assert) {
@@ -72,8 +69,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oStringEditorElement.setValue("{someBindingPath}");
-			QUnitUtils.triggerEvent("input", this.oStringEditorElement.getDomRef());
+			EditorQunitUtils.setInputValue(this.oStringEditorElement, "{someBindingPath}");
 		});
 
 		QUnit.test("When an invalid input is provided", function (assert) {
@@ -89,9 +85,7 @@ sap.ui.define([
 				this.oStringEditor.setModel(oI18nModel, "i18n");
 
 				// Test
-				this.oStringEditorElement.setValue("{brokenBindingString");
-				QUnitUtils.triggerEvent("input", this.oStringEditorElement.getDomRef());
-
+				EditorQunitUtils.setInputValue(this.oStringEditorElement, "{brokenBindingString");
 				assert.strictEqual(this.oStringEditorElement.getValueState(), "Error", "Then the error is displayed");
 				assert.strictEqual(this.oStringEditor.getValue(), "Hello World.", "Then the editor value is not updated");
 			}.bind(this));

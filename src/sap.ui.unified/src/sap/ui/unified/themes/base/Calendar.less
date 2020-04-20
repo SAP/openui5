@@ -134,6 +134,11 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 }
 
 .sapUiCalMonthView,
+.sapUiCalDatesRow {
+	white-space: nowrap;
+}
+
+.sapUiCalMonthView,
 .sapUiCalMonthPicker,
 .sapUiCalYearPicker {
 	width: 14em;
@@ -185,12 +190,6 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 	float: none; /* if not set, in IE the item line is displayed in the same line */
 }
 
-.sapUiCalItems{
-	display: inline-block;
-	width: 100%;
-	white-space: nowrap;
-}
-
 .sapUiCalWH,
 .sapUiCalItem{
 	display: block;
@@ -230,14 +229,11 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 	font-size: @sapMFontMediumSize;
 }
 
-.sapUiCalWeekNum{
-	position: absolute;
-	right: 100%;
-	width: 100%;
+.sapUiCalWeekNum {
+	width: 12.5%;
 	color: @sapUiBaseText;
 	font-size: @sapUiFontSmallSize;
 	cursor: default;
-	top: -0.0625rem;
 }
 
 .sapUiCalWH{
@@ -262,14 +258,17 @@ html.sap-desktop .sapUiCalItem:focus{
 	background-color: darken(@sapUiContentForegroundColor,5);
 }
 
-.sapUiCalMonthView .sapUiCalFirstWDay{
-	clear: both;
-	margin-left: 12.5%;
-	position: relative;
-	overflow: visible;
+.sapUiCalWeekNum {
+	clear: left;
+	float: left;
+	text-align: center;
 }
 
-.sapUiCalMonthView.sapUiCalNoWeekNum .sapUiCalFirstWDay{
+.sapUiCalMonthView.sapUiCalNoWeekNum .sapUiCalFirstWDay {
+	clear: left;
+}
+
+.sapUiCalMonthView.sapUiCalNoWeekNum .sapUiCalWH.sapUiCalFirstWDay {
 	margin-left: 0;
 }
 
@@ -330,12 +329,16 @@ html.sap-desktop .sapUiCalItem:focus{
 }
 
 /* Day names inside day */
-.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem {
-	height: 3rem;
-	position: relative;
+.sapUiCalNoNameLine.sapUiCalMonthView,
+.sapUiCalNoNameLine.sapUiCalDatesRow {
+	.sapUiCalItem {
+		height: 3rem;
+		position: relative;
+	}
 }
 
-.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
+
+.sapUiCalNoNameLine .sapUiCalItem > .sapUiCalDayName{
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -358,11 +361,11 @@ html.sap-desktop .sapUiCalItem:focus{
 }
 
 /* 2 calendar types */
-.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem {
+.sapUiCalMonthSecType .sapUiCalItem {
 	position: relative;
 }
 
-.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem > .sapUiCalItemSecText{
+.sapUiCalMonthSecType .sapUiCalItem > .sapUiCalItemSecText{
 	position: absolute;
 	bottom: 0;
 	right: 0;
@@ -539,23 +542,23 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 }
 
 /* Day names inside day */
-.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText{
+.sapUiCalNoNameLine .sapUiCalItem > .sapUiCalItemText{
 	padding-top: 1rem;
 	line-height: 2rem;
 }
 
-.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText{
+.sapUiCalNoNameLine .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText{
 	line-height: 1.85rem;
 }
 
-.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
+.sapUiCalNoNameLine .sapUiCalItem > .sapUiCalDayName{
 	line-height: 1rem;
 	height: 1rem;
 	font-size: 0.75rem;
 	padding-top: 0.375rem;
 }
 
-.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalDayName{
+.sapUiCalNoNameLine .sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalDayName{
 	color: @sapUiContentContrastTextColor;
 }
 
@@ -565,12 +568,12 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 }
 
 /* 2 calendar types */
-.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem  > .sapUiCalItemText{
+.sapUiCalMonthSecType .sapUiCalItem  > .sapUiCalItemText{
 	line-height: 2.125rem;
 	vertical-align: top;
 }
 
-.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem > .sapUiCalItemSecText{
+.sapUiCalMonthSecType .sapUiCalItem > .sapUiCalItemSecText{
 	font-size: 0.625rem;
 	height: 1rem;
 	line-height: 1rem;
@@ -579,7 +582,7 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	box-sizing: border-box;
 }
 
-.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemSecText{
+.sapUiCalMonthSecType .sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemSecText{
 	color: @sapUiContentContrastTextColor;
 }
 
@@ -774,7 +777,7 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 }
 
 /* Day names inside day */
-.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText{
+.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine .sapUiCalItem > .sapUiCalItemText{
 	padding-top: 0;
 	padding-left: 50%;
 	line-height: inherit;
@@ -782,13 +785,13 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 }
 
 .sapUiSizeCompact .sapUiCalItemNow > .sapUiCalItemText,
-.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText,
-.sapUiSizeCompact.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText,
-.sapUiSizeCompact .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText{
+.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText,
+.sapUiSizeCompact.sapUiCalNoNameLine .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText,
+.sapUiSizeCompact .sapUiCalNoNameLine .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText{
 	line-height: 1.625rem;
 }
 
-.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
+.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine .sapUiCalItem > .sapUiCalDayName{
 	left: 0;
 	height: 100%;
 	width: 50%;
@@ -804,16 +807,16 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 }
 
 /* 2 calendar types */
-.sapUiSizeCompact .sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem  > .sapUiCalItemText{
+.sapUiSizeCompact .sapUiCalMonthSecType .sapUiCalItem  > .sapUiCalItemText{
 	line-height: 1rem;
 	padding-right: 0.375rem;
 }
 
-.sapUiSizeCompact .sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem.sapUiCalItemNow  > .sapUiCalItemText{
+.sapUiSizeCompact .sapUiCalMonthSecType .sapUiCalItem.sapUiCalItemNow  > .sapUiCalItemText{
 	line-height: 1rem;
 }
 
-.sapUiSizeCompact .sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem > .sapUiCalItemSecText{
+.sapUiSizeCompact .sapUiCalMonthSecType .sapUiCalItem > .sapUiCalItemSecText{
 	height: 0.75rem;
 	line-height: 0.75rem;
 	padding-right: 0.25rem;

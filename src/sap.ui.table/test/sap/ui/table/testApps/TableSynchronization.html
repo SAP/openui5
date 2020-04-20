@@ -165,7 +165,7 @@
 							var iIndex = parseInt(oEvent.target.getAttribute("data-sap-ui-index"), 10);
 							that.oSyncInterface.syncRowHover(iIndex, false);
 						});
-						jQuery(oRow).click(function(oEvent) {
+						jQuery(oRow).on("click", function(oEvent) {
 							var iIndex = parseInt(oEvent.target.getAttribute("data-sap-ui-index"), 10);
 							var bSelected = oEvent.target.getAttribute("data-selected") === "true";
 							that.oSyncInterface.syncRowSelection(iIndex, !bSelected);
@@ -345,7 +345,7 @@
 		});
 	</script>
 </head>
-<body class="sapUiBody sapUiSizeCozy" role="application" style="display: flex; flex-direction: column;">
+<body class="sapUiBody sapUiSizeCozy" style="display: flex; flex-direction: column;">
 <div style="min-height: 33px; width: 133px; border: 1px solid silver;">top element</div>
 <div id="content" style="flex: 1 1 100%; margin: 10px"></div>
 <div style="min-height: 33px; width: 133px; border: 1px solid silver;">bottom element</div>

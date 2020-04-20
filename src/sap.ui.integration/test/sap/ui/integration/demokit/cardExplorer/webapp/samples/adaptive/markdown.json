@@ -22,6 +22,9 @@
 		}
 	},
 	"sap.card": {
+		"configuration": {
+			"enableMarkdown": true
+		},
 		"header": {
 			"title": "Markdown support",
 			"subTitle": "This is a sample of the markdown feature of MS Adaptive Cards.",
@@ -33,9 +36,6 @@
 		"content": {
 			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
 			"type": "AdaptiveCard",
-			"configuration": {
-				"enableMarkdown": true
-			},
 			"version": "1.2",
 			"body": [
 				{

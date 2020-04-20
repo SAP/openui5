@@ -24,7 +24,7 @@ sap.ui.define([
 		_onRouteMatched: function (oEvent) {
 			var oArgs = oEvent.getParameter("arguments"),
 				sSampleKey = oArgs["key"],
-				topicURL = "./topics/explore/" + sSampleKey + '.html',
+				topicURL = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/topics/explore/" + sSampleKey + '.html'),
 				topicTitle;
 
 			var navEntries = ExploreNavigationModel.getProperty('/navigation');

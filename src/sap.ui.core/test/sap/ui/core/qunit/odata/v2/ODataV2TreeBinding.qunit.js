@@ -409,7 +409,7 @@ sap.ui.define([
 		};
 
 		var handler2 = function(oEvent) {
-			oBinding.detachChange(handler2);
+			oBinding.detachRefresh(handler2);
 
 			// reload contexts
 			oBinding.attachChange(handler3);

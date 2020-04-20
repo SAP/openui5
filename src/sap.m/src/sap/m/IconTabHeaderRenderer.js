@@ -5,9 +5,6 @@
 sap.ui.define([], function () {
 	"use strict";
 
-	// shortcut for sap.m.IconTabFilterDesign
-	var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
 	/**
 	 * IconTabHeader renderer.
 	 * @namespace
@@ -66,8 +63,8 @@ sap.ui.define([], function () {
 		}
 
 		oRM.accessibilityState(oControl, {
-			role: "navigation",
-			label: oRB.getText("ICONTABHEADER_LABEL")
+			role: "navigation"
+			// label: oRB.getText("ICONTABHEADER_LABEL")
 		});
 
 		oRM.openEnd();

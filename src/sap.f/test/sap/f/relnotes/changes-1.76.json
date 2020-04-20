@@ -45,7 +45,7 @@
       {
         "id": "50535e27c2f5a2033e0fac5abd3b28878664216a",
         "type": "FEATURE",
-        "text": " sap.f.FlexibleColumnLayout: Introduced new property â€œautoFocusâ€?",
+        "text": " sap.f.FlexibleColumnLayout: Introduced new property \"autoFocus\"",
         "references": [
           {
             "type": "BCP",

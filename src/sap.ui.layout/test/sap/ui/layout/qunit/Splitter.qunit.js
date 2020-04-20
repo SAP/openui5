@@ -314,11 +314,8 @@ sap.ui.define([
 		oSplitter.rerender();
 	});
 
+
 	QUnit.module("General tests");
-	// QUnit.test("Events and Rerendering", function (assert) {
-	// 	assert.ok(iResizes === 3, "Number of resize-events fired (" + iResizes + ") is correct.");
-	// 	assert.ok(iRenderings === 7, "Number of rerenderings (" + iRenderings + ") is correct.");
-	// });
 
 	QUnit.test("_getContentAreas hook", function (assert) {
 		var oSplitter = new Splitter(),
@@ -536,6 +533,38 @@ sap.ui.define([
 		assert.ok(oBtn.bIsDestroyed, "Content inside has been destroyed");
 
 		oSplitter.destroy();
+	});
+
+	QUnit.test("resetContentAreasSizes", function (assert) {
+		function getSize (oControl) {
+			return { width: oControl.$().width(), height: oControl.$().height() };
+		}
+
+		var done = assert.async();
+
+		// Arrange
+		var oSplitter = new Splitter({
+			contentAreas: [createExampleContent("400px"), createExampleContent()]
+		});
+		oSplitter.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var aContentAreas = oSplitter.getContentAreas();
+
+		var aOldContentSize = aContentAreas.map(getSize);
+
+		oSplitter.resetContentAreasSizes();
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function () {
+			var aNewContentSize = aContentAreas.map(getSize);
+			assert.notDeepEqual(aNewContentSize, aOldContentSize, "Content Areas' sizes have changed");
+
+			// Clean-up
+			oSplitter.destroy();
+			done();
+
+		}, 200);
 	});
 
 	QUnit.module("Events", {

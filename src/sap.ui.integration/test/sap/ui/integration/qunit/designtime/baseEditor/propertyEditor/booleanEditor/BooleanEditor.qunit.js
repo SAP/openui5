@@ -2,18 +2,14 @@
 
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/events/KeyCodes"
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	BooleanEditor,
-	JSONModel,
-	QUnitUtils,
 	ResourceBundle,
 	ResourceModel,
-	KeyCodes
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -76,10 +72,7 @@ sap.ui.define([
 					fnDone();
 				});
 
-				var sFalseLabel = this.oBooleanEditorElement.getItemByKey("false").getText();
-				this.oBooleanEditorElement.getDomRef().value = sFalseLabel;
-				QUnitUtils.triggerEvent("input", this.oBooleanEditorElement.getDomRef());
-				QUnitUtils.triggerKeydown(this.oBooleanEditorElement.getDomRef(), KeyCodes.ENTER);
+				EditorQunitUtils.selectComboBoxValue(this.oBooleanEditorElement, "false");
 			}.bind(this));
 		});
 
@@ -91,9 +84,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oBooleanEditorElement.$("inner").val("{someBindingPath}");
-			QUnitUtils.triggerEvent("input", this.oBooleanEditorElement.$("inner"));
-			QUnitUtils.triggerKeydown(this.oBooleanEditorElement.getDomRef(), KeyCodes.ENTER);
+			EditorQunitUtils.setCustomComboBoxValue(this.oBooleanEditorElement, "{someBindingPath}");
 		});
 
 		QUnit.test("When a binding path is provided as the editor value", function (assert) {
@@ -114,10 +105,7 @@ sap.ui.define([
 				this.oBooleanEditor.setModel(oI18nModel, "i18n");
 
 				// Test
-				this.oBooleanEditorElement.$("inner").val("abc");
-				QUnitUtils.triggerEvent("input", this.oBooleanEditorElement.$("inner"));
-				QUnitUtils.triggerKeydown(this.oBooleanEditorElement.getDomRef(), KeyCodes.ENTER);
-
+				EditorQunitUtils.setCustomComboBoxValue(this.oBooleanEditorElement, "abc");
 				assert.strictEqual(this.oBooleanEditorElement.getValueState(), "Error", "Then the error is displayed");
 				assert.strictEqual(this.oBooleanEditor.getValue(), true, "Then the editor value is not updated");
 			}.bind(this));

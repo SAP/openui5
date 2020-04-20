@@ -405,6 +405,7 @@ sap.ui.define([
 							title : oVariant.content.content.title,
 							layer : oVariant.content.layer,
 							favorite : oVariant.content.content.favorite,
+							executeOnSelect: oVariant.content.content.executeOnSelect,
 							visible : oVariant.content.content.visible,
 							author : ObjectPath.get("content.support.user", oVariant)
 						})

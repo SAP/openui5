@@ -1042,13 +1042,6 @@ function(
 		}
 
 		Input.prototype.ontap.apply(this, arguments);
-
-	};
-
-	MultiInput.prototype._onclick = function (oEvent) {
-		if (this._bUseDialog && this.getTokens().length) {
-			this._openSuggestionsPopover();
-		}
 	};
 
 	/**

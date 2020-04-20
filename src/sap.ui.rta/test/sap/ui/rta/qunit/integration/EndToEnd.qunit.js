@@ -356,8 +356,8 @@ sap.ui.define([
 				}
 			}, this);
 
-			$groupOverlay.click();
-			$groupOverlay.click();
+			$groupOverlay.trigger("click");
+			$groupOverlay.trigger("click");
 		});
 
 		QUnit.test("when adding a SimpleForm Field via context menu (expanded context menu) - reveal", function(assert) {

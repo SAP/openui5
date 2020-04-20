@@ -31,6 +31,22 @@ sap.ui.define([
 		});
 	}
 
+	QUnit.module("Methods");
+
+	QUnit.test("_findItemByKey", function (assert) {
+		// arrange
+		var oITH = createHeaderWithItems(3),
+			oNestedItem = new IconTabFilter({
+				key: "nested"
+			}),
+			oSecondItem = oITH.getItems()[1];
+
+		oSecondItem.addItem(oNestedItem);
+
+		// assert
+		assert.strictEqual(oITH._findItemByKey("nested"), oNestedItem, "Nested item should be found.");
+	});
+
 	QUnit.module("Resize");
 
 	QUnit.test("when there is not enough space, items should be hidden", function(assert) {

@@ -88,6 +88,10 @@
 				"description": {
 					"description": "Description of the parameter for user-friendly visualization in the design-time editor.",
 					"type": "string"
+				},
+				"defaultUrl": {
+					"description": "A default url which will be used if there is no Host associated with the card.",
+					"type": "string"
 				}
 			}
 		}

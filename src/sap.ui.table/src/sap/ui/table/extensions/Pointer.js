@@ -163,9 +163,9 @@ sap.ui.define([
 
 			oTable._$colResize = oTable.$("rsz");
 
-			$Document.bind((bTouch ? "touchend" : "mouseup") + ".sapUiTableColumnResize",
+			$Document.on((bTouch ? "touchend" : "mouseup") + ".sapUiTableColumnResize",
 				ColumnResizeHelper.exitColumnResizing.bind(oTable));
-			$Document.bind((bTouch ? "touchmove" : "mousemove") + ".sapUiTableColumnResize",
+			$Document.on((bTouch ? "touchmove" : "mousemove") + ".sapUiTableColumnResize",
 				ColumnResizeHelper.onMouseMoveWhileColumnResizing.bind(oTable));
 
 			oTable._disableTextSelection();
@@ -220,10 +220,10 @@ sap.ui.define([
 			oTable._enableTextSelection();
 
 			var $Document = jQuery(document);
-			$Document.unbind("touchmove.sapUiTableColumnResize");
-			$Document.unbind("touchend.sapUiTableColumnResize");
-			$Document.unbind("mousemove.sapUiTableColumnResize");
-			$Document.unbind("mouseup.sapUiTableColumnResize");
+			$Document.off("touchmove.sapUiTableColumnResize");
+			$Document.off("touchend.sapUiTableColumnResize");
+			$Document.off("mousemove.sapUiTableColumnResize");
+			$Document.off("mouseup.sapUiTableColumnResize");
 		},
 
 		/*
@@ -302,7 +302,7 @@ sap.ui.define([
 		 */
 		initColumnTracking: function(oTable) {
 			// attach mousemove listener to update resizer position
-			oTable.$().find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed").mousemove(function(oEvent) {
+			oTable.$().find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed").on("mousemove", function(oEvent) {
 				var oDomRef = this.getDomRef();
 				if (!oDomRef || this._bIsColumnResizerMoving) {
 					return;
@@ -388,8 +388,8 @@ sap.ui.define([
 			// Bind the event handlers
 			var $Document = jQuery(document),
 				bTouch = oTable._isTouchEvent(oEvent);
-			$Document.bind((bTouch ? "touchend" : "mouseup") + ".sapUiColumnMove", ReorderHelper.exitReordering.bind(oTable));
-			$Document.bind((bTouch ? "touchmove" : "mousemove") + ".sapUiColumnMove", ReorderHelper.onMouseMoveWhileReordering.bind(oTable));
+			$Document.on((bTouch ? "touchend" : "mouseup") + ".sapUiColumnMove", ReorderHelper.exitReordering.bind(oTable));
+			$Document.on((bTouch ? "touchmove" : "mousemove") + ".sapUiColumnMove", ReorderHelper.onMouseMoveWhileReordering.bind(oTable));
 		},
 
 		/*
@@ -469,10 +469,10 @@ sap.ui.define([
 
 			// Unbind the event handlers
 			var $Document = jQuery(document);
-			$Document.unbind("touchmove.sapUiColumnMove");
-			$Document.unbind("touchend.sapUiColumnMove");
-			$Document.unbind("mousemove.sapUiColumnMove");
-			$Document.unbind("mouseup.sapUiColumnMove");
+			$Document.off("touchmove.sapUiColumnMove");
+			$Document.off("touchend.sapUiColumnMove");
+			$Document.off("mousemove.sapUiColumnMove");
+			$Document.off("mouseup.sapUiColumnMove");
 
 			this._bReorderScroll = false;
 
@@ -859,11 +859,11 @@ sap.ui.define([
 				var $Table = oTable.$();
 
 				// Cleans up the basic event handling for column resizing (and others).
-				$Table.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed").unbind();
+				$Table.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed").off();
 
 				// Cleans up the basic event handling for row hover effect
-				$Table.find(".sapUiTableCtrl > tbody > tr").unbind();
-				$Table.find(".sapUiTableRowSelectionCell").unbind();
+				$Table.find(".sapUiTableCtrl > tbody > tr").off();
+				$Table.find(".sapUiTableRowSelectionCell").off();
 			}
 		},
 

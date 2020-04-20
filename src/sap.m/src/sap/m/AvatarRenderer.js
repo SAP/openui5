@@ -44,7 +44,8 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				aLabelledBy = oAvatar.getAriaLabelledBy(),
 				aDescribedBy = oAvatar.getAriaDescribedBy(),
 				sAriaLabelTooltip = sTooltip && sInitials ? sDefaultTooltip + " " + sTooltip : sDefaultTooltip,
-				sAriaLabelInitials = sInitials ? sDefaultTooltip + " " + sInitials : sDefaultTooltip;
+				sAriaLabelInitials = sInitials ? sDefaultTooltip + " " + sInitials : sDefaultTooltip,
+				oBadge = oAvatar.hasListeners("press") ?  oAvatar._getBadge() : null;
 
 			oRm.openStart("span", oAvatar);
 			oRm.class(sAvatarClass);
@@ -84,7 +85,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			}
 			oRm.openEnd();
 			if (sActualDisplayType === AvatarType.Icon || sImageFallbackType === AvatarType.Icon) {
-				oRm.renderControl(oAvatar._getIcon());
+				oRm.renderControl(oAvatar._getIcon().addStyleClass(sAvatarClass + "TypeIcon"));
 			} else if (sActualDisplayType === AvatarType.Initials || sImageFallbackType === AvatarType.Initials){
 				oRm.openStart("span");
 				oRm.class(sAvatarClass + "InitialsHolder");
@@ -100,10 +101,19 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				oRm.openEnd();
 				oRm.close("span");
 			}
-			// HTML element for the LightBox magnifying glass icon
-			if (oAvatar._fnLightBoxOpen) {
-				oRm.openStart("span").class(sAvatarClass + "MagnifyingGlass").openEnd().close("span");
+			// HTML element for the badge icon
+			if (oBadge) {
+				oRm.openStart("div");
+				oRm.class(sAvatarClass + "BadgeIconActiveArea");
+				oRm.openEnd("div");
+					oRm.openStart("span");
+					oRm.class(sAvatarClass + "BadgeIcon");
+					oRm.openEnd("span");
+					oRm.renderControl(oBadge);
+					oRm.close("span");
+				oRm.close("div");
 			}
+
 			oRm.close("span");
 		};
 

@@ -6,13 +6,13 @@
  * Initialization Code and shared classes of library sap.m.
  */
 sap.ui.define([
-	'sap/ui/Device',
-	'sap/ui/base/DataType',
-	'sap/ui/base/EventProvider',
-	'sap/ui/core/Control',
-	'sap/base/util/ObjectPath',
+	"sap/ui/Device",
+	"sap/ui/base/DataType",
+	"sap/ui/base/EventProvider",
+	"sap/ui/core/Control",
+	"sap/base/util/ObjectPath",
 	// library dependency
-	'sap/ui/core/library',
+	"sap/ui/core/library",
 	"sap/base/strings/capitalize",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/assert",
@@ -25,7 +25,7 @@ sap.ui.define([
 	"./AvatarColor",
 	"./AvatarImageFitType",
 	// referenced here to enable the Support feature
-	'./Support'
+	"./Support"
 ],
 	function(
 	Device,
@@ -1103,7 +1103,7 @@ sap.ui.define([
 		Center : "Center",
 
 		/**
-		 * If the flex item's inline axes are the same as the cross axis, this value is identical to "Start".
+		 * If the flex item`s inline axes are the same as the cross axis, this value is identical to "Start".
 		 *
 		 * Otherwise, it participates in baseline alignment: all participating box items on the line are aligned
 		 * such that their baselines align, and the item with the largest distance between its baseline and
@@ -2161,7 +2161,7 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	thisLib.ValueCSSColor = DataType.createType('sap.m.ValueCSSColor', {
+	thisLib.ValueCSSColor = DataType.createType("sap.m.ValueCSSColor", {
 		isValid : function (vValue) {
 			var bResult = thisLib.ValueColor.hasOwnProperty(vValue);
 			if (bResult) {
@@ -2176,7 +2176,7 @@ sap.ui.define([
 				}
 			}
 		}
-	}, DataType.getType('string'));
+	}, DataType.getType("string"));
 
 	/**
 	 * A subset of input types that fits to a simple API returning one string.
@@ -3946,7 +3946,6 @@ sap.ui.define([
 	thisLib.AvatarColor = AvatarColor;
 	thisLib.AvatarImageFitType = AvatarImageFitType;
 
-
 		//lazy imports for MessageToast
 	sap.ui.lazyRequire("sap.m.MessageToast", "show");
 
@@ -4172,7 +4171,7 @@ sap.ui.define([
 		if (oTouch && typeof oTouch.identifier !== "undefined") {
 			oTouch = oTouch.identifier;
 		} else if (typeof oTouch !== "number") {
-			assert(false, 'sap.m.touch.find(): oTouch must be a touch object or a number');
+			assert(false, "sap.m.touch.find(): oTouch must be a touch object or a number");
 			return;
 		}
 
@@ -4213,7 +4212,7 @@ sap.ui.define([
 		} else if (typeof vElement === "string") {
 			vElement = jQuery(document.getElementById(vElement));
 		} else if (!(vElement instanceof jQuery)) {
-			assert(false, 'sap.m.touch.countContained(): vElement must be a jQuery object or Element reference or a string');
+			assert(false, "sap.m.touch.countContained(): vElement must be a jQuery object or Element reference or a string");
 			return 0;
 		}
 
@@ -4558,7 +4557,7 @@ sap.ui.define([
 		 */
 		function checkAndSetProperty(oControl, property, value) {
 			if (value !== undefined) {
-				var fSetter = oControl['set' + capitalize(property)];
+				var fSetter = oControl["set" + capitalize(property)];
 				if (typeof (fSetter) === "function") {
 					fSetter.call(oControl, value);
 					return true;
@@ -4721,7 +4720,7 @@ sap.ui.define([
 			if (!oAnnotation) {
 				return false;
 			}
-			var sProperty = sPath.substr(sPath.lastIndexOf('/') + 1);
+			var sProperty = sPath.substr(sPath.lastIndexOf("/") + 1);
 			mValueListAnnotation.inProperty = sProperty;
 
 			jQuery.each(oAnnotation.record, function(i, aPropertyValues){
@@ -4849,7 +4848,7 @@ sap.ui.define([
 						if (sSearchFocus) {
 							oCustomParams["search-focus"] = sSearchFocus;
 						} else {
-							assert(false, 'no search-focus defined');
+							assert(false, "no search-focus defined");
 						}
 					}
 
@@ -4858,7 +4857,7 @@ sap.ui.define([
 						length: iLength,
 						filters: aFilters,
 						parameters: {
-							select: mValueListAnnotation.selection.join(','),
+							select: mValueListAnnotation.selection.join(","),
 							custom: oCustomParams
 						},
 						events: {
@@ -4885,7 +4884,7 @@ sap.ui.define([
 						template: mValueListAnnotation.listItem,
 						length: iLength,
 						parameters: {
-							select: mValueListAnnotation.selection.join(',')
+							select: mValueListAnnotation.selection.join(",")
 						},
 						events: {
 							dataReceived: _fnButtonHandler
@@ -4907,7 +4906,7 @@ sap.ui.define([
 			var that = this;
 			var _createButton = function(Button){
 				var oButton = new Button(sId, {type: thisLib.ButtonType.Transparent});
-				oButton.attachEvent('press', fnPressFunction, that); // attach event this way to have the right this-reference in handler
+				oButton.attachEvent("press", fnPressFunction, that); // attach event this way to have the right this-reference in handler
 				fnCallback.call(that, oButton);
 			};
 			var fnButtonClass = sap.ui.require("sap/m/Button");

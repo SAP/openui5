@@ -2,15 +2,15 @@
 
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/iconEditor/IconEditor",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/QUnitUtils",
+	"qunit/designtime/EditorQunitUtils",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	IconEditor,
-	JSONModel,
 	QUnitUtils,
+	EditorQunitUtils,
 	ResourceBundle,
 	ResourceModel,
 	sinon
@@ -83,8 +83,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oEditorElement.setValue("sap-icon://complete");
-			QUnitUtils.triggerEvent("input", this.oEditorElement.getDomRef());
+			EditorQunitUtils.setInputValue(this.oEditorElement, "sap-icon://complete");
 		});
 
 		QUnit.test("When a binding path is provided", function (assert) {
@@ -95,8 +94,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oEditorElement.setValue("{someBindingPath}");
-			QUnitUtils.triggerEvent("input", this.oEditorElement.getDomRef());
+			EditorQunitUtils.setInputValue(this.oEditorElement, "{someBindingPath}");
 		});
 
 		QUnit.test("When an invalid input is provided", function (assert) {
@@ -112,8 +110,7 @@ sap.ui.define([
 				this.oEditor.setModel(oI18nModel, "i18n");
 
 				// Test
-				this.oEditorElement.setValue("sap-icon://not-a-valid-icon");
-				QUnitUtils.triggerEvent("input", this.oEditorElement.getDomRef());
+				EditorQunitUtils.setInputValue(this.oEditorElement, "sap-icon://not-a-valid-icon");
 
 				assert.strictEqual(this.oEditorElement.getValueState(), "Error", "Then the error is displayed");
 				assert.strictEqual(this.oEditor.getValue(), "sap-icon://target-group", "Then the editor value is not updated");
@@ -130,8 +127,7 @@ sap.ui.define([
 						fnDone();
 					});
 
-					oDialog._searchField.getInputElement().value = "approval";
-					QUnitUtils.triggerEvent("input", oDialog._searchField.getInputElement());
+					EditorQunitUtils.setSearchFieldValue(oDialog._searchField, "approval");
 				});
 			}.bind(this));
 
@@ -152,8 +148,7 @@ sap.ui.define([
 						QUnitUtils.triggerEvent("tap", oDialog.getItems()[2].getDomRef());
 					});
 
-					oDialog._searchField.getInputElement().value = "approval";
-					QUnitUtils.triggerEvent("input", oDialog._searchField.getInputElement());
+					EditorQunitUtils.setSearchFieldValue(oDialog._searchField, "approval");
 				});
 			}.bind(this));
 

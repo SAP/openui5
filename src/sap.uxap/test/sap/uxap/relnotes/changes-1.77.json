@@ -47,6 +47,12 @@
             "reference": "2070116486"
           }
         ]
+      },
+      {
+        "id": "1c410f85a66ff6d8857633c681b3dfbc3cea1ea3",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageLayout: Event for SubSections visibility",
+        "references": []
       }
     ]
   }

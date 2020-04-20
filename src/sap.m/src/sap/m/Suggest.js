@@ -53,7 +53,8 @@ sap.ui.define(['jquery.sap.global', './Toolbar', './Button', './SuggestionsList'
 				self._suggestionItemTapped = true;
 				picker.close();
 				window.setTimeout(function() {
-					oInput.setValue(value);
+					oInput._updateValue(value);
+					oInput._fireChangeEvent();
 					oInput.fireSearch({
 						query: value,
 						suggestionItem: item,
@@ -80,7 +81,7 @@ sap.ui.define(['jquery.sap.global', './Toolbar', './Button', './SuggestionsList'
 			dialogSearchField = new (sap.ui.require('sap/m/SearchField'))({
 				liveChange : function (oEvent) {
 					var value = oEvent.getParameter("newValue");
-					oInput.setValue(value);
+					oInput._updateValue(value);
 					oInput.fireLiveChange({newValue: value});
 					oInput.fireSuggest({suggestValue: value});
 					self.update();
@@ -99,7 +100,7 @@ sap.ui.define(['jquery.sap.global', './Toolbar', './Button', './SuggestionsList'
 					dialog._oCloseTrigger = true;
 					dialog.close();
 
-					oInput.setValue(originalValue);
+					oInput._updateValue(originalValue);
 				}
 			});
 
@@ -124,11 +125,12 @@ sap.ui.define(['jquery.sap.global', './Toolbar', './Button', './SuggestionsList'
 				},
 				beforeOpen: function() {
 					originalValue = oInput.getValue();
-					dialogSearchField.setValue(originalValue);
+					dialogSearchField._updateValue(originalValue);
 				},
 				afterClose: function(oEvent) {
 					if (!self._cancelButtonTapped  // fire the search event if not cancelled
 						&& !self._suggestionItemTapped) { // and if not closed from item tap
+						oInput._fireChangeEvent();
 						oInput.fireSearch({
 							query: oInput.getValue(),
 							refreshButtonPressed: false,

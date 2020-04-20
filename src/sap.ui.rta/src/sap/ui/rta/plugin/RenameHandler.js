@@ -182,7 +182,7 @@ sap.ui.define([
 			this._$editableField.offset({left: this._$oEditableControlDomRef.offset().left});
 			this._$editableField.offset({top: this._$oEditableControlDomRef.offset().top});
 			this._$editableField.css("visibility", "");
-			this._$editableField.focus();
+			this._$editableField.trigger("focus");
 
 			// keep Overlay selected while renaming
 			mPropertyBag.overlay.setSelected(true);

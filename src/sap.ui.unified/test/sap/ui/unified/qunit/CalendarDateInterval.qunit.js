@@ -373,12 +373,15 @@ sap.ui.define([
 
 		//Prepare
 		var oCalendarDateInt = new CalendarDateInterval(),
-				oExternalControl = new CalendarDateInterval("extControl");
+			oExternalControl = new CalendarDateInterval("extControl"),
+			oMonthDomRef, sExpected;
 
 		oCalendarDateInt.placeAt("content");
 		oExternalControl.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		var sExpected = oExternalControl.$().find(".sapUiCalItems").children()[0].id;
+
+		oMonthDomRef = oExternalControl.getAggregation("month")[0].getDomRef();
+		sExpected = oMonthDomRef.childNodes[1].id;
 
 		oExternalControl.focus();
 		_assertFocus(oExternalControl.getDomRef(), sExpected, "Prerequisites check: 'extControl' (another DateInterval) should be focused", assert);
@@ -742,7 +745,7 @@ sap.ui.define([
 
 		// act
 		var $Date = jQuery("#myCal--YP-y20000101");
-		$Date.focus();
+		$Date.trigger("focus");
 		qutils.triggerKeydown($Date.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 		qutils.triggerEvent("click", "myCal--Head-prev");
 		sap.ui.getCore().applyChanges();
@@ -992,7 +995,7 @@ sap.ui.define([
 
 		// select 14.08.2015
 		$Date = jQuery("#CalP--Cal--Month0-20150814");
-		$Date.focus();
+		$Date.trigger("focus");
 		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 		assert.equal(sap.ui.getCore().byId("CalP").getStartDate().getDate(), 14, "start date is set correctly");
@@ -1022,19 +1025,19 @@ sap.ui.define([
 		qutils.triggerEvent("click", "CalP--Cal--Head-B1");
 		// click on September
 		$Date = jQuery("#CalP--Cal--MP-m8");
-		$Date.focus();
+		$Date.trigger("focus");
 		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 		// click on Year button inside calendar picker
 		qutils.triggerEvent("click", "CalP--Cal--Head-B2");
 		// click on 2016
 		$Date = jQuery("#CalP--Cal--YP-y20160101");
-		$Date.focus();
+		$Date.trigger("focus");
 		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 		// click on 14 of September
 		$Date = jQuery("#CalP--Cal--Month0-20160914");
-		$Date.focus();
+		$Date.trigger("focus");
 		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 		oCalStartDate = sap.ui.getCore().byId("CalP").getStartDate();
@@ -1091,7 +1094,7 @@ sap.ui.define([
 
 		// click on 17 of August 2017
 		$Date = jQuery("#CalP--Cal--Month0-20170817");
-		$Date.focus();
+		$Date.trigger("focus");
 		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 		// open again the CalendarPicker
@@ -1123,12 +1126,12 @@ sap.ui.define([
 		qutils.triggerEvent("click", "CalP--Cal--Head-B1");
 		// click on December
 		$Date = jQuery("#CalP--Cal--MP-m11");
-		$Date.focus();
+		$Date.trigger("focus");
 		qutils.triggerKeydown($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 		// click on 11 of December
 		$Date = jQuery("#CalP--Cal--Month0-20171211");
-		$Date.focus();
+		$Date.trigger("focus");
 		qutils.triggerKeydown($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 

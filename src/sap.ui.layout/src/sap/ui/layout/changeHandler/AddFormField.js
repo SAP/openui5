@@ -41,18 +41,19 @@ sap.ui.define([
 				payload: mDelegate.payload
 			}, mPropertyBag);
 
-			return oDelegate.createControlForProperty(mDelegatePropertyBag).then(function (mField) {
-				var sNewFieldId = mPropertyBag.modifier.getId(mField.control);
-				mDelegatePropertyBag.labelFor = sNewFieldId;
+			return oDelegate.createControlForProperty(mDelegatePropertyBag)
+				.then(function (mField) {
+					var sNewFieldId = mPropertyBag.modifier.getId(mField.control);
+					mDelegatePropertyBag.labelFor = sNewFieldId;
 
-				return oDelegate.createLabel(mDelegatePropertyBag).then(function (oLabel) {
-					//harmonize return values for mediator create function and delegate:
-					return {
-						label: oLabel,
-						control: mField.control,
-						valueHelp: mField.valueHelp
-					};
-				});
+					return oDelegate.createLabel(mDelegatePropertyBag).then(function (oLabel) {
+						//harmonize return values for mediator create function and delegate:
+						return {
+							label: oLabel,
+							control: mField.control,
+							valueHelp: mField.valueHelp
+						};
+					});
 			});
 		});
 	}
@@ -119,7 +120,8 @@ sap.ui.define([
 			view: mPropertyBag.view,
 			fieldSelector: mSmartFieldSelector,
 			bindingPath: sBindingPath,
-			modifier: mPropertyBag.modifier
+			modifier: mPropertyBag.modifier,
+			element: oForm
 		};
 		// Check if the change is applicable
 		if (mPropertyBag.modifier.bySelector(mFieldSelector, oAppComponent)) {

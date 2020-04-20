@@ -72,14 +72,27 @@ sap.ui.define([
 	 * @public
 	 */
 	Destinations.prototype.getUrl = function (sKey) {
-		var sName = this._getName(sKey);
+		var oConfig = this._oConfiguration ? this._oConfiguration[sKey] : null,
+			sName,
+			sDefaultUrl;
 
-		if (!sName) {
-			return Promise.reject("Can not resolve destination '" + sKey + "'. Problem with configuration in the manifest.");
+		if (!oConfig) {
+			return Promise.reject("Configuration for destination '" + sKey + "' was not found in the manifest.");
 		}
 
-		if (!this._oHost) {
-			return Promise.reject("Can not resolve destination '" + sKey + "'. There is no 'host' specified.");
+		sName = oConfig.name;
+		sDefaultUrl = oConfig.defaultUrl;
+
+		if (!sName) {
+			return Promise.reject("Can not resolve destination '" + sKey + "'. There is no 'name' property.");
+		}
+
+		if (!this._oHost && !sDefaultUrl) {
+			return Promise.reject("Can not resolve destination '" + sKey + "'. There is no 'host' and no defaultUrl specified.");
+		}
+
+		if (!this._oHost && sDefaultUrl) {
+			return Promise.resolve(sDefaultUrl);
 		}
 
 		return this._oHost.getDestination(sName);
@@ -109,30 +122,6 @@ sap.ui.define([
 		var sSanitizedUrl = sUrl.trim().replace(/\/$/, ""); // remove any trailing spaces and slashes
 
 		return sString.replace("{{destinations." + sKey + "}}", sSanitizedUrl);
-	};
-
-	Destinations.prototype._getName = function (sKey) {
-		if (!this._oConfiguration) {
-			Log.error("Configuration for destinations was not found.");
-			return;
-		}
-
-		var oConfig = this._oConfiguration[sKey],
-			sName;
-
-		if (!oConfig) {
-			Log.error("Config for destination '" + sKey + "' was not found in manifest.");
-			return;
-		}
-
-		sName = oConfig.name;
-
-		if (!sName) {
-			Log.error("Configuration for destination '" + sKey + "' is missing a 'name'.");
-			return;
-		}
-
-		return oConfig.name;
 	};
 
 	return Destinations;

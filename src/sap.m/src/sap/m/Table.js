@@ -146,7 +146,20 @@ sap.ui.define([
 			 *
 			 * @since 1.76
 			 */
-			autoPopinMode: {type: "boolean", group: "Behavior", defaultValue: false}
+			autoPopinMode: {type: "boolean", group: "Behavior", defaultValue: false},
+
+			/**
+			 * Defines which columns should be hidden instead of moved into the pop-in area
+			 * depending on their importance. See {@link sap.m.Column#getImportance}
+			 *
+			 * <b>Note:</b> To hide columns based on their importance, it's mandatory to set <code>demandPopin="true"</code>
+			 * for the <code>sap.m.Column</code> control or set <code>autoPopinMode="true"</code> for the <code>sap.m.Table</code> control.
+			 * See {@link topic:38855e06486f4910bfa6f4485f7c2bac Configuring Responsive Behavior of a Table}
+			 * and {@link sap.m.Table#getAutoPopinMode}.
+			 *
+			 * @since 1.77
+			 */
+			hiddenInPopin: {type: "sap.ui.core.Priority[]", group: "Behavior"}
 		},
 		aggregations : {
 
@@ -188,6 +201,23 @@ sap.ui.define([
 					 * second dimension represents the cells of the tabular data.
 					 */
 					data : {type : "string[][]"}
+				}
+			},
+			/**
+			 * Fired when the table pop-in has changed.
+			 * @since 1.77
+			 */
+			popinChanged: {
+				parameters: {
+					/**
+					 * Returns true if there are visible columns in the pop-in area
+					 */
+					hasPopin: {type: "boolean"},
+					/**
+					 * Returns array of columns that are hidden in the pop-in based on their importance.
+					 * See {@link sap.m.Column#getImportance}
+					 */
+					hiddenInPopin: {type: "sap.m.Column[]"}
 				}
 			}
 		},
@@ -340,6 +370,12 @@ sap.ui.define([
 			this._forceStyleChange();
 		}
 		this._renderOverlay();
+		if (this._bPopinChanged) {
+			setTimeout(function() {
+				this._firePopinChangedEvent();
+			}.bind(this), 0);
+			this._bPopinChanged = false;
+		}
 	};
 
 	Table.prototype._renderOverlay = function() {
@@ -529,6 +565,15 @@ sap.ui.define([
 
 			if (!hasPopin) {
 				oColumn.setDisplay(this.getTableDomRef(), !oColumn.isHidden());
+				setTimeout(function() {
+					var aHiddenInPopin = this.getHiddenInPopin() || [];
+					var bHideColumn = aHiddenInPopin.some(function(sImportance) {
+						return !!sImportance;
+					});
+					if (bHideColumn) {
+						this._firePopinChangedEvent();
+					}
+				}.bind(this), 100);
 				return;
 			}
 		}
@@ -1080,6 +1125,23 @@ sap.ui.define([
 			}
 		}
 		return fAutoPopinWidth;
+	};
+
+	Table.prototype._getHiddenInPopin = function() {
+		var aVisiblePopinColumns = this.getColumns().filter(function(oColumn) {
+			return oColumn.getVisible() && oColumn.getDemandPopin();
+		});
+
+		return aVisiblePopinColumns.filter(function(oVisibleColumn) {
+			return oVisibleColumn._media && !oVisibleColumn._media.matches && !oVisibleColumn.isPopin();
+		});
+	};
+
+	Table.prototype._firePopinChangedEvent = function() {
+		this.fireEvent("popinChanged", {
+			hasPopin: this.hasPopin(),
+			hiddenInPopin: this._getHiddenInPopin()
+		});
 	};
 
 	return Table;

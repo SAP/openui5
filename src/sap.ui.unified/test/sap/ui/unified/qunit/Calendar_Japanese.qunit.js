@@ -35,14 +35,14 @@ sap.ui.define([
 
 		initializeCalendar(sSelectedDate);
 
-		var $Month = oCal1.getAggregation("month")[0].$();
+		var oMonth = oCal1.getAggregation("month")[0].getDomRef();
 
-		assert.equal($Month.find(".sapUiCalWH").length, 7, "week has 7 days");
+		assert.equal(oMonth.querySelectorAll(".sapUiCalWH:not([style='visibility: hidden;'])").length, 7, "week has 7 days");
 		assert.equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpectedMonth - 1], "Month is correct");
 		assert.equal(oCal1.$("-Head-B2").text(), iExpectedYear + " " + sExpectedEra, "Japanese Year is correct");
 
-		var aDays = $Month.find(".sapUiCalItem"),
-			$Day,
+		var aDays = oMonth.querySelectorAll(".sapUiCalItem"),
+			oDay,
 			sDate,
 			iCount = 0,
 			oDate = new UniversalDate(UniversalDate.UTC([iExpectedEra, iExpectedYear], iExpectedMonth - 1, 1));
@@ -50,25 +50,25 @@ sap.ui.define([
 		assert.equal(aDays.length, iExpectedDays + iExpectedDaysOfOtherMonthBefore + iExpectedDaysOfOtherMonthAfter, "Calendar shows all days");
 
 		for (var i = 0; i < 35; i++) {
-			$Day = jQuery(aDays[i]);
-			sDate = $Day.attr("data-sap-day");
+			oDay = aDays[i];
+			sDate = oDay.getAttribute("data-sap-day");
 
 			if (i < iExpectedDaysOfOtherMonthBefore || i >= aDays.length - iExpectedDaysOfOtherMonthAfter) {
-				assert.ok($Day.hasClass("sapUiCalItemOtherMonth"), "Item " + i + " (" + sDate + ") is not in current month.");
+				assert.ok(oDay.classList.contains("sapUiCalItemOtherMonth"), "Item " + i + " (" + sDate + ") is not in current month.");
 			} else {
 				iCount++;
-				assert.ok(!$Day.hasClass("sapUiCalItemOtherMonth"), "Item " + i + " (" + sDate + ") is in current month.");
+				assert.ok(!oDay.classList.contains("sapUiCalItemOtherMonth"), "Item " + i + " (" + sDate + ") is in current month.");
 				assert.equal(sDate, oFormat.format(oDate.getJSDate(), true), "Item " + i + " (" + sDate + ") has correct date (data-sap-day).");
-				assert.equal(jQuery($Day.children(".sapUiCalItemText")[0]).text(), "" + iCount, "Item " + i + " (" + sDate + ") has correct date (text).");
+				assert.equal(oDay.querySelector(".sapUiCalItemText").textContent, "" + iCount, "Item " + i + " (" + sDate + ") has correct date (text).");
 				oDate.setUTCDate(oDate.getUTCDate() + 1);
 			}
 
 			if (sSelectedDate == sDate) {
-				assert.ok($Day.hasClass("sapUiCalItemSel"), "Item " + i + " (" + sDate + ") is selected.");
-				assert.equal(jQuery($Day.children(".sapUiCalItemText")[0]).text(), "" + iExpectedDay, "Item " + i + " (" + sDate + ") has selected date (text).");
+				assert.ok(oDay.classList.contains("sapUiCalItemSel"), "Item " + i + " (" + sDate + ") is selected.");
+				assert.equal(oDay.querySelector(".sapUiCalItemText").textContent, "" + iExpectedDay, "Item " + i + " (" + sDate + ") has selected date (text).");
 				assert.equal(i, iExpectedIndex, "Date has expected index");
 			} else {
-				assert.ok(!$Day.hasClass("sapUiCalItemSel"), "Item " + i + " (" + sDate + ") is not selected.");
+				assert.ok(!oDay.classList.contains("sapUiCalItemSel"), "Item " + i + " (" + sDate + ") is not selected.");
 			}
 		}
 
@@ -78,7 +78,7 @@ sap.ui.define([
 	function checkMonthNavigation(sSelectedDate, iExpectedMonth, sExpectedYear, bForwardNavigation, assert) {
 
 		initializeCalendar(sSelectedDate);
-		oCal1.$("-Head-" + (bForwardNavigation ? "next" : "prev")).click();
+		oCal1.$("-Head-" + (bForwardNavigation ? "next" : "prev")).trigger("click");
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpectedMonth], "Month is correct after navigation: " + aMonthNames[iExpectedMonth]);
@@ -88,7 +88,7 @@ sap.ui.define([
 
 	function checkYearPicker(sSelectedDate, sExpectedStartYear, sExpectedEndYear, sExpectedSelYear, assert) {
 		initializeCalendar(sSelectedDate);
-		oCal1.$("-Head-B2").click();
+		oCal1.$("-Head-B2").trigger("click");
 		sap.ui.getCore().applyChanges();
 
 		var aYears = oCal1.$("-YP").find(".sapUiCalItem"),

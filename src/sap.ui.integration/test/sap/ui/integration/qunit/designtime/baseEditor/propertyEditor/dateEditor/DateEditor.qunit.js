@@ -2,14 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes",
+	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	BaseEditor,
-	QUnitUtils,
-	KeyCodes,
+	EditorQunitUtils,
 	DateFormat,
 	sinon
 ) {
@@ -85,9 +83,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oDateEditorElement.$("inner").val(sCurrentDateString);
-			QUnitUtils.triggerEvent("input", this.oDateEditorElement.getDomRef());
-			QUnitUtils.triggerKeydown(this.oDateEditorElement.getDomRef(), KeyCodes.ENTER);
+			EditorQunitUtils.setCustomComboBoxValue(this.oDateEditorElement, sCurrentDateString);
 		});
 
 		QUnit.test("When a binding path is added in the editor", function (assert) {
@@ -102,9 +98,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oDateEditorElement.$("inner").val("{someBindingPath}");
-			QUnitUtils.triggerEvent("input", this.oDateEditorElement.getDomRef());
-			QUnitUtils.triggerKeydown(this.oDateEditorElement.getDomRef(), KeyCodes.ENTER);
+			EditorQunitUtils.setCustomComboBoxValue(this.oDateEditorElement, "{someBindingPath}");
 		});
 
 		QUnit.test("When a binding path is provided as the editor value", function (assert) {
@@ -120,9 +114,7 @@ sap.ui.define([
 			var oSpy = sandbox.spy();
 			this.oDateEditor.attachValueChange(oSpy);
 
-			this.oDateEditorElement.$("inner").val("This is not a date");
-			QUnitUtils.triggerEvent("input", this.oDateEditorElement.getDomRef());
-			QUnitUtils.triggerKeydown(this.oDateEditorElement.getDomRef(), KeyCodes.ENTER);
+			EditorQunitUtils.setCustomComboBoxValue(this.oDateEditorElement, "This is not a date");
 
 			assert.strictEqual(this.oDateEditorElement.getValueState(), "Error", "Then the error is displayed");
 

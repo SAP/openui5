@@ -40,6 +40,7 @@ sap.ui.define([
 	 */
 	var PropertyEditor = Control.extend("sap.ui.integration.designtime.baseEditor.PropertyEditor", {
 		metadata: {
+			interfaces : ["sap.ui.core.IFormContent"],
 			properties: {
 				/**
 				 * Property name for which the configuration should be retrieved. The configuration for a specified name will be taken from the {@link sap.ui.integration.designtime.baseEditor.BaseEditor BaseEditor} directly.
@@ -491,6 +492,33 @@ sap.ui.define([
 
 	PropertyEditor.prototype.getRuntimeConfig = function () {
 		return this._mConfig;
+	};
+
+	PropertyEditor.prototype.enhanceAccessibilityState = function (oElement, mAriaProps) {
+		var oParent = this.getParent();
+
+		if (oParent && oParent.enhanceAccessibilityState) {
+			// use Field as control, but aria properties of rendered inner control.
+			oParent.enhanceAccessibilityState(this, mAriaProps);
+		}
+
+		return mAriaProps;
+	};
+
+	PropertyEditor.prototype.getFocusDomRef = function() {
+		var oNestedEditor = this.getAggregation("propertyEditor");
+
+		if (oNestedEditor) {
+			return oNestedEditor.getFocusDomRef();
+		}
+	};
+
+	PropertyEditor.prototype.getIdForLabel = function() {
+		var oNestedEditor = this.getAggregation("propertyEditor");
+
+		if (oNestedEditor) {
+			return oNestedEditor.getIdForLabel();
+		}
 	};
 
 	return PropertyEditor;

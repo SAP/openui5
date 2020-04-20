@@ -111,6 +111,10 @@
 							{
 								"type": "Input.Date",
 								"id": "meetDate"
+							},
+							{
+								"type": "Input.Time",
+								"id": "meetTime"
 							}
 						],
 						"actions": [

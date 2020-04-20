@@ -598,35 +598,9 @@ function(
 		}
 
 		!this.getWidth() && this.setWidth("100%");
-		// Unregister custom event handlers after migration to semantic rendering
-		this.$().off("click");
-	};
-
-	/**
-	 * Overwrites the onAfterRendering.
-	 *
-	 * @public
-	 */
-	Input.prototype.onAfterRendering = function() {
-
-		InputBase.prototype.onAfterRendering.call(this);
 
 		if (this._oSuggPopover) {
 			this._oSuggPopover._resetTypeAhead();
-		}
-
-		if (this._bUseDialog && this.getEditable() && this.getEnabled()) {
-			// click event has to be used in order to focus on the input in dialog
-			// do not open suggestion dialog by click over the value help icon
-			this.$().on("click", jQuery.proxy(function (oEvent) {
-				if (this._onclick) {
-					this._onclick(oEvent);
-				}
-
-				if (this.getShowSuggestion() && this._oSuggPopover && oEvent.target.id != this.getId() + "-vhi") {
-					this._openSuggestionsPopover();
-				}
-			}, this));
 		}
 	};
 
@@ -1091,6 +1065,15 @@ function(
 	Input.prototype.ontap = function(oEvent) {
 		InputBase.prototype.ontap.call(this, oEvent);
 		this._fireValueHelpRequestForValueHelpOnly();
+
+		if (this._bUseDialog
+			 && this.getEditable()
+			 && this.getEnabled()
+			 && this.getShowSuggestion()
+			 && this._oSuggPopover
+			 && oEvent.target.id != this.getId() + "-vhi") {
+				this._openSuggestionsPopover();
+		}
 	};
 
 	/**
@@ -1284,7 +1267,7 @@ function(
 			if (bFocusInPopup && !oSuggPopover.bMessageValueStateActive) {
 				// set the flag that the focus is currently in the Popup
 				this._bPopupHasFocus = true;
-				if (Device.system.desktop && deepEqual(oPopup.getFocusDomRef(), oFocusDomRef)) {
+				if (Device.system.desktop && deepEqual(oPopup.getFocusDomRef(), oFocusDomRef) || oFocusedControl.isA("sap.m.GroupHeaderListItem")) {
 					// force the focus to stay in the Input field when scrollbar
 					// is moving
 					this.focus();
@@ -1521,10 +1504,21 @@ function(
 				newValue: value
 			});
 
+			// always focus input field when typing in it
+			this.addStyleClass("sapMFocus");
+
 			// No need to fire suggest event when suggestion feature isn't enabled or runs on the phone.
 			// Because suggest event should only be fired by the input in dialog when runs on the phone.
 			if (this.getShowSuggestion() && !this._bUseDialog) {
+				var oList = this._getSuggestionsPopover()._oList;
 				this._triggerSuggest(value);
+
+				if (oList) {
+					var oSelectedItem = oList.getSelectedItem();
+
+					oList.removeStyleClass("sapMListFocus");
+					oSelectedItem && oSelectedItem.removeStyleClass("sapMLIBFocused");
+				}
 			}
 		};
 
@@ -2737,7 +2731,8 @@ function(
 
 					this._updateSelectionFromList();
 
-					var oList = oSuggPopover._oList;
+					var oList = oSuggPopover._oList,
+						oSelectedItem = oList.getSelectedItem();
 
 					if (!oList) {
 						return;
@@ -2745,6 +2740,7 @@ function(
 
 					// only destroy items in simple suggestion mode
 					if (oList instanceof Table) {
+						oSelectedItem && oSelectedItem.removeStyleClass("sapMLIBFocused");
 						oList.removeSelections(true);
 					} else {
 						oList.destroyItems();

@@ -5,6 +5,14 @@
 		"type": "card"
 	},
 	"sap.card": {
+		"configuration": {
+		  "actionHandlers": {
+				"submit": {
+					"url": "./adaptivecard-manifest.json",
+					"method": "POST"
+				}
+		  }
+		},
 		"header": {
 			"title": "Adaptive Card - Inputs",
 				"subTitle": "sap.ui.integration",

@@ -1,8 +1,11 @@
 /*global QUnit */
-sap.ui.define(["sap/base/security/sanitizeHTML"], function(sanitizeHTML) {
+sap.ui.define([
+	"sap/base/security/sanitizeHTML",
+	"sap/ui/thirdparty/caja-html-sanitizer"
+], function(sanitizeHTML) {
 	"use strict";
 
-	QUnit.module("Sanitize check");
+	QUnit.module("Sanitizer Functionality");
 
 	QUnit.test("valid HTML5", function(assert) {
 
@@ -82,6 +85,77 @@ sap.ui.define(["sap/base/security/sanitizeHTML"], function(sanitizeHTML) {
 		var sResultHTML = '<div><a>Some Link</a></div>';
 		assert.equal(sanitizeHTML(sHTML), sResultHTML, sHTML + " not valid");
 
+	});
+
+	QUnit.module("Sanitizer Performance", {
+		before: function(assert) {
+			// add a custom assertion "lower than"
+			QUnit.assert.lt = function(actual, expected, message) {
+				this.pushResult({
+					result: actual < expected,
+					actual: actual,
+					expected: "< " + expected,
+					message: message
+				});
+			};
+		},
+		after: function(assert) {
+			delete QUnit.assert.lt;
+		}
+	});
+
+	QUnit.test("lexCss", function(assert) {
+
+		assert.equal(typeof window.lexCss, "function", "[precondition] there should be a global function 'lexCss'");
+
+		[
+			{
+				input: "width: 100%",
+				tokens: ["width", ":", " ", "100%"]
+			},
+			{
+				input: "background-image: url(foobar.png);",
+				tokens: ["background-image", ":", " ", "url(\"foobar.png\")", ";"]
+			},
+			{
+				input: "background-image: url('foobar.png');",
+				tokens: ["background-image", ":", " ", "url(\"foobar.png\")", ";"]
+			},
+			{
+				input: "background-image: url(\"foobar.png\");",
+				tokens: ["background-image", ":", " ", "url(\"foobar.png\")", ";"]
+			},
+			{
+				input: "width: calc(100px+20em);",
+				tokens: ["width", ":", " ", "calc(", "100px", "+20em", ")", ";"]
+			},
+			{
+				input: "font: 10pt normal 'Helvetic Neue',sans-serif;",
+				tokens: ["font", ":", " ", "10pt", " ", "normal", " ", "\"Helvetic Neue\"", ",", "sans-serif", ";"]
+			},
+			{
+				input: "font-size:10.0pt; font-family:\\5320\\7265\\6669\\2020\\2020\\2020\\2020\\2020\\2020\\2020\\2020\\2020\\2020; color:black",
+				tokens: [
+					"font-size", ":", "10.0pt", ";", " ",
+					"font-family", ":", "\u5320\u7265\u6669\u2020\u2020\u2020\u2020\u2020\u2020\u2020\u2020\u2020\u2020", ";", " ",
+					"color", ":", "black"
+				]
+			}
+		].forEach(function(oData) {
+			var N = 4,
+				t0, t1, tokens, i;
+
+			// act
+			t0 = Date.now();
+			for (i = 0; i < N; i++) {
+				tokens = window.lexCss(oData.input);
+			}
+			t1 = Date.now();
+
+			// assert
+			assert.deepEqual(tokens, oData.tokens, "tokenizing \"" + oData.input + "\" should return the expected tokens");
+			assert.lt((t1 - t0) / N, 100, "avg. call time should be less than 100ms");
+		});
 	});
 
 });

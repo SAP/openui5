@@ -16,7 +16,10 @@ sap.ui.define(function () {
 				noConflict: true,
 				// preload: "auto",
 				"xx-waitForTheme": "init",
-				"xx-supportedLanguages": ""
+				"xx-supportedLanguages": "",
+				resourceroots: {
+					"qunit": "test-resources/sap/ui/integration/qunit/"
+				}
 			},
 			coverage: {
 				only: ["sap/ui/integration"]
@@ -148,6 +151,14 @@ sap.ui.define(function () {
 					'./cards/AdaptiveContent/UI5InputChoiceSet.qunit'
 				]
 			},
+			"UI5InputTime": {
+				coverage: {
+					only: ["sap/ui/integration/cards/adaptivecards/elements/UI5InputTime"]
+				},
+				module: [
+					'./cards/AdaptiveContent/UI5InputTime.qunit'
+				]
+			},
 			"ActionRender": {
 				coverage: {
 					only: ["sap/ui/integration/cards/adaptivecards/overwrites/ActionRender"]
@@ -244,11 +255,11 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"designtime/baseEditor/BasePropertyEditor": {
+			"designtime/baseEditor/propertyEditor/BasePropertyEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/baseEditor/BasePropertyEditor"
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor"
 					]
 				},
 				sinon: false
@@ -460,6 +471,20 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/baseEditor/util/StylesheetManager": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/util/StylesheetManager"
+					]
+				},
+				loader:{
+					paths:{
+						"mockdata": "test-resources/sap/ui/integration/qunit/designtime/baseEditor/util"
+					}
+				},
+				sinon: false
+			},
 			"designtime/baseEditor/layout/Form": {
 				group: "DesignTime Editor",
 				coverage: {
@@ -492,6 +517,15 @@ sap.ui.define(function () {
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/cardEditor/propertyEditor/complexMapEditor/ComplexMapEditor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/cardEditor/propertyEditor/destinationsEditor/DestinationsEditor": {
+				group: "Card DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/cardEditor/propertyEditor/destinationsEditor/DestinationsEditor"
 					]
 				},
 				sinon: false

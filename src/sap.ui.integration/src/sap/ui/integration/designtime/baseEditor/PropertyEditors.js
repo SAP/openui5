@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/util/findClosestInstance",
 	"sap/ui/integration/designtime/baseEditor/util/createPromise",
 	"sap/ui/integration/designtime/baseEditor/util/isAggregationTemplate",
+	"sap/ui/integration/designtime/baseEditor/util/StylesheetManager",
 	"sap/base/util/restricted/_intersection",
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/deepEqual",
@@ -17,6 +18,7 @@ sap.ui.define([
 	findClosestInstance,
 	createPromise,
 	isAggregationTemplate,
+	StylesheetManager,
 	_intersection,
 	_omit,
 	deepEqual,
@@ -39,10 +41,6 @@ sap.ui.define([
 					labelSpanM: 12,
 					labelSpanS: 12,
 					adjustLabelSpan: false,
-					emptySpanXL: 0,
-					emptySpanL: 0,
-					emptySpanM: 0,
-					emptySpanS: 0,
 					columnsXL: 1,
 					columnsL: 1,
 					columnsM: 1,
@@ -322,6 +320,10 @@ sap.ui.define([
 
 	PropertyEditors.prototype.init = function () {
 		this.attachLayoutChange(function (oEvent) {
+			// Remove CSS file from previous layout
+			var sPreviousLayout = oEvent.getParameter("previousLayout");
+			this._removeStylesheet(this._getLayoutPath(sPreviousLayout));
+
 			var sLayout = oEvent.getParameter("layout");
 			this._initLayout(sLayout);
 		}, this);
@@ -343,6 +345,9 @@ sap.ui.define([
 		if (this._fnCancelLayoutLoading) {
 			this._fnCancelLayoutLoading();
 		}
+
+		this._removeStylesheet(this._getLayoutPath(this.getLayout()));
+
 		Control.prototype.destroy.apply(this, arguments);
 	};
 
@@ -361,6 +366,18 @@ sap.ui.define([
 				fnReject
 			);
 		});
+	};
+
+	PropertyEditors.prototype._loadStylesheet = function (sFilePath) {
+		this._bCssRequested = true;
+		return StylesheetManager.add(sFilePath);
+	};
+
+	PropertyEditors.prototype._removeStylesheet = function (sFilePath) {
+		if (this._bCssRequested) {
+			StylesheetManager.remove(sFilePath);
+			delete this._bCssRequested;
+		}
 	};
 
 	PropertyEditors.prototype.getEditor = function () {
@@ -532,20 +549,21 @@ sap.ui.define([
 			};
 		}
 
-		if (!oLayoutConfig) {
-			var mLayout = mLayouts[this.getLayout()];
-			oLayoutConfig = mLayout && mLayout.defaultConfig || undefined;
-		}
+		var mDefaultConfig = mLayouts[this.getLayout()].defaultConfig;
 
 		// Prioritization (bottom wins):
 		// - default config
 		// - custom layout config
 		// - renderLabels property (if set)
-		return Object.assign({}, oLayoutConfig, mRenderLabels);
+		return Object.assign({}, mDefaultConfig, oLayoutConfig, mRenderLabels);
+	};
+
+	PropertyEditors.prototype._getLayoutPath = function (sLayout) {
+		return mLayouts.hasOwnProperty(sLayout) ? mLayouts[sLayout].module : sLayout;
 	};
 
 	PropertyEditors.prototype._initLayout = function (sLayout) {
-		var sPath = mLayouts.hasOwnProperty(sLayout) ? mLayouts[sLayout].module : sLayout;
+		var sPath = this._getLayoutPath(sLayout);
 
 		this._bLayoutReady = false;
 
@@ -558,6 +576,7 @@ sap.ui.define([
 		}
 
 		var mPromise = createPromise(function (fnResolve, fnReject) {
+			this._loadStylesheet(sPath); // out of Promise.all as it's optional
 			Promise.all([
 				this._loadFragment(sPath),
 				this._loadModule(sPath)
@@ -570,8 +589,6 @@ sap.ui.define([
 			var oLayout = aResult[0];
 			this._prepareViewData = aResult[1];
 
-			// this.removeAllAggregation("content");
-			// this.addContent(oLayout);
 			this.setContent(oLayout);
 			this._bLayoutReady = true;
 			this._initPropertyEditors();

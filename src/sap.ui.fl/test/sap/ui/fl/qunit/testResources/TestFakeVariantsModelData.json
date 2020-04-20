@@ -6,6 +6,7 @@
 				"key": "vmReference1",
 				"title": "Standard",
 				"favorite": true,
+				"executeOnSelect": false,
 				"visible": true,
 				"author": "SAP"
 			},
@@ -14,6 +15,7 @@
 				"title": "New Variant Title",
 				"layer": "VENDOR",
 				"favorite": false,
+				"executeOnSelect": true,
 				"visible": true,
 				"author": ""
 			},
@@ -22,6 +24,7 @@
 				"title": "variant AA",
 				"layer": "CUSTOMER",
 				"favorite": true,
+				"executeOnSelect": false,
 				"visible": false,
 				"author": ""
 			}
@@ -35,6 +38,7 @@
 				"title": "variant C",
 				"layer": "CUSTOMER",
 				"favorite": true,
+				"executeOnSelect": false,
 				"visible": true,
 				"author": "SAP"
 			},
@@ -43,6 +47,7 @@
 				"title": "variant A",
 				"layer": "CUSTOMER",
 				"favorite": true,
+				"executeOnSelect": false,
 				"visible": true,
 				"author": ""
 			},
@@ -51,6 +56,7 @@
 				"title": "variant B",
 				"layer": "USER",
 				"favorite": true,
+				"executeOnSelect": false,
 				"visible": true,
 				"author": ""
 			}
@@ -62,6 +68,7 @@
 			{
 				"author": "SAP",
 				"favorite": false,
+				"executeOnSelect": false,
 				"key": "nonExistingVariant1",
 				"title": "Standard",
 				"visible": false
@@ -74,6 +81,7 @@
 			{
 				"author": "SAP",
 				"favorite": true,
+				"executeOnSelect": false,
 				"key": "nonExistingVariant2",
 				"title": "Standard",
 				"visible": true

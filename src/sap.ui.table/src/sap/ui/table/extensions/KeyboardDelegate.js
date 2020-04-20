@@ -407,19 +407,18 @@ sap.ui.define([
 			// If only the up or down key was pressed while the table is in navigation mode, and a non-interactive element inside a cell is focused,
 			// set the focus to the cell this element is inside.
 			if (!bActionModeNavigation && $ParentCell) {
-				$ParentCell.focus();
+				$ParentCell.trigger("focus");
 				return;
 			}
 
 			preventItemNavigation(oEvent);
 
 			// The FocusHandler triggers the "sapfocusleave" event in a timeout of 0ms after a blur event. To give the control in the cell
-			// enough time to react to the "sapfocusleave" event (e.g. sap.m.Input - changes its value), scrolling is performed
-			// asynchronously.
+			// enough time to react to the "sapfocusleave" event (e.g. sap.m.Input - changes its value), scrolling is performed asynchronously.
 			if (sDirection === NavigationDirection.UP) {
 				if (TableUtils.isFirstScrollableRow(oTable, oCellInfo.cell)) {
 					// Scroll one row up.
-					bScrolled = oTable._getScrollExtension().scrollVertically(false, false, true, bAllowSapFocusLeave, function() {
+					bScrolled = oTable._getScrollExtension().scrollVertically(false, false, bAllowSapFocusLeave, function() {
 						if (bAllowSapFocusLeave) {
 							document.activeElement.blur();
 						}
@@ -427,7 +426,7 @@ sap.ui.define([
 				}
 			} else if (TableUtils.isLastScrollableRow(oTable, oCellInfo.cell)) {
 				// Scroll one row down.
-				bScrolled = oTable._getScrollExtension().scrollVertically(true, false, true, bAllowSapFocusLeave, function() {
+				bScrolled = oTable._getScrollExtension().scrollVertically(true, false, bAllowSapFocusLeave, function() {
 					if (bAllowSapFocusLeave) {
 						document.activeElement.blur();
 					}
@@ -448,14 +447,14 @@ sap.ui.define([
 
 				// Leave the action mode when trying to navigate up on the first row.
 				if (!bActionMode && $ParentCell) {
-					$ParentCell.focus(); // A non-interactive element inside a cell is focused, focus the cell this element is inside.
+					$ParentCell.trigger("focus"); // A non-interactive element inside a cell is focused, focus the cell this element is inside.
 				} else {
 					oKeyboardExtension.setActionMode(false);
 				}
 			} else if (sDirection === NavigationDirection.DOWN && oCellInfo.rowIndex === oTable._getRowCounts().count - 1) {
 				// Leave the action mode when trying to navigate down on the last row.
 				if (!bActionMode && $ParentCell) {
-					$ParentCell.focus(); // A non-interactive element inside a cell is focused, focus the cell this element is inside.
+					$ParentCell.trigger("focus"); // A non-interactive element inside a cell is focused, focus the cell this element is inside.
 				} else {
 					var oCreationRow = oTable.getCreationRow();
 
@@ -841,7 +840,7 @@ sap.ui.define([
 
 		if ($Target.hasClass("sapUiTableOuterBefore") || $Target.hasClass("sapUiTableOuterAfter")
 			|| (oEvent.target != this.getDomRef("overlay") && this.getShowOverlay())) {
-			this.$("overlay").focus();
+			this.$("overlay").trigger("focus");
 
 		} else if ($Target.hasClass("sapUiTableCtrlBefore")) {
 			var bNoData = TableUtils.isNoDataVisible(this);
@@ -857,7 +856,7 @@ sap.ui.define([
 			}
 		}/* else {
 			// If needed and NoData visible, then set the focus to NoData area.
-			this.$("noDataCnt").focus();
+			this.$("noDataCnt").trigger("focus");
 		}*/
 
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
@@ -914,7 +913,7 @@ sap.ui.define([
 			if (!bIsInActionMode && bIsInCell) {
 				// A non-interactive element inside a cell, or any kind of element inside a column header cell is focused.
 				// Focus the cell this element is inside.
-				$Cell.focus();
+				$Cell.trigger("focus");
 
 			} else if (oCellInfo.isOfType(CellType.ANYCOLUMNHEADER)) {
 				// Focus the interactive element inside a column header cell.
@@ -1126,7 +1125,7 @@ sap.ui.define([
 
 		} else if (oCellInfo.isOfType(CellType.ANYCOLUMNHEADER)) {
 			if (TableUtils.isNoDataVisible(this)) {
-				this.$("noDataCnt").focus();
+				this.$("noDataCnt").trigger("focus");
 			} else {
 				KeyboardDelegate._restoreFocusOnLastFocusedDataCell(this, oEvent);
 			}
@@ -1145,18 +1144,17 @@ sap.ui.define([
 			if ($Cell) {
 				// The target is a non-interactive element inside a data cell. We are not in action mode, so focus the cell.
 				oEvent.preventDefault();
-				$Cell.focus();
+				$Cell.trigger("focus");
 			}
 		}
 	};
 
 	function scrollDownAndFocus(oTable, oCellInfo, bTableHasRowSelectors, iRowIndex, oRow) {
 		// The FocusHandler triggers the "sapfocusleave" event in a timeout of 0ms after a blur event. To give the control in the cell
-		// enough time to react to the "sapfocusleave" event (e.g. sap.m.Input - changes its value), scrolling is performed
-		// asynchronously.
+		// enough time to react to the "sapfocusleave" event (e.g. sap.m.Input - changes its value), scrolling is performed asynchronously.
 		var bAllowSapFocusLeave = oCellInfo.isOfType(CellType.DATACELL);
 		var oKeyboardExtension = oTable._getKeyboardExtension();
-		var bScrolled = oTable._getScrollExtension().scrollVertically(true, false, true, bAllowSapFocusLeave, function() {
+		var bScrolled = oTable._getScrollExtension().scrollVertically(true, false, bAllowSapFocusLeave, function() {
 			if (bAllowSapFocusLeave) {
 				document.activeElement.blur();
 			}
@@ -1281,18 +1279,17 @@ sap.ui.define([
 			if ($Cell) {
 				// The target is a non-interactive element inside a data cell. We are not in action mode, so focus the cell.
 				oEvent.preventDefault();
-				$Cell.focus();
+				$Cell.trigger("focus");
 			}
 		}
 	};
 
 	function scrollUpAndFocus(oTable, oCellInfo, bRowHasInteractiveRowHeader, iRowIndex, oRow) {
 		// The FocusHandler triggers the "sapfocusleave" event in a timeout of 0ms after a blur event. To give the control in the cell
-		// enough time to react to the "sapfocusleave" event (e.g. sap.m.Input - changes its value), scrolling is performed
-		// asynchronously.
+		// enough time to react to the "sapfocusleave" event (e.g. sap.m.Input - changes its value), scrolling is performed asynchronously.
 		var bAllowSapFocusLeave = oCellInfo.isOfType(CellType.DATACELL);
 		var oKeyboardExtension = oTable._getKeyboardExtension();
-		var bScrolled = oTable._getScrollExtension().scrollVertically(false, false, true, bAllowSapFocusLeave, function() {
+		var bScrolled = oTable._getScrollExtension().scrollVertically(false, false, bAllowSapFocusLeave, function() {
 			if (bAllowSapFocusLeave) {
 				document.activeElement.blur();
 			}
@@ -1377,7 +1374,7 @@ sap.ui.define([
 				}
 
 				if (TableUtils.isLastScrollableRow(this, oEvent.target)) {
-					var bScrolled = this._getScrollExtension().scrollVertically(true, false, true);
+					var bScrolled = this._getScrollExtension().scrollVertically(true, false);
 					if (bScrolled) {
 						preventItemNavigation(oEvent);
 					}
@@ -1456,7 +1453,7 @@ sap.ui.define([
 				}
 
 				if (TableUtils.isFirstScrollableRow(this, oEvent.target)) {
-					var bScrolled = this._getScrollExtension().scrollVertically(false, false, true);
+					var bScrolled = this._getScrollExtension().scrollVertically(false, false);
 					if (bScrolled) {
 						preventItemNavigation(oEvent);
 					}
@@ -1777,7 +1774,7 @@ sap.ui.define([
 					/* Scrollable area */
 					} else if (iFocusedRow >= iHeaderRowCount + mRowCounts.fixedTop &&
 							   iFocusedRow < iHeaderRowCount + TableUtils.getNonEmptyVisibleRowCount(this) - mRowCounts.fixedBottom) {
-						this._getScrollExtension().scrollVerticallyMax(false, true);
+						this._getScrollExtension().scrollVerticallyMax(false);
 						// If a fixed top area exists or we are in the row action column (has no header), then set the focus to the first row (of
 						// the top fixed area), otherwise set the focus to the first row of the column header area.
 						if (mRowCounts.fixedTop > 0 || oCellInfo.isOfType(CellType.ROWACTION)) {
@@ -1789,7 +1786,7 @@ sap.ui.define([
 					/* Bottom fixed area */
 					} else {
 						// Set the focus to the first row of the scrollable area and scroll to top.
-						this._getScrollExtension().scrollVerticallyMax(false, true);
+						this._getScrollExtension().scrollVerticallyMax(false);
 						TableUtils.focusItem(this, iFocusedIndex - iColumnCount * (iFocusedRow - iHeaderRowCount - mRowCounts.fixedTop), oEvent);
 					}
 				}
@@ -1835,7 +1832,7 @@ sap.ui.define([
 							TableUtils.focusItem(
 								this, iFocusedIndex + iColumnCount * (iHeaderRowCount + mRowCounts.fixedTop - iFocusedRow - 1), oEvent);
 						} else {
-							this._getScrollExtension().scrollVerticallyMax(true, true);
+							this._getScrollExtension().scrollVerticallyMax(true);
 							TableUtils.focusItem(
 								this,
 								iFocusedIndex + iColumnCount * (iHeaderRowCount + iNonEmptyVisibleRowCount - mRowCounts.fixedBottom - iFocusedRow - 1),
@@ -1846,7 +1843,7 @@ sap.ui.define([
 					/* Top fixed area */
 					} else if (iFocusedRow >= iHeaderRowCount && iFocusedRow < iHeaderRowCount + mRowCounts.fixedTop) {
 						// Set the focus to the last row of the scrollable area and scroll to bottom.
-						this._getScrollExtension().scrollVerticallyMax(true, true);
+						this._getScrollExtension().scrollVerticallyMax(true);
 						TableUtils.focusItem(
 							this,
 							iFocusedIndex + iColumnCount * (iHeaderRowCount + iNonEmptyVisibleRowCount - mRowCounts.fixedBottom - iFocusedRow - 1),
@@ -1857,7 +1854,7 @@ sap.ui.define([
 					} else if (iFocusedRow >= iHeaderRowCount + mRowCounts.fixedTop &&
 							   iFocusedRow < iHeaderRowCount + iNonEmptyVisibleRowCount - mRowCounts.fixedBottom) {
 						// Set the focus to the last row of the scrollable area and scroll to bottom.
-						this._getScrollExtension().scrollVerticallyMax(true, true);
+						this._getScrollExtension().scrollVerticallyMax(true);
 						TableUtils.focusItem(
 							this, iFocusedIndex + iColumnCount * (iHeaderRowCount + iNonEmptyVisibleRowCount - iFocusedRow - 1), oEvent);
 
@@ -1904,7 +1901,7 @@ sap.ui.define([
 					var iPageSize = TableUtils.getNonEmptyVisibleRowCount(this) - mRowCounts.fixedTop - mRowCounts.fixedBottom;
 					var iRowsToBeScrolled = this.getFirstVisibleRow();
 
-					this._getScrollExtension().scrollVertically(false, true, true); // Scroll up one page
+					this._getScrollExtension().scrollVertically(false, true); // Scroll up one page
 
 					// Only change the focus if scrolling was not performed over a full page, or not at all.
 					if (iRowsToBeScrolled < iPageSize) {
@@ -1996,7 +1993,7 @@ sap.ui.define([
 					var iPageSize = TableUtils.getNonEmptyVisibleRowCount(this) - mRowCounts.fixedTop - mRowCounts.fixedBottom;
 					var iRowsToBeScrolled = this._getTotalRowCount() - mRowCounts.fixedBottom - this.getFirstVisibleRow() - iPageSize * 2;
 
-					this._getScrollExtension().scrollVertically(true, true, true); // Scroll down one page
+					this._getScrollExtension().scrollVertically(true, true); // Scroll down one page
 
 					// If scrolling was not performed over a full page and there is a bottom fixed area,
 					// then set the focus to the last row of the bottom fixed area.

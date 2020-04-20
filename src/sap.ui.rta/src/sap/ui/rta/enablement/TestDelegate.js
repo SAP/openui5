@@ -33,13 +33,18 @@ function(
 		return ["aggregationName", "bindingPath"].every(isAString.bind(null, mPropertyBag));
 	}
 
-	var TestDelegate = {
+	/**
+	 * sap.ui.fl Delegate to be used in elementActionTests.
+	 * @namespace sap.ui.rta.enablement.TestDelegate
+	 * @implements sap.ui.fl.interfaces.Delegate
+	 * @experimental Since 1.77
+	 * @since 1.77
+	 * @public
+	 */
+	var TestDelegate = /** @lends sap.ui.rta.enablement.TestDelegate */ {
+
 		/**
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.core.Element} mPropertyBag.element - Element instance the delegate is attached to
-		 * @param {string} mPropertyBag.aggregationName - Name of the aggregation the delegate should provide additional elements
-		 * @param {object} [mPropertyBag.payload] - Payload parameter attached to the delegate, empty object if no payload was assigned
-		 * @returns {Promise<sap.ui.fl.delegate.PropertyInfo[]>} Metadata in a deep structure of nodes and properties
+		 *	@inheritdoc
 		 */
 		getPropertyInfo: function (mPropertyBag) {
 			return Promise.resolve()
@@ -56,34 +61,7 @@ function(
 		},
 
 		/**
-		 * Optional method to provide all properties and the corresponding controls that represent them.
-		 * Implement this method if evaluating the binding is not enough e.g. a Table has not yet received a binding or if like filter field represents a property without binding)
-		 *
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {object} mPropertyBag.payload - Payload parameter attached to the delegate, empty object if no payload was assigned
-		 * @param {string} mPropertyBag.element - Control of the element the delegate is attached to
-		 * @param {string} mPropertyBag.aggregationName - Name of the aggregation the delegate should provide additional elements
-		 * @returns {Promise<sap.ui.fl.delegate.RepresentedPropertyInfo[]>} data about properties represented on the screen (either via binding or similar like a filter field that has never directly a binding)
-		 * @experimental we still need some more use cases/pilot usage to finalize the API
-		 */
-		getRepresentedProperties: function (/*mPropertyBag*/) {
-		},
-
-		/**
-		 * Creates a label for the corresponding metadata property
-		 * The control should be created with the modifier as it will be called by change handlers during XML preprocessing with XML nodes
-		 * as well as at runtime when real control instances exist.
-		 *
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Modifier to harmonize access, creation and manipulation to controls in XML Views and JS Controls
-		 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent - Needed to calculate the correct ID in case you provide an selector
-		 * @param {Element} [mPropertyBag.view] - XML node of the view, required for XML case to create nodes and to find elements
-		 * @param {string} mPropertyBag.labelFor - ID of the control the label is used for, this can serve as prefix for the labels ID
-		 * @param {string} mPropertyBag.bindingPath - Runtime binding path the control should be bound to
-		 * @param {object} [mPropertyBag.payload] - Payload parameter attached to the delegate, undefined if no payload was assigned
-		 * @param {string} mPropertyBag.controlType - Control type of the element the delegate is attached to
-		 * @param {string} mPropertyBag.aggregationName - Name of the aggregation the delegate should provide additional elements
-		 * @returns {Promise<sap.ui.base.ManagedObject|Element>} Control representation of the label
+		 *	@inheritdoc
 		 */
 		createLabel: function (mPropertyBag) {
 			return Promise.resolve()
@@ -108,28 +86,14 @@ function(
 		},
 
 		/**
-		 * Creates a control to show and edit the corresponding metadata property and provide a value help if that is needed in addition.
-		 * The control should be created with the modifier as it will be called by change handlers during XML preprocessing with XML nodes
-		 * as well as at runtime when real control instances exist.
-		 *
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Modifier to harmonize access, creation and manipulation to controls in XML Views and JS Controls
-		 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent - Needed to calculate the correct ID in case you provide an selector
-		 * @param {Element} [mPropertyBag.view] - XML node of the view, required for XML case to create nodes and to find elements
-		 * @param {object} mPropertyBag.fieldSelector - Selector to calculate the ID for the control that is created
-		 * @param {string} mPropertyBag.fieldSelector.id - Control ID targeted by the change
-		 * @param {boolean} [mPropertyBag.fieldSelector.isLocalId] - <code>true</code> if the ID within the selector is a local ID or a global ID
-		 * @param {string} mPropertyBag.bindingPath - Runtime binding path the control should be bound to
-		 * @param {object} mPropertyBag.payload - Payload parameter attached to the delegate, undefined if no payload was assigned
-		 * @param {string} mPropertyBag.controlType - Control type of the element the delegate is attached to
-		 * @param {string} mPropertyBag.aggregationName - Name of the aggregation the delegate should provide additional elements
-		 * @returns {Promise<sap.ui.fl.delegate.SpecificControlInfo>} Map containing the controls to add
+		 *	@inheritdoc
 		 */
 		createControlForProperty: function (mPropertyBag) {
 			return Promise.resolve()
 				.then(function () {
 					var bParametersValid =
 						checkCommonParametersForControl(mPropertyBag)
+						&& (isAString(mPropertyBag.element, "nodeName") || mPropertyBag.element.isA("sap.ui.core.Element"))
 						&& isPlainObject(mPropertyBag.fieldSelector) && isAString(mPropertyBag.fieldSelector, "id");
 
 					if (bParametersValid) {
@@ -163,21 +127,7 @@ function(
 		},
 
 		/**
-		 * Creates a layout control that should already include the label and a control to show an edit the metadata property in an arrangement fitting a generic layout container.
-		 * The controls should be created with the modifier as it will be called by change handlers during XML preprocessing with XML nodes
-		 * as well as at runtime when real control instances exist.
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Modifier to harmonize access, creation and manipulation to controls in XML Views and JS Controls
-		 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent - Needed to calculate the correct ID in case you provide an selector
-		 * @param {Element} [mPropertyBag.view] - XML node of the view, required for XML case to create nodes and to find elements
-		 * @param {object} mPropertyBag.fieldSelector - Selector to calculate the ID for the control that is created
-		 * @param {string} mPropertyBag.fieldSelector.id - Control ID targeted by the change
-		 * @param {boolean} [mPropertyBag.fieldSelector.isLocalId] - <code>true</code> if the ID within the selector is a local ID or a global ID
-		 * @param {string} mPropertyBag.bindingPath - Runtime binding path the control should be bound to
-		 * @param {object} [mPropertyBag.payload] - Payload parameter attached to the delegate, undefined if no payload was assigned
-		 * @param {string} mPropertyBag.controlType - Control type of the element the delegate is attached to
-		 * @param {string} mPropertyBag.aggregationName - Name of the aggregation the delegate should provide additional elements
-		 * @returns {Promise<sap.ui.fl.delegate.LayoutControlInfo>} Map containing the controls to add
+		 *	@inheritdoc
 		 */
 		createLayout: function (mPropertyBag) {
 			return Promise.resolve()

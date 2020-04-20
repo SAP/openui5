@@ -276,7 +276,7 @@ describe("sap.m.PlanningCalendar", function() {
 		 element(by.id("PC1-Header-ViewSwitch")).click();
 		 element(by.cssContainingText(".sapMSelectListItem", "1 Week")).click();
 		 element(by.id("PC1-Header-NavToolbar-PickerBtn")).click();
-		 expect(takeScreenshot(element(by.id("PPC1-Header-Cal")))).toLookAs("datepicker_1week_view");
+		 expect(takeScreenshot(element(by.id("PC1-Header-Cal")))).toLookAs("datepicker_1week_view");
 		 element(by.id("PC1-Header-Cal--Head-B1")).click();
 		 expect(takeScreenshot(element(by.id("PC1-Header-Cal")))).toLookAs("monthpicker_1week_view");
 		 element(by.id("PC1-Header-Cal--Head-B2")).click();
@@ -316,7 +316,7 @@ describe("sap.m.PlanningCalendar", function() {
 		element(by.id("PC1-Header-Cal--Head-B1")).click();
 		expect(takeScreenshot(element(by.id("PC1-Header-Cal")))).toLookAs("monthview_on_days_view");
 		element(by.id("PC1-Header-Cal--Head-B2")).click();
-		expect(takeScreenshot(element(by.id("PC1-DateInt--Cal")))).toLookAs("yearview_on_days_view");
+		expect(takeScreenshot(element(by.id("PC1-Header-Cal")))).toLookAs("yearview_on_days_view");
 		element(by.id("inputFocusHelper")).click(); //clean up - make sure no popups are opened
 	});
 	it("should check year view on months view that is rendering properly", function () {

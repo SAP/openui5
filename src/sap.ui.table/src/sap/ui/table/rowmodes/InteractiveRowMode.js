@@ -311,7 +311,7 @@ sap.ui.define([
 		var bTouch = oTable._isTouchEvent(oEvent);
 
 		// Fix for IE text selection while dragging
-		$Body.bind("selectstart", ResizeHelper.onSelectStartWhileInteractiveResizing);
+		$Body.on("selectstart", ResizeHelper.onSelectStartWhileInteractiveResizing);
 
 		$Body.append(
 			"<div id=\"" + oTable.getId() + "-ghost\" class=\"sapUiTableInteractiveResizerGhost\" style =\" height:" + height + "px; width:"
@@ -321,9 +321,9 @@ sap.ui.define([
 		$Splitter.append(
 			"<div id=\"" + oTable.getId() + "-rzoverlay\" style =\"left: 0px; right: 0px; bottom: 0px; top: 0px; position:absolute\" ></div>");
 
-		$Document.bind((bTouch ? "touchend" : "mouseup") + ".sapUiTableInteractiveResize",
+		$Document.on((bTouch ? "touchend" : "mouseup") + ".sapUiTableInteractiveResize",
 			ResizeHelper.exitInteractiveResizing.bind(oTable, oMode));
-		$Document.bind((bTouch ? "touchmove" : "mousemove") + ".sapUiTableInteractiveResize",
+		$Document.on((bTouch ? "touchmove" : "mousemove") + ".sapUiTableInteractiveResize",
 			ResizeHelper.onMouseMoveWhileInteractiveResizing.bind(oTable)
 		);
 
@@ -356,11 +356,11 @@ sap.ui.define([
 		$Ghost.remove();
 		this.$("rzoverlay").remove();
 
-		$Body.unbind("selectstart", ResizeHelper.onSelectStartWhileInteractiveResizing);
-		$Document.unbind("touchend.sapUiTableInteractiveResize");
-		$Document.unbind("touchmove.sapUiTableInteractiveResize");
-		$Document.unbind("mouseup.sapUiTableInteractiveResize");
-		$Document.unbind("mousemove.sapUiTableInteractiveResize");
+		$Body.off("selectstart", ResizeHelper.onSelectStartWhileInteractiveResizing);
+		$Document.off("touchend.sapUiTableInteractiveResize");
+		$Document.off("touchmove.sapUiTableInteractiveResize");
+		$Document.off("mouseup.sapUiTableInteractiveResize");
+		$Document.off("mousemove.sapUiTableInteractiveResize");
 
 		this._enableTextSelection();
 	};

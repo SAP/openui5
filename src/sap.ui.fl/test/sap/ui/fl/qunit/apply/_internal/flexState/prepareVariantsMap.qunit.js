@@ -4,18 +4,18 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/prepareVariantsMap",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/base/util/LoaderExtensions",
-	"sap/ui/core/Component",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	prepareVariantsMap,
 	VariantUtil,
 	LoaderExtensions,
-	Component,
 	sinon
 ) {
 	"use strict";
+
 	var sandbox = sinon.sandbox.create();
 	QUnit.dump.maxDepth = 20;
+
 	QUnit.module("Given prepareVariantsMap()", {
 		beforeEach: function () {
 			return Promise.all([

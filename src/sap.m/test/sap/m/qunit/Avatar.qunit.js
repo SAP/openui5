@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Avatar",
 	"sap/m/LightBox",
-	"sap/f/library"
+	"sap/m/library",
+	"sap/base/Log"
 ], function(
 	oCore,
 	Device,
@@ -16,7 +17,8 @@ sap.ui.define([
 	qutils,
 	Avatar,
 	LightBox,
-	library
+	library,
+	Log
 ) {
 	"use strict";
 
@@ -30,7 +32,8 @@ sap.ui.define([
 		sDefaultIconRendered = "Avatar is a default icon",
 		sPreAvatarFitType = "Avatar's image fit type is ",
 		// shortcut for sap.m.AvatarColor
-		AvatarColor = library.AvatarColor;
+		AvatarColor = library.AvatarColor,
+		sandbox = sinon.sandbox.create();
 
 	function createAvatar(oProps, sId) {
 		var oAvatarProps = {};
@@ -696,6 +699,86 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(sActualBackgroundColor, oAvatar._getActualBackgroundColor(),
 			"After re-rendering the Avatar, its background is kept (" + sActualBackgroundColor + ").");
+	});
+
+	/* tests */
+	QUnit.module("Avatar different badge configurations", {
+		beforeEach: function () {
+			this.oAvatar = createAvatar();
+			this.oAvatar.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: teardownFunction
+	});
+
+	QUnit.test("Affordance is rendered when press event is attached", function(assert) {
+		//setup
+		this.oAvatar.attachPress(function () {});
+		this.oAvatar.setBadgeIcon("sap-icon://zoom-in");
+		oCore.applyChanges();
+
+		//assert
+		assert.equal(this.oAvatar._badgeRef != null, true, "Badge is attached to Avatar");
+		assert.equal(this.oAvatar._badgeRef.getTooltip(),
+			sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("AVATAR_TOOLTIP_ZOOMIN"),
+			"Badge Tooltip is predefined");
+	});
+
+	QUnit.test("Affordance is not attached, when press event is missing", function(assert) {
+		//setup
+		this.oAvatar.setBadgeIcon("sap-icon://zoom-in");
+		oCore.applyChanges();
+
+		//assert
+		assert.equal(this.oAvatar._badgeRef === null, true, "Badge is attached to Avatar");
+	});
+
+	QUnit.test("Affordance is attached, when details aggregation is presented", function(assert) {
+		// Act
+		this.oAvatar.setDetailBox(new LightBox());
+		oCore.applyChanges();
+
+		//assert
+		assert.equal(this.oAvatar._badgeRef != null, true, "Badge is attached to Avatar");
+	});
+
+	QUnit.test("Affordance is attached, when details aggregation is presented", function(assert) {
+		// Act
+		this.oAvatar.attachPress(function () {});
+		this.oAvatar.setBadgeIcon("sap-icon://edit");
+		this.oAvatar.setBadgeTooltip("Edit custom");
+		oCore.applyChanges();
+
+		//assert
+		assert.equal(this.oAvatar._badgeRef.getTooltip() != sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("AVATAR_TOOLTIP_ZOOMIN"),
+		true, "Badge tooltip is not predefined");
+
+		//assert
+		assert.equal(this.oAvatar._badgeRef.getTooltip() != this.oAvatar.getTooltip(),
+			true, "Badge tooltip is not default one");
+	});
+
+	QUnit.test("Affordance is not presented with bulk data", function(assert) {
+		// Arrange
+		var sWarnArgs = "No valid Icon URI source for badge affordance was provided";
+		this.oAvatar.attachPress(function () {});
+		sandbox.stub(Log, "warning");
+
+		//Act
+		this.oAvatar.setBadgeIcon("12345");
+		oCore.applyChanges();
+
+		//Assert
+		assert.equal(this.oAvatar._badgeRef === null, true, "No badge is attached to Avatar with various string value");
+
+		//Act
+		this.oAvatar.setBadgeIcon("sap-icon://no-icon");
+		oCore.applyChanges();
+
+		//Assert
+		assert.equal(this.oAvatar._badgeRef === null, true, "Badge is attached to Avatar with bulk URI");
+		assert.ok(Log.warning.withArgs(sWarnArgs).called, "then an error was logged");
+		assert.equal(Log.warning.withArgs(sWarnArgs).callCount, 2, "then an error was logged");
 	});
 
 	QUnit.module("Keyboard handling", {

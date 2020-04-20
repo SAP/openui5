@@ -1395,7 +1395,11 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().trigger("click");
+		oInput.ontap({
+			target: {
+				id: oInput.getId()
+			}
+		});
 		this.clock.tick(500);
 
 		oPopup = oInput._oSuggPopover._oPopover;
@@ -1468,7 +1472,11 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().trigger("click");
+		oInput.ontap({
+			target: {
+				id: oInput.getId()
+			}
+		});
 		this.clock.tick(500);
 
 		oPopup = oInput._oSuggPopover._oPopover;
@@ -1520,7 +1528,11 @@ sap.ui.define([
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		oInput._$input.focus().trigger("click");
+		oInput.ontap({
+			target: {
+				id: oInput.getId()
+			}
+		});
 		this.clock.tick(500);
 		oPopup = oInput._oSuggPopover._oPopover;
 
@@ -1580,7 +1592,11 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().trigger("click");
+		oInput.ontap({
+			target: {
+				id: oInput.getId()
+			}
+		});
 		this.clock.tick(500);
 
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
@@ -1621,7 +1637,11 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().trigger("click");
+		oInput.ontap({
+			target: {
+				id: oInput.getId()
+			}
+		});
 		this.clock.tick(500);
 		var oSpy = this.spy(oInput._oSuggPopover._oPopover, "invalidate");
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
@@ -2228,7 +2248,11 @@ sap.ui.define([
 		oDialogRendererSpy = sinon.spy(DialogRenderer, "render");
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().trigger("click");
+		oInput.ontap({
+			target: {
+				id: oInput.getId()
+			}
+		});
 		this.clock.tick(300);
 
 		oPopup = oInput._oSuggPopover._oPopover;
@@ -5188,6 +5212,29 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(this.oInput.getValue(), aVisibleItems[1].getTitle(), "The value is populated again.");
 		assert.notOk(oGroupHeader.hasStyleClass("sapMInputFocusedHeaderGroup"), "Styling is removed from the unselected group header.");
+	});
+
+	QUnit.test("Selection of group header", function(assert) {
+		var aVisibleItems, oGroupHeader;
+
+		// act
+		this.oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		this.oInput._$input.focus().val("A").trigger("input");
+		this.clock.tick(300);
+
+		aVisibleItems = this.oInput._oSuggPopover._oList.getItems().filter(function(oItem){
+			return oItem.getVisible();
+		});
+		oGroupHeader = aVisibleItems[0];
+
+		// assert
+		assert.ok(oGroupHeader.isA("sap.m.GroupHeaderListItem"), "The first visible item is a group header");
+
+		//act
+		oGroupHeader.focus();
+
+		//assert
+		assert.strictEqual(document.activeElement, this.oInput.getFocusDomRef(), "The focus is in the input field");
 	});
 
 	QUnit.module("showItems functionality: List", {

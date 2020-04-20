@@ -964,7 +964,11 @@ var decodeCss;
   // FUNCTION  ::=  ident '('
   // Diff: We exclude url explicitly.
   // TODO: should we be tolerant of "fn ("?
-  var FUNCTION = '(?!url[(])' + IDENT + '[(]';
+  // ##### BEGIN: MODIFIED BY SAP
+  // Avoid risk of 'catastrophic backtracking' when unicode escapes are used
+  // var FUNCTION = '(?!url[(])' + IDENT + '[(]';
+  var FUNCTION = '(?!url[(])(?=(' + IDENT + '))\\1[(]';
+  // ##### END: MODIFIED BY SAP
   // INCLUDES  ::=  "~="
   var INCLUDES = '~=';
   // DASHMATCH  ::=  "|="

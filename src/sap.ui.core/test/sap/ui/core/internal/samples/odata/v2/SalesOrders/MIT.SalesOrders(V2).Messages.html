@@ -174,7 +174,7 @@
 				<b>Check:</b> There is a message for the quantity of the item that at least 2 have
 					to be ordered.<br />
 				<b>Check:</b> If the corresponding note field does not start with
-					<code>Error:</code> the row highlighter indicates a warning.<br />
+					<code>Error:</code> the row highlighter indicates a warning.
 			</li>
 			<li>Change the note of that sales order item to <code>Error: My message</code> and
 				save.<br />
@@ -214,7 +214,7 @@
 			<li>Scroll to the end of the sales order line items table.<br />
 				<b>Check:</b> All items for <code>HT-1000</code> have at least a quantity of 2.
 					<br />
-				<b>Check:</b> No item has a quantity of 0.<br />
+				<b>Check:</b> No item has a quantity of 0.
 			</li>
 		</ol>
 		<h3>(IV) Transition Messages Only</h3>
@@ -260,6 +260,64 @@
 			<li>Scroll in the table that the 5th item is requested.<br />
 				<b>Check:</b> The number of messages increases.<br />
 				<b>Check:</b> The message for the 5th item is contained in the message popover.
+			</li>
+		</ol>
+		<h3>(V) Filter Sales Order Items by Items with Messages</h3>
+		Search for a sales order with items with and without messages. The messages should have a
+		different message severity.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.<br />
+				<b>Check:</b> There are items with and without messages.
+			</li>
+			<li>Change the <code>Filter</code> value in the <code>Sales Order Items</code> table
+				from <code>Show all</code> to any other value.<br />
+				<b>Check:</b> Only items that match the selected filter are displayed.<br />
+				<b>Check:</b> If there is no item matching the selected filter, you get a message
+					box with the information, that no item matches. The filter for the table has
+					been changed back to <code>Show all</code>.
+			</li>
+			<li>Repeat the steps above with different filter values.</li>
+		</ol>
+		<h3>(VI) Create and Delete Sales Order Items</h3>
+		Search for a sales order with at most two items.
+		<ol>
+			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
+				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
+				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
+					the <code>Sales Order Details</code> section.<br />
+				<b>Check:</b> Remember the number of messages.
+			</li>
+			<li>In the <code>Sales Order Items</code> table click on the
+				<code>Create a sales order item</code> button.<br />
+				<b>Check:</b> A <code>Create a New Sales Order Item</code> dialog opens.
+			</li>
+			<li>In the <code>Create a New Sales Order Item</code> dialog enter <code>HT-1000</code>
+				in the <code>Product ID</code> field, remove the content of the <code>Note</code>
+				field and press the <code>OK</code> button.<br />
+				<b>Check:</b> A message toast is displayed with the information, that the item has
+					been created.<br />
+				<b>Check:</b> The newly created item is displayed in the
+					<code>Sales Order Items</code> table.<br />
+				<b>Check:</b> There are two new messages in the message popover, one for the
+					quantity which has to be at least 2 and one for the missing note of the new
+					sales order item.
+			</li>
+			<li>In the <code>Sales Order Items</code> table select the newly created item and press
+				the <code>Delete the selected sales order item</code> button.<br />
+				<b>Check:</b> A <code>Sales Order Item Deletion</code> dialog opens.
+			</li>
+			<li>In the <code>Sales Order Item Deletion</code> dialog click on the <code>OK</code>
+				button.<br />
+				<b>Check:</b> The <code>Sales Order Item Deletion</code> dialog is closed and a
+					message toast is displayed with the information, that the deletion was
+					successful.<br />
+				<b>Check:</b> The deleted item has been removed from the
+					<code>Sales Order Items</code> table.<br />
+				<b>Check:</b> The messages for the deleted item have been removed from the message
+					popover.
 			</li>
 		</ol>
 	</body>

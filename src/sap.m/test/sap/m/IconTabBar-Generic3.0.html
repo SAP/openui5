@@ -44,6 +44,12 @@
 				});
 				label2.addStyleClass("label");
 
+				var label3 = new Label({
+					text: "With selectedKey"
+				});
+
+				label3.addStyleClass("label");
+
 				var itb1 = new IconTabBar("itb1", {
 					upperCase: true,
 					selectedKey: "mid",
@@ -452,6 +458,61 @@
 					items: lotsOfTabs
 				});
 
+				var itb3 = new IconTabBar("itb3", {
+					selectedKey: "nested",
+					items: [
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "0.Filter",
+							content: [
+								new RatingIndicator({
+									value: 1
+								})
+							]
+						}),
+						new IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "1.Filter",
+							key: "first",
+							content: [
+								new Label({
+									text: "info info info"
+								})
+							],
+							items: [
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "1.1.Filter",
+									content: [
+										new RatingIndicator({
+											value: 1
+										})
+									]
+								}),
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Critical,
+									text: "1.2.Filter",
+									content: [
+										new RatingIndicator({
+											value: 2
+										})
+									],
+									items: [
+										new IconTabFilter({
+											key: "nested",
+											iconColor: sap.ui.core.IconColor.Default,
+											text: "1.2.1.Filter",
+											content: [
+												new Text({ text: "Nested item content" })
+											]
+										})
+									]
+								})
+							]
+						})
+					]
+				});
+
 				// Checkbox for Compact Content Density for the page
 				var cbCompactContentDensity  = new sap.m.CheckBox("densityModeBox", {
 					selected: false,
@@ -476,7 +537,9 @@
 						label1,
 						itb1,
 						label2,
-						itb2
+						itb2,
+						label3,
+						itb3
 					]
 				});
 
@@ -488,7 +551,7 @@
 	</script>
 </head>
 
-<body id="body" class="sapUiBody" role="application">
+<body id="body" class="sapUiBody">
 </body>
 
 </html>

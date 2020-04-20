@@ -2,12 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes"
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	BaseEditor,
-	QUnitUtils,
-	KeyCodes
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -83,9 +81,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oEnumStringEditorElement.getDomRef().value = "Option C";
-			QUnitUtils.triggerEvent("input", this.oEnumStringEditorElement.getDomRef());
-			QUnitUtils.triggerKeydown(this.oEnumStringEditorElement.getDomRef(), KeyCodes.ENTER);
+			EditorQunitUtils.setCustomComboBoxValue(this.oEnumStringEditorElement, "Option C");
 		});
 
 		QUnit.test("When a binding path is provided in the input field", function (assert) {
@@ -96,9 +92,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oEnumStringEditorElement.$("inner").val("{someBindingPath}");
-			QUnitUtils.triggerEvent("input", this.oEnumStringEditorElement.$("inner"));
-			QUnitUtils.triggerKeydown(this.oEnumStringEditorElement.getDomRef(), KeyCodes.ENTER);
+			EditorQunitUtils.setCustomComboBoxValue(this.oEnumStringEditorElement, "{someBindingPath}");
 		});
 
 		QUnit.test("When a binding path is provided as the editor value", function (assert) {
@@ -107,9 +101,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When an invalid input is provided", function (assert) {
-			this.oEnumStringEditorElement.$("inner").val("Invalid Option");
-			QUnitUtils.triggerEvent("input", this.oEnumStringEditorElement.$("inner"));
-			QUnitUtils.triggerKeydown(this.oEnumStringEditorElement.getDomRef(), KeyCodes.ENTER);
+			EditorQunitUtils.setCustomComboBoxValue(this.oEnumStringEditorElement, "Invalid Option");
 
 			assert.strictEqual(this.oEnumStringEditorElement.getValueState(), "Error", "Then the error is displayed");
 			assert.strictEqual(this.oEnumStringEditor.getValue(), "Option B", "Then the editor value is not updated");
@@ -144,15 +136,12 @@ sap.ui.define([
 				sap.ui.getCore().applyChanges();
 				var oEnumStringEditorElement = oEnumStringEditor.getContent();
 
-
 				oEnumStringEditor.attachValueChange(function (oEvent) {
 					assert.strictEqual(oEvent.getParameter("value"), "Option D", "Then a custom value can be set in the editor");
 					fnDone();
 				});
 
-				oEnumStringEditorElement.$("inner").val("Option D");
-				QUnitUtils.triggerEvent("input", oEnumStringEditorElement.$("inner"));
-				QUnitUtils.triggerKeydown(oEnumStringEditorElement.$("inner"), KeyCodes.ENTER);
+				EditorQunitUtils.setCustomComboBoxValue(oEnumStringEditorElement, "Option D");
 			});
 		});
 
@@ -167,9 +156,7 @@ sap.ui.define([
 				sap.ui.getCore().applyChanges();
 				var oEnumStringEditorElement = oEnumStringEditor.getContent();
 
-				oEnumStringEditorElement.$("inner").val("{validBindingString}");
-				QUnitUtils.triggerEvent("input", oEnumStringEditorElement.$("inner"));
-				QUnitUtils.triggerKeydown(oEnumStringEditorElement.$("inner"), KeyCodes.ENTER);
+				EditorQunitUtils.setCustomComboBoxValue(oEnumStringEditorElement, "validBindingString}");
 
 				assert.strictEqual(oEnumStringEditorElement.getValueState(), "Error", "Then the error is displayed");
 				assert.strictEqual(oEnumStringEditor.getValue(), "Option B", "Then the editor value is not updated");

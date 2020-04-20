@@ -4,6 +4,8 @@ sap.ui.define([
 		"sap/ui/integration/library",
 		"sap/ui/integration/widgets/Card",
 		"sap/ui/integration/cards/ListContent",
+		"sap/ui/integration/util/RequestDataProvider",
+		"sap/ui/integration/Host",
 		"sap/ui/core/Core",
 		"sap/f/cards/NumericSideIndicator",
 		"sap/ui/integration/cards/NumericHeader",
@@ -18,6 +20,8 @@ sap.ui.define([
 		library,
 		Card,
 		ListContent,
+		RequestDataProvider,
+		Host,
 		Core,
 		NumericSideIndicator,
 		NumericHeader,
@@ -657,6 +661,38 @@ sap.ui.define([
 			}
 		};
 
+		var oManifestActionSubmit = {
+			"_version": "1.8.0",
+			"sap.app": {
+				"id": "adativecard.embedded",
+				"type": "card"
+			},
+			"sap.card": {
+				"configuration": {
+					"actionHandlers": {
+						"submit": {
+							"url": "./my-fake.url",
+							"method": "POST"
+						}
+					}
+				},
+				"type": "AdaptiveCard",
+				"content": {
+					"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+					"type": "AdaptiveCard",
+					"version": "1.0",
+					"body": [{
+						"type": "TextBlock",
+						"size": "medium",
+						"weight": "bolder",
+						"isSubtle": true,
+						"text": "Input.Text elements",
+						"horizontalAlignment": "center"
+					}]
+				}
+			}
+		};
+
 		function testNavigationServiceListContent(oManifest, assert) {
 			// Arrange
 			var done = assert.async(),
@@ -1227,6 +1263,109 @@ sap.ui.define([
 
 				// Cleanup
 				oActionSpy.restore();
+				done();
+			}.bind(this));
+		});
+
+		QUnit.module("Action Handlers", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					width: "400px",
+					height: "600px"
+				});
+
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Submit action handler", function (assert) {
+			var mEventArguments,
+				done = assert.async(),
+				oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
+				oSpyActionHandler = this.spy(CardActions, "handleSubmitAction");
+
+			// Setup
+			this.oCard.setManifest(oManifestActionSubmit);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+
+			this.oCard.attachEvent("_ready", function () {
+				mEventArguments = {
+					card: this.oCard,
+					host: null,
+					action: {type: CardActionType.Submit},
+					parameters: {configuration: {}, data: {foo: "bar"}},
+					source: this.oCard.getCardContent()
+				};
+				// Act
+				CardActions.fireAction(mEventArguments);
+
+				Core.applyChanges();
+
+				assert.ok(oStubRequest.called, "DataProvider's getData should have been called.");
+				assert.ok(oSpyActionHandler.called, "Submit Action's handler should have been called.");
+				assert.ok(oSpyActionHandler.calledWith(mEventArguments), "Submit Action's handler should have been called with the event configuration.");
+
+				done();
+			}.bind(this));
+		});
+
+		QUnit.test("Submit action handler at the Host", function (assert) {
+			var mEventArguments,
+				done = assert.async(),
+				oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
+				oSpyActionHandler = this.spy(CardActions, "handleSubmitAction"),
+				oHostActionHandlerSpy1 = this.spy(),
+				oHost1 = new Host({
+					action: oHostActionHandlerSpy1
+				}),
+				oHostActionHandlerSpy2 = this.spy(function (oEvent) {
+					oEvent.preventDefault();
+				}),
+				oHost2 = new Host({
+					action: oHostActionHandlerSpy2
+				});
+
+
+			// Setup
+			this.oCard.setManifest(oManifestActionSubmit);
+			this.oCard.setHost(oHost1);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+
+			this.oCard.attachEvent("_ready", function () {
+				mEventArguments = {
+					card: this.oCard,
+					host: oHost1,
+					action: {type: CardActionType.Submit},
+					parameters: {configuration: {}, data: {foo: "bar"}},
+					source: this.oCard.getCardContent()
+				};
+				// Act
+				CardActions.fireAction(mEventArguments);
+				Core.applyChanges();
+
+				// Assert
+				assert.ok(oHostActionHandlerSpy1.calledOnce, "Host's action handler should have been called");
+				assert.ok(oStubRequest.calledOnce, "DataProvider's getData should have been called.");
+				assert.ok(oSpyActionHandler.calledOnce, "Submit Action's handler should have been called.");
+				assert.ok(oSpyActionHandler.calledWith(mEventArguments), "Submit Action's handler should have been called with the event configuration.");
+
+				// Act
+				this.oCard.setHost(oHost2);
+				mEventArguments.host = oHost2;
+				CardActions.fireAction(mEventArguments);
+				Core.applyChanges();
+
+				// Assert
+				assert.ok(oHostActionHandlerSpy2.calledOnce, "Host's action handler should have been called");
+				assert.ok(oSpyActionHandler.calledOnce, "Submit Action's handler should be skipped this time.");
+
 				done();
 			}.bind(this));
 		});

@@ -3,19 +3,15 @@
 
 .sapMSinglePCColumnHeader.sapUiCalRow {
 	background-color: @_sap_m_SinglePlanningCalendarGrid_HoursBackground;
+	box-shadow: @_sap_m_SinglePlanningCalendarStickyShadow;
 
 	// TODO: Consider refactoring of the CSS of PlanningCalendar DatesRow CSS and fix the styles in one place
-	// for sapUiCalItems
 	.sapUiCalItem:focus {
 		outline-color: @sapUiContentFocusColor;
 
 		&.sapUiCalItemSel {
 			outline-color: @sapUiContentContrastFocusColor;
 		}
-	}
-
-	.sapUiCalItems {
-		box-shadow: @_sap_m_SinglePlanningCalendarStickyShadow;
 	}
 
 	.sapUiCalItemNow {

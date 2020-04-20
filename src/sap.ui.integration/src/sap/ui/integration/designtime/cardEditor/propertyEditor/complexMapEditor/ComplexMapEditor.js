@@ -31,7 +31,7 @@ sap.ui.define([
 	 * 	<td><code>allowKeyChange</code></td>
 	 *  <td><code>boolean</code></td>
 	 * 	<td><code>true</code></td>
-	 * 	<td>Whether to allow editing the key attribute of map entries</td>
+	 * 	<td>Whether to render an editor for the key attribute of map entries</td>
 	 * </tr>
 	 * <tr>
 	 * 	<td><code>allowAddAndRemove</code></td>
@@ -62,7 +62,7 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
-	ComplexMapEditor.prototype.asyncInit = function () {
+	ComplexMapEditor.prototype.onFragmentReady = function () {
 		this._oNestedArrayEditor = this.getContent();
 
 		this._oNestedArrayEditor.attachValueChange(function (oEvent) {
@@ -93,12 +93,12 @@ sap.ui.define([
 			}, this).filter(Boolean);
 
 			if (!aInvalidItems.length) {
-				this.setValue(this._formatOutputValue(aValue));
+				this.setValue(this._processOutputValue(aValue));
 			}
 		}, this);
 	};
 
-	ComplexMapEditor.prototype._formatInputValue = function (oValue) {
+	ComplexMapEditor.prototype._processInputValue = function (oValue) {
 		if (!oValue) {
 			oValue = {};
 		}
@@ -111,23 +111,40 @@ sap.ui.define([
 	};
 
 	ComplexMapEditor.prototype.setConfig = function (oConfig) {
-		var oArrayConfig = _merge({}, {
-			template: {
+		var oTemplate = {};
+
+		if (oConfig["allowKeyChange"] !== false) {
+			// Developer scenario
+
+			oTemplate = {
 				key: {
 					label: oConfig["keyLabel"] || this.getI18nProperty("CARD_EDITOR.COMPLEX_MAP.KEY"),
 					type: "string",
-					path: "key",
-					enabled: oConfig["allowKeyChange"] !== false
+					path: "key"
 				}
+			};
+		}
+
+		var oArrayConfig = _merge(
+			{},
+			{
+				template: oTemplate,
+				allowSorting: false
 			},
-			allowSorting: false
-		}, oConfig);
+			oConfig
+		);
 		oArrayConfig.type = "array";
 
 		// Avoid registration on BaseEditor
 		oArrayConfig.path = "";
 
-		this._oNestedArrayEditor.setConfig(oArrayConfig);
+		if (this.isReady()) {
+			this._oNestedArrayEditor.setConfig(oArrayConfig);
+		} else {
+			this.ready().then(function (oArrayConfig) {
+				this._oNestedArrayEditor.setConfig(oArrayConfig);
+			}.bind(this, oArrayConfig));
+		}
 		BasePropertyEditor.prototype.setConfig.call(this, oConfig);
 	};
 
@@ -149,12 +166,20 @@ sap.ui.define([
 	};
 
 	ComplexMapEditor.prototype.setValue = function (oValue) {
-		var oFormattedValue = this._formatInputValue(oValue);
-		this._oNestedArrayEditor.setValue(oFormattedValue);
+		var oFormattedValue = this._processInputValue(oValue);
+
+		if (this.isReady()) {
+			this._oNestedArrayEditor.setValue(oFormattedValue);
+		} else {
+			this.ready().then(function (oFormattedValue) {
+				this._oNestedArrayEditor.setValue(oFormattedValue);
+			}.bind(this, oFormattedValue));
+		}
+
 		BasePropertyEditor.prototype.setValue.call(this, oValue);
 	};
 
-	ComplexMapEditor.prototype._formatOutputValue = function(aValue) {
+	ComplexMapEditor.prototype._processOutputValue = function(aValue) {
 		var oFormattedValue = {};
 		aValue.forEach(function (oValue) {
 			oFormattedValue[oValue.key] = _omit(oValue, "key");

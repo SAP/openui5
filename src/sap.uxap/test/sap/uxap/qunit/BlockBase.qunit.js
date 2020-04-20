@@ -59,7 +59,7 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 			assert.strictEqual(oBlockViewController.getOwnerComponent(), oMainController.getOwnerComponent(), "The block view is owned by the component");
 
 			done();
-		}, 200);
+		}, 1000);
 	});
 
 	QUnit.test("blocks are target of lazy loading feature", function (assert) {

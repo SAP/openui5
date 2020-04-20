@@ -269,9 +269,11 @@ sap.ui.define([
 	IconPool.insertFontFaceStyle();
 	SearchField.prototype.init = function() {
 
-		// Default placeholder: "Search"
-		this.setProperty("placeholder", oResourceBundle.getText("FACETFILTER_SEARCH"),true);
+		// last changed value
+		this._lastValue = "";
 
+		// Default placeholder: "Search"
+		this.setProperty("placeholder", oResourceBundle.getText("FACETFILTER_SEARCH"), true);
 	};
 
 	SearchField.prototype.getFocusDomRef = function() {
@@ -382,9 +384,10 @@ sap.ui.define([
 			return;
 		}
 
-		this.setValue(value);
+		this._updateValue(value);
 		updateSuggestions(this);
 		this.fireLiveChange({newValue: value});
+		this._fireChangeEvent();
 		this.fireSearch({
 			query: value,
 			refreshButtonPressed: false,
@@ -472,6 +475,7 @@ sap.ui.define([
 			if (Device.system.desktop && !this.getShowRefreshButton() && (document.activeElement !== oInputElement)) {
 				oInputElement.focus();
 			}
+			this._fireChangeEvent();
 			this.fireSearch({
 				query: this.getValue(),
 				refreshButtonPressed: !!(this.getShowRefreshButton() && !this.$().hasClass("sapMFocus")),
@@ -512,7 +516,8 @@ sap.ui.define([
 	 */
 	SearchField.prototype.onSearch = function(event) {
 		var value = this.getInputElement().value;
-		this.setValue(value);
+		this._updateValue(value);
+		this._fireChangeEvent();
 		this.fireSearch({
 			query: value,
 			refreshButtonPressed: false,
@@ -542,11 +547,30 @@ sap.ui.define([
 	};
 
 	/**
-	 * Process the <code>change</code> event - update value and fire the event
+	 * Process the <code>change</code> event
 	 * @private
 	 */
 	SearchField.prototype.onChange = function(event) {
-		this.fireChange({value: this.getInputElement().value});
+		this._fireChangeEvent();
+	};
+
+	/**
+	 * Fires the <code>change</code> event if needed
+	 * @private
+	 */
+	SearchField.prototype._fireChangeEvent = function() {
+
+		var value = this.getInputElement().value;
+
+		if (this._lastValue === value) {
+			return;
+		}
+
+		this._lastValue = value;
+
+		this.fireChange({
+			value: value
+		});
 	};
 
 	/**
@@ -560,7 +584,7 @@ sap.ui.define([
 		// IE fires an input event when an empty input with a placeholder is focused or loses focus.// TODO remove after the end of support for Internet Explorer
 		// Check if the value has changed, before firing the liveChange event.
 		if (value != this.getValue()) {
-			this.setValue(value);
+			this._updateValue(value);
 			this.fireLiveChange({newValue: value});
 			if (this.getEnableSuggestions()) {
 				if (this._iSuggestDelay) {
@@ -604,10 +628,11 @@ sap.ui.define([
 					// take over the value from the selected suggestion list item, if any is selected:
 					if ((selectedIndex = this._oSuggest.getSelected()) >= 0) {
 						suggestionItem = this.getSuggestionItems()[selectedIndex];
-						this.setValue(suggestionItem.getSuggestionText());
+						this._updateValue(suggestionItem.getSuggestionText());
 					}
 				}
 
+				this._fireChangeEvent();
 				this.fireSearch({
 					query: this.getValue(),
 					suggestionItem: suggestionItem,
@@ -733,7 +758,7 @@ sap.ui.define([
 		}
 	};
 
-	SearchField.prototype.setValue = function(value) {
+	SearchField.prototype._updateValue = function(value) {
 		value = value || "";
 		var inputElement = this.getInputElement();
 		if (inputElement) {
@@ -751,6 +776,11 @@ sap.ui.define([
 		this.setProperty("value", value, true);
 		this._setToolTips();
 		return this;
+	};
+
+	SearchField.prototype.setValue = function(value) {
+		this._lastValue = value;
+		return this._updateValue(value);
 	};
 
 	SearchField.prototype._unregisterEventListeners = function () {
@@ -800,7 +830,7 @@ sap.ui.define([
 		if (suggestionsOn(oSF)) {
 			index = oSF._oSuggest.setSelected(iIndex, bRelative);
 			if (index >= 0) {
-				oSF.setValue(oSF.getSuggestionItems()[index].getSuggestionText());
+				oSF._updateValue(oSF.getSuggestionItems()[index].getSuggestionText());
 			}
 			oEvent.preventDefault();
 		}

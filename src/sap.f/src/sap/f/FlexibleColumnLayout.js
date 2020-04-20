@@ -635,9 +635,9 @@ sap.ui.define([
 
 		// Used to store the last focused DOM element of any of the columns
 		this._oColumnFocusInfo = {
-			beginColumn: {},
-			midColumn: {},
-			endColumn: {}
+			begin: {},
+			mid: {},
+			end: {}
 		};
 
 		// Create the 3 nav containers
@@ -656,9 +656,9 @@ sap.ui.define([
 		this._iNavigationArrowWidth = DomUnitsRem.toPx(Parameters.get("_sap_f_FCL_navigation_arrow_width"));
 
 		this._oColumnWidthInfo = {
-			beginColumn: 0,
-			midColumn: 0,
-			endColumn: 0
+			begin: 0,
+			mid: 0,
+			end: 0
 		};
 
 	};
@@ -703,7 +703,7 @@ sap.ui.define([
 
 		this["_" + sColumn + 'ColumnFocusOutDelegate'] = {
 			onfocusout: function(oEvent) {
-				this._oColumnFocusInfo[sColumn  + "Column"] = oEvent.target;
+				this._oColumnFocusInfo[sColumn] = oEvent.target;
 			}
 		};
 
@@ -851,7 +851,32 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._restoreFocusToColumn = function (sCurrentColumn) {
-		jQuery(this._oColumnFocusInfo[sCurrentColumn]).focus();
+		var oElement = this._oColumnFocusInfo[sCurrentColumn];
+
+		if (!oElement || jQuery.isEmptyObject(oElement)) {
+			// if no element was stored, get first focusable
+			oElement = this._getFirstFocusableElement(sCurrentColumn);
+		}
+
+		jQuery(oElement).focus();
+	};
+
+	/**
+	 *
+	 * Returns the first focusable element inside the current page in the corresponding nav container
+	 * @param {string} sColumn
+	 * @return {jQuery|Element|null}
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._getFirstFocusableElement = function (sColumn) {
+		var oCurrentColumn = this._getColumnByStringName(sColumn),
+			oCurrentPage = oCurrentColumn.getCurrentPage();
+
+		if (oCurrentPage) {
+			return oCurrentPage.$().firstFocusableDomRef();
+		}
+
+		return null;
 	};
 
 	/**
@@ -1240,11 +1265,12 @@ sap.ui.define([
 	*/
 	FlexibleColumnLayout.prototype._adjustColumnDisplay = function(oColumn, iNewWidth, bShouldRestoreFocus) {
 		var oColumnInfo = {
-				beginColumn: oColumn.hasClass("sapFFCLColumnBegin"),
-				midColumn: oColumn.hasClass("sapFFCLColumnMid"),
-				endColumn: oColumn.hasClass("sapFFCLColumnEnd")
+				begin: oColumn.hasClass("sapFFCLColumnBegin"),
+				mid: oColumn.hasClass("sapFFCLColumnMid"),
+				end: oColumn.hasClass("sapFFCLColumnEnd")
 			},
-			sCurrentColumn = getCurrentColumn(oColumnInfo);
+			sCurrentColumn = getCurrentColumn(oColumnInfo),
+			oEventColumnInfo;
 
 		//BCP: 1980006195
 		if (iNewWidth === 0) {
@@ -1254,7 +1280,11 @@ sap.ui.define([
 		}
 
 		if (this._oColumnWidthInfo[sCurrentColumn] !== iNewWidth) {
-			this.fireColumnResize(oColumnInfo);
+			oEventColumnInfo = {};
+			for (var next in oColumnInfo) {
+				oEventColumnInfo[next + "Column"] = oColumnInfo[next];
+			}
+			this.fireColumnResize(oEventColumnInfo);
 			if (bShouldRestoreFocus) {
 				this._restoreFocusToColumn(sCurrentColumn);
 			}

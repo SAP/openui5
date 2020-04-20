@@ -6,9 +6,14 @@
 	<VBox>
 		<VBox items="{ path: 'itemsModel>/', templateShareable: false}">
 			<VBox>
-				<Bar>
+				<Bar
+					visible="{= ${config/allowSorting} !== false || ${config/allowAddAndRemove} !== false || !!${itemsModel>itemLabel}}"
+				>
 					<contentLeft>
-						<Label text="{itemsModel>itemLabel}" />
+						<Label
+							text="{itemsModel>itemLabel}"
+							visible="{= !!${itemsModel>itemLabel}}"
+						/>
 					</contentLeft>
 					<contentRight>
 						<Button

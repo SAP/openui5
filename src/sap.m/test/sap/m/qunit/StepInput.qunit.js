@@ -350,6 +350,48 @@ sap.ui.define([
 		assert.equal(this.stepInput._getInput().getValueStateText(), sText, "valueStateText is properly propagated to the input aggregation");
 	});
 
+	QUnit.test("valueState stays the same after updating value", function (assert) {
+		//prepare
+		this.stepInput.setMin(1).setValue(3).setMax(5);
+		oCore.applyChanges();
+
+		//act
+		this.stepInput.setValue(6);
+		oCore.applyChanges();
+
+		//assert
+		assert.equal(this.stepInput.getValueState(), "None", "valueState stays None");
+		assert.equal(this.stepInput._getInput().getValueState(), "None", "valueState of the propagated to the input aggregation stays the same");
+	});
+
+	QUnit.test("valueState stays the same after updating min", function (assert) {
+		//prepare
+		this.stepInput.setMin(1).setValue(3).setMax(5);
+		oCore.applyChanges();
+
+		//act
+		this.stepInput.setMin(4);
+		oCore.applyChanges();
+
+		//assert
+		assert.equal(this.stepInput.getValueState(), "None", "valueState stays None");
+		assert.equal(this.stepInput._getInput().getValueState(), "None", "valueState of the propagated to the input aggregation stays the same");
+	});
+
+	QUnit.test("valueState stays the same after updating max", function (assert) {
+		//prepare
+		this.stepInput.setMin(1).setMax(3).setValue(2);
+		oCore.applyChanges();
+
+		//act
+		this.stepInput.setMax(2);
+		oCore.applyChanges();
+
+		//assert
+		assert.equal(this.stepInput.getValueState(), "None", "valueState stays None");
+		assert.equal(this.stepInput._getInput().getValueState(), "None", "valueState of the propagated to the input aggregation stays the same");
+	});
+
 	QUnit.test('Testing for duplicate id', function (assert) {
 		var oStepInput;
 
@@ -1635,7 +1677,7 @@ sap.ui.define([
 		assert.strictEqual($Input.attr("name"), 'useful name', "Internal input's 'name' attribute has correct value");
 		assert.ok($Input.is("[placeholder]"), "Internal Input has 'placeholder' attribute");
 		assert.strictEqual($Input.attr("placeholder"), 'useful placeholder', "Internal input's 'placeholder' attribute has correct value");
-		assert.ok($Input.is("[aria-invalid]"), "Internal Input has 'aria-invalid' attribute");
+		assert.notOk($Input.is("[aria-invalid]"), "Internal Input has 'aria-invalid' attribute");
 		assert.ok($Input.is("[aria-readonly]"), "Internal Input has 'aria-readonly' attribute");
 		assert.strictEqual($Input.attr("aria-readonly"), 'true', "Internal input's 'aria-readonly' attribute has correct value");
 		assert.ok($Input.is("[aria-disabled]"), "Internal Input has 'aria-disabled' attribute");
@@ -2366,8 +2408,6 @@ sap.ui.define([
 				"setProperty is called and it's first parameter is 'valueState'");
 		assert.strictEqual(oSpy.getCall(0).args[1], "Error",
 				"setProperty is called and it's second parameter is Error");
-		assert.strictEqual(oSpy.getCall(0).args[2], true,
-				"setProperty is called and it's third parameter is 'true'");
 		assert.strictEqual(oSpy.getCall(1).args[0], "value",
 				"setProperty is called and it's first parameter is 'value'");
 		assert.strictEqual(oSpy.getCall(1).args[1], "1.234",

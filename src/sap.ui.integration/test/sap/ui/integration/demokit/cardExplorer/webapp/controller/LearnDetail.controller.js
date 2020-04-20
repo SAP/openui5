@@ -35,7 +35,7 @@ sap.ui.define([
 				sGroup = oArgs.group || "overview", // group is mandatory (described in the manifest)
 				sTopicId = oArgs.key ? "/" + oArgs.key : "",
 				oNavEntry = this._findNavEntry(sGroup),
-				sTopicURL = "./topics/learn/" + sGroup + sTopicId + '.html',
+				sTopicURL = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/topics/learn/" + sGroup + sTopicId + '.html'),
 				sPageTitle = oNavEntry.topicTitle || oNavEntry.title;
 			var jsonObj = {
 				pageTitle: sPageTitle,

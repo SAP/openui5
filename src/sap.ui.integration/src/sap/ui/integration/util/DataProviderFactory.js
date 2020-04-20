@@ -95,5 +95,23 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider) {
 		return oDataProvider;
 	};
 
+	/**
+	 * Removes a DataProvider from Factory's registry.
+	 *
+	 * @param oDataProvider {sap.ui.integration.util.DataProvider}
+	 * @experimental
+	 */
+	DataProviderFactory.prototype.remove = function (oDataProvider) {
+		var iProviderIndex = this._aDataProviders.indexOf(oDataProvider);
+
+		if (iProviderIndex > -1) {
+			this._aDataProviders.splice(iProviderIndex, 1);
+		}
+
+		if (oDataProvider && !oDataProvider.bDestroyed && oDataProvider._bIsDestroyed) {
+			oDataProvider.destroy();
+		}
+	};
+
 	return DataProviderFactory;
 });

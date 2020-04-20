@@ -52,7 +52,7 @@ sap.ui.define([
 	 * <code>ComponentContainer</code> instances.
 	 *
 	 * <pre>
-	 * &lt;body id="content" class="sapUiBody sapUiSizeCompact" role="application">
+	 * &lt;body id="content" class="sapUiBody sapUiSizeCompact">
 	 *     ...
 	 *     &lt;div data-sap-ui-component
 	 *         data-id="container"

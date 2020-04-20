@@ -3745,6 +3745,7 @@ sap.ui.define([
 		// Act
 		oComboBox.setValueStateText("");
 		oComboBox.setValueState("Error");
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox._oSuggestionPopover._getValueStateHeader().getText(), ValueStateSupport.getAdditionalText(oComboBox),
@@ -3752,6 +3753,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.setValueStateText(sValueStateText);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox._oSuggestionPopover._getValueStateHeader().getText(), sValueStateText, "The text is set correctly when is set from the user.");
@@ -3774,6 +3776,8 @@ sap.ui.define([
 
 		var fnShowValueStateTextSpy = this.spy(oComboBox._oSuggestionPopover, "_showValueStateHeader");
 		oComboBox.setValueState("None");
+		sap.ui.getCore().applyChanges();
+
 		assert.ok(fnShowValueStateTextSpy.calledWith(false));
 
 		// cleanup
@@ -3792,6 +3796,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.setValueState(ValueState.Error);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.ok(oComboBox.$("content").hasClass("sapMInputBaseContentWrapperState"));

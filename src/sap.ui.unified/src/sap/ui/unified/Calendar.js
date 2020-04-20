@@ -51,9 +51,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	// get resource translation bundle;
 	var oCore = sap.ui.getCore(),
-		oLibraryResourceBundle = oCore.getLibraryResourceBundle("sap.ui.unified"),
 		CalendarType = sap.ui.core.CalendarType;
 	/*
 	 * Inside the Calendar CalendarDate objects are used. But in the API JS dates are used.
@@ -420,7 +418,7 @@ sap.ui.define([
 
 	Calendar.prototype._initilizeMonthPicker = function() {
 		var oMonthPicker = new MonthPicker(this.getId() + "--MP");
-
+		oMonthPicker._bCalendar = true;
 		oMonthPicker.attachEvent("select", this._selectMonth, this);
 		oMonthPicker.attachEvent("pageChange", _handleMonthPickerPageChange, this);
 		oMonthPicker._bNoThemeChange = true;
@@ -431,7 +429,7 @@ sap.ui.define([
 
 	Calendar.prototype._initilizeYearPicker = function() {
 		var oYearPicker = new YearPicker(this.getId() + "--YP");
-
+		oYearPicker._bCalendar = true;
 		oYearPicker.attachEvent("select", this._selectYear, this);
 		oYearPicker.attachEvent("pageChange", _handleYearPickerPageChange, this);
 		this.setAggregation("yearPicker", oYearPicker);
@@ -448,7 +446,7 @@ sap.ui.define([
 
 	Calendar.prototype._createMonth = function(sId){
 		var oMonth = new Month(sId, {width: "100%"});
-
+		oMonth._bCalendar = true;
 		oMonth.attachEvent("datehovered", this._handleDateHovered, this);
 		oMonth.attachEvent("weekNumberSelect", this._handleWeekNumberSelect, this);
 
@@ -1898,9 +1896,11 @@ sap.ui.define([
 		var oRm = sap.ui.getCore().createRenderManager(),
 			$Container = this.$("content");
 
-		oRm.renderControl(oPicker);
-		oRm.flush($Container[0], false, true); // insert it
-		oRm.destroy();
+		if ($Container[0]) {
+			oRm.renderControl(oPicker);
+			oRm.flush($Container[0], false, true); // insert it
+			oRm.destroy();
+		}
 	};
 
 	/**
@@ -2163,13 +2163,9 @@ sap.ui.define([
 			sAriaLabel = aMonthNamesWide[aMonths[0]] || sText;
 		}
 
-		if (!this._getSucessorsPickerPopup()) {
+		if (!this._getSucessorsPickerPopup() && sSecondaryMonthInfo) {
 			// Add info for the secondary month
-			if (sSecondaryMonthInfo) {
-				sAriaLabel += ", " + sSecondaryMonthInfo;
-			}
-
-			sAriaLabel += ". " + oLibraryResourceBundle.getText("CALENDAR_MONTH_PICKER_OPEN_HINT");
+			sAriaLabel += ", " + sSecondaryMonthInfo;
 		}
 
 		oHeader.setTextButton1(sText);
@@ -2542,11 +2538,6 @@ sap.ui.define([
 			sSecondHeaderText = sSecondHeaderYear || sFirstHeaderYear,
 			sPrimaryCalendarType = this.getPrimaryCalendarType();
 
-		if (!this._getSecondaryCalendarType()) {
-			// If secondary type is set, than placing the hint should be done in the end.
-			sFirstHeaderAriaLabel += (this._getSucessorsPickerPopup() ? "" : ". " + oLibraryResourceBundle.getText("CALENDAR_YEAR_PICKER_OPEN_HINT"));
-		}
-
 		if (this._iMode === 2 && oYearPicker && oYearPicker.getDomRef()) {
 
 			var aYearPickerCells = oYearPicker._oItemNavigation.getItemDomRefs(),
@@ -2587,7 +2578,7 @@ sap.ui.define([
 		if (sYear) {
 			// Add the secondary year info, as well as the hint.
 			// Keep in mind this method might be called from _handleNext/Previous without a year
-			sAriaLabel += ", " + sYear + (this._getSucessorsPickerPopup() ? "" : ". " + oLibraryResourceBundle.getText("CALENDAR_YEAR_PICKER_OPEN_HINT"));
+			sAriaLabel += ", " + sYear;
 			oHeader.setAriaLabelButton2(sAriaLabel);
 		}
 

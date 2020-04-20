@@ -189,10 +189,6 @@ sap.ui.define([
 		var oAddFacetButton = oFF.getAggregation("addFacetButton");
 		assert.ok(oAddFacetButton, "The add facet button is created");
 
-		// Verify the summary bar is created
-		var oSummaryBar = oFF.getAggregation("summaryBar");
-		assert.ok(oSummaryBar, "The summary bar is created");
-
 		jQuery.sap.touchEventMode === "ON";
 		oFF._enableTouchSupport();
 
@@ -984,7 +980,7 @@ sap.ui.define([
 	QUnit.test("FacetFilter._getSummaryBar", function(assert) {
 
 		var oFF = new FacetFilter();
-		var oSummaryBar = oFF.getAggregation("summaryBar");
+		var oSummaryBar = oFF._getSummaryBar();
 		assert.strictEqual(oSummaryBar, oFF._getSummaryBar(), "There should only be one instance of the summary bar created for the lifetime of the FacetFilter");
 
 		assert.equal(oSummaryBar.getContent().length, 1, "Summary bar should have one control in its content");

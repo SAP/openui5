@@ -122,12 +122,12 @@
 				"icon": "accelerated",
 				"text": "Team Calendar",
 				"desc": "Calendar demo app for team and team members",
-				"ref": "test-resources/sap/m/demokit/PlanningCalendarSinglePlanningCalendar/webapp/index.html",
+				"ref": "test-resources/sap/m/demokit/teamCalendar/webapp/index.html",
 				"links": {
-					"Run Integration Tests": "test-resources/sap/m/demokit/PlanningCalendarSinglePlanningCalendar/webapp/test/integration/opaTests.qunit.html"
+					"Run Integration Tests": "test-resources/sap/m/demokit/teamCalendar/webapp/test/integration/opaTests.qunit.html"
 				},
 				"category": "Showcase",
-				"config": "test-resources/sap/m/demokit/PlanningCalendarSinglePlanningCalendar/demoapp.json"
+				"config": "test-resources/sap/m/demokit/teamCalendar/demoapp.json"
 			},
 			{
 				"icon": "widgets",
@@ -187,7 +187,10 @@
 		"name": "Avatar (sap.m)",
 		"category": "Display",
 		"since": "1.73",
-		"samples": ["sap.m.sample.Avatar"]
+		"samples": [
+			"sap.m.sample.Avatar",
+			"sap.m.sample.AvatarWithAffordance"
+			]
 		},
 		{
 		  "id": "sap.m.ActionListItem",
@@ -1561,6 +1564,11 @@
 		  "description": "This sample demonstrates different combinations of types, shapes, and sizes of the Avatar."
 		},
 		{
+		  "id": "sap.m.sample.AvatarWithAffordance",
+		  "name": "Avatar With Visual Affordance",
+		  "description": "This sample demonstrates different combinations of types, shapes, and sizes of the Avatar with visual affordance."
+		},
+		{
 		  "id": "sap.m.sample.NewsContent",
 		  "name": "News Content",
 		  "description": "This control is used to display the news content text and subheader in a tile."
@@ -2675,7 +2683,7 @@
 	    {
 		  "id": "sap.m.sample.TableAutoPopin",
 		  "name": "Table - Auto popin of the table columns",
-		  "description": "This example demonstrates the automatic pop-in behavior of the table."
+		  "description": "This example demonstrates the automatic pop-in behavior of the table and hiding columns instead of moving them into the pop-in depending on their importance."
 	    },
 		{
 		  "id": "sap.m.sample.ActionListItem",

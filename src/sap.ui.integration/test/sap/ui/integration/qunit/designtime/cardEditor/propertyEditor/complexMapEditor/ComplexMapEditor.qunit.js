@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/ui/qunit/QUnitUtils",
+	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/base/util/values"
 ], function (
 	BaseEditor,
 	QUnitUtils,
+	EditorQunitUtils,
 	sinon,
 	values
 ) {
@@ -156,8 +158,7 @@ sap.ui.define([
 			});
 
 			var aDataSourceEditors = _getComplexMapEditors(this.oNestedArrayEditor)[0];
-			aDataSourceEditors["uri"].setValue("https://example.com/foobar");
-			QUnitUtils.triggerEvent("input", aDataSourceEditors["uri"].getDomRef());
+			EditorQunitUtils.setInputValue(aDataSourceEditors["uri"], "https://example.com/foobar");
 		});
 
 		QUnit.test("When the add button is clicked twice", function (assert) {
@@ -187,8 +188,7 @@ sap.ui.define([
 			this.oComplexMapEditor.attachValueChange(oSpy);
 
 			var aDataSourceEditors = _getComplexMapEditors(this.oNestedArrayEditor)[1];
-			aDataSourceEditors["key"].setValue("sampleDataSource");
-			QUnitUtils.triggerEvent("input", aDataSourceEditors["key"].getDomRef());
+			EditorQunitUtils.setInputValue(aDataSourceEditors["key"], "sampleDataSource");
 
 			assert.strictEqual(aDataSourceEditors["key"].getValueState(), "Error", "Then the error is displayed");
 
@@ -234,8 +234,8 @@ sap.ui.define([
 				sap.ui.getCore().applyChanges();
 				var oNestedArrayEditor = oComplexMapEditor.getContent();
 				return oNestedArrayEditor.ready().then(function () {
-					var oKeyEditor = _getComplexMapEditors(oNestedArrayEditor)[0]["key"];
-					assert.notOk(oKeyEditor.getEnabled(), "Then the key field is disabled");
+					var mEditors = _getComplexMapEditors(oNestedArrayEditor)[0];
+					assert.notOk(mEditors.hasOwnProperty("key"), "Then the key field is disabled");
 				});
 			});
 		});

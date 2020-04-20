@@ -624,6 +624,19 @@ sap.ui.define([
 		if (!this.getDemandPopin()) {
 			return false;
 		}
+
+		var oTable = this.getTable();
+		if (oTable) {
+			var aHiddenInPopin = oTable.getHiddenInPopin() || [];
+			var bHideColumn = aHiddenInPopin.some(function(sImportance) {
+				return this.getImportance() === sImportance;
+			}, this);
+
+			if (bHideColumn) {
+				return false;
+			}
+		}
+
 		if (this._media) {
 			return !this._media.matches;
 		}

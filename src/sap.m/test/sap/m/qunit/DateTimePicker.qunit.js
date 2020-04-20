@@ -394,23 +394,35 @@ sap.ui.define([
 				});
 	*/
 	QUnit.test("change date using calendar - open", function(assert) {
-		var done = assert.async();
+		var done = assert.async(),
+			oSliders,
+			aMonths,
+			aDays,
+			oDay,
+			aHours,
+			iIndex,
+			i;
+
 		bChange = false;
 		sValue = "";
 		sId = "";
 		oDTP3.focus();
 		qutils.triggerEvent("click", "DTP3-icon");
 		sap.ui.getCore().applyChanges();
-		setTimeout(function(){
+
+		oDTP3._createPopup();
+		oDTP3._oPopup.attachEvent("afterOpen", function() {
+
 			assert.ok(jQuery("#DTP3-cal")[0], "calendar rendered");
 			assert.ok(jQuery("#DTP3-cal").is(":visible"), "calendar is visible");
 
-			var oSliders = sap.ui.getCore().byId("DTP3-Sliders");
+			oSliders = sap.ui.getCore().byId("DTP3-Sliders");
 			assert.equal(oSliders.getAggregation("_columns").length, 3 , "DTP3: number of rendered sliders");
 
-			var aDays = jQuery("#DTP3-cal--Month0-days").find(".sapUiCalItem");
-			var oDay;
-			for ( var i = 0; i < aDays.length; i++) {
+			aMonths = jQuery("#DTP3-cal-content").children(".sapUiCalMonthView");
+			aDays = jQuery(aMonths[0]).find(".sapUiCalItem");
+
+			for (i = 0; i < aDays.length; i++) {
 				oDay = aDays[i];
 				if (jQuery(oDay).attr("data-sap-day") == "20160210") {
 					oDay.focus();
@@ -421,8 +433,7 @@ sap.ui.define([
 			// use ENTER to not run into itemNavigation
 			qutils.triggerKeyboardEvent(oDay, jQuery.sap.KeyCodes.ENTER, false, false, false);
 
-			var aHours = jQuery("#DTP3-Sliders-listHours-content").find(".sapMTimePickerItem");
-			var iIndex = 0;
+			aHours = jQuery("#DTP3-Sliders-listHours-content").find(".sapMTimePickerItem");
 			for ( iIndex = 0; iIndex < aHours.length; iIndex++) {
 				if (jQuery(aHours[iIndex]).hasClass("sapMTimePickerItemSelected")) {
 					break;
@@ -433,25 +444,25 @@ sap.ui.define([
 			qutils.triggerKeyboardEvent(oDTP3._oSliders.getAggregation("_columns")[0].getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
 
 			done();
-		}, 400);
+		});
 	});
 
 	QUnit.test("change date using calendar - choose", function(assert) {
 		var done = assert.async();
-		setTimeout(function(){
-			jQuery("#DTP3-OK").focus();
-			qutils.triggerKeydown("DTP3-OK", jQuery.sap.KeyCodes.ENTER, false, false, false);
-			qutils.triggerKeyup("DTP3-OK", jQuery.sap.KeyCodes.ENTER, false, false, false);
-			setTimeout(function(){
-				assert.ok(!jQuery("#DTP3-cal").is(":visible"), "calendar is invisible");
-				assert.ok(!jQuery("#DTP3-Sliders").is(":visible"), "Silder is invisible");
-				assert.equal(sId, "DTP3", "Change event fired");
-				assert.equal(sValue, "Feb 10, 2016, 11:11:00 AM", "Value in internal format priovided");
-				assert.equal(oDTP3.getValue(), "Feb 10, 2016, 11:11:00 AM", "Value in internal format set");
-				assert.equal(oDTP3.getDateValue().getTime(), new Date("2016", "01", "10", "11", "11").getTime(), "DateValue set");
-				done();
-			}, 600);
-		}, 400);
+
+		jQuery("#DTP3-OK").focus();
+		qutils.triggerKeydown("DTP3-OK", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyup("DTP3-OK", jQuery.sap.KeyCodes.ENTER, false, false, false);
+
+		oDTP3._oPopup.attachEvent("afterClose", function() {
+			assert.ok(!jQuery("#DTP3-cal").is(":visible"), "calendar is invisible");
+			assert.ok(!jQuery("#DTP3-Sliders").is(":visible"), "Silder is invisible");
+			assert.equal(sId, "DTP3", "Change event fired");
+			assert.equal(sValue, "Feb 10, 2016, 11:11:00 AM", "Value in internal format priovided");
+			assert.equal(oDTP3.getValue(), "Feb 10, 2016, 11:11:00 AM", "Value in internal format set");
+			assert.equal(oDTP3.getDateValue().getTime(), new Date("2016", "01", "10", "11", "11").getTime(), "DateValue set");
+			done();
+		});
 	});
 
 	QUnit.module("Accessibility");

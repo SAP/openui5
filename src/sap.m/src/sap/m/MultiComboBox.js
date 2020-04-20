@@ -343,6 +343,8 @@ function(
 		// note: prevent document scrolling when arrow keys are pressed
 		oEvent.preventDefault();
 
+		this.syncPickerContent();
+
 		if (this.isFocusInTokenizer()) {
 			return;
 		}
@@ -470,12 +472,7 @@ function(
 				}
 			}
 		} else {
-			// validate if an item is already selected
-			if (this.isPickerDialog()) {
-				this._showAlreadySelectedVisualEffect();
-			}
 			this._bPreventValueRemove = true;
-			!this.isComposingCharacter() && this._showWrongValueVisualEffect();
 		}
 
 		if (oEvent) {
@@ -753,17 +750,17 @@ function(
 	 */
 	MultiComboBox.prototype.oninput = function(oEvent) {
 		ComboBoxBase.prototype.oninput.apply(this, arguments);
+
 		var oInput = oEvent.srcControl,
 			bIsPickerDialog = this.isPickerDialog(),
 			oInputField = bIsPickerDialog ? this.getPickerTextField() : this,
-			sValueState = oInputField.getValueState(),
-			sValueStateText = oInputField.getValueStateText(),
-			sAlreadySelectedText = this._oRbM.getText("VALUE_STATE_ERROR_ALREADY_SELECTED");
+			sValueState = oInputField.getValueState();
 
 		// reset the value state
-		if (sValueState === ValueState.Error && sValueStateText === sAlreadySelectedText) {
+		if (sValueState === ValueState.Error && this._bAlreadySelected) {
 				oInputField.setValueState(this._sInitialValueState);
-				oInputField.setValueStateText(this._sOriginalValueStateText);
+				oInputField.setValueStateText(this._sInitialValueStateText);
+				this._bAlreadySelected = false;
 		}
 
 		if (!this.getEnabled() || !this.getEditable()) {
@@ -869,24 +866,26 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._showWrongValueVisualEffect = function() {
-		var oPickerTextField = this.getPickerTextField(),
-			oSuggestionsPopover = this._getSuggestionsPopover(),
-			sOldValueState = this.isPickerDialog() ? oPickerTextField.getValueState() : this.getValueState(),
-			sInvalidEntry = this._sOriginalValueStateText || this._oRbC.getText("VALUE_STATE_ERROR");
+		var oSuggestionsPopover = this._getSuggestionsPopover();
+		var sInitialValueStateText = this._sInitialValueStateText;
+		var sInitialValueState = this._sInitialValueState;
+		var sInvalidEntry = sInitialValueStateText || this._oRbC.getText("VALUE_STATE_ERROR");
+		var that = this;
 
-		if (sOldValueState === ValueState.Error) {
+		if (sInitialValueState === ValueState.Error) {
 			return;
 		}
 
 		if (oSuggestionsPopover) {
 			oSuggestionsPopover.updateValueState(ValueState.Error, sInvalidEntry, true);
-			setTimeout(oSuggestionsPopover.updateValueState.bind(oSuggestionsPopover, sOldValueState, sInvalidEntry, true), 1000);
+			setTimeout(oSuggestionsPopover.updateValueState.bind(oSuggestionsPopover, that.getValueState(), sInvalidEntry, true), 1000);
 		}
 
 		if (!this.isPickerDialog()) {
 			this.setValueState(ValueState.Error);
-			this.setValueStateText(sInvalidEntry);
-			setTimeout(this["setValueState"].bind(this, sOldValueState), 1000);
+			this.setValueStateText(this.getValueStateText() || sInvalidEntry);
+
+			setTimeout(this["setValueState"].bind(this, sInitialValueState || ValueState.Error), 1000);
 		}
 
 		this._syncInputWidth(this._oTokenizer);
@@ -898,26 +897,34 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._showAlreadySelectedVisualEffect = function() {
-		var bIsPickerDialog = this.isPickerDialog(),
-			oInputField = bIsPickerDialog ? this.getPickerTextField() : this,
-			sValueState = oInputField.getValueState(),
-			sValue = this.getValue().toLowerCase(),
-			aText = this.getSelectedItems().map(function(oItem) {
-				return oItem.getText().toLowerCase();
-			}),
-			sAlreadySelected = this._oRbM.getText("VALUE_STATE_ERROR_ALREADY_SELECTED");
+		var sAlreadySelectedText = this._oRbM.getText("VALUE_STATE_ERROR_ALREADY_SELECTED");
 
-		if (sValueState !== ValueState.Error) {
-			this._sInitialValueState = this.getValueState();
+		if (!this.getValue()) {
+			return;
 		}
 
-		if (aText.indexOf(sValue) > -1 && sValueState !== ValueState.Error && !this.isComposingCharacter()) {
-				oInputField.setValueState(ValueState.Error);
-				oInputField.setValueStateText(sAlreadySelected);
-				oInputField.selectText(0, this.getValue().length);
+		var bAlreadySelected = !!this.getSelectedItems().filter(function(oItem) {
+			return oItem.getText().toLowerCase() === this.getValue().toLowerCase();
+		}, this).length;
+
+		var bNewSelection = this.getItems().filter(function(oItem) {
+			return oItem.getText().toLowerCase() === this.getValue().toLowerCase();
+		}, this).length;
+
+		if (bAlreadySelected) {
+			this._sInitialValueState = this.getValueState();
+
+			this._sInitialValueStateText = this.getValueStateText();
+			this.setValueStateText(sAlreadySelectedText);
+
+			this._bAlreadySelected = true;
+			this.setValueState("Error");
+
+			return;
+		} else if (bNewSelection) {
+			return;
 		} else {
-				oInputField.setValueState(this._sInitialValueState);
-				oInputField.setValueStateText(this._sOriginalValueStateText);
+			this._showWrongValueVisualEffect();
 		}
 	};
 
@@ -1049,14 +1056,18 @@ function(
 		ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
 
 		this._bInitialSelectedKeysSettersCompleted = true;
-
 		this._oTokenizer.setEnabled(this.getEnabled());
-
 		this.setEditable(this.getEditable());
-
 		this._deregisterResizeHandler();
-
 		this._synchronizeSelectedItemAndKey();
+
+		if (!this._bAlreadySelected) {
+			this._sInitialValueStateText = this.getValueStateText();
+		}
+
+		if (this.getValueState() !== ValueState.Error) {
+			this._sInitialValueState = this.getValueState();
+		}
 	};
 
 	/**
@@ -1235,7 +1246,6 @@ function(
 
 		if (this.isPickerDialog()) {
 			// reset the value state after the dialog is closed
-			this._showAlreadySelectedVisualEffect();
 			this.getPickerTextField().setValue("");
 			this.getFilterSelectedButton() && this.getFilterSelectedButton().setPressed(false);
 		}
@@ -1465,26 +1475,6 @@ function(
 				});
 			}
 		}
-	};
-
-	/**
-	 * Sets the value state text
-	 *
-	 * @param {string} [sValueStateText] The new value state text
-	 * @returns {sap.m.MultiComboBox} this for chaining
-	 *
-	 * @public
-	 */
-	MultiComboBox.prototype.setValueStateText = function (sValueStateText) {
-		var aPrivateValueStateTexts = [this._oRbC.getText("VALUE_STATE_ERROR"),
-			this._oRbM.getText("VALUE_STATE_ERROR_ALREADY_SELECTED")];
-
-		if (aPrivateValueStateTexts.indexOf(sValueStateText) === -1) {
-			this._sOriginalValueStateText = sValueStateText;
-		}
-
-		ComboBoxBase.prototype.setValueStateText.apply(this, arguments);
-		return this;
 	};
 
 	/**
@@ -2085,8 +2075,9 @@ function(
 	 */
 	MultiComboBox.prototype.onAfterRenderingList = function() {
 		var oList = this._getList();
+		var bInputFocussed = document.activeElement === this.getFocusDomRef();
 
-		if (this.getEditable() && (this._iFocusedIndex != null) && (oList.getItems().length > this._iFocusedIndex)) {
+		if (this.getEditable() && !bInputFocussed && (this._iFocusedIndex != null) && (oList.getItems().length > this._iFocusedIndex)) {
 			oList.getItems()[this._iFocusedIndex].focus();
 			this._iFocusedIndex = null;
 		}
@@ -2113,7 +2104,6 @@ function(
 		ComboBoxBase.prototype.onAfterRendering.apply(this, arguments);
 		this._oTokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
 		this._registerResizeHandler();
-		this._sInitialValueState = this.getValueState();
 	};
 
 	/**
@@ -2130,7 +2120,7 @@ function(
 		// reset the value state
 		if (this.getValueState() === ValueState.Error && this.getValueStateText() === this._oRbM.getText("VALUE_STATE_ERROR_ALREADY_SELECTED")) {
 			this.setValueState(this._sInitialValueState);
-			this.setValueStateText(this._sOriginalValueStateText);
+			this.setValueStateText(this._sInitialValueStateText);
 		}
 
 		ComboBoxBase.prototype.onfocusout.apply(this, arguments);
@@ -2185,9 +2175,6 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onsapbackspace = function(oEvent) {
-		// validate the input value
-		this._showAlreadySelectedVisualEffect();
-
 		if (!this.getEnabled() || !this.getEditable()) {
 
 			// Prevent the backspace key from navigating back
@@ -2219,10 +2206,6 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onsapdelete = function(oEvent) {
-
-		// validate the input value
-		this._showAlreadySelectedVisualEffect();
-
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}

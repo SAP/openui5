@@ -781,6 +781,64 @@ sap.ui.define([
 		done();
 	});
 
+	QUnit.test("getSelectedIndex after parent collapse w/ recursive collapse", function(assert) {
+		var done = assert.async();
+		createTreeBindingAdapter("/bing/root", [], null, {
+			collapseRecursive: true,
+			displayRootNode: true,
+			numberOfExpandedLevels: 0
+		});
+		oBinding.expand(0);
+		oBinding.getContexts(0, 100);
+
+		oBinding.setSelectedIndex(1);
+		assert.equal(oBinding.getSelectedIndex(), 1, "Selected index is 1");
+
+		var fnChangeHandler1 = function(oEvent) {
+			oBinding.detachChange(fnChangeHandler1);
+			oBinding.getContexts(0, 100); // rebuild tree
+			assert.equal(oBinding.getSelectedIndex(), -1, "Selected index could not be found (-1)");
+
+			oBinding.expand(0);
+			oBinding.getContexts(0, 100);
+			assert.equal(oBinding.getSelectedIndex(), -1,
+				"Selected index has not been restored because of recursive collapse mode");
+			done();
+		};
+
+		oBinding.attachChange(fnChangeHandler1);
+		oBinding.collapse(0);
+	});
+
+	QUnit.test("getSelectedIndex after parent collapse w/o recursive collapse", function(assert) {
+		var done = assert.async();
+		createTreeBindingAdapter("/bing/root", [], null, {
+			collapseRecursive: false,
+			displayRootNode: true,
+			numberOfExpandedLevels: 0
+		});
+
+		oBinding.expand(0);
+		oBinding.getContexts(0, 100);
+
+		oBinding.setSelectedIndex(1);
+		assert.equal(oBinding.getSelectedIndex(), 1, "Selected index is 1");
+
+		var fnChangeHandler1 = function(oEvent) {
+			oBinding.detachChange(fnChangeHandler1);
+			oBinding.getContexts(0, 100); // rebuild tree
+			assert.equal(oBinding.getSelectedIndex(), -1, "Selected index could not be found (-1)");
+
+			oBinding.expand(0);
+			oBinding.getContexts(0, 100);
+			assert.equal(oBinding.getSelectedIndex(), 1, "Selected index 1 has been restored");
+			done();
+		};
+
+		oBinding.attachChange(fnChangeHandler1);
+		oBinding.collapse(0);
+	});
+
 	QUnit.test("Add Selection Interval", function(assert) {
 		var done = assert.async();
 		createTreeBindingAdapter("/bing/root", [], null, {

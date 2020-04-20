@@ -390,7 +390,7 @@ var ExpressionNode = /** @class */ (function (_super) {
                 }
                 i++;
             }
-            
+
         }
         return nodesCopy[0].evaluate(context);
     };

@@ -54,7 +54,7 @@ sap.ui.define([
 			this.oPostMessageBus = PostMessageBus.getInstance();
 			var oView = this.getView();
 
-			jQuery(window).resize(this.onSplitterResize);
+			jQuery(window).on("resize", this.onSplitterResize);
 
 			this.oPostMessageBus.subscribe("dtTool", "iFrameReady", this.onIFrameReady, this)
 				.subscribe("dtTool", "RTAstarted", this.onRTAstarted, this)

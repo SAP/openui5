@@ -155,7 +155,7 @@ function (
 					oColumnsOverlay.$().off("scroll", fnCallback);
 					done();
 				}.bind(this);
-				oColumnsOverlay.$().scroll(fnCallback);
+				oColumnsOverlay.$().on("scroll", fnCallback);
 
 				oScrollOverlay.$().scrollLeft(20);
 			});
@@ -236,7 +236,7 @@ function (
 					done();
 				}.bind(this);
 
-				oColumnsOverlay.$().scroll(fnCallback);
+				oColumnsOverlay.$().on("scroll", fnCallback);
 
 				oScrollOverlay.$().scrollLeft(20);
 			});

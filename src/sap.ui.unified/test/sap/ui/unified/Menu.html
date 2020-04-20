@@ -59,7 +59,7 @@
 
 				jQuery.sap.byId("settings").append("<div id='"+sId+"-frame' style='margin-top:5px;'><div style='display:inline-block;width:200px;'>" + sLabel + ":</div>" + sDom + "</div>");
 
-				jQuery.sap.byId(sId).change(fHandle);
+				jQuery.sap.byId(sId).on("change", fHandle);
 
 				return sId;
 			}
@@ -154,7 +154,7 @@
 				});
 				jQuery.sap.byId(sRerendering + "-frame").toggleClass("SettingHidden");
 
-				jQuery(document.body).keydown(function(e) {
+				jQuery(document.body).on("keydown", function(e) {
 					if ( e.keyCode == 68 /*D*/ && e.shiftKey && e.altKey && e.ctrlKey ) {
 						jQuery.sap.byId(sAvoidClosing + "-frame").toggleClass("SettingHidden");
 						jQuery.sap.byId(sRerendering + "-frame").toggleClass("SettingHidden");
@@ -466,7 +466,7 @@
 
 		</script>
 	</head>
-	<body class="sapUiBody" role="application">
+	<body class="sapUiBody">
 		<h1>Test Page for sap.ui.unified.Menu</h1>
 		<div id="settings"></div>
 		<hr>

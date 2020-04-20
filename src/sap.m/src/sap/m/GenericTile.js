@@ -453,6 +453,25 @@ sap.ui.define([
 			// attach handler in order to check the device type based on width and invalidate on change
 			Device.media.attachHandler(this._handleMediaChange, this, DEVICE_SET);
 		}
+
+		this.onDragComplete();
+	};
+
+	/**
+	 * Update Hover Overlay, Generic tile to remove Active Press state of generic Tile.
+	 * @private
+	 */
+	GenericTile.prototype.onDragComplete = function () {
+		//Check if "sapMGTPressActive" is present on Generic Tile after it has been Dragged, if Yes clear the class to remove the Press state of Generic tile.
+		if (this.hasStyleClass("sapMGTPressActive")) {
+			this.removeStyleClass("sapMGTPressActive");
+			if (this.$("hover-overlay").length > 0) {
+				this.$("hover-overlay").removeClass("sapMGTPressActive");
+			}
+			if (this.getMode() === library.GenericTileMode.LineMode) {
+				this.removeStyleClass("sapMGTLineModePress");
+			}
+		}
 	};
 
 	/**

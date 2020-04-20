@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 		"sap/ui/integration/library",
+		"sap/ui/core/library",
 		"sap/ui/dom/includeScript",
 		"sap/ui/integration/cards/BaseContent",
 		"sap/ui/integration/thirdparty/adaptivecards",
@@ -16,11 +17,20 @@ sap.ui.define([
 		"sap/ui/integration/cards/adaptivecards/elements/UI5InputToggle",
 		"sap/ui/integration/cards/adaptivecards/overwrites/ActionRender",
 		"sap/ui/integration/cards/adaptivecards/elements/hostConfig",
+		"sap/m/VBox",
+		"sap/m/MessageStrip",
+		"sap/ui/core/HTML",
+		"sap/ui/core/Core",
 		"sap/ui/model/json/JSONModel",
 		"sap/base/Log"
 	],
-	function (library, includeScript, BaseContent, AdaptiveCards, ACData, Markdown, UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, UI5InputToggle, ActionRender, HostConfig, JSONModel, Log) {
+	function (library, coreLibrary, includeScript, BaseContent, AdaptiveCards, ACData, Markdown,
+			  UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, UI5InputToggle, ActionRender, HostConfig,
+			  VBox, MessageStrip, HTML, Core, JSONModel, Log) {
 		"use strict";
+
+		// shortcut for sap.ui.core.MessageType
+		var MessageType = coreLibrary.MessageType;
 
 		/**
 		 * Constructor for a new <code>AdaptiveContent</code>.
@@ -56,8 +66,28 @@ sap.ui.define([
 			this._bComponentsReady = false;
 			this._bAdaptiveCardElementsReady = false;
 
+			this._setupCardContent();
 			this._setupAdaptiveCardDependency();
 			this._loadDependencies();
+		};
+
+		/**
+		 * Setup Card's structure
+		 *
+		 * @private
+		 */
+		AdaptiveContent.prototype._setupCardContent = function () {
+			var oMessageStrip = new MessageStrip(this.getId() + "-message", {showCloseButton: true, visible: false}),
+				oHTMLContainer = new HTML(this.getId() + "content", {
+					preferDOM: false,
+					content: "<div>&nbsp;</div>"
+				});
+
+			oMessageStrip.addStyleClass("sapUiTinyMargin");
+
+			this.setAggregation("_content", new VBox({
+				items: [oMessageStrip, oHTMLContainer]
+			}));
 		};
 
 		/**
@@ -75,19 +105,27 @@ sap.ui.define([
 				return;
 			}
 
-			this._handleMarkDown(oConfiguration);
+			this._handleMarkDown();
 			this._setupMSCardContent();
+		};
+
+		AdaptiveContent.prototype.getConfiguration = function () {
+			return this._oCardConfig;
 		};
 
 		/**
 		 * Processes the markdown only if enableMarkdown is set to true
 		 *
 		 * @private
-		 * @param {Object} oConfiguration The Configuration object.
 		 */
-		AdaptiveContent.prototype._handleMarkDown = function (oConfiguration) {
-			AdaptiveCards.AdaptiveCard.onProcessMarkdown = function(sText, oResult) {
-				if (oConfiguration.configuration && oConfiguration.configuration.enableMarkdown) {
+		AdaptiveContent.prototype._handleMarkDown = function () {
+			var that = this;
+
+			AdaptiveCards.AdaptiveCard.onProcessMarkdown = function (sText, oResult) {
+				var oCard = that.getParent(),
+					bEnableMarkdown = oCard.getManifestEntry("/sap.card/configuration/enableMarkdown");
+
+				if (bEnableMarkdown) {
 					oResult.outputHtml = new Markdown().render(sText);
 					oResult.didProcess = true;
 
@@ -109,9 +147,9 @@ sap.ui.define([
 			oData.loadData(sUrl)
 				.then(function () {
 					// set the data from the url as a card config
-					that._oCardConfig = oData.getData();
+					that._oCardConfig = Object.assign(that._oCardConfig, oData.getData());
 				}).then(function () {
-					that._handleMarkDown(that._oCardConfig);
+					that._handleMarkDown();
 					that._setupMSCardContent();
 				}).then(function () {
 					// destroy the data model, since it is not needed anymore
@@ -167,7 +205,7 @@ sap.ui.define([
 		 */
 		AdaptiveContent.prototype._isRtl = function () {
 			this.adaptiveCardInstance.isRtl = function () {
-				return sap.ui.getCore().getConfiguration().getRTL();
+				return Core.getConfiguration().getRTL();
 			};
 		};
 
@@ -182,7 +220,7 @@ sap.ui.define([
 
 				if (oAction instanceof AdaptiveCards.OpenUrlAction) {
 					oPayload = {
-						url:  oAction.url
+						url: oAction.url
 					};
 					sType = library.CardActionType.Navigation;
 				} else if (oAction instanceof AdaptiveCards.SubmitAction) {
@@ -199,6 +237,26 @@ sap.ui.define([
 					oCardActions.fireAction(this, sType, oPayload);
 				}
 			}.bind(this);
+		};
+
+		AdaptiveContent.prototype.onActionSubmitStart = function (oFormData) {
+			this.getParent().setBusy(true); // Loading indicator
+
+		};
+
+		AdaptiveContent.prototype.onActionSubmitEnd = function (oResponse, oError) {
+			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
+				sMessage = oError ? oResourceBundle.getText("CARDS_ADAPTIVE_ACTION_SUBMIT_ERROR") :
+					oResourceBundle.getText("CARDS_ADAPTIVE_ACTION_SUBMIT_SUCCESS"),
+				sMessageType = oError ? MessageType.Error : MessageType.Success,
+				oMessage = this.getAggregation("_content").getItems()[0];
+
+			oMessage
+				.setType(sMessageType)
+				.setText(sMessage)
+				.setVisible(true);
+
+			this.getParent().setBusy(false); // Loading indicator
 		};
 
 		/**
@@ -240,7 +298,7 @@ sap.ui.define([
 		 * @private
 		 */
 		AdaptiveContent.prototype._setupMSCardContent = function () {
-			var oDom = this.$(),
+			var oDom = this.getAggregation("_content").getItems()[1].$(),
 				oConfiguration = this._oCardConfig,
 				oContentTemplateData, oCardDataProvider;
 
@@ -289,23 +347,20 @@ sap.ui.define([
 		 * @private
 		 */
 		AdaptiveContent.prototype._createDataProvider = function (oData) {
-			if (this._oDataProvider) {
-				this._oDataProvider.destroy();
-			}
+			var oDataProvider = null;
 
 			if (this._oDataProviderFactory) {
-				this._oDataProvider = this._oDataProviderFactory.create(oData, this._oServiceManager);
+				oDataProvider = this._oDataProviderFactory.create(oData, this._oServiceManager);
 			}
 
-			return this._oDataProvider;
+			return oDataProvider;
 		};
-
 
 		/**
 		 * Setup a data provider - attach to needed events,
 		 * set the templating and render the card.
 		 *
-		 * @param {Object} oData The data needed for the provider
+		 * @param {Object} oDataProvider The data provider
 		 * @returns {Object} The created data provider
 		 * @private
 		 */
@@ -358,7 +413,7 @@ sap.ui.define([
 		 * @private
 		 */
 		AdaptiveContent.prototype._renderMSCardContent = function (oCard) {
-			var oDom = this.$();
+			var oDom = this.getAggregation("_content").getItems()[1].$();
 			if (this.adaptiveCardInstance && oCard && oDom && oDom.size()) {
 				this.adaptiveCardInstance.parse(oCard);
 				oDom.html(this.adaptiveCardInstance.render());

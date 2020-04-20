@@ -478,5 +478,26 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Callback prior the Submit Action
+	 *
+	 * It's called before the request is sent.
+	 *
+	 * @param oFormData {object} Parameters
+	 */
+	BaseContent.prototype.onActionSubmitStart = function (oFormData) {
+	};
+
+	/**
+	 * Callback after Submit Action
+	 *
+	 * It's called when the request completes- either successfully or not.
+	 *
+	 * @param oResponse {object} The response from the server
+	 * @param oError {object} The error object
+	 */
+	BaseContent.prototype.onActionSubmitEnd = function (oResponse, oError) {
+	};
+
 	return BaseContent;
 });

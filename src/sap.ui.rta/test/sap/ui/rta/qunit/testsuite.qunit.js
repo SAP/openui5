@@ -482,8 +482,7 @@ sap.ui.define([
 						resourceroots: {
 							"sap.ui.rta.test.additionalElements": "test-resources/sap/ui/rta/internal/testdata/additionalElements/"
 						}
-					},
-					autostart: false // test calls QUnit.start after some async initialization
+					}
 				},
 				"plugin/additionalElements/AdditionalElementsAnalyzerOData": {
 					group: "Plugin",

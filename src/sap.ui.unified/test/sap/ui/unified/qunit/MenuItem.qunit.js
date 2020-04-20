@@ -64,7 +64,7 @@ sap.ui.define([
 		this.oMenu.open();
 
 		// Act
-		this.oMenuItem.$().mouseover();
+		this.oMenuItem.$().trigger("mouseover");
 
 		// Assert
 		assert.ok(true, "mouseover event does not lead to an exception");

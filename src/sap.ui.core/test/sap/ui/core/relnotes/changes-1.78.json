@@ -1,0 +1,33 @@
+{
+  "1.78.0": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "bc2c83f2df4e84eb5dfad2900c27d4592a2dcead",
+        "type": "FIX",
+        "text": " model.Model: avoid too many setTimeout/clearTimeout calls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070128967"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070128920"
+          }
+        ]
+      },
+      {
+        "id": "8d0208acabd23c264dcc222e11ab7c0fcbb3d279",
+        "type": "FIX",
+        "text": " sap.ui.core.hyphenation.Hyphenation: Check for native support improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070141765"
+          }
+        ]
+      }
+    ]
+  }
+}

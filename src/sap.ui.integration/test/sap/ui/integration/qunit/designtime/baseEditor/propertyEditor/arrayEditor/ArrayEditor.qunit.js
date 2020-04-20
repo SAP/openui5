@@ -2,18 +2,16 @@
 
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
-	"sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/base/util/ObjectPath",
-	"sap/base/util/restricted/_merge"
+	"sap/base/util/restricted/_merge",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	BaseEditor,
-	ArrayEditor,
-	JSONModel,
 	QUnitUtils,
 	ObjectPath,
-	_merge
+	_merge,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -819,6 +817,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when editing item in the nested array, then no re-rendering should take place", function (assert) {
+			var fnDone = assert.async();
 			var oVWCarEditor = _getArrayEditorElements(this.oArrayEditor)[0];
 			var oOwnersEditor = oVWCarEditor.getItems()[1]._getPropertyEditors()[2].getAggregation("propertyEditor");
 			var aOwnersItems = _getArrayEditorElements(oOwnersEditor);
@@ -827,15 +826,18 @@ sap.ui.define([
 
 			oOwnerInput.focus();
 			assert.strictEqual(document.activeElement, oOwnerInput.$("inner").get(0));
-			oOwnerInput.setValue("Kevin");
-			QUnitUtils.triggerEvent("input", oOwnerInput.getDomRef());
+
+			EditorQunitUtils.setInputValue(oOwnerInput, "Kevin");
 
 			assert.strictEqual(
 				ObjectPath.get(["cars", "0", "owners", "0", "name"], this.oBaseEditor.getJson()),
 				"Kevin"
 			);
 
-			assert.strictEqual(document.activeElement, oOwnerInput.$("inner").get(0));
+			setTimeout(function () {
+				assert.strictEqual(document.activeElement, oOwnerInput.$("inner").get(0));
+				fnDone();
+			});
 		});
 	});
 

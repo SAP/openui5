@@ -187,27 +187,33 @@
 			}
 		});
 
-		oButton.addStyleClass("sapUiLargeMargin").placeAt("ctr_cont");
-		oSelect.addStyleClass("sapUiLargeMargin").placeAt("ctr_cont");
+		oButton.placeAt("ctr_cont");
+		oSelect.placeAt("ctr_cont");
 
 		var oPage = new sap.m.Page("page0", {
 			showHeader: false,
 			content: [
-				oMenuButton.addStyleClass("sapUiLargeMargin")
+				new sap.m.FlexBox({
+					height: "300px",
+					width: "600px",
+					justifyContent: "Center",
+					alignItems: "Center",
+					items: oMenuButton
+				})
 			]
 		});
 
 		var oApp = new sap.m.App({
 			initialPage: "page0",
 			pages: [
-				oPage.addStyleClass("sapUiLargeMargin")
+				oPage
 			]
 		});
 
-	oApp.addStyleClass("sapUiLargeMargin").placeAt("menu_cont");
+	oApp.placeAt("menu_cont");
 	</script>
 </head>
-<body id="body" class="sapUiBody" role="application">
+<body id="body" class="sapUiBody">
 <div id="ctr_cont" style="height: 100px"></div>
 <div id="menu_cont"></div>
 </body>

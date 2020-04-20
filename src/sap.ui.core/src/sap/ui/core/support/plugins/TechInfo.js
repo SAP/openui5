@@ -211,7 +211,7 @@ sap.ui.define([
 					});
 				});
 			}, function (oError) {
-				Log.error("Could not load module 'sap/ui/testrecorder/Bootstrap':", oError);
+				Log.error("Could not load module 'sap/ui/core/support/trace/E2eTraceLib':", oError);
 			});
 
 		};

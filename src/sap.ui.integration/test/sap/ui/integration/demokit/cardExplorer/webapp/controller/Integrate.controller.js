@@ -27,7 +27,7 @@ sap.ui.define([
 		_onRouteMatched: function (oEvent) {
 			var oArgs = oEvent.getParameter("arguments"),
 				sSampleKey = oArgs["key"],
-				sTopicURL = "./topics/integrate/" + sSampleKey + '.html',
+				sTopicURL = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/topics/integrate/" + sSampleKey + '.html'),
 				oCurrentEntry;
 
 			var aNavEntries = IntegrateNavigationModel.getProperty('/navigation');

@@ -361,8 +361,6 @@ sap.ui.define([
 				// Vertical scrolling
 				oVerticalScrollbar: null,
 				oVerticalScrollPosition: new ScrollPosition(oTable),
-				bIsScrolledVerticallyByWheel: false,
-				bIsScrolledVerticallyByKeyboard: false,
 				pVerticalScrollUpdateProcess: null,
 
 				// External vertical scrolling
@@ -699,7 +697,9 @@ sap.ui.define([
 					});
 				};
 
-				if (oTable._bLargeDataScrolling && !internal(oTable).bIsScrolledVerticallyByWheel) {
+				oTable._getKeyboardExtension().setActionMode(false);
+
+				if (oTable._bLargeDataScrolling) {
 					_internal.mTimeouts.largeDataScrolling = setTimeout(function() {
 						delete _internal.mTimeouts.largeDataScrolling;
 
@@ -790,20 +790,6 @@ sap.ui.define([
 			// For interaction detection.
 			Interaction.notifyScrollEvent && Interaction.notifyScrollEvent(oEvent);
 
-			if (!VerticalScrollProcess.canStart(this, VerticalScrollProcess.UpdateFromScrollbar)) {
-				return;
-			}
-
-			if (internal(this).bIsScrolledVerticallyByKeyboard) {
-				// When scrolling with the keyboard the first visible row is already correct and does not need adjustment.
-				log("VerticalScrollingHelper.onScrollbarScroll: Aborted - Scrolled by keyboard", this);
-				return;
-			}
-
-			// Do not scroll in action mode, if scrolling was not initiated by a keyboard action!
-			// Might cause loss of user input and other undesired behavior.
-			this._getKeyboardExtension().setActionMode(false);
-
 			var nNewScrollTop = oEvent.target.scrollTop; // Can be a float if zoomed in Chrome.
 			var nOldScrollTop = oEvent.target._scrollTop; // This is set in VerticalScrollingHelper.scrollScrollbar.
 			var bScrollWithScrollbar = nNewScrollTop !== nOldScrollTop;
@@ -818,8 +804,6 @@ sap.ui.define([
 			} else {
 				log("VerticalScrollingHelper.onScrollbarScroll: Scroll position changed to " + nNewScrollTop + " by API", this);
 			}
-
-			internal(this).bIsScrolledVerticallyByWheel = false;
 		},
 
 		/**
@@ -1500,17 +1484,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Will be called if the vertical scrollbar is clicked.
-		 * Resets the vertical scroll flags.
-		 *
-		 * @param {jQuery.Event} oEvent The mouse event object.
-		 */
-		onScrollbarMouseDown: function(oEvent) {
-			internal(this).bIsScrolledVerticallyByWheel = false;
-			internal(this).bIsScrolledVerticallyByKeyboard = false;
-		},
-
-		/**
 		 * Adds an event handler that is called before the <code>VerticalScrollingHelper.onRowsUpdated</code> handler. The event object is passed
 		 * as the first argument. A preprocessor is called only once and is then removed automatically. If the preprocessor returns false, the
 		 * <code>onRowsUpdated</code> handler will not be executed.
@@ -1712,7 +1685,6 @@ sap.ui.define([
 		addEventListeners: function(oTable) {
 			var oScrollExtension = oTable._getScrollExtension();
 			var aScrollAreas = VerticalScrollingHelper.getScrollAreas(oTable);
-			var oVSb = oScrollExtension.getVerticalScrollbar();
 			var oViewport = oTable.getDomRef("tableCCnt");
 
 			if (!oScrollExtension._onVerticalScrollEventHandler) {
@@ -1721,13 +1693,6 @@ sap.ui.define([
 
 			for (var i = 0; i < aScrollAreas.length; i++) {
 				aScrollAreas[i].addEventListener("scroll", oScrollExtension._onVerticalScrollEventHandler);
-			}
-
-			if (oVSb) {
-				if (!oScrollExtension._onVerticalScrollbarMouseDownEventHandler) {
-					oScrollExtension._onVerticalScrollbarMouseDownEventHandler = VerticalScrollingHelper.onScrollbarMouseDown.bind(oTable);
-				}
-				oVSb.addEventListener("mousedown", oScrollExtension._onVerticalScrollbarMouseDownEventHandler);
 			}
 
 			if (oViewport) {
@@ -1748,7 +1713,6 @@ sap.ui.define([
 		removeEventListeners: function(oTable) {
 			var oScrollExtension = oTable._getScrollExtension();
 			var aScrollAreas = VerticalScrollingHelper.getScrollAreas(oTable);
-			var oVSb = oScrollExtension.getVerticalScrollbar();
 			var oViewport = oTable.getDomRef("tableCCnt");
 
 			if (oScrollExtension._onVerticalScrollEventHandler) {
@@ -1756,11 +1720,6 @@ sap.ui.define([
 					aScrollAreas[i].removeEventListener("scroll", oScrollExtension._onVerticalScrollEventHandler);
 				}
 				delete oScrollExtension._onVerticalScrollEventHandler;
-			}
-
-			if (oVSb && oScrollExtension._onVerticalScrollbarMouseDownEventHandler) {
-				oVSb.removeEventListener("mousedown", oScrollExtension._onVerticalScrollbarMouseDownEventHandler);
-				delete oScrollExtension._onVerticalScrollbarMouseDownEventHandler;
 			}
 
 			if (oViewport && oScrollExtension._onViewportScrollEventHandler) {
@@ -1874,11 +1833,7 @@ sap.ui.define([
 					oVerticalScrollPosition.scrollRows(iScrollDelta * this._getRowCounts().count);
 				}
 
-				internal(this).bIsScrolledVerticallyByWheel = true;
-				internal(this).bIsScrolledVerticallyByKeyboard = false;
-
 				this._getKeyboardExtension().setActionMode(false);
-
 				VerticalScrollingHelper.performUpdateFromScrollPosition(this);
 			}
 		},
@@ -2329,17 +2284,16 @@ sap.ui.define([
 	});
 
 	/**
-	 * Scrolls the table vertically by setting the property <code>firstVisibleRow</code>.
+	 * Scrolls the table vertically.
 	 *
-	 * @param {boolean} [bDown=false] If <code>true</code>, the table will be scrolled down, otherwise it is scrolled up.
+	 * @param {boolean} [bDown=false] If <code>true</code>, the table is scrolled down, otherwise up.
 	 * @param {boolean} [bPage=false] If <code>true</code>, the amount of visible scrollable rows (a page) is scrolled,
 	 *                                otherwise a single row is scrolled.
-	 * @param {boolean} [bIsKeyboardScroll=false] Indicates whether scrolling is initiated by a keyboard action.
 	 * @param {boolean} [bAsync=false] Whether to set the first visible row asynchronously.
 	 * @param {function} [fnBeforeScroll] Callback that is called synchronously before the property <code>firstVisibleRow</code> is set.
 	 * @returns {boolean} Returns <code>true</code>, if scrolling was actually performed.
 	 */
-	ScrollExtension.prototype.scrollVertically = function(bDown, bPage, bIsKeyboardScroll, bAsync, fnBeforeScroll) {
+	ScrollExtension.prototype.scrollVertically = function(bDown, bPage, bAsync, fnBeforeScroll) {
 		var oTable = this.getTable();
 
 		if (!oTable) {
@@ -2348,7 +2302,6 @@ sap.ui.define([
 
 		bDown = bDown === true;
 		bPage = bPage === true;
-		bIsKeyboardScroll = bIsKeyboardScroll === true;
 		bAsync = bAsync === true;
 
 		var bScrolled = false;
@@ -2385,33 +2338,23 @@ sap.ui.define([
 			bScrolled = true;
 		}
 
-		if (bScrolled && bIsKeyboardScroll) {
-			internal(oTable).bIsScrolledVerticallyByKeyboard = true;
-		}
-
 		return bScrolled;
 	};
 
 	/**
-	 * Scrolls the table vertically to the end or to the beginning by setting the property <code>firstVisibleRow</code>.
+	 * Scrolls the table vertically to the end or to the beginning.
 	 *
-	 * @param {boolean} [bDown=false] If <code>true</code>, the table will be scrolled down, otherwise it is scrolled up.
-	 * @param {boolean} [bIsKeyboardScroll=false] Indicates whether scrolling is initiated by a keyboard action.
+	 * @param {boolean} [bDown=false] If <code>true</code>, the table is scrolled down, otherwise up.
 	 * @returns {boolean} Returns <code>true</code>, if scrolling was actually performed.
 	 */
-	ScrollExtension.prototype.scrollVerticallyMax = function(bDown, bIsKeyboardScroll) {
+	ScrollExtension.prototype.scrollVerticallyMax = function(bDown) {
 		var oTable = this.getTable();
 
 		if (!oTable) {
 			return false;
 		}
 
-		if (bDown == null) {
-			bDown = false;
-		}
-		if (bIsKeyboardScroll == null) {
-			bIsKeyboardScroll = false;
-		}
+		bDown = bDown === true;
 
 		var bScrolled = false;
 		var iFirstVisibleScrollableRow = oTable.getFirstVisibleRow();
@@ -2425,10 +2368,6 @@ sap.ui.define([
 		} else if (iFirstVisibleScrollableRow > 0) {
 			oTable.setFirstVisibleRow(0);
 			bScrolled = true;
-		}
-
-		if (bScrolled && bIsKeyboardScroll) {
-			internal(oTable).bIsScrolledVerticallyByKeyboard = true;
 		}
 
 		return bScrolled;

@@ -205,6 +205,7 @@ function (
 		});
 
 		QUnit.test("when an overlay has createContainer action designTime metadata, and isEnabled property is function", function(assert) {
+			assert.expect(22);
 			this.oFormOverlay.setDesignTimeMetadata({
 				aggregations : {
 					formContainers : {

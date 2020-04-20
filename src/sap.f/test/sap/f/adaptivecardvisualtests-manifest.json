@@ -5,6 +5,9 @@
 		"type": "card"
 	},
 	"sap.card": {
+		"configuration": {
+			"enableMarkdown": true
+		},
 		"header": {
 			"title": "Adaptive Card - Inputs",
 				"subTitle": "sap.ui.integration",
@@ -20,9 +23,6 @@
 			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
 			"type": "AdaptiveCard",
 			"version": "1.0",
-			"configuration": {
-				"enableMarkdown": true
-			},
 			"body": [
 				{
 				"type": "ColumnSet",
@@ -171,9 +171,10 @@
 								},
 								{
 									"type": "Input.Time",
-									"placeholder": "Start time",
 									"id": "TimeVal",
-									"value": "16:59"
+									"value": "13:59",
+									"min": "12:00",
+									"max": "17:00"
 								}
 							]
 						}

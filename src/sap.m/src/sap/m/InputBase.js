@@ -393,6 +393,10 @@ function(
 	};
 
 	InputBase.prototype.onAfterRendering = function() {
+		var sValueState = this.getValueState();
+		var bIsFocused = this.getFocusDomRef() === document.activeElement;
+		var bClosedValueState = sValueState === ValueState.None;
+
 		// maybe control is invalidated on keystrokes and
 		// even the value property did not change
 		// dom value is still the old value
@@ -402,6 +406,8 @@ function(
 			// so we should keep the dom up-to-date
 			this.$("inner").val(this._sDomValue);
 		}
+
+		this.$("message").text(this.getValueStateText());
 
 		// IE fires the input event when it is put (rendered) in the dom and it has a non-ASCII character
 		//
@@ -414,6 +420,11 @@ function(
 
 		// rendering phase is finished
 		this.bRenderingPhase = false;
+
+
+		if (bIsFocused) {
+			this[bClosedValueState ? "closeValueStateMessage" : "openValueStateMessage"]();
+		}
 	};
 
 	InputBase.prototype.exit = function() {
@@ -803,30 +814,6 @@ function(
 	};
 
 	/**
-	 * Registers an event listener to the browser input event.
-	 *
-	 * @param {function} fnCallback Function to be called when the value of the input element is changed.
-	 * @deprecated Since 1.22. Instead, use event delegation(oninput) to listen input event.
-	 * @return {sap.m.InputBase} <code>this</code> to allow method chaining.
-	 * @protected
-	 */
-	InputBase.prototype.bindToInputEvent = function(fnCallback) {
-
-		// remove the previous event delegate
-		if (this._oInputEventDelegate) {
-			this.removeEventDelegate(this._oInputEventDelegate);
-		}
-
-		// generate new input event delegate
-		this._oInputEventDelegate = {
-			oninput : fnCallback
-		};
-
-		// add the input event delegate
-		return this.addEventDelegate(this._oInputEventDelegate);
-	};
-
-	/**
 	 * Sets the DOM value of the input field and handles placeholder visibility.
 	 *
 	 * @param {string} sValue value of the input field.
@@ -1048,22 +1035,6 @@ function(
 		}
 	};
 
-	InputBase.prototype.updateValueStateClasses = function(sValueState, sOldValueState) {
-		var $DomRef = this.$(),
-			$ContentWrapper = this.$("content"),
-			mValueState = ValueState;
-
-		if (sOldValueState !== mValueState.None) {
-			$DomRef.removeClass("sapMInputBaseState");
-			$ContentWrapper.removeClass("sapMInputBaseContentWrapperState sapMInputBaseContentWrapper" + sOldValueState);
-		}
-
-		if (sValueState !== mValueState.None) {
-			$DomRef.addClass("sapMInputBaseState");
-			$ContentWrapper.addClass("sapMInputBaseContentWrapperState sapMInputBaseContentWrapper" + sValueState);
-		}
-	};
-
 	InputBase.prototype.shouldValueStateMessageBeOpened = function() {
 		return (this.getValueState() !== ValueState.None) &&
 				this.getEditable() &&
@@ -1093,68 +1064,6 @@ function(
 	/* ----------------------------------------------------------- */
 	/* public methods                                              */
 	/* ----------------------------------------------------------- */
-
-	/**
-	 * Setter for property <code>valueState</code>.
-	 *
-	 * Default value is <code>None</code>.
-	 *
-	 * @param {sap.ui.core.ValueState} sValueState New value for property <code>valueState</code>.
-	 * @return {sap.m.InputBase} <code>this</code> to allow method chaining.
-	 * @public
-	 */
-	InputBase.prototype.setValueState = function(sValueState) {
-		var sOldValueState = this.getValueState();
-		this.setProperty("valueState", sValueState, true);
-
-		// get the value back in case of invalid value
-		sValueState = this.getValueState();
-		if (sValueState === sOldValueState) {
-			return this;
-		}
-
-		var oDomRef = this.getDomRef();
-
-		if (!oDomRef) {
-			return this;
-		}
-
-		var $Input = this.$("inner"),
-			mValueState = ValueState;
-
-		if (sValueState === mValueState.Error) {
-			$Input.attr("aria-invalid", "true");
-		} else {
-			$Input.removeAttr("aria-invalid");
-		}
-
-		this.updateValueStateClasses(sValueState, sOldValueState);
-
-		if ($Input[0] === document.activeElement) {
-			if (sValueState === mValueState.None) {
-				this.closeValueStateMessage();
-			} else {
-				this.openValueStateMessage();
-			}
-		}
-		return this;
-	};
-
-	/**
-	 * Setter for property <code>valueStateText</code>.
-	 *
-	 * Default value is empty/<code>undefined</code>.
-	 *
-	 * @param {string} sText New value for property <code>valueStateText</code>.
-	 * @returns {sap.m.InputBase} <code>this</code> to allow method chaining
-	 * @since 1.26
-	 * @public
-	 */
-	InputBase.prototype.setValueStateText = function(sText) {
-		this.setProperty("valueStateText", sText, true);
-		this.$("message").text(this.getValueStateText());
-		return this;
-	};
 
 	/**
 	 * Setter for property <code>value</code>.

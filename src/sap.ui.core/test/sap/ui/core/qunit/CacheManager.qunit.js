@@ -19,6 +19,17 @@ sap.ui.define([
 	});
 	aSupportedEnv.push({
 		system: Device.system.SYSTEMTYPE.DESKTOP,
+		browserName: Device.browser.BROWSER.EDGE,
+		browserVersion: 80
+	});
+	aSupportedEnv.push({
+		system: Device.system.SYSTEMTYPE.DESKTOP,
+		browserName: Device.browser.BROWSER.FIREFOX,
+		os: Device.os.OS.WINDOWS,
+		browserVersion: 74
+	});
+	aSupportedEnv.push({
+		system: Device.system.SYSTEMTYPE.DESKTOP,
 		browserName: Device.browser.BROWSER.SAFARI,
 		browserVersion: 13
 	});
@@ -32,12 +43,25 @@ sap.ui.define([
 		browserName: Device.browser.BROWSER.SAFARI,
 		browserVersion: 13
 	});
+	aSupportedEnv.push({
+		system: Device.system.SYSTEMTYPE.TABLET,
+		os: Device.os.OS.ANDROID,
+		browserName: Device.browser.BROWSER.CHROME,
+		browserVersion:80
+	});
+	aSupportedEnv.push({
+		system: Device.system.SYSTEMTYPE.PHONE,
+		os: Device.os.OS.ANDROID,
+		browserName: Device.browser.BROWSER.CHROME,
+		browserVersion: 80
+	});
 	var bSupportedEnv = aSupportedEnv.some(function(oSuppportedEnv) {
 		var bSupportedSystem = Device.system[oSuppportedEnv.system],
+			bSupportedOSName = oSuppportedEnv.os ? oSuppportedEnv.os === Device.os.name : true,
 			bSupportedBrowserName = oSuppportedEnv.browserName === Device.browser.name,
 			bSupportedBrowserVersion = Device.browser.version >= oSuppportedEnv.browserVersion;
 
-		return bSupportedSystem && bSupportedBrowserName && bSupportedBrowserVersion && window.indexedDB;
+		return bSupportedSystem && bSupportedOSName && bSupportedBrowserName && bSupportedBrowserVersion && window.indexedDB;
 	});
 
 	if (!bSupportedEnv) {
@@ -84,6 +108,7 @@ sap.ui.define([
 			function doesEnvMatch(oEnv, oSupportedEnv) {
 				return (
 					oSupportedEnv.system === oEnv.system
+					&& (oSupportedEnv.os ? oSupportedEnv.os === oEnv.os : true)
 					&& oSupportedEnv.browserName === oEnv.browserName
 					&& oEnv.browserVersion >= oSupportedEnv.browserVersion
 				);
@@ -92,14 +117,17 @@ sap.ui.define([
 			// Iterate over all environments and collect those which does not match the supported ones (aSupportedEnv)
 			for (var syst in Device.system.SYSTEMTYPE) {
 				for (var browser in Device.browser.BROWSER) {
-					var oEnv = {
-						system: Device.system.SYSTEMTYPE[syst],
-						browserName: Device.browser.BROWSER[browser],
-						browserVersion: Device.browser.version
-					};
+					for (var os in Device.os.OS) {
+						var oEnv = {
+							system: Device.system.SYSTEMTYPE[syst],
+							os: Device.os.OS[os],
+							browserName: Device.browser.BROWSER[browser],
+							browserVersion: Device.browser.version
+						};
 
-					if (!aSupportedEnv.some(doesEnvMatch.bind(null, oEnv)) ) {
-						aNonSupportedEnv.push(oEnv);
+						if (!aSupportedEnv.some(doesEnvMatch.bind(null, oEnv)) ) {
+							aNonSupportedEnv.push(oEnv);
+						}
 					}
 				}
 			}
@@ -123,6 +151,9 @@ sap.ui.define([
 			return Promise.all(aSupportedEnv.map(function(oEnv) {
 				// Arrange
 				that.stub(Device.system, oEnv.system).value(true);
+				if (oEnv.os) {
+					 that.stub(Device.os, "name").value(oEnv.os);
+					}
 				that.stub(Device.browser, "name").value(oEnv.browserName);
 				that.stub(Device.browser, "version").value(oEnv.browserVersion);
 
@@ -138,6 +169,9 @@ sap.ui.define([
 						} else {
 							that.stub(Device.system, Device.system.SYSTEMTYPE[systemType]).value(false);
 						}
+					}
+					if (oEnv.os) {
+						that.stub(Device.os, "name").value(oEnv.os);
 					}
 					that.stub(Device.browser, "name").value(oEnv.browserName);
 					that.stub(Device.browser, "version").value(oEnv.browserVersion);

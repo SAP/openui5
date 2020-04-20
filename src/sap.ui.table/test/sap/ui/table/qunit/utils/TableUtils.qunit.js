@@ -943,7 +943,7 @@ sap.ui.define([
 				assert.equal(TableUtils.isLastScrollableRow(oTable, getCell(i, 0)), i == iVisibleRowCount - iFixedBottom - 1,
 					"isLastScrollableRow (" + i + ")");
 			}
-			oTable._getScrollExtension().scrollVertically(true, false);
+			oTable._getScrollExtension().scrollVertically(true);
 		}
 	});
 

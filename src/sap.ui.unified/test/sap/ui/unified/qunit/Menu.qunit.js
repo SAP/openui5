@@ -1261,9 +1261,9 @@ sap.ui.define([
 			oMenu.openAsContextMenu(oEvent, jQuery("#qunit-fixture").get(0));
 			assert.ok(oMenu.bOpen, "Menu opened");
 		};
-		jQuery("#qunit-fixture").bind("contextmenu", fnEventHandler);
-		jQuery("#qunit-fixture").contextmenu();
-		jQuery("#qunit-fixture").unbind("contextmenu", fnEventHandler);
+		jQuery("#qunit-fixture").on("contextmenu", fnEventHandler);
+		jQuery("#qunit-fixture").trigger("contextmenu");
+		jQuery("#qunit-fixture").off("contextmenu", fnEventHandler);
 		oMenu.destroy();
 	});
 

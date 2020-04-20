@@ -585,6 +585,11 @@ sap.ui.define([
 			this.fnFilter = null;
 		};
 
+		ComboBoxBase.prototype.onBeforeRendering = function () {
+			ComboBoxTextField.prototype.onBeforeRendering.apply(this, arguments);
+			this._updateSuggestionsPopoverValueState();
+		};
+
 		ComboBoxBase.prototype._handlePopupOpenAndItemsLoad = function (bOpenOnInteraction) {
 			var oPicker;
 
@@ -852,36 +857,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Sets the visualization of the validation state of the control,
-		 * e.g. <code>Error</code>, <code>Warning</code>, <code>Success</code>.
-		 *
-		 * @param {sap.ui.core.ValueState} [sValueState] The new value state
-		 * @returns {sap.m.InputBase} this for chaining
-		 *
-		 * @public
-		 */
-		ComboBoxBase.prototype.setValueState = function(sValueState) {
-			ComboBoxTextField.prototype.setValueState.apply(this, arguments);
-			this._updateSuggestionsPopoverValueState();
-
-			return this;
-		};
-
-		/**
-		 * Sets the value state text
-		 *
-		 * @param {string} [sValueStateText] The new value state text
-		 * @returns {sap.m.InputBase} this for chaining
-		 *
-		 * @public
-		 */
-		ComboBoxBase.prototype.setValueStateText = function(sValueStateText) {
-			ComboBoxTextField.prototype.setValueStateText.apply(this, arguments);
-			this._updateSuggestionsPopoverValueState();
-			return this;
-		};
-
-		/**
 		 * Sets <code>sap.m.FormattedText</code> value state message and creates
 		 * a cloned object for aggregation of <code>sap.m.ValueStateHeader</code>.
 		 *
@@ -897,20 +872,6 @@ sap.ui.define([
 				this._oFormattedValueStateHeader = oFormattedValueStateText.clone();
 			}
 
-			this._updateSuggestionsPopoverValueState();
-			return this;
-		};
-
-		/**
-		 * Sets whether the value state message should be shown or not.
-		 *
-		 * @param {boolean} [bShow] The new value state text
-		 * @returns {sap.m.InputBase} this for chaining
-		 *
-		 * @public
-		 */
-		ComboBoxBase.prototype.setShowValueStateMessage = function(bShow) {
-			ComboBoxTextField.prototype.setShowValueStateMessage.apply(this, arguments);
 			this._updateSuggestionsPopoverValueState();
 			return this;
 		};

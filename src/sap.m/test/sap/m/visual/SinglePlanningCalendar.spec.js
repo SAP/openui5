@@ -160,25 +160,25 @@ describe("sap.m.SinglePlanningCalendar", function() {
 		//there is no focus on mobile
 		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
 			element(by.id("overrideTime")).click();
-			element(by.css("[data-sap-start-date='20180711-0200']")).click();
+			element(by.css("[data-sap-start-date='20180711-0900']")).click();
 			expect(takeScreenshot(oSPC)).toLookAs("focused_cell_with_mouse");
 		}
 	});
 
 	it("should focus another cell in the right with ARROW RIGHT keyboard key", function () {
-		_focusFromCellToCell("[data-sap-start-date='20180711-0200']", "focused_cell_with_arrow_right_kb", protractor.Key.ARROW_RIGHT);
+		_focusFromCellToCell("[data-sap-start-date='20180711-0900']", "focused_cell_with_arrow_right_kb", protractor.Key.ARROW_RIGHT);
 	});
 
 	it("should focus another cell in the left with ARROW LEFT keyboard key", function () {
-		_focusFromCellToCell("[data-sap-start-date='20180711-0200']", "focused_cell_with_arrow_left_kb", protractor.Key.ARROW_LEFT);
+		_focusFromCellToCell("[data-sap-start-date='20180711-0900']", "focused_cell_with_arrow_left_kb", protractor.Key.ARROW_LEFT);
 	});
 
 	it("should focus another cell up with ARROW UP keyboard key", function () {
-		_focusFromCellToCell("[data-sap-start-date='20180711-0200']", "focused_cell_with_arrow_up_kb", protractor.Key.ARROW_UP);
+		_focusFromCellToCell("[data-sap-start-date='20180711-0900']", "focused_cell_with_arrow_up_kb", protractor.Key.ARROW_UP);
 	});
 
 	it("should focus another cell down with ARROW DOWN keyboard key", function () {
-		_focusFromCellToCell("[data-sap-start-date='20180711-0200']", "focused_cell_with_arrow_down_kb", protractor.Key.ARROW_DOWN);
+		_focusFromCellToCell("[data-sap-start-date='20180711-0900']", "focused_cell_with_arrow_down_kb", protractor.Key.ARROW_DOWN);
 	});
 
 	it("should focus a cell in the right with ARROW RIGHT keyboard key", function () {

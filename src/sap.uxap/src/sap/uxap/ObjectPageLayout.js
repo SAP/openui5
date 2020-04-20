@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/util/merge",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/events/F6Navigation",
 	"sap/ui/dom/getFirstEditableInput"
 ], function(
 	jQuery,
@@ -54,6 +55,7 @@ sap.ui.define([
 	assert,
 	merge,
 	KeyCodes,
+	F6Navigation,
 	getFirstEditableInput
 ) {
 	"use strict";
@@ -434,6 +436,20 @@ sap.ui.define([
 						 * The selected subsection object.
 						 */
 						subSection: {type: "sap.uxap.ObjectPageSubSection"}
+					}
+				},
+
+				/**
+				 * Fired when the visibility of subsections is changed.
+				 * @since 1.77
+				 */
+				subSectionVisibilityChange: {
+					parameters: {
+
+						/**
+						 * Object whose keys are the visible SubSection IDs and their values are the SubSection instances
+						 */
+						visibleSubSections: {type: "object"}
 					}
 				}
 			},
@@ -843,7 +859,7 @@ sap.ui.define([
 			this._snapHeader(bAppendHeaderToContent);
 		}
 
-		this.getHeaderTitle()._getFocusSpan().$().focus();
+		this.getHeaderTitle()._getFocusSpan().$().trigger("focus");
 	};
 
 	/**
@@ -1034,7 +1050,22 @@ sap.ui.define([
 
 		this._ensureCorrectParentHeight();
 
+		if (this._$sectionsContainer) {
+			this._$sectionsContainer.off("focusout");
+			this._$sectionsContainer.off("focusin");
+		}
+
 		this._cacheDomElements();
+
+		if (this._$sectionsContainer) {
+			this._$sectionsContainer.focusin(function () {
+				this._skipToNextFastGroup = true;
+			}.bind(this));
+
+			this._$sectionsContainer.focusout(function () {
+				this._skipToNextFastGroup = false;
+			}.bind(this));
+		}
 
 		if (this._hasDynamicTitle()) {
 			this.addStyleClass("sapUxAPObjectPageHasDynamicTitle");
@@ -1389,6 +1420,7 @@ sap.ui.define([
 		this._$stickyHeaderContent = jQuery(document.getElementById(this.getId() + "-stickyHeaderContent"));
 		this._$contentContainer = jQuery(document.getElementById(this.getId() + "-scroll"));
 		this._$sectionsContainer = jQuery(document.getElementById(this.getId() + "-sectionsContainer"));
+		this._$skipFastGroupAnchor = jQuery(document.getElementById(this.getId() + "-skipFastGroupAnchor"));
 
 		// BCP 1870201875: explicitly set the latest scrollContainer dom ref
 		// (as the scroller obtains the latest scrollContainer dom ref in a LATER hook, which fails in conditions detailed in BCP 1870201875)
@@ -1623,7 +1655,7 @@ sap.ui.define([
 
 		if (diff(Object.keys((this._oVisibleSubSections)), Object.keys(oVisibleSubSections)).length) {
 			this._oVisibleSubSections = oVisibleSubSections;
-			this.fireEvent("_subSectionVisibilityChange", {visibleSubSections: oVisibleSubSections});
+			this.fireEvent("subSectionVisibilityChange", {visibleSubSections: oVisibleSubSections});
 		}
 	};
 
@@ -1637,6 +1669,37 @@ sap.ui.define([
 		}
 		this.setProperty("useIconTabBar", bValue);
 		return this;
+	};
+
+	/**
+	 * Handler for F6
+	 *
+	 * @param {Object} oEvent - The event object
+	 */
+	ObjectPageLayout.prototype.onsapskipforward = function(oEvent) {
+		if (this._skipToNextFastGroup) {
+			this._handleGroupNavigation(oEvent, true);
+		}
+	};
+
+	/**
+	 * Handler for Shift + F6
+	 *
+	 * @param {Object} oEvent - The event object
+	 */
+	ObjectPageLayout.prototype.onsapskipback = function(oEvent) {
+		if (this._skipToNextFastGroup) {
+			this._handleGroupNavigation(oEvent, false);
+		}
+	};
+
+	ObjectPageLayout.prototype._handleGroupNavigation = function (oEvent, bForward) {
+		var oSettings = {
+			target: bForward ? this._$skipFastGroupAnchor[0] : this._$sectionsContainer[0]
+		};
+
+		oEvent.type = "keydown";
+		F6Navigation.handleF6GroupNavigation(oEvent, oSettings);
 	};
 
 	/**
@@ -3223,7 +3286,7 @@ sap.ui.define([
 		fnMoveNavBar.call(this);
 		if (Device.system.phone !== true) { // FIX - can not convert to expanded on windows phone
 			if (!this.oCore.byId(this.oCore.getCurrentFocusedControlId())) {
-				oLastSelectedElement && oLastSelectedElement.$().focus();
+				oLastSelectedElement && oLastSelectedElement.$().trigger("focus");
 			}
 		}
 
@@ -3934,7 +3997,7 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._toggleFooterAnimation = function(bShow, oFooter) {
 
-		this._$footerWrapper.bind("webkitAnimationEnd animationend",
+		this._$footerWrapper.on("webkitAnimationEnd animationend",
 		this._onToggleFooterAnimationEnd.bind(this, oFooter));
 		//Flagging if the animation has started
 		this._bIsFooterAanimationGoing = true;
@@ -3954,7 +4017,7 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._onToggleFooterAnimationEnd = function(oFooter) {
 
-		this._$footerWrapper.unbind("webkitAnimationEnd animationend");
+		this._$footerWrapper.off("webkitAnimationEnd animationend");
 
 		if (oFooter.hasStyleClass(ObjectPageLayout.HIDE_FOOTER_CLASS_NAME)) {
 			this._$footerWrapper.addClass("sapUiHidden");

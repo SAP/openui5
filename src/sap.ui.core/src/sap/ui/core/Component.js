@@ -2067,7 +2067,9 @@ sap.ui.define([
 	 *     is set to an object value, this URL specifies the location to which the manifest object should resolve the relative
 	 *     URLs to.
 	 * @param {string} [mOptions.handleValidation=false] If set to <code>true</code> validation of the component is handled by the <code>MessageManager</code>
-	 * @param {object} [mOptions.asyncHints] Hints for asynchronous loading
+	 * @param {object} [mOptions.asyncHints] Hints for asynchronous loading.
+	 *     <b>Beware:</b> This parameter is only used internally by the UI5 framework and compatibility cannot be guaranteed.
+	 *     The parameter must not be used in productive code, except in code delivered by the UI5 teams.
 	 * @param {string[]|object[]} [mOptions.asyncHints.components] a list of components needed by the current component and its subcomponents
 	 *     The framework will try to preload these components (their Component-preload.js) asynchronously, errors will be ignored.
 	 *     Please note that the framework has no knowledge about whether a Component provides a preload file or whether it is bundled
@@ -2095,8 +2097,6 @@ sap.ui.define([
 	 * @since 1.56.0
 	 * @static
 	 * @public
-	 * @experimental Since 1.56.0. Support for <em>asyncHints</em> is still experimental and might be modified or removed completely again.
-	 *   It must not be used in productive code, except in code delivered by the UI5 teams.
 	 */
 	Component.create = function(mOptions) {
 		if (mOptions == null || typeof mOptions !== "object") {
@@ -2149,7 +2149,9 @@ sap.ui.define([
 	 *              documentation describes the processing behavior in more detail.
 	 *              Please also have a look at this dev-guide chapter for general usage instructions: {@link topic:CPOUI5FRAMEWORK-57_Docu_Chapter Text Verticalization}.
 	 * @param {boolean} [vConfig.async] Indicates whether the Component creation should be done asynchronously; defaults to true when using the manifest property with a truthy value otherwise the default is false (experimental setting)
-	 * @param {object} [vConfig.asyncHints] Hints for the asynchronous loading (experimental setting)
+	 * @param {object} [vConfig.asyncHints] @since 1.27.0 Hints for the asynchronous loading.
+	 *     <b>Beware:</b> This parameter is only used internally by the UI5 framework and compatibility cannot be guaranteed.
+	 *     The parameter must not be used in productive code, except in code delivered by the UI5 teams.
 	 * @param {string[]} [vConfig.asyncHints.libs] Libraries that should be (pre-)loaded before the Component (experimental setting)
 	 * @param {string[]} [vConfig.asyncHints.components] Components that should be (pre-)loaded before the Component (experimental setting)
 	 * @param {Promise|Promise[]} [vConfig.asyncHints.waitFor] @since 1.37.0 a <code>Promise</code> or and array of <code>Promise</code>s for which the Component instantiation should wait (experimental setting)
@@ -2176,9 +2178,6 @@ sap.ui.define([
 	 * @public
 	 * @static
 	 * @since 1.15.0
-	 * @experimental Since 1.27.0. Support for <em>asyncHints</em> is still experimental and might be modified or removed completely again.
-	 *   It must not be used in productive code, except in code delivered by the UI5 teams. The synchronous usage of the API is
-	 *   not experimental and can be used without restrictions.
 	 */
 	sap.ui.component = function(vConfig) {
 		// a parameter must be given!
@@ -2352,7 +2351,9 @@ sap.ui.define([
 	 * @param {string} [mOptions.altManifestUrl] @since 1.61.0 Alternative URL for the manifest.json. If <code>mOptions.manifest</code>
 	 *     is set to an object value, this URL specifies the location to which the manifest object should resolve the relative
 	 *     URLs to.
-	 * @param {object} [mOptions.asyncHints] Hints for asynchronous loading
+	 * @param {object} [mOptions.asyncHints] Hints for asynchronous loading.
+	 *     <b>Beware:</b> This parameter is only used internally by the UI5 framework and compatibility cannot be guaranteed.
+	 *     The parameter must not be used in productive code, except in code delivered by the UI5 teams.
 	 * @param {string[]|object[]} [mOptions.asyncHints.components] a list of components needed by the current component and its subcomponents
 	 *     The framework will try to preload these components (their Component-preload.js) asynchronously, errors will be ignored.
 	 *     Please note that the framework has no knowledge about whether a Component provides a preload file or whether it is bundled
@@ -2381,8 +2382,6 @@ sap.ui.define([
 	 * @since 1.56.0
 	 * @static
 	 * @public
-	 * @experimental Since 1.56.0. Support for <em>asyncHints</em> is still experimental and might be modified or removed completely again.
-	 *   It must not be used in productive code, except in code delivered by the UI5 teams.
 	 */
 	Component.load = function (mOptions) {
 
@@ -2429,9 +2428,10 @@ sap.ui.define([
 	 * When a manifest.json is referenced in oConfig this manifest is not used for the derived instances of the Component class.
 	 * The manifest/manifest url must be provided for every instance explicitly.
 	 *
-	 * When asynchronous loading is used, additional <code>asyncHints</code> can be provided. The structure of these hints and how
-	 * they impact the loading of components, is still experimental. Code that wants to be safe wrt. version updates, should
-	 * not use the code>asyncHints</code> property.
+	 * Since 1.27.0, when asynchronous loading is used, additional <code>asyncHints</code> can be provided.
+	 * This parameter is only used internally by the UI5 framework and compatibility cannot be guaranteed.
+	 * The parameter must not be used in productive code, except in code delivered by the UI5 teams.
+	 *
 	 * <ul>
 	 * <li><code>oConfig.asyncHints.components : string[]</code>a list of components needed by the current component and its subcomponents
 	 *     The framework will try to preload these components (their Component-preload.js) asynchronously, errors will be ignored.
@@ -2465,9 +2465,6 @@ sap.ui.define([
 	 * @since 1.16.3
 	 * @static
 	 * @public
-	 * @experimental Since 1.27.0. Support for <em>asyncHints</em> is still experimental and might be modified or removed completely again.
-	 *   It must not be used in productive code, except in code delivered by the UI5 teams. The synchronous usage of the API is
-	 *   not experimental and can be used without restrictions.
 	 */
 	sap.ui.component.load = function(oConfig, bFailOnError) {
 		Log.warning("Do not use deprecated function 'sap.ui.component.load'! Use 'Component.load' instead");
@@ -3089,7 +3086,7 @@ sap.ui.define([
 						//    1. The manifest is defined in the component metadata (no Manifest object yet)
 						//    2. We have instance specific information (activeTerminologies)
 						// In case of a manifest-first approach (Manifest object exists already),
-						// the i18n processing has already happend and we skip this part.
+						// the i18n processing has already happened and we skip this part.
 
 						// Why do we set the oManifest object here?
 						// > If we have instance specific information like "activeTerminologies", the resulting
@@ -3114,7 +3111,7 @@ sap.ui.define([
 					return oControllerClass;
 				}
 
-				// Load all modules derived from "/sap.ui5" manifest entries asynchronously (if underlaying loader supports it)
+				// Load all modules derived from "/sap.ui5" manifest entries asynchronously (if underlying loader supports it)
 				// Note: this does not load modules declared / derived from parent manifests (e.g. extension scenario)
 				var aModuleNames = [];
 

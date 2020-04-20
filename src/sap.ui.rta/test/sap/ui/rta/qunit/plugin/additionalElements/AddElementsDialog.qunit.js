@@ -100,7 +100,7 @@ sap.ui.define([
 
 			this.oAddElementsDialog.attachOpened(function() {
 				var oTargetItem = getItemByPath(oList.getItems(), sBindingPath);
-				oTargetItem.$().focus();
+				oTargetItem.$().trigger("focus");
 				assert.strictEqual(document.activeElement, oTargetItem.getDomRef());
 				oTargetItem.$().trigger("tap");
 

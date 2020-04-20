@@ -140,14 +140,12 @@
 				var sFilter = jQuery("#filter").val() || "";
 				var sTheme = jQuery("#theme").val();
 				var bRTL = jQuery("#rtl").is(":checked");
-				var bAvoidAriaApplicationRole = jQuery("#avoidAriaApplicationRole").is(":checked");
 				var $Content = jQuery("#content");
 
 				var mParams = {
 					"sap-ui-language": "en",
 					"sap-ui-theme": sTheme,
-					"sap-ui-rtl": "" + bRTL,
-					"sap-ui-xx-avoidAriaApplicationRole": "" + bAvoidAriaApplicationRole
+					"sap-ui-rtl": "" + bRTL
 				}
 				var aBuffer = [];
 
@@ -223,7 +221,6 @@
 					jQuery("#lib").on("change", onChange);
 					jQuery("#theme").on("change", onChange);
 					jQuery("#rtl").on("change", onChange);
-					jQuery("#avoidAriaApplicationRole").on("change", onChange);
 					jQuery("#filter").on("change", onChange);
 					if (sap.ui.Device.browser.msie) {
 						jQuery("#filter").on("keyup", function(oEvent){
@@ -243,10 +240,10 @@
 			});
 		</script>
 	</head>
-	<body class="sapUiBody" role="application">
+	<body class="sapUiBody">
 	<div id="root">
 	<h1 id="title">SAPUI5 Accessibility Testpages Overview</h1>
-	<div id="bar" style="display:none;" role="toolbar"><label for="lib">Libraries:</label><select id="lib"></select><label for="theme">Theme:</label><select id="theme"></select><label for="rtl">RTL Mode:</label><input type="checkbox" id="rtl"><label for="avoidAriaApplicationRole">Avoid Aria Application Role: </label><input type="checkbox" id="avoidAriaApplicationRole"><span style="float:right;"><label for="filter">Filter:</label><input id="filter"></span></div>
+	<div id="bar" style="display:none;" role="toolbar"><label for="lib">Libraries:</label><select id="lib"></select><label for="theme">Theme:</label><select id="theme"></select><label for="rtl">RTL Mode:</label><input type="checkbox" id="rtl"><span style="float:right;"><label for="filter">Filter:</label><input id="filter"></span></div>
 	<div id="content" style="display:none;"></div>
 	<div id="message">Loading ...</div>
 	</div>

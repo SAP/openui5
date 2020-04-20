@@ -315,6 +315,17 @@ sap.ui.define([
 					});
 					aSupportedEnv.push({
 						system: Device.system.SYSTEMTYPE.DESKTOP,
+						browserName: Device.browser.BROWSER.EDGE,
+						browserVersion: 80
+					});
+					aSupportedEnv.push({
+						system: Device.system.SYSTEMTYPE.DESKTOP,
+						os: Device.os.OS.WINDOWS,
+						browserName: Device.browser.BROWSER.FIREFOX,
+						browserVersion: 74
+					});
+					aSupportedEnv.push({
+						system: Device.system.SYSTEMTYPE.DESKTOP,
 						browserName: Device.browser.BROWSER.SAFARI,
 						browserVersion: 13
 					});
@@ -328,12 +339,26 @@ sap.ui.define([
 						browserName: Device.browser.BROWSER.SAFARI,
 						browserVersion: 13
 					});
+					aSupportedEnv.push({
+						system: Device.system.SYSTEMTYPE.TABLET,
+						os: Device.os.OS.ANDROID,
+						browserName: Device.browser.BROWSER.CHROME,
+						browserVersion:80
+					});
+					aSupportedEnv.push({
+						system: Device.system.SYSTEMTYPE.PHONE,
+						os: Device.os.OS.ANDROID,
+						browserName: Device.browser.BROWSER.CHROME,
+						browserVersion: 80
+					});
+
 					this._bSupportedEnvironment = aSupportedEnv.some(function (oSuppportedEnv) {
 						var bSupportedSystem = Device.system[oSuppportedEnv.system],
+							bSupportedOSName = oSuppportedEnv.os ? oSuppportedEnv.os === Device.os.name : true,
 							bSupportedBrowserName = oSuppportedEnv.browserName === Device.browser.name,
 							bSupportedBrowserVersion = Device.browser.version >= oSuppportedEnv.browserVersion;
 
-						return bSupportedSystem && bSupportedBrowserName && bSupportedBrowserVersion && window.indexedDB;
+						return bSupportedSystem && bSupportedOSName && bSupportedBrowserName && bSupportedBrowserVersion && window.indexedDB;
 					});
 				}
 				return this._bSupportedEnvironment;

@@ -25,7 +25,8 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/base/Event",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/model/Sorter"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -51,7 +52,8 @@ sap.ui.define([
 	containsOrEquals,
 	Event,
 	InvisibleText,
-	Core
+	Core,
+	Sorter
 ) {
 	createAndAppendDiv("content");
 
@@ -2761,6 +2763,60 @@ sap.ui.define([
 		assert.ok((iTimeStamp + 1000) > window.performance.now(), "A thousand Tokens get populated under a second");
 
 		//Clean up
+		oMultiInput.destroy();
+	});
+
+	QUnit.test("Selection of group header", function(assert) {
+		// Arrange
+		var oModel, aVisibleItems, oGroupHeader,
+			aData = [
+				{
+					name: "A Item 1", key: "a-item-1", group: "A"
+				}, {
+					name: "A Item 2", key: "a-item-2", group: "A"
+				},{
+					name: "B Item 1", key: "a-item-1", group: "B"
+				},{
+					name: "B Item 2", key: "a-item-2", group: "B"
+				},{
+					name: "Other Item", key: "ab-item-1", group: "A B"
+				}
+			],
+			oMultiInput = new MultiInput({});
+
+		oMultiInput.placeAt("content");
+
+		oModel = new JSONModel();
+		oModel.setData(aData);
+		oMultiInput.setModel(oModel);
+
+		oMultiInput.bindAggregation("suggestionItems", {
+			path: "/",
+			sorter: [new Sorter('group', false, true)],
+			template: new Item({text: "{name}", key: "{key}"})
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oMultiInput.onfocusin({target: oMultiInput.getDomRef("inner")}); // for some reason this is not triggered when calling focus via API
+		oMultiInput._$input.focus().val("A").trigger("input");
+		this.clock.tick(300);
+
+		aVisibleItems = oMultiInput._oSuggPopover._oList.getItems().filter(function(oItem){
+			return oItem.getVisible();
+		});
+		oGroupHeader = aVisibleItems[0];
+
+		// Assert
+		assert.ok(oGroupHeader.isA("sap.m.GroupHeaderListItem"), "The first visible item is a group header");
+
+		// Act
+		oGroupHeader.focus();
+
+		// Assert
+		assert.strictEqual(document.activeElement, oMultiInput.getFocusDomRef(), "The focus is in the input field");
+
+		// Clean up
 		oMultiInput.destroy();
 	});
 });

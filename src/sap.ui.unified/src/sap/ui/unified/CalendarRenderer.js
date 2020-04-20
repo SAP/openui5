@@ -25,10 +25,17 @@ sap.ui.define([],
 
 		oCal._iMode = 0; // it's rendered always as DayPicker
 
-		var sId = oCal.getId();
-		var sTooltip = oCal.getTooltip_AsString();
-		var aMonths = oCal.getAggregation("month");
-		var sWidth = oCal.getWidth();
+		var sId = oCal.getId(),
+			sTooltip = oCal.getTooltip_AsString(),
+			aMonths = oCal.getAggregation("month"),
+			sWidth = oCal.getWidth(),
+			rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
+			mAccProps = {labelledby: {value: "", append: false}};
+
+		if (oCal._bPoupupMode) {
+			mAccProps.role = "dialog";
+			mAccProps.modal = true;
+		}
 
 		oRm.openStart("div", oCal);
 		oRm.class("sapUiCal");
@@ -36,12 +43,6 @@ sap.ui.define([],
 			oRm.class("sapUiCalMulti");
 		}
 
-		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
-		var mAccProps = {labelledby: {value: "", append: false}}; // render on Month
-		if (oCal._bPoupupMode) {
-			mAccProps.role = "dialog";
-			mAccProps.modal = true;
-		}
 		oRm.accessibilityState(oCal, mAccProps);
 
 		if (sTooltip) {

@@ -3224,10 +3224,10 @@ function (
 		}
 	});
 
-	QUnit.test("_subSectionVisibilityChange without IconTabBar and changing visibility", function (assert) {
+	QUnit.test("subSectionVisibilityChange without IconTabBar and changing visibility", function (assert) {
 		// Arrange
 		var fnDone = assert.async();
-		this.oObjectPage.attachEventOnce("_subSectionVisibilityChange", function(oEvent) {
+		this.oObjectPage.attachEventOnce("subSectionVisibilityChange", function(oEvent) {
 			// Assert
 			var oVisibleSubSections = oEvent.getParameter("visibleSubSections");
 			assert.strictEqual(Object.keys(oVisibleSubSections).length, 2,
@@ -3242,12 +3242,12 @@ function (
 		this.oObjectPage.getSections()[0].getSubSections()[0].setVisible(false);
 	});
 
-	QUnit.test("_subSectionVisibilityChange with IconTabBar and changing visibility", function (assert) {
+	QUnit.test("subSectionVisibilityChange with IconTabBar and changing visibility", function (assert) {
 		// Arrange
 		var fnDone = assert.async();
 
 		this.oObjectPage.setUseIconTabBar(true);
-		this.oObjectPage.attachEventOnce("_subSectionVisibilityChange", function(oEvent) {
+		this.oObjectPage.attachEventOnce("subSectionVisibilityChange", function(oEvent) {
 			// Assert
 			var oVisibleSubSections = oEvent.getParameter("visibleSubSections");
 			assert.strictEqual(Object.keys(oVisibleSubSections).length, 1,
@@ -3263,10 +3263,10 @@ function (
 		this.oObjectPage.getSections()[0].getSubSections()[0].setVisible(false);
 	});
 
-	QUnit.test("_subSectionVisibilityChange adding new SubSection and Section without IconTabBar", function (assert) {
+	QUnit.test("subSectionVisibilityChange adding new SubSection and Section without IconTabBar", function (assert) {
 		// Arrange
 		var fnDone = assert.async();
-		this.oObjectPage.attachEventOnce("_subSectionVisibilityChange", function(oEvent) {
+		this.oObjectPage.attachEventOnce("subSectionVisibilityChange", function(oEvent) {
 			// Assert
 			var oVisibleSubSections = oEvent.getParameter("visibleSubSections");
 			assert.strictEqual(Object.keys(oVisibleSubSections).length, 4,
@@ -3277,7 +3277,7 @@ function (
 				oFactory.getSubSection(5, [oFactory.getBlocks()], null)
 			]));
 
-			this.oObjectPage.attachEventOnce("_subSectionVisibilityChange", function() {
+			this.oObjectPage.attachEventOnce("subSectionVisibilityChange", function() {
 				// Assert
 				var oVisibleSubSections = oEvent.getParameter("visibleSubSections");
 				assert.strictEqual(Object.keys(oVisibleSubSections).length, 5,
@@ -3294,13 +3294,13 @@ function (
 		this.oObjectPage.getSections()[0].addSubSection(oFactory.getSubSection(3, [oFactory.getBlocks()], null));
 	});
 
-	QUnit.test("_subSectionVisibilityChange adding new SubSection and Section with IconTabBar", function (assert) {
+	QUnit.test("subSectionVisibilityChange adding new SubSection and Section with IconTabBar", function (assert) {
 		// Arrange
 		var fnDone = assert.async(),
 			oSpy;
 
 		this.oObjectPage.setUseIconTabBar(true);
-		this.oObjectPage.attachEventOnce("_subSectionVisibilityChange", function(oEvent) {
+		this.oObjectPage.attachEventOnce("subSectionVisibilityChange", function(oEvent) {
 			// Assert
 			var oVisibleSubSections = oEvent.getParameter("visibleSubSections");
 			assert.strictEqual(Object.keys(oVisibleSubSections).length, 3,

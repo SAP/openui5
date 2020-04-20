@@ -125,6 +125,12 @@
             "reference": "2070096747"
           }
         ]
+      },
+      {
+        "id": "26d13c8c50460624d2646362641b8a4861dd7ebe",
+        "type": "FEATURE",
+        "text": " sap.m.Avatar: Visual Affordance on Avatar presented",
+        "references": []
       }
     ]
   }

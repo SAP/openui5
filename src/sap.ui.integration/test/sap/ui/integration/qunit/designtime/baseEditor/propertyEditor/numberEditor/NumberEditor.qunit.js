@@ -2,11 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
-	"sap/ui/qunit/QUnitUtils",
+	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/core/format/NumberFormat"
 ], function (
 	BaseEditor,
-	QUnitUtils,
+	EditorQunitUtils,
 	NumberFormat
 ) {
 	"use strict";
@@ -75,8 +75,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oNumberEditorElement.setValue("42.123");
-			QUnitUtils.triggerEvent("input", this.oNumberEditorElement.getDomRef());
+			EditorQunitUtils.setInputValue(this.oNumberEditorElement, "42.123");
 		});
 
 		QUnit.test("When a binding path is provided", function (assert) {
@@ -87,13 +86,11 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oNumberEditorElement.setValue("{someBindingPath}");
-			QUnitUtils.triggerEvent("input", this.oNumberEditorElement.getDomRef());
+			EditorQunitUtils.setInputValue(this.oNumberEditorElement, "{someBindingPath}");
 		});
 
 		QUnit.test("When an invalid input is provided", function (assert) {
-			this.oNumberEditorElement.setValue("abc");
-			QUnitUtils.triggerEvent("input", this.oNumberEditorElement.getDomRef());
+			EditorQunitUtils.setInputValue(this.oNumberEditorElement, "abc");
 
 			assert.strictEqual(this.oNumberEditorElement.getValueState(), "Error", "Then the error is displayed");
 			assert.strictEqual(this.oNumberEditor.getValue(), 3.14, "Then the editor value is not updated");

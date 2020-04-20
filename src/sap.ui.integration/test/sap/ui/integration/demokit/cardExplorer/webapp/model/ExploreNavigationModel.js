@@ -60,6 +60,11 @@ sap.ui.define([
 								title: 'Markdown',
 								key: 'markdown',
 								manifestUrl: '/samples/adaptive/markdown.json'
+							},
+							{
+								title: 'Submit Action',
+								key: 'adaptive-action-submit',
+								manifestUrl: '/samples/adaptive/action-submit.json'
 							}
 						]
 					},
@@ -198,6 +203,32 @@ sap.ui.define([
 										url: '/samples/component/cardContentControls/Main.controller.js',
 										name: 'Main.controller.js',
 										key: 'Main.controller.js'
+									}
+								]
+							},
+							{
+								title: 'Advanced',
+								key: 'advanced',
+								files: [
+									{
+										url: '/samples/component/advanced/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/component/advanced/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									},
+									{
+										url: '/samples/component/advanced/Main.controller.js',
+										name: 'Main.controller.js',
+										key: 'Main.controller.js'
+									},
+									{
+										url: '/samples/component/advanced/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml'
 									}
 								]
 							}

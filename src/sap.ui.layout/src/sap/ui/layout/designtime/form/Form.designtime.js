@@ -10,6 +10,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	function isChildOfFormElement(oElement) {
+		return oElement.getParent().isA("sap.ui.layout.form.FormElement");
+	}
+
 	function fnIsLayoutSupported(oForm){
 		if ((oForm instanceof Form) &&
 			oForm.getLayout() &&
@@ -40,6 +44,13 @@ sap.ui.define([
 			},
 			formContainers : {
 				propagateRelevantContainer: true,
+				propagateMetadata: function (oElement) {
+					if (isChildOfFormElement(oElement)) {
+						return {
+							actions: "not-adaptable"
+						};
+					}
+				},
 				childNames : {
 					singular : "GROUP_CONTROL_NAME",
 					plural : "GROUP_CONTROL_NAME_PLURAL"

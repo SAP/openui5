@@ -84,20 +84,22 @@ sap.ui.define([
 
 	BaseCreate.prototype._getParentOverlay = function (bSibling, oOverlay) {
 		var oParentOverlay;
+		var oResponsibleElementOverlay = this.getResponsibleElementOverlay(oOverlay);
 		if (bSibling) {
-			oParentOverlay = oOverlay.getParentElementOverlay();
+			oParentOverlay = oResponsibleElementOverlay.getParentElementOverlay();
 		} else {
-			oParentOverlay = oOverlay;
+			oParentOverlay = oResponsibleElementOverlay;
 		}
 		return oParentOverlay;
 	};
 
 	BaseCreate.prototype.getCreateActions = function (bSibling, oOverlay) {
-		var oParentOverlay = this._getParentOverlay(bSibling, oOverlay);
+		var oResponsibleElementOverlay = this.getResponsibleElementOverlay(oOverlay);
+		var oParentOverlay = this._getParentOverlay(bSibling, oResponsibleElementOverlay);
 		var oDesignTimeMetadata = oParentOverlay.getDesignTimeMetadata();
-		var aActions = oDesignTimeMetadata.getActionDataFromAggregations(this.getActionName(), oOverlay.getElement());
+		var aActions = oDesignTimeMetadata.getActionDataFromAggregations(this.getActionName(), oResponsibleElementOverlay.getElement());
 		if (bSibling) {
-			var sParentAggregation = oOverlay.getParentAggregationOverlay().getAggregationName();
+			var sParentAggregation = oResponsibleElementOverlay.getParentAggregationOverlay().getAggregationName();
 			return aActions.filter(function (oAction) {
 				return oAction.aggregation === sParentAggregation;
 			});
@@ -105,32 +107,32 @@ sap.ui.define([
 		return aActions;
 	};
 
-	BaseCreate.prototype.getCreateAction = function (bSibling, oOverlay) {
-		return this.getCreateActions(bSibling, oOverlay)[0];
+	BaseCreate.prototype.getCreateAction = function (bSibling, oOverlay, sAggregationName) {
+		var aActions = this.getCreateActions(bSibling, oOverlay);
+		if (sAggregationName) {
+			var oCreateActionForAggregation;
+			aActions.some(function(oAction) {
+				if (oAction.aggregation === sAggregationName) {
+					oCreateActionForAggregation = oAction;
+					return true;
+				}
+			});
+			return oCreateActionForAggregation;
+		}
+		return aActions[0];
 	};
 
 	BaseCreate.prototype.isAvailable = function (bSibling, aElementOverlays) {
 		return this._isEditableByPlugin(aElementOverlays[0], bSibling);
 	};
 
-	BaseCreate.prototype.isEnabled = function (vIsEnabledParameter, aElementOverlays) {
-		var oElementOverlay = aElementOverlays[0];
-		var bSibling;
-		var vAction;
-		if (typeof vIsEnabledParameter === "boolean") {
-			bSibling = vIsEnabledParameter;
-			vAction = this.getCreateAction(bSibling, oElementOverlay);
-		} else {
-			bSibling = vIsEnabledParameter.isSibling;
-			vAction = vIsEnabledParameter.action;
-		}
-
-		if (!vAction) {
+	BaseCreate.prototype.isActionEnabled = function (oAction, bSibling, oElementOverlay) {
+		if (!oAction) {
 			return false;
 		}
 
-		if (vAction.isEnabled && typeof vAction.isEnabled === "function") {
-			var fnIsEnabled = vAction.isEnabled;
+		if (oAction.isEnabled && typeof oAction.isEnabled === "function") {
+			var fnIsEnabled = oAction.isEnabled;
 			var oParentOverlay = this._getParentOverlay(bSibling, oElementOverlay);
 			return fnIsEnabled(oParentOverlay.getElement());
 		}
@@ -169,18 +171,6 @@ sap.ui.define([
 		var sContainerTitle = oAggregationDescription.singular;
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		return oTextResources.getText(sText, sContainerTitle);
-	};
-
-	BaseCreate.prototype.getCreateMenuItemText = function (oMenuItem, sTextKey, oOverlay) {
-		var vAction = oMenuItem.action;
-		var oParentOverlay = this._getParentOverlay(oMenuItem.isSibling, oOverlay);
-		var oDesignTimeMetadata = oParentOverlay.getDesignTimeMetadata();
-		var oElement = oParentOverlay.getElement();
-		return this._getText(vAction, oElement, oDesignTimeMetadata, sTextKey);
-	};
-
-	BaseCreate.prototype.handler = function (vHandleParameter, aElementOverlays) {
-		this.handleCreate(vHandleParameter, aElementOverlays[0]);
 	};
 
 	/**
