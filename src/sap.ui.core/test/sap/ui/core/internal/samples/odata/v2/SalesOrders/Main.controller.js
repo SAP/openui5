@@ -18,21 +18,48 @@ sap.ui.define([
 	var MessageType = coreLibrary.MessageType;
 
 	return Controller.extend("sap.ui.core.internal.samples.odata.v2.SalesOrders.Main", {
-		defaultErrorHandler : function (oError) {
+		defaultErrorHandler : function (sMessage, oError) {
 			var sCode = "unknown",
-				oErrorDetails,
-				sMessage = "unknown";
+				sDetailMessage = "unknown",
+				oErrorDetails;
 
+			//TODO: avoid that message is reported twice in error handler and in requestFailed event
+			// hack
+			if (oError.headers && oError.headers.processed) {
+				return;
+			}
 			try {
 				oErrorDetails = JSON.parse(oError.responseText);
 				sCode = oErrorDetails.error.code;
-				sMessage = oErrorDetails.error.message.value;
+				sDetailMessage = oErrorDetails.error.message.value;
 			} catch (error) {/*ignore errors while parsing the response*/}
-			MessageBox.error("Service request failed: " + sMessage + " (" + sCode + ").");
+			MessageBox.error(sMessage + ": " + sDetailMessage + " (" + sCode + ").");
+			if (oError.headers) { // hack to mark error as processed
+				oError.headers.processed = true;
+			}
 		},
 
-		onCancelCreateItem : function () {
-			this.byId("createSalesOrderItemDialog").close();
+		formatMessageSubtitle : function (sMessageFullTarget) {
+			var i;
+
+			if (sMessageFullTarget) {
+				i = sMessageFullTarget.lastIndexOf("ItemPosition=");
+				if (i >= 0) {
+					return "Sales Order Item " + sMessageFullTarget.slice(i + 13, i + 25);
+				} else {
+					i = sMessageFullTarget.lastIndexOf("SalesOrderSet(");
+					if (i >= 0) {
+						return "Sales Order " + sMessageFullTarget.slice(i + 14, i + 26);
+					}
+				}
+			}
+		},
+
+		onCloseMessageDetails : function (oEvent) {
+			var oMessageDetails = this.byId("messageDetails");
+
+			oMessageDetails.setBindingContext(null);
+			oMessageDetails.close();
 		},
 
 		onCloseProductDetails : function () {
@@ -41,33 +68,31 @@ sap.ui.define([
 
 		onCreateItem : function () {
 			var oBindingContext = this.byId("objectPage").getBindingContext(),
-				oCreateDialog = this.byId("createSalesOrderItemDialog"),
-				oModel = oBindingContext.getModel(),
-				oUIModel = this.getView().getModel("ui");
+				oCreatedContext,
+				oCreateDialog = this.byId("createSalesOrderItemDialog");
 
-			oModel.createEntry("ToLineItems", {
+			oCreatedContext = this.getView().getModel().createEntry("ToLineItems", {
 				context : oBindingContext,
+				error : this.defaultErrorHandler.bind(null, "Failed to create sales order item"),
 				expand : "ToProduct,ToHeader",
-				// error handling is done by submitChanges
 				groupId : "create",
 				properties : {
-					DeliveryDate : oUIModel.getProperty("/newItem/DeliveryDate"),
-					Note : oUIModel.getProperty("/newItem/Note"),
-					ProductID : oUIModel.getProperty("/newItem/ProductID"),
-					Quantity : oUIModel.getProperty("/newItem/Quantity"),
-					QuantityUnit : oUIModel.getProperty("/newItem/QuantityUnit"),
+					DeliveryDate : new Date(Date.now() + 14 * 24 * 3600000),
+					Note : "Created by OData V2 Sales Orders App",
+					ProductID : "HT-1000",
+					Quantity : "1",
+					QuantityUnit : "EA",
 					SalesOrderID : oBindingContext.getProperty("SalesOrderID")
 				},
 				success : function () {
-					MessageToast.show("Item created");
 					oCreateDialog.close();
+					MessageBox.success("Created sales order item '"
+						+ oCreatedContext.getProperty("ItemPosition") + "'");
 				}
 			});
-			this.readSalesOrder("create");
-			oModel.submitChanges({
-				error : this.defaultErrorHandler,
-				groupId : "create"
-			});
+
+			oCreateDialog.setBindingContext(oCreatedContext);
+			oCreateDialog.open();
 		},
 
 		onDeleteItem : function () {
@@ -94,6 +119,12 @@ sap.ui.define([
 				+ " / " + oItemContext.getProperty("ItemPosition", true);
 			sMessage = "Do you really want to delete: " + sSalesOrderLineItem + "?";
 			MessageBox.confirm(sMessage, onConfirm, "Sales Order Item Deletion");
+		},
+
+		onDiscardCreatedItem : function () {
+			this.byId("createSalesOrderItemDialog").close();
+			this.getView().getModel()
+				.deleteCreatedEntry(this.byId("createSalesOrderItemDialog").getBindingContext());
 		},
 
 		onFilterMessages : function (oEvent) {
@@ -127,7 +158,7 @@ sap.ui.define([
 				sSalesOrderID = oEvent.getSource().getBindingContext().getProperty("SalesOrderID");
 
 			oModel.callFunction("/SalesOrderItem_FixAllQuantities", {
-				error : this.defaultErrorHandler,
+				error : this.defaultErrorHandler.bind(null, "Failed to fix all quantities"),
 				groupId : "FixQuantity",
 				method : "POST",
 				success : function () {
@@ -143,10 +174,7 @@ sap.ui.define([
 			oView.byId("ToLineItems").getBinding("rows").refresh(undefined, "FixQuantity");
 			this.readSalesOrder("FixQuantity");
 
-			oModel.submitChanges({
-				error : this.defaultErrorHandler,
-				groupId : "FixQuantity"
-			});
+			oModel.submitChanges({groupId : "FixQuantity"});
 		},
 
 		onFixQuantity : function (oEvent) {
@@ -156,7 +184,8 @@ sap.ui.define([
 				sSalesOrderID = oBindingContext.getProperty("SalesOrderID");
 
 			oModel.callFunction("/SalesOrderItem_FixQuantity", {
-				error : this.defaultErrorHandler,
+				error : this.defaultErrorHandler.bind(null,
+					"Failed to fix quantity for item " + sItemPosition),
 				groupId : "FixQuantity",
 				method : "POST",
 				refreshAfterChange : false,
@@ -171,18 +200,18 @@ sap.ui.define([
 			// read requests for side-effects
 			this.readSalesOrder("FixQuantity");
 
-			oModel.submitChanges({
-				error : this.defaultErrorHandler,
-				groupId : "FixQuantity"
-			});
+			oModel.submitChanges({groupId : "FixQuantity"});
 		},
 
 		onInit : function () {
 			var oRowSettings = this.byId("rowsettings"),
-				oView = this.getView();
+				oView = this.getView(),
+				that = this;
 
 			oView.setModel(Core.getMessageManager().getMessageModel(), "messages");
-			oView.getModel().attachRequestCompleted(this.onRequestComplete.bind(this));
+			oView.getModel().attachRequestFailed(function (oEvent) {
+				that.defaultErrorHandler("Service request failed", oEvent.getParameter("response"));
+			});
 
 			// adding the formatter dynamically is a prerequisite that it is called with the control
 			// as 'this'
@@ -219,14 +248,12 @@ sap.ui.define([
 			}
 		},
 
-		onRequestComplete : function (oEvent) {
-			if (!oEvent.getParameter("success")) {
-				this.defaultErrorHandler(oEvent.getParameter("response"));
-			}
-		},
-
 		onResetChanges : function () {
 			this.getView().getModel().resetChanges();
+		},
+
+		onSaveCreatedItem : function () {
+			this.getView().getModel().submitChanges({groupId : "create"});
 		},
 
 		onSaveSalesOrder : function () {
@@ -236,9 +263,19 @@ sap.ui.define([
 			// ensure that the read request is in the same batch
 			this.readSalesOrder("changes");
 			oView.getModel().submitChanges({
-				error : this.defaultErrorHandler,
-				success : function () {
-					MessageToast.show("Successfully saved the sales order '" + sSalesOrder + "'");
+				error : this.defaultErrorHandler.bind(null, "Failed to save the sales order'"
+					+ sSalesOrder + "'"),
+				success : function (oResultData) {
+					var bHasMessages = false;
+
+					if (oResultData) {
+						bHasMessages = oResultData.__batchResponses.some(function (oBatchResponse) {
+							return oBatchResponse.message;
+						});
+					}
+					if (!bHasMessages) {
+						MessageToast.show("Sales order '" + sSalesOrder + "' successfully saved");
+					}
 				}
 			});
 		},
@@ -264,17 +301,18 @@ sap.ui.define([
 			oTable.getBinding("rows").filter();
 			oView.byId("itemFilter").setSelectedKey("Show all");
 
-			oView.byId("objectPage").bindElement(sContextPath);
+			oView.byId("objectPage").bindElement(sContextPath, {createPreliminaryContext : true});
 			oTable.clearSelection();
 			oView.byId("messagePopover").getBinding("items")
 				.filter(new Filter("fullTarget", FilterOperator.StartsWith, sContextPath));
 		},
 
-		onShowCreateItemDialog : function () {
-			var oCreateDialog = this.byId("createSalesOrderItemDialog");
+		onShowMessageDetails : function (oEvent) {
+			var oContext = oEvent.getSource().getObjectBinding("messages").getBoundContext(),
+				oMessageDetails = this.byId("messageDetails");
 
-			oCreateDialog.setBindingContext(this.byId("objectPage").getBindingContext());
-			oCreateDialog.open();
+			oMessageDetails.setBindingContext(oContext, "messages");
+			oMessageDetails.open();
 		},
 
 		onShowProductDetails : function (oEvent) {
