@@ -333,6 +333,16 @@ function(
 				oModules = {};
 				if (bAsync) {
 					return new Promise(function(resolve, reject) {
+						// check whether all modules have been loaded already, avoids nested setTimeout calls
+						var bAllLoaded = Object.keys(oRequireContext).reduce(function(bAll, sKey) {
+							oModules[sKey] = sap.ui.require(oRequireContext[sKey]);
+							return bAll && oModules[sKey] !== undefined;
+						}, true);
+						if ( bAllLoaded ) {
+							resolve(oModules);
+							return;
+						}
+						// fall back to async loading
 						sap.ui.require(values(oRequireContext), function() {
 							var aLoadedModules = arguments;
 							Object.keys(oRequireContext).forEach(function(sKey, i) {
