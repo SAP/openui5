@@ -1025,7 +1025,7 @@ sap.ui.define([
 	 * @param {String}  [oPropertyBag.projectId] - Project ID of the change file
 	 * @param {String}  [oPropertyBag.moduleName] - Name of the module which this changes refers to (XML or JS)
 	 * @param {String}  [oPropertyBag.generator] - Tool that is used to generate the change file
-	 * @param {Boolean}  [oPropertyBag.jsOnly] - Indicates that the change can only be applied with the JS modifier
+	 * @param {Boolean} [oPropertyBag.jsOnly] - Indicates that the change can only be applied with the JS modifier
 	 * @param {Object}  [oPropertyBag.oDataInformation] - Object with information about the oData service
 	 * @param {String}  [oPropertyBag.oDataInformation.propertyName] - Name of the OData property
 	 * @param {String}  [oPropertyBag.oDataInformation.entityType] - Name of the OData entity type that the property belongs to

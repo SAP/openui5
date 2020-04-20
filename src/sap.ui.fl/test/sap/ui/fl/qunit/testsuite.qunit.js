@@ -745,11 +745,6 @@ sap.ui.define([
 					only: ["sap/ui/fl/FakeLrepConnector"]
 				}
 			},
-			LrepConnector: {
-				coverage: {
-					only: ["sap/ui/fl/LrepConnector"]
-				}
-			},
 			PreprocessorImpl: {
 				coverage: {
 					only: ["sap/ui/fl/PreprocessorImpl"]

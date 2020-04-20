@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/LrepConnector"
+	"sap/ui/fl/write/_internal/connectors/LrepConnector"
 ], function(
 	FlexState,
 	LrepConnector
@@ -71,7 +71,10 @@ sap.ui.define([
 			return Promise.reject("not all mandatory properties were provided for the storage of the personalization");
 		}
 
-		return LrepConnector.createConnector().send("/sap/bc/lrep/ui2personalization/", "PUT", oPersonalization, {}).then(function(oPersonalizationResult) {
+		return LrepConnector.ui2Personalization.create({
+			flexObjects: oPersonalization
+		})
+		.then(function(oPersonalizationResult) {
 			var oPersonalizationSubsection = FlexState.getUI2Personalization(oPersonalizationResult.response.reference);
 			oPersonalizationSubsection[oPersonalizationResult.response.containerKey] = oPersonalizationSubsection[oPersonalizationResult.response.containerKey] || [];
 			oPersonalizationSubsection[oPersonalizationResult.response.containerKey].push(oPersonalizationResult.response);
@@ -95,9 +98,11 @@ sap.ui.define([
 			return Promise.reject("not all mandatory properties were provided for the storage of the personalization");
 		}
 
-		var sUrl = "/sap/bc/lrep/ui2personalization/?reference=" + sReference + "&containerkey=" + sContainerKey + "&itemname=" + sItemName;
-
-		return LrepConnector.createConnector().send(sUrl, "DELETE", {}).then(function() {
+		return LrepConnector.ui2Personalization.remove({
+			reference: sReference,
+			containerKey: sContainerKey,
+			itemName: sItemName
+		}).then(function() {
 			var aItems = UI2PersonalizationState.getPersonalization(sReference, sContainerKey);
 			var oToBeDeletedItem = UI2PersonalizationState.getPersonalization(sReference, sContainerKey, sItemName);
 			var nIndexOfItem = aItems.indexOf(oToBeDeletedItem);

@@ -45,7 +45,8 @@ sap.ui.define([
 		SETTINGS: "/flex/settings",
 		TOKEN: "/actions/getcsrftoken/",
 		APPVARIANTS: "/appdescr_variants/",
-		APPVARIANTS_OVERVIEW: "/app_variant_overview/"
+		APPVARIANTS_OVERVIEW: "/app_variant_overview/",
+		UI2PERSONALIZATION: "/sap/bc/lrep/ui2personalization/"
 	};
 
 	/**
@@ -138,8 +139,8 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl.write._internal.Storage
 	 */
-	var LrepConnector = merge({}, BaseConnector, /** @lends sap.ui.fl.write._internal.connectors.LrepConnector */ {
-
+	return merge({}, BaseConnector, /** @lends sap.ui.fl.write._internal.connectors.LrepConnector */ {
+		applyConnector: ApplyConnector,
 		layers: ApplyConnector.layers,
 		/**
 		 * Resets flexibility files for a given application and layer.
@@ -379,91 +380,41 @@ sap.ui.define([
 				"application/json; charset=utf-8", "json"
 			);
 			return WriteUtils.sendRequest(sDeleteUrl, "DELETE", oRequestOption);
-		}
-	});
-	LrepConnector.applyConnector = ApplyConnector;
-
-	LrepConnector.appVariant = {
-		getManifest: function(mPropertyBag) {
-			var sAppVariantManifestUrl = mPropertyBag.appVarUrl;
-			var oRequestOption = WriteUtils.getRequestOptions(
-				ApplyConnector,
-				undefined,
-				undefined,
-				"application/json; charset=utf-8", "json"
-			);
-			return WriteUtils.sendRequest(sAppVariantManifestUrl, "GET", oRequestOption);
 		},
-		load: function(mPropertyBag) {
-			var sAppVariantUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag);
-			var oRequestOption = WriteUtils.getRequestOptions(
-				ApplyConnector,
-				undefined,
-				undefined,
-				"application/json; charset=utf-8", "json"
-			);
-			return WriteUtils.sendRequest(sAppVariantUrl, "GET", oRequestOption);
-		},
-		create: function(mPropertyBag) {
-			mPropertyBag.method = "POST";
-			mPropertyBag.isAppVariant = true;
-			return _doWrite(mPropertyBag);
-		},
-		assignCatalogs: function(mPropertyBag) {
-			var mParameters = {};
-			mParameters.action = mPropertyBag.action;
-			delete mPropertyBag.action;
-			mParameters.assignFromAppId = mPropertyBag.assignFromAppId;
-			delete mPropertyBag.assignFromAppId;
-
-			var sCatalogAssignmentUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
-			delete mPropertyBag.reference;
-			var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
-
-			var oRequestOption = WriteUtils.getRequestOptions(
-				ApplyConnector,
-				sTokenUrl,
-				undefined,
-				"application/json; charset=utf-8", "json"
-			);
-			return WriteUtils.sendRequest(sCatalogAssignmentUrl, "POST", oRequestOption);
-		},
-		unassignCatalogs: function(mPropertyBag) {
-			var mParameters = {};
-			mParameters.action = mPropertyBag.action;
-			delete mPropertyBag.action;
-
-			var sCatalogUnAssignmentUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
-			delete mPropertyBag.reference;
-			var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
-
-			var oRequestOption = WriteUtils.getRequestOptions(
-				ApplyConnector,
-				sTokenUrl,
-				undefined,
-				"application/json; charset=utf-8", "json"
-			);
-			return WriteUtils.sendRequest(sCatalogUnAssignmentUrl, "POST", oRequestOption);
-		},
-		update: function(mPropertyBag) {
-			return _selectTransportForAppVariant(mPropertyBag).then(function(sTransport) {
-				if (sTransport) {
-					mPropertyBag.transport = sTransport;
-				}
-				delete mPropertyBag.isForSmartBusiness;
-				mPropertyBag.method = "PUT";
+		appVariant: {
+			getManifest: function (mPropertyBag) {
+				var sAppVariantManifestUrl = mPropertyBag.appVarUrl;
+				var oRequestOption = WriteUtils.getRequestOptions(
+					ApplyConnector,
+					undefined,
+					undefined,
+					"application/json; charset=utf-8", "json"
+				);
+				return WriteUtils.sendRequest(sAppVariantManifestUrl, "GET", oRequestOption);
+			},
+			load: function (mPropertyBag) {
+				var sAppVariantUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag);
+				var oRequestOption = WriteUtils.getRequestOptions(
+					ApplyConnector,
+					undefined,
+					undefined,
+					"application/json; charset=utf-8", "json"
+				);
+				return WriteUtils.sendRequest(sAppVariantUrl, "GET", oRequestOption);
+			},
+			create: function (mPropertyBag) {
+				mPropertyBag.method = "POST";
 				mPropertyBag.isAppVariant = true;
 				return _doWrite(mPropertyBag);
-			});
-		},
-		remove: function(mPropertyBag) {
-			return _selectTransportForAppVariant(mPropertyBag).then(function(sTransport) {
+			},
+			assignCatalogs: function (mPropertyBag) {
 				var mParameters = {};
-				if (sTransport) {
-					mParameters.changelist = sTransport;
-				}
-				delete mPropertyBag.isForSmartBusiness;
-				var sDeleteUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
+				mParameters.action = mPropertyBag.action;
+				delete mPropertyBag.action;
+				mParameters.assignFromAppId = mPropertyBag.assignFromAppId;
+				delete mPropertyBag.assignFromAppId;
+
+				var sCatalogAssignmentUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
 				delete mPropertyBag.reference;
 				var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
 
@@ -473,29 +424,90 @@ sap.ui.define([
 					undefined,
 					"application/json; charset=utf-8", "json"
 				);
-				return WriteUtils.sendRequest(sDeleteUrl, "DELETE", oRequestOption);
-			});
+				return WriteUtils.sendRequest(sCatalogAssignmentUrl, "POST", oRequestOption);
+			},
+			unassignCatalogs: function (mPropertyBag) {
+				var mParameters = {};
+				mParameters.action = mPropertyBag.action;
+				delete mPropertyBag.action;
+
+				var sCatalogUnAssignmentUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
+				delete mPropertyBag.reference;
+				var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
+
+				var oRequestOption = WriteUtils.getRequestOptions(
+					ApplyConnector,
+					sTokenUrl,
+					undefined,
+					"application/json; charset=utf-8", "json"
+				);
+				return WriteUtils.sendRequest(sCatalogUnAssignmentUrl, "POST", oRequestOption);
+			},
+			update: function (mPropertyBag) {
+				return _selectTransportForAppVariant(mPropertyBag).then(function (sTransport) {
+					if (sTransport) {
+						mPropertyBag.transport = sTransport;
+					}
+					delete mPropertyBag.isForSmartBusiness;
+					mPropertyBag.method = "PUT";
+					mPropertyBag.isAppVariant = true;
+					return _doWrite(mPropertyBag);
+				});
+			},
+			remove: function (mPropertyBag) {
+				return _selectTransportForAppVariant(mPropertyBag).then(function (sTransport) {
+					var mParameters = {};
+					if (sTransport) {
+						mParameters.changelist = sTransport;
+					}
+					delete mPropertyBag.isForSmartBusiness;
+					var sDeleteUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
+					delete mPropertyBag.reference;
+					var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
+
+					var oRequestOption = WriteUtils.getRequestOptions(
+						ApplyConnector,
+						sTokenUrl,
+						undefined,
+						"application/json; charset=utf-8", "json"
+					);
+					return WriteUtils.sendRequest(sDeleteUrl, "DELETE", oRequestOption);
+				});
+			},
+			list: function (mPropertyBag) {
+				var mParameters = {};
+
+				mParameters.layer = mPropertyBag.layer;
+				mParameters["sap.app/id"] = mPropertyBag.reference;
+
+				delete mPropertyBag.layer;
+				delete mPropertyBag.reference;
+
+				var sAppVarOverviewUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS_OVERVIEW, mPropertyBag, mParameters);
+
+				var oRequestOption = WriteUtils.getRequestOptions(
+					ApplyConnector,
+					undefined,
+					undefined,
+					"application/json; charset=utf-8", "json"
+				);
+				return WriteUtils.sendRequest(sAppVarOverviewUrl, "GET", oRequestOption);
+			}
 		},
-		list: function(mPropertyBag) {
-			var mParameters = {};
-
-			mParameters.layer = mPropertyBag.layer;
-			mParameters["sap.app/id"] = mPropertyBag.reference;
-
-			delete mPropertyBag.layer;
-			delete mPropertyBag.reference;
-
-			var sAppVarOverviewUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS_OVERVIEW, mPropertyBag, mParameters);
-
-			var oRequestOption = WriteUtils.getRequestOptions(
-				ApplyConnector,
-				undefined,
-				undefined,
-				"application/json; charset=utf-8", "json"
-			);
-			return WriteUtils.sendRequest(sAppVarOverviewUrl, "GET", oRequestOption);
+		ui2Personalization: {
+			create: function (mPropertyBag) {
+				mPropertyBag.applyConnector = this.applyConector;
+				return WriteUtils.sendRequest(ROUTES.UI2PERSONALIZATION, "PUT", mPropertyBag);
+			},
+			remove: function (mPropertyBag) {
+				mPropertyBag.applyConnector = this.applyConector;
+				var sUrl = ApplyUtils.getUrl(ROUTES.UI2PERSONALIZATION, {
+					reference: mPropertyBag.reference,
+					containerkey: mPropertyBag.containerKey,
+					itemname: mPropertyBag.itemName
+				});
+				return WriteUtils.sendRequest(sUrl, "DELETE");
+			}
 		}
-	};
-
-	return LrepConnector;
+	});
 }, true);

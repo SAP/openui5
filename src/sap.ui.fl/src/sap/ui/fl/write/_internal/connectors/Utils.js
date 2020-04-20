@@ -31,7 +31,9 @@ sap.ui.define([
 	function updateTokenInPropertyBagAndConnector (mPropertyBag) {
 		return ApplyUtils.sendRequest(mPropertyBag.tokenUrl, "HEAD").then(function (oResult) {
 			if (oResult && oResult.xsrfToken) {
-				mPropertyBag.applyConnector.xsrfToken = oResult.xsrfToken;
+				if (mPropertyBag.applyConnector) {
+					mPropertyBag.applyConnector.xsrfToken = oResult.xsrfToken;
+				}
 				mPropertyBag.xsrfToken = oResult.xsrfToken;
 				return mPropertyBag;
 			}
