@@ -74,7 +74,7 @@ sap.ui.define([
 
 	function _disassembleVariantSectionsIfNecessary(aResponses) {
 		return aResponses.map(function (oResponse) {
-			return oResponse.variantSection ? storageResultDisassemble(oResponse) : oResponse;
+			return storageResultDisassemble(oResponse);
 		});
 	}
 
