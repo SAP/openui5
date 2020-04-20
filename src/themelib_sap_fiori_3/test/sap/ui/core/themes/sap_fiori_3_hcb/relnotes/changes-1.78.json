@@ -1,0 +1,18 @@
+{
+  "1.78.0": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "f21833b7b2ffd7a03ee54e7275abd473b546984f",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Fixed incorrect display of focus on contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980435273"
+          }
+        ]
+      }
+    ]
+  }
+}

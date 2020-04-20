@@ -27,6 +27,53 @@
             "reference": "2070141765"
           }
         ]
+      },
+      {
+        "id": "26d59b54863cac9efbdc3e9d78fe20bc1f885605",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: Fix getSelectedIndex return value if node can\u0027t be found",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070052448"
+          }
+        ]
+      },
+      {
+        "id": "aed52e776f8ff1834333016dab7f7ddefeb5da81",
+        "type": "FIX",
+        "text": " sap.ui.core.cache.CacheManager: Remove restriction for Apple OS",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "cf055689a1b1e31d217eb06b516ed3ad4080cc99",
+        "type": "FIX",
+        "text": " sap.ui.core.hyphenation.Hyphenation: Improved behavior for Google Chrome on macOS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070112349"
+          }
+        ]
+      },
+      {
+        "id": "68c3af40d0203fa52a0dd8924383c529f005e3e1",
+        "type": "FIX",
+        "text": " sap.ui.core: several documentation enhancements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070111549"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970388173"
+          }
+        ]
       }
     ]
   }

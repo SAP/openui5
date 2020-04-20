@@ -1,0 +1,18 @@
+{
+  "1.78.0": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "26d59b54863cac9efbdc3e9d78fe20bc1f885605",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: Fix getSelectedIndex return value if node can\u0027t be found",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070052448"
+          }
+        ]
+      }
+    ]
+  }
+}

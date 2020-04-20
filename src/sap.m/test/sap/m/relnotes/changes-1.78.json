@@ -51,6 +51,67 @@
             "reference": "2070043278"
           }
         ]
+      },
+      {
+        "id": "0338f0100aad91f247f10ca3a449655c9ab314c3",
+        "type": "FIX",
+        "text": " P13nConditionPanel: add empty condition option text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070136267"
+          }
+        ]
+      },
+      {
+        "id": "1348c30a236c2ef79825dfb7311d8d28cfca1de5",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: mutating the visible property has effect in the UI",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070155044"
+          }
+        ]
+      },
+      {
+        "id": "84b54eee539a01da6ad74535d6c0cfb6e35731a8",
+        "type": "FIX",
+        "text": " sap.m.Panel: Documentation improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070154349"
+          }
+        ]
+      },
+      {
+        "id": "21fbf325b119d9f4d296d151afdef2bff39c93fd",
+        "type": "FIX",
+        "text": " sap.m.Select: Corrected aria-activedescendant",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070099054"
+          }
+        ]
+      },
+      {
+        "id": "be09a2129232702aaaf8b94f47a623958f58cef8",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: filter detail items without a key cannot be selected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070123388"
+          }
+        ]
+      },
+      {
+        "id": "7370162eadb830594fb7954b95b23b35e2fecfe5",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: filter detail items without a key cannot be selected",
+        "references": []
       }
     ]
   }
