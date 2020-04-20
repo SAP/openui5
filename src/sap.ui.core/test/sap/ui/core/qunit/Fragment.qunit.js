@@ -382,7 +382,7 @@ sap.ui.define([
 		assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated, with no View prefix");
 
 		var btn1id = oXmlFragmentInXmlView.getContent()[0].getId();
-		assert.equal(btn1id, "__xmlview0--btnInXmlFragment", "static Control ID inside Fragment should be prefixed by View ID");
+		assert.equal(btn1id, oXmlView.getId() + "--btnInXmlFragment", "static Control ID inside Fragment should be prefixed by View ID");
 		qutils.triggerEvent("click", btn1id);
 
 		var btn2 = oXmlFragmentInXmlView.getContent()[1];
@@ -403,7 +403,7 @@ sap.ui.define([
 		assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated, with no View prefix");
 
 		var btn1id = oXmlFragmentWithIdInXmlView.getContent()[0].getId();
-		assert.equal(btn1id, "__xmlview0--xmlInXml--btnInXmlFragment", "static Control ID inside Fragment should be prefixed by View ID and Fragment ID");
+		assert.equal(btn1id, oXmlView.getId() + "--xmlInXml--btnInXmlFragment", "static Control ID inside Fragment should be prefixed by View ID and Fragment ID");
 		qutils.triggerEvent("click", btn1id);
 
 		var btn2 = oXmlFragmentWithIdInXmlView.getContent()[1];
@@ -426,7 +426,7 @@ sap.ui.define([
 		assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated, with no View prefix");
 
 		var btn1id = oJsFragmentInXmlView.getContent()[0].getId();
-		assert.equal(btn1id, "__xmlview0--btnInJsFragment", "static Control ID inside Fragment should be prefixed by View ID");
+		assert.equal(btn1id, oXmlView.getId() + "--btnInJsFragment", "static Control ID inside Fragment should be prefixed by View ID");
 		qutils.triggerEvent("click", btn1id);
 
 		var btn2 = oJsFragmentInXmlView.getContent()[1];
@@ -447,7 +447,7 @@ sap.ui.define([
 		assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated, with no View prefix");
 
 		var btn1id = oJsFragmentWithIdInXmlView.getContent()[0].getId();
-		assert.equal(btn1id, "__xmlview0--jsInXml--btnInJsFragment", "static Control ID inside Fragment should be prefixed by View ID and Fragment ID");
+		assert.equal(btn1id, oXmlView.getId() + "--jsInXml--btnInJsFragment", "static Control ID inside Fragment should be prefixed by View ID and Fragment ID");
 		qutils.triggerEvent("click", btn1id);
 
 		var btn2 = oJsFragmentWithIdInXmlView.getContent()[1];
@@ -470,7 +470,7 @@ sap.ui.define([
 		assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated, with no View prefix");
 
 		var btn1id = oHtmlFragmentInXmlView.getContent()[0].getId();
-		assert.equal(btn1id, "__xmlview0--btnInHtmlFragment", "static Control ID inside Fragment should be prefixed by View ID");
+		assert.equal(btn1id, oXmlView.getId() + "--btnInHtmlFragment", "static Control ID inside Fragment should be prefixed by View ID");
 		qutils.triggerEvent("click", btn1id);
 
 		var btn2 = oHtmlFragmentInXmlView.getContent()[1];
@@ -491,7 +491,7 @@ sap.ui.define([
 		assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated, with no View prefix");
 
 		var btn1id = oHtmlFragmentWithIdInXmlView.getContent()[0].getId();
-		assert.equal(btn1id, "__xmlview0--htmlInXml--btnInHtmlFragment", "static Control ID inside Fragment should be prefixed by View ID and Fragment ID");
+		assert.equal(btn1id, oXmlView.getId() + "--htmlInXml--btnInHtmlFragment", "static Control ID inside Fragment should be prefixed by View ID and Fragment ID");
 		qutils.triggerEvent("click", btn1id);
 
 		var btn2 = oHtmlFragmentWithIdInXmlView.getContent()[1];
@@ -771,4 +771,3 @@ sap.ui.define([
 	});
 
 });
-

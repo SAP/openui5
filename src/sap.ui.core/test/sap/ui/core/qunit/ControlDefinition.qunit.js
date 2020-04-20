@@ -32,10 +32,11 @@
 
 
 		QUnit.test("Extend sap.ui.core.Control", function(assert) {
+			assert.expect(4);
 			assert.equal(window.my, undefined, "'my' should not be defined yet");
 
 			// define control
-			Control.extend("my.lib.MyControl", {
+			var MyLibControlClass = Control.extend("my.lib.MyControl", {
 				metadata : {
 					properties : {
 						"text" : "string",
@@ -53,6 +54,11 @@
 					events : {
 						"somethingHappened" : "somethingHappened"
 					}
+				},
+
+				constructor: function(sId, mSettings, assert) {
+					Control.call(this, sId, mSettings);
+					this._assert = assert;
 				},
 
 				init : function() {
@@ -73,6 +79,9 @@
 				},
 
 				renderer : function(rm, c) {
+					if (c._assert) {
+						c._assert.ok(true, "Renderer was called");
+					}
 					rm.write("<span tabindex='0'");
 					rm.writeControlData(c);
 					rm.write(">", c.getText(), "</span>");
@@ -81,6 +90,14 @@
 
 			// check control type
 			assert.ok(my.lib.MyControl, "my.lib.MyControl should be defined now");
+
+			var myControl = new MyLibControlClass("myControl", undefined, assert);
+
+			myControl.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(myControl.$().length, 1, "The control should be rendered");
+			myControl.destroy();
 		});
 
 		QUnit.module("", {

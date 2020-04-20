@@ -117,6 +117,8 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.module("RenderManager");
+
 	QUnit.test("String rendering output and events", function(assert) {
 		var oStringControl = new StringControl();
 		var onBeforeRenderingSpy = sinon.spy();
