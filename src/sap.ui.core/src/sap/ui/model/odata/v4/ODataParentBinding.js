@@ -656,7 +656,14 @@ sap.ui.define([
 				mWrappedChildQueryOptions,
 				mLocalQueryOptions = aResult[0],
 				oProperty = aResult[1],
-				sReducedPath = oMetaModel.getReducedPath(sResolvedChildPath, sBaseForPathReduction);
+				sReducedPath;
+
+			if (Array.isArray(oProperty)) { // Arrays are only used for functions and actions
+				// a (non-deferred) function has to have its own cache
+				return undefined;
+			}
+
+			sReducedPath = oMetaModel.getReducedPath(sResolvedChildPath, sBaseForPathReduction);
 
 			if (sChildPath === "$count" || sChildPath.slice(-7) === "/$count"
 					|| sChildPath[0] === "@") {
