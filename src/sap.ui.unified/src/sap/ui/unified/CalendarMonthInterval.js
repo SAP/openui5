@@ -351,7 +351,7 @@ sap.ui.define([
 	/**
 	 * Sets a start date.
 	 * @param {Date} oStartDate A JavaScript date
-	 * @return {sap.ui.unified.CalendarMonthInterval} <code>this</code> for method chaining
+	 * @return {this} <code>this</code> for method chaining
 	 */
 	CalendarMonthInterval.prototype.setStartDate = function(oStartDate){
 
@@ -525,7 +525,7 @@ sap.ui.define([
 	 * Displays a month in the <code>CalendarMonthInterval</code> but doesn't set the focus.
 	 *
 	 * @param {Object} oDatetime JavaScript date object for displayed date. (The month of this date will be displayed.)
-	 * @returns {sap.ui.unified.CalendarMonthInterval} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -688,7 +688,7 @@ sap.ui.define([
 	/*
 	 * Sets a maximum date for the calendar.
 	 * @param {Date} oDate a JavaScript date
-	 * @return {sap.ui.unified.CalendarMonthInterval} <code>this</code> for method chaining
+	 * @return {this} <code>this</code> for method chaining
 	 */
 	CalendarMonthInterval.prototype.setMaxDate = function(oDate){
 

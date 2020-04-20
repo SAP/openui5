@@ -502,7 +502,7 @@ function(
 		 * Opens the MessagePopover
 		 *
 		 * @param {sap.ui.core.Control} oControl Control which opens the MessagePopover
-		 * @returns {sap.m.MessagePopover} Reference to the 'this' for chaining purposes
+		 * @returns {this} Reference to the 'this' for chaining purposes
 		 * @public
 		 * @ui5-metamodel
 		 */
@@ -538,7 +538,7 @@ function(
 		/**
 		 * Closes the MessagePopover
 		 *
-		 * @returns {sap.m.MessagePopover} Reference to the 'this' for chaining purposes
+		 * @returns {this} Reference to the 'this' for chaining purposes
 		 * @public
 		 */
 		MessagePopover.prototype.close = function () {
@@ -565,7 +565,7 @@ function(
 		 * oControl parameter is mandatory in the same way as in 'openBy' method
 		 *
 		 * @param {sap.ui.core.Control} oControl Control which opens the MessagePopover
-		 * @returns {sap.m.MessagePopover} Reference to the 'this' for chaining purposes
+		 * @returns {this} Reference to the 'this' for chaining purposes
 		 * @public
 		 */
 		MessagePopover.prototype.toggle = function (oControl) {

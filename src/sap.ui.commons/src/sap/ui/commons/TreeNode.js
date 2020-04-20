@@ -324,7 +324,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', './library', 'sap/ui/core/CustomStyle
 	 * Default value is empty/<code>undefined</code>
 	 *
 	 * @param {boolean} bIsSelected  new value for property <code>isSelected</code>
-	 * @return {sap.ui.commons.TreeNode} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	TreeNode.prototype.setIsSelected = function(bIsSelected) {
@@ -353,7 +353,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', './library', 'sap/ui/core/CustomStyle
 	 * Default value is <code>true</code>
 	 *
 	 * @param {boolean} bSelectable  new value for property <code>selectable</code>
-	 * @return {sap.ui.commons.TreeNode} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	TreeNode.prototype.setSelectable = function(bSelectable) {

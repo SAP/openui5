@@ -592,7 +592,7 @@ sap.ui.define([
 	 * @param {int} iIndex The <code>0</code>-based index the item should be inserted at; for
 	 *             a negative value of <code>iIndex</code>, the item is inserted at position 0; for a value
 	 *             greater than the current size of the aggregation, the item is inserted at the last position.
-	 * @returns {sap.f.GridContainer} <code>this</code> to allow method chaining.
+	 * @returns {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	GridContainer.prototype.insertItem = function (oItem, iIndex) {

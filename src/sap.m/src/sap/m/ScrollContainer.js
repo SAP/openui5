@@ -146,7 +146,7 @@ sap.ui.define([
 		 * @param {int} [time=0]
 		 *         The duration of animated scrolling in milliseconds.
 		 *         The value <code>0</code> results in immediate scrolling without animation.
-		 * @returns {sap.m.ScrollContainer} <code>this</code> to facilitate method chaining
+		 * @returns {this} <code>this</code> to facilitate method chaining
 		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
@@ -173,7 +173,7 @@ sap.ui.define([
 		 * Scrolls to an element(DOM or sap.ui.core.Element) within the page if the element is rendered.
 		 * @param {HTMLElement | sap.ui.core.Element} element The element to which should be scrolled.
 		 * @param {int} [time=0] The duration of animated scrolling. To scroll immediately without animation, give 0 as value or leave it default.
-		 * @returns {sap.m.ScrollContainer} <code>this</code> to facilitate method chaining.
+		 * @returns {this} <code>this</code> to facilitate method chaining.
 		 * @since 1.30
 		 * @public
 		 */

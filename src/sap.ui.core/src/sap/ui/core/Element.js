@@ -240,7 +240,7 @@ sap.ui.define([
 	/**
 	 * Elements don't have a facade and therefore return themselves as their interface.
 	 *
-	 * @returns {sap.ui.core.Element} <code>this</code> as there's no facade for elements
+	 * @returns {this} <code>this</code> as there's no facade for elements
 	 * @see sap.ui.base.Object#getInterface
 	 * @public
 	 */
@@ -654,7 +654,7 @@ sap.ui.define([
 	 * @param {boolean} [bCallBefore=false] if true, the delegate event listeners are called before the event listeners of the element; default is "false". In order to also set bClone, this parameter must be given.
 	 * @param {object} [oThis=oDelegate] if given, this object will be the "this" context in the listener methods; default is the delegate object itself
 	 * @param {boolean} [bClone=false] if true, this delegate will also be attached to any clones of this element; default is "false"
-	 * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @private
 	 */
 	Element.prototype.addDelegate = function (oDelegate, bCallBefore, oThis, bClone) {
@@ -689,7 +689,7 @@ sap.ui.define([
 	 * If the delegate was marked to be cloned and this element has been cloned, the delegate will not be removed from any clones.
 	 *
 	 * @param {object} oDelegate the delegate object
-	 * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @private
 	 */
 	Element.prototype.removeDelegate = function (oDelegate) {
@@ -754,7 +754,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oDelegate The delegate object which consists of the event handler names and the corresponding event handler functions
 	 * @param {object} [oThis=oDelegate] If given, this object will be the "this" context in the listener methods; default is the delegate object itself
-	 * @returns {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @since 1.9.0
 	 * @public
 	 */
@@ -780,7 +780,7 @@ sap.ui.define([
 	 * oElement.removeEventDelegate(oDelegate);
 	 * </pre>
 	 * @param {object} oDelegate The delegate object which consists of the event handler names and the corresponding event handler functions
-	 * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @since 1.9.0
 	 * @public
 	 */
@@ -884,7 +884,7 @@ sap.ui.define([
 	 * @param {object} oFocusInfo Focus info object as returned by {@link getFocusInfo}
 	 * @param {boolean} [oFocusInfo.preventScroll=false] @since 1.60 if it's set to true, the focused
 	 *   element won't be shifted into the viewport if it's not completely visible before the focus is set
-	 * @returns {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	Element.prototype.applyFocusInfo = function (oFocusInfo) {
@@ -920,7 +920,7 @@ sap.ui.define([
 	 * If a new tooltip is set, any previously set tooltip is deactivated.
 	 *
 	 * @param {string|sap.ui.core.TooltipBase} vTooltip New tooltip
-	 * @returns {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Element.prototype.setTooltip = function(vTooltip) {
@@ -986,7 +986,7 @@ sap.ui.define([
 	/**
 	 * Destroys the tooltip in the aggregation
 	 * named <code>tooltip</code>.
-	 * @return {sap.ui.core.Element} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @name sap.ui.core.Element#destroyTooltip
 	 * @function
@@ -1310,7 +1310,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sIdSuffix] Suffix to be appended to the cloned element ID
 	 * @param {string[]} [aLocalIds] Array of local IDs within the cloned hierarchy (internally used)
-	 * @returns {sap.ui.core.Element} reference to the newly created clone
+	 * @returns {this} reference to the newly created clone
 	 * @public
 	 */
 	Element.prototype.clone = function(sIdSuffix, aLocalIds){
@@ -1364,7 +1364,7 @@ sap.ui.define([
 	 * for this control when it is used inside a layout.
 	 *
 	 * @param {sap.ui.core.LayoutData} oLayoutData which should be set
-	 * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Element.prototype.setLayoutData = function(oLayoutData) {
@@ -1416,7 +1416,7 @@ sap.ui.define([
 	 * @param {object} [mParameters] map of additional parameters for this binding (only taken into account when vPath is a string in that case it corresponds to vPath.parameters).
 	 * The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.ContextBinding</code>.
 	 *
-	 * @returns {sap.ui.core.Element} reference to the instance itself
+	 * @returns {this} reference to the instance itself
 	 * @public
 	 * @function
 	 * @see {@link sap.ui.base.ManagedObject#bindObject}

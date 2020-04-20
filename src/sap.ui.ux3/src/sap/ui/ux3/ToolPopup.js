@@ -632,7 +632,7 @@ sap.ui.define([
              * reference position for docking
              * @param {sap.ui.core.Popup.Dock} [at=sap.ui.core.Popup.Dock.CenterCenter] The "of" element's
              * reference point for docking to
-             * @returns {sap.ui.ux3.ToolPopup}
+             * @returns {this}
              * @public
              */
             ToolPopup.prototype.open = function (my, at) {
@@ -1036,7 +1036,7 @@ sap.ui.define([
              *         If set, the focus is NOT restored to the element that had the focus before the ToolPopup was opened.
              *         This makes sense when the ToolPopup is closed programmatically from a different area of the application
              *         (outside the ToolPopup) and the focus should not move aways from that place.
-             * @returns {sap.ui.ux3.ToolPopup}
+             * @returns {this}
              * @public
              * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
              */
@@ -1391,7 +1391,7 @@ sap.ui.define([
          * Overriden setter for the Icon.
          *
          * @param {string} sIcon
-         * @returns {sap.ui.ux3.ToolPopup}
+         * @returns {this}
          */
         ToolPopup.prototype.setIcon = function (sIcon) {
             this.setProperty("icon", sIcon, true); // rerendering makes no sense, as this icon is not rendered by the ToolPopup
@@ -1403,7 +1403,7 @@ sap.ui.define([
          * Overriden setter for the icon hover.
          *
          * @param {string} sIconHover
-         * @returns {sap.ui.ux3.ToolPopup}
+         * @returns {this}
          */
         ToolPopup.prototype.setIconHover = function (sIconHover) {
             this.setProperty("iconHover", sIconHover, true); // rerendering makes no sense, as this icon is not rendered by the ToolPopup
@@ -1414,7 +1414,7 @@ sap.ui.define([
         /**
          * Overriden setter for the selected icon.
          * @param {string} sIconSelected
-         * @returns {sap.ui.ux3.ToolPopup}
+         * @returns {this}
          */
         ToolPopup.prototype.setIconSelected = function (sIconSelected) {
             this.setProperty("iconSelected", sIconSelected, true); // rerendering makes no sense, as this icon is not rendered by the ToolPopup
@@ -1435,7 +1435,7 @@ sap.ui.define([
          * Overriden setter for the max width internally.
          *
          * @param {sap.ui.core.CSSSize} sMaxWidth
-         * @returns {sap.ui.ux3.ToolPopup}
+         * @returns {this}
          */
         ToolPopup.prototype.setMaxWidth = function (sMaxWidth) {
             var pattern = /[0-9]+px/;

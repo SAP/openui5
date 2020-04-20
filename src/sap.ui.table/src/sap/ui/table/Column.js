@@ -499,7 +499,7 @@ function(
 	 * Sets the creation template.
 	 *
 	 * @param {sap.ui.core.Control} oCreationTemplate Instance of the creation template control
-	 * @returns {sap.ui.table.Column} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
@@ -533,7 +533,7 @@ function(
 	/**
 	 * Destroys the creation template.
 	 *
-	 * @returns {sap.ui.table.Column} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
@@ -774,7 +774,7 @@ function(
 	 * Sorts the current column ascending or descending.
 	 *
 	 * @param {boolean} bDescending Sort order of the column (if undefined the default will be ascending)
-	 * @returns {sap.ui.table.Column} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @deprecated Since version 1.5.1. Please use the function "sap.ui.Table.prototype.sort".
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -1066,7 +1066,7 @@ function(
 	 * A function receives the entered filter value as a parameter and should return the appropriate value for the filter expression.
 	 *
 	 * @param {any} vType The filter type
-	 * @returns {sap.ui.table.Column} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 *
 	 * @example <caption>Class name of a type.</caption>

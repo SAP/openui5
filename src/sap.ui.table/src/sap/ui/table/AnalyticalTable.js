@@ -254,7 +254,7 @@ sap.ui.define([
 	 * The property <code>enableGrouping</code> is not supported by the <code>AnalyticalTable</code> control.
 	 *
 	 * @deprecated Since version 1.28.
-	 * @returns {sap.ui.table.AnalyticalTable} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	AnalyticalTable.prototype.setEnableGrouping = function() {
@@ -275,7 +275,7 @@ sap.ui.define([
 	 * The <code>groupBy</code> association is not supported by the <code>AnalyticalTable</code> control.
 	 *
 	 * @deprecated Since version 1.28.
-	 * @returns {sap.ui.table.AnalyticalTable} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	AnalyticalTable.prototype.setGroupBy = function() {
@@ -1109,7 +1109,7 @@ sap.ui.define([
 	 * correspond to an <code>AnalyticalTable</code> row.
 	 *
 	 * @param {int} iRowIndex The row index which will be selected (in case it exists)
-	 * @returns {sap.ui.table.AnalyticalTable} a reference to the <code>AnalyticalTable</code> control, can be used for chaining
+	 * @returns {this} a reference to the <code>AnalyticalTable</code> control, can be used for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function
@@ -1139,7 +1139,7 @@ sap.ui.define([
 	 *
 	 * @param {int} iFromIndex the start index of the selection range
 	 * @param {int} iToIndex the end index of the selection range
-	 * @returns {sap.ui.table.AnalyticalTable} a reference to the <code>AnalyticalTable</code> control, can be used for chaining
+	 * @returns {this} a reference to the <code>AnalyticalTable</code> control, can be used for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function
@@ -1157,7 +1157,7 @@ sap.ui.define([
 	 *
 	 * @param {int} iFromIndex The starting index of the range which will be selected.
 	 * @param {int} iToIndex The starting index of the range which will be selected.
-	 * @returns {sap.ui.table.AnalyticalTable} a reference to the <code>AnalyticalTable</code> control, can be used for chaining
+	 * @returns {this} a reference to the <code>AnalyticalTable</code> control, can be used for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function
@@ -1172,7 +1172,7 @@ sap.ui.define([
 	 *
 	 * @param {int} iFromIndex The starting index of the range which will be deselected.
 	 * @param {int} iToIndex The starting index of the range which will be deselected.
-	 * @returns {sap.ui.table.AnalyticalTable} a reference to the <code>AnalyticalTable</code> control, can be used for chaining
+	 * @returns {this} a reference to the <code>AnalyticalTable</code> control, can be used for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function
@@ -1187,7 +1187,7 @@ sap.ui.define([
 	 * In addition all subsequent rows/tree nodes, which will be paged into view are also immediately selected.
 	 * However, due to obvious performance/network traffic reasons, the SelectAll function will NOT retrieve any data from the backend.
 	 *
-	 * @returns {sap.ui.table.AnalyticalTable} a reference to the <code>AnalyticalTable</code> control, can be used for chaining
+	 * @returns {this} a reference to the <code>AnalyticalTable</code> control, can be used for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function
@@ -1211,7 +1211,7 @@ sap.ui.define([
 	 * Expands one or more rows.
 	 *
 	 * @param {int|int[]} vRowIndex A single index or an array of indices of the rows to be expanded
-	 * @returns {sap.ui.table.AnalyticalTable} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function
@@ -1222,7 +1222,7 @@ sap.ui.define([
 	 * Collapses one or more rows.
 	 *
 	 * @param {int|int[]} vRowIndex A single index, or an array of indices of the rows to be collapsed
-	 * @returns {sap.ui.table.AnalyticalTable} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function
@@ -1234,7 +1234,7 @@ sap.ui.define([
 	 * If this method is called, not all groups might be loaded. If the user then scrolls to the bottom of the table,
 	 * additional groups are loaded, which increases the scroll range, and the scroll thumb moves up.
 	 *
-	 * @returns {sap.ui.table.AnalyticalTable} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @since 1.70
@@ -1252,7 +1252,7 @@ sap.ui.define([
 	/**
 	 * Collapses all nodes (and their child nodes if collapseRecursive is activated).
 	 *
-	 * @returns {sap.ui.table.AnalyticalTable} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function

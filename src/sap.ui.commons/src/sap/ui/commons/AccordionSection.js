@@ -189,7 +189,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 	 * Property setter for the "enabled" state
 	 *
 	 * @param {boolean} bEnabled Whether the AccordionSection is enabled or not
-	 * @return {sap.ui.commons.AccordionSection} 'this' to allow method chaining
+	 * @return {this} 'this' to allow method chaining
 	 * @public
 	 */
 	AccordionSection.prototype.setEnabled = function(bEnabled) {
@@ -222,7 +222,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 	 * Property setter for the "collapsed" state
 	 *
 	 * @param {boolean} bCollapsed Whether the AccordionSection is collapsed or not
-	 * @return {sap.ui.commons.AccordionSection} 'this' to allow method chaining
+	 * @return {this} 'this' to allow method chaining
 	 * @public
 	 */
 	AccordionSection.prototype.setCollapsed = function(bCollapsed) {

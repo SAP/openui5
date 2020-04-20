@@ -347,7 +347,7 @@ sap.ui.define([
 		/**
 		 * Destroys the internal composite aggregation
 		 *
-		 * @returns {sap.ui.core.XMLComposite} Returns <code>this</code> to allow method chaining
+		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 *
 		 * @private
 		 */
@@ -392,7 +392,7 @@ sap.ui.define([
 		/**
 		 * Sets the internal composite aggregation
 		 *
-		 * @returns {sap.ui.core.XMLComposite} Returns <code>this</code> to allow method chaining
+		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 *
 		 * @private
 		 */

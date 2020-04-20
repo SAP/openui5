@@ -414,7 +414,7 @@ sap.ui.define([
 	 * Validates the <code>src</code> parameter, and sets the actual type appropriately.
 	 *
 	 * @param {string} sSrc
-	 * @returns {sap.m.Avatar}
+	 * @returns {this}
 	 * @private
 	 */
 	Avatar.prototype._validateSrc = function (sSrc) {
@@ -441,7 +441,7 @@ sap.ui.define([
 	 * Validates the <code>src</code> parameter, and returns sap.ui.core.Icon object.
 	 *
 	 * @param {string} sSrc
-	 * @returns {sap.m.Avatar}
+	 * @returns {sap.ui.core.Icon|null}
 	 * @private
 	 */
 	Avatar.prototype._getDisplayIcon = function (sSrc) {

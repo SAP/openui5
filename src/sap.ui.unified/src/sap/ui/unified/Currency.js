@@ -149,7 +149,7 @@ sap.ui.define([
 		 *
 		 * @override
 		 * @param {string} sValue The value to be set
-		 * @returns {sap.ui.unified.Currency} <code>this</code> pointer for chaining
+		 * @returns {this} <code>this</code> pointer for chaining
 		 */
 		Currency.prototype.setValue = function(sValue) {
 			// Check if the value is bound and is undefined. In case of
@@ -183,7 +183,7 @@ sap.ui.define([
 		/**
 		 * Currency property setter.
 		 * @param {string} sValue The ISO 4217 currency code
-		 * @return {sap.ui.unified.Currency} <code>this</code> pointer for chaining
+		 * @return {this} <code>this</code> pointer for chaining
 		 */
 		Currency.prototype.setCurrency = function (sValue) {
 			var iCurrencyDigits,
@@ -224,7 +224,7 @@ sap.ui.define([
 		/**
 		 * UseSymbol property setter.
 		 * @param {boolean} bValue Whether the control must show the currency symbol instead of the ISO currency code
-		 * @return {sap.ui.unified.Currency} <code>this</code> pointer for chaining
+		 * @return {this} <code>this</code> pointer for chaining
 		 */
 		Currency.prototype.setUseSymbol = function (bValue) {
 			this.setProperty("useSymbol", bValue, true);
@@ -235,7 +235,7 @@ sap.ui.define([
 		/**
 		 * MaxPrecision property setter.
 		 * @param {int} iValue The maximum precision value
-		 * @return {sap.ui.unified.Currency} <code>this</code> pointer for chaining
+		 * @return {this} <code>this</code> pointer for chaining
 		 */
 		Currency.prototype.setMaxPrecision = function (iValue) {
 			this.setProperty("maxPrecision", iValue, true);

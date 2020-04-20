@@ -133,7 +133,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @param {boolean} isExpanded Indication if the SideNavigation is expanded.
-		 * @returns {sap.tnt.SideNavigation} this SideNavigation reference for chaining.
+		 * @returns {this} this SideNavigation reference for chaining.
 		 */
 		SideNavigation.prototype.setExpanded = function (isExpanded) {
 
@@ -260,7 +260,7 @@ sap.ui.define([
 		 * Sets the selected item based on a key.
 		 * @public
 		 * @param {string} selectedKey The key of the item to be selected
-		 * @return {sap.tnt.SideNavigation} this pointer for chaining
+		 * @return {this} this pointer for chaining
 		 */
 		SideNavigation.prototype.setSelectedKey = function (selectedKey) {
 

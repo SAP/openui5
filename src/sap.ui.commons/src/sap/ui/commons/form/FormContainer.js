@@ -57,7 +57,7 @@ sap.ui.define(['sap/ui/commons/library', 'sap/ui/layout/form/FormContainer'],
 	* Default value is <code>true</code>
 	*
 	* @param {boolean} bVisible new value for property <code>visible</code>
-	* @return {sap.ui.commons.form.FormContainer} <code>this</code> to allow method chaining
+	* @return {this} <code>this</code> to allow method chaining
 	* @public
 	* @since 1.12.0
 	* @name sap.ui.commons.form.FormContainer#setVisible

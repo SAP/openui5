@@ -421,7 +421,7 @@ sap.ui.define([
 	/*
 	 * Sets a date for the month.
 	 * @param {Date} oDate a JavaScript date
-	 * @return {sap.ui.unified.calendar.Month} <code>this</code> for method chaining
+	 * @return {this} <code>this</code> for method chaining
 	 */
 	Month.prototype.setDate = function(oDate){
 		if (oDate) {
@@ -452,7 +452,7 @@ sap.ui.define([
 	 * displays the month of a given date without setting the focus
 	 *
 	 * @param {object} oDate JavaScript date object for focused date.
-	 * @returns {sap.ui.unified.calendar.Month} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1318,7 +1318,7 @@ sap.ui.define([
 	 * when focus is being restored back (e.g. after rerendering), we focus the needed DOM element (in this case day)
 	 *
 	 * @param {object} oInfo the focus info
-	 * @returns {sap.ui.unified.calendar.Month} <code>this</code> for method chaining.
+	 * @returns {this} <code>this</code> for method chaining.
 	 */
 	Month.prototype.applyFocusInfo = function(oInfo){
 		return this;
@@ -1484,7 +1484,7 @@ sap.ui.define([
 	 * 			Whether or not the first date should be focused.
 	 * 			<b>Note:</b> This should be set to <code>true</code> if week number is selected,
 	 * 			since that isn't a focusable element.
-	 * @returns {sap.ui.unified.calendar.Month} this For chaining
+	 * @returns {this} this For chaining
 	 * @private
 	 */
 	Month.prototype._handleWeekSelection = function (oStartDate, bFocusStartDate) {
@@ -1513,7 +1513,7 @@ sap.ui.define([
 	 * or deselects them if they are already selected.
 	 *
 	 * @param {sap.ui.unified.calendar.CalendarDate} oEndDate The last of those days to be selected
-	 * @returns {sap.ui.unified.calendar.Month} this For chaining
+	 * @returns {this} this For chaining
 	 * @private
 	 */
 	Month.prototype._handleConsecutiveDaysSelection = function (oEndDate) {
@@ -1608,7 +1608,7 @@ sap.ui.define([
 	 * @param {int} iWeekNumber Week's number
 	 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate Week's start date
 	 * @param {sap.ui.unified.calendar.CalendarDate} oEndDate Week's end date
-	 * @returns {sap.ui.unified.calendar.Month} this For chaining
+	 * @returns {this} this For chaining
 	 * @private
 	 */
 	Month.prototype._handleWeekSelectionByMultipleDays = function (iWeekNumber, oStartDate, oEndDate) {
@@ -1639,7 +1639,7 @@ sap.ui.define([
 	 * @param {int} iWeekNumber Week's number
 	 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate Week's start date
 	 * @param {sap.ui.unified.calendar.CalendarDate} oEndDate Week's end date
-	 * @returns {sap.ui.unified.calendar.Month} this For chaining
+	 * @returns {this} this For chaining
 	 * @private
 	 */
 	Month.prototype._handleWeekSelectionBySingleInterval = function(iWeekNumber, oStartDate, oEndDate) {
@@ -1708,7 +1708,7 @@ sap.ui.define([
 	 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate Starting date
 	 * @param {sap.ui.unified.calendar.CalendarDate} oEndDate End date
 	 * @param {boolean} bSelect [bSelect=false] Whether to select or deselect the days
-	 * @returns {sap.ui.unified.calendar.Month} this For chaining
+	 * @returns {this} this For chaining
 	 * @private
 	 */
 	Month.prototype._toggleDaysBetween = function (oStartDate, oEndDate, bSelect) {

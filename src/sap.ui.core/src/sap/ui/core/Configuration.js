@@ -605,7 +605,7 @@ sap.ui.define([
 		/**
 		 * Allows setting the theme name
 		 * @param {string} sTheme the theme name
-		 * @return {sap.ui.core.Configuration} <code>this</code> to allow method chaining
+		 * @return {this} <code>this</code> to allow method chaining
 		 * @private
 		 */
 		_setTheme : function (sTheme) {
@@ -738,7 +738,7 @@ sap.ui.define([
 		 *   as SAP Logon language.
 		 * @throws {Error} When <code>sLanguage</code> can't be interpreted as a BCP47 language or when
 		 *   <code>sSAPLanguage</code> is given and can't be interpreted as SAP language code.
-		 * @return {sap.ui.core.Configuration} <code>this</code> to allow method chaining
+		 * @return {this} <code>this</code> to allow method chaining
 		 *
 		 * @see http://scn.sap.com/docs/DOC-14377
 		 * @public
@@ -806,7 +806,7 @@ sap.ui.define([
 		 * @experimental
 		 * @since 1.37.0
 		 * @param {boolean} on true to switch it on, false if to switch it off
-		 * @returns {sap.ui.core.Configuration}
+		 * @returns {this}
 		 */
 		setUI5CacheOn: function (on) {
 			this["xx-cache-use"] = on;
@@ -828,7 +828,7 @@ sap.ui.define([
 		 * @experimental
 		 * @since 1.37.0
 		 * @param {boolean} on true to switch it on, false if to switch it off
-		 * @returns {sap.ui.core.Configuration}
+		 * @returns {this}
 		 */
 		setUI5CacheSerializationSupport: function (on) {
 			this["xx-cache-serialization"] = on;
@@ -903,7 +903,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.core.CalendarType|null} sCalendarType the new calendar type. Set it with null to clear the calendar type
 		 *   and the calendar type is calculated based on the format settings and current locale.
-		 * @return {sap.ui.core.Configuration} <code>this</code> to allow method chaining
+		 * @return {this} <code>this</code> to allow method chaining
 		 * @public
 		 * @since 1.28.6
 		 */
@@ -951,7 +951,7 @@ sap.ui.define([
 		 * @param {string|null} sFormatLocale the new format locale as a BCP47 compliant language tag;
 		 *   case doesn't matter and underscores can be used instead of dashes to separate
 		 *   components (compatibility with Java Locale IDs)
-		 * @return {sap.ui.core.Configuration} <code>this</code> to allow method chaining
+		 * @return {this} <code>this</code> to allow method chaining
 		 * @public
 		 * @throws {Error} When <code>sFormatLocale</code> is given, but is not a valid BCP47 language
 		 *   tag or Java locale identifier
@@ -1096,7 +1096,7 @@ sap.ui.define([
 		 * <b>Note</b>: See documentation of {@link #setLanguage} for restrictions.
 		 *
 		 * @param {boolean|null} bRTL new character orientation mode or <code>null</code>
-		 * @return {sap.ui.core.Configuration} <code>this</code> to allow method chaining
+		 * @return {this} <code>this</code> to allow method chaining
 		 * @public
 		 */
 		setRTL : function(bRTL) {
@@ -1547,7 +1547,7 @@ sap.ui.define([
 		 * });
 		 *
 		 * @param {object} mSettings Configuration options to apply
-		 * @returns {sap.ui.core.Configuration} Returns <code>this</code> to allow method chaining
+		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
 		 * @since 1.38.6
 		 */

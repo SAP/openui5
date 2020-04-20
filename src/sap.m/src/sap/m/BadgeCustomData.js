@@ -47,7 +47,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {string} Value to be.
-	 * @return {sap.m.BadgeCustomData} this BadgeCustomData reference for chaining.
+	 * @return {this} this BadgeCustomData reference for chaining.
 	 */
 	BadgeCustomData.prototype.setValue =  function (sValue) {
 		if (this.getValue() === sValue) { return this; }
@@ -81,7 +81,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {string} Key to be.
-	 * @return {sap.m.BadgeCustomData} this BadgeCustomData reference for chaining.
+	 * @return {this} this BadgeCustomData reference for chaining.
 	 */
 	BadgeCustomData.prototype.setKey = function () {
 		return this;

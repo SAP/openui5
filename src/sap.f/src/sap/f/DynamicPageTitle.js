@@ -483,7 +483,7 @@ sap.ui.define([
 	 * Sets the value of the <code>areaShrinkRatio</code> property.
 	 *
 	 * @param {sap.f.DynamicPageTitleShrinkRatio} sAreaShrinkRatio - new value of the <code>areaShrinkRatio</code>
-	 * @return {sap.f.DynamicPageTitle} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @since 1.54
 	 */

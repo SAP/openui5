@@ -175,7 +175,7 @@ function(
 		 * Default value is <code>None</code>.
 		 *
 		 * @param {sap.ui.core.ValueState} sValueState New value for property <code>valueState</code>.
-		 * @return {sap.m.SliderTooltip} <code>this</code> to allow method chaining.
+		 * @return {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		SliderTooltip.prototype.setValueState = function (sValueState) {

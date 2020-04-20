@@ -1553,7 +1553,7 @@ sap.ui.define([
 	 * Content must be capable of being positioned via position:absolute;
 	 *
 	 * @param {sap.ui.core.Control | Element } oContent The content of the popup
-	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Popup.prototype.setContent = function(oContent) {
@@ -1581,7 +1581,7 @@ sap.ui.define([
 	 * @param {string | sap.ui.core.Element | Element | jQuery | jQuery.Event} [of=document] specifies the reference element to which the given content should be aligned as specified in the other parameters
 	 * @param {string} [offset='0 0'] the offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "0 10" to move the popup 10 pixels to the right). If the docking of both "my" and "at" are both RTL-sensitive ("begin" or "end"), this offset is automatically mirrored in the RTL case as well.
 	 * @param {string} [collision] defines how the position of an element should be adjusted in case it overflows the window in some direction. The valid values that refer to jQuery-UI's position parameters are "flip", "fit" and "none".
-	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Popup.prototype.setPosition = function(my, at, of, offset, collision) {
@@ -1948,7 +1948,7 @@ sap.ui.define([
 	 * This also affects a currently open popup.
 	 *
 	 * @param {boolean} bShowShadow whether to show a shadow
-	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Popup.prototype.setShadow = function(bShowShadow) {
@@ -1968,7 +1968,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bModal whether the Popup is of modal type
 	 * @param {string} [sModalCSSClass] a CSS class (or space-separated list of classes) that should be added to the block layer
-	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Popup.prototype.setModal = function(bModal, sModalCSSClass) {
@@ -2042,7 +2042,7 @@ sap.ui.define([
 	 * - for touch environment: user clicks the area which is outside the popup itself, the DOM element which the popup
 	 *   aligns to (except document), and any extra popup content set by calling setExtraContent.
 	 * @param {boolean} bAutoClose whether the Popup should close as soon as the focus leaves
-	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Popup.prototype.setAutoClose = function(bAutoClose) {
@@ -2075,7 +2075,7 @@ sap.ui.define([
 	 *
 	 * @param {Element[]|sap.ui.core.Element[]|string[]} aContent An array containing DOM elements, sap.ui.core.Element
 	 *  or an ID which are considered to be part of the Popup; a value of null removes all previous content
-	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @since 1.75
 	 */
@@ -2166,7 +2166,7 @@ sap.ui.define([
 	 *
 	 * @param {function} fnOpen The function which executes the custom opening animation
 	 * @param {function} fnClose The function  which executes the custom closing animation
-	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Popup.prototype.setAnimations = function(fnOpen, fnClose) {
@@ -2191,7 +2191,7 @@ sap.ui.define([
 	 *
 	 * @param {int} [iOpenDuration=jQuery.fx.speed.fast] in milliseconds
 	 * @param {int} [iCloseDuration=jQuery.fx.speed.fast] in milliseconds
-	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Popup.prototype.setDurations = function(iOpenDuration, iCloseDuration) {

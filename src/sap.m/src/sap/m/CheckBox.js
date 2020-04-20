@@ -412,7 +412,7 @@ sap.ui.define([
 	 * Sets the tab index of the control
 	 *
 	 * @param {int} iTabIndex The tab index should be greater than or equal -1
-	 * @returns {sap.m.CheckBox} The <code>sap.m.CheckBox</code> instance
+	 * @returns {this} The <code>sap.m.CheckBox</code> instance
 	 * @since 1.16
 	 * @protected
 	 */

@@ -252,7 +252,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {object} oOrigin Origin of the invalidation.
-	 * @returns {sap.m.LightBox} this LightBox reference for chaining.
+	 * @returns {this} this LightBox reference for chaining.
 	 */
 	LightBox.prototype.invalidate = function (oOrigin) {
 		var oImageContent = this._getImageContent();
@@ -298,7 +298,7 @@ sap.ui.define([
 	 * Opens the LightBox.
 	 *
 	 * @public
-	 * @returns {sap.m.LightBox} Pointer to the control instance for chaining.
+	 * @returns {this} Pointer to the control instance for chaining.
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	LightBox.prototype.open = function () {
@@ -333,7 +333,7 @@ sap.ui.define([
 	 * Closes the LightBox.
 	 *
 	 * @public
-	 * @returns {sap.m.LightBox} Pointer to the control instance for chaining.
+	 * @returns {this} Pointer to the control instance for chaining.
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	LightBox.prototype.close = function () {

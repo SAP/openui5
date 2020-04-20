@@ -344,7 +344,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', './TextField', './library', './TextAr
 	 * Property setter for MaxLength
 	 *
 	 * @param {int} iMaxLength maximal length of text
-	 * @return {sap.ui.commons.TextArea} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	TextArea.prototype.setMaxLength = function(iMaxLength) {
@@ -369,7 +369,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', './TextField', './library', './TextAr
 	 * Property setter for the cursor position
 	 *
 	 * @param {int} iCursorPos cursor position
-	 * @return {sap.ui.commons.TextArea} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	TextArea.prototype.setCursorPos = function(iCursorPos) {

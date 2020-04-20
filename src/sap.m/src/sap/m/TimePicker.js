@@ -575,7 +575,7 @@ function(
 		/**
 		 * Sets the seconds slider step.
 		 * @param {int} step The step used to generate values for the seconds slider
-		 * @returns {sap.m.TimePicker} <code>this</code> to allow method chaining
+		 * @returns {this} <code>this</code> to allow method chaining
 		 * @public
 		 */
 		TimePicker.prototype.setSecondsStep = function(step) {
@@ -593,7 +593,7 @@ function(
 		 * Sets the title label inside the picker.
 		 *
 		 * @param {string} title A title
-		 * @returns {sap.m.TimePicker} <code>this</code> to allow method chaining
+		 * @returns {this} <code>this</code> to allow method chaining
 		 */
 		TimePicker.prototype.setTitle = function(title) {
 			var oSliders = this._getSliders();
@@ -635,7 +635,7 @@ function(
 		 * Recommended usage is to not use it with am/pm format.
 		 *
 		 * @param {boolean} bSupport2400
-		 * @returns {sap.m.TimePicker} this instance, used for chaining
+		 * @returns {this} this instance, used for chaining
 		 * @public
 		 */
 		TimePicker.prototype.setSupport2400 = function (bSupport2400) {
@@ -684,7 +684,7 @@ function(
 		 *
 		 * @override
 		 * @param {string} sValue New value
-		 * @returns {sap.m.TimePicker} this instance, used for chaining
+		 * @returns {this} this instance, used for chaining
 		 * @public
 		 */
 		TimePicker.prototype.setValue = function(sValue) {
@@ -759,7 +759,7 @@ function(
 		 * @public
 		 * @override
 		 * @param {string|sap.ui.core.TooltipBase} vTooltip
-		 * @returns {sap.m.TimePicker} A reference to <code>this</code> instance to allow method chaining.
+		 * @returns {this} A reference to <code>this</code> instance to allow method chaining.
 		 */
 		TimePicker.prototype.setTooltip = function(vTooltip) {
 			/*
@@ -794,7 +794,7 @@ function(
 		 * Necessary for translation and auto-complete of the day periods, such as AM and PM.
 		 *
 		 * @param {string} sLocaleId A locale identifier like 'en_US'
-		 * @returns {sap.m.TimePicker} this instance, used for chaining
+		 * @returns {this} this instance, used for chaining
 		 * @public
 		 */
 		TimePicker.prototype.setLocaleId = function(sLocaleId) {
@@ -1802,7 +1802,7 @@ function(
 		 * </ul>
 		 *
 		 * @param {object} [mArguments] The arguments to pass along with the event
-		 * @return {sap.m.TimePicker} <code>this</code> to allow method chaining
+		 * @return {this} <code>this</code> to allow method chaining
 		 * @protected
 		 * @name sap.m.TimePicker#fireChange
 		 * @function

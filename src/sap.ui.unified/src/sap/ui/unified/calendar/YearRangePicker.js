@@ -81,7 +81,7 @@ sap.ui.define([
 	/**
 	 * Sets a date.
 	 * @param {object} oRangeMidDate a JavaScript date
-	 * @return {sap.ui.unified.calendar.YearRangePicker} <code>this</code> for method chaining
+	 * @return {this} <code>this</code> for method chaining
 	 */
 	YearRangePicker.prototype.setDate = function(oRangeMidDate){
 		var oCalDate, iYear, iYears, oFirstDate, iHalfRange;

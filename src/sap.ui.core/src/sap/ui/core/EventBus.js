@@ -61,7 +61,7 @@ sap.ui.define([
 	 * @param {object}
 	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
 	 *                        handler function). If it is not specified, the handler function is called in the context of the event bus.
-	 * @return {sap.ui.core.EventBus} Returns <code>this</code> to allow method chaining
+	 * @return {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	EventBus.prototype.subscribe = function(sChannelId, sEventId, fnFunction, oListener) {
@@ -102,7 +102,7 @@ sap.ui.define([
 	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
 	 *                        handler function). If it is not specified, the handler function is called in the context of the event bus.
 	 * @since 1.32.0
-	 * @return {sap.ui.core.EventBus} Returns <code>this</code> to allow method chaining
+	 * @return {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	EventBus.prototype.subscribeOnce = function(sChannelId, sEventId, fnFunction, oListener){
@@ -133,7 +133,7 @@ sap.ui.define([
 	 *            fnFunction The handler function to unsubscribe from the event
 	 * @param {object}
 	 *            [oListener] The object that wanted to be notified when the event occurred
-	 * @return {sap.ui.core.EventBus} Returns <code>this</code> to allow method chaining
+	 * @return {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	EventBus.prototype.unsubscribe = function(sChannelId, sEventId, fnFunction, oListener) {

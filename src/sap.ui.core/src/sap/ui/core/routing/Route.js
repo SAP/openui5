@@ -435,7 +435,7 @@ sap.ui.define([
 			 *            [oListener] Context object to call the event handler with. Defaults to this
 			 *            <code>sap.ui.core.routing.Route</code> itself
 			 *
-			 * @returns {sap.ui.core.routing.Route} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 * @since 1.25.1
 			 */
@@ -451,7 +451,7 @@ sap.ui.define([
 			 *
 			 * @param {function} fnFunction The function to be called, when the event occurs
 			 * @param {object} [oListener] Context object on which the given function had to be called
-			 * @returns {sap.ui.core.routing.Route} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 * @since 1.25.1
 			 */
@@ -500,7 +500,7 @@ sap.ui.define([
 			 *            [oListener] Context object to call the event handler with. Defaults to this
 			 *            <code>Route</code> itself
 			 *
-			 * @returns {sap.ui.core.routing.Route} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 * @since 1.46.1
 			 */
@@ -516,7 +516,7 @@ sap.ui.define([
 			 *
 			 * @param {function} fnFunction The function to be called, when the event occurs
 			 * @param {object} [oListener] Context object on which the given function had to be called
-			 * @returns {sap.ui.core.routing.Route} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 * @since 1.46.1
 			 */
@@ -577,7 +577,7 @@ sap.ui.define([
 			 *            [oListener] Context object to call the event handler with. Defaults to this
 			 *            <code>Route</code> itself
 			 *
-			 * @returns {sap.ui.core.routing.Route} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 * @since 1.25.1
 			 */
@@ -593,7 +593,7 @@ sap.ui.define([
 			 *
 			 * @param {function} fnFunction The function to be called, when the event occurs
 			 * @param {object} [oListener] Context object on which the given function had to be called
-			 * @returns {sap.ui.core.routing.Route} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 * @since 1.25.1
 			 */

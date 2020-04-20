@@ -839,7 +839,7 @@ sap.ui.define([
 	* adding a single block to the end of the <code>blocks</code> aggregation.
 	* @param {sap.uxap.BlockBase} oObject The <code>sap.uxap.BlockBase</code> instance
 	* @param {int} iIndex The insertion index
-	* @returns {sap.uxap.ObjectPageSubSection} The <code>sap.uxap.ObjectPageSubSection</code> instance
+	* @returns {this} The <code>sap.uxap.ObjectPageSubSection</code> instance
 	* @public
 	*/
 	ObjectPageSubSection.prototype.insertBlock = function (oObject, iIndex) {
@@ -855,7 +855,7 @@ sap.ui.define([
 	 * adding a single block to the end of the <code>moreBlocks</code> aggregation.
 	 * @param {sap.uxap.BlockBase} oObject The <code>sap.uxap.BlockBase</code> instance
 	 * @param {int} iIndex The insertion index
-	 * @returns {sap.uxap.ObjectPageSubSection} The <code>sap.uxap.ObjectPageSubSection</code> instance
+	 * @returns {this} The <code>sap.uxap.ObjectPageSubSection</code> instance
 	 * @public
 	 */
 	ObjectPageSubSection.prototype.insertMoreBlock = function (oObject, iIndex) {

@@ -124,7 +124,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @param {number} iWidth value.
-		 * @returns {sap.ui.layout.BlockLayoutCell} this BlockLayoutCell reference for chaining.
+		 * @returns {this} this BlockLayoutCell reference for chaining.
 		 */
 		BlockLayoutCell.prototype.setWidth = function (iWidth) {
 			this.setProperty("width", iWidth);

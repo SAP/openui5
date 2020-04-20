@@ -216,7 +216,7 @@ sap.ui.define([
 		* If an ID of a <code>sap.f.ProductSwitchItem</code> instance is given, the item with this ID becomes the <code>selectedItem</code> association.
 		* Alternatively, a <code>sap.f.ProductSwitchItem</code> instance may be given or <code>null</code> to clear the selection.
 		*
-		* @returns {sap.f.ProductSwitch} <code>this</code> to allow method chaining
+		* @returns {this} <code>this</code> to allow method chaining
 		* @public
 		*/
 

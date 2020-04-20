@@ -230,7 +230,7 @@ sap.ui.define([
 	/**
 	 * Sets OData V4 semantics for this type instance.
 	 *
-	 * @returns {sap.ui.model.odata.type.DateTimeOffset}
+	 * @returns {this}
 	 *   <code>this</code> to allow method chaining
 	 *
 	 * @private

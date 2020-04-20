@@ -1375,7 +1375,7 @@ sap.ui.define([
 	 *   The parameter name
 	 * @param {any} vValue
 	 *   The parameter value
-	 * @returns {sap.ui.model.odata.v4.ODataContextBinding}
+	 * @returns {this}
 	 *   <code>this</code> to enable method chaining
 	 * @throws {Error} If the binding is not a deferred operation binding (see
 	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}) or if the value is missing

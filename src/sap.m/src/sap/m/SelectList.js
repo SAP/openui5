@@ -882,7 +882,7 @@ sap.ui.define([
 		 * If an ID of a <code>sap.ui.core.Item</code> is given, the item with this ID becomes the <code>selectedItem</code> association.
 		 * Alternatively, a <code>sap.ui.core.Item</code> instance may be given or <code>null</code> to clear the selection.
 		 *
-		 * @returns {sap.m.SelectList} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		SelectList.prototype.setSelectedItem = function(vItem) {
@@ -911,7 +911,7 @@ sap.ui.define([
 		 * Default value is an empty string <code>""</code> or <code>undefined</code>.
 		 *
 		 * @param {string | undefined} vItem New value for property <code>selectedItemId</code>.
-		 * @returns {sap.m.SelectList} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		SelectList.prototype.setSelectedItemId = function(vItem) {
@@ -926,7 +926,7 @@ sap.ui.define([
 		 * Default value is an empty string <code>""</code> or <code>undefined</code>.
 		 *
 		 * @param {string} sKey New value for property <code>selectedKey</code>.
-		 * @returns {sap.m.SelectList} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		SelectList.prototype.setSelectedKey = function(sKey) {
@@ -1057,7 +1057,7 @@ sap.ui.define([
 		/**
 		 * Destroys all the items in the aggregation named <code>items</code>.
 		 *
-		 * @returns {sap.m.SelectList} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		SelectList.prototype.destroyItems = function() {

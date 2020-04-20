@@ -1253,7 +1253,7 @@ sap.ui.define([
 	 * Property setter for the editable state
 	 *
 	 * @param {boolean} bEditable Whether the Slider should be editable, or not (read-only then)
-	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Slider.prototype.setEditable = function(bEditable) {
@@ -1282,7 +1282,7 @@ sap.ui.define([
 	 * Property setter for the enabled state
 	 *
 	 * @param {boolean} bEnabled Whether the Slider should be ednabled, or not (disabled)
-	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Slider.prototype.setEnabled = function(bEnabled) {
@@ -1323,7 +1323,7 @@ sap.ui.define([
 	 * Property setter for the totalUnits state
 	 *
 	 * @param {int} iTotalUnits Number of the units (tick-spaces)
-	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Slider.prototype.setTotalUnits = function(iTotalUnits) {
@@ -1341,7 +1341,7 @@ sap.ui.define([
 	 * A new rendering is not necessary, only the grip must be moved.
 	 *
 	 * @param {float} fValue
-	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Slider.prototype.setValue = function(fValue) {

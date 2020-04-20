@@ -183,7 +183,7 @@ sap.ui.define([
 	 *            [oListener] Context object to call the event handler with. Defaults to this
 	 *            <code>sap.ui.model.Model</code> itself
 	 *
-	 * @returns {sap.ui.model.Model} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Model.prototype.attachRequestFailed = function(oData, fnFunction, oListener) {
@@ -201,7 +201,7 @@ sap.ui.define([
 	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
 	 *            [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.model.Model} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Model.prototype.detachRequestFailed = function(fnFunction, oListener) {
@@ -218,7 +218,7 @@ sap.ui.define([
 	 * @param {string} [oParameters.statusText] The status as a text, details not specified, intended only for diagnosis output
 	 * @param {string} [oParameters.responseText] Response that has been received for the request ,as a text string
 	 *
-	 * @returns {sap.ui.model.Model} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	Model.prototype.fireRequestFailed = function(oParameters) {
@@ -261,7 +261,7 @@ sap.ui.define([
 	 *            [oListener] Context object to call the event handler with. Defaults to this
 	 *            <code>sap.ui.model.Model</code> itself.
 	 *
-	 * @returns {sap.ui.model.Model} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Model.prototype.attachParseError = function(oData, fnFunction, oListener) {
@@ -279,7 +279,7 @@ sap.ui.define([
 	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
 	 *            [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.model.Model} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Model.prototype.detachParseError = function(fnFunction, oListener) {
@@ -299,7 +299,7 @@ sap.ui.define([
 	 * @param {int} [oParameters.linepos]
 	 * @param {int} [oParameters.filepos]
 	 *
-	 * @returns {sap.ui.model.Model} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	Model.prototype.fireParseError = function(oParameters) {
@@ -341,7 +341,7 @@ sap.ui.define([
 	 *            [oListener] Context object to call the event handler with. Defaults to this
 	 *            <code>sap.ui.model.Model</code> itself
 	 *
-	 * @returns {sap.ui.model.Model} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Model.prototype.attachRequestSent = function(oData, fnFunction, oListener) {
@@ -359,7 +359,7 @@ sap.ui.define([
 	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
 	 *            [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.model.Model} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Model.prototype.detachRequestSent = function(fnFunction, oListener) {
@@ -376,7 +376,7 @@ sap.ui.define([
 	 * @param {boolean} [oParameters.async] If the request is synchronous or asynchronous (if available)
 	 * @param {string} [oParameters.info] additional information for the request (if available) <strong>deprecated</strong>
 	 * @param {object} [oParameters.infoObject] Additional information for the request (if available)
-	 * @returns {sap.ui.model.Model} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	Model.prototype.fireRequestSent = function(oParameters) {
@@ -427,7 +427,7 @@ sap.ui.define([
 	 *            [oListener] Context object to call the event handler with. Defaults to this
 	 *            <code>sap.ui.model.Model</code> itself
 	 *
-	 * @returns {sap.ui.model.Model} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Model.prototype.attachRequestCompleted = function(oData, fnFunction, oListener) {
@@ -445,7 +445,7 @@ sap.ui.define([
 	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
 	 *            [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.model.Model} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Model.prototype.detachRequestCompleted = function(fnFunction, oListener) {
@@ -463,7 +463,7 @@ sap.ui.define([
 	 * @param {string} [oParameters.info] additional information for the request (if available) <strong>deprecated</strong>
 	 * @param {object} [oParameters.infoObject] Additional information for the request (if available)
 	 *
-	 * @returns {sap.ui.model.Model} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	Model.prototype.fireRequestCompleted = function(oParameters) {
@@ -490,7 +490,7 @@ sap.ui.define([
 	 * @param {object} [oParameters.context] the context of the property
 	 * @param {object} [oParameters.value] the value of the property
 	 *
-	 * @returns {sap.ui.model.Model} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	Model.prototype.firePropertyChange = function(oParameters) {
@@ -536,7 +536,7 @@ sap.ui.define([
 	 *            [oListener] Context object to call the event handler with. Defaults to this
 	 *            <code>sap.ui.model.Model</code> itself
 	 *
-	 * @returns {sap.ui.model.Model} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Model.prototype.attachPropertyChange = function(oData, fnFunction, oListener) {
@@ -554,7 +554,7 @@ sap.ui.define([
 	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
 	 *            [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.model.Model} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Model.prototype.detachPropertyChange = function(fnFunction, oListener) {
@@ -831,7 +831,7 @@ sap.ui.define([
 	 * be updated with the new binding mode.
 	 *
 	 * @param {sap.ui.model.BindingMode} sMode The default binding mode to set for the model
-	 * @returns {sap.ui.model.Model} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Model.prototype.setDefaultBindingMode = function(sMode) {

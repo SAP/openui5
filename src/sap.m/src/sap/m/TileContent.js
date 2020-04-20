@@ -208,7 +208,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './TileContentRenderer'],
 	/**
 	 * Setter for protected property to enable or disable footer rendering. This function does not invalidate the control.
 	 * @param {boolean} value Determines whether the control's footer is rendered or not
-	 * @returns {sap.m.TileContent} this to allow method chaining
+	 * @returns {this} this to allow method chaining
 	 * @protected
 	 */
 	TileContent.prototype.setRenderFooter = function(value) {
@@ -219,7 +219,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './TileContentRenderer'],
 	/**
 	 * Setter for protected property to enable or disable content rendering. This function does not invalidate the control.
 	 * @param {boolean} value Determines whether the control's content is rendered or not
-	 * @returns {sap.m.TileContent} this To allow method chaining
+	 * @returns {this} this To allow method chaining
 	 * @protected
 	 */
 	TileContent.prototype.setRenderContent = function(value) {

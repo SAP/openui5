@@ -126,7 +126,7 @@ sap.ui.define([
 		 * This property can only be applied initially.
 		 *
 		 * @param {string} sCommand New value for property <code>command</code>
-		 * @return {sap.ui.core.CommandExecution} Reference to <code>this</code> in order to allow method chaining
+		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 * @private
 		 */
 		setCommand: function(sCommand) {

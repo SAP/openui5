@@ -43,7 +43,7 @@ var MessageParser = Object.extend("sap.ui.core.message.MessageParser", {
  * This method is used by the model to register itself as MessageProcessor for this parser
  *
  * @param {sap.ui.core.message.MessageProcessor} oProcessor - The MessageProcessor that can be used to fire events
- * @return {sap.ui.core.message.MessageParser} Instance reference for method chaining
+ * @return {this} Instance reference for method chaining
  * @protected
  */
 MessageParser.prototype.setProcessor = function(oProcessor) {

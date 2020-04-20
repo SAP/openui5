@@ -225,7 +225,7 @@ function(
 
 	/**
 	 * Moves the selection backwards by one step.
-	 * @returns {sap.m.WizardProgressNavigator} Pointer to the control instance for chaining.
+	 * @returns {this} Pointer to the control instance for chaining.
 	 * @public
 	 */
 	WizardProgressNavigator.prototype.previousStep = function () {
@@ -240,7 +240,7 @@ function(
 
 	/**
 	 * Moves the selection forwards by one step.
-	 * @returns {sap.m.WizardProgressNavigator} Pointer to the control instance for chaining.
+	 * @returns {this} Pointer to the control instance for chaining.
 	 * @public
 	 */
 	WizardProgressNavigator.prototype.nextStep = function () {
@@ -249,7 +249,7 @@ function(
 
 	/**
 	 * Moves the selection forwards to the next step that requires input.
-	 * @returns {sap.m.WizardProgressNavigator} Pointer to the control instance for chaining.
+	 * @returns {this} Pointer to the control instance for chaining.
 	 * @public
 	 */
 	WizardProgressNavigator.prototype.incrementProgress = function () {
@@ -447,7 +447,7 @@ function(
 	/**
 	 * Move to the specified step while updating the current step and active step.
 	 * @param {number} iNewStep The step number to which current step will be set. Non zero-based.
-	 * @returns {sap.m.WizardProgressNavigator} Pointer to the control instance for chaining.
+	 * @returns {this} Pointer to the control instance for chaining.
 	 * @private
 	 */
 	WizardProgressNavigator.prototype._moveToStep = function (iNewStep) {
@@ -485,7 +485,7 @@ function(
 	 * Updates the current step in the control instance as well as the DOM structure.
 	 * @param {number} iNewStep The step number to which current step will be set. Non zero-based.
 	 * @param {number} iOldStep The step number to which current step was set. Non zero-based.
-	 * @returns {sap.m.WizardProgressNavigator} Pointer to the control instance for chaining.
+	 * @returns {this} Pointer to the control instance for chaining.
 	 * @private
 	 */
 	WizardProgressNavigator.prototype._updateCurrentStep = function (iNewStep, iOldStep) {

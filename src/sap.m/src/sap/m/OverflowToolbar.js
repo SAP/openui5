@@ -253,7 +253,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {boolean} bValue
-	 * @return {sap.m.OverflowToolbar} <code>this</code> pointer for chaining
+	 * @return {this} <code>this</code> pointer for chaining
 	 */
 	OverflowToolbar.prototype.setAsyncMode = function(bValue) {
 		// No invalidation is needed

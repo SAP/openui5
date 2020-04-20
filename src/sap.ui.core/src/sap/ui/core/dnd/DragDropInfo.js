@@ -110,7 +110,7 @@ sap.ui.define(["./DragInfo", "./DropInfo", "sap/ui/Device", "sap/base/Log"],
 	 * <code>groupName</code> property must not be set.
 	 *
 	 * @private
-	 * @returns {sap.ui.core.dnd.DragDropInfo} <code>this</code> to allow method chaining.
+	 * @returns {this} <code>this</code> to allow method chaining.
 	 */
 	DragDropInfo.prototype.setGroupName = function() {
 		Log.error("groupName property must not be set on " + this);

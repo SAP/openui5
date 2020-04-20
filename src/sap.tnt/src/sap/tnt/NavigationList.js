@@ -255,7 +255,7 @@ sap.ui.define([
 		 * Sets the selected item based on a key.
 		 * @public
 		 * @param {string} selectedKey The key of the item to be selected
-		 * @return {sap.tnt.NavigationList} this pointer for chaining
+		 * @return {this} this pointer for chaining
 		 */
 		NavigationList.prototype.setSelectedKey = function (selectedKey) {
 

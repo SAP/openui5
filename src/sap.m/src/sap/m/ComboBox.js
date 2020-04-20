@@ -479,7 +479,7 @@ sap.ui.define([
 		 * @param {string} sAssociationName The name of the association.
 		 * @param {string} sId The ID which should be set as association.
 		 * @param {boolean} bSuppressInvalidate Should the control invalidation be suppressed.
-		 * @returns {sap.m.ComboBox} <code>this</code> to allow method chaining
+		 * @returns {this} <code>this</code> to allow method chaining
 		 * @private
 		 * @since 1.22.1
 		 */
@@ -1608,7 +1608,7 @@ sap.ui.define([
 		/**
 		 * Destroys all the items in the aggregation named <code>items</code>.
 		 *
-		 * @returns {sap.m.ComboBox} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		ComboBox.prototype.destroyItems = function() {
@@ -1651,7 +1651,7 @@ sap.ui.define([
 		 *
 		 * @param {int} iSelectionStart The index of the first selected character.
 		 * @param {int} iSelectionEnd The index of the character after the last selected character.
-		 * @returns {sap.m.ComboBox} <code>this</code> to allow method chaining
+		 * @returns {this} <code>this</code> to allow method chaining
 		 * @protected
 		 * @since 1.22.1
 		 */
@@ -1702,7 +1702,7 @@ sap.ui.define([
 		/**
 		 * Opens the control's picker popup.
 		 *
-		 * @returns {sap.m.ComboBox} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @protected
 		 */
 		ComboBox.prototype.open = function() {
@@ -1785,7 +1785,7 @@ sap.ui.define([
 		 * Alternatively, a <code>sap.ui.core.Item</code> instance may be given or <code>null</code> to clear
 		 * the selection.
 		 *
-		 * @returns {sap.m.ComboBox} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		ComboBox.prototype.setSelectedItem = function(vItem) {
@@ -1818,7 +1818,7 @@ sap.ui.define([
 		 * the selection is cleared.
 		 * If the ID has no corresponding aggregated item, the selected item is not changed.
 		 *
-		 * @returns {sap.m.ComboBox} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		ComboBox.prototype.setSelectedItemId = function(vItem) {
@@ -1845,7 +1845,7 @@ sap.ui.define([
 		 * If duplicate keys exist, the first item matching the key is selected.
 		 * If a key is set and no item exists with that key, the visual selection remains the same.
 		 *
-		 * @returns {sap.m.ComboBox} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		ComboBox.prototype.setSelectedKey = function(sKey) {

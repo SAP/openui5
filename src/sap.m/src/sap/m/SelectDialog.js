@@ -446,7 +446,7 @@ function(
 	* Sets the growing  to the internal list
 	* @public
 	* @param {boolean} bValue Value for the list's growing.
-	* @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	* @returns {this} <code>this</code> pointer for chaining
 	*/
 	SelectDialog.prototype.setGrowing = function (bValue) {
 		this._oList.setGrowing(bValue);
@@ -460,7 +460,7 @@ function(
 	 * Sets the draggable property.
 	 * @public
 	 * @param {boolean} bValue Value for the draggable property
-	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.setDraggable = function (bValue) {
 		this._setInteractionProperty(bValue, "draggable", this._oDialog.setDraggable);
@@ -472,7 +472,7 @@ function(
 	 * Sets the resizable property.
 	 * @public
 	 * @param {boolean} bValue Value for the resizable property
-	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.setResizable = function (bValue) {
 		this._setInteractionProperty(bValue, "resizable", this._oDialog.setResizable);
@@ -516,7 +516,7 @@ function(
 	 * Sets the busyIndicatorDelay value to the internal list
 	 * @public
 	 * @param {int} iValue Value for the busyIndicatorDelay.
-	 * @returns {sap.m.SelectDialog} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 */
 	SelectDialog.prototype.setBusyIndicatorDelay = function (iValue) {
 		this._oList.setBusyIndicatorDelay(iValue);
@@ -576,7 +576,7 @@ function(
 	* Is called after renderer is finished to show the busy state
 	* @override
 	* @protected
-	* @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	* @returns {this} <code>this</code> pointer for chaining
 	*/
 	SelectDialog.prototype.onAfterRendering = function () {
 		if (this._bInitBusy && this._bFirstRender) {
@@ -591,7 +591,7 @@ function(
 	* Invalidates the dialog instead of this control (we don't have a renderer)
 	* @override
 	* @protected
-	* @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	* @returns {this} <code>this</code> pointer for chaining
 	*/
 	SelectDialog.prototype.invalidate = function () {
 		// CSN #80686/2014: only invalidate inner dialog if call does not come from inside
@@ -608,7 +608,7 @@ function(
 	 * Opens the internal dialog with a searchfield and a list.
 	 *
 	 * @param {string} sSearchValue  A value for the search can be passed to match with the filter applied to the list binding.
-	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -652,7 +652,7 @@ function(
 	* Sets the growing threshold to the internal list
 	* @public
 	* @param {int} iValue Value for the list's growing threshold.
-	* @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	* @returns {this} <code>this</code> pointer for chaining
 	*/
 	SelectDialog.prototype.setGrowingThreshold = function (iValue) {
 		this._oList.setGrowingThreshold(iValue);
@@ -666,7 +666,7 @@ function(
 	 * @override
 	 * @public
 	 * @param {boolean} bMulti Flag for multi selection mode
-	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.setMultiSelect = function (bMulti) {
 		this.setProperty("multiSelect", bMulti, true);
@@ -690,7 +690,7 @@ function(
 	 * @override
 	 * @public
 	 * @param {string} sTitle The title text for the dialog
-	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.setTitle = function (sTitle) {
 		this.setProperty("title", sTitle, true);
@@ -712,7 +712,7 @@ function(
 	 * @override
 	 * @public
 	 * @param {string} sText The text for the confirm button
-	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.setConfirmButtonText = function (sText) {
 		this.setProperty("confirmButtonText", sText, true);
@@ -726,7 +726,7 @@ function(
 	 * @override
 	 * @public
 	 * @param {string} sNoDataText The no data text for the list
-	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.setNoDataText = function (sNoDataText) {
 		this._oList.setNoDataText(sNoDataText);
@@ -759,7 +759,7 @@ function(
 	 * @param {sap.ui.core.CSSSize} sWidth The new content width value for the dialog
 	 * @public
 	 * @override
-	 * @returns {sap.m.SelectDialog} <code>this</code>s pointer for chaining
+	 * @returns {this} <code>this</code>s pointer for chaining
 	 */
 	SelectDialog.prototype.setContentWidth = function (sWidth) {
 		this._oDialog.setContentWidth(sWidth);
@@ -781,7 +781,7 @@ function(
 	 * Sets the Clear button visible state
 	 * @public
 	 * @param {boolean} bVisible Value for the Clear button visible state.
-	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.setShowClearButton = function (bVisible) {
 		this.setProperty("showClearButton", bVisible, true);
@@ -801,7 +801,7 @@ function(
 	 * @param {sap.ui.core.CSSSize} sHeight The new content width value for the dialog
 	 * @public
 	 * @override
-	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.setContentHeight = function (sHeight) {
 		this._oDialog.setContentHeight(sHeight);
@@ -815,7 +815,7 @@ function(
 	 * @public
 	 * @override
 	 * @param {string} sStyleClass CSS class name to add
-	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.addStyleClass = function () {
 		this._oDialog.addStyleClass.apply(this._oDialog, arguments);
@@ -827,7 +827,7 @@ function(
 	 * @public
 	 * @override
 	 * @param {string} sStyleClass CSS class name to remove
-	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.removeStyleClass = function () {
 		this._oDialog.removeStyleClass.apply(this._oDialog, arguments);
@@ -840,7 +840,7 @@ function(
 	 * @override
 	 * @param {string} sStyleClass CSS class name to add or remove
 	 * @param {boolean} [bAdd] Whether style class should be added (or removed); when this parameter is not given, the given style class will be toggled (removed, if present, and added if not present)
-	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.toggleStyleClass = function () {
 		this._oDialog.toggleStyleClass.apply(this._oDialog, arguments);
@@ -879,7 +879,7 @@ function(
 	 *
 	 * @public
 	 * @since 1.68
-	 * @returns {sap.m.SelectDialog} <code>this</code> to allow method chaining.
+	 * @returns {this} <code>this</code> to allow method chaining.
 	 */
 	SelectDialog.prototype.clearSelection = function () {
 		this._removeSelection();
@@ -900,7 +900,7 @@ function(
 	 * @public
 	 * @param {sap.ui.model.Model} oModel the model that holds the data for the list
 	 * @param {string} [sModelName] the optional model name
-	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.setModel = function (oModel, sModelName) {
 		// reset busy mode if model was changed
@@ -927,7 +927,7 @@ function(
 	 * @public
 	 * @param {sap.ui.model.Context} oContext The new context
 	 * @param {string} sModelName The optional model name
-	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 */
 
 	SelectDialog.prototype.setBindingContext = function (oContext, sModelName) {
@@ -952,7 +952,7 @@ function(
 	 * @param {string} sValue The new filter value or undefined if called by management functions
 	 * @param {boolean} bClearButtonPressed Indicates if the clear button is pressed
 	 * @param {string} sEventType The search field event type that has been called (liveChange / search)
-	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype._executeSearch = function (sValue, bClearButtonPressed, sEventType) {
 

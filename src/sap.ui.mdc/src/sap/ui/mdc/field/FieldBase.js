@@ -1325,7 +1325,7 @@ sap.ui.define([
 	 * The <code>labelFor</code> association is set to the <code>Field</code> or </code>FilterField</code> control.
 	 *
 	 * @param {sap.ui.core.Label} oLabel Label control
-	 * @returns {sap.ui.mdc.field.FieldBase} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 *
 	 * @private
 	 * @ui5-restricted sap.fe

@@ -802,7 +802,7 @@ sap.ui.define([
 		/**
 		* Sets the <code>selectionMode</code> property
 		* @param {string} vValue the selection mode to set the chart to
-		* @returns {sap.ui.mdc.Chart} reference to <code>this</code> for method chaining
+		* @returns {this} reference to <code>this</code> for method chaining
 		*
 		* @private
 		* @ui5-restricted Fiori Elements

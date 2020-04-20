@@ -319,7 +319,7 @@ sap.ui.define([
 	 * Default value is <code>0</code>
 	 *
 	 * @param {int} iRowCount New value for property <code>fixedRowCount</code>
-	 * @returns {sap.ui.table.TreeTable} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	TreeTable.prototype.setFixedRowCount = function(iRowCount) {
@@ -391,7 +391,7 @@ sap.ui.define([
 	 * Expands one or more rows.
 	 *
 	 * @param {int|int[]} vRowIndex A single index or an array of indices of the rows to be expanded
-	 * @returns {sap.ui.table.TreeTable} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -404,7 +404,7 @@ sap.ui.define([
 	 * Collapses one or more rows.
 	 *
 	 * @param {int|int[]} vRowIndex A single index or an array of indices of the rows to be collapsed
-	 * @returns {sap.ui.table.TreeTable} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -416,7 +416,7 @@ sap.ui.define([
 	/**
 	 * Collapses all nodes (and lower if collapseRecursive is activated)
 	 *
-	 * @returns {sap.ui.table.TreeTable} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -439,7 +439,7 @@ sap.ui.define([
 	 * Please also see <code>sap.ui.model.odata.OperationMode</code>.
 	 *
 	 * @param {int} iLevel the level to which the trees shall be expanded
-	 * @returns {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
+	 * @returns {this} a reference on the TreeTable control, can be used for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -494,7 +494,7 @@ sap.ui.define([
 	 *
 	 * @param {int} iFromIndex the start index of the selection range
 	 * @param {int} iToIndex the end index of the selection range
-	 * @returns {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
+	 * @returns {this} a reference on the TreeTable control, can be used for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function
@@ -508,7 +508,7 @@ sap.ui.define([
 	 * correspond to a TreeTable row.
 	 *
 	 * @param {int} iRowIndex The row index which will be selected (if existing)
-	 * @returns {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
+	 * @returns {this} a reference on the TreeTable control, can be used for chaining
 	 * @public
 	 * @function
 	 * @name sap.ui.table.TreeTable#setSelectedIndex
@@ -548,7 +548,7 @@ sap.ui.define([
 	 * Additional rows or tree nodes that come into view through scrolling or paging are also selected immediately as soon as they get visible.
 	 * However, <code>SelectAll</code> does not retrieve any data from the back end in order to improve performance and reduce the network traffic.
 	 *
-	 * @returns {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
+	 * @returns {this} a reference on the TreeTable control, can be used for chaining
 	 * @public
 	 * @function
 	 * @name sap.ui.table.TreeTable#selectAll
@@ -624,7 +624,7 @@ sap.ui.define([
 	 *
 	 * @deprecated Since version 1.28.
 	 * To get a group-like visualization the <code>useGroupMode</code> property can be used.
-	 * @returns {sap.ui.table.TreeTable} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @see sap.ui.table.TreeTable#setUseGroupMode
 	 * @public
 	 */
@@ -646,7 +646,7 @@ sap.ui.define([
 	 * The <code>groupBy</code> association is not supported by the <code>TreeTable</code> control.
 	 *
 	 * @deprecated Since version 1.28.
-	 * @returns {sap.ui.table.TreeTable} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	TreeTable.prototype.setGroupBy = function() {
@@ -665,7 +665,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bFlat If set to <code>true</code>, the flat mode is enabled
 	 *
-	 * @returns {sap.ui.table.TreeTable} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	TreeTable.prototype.setUseFlatMode = function(bFlat) {

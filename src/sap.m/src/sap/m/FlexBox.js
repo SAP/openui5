@@ -175,7 +175,7 @@ function(
 	 *
 	 * @public
 	 * @param {object} oItem Added item.
-	 * @returns {sap.m.FlexBox} <code>this</code> FlexBox reference for chaining.
+	 * @returns {this} <code>this</code> FlexBox reference for chaining.
 	 */
 	FlexBox.prototype.addItem = function(oItem) {
 		this.addAggregation("items", oItem);
@@ -190,7 +190,7 @@ function(
 	 * @public
 	 * @param {object} oItem Inserted item.
 	 * @param {int} iIndex Index of the inserted item.
-	 * @returns {sap.m.FlexBox} <code>this</code> FlexBox reference for chaining.
+	 * @returns {this} <code>this</code> FlexBox reference for chaining.
 	 */
 	FlexBox.prototype.insertItem = function(oItem, iIndex) {
 		this.insertAggregation("items", oItem, iIndex);
@@ -308,7 +308,7 @@ function(
 	 *
 	 * @public
 	 * @param {string} sValue Render type in string format.
-	 * @returns {sap.m.FlexBox} <code>this</code> FlexBox reference for chaining.
+	 * @returns {this} <code>this</code> FlexBox reference for chaining.
 	 */
 	FlexBox.prototype.setRenderType = function(sValue) {
 		var sOldValue = this.getRenderType(),

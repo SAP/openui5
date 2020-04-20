@@ -80,7 +80,7 @@ sap.ui.define([
 
 	/**
 	 * Toggles the expand/collapse state of the SideContent.
-	 * @returns {sap.tnt.ToolPage} Pointer to the control instance for chaining.
+	 * @returns {this} Pointer to the control instance for chaining.
 	 * @public
 	 */
 	ToolPage.prototype.toggleSideContentMode = function () {
@@ -90,7 +90,7 @@ sap.ui.define([
 	/**
 	 * Sets the expand/collapse state of the SideContent.
 	 * @param {boolean} bSideExpanded defines whether the SideNavigation is expanded.
-	 * @returns {sap.tnt.ToolPage} Pointer to the control instance for chaining
+	 * @returns {this} Pointer to the control instance for chaining
 	 * @public
 	 */
 	ToolPage.prototype.setSideExpanded = function (bSideExpanded) {

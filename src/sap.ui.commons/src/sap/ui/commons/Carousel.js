@@ -775,7 +775,7 @@ sap.ui.define([
 	 * Default value is <code>0</code>
 	 *
 	 * @param {int} iFirstVisibleIndex  new value for property <code>firstVisibleIndex</code>
-	 * @return {sap.ui.commons.Carousel} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @since 1.11.0
 	 */

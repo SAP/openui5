@@ -182,7 +182,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @param {function} fnFilter A callback function called when typing in a ComboBoxBase control or ancestor.
-		 * @returns {sap.m.ComboBoxBase} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @since 1.58
 		 */
 		ComboBoxBase.prototype.setFilterFunction = function(fnFilter) {
@@ -1059,7 +1059,7 @@ sap.ui.define([
 		/**
 		 * Opens the control's picker popup.
 		 *
-		 * @returns {sap.m.ComboBoxBase} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @protected
 		 */
 		ComboBoxBase.prototype.open = function() {
@@ -1195,7 +1195,7 @@ sap.ui.define([
 		 * Adds an item to the aggregation named <code>items</code>.
 		 *
 		 * @param {sap.ui.core.Item} oItem The item to be added; if empty, nothing is added.
-		 * @returns {sap.m.ComboBoxBase} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		ComboBoxBase.prototype.addItem = function(oItem) {
@@ -1219,7 +1219,7 @@ sap.ui.define([
 		 * @param {int} iIndex The <code>0</code>-based index the item should be inserted at; for
 		 *             a negative value of <code>iIndex</code>, the item is inserted at position 0; for a value
 		 *             greater than the current size of the aggregation, the item is inserted at the last position.
-		 * @returns {sap.m.ComboBoxBase} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		ComboBoxBase.prototype.insertItem = function(oItem, iIndex) {
@@ -1332,7 +1332,7 @@ sap.ui.define([
 		/**
 		 * Closes the control's picker popup.
 		 *
-		 * @returns {sap.m.ComboBoxBase} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		ComboBoxBase.prototype.close = function() {

@@ -526,7 +526,7 @@ sap.ui.define([
 	 * Property setter for the ValueState
 	 *
 	 * @param {sap.ui.core.ValueState} oValueState
-	 * @return {sap.ui.commons.TextField} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	TextField.prototype.setValueState = function(oValueState) {
@@ -571,7 +571,7 @@ sap.ui.define([
 	 * Property setter for the editable state
 	 *
 	 * @param {boolean} bEditable
-	 * @return {sap.ui.commons.TextField} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	TextField.prototype.setEditable = function(bEditable) {
@@ -593,7 +593,7 @@ sap.ui.define([
 	 * Property setter for the enabled state
 	 *
 	 * @param {boolean} bEnabled
-	 * @return {sap.ui.commons.TextField} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	TextField.prototype.setEnabled = function(bEnabled) {
@@ -615,7 +615,7 @@ sap.ui.define([
 	 * Property setter for the Required-State
 	 *
 	 * @param {boolean} bRequired:
-	 * @return {sap.ui.commons.TextField} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	TextField.prototype.setRequired = function(bRequired) {
@@ -643,7 +643,7 @@ sap.ui.define([
 	 * Property setter for the Design
 	 *
 	 * @param {sap.ui.core.Design} sDesign:
-	 * @return {sap.ui.commons.TextField} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	TextField.prototype.setDesign = function(sDesign) {
@@ -668,7 +668,7 @@ sap.ui.define([
 	 * Property setter for the Value
 	 *
 	 * @param {string} sValue:
-	 * @return {sap.ui.commons.TextField} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	TextField.prototype.setValue = function(sValue) {
@@ -708,7 +708,7 @@ sap.ui.define([
 	 * Property setter for the Tooltip
 	 *
 	 * @param oTooltip:
-	 * @return {sap.ui.commons.TextField} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	TextField.prototype.setTooltip = function(oTooltip) {

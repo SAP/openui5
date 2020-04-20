@@ -636,7 +636,7 @@ sap.ui.define([
 	 * sets the locale for the DatePicker
 	 * only for internal use
 	 * @param {string} sLocale  new value for <code>locale</code>
-	 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @private
 	 */
 	Calendar.prototype.setLocale = function(sLocale){
@@ -696,7 +696,7 @@ sap.ui.define([
 	 *
 	 * @param {Object} oDate
 	 *         JavaScript date object for focused date.
-	 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -713,7 +713,7 @@ sap.ui.define([
 	 *
 	 * @param {Object} oDate
 	 *         JavaScript date object for focused date.
-	 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @since 1.28.0
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -760,7 +760,7 @@ sap.ui.define([
 	 * e.G. Tab-chain should not leave calendar
 	 * only for internal use
 	 * @param {boolean} bPoupupMode <code>PopupMode</code>
-	 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @private
 	 */
 	Calendar.prototype.setPopupMode = function(bPoupupMode){
@@ -915,7 +915,7 @@ sap.ui.define([
 	/**
 	 * Sets a minimum date for the calendar.
 	 * @param {Date} oDate a JavaScript date
-	 * @return {sap.ui.unified.Calendar} <code>this</code> for method chaining
+	 * @return {this} <code>this</code> for method chaining
 	 * @public
 	 */
 	Calendar.prototype.setMinDate = function(oDate){
@@ -964,7 +964,7 @@ sap.ui.define([
 	/**
 	 * Sets a maximum date for the calendar.
 	 * @param {Date} oDate a JavaScript date
-	 * @return {sap.ui.unified.Calendar} <code>this</code> for method chaining
+	 * @return {this} <code>this</code> for method chaining
 	 * @public
 	 */
 	Calendar.prototype.setMaxDate = function(oDate){
@@ -1862,7 +1862,7 @@ sap.ui.define([
 	/**
 	 * Updates visibility of active Header month button
 	 * Only for internal use
-	 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @private
 	 */
 	Calendar.prototype._updateMonthButtonVisibility = function(){
@@ -2306,7 +2306,7 @@ sap.ui.define([
 	 /**
 	 * Updates visibility of active Header Year button
 	 * Only for internal use
-	 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @private
 	 */
 	Calendar.prototype._updateActiveHeaderYearButtonVisibility = function(){

@@ -435,7 +435,7 @@ function(
 		 * Sets the <code>number</code> property of the control.
 		 * @param {string} sNumber <code>Number</code> showed in <code>ObjectListItem</code>
 		 * @override
-		 * @returns {sap.m.ObjectListItem} this pointer for chaining
+		 * @returns {this} this pointer for chaining
 		 */
 		ObjectListItem.prototype.setNumber = function (sNumber) {
 			//Do not rerender the whole control ObjectListItem control
@@ -450,7 +450,7 @@ function(
 		 * Sets the <code>numberUnit</code> property of the control.
 		 * @param {string} sNumberUnit <code>NumberUnit</code> showed in <code>ObjectListItem</code>
 		 * @override
-		 * @returns {sap.m.ObjectListItem} this pointer for chaining
+		 * @returns {this} this pointer for chaining
 		 */
 		ObjectListItem.prototype.setNumberUnit = function (sNumberUnit) {
 			//Do not rerender the whole control but only ObjectNumber control
@@ -465,7 +465,7 @@ function(
 		 * Sets the <code>numberTextDirection</code> property of the control.
 		 * @param {sap.ui.core.TextDirection} oTextDirection The text direction of the internal <code>ObjectNumber</code>
 		 * @override
-		 * @returns {sap.m.ObjectListItem} this pointer for chaining
+		 * @returns {this} this pointer for chaining
 		 */
 		ObjectListItem.prototype.setNumberTextDirection = function (oTextDirection) {
 			//Do not rerender the whole control but only ObjectNumber control
@@ -480,7 +480,7 @@ function(
 		 * Sets the <code>numberState</code> property of the control.
 		 * @param {sap.ui.core.ValueState} oValueState The <code>valueState</code> of the internal <code>ObjectNumber</code>
 		 * @override
-		 * @returns {sap.m.ObjectListItem} this pointer for chaining
+		 * @returns {this} this pointer for chaining
 		 */
 		ObjectListItem.prototype.setNumberState = function (oValueState) {
 			//Do not rerender the whole control but only ObjectNumber control
@@ -496,7 +496,7 @@ function(
 		 * @override
 		 * @public
 		 * @param {boolean} bMarked the new value
-		 * @returns {sap.m.ObjectListItem} this pointer for chaining
+		 * @returns {this} this pointer for chaining
 		 */
 		ObjectListItem.prototype.setMarkFavorite = function (bMarked) {
 			return this._setOldMarkers(ObjectMarkerType.Favorite, bMarked);
@@ -507,7 +507,7 @@ function(
 		 * @override
 		 * @public
 		 * @param {boolean} bMarked the new value
-		 * @returns {sap.m.ObjectListItem} this pointer for chaining
+		 * @returns {this} this pointer for chaining
 		 */
 		ObjectListItem.prototype.setMarkFlagged = function (bMarked) {
 			return this._setOldMarkers(ObjectMarkerType.Flagged, bMarked);
@@ -518,7 +518,7 @@ function(
 		 * @override
 		 * @public
 		 * @param {boolean} bMarked the new value
-		 * @returns {sap.m.ObjectListItem} this pointer for chaining
+		 * @returns {this} this pointer for chaining
 		 */
 		ObjectListItem.prototype.setMarkLocked = function (bMarked) {
 			return this._setOldMarkers(ObjectMarkerType.Locked, bMarked);
@@ -529,7 +529,7 @@ function(
 		 * @override
 		 * @public
 		 * @param {boolean} bMarked the new value
-		 * @returns {sap.m.ObjectListItem} this pointer for chaining
+		 * @returns {this} this pointer for chaining
 		 */
 		ObjectListItem.prototype.setShowMarkers = function (bMarked) {
 			var sMarkerType;
@@ -616,7 +616,7 @@ function(
 		 * @private
 		 * @param {string} markerType the type of the marker which should be created to updated
 		 * @param {boolean} bMarked the new value
-		 * @returns {sap.m.ObjectListItem} this pointer for chaining
+		 * @returns {this} this pointer for chaining
 		 */
 		ObjectListItem.prototype._setOldMarkers = function (markerType, bMarked) {
 			var aAllMarkers = this.getMarkers();

@@ -802,7 +802,7 @@ function(
 	 * <code>selectedItem</code> association.
 	 * Alternatively, a <code>sap.ui.core.Item</code> instance may be given or <code>null</code> to clear
 	 * the selection.
-	 * @returns {sap.m.Input} <code>this</code> to allow method chaining.
+	 * @returns {this} <code>this</code> to allow method chaining.
 	 * @since 1.44
 	 */
 	Input.prototype.setSelectedItem = function(oItem) {
@@ -829,7 +829,7 @@ function(
 	 * If the provided <code>sKey</code> is an empty string <code>""</code> or <code>undefined</code>,
 	 * the selection is cleared.
 	 * If duplicate keys exist, the first item matching the key is selected.
-	 * @returns {sap.m.Input} <code>this</code> to allow method chaining.
+	 * @returns {this} <code>this</code> to allow method chaining.
 	 * @since 1.44
 	 */
 	Input.prototype.setSelectedKey = function(sKey) {
@@ -977,7 +977,7 @@ function(
 	 * <code>selectedRow</code> association.
 	 * Alternatively, a <code>sap.m.ColumnListItem</code> instance may be given or <code>null</code> to clear
 	 * the selection.
-	 * @returns {sap.m.Input} <code>this</code> to allow method chaining.
+	 * @returns {this} <code>this</code> to allow method chaining.
 	 * @since 1.44
 	 */
 	Input.prototype.setSelectedRow = function(oListItem) {
@@ -1109,7 +1109,7 @@ function(
 	 *
 	 * @public
 	 * @param {function} fnFilter The filter function is called when displaying suggestion items and has two input parameters: the first one is the string that is currently typed in the input field and the second one is the item that is being filtered. Returning true will add this item to the popup, returning false will not display it.
-	 * @returns {sap.m.Input} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 * @since 1.16.1
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1130,7 +1130,7 @@ function(
 	 *
 	 * @public
 	 * @param {function} fnFilter The result function is called with one parameter: the sap.m.ColumnListItem that is selected. The function must return a result string that will be displayed as the input field's value.
-	 * @returns {sap.m.Input} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 * @since 1.21.1
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1170,7 +1170,7 @@ function(
 	 * @private
 	 * @param {int} iStart Start of selection.
 	 * @param {iEnd} iEnd End of selection.
-	 * @returns {sap.m.Input} this Input instance for chaining.
+	 * @returns {this} this Input instance for chaining.
 	 */
 	Input.prototype._doSelect = function(iStart, iEnd) {
 		if (Device.support.touch) {
@@ -1388,7 +1388,7 @@ function(
 	 * Update suggestion items.
 	 *
 	 * @public
-	 * @return {sap.m.Input} this Input instance for chaining.
+	 * @return {this} this Input instance for chaining.
 	 */
 	Input.prototype.updateSuggestionItems = function() {
 		this._bSuspendInvalidate = true;
@@ -1483,7 +1483,7 @@ function(
 		 *
 		 * @public
 		 * @param {boolean} bValue Show suggestions.
-		 * @return {sap.m.Input} this Input instance for chaining.
+		 * @return {this} this Input instance for chaining.
 		 */
 		Input.prototype.setShowSuggestion = function(bValue){
 			var oSuggestionsPopover;
@@ -1522,7 +1522,7 @@ function(
 		 *
 		 * @public
 		 * @param {boolean} bValue Show suggestions.
-		 * @return {sap.m.Input} this Input instance for chaining.
+		 * @return {this} this Input instance for chaining.
 		 */
 		Input.prototype.setShowTableSuggestionValueHelp = function(bValue) {
 			this.setProperty("showTableSuggestionValueHelp", bValue, true);
@@ -1805,7 +1805,7 @@ function(
 		 *
 		 * @public
 		 * @param {sap.ui.core.Item} oItem Suggestion item.
-		 * @return {sap.m.Input} this Input instance for chaining.
+		 * @return {this} this Input instance for chaining.
 		 */
 		Input.prototype.addSuggestionItem = function(oItem) {
 			this.addAggregation("suggestionItems", oItem, true);
@@ -1826,7 +1826,7 @@ function(
 		 * @public
 		 * @param {sap.ui.core.Item} oItem Suggestion item.
 		 * @param {int} iIndex Index to be inserted.
-		 * @returns {sap.m.Input} this Input instance for chaining.
+		 * @returns {this} this Input instance for chaining.
 		 */
 		Input.prototype.insertSuggestionItem = function(oItem, iIndex) {
 			this.insertAggregation("suggestionItems", iIndex, oItem, true);
@@ -1870,7 +1870,7 @@ function(
 		 * Destroys suggestion items.
 		 *
 		 * @public
-		 * @return {sap.m.Input} this Input instance for chaining.
+		 * @return {this} this Input instance for chaining.
 		 */
 		Input.prototype.destroySuggestionItems = function() {
 			this.destroyAggregation("suggestionItems", true);
@@ -1883,7 +1883,7 @@ function(
 		 *
 		 * @public
 		 * @param {sap.ui.core.Item} oItem Suggestion item.
-		 * @return {sap.m.Input} this Input instance for chaining.
+		 * @return {this} this Input instance for chaining.
 		 */
 		Input.prototype.addSuggestionRow = function(oItem) {
 			oItem.setType(ListType.Active);
@@ -1899,7 +1899,7 @@ function(
 		 * @public
 		 * @param {sap.ui.core.Item} oItem Suggestion row
 		 * @param {int} iIndex Row index.
-		 * @return {sap.m.Input} this Input instance for chaining.
+		 * @return {this} this Input instance for chaining.
 		 */
 		Input.prototype.insertSuggestionRow = function(oItem, iIndex) {
 			oItem.setType(ListType.Active);
@@ -1938,7 +1938,7 @@ function(
 		 * Destroys all suggestion rows.
 		 *
 		 * @public
-		 * @return {sap.m.Input} this Input instance for chaining.
+		 * @return {this} this Input instance for chaining.
 		 */
 		Input.prototype.destroySuggestionRows = function() {
 			this.destroyAggregation("suggestionRows");
@@ -2301,7 +2301,7 @@ function(
 	 * Default value is empty/<code>undefined</code>.
 	 *
 	 * @param {string} sValue New value for property <code>value</code>.
-	 * @return {sap.m.Input} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	Input.prototype.setValue = function(sValue) {

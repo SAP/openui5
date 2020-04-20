@@ -1487,7 +1487,7 @@ sap.ui.define([
 	 *             a negative value of <code>iIndex</code>, the subList is inserted at position 0; for a value
 	 *             greater than the current size of the aggregation, the subList is inserted at
 	 *             the last position
-	 * @return {sap.ui.ux3.ExactList} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @protected
 	 */
 
@@ -1497,7 +1497,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.ux3.ExactList}
 	 *            oSubList the subList to add; if empty, nothing is inserted
-	 * @return {sap.ui.ux3.ExactList} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @protected
 	 */
 
@@ -1529,7 +1529,7 @@ sap.ui.define([
 	/**
 	 * Destroys all the subLists in the aggregation
 	 * named <code>subLists</code>.
-	 * @return {sap.ui.ux3.ExactList} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @protected
 	 */
 

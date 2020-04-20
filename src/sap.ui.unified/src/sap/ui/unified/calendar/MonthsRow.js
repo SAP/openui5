@@ -257,7 +257,7 @@ sap.ui.define([
 	/**
 	 * Sets a date for the months row.
 	 * @param {Date} oDate a JavaScript date
-	 * @return {sap.ui.unified.calendar.MonthsRow} <code>this</code> for method chaining
+	 * @return {this} <code>this</code> for method chaining
 	 */
 	MonthsRow.prototype.setDate = function(oDate){
 		if (oDate) {
@@ -288,7 +288,7 @@ sap.ui.define([
 	/*
 	 * Sets a date for a start date of the months row.
 	 * @param {Date} oStartDate A JavaScript date
-	 * @return {sap.ui.unified.calendar.MonthsRow} <code>this</code> for method chaining
+	 * @return {this} <code>this</code> for method chaining
 	 */
 	MonthsRow.prototype.setStartDate = function(oStartDate){
 		CalendarUtils._checkJSDateObject(oStartDate);
@@ -331,7 +331,7 @@ sap.ui.define([
 	 * Displays the month of a given date without setting the focus
 	 *
 	 * @param {object} oDate JavaScript Date object for focused date.
-	 * @returns {sap.ui.unified.calendar.MonthsRow} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */

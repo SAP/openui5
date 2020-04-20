@@ -100,7 +100,7 @@ sap.ui.define([
 	 * This sets an individual text for the ValueState of the parent element of the RichTooltip.
 	 *
 	 * @param {string} sText the text that should be shown as individual ValueState text
-	 * @returns {sap.ui.commons.RichTooltip} Returns <code>this</code> to facilitate method chaining.
+	 * @returns {this} Returns <code>this</code> to facilitate method chaining.
 	 * @public
 	 */
 	RichTooltip.prototype.setValueStateText = function(sText) {

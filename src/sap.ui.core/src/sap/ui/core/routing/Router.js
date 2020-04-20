@@ -380,7 +380,7 @@ sap.ui.define([
 			 *
 			 * @param {boolean} [bIgnoreInitialHash=false] @since 1.48.0 Whether the current URL hash shouldn't be parsed after the router is initialized
 			 * @public
-			 * @returns {sap.ui.core.routing.Router} this for chaining.
+			 * @returns {this} this for chaining.
 			 */
 			initialize : function (bIgnoreInitialHash) {
 				var that = this,
@@ -747,7 +747,7 @@ sap.ui.define([
 			 * @param {sap.ui.core.mvc.View} oView The view instance
 			 * @since 1.22
 			 * @public
-			 * @returns {sap.ui.core.routing.Router} @since 1.28 the this pointer for chaining
+			 * @returns {this} @since 1.28 the this pointer for chaining
 			 */
 			setView : function (sViewName, oView) {
 				this._oViews.setView(sViewName, oView);
@@ -823,7 +823,7 @@ sap.ui.define([
 			*             history. If set to <code>false</code>, the hash is set and the entry is stored in the browser
 			*             history.
 			 * @public
-			 * @returns {sap.ui.core.routing.Router} this for chaining.
+			 * @returns {this} this for chaining.
 			 */
 			navTo : function (sName, oParameters, oComponentTargetInfo, bReplace) {
 				var that = this,
@@ -956,7 +956,7 @@ sap.ui.define([
 			 *            [oListener] Context object to call the event handler with, defaults to this
 			 *            <code>sap.ui.core.routing.Router</code> itself
 			 *
-			 * @returns {sap.ui.core.routing.Router} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 */
 			attachRouteMatched : function(oData, fnFunction, oListener) {
@@ -974,7 +974,7 @@ sap.ui.define([
 			 *            fnFunction The function to be called when the event occurs
 			 * @param {object}
 			 *            oListener Context object on which the given function had to be called
-			 * @returns {sap.ui.core.routing.Router} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 */
 			detachRouteMatched : function(fnFunction, oListener) {
@@ -987,7 +987,7 @@ sap.ui.define([
 			 *
 			 * @param {object} [oParameters] Parameters to pass along with the event
 			 *
-			 * @returns {sap.ui.core.routing.Router} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @protected
 			 */
 			fireRouteMatched : function(oParameters) {
@@ -1043,7 +1043,7 @@ sap.ui.define([
 			 *            [oListener] Context object to call the event handler with, defaults to this
 			 *            <code>sap.ui.core.routing.Router</code> itself
 			 *
-			 * @returns {sap.ui.core.routing.Router} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 */
 			attachBeforeRouteMatched : function(oData, fnFunction, oListener) {
@@ -1061,7 +1061,7 @@ sap.ui.define([
 			 *            fnFunction The function to be called when the event occurs
 			 * @param {object}
 			 *            oListener Context object on which the given function had to be called
-			 * @returns {sap.ui.core.routing.Router} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 */
 			detachBeforeRouteMatched : function(fnFunction, oListener) {
@@ -1074,7 +1074,7 @@ sap.ui.define([
 			 *
 			 * @param {object} [oParameters] Parameters to pass along with the event
 			 *
-			 * @returns {sap.ui.core.routing.Router} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @protected
 			 */
 			fireBeforeRouteMatched : function(oParameters) {
@@ -1098,7 +1098,7 @@ sap.ui.define([
 			 *            [oListener] Context object to call the event handler with, defaults to this
 			 *            <code>sap.ui.core.routing.Router</code> itself
 			 *
-			 * @returns {sap.ui.core.routing.Router} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 * @deprecated Since 1.28 use {@link #getViews} instead.
 			 */
@@ -1117,7 +1117,7 @@ sap.ui.define([
 			 *            fnFunction The function to be called when the event occurs
 			 * @param {object}
 			 *            oListener Context object on which the given function had to be called
-			 * @returns {sap.ui.core.routing.Router} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 * @deprecated Since 1.28 use {@link #getViews} instead.
 			 */
@@ -1131,7 +1131,7 @@ sap.ui.define([
 			 *
 			 * @param {object} [oParameters] Parameters to pass along with the event
 			 *
-			 * @returns {sap.ui.core.routing.Router} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @protected
 			 * @deprecated As of 1.28 use {@link #getViews} instead.
 			 */
@@ -1183,7 +1183,7 @@ sap.ui.define([
 			 *            [oListener] Context object to call the event handler with, defaults to this
 			 *            <code>sap.ui.core.routing.Router</code> itself
 			 *
-			 * @returns {sap.ui.core.routing.Router} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 */
 			attachRoutePatternMatched : function(oData, fnFunction, oListener) {
@@ -1204,7 +1204,7 @@ sap.ui.define([
 			 *            fnFunction The function to be called when the event occurs
 			 * @param {object}
 			 *            oListener Context object on which the given function had to be called
-			 * @returns {sap.ui.core.routing.Router} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 */
 			detachRoutePatternMatched : function(fnFunction, oListener) {
@@ -1220,7 +1220,7 @@ sap.ui.define([
 			 *
 			 * @param {object} [oParameters] Parameters to pass along with the event
 			 *
-			 * @returns {sap.ui.core.routing.Router} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @protected
 			 */
 			fireRoutePatternMatched : function(oParameters) {
@@ -1258,7 +1258,7 @@ sap.ui.define([
 			 *            [oListener] Context object to call the event handler with, defaults to this
 			 *            <code>sap.ui.core.routing.Router</code> itself
 			 *
-			 * @returns {sap.ui.core.routing.Router} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 */
 			attachBypassed : function(oData, fnFunction, oListener) {
@@ -1277,7 +1277,7 @@ sap.ui.define([
 			 *            fnFunction The function to be called when the event occurs
 			 * @param {object}
 			 *            oListener Context object on which the given function had to be called
-			 * @returns {sap.ui.core.routing.Router} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 */
 			detachBypassed : function(fnFunction, oListener) {
@@ -1291,7 +1291,7 @@ sap.ui.define([
 			 *
 			 * @param {object} [oParameters] Parameters to pass along with the event
 			 *
-			 * @returns {sap.ui.core.routing.Router} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @protected
 			 */
 			fireBypassed : function(oParameters) {
@@ -1350,7 +1350,7 @@ sap.ui.define([
 			 *            [oListener] Context object to call the event handler with, defaults to this
 			 *            <code>sap.ui.core.routing.Router</code> itself
 			 *
-			 * @returns {sap.ui.core.routing.Router} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
  			 * @public
  			 */
 			attachTitleChanged : function(oData, fnFunction, oListener) {
@@ -1368,7 +1368,7 @@ sap.ui.define([
 			 *            fnFunction The function to be called when the event occurs
 			 * @param {object}
 			 *            oListener Context object on which the given function had to be called
-			 * @returns {sap.ui.core.routing.Router} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 */
 			detachTitleChanged : function(fnFunction, oListener) {

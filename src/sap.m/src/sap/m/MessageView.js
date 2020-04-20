@@ -640,7 +640,7 @@ sap.ui.define([
 	/**
 	 * Creates navigation pages
 	 *
-	 * @returns {sap.m.MessageView} Reference to the 'this' for chaining purposes
+	 * @returns {this} Reference to the 'this' for chaining purposes
 	 * @private
 	 */
 	MessageView.prototype._createNavigationPages = function () {
@@ -683,7 +683,7 @@ sap.ui.define([
 	/**
 	 * Creates Lists of the MessageView
 	 *
-	 * @returns {sap.m.MessageView} Reference to the 'this' for chaining purposes
+	 * @returns {this} Reference to the 'this' for chaining purposes
 	 * @private
 	 */
 	MessageView.prototype._createLists = function () {
@@ -705,7 +705,7 @@ sap.ui.define([
 	/**
 	 * Destroy items in the MessageView's Lists
 	 *
-	 * @returns {sap.m.MessageView} Reference to the 'this' for chaining purposes
+	 * @returns {this} Reference to the 'this' for chaining purposes
 	 * @private
 	 */
 	MessageView.prototype._clearLists = function () {
@@ -844,7 +844,7 @@ sap.ui.define([
 	/**
 	 * Destroy the buttons in the SegmentedButton
 	 *
-	 * @returns {sap.m.MessageView} Reference to the 'this' for chaining purposes
+	 * @returns {this} Reference to the 'this' for chaining purposes
 	 * @private
 	 */
 	MessageView.prototype._clearSegmentedButton = function () {
@@ -858,7 +858,7 @@ sap.ui.define([
 	/**
 	 * Fill SegmentedButton with needed Buttons for filtering
 	 *
-	 * @returns {sap.m.MessageView} Reference to the 'this' for chaining purposes
+	 * @returns {this} Reference to the 'this' for chaining purposes
 	 * @private
 	 */
 	MessageView.prototype._fillSegmentedButton = function () {

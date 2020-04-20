@@ -112,7 +112,7 @@ sap.ui.define([
 	*
 	* @param {sap.f.semantic.SemanticControl} oSemanticControl
 	* @param {String} sPlacement
-	* @returns {sap.f.semantic.SemanticFooter}
+	* @returns {this}
 	*/
 	SemanticFooter.prototype.addContent = function(oSemanticControl, sPlacement) {
 		this["_insertSemantic" + SemanticFooter.mPlacementMethodMap[sPlacement]].call(this, oSemanticControl);
@@ -124,7 +124,7 @@ sap.ui.define([
 	*
 	* @param {sap.f.semantic.SemanticControl} oSemanticControl
 	* @param {String} sPlacement
-	* @returns {sap.f.semantic.SemanticFooter}
+	* @returns {this}
 	*/
 	SemanticFooter.prototype.removeContent = function(oSemanticControl, sPlacement) {
 		this["_removeSemantic" + SemanticFooter.mPlacementMethodMap[sPlacement]].call(this, oSemanticControl);
@@ -135,7 +135,7 @@ sap.ui.define([
 	* Destroys all the actions - custom and semantic
 	* and cleans all the references in use.
 	*
-	* @returns {sap.f.semantic.SemanticFooter}
+	* @returns {this}
 	*/
 	SemanticFooter.prototype.destroy = function() {
 		this._aCustomContent = null;
@@ -150,7 +150,7 @@ sap.ui.define([
 	* Inserts the <code>sap.f.semantic.SemanticControl</code> in the <code>footerLeft</code> area.
 	*
 	* @param {sap.f.semantic.SemanticControl} oSemanticControl
-	* @returns {sap.f.semantic.SemanticFooter}
+	* @returns {this}
 	*/
 	SemanticFooter.prototype._insertSemanticLeftContent = function(oSemanticControl) {
 		var oControl = this._getControl(oSemanticControl),
@@ -168,7 +168,7 @@ sap.ui.define([
 	* Inserts the <code>sap.f.semantic.SemanticControl</code> in the <code>footerRight</code> area.
 	*
 	* @param {sap.f.semantic.SemanticControl} oSemanticControl
-	* @returns {sap.f.semantic.SemanticFooter}
+	* @returns {this}
 	*/
 	SemanticFooter.prototype._insertSemanticRightContent = function(oSemanticControl) {
 		var oControl = this._getControl(oSemanticControl);
@@ -248,7 +248,7 @@ sap.ui.define([
 	* Inserts a <code>sap.m.ToolbarSpacer</code>
 	* between the <code>footerLeft</code> and <code>footerRight</code> areas.
 	*
-	* @returns {sap.f.semantic.SemanticFooter}
+	* @returns {this}
 	*/
 	SemanticFooter.prototype._insertSpacer = function() {
 		this._callContainerAggregationMethod("addContent", this._getSpacer());

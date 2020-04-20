@@ -351,7 +351,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 	 * @function
 	 * @param {string} sEventId the event id
 	 * @param {Object} [mParameters] the parameter map (JSON)
-	 * @return {sap.ui.core.support.Support} Returns <code>this</code> to allow method chaining
+	 * @return {this} Returns <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted
 	 */

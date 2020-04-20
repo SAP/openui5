@@ -78,7 +78,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {string} sValue The text of the title
-	 * @return {sap.f.cards.NumericSideIndicator} this pointer for chaining
+	 * @return {this} this pointer for chaining
 	 */
 	NumericSideIndicator.prototype.setTitle = function(sValue) {
 		this.setProperty("title", sValue, true);
@@ -91,7 +91,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {string} sValue The text of the title
-	 * @return {sap.f.cards.NumericSideIndicator} this pointer for chaining
+	 * @return {this} this pointer for chaining
 	 */
 	NumericSideIndicator.prototype.setNumber = function(sValue) {
 		this.setProperty("number", sValue, true);
@@ -104,7 +104,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {string} sValue The text of the title
-	 * @return {sap.f.cards.NumericSideIndicator} this pointer for chaining
+	 * @return {this} this pointer for chaining
 	 */
 	NumericSideIndicator.prototype.setUnit = function(sValue) {
 		this.setProperty("unit", sValue, true);

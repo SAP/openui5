@@ -4350,7 +4350,7 @@ sap.ui.define([
 	 *            [oListener] Context object to call the event handler with. Defaults to this
 	 *            <code>sap.ui.model.odata.ODataTreeBindingFlat</code> itself
 	 *
-	 * @returns {sap.ui.model.odata.ODataTreeBindingFlat} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	ODataTreeBindingFlat.prototype.attachSelectionChanged = function(oData, fnFunction, oListener) {
@@ -4368,7 +4368,7 @@ sap.ui.define([
 	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
 	 *            [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.model.odata.ODataTreeBindingFlat} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	ODataTreeBindingFlat.prototype.detachSelectionChanged = function(fnFunction, oListener) {
@@ -4391,7 +4391,7 @@ sap.ui.define([
 	 * @param {int[]} [oParameters.rowIndices] Other selected indices (if available)
 	 * @param {boolean} [oParameters.indexChangesCouldNotBeDetermined]
 	 *						True in case changed indices could not be determined
-	 * @return {sap.ui.model.odata.ODataTreeBindingFlat} Reference to <code>this</code> in order to allow method chaining
+	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	ODataTreeBindingFlat.prototype.fireSelectionChanged = function(oParameters) {

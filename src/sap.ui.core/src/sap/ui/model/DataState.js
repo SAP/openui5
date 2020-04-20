@@ -93,7 +93,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sProperty - The property name
 	 * @param {any} vValue - The new value
-	 * @returns {sap.ui.model.DataState} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @private
 	 */
 	DataState.prototype.setProperty = function(sProperty, vValue) {
@@ -103,7 +103,7 @@ sap.ui.define([
 
 	/**
 	 * @deprecated Likely unused method
-	 * @returns {sap.ui.model.DataState} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @private
 	 */
 	DataState.prototype.calculateChanges = function() {
@@ -180,7 +180,7 @@ sap.ui.define([
 	 * Sets an array of model state messages.
 	 *
 	 * @param {sap.ui.core.Message[]} [aMessages=[]] The model messages for this data state.
-	 * @returns {sap.ui.model.DataState} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	DataState.prototype.setModelMessages = function(aMessages) {
@@ -202,7 +202,7 @@ sap.ui.define([
 	 * Sets an array of control state messages.
 	 *
 	 * @param {sap.ui.core.Message[]} aMessages - The control messages
-	 * @return {sap.ui.model.DataState} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	DataState.prototype.setControlMessages = function(aMessages) {
@@ -263,7 +263,7 @@ sap.ui.define([
 	 * Sets the laundering state of the data state.
 	 *
 	 * @param {boolean} bLaundering Whether the state is laundering
-	 * @returns {sap.ui.model.DataState} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	DataState.prototype.setLaundering = function(bLaundering) {
@@ -285,7 +285,7 @@ sap.ui.define([
 	 * Sets the formatted value of the data state,
 	 *
 	 * @param {any} vValue the value
-	 * @returns {sap.ui.model.DataState} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	DataState.prototype.setValue = function(vValue) {
@@ -311,7 +311,7 @@ sap.ui.define([
 	 *
 	 * @param {any} vInvalidValue The value that was rejected by the type validation or
 	 *   <code>undefined</code> if the value was valid
-	 * @returns {sap.ui.model.DataState} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	DataState.prototype.setInvalidValue = function(vInvalidValue) {
@@ -334,7 +334,7 @@ sap.ui.define([
 	 * Sets the formatted original value of the data.
 	 *
 	 * @param {boolean} vOriginalValue The original value
-	 * @returns {sap.ui.model.DataState} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	DataState.prototype.setOriginalValue = function(vOriginalValue) {

@@ -659,7 +659,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sIdSuffix] Suffix to be appended to the cloned element IDs
 	 * @param {string[]} [aLocalIds] Array of local IDs within the cloned hierarchy (internally used)
-	 * @returns {sap.ui.core.mvc.View} Reference to the newly created clone
+	 * @returns {this} Reference to the newly created clone
 	 * @public
 	 */
 	View.prototype.clone = function(sIdSuffix, aLocalIds) {

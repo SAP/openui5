@@ -310,7 +310,7 @@ function(
 	 * Default value is empty/undefined.
 	 * @public
 	 * @param {string} sTitle New value for property title
-	 * @returns {sap.m.ObjectIdentifier} this to allow method chaining
+	 * @returns {this} this to allow method chaining
 	 */
 	ObjectIdentifier.prototype.setTitle = function (sTitle) {
 		if (sTitle) {
@@ -325,7 +325,7 @@ function(
 	 * Default value is empty/undefined.
 	 * @public
 	 * @param {string} sText New value for property text
-	 * @returns {sap.m.ObjectIdentifier} this to allow method chaining
+	 * @returns {this} this to allow method chaining
 	 */
 	ObjectIdentifier.prototype.setText = function(sText) {
 		if (sText) {
@@ -340,7 +340,7 @@ function(
 	 * Default value is false.
 	 * @public
 	 * @param {boolean} bValue new value for property titleActive
-	 * @returns {sap.m.ObjectIdentifier} this to allow method chaining
+	 * @returns {this} this to allow method chaining
 	 */
 	ObjectIdentifier.prototype.setTitleActive = function(bValue) {
 		var bPrevValue = this.getTitleActive();

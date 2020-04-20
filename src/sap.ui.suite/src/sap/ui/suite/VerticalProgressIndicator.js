@@ -83,7 +83,7 @@ sap.ui.define([
 	 * A new rendering is not necessary, only the bar will be moved
 	 *
 	 * @param {int} iPercentage
-	 * @return {sap.ui.suite.VerticalProgressIndicator} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	VerticalProgressIndicator.prototype.setPercentage = function(iPercentage) {

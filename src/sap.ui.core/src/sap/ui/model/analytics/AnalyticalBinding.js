@@ -940,7 +940,7 @@ sap.ui.define([
 	 *            aFilter an Array of sap.ui.model.Filter objects or a single Filter instance.
 	 * @param {sap.ui.model.FilterType}
 	 *            [sFilterType=sap.ui.model.FilterType.Control] Type of the filter which should be adjusted.
-	 * @return {sap.ui.model.analytics.AnalyticalBinding}
+	 * @return {this}
 	 *            returns <code>this</code> to facilitate method chaining
 	 *
  	 * @public
@@ -1011,7 +1011,7 @@ sap.ui.define([
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.sort
 	 * @param {sap.ui.model.Sorter|array}
 	 *            aSorter a sorter object or an array of sorter objects which define the sort order.
-	 * @return {sap.ui.model.analytics.AnalyticalBinding}
+	 * @return {this}
 	 *            returns <code>this</code> to facilitate method chaining.
 	 *
 	 * @public

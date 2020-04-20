@@ -641,7 +641,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {string} sLayoutMode define the layout mode for the condition row. The value can be Desktop, Tablet or Phone.
-	 * @returns {sap.m.P13nConditionPanel} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 */
 	P13nConditionPanel.prototype.setLayoutMode = function(sLayoutMode) {
 		this.setProperty("layoutMode", sLayoutMode);
@@ -666,7 +666,7 @@ sap.ui.define([
 	 * @private
 	 * @since 1.30.0
 	 * @param {boolean} bEnabled enables or disables the <code>ContainerQuery</code>
-	 * @returns {sap.m.P13nConditionPanel} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 */
 	P13nConditionPanel.prototype.setContainerQuery = function(bEnabled) {
 		this._unregisterResizeHandler();

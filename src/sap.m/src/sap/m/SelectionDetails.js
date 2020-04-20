@@ -203,7 +203,7 @@ function(
 
 	/**
 	 * Closes SelectionDetails if open.
-	 * @returns {sap.m.SelectionDetails} To ensure method chaining, return the SelectionDetails.
+	 * @returns {this} To ensure method chaining, return the SelectionDetails.
 	 * @public
 	 * @function
 	 * @name sap.m.SelectionDetailsFacade#close
@@ -223,7 +223,7 @@ function(
 	 *
 	 * @param {string} title The title property of the {@link sap.m.Page page} control to which the navigation should occur.
 	 * @param {sap.ui.core.Control} content The content of the control to which the navigation should occur.
-	 * @returns {sap.m.SelectionDetails} To ensure method chaining, return the SelectionDetails.
+	 * @returns {this} To ensure method chaining, return the SelectionDetails.
 	 * @public
 	 * @function
 	 * @name sap.m.SelectionDetailsFacade#navTo
@@ -252,7 +252,7 @@ function(
 	/**
 	 * Enables line wrapping for the labels of the of the {@link sap.m.SelectionDetailsItemLine} elements.
 	 * @param {boolean} bWrap True to apply wrapping to the labels of the {@link sap.m.SelectionDetailsItemLine} elements.
-	 * @returns {sap.m.SelectionDetails} To ensure method chaining, returns SelectionDetails.
+	 * @returns {this} To ensure method chaining, returns SelectionDetails.
 	 * @public
 	 * @function
 	 * @name sap.m.SelectionDetailsFacade#setWrapLabels
@@ -274,7 +274,7 @@ function(
 	 * Sets the popover to modal or non-modal based on the given parameter. This only takes effect on desktop or tablet.
 	 * Please see the documentation {@link sap.m.ResponsivePopover#modal}.
 	 * @param {boolean} modal New value for property modal of the internally used popover.
-	 * @returns {sap.m.SelectionDetails} To ensure method chaining, return the SelectionDetails.
+	 * @returns {this} To ensure method chaining, return the SelectionDetails.
 	 * @protected
 	 */
 	SelectionDetails.prototype.setPopoverModal = function(modal) {
@@ -930,7 +930,7 @@ function(
 	 * @protected
 	 * @param {any} data Data to be passed to the factory function
 	 * @param {function} factory The item factory function that returns SelectionDetailsItems
-	 * @returns {sap.m.SelectionDetails} this to allow method chaining
+	 * @returns {this} this to allow method chaining
 	 */
 	SelectionDetails.prototype.registerSelectionDetailsItemFactory = function(data, factory) {
 		if (typeof (data) === "function") {
@@ -951,7 +951,7 @@ function(
 	 * @protected
 	 * @param {string} eventId The identifier of the event to listen for
 	 * @param {object} listener The object which triggers the event to register on
-	 * @returns {sap.m.SelectionDetails} this to allow method chaining
+	 * @returns {this} this to allow method chaining
 	 */
 	SelectionDetails.prototype.attachSelectionHandler = function(eventId, listener) {
 		// only create change handler once + check for argument validity
@@ -969,7 +969,7 @@ function(
 	/**
 	 * Detaches the event which was attached by <code>attachSelectionHandler</code>.
 	 * @protected
-	 * @returns {sap.m.SelectionDetails} this to allow method chaining
+	 * @returns {this} this to allow method chaining
 	 */
 	SelectionDetails.prototype.detachSelectionHandler = function() {
 		if (this._oChangeHandler) {

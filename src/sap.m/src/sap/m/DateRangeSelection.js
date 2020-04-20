@@ -291,7 +291,7 @@ sap.ui.define([
 	 * If this property is used, the <code>dateValue</code> property should not be changed from the caller.
 	 *
 	 * @param {string} sValue The new value of the input.
-	 * @return {sap.m.DateRangeSelection} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	DateRangeSelection.prototype.setValue = function(sValue) {
@@ -371,7 +371,7 @@ sap.ui.define([
 	 * <b>Note:</b> Property <code>valueFormat</code> is not supported in the <code>sap.m.DateRangeSelection</code> control.
 	 *
 	 * @param {string} sValueFormat New value for property valueFormat
-	 * @return {sap.m.DateRangeSelection} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	DateRangeSelection.prototype.setValueFormat = function(sValueFormat) {
@@ -448,7 +448,7 @@ sap.ui.define([
 	 * <b>Note:</b> If this property is used, the <code>value</code> property should not be changed from the caller.
 	 *
 	 * @param {object} oDateValue New value for property <code>dateValue</code>
-	 * @return {sap.m.DateRangeSelection} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	DateRangeSelection.prototype.setDateValue = function(oDateValue) {
@@ -1241,7 +1241,7 @@ sap.ui.define([
 	 * </ul>
 	 *
 	 * @param {object} [mArguments] The arguments to pass along with the event.
-	 * @return {sap.m.DateRangeSelection} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @protected
 	 * @name sap.m.DateRangeSelection#fireChange
 	 * @function

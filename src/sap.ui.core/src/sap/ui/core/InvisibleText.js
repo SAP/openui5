@@ -81,7 +81,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
+	 * @return {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 * @deprecated As of version 1.27, local BusyIndicator is not supported by control.
 	 * @function
@@ -89,7 +89,7 @@ sap.ui.define([
 	InvisibleText.prototype.setBusy = makeNotSupported("Property busy");
 
 	/**
-	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
+	 * @return {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 * @deprecated As of version 1.27, local BusyIndicator is not supported by control.
 	 * @function
@@ -97,7 +97,7 @@ sap.ui.define([
 	InvisibleText.prototype.setBusyIndicatorDelay = makeNotSupported("Property busy");
 
 	/**
-	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
+	 * @return {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 * @deprecated As of version 1.54, local BusyIndicator is not supported by control.
 	 * @function
@@ -105,7 +105,7 @@ sap.ui.define([
 	InvisibleText.prototype.setBusyIndicatorSize = makeNotSupported("Property busy");
 
 	/**
-	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
+	 * @return {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 * @deprecated As of version 1.27, property <code>visible</code> is not supported by control.
 	 * @function
@@ -113,7 +113,7 @@ sap.ui.define([
 	InvisibleText.prototype.setVisible = makeNotSupported("Property visible");
 
 	/**
-	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
+	 * @return {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 * @deprecated As of version 1.27, tooltip is not supported by control.
 	 * @function
@@ -139,7 +139,7 @@ sap.ui.define([
 	/**
 	 * Adds <code>this</code> control into the static, hidden area UI area container.
 	 *
-	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
+	 * @return {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 * @see sap.ui.core.Control#placeAt
 	 */

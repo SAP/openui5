@@ -1516,8 +1516,7 @@ function(
 		 * Increments the value by multiplying the <code>step</code> with the given parameter.
 		 *
 		 * @param {int} [iStep=1] The number of steps the slider goes up.
-		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
-		 * @type {sap.m.Slider}
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		Slider.prototype.stepUp = function(iStep) {
@@ -1528,8 +1527,7 @@ function(
 		 * Decrements the value by multiplying the step the <code>step</code> with the given parameter.
 		 *
 		 * @param {int} [iStep=1] The number of steps the slider goes down.
-		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
-		 * @type {sap.m.Slider}
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		Slider.prototype.stepDown = function(iStep) {
@@ -1543,7 +1541,7 @@ function(
 		 *
 		 * @param {float} fNewValue new value for property <code>value</code>.
 		 * @param {object} mOptions The options object
-		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		Slider.prototype.setValue = function(fNewValue, mOptions) {

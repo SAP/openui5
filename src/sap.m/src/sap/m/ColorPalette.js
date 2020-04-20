@@ -286,7 +286,7 @@ sap.ui.define([
 		 * Sets a default displayMode.
 		 * @param {sap.ui.unified.ColorPickerDisplayMode} oDisplayMode the color
 		 * @private
-		 * @return {sap.m.ColorPalette} <code>this</code> for method chaining
+		 * @return {this} <code>this</code> for method chaining
 		 */
 		ColorPalette.prototype._setDisplayMode = function (oDisplayMode) {
 			var oColorPicker = this._getColorPicker();
@@ -370,7 +370,7 @@ sap.ui.define([
 		 * Sets a selected color for the ColorPicker control.
 		 * @param {sap.ui.core.CSSColor} color the selected color
 		 * @public
-		 * @return {sap.m.ColorPalette} <code>this</code> for method chaining
+		 * @return {this} <code>this</code> for method chaining
 		 */
 		ColorPalette.prototype.setColorPickerSelectedColor = function (color) {
 			if (!CSSColor.isValid(color)) {
@@ -402,7 +402,7 @@ sap.ui.define([
 		 * Sets a default color.
 		 * @param {sap.ui.core.CSSColor} color the color
 		 * @private
-		 * @return {sap.m.ColorPalette} <code>this</code> for method chaining
+		 * @return {this} <code>this</code> for method chaining
 		 */
 		ColorPalette.prototype._setDefaultColor = function (color) {
 			if (!CSSColor.isValid(color)) {

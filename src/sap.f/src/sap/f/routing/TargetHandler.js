@@ -51,7 +51,7 @@ sap.ui.define(['sap/m/InstanceManager', 'sap/f/FlexibleColumnLayout', 'sap/ui/ba
 		 *
 		 * @param {boolean} bCloseDialogs Close dialogs if <code>true</code>
 		 * @public
-		 * @returns {sap.f.routing.TargetHandler} For chaining
+		 * @returns {this} For chaining
 		 */
 		TargetHandler.prototype.setCloseDialogs = function (bCloseDialogs) {
 			this._bCloseDialogs = !!bCloseDialogs;

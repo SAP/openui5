@@ -270,7 +270,7 @@ sap.ui.define([
 		/**
 		 * Sets the <code>buttonMode</code> of the control.
 		 * @param {sap.m.MenuButtonMode} sMode The new button mode
-		 * @returns {sap.m.MenuButton} This instance
+		 * @returns {this} This instance
 		 * @public
 		 */
 		MenuButton.prototype.setButtonMode = function(sMode) {
@@ -575,7 +575,7 @@ sap.ui.define([
 		 * Override setter because the parent control has placed custom logic in it and all changes need to be propagated
 		 * to the internal button aggregation.
 		 * @param {string} sValue The text of the sap.m.MenuButton
-		 * @return {sap.m.MenuButton} This instance for chaining
+		 * @return {this} This instance for chaining
 		 */
 		MenuButton.prototype.setText = function (sValue) {
 			Control.prototype.setProperty.call(this, 'text', sValue);
@@ -587,7 +587,7 @@ sap.ui.define([
 		 * Override setter because the parent control has placed custom logic in it and all changes need to be propagated
 		 * to the internal button aggregation.
 		 * @param {string} sValue`
-		 * @return {sap.m.MenuButton} This instance for chaining
+		 * @return {this} This instance for chaining
 		 */
 		MenuButton.prototype.setType = function (sValue) {
 			Control.prototype.setProperty.call(this, 'type', sValue);
@@ -599,7 +599,7 @@ sap.ui.define([
 		 * Override setter because the parent control has placed custom logic in it and all changes need to be propagated
 		 * to the internal button aggregation.
 		 * @param {string} vValue
-		 * @return {sap.m.MenuButton} This instance for chaining
+		 * @return {this} This instance for chaining
 		 */
 		MenuButton.prototype.setIcon = function (vValue) {
 			Control.prototype.setProperty.call(this, 'icon', vValue);
@@ -612,7 +612,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sAriaLabelledBy the passed value
 		 * @override
-		 * @return {sap.m.MenuButton} This instance for chaining
+		 * @return {this} This instance for chaining
 		 */
 		MenuButton.prototype.addAriaLabelledBy = function(sAriaLabelledBy) {
 			this.getAggregation("_button").addAssociation("ariaLabelledBy", sAriaLabelledBy);
@@ -624,7 +624,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sAriaDescribedBy the passed value
 		 * @override
-		 * @return {sap.m.MenuButton} This instance for chaining
+		 * @return {this} This instance for chaining
 		 */
 		MenuButton.prototype.addAriaDescribedBy = function(sAriaDescribedBy) {
 			this.getAggregation("_button").addAssociation("ariaDescribedBy", sAriaDescribedBy);
@@ -636,7 +636,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sAriaLabelledBy the passed value
 		 * @override
-		 * @return {sap.m.MenuButton} This instance for chaining
+		 * @returns {string|null} ID of the removed control
 		 */
 		MenuButton.prototype.removeAriaLabelledBy = function(sAriaLabelledBy) {
 			this.getAggregation("_button").removeAssociation("ariaLabelledBy", sAriaLabelledBy);
@@ -648,7 +648,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sAriaDescribedBy the passed value to be removed
 		 * @override
-		 * @return {sap.m.MenuButton} This instance for chaining
+		 * @returns {string|null} ID of the removed control
 		 */
 		MenuButton.prototype.removeAriaDescribedBy = function(sAriaDescribedBy) {
 			this.getAggregation("_button").removeAssociation("ariaDescribedBy", sAriaDescribedBy);
@@ -660,7 +660,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sAriaLabelledBy the passed value to be removed
 		 * @override
-		 * @return {sap.m.MenuButton} This instance for chaining
+		 * @returns {string[]} IDs of the removed controls
 		 */
 		MenuButton.prototype.removeAllAriaLabelledBy = function(sAriaLabelledBy) {
 			this.getAggregation("_button").removeAllAssociation("ariaLabelledBy");
@@ -671,7 +671,7 @@ sap.ui.define([
 		 * Overrides the setter in order to propagate the value to the inner button instance.
 		 *
 		 * @override
-		 * @return {sap.m.MenuButton} This instance for chaining
+		 * @returns {string[]} IDs of the removed controls
 		 */
 		MenuButton.prototype.removeAllAriaDescribedBy = function() {
 			this.getAggregation("_button").removeAllAssociation("ariaDescribedBy");
@@ -754,7 +754,7 @@ sap.ui.define([
 		 * Ensures that MenuButton's internal button will have a reference back to the labels, by which
 		 * the MenuButton is labelled
 		 *
-		 * @returns {sap.m.MenuButton} For chaining
+		 * @returns {this} For chaining
 		 * @private
 		 */
 		MenuButton.prototype._ensureBackwardsReference = function () {

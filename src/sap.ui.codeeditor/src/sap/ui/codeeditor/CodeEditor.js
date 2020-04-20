@@ -388,7 +388,7 @@ sap.ui.define([
 
 	/**
 	 * Sets the focus to the code editor
-	 * @returns {sap.ui.codeeditor.CodeEditor} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	CodeEditor.prototype.focus = function() {
@@ -400,7 +400,7 @@ sap.ui.define([
 	/**
 	 * Sets the color theme  of the code editor
 	 * @param {string} sTheme See property documentation for accepted values
-	 * @returns {sap.ui.codeeditor.CodeEditor} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	CodeEditor.prototype.setColorTheme = function(sTheme) {

@@ -133,7 +133,7 @@ sap.ui.define(['./Panel', './library', 'sap/ui/core/library'],
 	/*
 	 * Sets the scroll position of the Tab in pixel from the left.
 	 * @param {int} iPosition The position to scroll to
-	 * @return {sap.ui.commons.Tab} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Tab.prototype.setScrollLeft = function (iPosition) {
@@ -165,7 +165,7 @@ sap.ui.define(['./Panel', './library', 'sap/ui/core/library'],
 	/*
 	 * Sets the scroll position of the Tab in pixel from the top.
 	 * @param {int} iPosition The position to scroll to
-	 * @return {sap.ui.commons.Tab} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Tab.prototype.setScrollTop = function (iPosition) {
@@ -184,7 +184,7 @@ sap.ui.define(['./Panel', './library', 'sap/ui/core/library'],
 	 * If no Tab is selected (because all tabs have been disabled before) also re-rendering is needed.
 	 *
 	 * @param {boolean} bEnabled Whether the Tab should be enabled or not
-	 * @return {sap.ui.commons.Tab} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Tab.prototype.setEnabled = function(bEnabled) {
@@ -217,7 +217,7 @@ sap.ui.define(['./Panel', './library', 'sap/ui/core/library'],
 	 * Sets the Tab width.
 	 *
 	 * @param {string} sWidth The width of the panel as CSS size
-	 * @return {sap.ui.commons.Tab} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Tab.prototype.setWidth = function (sWidth) {
@@ -230,7 +230,7 @@ sap.ui.define(['./Panel', './library', 'sap/ui/core/library'],
 	 * Sets content padding.
 	 *
 	 * @param {boolean} bPadding Whether the Panel should have padding
-	 * @returns {sap.ui.commons.Tab} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Tab.prototype.setApplyContentPadding = function(bPadding) {

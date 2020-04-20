@@ -246,7 +246,7 @@ sap.ui.define([
 			 *
 			 * @public
 			 * @param {number} iSelectedIndex The index of the radio button which has to be selected.
-			 * @returns {sap.m.RadioButtonGroup} Pointer to the control instance for chaining.
+			 * @returns {this} Pointer to the control instance for chaining.
 			 */
 			RadioButtonGroup.prototype.setSelectedIndex = function(iSelectedIndex) {
 
@@ -293,7 +293,7 @@ sap.ui.define([
 			 *
 			 * @public
 			 * @param {sap.m.RadioButton} oSelectedButton The item to be selected.
-			 * @returns {sap.m.RadioButtonGroup} Pointer to the control instance for chaining.
+			 * @returns {this} Pointer to the control instance for chaining.
 			 */
 			RadioButtonGroup.prototype.setSelectedButton = function (oSelectedButton) {
 				if (!oSelectedButton) {
@@ -325,7 +325,7 @@ sap.ui.define([
 			 *
 			 * @public
 			 * @param {sap.m.RadioButton} oButton The button which will be added to the group.
-			 * @returns {sap.m.RadioButtonGroup} Pointer to the control instance for chaining.
+			 * @returns {this} Pointer to the control instance for chaining.
 			 */
 			RadioButtonGroup.prototype.addButton = function(oButton) {
 				if (!this._bUpdateButtons && this.getSelectedIndex() === undefined) {
@@ -351,7 +351,7 @@ sap.ui.define([
 			 * @public
 			 * @param {sap.m.RadioButton} oButton The radio button which will be added to the group.
 			 * @param {number} iIndex The index, at which the radio button will be added.
-			 * @returns {sap.m.RadioButtonGroup} Pointer to the control instance for chaining.
+			 * @returns {this} Pointer to the control instance for chaining.
 			 */
 			RadioButtonGroup.prototype.insertButton = function(oButton, iIndex) {
 				if (!this.aRBs) {
@@ -485,7 +485,7 @@ sap.ui.define([
 			 * Destroys all radio buttons.
 			 *
 			 * @public
-			 * @returns {sap.m.RadioButtonGroup} Pointer to the control instance for chaining.
+			 * @returns {this} Pointer to the control instance for chaining.
 			 */
 			RadioButtonGroup.prototype.destroyButtons = function() {
 
@@ -567,7 +567,7 @@ sap.ui.define([
 			 * @public
 			 * @function
 			 * @param {boolean} bEditable Defines whether the radio buttons should be interactive.
-			 * @returns {sap.m.RadioButtonGroup} Pointer to the control instance for chaining.
+			 * @returns {this} Pointer to the control instance for chaining.
 			 */
 
 			/**
@@ -578,7 +578,7 @@ sap.ui.define([
 			 * @public
 			 * @function
 			 * @param {boolean} bEnabled Defines whether the radio buttons should be interactive.
-			 * @returns {sap.m.RadioButtonGroup} Pointer to the control instance for chaining.
+			 * @returns {this} Pointer to the control instance for chaining.
 			 */
 
 			/**
@@ -587,7 +587,6 @@ sap.ui.define([
 			 *
 			 * @private
 			 * @param {sap.ui.base.Event} oControlEvent The event that gets fired by the {@link sap.ui.core.delegate.ItemNavigation} delegate.
-			 * @returns {sap.m.RadioButtonGroup} Pointer to the control instance for chaining.
 			 */
 			RadioButtonGroup.prototype._handleAfterFocus = function(oControlEvent) {
 

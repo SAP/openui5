@@ -311,7 +311,7 @@ sap.ui.define([
 	 * @param {object}
 	 *            [oListener] Context object to call the event handler with; defaults to
 	 *            <code>sap.ui.core.BusyIndicator</code>
-	 * @returns {sap.ui.core.BusyIndicator} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	BusyIndicator.attachOpen = function(fnFunction, oListener) {
@@ -326,7 +326,7 @@ sap.ui.define([
 	 *            fnFunction The callback function to unregister
 	 * @param {object}
 	 *            [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.core.BusyIndicator} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	BusyIndicator.detachOpen = function(fnFunction, oListener) {
@@ -345,7 +345,7 @@ sap.ui.define([
 	 * @param {object}
 	 *            [oListener] Context object to call the event handler with; defaults to
 	 *            <code>sap.ui.core.BusyIndicator</code>
-	 * @returns {sap.ui.core.BusyIndicator} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	BusyIndicator.attachClose = function(fnFunction, oListener) {
@@ -360,7 +360,7 @@ sap.ui.define([
 	 *            fnFunction The callback function to unregister
 	 * @param {object}
 	 *            [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.core.BusyIndicator} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	BusyIndicator.detachClose = function(fnFunction, oListener) {

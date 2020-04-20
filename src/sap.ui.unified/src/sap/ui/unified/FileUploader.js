@@ -672,7 +672,7 @@ sap.ui.define([
 	 * Ensures that FileUploader's internal button will have a reference back to the labels, by which
 	 * the FileUploader is labelled
 	 *
-	 * @returns {sap.ui.unified.FileUploader} For chaining
+	 * @returns {this} For chaining
 	 * @private
 	 */
 	FileUploader.prototype._ensureBackwardsReference = function () {
@@ -1190,7 +1190,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.25.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @returns {sap.ui.unified.FileUploader} The <code>sap.ui.unified.FileUploader</code> instance
+	 * @returns {this} The <code>sap.ui.unified.FileUploader</code> instance
 	 */
 	FileUploader.prototype.clear = function () {
 		var uploadForm = this.getDomRef("fu_form");

@@ -212,7 +212,7 @@ sap.ui.define([
 	 * This property must not be set for the <code>Field</code>
 	 *
 	 * @param {int} iMaxConditions Oonly 1 condition allowed in <code>Field</code>
-	 * @returns {sap.ui.mdc.Field} <code>this</code> to allow method chaining.
+	 * @returns {this} <code>this</code> to allow method chaining.
 	 * @private
 	 */
 	Field.prototype.setMaxConditions = function(iMaxConditions) {
@@ -518,7 +518,7 @@ sap.ui.define([
 	 * use the <code>value</code> and <code>additionalValue</code> properties instead.
 	 *
 	 * @param {object[]} aConditions Conditions to be set
-	 * @returns {sap.ui.mdc.Field} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @name sap.ui.mdc.Field#setConditions
 	 * @function
@@ -543,7 +543,7 @@ sap.ui.define([
 	 * In this case the value of the <code>dataType</code> property is ignored.
 	 *
 	 * @param {string} sDataType DataType to be set
-	 * @returns {sap.ui.mdc.Field} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @name sap.ui.mdc.Field#setDataType
 	 * @function
@@ -556,7 +556,7 @@ sap.ui.define([
 	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeConstraints</code> property are ignored.
 	 *
 	 * @param {string} oDataTypeConstraints Constraints to be set
-	 * @returns {sap.ui.mdc.Field} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @name sap.ui.mdc.Field#setDataTypeConstraints
 	 * @function
@@ -569,7 +569,7 @@ sap.ui.define([
 	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeFormatOptions</code> property are ignored.
 	 *
 	 * @param {string} oDataTypeFormatOptions Format options to be set
-	 * @returns {sap.ui.mdc.Field} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @name sap.ui.mdc.Field#setDataTypeFormatOptions
 	 * @function

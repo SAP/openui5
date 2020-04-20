@@ -189,7 +189,7 @@ sap.ui.define([
 	/*
 	 * Sets the title property.
 	 * @param {string} sTitle New value for property title
-	 * @returns {sap.m.FacetFilterList} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 */
 	FacetFilterList.prototype.setTitle = function(sTitle) {
 
@@ -202,7 +202,7 @@ sap.ui.define([
 	/*
 	 * Sets the multiSelect property (default value is <code>true</code>).
 	 * @param {boolean}	bVal New value for property multiSelect
-	 * @returns {sap.m.FacetFilterList}	this to allow method chaining
+	 * @returns {this}	this to allow method chaining
 	 */
 	FacetFilterList.prototype.setMultiSelect = function(bVal) {
 
@@ -216,7 +216,7 @@ sap.ui.define([
 	 * Overrides to allow only MultiSelect and SingleSelectMaster list modes.
 	 * If an invalid mode is given then the mode will not be changed.
 	 * @param {sap.m.ListMode} mode The list mode
-	 * @returns {sap.m.FacetFilterList} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	FacetFilterList.prototype.setMode = function(mode) {

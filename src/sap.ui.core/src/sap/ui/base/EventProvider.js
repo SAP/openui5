@@ -66,7 +66,7 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 	 * @param {object}
 	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
 	 *                        handler function). If it is not specified, the handler function is called in the context of the event provider.
-	 * @return {sap.ui.base.EventProvider} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	EventProvider.prototype.attachEvent = function(sEventId, oData, fnFunction, oListener) {
@@ -116,7 +116,7 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 	 * @param {object}
 	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
 	 *                        handler function). If it is not specified, the handler function is called in the context of the event provider.
-	 * @return {sap.ui.base.EventProvider} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	EventProvider.prototype.attachEventOnce = function(sEventId, oData, fnFunction, oListener) {
@@ -150,7 +150,7 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 	 *            fnFunction The handler function to detach from the event
 	 * @param {object}
 	 *            [oListener] The object that wanted to be notified when the event occurred
-	 * @return {sap.ui.base.EventProvider} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	EventProvider.prototype.detachEvent = function(sEventId, fnFunction, oListener) {

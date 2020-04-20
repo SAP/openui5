@@ -608,7 +608,7 @@ sap.ui.define([
 	 * use it instead of <code>setMyPosition/setAtPosition</code>.
 	 * @param {sap.ui.core.Dock} myPosition docking position of the Callout
 	 * @param {sap.ui.core.Dock} atPosition docking position of the parent control
-	 * @return {sap.ui.commons.CalloutBase} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */

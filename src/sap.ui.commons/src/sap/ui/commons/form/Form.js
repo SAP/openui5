@@ -63,7 +63,7 @@ sap.ui.define([
 	* Default value is <code>true</code>
 	*
 	* @param {boolean} bVisible new value for property <code>visible</code>
-	* @return {sap.ui.commons.form.Form} <code>this</code> to allow method chaining
+	* @return {this} <code>this</code> to allow method chaining
 	* @public
 	* @since 1.12.0
 	* @name sap.ui.commons.form.Form#setVisible

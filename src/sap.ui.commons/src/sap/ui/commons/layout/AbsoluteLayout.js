@@ -84,7 +84,7 @@ sap.ui.define([
 	 * @override
 	 * @public
 	 * @param {string} sWidth The passed width of the control.
-	 * @returns {sap.ui.commons.layout.AbsoluteLayout} <code>this</code> Control reference for chaining.
+	 * @returns {this} <code>this</code> Control reference for chaining.
 	 */
 	AbsoluteLayout.prototype.setWidth = function(sWidth) {
 		return setProp(this, "width", sWidth, "LYT_SIZE");
@@ -97,7 +97,7 @@ sap.ui.define([
 	 * @override
 	 * @public
 	 * @param {string} sHeight The passed height of the control.
-	 * @returns {sap.ui.commons.layout.AbsoluteLayout} <code>this</code> Control reference for chaining.
+	 * @returns {this} <code>this</code> Control reference for chaining.
 	 */
 	AbsoluteLayout.prototype.setHeight = function(sHeight) {
 		return setProp(this, "height", sHeight, "LYT_SIZE");
@@ -110,7 +110,7 @@ sap.ui.define([
 	 * @override
 	 * @public
 	 * @param {object} oVerticalScrolling Object that contains settings for Vertical scrolling.
-	 * @returns {sap.ui.commons.layout.AbsoluteLayout} <code>this</code> Control reference for chaining.
+	 * @returns {this} <code>this</code> Control reference for chaining.
 	 */
 	AbsoluteLayout.prototype.setVerticalScrolling = function(oVerticalScrolling) {
 		return setProp(this, "verticalScrolling", oVerticalScrolling, "LYT_SCROLL");
@@ -122,7 +122,7 @@ sap.ui.define([
 	 * @override
 	 * @public
 	 * @param {object} oHorizontalScrolling Object that contains settings for Horizontal scrolling.
-	 * @returns {sap.ui.commons.layout.AbsoluteLayout} <code>this</code> Control reference for chaining.
+	 * @returns {this} <code>this</code> Control reference for chaining.
 	 */
 	AbsoluteLayout.prototype.setHorizontalScrolling = function(oHorizontalScrolling) {
 		return setProp(this, "horizontalScrolling", oHorizontalScrolling, "LYT_SCROLL");
@@ -135,7 +135,7 @@ sap.ui.define([
 	 * @public
 	 * @param {object} oPosition Element which must be positioned in the layout.
 	 * @param {int} iIndex Index of the element which is to be positioned.
-	 * @returns {sap.ui.commons.layout.AbsoluteLayout} <code>this</code> Control reference for chaining.
+	 * @returns {this} <code>this</code> Control reference for chaining.
 	 */
 	AbsoluteLayout.prototype.insertPosition = function(oPosition, iIndex) {
 		var bHasDomRef = !!this.getDomRef();
@@ -152,7 +152,7 @@ sap.ui.define([
 	 * @override
 	 * @public
 	 * @param {object} oPosition  Element which must be positioned in the layout.
-	 * @returns {sap.ui.commons.layout.AbsoluteLayout} <code>this</code> Control reference for chaining.
+	 * @returns {this} <code>this</code> Control reference for chaining.
 	 */
 	AbsoluteLayout.prototype.addPosition = function(oPosition) {
 		var bHasDomRef = !!this.getDomRef();
@@ -203,7 +203,7 @@ sap.ui.define([
 	 *
 	 * @override
 	 * @public
-	 * @returns {sap.ui.commons.layout.AbsoluteLayout} <code>this</code> Control reference for chaining.
+	 * @returns {this} <code>this</code> Control reference for chaining.
 	 */
 	AbsoluteLayout.prototype.destroyPositions = function() {
 		cleanup(this.getPositions());

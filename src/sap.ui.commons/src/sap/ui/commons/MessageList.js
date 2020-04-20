@@ -192,7 +192,7 @@ sap.ui.define([
 	 * in order to invoke the open() and close() of the MessageList Popup.
 	 *
 	 * @param {boolean} bVisible New value for property <code>visible</code>
-	 * @return {sap.ui.commons.MessageList} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	MessageList.prototype.setVisible = function(bVisible) {

@@ -709,7 +709,7 @@ sap.ui.define([
 	 * Sets the value of the <code>backgroundDesignAnchorBar</code> property.
 	 *
 	 * @param {sap.m.BackgroundDesign} sBackgroundDesignAnchorBar - new value of the <code>backgroundDesignAnchorBar</code>
-	 * @return {sap.uxap.ObjectPageLayout} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @since 1.58
 	 */
@@ -1421,7 +1421,7 @@ sap.ui.define([
 	 * @param {string | sap.uxap.ObjectPageSection} sId
 	 *            The ID or the section instance that should be selected
 	 *            Note that <code>null</code> or <code>undefined</code> are not valid arguments
-	 * @return {sap.uxap.ObjectPageLayout} Returns <code>this</code> to allow method chaining
+	 * @return {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ObjectPageLayout.prototype.setSelectedSection = function (sId) {
@@ -3435,7 +3435,7 @@ sap.ui.define([
 	 * Restores the focus after moving the Navigation bar after moving it between containers
 	 * @private
 	 * @param {function} fnMoveNavBar a function that moves the navigation bar
-	 * @returns {sap.uxap.ObjectPageLayout} this
+	 * @returns {this} this
 	 */
 	ObjectPageLayout.prototype._restoreFocusAfter = function (fnMoveNavBar) {
 		var oLastSelectedElement = this.oCore.byId(this.oCore.getCurrentFocusedControlId());

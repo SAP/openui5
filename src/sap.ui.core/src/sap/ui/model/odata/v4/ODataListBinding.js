@@ -1485,7 +1485,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.FilterType} [sFilterType=sap.ui.model.FilterType.Application]
 	 *   The filter type to be used
-	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
+	 * @returns {this}
 	 *   <code>this</code> to facilitate method chaining
 	 * @throws {Error}
 	 *   If there are pending changes or if an unsupported operation mode is used (see
@@ -2881,7 +2881,7 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}.
 	 *   Static sorters, as defined in the '$orderby' binding parameter, are always executed after
 	 *   the dynamic sorters.
-	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
+	 * @returns {this}
 	 *   <code>this</code> to facilitate method chaining
 	 * @throws {Error}
 	 *   If there are pending changes or if an unsupported operation mode is used (see

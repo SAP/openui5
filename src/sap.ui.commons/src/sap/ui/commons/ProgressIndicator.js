@@ -196,7 +196,7 @@ sap.ui.define([
 	 * A new rendering is not necessary, only the bar has to be moved.
 	 *
 	 * @param {int} iPercentValue The new percent value of the ProgressIndicator.
-	 * @return {sap.ui.commons.ProgressIndicator} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	ProgressIndicator.prototype.setPercentValue = function(iPercentValue) {

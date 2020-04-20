@@ -11,8 +11,7 @@ sap.ui.define(['./Control', "sap/base/Log"],
 	/**
 	 * This class is only here for compatibility reasons. LBI works automatically with all controls
 	 *
-	 * @returns {sap.ui.core.LocalBusyIndicatorSupport}
-	 * @constructor
+	 * @function
 	 * @private
 	 * @deprecated
 	 * @alias sap.ui.core.LocalBusyIndicatorSupport

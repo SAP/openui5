@@ -1984,7 +1984,7 @@ sap.ui.define([
 	 * So the <code>SimpleForm</code> must not have an own title.
 	 * @param {string} sTitleID <code>Title</code> control ID
 	 * @private
-	 * @return {sap.ui.layout.form.SimpleForm} Reference to <code>this</code> to allow method chaining
+	 * @return {this} Reference to <code>this</code> to allow method chaining
 	 */
 	SimpleForm.prototype._suggestTitleId = function (sTitleID) {
 

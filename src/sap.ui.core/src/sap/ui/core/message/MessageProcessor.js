@@ -88,7 +88,7 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/util/uid"],
 	 *            [oListener] Context object to call the event handler with,
 	 *            defaults to this <code>MessageProcessor</code> itself
 	 *
-	 * @returns {sap.ui.core.message.MessageProcessor} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	MessageProcessor.prototype.attachMessageChange = function(oData, fnFunction, oListener) {
@@ -106,7 +106,7 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/util/uid"],
 	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
 	 *            [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.core.message.MessageProcessor} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	MessageProcessor.prototype.detachMessageChange = function(fnFunction, oListener) {
@@ -119,7 +119,7 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/util/uid"],
 	 *
 	 * @param {object} [oParameters] Parameters to pass along with the event
 	 *
-	 * @returns {sap.ui.core.message.MessageProcessor} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	MessageProcessor.prototype.fireMessageChange = function(oParameters) {

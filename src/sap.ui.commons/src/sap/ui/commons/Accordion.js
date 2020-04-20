@@ -778,7 +778,7 @@ sap.ui.define([
 	 * Redefinition of the method to add additional handling
 	 *
 	 * @param {string} sOpenedSectionsId  New value for property openedSectionsId
-	 * @return {sap.ui.commons.Accordion} 'this' to allow method chaining
+	 * @return {this} 'this' to allow method chaining
 	 * @public
 	 */
 	Accordion.prototype.setOpenedSectionsId = function(sOpenedSectionsId) {

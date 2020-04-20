@@ -2149,7 +2149,7 @@ function(
 		 * Sets the <code>wrapItemsText</code> property.
 		 *
 		 * @param {boolean} bWrap
-		 * @returns {sap.m.Select} <code>this</code> to allow method chaining
+		 * @returns {this} <code>this</code> to allow method chaining
 		 * @since 1.69
 		 * @public
 		 */
@@ -2197,7 +2197,7 @@ function(
 		/**
 		 * Open the control's picker popup.
 		 *
-		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @protected
 		 * @since 1.16
 		 */
@@ -2219,7 +2219,7 @@ function(
 		/**
 		 * Toggle the open state of the control's picker popup.
 		 *
-		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @since 1.26
 		 */
 		Select.prototype.toggleOpenState = function() {
@@ -2611,7 +2611,7 @@ function(
 		 * Adds an item to the aggregation named <code>items</code>.
 		 *
 		 * @param {sap.ui.core.Item} oItem The item to be added; if empty, nothing is added.
-		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		Select.prototype.addItem = function(oItem) {
@@ -2631,7 +2631,7 @@ function(
 		 * @param {int} iIndex The <code>0</code>-based index the item should be inserted at; for
 		 *             a negative value of <code>iIndex</code>, the item is inserted at position 0; for a value
 		 *             greater than the current size of the aggregation, the item is inserted at the last position.
-		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		Select.prototype.insertItem = function(oItem, iIndex) {
@@ -2678,7 +2678,7 @@ function(
 		 * Alternatively, a <code>sap.ui.core.Item</code> instance may be given or <code>null</code>.
 		 * If the value of <code>null</code> is provided, the first enabled item will be selected (if any items exist).
 		 *
-		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		Select.prototype.setSelectedItem = function(vItem) {
@@ -2710,7 +2710,7 @@ function(
 		 * @param {string | undefined} [vItem] New value for property <code>selectedItemId</code>.
 		 * If the provided <code>vItem</code> has a default value, the first enabled item will be selected (if any items exist).
 		 *
-		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 * @since 1.12
 		 */
@@ -2754,7 +2754,7 @@ function(
 		 * In the case that an item has the default key value, it is selected instead.
 		 * If duplicate keys exist, the first item matching the key is selected.
 		 *
-		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 * @since 1.11
 		 */
@@ -2970,7 +2970,7 @@ function(
 		/**
 		 * Destroys all the items in the aggregation named <code>items</code>.
 		 *
-		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		Select.prototype.destroyItems = function() {
@@ -3000,7 +3000,7 @@ function(
 		/**
 		 * Closes the control's picker popup.
 		 *
-		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
+		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @public
 		 * @since 1.16
 		 */

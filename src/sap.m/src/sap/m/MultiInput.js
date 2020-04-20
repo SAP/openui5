@@ -1275,7 +1275,7 @@ function(
 	 *
 	 * @param {sap.m.Token[]} aTokens The new token set
 	 * @public
-	 * @returns {sap.m.MultiInput} Pointer to the control instance for chaining
+	 * @returns {this} Pointer to the control instance for chaining
 	 */
 	MultiInput.prototype.setTokens = function (aTokens) {
 		 if (!Array.isArray(aTokens)) {

@@ -88,7 +88,7 @@ sap.ui.define([
 	 * Sets the busy state on the inner <code>CreationRow</code> control.
 	 *
 	 * @param {boolean} bBusy Busy state that is applied to the inner control
-	 * @returns {sap.ui.mdc.table.CreationRow}  Returns <code>this</code> to allow method chaining
+	 * @returns {this}  Returns <code>this</code> to allow method chaining
 	 */
 	CreationRow.prototype.setBusy = function(bBusy) {
 		this.setProperty('busy', bBusy, true);
