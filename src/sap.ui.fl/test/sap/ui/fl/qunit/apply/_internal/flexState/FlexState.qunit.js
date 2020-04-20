@@ -581,6 +581,58 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("FlexState with Storage stubs", {
+		beforeEach: function () {
+			this.oAppComponent = new UIComponent(sComponentId);
+
+			this.oLoaderSpy = sandbox.spy(Loader, "loadFlexData");
+			this.oApplyStorageLoadFlexDataSpy = sandbox.stub(Storage, "loadFlexData");
+			this.oApplyStorageCompleteFlexDataSpy = sandbox.spy(Storage, "completeFlexData");
+		},
+		afterEach: function () {
+			FlexState.clearState();
+			this.oAppComponent.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when initialize is called in parallel after partialFlexState is set", function(assert) {
+			mResponse.changes = [{fileType:"change", changeType:"propertyChange", layer: LayerUtils.getCurrentLayer()}];
+			this.oApplyStorageLoadFlexDataSpy.resolves(mResponse);
+			var oFlexStateSpy = sandbox.spy(FlexState, "initialize");
+			return FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId,
+				partialFlexState: true
+			}).then(function() {
+				assert.equal(oFlexStateSpy.callCount, 1, "flexstate is called once");
+				assert.equal(this.oLoaderSpy.callCount, 1, "loader is called once");
+				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is called once");
+				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 0, "storage completeFlexData is not called");
+			}.bind(this))
+			.then(function() {
+				var oStatePromise1 = FlexState.initialize({
+					reference: sReference,
+					componentId: sComponentId
+				});
+				var oStatePromise2 = FlexState.initialize({
+					reference: sReference,
+					componentId: sComponentId
+				});
+				return Promise.all([oStatePromise1, oStatePromise2]);
+			})
+			.then(function() {
+				assert.equal(oFlexStateSpy.callCount, 3, "flexstate is called three times");
+				assert.equal(this.oLoaderSpy.callCount, 2, "loader is called twice");
+				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is called once");
+				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 1, "storage completeFlexData is called once");
+				return FlexState.getStorageResponse(sReference);
+			}.bind(this))
+			.then(function(oUnfilteredStorageResponse) {
+				assert.equal(oUnfilteredStorageResponse.changes.changes.length, 1, "there is one changes");
+			});
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});

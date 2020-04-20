@@ -235,7 +235,8 @@ sap.ui.define([
 			if (_mInitPromises[mPropertyBag.reference]) {
 				return _mInitPromises[mPropertyBag.reference].then(function (mPropertyBag) {
 					if (_mInstances[mPropertyBag.reference].partialFlexState === true && mPropertyBag.partialFlexState !== true) {
-						mPropertyBag.partialFlexData = _mInstances[mPropertyBag.reference].unfilteredStorageResponse.changes;
+						_mInstances[mPropertyBag.reference].partialFlexState = false;
+						mPropertyBag.partialFlexData = merge({}, _mInstances[mPropertyBag.reference].unfilteredStorageResponse.changes);
 						return loadFlexData(mPropertyBag);
 					}
 					// if the component with the same reference was rendered with a new ID - clear existing state
