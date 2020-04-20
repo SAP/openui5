@@ -25147,4 +25147,50 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: list binding is used to create an entity, but the metadata could not be loaded
+	// JIRA: CPOUI5ODATAV4-231
+	QUnit.test("CPOUI5ODATAV4-231: ODLB#create failed due to failed $metadata", function (assert) {
+		var that = this;
+
+		return this.createView(assert, "", createModel(sInvalidModel)).then(function () {
+			var oListBinding = that.oModel.bindList("/People");
+
+			that.oLogMock.expects("error")
+				.withExactArgs("GET /invalid/model/$metadata",
+					"Could not load metadata: 500 Internal Server Error",
+					"sap.ui.model.odata.v4.lib._MetadataRequestor");
+			// Note: this error message is a bit misleading ;-)
+			that.oLogMock.expects("error")
+				.withExactArgs("POST on 'People' failed; will be repeated automatically",
+					sinon.match("Error: Could not load metadata: 500 Internal Server Error"),
+					"sap.ui.model.odata.v4.ODataListBinding");
+			that.expectRequest({
+					method : "POST",
+					url : "People",
+					payload : {}
+				})
+				.expectMessages([{
+					code : undefined,
+					descriptionUrl : undefined,
+					message : "Could not load metadata: 500 Internal Server Error",
+					persistent : true,
+					target : "",
+					technical : true,
+					technicalDetails : {},
+					type : "Error"
+				}]);
+
+			return Promise.all([
+				oListBinding.create().created().then(function () {
+						assert.ok(false, "Unexpected success");
+					}, function (oError) {
+						assert.strictEqual(oError.message,
+							"Could not load metadata: 500 Internal Server Error");
+					}),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 });
