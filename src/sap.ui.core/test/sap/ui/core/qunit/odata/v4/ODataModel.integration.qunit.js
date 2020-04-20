@@ -23743,7 +23743,11 @@ sap.ui.define([
 	// "/As(1)/AtoCs(2)/CtoD/DtoC/CtoA/AValue".
 	// JIRA: CPOUI5ODATAV4-221
 	QUnit.test("requestSideEffects: parent cache of a list binding", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true, updateGroupId : "update1"}),
+		var oModel = createSpecialCasesModel({
+				autoExpandSelect : true,
+				groupId : "$auto", // required so that late property requests can be combined
+				updateGroupId : "update1"
+			}),
 			sView = '\
 <FlexBox binding="{/As(1)}">\
 	<Text id="avalue::form" text="{AValue}"/>\
@@ -23755,6 +23759,7 @@ sap.ui.define([
 	</Table>\
 </FlexBox>\
 <FlexBox id="form" binding="{CtoD}">\
+	<Text text="{DID}"/>\
 	<Text id="dvalue" text="{DValue}"/>\
 </FlexBox>',
 			that = this;
@@ -23780,6 +23785,7 @@ sap.ui.define([
 			.expectChange("dvalue");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			// combined late property requests
 			that.expectRequest("As(1)/AtoCs(2)?$select=CID&$expand=CtoD($select=DID,DValue)", {
 					CID : 2,
 					CtoD : {

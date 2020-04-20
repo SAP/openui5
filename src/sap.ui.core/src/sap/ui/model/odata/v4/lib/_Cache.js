@@ -630,8 +630,10 @@ sap.ui.define([
 				if (typeof vKey === "object") {
 					vKey = vKey[Object.keys(vKey)[0]]; // the path for the alias
 				}
-				mQueryOptions0.$select.push(vKey);
-				aUpdateProperties.push(_Helper.buildPath(sBasePath, vKey));
+				if (mQueryOptions0.$select.indexOf(vKey) < 0) {
+					mQueryOptions0.$select.push(vKey);
+					aUpdateProperties.push(_Helper.buildPath(sBasePath, vKey));
+				}
 			});
 			if (sBasePath) {
 				aUpdateProperties.push(sBasePath + "/@odata.etag");
