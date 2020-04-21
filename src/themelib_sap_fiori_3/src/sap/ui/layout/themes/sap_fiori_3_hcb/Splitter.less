@@ -3,44 +3,25 @@
 /* Quartz High Contrast Black theme        */
 /* ======================================= */
 
-@_sap_ui_layout_Splitter_BarColor: @sapUiHcReducedAltForeground;
-@_sap_ui_layout_Splitter_BarHoverColor: @sapUiBaseBG;
+@_sap_ui_layout_Splitter_BarActiveDecorationColors: @sapUiObjectHeaderBorderColor, @sapUiObjectHeaderBorderColor;
+@_sap_ui_layout_Splitter_BarDecorationColors: @sapUiObjectHeaderBorderColor, fade(@sapUiObjectHeaderBorderColor, 0);
+@_sap_ui_layout_Splitter_BarBorder: 0.0625rem solid @sapUiGroupContentBorderColor;
+@_sap_ui_layout_Splitter_BarHoverIconBorderColor: @sapUiButtonLiteHoverBorderColor;
+@_sap_ui_layout_Splitter_BarHoverIconBackground: @sapUiButtonLiteHoverBackground;
 
 .sapUiLoSplitter {
 	background-color: @sapUiHcStandardBackground;
 }
 
-html.sap-desktop .sapUiLoSplitterH.sapUiLoSplitter > .sapUiLoSplitterBar,
-html.sap-desktop .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-	height: 100%;
-	width: 0.25rem;
-}
+/*********************************** Focus outline**********************************/
 
-html.sap-desktop .sapUiLoSplitterV.sapUiLoSplitter > .sapUiLoSplitterBar,
-html.sap-desktop .sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-	width: 100%;
-	height: 0.25rem;
-}
-
-.sapUiLoSplitter > .sapUiLoSplitterBar {
-	background-color:@_sap_ui_layout_Splitter_BarColor;
-}
-
-.sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-	background-color: @sapUiGlobalBackgroundColor;
-}
-
-.sapUiLoSplitterBarIcon {
-	display: none;
-}
-
-.sapUiLoSplitter > .sapUiLoSplitterBar:hover,
-.sapUiLoSplitter > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-	background-color: @sapUiHcStandardForeground;
-}
-
-/*********************************** IE Focus outline workaround **********************************/// TODO remove after the end of support for Internet Explorer
-
-html[data-sap-ui-browser^=ie] .sapUiLoSplitterH > .sapUiLoSplitterBar:focus::after {
-	top: 0;
+.sapUiLoSplitter > .sapUiLoSplitterBar,
+.sapUiLoSplitter > .sapUiLoSplitterOverlay .sapUiLoSplitterOverlayBar {
+	&:focus::after {
+		border-width: 2px;
+		top: -1px;
+		bottom: -1px;
+		left: -1px;
+		right: -1px;
+	}
 }

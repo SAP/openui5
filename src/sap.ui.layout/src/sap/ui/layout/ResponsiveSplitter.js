@@ -56,7 +56,7 @@ sap.ui.define([
 	 * <h3>Responsive Behavior</h3>
 	 * <ul>
 	 * <li>As soon as views are in the off-canvas mode, the pagination bar at the bottom of the application allows the user to switch between them.</li>
-	 * <li>On touch-enabled devices, the splitters show explicit handles with larger touch areas.</li>
+	 * <li>On touch-enabled devices the bars of the splitter can be moved by touching the grip.</li>
 	 * <li>Double-clicking on a splitter will collapse or expand it back to its original position.</li>
 	 * </ul>
 	 *

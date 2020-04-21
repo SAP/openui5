@@ -1,21 +1,16 @@
-/*global QUnit sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit  */
+
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/layout/SplitPane',
-	'sap/ui/layout/PaneContainer',
-	'sap/ui/layout/AssociativeSplitter',
-	'sap/ui/layout/SplitterLayoutData',
-	'sap/m/Button',
-	'sap/m/ScrollContainer'
+	"sap/ui/layout/AssociativeSplitter",
+	"sap/m/Button",
+	"sap/m/ScrollContainer",
+	"sap/ui/dom/units/Rem"
 ], function(
-	jQuery,
-	SplitPane,
-	PaneContainer,
 	AssociativeSplitter,
-	SplitterLayoutData,
 	Button,
-	ScrollContainer) {
+	ScrollContainer,
+	Rem
+) {
 	'use strict';
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -91,29 +86,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Mousedown", function (assert) {
-		// arrange
-		var oStub = sinon.stub(this.oSplitter, "_onBarMoveStart"),
-			oSplitterBar = this.oSplitter.$().children("#splitter-splitbar-0")[0],
-			oSplitterBarIcon = this.oSplitter.$().find("#splitter-splitbar-0-icon")[0],
-			oContentArea = this.oSplitter.$().children("#splitter-content-0")[0];
-
-		// act and assert
-		this.oSplitter.onmousedown({ target: oContentArea });
-		assert.strictEqual(oStub.callCount, 0, "Clicking on content area should NOT trigger _onBarMoveStart");
-
-		oStub.resetHistory();
-		this.oSplitter.onmousedown({ target: oSplitterBar });
-		assert.strictEqual(oStub.callCount, 1, "Clicking on a splitter bar should trigger _onBarMoveStart");
-
-		oStub.resetHistory();
-		this.oSplitter.onmousedown({ target: oSplitterBarIcon });
-		assert.strictEqual(oStub.callCount, 1, "Clicking on a splitter bar icon should trigger _onBarMoveStart");
-
-		// cleanup
-		oStub.restore();
-	});
-
 	QUnit.test("Double click", function (assert) {
 		// arrange
 		var oFirstSplitterBar = this.oSplitter.$().children("#splitter-splitbar-0")[0],
@@ -146,33 +118,6 @@ sap.ui.define([
 		this.oSplitter._onBarMoveEnd({ changedTouches: false }); // used to deregister event listeners added onmousedown
 	});
 
-	QUnit.test("Touchstart", function (assert) {
-		// arrange
-		var oStub = sinon.stub(AssociativeSplitter.prototype, "_onBarMoveStart"),
-			oSplitterBar = this.oSplitter.$().children("#splitter-splitbar-0")[0],
-			oSplitterBarIcon = this.oSplitter.$().find("#splitter-splitbar-0-icon")[0],
-			oContentArea = this.oSplitter.$().children("#splitter-content-0")[0],
-			oFakeEvent = { changedTouches: [ "touch"] };
-
-		// act and assert
-		oFakeEvent.target = oContentArea;
-		this.oSplitter.ontouchstart(oFakeEvent);
-		assert.strictEqual(oStub.callCount, 0, "Touch on content area should NOT trigger _onBarMoveStart");
-
-		oStub.resetHistory();
-		oFakeEvent.target = oSplitterBar;
-		this.oSplitter.ontouchstart(oFakeEvent);
-		assert.strictEqual(oStub.callCount, 1, "Touch on a splitter bar should trigger _onBarMoveStart");
-
-		oStub.resetHistory();
-		oFakeEvent.target = oSplitterBarIcon;
-		this.oSplitter.ontouchstart(oFakeEvent);
-		assert.strictEqual(oStub.callCount, 1, "Touch on a splitter bar icon should trigger _onBarMoveStart");
-
-		// cleanup
-		oStub.restore();
-	});
-
 	QUnit.module("Responsiveness", {
 		beforeEach: function () {
 			this.oSplitter = new AssociativeSplitter("splitter");
@@ -194,7 +139,8 @@ sap.ui.define([
 
 	QUnit.test("After resize of a SplitBar", function (assert) {
 		var iFirstContentAreaWidth, iSecondContentAreaWidth,
-			aCalculatedSizes;
+			aCalculatedSizes,
+			iExpectedWidth = 500 - Rem.toPx(1); // 1rem is the size of the splitter bar;
 
 		sap.ui.getCore().byId(this.oSplitter.getAssociatedContentAreas()[0]).getLayoutData().setSize("100px");
 		this.oContainer.setWidth("500px");
@@ -204,7 +150,7 @@ sap.ui.define([
 		iFirstContentAreaWidth = aCalculatedSizes[0];
 		iSecondContentAreaWidth = aCalculatedSizes[1];
 
-		assert.strictEqual(iFirstContentAreaWidth + iSecondContentAreaWidth, 496, "Sum of the widths of content areas should be equal to the size of the container minus the splitterbar(0.25rem)");
+		assert.strictEqual(iFirstContentAreaWidth + iSecondContentAreaWidth, iExpectedWidth, "Sum of the widths of content areas should be equal to the size of the container minus the splitterbar(0.25rem)");
 	});
 
 	QUnit.test("Calculations should be done with 5 digit precision", function (assert) {

@@ -8,27 +8,6 @@
 	<script src="../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
 		data-sap-ui-libs="sap.ui.core,sap.ui.layout, sap.m"></script>
 	<style>
-		#content {
-			position: relative;
-			display: block;
-			width: 80%;
-			left: 10%;
-			height: 500px;
-		}
-
-		html[dir="rtl"] #content {
-			left: auto;
-			right: 10%;
-		}
-
-		#debug {
-			display: block;
-			width: 100%;
-			height: 50px;
-			overflow-x: hidden;
-			overflow-y: auto;
-		}
-
 		#buttons,
 		#options {
 			margin-top: 1rem;
@@ -105,48 +84,7 @@
 					]
 				});
 
-				var oOptionsLayout = new VerticalLayout();
-
-
-				oSplitter._debugLog = function (sLogMessage) {
-					if (!oSplitter._debugLog.aDebugLog) {
-						oSplitter._debugLog.aDebugLog = [];
-					}
-					if (!oSplitter._debugLog.oDebugDom) {
-						oSplitter._debugLog.oDebugDom = document.getElementById("debug");
-						oSplitter._debugLog.bFirstTime = true;
-					}
-
-					oSplitter._debugLog.aDebugLog.push(sLogMessage);
-
-					if (!oSplitter._debugLog.oDebugDom) {
-						// DOM Not ready...
-						return
-					}
-
-					var fnCreateLine = function (sText) {
-						var oLogLine = document.createElement("span");
-						oLogLine.className = "sapUiDebugLine";
-						oLogLine.appendChild(document.createTextNode(sText));
-						return oLogLine;
-					}
-
-					if (oSplitter._debugLog.bFirstTime) {
-						// Log everything that came before
-						oSplitter._debugLog.bFirstTime = false;
-
-						for (var i = 0; i < oSplitter._debugLog.aDebugLog.length; ++i) {
-							oSplitter._debugLog.oDebugDom.appendChild(
-								fnCreateLine(oSplitter._debugLog.aDebugLog[i])
-							);
-						}
-					}
-
-					oSplitter._debugLog.oDebugDom.insertBefore(
-						fnCreateLine(sLogMessage), oSplitter._debugLog.oDebugDom.firstChild
-					);
-				}
-
+				var oOptionsLayout = new VerticalLayout().addStyleClass("options");
 
 				function showLayoutOptions() {
 					// Remove all Options
@@ -201,7 +139,7 @@
 				}
 				showLayoutOptions();
 
-				var oButtonLayout = new HorizontalLayout();
+				var oButtonLayout = new HorizontalLayout().addStyleClass("buttons");
 
 				var oAddContentBtn = new Button({
 					text: "Add content area",
@@ -249,7 +187,6 @@
 
 				[oAddContentBtn, oRemoveContentBtn, oInvalidateBtn, oResizeBtn, oSwitchOrientationBtn].forEach(function (oBtn) { oButtonLayout.addContent(oBtn); });
 
-				oButtonLayout.placeAt("buttons");
 
 				var oEventStatus = new Text({
 					text: "Nothing happened so far."
@@ -263,15 +200,26 @@
 					showLayoutOptions();
 				});
 
-				oSplitter.placeAt("content");
+				var oApp = new sap.m.App({
+					pages: [
+						new sap.m.Page({
+							title: "sap.ui.layout.Splitter",
+							content: [
+								oSplitter,
+								oButtonLayout,
+								oOptionsLayout,
+								oEventStatus
+							]
+						})
+					]
+				});
+
+				oApp.placeAt("content");
 			});
 		});
 	</script>
 </head>
 <body class="sapUiBody">
-	<div id="debug"></div>
 	<div id="content"></div>
-	<div id="buttons"></div>
-	<div id="options"></div>
 </body>
 </html>
