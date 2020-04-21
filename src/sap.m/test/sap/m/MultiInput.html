@@ -471,8 +471,27 @@
 				controls: [
 					new sap.m.Link({
 						text: "link",
-						href: "#",
-						target: "_blank"
+						href: "",
+						press: function() {
+							var oDialog = new sap.m.Dialog({
+								title: 'Recomendations are based on:',
+								type: sap.m.Dialog.DialogType.Message,
+								state: sap.ui.core.ValueState.Warning,
+								content: new sap.m.Text({
+									text: 'Machine learning information and more details'
+								}),
+								beginButton: new sap.m.Button({
+									text: 'OK',
+									press: function () {
+										oDialog.close();
+									}
+								}),
+								afterClose: function () {
+									oDialog.destroy();
+								}
+							});
+							oDialog.open();
+						}
 					})
 				]
 			}),
@@ -486,16 +505,22 @@
 			suggestionColumns : aEvenMoreSuggestionColumns,
 			formattedValueStateText: new sap.m.FormattedText({
 				htmlText: "Warning value state message with formatted text containing %%0 %%1",
-				controls: [new sap.m.Link({
-					text: "multiple",
-					href: "#",
-					target: "_blank"
-				}),
-				new sap.m.Link({
-					text: "links",
-					href: "#",
-					target: "_blank"
-				})]
+				controls: [
+					new sap.m.Link({
+						text: "multiple",
+						href: "#",
+						press: function() {
+							sap.m.MessageToast.show("You have pressed a link in value state message", { my: sap.ui.core.Popup.Dock.CenterCenter, at: sap.ui.core.Popup.Dock.CenterCenter });
+						}
+					}),
+					new sap.m.Link({
+						text: "links",
+						href: "#",
+						press: function() {
+							sap.m.MessageToast.show("You have pressed a link in value state message", { my: sap.ui.core.Popup.Dock.CenterCenter, at: sap.ui.core.Popup.Dock.CenterCenter });
+						}
+					})
+				]
 			}),
 		});
 
