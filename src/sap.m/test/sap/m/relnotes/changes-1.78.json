@@ -112,6 +112,23 @@
         "type": "FIX",
         "text": " sap.m.ViewSettingsDialog: filter detail items without a key cannot be selected",
         "references": []
+      },
+      {
+        "id": "d9f59f7ac21e985c86bd234db6b5c1a0cd7cfd1c",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: GenericTags overflow correctly now",
+        "references": []
+      },
+      {
+        "id": "1be7ecad154e5b7fc60424dd8739633fc4ac48f9",
+        "type": "FIX",
+        "text": " sap.m.Button: Focus enhanced on Firefox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070154431"
+          }
+        ]
       }
     ]
   }

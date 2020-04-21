@@ -12,6 +12,17 @@
             "reference": "2070141480"
           }
         ]
+      },
+      {
+        "id": "39baa496e6409fd74d56c58a71e874b011008751",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: setFileType and setMimeType are now working after initial rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070139852"
+          }
+        ]
       }
     ]
   }

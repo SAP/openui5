@@ -12,6 +12,12 @@
             "reference": "1980435273"
           }
         ]
+      },
+      {
+        "id": "d9f59f7ac21e985c86bd234db6b5c1a0cd7cfd1c",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: GenericTags overflow correctly now",
+        "references": []
       }
     ]
   }

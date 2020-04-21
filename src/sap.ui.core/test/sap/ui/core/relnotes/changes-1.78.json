@@ -74,6 +74,23 @@
             "reference": "1970388173"
           }
         ]
+      },
+      {
+        "id": "bd9d1494681f9eb3a9b26492b7ea4260f7b06363",
+        "type": "FIX",
+        "text": " DragAndDrop: The text of input fields should be selectable in FF and Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070157420"
+          }
+        ]
+      },
+      {
+        "id": "0cf3dea9f505ffad03c4e4486ed0e028c2ba6f7d",
+        "type": "FIX",
+        "text": " test recorder: result filtering for descendant and ancestor selectors",
+        "references": []
       }
     ]
   }

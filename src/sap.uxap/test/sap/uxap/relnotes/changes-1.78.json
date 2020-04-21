@@ -12,6 +12,12 @@
             "reference": "2070059901"
           }
         ]
+      },
+      {
+        "id": "ebed0a018fc421a3cc8f9a2b2758750ec13932e0",
+        "type": "FEATURE",
+        "text": " sap.f.DynamicPageTitle: Introduced new ariaDescribedBy association",
+        "references": []
       }
     ]
   }

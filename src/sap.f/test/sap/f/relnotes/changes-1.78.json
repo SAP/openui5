@@ -1,0 +1,19 @@
+{
+  "1.78.0": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "ebed0a018fc421a3cc8f9a2b2758750ec13932e0",
+        "type": "FEATURE",
+        "text": " sap.f.DynamicPageTitle: Introduced new ariaDescribedBy association",
+        "references": []
+      },
+      {
+        "id": "d9f59f7ac21e985c86bd234db6b5c1a0cd7cfd1c",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: GenericTags overflow correctly now",
+        "references": []
+      }
+    ]
+  }
+}
