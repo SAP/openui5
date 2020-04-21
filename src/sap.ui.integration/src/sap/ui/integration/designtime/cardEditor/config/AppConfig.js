@@ -130,6 +130,13 @@ sap.ui.define(function () {
 					"path": "settings/maxAge"
 				}
 			}
+		},
+		"mobile": {
+			"tags": ["app"],
+			"label": "{i18n>CARD_EDITOR.APP.MOBILE}",
+			"type": "boolean",
+			"defaultValue": "",
+			"path": "/sap.platform.mobilecards/compatible"
 		}
 	};
 });
