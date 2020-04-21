@@ -25170,7 +25170,7 @@ sap.ui.define([
 			// Note: this error message is a bit misleading ;-)
 			that.oLogMock.expects("error")
 				.withExactArgs("POST on 'People' failed; will be repeated automatically",
-					sinon.match("Error: Could not load metadata: 500 Internal Server Error"),
+					sinon.match("Could not load metadata: 500 Internal Server Error"),
 					"sap.ui.model.odata.v4.ODataListBinding");
 			that.expectRequest({
 					method : "POST",
