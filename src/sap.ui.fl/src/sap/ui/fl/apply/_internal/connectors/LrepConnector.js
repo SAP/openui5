@@ -114,7 +114,6 @@ sap.ui.define([
 					oResponse.cacheKey = mPropertyBag.cacheKey;
 				}
 				oResponse.changes = oResponse.changes.concat(oResponse.compVariants || []);
-				oResponse.ui2personalization = oResponse.ui2personalization || {};
 				if (oResponse.settings) {
 					this.settings = oResponse.settings;
 				}

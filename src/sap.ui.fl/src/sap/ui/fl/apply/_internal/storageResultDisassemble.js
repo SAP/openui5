@@ -4,11 +4,13 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/StorageUtils",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/base/util/isEmptyObject"
 ],
 function(
 	StorageUtils,
-	merge
+	merge,
+	isEmptyObject
 ) {
 	"use strict";
 
@@ -43,22 +45,26 @@ function(
 	 *
 	 */
 	return function(oResponse) {
-		var aFlexObjects = oResponse.changes || [];
+		if (!isEmptyObject(oResponse.variantSection)) {
+			var aFlexObjects = oResponse.changes || [];
 
-		for (var sVariantManagement in oResponse.variantSection) {
-			var oVariantManagement = oResponse.variantSection[sVariantManagement];
-			for (var sChangeType in oVariantManagement.variantManagementChanges) {
-				aFlexObjects = aFlexObjects.concat(oVariantManagement.variantManagementChanges[sChangeType]);
+			for (var sVariantManagement in oResponse.variantSection) {
+				var oVariantManagement = oResponse.variantSection[sVariantManagement];
+				for (var sChangeType in oVariantManagement.variantManagementChanges) {
+					aFlexObjects = aFlexObjects.concat(oVariantManagement.variantManagementChanges[sChangeType]);
+				}
+				aFlexObjects = oVariantManagement.variants.reduce(_collectControlVariantFlexObjects, aFlexObjects);
 			}
-			aFlexObjects = oVariantManagement.variants.reduce(_collectControlVariantFlexObjects, aFlexObjects);
+
+			var mGroupedFlexObjects = StorageUtils.getGroupedFlexObjects(aFlexObjects);
+			var aDisassembleResponses = StorageUtils.filterAndSortResponses(mGroupedFlexObjects);
+			//Add un-disassembled parts of the original response into the first response of the result array
+			delete oResponse.changes;
+			delete oResponse.variantSection;
+			merge(aDisassembleResponses[0] || {}, oResponse);
+			return aDisassembleResponses;
 		}
 
-		var mGroupedFlexObjects = StorageUtils.getGroupedFlexObjects(aFlexObjects);
-		var aDisassembleResponses = StorageUtils.filterAndSortResponses(mGroupedFlexObjects);
-		//Add un-disassembled parts of the original response into the first response of the result array
-		delete oResponse.changes;
-		delete oResponse.variantSection;
-		merge(aDisassembleResponses[0], oResponse);
-		return aDisassembleResponses;
+		return [oResponse];
 	};
 });

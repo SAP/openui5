@@ -22,54 +22,7 @@ sap.ui.define([
 				changes: [],
 				variantSection: {}
 			};
-			assert.equal(0, storageResultDisassemble(oResponse).length, "then an empty array is returned");
-		});
-		QUnit.test("Given storageResultDisassemble is called for a response with VENDOR and CUSTOMER changes and an empty variant section", function(assert) {
-			var oResponse = {
-				changes: [{
-					fileName: "change2",
-					fileType: "change",
-					layer: "VENDOR",
-					creation: "2019-07-22T10:33:19.7491090Z"
-				}, {
-					fileName: "change1",
-					fileType: "change",
-					layer: "VENDOR",
-					creation: "2019-07-22T10:32:19.7491090Z"
-				}, {
-					fileName: "change4",
-					fileType: "change",
-					layer: "CUSTOMER",
-					creation: "2019-07-22T10:35:19.7491090Z"
-				}, {
-					fileName: "change3",
-					fileType: "change",
-					layer: "CUSTOMER",
-					creation: "2019-07-22T10:34:19.7491090Z"
-				}],
-				variantSection: {}
-			};
-			// test
-			var aResponses = storageResultDisassemble(oResponse);
-			assert.equal(2, aResponses.length, "then an array with two response objects is returned");
-			// VENDOR response object
-			var oFlexDataResponse = aResponses[0];
-			assert.equal(2, oFlexDataResponse.changes.length, "and the first response object is for the VENDOR layer and contains the changes sorted by creation timestamp in ascending order");
-			assert.equal("change1", oFlexDataResponse.changes[0].fileName, "and change1 is the first change in the array");
-			assert.equal("change2", oFlexDataResponse.changes[1].fileName, "and change2 is the second change in the array");
-			assert.equal(0, oFlexDataResponse.variants.length, "and the variants array of the first response object is empty");
-			assert.equal(0, oFlexDataResponse.variantChanges.length, "and the variantChanges array of the first response object is empty");
-			assert.equal(0, oFlexDataResponse.variantDependentControlChanges.length, "and the variantDependentControlChanges array of the first response object is empty");
-			assert.equal(0, oFlexDataResponse.variantManagementChanges.length, "and the variantManagementChanges array of the first response object is empty");
-			// CUSTOMER response object
-			oFlexDataResponse = aResponses[1];
-			assert.equal(2, oFlexDataResponse.changes.length, "and the second response object is for the CUSTOMER layer and contains the changes sorted by creation timestamp in ascending order");
-			assert.equal("change3", oFlexDataResponse.changes[0].fileName, "and change3 is the first change in the array");
-			assert.equal("change4", oFlexDataResponse.changes[1].fileName, "and change4 is the second change in the array");
-			assert.equal(0, oFlexDataResponse.variants.length, "and the variants array of the second response object is empty");
-			assert.equal(0, oFlexDataResponse.variantChanges.length, "and the variantChanges array of the second response object is empty");
-			assert.equal(0, oFlexDataResponse.variantDependentControlChanges.length, "and the variantDependentControlChanges array of the second response object is empty");
-			assert.equal(0, oFlexDataResponse.variantManagementChanges.length, "and the variantManagementChanges array of the second response object is empty");
+			assert.deepEqual(storageResultDisassemble(oResponse), [oResponse], "then the array is returned which is expected");
 		});
 		QUnit.test("Given storageResultDisassemble is called for a response with an empty changes array and a variant section with VENDOR and CUSTOMER variants and a standard variant", function(assert) {
 			var oResponse = {

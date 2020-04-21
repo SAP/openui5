@@ -193,7 +193,201 @@ sap.ui.define([
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
-				assert.equal(Object.keys(oResult).length, 8, "seven entries are in the result");
+				assert.equal(Object.keys(oResult).length, 8, "eight entries are in the result");
+			});
+		});
+
+		QUnit.test("Given only one connector provides UI2 personalization change and a variant change", function (assert) {
+			var oContent = {
+				_persoSchemaVersion: "1.0",
+				aColumns: [{
+					text: "First Name",
+					order: 2,
+					visible: true,
+					id: "testId",
+					group: null
+				}],
+				oHeader: {
+					text: "All",
+					visible: true,
+					id: "testControlId"
+				}
+			};
+
+			var oUI2PersonalizationResponse = {
+				"nw.core.iam.busr.userlist": {
+					reference: "customer.reference.app.id_123456",
+					content: oContent,
+					itemName: "userTable",
+					category: "I",
+					containerKey: "nw.core.iam.busr.userlist",
+					containerCategory: "U"
+				}
+			};
+
+			var oVariantContent = {
+				fileName: "fileName1",
+				fileType: "ctrl_variant",
+				layer: "CUSTOMER",
+				variantManagementReference: "variantManagement1",
+				creation:"2020-04-17T13:10:20.1234567Z"
+			};
+
+			var oExpectedStorageResponse = Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+				ui2personalization: oUI2PersonalizationResponse,
+				variants: [oVariantContent]
+			});
+
+			sandbox.stub(LrepConnector, "loadFlexData").resolves({
+				ui2personalization: oUI2PersonalizationResponse,
+				variantSection : {
+					variantManagement1: {
+						variantManagementChanges: {},
+						variants: [{
+							content: oVariantContent,
+							controlChanges: [],
+							variantChanges: {}
+						}]
+					}
+				}
+			});
+
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
+				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
+				assert.deepEqual(oResult.ui2personalization, oUI2PersonalizationResponse, "then the UI2 personalization change is correct");
+				assert.deepEqual(oResult.variants[0], oVariantContent, "then the variant change is correct");
+				assert.equal(Object.keys(oResult).length, 8, "eight entries are in the result");
+			});
+		});
+
+		QUnit.test("Given only one connector provides only UI2 personalization change", function (assert) {
+			var oContent = {
+				_persoSchemaVersion: "1.0",
+				aColumns: [{
+					text: "First Name",
+					order: 2,
+					visible: true,
+					id: "testId",
+					group: null
+				}],
+				oHeader: {
+					text: "All",
+					visible: true,
+					id: "testControlId"
+				}
+			};
+
+			var oUI2PersonalizationResponse = {
+				"nw.core.iam.busr.userlist": {
+					reference: "customer.reference.app.id_123456",
+					content: oContent,
+					itemName: "userTable",
+					category: "I",
+					containerKey: "nw.core.iam.busr.userlist",
+					containerCategory: "U"
+				}
+			};
+
+			var oExpectedStorageResponse = Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+				ui2personalization: oUI2PersonalizationResponse
+			});
+
+			sandbox.stub(LrepConnector, "loadFlexData").resolves({
+				ui2personalization: oUI2PersonalizationResponse
+			});
+
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
+				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
+				assert.deepEqual(oResult.ui2personalization, oUI2PersonalizationResponse, "then the UI2 personalization change is correct");
+				assert.equal(Object.keys(oResult).length, 8, "eight entries are in the result");
+			});
+		});
+
+		QUnit.test("Given only one connector provides only UI2 personalization change and variant section is empty object", function (assert) {
+			var oContent = {
+				_persoSchemaVersion: "1.0",
+				aColumns: [{
+					text: "First Name",
+					order: 2,
+					visible: true,
+					id: "testId",
+					group: null
+				}],
+				oHeader: {
+					text: "All",
+					visible: true,
+					id: "testControlId"
+				}
+			};
+
+			var oUI2PersonalizationResponse = {
+				"nw.core.iam.busr.userlist": {
+					reference: "customer.reference.app.id_123456",
+					content: oContent,
+					itemName: "userTable",
+					category: "I",
+					containerKey: "nw.core.iam.busr.userlist",
+					containerCategory: "U"
+				}
+			};
+
+			var oExpectedStorageResponse = Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+				ui2personalization: oUI2PersonalizationResponse
+			});
+
+			sandbox.stub(LrepConnector, "loadFlexData").resolves({
+				ui2personalization: oUI2PersonalizationResponse,
+				variantSection: {}
+			});
+
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
+				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
+				assert.deepEqual(oResult.ui2personalization, oUI2PersonalizationResponse, "then the UI2 personalization change is correct");
+				assert.equal(Object.keys(oResult).length, 8, "eight entries are in the result");
+			});
+		});
+
+		QUnit.test("Given only one connector provides all types of changes", function (assert) {
+			var oContent = {
+				_persoSchemaVersion: "1.0",
+				aColumns: [{
+					text: "First Name",
+					order: 2,
+					visible: true,
+					id: "testId",
+					group: null
+				}],
+				oHeader: {
+					text: "All",
+					visible: true,
+					id: "testControlId"
+				}
+			};
+
+			var oUI2PersonalizationResponse = {
+				"nw.core.iam.busr.userlist": {
+					reference: "customer.reference.app.id_123456",
+					content: oContent,
+					itemName: "userTable",
+					category: "I",
+					containerKey: "nw.core.iam.busr.userlist",
+					containerCategory: "U"
+				}
+			};
+
+			var oExpectedStorageResponse = Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
+				ui2personalization: oUI2PersonalizationResponse
+			});
+
+			sandbox.stub(LrepConnector, "loadFlexData").resolves({
+				ui2personalization: oUI2PersonalizationResponse,
+				variantSection: {}
+			});
+
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
+				assert.deepEqual(oResult, merge(oExpectedStorageResponse, {cacheKey: null}), "then the expected result is returned");
+				assert.deepEqual(oResult.ui2personalization, oUI2PersonalizationResponse, "then the UI2 personalization change is correct");
+				assert.equal(Object.keys(oResult).length, 8, "eight entries are in the result");
 			});
 		});
 
