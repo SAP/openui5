@@ -355,6 +355,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			var sValueState = this._getValueStateString(oSelect),
 				oSelectedItem = oSelect.getSelectedItem(),
 				bIconOnly = oSelect.getType() === SelectType.IconOnly,
+				oValueIcon = oSelect._getValueIcon(),
 				oAriaLabelledBy,
 				sActiveDescendant,
 				sDesc;
@@ -375,7 +376,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			}
 
 			oAriaLabelledBy = {
-				value: sDesc ? oSelect._getValueIcon().getId() : oSelect.getId() + "-label" + sValueState,
+				value: (sDesc && oValueIcon) ? oValueIcon.getId() : oSelect.getId() + "-label" + sValueState,
 				append: true
 			};
 
