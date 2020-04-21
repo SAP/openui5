@@ -329,6 +329,56 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("value: path ends with /$Path", function (assert) {
+		var oMetaModel = {},
+			oContext = new BaseContext(oMetaModel, "/Equipments/@UI.LineItem/4/Value/$Path"),
+			vRawValue = {},
+			vResult = {/*string or Promise*/};
+
+		this.mock(Expression).expects("getExpression")
+			.withExactArgs({
+				asExpression : false,
+				complexBinding : false,
+				ignoreAsPrefix : "",
+				model : sinon.match.same(oMetaModel),
+				parameters : undefined,
+				path : "/Equipments/@UI.LineItem/4/Value",
+				prefix : "",
+				value : {$Path : sinon.match.same(vRawValue)},
+				$$valueAsPromise : undefined
+			})
+			.returns(vResult);
+
+		// code under test
+		assert.strictEqual(AnnotationHelper.value(vRawValue, {context : oContext}), vResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("value: path ends with /$PropertyPath", function (assert) {
+		var oMetaModel = {},
+			oContext = new BaseContext(oMetaModel, "/Artists/@UI.SelectionFields/0/$PropertyPath"),
+			vRawValue = {},
+			vResult = {/*string or Promise*/};
+
+		this.mock(Expression).expects("getExpression")
+			.withExactArgs({
+				asExpression : false,
+				complexBinding : false,
+				ignoreAsPrefix : "",
+				model : sinon.match.same(oMetaModel),
+				parameters : undefined,
+				path : "/Artists/@UI.SelectionFields/0",
+				prefix : "",
+				value : {$PropertyPath : sinon.match.same(vRawValue)},
+				$$valueAsPromise : undefined
+			})
+			.returns(vResult);
+
+		// code under test
+		assert.strictEqual(AnnotationHelper.value(vRawValue, {context : oContext}), vResult);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("value: $$valueAsPromise", function (assert) {
 		var oModel = {
 				fetchObject : function () {}
@@ -673,8 +723,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("format: path ends with /$Path", function (assert) {
 		var oMetaModel = {},
-			sPath = "/Equipments/@UI.LineItem/4/Value/$Path",
-			oContext = new BaseContext(oMetaModel, sPath),
+			oContext = new BaseContext(oMetaModel, "/Equipments/@UI.LineItem/4/Value/$Path"),
 			vRawValue = {},
 			vResult = {/*string or Promise*/};
 
@@ -686,14 +735,51 @@ sap.ui.define([
 				ignoreAsPrefix : "",
 				model : sinon.match.same(oMetaModel),
 				parameters : undefined,
-				path : sPath,
-				prefix : "",
-				value : sinon.match.same(vRawValue),
+				path : "/Equipments/@UI.LineItem/4/Value",
+				prefix : "", // Note: $Path at end cannot contribute to prefix!
+				value : {$Path : sinon.match.same(vRawValue)},
 				$$valueAsPromise : true
 			})
 			.returns(vResult);
 
+		// code under test
 		assert.strictEqual(AnnotationHelper.format(vRawValue, {context : oContext}), vResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("format: with $Path in between and at end", function (assert) {
+		var oMetaModel = {
+				fetchObject : function () {},
+				getObject : function () {}
+			},
+			oMetaModelMock = this.mock(oMetaModel),
+			oContext = new BaseContext(oMetaModel,
+				"/Equipments/@UI.LineItem/0/Value/$Path@Common.Text/$Path"),
+			vRawValue = {},
+			vResult = {/*string or Promise*/};
+
+		oMetaModelMock.expects("fetchObject")
+			.withExactArgs("/Equipments/@UI.LineItem/0/Value/$Path")
+			.returns(SyncPromise.resolve("EQUIPMENT_2_PRODUCT/Name"));
+		this.mock(Expression).expects("getExpression")
+			.withExactArgs({
+				asExpression : false,
+				complexBinding : true,
+				formatOptions : undefined,
+				ignoreAsPrefix : "",
+				model : sinon.match.same(oMetaModel),
+				parameters : undefined,
+				path : "/Equipments/@UI.LineItem/0/Value/$Path@Common.Text",
+				prefix : "EQUIPMENT_2_PRODUCT/",
+				value : {$Path : sinon.match.same(vRawValue)},
+				$$valueAsPromise : true
+			})
+			.returns(vResult);
+
+		// code under test
+		AnnotationHelper.format(vRawValue, {context : oContext}).then(function (vResult0) {
+			assert.strictEqual(vResult0, vResult);
+		});
 	});
 
 	//*********************************************************************************************
@@ -764,6 +850,32 @@ sap.ui.define([
 				assert.strictEqual(vResult0, vResult);
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("format: path ends with /$PropertyPath", function (assert) {
+		var oMetaModel = {},
+			oContext = new BaseContext(oMetaModel, "/Artists/@UI.SelectionFields/0/$PropertyPath"),
+			vRawValue = {},
+			vResult = {/*string or Promise*/};
+
+		this.mock(Expression).expects("getExpression")
+			.withExactArgs({
+				asExpression : false,
+				complexBinding : true,
+				formatOptions : undefined,
+				ignoreAsPrefix : "",
+				model : sinon.match.same(oMetaModel),
+				parameters : undefined,
+				path : "/Artists/@UI.SelectionFields/0",
+				prefix : "",
+				value : {$PropertyPath : sinon.match.same(vRawValue)},
+				$$valueAsPromise : true
+			})
+			.returns(vResult);
+
+		// code under test
+		assert.strictEqual(AnnotationHelper.format(vRawValue, {context : oContext}), vResult);
 	});
 
 	//*********************************************************************************************

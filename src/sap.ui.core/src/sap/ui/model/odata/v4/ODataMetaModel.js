@@ -793,11 +793,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a property binding for this meta data model which refers to the content from the
+	 * Creates a property binding for this metadata model which refers to the content from the
 	 * given path (relative to the given context).
 	 *
 	 * @param {string} sPath
-	 *   A relative or absolute path within the meta data model, for example "/EMPLOYEES/ENTRYDATE"
+	 *   A relative or absolute path within the metadata model, for example "/EMPLOYEES/ENTRYDATE"
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
 	 * @param {object} [mParameters]
@@ -809,7 +809,7 @@ sap.ui.define([
 	 * @param {object} [mParameters.scope]
 	 *   Optional scope for lookup of aliases for computed annotations (since 1.43.0)
 	 * @returns {sap.ui.model.PropertyBinding}
-	 *   A property binding for this meta data model
+	 *   A property binding for this metadata model
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#bindProperty
