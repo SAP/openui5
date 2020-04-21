@@ -119,6 +119,7 @@
 			</Action>
 			<Action Name="SendAutograph" EntitySetPath="_it" IsBound="true">
 				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
+				<Parameter Name="Address" Type="special.cases.Address"/>
 				<Parameter Name="Channel" Type="Edm.String" Nullable="false"/>
 			</Action>
 			<Action Name="EditAction" EntitySetPath="_it" IsBound="true">
@@ -170,6 +171,9 @@
 				<EntitySet Name="Bs" EntityType="special.cases.B"/>
 				<ActionImport Name="HirePerson" Action="special.cases.AcHirePerson"/>
 			</EntityContainer>
+			<Annotations Target="special.cases.ArtistsType/ArtistID">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="Name" />
+			</Annotations>
 			<Annotations Target="special.cases.ArtistsType/Name">
 				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Artist Name" />
 			</Annotations>
@@ -182,6 +186,12 @@
 			</Annotations>
 			<Annotations Target="special.cases.ArtistsType">
 				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Artist" />
+				<Annotation Term="com.sap.vocabularies.UI.v1.SelectionFields">
+					<Collection>
+						<PropertyPath>Name</PropertyPath>
+						<PropertyPath>BestFriend/Name</PropertyPath>
+					</Collection>
+				</Annotation>
 			</Annotations>
 			<Annotations Target="special.cases.EntityWithUnsupportedEdmTypes">
 				<Annotation Term="com.sap.vocabularies.UI.v1.SelectionFields">
