@@ -23,11 +23,19 @@ sap.ui.define(['sap/ui/core/Fragment'],
                 });
             };
 
-            if (oExtensionPoint.name === "EP1") {
-                pLoaded =  Fragment.load({
-                    id: oExtensionPoint.view.createId("customFragment"),
-                    name: "testdata.customizing.customer.ext.Custom"
-                });
+            if (["EP1", "EP99"].indexOf(oExtensionPoint.name) >= 0) {
+
+                if (oExtensionPoint.name == "EP1") {
+                    pLoaded =  Fragment.load({
+                        id: oExtensionPoint.view.createId("customFragment"),
+                        name: "testdata.customizing.customer.ext.Custom"
+                    });
+                } else if (oExtensionPoint.name == "EP99") {
+                    pLoaded =  Fragment.load({
+                        id: oExtensionPoint.view.createId("ep99"),
+                        name: "testdata.customizing.customer.ext.EP99"
+                    });
+                }
 
                 /**
                  * Need the owner component?

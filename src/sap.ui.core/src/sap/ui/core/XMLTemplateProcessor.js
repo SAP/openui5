@@ -261,7 +261,34 @@ function(
 	 * @private
 	 */
 	XMLTemplateProcessor.parseTemplatePromise = function(xmlNode, oView, bAsync, oParseConfig) {
-		return parseTemplate(xmlNode, oView, false, bAsync, oParseConfig);
+		return parseTemplate(xmlNode, oView, false, bAsync, oParseConfig).then(function() {
+			var p = SyncPromise.resolve();
+
+			// args is the result array of the XMLTP's parsing.
+			// It contains strings like "tabs/linebreaks/..." AND control instances
+			// Additionally it also includes ExtensionPoint placeholder objects if an ExtensionPoint is present in the top-level of the View.
+			var args = arguments;
+
+			// we only trigger Flex for ExtensionPoints inside Views
+			// A potential ExtensionPoint provider will resolve any ExtensionPoints with their correct content (or the default content, if not flex changes exist)
+			if (oView.isA("sap.ui.core.mvc.View") && oView._epInfo && oView._epInfo.all.length > 0) {
+				p = fnTriggerExtensionPointProvider(bAsync, oView, {
+					"content": oView._epInfo.all
+				});
+			}
+
+			// We need to remove ExtensionPoint placeholders from result array,
+			// otherwise the XMLViewRenderer will stumble over them.
+			return p.then(function() {
+				// TODO: might be refactored into resolveResultPromises()?
+				if (Array.isArray(args[0])) {
+					 args[0] = args[0].filter(function(e) {
+						return !e._isExtensionPoint;
+					 });
+				 }
+				return args[0];
+			});
+		});
 	};
 
 	/**
@@ -350,6 +377,38 @@ function(
 				}
 			}
 		}
+	}
+
+	function fnTriggerExtensionPointProvider(bAsync, oTargetControl, mAggregationsWithExtensionPoints) {
+		var pProvider = SyncPromise.resolve();
+
+		if (ExtensionPoint._sExtensionProvider && !isEmptyObject(mAggregationsWithExtensionPoints)) {
+			var pExtensionPoints = [];
+
+			// in the async case we can collect the ExtensionPointProvider promises and
+			// then can delay the view.loaded() promise until all extension points are
+			var fnResolveExtensionPoints;
+			if (bAsync) {
+				pProvider = new Promise(function(resolve) {
+					fnResolveExtensionPoints = resolve;
+				});
+			}
+
+			sap.ui.require([ExtensionPoint._sExtensionProvider], function(ExtensionPointProvider) {
+				Object.keys(mAggregationsWithExtensionPoints).forEach(function(sAggregationName) {
+					var aExtensionPoints = mAggregationsWithExtensionPoints[sAggregationName];
+					aExtensionPoints.forEach(function(oExtensionPoint) {
+						oExtensionPoint.targetControl = oTargetControl;
+						pExtensionPoints.push(ExtensionPointProvider.applyExtensionPoint(oExtensionPoint));
+					});
+				});
+				// we collect the ExtensionProvider Promises
+				if (bAsync) {
+					Promise.all(pExtensionPoints).then(fnResolveExtensionPoints);
+				}
+			});
+		}
+		return pProvider;
 	}
 
 	/**
@@ -512,9 +571,34 @@ function(
 						// The order of processing (and Promise resolution) is mandatory for keeping the order of the UI5 Controls' aggregation fixed and compatible.
 						return createControlOrExtension(xmlNode, pRequireContext).then(function(aChildControls) {
 							for (var i = 0; i < aChildControls.length; i++) {
-							var oChild = aChildControls[i];
+								var oChild = aChildControls[i];
+
+								// only views have a content aggregation
 								if (oView.getMetadata().hasAggregation("content")) {
-									oView.addAggregation("content", oChild);
+									// track extensionpoint information for root-level children of the view
+									oView._epInfo = oView._epInfo || {
+										contentControlsCount: 0,
+										last: null,
+										all: []
+									};
+
+									// child node is a placeholder for an ExtensionPoint
+									// only in Flexibility scenario if an ExtensionProvider is given!
+									if (oChild._isExtensionPoint) {
+										oChild.index = oView._epInfo.contentControlsCount;
+										oChild.targetControl = oView;
+										oChild.aggregationName = "content";
+										if (oView._epInfo.last) {
+											oView._epInfo.last._nextSibling = oChild;
+										}
+										oView._epInfo.last = oChild;
+										oView._epInfo.all.push(oChild);
+									} else {
+										// regular UI5 Controls can be added to the content aggregation directly
+										oView._epInfo.contentControlsCount++;
+										oView.addAggregation("content", oChild);
+									}
+
 								// can oView really have an association called "content"?
 								} else if (oView.getMetadata().hasAssociation(("content"))) {
 									oView.addAssociation("content", oChild);
@@ -996,6 +1080,9 @@ function(
 								var oControl = aControls[j];
 								// append the child to the aggregation
 								var name = oAggregation.name;
+
+								// oControl is an ExtensionPoint placeholder
+								// only in Flexibility scenario if an ExtensionProvider is given!
 								if (oControl._isExtensionPoint) {
 									if (!mSettings[name]) {
 										mSettings[name] = [];
@@ -1079,36 +1166,6 @@ function(
 						}
 
 					} else {
-
-						var fnTriggerExtensionPointProvider = function(oTargetControl) {
-							if (ExtensionPoint._sExtensionProvider && !isEmptyObject(mAggregationsWithExtensionPoints)) {
-								var pExtensionPoints = [];
-
-								// in the async case we can collect the ExtensionPointProvider promises and
-								// then can delay the view.loaded() promise until all extension points are
-								var fnResolveExtensionPoints;
-								if (bAsync) {
-									pProvider = new Promise(function(resolve, reject) {
-										fnResolveExtensionPoints = resolve;
-									});
-								}
-
-								sap.ui.require([ExtensionPoint._sExtensionProvider], function(ExtensionPointProvider) {
-									Object.keys(mAggregationsWithExtensionPoints).forEach(function(sAggregationName) {
-										var aExtensionPoints = mAggregationsWithExtensionPoints[sAggregationName];
-										aExtensionPoints.forEach(function(oExtensionPoint) {
-											oExtensionPoint.targetControl = oTargetControl;
-											pExtensionPoints.push(ExtensionPointProvider.applyExtensionPoint(oExtensionPoint));
-										});
-									});
-									// we collect the ExtensionProvider Promises
-									if (bAsync) {
-										Promise.all(pExtensionPoints).then(fnResolveExtensionPoints);
-									}
-								});
-							}
-						};
-
 						// call the control constructor with the according owner in scope
 						var fnCreateInstance = function() {
 							var oInstance;
@@ -1129,7 +1186,7 @@ function(
 							}
 
 							// check if we need to hand the ExtensionPoint info to the ExtensionProvider
-							fnTriggerExtensionPointProvider(oInstance);
+							pProvider = fnTriggerExtensionPointProvider(bAsync, oInstance, mAggregationsWithExtensionPoints);
 
 							return oInstance;
 						};
