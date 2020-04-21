@@ -5,11 +5,9 @@
 /* global XMLHttpRequest */
 
 sap.ui.define([
-	"sap/base/security/encodeURLParameters",
-	"sap/base/Log"
+	"sap/base/security/encodeURLParameters"
 ], function (
-	encodeURLParameters,
-	Log
+	encodeURLParameters
 ) {
 	"use strict";
 
@@ -50,20 +48,6 @@ sap.ui.define([
 	};
 
 	return {
-		/**
-		 * Creates a Error messages in case of a failed Connector call while getting responses from multiple endpoints
-		 *
-		 * @param {object} oResponse Response from the sent request
-		 * @param {object} oConnectorConfig Configured Connector
-		 * @param {string} sFunctionName Name of the called function
-		 * @param {string} sErrorMessage Error messages retrieved from the endpoint
-		 * @returns {object} oResponse Response from the endpoint
-		 */
-		logAndResolveDefault: function (oResponse, oConnectorConfig, sFunctionName, sErrorMessage) {
-			Log.error("Connector (" + oConnectorConfig.connector + ") failed call '" + sFunctionName + "': " + sErrorMessage);
-			return oResponse;
-		},
-
 		/**
 		 * Creating a full request url. Generic Method for all Connectors.
 		 * This includes the url prefix and optional cache buster token, flex reference and query parameters.

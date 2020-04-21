@@ -1065,6 +1065,56 @@ sap.ui.define([
 			}.bind(this));
 		});
 	});
+
+	QUnit.module("LrepConnector.ui2personalization", {
+		beforeEach : function () {
+			sandbox.useFakeServer();
+			sandbox.server.autoRespond = true;
+			this.oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
+		},
+		afterEach: function() {
+			WriteUtils.sendRequest.restore();
+			sandbox.verifyAndRestore();
+		}
+	}, function() {
+		QUnit.test("given a mock server, when ui2Personalization.create is triggered", function (assert) {
+			var oContainerData = {
+				reference: "test.app",
+				containerKey: "container12",
+				itemName: "tablePersonalization",
+				content: {}
+			};
+
+			var mPropertyBag = {
+				flexObject : oContainerData
+			};
+
+			return LrepConnector.ui2Personalization.create(mPropertyBag).then(function () {
+				assert.equal(this.oStubSendRequest.callCount, 1, "one call was sent");
+				var oCallArguments = this.oStubSendRequest.getCall(0).args;
+				assert.equal(oCallArguments[0], "/sap/bc/lrep/ui2personalization/", "the correct url was passed");
+				assert.equal(oCallArguments[1], "PUT", "the correct method was passed");
+				assert.equal(oCallArguments[2].payload, JSON.stringify(oContainerData), "the correct payload was passed");
+			}.bind(this));
+		});
+
+		QUnit.test("given a mock server, when ui2Personalization.remove is triggered", function (assert) {
+			var mPropertyBag = {
+				reference: "test.app",
+				containerKey: "container12",
+				itemName: "tablePersonalization"
+			};
+
+			return LrepConnector.ui2Personalization.remove(mPropertyBag).then(function () {
+				assert.equal(this.oStubSendRequest.callCount, 1, "one call was sent");
+				var oCallArguments = this.oStubSendRequest.getCall(0).args;
+				assert.equal(oCallArguments[0], "/sap/bc/lrep/ui2personalization/?reference=test.app" +
+					"&containerkey=container12&itemname=tablePersonalization", "the correct url was passed");
+				assert.equal(oCallArguments[1], "DELETE", "the correct method was passed");
+			}.bind(this));
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});
