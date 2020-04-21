@@ -255,6 +255,31 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
+	//BCP: 2070139852
+	QUnit.test("input has the correct accept attribute", function(assert) {
+		//Setup
+		var oFileUploader = createFileUploader({
+			fileType: ["XML"],
+			mimeType: []
+		});
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oFileUploader.$().find("input[type='file']").attr("accept"),
+			".XML",
+			"accept attribute is correct initially");
+
+		oFileUploader.setFileType(["JSON"]);
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oFileUploader.$().find("input[type='file']").attr("accept"),
+			".JSON",
+			"accept attribute is correct after using setter");
+		//cleanup
+		oFileUploader.destroy();
+	});
+
 	QUnit.test("Test valueStateText property - setter/getter", function (assert) {
 		var oFileUploader = createFileUploader(),
 			VALUE_STATE_TEXT = "Test";
