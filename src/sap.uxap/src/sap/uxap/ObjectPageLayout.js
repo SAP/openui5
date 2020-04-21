@@ -859,7 +859,7 @@ sap.ui.define([
 			this._snapHeader(bAppendHeaderToContent);
 		}
 
-		this.getHeaderTitle()._getFocusSpan().$().trigger("focus");
+		this.getHeaderTitle()._getFocusSpan().trigger("focus");
 	};
 
 	/**
