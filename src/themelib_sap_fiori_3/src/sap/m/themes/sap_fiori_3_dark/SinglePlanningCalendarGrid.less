@@ -3,6 +3,18 @@
 /* Quartz Dark theme                                 */
 /* ================================================= */
 
+.sapUiSizeCompact .sapMSinglePCGrid {
+	& .sapUiCalItem
+	{
+		text-align: left;
+	}
+
+	& .sapUiCalDayName
+	{
+		text-align: right;
+	}
+}
+
 .sapMSinglePC .sapUiCalendarAppCont{
 	border-left: 0.0625rem solid lighten(@sapUiListBorderColor, 15);
 	border-radius: 0 0.125rem 0.125rem 0.125rem;
@@ -22,10 +34,6 @@
 	}
 	//Special Dates
 	.sapMSinglePCGrid .@{iitemtypeclass} {
-		&.sapUiCalItem,
-		.sapUiCalSpecialDate {
-			border-radius: initial;
-		}
 		&.sapUiCalItem:hover {
 			border-radius: 0.25rem;
 		}
@@ -36,6 +44,13 @@
 		}
 		&.sapUiCalItem:not(.sapUiCalItemSel) {
 			box-shadow: inset 0 -0.25rem 0 @color;
+		}
+		//week views selected
+		&.sapUiCalItem.sapUiCalItemSel {
+			box-shadow: inset 0 -0.25rem 0 @color, inset 0 -0.25rem white;
+			.sapUiCalItemText {
+				box-shadow: none;
+			}
 		}
 		//day view
 		.sapMSinglePCBlockersColumn {
@@ -125,11 +140,14 @@
 				background-color: @sapUiActive;
 				border: 0.125rem solid @sapUiLegendCurrentDateTime;
 			}
+			&.sapUiCalItemSel:hover {
+				background-color: @sapUiContentSelectedHoverBackground;
+			}
 			&.sapUiCalItemSel .sapUiCalItemText,
 			.sapUiCalItemText {
 				box-shadow: none;
 				border: transparent;
-				line-height: 1.75rem;
+				line-height: 1.5rem;
 			}
 		}
 		.sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemText,
@@ -139,11 +157,29 @@
 
 		.sapUiCalItem.sapUiCalItemSel .sapUiCalItemText,
 		.sapUiCalItemText {
-			line-height: 1.825rem;
+			line-height: 1.5rem;
 		}
 
 		.sapUiCalItem:focus > .sapUiCalItemText {
 			outline: none;
+		}
+
+		.sapUiCalItem {
+			.sapUiCalItemText,
+			.sapUiCalDayName {
+				height: 1.4rem;
+				padding-left: 0.125rem;
+			}
+
+			&.sapUiCalItemNow .sapUiCalDayName,
+			.sapUiCalItemText {
+				line-height: 1.5rem;
+			}
+
+			.sapUiCalDayName {
+				line-height: 1.5rem;
+				padding-right: 0.125rem;
+			}
 		}
 	}
 }
