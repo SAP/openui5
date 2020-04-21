@@ -193,9 +193,6 @@ sap.ui.define([
 		// When set to true, the recalculation algorithm will bypass an optimization to determine if anything moved from/to the Popover
 		this._bSkipOptimization = false;
 
-		// When set to true, after content size is changed, event is fired with an invalidate parameter = true
-		this._bHasFlexibleContent = false;
-
 		this._aControlSizes = {}; // A map of control id -> control *optimal* size in pixels; the optimal size is outerWidth for most controls and min-width for spacers
 
 		this._iFrameRequest = null;
@@ -427,11 +424,12 @@ sap.ui.define([
 	 */
 	OverflowToolbar.prototype._cacheControlsInfo = function () {
 		var aVisiblePopoverOnlyControls,
-			bHasVisiblePopoverOnlyControls;
+			bHasVisiblePopoverOnlyControls,
+			iLeftPadding = parseInt(this.$().css("padding-right")) || 0,
+			iRightPadding =  parseInt(this.$().css("padding-left")) || 0;
 
 		this._iOldContentSize = this._iContentSize;
 		this._iContentSize = 0; // The total *optimal* size of all controls in the toolbar
-		this._bHasFlexibleContent = false;
 
 		this.getContent().forEach(this._updateControlsCachedSizes, this);
 
@@ -459,8 +457,7 @@ sap.ui.define([
 		// If the total width of all overflow-enabled children changed, fire a private event to notify interested parties
 		if (this._iOldContentSize !== this._iContentSize) {
 			this.fireEvent("_contentSizeChange", {
-				contentSize: this._iContentSize,
-				invalidate: this._bHasFlexibleContent
+				contentSize: this._iContentSize + iLeftPadding + iRightPadding
 			});
 		}
 	};
@@ -482,8 +479,6 @@ sap.ui.define([
 		if (sPriority !== OverflowToolbarPriority.AlwaysOverflow) {
 			this._iContentSize += iControlSize;
 		}
-
-		this._bHasFlexibleContent = this._bHasFlexibleContent || oControl.isA("sap.m.IOverflowToolbarFlexibleContent");
 	};
 
 	/**

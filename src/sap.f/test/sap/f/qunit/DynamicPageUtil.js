@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/m/OverflowToolbar",
 	"sap/m/ToolbarSpacer",
 	"sap/m/Breadcrumbs",
-	"sap/m/Link"
+	"sap/m/Link",
+	"sap/m/GenericTag"
 ],
 	function (
 	$,
@@ -34,7 +35,8 @@ sap.ui.define([
 	OverflowToolbar,
 	ToolbarSpacer,
 	Breadcrumbs,
-	Link
+	Link,
+	GenericTag
 ) {
 	"use strict";
 
@@ -321,6 +323,11 @@ sap.ui.define([
 		getTitle: function () {
 			return new Title({
 				text: "Anna Maria Luisa"
+			});
+		},
+		getGenericTag: function (sText) {
+			return new GenericTag({
+				text: sText
 			});
 		},
 		getOverflowToolbar: function () {

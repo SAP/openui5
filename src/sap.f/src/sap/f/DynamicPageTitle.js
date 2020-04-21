@@ -1321,19 +1321,12 @@ sap.ui.define([
 	/**
 	 * Called whenever the content size of an overflow toolbar, used in the content aggregation, changes.
 	 * Content size is defined as the total width of the toolbar's overflow-enabled content, not the toolbar's own width.
-	 * Invalidates if OverflowToolbar has flexible content, in order flex basis to be calculated correctly.
 	 * @param oEvent
 	 * @private
 	 */
 	DynamicPageTitle.prototype._onContentSizeChange = function (oEvent) {
-		var iContentSize = oEvent.getParameter("contentSize"),
-			bNeedsInvalidation =  oEvent.getParameter("invalidate");
-
-		if (bNeedsInvalidation) {
-			this.invalidate();
-		} else {
+		var iContentSize = oEvent.getParameter("contentSize");
 			this._setContentAreaFlexBasis(iContentSize, oEvent.getSource().$().parent());
-		}
 	};
 
 	/**

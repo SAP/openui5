@@ -960,6 +960,81 @@ function (
 		assert.strictEqual(oTitleClone.getNavigationActions().length, iExpectedNavActionsCount, "title clone also has the same nav actions count");
 	});
 
+	QUnit.module("DynamicPage Title - with OverflowToolbar and GenericTags ", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPage();
+			this.oDynamicPageTitle = this.oDynamicPage.getTitle();
+			oUtil.renderObject(this.oDynamicPage);
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+			this.oDynamicPageTitle = null;
+		}
+	});
+
+	QUnit.test("Adding an OverflowToolbar to the content with GenericTag in it", function (assert) {
+		var oToolbar = oFactory.getOverflowToolbar(),
+			oGenericTag = oFactory.getGenericTag("Test 1"),
+			oDynamicPageTitle = this.oDynamicPageTitle,
+			fnDone = assert.async(),
+			sInitialFlexBasis,
+			sNewFlexBasis;
+
+		assert.expect(2);
+
+		// Act
+		oToolbar.addContent(oGenericTag);
+		this.oDynamicPageTitle.addContent(oToolbar);
+		Core.applyChanges();
+
+		setTimeout(function () {
+			sInitialFlexBasis = oDynamicPageTitle.$("content").css("flex-basis");
+
+			// Act
+			oGenericTag.setText("Looooooooooooooooooooooooooonger text");
+			Core.applyChanges();
+
+			setTimeout(function () {
+				// Assert
+				sNewFlexBasis = oDynamicPageTitle.$("content").css("flex-basis");
+				assert.ok(sNewFlexBasis > sInitialFlexBasis, "Setting longer text to a GenericTag in the OFT expands the flex-basis area");
+				assert.notOk(oToolbar._getOverflowButton().$().is(":visible"), "Overflow button is not visible when width is enough");
+
+				fnDone();
+			}, 600);
+		}, 600);
+	});
+
+	QUnit.test("GenericTag in the OFT content gets out of the Popover", function (assert) {
+		var oToolbar = oFactory.getOverflowToolbar(),
+			$qunitDOMLocation =  $("#qunit-fixture"),
+			sInitialWidth = $qunitDOMLocation.width(),
+			fnDone = assert.async();
+
+		assert.expect(2);
+
+		// Act
+		$qunitDOMLocation.width("200px");
+		oToolbar.addContent(oFactory.getGenericTag("Loooooong test"));
+		this.oDynamicPageTitle.addContent(oToolbar);
+		Core.applyChanges();
+
+		setTimeout(function () {
+			// Assert
+			assert.ok(oToolbar._getOverflowButton().$().is(":visible"), "Overflow button is visible when width is not enough");
+
+			// Act - restoring the initial width of the Qunit-fixture
+			$qunitDOMLocation.width(sInitialWidth);
+			setTimeout(function () {
+				// Assert
+				assert.notOk(oToolbar._getOverflowButton().$().is(":visible"), "Overflow button is not visible when width is enough");
+				fnDone();
+			}, 600);
+		}, 600);
+	});
+
+
 	/* --------------------------- DynamicPage Title Aggregations ---------------------------------- */
 	QUnit.module("DynamicPage Title - SnappedTitleOnMobile Aggregation", {
 		beforeEach: function () {
