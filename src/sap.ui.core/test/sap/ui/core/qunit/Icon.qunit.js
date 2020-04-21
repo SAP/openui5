@@ -146,11 +146,17 @@ sap.ui.define([
 		oIcon.placeAt("uiAreaA");
 		sap.ui.getCore().applyChanges();
 		assert.equal(oIcon.$().css("cursor"), "pointer", "Icon which has press event handler should show pointer cursor");
+
 		oIcon.attachPress(fn2);
+		sap.ui.getCore().applyChanges();
 		assert.equal(oIcon.$().css("cursor"), "pointer", "Icon which has press event handler should show pointer cursor");
+
 		oIcon.detachPress(fn1);
+		sap.ui.getCore().applyChanges();
 		assert.equal(oIcon.$().css("cursor"), "pointer", "Icon which still has press event handler should show pointer cursor");
+
 		oIcon.detachPress(fn2);
+		sap.ui.getCore().applyChanges();
 		assert.equal(oIcon.$().css("cursor"), "default", "Icon which has no press event handler should not show pointer cursor");
 
 		oIcon.destroy();
@@ -404,9 +410,10 @@ sap.ui.define([
 		var fnPressHandler = function() {};
 
 		this.oAriaIcon.attachPress(fnPressHandler);
+		sap.ui.getCore().applyChanges();
 
 		var $icon = this.oAriaIcon.$();
-		assert.strictEqual($icon.attr("role"), "button", "role is set to button");
+		assert.strictEqual($icon.attr("role"), "presentation", "role is set to presentation");
 		assert.strictEqual($icon.attr("tabindex"), "0", "tabindex is set to 0");
 		assert.notEqual($icon.attr("title"), undefined, "title is set");
 
@@ -421,7 +428,22 @@ sap.ui.define([
 		assert.strictEqual($icon.attr("tabindex"), "0", "tabindex is restored when noTabStop is set to false");
 
 		this.oAriaIcon.detachPress(fnPressHandler);
+		sap.ui.getCore().applyChanges();
 		assert.strictEqual($icon.attr("role"), "presentation", "role is set back to presentation");
+		assert.strictEqual($icon.attr("tabindex"), undefined, "no tabindex is output");
+
+		this.oAriaIcon.setDecorative(false);
+		this.oAriaIcon.attachPress(fnPressHandler);
+
+		sap.ui.getCore().applyChanges();
+		$icon = this.oAriaIcon.$();
+		assert.strictEqual($icon.attr("role"), "button", "role is set to button");
+		assert.strictEqual($icon.attr("tabindex"), "0", "tabindex is set to 0");
+
+		this.oAriaIcon.detachPress(fnPressHandler);
+		sap.ui.getCore().applyChanges();
+		$icon = this.oAriaIcon.$();
+		assert.strictEqual($icon.attr("role"), "img", "role is set back to img");
 		assert.strictEqual($icon.attr("tabindex"), undefined, "no tabindex is output");
 	});
 

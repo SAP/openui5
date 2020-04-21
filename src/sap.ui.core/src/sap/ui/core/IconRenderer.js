@@ -12,7 +12,9 @@ sap.ui.define(['./IconPool', './library', "sap/base/security/encodeCSS"], functi
 	 * @namespace
 	 * @alias sap.ui.core.IconRenderer
 	 */
-	var IconRenderer = {};
+	var IconRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -28,7 +30,6 @@ sap.ui.define(['./IconPool', './library', "sap/base/security/encodeCSS"], functi
 			sColor = oControl.getColor(),
 			sBackgroundColor = oControl.getBackgroundColor(),
 			sSize = oControl.getSize(),
-			bNoTabStop = oControl.getNoTabStop(),
 			sTitle = oControl._getOutputTitle(vIconInfo),
 			aLabelledBy,
 			oInvisibleText,
@@ -50,67 +51,49 @@ sap.ui.define(['./IconPool', './library', "sap/base/security/encodeCSS"], functi
 			oInvisibleText = oControl.getAggregation("_invisibleText");
 		}
 
-		oRm.write("<span");
-		oRm.writeControlData(oControl);
-		if (bIconInfo) {
-			oRm.writeAccessibilityState(oControl, oAccAttributes);
-		}
+		oRm.openStart("span", oControl);
+		oRm.class("sapUiIcon");
 
+		if (bIconInfo) {
+			oRm.accessibilityState(oControl, oAccAttributes);
+			oRm.attr("data-sap-ui-icon-content", vIconInfo.content);
+			oRm.style("font-family", "'" + encodeCSS(vIconInfo.fontFamily) + "'");
+			if (!vIconInfo.suppressMirroring) {
+				oRm.class("sapUiIconMirrorInRTL");
+			}
+		}
 
 		if (sTitle) {
-			oRm.writeAttributeEscaped("title", sTitle);
-		}
-
-		if (oControl.hasListeners("press") && !bNoTabStop) {
-			oRm.writeAttribute("tabindex", 0);
-		}
-
-		if (bIconInfo) {
-			oRm.writeAttributeEscaped("data-sap-ui-icon-content", vIconInfo.content);
-			oRm.addStyle("font-family", "'" + encodeCSS(vIconInfo.fontFamily) + "'");
-		}
-
-		if (sWidth) {
-			oRm.addStyle("width", sWidth);
-		}
-
-		if (sHeight) {
-			oRm.addStyle("height", sHeight);
-			oRm.addStyle("line-height", sHeight);
-		}
-
-		if (sColor && !(sColor in IconColor)) {
-			oRm.addStyle("color", sColor);
-		}
-
-		if (sBackgroundColor && !(sBackgroundColor in IconColor)) {
-			oRm.addStyle("background-color", sBackgroundColor);
-		}
-
-		if (sSize) {
-			oRm.addStyle("font-size", sSize);
-		}
-
-		oRm.addClass("sapUiIcon");
-
-		if (bIconInfo && !vIconInfo.suppressMirroring) {
-			oRm.addClass("sapUiIconMirrorInRTL");
+			oRm.attr("title", sTitle);
 		}
 
 		if (oControl.hasListeners("press")) {
-			oRm.addClass("sapUiIconPointer");
+			oRm.class("sapUiIconPointer");
+			if (!oControl.getNoTabStop()) {
+				oRm.attr("tabindex", "0");
+			}
 		}
 
-		oRm.writeClasses();
-		oRm.writeStyles();
+		oRm.style("width", sWidth);
+		oRm.style("height", sHeight);
+		oRm.style("line-height", sHeight);
+		oRm.style("font-size", sSize);
 
-		oRm.write(">");
+		if (sColor && !(sColor in IconColor)) {
+			oRm.style("color", sColor);
+		}
+
+		if (sBackgroundColor && !(sBackgroundColor in IconColor)) {
+			oRm.style("background-color", sBackgroundColor);
+		}
+
+		oRm.openEnd();
 
 		if (aLabelledBy && aLabelledBy.length && oInvisibleText) {
 			oRm.renderControl(oInvisibleText);
 		}
 
-		oRm.write("</span>");
+		oRm.close("span");
 	};
 
 	return IconRenderer;

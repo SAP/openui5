@@ -78,20 +78,19 @@ function(
 	}});
 
 	RowAction.prototype.init = function() {
-		var fnSetTooltip = function(vTooltip) {
-			this.setAggregation("tooltip", vTooltip, true);
-			this.setSrc(this.getSrc()); //Updates the title property
-			return this;
+		var fnOnKeyUp = function(oEvent) {
+			this._bKeyboard = oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER;
+			Icon.prototype.onkeyup.apply(this, arguments);
 		};
 
 		var that = this;
 		var oIcon = new Icon(this.getId() + "-icon0", {decorative: false, press: function(oEvent){that._handlePress(oEvent, true);}});
 		oIcon.addStyleClass("sapUiTableActionIcon");
-		oIcon.setTooltip = fnSetTooltip;
+		oIcon.onkeyup = fnOnKeyUp;
 		this.addAggregation("_icons", oIcon);
 		oIcon = new Icon(this.getId() + "-icon1", {decorative: false, press: function(oEvent){that._handlePress(oEvent, false);}});
 		oIcon.addStyleClass("sapUiTableActionIcon");
-		oIcon.setTooltip = fnSetTooltip;
+		oIcon.onkeyup = fnOnKeyUp;
 		this.addAggregation("_icons", oIcon);
 
 		this._iLen = 0;
