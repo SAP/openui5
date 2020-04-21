@@ -46,13 +46,13 @@ sap.ui.define([
 	};
 
 	ParametersEditor.prototype._itemsFormatter = function(aItems) {
-		return aItems.map(function (oItem) {
+		return Array.isArray(aItems) ? aItems.map(function (oItem) {
 			var oValue = _merge({}, oItem.value[0]);
 			if (!oValue.label) {
 				oValue.label = oItem.key;
 			}
 			return oValue;
-		});
+		}) : [];
 	};
 
 	ParametersEditor.prototype._onLabelChange = function(oEvent, sKey) {
@@ -69,7 +69,9 @@ sap.ui.define([
 	ParametersEditor.prototype.setConfig = function(oConfig) {
 		// Config scenario
 		if (oConfig.allowTypeChange === false && oConfig.allowKeyChange === false) {
-			this.setFragment("sap.ui.integration.designtime.cardEditor.propertyEditor.parametersEditor.ParametersConfigurationEditor");
+			this.setFragment("sap.ui.integration.designtime.cardEditor.propertyEditor.parametersEditor.ParametersConfigurationEditor", function () {
+				return 1;
+			});
 		}
 		MapEditor.prototype.setConfig.apply(this, arguments);
 	};

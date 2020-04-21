@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/restricted/_merge",
 	"sap/ui/integration/designtime/baseEditor/util/binding/resolveBinding",
-	"sap/ui/integration/designtime/baseEditor/util/unset"
+	"sap/ui/integration/designtime/baseEditor/util/unset",
+	"sap/base/strings/formatMessage"
 ], function (
 	BasePropertyEditor,
 	deepClone,
@@ -18,7 +19,8 @@ sap.ui.define([
 	JSONModel,
 	_merge,
 	resolveBinding,
-	unset
+	unset,
+	formatMessage
 ) {
 	"use strict";
 
@@ -88,7 +90,7 @@ sap.ui.define([
 				aValue.forEach(function(oValue, iIndex) {
 					var oValueCopy = deepClone(oValue);
 					var mItem = {
-						itemLabel: oConfig.itemLabel,
+						itemLabel: oConfig.itemLabel || this.getI18nProperty("BASE_EDITOR.ARRAY.ITEM_LABEL"),
 						index: iIndex,
 						total: aValue.length,
 						properties: Object.keys(oConfig.template).map(function (sKey) {
@@ -116,7 +118,21 @@ sap.ui.define([
 						{
 							"": oProxyModel.getContext("/")
 						},
-						["template", "value"]
+						["template", "value", "itemLabel"]
+					);
+					mItem.itemLabel = resolveBinding(
+						{
+							itemLabel: mItem.itemLabel
+						},
+						{
+							"": oProxyModel
+						},
+						{
+							"": oProxyModel.getContext("/")
+						}
+					).itemLabel || formatMessage(
+						this.getI18nProperty("BASE_EDITOR.ARRAY.NEW_ITEM_LABEL"),
+						[oConfig.addItemLabel || this.getI18nProperty("BASE_EDITOR.ARRAY.ITEM_LABEL")]
 					);
 					oProxyModel.destroy();
 					aItems.push(mItem);
@@ -130,6 +146,13 @@ sap.ui.define([
 	ArrayEditor.prototype.setValue = function (aValue) {
 		aValue = Array.isArray(aValue) ? aValue : [];
 		BasePropertyEditor.prototype.setValue.call(this, aValue);
+	};
+
+	ArrayEditor.prototype.setConfig = function (oConfig) {
+		if (oConfig.collapsibleItems === false) {
+			this.setFragment("sap.ui.integration.designtime.baseEditor.propertyEditor.arrayEditor.ArrayEditorPlain");
+		}
+		BasePropertyEditor.prototype.setConfig.apply(this, arguments);
 	};
 
 	ArrayEditor.prototype.getExpectedWrapperCount = function (aValue) {
@@ -206,6 +229,10 @@ sap.ui.define([
 		}
 
 		this.setValue(aEditorValue);
+	};
+
+	ArrayEditor.prototype.formatAddItemText = function(sAddText, sItemLabel, sFallbackItemLabel) {
+		return formatMessage(sAddText, [sItemLabel || sFallbackItemLabel]);
 	};
 
 	return ArrayEditor;

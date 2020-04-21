@@ -50,50 +50,53 @@ sap.ui.define([
 	});
 
 	DestinationsEditor.prototype.setConfig = function (oConfig) {
-		var oTemplate = {};
+		var oCustomConfig = {};
 
 		if (oConfig["allowKeyChange"] !== false) {
 			// Destination-specific developer scenario
-			oTemplate = {
-				label: {
-					label: this.getI18nProperty("CARD_EDITOR.DESTINATION.LABEL"),
-					type: "string",
-					path: "label"
-					// defaultValue: "${key}"
-				},
-				name: {
-					label: this.getI18nProperty("CARD_EDITOR.DESTINATION.NAME"),
-					type: "enum",
-					path: "name",
-					"enum": oConfig["allowedValues"] || [],
-					allowCustomValues: true,
-					allowBindings: false
-				},
-				defaultUrl: {
-					label: this.getI18nProperty("CARD_EDITOR.DESTINATION.DEFAULT_URL"),
-					type: "string",
-					path: "defaultUrl"
+			oCustomConfig = {
+				template: {
+					label: {
+						label: this.getI18nProperty("CARD_EDITOR.DESTINATION.LABEL"),
+						type: "string",
+						path: "label"
+						// defaultValue: "${key}"
+					},
+					name: {
+						label: this.getI18nProperty("CARD_EDITOR.DESTINATION.NAME"),
+						type: "enum",
+						path: "name",
+						"enum": oConfig["allowedValues"] || [],
+						allowCustomValues: true,
+						allowBindings: false
+					},
+					defaultUrl: {
+						label: this.getI18nProperty("CARD_EDITOR.DESTINATION.DEFAULT_URL"),
+						type: "string",
+						path: "defaultUrl"
+					}
 				}
 			};
 		} else {
 			// Config scenario
-			oTemplate = {
-				name: {
-					label: "{= ${label} || ${key}}",
-					type: "enum",
-					path: "name",
-					"enum": oConfig["allowedValues"] || [],
-					allowCustomValues: false,
-					allowBindings: false
+			oCustomConfig = {
+				collapsibleItems: false,
+				template: {
+					name: {
+						label: "{= ${label} || ${key}}",
+						type: "enum",
+						path: "name",
+						"enum": oConfig["allowedValues"] || [],
+						allowCustomValues: false,
+						allowBindings: false
+					}
 				}
 			};
 		}
 
 		var oComplexMapConfig = _merge(
 			{},
-			{
-				template: oTemplate
-			},
+			oCustomConfig,
 			oConfig
 		);
 

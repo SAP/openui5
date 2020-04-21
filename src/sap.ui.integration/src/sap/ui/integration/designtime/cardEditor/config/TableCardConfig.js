@@ -26,6 +26,7 @@ sap.ui.define([
 			"type": "array",
 			"path": "content/row/columns",
 			"itemLabel": "{i18n>CARD_EDITOR.TABLE.ROW.COLUMN}",
+			"addItemLabel": "{i18n>CARD_EDITOR.TABLE.ROW.COLUMN}",
 			"template": {
 				"title": {
 					"tags": ["content", "tableRowColumn"],

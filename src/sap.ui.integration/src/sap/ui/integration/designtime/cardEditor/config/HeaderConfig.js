@@ -130,6 +130,7 @@ sap.ui.define([
 			"path": "header/sideIndicators",
 			"type": "array",
 			"itemLabel": "{i18n>CARD_EDITOR.SIDE_INDICATOR}",
+			"addItemLabel": "{i18n>CARD_EDITOR.SIDE_INDICATOR}",
 			"template": {
 				"title" : {
 					"label": "{i18n>CARD_EDITOR.SIDE_INDICATOR.TITLE}",
