@@ -4064,6 +4064,7 @@ sap.ui.define([
 				value="{meta>/ChangeTeamBudgetByID/Budget@@format({$$noPatch : true$), null)}"/>\
 			<Text text="{meta>/ChangeTeamBudgetByID/Budget@@format(null, $(shortLimit : 1000,\
 				style : \'short\'$))}"/>\
+			<Input value="{meta>/ChangeTeamBudgetByID/TeamID@@value}"/>\
 			<Input value="{meta>/ChangeTeamBudgetByID/TeamID@@value($($$noPatch : true$))}"/>\
 		</FlexBox>\
 	</FlexBox>\
@@ -4086,6 +4087,7 @@ sap.ui.define([
 		<Text text="{path:\'Budget\',type:\'sap.ui.model.odata.type.Decimal\',\
 			constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false},\
 			formatOptions:{\'shortLimit\':1000,\'style\':\'short\'}}"/>\
+		<Input value="{TeamID}"/>\
 		<Input value="{path:\'TeamID\',parameters:{\'$$noPatch\':true}}"/>\
 	</FlexBox>\
 </FlexBox>');

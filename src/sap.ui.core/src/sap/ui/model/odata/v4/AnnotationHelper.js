@@ -28,14 +28,25 @@ sap.ui.define([
 		 */
 		AnnotationHelper = {
 			/**
-			 * A function that helps to interpret OData V4 annotations. It knows about the following
-			 * expressions:
+			 * A function that helps to interpret OData V4 annotations.
+			 *
+			 * Unsupported or incorrect values are turned into a string nevertheless, but are
+			 * indicated as such. In such a case, an error describing the problem is logged to the
+			 * console. Proper escaping is used to make sure that data binding syntax is not
+			 * corrupted.
+			 *
+			 * Example:
+			 * <pre>
+			 * &lt;Text text="{meta>Value/@@sap.ui.model.odata.v4.AnnotationHelper.format}" />
+			 * </pre>
+			 *
+			 * <h3>Supported Expressions</h3>
 			 * <ul>
 			 *   <li>"14.4 Constant Expressions" for "edm:Bool", "edm:Date",
 			 *   "edm:DateTimeOffset", "edm:Decimal", "edm:Float", "edm:Guid", "edm:Int",
 			 *   "edm:TimeOfDay".
-			 *   <li>constant "14.4.11 Expression edm:String": This is turned into a fixed
-			 *   text (e.g. <code>"Width"</code>). String constants that contain a simple binding
+			 *   <li>constant "14.4.11 Expression edm:String": This is turned into a fixed text (for
+			 *   example <code>"Width"</code>). String constants that contain a simple binding
 			 *   <code>"{@i18n>...}"</code> to the hard-coded model name "@i18n" with arbitrary path
 			 *   are not turned into a fixed text, but kept as a data binding expression; this
 			 *   allows local annotation files to refer to a resource bundle for
@@ -58,9 +69,9 @@ sap.ui.define([
 			 *   <li>dynamic "14.5.10 Expression edm:Null": This is turned into a
 			 *   <code>null</code> value. It is ignored in <code>odata.concat</code>.
 			 *   <li>dynamic "14.5.12 Expression edm:Path" and "14.5.13 Expression
-			 *   edm:PropertyPath": This is turned into a data binding relative to an entity,
-			 *   including type information and constraints as available from metadata,
-			 *   e.g. <code>"{path : 'Name', type : 'sap.ui.model.odata.type.String', constraints :
+			 *   edm:PropertyPath": These are turned into data bindings relative to an entity,
+			 *   including type information and constraints as available from metadata, for example
+			 *   <code>"{path : 'Name', type : 'sap.ui.model.odata.type.String', constraints :
 			 *   {'maxLength' : 255}, formatOptions : {'parseKeepsEmptyString' : true}}"</code>.
 			 *   Depending on the used type, some additional constraints and format options of this
 			 *   type are set:
@@ -84,6 +95,7 @@ sap.ui.define([
 			 *   <code>vRawValue</code> is the path itself, and not the object wrapping it.
 			 * </ul>
 			 *
+			 * <h3>$AnnotationPath and $Path</h3>
 			 * If <code>oDetails.context.getPath()</code> contains a single "$AnnotationPath" or
 			 * "$Path" segment, the value corresponding to that segment is considered as a data
 			 * binding path prefix whenever a dynamic "14.5.12 Expression edm:Path" or
@@ -91,15 +103,28 @@ sap.ui.define([
 			 * {@link sap.ui.model.odata.v4.AnnotationHelper.resolve$Path} to avoid these prefixes
 			 * in cases where they are not applicable.
 			 *
-			 * Unsupported or incorrect values are turned into a string nevertheless, but indicated
-			 * as such. Proper escaping is used to make sure that data binding syntax is not
-			 * corrupted. In such a case, an error describing the problem is logged to the console.
-			 *
-			 * Example:
+			 * <h4>$AnnotationPath</h4>
+			 * Example for "$AnnotationPath" in the context's path:
 			 * <pre>
-			 * &lt;Text text="{meta>Value/@@sap.ui.model.odata.v4.AnnotationHelper.format}" />
+			 * &lt;Annotations Target="com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT">
+			 *	&lt;Annotation Term="com.sap.vocabularies.UI.v1.Facets">
+			 *		&lt;Collection>
+			 *			&lt;Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+			 *				&lt;PropertyValue Property="Target" AnnotationPath="EQUIPMENT_2_PRODUCT/@com.sap.vocabularies.Common.v1.QuickInfo" />
+			 *			&lt;/Record>
+			 *		&lt;/Collection>
+			 *	&lt;/Annotation>
+			 * &lt;/Annotations>
+			 * &lt;Annotations Target="com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product">
+			 *	&lt;Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo" Path="Name" />
+			 * &lt;/Annotations>
 			 * </pre>
+			 * <pre>
+			 * &lt;Text text="{meta>/Equipments/@com.sap.vocabularies.UI.v1.Facets/0/Target/$AnnotationPath/@@sap.ui.model.odata.v4.AnnotationHelper.format}" />
+			 * </pre>
+			 * <code>format</code> returns a binding with path "EQUIPMENT_2_PRODUCT/Name".
 			 *
+			 * <h4>$Path</h4>
 			 * Example for "$Path" in the context's path:
 			 * <pre>
 			 * &lt;Annotations Target="com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT">
@@ -121,48 +146,7 @@ sap.ui.define([
 			 * <code>format</code> returns a binding with path
 			 * "EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name".
 			 *
-			 * Example for "$AnnotationPath" in the context's path:
-			 * <pre>
-			 * &lt;Annotations Target="com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT">
-			 *	&lt;Annotation Term="com.sap.vocabularies.UI.v1.Facets">
-			 *		&lt;Collection>
-			 *			&lt;Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
-			 *				&lt;PropertyValue Property="Target" AnnotationPath="EQUIPMENT_2_PRODUCT/@com.sap.vocabularies.Common.v1.QuickInfo" />
-			 *			&lt;/Record>
-			 *		&lt;/Collection>
-			 *	&lt;/Annotation>
-			 * &lt;/Annotations>
-			 * &lt;Annotations Target="com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product">
-			 *	&lt;Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo" Path="Name" />
-			 * &lt;/Annotations>
-			 * </pre>
-			 * <pre>
-			 * &lt;Text text="{meta>/Equipments/@com.sap.vocabularies.UI.v1.Facets/0/Target/$AnnotationPath/@@sap.ui.model.odata.v4.AnnotationHelper.format}" />
-			 * </pre>
-			 * <code>format</code> returns a binding with path "EQUIPMENT_2_PRODUCT/Name".
-			 *
-			 * Since 1.73.0 in addition to supporting annotations, this function also can be used to
-			 * interpret action or function parameters as a binding string.
-			 *
-			 * See an example of the metadata for an unbound action "AcChangeTeamBudgetByID":
-			 * <pre>
-			 *    &lt;Action Name="AcChangeTeamBudgetByID">
-			 *        &lt;Parameter Name="TeamID" Type="Edm.String" Nullable="false" MaxLength="10"/>
-			 *        &lt;Parameter Name="Budget" Type="Edm.Decimal" Nullable="false" Precision="16" Scale="variable"/>
-			 *    &lt;/Action>
-			 * </pre>
-			 *
-			 * Let <code>ChangeTeamBudgetByID</code> be the action import of this action. Using
-			 * <code>AnnotationHelper.format</code> for the <code>TeamID</code> like
-			 * <pre>
-			 * &lt;Text text="{meta>/ChangeTeamBudgetByID/TeamID@@sap.ui.model.odata.v4.AnnotationHelper.format}" />
-			 * </pre>
-			 * returns the following binding string which contains information about path, type and
-			 * constraints:
-			 * <pre>
-			 * &lt;Text text="{path:'TeamID',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':10,'nullable':false},formatOptions:{'parseKeepsEmptyString':true}}" />
-			 * </pre>
-			 *
+			 * <h3>Annotations on an Operation or a Parameter</h3>
 			 * Since 1.71.0, for annotations on an operation or a parameter, the binding parameter's
 			 * name is stripped off any dynamic "14.5.12 Expression edm:Path" and
 			 * "14.5.13 Expression edm:PropertyPath" where it might be used as a first segment.
@@ -200,6 +184,29 @@ sap.ui.define([
 			 * and the data binding evaluates to the <code>SupplierIdentifier</code> property of the
 			 * entity the operation is called on.
 			 *
+			 * <h3>Operation Parameters</h3>
+			 * Since 1.73.0, this function can be used on action or function parameters and results
+			 * in a relative data binding, just like a "14.5.12 Expression edm:Path".
+			 *
+			 * Assume we have the following metadata for an unbound action "AcChangeTeamBudgetByID":
+			 * <pre>
+			 *    &lt;Action Name="AcChangeTeamBudgetByID">
+			 *        &lt;Parameter Name="TeamID" Type="Edm.String" Nullable="false" MaxLength="10"/>
+			 *        &lt;Parameter Name="Budget" Type="Edm.Decimal" Nullable="false" Precision="16" Scale="variable"/>
+			 *    &lt;/Action>
+			 * </pre>
+			 *
+			 * Let <code>ChangeTeamBudgetByID</code> be the action import of this action. Using
+			 * <code>AnnotationHelper.format</code> for the <code>TeamID</code> like
+			 * <pre>
+			 * &lt;Text text="{meta>/ChangeTeamBudgetByID/TeamID@@sap.ui.model.odata.v4.AnnotationHelper.format}" />
+			 * </pre>
+			 * results in
+			 * <pre>
+			 * &lt;Text text="{path:'TeamID',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':10,'nullable':false},formatOptions:{'parseKeepsEmptyString':true}}" />
+			 * </pre>
+			 *
+			 * <h3>Binding Parameters and Format Options</h3>
 			 * Since 1.77.0, binding parameters and format options can be given. The usage
 			 * <pre>
 			 * &lt;Input value="{meta>/ChangeTeamBudgetByID/Budget@@sap.ui.model.odata.v4.AnnotationHelper.format($($$noPatch : true$), $(groupingEnabled : false$))}" />
@@ -209,6 +216,7 @@ sap.ui.define([
 			 * <code>$)</code> respectively. Use <code>null</code>, not <code>undefined</code>, in
 			 * case no binding parameters are needed.
 			 *
+			 * <h3>Structural Properties</h3>
 			 * Since 1.78.0, this function can be used on a structural property and results in a
 			 * relative data binding, just like a "14.5.12 Expression edm:Path". The usage
 			 * <pre>
@@ -234,7 +242,7 @@ sap.ui.define([
 			 *   a parameter; needed to strip off the binding parameter's name from any dynamic
 			 *   "14.5.12 Expression edm:Path" and "14.5.13 Expression edm:PropertyPath" where it
 			 *   might be used as a first segment (since 1.71.0). This does not apply to annotations
-			 *   on a parameter (since 1.76.0)
+			 *   on a parameter (since 1.76.0).
 			 * @returns {string|Promise}
 			 *   A data binding, or a fixed text, or a sequence thereof, or a <code>Promise</code>
 			 *   resolving with that string, for example if not all type information is already
@@ -629,14 +637,24 @@ sap.ui.define([
 			},
 
 			/**
-			 * A function that helps to interpret OData V4 annotations. It knows about the following
-			 * expressions:
+			 * A function that helps to interpret OData V4 annotations.
+			 *
+			 * Unsupported or incorrect values are turned into a string nevertheless, but are
+			 * indicated as such. In such a case, an error describing the problem is logged to the
+			 * console.
+			 *
+			 * Example:
+			 * <pre>
+			 * &lt;Text text="{meta>Value/@@sap.ui.model.odata.v4.AnnotationHelper.value}" />
+			 * </pre>
+			 *
+			 * <h3>Supported Expressions</h3>
 			 * <ul>
 			 *   <li>"14.4 Constant Expressions" for "edm:Bool", "edm:Date",
 			 *   "edm:DateTimeOffset", "edm:Decimal", "edm:Float", "edm:Guid", "edm:Int",
 			 *   "edm:TimeOfDay".
-			 *   <li>constant "14.4.11 Expression edm:String": This is turned into a fixed
-			 *   text (e.g. <code>"Width"</code>). String constants that contain a simple binding
+			 *   <li>constant "14.4.11 Expression edm:String": This is turned into a fixed text (for
+			 *   example <code>"Width"</code>). String constants that contain a simple binding
 			 *   <code>"{@i18n>...}"</code> to the hard-coded model name "@i18n" with arbitrary path
 			 *   are not turned into a fixed text, but kept as a data binding expression; this
 			 *   allows local annotation files to refer to a resource bundle for
@@ -659,18 +677,12 @@ sap.ui.define([
 			 *   <li>dynamic "14.5.10 Expression edm:Null": This is turned into a
 			 *   <code>null</code> value. It is ignored in <code>odata.concat</code>.
 			 *   <li>dynamic "14.5.12 Expression edm:Path" and "14.5.13 Expression
-			 *   edm:PropertyPath": This is turned into a simple data binding, e.g.
+			 *   edm:PropertyPath": These are turned into simple data bindings, for example
 			 *   <code>"{Name}"</code>. Since 1.78.0, both are also supported if
 			 *   <code>vRawValue</code> is the path itself, and not the object wrapping it.
 			 * </ul>
-			 * Unsupported or incorrect values are turned into a string nevertheless, but indicated
-			 * as such. In such a case, an error describing the problem is logged to the console.
 			 *
-			 * Example:
-			 * <pre>
-			 * &lt;Text text="{meta>Value/@@sap.ui.model.odata.v4.AnnotationHelper.value}" />
-			 * </pre>
-			 *
+			 * <h3>Annotations on an Operation or a Parameter</h3>
 			 * Since 1.71.0, for annotations on an operation or a parameter, the binding parameter's
 			 * name is stripped off any dynamic "14.5.12 Expression edm:Path" and
 			 * "14.5.13 Expression edm:PropertyPath" where it might be used as a first segment.
@@ -682,6 +694,55 @@ sap.ui.define([
 			 * parameter context of the operation binding (see
 			 * {@link sap.ui.model.odata.v4.ODataContextBinding#getParameterContext}).
 			 *
+			 * Example:
+			 * <pre>
+			 *    &lt;Action Name="ShipProduct" EntitySetPath="_it" IsBound="true" >
+			 *        &lt;Parameter Name="_it" Type="name.space.Product" Nullable="false"/>
+			 *        &lt;Parameter Name="City" Type="Edm.String"/>
+			 *    &lt;/Action>
+			 * </pre>
+			 * For the operation <code>ShipProduct</code> mentioned above, the following annotation
+			 * targets an operation parameter and refers back to the binding parameter.
+			 * <pre>
+			 *     &lt;Annotations Target="name.space.ShipProduct(name.space.Product)/City">
+			 *        &lt;Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="_it/SupplierIdentifier"/>
+			 *     &lt;/Annotations>
+			 * </pre>
+			 *
+			 * Using <code>AnnotationHelper.value</code> like
+			 * <pre>
+			 * &lt;Text text="{meta>/Products/name.space.ShipProduct/$Parameter/City@com.sap.vocabularies.Common.v1.Text@@sap.ui.model.odata.v4.AnnotationHelper.value}" />
+			 * </pre>
+			 * results in
+			 * <pre>
+			 * &lt;Text text="{_it/SupplierIdentifier}" />
+			 * </pre>
+			 * and the data binding evaluates to the <code>SupplierIdentifier</code> property of the
+			 * entity the operation is called on.
+			 *
+			 * <h3>Operation Parameters</h3>
+			 * Since 1.73.0, this function can be used on action or function parameters and results
+			 * in a relative data binding, just like a "14.5.12 Expression edm:Path".
+			 *
+			 * Assume we have the following metadata for an unbound action "AcChangeTeamBudgetByID":
+			 * <pre>
+			 *    &lt;Action Name="AcChangeTeamBudgetByID">
+			 *        &lt;Parameter Name="TeamID" Type="Edm.String" Nullable="false" MaxLength="10"/>
+			 *        &lt;Parameter Name="Budget" Type="Edm.Decimal" Nullable="false" Precision="16" Scale="variable"/>
+			 *    &lt;/Action>
+			 * </pre>
+			 *
+			 * Let <code>ChangeTeamBudgetByID</code> be the action import of this action. Using
+			 * <code>AnnotationHelper.value</code> for the <code>TeamID</code> like
+			 * <pre>
+			 * &lt;Text text="{meta>/ChangeTeamBudgetByID/TeamID@@sap.ui.model.odata.v4.AnnotationHelper.value}" />
+			 * </pre>
+			 * results in
+			 * <pre>
+			 * &lt;Text text="{TeamID}" />
+			 * </pre>
+			 *
+			 * <h3>Binding Parameters</h3>
 			 * Since 1.77.0, binding parameters can be given. The usage
 			 * <pre>
 			 * &lt;Input value="{meta>/ChangeTeamBudgetByID/Budget@@sap.ui.model.odata.v4.AnnotationHelper.value($($$noPatch : true$))}" />
@@ -690,8 +751,16 @@ sap.ui.define([
 			 * notation, curly brackets must be replaced by <code>$(</code> and <code>$)</code>
 			 * respectively.
 			 *
+			 * <h3>Structural Properties</h3>
 			 * Since 1.78.0, this function can be used on a structural property and results in a
-			 * relative data binding, just like a "14.5.12 Expression edm:Path".
+			 * relative data binding, just like a "14.5.12 Expression edm:Path". The usage
+			 * <pre>
+			 * &lt;Input value="{meta>/Department/Name@@sap.ui.model.odata.v4.AnnotationHelper.value}"/>
+			 * </pre>
+			 * results in
+			 * <pre>
+			 * &lt; Input value="{Name}"/>
+			 * </pre>
 			 *
 			 * @param {any} vRawValue
 			 *   The raw value from the meta model
@@ -708,7 +777,7 @@ sap.ui.define([
 			 *   a parameter; needed to strip off the binding parameter's name from any dynamic
 			 *   "14.5.12 Expression edm:Path" and "14.5.13 Expression edm:PropertyPath" where it
 			 *   might be used as a first segment (since 1.72.0). This does not apply to annotations
-			 *   on a parameter (since 1.76.0)
+			 *   on a parameter (since 1.76.0).
 			 * @returns {string}
 			 *   A data binding or a fixed text or a sequence thereof
 			 *
