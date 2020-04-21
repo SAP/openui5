@@ -17,7 +17,7 @@ sap.ui.define(function() {
 
 	ViewRenderer.addDisplayClass = function(rm, oControl) {
 		if (oControl.getDisplayBlock() || (oControl.getWidth() === "100%" && oControl.getHeight() === "100%")) {
-			rm.addClass("sapUiViewDisplayBlock");
+			rm.class("sapUiViewDisplayBlock");
 		}
 	};
 

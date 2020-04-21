@@ -40,7 +40,10 @@ sap.ui.define([
 			var aControls = oScope.getElements().filter(function (oElement) { return oElement.isA("sap.ui.core.Control"); });
 
 			aControls.forEach(function (oControl) {
-				if (RenderManager.getApiVersion(oControl.getRenderer()) < 2) {
+				// The XMLView is excluded for now to not produce false-positive results
+				// Due to the possibility of mixing XHTML and UI5 content in the XML content,
+				// the XMLViewRenderer cannot be migrated fully to API version 2 yet.
+				if (RenderManager.getApiVersion(oControl.getRenderer()) < 2 && !oControl.isA("sap.ui.core.mvc.XMLView")) {
 					var sControlName = oControl.getMetadata().getName();
 
 					oIssueManager.addIssue({

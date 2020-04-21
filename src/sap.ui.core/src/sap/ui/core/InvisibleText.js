@@ -43,27 +43,28 @@ sap.ui.define(['./Control', './library', "sap/base/Log", "sap/base/security/enco
 			}
 		},
 
-		renderer : function(oRm, oControl) {
-			// The text is hidden through "display: none" in the shared CSS class
-			// "sapUiInvisibleText", as an alternative in case screen readers have trouble with
-			// "display: none", the following class definition could be used:
-			//	.sapUiInvisibleText {
-			//		display: inline-block !important;
-			//		visibility: hidden !important;
-			//		width: 0 !important;
-			//		height: 0 !important;
-			//		overflow: hidden !important;
-			//		position: absolute !important;
-			//	}
+		renderer : {
+			apiVersion : 2,
+			render: function(oRm, oControl) {
+				// The text is hidden through "display: none" in the shared CSS class
+				// "sapUiInvisibleText", as an alternative in case screen readers have trouble with
+				// "display: none", the following class definition could be used:
+				//	.sapUiInvisibleText {
+				//		display: inline-block !important;
+				//		visibility: hidden !important;
+				//		width: 0 !important;
+				//		height: 0 !important;
+				//		overflow: hidden !important;
+				//		position: absolute !important;
+				//	}
 
-			oRm.write("<span");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapUiInvisibleText");
-			oRm.writeClasses();
-			oRm.writeAttribute("aria-hidden", "true");
-			oRm.write(">");
-			oRm.writeEscaped(oControl.getText() || "");
-			oRm.write("</span>");
+				oRm.openStart("span", oControl);
+				oRm.class("sapUiInvisibleText");
+				oRm.attr("aria-hidden", "true");
+				oRm.openEnd();
+				oRm.text(oControl.getText() || "");
+				oRm.close("span");
+			}
 		}
 	});
 
@@ -116,6 +117,9 @@ sap.ui.define(['./Control', './library', "sap/base/Log", "sap/base/security/enco
 	InvisibleText.prototype.setTooltip = makeNotSupported("Aggregation tooltip");
 
 	InvisibleText.prototype.setText = function(sText) {
+		// For performance reasons, we suppress the invalidation and update the DOM directly.
+		// A lot of controls don't really render the invisible Text in their own DOM,
+		// but use it to store aria information and then call toStatic().
 		this.setProperty("text", sText, true);
 		this.$().html(encodeXML(this.getText() || ""));
 		return this;
