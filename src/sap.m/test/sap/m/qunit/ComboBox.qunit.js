@@ -2232,10 +2232,9 @@ sap.ui.define([
 	QUnit.test("setSelectedKey() set the selected item when the picker popup is open test case 2", function (assert) {
 
 		// system under test
-		var oExpectedItem;
 		var oComboBox = new ComboBox({
 			items: [
-				oExpectedItem = new Item({
+				new Item({
 					key: "GER",
 					text: "Germany"
 				})
@@ -2251,10 +2250,9 @@ sap.ui.define([
 		oComboBox.syncPickerContent();
 		oComboBox.open();
 		this.clock.tick(1000); // wait 1s after the open animation is completed
-		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// assert
-		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), sExpectedActiveDescendantId, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
+		assert.notOk(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 		// cleanup
 		oComboBox.destroy();
@@ -5268,9 +5266,10 @@ sap.ui.define([
 	QUnit.test("onsapshow Alt + DOWN - open the picker pop-up", function (assert) {
 
 		// system under test
+		var oExpectedItem;
 		var oComboBox = new ComboBox({
 			items: [
-				new Item({
+				oExpectedItem = new Item({
 					key: "0",
 					text: "item 0"
 				}),
@@ -5291,7 +5290,11 @@ sap.ui.define([
 		// act
 		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 
+		// arrange
+		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
+
 		// assert
+		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), sExpectedActiveDescendantId, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 		assert.strictEqual(fnShowSpy.callCount, 1, "onsapshow() method was called exactly once");
 
 		this.clock.tick(1000);
@@ -8119,13 +8122,12 @@ sap.ui.define([
 	QUnit.test("oninput the ComboBox's picker pop-up should open", function (assert) {
 
 		// system under test
-		var oExpectedItem;
 		var oComboBox = new ComboBox({
 			items: [
 				new Item({
 					text: "Egypt"
 				}),
-				oExpectedItem = new Item({
+				new Item({
 					text: "Germany"
 				}),
 				new Item({
@@ -8148,13 +8150,12 @@ sap.ui.define([
 		oComboBox.getFocusDomRef().value = "G";
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
 		this.clock.tick(1000);	// wait 1s after the open animation is completed
-		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// assert
 		assert.strictEqual(fnOpenSpy.callCount, 1, "open() method was called exactly once");
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
 		assert.strictEqual(oComboBox.getVisibleItems().length, 3, "Three items are visible");
-		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
+		assert.notOk(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 		// cleanup
 		oComboBox.destroy();
@@ -9013,10 +9014,9 @@ sap.ui.define([
 	QUnit.test("onAfterOpen test case 2", function (assert) {
 
 		// system under test
-		var oExpectedItem;
 		var oComboBox = new ComboBox({
 			items: [
-				oExpectedItem = new Item({
+				new Item({
 					key: "GER",
 					text: "Germany"
 				})
@@ -9033,10 +9033,9 @@ sap.ui.define([
 		oComboBox.syncPickerContent();
 		oComboBox.open();
 		this.clock.tick(1000);
-		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// assert
-		assert.strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), sExpectedActiveDescendantId);
+		assert.notOk(oComboBox.$("inner").attr("aria-activedescendant"), 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 		// cleanup
 		oComboBox.destroy();

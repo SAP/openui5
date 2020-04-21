@@ -209,7 +209,9 @@ sap.ui.define([
 				bShouldResetSelectionStart = oControl._shouldResetSelectionStart(oItem),
 				oSelectedItem = oControl.getSelectedItem(),
 				bGroupHeaderItem = oItem.isA("sap.ui.core.SeparatorItem"),
-				oListItem;
+				oListItem = this.getListItem(oItem);
+
+			oControl.handleListItemsVisualFocus(oListItem);
 
 			oControl.setSelection(oItem);
 
@@ -242,9 +244,6 @@ sap.ui.define([
 				oControl._handleAriaActiveDescendant(oItem);
 				oControl._getGroupHeaderInvisibleText().setText(oControl._oRb.getText("LIST_ITEM_GROUP_HEADER") + " " + oItem.getText());
 			}
-
-			oListItem = this.getListItem(oItem);
-			oControl.handleListItemsVisualFocus(oListItem);
 
 			if (oControl.isOpen()) {
 				oControl.removeStyleClass("sapMFocus");
@@ -350,7 +349,7 @@ sap.ui.define([
 			if (oDomRef) {
 
 				// the aria-activedescendant attribute is set when the list is rendered
-				if (vItem && oListItem && oListItem.getDomRef() && this.isOpen()) {
+				if (vItem && oListItem && oListItem.getDomRef() && this.isOpen() && oListItem.hasStyleClass("sapMLIBFocused")) {
 					oDomRef.setAttribute(sActivedescendant, oListItem.getId());
 				} else {
 					oDomRef.removeAttribute(sActivedescendant);
@@ -1174,6 +1173,11 @@ sap.ui.define([
 			this.addStyleClass("sapMFocus");
 			this._getList().removeStyleClass("sapMListFocus");
 
+			if (this._oLastFocusedListItem) {
+				this._oLastFocusedListItem.removeStyleClass("sapMLIBFocused");
+				this._oLastFocusedListItem = null;
+			}
+
 			// if recommendations were shown - add the icon pressed style
 			if (this._getItemsShownWithFilter()) {
 				this.toggleIconPressedStyle(true);
@@ -1432,7 +1436,6 @@ sap.ui.define([
 		ComboBox.prototype.onAfterOpen = function() {
 			var oDomRef = this.getFocusDomRef(),
 				oItem = this.getSelectedItem(),
-				oListItem = this.getListItem(oItem),
 				oSelectionRange = this._getSelectionRange(),
 				isAndroidTablet = (this.isPlatformTablet() && Device.os.android);
 
@@ -1440,10 +1443,6 @@ sap.ui.define([
 
 			if (oDomRef) {
 				oDomRef.setAttribute("aria-expanded", "true");
-
-				// notice that the "aria-activedescendant" attribute is set when the currently active descendant is
-				// visible and in view
-				oListItem && oDomRef.setAttribute("aria-activedescendant", oListItem.getId());
 			}
 
 			// if there is a selected item, scroll and show the list
@@ -1851,6 +1850,15 @@ sap.ui.define([
 
 				if (oItem) {
 					oListItem = this.getListItem(oItem);
+
+					if (this.isOpen()) {
+						this.removeStyleClass("sapMFocus");
+						this._getList().addStyleClass("sapMListFocus");
+						this.handleListItemsVisualFocus(oListItem);
+					} else {
+						this.addStyleClass("sapMFocus");
+					}
+
 					this.setSelection(oItem);
 					this.updateDomValue(oItem.getText());
 
@@ -1861,14 +1869,6 @@ sap.ui.define([
 					setTimeout(function() {
 						this.selectText(0, oItem.getText().length);
 					}.bind(this), 0);
-
-					if (this.isOpen()) {
-						this.removeStyleClass("sapMFocus");
-						this._getList().addStyleClass("sapMListFocus");
-						this.handleListItemsVisualFocus(oListItem);
-					} else {
-						this.addStyleClass("sapMFocus");
-					}
 				}
 			}
 		};
