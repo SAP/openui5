@@ -21,19 +21,12 @@ Get it!
 Go to the [download page](http://openui5.org/download.html) and get the complete UI5 runtime
 and the UI5 SDK containing the documentation and many example apps as well as the complete runtime.
 
-You can also consume [every OpenUI5 library](https://www.npmjs.com/org/openui5) individually via [npm](https://docs.npmjs.com/getting-started/what-is-npm), for example:
-```sh
-npm install @openui5/sap.ui.core @openui5/sap.m @openui5/themelib_sap_belize [...]
-```
+You can also consume OpenUI5 using the [UI5 Tooling](https://sap.github.io/ui5-tooling/). **Get started [here](https://sap.github.io/ui5-tooling/pages/GettingStarted/)!**
 
-The UI5 distribution via Bower is stopped with 1.60+, as Bower itself is now [deprecated](https://github.com/bower/bower/issues/2298).
-
-⚠️ **Note**: Contrary to the bower releases, the npm releases do not contain library preload files. The npm packages only contain the raw source files of the OpenUI5 libraries.
+Alternatively, you can also download [every OpenUI5 library](https://www.npmjs.com/org/openui5) individually via [npm](https://docs.npmjs.com/getting-started/what-is-npm), for example: `npm install @openui5/sap.ui.core @openui5/sap.m @openui5/themelib_sap_belize [...]`.
 
 Preload packages for components and libraries can be built using the [UI5 Tooling](https://github.com/SAP/ui5-tooling).
-
-See also: [CLI guideline](https://github.com/SAP/ui5-cli#cli-usage)
-
+See also: [CLI guideline](https://github.com/SAP/ui5-cli#cli-usage).
 
 Get started!
 ------------
