@@ -238,6 +238,7 @@ sap.ui.define(["sap/base/util/each"],
 					// for compatibility reasons (OData Tree Binding)
 					return undefined;
 				},
+				detachSelectionChanged: function() {}, // for compatibility
 				clearSelection: function () {
 					that._oSelection.clearSelection();
 				},

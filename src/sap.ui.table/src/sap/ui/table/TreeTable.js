@@ -192,7 +192,7 @@ sap.ui.define([
 		var oBinding = this.getBinding("rows");
 		var oNode = oState.context;
 
-		oState.context = oNode.context ? oNode.context : null; // The TreeTable requests nodes from the binding.
+		oState.context = oNode.context; // The TreeTable requests nodes from the binding.
 
 		if (!oState.context) {
 			return;
@@ -201,21 +201,12 @@ sap.ui.define([
 		oState.level = oNode.level + 1;
 
 		if (oBinding.nodeHasChildren) {
-			if (oNode.nodeState) {
-				oState.expandable = oBinding.nodeHasChildren(oNode);
-			}
-		} else if (oBinding.hasChildren) {
+			oState.expandable = oBinding.nodeHasChildren(oNode);
+		} else {
 			oState.expandable = oBinding.hasChildren(oNode.context);
 		}
 
-		if (oState.expandable) {
-			if (oBinding.getLevel) {
-				//used by the "mini-adapter" in the ClientTreeBindings
-				oState.expanded = oBinding.isExpanded(this.getIndex());
-			} else if (oBinding.findNode) { // the ODataTreeBinding(Adapter) provides the hasChildren method for Tree
-				oState.expanded = this && oNode.nodeState ? oNode.nodeState.expanded : false;
-			}
-		}
+		oState.expanded = oNode.nodeState.expanded;
 
 		if (TableUtils.Grouping.isGroupMode(this)) {
 			var sHeaderProp = this.getGroupHeaderProperty();

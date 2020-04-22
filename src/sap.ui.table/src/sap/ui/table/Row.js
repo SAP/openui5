@@ -14,6 +14,8 @@ sap.ui.define([
 		GroupHeader: "GroupHeader"
 	});
 
+	// TODO: Write tests for the row state including the Row.UpdateState hook.
+
 	/**
 	 * Constructor for an object that contains status information for a row.
 	 *
