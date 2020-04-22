@@ -34,74 +34,46 @@
 	}
 }
 
-.sapTntSideNavigation {
-
-	.sapTntNavLIGroupItem.sapTntNavLIItemSelected:not(.sapTntNavLIItemDisabled),
-	.sapTntNavLIGroupItem.sapTntNavLIItemSelected:not(.sapTntNavLIItemDisabled):last-child,
-	.sapTntNavLIItemSelected:not(.sapTntNavLIItemDisabled) .sapTntNavLIGroup  {
-		border-bottom: 1px solid @sapUiListSelectionBorderColor;
-	}
-}
-
 .sapTntSideNavigation.sapTntSideNavigationNotExpandedWidth {
   width: 3rem;
 }
 
 .sapTntSideNavigationNotExpanded {
 
-  .sapTntNavLIText, .sapTntNavLIExpandIcon  {
-    display: none;
-  }
-  .sapTntSideNavigationSeparator {
-	margin: 0.25rem 0.5rem 0.25rem 0.5rem;
-  }
+	.sapTntNavLIText, .sapTntNavLIExpandIcon  {
+		display: none;
+	}
+	.sapTntSideNavigationSeparator {
+		margin: 0.25rem 0.5rem 0.25rem 0.5rem;
+	}
 
-  .sapTntSideNavigationFlexible {
-    padding-right: 3rem;
-    width: 6rem;
-  }
+	.sapTntSideNavigationFlexible {
+		padding-right: 3rem;
+		width: 6rem;
+	}
 
-  .sapTntNavLIItem .sapTntNavLIGroup .sapTntNavLIGroupExpandedItems{
-	border-bottom: none;
-  }
-
-  .sapTntNavLIGroupItem.sapTntNavLIItemSelected:not(.sapTntNavLIItemDisabled),
-  .sapTntNavLIGroupItem.sapTntNavLIItemSelected:not(.sapTntNavLIItemDisabled):last-child,
-  .sapTntNavLIItemSelected:not(.sapTntNavLIItemDisabled) .sapTntNavLIGroup  {
-	  border-bottom: 1px solid @sapUiListSelectionBorderColor;
-  }
-
-.sapTnTNavLINotExpandedTriangle:not(.sapTntNavLIItemDisabled):after {
-	  content: "";
-	  width: 0;
-	  height: 0;
-	  border-left: 0.375rem solid transparent;
-	  border-bottom: 0.375rem solid @sapUiContentIconColor;
-	  position:absolute;
-	  right: 0.1875rem;
-	  bottom:0.125rem;
-  }
-}
-.sapTntNavLIPopup {
-	.sapTntNavLIGroupItem.sapTntNavLIItemSelected:not(.sapTntNavLIItemDisabled),
-	.sapTntNavLIGroupItem.sapTntNavLIItemSelected:not(.sapTntNavLIItemDisabled):last-child,
-	.sapTntNavLIItemSelected:not(.sapTntNavLIItemDisabled) .sapTntNavLIGroup  {
-		border-bottom: 1px solid @sapUiListSelectionBorderColor;
+	.sapTnTNavLINotExpandedTriangle:not(.sapTntNavLIItemDisabled):after {
+		content: "";
+		width: 0;
+		height: 0;
+		border-left: 0.375rem solid transparent;
+		border-bottom: 0.375rem solid @sapUiContentIconColor;
+		position:absolute;
+		right: 0.1875rem;
+		bottom:0.125rem;
 	}
 }
 
 .sapTntSideNavigationFlexible {
-  -webkit-box-flex: 1;
-  -webkit-flex-grow: 1;
-  flex-grow: 1;
-
-  -webkit-flex-basis: 100%;
-  flex-basis: 100%;
-
-  position: relative;
-  overflow: hidden;
-
-  box-sizing: border-box;
+	-webkit-box-flex: 1;
+	-webkit-flex-grow: 1;
+	flex-grow: 1;
+	-webkit-flex-basis: 100%;
+	flex-basis: 100%;
+	position: relative;
+	overflow: hidden;
+	box-sizing: border-box;
+	outline: none;
 }
 
 .sapTntSideNavigationSeparator {
