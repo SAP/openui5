@@ -7,17 +7,13 @@
 @_sap_m_Token_TokenPadding: 0.5rem;
 @_sap_m_Token_TokenCompactPadding: 0.25rem;
 @_sap_m_Token_LeftPadding: 0.3125rem;
-@_sap_m_Token_BorderColor: darken(@sapUiButtonBackground, 24);
-@_sap_m_Token_HoverBorderColor: lighten(@sapUiButtonHoverBorderColor, 30);
-@_sap_m_Token_HoverBackgroundColor: @sapUiButtonHoverBackground;
-@_sap_m_Token_BackgroundColor: darken(@sapUiButtonBackground, 2);
 @_sap_m_Token_LeftPadding: 0.3125rem;
 @_sap_m_Token_TokenSize: @sapMFontSmallSize + (2 * @_sap_m_Token_TokenPadding) - @_sap_m_Token_LeftPadding;
 @_sap_m_Token_TokenCompactSize: @sapMFontSmallSize  + @_sap_m_Token_TokenCompactPadding;
 
 .sapMToken {
-	border: @sapUiButtonBorderWidth solid @_sap_m_Token_BorderColor;
-	background: @_sap_m_Token_BackgroundColor;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonTokenBorderColor;
+	background: @sapUiButtonTokenBackground;
 	font-size: @sapMFontMediumSize;
 	border-radius: 0.25rem;
 	padding-left: 0.3125rem;
@@ -42,8 +38,8 @@
 }
 
 html.sap-desktop .sapMToken:hover {
-	border: @sapUiButtonBorderWidth solid @_sap_m_Token_HoverBorderColor;
-	background: @_sap_m_Token_HoverBackgroundColor;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonHoverBorderColor;
+	background: @sapUiButtonHoverBackground;
 	border-radius: 0.25rem;
 }
 
