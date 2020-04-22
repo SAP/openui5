@@ -50,6 +50,11 @@ var LocaleListItem = sap.m.ListItemBase.extend("LocaleListItem", {
 		oRM.writeControlData(oControl);
 		oRM.write("style=\"display:flex;align-items:center;height:40px;\">");
 		oRM.write("<img title=\"" + sLocale + "\" src=\"flags/" + sLocale.substr(3) + ".png\" style=\"width:30px;margin:10px\" />");
+
+		oRM.write("<span style=\"margin: 0 5px\">");
+		oRM.writeEscaped("\"" + sLocale + "\"");
+		oRM.write("</span>");
+
 		oRM.write("<span " );
 		if (aRTLLocales.indexOf(sLocale) >= 0) {
 			oRM.write("dir=\"rtl\"");
@@ -57,6 +62,7 @@ var LocaleListItem = sap.m.ListItemBase.extend("LocaleListItem", {
 		oRM.write(">");
 		oRM.writeEscaped(sText);
 		oRM.write("</span>");
+
 		oRM.write("</div>");
 	}
 });
