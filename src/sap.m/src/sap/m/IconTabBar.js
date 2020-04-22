@@ -208,9 +208,18 @@ sap.ui.define([
 			 * For compatibility reasons, the default value is <code>Cozy</code>.
 			 * @since 1.56
 			 */
-			tabDensityMode : {type : "sap.m.IconTabDensityMode", group : "Appearance", defaultValue : IconTabDensityMode.Cozy}
+			tabDensityMode : {type : "sap.m.IconTabDensityMode", group : "Appearance", defaultValue : IconTabDensityMode.Cozy},
 
-			},
+			/**
+			 * Specifies optional texts for the screen reader.
+			 *
+			 * The given object can contain the following keys:
+			 * <code>headerLabel</code> - text to serve as a label for the header,
+			 * <code>headerDescription</code> - text to serve as a description for the header.
+			 * @since 1.78
+			 */
+			ariaTexts : {type : "object", group : "Accessibility", defaultValue : null}
+		},
 		aggregations : {
 
 			/**
@@ -552,6 +561,8 @@ sap.ui.define([
 
 	IconTabBar.prototype.onBeforeRendering = function () {
 		var ITHDomRef = this._getIconTabHeader().$();
+
+		this._getIconTabHeader()._setAriaTexts(this.getAriaTexts());
 
 		if (this._bStickyContentSticked && ITHDomRef) {
 			delete this._bStickyContentSticked;
