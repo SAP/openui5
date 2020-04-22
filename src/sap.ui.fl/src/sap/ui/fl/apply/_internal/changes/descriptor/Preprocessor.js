@@ -5,12 +5,14 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/Applier",
+	"sap/ui/fl/apply/_internal/changes/descriptor/ApplyStrategyFactory",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/performance/Measurement",
 	"sap/ui/fl/Utils"
 ], function(
 	Applier,
+	ApplyStrategyFactory,
 	FlexState,
 	ManifestUtils,
 	Measurement,
@@ -21,7 +23,7 @@ sap.ui.define([
 	/**
 	 * Flex hook for preprocessing manifest early. Merges descriptor changes if needed.
 	 *
-	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.Applier
+	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.Preprocessor
 	 * @experimental
 	 * @since 1.74
 	 * @version ${version}
@@ -48,8 +50,6 @@ sap.ui.define([
 				return Promise.resolve(oManifest);
 			}
 
-			Measurement.start("flexStateInitialize", "Initialization of flex state", ["sap.ui.fl"]);
-
 			var oComponentData = oConfig.componentData || {};
 			var sReference = ManifestUtils.getFlexReference({
 				manifest: oManifest,
@@ -64,12 +64,10 @@ sap.ui.define([
 				reference: sReference,
 				partialFlexState: true
 			}).then(function() {
-				Measurement.end("flexStateInitialize");
-				Measurement.start("flexAppDescriptorMerger", "Client side app descriptor merger", ["sap.ui.fl"]);
+				return ApplyStrategyFactory.getRuntimeStrategy();
+			}).then(function(RuntimeStrategy) {
 				var aAppDescriptorChanges = FlexState.getAppDescriptorChanges(sReference);
-				var oUpdatedManifest = Applier.applyChanges(oManifest, aAppDescriptorChanges);
-				Measurement.end("flexAppDescriptorMerger");
-				return oUpdatedManifest;
+				return Applier.applyChanges(oManifest, aAppDescriptorChanges, RuntimeStrategy);
 			});
 		}
 	};
