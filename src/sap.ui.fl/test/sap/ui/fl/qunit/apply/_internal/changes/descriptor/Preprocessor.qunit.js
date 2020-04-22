@@ -242,6 +242,45 @@ function (
 		});
 	});
 
+
+	QUnit.module("Preprocessor", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+
+			jQuery.getJSON("test-resources/sap/ui/fl/qunit/testResources/descriptorChanges/TestApplierManifest.json")
+				.done(function(oTestApplierManifestResponse) {
+					this.oManifest = oTestApplierManifestResponse;
+					done();
+				}.bind(this));
+
+			this.fnFlexStateStub = sandbox.stub(FlexState, "initialize").resolves();
+			this.fnGetAppDescriptorChangesSpy = sandbox.stub(FlexState, "getAppDescriptorChanges").returns([]);
+		},
+		afterEach: function () {
+			FlexState.clearState();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when calling 'preprocessManifest' with a fl-asyncHint", function (assert) {
+			var oConfig = {
+				componentData: {},
+				asyncHints: {
+					requests: [{
+						name: "sap.ui.fl.changes",
+						reference: "sap.app.descriptor.test"
+					}]
+				},
+				id: "componentId"
+			};
+
+			return Preprocessor.preprocessManifest(this.oManifest, oConfig).then(function (oManifest) {
+				assert.deepEqual(oManifest, this.oManifest, "the manifest is returned");
+				assert.equal(this.fnFlexStateStub.callCount, 1, "FlexState was initialized once");
+				assert.equal(this.fnGetAppDescriptorChangesSpy.callCount, 0, "FlexState.getAppDescriptorChanges is never called");
+			}.bind(this));
+		});
+	});
+
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});

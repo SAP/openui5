@@ -107,7 +107,7 @@ sap.ui.define([
 
 	QUnit.module("ManifestUtils.getCacheKeyFromAsyncHints", {}, function() {
 		QUnit.test("without async hints given", function(assert) {
-			assert.equal(ManifestUtils.getCacheKeyFromAsyncHints({}, sReference), undefined, "nothing is returned");
+			assert.equal(ManifestUtils.getCacheKeyFromAsyncHints({}), undefined, "nothing is returned");
 		});
 
 		QUnit.test("with filled async hints given", function(assert) {
@@ -120,7 +120,7 @@ sap.ui.define([
 					}
 				]
 			};
-			assert.equal(ManifestUtils.getCacheKeyFromAsyncHints(oAsyncHints, sReference), "token", "the cachebusterToken is returned");
+			assert.equal(ManifestUtils.getCacheKeyFromAsyncHints(oAsyncHints), "token", "the cachebusterToken is returned");
 		});
 
 		QUnit.test("with empty async hints given (<NO CHANGES>)", function(assert) {
@@ -132,7 +132,26 @@ sap.ui.define([
 					}
 				]
 			};
-			assert.equal(ManifestUtils.getCacheKeyFromAsyncHints(oAsyncHints, sReference), "<NO CHANGES>", "nothing is returned");
+			assert.equal(ManifestUtils.getCacheKeyFromAsyncHints(oAsyncHints), "<NO CHANGES>", "nothing is returned");
+		});
+	});
+
+	QUnit.module("ManifestUtils.getChangeManifestFromAsyncHints", {}, function() {
+		QUnit.test("without async hints given", function(assert) {
+			assert.equal(ManifestUtils.getChangeManifestFromAsyncHints({}), true, "true is returned");
+		});
+
+		QUnit.test("with filled async hints", function(assert) {
+			var oAsyncHints = {
+				requests: [
+					{
+						name: "sap.ui.fl.changes",
+						reference: sReference,
+						cachebusterToken: "token"
+					}
+				]
+			};
+			assert.equal(ManifestUtils.getChangeManifestFromAsyncHints(oAsyncHints), false, "true is returned");
 		});
 	});
 
