@@ -93,12 +93,22 @@ sap.ui.define([
 			oControl.removeAttribute(sPropertyName);
 		},
 
+		_setProperty: function (oControl, sPropertyName, vPropertyValue, bEscapeBindingStrings) {
+			var sValue = this._getSerializedValue(vPropertyValue);
+			if (bEscapeBindingStrings) {
+				sValue = this._escapeCurlyBracketsInString(sValue);
+			}
+			oControl.setAttribute(sPropertyName, sValue);
+		},
+
 		/**
 		 * @inheritDoc
 		 */
 		setProperty: function (oControl, sPropertyName, vPropertyValue) {
-			var sValue = this._getSerializedValue(vPropertyValue);
-			oControl.setAttribute(sPropertyName, sValue);
+			// binding strings in properties needs always to be escaped, triggered by the last parameter.
+			// It is required to be complient with setProperty functionality in JS case. There could be
+			// properties provided as settings with existing bindings. Use the applySettings function in this case.
+			this._setProperty(oControl, sPropertyName, vPropertyValue, true);
 		},
 
 		/**
@@ -204,7 +214,10 @@ sap.ui.define([
 				var vValue = mSettings[sKey];
 				switch (oKeyInfo._iKind) {
 					case 0: // PROPERTY
-						this.setProperty(oControl, sKey, vValue);
+						// Settings provided as property could have some bindings that needs to be resolved by the core
+						// and therefore they shouldn't be escaped by setProperty function. In opposite to the common
+						// setProperty functionality!
+						this._setProperty(oControl, sKey, vValue, false);
 						break;
 					// case 1: // SINGLE_AGGREGATION
 					// 	this.insertAggregation(oControl, sKey, vValue);
