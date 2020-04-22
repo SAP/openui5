@@ -2265,20 +2265,7 @@ function(
 	 * @returns {sap.m.Input} Cloned input.
 	 */
 	Input.prototype.clone = function() {
-		var oInputClone = Control.prototype.clone.apply(this, arguments),
-			bindingInfo;
-
-		// add suggestion columns
-		bindingInfo = this.getBindingInfo("suggestionColumns");
-		if (bindingInfo) {
-			oInputClone.bindAggregation("suggestionColumns", jQuery.extend({}, bindingInfo));
-		}
-
-		// add suggestion rows
-		bindingInfo = this.getBindingInfo("suggestionRows");
-		if (bindingInfo) {
-			oInputClone.bindAggregation("suggestionRows", jQuery.extend({}, bindingInfo));
-		}
+		var oInputClone = Control.prototype.clone.apply(this, arguments);
 
 		oInputClone.setRowResultFunction(this._fnRowResultFilter);
 

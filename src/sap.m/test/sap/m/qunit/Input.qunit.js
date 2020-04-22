@@ -27,6 +27,9 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/m/Link",
 	"sap/m/Toolbar",
+	"sap/m/Page",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/m/FormattedText",
 	"jquery.sap.global",
 	"jquery.sap.strings", // provides jQuery.sap.startsWithIgnoreCase
@@ -59,6 +62,9 @@ sap.ui.define([
 	KeyCodes,
 	Link,
 	Toolbar,
+	Page,
+	Filter,
+	FilterOperator,
 	FormattedText,
 	jQuery
 ) {
@@ -3812,6 +3818,101 @@ sap.ui.define([
 		assert.notOk(oInput.$("SuggDescr").text(), "The suggestion description is cleared");
 
 		// clean up
+		oInput.destroy();
+	});
+
+	QUnit.test("Input cloned with correct suggestion rows", function(assert) {
+		var oData = new JSONModel({
+			"result": [{
+				"PricingService": "New York Service",
+				"PricingProduct": "Apple Plus",
+				"PricingLocation": "ICE New York"
+			}, {
+				"PricingService": "Internal Service",
+				"PricingProduct": "Apple",
+				"PricingLocation": "Chicago"
+			}, {
+				"PricingService": "Internal Price",
+				"PricingProduct": "MHCME",
+				"PricingLocation": "Chicago2"
+			}, {
+				"PricingService": "Oil New",
+				"PricingProduct": "MHCME",
+				"PricingLocation": "London"
+			}, {
+				"PricingService": "Oil Price Information Service",
+				"PricingProduct": "MHCME Test",
+				"PricingLocation": "London"
+			}]
+		});
+
+		// setup
+		var oInput = new Input({
+				showSuggestion: true,
+				showTableSuggestionValueHelp: false,
+				suggest: function (oEvent) {
+					var oFilter = null,
+						aFilters = [],
+						oSource = oEvent.getSource(),
+						sTerm = oEvent.getParameter("suggestValue");
+
+					if (sTerm) {
+						aFilters.push(new Filter("PricingService", FilterOperator.Contains, sTerm));
+						oFilter = new Filter({
+							filters: aFilters,
+							and: true
+						});
+					}
+					var oBinding = oSource.getBinding("suggestionRows");
+					oBinding.filter(oFilter);
+					oSource.setFilterSuggests(false);
+				},
+				suggestionColumns: [
+					new Column({
+						header: new Label({
+							text: "Pricing Service"
+						})
+					}),
+					new Column({
+						header : new Label({
+							text : "Pricing Product"
+						})
+					}),
+					new Column({
+						header : new Label({
+							text : "Pricing Location"
+						})
+					})
+				],
+				suggestionRows: {
+					path: 'local>/result',
+					templateShareable: false,
+					template: new ColumnListItem({
+						cells: [
+							new Label({text: "{local>PricingService}"}),
+							new Label({text: "{local>PricingProduct}"}),
+							new Label({text: "{local>PricingLocation}"})
+						]
+					})
+				}
+			});
+
+		var oPage = new Page("myPage", {content: oInput}).setModel(oData, "local").placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.onfocusin();
+		oInput._$input.focus().val("New").trigger("input");
+		this.clock.tick(400);
+
+		var oClonedInput = oInput.clone();
+		oPage.addContent(oClonedInput);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oClonedInput.getAggregation("suggestionRows").length, 5, "The suggestions rows should be cloned correctly");
+
+		// clear
+		oPage.destroy();
 		oInput.destroy();
 	});
 
