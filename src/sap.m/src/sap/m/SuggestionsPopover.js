@@ -632,9 +632,8 @@ sap.ui.define([
 			this._oPopover.close();
 
 			/* By default the value state message popup is opened when the suggestion popover
-			is closed. We don't want that in this case. In IE the popup is opened with setTimeout
-			because if the input receive the focus and the parent div scrolls,
-			we should wait until the scroll ends. So we need to also close it with setTimeout. */
+			is closed. We don't want that in this case because the focus will move on to the next object.
+			The popup must be closed with setTimeout() because it is opened with one. */
 			setTimeout(function() {
 				this._oInput.closeValueStateMessage();
 			}.bind(this), 0);
@@ -679,6 +678,10 @@ sap.ui.define([
 	 * @private
 	 */
 	SuggestionsPopover.prototype._handleValueStateLinkNav = function(oEvent) {
+		// The Input & MultiInput use a boolean flag to indicate whether or not the
+		// visual focus is on the ValueStateHeader, the ComboBox has a private property for that
+		this.bMessageValueStateActive = this._oInput.getFormattedTextFocused ? this._oInput.getFormattedTextFocused() : this.bMessageValueStateActive;
+
 		if ((!this.bMessageValueStateActive || !this.getValueStateLinks().length) || (this.bMessageValueStateActive && document.activeElement.tagName === "A")) {
 			return;
 		}
@@ -688,6 +691,7 @@ sap.ui.define([
 
 		// Prevent from closing right away
 		oEvent.preventDefault();
+		this._iPopupListSelectedIndex = -1;
 
 		// Move the real focus on the first link and remove the pseudo one from the
 		// Formatted Text value state header
@@ -716,10 +720,6 @@ sap.ui.define([
 		var oInput = this._oInput,
 			oListItem,
 			oInnerRef = oInput.$("inner");
-
-		if (oEvent.isMarked()) {
-			return;
-		}
 
 		if (oEvent.isMarked()) {
 			return;

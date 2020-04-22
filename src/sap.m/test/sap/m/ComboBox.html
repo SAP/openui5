@@ -677,7 +677,9 @@
 				controls: [new sap.m.Link({
 					text: "link",
 					href: "#",
-					target: "_blank"
+					press: function() {
+						sap.m.MessageToast.show("You have pressed a link in value state message", { my: sap.ui.core.Popup.Dock.CenterCenter, at: sap.ui.core.Popup.Dock.CenterCenter });
+					}
 				})]
 			}),
 			items: {
@@ -695,12 +697,16 @@
 					new sap.m.Link({
 						text: "link",
 						href: "#",
-						target: "_blank"
+						press: function() {
+							sap.m.MessageToast.show("You have pressed a link in value state message", { my: sap.ui.core.Popup.Dock.CenterCenter, at: sap.ui.core.Popup.Dock.CenterCenter });
+						}
 					}),
 					new sap.m.Link({
 						text: "second link",
 						href: "#",
-						target: "_blank"
+						press: function() {
+							sap.m.MessageToast.show("You have pressed a link in value state message", { my: sap.ui.core.Popup.Dock.CenterCenter, at: sap.ui.core.Popup.Dock.CenterCenter });
+						}
 					})
 				]
 			}),

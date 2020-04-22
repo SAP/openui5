@@ -243,7 +243,6 @@ sap.ui.define([
 				oControl.updateDomValue(sTypedValue);
 				oControl._bIsLastFocusedItemHeader = true;
 
-				oControl._handleAriaActiveDescendant(oItem);
 				oControl._getGroupHeaderInvisibleText().setText(oControl._oRb.getText("LIST_ITEM_GROUP_HEADER") + " " + oItem.getText());
 			}
 
@@ -335,29 +334,6 @@ sap.ui.define([
 				}
 			}
 		}
-
-		/**
-		 * Handles the virtual focus of items.
-		 *
-		 * @param {sap.ui.core.Item | null} vItem The item that should be focused
-		 * @private
-		 * @since 1.32
-		 */
-		ComboBox.prototype._handleAriaActiveDescendant = function(vItem) {
-			var oDomRef = this.getFocusDomRef(),
-				oListItem = this.getListItem(vItem),
-				sActivedescendant = "aria-activedescendant";
-
-			if (oDomRef) {
-
-				// the aria-activedescendant attribute is set when the list is rendered
-				if (vItem && oListItem && oListItem.getDomRef() && this.isOpen() && oListItem.hasStyleClass("sapMLIBFocused")) {
-					oDomRef.setAttribute(sActivedescendant, oListItem.getId());
-				} else {
-					oDomRef.removeAttribute(sActivedescendant);
-				}
-			}
-		};
 
 		/**
 		 * Gets the text of the selected item.
@@ -552,56 +528,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Handles the pseudo focus and <code>aria-activedescendant</code> attribute on navigation,
-		 * if value state message is <code>sap.m.FormattedText</code>
-		 *
-		 * @private
-		 */
-		ComboBox.prototype._handleFTValueState = function () {
-			var oCustomHeader = this.getPicker().getCustomHeader(),
-				aValueStateLinks = this.getValueStateLinks(),
-				oPseudoFocusedElement = Device.browser.msie ? oCustomHeader.getFormattedText() : oCustomHeader;
-
-			if (!aValueStateLinks.length) {
-				return;
-			}
-			// If there is a link in the value state message and the text is not yet focused
-			if (!this._bMessageValueStateActive) {
-				this.getFocusDomRef().setAttribute("aria-activedescendant", oCustomHeader.getFormattedText().getId());
-			}
-
-			oPseudoFocusedElement.toggleStyleClass("sapMPseudoFocus", !this._bMessageValueStateActive);
-			this._bMessageValueStateActive = !this._bMessageValueStateActive;
-		};
-
-		/**
-		 * Handles the arrow Up and Down events when a link is present in the value state message.
-		 *
-		 * @param {array} aAllSelectableItems Array of all selectable items
-		 * @param {object} oItemToUse Currently selected item
-		 * @param {boolean} bDirectionDown The direction of next selected item. <code>true</code> = down, <code>false</code> = up
-		 * @private
-		 */
-		ComboBox.prototype.valueStateFormattedTextNav = function (aAllSelectableItems, oItemToUse, bDirectionDown) {
-			if (this._bMessageValueStateActive && !bDirectionDown) {
-				this.addStyleClass("sapMFocus");
-				this._handleFTValueState();
-				return;
-			} else if (this._bMessageValueStateActive && bDirectionDown) {
-				this._handleFTValueState();
-				this._getList().addStyleClass("sapMListFocus");
-				this.getListItem(oItemToUse).addStyleClass("sapMLIBFocused");
-			}
-
-			// If the visible focus is on the first item and the value state message is a formatted text aggregation with link(s)
-			if (!this._bMessageValueStateActive && oItemToUse === aAllSelectableItems[0] && !bDirectionDown && this.getValueStateLinks().length) {
-				this._handleFTValueState();
-				this._getList().removeStyleClass("sapMListFocus");
-				this.getListItem(oItemToUse).removeStyleClass("sapMLIBFocused");
-			}
-		};
-
-		/**
 		 * Returns the next focusable item when keyboard navigation is in place.
 		 *
 		 * @param {boolean} bDirectionDown The direction of next selected item. <code>true</code> = down, <code>false</code> = up
@@ -613,13 +539,10 @@ sap.ui.define([
 				aSelectableNotSeparatorItems = this.getNonSeparatorSelectableItems(aAllSelectableItems),
 				bFocusInInput = this.hasStyleClass("sapMFocus"),
 				oItemToUse = this.getSelectedItem() || this._getItemByListItem(this._oLastFocusedListItem),
+				bMessageValueStateActive = this.getFormattedTextFocused(),
 				oNextSelectableItem;
 
-			if (bFocusInInput && this.isOpen() && !bDirectionDown && this.getValueStateLinks().length) {
-				return null;
-			}
-
-			if ((bFocusInInput && this.isOpen()) || (bDirectionDown && this._bMessageValueStateActive)) {
+			if ((bFocusInInput && this.isOpen()) || bMessageValueStateActive) {
 				// Visual focus on input or formatted text value state header and the picker is opened
 				oNextSelectableItem = aAllSelectableItems[0];
 			} else if (bFocusInInput && !this.getValueStateLinks().length) {
@@ -629,7 +552,10 @@ sap.ui.define([
 				oNextSelectableItem = aAllSelectableItems[aAllSelectableItems.indexOf(oItemToUse) + (bDirectionDown ? 1 : -1)];
 			}
 
-			this.valueStateFormattedTextNav(aAllSelectableItems, oItemToUse, bDirectionDown);
+			if (bMessageValueStateActive || (!bMessageValueStateActive && oItemToUse === aAllSelectableItems[0] && !bDirectionDown && this.getValueStateLinks().length)) {
+				this.setProperty("formattedTextFocused", !bMessageValueStateActive);
+			}
+
 			return oNextSelectableItem;
 		};
 
@@ -734,7 +660,7 @@ sap.ui.define([
 			var oList = this._getList(),
 				oListItem, sKey;
 
-			this.setAssociation("selectedItem", vItem, true);
+			this.setAssociation("selectedItem", vItem);
 			this._setPropertyProtected("selectedItemId", (vItem instanceof Item) ? vItem.getId() : vItem, true);
 
 			if (typeof vItem === "string") {
@@ -752,8 +678,7 @@ sap.ui.define([
 			}
 
 			sKey = vItem ? vItem.getKey() : "";
-			this._setPropertyProtected("selectedKey", sKey, true);
-			this._handleAriaActiveDescendant(vItem);
+			this._setPropertyProtected("selectedKey", sKey);
 
 			if (this._oSuggestionPopover) {
 				this._oSuggestionPopover._iPopupListSelectedIndex = this.getItems().indexOf(vItem);
@@ -971,7 +896,25 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.onBeforeRendering = function() {
 			ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
+
+			var oSelectedItem = this.getSelectedItem(),
+				oList = this._getList(),
+				oSelectedListItem = oSelectedItem && this.getListItem(oSelectedItem),
+				bFormattedTextHeaderFocused = this.getProperty("formattedTextFocused"),
+				oCustomHeader = this.getPicker() && this.getPicker().getCustomHeader(),
+				oPseudoFocusedElement = Device.browser.msie ? oCustomHeader.getFormattedText() : oCustomHeader;
+
 			this.synchronizeSelection();
+
+			if (bFormattedTextHeaderFocused) {
+				oPseudoFocusedElement.addStyleClass("sapMPseudoFocus");
+				oList.removeStyleClass("sapMListFocus");
+				oSelectedListItem.removeStyleClass("sapMLIBFocused");
+				this.removeStyleClass("sapMFocus");
+			} else if (oPseudoFocusedElement) {
+				oPseudoFocusedElement.removeStyleClass("sapMPseudoFocus");
+			}
+
 		};
 
 		/**
@@ -1172,6 +1115,7 @@ sap.ui.define([
 			}
 
 			// always focus input field when typing in it
+			this.setFormattedTextFocused(false);
 			this.addStyleClass("sapMFocus");
 			this._getList().removeStyleClass("sapMListFocus");
 
@@ -1384,6 +1328,8 @@ sap.ui.define([
 			var fnPickerTypeBeforeOpen = this["onBeforeOpen" + this.getPickerType()],
 				oDomRef = this.getFocusDomRef();
 
+			this.setProperty("open", true);
+
 			// the dropdown list can be opened by calling the .open() method (without
 			// any end user interaction), in this case if items are not already loaded
 			// and there is an {@link #loadItems} event listener attached, the items should be loaded
@@ -1431,16 +1377,11 @@ sap.ui.define([
 		 * @private
 		 */
 		ComboBox.prototype.onAfterOpen = function() {
-			var oDomRef = this.getFocusDomRef(),
-				oItem = this.getSelectedItem(),
+			var oItem = this.getSelectedItem(),
 				oSelectionRange = this._getSelectionRange(),
 				bTablet = this.isPlatformTablet();
 
 			this.closeValueStateMessage();
-
-			if (oDomRef) {
-				oDomRef.setAttribute("aria-expanded", "true");
-			}
 
 			// if there is a selected item, scroll and show the list
 			fnSelectedItemOnViewPort.call(this, true);
@@ -1463,13 +1404,12 @@ sap.ui.define([
 		ComboBox.prototype.onBeforeClose = function() {
 			ComboBoxBase.prototype.onBeforeClose.apply(this, arguments);
 			var oDomRef = this.getFocusDomRef();
+			this.setProperty("open", false);
+			this.setProperty("formattedTextFocused", false);
 
 			if (oDomRef) {
 				// notice that the "aria-controls" attribute is removed when the popover is closed.
 				oDomRef.removeAttribute("aria-controls");
-
-				// the "aria-activedescendant" attribute is removed when the currently active descendant is not visible
-				oDomRef.removeAttribute("aria-activedescendant");
 			}
 
 			// remove the active state of the control's field
@@ -1482,23 +1422,14 @@ sap.ui.define([
 		 * @private
 		 */
 		ComboBox.prototype.onAfterClose = function() {
-			var oDomRef = this.getFocusDomRef();
-
-			if (oDomRef) {
-				oDomRef.setAttribute("aria-expanded", "false");
-			}
-
 			// clear the filter to make all items visible,
 			// notice that to prevent flickering, the filter is cleared
 			// after the close animation is completed
 			this.clearFilter();
-
 			this._sInputValueBeforeOpen = "";
 
-			// if the focus is back to the input after closing the picker,
-			// the value state message should be reopen
-			if (this.shouldValueStateMessageBeOpened() && (document.activeElement === oDomRef)) {
-				this.openValueStateMessage();
+			if (this.isPickerDialog()) {
+				ComboBoxBase.prototype.closeValueStateMessage.apply(this, arguments);
 			}
 		};
 
@@ -1602,51 +1533,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Handles the Tab key event when pressed while the visual focus is on a value state message with <code>sap.m.FormattedText</code>.
-		 *
-		 * @param {jQuery.Event} oEvent The event object
-		 * @private
-		 */
-		ComboBox.prototype.onsaptabnext = function(oEvent) {
-			if (!this.getPicker() || !this.isOpen()) {
-				ComboBoxBase.prototype.onsaptabnext.apply(this);
-				return;
-			}
-
-			var oCustomHeader = this.getPicker().getCustomHeader(),
-				aValueStateLinks =  this.getValueStateLinks(),
-				iLastValueStateLink = aValueStateLinks.length ? aValueStateLinks[oCustomHeader.getFormattedText().getControls().length - 1] : null;
-
-			if (this._bMessageValueStateActive && aValueStateLinks.length && document.activeElement.tagName !== "A") {
-				oEvent.preventDefault();
-				oCustomHeader.getFormattedText().getControls()[0].focus();
-				oEvent.stopPropagation();
-				oCustomHeader.getFormattedText().removeStyleClass("sapMPseudoFocus");
-
-				// If the focus is on the last link in the value state
-				iLastValueStateLink.addDelegate({
-					onsaptabnext: function() {
-						this.close();
-
-						/* By default the value state message popup is opened when the suggestion popover
-						is closed. We don't want that in this case. In IE the popup is opened with setTimeout
-						because if the input receive the focus and the parent div scrolls,
-						we should wait until the scroll ends. So we need to also close it with setTimeout. */
-						if (Device.browser.msie) {
-							setTimeout(function() {
-								this.closeValueStateMessage();
-							}.bind(this), 0);
-						} else {
-							this.closeValueStateMessage();
-						}
-
-						this._bMessageValueStateActive = false;
-					}
-				}, this);
-			}
-		};
-
-		/**
 		 * Handles the <code>sapdown</code> pseudo event when the Down arrow key is pressed.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
@@ -1664,6 +1550,7 @@ sap.ui.define([
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
+
 
 			// prevent document scrolling when arrow keys are pressed
 			oEvent.preventDefault();
@@ -1720,6 +1607,10 @@ sap.ui.define([
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
+			if (this.getValueStateLinks().length) {
+				this.setProperty("formattedTextFocused", true);
+			}
+
 			// prevent document scrolling when Home key is pressed
 			oEvent.preventDefault();
 
@@ -1753,6 +1644,10 @@ sap.ui.define([
 			// prevent document scrolling when End key is pressed
 			oEvent.preventDefault();
 
+			if (this.getValueStateLinks().length && this.getFormattedTextFocused()) {
+				this.setProperty("formattedTextFocused", false);
+			}
+
 			this.loadItems(function navigateToLastSelectableItem() {
 				var oLastSelectableItem = this.findLastEnabledItem(this.getSelectableItems());
 				fnHandleKeyboardNavigation.call(this, oControl, oLastSelectableItem);
@@ -1781,6 +1676,9 @@ sap.ui.define([
 			// prevent document scrolling when page down key is pressed
 			oEvent.preventDefault();
 
+			if (this.getValueStateLinks().length && this.getFormattedTextFocused()) {
+				this.setProperty("formattedTextFocused", false);
+			}
 			this.loadItems(function() {
 				var aSelectableItems = this.getNonSeparatorSelectableItems(this.getSelectableItems()),
 					iIndex = aSelectableItems.indexOf(this.getSelectedItem()) + 10,
@@ -1890,16 +1788,14 @@ sap.ui.define([
 
 			this.addStyleClass("sapMFocus");
 
-			if (this.isOpen() && this._getList().hasStyleClass("sapMListFocus")) {
+			if (this.getFormattedTextFocused()) {
+				this.setFormattedTextFocused(false);
+			} else if ((this.getOpen() && this._getList().hasStyleClass("sapMListFocus")) || this._oLastFocusedListItem) {
 				this._getList().removeStyleClass("sapMListFocus");
-			}
-
-			if (this._oLastFocusedListItem) {
 				this._oLastFocusedListItem.removeStyleClass("sapMLIBFocused");
 				this._oLastFocusedListItem = null;
+				oDomRef.removeAttribute(sActivedescendant);
 			}
-
-			oDomRef.removeAttribute(sActivedescendant);
 		};
 
 		/**
@@ -1998,7 +1894,7 @@ sap.ui.define([
 			oRelatedControl = core.byId(oEvent.relatedControlId);
 			oFocusDomRef = oRelatedControl && oRelatedControl.getFocusDomRef();
 
-			if (containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef) && !bTablet && !this._bMessageValueStateActive) {
+			if (containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef) && !bTablet && !this.getFormattedTextFocused()) {
 
 				// force the focus to stay in the input field
 				this.focus();
@@ -2223,7 +2119,6 @@ sap.ui.define([
 
 				oPicker = this.createPicker(this.getPickerType());
 				oPickerTextField = this.getPickerTextField();
-				this._updateSuggestionsPopoverValueState();
 
 				this._fillList();
 				if (oPickerTextField) {
@@ -2238,28 +2133,17 @@ sap.ui.define([
 						}
 					}, this);
 				}
+
+				/* Forward the value state data to the newly created suggestions popover
+				except the FormattedText aggregation. At this point we don't know if the
+				sugg. popover will get opened afterwards, so we don't want to switch it's
+				parent to ValueStateHeader yet, allowing the InputBase to still be able
+				to render it in a ValueStateMessage popup if needed. */
+				this._oSuggestionPopover.updateValueState(this.getValueState(), this.getValueStateText(), this.getShowValueStateMessage());
 			}
 
 			this.synchronizeSelection();
-
 			return oPicker;
-		};
-
-		/**
-		 * Closes the control's picker popup and focus input field.
-		 *
-		 * @returns {sap.m.ComboBox} <code>this</code> to allow method chaining.
-		 * @public
-		 */
-		ComboBox.prototype.close = function() {
-			var oList = this._getList();
-			ComboBoxBase.prototype.close.call(this);
-
-			this.addStyleClass("sapMFocus");
-			//Remove focusing class from the list
-			oList && oList.removeStyleClass("sapMListFocus");
-
-			return this;
 		};
 
 		/**
@@ -2557,6 +2441,22 @@ sap.ui.define([
 			// Attaching to that event here, ensures that showItems filtering would happen
 			// after SuggestionsPopover's reset, but before the picker is opened.
 			oPicker.attachBeforeOpen(fnPickerOpenListener, this);
+		};
+
+		/**
+		 * Gets <code>sap.m.FormattedText</code> aggregation based on its current parent.
+		 * If the SuggestionPopover is open that is the <code>sap.m.ValueStateHeader</code>, otherwise is the InputBase itself.
+		 *
+		 * @private
+		 * @returns {sap.m.FormattedText} Aggregation used for value state message that can contain links.
+		 * @since 1.78
+		 */
+		ComboBox.prototype._getFormattedValueStateText = function() {
+			if (this.isOpen()) {
+				return this._getSuggestionsPopover()._getValueStateHeader().getFormattedText();
+			} else {
+				return ComboBoxTextField.prototype.getFormattedValueStateText.call(this);
+			}
 		};
 
 		return ComboBox;
