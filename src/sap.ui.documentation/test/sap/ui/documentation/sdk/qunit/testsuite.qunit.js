@@ -42,6 +42,12 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					only : ["sap/ui/documentation/sdk/util/LiveEditorOutput.html"]
 				},
 				skip: Device.browser.msie
+			},
+
+			"Resources": {
+				coverage: {
+					only : ["sap/ui/documentation/sdk/util/Resources"]
+				}
 			}
 
 			// "Forwarding": {

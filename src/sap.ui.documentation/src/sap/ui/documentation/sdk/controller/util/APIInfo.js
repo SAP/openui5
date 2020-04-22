@@ -3,8 +3,10 @@
  */
 
 // Provides reuse functionality for reading documentation from api.json files (as created by the UI5 JSDoc3 template/plugin)
-sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/Log"],
-	function(jQuery, Log) {
+sap.ui.define(["sap/ui/thirdparty/jquery",
+		"sap/base/Log",
+		"sap/ui/documentation/sdk/util/Resources"],
+	function(jQuery, Log, ResourcesUtil) {
 		"use strict";
 
 		/**
@@ -23,7 +25,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/Log"],
 			return new Promise(function (resolve, reject) {
 				jQuery.ajax({
 					async: true,
-					url : "./docs/api/api-index.json",
+					url : ResourcesUtil.getResourceOriginPath("/docs/api/api-index.json"),
 					dataType : 'json',
 					success : function(vResponse) {
 						var aResult = vResponse.symbols || [];
@@ -33,7 +35,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/Log"],
 					error : function () {
 						jQuery.ajax({
 							async: true,
-							url : "../../../../../../docs/api/api-index.json",
+							url : ResourcesUtil.getResourceOriginPath("../../../../../../docs/api/api-index.json"),
 							dataType : 'json',
 							success : function(vResponse) {
 								var aResult = vResponse.symbols || [];
@@ -60,7 +62,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/Log"],
 			return new Promise(function (resolve, reject) {
 				jQuery.ajax({
 					async: true,
-					url : "./docs/api/api-index-deprecated.json",
+					url : ResourcesUtil.getResourceOriginPath("/docs/api/api-index-deprecated.json"),
 					dataType : 'json',
 					success : function(vResponse) {
 						oLibraryDataCache["deprecated"] = vResponse;
@@ -83,7 +85,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/Log"],
 			return new Promise(function (resolve, reject) {
 				jQuery.ajax({
 					async: true,
-					url : "./docs/api/api-index-experimental.json",
+					url : ResourcesUtil.getResourceOriginPath("/docs/api/api-index-experimental.json"),
 					dataType : 'json',
 					success : function(vResponse) {
 						oLibraryDataCache["experimental"] = vResponse;
@@ -106,7 +108,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/Log"],
 			return new Promise(function (resolve, reject) {
 				jQuery.ajax({
 					async: true,
-					url : "./docs/api/api-index-since.json",
+					url : ResourcesUtil.getResourceOriginPath("/docs/api/api-index-since.json"),
 					dataType : 'json',
 					success : function(vResponse) {
 						oLibraryDataCache["since"] = vResponse;
@@ -135,7 +137,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/Log"],
 				// Fetch library data, then cache it no matter the result
 				jQuery.ajax({
 					async: true,
-					url : sTestResourcesRoot + sLibraryName.replace(/\./g, '/') + '/designtime/apiref/api.json',
+					url : ResourcesUtil.getResourceOriginPath(sTestResourcesRoot + sLibraryName.replace(/\./g, '/') + '/designtime/apiref/api.json'),
 					dataType : 'json',
 					success : function(vResponse) {
 						var aResult = vResponse.symbols || [];

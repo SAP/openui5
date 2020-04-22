@@ -9,8 +9,9 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/XML2JSONUtils",
 		"sap/ui/Device",
-		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler"
-	], function (jQuery, BaseController, JSONModel, XML2JSONUtils, Device, ToggleFullScreenHandler) {
+		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
+		"sap/ui/documentation/sdk/util/Resources"
+	], function (jQuery, BaseController, JSONModel, XML2JSONUtils, Device, ToggleFullScreenHandler, ResourcesUtil) {
 		"use strict";
 
 		var GIT_HUB_DOCS_URL = "https://sap.github.io/openui5-docs/#/",
@@ -66,7 +67,9 @@ sap.ui.define([
 			 */
 			_onTopicMatched: function (event) {
 				//TODO: global jquery call found
-				var topicId = event.getParameter("arguments").id, topicURL = this._oConfig.docuPath + topicId + (topicId.match(/\.html/) ? "" : ".html"), htmlContent = jQuery.sap.syncGetText(topicURL).data, jsonObj;
+				var topicId = event.getParameter("arguments").id,
+					topicURL = ResourcesUtil.getResourceOriginPath(this._oConfig.docuPath + topicId + (topicId.match(/\.html/) ? "" : ".html")),
+					htmlContent = jQuery.sap.syncGetText(topicURL).data, jsonObj;
 
 				if (!htmlContent) {
 					setTimeout(function () {
