@@ -302,20 +302,16 @@
 		new sap.m.App().addPage(oPage = new sap.m.Page({
 			title: "sap.m.TabContainer test page",
 			content: [tabContainer],
-			footer: new sap.m.Bar({
-				contentLeft: [
+			footer: new sap.m.OverflowToolbar({
+				content: [
 					changeTabButton1,
 					changeTabButton2,
-					changeTabButton3
-				],
-				contentMiddle: [
+					changeTabButton3,
 					changeNameButton,
 					addIconButton,
 					changeIconButton,
 					removeIconButton,
-					toggleModifiedButton
-				],
-				contentRight: [
+					toggleModifiedButton,
 					addButton,
 					insertButton,
 					removeButton,
