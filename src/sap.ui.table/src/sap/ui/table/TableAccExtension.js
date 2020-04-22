@@ -620,13 +620,13 @@ sap.ui.define([
 					mAttributes["aria-labelledby"] = [sTableId + "-ariacolrowheaderlabel"];
 
 					var bAddSelectAllLabel = false;
-					mAttributes["role"] = ["button"];
+					mAttributes["role"] = ["checkbox"];
 					if (mParams && mParams.enabled) {
-						mAttributes["aria-pressed"] = mParams.checked ? "true" : "false";
+						mAttributes["aria-checked"] = mParams.checked ? "true" : "false";
 					} else {
 						bAddSelectAllLabel = true;
 						mAttributes["aria-disabled"] = "true";
-						mAttributes["aria-pressed"] = "false";
+						mAttributes["aria-checked"] = "false";
 					}
 					if (bAddSelectAllLabel || !oTable._getShowStandardTooltips()) {
 						mAttributes["aria-labelledby"].push(sTableId + "-ariaselectall");
@@ -1304,7 +1304,7 @@ sap.ui.define([
 	TableAccExtension.prototype.setSelectAllState = function(bSelectAll) {
 		var oTable = this.getTable();
 		if (oTable) {
-			oTable.$("selall").attr("aria-pressed", bSelectAll ? "true" : "false");
+			oTable.$("selall").attr("aria-checked", bSelectAll ? "true" : "false");
 		}
 	};
 
