@@ -540,4 +540,47 @@ sap.ui.define([
 				});
 		});
 	});
+
+	QUnit.test("core:require no async require for loaded modules", function(assert) {
+		// setup
+		sap.ui.predefine("test/never-seen-before", [], function() { return "module1"; });
+		var oRequireSpy = this.spy(sap.ui, "require"),
+			sXML =
+				'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core">' +
+					'<Panel id="panel" core:require="{' +
+						'\'mod1\': \'sap/ui/model/FilterOperator\',' +
+							'\'mod2\': \'test/never-seen-before\',' +
+								'\'mod3\': \'sap/ui/core/Core\'' +
+						'}" />' +
+				'</mvc:View>';
+
+		// act
+		return XMLView.create({
+			definition: sXML
+		}).then(function(oViewInstance1) {
+			// assert
+			assert.ok(oRequireSpy.calledWithExactly("sap/ui/model/FilterOperator"));
+			assert.ok(oRequireSpy.calledWithExactly("test/never-seen-before"));
+			assert.ok(oRequireSpy.calledWithExactly("sap/ui/core/Core"));
+			assert.ok(oRequireSpy.calledWith(["sap/ui/model/FilterOperator", "test/never-seen-before", "sap/ui/core/Core"]));
+
+			// cleanup
+			oViewInstance1.destroy();
+			oRequireSpy.resetHistory();
+
+			// act again
+			return XMLView.create({
+				definition: sXML
+			});
+		}).then(function(oViewInstance2) {
+			// assert again
+			assert.ok(oRequireSpy.calledWithExactly("sap/ui/model/FilterOperator"));
+			assert.ok(oRequireSpy.calledWithExactly("test/never-seen-before"));
+			assert.ok(oRequireSpy.calledWithExactly("sap/ui/core/Core"));
+			assert.ok(oRequireSpy.neverCalledWith(["sap/ui/model/FilterOperator", "test/never-seen-before", "sap/ui/core/Core"]));
+
+			// cleanup
+			oViewInstance2.destroy();
+		});
+	});
 });
