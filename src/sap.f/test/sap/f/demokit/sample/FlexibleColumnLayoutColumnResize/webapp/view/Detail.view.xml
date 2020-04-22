@@ -1,0 +1,43 @@
+<mvc:View
+controllerName="sap.f.FlexibleColumnLayoutColumnResize.controller.Detail"
+xmlns:mvc="sap.ui.core.mvc"
+xmlns="sap.m"
+xmlns:f="sap.f"
+xmlns:layout="sap.ui.layout"
+height="100%">
+<f:DynamicPage id="dynamicPageId" toggleHeaderOnTitleClick="false">
+	<f:title>
+		<f:DynamicPageTitle>
+			<f:heading>
+				<Title text="Details Page"/>
+			</f:heading>
+
+			<f:navigationActions>
+				<Button
+					press="handleClose"
+					icon="sap-icon://decline"
+					type="Transparent" />
+			</f:navigationActions>
+		</f:DynamicPageTitle>
+	</f:title>
+	<f:header>
+		<f:DynamicPageHeader pinnable="false">
+			<layout:HorizontalLayout allowWrapping="true">
+				<layout:VerticalLayout class="sapUiMediumMarginEnd">
+					<ObjectAttribute title="Location" text="Warehouse A"/>
+					<ObjectAttribute title="Halway" text="23L"/>
+					<ObjectAttribute title="Rack" text="34"/>
+				</layout:VerticalLayout>
+
+				<layout:VerticalLayout>
+					<ObjectAttribute title="Availability"/>
+					<ObjectStatus text="In Stock" state="Success" />
+				</layout:VerticalLayout>
+			</layout:HorizontalLayout>
+		</f:DynamicPageHeader>
+	</f:header>
+	<f:content>
+		<MessageStrip type="Success" text="Close this column to return to the previous page and resume its scroll position"/>
+	</f:content>
+</f:DynamicPage>
+</mvc:View>
