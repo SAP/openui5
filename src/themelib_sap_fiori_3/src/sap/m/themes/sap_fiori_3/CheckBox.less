@@ -23,13 +23,11 @@
 	}
 }
 
-@_sap_m_CheckBox_SelectedWarningColor: darken(@sapUiFieldWarningColor, 100);
-
 .sapMCb.sapMCbWarn .sapMCbBg {
 	background-color: @sapUiFieldWarningBackground;
 	border: 0.125rem solid @sapUiFieldWarningColor;
 	&.sapMCbMarkChecked:before {
-		color: @_sap_m_CheckBox_SelectedWarningColor;
+		color: @sapUiFieldTextColor;
 	}
 }
 
