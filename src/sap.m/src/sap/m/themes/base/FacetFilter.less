@@ -80,7 +80,16 @@ html.sap-desktop .sapMFFScrolling.sapMFFNoScrollForward > .sapMFFArrowScrollRigh
 
 .sapMFFResetSpacer {
 	/* Space reserved at the end of the FacetFilter for placing the reset button */
-	margin-right: 3rem;
+	margin-right: 2.75rem;
+	margin-left: 1rem;
+}
+
+.sapUiSizeCompact {
+	.sapMFFResetSpacer {
+		/* Space reserved at the end of the FacetFilter for placing the reset button */
+		margin-right: 2.5rem;
+		margin-left: 1rem;
+	}
 }
 
 .sapMFF .sapMTB-Info-CTX .sapMBtnIcon .sapUiIcon {
@@ -137,7 +146,10 @@ html.sap-desktop .sapMFF > .sapMTB-Info-CTX.sapMTB > .sapMFFRefresh.sapMBtn:focu
 /* specific selector for the light facet filter text to use padding instead of margin,
   otherwise the text gets cut off in Arabic because of the italic font
 */
-.sapMFF > .sapMIBar.sapMTB.sapMTB-Info-CTX > .sapMText {
-	margin: 0;
-	padding: 0.5rem;
+.sapMFF > .sapMIBar.sapMTB.sapMTB-Info-CTX {
+	padding-right: 0.5rem;
+	padding-left: 0.75rem;
+	.sapMText {
+		padding: 0.5rem 0.5rem 0.5rem 0;
+	}
 }
