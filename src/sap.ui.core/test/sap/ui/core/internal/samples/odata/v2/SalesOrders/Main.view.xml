@@ -56,7 +56,7 @@
 						}" width="12em" />
 				</form:SimpleForm>
 				<t:Table id="ToLineItems" rowActionCount="1" rows="{
-						parameters : {transitionMessagesOnly : true},
+						parameters : {usePreliminaryContext : true, transitionMessagesOnly : true},
 						path : 'ToLineItems'
 					}" rowSelectionChange="onSelectItem" selectionMode="Single" threshold="0"
 					visibleRowCount="4">

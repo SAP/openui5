@@ -54,7 +54,8 @@ sap.ui.define([
 
 	"use strict";
 
-	var MessageType = coreLibrary.MessageType,
+	var sClassName = "sap.ui.model.odata.v2.ODataModel",
+		MessageType = coreLibrary.MessageType,
 		mMessageType2Severity = {};
 
 	mMessageType2Severity[MessageType.Error] = 0;
@@ -1250,6 +1251,7 @@ sap.ui.define([
 				oEventInfo.response.statusCode = oResponse.statusCode;
 				oEventInfo.response.statusText = oResponse.statusText;
 				oEventInfo.response.responseText = oResponse.body !== undefined ? oResponse.body : oResponse.responseText;
+				oEventInfo.response.expandAfterCreateFailed = oResponse.expandAfterCreateFailed;
 			}
 		}
 		oEventInfo.ID = oRequest.requestID;
@@ -3217,17 +3219,43 @@ sap.ui.define([
 	ODataModel.prototype._submitBatchRequest = function(oBatchRequest, aRequests, fnSuccess, fnError) {
 		var that = this,
 			mChangeEntities = {},
+			mContentID2KeyAndDeepPath = {},
 			mGetEntities = {},
 			mEntityTypes = {};
 
 		function processResponse(oRequest, oResponse, bAborted) {
-			for (var i = 0; i < oRequest.parts.length; i++) {
+			var sContentID, sEntityKey, i;
+
+			for (i = 0; i < oRequest.parts.length; i++) {
 				if (bAborted || oRequest.parts[i].request._aborted) {
 					that._processAborted(oRequest.parts[i].request, oResponse);
 				} else if (oResponse.message) {
 					that._processError(oRequest.parts[i].request, oResponse, oRequest.parts[i].fnError);
 				} else {
-					that._processSuccess(oRequest.parts[i].request, oResponse, oRequest.parts[i].fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
+					if (oRequest.request.withContentID) {
+						sContentID = oRequest.request.withContentID;
+						if (oRequest.request.created) {
+							sEntityKey = that._getKey(oResponse.data);
+
+							mContentID2KeyAndDeepPath[sContentID] = {
+								key : sEntityKey,
+								deepPath : oRequest.request.deepPath.replace(
+									"('" + sContentID + "')",
+										sEntityKey.slice(sEntityKey.indexOf("(")))
+							};
+						} else {
+							// creation request must have been successful -> map entry exists
+							sEntityKey = mContentID2KeyAndDeepPath[sContentID].key;
+
+							oRequest.request.requestUri =
+								oRequest.request.requestUri.replace("$" + sContentID, sEntityKey);
+							oRequest.request.deepPath =
+								mContentID2KeyAndDeepPath[sContentID].deepPath;
+						}
+					}
+
+					that._processSuccess(oRequest.parts[i].request, oResponse,
+						oRequest.parts[i].fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
 				}
 			}
 		}
@@ -3677,17 +3705,29 @@ sap.ui.define([
 					var aReadRequests = [], aBatchGroup = [], oChangeSet, aChanges;
 					var oWrappedBatchRequestHandle = wrapRequestHandle();
 					if (oRequestGroup.changes) {
-						each(oRequestGroup.changes, function(sChangeSetId, aChangeSet){
+						each(oRequestGroup.changes, function(sChangeSetId, aChangeSet) {
+							var oCurrentRequest, i, oRequestInfo;
+
 							oChangeSet = {__changeRequests:[]};
 							aChanges = [];
-							for (var i = 0; i < aChangeSet.length; i++) {
+							for (i = 0; i < aChangeSet.length; i++) {
+								oCurrentRequest = aChangeSet[i].request;
 								//increase laundering
-								sPath = '/' + that.getKey(aChangeSet[i].request.data);
-								that.increaseLaundering(sPath, aChangeSet[i].request.data);
+								sPath = '/' + that.getKey(oCurrentRequest.data);
+								that.increaseLaundering(sPath, oCurrentRequest.data);
 								checkAbort(aChangeSet[i], oWrappedBatchRequestHandle);
 								if (aChangeSet[i].parts.length > 0) {
-									that.removeInternalMetadata(aChangeSet[i].request.data);
-									oChangeSet.__changeRequests.push(aChangeSet[i].request);
+									that.removeInternalMetadata(oCurrentRequest.data);
+									oChangeSet.__changeRequests.push(oCurrentRequest);
+
+									if (oCurrentRequest.expandRequest) {
+										// for created entities there is always exactly one part
+										oRequestInfo = aChangeSet[i].parts[0];
+										that._pushToRequestQueue(mRequests, sRequestGroupId,
+											undefined, oCurrentRequest.expandRequest,
+											oRequestInfo.fnSuccess, oRequestInfo.fnError,
+											oRequestInfo.requestHandle, false);
+									}
 									aChanges.push(aChangeSet[i]);
 								}
 							}
@@ -4024,7 +4064,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processChange = function(sKey, oData, sUpdateMethod, sDeepPath) {
-		var oPayload, oEntityType, mParams, sMethod, sETag, sUrl, bCreated, mHeaders, aUrlParams, oRequest, oUnModifiedEntry, that = this;
+		var bCreated, oEntityType, sETag, oExpandRequest, mHeaders, sMethod, mParams, oPayload,
+			oRequest, oUnModifiedEntry, sUrl, aUrlParams, sWithContentID,
+			that = this;
 
 		if (sDeepPath && this.mChangedEntities[sKey] && this.mChangedEntities[sKey].__metadata) {
 			// store or update deep path
@@ -4050,6 +4092,8 @@ sap.ui.define([
 			sKey = oData.__metadata.created.key;
 			bCreated = true;
 			mParams = oData.__metadata.created;
+			oExpandRequest = oData.__metadata.created.expandRequest;
+			sWithContentID = oData.__metadata.created.withContentID;
 			if (oData.__metadata.created.functionImport){
 				// update request url params with changed data from payload
 				mParams.urlParameters = this._createFunctionImportParameters(oData.__metadata.created.key, sMethod, oPayload );
@@ -4124,6 +4168,10 @@ sap.ui.define([
 		//for createEntry requests we need to flag request again
 		if (bCreated) {
 			oRequest.created = true;
+			if (oExpandRequest) {
+				oRequest.expandRequest = oExpandRequest;
+				oRequest.withContentID = sWithContentID;
+			}
 		}
 
 		if (this.bUseBatch) {
@@ -4366,8 +4414,7 @@ sap.ui.define([
 				mHeaders["sap-message-scope"] = this.sMessageScope;
 			} else {
 				Log.error("Message scope 'sap.ui.model.odata.MessageScope.BusinessObject' is not"
-					+ " supported by the service: " + this.sServiceUrl, undefined,
-					"sap.ui.model.odata.v2.ODataModel");
+					+ " supported by the service: " + this.sServiceUrl, undefined, sClassName);
 			}
 		}
 
@@ -5810,42 +5857,98 @@ sap.ui.define([
 	 *
 	 * The optional parameter <code>mParameters.properties</code> can be used as follows:
 	 * <ul>
-	 *   <li><code>properties</code> could be an array containing the property names which should be included
-	 *     in the new entry. Other properties defined in the entity type won't be included. </li>
-	 *   <li><code>properties</code> could be an object which includes the desired properties and the
-	 *     corresponding values which should be used for the created entry. </li>
+	 *   <li><code>properties</code> could be an array containing the property names which should be
+	 *     included in the new entry. Other properties defined in the entity type won't be included.
+	 *   </li>
+	 *   <li><code>properties</code> could be an object which includes the desired properties and
+	 *     the corresponding values which should be used for the created entry. </li>
 	 * </ul>
-	 * If <code>properties</code> is not specified, all properties in the entity type will be included in the
-	 * created entry.
+	 * If <code>properties</code> is not specified, all properties in the entity type will be
+	 * included in the created entry.
 	 *
 	 * If there are no values specified, the properties will have <code>undefined</code> values.
 	 *
-	 * Please note that deep creates (including data defined by navigation properties) are not supported.
+	 * Please note that deep creates (including data defined by navigation properties) are not
+	 * supported.
 	 *
-	 * @param {string} sPath Name of the path to the EntitySet
-	 * @param {object} mParameters A map of the following parameters:
-	 * @param {array|object} [mParameters.properties] An array that specifies a set of properties or the entry
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
-	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
-	 * @param {string} [mParameters.changeSetId] ID of the <code>ChangeSet</code> that this request should belong to
-	 * @param {sap.ui.model.Context} [mParameters.context] The binding context
-	 * @param {function} [mParameters.success] The success callback function
-	 * @param {function} [mParameters.error] The error callback function
-	 * @param {Object<string,string>} [mParameters.headers] A map of headers
-	 * @param {Object<string,string>} [mParameters.urlParameters] A map of URL parameters
-	 * @param {boolean} [mParameters.refreshAfterChange] Since 1.46; defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
-	           If given, this overrules the model-wide <code>refreshAfterChange</code> flag for this operation only.
+	 * The parameter <code>expand</code> is supported since 1.78.0. If this parameter is set, the
+	 * given navigation properties are expanded automatically with the same $batch request in which
+	 * the POST request for the creation is contained. Ensure that the batch mode is used and the
+	 * back-end service supports GET requests relative to a Content ID outside the changeset.
+	 * The success and error callback functions are called only once, even if there are two requests
+	 * in the <code>$batch</code> related to a single call of {@link #createEntry}:
+	 * <ul>
+	 *   <li>a POST request for creating an entity,</li>
+	 *   <li>a GET request for requesting the navigation properties for the just created entity.
+	 *   </li>
+	 * </ul>
+	 * The following outcomes are possible:
+	 * <ul>
+	 *   <li>If both requests succeed, the success handler is called with the merged data of the
+	 *     POST and the GET request and with the response of the POST request.</li>
+	 *   <li>If the POST request fails, the GET request also fails. In that case the error callback
+	 *     handler is called with the error response of the POST request.</li>
+	 *   <li>If the POST request succeeds but the GET request for the navigation properties fails,
+	 *     the success handler is called with the data and the response of the POST request. The
+	 *     response object of the success handler call and the response parameter of the
+	 *     corresponding <code>requestFailed</code> and <code>requestCompleted</code> events have an
+	 *     additional property <code>expandAfterCreateFailed</code> set to <code>true</code>.
+	 *   </li>
+	 * </ul>
 	 *
-	 * @return {sap.ui.model.Context} A Context object that points to the new created entry.
+	 * @param {string} sPath
+	 *   The path to the EntitySet
+	 * @param {object} mParameters
+	 *   A map of the following parameters:
+	 * @param {string} [mParameters.batchGroupId]
+	 *   Deprecated - use <code>groupId</code> instead
+	 * @param {string} [mParameters.changeSetId]
+	 *   The ID of the <code>ChangeSet</code> that this request should belong to
+	 * @param {sap.ui.model.Context} [mParameters.context]
+	 *   The binding context
+	 * @param {function} [mParameters.error]
+	 *   The error callback function
+	 * @param {string} [mParameters.expand]
+	 *   A comma-separated list of navigation properties to be expanded for the newly created
+	 *   entity; since 1.78.0.<br />
+	 *   The navigation properties are requested with an additional GET request in the same
+	 *   <code>$batch</code> request as the POST request for the entity creation; the given
+	 *   <code>mParameters.headers</code> are not considered in the GET request.<br />
+	 *   <strong>Note:</strong> The following prerequisites must be fulfilled:
+	 *   <ul>
+	 *     <li>batch mode must be enabled; see constructor parameter <code>useBatch</code>,</li>
+	 *     <li>the back-end service must support the "Content ID" header,</li>
+	 *     <li>the back end must allow GET requests relative to this Content ID outside the
+	 *       changeset within the <code>$batch</code> request.</li>
+	 *   </ul>
+	 * @param {string} [mParameters.groupId]
+	 *   The ID of a request group; requests belonging to the same group will be bundled in one
+	 *   batch request
+	 * @param {Object<string,string>} [mParameters.headers]
+	 *   A map of headers
+	 * @param {array|object} [mParameters.properties]
+	 *   An array that specifies a set of properties or the entry
+	 * @param {boolean} [mParameters.refreshAfterChange]
+	 *   Whether to update all bindings after submitting this change operation, see
+	 *   {@link #setRefreshAfterChange}; if given, this overrules the model-wide
+	 *   <code>refreshAfterChange</code> flag for this operation only; since 1.46
+	 * @param {function} [mParameters.success]
+	 *   The success callback function
+	 * @param {Object<string,string>} [mParameters.urlParameters]
+	 *   A map of URL parameters
+	 *
+	 * @return {sap.ui.model.Context} A Context object that points to the newly created entry.
+	 * @throws {Error}
+	 *   If the <code>expand</code> parameter is used but the batch mode is disabled
 	 * @public
 	 */
 	ODataModel.prototype.createEntry = function(sPath, mParameters) {
-		var fnSuccess, fnError, oRequest, sUrl, sETag, oContext,
-			sKey, aUrlParams, sGroupId, sChangeSetId, bRefreshAfterChange,
-			mUrlParams, mHeaders, mRequests, vProperties, oEntity = {},
-			fnCreated,
+		var bCanonical, sChangeSetId, oContext, fnCreated, sDeepPath, fnError, sETag, sExpand,
+			sGroupId, mHeaders, sKey, sNormalizedPath, vProperties, bRefreshAfterChange, oRequest,
+			mRequests, fnSuccess, sUrl, aUrlParams, mUrlParams,
+			oEntity = {},
 			sMethod = "POST",
-			that = this, sDeepPath, sNormalizedPath, bCanonical;
+			that = this;
 
 		if (mParameters) {
 			vProperties = mParameters.properties;
@@ -5860,6 +5963,10 @@ sap.ui.define([
 			mUrlParams = mParameters.urlParameters;
 			bRefreshAfterChange = mParameters.refreshAfterChange;
 			bCanonical = mParameters.canonicalRequest;
+			sExpand = mParameters.expand;
+		}
+		if (sExpand && !this.bUseBatch) {
+			throw new Error("The 'expand' parameter is only supported if batch mode is used");
 		}
 		bCanonical = this._isCanonicalRequestNeeded(bCanonical);
 
@@ -5874,6 +5981,9 @@ sap.ui.define([
 			abort: function() {
 				if (oRequest) {
 					oRequest._aborted = true;
+					if (oRequest.expandRequest) {
+						oRequest.expandRequest._aborted = true;
+					}
 				}
 			}
 		};
@@ -5886,7 +5996,11 @@ sap.ui.define([
 		sDeepPath = that.resolveDeep(sPath, oContext);
 
 		function create() {
-			var oCreatedContext;
+			var oCreateData, oCreatedContext, oCreateResponse, oEntitySetMetadata, oExpandRequest,
+				sUID,
+				bCreateFailed = false,
+				fnErrorFromParameters = fnError,
+				fnSuccessFromParameters = fnSuccess;
 
 			var oEntityMetadata = that.oMetadata._getEntityTypeByPath(sNormalizedPath);
 			if (!oEntityMetadata) {
@@ -5913,15 +6027,65 @@ sap.ui.define([
 				}
 			}
 			//get EntitySet metadata for data storage
-			var oEntitySetMetadata = that.oMetadata._getEntitySetByType(oEntityMetadata);
-			var sUiD = "('" + uid() + "')";
-			sKey = oEntitySetMetadata.name + sUiD;
+			oEntitySetMetadata = that.oMetadata._getEntitySetByType(oEntityMetadata);
+			sUID = uid();
+			sKey = oEntitySetMetadata.name + "('" + sUID + "')";
 
 
 			if (sDeepPath && that.oMetadata._isCollection(sDeepPath)){
-				sDeepPath = sDeepPath + sUiD;
+				sDeepPath = sDeepPath + "('" + sUID + "')";
 			}
 
+			if (sExpand) {
+				mHeaders = Object.assign({}, mHeaders, {
+					"Content-ID" : sUID,
+					// skip state messages for the POST, they are requested by the following GET
+					"sap-messages" : "transientOnly"
+				});
+				fnSuccess = function (oData, oCreateResponse0) {
+					if (!oCreateData) {
+						// successful POST, wait for GET
+						oCreateData = oData;
+						oCreateResponse = oCreateResponse0;
+						return;
+					}
+					// successful GET after successful POST -> call success handler with merged data
+					// successful GET after a failed POST cannot occur
+					if (fnSuccessFromParameters) {
+						oData = Object.assign({}, oCreateData, oData);
+						fnSuccessFromParameters(oData, oCreateResponse);
+					}
+				};
+				fnError = function (oError) {
+					if (oCreateData) {
+						// failed GET after successful POST -> call success handler with the data of
+						// the POST request and mark the response with expandAfterCreateFailed=true
+						oCreateResponse.expandAfterCreateFailed = true;
+						oError.expandAfterCreateFailed = true;
+						Log.error("Entity creation was successful but expansion of navigation"
+							+ " properties failed", oError, sClassName);
+						if (fnSuccessFromParameters) {
+							fnSuccessFromParameters(oCreateData, oCreateResponse);
+						}
+						return;
+					}
+					if (!bCreateFailed) {
+						// failed POST -> remember to skip the following failed GET and call the
+						// error handler
+						bCreateFailed = true;
+						if (fnErrorFromParameters) {
+							fnErrorFromParameters(oError);
+						}
+					} else {
+						// failed GET after a failed POST -> mark the error response with
+						// expandAfterCreateFailed=true that it can be passed to requestFailed and
+						// requestCompleted event handlers
+						oError.expandAfterCreateFailed = true;
+						// reset flag, handlers may be called again when retrying the create
+						bCreateFailed = false;
+					}
+				};
+			}
 			oEntity.__metadata = {
 				type: "" + oEntityMetadata.entityType,
 				uri: that.sServiceUrl + '/' + sKey,
@@ -5944,6 +6108,17 @@ sap.ui.define([
 			sUrl = that._createRequestUrlWithNormalizedPath(sNormalizedPath, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, oEntity, sETag);
 
+			if (sExpand) {
+				oExpandRequest = that._createRequest("$" + sUID + "?"
+						+ ODataUtils._encodeURLParameters({$expand : sExpand, $select : sExpand}),
+					"/$" + sUID, "GET", that._getHeaders(undefined, true), null, undefined,
+					undefined, true);
+				oExpandRequest.withContentID = sUID;
+				oRequest.expandRequest = oExpandRequest;
+				oRequest.withContentID = sUID;
+				oEntity.__metadata.created.expandRequest = oExpandRequest;
+				oEntity.__metadata.created.withContentID = sUID;
+			}
 			oCreatedContext = that.getContext("/" + sKey, sDeepPath); // context wants a path
 			oCreatedContext.bCreated = true;
 
@@ -6429,8 +6604,7 @@ sap.ui.define([
 					sMessage = oError.xmlDoc.parseError.reason;
 					sDetails = oError.xmlDoc.parseError.srcText;
 				}
-				Log.error("error in ODataMetaModel.loaded(): " + sMessage, sDetails,
-					"sap.ui.model.odata.v2.ODataModel");
+				Log.error("error in ODataMetaModel.loaded(): " + sMessage, sDetails, sClassName);
 			});
 		}
 		return this.oMetaModel;
