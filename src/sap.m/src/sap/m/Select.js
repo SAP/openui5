@@ -1115,15 +1115,20 @@ function(
 		 * @private
 		 */
 		Select.prototype._createDialog = function() {
-			var that = this;
-			return new Dialog({
-				stretch: true,
-				ariaLabelledBy: [this.getPickerValueStateContentId(), this._getPickerHiddenLabelId()],
-				customHeader: this._getPickerHeader(),
-				beforeOpen: function() {
-					that.updatePickerHeaderTitle();
-				}
-			});
+			var that = this,
+				oHeader = this._getPickerHeader(),
+				oDialog = new Dialog({
+					stretch: true,
+					ariaLabelledBy: [this.getPickerValueStateContentId(), this._getPickerHiddenLabelId()],
+					customHeader: oHeader,
+					beforeOpen: function() {
+						that.updatePickerHeaderTitle();
+					}
+				});
+
+				oDialog._setupBarTitleAlignment(oHeader, this.getId() + "_pickerHeader");
+
+			return oDialog;
 		};
 
 		/**
