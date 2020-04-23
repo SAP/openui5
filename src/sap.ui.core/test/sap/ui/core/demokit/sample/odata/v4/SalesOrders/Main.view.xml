@@ -6,6 +6,8 @@
 	xmlns:demo="sap.ui.core.sample.common"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc">
+	<App>
+	<Page id="page" floatingFooter="true" showHeader="false">
 	<VBox>
 		<Toolbar design="Transparent">
 			<Label design="Bold" labelFor="favoriteProduct" text="Favorite product:">
@@ -472,4 +474,6 @@
 			</List>
 		</VBox>
 	</VBox>
+	</Page>
+	</App>
 </mvc:View>
