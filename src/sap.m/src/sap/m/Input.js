@@ -995,7 +995,10 @@ function(
 	 */
 	Input.prototype.ontap = function(oEvent) {
 		InputBase.prototype.ontap.call(this, oEvent);
-		this._fireValueHelpRequestForValueHelpOnly();
+
+		if (this.isValueHelpOnlyOpener(oEvent.target)) {
+			this._fireValueHelpRequestForValueHelpOnly();
+		}
 	};
 
 	/**
@@ -2742,6 +2745,18 @@ function(
 		InputBase.prototype.setShowValueStateMessage.apply(this, arguments);
 		this._updateSuggestionsPopoverValueState();
 		return this;
+	};
+
+	/**
+	 * Gets the supported openers for the valueHelpOnly.
+	 * In the context of the Input, all targets are valid.
+	 *
+	 * @protected
+	 * @param {HTMLElement|undefined} oTarget The target of the event.
+	 * @returns {Boolean} Boolean indicating if the target is a valid opener.
+	 */
+	Input.prototype.isValueHelpOnlyOpener = function (oTarget) {
+		return true;
 	};
 
 	return Input;
