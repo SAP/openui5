@@ -949,7 +949,7 @@ sap.ui.define([
 	 */
 	SuggestionsPopover.prototype._createHighlightedText = function (oItemDomRef, sInputValue, bWordMode) {
 		var sDomRefLowerText, iStartHighlightingIndex, iInputLength, iNextSpaceIndex, sChunk,
-			sText = oItemDomRef ? oItemDomRef.innerText : "",
+			sText = oItemDomRef ? oItemDomRef.textContent : "",
 			sFormattedText = "";
 
 		if (!SuggestionsPopover._wordStartsWithValue(sText, sInputValue)) {
