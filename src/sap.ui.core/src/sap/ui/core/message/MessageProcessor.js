@@ -66,7 +66,7 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/util/uid"],
 	/**
 	 * The <code>messageChange</code> event is fired when the messages are changed.
 	 *
-	 * @name sap.ui.core.messages.MessageProcessor#messageChange
+	 * @name sap.ui.core.message.MessageProcessor#messageChange
 	 * @event
 	 * @param {sap.ui.base.Event} oEvent
 	 * @public
