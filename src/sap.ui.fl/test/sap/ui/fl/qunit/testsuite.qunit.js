@@ -302,17 +302,18 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/storageResultDisassemble"]
 				}
 			},
-			"apply/_internal/extensionPoint/Processor": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/extensionPointProcessor"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
-					}
-				}
-			},
+			// TODO: temporarily disabled due to customer incident: 275287
+			// "apply/_internal/extensionPoint/Processor": {
+			// 	group: "Apply Internal",
+			// 	coverage: {
+			// 		only: ["sap/ui/fl/extensionPointProcessor"]
+			// 	},
+			// 	ui5: {
+			// 		resourceroots: {
+			// 			"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
+			// 		}
+			// 	}
+			// },
 			"write/api/ChangesWriteAPI": {
 				group: "Write API",
 				coverage: {
@@ -973,18 +974,19 @@ sap.ui.define([
 					only: ["sap/ui/fl/registry/ChangeTypeMetadata"]
 				}
 			},
-			"registry/ExtensionPointRegistry": {
-				group: "registry",
-				coverage: {
-					only: ["sap/ui/fl/registry/ExtensionPointRegistry"]
-				},
-				ui5: {
-					resourceroots: {
-						testComponent: "test-resources/sap/ui/fl/qunit/testComponent",
-						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
-					}
-				}
-			},
+			// TODO: temporarily disabled due to customer incident: 275287
+			// "registry/ExtensionPointRegistry": {
+			// 	group: "registry",
+			// 	coverage: {
+			// 		only: ["sap/ui/fl/registry/ExtensionPointRegistry"]
+			// 	},
+			// 	ui5: {
+			// 		resourceroots: {
+			// 			testComponent: "test-resources/sap/ui/fl/qunit/testComponent",
+			// 			"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
+			// 		}
+			// 	}
+			// },
 			"registry/Settings": {
 				group: "registry",
 				coverage: {
