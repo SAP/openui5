@@ -12,6 +12,9 @@ sap.ui.define([
 
 	/**
 	 * Descriptor change merger for change type <code>appdescr_fiori_setRegistrationIds</code>.
+	 * Sets and overwrites new array for <code>sap.fiori/registrationIds</code>. Creates new <code>sap.fiori</code> node if necesssary.
+	 *
+	 * Only available during build time {@link sap.ui.fl.apply._internal.changes.descriptor.RegistrationBuild}.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.fiori.SetRegistrationIds
 	 * @experimental
@@ -19,12 +22,13 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal
 	 */
-	var SetRegistrationIds = {
+	var SetRegistrationIds = /** @lends sap.ui.fl.apply._internal.changes.descriptor.fiori.SetRegistrationIds */ {
 
 		/**
-		 * Sets and overwrites new array for sap.fiori/registrationIds. Creates new sap.fiori node if necesssary.
+		 * Method to apply the <code>appdescr_app_setRegistrationIds</code> change to the manifest.
 		 * @param {object} oManifest Original manifest
 		 * @param {object} oChange Change with type <code>appdescr_fiori_setRegistrationIds</code>
+		 * @param {Arrayy} oChange.content.registrationIds Registration ID
 		 * @returns {object} Updated manifest with changed registrationIds
 		 *
 		 * @private

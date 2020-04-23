@@ -39,6 +39,8 @@ sap.ui.define([
 
 	/**
 	 * Descriptor change merger for change type <code>appdescr_ui5_addLibraries</code>.
+	 * Loops over one change which might contain several libraries.
+	 * If one library already exists, merge it, else add new library to manifest.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.ui5.AddLibrary
 	 * @experimental
@@ -50,11 +52,10 @@ sap.ui.define([
 	var AddLibrary = {
 
 		/**
-		 * Loops over one change which might contain several libraries.
-		 * If one library already exists, merge it, else add new library to manifest.
-		 *
+		 * Method to apply the <code>appdescr_ui5_addLibraries</code> change to the manifest.
 		 * @param {object} oManifest Original manifest
 		 * @param {object} oChange Change with type <code>appdescr_ui5_addLibraries</code>
+		 * @param {object} oChange.content.libraries Change content containing libraries names and minVersion
 		 * @returns {object} Updated manifest with merged dependencies
 		 *
 		 * @private

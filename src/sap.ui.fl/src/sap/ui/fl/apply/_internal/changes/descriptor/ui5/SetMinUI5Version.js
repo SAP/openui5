@@ -13,6 +13,10 @@ sap.ui.define([
 
 	/**
 	 * Descriptor change merger for change type <code>appdescr_ui5_setMinUI5Version</code>.
+	 * Sets minUI5Version to manifest node <code>sap.ui5/dependencies/minUI5Version</code>.
+	 * Only updates minUI5Version if the new version is higher than the old version.
+	 *
+	 * Only available during build time {@link sap.ui.fl.apply._internal.changes.descriptor.RegistrationBuild}.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.ui5.SetMinUI5Version
 	 * @experimental
@@ -20,14 +24,14 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal
 	 */
-	var SetMinUI5Version = {
+	var SetMinUI5Version = /** @lends sap.ui.fl.apply._internal.changes.descriptor.ui5.SetMinUI5Version */ {
 
 		/**
-		 * Sets minUI5Version to manifest node <code>sap.ui5/dependencies/minUI5Version</code>.
-		 * Only updates minUI5Version if the new version is higher than the old version.
+		 * Method to apply the <code>appdescr_ui5_setMinUI5Version</code> change to the manifest.
 		 *
 		 * @param {object} oManifest Original manifest
 		 * @param {object} oChange Change with type <code>appdescr_ui5_setMinUI5Version</code>
+		 * @param {string} oChange.content.minUI5Version New minUI5Version
 		 * @returns {object} Updated manifest with updated minUI5Version
 		 *
 		 * @private
