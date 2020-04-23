@@ -69,6 +69,71 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("sendRequest success with stringified response", function (assert) {
+			var sUrl = "anUrl";
+			var sMethod = "POST";
+			var mPropertyBag = {
+				applyConnector: {
+					xsrfToken: "123"
+				}
+			};
+
+			var fnMockedBackendCall = function() {
+				var oResult = {};
+				var oResponse = {response: '{"foo": "test","hugo": "otherTest"}'};
+				if (oResponse.response) {
+					oResult.response = typeof oResponse.response === "string" ? JSON.parse(oResponse.response) : oResponse.response;
+				}
+				return Promise.resolve(oResult);
+			};
+
+			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest").callsFake(fnMockedBackendCall);
+			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).then(function (oResponse) {
+				assert.deepEqual(oResponse, {
+					response : {
+						foo: "test",
+						hugo: "otherTest"
+					}
+				}, "correct parsed response is returned");
+				assert.ok(oStubSendRequest.calledWith(sUrl, sMethod, mPropertyBag), "there is one request sent");
+			});
+		});
+
+		QUnit.test("sendRequest success with parsed response", function (assert) {
+			var sUrl = "anUrl";
+			var sMethod = "POST";
+			var mPropertyBag = {
+				applyConnector: {
+					xsrfToken: "123"
+				}
+			};
+
+			var fnMockedBackendCall = function() {
+				var oResult = {};
+				var oResponse = {
+					response : {
+						foo: "test",
+						hugo: "otherTest"
+					}
+				};
+				if (oResponse.response) {
+					oResult.response = typeof oResponse.response === "string" ? JSON.parse(oResponse.response) : oResponse.response;
+				}
+				return Promise.resolve(oResult);
+			};
+
+			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest").callsFake(fnMockedBackendCall);
+			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).then(function (oResponse) {
+				assert.deepEqual(oResponse, {
+					response : {
+						foo:"test",
+						hugo:"otherTest"
+					}
+				}, "correct parsed response is returned");
+				assert.ok(oStubSendRequest.calledWith(sUrl, sMethod, mPropertyBag), "there is one request sent");
+			});
+		});
+
 		QUnit.test("sendRequest failed with error code different from 403", function (assert) {
 			var sUrl = "anUrl";
 			var sMethod = "POST";
