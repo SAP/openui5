@@ -22,7 +22,7 @@
 		markFavorite="true"
 		numberState="Success"
 		backgroundDesign="Translucent"
-		class="sapUiResponsivePadding--header" >
+		class="sapUiResponsivePadding--header">
 		<ObjectAttribute
 			title="Manufacturer"
 			text="{SupplierName}"/>
@@ -37,7 +37,7 @@
 				id="itb1"
 				selectedKey="key3"
 				upperCase="true"
-				class="sapUiResponsiveContentPadding">
+				class="sapUiResponsivePadding--header sapUiResponsivePadding--content">
 				<items>
 				<IconTabFilter
 					text="Info"
