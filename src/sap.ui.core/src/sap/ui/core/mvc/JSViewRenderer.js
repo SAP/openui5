@@ -35,7 +35,7 @@ sap.ui.define(['./ViewRenderer'],
 
 		oControl.getContent().forEach(rm.renderControl, rm);
 
-		rm.close();
+		rm.close("div");
 	};
 
 
