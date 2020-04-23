@@ -17,6 +17,18 @@ function(
 		return sComponentName;
 	}
 
+	function getFlAsyncHint(oAsyncHints) {
+		var oFlAsyncHint;
+
+		oAsyncHints.requests.some(function(oAsyncHint) {
+			if (oAsyncHint.name === "sap.ui.fl.changes") {
+				oFlAsyncHint = oAsyncHint;
+			}
+		});
+
+		return oFlAsyncHint;
+	}
+
 	/**
 	 * Provides utility functions for handling manifests; All function work with Manifest Objects or raw manifests
 	 *
@@ -52,18 +64,25 @@ function(
 			return appendComponentToReference(Utils.getAppIdFromManifest(oManifest));
 		},
 
-		getCacheKeyFromAsyncHints: function(oAsyncHints, sReference) {
+		getCacheKeyFromAsyncHints: function(oAsyncHints) {
 			if (oAsyncHints && oAsyncHints.requests && Array.isArray(oAsyncHints.requests)) {
-				var oFlAsyncHint;
-				oAsyncHints.requests.some(function(oAsyncHint) {
-					if (oAsyncHint.name === "sap.ui.fl.changes" && oAsyncHint.reference === sReference) {
-						oFlAsyncHint = oAsyncHint;
-					}
-				});
+				var oFlAsyncHint = getFlAsyncHint(oAsyncHints);
 				if (oFlAsyncHint) {
 					return oFlAsyncHint.cachebusterToken || "<NO CHANGES>";
 				}
 			}
+		},
+
+		getChangeManifestFromAsyncHints: function(oAsyncHints) {
+			// whenever there is a back end providing a fl async hint it is also not necessary to merge on client side
+			if (oAsyncHints && oAsyncHints.requests && Array.isArray(oAsyncHints.requests)) {
+				var oFlAsyncHint = getFlAsyncHint(oAsyncHints);
+				if (oFlAsyncHint) {
+					return false;
+				}
+			}
+
+			return true;
 		},
 
 		getBaseComponentNameFromManifest: function(oManifest) {

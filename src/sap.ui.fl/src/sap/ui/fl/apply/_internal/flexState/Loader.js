@@ -60,7 +60,7 @@ sap.ui.define([
 				reference: mPropertyBag.reference,
 				appVersion: Utils.getAppVersionFromManifest(mPropertyBag.manifest) || Utils.DEFAULT_APP_VERSION,
 				componentName: sComponentName,
-				cacheKey: ManifestUtils.getCacheKeyFromAsyncHints(mPropertyBag.asyncHints, mPropertyBag.reference),
+				cacheKey: ManifestUtils.getCacheKeyFromAsyncHints(mPropertyBag.asyncHints),
 				siteId: Utils.getSiteIdByComponentData(mPropertyBag.componentData),
 				appDescriptor: mPropertyBag.manifest.getRawJson ? mPropertyBag.manifest.getRawJson() : mPropertyBag.manifest,
 				draftLayer: mPropertyBag.draftLayer

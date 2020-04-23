@@ -42,19 +42,32 @@ sap.ui.define([
 		 * @returns {Promise<object>} - Processed manifest
 		 */
 		preprocessManifest: function(oManifest, oConfig) {
-			// Measurement for the whole flex processing until the VariantModel is attached to the component; this does not include actual CodeExt or UI change applying
-			Measurement.start("flexProcessing", "Complete flex processing", ["sap.ui.fl"]);
-
 			// stop processing if the component is not of the type application or component ID is missing
 			if (!Utils.isApplication(oManifest, true) || !oConfig.id) {
 				return Promise.resolve(oManifest);
 			}
+
+			Measurement.start("flexStateInitialize", "Initialization of flex state", ["sap.ui.fl"]);
 
 			var oComponentData = oConfig.componentData || {};
 			var sReference = ManifestUtils.getFlexReference({
 				manifest: oManifest,
 				componentData: oComponentData
 			});
+
+			// in case the asyncHints already mention that there is no change for the manifest, just trigger the loading
+			if (!ManifestUtils.getChangeManifestFromAsyncHints(oConfig.asyncHints)) {
+				FlexState.initialize({
+					componentData: oComponentData,
+					asyncHints: oConfig.asyncHints,
+					rawManifest: oManifest,
+					componentId: oConfig.id,
+					reference: sReference,
+					partialFlexState: true
+				}).then(Measurement.end.bind(undefined, "flexStateInitialize"));
+
+				return Promise.resolve(oManifest);
+			}
 
 			return FlexState.initialize({
 				componentData: oComponentData,
@@ -64,10 +77,15 @@ sap.ui.define([
 				reference: sReference,
 				partialFlexState: true
 			}).then(function() {
+				Measurement.end("flexStateInitialize");
+				Measurement.start("flexAppDescriptorMerger", "Client side app descriptor merger", ["sap.ui.fl"]);
 				return ApplyStrategyFactory.getRuntimeStrategy();
 			}).then(function(RuntimeStrategy) {
 				var aAppDescriptorChanges = FlexState.getAppDescriptorChanges(sReference);
 				return Applier.applyChanges(oManifest, aAppDescriptorChanges, RuntimeStrategy);
+			}).then(function(oManifest) {
+				Measurement.end("flexAppDescriptorMerger");
+				return oManifest;
 			});
 		}
 	};
