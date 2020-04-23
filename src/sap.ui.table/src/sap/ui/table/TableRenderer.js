@@ -1136,14 +1136,14 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			if (bIsLastColumn) {
 				rm.class("sapUiTableCellLast");
 			}
+			if (bIsFirstColumn && TableUtils.Grouping.isTreeMode(oTable)) {
+				rm.class("sapUiTableCellFlex"); // without flex, icon pushes contents too wide
+			}
 
 			rm.openEnd();
 
 			rm.openStart("div");
 			rm.class("sapUiTableCellInner");
-			if (bIsFirstColumn && TableUtils.Grouping.isTreeMode(oTable)) {
-				rm.class("sapUiTableCellFlex"); // without flex, icon pushes contents too wide
-			}
 
 			oTable._getRowMode().renderCellContentStyles(rm);
 
