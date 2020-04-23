@@ -5,19 +5,19 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/changeHandler/ChangeHandlerMediator",
 	"sap/base/Log",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/base/util/ObjectPath"
 ], function (
 	Base,
 	ChangeHandlerMediator,
 	Log,
-	merge
+	merge,
+	ObjectPath
 ) {
 	"use strict";
 
 	function getChangeHandlerCreateFunction(mChangeHandlerSettings) {
-		return mChangeHandlerSettings
-			&& mChangeHandlerSettings.content
-			&& mChangeHandlerSettings.content.createFunction;
+		return ObjectPath.get("content.createFunction", mChangeHandlerSettings);
 	}
 
 	function checkChangeDefinition(oChangeDefinition, mChangeHandlerSettings) {
@@ -32,33 +32,61 @@ sap.ui.define([
 		return false;
 	}
 
+	function getFieldIdForFormElement(sFormElementId) {
+		return sFormElementId + "-field";
+	}
+
+	function getDelegateControlForPropertyAndLabel(mDelegatePropertyBag, oDelegate) {
+		var mDelegateSettings = merge({}, mDelegatePropertyBag);
+		mDelegateSettings.fieldSelector.id = getFieldIdForFormElement(mDelegateSettings.fieldSelector.id);
+
+		return oDelegate.createControlForProperty(mDelegateSettings)
+			.then(function(mSpecificControlInfo) {
+				var sNewFieldId = mDelegatePropertyBag.modifier.getId(mSpecificControlInfo.control);
+				mDelegatePropertyBag.labelFor = sNewFieldId;
+
+				return oDelegate.createLabel(mDelegatePropertyBag).then(function(oLabel) {
+					//harmonize return values for mediator create function and delegate:
+					return {
+						label: oLabel,
+						control: mSpecificControlInfo.control,
+						valueHelp: mSpecificControlInfo.valueHelp
+					};
+				});
+			});
+	}
+
 	function getControlsFromDelegate(mDelegate, mPropertyBag) {
+		var mDelegatePropertyBag = merge({
+			aggregationName: "formElements",
+			payload: mDelegate.payload
+		}, mPropertyBag);
+		var oDelegate;
+
 		return new Promise(function (resolve) {
 			sap.ui.require([mDelegate.name], resolve);
-		}).then(function (oDelegate) {
-			var mDelegatePropertyBag = merge({
-				aggregationName: "formElements",
-				payload: mDelegate.payload
-			}, mPropertyBag);
-
-			return oDelegate.createControlForProperty(mDelegatePropertyBag)
-				.then(function (mField) {
-					var sNewFieldId = mPropertyBag.modifier.getId(mField.control);
-					mDelegatePropertyBag.labelFor = sNewFieldId;
-
-					return oDelegate.createLabel(mDelegatePropertyBag).then(function (oLabel) {
-						//harmonize return values for mediator create function and delegate:
-						return {
-							label: oLabel,
-							control: mField.control,
-							valueHelp: mField.valueHelp
-						};
-					});
-			});
+		})
+			.then(function (oDelegateModule) {
+				oDelegate = oDelegateModule;
+			})
+			.then(function() {
+				if (oDelegate.createLayout) {
+					return oDelegate.createLayout(mDelegatePropertyBag);
+				}
+			})
+			.then(function(mLayoutControlInfo) {
+				if (ObjectPath.get("control", mLayoutControlInfo)) {
+					mLayoutControlInfo.layoutControl = true;
+					return mLayoutControlInfo;
+				}
+				return getDelegateControlForPropertyAndLabel(mDelegatePropertyBag, oDelegate);
 		});
 	}
 
 	function getControlsFromChangeHandlerCreateFunction(oChangeDefinition, mPropertyBag) {
+		var mCreateSettings = merge({}, mPropertyBag);
+		mCreateSettings.fieldSelector.id = getFieldIdForFormElement(mCreateSettings.fieldSelector.id);
+
 		return ChangeHandlerMediator.getChangeHandlerSettings({
 			"scenario": "addODataFieldWithLabel",
 			"oDataServiceVersion": oChangeDefinition.content && oChangeDefinition.content.oDataServiceVersion
@@ -66,7 +94,7 @@ sap.ui.define([
 			.then(function (mChangeHandlerSettings) {
 				if (checkChangeDefinition(oChangeDefinition, mChangeHandlerSettings)) {
 					var fnChangeHandlerCreateFunction = getChangeHandlerCreateFunction(mChangeHandlerSettings);
-					return fnChangeHandlerCreateFunction(mPropertyBag.modifier, mPropertyBag);
+					return fnChangeHandlerCreateFunction(mCreateSettings.modifier, mCreateSettings);
 				} else {
 					Log.error("Change does not contain sufficient information to be applied or ChangeHandlerMediator could not be retrieved: [" + oChangeDefinition.layer + "]"
 						+ oChangeDefinition.namespace + "/"
@@ -112,13 +140,11 @@ sap.ui.define([
 		var oAppComponent = mPropertyBag.appComponent;
 		var oChangeContent = oChangeDefinition.content;
 		var mFieldSelector = oChangeContent.newFieldSelector;
-		var mSmartFieldSelector = merge({}, oChangeContent.newFieldSelector);
-		mSmartFieldSelector.id = mSmartFieldSelector.id + "-field";
 		var sBindingPath = oChangeContent.bindingPath;
 		var mCreateProperties = {
 			appComponent: mPropertyBag.appComponent,
 			view: mPropertyBag.view,
-			fieldSelector: mSmartFieldSelector,
+			fieldSelector: mFieldSelector,
 			bindingPath: sBindingPath,
 			modifier: mPropertyBag.modifier,
 			element: oForm
@@ -138,21 +164,30 @@ sap.ui.define([
 			: getControlsFromChangeHandlerCreateFunction(oChangeDefinition, mCreateProperties);
 
 		return oWaitForInnerControls
-				.then(function (mInnerControls) {
-					var oCreatedFormElement = mPropertyBag.modifier.createControl("sap.ui.layout.form.FormElement", oAppComponent, oView, mFieldSelector);
+			.then(function(mInnerControls) {
+				var oCreatedFormElement;
+
+				// "layoutControl" property is present only when the control is returned from Delegate.createLayout()
+				if (!mInnerControls.layoutControl) {
+					oCreatedFormElement = mPropertyBag.modifier.createControl("sap.ui.layout.form.FormElement", oAppComponent, oView, mFieldSelector);
 					mPropertyBag.modifier.insertAggregation(oCreatedFormElement, "label", mInnerControls.label, 0, oView);
 					mPropertyBag.modifier.insertAggregation(oCreatedFormElement, "fields", mInnerControls.control, 0, oView);
-					var oParentFormContainer = oChange.getDependentControl("parentFormContainer", mPropertyBag);
-					mPropertyBag.modifier.insertAggregation(oParentFormContainer, "formElements", oCreatedFormElement, iIndex, oView);
+				} else {
+					oCreatedFormElement = mInnerControls.control;
+				}
 
-					if (mInnerControls.valueHelp) {
-						mPropertyBag.modifier.insertAggregation(oParentFormContainer, "dependents", mInnerControls.valueHelp, 0, oView);
-						var oValueHelpSelector = mPropertyBag.modifier.getSelector(mPropertyBag.modifier.getId(mInnerControls.valueHelp), oAppComponent);
-						oRevertData.valueHelpSelector = oValueHelpSelector;
-					}
-					oChange.setRevertData(oRevertData);
-					return true;
-				});
+				var oParentFormContainer = oChange.getDependentControl("parentFormContainer", mPropertyBag);
+				mPropertyBag.modifier.insertAggregation(oParentFormContainer, "formElements", oCreatedFormElement, iIndex, oView);
+
+				if (mInnerControls.valueHelp) {
+					mPropertyBag.modifier.insertAggregation(oParentFormContainer, "dependents", mInnerControls.valueHelp, 0, oView);
+					var oValueHelpSelector = mPropertyBag.modifier.getSelector(mPropertyBag.modifier.getId(mInnerControls.valueHelp), oAppComponent);
+					oRevertData.valueHelpSelector = oValueHelpSelector;
+				}
+
+				oChange.setRevertData(oRevertData);
+				return true;
+			});
 	};
 	/**
 	 * Completes the change by adding change handler specific content

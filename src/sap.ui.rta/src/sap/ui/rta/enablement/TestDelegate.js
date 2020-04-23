@@ -2,10 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/util/isPlainObject"
+	"sap/base/util/isPlainObject",
+	"sap/base/util/merge"
 ],
 function(
-	isPlainObject
+	isPlainObject,
+	merge
 ) {
 	"use strict";
 
@@ -97,7 +99,7 @@ function(
 						&& isPlainObject(mPropertyBag.fieldSelector) && isAString(mPropertyBag.fieldSelector, "id");
 
 					if (bParametersValid) {
-						return Promise.all([
+						var aPromises = [
 							mPropertyBag.modifier.createControl("sap.m.Text",
 								mPropertyBag.appComponent,
 								mPropertyBag.view,
@@ -106,43 +108,81 @@ function(
 									text: "{" + mPropertyBag.bindingPath + "}"
 								},
 								true/*async*/
-							),
-							mPropertyBag.modifier.createControl("sap.ui.core.Element",
+							)
+						];
+						if (mPropertyBag.payload.valueHelpId) {
+							aPromises.push(mPropertyBag.modifier.createControl("sap.ui.core.Element",
 								mPropertyBag.appComponent,
 								mPropertyBag.view,
 								{
-									id: mPropertyBag.modifier.getId(mPropertyBag.view) + "--valueHelp",
+									id: mPropertyBag.modifier.getId(mPropertyBag.view) + "--" + mPropertyBag.payload.valueHelpId,
 									idIsLocal: true
 								},
 								true
-							)
-						]).then(function (aControls) {
-							return {
-								control: aControls[0],
-								valueHelp: aControls[1]
-							};
-						});
+							));
+						}
+						return Promise.all(aPromises)
+							.then(function(aControls) {
+								return {
+									control: aControls[0],
+									valueHelp: aControls[1]
+								};
+							});
 					}
 				});
 		},
 
 		/**
+		 *	@params {string} mPropertyBag.payload.layoutType - Control type for layout
+		 *	@params {string} mPropertyBag.payload.aggregation - Layout aggregation for field control
+		 *	@params {string} [mPropertyBag.payload.labelAggregation] - Layout aggregation for label control if applicable
+		 *	@params {boolean} [mPropertyBag.payload.useCreateLayout] - Indicates if only createLayout() should be used for control creation
+		 *
+		 *	@override
 		 *	@inheritdoc
 		 */
-		createLayout: function (mPropertyBag) {
-			return Promise.resolve()
-				.then(function () {
-					var bParametersValid =
-						checkCommonParametersForControl(mPropertyBag)
-						&& mPropertyBag.fieldSelector && typeof mPropertyBag.fieldSelector === "object" && typeof mPropertyBag.fieldSelector.id === "string";
+		createLayout: function(mPropertyBag) {
+			var bParametersValid =
+				checkCommonParametersForControl(mPropertyBag)
+				&& mPropertyBag.fieldSelector && typeof mPropertyBag.fieldSelector === "object" && typeof mPropertyBag.fieldSelector.id === "string";
 
-					if (bParametersValid) {
-						return {
-							control: {},
-							valueHelp: {}
-						};
+			if (bParametersValid) {
+				return new Promise(function(resolve) {
+					if (!mPropertyBag.payload.useCreateLayout) {
+						return resolve();
 					}
+					var oLayout;
+					var oValueHelp;
+					var mLayoutSettings = merge({}, mPropertyBag);
+					mLayoutSettings.fieldSelector.id += "-field";
+
+					TestDelegate.createControlForProperty(mLayoutSettings)
+						.then(function(mSpecificControlInfo) {
+							oValueHelp = mSpecificControlInfo.valueHelp;
+							oLayout = mLayoutSettings.modifier.createControl(mLayoutSettings.payload.layoutType, mLayoutSettings.appComponent, mLayoutSettings.view, mPropertyBag.fieldSelector);
+							mLayoutSettings.modifier.insertAggregation(oLayout, mLayoutSettings.payload.aggregation, mSpecificControlInfo.control, 0, mLayoutSettings.view);
+
+							// some layout controls do not require a label control
+							if (mLayoutSettings.payload.labelAggregation) {
+								var mCreateLabelInfo = Object.assign({
+									labelFor: mLayoutSettings.modifier.getId(mSpecificControlInfo.control)
+								}, mLayoutSettings);
+								return TestDelegate.createLabel(mCreateLabelInfo);
+							}
+						})
+						.then(function(oLabel) {
+							if (oLabel) {
+								mLayoutSettings.modifier.insertAggregation(oLayout, mLayoutSettings.payload.labelAggregation, oLabel, 0, mLayoutSettings.view);
+							}
+						})
+						.then(function() {
+							resolve({
+								control: oLayout,
+								valueHelp: oValueHelp
+							});
+						});
 				});
+			}
 		}
 	};
 

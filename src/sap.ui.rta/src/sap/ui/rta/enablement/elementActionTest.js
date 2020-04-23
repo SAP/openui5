@@ -216,7 +216,7 @@ function (
 									assert.equal(aAddActions.length, 1, "there should be only one aggregation with the possibility to do an add " + mOptions.action.name[1] + " action");
 									oAggregationOverlay = this.oControlOverlay.getAggregationOverlay(aAddActions[0].aggregation);
 									oElementDesignTimeMetadata = oAggregationOverlay.getDesignTimeMetadata();
-									sCommandName = "addODataProperty"; //TODO cleanup
+									sCommandName = "addDelegateProperty";
 								} else if (oResponsibleElement) {
 									if (mOptions.action.name === "reveal") {
 										this.oControl = mOptions.action.revealedElement(this.oView);
@@ -229,7 +229,6 @@ function (
 										resolve(this.oControl.getMetadata().loadDesignTime(this.oControl));
 									}
 								}
-
 								resolve();
 							}.bind(this));
 						}.bind(this));
