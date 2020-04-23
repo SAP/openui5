@@ -1910,6 +1910,26 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("set a selected item asynchronously", function(assert) {
+		var oVDFItem = new ViewSettingsFilterItem({
+			key: "item"
+		});
+		this.oVSD.addFilterItem(oVDFItem);
+
+		var oPreSelectKeys = {
+			"item": {
+				"subItem": true
+			}
+		};
+
+		this.oVSD.setSelectedFilterCompoundKeys(oPreSelectKeys);
+		oVDFItem.addItem(new ViewSettingsItem({
+			key: "subItem"
+		}));
+
+		assert.deepEqual(this.oVSD.getSelectedFilterCompoundKeys(), oPreSelectKeys, "there is a selected item");
+	});
+
 	//BCP: 1570899196
 	QUnit.test("removeFilterItem works with index as a parameter", function(assert) {
 		oVsdConfig.addFilterItems(this.oVSD);
