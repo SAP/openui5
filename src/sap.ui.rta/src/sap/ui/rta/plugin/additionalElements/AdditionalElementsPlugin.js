@@ -522,6 +522,7 @@ sap.ui.define([
 					return fnGetActionData(oAction, oDesignTimeMetadata)
 						.then(function (mAction) {
 							if (mAction) {
+								mAction.addPropertyActionData.relevantContainer = mParents.relevantContainer;
 								if (!oReturn[mAction.aggregationName]) {
 									oReturn[mAction.aggregationName] = {};
 								}
@@ -1151,8 +1152,6 @@ sap.ui.define([
 					}
 
 					if (mActions.addODataProperty) {
-						mActions.addODataProperty.relevantContainer = oElementOverlay.getRelevantContainer(!bOverlayIsSibling);
-
 						oAddPropertyPromise = this._waitForChangeHandlerSettings(mActions.addODataProperty.action)
 							.then(function(mChangeHandlerSettings) {
 								// No dialog elements for metadata with changeHandlerSettings and without createFunction
