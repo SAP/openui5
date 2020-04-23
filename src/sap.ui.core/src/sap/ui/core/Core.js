@@ -88,7 +88,7 @@ sap.ui.define([
 
 	"use strict";
 
-	/*global Promise, XMLHttpRequest */
+	/*global Map, Promise */
 
 	/**
 	 * Executes an 'eval' for its arguments in the global context (without closure variables).
@@ -1676,16 +1676,33 @@ sap.ui.define([
 
 	}
 
+	/**
+	 * Map of library manifests keyed by library names.
+	 *
+	 * If the manifest was loaded but could not be parsed, <code>null</code> will be stored.
+	 * @type {Map<string,object>}
+	 * @private
+	 */
+	var mLibraryManifests = new Map();
+
 	function getManifest(lib) {
+		if ( mLibraryManifests.has(lib) ) {
+			return mLibraryManifests.get(lib);
+		}
+
 		var manifestModule = lib.replace(/\./g, '/') + '/manifest.json';
 
-		if ( !!sap.ui.loader._.getModuleState(manifestModule) ) {
+		if ( sap.ui.loader._.getModuleState(manifestModule) ) {
 
-			return LoaderExtensions.loadResource(manifestModule, {
+			var oManifest = LoaderExtensions.loadResource(manifestModule, {
 				dataType: 'json',
 				async: false, // always sync as we are sure to load from preload cache
 				failOnError: false
 			});
+
+			mLibraryManifests.set(lib, oManifest);
+
+			return oManifest;
 		}
 	}
 
@@ -2544,6 +2561,35 @@ sap.ui.define([
 			sLocale = undefined;
 		}
 
+		/**
+		 *
+		 * @param {Object} vInfo bundle information. Can be:
+		 * <ul>
+		 *     <li>false - library has no resource bundle</li>
+		 *     <li>true|null|undefined - use default settings: bundle is 'messageBundle.properties',
+		 *       fallback and supported locales are not defined (defaulted by ResourceBundle)</li>
+		 *     <li>typeof string - string is the url of the bundle,
+		 *       fallback and supported locales are not defined (defaulted by ResourceBundle)</li>
+		 *     <li>typeof object - object can contain bundleUrl, supportedLocales, fallbackLocale</li>
+		 * </ul>
+		 * @returns {Object} bundle information
+		 */
+		function normalizeBundleInfo(vInfo) {
+			if ( vInfo == null || vInfo === true ) {
+				return {
+					bundleUrl: "messagebundle.properties"
+				};
+			}
+			if ( typeof vInfo === "string" ) {
+				return {
+					bundleUrl: vInfo
+				};
+			}
+			if ( typeof vInfo === "object" ) {
+				return vInfo;
+			}
+			// return undefined
+		}
 
 		assert((sLibraryName === undefined && sLocale === undefined) || typeof sLibraryName === "string", "sLibraryName must be a string or there is no argument given at all");
 		assert(sLocale === undefined || typeof sLocale === "string", "sLocale must be a string or omitted");
@@ -2558,10 +2604,13 @@ sap.ui.define([
 			if ( oManifest && Version(oManifest._version).compareTo("1.9.0") >= 0 ) {
 				vI18n = oManifest["sap.ui5"] && oManifest["sap.ui5"].library && oManifest["sap.ui5"].library.i18n;
 			} // else vI18n = undefined
+			vI18n = normalizeBundleInfo(vI18n);
 
-			if (vI18n !== false) {
+			if (vI18n) {
 				vResult = ResourceBundle.create({
-					url : getModulePath(sLibraryName + "/", (typeof vI18n === "string" ? vI18n : 'messagebundle.properties')),
+					url : getModulePath(sLibraryName + "/", vI18n.bundleUrl),
+					supportedLocales: vI18n.supportedLocales,
+					fallbackLocale: vI18n.fallbackLocale,
 					locale : sLocale,
 					async: bAsync
 				});
