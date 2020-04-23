@@ -3935,7 +3935,8 @@ sap.ui.define([
 		oInputValueHelpOnly.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		oInputValueHelpOnly.ontap();
+		qutils.triggerTouchEvent("tap", oInputValueHelpOnly._$input[0]);
+
 		this.clock.tick(1000);
 		sap.ui.getCore().applyChanges();
 
