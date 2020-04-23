@@ -4,26 +4,19 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/requireAsync",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ApplyUtil",
 	"sap/base/Log"
 ], function (
+	requireAsync,
 	ApplyUtil,
 	Log
 ) {
 	"use strict";
 
-	//TODO: make sap.ui.fl.Utils.requireAsync a single file util and call it here
-	function loadLazy(sPath) {
-		return new Promise(function (resolve) {
-			sap.ui.require([sPath], function(Registration) {
-				resolve(Registration);
-			});
-		});
-	}
-
 	var BuildStrategy = {
 		registry: function() {
-			return loadLazy("sap/ui/fl/apply/_internal/changes/descriptor/RegistrationBuild");
+			return requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/RegistrationBuild");
 		},
 		handleError: function (oError) {
 			throw oError;
@@ -49,7 +42,7 @@ sap.ui.define([
 
 	var RuntimeStrategy = {
 		registry: function() {
-			return loadLazy("sap/ui/fl/apply/_internal/changes/descriptor/Registration");
+			return requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/Registration");
 		},
 		handleError: function (oError) {
 			Log.error(oError);

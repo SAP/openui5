@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/UnstashControl",
 	"sap/ui/fl/changeHandler/AddXML",
 	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
+	"sap/ui/fl/requireAsync",
 	"sap/base/Log"
 ], function(
 	Utils,
@@ -35,6 +36,7 @@ sap.ui.define([
 	UnstashControl,
 	AddXML,
 	AddXMLAtExtensionPoint,
+	requireAsync,
 	Log
 ) {
 	"use strict";
@@ -146,7 +148,7 @@ sap.ui.define([
 		var sSkipNext = "ChangeRegistry._registerChangeHandlersForControl.skip_next_then";
 
 		if (typeof oChangeHandlers === "string") {
-			oPromise = Utils.requireAsync(oChangeHandlers + ".flexibility")
+			oPromise = requireAsync(oChangeHandlers + ".flexibility")
 			.catch(function(oError) {
 				Log.error("Flexibility change handler registration failed.\nControlType: " + sControlType + "\n" + oError.message);
 				return Promise.resolve(sSkipNext); // continue without a registration
@@ -181,7 +183,7 @@ sap.ui.define([
 		if (typeof sChangeHandlerModulePath !== "string") {
 			return new Utils.FakePromise(undefined); // continue without a registration
 		}
-		return Utils.requireAsync(sChangeHandlerModulePath)
+		return requireAsync(sChangeHandlerModulePath)
 			.then(function(oChangeHandlers) {
 				var vChangeHandler = oChangeHandlers[sChangeType];
 				if (!vChangeHandler) {
