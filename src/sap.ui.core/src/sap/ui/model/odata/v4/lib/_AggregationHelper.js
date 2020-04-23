@@ -133,8 +133,8 @@ sap.ui.define([
 		 *   A map from groupable property names to empty objects
 		 * @param {string[]} [oAggregation.groupLevels]
 		 *   A list of groupable property names (which may, but don't need to be repeated in
-		 *   <code>oAggregation.group</code>) used to determine group levels; only a single group
-		 *   level is supported
+		 *   <code>oAggregation.group</code>) used to determine group levels; only two group
+		 *   levels are supported
 		 * @param {object} [mQueryOptions={}]
 		 *   A map of key-value pairs representing the query string
 		 * @param {boolean} [mQueryOptions.$count]
@@ -288,8 +288,8 @@ sap.ui.define([
 
 			checkKeys(oAggregation, mAllowedAggregationKeys2Type);
 			oAggregation.groupLevels = oAggregation.groupLevels || [];
-			if (oAggregation.groupLevels.length > 1) {
-				throw new Error("More than one group level: " + oAggregation.groupLevels);
+			if (oAggregation.groupLevels.length > 2) {
+				throw new Error("More than two group levels: " + oAggregation.groupLevels);
 			}
 
 			oAggregation.aggregate = oAggregation.aggregate || {};

@@ -970,7 +970,7 @@ sap.ui.define([
 				oMovingContext = aContexts[i];
 				oMovingContext.iIndex += iCount;
 				aContexts[i + iCount] = oMovingContext;
-				aContexts[i] = undefined;
+				delete aContexts[i];
 			}
 			that.iMaxLength += iCount;
 			that._fireChange({reason : ChangeReason.Change});
@@ -2416,7 +2416,7 @@ sap.ui.define([
 	 *   A list of groupable property names used to determine group levels. They may, but don't need
 	 *   to, be repeated in <code>oAggregation.group</code>. Group levels cannot be combined with
 	 *   filtering, with the system query option <code>$count</code>, or with an aggregatable
-	 *   property for which a grand total is needed; only a single group level is supported.
+	 *   property for which a grand total is needed; two group levels are supported at most.
 	 * @throws {Error}
 	 *   If the given data aggregation object is unsupported, if the system query option
 	 *   <code>$apply</code> has been specified explicitly before, or if there are pending changes

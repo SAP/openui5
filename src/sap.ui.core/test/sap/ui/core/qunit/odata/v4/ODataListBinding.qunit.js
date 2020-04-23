@@ -6271,9 +6271,9 @@ sap.ui.define([
 			assert.ok(bSuccess);
 			assert.strictEqual(oBinding.aContexts[0], aContextsBefore[0], "0");
 			assert.strictEqual(oBinding.aContexts[1], aContextsBefore[1], "1");
-			assert.strictEqual(oBinding.aContexts[2], undefined, "2");
-			assert.strictEqual(oBinding.aContexts[3], undefined, "3");
-			assert.strictEqual(oBinding.aContexts[4], undefined, "4");
+			assert.notOk(2 in oBinding.aContexts, "2");
+			assert.notOk(3 in oBinding.aContexts, "3");
+			assert.notOk(4 in oBinding.aContexts, "4");
 			assert.strictEqual(oBinding.aContexts[5], aContextsBefore[2], "5");
 			assert.strictEqual(oBinding.aContexts[6], aContextsBefore[3], "6");
 			assert.strictEqual(oBinding.aContexts[7], aContextsBefore[4], "7");
