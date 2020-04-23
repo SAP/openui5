@@ -710,7 +710,7 @@ sap.ui.define([
                 aHandles = [this.getClosestHandleDomRef(oTouch)];
                 this._updateHandle(aHandles[0], fValue);
                 // _updateHandle would update the range and the check for change event fire would fail in _ontouchend
-                this._fireChangeAndLiveChange({range: this.getRange()});
+                this.fireLiveChange({range: aRange});
             } else if (iHandleIndex !== -1) { // Determine if the press event is on certain handle
                 aHandles = [this.getDomRef(iHandleIndex === 0 ? "handle1" : "handle2")];
             }
