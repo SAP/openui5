@@ -111,6 +111,7 @@ sap.ui.define([
 		assert.strictEqual(this.oTable.$("selall").find(".sapUiTableSelectAllCheckBox").length, 0, "no Select All checkbox");
 		assert.strictEqual(this.oTable.$("selall").find(".sapUiTableSelectClear").length, 1, "Deselect All button exists");
 		assert.strictEqual(this.oTable.$("selall").attr("title"), "Deselect All", "Tooltip exists");
+		assert.strictEqual(this.oTable.$("selall").attr("role"), "button", "role attribute is set to button");
 		assert.ok(this.oTable.$("selall").attr("aria-disabled"), "aria-disabled is set to true");
 		this.oTable.setEnableSelectAll(false);
 		assert.strictEqual(this.oTable.$("selall").attr("title"), "Deselect All", "Tooltip exists");
