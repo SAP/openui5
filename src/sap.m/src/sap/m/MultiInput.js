@@ -1916,6 +1916,17 @@ function(
 		oFocusDomRef.style.width = 'calc(100% - ' + Math.floor(iSummedIconsWidth + iTokenizerWidth) + "px";
 	};
 
+	/**
+	 * Gets the supported openers for the valueHelpOnly.
+	 *
+	 * @protected
+	 * @param {HTMLElement} oTarget The target of the event.
+	 * @returns {Boolean} Boolean indicating if the target is a valid opener.
+	 */
+	MultiInput.prototype.isValueHelpOnlyOpener = function (oTarget) {
+		return [this._$input[0], this._getValueHelpIcon().getDomRef()].indexOf(oTarget) > -1;
+	};
+
 	return MultiInput;
 
 });
