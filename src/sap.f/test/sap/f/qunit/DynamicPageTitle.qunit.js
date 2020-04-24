@@ -397,6 +397,29 @@ function (
 
 	QUnit.module("DynamicPage - Rendering - Title heading, snappedHeading and expandedHeading");
 
+	QUnit.test("Focus span rendered correctly with and without header", function (assert) {
+		// Arrange
+		var oDynamicPage = oFactory.getDynamicPage(),
+			oDynamicPageTitle = oDynamicPage.getTitle();
+
+		// Act
+		oUtil.renderObject(oDynamicPage);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oDynamicPageTitle._getFocusSpan().is(":visible"), true, "focusSpan is visible");
+
+		// Act
+		oDynamicPage.destroyHeader();
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oDynamicPageTitle._getFocusSpan().is(":hidden"), true, "focusSpan is hidden");
+
+		// Clean up
+		oDynamicPage.destroy();
+	});
+
 	QUnit.test("No heading at all", function (assert) {
 		var oDynamicPageTitle = new DynamicPageTitle({}),
 				oDynamicPage = new DynamicPage({

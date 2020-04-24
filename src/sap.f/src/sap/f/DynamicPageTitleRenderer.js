@@ -41,11 +41,8 @@ sap.ui.define([
 			.attr("role", "button")
 			.attr("aria-expanded", oDynamicPageTitle._bExpandedState)
 			.attr("aria-labelledby", sLabelledBy)
-			.attr("aria-describedby", sDescribedBy);
-
-		if (oDynamicPageTitle._bIsFocusable) {
-			oRm.attr("tabindex", 0);
-		}
+			.attr("aria-describedby", sDescribedBy)
+			.attr("tabindex", 0);
 
 		oRm.openEnd()
 			.close("span");
