@@ -114,15 +114,30 @@ describe('sap.m.MultiComboBox', function() {
 	});
 
 	//MultiComboBox - Binding
-    it("should visualize a MultiComboBox and select the last item to check if the popover have unnecessary scroll", function(){
-        browser.executeScript('document.getElementById("MultiComboBoxFourItems").scrollIntoView()').then(function() {
-            element(by.id("MultiComboBoxFourItems-arrow")).click();
-            browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
-            browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
-            browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
-            browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
-            browser.actions().sendKeys(protractor.Key.SPACE).perform();
-            expect(takeScreenshot()).toLookAs("multiComboBox_with_selected_last_item");
-        });
-    });
+	it("should visualize a MultiComboBox and select the last item to check if the popover have unnecessary scroll", function(){
+		browser.executeScript('document.getElementById("MultiComboBoxFourItems").scrollIntoView()').then(function() {
+			element(by.id("MultiComboBoxFourItems-arrow")).click();
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.SPACE).perform();
+			expect(takeScreenshot()).toLookAs("multiComboBox_with_selected_last_item");
+		});
+	});
+
+	// MultiComboBox - dropwdown selection
+	it("should visualize a MultiComboBox dropdown with correct selection", function() {
+		browser.executeScript('document.getElementById("MultiComboBoxBinding").scrollIntoView()').then(function() {
+			var oMultiComboBox = element(by.id("MultiComboBoxBinding"));
+			var oMultiComboBoxArrow = element(by.id("MultiComboBoxBinding-arrow"));
+			oMultiComboBox.click();
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			// simulate dropdown icon click
+			oMultiComboBoxArrow.click();
+			expect(takeScreenshot()).toLookAs("multiComboBox_dropdown_selection");
+		});
+	});
 });

@@ -5220,6 +5220,41 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Picker icon user interaction tests", function(assert) {
+		var aItems = [
+			new Item({key: "Item1", text: "Item1"}),
+			new Item({key: "Item2", text: "Item2"}),
+			new Item({key: "Item3", text: "Item3"}),
+			new Item({key: "Item4", text: "Item4"})
+		];
+
+		// Arrange
+		var oMultiComboBox = new MultiComboBox({items: aItems}).placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_UP);
+		this.clock.tick(300);
+
+		// Act
+		oMultiComboBox._handlePopupOpenAndItemsLoad(true); // Icon press
+		this.clock.tick(300);
+
+		assert.strictEqual(oMultiComboBox._getFocusedItem(), aItems[1], "The second item should be focused on icon press");
+
+		// Act
+		oMultiComboBox._bShouldClosePicker = true; // Simulate opened picker
+		oMultiComboBox._handlePopupOpenAndItemsLoad(true); // Icon press
+		this.clock.tick(300);
+
+		assert.strictEqual(oMultiComboBox.getValue(), "", "The value should be cleared when closing the picker with icon press");
+
+		// clean
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.module("Accessibility");
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
