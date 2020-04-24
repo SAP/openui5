@@ -1,0 +1,43 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	height="100%"
+	controllerName="sap.ui.core.sample.InvisibleMessage.InvisibleMessage">
+	<Page
+		showHeader="false"
+		class="sapUiContentPadding" >
+		<content>
+			<HBox>
+				<Button text="Infromation"
+						press="onPress">
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+				<Button type="Accept"
+						text="Success"
+						press="onPress">
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+				<Button type="Reject"
+						text="Error"
+						press="onPress">
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+				<Button type="Emphasized"
+						text="Emphasized"
+						press="onPress" />
+			</HBox>
+			<HBox>
+			<Text id="statustext"
+					text="There is no message sent to the invisible message service. Please, press a button.">
+			</Text>
+			</HBox>
+		</content>
+	</Page>
+</mvc:View>

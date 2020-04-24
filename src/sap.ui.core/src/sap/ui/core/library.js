@@ -59,6 +59,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 			"sap.ui.core.ValueState",
 			"sap.ui.core.VerticalAlign",
 			"sap.ui.core.Wrapping",
+			"sap.ui.core.InvisibleMessageMode",
 			"sap.ui.core.dnd.DropEffect",
 			"sap.ui.core.dnd.DropLayout",
 			"sap.ui.core.dnd.DropPosition",
@@ -113,7 +114,8 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 			"sap.ui.core.search.OpenSearchProvider",
 			"sap.ui.core.search.SearchProvider",
 			"sap.ui.core.tmpl.DOMAttribute",
-			"sap.ui.core.util.ExportCell"
+			"sap.ui.core.util.ExportCell",
+			"sap.ui.core.InvisibleMessage"
 		],
 		extensions: {
 			"sap.ui.support" : {
@@ -2059,6 +2061,33 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 		 * @public
 		 */
 		Container : "Container"
+
+	};
+
+
+	/**
+	 * Enumeration for different mode behaviors of the <code>InvisibleMessage</code>.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @experimental Since 1.73.
+	 * @since 1.78
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.core.InvisibleMessageMode =  {
+
+		/**
+		 * Indicates that updates to the region should be presented at the next graceful opportunity,
+		 * such as at the end of reading the current sentence, or when the user pauses typing.
+		 * @public
+		 */
+		Polite : "Polite",
+
+		/**
+		 * Indicates that updates to the region have the highest priority and should be presented to the user immediately.
+		 * @public
+		 */
+		Assertive : "Assertive"
 
 	};
 

@@ -76,6 +76,13 @@
 				"samples" : [ "sap.ui.core.sample.Icon" ]
 			},
 			{
+				"id" : "sap.ui.core.InvisibleMessage",
+				"name" : "InvisibleMessage",
+				"category" : "Display",
+				"since" : "1.78",
+				"samples" : [ "sap.ui.core.sample.InvisibleMessage" ]
+			},
+			{
 				"id" : "sap.ui.core.InvisibleText",
 				"name" : "InvisibleText",
 				"category" : "Display",
@@ -523,6 +530,11 @@
 				"id": "sap.ui.core.sample.TypeCurrency",
 				"name": "Currency Format",
 				"description": "Formats the number by using the parameters defined for the given currency code. Either currency symbol, currency code or none of them can be included in the final formatted string. It parses the given string into an array which contains both the currency number and currency code."
+			},
+			{
+				"id" : "sap.ui.core.sample.InvisibleMessage",
+				"name" : "InvisibleMessage",
+				"description" : "The InvisibleMessage provides a way to programmaticaly expose dynamic content changes in a way that can be announced by screen readers."
 			},
 			{
 				"id" : "sap.ui.core.sample.InvisibleText",
