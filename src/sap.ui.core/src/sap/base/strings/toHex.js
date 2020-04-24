@@ -19,7 +19,7 @@ sap.ui.define([], function() {
 	 * @function
 	 * @since 1.58
 	 * @private
-	 * @alias module:sap/strings/toHex
+	 * @alias module:sap/base/strings/toHex
 	 * @param {int} iChar UTF-16 character code
 	 * @param {int} [iLength=0] number of padded zeros
 	 * @returns {string} padded hex representation of the given character code
