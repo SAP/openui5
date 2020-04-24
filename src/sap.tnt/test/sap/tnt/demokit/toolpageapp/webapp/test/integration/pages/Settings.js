@@ -30,6 +30,7 @@ sap.ui.define([
 				iPressTheSaveButton: function() {
 					return this.waitFor({
 						id: "save",
+						visible: false,
 						viewNamespace: "sap.ui.demo.toolpageapp.view.settings",
 						viewName: sViewName2,
 						actions: new Press(),
