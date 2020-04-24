@@ -35,7 +35,7 @@ sap.ui.define([
 	 * Flex state class to persist maps and raw state (cache) for a given component reference.
 	 * The persistence happens inside an object mapped to the component reference, with the following properties:
 	 *
-	 * 	{
+	 *	{
 	 * 		appDescriptorMap: {},
 	 * 		changesMap: {},
 	 * 		variantsMap: {},
@@ -49,10 +49,10 @@ sap.ui.define([
 	 * 				ui2personalization: {...},
 	 * 			},
 	 * 			loadModules: <boolean>
-	 * 		}},
-	 * 		partialFlexState: <boolean>,
-	 * 		componentId: "<componentId>"
-	 * 	}
+	 * 		},
+	 *		partialFlexState: <boolean>,
+	 *		componentId: "<componentId>"
+	 *	}
 	 *
 	 * @namespace sap.ui.fl.apply._internal.flexState.FlexState
 	 * @experimental
@@ -86,7 +86,7 @@ sap.ui.define([
 
 	function _getInstanceEntryOrThrowError(sReference, sMapName) {
 		if (!_mInstances[sReference]) {
-			throw Error("State is not yet initialized");
+			throw new Error("State is not yet initialized");
 		}
 
 		if (!_mInstances[sReference].preparedMaps[sMapName]) {
@@ -145,7 +145,7 @@ sap.ui.define([
 
 	function loadFlexData(mPropertyBag) {
 		_mInitPromises[mPropertyBag.reference] = Loader.loadFlexData(mPropertyBag)
-			.then(function (mResponse) {
+			.then(function(mResponse) {
 				_mInstances[mPropertyBag.reference] = merge({}, {
 					unfilteredStorageResponse: mResponse,
 					preparedMaps: {},
@@ -206,11 +206,26 @@ sap.ui.define([
 	function _clearPreparedMaps(sReference) {
 		if (_mInstances[sReference]) {
 			_mInstances[sReference].preparedMaps = {};
-			// TODO: remove this block when VariantController is removed
-			if (_mInstances[sReference].unfilteredStorageResponse.changes) {
-				delete _mInstances[sReference].unfilteredStorageResponse.changes.variantSection;
-			}
 		}
+	}
+
+	function checkPartialFlexState(mInitProperties) {
+		var oFlexInstance = _mInstances[mInitProperties.reference];
+		if (oFlexInstance.partialFlexState === true && mInitProperties.partialFlexState !== true) {
+			oFlexInstance.partialFlexState = false;
+			mInitProperties.partialFlexData = merge({}, oFlexInstance.unfilteredStorageResponse.changes);
+			mInitProperties.reInitialize = true;
+		}
+		return mInitProperties;
+	}
+
+	function checkComponentId(mInitProperties) {
+		var sFlexInstanceComponentId = _mInstances[mInitProperties.reference].componentId;
+		// if the component with the same reference was rendered with a new ID - clear existing state
+		if (!mInitProperties.reInitialize && sFlexInstanceComponentId !== mInitProperties.componentId) {
+			mInitProperties.reInitialize = true;
+		}
+		return mInitProperties;
 	}
 
 	/**
@@ -228,36 +243,34 @@ sap.ui.define([
 	 * @param {boolean} [mPropertyBag.partialFlexState=false] - if true state is initialized partially and does not include flex bundles
 	 * @returns {promise<undefined>} Resolves a promise as soon as FlexState is initialized
 	 */
-	FlexState.initialize = function (mPropertyBag) {
-		return Promise.resolve().then(function(mPropertyBag) {
-			_enhancePropertyBag(mPropertyBag);
+	FlexState.initialize = function(mPropertyBag) {
+		return Promise.resolve(mPropertyBag)
+			.then(function(mInitProperties) {
+				_enhancePropertyBag(mInitProperties);
+				var sFlexReference = mInitProperties.reference;
 
-			if (_mInitPromises[mPropertyBag.reference]) {
-				return _mInitPromises[mPropertyBag.reference].then(function (mPropertyBag) {
-					if (_mInstances[mPropertyBag.reference].partialFlexState === true && mPropertyBag.partialFlexState !== true) {
-						_mInstances[mPropertyBag.reference].partialFlexState = false;
-						mPropertyBag.partialFlexData = merge({}, _mInstances[mPropertyBag.reference].unfilteredStorageResponse.changes);
-						return loadFlexData(mPropertyBag);
-					}
-					// if the component with the same reference was rendered with a new ID - clear existing state
-					if (_mInstances[mPropertyBag.reference].componentId !== mPropertyBag.componentId) {
-						return loadFlexData(mPropertyBag);
-					}
-					return _mInstances[mPropertyBag.reference].unfilteredStorageResponse;
-				}.bind(null, mPropertyBag));
-			}
+				if (_mInitPromises[sFlexReference]) {
+					return _mInitPromises[sFlexReference]
+						.then(checkPartialFlexState.bind(null, mInitProperties))
+						.then(checkComponentId)
+						.then(function(mEvaluatedProperties) {
+							return mEvaluatedProperties.reInitialize
+								? loadFlexData(mEvaluatedProperties)
+								: _mInstances[sFlexReference].unfilteredStorageResponse;
+						});
+				}
 
-			return loadFlexData(mPropertyBag);
-		}.bind(null, mPropertyBag))
-		.then(function(mPropertyBag, mResponse) {
-			// filtering should only be done once; can be reset via function
-			if (!_mInstances[mPropertyBag.reference].storageResponse) {
-				_mInstances[mPropertyBag.reference].storageResponse = filterByMaxLayer(mResponse);
-				_updateComponentData(mPropertyBag);
-				//for the time being ensure variantSection is available, remove once everyone is asking for getVariantState
-				FlexState.getVariantsState(mPropertyBag.reference);
-			}
-		}.bind(null, mPropertyBag));
+				return loadFlexData(mInitProperties);
+			})
+			.then(function(mPropertyBag, mResponse) {
+				// filtering should only be done once; can be reset via function
+				if (!_mInstances[mPropertyBag.reference].storageResponse) {
+					_mInstances[mPropertyBag.reference].storageResponse = filterByMaxLayer(mResponse);
+					_updateComponentData(mPropertyBag);
+					// for the time being ensure variants map is prepared until getChangesForComponent() is removed
+					FlexState.getVariantsState(mPropertyBag.reference);
+				}
+			}.bind(null, mPropertyBag));
 	};
 
 	/**
@@ -286,7 +299,7 @@ sap.ui.define([
 			}.bind(null, bVariantsMapExists, mPropertyBag.reference));
 	};
 
-	FlexState.clearState = function (sReference) {
+	FlexState.clearState = function(sReference) {
 		if (sReference) {
 			_deRegisterMaxLayerHandler(sReference);
 			delete _mInstances[sReference];
@@ -320,8 +333,7 @@ sap.ui.define([
 	};
 
 	FlexState.getVariantsState = function(sReference) {
-		var oVariantsMap = getVariantsMap(sReference);
-		return oVariantsMap;
+		return getVariantsMap(sReference);
 	};
 
 	FlexState.getUI2Personalization = function(sReference) {

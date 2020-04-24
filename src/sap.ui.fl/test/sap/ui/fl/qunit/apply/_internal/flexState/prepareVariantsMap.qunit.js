@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	prepareVariantsMap,
 	VariantUtil,
 	LoaderExtensions,
@@ -17,7 +17,7 @@ sap.ui.define([
 	QUnit.dump.maxDepth = 20;
 
 	QUnit.module("Given prepareVariantsMap()", {
-		beforeEach: function () {
+		beforeEach: function() {
 			return Promise.all([
 				LoaderExtensions.loadResource({
 					dataType: "json",
@@ -29,7 +29,7 @@ sap.ui.define([
 					url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/testResources/TestFakeVariantsMap.json"),
 					async: true
 				})
-			]).then(function (aValues) {
+			]).then(function(aValues) {
 				this.oBackendResponse = {};
 				this.oBackendResponse.changes = aValues[0];
 
@@ -48,15 +48,14 @@ sap.ui.define([
 		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("when called with no parameters", function (assert) {
+	}, function() {
+		QUnit.test("when called with no parameters", function(assert) {
 			var oExpectedMap = {};
 			assert.deepEqual(prepareVariantsMap({}), oExpectedMap, "the function returns an object with a map inside");
 		});
 
 		QUnit.test("when calling with required parameters without variant technical parameters", function(assert) {
 			var oVariantsMap = prepareVariantsMap(this.mPropertyBag);
-			assert.deepEqual(oVariantsMap, this.mPropertyBag.unfilteredStorageResponse.changes.variantSection, "then the variants map was set correctly");
 			assert.deepEqual(oVariantsMap, this.oVariantsMap, "then the variants map was returned correctly");
 		});
 
@@ -82,7 +81,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
 });

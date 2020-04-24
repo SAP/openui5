@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/core/Component",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/thirdparty/hasher",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -18,6 +19,7 @@ sap.ui.define([
 	Layer,
 	ControlVariantApplyAPI,
 	Component,
+	VariantManagementState,
 	hasher,
 	sinon
 ) {
@@ -25,16 +27,23 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
-	var fnStubTechnicalParameterValues = function (aUrlTechnicalParameters) {
+	var fnStubTechnicalParameterValues = function(aUrlTechnicalParameters) {
 		sandbox.stub(this.oModel, "getLocalId").withArgs(this.oDummyControl.getId(), this.oAppComponent).returns("variantMgmtId1");
 		sandbox.spy(URLHandler, "update");
-		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variant1").returns(true);
+		sandbox.stub(VariantManagementState, "getVariant").withArgs({
+			vmReference: "variantMgmtId1",
+			vReference: "variant1",
+			reference: "someComponentName"
+		}).returns(true);
 		sandbox.stub(hasher, "replaceHash");
 		sandbox.stub(Utils, "getUshellContainer").returns({
 			getService: function(sServiceName) {
 				switch (sServiceName) {
 					case "URLParsing":
-						return {parseShellHash: function () {}, constructShellHash: function() {return "constructedHash";}};
+						return {
+							parseShellHash: function() {},
+							constructShellHash: function() {return "constructedHash";}
+						};
 					case "ShellNavigation":
 						return {registerNavigationFilter: function() {}, unregisterNavigationFilter: function() {}};
 					case "CrossApplicationNavigation":
@@ -49,16 +58,16 @@ sap.ui.define([
 		sandbox.stub(Utils, "getParsedURLHash").returns(oReturnObject);
 	};
 
-	var fnStubUpdateCurrentVariant = function () {
+	var fnStubUpdateCurrentVariant = function() {
 		sandbox.stub(this.oModel, "updateCurrentVariant").returns(Promise.resolve());
 	};
 
-	var fnCheckUpdateCurrentVariantCalled = function (assert, sVariantManagement, sVariant) {
+	var fnCheckUpdateCurrentVariantCalled = function(assert, sVariantManagement, sVariant) {
 		assert.ok(this.oModel.updateCurrentVariant.calledOnce, "then variantModel.updateCurrentVariant called once");
 		assert.ok(this.oModel.updateCurrentVariant.calledWithExactly(sVariantManagement, sVariant, this.oAppComponent), "then variantModel.updateCurrentVariant called to activate the target variant");
 	};
 
-	var fnCheckActivateVariantErrorResponse = function (assert, sExpectedError, sReceivedError) {
+	var fnCheckActivateVariantErrorResponse = function(assert, sExpectedError, sReceivedError) {
 		assert.equal(sReceivedError, sExpectedError, "then Promise.reject() with the appropriate error message returned");
 		assert.equal(this.oModel.updateCurrentVariant.callCount, 0, "then variantModel.updateCurrentVariant not called");
 	};
@@ -92,9 +101,8 @@ sap.ui.define([
 
 			var oMockFlexController = {
 				_oChangePersistence: {
-					_oVariantController: {
-						getVariant: function () {},
-						assignResetMapListener: function() {}
+					getComponentName: function() {
+						return "someComponentName";
 					}
 				}
 			};
@@ -157,7 +165,7 @@ sap.ui.define([
 				element: "dummyControl",
 				variantReference: "variant1"
 			})
-			.then(function () {
+			.then(function() {
 				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
 			}.bind(this));
 		});
@@ -169,7 +177,7 @@ sap.ui.define([
 				element: this.oDummyControl,
 				variantReference: "variant1"
 			})
-			.then(function () {
+			.then(function() {
 				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
 			}.bind(this));
 		});
@@ -181,7 +189,7 @@ sap.ui.define([
 				element: this.oComponent.getId(),
 				variantReference: "variant1"
 			})
-			.then(function () {
+			.then(function() {
 				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
 			}.bind(this));
 		});
@@ -193,7 +201,7 @@ sap.ui.define([
 				element: this.oComponent,
 				variantReference: "variant1"
 			})
-			.then(function () {
+			.then(function() {
 				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
 			}.bind(this));
 		});
@@ -206,7 +214,7 @@ sap.ui.define([
 				variantReference: "variantInvalid"
 			})
 			.then(function() {},
-				function (oError) {
+				function(oError) {
 					fnCheckActivateVariantErrorResponse.call(this, assert, "A valid control or component, and a valid variant/ID combination are required", oError.message);
 				}.bind(this)
 			);
@@ -220,7 +228,7 @@ sap.ui.define([
 				variantReference: "variant1"
 			})
 			.then(function() {},
-				function (oError) {
+				function(oError) {
 					fnCheckActivateVariantErrorResponse.call(this, assert, "A valid variant management control or component (instance or ID) should be passed as parameter", oError.message);
 				}.bind(this)
 			);
@@ -234,7 +242,7 @@ sap.ui.define([
 				variantReference: "variant1"
 			})
 			.then(function() {},
-				function (oError) {
+				function(oError) {
 					fnCheckActivateVariantErrorResponse.call(this, assert, "No valid component or control found for the provided ID", oError.message);
 				}.bind(this)
 			);
@@ -249,14 +257,14 @@ sap.ui.define([
 				variantReference: "variant1"
 			})
 			.then(function() {},
-				function (oError) {
+				function(oError) {
 					fnCheckActivateVariantErrorResponse.call(this, assert, "No variant management model found for the passed control or application component", oError.message);
 				}.bind(this)
 			);
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		jQuery('#qunit-fixture').hide();
 	});
 });

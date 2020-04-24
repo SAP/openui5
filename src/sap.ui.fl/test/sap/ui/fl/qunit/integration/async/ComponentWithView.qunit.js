@@ -85,7 +85,6 @@ function(
 						}
 					}],
 					contexts: [],
-					variantSection: {},
 					settings: {
 						isKeyUser: true,
 						isAtoAvailable: false,

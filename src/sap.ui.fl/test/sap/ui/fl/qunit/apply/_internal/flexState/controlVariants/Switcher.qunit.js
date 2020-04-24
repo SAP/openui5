@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	includes,
 	_pick,
 	VariantManagementState,
@@ -30,16 +30,16 @@ sap.ui.define([
 			this.oChangesMap = {
 				mChanges: {
 					control1: [{
-						getId: function () {
+						getId: function() {
 							return "change1";
 						}
 					}],
 					control2: [{
-						getId: function () {
+						getId: function() {
 							return "change2";
 						}
 					}, {
-						getId: function () {
+						getId: function() {
 							return "change3";
 						}
 					}]
@@ -49,7 +49,7 @@ sap.ui.define([
 			this.aTargetVariantChanges = [this.oChangesMap.mChanges.control2[0]];
 			this.oFlexController = {
 				_oChangePersistence: {
-					getChangesMapForComponent: function () {
+					getChangesMapForComponent: function() {
 						return this.oChangesMap;
 					}.bind(this)
 				},
@@ -75,20 +75,27 @@ sap.ui.define([
 			sandbox.stub(VariantManagementState, "getVariantChanges")
 				.callThrough()
 				.withArgs(Object.assign(
-					_pick(this.mPropertyBag, ["vmReference"]), {variantsMap: this.oVariantsMap, vReference: this.mPropertyBag.currentVReference, changeInstance: true}
+					_pick(this.mPropertyBag, ["vmReference"]), {
+						variantsMap: this.oVariantsMap,
+						vReference: this.mPropertyBag.currentVReference,
+						changeInstance: true
+					}
 				))
 				.returns(this.aSourceVariantChanges)
 				.withArgs(Object.assign(
-					_pick(this.mPropertyBag, ["vmReference"]), {variantsMap: this.oVariantsMap, vReference: this.mPropertyBag.newVReference, changeInstance: true}
+					_pick(this.mPropertyBag, ["vmReference"]), {
+						variantsMap: this.oVariantsMap,
+						vReference: this.mPropertyBag.newVReference,
+						changeInstance: true
+					}
 				))
 				.returns(this.aTargetVariantChanges);
 		},
 		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when called", function(assert) {
-			Object.assign(this.mPropertyBag, {variantsMap: this.oVariantsMap, changesMap: this.oChangesMap});
 			return Switcher.switchVariant(this.mPropertyBag)
 				.then(function() {
 					assert.ok(Reverter.revertMultipleChanges.calledWith(this.aSourceVariantChanges.reverse(), this.mPropertyBag), "then revert of changes was correctly triggered");
@@ -96,9 +103,19 @@ sap.ui.define([
 					assert.ok(VariantManagementState.setCurrentVariant.calledWith(this.mPropertyBag), "then setting current variant was correctly triggered");
 				}.bind(this));
 		});
+
+		QUnit.test("when called and and there is an error in evaluating changes", function(assert) {
+			VariantManagementState.getContent.throws();
+			return Switcher.switchVariant(this.mPropertyBag)
+				.catch(function() {
+					assert.equal(Reverter.revertMultipleChanges.callCount, 0, "then revert of changes was not called");
+					assert.equal(this.oFlexController.applyVariantChanges.callCount, 0, "then apply of changes was not called");
+					assert.equal(VariantManagementState.setCurrentVariant.callCount, 0, "then setting current variant was not called");
+				}.bind(this));
+		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
 });

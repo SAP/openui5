@@ -573,33 +573,25 @@ sap.ui.define([
 			this.oResponse = StorageUtils.getEmptyFlexDataResponse();
 			this.sReference = "reference";
 			sandbox.stub(FlexState, "getFlexObjectsFromStorageResponse").returns(this.oResponse);
+			sandbox.stub(VariantManagementState, "getContent")
+				.callThrough()
+				.withArgs(this.sReference)
+				.returns({someKey: "variantMap"});
 		},
 		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when 'updateVariantsState' is called without an existing variants state", function(assert) {
+			VariantManagementState.getContent.reset();
 			sandbox.stub(Log, "error");
 			VariantManagementState.updateVariantsState({
 				reference: this.sReference
 			});
-			assert.ok(Log.error.callCount, 1, "then an error was logged");
-		});
-
-		QUnit.test("when 'updateVariantsState' is called to update variants state", function(assert) {
-			var oUpdatedVariantSection = {type: "mockVariantSection"};
-			this.oResponse.variantSection = {};
-
-			VariantManagementState.updateVariantsState({
-				reference: this.sReference,
-				content: oUpdatedVariantSection
-			});
-
-			assert.deepEqual(this.oResponse.variantSection, oUpdatedVariantSection, "then the variants state was updated");
+			assert.equal(Log.error.callCount, 1, "then an error was logged");
 		});
 
 		QUnit.test("when 'updateVariantsState' is called to add variant related changes", function(assert) {
-			this.oResponse.variantSection = {};
 			var oVariantDependentControlChange = {
 				getPendingAction: function() {return "NEW";},
 				getDefinition: function() {
@@ -654,7 +646,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when 'updateVariantsState' is called to delete variant related changes", function(assert) {
-			this.oResponse.variantSection = {};
 			var oVariantDependentControlChange = {
 				getPendingAction: function() {return "DELETE";},
 				getDefinition: function() {

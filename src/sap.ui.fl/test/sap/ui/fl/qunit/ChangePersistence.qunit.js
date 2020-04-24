@@ -24,7 +24,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState"
 ],
-function (
+function(
 	FlexState,
 	DependencyHandler,
 	ChangePersistence,
@@ -49,7 +49,7 @@ function (
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	sinon.stub(FlexState, "getVariantsState");
+	sinon.stub(FlexState, "getVariantsState").returns({});
 	var controls = [];
 
 	function getInitialChangesMap(mPropertyBag) {
@@ -57,7 +57,7 @@ function (
 	}
 
 	QUnit.module("sap.ui.fl.ChangePersistence", {
-		beforeEach: function () {
+		beforeEach: function() {
 			sandbox.stub(FlexState, "initialize").resolves();
 			sandbox.stub(VariantManagementState, "loadInitialChanges").returns([]);
 			this._mComponentProperties = {
@@ -73,18 +73,18 @@ function (
 				this._oComponentInstance = oComponent;
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 			controls.forEach(function(control) {
 				control.destroy();
 			});
 		}
 	}, function() {
-		QUnit.test("Shall be instantiable", function (assert) {
+		QUnit.test("Shall be instantiable", function(assert) {
 			assert.ok(this.oChangePersistence, "Shall create a new instance");
 		});
 
-		QUnit.test("the cache key is returned asynchronous", function (assert) {
+		QUnit.test("the cache key is returned asynchronous", function(assert) {
 			var sChacheKey = "abc123";
 
 			var oMockedWrappedContent = {
@@ -97,18 +97,22 @@ function (
 					return {};
 				},
 				getModel: function() {
-					return { getCurrentControlVariantIds: function () { return []; } };
+					return {
+						getCurrentControlVariantIds: function() {
+							return [];
+						}
+					};
 				}
 			};
 
 			sandbox.stub(Cache, "getChangesFillingCache").resolves(oMockedWrappedContent);
 
-			return this.oChangePersistence.getCacheKey(oMockedAppComponent).then(function (oCacheKeyResponse) {
+			return this.oChangePersistence.getCacheKey(oMockedAppComponent).then(function(oCacheKeyResponse) {
 				assert.equal(oCacheKeyResponse, sChacheKey);
 			});
 		});
 
-		QUnit.test("the cache key returns a tag if no cache key could be determined", function (assert) {
+		QUnit.test("the cache key returns a tag if no cache key could be determined", function(assert) {
 			var oMockedWrappedContent = {
 				changes: [{}],
 				etag: "",
@@ -117,12 +121,12 @@ function (
 
 			sandbox.stub(Cache, "getChangesFillingCache").resolves(oMockedWrappedContent);
 
-			return this.oChangePersistence.getCacheKey().then(function (oCacheKeyResponse) {
+			return this.oChangePersistence.getCacheKey().then(function(oCacheKeyResponse) {
 				assert.equal(oCacheKeyResponse, Cache.NOTAG);
 			});
 		});
 
-		QUnit.test("when getChangesForComponent is called with _bHasChangesOverMaxLayer set and ignoreMaxLayerParameter is passed as true", function (assert) {
+		QUnit.test("when getChangesForComponent is called with _bHasChangesOverMaxLayer set and ignoreMaxLayerParameter is passed as true", function(assert) {
 			this.oChangePersistence._bHasChangesOverMaxLayer = true;
 
 			var oMockedWrappedContent = {
@@ -133,50 +137,10 @@ function (
 
 			sandbox.stub(Cache, "getChangesFillingCache").resolves(oMockedWrappedContent);
 
-			return this.oChangePersistence.getChangesForComponent({ignoreMaxLayerParameter: true}).then(function (sResponse) {
+			return this.oChangePersistence.getChangesForComponent({ignoreMaxLayerParameter: true}).then(function(sResponse) {
 				assert.strictEqual(sResponse, this.oChangePersistence.HIGHER_LAYER_CHANGES_EXIST, "then the correct response is returned");
 				assert.notOk(this.oChangePersistence._bHasChangesOverMaxLayer, "then _bHasChangesOverMaxLayer is unset");
 			}.bind(this));
-		});
-
-		QUnit.test("when getChangesForComponent is called with a variantSection", function (assert) {
-			var oMockedWrappedContent = {
-				changes : {
-					changes: [],
-					variantSection : {
-						variantManagementId : {
-							variants : []
-						}
-					}
-				}
-			};
-
-			var oGetAllCtrlVariantChanges = sandbox.stub(this.oChangePersistence, "_getAllCtrlVariantChanges").returns([]);
-			sandbox.stub(Cache, "getChangesFillingCache").resolves(oMockedWrappedContent);
-
-			return this.oChangePersistence.getChangesForComponent().then(function () {
-				assert.ok(oGetAllCtrlVariantChanges.calledWith(oMockedWrappedContent), "then current variant control changes were returned");
-			});
-		});
-
-		QUnit.test("when getChangesForComponent is called for all variant changes", function (assert) {
-			var oMockedWrappedContent = {
-				changes : {
-					changes: [],
-					variantSection : {
-						variantManagementId : {
-							variants : []
-						}
-					}
-				}
-			};
-
-			var oGetAllCtrlVariantChanges = sandbox.stub(this.oChangePersistence, "_getAllCtrlVariantChanges").returns([]);
-			sandbox.stub(Cache, "getChangesFillingCache").resolves(oMockedWrappedContent);
-
-			return this.oChangePersistence.getChangesForComponent({includeCtrlVariants: true}).then(function () {
-				assert.ok(oGetAllCtrlVariantChanges.calledWith(oMockedWrappedContent, true), "then current variant control changes were returned");
-			});
 		});
 
 		QUnit.test("when _getAllCtrlVariantChanges is called to get only current variant control changes", function(assert) {
@@ -200,7 +164,9 @@ function (
 					oMockResponse.changes[sType].push(sType + "1", sType + "2");
 				}
 			});
-			var aChangesForComponent = this.oChangePersistence._getAllCtrlVariantChanges(oMockResponse, true, function() {return true;});
+			var aChangesForComponent = this.oChangePersistence._getAllCtrlVariantChanges(oMockResponse, true, function() {
+				return true;
+			});
 			assert.equal(aChangesForComponent.length, 8, "then only current variant control changes were returned");
 		});
 
@@ -215,7 +181,7 @@ function (
 				return parseInt(sChangeString.slice(-1)) % 2 === 0;
 			});
 			assert.equal(aChangesForComponent.length, 4, "then only filtered current variant control changes were returned");
-			var bValidChanges = aChangesForComponent.every(function (sChangeString) {
+			var bValidChanges = aChangesForComponent.every(function(sChangeString) {
 				return parseInt(sChangeString.slice(-1)) % 2 === 0;
 			});
 			assert.ok(bValidChanges, true, "then filtered changes were returned");
@@ -227,7 +193,7 @@ function (
 			sandbox.stub(Cache, "getChangesFillingCache").resolves(
 				{
 					changes: {
-						changes : [
+						changes: [
 							{
 								fileName: "change0",
 								fileType: "change",
@@ -246,7 +212,7 @@ function (
 
 		QUnit.test("getChangesForComponent shall not bind the messagebundle as a json model into app component if no VENDOR change is available", function(assert) {
 			sandbox.stub(Cache, "getChangesFillingCache").resolves({
-				changes: { changes: [] },
+				changes: {changes: []},
 				messagebundle: {i_123: "translatedKey"}
 			});
 			var mPropertyBag = {};
@@ -259,13 +225,15 @@ function (
 
 		QUnit.test("getChangesForComponent shall not bind the messagebundle as a json model into app component if no VENDOR change is available", function(assert) {
 			sandbox.stub(Cache, "getChangesFillingCache").resolves({
-				changes: { changes: [{
-					fileType: "change",
-					selector: {
-						id: "controlId"
-					},
-					layer : Layer.VENDOR
-				}] },
+				changes: {
+					changes: [{
+						fileType: "change",
+						selector: {
+							id: "controlId"
+						},
+						layer: Layer.VENDOR
+					}]
+				},
 				messagebundle: {i_123: "translatedKey"}
 			});
 			var mPropertyBag = {};
@@ -296,8 +264,7 @@ function (
 									id: "controlId"
 								}
 							}]
-					},
-					variantSection : {}
+					}
 				});
 
 			return this.oChangePersistence.getChangesForComponent().then(function(changes) {
@@ -307,32 +274,36 @@ function (
 		});
 
 		QUnit.test("getChangesForComponent shall return the changes for the component, filtering changes with the current layer (CUSTOMER)", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({changes: {changes: [
-				{
-					fileName: "change1",
-					layer: Layer.VENDOR,
-					fileType: "change",
-					selector: {
-						id: "controlId"
-					}
-				},
-				{
-					fileName: "change2",
-					layer: Layer.CUSTOMER,
-					fileType: "change",
-					selector: {
-						id: "controlId1"
-					}
-				},
-				{
-					fileName: "change3",
-					layer: Layer.USER,
-					fileType: "change",
-					selector: {
-						id: "controlId2"
-					}
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+				changes: {
+					changes: [
+						{
+							fileName: "change1",
+							layer: Layer.VENDOR,
+							fileType: "change",
+							selector: {
+								id: "controlId"
+							}
+						},
+						{
+							fileName: "change2",
+							layer: Layer.CUSTOMER,
+							fileType: "change",
+							selector: {
+								id: "controlId1"
+							}
+						},
+						{
+							fileName: "change3",
+							layer: Layer.USER,
+							fileType: "change",
+							selector: {
+								id: "controlId2"
+							}
+						}
+					]
 				}
-			]}});
+			});
 
 			return this.oChangePersistence.getChangesForComponent({currentLayer: Layer.CUSTOMER}).then(function(changes) {
 				assert.strictEqual(changes.length, 1, "1 change shall be returned");
@@ -341,32 +312,36 @@ function (
 		});
 
 		QUnit.test("getChangesForComponent shall return the changes for the component, not filtering changes with the current layer", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({changes: {changes: [
-				{
-					fileName: "change1",
-					layer: Layer.VENDOR,
-					fileType: "change",
-					selector: {
-						id: "controlId"
-					}
-				},
-				{
-					fileName: "change2",
-					layer: Layer.CUSTOMER,
-					fileType: "change",
-					selector: {
-						id: "controlId1"
-					}
-				},
-				{
-					fileName: "change3",
-					layer: Layer.USER,
-					fileType: "change",
-					selector: {
-						id: "controlId2"
-					}
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+				changes: {
+					changes: [
+						{
+							fileName: "change1",
+							layer: Layer.VENDOR,
+							fileType: "change",
+							selector: {
+								id: "controlId"
+							}
+						},
+						{
+							fileName: "change2",
+							layer: Layer.CUSTOMER,
+							fileType: "change",
+							selector: {
+								id: "controlId1"
+							}
+						},
+						{
+							fileName: "change3",
+							layer: Layer.USER,
+							fileType: "change",
+							selector: {
+								id: "controlId2"
+							}
+						}
+					]
 				}
-			]}});
+			});
 
 			return this.oChangePersistence.getChangesForComponent().then(function(changes) {
 				assert.strictEqual(changes.length, 3, "all the 3 changes shall be returned");
@@ -374,52 +349,56 @@ function (
 		});
 
 		QUnit.test("After run getChangesForComponent without includeVariants parameter", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({changes: {changes: [
-				{
-					fileName: "file1",
-					fileType: "change",
-					changeType: "defaultVariant",
-					layer: Layer.CUSTOMER,
-					selector: { persistencyKey: "SmartFilter_Explored" }
-				},
-				{
-					fileName: "file2",
-					fileType: "change",
-					changeType: "renameGroup",
-					layer: Layer.CUSTOMER,
-					selector: { id: "controlId1" }
-				},
-				{
-					fileName: "file3",
-					filetype: "change",
-					changetype: "removeField",
-					layer: Layer.CUSTOMER,
-					selector: {}
-				},
-				{
-					fileName: "file4",
-					fileType: "variant",
-					changeType: "filterBar",
-					layer: Layer.CUSTOMER,
-					selector: { persistencyKey: "SmartFilter_Explored" }
-				},
-				{
-					fileName: "file6",
-					fileType: "variant",
-					changeType: "filterBar",
-					layer: Layer.CUSTOMER
-				},
-				{
-					fileName: "file7",
-					fileType: "change",
-					changeType: "codeExt",
-					layer: Layer.CUSTOMER,
-					selector: { id: "controlId2" }
-				},
-				{
-					fileType: "somethingelse"
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+				changes: {
+					changes: [
+						{
+							fileName: "file1",
+							fileType: "change",
+							changeType: "defaultVariant",
+							layer: Layer.CUSTOMER,
+							selector: {persistencyKey: "SmartFilter_Explored"}
+						},
+						{
+							fileName: "file2",
+							fileType: "change",
+							changeType: "renameGroup",
+							layer: Layer.CUSTOMER,
+							selector: {id: "controlId1"}
+						},
+						{
+							fileName: "file3",
+							filetype: "change",
+							changetype: "removeField",
+							layer: Layer.CUSTOMER,
+							selector: {}
+						},
+						{
+							fileName: "file4",
+							fileType: "variant",
+							changeType: "filterBar",
+							layer: Layer.CUSTOMER,
+							selector: {persistencyKey: "SmartFilter_Explored"}
+						},
+						{
+							fileName: "file6",
+							fileType: "variant",
+							changeType: "filterBar",
+							layer: Layer.CUSTOMER
+						},
+						{
+							fileName: "file7",
+							fileType: "change",
+							changeType: "codeExt",
+							layer: Layer.CUSTOMER,
+							selector: {id: "controlId2"}
+						},
+						{
+							fileType: "somethingelse"
+						}
+					]
 				}
-			]}});
+			});
 
 			return this.oChangePersistence.getChangesForComponent().then(function(changes) {
 				assert.strictEqual(changes.length, 2, "only standard UI changes were returned, smart variants were excluded");
@@ -431,68 +410,72 @@ function (
 		});
 
 		QUnit.test("After run getChangesForComponent with includeVariants parameter", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({changes: {changes: [
-				{
-					fileName: "file1",
-					fileType: "change",
-					changeType: "defaultVariant",
-					layer: Layer.CUSTOMER,
-					selector: { persistencyKey: "SmartFilter_Explored" }
-				},
-				{
-					fileName: "file2",
-					fileType: "change",
-					changeType: "defaultVariant",
-					layer: Layer.CUSTOMER,
-					selector: {}
-				},
-				{
-					fileName: "file3",
-					fileType: "change",
-					changeType: "renameGroup",
-					layer: Layer.CUSTOMER,
-					selector: { id: "controlId1" }
-				},
-				{
-					fileName: "file4",
-					fileType: "variant",
-					changeType: "filterBar",
-					layer: Layer.CUSTOMER,
-					selector: { persistencyKey: "SmartFilter_Explored" }
-				},
-				{
-					fileName: "file5",
-					fileType: "variant",
-					changeType: "filterBar",
-					layer: Layer.CUSTOMER
-				},
-				{
-					fileName: "file6",
-					fileType: "variant",
-					changeType: "filterBar",
-					layer: Layer.CUSTOMER
-				},
-				{
-					fileName: "file7",
-					fileType: "change",
-					changeType: "codeExt",
-					layer: Layer.CUSTOMER,
-					selector: { id: "controlId2" }
-				},
-				{
-					fileType: "somethingelse"
-				},
-				{
-					fileName: "file8",
-					fileType: "change",
-					changeType: "appdescr_changes",
-					layer: Layer.CUSTOMER
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+				changes: {
+					changes: [
+						{
+							fileName: "file1",
+							fileType: "change",
+							changeType: "defaultVariant",
+							layer: Layer.CUSTOMER,
+							selector: {persistencyKey: "SmartFilter_Explored"}
+						},
+						{
+							fileName: "file2",
+							fileType: "change",
+							changeType: "defaultVariant",
+							layer: Layer.CUSTOMER,
+							selector: {}
+						},
+						{
+							fileName: "file3",
+							fileType: "change",
+							changeType: "renameGroup",
+							layer: Layer.CUSTOMER,
+							selector: {id: "controlId1"}
+						},
+						{
+							fileName: "file4",
+							fileType: "variant",
+							changeType: "filterBar",
+							layer: Layer.CUSTOMER,
+							selector: {persistencyKey: "SmartFilter_Explored"}
+						},
+						{
+							fileName: "file5",
+							fileType: "variant",
+							changeType: "filterBar",
+							layer: Layer.CUSTOMER
+						},
+						{
+							fileName: "file6",
+							fileType: "variant",
+							changeType: "filterBar",
+							layer: Layer.CUSTOMER
+						},
+						{
+							fileName: "file7",
+							fileType: "change",
+							changeType: "codeExt",
+							layer: Layer.CUSTOMER,
+							selector: {id: "controlId2"}
+						},
+						{
+							fileType: "somethingelse"
+						},
+						{
+							fileName: "file8",
+							fileType: "change",
+							changeType: "appdescr_changes",
+							layer: Layer.CUSTOMER
+						}
+					]
 				}
-			]}});
+			});
 
 			var fnWarningLogStub = sandbox.stub(Log, "warning");
 
-			return this.oChangePersistence.getChangesForComponent({includeVariants : true}).then(function(changes) {
+			return this.oChangePersistence.getChangesForComponent({includeVariants: true}).then(function(changes) {
 				assert.strictEqual(changes.length, 5, "both standard UI changes and smart variants were returned");
 				assert.ok(changes[0]._oDefinition.fileType === "change", "first change has file type change");
 				assert.ok(changes[0].getChangeType() === "defaultVariant", "and change type defaultVariant");
@@ -508,72 +491,78 @@ function (
 			});
 		});
 
-		QUnit.test("when getChangesForComponent is called with a max layer parameter and includeCtrlVariants set to true", function(assert) {
-			var oResponse = {
-				changes: [
-					{
-						fileName: "vendorChange",
-						fileType: "change",
-						layer: Layer.VENDOR
-					},
-					{
-						fileName: "partnerChange",
-						fileType: "change",
-						layer: Layer.PARTNER
-					},
-					{
-						fileName: "customerChange",
-						fileType: "change",
-						layer: Layer.CUSTOMER
-					},
-					{
-						fileName: "userChange",
-						fileType: "change",
-						layer: Layer.USER
-					}
-				],
-				variantSection: {
-					variantManagementId: {
-						variants: [
-							{
-								content: {
-									fileName: "variantManagementId"
-								},
-								controlChanges: [
-									{
-										fileName: "variantDependentControlChange"
-									}
-								]
-							}
-						]
+		function mockVariableChangesAndGetVariant() {
+			var oResponse = StorageUtils.getEmptyFlexDataResponse();
+			oResponse.changes.push(
+				{
+					fileName: "vendorChange",
+					fileType: "change",
+					layer: Layer.VENDOR
+				},
+				{
+					fileName: "partnerChange",
+					fileType: "change",
+					layer: Layer.PARTNER
+				},
+				{
+					fileName: "customerChange",
+					fileType: "change",
+					layer: Layer.CUSTOMER
+				},
+				{
+					fileName: "userChange",
+					fileType: "change",
+					layer: Layer.USER
+				}
+			);
+			oResponse.variantDependentControlChanges.push(
+				{
+					fileName: "variantDependentControlChange",
+					fileType: "change",
+					layer: Layer.CUSTOMER,
+					variantReference: "variantManagementId"
+				}
+			);
+			oResponse.variantChanges.push(
+				{
+					fileName: "variantChange",
+					fileType: "ctrl_variant_change",
+					layer: Layer.VENDOR,
+					selector: {
+						id: "variantManagementId"
 					}
 				}
+			);
+			oResponse.variantManagementChanges.push(
+				{
+					fileName: "variantManagementChange",
+					fileType: "ctrl_variant_management_change",
+					layer: Layer.USER,
+					selector: {
+						id: "variantManagementId"
+					}
+				}
+			);
+			var oVariant = {
+				controlChanges: [oResponse.variantDependentControlChanges[0]]
 			};
+			sandbox.stub(VariantManagementState, "getVariant")
+				.callThrough()
+				.withArgs({
+					vReference: "variantManagementId",
+					reference: this.oChangePersistence.getComponentName()
+				})
+				.returns(oVariant);
 			sandbox.stub(Cache, "getChangesFillingCache").resolves({
 				changes: oResponse
 			});
+			VariantManagementState.loadInitialChanges.returns([oResponse.variantDependentControlChanges[0]]);
+			return oVariant;
+		}
 
+		QUnit.test("when getChangesForComponent is called with a max layer parameter and includeCtrlVariants set to true", function(assert) {
+			var oVariant = mockVariableChangesAndGetVariant.call(this);
 			sandbox.stub(LayerUtils, "getMaxLayer").returns(Layer.CUSTOMER);
-			sandbox.stub(this.oChangePersistence, "_getAllCtrlVariantChanges")
-				.withArgs(sinon.match.any, true)
-				.returns([
-					{
-						fileName: "variantDependentControlChange",
-						fileType: "change",
-						layer: Layer.CUSTOMER,
-						variantReference: "variantManagementId"
-					},
-					{
-						fileName: "variantChange",
-						fileType: "ctrl_variant_change",
-						layer: Layer.USER,
-						selector: {
-							id: "variantManagementId"
-						}
-					}
-				]);
-			sandbox.stub(this.oChangePersistence._oVariantController, "checkAndSetVariantContent");
-			sandbox.stub(VariantManagementState, "updateVariantsState");
 
 			return this.oChangePersistence.getChangesForComponent({includeCtrlVariants: true}).then(function(aChanges) {
 				assert.strictEqual(aChanges.length, 5, "only changes which are under max layer are returned");
@@ -584,70 +573,25 @@ function (
 					return aChangeFileNames.indexOf(sChangeFileName) !== -1;
 				});
 				assert.equal(bExpectedChangesExist, true, "then max layer filtered changes were returned");
-				assert.equal(VariantManagementState.updateVariantsState.firstCall.args[0].content["variantManagementId"].variants[0].controlChanges[0].getId(), "variantDependentControlChange",
+				assert.equal(oVariant.controlChanges[0].getVariantReference(), "variantManagementId",
 					"then variant dependent control change content was replaced with an instance");
 				assert.strictEqual(this.oChangePersistence._bHasChangesOverMaxLayer, true, "then the flag _bHasChangesOverMaxLayer is set");
 			}.bind(this));
 		});
 
 		QUnit.test("when getChangesForComponent is called without a max layer parameter and includeCtrlVariants set to true", function(assert) {
-			var oResponse = {
-				changes: [
-					{
-						fileName: "vendorChange",
-						fileType: "change",
-						layer: Layer.VENDOR
-					},
-					{
-						fileName: "userChange",
-						fileType: "change",
-						layer: Layer.USER
-					}
-				],
-				variantSection: {
-					variantManagementId: {
-						variants: [
-							{
-								content: {
-									fileName: "variantManagementId"
-								},
-								controlChanges: [
-									{
-										fileName: "variantDependentControlChange"
-									}
-								]
-							}
-						]
-					}
-				}
-			};
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({
-				changes: oResponse
-			});
-
-			sandbox.stub(this.oChangePersistence, "_getAllCtrlVariantChanges")
-				.withArgs(sinon.match.any, undefined)
-				.returns([
-					{
-						fileName: "variantDependentControlChange",
-						fileType: "change",
-						layer: Layer.CUSTOMER,
-						variantReference: "variantManagementId"
-					}
-				]);
-			sandbox.stub(this.oChangePersistence._oVariantController, "checkAndSetVariantContent");
-			sandbox.stub(VariantManagementState, "updateVariantsState");
+			var oVariant = mockVariableChangesAndGetVariant.call(this);
 
 			return this.oChangePersistence.getChangesForComponent().then(function(aChanges) {
-				assert.strictEqual(aChanges.length, 3, "only changes which are under max layer are returned");
+				assert.strictEqual(aChanges.length, 5, "then correct no. of changes were returned");
 				var aChangeFileNames = aChanges.map(function(oChangeOrChangeContent) {
 					return oChangeOrChangeContent.fileName || oChangeOrChangeContent.getId();
 				});
-				var bExpectedChangesExist = ["vendorChange", "userChange", "variantDependentControlChange"].every(function(sChangeFileName) {
+				var bExpectedChangesExist = ["vendorChange", "partnerChange", "customerChange", "variantDependentControlChange", "userChange"].every(function(sChangeFileName) {
 					return aChangeFileNames.indexOf(sChangeFileName) !== -1;
 				});
 				assert.equal(bExpectedChangesExist, true, "then the expected changes were returned");
-				assert.equal(VariantManagementState.updateVariantsState.firstCall.args[0].content["variantManagementId"].variants[0].controlChanges[0].getId(), "variantDependentControlChange",
+				assert.equal(oVariant.controlChanges[0].getVariantReference(), "variantManagementId",
 					"then variant dependent control change content was replaced with an instance");
 				assert.strictEqual(this.oChangePersistence._bHasChangesOverMaxLayer, false, "then the flag _bHasChangesOverMaxLayer was not set");
 			}.bind(this));
@@ -655,9 +599,9 @@ function (
 
 		QUnit.test("when _getLayerFromChangeOrChangeContent is called with a change instance", function(assert) {
 			var oChange = new Change({
-				fileName:"change1",
+				fileName: "change1",
 				layer: Layer.USER,
-				selector: { id: "controlId" },
+				selector: {id: "controlId"},
 				dependentSelector: []
 			});
 			assert.strictEqual(this.oChangePersistence._getLayerFromChangeOrChangeContent(oChange), Layer.USER, "then the correct layer is returned");
@@ -674,36 +618,40 @@ function (
 		});
 
 		QUnit.test("getChangesForComponent shall ignore max layer parameter when current layer is set", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({changes: {changes: [
-				{
-					fileName:"change2",
-					fileType: "change",
-					layer: Layer.VENDOR,
-					selector: { id: "controlId" },
-					dependentSelector: []
-				},
-				{
-					fileName:"change3",
-					fileType: "change",
-					layer: Layer.USER,
-					selector: { id: "anotherControlId" },
-					dependentSelector: []
-				},
-				{
-					fileName:"change4",
-					fileType: "change",
-					layer: Layer.CUSTOMER,
-					selector: { id: "controlId" },
-					dependentSelector: []
-				},
-				{
-					fileName:"change5",
-					fileType: "change",
-					layer: Layer.PARTNER,
-					selector: { id: "controlId" },
-					dependentSelector: []
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+				changes: {
+					changes: [
+						{
+							fileName: "change2",
+							fileType: "change",
+							layer: Layer.VENDOR,
+							selector: {id: "controlId"},
+							dependentSelector: []
+						},
+						{
+							fileName: "change3",
+							fileType: "change",
+							layer: Layer.USER,
+							selector: {id: "anotherControlId"},
+							dependentSelector: []
+						},
+						{
+							fileName: "change4",
+							fileType: "change",
+							layer: Layer.CUSTOMER,
+							selector: {id: "controlId"},
+							dependentSelector: []
+						},
+						{
+							fileName: "change5",
+							fileType: "change",
+							layer: Layer.PARTNER,
+							selector: {id: "controlId"},
+							dependentSelector: []
+						}
+					]
 				}
-			]}});
+			});
 
 			sandbox.stub(LayerUtils, "getMaxLayer").returns(Layer.CUSTOMER);
 
@@ -724,47 +672,51 @@ function (
 		});
 
 		QUnit.test("getChangesForComponent ignore filtering when ignoreMaxLayerParameter property is available", function(assert) {
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({changes: {changes: [
-				{
-					fileName:"change1",
-					fileType: "change",
-					layer: Layer.USER,
-					selector: { id: "controlId" },
-					dependentSelector: []
-				},
-				{
-					fileName:"change2",
-					fileType: "change",
-					layer: Layer.VENDOR,
-					selector: { id: "controlId" },
-					dependentSelector: []
-				},
-				{
-					fileName:"change3",
-					fileType: "change",
-					layer: Layer.USER,
-					selector: { id: "anotherControlId" },
-					dependentSelector: []
-				},
-				{
-					fileName:"change4",
-					fileType: "change",
-					layer: Layer.CUSTOMER,
-					selector: { id: "controlId" },
-					dependentSelector: []
-				},
-				{
-					fileName:"change5",
-					fileType: "change",
-					layer: Layer.PARTNER,
-					selector: { id: "controlId" },
-					dependentSelector: []
+			sandbox.stub(Cache, "getChangesFillingCache").resolves({
+				changes: {
+					changes: [
+						{
+							fileName: "change1",
+							fileType: "change",
+							layer: Layer.USER,
+							selector: {id: "controlId"},
+							dependentSelector: []
+						},
+						{
+							fileName: "change2",
+							fileType: "change",
+							layer: Layer.VENDOR,
+							selector: {id: "controlId"},
+							dependentSelector: []
+						},
+						{
+							fileName: "change3",
+							fileType: "change",
+							layer: Layer.USER,
+							selector: {id: "anotherControlId"},
+							dependentSelector: []
+						},
+						{
+							fileName: "change4",
+							fileType: "change",
+							layer: Layer.CUSTOMER,
+							selector: {id: "controlId"},
+							dependentSelector: []
+						},
+						{
+							fileName: "change5",
+							fileType: "change",
+							layer: Layer.PARTNER,
+							selector: {id: "controlId"},
+							dependentSelector: []
+						}
+					]
 				}
-			]}});
+			});
 
 			sandbox.stub(LayerUtils, "getMaxLayer").returns(Layer.CUSTOMER);
 
-			return this.oChangePersistence.getChangesForComponent({ignoreMaxLayerParameter : true}).then(function(oChanges) {
+			return this.oChangePersistence.getChangesForComponent({ignoreMaxLayerParameter: true}).then(function(oChanges) {
 				assert.strictEqual(oChanges.length, 5, "filtering is ignored, all changes are returned");
 			});
 		});
@@ -772,10 +724,10 @@ function (
 		QUnit.test("getChangesForVariant does nothing if entry in variant changes map is available", function(assert) {
 			var aStubChanges = [
 				{
-					fileName:"change1",
+					fileName: "change1",
 					fileType: "change",
 					layer: Layer.USER,
-					selector: { id: "controlId" },
+					selector: {id: "controlId"},
 					dependentSelector: []
 				}
 			];
@@ -790,56 +742,60 @@ function (
 		QUnit.test("getChangesForVariant call getChangesForComponent and filter results after that if entry in variant changes map is not available", function(assert) {
 			var oPromise = new Promise(function(resolve) {
 				setTimeout(function() {
-					resolve({changes: {changes: [
-						{
-							fileName: "change1",
-							fileType: "change",
-							changeType: "defaultVariant",
-							layer: Layer.CUSTOMER,
-							selector: { persistencyKey: "SmartFilter_Explored" },
-							originalLanguage: "EN"
-						},
-						{
-							fileName: "change2",
-							fileType: "change",
-							changeType: "defaultVariant",
-							layer: Layer.CUSTOMER,
-							selector: {}
-						},
-						{
-							fileName: "change3",
-							fileType: "change",
-							changeType: "renameGroup",
-							layer: Layer.CUSTOMER,
-							selector: { id: "controlId1" }
-						},
-						{
-							fileName: "variant1",
-							fileType: "variant",
-							changeType: "filterBar",
-							layer: Layer.CUSTOMER,
-							selector: { persistencyKey: "SmartFilter_Explored" },
-							originalLanguage: "EN"
-						},
-						{
-							fileName: "variant2",
-							fileType: "variant",
-							changeType: "filterBar",
-							layer: Layer.CUSTOMER
-						},
-						{
-							fileName: "change4",
-							fileType: "change",
-							changeType: "codeExt",
-							layer: Layer.CUSTOMER,
-							selector: { id: "controlId2" }
-						},
-						{
-							fileType: "change",
-							changeType: "appdescr_changes",
-							layer: Layer.CUSTOMER
+					resolve({
+						changes: {
+							changes: [
+								{
+									fileName: "change1",
+									fileType: "change",
+									changeType: "defaultVariant",
+									layer: Layer.CUSTOMER,
+									selector: {persistencyKey: "SmartFilter_Explored"},
+									originalLanguage: "EN"
+								},
+								{
+									fileName: "change2",
+									fileType: "change",
+									changeType: "defaultVariant",
+									layer: Layer.CUSTOMER,
+									selector: {}
+								},
+								{
+									fileName: "change3",
+									fileType: "change",
+									changeType: "renameGroup",
+									layer: Layer.CUSTOMER,
+									selector: {id: "controlId1"}
+								},
+								{
+									fileName: "variant1",
+									fileType: "variant",
+									changeType: "filterBar",
+									layer: Layer.CUSTOMER,
+									selector: {persistencyKey: "SmartFilter_Explored"},
+									originalLanguage: "EN"
+								},
+								{
+									fileName: "variant2",
+									fileType: "variant",
+									changeType: "filterBar",
+									layer: Layer.CUSTOMER
+								},
+								{
+									fileName: "change4",
+									fileType: "change",
+									changeType: "codeExt",
+									layer: Layer.CUSTOMER,
+									selector: {id: "controlId2"}
+								},
+								{
+									fileType: "change",
+									changeType: "appdescr_changes",
+									layer: Layer.CUSTOMER
+								}
+							]
 						}
-					]}});
+					});
 				}, 100);
 			});
 			sandbox.stub(Cache, "getChangesFillingCache").returns(oPromise);
@@ -860,7 +816,7 @@ function (
 			var oAddChangeStub = sandbox.stub(DependencyHandler, "addChangeAndUpdateDependencies");
 			var oSetStateStub = sandbox.stub(Change.prototype, "setInitialApplyState");
 			sandbox.stub(DependencyHandler, "createEmptyDependencyMap").returns(mExpectedChangesMap);
-			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {}).then(function (fnGetChangesMap) {
+			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {}).then(function(fnGetChangesMap) {
 				assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
 				assert.equal(oAddChangeStub.callCount, 3, "3 changes were added");
 				assert.equal(oSetStateStub.callCount, 3, "the state was set 3 times");
@@ -988,9 +944,11 @@ function (
 
 			this.oChangePersistence._mChangesInitial = mInitialChangesMap;
 			this.oChangePersistence._mChanges = mCurrentChangesMap;
+
 			function dependencyValid() {
 				return true;
 			}
+
 			function dependencyInvalid() {
 				return false;
 			}
@@ -1012,7 +970,7 @@ function (
 
 		QUnit.test("deleteChanges with bRunTimeCreatedChange parameter set, shall remove the given change from the map", function(assert) {
 			var oAppComponent = {
-				id :"mockAppComponent"
+				id: "mockAppComponent"
 			};
 			sandbox.stub(Cache, "getChangesFillingCache").resolves({
 				changes: {
@@ -1046,7 +1004,7 @@ function (
 			sandbox.spy(this.oChangePersistence, "_deleteChangeInMap");
 
 			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
-				.then(function (fnGetChangesMap) {
+				.then(function(fnGetChangesMap) {
 					var mChanges = fnGetChangesMap().mChanges;
 					var oChangeForDeletion = mChanges["controlId"][1]; // second change for 'controlId' shall be removed
 					this.oChangePersistence.deleteChange(oChangeForDeletion, true);
@@ -1059,20 +1017,20 @@ function (
 				getLocalId: function() {
 					return "viewId";
 				},
-				id :"componentId"
+				id: "componentId"
 			};
 
 			var oChangeWithViewPrefix = {
-				fileName:"changeWithViewPrefix",
+				fileName: "changeWithViewPrefix",
 				fileType: "change",
 				reference: "appComponentReference",
-				selector:{
+				selector: {
 					id: "componentId---viewId--controlId"
 				}
 			};
 
 			var oChangeWithoutViewPrefix = {
-				fileName:"changeWithoutViewPrefix",
+				fileName: "changeWithoutViewPrefix",
 				fileType: "change",
 				reference: "appComponentReference",
 				selector: {
@@ -1081,7 +1039,7 @@ function (
 			};
 
 			var oChangeWithPrefixAndLocalId = {
-				fileName:"changeWithPrefixAndLocalId",
+				fileName: "changeWithPrefixAndLocalId",
 				fileType: "change",
 				reference: "appComponentReference",
 				selector: {
@@ -1092,7 +1050,7 @@ function (
 
 			// when additionally ID prefixes could be present e.g. fragment ID, control ID containing "--"
 			var oChangeWithViewAndAdditionalPrefixes = {
-				fileName:"changeWithViewAndAdditionalPrefixes",
+				fileName: "changeWithViewAndAdditionalPrefixes",
 				fileType: "change",
 				reference: "appComponentReference",
 				selector: {
@@ -1115,7 +1073,7 @@ function (
 			};
 
 			return this.oChangePersistence.getChangesForView(mPropertyBag)
-				.then(function (aChanges) {
+				.then(function(aChanges) {
 					assert.strictEqual(aChanges.length, 3, "then two changes belonging to the view were returned");
 					assert.strictEqual(aChanges[0].getId(), "changeWithViewPrefix", "then the change with view prefix was returned");
 					assert.strictEqual(aChanges[1].getId(), "changeWithPrefixAndLocalId", "then the change with view prefix was returned");
@@ -1125,21 +1083,21 @@ function (
 
 		QUnit.test("when getChangesForView is called with an embedded component and a view ID existing both for app and embedded components", function(assert) {
 			var oEmbeddedComponent = {
-				id :"mockEmbeddedComponent"
+				id: "mockEmbeddedComponent"
 			};
 
 			var oChange1View1 = {
-				fileName:"change1View1",
+				fileName: "change1View1",
 				fileType: "change",
 				reference: "appComponentReference",
-				selector:{
+				selector: {
 					id: "view1--button1",
 					idIsLocal: true
 				}
 			};
 
 			var oChange1View2 = {
-				fileName:"change1View2",
+				fileName: "change1View2",
 				fileType: "change",
 				reference: "appComponentReference",
 				selector: {
@@ -1161,7 +1119,7 @@ function (
 			};
 
 			return this.oChangePersistence.getChangesForView(mPropertyBag)
-				.then(function (aChanges) {
+				.then(function(aChanges) {
 					assert.strictEqual(aChanges.length, 1, "then only one change is returned");
 					assert.strictEqual(aChanges[0].getId(), "change1View2", "then only the change belonging to the embedded component was returned");
 				});
@@ -1169,14 +1127,14 @@ function (
 
 		QUnit.test("when getChangesForView is called with an extension point selector containing a view ID", function(assert) {
 			var oAppComponent = {
-				id :"appComponentReference"
+				id: "appComponentReference"
 			};
 
 			var oChange1View1 = {
-				fileName:"change1View1",
+				fileName: "change1View1",
 				fileType: "change",
 				reference: "appComponentReference",
-				selector:{
+				selector: {
 					name: "Extension1",
 					viewSelector: {
 						id: "viewWithExtension",
@@ -1186,10 +1144,10 @@ function (
 			};
 
 			var oChange1View2 = {
-				fileName:"change1View2",
+				fileName: "change1View2",
 				fileType: "change",
 				reference: "appComponentReference",
-				selector:{
+				selector: {
 					name: "Extension1",
 					viewSelector: {
 						id: "viewWithoutExtension",
@@ -1199,7 +1157,7 @@ function (
 			};
 
 			var oChange2View2 = {
-				fileName:"change2View2",
+				fileName: "change2View2",
 				fileType: "change",
 				reference: "appComponentReference",
 				selector: {
@@ -1212,7 +1170,7 @@ function (
 			};
 
 			var oChange3View3 = {
-				fileName:"change3View3",
+				fileName: "change3View3",
 				fileType: "change",
 				reference: "appComponentReference",
 				selector: {
@@ -1225,7 +1183,7 @@ function (
 			};
 
 			var oChange4View3 = {
-				fileName:"change4View3",
+				fileName: "change4View3",
 				fileType: "change",
 				reference: "appComponentReference",
 				selector: {
@@ -1238,7 +1196,7 @@ function (
 			};
 
 			var oChange4View1 = {
-				fileName:"change4View1",
+				fileName: "change4View1",
 				fileType: "change",
 				reference: "appComponentReference",
 				selector: {
@@ -1273,7 +1231,7 @@ function (
 			};
 
 			return this.oChangePersistence.getChangesForView(mPropertyBag)
-				.then(function (aChanges) {
+				.then(function(aChanges) {
 					assert.strictEqual(aChanges.length, 2, "then only two change were returned");
 					assert.strictEqual(aChanges[0].getId(), "change1View1", "then only the change with the correct viewId of the selector was returned");
 					assert.strictEqual(aChanges[1].getId(), "change4View1", "then only the change with the correct viewId of the selector was returned");
@@ -1282,15 +1240,15 @@ function (
 
 		QUnit.test("when getChangesForExtensionPoint is called with an extension point selector containing a view ID", function(assert) {
 			var oAppComponent = {
-				id :"appComponentReference"
+				id: "appComponentReference"
 			};
 
 			var oChange1_EP1_V1_VENDOR = {
-				fileName:"oChange1_EP1_V1_VENDOR",
+				fileName: "oChange1_EP1_V1_VENDOR",
 				fileType: "change",
 				layer: "VENDOR",
 				reference: "appComponentReference",
-				selector:{
+				selector: {
 					name: "EP1",
 					viewSelector: {
 						id: "V1",
@@ -1300,11 +1258,11 @@ function (
 			};
 
 			var oChange2_EP1_V1_CUSTOMER_BASE = {
-				fileName:"oChange2_EP1_V1_CUSTOMER_BASE",
+				fileName: "oChange2_EP1_V1_CUSTOMER_BASE",
 				fileType: "change",
 				layer: "CUSTOMER_BASE",
 				reference: "appComponentReference",
-				selector:{
+				selector: {
 					name: "EP1",
 					viewSelector: {
 						id: "V1",
@@ -1314,7 +1272,7 @@ function (
 			};
 
 			var oChange3_EP1_V2_VENDOR = {
-				fileName:"oChange3_EP1_V2_VENDOR",
+				fileName: "oChange3_EP1_V2_VENDOR",
 				fileType: "change",
 				layer: "VENDOR",
 				reference: "appComponentReference",
@@ -1352,26 +1310,26 @@ function (
 			mPropertyBag.name = "EP1";
 			mPropertyBag.viewId = "appComponentReference---V1";
 			return this.oChangePersistence.getChangesForExtensionPoint(mPropertyBag)
-				.then(function (aChanges) {
+				.then(function(aChanges) {
 					assert.strictEqual(aChanges.length, 2, "then only two change were returned");
 					assert.strictEqual(aChanges[0].getId(), "oChange1_EP1_V1_VENDOR", "then only the change with the correct viewId of the selector was returned");
 					assert.strictEqual(aChanges[1].getId(), "oChange2_EP1_V1_CUSTOMER_BASE", "then only the change with the correct viewId of the selector was returned");
 					//Get change for EP1 in V2
 					mPropertyBag.viewId = "appComponentReference---V2";
 					return this.oChangePersistence.getChangesForExtensionPoint(mPropertyBag)
-						.then(function (aChanges) {
+						.then(function(aChanges) {
 							assert.strictEqual(aChanges.length, 1, "then only once change were returned");
 							assert.strictEqual(aChanges[0].getId(), "oChange3_EP1_V2_VENDOR", "then only the change with the correct viewId of the selector was returned");
 							//Get change for EP2 in V1
 							mPropertyBag.name = "EP2";
 							mPropertyBag.viewId = "appComponentReference---V1";
 							return this.oChangePersistence.getChangesForExtensionPoint(mPropertyBag)
-								.then(function (aChanges) {
+								.then(function(aChanges) {
 									assert.strictEqual(aChanges.length, 0, "then no change were returned");
 									//Get changes for an incomplete extension point info
 									mPropertyBag.name = undefined;
 									return this.oChangePersistence.getChangesForExtensionPoint(mPropertyBag)
-										.then(function (aChanges) {
+										.then(function(aChanges) {
 											assert.strictEqual(aChanges.length, 0, "then no change were returned");
 										});
 								}.bind(this));
@@ -1379,7 +1337,7 @@ function (
 				}.bind(this));
 		});
 
-		QUnit.test("_getChangesFromMapByNames returns array of changes with corresponding name", function (assert) {
+		QUnit.test("_getChangesFromMapByNames returns array of changes with corresponding name", function(assert) {
 			var oAppComponent = {
 				id: "mockAppComponent"
 			};
@@ -1434,26 +1392,26 @@ function (
 			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
 
 			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
-				.then(function () {
+				.then(function() {
 					return this.oChangePersistence._getChangesFromMapByNames(aNames);
 				}.bind(this))
-				.then(function (aChanges) {
+				.then(function(aChanges) {
 					assert.deepEqual(aChanges, aExpectedChanges, " 2 changes should be found");
 				});
 		});
 
 		QUnit.test("when calling transportAllUIChanges successfully", function(assert) {
 			var oMockNewChange = {
-				fileType : "change",
-				id : "changeId2"
+				fileType: "change",
+				id: "changeId2"
 			};
 
 			var oAppVariantDescriptor = {
-				packageName : "$TMP",
-				fileType : "appdescr_variant",
-				fileName : "manifest",
-				id : "customer.app.var.id",
-				namespace : "namespace"
+				packageName: "$TMP",
+				fileType: "appdescr_variant",
+				fileName: "manifest",
+				id: "customer.app.var.id",
+				namespace: "namespace"
 			};
 			var oRootControl = {
 				id: "sampleControl"
@@ -1483,13 +1441,13 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("when calling resetChanges without generator, selector IDs and change types specified", function (assert) {
+		QUnit.test("when calling resetChanges without generator, selector IDs and change types specified", function(assert) {
 			sandbox.stub(Log, "error");
 			this.oChangePersistence.resetChanges(Layer.VENDOR);
 			assert.ok(Log.error.calledWith("Of the generator, selector IDs and change types parameters at least one has to filled"), "then Log.error() is called with an error");
 		});
 
-		QUnit.test("when calling resetChanges without aSelectorIds and aChangeTypes (application reset)", function (assert) {
+		QUnit.test("when calling resetChanges without aSelectorIds and aChangeTypes (application reset)", function(assert) {
 			var done = assert.async();
 			// changes for the component
 			var oVENDORChange1 = new Change({
@@ -1528,7 +1486,7 @@ function (
 
 			var aChanges = [oVENDORChange1, oVENDORChange2];
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves(aChanges);
-			var aDeletedChangeContentIds = {response : [{name: "1"}, {name: "2"}]};
+			var aDeletedChangeContentIds = {response: [{name: "1"}, {name: "2"}]};
 
 			var oResetChangesStub = sandbox.stub(WriteStorage, "reset").resolves(aDeletedChangeContentIds);
 			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
@@ -1548,7 +1506,7 @@ function (
 			});
 		});
 
-		QUnit.test("when calling resetChanges with selector and change type (control reset)", function (assert) {
+		QUnit.test("when calling resetChanges with selector and change type (control reset)", function(assert) {
 			// changes for the component
 			var oVENDORChange1 = new Change({
 				fileType: "change",
@@ -1609,13 +1567,13 @@ function (
 	});
 
 	QUnit.module("sap.ui.fl.ChangePersistence addChange", {
-		beforeEach: function () {
+		beforeEach: function() {
 			sandbox.stub(FlexState, "initialize").resolves();
 			sandbox.stub(FlexState, "getAppDescriptorChanges").returns([]);
 			sandbox.stub(VariantManagementState, "loadInitialChanges").returns([]);
 			this._mComponentProperties = {
-				name : "saveChangeScenario",
-				appVersion : "1.2.3"
+				name: "saveChangeScenario",
+				appVersion: "1.2.3"
 			};
 			sandbox.stub(Utils, "isApplication").returns(false);
 			return Component.create({
@@ -1626,20 +1584,23 @@ function (
 				this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("checkForOpenDependenciesForControl", function(assert) {
 			var oCheckDependenciesStub = sandbox.stub(DependencyHandler, "checkForOpenDependenciesForControl");
-			this.oChangePersistence.checkForOpenDependenciesForControl({id: "anotherId", idIsLocal: false}, this._oAppComponentInstance);
+			this.oChangePersistence.checkForOpenDependenciesForControl({
+				id: "anotherId",
+				idIsLocal: false
+			}, this._oAppComponentInstance);
 			assert.equal(oCheckDependenciesStub.callCount, 1, "the function was called once");
 			assert.deepEqual(oCheckDependenciesStub.lastCall.args[0], this.oChangePersistence._mChanges, "the changes map was passed");
 			assert.equal(oCheckDependenciesStub.lastCall.args[1], "anotherId", "the resolved ID was passed");
 			assert.equal(oCheckDependenciesStub.lastCall.args[2], this._oAppComponentInstance, "the app component instance was passed");
 		});
 
-		QUnit.test("When call addChange 3 times, 4 new changes are returned and the dependencies map also got updated", function (assert) {
+		QUnit.test("When call addChange 3 times, 4 new changes are returned and the dependencies map also got updated", function(assert) {
 			var oChangeContent1;
 			var oChangeContent2;
 			var oChangeContent3;
@@ -1650,8 +1611,8 @@ function (
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
@@ -1660,8 +1621,8 @@ function (
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "removeField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
@@ -1670,8 +1631,8 @@ function (
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
@@ -1697,8 +1658,8 @@ function (
 			assert.strictEqual(aChanges[2], newChange3);
 		});
 
-		QUnit.test("Shall add propagation listener on the app component if an embedded component is passed", function (assert) {
-			var oChangeContent = { };
+		QUnit.test("Shall add propagation listener on the app component if an embedded component is passed", function(assert) {
+			var oChangeContent = {};
 			var done = assert.async();
 			sandbox.stub(this.oChangePersistence, "addDirtyChange");
 			sandbox.stub(this.oChangePersistence, "_addRunTimeCreatedChangeAndUpdateDependencies");
@@ -1714,7 +1675,7 @@ function (
 			assert.notOk(fnAddPropagationListenerStub.calledWith(this._oAppComponentInstance), "then _addPropagationListener not called with the embedded component");
 		});
 
-		QUnit.test("Shall not add the same change twice", function (assert) {
+		QUnit.test("Shall not add the same change twice", function(assert) {
 			// possible scenario: change gets saved, then without reload undo and redo gets called. both would add a dirty change
 			var oChangeContent;
 			var aChanges;
@@ -1724,8 +1685,8 @@ function (
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
@@ -1744,8 +1705,8 @@ function (
 			assert.deepEqual(oNewChange, oSecondChange);
 		});
 
-		QUnit.test("also adds the flexibility propagation listener in case the application component does not have one yet", function (assert) {
-			var aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function (fnListener) {
+		QUnit.test("also adds the flexibility propagation listener in case the application component does not have one yet", function(assert) {
+			var aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function(fnListener) {
 				return fnListener._bIsSapUiFlFlexControllerApplyChangesOnControl;
 			});
 
@@ -1757,22 +1718,22 @@ function (
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
 			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
-			aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function (fnListener) {
+			aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function(fnListener) {
 				return fnListener._bIsSapUiFlFlexControllerApplyChangesOnControl;
 			});
 
 			assert.equal(aRegisteredFlexPropagationListeners.length, 1, "one propagation listener is added");
 		});
 
-		QUnit.test("adds the flexibility propagation listener only once even when adding multiple changes", function (assert) {
-			var aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function (fnListener) {
+		QUnit.test("adds the flexibility propagation listener only once even when adding multiple changes", function(assert) {
+			var aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function(fnListener) {
 				return fnListener._bIsSapUiFlFlexControllerApplyChangesOnControl;
 			});
 
@@ -1784,52 +1745,54 @@ function (
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
-			aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function (fnListener) {
+			aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function(fnListener) {
 				return fnListener._bIsSapUiFlFlexControllerApplyChangesOnControl;
 			});
 
 			assert.equal(aRegisteredFlexPropagationListeners.length, 1, "one propagation listener is added");
 		});
 
-		QUnit.test("also adds the flexibility propagation listener in case the application component does not have one yet (but other listeners)", function (assert) {
-			this._oComponentInstance.addPropagationListener(function () {});
+		QUnit.test("also adds the flexibility propagation listener in case the application component does not have one yet (but other listeners)", function(assert) {
+			this._oComponentInstance.addPropagationListener(function() {
+			});
 
 			var oChangeContent = {
 				fileName: "Gizorillus",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
 			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
-			var aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function (fnListener) {
+			var aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function(fnListener) {
 				return fnListener._bIsSapUiFlFlexControllerApplyChangesOnControl;
 			});
 
 			assert.equal(aRegisteredFlexPropagationListeners.length, 1, "one propagation listener is added");
 		});
 
-		QUnit.test("also adds the flexibility propagation listener in case the application component does not have one yet (but other listeners)", function (assert) {
-			var fnAssertFlPropagationListenerCount = function (nNumber, sAssertionText) {
-				var aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function (fnListener) {
+		QUnit.test("also adds the flexibility propagation listener in case the application component does not have one yet (but other listeners)", function(assert) {
+			var fnAssertFlPropagationListenerCount = function(nNumber, sAssertionText) {
+				var aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function(fnListener) {
 					return fnListener._bIsSapUiFlFlexControllerApplyChangesOnControl;
 				});
 				assert.equal(aRegisteredFlexPropagationListeners.length, nNumber, sAssertionText);
 			}.bind(this);
 
-			var fnEmptyFunction = function() {};
+			var fnEmptyFunction = function() {
+			};
 			this._oComponentInstance.addPropagationListener(fnEmptyFunction.bind());
 
 			fnAssertFlPropagationListenerCount(0, "no FL propagation listener was added");
@@ -1839,7 +1802,7 @@ function (
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
+				selector: {id: "control1"},
 				content: {},
 				originalLanguage: "DE"
 			};
@@ -1851,14 +1814,14 @@ function (
 	});
 
 	QUnit.module("sap.ui.fl.ChangePersistence saveChanges", {
-		beforeEach: function () {
+		beforeEach: function() {
 			sandbox.stub(FlexState, "initialize").resolves();
 			sandbox.stub(VariantManagementState, "loadInitialChanges").returns([]);
 			var oBackendResponse = {changes: StorageUtils.getEmptyFlexDataResponse()};
 			this.oGetFlexObjectsFromStorageResponseStub = sandbox.stub(FlexState, "getFlexObjectsFromStorageResponse").returns(oBackendResponse.changes);
 			this._mComponentProperties = {
-				name : "saveChangeScenario",
-				appVersion : "1.2.3"
+				name: "saveChangeScenario",
+				appVersion: "1.2.3"
 			};
 			this._oComponentInstance = sap.ui.component({
 				name: "sap/ui/fl/qunit/integration/testComponentComplex"
@@ -1870,13 +1833,13 @@ function (
 
 			this.oServer = sinon.fakeServer.create();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oServer.restore();
 			sandbox.restore();
 			Cache._entries = {};
 		}
 	}, function() {
-		QUnit.test("Shall save the dirty changes when adding a new change and return a promise", function (assert) {
+		QUnit.test("Shall save the dirty changes when adding a new change and return a promise", function(assert) {
 			var oChangeContent;
 
 			oChangeContent = {
@@ -1884,8 +1847,8 @@ function (
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
@@ -1896,7 +1859,7 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("Shall save the dirty changes for a draft when adding a new change and return a promise", function (assert) {
+		QUnit.test("Shall save the dirty changes for a draft when adding a new change and return a promise", function(assert) {
 			var oChangeContent;
 
 			oChangeContent = {
@@ -1904,8 +1867,8 @@ function (
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
@@ -1917,7 +1880,7 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("(Save As scenario) Shall save the dirty changes for the created app variant when pressing a 'Save As' button and return a promise", function (assert) {
+		QUnit.test("(Save As scenario) Shall save the dirty changes for the created app variant when pressing a 'Save As' button and return a promise", function(assert) {
 			var oChangeContent;
 
 			oChangeContent = {
@@ -1925,8 +1888,8 @@ function (
 				layer: Layer.CUSTOMER,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
@@ -1952,12 +1915,12 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("Shall save all dirty changes with changes in DELETE state", function (assert) {
+		QUnit.test("Shall save all dirty changes with changes in DELETE state", function(assert) {
 			var oChangeContent = {
 				fileName: "Gizorillus",
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" }
+				selector: {id: "control1"}
 			};
 			var oChange = new Change(oChangeContent);
 
@@ -1971,19 +1934,19 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("Shall save passed dirty changes with changes in DELETE state", function (assert) {
+		QUnit.test("Shall save passed dirty changes with changes in DELETE state", function(assert) {
 			var oChangeNotToBeSaved = new Change({
 				fileName: "Gizorillus1",
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" }
+				selector: {id: "control1"}
 			});
 
 			var oChangeToBeSaved = new Change({
 				fileName: "Gizorillus2",
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control2" }
+				selector: {id: "control2"}
 			});
 
 			this.oChangePersistence.deleteChange(oChangeNotToBeSaved);
@@ -1998,19 +1961,19 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("Shall save all dirty changes in a bulk", function (assert) {
+		QUnit.test("Shall save all dirty changes in a bulk", function(assert) {
 			var oChangeContent1 = {
 				fileName: "Gizorillus1",
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" }
+				selector: {id: "control1"}
 			};
 
 			var oChangeContent2 = {
 				fileName: "Gizorillus2",
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" }
+				selector: {id: "control1"}
 			};
 			this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
 			this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
@@ -2024,19 +1987,19 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("Shall save passed dirty changes in a bulk", function (assert) {
+		QUnit.test("Shall save passed dirty changes in a bulk", function(assert) {
 			var oChangeContent1 = {
 				fileName: "Gizorillus1",
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" }
+				selector: {id: "control1"}
 			};
 
 			var oChangeContent2 = {
 				fileName: "Gizorillus2",
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control2" }
+				selector: {id: "control2"}
 			};
 
 			var oChangeToBeSaved = this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
@@ -2050,7 +2013,7 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("(Save As scenario) Shall save the dirty changes for the new created app variant in a bulk when pressing a 'Save As' button", function (assert) {
+		QUnit.test("(Save As scenario) Shall save the dirty changes for the new created app variant in a bulk when pressing a 'Save As' button", function(assert) {
 			var oChangeContent1;
 			var oChangeContent2;
 
@@ -2059,8 +2022,8 @@ function (
 				layer: Layer.CUSTOMER,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
@@ -2069,8 +2032,8 @@ function (
 				layer: Layer.CUSTOMER,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 			this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
@@ -2095,12 +2058,12 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("Shall add and remove changes to the cache depending upon change category", function (assert) {
+		QUnit.test("Shall add and remove changes to the cache depending upon change category", function(assert) {
 			var aSavedChanges = [];
 			sandbox.stub(VariantManagementState, "updateVariantsState");
 
 			var oChangeContent1 = {
-				content : {
+				content: {
 					title: "variant 0"
 				},
 				fileName: "variant0",
@@ -2109,19 +2072,19 @@ function (
 			};
 
 			var oChangeContent2 = {
-				variantReference:"variant0",
-				fileName:"controlChange0",
-				fileType:"change",
-				content:{},
-				selector:{
-					id:"selectorId"
+				variantReference: "variant0",
+				fileName: "controlChange0",
+				fileType: "change",
+				content: {},
+				selector: {
+					id: "selectorId"
 				}
 			};
 
 			var oChangeContent3 = {
 				fileType: "ctrl_variant_change",
 				selector: {
-					id : "variant0"
+					id: "variant0"
 				}
 			};
 
@@ -2129,7 +2092,7 @@ function (
 				fileName: "setDefault",
 				fileType: "ctrl_variant_management_change",
 				content: {
-					defaultVariant:"variant0"
+					defaultVariant: "variant0"
 				},
 				selector: {
 					id: "variantManagementId"
@@ -2141,8 +2104,8 @@ function (
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
@@ -2157,15 +2120,14 @@ function (
 			var oAddChangeSpy = sandbox.spy(Cache, "addChange");
 			var oDeleteChangeSpy = sandbox.spy(Cache, "deleteChange");
 			var mPropertyBag = {
-				reference: this.oChangePersistence._mComponent.name,
-				content: this.oChangePersistence._oVariantController.getChangeFileContent()
+				reference: this.oChangePersistence._mComponent.name
 			};
 
 			function _checkVariantSyncCall() {
-				aSavedChanges.forEach(function (oSavedChange, iIndex) {
+				aSavedChanges.forEach(function(oSavedChange, iIndex) {
 					if (iIndex < 4) { // only first 4 changes are variant related
 						assert.ok(VariantManagementState.updateVariantsState.getCall(iIndex).calledWith(
-							Object.assign(mPropertyBag, {changeToBeAddedOrDeleted: oSavedChange})), "then variant controller content was synced with the FlexState");
+							Object.assign(mPropertyBag, {changeToBeAddedOrDeleted: oSavedChange})), "then the change was added to flex state response");
 					}
 				});
 			}
@@ -2184,14 +2146,14 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("shall remove the change from the dirty changes, after is has been saved", function (assert) {
+		QUnit.test("shall remove the change from the dirty changes, after is has been saved", function(assert) {
 			var oChangeContent = {
 				fileName: "Gizorillus",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
@@ -2202,14 +2164,14 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("(Save As scenario) shall remove the change from the dirty changes, after it has been saved for the new app variant", function (assert) {
+		QUnit.test("(Save As scenario) shall remove the change from the dirty changes, after it has been saved for the new app variant", function(assert) {
 			var oChangeContent = {
 				fileName: "Gizorillus",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
@@ -2232,14 +2194,14 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("shall delete a change from the dirty changes, if it has just been added to the dirty changes, having a pending action of NEW", function (assert) {
+		QUnit.test("shall delete a change from the dirty changes, if it has just been added to the dirty changes, having a pending action of NEW", function(assert) {
 			var oChangeContent = {
 				fileName: "Gizorillus",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
@@ -2250,18 +2212,18 @@ function (
 			assert.strictEqual(aDirtyChanges.length, 0);
 		});
 
-		QUnit.skip("shall not change the state of a dirty change in case of a connector error", function (assert) {
+		QUnit.skip("shall not change the state of a dirty change in case of a connector error", function(assert) {
 			var oChangeContent = {
 				fileName: "Gizorillus",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
-			var oRaisedError = {messages: [{severity : "Error", text : "Error"}]};
+			var oRaisedError = {messages: [{severity: "Error", text: "Error"}]};
 
 			// this test requires a slightly different setup
 			this.oGetFlexObjectsFromStorageResponseStub.restore();
@@ -2273,7 +2235,7 @@ function (
 
 			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 			return this.oChangePersistence.saveDirtyChanges()
-				['catch'](function(oError) {
+				.catch(function(oError) {
 					assert.equal(oError, oRaisedError, "the error object is correct");
 					return this.oChangePersistence.getChangesForComponent();
 				}.bind(this))
@@ -2285,14 +2247,14 @@ function (
 				}.bind(this));
 		});
 
-		QUnit.test("shall keep a change in the dirty changes, if it has a pending action of DELETE", function (assert) {
+		QUnit.test("shall keep a change in the dirty changes, if it has a pending action of DELETE", function(assert) {
 			var oChangeContent = {
 				fileName: "Gizorillus",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
@@ -2305,14 +2267,14 @@ function (
 			assert.strictEqual(aDirtyChanges.length, 1);
 		});
 
-		QUnit.test("shall delete a change from the dirty changes after the deletion has been saved", function (assert) {
+		QUnit.test("shall delete a change from the dirty changes after the deletion has been saved", function(assert) {
 			var oChangeContent = {
 				fileName: "Gizorillus",
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
@@ -2329,7 +2291,7 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("saveSequenceOfDirtyChanges shall save a sequence of the dirty changes in a bulk", function (assert) {
+		QUnit.test("saveSequenceOfDirtyChanges shall save a sequence of the dirty changes in a bulk", function(assert) {
 			var oChangeContent1;
 			var oChangeContent2;
 			var oChangeContent3;
@@ -2339,8 +2301,8 @@ function (
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
@@ -2349,8 +2311,8 @@ function (
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
@@ -2359,8 +2321,8 @@ function (
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 			this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
@@ -2376,7 +2338,7 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("saveSequenceOfDirtyChanges shall save a sequence of the dirty changes in a bulk for drafts", function (assert) {
+		QUnit.test("saveSequenceOfDirtyChanges shall save a sequence of the dirty changes in a bulk for drafts", function(assert) {
 			var oChangeContent1;
 			var oChangeContent2;
 			var oChangeContent3;
@@ -2386,8 +2348,8 @@ function (
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
@@ -2396,8 +2358,8 @@ function (
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 
@@ -2406,8 +2368,8 @@ function (
 				layer: Layer.VENDOR,
 				fileType: "change",
 				changeType: "addField",
-				selector: { id: "control1" },
-				content: { },
+				selector: {id: "control1"},
+				content: {},
 				originalLanguage: "DE"
 			};
 			this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
@@ -2477,9 +2439,9 @@ function (
 			assert.ok(sId);
 			var oChange = this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"];
 			assert.equal(oChange.getPendingAction(), "NEW");
-			var oCreatedContent = merge(oChange.getDefinition(), {support: { user: "creator"}});
+			var oCreatedContent = merge(oChange.getDefinition(), {support: {user: "creator"}});
 			var oCreateResponse = {response: [oCreatedContent]};
-			var oUpdatedContent = merge(oCreatedContent, {texts: { variantName: "newName"}});
+			var oUpdatedContent = merge(oCreatedContent, {texts: {variantName: "newName"}});
 			var oUpdateResponse = {response: oUpdatedContent};
 			var oDeleteResponse = {};
 
@@ -2490,19 +2452,19 @@ function (
 			this.oRemoveStub.restore();
 			this.oRemoveStub = sandbox.stub(WriteStorage, "remove").resolves(oDeleteResponse);
 
-			return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function (aResults) {
+			return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function(aResults) {
 				assert.ok(Array.isArray(aResults));
 				assert.equal(aResults.length, 1);
 				assert.strictEqual(aResults[0], oCreateResponse);
 				assert.equal(oChange.getDefinition().support.user, "creator");
 				assert.equal(oChange.getState(), Change.states.PERSISTED);
 				oChange.setState(Change.states.DIRTY);
-				return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function (aResults) {
+				return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function(aResults) {
 					assert.strictEqual(aResults[0], oUpdateResponse);
 					assert.equal(oChange.getDefinition().texts.variantName, "newName");
 					assert.equal(oChange.getState(), Change.states.PERSISTED);
 					oChange.markForDeletion();
-					return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function (aResults) {
+					return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function(aResults) {
 						assert.ok(Array.isArray(aResults));
 						assert.equal(aResults.length, 1);
 						assert.strictEqual(aResults[0], oDeleteResponse);
@@ -2544,13 +2506,13 @@ function (
 			sandbox.stub(WriteStorage, "write").resolves();
 			sandbox.stub(WriteStorage, "update").resolves();
 
-			return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function (aResults) {
+			return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function(aResults) {
 				assert.ok(Array.isArray(aResults));
 				assert.equal(aResults.length, 1);
 				assert.equal(aResults[0], undefined);
 				assert.equal(oChange.getState(), Change.states.PERSISTED);
 				oChange.setState(Change.states.DIRTY);
-				return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function (aResults) {
+				return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function(aResults) {
 					assert.equal(aResults[0], undefined);
 					assert.equal(oChange.getState(), Change.states.PERSISTED);
 					oChange.markForDeletion();
@@ -2599,7 +2561,7 @@ function (
 	});
 
 	QUnit.module("getResetAndPublishInfo", {
-		beforeEach: function () {
+		beforeEach: function() {
 			sandbox.stub(FlexState, "initialize").resolves();
 			sandbox.stub(WriteStorage, "getFlexInfo").returns(
 				Promise.resolve({
@@ -2618,16 +2580,16 @@ function (
 				appVersion: "1.2.3"
 			};
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("call getResetAndPublishInfo", function (assert) {
+		QUnit.test("call getResetAndPublishInfo", function(assert) {
 			return this.oChangePersistence.getResetAndPublishInfo(this.mPropertyBag)
-			.then(function (oResetAndPublishInfo) {
-				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "isResetEnabled is true");
-				assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "isPublishEnabled is true");
-			});
+				.then(function(oResetAndPublishInfo) {
+					assert.equal(oResetAndPublishInfo.isResetEnabled, true, "isResetEnabled is true");
+					assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "isPublishEnabled is true");
+				});
 		});
 	});
 
