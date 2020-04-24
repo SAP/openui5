@@ -293,7 +293,7 @@ sap.ui.define([
 	DateRangeSelection.prototype.setValue = function(sValue) {
 
 		if (sValue !== this.getValue()) {
-			this._lastValue = sValue;
+			this.setLastValue(sValue);
 		} else {
 			return this;
 		}
@@ -714,12 +714,12 @@ sap.ui.define([
 			}
 		}
 
-		if (sValue !== this._lastValue) {
+		if (sValue !== this.getLastValue()) {
 			if (this.getDomRef() && (this._$input.val() !== sValue)) {
 				this._$input.val(sValue);
 				this._curpos = this._$input.cursorPos();
 			}
-			this._lastValue = sValue;
+			this.setLastValue(sValue);
 			this.setProperty("value", sValue, true);
 			if (this._bValid) {
 				this.setProperty("dateValue", _normalizeDateValue(aDates[0]), true);
@@ -906,7 +906,7 @@ sap.ui.define([
 		var sValue = this._formatValue(oDateValue, oSecondDateValue);
 
 		if (sValue !== this.getValue()) {
-			this._lastValue = sValue;
+			this.setLastValue(sValue);
 		}
 		// Set the property in any case but check validity on output
 		this.setProperty("value", sValue);

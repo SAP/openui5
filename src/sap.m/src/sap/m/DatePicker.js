@@ -715,7 +715,7 @@ sap.ui.define([
 		var sValue = this._formatValue(oDate, true);
 
 		if (sValue !== this.getValue()) {
-			this._lastValue = sValue;
+			this.setLastValue(sValue);
 		}
 
 		// set the property in any case but check validity on output
@@ -940,10 +940,10 @@ sap.ui.define([
 		}
 
 		// compare with the old known value
-		if (this._lastValue !== sValue
+		if (this.getLastValue() !== sValue
 			|| (oDate && this.getDateValue() && oDate.getFullYear() !== this.getDateValue().getFullYear())) {
 			// remember the last value on change
-			this._lastValue = sValue;
+			this.setLastValue(sValue);
 
 			this.setProperty("value", sValue, true); // no rerendering
 			var sNewValue = this.getValue(); // in databinding a formatter could change the value (including dateValue) directly
@@ -1293,7 +1293,7 @@ sap.ui.define([
 				this._bValid = true;
 				if (this.getDomRef()) { // as control could be destroyed during update binding
 					this._$input.val(sValue);
-					this._lastValue = sValue;
+					this.setLastValue(sValue);
 				}
 				// we have to format the value with the existing format
 				// before setting it and firing the change event

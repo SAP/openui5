@@ -262,7 +262,7 @@ function(
 
 		// IE fires input event whenever placeholder attribute is changed
 		if (document.activeElement !== oEvent.target &&
-			Device.browser.msie && this.getValue() === this._lastValue) {
+			Device.browser.msie && this.getValue() === this.getLastValue()) {
 			oEvent.setMarked("invalid");
 			return;
 		}
@@ -320,7 +320,7 @@ function(
 	InputBase.prototype.init = function() {
 
 		// last changed value
-		this._lastValue = "";
+		this.setLastValue("");
 
 		/**
 		 * Indicates whether the input field is in the rendering phase.
@@ -566,7 +566,7 @@ function(
 		var sValue = this._getInputValue(sNewValue);
 
 		// compare with the old known value
-		if (sValue !== this._lastValue) {
+		if (sValue !== this.getLastValue()) {
 
 			// save the value on change
 			this.setValue(sValue);
@@ -575,7 +575,7 @@ function(
 			sValue = this.getValue();
 
 			// remember the last value on change
-			this._lastValue = sValue;
+			this.setLastValue(sValue);
 
 			// fire change event
 			this.fireChangeEvent(sValue, mParameters);
@@ -662,17 +662,17 @@ function(
 		var sValue = this._getInputValue();
 
 		// compare last known value and dom value
-		if (sValue !== this._lastValue) {
+		if (sValue !== this.getLastValue()) {
 
 			// mark the event that it is handled
 			oEvent.setMarked();
 			oEvent.preventDefault();
 
 			// revert to the old dom value
-			this.updateDomValue(this._lastValue);
+			this.updateDomValue(this.getLastValue());
 
 			// value is reverted, now call the hook to inform
-			this.onValueRevertedByEscape(this._lastValue, sValue);
+			this.onValueRevertedByEscape(this.getLastValue(), sValue);
 		}
 	};
 
@@ -1088,7 +1088,7 @@ function(
 		// check if we need to update the last value because
 		// when setProperty("value") called setValue is called again via binding
 		if (sValue !== this.getProperty("value")) {
-			this._lastValue = sValue;
+			this.setLastValue(sValue);
 		}
 
 		// update value property
@@ -1170,6 +1170,30 @@ function(
 			return this.$("inner");
 		}
 	});
+
+	/**
+	 * Sets the last value of the InputBase
+	 *
+	 * @param {string} sValue
+	 * @returns {sap.m.InputBase}
+	 * @since 1.78
+	 * @protected
+	 */
+	InputBase.prototype.setLastValue = function (sValue) {
+		this._lastValue = sValue;
+		return this;
+	};
+
+	/**
+	 * Gets the last value of the InputBase
+	 *
+	 * @returns {string}
+	 * @since 1.78
+	 * @protected
+	 */
+	InputBase.prototype.getLastValue = function () {
+		return this._lastValue;
+	};
 
 	return InputBase;
 

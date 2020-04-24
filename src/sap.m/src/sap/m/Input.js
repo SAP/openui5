@@ -1202,9 +1202,9 @@ function(
 			// restore the initial value that was there before suggestion dialog
 			if (this._sBeforeSuggest !== undefined) {
 				if (this._sBeforeSuggest !== this.getValue()) {
-					lastValue = this._lastValue;
+					lastValue = this.getLastValue();
 					this.setValue(this._sBeforeSuggest);
-					this._lastValue = lastValue; // override InputBase.onsapescape()
+					this.setLastValue(lastValue); // override InputBase.onsapescape()
 				}
 				this._sBeforeSuggest = undefined;
 			}
@@ -1213,7 +1213,7 @@ function(
 
 		if (this.getValueLiveUpdate()) {
 			// When valueLiveUpdate is true call setProperty to return back the last value.
-			this.setProperty("value", this._lastValue, true);
+			this.setProperty("value", this.getLastValue(), true);
 		}
 
 		if (InputBase.prototype.onsapescape) {

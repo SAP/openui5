@@ -111,7 +111,7 @@ sap.ui.define([
 		if (sValue === sOldValue) {
 			return this;
 		} else {
-			this._lastValue = sValue;
+			this.setLastValue(sValue);
 		}
 
 		// set the property in any case but check validity on output
@@ -165,7 +165,7 @@ sap.ui.define([
 		var sValue = this._formatValue(oDate, true);
 
 		if (sValue !== this.getValue()) {
-			this._lastValue = sValue;
+			this.setLastValue(sValue);
 		}
 		// set the property in any case but check validity on output
 		this.setProperty("value", sValue);
