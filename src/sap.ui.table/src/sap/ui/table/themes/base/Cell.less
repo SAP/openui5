@@ -449,7 +449,10 @@
 }
 
 .sapUiTableCellFlex {
-	display: flex;
+	> .sapUiTableCellInner {
+		display: flex;
+		align-items: center;
+	}
 }
 
 .sapUiTableRowHidden.sapUiTableCell > *,

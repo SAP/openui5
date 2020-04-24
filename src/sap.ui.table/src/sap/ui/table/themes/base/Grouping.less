@@ -25,8 +25,13 @@
 	flex: none;
 	justify-content: center;
 	align-items: center;
-	width: @_sap_ui_table_RowSelectorWidth;
+	width: @_sap_ui_table_BaseSize;
+	height: @_sap_ui_table_BaseSize;
 	cursor: default;
+
+	.sapUiSizeCondensed & {
+		height: @_sap_ui_table_BaseSizeCondensed;
+	}
 }
 
 .sapUiTableTreeIcon:focus {
