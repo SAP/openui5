@@ -70,7 +70,7 @@ sap.ui.define(function() {
 				}
 			},
 			ExtensionPoint: {
-				title: "ExtensionPoints with nProvider",
+				title: "ExtensionPoints with ExtensionProvider",
 				qunit: {
 					reorder: false
 				}
