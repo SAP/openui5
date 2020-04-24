@@ -183,7 +183,18 @@
 
 			var oData = {};
 			var bLibsAvailable = false;
-			var aThemes = ["sap_fiori_3", "sap_belize", "sap_belize_plus", "sap_belize_hcb", "sap_belize_hcw", "sap_bluecrystal", "sap_hcb"];
+			var mThemes = {
+				"sap_fiori_3": "SAP Quartz Light",
+				"sap_fiori_3_dark": "SAP Quartz Dark",
+				"sap_fiori_3_hcb": "SAP High Contrast Black",
+				"sap_fiori_3_hcw": "SAP High Contrast White",
+				"sap_belize": "SAP Belize",
+				"sap_belize_plus": "SAP Belize Deep",
+				"sap_belize_hcb": "SAP Belize HCB",
+				"sap_belize_hcw": "SAP Belize HCW",
+				"sap_bluecrystal": "SAP BlueCrystal",
+				"sap_hcb": "SAP HCB"
+			};
 			var sTitle = "";
 
 			jQuery(function() {
@@ -214,9 +225,9 @@
 						jQuery("#lib").append("<option value='" + lib + "'>" + lib + "</option>");
 					}
 
-					for (var i=0; i<aThemes.length; i++) {
-						jQuery("#theme").append("<option value='" + aThemes[i] + "'>" + aThemes[i] + "</option>");
-					}
+					Object.keys(mThemes).forEach(function (sKey) {
+						jQuery("#theme").append("<option value='" + sKey+ "'>" + mThemes[sKey] + "</option>");
+					});
 
 					jQuery("#lib").on("change", onChange);
 					jQuery("#theme").on("change", onChange);
