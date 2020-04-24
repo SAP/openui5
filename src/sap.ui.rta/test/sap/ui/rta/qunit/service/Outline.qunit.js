@@ -645,7 +645,8 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when get() is called", function (assert) {
+		// TODO: temporarily disabled due to customer incident: 275287
+		QUnit.skip("when get() is called", function (assert) {
 			var mExtensionPointOutlineItem = {
 				name: "ExtensionPoint2",
 				technicalName: "sap.ui.extensionpoint",
