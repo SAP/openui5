@@ -277,8 +277,17 @@ sap.ui.define([
 						". Change set must contain only POST, PUT, PATCH or DELETE requests.");
 				}
 
-				// adjust URL if it contains Content-ID reference by adding the change set index
-				sUrl = sUrl.replace(rContentIdReference, "$&." + iChangeSetIndex);
+				if (iChangeSetIndex !== undefined) {
+					// adjust URL if it contains Content-ID reference by adding the change set index
+					// (but not inside the query part)
+					sUrl = sUrl.replace(rContentIdReference, function (sMatch, iOffset) {
+						var iStartOfQuery = sUrl.indexOf("?");
+
+						return iStartOfQuery < 0 || iOffset < iStartOfQuery
+							? sMatch + "." + iChangeSetIndex
+							: sMatch;
+					});
+				}
 
 				aRequestBody = aRequestBody.concat(
 					"Content-Type:application/http\r\n",
