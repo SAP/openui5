@@ -2,13 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/base/Object",
-	"sap/base/Log"
+	"sap/ui/base/Object"
 ], function (
-	BaseObject,
-	Log
+	BaseObject
 ) {
 	"use strict";
+	/* global Map */
 
 	var rPattern = /\{\{destinations.([^\}]+)/;
 
@@ -37,13 +36,24 @@ sap.ui.define([
 			BaseObject.call(this);
 			this._oHost = oHost;
 			this._oConfiguration = oConfiguration;
+			this._mResolved = new Map();
 		}
 	});
 
+	/**
+	 * Sets the host which is used to resolve destinations.
+	 * @param {sap.ui.integration.Host} oHost The host.
+	 */
 	Destinations.prototype.setHost = function(oHost) {
 		this._oHost = oHost;
+		this._mResolved.clear();
 	};
 
+	/**
+	 * Process destination placeholders inside a configuration object.
+	 * @param {Object} oConfig The configuration object.
+	 * @returns {Promise} A promise which resolves with the processed object.
+	 */
 	Destinations.prototype.process = function (oConfig) {
 		var sUrl = oConfig.url,
 			oClonedConfig;
@@ -52,13 +62,13 @@ sap.ui.define([
 			return Promise.resolve(oConfig);
 		}
 
-		if (!this._hasDestination(sUrl)) {
+		if (!this.hasDestination(sUrl)) {
 			return Promise.resolve(oConfig);
 		}
 
 		oClonedConfig = jQuery.extend(true, {}, oConfig);
 
-		return this._processString(sUrl)
+		return this.processString(sUrl)
 			.then(function (sProcessedUrl) {
 				oClonedConfig.url = sProcessedUrl;
 				return oClonedConfig;
@@ -72,6 +82,23 @@ sap.ui.define([
 	 * @public
 	 */
 	Destinations.prototype.getUrl = function (sKey) {
+		var oResult;
+
+		if (this._mResolved.has(sKey)) {
+			return this._mResolved.get(sKey);
+		}
+
+		oResult = this._resolveUrl(sKey);
+
+		this._mResolved.set(sKey, oResult);
+
+		return oResult;
+	};
+
+	/**
+	 * @private
+	 */
+	Destinations.prototype._resolveUrl = function (sKey) {
 		var oConfig = this._oConfiguration ? this._oConfiguration[sKey] : null,
 			sName,
 			sDefaultUrl;
@@ -98,11 +125,21 @@ sap.ui.define([
 		return this._oHost.getDestination(sName);
 	};
 
-	Destinations.prototype._hasDestination = function (sString) {
+	/**
+	 * Returns true if the given string contains destination placeholder.
+	 * @param {string} sString The string to check.
+	 * @returns {boolean} True if the string contains a destination.
+	 */
+	Destinations.prototype.hasDestination = function (sString) {
 		return !!sString.match(rPattern);
 	};
 
-	Destinations.prototype._processString = function (sString) {
+	/**
+	 * Process a string and replaces a destination placeholder with the resolved destination.
+	 * @param {string} sString The string to process.
+	 * @returns {Promise} A Promise which resolves with the processed string.
+	 */
+	Destinations.prototype.processString = function (sString) {
 		var aMatches = sString.match(rPattern),
 			sKey;
 
@@ -118,6 +155,9 @@ sap.ui.define([
 			}.bind(this));
 	};
 
+	/**
+	 * @private
+	 */
 	Destinations.prototype._replaceUrl = function (sString, sKey, sUrl) {
 		var sSanitizedUrl = sUrl.trim().replace(/\/$/, ""); // remove any trailing spaces and slashes
 

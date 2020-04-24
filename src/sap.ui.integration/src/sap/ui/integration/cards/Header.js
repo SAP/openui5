@@ -5,13 +5,11 @@ sap.ui.define([
 	"sap/f/cards/Header",
 	"sap/f/cards/HeaderRenderer",
 	"sap/ui/integration/util/BindingHelper",
-	"sap/ui/integration/formatters/IconFormatter",
 	'sap/ui/model/json/JSONModel',
 	"sap/ui/integration/util/LoadingProvider"
 ], function (FHeader,
 			 FHeaderRenderer,
 			 BindingHelper,
-			 IconFormatter,
 			 JSONModel,
 			 LoadingProvider) {
 	"use strict";
@@ -37,7 +35,7 @@ sap.ui.define([
 	 */
 	var Header = FHeader.extend("sap.ui.integration.cards.Header", {
 
-		constructor: function (mConfiguration, oActionsToolbar, sAppId) {
+		constructor: function (mConfiguration, oActionsToolbar, sAppId, oIconFormatter) {
 
 			mConfiguration = mConfiguration || {};
 			this._sAppId = sAppId;
@@ -61,7 +59,7 @@ sap.ui.define([
 
 			if (mSettings.iconSrc) {
 				mSettings.iconSrc = BindingHelper.formattedProperty(mSettings.iconSrc, function (sValue) {
-					return IconFormatter.formatSrc(sValue, sAppId);
+					return oIconFormatter.formatSrc(sValue, sAppId);
 				});
 			}
 

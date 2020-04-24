@@ -88,7 +88,9 @@ sap.ui.define(function () {
 					'./cardbundle/CardStaticResources.qunit',
 					'./util/CardFormatters.qunit',
 					'./cards/BaseContent.qunit',
-					'./bindingFeatures/DateRange.qunit'
+					'./bindingFeatures/DateRange.qunit',
+					'./CardHost.qunit',
+					'./formatters/IconFormatter.qunit'
 				]
 			},
 			"CardLoading": {
@@ -110,6 +112,14 @@ sap.ui.define(function () {
 				module: [
 					'./loading/CardLoading.qunit'
 				]
+			},
+			"CardHost": {
+				coverage: {
+					only: [
+						"sap/ui/integration/widgets/Card",
+						"sap/ui/integration/Host"
+					]
+				}
 			},
 			"UI5InputText": {
 				coverage: {
@@ -190,6 +200,11 @@ sap.ui.define(function () {
 					only: [
 						"sap/ui/integration/customElements/"
 					]
+				}
+			},
+			"formatters/IconFormatter": {
+				coverage: {
+					only: ["sap/ui/integration/formatters/IconFormatter"]
 				}
 			},
 			"util/BindingHelper": {

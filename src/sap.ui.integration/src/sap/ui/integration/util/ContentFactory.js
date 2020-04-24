@@ -62,6 +62,7 @@ sap.ui.define([
 				oContent._sAppId = mConfig.appId;
 				oContent.setServiceManager(mConfig.serviceManager);
 				oContent.setDataProviderFactory(mConfig.dataProviderFactory);
+				oContent.setIconFormatter(mConfig.iconFormatter);
 				oContent.setActions(oActions);
 
 				if (sType.toLowerCase() !== "adaptivecard") {

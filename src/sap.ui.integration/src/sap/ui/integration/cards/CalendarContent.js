@@ -4,7 +4,6 @@
 sap.ui.define([
 		"sap/ui/integration/library",
 		"sap/ui/integration/cards/BaseContent",
-		"sap/ui/integration/formatters/IconFormatter",
 		"sap/ui/integration/util/BindingHelper",
 		"sap/ui/integration/util/BindingResolver",
 		"sap/f/PlanningCalendarInCard",
@@ -19,7 +18,7 @@ sap.ui.define([
 		"sap/ui/unified/DateTypeRange",
 		"sap/ui/unified/CalendarLegendItem"
 	],
-	function (library, BaseContent, IconFormatter, BindingHelper, BindingResolver, PlanningCalendarInCard, PlanningCalendarInCardRow, PlanningCalendarInCardLegend, mLibrary, PlanningCalendar, DateFormat, Filter, FilterOperator, CalendarAppointment, DateTypeRange, CalendarLegendItem) {
+	function (library, BaseContent, BindingHelper, BindingResolver, PlanningCalendarInCard, PlanningCalendarInCardRow, PlanningCalendarInCardLegend, mLibrary, PlanningCalendar, DateFormat, Filter, FilterOperator, CalendarAppointment, DateTypeRange, CalendarLegendItem) {
 		"use strict";
 
 		var AreaType = library.AreaType,
@@ -269,7 +268,7 @@ sap.ui.define([
 			}
 			if (mItem.template.icon && mItem.template.icon.src) {
 				mAppointmentSettings.icon = BindingHelper.formattedProperty(mItem.template.icon.src, function (sValue) {
-					return IconFormatter.formatSrc(sValue, this._sAppId);
+					return this._oIconFormatter.formatSrc(sValue, this._sAppId);
 				}.bind(this));
 			}
 			this._oAppointmentTemplate = new CalendarAppointment(mAppointmentSettings);
@@ -292,7 +291,7 @@ sap.ui.define([
 			}
 			if (mItem.template.icon && mItem.template.icon.src) {
 				mBlockerSettings.icon = BindingHelper.formattedProperty(mItem.template.icon.src, function (sValue) {
-					return IconFormatter.formatSrc(sValue, this._sAppId);
+					return this._oIconFormatter.formatSrc(sValue, this._sAppId);
 				}.bind(this));
 			}
 			this._oHeaderTemplate = new CalendarAppointment(mBlockerSettings);

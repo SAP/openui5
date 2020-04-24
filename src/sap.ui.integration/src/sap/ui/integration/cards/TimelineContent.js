@@ -4,19 +4,13 @@
 sap.ui.define([
 		"sap/ui/integration/cards/BaseListContent",
 		"sap/suite/ui/commons/Timeline",
-		"sap/suite/ui/commons/library",
 		"sap/suite/ui/commons/TimelineItem",
-		'sap/ui/base/ManagedObject',
-		"sap/ui/integration/util/BindingHelper",
-		"sap/ui/integration/formatters/IconFormatter"
+		"sap/ui/integration/util/BindingHelper"
 	], function (
 		BaseListContent,
 		Timeline,
-		suiteLibrary,
 		TimelineItem,
-		ManagedObject,
-		BindingHelper,
-		IconFormatter
+		BindingHelper
 	) {
 		"use strict";
 
@@ -136,7 +130,7 @@ sap.ui.define([
 			// settings that need a formatter
 			if (mItem.ownerImage && mItem.ownerImage.value) {
 				mSettings.userPicture = BindingHelper.formattedProperty(mItem.ownerImage.value, function (sValue) {
-					return IconFormatter.formatSrc(sValue, this._sAppId);
+					return this._oIconFormatter.formatSrc(sValue, this._sAppId);
 				}.bind(this));
 			}
 

@@ -24,7 +24,8 @@ sap.ui.define([
 	"sap/ui/integration/util/Destinations",
 	"sap/ui/integration/util/LoadingProvider",
 	"sap/ui/integration/util/HeaderFactory",
-	"sap/ui/integration/util/ContentFactory"
+	"sap/ui/integration/util/ContentFactory",
+	"sap/ui/integration/formatters/IconFormatter"
 ], function (
 	jQuery,
 	Core,
@@ -48,7 +49,8 @@ sap.ui.define([
 	Destinations,
 	LoadingProvider,
 	HeaderFactory,
-	ContentFactory
+	ContentFactory,
+	IconFormatter
 ) {
 	"use strict";
 	/* global Map */
@@ -577,6 +579,11 @@ sap.ui.define([
 			this._oDestinations = null;
 		}
 
+		if (this._oIconFormatter) {
+			this._oIconFormatter.destroy();
+			this._oIconFormatter = null;
+		}
+
 		this.destroyAggregation("_header");
 		this.destroyAggregation("_content");
 
@@ -718,6 +725,7 @@ sap.ui.define([
 		}
 
 		this._oDestinations = new Destinations(this.getHostInstance(), this._oCardManifest.get(MANIFEST_PATHS.DESTINATIONS));
+		this._oIconFormatter = new IconFormatter(this._oDestinations);
 		this._oDataProviderFactory = new DataProviderFactory(this._oDestinations);
 		this._oLoadingProvider = new LoadingProvider();
 
@@ -903,6 +911,7 @@ sap.ui.define([
 			contentManifest: oContentManifest,
 			serviceManager:  this._oServiceManager,
 			dataProviderFactory: this._oDataProviderFactory,
+			iconFormatter: this._oIconFormatter,
 			appId: this._sAppId
 		}).then(function (oContent) {
 				this._setCardContent(oContent);
