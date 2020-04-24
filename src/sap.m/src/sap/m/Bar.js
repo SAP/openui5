@@ -316,7 +316,6 @@ sap.ui.define([
 			bRtl = sap.ui.getCore().getConfiguration().getRTL(),
 			sLeftOrRight = bRtl ? "right" : "left",
 			oMidBarCss = { visibility : "" };
-
 		if (this.getEnableFlexBox()) {
 
 			iMidBarPlaceholderWidth = iBarWidth - iLeftBarWidth - iRightBarWidth - parseInt(this._$MidBarPlaceHolder.css('margin-left')) - parseInt(this._$MidBarPlaceHolder.css('margin-right'));
@@ -350,6 +349,12 @@ sap.ui.define([
 			oMidBarCss.width = iSpaceBetweenLeftAndRight + "px";
 
 			oMidBarCss.left = bRtl ? iRightBarWidth : iLeftBarWidth;
+		}
+
+		//Internet Explorer has a problem with resizing of elements and applying inline styles. If we have input with placeholder or search bar
+		//the resizing is forcing a focus lost, so we are not resizing the element.
+		if (Device.browser.msie) {
+			oMidBarCss.width = iMidBarPlaceholderWidth;
 		}
 
 		return oMidBarCss;
