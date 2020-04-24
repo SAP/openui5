@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/test/TestUtils"
 ], function (Log, Opa5, TestUtils) {
 	"use strict";
+	var sRaiseErrorMessage = "Property `Note` value `RAISE_ERROR` not allowed!";
 
 	return {
 		writeNonDeferredGroup : function (sGroupId, sUIComponent, Given, When, Then) {
@@ -42,10 +43,11 @@ sap.ui.define([
 
 				// Test: update of SalesOrder note -> error, restart after note corrected
 				When.onTheMainPage.changeNoteInSalesOrders(0, "RAISE_ERROR");
+				When.onTheMessagePopover.selectMessage(sRaiseErrorMessage);
 				Then.onTheMessagePopover.checkMessageHasTechnicalDetails({
 					originalMessage : {
 						code : "OO/000",
-						message : "Property `Note` value `RAISE_ERROR` not allowed!"
+						message : sRaiseErrorMessage
 					}
 				});
 				When.onTheMessagePopover.close();
@@ -55,7 +57,7 @@ sap.ui.define([
 					component : "sap.ui.model.odata.v4.Context",
 					level : Log.Level.ERROR,
 					message: "Failed to update path /SalesOrderList",
-					details : "Property `Note` value `RAISE_ERROR` not allowed!"
+					details : sRaiseErrorMessage
 				});
 				if (sGroupId.includes("irect")) { // Note: better check group submit mode, but how?
 					//TODO avoid duplicate reporting in case PATCH is not retried
@@ -63,7 +65,7 @@ sap.ui.define([
 						component : "sap.ui.model.odata.v4.ODataPropertyBinding",
 						level : Log.Level.ERROR,
 						message: "Failed to update path /SalesOrderList",
-						details : "Property `Note` value `RAISE_ERROR` not allowed!"
+						details : sRaiseErrorMessage
 					});
 				}
 
