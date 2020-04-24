@@ -123,7 +123,7 @@ sap.ui.define([
 
 			AdaptiveCards.AdaptiveCard.onProcessMarkdown = function (sText, oResult) {
 				var oCard = that.getParent(),
-					bEnableMarkdown = oCard.getManifestEntry("/sap.card/configuration/enableMarkdown");
+					bEnableMarkdown = oCard && oCard.getManifestEntry("/sap.card/configuration/enableMarkdown");
 
 				if (bEnableMarkdown) {
 					oResult.outputHtml = new Markdown().render(sText);
