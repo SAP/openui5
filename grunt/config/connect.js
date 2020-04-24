@@ -1,6 +1,6 @@
 var fs = require('fs');
 var url = require('url');
-var cspMiddleware = require('@ui5/server').middleware.csp;
+var cspMiddleware = require('@ui5/server').middlewareRepository.getMiddleware("csp").middleware;
 
 
 module.exports = function(grunt, config) {
