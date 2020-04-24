@@ -121,6 +121,15 @@ sap.ui.define([
 		this._oGridObserver.observe(this, { aggregations: ["items"] });
 	};
 
+	GridList.prototype.onfocusin = function() {
+		ListBase.prototype.onfocusin.apply(this, arguments);
+
+		this._oItemNavigation = this.getItemNavigation();
+		if (this._oItemNavigation) {
+			//Enable Up/Left Arrow and Down/Right Arrow to navigate
+			this._oItemNavigation.setTableMode(false, false);
+		}
+	};
 	GridList.prototype.exit = function () {
 		this._removeGridLayoutDelegate();
 
