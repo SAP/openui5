@@ -1902,6 +1902,14 @@ function(
 		var oItemDomRef = oItem.getDomRef(),
 			mPosition = this.getAccessbilityPosition(oItem);
 
+		// force IE to repaint so the focus border a visible
+		if (Device.browser.msie && this._oItemNavigation && this._oItemNavigation.getFocusedDomRef() === oItemDomRef) {
+			oItemDomRef.classList.remove("sapMLIBFocusable");
+			setTimeout(function() {
+				oItemDomRef.classList.add("sapMLIBFocusable");
+			}, 0);
+		}
+
 		if (!oItem.getContentAnnouncement) {
 			// let the screen reader announce the whole content
 			this.getNavigationRoot().setAttribute("aria-activedescendant", oItemDomRef.id);
@@ -2202,19 +2210,6 @@ function(
 
 	// Ctrl + A to switch select all/none
 	ListBase.prototype.onkeydown = function(oEvent) {
-		// force IE to repaint in reverse fast navigation via Shift + F6
-		if (Device.browser.msie && oEvent.shiftKey && oEvent.which === KeyCodes.F6) {
-			if (this._oItemNavigation) {
-				var $oFocusedDomRef = jQuery(this._oItemNavigation.getFocusedDomRef());
-				if ($oFocusedDomRef.hasClass("sapMLIBFocusable")) {
-					$oFocusedDomRef.removeClass("sapMLIBFocusable");
-					setTimeout(function() {
-						$oFocusedDomRef.addClass("sapMLIBFocusable");
-					}, 0);
-				}
-			}
-		}
-
 		var bCtrlA = (oEvent.which == KeyCodes.A) && (oEvent.metaKey || oEvent.ctrlKey);
 		if (oEvent.isMarked() || !bCtrlA || !jQuery(oEvent.target).hasClass(this.sNavItemClass) || this.bPreventMassSelection) {
 			return;
