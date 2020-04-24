@@ -12,6 +12,9 @@ sap.ui.define([
 
 	/**
 	 * Descriptor change merger for change type <code>appdescr_app_setTitle</code>.
+	 * Sets the title of the app by changing the manifest value <code>sap.app/title</code>.
+	 *
+	 * Available for both runtime and build.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.app.SetTitle
 	 * @experimental
@@ -22,7 +25,7 @@ sap.ui.define([
 	var SetTitle = {
 
 		/**
-		 * Sets the title of the app by changing the manifest value <code>sap.app/title</code>.
+		 * Method to apply the <code>appdescr_app_setTitle</code> change to the manifest.
 		 * @param {object} oManifest Original manifest
 		 * @returns {object} Updated manifest with changed title used as a placeholder for postprocessing
 		 *

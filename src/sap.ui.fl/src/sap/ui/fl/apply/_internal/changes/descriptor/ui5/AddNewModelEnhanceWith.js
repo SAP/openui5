@@ -15,7 +15,10 @@ sap.ui.define([
 
 	/**
 	 * Descriptor change merger for change type <code>appdescr_ui5_addNewModelEnhanceWith</code>.
-	 * Only works for inline descriptor changes.
+	 * Adds a <code>settings/enhanceWith</code> node of an existing model with a path to an i18n properties file relative to the location of the manifest.
+	 * Only works for referenced models of type <code>sap.ui.model.resource.ResourceModel</code>.
+	 *
+	 * Only available during build time.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.ui5.AddNewModelEnhanceWith
 	 * @experimental
@@ -23,14 +26,15 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal
 	 */
-	var AddNewModelEnhanceWith = {
+	var AddNewModelEnhanceWith = /** @lends sap.ui.fl.apply._internal.changes.descriptor.ui5.AddNewModelEnhanceWith */ {
 
 		/**
-		 * Adds an <code>settings/enhanceWith</code> node of an existing model with a path to an i18n properties file relative to the location of the manifest.
-		 * Only works for referenced models of type <code>sap.ui.model.resource.ResourceModel</code>.
+		 * Method to apply the <code>appdescr_ui5_addNewModelEnhanceWith</code> change to the manifest.
 		 * @param {object} oManifest Original manifest
 		 * @param {object} oChange Change with type <code>appdescr_ui5_addNewModelEnhanceWith</code>
-		 * @returns {object} Updated manifest with model property
+		 * @param {string} oChange.content.modelId ID of existing model, referenced model must have type <code>sap.ui.model.resource.ResourceModel</code>
+		 * @param {string} oChange.texts.i18n Path to an i18n properties path relative to the location of the change
+		 * @returns {object} Updated manifest with <code>sap.ui5/models</code> entity
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.fl.apply._internal
