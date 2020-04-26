@@ -127,6 +127,20 @@ sap.ui.define([
 		},
 
 		/**
+		 * Resets variant management state
+		 *
+		 * @param {string} sReference - Component reference
+		 *
+		 * @private
+		 * @ui5-restricted
+		 */
+		resetContent: function(sReference) {
+			// reset on component destroy() should be handled more centrally
+			// once all maps are prepared in flex state
+			FlexState.clearFilteredResponse(sReference);
+		},
+
+		/**
 		 * Returns control changes for a given variant reference.
 		 *
 		 * @param {String} mPropertyBag.vmReference - Variant management reference

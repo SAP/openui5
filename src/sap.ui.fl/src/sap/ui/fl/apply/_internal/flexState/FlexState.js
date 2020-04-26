@@ -193,7 +193,7 @@ sap.ui.define([
 				var sCurrentMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sNewHash);
 				var sPreviousMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sOldHash);
 				if (sCurrentMaxLayer !== sPreviousMaxLayer) {
-					FlexState.clearMaxLayerFiltering(sReference);
+					FlexState.clearFilteredResponse(sReference);
 				}
 			} catch (oError) {
 				// required to hinder any errors - can break FLP navigation
@@ -314,12 +314,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes the saved filtered storage response and internal maps for the given reference;
-	 * The next initialize call will add it again
+	 * Removes the saved filtered storage response and internal maps for the given reference.
+	 * The next initialize call will add it again.
 	 *
 	 * @param {string} sReference - Flex reference of the app
 	 */
-	FlexState.clearMaxLayerFiltering = function(sReference) {
+	FlexState.clearFilteredResponse = function(sReference) {
 		delete _mInstances[sReference].storageResponse;
 		_clearPreparedMaps(sReference);
 	};
