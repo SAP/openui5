@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/Storage",
 	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/Utils",
 	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/ui/thirdparty/sinon-4"
@@ -19,6 +20,7 @@ sap.ui.define([
 	Storage,
 	StorageUtils,
 	LayerUtils,
+	Utils,
 	Log,
 	merge,
 	sinon
@@ -391,7 +393,7 @@ sap.ui.define([
 					}
 				}.bind(this)
 			};
-			sandbox.stub(LayerUtils, "getUshellContainer").returns(oUShellService);
+			sandbox.stub(Utils, "getUshellContainer").returns(oUShellService);
 		},
 		afterEach: function() {
 			FlexState.clearState();
@@ -606,7 +608,7 @@ sap.ui.define([
 			this.oAppComponent = new UIComponent(sComponentId);
 
 			this.oLoaderSpy = sandbox.spy(Loader, "loadFlexData");
-			this.oApplyStorageLoadFlexDataSpy = sandbox.stub(Storage, "loadFlexData");
+			this.oApplyStorageLoadFlexDataStub = sandbox.stub(Storage, "loadFlexData");
 			this.oApplyStorageCompleteFlexDataSpy = sandbox.spy(Storage, "completeFlexData");
 		},
 		afterEach: function() {
@@ -616,12 +618,12 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when initialize is called in parallel after partialFlexState is set", function(assert) {
-			mResponse.changes = [{
+			mResponse.changes.changes = [{
 				fileType: "change",
 				changeType: "propertyChange",
 				layer: LayerUtils.getCurrentLayer()
 			}];
-			this.oApplyStorageLoadFlexDataSpy.resolves(mResponse);
+			this.oApplyStorageLoadFlexDataStub.resolves(mResponse.changes);
 			var oFlexStateSpy = sandbox.spy(FlexState, "initialize");
 			return FlexState.initialize({
 				reference: sReference,
@@ -631,7 +633,7 @@ sap.ui.define([
 			.then(function() {
 				assert.equal(oFlexStateSpy.callCount, 1, "flexstate is called once");
 				assert.equal(this.oLoaderSpy.callCount, 1, "loader is called once");
-				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is called once");
+				assert.equal(this.oApplyStorageLoadFlexDataStub.callCount, 1, "storage loadFlexData is called once");
 				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 0, "storage completeFlexData is not called");
 			}.bind(this))
 			.then(function() {
@@ -648,7 +650,7 @@ sap.ui.define([
 			.then(function() {
 				assert.equal(oFlexStateSpy.callCount, 3, "flexstate is called three times");
 				assert.equal(this.oLoaderSpy.callCount, 2, "loader is called twice");
-				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is called once");
+				assert.equal(this.oApplyStorageLoadFlexDataStub.callCount, 1, "storage loadFlexData is called once");
 				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 1, "storage completeFlexData is called once");
 				return FlexState.getStorageResponse(sReference);
 			}.bind(this))

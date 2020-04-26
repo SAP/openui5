@@ -45,23 +45,24 @@ sap.ui.define([
 
 	function givenAnFLP(fnFLPToExternalStub, mShellParams) {
 		sandbox.stub(FlexUtils, "getUshellContainer").returns({
-			getService : function() {
+			getService: function() {
 				return {
-					toExternal : fnFLPToExternalStub,
-					getHash : function() {
+					toExternal: fnFLPToExternalStub,
+					getHash: function() {
 						return "Action-somestring";
 					},
-					parseShellHash : function() {
+					parseShellHash: function() {
 						var mHash = {
-							semanticObject : "Action",
-							action : "somestring"
+							semanticObject: "Action",
+							action: "somestring"
 						};
 
 						if (mShellParams) {
 							mHash.params = mShellParams;
 						}
 						return mHash;
-					}
+					},
+					unregisterNavigationFilter: function() {}
 				};
 			},
 			getLogonSystem: function() {
@@ -435,22 +436,7 @@ sap.ui.define([
 		QUnit.test("when draft changes are available, RTA is started and user exists", function(assert) {
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
-			sandbox.stub(FlexUtils, "getUshellContainer").returns({
-				getService: function () {
-					return {
-						toExternal: function() {
-							return true;
-						},
-						parseShellHash: function () {
-							return {
-								params: {
-									"sap-ui-fl-version": [Layer.CUSTOMER]
-								}
-							};
-						}
-					};
-				}
-			});
+			givenAnFLP(function() {return true;}, {"sap-ui-fl-version": [Layer.CUSTOMER]});
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITHOUT_DRAFT", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
@@ -880,22 +866,7 @@ sap.ui.define([
 			this.oRta = new RuntimeAuthoring({
 				rootControl : this.oRootControl
 			});
-			sandbox.stub(FlexUtils, "getUshellContainer").returns({
-				getService: function () {
-					return {
-						toExternal: function() {
-							return true;
-						},
-						parseShellHash: function () {
-							return {
-								params: {
-									"sap-ui-fl-version": [Layer.CUSTOMER]
-								}
-							};
-						}
-					};
-				}
-			});
+			givenAnFLP(function() {return true;}, {"sap-ui-fl-version": [Layer.CUSTOMER]});
 		},
 		afterEach : function() {
 			this.oRta.destroy();
@@ -1097,16 +1068,7 @@ sap.ui.define([
 
 	QUnit.module("Given that RuntimeAuthoring wants to determine if a reload is needed", {
 		beforeEach: function() {
-			sandbox.stub(FlexUtils, "getUshellContainer").returns({
-				getService: function () {
-					return {
-						toExternal: true,
-						parseShellHash: function () {
-							return {params: {}};
-						}
-					};
-				}
-			});
+			givenAnFLP(function() {return true;}, {});
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
 				rootControl : this.oRootControl,
@@ -1238,16 +1200,7 @@ sap.ui.define([
 
 	QUnit.module("Given that RuntimeAuthoring wants to determine if a reload is needed on exit", {
 		beforeEach: function() {
-			sandbox.stub(FlexUtils, "getUshellContainer").returns({
-				getService: function () {
-					return {
-						toExternal: true,
-						parseShellHash: function () {
-							return {params: {}};
-						}
-					};
-				}
-			});
+			givenAnFLP(function() {return true;}, {});
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
 				rootControl : this.oRootControl,

@@ -25,9 +25,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl
 	 */
 	return function () {
-		var oShellContainer = Utils.getUshellContainer();
-		if (oShellContainer) {
-			var oUserInfoService = oShellContainer.getService("UserInfo");
+		return Utils.ifUShellContainerThen(function(aServices) {
+			var oUserInfoService = aServices[0];
 			if (!oUserInfoService) {
 				return {};
 			}
@@ -53,7 +52,6 @@ sap.ui.define([
 			} catch (oError) {
 				Log.error("Unexpected exception when reading shell user info: " + oError.toString());
 			}
-		}
-		return {};
+		}, ["UserInfo"]) || {};
 	};
 });

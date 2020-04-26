@@ -116,7 +116,7 @@ sap.ui.define([
 	 * @private
 	 */
 	function _registerNavigationFilter(oModel) {
-		Utils.whenUShellContainer(function(aServices) {
+		Utils.ifUShellContainerThen(function(aServices) {
 			if (!_mVariantIdChangeHandlers[oModel.sFlexReference]) {
 				_mVariantIdChangeHandlers[oModel.sFlexReference] = _handleVariantIdChangeInURL.bind(null, oModel, aServices);
 				aServices[0].registerNavigationFilter(_mVariantIdChangeHandlers[oModel.sFlexReference]);
@@ -132,7 +132,7 @@ sap.ui.define([
 	 * @private
 	 */
 	function _deRegisterNavigationFilter(oModel) {
-		Utils.whenUShellContainer(function(aServices) {
+		Utils.ifUShellContainerThen(function(aServices) {
 			if (_mVariantIdChangeHandlers[oModel.sFlexReference]) {
 				aServices[0].unregisterNavigationFilter(_mVariantIdChangeHandlers[oModel.sFlexReference]);
 				delete _mVariantIdChangeHandlers[oModel.sFlexReference];
