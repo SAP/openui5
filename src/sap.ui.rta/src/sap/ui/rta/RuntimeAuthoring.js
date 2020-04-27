@@ -1065,6 +1065,7 @@ function(
 
 	RuntimeAuthoring.prototype._handleDiscard = function() {
 		var sLayer = this.getLayer();
+		this.getCommandStack().removeAllCommands();
 		RuntimeAuthoring.enableRestart(sLayer, this.getRootControlInstance());
 		if (!FlexUtils.getUshellContainer()) {
 			var oReloadInfo = {
@@ -1075,7 +1076,6 @@ function(
 			return this._triggerHardReload(oReloadInfo);
 		}
 		var mParsedHash = this._handleDraftParameter(FlexUtils.getParsedURLHash());
-		this.getCommandStack().removeAllCommands();
 		this._triggerCrossAppNavigation(mParsedHash);
 		return this.stop(true, true);
 	};
