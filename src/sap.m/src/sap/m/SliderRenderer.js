@@ -51,13 +51,6 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 
 			oRm.write(">");
 
-			if (oSlider.getEnableTickmarks()) {
-				this.renderTickmarks(oRm, oSlider);
-			} else {
-				// Keep the "old" labels for backwards compatibility
-				this.renderLabels(oRm, oSlider);
-			}
-
 			oRm.write('<div');
 			oRm.writeAttribute("id", oSlider.getId() + "-inner");
 			this.addInnerClass(oRm, oSlider);
@@ -76,6 +69,12 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 
 			this.renderHandles(oRm, oSlider, sSliderLabels);
 			oRm.write("</div>");
+
+			if (oSlider.getEnableTickmarks()) {
+				this.renderTickmarks(oRm, oSlider);
+			} else {
+				this.renderLabels(oRm, oSlider);
+			}
 
 			if (oSlider.getName()) {
 				this.renderInput(oRm, oSlider);
