@@ -110,13 +110,15 @@ function(
 	 * the footer toolbar if they refer to a table. Place group, sort, and filter buttons
 	 * in the footer toolbar if they refer to a master list.
 	 *
-	 * <b>Note:</b> Reset button, when used in <code>ViewSettingsDialog</code> without custom tabs,
-	 * is enabled when there are some Filters or presetFilters selected as well as there are changes
-	 * in Sort by, Sort order, Group By or Group order values compared to initial state of the dialog,
-	 * and disabled, if there are no changes or filters set. If the <code>ViewSettingsDialog</code>
-	 * have one or more custom tabs, the Reset button is always enabled, because there is no way
-	 * to determine the initial state of the custom tabs content and compare to their current state
-	 * in order to determine enable/disable state of the Reset button.
+	 * <b>Note:</b> Reset button, when used in <code>ViewSettingsDialog</code> without custom tabs
+	 * or custom items in one of its aggregations, is enabled when there are some Filters or
+	 * presetFilters selected as well as there are changes in Sort by, Sort order, Group By or
+	 * Group order values compared to initial state of the dialog, and disabled, if there are no
+	 * changes or filters set. If the <code>ViewSettingsDialog</code> have one or more custom tabs
+	 * or custom items in one of its aggregations (sortItems, groupItems, filterItems or
+	 * presetFilterItems), the Reset button is always enabled, because there is no way to determine
+	 * the initial state of the custom tabs content and compare to their current state in order to
+	 * determine enable/disable state of the Reset button.
 	 *
 	 * <h3>Usage</h3>
 	 *
@@ -1664,6 +1666,36 @@ function(
 	/* =========================================================== */
 
 	/**
+	 * Checks if there is a custom item in the given aggregation, one of sortItems, groupItems, filterItems or presetFilterItems.
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._checkForInnerCustomItems = function(aItems) {
+		for (var i = 0; i < aItems.length; i++) {
+			if (aItems[i].isA("sap.m.ViewSettingsCustomItem")) {
+				return true;
+			}
+		}
+		return false;
+	};
+
+	/**
+	 * Checks if there is a custom tab or a custom item in the aggregations sortItems, groupItems, filterItems and presetFilterItems.
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._checkForCustomItems = function() {
+		var aSortItems = this.getSortItems(),
+			aGroupItems = this.getGroupItems(),
+			aFilterItems = this.getFilterItems(),
+			aPresetFilterItems = this.getPresetFilterItems();
+
+		return this.getAggregation("customTabs").length ||
+			aSortItems.length && this._checkForInnerCustomItems(aSortItems) ||
+			aGroupItems.length && this._checkForInnerCustomItems(aGroupItems) ||
+			aFilterItems.length && this._checkForInnerCustomItems(aFilterItems) ||
+			aPresetFilterItems.length && this._checkForInnerCustomItems(aPresetFilterItems);
+	};
+
+	/**
 	 * Checks if there are changes made since the initial VSD open and enables/disables reset buttons accordingly
 	 * @private
 	 */
@@ -1671,7 +1703,7 @@ function(
 		var bChanges = false,
 			oFilterKeys = this.getSelectedFilterItems();
 
-		if (this.getAggregation("customTabs").length > 0) {
+		if (this._checkForCustomItems()) {
 			// there are custom tabs defined, enable Reset button in any case
 			bChanges = true;
 		} else {

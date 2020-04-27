@@ -3302,6 +3302,70 @@ sap.ui.define([
 		oViewSettingsDialog.destroy();
 	});
 
+	QUnit.test("When there is a custom sort item, the reset button is always enabled", function (assert) {
+		// Arrange
+		var oViewSettingsDialog = new ViewSettingsDialog({
+			sortItems: new ViewSettingsCustomItem({})
+		});
+
+		// Act
+		oViewSettingsDialog.open();
+
+		// Assert
+		assert.ok(oViewSettingsDialog._getResetButton().getEnabled(), "Reset button is enabled, when there is a custom sort item.");
+
+		// Cleanup
+		oViewSettingsDialog.destroy();
+	});
+
+	QUnit.test("When there is a custom group item, the reset button is always enabled", function (assert) {
+		// Arrange
+		var oViewSettingsDialog = new ViewSettingsDialog({
+			groupItems: new ViewSettingsCustomItem({})
+		});
+
+		// Act
+		oViewSettingsDialog.open();
+
+		// Assert
+		assert.ok(oViewSettingsDialog._getResetButton().getEnabled(), "Reset button is enabled, when there is a custom goup item.");
+
+		// Cleanup
+		oViewSettingsDialog.destroy();
+	});
+
+	QUnit.test("When there is a custom filter item, the reset button is always enabled", function (assert) {
+		// Arrange
+		var oViewSettingsDialog = new ViewSettingsDialog({
+			filterItems: new ViewSettingsCustomItem({})
+		});
+
+		// Act
+		oViewSettingsDialog.open();
+
+		// Assert
+		assert.ok(oViewSettingsDialog._getResetButton().getEnabled(), "Reset button is enabled, when there is a custom filter item.");
+
+		// Cleanup
+		oViewSettingsDialog.destroy();
+	});
+
+	QUnit.test("When there is a custom preset filter item, the reset button is always enabled", function (assert) {
+		// Arrange
+		var oViewSettingsDialog = new ViewSettingsDialog({
+			presetFilterItems: new ViewSettingsCustomItem({})
+		});
+
+		// Act
+		oViewSettingsDialog.open();
+
+		// Assert
+		assert.ok(oViewSettingsDialog._getResetButton().getEnabled(), "Reset button is enabled, when there is a custom preset filter item.");
+
+		// Cleanup
+		oViewSettingsDialog.destroy();
+	});
+
 	QUnit.module("Accessibility", {
 		beforeEach : function () {
 			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
