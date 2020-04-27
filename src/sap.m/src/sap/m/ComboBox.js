@@ -1146,7 +1146,8 @@ sap.ui.define([
 			var oDomRef = this.getFocusDomRef(),
 				oItem = this.getSelectedItem(),
 				oListItem = this.getListItem(oItem),
-				oSelectionRange = this._getSelectionRange();
+				oSelectionRange = this._getSelectionRange(),
+				bTablet = this.isPlatformTablet();
 
 			if (oDomRef) {
 				this.getRoleComboNodeDomRef().setAttribute("aria-expanded", "true");
@@ -1159,7 +1160,7 @@ sap.ui.define([
 			// if there is a selected item, scroll and show the list
 			fnSelectedItemOnViewPort.call(this, true);
 
-			if (oItem && oSelectionRange.start === oSelectionRange.end) {
+			if (!bTablet && oItem && oSelectionRange.start === oSelectionRange.end) {
 				setTimeout(function() {
 					this.selectText(0, oSelectionRange.end);
 				}.bind(this), 0);
