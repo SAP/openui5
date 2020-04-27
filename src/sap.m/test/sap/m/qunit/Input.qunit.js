@@ -386,6 +386,25 @@ sap.ui.define([
 		assert.strictEqual(spy.callCount, 1, "Value Help Request has been fired and received successfully");
 	});
 
+	QUnit.test("Value help icon role should be 'button' and area-label attribute should be set", function(assert) {
+		// Arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			showValueHelp: true
+		});
+
+		// Act
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(document.getElementById(oInput._getValueHelpIcon().sId).getAttribute("role"), "button", "The value help icon role attribute is correctly set to 'button'");
+		assert.strictEqual(document.getElementById(oInput._getValueHelpIcon().sId).getAttribute("aria-label"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUT_VALUEHELP_BUTTON"), "The value help icon aria-label attribute is correctly set");
+
+		// Clean
+		oInput.destroy();
+	});
+
 	QUnit.test("Keyboard Handling", function(assert) {
 		// F4 event check
 		var evt = jQuery.Event("sapshow"),
