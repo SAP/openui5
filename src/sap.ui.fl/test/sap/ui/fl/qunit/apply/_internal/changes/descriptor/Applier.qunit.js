@@ -449,8 +449,7 @@ function (
 			aChanges = convertChanges(aChanges);
 
 			return Applier.applyChanges(this.oManifest, aChanges, this.BuildtimeStrategy).catch(function(oError) {
-				assert.equal(oError.name, "TypeError");
-				assert.equal(oError.message, "Cannot read property 'applyChange' of undefined");
+				assert.ok(oError, "error is thrown");
 			});
 		});
 
