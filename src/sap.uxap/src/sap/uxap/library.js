@@ -319,6 +319,31 @@ sap.ui.define([
 		},
 		_isCurrentMediaSize: function (sMedia, oRange) {
 			return oRange && oRange.name === sMedia;
+		},
+		/**
+		 * Calculates scroll position of a child of a container.
+		 * @param {HTMLElement | jQuery} vElement An element(DOM or jQuery) for which the scroll position will be calculated.
+		 * @param {HTMLElement | jQuery} vContainer The container element(DOM or jQuery) and reference offsetParent
+		 * @returns {object} Position object.
+		 * @protected
+		 */
+		getChildPosition: function(vElement, vContainer) {
+			// check if vElement is a DOM element and if yes convert it to jQuery object
+			var $Element = vElement instanceof jQuery ? vElement : jQuery(vElement),
+				$Container = vContainer instanceof jQuery ? vContainer : jQuery(vContainer),
+				$topmostContainer = jQuery(document.documentElement),
+				oElementPosition = $Element.position(),
+				$OffsetParent = $Element.offsetParent(),
+				oAddUpPosition;
+
+			while (!$OffsetParent.is($Container) && !$OffsetParent.is($topmostContainer)) {
+				oAddUpPosition = $OffsetParent.position();
+				oElementPosition.top += oAddUpPosition.top;
+				oElementPosition.left += oAddUpPosition.left;
+				$OffsetParent = $OffsetParent.offsetParent();
+			}
+
+			return oElementPosition;
 		}
 	};
 
