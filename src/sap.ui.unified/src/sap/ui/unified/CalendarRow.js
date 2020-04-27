@@ -48,6 +48,8 @@ sap.ui.define([
 	// shortcut for sap.ui.unified.CalendarIntervalType
 	var CalendarIntervalType = library.CalendarIntervalType;
 
+	var TOP_BOT_APP_MARGIN = 4;
+
 	/*
 	 * <code>UniversalDate</code> objects are used inside the <code>CalendarRow</code>, whereas JavaScript dates are used in the API.
 	 * So conversion must be done on API functions.
@@ -1516,10 +1518,13 @@ sap.ui.define([
 		var iStaticHeight = 0;
 		var iLevels = 0;
 		var i = 0;
+		var bIntervalContainer = false;
 		var bAppointmentsReducedHeight = !Device.system.phone && this.getAppointmentsReducedHeight();
+		var iTop;
 
 		if (this.getShowIntervalHeaders() && (this.getShowEmptyIntervalHeaders() || this._getVisibleIntervalHeaders().length > 0)) {
 			iStaticHeight = jQuery(this.$("AppsInt0").children(".sapUiCalendarRowAppsIntHead")[0]).outerHeight(true);
+			bIntervalContainer = true;
 		}
 
 		// adjust min width
@@ -1592,7 +1597,11 @@ sap.ui.define([
 				$Appointment.attr("data-sap-level", oAppointment.level);
 			}
 
-			$Appointment.css("top", (iHeight * oAppointment.level + iStaticHeight) + "px");
+			iTop = iHeight * oAppointment.level + iStaticHeight;
+			if (!bIntervalContainer) {
+				iTop += TOP_BOT_APP_MARGIN;
+			}
+			$Appointment.css("top", iTop + "px");
 
 			var iAppointmentEndLevel = oAppointment.level;
 			if (bTwoLevels) {
@@ -1606,10 +1615,15 @@ sap.ui.define([
 		iLevels++; // as 0 is a valid level
 		iHeight = iHeight * iLevels + iStaticHeight;
 
+		if (!bIntervalContainer) {
+			// synchronize row height with content height
+			iHeight += TOP_BOT_APP_MARGIN;
+		}
+
 		if (!this.getHeight()) {
 			// no height set -> determine from rendered levels
 			$Apps.outerHeight(iHeight);
-		}else {
+		} else {
 			// make intervals as large as scroll height
 			var aIntervals = this.$("Apps").children(".sapUiCalendarRowAppsInt");
 			for (i = 0; i < aIntervals.length; i++) {
