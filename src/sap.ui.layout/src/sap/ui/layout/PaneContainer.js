@@ -56,6 +56,11 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 		this._oSplitter._bUseIconForSeparator = false;
 	};
 
+	PaneContainer.prototype.exit = function () {
+		this._oSplitter.destroy();
+		this._oSplitter = null;
+	};
+
 	/**
 	 * Setter for property orientation.
 	 * Default value is sap.ui.core.Orientation.Horizontal
