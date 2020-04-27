@@ -27,7 +27,7 @@
       {
         "id": "a7a0009e1e5305ea4ad084746dd289a3acd5180b",
         "type": "FIX",
-        "text": "v2.ODataAnnotations: don\u0027t cache invalid annotations",
+        "text": "v2.ODataAnnotations: don't cache invalid annotations",
         "references": [
           {
             "type": "BCP",
@@ -172,7 +172,7 @@
       {
         "id": "cd553e45a0c0e08fd2a5a8d346ec399cca8c794e",
         "type": "FIX",
-        "text": "format/DateFormat: Multiple instances shouldn\u0027t share fallback formats",
+        "text": "format/DateFormat: Multiple instances shouldn't share fallback formats",
         "references": [
           {
             "type": "BCP",
@@ -881,7 +881,7 @@
       {
         "id": "72da2e919114457d94e6b62864bce0d73d31c320",
         "type": "FIX",
-        "text": "ODataMessageParser: support \u0027transition\u0027 flag",
+        "text": "ODataMessageParser: support 'transition' flag",
         "references": [
           {
             "type": "BCP",
@@ -892,7 +892,7 @@
       {
         "id": "74e9a598c6274aab7daf8d8895f4dd1119be7565",
         "type": "FIX",
-        "text": "ODataModel: Don\u0027t send CSRF token for GET requests",
+        "text": "ODataModel: Don't send CSRF token for GET requests",
         "references": [
           {
             "type": "BCP",
@@ -941,7 +941,7 @@
       {
         "id": "9f0e1cc7cdef7da02354052091993652ddfc6af9",
         "type": "FIX",
-        "text": "sap.ui.core: Remove circular dependency Component \u003c-\u003e Core",
+        "text": "sap.ui.core: Remove circular dependency Component <-> Core",
         "references": []
       }
     ]
@@ -969,7 +969,7 @@
       {
         "id": "b8cfcccec353b9646eea8f10742c5571bb76fed9",
         "type": "FIX",
-        "text": "core.Popup: blur focus element only when it\u0027s not in a Popup",
+        "text": "core.Popup: blur focus element only when it's not in a Popup",
         "references": [
           {
             "type": "BCP",
@@ -1170,7 +1170,7 @@
       {
         "id": "602fe9aa37fa70e1f921b0bd1d7e4160e6138c32",
         "type": "FIX",
-        "text": " v2.ODataListBinding: Don\u0027t use expanded data, if custom parameters are set",
+        "text": " v2.ODataListBinding: Don't use expanded data, if custom parameters are set",
         "references": [
           {
             "type": "BCP",
@@ -1186,7 +1186,7 @@
       {
         "id": "2592ce67846166bb89268bbe0084e16d5f8690ac",
         "type": "FIX",
-        "text": " ODataModel: Don\u0027t send CSRF token for GET requests",
+        "text": " ODataModel: Don't send CSRF token for GET requests",
         "references": [
           {
             "type": "BCP",
@@ -1235,7 +1235,7 @@
       {
         "id": "a45b90fba1f82bcc55e76aa62cf199402de72007",
         "type": "FIX",
-        "text": " ManagedObject.bindAggregation returns \u0027this\u0027 even when forwarded",
+        "text": " ManagedObject.bindAggregation returns 'this' even when forwarded",
         "references": [
           {
             "type": "BCP",
@@ -1305,6 +1305,41 @@
           {
             "type": "BCP",
             "reference": "002075129500006800032019"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.26": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "a2318feae9fe1d101ac3385156226d22e37229a1",
+        "type": "FIX",
+        "text": " caja-html-sanitizer: avoid catastrophic backtracking in lexCss",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001766652020"
+          }
+        ]
+      },
+      {
+        "id": "73aa95fbe3f0e7a30bec54d0ef8b3aa71cbd3877",
+        "type": "FIX",
+        "text": " format.NumberFormat: Support lenient-parsing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000908182020"
+          },
+          {
+            "type": "BCP",
+            "reference": "012005041000000656012019"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003154282019"
           }
         ]
       }

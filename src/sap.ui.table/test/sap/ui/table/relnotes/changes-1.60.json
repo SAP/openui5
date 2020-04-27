@@ -198,7 +198,7 @@
       {
         "id": "42ee76276bd358519dd6478288dccf2722a3facc",
         "type": "FIX",
-        "text": "Table: SelectAll button won\u0027t deselect in \"Single\" selection mode",
+        "text": "Table: SelectAll button won't deselect in \"Single\" selection mode",
         "references": [
           {
             "type": "BCP",
@@ -359,6 +359,44 @@
           {
             "type": "BCP",
             "reference": "1980430262"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.26": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "dcdaf9aa261ba06c09dcd6b6571042dcb9059953",
+        "type": "FIX",
+        "text": " Table: Alignment of the highlight in a selected row",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070165432"
+          }
+        ]
+      },
+      {
+        "id": "83a11829dce51d37ac375d56e93dc370d9f47e7b",
+        "type": "FIX",
+        "text": " Table: header selector role and aria attributes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070163790"
+          }
+        ]
+      },
+      {
+        "id": "43d4653e7bd566e7a94f862c9b30a3171329b6c4",
+        "type": "FIX",
+        "text": " TablePersoController: use hasGrouping property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070051221"
           }
         ]
       }
