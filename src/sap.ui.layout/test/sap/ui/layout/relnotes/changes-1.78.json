@@ -7,6 +7,12 @@
         "type": "FEATURE",
         "text": " sap.ui.layout.Splitter: Method resetContentAreasSizes is now available",
         "references": []
+      },
+      {
+        "id": "8cbc40c36a258f34f89b42c665cee49a5657d564",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: Orchestration of the initial rendering fixed",
+        "references": []
       }
     ]
   }

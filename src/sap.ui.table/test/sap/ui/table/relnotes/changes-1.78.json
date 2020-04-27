@@ -12,6 +12,17 @@
             "reference": "2070052448"
           }
         ]
+      },
+      {
+        "id": "b9a3be936001639523924ad535684df2fee52736",
+        "type": "FIX",
+        "text": " TreeTable: Fix single selection if collapseRecursive is false",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070052448"
+          }
+        ]
       }
     ]
   }

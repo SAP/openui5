@@ -129,6 +129,100 @@
             "reference": "2070154431"
           }
         ]
+      },
+      {
+        "id": "7205ec82a9885ed1c8eb88a8ec4cb4e93be19558",
+        "type": "FEATURE",
+        "text": " sap.m.IconTabBar: Add new property ariaTexts",
+        "references": []
+      },
+      {
+        "id": "2d13b79f405ade40c98b3f119466e0bf5c94e229",
+        "type": "FIX",
+        "text": " sap.m.Bar: Focus handling in middle section for Internet Explorer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070118503"
+          }
+        ]
+      },
+      {
+        "id": "4d68a68a6adc5f57d0189219d65c9206cce3b6a9",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: change parent DomRef in Design Time Metadata",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070171880"
+          }
+        ]
+      },
+      {
+        "id": "db746057b6a390195b7334865f63fefe6db3ce39",
+        "type": "FIX",
+        "text": " sap.m.Input: Clone method fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070123110"
+          }
+        ]
+      },
+      {
+        "id": "3928b005838bd5a4c742fe19f83eccf78a1491ef",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: sap.m.IconTabBar alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070043278"
+          }
+        ]
+      },
+      {
+        "id": "8448a30d6bffa08dc7b0e777229d08691650f99e",
+        "type": "FIX",
+        "text": " sap.m.Select: reinforced check now added inside control renderer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070173532"
+          }
+        ]
+      },
+      {
+        "id": "3fb18dcb7d3805caf163d1a3dc773de0c25c757d",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Preventing wheel in disabled and readonly states",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070157892"
+          }
+        ]
+      },
+      {
+        "id": "436060fc38d773b0ac029adfdef64be283eb3cfa",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: async selection of a filterItem",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070146104"
+          }
+        ]
+      },
+      {
+        "id": "ff4a2a818fd7002ee44d4e5897e2e52c9a1c1487",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fiori theme special dates visualization adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070126624"
+          }
+        ]
       }
     ]
   }

@@ -12,6 +12,17 @@
             "reference": "2070003933"
           }
         ]
+      },
+      {
+        "id": "d9ef949ee799684b62f8ab94adf17c93c4c49e29",
+        "type": "FIX",
+        "text": " disabling of ui adaptation extensionPoint functionality",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002752872020"
+          }
+        ]
       }
     ]
   }

@@ -91,6 +91,40 @@
         "type": "FIX",
         "text": " test recorder: result filtering for descendant and ancestor selectors",
         "references": []
+      },
+      {
+        "id": "17eb54f860cf2daeb0f817a247ec226138fe4e76",
+        "type": "FEATURE",
+        "text": " sap.ui.core.InvisibleMessage: Message service implemented",
+        "references": []
+      },
+      {
+        "id": "0d3943e0f8ca0ce6128cce23187f9aef3c4b3c5c",
+        "type": "FIX",
+        "text": " MessageProcessor: make \u0027messageChange\u0027 event visible in API Ref",
+        "references": []
+      },
+      {
+        "id": "c44c3ebec517a0fba18788d23805dfc6b79302ea",
+        "type": "FIX",
+        "text": " XMLTemplateProcessor: Handle Top-Level ExtensionPoints and Flexibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070136077"
+          }
+        ]
+      },
+      {
+        "id": "85099fd201e3ed851f0492100477e00d6f7c6c72",
+        "type": "FIX",
+        "text": " routing.qunit.History: check enablement of pushstate instead of browser",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070145984"
+          }
+        ]
       }
     ]
   }

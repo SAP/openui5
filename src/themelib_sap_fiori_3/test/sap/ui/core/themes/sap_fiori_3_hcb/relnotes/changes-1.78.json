@@ -18,6 +18,34 @@
         "type": "FIX",
         "text": " sap.f.DynamicPageTitle: GenericTags overflow correctly now",
         "references": []
+      },
+      {
+        "id": "a55ef69703e50657f6371cb195c48d2e7131711e",
+        "type": "FIX",
+        "text": " Form: layout issues in toolbar in Fiori3 theme",
+        "references": []
+      },
+      {
+        "id": "a2d966e20e29971520924ef012905c6b0577c28f",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Border of selected item is now visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070148602"
+          }
+        ]
+      },
+      {
+        "id": "ff4a2a818fd7002ee44d4e5897e2e52c9a1c1487",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fiori theme special dates visualization adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070126624"
+          }
+        ]
       }
     ]
   }
