@@ -3,7 +3,15 @@
 	"sap.app": {
 		"id": "sap.my.test.widget.wfviz",
 		"type": "widget",
-		"i18n": "i18n/i18n.properties",
+		"i18n": {
+		  "bundleUrl": "i18n/i18n.properties",
+		  "supportedLocales": [
+		    "",
+		    "de",
+		    "en"
+		  ],
+		  "fallbackLocale": "en"
+		},
 		"title": "{{TITLE}}",
 		"subTitle": "{{SUBTITLE}}",
 		"shortTitle": "{{SHORTTITLE}}",
@@ -40,7 +48,13 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sap.my.test.widget.wfviz.i18n.i18n"
+					"bundleName": "sap.my.test.widget.wfviz.i18n.i18n",
+					"supportedLocales": [
+					  "",
+					  "de",
+					  "en"
+					],
+					"fallbackLocale": "en"
 				}
 			}
 		},
