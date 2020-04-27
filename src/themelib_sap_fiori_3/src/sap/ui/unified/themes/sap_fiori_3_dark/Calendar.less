@@ -117,8 +117,8 @@ html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:active {
 	overflow: visible;
 }
 
-html.sap-desktop .sapUiCalItem:not(.sapUiCalItemSel):focus {
-	background-color: @sapUiListHoverBackground;
+html.sap-desktop .sapUiCalItem:not(.sapUiCalItemSel):not(.sapUiCalItemWeekEnd):focus {
+	background-color: @sapUiLegendWorkingBackground;
 }
 
 /* hover and focus makes only sense on desktops. On mobile devices it's not needed */
@@ -148,7 +148,7 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 html.sap-desktop .sapUiCalMonthPicker .sapUiCalItemSel:focus,
 html.sap-desktop .sapUiCalYearPicker .sapUiCalItemSel:focus {
 	outline-color: @sapUiContentContrastFocusColor;
-	background-color: @sapUiActive;
+	background-color: @sapUiContentSelectedBackground;
 }
 
 html.sap-desktop .sapUiSizeCompact .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalDayName {
@@ -199,13 +199,13 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	}
 }
 
-.sapUiCalItemWeekEnd {
+.sapUiCalItemWeekEnd,
+html.sap-desktop .sapUiCalItemWeekEnd:focus {
 	background-color: @_sap_ui_unified_Calendar_ItemWeekEndColor;
 }
 
 html.sap-desktop .sapUiCalDatesRow .sapUiCalItemWeekEnd:not(.sapUiCalItemSel):hover,
-html.sap-desktop .sapUiCal:not(.sapUiCalDateInt) .sapUiCalItemWeekEnd:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover,
-html.sap-desktop .sapUiCalItemWeekEnd:focus {
+html.sap-desktop .sapUiCal:not(.sapUiCalDateInt) .sapUiCalItemWeekEnd:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover{
 	background-color: @_sap_ui_unified_Calendar_ItemWeekEndHoverColor;
 }
 
@@ -287,8 +287,7 @@ html.sap-desktop .sapUiCal:not(.sapUiCalDateInt) .sapUiCalItem:not(.sapUiCalItem
 	color: @sapUiContentContrastTextColor;
 }
 
-html.sap-desktop .sapUiCalItemOtherMonth:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover,
-html.sap-desktop .sapUiCalItemOtherMonth:focus {
+html.sap-desktop .sapUiCalItemOtherMonth:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover {
 	background-color: @sapUiListHoverBackground;
 }
 
@@ -332,9 +331,13 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 	border-color: @sapUiContentContrastFocusColor;
 }
 
-html.sap-desktop .sapUiCalItemSelBetween:hover,
-html.sap-desktop .sapUiCalItemSelBetween:focus {
+html.sap-desktop .sapUiCalItemSelBetween:hover {
 	background-color: @sapUiListSelectionHoverBackground;
+}
+
+
+html.sap-desktop .sapUiCalItemSelBetween:focus:not(:hover){
+	background-color: @sapUiListSelectionBackgroundColor;
 }
 
 .sapUiCalItemNow:not(.sapUiCalItemSelBetween) > .sapUiCalItemText {
