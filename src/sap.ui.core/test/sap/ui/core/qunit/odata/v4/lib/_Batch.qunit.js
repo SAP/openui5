@@ -527,6 +527,15 @@ sap.ui.define([
 					"Content-Type" : "application/json"
 				},
 				body : oNewEmployeeBody
+			}, {
+				method : "DELETE",
+				// Note: This is unrealistic as key predicates use encodeURIComponent and entity set
+				// names cannot contain a dollar, but still we should not confuse it with a
+				// Content-ID reference!
+				url : "$TEAMS('$1')",
+				headers : {
+					"Content-Type" : "application/json"
+				}
 			}], {
 				method : "GET",
 				// Note: do not confuse with Content-ID reference! BCP: 2070180250
@@ -598,6 +607,15 @@ sap.ui.define([
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
 		JSON.stringify(oNewEmployeeBody) + "\r\n" +
+		"--changeset_id-1450426018742-913\r\n" +
+		"Content-Type:application/http\r\n" +
+		"Content-Transfer-Encoding:binary\r\n" +
+		"Content-ID:3.1\r\n" +
+		"\r\n" +
+		"DELETE $TEAMS('$1') HTTP/1.1\r\n" +
+		"Content-Type:application/json\r\n" +
+		"\r\n" +
+		"\r\n" +
 		"--changeset_id-1450426018742-913--\r\n" +
 		"--batch_id-1450426018742-911\r\n" +
 		"Content-Type:application/http\r\n" +
