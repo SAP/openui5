@@ -19,8 +19,8 @@ function (coreLibrary, ManagedObject, Log) {
 	 * This class is a singleton. The class instance can be retrieved via the static method <code>sap.ui.core.InvisibleMessage.getInstance()</code>.
 	 *
 	 * Note: Keep in mind that according to the ARIA standard, the live regions should be presented and should be empty.
-	 * Thus, we recommend to instantiate <code> InvisibleMessage</code> via <code>sap.ui.core.InvisibleMessage.getInstance()<code> as early as possible in the application logic – with the Component initialization, with the main Controller initialization, after Core initialization, ect.
-	 * Then, you should specify the text, that has to be announced by the screen reader, and the live region’s mode using the <code>announce<code> method.
+	 * Thus, we recommend to instantiate <code> InvisibleMessage</code> via <code>sap.ui.core.InvisibleMessage.getInstance()</code> as early as possible in the application logic – with the Component initialization, with the main Controller initialization, after Core initialization, ect.
+	 * Then, you should specify the text, that has to be announced by the screen reader, and the live region’s mode using the <code>announce</code> method.
 	 *
 	 * @extends sap.ui.core.ManagedObject
 	 *
