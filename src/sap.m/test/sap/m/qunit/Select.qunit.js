@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/ComboBoxTextField",
 	"sap/m/SelectList",
+	"sap/m/Dialog",
 	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleText",
 	"sap/m/library",
@@ -49,6 +50,7 @@ sap.ui.define([
 		Label,
 		ComboBoxTextField,
 		SelectList,
+		Dialog,
 		Element,
 		InvisibleText,
 		mobileLibrary,
@@ -9387,6 +9389,21 @@ sap.ui.define([
 
 			// cleanup
 			oSelect.destroy();
+		});
+
+		QUnit.test('title alignment is handled by dialog', function (assert) {
+			fnToMobileMode();
+
+			// setup
+			var fnDialogAlignmentSpy = this.spy(Dialog.prototype, "_setupBarTitleAlignment"),
+				oSelect = new Select();
+
+			// assert
+			assert.strictEqual(fnDialogAlignmentSpy.called, true, 'Title alignment is handled correctly');
+
+			// cleanup
+			oSelect.destroy();
+			fnToDesktopMode();
 		});
 
 		QUnit.module("onAfterClose");
