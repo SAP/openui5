@@ -286,6 +286,12 @@ sap.ui.define([
 			VariantManagementState.setCurrentVariant({vmReference: "vmReference1", newVReference: "variant2", reference: this.sReference});
 			assert.strictEqual(this.oVariantsMap["vmReference1"].currentVariant, "variant2", "then current variant is set correctly");
 		});
+
+		QUnit.test("when 'resetContent'  is called", function(assert) {
+			sandbox.stub(FlexState, "clearFilteredResponse");
+			VariantManagementState.resetContent(this.sReference);
+			assert.ok(FlexState.clearFilteredResponse.calledWith(this.sReference), "then storage response and prepared variants map were reset");
+		});
 	});
 
 	QUnit.module("Given changes / variants are required to be added / removed from variant management state", {

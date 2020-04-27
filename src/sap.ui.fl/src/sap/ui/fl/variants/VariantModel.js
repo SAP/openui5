@@ -141,7 +141,11 @@ sap.ui.define([
 	}
 
 	function _setBusy(oModel, sVMReference, bValue) {
-		oModel.oData[sVMReference].variantBusy = bValue;
+		// when component is destroyed the associated variant management reference might be deleted,
+		// as part of the callback in _setVariantModelBusy()
+		if (bValue || oModel.oData[sVMReference]) {
+			oModel.oData[sVMReference].variantBusy = bValue;
+		}
 		oModel.checkUpdate();
 	}
 
@@ -1151,18 +1155,18 @@ sap.ui.define([
 				return Switcher.switchVariant(mPropertyBag)
 					.then(function() {
 						delete this.oData[sVariantManagementReference];
-						delete VariantManagementState.getContent(this.oFlexController.getComponentName())[sVariantManagementReference];
-						this._ensureStandardVariantExists(sVariantManagementReference);
 					}.bind(this))
 					.catch(function(oError) {
 						Log.warning(oError.message);
 					});
 			}
 
+			// works as sync promise chain for each variant management reference
 			return _setVariantModelBusy(resetToDefault.bind(this), this, sVariantManagementReference);
 		}.bind(this));
 		return this._oVariantSwitchPromise
 			.then(function() {
+				VariantManagementState.resetContent(this.sFlexReference);
 				//re-initialize hash data and remove existing parameters
 				URLHandler.initialize({model: this});
 				URLHandler.update({

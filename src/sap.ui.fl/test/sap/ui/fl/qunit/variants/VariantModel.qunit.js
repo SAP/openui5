@@ -158,6 +158,7 @@ function(
 			var sCurrentVariantBeforeReset = this.oModel.oData[sVariantManagementReference].currentVariant;
 			sandbox.stub(URLHandler, "update");
 			sandbox.stub(Switcher, "switchVariant").resolves();
+			sandbox.spy(VariantManagementState, "resetContent");
 
 			return this.oModel.resetMap().then(function() {
 				assert.ok(Switcher.switchVariant.calledWith({
@@ -174,8 +175,8 @@ function(
 					updateHashEntry: true,
 					model: this.oModel
 				}), "then hash register was reset");
-				assert.strictEqual(this.oData[sVariantManagementReference].variants.length, 1, "then only one variant exists after reset");
-				assert.strictEqual(this.oData[sVariantManagementReference].variants[0].key, sVariantManagementReference, "then the only variant existing is standard variant");
+				assert.strictEqual(this.oData[sVariantManagementReference], undefined, "then model data was deleted");
+				assert.equal(VariantManagementState.resetContent.callCount, 1, "then variants map was reset");
 			}.bind(this));
 		});
 
