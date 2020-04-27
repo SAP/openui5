@@ -1,4 +1,4 @@
-/* global QUnit sinon */
+/* global QUnit */
 
 QUnit.config.autostart = false;
 sap.ui.test.qunit.delayTestStart();
@@ -475,12 +475,14 @@ sap.ui.require([
 			// enforces a sync rendering of the AlignedFlowLayout control
 			Core.applyChanges();
 
+			var spy = this.spy;
+
 			// wait some time after the initial rendering cycle finishes
 			// to ensure that the reflows caused by the initial rendering
 			// cycle is finish
 			setTimeout(function() {
 				var oLayoutDomRef = oAlignedFlowLayout.getDomRef();
-				var oReflowStub = sinon.stub(oAlignedFlowLayout, "reflow");
+				var oReflowSpy = spy(oAlignedFlowLayout, "reflow");
 
 				// act + arrange, update height of the AlignedFlowLayout control,
 				// this should not trigger a function call to the .reflow() method
@@ -493,21 +495,21 @@ sap.ui.require([
 				oAlignedFlowLayout.fLayoutWidth = fLayoutWidth;
 
 				// wait some time until the browser layout is finished
-				setTimeout(fnAfterBrowserReflow.bind(this), 100);
+				setTimeout(fnAfterBrowserReflow, 100);
 
 				function fnAfterBrowserReflow() {
 
 					// assert
 					var sMessage = "a function call to the .reflow() method should not be" +
                     " triggered when the height of the layout control changes";
-					assert.strictEqual(oReflowStub.callCount, 0, sMessage);
+					assert.strictEqual(oReflowSpy.callCount, 0, sMessage);
 
 					// cleanup
-					oReflowStub.restore();
+					oReflowSpy.restore();
 					oAlignedFlowLayout.destroy();
 					done();
 				}
-			}.bind(this), 100);
+			}, 100);
 		});
 
 		QUnit.test("it should not trigger unnecessary function calls to the .reflow() method to" +
@@ -535,12 +537,14 @@ sap.ui.require([
 			// enforces a sync rendering of the AlignedFlowLayout control
 			Core.applyChanges();
 
+			var spy = this.spy;
+
 			// wait some time after the initial rendering cycle finishes
 			// to ensure that the reflows caused by the initial rendering
 			// cycle is finish
 			setTimeout(function() {
 				var oEndItemDomRef = oAlignedFlowLayout.getDomRef("endItem");
-				var oReflowStub = sinon.stub(oAlignedFlowLayout, "reflow");
+				var oReflowSpy = spy(oAlignedFlowLayout, "reflow");
 
 				// act + arrange, update height of the item holding the `endContent`
 				// aggregation, this should not trigger a function call to the .reflow()
@@ -554,7 +558,7 @@ sap.ui.require([
 				oAlignedFlowLayout.fEndItemWidth = fEndItemWidth;
 
 				// wait some time until the browser layout is finished
-				setTimeout(fnAfterBrowserReflow.bind(this), 100);
+				setTimeout(fnAfterBrowserReflow, 100);
 
 				function fnAfterBrowserReflow() {
 
@@ -562,14 +566,14 @@ sap.ui.require([
 					var sMessage = "a function call to the .reflow() method should not be" +
 					" triggered when the height of the item holding the `endContent` aggregation" +
 					" changes";
-					assert.strictEqual(oReflowStub.callCount, 0, sMessage);
+					assert.strictEqual(oReflowSpy.callCount, 0, sMessage);
 
 					// cleanup
-					oReflowStub.restore();
+					oReflowSpy.restore();
 					oAlignedFlowLayout.destroy();
 					done();
 				}
-			}.bind(this), 100);
+			}, 100);
 		});
 	}
 
