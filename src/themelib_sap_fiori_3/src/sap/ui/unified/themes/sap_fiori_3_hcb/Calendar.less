@@ -8,9 +8,7 @@
 @_sap_ui_unified_Calendar_ItemBorderColor: @sapUiListBackground;
 @_sap_ui_unified_Calendar_ItemWeekEndColor: @sapUiLegendNonWorkingBackground;
 @_sap_ui_unified_Calendar_ItemWeekEndHoverColor: @sapUiListHoverBackground;
-@_sap_ui_unified_Calendar_ItemOtherMonthColor: lighten(@sapUiBaseText, 30);
-@_sap_ui_unified_Calendar_ItemSelBetweenColor: lighten(@sapUiSelected, 43);
-@_sap_ui_unified_Calendar_ItemSelBetweenHoverColor: lighten(@sapUiSelected, 35);
+@_sap_ui_unified_Calendar_ItemOtherMonthColor: @sapUiContentLabelColor;
 @_sap_ui_unified_Calendar_sapUiCalItemType01: @sapLegendColor1;
 @_sap_ui_unified_Calendar_sapUiCalItemType02: @sapLegendColor2;
 @_sap_ui_unified_Calendar_sapUiCalItemType03: @sapLegendColor3;
@@ -283,7 +281,7 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 }
 
 .sapUiCalItemOtherMonth {
-	background-color: transparent;
+	background-color: @sapUiListBackground;
 	color: @_sap_ui_unified_Calendar_ItemOtherMonthColor;
 }
 
