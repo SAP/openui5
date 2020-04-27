@@ -224,6 +224,11 @@ sap.ui.define([
 			this._oPopover.destroy();
 			this._oPopover = null;
 		}
+
+		if (this.getAggregation("_expandButton")) {
+			this._getExpandButton().removeEventDelegate(this._oButtonEventDelegate);
+			this._oButtonEventDelegate = null;
+		}
 	};
 
 	IconTabFilter.prototype.invalidate = function() {
@@ -727,6 +732,14 @@ sap.ui.define([
 				press: this._expandButtonPress.bind(this)
 			}).addStyleClass("sapMITBFilterExpandBtn");
 
+			this._oButtonEventDelegate = {
+				onlongdragover: this._handleOnLongDragOver,
+				ondragover: this._handleOnDragOver,
+				ondragleave: this._handleOnDragLeave,
+				ondrop: this._handleOnDrop
+			};
+			oButton.addEventDelegate(this._oButtonEventDelegate, this);
+
 			this.setAggregation("_expandButton", oButton);
 		}
 
@@ -742,6 +755,7 @@ sap.ui.define([
 		this.$().focus();
 
 		if (!this._oPopover) {
+
 			this._oPopover = new ResponsivePopover({
 				showArrow: false,
 				showHeader: false,
@@ -853,6 +867,41 @@ sap.ui.define([
 	};
 
 
+	/** Handles onDragOver of the expand button.
+	* @private
+	* @param {jQuery.Event} oEvent The jQuery drag over event
+	*/
+	IconTabFilter.prototype._handleOnDragOver = function (oEvent) {
+		this._getExpandButton().addStyleClass("sapMBtnDragOver");
+		oEvent.preventDefault(); // allow drop, so that the cursor is correct
+	};
+
+	/** Handles onLongDragOver of the expand button.
+	* @private
+	*/
+	IconTabFilter.prototype._handleOnLongDragOver = function () {
+		if (this._oPopover && this._oPopover.isOpen()) {
+			return;
+		}
+		this._expandButtonPress();
+	};
+
+	/**
+	 * Handles onDrop on the expand button.
+	 * @private
+	 */
+	IconTabFilter.prototype._handleOnDrop = function () {
+		this._getExpandButton().removeStyleClass("sapMBtnDragOver");
+	};
+
+	/**
+	 * Handles onDragLeave on the expand button.
+	 * @private
+	 */
+	IconTabFilter.prototype._handleOnDragLeave = function () {
+		this._getExpandButton().removeStyleClass("sapMBtnDragOver");
+	};
+
 	/**
 	 * Populates the IconTabBarSelectList with the context of this instance's items
 	 *
@@ -862,27 +911,38 @@ sap.ui.define([
 	IconTabFilter.prototype._setSelectListItems = function () {
 		var oIconTabHeader = this.getParent(),
 			oSelectList = this._getSelectList(),
-			aTabFilters = this.getItems(),
+			aTabFilters = this._getAllSubFilters(),
 			oPrevSelectedItem = oIconTabHeader.oSelectedItem,
 			bHasSelectedItem = false,
-			aItemsInStrip;
+			aItemsInStrip,
+			i;
 
 		if (this._bIsOverflow) {
-			aTabFilters = oIconTabHeader.getTabFilters();
+			var aHeaderTabFilters = oIconTabHeader.getTabFilters();
 			aItemsInStrip = oIconTabHeader._getItemsInStrip();
+			aTabFilters = [];
+
+			for (i = 0; i < aHeaderTabFilters.length; i++) {
+
+				// If tab is an overflow tab and oTabFilter is already in Tab Strip, do not add it to list
+				// on a mobile device, this behaviour doesn't occur, and all items are shown
+				if (!Device.system.phone && aItemsInStrip.indexOf(aHeaderTabFilters[i]) > -1) {
+					continue;
+				}
+
+				var aSubFilters = aHeaderTabFilters[i]._getAllSubFilters();
+				aTabFilters.push(aHeaderTabFilters[i]);
+				for (var j = 0; j < aSubFilters.length; j++) {
+					aTabFilters.push(aSubFilters[j]);
+				}
+			}
 		}
 
 		oSelectList.destroyItems();
 		oSelectList.setSelectedItem(null);
 
-		for (var i = 0; i < aTabFilters.length; i++) {
+		for (i = 0; i < aTabFilters.length; i++) {
 			var oTabFilter = aTabFilters[i];
-
-			// If tab is an overflow tab and oTabFilter is already in Tab Strip, do not add it to list
-			// on a mobile device, this behaviour doesn't occur, and all items are shown
-			if (this._bIsOverflow && !Device.system.phone && aItemsInStrip.indexOf(oTabFilter) > -1) {
-				continue;
-			}
 
 			var oListItem = oTabFilter.clone(undefined, undefined, { cloneChildren: false, cloneBindings: true });
 			oListItem._oTabFilter = oTabFilter; // link list item to its underlying tab filter

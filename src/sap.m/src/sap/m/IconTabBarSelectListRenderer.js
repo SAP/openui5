@@ -94,7 +94,7 @@ sap.ui.define([
 				iSetSize = aItems.length;
 			}
 
-			var fPaddingLeft = fPadding * iLevel;
+			var fPaddingLeft = fPadding * (iLevel + oItem._getNestedLevel() - 1);
 			oItem.renderInSelectList(
 				oRM,
 				oSelectList,
@@ -103,17 +103,6 @@ sap.ui.define([
 				fPaddingLeft
 			);
 
-			var aSubFilters = oItem._getRealTab().getItems();
-			if (aSubFilters.length) {
-				oRM.openStart("li")
-					.openEnd();
-
-				iLevel++;
-				IconTabBarSelectListRenderer.renderList(oRM, aSubFilters, oSelectList, null, bTextOnly, iLevel, fPadding, aSubFilters.length);
-				iLevel--;
-
-				oRM.close("li");
-			}
 		}
 
 		oRM.close("ul");

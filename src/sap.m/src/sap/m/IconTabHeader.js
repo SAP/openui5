@@ -278,13 +278,6 @@ sap.ui.define([
 			});
 			oOverflow._bIsOverflow = true;
 
-			this._oOverflowEventDelegate = {
-				onlongdragover: this._handleOnLongDragOver,
-				ondragover: this._handleOnDragOver,
-				ondragleave: this._handleOnDragLeave,
-				ondrop: this._handleOnDrop
-			};
-			oOverflow.addEventDelegate(this._oOverflowEventDelegate, this);
 			oOverflow.addEventDelegate({ onsapnext: oOverflow.onsapdown }, oOverflow);
 
 			this.setAggregation("_overflow", oOverflow);
@@ -348,43 +341,6 @@ sap.ui.define([
 		});
 
 		return aTabFilters;
-	};
-
-	/**
-	 * Handles onLongDragOver of overflow.
-	 * @private
-	 */
-	IconTabHeader.prototype._handleOnLongDragOver = function () {
-		var oOverflow = this._getOverflow();
-		if (!oOverflow._oPopover || !oOverflow._oPopover.isOpen()) {
-			oOverflow._expandButtonPress();
-		}
-	};
-
-	/**
-	 * Handles onDragOver of the overflow.
-	 * @private
-	 * @param {jQuery.Event} oEvent The jQuery drag over event
-	 */
-	IconTabHeader.prototype._handleOnDragOver = function (oEvent) {
-		this._getOverflow()._getExpandButton().addStyleClass("sapMBtnDragOver");
-		oEvent.preventDefault(); // allow drop, so that the cursor is correct
-	};
-
-	/**
-	 * Handles onDrop on the overflow.
-	 * @private
-	 */
-	IconTabHeader.prototype._handleOnDrop = function () {
-		this._getOverflow()._getExpandButton().removeStyleClass("sapMBtnDragOver");
-	};
-
-	/**
-	 * Handles onDragLeave on the overflow.
-	 * @private
-	 */
-	IconTabHeader.prototype._handleOnDragLeave = function () {
-		this._getOverflow()._getExpandButton().removeStyleClass("sapMBtnDragOver");
 	};
 
 	/**
@@ -1292,15 +1248,25 @@ sap.ui.define([
 	IconTabHeader.prototype._handleDragAndDrop = function (oEvent) {
 		var sDropPosition = oEvent.getParameter("dropPosition"),
 			oDraggedControl = oEvent.getParameter("draggedControl"),
-			oDroppedControl = oEvent.getParameter("droppedControl");
+			oDroppedControl = oEvent.getParameter("droppedControl"),
+			oContext = this;
 
-		IconTabBarDragAndDropUtil.handleDrop(this, sDropPosition, oDraggedControl._getRealTab(), oDroppedControl, false);
+		if (sDropPosition === "On") {
+			oContext = oDroppedControl._getRealTab();
+		}
+
+		IconTabBarDragAndDropUtil.handleDrop(oContext, sDropPosition, oDraggedControl._getRealTab(), oDroppedControl, false);
 
 		this._setItemsForStrip();
 		this._initItemNavigation();
+		this._getOverflow()._setSelectListItems();
 		this._getSelectList()._initItemNavigation();
 
 		oDraggedControl._getRealTab().$().focus();
+
+		if (sDropPosition === "On") {
+			oDroppedControl._getRealTab().$().focus();
+		}
 	};
 
 	/* =========================================================== */
