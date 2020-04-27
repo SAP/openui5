@@ -253,8 +253,7 @@ sap.ui.define([
 			 * this.mPathCache =
 			 * {
 			 *		'aBindingPath': {
-			 *			canonicalPath: 'The canonicalPath',
-			 *			updateKey: 'path relevant for path invalidation'
+			 *			canonicalPath : 'The canonicalPath'
 			 *		}
 			 * }
 			 */
@@ -1382,7 +1381,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Imports the data form the to the internal storage.
+	 * Imports the given data to the internal storage.
 	 *
 	 * Nested entries are processed recursively, moved to the canonical location and referenced from the parent entry.
 	 * keys are collected in a map for updating bindings
@@ -1393,10 +1392,14 @@ sap.ui.define([
 	 * @param {string} [sPath] The path to the data
 	 * @param {string} [sDeepPath] The deep path to the data
 	 * @param {string} [sKey] The cache key to the data if known
+	 * @param {boolean} [bFunctionImport] Whether the imported data is for a function import
+	 *   response; recursive calls to this method importing entities within the function response
+	 *   do not set this flag.
 	 * @return {string|string[]} Key of imported data or array of keys in case of nested entries
 	 * @private
 	 */
-	ODataModel.prototype._importData = function(oData, mChangedEntities, oResponse, sPath, sDeepPath, sKey) {
+	ODataModel.prototype._importData = function(oData, mChangedEntities, oResponse, sPath,
+			sDeepPath, sKey, bFunctionImport) {
 		var that = this,
 			aList, oResult, oEntry, oCurrentEntry;
 			sPath = sPath || "";
@@ -1496,37 +1499,69 @@ sap.ui.define([
 			sPath = sPath || '/' + sKey;
 			sDeepPath = sDeepPath || sPath;
 
-
 			var sCanonicalPath = this.resolveFromCache(sDeepPath);
 			// Prevents writing invalid entries into cache, like /Product(1) : /Product(2).
 			// This could occur, when a navigation target changes on the server and the old target was resolved from cache before invalidation.
             if (sCanonicalPath === "/" + sKey || (sCanonicalPath && sCanonicalPath.split("/").length > 2)) {
 				// try to resolve/cache paths containing mutiple nav properties likes "SalesOrderItem(123)/ToProduct/ToSupplier" => Product(123)/ToSupplier
-                this._writePathCache(sCanonicalPath, "/" + sKey);
+                this._writePathCache(sCanonicalPath, "/" + sKey, bFunctionImport);
             }
 
-			this._writePathCache(sPath, "/" + sKey);
-			this._writePathCache(sDeepPath, "/" + sKey);
+			this._writePathCache(sPath, "/" + sKey, bFunctionImport);
+			this._writePathCache(sDeepPath, "/" + sKey, bFunctionImport,
+				/*bUpdateShortenedPaths*/true);
 
 			return sKey;
 		}
 	};
 
 	/**
-	 * Writes a new entry into the canonical path cache.
+	 * Writes a new entry into the canonical path cache mapping the given path to the given
+	 * canonical path. As a path consisting of one segment only is canonical, the path itself is
+	 * written as value in this case instead of the given canonical path; an exception to this
+	 * are function imports: they have a one segment path, but the canonical path addresses the
+	 * function import response.
 	 *
-	 * @param {string} sPath The path is used as cache key.
-	 * @param {string} sCanonicalPath The canonical path addressing the same resource.
+	 * @param {string} sPath The absolute path that is used as cache key
+	 * @param {string} sCanonicalPath The canonical path addressing the same resource
+	 * @param {boolean} [bFunctionImport] Whether <code>sPath</code> points to a function import
+	 * @param {boolean} [bUpdateShortenedPaths] Whether to update entries for "shortened paths" in
+	 *   case <code>sPath</code> is a deep path; a shortened path is the canonical path for a prefix
+	 *   of a deep path concatenated with the corresponding deep path suffix
 	 * @private
 	 */
-	ODataModel.prototype._writePathCache = function(sPath, sCanonicalPath){
-		if (sPath && sCanonicalPath/* last condition checks for nav property and parameter like Product(1), Product(2)*/){
+	ODataModel.prototype._writePathCache = function(sPath, sCanonicalPath, bFunctionImport,
+			bUpdateShortenedPaths) {
+		var sCacheKey, oCacheKeyEntry, sPathPrefix, oPathPrefixEntry, aSegments, iSegments;
+
+		if (sPath && sCanonicalPath){
 			if (!this.mPathCache[sPath]) {
 				this.mPathCache[sPath] = {};
 			}
+			// path with one segment => path is canonical unless it is a function import
+			if (!bFunctionImport && sPath.lastIndexOf("/") === 0) {
+				sCanonicalPath = sPath;
+			}
 			this.mPathCache[sPath].canonicalPath = sCanonicalPath;
-			if (!this.mPathCache[sPath].updateKey) {
-				this.mPathCache[sPath].updateKey = sPath.substr(sPath.lastIndexOf("("));
+
+			if (bUpdateShortenedPaths) {
+				aSegments = sPath.split("/");
+				// start with deep path prefixes consisting of at least two non-empty segments plus
+				// the empty segment at the beginning (that is 3) and update all existing path cache
+				// entries having the canonical path of the path prefix plus the corresponding deep
+				// path suffix as key
+				for (iSegments = 3; iSegments < aSegments.length; iSegments += 1) {
+					sPathPrefix = aSegments.slice(0, iSegments).join("/");
+					oPathPrefixEntry = this.mPathCache[sPathPrefix];
+					if (oPathPrefixEntry) {
+						sCacheKey = oPathPrefixEntry.canonicalPath
+							+ sPath.slice(sPathPrefix.length);
+						oCacheKeyEntry = this.mPathCache[sCacheKey];
+						if (oCacheKeyEntry) {
+							oCacheKeyEntry.canonicalPath = sCanonicalPath;
+						}
+					}
+				}
 			}
 		}
 	};
@@ -3791,9 +3826,11 @@ sap.ui.define([
 				//need a deep data copy for import
 				oImportData = merge({}, oResultData);
 				if (oRequest.key || oRequest.created) {
-					that._importData(oImportData, mLocalGetEntities, oResponse);
+					that._importData(oImportData, mLocalGetEntities, oResponse, undefined,
+						undefined, undefined, oEntityType && oEntityType.isFunction);
 				} else {
-					that._importData(oImportData, mLocalGetEntities, oResponse, sPath, oRequest.deepPath);
+					that._importData(oImportData, mLocalGetEntities, oResponse, sPath,
+						oRequest.deepPath, undefined, oEntityType && oEntityType.isFunction);
 				}
 				oResponse._imported = true;
 			}
