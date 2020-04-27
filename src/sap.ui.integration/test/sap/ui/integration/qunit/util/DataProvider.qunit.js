@@ -117,7 +117,6 @@ function (DataProviderFactory, ServiceDataProvider, DataProvider, RequestDataPro
 			},
 			updateInterval: 1
 		};
-		var fnSpy = sinon.spy(DataProvider.prototype, "setUpdateInterval");
 
 		// Act
 		var oDataProvider = this.oDataProviderFactory.create(oDataSettings);
@@ -125,12 +124,8 @@ function (DataProviderFactory, ServiceDataProvider, DataProvider, RequestDataPro
 		// Assert
 		assert.ok(DataProvider.prototype.setSettings.calledOnce, "Should have called setSettings.");
 		assert.ok(DataProvider.prototype.setSettings.getCall(0).calledWith(oDataSettings), "Should have called setSettings with correct arguments.");
-		assert.ok(DataProvider.prototype.setUpdateInterval.calledOnce, "Should have called setUpdateInterval.");
 		assert.ok(oDataProvider, "Should have created a DataProvider instance.");
 		assert.ok(oDataProvider.isA("sap.ui.integration.util.DataProvider"), "Should have created a DataProvider instance.");
-
-		// Cleanup
-		fnSpy.restore();
 	});
 
 	QUnit.test("destroy", function (assert) {
@@ -163,54 +158,31 @@ function (DataProviderFactory, ServiceDataProvider, DataProvider, RequestDataPro
 
 	testSetSettings(DataProvider);
 
-	QUnit.test("Refreshing interval", function (assert) {
+	QUnit.test("updateInterval", function (assert) {
+
+		var done = assert.async();
 
 		// Arrange
-		this.clock = sinon.useFakeTimers(0);
 		var oSettings = {
 			json: {
 				"key": "value"
-			}
+			},
+			updateInterval: 1
 		};
-		var iInterval = 1;
-		var iTickInterval = iInterval * 1000;
+
 		this.oDataProvider.setSettings(oSettings);
-		var fnStub = sinon.stub(DataProvider.prototype, "triggerDataUpdate");
+		var fnSpy = sinon.spy(this.oDataProvider, "onDataRequestComplete");
 
 		// Act
-		this.oDataProvider.setUpdateInterval(iInterval);
+		this.oDataProvider.triggerDataUpdate();
 
-		// Assert
-		this.clock.tick(iTickInterval);
-		assert.ok(fnStub.calledOnce, "Should call triggerDataUpdate");
-
-		this.clock.tick(iTickInterval);
-		assert.ok(fnStub.calledTwice, "Should call triggerDataUpdate");
-
-		this.clock.tick(iTickInterval);
-		assert.ok(fnStub.calledThrice, "Should call triggerDataUpdate");
+		setTimeout(function () {
+			assert.ok(fnSpy.callCount > 1, "onDataRequestComplete is called more than once");
+			done();
+		}, 2000);
 
 		// Cleanup
-		fnStub.restore();
-		this.clock.restore();
-	});
-
-	QUnit.test("Incorrect refreshing interval", function (assert) {
-
-		// Arrange
-		var oSettings = {
-			json: {
-				"key": "value"
-			}
-		};
-		var iInterval = "Incorrect interval";
-		this.oDataProvider.setSettings(oSettings);
-
-		// Act
-		this.oDataProvider.setUpdateInterval(iInterval);
-
-		// Assert
-		assert.notOk(this.oDataProvider._iIntervalId, "Should have NOT set an interval.");
+		fnSpy.reset();
 	});
 
 	QUnit.test("triggerDataUpdate - with JSON", function (assert) {

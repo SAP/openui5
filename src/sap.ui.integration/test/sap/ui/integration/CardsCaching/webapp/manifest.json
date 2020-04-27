@@ -1,0 +1,42 @@
+{
+	"sap.app": {
+		"id": "sap.ui.CardsCaching",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"dataSources": {
+			"getActivities": {
+				"uri": "./getData/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri" : "localService/metadata.xml"
+				}
+			},
+			"shouldUpdateActivities": {
+				"uri": "./shouldUpdateData/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri" : "localService/metadata.xml"
+				}
+			}
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.CardsCaching.CardsCaching",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.f": {},
+				"sap.ui.integration": {}
+			}
+		},
+		"config": {
+		}
+	}
+}

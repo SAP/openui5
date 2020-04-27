@@ -176,12 +176,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets a data provider to the header.
+	 * Sets a data settings to the header.
 	 *
 	 * @private
 	 * @param {object} oDataSettings The data settings
 	 */
-	NumericHeader.prototype._setData = function (oDataSettings) {
+	NumericHeader.prototype._setDataConfiguration = function (oDataSettings) {
 		var sPath = "/";
 		if (oDataSettings && oDataSettings.path) {
 			sPath = oDataSettings.path;
@@ -196,23 +196,25 @@ sap.ui.define([
 
 		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 
-		this._oLoadingProvider.createLoadingState(this._oDataProvider);
 		if (this._oDataProvider) {
 			// If a data provider is created use an own model. Otherwise bind to the one propagated from the card.
 			this.setModel(new JSONModel());
 
+			this._oDataProvider.attachDataRequested(function () {
+				this.onDataRequested();
+			}.bind(this));
+
 			this._oDataProvider.attachDataChanged(function (oEvent) {
 				this._updateModel(oEvent.getParameter("data"));
+				this.onDataRequestComplete();
 			}.bind(this));
 
 			this._oDataProvider.attachError(function (oEvent) {
 				this._handleError(oEvent.getParameter("message"));
+				this.onDataRequestComplete();
 			}.bind(this));
-			this._oDataProvider.triggerDataUpdate().then(function () {
-				this.fireEvent("_dataReady");
-				this._oLoadingProvider.setLoading(false);
-				this._oLoadingProvider.removeHeaderPlaceholder(this);
-			}.bind(this));
+
+			this._oDataProvider.triggerDataUpdate();
 		} else {
 			this.fireEvent("_dataReady");
 		}
@@ -224,6 +226,16 @@ sap.ui.define([
 
 	NumericHeader.prototype._handleError = function (sLogMessage) {
 		this.fireEvent("_error", { logMessage: sLogMessage });
+	};
+
+	NumericHeader.prototype.onDataRequested = function () {
+		this._oLoadingProvider.createLoadingState(this._oDataProvider);
+	};
+
+	NumericHeader.prototype.onDataRequestComplete = function () {
+		this.fireEvent("_dataReady");
+		this._oLoadingProvider.setLoading(false);
+		this._oLoadingProvider.removeHeaderPlaceholder(this);
 	};
 
 	return NumericHeader;

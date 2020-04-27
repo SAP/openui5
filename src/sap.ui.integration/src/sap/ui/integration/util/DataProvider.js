@@ -1,7 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/base/ManagedObject"], function (ManagedObject) {
+sap.ui.define(["sap/ui/base/ManagedObject"],
+	function (ManagedObject) {
 	"use strict";
 
 	/**
@@ -31,6 +32,15 @@ sap.ui.define(["sap/ui/base/ManagedObject"], function (ManagedObject) {
 	var DataProvider = ManagedObject.extend("sap.ui.integration.util.DataProvider", {
 		metadata: {
 			events: {
+
+				/**
+				 * Event fired when new data is requested.
+				 */
+				dataRequested: {
+					parameters : {
+
+					}
+				},
 
 				/**
 				 * Event fired when new data is available.
@@ -94,12 +104,17 @@ sap.ui.define(["sap/ui/base/ManagedObject"], function (ManagedObject) {
 	 * @returns {Promise} A promise resolved when the update has finished.
 	 */
 	DataProvider.prototype.triggerDataUpdate = function () {
+
+		this.fireDataRequested();
+
 		return this.getData()
 			.then(function (oData) {
-				this.fireDataChanged({ data: oData });
+				this.fireDataChanged({data: oData});
+				this.onDataRequestComplete();
 			}.bind(this))
 			.catch(function (sError) {
-				this.fireError({ message: sError });
+				this.fireError({message: sError});
+				this.onDataRequestComplete();
 			}.bind(this));
 	};
 
@@ -117,26 +132,6 @@ sap.ui.define(["sap/ui/base/ManagedObject"], function (ManagedObject) {
 		});
 	};
 
-	/**
-	 * Sets a data update interval.
-	 *
-	 * @param {number} iInterval The data update interval in seconds.
-	 */
-	DataProvider.prototype.setUpdateInterval = function (iInterval) {
-		var iValue = parseInt(iInterval);
-		if (!iValue) {
-			return;
-		}
-
-		if (this._iIntervalId) {
-			clearInterval(this._iIntervalId);
-		}
-
-		this._iIntervalId = setInterval(function () {
-			this.triggerDataUpdate();
-		}.bind(this), iValue * 1000);
-	};
-
 	DataProvider.prototype.destroy = function () {
 		if (this._iIntervalId) {
 			clearInterval(this._iIntervalId);
@@ -144,6 +139,25 @@ sap.ui.define(["sap/ui/base/ManagedObject"], function (ManagedObject) {
 		}
 		this._oSettings = null;
 		ManagedObject.prototype.destroy.apply(this, arguments);
+	};
+
+	DataProvider.prototype.onDataRequestComplete = function () {
+
+		var iInterval;
+
+		if (!this._oSettings || !this._oSettings.updateInterval) {
+			return;
+		}
+
+		iInterval = parseInt(this._oSettings.updateInterval);
+
+		if (isNaN(iInterval)) {
+			return;
+		}
+
+		setTimeout(function () {
+			this.triggerDataUpdate();
+		}.bind(this), iInterval * 1000);
 	};
 
 	return DataProvider;

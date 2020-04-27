@@ -201,7 +201,7 @@ sap.ui.define([
 
 		this._oLoadingPlaceholder = this._oLoadingProvider.createContentPlaceholder(oConfiguration, sType);
 
-		this._setData(oConfiguration.data);
+		this._setDataConfiguration(oConfiguration.data);
 
 		return this;
 	};
@@ -216,7 +216,7 @@ sap.ui.define([
 	 * @private
 	 * @param {Object} oDataSettings The data part of the configuration object
 	 */
-	BaseContent.prototype._setData = function (oDataSettings) {
+	BaseContent.prototype._setDataConfiguration = function (oDataSettings) {
 		var sPath = "/";
 		if (oDataSettings && oDataSettings.path) {
 			sPath = oDataSettings.path;
@@ -231,26 +231,27 @@ sap.ui.define([
 			this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 		}
 
-		this._oLoadingProvider.createLoadingState(this._oDataProvider);
-
 		if (this._oDataProvider) {
 
 			// If a data provider is created use an own model. Otherwise bind to the one propagated from the card.
 			this.setModel(new JSONModel());
 
+			this._oDataProvider.attachDataRequested(function () {
+				this.onDataRequested();
+			}.bind(this));
+
 			this._oDataProvider.attachDataChanged(function (oEvent) {
 				this._updateModel(oEvent.getParameter("data"));
 				this.onDataChanged();
+				this.onDataRequestComplete();
 			}.bind(this));
 
 			this._oDataProvider.attachError(function (oEvent) {
 				this._handleError(oEvent.getParameter("message"));
+				this.onDataRequestComplete();
 			}.bind(this));
 
-			this._oDataProvider.triggerDataUpdate().then(function () {
-				this.fireEvent("_dataReady");
-				this.destroyPlaceholder();
-			}.bind(this));
+			this._oDataProvider.triggerDataUpdate();
 		} else {
 			this.fireEvent("_dataReady");
 		}
@@ -503,6 +504,18 @@ sap.ui.define([
 	 * @param oError {object} The error object
 	 */
 	BaseContent.prototype.onActionSubmitEnd = function (oResponse, oError) {
+	};
+
+
+	BaseContent.prototype.onDataRequested = function () {
+		if (this._oLoadingProvider) {
+			this._oLoadingProvider.createLoadingState(this._oDataProvider);
+		}
+	};
+
+	BaseContent.prototype.onDataRequestComplete = function () {
+		this.fireEvent("_dataReady");
+		this.destroyPlaceholder();
 	};
 
 	return BaseContent;
