@@ -322,7 +322,7 @@ sap.ui.define([
 			this.oM.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			var oTarget = this.oM.getDomRef().querySelector(".sapUiCalWeekNum"),
+			var oTarget = this.oM.getDomRef().querySelectorAll(".sapUiCalWeekNum")[1],
 				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
 				deviceStub = this.stub(sap.ui.Device.support, "touch", true);
 
@@ -382,7 +382,7 @@ sap.ui.define([
 			this.oM.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			var oTarget = this.oM.getDomRef().querySelector(".sapUiCalWeekNum"),
+			var oTarget = this.oM.getDomRef().querySelectorAll(".sapUiCalWeekNum")[1],
 				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
 				isSelectedDaySpy = this.spy(this.oM, "_selectDay"),
 				oBrowserStub = this.stub(sap.ui.Device, "browser", { msie: true });
@@ -403,7 +403,7 @@ sap.ui.define([
 			this.oM.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			var oTarget = this.oM.getDomRef().querySelector(".sapUiCalWeekNum"),
+			var oTarget = this.oM.getDomRef().querySelectorAll(".sapUiCalWeekNum")[1],
 				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
 				isSelectedDaySpy = this.spy(this.oM, "_selectDay"),
 				oBrowserStub = this.stub(sap.ui.Device, "browser", {edge: true});
@@ -988,7 +988,7 @@ sap.ui.define([
 		QUnit.test("[Multiple day selection] Week number click on touch devices", function (assert) {
 			// Prepare
 			var oWeekNumberSelectSpy = this.spy(this.oM, "fireWeekNumberSelect"),
-				oMockEvent = { target: this.oM.getDomRef().querySelector(".sapUiCalWeekNum") };
+				oMockEvent = { target: this.oM.getDomRef().querySelectorAll(".sapUiCalWeekNum")[1] };
 
 			this.stub(sap.ui.Device.support, "touch", true);
 			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
@@ -1009,7 +1009,7 @@ sap.ui.define([
 		QUnit.test("[Multiple day selection] Week number click on non-touch devices", function (assert) {
 			// Prepare
 			var oWeekNumberSelectSpy = this.spy(this.oM, "fireWeekNumberSelect"),
-				oMockEvent = { target: this.oM.getDomRef().querySelector(".sapUiCalWeekNum") };
+				oMockEvent = { target: this.oM.getDomRef().querySelectorAll(".sapUiCalWeekNum")[1] };
 
 			this.stub(sap.ui.Device.support, "touch", false);
 			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
@@ -1055,7 +1055,7 @@ sap.ui.define([
 		QUnit.test("[Single interval selection] Week number click on touch devices", function (assert) {
 			// Prepare
 			var oWeekNumberSelectSpy = this.spy(this.oM, "fireWeekNumberSelect"),
-				oMockEvent = { target: this.oM.getDomRef().querySelector(".sapUiCalWeekNum") };
+				oMockEvent = { target: this.oM.getDomRef().querySelectorAll(".sapUiCalWeekNum")[1] };
 
 			this.stub(sap.ui.Device.support, "touch", true);
 			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
@@ -1075,7 +1075,7 @@ sap.ui.define([
 		QUnit.test("[Single interval selection] Week number click on non-touch devices", function (assert) {
 			// Prepare
 			var oWeekNumberSelectSpy = this.spy(this.oM, "fireWeekNumberSelect"),
-				oMockEvent = { target: this.oM.getDomRef().querySelector(".sapUiCalWeekNum") };
+				oMockEvent = { target: this.oM.getDomRef().querySelectorAll(".sapUiCalWeekNum")[1] };
 
 			this.stub(sap.ui.Device.support, "touch", false);
 			this.stub(this.oM, "_areMouseEventCoordinatesInThreshold", function () { return true; });
