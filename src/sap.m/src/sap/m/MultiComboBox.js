@@ -599,6 +599,7 @@ function(
 		}
 
 		if (oEvent.target === this.getFocusDomRef()) {
+			this._oTokenizer.hasOneTruncatedToken() && this._oTokenizer.setFirstTokenTruncated(false);
 			this.getEnabled() && this.addStyleClass("sapMFocus");
 			// enable type ahead when switching focus from the dropdown to the input field
 			// we need to check whether the focus has been triggered by the popover's closing or just a manual focusin
@@ -721,9 +722,21 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onkeydown = function(oEvent) {
+		var bEditable = this.getEditable(),
+			iTokensCount = this._oTokenizer.getTokens().length;
 		ComboBoxBase.prototype.onkeydown.apply(this, arguments);
 
-		if (!this.getEnabled() || !this.getEditable()) {
+		if (!this.getEnabled()) {
+			return;
+		}
+
+		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === KeyCodes.I && iTokensCount) {
+			oEvent.preventDefault();
+			if (bEditable) {
+				this._togglePopover();
+			} else {
+				this._toggleReadonlyPopover(this.getDomRef());
+			}
 			return;
 		}
 
@@ -1971,7 +1984,14 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._handleIndicatorPress = function(oEvent) {
-		var oPicker;
+		var oPicker,
+			aTokens = this._oTokenizer.getTokens();
+
+		if (aTokens.length === 1 && aTokens[0].getTruncated()) {
+			// this is needed as upon syncing and opening the picker new token is created
+			// and the width of its text should be calculated properly.
+			this._oTokenizer.setFirstTokenTruncated(false);
+		}
 
 		this.syncPickerContent();
 		this._filterSelectedItems(oEvent, true);
@@ -1982,7 +2002,7 @@ function(
 			oPicker.open();
 		} else {
 			this._updatePopoverBasedOnEditMode(false);
-			this._getReadOnlyPopover().openBy(this._oTokenizer);
+			this._toggleReadonlyPopover(this._oTokenizer);
 		}
 
 		if (this.isPickerDialog()) {
@@ -1990,6 +2010,43 @@ function(
 			this.bOpenedByKeyboardOrButton = true;
 		} else {
 			setTimeout(this._oTokenizer["scrollToEnd"].bind(this._oTokenizer), 0);
+		}
+	};
+
+	/**
+	 * Close or open the suggestion popover depending on the current state
+	 *
+	 * @private
+	 */
+	MultiComboBox.prototype._togglePopover = function() {
+		var oPicker = this.getPicker();
+
+		if (!oPicker) {
+			oPicker = this.syncPickerContent(true);
+		}
+
+		if (oPicker.isOpen()) {
+			oPicker.close();
+		} else {
+			oPicker.open();
+		}
+	};
+
+	/**
+	 * Close or open the suggestion read-only popover depending on the current state
+	 *
+	 * @private
+	 */
+	MultiComboBox.prototype._toggleReadonlyPopover = function(oOpenByControl) {
+		var oPopover = this._getReadOnlyPopover(),
+			oPopoverIsOpen = oPopover.isOpen();
+
+		if (oPopoverIsOpen) {
+			oPopover.close();
+		} else {
+			this.syncPickerContent(true);
+			this._updatePopoverBasedOnEditMode(false);
+			oPopover.openBy(oOpenByControl);
 		}
 	};
 
@@ -3396,7 +3453,7 @@ function(
 		var sInvisibleTextId = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER");
 		var bHasAriaLabelledBy = this.getAriaLabelledBy().indexOf(sInvisibleTextId) !== -1;
 
-		if (!this.getEditable() && this._oTokenizer._hasMoreIndicator()) {
+		if (!this.getEditable() && this._oTokenizer && this._oTokenizer._hasMoreIndicator()) {
 			!bHasAriaLabelledBy && this.addAriaLabelledBy(sInvisibleTextId);
 		} else {
 			bHasAriaLabelledBy && this.removeAriaLabelledBy(sInvisibleTextId);

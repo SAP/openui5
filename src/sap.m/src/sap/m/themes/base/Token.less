@@ -61,7 +61,6 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	display: inline-block;
 	overflow: hidden;
 	white-space: nowrap;
-	text-overflow: ellipsis;
 
 	// at least for Microsoft Surface Tablet we experienced problems when not setting these properties - touches on the Token seemed to be propageted to the Span inside the Token-Div and thereby (part of) the text contained in the Span would appear selected
 	-webkit-touch-callout: none;
@@ -75,6 +74,10 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	line-height: 1.5rem;
 	max-width: calc(~"100% - " @_sap_m_Token_TokenSize);
 	box-sizing: border-box;
+}
+
+.sapMToken.sapMTokenTruncated .sapMTokenText {
+	text-overflow: ellipsis;
 }
 
 .sapUiSizeCompact .sapMTokenText {
@@ -159,13 +162,4 @@ html.sap-desktop .sapMToken.sapMTokenSelected:hover {
 
 .sapUiSizeCompact .sapMListTbl .sapMToken .sapUiIcon:not(.sapMLIBImgNav) {
 	font-size: 0.75rem;
-}
-
-html[data-sap-ui-browser*="sf"] {
-	.sapMTokenText,
-	.sapUiSizeCompact .sapMTokenText,
-	.sapMTokenReadOnly .sapMTokenText,
-	.sapUiSizeCompact .sapMTokenReadOnly .sapMTokenText {
-		max-width: 100%;
-	}
 }

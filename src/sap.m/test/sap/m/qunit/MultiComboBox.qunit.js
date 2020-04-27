@@ -53,6 +53,8 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
+	var nPopoverAnimationTick = 300;
+
 	createAndAppendDiv("MultiComboBox-content").setAttribute("class", "select-content");
 
 
@@ -2644,7 +2646,7 @@ sap.ui.define([
 		oMultiComboBox.setValue("l");
 		sap.ui.getCore().applyChanges();
 		oMultiComboBox.open();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		oMultiComboBox.fireChange({ value: "l" });
 		oMultiComboBox.oninput(oFakeEvent);
@@ -2999,7 +3001,7 @@ sap.ui.define([
 		// act
 		oMultiComboBox.oncompositionstart(oFakeEvent);
 		oMultiComboBox.oninput(oFakeEvent);
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		// assert
 		assert.ok(oHandleInputEventSpy.called, "handleInputValidation should be called on input");
@@ -3017,7 +3019,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox._handleInputFocusOut();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		// Assert
 		assert.notOk(oMultiComboBox._bIsPasteEvent, "Should reset _bIsPasteEvent variable");
@@ -4631,7 +4633,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		oMultiComboBox.open();
 		this.clock.tick(1000);
@@ -4639,7 +4641,7 @@ sap.ui.define([
 
 		oMultiComboBox.setSelectedItems([oItem]);
 		oMultiComboBox.getPicker().getCustomHeader().getContentRight()[0].firePress();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 0, "No items selected after cancel selection");
 
@@ -4761,7 +4763,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oMultiComboBox.open();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		oMultiComboBox._sOldValue = "t";
 		oMultiComboBox._bCheckBoxClicked = false;
@@ -4775,7 +4777,7 @@ sap.ui.define([
 
 		oMultiComboBox._handleSelectionLiveChange(oFakeEvent);
 		sap.ui.getCore().applyChanges();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		assert.strictEqual(oMultiComboBox.isOpen(), false, "Picker should close after selection");
 		assert.strictEqual(oMultiComboBox.getValue(), "", "Value should be empty");
@@ -4813,7 +4815,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oMultiComboBox.open();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		oMultiComboBox._sOldValue = "t";
 		oMultiComboBox._bCheckBoxClicked = true;
@@ -4827,7 +4829,7 @@ sap.ui.define([
 
 		oMultiComboBox._handleSelectionLiveChange(oFakeEvent);
 		sap.ui.getCore().applyChanges();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		assert.strictEqual(oMultiComboBox.isOpen(), true, "Picker should not close after selection");
 		assert.strictEqual(oMultiComboBox.getValue(), "t", "Value should be t");
@@ -4871,10 +4873,10 @@ sap.ui.define([
 		oHandleTokensStub.withArgs("selected").returns(true);
 
 		oMultiComboBox.getFocusDomRef().blur();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		oMultiComboBox.open();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		oMultiComboBox._handleSelectionLiveChange(oFakeEvent);
 		sap.ui.getCore().applyChanges();
@@ -5068,7 +5070,7 @@ sap.ui.define([
 		oHandleTokensStub.withArgs("type").returns(Tokenizer.TokenChangeType.Removed);
 		oHandleTokensStub.withArgs("token").returns(oMultiComboBox._oTokenizer.getTokens()[0]);
 		oMultiComboBox._handleTokenChange(oFakeEvent);
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		assert.ok(!oSpy.called, "onfocusin of the MCB should not be triggered after a token is deleted");
 
@@ -5295,7 +5297,7 @@ sap.ui.define([
 		oMultiComboBox.setWidth("50px");
 
 		sap.ui.getCore().applyChanges();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		//assert
 		assert.ok(oMultiComboBox.getFocusDomRef().getAttribute('aria-labelledBy').indexOf(sInvisibleTextId) !== -1, "Input has aria-labelledby attribute to indicate Enter press possibility");
@@ -5651,11 +5653,11 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oMultiComboBox.open();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 		oSelectedButton.setPressed(true);
 		oMultiComboBox._filterSelectedItems({"oSource": oSelectedButton});
 		sap.ui.getCore().applyChanges();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 1, "Only one item should be visible");
 		assert.strictEqual(oSelectedButton.getPressed(),true,"the SelectedButton is pressed");
@@ -5666,10 +5668,10 @@ sap.ui.define([
 
 		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 3, "All three items are visible");
 		assert.strictEqual(oSelectedButton.getPressed(), false, "the SelectedButton is not pressed");
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		oMultiComboBox.close();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		oMultiComboBox.destroy();
 	});
@@ -5711,11 +5713,11 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oMultiComboBox.open();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 		oSelectedButton.setPressed(true);
 		oMultiComboBox._filterSelectedItems({"oSource": oSelectedButton});
 		sap.ui.getCore().applyChanges();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "There is one selected item");
 		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 2, "Only one item should be visible");
@@ -5726,10 +5728,10 @@ sap.ui.define([
 
 		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 5, "All three items are visible");
 		assert.strictEqual(oSelectedButton.getPressed(), false, "the SelectedButton is not pressed");
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		oMultiComboBox.close();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		oMultiComboBox.destroy();
 	});
@@ -5815,7 +5817,7 @@ sap.ui.define([
 		oMultiComboBox._selectItemByKey(oFakeEvent);
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		// Assert
 		assert.ok(oAddAssociationStub.calledOnce, "addAssociation was called once");
@@ -5909,7 +5911,7 @@ sap.ui.define([
 		oMultiComboBox._selectItemByKey(oFakeEvent);
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		// Assert
 		assert.ok(oAddAssociationStub.calledOnce, "addAssociation was called once");
@@ -5969,7 +5971,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oMultiComboBox.open();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		oPickerTextField = oMultiComboBox.getPickerTextField();
 		oPickerTextField.focus();
@@ -5977,9 +5979,9 @@ sap.ui.define([
 
 		oPickerTextFieldDomRef.value = "I";
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef);
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 		sap.ui.test.qunit.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER); //onsapenter
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		// assert
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 2, "There are two selected item");
@@ -7545,7 +7547,7 @@ sap.ui.define([
 		// act
 		this.multiComboBox.oncompositionstart(oFakeEvent);
 		this.multiComboBox.oninput(oFakeEvent);
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		// assert
 		assert.ok(oHandleInputEventSpy.called, "handleInputValidation should be called on input");
@@ -8087,5 +8089,133 @@ sap.ui.define([
 
 		// Cleanup
 		oMultiComboBox.destroy();
+	});
+
+	QUnit.module("One extra long token handling", {
+		beforeEach: function(){
+			this.oMultiComboBox = new MultiComboBox({
+				width: '200px',
+				items: [new Item({key: "A", text: "Extra long long long long long token"})]
+			});
+
+			this.oMultiComboBox.setSelectedKeys(["A"]);
+			this.oMultiComboBox.placeAt("MultiComboBox-content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oMultiComboBox.destroy();
+		}
+	});
+
+	QUnit.test("Should set/remove truncation on focusin/focusout", function (assert) {
+		// Arrange
+		var oSpy = sinon.spy(this.oMultiComboBox._oTokenizer, "_useCollapsedMode"),
+			oMockEvent = {
+				target: this.oMultiComboBox.getFocusDomRef()
+			};
+
+		// Act
+		this.oMultiComboBox.onfocusin(oMockEvent);
+		this.clock.tick(nPopoverAnimationTick);
+
+		// Assert
+		assert.ok(oSpy.calledWith(false), "_useCollapsedMode should be called with 'false'.");
+		assert.ok(!this.oMultiComboBox._oTokenizer.hasOneTruncatedToken(), "Truncation was removed from the token");
+
+		// Act
+		this.oMultiComboBox.onsapfocusleave(oMockEvent);
+		this.clock.tick(nPopoverAnimationTick);
+
+		assert.ok(oSpy.calledWith(true), "_useCollapsedMode should be called with 'true'.");
+		assert.ok(this.oMultiComboBox._oTokenizer.hasOneTruncatedToken(), "Truncation was set on the token");
+	});
+
+	QUnit.test("Should open/close suggestion popover on CTRL + I", function (assert) {
+		// Arrange
+		var oPicker;
+
+		// Act
+		qutils.triggerKeydown(this.oMultiComboBox, KeyCodes.I, false, false, true); // trigger Control key + I
+		this.clock.tick(nPopoverAnimationTick);
+
+		oPicker = this.oMultiComboBox.getPicker();
+
+		// Assert
+		assert.ok(oPicker.isOpen(), "Should open suggestion popover");
+
+		// Act
+		qutils.triggerKeydown(this.oMultiComboBox, KeyCodes.I, false, false, true); // trigger Control key + I
+		this.clock.tick(nPopoverAnimationTick);
+
+		// // Assert
+		assert.notOk(oPicker.isOpen(), "Should close suggestion popover");
+	});
+
+	QUnit.test("Should open read only popover on CTRL + I and the token should not be truncated", function (assert) {
+		// Arrange
+		this.oMultiComboBox.setEditable(false);
+		this.clock.tick();
+
+		assert.ok(this.oMultiComboBox._oTokenizer.hasOneTruncatedToken(), "The token should be truncated");
+
+		// Act
+		qutils.triggerKeydown(this.oMultiComboBox, KeyCodes.I, false, false, true); // trigger Control key + I
+		this.clock.tick(nPopoverAnimationTick);
+
+		// Assert
+		assert.ok(this.oMultiComboBox._getReadOnlyPopover().isOpen(), "Suggestion read only popover should be opened");
+		assert.notOk(this.oMultiComboBox._oTokenizer.hasOneTruncatedToken(), "The token should not be truncated");
+	});
+
+	QUnit.test("Truncation should stay on token click in read only mode", function (assert) {
+		// Arrange
+		this.oMultiComboBox.setEditable(false);
+
+		// Act
+		this.oMultiComboBox.$().find(".sapMTokenizerIndicator")[0].click();
+		this.clock.tick(nPopoverAnimationTick);
+
+		// Assert
+		assert.ok(this.oMultiComboBox._oTokenizer.hasOneTruncatedToken(), "The token should be truncated");
+	});
+
+	QUnit.test("Should not create suggestion popover on CTRL + I when the input doesn't have tokens", function (assert) {
+		// Arrange
+		var oMultiComboBox = new MultiComboBox();
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		qutils.triggerKeydown(oMultiComboBox, KeyCodes.I, false, false, true); // trigger Control key + I
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(nPopoverAnimationTick);
+
+		// Assert
+		assert.strictEqual(oMultiComboBox.getPicker(), null, "Suggestion popover should not be opened.");
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("Should not open suggestion popover on CTRL + I when the input doesn't have tokens", function (assert) {
+		// Arrange
+		// First we need to make sure there is picker
+		this.oMultiComboBox.createPicker();
+
+		// Remove all tokens
+		this.oMultiComboBox.setSelectedKeys([]);
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		qutils.triggerKeydown(this.oMultiComboBox, KeyCodes.I, false, false, true); // trigger Control key + I
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(nPopoverAnimationTick);
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.getPicker().isOpen(), false, "Suggestion popover should not be opened.");
+
+		// cleanup
+		this.oMultiComboBox.destroy();
 	});
 });

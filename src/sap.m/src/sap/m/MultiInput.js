@@ -328,6 +328,13 @@ function(
 	 */
 	MultiInput.prototype.oninput = function(oEvent) {
 		Input.prototype.oninput.call(this, oEvent);
+
+		// IE fires input event in different scenarios - check InputBase
+		if (oEvent.isMarked("invalid") || !this.getEditable()) {
+			return;
+		}
+
+		this._setValueVisible();
 		this._manageListsVisibility(false);
 		this._getSelectedItemsPicker().close();
 	};
@@ -688,12 +695,10 @@ function(
 			this._tokenizer._changeAllTokensSelection(false);
 		}
 
-		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === KeyCodes.A) {
-			if (this._tokenizer.getTokens().length > 0) {
-				this._tokenizer.focus();
-				this._tokenizer._changeAllTokensSelection(true);
-				oEvent.preventDefault();
-			}
+		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === KeyCodes.A && this._tokenizer.getTokens().length > 0) {
+			this._tokenizer.focus();
+			this._tokenizer._changeAllTokensSelection(true);
+			oEvent.preventDefault();
 		}
 
 		// ctrl/meta + c OR ctrl/meta + Insert - Copy all selected Tokens
@@ -708,6 +713,17 @@ function(
 			} else {
 				this._tokenizer._copy();
 			}
+		}
+
+		// ctrl/meta + I -> Open suggestions
+		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === KeyCodes.I && this._tokenizer.getTokens().length) {
+			this._manageListsVisibility(true);
+			if (this.getEditable()) {
+				this._toggleSelectedItemsPicker();
+			} else {
+				this._toggleReadonlyPopover(this.getDomRef());
+			}
+			oEvent.preventDefault();
 		}
 	};
 
@@ -783,6 +799,44 @@ function(
 			}
 		}.bind(this), 0);
 
+	};
+
+	/**
+	 * Close or open the suggestion popover depending on the current state
+	 *
+	 * @private
+	 */
+	MultiInput.prototype._toggleSelectedItemsPicker = function () {
+		var oPicker = this._getSelectedItemsPicker();
+
+		// In case we have one token in the MultiInput, with truncated text,
+		// tapping on the token will open the selected items picker.
+		// With the focus, we ensure that the last focused element before opening the popover is
+		// the MultiInput itself, as otherwise the focus will be returned to the token.
+		this.focus();
+		if (oPicker.isOpen()) {
+			this._setValueVisible();
+			oPicker.close();
+		} else {
+			this._openSelectedItemsPicker();
+		}
+	};
+
+	/**
+	 * Close or open the read-only popover
+	 *
+	 * @private
+	 */
+	MultiInput.prototype._toggleReadonlyPopover = function (oOpenByDom) {
+		var oPopover = this._getReadOnlyPopover(),
+			oPopoverIsOpen = oPopover.isOpen();
+
+		if (oPopoverIsOpen) {
+			oPopover.close();
+		} else {
+			this._fillList();
+			oPopover.openBy(oOpenByDom);
+		}
 	};
 
 	MultiInput.prototype._convertTextToToken = function (text, bCopiedToken) {
@@ -1056,6 +1110,7 @@ function(
 
 		if (oEvent.target === this.getFocusDomRef()) {
 			Input.prototype.onfocusin.apply(this, arguments);
+			this._tokenizer.hasOneTruncatedToken() && this._tokenizer.setFirstTokenTruncated(false);
 		}
 
 		if (!this._bUseDialog &&
@@ -1063,13 +1118,13 @@ function(
 			oEvent.target === this.getDomRef("inner") &&
 			!(this._oSuggestionPopup && this._oSuggestionPopup.isOpen())
 		) {
-
 			this._tokenizer._useCollapsedMode(false);
 			this._setValueVisible();
 			this._tokenizer.scrollToEnd();
 		}
-	};
 
+		this._registerResizeHandler();
+	};
 
 	/**
 	 * When press ESC, deselect all tokens and all texts
@@ -1468,7 +1523,7 @@ function(
 				that._fillList();
 				that._updatePickerHeaderTitle();
 			})
-			.attachAfterClose(function(){
+			.attachAfterClose(function() {
 				that._tokenizer._useCollapsedMode(true);
 				that._bShowListWithTokens = false;
 			});
@@ -1494,7 +1549,6 @@ function(
 
 		return oPopupInput;
 	};
-
 
 	MultiInput.prototype._hasShowSelectedButton = function () {
 		return true;
@@ -1522,23 +1576,13 @@ function(
 		var oPopover = this._getSelectedItemsPicker(),
 			oDomRef = this.getDomRef(),
 			sWidth;
+
 		this._setValueInvisible();
 		this._fillList();
 
 		if (oDomRef && oPopover) {
 			sWidth = (oDomRef.offsetWidth / parseFloat(library.BaseFontSize)) + "rem";
 			oPopover.setContentMinWidth(sWidth);
-		}
-	};
-	/**
-	 * This event handler will be called after the MultiComboBox's Pop-up is closed.
-	 *
-	 * @private
-	 */
-	MultiInput.prototype._onAfterCloseTokensPicker = function() {
-		if (this._oSuggPopover && !this.getValue()) {
-			this._tokenizer._useCollapsedMode(true);
-			this._setValueInvisible();
 		}
 	};
 
@@ -1736,14 +1780,17 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._handleIndicatorPress = function() {
-			this._bShowListWithTokens = true;
-			if (this.getEditable()) {
-				this._openSelectedItemsPicker();
-			} else {
-				this._fillList();
-				this._manageListsVisibility(true);
-				this._getReadOnlyPopover().openBy(this._tokenizer._oIndicator[0]);
-			}
+		var bNMoreIndicatorVisible = this._tokenizer._oIndicator && !this._tokenizer._oIndicator[0].classList.contains("sapUiHidden"),
+			oOpenByDom = bNMoreIndicatorVisible ? this._tokenizer._oIndicator[0] : this.getDomRef();
+
+		this._bShowListWithTokens = true;
+		if (this.getEditable()) {
+			// The selected items picker
+			this.focus();
+			this._openSelectedItemsPicker();
+		} else {
+			this._toggleReadonlyPopover(oOpenByDom);
+		}
 	};
 
 	/**
@@ -1805,7 +1852,6 @@ function(
 			// configuration
 			this._oSelectedItemPicker.setHorizontalScrolling(false)
 				.attachBeforeOpen(this._onBeforeOpenTokensPicker, this)
-				.attachAfterClose(this._onAfterCloseTokensPicker, this)
 				.addContent(this._getTokensList());
 		}
 		return this._oSelectedItemPicker;

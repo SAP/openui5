@@ -1176,6 +1176,34 @@
 			]
 		});
 
+
+		//*******************************
+		var oMultiInput10 = new sap.m.MultiInput({
+			id: "multiInputWithOneLongToken",
+			placeholder: "1 item example",
+			valueHelpRequest: function () {
+				var oDialog = new sap.m.Dialog({
+					endButton: new sap.m.Button({
+						text: "Close",
+						press: function () {
+							oDialog.close();
+						}
+					})
+				}).open();
+			},
+			width:"25%",
+			tokens: [
+				new sap.m.Token({text: "Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, "}),
+		 	],
+		});
+
+		var readOnlyButtonMI10 = new sap.m.ToggleButton({
+			text : "Toggle Read-Only mode MI with long token",
+			press : function() {
+				oMultiInput10.setEditable(!oMultiInput10.getEditable());
+			}
+		});
+
 		var oMultiInputReadOnly = new sap.m.MultiInput("multiInputReadOnlyInitial", {
 			width : "400px",
 			tokens : [
@@ -1405,6 +1433,9 @@
 					new sap.m.Label({labelFor: oMultiInput9.getId(), text:"MultiInput with toggle button for read only"}),
 					oMultiInput9,
 					readOnlyButton,
+					new sap.m.Label({labelFor: oMultiInput10.getId(), text : "One token with extra long text", width:"100%"}),
+					oMultiInput10,
+					readOnlyButtonMI10,
 					new sap.m.Label({labelFor: oMultiInputReadOnly.getId(), text:"MultiInput in read-only state(editable=false). Should contain 11 tokens."}),
 					oMultiInputReadOnly,
 					new sap.m.Label({labelFor: multiInputWithSelectDialog.getId(), text : "MultiInput with SelectDialog", width: "100%"}),

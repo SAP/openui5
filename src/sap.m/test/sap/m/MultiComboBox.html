@@ -804,6 +804,23 @@
 		]
 	});
 
+	var oMultiComboBoxOneToken = new sap.m.MultiComboBox({
+		id : "MultiComboBoxOneToken",
+		width : "300px",
+		placeholder : "Example with one token.",
+		items : [oItem = new sap.ui.core.Item({
+			text : "Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, "
+		})],
+		selectedItems : [oItem]
+	});
+
+	var readOnlyButtonOneToken = new sap.m.ToggleButton({
+		text : "Toggle Read-Only mode MC with long token",
+		press : function() {
+			oMultiComboBoxOneToken.setEditable(!oMultiComboBoxOneToken.getEditable());
+		}
+	});
+
 	var oApp = new sap.m.App("myApp", {
 		initialPage : "page1"
 	});
@@ -811,7 +828,8 @@
 		content : [theCompactMode,oMultiComboBox2, oMultiComboBox, oMultiComboBox1,
 				oMultiComboBoxDisabledListItemSelectable, oMultiComboBoxDisabledListItemDisabled, oMultiComboBoxReadOnly,
 				oMultiComboBoxDisabled, oMultiComboBoxWithoutKey, oMultiComboBoxError, oMultiComboBoxWarning,
-				oMultiComboBoxSuccess, oMultiComboBoxBinding, oToolbar],
+				oMultiComboBoxSuccess, oMultiComboBoxOneToken, readOnlyButtonOneToken,
+				oMultiComboBoxBinding, oToolbar],
 		showNavButton : true,
 		navButtonPress : function() {
 			oApp.to("page2")

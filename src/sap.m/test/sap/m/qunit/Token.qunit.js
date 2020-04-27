@@ -153,6 +153,11 @@ sap.ui.define([
 		assert.equal(this.token1.$().children(0).attr("dir"), 'rtl', "Token has attribute dir equal to rtl");
 	});
 
+	QUnit.test("setter / getter truncated", function(assert) {
+		this.token1.setTruncated(true);
+		assert.equal(this.token1.getTruncated(), true, "Token's textTruncated property was set.");
+	});
+
 	QUnit.module("Keyboard Handling", {
 		beforeEach : function() {
 			this.token1 = new Token("t1");
@@ -330,6 +335,44 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) === -1, "Token has the invisible text ID removed from aria-describedby attribute");
+	});
+
+	QUnit.module("Truncated Token", {
+		beforeEach : function() {
+			this.tokenizer = new Tokenizer("t");
+			this.token = new Token("t1");
+
+			this.tokenizer.addToken(this.token);
+
+			this.tokenizer.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.tokenizer.destroy();
+		}
+	});
+
+	QUnit.test("Selection when token is truncated", function(assert) {
+		var oSpy = this.spy(this.token, "setSelected");
+
+		// Arrange
+		this.token.setTruncated(true);
+
+		// Act
+		this.token._onTokenPress({});
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 0, "Token was not initially selected");
+
+		// Arrange
+		this.token.setTruncated(false);
+
+		// Act
+		this.token._onTokenPress({});
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "Token was selected.");
+		assert.strictEqual(oSpy.calledWith(true), true, "Correct parameter passed");
 	});
 
 });
