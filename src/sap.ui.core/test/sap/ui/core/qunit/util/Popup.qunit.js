@@ -1267,8 +1267,10 @@ sap.ui.define([
 
 			QUnitUtils.triggerSelectAll();
 
-			if (Device.browser.msie || Device.browser.edge){
-				assert.ok(QUnitUtils.includesSelectedText(["OpenPopup", "QUnittests'Popup'ofsuite'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
+			if (Device.browser.msie) {
+				assert.ok(QUnitUtils.isSelectedTextEqual(QUnitUtils._removeAllWhitespaces(document.body.innerText)), "The whole content of the html document should be selected.");
+			} else if (Device.browser.edge) {
+				assert.ok(QUnitUtils.includesSelectedText(["OpenPopup", "sap.ui.core.Popup"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("OpenPopup"), "The selected text should be correct 'OpenPopup'.");
 			}
@@ -1309,8 +1311,10 @@ sap.ui.define([
 
 			QUnitUtils.triggerSelectAll();
 
-			if (Device.browser.msie || Device.browser.edge){
-				assert.ok(QUnitUtils.includesSelectedText(["Button", "QUnittests'Popup'ofsuite'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
+			if (Device.browser.msie) {
+				assert.ok(QUnitUtils.isSelectedTextEqual(QUnitUtils._removeAllWhitespaces(document.body.innerText)), "The whole content of the html document should be selected.");
+			} else if (Device.browser.edge) {
+				assert.ok(QUnitUtils.includesSelectedText(["OpenPopup", "sap.ui.core.Popup"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("Button"), "The selected text should be correct 'Button'.");
 			}
@@ -1373,8 +1377,10 @@ sap.ui.define([
 
 			QUnitUtils.triggerSelectAll();
 
-			if (Device.browser.msie || Device.browser.edge){
-				assert.ok(QUnitUtils.includesSelectedText(["OpenPopup", "QUnittests'Popup'ofsuite'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
+			if (Device.browser.msie) {
+				assert.ok(QUnitUtils.isSelectedTextEqual(QUnitUtils._removeAllWhitespaces(document.body.innerText)), "The whole content of the html document should be selected.");
+			} else if (Device.browser.edge) {
+				assert.ok(QUnitUtils.includesSelectedText(["OpenPopup", "sap.ui.core.Popup"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("OpenPopup"), "The selected text should be correct 'OpenPopup'.");
 			}
@@ -1414,8 +1420,10 @@ sap.ui.define([
 
 			QUnitUtils.triggerSelectAll();
 
-			if (Device.browser.msie || Device.browser.edge){
-				assert.ok(QUnitUtils.includesSelectedText(["OpenPopup", "Button", "QUnittests'Popup'ofsuite'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
+			if (Device.browser.msie) {
+				assert.ok(QUnitUtils.isSelectedTextEqual(QUnitUtils._removeAllWhitespaces(document.body.innerText)), "The whole content of the html document should be selected.");
+			} else if (Device.browser.edge) {
+				assert.ok(QUnitUtils.includesSelectedText(["OpenPopup", "sap.ui.core.Popup"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("OpenPopupButton"), "The selected text should be correct 'Open PopupButton'.");
 			}
@@ -1501,8 +1509,10 @@ sap.ui.define([
 
 			QUnitUtils.triggerSelectAll();
 
-			if (Device.browser.msie || Device.browser.edge) {
-				assert.ok(QUnitUtils.includesSelectedText(["Button", "QUnittests'Popup'ofsuite'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
+			if (Device.browser.msie) {
+				assert.ok(QUnitUtils.isSelectedTextEqual(QUnitUtils._removeAllWhitespaces(document.body.innerText)), "The whole content of the html document should be selected.");
+			} else if (Device.browser.edge) {
+				assert.ok(QUnitUtils.includesSelectedText(["OpenPopup", "sap.ui.core.Popup"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("Button"), "The selected text should be correct 'Button'.");
 			}
@@ -1638,8 +1648,10 @@ sap.ui.define([
 
 			QUnitUtils.triggerSelectAll();
 
-			if (Device.browser.msie || Device.browser.edge) {
-				assert.ok(QUnitUtils.includesSelectedText(["OpenPopup", "QUnittests'Popup'ofsuite'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
+			if (Device.browser.msie) {
+				assert.ok(QUnitUtils.isSelectedTextEqual(QUnitUtils._removeAllWhitespaces(document.body.innerText)), "The whole content of the html document should be selected.");
+			} else if (Device.browser.edge) {
+				assert.ok(QUnitUtils.includesSelectedText(["OpenPopup", "sap.ui.core.Popup"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("OpenPopup"), "The selected text should be correct 'OpenPopup'.");
 			}
@@ -1680,8 +1692,10 @@ sap.ui.define([
 
 			QUnitUtils.triggerSelectAll();
 
-			if (Device.browser.msie || Device.browser.edge) {
-				assert.ok(QUnitUtils.includesSelectedText(["Button", "QUnittests'Popup'ofsuite'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
+			if (Device.browser.msie) {
+				assert.ok(QUnitUtils.isSelectedTextEqual(QUnitUtils._removeAllWhitespaces(document.body.innerText)), "The whole content of the html document should be selected.");
+			} else if (Device.browser.edge) {
+				assert.ok(QUnitUtils.includesSelectedText(["OpenPopup", "sap.ui.core.Popup"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("Button"), "The selected text should be correct 'Button'.");
 			}
@@ -1712,8 +1726,10 @@ sap.ui.define([
 
 			QUnitUtils.triggerSelectAll();
 
-			if (Device.browser.msie || Device.browser.edge) {
-				assert.ok(QUnitUtils.includesSelectedText(["Button", "QUnittests'Popup'ofsuite'test-resources/sap/ui/core/qunit/util/testsuite.util.qunit'"]) , "The whole content of the html document should be selected.");
+			if (Device.browser.msie) {
+				assert.ok(QUnitUtils.isSelectedTextEqual(QUnitUtils._removeAllWhitespaces(document.body.innerText)), "The whole content of the html document should be selected.");
+			} else if (Device.browser.edge) {
+				assert.ok(QUnitUtils.includesSelectedText(["OpenPopup", "sap.ui.core.Popup"]) , "The whole content of the html document should be selected.");
 			} else {
 				assert.ok(QUnitUtils.isSelectedTextEqual("Button"), "The selected text should be correct 'Button'.");
 			}
