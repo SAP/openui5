@@ -187,38 +187,40 @@ sap.ui.define([
 	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise for asynchronous or FakePromise for synchronous processing scenario
 	 * @private
 	 */
-	function iterateDependentQueue(mChangesMap) {
+	function iterateDependentQueue(mChangesMap, sControlId) {
 		var aCoveredChanges = [];
 		var aDependenciesToBeDeleted = [];
 		var aPromises = [];
-		mChangesMap.dependencyRemovedInLastBatch.forEach(function(sDependencyKey) {
-			var oDependency = mChangesMap.mDependencies[sDependencyKey];
-			if (
-				oDependency.dependencies.length === 0
-				&& !(oDependency.controlsDependencies && oDependency.controlsDependencies.length)
-			) {
-				aDependenciesToBeDeleted.push(sDependencyKey);
-				aCoveredChanges.push(oDependency.changeObject.getId());
-				if (oDependency[PENDING]) {
-					aPromises.push(function() {
-						return oDependency[PENDING]();
-					});
+		if (mChangesMap.dependencyRemovedInLastBatch[sControlId]) {
+			mChangesMap.dependencyRemovedInLastBatch[sControlId].forEach(function(sDependencyKey) {
+				var oDependency = mChangesMap.mDependencies[sDependencyKey];
+				if (
+					oDependency.dependencies.length === 0
+					&& !(oDependency.controlsDependencies && oDependency.controlsDependencies.length)
+				) {
+					aDependenciesToBeDeleted.push(sDependencyKey);
+					aCoveredChanges.push(oDependency.changeObject.getId());
+					if (oDependency[PENDING]) {
+						aPromises.push(function() {
+							return oDependency[PENDING]();
+						});
+					}
 				}
-			}
-		});
+			});
+		}
 
-		return Utils.execPromiseQueueSequentially(aPromises).then(function () {
-			mChangesMap.dependencyRemovedInLastBatch = [];
+		return Utils.execPromiseQueueSequentially(aPromises).then(function(aCoveredChanges, aDependenciesToBeDeleted, sControlId) {
+			delete mChangesMap.dependencyRemovedInLastBatch[sControlId];
 			aDependenciesToBeDeleted.forEach(function(sDependencyKey) {
 				delete mChangesMap.mDependencies[sDependencyKey];
 			});
 
 			aCoveredChanges.forEach(function(sChangeId) {
-				DependencyHandler.resolveDependenciesForChange(mChangesMap, sChangeId);
+				DependencyHandler.resolveDependenciesForChange(mChangesMap, sChangeId, sControlId);
 			});
 
 			return !!aCoveredChanges.length;
-		});
+		}.bind(undefined, aCoveredChanges, aDependenciesToBeDeleted, sControlId));
 	}
 
 	/**
@@ -248,7 +250,7 @@ sap.ui.define([
 			mDependencies: {},
 			mDependentChangesOnMe: {},
 			mControlsWithDependencies: {},
-			dependencyRemovedInLastBatch: []
+			dependencyRemovedInLastBatch: {}
 		};
 	};
 
@@ -284,12 +286,12 @@ sap.ui.define([
 	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
 	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all dependencies were processed for asynchronous or FakePromise for the synchronous processing scenario
 	 */
-	DependencyHandler.processDependentQueue = function (mChangesMap, oAppComponent) {
-		return iterateDependentQueue(mChangesMap).then(function(bContinue) {
+	DependencyHandler.processDependentQueue = function(mChangesMap, oAppComponent, sControlId) {
+		return iterateDependentQueue(mChangesMap, sControlId).then(function(sControlId, bContinue) {
 			if (bContinue) {
-				return DependencyHandler.processDependentQueue(mChangesMap, oAppComponent);
+				return DependencyHandler.processDependentQueue(mChangesMap, oAppComponent, sControlId);
 			}
-		});
+		}.bind(undefined, sControlId));
 	};
 
 	/**
@@ -324,8 +326,9 @@ sap.ui.define([
 					if (iIndex > -1) {
 						oDependency.controlsDependencies.splice(iIndex, 1);
 						delete mChangesMap.mControlsWithDependencies[sControlId];
-						if (!includes(mChangesMap.dependencyRemovedInLastBatch, sChangeKey)) {
-							mChangesMap.dependencyRemovedInLastBatch.push(sChangeKey);
+						mChangesMap.dependencyRemovedInLastBatch[sControlId] = mChangesMap.dependencyRemovedInLastBatch[sControlId] || [];
+						if (!includes(mChangesMap.dependencyRemovedInLastBatch[sControlId], sChangeKey)) {
+							mChangesMap.dependencyRemovedInLastBatch[sControlId].push(sChangeKey);
 						}
 					}
 				}
@@ -341,18 +344,19 @@ sap.ui.define([
 	 * @param {object} mChangesMap - Changes Map
 	 * @param {string} sChangeKey - Key of the change which dependencies have to be resolved
 	 */
-	DependencyHandler.resolveDependenciesForChange = function(mChangesMap, sChangeKey) {
+	DependencyHandler.resolveDependenciesForChange = function(mChangesMap, sChangeKey, sControlId) {
 		var mDependentChangesOnMe = mChangesMap.mDependentChangesOnMe[sChangeKey];
 		if (mDependentChangesOnMe) {
-			mDependentChangesOnMe.forEach(function (sKey) {
+			mDependentChangesOnMe.forEach(function(sKey) {
 				var oDependency = mChangesMap.mDependencies[sKey];
 
 				// oDependency might be undefined, since initial dependencies were not copied yet from applyAllChangesForControl() for change with ID sKey
 				var iIndex = oDependency ? oDependency.dependencies.indexOf(sChangeKey) : -1;
 				if (iIndex > -1) {
 					oDependency.dependencies.splice(iIndex, 1);
-					if (!includes(mChangesMap.dependencyRemovedInLastBatch, sKey)) {
-						mChangesMap.dependencyRemovedInLastBatch.push(sKey);
+					mChangesMap.dependencyRemovedInLastBatch[sControlId] = mChangesMap.dependencyRemovedInLastBatch[sControlId] || [];
+					if (!includes(mChangesMap.dependencyRemovedInLastBatch[sControlId], sKey)) {
+						mChangesMap.dependencyRemovedInLastBatch[sControlId].push(sKey);
 					}
 				}
 			});
