@@ -10,7 +10,9 @@ sap.ui.define([
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Sorter",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes"
 ],
 function (
 	GridList,
@@ -22,7 +24,9 @@ function (
 	GroupHeaderListItem,
 	JSONModel,
 	Sorter,
-	Core
+	Core,
+	qutils,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -380,5 +384,82 @@ function (
 		// Assert
 		assert.strictEqual(oItemPositionBeforeBusy.top, oItemPositionAfterBusy.top, "The element should NOT be moved vertically after it gets busy");
 		assert.strictEqual(oItemPositionBeforeBusy.left, oItemPositionAfterBusy.left, "The element should NOT be moved horizontally after it gets busy");
+	});
+
+	QUnit.module("Keyboard handling", {
+		beforeEach: function () {
+			this.oGridList = new GridList({
+				customLayout: new GridBoxLayout({
+					boxWidth: "200px"
+				}),
+				items: [
+					new GridListItem({
+						content: [
+							new Text({ text: "This is the content"})
+						]
+					}),
+					new GridListItem({
+						content: [
+							new Text({ text: "This is the content"})
+						]
+					}),
+					new GridListItem({
+						content: [
+							new Text({ text: "This is the content"})
+						]
+					})
+				]
+			});
+
+			this.oGridList.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oGridList.destroy();
+		}
+	});
+
+	QUnit.test("Right/Down Arrow navigating trough grid list", function (assert) {
+
+		// Arrange
+		var oItem = this.oGridList.getItems()[0],
+			oItem1 = this.oGridList.getItems()[1],
+			oItem2 = this.oGridList.getItems()[2];
+		oItem.$().focus();
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerKeydown(oItem.$(), KeyCodes.ARROW_RIGHT, false, false, false);
+
+		// Assert
+		assert.strictEqual(document.activeElement === oItem1.getFocusDomRef(), true, "Focus should be on the second GridListItem");
+
+		// Act
+		qutils.triggerKeydown(oItem1.$(), KeyCodes.ARROW_DOWN, false, false, false);
+
+		// Assert
+		assert.strictEqual(document.activeElement === oItem2.getFocusDomRef(), true,  "Focus should be on the third GridListItem");
+	});
+
+	QUnit.test("Left/Up Arrow navigating trough grid list", function (assert) {
+
+		// Arrange
+		var oItem = this.oGridList.getItems()[0],
+			oItem1 = this.oGridList.getItems()[1],
+			oItem2 = this.oGridList.getItems()[2];
+		oItem2.$().focus();
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerKeydown(oItem2.$(), KeyCodes.ARROW_LEFT, false, false, false);
+
+		// Assert
+		assert.strictEqual(document.activeElement === oItem1.getFocusDomRef(), true, "Focus should be on the second GridListItem");
+
+		// Act
+		qutils.triggerKeydown(oItem1.$(), KeyCodes.ARROW_UP, false, false, false);
+
+		// Assert
+		assert.strictEqual(document.activeElement === oItem.getFocusDomRef(), true,  "Focus should be on the first GridListItem");
 	});
 });
