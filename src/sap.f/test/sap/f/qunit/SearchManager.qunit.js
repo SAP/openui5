@@ -228,7 +228,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// Assert
-			assert.strictEqual(this.oSearchManager._oSearch.$()[0].childElementCount, 2, "Search field and search button were rendered.");
+			assert.strictEqual(this.oSearchManager._oSearch.$().find(".sapFShellBarSearchWrap")[0].childElementCount, 3, "Search field and search button were rendered.");
 		});
 
 		QUnit.test("Open search rendering in phone mode", function (assert) {
@@ -238,7 +238,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// Assert
-			assert.strictEqual(this.oSearchManager._oSearch.$()[0].childElementCount, 3,
+			assert.strictEqual(this.oSearchManager._oSearch.$().find(".sapFShellBarSearchWrap")[0].childElementCount, 3,
 				"Search field, search button and cancel button were rendered.");
 			assert.strictEqual(this.oSearchManager._oSearch.$()[0].classList.contains("sapFShellBarSearchFullWidth"), true,
 				"Full width class list was added.");
