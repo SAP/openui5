@@ -548,21 +548,32 @@ sap.ui.define([
 		 * (a)synchronously to retrieve the module values.
 		 *
 		 * @param {boolean} bAsync - Whether the async API is expected to be used
-		 * @param {string[]} aURNS - The slash-separated unified resource names
+		 * @param {string[]} aURNs - The slash-separated unified resource names
 		 * @param {function} [fnCallback] - A callback function which returns the array of module
 		 *   values and adds modules to the global namespace as a side effect
+		 * @param {boolean} [bAllAvailable] - Whether all modules are available synchronously
 		 */
-		expectRequire : function (bAsync, aURNs, fnCallback) {
-			var that = this;
+		expectRequire : function (bAsync, aURNs, fnCallback, bAllAvailable) {
+			var aAvailableModules = bAllAvailable
+					? fnCallback()
+					: [aURNs.length > 1 ? {} : null], // assume some, but not all are available ;-)
+				that = this;
 
 			if (bAsync) {
-				this.oSapUiMock.expects("require").on(sap.ui)
-					.withExactArgs(aURNs, sinon.match.func)
-					.callsFake(function (aDependencies, fnFactory) {
-						setTimeout(function () {
-							fnFactory.apply(null, fnCallback && fnCallback());
-						}, 0); // simulate AMD
-					});
+				aURNs.forEach(function (sURN, i) {
+					that.oSapUiMock.expects("require")
+						.withExactArgs(sURN, i, aURNs)
+						.returns(aAvailableModules[i]);
+				});
+				if (!bAllAvailable) {
+					this.oSapUiMock.expects("require")
+						.withExactArgs(aURNs, sinon.match.func, sinon.match.func)
+						.callsFake(function (aDependencies, fnFactory, fnErrback) {
+							setTimeout(function () {
+								fnFactory.apply(null, fnCallback && fnCallback());
+							}, 0); // simulate AMD
+						});
+				}
 				this.oSapUiMock.expects("requireSync").never();
 			} else {
 				aURNs.forEach(function (sURN, i) {
@@ -3710,23 +3721,25 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("async require on view level", function (assert) {
-		var aViewContent = [
-				mvcView().replace(">", ' template:require="foo.Helper">'),
+[false, true].forEach(function (bAllAvailable) {
+	QUnit.test("async require on view level, all available: " + bAllAvailable, function (assert) {
+		var oHelper = {
+				bar : function (vValue) {
+					return "*" + vValue + "*";
+				}
+			},
+			aViewContent = [
+				mvcView().replace(">", ' template:require="foo.Helper not.Used">'),
 				"<Text text=\"{formatter: 'foo.Helper.bar', path: '/flag'}\"/>",
 				'</mvc:View>'
 			];
 
-		this.expectRequire(true, ["foo/Helper"], function () {
+		this.expectRequire(true, ["foo/Helper", "not/Used"], function () {
 			window.foo = {
-				Helper : {
-					bar : function (vValue) {
-						return "*" + vValue + "*";
-					}
-				}
+				Helper : oHelper
 			};
-			return [window.foo.Helper];
-		});
+			return [oHelper, {/*not used*/}];
+		}, bAllAvailable);
 
 		return this.checkTracing(assert, true, [
 			{m : "[ 0] Start processing qux"},
@@ -3738,6 +3751,7 @@ sap.ui.define([
 			'<Text text="*true*"/>'
 		], true);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("AMD require on view and fragment level", function (assert) {

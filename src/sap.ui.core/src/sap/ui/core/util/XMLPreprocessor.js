@@ -1265,7 +1265,8 @@ sap.ui.define([
 			 *   any XML DOM element
 			 * @returns {sap.ui.base.SyncPromise}
 			 *   A sync promise which resolves with <code>undefined</code> as soon as all required
-			 *   modules have been loaded
+			 *   modules have been loaded, or is rejected with a corresponding error if module
+			 *   loading fails.
 			 * @throws {Error}
 			 *   If loading fails in sync mode
 			 */
@@ -1276,15 +1277,21 @@ sap.ui.define([
 					aURNs;
 
 				function asyncRequire() {
-					return new SyncPromise(function (resolve) {
-						// Note: currently there is no way to detect failure
-						sap.ui.require(aURNs, function (/*oModule,...*/) {
-							var aModules = arguments;
+					return new SyncPromise(function (resolve, reject) {
+						var aModules = aURNs.map(sap.ui.require);
 
-							Object.keys(mAlias2URN).forEach(function (sAlias, i) {
-								oScope[sAlias] = aModules[i];
-							});
-							resolve();
+						if (aModules.every(Boolean)) {
+							// if all modules have been loaded already, resolve sync
+							// Note: we do not care about edge cases where a module value is falsy
+							resolve(aModules);
+						} else {
+							sap.ui.require(aURNs, function (/*oModule,...*/) {
+								resolve(arguments); // Note: not exactly an Array, but good enough
+							}, reject);
+						}
+					}).then(function (aModules) {
+						Object.keys(mAlias2URN).forEach(function (sAlias, i) {
+							oScope[sAlias] = aModules[i];
 						});
 					});
 				}
