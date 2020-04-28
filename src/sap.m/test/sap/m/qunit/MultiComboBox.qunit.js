@@ -5094,6 +5094,34 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("After pressing arrow down/up and expanding the dropdown, the focused item should be the selected item in the input", function(assert) {
+		var aItems = [
+			new Item({key: "Item1", text: "Item1"}),
+			new Item({key: "Item2", text: "Item2"}),
+			new Item({key: "Item3", text: "Item3"}),
+			new Item({key: "Item4", text: "Item4"})
+		];
+
+		// Arrange
+		var oMultiComboBox = new MultiComboBox({items: aItems}).placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_UP);
+		this.clock.tick(300);
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.F4);
+		this.clock.tick(300);
+
+		assert.strictEqual(oMultiComboBox._getFocusedItem(), aItems[1], "The second item should be focused");
+
+		// clean
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.module("Accessibility");
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
