@@ -202,7 +202,7 @@ function(
 		TabStrip.ICON_BUTTONS = {
 			LeftArrowButton: "slim-arrow-left",
 			RightArrowButton: "slim-arrow-right",
-			DownArrowButton: "slim-arrow-down",
+			DownArrowButton: Device.system.phone ? "navigation-down-arrow" : "slim-arrow-down",
 			AddButton: "add"
 		};
 
@@ -321,6 +321,8 @@ function(
 				}
 
 				this._sResizeListenerId = ResizeHandler.register(this.getDomRef(),  jQuery.proxy(this._adjustScrolling, this));
+			} else {
+				this.$().toggleClass("sapUiSelectable", this.getItems().length > 1);
 			}
 		};
 
@@ -331,9 +333,9 @@ function(
 		 * @private
 		 */
 		TabStrip.prototype._handleInititalScrollToItem = function() {
-			var $oItem = sap.ui.getCore().byId(this.getSelectedItem());
-			if ($oItem && $oItem.$().length > 0) { // check if the item is already in the DOM
-				this._scrollIntoView($oItem, 500);
+			var oItem = sap.ui.getCore().byId(this.getSelectedItem());
+			if (oItem && oItem.$().length > 0) { // check if the item is already in the DOM
+				this._scrollIntoView(oItem, 500);
 			}
 			sap.ui.getCore().detachThemeChanged(this._handleInititalScrollToItem, this);
 		};
@@ -649,9 +651,9 @@ function(
 				oSelectedSelectItem,
 				oSelectedTabStripItem,
 				oConstructorSettings = {
-					type: Device.system.phone ? SelectType.Default : SelectType.IconOnly,
+					type: SelectType.IconOnly,
 					autoAdjustWidth : true,
-					maxWidth: Device.system.phone ? "100%" : "2.5rem",
+					maxWidth: "2.5rem",
 					icon: IconPool.getIconURI(TabStrip.ICON_BUTTONS.DownArrowButton),
 					tooltip: oRb.getText("TABSTRIP_OPENED_TABS"),
 					change: function (oEvent) {
@@ -842,16 +844,20 @@ function(
 		 * @override
 		 */
 		TabStrip.prototype.setSelectedItem = function(oSelectedItem) {
+			var bNotMobile = !Device.system.phone;
+
 			if (!oSelectedItem) {
 				return this;
 			}
 
-			if (oSelectedItem.$().length > 0) {
+			if (oSelectedItem.$().length > 0 && bNotMobile) {
 				this._scrollIntoView(oSelectedItem, 500);
 			}
 
-			this._updateAriaSelectedAttributes(this.getItems(), oSelectedItem);
-			this._updateSelectedItemClasses(oSelectedItem.getId());
+			if (bNotMobile) {
+				this._updateAriaSelectedAttributes(this.getItems(), oSelectedItem);
+				this._updateSelectedItemClasses(oSelectedItem.getId());
+			}
 
 			// propagate the selection change to the select aggregation
 			if (this.getHasSelect()) {
@@ -859,7 +865,7 @@ function(
 				this.getAggregation('_select').setSelectedItem(oSelectItem);
 			}
 
-			return this.setAssociation("selectedItem", oSelectedItem, true); //render manually;
+			return this.setAssociation("selectedItem", oSelectedItem, bNotMobile);
 		};
 
 		/**
