@@ -522,6 +522,15 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			IconTabBarRTL: {
+				title: "QUnit Page for sap.m.IconTabBarRtl",
+				sinon: {
+					useFakeTimers: true
+				},
+				ui5: {
+					rtl: true
+				}
+			},
 			IconTabHeader: {
 				title: "QUnit Page for sap.m.IconTabHeader",
 				sinon: {

@@ -1315,18 +1315,19 @@ sap.ui.define([
 	 * Moves a tab by a specific key code
 	 *
 	 * @param {object} oTab The event object
-	 * @param {number} iKeyCode Key code
+	 * @param {integer} iKeyCode Key code
+	 * @param {integer} iMaxIndex The end of the tab strip`
 	 * @private
 	 */
-	IconTabHeader.prototype._moveTab = function (oTab, iKeyCode) {
-		IconTabBarDragAndDropUtil.moveItem.call(this, oTab, iKeyCode);
+	IconTabHeader.prototype._moveTab = function (oTab, iKeyCode, iMaxIndex) {
+		IconTabBarDragAndDropUtil.moveItem.call(this, oTab, iKeyCode, iMaxIndex);
 		this._setItemsForStrip();
 		this._initItemNavigation();
 	};
 
 	/**
-	 * Handle keyboard drag&drop
-	 * @param {jQuery.Event} oEvent
+	 * Handles keyboard drag&drop
+	 * @param {jQuery.Event} oEvent The jQuery event object
 	 * @private
 	 */
 	IconTabHeader.prototype.ondragrearranging = function (oEvent) {
@@ -1334,8 +1335,10 @@ sap.ui.define([
 			return;
 		}
 
-		var oTab = oEvent.srcControl;
-		this._moveTab(oTab, oEvent.keyCode);
+		var oTab = oEvent.srcControl,
+			iTabStripEnd = this.indexOfItem(this._getItemsInStrip().pop());
+
+		this._moveTab(oTab, oEvent.keyCode, iTabStripEnd);
 		oTab.$().focus();
 	};
 
@@ -1355,14 +1358,14 @@ sap.ui.define([
 
 	/**
 	 * Moves tab for Drag&Drop keyboard handling
-	 * Ctrl + Left Right || Ctrl + Arrow Up
+	 * Modifier + Right Arrow || Modifier + Arrow Up
 	 * @param {jQuery.Event} oEvent
 	 */
 	IconTabHeader.prototype.onsapincreasemodifiers = IconTabHeader.prototype.ondragrearranging;
 
 	/**
 	 * Moves tab for Drag&Drop keyboard handling
-	 * Ctrl + Left Arrow || Ctrl + Arrow Down
+	 * Modifier + Left Arrow || Modifier + Arrow Down
 	 * @param {jQuery.Event} oEvent
 	 */
 	IconTabHeader.prototype.onsapdecreasemodifiers = IconTabHeader.prototype.ondragrearranging;

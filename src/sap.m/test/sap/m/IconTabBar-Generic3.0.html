@@ -447,6 +447,14 @@
 						content: new Text({ text: 'Content ' + i })
 					}));
 				}
+
+				lotsOfTabs.splice(4, 1, new IconTabFilter({
+					key: "5",
+					text: "Tab 5. Invisible.",
+					content: new Text({ text: 'Invisible tab content' }),
+					visible: false
+				}));
+
 				lotsOfTabs.splice(14, 1, new IconTabFilter({
 					key: "long",
 					text: "Tab 15. With The Longest Label",

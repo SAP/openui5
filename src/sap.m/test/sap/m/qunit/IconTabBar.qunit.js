@@ -20,7 +20,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/m/ObjectHeader",
 	"sap/ui/Device",
-	"jquery.sap.global"
+	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -40,8 +40,11 @@ sap.ui.define([
 	HTML,
 	Core,
 	ObjectHeader,
-	Device
+	Device,
+	jQuery
 ) {
+	"use strict";
+
 	// shortcut for sap.m.IconTabDensityMode
 	var IconTabDensityMode = mobileLibrary.IconTabDensityMode;
 
@@ -2335,6 +2338,30 @@ sap.ui.define([
 		assert.strictEqual(aClonedItems.pop().getContent().length, 0, "Cloned filter should NOT have items");
 	});
 
+	QUnit.test("Selection after re-opening the Select List", function (assert) {
+		// Arrange
+		var oIconTabHeader = this.oIconTabBar.getAggregation("_header"),
+			oOverflowButton = oIconTabHeader._getOverflow(),
+			oSelectList = oIconTabHeader._getSelectList();
+
+		// Act
+		oOverflowButton._expandButtonPress();
+		this.clock.tick(500);
+
+		// Assert - check initial focus
+		assert.strictEqual(oSelectList._oItemNavigation.getFocusedIndex(), 0, "The first item in the Select List should be focused.");
+
+		// Act - focus the 5th item in the Select List, then close and open it again
+		oSelectList._oItemNavigation.setSelectedIndex(5);
+		oSelectList.getItems()[0]._getRealTab().setVisible(false);
+		oOverflowButton._closeOverflow();
+		oOverflowButton._expandButtonPress();
+		this.clock.tick(500);
+
+		// Assert - check initial focus again
+		assert.strictEqual(oOverflowButton._oPopover.getInitialFocus(), oSelectList.getVisibleItems()[0].getId(), "The first visible item in the Select List should be focused.");
+	});
+
 	QUnit.module("ARIA",{
 		beforeEach: function () {
 			this.oIconTabBar = getIconTabBar();
@@ -2794,6 +2821,7 @@ sap.ui.define([
 		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 2');
 		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-setsize"), "3" , 'Aria-setsize should be 3');
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Right", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
@@ -2801,113 +2829,152 @@ sap.ui.define([
 		assert.strictEqual(this.oIconTabBar1.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
 		assert.strictEqual(Core.byId("tab1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(39, "tabReorder1"));
-		this.oIconTabHeader1.ondragrearranging(this.returnMockEvent(39, "tabReorder1"));
+		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
+		this.oIconTabHeader1.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "First tab", 'First Tab is "Second Tab"');
 		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 		assert.strictEqual(this.oIconTabBar1.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
 		assert.strictEqual(Core.byId("tab1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Right of last element", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Third tab", 'Third Tab is "Third Tab"');
 		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
 		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(39, "tabReorder1"));
+		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Third tab", 'Third Tab is "Third Tab"');
 		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Left of first element", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
 		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 		//ACT
 
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(37, "tabReorder1"));
+		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_LEFT, "tabReorder1"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
 		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Left", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "Second tab", 'Second Tab is "Second Tab"');
 		assert.strictEqual(Core.byId("tabReorder2").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(37, "tabReorder2"));
+		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_LEFT, "tabReorder2"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "First tab", 'First Tab is "Second Tab"');
 		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Home", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "Second tab", 'Second Tab is "Second Tab"');
 		assert.strictEqual(Core.byId("tabReorder2").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(36, "tabReorder2"));
+		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.HOME, "tabReorder2"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "First tab", 'First Tab is "Second Tab"');
 		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + End", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
 		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(35, "tabReorder1"));
+		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.END, "tabReorder1"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "First tab", 'First Tab is "Last Tab"');
 		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: Event Calling: onsapincreasemodifiers", function(assert) {
 		// Assert
 		var oEventSpyIncrease = this.spy(this.oIconTabHeader, "onsapincreasemodifiers");
 		assert.ok(oEventSpyIncrease.callCount === 0, "The method is skipped and the event went to the global KH");
 		//ACT
-		this.oIconTabHeader.onsapincreasemodifiers(this.returnMockEvent(39, "tabReorder1"));
+		this.oIconTabHeader.onsapincreasemodifiers(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
 		// Assert
 		assert.ok(oEventSpyIncrease.callCount === 1, "The method is skipped and the event went to the global KH");
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: Event Calling: onsapdecreasemodifiers", function(assert) {
 		// Assert
 		var oEventSpyDecrease = this.spy(this.oIconTabHeader, "onsapdecreasemodifiers");
 		assert.ok(oEventSpyDecrease.callCount === 0, "The method is skipped and the event went to the global KH");
 		//ACT
-		this.oIconTabHeader.onsapdecreasemodifiers(this.returnMockEvent(37, "tabReorder1"));
+		this.oIconTabHeader.onsapdecreasemodifiers(this.returnMockEvent(KeyCodes.ARROW_LEFT, "tabReorder1"));
 		// Assert
 		assert.ok(oEventSpyDecrease.callCount === 1, "The method is skipped and the event went to the global KH");
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: Event Calling: onsaphomemodifiers", function(assert) {
 		// Assert
 		var oEventSpyHome  = this.spy(this.oIconTabHeader, "onsaphomemodifiers");
 		assert.ok(oEventSpyHome.callCount === 0, "The method is skipped and the event went to the global KH");
 		//ACT
-		this.oIconTabHeader.onsaphomemodifiers(this.returnMockEvent(36, "tabReorder2"));
+		this.oIconTabHeader.onsaphomemodifiers(this.returnMockEvent(KeyCodes.HOME, "tabReorder2"));
 		// Assert
 		assert.ok(oEventSpyHome.callCount === 1, "The method is skipped and the event went to the global KH");
-
-
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: Event Calling: onsapendmodifiers", function(assert) {
 		// Assert
 		var oEventSpyEnd  = this.spy(this.oIconTabHeader, "onsapendmodifiers");
 		assert.ok(oEventSpyEnd.callCount === 0, "The method is skipped and the event went to the global KH");
 		//ACT
-		this.oIconTabHeader.onsapendmodifiers(this.returnMockEvent(35, "tabReorder1"));
+		this.oIconTabHeader.onsapendmodifiers(this.returnMockEvent(KeyCodes.END, "tabReorder1"));
 		// Assert
 		assert.ok(oEventSpyEnd.callCount === 1, "The method is skipped and the event went to the global KH");
+	});
 
+	QUnit.test("Drag&Drop Keyboard Handling: Event Calling: onsapincreasemodifiers", function(assert) {
+		// Assert
+		var oEventSpyIncrease = this.spy(this.oIconTabHeader, "onsapincreasemodifiers");
+		assert.ok(oEventSpyIncrease.callCount === 0, "The method is skipped and the event went to the global KH");
+		//ACT
+		this.oIconTabHeader.onsapincreasemodifiers(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
+		// Assert
+		assert.ok(oEventSpyIncrease.callCount === 1, "The method is skipped and the event went to the global KH");
+	});
+
+	QUnit.test("Drag&Drop Keyboard Handling: Drag through hidden tabs", function(assert) {
+		// arrange
+		this.oIconTabBar.$().width("150px");
+		this.oIconTabHeader.invalidate();
+		Core.applyChanges();
+		// assert
+		assert.strictEqual(this.oIconTabHeader._getItemsInStrip().length, 1, "There should be 1 visible item and 2 in the 'More' menu");
+		// act
+		this.oIconTabHeader.onsapincreasemodifiers(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
+		// assert
+		assert.strictEqual(this.oIconTabHeader.indexOfItem(Core.byId("tabReorder1")), 0, "The item should remain on the same position.");
+	});
+
+	QUnit.test("Drag&Drop Keyboard Handling: Drag through invisible tab", function(assert) {
+		// arrange
+		this.oIconTabHeader.getItems()[1].setVisible(false);
+		Core.applyChanges();
+		// act
+		this.oIconTabHeader.onsapincreasemodifiers(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
+		// assert
+		assert.strictEqual(this.oIconTabHeader.indexOfItem(Core.byId("tabReorder1")), 2, "Tab index should have changed from 0 to 2.");
 	});
 
 	QUnit.module("Drag&Drop: Overflow rearranging", {
 		beforeEach: function() {
 			this.oIconTabBar = getIconTabBar();
 			this.oIconTabBar.placeAt('qunit-fixture');
-			Core.applyChanges();
-
 			this.oIconTabHeader = this.oIconTabBar.getAggregation("_header");
 			this.oSelectList = this.oIconTabHeader._getSelectList();
+			this.oIconTabHeader.setEnableTabReordering(true);
+			Core.applyChanges();
 
 			var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
 			oButton.trigger('tap');
@@ -3003,6 +3070,35 @@ sap.ui.define([
 		assert.strictEqual(oListItem0.getText(), oTab1.getText(), "First Tab in Overflow is now - " + oTab1.getText());
 		assert.strictEqual(oListItem1.getText(), oTab2.getText(), "Second Tab in Overflow is now - " + oTab2.getText());
 		assert.strictEqual(oListItem2.getText(), oTab0.getText(), "Third Tab in Overflow is now - " + oTab0.getText());
+	});
+
+	QUnit.test("Drag&Drop with Arrow Up outside of the SelectList", function(assert) {
+		// Arrange
+		var oFirstTabInSelectList = this.oSelectList.getItems()[0];
+		var iIndexBeforeMove = this.oIconTabHeader.indexOfItem(oFirstTabInSelectList._getRealTab());
+
+		// Act
+		this.oSelectList.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_UP, oFirstTabInSelectList.getId()));
+
+		// Assert
+		assert.strictEqual(this.oIconTabHeader.indexOfItem(oFirstTabInSelectList._getRealTab()), iIndexBeforeMove, "First item in the select list should NOT be able to move up.");
+	});
+
+	QUnit.test("Drag&Drop: Select item from overflow, then move it with Arrow Left", function(assert) {
+		// Arrange
+		var oSixthTabInSelectList = this.oSelectList.getItems()[5],
+			sIndexBeforeMove = this.oIconTabHeader.indexOfItem(oSixthTabInSelectList._getRealTab()),
+			iPositionAfterJump = sIndexBeforeMove - 6; // should jump over the 5 hidden items before it
+
+		// Act - select and move the item left
+		this.oSelectList.ontap({
+			target: oSixthTabInSelectList.getDomRef(),
+			preventDefault: jQuery.noop
+		});
+		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_LEFT, oSixthTabInSelectList._getRealTab().getId()));
+
+		// Assert
+		assert.strictEqual(this.oIconTabHeader.indexOfItem(oSixthTabInSelectList._getRealTab()), iPositionAfterJump - 1, "Item should have moved enough to be able to drag it by pressing arrow left once.");
 	});
 
 	QUnit.test("Drag&Drop dropPosition: 'Before'", function(assert) {
@@ -3500,220 +3596,5 @@ sap.ui.define([
 		oSetSelectedItemSpy.restore();
 		oITB.destroy();
 	});
-
-	QUnit.module("Drag&Drop: RTL", {
-		beforeEach: function() {
-			this.oIconTabBar = new IconTabBar({
-				enableTabReordering: true,
-				items: [
-					new IconTabFilter({
-						id: 'tabReorder1',
-						text: "First tab",
-						count: "3",
-						content: [
-							new Button({ text: "Text 1" })
-						]
-					}),
-					new IconTabFilter({
-						id: 'tabReorder2',
-						text: "Second tab",
-						count: "1",
-						content: [
-							new Button({ text: "Text 2" })
-						]
-					}),
-					new IconTabFilter({
-						id: 'tabReorder3',
-						text: "Third tab",
-						count: "Count",
-						content: [
-							new Button({ text: "Text 3" })
-						]
-					})
-				]
-			});
-
-			this.oIconTabBar1 = new IconTabBar({
-				items: [
-					new IconTabFilter({
-						id: 'tab1',
-						text: "First tab",
-						count: "3",
-						content: [
-							new Button({ text: "Text 1" })
-						]
-					}),
-					new IconTabFilter({
-						id: 'tab2',
-						text: "Second tab",
-						count: "1",
-						content: [
-							new Button({ text: "Text 2" })
-						]
-					})
-				]
-			});
-
-			this.oIconTabBar.placeAt('qunit-fixture');
-			this.oIconTabBar1.placeAt('qunit-fixture');
-			Core.applyChanges();
-
-			this.oMockEvent = {
-				getParameter: function(parameter) {
-					switch (parameter) {
-						case "dropPosition" :
-							return "After";
-						case "draggedControl" :
-							return  Core.byId("tabReorder1");
-						case "droppedControl" :
-							return Core.byId("tabReorder3");
-					}
-				}
-			};
-
-			this.oMockEvent2 = {
-				getParameter: function(parameter) {
-					switch (parameter) {
-						case "dropPosition" :
-							return "Before";
-						case "draggedControl" :
-							return  Core.byId("tabReorder1");
-						case "droppedControl" :
-							return Core.byId("tabReorder3");
-					}
-				}
-			};
-
-			 this.returnMockEvent = function(iKeyCode, sId) {
-				var oMockEventTest = {
-					keyCode: iKeyCode,
-					srcControl: Core.byId(sId)
-				};
-
-				return oMockEventTest;
-			};
-			sap.ui.getCore().getConfiguration().setRTL(true);
-			this.oIconTabHeader = this.oIconTabBar.getAggregation("_header");
-			this.oIconTabHeader1 = this.oIconTabBar1.getAggregation("_header");
-
-
-		},
-		afterEach: function() {
-			this.oIconTabBar.destroy();
-			this.oIconTabHeader.destroy();
-			this.oIconTabBar1.destroy();
-			this.oIconTabHeader1.destroy();
-			this.oIconTabBar = null;
-			this.oIconTabHeader = null;
-			this.oIconTabBar1 = null;
-			this.oIconTabHeader1 = null;
-			this.returnMockEvent = null;
-			this.oMockEvent = null;
-			this.oMockEvent2 = null;
-			sap.ui.getCore().getConfiguration().setRTL(false);
-		}
-	});
-
-
-	QUnit.test("Drag&Drop dropPosition: 'After' RTL", function(assert) {
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		// Act
-		this.oIconTabHeader._handleDragAndDrop(this.oMockEvent2);
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Second tab", "In 'First tab' position is 'Second tab'");
-		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "First tab", "'Firs tab' is at last position");
-	});
-
-	QUnit.test("Drag&Drop dropPosition: 'Before' RTL", function(assert) {
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		// Act
-		this.oIconTabHeader._handleDragAndDrop(this.oMockEvent);
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Second tab", "In 'First tab' position is 'Second tab'");
-		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "First tab", "'First tab' is at the middle");
-	});
-
-	QUnit.test("Drag&Drop accessibility: RTL", function(assert) {
-		// Assert
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-		assert.strictEqual(Core.byId("tabReorder2").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 2');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 3');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-setsize"), "3" , 'Aria-setsize should be 3');
-		// Act
-		this.oIconTabHeader._handleDragAndDrop(this.oMockEvent2);
-		// Assert
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 3');
-		assert.strictEqual(Core.byId("tabReorder2").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 2');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-setsize"), "3" , 'Aria-setsize should be 3');
-	});
-	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Right RTL", function(assert) {
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-		assert.strictEqual(this.oIconTabBar1.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tab1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(39,"tabReorder2"));
-		this.oIconTabHeader1.ondragrearranging(this.returnMockEvent(39,"tab2"));
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "First tab", 'First Tab is "Second Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
-		assert.strictEqual(this.oIconTabBar1.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tab1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-	});
-	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Right of last element RTL", function(assert) {
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Third tab", 'Third Tab is "Third Tab"');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
-		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(39,"tabReorder3"));
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Second tab", 'Third Tab is "Second Tab"');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 2');
-	});
-	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Left of first element RTL", function(assert) {
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(37,"tabReorder1"));
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Second tab", 'Second Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
-	});
-	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Left RTL", function(assert) {
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'Fisrt Tab is "Fisrt Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(37,"tabReorder1"));
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "First tab", 'First Tab is "Second Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
-	});
-	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Home RTL", function(assert) {
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "Second tab", 'Second Tab is "Second Tab"');
-		assert.strictEqual(Core.byId("tabReorder2").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
-		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(36,"tabReorder2"));
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Second tab", 'Second Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
-	});
-	QUnit.test("Drag&Drop Keyboard Handling: CTRL + End RTL", function(assert) {
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(35,"tabReorder1"));
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "First tab", 'First Tab is "Last Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
-	});
-
 
 });
