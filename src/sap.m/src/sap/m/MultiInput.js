@@ -1411,7 +1411,7 @@ function(
 
 		var sValue = this._getInputValue(sNewValue);
 
-		if (sValue === this._lastValue) {
+		if (sValue === this.getLastValue()) {
 			this._bCheckDomValue = false;
 			return;
 		}
@@ -1419,7 +1419,7 @@ function(
 		if (!this._bTokenIsValidated) {
 			this.setValue(sValue);
 			sValue = this.getValue();
-			this._lastValue = sValue;
+			this.setLastValue(sValue);
 		}
 
 		this.fireChangeEvent(sValue, mParameters);

@@ -572,7 +572,7 @@ sap.ui.define([
 		});
 
 		// arrange
-		var sLastValue = oInput._lastValue;
+		var sLastValue = oInput.getLastValue();
 
 		// act as twoway binding does
 		oInput.setProperty("value", sTestValue, true);
