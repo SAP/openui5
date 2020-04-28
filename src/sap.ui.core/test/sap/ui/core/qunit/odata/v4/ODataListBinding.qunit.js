@@ -111,10 +111,10 @@ sap.ui.define([
 		 */
 		bindList : function () {
 			try {
-				this.stub(sap.ui.getCore(), "addPrerenderingTask");
+				this.stub(this.oModel, "addPrerenderingTask");
 				return this.oModel.bindList.apply(this.oModel, arguments);
 			} finally {
-				sap.ui.getCore().addPrerenderingTask.restore();
+				this.oModel.addPrerenderingTask.restore();
 			}
 		},
 
@@ -1437,19 +1437,25 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bSuspend) {
-	QUnit.test("getContexts: AddVirtualContext, suspend = " + bSuspend, function (assert) {
+[false, /*see strictEqual below*/"true"].forEach(function (bUseExtendedChangeDetection) {
+	[false, true].forEach(function (bSuspend) {
+		var sTitle = "getContexts: AddVirtualContext, suspend:" + bSuspend +
+			", use extended change detection:" + bUseExtendedChangeDetection;
+
+	QUnit.test(sTitle, function (assert) {
 		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')"),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext),
 			oBindingMock = this.mock(oBinding),
 			aContexts,
-			oTaskCall,
+			oModelMock = this.mock(this.oModel),
+			oAddTask0,
+			oAddTask1,
 			oVirtualContext = {destroy : function () {}};
 
+		oBinding.bUseExtendedChangeDetection = bUseExtendedChangeDetection;
 		oBinding.sChangeReason = "AddVirtualContext";
 		oBindingMock.expects("checkSuspended");
-		oTaskCall = this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
-			.withExactArgs(sinon.match.func, true);
+		oAddTask0 = oModelMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func, true);
 		this.mock(oBinding.oModel).expects("resolve")
 			.withExactArgs(oBinding.sPath, sinon.match.same(oContext)).returns("/~");
 		this.mock(Context).expects("create")
@@ -1458,32 +1464,48 @@ sap.ui.define([
 			.returns(oVirtualContext);
 		oBindingMock.expects("fetchContexts").never();
 		oBindingMock.expects("_fireChange").never();
+		if (bSuspend) {
+			oBindingMock.expects("reset").never();
+		}
 
 		// code under test
-		aContexts = oBinding.getContexts(0, 10, 100);
+		aContexts = oBinding.getContexts(0, 10, bUseExtendedChangeDetection ? undefined : 100);
 
 		assert.strictEqual(oBinding.sChangeReason, undefined);
 		assert.strictEqual(aContexts.length, 1);
 		assert.strictEqual(aContexts[0], oVirtualContext);
 
 		// prerendering task
-		oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(bSuspend);
-		if (bSuspend) {
-			oBindingMock.expects("_fireChange").never();
-			oBindingMock.expects("reset").never();
-		} else {
+		oBindingMock.expects("isRootBindingSuspended").twice().withExactArgs().returns(bSuspend);
+		if (!bSuspend) {
+			oBindingMock.expects("getContexts").on(oBinding)
+				.withExactArgs(0, 10, bUseExtendedChangeDetection ? undefined : 100)
+				.callsFake(function () {
+					assert.strictEqual(this.bUseExtendedChangeDetection, false);
+				});
+		}
+		oAddTask1 = oModelMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func);
+
+		// code under test - call the 1st prerendering task
+		oAddTask0.args[0][0]();
+
+		assert.strictEqual(oBinding.bUseExtendedChangeDetection, bUseExtendedChangeDetection);
+
+		if (!bSuspend) {
 			oBindingMock.expects("_fireChange").withExactArgs({
-				detailedReason : "RemoveVirtualContext",
-				reason : ChangeReason.Change
-			});
+					detailedReason : "RemoveVirtualContext",
+					reason : ChangeReason.Change
+				}).callsFake(function () {
+					assert.strictEqual(oBinding.sChangeReason, "RemoveVirtualContext");
+				});
 			oBindingMock.expects("reset").withExactArgs(ChangeReason.Refresh);
 		}
 		this.mock(oVirtualContext).expects("destroy").withExactArgs();
 
-		// code under test - call the prerendering task
-		oTaskCall.args[0][0]();
+		// code under test - call the 2nd prerendering task
+		oAddTask1.args[0][0]();
+	});
 
-		assert.strictEqual(oBinding.sChangeReason, bSuspend ? undefined : "RemoveVirtualContext");
 	});
 });
 
@@ -2942,7 +2964,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"/EMPLOYEES/3", 3)
 			.returns(oContext3);
-		this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+		this.mock(this.oModel).expects("addPrerenderingTask")
 			.withExactArgs(sinon.match.func).callsArg(0);
 		this.mock(oBinding).expects("destroyPreviousContexts").withExactArgs();
 
@@ -2993,7 +3015,7 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 					"/EMPLOYEES('3')", 3)
 				.returns(oContext3);
-			this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+			this.mock(this.oModel).expects("addPrerenderingTask")
 				.withExactArgs(sinon.match.func).callsArg(0);
 			this.mock(mPreviousContextsByPath["/EMPLOYEES('0')"]).expects("destroy")
 				.withExactArgs();
@@ -3021,7 +3043,7 @@ sap.ui.define([
 	QUnit.test("createContexts, no prerendering task if no previous contexts", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES", {});
 
-		this.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
+		this.mock(this.oModel).expects("addPrerenderingTask").never();
 
 		// code under test
 		oBinding.createContexts(1, 1, 0);
@@ -3063,7 +3085,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"/EMPLOYEES('1')", 0)
 			.returns(oNewContext);
-		this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+		this.mock(this.oModel).expects("addPrerenderingTask")
 			.withExactArgs(sinon.match.func).callsArg(0);
 		this.mock(oCreatedContext).expects("destroy").withExactArgs();
 

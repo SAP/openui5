@@ -283,7 +283,7 @@ sap.ui.define([
 						getGroupProperty : this.getGroupProperty.bind(this),
 						onCreateGroup : function (sGroupId) {
 							if (that.isAutoGroup(sGroupId)) {
-								sap.ui.getCore().addPrerenderingTask(
+								that.addPrerenderingTask(
 									that._submitBatch.bind(that, sGroupId, true));
 							}
 						},
@@ -300,6 +300,7 @@ sap.ui.define([
 
 					this.aAllBindings = [];
 					this.sDefaultBindingMode = BindingMode.TwoWay;
+					this.aPrerenderingTasks = null; // @see #addPrerenderingTask
 					this.mSupportedBindingModes = {
 						OneTime : true,
 						OneWay : true,
@@ -387,6 +388,35 @@ sap.ui.define([
 	 * @public
 	 * @since 1.66.0
 	 */
+
+	/**
+	 * Adds a task that is guaranteed to run once, just before the next rendering. Triggers a
+	 * rendering request, so that this happens as soon as possible.
+	 *
+	 * @param {function} fnPrerenderingTask
+	 *   A function that is called before the rendering
+	 * @param {boolean} [bFirst=false]
+	 *   Whether the task should become the first one, not the last one
+	 * @private
+	 */
+	ODataModel.prototype.addPrerenderingTask = function (fnPrerenderingTask, bFirst) {
+		var that = this;
+
+		if (!this.aPrerenderingTasks) {
+			this.aPrerenderingTasks = [];
+			sap.ui.getCore().addPrerenderingTask(function () {
+				while (that.aPrerenderingTasks.length) {
+					that.aPrerenderingTasks.shift()();
+				}
+				that.aPrerenderingTasks = null;
+			});
+		}
+		if (bFirst) {
+			this.aPrerenderingTasks.unshift(fnPrerenderingTask);
+		} else {
+			this.aPrerenderingTasks.push(fnPrerenderingTask);
+		}
+	};
 
 	// See class documentation
 	// @override
@@ -1802,7 +1832,7 @@ sap.ui.define([
 		}
 
 		return new Promise(function (resolve) {
-			sap.ui.getCore().addPrerenderingTask(function () {
+			that.addPrerenderingTask(function () {
 				resolve(that._submitBatch(sGroupId));
 			});
 		});

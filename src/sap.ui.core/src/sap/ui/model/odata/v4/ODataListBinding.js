@@ -756,7 +756,7 @@ sap.ui.define([
 		}
 		// destroy previous contexts which are not reused
 		if (Object.keys(this.mPreviousContextsByPath).length) {
-			sap.ui.getCore().addPrerenderingTask(this.destroyPreviousContexts.bind(this));
+			oModel.addPrerenderingTask(this.destroyPreviousContexts.bind(this));
 		}
 		if (iCount !== undefined) { // server count is available or "non-empty short read"
 			this.bLengthFinal = true;
@@ -1461,17 +1461,27 @@ sap.ui.define([
 
 		if (sChangeReason === "AddVirtualContext") {
 			// Note: this task is queued _before_ any SubmitMode.Auto task!
-			sap.ui.getCore().addPrerenderingTask(function () {
+			this.oModel.addPrerenderingTask(function () {
+				var bOld = that.bUseExtendedChangeDetection;
+
 				if (!that.isRootBindingSuspended()) {
-					// Note: first result of getContexts after refresh is ignored
-					that.sChangeReason = "RemoveVirtualContext";
-					that._fireChange({
-						detailedReason : that.sChangeReason,
-						reason : ChangeReason.Change
-					});
-					that.reset(ChangeReason.Refresh);
+					// request data (before removing virtual context), but avoid E.C.D.
+					that.bUseExtendedChangeDetection = false;
+					that.getContexts(iStart, iLength, iMaximumPrefetchSize);
+					that.bUseExtendedChangeDetection = bOld;
 				}
-				oVirtualContext.destroy();
+				that.oModel.addPrerenderingTask(function () {
+					if (!that.isRootBindingSuspended()) {
+						// Note: first result of getContexts after refresh is ignored
+						that.sChangeReason = "RemoveVirtualContext";
+						that._fireChange({
+							detailedReason : that.sChangeReason,
+							reason : ChangeReason.Change
+						});
+						that.reset(ChangeReason.Refresh);
+					}
+					oVirtualContext.destroy();
+				});
 			}, true);
 			oVirtualContext = Context.create(this.oModel, this,
 				this.oModel.resolve(this.sPath, this.oContext) + "/" + Context.VIRTUAL,

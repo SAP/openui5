@@ -151,6 +151,7 @@ sap.ui.define([
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneWay), true);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.TwoWay), true);
 		assert.deepEqual(oModel.aAllBindings, []);
+		assert.strictEqual(oModel.aPrerenderingTasks, null);
 		oMetaModel = oModel.getMetaModel();
 		assert.ok(oMetaModel instanceof ODataMetaModel);
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
@@ -463,7 +464,7 @@ sap.ui.define([
 		this.mock(oModel._submitBatch).expects("bind")
 			.withExactArgs(sinon.match.same(oModel), "$auto", true)
 			.returns(fnSubmitAuto);
-		this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+		this.mock(oModel).expects("addPrerenderingTask")
 			.withExactArgs(fnSubmitAuto);
 
 		// code under test - call onCreateGroup
@@ -2472,6 +2473,82 @@ sap.ui.define([
 			"SAP-ContextId" : "123",
 			"X-CSRF-Token" : "xyz"
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addPrerenderingTask: queue", function (assert) {
+		var oExpectation = this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+				.withExactArgs(sinon.match.func),
+			fnFirstPrerenderingTask = "first",
+			fnPrerenderingTask0 = "0",
+			fnPrerenderingTask1 = "1",
+			oModel = createModel();
+
+		assert.strictEqual(oModel.aPrerenderingTasks, null);
+
+		// code under test
+		oModel.addPrerenderingTask(fnPrerenderingTask0);
+
+		oExpectation.verify();
+		assert.deepEqual(oModel.aPrerenderingTasks, [fnPrerenderingTask0]);
+
+		// code under test
+		oModel.addPrerenderingTask(fnPrerenderingTask1);
+
+		assert.deepEqual(oModel.aPrerenderingTasks, [fnPrerenderingTask0, fnPrerenderingTask1]);
+
+		// code under test
+		oModel.addPrerenderingTask(fnFirstPrerenderingTask, /*bFirst*/true);
+
+		assert.deepEqual(oModel.aPrerenderingTasks,
+			[fnFirstPrerenderingTask, fnPrerenderingTask0, fnPrerenderingTask1]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addPrerenderingTask: process", function (assert) {
+		var fnFirstTask = this.spy(),
+			oModel = createModel(),
+			fnPrerenderingTask0 = this.spy(function () {
+				assert.notStrictEqual(oModel.aPrerenderingTasks, null);
+				oModel.addPrerenderingTask(fnFirstTask, /*bFirst*/true);
+			}),
+			fnPrerenderingTask1 = this.spy(function () {
+				oModel.addPrerenderingTask(fnLastTask);
+			}),
+			fnLastTask = this.spy(),
+			fnProcess;
+
+		this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+			.withExactArgs(sinon.match.func)
+			.callsFake(function (fnCoreTask) {
+				fnProcess = fnCoreTask;
+			});
+		oModel.addPrerenderingTask(); // just to schedule processing
+		oModel.aPrerenderingTasks = [fnPrerenderingTask0, fnPrerenderingTask1];
+
+		// code under test
+		fnProcess(); // run processing
+
+		assert.ok(fnPrerenderingTask0.calledOnce);
+		assert.ok(fnPrerenderingTask0.calledOn());
+		assert.ok(fnPrerenderingTask0.calledWithExactly());
+
+		assert.ok(fnFirstTask.calledOnce);
+		assert.ok(fnFirstTask.calledOn());
+		assert.ok(fnFirstTask.calledWithExactly());
+		assert.ok(fnFirstTask.calledAfter(fnPrerenderingTask0));
+
+		assert.ok(fnPrerenderingTask1.calledOnce);
+		assert.ok(fnPrerenderingTask1.calledOn());
+		assert.ok(fnPrerenderingTask1.calledWithExactly());
+		assert.ok(fnPrerenderingTask1.calledAfter(fnFirstTask));
+
+		assert.ok(fnLastTask.calledOnce);
+		assert.ok(fnLastTask.calledOn());
+		assert.ok(fnLastTask.calledWithExactly());
+		assert.ok(fnLastTask.calledAfter(fnPrerenderingTask1));
+
+		assert.strictEqual(oModel.aPrerenderingTasks, null);
 	});
 });
 

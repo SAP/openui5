@@ -485,7 +485,7 @@ sap.ui.define([
 			that = this;
 
 		function addUnlockTask() {
-			sap.ui.getCore().addPrerenderingTask(function () {
+			that.oModel.addPrerenderingTask(function () {
 				iCount -= 1;
 				if (iCount > 0) {
 					// Use a promise to get out of the prerendering loop
@@ -1136,7 +1136,7 @@ sap.ui.define([
 			this.createReadGroupLock(this.getGroupId(), true, 1);
 			// dependent bindings are only removed in a *new task* in ManagedObject#updateBindings
 			// => must only resume in prerendering task
-			sap.ui.getCore().addPrerenderingTask(doResume);
+			this.oModel.addPrerenderingTask(doResume);
 		 } else {
 			this.createReadGroupLock(this.getGroupId(), true);
 			doResume();
