@@ -49,7 +49,11 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sap.ui.rta.dttool.i18n.i18n"
+					"bundleName": "sap.ui.rta.dttool.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
 				},
 				"preload": true
 			}
