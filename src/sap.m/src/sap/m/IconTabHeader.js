@@ -109,7 +109,7 @@ sap.ui.define([
 			 * so the user can select specific tab filter easier.
 			 * @deprecated as of 1.75
 			 */
-			showOverflowSelectList : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true },
+			showOverflowSelectList : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
 			/**
 			 * Specifies the background color of the header.
