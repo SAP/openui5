@@ -53,5 +53,36 @@
         ]
       }
     ]
+  },
+  "1.75.2": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "6ccf4f89de8453203fc058d9c79465316191ed8c",
+        "type": "FIX",
+        "text": " sap.ui.fl: Fixing the UI2 personalization changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070139023"
+          },
+          {
+            "type": "BCP",
+            "reference": "1940740075"
+          }
+        ]
+      },
+      {
+        "id": "2c6914492c935ba476084e97a372367699f9e7c9",
+        "type": "FIX",
+        "text": " sap.ui.fl - fix partial FlexState overwrite",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070161667"
+          }
+        ]
+      }
+    ]
   }
 }
