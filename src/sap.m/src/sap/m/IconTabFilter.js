@@ -147,11 +147,11 @@ sap.ui.define([
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"},
 
 			/**
-			 * The sub icon tab bar filters (optional).
+			 * The sub items of this filter (optional).
 			 * @since 1.77
 			 * @experimental As of 1.77
 			 */
-			items : {type : "sap.m.IconTabFilter", multiple : true, singularName : "item"},
+			items : {type : "sap.m.IconTab", multiple : true, singularName : "item"},
 
 			/**
 			 * The expand icon if there are sub filters
@@ -327,7 +327,7 @@ sap.ui.define([
 	 * @private
 	 */
 	IconTabFilter.prototype._getRealTab = function () {
-		return this._oTabFilter || this;
+		return this._oRealItem || this;
 	};
 
 	/**
@@ -391,7 +391,7 @@ sap.ui.define([
 			mAriaParams.controls = oIconTabBar.getId() + "-content";
 		}
 
-		if (this._getAllSubFilters().length) {
+		if (this.getItems().length) {
 			mAriaParams.roledescription = oResourceBundle.getText("ICONTABFILTER_SPLIT_TAB");
 		}
 
@@ -595,6 +595,7 @@ sap.ui.define([
 		}
 
 		oRM.openStart("li", this)
+			.class("sapMITBSelectItem")
 			.attr("tabindex", "-1")
 			.attr("role", "menuitem");
 
@@ -622,8 +623,6 @@ sap.ui.define([
 				.attr("aria-disabled", true);
 		}
 
-
-		oRM.class("sapMITBSelectItem");
 
 		if (oSelectList.getSelectedItem() == this) {
 			oRM.class("sapMITBSelectItemSelected");
@@ -675,7 +674,7 @@ sap.ui.define([
 	 * Renders an icon.
 	 * @private
 	 */
-	IconTabFilter.prototype._renderIcon =  function(oRM) {
+	IconTabFilter.prototype._renderIcon = function (oRM) {
 		var oIcon = this.getIcon();
 		if (oIcon) {
 			var oIconInfo = IconPool.getIconInfo(oIcon),
@@ -814,7 +813,7 @@ sap.ui.define([
 
 		this._oPopover.removeAllContent();
 		this._oPopover.addContent(oSelectList)
-			.setInitialFocus(bHasSelectedItem ? oSelectList.getSelectedItem() : oSelectList.getVisibleItems()[0])
+			.setInitialFocus(bHasSelectedItem ? oSelectList.getSelectedItem() : oSelectList.getVisibleTabFilters()[0])
 			.openBy(this._getExpandButton() || this);
 	};
 
@@ -822,16 +821,32 @@ sap.ui.define([
 	 * Returns all the items of an IconTabFilter and its sub-items recursively.
 	 *
 	 * @private
-	 * @returns {sap.m.IconTabFilter[]} All filters
+	 * @returns {sap.m.IconTab[]} All sub items in the hierarchy
 	 */
-	IconTabFilter.prototype._getAllSubFilters = function () {
+	IconTabFilter.prototype._getAllSubItems = function () {
 		var aResult = [];
 
 		this._getRealTab().getItems().forEach(function (oItem) {
-			aResult = aResult.concat(oItem, oItem._getAllSubFilters());
+			if (oItem.isA("sap.m.IconTabFilter")) {
+				aResult = aResult.concat(oItem, oItem._getAllSubItems());
+			} else {
+				aResult = aResult.concat(oItem);
+			}
 		});
 
 		return aResult;
+	};
+
+	/**
+	 * Returns all the filters of an IconTabFilter and their sub-items recursively.
+	 *
+	 * @private
+	 * @returns {sap.m.IconTabFilter[]} All sub items in the hierarchy
+	 */
+	IconTabFilter.prototype._getAllSubFilters = function () {
+		return this._getAllSubItems().filter(function (oItem) {
+			return oItem.isA("sap.m.IconTabFilter");
+		});
 	};
 
 	IconTabFilter.prototype._getAllSubFiltersDomRefs = function () {
@@ -933,42 +948,44 @@ sap.ui.define([
 	IconTabFilter.prototype._setSelectListItems = function () {
 		var oIconTabHeader = this.getParent(),
 			oSelectList = this._getSelectList(),
-			aTabFilters = this._getAllSubFilters(),
+			aItemsForList = this._getAllSubItems(),
 			oPrevSelectedItem = oIconTabHeader.oSelectedItem,
 			bHasSelectedItem = false,
-			aItemsInStrip,
-			i;
+			oItem;
 
 		if (this._bIsOverflow) {
-			var aHeaderTabFilters = oIconTabHeader.getTabFilters();
-			aItemsInStrip = oIconTabHeader._getItemsInStrip();
-			aTabFilters = [];
+			var aHeaderItems = oIconTabHeader.getItems();
+			var aItemsInStrip = oIconTabHeader._getItemsInStrip();
+			aItemsForList = [];
 
-			for (i = 0; i < aHeaderTabFilters.length; i++) {
-
-				// If tab is an overflow tab and oTabFilter is already in Tab Strip, do not add it to list
+			aHeaderItems.forEach(function (oItem) {
+				// If tab is an overflow tab and oItem is already in Tab Strip, do not add it to list
 				// on a mobile device, this behaviour doesn't occur, and all items are shown
-				if (!Device.system.phone && aItemsInStrip.indexOf(aHeaderTabFilters[i]) > -1) {
-					continue;
+				if (!Device.system.phone && aItemsInStrip.indexOf(oItem) > -1) {
+					return;
 				}
 
-				var aSubFilters = aHeaderTabFilters[i]._getAllSubFilters();
-				aTabFilters.push(aHeaderTabFilters[i]);
-				for (var j = 0; j < aSubFilters.length; j++) {
-					aTabFilters.push(aSubFilters[j]);
+				aItemsForList.push(oItem);
+				if (oItem.isA("sap.m.IconTabFilter")) {
+					oItem._getAllSubItems().forEach(function (oSubItem) {
+						aItemsForList.push(oSubItem);
+					});
 				}
-			}
+			});
 		}
 
 		oSelectList.destroyItems();
 		oSelectList.setSelectedItem(null);
 
-		for (i = 0; i < aTabFilters.length; i++) {
-			var oTabFilter = aTabFilters[i];
-
-			var oListItem = oTabFilter.clone(undefined, undefined, { cloneChildren: false, cloneBindings: true });
-			oListItem._oTabFilter = oTabFilter; // link list item to its underlying tab filter
+		for (var i = 0; i < aItemsForList.length; i++) {
+			oItem = aItemsForList[i];
+			var oListItem = oItem.clone(undefined, undefined, { cloneChildren: false, cloneBindings: true });
+			oListItem._oRealItem = oItem; // link list item to its underlying item from the items aggregation
 			oSelectList.addItem(oListItem);
+
+			if (oItem.isA("sap.m.IconTabSeparator")) {
+				continue;
+			}
 
 			if (oListItem._getRealTab() === oPrevSelectedItem) {
 				oSelectList.setSelectedItem(oListItem);

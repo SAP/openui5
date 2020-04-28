@@ -28,8 +28,9 @@
 				"sap/m/Text",
 				"sap/m/RatingIndicator",
 				"sap/m/IconTabBar",
-				"sap/m/IconTabFilter"
-			], function (Core, App, Page, Label, Input, Text, RatingIndicator, IconTabBar, IconTabFilter) {
+				"sap/m/IconTabFilter",
+				"sap/m/IconTabSeparator"
+			], function (Core, App, Page, Label, Input, Text, RatingIndicator, IconTabBar, IconTabFilter, IconTabSeparator) {
 				"use strict";
 
 				var app = new App("myApp", { initialPage: "page1" });
@@ -223,6 +224,63 @@
 											value: 2
 										})
 									]
+								}),
+								new IconTabSeparator({ icon: "sap-icon://process" }),
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "4.3.Filter",
+									content: [
+										new RatingIndicator({
+											value: 3
+										})
+									]
+								}),
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "4.4.Filter",
+									content: [
+										new RatingIndicator({
+											value: 4
+										})
+									]
+								}),
+								new IconTabSeparator({}),
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "4.5.Filter",
+									content: [
+										new RatingIndicator({
+											value: 1
+										})
+									]
+								}),
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "4.6.Filter",
+									content: [
+										new RatingIndicator({
+											value: 2
+										})
+									]
+								}),
+								new sap.m.IconTabSeparator({ icon: "sap-icon://vertical-grip" }),
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "4.7.Filter",
+									content: [
+										new RatingIndicator({
+											value: 3
+										})
+									]
+								}),
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "4.8.Filter",
+									content: [
+										new RatingIndicator({
+											value: 4
+										})
+									]
 								})
 							]
 						}),
@@ -247,9 +305,73 @@
 						new IconTabFilter({
 							iconColor: sap.ui.core.IconColor.Critical,
 							text: "7.Filter",
+							key: "withNestedSeparators",
 							content: [
 								new RatingIndicator({
 									value: 0
+								})
+							],
+							items: [
+							new IconTabSeparator({}),
+								new IconTabFilter({
+									iconColor: sap.ui.core.IconColor.Default,
+									text: "7.1.Filter",
+									content: [
+										new RatingIndicator({
+											value: 0
+										})
+									],
+									items: [
+										new IconTabFilter({
+											iconColor: sap.ui.core.IconColor.Default,
+											text: "7.1.1.Filter",
+											content: [
+												new RatingIndicator({
+													value: 1
+												})
+											],
+											items: [
+												new IconTabFilter({
+													iconColor: sap.ui.core.IconColor.Default,
+													text: "7.1.1.1.Filter",
+													content: [
+														new RatingIndicator({
+															value: 4
+														})
+													]
+												}),
+												new IconTabSeparator({}),
+												new IconTabFilter({
+													iconColor: sap.ui.core.IconColor.Default,
+													text: "7.1.1.2.Filter",
+													content: [
+														new RatingIndicator({
+															value: 2
+														})
+													]
+												}),
+												new IconTabFilter({
+													iconColor: sap.ui.core.IconColor.Default,
+													text: "7.1.1.3.Filter",
+													content: [
+														new RatingIndicator({
+															value: 3
+														})
+													]
+												}),
+												new IconTabSeparator({}),
+												new IconTabFilter({
+													iconColor: sap.ui.core.IconColor.Default,
+													text: "7.1.1.4.Filter",
+													content: [
+														new RatingIndicator({
+															value: 4
+														})
+													]
+												}),
+											]
+										}),
+									]
 								})
 							]
 						}),
@@ -1309,7 +1431,6 @@
 
 				app.addPage(page);
 				app.placeAt("body");
-
 			})
 		});
 	</script>

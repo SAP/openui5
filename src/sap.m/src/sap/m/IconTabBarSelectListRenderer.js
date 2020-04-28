@@ -34,38 +34,38 @@ sap.ui.define([
 			bTextOnly = oIconTabHeader._checkTextOnly(),
 			iTotalItemsCount = oIconTabHeader.getVisibleTabFilters().length,
 			fNestedItemPaddingLeft = this.fNestedItemPaddingLeft,
-			iLevel = 0;
+			bExtraIndent = false;
 
 		// find if in that level of nesting there is some semantic icon set
 		// all of the filters in same level (all siblings) should know that
-		var bHasSemanticColor = aItems.some(function (oItem) { return oItem.getIconColor() !== IconColor.Default; });
+		var bHasSemanticColor = aItems
+			.filter(function (oItem) { return oItem.isA("sap.m.IconTabFilter"); })
+			.some(function (oItem) { return oItem.getIconColor() !== IconColor.Default; });
 
 		oSelectList.checkIconOnly();
 
 		var fAdditionalPadding = Number.parseFloat(Parameters.get("_sap_m_IconTabBar_SelectListItem_PaddingLeftAdditional"));
-		if (bHasSemanticColor) {
+		if (bHasSemanticColor && fAdditionalPadding) {
 			fNestedItemPaddingLeft += fAdditionalPadding;
-
-			if (fAdditionalPadding) {
-				iLevel++;
-			}
+			bExtraIndent = true;
 		}
 
-		this.renderList(oRM, aItems, oSelectList, oIconTabHeader, bTextOnly, iLevel, fNestedItemPaddingLeft, iTotalItemsCount);
+		this.renderList(oRM, aItems, oSelectList, oIconTabHeader, bTextOnly, fNestedItemPaddingLeft, bExtraIndent, iTotalItemsCount);
 	};
 
 	/**
 	 * Renders the <code>ul<code> element for the IconTabBarSelectList's items, or an IconTabFilter's own items.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.m.IconTabFilter[]} aItems the control's items
+	 * @param {sap.m.IconTab[]} aItems the control's items
 	 * @param {sap.m.IconTabBarSelectList} oSelectList an object representation of the control that should be rendered
 	 * @param {sap.m.IconTabHeader} oIconTabHeader the IconTabHeader control which the SelectList is rendered in
 	 * @param {boolean} bTextOnly IconTabFilter's <code>textOnly</code> property
-	 * @param {int} iLevel base level of indentation for all list items
+	 * @param {number} fPadding base value used as indentation
+	 * @param {boolean} bExtraIndent adds extra indentation, used to provide space for semantic icons
 	 * @param {int} iSetSize total number of items in the IconTabHeader
 	 */
-	IconTabBarSelectListRenderer.renderList = function (oRM, aItems, oSelectList, oIconTabHeader, bTextOnly, iLevel, fPadding, iSetSize) {
+	IconTabBarSelectListRenderer.renderList = function (oRM, aItems, oSelectList, oIconTabHeader, bTextOnly, fPadding, bExtraIndent, iSetSize) {
 		if (!aItems.length) {
 			return;
 		}
@@ -84,25 +84,21 @@ sap.ui.define([
 			var oItem = aItems[i],
 				iIndexInSet;
 
-			if (oIconTabHeader) {
+			if (oIconTabHeader && oItem.isA("sap.m.IconTabFilter")) {
 				iIndexInSet = oIconTabHeader.getVisibleTabFilters().indexOf(oItem._getRealTab());
 			}
 
 			// if rendering first level of tab overflow list
-			if (oItem._getRootTab()._getSelectList() === oSelectList) {
+			if (oItem.isA("sap.m.IconTabFilter") && oItem._getRootTab()._getSelectList() === oSelectList) {
 				iIndexInSet = i;
 				iSetSize = aItems.length;
 			}
 
-			var fPaddingLeft = fPadding * (iLevel + oItem._getNestedLevel() - 1);
-			oItem.renderInSelectList(
-				oRM,
-				oSelectList,
-				iIndexInSet,
-				iSetSize,
-				fPaddingLeft
-			);
-
+			var iLevel = oItem._getNestedLevel() - 1;
+			if (bExtraIndent) {
+				iLevel++;
+			}
+			oItem.renderInSelectList(oRM, oSelectList, iIndexInSet, iSetSize, fPadding * iLevel);
 		}
 
 		oRM.close("ul");
