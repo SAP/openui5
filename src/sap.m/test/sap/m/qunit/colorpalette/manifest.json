@@ -4,7 +4,13 @@
 	"sap.app": {
 		"id": "cp.opa.test.app",
 		"type": "application",
-		"i18n": "i18n/i18n.properties",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
+		},
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
 		"tags": {
@@ -76,7 +82,11 @@
 				"preload": true,
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "cp.opa.test.app.i18n.i18n"
+					"bundleName": "cp.opa.test.app.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
 				}
 			}
 		},

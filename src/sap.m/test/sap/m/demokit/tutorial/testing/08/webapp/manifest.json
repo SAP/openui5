@@ -3,7 +3,13 @@
 	"sap.app": {
 		"id": "sap.ui.demo.bulletinboard",
 		"type": "application",
-		"i18n": "webapp/i18n/i18n.properties",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
+		},
 		"title": "",
 		"description": "",
 		"applicationVersion": {
@@ -51,7 +57,11 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sap.ui.demo.bulletinboard.i18n.i18n"
+					"bundleName": "sap.ui.demo.bulletinboard.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
 				}
 			},
 			"": {
