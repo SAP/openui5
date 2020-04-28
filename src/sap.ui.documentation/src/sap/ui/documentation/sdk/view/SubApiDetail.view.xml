@@ -191,6 +191,7 @@
 															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
 													</m:MessageStrip>
 													<m:ObjectStatus text="Visibility: {visibility}" state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
+													<m:ObjectStatus visible="{=${since} !== undefined}" text="Since: {since}" />
 												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
