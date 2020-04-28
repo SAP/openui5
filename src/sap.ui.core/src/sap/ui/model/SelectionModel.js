@@ -14,6 +14,7 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/assert"],
 	 * Constructs an instance of an sap.ui.model.SelectionModel.
 	 *
 	 * @class
+	 * This artefact is used by the table controls for handling selections. It is not associated with the model layer of UI5.
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
