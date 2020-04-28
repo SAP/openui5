@@ -313,7 +313,7 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/storageResultDisassemble"]
 				}
 			},
-			// TODO: temporarily disabled due to customer incident: 275287
+			// TODO: temporarily disabled due to issues
 			// "apply/_internal/extensionPoint/Processor": {
 			// 	group: "Apply Internal",
 			// 	coverage: {
@@ -325,6 +325,12 @@ sap.ui.define([
 			// 		}
 			// 	}
 			// },
+			"initial/api/connectors/FileListBaseConnector": {
+				group: "Initial API",
+				coverage: {
+					only: ["sap/ui/fl/initial/api/connectors/FileListBaseConnector"]
+				}
+			},
 			"write/api/ChangesWriteAPI": {
 				group: "Write API",
 				coverage: {
@@ -979,7 +985,7 @@ sap.ui.define([
 					only: ["sap/ui/fl/registry/ChangeTypeMetadata"]
 				}
 			},
-			// TODO: temporarily disabled due to customer incident: 275287
+			// TODO: temporarily disabled due to issues
 			// "registry/ExtensionPointRegistry": {
 			// 	group: "registry",
 			// 	coverage: {
