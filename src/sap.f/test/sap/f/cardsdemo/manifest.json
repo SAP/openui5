@@ -3,7 +3,14 @@
   "sap.app": {
 	"id": "sap.f.cardsdemo",
 	"type": "application",
-	"i18n": "i18n/i18n.properties",
+	"i18n": {
+		"bundleUrl": "i18n/i18n.properties",
+		"supportedLocales": [
+			"",
+			"en"
+		],
+		"fallbackLocale": "en"
+	},
 	"title": "{{appTitle}}",
 	"description": "{{appDescription}}",
 	"applicationVersion": {
@@ -54,7 +61,12 @@
 	  "i18n": {
 		"type": "sap.ui.model.resource.ResourceModel",
 		"settings": {
-		  "bundleName": "sap.f.cardsdemo.i18n.i18n"
+		  "bundleName": "sap.f.cardsdemo.i18n.i18n",
+		  "supportedLocales": [
+		  	"",
+		  	"en"
+		  ],
+		  "fallbackLocale": "en"
 		},
 		"preload": true
 	  }
