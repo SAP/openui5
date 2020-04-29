@@ -497,124 +497,115 @@ ODataMessageParser._isResponseForCreate = function (mRequestInfo) {
 
 /**
  * Determines the absolute target URL (relative to the service URL) from the given message object
- * and from the given request info and updates the message object's <code>canonicalTarget</code> and
+ * and from the given request info and updates the message object's <code>target</code> and
  * <code>deepPath</code>.
  * If the message object's target is not absolute, it uses the location header of the response (in
  * case of a successful creation of an entity), the internal entity key (in case of a failed
- * creation of an entity) or the request URL to determine the message object's
- * <code>canonicalTarget</code> and <code>deepPath</code>.
+ * creation of an entity) or the request URL to determine the message object's <code>target</code>
+ * and <code>deepPath</code>.
  * The <code>deepPath</code> is always reduced, that means all adjacent partner attributes have been
  * removed from the target path.
+ * If no target is contained in the given message object, the request used the message scope
+ * <code>BusinessObject</code> and the response is no technical error, then the message object's
+ * <code>target</code> and <code>deepPath</code> are set to empty string.
  *
  * @param {ODataMessageParser~ServerError} oMessageObject
- *   The object containing the message data
+ *   The object containing the message data; <code>target</code> and <code>deepPath</code> are
+ *   updated
  * @param {ODataMessageParser~RequestInfo} mRequestInfo
  *   A map containing information about the current request
- * @param {boolean} bIsTechnical - Whether this is a technical error (like 404 - not found)
+ * @param {boolean} bIsTechnical
+ *   Whether this is a technical error (like 404 - not found)
  * @private
  */
 ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestInfo, bIsTechnical) {
-	var bCreate, sUrlForTargetCalculation;
+	var sCanonicalTarget, bCreate, mFunctionInfo, iPos, sPreviousCanonicalTarget, sRequestTarget,
+		sUrl, mUrlData, sUrlForTargetCalculation,
+		sDeepPath = "",
+		oRequest = mRequestInfo.request,
+		oResponse = mRequestInfo.response,
+		sTarget = oMessageObject.target;
 
-	if (oMessageObject.propertyref !== undefined && oMessageObject.target !== undefined) {
+	if (oMessageObject.propertyref !== undefined && sTarget !== undefined) {
 		Log.warning("Used the message's 'target' property for target calculation; the property"
 			+ " 'propertyref' is deprecated and must not be used together with 'target'",
 			mRequestInfo.url, sClassName);
-	} else if (oMessageObject.target === undefined) {
-		oMessageObject.target = oMessageObject.propertyref;
+	} else if (sTarget === undefined) {
+		sTarget = oMessageObject.propertyref;
 	}
-	if (oMessageObject.target === undefined && !bIsTechnical
+	if (sTarget === undefined && !bIsTechnical
 			&& mRequestInfo.request.headers["sap-message-scope"] === "BusinessObject") {
 		oMessageObject.deepPath = "";
 		oMessageObject.target = "";
 
 		return;
 	}
-	if (oMessageObject.target === undefined) {
-		oMessageObject.target = "";
-	}
-	if (oMessageObject.target.indexOf("/#TRANSIENT#") === 0) {
-		oMessageObject.target = oMessageObject.target.substr(12);
-	}
-
-	var sTarget = oMessageObject.target;
-	var sDeepPath = "";
+	sTarget = sTarget || "";
+	sTarget = sTarget.startsWith("/#TRANSIENT#") ? sTarget.slice(12) : sTarget;
 
 	if (sTarget[0] !== "/") {
-		var sRequestTarget = "";
-
-		// special case for 201 POST requests which create a resource
-		// The target is a relative resource path segment that can be appended to the Location response header (for POST requests that create a new entity)
-		var sMethod = mRequestInfo.request.method || "GET";
 		bCreate = ODataMessageParser._isResponseForCreate(mRequestInfo);
 
 		if (bCreate === true) { // successful create
-			sUrlForTargetCalculation = mRequestInfo.response.headers["location"];
+			// special case for 201 POST requests which create a resource;
+			// the target is a relative resource path segment that can be appended to the location
+			// response header (for POST requests that create a new entity)
+			sUrlForTargetCalculation = oResponse.headers["location"];
 		} else if (bCreate === false) { // failed create
-			sUrlForTargetCalculation = mRequestInfo.request.key;
+			sUrlForTargetCalculation = oRequest.key;
 		} else {
 			sUrlForTargetCalculation = mRequestInfo.url;
 		}
-
-		//parsing
-		var mUrlData = this._parseUrl(sUrlForTargetCalculation);
-		var sUrl = mUrlData.url;
-
-		var iPos = sUrl.lastIndexOf(this._serviceUrl);
+		mUrlData = this._parseUrl(sUrlForTargetCalculation);
+		sUrl = mUrlData.url;
+		iPos = sUrl.indexOf(this._serviceUrl);
 		if (iPos > -1) {
-			sRequestTarget = sUrl.substr(iPos + this._serviceUrl.length);
-		} else {
+			sRequestTarget = sUrl.slice(iPos + this._serviceUrl.length);
+		} else { // e.g. within $batch responses
 			sRequestTarget = "/" + sUrl;
 		}
 
-		// function import case; bCreate === false might also be a function import call
-		if (!bCreate) {
-			var mFunctionInfo = this._metadata._getFunctionImportMetadata(sRequestTarget, sMethod);
+		if (!bCreate) { // bCreate === false might be a failed function import
+			mFunctionInfo = this._metadata._getFunctionImportMetadata(sRequestTarget,
+				oRequest.method);
 
 			if (mFunctionInfo) {
 				sRequestTarget = this._getFunctionTarget(mFunctionInfo, mRequestInfo, mUrlData);
 				sDeepPath = sRequestTarget;
 			}
 		}
-
+		if (!sDeepPath && oRequest.deepPath){
+			sDeepPath = oRequest.deepPath;
+		}
 		// If sRequestTarget is a collection, we have to add the target without a "/". In this case
 		// a target would start with the specific product (like "(23)"), but the request itself
 		// would not have the brackets
-		var iSlashPos = sRequestTarget.lastIndexOf("/");
-		var sRequestTargetName = iSlashPos > -1 ? sRequestTarget.substr(iSlashPos) : sRequestTarget;
-
-		if (!sDeepPath && mRequestInfo.request.deepPath){
-			sDeepPath = mRequestInfo.request.deepPath;
-		}
-		if (sRequestTargetName.indexOf("(") > -1) {
-			// It is an entity
+		if (sRequestTarget.slice(sRequestTarget.lastIndexOf("/")).indexOf("(") > -1
+				|| !this._metadata._isCollection(sRequestTarget)) {// references a single entity
+			sDeepPath = sTarget ? sDeepPath + "/" + sTarget : sDeepPath;
 			sTarget = sTarget ? sRequestTarget + "/" + sTarget : sRequestTarget;
-			sDeepPath = oMessageObject.target ? sDeepPath + "/" + oMessageObject.target : sDeepPath;
-		} else if (this._metadata._isCollection(sRequestTarget)){ // (0:n) cardinality
-				sTarget = sRequestTarget + sTarget;
-				sDeepPath = sDeepPath + oMessageObject.target;
-		} else { // 0:1 cardinality
-			sTarget = sTarget ? sRequestTarget + "/" + sTarget : sRequestTarget;
-			sDeepPath = oMessageObject.target ? sDeepPath + "/" + oMessageObject.target : sDeepPath;
+		} else { // references a collection or the complete $batch
+			sDeepPath = sDeepPath + sTarget;
+			sTarget = sRequestTarget + sTarget;
 		}
 	}
 
-	oMessageObject.canonicalTarget = sTarget;
 	if (this._processor){
-		var sCanonicalTarget = this._processor.resolve(sTarget, undefined, true);
-
+		sCanonicalTarget = this._processor.resolve(sTarget, undefined, true);
 		// Multiple resolve steps are necessary for paths containing multiple navigation properties
-		// with to 0 or 1 to n relation, e.g. /SalesOrder(1)/toItem(2)/toSubItem(3)
-		var iNumberOfParts = sTarget.split(")").length - 1; // number of parts is decreased by one thus last part is the property or empty string
-		for (var i = 2; i < iNumberOfParts; i++){ // e.g. path: "/SalesOrder(1)/toItem(2)/toSubItem(3)" => 3 parts = 2 nav properties
-			sCanonicalTarget = this._processor.resolve(sCanonicalTarget, undefined, true);
+		// with to n relation, e.g. /SalesOrder(1)/toItem(2)/toSubItem(3)
+		while (sCanonicalTarget && sCanonicalTarget.lastIndexOf("/") > 0
+				&& sCanonicalTarget !== sPreviousCanonicalTarget) {
+			sPreviousCanonicalTarget = sCanonicalTarget;
+			sCanonicalTarget = this._processor.resolve(sCanonicalTarget, undefined, true)
+				// if canonical path cannot be determined, take the previous
+				|| sPreviousCanonicalTarget;
 		}
-
-		oMessageObject.canonicalTarget = sCanonicalTarget || sTarget;
+		sTarget = sCanonicalTarget || sTarget;
 		oMessageObject.deepPath
-			= this._metadata._getReducedPath(sDeepPath || oMessageObject.canonicalTarget);
+			= this._metadata._getReducedPath(sDeepPath || sTarget);
 	}
-	oMessageObject.target = ODataUtils._normalizeKey(oMessageObject.canonicalTarget);
+	oMessageObject.target = ODataUtils._normalizeKey(sTarget);
 };
 
 /**
