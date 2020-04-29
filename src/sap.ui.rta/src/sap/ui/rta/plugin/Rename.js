@@ -130,7 +130,7 @@ sap.ui.define([
 			if (typeof oTargetOverlayAction.isEnabled === "function") {
 				bIsEnabled = oTargetOverlayAction.isEnabled(oTargetOverlay.getElement());
 			} else {
-				bIsEnabled = oTargetOverlay.isEnabled;
+				bIsEnabled = oTargetOverlayAction.isEnabled;
 			}
 		}
 
