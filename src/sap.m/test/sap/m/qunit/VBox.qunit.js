@@ -1,15 +1,23 @@
-/*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit, sinon */
+
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Image",
+	"sap/m/FlexBox",
 	"sap/m/VBox",
 	"jquery.sap.global",
 	"sap/ui/Device"
-], function(QUnitUtils, createAndAppendDiv, Image, VBox, jQuery, Device) {
-	createAndAppendDiv("content");
+], function(
+	createAndAppendDiv,
+	Image,
+	FlexBox,
+	VBox,
+	jQuery,
+	Device
+) {
+	"use strict";
 
+	createAndAppendDiv("content");
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
 
@@ -67,12 +75,6 @@ sap.ui.define([
 	oVBox2.setRenderType('Div');
 	oVBox2.placeAt("content");
 
-
-
-	jQuery(document).ready(function() {
-
-	});
-
 	QUnit.test("Flex Boxes rendered", function(assert){
 		assert.ok(jQuery.sap.domById("vbox1"), "VBox 1 should be rendered");
 		assert.equal(jQuery.sap.byId("vbox1").get(0).tagName, "UL", "VBox 1 should be rendered as UL");
@@ -109,5 +111,25 @@ sap.ui.define([
 	QUnit.test("align-items", function(assert){
 		assert.equal(jQuery("#vbox1").css('align-items'), "flex-end", "VBox align-items property should be set correctly in standard-compatible browsers");
 		assert.equal(jQuery("#vbox2").css('align-items'), "center", "VBox align-items property should be set correctly in standard-compatible browsers");
+	});
+
+	QUnit.module("Properties");
+
+	QUnit.test("Direction - default value", function (assert) {
+		var oVBox = new VBox();
+
+		assert.strictEqual(oVBox.getDirection(), "Column", "The default value of 'direction' property should be 'Column'");
+	});
+
+	QUnit.module("Overridden methods");
+
+	QUnit.test("init", function (assert) {
+		var flexBoxInitSpy = sinon.spy(FlexBox.prototype, "init"),
+			oVBox = new VBox();
+
+		assert.ok(flexBoxInitSpy.calledOnce, "When VBox is initialized, the init method of FlexBox should also be called.");
+
+		oVBox.destroy();
+		flexBoxInitSpy.restore();
 	});
 });
