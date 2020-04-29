@@ -1984,8 +1984,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Absolute ODCB, late property. See that it is requested only once, even when
-	// multiple bindings request it parallel. See that is written to the cache. See that it is
-	// updated via requestSideEffects.
+	// multiple bindings and controller code request it in parallel. See that is written to the
+	// cache. See that it is updated via requestSideEffects.
 	// JIRA: CPOUI5UISERVICESV3-1878
 	QUnit.test("ODCB: late property", function (assert) {
 		var oFormContext,
@@ -2037,7 +2037,13 @@ sap.ui.define([
 			that.oView.byId("longitude1").setBindingContext(oFormContext);
 			that.oView.byId("longitude2").setBindingContext(oFormContext);
 
-			return that.waitForChanges(assert);
+			return Promise.all([
+				oFormContext.requestProperty("Address/GeoLocation/Longitude")
+					.then(function (sLongitude) {
+						assert.strictEqual(sLongitude, "8.7");
+					}),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			that.oLogMock.expects("error")
 				.withArgs("Failed to drill-down into CompanyName, invalid segment: CompanyName");
@@ -10188,6 +10194,9 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Auto-$expand/$select: Relative ODataListBinding considers $filter set via API, i.e.
 	// it changes the initially aggregated query options and creates a separate cache/request.
+	//
+	// P.S.: Sync data access is possible although oCachePromise becomes pending again.
+	// JIRA: CPOUI5ODATAV4-204
 	QUnit.test("ODLB with auto-$expand/$select below ODCB: filter via API", function (assert) {
 		var sView = '\
 <FlexBox binding="{/TEAMS(\'2\')}">\
@@ -10215,6 +10224,8 @@ sap.ui.define([
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
 			.then(function () {
+				var oListBinding = that.oView.byId("table").getBinding("items");
+
 				that.expectRequest("TEAMS('2')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID,Name"
 						+ "&$filter=AGE gt 42&$skip=0&$top=100", {
 						value : [
@@ -10225,8 +10236,10 @@ sap.ui.define([
 					.expectChange("text", [, "Peter Burke"]);
 
 				// code under test
-				that.oView.byId("table").getBinding("items")
-					.filter(new Filter("AGE", FilterOperator.GT, 42));
+				oListBinding.filter(new Filter("AGE", FilterOperator.GT, 42));
+
+				// code under test: sync data access...
+				assert.strictEqual(oListBinding.getContext().getProperty("Team_Id"), "2");
 
 				return that.waitForChanges(assert);
 			});
@@ -22701,7 +22714,9 @@ sap.ui.define([
 	// and all properties including $count can be accessed. Check also that it does not clash with
 	// unreduced list bindings.
 	// JIRA: CPOUI5UISERVICESV3-1877
-	QUnit.test("Partner attributes in path to collection", function (assert) {
+	// Sync data access is possible although oCachePromise becomes pending again.
+	// JIRA: CPOUI5ODATAV4-204
+	QUnit.test("Partner attributes in path to collection, CPOUI5ODATAV4-204", function (assert) {
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Bs(1)}">\
@@ -22731,6 +22746,8 @@ sap.ui.define([
 			.expectChange("dValue", ["99", "98"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oListBinding = that.oView.byId("table").getBinding("items");
+
 			that.expectRequest("Bs(1)/BtoA/AtoB/BtoDs?$select=DID,DValue&$orderby=DValue"
 				+ "&$skip=0&$top=100", {
 					value : [
@@ -22742,7 +22759,10 @@ sap.ui.define([
 				.expectChange("dValue", ["98", "99"]);
 
 			// code under test
-			that.oView.byId("table").getBinding("items").sort(new Sorter("DValue"));
+			oListBinding.sort(new Sorter("DValue"));
+
+			// code under test: sync data access...
+			assert.strictEqual(oListBinding.getContext().getProperty("BValue"), 101);
 
 			return that.waitForChanges(assert);
 		});
@@ -24454,7 +24474,9 @@ sap.ui.define([
 	// Scenario: Cache is immutable although oCachePromise becomes pending again. The list binding
 	// inside the details must not prevent other bindings from sending their own request.
 	// JIRA: CPOUI5UISERVICESV3-2025
-	QUnit.test("CPOUI5UISERVICESV3-2025", function (assert) {
+	// Sync data access is possible although oCachePromise becomes pending again.
+	// JIRA: CPOUI5ODATAV4-204
+	QUnit.test("CPOUI5UISERVICESV3-2025, CPOUI5ODATAV4-204", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/TEAMS}">\
@@ -24482,6 +24504,8 @@ sap.ui.define([
 			.expectChange("managerId");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+
 			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=100",
 					{value : [{ID : "2", Name : "Frederic Fall"}]})
 				.expectChange("name", ["Frederic Fall"])
@@ -24490,8 +24514,10 @@ sap.ui.define([
 				.expectChange("managerId", "5");
 
 			// code under test: bindings inside "detail" form need to send their own requests
-			that.oView.byId("detail").setBindingContext(
-				that.oView.byId("table").getItems()[0].getBindingContext());
+			that.oView.byId("detail").setBindingContext(oContext);
+
+			// code under test: sync data access...
+			assert.deepEqual(oContext.getObject(), {Team_Id : "TEAM_01"});
 
 			return that.waitForChanges(assert);
 		});
