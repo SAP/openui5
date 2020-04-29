@@ -690,6 +690,23 @@ sap.ui.define([
 		assert.strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapshow' event.");
 	});
 
+	QUnit.test("Open and close if the menu contains only disabled items", function(assert) {
+		this.oMenuItem1.setEnabled(false);
+		this.oMenuItem2.setEnabled(false);
+		sap.ui.getCore().applyChanges();
+
+		this.sut.openMenuByKeyboard();
+
+		var oFakeEvent = { keyCode: 13};
+
+		this.sut.onkeydown(oFakeEvent);
+
+		assert.strictEqual(this.sut._bPopupOpen, false, "The Menu was closed");
+
+		this.oMenuItem1.setEnabled(true);
+		this.oMenuItem2.setEnabled(true);
+	});
+
 	QUnit.test("_menuItemSelected is fired", function(assert) {
 		var fnHandleMenuItemSelected = sinon.spy();
 		this.sut.attachEvent("_menuItemSelected", fnHandleMenuItemSelected);
@@ -852,11 +869,11 @@ sap.ui.define([
 		assert.ok(oSpyMenuOpenBy.args[0][3], Dock.BeginBottom, "Menu's openBy default parameter sDockAt is BeginBottom");
 		assert.ok(oSpyMenuOpenBy.args[0][4], "0 -2", "Menu's openBy default parameter sOffset is '0 -2'");
 
-		this.sut.destroyMenu();
 		oSpySetArrowState.reset();
 		oSpyMenuOpenBy.reset();
 
 		//Act
+		this.sut.destroyMenu();
 		this.sut._handleButtonPress(false);
 
 		//Assert
