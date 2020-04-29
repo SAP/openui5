@@ -110,15 +110,14 @@ function(
 	 * the footer toolbar if they refer to a table. Place group, sort, and filter buttons
 	 * in the footer toolbar if they refer to a master list.
 	 *
-	 * <b>Note:</b> Reset button, when used in <code>ViewSettingsDialog</code> without custom tabs
-	 * or custom items in one of its aggregations, is enabled when there are some Filters or
-	 * presetFilters selected as well as there are changes in Sort by, Sort order, Group By or
-	 * Group order values compared to initial state of the dialog, and disabled, if there are no
-	 * changes or filters set. If the <code>ViewSettingsDialog</code> have one or more custom tabs
-	 * or custom items in one of its aggregations (sortItems, groupItems, filterItems or
-	 * presetFilterItems), the Reset button is always enabled, because there is no way to determine
-	 * the initial state of the custom tabs content and compare to their current state in order to
-	 * determine enable/disable state of the Reset button.
+	 * <b>Note:</b> If <code>ViewSettingsDialog</code> is used without custom tabs or custom items
+	 * in any of its aggregations, then Reset button is enabled if the user selects any Filters or
+	 * presetFilters or changes any of the Sort by, Sort order, Group by, or Group order values.
+	 * When <code>ViewSettingsDialog</code> is used with custom tabs or custom items
+	 * in any of its aggregations (sortItems, groupItems, filterItems or presetFilterItems),
+	 * the Reset button is always enabled, because there is no way to determine
+	 * the initial state of the custom tabs and compare it to their current state in order to
+	 * determine the enable/disable state of the Reset button.
 	 *
 	 * <h3>Usage</h3>
 	 *
