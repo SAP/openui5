@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/unified/FileUploader",
 	"sap/ui/core/TooltipBase",
 	"sap/m/Label",
-	"sap/m/Text"
-], function(qutils, FileUploader, TooltipBase, Label, Text) {
+	"sap/m/Text",
+	"sap/ui/Device"
+], function(qutils, FileUploader, TooltipBase, Label, Text, Device) {
 	"use strict";
 
 	/**
@@ -1046,5 +1047,20 @@ sap.ui.define([
 
 		// Cleanup
 		oFileUploader.destroy();
+	});
+
+	QUnit.test("Click focuses the fileuploader button", function (assert) {
+		//Arrange
+		this.stub(Device, "browser", {"safari": true});
+		var oFileUploader = new sap.ui.unified.FileUploader("fu"),
+			oSpy = this.spy(oFileUploader.oBrowse, "focus");
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		//Act
+		oFileUploader.onclick();
+
+		//Assert
+		assert.strictEqual(oSpy.callCount, 1, "Clicking on browse button should focus the button in safari");
 	});
 });

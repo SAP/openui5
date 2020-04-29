@@ -1410,7 +1410,7 @@ sap.ui.define([
 			this.setValue("", true);
 		}
 		//refocus the Button, except bSupressFocus is set
-		if (this.oBrowse.getDomRef() && containsOrEquals(this.getDomRef(), document.activeElement)) {
+		if (this.oBrowse.getDomRef() && (Device.browser.safari || containsOrEquals(this.getDomRef(), document.activeElement))) {
 			this.oBrowse.focus();
 		}
 	};
