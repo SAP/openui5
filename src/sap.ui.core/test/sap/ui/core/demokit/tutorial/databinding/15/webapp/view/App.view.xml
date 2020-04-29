@@ -1,6 +1,7 @@
 <mvc:View
 	controllerName="sap.ui.demo.db.controller.App"
 	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc">
 	<Panel headerText="{i18n>panel1HeaderText}" class="sapUiResponsiveMargin" width="auto">
@@ -53,32 +54,8 @@
 					factory: '.productListFactory'
 				}">
 				<dependents>
-					<StandardListItem
-						id="productSimple"
-						icon="sap-icon://warning"
-						title="{products>ProductName} ({products>QuantityPerUnit})"
-						info="{i18n>Discontinued}"
-						type="Active"
-						infoState="Error"
-						press=".onItemSelected">
-					</StandardListItem>
-					<ObjectListItem
-						id="productExtended"
-						title="{products>ProductName} ({products>QuantityPerUnit})"
-						number="{
-							parts: [
-								{path: 'products>UnitPrice'},
-								{path: '/currencyCode'}
-							],
-							type: 'sap.ui.model.type.Currency',
-							formatOptions : {
-								showMeasure : false
-							}
-						}"
-						type="Active"
-						numberUnit="{/currencyCode}"
-						press=".onItemSelected">
-					</ObjectListItem>
+					<core:Fragment fragmentName="sap.ui.demo.db.view.ProductSimple" type="XML"/>
+					<core:Fragment fragmentName="sap.ui.demo.db.view.ProductExtended" type="XML"/>
 				</dependents>
 			</List>
 		</content>
