@@ -673,7 +673,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_importData for function import", function (assert) {
+[undefined, "/canonicalParent/toChild"].forEach(function (sPathFromCanonicalParent, i) {
+	QUnit.test("_importData for function import, " + i, function (assert) {
 		var mChangedEntities = {},
 			oData = {},
 			oModel = {
@@ -696,6 +697,10 @@ sap.ui.define([
 		oModelMock.expects("_writePathCache").withExactArgs("sPath", "/key", "bFunctionImport");
 		oModelMock.expects("_writePathCache").withExactArgs("sDeepPath", "/key", "bFunctionImport",
 			/*bUpdateShortenedPaths*/true);
+		if (sPathFromCanonicalParent) {
+			oModelMock.expects("_writePathCache")
+				.withExactArgs(sPathFromCanonicalParent, "/key", "bFunctionImport");
+		}
 
 		// the parameter oResponse is unused in this test as there is no array or navigation
 		// properties in the data nor are there bindable response headers
@@ -704,7 +709,63 @@ sap.ui.define([
 
 		// code under test
 		ODataModel.prototype._importData.call(oModel, oData, mChangedEntities,
-			/*oResponse*/ undefined, "sPath", "sDeepPath", /*sKey*/ undefined, "bFunctionImport");
+			/*oResponse*/ undefined, "sPath", "sDeepPath", /*sKey*/ undefined, "bFunctionImport",
+			sPathFromCanonicalParent);
+
+		assert.ok(mChangedEntities["key"]);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_importData for data with 0..1 navigation properties", function (assert) {
+		var mChangedEntities = {},
+			oData = {
+				n0 : {
+					__metadata : {
+						uri : "uri0"
+					}
+				}
+			},
+			oEntry = {},
+			oModel = {
+				_getEntity : function () {},
+				_getKey : function () {},
+				hasContext : function () {},
+				// add method under test to check correct recursion
+				_importData : ODataModel.prototype._importData,
+				resolveFromCache : function () {},
+				_updateChangedEntities : function () {},
+				_writePathCache : function () {}
+			},
+			oModelMock = this.mock(oModel);
+
+		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oData)).returns("key");
+		oModelMock.expects("_getEntity").withExactArgs("key").returns(oEntry);
+		// from code under test
+		oModelMock.expects("_importData")
+			.withExactArgs(sinon.match.same(oData), sinon.match.same(mChangedEntities), "oResponse",
+				"sPath", "sDeepPath", undefined, "bFunctionImport")
+			.callThrough();
+		// recursive call for importing navigation property data
+		oModelMock.expects("_importData")
+			.withExactArgs(sinon.match.same(oData.n0), sinon.match.same(mChangedEntities),
+				"oResponse", "sPath/n0", "sDeepPath/n0", undefined, false, "/key/n0")
+			.returns("oResult");
+		oModelMock.expects("hasContext").withExactArgs("/key").returns(false);
+		oModelMock.expects("_updateChangedEntities")
+			.withExactArgs({key : sinon.match.same(oEntry)});
+		oModelMock.expects("resolveFromCache").withExactArgs("sDeepPath").returns("/key");
+		// test that bFunctionImport is propagated to _writePathCache
+		oModelMock.expects("_writePathCache").withExactArgs("/key", "/key", "bFunctionImport");
+		oModelMock.expects("_writePathCache").withExactArgs("sPath", "/key", "bFunctionImport");
+		oModelMock.expects("_writePathCache").withExactArgs("sDeepPath", "/key", "bFunctionImport",
+			/*bUpdateShortenedPaths*/true);
+
+		// code under test
+		oModel._importData(oData, mChangedEntities, "oResponse", "sPath", "sDeepPath",
+			/*sKey*/ undefined, "bFunctionImport");
+
+		assert.strictEqual(oEntry.n0.__ref, "oResult");
 
 		assert.ok(mChangedEntities["key"]);
 	});

@@ -1395,11 +1395,14 @@ sap.ui.define([
 	 * @param {boolean} [bFunctionImport] Whether the imported data is for a function import
 	 *   response; recursive calls to this method importing entities within the function response
 	 *   do not set this flag.
+	 * @param {string} [sPathFromCanonicalParent] The path concatenated from the canonical path of
+	 *   the parent and the navigation property when importing data for a 0..1 navigation
+	 *   property via a recursive call to this method
 	 * @return {string|string[]} Key of imported data or array of keys in case of nested entries
 	 * @private
 	 */
 	ODataModel.prototype._importData = function(oData, mChangedEntities, oResponse, sPath,
-			sDeepPath, sKey, bFunctionImport) {
+			sDeepPath, sKey, bFunctionImport, sPathFromCanonicalParent) {
 		var that = this,
 			aList, oResult, oEntry, oCurrentEntry;
 			sPath = sPath || "";
@@ -1462,7 +1465,8 @@ sap.ui.define([
 					var sNewPath = sPath + "/" + sName;
 					var sNewDeepPath = sDeepPath + "/" + sName;
 
-					oResult = that._importData(oProperty, mChangedEntities, oResponse, sNewPath, sNewDeepPath /*, sKey is not available */);
+					oResult = that._importData(oProperty, mChangedEntities, oResponse, sNewPath,
+						sNewDeepPath, undefined, false, "/" + sKey + "/" + sName);
 					if (Array.isArray(oResult)) {
 						oEntry[sName] = { __list: oResult };
 					} else {
@@ -1510,6 +1514,9 @@ sap.ui.define([
 			this._writePathCache(sPath, "/" + sKey, bFunctionImport);
 			this._writePathCache(sDeepPath, "/" + sKey, bFunctionImport,
 				/*bUpdateShortenedPaths*/true);
+			if (sPathFromCanonicalParent) {
+				this._writePathCache(sPathFromCanonicalParent, "/" + sKey, bFunctionImport);
+			}
 
 			return sKey;
 		}
