@@ -7,6 +7,9 @@ sap.ui.define(['./FlexBox', './library', "./VBoxRenderer"],
 	function(FlexBox, library, VBoxRenderer) {
 	"use strict";
 
+	// shortcut for sap.m.FlexDirection
+	var FlexDirection = library.FlexDirection;
+
 	/**
 	 * Constructor for a new VBox.
 	 *
@@ -38,6 +41,11 @@ sap.ui.define(['./FlexBox', './library', "./VBoxRenderer"],
 		designtime: "sap/m/designtime/VBox.designtime"
 	}});
 
-	return VBox;
+	VBox.prototype.init = function () {
+		this.setDirection(FlexDirection.Column);
 
+		FlexBox.prototype.init.apply(this, arguments);
+	};
+
+	return VBox;
 });
