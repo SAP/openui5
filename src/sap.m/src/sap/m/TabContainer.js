@@ -563,20 +563,15 @@ sap.ui.define([
 		 * @override
 		 */
 		TabContainer.prototype.setShowAddNewButton = function (bShowButton) {
-			var oTabStrip;
 			this.setProperty("showAddNewButton", bShowButton, true);
 
 			if (Device.system.phone) {
 				bShowButton ? this.addStyleClass("sapUiShowAddNewButton") : this.removeStyleClass("sapUiShowAddNewButton");
 			}
 
-			if (!bShowButton) {
-				return this;
-			}
-
-			oTabStrip = this._getTabStrip();
+			var oTabStrip = this._getTabStrip();
 			if (oTabStrip) {
-				oTabStrip.setAddButton(this._getAddNewTabButton());
+				oTabStrip.setAddButton(bShowButton ? this._getAddNewTabButton() : null);
 			}
 
 			return this;

@@ -578,6 +578,24 @@ sap.ui.define([
 
 	QUnit.module("Others");
 
+	QUnit.test("showAddNewButton", function(assert) {
+		// preapre
+		var oTabContainer = new TabContainer();
+
+		// act
+		oTabContainer.setShowAddNewButton(true);
+		// assert
+		assert.ok(oTabContainer.getAddButton() !== null, "Add button object is created");
+
+		// act
+		oTabContainer.setShowAddNewButton(false);
+		// assert
+		assert.ok(oTabContainer.getAddButton() === null, "Add button object is destroyed");
+
+		// clean
+		oTabContainer.destroy();
+	});
+
 	QUnit.test("showAddNewButton on mobile", function(assert) {
 		// preapre
 		this.stub(Device.system, "phone", true);
