@@ -18,7 +18,7 @@
 
 		//Default sample
 		var oMultiInputCustomValidator = new sap.m.MultiInput("multiInputCustomValidator",{
-			width:"40%",
+			width:"50%",
 			ariaLabelledBy: "labelDefault"
 		});
 
@@ -92,7 +92,7 @@
 
 		//Sample with tabular suggestions
 		var oTabularSuggestMultiInput = new sap.m.MultiInput("tabularSuggestMI", {
-			width: "40%",
+			width: "50%",
 			ariaLabelledBy: "labelTabular",
 			tokens:[
 				new sap.m.Token({text: "Token 1", key: "0001"}),
@@ -178,26 +178,26 @@
 
 		// Warning sample
 		var oWarningMultiInput = new sap.m.MultiInput("mIWarning", {
-			placeholder: "Placeholder text",
+			placeholder: "Placeholder",
 			valueState: "Warning",
 			valueStateText: "Simple value state warning text",
-			width: "40%",
+			width: "50%",
 			ariaLabelledBy: "labelWarning"
 		}),
 
 		// Error sample
 			oErrorMultiInput = new sap.m.MultiInput("mIError", {
-				placeholder: "Placeholder text",
+				placeholder: "Placeholder",
 				valueStateText: "Simple value state error text",
 				valueState: "Error",
-				width: "40%",
+				width: "50%",
 				ariaLabelledBy: "labelError"
 			});
 
 			oSuccessMultiInput =  new sap.m.MultiInput("mISuccess", {
-				placeholder: "Placeholder text",
+				placeholder: "Placeholder",
 				valueState: "Success",
-				width: "40%",
+				width: "50%",
 				ariaLabelledBy: "labelSuccess"
 			});
 
@@ -205,7 +205,7 @@
 			oMultiInput8 = new sap.m.MultiInput("multiInputNoPlaceholder", {
 				enableMultiLineMode: true,
 				maxTokens: 3,
-				width: "40%",
+				width: "50%",
 				ariaLabelledBy: "labelMaxTokens"
 			});
 
@@ -216,7 +216,7 @@
 
 		//Read-only
 		var oMultiInputReadOnly = new sap.m.MultiInput("multiInputReadOnlyInitial", {
-			width : "40%",
+			width : "50%",
 			ariaLabelledBy: "labelReadOnly",
 			tokens : [
 				new sap.m.Token({text: "100", key: "0001"}),
@@ -235,7 +235,7 @@
 
 		//Disabled
 			oDisabledMultiInput = new sap.m.MultiInput("multiInputDisabled",{
-				width:"40%",
+				width:"50%",
 				enabled: false,
 				ariaLabelledBy: "labelDisabled"
 			});
