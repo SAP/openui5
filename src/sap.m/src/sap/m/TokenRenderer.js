@@ -45,6 +45,10 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 			oRm.class("sapMTokenReadOnly");
 		}
 
+		if (oControl.getTruncated()) {
+			oRm.class("sapMTokenTruncated");
+		}
+
 		// add tooltip if available
 		if (sTooltip) {
 			oRm.attr("title", sTooltip);
