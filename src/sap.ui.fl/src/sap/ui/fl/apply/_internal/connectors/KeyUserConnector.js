@@ -30,7 +30,8 @@ sap.ui.define([
 		],
 		ROUTES: {
 			DATA: PREFIX + API_VERSION + "/data/"
-		}
+		},
+		isLanguageInfoRequired: true
 	});
 
 	return KeyUserConnector;

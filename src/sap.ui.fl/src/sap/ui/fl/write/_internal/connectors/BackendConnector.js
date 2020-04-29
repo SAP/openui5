@@ -36,9 +36,12 @@ sap.ui.define([
 			// TODO: As soon as drafts can be based on other versions the parentVersion must be passed down from higher layers
 			mParameters.parentVersion = "";
 		}
-
+		if (this.isLanguageInfoRequired) {
+			ApplyUtils.addLanguageInfo(mParameters);
+		}
 		var sWriteUrl = ApplyUtils.getUrl(this.ROUTES.CHANGES, mPropertyBag, mParameters);
 		delete mPropertyBag.fileName;
+		delete mParameters["sap-language"];
 		var sTokenUrl = ApplyUtils.getUrl(this.ROUTES.TOKEN, mPropertyBag, mParameters);
 
 		var oRequestOption = WriteUtils.getRequestOptions(

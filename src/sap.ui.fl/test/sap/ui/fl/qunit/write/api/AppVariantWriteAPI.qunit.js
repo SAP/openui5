@@ -316,7 +316,7 @@ sap.ui.define([
 							assert.strictEqual(oAppVariant.packageName, "", "then the app variant will be saved with an empty package");
 							assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the app variant id is correct");
 							assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
-							assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/", "POST"), "then backend call is triggered with correct parameters");
+							assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?sap-language=en", "POST"), "then backend call is triggered with correct parameters");
 							assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then a UI change has been removed from the persistence");
 							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then the descriptor changes have been inlined in the app variant and have been removed from the persistence");
 						});
@@ -552,7 +552,7 @@ sap.ui.define([
 							assert.strictEqual(oAppVariant.packageName, "", "then the app variant will be saved with an empty package");
 							assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the app variant id is correct");
 							assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
-							assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/", "POST"), "then backend call is triggered with correct parameters");
+							assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?sap-language=en", "POST"), "then backend call is triggered with correct parameters");
 							assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then a UI change has been removed from the persistence");
 						});
 				});

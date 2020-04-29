@@ -43,7 +43,9 @@ sap.ui.define([
 			if (mPropertyBag.draftLayer) {
 				mParameters.version = "0";
 			}
-
+			if (this.isLanguageInfoRequired) {
+				ApplyUtils.addLanguageInfo(mParameters);
+			}
 			var sDataUrl = ApplyUtils.getUrl(this.ROUTES.DATA, mPropertyBag, mParameters);
 			return ApplyUtils.sendRequest(sDataUrl, "GET", { xsrfToken: this.xsrfToken}).then(function (oResult) {
 				var oResponse = oResult.response;

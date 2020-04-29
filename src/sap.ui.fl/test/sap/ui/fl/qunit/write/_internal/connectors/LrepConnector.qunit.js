@@ -524,7 +524,7 @@ sap.ui.define([
 				flexObjects: [],
 				url: "/sap/bc/lrep"
 			};
-			var sUrl = "/sap/bc/lrep/changes/";
+			var sUrl = "/sap/bc/lrep/changes/?sap-language=en";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
 			return LrepConnector.write(mPropertyBag).then(function () {
@@ -549,7 +549,7 @@ sap.ui.define([
 				flexObject: oFlexObject,
 				url: "/sap/bc/lrep"
 			};
-			var sUrl = "/sap/bc/lrep/changes/myFileName";
+			var sUrl = "/sap/bc/lrep/changes/myFileName?sap-language=en";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
 			return LrepConnector.update(mPropertyBag).then(function () {
@@ -575,7 +575,7 @@ sap.ui.define([
 				url: "/sap/bc/lrep",
 				transport: "transportID"
 			};
-			var sUrl = "/sap/bc/lrep/variants/myFileName?changelist=transportID";
+			var sUrl = "/sap/bc/lrep/variants/myFileName?changelist=transportID&sap-language=en";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
 			return LrepConnector.update(mPropertyBag).then(function () {
@@ -714,7 +714,7 @@ sap.ui.define([
 				url: "/sap/bc/lrep",
 				transport: "aTransport"
 			};
-			var sUrl = "/sap/bc/lrep/appdescr_variants/?changelist=aTransport";
+			var sUrl = "/sap/bc/lrep/appdescr_variants/?changelist=aTransport&sap-language=en";
 
 			return LrepConnector.appVariant.create(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
@@ -749,7 +749,7 @@ sap.ui.define([
 				skipIam: true,
 				transport: "ATO_NOTIFICATION"
 			};
-			var sUrl = "/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true";
+			var sUrl = "/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=en";
 
 			return LrepConnector.appVariant.create(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
@@ -787,7 +787,7 @@ sap.ui.define([
 					}
 				}
 			};
-			var sUrl = "/sap/bc/lrep/appdescr_variants/";
+			var sUrl = "/sap/bc/lrep/appdescr_variants/?sap-language=en";
 
 			return LrepConnector.appVariant.create(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
@@ -848,7 +848,7 @@ sap.ui.define([
 				url: "/sap/bc/lrep",
 				transport: "aTransport"
 			};
-			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId?changelist=aTransport";
+			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId?changelist=aTransport&sap-language=en";
 
 			return LrepConnector.appVariant.update(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "PUT", {
@@ -883,7 +883,7 @@ sap.ui.define([
 					getNamespace: function() {return "aNameSpace";}
 				}
 			};
-			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId?changelist=aTransport";
+			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId?changelist=aTransport&sap-language=en";
 			var oStubOpenTransportSelection = sinon.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: "aTransport"});
 			return LrepConnector.appVariant.update(mPropertyBag).then(function () {
 				assert.ok(oStubOpenTransportSelection.calledOnce);
