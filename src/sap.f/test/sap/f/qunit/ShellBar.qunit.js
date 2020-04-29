@@ -6,11 +6,8 @@ sap.ui.define([
 	"sap/f/shellBar/Factory",
 	"sap/f/ShellBarRenderer",
 	"sap/f/shellBar/ResponsiveHandler",
-	"sap/f/shellBar/AdditionalContentSupport",
-	"sap/f/shellBar/ContentButton",
 	"sap/m/ToolbarSpacer",
 	"sap/m/OverflowToolbarButton",
-	"sap/ui/core/theming/Parameters",
 	"sap/f/Avatar",
 	"sap/m/Menu",
 	"sap/ui/core/Core",
@@ -22,11 +19,8 @@ function (
 	Factory,
 	ShellBarRenderer,
 	ResponsiveHandler,
-	AdditionalContentSupport,
-	ContentButton,
 	ToolbarSpacer,
 	OverflowToolbarButton,
-	Parameters,
 	Avatar,
 	Menu,
 	Core,
@@ -177,10 +171,8 @@ function (
 				type: "sap.f.Avatar",
 				multiple: false,
 				singularName: undefined,
-				forwarding: {
-					aggregation: "avatar",
-					getter: "_getProfile"
-				}},
+				forwarding: undefined
+			},
 			{
 				name: "additionalContent",
 				type: "sap.f.IShellBar",
@@ -416,21 +408,6 @@ function (
 		}
 	});
 
-	QUnit.test("_getProfile", function (assert) {
-		// Arrange
-		var oFactoryGetterSpy = sinon.spy(this.oSB._oFactory, "getAvatarButton");
-
-		// Act
-		var oProfile = this.oSB._getProfile();
-
-		// Assert
-		assert.strictEqual(oFactoryGetterSpy.callCount, 1, "Factory getter called once");
-		assert.ok(oProfile.isA("sap.f.shallBar.ContentButton"), "Method returned correct object");
-
-		// Cleanup
-		oFactoryGetterSpy.restore();
-	});
-
 	QUnit.test("_getMenu", function (assert) {
 		// Arrange
 		var oFactoryGetterSpy = sinon.spy(this.oSB._oFactory, "getMegaMenu");
@@ -660,7 +637,7 @@ function (
 				showProductSwitcher: true,
 				showMenuButton: true
 			});
-			this.oSB.setAggregation("profile", new Avatar({initials: "UI"}));
+			this.oSB.setProfile(new Avatar({initials: "UI"}));
 			this.oRb = Core.getLibraryResourceBundle("sap.f");
 			this.oSB.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
@@ -983,24 +960,39 @@ function (
 
 	QUnit.test("avatarPressed", function (assert) {
 		// Setup
-		var oEventParamters,
-			done = assert.async(),
-			fnTestEvent = function () {
-				// Assert
-				assert.ok(true, "Event was fired");
-				assert.strictEqual(this.oSB._oAvatarButton.getAvatar().getId(),
-					oEventParamters.avatar.getId(), "Correct parameter was passed");
-
-				// Clean up
-				done();
-			}.bind(this);
+		var done = assert.async();
 
 		assert.expect(2);
 
 		this.oSB.attachAvatarPressed(function(oEvent) {
-			oEventParamters = oEvent.getParameters();
-			fnTestEvent(oEvent);
-		});
+			// Assert
+			assert.ok(true, "Event was fired");
+			assert.strictEqual(this.oSB._oAvatarButton.getId(), oEvent.getParameter("avatar").getId(), "Correct parameter was passed");
+
+			// Clean up
+			done();
+		}, this);
+
+		// Act
+		this.oSB._oAvatarButton.firePress();
+	});
+
+	QUnit.test("avatar press", function (assert) {
+		// Setup
+		var done = assert.async();
+
+		assert.expect(2);
+
+		this.oSB._oAvatarButton.attachPress(function(oEvent) {
+			var sEventProviderId = oEvent.getSource().getId();
+
+			// Assert
+			assert.ok(true, "Event was fired");
+			assert.strictEqual(this.oSB._oAvatarButton.getId(),	sEventProviderId, "Avatar own event is fired");
+
+			// Clean up
+			done();
+		}, this);
 
 		// Act
 		this.oSB._oAvatarButton.firePress();
