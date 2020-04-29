@@ -1,4 +1,5 @@
 <mvc:View
+	controllerName="sap.m.sample.InputValueState.C"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	xmlns:l="sap.ui.layout">
@@ -12,26 +13,25 @@
 				value="Value state Warning."/>
 			<Input valueState="Warning" value="Value state Warning with message containing a link." class="sapUiSmallMargin">
 				<formattedValueStateText>
-					<FormattedText htmlText="Warning message with sap.m.FormattedText containing %%0.">
+					<FormattedText htmlText="There is a conflict with the current value. Recommendation based on: %%0">
 						<controls>
-							<Link text="a link" href="#" target="_blank"/>
+							<Link text="See more information" href="" press=".handleFormattedTextLinkPress"/>
 						</controls>
 					</FormattedText>
 				</formattedValueStateText>
 			</Input>
 			<Input valueState="Error" value="Value state Error" class="sapUiSmallMargin"/>
-			<Input valueState="Error" value="Value state Error with message containing multiple links." class="sapUiSmallMargin">
-				<formattedValueStateText>
-					<FormattedText htmlText="Error message with sap.m.FormattedText containing %%0 %%1.">
-						<controls>
-							<Link text="multiple" href="#" target="_blank"/>
-							<Link text="links" href="#" target="_blank"/>
-						</controls>
-					</FormattedText>
-				</formattedValueStateText>
-			</Input>
-
 			<Input valueState="Information" value="Value state Information" class="sapUiSmallMargin"/>
+			<Input valueState="Information" value="Value state Information with message containing multiple links." class="sapUiSmallMargin">
+			<formattedValueStateText>
+				<FormattedText htmlText="Recommendation based on: %%0 and %%1.">
+					<controls>
+						<Link text="link 1" href="" press=".handleFormattedTextLinkPress"/>
+						<Link text="link 2" href="" press=".handleFormattedTextLinkPress"/>
+					</controls>
+				</FormattedText>
+			</formattedValueStateText>
+		</Input>
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

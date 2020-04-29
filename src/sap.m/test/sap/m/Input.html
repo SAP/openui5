@@ -741,28 +741,52 @@
 		});
 
 		var oFormattedValueStateInput = new sap.m.Input("fvsinput", {
-			valueState: "Warning",
-			valueStateText: "Plain text warning message",
-			placeholder: "Warning value state message with formatted text containing link",
+			valueState: "Information",
+			valueStateText: "Plain text information message",
+			placeholder: "Information value state message with formatted text containing link",
 			formattedValueStateText: new sap.m.FormattedText({
-				htmlText: "Warning value state message with formatted text containing %%0",
+				htmlText: "Information value state message with formatted text containing %%0",
 				controls: [new sap.m.Link({
 					text: "Link",
 					href: "#",
-					target: "_blank"
+					press: function() {
+						var oDialog = new sap.m.Dialog({
+							title: 'Recomendations are based on:',
+							type: 'Message',
+							state: 'Information',
+							content: new sap.m.Text({
+								text: 'Machine learning information and more details'
+							}),
+							beginButton: new sap.m.Button({
+								text: 'OK',
+								press: function () {
+									oDialog.close();
+								}
+							}),
+							afterClose: function () {
+								oDialog.destroy();
+							}
+						});
+						oDialog.open();
+					}
 				})]
 			})
 		});
 
 		var oFormattedValueStateInput2 = new sap.m.Input("fvsinput2", {
-			valueState: "Error",
-			valueStateText: "Plain text error message",
-			placeholder: "Input with suggestions (countries) and error value state message with formatted text containing multiple links",
+			valueState: "Warning",
+			valueStateText: "Plain text warning message",
+			placeholder: "Input with suggestions (countries) and error value state message with formatted text containing multiple links. Type 'B'",
 			showSuggestion: true,
 			suggestionItems: [
 				new sap.ui.core.Item({text: "Argentina"}),
 				new sap.ui.core.Item({text: "Bulgaria"}),
 				new sap.ui.core.Item({text: "Brazil"}),
+				new sap.ui.core.Item({text: "Belarus"}),
+				new sap.ui.core.Item({text: "Burkina Faso"}),
+				new sap.ui.core.Item({text: "Bangladesh"}),
+				new sap.ui.core.Item({text: "Belize"}),
+				new sap.ui.core.Item({text: "Belgium"}),
 				new sap.ui.core.Item({text: "Canada"}),
 				new sap.ui.core.Item({text: "Denmark"})
 			],
@@ -771,12 +795,16 @@
 				controls: [new sap.m.Link({
 					text: "multiple",
 					href: "#",
-					target: "_blank"
+					press: function() {
+						sap.m.MessageToast.show("You have pressed a link in value state message", { my: sap.ui.core.Popup.Dock.CenterCenter, at: sap.ui.core.Popup.Dock.CenterCenter });
+					}
 				}),
 				new sap.m.Link({
 					text: "links",
 					href: "#",
-					target: "_blank"
+					press: function() {
+						sap.m.MessageToast.show("You have pressed a link in value state message", { my: sap.ui.core.Popup.Dock.CenterCenter, at: sap.ui.core.Popup.Dock.CenterCenter });
+					}
 				})]
 			})
 		});

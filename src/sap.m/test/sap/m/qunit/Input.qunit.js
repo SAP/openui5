@@ -4856,9 +4856,10 @@ sap.ui.define([
 			})
 		}),
 			oSuggestionsPopoverHeader;
+
 		// Act
 		this.oInput.onfocusin();
-		this.clock.tick(300);
+		this.clock.tick();
 
 		// Assert
 		assert.ok(this.oInput._oValueStateMessage._oPopup.getContent().classList.contains("sapMValueStateMessage"), "Value state message is displayed");
@@ -4886,7 +4887,7 @@ sap.ui.define([
 
 		// Act
 		oSuggestionsPopoverHeader.getControls()[0].firePress();
-		this.clock.tick(300);
+		this.clock.tick();
 
 		// Assert
 		assert.strictEqual(oSuggestionsPopoverHeader.$().text(), "Value state message containing a link", "Formatted text value state message containing a link is still displayed in the suggestion popover header after link click");
@@ -4896,7 +4897,7 @@ sap.ui.define([
 
 		// Act
 		this.oInput._closeSuggestionPopup();
-		this.clock.tick(300);
+		this.clock.tick();
 
 		// Assert
 		assert.ok(this.oInput._oValueStateMessage._oPopup.getContent().classList.contains("sapMValueStateMessage"), "Value state message is displayed");
@@ -4923,7 +4924,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		this.oInput.onfocusin();
-		this.clock.tick(300);
+		this.clock.tick();
 
 
 		oPopup = this.oInput._oValueStateMessage._oPopup;
@@ -4933,7 +4934,7 @@ sap.ui.define([
 		assert.strictEqual(document.querySelectorAll("#" + this.oInput.getId() + "-message a").length, 2, "Value state message links are displayed");
 	});
 
-	QUnit.test("Value state popup should be closed when Tab key is pressed", function (assert) {
+	QUnit.test("Value state popup should be closed on focusout", function (assert) {
 		// Arrange
 		this.oInput.setValueState("Warning");
 		var oFormattedValueStateText = new FormattedText({
@@ -4954,47 +4955,12 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		this.oInput.focus();
-		this.clock.tick(300);
-
-		sap.ui.test.qunit.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.TAB);
-		this.clock.tick(300);
-
+		this.clock.tick();
+		this.oInput.getFocusDomRef().blur();
 		oPopup = this.oInput._oValueStateMessage._oPopup;
+
 		// Assert
 		assert.strictEqual(oPopup.getContent().style.display, "none", "Value state message is not displayed");
-	});
-
-	QUnit.test("Value state popup should not be closed if clicked/tapped on the message popup", function (assert) {
-		// Arrange
-		this.oInput.setValueState("Warning");
-		var oFormattedValueStateText = new FormattedText({
-			htmlText: "Value state message containing %%0 %%1",
-			controls: [new Link({
-				text: "multiple",
-				href: "#"
-			}),
-			new Link({
-				text: "links",
-				href: "#"
-			})]
-		});
-		var oPopup;
-
-		// Act
-		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		sap.ui.getCore().applyChanges();
-
-		this.oInput.getFocusDomRef().focus();
-		this.oInput.getFocusDomRef().click();
-
-
-		this.oInput.getFormattedValueStateText().$().trigger("click");
-		this.clock.tick(300);
-
-		oPopup = this.oInput._oValueStateMessage._oPopup;
-
-		// Assert
-		assert.ok(oPopup && oPopup.getContent().style.display !== "none", "Value state message popup is still open");
 	});
 
 	QUnit.test("Value state message link should be clickable and popup should be closed after a click", function (assert) {
@@ -5020,7 +4986,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		this.oInput.getFocusDomRef().focus();
-		this.clock.tick(300);
+		this.clock.tick();
 		sap.ui.getCore().applyChanges();
 
 		oFakeEvent = {
@@ -5028,7 +4994,7 @@ sap.ui.define([
 		};
 
 		this.oInput.onfocusout(oFakeEvent);
-		this.clock.tick(300);
+		this.clock.tick();
 		this.oInput.getFormattedValueStateText().getControls()[0].firePress();
 
 		oPopup = this.oInput._oValueStateMessage._oPopup;
@@ -5058,16 +5024,226 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		this.oInput.focus();
-		this.clock.tick(300);
+		this.clock.tick();
 
 
 		this.oInput.onfocusout(oFakeEvent);
-		this.clock.tick(900);
+		this.clock.tick();
 
 		oPopup = this.oInput._oValueStateMessage._oPopup;
 
 		// Assert
 		assert.strictEqual(oPopup.getContent().style.display, "none", "Value state message is not displayed");
+	});
+
+	QUnit.test("Setting new value state formatted text aggregation should be update also the value state header", function (assert) {
+		// Arrange
+		var	oSuggPopoverHeaderValueState;
+		var oFormattedValueStateText = new FormattedText({
+			htmlText: "Value state message containing a %%0",
+			controls: new Link({
+				text: "link",
+				href: "#"
+			})
+		});
+
+		// Act
+		this.oInput.setValueState("Error");
+		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
+		sap.ui.getCore().applyChanges();
+
+		// Open sugg. popover with the initialy set formatted text value state
+		// to switch the FormattedText aggregation to the value state header
+		this.oInput._openSuggestionsPopover();
+		this.clock.tick();
+		this.oInput._closeSuggestionPopup();
+		this.clock.tick();
+
+		oFormattedValueStateText = new FormattedText({
+			htmlText: "Another value state message containing %%0 %%1",
+			controls: [
+				new Link({
+					text: "multiple",
+					href: "#"
+				}),
+				new Link({
+					text: "links",
+					href: "#"
+				})
+			]
+		});
+
+		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
+		sap.ui.getCore().applyChanges();
+
+		this.oInput._openSuggestionsPopover();
+		this.clock.tick();
+
+		oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover()._oPopover.getCustomHeader().getFormattedText().getDomRef().textContent;
+
+		// Assert
+		assert.strictEqual(oSuggPopoverHeaderValueState, "Another value state message containing multiple links", "New FormattedText value state message is correcrtly set in the popover's value state header");
+	});
+
+	QUnit.test("Change to the formatted text input aggregation should also be change in the value state header", function (assert) {
+		// Arrange
+		this.oInput.setValueState("Error");
+		var oFormattedValueStateText = new FormattedText({
+			htmlText: "Value state message containing a %%0",
+			controls: new Link({
+				text: "link",
+				href: "#"
+			})
+		});
+		var	oSuggPopoverHeaderValueState;
+
+		// Act
+		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
+
+		this.oInput._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
+		sap.ui.getCore().applyChanges();
+
+		this.oInput._openSuggestionsPopover();
+		this.clock.tick();
+
+		oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover()._oPopover.getCustomHeader().getFormattedText().getDomRef().textContent;
+
+		// Assert
+		assert.strictEqual(oSuggPopoverHeaderValueState, "New value state message containing a link", "The FormattedText aggregation is correctly updated in the popover's value state header");
+	});
+
+	QUnit.test("Change to the formatted text input aggregation should also be reflected in the value state header while it is open", function (assert) {
+		// Arrange
+		this.oInput.setValueState("Error");
+		var oFormattedValueStateText = new FormattedText({
+			htmlText: "Value state message containing a %%0",
+			controls: new Link({
+				text: "link",
+				href: "#"
+			})
+		});
+		var	oSuggPopoverHeaderValueState;
+		var oPopup;
+
+		// Act
+		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
+		this.oInput._openSuggestionsPopover();
+		this.clock.tick();
+
+		this.oInput._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
+		sap.ui.getCore().applyChanges();
+		oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover()._oPopover.getCustomHeader().getFormattedText().getDomRef().textContent;
+
+		// Assert
+		assert.strictEqual(oSuggPopoverHeaderValueState, "New value state message containing a link", "The FormattedText aggregation is correctly updated in the popover's value state header while it's open");
+
+		// Act
+		this.oInput._closeSuggestionPopup();
+		this.clock.tick();
+
+		oPopup = this.oInput._oValueStateMessage._oPopup;
+		// Assert
+		assert.strictEqual(oPopup.getContent().childNodes[1].textContent, "New value state message containing a link", "The updated FormattedText aggregation is also correctly displayed in the Input's value state popup after the suggestion popover is closed");
+	});
+
+	QUnit.test("Arrow up when the first item is selected should place visible pseudo focus on the formatted text value state message DOM on IE", function (assert) {
+		// Arrange
+		this.stub(Device, "browser", {
+			msie: true
+		});
+		this.oInput.setValueState("Error");
+		var oFormattedValueStateText = new FormattedText({
+			htmlText: "Value state message containing a %%0",
+			controls: new Link({
+				text: "link",
+				href: "#"
+			})
+		});
+		var	oHeaderValueFormattedText;
+
+		// Act
+		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
+		sap.ui.getCore().applyChanges();
+
+		this.oInput._$input.focus().val("on").trigger("input");
+		this.clock.tick(300);
+
+		sap.ui.test.qunit.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ARROW_UP);
+		this.clock.tick();
+
+		oHeaderValueFormattedText = this.oInput._getSuggestionsPopover()._oPopover.getCustomHeader().getFormattedText();
+
+		// Assert
+		assert.ok(oHeaderValueFormattedText.$().hasClass("sapMPseudoFocus"), "Pseudo focus is on formatted text value state message");
+		assert.strictEqual(this.oInput.getFocusDomRef().getAttribute("aria-activedescendant"), oHeaderValueFormattedText.getId(), "Aria attribute of input is the ID of the formatted value state text");
+		assert.notOk(this.oInput._oSuggPopover._oList.getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is not on the first item");
+	});
+
+	QUnit.test("Arrow up when the first item is selected should place visible pseudo focus on the value state header DOM on browsers different from IE", function (assert) {
+		// Arrange
+		this.stub(Device, "browser", {
+			msie: false
+		});
+		this.oInput.setValueState("Error");
+		var oFormattedValueStateText = new FormattedText({
+			htmlText: "Value state message containing a %%0",
+			controls: new Link({
+				text: "link",
+				href: "#"
+			})
+		});
+		var	oValueStateHeader;
+
+		// Act
+		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
+		sap.ui.getCore().applyChanges();
+
+		this.oInput._$input.focus().val("on").trigger("input");
+		this.clock.tick(300);
+
+		sap.ui.test.qunit.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ARROW_UP);
+		this.clock.tick();
+
+		oValueStateHeader = this.oInput._getSuggestionsPopover()._oPopover.getCustomHeader();
+
+		// Assert
+		assert.ok(oValueStateHeader.$().hasClass("sapMPseudoFocus"), "Pseudo focus is on the value state header");
+		assert.strictEqual(this.oInput.getFocusDomRef().getAttribute("aria-activedescendant"), oValueStateHeader.getFormattedText().getId(), "Aria attribute of input is the ID of the formatted value state text");
+		assert.notOk(this.oInput._oSuggPopover._oList.getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is not on the first item");
+	});
+
+	QUnit.test("Should move the visual focus from value state header to the input when the user starts typing", function (assert) {
+		// Arrange
+		var oFormattedValueStateText = new FormattedText({
+			htmlText: "Value state message containing a %%0",
+			controls: new Link({
+				text: "link",
+				href: "#"
+			})
+		});
+		var	oValueStateHeader;
+
+		// Act
+		this.oInput.setValueState("Information");
+		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
+		sap.ui.getCore().applyChanges();
+
+		this.oInput._$input.focus().val("o").trigger("input");
+		this.clock.tick(300);
+
+		// Select the value state header
+		sap.ui.test.qunit.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ARROW_UP);
+		this.clock.tick();
+
+		this.oInput._$input.focus().val("one").trigger("input");
+		this.clock.tick();
+
+		oValueStateHeader = this.oInput._getSuggestionsPopover()._oPopover.getCustomHeader();
+
+		// Assert
+		assert.notOk(oValueStateHeader.$().hasClass("sapMPseudoFocus"), "Pseudo focus is not the value state header");
+		assert.notOk(this.oInput._oSuggPopover._oList.getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is not on the first item");
+		assert.ok(this.oInput.$().hasClass("sapMFocus"), "The visual pseudo focus is on the input");
 	});
 
 	QUnit.module("Input with suggestions - change event", {

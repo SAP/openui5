@@ -332,6 +332,10 @@ function(
 		this._oValueStateMessage = new ValueStateMessage(this);
 		// handle composition events & validation of composition symbols
 		this._bIsComposingCharacter = false;
+
+		this.fnCloseValueStateOnClick = function() {
+			this.closeValueStateMessage();
+		};
 	};
 
 	/**
@@ -386,10 +390,6 @@ function(
 
 		// mark the rendering phase
 		this.bRenderingPhase = true;
-
-		// If there are links in the value state message, close the popup
-		// after press
-		this._handleValueStateLinkPress();
 	};
 
 	InputBase.prototype.onAfterRendering = function() {
@@ -421,7 +421,6 @@ function(
 		// rendering phase is finished
 		this.bRenderingPhase = false;
 
-
 		if (bIsFocused) {
 			this[bClosedValueState ? "closeValueStateMessage" : "openValueStateMessage"]();
 		}
@@ -440,16 +439,6 @@ function(
 	/* =========================================================== */
 	/* Event handlers                                              */
 	/* =========================================================== */
-
-	/**
-	 * Handles the tab press event of the Input.
-	 *
-	 * @param {jQuery.Event} oEvent The event object.
-	 * @private
-	 */
-	InputBase.prototype.onsaptabnext = function(oEvent) {
-		this.closeValueStateMessage();
-	};
 
 	/**
 	 * Handles the touch start event of the Input.
@@ -888,16 +877,18 @@ function(
 	 * @param {jQuery.Event} oEvent The event object.
 	 * @private
 	 */
-	InputBase.prototype._handleValueStateLinkPress = function() {
-		var oFormattedValueState = this.getFormattedValueStateText();
-		if (oFormattedValueState && oFormattedValueState.getHtmlText() && oFormattedValueState.getControls()) {
-			oFormattedValueState.getControls().forEach(
-				function(oLink) {
-						oLink.attachPress(function() {
-							this.closeValueStateMessage();
-						}, this);
-				}, this);
-		}
+	InputBase.prototype._attachValueStateLinkPress = function() {
+		this._aValueStateLinks().forEach(
+			function(oLink) {
+				oLink.attachPress(this.fnCloseValueStateOnClick, this);
+			}, this);
+	};
+
+	InputBase.prototype._dettachValueStateLinkPress = function() {
+		this._aValueStateLinks().forEach(
+			function(oLink) {
+				oLink.detachPress(this.fnCloseValueStateOnClick, this);
+			}, this);
 	};
 
 	/**
@@ -951,6 +942,7 @@ function(
 	 */
 	InputBase.prototype.closeValueStateMessage = function() {
 		if (this._oValueStateMessage) {
+			this._dettachValueStateLinkPress();
 			this._oValueStateMessage.close();
 		}
 	};
@@ -1020,18 +1012,17 @@ function(
 	 */
 	InputBase.prototype.openValueStateMessage = function() {
 		if (this._oValueStateMessage && this.shouldValueStateMessageBeOpened()) {
-
-			// if the input receive the focus and the parent div scrolls,
+			// Render the value state message after closing of the popover
+			// is complete and the FormattedText aggregation is finished the parent
+			// switch from the ValueStateHeader to the InputBase.
+			// Also if the input receive the focus and the parent div scrolls,
 			// in IE we should wait until the scroll ends
-			if (Device.browser.msie) {
-				setTimeout(function () {
-					if (!this.bIsDestroyed) {
-						this._oValueStateMessage.open();
-					}
-				}.bind(this), 0);
-			} else {
-				this._oValueStateMessage.open();
-			}
+			setTimeout(function () {
+				if (!this.bIsDestroyed) {
+					this._attachValueStateLinkPress();
+					this._oValueStateMessage.open();
+				}
+			}.bind(this), 0);
 		}
 	};
 
