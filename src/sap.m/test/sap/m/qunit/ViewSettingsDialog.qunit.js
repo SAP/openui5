@@ -1995,6 +1995,54 @@ sap.ui.define([
 		assert.ok(this.oVSD.getDomRef().id === this.oVSD.getId() + "-dialog", "The inner dialogs DOM reference is returned");
 	});
 
+	QUnit.test("Check setSelectedFilterCompoundKeys and getSelectedFilterCompoundKeys method", function (assert) {
+		var oCompoundKeys1 = {
+			"myNameFilter": {
+				"name1": true,
+				"name3": true
+			}
+		},
+		oCompoundKeys2 = {
+			"myNameFilter": {
+				"name3": true
+			}
+		},
+		oCompoundKeys3 = {
+			"myStatusFilter": {
+				"status1": true,
+				"status2": true
+			}
+		},
+		aSelected,
+		oCompoundResult;
+
+		oVsdConfig.addFilterItems(this.oVSD);
+
+		// act
+		this.oVSD.setSelectedFilterCompoundKeys(oCompoundKeys1);
+		aSelected = this.oVSD.getSelectedFilterKeys();
+		oCompoundResult = this.oVSD.getSelectedFilterCompoundKeys();
+		// assert
+		assert.ok(Object.keys(aSelected).length === 2 && aSelected["name1"] && aSelected["name3"], "There are proper items selected after applying the first preset");
+		assert.deepEqual(oCompoundResult, oCompoundKeys1, "There are proper items returned by getSelectedFilterCompoundKeys()");
+
+		// act
+		this.oVSD.setSelectedFilterCompoundKeys(oCompoundKeys2);
+		aSelected = this.oVSD.getSelectedFilterKeys();
+		oCompoundResult = this.oVSD.getSelectedFilterCompoundKeys();
+		// assert
+		assert.ok(Object.keys(aSelected).length === 1 && aSelected["name3"], "There are proper items selected after applying the second preset");
+		assert.deepEqual(oCompoundResult, oCompoundKeys2, "There are proper items returned by getSelectedFilterCompoundKeys()");
+
+		// act
+		this.oVSD.setSelectedFilterCompoundKeys(oCompoundKeys3);
+		aSelected = this.oVSD.getSelectedFilterKeys();
+		oCompoundResult = this.oVSD.getSelectedFilterCompoundKeys();
+		// assert
+		assert.ok(Object.keys(aSelected).length === 3 && aSelected["name3"] && aSelected["status1"] && aSelected["status2"], "There are proper items selected after applying the third preset");
+		assert.deepEqual(oCompoundResult, Object.assign(oCompoundKeys2, oCompoundKeys3), "There are proper items returned by getSelectedFilterCompoundKeys()");
+	});
+
 	QUnit.module("Re-rendering after changing selections", {
 		beforeEach : function () {
 			this.oVSD = new ViewSettingsDialog();
