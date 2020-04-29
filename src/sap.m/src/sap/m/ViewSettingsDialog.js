@@ -356,6 +356,7 @@ function(
 		this._sTitleLabelId                 = sId + "-title";
 		this._sFilterDetailTitleLabelId     = sId + "-detailtitle";
 		this._oFiltersSelectedOnly			= {};
+		this._oKeylessFilters				= {};
 
 		/* setup a name map between the sortItems
 		 aggregation and an sap.m.List with items
@@ -410,6 +411,7 @@ function(
 		this._filterContent                 = null;
 		this._sCustomTabsButtonsIdPrefix    = null;
 		this._fnFilterSearchCallback        = null;
+		this._oKeylessFilters               = null;
 
 		// sap.ui.core.Popup removes its content on close()/destroy() automatically from the static UIArea,
 		// but only if it added it there itself. As we did that, we have to remove it also on our own
@@ -1493,12 +1495,13 @@ function(
 			sParentKey,
 			oFilterItem;
 
+		this._oKeylessFilters = {};
+
 		for (i = 0; i < aSelectedFilterItems.length; i++) {
 			oFilterItem = aSelectedFilterItems[i];
 			if (oFilterItem instanceof sap.m.ViewSettingsCustomItem) {
 				sKey = oFilterItem.getKey();
 				oSelectedFilterKeys[sKey] = oFilterItem.getSelected();
-
 			} else {
 				sKey = oFilterItem.getKey();
 				sParentKey = oFilterItem.getParent().getKey();
@@ -1506,6 +1509,13 @@ function(
 					oSelectedFilterKeys[sParentKey] = {};
 				}
 				oSelectedFilterKeys[sParentKey][sKey] = oFilterItem.getSelected();
+				if (sKey === "") {
+					// store additional data for keyless items in order to ease restore
+					if (!this._oKeylessFilters[sParentKey]) {
+						this._oKeylessFilters[sParentKey] = {};
+					}
+					this._oKeylessFilters[sParentKey][oFilterItem.getText()] = true;
+				}
 			}
 		}
 
@@ -1604,6 +1614,7 @@ function(
 		var aFilterItems = this.getFilterItems(),
 			sParentKey,
 			sKey,
+			sText,
 			oParentItem,
 			oSelectedSubFilterKeys,
 			aSubFilterItems,
@@ -1638,7 +1649,10 @@ function(
 					// loop through the sub-items
 					for (iIndex = 0; iIndex < aSubFilterItems.length; iIndex++) {
 						sKey = aSubFilterItems[iIndex].getKey();
-						if (oSelectedSubFilterKeys[sKey]) {
+						sText = aSubFilterItems[iIndex].getText();
+						if ((sKey !== "" && oSelectedSubFilterKeys[sKey]) ||
+							(sKey === "" && this._oKeylessFilters[sParentKey]
+										 && this._oKeylessFilters[sParentKey][sText])) {
 							// get passed value; respect multi-select
 							bSelected = bOneSelected ? false : oSelectedSubFilterKeys[sKey];
 						} else {
