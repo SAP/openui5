@@ -3552,7 +3552,7 @@ sap.ui.define([
 		$headerTitleClone.appendTo(this._$titleArea.parent());
 
 		if (bEnableStickyMode) {
-			this.getHeaderTitle() && this.getHeaderTitle()._adaptLayoutForDomElement($headerTitleClone);
+			this.getHeaderTitle() && this.getHeaderTitle()._adaptObjectPageHeaderIndentifierLine($headerTitleClone);
 		}
 
 		return $headerTitleClone;

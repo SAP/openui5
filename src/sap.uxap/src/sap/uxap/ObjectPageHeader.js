@@ -652,7 +652,7 @@ sap.ui.define([
 							this.$().hide();
 						}
 
-						that._resizeIdentifierLineContainer();
+						that._resizeIdentifierLineContainer(that.$());
 
 					};
 				}
@@ -844,37 +844,7 @@ sap.ui.define([
 	 */
 	ObjectPageHeader.prototype._adaptLayout = function (oEvent) {
 
-		this._adaptLayoutForDomElement(null, oEvent);
-	};
-
-	/**
-	 * Adapts title/subtitle container and action buttons and overflow button with a delay.
-	 * As this method may be called multiple times in one JavaScript tick, every time it clears
-	 * the previous timeout, if any, and sets a new one, so it will be executed only once.
-	 * @private
-	 */
-	ObjectPageHeader.prototype._adaptLayoutDelayed = function () {
-		if (this._adaptLayoutTimeout) {
-			clearTimeout(this._adaptLayoutTimeout);
-		}
-
-		this._adaptLayoutTimeout = setTimeout(function() {
-			this._adaptLayoutTimeout = null;
-			this._adaptLayout();
-		}.bind(this), 0);
-	};
-
-	/**
-	 * Adapts the layout of the given headerTitle domElement
-	 *
-	 * @param {object} $headerDomRef The reference to the header dom element
-	 * @param {object} oEvent The event of child-element that brought the need to adapt the headerTitle layout
-	 *
-	 * @private
-	 */
-	ObjectPageHeader.prototype._adaptLayoutForDomElement = function ($headerDomRef, oEvent) {
-
-		var $identifierLine = this._findById($headerDomRef, "identifierLine"),
+		var $identifierLine = this.$("identifierLine"),
 			iIdentifierContWidth = $identifierLine.width(),
 			iActionsWidth = this._getActionsWidth(), // the width off all actions without hidden one
 			iActionsContProportion = iActionsWidth / iIdentifierContWidth, // the percentage(proportion) that action buttons take from the available space
@@ -909,11 +879,30 @@ sap.ui.define([
 			$overflowButton.hide();
 		}
 
-		this._adaptObjectPageHeaderIndentifierLine($headerDomRef);
+		this._adaptObjectPageHeaderIndentifierLine(this.$());
 	};
 
 	/**
-	 * Adapt title/subtitle container and action buttons
+	 * Adapts title/subtitle container and action buttons and overflow button with a delay.
+	 * As this method may be called multiple times in one JavaScript tick, every time it clears
+	 * the previous timeout, if any, and sets a new one, so it will be executed only once.
+	 * @private
+	 */
+	ObjectPageHeader.prototype._adaptLayoutDelayed = function () {
+		if (this._adaptLayoutTimeout) {
+			clearTimeout(this._adaptLayoutTimeout);
+		}
+
+		this._adaptLayoutTimeout = setTimeout(function() {
+			this._adaptLayoutTimeout = null;
+			this._adaptLayout();
+		}.bind(this), 0);
+	};
+
+	/**
+	 * Adapt title/subtitle container
+	 * @param {jQuery} $domRef the original or the cloned dom element of the headerTitle
+	 * The cloned dom element is used for pre-calculating the expected height of the header in an alternative [to the current] state
 	 * @private
 	 */
 	ObjectPageHeader.prototype._adaptObjectPageHeaderIndentifierLine = function ($domRef) {
@@ -1080,8 +1069,7 @@ sap.ui.define([
 
 	/**
 	 * Finds the sub-element with the given <code>sId</code> contained
-	 * within <code>$headerDomRef</code> (if <code>$headerDomRef</code> is supplied) or
-	 * globally, prepended with own id (if <code>$headerDomRef</code> is not supplied)
+	 * within <code>$headerDomRef</code>
 	 *
 	 * @param {object} jQuery reference to the header dom element
 	 * @param {string} the id of the element to be found
@@ -1092,17 +1080,14 @@ sap.ui.define([
 	ObjectPageHeader.prototype._findById = function ($headerDomRef, sId) {
 		var sEscapedId;
 
-		if (!sId) {
+		if (!sId || !$headerDomRef) {
 			return null;
 		}
 
-		if ($headerDomRef) {
-			sId = this.getId() + '-' + sId;
-			sEscapedId = "#" + sId.replace(/(:|\.)/g,'\\$1');
-			return $headerDomRef.find(sEscapedId);
-		}
+		sId = this.getId() + '-' + sId;
+		sEscapedId = "#" + sId.replace(/(:|\.)/g,'\\$1');
+		return $headerDomRef.find(sEscapedId);
 
-		return this.$(sId); //if no dom reference then search within its own id-space (prepended with own id)
 	};
 
 	/**
