@@ -11,6 +11,7 @@ sap.ui.define([
 	"jquery.sap.mobile",
 	"sap/ui/core/library",
 	"sap/m/InputBase",
+	"sap/m/Link",
 	"sap/ui/base/Event",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
@@ -34,6 +35,7 @@ sap.ui.define([
 	jQuery,
 	coreLibrary,
 	InputBase,
+	Link,
 	Event,
 	Log,
 	KeyCodes,
@@ -7488,6 +7490,106 @@ sap.ui.define([
 		assert.notEqual(document.activeElement, this.oMultiComboBox.getFocusDomRef(), "Focus is not in the input field");
 		assert.strictEqual(this.oMultiComboBox.getValue(), "", "The input value is deleted");
 	});
+
+	QUnit.module("Value State Containing links", {
+		beforeEach : function() {
+			var oItem1, oItem2, oItem3, oItem4;
+			this.oMultiComboBox = new MultiComboBox({
+				items: [
+					oItem1 = new ListItem({
+						text: "Hong Kong",
+						additionalText: "China"
+					}),
+					oItem2 = new ListItem({
+						text: "Haskovo",
+						additionalText: "Bulgaria"
+					}),
+					oItem3 = new ListItem({
+						text: "Baragoi",
+						additionalText: "Kenya"
+					}),
+					oItem4 = new ListItem({
+						text: "Brussel",
+						additionalText: "Belgium"
+					})
+				]
+			});
+
+			var oFormattedValueStateText = new sap.m.FormattedText({
+				htmlText: "Value state message containing %%0 %%1",
+				controls: [new Link({
+					text: "multiple",
+					href: "#"
+				}),
+				new Link({
+					text: "links",
+					href: "#"
+				})]
+			});
+
+			this.oMultiComboBox.setShowValueStateMessage(true);
+			this.oMultiComboBox.setValueState("Warning");
+			this.oMultiComboBox.setFormattedValueStateText(oFormattedValueStateText);
+			this.oMultiComboBox.placeAt("MultiComboBox-content");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oMultiComboBox.destroy();
+		}
+	});
+
+	QUnit.test("onkeydown should focus the formatted value state header if the current focus is on the input", function(assert) {
+		// Act
+		this.oMultiComboBox.open();
+		this.clock.tick();
+
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._oValueStateHeader.getDomRef(), document.activeElement, "The formatted value state message is focused");
+	});
+
+	QUnit.test("tab key pressed on the last link in the value state message should close the picker", function(assert) {
+		// Act
+		this.oMultiComboBox.open();
+		this.clock.tick();
+
+		// this.oMultiComboBox._getSuggestionsPopover()._oValueStateHeader.getFormattedText().getControls()[1].getDomRef().focus();
+		this.oMultiComboBox._handleFormattedTextNav();
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox._getSuggestionsPopover()._oValueStateHeader.getFormattedText().getControls()[1].getDomRef(), KeyCodes.TAB);
+
+		// Assert
+		assert.ok(!this.oMultiComboBox.isOpen(), "Popover is closed");
+	});
+
+	QUnit.test("when the focus is on the first item it should go to the value state header containing a link on arrow up", function(assert) {
+		// Act
+		this.oMultiComboBox.getFocusDomRef().focus();
+		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.ARROW_DOWN, false, true);
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getListItem(this.oMultiComboBox.getItems()[0]).getDomRef(), KeyCodes.ARROW_UP);
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._oValueStateHeader.getDomRef(), document.activeElement, "Value state header is focused");
+	});
+
+	QUnit.test("Value state header containing links should be focusable but not part of the tab chain", function(assert) {
+		// Arrange
+		var oFakeEvent = {
+			isMarked: function () { },
+			setMarked: function () { },
+			preventDefault: function() {return false; }
+		};
+
+		// Act
+		this.oMultiComboBox.open();
+		this.oMultiComboBox.onsapdown(oFakeEvent);
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._oValueStateHeader.$().attr("tabindex"), "-1", "Value state message is focusable but not part of the tab chain");
+		assert.ok(this.oMultiComboBox._getSuggestionsPopover()._oValueStateHeader.$().hasClass("sapMFocusable"), "sapMFocusable class is applied to the value state header");
+	});
+
 
 	QUnit.module("Composition characters handling", {
 		beforeEach: function () {

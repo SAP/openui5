@@ -96,8 +96,15 @@ li.sapMMultiComboBoxItem .sapMCbBg {
 	line-height: 2.5rem;
 }
 
-.sapMMultiComboBoxPicker .sapMSLITitleOnly {
-	font-size: 0.875rem;
+.sapMMultiComboBoxPicker {
+	.sapMFocusable:focus {
+		outline: 1px dotted @sapUiContentFocusColor;
+		outline-offset: -0.125rem;
+	}
+
+	}
+	.sapMSLITitleOnly {
+		font-size: 0.875rem;
 }
 
 /* Compact size */
