@@ -30,7 +30,7 @@
 			/>
 		</form:layout>
 		<form:formContainers>
-			<form:FormContainer formElements="{path: 'items', templateShareable: false}">
+			<form:FormContainer formElements="{path: 'items', templateShareable: false}" visible="{visible}">
 				<form:toolbar>
 					<Toolbar style="Clear" visible="{= !!${label}}">
 						<Title text="{label}" titleStyle="H6" />

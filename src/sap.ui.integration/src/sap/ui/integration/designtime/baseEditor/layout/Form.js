@@ -57,6 +57,12 @@ sap.ui.define([
 		}
 	}
 
+	function isGroupVisible(aConfigs) {
+		return aConfigs.some(function (mGroupConfig) {
+			return typeof mGroupConfig.config.visible === "boolean" ? mGroupConfig.config.visible : true;
+		});
+	}
+
 	/**
 	 * Object declaration for property editor configuration.
 	 *
@@ -149,12 +155,15 @@ sap.ui.define([
 
 				return {
 					label: mGroupConfig.label,
-					items: aItems
+					items: aItems,
+					visible: isGroupVisible(aItems)
 				};
 			});
 		} else {
+			var aItems = aConfigs.splice(0, aConfigs.length).map(createFormField);
 			mViewModel.groups = [{
-				items: aConfigs.splice(0, aConfigs.length).map(createFormField)
+				items: aItems,
+				visible: isGroupVisible(aItems)
 			}];
 		}
 
