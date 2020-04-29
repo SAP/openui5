@@ -576,8 +576,11 @@ sap.ui.define([
 		 *   binding contexts relevant for template pre-processing
 		 * @param {object} mSettings.models
 		 *   models relevant for template pre-processing
-		 * @returns {Element}
-		 *   <code>oRootElement</code>
+		 * @returns {Element|Promise}
+		 *   <code>oRootElement</code> or a promise which resolves with <code>oRootElement</code> as
+		 *   soon as processing is done, or is rejected with a corresponding error if processing
+		 *   fails; since 1.57.0, a promise is returned if and only if processing cannot complete
+		 *   synchronously
 		 *
 		 * @private
 		 */
