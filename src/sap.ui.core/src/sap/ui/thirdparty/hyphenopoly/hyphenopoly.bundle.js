@@ -168,11 +168,11 @@
 					xhr.responseType = "arraybuffer";
 					xhr.onload = function () {
 						if (xhr.status !== 200) {
-							reject(xhr.status);
+							return reject(xhr.status);
 						}
 
 						if (!(xhr.response instanceof ArrayBuffer)) {
-							reject("The response for '" + path + "' is invalid. Expected ArrayBuffer.");
+							return reject("The response for '" + path + "' is invalid. Expected ArrayBuffer.");
 						}
 
 						resolve(new Uint8Array(xhr.response).buffer);
