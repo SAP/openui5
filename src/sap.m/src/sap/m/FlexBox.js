@@ -38,15 +38,11 @@ function(
 	// shortcut for sap.m.FlexJustifyContent
 	var FlexJustifyContent = library.FlexJustifyContent;
 
-
-
 	// shortcut for sap.m.FlexRendertype
 	var FlexRendertype = library.FlexRendertype;
 
 	// shortcut for sap.m.FlexDirection
 	var FlexDirection = library.FlexDirection;
-
-
 
 	/**
 	 * Constructor for a new <code>sap.m.FlexBox</code>.
@@ -171,14 +167,6 @@ function(
 	 * @public
 	 */
 	FlexBox.prototype.init = function() {
-		// Make sure that HBox and VBox have a valid direction
-		if (this instanceof sap.m.HBox && (this.getDirection() !== FlexDirection.Row || this.getDirection() !== FlexDirection.RowReverse)) {
-			this.setDirection('Row');
-		}
-		if (this instanceof sap.m.VBox && (this.getDirection() !== FlexDirection.Column || this.getDirection() !== FlexDirection.ColumnReverse)) {
-			this.setDirection('Column');
-		}
-
 		this._oItemDelegate = {
 			onAfterRendering: this._onAfterItemRendering
 		};
