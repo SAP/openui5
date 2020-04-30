@@ -722,7 +722,7 @@ sap.ui.define([
 		assert.equal(token2.getSelected(), true, "Token2 is selected");
 		assert.equal(token3.getSelected(), true, "Token3 is selected");
 
-		this.multiInput1.ontap();
+		qutils.triggerEvent("tap", this.multiInput1.getDomRef());
 		this.clock.tick(1);
 
 		assert.equal(token1.getSelected(), false, "Token1 is unselected");
@@ -1476,6 +1476,53 @@ sap.ui.define([
 		assert.strictEqual(this.multiInput1.getValue(), "", "Value of the input should be empty");
 
 		assert.strictEqual(oSpyChangeEvent.callCount, 1, "Change event should be fired once");
+	});
+
+	QUnit.test("Clicking on a Token should not trigger Input.prototype._fireValueHelpRequestForValueHelpOnly", function(assert) {
+		var oSpy = sinon.spy(Input.prototype, "_fireValueHelpRequestForValueHelpOnly"),
+			oToken = new Token();
+
+		this.multiInput1.addToken(oToken);
+
+		this.multiInput1.attachTokenUpdate(function(oEvent){
+			oEvent.preventDefault();
+		});
+
+		sap.ui.getCore().applyChanges();
+
+		qutils.triggerEvent("tap", this.multiInput1.getTokens()[0].getDomRef());
+
+		// assert
+		assert.notOk(oSpy.called, "Input's _fireValueHelpRequestForValueHelpOnly method is not called");
+
+		// clean up
+		oSpy.restore();
+	});
+
+	QUnit.test("Clicking on nMore should not trigger Input.prototype._fireValueHelpRequestForValueHelpOnly", function(assert) {
+		var oSpy = sinon.spy(Input.prototype, "_fireValueHelpRequestForValueHelpOnly");
+
+		this.multiInput1.setWidth("200px");
+		this.multiInput1.setTokens([
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"})
+		]);
+
+		this.multiInput1.attachTokenUpdate(function(oEvent){
+			oEvent.preventDefault();
+		});
+
+		sap.ui.getCore().applyChanges();
+
+		this.multiInput1._handleIndicatorPress();
+
+		// assert
+		assert.notOk(oSpy.called, "Input's _fireValueHelpRequestForValueHelpOnly method is not called");
+
+		// clean up
+		oSpy.restore();
 	});
 
 	QUnit.module("Accessibility", {
