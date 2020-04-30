@@ -524,7 +524,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrieves thе next entry starting from the given one within the <code>sap.ui.core.TitleLevel</code> enumeration.
+	 * Retrieves the next entry starting from the given one within the <code>sap.ui.core.TitleLevel</code> enumeration.
 	 * <br><b>Note:</b>
 	 * <ul>
 	 * <li> If the provided starting entry is not found, the <code>sap.ui.core.TitleLevel.Auto</code> is returned.</li>
@@ -2629,7 +2629,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines thе <code>ObjectPageSectionBase</code> internal <code>titleLevel</code>.
+	 * Determines the <code>ObjectPageSectionBase</code> internal <code>titleLevel</code>.
 	 * For <code>ObjectPageSection</code>, the internal <code>titleLevel</code> is the current <code>sectionTitleLevel</code>.
 	 * For <code>ObjectPageSubSection</code>, the internal <code>titleLevel</code> is one level lower than the current <code>sectionTitleLevel</code>.
 	 * If the <code>sectionTitleLevel</code> has value of <code>sap.ui.core.TitleLevel.Auto</code>,

@@ -3304,7 +3304,7 @@ function (
 			// Assert
 			var oVisibleSubSections = oEvent.getParameter("visibleSubSections");
 			assert.strictEqual(Object.keys(oVisibleSubSections).length, 3,
-				"Three visible subSectionс аре reported when new visible subSection is added to the selected section");
+				"Three visible subSections are reported when new visible subSection is added to the selected section");
 
 			oSpy = sinon.spy(this.oObjectPage, "fireEvent");
 

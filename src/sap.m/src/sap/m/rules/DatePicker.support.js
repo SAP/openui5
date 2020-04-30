@@ -132,7 +132,7 @@ sap.ui.define(["sap/ui/support/library"], function(SupportLib) {
 	};
 
 	/**
-	 *  Checks if a dateValue contains JS Date object with hours, minutes and seconds different than 0, 0, 0, local time - warхing.
+	 *  Checks if a dateValue contains JS Date object with hours, minutes and seconds different than 0, 0, 0, local time - warxing.
 	 */
 	var oDateValueHasHoursMinutesSeconds = {
 		id: "dateValueHasHoursMinutesSeconds",
@@ -141,7 +141,7 @@ sap.ui.define(["sap/ui/support/library"], function(SupportLib) {
 		enabled: true,
 		minversion: "1.28",
 		title: "DatePicker: dateValue has hours, minutes or seconds",
-		description: "The dateValue contains JS Date object with hours, minutes and seconds different than 0, 0, 0, local time - warхing.",
+		description: "The dateValue contains JS Date object with hours, minutes and seconds different than 0, 0, 0, local time - warxing.",
 		resolution: "Do not set hours, minutes and seconds, when you set dateValue",
 		resolutionurls: [{
 			text: "SAP Fiori Design Guidelines: DatePicker",

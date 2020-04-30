@@ -67,7 +67,7 @@ function(
 	 *
 	 * <h3>Overview</h3>
 	 *
-	 * Тhe calendar header contains the action controls which you can use to manipulate the calendar and facilitate
+	 * The calendar header contains the action controls which you can use to manipulate the calendar and facilitate
 	 * navigation.
 	 *
 	 * <b>Note:</b> The <code>PlanningCalendarHeader</code> uses parts of the <code>sap.ui.unified</code> library.

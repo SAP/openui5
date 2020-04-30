@@ -4,7 +4,7 @@ sap.ui.define([
 	'sap/ui/test/Opa5', 'sap/ui/test/opaQunit', 'sap/ui/test/actions/Press'
 ], function(Opa5, OpaTest, Press) {
 
-	var оАctions = new Opa5({
+	var oActions = new Opa5({
 		iPressOnTheButton : function (sButtonId) {
 			return this.waitFor({
 				id : sButtonId,
@@ -82,7 +82,7 @@ sap.ui.define([
 	});
 
 	Opa5.extendConfig({
-		actions : оАctions,
+		actions : oActions,
 		assertions : oAssertions,
 		autoWait: true
 	});
