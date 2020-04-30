@@ -883,9 +883,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchValue: relative binding w/o cache", function (assert) {
-		var bCached = {/*false,true*/},
-			oContext = {
+[false, true].forEach(function (bCached) {
+	QUnit.test("fetchValue: relative binding w/o cache, bCached = " + bCached, function (assert) {
+		var oContext = {
 				fetchValue : function () {},
 				getPath : function () {return "/absolute";}
 			},
@@ -894,6 +894,10 @@ sap.ui.define([
 			oResult = {},
 			oBinding = this.bindContext("navigation", oContext);
 
+		if (bCached) {
+			// never resolved, must be ignored
+			oBinding.oCachePromise = new SyncPromise(function () {});
+		}
 		this.mock(oContext).expects("fetchValue")
 			.withExactArgs(sPath, sinon.match.same(oListener), sinon.match.same(bCached))
 			.returns(SyncPromise.resolve(oResult));
@@ -903,6 +907,7 @@ sap.ui.define([
 			oBinding.fetchValue(sPath, oListener, bCached).getResult(),
 			oResult);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("fetchValue: relative binding w/ cache, mismatch", function (assert) {
@@ -949,6 +954,63 @@ sap.ui.define([
 			assert.strictEqual(oError.canceled, "noDebugLog");
 			return true;
 		}, "expect canceled error");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchValue: oCachePromise still pending", function (assert) {
+		var oBinding = this.bindContext("/absolute"),
+			oCache = oBinding.oCachePromise.getResult();
+
+		oBinding.oCache = undefined;
+		oBinding.oCachePromise = SyncPromise.resolve(Promise.resolve(oCache));
+		this.mock(oBinding).expects("getRelativePath").withExactArgs("/absolute/bar")
+			.returns("bar");
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "bar", sinon.match.func, null)
+			.returns(SyncPromise.resolve(42));
+
+		// code under test
+		return oBinding.fetchValue("/absolute/bar", null, true).then(function (vResult) {
+			assert.strictEqual(vResult, 42);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchValue: oCachePromise became pending again", function (assert) {
+		var oBinding = this.bindContext("/absolute"),
+			oCache = oBinding.oCachePromise.getResult();
+
+		oBinding.oCachePromise = new SyncPromise(function () {}); // never resolved, must be ignored
+		this.mock(oBinding).expects("getRelativePath").withExactArgs("/absolute/bar")
+			.returns("bar");
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "bar", sinon.match.func, null)
+			.returns(SyncPromise.resolve(42));
+
+		// code under test
+		assert.strictEqual(oBinding.fetchValue("/absolute/bar", null, true).getResult(), 42);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchValue: !bCached, wait for oCachePromise again", function (assert) {
+		var oBinding = this.bindContext("/absolute"),
+			oCache = oBinding.oCachePromise.getResult(),
+			oGroupLock = {};
+
+		oBinding.oCache = {/*do not use!*/};
+		oBinding.oCachePromise = SyncPromise.resolve(Promise.resolve(oCache));
+		oBinding.oReadGroupLock = undefined; // not interested in the initial case
+		this.mock(oBinding).expects("getRelativePath").withExactArgs("/absolute/bar")
+			.returns("bar");
+		this.mock(oBinding).expects("lockGroup").withExactArgs().returns(oGroupLock);
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(oGroupLock), "bar", sinon.match.func, undefined)
+			.returns(SyncPromise.resolve(42));
+
+		// code under test
+		return oBinding.fetchValue("/absolute/bar").then(function (vResult) {
+			assert.strictEqual(vResult, 42);
+		});
 	});
 
 	//*********************************************************************************************

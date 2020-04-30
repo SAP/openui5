@@ -1312,9 +1312,12 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.fetchValue = function (sPath, oListener, bCached) {
-		var that = this;
+		var oCachePromise = bCached && this.oCache !== undefined
+				? SyncPromise.resolve(this.oCache)
+				: this.oCachePromise,
+			that = this;
 
-		return this.oCachePromise.then(function (oCache) {
+		return oCachePromise.then(function (oCache) {
 			var oGroupLock, sRelativePath;
 
 			if (oCache) {

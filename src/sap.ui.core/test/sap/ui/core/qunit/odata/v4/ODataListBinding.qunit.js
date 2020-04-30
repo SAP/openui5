@@ -2268,15 +2268,18 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("fetchValue: relative binding", function (assert) {
-		var oBinding,
-			bCached = {/*false,true*/},
-			oContext = Context.create(this.oModel, {}, "/foo"),
+[false, true].forEach(function (bCached) {
+	QUnit.test("fetchValue: relative binding, bCached = " + bCached, function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/foo"),
 			oListener = {},
 			sPath = "/foo/42/bar",
-			oResult = {};
+			oResult = {},
+			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext);
 
-		oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext);
+		if (bCached) {
+			// never resolved, must be ignored
+			oBinding.oCachePromise = new SyncPromise(function () {});
+		}
 		this.mock(oContext).expects("fetchValue")
 			.withExactArgs(sPath, sinon.match.same(oListener), sinon.match.same(bCached))
 			.returns(SyncPromise.resolve(oResult));
@@ -2284,6 +2287,7 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oBinding.fetchValue(sPath, oListener, bCached).getResult(), oResult);
 	});
+});
 	//TODO provide iStart, iLength parameter to fetchValue to support paging on nested list
 
 	//*********************************************************************************************
@@ -2325,6 +2329,66 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oBinding.fetchValue(sPath, oListener, bCached).getResult(), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchValue: oCachePromise still pending", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oCache = oBinding.oCachePromise.getResult(),
+			sPath = "/EMPLOYEES/42/bar",
+			oReadResult = {};
+
+		oBinding.oCache = undefined;
+		oBinding.oCachePromise = SyncPromise.resolve(Promise.resolve(oCache));
+		this.mock(oBinding).expects("getRelativePath").withExactArgs(sPath).returns("42/bar");
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "42/bar", undefined, null)
+			.returns(SyncPromise.resolve(oReadResult));
+
+		// code under test
+		return oBinding.fetchValue(sPath, null, true).then(function (oResult) {
+			assert.strictEqual(oResult, oReadResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchValue: oCachePromise became pending again", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oCache = oBinding.oCachePromise.getResult(),
+			sPath = "/EMPLOYEES/42/bar",
+			oReadResult = {};
+
+		oBinding.oCachePromise = new SyncPromise(function () {}); // never resolved, must be ignored
+		this.mock(oBinding).expects("getRelativePath").withExactArgs(sPath).returns("42/bar");
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "42/bar", undefined, null)
+			.returns(SyncPromise.resolve(oReadResult));
+
+		// code under test
+		assert.strictEqual(oBinding.fetchValue(sPath, null, true).getResult(), oReadResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchValue: !bCached, wait for oCachePromise again", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oCache = oBinding.oCachePromise.getResult(),
+			oGroupLock = {},
+			sPath = "/EMPLOYEES/42/bar",
+			oReadResult = {};
+
+		oBinding.oCache = {/*do not use!*/};
+		oBinding.oCachePromise = SyncPromise.resolve(Promise.resolve(oCache));
+		oBinding.oReadGroupLock = undefined; // not interested in the initial case
+		this.mock(oBinding).expects("getRelativePath").withExactArgs(sPath).returns("42/bar");
+		this.mock(oBinding).expects("lockGroup").withExactArgs().returns(oGroupLock);
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(oGroupLock), "42/bar", undefined, undefined)
+			.returns(SyncPromise.resolve(oReadResult));
+
+		// code under test
+		return oBinding.fetchValue(sPath).then(function (oResult) {
+			assert.strictEqual(oResult, oReadResult);
+		});
 	});
 
 	//*********************************************************************************************
