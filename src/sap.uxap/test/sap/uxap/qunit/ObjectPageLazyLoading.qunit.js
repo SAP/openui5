@@ -231,11 +231,11 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 
 		oObjectPageLayout.setSelectedSection(aSectionBases[0].getId());
 
-		assert.equal(oObjectPageLayout._grepCurrentTabSectionBases().length, 2, "_grepCurrentTabSectionBases returns 2 filtered sections initially");
+		assert.equal(oObjectPageLayout._grepCurrentTabSectionBases().length, 3, "_grepCurrentTabSectionBases returns 3 filtered sections + subsections initially");
 
 		aSectionBases[1].getParent = fnCustomGetParent;
 
-		assert.equal(oObjectPageLayout._grepCurrentTabSectionBases().length, 1, "_grepCurrentTabSectionBases returns a valid value if some of the sections parent is undefined");
+		assert.equal(oObjectPageLayout._grepCurrentTabSectionBases().length, 2, "_grepCurrentTabSectionBases returns a valid value if some of the sections parent is undefined");
 	});
 
 	QUnit.module("ObjectPageAfterRendering");
