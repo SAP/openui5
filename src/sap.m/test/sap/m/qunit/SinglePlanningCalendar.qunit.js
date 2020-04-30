@@ -467,16 +467,14 @@ sap.ui.define([
 				]
 			}),
 			oFakeEvent = {
-				target: {
-					classList: {
-						contains: function() {
-							return false;
-						}
-					}
-				},
+				target: jQuery("<div></div>").attr({
+					"class": "sapMSPCMonthDay"
+				}).get(0),
 				srcControl: oSPC.getAggregation("_mvgrid")
 			},
 			fnFireAppointmentSelectSpy = this.spy(oSPC, "fireAppointmentSelect");
+
+		oSPC.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		//act

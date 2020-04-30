@@ -317,16 +317,16 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		SinglePlanningCalendarMonthGrid.prototype._fireSelectionEvent = function (oEvent) {
-			var oTarget = oEvent.srcControl,
-				$target = jQuery(oEvent.target).eq(0),
-				$cell = $target.closest('.sapMSPCMonthDay').eq(0),
-				bIsLink = $target.length && $target[0].classList.contains("sapMLnk"),
+			var oSrcControl = oEvent.srcControl,
+				oTarget = oEvent.target,
+				bIsCell = oTarget && oTarget.classList.contains("sapMSPCMonthDay"),
+				bIsLink = oTarget && oTarget.classList.contains("sapMLnk"),
 				iTimestamp,
 				oStartDate,
 				oEndDate;
 
-			if (oTarget && oTarget.isA("sap.m.SinglePlanningCalendarMonthGrid") && $cell && !bIsLink) {
-				iTimestamp = parseInt($cell.attr("sap-ui-date"));
+			if (oSrcControl && oSrcControl.isA("sap.m.SinglePlanningCalendarMonthGrid") && bIsCell && !bIsLink) {
+				iTimestamp = parseInt(oTarget.getAttribute("sap-ui-date"));
 
 				oStartDate = new Date(iTimestamp);
 				oStartDate = new Date(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate());
@@ -339,10 +339,10 @@ sap.ui.define([
 					appointment: undefined,
 					appointments: this._toggleAppointmentSelection(undefined, true)
 				});
-			} else if (oTarget && oTarget.isA("sap.ui.unified.CalendarAppointment")) {
+			} else if (oSrcControl && oSrcControl.isA("sap.ui.unified.CalendarAppointment")) {
 				this.fireAppointmentSelect({
-					appointment: oTarget,
-					appointments: this._toggleAppointmentSelection(oTarget, !(oEvent.ctrlKey || oEvent.metaKey))
+					appointment: oSrcControl,
+					appointments: this._toggleAppointmentSelection(oSrcControl, !(oEvent.ctrlKey || oEvent.metaKey))
 				});
 			}
 		};
