@@ -80,6 +80,32 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 	};
 
 	QUnit.module("ObjectPage Content scroll visibility");
+	QUnit.test("correct scroll position of section with hidden title", function(assert) {
+		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 10),
+			oFirstSection = oObjectPage.getSections()[0],
+			done = assert.async();
+
+		oObjectPage.addEventDelegate({
+			onBeforeRendering:function(){
+				oObjectPage._bStickyAnchorBar = true;//force init rendering with snapped header
+				oObjectPage._bHeaderExpanded = false;
+			}
+		});
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function(){
+			//act
+			var iPosTop = oObjectPage._computeScrollPosition(oFirstSection),
+			iOffsetTop = oFirstSection.getDomRef().offsetTop;
+
+			assert.strictEqual(iPosTop ,iOffsetTop ,"corrected scroll position");
+
+			oObjectPage.destroy();
+			done();
+		});
+
+		helpers.renderObject(oObjectPage);
+	});
+
 	QUnit.test("ObjectPage Content CustomScrollBar visibility", function (assert) {
 		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 10),
 			fnDone = assert.async();
