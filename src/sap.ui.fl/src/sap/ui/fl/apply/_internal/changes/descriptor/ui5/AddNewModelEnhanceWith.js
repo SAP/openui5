@@ -18,7 +18,7 @@ sap.ui.define([
 	 * Adds a <code>settings/enhanceWith</code> node of an existing model with a path to an i18n properties file relative to the location of the manifest.
 	 * Only works for referenced models of type <code>sap.ui.model.resource.ResourceModel</code>.
 	 *
-	 * Only available during build time.
+	 * Only available during build time {@link sap.ui.fl.apply._internal.changes.descriptor.RegistrationBuild}.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.ui5.AddNewModelEnhanceWith
 	 * @experimental
