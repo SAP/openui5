@@ -174,6 +174,40 @@ sap.ui.define([
 		return oModel._oVariantSwitchPromise;
 	}
 
+	function revertVariantAndClearData(mPropertyBag) {
+		return Switcher.switchVariant(mPropertyBag)
+			.then(function() {
+				delete this.oData[mPropertyBag.vmReference];
+			}.bind(this))
+			.catch(function(oError) {
+				Log.warning(oError.message);
+			});
+	}
+
+	function switchVariantAndUpdateModel(mPropertyBag) {
+		return Switcher.switchVariant(mPropertyBag)
+			.then(function() {
+				// update current variant in model
+				this.oData[mPropertyBag.vmReference].originalCurrentVariant = mPropertyBag.newVReference;
+				this.oData[mPropertyBag.vmReference].currentVariant = mPropertyBag.newVReference;
+				if (this.oData[mPropertyBag.vmReference].updateVariantInURL) {
+					URLHandler.updateVariantInURL({
+						vmReference: mPropertyBag.vmReference,
+						newVReference: mPropertyBag.newVReference,
+						model: this
+					});
+				}
+				this.checkUpdate();
+			}.bind(this));
+	}
+
+	function isVariantValidForRemove(oVariant, sVariantManagementReference, bDesignTimeModeToBeSet) {
+		if ((oVariant.layer === LayerUtils.getCurrentLayer(!bDesignTimeModeToBeSet)) && (oVariant.key !== sVariantManagementReference)) {
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Constructor for a new sap.ui.fl.variants.VariantModel model.
 	 * @class Variant model implementation for JSON format.
@@ -272,23 +306,6 @@ sap.ui.define([
 			modifier: JsControlTreeModifier,
 			reference: this.sFlexReference
 		};
-
-		function switchVariantAndUpdateModel(mPropertyBag) {
-			return Switcher.switchVariant(mPropertyBag)
-				.then(function() {
-					// update current variant in model
-					this.oData[sVariantManagementReference].originalCurrentVariant = sNewVariantReference;
-					this.oData[sVariantManagementReference].currentVariant = sNewVariantReference;
-					if (this.oData[sVariantManagementReference].updateVariantInURL) {
-						URLHandler.updateVariantInURL({
-							vmReference: sVariantManagementReference,
-							newVReference: sNewVariantReference,
-							model: this
-						});
-					}
-					this.checkUpdate();
-				}.bind(this));
-		}
 
 		if (bInternallyCalled) {
 			return switchVariantAndUpdateModel.call(this, mPropertyBag);
@@ -843,13 +860,6 @@ sap.ui.define([
 	};
 
 	VariantModel.prototype.setModelPropertiesForControl = function(sVariantManagementReference, bDesignTimeModeToBeSet, oControl) {
-		var fnRemove = function(oVariant, sVariantManagementReference, bDesignTimeModeToBeSet) {
-			if ((oVariant.layer === LayerUtils.getCurrentLayer(!bDesignTimeModeToBeSet)) && (oVariant.key !== sVariantManagementReference)) {
-				return true;
-			}
-			return false;
-		};
-
 		this.oData[sVariantManagementReference].modified = false;
 		this.oData[sVariantManagementReference].showFavorites = true;
 
@@ -884,7 +894,7 @@ sap.ui.define([
 			this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
 				oVariant.rename = true;
 				oVariant.change = true;
-				oVariant.remove = fnRemove(oVariant, sVariantManagementReference, bDesignTimeModeToBeSet);
+				oVariant.remove = isVariantValidForRemove(oVariant, sVariantManagementReference, bDesignTimeModeToBeSet);
 			});
 		} else if (this.oData[sVariantManagementReference]._isEditable) { // Personalization settings
 			oControl.attachManage({
@@ -895,7 +905,7 @@ sap.ui.define([
 
 			// Properties for variant management control's internal model
 			this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
-				oVariant.remove = fnRemove(oVariant, sVariantManagementReference, bDesignTimeModeToBeSet);
+				oVariant.remove = isVariantValidForRemove(oVariant, sVariantManagementReference, bDesignTimeModeToBeSet);
 				// Check for end-user variant
 				if (oVariant.layer === LayerUtils.getCurrentLayer(true)) {
 					oVariant.rename = true;
@@ -1151,18 +1161,9 @@ sap.ui.define([
 				reference: this.sFlexReference
 			};
 
-			function resetToDefault() {
-				return Switcher.switchVariant(mPropertyBag)
-					.then(function() {
-						delete this.oData[sVariantManagementReference];
-					}.bind(this))
-					.catch(function(oError) {
-						Log.warning(oError.message);
-					});
-			}
-
-			// works as sync promise chain for each variant management reference
-			return _setVariantModelBusy(resetToDefault.bind(this), this, sVariantManagementReference);
+			//_setVariantModelBusy adds a promise to the _oVariantSwitchPromise chain
+			//for each variant management reference (control) a promise will be added
+			return _setVariantModelBusy(revertVariantAndClearData.bind(this, mPropertyBag), this, sVariantManagementReference);
 		}.bind(this));
 		return this._oVariantSwitchPromise
 			.then(function() {
