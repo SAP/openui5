@@ -3,24 +3,38 @@
 sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/Utils",
 	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	Layer,
 	LayerUtils,
+	Utils,
 	UriParameters,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
+	function stubUShellContainer(mParsedShellHash) {
+		sandbox.stub(Utils, "getUshellContainer").returns({
+			getService: function() {
+				return {
+					getHash: function() {
+						return "";
+					},
+					parseShellHash: function() {
+						return mParsedShellHash;
+					}
+				};
+			}
+		});
+	}
 
 	var aControls = [];
 
 	QUnit.module("sap.ui.fl.LayerUtils", {
-		beforeEach: function () {
-		},
 		afterEach: function () {
 			aControls.forEach(function (oControl) {
 				oControl.destroy();
@@ -95,6 +109,7 @@ function(
 
 	QUnit.module("LayerUtils.isLayerFilteringRequired", {
 		beforeEach: function () {
+			stubUShellContainer();
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -115,6 +130,7 @@ function(
 
 	QUnit.module("LayerUtils.isOverMaxLayer", {
 		beforeEach: function () {
+			stubUShellContainer();
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -141,6 +157,7 @@ function(
 
 	QUnit.module("LayerUtils.getMaxLayer", {
 		beforeEach: function () {
+			stubUShellContainer();
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -156,21 +173,10 @@ function(
 		});
 
 		QUnit.test("sap-ui-fl-max-layer is set as hash parameter", function (assert) {
-			var oParameters = {
+			Utils.getUshellContainer.restore();
+			stubUShellContainer({
 				params: {
 					"sap-ui-fl-max-layer": [Layer.CUSTOMER]
-				}
-			};
-			sandbox.stub(LayerUtils, "getUshellContainer").returns({
-				getService: function () {
-					return {
-						getHash: function () {
-							return "";
-						},
-						parseShellHash: function () {
-							return oParameters;
-						}
-					};
 				}
 			});
 			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns(Layer.VENDOR);
@@ -180,6 +186,7 @@ function(
 
 	QUnit.module("LayerUtils.doesCurrentLayerRequirePackage", {
 		beforeEach: function () {
+			stubUShellContainer();
 		},
 		afterEach: function () {
 			sandbox.restore();

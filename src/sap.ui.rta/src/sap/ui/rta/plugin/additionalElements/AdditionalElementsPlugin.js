@@ -748,23 +748,24 @@ sap.ui.define([
 		 */
 		_onOpenCustomField : function () {
 			// open field ext ui
-			var oUshellContainer = FlUtils.getUshellContainer();
-			var oCrossAppNav = oUshellContainer.getService("CrossApplicationNavigation");
-			var sHrefForFieldExtensionUi = (oCrossAppNav && oCrossAppNav.hrefForExternal({
-				target : {
-					semanticObject : "CustomField",
-					action : "develop"
-				},
-				params : {
-					businessContexts : this._oCurrentFieldExtInfo.BusinessContexts.map(function(oBusinessContext) {
-						return oBusinessContext.BusinessContext;
-					}),
-					serviceName : this._oCurrentFieldExtInfo.ServiceName,
-					serviceVersion : this._oCurrentFieldExtInfo.ServiceVersion,
-					entityType : this._oCurrentFieldExtInfo.EntityType
-				}
-			}));
-			Utils.openNewWindow(sHrefForFieldExtensionUi);
+			FlUtils.ifUShellContainerThen(function(aServices) {
+				var oCrossAppNav = aServices[0];
+				var sHrefForFieldExtensionUi = (oCrossAppNav && oCrossAppNav.hrefForExternal({
+					target : {
+						semanticObject : "CustomField",
+						action : "develop"
+					},
+					params : {
+						businessContexts : this._oCurrentFieldExtInfo.BusinessContexts.map(function(oBusinessContext) {
+							return oBusinessContext.BusinessContext;
+						}),
+						serviceName : this._oCurrentFieldExtInfo.ServiceName,
+						serviceVersion : this._oCurrentFieldExtInfo.ServiceVersion,
+						entityType : this._oCurrentFieldExtInfo.EntityType
+					}
+				}));
+				Utils.openNewWindow(sHrefForFieldExtensionUi);
+			}.bind(this), ["CrossApplicationNavigation"]);
 		},
 
 		_createCommands : function(mParents, oSiblingElement, mActions, iIndex) {

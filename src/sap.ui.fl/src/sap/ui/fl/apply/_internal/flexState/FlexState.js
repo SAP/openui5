@@ -170,25 +170,23 @@ sap.ui.define([
 	}
 
 	function _registerMaxLayerHandler(sReference) {
-		var oUshellContainer = LayerUtils.getUshellContainer();
-		if (oUshellContainer) {
+		Utils.ifUShellContainerThen(function(aServices) {
 			_mNavigationHandlers[sReference] = _handleMaxLayerChange.bind(null, sReference);
-			oUshellContainer.getService("ShellNavigation").registerNavigationFilter(_mNavigationHandlers[sReference]);
-		}
+			aServices[0].registerNavigationFilter(_mNavigationHandlers[sReference]);
+		}, ["ShellNavigation"]);
 	}
 
 	function _deRegisterMaxLayerHandler(sReference) {
-		var oUshellContainer = LayerUtils.getUshellContainer();
-		if (oUshellContainer && _mNavigationHandlers[sReference]) {
-			oUshellContainer.getService("ShellNavigation").unregisterNavigationFilter(_mNavigationHandlers[sReference]);
-			delete _mNavigationHandlers[sReference];
-		}
+		Utils.ifUShellContainerThen(function(aServices) {
+			if (_mNavigationHandlers[sReference]) {
+				aServices[0].unregisterNavigationFilter(_mNavigationHandlers[sReference]);
+				delete _mNavigationHandlers[sReference];
+			}
+		}, ["ShellNavigation"]);
 	}
 
 	function _handleMaxLayerChange(sReference, sNewHash, sOldHash) {
-		var oUshellContainer = LayerUtils.getUshellContainer();
-		if (oUshellContainer) {
-			var oShellNavigation = oUshellContainer.getService("ShellNavigation");
+		return Utils.ifUShellContainerThen(function(aServices) {
 			try {
 				var sCurrentMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sNewHash);
 				var sPreviousMaxLayer = LayerUtils.getMaxLayerTechnicalParameter(sOldHash);
@@ -199,8 +197,8 @@ sap.ui.define([
 				// required to hinder any errors - can break FLP navigation
 				Log.error(oError.message);
 			}
-			return oShellNavigation.NavigationFilterStatus.Continue;
-		}
+			return aServices[0].NavigationFilterStatus.Continue;
+		}, ["ShellNavigation"]);
 	}
 
 	function _clearPreparedMaps(sReference) {

@@ -16,8 +16,7 @@ sap.ui.define([
 	"sap/ui/core/Manifest",
 	"sap/base/util/restricted/_omit",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/thirdparty/jquery",
-	"sap/base/util/isEmptyObject"
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	Utils,
@@ -35,8 +34,7 @@ function(
 	Manifest,
 	_omit,
 	sinon,
-	jQuery,
-	isEmptyObject
+	jQuery
 ) {
 	"use strict";
 
@@ -765,14 +763,14 @@ function(
 			assert.ok(jQuery.isEmptyObject(Utils.getParsedURLHash()), "then no url parameters are received");
 		});
 
-		QUnit.test("when calling 'whenUShellContainer' without a ushell container", function(assert) {
-			var oReturnValue = Utils.whenUShellContainer(function() {
+		QUnit.test("when calling 'ifUShellContainerThen' without a ushell container", function(assert) {
+			var vReturnValue = Utils.ifUShellContainerThen(function() {
 				assert.ok(false, "callback function should not be called");
 			}, ["service1"]);
-			assert.ok(isEmptyObject(oReturnValue), "then an empty object was returned");
+			assert.strictEqual(vReturnValue, undefined, "then undefined was returned");
 		});
 
-		QUnit.test("when calling 'whenUShellContainer' with a ushell container", function(assert) {
+		QUnit.test("when calling 'ifUShellContainerThen' with a ushell container", function(assert) {
 			assert.expect(2);
 			sandbox.stub(Utils, "getUshellContainer").returns({
 				getService: function(sServiceName) {
@@ -783,7 +781,7 @@ function(
 					}
 				}
 			});
-			Utils.whenUShellContainer(function(aServices) {
+			Utils.ifUShellContainerThen(function(aServices) {
 				assert.equal(aServices[0], "evaluatedService1", "then callback function was called with the ushell service");
 				assert.equal(aServices[1], "evaluatedService2", "then callback function was called with the ushell service");
 			}, ["service1", "service2"]);

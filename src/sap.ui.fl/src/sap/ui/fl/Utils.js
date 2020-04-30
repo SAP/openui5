@@ -721,10 +721,10 @@ function(
 		 * @returns {object} Returns the parsed URL hash object or an empty object if ushell container is not available
 		 */
 		getParsedURLHash: function() {
-			return Utils.whenUShellContainer(function(aServices) {
+			return Utils.ifUShellContainerThen(function(aServices) {
 				var oParsedHash = aServices[0].parseShellHash(hasher.getHash());
 				return oParsedHash || {};
-			}, ["URLParsing"]);
+			}, ["URLParsing"]) || {};
 		},
 
 		/**
@@ -732,9 +732,9 @@ function(
 		 *
 		 * @param {function} fnCallBack - Callback function
 		 * @param {string[]} aServiceNames - array of ushell service names
-		 * @returns {any} Returns the value from the callback or an empty object if ushell is not available
+		 * @returns {any|undefined} Returns the value from the callback
 		 */
-		whenUShellContainer: function(fnCallBack, aServiceNames) {
+		ifUShellContainerThen: function(fnCallBack, aServiceNames) {
 			var oUShellContainer = Utils.getUshellContainer();
 			if (oUShellContainer) {
 				var aServices = aServiceNames.map(function(sServiceName) {
@@ -742,7 +742,6 @@ function(
 				});
 				return fnCallBack(aServices);
 			}
-			return {};
 		},
 
 		/**
