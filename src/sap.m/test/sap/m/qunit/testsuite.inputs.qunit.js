@@ -112,7 +112,7 @@ sap.ui.define([
 				_alternativeTitle: "QUnit page for sap.m.MaskInput",
 				ui5: {
 					language: "en-US",
-					bindingSyntax: "simle"
+					bindingSyntax: "simple"
 				},
 				sinon: {
 					useFakeTimers: true
