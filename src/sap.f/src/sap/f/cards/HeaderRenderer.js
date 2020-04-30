@@ -58,13 +58,12 @@ sap.ui.define([], function () {
 			oRm.write("</div>");
 		}
 
+		oRm.write("<div");
+		oRm.addClass("sapFCardHeaderText");
+		oRm.writeClasses();
+		oRm.write(">");
+
 		if (oControl.getTitle() || oBindingInfos.title) {
-
-			oRm.write("<div");
-			oRm.addClass("sapFCardHeaderText");
-			oRm.writeClasses();
-			oRm.write(">");
-
 			oRm.write("<div");
 			oRm.addClass("sapFCardHeaderTextFirstLine");
 			oRm.writeClasses();
@@ -97,9 +96,9 @@ sap.ui.define([], function () {
 				}
 				oRm.renderControl(oSubtitle);
 			}
-
-			oRm.write("</div>");
 		}
+
+		oRm.write("</div>");
 
 		if (oToolbar) {
 			oRm.write("<div");
