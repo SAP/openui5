@@ -30,6 +30,20 @@
 	line-height: 2.75rem;
 }
 
+/* alignment of Labels */
+.sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiFormElementLbl {
+	padding-top: 0.875rem;
+}
+
+.sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr.sapUiGridConteinerFirstRow > td.sapUiFormElementLbl {
+	padding-top: 2.875rem;
+}
+
+.sapUiFormEdit.sapUiFormM >.sapUiGrid > tbody > tr:first-child > td.sapUiFormElementLbl, /* if no Form title */
+.sapUiFormEdit[aria-labelledby].sapUiFormM > .sapUiGrid > tbody > tr:nth-child(2) > td.sapUiFormElementLbl {
+	padding-top: 1.875rem;
+}
+
 .sapUiGridHeader.sapUiFormContainerToolbar > .sapMTB {
 	padding: 0;
 }
