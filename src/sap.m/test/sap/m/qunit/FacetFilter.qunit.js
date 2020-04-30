@@ -1616,7 +1616,7 @@ sap.ui.define([
 		oFacetFilter.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		oTargetList.attachEvent("search", function(oEvent) {
+		oTargetList.attachEventOnce("search", function(oEvent) {
 			var sSearchString = oEvent.getParameters()["term"];
 
 			this.bindItems({
