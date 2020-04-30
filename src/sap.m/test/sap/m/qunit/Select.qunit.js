@@ -10159,6 +10159,7 @@ sap.ui.define([
 		QUnit.test("Hidden input attributes and classes", function (assert) {
 			// Attributes
 			assert.strictEqual(this.$oHiddenInputRef.attr("aria-readonly"), "true", "Hidden input is readonly");
+			assert.strictEqual(this.$oHiddenInputRef.attr("aria-hidden"), "true", "Hidden has aria-hidden");
 			assert.strictEqual(this.$oHiddenInputRef.attr("tabindex"), "-1", "Hidden input shouldn't be reachable via keyboard navigation");
 
 			// Classes

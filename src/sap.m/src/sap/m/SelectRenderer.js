@@ -138,6 +138,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			// Attributes
 			oRm.attr("aria-readonly", "true");
 			oRm.attr("tabindex", "-1");
+			oRm.attr("aria-hidden", "true");
 
 			// Classes
 			oRm.class("sapUiPseudoInvisibleText");
