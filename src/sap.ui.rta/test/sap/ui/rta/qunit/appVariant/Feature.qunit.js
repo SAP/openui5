@@ -335,8 +335,6 @@ sap.ui.define([
 
 	QUnit.module("Given that a RtaAppVariantFeature is instantiated", {
 		beforeEach : function() {
-			this.oServer = sinon.fakeServer.create();
-
 			window.bUShellNavigationTriggered = false;
 			this.originalUShell = sap.ushell;
 			// this overrides the ushell globally => we need to restore it!
@@ -366,7 +364,6 @@ sap.ui.define([
 			});
 		},
 		afterEach : function() {
-			this.oServer.restore();
 			sandbox.restore();
 			sap.ushell = this.originalUShell;
 			delete window.bUShellNavigationTriggered;
