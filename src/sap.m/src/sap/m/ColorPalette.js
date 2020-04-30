@@ -889,7 +889,7 @@ sap.ui.define([
 			if (oItemInfo.bIsLastItem && oItemInfo.bIsInTheLastColumn) {
 				oEvent.preventDefault(); //browser's scrolling should be prevented
 
-				this.fireEvent(ItemNavigation.Events.BorderReached, {// Arrow down on last item should fire the event "BorderRеached"
+				this.fireEvent(ItemNavigation.Events.BorderReached, {// Arrow down on last item should fire the event "BorderReached"
 					index: iCurrentIndex,
 					event: oEvent
 				});

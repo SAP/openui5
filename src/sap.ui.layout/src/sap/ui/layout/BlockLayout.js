@@ -40,7 +40,7 @@ sap.ui.define([
 		 * The main colors of the sets can be changed in Theme Designer. To change the background of a particular cell, set <code>backgroundColorSet</code> (main color)
 		 * and <code>backgroundColorShade</code> (shade).
 		 *
-		 * <b>Note:</b> Usage of disabled, emphasized or subtle links as titles is not recommended. Dark background designs, for example Accent, are not fully supported with regards to Аccessibility when used with links as titles.
+		 * <b>Note:</b> Usage of disabled, emphasized or subtle links as titles is not recommended. Dark background designs, for example Accent, are not fully supported with regards to Accessibility when used with links as titles.
 		 *
 		 * <h3>Usage</h3>
 		 * <h4>When to use</h4>

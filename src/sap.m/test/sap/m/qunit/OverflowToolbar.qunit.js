@@ -1580,7 +1580,7 @@ sap.ui.define([
 
 	QUnit.module("Layout");
 
-	QUnit.test("Changing a control'с property does not change the order in controls' collections", function (assert) {
+	QUnit.test("Changing a control's property does not change the order in controls' collections", function (assert) {
 		// Arrange
 		var aContent = getDefaultContent(),
 			oOverflowTB,
@@ -2058,7 +2058,7 @@ sap.ui.define([
 		}, 200);
 	});
 
-	QUnit.test("changing property of an invisible control inside OT, does nоt force it to rerender", function (assert) {
+	QUnit.test("changing property of an invisible control inside OT, does not force it to rerender", function (assert) {
 
 	// Arrange
 		var oLabel = new Label({text: "Text", visible: false, id: "label_0"}),

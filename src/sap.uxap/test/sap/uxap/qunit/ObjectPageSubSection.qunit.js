@@ -1403,7 +1403,7 @@ function($, Core, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, Obj
 
 			assert.expect(5);
 
-			// Аct
+			// Act
 			oPage.setHeaderTitle(new ObjectPageDynamicHeaderTitle());
 			oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
 

@@ -238,7 +238,7 @@ function (
 		assert.equal(this.oSemanticPage.getTitleHeading(), null,
 			"SemanticPage titleHeading is null by default.");
 
-		// Аct: set titleHeading
+		// Act: set titleHeading
 		vResult = this.oSemanticPage.setTitleHeading(oTitle);
 
 		// Assert
@@ -247,7 +247,7 @@ function (
 		assert.equal(this.oSemanticPage, vResult,
 			"SemanticPage setTitleHeading returns the SemanticPage instance.");
 
-		// Аct: destroy titleHeading
+		// Act: destroy titleHeading
 		vResult = this.oSemanticPage.destroyTitleHeading();
 
 		// Assert
@@ -274,7 +274,7 @@ function (
 		assert.equal(this.oSemanticPage.getTitleExpandedHeading(), null,
 			"SemanticPage titleExpandedHeading is null by default.");
 
-		// Аct: set titleExpandedHeading
+		// Act: set titleExpandedHeading
 		vResult = this.oSemanticPage.setTitleExpandedHeading(oTitle);
 
 		// Assert
@@ -283,7 +283,7 @@ function (
 		assert.equal(this.oSemanticPage, vResult,
 			"SemanticPage setTitleExpandedHeading returns the SemanticPage instance.");
 
-		// Аct: destroy titleExpandedHeading
+		// Act: destroy titleExpandedHeading
 		vResult = this.oSemanticPage.destroyTitleExpandedHeading();
 
 		// Assert
@@ -301,7 +301,7 @@ function (
 		assert.equal(this.oSemanticPage.getTitleSnappedHeading(), null,
 			"SemanticPage titleSnappedHeading is null by default.");
 
-		// Аct: set titleSnappedHeading
+		// Act: set titleSnappedHeading
 		vResult = this.oSemanticPage.setTitleSnappedHeading(oTitle);
 
 		// Assert
@@ -310,7 +310,7 @@ function (
 		assert.equal(this.oSemanticPage, vResult,
 			"SemanticPage setTitleSnappedHeading returns the SemanticPage instance.");
 
-		// Аct: destroy titleSnappedHeading
+		// Act: destroy titleSnappedHeading
 		vResult = this.oSemanticPage.destroyTitleSnappedHeading();
 
 		// Assert
@@ -328,7 +328,7 @@ function (
 		assert.equal(this.oSemanticPage.getTitleBreadcrumbs(), null,
 			"SemanticPage titleBreadcrumbs is null by default.");
 
-		// Аct: set titleHeading
+		// Act: set titleHeading
 		vResult = this.oSemanticPage.setTitleBreadcrumbs(oBreadcrumbs);
 
 		// Assert
@@ -337,7 +337,7 @@ function (
 		assert.equal(this.oSemanticPage, vResult,
 			"SemanticPage setTitleBreadcrumbs returns the SemanticPage instance.");
 
-		// Аct: destroy titleHeading
+		// Act: destroy titleHeading
 		vResult = this.oSemanticPage.destroyTitleBreadcrumbs();
 
 		// Assert
@@ -551,14 +551,14 @@ function (
 		assert.equal(this.oSemanticPage.getContent(), null,
 			"SemanticPage content is null by default.");
 
-		// Аct - add content
+		// Act - add content
 		this.oSemanticPage.setContent(oMessageStrip);
 
 		// Assert
 		assert.equal(this.oSemanticPage.getContent(), oMessageStrip,
 			"SemanticPage content aggregation is set and retrieved successfully.");
 
-		// Аct - destroy content
+		// Act - destroy content
 		this.oSemanticPage.destroyContent();
 
 		// Assert

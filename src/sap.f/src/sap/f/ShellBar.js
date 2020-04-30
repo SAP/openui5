@@ -255,10 +255,10 @@ function(
 		this._bRightBoxUpdateNeeded = true;
 
 		this._oOverflowToolbar = this._oFactory.getOverflowToolbar();
-		this._оAdditionalBox = this._oFactory.getAdditionalBox();
+		this._oAdditionalBox = this._oFactory.getAdditionalBox();
 		this._aControls = [];
 		this.setAggregation("_overflowToolbar", this._oOverflowToolbar);
-		this.setAggregation("_additionalBox", this._оAdditionalBox);
+		this.setAggregation("_additionalBox", this._oAdditionalBox);
 
 		this._oToolbarSpacer = this._oFactory.getToolbarSpacer();
 
@@ -501,7 +501,7 @@ function(
 				this.addControlToCollection(this._oHomeIcon, this._aLeftControls);
 			}
 			this._assignControlsToAdditionalBox();
-			this._aLeftControls.push(this._оAdditionalBox);
+			this._aLeftControls.push(this._oAdditionalBox);
 		}
 
 		// Assign the CoPilot independently
@@ -536,7 +536,7 @@ function(
 
 	// Utility
 	ShellBar.prototype._assignControlsToAdditionalBox = function () {
-		this._оAdditionalBox.removeAllItems();
+		this._oAdditionalBox.removeAllItems();
 
 		// we need to create and assign null to the title control reference,
 		// which we will later read in ResponsiveHandler
@@ -544,20 +544,20 @@ function(
 		//depends on the given configuration we either show MenuButton with MegaMenu, or Title
 		if (this.getShowMenuButton() && this._oPrimaryTitle){
 
-			this.addControlToCollection(this._oPrimaryTitle, this._оAdditionalBox);
+			this.addControlToCollection(this._oPrimaryTitle, this._oAdditionalBox);
 			this._oTitleControl = this._oPrimaryTitle;
 
 		} else if (this._oMegaMenu) {
 
-			this.addControlToCollection(this._oMegaMenu, this._оAdditionalBox);
+			this.addControlToCollection(this._oMegaMenu, this._oAdditionalBox);
 			this._oTitleControl = this._oMegaMenu;
 		}
 
 		if (this._oSecondTitle) {
-			this.addControlToCollection(this._oSecondTitle, this._оAdditionalBox);
+			this.addControlToCollection(this._oSecondTitle, this._oAdditionalBox);
 		}
 
-		return this._оAdditionalBox;
+		return this._oAdditionalBox;
 	};
 
 	// Utility
@@ -604,7 +604,7 @@ function(
 		if (Array.isArray(aEntity)) {
 			fnAction = "push";
 		} else {
-			fnAction = aEntity === this._оAdditionalBox ? "addItem" : "addContent";
+			fnAction = aEntity === this._oAdditionalBox ? "addItem" : "addContent";
 		}
 		this._addDataToControl(oControl);
 		aEntity[fnAction](oControl);
