@@ -221,7 +221,11 @@ sap.ui.define([
 	 *            new Component instance
 	 * @public
 	 *
-	 * @class Base Class for Component.
+	 * @class Base Class for Components.
+	 * Components are independent and reusable parts of UI5 applications.
+	 * They facilitate the encapsulation of closely related parts of an application,
+	 * thus enabling developers to structure and maintain their applications more easily.
+	 *
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
