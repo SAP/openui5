@@ -1173,11 +1173,6 @@ sap.ui.define([
 			this.addStyleClass("sapMFocus");
 			this._getList().removeStyleClass("sapMListFocus");
 
-			if (this._oLastFocusedListItem) {
-				this._oLastFocusedListItem.removeStyleClass("sapMLIBFocused");
-				this._oLastFocusedListItem = null;
-			}
-
 			// if recommendations were shown - add the icon pressed style
 			if (this._getItemsShownWithFilter()) {
 				this.toggleIconPressedStyle(true);
@@ -1880,6 +1875,30 @@ sap.ui.define([
 		 * @private
 		 */
 		ComboBox.prototype.onsaphide = ComboBox.prototype.onsapshow;
+
+		/**
+	 	* Called when the <code>ComboBox</code> is clicked or tapped.
+	 	*
+		* @public
+		* @param {jQuery.Event} oEvent The event object.
+		*/
+		ComboBox.prototype.ontap = function(oEvent) {
+			var oDomRef = this.getFocusDomRef(),
+				sActivedescendant = "aria-activedescendant";
+
+			this.addStyleClass("sapMFocus");
+
+			if (this.isOpen() && this._getList().hasStyleClass("sapMListFocus")) {
+				this._getList().removeStyleClass("sapMListFocus");
+			}
+
+			if (this._oLastFocusedListItem) {
+				this._oLastFocusedListItem.removeStyleClass("sapMLIBFocused");
+				this._oLastFocusedListItem = null;
+			}
+
+			oDomRef.removeAttribute(sActivedescendant);
+		};
 
 		/**
 		 * Handles the <code>focusin</code> event.
