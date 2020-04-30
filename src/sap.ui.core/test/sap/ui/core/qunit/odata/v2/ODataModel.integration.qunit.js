@@ -4265,11 +4265,6 @@ usePreliminaryContext : false}}">\
 				properties : {}
 			});
 
-			//TODO: consider also technical flags in propagateMessages
-			that.oLogMock.expects("error")
-				.withExactArgs("Unexpected non-persistent message in response, but requested "
-					+ "only transition messages", undefined,
-					"sap.ui.model.odata.ODataMessageParser");
 			that.oLogMock.expects("fatal")
 				.withExactArgs("The following problem occurred: HTTP request failed400,FAILED,"
 					+ oErrorPOST.body);
