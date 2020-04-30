@@ -8,9 +8,10 @@
 sap.ui.define([
 	'sap/ui/core/dnd/DragInfo',
 	'sap/ui/core/dnd/DropInfo',
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/dnd/DropPosition"
 ],
-	function(DragInfo, DropInfo, KeyCodes) {
+	function(DragInfo, DropInfo, KeyCodes, DropPosition) {
 		"use strict";
 
 		var INSERT_POSITION_BEFORE = "Before",
@@ -52,6 +53,10 @@ sap.ui.define([
 					iAggregationDropIndex = 0,
 					bRtl = sap.ui.getCore().getConfiguration().getRTL(),
 					bIsDropPositionBefore = sDropPosition === INSERT_POSITION_BEFORE;
+				// Prevent cycle
+				if (oDraggedControl._isParentOf(oDroppedControl)) {
+					return;
+				}
 
 				if (bRtl && !bIgnoreRTL) {
 					if (bIsDropPositionBefore) {
@@ -71,7 +76,23 @@ sap.ui.define([
 					}
 				}
 
+				if (context.isA("sap.m.IconTabFilter")){
+					if (bIsDropPositionBefore) {
+						iAggregationDropIndex = iDropIndex;
+					} else {
+						iAggregationDropIndex = iDropIndex + 1;
+					}
+				}
+
 				IconTabBarDragAndDropUtil._insertControl(sInsertAfterBeforePosition, $DraggedControl, $DroppedControl);
+
+				if (sDropPosition === "On") {
+					if (oDroppedControl === oDraggedControl) {
+						return;
+					}
+					iAggregationDropIndex = context.getAggregation("items").length;
+				}
+
 				IconTabBarDragAndDropUtil._handleConfigurationAfterDragAndDrop.call(context, oDraggedControl, iAggregationDropIndex);
 			},
 
@@ -250,7 +271,7 @@ sap.ui.define([
 			},
 
 			/**
-			 * Adding aggregations for  drag and drop.
+			 * Adding aggregations for drag and drop.
 			 * @param {object} context from which context function is called (sap.m.IconTabHeader or sap.m.IconTabSelectList)
 			 * @param {string} sDropLayout Depending on the control we are dragging in, it could be Vertical or Horizontal
 			 */
@@ -264,7 +285,7 @@ sap.ui.define([
 				}));
 				context.addDragDropConfig(new DropInfo({
 					targetAggregation: "items",
-					dropPosition: "Between",
+					dropPosition: DropPosition.OnOrBetween,
 					dropLayout: sDropLayout,
 					drop: context._handleDragAndDrop.bind(context),
 					groupName: DRAG_DROP_GROUP_NAME + sIconTabHeaderId

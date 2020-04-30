@@ -235,11 +235,20 @@ sap.ui.define([
 	 * @private
 	 */
 	IconTabBarSelectList.prototype._handleDragAndDrop = function (oEvent) {
-		var oDropPosition = oEvent.getParameter("dropPosition"),
+		var sDropPosition = oEvent.getParameter("dropPosition"),
 			oDraggedControl = oEvent.getParameter("draggedControl"),
-			oDroppedControl = oEvent.getParameter("droppedControl");
+			oDroppedControl = oEvent.getParameter("droppedControl"),
+			oContext = oDroppedControl._getRealTab().getParent();
 
-		IconTabBarDragAndDropUtil.handleDrop(this._oIconTabHeader, oDropPosition, oDraggedControl._getRealTab(), oDroppedControl._getRealTab(), true);
+		if (this._oTabFilter._bIsOverflow) {
+			oContext = this._oIconTabHeader;
+		}
+
+		if (sDropPosition === "On") {
+			oContext = oDroppedControl._getRealTab();
+		}
+
+		IconTabBarDragAndDropUtil.handleDrop(oContext, sDropPosition, oDraggedControl._getRealTab(), oDroppedControl._getRealTab(), true);
 
 		this._oIconTabHeader._setItemsForStrip();
 		this._oIconTabHeader._initItemNavigation();
@@ -247,7 +256,7 @@ sap.ui.define([
 		this._oTabFilter._setSelectListItems();
 		this._initItemNavigation();
 
-		oDraggedControl.$().focus();
+		oDroppedControl._getRealTab().getParent().$().focus();
 	};
 
 	/* =========================================================== */
