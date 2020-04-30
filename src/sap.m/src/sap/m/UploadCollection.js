@@ -1572,8 +1572,8 @@ sap.ui.define([
 			$container = null;
 		}
 
-		oContainer = new HTML({
-			content: "<span id=" + sContainerId + " class='sapMUCTextButtonContainer'></span>",
+		oContainer = new HTML(sContainerId, {
+			content: "<span class='sapMUCTextButtonContainer'></span>",
 			afterRendering: this._renderContent.bind(this, item, sContainerId)
 		});
 		oListItem = new CustomListItem(sItemId + "-cli", {
