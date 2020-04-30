@@ -1799,4 +1799,73 @@ sap.ui.define([
 		assert.strictEqual(oRequest1.request.requestUri, "~serviceUri/Foo('~key')?bar");
 		assert.strictEqual(oRequest1.request.deepPath, "~deepPath('~key')");
 	});
+
+	//*********************************************************************************************
+[true, false].forEach(function (bReject) {
+	QUnit.test("metadataLoaded calls oMetadata.loaded (" + bReject + ")", function (assert) {
+		var oModel = {
+				oMetadata : {
+					loaded : function () {}
+				}
+			},
+			oPromise = {};
+
+		this.mock(oModel.oMetadata).expects("loaded").withExactArgs(bReject).returns(oPromise);
+
+		//code under test
+		assert.strictEqual(ODataModel.prototype.metadataLoaded.call(oModel, bReject),
+			oPromise);
+	});
+});
+
+	//*********************************************************************************************
+[true, false].forEach(function (bReject) {
+	[true, false].forEach(function (bAnnotations) {
+		[true, false].forEach(function (bMetadata) {
+	var sTitle = "metadataLoaded with annotations: " + "bRejectOnFailure=" + bReject + " (" +
+		bAnnotations + ", " + bMetadata + ")";
+
+	QUnit.test(sTitle, function (assert) {
+		var fnAnnotationsPromise,
+			oMetadataPromise,
+			fnMetadataPromise,
+			oModel = {
+				bLoadAnnotationsJoined : true,
+				oMetadata : {
+					loaded : function () {}
+				}
+			},
+			oTest = {
+				resolved : function () {},
+				rejected : function () {}
+			},
+			oTestMock = this.mock(oTest);
+
+		oModel.pAnnotationsLoaded = new Promise(function(resolve, reject) {
+			fnAnnotationsPromise = bAnnotations ? resolve : reject;
+		});
+		oMetadataPromise = new Promise(function(resolve, reject) {
+			// The metadata promise is not rejected if !bReject (existing behavior).
+			fnMetadataPromise = (bMetadata || !bReject) ? resolve : reject;
+		});
+		this.mock(oModel.oMetadata).expects("loaded").withExactArgs(bReject)
+			.returns(oMetadataPromise);
+		// The resulting promise is never rejected if !bReject.
+		if (!bReject || (bAnnotations && bMetadata)) {
+			oTestMock.expects("resolved");
+			oTestMock.expects("rejected").never();
+		} else {
+			oTestMock.expects("resolved").never();
+			oTestMock.expects("rejected");
+		}
+		fnAnnotationsPromise();
+		fnMetadataPromise();
+
+		// code under test
+		return ODataModel.prototype.metadataLoaded.call(oModel, bReject)
+			.then(oTest.resolved, oTest.rejected);
+	});
+		});
+	});
+});
 });
