@@ -27,3 +27,9 @@
 .sapMLnk:not(.sapMLnkDsbl) {
 	text-shadow: @_sap_m_Link_TextShadowColor;
 }
+
+/* align Link in Form with Label */
+.sapUiFormEdit .sapMLnk {
+	margin-top: 0.875rem; /* don't use padding as this would stretch the focus outline */
+	margin-bottom: 0.625rem; /* for some reason browser adds 4px, display: block would lead to stretched focus outline*/
+}
