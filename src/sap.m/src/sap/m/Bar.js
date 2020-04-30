@@ -214,7 +214,6 @@ sap.ui.define([
 		this._updatePosition(bContentLeft, bContentMiddle, bContentRight);
 
 		this._sResizeListenerId = ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._handleResize, this));
-
 		if (this.getEnableFlexBox()) {
 			return;
 		}
@@ -226,7 +225,6 @@ sap.ui.define([
 		if (bContentMiddle) {
 			this._sResizeListenerIdMid = ResizeHandler.register(this._$MidBarPlaceHolder[0], jQuery.proxy(this._handleResize, this));
 		}
-
 		if (bContentRight) {
 			this._sResizeListenerIdRight = ResizeHandler.register(this._$RightBar[0], jQuery.proxy(this._handleResize, this));
 		}
@@ -253,14 +251,15 @@ sap.ui.define([
 		}
 
 		var iBarWidth = this.$().outerWidth(true);
-
 		// reset to default
 		this._$RightBar.css({ width : "" });
 		this._$LeftBar.css({ width : "" });
-		this._$MidBarPlaceHolder.css({ position : "", width : "", visibility : 'hidden' });
-
+		if (Device.browser.msie) {
+			this._$MidBarPlaceHolder.css({ position : "", width : ""});
+		} else {
+			this._$MidBarPlaceHolder.css({ position : "", width : "", visibility: "hidden"});
+		}
 		var iRightBarWidth = this._$RightBar.outerWidth(true);
-
 		//right bar is bigger than the bar - only show the right bar
 		if (iRightBarWidth > iBarWidth) {
 
@@ -276,7 +275,6 @@ sap.ui.define([
 			return;
 
 		}
-
 		var iLeftBarWidth = this._getBarContainerWidth(this._$LeftBar);
 
 		// handle the case when left and right content are wider than the bar itself
@@ -295,10 +293,8 @@ sap.ui.define([
 			return;
 
 		}
-
 		//middle bar will be shown
 		this._$MidBarPlaceHolder.css(this._getMidBarCss(iRightBarWidth, iBarWidth, iLeftBarWidth));
-
 	};
 
 	/**
@@ -349,12 +345,6 @@ sap.ui.define([
 			oMidBarCss.width = iSpaceBetweenLeftAndRight + "px";
 
 			oMidBarCss.left = bRtl ? iRightBarWidth : iLeftBarWidth;
-		}
-
-		//Internet Explorer has a problem with resizing of elements and applying inline styles. If we have input with placeholder or search bar
-		//the resizing is forcing a focus lost, so we are not resizing the element.
-		if (Device.browser.msie) {
-			oMidBarCss.width = iMidBarPlaceholderWidth;
 		}
 
 		return oMidBarCss;
