@@ -688,6 +688,9 @@ sap.ui.define([
 		if (this.getFooter() && this._bIsFooterAanimationGoing) {
 			this._onToggleFooterAnimationEnd(this.getFooter());
 		}
+		// clear the cached DOM element to prevent obsolete layout calculations
+		// of the old <code>this._$titleArea</code> before rendering is finalized
+		this._$titleArea = [];
 	};
 
 	/**
