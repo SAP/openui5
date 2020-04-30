@@ -346,17 +346,32 @@ sap.ui.define([
 			oSlider = new Slider(),
 			aLabels = oSlider.getAggregation("_handlesLabels"),
 			oSliderWithTickmarks = new Slider({enableTickmarks: true}),
+			oSliderWithLables = new sap.m.Slider({
+				min: 0,
+				max: 40,
+				step: 5,
+				enableTickmarks: true,
+				showAdvancedTooltip: true,
+				scale: new sap.m.ResponsiveScale({
+					tickmarksBetweenLabels: 1
+				})
+			}),
 			aTickmarksLabels = oSliderWithTickmarks.getAggregation("_handlesLabels");
 
 		oSlider.placeAt("content");
 		oSliderWithTickmarks.placeAt("content");
+		oSliderWithLables.placeAt("content");
 		sap.ui.getCore().applyChanges();
+
+		var sInvisibleTextId = oSliderWithLables.getDomRef("handle").getAttribute("aria-labelledby");
 
 		// assert
 		assert.strictEqual(aLabels.length, 1, "Label for handles should be added as an aggregation");
 		assert.ok(oBoundleCalledStub.calledWith("SLIDER_HANDLE"), "Text should be regarding the handle");
 		assert.strictEqual(oSlider.getDomRef("handle").getAttribute("aria-labelledby"), aLabels[0].getId());
 		assert.strictEqual(oSliderWithTickmarks.getDomRef("handle").getAttribute("aria-labelledby"), aTickmarksLabels[0].getId());
+		assert.ok(document.getElementById(sInvisibleTextId), "The InvisibleText is rendered");
+
 
 		// cleanup
 		oSlider.destroy();

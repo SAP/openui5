@@ -76,7 +76,6 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 
 			this.renderLabels(oRm, oSlider);
 
-
 			if (oSlider.getName()) {
 				this.renderInput(oRm, oSlider);
 			}

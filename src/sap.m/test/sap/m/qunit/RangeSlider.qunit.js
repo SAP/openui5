@@ -1242,6 +1242,24 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
+	QUnit.test("RangeSlider with enabled tickmarks and not set scale, should remove the default one, after 'scale' aggregation is set", function(assert) {
+		var oDefaultLabelsDOM;
+		var oScale = new ResponsiveScale({tickmarksBetweenLabels: 1});
+		var oSlider = new RangeSlider({
+			enableTickmarks: true,
+			scale: oScale
+		});
+
+		oSlider.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		oDefaultLabelsDOM = "#" + oSlider.getId() + " .sapMSliderLabels";
+
+		assert.strictEqual(document.querySelector(oDefaultLabelsDOM), null, "Default tickmark labels should not be rendered");
+
+		oSlider.destroy();
+	});
+
 	QUnit.module("Accessibility");
 
 	QUnit.test("RangeSlider with inputs as tooltip should add an aria", function(assert) {
