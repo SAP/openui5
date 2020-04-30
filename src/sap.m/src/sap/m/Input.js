@@ -1023,6 +1023,8 @@ function(
 				id: this.getId() + "-vhi",
 				src: IconPool.getIconURI("value-help"),
 				useIconTooltip: false,
+				alt: this._oRb.getText("INPUT_VALUEHELP_BUTTON"),
+				decorative: false,
 				noTabStop: true,
 				press: function (oEvent) {
 					// if the property valueHelpOnly is set to true, the event is triggered in the ontap function
