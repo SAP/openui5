@@ -375,7 +375,7 @@ sap.ui.define([
 		assert.ok(jQuery.sap.domById("dialog"), "dialog is rendered after it's opened.");
 		assert.ok($Dialog.closest("#sap-ui-static")[0], "dialog should be rendered inside the static uiArea.");
 		assert.ok(oSubHeaderDom, "Sub header should be rendered inside the dialog");
-		assert.equal($ScrollDiv.css("display"), "block", "Scroll div should always have display: block");
+		assert.equal($ScrollDiv.css("display"), "inline-block", "Scroll div should always have display: inline-block");
 
 		if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
 			assert.equal(oSearchField, document.activeElement, "searchfield should have the focus");
@@ -1359,7 +1359,7 @@ sap.ui.define([
 
 		assert.ok(oDialog.isOpen(), "Dialog is opened");
 		this.stub(oDialog, "_adjustScrollingPane", function () {
-			assert.equal(oDialog.$("scroll").css("display"), "block", "display: block is cleared before size calculation");
+			assert.equal(oDialog.$("scroll").css("display"), "inline-block", "display: block is cleared before size calculation");
 		});
 		oDialog._reapplyPosition();
 		oDialog.destroy();
