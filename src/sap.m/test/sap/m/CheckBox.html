@@ -204,7 +204,7 @@
 					oToolbar,
 					new sap.ui.layout.form.SimpleForm({
 						id: "sf_with_checkbox",
-						title: "Form containing a CheckBox",
+						title: new sap.ui.core.Title({text: "Form containing a CheckBox", level: sap.ui.core.TitleLevel.H2}),
 						editable : true,
 						content : [
 							new sap.m.CheckBox({id: "cb_in_a_form", selected:true, text:"CheckBox in a Form"})
