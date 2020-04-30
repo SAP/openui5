@@ -25,7 +25,8 @@ sap.ui.define([
 
 			//TODO: avoid that message is reported twice in error handler and in requestFailed event
 			// hack
-			if (oError.headers && oError.headers.processed) {
+			if (oError.headers && oError.headers.processed
+					|| oError.expandAfterCreateFailed/*handled in success event handler*/) {
 				return;
 			}
 			try {
@@ -84,7 +85,7 @@ sap.ui.define([
 					QuantityUnit : "EA",
 					SalesOrderID : oBindingContext.getProperty("SalesOrderID")
 				},
-				success : function () {
+				success : function (oData, oResponse) {
 					oCreateDialog.close();
 					MessageBox.success("Created sales order item '"
 						+ oCreatedContext.getProperty("ItemPosition") + "'");
@@ -99,7 +100,8 @@ sap.ui.define([
 			var oTable = this.byId("ToLineItems"),
 				oItemContext = oTable.getContextByIndex(oTable.getSelectedIndex()),
 				sMessage,
-				sSalesOrderLineItem;
+				sSalesOrderLineItem,
+				that = this;
 
 			function onConfirm(sCode) {
 				if (sCode !== 'OK') {
@@ -113,6 +115,7 @@ sap.ui.define([
 						oTable.clearSelection();
 					}
 				});
+				that.readSalesOrder();
 			}
 
 			sSalesOrderLineItem = oItemContext.getProperty("SalesOrderID", true)

@@ -42,7 +42,7 @@ sap.ui.define([
 			success : MessageType.Success,
 			info : MessageType.Information
 		},
-		rTemporaryKey = /\('(id-[^']+)'\)$/;
+		rTemporaryKey = /id(?:-[0-9]+){2}/;
 
 	/**
 	 * Clones the given OData message object and replaces the target property of the clone by
@@ -408,11 +408,11 @@ sap.ui.define([
 					code : oMessage.code,
 					descriptionUrl : oMessage.descriptionUrl,
 					fullTarget : oMessage.fullTarget
-						&& oMessage.fullTarget.replace(rTemporaryKey, "('~key~')"),
+						&& oMessage.fullTarget.replace(rTemporaryKey, "~key~"),
 					message : oMessage.message,
 					persistent : oMessage.persistent,
 					target : oMessage.target
-						&& oMessage.target.replace(rTemporaryKey, "('~key~')"),
+						&& oMessage.target.replace(rTemporaryKey, "~key~"),
 					technical : oMessage.technical,
 					type : oMessage.type
 				};
@@ -669,7 +669,8 @@ sap.ui.define([
 					oResponse,
 					mResponseHeaders,
 					sUrl = oActualRequest.requestUri,
-					bWaitForResponse = true;
+					bWaitForResponse = true,
+					sWithContentID;
 
 				function checkFinish() {
 					if (!that.aRequests.length && !that.iPendingResponses) {
@@ -690,6 +691,7 @@ sap.ui.define([
 
 				oActualRequest = Object.assign({}, oActualRequest);
 				oActualRequest.headers = Object.assign({}, oActualRequest.headers);
+				sWithContentID = oActualRequest.withContentID;
 
 				if (sUrl.startsWith(that.oModel.sServiceUrl)) {
 					oActualRequest.requestUri = sUrl.slice(that.oModel.sServiceUrl.length + 1);
@@ -709,9 +711,11 @@ sap.ui.define([
 				delete oActualRequest["deferred"];
 				delete oActualRequest["eventInfo"];
 				delete oActualRequest["password"];
+				delete oActualRequest["expandRequest"];
 				delete oActualRequest["requestID"];
 				delete oActualRequest["updateAggregatedMessages"];
 				delete oActualRequest["user"];
+				delete oActualRequest["withContentID"];
 				if (oExpectedRequest) {
 					oExpectedResponse = oExpectedRequest.response;
 					if (oExpectedResponse === NO_CONTENT) {
@@ -723,10 +727,9 @@ sap.ui.define([
 							response : oExpectedResponse
 						};
 					} else {
-						oResponse = {
-							data : oExpectedResponse,
-							statusCode : 200
-						};
+						oResponse = oExpectedResponse && oExpectedResponse.data
+							? oExpectedResponse
+							: {data : oExpectedResponse, statusCode : 200};
 
 						// oResponse needs __metadata for ODataModel.prototype._getKey
 						if (oResponse.data && Array.isArray(oResponse.data.results)) {
@@ -747,17 +750,33 @@ sap.ui.define([
 
 					if (oActualRequest.key && sMethod === "POST"
 							&& oActualRequest.headers["x-http-method"] !== "MERGE") {
-						that.sTemporaryKey = oActualRequest.key.match(rTemporaryKey)[1];
+						that.sTemporaryKey = sWithContentID
+							|| oActualRequest.key.match(rTemporaryKey)[0];
 
 						oExpectedRequest.deepPath = oExpectedRequest.deepPath.replace("~key~",
 							that.sTemporaryKey);
 						delete oActualRequest["key"];
+
+						if (oExpectedRequest.headers && oExpectedRequest.headers["Content-ID"]) {
+							oExpectedRequest.headers["Content-ID"] =
+								oExpectedRequest.headers["Content-ID"]
+									.replace("~key~", that.sTemporaryKey);
+						}
+					}
+					if (oActualRequest.requestUri.startsWith("$") && sMethod === "GET") {
+						oExpectedRequest.requestUri = oExpectedRequest.requestUri.replace("~key~",
+							that.sTemporaryKey);
+						oExpectedRequest.deepPath = oExpectedRequest.deepPath.replace("~key~",
+							that.sTemporaryKey);
 					}
 					if ("batchNo" in oExpectedRequest) {
 						oActualRequest.batchNo = iBatchNo;
 					}
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
 					oResponse.headers = mResponseHeaders || {};
+					if (oExpectedRequest.headers["Content-ID"]) {
+						oResponse.headers["Content-ID"] = oExpectedRequest.headers["Content-ID"];
+					}
 				} else {
 					assert.ok(false, sMethod + " " + sUrl + " (unexpected)");
 					oResponse = {value : []}; // dummy response to avoid further errors
@@ -4100,7 +4119,7 @@ usePreliminaryContext : false}}">\
 					deepPath : "/SalesOrderSet('1')/ToLineItems",
 					method : "GET",
 					requestUri : "SalesOrderSet('1')/ToLineItems"
-				}, oFixture.aResponses[3])
+				}, oFixture.aResponses[2])
 				.expectMessages(oFixture.aExpectedMessages);
 			if (bWithError) {
 				that.oLogMock.expects("fatal").twice()
@@ -4155,7 +4174,183 @@ usePreliminaryContext : false}}">\
 
 			// code under test
 			oModel.deleteCreatedEntry(oContext);
+		});
+	});
 
+	//*********************************************************************************************
+	// Scenario: The creation (POST) of a new entity leads to an automatic expand of the given
+	// navigation properties (GET) within the same $batch. If the creation fails, the POST request
+	// and the corresponding GET request for the expansion of the navigation properties are repeated
+	// with the next call of submitBatch.
+	// JIRA: CPOUI5MODELS-198
+	QUnit.test("createEntry: automatic expand of navigation properties", function (assert) {
+		var iBatchNo = 1,
+			oCreatedContext,
+			oGETRequest = {
+				deepPath : "/$~key~",
+				method : "GET",
+				requestUri : "$~key~?$expand=ToProduct&$select=ToProduct"
+			},
+			oModel = createSalesOrdersModelMessageScope({
+				canonicalRequests : true,
+				useBatch : true
+			}),
+			oNoteError = this.createResponseMessage("Note"),
+			oPOSTRequest = {
+				created : true,
+				data : {
+					__metadata : {
+						type : "gwsample_basic.SalesOrderLineItem"
+					}
+				},
+				deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
+				headers : {"Content-ID": "~key~", "sap-messages": "transientOnly"},
+				method : "POST",
+				requestUri : "SalesOrderSet('1')/ToLineItems"
+			},
+			sView = '\
+<FlexBox id="productDetails"\
+	binding="{path : \'ToProduct\', parameters : {select : \'Name\'}}">\
+	<Text id="productName" text="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("productName", null);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oErrorGET = createErrorResponse({message : "GET failed", statusCode : 400}),
+				oErrorPOST = createErrorResponse({message : "POST failed", statusCode : 400}),
+				bHandlerCalled;
+
+			function fnHandleError (oEvent) {
+				var oResponse = oEvent.getParameter("response");
+
+				if (!bHandlerCalled) {
+					assert.strictEqual(oResponse.expandAfterCreateFailed, undefined);
+					bHandlerCalled = true;
+				} else {
+					assert.strictEqual(oResponse.expandAfterCreateFailed, true);
+					oModel.detachRequestFailed(fnHandleError);
+				}
+			}
+
+			that.expectHeadRequest()
+				.expectRequest(Object.assign({batchNo : iBatchNo}, oPOSTRequest), oErrorPOST)
+				.expectRequest(Object.assign({batchNo : iBatchNo}, oGETRequest), oErrorGET)
+				.expectMessages([{
+					code : "UF0",
+					descriptionUrl : "",
+					fullTarget : "/SalesOrderSet('1')/ToLineItems('~key~')",
+					message : "POST failed",
+					persistent : false,
+					target : "/SalesOrderLineItemSet('~key~')",
+					technical : true,
+					type : "Error"
+				}, {
+					code : "UF0",
+					descriptionUrl : "",
+					fullTarget : "/$~key~",
+					message : "GET failed",
+					persistent : false,
+					target : "/$~key~",
+					technical : true,
+					type : "Error"
+				}]);
+
+			oModel.attachRequestFailed(fnHandleError);
+
+			// code under test
+			oCreatedContext = oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {
+				expand : "ToProduct",
+				properties : {}
+			});
+
+			//TODO: consider also technical flags in propagateMessages
+			that.oLogMock.expects("error")
+				.withExactArgs("Unexpected non-persistent message in response, but requested "
+					+ "only transition messages", undefined,
+					"sap.ui.model.odata.ODataMessageParser");
+			that.oLogMock.expects("fatal")
+				.withExactArgs("The following problem occurred: HTTP request failed400,FAILED,"
+					+ oErrorPOST.body);
+			that.oLogMock.expects("fatal")
+				.withExactArgs("The following problem occurred: HTTP request failed400,FAILED,"
+					+ oErrorGET.body);
+
+			oModel.submitChanges();
+
+			iBatchNo += 1;
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest(Object.assign({batchNo : iBatchNo}, oPOSTRequest), {
+					data : {
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+						},
+						ItemPosition : "10",
+						SalesOrderID : "1"
+					},
+					statusCode : 201
+				})
+				.expectRequest(Object.assign({batchNo : iBatchNo}, oGETRequest), {
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+					},
+					ToProduct : {
+						__metadata : {uri : "ProductSet(ProductID='P1')"},
+						Name : "Product 1",
+						ProductID : "P1"
+					}
+				}, {
+					"sap-message" : getMessageHeader([oNoteError])
+				})
+				.expectMessage(oNoteError,
+					"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/",
+					"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')/");
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("productName", "Product 1");
+
+			// code under test
+			that.oView.byId("productDetails").setBindingContext(oCreatedContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			[
+				"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')/ToProduct",
+				"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct",
+				"/ProductSet(ProductID='P1')"
+			].forEach(function (sPath) {
+				var oData = oModel.getObject(sPath, null, {select : "Name"});
+
+				assert.strictEqual(oData.Name, "Product 1", "getObject for " + sPath);
+			});
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: The creation (POST) of a new entity leads to an automatic expand of the given
+	// navigation properties within the same $batch. Calling resetChanges on the model removes also
+	// the GET request for the automatic expansion of the given navigation properties.
+	// JIRA: CPOUI5MODELS-198
+	QUnit.test("createEntry: abort automatic expand of navigation properties", function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+			that = this;
+
+		return this.createView(assert, /*sView*/"", oModel).then(function () {
+			// code under test
+			oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {
+				expand : "ToProduct",
+				properties : {}
+			});
+
+			// code under test
+			oModel.resetChanges();
 			oModel.submitChanges();
 
 			return that.waitForChanges(assert);

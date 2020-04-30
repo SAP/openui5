@@ -294,17 +294,43 @@
 				<code>Create a sales order item</code> button.<br />
 				<b>Check:</b> A <code>Create a New Sales Order Item</code> dialog opens.
 			</li>
+			<li>In the <code>Create a New Sales Order Item</code> dialog remove the value of the
+				<code>Product ID</code> field and press the <code>Save</code> button.<br />
+				<b>Check:</b> A message box is displayed indicating that the mandatory field
+					'PRODUCT_GUID' is empty.
+			</li>
+			<li>Close the error message box.<br />
+				<b>Check:</b> The <code>Create a New Sales Order Item</code> dialog is still open.
+			</li>
+			<li>In the <code>Create a New Sales Order Item</code> dialog click the
+				<code>Discard</code> button.<br />
+				<b>Check:</b> The <code>Create a New Sales Order Item</code> dialog is closed.
+			</li>
+			<li>Repeat the steps (2) - (4).</li>
+			<li>Remember the <code>Gross Amount</code> and the <code>Changed At</code> data from the
+				<code>Sales Order</code> section.</li>
 			<li>In the <code>Create a New Sales Order Item</code> dialog enter <code>HT-1000</code>
 				in the <code>Product ID</code> field, remove the content of the <code>Note</code>
-				field and press the <code>OK</code> button.<br />
-				<b>Check:</b> A message toast is displayed with the information, that the item has
-					been created.<br />
+				field and press the <code>Save</code> button.<br />
+				<b>Check:</b> A success message box is displayed with the information, that the item
+					has been created. Confirm that message box.<br />
 				<b>Check:</b> The newly created item is displayed in the
 					<code>Sales Order Items</code> table.<br />
+				<b>Check:</b> The <code>Gross Amount</code> and the <code>Changed At</code> values
+					are updated.<br />
 				<b>Check:</b> There are two new messages in the message popover, one for the
 					quantity which has to be at least 2 and one for the missing note of the new
 					sales order item.
 			</li>
+			<li>Open the developer tools, navigate to the network tab, clear the requests and filter
+				for <code>$batch</code> requests.</li>
+			<li>In the <code>Sales Order Items</code> table click on the <code>&gt;</code> at the
+				end of the row for the newly created entity to open the product details.<br />
+				<b>Check:</b> There is no <code>$batch</code> request.<br />
+				<b>Check:</b> A <code>Product Details</code> dialog is opened showing the
+					<code>Product ID</code> and the corresponding product <code>Name</code>.
+			</li>
+			<li>Close the <code>Product Details</code> dialog.</li>
 			<li>In the <code>Sales Order Items</code> table select the newly created item and press
 				the <code>Delete the selected sales order item</code> button.<br />
 				<b>Check:</b> A <code>Sales Order Item Deletion</code> dialog opens.
@@ -316,6 +342,8 @@
 					successful.<br />
 				<b>Check:</b> The deleted item has been removed from the
 					<code>Sales Order Items</code> table.<br />
+				<b>Check:</b> The <code>Gross Amount</code> and the <code>Changed At</code> values
+					are updated.<br />
 				<b>Check:</b> The messages for the deleted item have been removed from the message
 					popover.
 			</li>
