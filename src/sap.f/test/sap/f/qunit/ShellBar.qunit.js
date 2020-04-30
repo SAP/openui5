@@ -1,6 +1,7 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/f/SearchManager",
 	"sap/f/ShellBar",
 	"sap/f/shellBar/Factory",
 	"sap/f/ShellBarRenderer",
@@ -16,6 +17,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ],
 function (
+	SearchManager,
 	ShellBar,
 	Factory,
 	ShellBarRenderer,
@@ -508,7 +510,7 @@ function (
 		this.oSB.setTitle("Test title");
 		this.oSB.setSecondTitle("Test second title");
 		this.oSB.setShowCopilot(true);
-		this.oSB.setSearchManager(new sap.f.SearchManager());
+		this.oSB.setSearchManager(new SearchManager());
 		this.oSB.setShowSearch(true);
 		this.oSB.setShowNotifications(true);
 		this.oSB.setShowProductSwitcher(true);
@@ -845,7 +847,7 @@ function (
 
 	QUnit.module("Managed Search", {
 		beforeEach: function () {
-			var oSearchManager = new sap.f.SearchManager();
+			var oSearchManager = new SearchManager();
 
 			oSearchManager._oSearch.setIsOpen(true);
 
