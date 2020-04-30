@@ -29,6 +29,16 @@ sap.ui.define([
 	 */
 
 	/**
+	 * The <code>sap.ui.fl.initial.api</code> namespace contains public APIs that can be used
+	 * during app startup, e.g. to inherit classes to create their own logic for retrieving data for flexibility.
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.initial.api
+	 * @public
+	 */
+
+	/**
 	 * The <code>sap.ui.fl.apply</code> namespace should contain all code necessary to
 	 * start a UI5 app for an end user with changes. Be aware that only the <code>api</code>
 	 * sub-namespace contains public and stable APIs.
@@ -122,7 +132,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 */
-
 
 	/**
 	 * SAPUI5 Library for SAPUI5 Flexibility and Descriptor Changes, App Variants, Control Variants (Views) and Personalization.
