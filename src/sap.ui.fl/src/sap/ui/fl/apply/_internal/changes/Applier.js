@@ -213,7 +213,7 @@ sap.ui.define([
 		 *
 		 * @param {function} fnGetChangesMap - Function which resolves with the changes map
 		 * @param {object} oAppComponent - Component instance that is currently loading
-		 * @param {sap.ui.fl.oFlexControlle} oFlexController - Instance of FlexController
+		 * @param {sap.ui.fl.oFlexController} oFlexController - Instance of FlexController
 		 * @param {sap.ui.core.Control} oControl Instance of the control to which changes should be applied
 		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Resolves as soon as all changes for the control are applied
 		 */
@@ -249,11 +249,11 @@ sap.ui.define([
 					if (oChange._ignoreOnce) {
 						delete oChange._ignoreOnce;
 					} else if (oChange.isApplyProcessFinished()) {
-						DependencyHandler.resolveDependenciesForChange(mChangesMap, oChange.getId());
+						DependencyHandler.resolveDependenciesForChange(mChangesMap, oChange.getId(), sControlId);
 					} else if (!mChangesMap.mDependencies[oChange.getId()]) {
 						aPromiseStack.push(function() {
 							return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag).then(function() {
-								DependencyHandler.resolveDependenciesForChange(mChangesMap, oChange.getId());
+								DependencyHandler.resolveDependenciesForChange(mChangesMap, oChange.getId(), sControlId);
 							});
 						});
 					} else {
@@ -264,7 +264,7 @@ sap.ui.define([
 
 				if (aChangesForControl.length || bControlWithDependencies) {
 					return FlUtils.execPromiseQueueSequentially(aPromiseStack).then(function () {
-						return DependencyHandler.processDependentQueue(mChangesMap, oAppComponent);
+						return DependencyHandler.processDependentQueue(mChangesMap, oAppComponent, sControlId);
 					});
 				}
 			}.bind(null, oControl));
