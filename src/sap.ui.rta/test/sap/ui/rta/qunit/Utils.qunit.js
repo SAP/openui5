@@ -55,6 +55,7 @@ function(
 			this.oView = sap.ui.getCore().byId("Comp1---idMain1");
 			this.oView.getModel().refresh(true);
 			sap.ui.getCore().applyChanges();
+			return this.oView.getModel().getMetaModel().loaded();
 		},
 		after: function() {
 			this.oCompCont.destroy();
@@ -63,30 +64,6 @@ function(
 			sandbox.restore();
 		}
 	}, function () {
-		QUnit.test("when getBoundEntityType is called for ", function(assert) {
-			//ensure core init with its first rendering is done
-			var done = assert.async();
-			var fnExecuteTests = function () {
-				var oGroupElementWithBinding = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
-				var oGroupElementWithOneUnboundField = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.BoundButton");
-				var oGroupElementWithNoBinding = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.BoundButton34");
-				var oGroupWithBindingElements = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.Reversal");
-				var oGroupWithNoBindingElements = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument");
-
-				assert.equal(Utils.getBoundEntityType(oGroupElementWithBinding).name, "Header", "a field with binding then finds the entity type");
-				assert.equal(Utils.getBoundEntityType(oGroupElementWithOneUnboundField).name, "Header", "a field with partial binding then finds the entity type");
-				assert.equal(Utils.getBoundEntityType(oGroupElementWithNoBinding).name, "Header", "a field no binding then finds the entity type");
-				assert.equal(Utils.getBoundEntityType(oGroupWithBindingElements).name, "Header", "a group with binding then finds the entity type");
-				assert.equal(Utils.getBoundEntityType(oGroupWithNoBindingElements).name, "Header", "a group no binding then finds the entity type");
-
-				done();
-			};
-
-			this.oView.getModel().getMetaModel().loaded().then(function () {
-				fnExecuteTests();
-			});
-		});
-
 		QUnit.test("Given extensibility disabled in the system when isServiceUpToDate is called", function(assert) {
 			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(false);
 

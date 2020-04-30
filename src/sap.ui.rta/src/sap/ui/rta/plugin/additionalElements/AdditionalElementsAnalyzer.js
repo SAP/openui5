@@ -5,19 +5,19 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dt/ElementUtil",
-	"sap/ui/rta/Utils",
 	"sap/base/Log",
+	"sap/base/util/ObjectPath",
 	"sap/ui/rta/util/BindingsExtractor"
 ], function (
 	jQuery,
 	ElementUtil,
-	RtaUtils,
 	Log,
+	ObjectPath,
 	BindingsExtractor
 ) {
 	"use strict";
 
-	function _enrichProperty(mProperty, mODataEntity, oElement, sAggregationName) {
+	function _enrichProperty(mProperty, mODataEntity, oElement, sAggregationName, sModelName) {
 		var mProp = {
 			name :  mProperty.name,
 			bindingPath : mProperty.name,
@@ -46,7 +46,7 @@ sap.ui.define([
 					// if the binding is a listbinding, we skip the check for field control
 					var bListBinding = oElement.getBinding(sAggregationName) instanceof sap.ui.model.ListBinding;
 					if (!bListBinding) {
-						var iFieldControlValue = oElement.getBindingContext().getProperty(sFieldControlPath);
+						var iFieldControlValue = oElement.getBindingContext(sModelName).getProperty(sFieldControlPath);
 						mProp.unsupported = iFieldControlValue === 0;
 					}
 				}
@@ -58,7 +58,7 @@ sap.ui.define([
 	/**
 	 * Is field using a complex type
 	 *
-	 * @param {Object} mProperty - property from entityType
+	 * @param {object} mProperty - property from entityType
 	 * @returns {boolean} - Returns true if property is using a complex type
 	 */
 	function _isComplexType (mProperty) {
@@ -70,11 +70,11 @@ sap.ui.define([
 		return false;
 	}
 
-	function _checkForAbsoluteAggregationBinding(oElement, sAggregationName) {
+	function _checkForAbsoluteAggregationBinding(oElement, sAggregationName, sModelName) {
 		if (!oElement) {
 			return false;
 		}
-		var mBindingInfo = oElement.getBindingInfo(sAggregationName);
+		var mBindingInfo = oElement.getBindingInfo(sAggregationName, sModelName);
 		var sPath = mBindingInfo && mBindingInfo.path;
 		if (!sPath) {
 			return false;
@@ -85,38 +85,38 @@ sap.ui.define([
 		return sPath.indexOf("/") === 0;
 	}
 
-	function _getDefaultModelBindingData(oElement, bAbsoluteAggregationBinding, sAggregationName) {
+	function _getModelBindingData(oElement, bAbsoluteAggregationBinding, sAggregationName, sModelName) {
 		var vBinding;
 		if (bAbsoluteAggregationBinding) {
-			vBinding = oElement.getBindingInfo(sAggregationName);
-			//check to be default model binding otherwise return undefined
-			if (typeof vBinding.model === "string" && vBinding.model !== "") {
+			vBinding = oElement.getBindingInfo(sAggregationName, sModelName);
+			//check to be model binding otherwise return undefined
+			if (typeof vBinding.model === "string" && vBinding.model !== sModelName) {
 				vBinding = undefined;
 			}
 		} else {
-			//here we explicitly request the default models binding context
-			vBinding = oElement.getBindingContext();
+			//here we explicitly request the models binding context
+			vBinding = oElement.getBindingContext(sModelName);
 		}
 		return vBinding;
 	}
 
-	function _getBindingPath(oElement, sAggregationName) {
-		var bAbsoluteAggregationBinding = _checkForAbsoluteAggregationBinding(oElement, sAggregationName);
-		var vBinding = _getDefaultModelBindingData(oElement, bAbsoluteAggregationBinding, sAggregationName);
+	function _getBindingPath(oElement, sAggregationName, sModelName) {
+		var bAbsoluteAggregationBinding = _checkForAbsoluteAggregationBinding(oElement, sAggregationName, sModelName);
+		var vBinding = _getModelBindingData(oElement, bAbsoluteAggregationBinding, sAggregationName, sModelName);
 		if (vBinding) {
 			return bAbsoluteAggregationBinding ? vBinding.path : vBinding.getPath();
 		}
 	}
 
-	function _convertMetadataToDelegateFormat (mODataEntity, oMetaModel, oElement, sAggregationName) {
+	function _convertMetadataToDelegateFormat (mODataEntity, oMetaModel, oElement, sAggregationName, sModelName) {
 		var aProperties = mODataEntity.property.map(function(mProperty) {
-			var mProp = _enrichProperty(mProperty, mODataEntity, oElement, sAggregationName);
+			var mProp = _enrichProperty(mProperty, mODataEntity, oElement, sAggregationName, sModelName);
 			if (_isComplexType(mProperty)) {
 				var mComplexType = oMetaModel.getODataComplexType(mProperty.type);
 				if (mComplexType) {
 					//deep properties
 					mProp.properties = mComplexType.property.map(function(mComplexProperty) {
-						var mInnerProp = _enrichProperty(mComplexProperty, mODataEntity, oElement, sAggregationName);
+						var mInnerProp = _enrichProperty(mComplexProperty, mODataEntity, oElement, sAggregationName, sModelName);
 						mInnerProp.bindingPath = mProperty.name + "/" + mComplexProperty.name;
 						mInnerProp.referencedComplexPropertyName = mProp.label || mProp.name; //TODO find a more generic name here and in dialog
 						return mInnerProp;
@@ -200,8 +200,8 @@ sap.ui.define([
 
 	/**
 	 * Fetching all available properties of the Element's Model
-	 * @param {sap.ui.core.Control} oElement - Control instance
-	 * @param {string} sAggregationName - aggregation name of the action
+	 * @param {sap.ui.core.Element} oElement - Element instance
+	 * @param {string} sAggregationName - Aggregation name of the action
 	 * @return {Promise} - Returns Promise with results in delegate format
 	 * @private
 	 */
@@ -307,42 +307,35 @@ sap.ui.define([
 	/**
 	 * Retrieving sibling elements from its parent container which are bound to the same Model (important!)
 	 *
-	 * @param {sap.ui.core.Control} oElement - element for which we're looking for siblings
-	 * @param {sap.ui.core.Control} oRelevantContainer - "parent" container of the oElement
+	 * @param {sap.ui.core.Element} oElement - element for which we're looking for siblings
+	 * @param {sap.ui.core.Element} oRelevantContainer - "parent" container of the oElement
 	 * @param {string} sAggregationName - name of the aggregation of the action
+	 * @param {string} sModelName - model name
 	 *
-	 * @return {Array.<sap.ui.core.Control>} - returns an array with found siblings elements
+	 * @return {sap.ui.core.Element[]} - returns an array with found siblings elements
 	 *
 	 * @private
 	 */
-	function _getRelevantElements(oElement, oRelevantContainer, sAggregationName) {
+	function _getRelevantElements(oElement, oRelevantContainer, sAggregationName, sModelName) {
 		if (oRelevantContainer && oRelevantContainer !== oElement) {
-			var sEntityName = RtaUtils.getEntityTypeByPath(
-				oElement.getModel(),
-				_getBindingPath(oElement, sAggregationName)
-			);
+			var sRelevantContainerBindingPath = _getBindingPath(oElement, sAggregationName, sModelName);
 
 			return ElementUtil
 				.findAllSiblingsInContainer(oElement, oRelevantContainer)
 				// We accept only siblings that are bound on the same model
 				.filter(function (oSiblingElement) {
-					var sPath = _getBindingPath(oSiblingElement, sAggregationName);
-					if (sPath) {
-						return RtaUtils.getEntityTypeByPath(oSiblingElement.getModel(), sPath) === sEntityName;
-					}
-					return false;
+					return sRelevantContainerBindingPath === _getBindingPath(oSiblingElement, sAggregationName, sModelName);
 				});
 		}
 		return [oElement];
 	}
 
 	function _checkForComplexDuplicates(aProperties) {
-		//TODO find a more generic name here and in dialog
-		aProperties.forEach(function(oODataProperty, index, aProperties) {
-			if (oODataProperty["duplicateComplexName"] !== true) {
+		aProperties.forEach(function(oModelProperty, index, aProperties) {
+			if (oModelProperty["duplicateComplexName"] !== true) {
 				for (var j = index + 1; j < aProperties.length - 1; j++) {
-					if (oODataProperty.label === aProperties[j].label) {
-						oODataProperty["duplicateComplexName"] = true;
+					if (oModelProperty.label === aProperties[j].label) {
+						oModelProperty["duplicateComplexName"] = true;
 						aProperties[j]["duplicateComplexName"] = true;
 					}
 				}
@@ -354,15 +347,15 @@ sap.ui.define([
 	//check for duplicate labels to later add the referenced complexTypeName if available
 	function _checkForDuplicateLabels(oInvisibleElement, aProperties) {
 		//TODO find a more generic name here and in dialog
-		return aProperties.some(function(oDataProperty) {
-			return oDataProperty.label === oInvisibleElement.label;
+		return aProperties.some(function(oModelProperty) {
+			return oModelProperty.label === oInvisibleElement.label;
 		});
 	}
 
 	/**
 	 * Checks if array of paths is not empty
-	 * @param {Array.<String>} aBindingPaths - Array of collected binding paths
-	 * @return {Boolean} - true if it has binding(s)
+	 * @param {string[]} aBindingPaths - Array of collected binding paths
+	 * @return {boolean} - true if it has binding(s)
 	 * @private
 	 */
 	function _hasBindings(aBindingPaths) {
@@ -370,22 +363,22 @@ sap.ui.define([
 	}
 
 	/**
-	 * Looks for a ODataProperty for a set of bindings paths
+	 * Looks for a model property for a set of bindings paths
 	 *
-	 * @param {Array.<String>} aControlsBindingPaths - Array of collected binding paths
-	 * @param {Array.<Object>} aProperties - Array of Fields
+	 * @param {string[]} aControlsBindingPaths - Array of collected binding paths
+	 * @param {object[]} aProperties - Array of Fields
 	 *
-	 * @return {Object|undefined} - returns first found Object with Field (Property) description, undefined if not found
+	 * @return {object|undefined} - returns first found Object with Field (Property) description, undefined if not found
 	 *
 	 * @private
 	 */
-	function _findODataProperty(aControlsBindingPaths, aProperties) {
-		return aProperties.filter(function (oDataProperty) {
+	function _findModelProperty(aControlsBindingPaths, aProperties) {
+		return aProperties.filter(function (oModelProperty) {
 			return aControlsBindingPaths.some(function(sBindingPath) {
 				//there might be some deeper binding paths available on controls,
 				//than returned by the model evaluation (e.g. navigation property paths)
 				//So we only check a properties are part of the controls bindings
-				return sBindingPath.startsWith(oDataProperty.bindingPath);
+				return sBindingPath.startsWith(oModelProperty.bindingPath);
 			});
 		}).pop();
 	}
@@ -398,7 +391,7 @@ sap.ui.define([
 		);
 	}
 
-	function _getUnrepresentedProperties(oElement, mAction, oModel, fnGetAllProperties, sType) {
+	function _getUnrepresentedProperties(oElement, mAction, sModelName, fnGetAllProperties, sType) {
 		var oDefaultAggregation = oElement.getMetadata().getAggregation();
 		var sAggregationName = oDefaultAggregation ? oDefaultAggregation.name : mAction.action.aggregation;
 		return Promise.resolve()
@@ -406,8 +399,9 @@ sap.ui.define([
 				return fnGetAllProperties(oElement, sAggregationName, mAction);
 			})
 			.then(function(aAllProperties) {
+				var oModel = oElement.getModel(sModelName);
 				var aUnrepresentedProperties = _filterUnsupportedProperties(aAllProperties);
-				var aRelevantElements = _getRelevantElements(oElement, mAction.relevantContainer, sAggregationName);
+				var aRelevantElements = _getRelevantElements(oElement, mAction.relevantContainer, sAggregationName, sModelName);
 				var aBindingPaths = [];
 
 				aRelevantElements.forEach(function(oElement) {
@@ -418,14 +412,14 @@ sap.ui.define([
 
 				var fnFilter = mAction.action.filter ? mAction.action.filter : function() {return true;};
 
-				aUnrepresentedProperties = aUnrepresentedProperties.filter(function(oDataProperty) {
+				aUnrepresentedProperties = aUnrepresentedProperties.filter(function(oModelProperty) {
 					var bHasBindingPath = false;
 					if (aBindingPaths) {
 						bHasBindingPath = aBindingPaths.some(function(sBindingPath) {
-							return sBindingPath === oDataProperty.bindingPath;
+							return sBindingPath === oModelProperty.bindingPath;
 						});
 					}
-					return !bHasBindingPath && fnFilter(mAction.relevantContainer, oDataProperty);
+					return !bHasBindingPath && fnFilter(mAction.relevantContainer, oModelProperty);
 				});
 
 				aUnrepresentedProperties = _checkForComplexDuplicates(aUnrepresentedProperties);
@@ -437,10 +431,10 @@ sap.ui.define([
 	}
 
 	/**
-	 * Enhance Invisible Element with extra data from OData property
+	 * Enhance Invisible Element with extra data from model property or custom item
 	 *
-	 * @param {sap.ui.core.Control} oInvisibleElement - Invisible Element
-	 * @param {Object} mODataProperty - ODataProperty as a source of data enhancement process
+	 * @param {sap.ui.core.Element} oInvisibleElement - Invisible Element
+	 * @param {object} mSomeItem - source of data enhancement process
 	 *
 	 * @private
 	 */
@@ -462,30 +456,39 @@ sap.ui.define([
 
 	/**
 	 * Checks if this InvisibleProperty should be included in resulting list and adds information
-	 * from oDataProperty to the InvisibleProperty if available
+	 * from models metadata to the InvisibleProperty if available
+	 * if metadata is available and the element is not present in it, do not include it:
+	 * Example use case: custom field which was hidden and then removed from system
+	 * should not be available for reveal after the removal
 	 *
-	 * @param {sap.ui.core.Control} oInvisibleElement - Invisible Element
-	 * @param {Array.<Object>} aProperties - Array of Fields
-	 * @param {Object} mBindingPaths - Map of all binding paths and binding context paths of the passed invisible element
+	 * @param {sap.ui.core.Element} oInvisibleElement - Invisible Element
+	 * @param {object[]} aProperties - Array of Fields
+	 * @param {object} mBindingPaths - Map of all binding paths and binding context paths of the passed invisible element
 	 *
-	 * @return {Boolean} - whether this field is
+	 * @return {boolean} - whether this field should be included
 	 *
 	 * @private
 	 */
-	function _checkAndEnhanceODataProperty(oInvisibleElement, aProperties, mBindingPaths) {
+	function _checkAndEnhanceByModelProperty(oInvisibleElement, aProperties, mBindingPaths) {
 		var aBindingPaths = mBindingPaths.bindingPaths;
-		var mODataProperty;
 
-		return (
+		if (!_hasBindings(aBindingPaths)) {
 			// include it if the field has no bindings (bindings can be added in runtime)
-			!_hasBindings(aBindingPaths)
-			// looking for a corresponding OData property, if it exists oInvisibleElement is being enhanced
-			// with extra data from it
-			|| (
-				(mODataProperty = _findODataProperty(aBindingPaths, aProperties))
-				&& (_enhanceInvisibleElement(oInvisibleElement, mODataProperty) || true)
-			)
-		);
+			return true;
+		}
+
+		var mModelProperty = _findModelProperty(aBindingPaths, aProperties);
+		if (mModelProperty) {
+			_enhanceInvisibleElement(oInvisibleElement, mModelProperty);
+			return true;
+		}
+		return false;
+	}
+
+	function _getModelName(mAddViaDelegate) {
+		//ManagedObject jsdoc tells to use undefined for default model, therefore it
+		//is necessary to return undefined if modelName or whole delegateInfo is missing
+		return ObjectPath.get("delegateInfo.payload.modelName", mAddViaDelegate);
 	}
 
 	// API: depending on the available actions for the aggregation call one or both of these methods
@@ -493,20 +496,20 @@ sap.ui.define([
 		/**
 		 * Filters available invisible elements whether they could be shown or not
 		 *
-		 * @param {sap.ui.core.Control} oElement - Container Element where to start search for a invisible
-		 * @param {Object} mActions - Container with actions
+		 * @param {sap.ui.core.Element} oElement - Container Element where to start search for a invisible
+		 * @param {object} mActions - Container with actions
 		 *
 		 * @return {Promise} - returns a Promise which resolves with a list of hidden controls are available to display
 		 */
 		enhanceInvisibleElements : function(oElement, mActions) {
-			var oModel = oElement.getModel(); //TODO named model support
 			var mRevealData = mActions.reveal;
 			var mAddODataProperty = mActions.addODataProperty;
 			var mAddViaDelegate = mActions.addViaDelegate;
+			var sModelName = _getModelName(mAddViaDelegate);
 			var mCustom = mActions.addViaCustom;
 			var oDefaultAggregation = oElement.getMetadata().getAggregation();
 			var sAggregationName = oDefaultAggregation ? oDefaultAggregation.name : mActions.aggregation;
-
+			var oModel = oElement.getModel(sModelName);
 			return Promise.resolve()
 				.then(function () {
 					return _getAllPropertiesFromModels(oElement, sAggregationName, mActions);
@@ -524,21 +527,15 @@ sap.ui.define([
 
 						// BCP: 1880498671
 						if (mAddODataProperty || mAddViaDelegate) {
-							if (_getBindingPath(oElement, sAggregationName) === _getBindingPath(oInvisibleElement, sAggregationName)) {
+							if (_getBindingPath(oElement, sAggregationName, sModelName) === _getBindingPath(oInvisibleElement, sAggregationName, sModelName)) {
 								//TODO fix with stashed type support
 								mBindingPathCollection = BindingsExtractor.collectBindingPaths(oInvisibleElement, oModel);
 								oInvisibleElement.duplicateComplexName = _checkForDuplicateLabels(oInvisibleElement, aProperties);
 
-								//Add information from the oDataProperty to the InvisibleProperty if available;
-								//if oData is available and the element is not present in it, do not include it
-								//Example use case: custom field which was hidden and then removed from system
-								//should not be available for adding after the removal
-								if (aProperties.length > 0) {
-									bIncludeElement = _checkAndEnhanceODataProperty(
-										oInvisibleElement,
-										aProperties,
-										mBindingPathCollection);
-								}
+								bIncludeElement = _checkAndEnhanceByModelProperty(
+									oInvisibleElement,
+									aProperties,
+									mBindingPathCollection);
 							} else if (BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0) {
 								bIncludeElement = false;
 							}
@@ -571,17 +568,16 @@ sap.ui.define([
 		/**
 		 * Retrieves available OData properties from the metadata
 		 *
-		 * @param {sap.ui.core.Control} oElement - Source element of which Model we're looking for additional properties
-		 * @param {Object} mAction - Action descriptor
+		 * @param {sap.ui.core.Element} oElement - Source element of which Model we're looking for additional properties
+		 * @param {object} mAction - Action descriptor for add via odata property action
 		 *
 		 * @return {Promise} - returns a Promise which resolves with a list of available to display OData properties
 		 */
 		getUnboundODataProperties: function (oElement, mAction) {
-			var oModel = oElement.getModel();
 			return _getUnrepresentedProperties(
 				oElement,
 				mAction,
-				oModel,
+				undefined,
 				_getODataPropertiesOfModel,
 				"odata"
 			);
@@ -590,17 +586,17 @@ sap.ui.define([
 		/**
 		 * Retrieves available properties from the delegate
 		 *
-		 * @param {sap.ui.core.Control} oElement - Source element for which delegate we're looking for additional properties
-		 * @param {Object} mAction - Action descriptor
+		 * @param {sap.ui.core.Element} oElement - Source element for which delegate we're looking for additional properties
+		 * @param {object} mAction - Action descriptor for add via delegate action
 		 *
 		 * @return {Promise} - returns a Promise which resolves with a list of available to display delegate properties
 		 */
 		getUnrepresentedDelegateProperties: function (oElement, mAction) {
-			var oModel = oElement.getModel(); //TODO named model from payload!
+			var sModelName = _getModelName(mAction);
 			return _getUnrepresentedProperties(
 				oElement,
 				mAction,
-				oModel,
+				sModelName,
 				_getAllPropertiesFromDelegate,
 				"delegate"
 			);

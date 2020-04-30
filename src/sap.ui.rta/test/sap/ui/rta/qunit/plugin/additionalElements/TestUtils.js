@@ -46,7 +46,7 @@ sap.ui.define([
 		});
 	}
 
-	var testUtil = {
+	var TestUtil = {
 		assertElementsEqual : function(mActualAdditionalElement, mExpected, msg, assert) {
 			assert.equal(mActualAdditionalElement.selected, mExpected.selected, msg + " -selected");
 			assert.equal(mActualAdditionalElement.label, mExpected.label, msg + " -label");
@@ -85,5 +85,5 @@ sap.ui.define([
 		}
 	};
 
-	return testUtil;
+	return TestUtil;
 });
