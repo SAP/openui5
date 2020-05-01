@@ -21,7 +21,7 @@ sap.ui.define([
 	var ControlSnippetProvider = BaseObject.extend("sap.ui.testrecorder.codeSnippets.ControlSnippetProvider", {
 		constructor: function () {
 			if (!oControlSnippetProvider) {
-				Object.apply(this, arguments);
+				BaseObject.apply(this, arguments);
 			} else {
 				return oControlSnippetProvider;
 			}

@@ -51,6 +51,7 @@ sap.ui.define([
 			if (!oServiceContext) {
 				throw new Error("Missing context object");
 			}
+			EventProvider.call(this);
 			this._mServiceFactoryReferences = mServiceFactoryReferences;
 			this._mServices = {};
 			this._oServiceContext = oServiceContext;

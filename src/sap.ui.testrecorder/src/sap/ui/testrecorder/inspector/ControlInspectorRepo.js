@@ -29,7 +29,7 @@ sap.ui.define([
 	var ControlInspectorRepo = BaseObject.extend("sap.ui.testrecorder.inspector.ControlInspectorRepo", {
 		constructor: function () {
 			if (!oControlInspectorRepo) {
-				Object.apply(this, arguments);
+				BaseObject.apply(this, arguments);
 			} else {
 				return oControlInspectorRepo;
 			}

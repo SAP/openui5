@@ -37,7 +37,7 @@ sap.ui.define([
 		constructor: function () {
 			// better to be singleton because of the mutation observer
 			if (!oControlInspector) {
-				Object.apply(this, arguments);
+				BaseObject.apply(this, arguments);
 				this._appObserver = new AppMutationObserver(this.getAllControlData.bind(this));
 				this._selectedElementObserver = new ElementMutationObserver(this.getControlData.bind(this));
 			} else {

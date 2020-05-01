@@ -16,7 +16,7 @@ sap.ui.define([
 	var RawSnippetUtil = BaseObject.extend("sap.ui.testrecorder.codeSnippets.RawSnippetUtil", {
 		constructor: function () {
 			if (!oRawSnippetUtil) {
-				Object.apply(this, arguments);
+				BaseObject.apply(this, arguments);
 			} else {
 				return oRawSnippetUtil;
 			}
