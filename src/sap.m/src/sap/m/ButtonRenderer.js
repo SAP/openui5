@@ -50,6 +50,7 @@ sap.ui.define([
 
 		// get icon from icon pool
 		var sBackURI = IconPool.getIconURI("nav-back");
+		var sMinWidth;
 
 		// start button tag
 		oRm.openStart("button", oButton);
@@ -122,6 +123,16 @@ sap.ui.define([
 		// set user defined width
 		if (sWidth != "" || sWidth.toLowerCase() === "auto") {
 			oRm.style("width", sWidth);
+
+			//this is a workaround until we move all button property classes to the root element
+			//we need different min-width of the button in different cases
+			//we may also need it different in different themes, but not possible with this workaround
+			if (oButton._getAppliedIcon() && sText) {
+				sMinWidth = "4rem";
+			} else { //text only, icon only OR no text no icon
+				sMinWidth = "2.25rem";
+			}
+			oRm.style("min-width", sMinWidth);
 		}
 		renderTabIndex(oButton, oRm);
 
@@ -189,7 +200,7 @@ sap.ui.define([
 		}
 
 		// write icon
-		if (oButton._getAppliedIcon()) {
+		if (oButton.getIconFirst() && oButton._getAppliedIcon()) {
 			this.writeImgHtml(oRm, oButton);
 		}
 
@@ -212,6 +223,11 @@ sap.ui.define([
 				oRm.close("bdi");
 			}
 			oRm.close("span");
+		}
+
+		// write icon
+		if (!oButton.getIconFirst() && oButton._getAppliedIcon()) {
+			this.writeImgHtml(oRm, oButton);
 		}
 
 		// special handling for IE focus outline

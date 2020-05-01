@@ -58,9 +58,14 @@ span.sapMBtnInner.sapMBtnEmphasized {
 
 .sapMBtnInner.sapMBtnText .sapMBtnIcon {
 	width: 1rem;
-	padding-left: 0.5625rem;
+	min-width: 1rem;
 	padding-right: 0.375rem;
 	text-align: center;
+}
+
+.sapMBtnInner.sapMBtnText .sapMBtnIcon.sapMBtnIconRight {
+	padding-right: 0;
+	padding-left: 0.375rem;
 }
 
 .sapMBtnInner.sapMBtnText .sapMBtnIcon.sapMImg {
@@ -75,37 +80,14 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	line-height: 2.125rem;
 }
 
-.sapMBtnInner.sapMBtnText,
-.sapMBtnIconLeft + .sapMBtnIconRight,
-.sapMBtnIconLeft + .sapMBtnIconLeft {
+.sapMBtnInner.sapMBtnText {
 	padding-left: 0.5625rem;
 	padding-right: 0.5625rem;
 }
 
-.sapMBtnText .sapMBtnIconLeft + .sapMBtnIconLeft {
-	left: 0;
-}
-
-.sapMBtnInner.sapMBtnText.sapMBtnBack,
-.sapMBtnInner.sapMBtnText.sapMBtnIconFirst,
-.sapMBtnInner.sapMBtnText.sapMBtnBack.sapMBtnIconFirst > .sapMBtnCustomIcon {
-	padding-left: 1.9375rem;
-}
-
-.sapMBtnInner.sapMBtnText.sapMBtnIconLast {
-	padding-right: 1.9375rem;
-}
-
-.sapMBtnInner.sapMBtnText.sapMBtnBack.sapMBtnIconFirst {
-	padding-left: 3.3125rem;
-}
-
-.sapMBtnInner.sapMBtnText > .sapMImg.sapMBtnIconRight ~ .sapMBtnContent {
-	padding-right: 1.25rem;
-}
-
-.sapMBtnInner.sapMBtnText > .sapMImg.sapMBtnIconLeft + .sapMBtnContent {
-	padding-left: 1.25rem;
+.sapMBtnIconLeft + .sapMBtnIconRight,
+.sapMBtnIconLeft + .sapMBtnIconLeft {
+	padding-right: 0.5625rem;
 }
 
 .sapMBtnGhost {
@@ -132,53 +114,21 @@ span.sapMBtnInner.sapMBtnEmphasized {
 		margin-right: 0;
 	}
 
-	.sapMBtnText .sapMBtnIconLeft + .sapMBtnIconLeft {
-		left: 0;
-	}
-
-	.sapMBtnInner.sapMBtnText,
-	.sapMBtnBack:not(.sapMBtnText) > .sapMBtnIconLeft,
-	.sapMBtnIconLeft + .sapMBtnIconRight,
-	.sapMBtnIconLeft + .sapMBtnIconLeft,
-	.sapMBtnInner .sapMBtnIcon :not(img) {
+	.sapMBtnInner.sapMBtnText {
 		padding-left: 0.4375rem;
 		padding-right: 0.4375rem;
 	}
 
-	.sapMBtnInner.sapMBtnText .sapMBtnIcon {
-		padding-right: 0.375rem;
-	}
-
-	.sapMBtnInner.sapMBtnText .sapMBtnIcon.sapMBtnIconRight {
+	.sapMBtnBack:not(.sapMBtnText) > .sapMBtnIconLeft,
+	.sapMBtnIconLeft + .sapMBtnIconRight,
+	.sapMBtnIconLeft + .sapMBtnIconLeft,
+	.sapMBtnInner .sapMBtnIcon :not(img) {
 		padding-right: 0.4375rem;
-		padding-left: 0.375rem;
 	}
 
 	.sapMBtnInner > img {
 		margin: 0;
 		padding: 0;
-	}
-
-	.sapMBtnInner.sapMBtnText.sapMBtnBack,
-	.sapMBtnInner.sapMBtnText.sapMBtnIconFirst,
-	.sapMBtnInner.sapMBtnText.sapMBtnBack.sapMBtnIconFirst > .sapMBtnCustomIcon {
-		padding-left: 1.8125rem;
-	}
-
-	.sapMBtnInner.sapMBtnText.sapMBtnIconLast {
-		padding-right: 1.8125rem;
-	}
-
-	.sapMBtnInner.sapMBtnText.sapMBtnBack.sapMBtnIconFirst {
-		padding-left: 3.1875rem;
-	}
-
-	.sapMBtnInner.sapMBtnText > .sapMImg.sapMBtnIconRight ~ .sapMBtnContent {
-		padding-right: 0.5rem;
-	}
-
-	.sapMBtnInner.sapMBtnText > .sapMImg.sapMBtnIconLeft + .sapMBtnContent {
-		padding-left: 0.5rem;
 	}
 }
 
