@@ -1,5 +1,5 @@
-sap.ui.define([ 'jquery.sap.global', 'sap/m/MessageToast', 'sap/m/MessageBox', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel' ],
-	function(jQuery, MessageToast, MessageBox, Controller, JSONModel) {
+sap.ui.define([ 'sap/m/MessageBox', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel' ],
+	function(MessageBox, Controller, JSONModel) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.m.sample.HeaderContainerOH.Page", {
