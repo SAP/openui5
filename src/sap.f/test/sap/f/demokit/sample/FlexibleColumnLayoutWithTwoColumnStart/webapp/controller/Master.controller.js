@@ -49,4 +49,4 @@ sap.ui.define([
 			oBinding.sort(oSorter);
 		}
 	});
-}, true);
+});

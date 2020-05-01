@@ -4,12 +4,10 @@ sap.ui.define([
 		'sap/ui/core/CustomData',
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/Filter'
-	], function(MessageToast, ViewSettingsItem, CustomData, Fragment, Controller, Filter) {
+		'sap/ui/model/Filter',
+		'sap/ui/model/FilterOperator'
+	], function(MessageToast, ViewSettingsItem, CustomData, Fragment, Controller, Filter, FilterOperator) {
 	"use strict";
-
-	// shortcut for sap.ui.model.FilterOperator
-	var FilterOperator = sap.ui.model.FilterOperator;
 
 	return Controller.extend("sap.m.sample.ViewSettingsDialog.C", {
 

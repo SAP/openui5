@@ -164,7 +164,7 @@ sap.ui.define([
 	/**
 	 * Library internationalization resource bundle.
 	 *
-	 * @type {sap.base.i18n.ResourceBundle}
+	 * @type {module:sap/base/i18n/ResourceBundle}
 	 */
 	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 

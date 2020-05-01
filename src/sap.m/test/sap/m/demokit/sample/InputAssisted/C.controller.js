@@ -1,10 +1,10 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/Filter',
+		'sap/ui/model/FilterOperator',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Fragment, Controller, Filter, JSONModel) {
+	], function(Fragment, Controller, Filter, FilterOperator, JSONModel) {
 	"use strict";
 
 	var CController = Controller.extend("sap.m.sample.InputAssisted.C", {
@@ -12,7 +12,7 @@ sap.ui.define([
 
 		onInit: function () {
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			// the default limit of the model is set to 100. We want to show all the entries.
 			oModel.setSizeLimit(1000000);
 			this.getView().setModel(oModel);
@@ -34,7 +34,7 @@ sap.ui.define([
 			// create a filter for the binding
 			this._valueHelpDialog.getBinding("items").filter([new Filter(
 				"Name",
-				sap.ui.model.FilterOperator.Contains, sInputValue
+				FilterOperator.Contains, sInputValue
 			)]);
 
 			// open value help dialog filtered by the input value
@@ -45,7 +45,7 @@ sap.ui.define([
 			var sValue = evt.getParameter("value");
 			var oFilter = new Filter(
 				"Name",
-				sap.ui.model.FilterOperator.Contains, sValue
+				FilterOperator.Contains, sValue
 			);
 			evt.getSource().getBinding("items").filter([oFilter]);
 		},

@@ -129,4 +129,4 @@ sap.ui.define(['jquery.sap.global'],
 
 	return DemoPersoService;
 
-}, /* bExport= */ true);
+});

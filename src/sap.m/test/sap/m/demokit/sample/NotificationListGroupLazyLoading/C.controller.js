@@ -1,9 +1,12 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/mvc/Controller',
+	'sap/ui/core/library',
+	'sap/m/NotificationListItem',
 	'sap/m/MessageToast'
-], function (jQuery, Controller, MessageToast) {
+], function (Controller, coreLibrary, NotificationListItem, MessageToast) {
 	'use strict';
+
+	var Priority = coreLibrary.Priority;
 
 	var CController = Controller.extend('sap.m.sample.NotificationListGroupLazyLoading.C', {
 
@@ -44,7 +47,7 @@ sap.ui.define([
 		},
 
 		_addItemsToGroup: function(notificationGroup) {
-			var priorities = Object.keys(sap.ui.core.Priority);
+			var priorities = Object.keys(Priority);
 			var times = ['3 days', '5 minutes', '1 hour'];
 			var titles = ['New order request', 'Your vacation has been approved', 'New transaction in queue', 'An new request await your action'];
 			var notificationPriority;
@@ -52,12 +55,12 @@ sap.ui.define([
 			for (var index = 0; index < 3; index += 1) {
 				notificationPriority = priorities[randomIndex(priorities.length)];
 
-				notificationGroup.addItem(new sap.m.NotificationListItem({
+				notificationGroup.addItem(new NotificationListItem({
 					title: titles[randomIndex(titles.length)],
 					showCloseButton: true,
 					datetime: times[randomIndex(times.length)],
 					unread: true,
-					priority: sap.ui.core.Priority[notificationPriority]
+					priority: Priority[notificationPriority]
 				}));
 			}
 

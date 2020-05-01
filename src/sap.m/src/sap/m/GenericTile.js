@@ -622,7 +622,7 @@ sap.ui.define([
 
 	/**
 	 * Calculates all style and caches it if it has changed.
-	 * @returns {boolean} True if the data has changed, false if no changes have been detected by jQuery.sap.equal
+	 * @returns {boolean} True if the data has changed, false if no changes have been detected by deepEqual
 	 * @private
 	 */
 	GenericTile.prototype._getStyleData = function () {

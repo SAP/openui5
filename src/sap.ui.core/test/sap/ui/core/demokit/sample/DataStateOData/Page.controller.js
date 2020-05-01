@@ -1,5 +1,5 @@
-sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/util/MockServer', 'sap/ui/model/json/JSONModel', 'sap/ui/model/odata/v2/ODataModel', 'sap/ui/model/type/String', 'sap/ui/thirdparty/jquery'],
-	function(MessageToast, Controller, MockServer, JSONModel, ODataModel, TypeString, jQuery) {
+sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/util/MockServer', 'sap/ui/model/json/JSONModel', 'sap/ui/model/odata/v2/ODataModel', 'sap/ui/model/type/String', 'sap/base/util/extend'],
+	function(MessageToast, Controller, MockServer, JSONModel, ODataModel, TypeString, extend) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.core.sample.DataStateOData.Page", {
@@ -88,14 +88,14 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/
 			for (var n in oDataState.mProperties) {
 					if (n in oChanges) {
 						aChangedProperties.push(n);
-						this.oDataStateModel.setProperty("/" + n,jQuery.extend({},oChanges[n]));
+						this.oDataStateModel.setProperty("/" + n, extend({}, oChanges[n]));
 					} else {
 						//clear old value
 						//this.oDataStateModel.setProperty("/" + n + "/oldValue",null);
 					}
 			}
 			if (oChanges['dirty']) {
-				this.oDataStateModel.setProperty("/dirty",jQuery.extend({},oChanges['dirty']));
+				this.oDataStateModel.setProperty("/dirty", extend({}, oChanges['dirty']));
 			}
 
 			this.applyPropertyHighlight(aChangedProperties);

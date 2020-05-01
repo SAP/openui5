@@ -1,19 +1,19 @@
 sap.ui.define([
-		'jquery.sap.global',
+		'sap/ui/core/syncStyleClass',
 		'sap/m/MessageToast',
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/Filter',
 		'sap/ui/model/FilterOperator',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageToast, Fragment, Controller, Filter, FilterOperator, JSONModel) {
+	], function(syncStyleClass, MessageToast, Fragment, Controller, Filter, FilterOperator, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.SelectDialog.controller.SelectDialog", {
 
 		onInit : function () {
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
 		},
 
@@ -88,7 +88,7 @@ sap.ui.define([
 			this._oDialog.getBinding("items").filter([]);
 
 			// toggle compact style
-			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
+			syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
 		},
 
 		handleSearch: function(oEvent) {

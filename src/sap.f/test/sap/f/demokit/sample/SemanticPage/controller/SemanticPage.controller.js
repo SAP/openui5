@@ -1,18 +1,22 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Core',
+	'sap/ui/core/library',
+	'sap/ui/core/message/ControlMessageProcessor',
+	'sap/ui/core/message/Message',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/Filter',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/MessagePopover',
 	'sap/m/MessagePopoverItem',
 	'sap/m/MessageBox'
-], function(jQuery, Core, Controller, Filter, JSONModel, MessagePopover, MessagePopoverItem, MessageBox) {
+], function(Core, coreLibrary, ControlMessageProcessor, Message, Controller, Filter, JSONModel, MessagePopover, MessagePopoverItem, MessageBox) {
 	"use strict";
+
+	var MessageType = coreLibrary.MessageType;
 
 	return Controller.extend("sap.f.sample.SemanticPage.controller.SemanticPage", {
 		onInit: function () {
-			var oMessageProcessor = new sap.ui.core.message.ControlMessageProcessor(),
+			var oMessageProcessor = new ControlMessageProcessor(),
 				oMessageManager = Core.getMessageManager();
 
 			this.oModel = new JSONModel();
@@ -23,9 +27,9 @@ sap.ui.define([
 
 			oMessageManager.registerMessageProcessor(oMessageProcessor);
 			oMessageManager.addMessages(
-				new sap.ui.core.message.Message({
+				new Message({
 					message: "Something wrong happened",
-					type: sap.ui.core.MessageType.Error,
+					type: MessageType.Error,
 					processor: oMessageProcessor
 				})
 			);

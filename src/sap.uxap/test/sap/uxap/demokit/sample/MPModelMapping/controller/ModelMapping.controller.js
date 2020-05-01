@@ -16,4 +16,4 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/core/mvc/Controller"], fun
 		}
 	});
 
-}, true);
+});

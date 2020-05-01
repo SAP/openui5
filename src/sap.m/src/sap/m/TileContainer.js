@@ -1807,7 +1807,7 @@ function(
 			iNearRight = oContentDimension.width - (iLeft +  this._oDragSession.oTileElement.offsetWidth),
 			iNearLeft =  iLeft;
 
-		//jQuery.sap.log.info("ScrollLeft = " + this._iScrollLeft + " Left = " + iLeft + " Top = " + iTop);
+		//Log.info("ScrollLeft = " + this._iScrollLeft + " Left = " + iLeft + " Top = " + iTop);
 		this._oDragSession.oTile.setPos(iLeft,iTop);
 
 		// reset the clipping of the tile

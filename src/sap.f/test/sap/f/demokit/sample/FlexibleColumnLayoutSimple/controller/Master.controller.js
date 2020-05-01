@@ -14,4 +14,4 @@ sap.ui.define([
 			this.bus.publish("flexible", "setDetailPage");
 		}
 	});
-}, true);
+});

@@ -130,7 +130,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Tile.prototype.setSize = function(iWidth,iHeight){
-		//jQuery.sap.log.debug("Set tile size, id:" + this.getId() + ", x:" + iWidth + ", y:" + iHeight);
+		//Log.debug("Set tile size, id:" + this.getId() + ", x:" + iWidth + ", y:" + iHeight);
 		this._width = iWidth;
 		this._height = iHeight;
 	};

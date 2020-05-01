@@ -7,4 +7,4 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
 			this.oParentBlock.setMode(sNewMode);
 		}
 	});
-}, true);
+});

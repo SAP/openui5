@@ -369,7 +369,7 @@ sap.ui.define([
 		 * @returns {boolean} whether the passed DOM reference is nested in the active DOM of the document
 		 */
 		/*function isInActiveDom(oDomRef) {
-			jQuery.sap.assert(oDomRef != null);
+			assert(oDomRef != null);
 			var oCurrDomRef = oDomRef;
 			while(oCurrDomRef) {
 				if(oCurrDomRef === document) return true;

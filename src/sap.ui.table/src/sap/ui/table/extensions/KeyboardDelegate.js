@@ -142,9 +142,9 @@ sap.ui.define([
 	 * @param {int} [modifierKeyMask=0] The modifier key bit mask.
 	 * @returns {boolean} Returns <code>true</code>, if the specified key combination was pressed.
 	 * @example
-	 * KeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.A); // A
+	 * KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.A); // A
 	 * KeyboardDelegate._isKeyCombination(oEvent, "+"); // CharCode check: "+" and "NumpadPlus"
-	 * KeyboardDelegate._isKeyCombination(oEvent, jQuery.sap.KeyCodes.A, ModKey.CTRL + ModKey.SHIFT); // Ctrl+Shift+A
+	 * KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.A, ModKey.CTRL + ModKey.SHIFT); // Ctrl+Shift+A
 	 * KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL); // Ctrl (useful for simulated events like "sapdown")
 	 * @private
 	 * @static
@@ -980,8 +980,8 @@ sap.ui.define([
 	 *
 	 * For example:
 	 * UI5 default:
-	 *  - PLUS = 187 (jQuery.sap.KeyCodes.PLUS)
-	 *  - MINUS: 219 (jQuery.sap.KeyCodes.MINUS)
+	 *  - PLUS = 187 (KeyCodes.PLUS)
+	 *  - MINUS: 219 (KeyCodes.MINUS)
 	 * Chrome, Edge, IE:
 	 *  - MINUS = 189
 	 * Firefox:

@@ -16,4 +16,4 @@ sap.ui.define([
 			this.oJsonConfigModel.setProperty("/subSectionLayout", this.isTitleOnTop ? "TitleOnTop" : "TitleOnLeft");
 		}
 	});
-}, true);
+});

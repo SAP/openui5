@@ -1,15 +1,14 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/m/MessageToast',
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageToast, Fragment, Controller, JSONModel) {
+	], function(MessageToast, Fragment, Controller, JSONModel) {
 	"use strict";
 
 	var ControllerController = Controller.extend("sap.ui.unified.sample.ShellBasic.Controller", {
 		onInit: function() {
-			var oData = {logo: sap.ui.require.toUrl("sap/ui/core") + "/" + "mimes/logo/sap_50x26.png"};
+			var oData = {logo: sap.ui.require.toUrl("sap/ui/core/mimes/logo/sap_50x26.png")};
 			var oModel = new JSONModel();
 			oModel.setData(oData);
 			this.getView().setModel(oModel);

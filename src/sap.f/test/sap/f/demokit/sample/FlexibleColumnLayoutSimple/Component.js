@@ -7,4 +7,4 @@ function (UIComponent) {
 			manifest: "json"
 		}
 	});
-}, true);
+});

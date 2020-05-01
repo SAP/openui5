@@ -38,7 +38,7 @@ sap.ui.define([
 				this.model.updateBindings();
 			}.bind(this));
 
-			this.model.loadData(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			this.model.loadData(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(this.model);
 		},
 

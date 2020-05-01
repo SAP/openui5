@@ -475,7 +475,7 @@ sap.ui.define([
 	/**
 	 * Enhances or creates the i18n model for the card.
 	 *
-	 * @param {sap.base.i18n.ResourceBundle} oResourceBundle The resource bundle which will be used to create the model or will enhance it.
+	 * @param {module:sap/base/i18n/ResourceBundle} oResourceBundle The resource bundle which will be used to create the model or will enhance it.
 	 * @private
 	 */
 	Card.prototype._enhanceI18nModel = function (oResourceBundle) {

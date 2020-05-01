@@ -1,9 +1,8 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Fragment, Controller, JSONModel) {
+	], function(Fragment, Controller, JSONModel) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.layout.sample.Form480_Trial.Page", {
@@ -34,7 +33,7 @@ sap.ui.define([
 		handleEditPress : function () {
 
 			//Clone the data
-			this._oSupplier = jQuery.extend({}, this.getView().getModel().getData().SupplierCollection[0]);
+			this._oSupplier = Object.assign({}, this.getView().getModel().getData().SupplierCollection[0]);
 			this._toggleButtonsAndView(true);
 
 		},

@@ -1,12 +1,14 @@
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageToast",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/core/format/DateFormat",
-	"sap/m/ToolbarSpacer"
-], function(Controller, JSONModel, MessageToast, Filter, FilterOperator, DateFormat, ToolbarSpacer) {
+	"sap/m/ToolbarSpacer",
+	"sap/ui/thirdparty/jquery"
+], function(Log, Controller, JSONModel, MessageToast, Filter, FilterOperator, DateFormat, ToolbarSpacer, jQuery) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Filtering.Controller", {
@@ -39,7 +41,7 @@ sap.ui.define([
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
-			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
+			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
 				success: function(oData) {
 					var aTemp1 = [];
@@ -48,11 +50,11 @@ sap.ui.define([
 					var aCategoryData = [];
 					for (var i = 0; i < oData.ProductCollection.length; i++) {
 						var oProduct = oData.ProductCollection[i];
-						if (oProduct.SupplierName && jQuery.inArray(oProduct.SupplierName, aTemp1) < 0) {
+						if (oProduct.SupplierName && aTemp1.indexOf(oProduct.SupplierName) < 0) {
 							aTemp1.push(oProduct.SupplierName);
 							aSuppliersData.push({Name: oProduct.SupplierName});
 						}
-						if (oProduct.Category && jQuery.inArray(oProduct.Category, aTemp2) < 0) {
+						if (oProduct.Category && aTemp2.indexOf(oProduct.Category) < 0) {
 							aTemp2.push(oProduct.Category);
 							aCategoryData.push({Name: oProduct.Category});
 						}
@@ -68,7 +70,7 @@ sap.ui.define([
 					oModel.setData(oData);
 				},
 				error: function() {
-					jQuery.sap.log.error("failed to load json");
+					Log.error("failed to load json");
 				}
 			});
 
@@ -79,7 +81,7 @@ sap.ui.define([
 			var oFilter = null;
 
 			if (this._oGlobalFilter && this._oPriceFilter) {
-				oFilter = new sap.ui.model.Filter([this._oGlobalFilter, this._oPriceFilter], true);
+				oFilter = new Filter([this._oGlobalFilter, this._oPriceFilter], true);
 			} else if (this._oGlobalFilter) {
 				oFilter = this._oGlobalFilter;
 			} else if (this._oPriceFilter) {

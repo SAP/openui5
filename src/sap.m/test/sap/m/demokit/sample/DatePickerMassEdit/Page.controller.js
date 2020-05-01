@@ -23,7 +23,7 @@ sap.ui.define([
 					sDate,
 					oDateFormat = DateFormat.getInstance({pattern: "yyyy-MM-dd"});
 
-				this.oProductModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+				this.oProductModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 				this.oProductModel.setSizeLimit(10);
 				this._oSelectNewDateDialog = new Dialog({
 					title: "Select New Date",

@@ -107,7 +107,7 @@ sap.ui.define([
 		 *
 		 * Both parameter functions gets a log entry object passed in with the following properties:
 		 * <ul>
-		 *    <li>{jQuery.sap.log.Level} oLogEntry.level One of the log levels FATAL, ERROR, WARNING, INFO, DEBUG, TRACE</li>
+		 *    <li>{module:sap/base/Log.Level} oLogEntry.level One of the log levels FATAL, ERROR, WARNING, INFO, DEBUG, TRACE</li>
 		 *    <li>{string} oLogEntry.message     The logged message</li>
 		 *    <li>{string} oLogEntry.details     The optional details for the message</li>
 		 *    <li>{string} oLogEntry.component   The optional log component under which the message was logged</li>

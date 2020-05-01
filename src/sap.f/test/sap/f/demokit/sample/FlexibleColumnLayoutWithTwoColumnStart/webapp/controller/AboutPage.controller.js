@@ -13,4 +13,4 @@ sap.ui.define([
 			window.history.go(-1);
 		}
 	});
-}, true);
+});

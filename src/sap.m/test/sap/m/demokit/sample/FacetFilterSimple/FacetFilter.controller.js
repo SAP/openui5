@@ -17,7 +17,7 @@ sap.ui.define([
 			})
 			.then(function(oComp) {
 				// set explored app's demo model on this sample
-				var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json"),
+				var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json")),
 					oTable,
 					oBindingInfo;
 

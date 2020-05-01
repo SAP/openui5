@@ -1,52 +1,57 @@
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/core/message/ControlMessageProcessor',
+	'sap/ui/core/message/Message',
 	'sap/ui/core/mvc/Controller',
+	'sap/ui/core/library',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/MessagePopover',
-	'sap/m/MessagePopoverItem'
-], function (jQuery, Controller, JSONModel, MessagePopover, MessagePopoverItem) {
+	'sap/m/MessagePopoverItem',
+	'sap/m/MessageToast'
+], function (ControlMessageProcessor, Message, Controller, coreLibrary, JSONModel, MessagePopover, MessagePopoverItem, MessageToast) {
 	"use strict";
+
+	var MessageType = coreLibrary.MessageType;
 
 	var PageController = Controller.extend("sap.m.sample.SemanticPageFloatingFooter.Page", {
 
 		onInit: function () {
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
 
 
-			var oMessageProcessor = new sap.ui.core.message.ControlMessageProcessor();
+			var oMessageProcessor = new ControlMessageProcessor();
 			var oMessageManager = sap.ui.getCore().getMessageManager();
 
 			oMessageManager.registerMessageProcessor(oMessageProcessor);
 
 			oMessageManager.addMessages(
-				new sap.ui.core.message.Message({
+				new Message({
 					message: "Something wrong happened",
-					type: sap.ui.core.MessageType.Error,
+					type: MessageType.Error,
 					processor: oMessageProcessor
 				})
 			);
 		},
 		onPress: function (oEvent) {
 
-			sap.m.MessageToast.show("Pressed custom button " + oEvent.getSource().getId());
+			MessageToast.show("Pressed custom button " + oEvent.getSource().getId());
 		},
 		onSemanticButtonPress: function (oEvent) {
 
 			var sAction = oEvent.getSource().getMetadata().getName();
 			sAction = sAction.replace(oEvent.getSource().getMetadata().getLibraryName() + ".", "");
 
-			sap.m.MessageToast.show("Pressed: " + sAction);
+			MessageToast.show("Pressed: " + sAction);
 		},
 		onSemanticSelectChange: function (oEvent, oData) {
 			var sAction = oEvent.getSource().getMetadata().getName();
 			sAction = sAction.replace(oEvent.getSource().getMetadata().getLibraryName() + ".", "");
 
 			var sStatusText = sAction + " by " + oEvent.getSource().getSelectedItem().getText();
-			sap.m.MessageToast.show("Selected: " + sStatusText);
+			MessageToast.show("Selected: " + sStatusText);
 		},
 		onPositionChange: function (oEvent) {
-			sap.m.MessageToast.show("Positioned changed to " + oEvent.getParameter("newPosition"));
+			MessageToast.show("Positioned changed to " + oEvent.getParameter("newPosition"));
 		},
 		onMessagesButtonPress: function (oEvent) {
 
@@ -68,9 +73,9 @@ sap.ui.define([
 		},
 		onMultiSelectPress: function (oEvent) {
 			if (oEvent.getSource().getPressed()) {
-				sap.m.MessageToast.show("MultiSelect Pressed");
+				MessageToast.show("MultiSelect Pressed");
 			} else {
-				sap.m.MessageToast.show("MultiSelect Unpressed");
+				MessageToast.show("MultiSelect Unpressed");
 			}
 		}
 	});

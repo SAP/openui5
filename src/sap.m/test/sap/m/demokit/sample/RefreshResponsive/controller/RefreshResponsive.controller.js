@@ -3,8 +3,9 @@ sap.ui.define([
 		'sap/ui/Device',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/Filter',
+		'sap/ui/model/FilterOperator',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Device, Controller, Filter, JSONModel) {
+	], function(jQuery, Device, Controller, Filter, FilterOperator, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.RefreshResponsive.controller.RefreshResponsive", {
@@ -35,7 +36,7 @@ sap.ui.define([
 
 			// load product data
 			this._productCount = 0;
-			jQuery.getJSON(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", function (oData) {
+			jQuery.getJSON(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), function (oData) {
 				this._productData = oData;
 				this._pushNewProduct();
 			}.bind(this));
@@ -55,7 +56,7 @@ sap.ui.define([
 
 		handleRefresh: function (oEvent) {
 
-			setTimeout(jQuery.proxy(function () {
+			setTimeout(function () {
 
 				this._pushNewProduct();
 				this.byId("pullToRefresh").hide();
@@ -66,11 +67,11 @@ sap.ui.define([
 				var sQuery = oSearchField.getValue();
 				var aFilters = [];
 				if (sQuery && sQuery.length) {
-					aFilters.push(new Filter("Name", sap.ui.model.FilterOperator.Contains, sQuery));
+					aFilters.push(new Filter("Name", FilterOperator.Contains, sQuery));
 				}
 				oList.getBinding("items").filter(aFilters);
 
-			}, this), 1000);
+			}.bind(this), 1000);
 		}
 	});
 });

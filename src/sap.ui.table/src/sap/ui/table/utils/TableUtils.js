@@ -39,7 +39,7 @@ sap.ui.define([
 
 	/**
 	 * The resource bundle of the sap.ui.table library.
-	 * @type {jQuery.sap.util.ResourceBundle}
+	 * @type {module:sap/base/i18n/ResourceBundle}
 	 */
 	var oResourceBundle;
 	var iBaseFontSize = null;
@@ -1163,10 +1163,10 @@ sap.ui.define([
 		 * Gets the resource bundle of the sap.ui.table library. The bundle will be loaded if it is not already loaded or if it should be reloaded.
 		 * After the bundle is loaded, {@link sap.ui.table.utils.TableUtils.getResourceText} can be used to get texts.
 		 *
-		 * @param {Object} [mOptions] Configuration options
+		 * @param {object} [mOptions] Configuration options
 		 * @param {boolean} [mOptions.async=false] Whether to load the bundle asynchronously.
 		 * @param {boolean} [mOptions.reload=false] Whether to reload the bundle, if it already was loaded.
-		 * @returns {jQuery.sap.util.ResourceBundle | Promise} The resource bundle, or a Promise if the bundle is loaded asynchronously.
+		 * @returns {module:sap/base/i18n/ResourceBundle | Promise} The resource bundle, or a Promise if the bundle is loaded asynchronously.
 		 */
 		getResourceBundle: function(mOptions) {
 			mOptions = jQuery.extend({async: false, reload: false}, mOptions);

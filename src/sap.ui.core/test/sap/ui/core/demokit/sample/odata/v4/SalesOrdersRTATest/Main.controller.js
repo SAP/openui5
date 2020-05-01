@@ -2,12 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
+	"sap/base/util/extend",
 	"sap/m/Button",
 	"sap/m/Column",
 	"sap/m/Label",
 	"sap/m/Text"
-], function (jQuery, Button, Column, Label, Text) {
+], function (extend, Button, Column, Label, Text) {
 	"use strict";
 
 	return sap.ui.controller("sap.ui.core.sample.odata.v4.SalesOrdersRTATest.Main", {
@@ -171,7 +171,7 @@ sap.ui.define([
 
 				// ensure template is not shared between old and new binding
 				delete oBindingInfo.template;
-				oControl.bindItems(jQuery.extend({}, oBindingInfo, {
+				oControl.bindItems(extend({}, oBindingInfo, {
 					// a root binding needs to be suspended initially
 					suspended : oItemsBinding === oItemsBinding.getRootBinding(),
 					template : oTemplate

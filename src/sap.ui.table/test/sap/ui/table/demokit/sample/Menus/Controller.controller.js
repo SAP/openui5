@@ -1,14 +1,17 @@
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
 	"sap/m/MessageToast",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/Popup",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"sap/m/ToolbarSpacer"
-], function(Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat, MenuM, MenuItemM, ToolbarSpacer) {
+	"sap/m/ToolbarSpacer",
+	"sap/ui/thirdparty/jquery"
+], function(Log, Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat, Popup, MenuM, MenuItemM, ToolbarSpacer, jQuery) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Menus.Controller", {
@@ -38,7 +41,7 @@ sap.ui.define([
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
-			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
+			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
 				success: function(oData) {
 					var aTemp1 = [];
@@ -47,11 +50,11 @@ sap.ui.define([
 					var aCategoryData = [];
 					for (var i = 0; i < oData.ProductCollection.length; i++) {
 						var oProduct = oData.ProductCollection[i];
-						if (oProduct.SupplierName && jQuery.inArray(oProduct.SupplierName, aTemp1) < 0) {
+						if (oProduct.SupplierName && aTemp1.indexOf(oProduct.SupplierName) < 0) {
 							aTemp1.push(oProduct.SupplierName);
 							aSuppliersData.push({Name: oProduct.SupplierName});
 						}
-						if (oProduct.Category && jQuery.inArray(oProduct.Category, aTemp2) < 0) {
+						if (oProduct.Category && aTemp2.indexOf(oProduct.Category) < 0) {
 							aTemp2.push(oProduct.Category);
 							aCategoryData.push({Name: oProduct.Category});
 						}
@@ -67,7 +70,7 @@ sap.ui.define([
 					oModel.setData(oData);
 				},
 				error: function() {
-					jQuery.sap.log.error("failed to load json");
+					Log.error("failed to load json");
 				}
 			});
 
@@ -121,7 +124,7 @@ sap.ui.define([
 
 			//Open the menu on the cell
 			var oCellDomRef = oEvent.getParameter("cellDomRef");
-			var eDock = sap.ui.core.Popup.Dock;
+			var eDock = Popup.Dock;
 			this._oIdContextMenu.open(false, oCellDomRef, eDock.BeginTop, eDock.BeginBottom, oCellDomRef, "none none");
 		},
 

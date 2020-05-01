@@ -40,7 +40,7 @@ sap.ui.define([
 			 *     the controller (example: <code>".myLocalHandler"</code>)</li>
 			 * <li><i>absolute</i>: names that contain, but do not start with a dot ('.') are first checked
 			 *     against the given local variables <code>mLocals</code>. When it can't be resolved, it's
-			 *     then assumed to mean a global handler function. {@link jQuery.sap.getObject}
+			 *     then assumed to mean a global handler function. {@link module:sap/base/util/ObjectPath.get}
 			 *     will be used to retrieve the function (example: <code>"some.global.handler"</code> )</li>
 			 * <li><i>legacy</i>: Names that contain no dot at all are first checked against the
 			 *     <code>oController</code>. If nothing is found, it's interpreted as a relative name and

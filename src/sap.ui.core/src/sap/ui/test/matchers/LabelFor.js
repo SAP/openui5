@@ -94,13 +94,13 @@ sap.ui.define([
         },
 
         /**
-         * The key of the I18N text in the containing {@link jQuery.sap.util.ResourceBundle}.
+         * The key of the I18N text in the containing {@link module:sap/base/i18n/ResourceBundle}.
          */
         key : {
           type : "string"
         },
         /**
-         * The parameters for replacing the placeholders of the I18N text. See {@link jQuery.sap.util.ResourceBundle#getText}.
+         * The parameters for replacing the placeholders of the I18N text. See {@link module:sap/base/i18n/ResourceBundle#getText}.
          */
         parameters : {
           type : "any"

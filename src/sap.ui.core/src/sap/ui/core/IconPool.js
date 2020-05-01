@@ -789,7 +789,7 @@ sap.ui.define([
 		 * @param {string|string[]} iconInfo.content is the special hexadecimal code without the prefix, for example "e000" or several of them
 		 * @param {boolean} [iconInfo.overWrite=false] indicates if already registered icons should be overwritten when the same name and collection are given. The built in icons can never be overwritten.
 		 * @param {boolean} [iconInfo.suppressMirroring=false] indicates whether this icon should NOT be mirrored in RTL (right to left) mode.
-		 * @param {jQuery.sap.util.ResourceBundle} [iconInfo.resourceBundle] ResourceBundle to be used for translation. Key format: "Icon.<iconName>".
+		 * @param {module:sap/base/i18n/ResourceBundle} [iconInfo.resourceBundle] ResourceBundle to be used for translation. Key format: "Icon.<iconName>".
 		 *
 		 * @return {object} the info object of the registered icon which has the name, collection, uri, fontFamily, content and suppressMirroring properties.
 		 * @static

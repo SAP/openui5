@@ -27,4 +27,4 @@ sap.ui.define([
 			this.oJsonConfigModel.setProperty("/useTwoColumnsForLargeScreen", this.bUseTwoColumns);
 		}
 	});
-}, true);
+});
