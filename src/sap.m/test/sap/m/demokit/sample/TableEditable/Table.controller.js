@@ -1,12 +1,12 @@
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/base/util/deepExtend',
 	'./Formatter',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/ColumnListItem',
 	'sap/m/Input',
 	'sap/m/MessageToast'
-], function(jQuery, Formatter, Controller, JSONModel, ColumnListItem, Input, MessageToast) {
+], function(deepExtend, Formatter, Controller, JSONModel, ColumnListItem, Input, MessageToast) {
 	"use strict";
 
 	var TableController = Controller.extend("sap.m.sample.TableEditable.Table", {
@@ -45,7 +45,7 @@ sap.ui.define([
 		},
 
 		onEdit: function() {
-			this.aProductCollection = jQuery.extend(true, [], this.oModel.getProperty("/ProductCollection"));
+			this.aProductCollection = deepExtend([], this.oModel.getProperty("/ProductCollection"));
 			this.byId("editButton").setVisible(false);
 			this.byId("saveButton").setVisible(true);
 			this.byId("cancelButton").setVisible(true);

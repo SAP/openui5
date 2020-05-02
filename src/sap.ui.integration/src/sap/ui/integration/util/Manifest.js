@@ -119,7 +119,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @returns {sap.base.i18n.ResourceBundle} The resource bundle.
+	 * @returns {module:sap/base/i18n/ResourceBundle} The resource bundle.
 	 */
 	Manifest.prototype.getResourceBundle = function () {
 		return this.oResourceBundle;

@@ -1,10 +1,13 @@
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/base/util/UriParameters",
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
+	"sap/f/library",
 	"sap/f/FlexibleColumnLayoutSemanticHelper"
-], function (jQuery, UIComponent, JSONModel, FlexibleColumnLayoutSemanticHelper) {
+], function (UriParameters, UIComponent, JSONModel, library, FlexibleColumnLayoutSemanticHelper) {
 	"use strict";
+
+	var LayoutType = library.LayoutType;
 
 	return UIComponent.extend("sap.f.FlexibleColumnLayoutWithFullscreenPage.Component", {
 		metadata: {
@@ -18,19 +21,12 @@ sap.ui.define([
 			this.setModel(oModel);
 
 			// set products demo model on this sample
-			var oProductsModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oProductsModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			oProductsModel.setSizeLimit(1000);
 			this.setModel(oProductsModel, "products");
 
 
 			this.getRouter().initialize();
-		},
-
-		createContent: function () {
-			return sap.ui.view({
-				viewName: "sap.f.FlexibleColumnLayoutWithFullscreenPage.view.FlexibleColumnLayout",
-				type: "XML"
-			});
 		},
 
 		/**
@@ -39,9 +35,9 @@ sap.ui.define([
 		 */
 		getHelper: function () {
 			var oFCL = this.getRootControl().byId("fcl"),
-				oParams = jQuery.sap.getUriParameters(),
+				oParams = UriParameters.fromQuery(location.search),
 				oSettings = {
-					defaultTwoColumnLayoutType: sap.f.LayoutType.TwoColumnsMidExpanded,
+					defaultTwoColumnLayoutType: LayoutType.TwoColumnsMidExpanded,
 					mode: oParams.get("mode"),
 					initialColumnsCount: oParams.get("initial"),
 					maxColumnsCount: oParams.get("max")
@@ -50,4 +46,4 @@ sap.ui.define([
 			return FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL, oSettings);
 		}
 	});
-}, true);
+});

@@ -1,13 +1,17 @@
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/core/library',
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/Filter',
+	'sap/ui/core/message/ControlMessageProcessor',
+	'sap/ui/core/message/Message',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/Device',
 	'sap/m/MessagePopover',
-	'sap/m/MessagePopoverItem'
-], function(jQuery, Controller, Filter, JSONModel, Device, MessagePopover, MessagePopoverItem) {
+	'sap/m/MessagePopoverItem',
+	'sap/m/MessageToast'
+], function(coreLibrary, Controller, ControlMessageProcessor, Message, JSONModel, Device, MessagePopover, MessagePopoverItem, MessageToast) {
 	"use strict";
+
+	var MessageType = coreLibrary.MessageType;
 
 	return Controller.extend("sap.f.sample.SemanticPageFreeStyle.controller.SemanticPageFreeStyle", {
 		onInit: function () {
@@ -17,15 +21,15 @@ sap.ui.define([
 			this.oSemanticPage = this.byId("mySemanticPage");
 			this.oSemanticPage.setModel(this.oModel);
 
-			var oMessageProcessor = new sap.ui.core.message.ControlMessageProcessor();
+			var oMessageProcessor = new ControlMessageProcessor();
 			var oMessageManager = sap.ui.getCore().getMessageManager();
 
 			oMessageManager.registerMessageProcessor(oMessageProcessor);
 
 			oMessageManager.addMessages(
-				new sap.ui.core.message.Message({
+				new Message({
 					message: "Something wrong happened",
-					type: sap.ui.core.MessageType.Error,
+					type: MessageType.Error,
 					processor: oMessageProcessor
 				})
 			);
@@ -51,7 +55,7 @@ sap.ui.define([
 		},
 
 		onSaveButtonPress: function(oEvent) {
-			sap.m.MessageToast.show("Pressed custom button " + oEvent.getSource().getId());
+			MessageToast.show("Pressed custom button " + oEvent.getSource().getId());
 		},
 
 		showFooter: function() {

@@ -7,18 +7,20 @@ sap.ui.define([
 		'sap/m/TabContainer',
 		'sap/m/TabContainerItem',
 		'sap/m/MessageBox',
-		'sap/ui/core/Fragment'
+		'sap/ui/core/Fragment',
+		'sap/base/util/deepExtend',
+		'sap/base/util/extend'
 	],
-	function (Controller, Element, JSONModel, Filter, FilterOperator, TabContainer, TabContainerItem, MessageBox, Fragment) {
+	function (Controller, Element, JSONModel, Filter, FilterOperator, TabContainer, TabContainerItem, MessageBox, Fragment, deepExtend, extend) {
 		"use strict";
 
 		function fnNavBackButton() {
 			var sMessage, oTabContainer,
-				fnGoBackToTablePage = jQuery.proxy(function () {
+				fnGoBackToTablePage = function () {
 					this.oPageTabContainer.destroyContent();
 					this.oPageAddItem.destroyContent();
 					this.oNavCon.back();
-				}, this);
+				}.bind(this);
 
 			if (this._isInEditMode()) {
 				sMessage = "Your changes to the following tabs will be lost when you leave the page: \n";
@@ -32,13 +34,13 @@ sap.ui.define([
 				}
 
 				this._showConfirmation(sMessage, ["Leave Page", MessageBox.Action.CANCEL],
-					jQuery.proxy(function (sAction) {
+					function (sAction) {
 						if (sAction !== MessageBox.Action.CANCEL) {
 							this._bEditMode = false;
 							fnGoBackToTablePage();
 							this._resetUnsavedItems();
 						}
-					}, this));
+					}.bind(this));
 			} else {
 				fnGoBackToTablePage();
 			}
@@ -61,12 +63,12 @@ sap.ui.define([
 			this.oPageAddItem = this.oView.byId("addItemPage");
 
 
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.oView.setModel(oModel);
 
-			this.oPageTable.attachSelectionChange(jQuery.proxy(fnTableSelectionChange, this));
-			this.oPageTabContainer.attachNavButtonPress(jQuery.proxy(fnNavBackButton, this));
-			this.oPageAddItem.attachNavButtonPress(jQuery.proxy(fnNavBackButton, this));
+			this.oPageTable.attachSelectionChange(fnTableSelectionChange, this);
+			this.oPageTabContainer.attachNavButtonPress(fnNavBackButton, this);
+			this.oPageAddItem.attachNavButtonPress(fnNavBackButton, this);
 		};
 
 		TCController.prototype.onExit = function () {
@@ -79,9 +81,9 @@ sap.ui.define([
 			this._oNewUnsavedItems = null;
 
 
-			this.oPageTable.detachSelectionChange(fnTableSelectionChange);
-			this.oPageTabContainer.detachNavButtonPress(fnNavBackButton).destroyContent();
-			this.oPageAddItem.detachNavButtonPress(fnNavBackButton).destroyContent();
+			this.oPageTable.detachSelectionChange(fnTableSelectionChange, this);
+			this.oPageTabContainer.detachNavButtonPress(fnNavBackButton, this).destroyContent();
+			this.oPageAddItem.detachNavButtonPress(fnNavBackButton, this).destroyContent();
 
 			this.oPageAddItem = null;
 			this.oPageTabContainer = null;
@@ -111,9 +113,9 @@ sap.ui.define([
 					});
 					oTabContainer = new TabContainer({
 						showAddNewButton: true,
-						addNewButtonPress: jQuery.proxy(this, "_handleTabContainerAddNewButtonPress"),
-						itemClose: jQuery.proxy(this, "_handleTabContainerItemClose"),
-						itemSelect: jQuery.proxy(this, "_handleTabContainerItemSelect"),
+						addNewButtonPress: this._handleTabContainerAddNewButtonPress.bind(this),
+						itemClose: this._handleTabContainerItemClose.bind(this),
+						itemSelect: this._handleTabContainerItemSelect.bind(this),
 						items: {
 							path: '/ProductCollection',
 							filters: aFilters,
@@ -132,9 +134,9 @@ sap.ui.define([
 				});
 				oTabContainer = new TabContainer({
 					showAddNewButton: true,
-					addNewButtonPress: jQuery.proxy(this, "_handleTabContainerAddNewButtonPress"),
-					itemClose: jQuery.proxy(this, "_handleTabContainerItemClose"),
-					itemSelect: jQuery.proxy(this, "_handleTabContainerItemSelect"),
+					addNewButtonPress: this._handleTabContainerAddNewButtonPress.bind(this),
+					itemClose: this._handleTabContainerItemClose.bind(this),
+					itemSelect: this._handleTabContainerItemSelect.bind(this),
 					items: {
 						path: '/ProductCollection',
 						filters: aFilters,
@@ -159,11 +161,11 @@ sap.ui.define([
 			if (oItem && oItem.getModified()) {
 				this._showConfirmation("Your changes will be lost when you close this tab",
 					["Close Tab", MessageBox.Action.CANCEL],
-					jQuery.proxy(function (sAction) {
+					function (sAction) {
 						if (sAction !== MessageBox.Action.CANCEL) {
 							this._closeItemInTabContainer(oItem);
 						}
-					}, this));
+					}.bind(this));
 			} else {
 				this._closeItemInTabContainer(oItem);
 			}
@@ -174,7 +176,7 @@ sap.ui.define([
 				sProductId = "ProductId-" + Math.random(),
 				oTabContainer = this.oPageTabContainer.getContent()[0],
 				oTabContainerItemsBinding = oTabContainer.getBinding("items"),
-				aAppliedFilters = jQuery.extend([], oTabContainerItemsBinding.aApplicationFilters, oTabContainerItemsBinding.aFilters),
+				aAppliedFilters = extend([], oTabContainerItemsBinding.aApplicationFilters, oTabContainerItemsBinding.aFilters),
 				oModel = this.oView.getModel(),
 				aData = oModel.getProperty("/ProductCollection"),
 				oNewItem = {
@@ -260,7 +262,7 @@ sap.ui.define([
 			oSelectedItem.setModified(true);
 
 			oBindingContext = oSelectedItem.getBindingContext();
-			oEditModel = new JSONModel(jQuery.extend(true, {}, oBindingContext.getProperty(oBindingContext.getPath())));
+			oEditModel = new JSONModel(deepExtend({}, oBindingContext.getProperty(oBindingContext.getPath())));
 
 			if (oEditFragment instanceof Promise) {
 				oEditFragment.then(function(oFragment) {
@@ -322,7 +324,7 @@ sap.ui.define([
 
 			oSelectedItem.getModel().setProperty(
 				oBindingContext.getPath(),
-				jQuery.extend(true, oBindingContext.getProperty(oBindingContext.getPath()), oFragmentData)
+				deepExtend(oBindingContext.getProperty(oBindingContext.getPath()), oFragmentData)
 			);
 
 			oSelectedItem.destroyContent();
@@ -366,7 +368,7 @@ sap.ui.define([
 
 			// Redirect to the table, if there are no items left
 			if (!aAppliedFilters.length) {
-				jQuery.sap.delayedCall(100, this, fnNavBackButton);
+				setTimeout(fnNavBackButton.bind(this), 100);
 			}
 		};
 

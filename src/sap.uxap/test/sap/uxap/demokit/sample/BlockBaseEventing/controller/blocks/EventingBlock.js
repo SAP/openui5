@@ -8,4 +8,4 @@ sap.ui.define(["sap/uxap/BlockBase"], function (BlockBase) {
 			}
 		}
 	});
-}, true);
+});

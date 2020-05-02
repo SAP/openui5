@@ -18,4 +18,4 @@ sap.ui.define(['sap/uxap/BlockBase'], function (BlockBase) {
 
 	return BlockJobInfoPart3;
 
-}, true);
+});

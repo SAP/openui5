@@ -10,4 +10,4 @@ sap.ui.define(["sap/ui/core/mvc/Controller", "sap/m/MessageToast"], function (Co
 			MessageToast.show("Button was presed");
 		}
 	});
-}, true);
+});

@@ -302,7 +302,7 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 
 			var isRtl = sap.ui.getCore().getConfiguration().getRTL();
 
-			//  jQuery.sap.KeyCodes.MINUS is not returning 189
+			//  KeyCodes.MINUS is not returning 189
 			if ((event.shiftKey && event.which == 189) ||
 				event.which == KeyCodes.NUMPAD_MINUS ||
 				(event.which == KeyCodes.ARROW_RIGHT && isRtl) ||

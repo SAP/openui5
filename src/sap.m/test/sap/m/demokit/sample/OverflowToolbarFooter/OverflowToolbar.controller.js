@@ -1,17 +1,17 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/Filter',
+		'sap/ui/model/FilterOperator',
 		'sap/ui/model/Sorter',
 		'sap/ui/model/json/JSONModel',
 		'sap/m/MessageToast'
-	], function(jQuery, Controller, Filter, Sorter, JSONModel, MessageToast) {
+	], function(Controller, Filter, FilterOperator, Sorter, JSONModel, MessageToast) {
 	"use strict";
 
 	var OverflowToolbarController = Controller.extend("sap.m.sample.OverflowToolbarFooter.OverflowToolbar", {
 
 		onInit : function (evt) {
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
 
 			this.bGrouped = false;
@@ -77,7 +77,7 @@ sap.ui.define([
 			}
 
 			if (this.sSearchQuery) {
-				var oFilter = new Filter("Name", sap.ui.model.FilterOperator.Contains, this.sSearchQuery);
+				var oFilter = new Filter("Name", FilterOperator.Contains, this.sSearchQuery);
 				aFilters.push(oFilter);
 			}
 

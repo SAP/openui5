@@ -4,8 +4,8 @@ sap.ui.define([
 	'sap/ui/core/message/Message',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/model/type/String',
-	'jquery.sap.global'
-], function(MessageToast, Controller, Message, JSONModel, TypeString, jQuery) {
+	'sap/base/util/extend'
+], function(MessageToast, Controller, Message, JSONModel, TypeString, extend) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.core.sample.DataState.Page", {
@@ -218,7 +218,7 @@ sap.ui.define([
 				if (!applyMessages(n)) {
 					if (n in oChanges) {
 						aChangedProperties.push(n);
-						this.oDataStateModel.setProperty("/" + n, jQuery.extend({}, oChanges[n]));
+						this.oDataStateModel.setProperty("/" + n, extend({}, oChanges[n]));
 					} else {
 						//clear old value
 						this.oDataStateModel.setProperty("/" + n + "/oldValue",null);

@@ -19,7 +19,7 @@ sap.ui.define([
 	 * @since 1.38.0
 	 * Helper object to select an ABAP transport for an LREP object. This is not a generic utility to select a transport request, but part
 	 *        of the SmartVariant control.
-	 * @param jQuery.sap.global} jQuery a reference to the jQuery implementation.
+	 * @param {jQuery} jQuery a reference to the jQuery implementation.
 	 * @param {sap.ui.fl.Utils} Utils a reference to the flexibility utilities implementation.
 	 * @param {sap.ui.fl.transport.Transports} Transports a reference to the transport service implementation.
 	 * @param {sap.ui.fl.transport.TransportDialog} TransportDialog a reference to the transport dialog implementation.

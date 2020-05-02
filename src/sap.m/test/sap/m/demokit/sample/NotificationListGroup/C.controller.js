@@ -1,8 +1,9 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/mvc/Controller',
+	'sap/m/Link',
+	'sap/m/MessageStrip',
 	'sap/m/MessageToast'
-], function (jQuery, Controller, MessageToast) {
+], function (Controller, Link, MessageStrip, MessageToast) {
 	'use strict';
 
 	var CController = Controller.extend('sap.m.sample.NotificationListGroup.C', {
@@ -25,12 +26,12 @@ sap.ui.define([
 			var errorIndex = Math.floor(Math.random() * 3);
 			var length = notifications.length;
 
-			var messageStrip = new sap.m.MessageStrip({
+			var messageStrip = new MessageStrip({
 				type: 'Error',
 				showIcon: true,
 				showCloseButton: true,
 				text: 'Error: Something went wrong.',
-				link: new sap.m.Link({
+				link: new Link({
 					text: 'SAP CE',
 					href: 'http://www.sap.com/',
 					target: '_blank'

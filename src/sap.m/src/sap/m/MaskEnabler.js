@@ -1169,8 +1169,6 @@ sap.ui.define([
 		/**
 		 * Determines the browser specific minimal delay time for setTimeout.
 		 *
-		 * Todo: This logic is a good candidate to be implemented generally in jQuery.sap.delayedCall method.
-		 *
 		 * @private
 		 */
 		this._getMinBrowserDelay = function () {

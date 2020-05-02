@@ -211,7 +211,7 @@ sap.ui.define([
 					};
 
 				if (bCopy) { // "copy" appointment
-					var oProps = jQuery.extend({}, oModel.getProperty(oAppointment.getBindingContext().getPath()));
+					var oProps = Object.assign({}, oModel.getProperty(oAppointment.getBindingContext().getPath()));
 					oProps.start = oStartDate;
 					oProps.end = oEndDate;
 

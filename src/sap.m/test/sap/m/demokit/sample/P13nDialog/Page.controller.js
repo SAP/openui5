@@ -1,6 +1,6 @@
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/Fragment', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'
-], function(jQuery, Fragment, Controller, JSONModel) {
+	'sap/base/util/deepExtend', 'sap/ui/core/Fragment', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'
+], function(deepExtend, Fragment, Controller, JSONModel) {
 	"use strict";
 
 	/**
@@ -134,7 +134,7 @@ sap.ui.define([
 		oDataBeforeOpen: {},
 
 		onInit: function() {
-			this.oJSONModel = new JSONModel(jQuery.extend(true, {}, this.oDataInitial));
+			this.oJSONModel = new JSONModel(deepExtend({}, this.oDataInitial));
 			this.oJSONModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
 		},
 
@@ -145,7 +145,7 @@ sap.ui.define([
 		},
 
 		onCancel: function(oEvent) {
-			this.oJSONModel.setProperty("/", jQuery.extend(true, [], this.oDataBeforeOpen));
+			this.oJSONModel.setProperty("/", deepExtend([], this.oDataBeforeOpen));
 
 			this.oDataBeforeOpen = {};
 			oEvent.getSource().close();
@@ -153,7 +153,7 @@ sap.ui.define([
 		},
 
 		onReset: function() {
-			this.oJSONModel.setProperty("/", jQuery.extend(true, [], this.oDataInitial));
+			this.oJSONModel.setProperty("/", deepExtend([], this.oDataInitial));
 		},
 
 		onPersonalizationDialogPress: function() {
@@ -163,7 +163,7 @@ sap.ui.define([
 
 			this.getView().addDependent(oPersonalizationDialog);
 
-			this.oDataBeforeOpen = jQuery.extend(true, {}, this.oJSONModel.getData());
+			this.oDataBeforeOpen = deepExtend({}, this.oJSONModel.getData());
 			oPersonalizationDialog.open();
 		},
 
@@ -181,9 +181,9 @@ sap.ui.define([
 			};
 			var fnGetUnion = function(aDataBase, aData) {
 				if (!aData) {
-					return jQuery.extend(true, [], aDataBase);
+					return deepExtend([], aDataBase);
 				}
-				var aUnion = jQuery.extend(true, [], aData);
+				var aUnion = deepExtend([], aData);
 				aDataBase.forEach(function(oMItemBase) {
 					var oMItemUnion = fnGetArrayElementByKey("columnKey", oMItemBase.columnKey, aUnion);
 					if (!oMItemUnion) {

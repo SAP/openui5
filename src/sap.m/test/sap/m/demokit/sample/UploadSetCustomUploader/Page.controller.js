@@ -1,13 +1,14 @@
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/m/library",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/Item",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/upload/Uploader",
 	"sap/m/StandardListItem"
-], function (jQuery, MobileLibrary, Controller, Item, JSONModel, Uploader, ListItem) {
+], function (MobileLibrary, Controller, Item, JSONModel, Uploader, ListItem) {
 	"use strict";
+
+	var ListMode = MobileLibrary.ListMode;
 
 	var CustomUploader = Uploader.extend("sap.m.sample.UploadSetCustomUploader.CustomUploader", {
 		metadata: {}
@@ -31,7 +32,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.m.sample.UploadSet.Page", {
 		onInit: function () {
-			var sPath = sap.ui.require.toUrl("sap/m/sample/UploadSetCustomUploader") + "/items.json",
+			var sPath = sap.ui.require.toUrl("sap/m/sample/UploadSetCustomUploader/items.json"),
 				oUploadSet = this.byId("UploadSet"),
 				oCustomUploader = new CustomUploader();
 
@@ -46,7 +47,7 @@ sap.ui.define([
 			oCustomUploader.attachUploadCompleted(this.onUploadCompleted.bind(this));
 			oCustomUploader.attachUploadAborted(this.onUploadAborted.bind(this));
 
-			oUploadSet.getList().setMode(MobileLibrary.ListMode.MultiSelect);
+			oUploadSet.getList().setMode(ListMode.MultiSelect);
 		},
 		onUploadStarted: function (oEvent) {
 			var oList = this.byId("progressList"),

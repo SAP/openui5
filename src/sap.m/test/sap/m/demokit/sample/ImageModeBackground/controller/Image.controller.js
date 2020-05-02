@@ -13,7 +13,7 @@ sap.ui.define([
 
 		onInit: function() {
 			var bIsPhone = Device.system.phone,
-				oImgModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/img.json");
+				oImgModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/img.json"));
 
 			this.getView().setModel(new JSONModel({
 				imageHeight: bIsPhone ? "5em" : "10em",

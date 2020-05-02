@@ -16,4 +16,4 @@ sap.ui.define(['sap/uxap/BlockBase'], function (BlockBase) {
 		}
 	});
 	return BlockEmpDetailPart1;
-}, true);
+});

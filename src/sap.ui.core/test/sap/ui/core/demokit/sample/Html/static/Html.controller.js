@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/HTML'
 ], function(

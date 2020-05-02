@@ -5,4 +5,4 @@ sap.ui.define(['sap/uxap/BlockBase'], function (BlockBase) {
 			/* no additional views provided */
 		}
 	});
-}, true);
+});

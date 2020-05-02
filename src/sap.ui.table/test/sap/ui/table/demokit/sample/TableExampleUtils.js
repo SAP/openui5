@@ -1,10 +1,11 @@
 sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
+	"sap/ui/core/syncStyleClass",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Popover",
 	"sap/m/List",
 	"sap/m/Button",
 	"sap/m/FeedListItem"
-], function(JSONModel, Popover, List, Button, FeedListItem) {
+], function(syncStyleClass, JSONModel, Popover, List, Button, FeedListItem) {
 	"use strict";
 
 	function showInfo(aItems, oBy) {
@@ -29,8 +30,8 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 			]
 		});
 
-		jQuery.sap.syncStyleClass("sapUiSizeCompact", oBy, oPopover);
-		jQuery.sap.syncStyleClass("sapUiSizeCozy", oBy, oPopover);
+		syncStyleClass("sapUiSizeCompact", oBy, oPopover);
+		syncStyleClass("sapUiSizeCozy", oBy, oPopover);
 		oPopover.setModel(new JSONModel({items: aItems}));
 		oPopover.openBy(oBy, true);
 	}
@@ -62,4 +63,4 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 
 	return Utils;
 
-}, true /* bExport */);
+});

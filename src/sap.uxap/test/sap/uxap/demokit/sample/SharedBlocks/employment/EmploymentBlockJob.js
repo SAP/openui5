@@ -17,4 +17,4 @@ sap.ui.define(['sap/uxap/BlockBase'], function (BlockBase) {
 	});
 
 	return EmploymentBlockJob;
-}, true);
+});

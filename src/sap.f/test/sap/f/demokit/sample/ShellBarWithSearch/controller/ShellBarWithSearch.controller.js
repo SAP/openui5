@@ -8,7 +8,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.f.sample.ShellBarWithSearch.controller.ShellBarWithSearch", {
 		onInit: function () {
-			this.oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			this.oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			var oView = this.getView();
 			oView.setModel(this.oModel);
 			this.oSF = oView.byId("searchField");

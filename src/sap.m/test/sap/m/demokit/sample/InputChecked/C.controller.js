@@ -1,12 +1,11 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/m/MessageBox',
 		'sap/m/MessageToast',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/SimpleType',
 		'sap/ui/model/ValidateException',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageBox, MessageToast, Controller, SimpleType, ValidateException, JSONModel) {
+	], function(MessageBox, MessageToast, Controller, SimpleType, ValidateException, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.InputChecked.C", {
@@ -49,7 +48,6 @@ sap.ui.define([
 		 */
 		onContinue : function () {
 			// collect input controls
-			var that = this;
 			var oView = this.getView();
 			var aInputs = [
 				oView.byId("nameInput"),
@@ -59,9 +57,9 @@ sap.ui.define([
 
 			// check that inputs are not empty
 			// this does not happen during data binding as this is only triggered by changes
-			jQuery.each(aInputs, function (i, oInput) {
-				bValidationError = that._validateInput(oInput) || bValidationError;
-			});
+			aInputs.forEach(function (oInput) {
+				bValidationError = this._validateInput(oInput) || bValidationError;
+			}, this);
 
 			// output result
 			if (!bValidationError) {

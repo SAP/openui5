@@ -2540,7 +2540,7 @@ sap.ui.define([
 	 * @param {string} [sLibraryName='sap.ui.core'] Name of the library to retrieve the bundle for
 	 * @param {string} [sLocale] Locale to retrieve the resource bundle for
 	 * @param {boolean} [bAsync=false] Whether the resource bundle is loaded asynchronously
-	 * @return {jQuery.sap.util.ResourceBundle|Promise} The best matching resource bundle for the given
+	 * @return {module:sap/base/i18n/ResourceBundle|Promise} The best matching resource bundle for the given
 	 *   parameters or <code>undefined</code>; in asynchronous case a Promise on that bundle is returned
 	 * @public
 	 */

@@ -3,4 +3,4 @@ sap.ui.define(["sap/uxap/BlockBase"], function (BlockBase) {
 	return BlockBase.extend("sap.uxap.sample.ObjectPageFormLayout.view.blocks.PersonalFormBlock", {
 		metadata: {}
 	});
-}, true);
+});

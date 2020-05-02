@@ -1,19 +1,18 @@
 sap.ui.define([
-	"sap/ui/test/Opa5",
-	"sap/ui/thirdparty/jquery"
-], function(Opa5, jQuery) {
+	"sap/ui/test/Opa5"
+], function(Opa5) {
 	"use strict";
 
 	return Opa5.extend("sap.ui.testrecorder.qunit.integration.pages.Common", {
 		iStartMyMockRecorder: function () {
 			return this.iStartMyAppInAFrame({
-				source: jQuery.sap.getModulePath("sap/ui/testrecorder/recorderMock") + "/overlay.html",
+				source: sap.ui.require.toUrl("sap/ui/testrecorder/recorderMock/overlay.html"),
 				autoWait:true
 			});
 		},
 		iStartMyMockApp: function () {
 			return this.iStartMyAppInAFrame({
-				source: jQuery.sap.getModulePath("sap/ui/testrecorder/appMock") + "/index.html",
+				source: sap.ui.require.toUrl("sap/ui/testrecorder/appMock/index.html"),
 				autoWait:true
 			});
 		},

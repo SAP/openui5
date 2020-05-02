@@ -19,7 +19,7 @@ sap.ui.define([
 			}));
 
 			// set explored app's demo model on this sample
-			oImgModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/img.json");
+			oImgModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/img.json"));
 			this.getView().setModel(oImgModel, "img");
 
 		},

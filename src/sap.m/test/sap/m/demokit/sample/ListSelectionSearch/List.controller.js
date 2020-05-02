@@ -1,15 +1,16 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel"
-], function (Controller, Filter, JSONModel) {
+], function (Controller, Filter, FilterOperator, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.ListSelectionSearch.List", {
 
 		onInit: function () {
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
 		},
 
@@ -18,7 +19,7 @@ sap.ui.define([
 			var aFilters = [];
 			var sQuery = oEvent.getSource().getValue();
 			if (sQuery && sQuery.length > 0) {
-				var filter = new Filter("Name", sap.ui.model.FilterOperator.Contains, sQuery);
+				var filter = new Filter("Name", FilterOperator.Contains, sQuery);
 				aFilters.push(filter);
 			}
 

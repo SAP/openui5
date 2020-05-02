@@ -592,7 +592,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * @returns {jQuery.sap.util.ResourceBundle}
+		 * @returns {module:sap/base/i18n/ResourceBundle}
 		 * @private
 		 */
 		PDFViewer.prototype._getLibraryResourceBundle = function () {

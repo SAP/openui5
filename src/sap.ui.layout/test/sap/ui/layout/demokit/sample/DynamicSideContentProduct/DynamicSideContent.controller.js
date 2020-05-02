@@ -8,7 +8,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap
 			this._showSideContentButton = this.byId("showSideContentButton");
 
 			// set explored app's demo model on this sample
-			var oImgModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/img.json");
+			var oImgModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/img.json"));
 			this.getView().setModel(oImgModel, "img");
 
 			// set media model

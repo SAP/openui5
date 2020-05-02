@@ -517,7 +517,7 @@ sap.ui.define([
 	 * If there is no further fallback locale or when requests for the next fallback locale are
 	 * suppressed by configuration or when the file cannot be loaded, <code>null</code> is returned.
 	 *
-	 * @param {ResourceBundle} oBundle ResourceBundle to extend
+	 * @param {module:sap/base/i18n/ResourceBundle} oBundle ResourceBundle to extend
 	 * @param {boolean} [bAsync=false] Whether the resource should be loaded asynchronously
 	 * @returns The newly loaded properties (sync mode) or a Promise on the properties (async mode);
 	 *         value / Promise fulfillment will be <code>null</code> when the properties for the

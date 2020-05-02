@@ -58,4 +58,4 @@ sap.ui.define([
 			MessageToast.show("ObjectPageLayout current state:\r\n" + JSON.stringify(this.oObjectPageStateModel.getData(), null, 4));
 		}
 	});
-}, true);
+});

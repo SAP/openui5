@@ -1,9 +1,8 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/mvc/Controller',
 		'sap/m/IconTabFilter',
 		'sap/m/Text'
-	], function(jQuery, Controller, IconTabFilter, Text) {
+	], function(Controller, IconTabFilter, Text) {
 	"use strict";
 
 	var IconTabBarController = Controller.extend("sap.m.sample.IconTabBarDragDrop.IconTabBarDragDrop", {

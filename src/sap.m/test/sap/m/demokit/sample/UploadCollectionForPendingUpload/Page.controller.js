@@ -1,12 +1,11 @@
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/mvc/Controller",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/m/UploadCollectionParameter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device"
-], function(jQuery, Controller, MessageBox, MessageToast, UploadCollectionParameter, JSONModel, Device) {
+], function(Controller, MessageBox, MessageToast, UploadCollectionParameter, JSONModel, Device) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.UploadCollectionForPendingUpload.Page", {

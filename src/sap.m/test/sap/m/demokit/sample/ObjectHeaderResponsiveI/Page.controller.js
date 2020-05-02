@@ -8,7 +8,7 @@ sap.ui.define([
 	return Controller.extend("sap.m.sample.ObjectHeaderResponsiveI.Page", {
 
 		onInit: function() {
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
 		},
 

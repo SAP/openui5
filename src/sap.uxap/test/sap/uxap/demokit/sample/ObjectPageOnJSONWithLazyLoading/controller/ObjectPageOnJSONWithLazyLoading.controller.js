@@ -10,4 +10,4 @@ sap.ui.define([
 			this.getView().setModel(oJsonModel, "ObjectPageModel");
 		}
 	});
-}, true);
+});
