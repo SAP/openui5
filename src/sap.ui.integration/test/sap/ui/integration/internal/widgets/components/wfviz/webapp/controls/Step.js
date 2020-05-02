@@ -1,4 +1,4 @@
-sap.ui.define(["sap/ui/core/Control"], function(Element) {
+sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	"use strict";
 
 	var Step = Element.extend("sap.dwp.workflow.controls.Step", {
