@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"test/sap/ui/fl/testApps/controlPersonalizationAPIChanges/Helper"
-], function (Layer, Controller, Utils, Helper) {
+], function (Controller, Layer, Utils, Helper) {
 	"use strict";
 
 	return Controller.extend("test.sap.ui.fl.testApps.controlPersonalizationAPIChanges.controller.FirstSubView", {

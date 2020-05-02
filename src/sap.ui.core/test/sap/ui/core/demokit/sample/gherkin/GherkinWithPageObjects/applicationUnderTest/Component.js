@@ -1,5 +1,5 @@
 sap.ui.define(["sap/ui/core/UIComponent"],
-	function(UIComponent, View) {
+	function(UIComponent) {
 	"use strict";
 
 	var Component = UIComponent.extend("appUnderTest.Component", {

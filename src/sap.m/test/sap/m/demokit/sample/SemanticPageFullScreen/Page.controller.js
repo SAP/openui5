@@ -5,7 +5,8 @@ sap.ui.define([
 		'sap/ui/core/library',
 		'sap/ui/model/json/JSONModel',
 		'sap/m/MessagePopover',
-		'sap/m/MessagePopoverItem'
+		'sap/m/MessagePopoverItem',
+		'sap/m/MessageToast'
 	], function(ControlMessageProcessor, Message, Controller, coreLibrary, JSONModel, MessagePopover, MessagePopoverItem, MessageToast) {
 	"use strict";
 
