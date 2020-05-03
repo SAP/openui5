@@ -914,7 +914,7 @@ function (
 			},
 			oOSBEventDelegate = {
 				"onAfterRendering": function() {
-					this.oSB._oSearch.removeEventDelegate(oOSBEventDelegate);
+					this.oSB.removeEventDelegate(oOSBEventDelegate);
 
 					// Act
 					this.oSB._oOverflowToolbar._getOverflowButton().firePress();
@@ -927,10 +927,14 @@ function (
 
 		// Act
 		oSearchManager._oSearch.setIsOpen(false);
-		oSearchManager._oSearch.addEventDelegate(oSearchEventDelegate);
-		this.oSB.addEventDelegate(oOSBEventDelegate, this);
 		this.oSB._oResponsiveHandler._transformToPhoneState();
 		Core.applyChanges();
+
+		setTimeout(function () {
+			oSearchManager._oSearch.addEventDelegate(oSearchEventDelegate);
+			this.oSB.addEventDelegate(oOSBEventDelegate, this);
+			this.oSB.invalidate();
+		}.bind(this), 1000);
 	});
 
 	QUnit.test("Mobile requirements with both configuration - with or without menu button", function (assert) {
