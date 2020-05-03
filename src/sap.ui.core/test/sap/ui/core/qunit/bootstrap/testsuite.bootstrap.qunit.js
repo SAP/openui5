@@ -318,9 +318,10 @@ sap.ui.define(function() {
 				group: "Theme Versioning",
 				title: "QUnit Page for Theme Version Parameter - off - async",
 				ui5: {
-					theme: "base",
 					language: "en",
-					preload: "async"
+					preload: "async",
+					theme: "base",
+					versionedLibCss: false
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit"
@@ -329,9 +330,10 @@ sap.ui.define(function() {
 				group: "Theme Versioning",
 				title: "QUnit Page for Theme Version Parameter - off - sync",
 				ui5: {
-					theme: "base",
 					language: "en",
-					preload: "sync"
+					preload: "sync",
+					theme: "base",
+					versionedLibCss: false
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit"
@@ -340,9 +342,15 @@ sap.ui.define(function() {
 				group: "Theme Versioning",
 				title: "QUnit Page for Theme Version Parameter - on - async (with custom.css)",
 				ui5: {
-					theme: "customcss",
 					language: "en",
-					preload: "async"
+					preload: "async",
+					theme: "customcss",
+					themeRoots: {
+						"customcss": {
+							"sap.ui.core": "test-resources/sap/ui/core/qunit/testdata/customcss/"
+						}
+					},
+					versionedLibCss: true
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit"
@@ -351,9 +359,10 @@ sap.ui.define(function() {
 				group: "Theme Versioning",
 				title: "QUnit Page for Theme Version Parameter - on - async",
 				ui5: {
-					theme: "base",
 					language: "en",
-					preload: "async"
+					theme: "base",
+					preload: "async",
+					versionedLibCss: true
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit"
@@ -362,9 +371,15 @@ sap.ui.define(function() {
 				group: "Theme Versioning",
 				title: "QUnit Page for Theme Version Parameter - on - sync (with custom.css)",
 				ui5: {
-					theme: "customcss",
 					language: "en",
-					preload: "sync"
+					preload: "sync",
+					theme: "customcss",
+					themeRoots: {
+						"customcss": {
+							"sap.ui.core": "test-resources/sap/ui/core/qunit/testdata/customcss/"
+						}
+					},
+					versionedLibCss: true
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit"
@@ -375,7 +390,8 @@ sap.ui.define(function() {
 				ui5: {
 					theme: "base",
 					language: "en",
-					preload: "sync"
+					preload: "sync",
+					versionedLibCss: true
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
 				module: "./ThemeVersion.qunit"

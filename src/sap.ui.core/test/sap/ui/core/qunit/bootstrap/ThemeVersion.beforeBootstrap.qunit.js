@@ -1,5 +1,7 @@
 /*global sinon */
-(function() {
+sap.ui.define([
+	"sap/base/util/UriParameters"
+], function(UriParameters) {
 	"use strict";
 
 	function setupFakeServer(mOptions) {
@@ -24,9 +26,9 @@
 		window.oServer.autoRespond = true;
 		window.oServer.xhr.useFilters = true;
 		window.oServer.xhr.addFilter(function(sMethod, sPath, bAsync) {
-			return !(sPath === "../../../../../../resources/sap-ui-version.json" && bAsync === mOptions.async);
+			return !(sPath === "resources/sap-ui-version.json" && bAsync === mOptions.async);
 		});
-		window.oServer.respondWith("GET", "../../../../../../resources/sap-ui-version.json",
+		window.oServer.respondWith("GET", "resources/sap-ui-version.json",
 		[
 			200,
 			{
@@ -37,24 +39,21 @@
 	}
 
 	// nomen est omen
-	var sTestFileName = window.location.pathname.slice(window.location.pathname.lastIndexOf('/') + 1);
+	var sTestName = UriParameters.fromQuery(location.search).get("test");
 
 	var oOptions = window.oTestOptions = {
-		async: /-async[-.]/.test(sTestFileName),
-		versionedLibCss: /-on[-.]/.test(sTestFileName),
-		customcss: /-customcss[-.]/.test(sTestFileName)
+		async: /-async(?:-|$)/.test(sTestName),
+		versionedLibCss: /-on(?:-|$)/.test(sTestName),
+		customcss: /-customcss(?:-|$)/.test(sTestName)
 	};
 
 	setupFakeServer({async: oOptions.async});
+	sinon.stub(sap.ui.loader, "config").callsFake(function(cfg) {
+		if ( cfg === undefined ) {
+			return { async: oOptions.async };
+		} else {
+			return sap.ui.loader.config.wrappedMethod.apply(sap.ui.loader, arguments);
+		}
+	});
 
-	if ( oOptions.customcss ) {
-		window["sap-ui-config"] = {
-			themeRoots: {
-				"customcss": {
-					"sap.ui.core": "../testdata/customcss/"
-				}
-			}
-		};
-	}
-
-}());
+});
