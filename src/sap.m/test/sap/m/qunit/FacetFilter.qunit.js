@@ -1588,7 +1588,7 @@ sap.ui.define([
 		oFacetFilter.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		oTargetList.attachEvent("search", function(oEvent) {
+		oTargetList.attachEventOnce("search", function(oEvent) {
 			var sSearchString = oEvent.getParameters()["term"];
 
 			this.bindItems({
@@ -4859,6 +4859,71 @@ sap.ui.define([
 
 
 	QUnit.module("Other scenarios");
+
+	//BCP: 2070160117
+	QUnit.test("Facet button text when default filtering is prevented and select all checkbox is checked", function(assert) {
+		// arrange
+		var done = assert.async(),
+			aValues = [{key : 'k1',text : "aa"}, {key : 'k2',text : "aabb"}, {key : 'k3',text : "cc"}],
+			oModel = new JSONModel({
+				values : aValues
+			}),
+			oFFL = new FacetFilterList({
+				title : "Values"
+			}),
+			oFF = new FacetFilter({
+				showPersonalization : true,
+				liveSearch : false,
+				lists: [oFFL]
+			}),
+			oButtonOpener = oFF._getButtonForList(oFFL),
+			oPopover = oFF._getPopover(),
+			oFakeEvent = {
+				getParameters: function () {
+					return {
+						query: "aa"
+					};
+				}
+			};
+
+		oFF.setModel(oModel);
+		oFF.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oFFL.attachEventOnce("search", function(oEvent) {
+			var sSearchString = oEvent.getParameters()["term"];
+
+			this.bindItems({
+				path : "/values",
+				template : new FacetFilterItem({
+					text : "{text}",
+					key : "{key}"
+				}),
+				filters: [new Filter("text", 'Contains', sSearchString.toLowerCase())]
+			});
+
+			oEvent.preventDefault();
+		});
+
+		oPopover.attachEventOnce("afterOpen", function(oEvent) {
+			// act
+			oFFL._handleSearchEvent(oFakeEvent);
+			// select all items
+			oFFL._handleSelectAllClick(true);
+
+			oPopover.attachEventOnce("afterClose", function(oEvent) {
+				sap.ui.getCore().applyChanges();
+				//assert
+				assert.equal(oButtonOpener.getText(), "Values (All)", "Button text is All");
+				oFF.destroy();
+				done();
+			});
+
+			oFF._closePopover();
+		});
+
+		oFF._openPopover(oPopover, oButtonOpener);
+	});
 
 	QUnit.test("Keep selected cache items when updatedFinished event is triggered from items binding", function(assert) {
 		// prepare
