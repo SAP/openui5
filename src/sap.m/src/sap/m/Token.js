@@ -150,20 +150,18 @@ sap.ui.define([
 	 * This file defines behavior for the control,
 	 */
 	Token.prototype.init = function() {
-		var that = this,
-			bSysCancelIconUsed = Parameters.get("_sap_m_Token_Sys_Cancel_Icon") === "true",
-			sSrcIcon = bSysCancelIconUsed ? "sap-icon://sys-cancel" : "sap-icon://decline";
+		var bSysCancelIconUsed = Parameters.get("_sap_m_Token_Sys_Cancel_Icon") === "true",
+			sSrcIcon = bSysCancelIconUsed ? "sap-icon://sys-cancel" : "sap-icon://decline",
+			oDeleteIcon = new Icon({
+				id : this.getId() + "-icon",
+				src : sSrcIcon,
+				noTabStop: true,
+				press : this._tokenIconPress.bind(this)
+			});
 
-		this._deleteIcon = new Icon({
-			id : that.getId() + "-icon",
-			src : sSrcIcon,
-			noTabStop: true,
-			press : this._tokenIconPress.bind(this)
-		});
-
-		this._deleteIcon.addStyleClass("sapMTokenIcon");
-		this.setAggregation("deleteIcon", this._deleteIcon);
-		this._deleteIcon.setUseIconTooltip(false);
+		oDeleteIcon.addStyleClass("sapMTokenIcon");
+		oDeleteIcon.setUseIconTooltip(false);
+		this.setAggregation("deleteIcon", oDeleteIcon);
 	};
 
 	/**
@@ -219,7 +217,7 @@ sap.ui.define([
 
 		this.firePress();
 
-		if (bSelected != bNewSelectedValue) {
+		if (bSelected !== bNewSelectedValue) {
 			if (bNewSelectedValue) {
 				this.fireSelect();
 			} else {
@@ -269,7 +267,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Token.prototype._changeSelection = function(bSelected) {
-		if (this.getSelected() == bSelected) {
+		if (this.getSelected() === bSelected) {
 			return;
 		}
 
@@ -289,7 +287,9 @@ sap.ui.define([
 	 * @private
 	 */
 	Token.prototype.ontap = function(oEvent) {
-		if (oEvent.target.id == this._deleteIcon.getId()){
+		var oDeleteIcon = this.getAggregation("deleteIcon");
+
+		if (oDeleteIcon && oEvent.target.id === oDeleteIcon.getId()) {
 			oEvent.setMark("tokenDeletePress", true);
 			return;
 		}
@@ -375,11 +375,12 @@ sap.ui.define([
 	};
 
 	Token.prototype.onThemeChanged = function () {
-		var bSysCancelIconUsed = Parameters.get("_sap_m_Token_Sys_Cancel_Icon") === "true",
+		var oDeleteIcon = this.getAggregation("deleteIcon"),
+			bSysCancelIconUsed = Parameters.get("_sap_m_Token_Sys_Cancel_Icon") === "true",
 			sSrcIcon = bSysCancelIconUsed ? "sap-icon://sys-cancel" : "sap-icon://decline";
 
-		if (this._deleteIcon.getSrc() !== sSrcIcon) {
-			this._deleteIcon.setSrc(sSrcIcon);
+		if (oDeleteIcon && oDeleteIcon.getSrc() !== sSrcIcon) {
+			oDeleteIcon.setSrc(sSrcIcon);
 		}
 	};
 
