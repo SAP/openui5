@@ -101,9 +101,9 @@ sap.ui.define([
 					FlexState.getStorageResponse(sReference + ".Component")
 				]);
 			}.bind(this))
-			.then(function(mStorageResponses) {
-				assert.notEqual(mStorageResponses[0], undefined, "the FlexState without .Component was initialized");
-				assert.notEqual(mStorageResponses[1], undefined, "the FlexState with .Component was initialized");
+			.then(function(aStorageResponses) {
+				assert.notEqual(aStorageResponses[0], undefined, "the FlexState without .Component was initialized");
+				assert.notEqual(aStorageResponses[1], undefined, "the FlexState with .Component was initialized");
 			});
 		});
 
@@ -374,7 +374,7 @@ sap.ui.define([
 
 			this.oAppComponent = new UIComponent(sComponentId);
 
-			this.oclearFilteredResponseStub = sandbox.stub(FlexState, "clearFilteredResponse");
+			this.oClearFilteredResponseStub = sandbox.stub(FlexState, "clearFilteredResponse");
 			this.oErrorLog = sandbox.stub(Log, "error");
 			this.oGetMaxLayerTechnicalParameter = sandbox.stub(LayerUtils, "getMaxLayerTechnicalParameter").callThrough();
 			this.oRegistrationHandlerStub = sandbox.stub();
@@ -418,7 +418,7 @@ sap.ui.define([
 				var sStatus = fnRegistrationHandler(sNewHash, sOldHash);
 				assert.equal(this.oRegistrationHandlerStub.callCount, 1, "then a handler was registered for max layer changes");
 				assert.equal(sStatus, "continue", "then the correct status was returned for shell navigation");
-				assert.equal(this.oclearFilteredResponseStub.callCount, 1, "then max layer filtering was cleared");
+				assert.equal(this.oClearFilteredResponseStub.callCount, 1, "then max layer filtering was cleared");
 				FlexState.clearState(sReference);
 				assert.equal(this.oDeRegistrationHandlerStub.callCount, 1, "then the handler was de-registered for max layer changes");
 				assert.ok(this.oDeRegistrationHandlerStub.calledWith(sinon.match.func), 1, "then de-registration happens with a handler function");
@@ -442,7 +442,7 @@ sap.ui.define([
 				var sStatus = fnRegistrationHandler(sNewHash, sOldHash);
 				assert.equal(this.oRegistrationHandlerStub.callCount, 1, "then a handler was registered for max layer changes");
 				assert.equal(sStatus, "continue", "then the correct status was returned for shell navigation");
-				assert.equal(this.oclearFilteredResponseStub.callCount, 0, "then max layer filtering was not cleared");
+				assert.equal(this.oClearFilteredResponseStub.callCount, 0, "then max layer filtering was not cleared");
 				FlexState.clearState(sReference);
 				assert.equal(this.oDeRegistrationHandlerStub.callCount, 1, "then the handler was de-registered for max layer changes");
 				assert.ok(this.oDeRegistrationHandlerStub.calledWith(sinon.match.func), 1, "then de-registration happens with a handler function");
@@ -461,7 +461,7 @@ sap.ui.define([
 				var sStatus = fnRegistrationHandler();
 				assert.equal(this.oRegistrationHandlerStub.callCount, 1, "then a handler was registered for max layer changes");
 				assert.equal(sStatus, "continue", "then the correct status was returned for shell navigation");
-				assert.equal(this.oclearFilteredResponseStub.callCount, 0, "then max layer filtering was not cleared");
+				assert.equal(this.oClearFilteredResponseStub.callCount, 0, "then max layer filtering was not cleared");
 				FlexState.clearState(sReference);
 				assert.equal(this.oDeRegistrationHandlerStub.callCount, 1, "then the handler was de-registered for max layer changes");
 				assert.ok(this.oDeRegistrationHandlerStub.calledWith(sinon.match.func), "then de-registration happens with a handler function");
@@ -480,7 +480,7 @@ sap.ui.define([
 				var sStatus = fnRegistrationHandler();
 				assert.equal(this.oRegistrationHandlerStub.callCount, 1, "then a handler was registered for max layer changes");
 				assert.equal(sStatus, "continue", "then the correct status was returned for shell navigation");
-				assert.equal(this.oclearFilteredResponseStub.callCount, 0, "then max layer filtering was not cleared");
+				assert.equal(this.oClearFilteredResponseStub.callCount, 0, "then max layer filtering was not cleared");
 				assert.equal(this.oErrorLog.callCount, 1, "then error was logged");
 				FlexState.clearState(sReference);
 				assert.equal(this.oDeRegistrationHandlerStub.callCount, 1, "then the reference instance is de-registered for max layer changes");
@@ -507,21 +507,21 @@ sap.ui.define([
 		});
 
 		QUnit.test("when clearFilteredResponse() is called", function(assert) {
-			var sReference2 = "second.reference";
-
+			this.oClearFilteredResponseStub.restore();
 			return FlexState.initialize({
 				reference: sReference,
 				componentId: sComponentId
 			})
-			.then(FlexState.initialize.bind(null, {
-				reference: sReference2,
-				componentId: sComponentId
-			}))
-			.then(function() {
-				FlexState.clearState();
-				assert.equal(this.oDeRegistrationHandlerStub.callCount, 2, "then the handler was de-registered for all existing references");
-				assert.ok(this.oDeRegistrationHandlerStub.alwaysCalledWith(sinon.match.func), "then de-registration always happens with a handler function");
-			}.bind(this));
+				.then(FlexState._callPrepareFunction.resetHistory.bind(FlexState._callPrepareFunction))
+				.then(FlexState.clearFilteredResponse.bind(this, sReference))
+				.then(FlexState.initialize.bind(null, {
+					reference: sReference,
+					componentId: sComponentId
+				}))
+				.then(function() {
+					assert.equal(FlexState._callPrepareFunction.callCount, 1, "then variants map was prepared again during initialize, since storage response was deleted");
+					assert.ok(FlexState._callPrepareFunction.calledWith("variantsMap"), "then variants map was prepared again");
+				});
 		});
 	});
 
