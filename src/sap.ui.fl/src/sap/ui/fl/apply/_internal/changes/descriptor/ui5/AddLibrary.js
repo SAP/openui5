@@ -42,6 +42,8 @@ sap.ui.define([
 	 * Loops over one change which might contain several libraries.
 	 * If one library already exists, merge it, else add new library to manifest.
 	 *
+	 * Available for both runtime and build {@link sap.ui.fl.apply._internal.changes.descriptor.Registration}.
+	 *
 	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.ui5.AddLibrary
 	 * @experimental
 	 * @since 1.74
