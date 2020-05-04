@@ -891,14 +891,34 @@
 		}
 	});
 
+	var MultiComboBoxFourItems = new sap.m.MultiComboBox({
+		id : "MultiComboBoxFourItems",
+		width : "300px",
+		items : [
+			new sap.ui.core.Item({
+				text : "New"
+			}),
+			new sap.ui.core.Item({
+				text : "Open"
+			}),
+			new sap.ui.core.Item({
+				text : "In Process"
+			}),
+			new sap.ui.core.Item({
+				text : "Completed"
+			})
+		]
+	});
+
 	var oApp = new sap.m.App("myApp", {
 		initialPage : "page1"
 	});
 	oApp.addPage(new sap.m.Page("page1", {
 		content : [theCompactMode,oMultiComboBox2, oMultiComboBox, oMultiComboBox1,
 				oMultiComboBoxDisabledListItemSelectable, oMultiComboBoxDisabledListItemDisabled, oMultiComboBoxReadOnly,
-				oMultiComboBoxDisabled, oMultiComboBoxWithoutKey, oMultiComboBoxError, oMultiComboBoxErrorWithLink, oMultiComboBoxWarningWithLinks, oMultiComboBoxWarning,
-				oMultiComboBoxSuccess, oMultiComboBoxBinding, oToolbar],
+				oMultiComboBoxErrorWithLink, oMultiComboBoxWarningWithLinks, oMultiComboBoxDisabled, oMultiComboBoxWithoutKey, oMultiComboBoxError, oMultiComboBoxWarning,
+				oMultiComboBoxSuccess, oMultiComboBoxOneToken, readOnlyButtonOneToken, MultiComboBoxFourItems,
+				oMultiComboBoxBinding, oToolbar],
 		showNavButton : true,
 		navButtonPress : function() {
 			oApp.to("page2")

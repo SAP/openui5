@@ -75,4 +75,21 @@ describe("sap.m.InputVisualTests", function() {
 			expect(takeScreenshot(oInput)).toLookAs("input_field_focused");
 		});
 	});
+
+	it("Should visualize input with sticky header suggestions", function () {
+		var oInput = element(by.id("inputWithStickySuggestions"));
+		browser.executeScript("document.getElementById('inputWithStickySuggestions').scrollIntoView()").then(function() {
+			oInput.click();
+			expect(takeScreenshot(oInput)).toLookAs("input_with_sticky_suggestions_focused");
+
+			browser.actions().sendKeys("A").perform();
+			expect(takeScreenshot(oInput)).toLookAs("sticky_suggestions_visible");
+
+			for (var index = 0; index < 25; index++) {
+				browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			}
+
+			expect(takeScreenshot()).toLookAs("sticky_suggestions_table_visible");
+		});
+	});
 });

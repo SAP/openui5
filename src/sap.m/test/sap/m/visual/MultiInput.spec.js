@@ -161,4 +161,20 @@ describe('sap.m.MultiInput', function() {
 			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_one_long_token_focused_in");
 		});
 	});
+
+	it("Should visualize multiInput with sticky header suggestions", function () {
+		var oMultiInput = element(by.id("multiInputWithStickySuggestions"));
+		browser.executeScript("document.getElementById('multiInputWithStickySuggestions').scrollIntoView()").then(function() {
+			oMultiInput.click();
+			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_sticky_suggestions_focused");
+
+			browser.actions().sendKeys("A").perform();
+			expect(takeScreenshot(oMultiInput)).toLookAs("sticky_suggestions_visible");
+
+			for (var index = 0; index < 25; index++) {
+				browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			}
+			expect(takeScreenshot()).toLookAs("sticky_suggestions_table_visible");
+		});
+	});
 });

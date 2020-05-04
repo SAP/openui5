@@ -110,6 +110,12 @@ describe("sap.m.Popover", function () {
 		element(by.id("change-belize-theme")).click();
 	});
 
+	it("Should open Popover with checkboxes and check one of them", function () {
+		element(by.id("btn15")).click();
+		element(by.id("popover12CheckBox1")).click();
+		expect(takeScreenshot()).toLookAs("popover-with-checkboxes");
+	});
+
 	// This test will open Dialog on mobile devices and Popover on desktops.
 	// This will make it harder to determine how to close it so it can be left last
 	it("Should open an overflowing popover which should be displayed with a visible scrollbar", function () {
