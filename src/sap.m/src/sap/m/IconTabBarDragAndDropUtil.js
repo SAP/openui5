@@ -76,7 +76,7 @@ sap.ui.define([
 					}
 				}
 
-				if (context.isA("sap.m.IconTabFilter")){
+				if (context.isA("sap.m.IconTabFilter") || !oDraggedControl.getParent().isA("sap.m.IconTabHeader")){
 					if (bIsDropPositionBefore) {
 						iAggregationDropIndex = iDropIndex;
 					} else {
