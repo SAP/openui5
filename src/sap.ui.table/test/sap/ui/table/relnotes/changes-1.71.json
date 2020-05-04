@@ -1,0 +1,18 @@
+{
+  "1.71.16": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "f9158694a8aff9437c6addbb6f6ab229f5a1af4b",
+        "type": "FIX",
+        "text": " Table: header selector role and aria attributes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070038825"
+          }
+        ]
+      }
+    ]
+  }
+}

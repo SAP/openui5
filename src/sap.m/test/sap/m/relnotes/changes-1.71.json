@@ -207,7 +207,7 @@
       {
         "id": "4c108d0080d10a89741df5f950b4a10706d4c451",
         "type": "FIX",
-        "text": " sap.m.FacetFilter: doesn\u0027t show button if the list is empty",
+        "text": " sap.m.FacetFilter: doesn't show button if the list is empty",
         "references": [
           {
             "type": "BCP",
@@ -283,7 +283,7 @@
       {
         "id": "0cb64b956471fef66cbe2a4c03e9d5b30d5d5007",
         "type": "FIX",
-        "text": " sap.m.ObjectStatus: pseudo invisible text for ARIA doesn\u0027t take space",
+        "text": " sap.m.ObjectStatus: pseudo invisible text for ARIA doesn't take space",
         "references": [
           {
             "type": "BCP",
@@ -392,7 +392,7 @@
       {
         "id": "f8f07837eb02f50930e150552ea923790c58a5dd",
         "type": "FIX",
-        "text": " sap.m.MultiComboBox: Sync selectedKeys \u0026 selectedItems",
+        "text": " sap.m.MultiComboBox: Sync selectedKeys & selectedItems",
         "references": [
           {
             "type": "BCP",
@@ -414,7 +414,7 @@
       {
         "id": "9cfe22572525fc469af0f88187469f6459f18f6e",
         "type": "FIX",
-        "text": " sap.m.OverflowToolbar: Order in controls\u0027 collection is fixed",
+        "text": " sap.m.OverflowToolbar: Order in controls' collection is fixed",
         "references": [
           {
             "type": "BCP",
@@ -741,7 +741,7 @@
       {
         "id": "4c108d0080d10a89741df5f950b4a10706d4c451",
         "type": "FIX",
-        "text": " sap.m.FacetFilter: doesn\u0027t show button if the list is empty",
+        "text": " sap.m.FacetFilter: doesn't show button if the list is empty",
         "references": [
           {
             "type": "BCP",
@@ -822,7 +822,7 @@
       {
         "id": "f8f07837eb02f50930e150552ea923790c58a5dd",
         "type": "FIX",
-        "text": " sap.m.MultiComboBox: Sync selectedKeys \u0026 selectedItems",
+        "text": " sap.m.MultiComboBox: Sync selectedKeys & selectedItems",
         "references": [
           {
             "type": "BCP",
@@ -905,7 +905,7 @@
       {
         "id": "0cb64b956471fef66cbe2a4c03e9d5b30d5d5007",
         "type": "FIX",
-        "text": " sap.m.ObjectStatus: pseudo invisible text for ARIA doesn\u0027t take space",
+        "text": " sap.m.ObjectStatus: pseudo invisible text for ARIA doesn't take space",
         "references": [
           {
             "type": "BCP",
@@ -927,7 +927,7 @@
       {
         "id": "9cfe22572525fc469af0f88187469f6459f18f6e",
         "type": "FIX",
-        "text": " sap.m.OverflowToolbar: Order in controls\u0027 collection is fixed",
+        "text": " sap.m.OverflowToolbar: Order in controls' collection is fixed",
         "references": [
           {
             "type": "BCP",
@@ -1093,7 +1093,7 @@
       {
         "id": "6f8243d411b2496e393524da31e9c855fa68de45",
         "type": "FIX",
-        "text": " GenericTile breathing \u0026 language fix",
+        "text": " GenericTile breathing & language fix",
         "references": [
           {
             "type": "BCP",
@@ -1251,7 +1251,7 @@
       {
         "id": "1acc69019f8156be431d0a8155cab9ea98c12652",
         "type": "FIX",
-        "text": " sap.m.NumericContent: Property truncateValueTo is not ignored anymore \u0026 Case insensitive NumericContent lang map + add en_US lang.",
+        "text": " sap.m.NumericContent: Property truncateValueTo is not ignored anymore & Case insensitive NumericContent lang map + add en_US lang.",
         "references": [
           {
             "type": "BCP",
@@ -1332,7 +1332,7 @@
       {
         "id": "09a364f7e7661e50fcb379846858c922d7ec394c",
         "type": "FIX",
-        "text": " sap.m.PlanningCalendar: Navigation doesn\u0027t throw an error",
+        "text": " sap.m.PlanningCalendar: Navigation doesn't throw an error",
         "references": [
           {
             "type": "BCP",
@@ -1400,7 +1400,7 @@
       {
         "id": "39757a8d0ef3889e50ef53bf0122f44f0ea6d357",
         "type": "FIX",
-        "text": " sap.m.DateRangeSelection: doesn\u0027t throw error",
+        "text": " sap.m.DateRangeSelection: doesn't throw error",
         "references": [
           {
             "type": "BCP",
@@ -1473,6 +1473,107 @@
           {
             "type": "BCP",
             "reference": "1980431395"
+          }
+        ]
+      }
+    ]
+  },
+  "1.71.16": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "536b48c1b39dd544ba7b4a99052b3df3cc503853",
+        "type": "FIX",
+        "text": " sap.m.FactFilter: selected items text in the facet buttons is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070160117"
+          }
+        ]
+      },
+      {
+        "id": "e4d5b5c560419635309ae0a33061609535f427d4",
+        "type": "FIX",
+        "text": " sap.m.VBox: Default Column direction is now set properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002620552020"
+          }
+        ]
+      },
+      {
+        "id": "4f1e33aa646d116c3e13791c4b3e701b34b00f0a",
+        "type": "FIX",
+        "text": " sap.m.Bar: Preventing lost focus of input elements in middle content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070118503"
+          }
+        ]
+      },
+      {
+        "id": "b74d8a66360fb561afb173ba956e465de6fdfb6c",
+        "type": "FIX",
+        "text": " sap.m.Input: ValueHelpRequest is no longer triggered on all interactions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070163167"
+          }
+        ]
+      },
+      {
+        "id": "70b82ab6a88caea297adb92844c19bca0af8d7ea",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Texts are no longer blurred in Chrome",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004104102019"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400002683242020"
+          }
+        ]
+      },
+      {
+        "id": "f2a4a464acd523e97de562588860c52384456d55",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Disable text selection for selected option on tablets",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002750922020"
+          }
+        ]
+      },
+      {
+        "id": "e25a9b8f62076bb8192af991eee6494b9c43a292",
+        "type": "FIX",
+        "text": " sap.m.Slider: Adjust tickmarks and tooltips positioning",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070039116"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070187508"
+          }
+        ]
+      },
+      {
+        "id": "b490923a0cdb91fdbe22f239e80e9e7449c94761",
+        "type": "FIX",
+        "text": " sap.m.Input: Clone method fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070123110"
           }
         ]
       }
