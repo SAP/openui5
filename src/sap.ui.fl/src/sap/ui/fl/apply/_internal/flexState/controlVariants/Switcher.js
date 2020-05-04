@@ -41,18 +41,6 @@ sap.ui.define([
 				}
 			)
 		);
-		var aCurrentChangesKeys = aCurrentVariantChanges.map(function(oCurrentVariantChange) {
-			return oCurrentVariantChange.getId();
-		});
-		var aMapChanges = Object.keys(mPropertyBag.changesMap).reduce(
-			function(aControlChanges, sControlId) {
-				return aControlChanges.concat(mPropertyBag.changesMap[sControlId]);
-			}, []);
-
-		var aFilteredChangesFromMap = aMapChanges.filter(function(oChangeInMap) {
-			return includes(aCurrentChangesKeys, oChangeInMap.getId());
-		});
-
 		var aNewChanges = VariantManagementState.getVariantChanges(
 			Object.assign(
 				_pick(mPropertyBag, ["vmReference", "variantsMap", "reference"]), {
@@ -61,6 +49,20 @@ sap.ui.define([
 				}
 			)
 		);
+		var aMapChanges = Object.keys(mPropertyBag.changesMap).reduce(function(aControlChanges, sControlId) {
+			return aControlChanges.concat(mPropertyBag.changesMap[sControlId]);
+		}, []);
+		var aChangeKeysFromMap = aMapChanges.map(function(oCurrentVariantChange) {
+			return oCurrentVariantChange.getId();
+		});
+
+		var aFilteredChangesFromMap = aCurrentVariantChanges.reduce(function(aFilteredChanges, oChange) {
+			var iMapIndex = aChangeKeysFromMap.indexOf(oChange.getId());
+			if (iMapIndex > -1) {
+				aFilteredChanges = aFilteredChanges.concat(aMapChanges[iMapIndex]);
+			}
+			return aFilteredChanges;
+		}, []);
 
 		var aRevertChanges = [];
 		if (aNewChanges.length > 0) {
