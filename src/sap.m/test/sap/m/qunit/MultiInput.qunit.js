@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/InputBase",
 	"sap/ui/core/ListItem",
-	"sap/m/StandardListItem"
+	"sap/m/StandardListItem",
+	"sap/ui/core/library"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -39,11 +40,13 @@ sap.ui.define([
 	Input,
 	InputBase,
 	ListItem,
-	StandardListItem
+	StandardListItem,
+	coreLibrary
 ) {
 	createAndAppendDiv("content");
 
-
+	// shortcut for sap.ui.core.OpenState
+	var OpenState = coreLibrary.OpenState;
 
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
@@ -807,18 +810,20 @@ sap.ui.define([
 
 	QUnit.test("onsapenter on mobile device", function (assert) {
 		// Setup
-		var oMI, sValue;
+		var oMI, sValue, oPickerTextFieldDomRef, sOpenState;
 
 		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
 		});
+
 		oMI = new MultiInput({
 			change: function (oEvent) {
 				sValue = oEvent.getParameter("value");
 			}
 		}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
 
 		// Act
 		oMI._oSuggPopover._oPopover.open();
@@ -828,14 +833,18 @@ sap.ui.define([
 		assert.ok(oMI._oSuggPopover._oPopover.isOpen(), "The dialog is opened");
 
 		// Act
-		oMI._oSuggPopover._oPopupInput.setValue("test");
-		qutils.triggerKeydown(oMI._oSuggPopover._oPopupInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		oPickerTextFieldDomRef = oMI._oSuggPopover._oPopupInput.getFocusDomRef();
+
+		sap.ui.test.qunit.triggerCharacterInput(oPickerTextFieldDomRef, "test");
+		qutils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
+
+		sOpenState = oMI._oSuggPopover._oPopover.oPopup.getOpenState();
 
 		// Assert
-		assert.ok(oMI._oSuggPopover._oPopover.isOpen(), "The dialog is still open after enter key");
+		assert.strictEqual(sOpenState === OpenState.OPEN, true, "The dialog is still open after enter key");
 		assert.strictEqual(sValue, 'test', "The change event is triggered and the right value is passed");
 
-		// // Cleanup
+		// Cleanup
 		oMI.destroy();
 	});
 
