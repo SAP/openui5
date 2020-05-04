@@ -929,7 +929,7 @@ sap.ui.define([
 		var oManifestHeader = this._oCardManifest.get(MANIFEST_PATHS.HEADER),
 			oHeaderFactory = new HeaderFactory(this);
 
-		return oHeaderFactory.create(oManifestHeader, this._oCardManifest);
+		return oHeaderFactory.create(oManifestHeader);
 	};
 
 	Card.prototype.getContentManifest = function () {
