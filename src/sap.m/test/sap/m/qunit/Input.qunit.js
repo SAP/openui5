@@ -4976,6 +4976,8 @@ sap.ui.define([
 		this.oInput.focus();
 		this.clock.tick();
 		this.oInput.getFocusDomRef().blur();
+		this.clock.tick();
+
 		oPopup = this.oInput._oValueStateMessage._oPopup;
 
 		// Assert
@@ -5015,6 +5017,7 @@ sap.ui.define([
 		this.oInput.onfocusout(oFakeEvent);
 		this.clock.tick();
 		this.oInput.getFormattedValueStateText().getControls()[0].firePress();
+		this.clock.tick();
 
 		oPopup = this.oInput._oValueStateMessage._oPopup;
 
@@ -5044,7 +5047,6 @@ sap.ui.define([
 
 		this.oInput.focus();
 		this.clock.tick();
-
 
 		this.oInput.onfocusout(oFakeEvent);
 		this.clock.tick();

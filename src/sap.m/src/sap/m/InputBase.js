@@ -941,10 +941,15 @@ function(
 	 * @protected
 	 */
 	InputBase.prototype.closeValueStateMessage = function() {
-		if (this._oValueStateMessage) {
-			this._dettachValueStateLinkPress();
-			this._oValueStateMessage.close();
-		}
+		// To avoid execution of the opening logic after the closing one,
+		// when closing the suggestions dialog on mobile devices, due to race condition,
+		// the value state message should be closed with timeout because it's opened that way
+		setTimeout(function() {
+			if (this._oValueStateMessage) {
+				this._dettachValueStateLinkPress();
+				this._oValueStateMessage.close();
+			}
+		}.bind(this), 0);
 	};
 
 	/**

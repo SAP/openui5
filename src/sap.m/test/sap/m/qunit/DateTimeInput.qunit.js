@@ -312,6 +312,8 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		document.activeElement.blur();
+		this.clock.tick();
+
 		assert.ok(!oPicker._oValueStateMessage._oPopup.isOpen(), "error message is closed");
 	});
 
