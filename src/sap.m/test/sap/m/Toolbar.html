@@ -22,6 +22,8 @@
 	var oApp = new sap.m.App();
 	var sAddIconURI = sap.ui.core.IconPool.getIconURI("add");
 
+    new sap.ui.core.InvisibleText("SF_AD", {text: "Search"}).toStatic();
+
 	function getToolbarContent (sText, sSelId) {
 		return [
 			new sap.m.Button({text : "Button"}),
@@ -47,6 +49,7 @@
 			}),
 			new sap.m.SearchField({
 				placeholder : "Search",
+                ariaDescribedBy: ["SF_AD"],
 				width : "200px"
 			}),
 			new sap.m.SegmentedButton({
@@ -211,7 +214,7 @@
 				content : [
 					new sap.m.Label({text : "Label", tooltip: "Label"}),
 					new sap.m.Text({text: "Text"}),
-					new sap.m.Title({text: "Title"}),
+					new sap.m.Title({text: "Title", level: sap.ui.core.TitleLevel.H1}),
 					new sap.ui.core.Icon({src : "sap-icon://collaborate"})
 				]
 			}).attachPress(function(oEvent) {
@@ -226,8 +229,8 @@
 				content : [
 					new sap.m.Label({text : "Label", tooltip: "Label"}),
 					new sap.m.Text({text: "Text"}),
-					new sap.m.Title({text: "Title"}),
-					new sap.ui.core.Icon({src : "sap-icon://collaborate"})
+                    new sap.m.Title({text: "Title", level: sap.ui.core.TitleLevel.H1}),
+                    new sap.ui.core.Icon({src : "sap-icon://collaborate"})
 				]
 			}),
 			new sap.m.Toolbar({
@@ -265,10 +268,12 @@
 						text : "Percent Width Controls",
 						tooltip : "Percent Width Controls",
 						labelFor: "searchField",
+                        ariaDescribedBy: ["SF_AD"],
 						width: "15%"
 					}),
 					new sap.m.ToolbarSpacer(),
 					new sap.m.SearchField("searchField", {
+                        ariaDescribedBy: ["SF_AD"],
 						placeholder : "This has 100% width by default"
 					})
 				]
