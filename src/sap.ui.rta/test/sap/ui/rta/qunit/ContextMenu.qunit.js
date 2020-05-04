@@ -456,7 +456,7 @@ function(
 					}
 				};
 
-				oContextMenuPlugin._aMenuItems = [{
+				sandbox.stub(oContextMenuPlugin, '_aMenuItems').value([{
 					menuItem : {
 						id : "CTX_TEST",
 						handler : function() {
@@ -464,8 +464,37 @@ function(
 							done();
 						}
 					}
-				}];
+				}]);
 				oContextMenuPlugin._onItemSelected(oEvent);
+			});
+
+			QUnit.test("when the context menu is opened twice on the same element", function(assert) {
+				var oGroupElementOverlay = OverlayRegistry.getOverlay(this.oBoundGroupElement);
+				oGroupElementOverlay.focus();
+				oGroupElementOverlay.setSelected(true);
+				RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay);
+				return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
+					var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+					assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
+					assert.equal(oContextMenuControl.getButtons().length, 5, "the second open is ignored and the five menu items are only added once");
+				}.bind(this));
+			});
+
+			QUnit.test("when the context menu is opened twice on different elements", function (assert) {
+				var oGroupElementOverlay = OverlayRegistry.getOverlay(this.oBoundGroupElement);
+				var oFormOverlay = OverlayRegistry.getOverlay(this.oSmartForm);
+
+				oFormOverlay.focus();
+				oFormOverlay.setSelected(true);
+				RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFormOverlay);
+
+				oGroupElementOverlay.focus();
+				oGroupElementOverlay.setSelected(true);
+				return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
+					var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+					assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
+					assert.equal(oContextMenuControl.getButtons().length, 5, "the first open is canceled and the five menu items are only added once");
+				}.bind(this));
 			});
 		});
 
