@@ -548,6 +548,9 @@ sap.ui.define([
 }, {
 	oMessage : new Message({message : "new", persistent : false}),
 	bExpectError : true
+}, {
+	oMessage : new Message({message : "new", persistent : false, technical : true}),
+	bExpectError : false
 }].forEach(function (oFixture, i) {
 	QUnit.test("_propagateMessages: sap-messages=transientOnly, " + i, function (assert) {
 		var oLastMessage = new Message({message : "keep"}),
@@ -591,8 +594,7 @@ sap.ui.define([
 
 		// code under test
 		ODataMessageParser.prototype._propagateMessages.call(oODataMessageParser,
-			aMessages, mRequestInfo/* , mGetEntities,
-			mChangeEntities, bSimpleMessageLifecycle*/);
+			aMessages, mRequestInfo/* , mGetEntities, mChangeEntities, bSimpleMessageLifecycle*/);
 
 		assert.deepEqual(oODataMessageParser._lastMessages, aNewLastMessages);
 	});

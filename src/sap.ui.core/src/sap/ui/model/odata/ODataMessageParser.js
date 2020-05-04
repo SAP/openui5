@@ -297,7 +297,7 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 	if (bTransitionMessagesOnly) {
 		aKeptMessages = this._lastMessages;
 		bStateMessages = aMessages.some(function (oMessage) {
-			return !oMessage.getPersistent();
+			return !oMessage.getPersistent() && !oMessage.getTechnical();
 		});
 		if (bStateMessages) {
 			Log.error("Unexpected non-persistent message in response, but requested only "
