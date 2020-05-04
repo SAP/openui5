@@ -76,13 +76,13 @@
 		</div>
 
 		<p>
-			Navigation (extends Action):
+			Parameters for Navigation action:
 		</p>
 
 		<div class="tableWrapper">
 			<table>
 				<tr>
-					<th>Property</th>
+					<th>Parameter</th>
 					<th>Type</th>
 					<th>Required</th>
 					<th>Description</th>
@@ -122,7 +122,9 @@
 			"actions": [
 				{
 					"type": "Navigation",
-					"url": "/some/url",
+					"parameters": {
+						"url": "/some/url"
+					}
 				}
 			]
 		},
@@ -138,8 +140,10 @@
 			"actions": [
 				{
 					"type": "Navigation",
-					"url": "/some/url",
-					"target": "_self"
+					"parameters": {
+						"url": "/some/url",
+						"target": "_self"
+					}
 				}
 			]
 		},
@@ -186,7 +190,9 @@
 					{
 						"type": "Navigation",
 						"enabled": "{= ${url}}",
-						"url": "{url}"
+						"parameters": {
+							"url": "{url}"
+						}
 					}
 				]
 			}
