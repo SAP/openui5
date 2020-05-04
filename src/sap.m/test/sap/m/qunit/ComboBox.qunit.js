@@ -12976,4 +12976,64 @@ sap.ui.define([
 		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"),this.oErrorComboBox.getListItem(this.oErrorComboBox.getItems()[0]).getId(), "Area attribute of input is the ID of the formatted value state text");
 	});
 
+	QUnit.test("Tapping on the input shoould apply the visual focus", function (assert) {
+		// Arrange
+		var oComboBox = new ComboBox({
+			items: [
+				new Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new Item({
+					key: "1",
+					text: "item 1"
+				}),
+
+				new Item({
+					key: "2",
+					text: "item 2"
+				})
+			]
+		});
+
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oFakeEvent = {
+			getEnabled: function () { return true; },
+			setMarked: function () { },
+			srcControl: oComboBox
+		};
+
+		// Act
+		oComboBox.focus();
+		sap.ui.getCore().applyChanges();
+
+		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
+
+		// Arrange
+		var oFirstListItem = oComboBox._oList.getItems()[0],
+			sExpectedActiveDescendantId = oFirstListItem.getId();
+
+		// Assert
+		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "The picker is open");
+		assert.ok(oFirstListItem.hasStyleClass("sapMLIBFocused"), "The visual pseudo focus is on the first item");
+		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), sExpectedActiveDescendantId, 'The "aria-activedescendant" attribute is set correctly');
+
+		// Act
+		oComboBox.ontap(oFakeEvent);
+		this.clock.tick();
+
+		// Assert
+		assert.notOk(oFirstListItem.hasStyleClass("sapMLIBFocused"), "The visual pseudo focus is removed when the input field is on focus");
+		assert.ok(oComboBox.$().hasClass("sapMFocus"), "The visual focus is on the input field");
+		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is removed when the input field is on focus');
+
+		//clean up
+		oComboBox.destroy();
+
+	});
+
+
 });
