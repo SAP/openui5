@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/dt/ContextMenuControl",
 	"sap/ui/dt/Util",
 	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/util/_createPromise",
 	"sap/ui/Device",
 	"sap/base/assert",
 	"sap/ui/events/KeyCodes",
@@ -17,6 +18,7 @@ sap.ui.define([
 	ContextMenuControl,
 	DtUtil,
 	OverlayRegistry,
+	_createPromise,
 	Device,
 	assert,
 	KeyCodes,
@@ -159,7 +161,18 @@ sap.ui.define([
 	ContextMenu.prototype.open = function (mPosition, oOverlay, bContextMenu, bIsSubMenu) {
 		this._bContextMenu = !!bContextMenu;
 
-		this.setContextElement(oOverlay.getElement());
+		var oNewContextElement = oOverlay.getElement();
+		if (this._fnCancelMenuPromise) {
+			// Menu is still opening
+			if (this.getContextElement() === oNewContextElement) {
+				// Same context element, first opening request is still valid
+				return;
+			}
+			this._fnCancelMenuPromise();
+			delete this._fnCancelMenuPromise;
+		}
+
+		this.setContextElement(oNewContextElement);
 
 		this.getDesignTime().getSelectionManager().attachChange(this._onSelectionChanged, this);
 
@@ -184,7 +197,11 @@ sap.ui.define([
 
 		var oPromise = Promise.resolve();
 		if (!bIsSubMenu) {
-			oPromise = DtUtil.waitForSynced(this.getDesignTime())()
+			var oDtSyncPromise = _createPromise(function (resolve, reject) {
+				DtUtil.waitForSynced(this.getDesignTime())().then(resolve).catch(reject);
+			}.bind(this));
+			this._fnCancelMenuPromise = oDtSyncPromise.cancel;
+			oPromise = oDtSyncPromise.promise
 				.then(function() {
 					this._aGroupedItems = [];
 					this._aSubMenus = [];
@@ -197,7 +214,12 @@ sap.ui.define([
 						}
 						aPluginItemPromises.push(vMenuItems);
 					});
-					return Promise.all(aPluginItemPromises);
+
+					var oPluginItemsPromise = _createPromise(function (resolve, reject) {
+						Promise.all(aPluginItemPromises).then(resolve).catch(reject);
+					});
+					this._fnCancelMenuPromise = oPluginItemsPromise.cancel;
+					return oPluginItemsPromise.promise;
 				}.bind(this))
 				.then(function(aPluginMenuItems) {
 					return aPluginMenuItems.reduce(function(aConcatinatedMenuItems, aMenuItems) {
@@ -216,6 +238,7 @@ sap.ui.define([
 					}.bind(this));
 
 					this._addItemGroupsToMenu(mPosition, oOverlay);
+					delete this._fnCancelMenuPromise;
 				}.bind(this));
 		}
 
