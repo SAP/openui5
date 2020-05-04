@@ -130,7 +130,7 @@ html.sap-desktop .sapUiCal:not(.sapUiCalDateInt) .sapUiCalItem:not(.sapUiCalItem
 	background-color: @_sap_ui_unified_Calendar_ItemHoverColor;
 }
 
-html.sap-desktop .sapUiCalItem:focus > .sapUiCalItemText,
+html.sap-desktop .sapUiCalItem:not(.sapUiCalItemSelBetween):not(.sapUiCalItemSelStart):not(.sapUiCalItemSelEnd):focus > .sapUiCalItemText,
 html.sap-desktop .sapUiCalMonthPicker .sapUiCalItem:focus,
 html.sap-desktop .sapUiCalYearPicker .sapUiCalItem:focus {
 	outline: 0.0625rem dotted @sapUiContentFocusColor;
@@ -229,6 +229,7 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 	position: relative;
 	&:focus > .sapUiCalItemText {
 		position: static;
+		outline: none;
 		&:after {
 			position: absolute;
 			top: 0.125rem;
@@ -237,6 +238,7 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 			bottom: 0.125rem;
 			border: 0.0625rem dotted @sapUiContentFocusColor;
 			content: "";
+			
 		}
 	}
 	&.sapUiCalItemSelBetween .sapUiCalItemText {
