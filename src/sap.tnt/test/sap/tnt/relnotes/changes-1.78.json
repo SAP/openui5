@@ -12,6 +12,16 @@
             "reference": "2070148602"
           }
         ]
+      },
+      {
+        "id": "429af7dd953772f337127ba19d5778d404caa4ed",
+        "type": "FIX",
+        "text": " sap.tnt.ToolPage demokit app",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
       }
     ]
   }

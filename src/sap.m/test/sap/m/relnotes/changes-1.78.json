@@ -223,6 +223,211 @@
             "reference": "2070126624"
           }
         ]
+      },
+      {
+        "id": "0a5d7075f0a775941c72ae486a7773e560dcf93a",
+        "type": "FIX",
+        "text": " sap.m.ActionSelect: Accessibility test page adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070193003"
+          }
+        ]
+      },
+      {
+        "id": "3ca98043ff72ac5e0a382e0abe281c8e08b36de5",
+        "type": "FIX",
+        "text": " sap.m.Bar: Preventing lost focus of input elements in middle content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070118503"
+          }
+        ]
+      },
+      {
+        "id": "36af2e87bbef9cc912544e730d81ff90d012596b",
+        "type": "FIX",
+        "text": " sap.m.Button: Icon and text are center-aligned inside the button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070123105"
+          }
+        ]
+      },
+      {
+        "id": "94d0566e0a3ef6434664107803f6f760bb5e31c1",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Accessibility sample adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070193116"
+          }
+        ]
+      },
+      {
+        "id": "8c000afa3a21c691c88d95e271ce887ba4e98d8a",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Aria-activedescendant is set on focus change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "207010908"
+          }
+        ]
+      },
+      {
+        "id": "8ba8452123fbfda0e03a95c913d7bdb690f23f31",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Disable text selection for selected option on tablets",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751294 0000275092 2020"
+          }
+        ]
+      },
+      {
+        "id": "cfea31439f0b1bd25d2b1afa68c7cceea0b6ba7d",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Exception in OData v4 fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001689492020"
+          }
+        ]
+      },
+      {
+        "id": "bb1c567056eb07268c1ffb36c127bd440acbe850",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Fixed scrollbar showing while zoomed in Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070153642"
+          }
+        ]
+      },
+      {
+        "id": "ec4aef14ba762a8ff706f173c3121b5826bf4c2f",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Revert \u0027Fixed scrollbar showing while zoomed in Safari\u0027",
+        "references": []
+      },
+      {
+        "id": "cf52c0e35b9c799782421a47ee2be4ac2b9edd56",
+        "type": "FIX",
+        "text": " sap.m.FactFilter: selected items text in the facet buttons is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070160117"
+          }
+        ]
+      },
+      {
+        "id": "db74094ea64a686ee68b6ae953d9eb9740fedec5",
+        "type": "FIX",
+        "text": " sap.m.Input: Accessibility sample adjusted",
+        "references": []
+      },
+      {
+        "id": "bd284bc1ec4142966418deab9b381d8df7336c2b",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Accessibility sample adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070193376"
+          }
+        ]
+      },
+      {
+        "id": "8ebfad4bca2781dfa271a18cca1d28d5a4e20a42",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: align the implementation to the current VD specs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070131385"
+          }
+        ]
+      },
+      {
+        "id": "0ca8d5d78e8a81bc8d9ba724fe7c1199b1ab6e6b",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: cellPress event now fired corretly on month view",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070195311"
+          }
+        ]
+      },
+      {
+        "id": "66a3d17d55d026467db416c560588ce182132dcf",
+        "type": "FIX",
+        "text": " sap.m.Slider: Aria-labelledby correctly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070193472"
+          }
+        ]
+      },
+      {
+        "id": "26a407ea50c305d7be44fa50c2e0ebd014d5c996",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Improve highlightSuggestionItems performance",
+        "references": []
+      },
+      {
+        "id": "a6f55e815b498cbab943d0861ded7a255bce9947",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: setShowAddNewButton method now works as expected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070197325"
+          }
+        ]
+      },
+      {
+        "id": "518e06dfedb93a7ad21eace6482610fc96cfdd1b",
+        "type": "FIX",
+        "text": " sap.m.VBox: Default Column direction is now set properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002620552020"
+          }
+        ]
+      },
+      {
+        "id": "5d5e614d0bfc51b83d2e67b76ac89e7e6bf545a3",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: reset button enablement fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070029347"
+          }
+        ]
+      },
+      {
+        "id": "25fc2a64c14870400b3a3c7d8a2f6fac57117b59",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: setSelectedFilterCompoundKeys() method now works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070146104"
+          }
+        ]
       }
     ]
   }

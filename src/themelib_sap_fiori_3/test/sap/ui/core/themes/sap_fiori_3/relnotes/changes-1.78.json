@@ -46,6 +46,45 @@
             "reference": "2070126624"
           }
         ]
+      },
+      {
+        "id": "c929fb9e1e379d4eebfb198df20a37ba93ba5780",
+        "type": "FIX",
+        "text": " Form: Fiori3 themes align Label, Text and Link with Input",
+        "references": []
+      },
+      {
+        "id": "36af2e87bbef9cc912544e730d81ff90d012596b",
+        "type": "FIX",
+        "text": " sap.m.Button: Icon and text are center-aligned inside the button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070123105"
+          }
+        ]
+      },
+      {
+        "id": "e96703252a8fd1913387bf64ac419a997ee3172d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: align the implementation to the current VD specs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070131385"
+          }
+        ]
+      },
+      {
+        "id": "de30e165124b3e7904f7103201c1f30c15e39c5e",
+        "type": "FIX",
+        "text": " sap.m.SplitButton: Internet Explorer visual enhancement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070179620"
+          }
+        ]
       }
     ]
   }
