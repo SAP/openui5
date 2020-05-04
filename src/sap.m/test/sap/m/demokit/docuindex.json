@@ -1236,6 +1236,7 @@
 			"sap.m.sample.TableLayout",
 			"sap.m.sample.TableMergeCells",
 			"sap.m.sample.TablePerso",
+			"sap.m.sample.TableScrollToIndex",
 			"sap.m.sample.TableVerticalAlignment",
 			"sap.m.sample.TableViewSettingsDialog",
 			"sap.m.sample.TableExport",
@@ -2634,6 +2635,11 @@
 		  "id": "sap.m.sample.TablePerso",
 		  "name": "Table - Personalization",
 		  "description": "The Table Perso Dialog is a simple dialog to be used for allowing the user to set table personalizations, specifically column visibility and order. Use the Table Perso Controller in conjunction with a persistence service based on the abstract Table Perso Provider to have changes made and persisted."
+		},
+		{
+			"id": "sap.m.sample.TableScrollToIndex",
+			"name": "Table - Scroll To Index",
+			"description": "This sample demonstrates the scroll-to-index functionality."
 		},
 		{
 		  "id": "sap.m.sample.TableMergeCells",
