@@ -387,7 +387,7 @@ function(
 			sandbox.stub(this.oRta, "_initVersioning").resolves();
 			this.oRta._bVersioningEnabled = true;
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
-
+			this.oRta.oTriggerCrossAppNavigationStub = sandbox.stub(this.oRta, "_triggerCrossAppNavigation");
 			this.oRta.setFlexSettings({layer: Layer.CUSTOMER});
 			sandbox.stub(RtaUtils, "hasUrlParameterWithValue").resolves(true);
 		},
@@ -437,6 +437,41 @@ function(
 					assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are stil shwon");
 					assert.equal(this.oRta.getToolbar().getDraftEnabled(), false, "then the draft buttons are disabled");
 				}.bind(this));
+		});
+
+		QUnit.test("when RTA is started and no draft is available, and and the key user starts working and discards", function(assert) {
+			sandbox.stub(VersionsAPI, "getVersions").returns([]);
+			var mParsedHash = {
+				params: {}
+			};
+			var mExpectedParsedHash = {
+				params: {"sap-ui-fl-version": ["false"]}
+			};
+			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
+			sandbox.stub(Utils, "getParsedURLHash").returns(mParsedHash);
+			sandbox.stub(Utils, "getUshellContainer").returns({
+				getService: true
+			});
+			return this.oRta.start()
+			.then(function () {
+				return new CommandFactory().getCommandFor(this.oGroupElement, "Remove", {
+					removedElement: this.oGroupElement
+				}, this.oGroupElementDesignTimeMetadata);
+			}.bind(this))
+			.then(function (oRemoveCommand) {
+				return this.oCommandStack.pushAndExecute(oRemoveCommand);
+			}.bind(this))
+			.then(function () {
+				assert.equal(this.oRta.getToolbar().getVersioningVisible(), true, "then the draft buttons are visible");
+				assert.equal(this.oRta.getToolbar().getDraftEnabled(), true, "then the draft buttons are enabled");
+			}.bind(this))
+			.then(function () {
+				return this.oRta._handleDiscard();
+			}.bind(this))
+			.then(function () {
+				assert.deepEqual(this.oRta.oTriggerCrossAppNavigationStub.getCall(0).args[0],
+					mExpectedParsedHash, "then crossAppNavigation was triggered");
+			}.bind(this));
 		});
 
 		QUnit.test("when RTA is started and a draft is available, and and the key user starts working", function(assert) {
