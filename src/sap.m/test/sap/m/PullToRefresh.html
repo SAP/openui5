@@ -135,16 +135,17 @@ function createSelect(oPullDown, iSelectedItem){
 		}
 	});
 
-	var oBar0 = new sap.m.Bar({
-		contentLeft : [
+	var oBar0 = new sap.m.OverflowToolbar("otbFooter", {
+		width: 'auto',
+		content : [
 			new sap.m.Button({
 				text : "Clear List",
 				press : function() {
 					standardList.removeAllAggregation("items");
 				}
-			})
-		],
-		contentRight: createSelect(pullToRefreshStd)
+			}),
+			new sap.m.ToolbarSpacer(),
+		].concat(createSelect(pullToRefreshStd))
 	});
 
 	var standardPull2Refresh = new sap.m.Page("standardP2R", {
