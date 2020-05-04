@@ -36,6 +36,7 @@ sap.ui.define([
 			}
 
 			this._prepareNewAdditionalControl = function (oControl) {
+
 				if (!oControl.getLayoutData()) {
 					oControl.setLayoutData(new OverflowToolbarLayoutData({
 						priority: OverflowToolbarPriority.Low
@@ -45,32 +46,31 @@ sap.ui.define([
 			};
 
 			this.addAdditionalContent = function (oControl) {
-				if (!this._aAdditionalContent) {
-					this._aAdditionalContent = [];
+
+				this.validateAggregation("additionalContent", oControl, true);
+
+				if (this.indexOfAdditionalContent(oControl) !== -1) {
+					Log.warning("Object" + oControl + " is already added to ShellBar");
+					return this;
 				}
 
 				this._aAdditionalContent.push(this._prepareNewAdditionalControl(oControl));
-				this._bOTBUpdateNeeded = true;
+				this._updateParent();
 				return this;
 			};
 
 			this.insertAdditionalContent = function (oControl, iIndex) {
-				var i;
 
-				if (!this._aAdditionalContent) {
-					this._aAdditionalContent = [];
+				this.validateAggregation("additionalContent", oControl, true);
+
+				if (this.indexOfAdditionalContent(oControl) !== -1) {
+					Log.warning("Object" + oControl + " is already added to ShellBar");
+					return this;
 				}
 
-				if (iIndex < 0) {
-					i = 0;
-				} else if (iIndex > this._aAdditionalContent.length) {
-					i = this._aAdditionalContent.length;
-				} else {
-					i = iIndex;
-				}
-				this._aAdditionalContent.splice(i, 0, oControl);
+				this._aAdditionalContent.splice(iIndex, 0, oControl);
 
-				this._bOTBUpdateNeeded = true;
+				this._updateParent();
 				return this;
 			};
 
@@ -85,44 +85,86 @@ sap.ui.define([
 
 			this.removeAdditionalContent = function (vObject) {
 				var oChild,
-					i;
+					i,
+					_vObject = vObject;
 
-				if (typeof (vObject) === "string") { // ID of the object is given
+				if (typeof (_vObject) === "string") { // ID of the object is given
 					for (i = 0; i < this._aAdditionalContent.length; i++) {
-						if (this._aAdditionalContent[i] && this._aAdditionalContent[i].getId() === vObject) {
-							vObject = i;
+						if (this._aAdditionalContent[i] && this._aAdditionalContent[i].getId() === _vObject) {
+							_vObject = i;
 							break;
+						} else if (i === this._aAdditionalContent.length - 1) {
+							_vObject = -1;
 						}
 					}
 				}
 
-				if (typeof (vObject) === "object") { // the object itself is given or has just been retrieved
+				if (typeof (_vObject) === "object") { // the object itself is given or has just been retrieved
 					for (i = 0; i < this._aAdditionalContent.length; i++) {
-						if (this._aAdditionalContent[i] === vObject) {
-							vObject = i;
+						if (this._aAdditionalContent[i] === _vObject) {
+							_vObject = i;
 							break;
-						}
+						} else if (i === this._aAdditionalContent.length - 1) {
+						_vObject = -1;
+					}
 					}
 				}
 
-				if (typeof (vObject) === "number") { // "vObject" is the index now
-					if (vObject < 0 || vObject >= this._aAdditionalContent.length) {
-						Log.warning("ShellBar.removeAggregation called with invalid index: AdditionalContent, " + vObject);
+				if (typeof (_vObject) === "number") { // "_vObject" is the index now
+					if (_vObject < 0 || _vObject >= this._aAdditionalContent.length) {
+						Log.warning("ShellBar.removeAggregation AdditionalContent called with invalid parameter for " +
+							"non-existing object:, " + vObject);
+						return null;
 					} else {
-						oChild = this._aAdditionalContent[vObject];
-						this._aAdditionalContent.splice(vObject, 1); // first remove it from array, then call setParent (avoids endless recursion)
-						oChild.setParent(null);
-					}
-				}
+						oChild = this._aAdditionalContent[_vObject];
+						this._aAdditionalContent.splice(_vObject, 1); // first remove it from array, then call setParent (avoids endless recursion)
 
+						oChild.setParent(null);
+						this._updateParent();
+						return oChild;
+					}
+				} else {
+					return null;
+				}
 			};
 
-			this.destroyAdditionalContent = function (oControl) {
+			this.removeAllAdditionalContent = function () {
+				var oChild,
+					aChildren = this._aAdditionalContent,
+					i;
+				if (!aChildren) {
+					return [];
+				}
+
+				this._aAdditionalContent = [];
+
+				for (i = 0; i < aChildren.length; i++) {
+					oChild = aChildren[i];
+					oChild.setParent(null);
+				}
+
+				this._updateParent();
+				return aChildren;
+			};
+
+			this.destroyAdditionalContent = function () {
+				this._aAdditionalContent.forEach(this._destroyAllAdditionalContent, this);
+				this._aAdditionalContent = [];
+				this._updateParent();
 				return this;
+			};
+
+			this._destroyAllAdditionalContent = function (oControl) {
+				return oControl.destroy();
 			};
 
 			this.getAdditionalContent = function () {
 				return this._aAdditionalContent;
+			};
+
+			this._updateParent = function () {
+				this._bOTBUpdateNeeded = true;
+				this.invalidate();
 			};
 
 		};
