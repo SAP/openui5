@@ -3485,6 +3485,19 @@ sap.ui.define([
 			}
 		};
 
+		this.oMockEventSubItemBeforeMainItem = {
+			getParameter: function(parameter) {
+				switch (parameter) {
+					case "dropPosition" :
+						return "Before";
+					case "draggedControl" :
+						return  Core.byId("subItem1");
+					case "droppedControl" :
+						return Core.byId("tabReorder3");
+				}
+			}
+		};
+
 		this.returnMockEvent = function(iKeyCode, sId) {
 			var oMockEventTest = {
 				keyCode: iKeyCode,
@@ -3560,6 +3573,19 @@ sap.ui.define([
 
 		assert.strictEqual(aFirstItem.getItems().length, 0, "There are still no sub items in the first item of the first tab");
 		assert.strictEqual(this.oIconTabHeader.getItems().length, 3, "There are  still three tabs in IconTabHeader strip");
+
+	});
+
+	QUnit.test("Drag&Drop: Dropping a sub item between header items", function (assert) {
+
+		assert.strictEqual(this.oIconTabHeader.getItems()[this.oIconTabHeader.getItems().length - 1].getText(), "Third tab", "The item with text 'Third tab' is the last item");
+		assert.strictEqual(this.oIconTabHeader.getItems()[this.oIconTabHeader.getItems().length - 2].getText(), "Second tab", "The item with text 'Second tab' is the item before the last");
+
+		this.oIconTabHeader._handleDragAndDrop(this.oMockEventSubItemBeforeMainItem);
+
+		assert.strictEqual(this.oIconTabHeader.getItems()[this.oIconTabHeader.getItems().length - 1].getText(), "Third tab", "The item with text 'Third tab' is the last item");
+		assert.strictEqual(this.oIconTabHeader.getItems()[this.oIconTabHeader.getItems().length - 2].getText(), "child 1", "The item with text 'child 1' is the item before the last");
+		assert.strictEqual(this.oIconTabHeader.getItems()[this.oIconTabHeader.getItems().length - 3].getText(), "Second tab", "The item with text 'Second tab' is the second to last item");
 
 	});
 
