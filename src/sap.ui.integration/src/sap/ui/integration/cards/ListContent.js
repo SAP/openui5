@@ -6,11 +6,9 @@ sap.ui.define([
 		"sap/ui/integration/cards/BaseListContent",
 		"sap/m/List",
 		"sap/m/StandardListItem",
-		"sap/ui/base/ManagedObject",
-		"sap/ui/integration/formatters/IconFormatter",
 		"sap/ui/integration/util/BindingHelper"
 	],
-	function (library, BaseListContent, sapMList, StandardListItem, ManagedObject, IconFormatter, BindingHelper) {
+	function (library, BaseListContent, sapMList, StandardListItem, BindingHelper) {
 		"use strict";
 
 		var AreaType = library.AreaType;
@@ -152,7 +150,7 @@ sap.ui.define([
 
 			if (mItem.icon && mItem.icon.src) {
 				mSettings.icon = BindingHelper.formattedProperty(mItem.icon.src, function (sValue) {
-					return IconFormatter.formatSrc(sValue, this._sAppId);
+					return this._oIconFormatter.formatSrc(sValue, this._sAppId);
 				}.bind(this));
 			}
 

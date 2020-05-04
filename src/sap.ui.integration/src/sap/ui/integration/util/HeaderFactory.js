@@ -106,7 +106,7 @@ sap.ui.define([
 				oHeader = new NumericHeader(mConfiguration, oActionsToolbar, oCard._sAppId);
 				break;
 			default:
-				oHeader = new Header(mConfiguration, oActionsToolbar, oCard._sAppId);
+				oHeader = new Header(mConfiguration, oActionsToolbar, oCard._sAppId, oCard._oIconFormatter);
 				break;
 		}
 
