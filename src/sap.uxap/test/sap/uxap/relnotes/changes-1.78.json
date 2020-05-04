@@ -18,6 +18,28 @@
         "type": "FEATURE",
         "text": " sap.f.DynamicPageTitle: Introduced new ariaDescribedBy association",
         "references": []
+      },
+      {
+        "id": "a48ce78d5fd1d804f3fc63fa880c6fa3634b20c2",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Early focus trigger in IE fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070134081"
+          }
+        ]
+      },
+      {
+        "id": "907bbba7b3f944196dbfd785a603f7e21f9f7da6",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevent redundant DOM calculations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070180461"
+          }
+        ]
       }
     ]
   }

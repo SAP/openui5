@@ -29,6 +29,12 @@
             "reference": "002075129400002752872020"
           }
         ]
+      },
+      {
+        "id": "81db9459c7a8a2935e6f59480f0a0164ecaf0241",
+        "type": "FIX",
+        "text": " sap.ui.fl - Fix qunit error assertion for nightly build",
+        "references": []
       }
     ]
   }

@@ -29,6 +29,17 @@
             "reference": "2070148602"
           }
         ]
+      },
+      {
+        "id": "36af2e87bbef9cc912544e730d81ff90d012596b",
+        "type": "FIX",
+        "text": " sap.m.Button: Icon and text are center-aligned inside the button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070123105"
+          }
+        ]
       }
     ]
   }

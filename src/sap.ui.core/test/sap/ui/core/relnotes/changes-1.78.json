@@ -125,6 +125,23 @@
             "reference": "2070145984"
           }
         ]
+      },
+      {
+        "id": "ae7977fde5b503dd04759a2ee4fd530ffd6ecbeb",
+        "type": "FIX",
+        "text": " sap.ui.core.Popup: Fixed scrolling behavior while popup opening",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070120788"
+          }
+        ]
+      },
+      {
+        "id": "82bf8b7beafa336e0285ce9d02617ca8d8d647c6",
+        "type": "FIX",
+        "text": " sap/base/strings/toHex: Module JSDoc alias fixed",
+        "references": []
       }
     ]
   }

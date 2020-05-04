@@ -13,6 +13,17 @@
         "type": "FIX",
         "text": " sap.f.DynamicPageTitle: GenericTags overflow correctly now",
         "references": []
+      },
+      {
+        "id": "0e2c844de8135eb177f78d9dc4505c4578d987e8",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Qunit test no longer fails at IE11",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070187869"
+          }
+        ]
       }
     ]
   }

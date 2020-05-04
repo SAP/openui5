@@ -23,6 +23,12 @@
             "reference": "002075129400002752872020"
           }
         ]
+      },
+      {
+        "id": "614fae41f7234c347a40d3758048e6c64fbc85be",
+        "type": "FIX",
+        "text": " sap.ui.rta: Getting rid of sinon.fakeServer as it was never used",
+        "references": []
       }
     ]
   }
