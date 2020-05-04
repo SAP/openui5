@@ -9,7 +9,11 @@ sap.ui.define([
 	"sap/f/GridContainerItemLayoutData",
 	"sap/f/GridContainerSettings",
 	"sap/ui/Device",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes",
+	"jquery.sap.global",
+	"sap/m/Button"
 ],
 function (
 	GridContainer,
@@ -20,13 +24,144 @@ function (
 	GridContainerItemLayoutData,
 	GridContainerSettings,
 	Device,
-	Log
+	Log,
+	qutils,
+	KeyCodes,
+	jQuery,
+	Button
 ) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture",
 		EDGE_VERSION_WITH_GRID_SUPPORT = 16,
 		bIsGridSupported = !Device.browser.msie && !(Device.browser.edge && Device.browser.version < EDGE_VERSION_WITH_GRID_SUPPORT);
+
+	var oManifest_ListCard = {
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"actions": [
+					{
+						"type": "Navigation",
+						"url": "https://www.sap.com"
+					}
+				],
+				"title": "L3 Request list content Card",
+				"subTitle": "Card subtitle",
+				"icon": {
+					"src": "sap-icon://accept"
+				},
+				"status": {
+					"text": "100 of 200"
+				}
+			},
+			"content": {
+				"data": {
+					"json": [
+						{
+							"Name": "Notebook Basic 15",
+							"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+							"Id": "HT-1000",
+							"SubCategoryId": "Notebooks",
+							"icon": "../images/Woman_avatar_01.png",
+							"state": "Information",
+							"info": "27.45 EUR",
+							"infoState": "Success"
+						},
+						{
+							"Name": "Notebook Basic 17",
+							"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+							"Id": "HT-1001",
+							"SubCategoryId": "Notebooks",
+							"icon": "../images/Woman_avatar_01.png",
+							"state": "Success",
+							"info": "27.45 EUR",
+							"infoState": "Success"
+
+						},
+						{
+							"Name": "Notebook Basic 18",
+							"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+							"Id": "HT-1002",
+							"SubCategoryId": "Notebooks",
+							"icon": "../images/Woman_avatar_01.png",
+							"state": "Warning",
+							"info": "9.45 EUR",
+							"infoState": "Error"
+						},
+						{
+							"Name": "Notebook Basic 19",
+							"Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+							"Id": "HT-1003",
+							"SubCategoryId": "Notebooks",
+							"icon": "../images/Woman_avatar_01.png",
+							"state": "Error",
+							"info": "9.45 EUR",
+							"infoState": "Error"
+						},
+						{
+							"Name": "ITelO Vault",
+							"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+							"Id": "HT-1007",
+							"SubCategoryId": "PDAs & Organizers",
+							"icon": "../images/Woman_avatar_01.png",
+							"state": "Success",
+							"info": "29.45 EUR",
+							"infoState": "Success"
+						},
+						{
+							"Name": "Notebook Professional 15",
+							"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+							"Id": "HT-1010",
+							"SubCategoryId": "Notebooks",
+							"icon": "../images/Woman_avatar_01.png",
+							"state": "Success",
+							"info": "29.45 EUR",
+							"infoState": "Success"
+						},
+						{
+							"Name": "Notebook Professional 26",
+							"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+							"Id": "HT-1022",
+							"SubCategoryId": "Notebooks",
+							"icon": "../images/Woman_avatar_01.png",
+							"state": "Success",
+							"info": "29.45 EUR",
+							"infoState": "Success"
+						},
+						{
+							"Name": "Notebook Professional 27",
+							"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+							"Id": "HT-1024",
+							"SubCategoryId": "Notebooks",
+							"icon": "../images/Woman_avatar_01.png",
+							"state": "Success",
+							"info": "29.45 EUR",
+							"infoState": "Success"
+						}
+					]
+				},
+				"item": {
+					"icon": {
+						"src": "{icon}"
+					},
+					"title": {
+						"label": "{{title_label}}",
+						"value": "{Name}"
+					},
+					"description": {
+						"label": "{{description_label}}",
+						"value": "{Description}"
+					},
+					"highlight": "{state}",
+					"info": {
+						"value": "{info}",
+						"state": "{infoState}"
+					}
+				}
+			}
+		}
+	};
 
 	/**
 	 * Test if grid settings are applied to the grid in DOM
@@ -293,7 +428,7 @@ function (
 		assert.strictEqual($grid.find("#tile1").length, 1, "Item 1 is inserted with index which is out of range");
 		assert.strictEqual($grid.find("#tile2").length, 1, "Item 2 is inserted with index which is out of range");
 		assert.strictEqual($grid.find("#tile3").length, 1, "Item 3 is inserted with index 1");
-		assert.strictEqual($grid.find("#tile3").parent().index(), 1, "Item 3 is inserted on correct location");
+		assert.strictEqual($grid.find("#tile3").parent().index(), 2, "Item 3 is inserted on correct location");
 
 		oItem1.destroy();
 		oItem2.destroy();
@@ -382,24 +517,24 @@ function (
 		Core.applyChanges();
 
 		// Assert
-		assert.ok(aWrappers[0].offsetWidth > 0, "Initially visible item wrapper should take width.");
-		assert.notOk(aWrappers[1].offsetWidth > 0, "Initially invisible item wrapper should NOT take any width.");
+		assert.ok(aWrappers[1].offsetWidth > 0, "Initially visible item wrapper should take width.");
+		assert.notOk(aWrappers[2].offsetWidth > 0, "Initially invisible item wrapper should NOT take any width.");
 
 		// Act
 		oInvisibleItem.setVisible(true);
 		Core.applyChanges();
 
 		// Assert
-		assert.ok(aWrappers[0].offsetWidth > 0, "Wrapper of visible item should take width.");
-		assert.ok(aWrappers[1].offsetWidth > 0, "When item is turned to visible, its wrapper should take width.");
+		assert.ok(aWrappers[1].offsetWidth > 0, "Wrapper of visible item should take width.");
+		assert.ok(aWrappers[2].offsetWidth > 0, "When item is turned to visible, its wrapper should take width.");
 
 		// Act
 		oVisibleItem.setVisible(false);
 		Core.applyChanges();
 
 		// Assert
-		assert.notOk(aWrappers[0].offsetWidth > 0, "When item is turned to invisible, its wrapper should NOT take width.");
-		assert.ok(aWrappers[1].offsetWidth > 0, "Wrapper of visible item should take width.");
+		assert.notOk(aWrappers[1].offsetWidth > 0, "When item is turned to invisible, its wrapper should NOT take width.");
+		assert.ok(aWrappers[2].offsetWidth > 0, "Wrapper of visible item should take width.");
 	});
 
 	if (bIsGridSupported) {
@@ -787,5 +922,93 @@ function (
 			// the width on IE depends on number of columns
 			assert.strictEqual(this.oGrid.$().width(), 176, "Grid width is correct. Equal to two columns and one gap for IE.");
 		}
+	});
+
+	QUnit.module("Keyboard handling", {
+		beforeEach: function () {
+
+			// Arrange
+			var oSettings = new GridContainerSettings({columns: 2, rowSize: "80px", columnSize: "80px", gap: "16px"});
+
+			this.oButton = new Button({
+				text: "Test"
+			});
+			this.oGrid = new GridContainer({
+				layout: oSettings,
+				items: [
+					new Card({
+						manifest: oManifest_ListCard,
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
+					}),
+					new Card({
+						manifest: oManifest_ListCard,
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
+					}),
+					new Card({
+						manifest: oManifest_ListCard,
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
+					}),
+					new GenericTile({
+						header: "headerText 1",
+						subheader: "subheaderText",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
+					})
+				]
+			});
+
+			this.oGrid.placeAt(DOM_RENDER_LOCATION);
+			this.oButton.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oGrid.destroy();
+			this.oButton.destroy();
+
+		}
+	});
+
+	QUnit.test("Right/Down Arrow navigating trough grid container", function (assert) {
+
+		// Arrange
+		var oItemWrapper1 = this.oGrid.getDomRef().children[1],
+			oItemWrapper2 = this.oGrid.getDomRef().children[2],
+			oItemWrapper3 = this.oGrid.getDomRef().children[3];
+		oItemWrapper1.focus();
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerKeydown(oItemWrapper1, KeyCodes.ARROW_RIGHT, false, false, false);
+
+		// Assert
+		assert.strictEqual(oItemWrapper2.getAttribute("tabindex"), "0", "Focus should be on the second GridItem");
+
+		// Act
+		qutils.triggerKeydown(oItemWrapper2, KeyCodes.ARROW_DOWN, false, false, false);
+
+		// Assert
+		assert.strictEqual(oItemWrapper3.getAttribute("tabindex"), "0",  "Focus should be on the third GridItem");
+
+	});
+
+	QUnit.test("Left/Up Arrow navigating trough grid container", function (assert) {
+
+		// Arrange
+		var oItemWrapper1 = this.oGrid.getDomRef().children[1],
+			oItemWrapper2 = this.oGrid.getDomRef().children[2],
+			oItemWrapper3 = this.oGrid.getDomRef().children[3];
+		oItemWrapper3.focus();
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerKeydown(oItemWrapper3, KeyCodes.ARROW_LEFT, false, false, false);
+
+		// Assert
+		assert.strictEqual(oItemWrapper2.getAttribute("tabindex"), "0", "Focus should be on the second GridItem");
+
+		// Act
+		qutils.triggerKeydown(oItemWrapper2, KeyCodes.ARROW_UP, false, false, false);
+
+		// Assert
+		assert.strictEqual(oItemWrapper1.getAttribute("tabindex"), "0",  "Focus should be on the first GridItem");
 	});
 });
