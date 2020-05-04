@@ -423,6 +423,7 @@ sap.ui.define([
 		this._cacheDomElements();
 		this._attachFocusSpanHandlers();
 		this._toggleState(this._bExpandedState);
+		this._toggleFocusableState(this._bIsFocusable);
 		this._doNavigationActionsLayout();
 		// Needs update in order to determine its visibility by visibility of its content.
 		this._updateTopAreaVisibility();
@@ -757,7 +758,7 @@ sap.ui.define([
 		$oTitleFocusSpan = this._getFocusSpan();
 
 		if ($oTitleFocusSpan) {
-			bFocusable ? $oTitleFocusSpan.attr("tabindex", 0) : $oTitleFocusSpan.removeAttr("tabindex");
+			bFocusable ? $oTitleFocusSpan.show() : $oTitleFocusSpan.hide();
 		}
 	};
 

@@ -119,7 +119,7 @@ function (
 		oDynamicPageTitle.ontap(oFakeEvent);
 		assert.equal(oDynamicPage.getHeaderExpanded(), false, "The header is still collapsed, because toggleHeaderOnTitleClick = false");
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be still excluded from the tab chain");
-		assert.equal($oDynamicPageTitleSpan.attr("tabindex"), undefined, "The header title is not focusable");
+		assert.equal($oDynamicPageTitleSpan.is(":hidden"), true, "The header title is not focusable");
 		assert.notOk(oDynamicPage.getTitle().$().attr("aria-labelledby"),
 				"Since the header isn't toggleable, an aria-labelledby attribute shouldn't be rendered");
 
@@ -129,7 +129,7 @@ function (
 		assert.equal(oDynamicPage.getHeaderExpanded(), true, "After restoring toggleHeaderOnTitleClick to true, the header again expands on click");
 		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, "true", sAriaLabelledBy, "Header is back to expanded");
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "visible", "Header should be included in the tab chain again");
-		assert.equal($oDynamicPageTitleSpan.attr("tabindex"), 0, "The header title is focusable again");
+		assert.equal($oDynamicPageTitleSpan.is(":visible"), true, "The header title is focusable again");
 
 		oPinButton.firePress();
 		oDynamicPageTitle.ontap(oFakeEvent);

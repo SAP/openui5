@@ -511,11 +511,11 @@ function (
 
 		assert.ok(!oUtil.exists(this.oDynamicPageNoHeader.getHeader()), "The DynamicPage Header does not exist.");
 		assert.ok(oTitle._getExpandButton().$().hasClass("sapUiHidden"), "Title expand button is hidden");
-		assert.equal(oTitle._getFocusSpan().attr("tabindex"), undefined, "Focus span should be excluded from the tab chain");
+		assert.equal(oTitle._getFocusSpan().is(":hidden"), true, "Focus span should be excluded from the tab chain");
 		assert.notOk(this.oDynamicPageNoHeader.$().hasClass("sapFDynamicPageTitleClickEnabled"), "No DynamicPage Header - sapFDynamicPageTitleClickEnabled not added");
 
 		this.oDynamicPageNoHeader.setToggleHeaderOnTitleClick(true);
-		assert.equal(oTitle._getFocusSpan().attr("tabindex"), undefined, "Focus span should still be excluded from the tab chain");
+		assert.equal(oTitle._getFocusSpan().is(":hidden"), true, "Focus span should still be excluded from the tab chain");
 		assert.notOk(this.oDynamicPageNoHeader.$().hasClass("sapFDynamicPageTitleClickEnabled"), "No DynamicPage Header - sapFDynamicPageTitleClickEnabled not added");
 	});
 
@@ -2140,7 +2140,7 @@ function (
 			$oDynamicPageTitleSpan = oDynamicPage.getTitle()._getFocusSpan();
 
 		assert.equal(oDynamicPage.getToggleHeaderOnTitleClick(), false, "Initially toggleHeaderOnTitleClick = false");
-		assert.equal($oDynamicPageTitleSpan.attr("tabindex"), undefined, "Initially the header title is not focusable");
+		assert.equal($oDynamicPageTitleSpan.is(":hidden"), true, "Initially the header title is not focusable");
 	});
 
 	/* --------------------------- DynamicPage ARIA ---------------------------------- */
