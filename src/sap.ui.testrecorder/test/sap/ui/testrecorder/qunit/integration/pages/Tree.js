@@ -22,7 +22,13 @@ sap.ui.define([
 				iSelectItem: function (sText) {
 					this.waitFor({
 						matchers: function () {
-							return Opa5.getJQuery()("tag:contains(" + sText + ")");
+							var jQuery = Opa5.getJQuery();
+							Opa5.assert.ok(jQuery.prototype.jquery, "Tree.iSelectItem - jQuery is loaded");
+
+							var treeItemWithText = jQuery("tag:contains(" + sText + ")");
+							Opa5.assert.ok(treeItemWithText.is(":visible"), "Tree.iSelectItem - Tree item is visible. text = " + sText);
+
+							return treeItemWithText;
 						},
 						actions: function ($item) {
 							$item.click();
@@ -67,8 +73,19 @@ sap.ui.define([
 				iShouldSeeTheHighlightedItem: function (sText) {
 					this.waitFor({
 						matchers: function () {
-							var oTag = Opa5.getJQuery()("tag:contains(" + sText + ")");
-							return oTag.parent().attr("selected");
+							var jQuery = Opa5.getJQuery();
+							Opa5.assert.ok(jQuery.prototype.jquery, "Tree.iShouldSeeTheHighlightedItem - jQuery is loaded");
+
+							var treeItemWithText = jQuery("tag:contains(" + sText + ")");
+							Opa5.assert.ok(treeItemWithText.is(":visible"), "Tree.iShouldSeeTheHighlightedItem - Tree item is visible. text = " + sText);
+
+							var treeItemWithHighlight = treeItemWithText.parent();
+							Opa5.assert.ok(treeItemWithHighlight.is(":visible"), "Tree.iShouldSeeTheHighlightedItem - Tree item wrapper is visible");
+
+							var isSelected = treeItemWithHighlight.attr("selected");
+							Opa5.assert.ok(isSelected, "Tree.iShouldSeeTheHighlightedItem - Tree item is selected");
+
+							return isSelected;
 						},
 						success: function (bSelected) {
 							Opa5.assert.ok(bSelected, "Item should be highlighted");
