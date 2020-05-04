@@ -198,10 +198,10 @@ sap.ui.define([
 				return this;
 			},
 
-			scrollTo : function(x, y, time) {
+			scrollTo : function(x, y, time, fnScrollEndCallback) {
 				this._scrollX = x; // remember for later rendering
 				this._scrollY = y;
-				this._scrollTo(x, y, time);
+				this._scrollTo(x, y, time, fnScrollEndCallback);
 				return this;
 			},
 
@@ -747,14 +747,18 @@ sap.ui.define([
 				}
 			},
 
-			_scrollTo: function(x, y, time) {
+			_scrollTo: function(x, y, time, fnScrollEndCallback) {
 				if (this._$Container.length > 0) {
 					if (time > 0) {
-						this._$Container.finish().animate({ scrollTop: y, scrollLeft: x }, time, jQuery.proxy(this._readActualScrollPosition, this));
+						this._$Container.finish().animate({ scrollTop: y, scrollLeft: x }, time, jQuery.proxy(function() {
+							this._readActualScrollPosition();
+							fnScrollEndCallback && fnScrollEndCallback();
+						}, this));
 					} else {
 						this._$Container.scrollTop(y);
 						this._$Container.scrollLeft(x);
 						this._readActualScrollPosition(); // if container is too large no scrolling is possible
+						fnScrollEndCallback && fnScrollEndCallback();
 					}
 				}
 			}
