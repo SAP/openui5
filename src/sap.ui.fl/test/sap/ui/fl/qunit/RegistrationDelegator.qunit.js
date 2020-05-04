@@ -7,6 +7,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/fl/EventHistory",
+	"sap/ui/core/ExtensionPoint",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -16,6 +18,8 @@ sap.ui.define([
 	MvcController,
 	XMLView,
 	EventHistory,
+	ExtensionPoint,
+	ManifestUtils,
 	sinon,
 	jQuery
 ) {
@@ -35,6 +39,7 @@ sap.ui.define([
 			var oRegisterExtensionProviderStub = sandbox.stub(MvcController, "registerExtensionProvider");
 			var oRegisterXMLPreprocessorStub = sandbox.stub(XMLView, "registerPreprocessor");
 			var oRegisterEventListenerStub = sandbox.stub(EventHistory, "start");
+			var oRegisterExtensionPointProviderStub = sandbox.stub(ExtensionPoint, "registerExtensionProvider");
 
 			var fnDone = assert.async();
 			sap.ui.require(["sap/ui/fl/library"], function() {
@@ -46,9 +51,32 @@ sap.ui.define([
 				assert.equal(oRegisterExtensionProviderStub.callCount, 1, "Extension provider called.");
 				assert.equal(oRegisterXMLPreprocessorStub.callCount, 1, "XML preprocessor called.");
 				assert.equal(oRegisterEventListenerStub.callCount, 1, "Event Listener called.");
+				assert.equal(oRegisterExtensionPointProviderStub.callCount, 1, "ExtensionPoint called.");
 				assert.ok(Component._fnPreprocessManifest);
 				fnDone();
 			});
+		});
+	});
+
+	QUnit.module("sap.ui.fl.RegistrationDelegator getExtensionPointProvider function", {
+		beforeEach: function () {
+			var oRegisterExtensionProviderStub = sandbox.stub(ExtensionPoint, "registerExtensionProvider");
+			RegistrationDelegator.registerAll();
+			this.fnExtensionProvider = oRegisterExtensionProviderStub.firstCall.args[0];
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("When extension point handling is disabled", function (assert) {
+			var oIsFlexExtensionPointHandlingEnabledStub = sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(false);
+			assert.notOk(this.fnExtensionProvider({}), "then 'undefined' is returned");
+			assert.equal(oIsFlexExtensionPointHandlingEnabledStub.callCount, 1, "the function was called once");
+		});
+		QUnit.test("When extension point handling is enabled", function (assert) {
+			var oIsFlexExtensionPointHandlingEnabledStub = sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(true);
+			assert.strictEqual(this.fnExtensionProvider({}), "sap/ui/fl/apply/_internal/extensionPoint/Processor", "then the processor module path is returned");
+			assert.equal(oIsFlexExtensionPointHandlingEnabledStub.callCount, 1, "the function was called once");
 		});
 	});
 

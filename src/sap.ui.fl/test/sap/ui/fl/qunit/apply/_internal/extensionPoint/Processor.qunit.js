@@ -27,6 +27,8 @@ sap.ui.define([
 	oDIV.id = "content";
 	document.body.appendChild(oDIV);
 	var sandbox = sinon.sandbox.create();
+	var SYNC = true;
+	var ASYNC = false;
 
 	// UI Construction
 	var oComponent;
@@ -55,7 +57,8 @@ sap.ui.define([
 			sandbox.stub(Loader, "loadFlexData").resolves({changes: {changes: createChanges("sap.ui.fl.qunit.extensionPoint.testApp.async")}});
 			return Component.create({
 				name: "sap.ui.fl.qunit.extensionPoint.testApp",
-				id: "sap.ui.fl.qunit.extensionPoint.testApp.async"
+				id: "sap.ui.fl.qunit.extensionPoint.testApp.async",
+				componentData: {}
 			}).then(function(_oComp) {
 				oComponent = _oComp;
 				oComponentContainer = oComponent.runAsOwner(function() {
@@ -159,7 +162,7 @@ sap.ui.define([
 		var oView = oComponent.getRootControl();
 
 		var fnAssert = function() {
-			assert.ok(ExtensionPoint._sExtensionProvider, "ExtensionPointProvider added");
+			assert.ok(ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
 
 			checkView("sync");
 			checkView("async");
@@ -182,20 +185,20 @@ sap.ui.define([
 		}, 500);
 	}
 	QUnit.module("ExtensionPoints with sync and async view when component is created sync", {
-		before: createComponentAndContainer.bind(null, true),
-		after: destroyComponentAndContainer.bind(null, true)
+		before: createComponentAndContainer.bind(null, SYNC),
+		after: destroyComponentAndContainer.bind(null, SYNC)
 	});
 
 	QUnit.test("When EPs and addXMLAtExtensionPoint are available in one sync views and one async view", function(assert) {
-		check(true, assert);
+		check(SYNC, assert);
 	});
 
 	QUnit.module("ExtensionPoints with sync and async view when component is created async", {
-		before: createComponentAndContainer.bind(null, false),
-		after: destroyComponentAndContainer.bind(null, false)
+		before: createComponentAndContainer.bind(null, ASYNC),
+		after: destroyComponentAndContainer.bind(null, ASYNC)
 	});
 
 	QUnit.test("When EPs and addXMLAtExtensionPoint are available in one sync views and one async view", function(assert) {
-		check(false, assert);
+		check(ASYNC, assert);
 	});
 });

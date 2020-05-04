@@ -88,6 +88,13 @@ function(
 		getBaseComponentNameFromManifest: function(oManifest) {
 			var oSapUi5Entry = oManifest.getEntry ? oManifest.getEntry("sap.ui5") : oManifest["sap.ui5"];
 			return oSapUi5Entry && oSapUi5Entry.componentName || Utils.getAppIdFromManifest(oManifest);
+		},
+
+		isFlexExtensionPointHandlingEnabled: function (oView) {
+			var oAppComponent = Utils.getAppComponentForControl(oView);
+			return oAppComponent
+				&& oAppComponent.getManifestEntry("sap.ui5")
+				&& oAppComponent.getManifestEntry("sap.ui5").flexExtensionPointEnabled;
 		}
 	};
 

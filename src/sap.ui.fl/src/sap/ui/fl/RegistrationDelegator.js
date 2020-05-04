@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/ExtensionPoint",
 	"sap/ui/fl/EventHistory",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/changes/descriptor/Preprocessor",
 	// the lower 2 are set as a callback in the "register...Processors" which are not detected as dependencies from the preload-building
 	"sap/ui/fl/PreprocessorImpl",
@@ -25,6 +26,7 @@ sap.ui.define([
 	XMLView,
 	ExtensionPoint,
 	EventHistory,
+	ManifestUtils,
 	Preprocessor
 ) {
 	"use strict";
@@ -74,10 +76,16 @@ sap.ui.define([
 		Component._fnPreprocessManifest = Preprocessor.preprocessManifest;
 	}
 
-	// TODO: temporarily disabled due to customer inciden: 275287
-	// function _registerExtensionPointProvider() {
-	// 	ExtensionPoint.registerExtensionProvider("sap/ui/fl/apply/_internal/extensionPoint/Processor");
-	// }
+	function getExtensionPointProvider(oView) {
+		if (ManifestUtils.isFlexExtensionPointHandlingEnabled(oView)) {
+			return "sap/ui/fl/apply/_internal/extensionPoint/Processor";
+		}
+		return undefined;
+	}
+
+	function _registerExtensionPointProvider() {
+		ExtensionPoint.registerExtensionProvider(getExtensionPointProvider);
+	}
 
 	/**
 	 * Registers everything in one call
@@ -92,7 +100,7 @@ sap.ui.define([
 		_registerChangesInComponent();
 		_registerXMLPreprocessor();
 		_registerDescriptorChangeHandler();
-		// _registerExtensionPointProvider(); TODO: temporarily disabled due to customer inciden: 275287
+		_registerExtensionPointProvider();
 	};
 
 	return RegistrationDelegator;
