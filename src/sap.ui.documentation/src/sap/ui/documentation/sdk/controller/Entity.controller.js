@@ -351,7 +351,8 @@ sap.ui.define([
 			 * Converts the deprecated boolean to a human readable text
 			 */
 			_createDeprecatedMark: function (sDeprecated) {
-				return (sDeprecated) ? "Deprecated" : "";
+				var oResourceBundle = this.getModel("i18n").getResourceBundle();
+				return (sDeprecated) ? oResourceBundle.getText("ENTITY_DEPRECATED") : "";
 			},
 
 			_switchPageTab: function () {
@@ -368,6 +369,8 @@ sap.ui.define([
 			},
 
 			_getHeaderLayoutUtil: function () {
+				var oResourceBundle;
+
 				if (!this._oHeaderLayoutUtil) {
 					var _getObjectAttributeBlock = function (sTitle, sText) {
 							return new ObjectAttribute({
@@ -394,12 +397,14 @@ sap.ui.define([
 							return oHBox;
 						};
 
+					oResourceBundle = this.getModel("i18n").getResourceBundle();
+
 					this._oHeaderLayoutUtil = {
 
 						_getApiReferenceBlock: function (oData) {
 							return _getHBox({
 								items: [
-									_getLabel({design: "Bold", text: "API Reference:"}),
+									_getLabel({design: "Bold", text: oResourceBundle.getText("ENITITY_API")}),
 									_getLink({
 										emphasized: true,
 										text: oData.name,
@@ -411,7 +416,7 @@ sap.ui.define([
 						_getDocumentationBlock: function (oData) {
 							return _getHBox({
 								items: [
-									_getLabel({design: "Bold", text: "Documentation:"}),
+									_getLabel({design: "Bold", text: oResourceBundle.getText("ENTITY_DOCUMENTATION")}),
 									_getLink({
 										emphasized: true,
 										text: oData.docuLinkText,
@@ -423,7 +428,7 @@ sap.ui.define([
 						_getUXGuidelinesBlock: function (oData) {
 							return _getHBox({
 								items: [
-									_getLabel({design: "Bold", text: "UX Guidelines:"}),
+									_getLabel({design: "Bold", text: oResourceBundle.getText("ENTITY_UX")}),
 									_getLink({
 										emphasized: true,
 										text: oData.uxGuidelinesLinkText,
@@ -436,7 +441,7 @@ sap.ui.define([
 						_getExtendsBlock: function (oData) {
 							return _getHBox({
 								items: [
-									_getLabel({text: "Extends:"}),
+									_getLabel({text: oResourceBundle.getText("ENTITY_EXTENDS")}),
 									_getLink({
 										text: oData.baseTypeText,
 										href: "entity/" + oData.baseType,
@@ -447,16 +452,16 @@ sap.ui.define([
 							}, true);
 						},
 						_getApplicationComponentBlock: function (oData) {
-							return _getObjectAttributeBlock("Application Component", oData.appComponent);
+							return _getObjectAttributeBlock(oResourceBundle.getText("ENTITY_COMPONENT"), oData.appComponent);
 						},
 						_getAvailableSinceBlock: function (oData) {
-							return _getObjectAttributeBlock("Available since", oData.entity.since);
+							return _getObjectAttributeBlock(oResourceBundle.getText("ENTITY_SINCE"), oData.entity.since);
 						},
 						_getCategoryBlock: function (oData) {
-							return _getObjectAttributeBlock("Category", oData.entity.category);
+							return _getObjectAttributeBlock(oResourceBundle.getText("ENTITY_CATEGORY"), oData.entity.category);
 						},
 						_getContentDensityBlock: function (oData) {
-							return _getObjectAttributeBlock("Content Density", oData.entity.formFactors);
+							return _getObjectAttributeBlock(oResourceBundle.getText("ENTITY_DENSITY"), oData.entity.formFactors);
 						}
 					};
 				}

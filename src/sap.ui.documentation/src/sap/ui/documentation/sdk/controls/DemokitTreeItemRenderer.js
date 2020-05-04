@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/m/TreeItemBaseRenderer', 'sap/ui/core/Renderer'],
-function(TreeItemBaseRenderer, Renderer) {
+sap.ui.define(['sap/m/TreeItemBaseRenderer','sap/ui/core/Core', 'sap/ui/core/Renderer'],
+function(TreeItemBaseRenderer, Core, Renderer) {
 	"use strict";
 
 	var DemokitTreeItemRender = Renderer.extend(TreeItemBaseRenderer);
@@ -36,6 +36,7 @@ function(TreeItemBaseRenderer, Renderer) {
 	};
 
 	DemokitTreeItemRender.renderLIContent = function (oRm, oControl) {
+		var oResourceBundle;
 
 		this.renderEntityType(oRm, oControl);
 
@@ -53,11 +54,13 @@ function(TreeItemBaseRenderer, Renderer) {
 		oRm.write('</a>');
 
 		if (oControl.getDeprecated()) {
+			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.documentation");
+
 			oRm.write('<span');
 			oRm.addClass("sapDemokitTreeItemLabel");
 			oRm.writeClasses();
 			oRm.write('>');
-			oRm.write("Deprecated");
+			oRm.write(oResourceBundle.getText("API_MASTER_DEPRECATED"));
 			oRm.write('</span>');
 		}
 	};

@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/m/library'],
-    function(Control, Button, SearchField, mobileLibrary) {
+sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/m/library', 'sap/ui/core/Core'],
+    function(Control, Button, SearchField, mobileLibrary, Core) {
     "use strict";
 
 		/**
@@ -149,7 +149,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/
         Search.prototype._lazyLoadClosingButton = function(bSuppressInvalidate) {
             if (!this.getAggregation("_closingButton")) {
                 var oBtn = new Button(this.getId() + "-closingBtn", {
-                    text: "Close", //TODO localize
+                    text: Core.getLibraryResourceBundle("sap.ui.documentation").getText("APP_SEARCH_FIELD_CLOSE"),
                     type: mobileLibrary.ButtonType.Transparent,
                     press: function() {
 

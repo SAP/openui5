@@ -44,13 +44,13 @@
 							visible="false"
 							width="100%">
 							<Text
-								text="Documentation"
+								text="{i18n>TOPIC_DETAIL_INIT_DOCUMENTATION}"
 								width="100%"
 								textAlign="Left"/>
 							<l:HorizontalLayout>
 								<Button
 										class="actionButton"
-										text="Download"
+										text="{i18n>TOPIC_DETAIL_INIT_DOWNLOAD_BTN}"
 										type="Emphasized"
 										press="onDownloadButtonPress"/>
 								<Button
@@ -86,11 +86,11 @@
 						<l:VerticalLayout width="100%">
 						<custom:TitleLink
 								width="100%"
-								text="What's New?"
+								text="{i18n>TOPIC_DETAIL_INIT_BLOCK_1_TITLE}"
 								href="topic/99ac68a5b1c3416ab5c84c99fefa250d"
 								titleStyle="H1"/>
 							<Text
-									text="Find out about the new features in the latest UI5 versions"/>
+									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_1_TEXT}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 
@@ -101,11 +101,11 @@
 						<l:VerticalLayout width="100%">
 						<custom:TitleLink
 								width="100%"
-								text="Read Me First"
+								text="{i18n>TOPIC_DETAIL_INIT_BLOCK_2_TITLE}"
 								href="topic/167193ced54c41c3961d7df3479d7bbe"
 								titleStyle="H1"/>
 							<Text
-									text="Important information before you start using UI5 productively"/>
+									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_2_TEXT}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 
@@ -117,12 +117,12 @@
 						<l:VerticalLayout width="100%">
 							<custom:TitleLink
 									width="100%"
-									text="Get Started"
+									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_3_TITLE}"
 									href="topic/8b49fc198bf04b2d9800fc37fecbb218"
 									class="demokitInitialPagesWhiteText"
 									titleStyle="H1"/>
 							<Text
-									text="Setup and tutorials"
+									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_3_TEXT}"
 									class="demokitInitialPagesWhiteText"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
@@ -137,12 +137,12 @@
 						<l:VerticalLayout width="100%">
 							<custom:TitleLink
 									width="100%"
-									text="Developing Apps"
+									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_4_TITLE}"
 									href="topic/23cfd955f58142389fa7c9097e11559c"
 									class="demokitInitialPagesWhiteText"
 									titleStyle="H1"/>
 							<Text
-									text="Best practices and what pitfalls you should look out for"
+									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_4_TEXT}"
 									class="demokitInitialPagesWhiteText"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
@@ -153,11 +153,11 @@
 						<l:VerticalLayout width="100%">
 							<custom:TitleLink
 									width="100%"
-									text="Extending Apps"
+									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_5_TITLE}"
 									href="topic/a264a9abf98d4caabbf9b027bc1005d8"
 									titleStyle="H1"/>
 							<Text
-									text="Adapt apps to your specific requirements"/>
+									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_5_TEXT}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 
@@ -168,11 +168,11 @@
 						<l:VerticalLayout width="100%">
 							<custom:TitleLink
 									width="100%"
-									text="Developing Controls"
+									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_6_TITLE}"
 									href="topic/8dcab0011d274051808f959800cabf9f"
 									titleStyle="H1"/>
 							<Text
-									text="Create custom controls or contribute to UI5"/>
+									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_6_TEXT}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 
@@ -191,7 +191,7 @@
 									href="topic/03265b0408e2432c9571d6b3feb6b1fd"
 									titleStyle="H1"/>
 							<Text
-									text="UI patterns and templates for commonly used application patterns"/>
+									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_7_TEXT}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 
@@ -203,11 +203,11 @@
 						<l:VerticalLayout width="100%">
 							<custom:TitleLink
 									width="100%"
-									text="Analysis Path Framework"
+									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_8_TITLE}"
 									href="topic/1c457c53595a6655e10000000a423f68"
 									titleStyle="H1"/>
 							<Text
-									text="Build and enhance interactive analytical web applications"/>
+									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_8_TEXT}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 					<l:BlockLayoutCell
@@ -217,12 +217,12 @@
 						<l:VerticalLayout width="100%">
 							<custom:TitleLink
 									width="100%"
-									text="Essentials"
+									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_9_TITLE}"
 									href="topic/ec699e0817fb46a0817b0fa276a249f8"
 									class="demokitInitialPagesWhiteText"
 									titleStyle="H1"/>
 							<Text
-									text="Development concepts, such as MVC, data binding, and components"
+									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_9_TEXT}"
 									class="demokitInitialPagesWhiteText"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
@@ -234,11 +234,11 @@
 						<l:VerticalLayout width="100%">
 							<custom:TitleLink
 									width="100%"
-									text="More About Controls"
+									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_10_TITLE}"
 									href="topic/3ec6808ff0f34a75a9f40748cf9989b9"
 									titleStyle="H1"/>
 							<Text
-									text="Addition to the API reference"/>
+									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_10_TEXT}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>

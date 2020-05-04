@@ -39,12 +39,12 @@
 							visible="false"
 							width="100%">
 							<Text class="sapUiDocumentationExploredHeaderText sapUiDocumentationExploredHeaderTitleText"
-								text="Samples"
+								text="{i18n>CONTROLS_PAGE_TITLE}"
 								width="100%"
 								textAlign="Left"/>
 							<Text
 								class="sapUiDocumentationExploredHeaderText sapUiDocumentationExploredSubText"
-								text="Explore and download code samples"
+								text="{i18n>CONTROLS_PAGE_DESC}"
 								width="100%"
 								textAlign="Left"/>
 						</l:VerticalLayout>
@@ -59,7 +59,7 @@
 			<headerToolbar>
 				<Toolbar class="headlineCell">
 					<Title width="100%"
-						text="Featured Controls"
+						text="{i18n>CONTROLS_FEATURED_CONTROLS}"
 						level="H1"
 						titleStyle="H1"
 						class="sapUiMediumMarginTopBottom"/>
@@ -83,7 +83,7 @@
 									filter="Input"
 									text="Input"
 									titleStyle="H2"/>
-							<Text text="User interaction"/>
+							<Text text="{i18n>CONTROLS_TEXT_1}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 					<l:BlockLayoutCell
@@ -102,7 +102,7 @@
 									filter="List"
 									text="Lists"
 									titleStyle="H2"/>
-							<Text text="Various list structures"/>
+							<Text text="{i18n>CONTROLS_TEXT_2}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 					<l:BlockLayoutCell
@@ -121,7 +121,7 @@
 									filter="Table"
 									text="Tables"
 									titleStyle="H2"/>
-							<Text text="Simple or more powerful tables"/>
+							<Text text="{i18n>CONTROLS_TEXT_3}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 					<l:BlockLayoutCell
@@ -140,7 +140,7 @@
 									filter="Popup"
 									text="Pop-Ups"
 									titleStyle="H2"/>
-							<Text text="Dialogs and popovers"/>
+							<Text text="{i18n>CONTROLS_TEXT_4}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
@@ -162,7 +162,7 @@
 									text="Tiles"
 									titleStyle="H2"/>
 							<Text
-									text="Tiles for e.g. texts, images or charts"/>
+									text="{i18n>CONTROLS_TEXT_5}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 					<l:BlockLayoutCell
@@ -181,7 +181,7 @@
 									filter="Message"
 									text="Messages"
 									titleStyle="H2"/>
-							<Text text="User notification"/>
+							<Text text="{i18n>CONTROLS_TEXT_6}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 					<l:BlockLayoutCell
@@ -200,7 +200,7 @@
 									filter="Bar"
 									text="Bars"
 									titleStyle="H2"/>
-							<Text text="Toolbars and headers"/>
+							<Text text="{i18n>CONTROLS_TEXT_7}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 					<l:BlockLayoutCell
@@ -219,7 +219,7 @@
 									filter="Tree"
 									text="Trees"
 									titleStyle="H2"/>
-							<Text text="Hierarchical data representation"/>
+							<Text text="{i18n>CONTROLS_TEXT_8}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
@@ -240,7 +240,7 @@
 									filter="Smart"
 									text="Smart Controls"
 									titleStyle="H2"/>
-							<Text text="Metadata-driven controls"/>
+							<Text text="{i18n>CONTROLS_TEXT_9}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 					<l:BlockLayoutCell
@@ -260,7 +260,7 @@
 									text="Maps"
 									titleStyle="H2"/>
 							<Text
-									text="Location visualization"/>
+									text="{i18n>CONTROLS_TEXT_10}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 					<l:BlockLayoutCell
@@ -280,7 +280,7 @@
 									text="Charts"
 									titleStyle="H2"/>
 							<Text
-									text="Data visualization"/>
+									text="{i18n>CONTROLS_TEXT_11}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 					<l:BlockLayoutCell
@@ -299,7 +299,7 @@
 									filter="Process"
 									text="Processes"
 									titleStyle="H2"/>
-							<Text text="Step-based Interactions"/>
+							<Text text="{i18n>CONTROLS_TEXT_12}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
@@ -312,7 +312,7 @@
 			<headerToolbar>
 				<Toolbar class="headlineCell">
 					<Title width="100%"
-						text="Layout &amp; Pages"
+						text="{i18n>CONTROLS_LAYOUT_PAGES}"
 						level="H1"
 						titleStyle="H1"
 						class="sapUiMediumMarginTopBottom"/>
@@ -337,7 +337,7 @@
 									text="Object Page"
 									titleStyle="H2"/>
 							<Text
-									text="Displaying, creating, or editing objects"/>
+									text="{i18n>CONTROLS_TEXT_13}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 					<l:BlockLayoutCell
@@ -357,7 +357,7 @@
 									text="Dynamic Page"
 									titleStyle="H2"/>
 							<Text
-									text="Page with title, header, and content area"
+									text="{i18n>CONTROLS_TEXT_14}"
 									class="sapUiTinyMarginBottom"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
@@ -378,7 +378,7 @@
 									text="Flexible Column Layout"
 									titleStyle="H2"/>
 							<Text
-									text="Page with up to 3 columns"/>
+									text="{i18n>CONTROLS_TEXT_15}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 					<l:BlockLayoutCell
@@ -398,7 +398,7 @@
 									text="Split App"
 									titleStyle="H2"/>
 							<Text
-									text="Two-column layout"
+									text="{i18n>CONTROLS_TEXT_16}"
 									class="sapUiTinyMarginBottom"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>

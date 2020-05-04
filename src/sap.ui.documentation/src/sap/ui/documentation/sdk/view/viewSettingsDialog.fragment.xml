@@ -5,15 +5,15 @@
 			id="viewSettingsDialog"
 			confirm="onConfirmViewSettings">
 		<groupItems>
-			<ViewSettingsItem text="Alphabetically" key="name" selected="true" />
-			<ViewSettingsItem text="Category" key="category" />
-			<ViewSettingsItem text="Content Density" key="formFactors" />
-			<ViewSettingsItem text="Namespace" key="namespace" />
-			<ViewSettingsItem text="Release" key="since" />
+			<ViewSettingsItem text="{i18n>VIEW_SETTINGS_DIALOG_ITEM_1}" key="name" selected="true" />
+			<ViewSettingsItem text="{i18n>VIEW_SETTINGS_DIALOG_ITEM_2}" key="category" />
+			<ViewSettingsItem text="{i18n>VIEW_SETTINGS_DIALOG_ITEM_3}" key="formFactors" />
+			<ViewSettingsItem text="{i18n>VIEW_SETTINGS_DIALOG_ITEM_4}" key="namespace" />
+			<ViewSettingsItem text="{i18n>VIEW_SETTINGS_DIALOG_ITEM_5}" key="since" />
 		</groupItems>
 		<filterItems>
 			<ViewSettingsFilterItem
-					text="Category"
+					text="{i18n>VIEW_SETTINGS_DIALOG_ITEM_2}"
 					key="category"
 					id="categoryFilter"
 					items="{
@@ -28,7 +28,7 @@
 				</items>
 			</ViewSettingsFilterItem>
 			<ViewSettingsFilterItem
-					text="Content Density"
+					text="{i18n>VIEW_SETTINGS_DIALOG_ITEM_3}"
 					key="formFactors"
 					items="{
 					path:'filter>/formFactors',
@@ -42,7 +42,7 @@
 				</items>
 			</ViewSettingsFilterItem>
 			<ViewSettingsFilterItem
-					text="Namespace"
+					text="{i18n>VIEW_SETTINGS_DIALOG_ITEM_4}"
 					key="namespace"
 					items="{
 					path:'filter>/namespace',
@@ -56,7 +56,7 @@
 				</items>
 			</ViewSettingsFilterItem>
 			<ViewSettingsFilterItem
-					text="Release"
+					text="{i18n>VIEW_SETTINGS_DIALOG_ITEM_5}"
 					key="since"
 					items="{
 					path:'filter>/since',

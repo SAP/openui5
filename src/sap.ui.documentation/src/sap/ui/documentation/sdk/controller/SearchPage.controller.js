@@ -8,7 +8,7 @@ sap.ui.define([
     "sap/ui/documentation/sdk/controller/BaseController",
 	"sap/ui/documentation/sdk/controller/util/SearchUtil",
 	"sap/ui/documentation/sdk/controller/util/Highlighter",
-    "sap/ui/model/json/JSONModel",
+	"sap/ui/model/json/JSONModel",
     "sap/m/GroupHeaderListItem",
     "sap/base/Log"
 ], function(jQuery, BaseController, SearchUtil, Highlighter, JSONModel, GroupHeaderListItem, Log) {
@@ -241,6 +241,12 @@ sap.ui.define([
 				}
 				//default case
 				return oDoc.summary;
+			},
+
+			formatTableTitle: function (sPattern, iVisibleItemsCount, iItemsCount) {
+				var sVisibleItemsString = iItemsCount > 0 ? "1 - " + iVisibleItemsCount : "0";
+
+				return this.formatMessage(sPattern, sVisibleItemsString, iItemsCount);
 			},
 
 			/**

@@ -19,13 +19,6 @@ sap.ui.define([
 			 * @public
 			 */
 			onInit: function () {
-				// set i18n model on view
-				var	i18nModel = new ResourceModel({
-						bundleName: "sap.ui.documentation.sdk.i18n.i18n"
-					});
-
-				this.getView().setModel(i18nModel, "i18n");
-
 				this.getRouter().getRoute("welcome").attachPatternMatched(this._onMatched, this);
 
 				sap.ui.getVersionInfo({async: true}).then(function (oVersionInfo) {

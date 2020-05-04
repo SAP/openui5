@@ -15,9 +15,9 @@
 
 		<customHeader>
 			<Toolbar width="100%">
-				<SearchField id="searchField" placeholder="Filter" liveChange="onTreeFilter" class="sapUiDocumentationFilterField"/>
-				<Button icon="sap-icon://expand-all" press="onTreeExpandAll" tooltip="Expand All"/>
-				<Button icon="sap-icon://collapse-all" press="onTreeCollapseAll" tooltip="Collapse All"/>
+				<SearchField id="searchField" placeholder="{i18n>TOPIC_MASTER_FILTER_PLACEHOLDER}" liveChange="onTreeFilter" class="sapUiDocumentationFilterField"/>
+				<Button icon="sap-icon://expand-all" press="onTreeExpandAll" tooltip="{i18n>TOPIC_MASTER_EXPAND_TOOLTIP}"/>
+				<Button icon="sap-icon://collapse-all" press="onTreeCollapseAll" tooltip="{i18n>TOPIC_MASTER_COLAPSE_TOOLTIP}"/>
 			</Toolbar>
 		</customHeader>
 
@@ -27,7 +27,7 @@
                 id="tree"
                 mode="SingleSelectMaster"
                 selectionChange="onNodeSelect"
-                noDataText="No data, please try with the global search"
+                noDataText="{i18n>TOPIC_MASTER_NO_DATA_TEXT}"
                 items="{ path: '/' }">
                 <custom:DemokitTreeItem
                         title="{text}"

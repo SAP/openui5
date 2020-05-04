@@ -9,20 +9,39 @@
 							alwaysShowContentHeader="true"
 							upperCaseAnchorBar="false">
 		<op:headerTitle>
-			<op:ObjectPageHeader id="searchTitle" objectTitle='Search Results for "{/searchTerm}"'>
+			<op:ObjectPageHeader id="searchTitle" objectTitle="{
+				parts: [
+					'i18n>SEARCH_PAGE_TITLE',
+					'/searchTerm'
+				],
+				formatter: '.formatMessage'
+			}">
 			</op:ObjectPageHeader>
 		</op:headerTitle>
 		<op:headerContent>
-			<ObjectAttribute title="" text="Search results are displayed in categories."/>
+			<ObjectAttribute title="" text="{i18n>SEARCH_PAGE_DESCRIPTION}"/>
 		</op:headerContent>
  		<op:sections>
-			<op:ObjectPageSection id="allSummaryTitle" title="All ({/AllLength})">
+			<op:ObjectPageSection id="allSummaryTitle" title="{
+				parts: [
+					'i18n>SEARCH_PAGE_ALL_SECTION_TITLE',
+					'/AllLength'
+				],
+				formatter: '.formatMessage'
+			}">
 			<op:subSections>
 				<op:ObjectPageSubSection>
 					<op:blocks>
 						<VBox class="sapUxAPObjectPageSubSectionAlignContent" width="auto">
 							<OverflowToolbar design="Transparent" height="3rem">
-								<Title text="ALL ({=!!${/AllLength} > 0 ? '1 - ' + ${/visibleAllLength} : '0'} of {/AllLength})"/>
+								<Title text="{
+									parts: [
+										'i18n>SEARCH_PAGE_ALL_SECTION_TABLE_TITLE',
+										'/visibleAllLength',
+										'/AllLength'
+									],
+									formatter: '.formatTableTitle'
+								}"/>
 							</OverflowToolbar>
 							<List
 								id="allList"
@@ -44,13 +63,27 @@
 				</op:ObjectPageSubSection>
 			</op:subSections>
 			</op:ObjectPageSection>
- 			<op:ObjectPageSection title="API Reference ({/APILength})" visible="{=!!${/APILength}}">
+ 			<op:ObjectPageSection title="{
+					parts: [
+						'i18n>SEARCH_PAGE_API_SECTION_TITLE',
+						'/APILength'
+					],
+					formatter: '.formatMessage'
+				}"
+				visible="{=!!${/APILength}}">
 				<op:subSections>
 					<op:ObjectPageSubSection>
 						<op:blocks>
 							<VBox class="sapUxAPObjectPageSubSectionAlignContent" width="auto">
 								<OverflowToolbar design="Transparent" height="3rem">
-									<Title text="API Reference (1 - {/visibleAPILength} of {/APILength})"/>
+									<Title text="{
+										parts: [
+											'i18n>SEARCH_PAGE_API_SECTION_TABLE_TITLE',
+											'/visibleAPILength',
+											'/APILength'
+										],
+										formatter: '.formatTableTitle'
+									}"/>
 								</OverflowToolbar>
 								<List
 									id="apiList"
@@ -72,13 +105,27 @@
 					</op:ObjectPageSubSection>
 				</op:subSections>
 			</op:ObjectPageSection>
-			<op:ObjectPageSection title="Documentation ({/DocLength})" visible="{=!!${/DocLength}}">
+			<op:ObjectPageSection title="{
+					parts: [
+						'i18n>SEARCH_PAGE_DOCUMENTATION_SECTION_TITLE',
+						'/DocLength'
+					],
+					formatter: '.formatMessage'
+				}"
+				visible="{=!!${/DocLength}}">
 				<op:subSections>
 					<op:ObjectPageSubSection>
 						<op:blocks>
 							<VBox class="sapUxAPObjectPageSubSectionAlignContent" width="auto">
 								<OverflowToolbar design="Transparent" height="3rem">
-									<Title text="Documentation (1 - {/visibleDocLength} of {/DocLength})"/>
+									<Title text="{
+										parts: [
+											'i18n>SEARCH_PAGE_DOCUMENTATION_SECTION_TABLE_TITLE',
+											'/visibleDocLength',
+											'/DocLength'
+										],
+										formatter: '.formatTableTitle'
+									}"/>
 								</OverflowToolbar>
 								<List
 									id="documentationList"
@@ -100,13 +147,27 @@
 					</op:ObjectPageSubSection>
  				</op:subSections>
 			</op:ObjectPageSection>
-			<op:ObjectPageSection title="Samples ({/ExploredLength})" visible="{=!!${/ExploredLength}}">
+			<op:ObjectPageSection title="{
+					parts: [
+						'i18n>SEARCH_PAGE_SAMPLES_SECTION_TITLE',
+						'/ExploredLength'
+					],
+					formatter: '.formatMessage'
+				}"
+				visible="{=!!${/ExploredLength}}">
 				<op:subSections>
 					<op:ObjectPageSubSection>
 						<op:blocks>
 							<VBox class="sapUxAPObjectPageSubSectionAlignContent" width="auto">
 								<OverflowToolbar design="Transparent" height="3rem">
-									<Title text="Samples (1 - {/visibleExploredLength} of {/ExploredLength})"/>
+									<Title text="{
+										parts: [
+											'i18n>SEARCH_PAGE_SAMPLES_SECTION_TABLE_TITLE',
+											'/visibleExploredLength',
+											'/ExploredLength'
+										],
+										formatter: '.formatTableTitle'
+									}"/>
 								</OverflowToolbar>
 								<List
 									id="samplesList"
