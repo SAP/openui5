@@ -630,7 +630,7 @@ sap.ui.define([
 	 */
 	Tokenizer.prototype.onsapfocusleave = function(oEvent) {
 		// when focus goes to token, keep the select status, otherwise deselect all tokens
-		if (document.activeElement == this.getDomRef() || !this._checkFocus()) {
+		if (document.activeElement === this.getDomRef() || !this._checkFocus()) {
 			this._changeAllTokensSelection(false);
 			this._oSelectionOrigin = null;
 		}
@@ -671,7 +671,6 @@ sap.ui.define([
 		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === KeyCodes.A) {
 
 			//to check how many tokens are selected before Ctrl + A in Tokenizer
-			this._iSelectedToken = this.getSelectedTokens().length;
 			bSelectAll = this.getSelectedTokens().length < this._getVisibleTokens().length;
 
 			if (this._getVisibleTokens().length > 0) {
@@ -969,7 +968,7 @@ sap.ui.define([
 			iTokenLeftOffset = oToken.$().offset().left,
 			iTokenWidth = oToken.$().width();
 
-		if (this._getVisibleTokens().indexOf(oToken) == 0) {
+		if (this._getVisibleTokens().indexOf(oToken) === 0) {
 			this.$().scrollLeft(0);
 			return;
 		}
@@ -1001,7 +1000,7 @@ sap.ui.define([
 		// oFocusedElement could be undefined since the focus element might not correspond to an SAPUI5 Control
 		var index = oFocusedElement ? aTokens.indexOf(oFocusedElement) : -1;
 
-		if (index == 0) {
+		if (index === 0) {
 			oEvent.setMarked("forwardFocusToParent");
 			// focus is on first token - we do not handle this event and let it bubble
 			return;
@@ -1653,7 +1652,7 @@ sap.ui.define([
 		// if the focus is not on a Token in this Tokenizer do nothing
 		if (!oFocusedToken ||
 			!(oFocusedToken instanceof sap.m.Token) ||
-			this.indexOfToken(oFocusedToken) == -1) {
+			this.indexOfToken(oFocusedToken) === -1) {
 			return null;
 		}
 
@@ -1805,7 +1804,7 @@ sap.ui.define([
 				oRange.selectNodeContents(this.getDomRef("clip"));
 				oSelection.addRange(oRange);
 			}
-			if (window.clipboardData && oFocusRef.id == this.getId() + "-clip" && this.getDomRef()) {
+			if (window.clipboardData && oFocusRef.id === this.getId() + "-clip" && this.getDomRef()) {
 				this.getDomRef().focus();
 			}
 		}
