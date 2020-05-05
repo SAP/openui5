@@ -902,7 +902,7 @@ sap.ui.define([
 				oSelectedListItem = oSelectedItem && this.getListItem(oSelectedItem),
 				bFormattedTextHeaderFocused = this.getProperty("formattedTextFocused"),
 				oCustomHeader = this.getPicker() && this.getPicker().getCustomHeader(),
-				oPseudoFocusedElement = Device.browser.msie ? oCustomHeader.getFormattedText() : oCustomHeader;
+				oPseudoFocusedElement = (Device.browser.msie && oCustomHeader && oCustomHeader.getFormattedText) ?  oCustomHeader.getFormattedText() : oCustomHeader;
 
 			this.synchronizeSelection();
 
