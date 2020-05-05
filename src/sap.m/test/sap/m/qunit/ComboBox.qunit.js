@@ -11163,11 +11163,11 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// act
+		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(2000);
 
 		sap.ui.test.qunit.triggerEvent("tap", oComboBox.getListItem(oComboBox.getFirstItem()).getDomRef());
-
 		this.clock.tick(2000);
 
 		// assert
@@ -11212,6 +11212,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// act
+		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(500);
 
@@ -13118,6 +13119,7 @@ sap.ui.define([
 		var oPopup;
 
 		// Act
+		this.oErrorComboBox.focus();
 		this.oErrorComboBox.open();
 		this.clock.tick();
 
@@ -13168,6 +13170,10 @@ sap.ui.define([
 				setMarked: function () { },
 				preventDefault: function() { return false; }
 			};
+
+		this.stub(Device, "browser", {
+			msie: false
+		});
 
 		// Act
 		sap.ui.test.qunit.triggerKeyboardEvent(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
