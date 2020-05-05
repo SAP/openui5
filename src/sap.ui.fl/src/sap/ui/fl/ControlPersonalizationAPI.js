@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
@@ -18,6 +19,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ], function(
+	FlexState,
 	Layer,
 	Utils,
 	LayerUtils,
@@ -163,6 +165,8 @@ sap.ui.define([
 		 *
 		 * Activates the passed variant applicable to the passed control/component.
 		 *
+		 * Currently directly used by sap/fe!
+		 *
 		 * @param {sap.ui.base.ManagedObject|string} vElement - The component or control (instance or ID) on which the variantModel is set
 		 * @param {string} sVariantReference - The variant reference which needs to be activated
 		 *
@@ -203,7 +207,12 @@ sap.ui.define([
 					throw new Error("A valid control or component, and a valid variant/ID combination are required");
 				}
 
-				return oVariantModel.updateCurrentVariant(sVariantManagementReference, sVariantReference, oAppComponent);
+				// sap/fe is using this API very early during app start, sometimes before FlexState is initialized
+				return FlexState.initialize({
+					componentId: oAppComponent.getId()
+				}).then(function() {
+					return oVariantModel.updateCurrentVariant(sVariantManagementReference, sVariantReference, oAppComponent);
+				});
 			})
 			["catch"](function (oError) {
 				Log.error(oError);
