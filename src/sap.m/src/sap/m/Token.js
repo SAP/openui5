@@ -203,9 +203,7 @@ sap.ui.define([
 	Token.prototype._onTokenPress = function(oEvent) {
 		var bSelected = this.getSelected(),
 			bCtrlKey = oEvent.ctrlKey || oEvent.metaKey,
-			bShiftKey = oEvent.shiftKey,
-			bNewSelectedValue = true,
-			oParent;
+			bNewSelectedValue = true;
 
 		if (bCtrlKey || (oEvent.which === KeyCodes.SPACE)) {
 			bNewSelectedValue = !bSelected;
@@ -223,11 +221,6 @@ sap.ui.define([
 			} else {
 				this.fireDeselect();
 			}
-		}
-
-		oParent = this.getParent();
-		if (oParent instanceof Tokenizer) {
-			oParent._onTokenSelect(this, bCtrlKey, bShiftKey);
 		}
 
 		if (this.getSelected()) {
@@ -261,38 +254,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the selection status of the token and fires the correct "select" or "deselect" event.
-	 *
-	 * @param {boolean} bSelected Indicates if the token is selected.
-	 * @private
-	 */
-	Token.prototype._changeSelection = function(bSelected) {
-		if (this.getSelected() === bSelected) {
-			return;
-		}
-
-		this.setSelected(bSelected);
-
-		if (bSelected) {
-			this.fireSelect();
-		} else {
-			this.fireDeselect();
-		}
-	};
-
-	/**
 	 * Event handler called when control is on tap
 	 *
 	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
-	Token.prototype.ontap = function(oEvent) {
+	Token.prototype.ontap = function (oEvent) {
 		var oDeleteIcon = this.getAggregation("deleteIcon");
 
 		if (oDeleteIcon && oEvent.target.id === oDeleteIcon.getId()) {
 			oEvent.setMark("tokenDeletePress", true);
 			return;
 		}
+
+		oEvent.setMark("tokenTap", this);
+
 		this._onTokenPress(oEvent);
 	};
 

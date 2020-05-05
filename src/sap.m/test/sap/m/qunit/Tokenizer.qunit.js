@@ -1109,7 +1109,7 @@ sap.ui.define([
 
 	QUnit.test("Test token selection with Shift and Ctrl", function(assert){
 		// arrange
-		this.t3.focus();
+		sap.ui.test.qunit.triggerEvent("tap", this.t3.getDomRef(), {target : this.t3.getDomRef()});
 
 		// act
 		sap.ui.test.qunit.triggerEvent("tap", this.t1.getDomRef(), {target : this.t1.getDomRef(), shiftKey: true});
