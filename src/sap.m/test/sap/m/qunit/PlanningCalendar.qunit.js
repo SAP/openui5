@@ -3612,6 +3612,24 @@ sap.ui.define([
 		assert.equal(oSpyCancel.callCount,1, "Close event was thrown once");
 	});
 
+	QUnit.test("Selection is correct after resizing", function(assert) {
+		// Prepare
+		var oSelectedDate = new Date(2019, 11, 3);
+
+		this.oPC2.setViewKey("One Month");
+		this.oPC2._oOneMonthsRow.addSelectedDate(new DateTypeRange({
+			startDate: oSelectedDate
+		}));
+
+		// Act
+		this.oPC2.setWidth("200px");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.equal(this.oPC2._oOneMonthsRow.getSelectedDates()[0].getStartDate().getTime(), oSelectedDate.getTime(),
+			"After resizing the selected date is the same as one selected from the user.");
+	});
+
 	QUnit.module("Miscellaneous", {
 		beforeEach: function() {
 			this.oPC = new PlanningCalendar();

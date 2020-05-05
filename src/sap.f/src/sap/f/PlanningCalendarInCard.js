@@ -309,7 +309,7 @@ sap.ui.define([
 		}
 
 		oStartDate = CalendarUtils.getFirstDateOfMonth(CalendarUtils._createUniversalUTCDate(oDate, undefined, true));
-		this._adjustSelectedDate(CalendarDate.fromLocalJSDate(oDate), false);
+		this._adjustSelectedDate(CalendarDate.fromLocalJSDate(oDate));
 		oDate = CalendarUtils._createLocalDate(oStartDate, true);
 		this.setStartDate(oDate);
 		this._dateNav.setCurrent(oDate);

@@ -89,7 +89,7 @@ sap.ui.define([
 						oNewStartDate = this._getStartDate();
 					}
 
-					this._adjustSelectedDate(oNewStartDate, false);
+					this._adjustSelectedDate(oNewStartDate);
 					this._oFocusDateOneMonth = oNewStartDate;
 					this._closeCalendarPicker(true);// true means do not focus, as we set the this._oFocusDateOneMonth and focus will happen in .focusDateExtend
 					this._focusDate(oCalPickerFocusedDate, false, true); //true means don't fire event (we already did it in setStartDate())
@@ -257,15 +257,11 @@ sap.ui.define([
 
 		/**
 		 * Sets the selection to match the focused date for size S and M.
-		 * @param {sap.ui.unified.calendar.CalendarDate} oDate The date to select unless bUseFirstOfMonth is used
-		 * @param {boolean} bUseFirstOfMonth If specified the first month of the given date will be used
+		 * @param {sap.ui.unified.calendar.CalendarDate} oSelectDate The date to select unless bUseFirstOfMonth is used
 		 * @private
 		 */
-		CalendarOneMonthInterval.prototype._adjustSelectedDate = function(oDate, bUseFirstOfMonth) {
-			var oMonth = this.getAggregation("month")[0],
-				oSelectDate;
-
-			oSelectDate = bUseFirstOfMonth ? CalendarUtils._getFirstDateOfMonth(oDate) : oDate;
+		CalendarOneMonthInterval.prototype._adjustSelectedDate = function(oSelectDate) {
+			var oMonth = this.getAggregation("month")[0];
 
 			if (oMonth.getMode && oMonth.getMode() < 2) {
 				this._selectDate(oSelectDate);
