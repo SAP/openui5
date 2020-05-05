@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/layout/cssgrid/GridLayoutDelegate",
 	"sap/ui/Device",
 	"sap/ui/core/Core",
-	"sap/ui/core/ResizeHandler"
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ],
 function (
 	CSSGrid,
@@ -20,7 +21,8 @@ function (
 	GridLayoutDelegate,
 	Device,
 	Core,
-	ResizeHandler
+	ResizeHandler,
+	waitForThemeApplied
 ) {
 	"use strict";
 
@@ -635,4 +637,6 @@ function (
 		assert.strictEqual(oItemPositionBeforeBusy.top, oItemPositionAfterBusy.top, "The element should NOT be moved vertically after it gets busy");
 		assert.strictEqual(oItemPositionBeforeBusy.left, oItemPositionAfterBusy.left, "The element should NOT be moved horizontally after it gets busy");
 	});
+
+	return waitForThemeApplied();
 });
