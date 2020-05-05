@@ -253,15 +253,29 @@ sap.ui.define([
 				},
 				selectMessage : function (sMessage) {
 					return this.waitFor({
-						controlType : "sap.m.StandardListItem",
-						matchers : new Properties({title: sMessage}),
-						success : function (aItems) {
-							if (aItems.length === 1) {
-								QUnitUtils.triggerEvent("tap", aItems[0].getDomRef());
-								Opa5.assert.ok(true, "Message selected: " + sMessage);
-							} else {
-								Opa5.assert.ok(false, "Duplicate Message: " + sMessage);
+						controlType : "sap.m.MessagePopover",
+						success : function (aMessagePopover) {
+							if (aMessagePopover[0].getItems().length === 1) {
+								// Note:
+								// selectMessage is used to display the message details, e.g. to
+								// afterwards check the details via checkMessageDetails.
+								// But, if only ONE Message is in the popover, then
+								// the message cannot (and need not) be selected because the
+								// details are already shown
+								return;
 							}
+							return this.waitFor({
+								controlType : "sap.m.StandardListItem",
+								matchers : new Properties({title : sMessage}),
+								success : function (aItems) {
+									if (aItems.length === 1) {
+										QUnitUtils.triggerEvent("tap", aItems[0].getDomRef());
+										Opa5.assert.ok(true, "Message selected: " + sMessage);
+									} else {
+										Opa5.assert.ok(false, "Duplicate Message: " + sMessage);
+									}
+								}
+							});
 						}
 					});
 				}

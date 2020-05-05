@@ -2247,8 +2247,8 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest(
-				"SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')?"
-				+ "$select=ItemPosition,Quantity,SalesOrderID", {
+				"SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
+				+ "?$select=ItemPosition,Quantity,SalesOrderID", {
 					ItemPosition : "0010",
 					SalesOrderID : "1",
 					Quantity : "5"
@@ -2726,8 +2726,8 @@ sap.ui.define([
 			.expectChange("businessPartner");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var sMessage = "GET SalesOrderList('1')/SO_2_SOITEM('0010')/SOITEM_2_PRODUCT?"
-				+ "$select=ProductID&$expand=PRODUCT_2_BP($select=BusinessPartnerID,"
+			var sMessage = "GET SalesOrderList('1')/SO_2_SOITEM('0010')/SOITEM_2_PRODUCT"
+				+ "?$select=ProductID&$expand=PRODUCT_2_BP($select=BusinessPartnerID,"
 				+ "CompanyName): " + oFixture.error;
 
 			that.oLogMock.expects("error")
@@ -3315,8 +3315,8 @@ sap.ui.define([
 	[function (oTable) {
 		this.expectRequest("EMPLOYEES('0')?$select=AGE,ID,Name",
 				{ID : "0", Name : "Frederic Fall", AGE : 70})
-			.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS?"
-				+ "$select=Category,ID,Name&$skip=0&$top=100", {
+			.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS"
+				+ "?$select=Category,ID,Name&$skip=0&$top=100", {
 				value : [{
 					Category : "Electronics",
 					ID : "1",
@@ -3329,8 +3329,8 @@ sap.ui.define([
 		this.expectRequest("EMPLOYEES?$select=AGE,ID,Name&$skip=0&$top=100", {
 				value : [{ID : "0", Name : "Frederic Fall", AGE : 70}]
 			})
-			.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS?"
-				+ "$select=Category,ID,Name&$skip=0&$top=100", {
+			.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS"
+				+ "?$select=Category,ID,Name&$skip=0&$top=100", {
 				value : [{
 					Category : "Electronics",
 					ID : "1",
@@ -3368,8 +3368,8 @@ sap.ui.define([
 
 			return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
 				.then(function () {
-					that.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS?"
-							+ "$select=Category,ID,Name&$skip=0&$top=100", {
+					that.expectRequest("EMPLOYEES('0')/EMPLOYEE_2_EQUIPMENTS"
+							+ "?$select=Category,ID,Name&$skip=0&$top=100", {
 							value : [{
 								Category : "Electronics",
 								ID : "1",
@@ -3423,8 +3423,8 @@ sap.ui.define([
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"]);
 
 		return this.createView(assert, sView).then(function () {
-			that.expectRequest("EMPLOYEES?$expand=EMPLOYEE_2_MANAGER&$orderby=Name&"
-					+ "$skip=0&$top=100", {
+			that.expectRequest("EMPLOYEES?$expand=EMPLOYEE_2_MANAGER&$orderby=Name"
+					+ "&$skip=0&$top=100", {
 					value : [
 						{Name : "Frederic Fall", EMPLOYEE_2_MANAGER : {ID : "1"}},
 						{Name : "Jonathan Smith", EMPLOYEE_2_MANAGER : {ID : "2"}}
@@ -4811,8 +4811,8 @@ sap.ui.define([
 						]
 					}))
 				.expectChange("note", ["Note 2"])
-				.expectRequest("SalesOrderList('2')/SO_2_SOITEM?"
-					+ "$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=20", {
+				.expectRequest("SalesOrderList('2')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=20", {
 						value : [
 							{ItemPosition : "10", Note : "Note 2", SalesOrderID : "2"}
 						]
@@ -6590,8 +6590,8 @@ sap.ui.define([
 		}).then(function () {
 			assert.strictEqual(oTable.getRows()[1].getBindingContext(), oCreatedContext1);
 
-			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&"
-						+ "$filter=SalesOrderID eq '44'", {
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+						+ "&$filter=SalesOrderID eq '44'", {
 					value : []
 				})
 				.expectChange("id", null) // for the deleted row
@@ -7473,8 +7473,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&"
-					+ "$filter=SalesOrderID eq '44'", {
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+					+ "&$filter=SalesOrderID eq '44'", {
 					value : []
 				});
 
@@ -7755,8 +7755,8 @@ sap.ui.define([
 		}).then(function () {
 			assert.strictEqual(oTable.getItems()[2].getBindingContext(), oCreatedContext1);
 
-			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&"
-				+ "$filter=SalesOrderID eq '44'", {
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
+				+ "&$filter=SalesOrderID eq '44'", {
 					value : []
 				});
 
@@ -9764,8 +9764,8 @@ sap.ui.define([
 			that.expectRequest({
 					method : "POST",
 					headers : {},
-					url : "Artists/special.cases.Create?"
-						+ "$select=ArtistID,IsActiveEntity,Messages,Name",
+					url : "Artists/special.cases.Create"
+						+ "?$select=ArtistID,IsActiveEntity,Messages,Name",
 					payload : {
 						ArtistID : "ABC",
 						IsActiveEntity : false,
@@ -9812,8 +9812,8 @@ sap.ui.define([
 		}).then(function () {
 			return that.checkValueState(assert, "nameCreated", "Success", "Just A Message");
 		}).then(function () {
-			that.expectRequest("Artists(ArtistID='ABC',IsActiveEntity=false)?"
-					+ "$select=ArtistID,IsActiveEntity,Messages,Name", {
+			that.expectRequest("Artists(ArtistID='ABC',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity,Messages,Name", {
 					"@odata.etag" : "ETagAfterRefresh",
 					ArtistID : "ABC",
 					IsActiveEntity : false,
@@ -10886,8 +10886,8 @@ sap.ui.define([
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			that = this;
 
-		this.expectRequest("SalesOrderList('42')/SO_2_SOITEM('10')?"
-				+ "$select=ItemPosition,Quantity,QuantityUnit,SalesOrderID", {
+		this.expectRequest("SalesOrderList('42')/SO_2_SOITEM('10')"
+				+ "?$select=ItemPosition,Quantity,QuantityUnit,SalesOrderID", {
 				"@odata.etag" : "ETag",
 				Quantity : "10.000",
 				QuantityUnit : "EA"
@@ -11274,8 +11274,8 @@ sap.ui.define([
 	</ColumnListItem>\
 </Table>';
 
-		this.expectRequest("Equipments?$select=Category,ID&"
-				+ "$expand=EQUIPMENT_2_PRODUCT($select=ID,SupplierIdentifier)"
+		this.expectRequest("Equipments?$select=Category,ID"
+				+ "&$expand=EQUIPMENT_2_PRODUCT($select=ID,SupplierIdentifier)"
 				+ "&$skip=0&$top=100", {
 				value : [{
 					Category : "Electronics",
@@ -11306,8 +11306,8 @@ sap.ui.define([
 	</ColumnListItem>\
 </Table>';
 
-		this.expectRequest("Equipments?$select=Category,ID&"
-				+ "$expand=EQUIPMENT_2_EMPLOYEE($select=AGE,ID)"
+		this.expectRequest("Equipments?$select=Category,ID"
+				+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=AGE,ID)"
 				+ "&$skip=0&$top=100", {
 				value : [{
 					Category : "Electronics",
@@ -12562,8 +12562,8 @@ sap.ui.define([
 
 				sId = that.addToForm(oForm, "Name", assert);
 				that.removeFromForm(oForm, "idEmployeeId");
-				that.expectRequest("Equipments(Category='Electronics',ID=1)?"
-						+ "$select=Category,ID,Name", {
+				that.expectRequest("Equipments(Category='Electronics',ID=1)"
+						+ "?$select=Category,ID,Name", {
 						Category : "Electronics",
 						ID : 1,
 						Name : "Office PC"
@@ -13921,8 +13921,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectRequest("Equipments?"
-					+ "$filter=EQUIPMENT_2_PRODUCT/ID eq 42&$skip=0&$top=100", {
+			that.expectRequest("Equipments"
+					+ "?$filter=EQUIPMENT_2_PRODUCT/ID eq 42&$skip=0&$top=100", {
 					value : [{Name : "Bar"}]
 				})
 				.expectChange("name", ["Bar"]);
@@ -14107,8 +14107,8 @@ sap.ui.define([
 					"/SalesOrderList(LifecycleStatus='" + "ZYX"[i] + "')");
 			});
 
-			that.expectRequest("SalesOrderList?"
-					+ "$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
+			that.expectRequest("SalesOrderList"
+					+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
 					+ "/orderby(LifecycleStatus desc)&$count=true&$skip=7&$top=3", {
 					"@odata.count" : "26",
 					value : [
@@ -15510,8 +15510,8 @@ sap.ui.define([
 				.expectChange("name");
 
 			return this.createView(assert, sView, oModel).then(function () {
-				that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?"
-						+ "$select=Address/City,ArtistID,IsActiveEntity,Name", {
+				that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+						+ "?$select=Address/City,ArtistID,IsActiveEntity,Name", {
 						Address : {City : "Liverpool"},
 						ArtistID : "42",
 						IsActiveEntity : true,
@@ -16158,8 +16158,8 @@ sap.ui.define([
 
 			oReturnValueContext = oReturnValueContext0;
 
-			that.expectRequest("Artists(ArtistID='23',IsActiveEntity=false)?"
-				+ "$select=ArtistID,IsActiveEntity,Name"
+			that.expectRequest("Artists(ArtistID='23',IsActiveEntity=false)"
+				+ "?$select=ArtistID,IsActiveEntity,Name"
 				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
 					ArtistID : "23",
 					IsActiveEntity : false,
@@ -16254,8 +16254,8 @@ sap.ui.define([
 
 				oReturnValueContext = aPromiseResults[0];
 
-				that.expectRequest("Artists(ArtistID='23',IsActiveEntity=true)?"
-					+ "$select=ArtistID,IsActiveEntity,Name"
+				that.expectRequest("Artists(ArtistID='23',IsActiveEntity=true)"
+					+ "?$select=ArtistID,IsActiveEntity,Name"
 					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
 						ArtistID : "23",
 						IsActiveEntity : true,
@@ -17744,8 +17744,8 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			oContext0 = that.oView.byId("equipments").getItems()[0].getBindingContext();
 
-			that.expectRequest("Equipments(Category='Electronics',ID=23)/EQUIPMENT_2_EMPLOYEE?"
-					+ "$select=ID,Name", {
+			that.expectRequest("Equipments(Category='Electronics',ID=23)/EQUIPMENT_2_EMPLOYEE"
+					+ "?$select=ID,Name", {
 					ID : "1",
 					Name : "John Smith"
 				})
@@ -17781,8 +17781,8 @@ sap.ui.define([
 		}).then(function () {
 			oContext1 = that.oView.byId("equipments").getItems()[1].getBindingContext();
 
-			that.expectRequest("Equipments(Category='Vehicle',ID=42)/EQUIPMENT_2_EMPLOYEE?"
-					+ "$select=ID,Name", {
+			that.expectRequest("Equipments(Category='Vehicle',ID=42)/EQUIPMENT_2_EMPLOYEE"
+					+ "?$select=ID,Name", {
 					ID : "2",
 					Name : "Frederic Fall"
 				})
@@ -17800,8 +17800,8 @@ sap.ui.define([
 					Category : "Vehicle",
 					ID : 42
 				})
-				.expectRequest("Equipments(Category='Vehicle',ID=42)/EQUIPMENT_2_EMPLOYEE?"
-					+ "$select=ID,Name", {
+				.expectRequest("Equipments(Category='Vehicle',ID=42)/EQUIPMENT_2_EMPLOYEE"
+					+ "?$select=ID,Name", {
 					ID : "2",
 					Name : "Frederic Fall"
 				});
@@ -18211,8 +18211,8 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("Equipments(Category='foo',ID='0815')?$select=Category,ID&"
-				+ "$expand=EQUIPMENT_2_EMPLOYEE($select=ID,Name,"
+		this.expectRequest("Equipments(Category='foo',ID='0815')?$select=Category,ID"
+				+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=ID,Name,"
 				+ "__CT__FAKE__Message/__FAKE__Messages)", {
 				Category : "foo",
 				ID : "0815",
@@ -18377,8 +18377,8 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest(
-			"TEAMS('TEAM_01')?"
-				+ "$expand=TEAM_2_EMPLOYEES($select=ID,Name,__CT__FAKE__Message/__FAKE__Messages)"
+			"TEAMS('TEAM_01')"
+				+ "?$expand=TEAM_2_EMPLOYEES($select=ID,Name,__CT__FAKE__Message/__FAKE__Messages)"
 				+ "&$select=Team_Id", {
 				Team_Id : "TEAM_01",
 				TEAM_2_EMPLOYEES : [{
@@ -20864,8 +20864,8 @@ sap.ui.define([
 					Address : {Street : "Bakerstreet"},
 					BusinessPartnerID : "23"
 				})
-				.expectRequest(sEntityPath + "/BP_2_PRODUCT?$select=Name,ProductID&$skip=0&"
-						+ "$top=100", {
+				.expectRequest(sEntityPath + "/BP_2_PRODUCT?$select=Name,ProductID&$skip=0"
+						+ "&$top=100", {
 					value : [{
 						"@odata.etag" : "ETag",
 						ProductID : "1",
@@ -23726,8 +23726,8 @@ sap.ui.define([
 
 			that.expectRequest("SalesOrderList('42')?$select=Messages,Note",
 					{Note : "refreshed Note"})
-				.expectRequest("SalesOrderList('42')/SO_2_SOITEM?"
-					+ "$select=GrossAmount,ItemPosition,SalesOrderID"
+				.expectRequest("SalesOrderList('42')/SO_2_SOITEM"
+					+ "?$select=GrossAmount,ItemPosition,SalesOrderID"
 					+ "&$filter=SalesOrderID eq '42' and ItemPosition eq '0010'", {
 					value : [
 						{GrossAmount : "1.41", ItemPosition : "0010", SalesOrderID : "42"}
@@ -23763,7 +23763,11 @@ sap.ui.define([
 	// "/As(1)/AtoCs(2)/CtoD/DtoC/CtoA/AValue".
 	// JIRA: CPOUI5ODATAV4-221
 	QUnit.test("requestSideEffects: parent cache of a list binding", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true, updateGroupId : "update1"}),
+		var oModel = createSpecialCasesModel({
+				autoExpandSelect : true,
+				groupId : "$auto", // required so that late property requests can be combined
+				updateGroupId : "update1"
+			}),
 			sView = '\
 <FlexBox binding="{/As(1)}">\
 	<Text id="avalue::form" text="{AValue}"/>\
@@ -23775,6 +23779,7 @@ sap.ui.define([
 	</Table>\
 </FlexBox>\
 <FlexBox id="form" binding="{CtoD}">\
+	<Text text="{DID}"/>\
 	<Text id="dvalue" text="{DValue}"/>\
 </FlexBox>',
 			that = this;
@@ -23800,6 +23805,7 @@ sap.ui.define([
 			.expectChange("dvalue");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			// combined late property requests
 			that.expectRequest("As(1)/AtoCs(2)?$select=CID&$expand=CtoD($select=DID,DValue)", {
 					CID : 2,
 					CtoD : {
