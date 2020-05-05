@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/core/message/Message",
 	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/ODataMessageParser",
+	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/test/TestUtils"
-], function (Log, Message, MessageScope, ODataMessageParser, TestUtils) {
+], function (Log, Message, MessageScope, ODataMessageParser, ODataUtils, TestUtils) {
 	/*global QUnit,sinon*/
 	/*eslint no-warning-comments: 0*/
 	"use strict";
@@ -597,6 +598,74 @@ sap.ui.define([
 			aMessages, mRequestInfo/* , mGetEntities, mChangeEntities, bSimpleMessageLifecycle*/);
 
 		assert.deepEqual(oODataMessageParser._lastMessages, aNewLastMessages);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_createMessage: no target", function (assert) {
+		var oMessage,
+			oMessageObject = {},
+			oODataMessageParser = {
+				_createTarget : function () {}
+			},
+			mRequestInfo = {
+				request : {headers : {"sap-message-scope" : "BusinessObject"}},
+				response : {}
+			};
+
+		this.mock(oODataMessageParser).expects("_createTarget").never();
+		this.mock(ODataUtils).expects("_normalizeKey").never();
+
+		// code under test
+		oMessage = ODataMessageParser.prototype._createMessage.call(oODataMessageParser,
+			oMessageObject, mRequestInfo, false);
+
+		assert.strictEqual(oMessage.fullTarget, "");
+		assert.strictEqual(oMessage.target, "");
+	});
+
+	//*********************************************************************************************
+[{
+	isTechnical : false,
+	request : {headers : {"sap-message-scope" : "foo"}}
+}, {
+	isTechnical : false,
+	request : {}
+}, {
+	isTechnical : false,
+	request : undefined
+}, {
+	isTechnical : true,
+	request : {headers : {"sap-message-scope" : "BusinessObject"}}
+}].forEach(function (oFixture, i) {
+	QUnit.test("_createMessage: no target default to empty string, " + i, function (assert) {
+		var oMessage,
+			oMessageObject = {},
+			oODataMessageParser = {
+				_createTarget : function () {}
+			},
+			mRequestInfo = {
+				request : oFixture.request,
+				response : {}
+			};
+
+		this.mock(oODataMessageParser).expects("_createTarget")
+			.withExactArgs(sinon.match.same(oMessageObject).and(sinon.match({target : ""})),
+				sinon.match.same(mRequestInfo))
+			.callsFake(function (oMessageObject0) {
+				oMessageObject0.canonicalTarget = "~target";
+				oMessageObject0.deepPath = "~deepPath";
+			});
+		this.mock(ODataUtils).expects("_normalizeKey")
+			.withExactArgs("~target")
+			.returns("~normalizedTarget");
+
+		// code under test
+		oMessage = ODataMessageParser.prototype._createMessage.call(oODataMessageParser,
+			oMessageObject, mRequestInfo, oFixture.isTechnical);
+
+		assert.strictEqual(oMessage.fullTarget, "~deepPath");
+		assert.strictEqual(oMessage.target, "~normalizedTarget");
 	});
 });
 });

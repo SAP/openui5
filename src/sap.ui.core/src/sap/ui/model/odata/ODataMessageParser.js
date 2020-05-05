@@ -344,7 +344,9 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 };
 
 /**
- * Creates an sap.ui.core.message.Message from the given JavaScript object
+ * Creates an sap.ui.core.message.Message from the given JavaScript object. Since 1.78.0 unbound
+ * non-technical messages are supported if the message scope for the request is
+ * <code>BusinessObject</code>.
  *
  * @param {ODataMessageParser~ServerError} oMessageObject - The object containing the message data
  * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
@@ -367,15 +369,17 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestI
 	var sDescriptionUrl = oMessageObject.longtext_url ? oMessageObject.longtext_url : "";
 
 	var bPersistent = false;
+	// propertyRef is deprecated and should not be used if a target is specified
 	if (!oMessageObject.target && oMessageObject.propertyref) {
 		oMessageObject.target = oMessageObject.propertyref;
 	}
-	// propertyRef is deprecated and should not be used if a target is specified
-	if (typeof oMessageObject.target === "undefined") {
+	if (oMessageObject.target === undefined
+			&& (bIsTechnical || !mRequestInfo.request || !mRequestInfo.request.headers
+				|| mRequestInfo.request.headers["sap-message-scope"] !== "BusinessObject")) {
 		oMessageObject.target = "";
 	}
 
-	if (oMessageObject.target.indexOf("/#TRANSIENT#") === 0) {
+	if (oMessageObject.target && oMessageObject.target.indexOf("/#TRANSIENT#") === 0) {
 		bPersistent = true;
 		oMessageObject.target = oMessageObject.target.substr(12);
 	} else if (oMessageObject.transient) {
@@ -384,18 +388,24 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestI
 		bPersistent = true;
 	}
 
-	this._createTarget(oMessageObject, mRequestInfo);
+	if (oMessageObject.target !== undefined) {
+		this._createTarget(oMessageObject, mRequestInfo);
+	}
 
 	return new Message({
 		type:      sType,
 		code:      sCode,
 		message:   sText,
 		descriptionUrl: sDescriptionUrl,
-		target:    ODataUtils._normalizeKey(oMessageObject.canonicalTarget),
+		target:    oMessageObject.target === undefined
+			? ""
+			: ODataUtils._normalizeKey(oMessageObject.canonicalTarget),
 		processor: this._processor,
 		technical: bIsTechnical,
 		persistent: bPersistent,
-		fullTarget: oMessageObject.deepPath,
+		fullTarget: oMessageObject.target === undefined
+			? ""
+			: oMessageObject.deepPath,
 		technicalDetails: {
 			statusCode: mRequestInfo.response.statusCode,
 			headers: mRequestInfo.response.headers
