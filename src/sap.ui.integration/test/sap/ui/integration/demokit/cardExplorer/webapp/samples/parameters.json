@@ -30,35 +30,51 @@
 			"parameters": {
 				"city": {
 					"value": "Berlin",
-					"type": "string"
+					"type": "string",
+					"label": "City",
+					"description": "The city for which the news is displayed."
 				},
 				"agencyName": {
 					"value": "NewsAPI",
-					"type": "string"
+					"type": "string",
+					"label": "News Agency Name",
+					"description": "The name of the agency, which provides the news."
 				},
 				"agencyUrl": {
 					"value": "https://newsapi.org",
-					"type": "string"
+					"type": "string",
+					"label": "News Agency URL",
+					"description": "The URL address of the news agency."
 				},
 				"numberOfArticles": {
 					"value": 4,
-					"type": "integer"
+					"type": "integer",
+					"label": "Maximum Articles",
+					"description": "Defines how many articles will be displayed at most."
 				},
 				"fakeNewsIndex": {
 					"value": 0.035,
-					"type": "number"
+					"type": "number",
+					"label": "Fake News Index",
+					"description": "Shows what percent of the news is fake."
 				},
 				"clickable": {
 					"value": true,
-					"type": "boolean"
+					"type": "boolean",
+					"label": "Read Article Details",
+					"description": "Defines whether articles can be clicked and show more information."
 				},
 				"from": {
 					"value": "{{parameters.TODAY_ISO}}",
-					"type": "date"
+					"type": "date",
+					"label": "From",
+					"description": "Start date for the searched period."
 				},
 				"to": {
 					"value": "{{parameters.NOW_ISO}}",
-					"type": "datetime"
+					"type": "datetime",
+					"label": "To",
+					"description": "End date and time for the searched period."
 				}
 			}
 		},

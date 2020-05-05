@@ -25,19 +25,27 @@
 			"parameters": {
 				"northwindServiceUrl": {
 					"value": "https://services.odata.org/V3/Northwind/Northwind.svc",
-					"type": "string"
+					"type": "string",
+					"label": "Northwind Service URL",
+					"description": "The URL of the web service."
 				},
 				"periodInterval": {
-				    "value": "lastYears",
-					"type": "string"
+					"value": "lastYears",
+					"type": "string",
+					"label": "Time interval measurement unit",
+					"description": "A predefined string, defining the time interval."
 				},
 				"periodAge": {
-				    "value": 30,
-					"type": "integer"
+					"value": 30,
+					"type": "integer",
+					"label": "Time interval quantity",
+					"description": "A quantity value, for the time period that should be taken."
 				},
 				"maxItems": {
 					"value": 7,
-					"type": "integer"
+					"type": "integer",
+					"label": "Maximum Items",
+					"description": "Defines how many items will be displayed at most."
 				}
 			}
 		},
