@@ -1982,11 +1982,7 @@ sap.ui.define([
 	ObjectPageLayout.prototype.scrollToSection = function (sId, iDuration, iOffset, bIsTabClicked, bRedirectScroll) {
 		var oSection = this.oCore.byId(sId),
 			iSnapPosition,
-			oTargetSubSection,
-			bAnimationsEnabled = (sap.ui.getCore().getConfiguration().getAnimationMode()
-				!== Configuration.AnimationMode.none),
-			bAnimatedScroll,
-			bScrollOverAnotherSubSection;
+			oTargetSubSection;
 
 		if (!this.getDomRef()){
 			Log.warning("scrollToSection can only be used after the ObjectPage is rendered", this);
@@ -2086,19 +2082,6 @@ sap.ui.define([
 			this.getHeaderTitle() && this._shiftHeaderTitle();
 
 			iScrollTo += iOffset;
-			bAnimatedScroll = bAnimationsEnabled && iDuration;
-			bScrollOverAnotherSubSection = (this._sScrolledSubSectionId !== oTargetSubSection.getId())
-				&& this._$opWrapper.length && (this._$opWrapper.get(0).scrollTop !== iScrollTo);
-
-			if (bAnimatedScroll && this.getEnableLazyLoading() && bScrollOverAnotherSubSection) {
-				// suppress lazyLoading during the animated scroll
-				// to avoid loading of intermediate sections
-				this._oLazyLoading.suppress();
-				setTimeout(function() {
-					this._oLazyLoading.resume();
-					this._oLazyLoading.doLazyLoading();
-				}.bind(this), iDuration);
-			}
 
 			if (!this._bStickyAnchorBar && this._shouldSnapHeaderOnScroll(iScrollTo)) {
 				iSnapPosition = this._getSnapPosition();
