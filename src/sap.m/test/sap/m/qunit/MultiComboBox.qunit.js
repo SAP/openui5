@@ -5181,7 +5181,7 @@ sap.ui.define([
 
 		// assert
 		setTimeout(function(){
-			assert.notOk(oSpy.called, "Tokenizer's scrollToEnd should not be called on focusining a token.");
+			assert.strictEqual(oSpy.callCount, 1, "Tokenizer's scrollToEnd should be called once on focusining a token.");
 			done();
 			oMultiComboBox.destroy();
 		}, 0);
