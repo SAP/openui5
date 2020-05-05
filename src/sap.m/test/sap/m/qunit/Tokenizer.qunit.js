@@ -525,21 +525,23 @@ sap.ui.define([
 
 	QUnit.test("Pressing delete icon when Tokenizer is disabled", function(assert) {
 		// arrange
-		var fnFireDeleteSpy,
+		var oFireDeleteSpy, oUpdateTokensSpy,
 			oToken = new Token({text: "test"});
 
-		fnFireDeleteSpy = this.spy(oToken, "fireDelete");
+		oFireDeleteSpy = this.spy(oToken, "fireDelete");
+		oUpdateTokensSpy = this.spy(this.tokenizer, "fireTokenUpdate");
 		this.tokenizer.addToken(oToken);
 		this.tokenizer.setEnabled(false);
 
 		// act
-		oToken._tokenIconPress({preventDefault: function () {}});
+		oToken.getAggregation("deleteIcon").firePress();
 
 		// assert
-		assert.equal(fnFireDeleteSpy.callCount, 0, "delete event was NOT fired");
+		assert.equal(oUpdateTokensSpy.callCount, 0, "TokenUpdate was NOT fired");
+		assert.equal(oFireDeleteSpy.callCount, 1, "delete event was fired");
 		assert.ok(!oToken.bIsDestroyed, "Token1 is NOT destroyed");
 
-		fnFireDeleteSpy.restore();
+		oFireDeleteSpy.restore();
 	});
 
 	QUnit.module("Scrolling public API", {

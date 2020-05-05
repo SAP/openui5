@@ -2048,7 +2048,6 @@ sap.ui.define([
 		// Arrange
 		var oFakeEvent, oItem,
 			oList = this.multiInput._getTokensList(),
-			oTokenDeleteSpy = this.spy(this.multiInput._tokenizer, "_onTokenDelete"),
 			oListRemoveItemSpy = this.spy(oList, "removeItem");
 
 		this.multiInput.setWidth("200px");
@@ -2067,7 +2066,6 @@ sap.ui.define([
 		this.multiInput._handleNMoreItemDelete(oFakeEvent);
 
 		// Assert
-		assert.strictEqual(oTokenDeleteSpy.callCount, 0, "Token was not deleted.");
 		assert.strictEqual(oListRemoveItemSpy.callCount, 0, "List item was not removed.");
 		assert.strictEqual(this.multiInput.getTokens().length, 1, "There is still one token in the multi input.");
 	});
