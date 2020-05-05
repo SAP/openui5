@@ -67,11 +67,11 @@ function(
 				assert.equal(aAdditionalElements[2].originalLabel, "", "then the originalLabel is not set");
 				assert.equal(aAdditionalElements[3].originalLabel, "", "then the originalLabel is not set");
 				assert.equal(aAdditionalElements[4].originalLabel, "", "then the originalLabel is not set");
-				assert.equal(aAdditionalElements[0].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
-				assert.equal(aAdditionalElements[1].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
-				assert.equal(aAdditionalElements[2].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
-				assert.equal(aAdditionalElements[3].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
-				assert.equal(aAdditionalElements[4].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
+				assert.equal(aAdditionalElements[0].parentPropertyName, "", "then the parentPropertyName is not set");
+				assert.equal(aAdditionalElements[1].parentPropertyName, "", "then the parentPropertyName is not set");
+				assert.equal(aAdditionalElements[2].parentPropertyName, "", "then the parentPropertyName is not set");
+				assert.equal(aAdditionalElements[3].parentPropertyName, "", "then the parentPropertyName is not set");
+				assert.equal(aAdditionalElements[4].parentPropertyName, "", "then the parentPropertyName is not set");
 			});
 		});
 
@@ -95,11 +95,11 @@ function(
 				assert.equal(aAdditionalElements[2].originalLabel, "", "then the originalLabel is not set");
 				assert.equal(aAdditionalElements[3].originalLabel, "", "then the originalLabel is not set");
 				assert.equal(aAdditionalElements[4].originalLabel, "", "then the originalLabel is not set");
-				assert.equal(aAdditionalElements[0].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
-				assert.equal(aAdditionalElements[1].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
-				assert.equal(aAdditionalElements[2].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
-				assert.equal(aAdditionalElements[3].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
-				assert.equal(aAdditionalElements[4].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
+				assert.equal(aAdditionalElements[0].parentPropertyName, "", "then the parentPropertyName is not set");
+				assert.equal(aAdditionalElements[1].parentPropertyName, "", "then the parentPropertyName is not set");
+				assert.equal(aAdditionalElements[2].parentPropertyName, "", "then the parentPropertyName is not set");
+				assert.equal(aAdditionalElements[3].parentPropertyName, "", "then the parentPropertyName is not set");
+				assert.equal(aAdditionalElements[4].parentPropertyName, "", "then the parentPropertyName is not set");
 			});
 		});
 
@@ -172,7 +172,7 @@ function(
 							modelName :sModelName
 						},
 						delegate: {
-							getPropertyInfo :function() {
+							getPropertyInfo: function() {
 								return Promise.resolve([{
 									name : "Property01",
 									bindingPath: "Property01"
