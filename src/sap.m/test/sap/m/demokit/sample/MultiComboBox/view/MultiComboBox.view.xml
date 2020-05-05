@@ -11,7 +11,7 @@
 		<MultiComboBox
 			selectionChange="handleSelectionChange"
 			selectionFinish="handleSelectionFinish"
-			width="500px"
+			width="350px"
 			items="{
 				path: '/ProductCollection',
 				sorter: { path: 'Name' }
