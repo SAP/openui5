@@ -3,6 +3,18 @@
 /* Quartz High Contrast Black theme                  */
 /* ================================================= */
 
+.sapUiSizeCompact .sapMSinglePCGrid {
+	& .sapUiCalItem
+	{
+		text-align: left;
+	}
+
+	& .sapUiCalDayName
+	{
+		text-align: right;
+	}
+}
+
 .sapMSinglePC .sapUiCalendarAppCont{
 	border-left: 0.0625rem solid darken(@sapUiListBorderColor, 15);
 	border-radius: 0 0.125rem 0.125rem 0.125rem;
@@ -24,12 +36,13 @@
 	.sapMSinglePCGrid .@{iitemtypeclass} {
 		&.sapUiCalItem,
 		.sapUiCalSpecialDate {
-			border-radius: initial;
+			border-bottom-left-radius: 0.25rem;
+			border-bottom-right-radius: 0.25rem;
 		}
 		&.sapUiCalItem:hover {
 			border-radius: 0.25rem;
 		}
-		//week 
+		//week
 		&.sapUiCalItem.sapUiCalItemSel .sapUiCalItemText,
 		&.sapUiCalItem .sapUiCalItemText {
 			box-shadow: none;
@@ -37,10 +50,24 @@
 		&.sapUiCalItem:not(.sapUiCalItemSel) {
 			box-shadow: inset 0 -0.25rem 0 @color;
 		}
+		//week views selected
+		&.sapUiCalItem.sapUiCalItemSel {
+			box-shadow: inset 0 -0.25rem 0 @color;
+			.sapUiCalItemText {
+				box-shadow: none;
+			}
+		}
 		//day view
 		.sapMSinglePCBlockersColumn {
 			box-shadow: inset 0 0.25rem 0 @color;
 		}
+	}
+}
+
+html.sap-desktop {
+	.sapMSinglePCBlockersRow > .sapMSinglePCBlockersColumns > .sapMSinglePCBlockersColumn:focus::after,
+	.sapMSinglePCGridContent .sapMSinglePCColumns .sapMSinglePCRow:focus::after {
+		border: 0.125rem dotted @sapUiContentFocusColor;
 	}
 }
 
@@ -128,10 +155,12 @@
 			outline: 0.0625rem solid black;
 			box-shadow: inset black;
 			&.sapUiCalItemSel {
-				background-color: @sapUiActive;
+				background-color: @sapUiContentSelectedBackground;
 				outline: 0.0625rem solid white;
-				box-shadow: inset white;
 				border: 0.125rem solid @sapUiLegendCurrentDateTime;
+			}
+			&.sapUiCalItemSel:hover {
+				background-color: @sapUiActive;
 			}
 			&.sapUiCalItemSel .sapUiCalItemText,
 			.sapUiCalItemText {
@@ -142,7 +171,7 @@
 		}
 		.sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemText,
 		.sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalItemText {
-			border: transparent;
+			border: 1px solid transparent;
 		}
 
 		.sapUiCalItem.sapUiCalItemSel {
@@ -154,6 +183,23 @@
 
 		.sapUiCalItem:focus > .sapUiCalItemText {
 			outline: none;
+		}
+
+		.sapUiCalItem {
+			.sapUiCalItemText,
+			.sapUiCalDayName {
+				padding-left: 0.125rem;
+			}
+
+			&.sapUiCalItemNow .sapUiCalDayName,
+			.sapUiCalItemText {
+				line-height: 1.85rem;
+			}
+
+			.sapUiCalDayName {
+				line-height: 1.875rem;
+				padding-right: 0.125rem;
+			}
 		}
 	}
 }
