@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/m/SelectDialog",
 	"sap/m/Dialog",
 	"sap/m/Table",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/Core"
 ], function(
 	qutils,
@@ -41,6 +42,7 @@ sap.ui.define([
 	SelectDialog,
 	Dialog,
 	Table,
+	XMLView,
 	Core
 ) {
 	createAndAppendDiv("content");
@@ -248,7 +250,18 @@ sap.ui.define([
 		"        </sections>" +
 		"    </ObjectPageLayout>" +
 		"    </m:App>" +
-		"</core:View>";
+		"</core:View>",
+
+
+		sEmptyView =
+			"<core:View" +
+			"        xmlns=\"sap.uxap\"" +
+			"        xmlns:core=\"sap.ui.core\"" +
+			"        xmlns:layout=\"sap.ui.layout\"" +
+			"        xmlns:m=\"sap.m\"" +
+			"        xmlns:f=\"sap.ui.layout.form\"" +
+			"        height=\"100%\">" +
+			"</core:View>";
 
 
 
@@ -796,6 +809,45 @@ sap.ui.define([
 		Fiori20Adapter.detachViewChange(oSpy);
 
 		oRootPage.destroy();
+	});
+
+	QUnit.test("Header is adapted if the content of the root view is added at a later time", function(assert) {
+
+		var done = assert.async();
+		XMLView.create(
+			{definition: sEmptyView}).then(function(oRootView) {
+				oRootView.placeAt("content");
+				Core.applyChanges();
+
+				var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
+					oTitleInfo,
+					oBackButton,
+					sViewId,
+					fnViewListener = function(oEvent) {
+						oBackButton = oEvent.getParameter("oBackButton");
+						oTitleInfo = oEvent.getParameter("oTitleInfo");
+						sViewId = oEvent.getParameter("sViewId");
+					},
+					oSpy = sinon.spy(fnViewListener);
+
+				Fiori20Adapter.attachViewChange(oSpy);
+				Fiori20Adapter.traverse(oRootView, oAdaptOptions);
+
+				oRootView.addContent(new App({
+					pages: [new Page({
+						title: "Test"
+					})]
+				}));
+
+				// Assert
+				assert.ok(oTitleInfo.text, "Test", "title is adapted");
+
+				// cleanup
+				Fiori20Adapter.detachViewChange(oSpy);
+
+				oRootView.destroy();
+				done();
+		});
 	});
 
 
