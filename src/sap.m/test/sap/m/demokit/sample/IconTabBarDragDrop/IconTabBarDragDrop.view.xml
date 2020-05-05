@@ -1,7 +1,20 @@
 <mvc:View
 	controllerName="sap.m.sample.IconTabBarDragDrop.IconTabBarDragDrop"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.ui.layout.form"
 	xmlns="sap.m">
+	<f:SimpleForm
+		layout="ResponsiveGridLayout"
+		editable="true"
+		adjustLabelSpan="false"
+		labelSpanXL="2"
+		labelSpanL="2"
+		labelSpanM="3"
+		labelSpanS="5">
+		<Label text="Tab Nesting" />
+		<Switch state="false" change=".onTabNestingChange" />
+	</f:SimpleForm>
+
 	<IconTabBar
 		id="idIconTabBar"
 		enableTabReordering="true"

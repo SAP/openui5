@@ -45,10 +45,15 @@
 				});
 				label1a.addStyleClass("label");
 
-				var label2 = new Label({
+				var label2a = new Label({
 					text: "Drag and Drop IconTabBar"
 				});
-				label2.addStyleClass("label");
+				label2a.addStyleClass("label");
+
+				var label2b = new Label({
+					text: "Drag and Drop IconTabBar (tabNestingViaInteraction=true)"
+				});
+				label2b.addStyleClass("label");
 
 				var label3 = new Label({
 					text: "With selectedKey"
@@ -729,9 +734,24 @@
 					content: new Text({ text: 'Content 15' })
 				}));
 
-				var itb2 = new IconTabBar("itb2", {
+				var itb2a = new IconTabBar("itb2a", {
 					enableTabReordering: true,
 					items: lotsOfTabs
+				});
+
+				var lotsOfTabs2 = [];
+				for (i = 1; i <= 60; i++) {
+					lotsOfTabs2.push(new IconTabFilter({
+						key: i,
+						text: "Tab " + i,
+						content: new Text({ text: "Content" + i })
+					}))
+				}
+
+				var itb2b = new IconTabBar("itb2b", {
+					enableTabReordering: true,
+					tabNestingViaInteraction: true,
+					items: lotsOfTabs2
 				});
 
 				var itb3 = new IconTabBar("itb3", {
@@ -1406,8 +1426,10 @@
 						itb1,
 						label1a,
 						itb1a,
-						label2,
-						itb2,
+						label2a,
+						itb2a,
+						label2b,
+						itb2b,
 						label3,
 						itb3,
 						label4,
