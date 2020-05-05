@@ -241,8 +241,10 @@ sap.ui.define([
 
 		if (this.getAggregation("_expandButton")) {
 			this._getExpandButton().removeEventDelegate(this._oDragEventDelegate);
-			this._oDragEventDelegate = null;
 		}
+
+		this.removeEventDelegate(this._oDragEventDelegate);
+		this._oDragEventDelegate = null;
 	};
 
 	IconTabFilter.prototype.invalidate = function() {
@@ -749,7 +751,17 @@ sap.ui.define([
 	IconTabFilter.prototype._getExpandButton = function () {
 		var oButton = this.getAggregation("_expandButton");
 
-		if (!oButton && !this._getRootTab().getParent()._isUnselectable(this)) {
+		if (this._getRootTab().getParent()._isUnselectable(this)) {
+			if (oButton) {
+				oButton.removeEventDelegate(this._oDragEventDelegate);
+				this.addEventDelegate(this._oDragEventDelegate, this);
+				this.destroyAggregation("_expandButton");
+			}
+			return null;
+		}
+
+		if (!oButton) {
+			// oButton is null and Button should be created
 			oButton = new AccButton(this.getId() + "-expandButton", {
 				type: ButtonType.Transparent,
 				icon: IconPool.getIconURI("slim-arrow-down"),
@@ -758,10 +770,9 @@ sap.ui.define([
 				press: this._expandButtonPress.bind(this)
 			}).addStyleClass("sapMITBFilterExpandBtn");
 
+			this.removeEventDelegate(this._oDragEventDelegate);
 			oButton.addEventDelegate(this._oDragEventDelegate, this);
 			this.setAggregation("_expandButton", oButton);
-		} else {
-			this.addEventDelegate(this._oDragEventDelegate, this);
 		}
 
 		return oButton;
@@ -1008,7 +1019,7 @@ sap.ui.define([
 	 */
 	IconTabFilter.prototype._getDragOverDomRef = function () {
 		if (this._getExpandButton()) {
-			return this.getDomRef().getElementsByClassName("sapMBtn")[0];
+			return this.getDomRef().getElementsByClassName("sapMITBFilterExpandBtn")[0];
 		} else {
 			return this.getDomRef();
 		}
