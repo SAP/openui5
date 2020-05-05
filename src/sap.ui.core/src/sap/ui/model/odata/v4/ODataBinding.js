@@ -614,8 +614,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if this binding or its dependent bindings have pending changes,
-	 * meaning updates that have not yet been successfully sent to the server.
+	 * Returns <code>true</code> if this binding or its dependent bindings have pending property
+	 * changes or created entities which have not been sent successfully to the server. This
+	 * function does not take into account the deletion of entities (see
+	 * {@link sap.ui.model.odata.v4.Context#delete}) and the execution of OData operations
+	 * (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}).
 	 *
 	 * @returns {boolean}
 	 *   <code>true</code> if the binding has pending changes

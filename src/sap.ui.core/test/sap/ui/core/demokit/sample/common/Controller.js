@@ -33,17 +33,47 @@ sap.ui.define([
 		/**
 		 * Creates a new sap.m.MessagePopover within the controller which is bound to the global
 		 * sap.ui.model.message.MessageModel. The MessagePopover listens to MessageModel changes
-		 * and will be automatically opened for new error messages.
+		 * and will be automatically opened for new error messages. If the view has a sap.m.Page
+		 * with the ID "page", then a navigation from a message to the control associated with the
+		 * message target is supported by clicking on the message title.
 		 *
 		 * @param {string} sOpenButtonId
 		 *   The ID of the Button where the MessagePopover has to be opened
 		 *
 		 */
 		initMessagePopover : function (sOpenButtonId) {
+			var oPage = this.getView().byId("page");
+
+			function onMessageSelected (oEvent) {
+				var oBestMatch,
+					aControls = oEvent.getParameter("item").getBindingContext("messages")
+						.getObject().getControlIds().map(function (sId) {
+							return sap.ui.getCore().byId(sId);
+					});
+
+				if (aControls.length) {
+					oBestMatch = aControls.reduce(function (oBefore, oCurrent) {
+						// editable wins over non editable control
+						if (!oBefore.getEditable() && oCurrent.getEditable()) {
+							return oCurrent;
+						}
+						return oBefore;
+					});
+					oPage.scrollToElement(oBestMatch);
+					setTimeout(function() {
+						// it may take some time to scroll the control into the visible area and the
+						// control can only be focused when it is visible
+						oBestMatch.focus();
+					}, 200);
+				}
+			}
+
 			this.messagePopover = new MessagePopover({
+				activeTitlePress : onMessageSelected,
 				items : {
 					path :"messages>/",
 					template : new MessageItem({
+						activeTitle : oPage ? true : false, // onMessageSelected needs a page
 						// Note: We need the details page in order to show a technical details link.
 						// The message popover only shows the details page if at least description
 						// or longtextUrl exists. Hence we here set description to ' '.

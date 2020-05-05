@@ -3389,7 +3389,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#fetchLateProperty: $expand", function (assert) {
+[false, true].forEach(function (bKey) {
+	// Note: The test always fetches "foo/bar/baz/qux" the key property is either "baz1"
+	//  (bKey=false) or "qux" (bKey=true, to test fetching a key property late)
+	QUnit.test("Cache#fetchLateProperty: $expand, key=" + bKey, function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Employees", {}),
 			oCacheMock = this.mock(oCache),
 			oData = {
@@ -3401,6 +3404,7 @@ sap.ui.define([
 			oEntityType = {
 				$Key : ["key"]
 			},
+			aExpectedUpdates,
 			oGroupLock = {
 				getUnlockedCopy : function () {}
 			},
@@ -3431,7 +3435,7 @@ sap.ui.define([
 							bar : {
 								$expand : {
 									baz : {
-										$select : ["qux", "baz1"]
+										$select : bKey ? ["qux"] : ["qux", "baz1"]
 									}
 								},
 								$select : ["baz"]
@@ -3444,7 +3448,7 @@ sap.ui.define([
 			},
 			oTypeBar = {},
 			oTypeBaz = {
-				$Key : ["baz1"]
+				$Key : bKey ? ["qux"] : ["baz1"]
 			},
 			oTypeFoo = {
 				$Key : ["foo1", {foo2 : "t/foo2"}]
@@ -3497,8 +3501,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(mTypeForMetaPath),
 				oCache.sMetaPath + "/entity/path/foo/bar/baz")
 			.returns(SyncPromise.resolve(oTypeBaz));
-		oHelperMock.expects("buildPath").withExactArgs("foo/bar/baz", "baz1")
-			.returns("foo/bar/baz/baz1");
+		oHelperMock.expects("buildPath").exactly(bKey ? 0 : 1)
+			.withExactArgs("foo/bar/baz", "baz1").returns("foo/bar/baz/baz1");
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oCache.sMetaPath + "/entity/path", mRequestQueryOptions, false, true)
 			.returns("?$expand=~1");
@@ -3518,13 +3522,18 @@ sap.ui.define([
 		oVisitResponseCall = this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oData), sinon.match.same(mTypeForMetaPath),
 				oCache.sMetaPath + "/entity/path", "('1')/entity/path");
+		aExpectedUpdates = [
+			"foo/bar/baz/qux", "key", "foo/foo1", "foo/t/foo2", "foo/@odata.etag",
+			"foo/@$ui5._/predicate", "foo/bar/@odata.etag", "foo/bar/@$ui5._/predicate"];
+		if (!bKey) {
+			aExpectedUpdates.push("foo/bar/baz/baz1");
+		}
+		aExpectedUpdates = aExpectedUpdates.concat([
+			"foo/bar/baz/@odata.etag", "foo/bar/baz/@$ui5._/predicate"
+		]);
 		oUpdateSelectedCall = oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('1')/entity/path",
-				sinon.match.same(oEntity), sinon.match.same(oData), [
-					"foo/bar/baz/qux", "key", "foo/foo1", "foo/t/foo2", "foo/@odata.etag",
-					"foo/@$ui5._/predicate", "foo/bar/@odata.etag", "foo/bar/@$ui5._/predicate",
-					"foo/bar/baz/baz1", "foo/bar/baz/@odata.etag", "foo/bar/baz/@$ui5._/predicate"
-				]);
+				sinon.match.same(oEntity), sinon.match.same(oData), aExpectedUpdates);
 		oHelperMock.expects("drillDown")
 			.withExactArgs(sinon.match.same(oEntity), ["foo"])
 			.returns(oData.foo);
@@ -3538,6 +3547,7 @@ sap.ui.define([
 			assert.ok((oUpdateSelectedCall.calledAfter(oVisitResponseCall)));
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("Cache#fetchLateProperty: parallel calls", function (assert) {
@@ -3553,7 +3563,8 @@ sap.ui.define([
 			oHelperMock = this.mock(_Helper),
 			oPromise1,
 			oPromise2,
-			mQueryOptions = {$select: []},
+			mQueryOptionsFoo = {$select: []},
+			mQueryOptionsBar = {$select: []},
 			mQueryOptionsForPath = {},
 			oRequestGroupLock,
 			mTypeForMetaPath = {
@@ -3570,14 +3581,17 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(mQueryOptionsForPath), ["property/foo"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				oCache.sMetaPath, {})
-			.returns(mQueryOptions);
+			.returns(mQueryOptionsFoo);
 		oHelperMock.expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(mQueryOptionsForPath), ["property/bar"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				oCache.sMetaPath, {})
-			.returns(mQueryOptions);
-		this.oRequestorMock.expects("buildQueryString").twice()
-			.withExactArgs(oCache.sMetaPath, sinon.match.same(mQueryOptions), false, true)
+			.returns(mQueryOptionsBar);
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs(oCache.sMetaPath, sinon.match.same(mQueryOptionsFoo), false, true)
+			.returns("?$select=property");
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs(oCache.sMetaPath, sinon.match.same(mQueryOptionsBar), false, true)
 			.returns("?$select=property");
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oCache.sMetaPath, sinon.match.same(oCache.mQueryOptions), true)
@@ -3587,7 +3601,7 @@ sap.ui.define([
 			.withExactArgs("GET", "Employees('31')?~",
 				sinon.match.same(oRequestGroupLock), undefined,
 				undefined, undefined, undefined, oCache.sMetaPath, undefined, false,
-				sinon.match.same(mQueryOptions))
+				sinon.match.same(mQueryOptionsFoo))
 			.resolves(oData);
 		this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oData), sinon.match.same(mTypeForMetaPath),
