@@ -4183,11 +4183,14 @@ sap.ui.define([
 			reason: sReason
 		};
 
-		// It must be ensured that the table's own "_rowsUpdated" event handler is always executed first.
 		this.onRowsUpdated(mParameters);
 
 		clearTimeout(this._mTimeouts.fireRowsUpdated);
 		this._mTimeouts.fireRowsUpdated = setTimeout(function() {
+			// If the rows are updated by setting new binding contexts, the cell contents are updated asynchronously (re-rendering).
+			// This has to be waited for before the update process of the rows can be completed.
+			this.onRowsContentUpdated(mParameters);
+
 			/**
 			 * This event is fired after the rows have been updated.
 			 *
@@ -4201,18 +4204,18 @@ sap.ui.define([
 	};
 
 	Table.prototype.onRowsUpdated = function(mParameters) {
-		if (this.getRows().length > 0) {
-			TableUtils.Grouping.updateGroups(this);
-			this._getAccExtension().updateAccForCurrentCell(mParameters.reason);
+		this._iRenderedFirstVisibleRow = this._getFirstRenderedRowIndex();
+		TableUtils.Grouping.updateGroups(this);
+		this._updateSelection();
+	};
 
+	Table.prototype.onRowsContentUpdated = function(mParameters) {
+		if (this.getRows().length > 0) {
 			this._resetRowHeights();
 			this._aRowHeights = this._collectRowHeights(false);
 			this._updateRowHeights(this._aRowHeights, false);
+			this._getAccExtension().updateAccForCurrentCell(mParameters.reason);
 		}
-
-		this._updateSelection();
-		this._iRenderedFirstVisibleRow = this._getFirstRenderedRowIndex();
-		this._getScrollExtension().updateVerticalScrollbarVisibility();
 	};
 
 	/**

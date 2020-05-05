@@ -10,7 +10,7 @@
 	position: fixed;
 	top: 0;
 	left: auto;
-	right: 100px;
+	right: 250px;
 	background-color: white;
 	opacity: 0.6;
 }
@@ -24,7 +24,7 @@
 	top: auto;
 	bottom: 0;
 	left: auto;
-	right: 100px;
+	right: 250px;
 	background-color: white;
 	opacity: 0.6;
 }

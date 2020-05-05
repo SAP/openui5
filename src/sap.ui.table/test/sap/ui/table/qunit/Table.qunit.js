@@ -527,7 +527,7 @@ sap.ui.define([
 		assert.ok(aColumns[4].$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling");
 	});
 
-	QUnit.test("Row Height", function(assert) {
+	QUnit.test("Row height; After rendering", function(assert) {
 		var oBody = document.body;
 		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 		var sequence = Promise.resolve();
@@ -538,8 +538,8 @@ sap.ui.define([
 		}
 
 		oTable.removeAllColumns();
-		oTable.addColumn(new Column({template: new HeightTestControl({height: "1px"})}));
-		oTable.addColumn(new Column({template: new HeightTestControl({height: "1px"})}));
+		oTable.addColumn(new Column({template: new HeightTestControl()}));
+		oTable.addColumn(new Column({template: new HeightTestControl()}));
 		oTable.setFixedColumnCount(1);
 		oTable.setRowActionCount(1);
 		oTable.setRowActionTemplate(new RowAction());
@@ -661,7 +661,44 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Column Header Height", function(assert) {
+	QUnit.test("Row height; After binding context update", function(assert) {
+		/* BCP: 1880420532 (IE), 1880455493 (Edge) */
+		if (Device.browser.msie || Device.browser.edge) {
+			document.getElementById("qunit-fixture").classList.remove("visible");
+		}
+
+		oTable.removeAllColumns();
+		oTable.addColumn(new Column({template: new HeightTestControl()}));
+		oTable.addColumn(new Column({template: new HeightTestControl({height: "{height}"})}));
+		oTable.setFixedColumnCount(1);
+		oTable.setRowActionCount(1);
+		oTable.setRowActionTemplate(new RowAction());
+		sap.ui.getCore().applyChanges();
+
+		return new Promise(function(resolve) {
+			oTable.attachEventOnce("_rowsUpdated", resolve);
+		}).then(function() {
+			// Updating only the content (property bindings of cells) without a binding change event for the rows is not supported.
+			oTable.getBinding("rows").getModel().getData().modelData[oTable.getRows()[0].getIndex()].height = "88px";
+			oTable.getBinding("rows").getModel().refresh(true);
+			return new Promise(function(resolve) {
+				oTable.attachEventOnce("_rowsUpdated", resolve);
+			});
+		}).then(function() {
+			var aRowDomRefs = oTable.getRows()[0].getDomRefs();
+			assert.strictEqual(aRowDomRefs.rowSelector.getBoundingClientRect().height, 89, "Selector height is ok");
+			assert.strictEqual(aRowDomRefs.rowFixedPart.getBoundingClientRect().height, 89, "Fixed part height is ok");
+			assert.strictEqual(aRowDomRefs.rowScrollPart.getBoundingClientRect().height, 89, "Scrollable part height is ok");
+			assert.strictEqual(aRowDomRefs.rowAction.getBoundingClientRect().height, 89, "Action height is ok");
+		}).then(function() {
+			/* BCP: 1880420532 (IE), 1880455493 (Edge) */
+			if (Device.browser.msie || Device.browser.edge) {
+				document.getElementById("qunit-fixture").classList.add("visible");
+			}
+		});
+	});
+
+	QUnit.test("Column header height", function(assert) {
 		var oBody = document.body;
 		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 		var sequence = Promise.resolve();
@@ -673,8 +710,8 @@ sap.ui.define([
 		}
 
 		oTable.removeAllColumns();
-		oTable.addColumn(new Column({label: new HeightTestControl({height: "1px"}), template: new HeightTestControl()}));
-		oTable.addColumn(new Column({label: new HeightTestControl({height: "1px"}), template: new HeightTestControl()}));
+		oTable.addColumn(new Column({label: new HeightTestControl(), template: new HeightTestControl()}));
+		oTable.addColumn(new Column({label: new HeightTestControl(), template: new HeightTestControl()}));
 		oTable.setFixedColumnCount(1);
 		oTable.setRowActionCount(1);
 		oTable.setRowActionTemplate(new RowAction());

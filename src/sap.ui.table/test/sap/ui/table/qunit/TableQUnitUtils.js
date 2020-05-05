@@ -87,29 +87,19 @@ sap.ui.define([
 	var HeightTestControl = Control.extend("sap.ui.table.test.HeightTestControl", {
 		metadata: {
 			properties: {
-				height: "string"
+				height: {type: "sap.ui.core.CSSSize", defaultValue: "1px"}
 			}
 		},
 		renderer: {
 			apiVersion: 2,
 			render: function(oRm, oControl) {
 				oRm.openStart("div", oControl);
-				oRm.style("height", oControl.getHeight() || "10px");
+				oRm.style("height", oControl.getHeight());
 				oRm.style("width", "100px");
-				oRm.style("background-color", "orange");
-				oRm.style("box-sizing", "border-box");
-				oRm.style("border-top", "2px solid blue");
-				oRm.style("border-bottom", "2px solid blue");
+				oRm.style("overflow", "hidden");
+				oRm.style("background", "linear-gradient(blue 1px, orange 1px, orange calc(100% - 1px), blue)");
 				oRm.openEnd();
 				oRm.close("div");
-			}
-		},
-		setHeight: function(sHeight) {
-			this.setProperty("height", sHeight, true);
-
-			var oDomRef = this.getDomRef();
-			if (oDomRef != null) {
-				oDomRef.style.height = sHeight;
 			}
 		}
 	});
