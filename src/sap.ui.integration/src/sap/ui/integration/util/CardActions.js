@@ -389,14 +389,21 @@ sap.ui.define([
 
 		CardActions._doPredefinedAction = function (mConfig) {
 			var oAction = mConfig.action,
+				mParameters = mConfig.parameters,
 				fnAction,
-				sUrl;
+				sUrl,
+				sTarget;
 
 			switch (oAction.type) {
 				case CardActionType.Navigation:
-					sUrl = mConfig.url;
+					if (oAction.service) {
+						break;
+					}
+
+					sUrl = mConfig.url || mParameters.url;
+					sTarget = oAction.target || mParameters.target || "_blank";
 					if (sUrl) {
-						window.open(sUrl, oAction.target || "_blank");
+						window.open(sUrl, sTarget);
 					}
 					break;
 				case CardActionType.Custom:

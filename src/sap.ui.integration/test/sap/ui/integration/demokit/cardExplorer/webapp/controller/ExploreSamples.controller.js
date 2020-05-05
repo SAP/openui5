@@ -282,6 +282,10 @@ sap.ui.define([
 					width: "25rem"
 				});
 			}
+
+			if (sType === "Navigation") {
+				oEvent.preventDefault();
+			}
 		},
 
 		_findSample: function (sSampleKey) {

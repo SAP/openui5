@@ -1187,7 +1187,10 @@ sap.ui.define([
 		QUnit.test("List should be actionable ", function (assert) {
 
 			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions, "fireAction");
+				oActionSpy = sinon.spy(CardActions, "fireAction"),
+				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake( function () {
+					Log.error(LOG_MESSAGE);
+				});
 
 			// Act
 			this.oCard.setManifest(oManifest_ListCard_No_Request);
@@ -1211,6 +1214,7 @@ sap.ui.define([
 
 				// Cleanup
 				oActionSpy.restore();
+				oStubOpenUrl.restore();
 				done();
 			}.bind(this));
 		});
