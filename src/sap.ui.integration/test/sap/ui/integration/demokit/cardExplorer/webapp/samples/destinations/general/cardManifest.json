@@ -43,7 +43,9 @@
 			"parameters": {
 				"maxItems": {
 					"value": 3,
-					"type": "integer"
+					"type": "integer",
+					"label": "Maximum Items",
+					"description": "Defines how many items will be displayed at most."
 				}
 			}
 		},

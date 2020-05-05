@@ -44,7 +44,10 @@
 		"configuration": {
 			"parameters": {
 				"city": {
-					"value": "Berlin"
+					"value": "Berlin",
+					"type": "string",
+					"label": "City",
+					"description": "A name of a city, which will be displayed in the card."
 				}
 			}
 		},
