@@ -1,24 +1,17 @@
 /*global QUnit sinon */
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/layout/SplitPane',
-	'sap/ui/layout/PaneContainer',
 	'sap/ui/layout/Splitter',
 	'sap/ui/layout/SplitterLayoutData',
 	'sap/ui/commons/Button',
 	'sap/m/Panel'
 ], function(
-	jQuery,
-	SplitPane,
-	PaneContainer,
 	Splitter,
 	SplitterLayoutData,
 	Button,
 	Panel
-	) {
+) {
 	'use strict';
-
 
 	function createExampleContent(sSize) {
 		if (createExampleContent.called === undefined) {
@@ -589,7 +582,7 @@ sap.ui.define([
 		// arrange
 		var oSpy = sinon.spy(this.oSplitter, "_onBarMoveStart"),
 			oSplitterBar = this.oSplitter.$().children("#splitter-splitbar-0")[0],
-			oSplitterBarIcon = this.oSplitter.$().find("#splitter-splitbar-0-icon")[0],
+			oSplitterBarGrip = this.oSplitter.$().find(".sapUiLoSplitterBarGrip")[0],
 			oContentArea = this.oSplitter.$().children("#splitter-content-0")[0];
 
 		// act and assert
@@ -601,11 +594,38 @@ sap.ui.define([
 		assert.strictEqual(oSpy.callCount, 1, "Clicking on a splitter bar should trigger _onBarMoveStart");
 
 		oSpy.resetHistory();
-		this.oSplitter.onmousedown({ target: oSplitterBarIcon });
+		this.oSplitter.onmousedown({ target: oSplitterBarGrip });
 		assert.strictEqual(oSpy.callCount, 1, "Clicking on a splitter bar icon should trigger _onBarMoveStart");
 
 		// cleanup
 		this.oSplitter._onBarMoveEnd({ changedTouches: false }); // used to deregister event listeners added onmousedown
+	});
+
+	QUnit.test("Touchstart", function (assert) {
+		// arrange
+		var oStub = sinon.stub(Splitter.prototype, "_onBarMoveStart"),
+			oSplitterBar = this.oSplitter.$().children("#splitter-splitbar-0")[0],
+			oSplitterBarGrip = this.oSplitter.$().find(".sapUiLoSplitterBarGrip")[0],
+			oContentArea = this.oSplitter.$().children("#splitter-content-0")[0],
+			oFakeEvent = { changedTouches: [ "touch"] };
+
+		// act and assert
+		oFakeEvent.target = oContentArea;
+		this.oSplitter.ontouchstart(oFakeEvent);
+		assert.strictEqual(oStub.callCount, 0, "Touch on content area should NOT trigger _onBarMoveStart");
+
+		oStub.resetHistory();
+		oFakeEvent.target = oSplitterBar;
+		this.oSplitter.ontouchstart(oFakeEvent);
+		assert.strictEqual(oStub.callCount, 1, "Touch on a splitter bar should trigger _onBarMoveStart");
+
+		oStub.resetHistory();
+		oFakeEvent.target = oSplitterBarGrip;
+		this.oSplitter.ontouchstart(oFakeEvent);
+		assert.strictEqual(oStub.callCount, 1, "Touch on a splitter bar icon should trigger _onBarMoveStart");
+
+		// cleanup
+		oStub.restore();
 	});
 
 	QUnit.module("Resize Handling");
@@ -678,5 +698,55 @@ sap.ui.define([
 			oPanel.destroy();
 			done();
 		}, 200);
+	});
+
+	QUnit.module("Bars", {
+		beforeEach: function () {
+			this.oSplitter = new Splitter("splitter", {
+				contentAreas: [
+					new Button({ layoutData: new SplitterLayoutData({size: "100px"}) }),
+					new Button({ layoutData: new SplitterLayoutData({size: "100px"}) }),
+					new Button({ layoutData: new SplitterLayoutData({size: "100px"}) })
+				]
+			});
+			this.oSplitter.placeAt("qunit-fixture");
+		},
+		afterEach: function () {
+			this.oSplitter.destroy();
+		}
+	});
+
+	QUnit.test("'left' position of overlay bar - Horizontal splitter", function (assert) {
+		// arrange
+		this.oSplitter.setOrientation("Horizontal");
+		sap.ui.getCore().applyChanges();
+		var $splitterBar = this.oSplitter.$().children("#splitter-splitbar-1"),
+			iBarWidth = $splitterBar.outerWidth();
+
+		// act
+		this.oSplitter.onmousedown({ target: $splitterBar[0] });
+
+		// assert
+		assert.strictEqual(this.oSplitter._move.relStart, 200 + iBarWidth, "Overlay splitter bar should have 'left' position calculated correctly.");
+
+		// cleanup
+		this.oSplitter._onBarMoveEnd({ changedTouches: false }); // used to deregister event listeners added onmousedown
+	});
+
+	QUnit.test("'top' position of overlay bar - Vertical splitter", function (assert) {
+		// arrange
+		this.oSplitter.setOrientation("Vertical");
+		sap.ui.getCore().applyChanges();
+		var $splitterBar = this.oSplitter.$().children("#splitter-splitbar-1"),
+			iBarHeight = $splitterBar.outerHeight();
+
+		// act
+		this.oSplitter.onmousedown({ target: $splitterBar[0] });
+
+		// assert
+		assert.strictEqual(this.oSplitter._move.relStart, 200 + iBarHeight, "Overlay splitter bar should have 'top' position calculated correctly.");
+
+		// cleanup
+		this.oSplitter._onBarMoveEnd({ changedTouches: false }); // used to deregister event listeners added onmousedown
 	});
 });

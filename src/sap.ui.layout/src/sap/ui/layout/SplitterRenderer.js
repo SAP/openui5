@@ -5,10 +5,8 @@ sap.ui.define(["sap/ui/core/library"],
 	function(coreLibrary) {
 	"use strict";
 
-
 	// shortcut for sap.ui.core.Orientation
 	var Orientation = coreLibrary.Orientation;
-
 
 	/**
 	 * Splitter renderer.
@@ -16,7 +14,6 @@ sap.ui.define(["sap/ui/core/library"],
 	 */
 	var SplitterRenderer = {
 	};
-
 
 	/**
 	 * Renders the main HTML element for the Splitter control and everything else is rendered in a
@@ -57,11 +54,10 @@ sap.ui.define(["sap/ui/core/library"],
 		var sId         = oControl.getId();
 		var bHorizontal = oControl.getOrientation() === Orientation.Horizontal;
 		var sSizeType   = bHorizontal ? "width" : "height";
-		var sGripIcon = "sap-icon://" + (bHorizontal ? "horizontal" : "vertical") + "-grip";
-
 		var aContents = oControl._getContentAreas();
 		var iLen = aContents.length;
 		var aCalculatedSizes = oControl.getCalculatedSizes();
+
 		for (var i = 0; i < iLen; ++i) {
 			var oLayoutData = aContents[i].getLayoutData();
 			var sSize = "0";
@@ -93,18 +89,7 @@ sap.ui.define(["sap/ui/core/library"],
 						"tabindex=\"0\">"
 				);
 
-				if (oControl._bUseIconForSeparator) {
-					// Icon ID must start with sId + "-splitbar-" + i so that the target is recognized for resizing
-					oRm.writeIcon(sGripIcon, "sapUiLoSplitterBarIcon", {
-						"id" : sId + "-splitbar-" + i + "-icon",
-						// prevent any tooltip / ARIA attributes on the icon as they
-						// are already set on the outer div
-						"title" : null,
-						"aria-label" : null
-					});
-				} else {
-					oRm.write("<span class='sapUiLoSplitterBarIcon'></span>");
-				}
+				this.renderSplitterBarGripAndDecorations(oRm, bHorizontal);
 				oRm.write("</div>");
 			}
 		}
@@ -114,25 +99,42 @@ sap.ui.define(["sap/ui/core/library"],
 			"<div id=\"" + sId + "-overlayBar\" class=\"sapUiLoSplitterOverlayBar\">"
 		);
 
-		if (oControl._bUseIconForSeparator) {
-			// Icon ID must start with sId + "-splitbar" so that the target is recognized for resizing
-			oRm.writeIcon(sGripIcon, "sapUiLoSplitterBarIcon", {
-				"id" : sId + "-splitbar-Overlay-icon",
-				// prevent any tooltip / ARIA attributes on the icon as they
-				// are already set on the outer div
-				"title" : null,
-				"aria-label" : null
-			});
-		} else {
-			oRm.write("<span class=\"sapUiLoSplitterBarIcon\"></span>");
-		}
+		this.renderSplitterBarGripAndDecorations(oRm, bHorizontal);
+
 		oRm.write(
 			"</div>" +
 			"</div>"
 		);
 	};
 
+	/**
+	 * Renders the grip and the decorations for a bar.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm RenderManager that can is used for writing to the render output buffer
+	 * @param {boolean} bHorizontal Whether the orientation of the Splitter is horizontal
+	 */
+	SplitterRenderer.renderSplitterBarGripAndDecorations = function(oRm, bHorizontal) {
+		var sIcon = bHorizontal ? "sap-icon://vertical-grip" : "sap-icon://horizontal-grip";
 
+		oRm.write("<div");
+		oRm.addClass("sapUiLoSplitterBarDecorationBefore");
+		oRm.writeClasses();
+		oRm.write(">");
+		oRm.write("</div>");
+
+		oRm.write("<div");
+		oRm.addClass("sapUiLoSplitterBarGrip");
+		oRm.writeClasses();
+		oRm.write(">");
+		oRm.writeIcon(sIcon, ["sapUiLoSplitterBarGripIcon"]);
+		oRm.write("</div>");
+
+		oRm.write("<div");
+		oRm.addClass("sapUiLoSplitterBarDecorationAfter");
+		oRm.writeClasses();
+		oRm.write(">");
+		oRm.write("</div>");
+	};
 
 	return SplitterRenderer;
 

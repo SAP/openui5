@@ -19,7 +19,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 	 * @class
 	 * PaneContainer is an abstraction of Splitter.
 	 *
-	 * Could be used as an aggregation of ResponsiveSplitter or other PaneContainers.
+	 * Could be used as an aggregation of ResponsiveSplitter or nested in other PaneContainers.
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
@@ -41,7 +41,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 		defaultAggregation : "panes",
 		aggregations : {
 			/**
-			 The Pane that will be shown when there is no suitable pane for ResponsiveSplitter's current width.
+			 * The panes to be split. The control will show n-1 splitter bars between n controls in this aggregation.
 			 */
 			panes: { type: "sap.ui.core.Element", multiple: true, singularName: "pane" }
 		}
@@ -52,8 +52,6 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 			orientation: this.getOrientation(),
 			height: "100%"
 		});
-
-		this._oSplitter._bUseIconForSeparator = false;
 	};
 
 	PaneContainer.prototype.exit = function () {
