@@ -316,7 +316,7 @@ sap.ui.define([
 		 * @private
 		 */
 		DynamicPageHeader.prototype._focusCollapseButton = function () {
-			this._getCollapseButton().$().focus();
+			this._getCollapseButton().$().trigger("focus");
 		};
 
 		/**
@@ -324,7 +324,7 @@ sap.ui.define([
 		 * @private
 		 */
 		DynamicPageHeader.prototype._focusPinButton = function () {
-			this._getPinButtonJQueryRef().focus();
+			this._getPinButtonJQueryRef().trigger("focus");
 		};
 
 		/**

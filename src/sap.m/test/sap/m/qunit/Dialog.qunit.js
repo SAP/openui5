@@ -1296,7 +1296,7 @@ sap.ui.define([
 		assert.equal(oFocusedControl.getId(), "initialFocusButton", "Initial focus should be set correctly");
 
 		assert.strictEqual(oDialog.getCustomHeader().$().attr("aria-level"), "2", "Customer header should have aria-level= '2'");
-		oDialog.$("lastfe").focus();
+		oDialog.$("lastfe").trigger("focus");
 		oFocusedControl = jQuery(document.activeElement).control(0);
 		assert.equal(oFocusedControl.getId(), "tabChainButton", "Focus should be set to the button in custom header");
 
@@ -1761,7 +1761,7 @@ sap.ui.define([
 
 		assert.strictEqual($dialogContent.height(), 150, "Dialog height should be 150px");
 
-		$dialogHeader.dblclick();
+		$dialogHeader.trigger("dblclick");
 
 		// assert
 		assert.strictEqual($dialogContent.height(), 400, "Dialog height should be 400px");

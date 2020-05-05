@@ -84,7 +84,7 @@ sap.ui.define([
 		function closePopup() {
 			assert.ok(oPdfViewer._bIsPopupOpen, 'The popup should be opened');
 			var popup = oPdfViewer._objectsRegister.getPopup();
-			$(popup.getDomRef('popupCloseButton')).trigger('focusin').mousedown().mouseup().click().trigger('tap').trigger('focusout');
+			$(popup.getDomRef('popupCloseButton')).trigger('focusin').trigger("mousedown").trigger("mouseup").trigger("click").trigger('tap').trigger('focusout');
 			return Promise.resolve();
 		}
 

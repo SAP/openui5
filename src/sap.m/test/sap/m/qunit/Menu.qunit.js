@@ -334,14 +334,14 @@ sap.ui.define([
 
 		this.sut.openBy();
 		this.clock.tick(1000);
-		this.sut._getVisualParent().getItems()[0].$().click();
+		this.sut._getVisualParent().getItems()[0].$().trigger("click");
 		this.clock.tick(1000);
 
 		//Assert
 		assert.strictEqual(this.sut.getItems()[0].getItems().length, 2, 'The item has sub items');
 		assert.strictEqual(fnFireItemSelectedSpy.calledOnce, false, "Item selected event is not fired when item is clicked");
 
-		this.sut._getVisualParent().getItems()[1].$().click();
+		this.sut._getVisualParent().getItems()[1].$().trigger("click");
 		this.clock.tick(1000);
 
 		//Assert
@@ -367,7 +367,7 @@ sap.ui.define([
 		}));
 		this.sut.openBy();
 		this.clock.tick(1000);
-		this.sut._getVisualParent().getItems()[2].$().click();
+		this.sut._getVisualParent().getItems()[2].$().trigger("click");
 		this.clock.tick(1000);
 
 		//assert

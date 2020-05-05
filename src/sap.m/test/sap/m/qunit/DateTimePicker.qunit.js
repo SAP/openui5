@@ -367,7 +367,7 @@ sap.ui.define([
 		oDTP2.focus();
 		jQuery("#DTP2").find("input").val("37+02+2016:10+11");
 		qutils.triggerKeyboardEvent("DTP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DTP2").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DTP2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DTP2", "Change event fired");
 		assert.equal(sValue, "37+02+2016:10+11", "Value of event has entered value if invalid");
 		assert.ok(!bValid, "Value is not valid");
@@ -381,7 +381,7 @@ sap.ui.define([
 		oDTP2.focus();
 		jQuery("#DTP2").find("input").val("18+02+2016:10+30");
 		qutils.triggerKeyboardEvent("DTP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DTP2").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DTP2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DTP2", "Change event fired");
 		assert.equal(sValue, "2016-02-18,10-30-00", "Value of event has entered value if valid");
 		assert.ok(bValid, "Value is valid");
@@ -450,7 +450,7 @@ sap.ui.define([
 	QUnit.test("change date using calendar - choose", function(assert) {
 		var done = assert.async();
 
-		jQuery("#DTP3-OK").focus();
+		jQuery("#DTP3-OK").trigger("focus");
 		qutils.triggerKeydown("DTP3-OK", jQuery.sap.KeyCodes.ENTER, false, false, false);
 		qutils.triggerKeyup("DTP3-OK", jQuery.sap.KeyCodes.ENTER, false, false, false);
 
@@ -637,7 +637,7 @@ sap.ui.define([
 		oDTP._$input.get(0).selectionStart = 3;
 		oDTP._$input.get(0).selectionEnd = 3;
 
-		oDTP.$().find(".sapUiIcon").click(); //simulate opening
+		oDTP.$().find(".sapUiIcon").trigger("click"); //simulate opening
 		this.clock.tick(100);
 
 		//Assert

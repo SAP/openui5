@@ -912,7 +912,7 @@ sap.ui.define([
 			oCheckBox.placeAt("qunit-fixture");
 			Core.applyChanges();
 
-			oCheckBox.$().focus(); // set focus on checkbox
+			oCheckBox.$().trigger("focus"); // set focus on checkbox
 
 			QUtils.triggerKeyup(oCheckBox.$(), KeyCodes.SPACE); // trigger Space up on checkbox
 			Core.applyChanges();
@@ -959,7 +959,7 @@ sap.ui.define([
 			oCheckBox.placeAt("qunit-fixture");
 			Core.applyChanges();
 
-			oCheckBox.$().focus(); // set focus on checkbox
+			oCheckBox.$().trigger("focus"); // set focus on checkbox
 
 			QUtils.triggerKeydown(oCheckBox.$(), KeyCodes.ENTER); // trigger Enter on checkbox
 			Core.applyChanges();

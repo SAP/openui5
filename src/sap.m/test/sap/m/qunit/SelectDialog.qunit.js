@@ -630,7 +630,7 @@ sap.ui.define([
 
 			jQuery.when(this.oSelectDialog.open()).then(function(oEvent) {
 				// Act
-				that.oSelectDialog._oSearchField.$('I').focus().val("abc").trigger("input");
+				that.oSelectDialog._oSearchField.$('I').trigger("focus").val("abc").trigger("input");
 				// liveChange is triggered after 300ms
 				clock.tick(400);
 			});
@@ -1236,7 +1236,7 @@ sap.ui.define([
 			bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
 
 			this.oSelectDialog._oDialog.attachAfterOpen(function(oEvent) {
-				that.oSelectDialog._oSearchField.$('I').focus().val("1").trigger("input");
+				that.oSelectDialog._oSearchField.$('I').trigger("focus").val("1").trigger("input");
 				that.clock.tick(350);
 			});
 

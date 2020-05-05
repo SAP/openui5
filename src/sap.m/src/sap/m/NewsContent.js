@@ -81,13 +81,13 @@ sap.ui.define([
 
 	NewsContent.prototype.onBeforeRendering = function() {
 		this._setPointerOnContentText();
-		this.$().unbind("mouseenter");
-		this.$().unbind("mouseleave");
+		this.$().off("mouseenter");
+		this.$().off("mouseleave");
 	};
 
 	NewsContent.prototype.onAfterRendering = function() {
-		this.$().bind("mouseenter", this._addTooltip.bind(this));
-		this.$().bind("mouseleave", this._removeTooltip.bind(this));
+		this.$().on("mouseenter", this._addTooltip.bind(this));
+		this.$().on("mouseleave", this._removeTooltip.bind(this));
 	};
 
 	/**
@@ -171,7 +171,7 @@ sap.ui.define([
 	 */
 	NewsContent.prototype.ontap = function(oEvent) {
 		if (Device.browser.msie) {
-			this.$().focus();
+			this.$().trigger("focus");
 		}
 		this.firePress();
 	};

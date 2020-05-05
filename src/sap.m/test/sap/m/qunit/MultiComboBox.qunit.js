@@ -6809,7 +6809,7 @@ sap.ui.define([
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		this.clock.tick(200);
 
-		oMultiComboBox.$().find(".sapMTokenizerIndicator").click();
+		oMultiComboBox.$().find(".sapMTokenizerIndicator").trigger("click");
 
 		//assert
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 2, "There are two selected items");
@@ -7340,9 +7340,9 @@ sap.ui.define([
 
 	QUnit.test("oninput the value state message should not be visible", function(assert) {
 		// act
-		this.oMultiComboBox._$input.focus().val("Brussel").trigger("input");
+		this.oMultiComboBox._$input.trigger("focus").val("Brussel").trigger("input");
 		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ENTER);
-		this.oMultiComboBox._$input.focus().val("H").trigger("input");
+		this.oMultiComboBox._$input.trigger("focus").val("H").trigger("input");
 		sap.ui.getCore().applyChanges();
 
 		// assert

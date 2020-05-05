@@ -692,7 +692,7 @@ sap.ui.define([
 
 			sap.ui.getCore().applyChanges();
 
-			this.multiInput1.$().focus();
+			this.multiInput1.$().trigger("focus");
 		},
 		afterEach : function() {
 			this.multiInput1.destroy();
@@ -930,7 +930,7 @@ sap.ui.define([
 			return new Token({text: args.text, key: args.text});
 		});
 
-		this.multiInput1._$input.focus();
+		this.multiInput1._$input.trigger("focus");
 		this.multiInput1._$input[0].setSelectionRange(3, 3);
 
 		sap.ui.getCore().applyChanges();
@@ -957,7 +957,7 @@ sap.ui.define([
 		this.multiInput1.addToken(token1);
 		this.multiInput1.setValue("text");
 
-		this.multiInput1._$input.focus();
+		this.multiInput1._$input.trigger("focus");
 
 		this.multiInput1.onsapprevious(oFakeEvent);
 
@@ -1109,7 +1109,7 @@ sap.ui.define([
 		// Act
 		// create new token by user input
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.D });
-		this.multiInput1._$input.focus().trigger(oFakeKeydown).val("D").trigger("input");
+		this.multiInput1._$input.trigger("focus").trigger(oFakeKeydown).val("D").trigger("input");
 		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ENTER);
 		sap.ui.getCore().applyChanges();
 
@@ -1294,7 +1294,7 @@ sap.ui.define([
 		oMultiInput1.placeAt("content");
 
 		// Act
-		oMI._tokenizer.$().click();
+		oMI._tokenizer.$().trigger("click");
 		this.clock.tick(1);
 
 		// Assert
@@ -1306,7 +1306,7 @@ sap.ui.define([
 		oSpy.restore();
 
 		oSpy1 = sinon.spy(oMultiInput1, "_manageListsVisibility");
-		oMultiInput1._tokenizer.$().click();
+		oMultiInput1._tokenizer.$().trigger("click");
 
 		// Assert
 		assert.ok(oSpy1.called, "_manageListsVisibility is called");
@@ -1939,7 +1939,7 @@ sap.ui.define([
 
 		// act
 		if (Device.browser.internet_explorer) {
-			this.multiInput._tokenizer.$().click();
+			this.multiInput._tokenizer.$().trigger("click");
 		} else {
 			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		}
@@ -1970,7 +1970,7 @@ sap.ui.define([
 
 		// act
 		if (Device.browser.internet_explorer) {
-			this.multiInput._tokenizer.$().click();
+			this.multiInput._tokenizer.$().trigger("click");
 		} else {
 			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		}
@@ -1988,7 +1988,7 @@ sap.ui.define([
 		oPicker.close();
 		// act
 		if (Device.browser.internet_explorer) {
-			this.multiInput._tokenizer.$().click();
+			this.multiInput._tokenizer.$().trigger("click");
 		} else {
 			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		}
@@ -2184,7 +2184,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		// act
 		if (Device.browser.internet_explorer) {
-			this.multiInput1._tokenizer.$().click();
+			this.multiInput1._tokenizer.$().trigger("click");
 		} else {
 			this.multiInput1.$().find(".sapMTokenizerIndicator")[0].click();
 		}
@@ -2390,7 +2390,7 @@ sap.ui.define([
 
 		// act
 		if (Device.browser.msie) {
-			this.multiInput._tokenizer.$().click();
+			this.multiInput._tokenizer.$().trigger("click");
 		} else {
 			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		}
@@ -2415,7 +2415,7 @@ sap.ui.define([
 
 		// act
 		if (Device.browser.msie) {
-			this.multiInput._tokenizer.$().click();
+			this.multiInput._tokenizer.$().trigger("click");
 		} else {
 			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		}
@@ -2436,7 +2436,7 @@ sap.ui.define([
 
 		// act
 		if (Device.browser.msie) {
-			this.multiInput._tokenizer.$().click();
+			this.multiInput._tokenizer.$().trigger("click");
 		} else {
 			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		}

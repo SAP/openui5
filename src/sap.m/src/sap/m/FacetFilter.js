@@ -678,16 +678,16 @@ sap.ui.define([
 		this.invalidate();
 
 		var $Tabbables = this.$().find(":sapTabbable");
-		jQuery($Tabbables[$Tabbables.length - 1]).focus();
+		jQuery($Tabbables[$Tabbables.length - 1]).trigger("focus");
 		var nextFocusIndex = this.oItemNavigation.getFocusedIndex();
-		jQuery(oEvent.target).blur();
+		jQuery(oEvent.target).trigger("blur");
 		this.oItemNavigation.setFocusedIndex(nextFocusIndex + 1);
 		this.focus();
 
 		if (this.oItemNavigation.getFocusedIndex() == 0) {
 			for ( var k = 0; k < this.$().find(":sapTabbable").length - 1; k++) {
 				if ($Tabbables[k].id.indexOf("add") >= 0) {
-					jQuery($Tabbables[k]).focus();
+					jQuery($Tabbables[k]).trigger("focus");
 				}
 			}
 		}
@@ -709,7 +709,7 @@ sap.ui.define([
 		if (oEvent.target.parentNode.className == "sapMFFHead" ) { //if focus on category, and then press tab, then focus on reset
 			for ( var i = 0; i < this.$().find(":sapTabbable").length; i++) {
 				if (this.$().find(":sapTabbable")[i].parentNode.className == "sapMFFResetDiv") {
-					jQuery(this.$().find(":sapTabbable")[i]).focus();
+					jQuery(this.$().find(":sapTabbable")[i]).trigger("focus");
 					this._invalidateFlag = false;
 					oEvent.preventDefault();
 					oEvent.setMarked();
@@ -740,20 +740,20 @@ sap.ui.define([
 
 		// without tabnext, and keep entering shift+tab, focus move to the 1st facetfilter list Button
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv" && this._previousTarget == null) {
-			jQuery(this.$().find(":sapTabbable")[0]).focus();
+			jQuery(this.$().find(":sapTabbable")[0]).trigger("focus");
 			oEvent.preventDefault();
 			oEvent.setMarked();
 			return;
 		}
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv" && this._previousTarget != null && this._previousTarget.id != oEvent.target.id) {
-			jQuery(this._previousTarget).focus();
+			jQuery(this._previousTarget).trigger("focus");
 			oEvent.preventDefault();
 			oEvent.setMarked();
 			return;
 		}
 		if (oEvent.target.id.indexOf("add") >= 0 || oEvent.target.parentNode.className == "sapMFFHead") {
 			this._previousTarget = oEvent.target;
-			jQuery(this.$().find(":sapTabbable")[0]).focus();
+			jQuery(this.$().find(":sapTabbable")[0]).trigger("focus");
 		}
 	};
 
@@ -768,11 +768,11 @@ sap.ui.define([
 		}
 
 		if (this._addTarget != null) {
-			jQuery(this._addTarget).focus();
+			jQuery(this._addTarget).trigger("focus");
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		} else {
-			jQuery(this._aRows[this._aRows.length - 1]).focus();
+			jQuery(this._aRows[this._aRows.length - 1]).trigger("focus");
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
@@ -789,7 +789,7 @@ sap.ui.define([
 			return;
 		}
 
-		jQuery(this._aRows[0]).focus();
+		jQuery(this._aRows[0]).trigger("focus");
 		oEvent.preventDefault();
 		oEvent.setMarked();
 		this._previousTarget = oEvent.target;
@@ -825,7 +825,7 @@ sap.ui.define([
 			this._previousTarget = oEvent.target;
 			var currentFocusIndex = this.oItemNavigation.getFocusedIndex() - 1;
 			var nextFocusIndex = currentFocusIndex + this._pageSize;
-			jQuery(oEvent.target).blur();
+			jQuery(oEvent.target).trigger("blur");
 			this.oItemNavigation.setFocusedIndex(nextFocusIndex);
 			this.focus();
 		}
@@ -847,7 +847,7 @@ sap.ui.define([
 			this._previousTarget = oEvent.target;
 			currentFocusIndex = this.oItemNavigation.getFocusedIndex() + 1;
 			var nextFocusIndex = currentFocusIndex - this._pageSize;
-			jQuery(oEvent.target).blur();
+			jQuery(oEvent.target).trigger("blur");
 			this.oItemNavigation.setFocusedIndex(nextFocusIndex);
 			this.focus();
 		}
@@ -867,7 +867,7 @@ sap.ui.define([
 		var currentFocusIndex = 0;
 		currentFocusIndex = this.oItemNavigation.getFocusedIndex() - 1;
 		var nextFocusIndex = currentFocusIndex + this._pageSize;
-		jQuery(oEvent.target).blur();
+		jQuery(oEvent.target).trigger("blur");
 		this.oItemNavigation.setFocusedIndex(nextFocusIndex);
 		this.focus();
 	};
@@ -889,7 +889,7 @@ sap.ui.define([
 			currentFocusIndex = currentFocusIndex + 1;
 		}
 		var nextFocusIndex = currentFocusIndex - this._pageSize;
-		jQuery(oEvent.target).blur();
+		jQuery(oEvent.target).trigger("blur");
 		this.oItemNavigation.setFocusedIndex(nextFocusIndex);
 		this.focus();
 	};
@@ -907,7 +907,7 @@ sap.ui.define([
 	//		[+] = right/down - keycode 107
 		this._previousTarget = oEvent.target;
 		var nextDocusIndex = this.oItemNavigation.getFocusedIndex() + 1;
-		jQuery(oEvent.target).blur();
+		jQuery(oEvent.target).trigger("blur");
 		this.oItemNavigation.setFocusedIndex(nextDocusIndex);
 		this.focus();
 	};
@@ -925,7 +925,7 @@ sap.ui.define([
 	//		[-] = left/up - keycode 109
 		this._previousTarget = oEvent.target;
 		var nextDocusIndex = this.oItemNavigation.getFocusedIndex() - 1;
-		jQuery(oEvent.target).blur();
+		jQuery(oEvent.target).trigger("blur");
 		this.oItemNavigation.setFocusedIndex(nextDocusIndex);
 		this.focus();
 	};
@@ -942,7 +942,7 @@ sap.ui.define([
 
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
-			jQuery(oEvent.target).focus();
+			jQuery(oEvent.target).trigger("focus");
 			oEvent.preventDefault();
 			oEvent.setMarked();
 			return;
@@ -961,7 +961,7 @@ sap.ui.define([
 
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
-			jQuery(oEvent.target).focus();
+			jQuery(oEvent.target).trigger("focus");
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
@@ -979,7 +979,7 @@ sap.ui.define([
 
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
-			jQuery(oEvent.target).focus();
+			jQuery(oEvent.target).trigger("focus");
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
@@ -997,7 +997,7 @@ sap.ui.define([
 
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
-			jQuery(oEvent.target).focus();
+			jQuery(oEvent.target).trigger("focus");
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
@@ -1017,7 +1017,7 @@ sap.ui.define([
 		}
 
 		var nextFocusIndex = this._lastCategoryFocusIndex;
-		jQuery(oEvent.target).blur();
+		jQuery(oEvent.target).trigger("blur");
 		this.oItemNavigation.setFocusedIndex(nextFocusIndex);
 		this.focus();
 	};

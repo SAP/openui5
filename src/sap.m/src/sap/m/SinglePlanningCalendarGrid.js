@@ -1147,9 +1147,9 @@ sap.ui.define([
 			}
 
 			if (bFullDayApp && iDirection !== KeyCodes.ARROW_DOWN) {
-				jQuery("[data-sap-start-date='" + oFormat.format(oAppStartDate) + "'].sapMSinglePCBlockersColumn").focus();
+				jQuery("[data-sap-start-date='" + oFormat.format(oAppStartDate) + "'].sapMSinglePCBlockersColumn").trigger("focus");
 			} else {
-				jQuery("[data-sap-start-date='" + oFormat.format(oAppStartDate) + "'].sapMSinglePCRow").focus();
+				jQuery("[data-sap-start-date='" + oFormat.format(oAppStartDate) + "'].sapMSinglePCRow").trigger("focus");
 			}
 		};
 

@@ -360,7 +360,7 @@ sap.ui.define([
 		oButton.firePress();
 
 		setTimeout(function () {
-			sap.ui.getCore().byId('oButton7').$().focus();
+			sap.ui.getCore().byId('oButton7').$().trigger("focus");
 
 			sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId('oButton7').$()[0], KeyCodes.PAGE_UP);
 			sap.ui.test.qunit.triggerKeyup(sap.ui.getCore().byId('oButton7').$()[0], KeyCodes.PAGE_UP);

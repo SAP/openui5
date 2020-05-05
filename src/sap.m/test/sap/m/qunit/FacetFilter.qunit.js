@@ -133,7 +133,7 @@ sap.ui.define([
 
 			//test
 			assert.equal(oFF.getLists().length, 105, "Expected 105 lists");
-			assert.ok(jQuery("#__item0-__list1-104").size(), "There should be element at 105 rendered");
+			assert.ok(jQuery("#__item0-__list1-104").length, "There should be element at 105 rendered");
 
 			destroyFF(oFF);
 

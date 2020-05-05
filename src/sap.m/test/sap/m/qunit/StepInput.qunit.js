@@ -547,7 +547,7 @@ sap.ui.define([
 		this.stepInput.setMin(3);
 		oInput.focus();
 		oInput.setValue(2);
-		oInput.$().blur();
+		oInput.$().trigger("blur");
 		this.stepInput._change();
 		oCore.applyChanges();
 
@@ -725,7 +725,7 @@ sap.ui.define([
 
 		// act
 		oInput.onfocusin();
-		oInput._$input.focus().val("3.12").trigger("input");
+		oInput._$input.trigger("focus").val("3.12").trigger("input");
 		this.clock.tick(300);
 		oCore.applyChanges();
 
@@ -735,7 +735,7 @@ sap.ui.define([
 		// act
 		this.stepInput.setDisplayValuePrecision(2);
 		oInput.onfocusin();
-		oInput._$input.focus().val("6.1267").trigger("input");
+		oInput._$input.trigger("focus").val("6.1267").trigger("input");
 		this.clock.tick(300);
 		oCore.applyChanges();
 
@@ -745,7 +745,7 @@ sap.ui.define([
 		// act
 		this.stepInput.setDisplayValuePrecision(3);
 		oInput.onfocusin();
-		oInput._$input.focus().val("9.12588").trigger("input");
+		oInput._$input.trigger("focus").val("9.12588").trigger("input");
 		this.clock.tick(300);
 		oCore.applyChanges();
 
@@ -915,7 +915,7 @@ sap.ui.define([
 		var oInput = this.stepInput._getInput();
 
 		//act
-		jQuery(this.stepInput).focus();
+		jQuery(this.stepInput).trigger("focus");
 		oInput.$("inner").val(7);
 
 		//assert
@@ -989,7 +989,7 @@ sap.ui.define([
 			oDecrementBtn = this.stepInput._getDecrementButton();
 
 		//act
-		jQuery(this.stepInput).focus();
+		jQuery(this.stepInput).trigger("focus");
 		oIncrementBtn.firePress();
 
 		//assert
@@ -1030,14 +1030,14 @@ sap.ui.define([
 		var oInput = this.stepInput._getInput();
 
 		// focus the field
-		jQuery(this.stepInput).focus();
+		jQuery(this.stepInput).trigger("focus");
 
 		//assert
 		assert.strictEqual(this.stepInput.getValue(), 4, "Value should not be changed"); //value not changed
 		assert.equal(this.oChangeSpy.callCount, 0, "Change Event should not be called");
 
 		//act
-		oInput.$("inner").blur();
+		oInput.$("inner").trigger("blur");
 
 		//assert
 		assert.equal(this.stepInput.getValue(), 4, "After focus out value should not be changed");
@@ -1115,7 +1115,7 @@ sap.ui.define([
 			oDecrementBtn = this.stepInput._getDecrementButton();
 
 		//act
-		jQuery(this.stepInput).focus();
+		jQuery(this.stepInput).trigger("focus");
 		this.stepInput._getInput().setValue(-7);
 		oIncrementBtn.firePress();
 

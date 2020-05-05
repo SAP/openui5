@@ -353,10 +353,10 @@ sap.ui.define([
 		if (this._oEditedItem) {
 			oInput = this._oEditedItem._getFileNameEdit().$("inner");
 			if (oInput) {
-				oInput.focus(function () {
+				oInput.on("focus", function () {
 					oInput.selectText(0, oInput.val().length);
 				});
-				oInput.focus();
+				oInput.trigger("focus");
 			}
 		}
 

@@ -256,7 +256,7 @@ sap.ui.define([
 		this._oTabFilter._setSelectListItems();
 		this._initItemNavigation();
 
-		oDroppedControl._getRealTab().getParent().$().focus();
+		oDroppedControl._getRealTab().getParent().$().trigger("focus");
 	};
 
 	/* =========================================================== */
@@ -279,7 +279,7 @@ sap.ui.define([
 
 		IconTabBarDragAndDropUtil.moveItem.call(this, oTabToBeMoved, iKeyCode, this.getItems().length - 1);
 		this._initItemNavigation();
-		oTabToBeMoved.$().focus();
+		oTabToBeMoved.$().trigger("focus");
 
 		if (iIndexBeforeMove !== this.indexOfItem(oTabToBeMoved)) {
 			this._oIconTabHeader._moveTab(oTabToBeMoved._getRealTab(), iKeyCode, this._oIconTabHeader.getItems().length - 1);

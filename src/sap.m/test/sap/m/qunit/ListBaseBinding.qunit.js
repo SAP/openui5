@@ -517,7 +517,7 @@ sap.ui.define([
 		oList.done(function () {
 
 			// focus to the input field
-			sFocusedControlId = oList.$().find("input").eq(5).focus().attr("id");
+			sFocusedControlId = oList.$().find("input").eq(5).trigger("focus").attr("id");
 
 			// rerender list
 			oList.rerender();
@@ -592,7 +592,7 @@ sap.ui.define([
 					}
 
 					// act: request new page
-					$GrowingButton.focus().trigger("tap");
+					$GrowingButton.trigger("focus").trigger("tap");
 
 					oList.attachUpdateFinished(function(oEvent) {
 						oNavigationRoot = oList.getNavigationRoot();

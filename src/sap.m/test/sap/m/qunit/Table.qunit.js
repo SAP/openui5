@@ -686,19 +686,19 @@ sap.ui.define([
 		assert.equal(sut.getAccessibilityType(), oResourceBundle.getText("ACC_CTR_TYPE_TABLE"), "Accessilitiy role correctly set");
 
 		// _setHeaderAnnouncement() test
-		var $tblHeader = sut.$("tblHeader").focus();
+		var $tblHeader = sut.$("tblHeader").trigger("focus");
 		var oInvisibleText = document.getElementById($tblHeader.attr("aria-labelledby"));
 		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " Name Color Number", "Text correctly assigned for screen reader announcement");
 
 		// _setFooterAnnouncment() test
-		var $tblFooter = sut.$("tblFooter").focus();
+		var $tblFooter = sut.$("tblFooter").trigger("focus");
 		oInvisibleText = document.getElementById($tblFooter.attr("aria-labelledby"));
 		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_FOOTER_ROW") + " Name Greetings", "Text correctly assigned for screen reader announcement");
 
 		// noDataText test
 		oBinding.filter([new Filter("name", "Contains", "xxx")]);
 		Core.applyChanges();
-		sut.$("nodata").focus();
+		sut.$("nodata").trigger("focus");
 		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("LIST_NO_DATA"), "Text correctly assinged for screen reader announcement");
 
 		sut.destroy();
@@ -750,12 +750,12 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// saptabnext event on tblHeader
-		var $tblHeader = sut.$("tblHeader").focus();
+		var $tblHeader = sut.$("tblHeader").trigger("focus");
 		qutils.triggerKeydown($tblHeader, KeyCodes.TAB);
 		assert.ok(fnIsHeaderRowEvent.called, "Event was triggered on the header");
 
 		// saptabnext on tblFooter
-		var $tblFooter = sut.$("tblFooter").focus();
+		var $tblFooter = sut.$("tblFooter").trigger("focus");
 		qutils.triggerKeydown($tblFooter, KeyCodes.TAB);
 		assert.ok(fnIsFooterRowEvent.called, "Event was triggered on the footer");
 
@@ -769,7 +769,7 @@ sap.ui.define([
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		var $tblHeader = sut.$("tblHeader").focus();
+		var $tblHeader = sut.$("tblHeader").trigger("focus");
 		// shift-tab on header row
 		qutils.triggerKeyboardEvent($tblHeader, KeyCodes.TAB, true, false, false);
 		assert.equal(document.activeElement, sut.$("before")[0]);
@@ -856,7 +856,7 @@ sap.ui.define([
 		var iItemsLength = sut.getItems().length;
 		assert.equal(iItemsLength, 5, "5 items are shown in the table, growing is not triggered");
 
-		var $trigger = sut.$("trigger").focus();
+		var $trigger = sut.$("trigger").trigger("focus");
 		qutils.triggerKeydown($trigger, KeyCodes.SPACE);
 		assert.ok(iItemsLength < sut.getItems().length, "Growing triggered via onsapspace event");
 		assert.ok(fnCheckGrowingFromScratch.called, "checkGrowingFromScratch called in order to recalculate merging cells");
@@ -869,7 +869,7 @@ sap.ui.define([
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		var $tblHeader = sut.$('tblHeader').focus();
+		var $tblHeader = sut.$('tblHeader').trigger("focus");
 
 		assert.ok(!sut._selectAllCheckBox.getSelected(), "SelectAll checkbox is not selected");
 		qutils.triggerKeydown($tblHeader, KeyCodes.SPACE);

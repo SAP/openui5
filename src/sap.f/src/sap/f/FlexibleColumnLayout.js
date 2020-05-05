@@ -858,7 +858,7 @@ sap.ui.define([
 			oElement = this._getFirstFocusableElement(sCurrentColumn);
 		}
 
-		jQuery(oElement).focus();
+		jQuery(oElement).trigger("focus");
 	};
 
 	/**

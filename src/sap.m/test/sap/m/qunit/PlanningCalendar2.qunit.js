@@ -333,7 +333,7 @@ sap.ui.define([
 
 			// click on the wanted year
 			$Date = jQuery("#" + sMonthPickerId + "--YP-y" + iYear + "0101");
-			$Date.focus();
+			$Date.trigger("focus");
 			oPC._getHeader().getAggregation("_monthPicker").getAggregation("monthPicker")._oItemNavigation.setFocusedIndex(iYear);
 			sap.ui.getCore().applyChanges();
 			qutils.triggerKeydown($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
@@ -347,7 +347,7 @@ sap.ui.define([
 
 			// click on the wanted month
 			$Date = jQuery("#" + sMonthPickerId + "--MP-m" + iMonth);
-			$Date.focus();
+			$Date.trigger("focus");
 			// sets February
 			oPC._getHeader().getAggregation("_monthPicker").getAggregation("monthPicker")._oItemNavigation.setFocusedIndex(iMonth);
 			sap.ui.getCore().applyChanges();
@@ -358,7 +358,7 @@ sap.ui.define([
 			// click on 14 of September
 			sDate = DateFormat().getInstance({pattern: "yyyymmdd"}).format(new Date(iYear, iMonth, iDay));
 			$Date = jQuery("#" + sCalendarPickerId + "--Month0-" + sDate);
-			$Date.focus();
+			$Date.trigger("focus");
 			qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 		}
 	};

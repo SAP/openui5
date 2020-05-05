@@ -366,7 +366,7 @@ function(
 		 */
 		TabStrip.prototype.applyFocusInfo = function (oFocusInfo) {
 			if (oFocusInfo.focusDomRef) {
-				jQuery(oFocusInfo.focusDomRef).focus();
+				jQuery(oFocusInfo.focusDomRef).trigger("focus");
 			}
 		};
 

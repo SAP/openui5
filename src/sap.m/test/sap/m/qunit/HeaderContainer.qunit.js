@@ -402,7 +402,7 @@ sap.ui.define([
 
 		QUnit.test("Test tab button click event", function (assert) {
 			//Arrange
-			this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(0).focus();
+			this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(0).trigger("focus");
 			var oEvt = {
 				preventDefault: function () {
 				},
@@ -417,7 +417,7 @@ sap.ui.define([
 
 		QUnit.test("Test shift Tab button click event", function (assert) {
 			//Arrange
-			this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(0).focus();
+			this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(0).trigger("focus");
 			var oEvt = {
 				preventDefault: function () {
 				},
@@ -432,7 +432,7 @@ sap.ui.define([
 
 		QUnit.test("Focus is set to next content after the button to the right of the element was clicked", function (assert) {
 			//Arrange
-			this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(0).focus();
+			this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(0).trigger("focus");
 			var oEvt = {
 				preventDefault: function () {
 				},
@@ -449,7 +449,7 @@ sap.ui.define([
 
 		QUnit.test("Focus is set to previous content after the button to the left of the element was clicked", function (assert) {
 			//Arrange
-			this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(1).focus();
+			this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(1).trigger("focus");
 			var oEvt = {
 				preventDefault: function () {
 				},
