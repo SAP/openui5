@@ -342,6 +342,11 @@ sap.ui.define([
 	AnchorBar.prototype._onSelectChange = function (oEvent) {
 		var oSelectedItem = oEvent.getParameter("selectedItem"), oSelectedSection;
 
+		if (!oSelectedItem) {
+			Log.warning("AnchorBar :: no selected hierarchicalSelect item");
+			return;
+		}
+
 		oSelectedSection = sap.ui.getCore().byId(oSelectedItem.getKey());
 
 		if (oSelectedSection) {
