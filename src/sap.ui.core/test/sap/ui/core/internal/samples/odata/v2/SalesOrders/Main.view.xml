@@ -56,7 +56,7 @@
 						}" width="12em" />
 				</form:SimpleForm>
 				<t:Table id="ToLineItems" rowActionCount="1" rows="{
-						parameters : {transitionMessagesOnly : true},
+						parameters : {usePreliminaryContext : true, transitionMessagesOnly : true},
 						path : 'ToLineItems'
 					}" rowSelectionChange="onSelectItem" selectionMode="Single" threshold="0"
 					visibleRowCount="4">
@@ -71,8 +71,7 @@
 								</layoutData>
 							</Title>
 							<Button enabled="{= !!${SalesOrderID}}" icon="sap-icon://add"
-								press="onShowCreateItemDialog" tooltip="Create a sales order item"
-							/>
+								press="onCreateItem" tooltip="Create a sales order item" />
 							<Button enabled="{ui>/itemSelected}" icon="sap-icon://delete"
 								press="onDeleteItem" tooltip="Delete the selected sales order item"
 								/>
@@ -125,11 +124,11 @@
 						<t:Column width="8em">
 							<Label text="Quantity" />
 							<t:template>
-								<Input value="{
+								<Input textAlign="Right" value="{
 										constraints : {precision : 13, scale : 3},
 										path : 'Quantity',
 										type : 'sap.ui.model.odata.type.Decimal'
-									}" textAlign="Right" />
+									}" />
 							</t:template>
 						</t:Column>
 						<t:Column width="5em">
@@ -145,11 +144,11 @@
 						<t:Column width="10em">
 							<Label text="Gross Amount" />
 							<t:template>
-								<Input value="{
+								<Input textAlign="Right" value="{
 										constraints : {precision : 16, scale : 3},
 										path : 'GrossAmount',
 										type : 'sap.ui.model.odata.type.Decimal'
-									}" textAlign="Right" />
+									}" />
 							</t:template>
 						</t:Column>
 						<t:Column width="6em">
@@ -183,31 +182,31 @@
 				<dependents>
 					<Dialog id="createSalesOrderItemDialog" title="Create a New Sales Order Item">
 						<buttons>
-							<Button text="OK" press="onCreateItem" type="Accept"/>
-							<Button text="Cancel" press="onCancelCreateItem" type="Reject"/>
+							<Button press="onSaveCreatedItem" text="Save" type="Accept" />
+							<Button press="onDiscardCreatedItem" text="Discard" type="Reject" />
 						</buttons>
 						<form:SimpleForm ariaLabelledBy="createSalesOrderItemDialog" editable="true"
 							layout="ResponsiveGridLayout">
-							<Label text="Sales Order ID"/>
-							<Input editable="false" value="{SalesOrderID}" width="8em"/>
-							<Label text="Product ID"/>
-							<Input value="{ui>/newItem/ProductID}"/>
-							<Label text="Quantity"/>
+							<Label text="Sales Order ID" />
+							<Input editable="false" value="{SalesOrderID}" width="8em" />
+							<Label text="Product ID" />
+							<Input value="{ProductID}" />
+							<Label text="Quantity" />
 							<Input value="{
 									constraints : {precision : 13, scale : 3},
-									path : 'ui>/newItem/Quantity',
+									path : 'Quantity',
 									type : 'sap.ui.model.odata.type.Decimal'
-								}"/>
-							<Label text="Unit"/>
-							<Input value="{ui>/newItem/QuantityUnit}"  width="4em"/>
-							<Label text="Delivery Date"/>
+								}" />
+							<Label text="Unit" />
+							<Input value="{QuantityUnit}" width="4em" />
+							<Label text="Delivery Date" />
 							<DateTimePicker value="{
 									constraints : {precision : 7},
-									path : 'ui>/newItem/DeliveryDate',
+									path : 'DeliveryDate',
 									type : 'sap.ui.model.odata.type.DateTime'
-								}"/>
-							<Label text="Note"/>
-							<Input value="{ui>/newItem/Note}"/>
+								}" />
+							<Label text="Note" />
+							<Input value="{Note}" />
 						</form:SimpleForm>
 					</Dialog>
 					<Dialog binding="{ToProduct}" id="productDetailsDialog" title="Product Details">
@@ -219,6 +218,25 @@
 							<Input value="{ProductID}" />
 							<Label text="Name" />
 							<Input value="{Name}" />
+						</form:SimpleForm>
+					</Dialog>
+					<Dialog id="messageDetails" title="Message Details">
+						<buttons>
+							<Button press="onCloseMessageDetails" text="Close" type="Emphasized" />
+						</buttons>
+						<form:SimpleForm editable="false" layout="ResponsiveGridLayout">
+							<Label text="Message ID" />
+							<Text text="{messages>id}" />
+							<Label text="Type" />
+							<Text text="{messages>type}" />
+							<Label text="Message" />
+							<Text text="{messages>message}" />
+							<Label text="Code" />
+							<Text text="{messages>code}" />
+							<Label text="Target" />
+							<Text text="{messages>target}" />
+							<Label text="Full Target" />
+							<Text text="{messages>fullTarget}" />
 						</form:SimpleForm>
 					</Dialog>
 				</dependents>
@@ -238,9 +256,16 @@
 								},
 								path : 'messages>/'
 							}">
-							<MessageItem activeTitle="true" description="{messages>message}"
-								subtitle="{messages>additionalText}" title="{messages>message}"
-								type="{messages>type}" />
+							<MessageItem activeTitle="true"
+								description="See technical details for more information"
+								subtitle="{
+									formatter : '.formatMessageSubtitle',
+									path : 'messages>fullTarget'
+								}" title="{messages>message}"
+								type="{messages>type}">
+								<Link binding="{messages>}" press="onShowMessageDetails"
+									text="Technical Details" />
+							</MessageItem>
 						</MessagePopover>
 					</dependents>
 				</Button>

@@ -1,5 +1,7 @@
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/base/util/deepExtend",
+	"sap/ui/core/syncStyleClass",
 	"sap/ui/core/mvc/Controller",
 	"sap/m/ObjectMarker",
 	"sap/m/MessageToast",
@@ -8,13 +10,16 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/FileSizeFormat",
 	"sap/ui/Device"
-], function(jQuery, Controller, ObjectMarker, MessageToast, UploadCollectionParameter, MobileLibrary, JSONModel, FileSizeFormat, Device) {
+], function(jQuery, deepExtend, syncStyleClass, Controller, ObjectMarker, MessageToast, UploadCollectionParameter, MobileLibrary, JSONModel, FileSizeFormat, Device) {
 	"use strict";
+
+	var ListMode = MobileLibrary.ListMode,
+		ListSeparators = MobileLibrary.ListSeparators;
 
 	return Controller.extend("sap.m.sample.UploadCollection.Page", {
 		onInit: function() {
 			// set mock data
-			var sPath = sap.ui.require.toUrl("sap/m/sample/UploadCollection") + "/uploadCollection.json";
+			var sPath = sap.ui.require.toUrl("sap/m/sample/UploadCollection/uploadCollection.json");
 			this.getView().setModel(new JSONModel(sPath));
 
 			this.getView().setModel(new JSONModel(Device), "device");
@@ -22,7 +27,7 @@ sap.ui.define([
 			this.getView().setModel(new JSONModel({
 				"maximumFilenameLength": 55,
 				"maximumFileSize": 1000,
-				"mode": MobileLibrary.ListMode.SingleSelectMaster,
+				"mode": ListMode.SingleSelectMaster,
 				"uploadEnabled": true,
 				"uploadButtonVisible": true,
 				"enableEdit": true,
@@ -30,16 +35,16 @@ sap.ui.define([
 				"visibleEdit": true,
 				"visibleDelete": true,
 				"listSeparatorItems": [
-					MobileLibrary.ListSeparators.All,
-					MobileLibrary.ListSeparators.None
+					ListSeparators.All,
+					ListSeparators.None
 				],
-				"showSeparators": MobileLibrary.ListSeparators.All,
+				"showSeparators": ListSeparators.All,
 				"listModeItems": [
 					{
-						"key": MobileLibrary.ListMode.SingleSelectMaster,
+						"key": ListMode.SingleSelectMaster,
 						"text": "Single"
 					}, {
-						"key": MobileLibrary.ListMode.MultiSelect,
+						"key": ListMode.MultiSelect,
 						"text": "Multi"
 					}
 				]
@@ -99,7 +104,7 @@ sap.ui.define([
 
 		deleteItemById: function(sItemToDeleteId) {
 			var oData = this.byId("UploadCollection").getModel().getData();
-			var aItems = jQuery.extend(true, {}, oData).items;
+			var aItems = deepExtend({}, oData).items;
 			jQuery.each(aItems, function(index) {
 				if (aItems[index] && aItems[index].documentId === sItemToDeleteId) {
 					aItems.splice(index, 1);
@@ -114,7 +119,7 @@ sap.ui.define([
 		deleteMultipleItems: function(aItemsToDelete) {
 			var oData = this.byId("UploadCollection").getModel().getData();
 			var nItemsToDelete = aItemsToDelete.length;
-			var aItems = jQuery.extend(true, {}, oData).items;
+			var aItems = deepExtend({}, oData).items;
 			var i = 0;
 			jQuery.each(aItems, function(index) {
 				if (aItems[index]) {
@@ -137,7 +142,7 @@ sap.ui.define([
 
 		onFileRenamed: function(oEvent) {
 			var oData = this.byId("UploadCollection").getModel().getData();
-			var aItems = jQuery.extend(true, {}, oData).items;
+			var aItems = deepExtend({}, oData).items;
 			var sDocumentId = oEvent.getParameter("documentId");
 			jQuery.each(aItems, function(index) {
 				if (aItems[index] && aItems[index].documentId === sDocumentId) {
@@ -163,7 +168,7 @@ sap.ui.define([
 			var oData = oUploadCollection.getModel().getData();
 
 			oData.items.unshift({
-				"documentId": jQuery.now().toString(), // generate Id,
+				"documentId": Date.now().toString(), // generate Id,
 				"fileName": oEvent.getParameter("files")[0].fileName,
 				"mimeType": "",
 				"thumbnailUrl": "",
@@ -176,7 +181,7 @@ sap.ui.define([
 					},
 					{
 						"title": "Uploaded On",
-						"text": new Date(jQuery.now()).toLocaleDateString(),
+						"text": new Date().toLocaleDateString(),
 						"active": false
 					},
 					{
@@ -261,7 +266,7 @@ sap.ui.define([
 
 		onModeChange: function(oEvent) {
 			var oSettingsModel = this.getView().getModel("settings");
-			if (oEvent.getParameters().selectedItem.getProperty("key") === MobileLibrary.ListMode.MultiSelect) {
+			if (oEvent.getParameters().selectedItem.getProperty("key") === ListMode.MultiSelect) {
 				oSettingsModel.setProperty("/visibleEdit", false);
 				oSettingsModel.setProperty("/visibleDelete", false);
 				this.enableToolbarItems(true);
@@ -299,7 +304,7 @@ sap.ui.define([
 		onSelectionChange: function() {
 			var oUploadCollection = this.byId("UploadCollection");
 			// Only it is enabled if there is a selected item in multi-selection mode
-			if (oUploadCollection.getMode() === MobileLibrary.ListMode.MultiSelect) {
+			if (oUploadCollection.getMode() === ListMode.MultiSelect) {
 				if (oUploadCollection.getSelectedItems().length > 0) {
 					this.byId("deleteSelectedButton").setEnabled(true);
 				} else {
@@ -321,7 +326,7 @@ sap.ui.define([
 				this.oSettingsDialog = sap.ui.xmlfragment("sap.m.sample.UploadCollection.AppSettings", this);
 				this.getView().addDependent(this.oSettingsDialog);
 			}
-			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this.oSettingsDialog);
+			syncStyleClass("sapUiSizeCompact", this.getView(), this.oSettingsDialog);
 			this.oSettingsDialog.open();
 		},
 

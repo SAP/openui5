@@ -35,7 +35,7 @@ sap.ui.define([
 	function _getChangesForVariantSwitch(mPropertyBag) {
 		var aCurrentVariantChanges = VariantManagementState.getVariantChanges(
 			Object.assign(
-				_pick(mPropertyBag, ["vmReference", "variantsMap"]), {
+				_pick(mPropertyBag, ["vmReference", "variantsMap", "reference"]), {
 					changeInstance: true,
 					vReference: mPropertyBag.currentVReference
 				}
@@ -45,17 +45,17 @@ sap.ui.define([
 			return oCurrentVariantChange.getId();
 		});
 		var aMapChanges = Object.keys(mPropertyBag.changesMap).reduce(
-			function (aControlChanges, sControlId) {
+			function(aControlChanges, sControlId) {
 				return aControlChanges.concat(mPropertyBag.changesMap[sControlId]);
 			}, []);
 
-		var aFilteredChangesFromMap = aMapChanges.filter(function (oChangeInMap) {
+		var aFilteredChangesFromMap = aMapChanges.filter(function(oChangeInMap) {
 			return includes(aCurrentChangesKeys, oChangeInMap.getId());
 		});
 
 		var aNewChanges = VariantManagementState.getVariantChanges(
 			Object.assign(
-				_pick(mPropertyBag, ["vmReference", "variantsMap"]), {
+				_pick(mPropertyBag, ["vmReference", "variantsMap", "reference"]), {
 					changeInstance: true,
 					vReference: mPropertyBag.newVReference
 				}
@@ -65,7 +65,7 @@ sap.ui.define([
 		var aRevertChanges = [];
 		if (aNewChanges.length > 0) {
 			aRevertChanges = aFilteredChangesFromMap.slice();
-			aFilteredChangesFromMap.some(function (oChange) {
+			aFilteredChangesFromMap.some(function(oChange) {
 				if (aNewChanges[0] && oChange.getId() === aNewChanges[0].getId()) {
 					aNewChanges.shift();
 					aRevertChanges.shift();
@@ -102,6 +102,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag
 		 * @param {sap.ui.fl.FlexController} mPropertyBag.flexController - Flex controller
 		 * @param {string} mPropertyBag.vmReference - Variant management reference
+		 * @param {string} mPropertyBag.reference - Flex reference
 		 * @param {string} mPropertyBag.newVReference - Variant reference to be switched to
 		 * @param {string} mPropertyBag.currentVReference - Variant reference to be switched from
 		 * @param {sap.ui.core.Component} mPropertyBag.appComponent - App component
@@ -111,16 +112,18 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		switchVariant: function (mPropertyBag) {
-			//TODO: should be a function in FlexState e.g. getUIChanges()
-			mPropertyBag.changesMap = mPropertyBag.flexController._oChangePersistence.getChangesMapForComponent().mChanges;
-			mPropertyBag.variantsMap = VariantManagementState.getContent({reference: mPropertyBag.flexController.getComponentName()});
-			var mChangesToBeSwitched = _getChangesForVariantSwitch(mPropertyBag);
+		switchVariant: function(mPropertyBag) {
+			return Promise.resolve().then(function() {
+				//TODO: should be a function in FlexState e.g. getUIChanges()
+				mPropertyBag.changesMap = mPropertyBag.flexController._oChangePersistence.getChangesMapForComponent().mChanges;
+				mPropertyBag.variantsMap = VariantManagementState.getContent(mPropertyBag.reference);
+				var mChangesToBeSwitched = _getChangesForVariantSwitch(mPropertyBag);
 
-			return Reverter.revertMultipleChanges(mChangesToBeSwitched.changesToBeReverted, mPropertyBag)
-			//TODO: apply variantChanges() should be moved out of flex controller
-				.then(mPropertyBag.flexController.applyVariantChanges.bind(mPropertyBag.flexController, mChangesToBeSwitched.changesToBeApplied, mPropertyBag.appComponent))
-				.then(VariantManagementState.setCurrentVariant.bind(null, mPropertyBag));
+				return Reverter.revertMultipleChanges(mChangesToBeSwitched.changesToBeReverted, mPropertyBag)
+				//TODO: apply variantChanges() should be moved out of flex controller
+					.then(mPropertyBag.flexController.applyVariantChanges.bind(mPropertyBag.flexController, mChangesToBeSwitched.changesToBeApplied, mPropertyBag.appComponent))
+					.then(VariantManagementState.setCurrentVariant.bind(null, mPropertyBag));
+			});
 		}
 
 	};

@@ -522,6 +522,15 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			IconTabBarRTL: {
+				title: "QUnit Page for sap.m.IconTabBarRtl",
+				sinon: {
+					useFakeTimers: true
+				},
+				ui5: {
+					rtl: true
+				}
+			},
 			IconTabHeader: {
 				title: "QUnit Page for sap.m.IconTabHeader",
 				sinon: {
@@ -642,7 +651,7 @@ sap.ui.define([
 				_alternativeTitle: "QUnit page for sap.m.MaskInput",
 				ui5: {
 					language: "en-US",
-					bindingSyntax: "simle"
+					bindingSyntax: "simple"
 				},
 				sinon: {
 					useFakeTimers: true

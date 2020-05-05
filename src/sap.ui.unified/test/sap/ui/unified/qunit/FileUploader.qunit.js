@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/unified/FileUploader",
 	"sap/ui/core/TooltipBase",
 	"sap/m/Label",
-	"sap/m/Text"
-], function(qutils, FileUploader, TooltipBase, Label, Text) {
+	"sap/m/Text",
+	"sap/ui/Device"
+], function(qutils, FileUploader, TooltipBase, Label, Text, Device) {
 	"use strict";
 
 	/**
@@ -251,6 +252,31 @@ sap.ui.define([
 			".txt,.pdf,image/png,image/jpeg",
 			"accept attribute is correct");
 
+		//cleanup
+		oFileUploader.destroy();
+	});
+
+	//BCP: 2070139852
+	QUnit.test("input has the correct accept attribute", function(assert) {
+		//Setup
+		var oFileUploader = createFileUploader({
+			fileType: ["XML"],
+			mimeType: []
+		});
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oFileUploader.$().find("input[type='file']").attr("accept"),
+			".XML",
+			"accept attribute is correct initially");
+
+		oFileUploader.setFileType(["JSON"]);
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oFileUploader.$().find("input[type='file']").attr("accept"),
+			".JSON",
+			"accept attribute is correct after using setter");
 		//cleanup
 		oFileUploader.destroy();
 	});
@@ -1021,5 +1047,20 @@ sap.ui.define([
 
 		// Cleanup
 		oFileUploader.destroy();
+	});
+
+	QUnit.test("Click focuses the fileuploader button", function (assert) {
+		//Arrange
+		this.stub(Device, "browser", {"safari": true});
+		var oFileUploader = new sap.ui.unified.FileUploader("fu"),
+			oSpy = this.spy(oFileUploader.oBrowse, "focus");
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		//Act
+		oFileUploader.onclick();
+
+		//Assert
+		assert.strictEqual(oSpy.callCount, 1, "Clicking on browse button should focus the button in safari");
 	});
 });

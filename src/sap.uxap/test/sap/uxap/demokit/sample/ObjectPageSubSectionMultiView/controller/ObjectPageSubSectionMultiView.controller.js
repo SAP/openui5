@@ -10,5 +10,5 @@ sap.ui.define([
 			$(".sapUiSimpleForm").css("backgroundColor", "green");
 		}
 	});
-}, true);
+});
 

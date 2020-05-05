@@ -1,10 +1,12 @@
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageToast",
 	"sap/ui/core/format/DateFormat",
-	"sap/m/ToolbarSpacer"
-], function(Controller, JSONModel, MessageToast, DateFormat, ToolbarSpacer) {
+	"sap/m/ToolbarSpacer",
+	"sap/ui/thirdparty/jquery"
+], function(Log, Controller, JSONModel, MessageToast, DateFormat, ToolbarSpacer, jQuery) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Resizing.Controller", {
@@ -34,7 +36,7 @@ sap.ui.define([
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
-			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
+			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
 				success: function(oData) {
 					var aTemp1 = [];
@@ -43,11 +45,11 @@ sap.ui.define([
 					var aCategoryData = [];
 					for (var i = 0; i < oData.ProductCollection.length; i++) {
 						var oProduct = oData.ProductCollection[i];
-						if (oProduct.SupplierName && jQuery.inArray(oProduct.SupplierName, aTemp1) < 0) {
+						if (oProduct.SupplierName && aTemp1.indexOf(oProduct.SupplierName) < 0) {
 							aTemp1.push(oProduct.SupplierName);
 							aSuppliersData.push({Name: oProduct.SupplierName});
 						}
-						if (oProduct.Category && jQuery.inArray(oProduct.Category, aTemp2) < 0) {
+						if (oProduct.Category && aTemp2.indexOf(oProduct.Category) < 0) {
 							aTemp2.push(oProduct.Category);
 							aCategoryData.push({Name: oProduct.Category});
 						}
@@ -63,7 +65,7 @@ sap.ui.define([
 					oModel.setData(oData);
 				},
 				error: function() {
-					jQuery.sap.log.error("failed to load json");
+					Log.error("failed to load json");
 				}
 			});
 
@@ -103,13 +105,13 @@ sap.ui.define([
 			} else {
 				this._messageBuffer.push("Column '" + oColumn.getLabel().getText() + "' was resized to " + oEvent.getParameter("width") + ".");
 				if (this._messageTimer) {
-					jQuery.sap.clearDelayedCall(this._messageTimer);
+					clearTimeout(this._messageTimer);
 				}
-				this._messageTimer = jQuery.sap.delayedCall(50, this, function(){
+				this._messageTimer = setTimeout(function(){
 					MessageToast.show(this._messageBuffer.join("\n"));
 					this._messageBuffer = [];
 					this._messageTimer = null;
-				});
+				}.bind(this), 50);
 			}
 		}
 	});

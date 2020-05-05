@@ -231,11 +231,11 @@ sap.ui.define([
 		assert.expect(6);
 		oDataSet.attachSearch(search);
 		oDataSet.attachSelectionChanged(handleSelection);
-		oDataSet.$("searchValue-tf-input").focus();
+		oDataSet.$("searchValue-tf-input").trigger("focus");
 		oDataSet.$("searchValue-tf-input").val("img2");
 		qutils.triggerKeydown(oDataSet.$("searchValue-tf-input"), "ENTER");
 		assert.equal(window.filterValue, "img2", "Search value");
-		oDataSet.$("searchValue-tf-input").focus();
+		oDataSet.$("searchValue-tf-input").trigger("focus");
 		oDataSet.$("searchValue-tf-input").val("img4");
 		qutils.triggerKeydown(oDataSet.$("searchValue-tf-input"), "ENTER");
 		assert.equal(window.filterValue, "img4", "Search value");

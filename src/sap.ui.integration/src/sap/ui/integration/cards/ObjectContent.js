@@ -14,9 +14,8 @@ sap.ui.define([
 		"sap/ui/core/ResizeHandler",
 		"sap/ui/layout/AlignedFlowLayout",
 		"sap/ui/dom/units/Rem",
-		"sap/ui/integration/util/BindingHelper",
-		"sap/ui/integration/formatters/IconFormatter"
-	], function (library, BaseContent, HBox, VBox, Text, Title, Avatar, Link , Label, ResizeHandler, AlignedFlowLayout, Rem, BindingHelper, IconFormatter) {
+		"sap/ui/integration/util/BindingHelper"
+	], function (library, BaseContent, HBox, VBox, Text, Title, Avatar, Link , Label, ResizeHandler, AlignedFlowLayout, Rem, BindingHelper) {
 		"use strict";
 
 		var AreaType = library.AreaType;
@@ -210,7 +209,7 @@ sap.ui.define([
 
 					if (oItem.icon) {
 						var vSrc = BindingHelper.formattedProperty(oItem.icon.src, function (sValue) {
-							return IconFormatter.formatSrc(sValue, this._sAppId);
+							return this._oIconFormatter.formatSrc(sValue, this._sAppId);
 						}.bind(this));
 
 						var oAvatar = new Avatar({

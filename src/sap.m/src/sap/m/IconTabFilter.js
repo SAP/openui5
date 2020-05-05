@@ -164,7 +164,7 @@ sap.ui.define([
 	/**
 	 * Library internationalization resource bundle.
 	 *
-	 * @type {sap.base.i18n.ResourceBundle}
+	 * @type {module:sap/base/i18n/ResourceBundle}
 	 */
 	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
@@ -202,6 +202,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Function is called when the element is initialized.
+	 *
+	 * @private
+	 */
+	IconTabFilter.prototype.init = function () {
+		this._oDragEventDelegate = {
+			onlongdragover: this._handleOnLongDragOver,
+			ondragover: this._handleOnDragOver,
+			ondragleave: this._handleOnDragLeave,
+			ondrop: this._handleOnDrop
+		};
+	};
+
+	/**
 	 * Function is called when exiting the element.
 	 *
 	 * @private
@@ -223,6 +237,11 @@ sap.ui.define([
 		if (this._oPopover) {
 			this._oPopover.destroy();
 			this._oPopover = null;
+		}
+
+		if (this.getAggregation("_expandButton")) {
+			this._getExpandButton().removeEventDelegate(this._oDragEventDelegate);
+			this._oDragEventDelegate = null;
 		}
 	};
 
@@ -357,7 +376,6 @@ sap.ui.define([
 		var oIconTabHeader = this.getParent(),
 			oIconTabBar = oIconTabHeader.getParent(),
 			bHasIconTabBar = oIconTabHeader._isInsideIconTabBar(),
-			oRB = Core.getLibraryResourceBundle("sap.m"),
 			mAriaParams = { role: "tab" },
 			sId = this.getId(),
 			sCount = this.getCount(),
@@ -374,7 +392,7 @@ sap.ui.define([
 		}
 
 		if (this._getAllSubFilters().length) {
-			mAriaParams.roledescription = oRB.getText("ICONTABFILTER_SPLIT_TAB");
+			mAriaParams.roledescription = oResourceBundle.getText("ICONTABFILTER_SPLIT_TAB");
 		}
 
 		if (sText.length ||
@@ -431,6 +449,10 @@ sap.ui.define([
 			oRM.class("sapMITHUnselectable");
 		}
 
+		if (this.getItems().length > 0) {
+			oRM.class("sapMITBFilterWithItems");
+		}
+
 		if (!this.getEnabled()) {
 			oRM.class("sapMITBDisabled")
 				.attr("aria-disabled", true);
@@ -463,7 +485,7 @@ sap.ui.define([
 					oRM.openStart("div", sId + "-iconColor")
 						.style("display", "none")
 						.openEnd()
-						.text(oRB.getText('ICONTABBAR_ICONCOLOR_' + oIconColor.toUpperCase()))
+						.text(oResourceBundle.getText('ICONTABBAR_ICONCOLOR_' + oIconColor.toUpperCase()))
 						.close("div");
 				}
 
@@ -513,9 +535,17 @@ sap.ui.define([
 				oRM.attr("dir", "ltr");
 			}
 
-			oRM.openEnd()
-				.text(oIconTabHeader._getDisplayText(this))
-				.close("div");
+			oRM.openEnd();
+			oRM.openStart("span").class("sapMITHTextContent").openEnd().text(oIconTabHeader._getDisplayText(this));
+			oRM.close("span");
+
+				if (this.getItems().length > 0 && this.getParent()._isUnselectable(this) || this._bIsOverflow) {
+					oRM.openStart("span", this.getId() + "-expandButton").class("sapMITHShowSubItemsIcon").openEnd();
+					oRM.icon(IconPool.getIconURI("slim-arrow-down"), [], {title: oResourceBundle.getText("ICONTABHEADER_OVERFLOW_MORE")});
+					oRM.close("span");
+				}
+
+				oRM.close("div");
 		}
 
 		if (!bInLine && bHorizontalDesign) {
@@ -525,7 +555,7 @@ sap.ui.define([
 		oRM.openStart("div").class("sapMITBContentArrow").openEnd().close("div");
 		oRM.close("div");
 
-		if (this._bIsOverflow || this.getItems().length > 0) {
+		if (this.getItems().length > 0 && !oIconTabHeader._isUnselectable(this)) {
 			oRM.openStart("span")
 				.accessibilityState({ role: "separator" })
 				.openEnd()
@@ -558,8 +588,7 @@ sap.ui.define([
 
 		var bTextOnly = true,
 			bIconOnly = oSelectList._bIconOnly,
-			oIconTabHeader = oSelectList._oIconTabHeader,
-			oRB = Core.getLibraryResourceBundle('sap.m');
+			oIconTabHeader = oSelectList._oIconTabHeader;
 
 		if (oIconTabHeader) {
 			bTextOnly = oIconTabHeader._bTextOnly;
@@ -619,7 +648,7 @@ sap.ui.define([
 
 		if (bShouldReadIconColor) {
 			this._invisibleText = new InvisibleText({
-				text: oRB.getText('ICONTABBAR_ICONCOLOR_' + oIconColor.toUpperCase())
+				text: oResourceBundle.getText('ICONTABBAR_ICONCOLOR_' + oIconColor.toUpperCase())
 			});
 
 			aLabelledByIds.push(this._invisibleText.getId());
@@ -720,16 +749,20 @@ sap.ui.define([
 
 	IconTabFilter.prototype._getExpandButton = function () {
 		var oButton = this.getAggregation("_expandButton");
-		if (!oButton) {
+
+		if (!oButton && !this._getRootTab().getParent()._isUnselectable(this)) {
 			oButton = new AccButton(this.getId() + "-expandButton", {
 				type: ButtonType.Transparent,
 				icon: IconPool.getIconURI("slim-arrow-down"),
-				tooltip: Core.getLibraryResourceBundle("sap.m").getText("ICONTABHEADER_OVERFLOW_MORE"),
+				tooltip: oResourceBundle.getText("ICONTABHEADER_OVERFLOW_MORE"),
 				tabIndex: "-1",
 				press: this._expandButtonPress.bind(this)
 			}).addStyleClass("sapMITBFilterExpandBtn");
 
+			oButton.addEventDelegate(this._oDragEventDelegate, this);
 			this.setAggregation("_expandButton", oButton);
+		} else {
+			this.addEventDelegate(this._oDragEventDelegate, this);
 		}
 
 		return oButton;
@@ -744,6 +777,7 @@ sap.ui.define([
 		this.$().focus();
 
 		if (!this._oPopover) {
+
 			this._oPopover = new ResponsivePopover({
 				showArrow: false,
 				showHeader: false,
@@ -780,8 +814,8 @@ sap.ui.define([
 
 		this._oPopover.removeAllContent();
 		this._oPopover.addContent(oSelectList)
-			.setInitialFocus(bHasSelectedItem ? oSelectList.getSelectedItem() : oSelectList.getItems()[0])
-			.openBy(this._getExpandButton());
+			.setInitialFocus(bHasSelectedItem ? oSelectList.getSelectedItem() : oSelectList.getVisibleItems()[0])
+			.openBy(this._getExpandButton() || this);
 	};
 
 	/**
@@ -855,6 +889,41 @@ sap.ui.define([
 	};
 
 
+	/** Handles onDragOver of the expand button.
+	* @private
+	* @param {jQuery.Event} oEvent The jQuery drag over event
+	*/
+	IconTabFilter.prototype._handleOnDragOver = function (oEvent) {
+		this._getDragOverDomRef().classList.add("sapMITHDragOver");
+		oEvent.preventDefault(); // allow drop, so that the cursor is correct
+	};
+
+	/** Handles onLongDragOver of the expand button.
+	* @private
+	*/
+	IconTabFilter.prototype._handleOnLongDragOver = function () {
+		if (this._oPopover && this._oPopover.isOpen()) {
+			return;
+		}
+		this._expandButtonPress();
+	};
+
+	/**
+	 * Handles onDrop on the expand button.
+	 * @private
+	 */
+	IconTabFilter.prototype._handleOnDrop = function () {
+		this._getDragOverDomRef().classList.remove("sapMITHDragOver");
+	};
+
+	/**
+	 * Handles onDragLeave on the expand button.
+	 * @private
+	 */
+	IconTabFilter.prototype._handleOnDragLeave = function () {
+		this._getDragOverDomRef().classList.remove("sapMITHDragOver");
+	};
+
 	/**
 	 * Populates the IconTabBarSelectList with the context of this instance's items
 	 *
@@ -864,27 +933,38 @@ sap.ui.define([
 	IconTabFilter.prototype._setSelectListItems = function () {
 		var oIconTabHeader = this.getParent(),
 			oSelectList = this._getSelectList(),
-			aTabFilters = this.getItems(),
+			aTabFilters = this._getAllSubFilters(),
 			oPrevSelectedItem = oIconTabHeader.oSelectedItem,
 			bHasSelectedItem = false,
-			aItemsInStrip;
+			aItemsInStrip,
+			i;
 
 		if (this._bIsOverflow) {
-			aTabFilters = oIconTabHeader.getTabFilters();
+			var aHeaderTabFilters = oIconTabHeader.getTabFilters();
 			aItemsInStrip = oIconTabHeader._getItemsInStrip();
+			aTabFilters = [];
+
+			for (i = 0; i < aHeaderTabFilters.length; i++) {
+
+				// If tab is an overflow tab and oTabFilter is already in Tab Strip, do not add it to list
+				// on a mobile device, this behaviour doesn't occur, and all items are shown
+				if (!Device.system.phone && aItemsInStrip.indexOf(aHeaderTabFilters[i]) > -1) {
+					continue;
+				}
+
+				var aSubFilters = aHeaderTabFilters[i]._getAllSubFilters();
+				aTabFilters.push(aHeaderTabFilters[i]);
+				for (var j = 0; j < aSubFilters.length; j++) {
+					aTabFilters.push(aSubFilters[j]);
+				}
+			}
 		}
 
 		oSelectList.destroyItems();
 		oSelectList.setSelectedItem(null);
 
-		for (var i = 0; i < aTabFilters.length; i++) {
+		for (i = 0; i < aTabFilters.length; i++) {
 			var oTabFilter = aTabFilters[i];
-
-			// If tab is an overflow tab and oTabFilter is already in Tab Strip, do not add it to list
-			// on a mobile device, this behaviour doesn't occur, and all items are shown
-			if (this._bIsOverflow && !Device.system.phone && aItemsInStrip.indexOf(oTabFilter) > -1) {
-				continue;
-			}
 
 			var oListItem = oTabFilter.clone(undefined, undefined, { cloneChildren: false, cloneBindings: true });
 			oListItem._oTabFilter = oTabFilter; // link list item to its underlying tab filter
@@ -903,6 +983,18 @@ sap.ui.define([
 		}
 
 		return bHasSelectedItem;
+	};
+
+	/**
+	 * Returns the correct drop element - button or text.
+	 * @private
+	 */
+	IconTabFilter.prototype._getDragOverDomRef = function () {
+		if (this._getExpandButton()) {
+			return this.getDomRef().getElementsByClassName("sapMBtn")[0];
+		} else {
+			return this.getDomRef();
+		}
 	};
 
 	IconTabFilter.prototype.onsapdown = function (oEvent) {

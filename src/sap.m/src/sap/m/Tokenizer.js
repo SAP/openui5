@@ -260,6 +260,11 @@ sap.ui.define([
 			}
 		}, this);
 
+		if (iTokensCount === 1 && (iFirstTokenToHide !== -1 || !this.getEditable())) {
+			this.setFirstTokenTruncated(true);
+			return;
+		}
+
 		// adjust the visibility of the tokens
 		if (iFirstTokenToHide > -1) {
 
@@ -290,6 +295,43 @@ sap.ui.define([
 
 			this.addStyleClass("sapMTokenizerNoNMore");
 		}
+	};
+
+	/**
+	 * Sets the first token truncation.
+	 *
+	 * @param {boolean} bValue The value to set
+	 * @returns {sap.m.Tokenizer} <code>this</code> instance for method chaining
+	 * @protected
+	 */
+	Tokenizer.prototype.setFirstTokenTruncated = function (bValue) {
+		var oToken = this.getTokens()[0];
+
+		if (this._iTruncateTokenTimeout) {
+			clearTimeout(this._iTruncateTokenTimeout);
+		}
+
+		this._iTruncateTokenTimeout = setTimeout(function() {
+			oToken && oToken.setTruncated(bValue);
+			if (bValue) {
+				this.addStyleClass("sapMTokenizerOneLongToken");
+			} else {
+				this.removeStyleClass("sapMTokenizerOneLongToken");
+				this.scrollToEnd();
+			}
+		}.bind(this));
+
+		return this;
+	};
+
+	/**
+	 * Checks if the token is one and truncated.
+	 *
+	 * @returns {boolean}
+	 * @protected
+	 */
+	Tokenizer.prototype.hasOneTruncatedToken = function () {
+		return this.getTokens().length === 1 && this.getTokens()[0].getTruncated();
 	};
 
 	/**
@@ -1334,7 +1376,7 @@ sap.ui.define([
 	Tokenizer.prototype.removeToken = function(oToken) {
 		oToken = this.removeAggregation("tokens", oToken);
 
-		this._bScrollToEndIsActive = true; //Ensure scroll to end is active after rendering
+		!this.getTokens().length && this.setFirstTokenTruncated(false);
 
 		this.fireTokenChange({
 			token : oToken,
@@ -1668,11 +1710,14 @@ sap.ui.define([
 	Tokenizer.prototype.onclick = function(oEvent) {
 		var bFireIndicatorHandler;
 
-			bFireIndicatorHandler = jQuery(oEvent.target).hasClass("sapMTokenizerIndicator") || (oEvent.target === this.getFocusDomRef());
-
 		if (!this.getEnabled()) {
 			return;
 		}
+
+		bFireIndicatorHandler =
+			oEvent.target.classList.contains("sapMTokenizerIndicator") ||
+			oEvent.target === this.getFocusDomRef() ||
+			this.hasOneTruncatedToken();
 
 		if (bFireIndicatorHandler) {
 			this._fnOnNMorePress && this._fnOnNMorePress(oEvent);
@@ -1800,7 +1845,11 @@ sap.ui.define([
 		aTokens.forEach(function (oToken) {
 			oToken.setProperty("editableParent", bEditable);
 		});
-		this.setProperty("editable", bEditable);
+		this.setProperty("editable", bEditable, false);
+
+		if (this.getTokens().length === 1) {
+			this._adjustTokensVisibility();
+		}
 
 		return this;
 	};

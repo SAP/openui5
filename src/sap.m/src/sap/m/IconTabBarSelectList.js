@@ -235,11 +235,20 @@ sap.ui.define([
 	 * @private
 	 */
 	IconTabBarSelectList.prototype._handleDragAndDrop = function (oEvent) {
-		var oDropPosition = oEvent.getParameter("dropPosition"),
+		var sDropPosition = oEvent.getParameter("dropPosition"),
 			oDraggedControl = oEvent.getParameter("draggedControl"),
-			oDroppedControl = oEvent.getParameter("droppedControl");
+			oDroppedControl = oEvent.getParameter("droppedControl"),
+			oContext = oDroppedControl._getRealTab().getParent();
 
-		IconTabBarDragAndDropUtil.handleDrop(this._oIconTabHeader, oDropPosition, oDraggedControl._getRealTab(), oDroppedControl._getRealTab(), true);
+		if (this._oTabFilter._bIsOverflow) {
+			oContext = this._oIconTabHeader;
+		}
+
+		if (sDropPosition === "On") {
+			oContext = oDroppedControl._getRealTab();
+		}
+
+		IconTabBarDragAndDropUtil.handleDrop(oContext, sDropPosition, oDraggedControl._getRealTab(), oDroppedControl._getRealTab(), true);
 
 		this._oIconTabHeader._setItemsForStrip();
 		this._oIconTabHeader._initItemNavigation();
@@ -247,7 +256,7 @@ sap.ui.define([
 		this._oTabFilter._setSelectListItems();
 		this._initItemNavigation();
 
-		oDraggedControl.$().focus();
+		oDroppedControl._getRealTab().getParent().$().focus();
 	};
 
 	/* =========================================================== */
@@ -255,8 +264,7 @@ sap.ui.define([
 	/* =========================================================== */
 
 	/**
-	 * Handle keyboard drag&drop
-	 * Ctrl + Home
+	 * Handles keyboard drag&drop
 	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
@@ -264,14 +272,18 @@ sap.ui.define([
 		if (!this._oIconTabHeader.getEnableTabReordering()) {
 			return;
 		}
-		var oTabToBeMoved = oEvent.srcControl,
-			iKeyCode = oEvent.keyCode;
 
-		IconTabBarDragAndDropUtil.moveItem.call(this, oTabToBeMoved, iKeyCode);
+		var oTabToBeMoved = oEvent.srcControl,
+			iKeyCode = oEvent.keyCode,
+			iIndexBeforeMove = this.indexOfItem(oTabToBeMoved);
+
+		IconTabBarDragAndDropUtil.moveItem.call(this, oTabToBeMoved, iKeyCode, this.getItems().length - 1);
 		this._initItemNavigation();
 		oTabToBeMoved.$().focus();
 
-		this._oIconTabHeader._moveTab(oTabToBeMoved._getRealTab(), iKeyCode);
+		if (iIndexBeforeMove !== this.indexOfItem(oTabToBeMoved)) {
+			this._oIconTabHeader._moveTab(oTabToBeMoved._getRealTab(), iKeyCode, this._oIconTabHeader.getItems().length - 1);
+		}
 	};
 
 	/**
@@ -290,14 +302,14 @@ sap.ui.define([
 
 	/**
 	 * Moves tab for Drag&Drop keyboard handling
-	 * Ctrl + Left Right || Ctrl + Arrow Up
+	 * Modifier + Right Arrow || Modifier + Arrow Up
 	 * @param {jQuery.Event} oEvent
 	 */
 	IconTabBarSelectList.prototype.onsapincreasemodifiers = IconTabBarSelectList.prototype.ondragrearranging;
 
 	/**
 	 * Moves tab for Drag&Drop keyboard handling
-	 * Ctrl + Left Arrow || Ctrl + Arrow Down
+	 * Modifier + Left Arrow || Modifier + Arrow Down
 	 * @param {jQuery.Event} oEvent
 	 */
 	IconTabBarSelectList.prototype.onsapdecreasemodifiers = IconTabBarSelectList.prototype.ondragrearranging;

@@ -3,7 +3,6 @@
 /* Quartz High Contrast White theme  */
 /* ================================= */
 
-@_sap_m_Switch_OffBackground: lighten(@sapUiButtonBackground, 3);
 @_sap_m_Switch_OffBorderColor: @sapUiButtonBorderColor;
 
 /* ------------------------------ */
@@ -43,7 +42,7 @@
 /* background */
 
 .sapMSwtOff:not(.sapMSwtAcceptReject) {
-	background: @_sap_m_Switch_OffBackground;
+	background: @sapUiButtonTrackBackground;
 	border-color: @sapUiContentForegroundBorderColor;
 }
 
@@ -55,7 +54,7 @@
 /* disabled */
 
 .sapMSwtDisabled {
-	opacity: 0.5;
+	opacity: @sapUiContentDisabledOpacity;
 }
 
 /* ------------------------------ */
@@ -97,15 +96,14 @@
 
 //on
 .sapMSwt.sapMSwtOn:not(.sapMSwtAcceptReject) {
-	background: @sapUiButtonSelectedBackground;
+	background: @sapUiButtonTrackSelectedBackground;
 	border-color: @sapUiButtonSelectedBorderColor;
 	.sapMSwtHandle {
 		box-sizing: border-box;
-		background: @sapUiButtonSelectedBackground;
+		background: @sapUiButtonTrackSelectedBackground;
 		border-color: @sapUiButtonSelectedBorderColor;
 	}
 	&.sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
-	  background: lighten(@sapUiButtonSelectedBackground,63);
 	  border-color: @sapUiButtonSelectedHoverBorderColor;
 		.sapMSwtHandle {
 			background: @sapUiButtonSelectedHoverBackground;
@@ -116,7 +114,7 @@
 
 //off
 .sapMSwt.sapMSwtOff:not(.sapMSwtAcceptReject) {
-	background: darken(@sapUiButtonBackground,7);
+	background: @sapUiButtonTrackBackground;
 	border-color: @sapUiContentForegroundBorderColor;
 	.sapMSwtHandle {
 		background: @sapUiButtonBackground;
@@ -140,7 +138,7 @@
 /* ------------------------------ */
 
 .sapMSwtAcceptReject.sapMSwt {
-	background: @_sap_m_Switch_OffBackground;
+	background: @sapUiButtonTrackBackground;
 	//on
 	&.sapMSwtOn {
 		background: @sapUiSuccessBG;

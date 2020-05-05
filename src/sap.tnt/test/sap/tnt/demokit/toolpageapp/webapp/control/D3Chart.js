@@ -53,7 +53,7 @@ sap.ui.define([
 		onAfterRendering: function () {
 			this._sResizeHandlerId = ResizeHandler.register(
 				this,
-				jQuery.proxy(this._onResize, this));
+				this._onResize.bind(this));
 
 			var $control = this.$();
 			if ($control.length > 0) {

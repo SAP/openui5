@@ -830,8 +830,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.fetchValue = function (sPath, oListener, bCached) {
-		var oError,
-			oGroupLock,
+		var oCachePromise = bCached && this.oCache !== undefined
+				? SyncPromise.resolve(this.oCache)
+				: this.oCachePromise,
+			oError,
 			oRootBinding = this.getRootBinding(),
 			that = this;
 
@@ -841,8 +843,9 @@ sap.ui.define([
 			oError.canceled = "noDebugLog";
 			throw oError;
 		}
-		return this.oCachePromise.then(function (oCache) {
+		return oCachePromise.then(function (oCache) {
 			var bDataRequested = false,
+				oGroupLock,
 				sRelativePath = oCache || that.oOperation
 					? that.getRelativePath(sPath)
 					: undefined,

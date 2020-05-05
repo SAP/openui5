@@ -430,10 +430,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("setEditable", function () {
+		var oToken;
 		this.tokenizer.addToken(new Token({text: "Token 1", key: "0001"}));
 
 		oToken = this.tokenizer.getTokens()[0];
-		sap.ui.getCore().applyChanges();
 
 		assert.ok(oToken.getProperty("editableParent"), "Token's parent is editable");
 
@@ -441,6 +441,15 @@ sap.ui.define([
 
 		assert.strictEqual(this.tokenizer.getEditable(), false, "The property of the Tokenizer was set.");
 		assert.strictEqual(oToken.getProperty("editableParent"), false, "The editableParent property of the Token was correctly set");
+	});
+
+	QUnit.test("setEditable with one token should call _adjustTokensVisibility method", function () {
+		var oSpy = this.spy(this.tokenizer, "_adjustTokensVisibility");
+
+		this.tokenizer.addToken(new Token({text: "Token 1", key: "0001"}));
+		this.tokenizer.setEditable(false);
+
+		assert.ok(oSpy.calledOnce, "The method was called once.");
 	});
 
 	QUnit.test("setWidth and setPixelWidth", function(assert) {
@@ -517,8 +526,7 @@ sap.ui.define([
 	QUnit.test("Pressing delete icon when Tokenizer is disabled", function(assert) {
 		// arrange
 		var fnFireDeleteSpy,
-			oToken = new Token({text: "test"}),
-			oTokenIcon = jQuery("#t1-icon")[0];
+			oToken = new Token({text: "test"});
 
 		fnFireDeleteSpy = this.spy(oToken, "fireDelete");
 		this.tokenizer.addToken(oToken);
@@ -1200,16 +1208,14 @@ sap.ui.define([
 		this.tokenizer.focus();
 		this.tokenizer.selectAllTokens(true);
 
-		document.addEventListener("copy", oExecCommandSpy);
-
 		// act
 		this.tokenizer._copy();
 
 		// assert
 		// we can intercept the attached function by
-		// getting the second call - called from inside the _copy method
+		// getting the first call - called from inside the _copy method
 		// and then its second argument
-		fnCopyToClipboard = oAddListenerSpy.getCall(1).args[1];
+		fnCopyToClipboard = oAddListenerSpy.getCall(0).args[1];
 		// Now we can check if it does attach the correct text
 		// to the provided event object
 
@@ -1330,32 +1336,6 @@ sap.ui.define([
 		assert.strictEqual(oIndicator.innerHTML, oRb.getText("TOKENIZER_SHOW_ALL_ITEMS", 2), "N-items label's text is correct.");
 	});
 
-	QUnit.test("Small containers usage (1 Item):", function(assert) {
-		var aTokens, oIndicator;
-		this.tokenizer = new Tokenizer({
-			maxWidth: "100px",
-			tokens: [
-				new Token({text: "XXXXXXXXXXXX"})
-			]
-		});
-
-		this.tokenizer.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// act
-		this.tokenizer._useCollapsedMode(true);
-		sap.ui.getCore().applyChanges();
-
-		// assert
-		aTokens = this.tokenizer.getTokens();
-		oIndicator = this.tokenizer.$().find(".sapMTokenizerIndicator")[0];
-
-		assert.ok(aTokens[0].$().hasClass("sapMHiddenToken"), "The first token should be hidden.");
-
-		assert.ok(oIndicator, true, "An indicator label is added.");
-		assert.strictEqual(oIndicator.innerHTML, oRb.getText("TOKENIZER_SHOW_ALL_ITEM", 1), "N-items label's text is correct.");
-	});
-
 	QUnit.test("_handleNMoreIndicator", function(assert) {
 		var oTokenizer = new Tokenizer();
 		assert.strictEqual(oTokenizer._handleNMoreIndicator(), oTokenizer, "The method return a instance of the tokenizer");
@@ -1451,5 +1431,141 @@ sap.ui.define([
 
 		assert.ok(token1.$().attr("title"), "There's a title for the token");
 		assert.ok(token2.$().attr("title"), "There's a title for the token");
+	});
+
+	QUnit.module("One token handling", {
+		beforeEach : function() {
+			this.tokenizer = new Tokenizer({
+				maxWidth: "100px",
+				tokens: [
+					new Token({text: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"})
+				]
+			});
+
+			this.tokenizer.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach : function() {
+			this.tokenizer.destroy();
+			this.clock.reset();
+		}
+	});
+
+	QUnit.test("setFirstTokenTruncated", function(assert) {
+		var oToken = this.tokenizer.getTokens()[0],
+			oSetTruncatedSpy = this.spy(oToken, "setTruncated"),
+			oAddStyleClassSpy = this.spy(this.tokenizer, "addStyleClass"),
+			oRemoveStyleClassSpy = this.spy(this.tokenizer, "removeStyleClass");
+
+		// Act
+		this.tokenizer.setFirstTokenTruncated(true);
+		this.clock.tick();
+
+		// Assert
+		assert.strictEqual(oSetTruncatedSpy.callCount, 1, "The token's setTruncated method called once.");
+		assert.strictEqual(oSetTruncatedSpy.calledWith(true), true, "Method called with correct parameter");
+		assert.strictEqual(oAddStyleClassSpy.callCount, 1, "The tokenizer's addStyleClass method was called once.");
+		assert.strictEqual(oAddStyleClassSpy.calledWith("sapMTokenizerOneLongToken"), true, "Method called with correct parameter");
+
+		// Act
+		this.tokenizer.setFirstTokenTruncated(false);
+		this.clock.tick();
+
+		// Assert
+		assert.strictEqual(oSetTruncatedSpy.callCount, 2, "The token's setTruncateds method twice.");
+		assert.strictEqual(oSetTruncatedSpy.calledWith(false), true, "Method called with correct parameter");
+		assert.strictEqual(oRemoveStyleClassSpy.callCount, 1, "The tokenizer's removeStyleClass method was called once.");
+		assert.strictEqual(oAddStyleClassSpy.calledWith("sapMTokenizerOneLongToken"), true, "Method called with correct parameter");
+
+		// Clean
+		oSetTruncatedSpy.restore();
+		oAddStyleClassSpy.restore();
+		oRemoveStyleClassSpy.restore();
+	});
+
+	QUnit.test("Click on tokenizer should remove truncation", function(assert) {
+		// Arrange
+		var oToken = this.tokenizer.getTokens()[0],
+			oSpy = this.spy(),
+			oMockEvent = {
+				target: oToken.getDomRef()
+			};
+
+		this.tokenizer._fnOnNMorePress = oSpy;
+		this.tokenizer._adjustTokensVisibility();
+		// await to set the truncation
+		this.clock.tick();
+
+		// Assert
+		assert.ok(oToken.getTruncated(), "Token should be truncated");
+
+		// Act
+		this.tokenizer.onclick(oMockEvent);
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "fnOnNMorePress should be called once.");
+	});
+
+	QUnit.test("Small container + One long token should set truncation to the token", function(assert) {
+		// Arrange
+		var oSpy = this.spy(this.tokenizer, 'setFirstTokenTruncated');
+
+		// Act
+		this.tokenizer._adjustTokensVisibility();
+		// await to set the truncation
+		this.clock.tick(500);
+
+		// Assert
+		assert.ok(oSpy.calledOnce, "Truncation function should be called once.");
+		assert.ok(this.tokenizer.$().hasClass("sapMTokenizerOneLongToken"), "Should have class for one long token.");
+		assert.ok(oSpy.calledWith(true), "Truncation function should be called with True value");
+		// cleanup
+		oSpy.restore();
+	});
+
+	QUnit.test("Small containers usage (1 Item):", function(assert) {
+		var oIndicator;
+
+		// Act
+		this.tokenizer._adjustTokensVisibility();
+		// await to set the truncation
+		this.clock.tick(500);
+
+		// Assert
+		oIndicator = this.tokenizer.$().find(".sapMTokenizerIndicator")[0];
+
+		assert.ok(this.tokenizer.$().hasClass("sapMTokenizerOneLongToken"), "Should have class for one long token.");
+		assert.ok(oIndicator, true, "An indicator label is added.");
+		assert.strictEqual(oIndicator.innerHTML, "", "N-items label's text is not added for one token.");
+	});
+
+	QUnit.test("Truncation should be removed after removing the token", function(assert) {
+		// Arrange
+		var oStub = sinon.stub(this.tokenizer, "setFirstTokenTruncated").returns(function(){});
+
+		// Act
+		this.tokenizer.removeToken(this.tokenizer.getTokens()[0]);
+
+		// Assert
+		assert.ok(oStub.calledOnce, "Truncation function should be called once.");
+		assert.ok(oStub.calledWith(false), "Truncation should be removed.");
+
+		// Clear
+		oStub.restore();
+	});
+
+	QUnit.test("hasOneTruncatedToken returns correct value", function(assert) {
+		// Assert
+		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), false, "hasOneTruncatedToken should return false");
+		// Act
+		this.tokenizer.getTokens()[0].setTruncated(true);
+		// Assert
+		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), true, "hasOneTruncatedToken should return true");
+		// Act
+		this.tokenizer.addToken(new Token({text: "test"}));
+		// Assert
+		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), false, "hasOneTruncatedToken should return false");
 	});
 });

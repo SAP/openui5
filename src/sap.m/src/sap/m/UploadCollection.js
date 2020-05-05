@@ -2,6 +2,11 @@
  * ${copyright}
  */
 
+// Ensure that sap.ui.unified is loaded before the module dependencies will be required.
+// Loading it synchronously is the only compatible option and doesn't harm when sap.ui.unified
+// already has been loaded asynchronously (e.g. via a dependency declared in the manifest)
+sap.ui.getCore().loadLibrary("sap.ui.unified");
+
 sap.ui.define([
 	"./library",
 	"sap/m/library",
@@ -1567,8 +1572,8 @@ sap.ui.define([
 			$container = null;
 		}
 
-		oContainer = new HTML({
-			content: "<span id=" + sContainerId + " class='sapMUCTextButtonContainer'></span>",
+		oContainer = new HTML(sContainerId, {
+			content: "<span class='sapMUCTextButtonContainer'></span>",
 			afterRendering: this._renderContent.bind(this, item, sContainerId)
 		});
 		oListItem = new CustomListItem(sItemId + "-cli", {

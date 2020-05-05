@@ -191,6 +191,7 @@
 															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
 													</m:MessageStrip>
 													<m:ObjectStatus text="Visibility: {visibility}" state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
+													<m:ObjectStatus visible="{=${since} !== undefined}" text="Since: {since}" />
 												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
@@ -490,7 +491,6 @@
 														text="Experimental API since {event>experimental/since} {event>experimental/text}"
 														type="Warning"
 														showIcon="true"
-														showCloseButton="false"
 														enableFormattedText="true"
 														class="sapUiSmallMarginBottom">
 													</m:MessageStrip>
@@ -503,7 +503,18 @@
 																<m:Link text="{parameter>type}"
 																		href="api/{parameter>type}"
 																		enabled="{= !!${parameter>linkEnabled} }"/>
-																<custom:JSDocText sanitizeContent="false" text="{path: 'parameter>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+																<layout:VerticalLayout>
+																	<custom:JSDocText sanitizeContent="false" text="{parameter>description}"/>
+																	<m:MessageStrip
+																			visible="{=${parameter>deprecated} !== undefined}"
+																			text="{parameter>deprecatedText}"
+																			type="Error"
+																			showIcon="true"
+																			showCloseButton="false"
+																			enableFormattedText="true"
+																			class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+																	</m:MessageStrip>
+																</layout:VerticalLayout>
 															</custom:Row>
 														</template:repeat>
 													</custom:LightTable>

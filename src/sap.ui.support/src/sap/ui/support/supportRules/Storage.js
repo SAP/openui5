@@ -58,7 +58,14 @@ function (RuleSerializer, constants) {
 	}
 
 	var _storage = localStorage,
-		_cookie = document.cookie;
+		_cookieInterface = {
+			get cookie() {
+				return document.cookie;
+			},
+			set cookie(sValue) {
+				document.cookie = sValue;
+			}
+		};
 
 	return {
 
@@ -278,7 +285,7 @@ function (RuleSerializer, constants) {
 		 * @returns {void}
 		 */
 		createPersistenceCookie: function(sCookieName, sCookieValue) {
-			_cookie = sCookieName + "=" + sCookieValue;
+			_cookieInterface.cookie = sCookieName + "=" + sCookieValue;
 		},
 
 		/**
@@ -293,7 +300,7 @@ function (RuleSerializer, constants) {
 		readPersistenceCookie: function(sCookieName) {
 
 			var name = sCookieName + "=",
-				decodedCookie = decodeURIComponent(_cookie),
+				decodedCookie = decodeURIComponent(_cookieInterface.cookie),
 				ca = decodedCookie.split(';'),
 				sOutput = "";
 			for (var i = 0; i < ca.length; i++) {
@@ -320,7 +327,7 @@ function (RuleSerializer, constants) {
 		 * @returns {void}
 		 */
 		deletePersistenceCookie: function(sCookieName) {
-			_cookie = sCookieName + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+			_cookieInterface.cookie = sCookieName + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 		},
 
 		_setStorage: function (oStorage) {
@@ -331,12 +338,12 @@ function (RuleSerializer, constants) {
 			return _storage;
 		},
 
-		_setCookie: function (sCookie) {
-			_cookie = sCookie;
+		_setCookieInterface: function (oCookieInterface) {
+			_cookieInterface = oCookieInterface;
 		},
 
-		_getCookie: function () {
-			return _cookie;
+		_getCookieInterface: function () {
+			return _cookieInterface;
 		}
 	};
 

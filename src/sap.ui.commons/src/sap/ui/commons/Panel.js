@@ -203,11 +203,11 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 			this._bFocusCollapseIcon = false;
 			var $collArrow = this.$("collArrow");
 			if ($collArrow.is(":visible") && ($collArrow.css("visibility") == "visible" || $collArrow.css("visibility") == "inherit")) {
-				$collArrow.focus();
+				$collArrow.trigger("focus");
 			} else {
 				var $collIco = this.$("collIco");
 				if ($collIco.is(":visible") && ($collIco.css("visibility") == "visible" || $collIco.css("visibility") == "inherit")) {
-					$collIco.focus();
+					$collIco.trigger("focus");
 				}
 			}
 		}
@@ -256,7 +256,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 	Panel.prototype.applyFocusInfo = function (oFocusInfo) {
 		var $DomRef;
 		if (oFocusInfo && oFocusInfo.id && ($DomRef = jQuery(document.getElementById(oFocusInfo.id))) && ($DomRef.length > 0)) {
-			$DomRef.focus();
+			$DomRef.trigger("focus");
 		} else {
 			this.focus();
 		}

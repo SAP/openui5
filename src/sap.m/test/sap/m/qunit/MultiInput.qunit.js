@@ -62,6 +62,7 @@ sap.ui.define([
 	var OpenState = coreLibrary.OpenState;
 
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var nPopoverAnimationTick = 300;
 
 	QUnit.module("Basic", {
 		beforeEach : function() {
@@ -822,7 +823,7 @@ sap.ui.define([
 		assert.equal(token2.getSelected(), true, "Token2 is selected");
 		assert.equal(token3.getSelected(), true, "Token3 is selected");
 
-		this.multiInput1.ontap();
+		qutils.triggerEvent("tap", this.multiInput1.getDomRef());
 		this.clock.tick(1);
 
 		assert.equal(token1.getSelected(), false, "Token1 is unselected");
@@ -1345,7 +1346,7 @@ sap.ui.define([
 		oMultiInput._oSuggPopover._oPopupInput.focus();
 		oMultiInput._oSuggPopover._oPopupInput.updateDomValue("123");
 		qutils.triggerKeydown(oMultiInput._oSuggPopover._oPopupInput.getFocusDomRef(), KeyCodes.ENTER);
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		assert.strictEqual(oMultiInput._tokenizer.getTokens().length, 1, "Just a single token gets created");
 
@@ -1363,7 +1364,7 @@ sap.ui.define([
 
 		oMI.getFocusDomRef().focus();
 		qutils.triggerKeydown(oMI.getFocusDomRef(), KeyCodes.ARROW_LEFT);
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		assert.ok(true, "No error has been thrown");
 
@@ -1639,6 +1640,53 @@ sap.ui.define([
 		assert.strictEqual(oMultiInput.getBinding("value").getModel().getProperty("/value"), "", "The binding value should be an empty string");
 
 		oMultiInput.destroy();
+	});
+
+	QUnit.test("Clicking on a Token should not trigger Input.prototype._fireValueHelpRequestForValueHelpOnly", function(assert) {
+		var oSpy = sinon.spy(Input.prototype, "_fireValueHelpRequestForValueHelpOnly"),
+			oToken = new Token();
+
+		this.multiInput1.addToken(oToken);
+
+		this.multiInput1.attachTokenUpdate(function(oEvent){
+			oEvent.preventDefault();
+		});
+
+		sap.ui.getCore().applyChanges();
+
+		qutils.triggerEvent("tap", this.multiInput1.getTokens()[0].getDomRef());
+
+		// assert
+		assert.notOk(oSpy.called, "Input's _fireValueHelpRequestForValueHelpOnly method is not called");
+
+		// clean up
+		oSpy.restore();
+	});
+
+	QUnit.test("Clicking on nMore should not trigger Input.prototype._fireValueHelpRequestForValueHelpOnly", function(assert) {
+		var oSpy = sinon.spy(Input.prototype, "_fireValueHelpRequestForValueHelpOnly");
+
+		this.multiInput1.setWidth("200px");
+		this.multiInput1.setTokens([
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"})
+		]);
+
+		this.multiInput1.attachTokenUpdate(function(oEvent){
+			oEvent.preventDefault();
+		});
+
+		sap.ui.getCore().applyChanges();
+
+		this.multiInput1._handleIndicatorPress();
+
+		// assert
+		assert.notOk(oSpy.called, "Input's _fireValueHelpRequestForValueHelpOnly method is not called");
+
+		// clean up
+		oSpy.restore();
 	});
 
 	QUnit.module("Accessibility", {
@@ -2247,7 +2295,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(oMultiInput._oReadOnlyPopover, KeyCodes.ENTER);
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		assert.notOk(oMultiInput._oReadOnlyPopover.isOpen(), "Readonly Popover should be closed");
 
@@ -2313,12 +2361,12 @@ sap.ui.define([
 
 		// act
 		oMultiInput._handleIndicatorPress();
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		oMultiInput.onsapfocusleave({
 			relatedControlId: oMultiInput._oReadOnlyPopover.getId()
 		});
-		this.clock.tick(300);
+		this.clock.tick(nPopoverAnimationTick);
 
 		assert.ok(oMultiInput._oReadOnlyPopover.isOpen(), "Readonly Popover should remain open");
 
@@ -2818,5 +2866,156 @@ sap.ui.define([
 
 		// Clean up
 		oMultiInput.destroy();
+	});
+
+	QUnit.module("One extra long token", {
+		beforeEach : function() {
+			this.oMultiInput = new MultiInput({
+				width: "100px",
+				tokens: [new Token({text: "Extra long token, Extra long token, Extra long token, Extra long token"})]
+			});
+			this.oMultiInput.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oMultiInput.destroy();
+		}
+	});
+
+	QUnit.test("Should remove truncation on focusin", function (assert) {
+		// Arrange
+		var oSpy = sinon.spy(this.oMultiInput._tokenizer, "_useCollapsedMode"),
+			oMockEvent = {
+				target: this.oMultiInput.getFocusDomRef(),
+				relatedTarget: this.oMultiInput.getTokens()[0].getDomRef()
+			};
+
+		// Act
+		this.oMultiInput.onfocusin(oMockEvent);
+		this.clock.tick(nPopoverAnimationTick);
+
+		// Assert
+		assert.ok(oSpy.calledWith(false), "Collapsed mode called with 'false'");
+		assert.ok(!this.oMultiInput._tokenizer.hasOneTruncatedToken(), "Truncation was removed from the token.");
+	});
+
+	QUnit.test("Should add truncation when focus leaves the MultiInput", function (assert) {
+		// Arrange
+		var oSpy = sinon.spy(this.oMultiInput._tokenizer, "_useCollapsedMode");
+
+		// Mock the tokenizer's check function to pass
+		this.oMultiInput._tokenizer._hasOneTruncatedToken = function () { return true; };
+
+		// Act
+		this.oMultiInput.onsapfocusleave({});
+		this.clock.tick(nPopoverAnimationTick);
+
+		// Assert
+		assert.ok(oSpy.calledWith(true), "Collapsed mode was called with 'true' as parameter.");
+		assert.ok(this.oMultiInput._tokenizer.getTokens()[0].getTruncated(), true, "The token's property was set correctly.");
+	});
+
+	QUnit.test("Should open/close suggestion popover on CTRL + I", function (assert) {
+		// Act
+		qutils.triggerKeydown(this.oMultiInput, KeyCodes.I, false, false, true); // trigger Control key + I
+		this.clock.tick(nPopoverAnimationTick);
+
+		// Assert
+		assert.ok(this.oMultiInput._getSelectedItemsPicker().isOpen(), "Should open suggestion popover");
+
+		// Act
+		qutils.triggerKeydown(this.oMultiInput, KeyCodes.I, false, false, true); // trigger Control key + I
+		this.clock.tick(nPopoverAnimationTick);
+
+		// Assert
+		assert.notOk(this.oMultiInput._getSelectedItemsPicker().isOpen(), "Should close suggestion popover");
+	});
+
+	QUnit.test("Should open/close suggestion popover on CTRL + I when MultiInput is readonly", function (assert) {
+		// Arrange
+		this.oMultiInput.setEditable(false);
+		this.clock.tick();
+
+		// Act
+		qutils.triggerKeydown(this.oMultiInput, KeyCodes.I, false, false, true); // trigger Control key + I
+		this.clock.tick(nPopoverAnimationTick);
+
+		// Assert
+		assert.ok(this.oMultiInput._getReadOnlyPopover().isOpen(), "Should open suggestion popover");
+
+		// Act
+		qutils.triggerKeydown(this.oMultiInput, KeyCodes.I, false, false, true); // trigger Control key + I
+		this.clock.tick(nPopoverAnimationTick);
+
+		// Assert
+		assert.notOk(this.oMultiInput._getReadOnlyPopover().isOpen(), "Should close suggestion popover");
+	});
+
+	QUnit.test("Should open/close suggestion popover on CTRL + I when MultiInput is readonly (real case scenario)", function (assert) {
+		// Arrange
+		this.oMultiInput.setEditable(false);
+		this.clock.tick();
+
+		// Act
+		qutils.triggerKeydown(this.oMultiInput, KeyCodes.I, false, false, true); // trigger Control key + I
+		this.clock.tick(nPopoverAnimationTick);
+
+		// Assert
+		assert.ok(this.oMultiInput._getReadOnlyPopover().isOpen(), "Should open suggestion popover");
+
+		// Act
+		qutils.triggerKeyup(document.activeElement, KeyCodes.ESCAPE, false, false, false); // trigger ESC key
+		this.clock.tick(nPopoverAnimationTick);
+
+		// Assert
+		assert.notOk(this.oMultiInput._getReadOnlyPopover().isOpen(), "Should close suggestion popover");
+	});
+
+
+	QUnit.test("Should not open suggestion popover on CTRL + I when the input doesn't have tokens", function (assert) {
+		// Arrange
+		var oMultiInput = new MultiInput();
+
+		oMultiInput.placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		qutils.triggerKeydown(this.oMultiInput, KeyCodes.I, false, false, true); // trigger Control key + I
+		this.clock.tick(nPopoverAnimationTick);
+
+		// Assert
+		assert.notOk(oMultiInput._getSelectedItemsPicker().isOpen(), "Shouldn't open suggestion popover");
+
+		// cleanup
+		oMultiInput.destroy();
+	});
+
+	QUnit.test("Should not close the picker when input event is marked as invalid.", function (assert) {
+		// Arrange
+		var oFakeEvent = {
+				isMarked: function () { return true; },
+				setMarked: function () { return; }
+			},
+			oSpy = this.spy(this.oMultiInput, "_getSelectedItemsPicker");
+
+		// Act
+		this.oMultiInput.oninput(oFakeEvent);
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 0, "Should not call _getSelectedItemsPicker if the event is marked as invalid");
+	});
+
+	QUnit.test("Truncation should stay on token click in read only mode", function (assert) {
+		// Arrange
+		this.oMultiInput.setEditable(false);
+
+		// Act
+		this.oMultiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		this.clock.tick(nPopoverAnimationTick);
+
+		// Assert
+		assert.ok(this.oMultiInput._tokenizer.hasOneTruncatedToken(), "The token should be truncated");
 	});
 });

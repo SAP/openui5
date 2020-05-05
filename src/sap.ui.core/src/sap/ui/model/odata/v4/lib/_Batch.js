@@ -11,7 +11,7 @@ sap.ui.define([
 
 	var mAllowedChangeSetMethods = {"POST" : true, "PUT" : true, "PATCH" : true, "DELETE" : true},
 		oBatch,
-		rContentIdReference = /\$\d+/,
+		rContentIdReference = /^\$\d+/,
 		rHeaderParameter = /(\S*?)=(?:"(.+)"|(\S+))/;
 
 	/**
@@ -277,8 +277,11 @@ sap.ui.define([
 						". Change set must contain only POST, PUT, PATCH or DELETE requests.");
 				}
 
-				// adjust URL if it contains Content-ID reference by adding the change set index
-				sUrl = sUrl.replace(rContentIdReference, "$&." + iChangeSetIndex);
+				if (iChangeSetIndex !== undefined && sUrl[0] === "$") {
+					// adjust URL if it starts with a Content-ID reference by adding the change set
+					// index
+					sUrl = sUrl.replace(rContentIdReference, "$&." + iChangeSetIndex);
+				}
 
 				aRequestBody = aRequestBody.concat(
 					"Content-Type:application/http\r\n",

@@ -2246,12 +2246,12 @@ function (
 		this.oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 			setTimeout(function () {
 				assert.notOk(helpers.exists(oObjectPage.getHeaderContent()), "The DynamicPage Header does not exist.");
-				assert.equal(oTitle._getFocusSpan().$().attr("tabindex"), undefined, "Focus span should be excluded from the tab chain");
+				assert.equal(oTitle._getFocusSpan().is(":hidden"), true, "Focus span should be excluded from the tab chain");
 				assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayoutTitleClickEnabled"), "No ObjectPage Header content - sapUxAPObjectPageLayoutTitleClickEnabled not added");
 
 				oObjectPage.setToggleHeaderOnTitleClick(true);
 
-				assert.equal(oTitle._getFocusSpan().$().attr("tabindex"), undefined, "Focus span should still be excluded from the tab chain");
+				assert.equal(oTitle._getFocusSpan().is(":hidden"), true, "Focus span should still be excluded from the tab chain");
 				assert.notOk(oObjectPage.$().hasClass("sapUxAPObjectPageLayoutTitleClickEnabled"), "No ObjectPage Header content - sapUxAPObjectPageLayoutTitleClickEnabled not added");
 				done();
 			}, 0);
@@ -3304,7 +3304,7 @@ function (
 			// Assert
 			var oVisibleSubSections = oEvent.getParameter("visibleSubSections");
 			assert.strictEqual(Object.keys(oVisibleSubSections).length, 3,
-				"Three visible subSectionс аре reported when new visible subSection is added to the selected section");
+				"Three visible subSections are reported when new visible subSection is added to the selected section");
 
 			oSpy = sinon.spy(this.oObjectPage, "fireEvent");
 

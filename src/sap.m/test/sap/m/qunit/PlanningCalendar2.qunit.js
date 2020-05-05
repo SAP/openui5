@@ -1507,6 +1507,20 @@ sap.ui.define([
 		this._testAriaAppointmentsAndSpecialDatesIfLegendIsDestroyed(CalendarIntervalType.Month, fnExtendSut);
 	});
 
+	QUnit.test("Interval toolbar has correct hidden label defining it's purpose", function(assert) {
+		// Prepare
+		var oPC = new PlanningCalendar(),
+			sExpectedId = InvisibleText.getStaticId("sap.m", "PC_INTERVAL_TOOLBAR"),
+			aAriaLabelledBy = oPC._oInfoToolbar.getAriaLabelledBy();
+
+		// Act
+		// Assert
+		assert.ok(aAriaLabelledBy.indexOf(sExpectedId) !== -1, "Correct aria-labelledby added");
+
+		// Clean up
+		oPC.destroy();
+	});
+
 	QUnit.module("views", {
 		beforeEach: function () {
 			this.oPC = new PlanningCalendar();

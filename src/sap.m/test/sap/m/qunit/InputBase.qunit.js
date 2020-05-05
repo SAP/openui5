@@ -572,7 +572,7 @@ sap.ui.define([
 		});
 
 		// arrange
-		var sLastValue = oInput._lastValue;
+		var sLastValue = oInput.getLastValue();
 
 		// act as twoway binding does
 		oInput.setProperty("value", sTestValue, true);
@@ -1179,6 +1179,8 @@ sap.ui.define([
 		assert.equal(oErrorInput.getValueStateText(), "Error Message", "error message is correct");
 
 		oErrorInput.getFocusDomRef().blur();
+		this.clock.tick();
+
 		assert.ok(!jQuery.sap.domById("errorinput-message"), "error message popup is closed when focus is out");
 
 		oWarningInput.focus();
@@ -1187,6 +1189,8 @@ sap.ui.define([
 		assert.equal(oWarningInput.getValueStateText(), "Warning Message", "warning message is correct");
 
 		oWarningInput.getFocusDomRef().blur();
+		this.clock.tick();
+
 		assert.ok(!jQuery.sap.domById("warninginput-message"), "warning message popup is closed when focus is out");
 
 		oErrorInput.setShowValueStateMessage(false);
@@ -1281,6 +1285,8 @@ sap.ui.define([
 		// none state
 		oValueStateInput.updateDomValue("12345");
 		sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
+		this.clock.tick();
+
 		assert.strictEqual(oValueStateInput.getValueState(), "None");
 		assert.ok(!jQuery.sap.domById("vsinput-message"), "no message popup");
 

@@ -592,6 +592,11 @@ sap.ui.define([
 								key: 'cardManifest.json'
 							},
 							{
+								url: '/samples/hostActions/adaptiveCardManifest.json',
+								name: 'adaptiveCardManifest.json',
+								key: 'adaptiveCardManifest.json'
+							},
+							{
 								url: '/samples/hostActions/HostActions.view.xml',
 								name: 'HostActions.view.xml',
 								key: 'HostActions.view.xml'

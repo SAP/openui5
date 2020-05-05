@@ -82,6 +82,14 @@ sap.ui.define([
 		assert.notOk(oItem0._getEditButton().getVisible(), "Edit button should be invisible for 'visibleEdit' set ex-post to false.");
 	});
 
+	QUnit.test("Flags visibleRemove, visibleEdit after UploadSetItem state is complete", function (assert) {
+		var oItem1 = this.oUploadSet.getItems()[1];
+		oItem1.setUploadState("Complete");
+
+		assert.notOk(oItem1._getDeleteButton().getVisible(), "Delete button should be invisible by for 'visibleRemove' set to false.");
+		assert.notOk(oItem1._getEditButton().getVisible(), "Edit button should be invisible for 'visibleEdit' set to false.");
+	});
+
 	/* ====== */
 	/* Events */
 	/* ====== */

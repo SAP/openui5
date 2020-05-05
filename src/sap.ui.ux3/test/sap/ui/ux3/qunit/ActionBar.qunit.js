@@ -88,7 +88,7 @@ sap.ui.define([
 	QUnit.module("Social Actions");
 	//Test social action
 	QUnit.test("Count visible social actions", function(assert) {
-		var iVisibleChildCount = oActionBar1.$("socialActions").children(":visible").size();
+		var iVisibleChildCount = oActionBar1.$("socialActions").children(":visible").length;
 		assert.ok(iVisibleChildCount == 5, iVisibleChildCount + " social actions visible");
 	});
 
@@ -114,11 +114,11 @@ sap.ui.define([
 		qutils.triggerMouseEvent(oActionBar1.getDomRef("Update"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
 			assert.ok(oActionBar1.getDomRef("UpdateActionPopup"), "Rendered update popup should exist in the page");
-			jQuery(jQuery(".sapUiFeederInput")[0]).focus();
+			jQuery(jQuery(".sapUiFeederInput")[0]).trigger("focus");
 			setTimeout(function() {
 				jQuery(".sapUiFeederInput")[0].innerHTML = "my feed entry";
 				setTimeout(function() {
-					jQuery(jQuery(".sapUiFeederInput")[0]).keyup();
+					jQuery(jQuery(".sapUiFeederInput")[0]).trigger("keyup");
 					setTimeout(function() {
 						//click on feed submit button should hide comment popup
 						qutils.triggerMouseEvent(oActionBar1.getDomRef('Feeder-send'), "click", 1, 1, 1, 1);
@@ -231,7 +231,7 @@ sap.ui.define([
 		oActionBar1.setShowFlag(false);
 		oActionBar1.setShowFavorite(false);
 		oActionBar1.setShowOpen(false);
-		var iVisibleChildCount = oActionBar1.$("socialActions").children(":visible").size();
+		var iVisibleChildCount = oActionBar1.$("socialActions").children(":visible").length;
 		assert.ok(iVisibleChildCount == 0, iVisibleChildCount + " social actions visible");
 	});
 
@@ -242,7 +242,7 @@ sap.ui.define([
 		oActionBar1.setShowFlag(true);
 		oActionBar1.setShowFavorite(true);
 		oActionBar1.setShowOpen(true);
-		var iVisibleChildCount = oActionBar1.$("socialActions").children(":visible").size();
+		var iVisibleChildCount = oActionBar1.$("socialActions").children(":visible").length;
 		assert.ok(iVisibleChildCount == 5, iVisibleChildCount + " social actions visible");
 	});
 
@@ -304,7 +304,7 @@ sap.ui.define([
 		assert.expect(1);
 		oActionBar1.setAlwaysShowMoreMenu(false);
 		setTimeout(function() {
-			var iVisibleChildCount = oActionBar1.$("businessActions").children(":visible").size();
+			var iVisibleChildCount = oActionBar1.$("businessActions").children(":visible").length;
 			assert.ok(iVisibleChildCount == 3, iVisibleChildCount + " business action buttons visible");
 			done();
 		}, 500);
@@ -313,13 +313,13 @@ sap.ui.define([
 	QUnit.test("Remove two business actions: one directly, one by its Id", function(assert) {
 		oActionBar1.removeBusinessAction(oCreateAction);
 		oActionBar1.removeBusinessAction('duplicate');
-		var iVisibleChildCount = oActionBar1.$("businessActions").children(":visible").size();
+		var iVisibleChildCount = oActionBar1.$("businessActions").children(":visible").length;
 		assert.ok(iVisibleChildCount == 1, iVisibleChildCount + " business action buttons visible");
 	});
 
 	QUnit.test("Remove all business actions", function(assert) {
 		oActionBar1.removeAllBusinessActions();
-		var iVisibleChildCount = oActionBar1.$("businessActions").children(":visible").size();
+		var iVisibleChildCount = oActionBar1.$("businessActions").children(":visible").length;
 		assert.ok(iVisibleChildCount == 0, iVisibleChildCount + " business action buttons visible");
 	});
 
@@ -328,7 +328,7 @@ sap.ui.define([
 		oActionBar1.addBusinessAction(oDuplicateAction);
 		oActionBar1.addBusinessAction(oDeleteAction);
 
-		var iVisibleChildCount = oActionBar1.$("businessActions").children(":visible").size();
+		var iVisibleChildCount = oActionBar1.$("businessActions").children(":visible").length;
 		assert.ok(iVisibleChildCount == 3, iVisibleChildCount + " business action buttons visible");
 
 	});
@@ -351,7 +351,7 @@ sap.ui.define([
 		assert.expect(2);
 		oActionBar1.setAlwaysShowMoreMenu(true);
 		setTimeout(function() {
-			var iVisibleChildCount = oActionBar1.$("businessActions").children(":visible").size();
+			var iVisibleChildCount = oActionBar1.$("businessActions").children(":visible").length;
 			assert.ok(iVisibleChildCount == 1, iVisibleChildCount + " business action buttons visible");
 			var bVisible = oActionBar1.$("MoreMenuButton").is(":visible");
 			assert.ok(bVisible, "More Menu Button is visible");
@@ -365,7 +365,7 @@ sap.ui.define([
 		oActionBar1.setAlwaysShowMoreMenu(false);
 		oActionBar1.destroyBusinessActions();
 		setTimeout(function() {
-			var iVisibleChildCount = oActionBar1.$("businessActions").children(":visible").size();
+			var iVisibleChildCount = oActionBar1.$("businessActions").children(":visible").length;
 			assert.ok(iVisibleChildCount == 0, iVisibleChildCount + " business action buttons visible");
 			done();
 		}, 500);

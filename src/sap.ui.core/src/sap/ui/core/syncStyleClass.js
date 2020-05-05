@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', 'sap/base/assert'], function(jQuery, BaseObject, assert, byId) {
+sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', 'sap/base/assert'], function(jQuery, BaseObject, assert) {
 	"use strict";
 
 	/**

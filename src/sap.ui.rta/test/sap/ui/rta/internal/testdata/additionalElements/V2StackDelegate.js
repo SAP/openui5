@@ -2,6 +2,13 @@ sap.ui.define([
 ], function(
 ) {
 	"use strict";
+
+	function _isFormRelatedElement(mPropertyBag) {
+		var oModifier = mPropertyBag.modifier;
+		var oElement = mPropertyBag.element;
+		return oModifier.getControlType(oElement).indexOf(".form.") !== -1;
+	}
+
 	/**
 	 * Is field using a complex type
 	 *
@@ -230,8 +237,12 @@ sap.ui.define([
 		},
 
 		createLayout: function(mPropertyBag) {
-			//TODO validate with object page header/VBox/HBox
 			var oModifier = mPropertyBag.modifier;
+			if (_isFormRelatedElement(mPropertyBag)) {
+				//Don't provide form handling
+				return Promise.resolve();
+			}
+			//TODO validate with object page header/VBox/HBox
 			return oModifier.createControl("sap.m.VBox",
 				mPropertyBag.appComponent,
 				mPropertyBag.view,

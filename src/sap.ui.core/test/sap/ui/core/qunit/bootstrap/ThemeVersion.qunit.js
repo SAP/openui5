@@ -14,6 +14,7 @@ sap.ui.define([
 	// restore global fakeServer (for initial sap-ui-version.json request)
 	// QUnit test itself should use a fakeServer for each test
 	window.oServer.restore();
+	sap.ui.loader.config.restore();
 
 	QUnit.module("default", {
 		initFakeServer: function(sResponseCode) {
@@ -40,7 +41,7 @@ sap.ui.define([
 
 		var sExpectedHref;
 		if (mOptions.customcss) {
-			sExpectedHref = "../testdata/customcss/sap/ui/core/themes/";
+			sExpectedHref = "test-resources/sap/ui/core/qunit/testdata/customcss/sap/ui/core/themes/";
 		} else {
 			sExpectedHref = sap.ui.require.toUrl("sap/ui/core/themes/");
 		}
@@ -72,7 +73,7 @@ sap.ui.define([
 		var sHref = oLink.getAttribute("href");
 		var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
 
-		var sExpectedHref = "../testdata/customcss/sap/ui/core/themes/" + sap.ui.getCore().getConfiguration().getTheme() + "/custom.css";
+		var sExpectedHref = "test-resources/sap/ui/core/qunit/testdata/customcss/sap/ui/core/themes/" + sap.ui.getCore().getConfiguration().getTheme() + "/custom.css";
 
 		assert.equal(
 			sHref,

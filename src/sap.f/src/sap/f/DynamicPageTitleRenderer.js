@@ -22,7 +22,9 @@ sap.ui.define([
 	DynamicPageTitleRenderer.render = function (oRm, oDynamicPageTitle) {
 		var oDynamicPageTitleState = oDynamicPageTitle._getState(),
 			sSapFDynamicPageTitle = "sapFDynamicPageTitle",
-			sBackgroundDesign = oDynamicPageTitle.getBackgroundDesign();
+			sBackgroundDesign = oDynamicPageTitle.getBackgroundDesign(),
+			sLabelledBy = oDynamicPageTitle._getARIALabelReferences(oDynamicPageTitle._bExpandedState) || oDynamicPageTitle.DEFAULT_HEADER_TEXT_ID,
+			sDescribedBy = oDynamicPageTitle._getAriaDescribedByReferences();
 
 		// DynamicPageTitle Root DOM Element.
 		oRm.openStart("div", oDynamicPageTitle);
@@ -34,7 +36,16 @@ sap.ui.define([
 
 		oRm.openEnd();
 
-		oRm.renderControl(oDynamicPageTitleState.focusSpan);
+		oRm.openStart("span", oDynamicPageTitle.getId() + "-focusSpan")
+			.class("sapFDynamicPageTitleFocusSpan")
+			.attr("role", "button")
+			.attr("aria-expanded", oDynamicPageTitle._bExpandedState)
+			.attr("aria-labelledby", sLabelledBy)
+			.attr("aria-describedby", sDescribedBy)
+			.attr("tabindex", 0);
+
+		oRm.openEnd()
+			.close("span");
 
 		this._renderTopArea(oRm, oDynamicPageTitleState);
 		this._renderMainArea(oRm, oDynamicPageTitleState);

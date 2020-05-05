@@ -4,11 +4,13 @@
 /* =========================== */
 
 @_sap_m_Link_TextShadowColor: none;
+@sapUiLinkSubtleColor: lighten(@sapUiLink, 10);
 
 .sapMLnkDsbl {
-	opacity: 0.4;
+	opacity: @sapUiContentDisabledOpacity;
 	outline: none;
 	cursor: default;
+	text-decoration: none;
 }
 
 .sapMLIBActive .sapMLnk {
@@ -16,8 +18,9 @@
 	text-decoration: underline;
 }
 
-.sapMLnkSubtle {
-	color: darken(@sapUiLink,15);
+.sapMLnk.sapMLnkSubtle {
+	color: @sapUiLinkSubtleColor;
+	text-decoration: none;
 }
 
 .sapMLnkSubtle:focus {
@@ -26,4 +29,19 @@
 
 .sapMLnk:not(.sapMLnkDsbl) {
 	text-shadow: @_sap_m_Link_TextShadowColor;
+}
+
+.sapMLnk:hover:not(.sapMLnkDsbl) {
+	color: @sapUiLinkHoverColor;
+}
+
+.sapMLnk:active:not(.sapMLnkDsbl),
+.sapMLnk:focus:not(.sapMLnkDsbl) {
+	color: @sapUiLinkActiveColor;
+}
+
+/* align Link in Form with Label */
+.sapUiFormEdit .sapMLnk {
+	margin-top: 0.875rem; /* don't use padding as this would stretch the focus outline */
+	margin-bottom: 0.625rem; /* for some reason browser adds 4px, display: block would lead to stretched focus outline*/
 }

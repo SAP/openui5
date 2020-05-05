@@ -19,21 +19,33 @@ html.sap-desktop .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed,
 	background-color: @sapUiButtonSelectedBackground;
 	border-color: @sapUiButtonSelectedBorderColor;
 	color: @sapUiButtonSelectedTextColor;
+	& .sapUiIcon {
+		color: @sapUiButtonSelectedTextColor;
+	}
 	text-shadow: none;
 	&.sapMBtnReject {
-		background-color: @sapUiButtonRejectActiveBackground;
-		border-color: @sapUiButtonRejectActiveBorderColor;
-		color: contrast(@sapUiButtonRejectActiveBackground, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);;
+		background-color: @sapUiButtonRejectSelectedBackground;
+		border-color: @sapUiButtonRejectSelectedBorderColor;
+		color: @sapUiButtonRejectSelectedTextColor;
+		& .sapUiIcon {
+			color: @sapUiButtonRejectSelectedTextColor;
+		}
 	}
 	&.sapMBtnAccept {
-		background-color: @sapUiButtonAcceptActiveBackground;
-		border-color: @sapUiButtonAcceptActiveBorderColor;
-		color: contrast(@sapUiButtonAcceptActiveBackground, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);;
+		background-color: @sapUiButtonAcceptSelectedBackground;
+		border-color: @sapUiButtonAcceptSelectedBorderColor;
+		color: @sapUiButtonAcceptSelectedTextColor;
+		& .sapUiIcon {
+			color: @sapUiButtonAcceptSelectedTextColor;
+		}
 	}
 	&.sapMBtnAttention {
-		background-color: @sapUiButtonAttentionActiveBackground;
-		border-color: @sapUiButtonAttentionActiveBorderColor;
-		color: contrast(@sapUiButtonAttentionActiveBackground, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);;
+		background-color: @sapUiButtonAttentionSelectedBackground;
+		border-color: @sapUiButtonAttentionSelectedBorderColor;
+		color: @sapUiButtonAttentionSelectedTextColor;
+		& .sapUiIcon {
+			color: @sapUiButtonAttentionSelectedTextColor;
+		}
 	}
 }
 

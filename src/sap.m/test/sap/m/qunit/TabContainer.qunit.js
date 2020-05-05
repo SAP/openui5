@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
@@ -10,6 +10,8 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/TabContainer",
 	"sap/m/TabStripItem",
+	"sap/ui/core/Element",
+	"sap/ui/Device",
 	"sap/m/Button",
 	"sap/m/library"
 ], function(
@@ -22,6 +24,8 @@ sap.ui.define([
 	Link,
 	TabContainer,
 	TabStripItem,
+	Element,
+	Device,
 	Button,
 	mobileLibrary
 ) {
@@ -177,6 +181,18 @@ sap.ui.define([
 		// cleanup
 		oActualRemovedItem = null;
 		oExpectedRemovedItem = null;
+	});
+
+	QUnit.test("removeItem", function(assert) {
+		// prepare
+		var sSelectedItemId = this.oTabContainer.getSelectedItem(),
+			oTabStrip = this.oTabContainer._getTabStrip();
+
+		// act
+		this.oTabContainer.removeItem(Element.registry.get(sSelectedItemId));
+
+		// assert
+		assert.equal(oTabStrip.getSelectedItem(), undefined, "Selected item id is removed");
 	});
 
 	QUnit.module("Misc", {
@@ -561,6 +577,45 @@ sap.ui.define([
 	});
 
 	QUnit.module("Others");
+
+	QUnit.test("showAddNewButton", function(assert) {
+		// preapre
+		var oTabContainer = new TabContainer();
+
+		// act
+		oTabContainer.setShowAddNewButton(true);
+		// assert
+		assert.ok(oTabContainer.getAddButton() !== null, "Add button object is created");
+
+		// act
+		oTabContainer.setShowAddNewButton(false);
+		// assert
+		assert.ok(oTabContainer.getAddButton() === null, "Add button object is destroyed");
+
+		// clean
+		oTabContainer.destroy();
+	});
+
+	QUnit.test("showAddNewButton on mobile", function(assert) {
+		// preapre
+		this.stub(Device.system, "phone", true);
+		this.stub(Device.system, "desktop", false);
+
+		var oTabContainer = new TabContainer({
+			showAddNewButton: true
+		}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+		jQuery('body').addClass('sap-phone');
+
+		// act
+		// assert
+		assert.ok(oTabContainer.getDomRef().classList.contains("sapUiShowAddNewButton"), "sapUiShowAddNewButton class is added to the DOM element");
+
+		// clean
+		oTabContainer.destroy();
+		jQuery('body').removeClass('sap-phone');
+	});
 
 	QUnit.test("Closing the only item, resets the selected item", function(assert) {
 		//arrange

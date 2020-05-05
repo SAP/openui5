@@ -10,7 +10,8 @@
 	.sapFShellBarOTB {
 		height: 2.75rem;
 	}
-	.CPImage {
+	.CPImage,
+	& .sapMIBar.sapMTB .CPImage {
 		.color1 {
 			stop-color: #C0D9F2;
 		}
@@ -55,7 +56,10 @@
 			.sapMIBar {
 				height: 2.75rem;
 			}
-
+			// sap.m.MegaMenu
+			.sapFSHMegaMenu {
+				height: 2.75rem;
+			}
 		// sap.m.Button
 			.sapMBtn {
 				height: 2.75rem;
@@ -71,16 +75,6 @@
 			.sapMBtnInner.sapMBtnText {
 				padding-left: 0.5625rem;
 				padding-right: 0.5625rem;
-			}
-			.sapMBtnInner.sapMBtnText.sapMBtnIconFirst,
-			.sapMBtnInner.sapMBtnText.sapMBtnBack {
-				padding-left: 2.375rem;
-			}
-			.sapMBtnInner.sapMBtnText.sapMBtnBack.sapMBtnIconFirst {
-				padding-left: 4.750rem;
-			}
-			.sapMBtnInner.sapMBtnText.sapMBtnIconLast {
-				padding-right: 2.375rem;
 			}
 
 			.sapMBtnContent {
@@ -146,7 +140,7 @@
 					height: 2.25rem;
 					line-height: 2.125rem;
 					padding-left: 0.625rem;
-					padding-right: 4.75rem;
+					padding-right: 2.375rem;
 				}
 				.sapMSFR:not(.sapMSFNS) {
 					right: 2.375rem;
@@ -190,8 +184,10 @@
 	.@{controlClass} {
 
 		// sap.m.Button
+		.sapFShellBarItem.sapMBtn,
+		.sapFShellBarItem .sapMBtn,
 		.sapMTB-Transparent-CTX .sapFShellBarItem.sapMBtn,
-		.sapMTB-Transparent-CTX .sapFShellBarItem>.sapMBtn {
+		.sapMTB-Transparent-CTX .sapFShellBarItem .sapMBtn {
 			&:focus .sapMBtnInner {
 				outline-color: contrast(@sapShellColor, @sapUiContentFocusColor, @sapUiContentContrastFocusColor, @sapContent_ContrastTextThreshold);
 			}
@@ -266,7 +262,7 @@
 		//sap.m.SearchField
 		.sapMSF {
 			.sapMSFF {
-				background: transparent;
+				background: @sapUiShellColor;
 				border-color: lighten(@sapUiShellBorderColor, 30);
 				&:hover {
 					background: @sapUiShellHoverBackground;

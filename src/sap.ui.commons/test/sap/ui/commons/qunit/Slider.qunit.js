@@ -111,7 +111,7 @@ sap.ui.define([
 	QUnit.test("Keyboard with Step", function(assert) {
 		var oSli = oSlis["oSli2"];
 		var oGrip = document.getElementById('oSli2-grip');
-		jQuery("#oSli2").focus();
+		jQuery("#oSli2").trigger("focus");
 		oSli.setValue(100);
 
 		qutils.triggerKeyboardEvent("oSli2", "ARROW_RIGHT");
@@ -196,7 +196,7 @@ sap.ui.define([
 	QUnit.test("Keyboard without Step", function(assert) {
 		var oSli = oSlis["oSli3"];
 		var oGrip = document.getElementById('oSli3-grip');
-		jQuery("#oSli3").focus();
+		jQuery("#oSli3").trigger("focus");
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli3", "ARROW_RIGHT");
 		assert.equal(oSli.getValue(), 100.4, "Value after keyboard right Arrow without step-wide:");
@@ -277,7 +277,7 @@ sap.ui.define([
 	QUnit.test("Keyboard with Read Only", function(assert) {
 		var oSli = oSlis["oSli6"];
 		var oGrip = document.getElementById('oSli6-grip');
-		jQuery("#oSli6").focus();
+		jQuery("#oSli6").trigger("focus");
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli6", "ARROW_RIGHT");
 		assert.equal(oSli.getValue(), 100, "Value after keyboard right Arrow on read only:");
@@ -572,7 +572,7 @@ sap.ui.define([
 	QUnit.test("Keyboard with Step", function(assert) {
 		var oSli = oSlis["oSli7"];
 		var oGrip = document.getElementById('oSli7-grip');
-		jQuery("#oSli7").focus();
+		jQuery("#oSli7").trigger("focus");
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_RIGHT");
 		qutils.triggerKeyboardEvent("oSli7", "ARROW_RIGHT");
@@ -656,7 +656,7 @@ sap.ui.define([
 	QUnit.test("Keyboard without Step", function(assert) {
 		var oSli = oSlis["oSli8"];
 		var oGrip = document.getElementById('oSli8-grip');
-		jQuery("#oSli8").focus();
+		jQuery("#oSli8").trigger("focus");
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli8", "ARROW_RIGHT");
 		assert.equal(oSli.getValue(), 100.4, "Value after keyboard right Arrow without step-wide:");
@@ -737,7 +737,7 @@ sap.ui.define([
 	QUnit.test("Keyboard with Read Only", function(assert) {
 		var oSli = oSlis["oSli11"];
 		var oGrip = document.getElementById('oSli11-grip');
-		jQuery("#oSli11").focus();
+		jQuery("#oSli11").trigger("focus");
 		oSli.setValue(100);
 		qutils.triggerKeyboardEvent("oSli11", "ARROW_RIGHT");
 		assert.equal(oSli.getValue(), 100, "Value after keyboard right Arrow on read only:");

@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/ComboBoxTextField",
 	"sap/m/SelectList",
+	"sap/m/Dialog",
 	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleText",
 	"sap/m/library",
@@ -49,6 +50,7 @@ sap.ui.define([
 		Label,
 		ComboBoxTextField,
 		SelectList,
+		Dialog,
 		Element,
 		InvisibleText,
 		mobileLibrary,
@@ -9389,6 +9391,21 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test('title alignment is handled by dialog', function (assert) {
+			fnToMobileMode();
+
+			// setup
+			var fnDialogAlignmentSpy = this.spy(Dialog.prototype, "_setupBarTitleAlignment"),
+				oSelect = new Select();
+
+			// assert
+			assert.strictEqual(fnDialogAlignmentSpy.called, true, 'Title alignment is handled correctly');
+
+			// cleanup
+			oSelect.destroy();
+			fnToDesktopMode();
+		});
+
 		QUnit.module("onAfterClose");
 
 		QUnit.test("onAfterClose", function (assert) {
@@ -10142,6 +10159,7 @@ sap.ui.define([
 		QUnit.test("Hidden input attributes and classes", function (assert) {
 			// Attributes
 			assert.strictEqual(this.$oHiddenInputRef.attr("aria-readonly"), "true", "Hidden input is readonly");
+			assert.strictEqual(this.$oHiddenInputRef.attr("aria-hidden"), "true", "Hidden has aria-hidden");
 			assert.strictEqual(this.$oHiddenInputRef.attr("tabindex"), "-1", "Hidden input shouldn't be reachable via keyboard navigation");
 
 			// Classes

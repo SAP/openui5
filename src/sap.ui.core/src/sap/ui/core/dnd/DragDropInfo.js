@@ -119,4 +119,4 @@ sap.ui.define(["./DragInfo", "./DropInfo", "sap/ui/Device", "sap/base/Log"],
 
 	return DragDropInfo;
 
-}, /* bExport= */ true);
+});

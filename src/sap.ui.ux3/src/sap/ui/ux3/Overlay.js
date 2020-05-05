@@ -208,9 +208,9 @@ sap.ui.define([
 		if (oShell) {
 			this._bFocusEventsRegistered = true;
 			oShell.syncWithCanvasSize(this.getId(), true, fnFocusFirst, fnFocusLast, fnApplyChanges);
-			this.$("firstFocusDummyPaneFw").attr("tabindex", "0").focusin(jQuery.proxy(oShell.focusFirstHdr,oShell));
-			this.$("firstFocusDummyPaneBw").attr("tabindex", "0").focusin(jQuery.proxy(oShell.focusLastTool,oShell));
-			this.$("LastFocusDummyPane").attr("tabindex", "0").focusin(jQuery.proxy(oShell.focusPaneStart,oShell));
+			this.$("firstFocusDummyPaneFw").attr("tabindex", "0").on("focusin", jQuery.proxy(oShell.focusFirstHdr,oShell));
+			this.$("firstFocusDummyPaneBw").attr("tabindex", "0").on("focusin", jQuery.proxy(oShell.focusLastTool,oShell));
+			this.$("LastFocusDummyPane").attr("tabindex", "0").on("focusin", jQuery.proxy(oShell.focusPaneStart,oShell));
 		} else {
 			this.$().css("bottom", "0").css("top", "0").css("left", "0").css("right", "0");
 		}
@@ -226,9 +226,9 @@ sap.ui.define([
 		}
 		if (this._bFocusEventsRegistered) {
 			this._bFocusEventsRegistered = false;
-			this.$("firstFocusDummyPaneFw").removeAttr("tabindex").unbind("focusin");
-			this.$("firstFocusDummyPaneBw").removeAttr("tabindex").unbind("focusin");
-			this.$("LastFocusDummyPane").removeAttr("tabindex").unbind("focusin");
+			this.$("firstFocusDummyPaneFw").removeAttr("tabindex").off("focusin");
+			this.$("firstFocusDummyPaneBw").removeAttr("tabindex").off("focusin");
+			this.$("LastFocusDummyPane").removeAttr("tabindex").off("focusin");
 		}
 	};
 

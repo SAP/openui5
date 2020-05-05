@@ -904,7 +904,7 @@ function (
 			oBeginColumnArrow =  this.oFCL.getAggregation("_beginColumnBackArrow"),
 			aColumns = ["begin", "mid", "end"];
 
-		// аct
+		// act
 		oBeginColumnArrow.firePress();
 
 		// assert

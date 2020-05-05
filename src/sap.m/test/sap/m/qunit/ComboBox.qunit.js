@@ -1788,6 +1788,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.setSelectedItem(null);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1969,6 +1970,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.setSelectedItemId("");
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -2216,6 +2218,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.setSelectedKey("");
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -2229,13 +2232,12 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("setSelectedKey() set the selected item when the picker popup is open test case 2", function (assert) {
+	QUnit.test("aria-activedescendant should not be set if item is not focused on open - e.g if the arrow icon is clicked", function (assert) {
 
 		// system under test
-		var oExpectedItem;
 		var oComboBox = new ComboBox({
 			items: [
-				oExpectedItem = new Item({
+				new Item({
 					key: "GER",
 					text: "Germany"
 				})
@@ -2243,18 +2245,17 @@ sap.ui.define([
 
 			selectedKey: "GER"
 		});
+		this.stub(oComboBox, "getSelectedItem", function() { return false; });
 
 		// arrange
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		oComboBox.syncPickerContent();
 		oComboBox.open();
-		this.clock.tick(1000); // wait 1s after the open animation is completed
-		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
+		this.clock.tick();
 
 		// assert
-		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), sExpectedActiveDescendantId, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
+		assert.notOk(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), 'The "aria-activedescendant" attribute is not set when the active descendant list item is not focused');
 
 		// cleanup
 		oComboBox.destroy();
@@ -3017,6 +3018,7 @@ sap.ui.define([
 		oComboBox.destroy();
 		fnChangeSpy.restore();
 	});
+
 	QUnit.test("Trigger close only once onItemPress", function (assert) {
 		this.stub(Device, "system", {
 			desktop: false,
@@ -3025,8 +3027,7 @@ sap.ui.define([
 		});
 
 		// system under test
-		var oTextSelectionSpy,
-			oComboBox = new ComboBox({
+		var oComboBox = new ComboBox({
 				items: [
 					new Item({
 						key: "0",
@@ -3047,14 +3048,12 @@ sap.ui.define([
 		oComboBox.open();
 		this.clock.tick(1000);
 
-		oTextSelectionSpy = this.spy(oComboBox, "selectText");
 		oComboBox._oList.getItems()[1].$().trigger("tap");
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(1000);
 
 		// Assert
-		assert.strictEqual(oCloseSpy.callCount, 1, "The close() method has been called once");
-		assert.strictEqual(oTextSelectionSpy.callCount, 0, "The selectText() should not be called on tablet");
+		assert.strictEqual(oCloseSpy.calledOnce, true, "The close() method has been called once");
 
 		// Cleanup
 		oComboBox.destroy();
@@ -3745,6 +3744,7 @@ sap.ui.define([
 		// Act
 		oComboBox.setValueStateText("");
 		oComboBox.setValueState("Error");
+		oComboBox.open();
 		sap.ui.getCore().applyChanges();
 
 		// Assert
@@ -3776,6 +3776,7 @@ sap.ui.define([
 
 		var fnShowValueStateTextSpy = this.spy(oComboBox._oSuggestionPopover, "_showValueStateHeader");
 		oComboBox.setValueState("None");
+		oComboBox.open();
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(fnShowValueStateTextSpy.calledWith(false));
@@ -5268,9 +5269,10 @@ sap.ui.define([
 	QUnit.test("onsapshow Alt + DOWN - open the picker pop-up", function (assert) {
 
 		// system under test
+		var oExpectedItem;
 		var oComboBox = new ComboBox({
 			items: [
-				new Item({
+				oExpectedItem = new Item({
 					key: "0",
 					text: "item 0"
 				}),
@@ -5290,8 +5292,13 @@ sap.ui.define([
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		sap.ui.getCore().applyChanges();
+
+		// arrange
+		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// assert
+		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), sExpectedActiveDescendantId, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 		assert.strictEqual(fnShowSpy.callCount, 1, "onsapshow() method was called exactly once");
 
 		this.clock.tick(1000);
@@ -6261,6 +6268,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		oComboBox.focus();
+
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
 			which: KeyCodes.A
@@ -6271,6 +6279,7 @@ sap.ui.define([
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().value, "Algeria");
@@ -6349,6 +6358,7 @@ sap.ui.define([
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -6804,6 +6814,7 @@ sap.ui.define([
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -7070,6 +7081,7 @@ sap.ui.define([
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -7318,6 +7330,7 @@ sap.ui.define([
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -7685,6 +7698,7 @@ sap.ui.define([
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -8057,6 +8071,7 @@ sap.ui.define([
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -8119,6 +8134,7 @@ sap.ui.define([
 	QUnit.test("oninput the ComboBox's picker pop-up should open", function (assert) {
 
 		// system under test
+
 		var oExpectedItem;
 		var oComboBox = new ComboBox({
 			items: [
@@ -8141,6 +8157,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		oComboBox.focus();
+
 		var fnOpenSpy = this.spy(oComboBox, "open");
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -8154,8 +8171,7 @@ sap.ui.define([
 		assert.strictEqual(fnOpenSpy.callCount, 1, "open() method was called exactly once");
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
 		assert.strictEqual(oComboBox.getVisibleItems().length, 3, "Three items are visible");
-		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
-
+		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId, "The 'aria-activedescendant' attribute is set when the active descendant is rendered and visible");
 		// cleanup
 		oComboBox.destroy();
 	});
@@ -9032,13 +9048,13 @@ sap.ui.define([
 		// act
 		oComboBox.syncPickerContent();
 		oComboBox.open();
-		this.clock.tick(1000);
+		sap.ui.getCore().applyChanges();
+
 		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// assert
-		assert.strictEqual(oComboBox.$("inner").attr("aria-activedescendant"), sExpectedActiveDescendantId);
+		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId, "The 'aria-activedescendant' attribute is set when the active descendant is rendered and visible");
 
-		// cleanup
 		oComboBox.destroy();
 	});
 
@@ -12903,7 +12919,10 @@ sap.ui.define([
 		this.clock.tick();
 
 		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.ARROW_DOWN, false, true);
+		this.clock.tick();
+
 		this.oErrorComboBox.onsapup(oFakeEvent);
+		this.clock.tick();
 
 		// Assert
 		assert.ok(this.oErrorComboBox.getPicker().getCustomHeader().$().hasClass("sapMPseudoFocus"), "Pseudo focus is on value state header");
@@ -12951,7 +12970,9 @@ sap.ui.define([
 
 		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.ARROW_DOWN, false, true);
 		this.oErrorComboBox.onsapup(oFakeEvent);
+		this.clock.tick();
 		this.oErrorComboBox.onsapdown(oFakeEvent);
+		this.clock.tick();
 
 		// Assert
 		assert.ok(this.oErrorComboBox.getListItem(this.oErrorComboBox.getItems()[0]).$().hasClass("sapMLIBFocused"), "The visual pseudo focus is on the first item");
@@ -12977,4 +12998,331 @@ sap.ui.define([
 		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"),this.oErrorComboBox.getListItem(this.oErrorComboBox.getItems()[0]).getId(), "Area attribute of input is the ID of the formatted value state text");
 	});
 
+	QUnit.test("Tapping on the input shoould apply the visual focus", function (assert) {
+		// Arrange
+		var oComboBox = new ComboBox({
+			items: [
+				new Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new Item({
+					key: "1",
+					text: "item 1"
+				}),
+
+				new Item({
+					key: "2",
+					text: "item 2"
+				})
+			]
+		});
+
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oFakeEvent = {
+			getEnabled: function () { return true; },
+			setMarked: function () { },
+			srcControl: oComboBox
+		};
+
+		// Act
+		oComboBox.focus();
+		sap.ui.getCore().applyChanges();
+
+		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
+		this.clock.tick();
+
+		// Arrange
+		var oFirstListItem = oComboBox._oList.getItems()[0],
+			sExpectedActiveDescendantId = oFirstListItem.getId();
+
+		// Assert
+		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.OPEN, "The picker is open");
+		assert.ok(oFirstListItem.hasStyleClass("sapMLIBFocused"), "The visual pseudo focus is on the first item");
+		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), sExpectedActiveDescendantId, 'The "aria-activedescendant" attribute is set correctly');
+
+		// Act
+		oComboBox.ontap(oFakeEvent);
+		this.clock.tick();
+
+		// Assert
+		assert.notOk(oFirstListItem.hasStyleClass("sapMLIBFocused"), "The visual pseudo focus is removed when the input field is on focus");
+		assert.ok(oComboBox.$().hasClass("sapMFocus"), "The visual focus is on the input field");
+		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is removed when the input field is on focus');
+
+		//clean up
+		oComboBox.destroy();
+	});
+
+	QUnit.test("Setting new value state formatted text aggregation should be update also the value state header", function (assert) {
+		// Arrange
+		var	oSuggPopoverHeaderValueState,
+			oFormattedValueStateText;
+
+		// Act
+		// Open sugg. popover with the initialy set formatted text value state
+		// to switch the FormattedText aggregation to the value state header
+		this.oErrorComboBox.open();
+		this.clock.tick();
+		this.oErrorComboBox.close();
+		this.clock.tick();
+
+		oFormattedValueStateText = new FormattedText({
+			htmlText: "Another value state message containing %%0 %%1",
+			controls: [
+				new Link({
+					text: "multiple",
+					href: "#"
+				}),
+				new Link({
+					text: "links",
+					href: "#"
+				})
+			]
+		});
+
+		this.oErrorComboBox.setFormattedValueStateText(oFormattedValueStateText);
+		sap.ui.getCore().applyChanges();
+
+		this.oErrorComboBox.open();
+		this.clock.tick();
+
+		oSuggPopoverHeaderValueState = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader().getFormattedText().getDomRef().textContent;
+
+		// Assert
+		assert.strictEqual(oSuggPopoverHeaderValueState, "Another value state message containing multiple links", "New FormattedText value state message is correcrtly set in the popover's value state header");
+	});
+	QUnit.test("Change to the formatted text InputBase aggregation should should be forwarded to the value state header", function (assert) {
+		// Arrange
+		var	oSuggPopoverHeaderValueState;
+
+		// Act
+		this.oErrorComboBox._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
+		sap.ui.getCore().applyChanges();
+
+		this.oErrorComboBox.open();
+		this.clock.tick();
+
+		oSuggPopoverHeaderValueState = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader().getFormattedText().getDomRef().textContent;
+
+		// Assert
+		assert.strictEqual(oSuggPopoverHeaderValueState, "New value state message containing a link", "The FormattedText aggregation is correctly forwarded to the popover's value state header");
+	});
+
+	QUnit.test("Change to the formatted text InputBase aggregation should should also be reflected in the value state header while it is open", function (assert) {
+		// Arrange
+		var	oSuggPopoverHeaderValueState;
+		var oPopup;
+
+		// Act
+		this.oErrorComboBox.open();
+		this.clock.tick();
+
+		this.oErrorComboBox._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
+		sap.ui.getCore().applyChanges();
+		oSuggPopoverHeaderValueState = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader().getFormattedText().getDomRef().textContent;
+
+		// Assert
+		assert.strictEqual(oSuggPopoverHeaderValueState, "New value state message containing a link", "The FormattedText aggregation is correctly updated in the popover's value state header while it's open");
+
+		// Act
+		this.oErrorComboBox.close();
+		this.clock.tick();
+
+		oPopup = this.oErrorComboBox._oValueStateMessage._oPopup;
+		// Assert
+		assert.strictEqual(oPopup.getContent().childNodes[1].textContent, "New value state message containing a link", "The updated FormattedText aggregation is also correctly displayed in the ComboBox value state popup after the suggestion popover is closed");
+	});
+
+	QUnit.test("Should move the visual focus from value state header to the ComboBox input when the user starts typing", function (assert) {
+		// Arrange
+		var	oValueStateHeader;
+
+		// Act
+		this.oErrorComboBox._$input.focus().val("A").trigger("input");
+		this.clock.tick();
+
+		// Select the value state header
+		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		this.clock.tick();
+
+		this.oErrorComboBox._$input.focus().val("Ger").trigger("input");
+		this.clock.tick();
+
+		oValueStateHeader = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader();
+
+		// Assert
+		assert.notOk(oValueStateHeader.$().hasClass("sapMPseudoFocus"), "Pseudo focus is not the value state header");
+		assert.notOk(this.oErrorComboBox._getSuggestionsPopover()._oList.getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is not on the first item");
+		assert.ok(this.oErrorComboBox.$().hasClass("sapMFocus"), "The visual pseudo focus is on the input field");
+	});
+
+	QUnit.test("onsaphome should move the visual focus on the value state header if links exists", function (assert) {
+		// Arrange
+		var	oValueStateHeader,
+			oEventMock = {
+				srcControl: this.oErrorComboBox,
+				setMarked: function () { },
+				preventDefault: function() { return false; }
+			};
+
+		// Act
+		sap.ui.test.qunit.triggerKeyboardEvent(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		this.clock.tick();
+		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick();
+		this.oErrorComboBox.onsaphome(oEventMock);
+		this.clock.tick();
+
+		oValueStateHeader = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader();
+
+		// Assert
+		assert.ok(oValueStateHeader.$().hasClass("sapMPseudoFocus"), "Pseudo focus is on the value state header");
+		assert.notOk(this.oErrorComboBox._getSuggestionsPopover()._oList.getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is not on the first item");
+		assert.notOk(this.oErrorComboBox.$().hasClass("sapMFocus"), "The visual pseudo focus is not the input field");
+	});
+
+	QUnit.test("onsapdown on a link in a value state header message should move the visual focus to the first suggested item", function (assert) {
+		// Arrange
+		var	oValueStateHeader,
+			oEventMock = {
+				srcControl: this.oErrorComboBox,
+				setMarked: function () { },
+				preventDefault: function() { return false; }
+			};
+
+
+		// Act
+		sap.ui.test.qunit.triggerKeyboardEvent(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		this.clock.tick();
+		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		this.clock.tick();
+		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.TAB);
+		this.clock.tick();
+
+		oValueStateHeader = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader();
+
+		// Assert
+		assert.strictEqual(oValueStateHeader.getFormattedText().getControls()[0].getDomRef(), document.activeElement, "The link in the value state header has the real focus");
+
+		this.oErrorComboBox.onsapdown(oEventMock);
+		this.clock.tick();
+
+		// Assert
+		assert.notOk(oValueStateHeader.$().hasClass("sapMPseudoFocus"), "Pseudo focus is not on the value state header");
+		assert.notOk(this.oErrorComboBox.$().hasClass("sapMFocus"), "The visual pseudo focus is not the input field");
+		assert.ok(this.oErrorComboBox._getSuggestionsPopover()._oList.getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is on the first item");
+	});
+
+	QUnit.test("When the FormattedText in the value state header is focused onsapend should move the focus to the last item", function (assert) {
+		// Arrange
+		var	oValueStateHeader,
+			iLastItemIndex,
+			oEventMock = {
+				srcControl: this.oErrorComboBox,
+				setMarked: function () { },
+				preventDefault: function() { return false; }
+			};
+
+			// Act
+		sap.ui.test.qunit.triggerKeyboardEvent(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		this.clock.tick();
+
+		iLastItemIndex = this.oErrorComboBox._getSuggestionsPopover()._oList.getItems().length - 1;
+
+		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		this.clock.tick();
+		this.oErrorComboBox.onsapend(oEventMock);
+		this.clock.tick();
+
+		oValueStateHeader = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader();
+
+		// Assert
+		assert.notOk(oValueStateHeader.$().hasClass("sapMPseudoFocus"), "Pseudo focus is not the value state header");
+		assert.notOk(this.oErrorComboBox.$().hasClass("sapMFocus"), "The visual pseudo focus is not the input field");
+		assert.ok(this.oErrorComboBox._getSuggestionsPopover()._oList.getItems()[iLastItemIndex].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is on the last item");
+	});
+
+	QUnit.test("Should display the correct value state FormattedText message when a value with no matching suggestion is typed in the ComboBox input field", function (assert) {
+		// Arrange
+		var	oValueStateFormattedText;
+
+		// Act
+		this.oErrorComboBox._$input.focus().val("@").trigger("input");
+		this.clock.tick();
+
+		oValueStateFormattedText = this.oErrorComboBox.getFormattedValueStateText().getHtmlText();
+
+		// Assert
+		assert.strictEqual(oValueStateFormattedText, "Value state message containing a %%0", "The correct value state formatted text message is set to the control");
+		assert.strictEqual(document.querySelector("#" + this.oErrorComboBox.getValueStateMessageId() + " div").textContent, "Value state message containing a link", "The correct value state message is rendered and dispaleyd in the popup");
+	});
+
+	QUnit.test("Should display the correct value state FormattedText message popup when a value with no matching suggestion is typed in the ComboBox input field after a suggestion item has been already shown prior to that", function (assert) {
+		// Arrange
+		var	oValueStateFormattedText;
+		var	oEventMock = {
+				keyCode: KeyCodes.Z,
+				srcControl: this.oErrorComboBox,
+				isMarked: function () { },
+				target: {}
+			};
+		oEventMock.target.value = "Gerz";
+
+		// Act
+		this.oErrorComboBox._$input.focus().val("Ger").trigger("input");
+		this.clock.tick();
+
+		// Assert
+		assert.strictEqual(this.oErrorComboBox._getSuggestionsPopover()._oList.getSelectedItem().getTitle(), "Germany", "Suggestion item has been matched");
+
+		// Add one more character that will make the input value with no matching suggestion item
+		this.oErrorComboBox.handleInputValidation(oEventMock, false);
+		this.clock.tick();
+
+		oValueStateFormattedText = this.oErrorComboBox.getFormattedValueStateText().getHtmlText();
+
+		// Assert
+		assert.strictEqual(oValueStateFormattedText, "Value state message containing a %%0", "The correct value state formatted text message is set to the ComboBox");
+		assert.strictEqual(document.querySelector("#" + this.oErrorComboBox.getValueStateMessageId() + " div").textContent, "Value state message containing a link", "The correct value state message is rendered and dispaleyd in the popup");
+	});
+
+	QUnit.test("Tapping on the input while valeu state header is focused shoould apply the visual focus on the input and remove it from the header", function (assert) {
+		var oFakeEvent = {
+			getEnabled: function () { return true; },
+			setMarked: function () { },
+			srcControl: this.oErrorComboBox,
+			preventDefault: function() { return false; }
+		};
+		var oFirstListItem,
+			oValueStateHeader;
+
+		// Act
+		this.oErrorComboBox.focus();
+		sap.ui.getCore().applyChanges();
+
+		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
+		this.clock.tick();
+
+		oValueStateHeader = this.oErrorComboBox._oSuggestionPopover._oValueStateHeader;
+		this.oErrorComboBox.onsapup(oFakeEvent);
+		this.clock.tick();
+
+		// Arrange
+		oFirstListItem = this.oErrorComboBox._oList.getItems()[0];
+
+		// Act
+		this.oErrorComboBox.ontap(oFakeEvent);
+		this.clock.tick();
+
+		// Assert
+		assert.notOk(oFirstListItem.hasStyleClass("sapMLIBFocused"), "The visual pseudo focus is removed when the input field is on focus");
+		assert.notOk(oValueStateHeader.hasStyleClass("sapMLIBFocused"), "The visual pseudo focus is removed when the input field is on focus");
+		assert.strictEqual(this.oErrorComboBox.getFormattedTextFocused(), false, "The visual focus is on the input field");
+		assert.ok(this.oErrorComboBox.$().hasClass("sapMFocus"), "The visual focus is on the input field");
+		assert.strictEqual(jQuery(this.oErrorComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is removed when the input field is on focus');
+	});
 });

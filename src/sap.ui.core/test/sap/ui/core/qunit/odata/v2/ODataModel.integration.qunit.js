@@ -41,7 +41,8 @@ sap.ui.define([
 			warning : MessageType.Warning,
 			success : MessageType.Success,
 			info : MessageType.Information
-		};
+		},
+		rTemporaryKey = /id(?:-[0-9]+){2}/;
 
 	/**
 	 * Clones the given OData message object and replaces the target property of the clone by
@@ -61,30 +62,35 @@ sap.ui.define([
 	/**
 	 * Creates an error response object for a technical error (http status code = 4xx/5xx).
 	 *
-	 * @param {int} [iStatusCode=500]
-	 *   The HTTP status code
-	 * @param {string} [sMessage="Internal Server Error"]
+	 * @param {object} [oErrorResponseInfo]
+	 *   The object describing the error response
+	 * @param {boolean} [oErrorResponseInfo.crashBatch]
+	 *   Whether the complete batch request shall fail
+	 * @param {string} [oErrorResponseInfo.message="Internal Server Error"]
 	 *   The message text
-	 * @param {string} [sMessageCode="UF0"]
+	 * @param {string} [oErrorResponseInfo.messageCode="UF0"]
 	 *   The message code
+	 * @param {int} [oErrorResponseInfo.statusCode=500]
+	 *   The HTTP status code
 	 * @returns {object}
 	 *   The error response
 	 */
-	function createErrorResponse(iStatusCode, sMessage, sMessageCode) {
-		sMessage = sMessage || "Internal Server Error";
-		sMessageCode = sMessageCode || "UF0";
-		iStatusCode = iStatusCode || 500;
+	function createErrorResponse(oErrorResponseInfo) {
+		oErrorResponseInfo = oErrorResponseInfo || {};
 
 		return {
-			statusCode : iStatusCode,
 			body : JSON.stringify({
 				error : {
+					code : oErrorResponseInfo.messageCode || "UF0",
 					message : {
-						value : sMessage
-					},
-					code : sMessageCode
+						value : oErrorResponseInfo.message || "Internal Server Error"
+					}
 				}
-			})
+			}),
+			crashBatch : oErrorResponseInfo.crashBatch,
+			headers : {},
+			statusCode : oErrorResponseInfo.statusCode || 500,
+			statusText : "FAILED"
 		};
 	}
 
@@ -316,6 +322,8 @@ sap.ui.define([
 			this.iPendingResponses = 0;
 			// A list of expected requests with the properties method, url, headers, response
 			this.aRequests = [];
+			// The temporary key for a created entity; can be referenced in deep paths by ~key~
+			this.sTemporaryKey = undefined;
 
 			// If the "VisibleRowCountMode" of the sap.ui.table.* is "Auto", the table uses the
 			// screen height (Device.resize.height) to compute the amount of contexts it requests
@@ -399,10 +407,12 @@ sap.ui.define([
 				return {
 					code : oMessage.code,
 					descriptionUrl : oMessage.descriptionUrl,
-					fullTarget : oMessage.fullTarget,
+					fullTarget : oMessage.fullTarget
+						&& oMessage.fullTarget.replace(rTemporaryKey, "~key~"),
 					message : oMessage.message,
 					persistent : oMessage.persistent,
-					target : oMessage.target,
+					target : oMessage.target
+						&& oMessage.target.replace(rTemporaryKey, "~key~"),
 					technical : oMessage.technical,
 					type : oMessage.type
 				};
@@ -556,23 +566,15 @@ sap.ui.define([
 				}
 			}
 
-			/*
+			/**
 			 * Checks that all requests in a batch are as expected and handles its response.
-
+			 *
 			 * @param {object} oRequest The request object
 			 * @param {function} fnSuccess Success callback function
 			 * @param {function} fnError Error callback function
 			 */
 			function checkBatchRequest(oRequest, fnSuccess, fnError) {
-				/**
-				 * Helper function to pass through the return of checkSingleRequest
-				 * @param {object} oData An application-specific payload object
-				 * @param {object} oResponse The response value of a proceeded single request
-				 * @returns {object} The response value of a proceeded single request
-				 */
-				function fnCallbackHelper(oData, oResponse) {
-					return oResponse;
-				}
+				var oCrashedResponse;
 
 				/**
 				 * Processes a request within a batch
@@ -580,46 +582,84 @@ sap.ui.define([
 				 * @returns {object} The processed response object of datajs#request
 				 */
 				function processRequest(oRequest) {
-					// TODO: correct error handling
-					return checkSingleRequest(oRequest, fnCallbackHelper, fnCallbackHelper,
-						that.iBatchNo);
+					if (oRequest.__changeRequests) {
+						return Promise.all(
+							oRequest.__changeRequests.map(processRequest)
+						).then(function (aResponses) {
+							var oErrorResponse = aResponses.reduce(function (oReduced, oCurrent) {
+									return oReduced || oCurrent.message && oCurrent;
+								}, undefined);
+
+							if (oErrorResponse) {
+								return oErrorResponse;
+							}
+							return {__changeResponses : aResponses};
+						});
+					}
+					return checkSingleRequest(oRequest, function /*fnSuccess*/(oData, oResponse) {
+							return oResponse;
+						},
+						function /*fnError*/(oError) {
+							return {message : "HTTP request failed", response : oError.response};
+						},
+						that.iBatchNo
+					).then(function (oResponse) {
+						if (oResponse.response && oResponse.response.crashBatch) {
+							delete oResponse.response.crashBatch;
+							oCrashedResponse = oResponse;
+						}
+						return oResponse;
+					});
 				}
 
 				/**
 				 * @param {object} oRequest A batch request object that contains an array of
 				 *   requests
-				 * @returns {object} The executed success handler of datajs#request
 				 */
 				function processRequests(oRequest) {
 					var aRequests = oRequest.data.__batchRequests;
 
-					return Promise.all(
+					Promise.all(
 						aRequests.map(processRequest)
 					).then(function (aResponses) {
-						// TODO: correct error handling
-						var oBatchResponse = {
-							data : {
-								__batchResponses : aResponses
-							}
-						};
+						var oBatchResponse;
 
-						return fnSuccess(oBatchResponse.data, oBatchResponse);
+						if (oCrashedResponse) {
+							fnError(oCrashedResponse);
+						} else {
+							oBatchResponse = {
+								data : {
+									__batchResponses : aResponses
+								}
+							};
+
+							fnSuccess(oBatchResponse.data, oBatchResponse);
+						}
 					});
 				}
 
 				that.iBatchNo += 1;
 
-				return processRequests(oRequest);
+				processRequests(oRequest);
 			}
 
-			/*
-			 * Checks that the expected request arrived and handles its response. This is used
-			 * individual for single requests or as reused part of batch requests.
+			/**
+			 * Checks that the expected request arrived and handles its response. If the status of
+			 * the expected request is less than 300 the given success handler is called, otherwise
+			 * the given error handler is called. This function can also be used to check requests
+			 * within a $batch request. In this case the resulting promise is resolved with the
+			 * return value of the given success or error handler.
 			 *
-			 * @param {object} oActualRequest The request object
-			 * @param {function} fnSuccess Success callback function
-			 * @param {function} fnError Error callback function
-			 * @param {number} [iBatchNo] The number of the batch to which the request belongs to
+			 * @param {object} oActualRequest
+			 *   The request object
+			 * @param {function} fnSuccess
+			 *   Success callback function
+			 * @param {function} fnError
+			 *   Error callback function
+			 * @param {number} [iBatchNo]
+			 *   The number of the batch to which the request belongs to
+			 * @returns {Promise}
+			 *   Returns a Promise resolving with the result of the given success or error callback
 			 */
 			function checkSingleRequest(oActualRequest, fnSuccess, fnError, iBatchNo) {
 				var oExpectedRequest,
@@ -629,7 +669,8 @@ sap.ui.define([
 					oResponse,
 					mResponseHeaders,
 					sUrl = oActualRequest.requestUri,
-					bWaitForResponse = true;
+					bWaitForResponse = true,
+					sWithContentID;
 
 				function checkFinish() {
 					if (!that.aRequests.length && !that.iPendingResponses) {
@@ -650,6 +691,7 @@ sap.ui.define([
 
 				oActualRequest = Object.assign({}, oActualRequest);
 				oActualRequest.headers = Object.assign({}, oActualRequest.headers);
+				sWithContentID = oActualRequest.withContentID;
 
 				if (sUrl.startsWith(that.oModel.sServiceUrl)) {
 					oActualRequest.requestUri = sUrl.slice(that.oModel.sServiceUrl.length + 1);
@@ -669,9 +711,11 @@ sap.ui.define([
 				delete oActualRequest["deferred"];
 				delete oActualRequest["eventInfo"];
 				delete oActualRequest["password"];
+				delete oActualRequest["expandRequest"];
 				delete oActualRequest["requestID"];
 				delete oActualRequest["updateAggregatedMessages"];
 				delete oActualRequest["user"];
+				delete oActualRequest["withContentID"];
 				if (oExpectedRequest) {
 					oExpectedResponse = oExpectedRequest.response;
 					if (oExpectedResponse === NO_CONTENT) {
@@ -683,10 +727,9 @@ sap.ui.define([
 							response : oExpectedResponse
 						};
 					} else {
-						oResponse = {
-							data : oExpectedResponse,
-							statusCode : 200
-						};
+						oResponse = oExpectedResponse && oExpectedResponse.data
+							? oExpectedResponse
+							: {data : oExpectedResponse, statusCode : 200};
 
 						// oResponse needs __metadata for ODataModel.prototype._getKey
 						if (oResponse.data && Array.isArray(oResponse.data.results)) {
@@ -704,11 +747,36 @@ sap.ui.define([
 					delete oExpectedRequest.response;
 					mResponseHeaders = oExpectedRequest.responseHeaders;
 					delete oExpectedRequest.responseHeaders;
+
+					if (oActualRequest.key && sMethod === "POST"
+							&& oActualRequest.headers["x-http-method"] !== "MERGE") {
+						that.sTemporaryKey = sWithContentID
+							|| oActualRequest.key.match(rTemporaryKey)[0];
+
+						oExpectedRequest.deepPath = oExpectedRequest.deepPath.replace("~key~",
+							that.sTemporaryKey);
+						delete oActualRequest["key"];
+
+						if (oExpectedRequest.headers && oExpectedRequest.headers["Content-ID"]) {
+							oExpectedRequest.headers["Content-ID"] =
+								oExpectedRequest.headers["Content-ID"]
+									.replace("~key~", that.sTemporaryKey);
+						}
+					}
+					if (oActualRequest.requestUri.startsWith("$") && sMethod === "GET") {
+						oExpectedRequest.requestUri = oExpectedRequest.requestUri.replace("~key~",
+							that.sTemporaryKey);
+						oExpectedRequest.deepPath = oExpectedRequest.deepPath.replace("~key~",
+							that.sTemporaryKey);
+					}
 					if ("batchNo" in oExpectedRequest) {
 						oActualRequest.batchNo = iBatchNo;
 					}
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
 					oResponse.headers = mResponseHeaders || {};
+					if (oExpectedRequest.headers["Content-ID"]) {
+						oResponse.headers["Content-ID"] = oExpectedRequest.headers["Content-ID"];
+					}
 				} else {
 					assert.ok(false, sMethod + " " + sUrl + " (unexpected)");
 					oResponse = {value : []}; // dummy response to avoid further errors
@@ -724,7 +792,6 @@ sap.ui.define([
 					if (oResponseBody.statusCode < 300) {
 						return fnSuccess({}, oResponseBody);
 					} else {
-						// TODO: correct error handling
 						return fnError(oResponseBody);
 					}
 				}).finally(function () {
@@ -1246,6 +1313,140 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: A single request within a $batch request fails
+	// JIRA: CPOUI5MODELS-198
+	QUnit.test("$batch error handling: single request fails", function (assert) {
+		var oErrorResponse = createErrorResponse({message : "Bad Request", statusCode : 400}),
+			oEventHandlers = {
+				batchCompleted : function () {},
+				batchFailed : function () {},
+				batchSent : function () {},
+				requestCompleted : function () {},
+				requestFailed : function () {},
+				requestSent : function () {}
+			},
+			oModel = createSalesOrdersModel({useBatch : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="id" text="{SalesOrderID}" />\
+</FlexBox>\
+<Table id="table" items="{/SalesOrderSet}">\
+	<ColumnListItem>\
+		<Text text="{SalesOrderID}" />\
+	</ColumnListItem>\
+</Table>';
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
+				SalesOrderID : "1"
+			})
+			.expectChange("id", null)
+			.expectChange("id", "1")
+			.expectRequest("SalesOrderSet?$skip=0&$top=100", oErrorResponse)
+			.expectMessages([{
+				code : "UF0",
+				descriptionUrl : "",
+				fullTarget : "/SalesOrderSet",
+				message : "Bad Request",
+				persistent : false,
+				target : "/SalesOrderSet",
+				technical : true,
+				type : "Error"
+			}]);
+
+		// don't care about passed arguments
+		this.mock(oEventHandlers).expects("batchCompleted");
+		this.mock(oEventHandlers).expects("batchFailed").never();
+		this.mock(oEventHandlers).expects("batchSent");
+		this.mock(oEventHandlers).expects("requestCompleted").twice();
+		this.mock(oEventHandlers).expects("requestFailed");
+		this.mock(oEventHandlers).expects("requestSent").twice();
+		oModel.attachBatchRequestCompleted(oEventHandlers.batchCompleted);
+		oModel.attachBatchRequestFailed(oEventHandlers.batchFailed);
+		oModel.attachBatchRequestSent(oEventHandlers.batchSent);
+		oModel.attachRequestCompleted(oEventHandlers.requestCompleted);
+		oModel.attachRequestFailed(oEventHandlers.requestFailed);
+		oModel.attachRequestSent(oEventHandlers.requestSent);
+		this.oLogMock.expects("fatal")
+			.withExactArgs("The following problem occurred: HTTP request failed400,FAILED,"
+				+ oErrorResponse.body);
+
+		// code under test
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: A single request caused complete $batch to fail
+	// JIRA: CPOUI5MODELS-198
+	QUnit.test("$batch error handling: complete batch fails", function (assert) {
+		var oErrorResponse = createErrorResponse({crashBatch : true}),
+			oEventHandlers = {
+				batchCompleted : function () {},
+				batchFailed : function () {},
+				batchSent : function () {},
+				requestCompleted : function () {},
+				requestFailed : function () {},
+				requestSent : function () {}
+			},
+			oModel = createSalesOrdersModel({useBatch : true}),
+			sView = '\
+<Table id="table" items="{/SalesOrderSet}">\
+	<ColumnListItem>\
+		<Text text="{SalesOrderID}" />\
+	</ColumnListItem>\
+</Table>\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="id" text="{SalesOrderID}" />\
+</FlexBox>';
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=100", oErrorResponse)
+			.expectRequest("SalesOrderSet('1')", {
+				SalesOrderID : "1"
+			})
+			.expectMessages([{
+				code : "UF0",
+				descriptionUrl : "",
+				fullTarget : "/SalesOrderSet('1')",
+				message : "Internal Server Error",
+				persistent : false,
+				target : "/SalesOrderSet('1')",
+				technical : true,
+				type : "Error"
+			}, {
+				code : "UF0",
+				descriptionUrl : "",
+				fullTarget : "/$batch",
+				message : "Internal Server Error",
+				persistent : false,
+				target : "/$batch",
+				technical : true,
+				type : "Error"
+			}])
+			.expectChange("id", null); // no change as batch fails
+
+		// don't care about passed arguments
+		this.mock(oEventHandlers).expects("batchCompleted");
+		this.mock(oEventHandlers).expects("batchFailed");
+		this.mock(oEventHandlers).expects("batchSent");
+		this.mock(oEventHandlers).expects("requestCompleted").twice();
+		this.mock(oEventHandlers).expects("requestFailed").twice();
+		this.mock(oEventHandlers).expects("requestSent").twice();
+		oModel.attachBatchRequestCompleted(oEventHandlers.batchCompleted);
+		oModel.attachBatchRequestFailed(oEventHandlers.batchFailed);
+		oModel.attachBatchRequestSent(oEventHandlers.batchSent);
+		oModel.attachRequestCompleted(oEventHandlers.requestCompleted);
+		oModel.attachRequestFailed(oEventHandlers.requestFailed);
+		oModel.attachRequestSent(oEventHandlers.requestSent);
+		this.oLogMock.expects("fatal").exactly(3)
+			.withExactArgs("The following problem occurred: HTTP request failed"
+				+ "500,FAILED," + oErrorResponse.body);
+
+		// code under test
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Message with empty target (tested as single request and as batch request)
 [false, true].forEach(function (bUseBatch) {
 	QUnit.test("Messages: empty target (useBatch=" + bUseBatch + ")", function (assert) {
@@ -1306,8 +1507,8 @@ sap.ui.define([
 	// Scenario: Messages with a http status code of 4xx/5xx are expected to be technical
 	// JIRA: CPOUI5MODELS-103
 [
-	{statusCode : 400, message : "Bad Request"},
-	{statusCode : 500, message : "Internal Server Error"}
+	{message : "Bad Request", statusCode : 400},
+	{message : "Internal Server Error", statusCode : 500}
 ].forEach(function (oFixture) {
 	var sTitle = "Messages: http status code '" + oFixture.statusCode + "' expects a technical "
 			+ "error message";
@@ -1321,8 +1522,7 @@ sap.ui.define([
 
 		this.oLogMock.expects("fatal").once();
 
-		this.expectRequest("SalesOrderSet('1')",
-				createErrorResponse(oFixture.statusCode, oFixture.message))
+		this.expectRequest("SalesOrderSet('1')", createErrorResponse(oFixture))
 			.expectMessages([{
 				code : "UF0",
 				fullTarget : "/SalesOrderSet('1')",
@@ -1350,7 +1550,7 @@ sap.ui.define([
 	<Text text="{SalesOrderID}" />\
 </FlexBox>';
 
-		this.expectRequest("SalesOrderSet('1')", createErrorResponse(200))
+		this.expectRequest("SalesOrderSet('1')", createErrorResponse({statusCode : 200}))
 			.expectMessages([]); // clean all expected messages
 
 		// code under test
@@ -3810,6 +4010,343 @@ usePreliminaryContext : false}}">\
 			// messages returned in the request for the sales order are considered after
 			// initializing the binding
 			assert.strictEqual(oItemsBinding.getDataState().getMessages().length, 1);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create two new entities and reload the collection in the same $batch. Test the
+	// successfully creation and the creation of the first entity fails which leads to single error
+	// response for the changeset. Ensure that test framwork processes the requests as expected.
+	// JIRA: CPOUI5MODELS-198
+[{
+	aExpectedMessages : [],
+	aResponses : [{ // 1st create
+		data : {
+			__metadata : {uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"},
+			ItemPosition : "10",
+			SalesOrderID : "1"
+		},
+		statusCode : 201
+	}, { // 2nd create
+		data : {
+			__metadata : {uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"},
+			ItemPosition : "20",
+			SalesOrderID : "1"
+		},
+		statusCode : 201
+	}, { // read all items
+		results : [{
+			__metadata : {uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"},
+			ItemPosition : "10",
+			Note : "Foo",
+			SalesOrderID : "1"
+		}, {
+			__metadata : {
+				uri : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
+			},
+			ItemPosition : "20",
+			Note : "Bar",
+			SalesOrderID : "1"
+		}]
+	}],
+	sTitle : "Successfully create 2 entities"
+}, {
+	aExpectedMessages : [{
+		code : "UF0",
+		descriptionUrl : "",
+		fullTarget : "/SalesOrderSet('1')/ToLineItems('~key~')",
+		message : "Internal Server Error",
+		persistent : false,
+		target : "/SalesOrderLineItemSet('~key~')",
+		technical : true,
+		type : "Error"
+	}, {
+		code : "UF0",
+		descriptionUrl : "",
+		fullTarget : "/SalesOrderSet('1')/ToLineItems('~key~')",
+		message : "Internal Server Error",
+		persistent : false,
+		target : "/SalesOrderLineItemSet('~key~')",
+		technical : true,
+		type : "Error"
+	}],
+	aResponses : [createErrorResponse(), undefined/*no response needed*/, {results : []}],
+	sTitle : "Create 2 entities with error response"
+}].forEach(function (oFixture) {
+	QUnit.test("ODataModel#createEntry: " + oFixture.sTitle, function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({
+				canonicalRequests : true,
+				useBatch : true
+			}),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			var oEventHandlers = {
+					requestCompleted : function () {},
+					requestFailed : function () {}
+				},
+				bWithError = oFixture.aExpectedMessages.length > 0;
+
+			that.expectHeadRequest()
+				.expectRequest({
+					batchNo : 1,
+					created : true,
+					data : {
+						__metadata : {
+							type : "gwsample_basic.SalesOrderLineItem"
+						}
+					},
+					deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
+					method : "POST",
+					requestUri : "SalesOrderSet('1')/ToLineItems"
+				}, oFixture.aResponses[0])
+				.expectRequest({
+					batchNo : 1,
+					created : true,
+					data : {
+						__metadata : {
+							type : "gwsample_basic.SalesOrderLineItem"
+						}
+					},
+					deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
+					method : "POST",
+					requestUri : "SalesOrderSet('1')/ToLineItems"
+				}, oFixture.aResponses[1])
+				.expectRequest({
+					batchNo : 1,
+					deepPath : "/SalesOrderSet('1')/ToLineItems",
+					method : "GET",
+					requestUri : "SalesOrderSet('1')/ToLineItems"
+				}, oFixture.aResponses[2])
+				.expectMessages(oFixture.aExpectedMessages);
+			if (bWithError) {
+				that.oLogMock.expects("fatal").twice()
+					.withExactArgs("The following problem occurred: HTTP request failed500,FAILED,"
+						+ oFixture.aResponses[0].body);
+			}
+
+			// don't care about passed arguments
+			that.mock(oEventHandlers).expects("requestCompleted").exactly(3);
+			that.mock(oEventHandlers).expects("requestFailed").exactly(bWithError ? 2 : 0);
+			oModel.attachRequestCompleted(oEventHandlers.requestCompleted);
+			oModel.attachRequestFailed(oEventHandlers.requestFailed);
+
+			// code under test
+			oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {properties : {}});
+
+			// code under test
+			oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {properties : {}});
+
+			oModel.read("/SalesOrderSet('1')/ToLineItems", {groupId : "changes"});
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Create a new entity and immediately reset all changes or call deleteCreatedEntry.
+	// The created entity is deleted and no request is sent.
+	// JIRA: CPOUI5MODELS-198
+	QUnit.test("ODataModel#createEntry: discard created entity", function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+			that = this;
+
+		return this.createView(assert, /*sView*/"", oModel).then(function () {
+			// code under test
+			oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {properties : {}});
+
+			// code under test
+			oModel.resetChanges();
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oContext;
+
+			// code under test
+			oContext = oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {properties : {}});
+
+			// code under test
+			oModel.deleteCreatedEntry(oContext);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: The creation (POST) of a new entity leads to an automatic expand of the given
+	// navigation properties (GET) within the same $batch. If the creation fails, the POST request
+	// and the corresponding GET request for the expansion of the navigation properties are repeated
+	// with the next call of submitBatch.
+	// JIRA: CPOUI5MODELS-198
+	QUnit.test("createEntry: automatic expand of navigation properties", function (assert) {
+		var iBatchNo = 1,
+			oCreatedContext,
+			oGETRequest = {
+				deepPath : "/$~key~",
+				method : "GET",
+				requestUri : "$~key~?$expand=ToProduct&$select=ToProduct"
+			},
+			oModel = createSalesOrdersModelMessageScope({
+				canonicalRequests : true,
+				useBatch : true
+			}),
+			oNoteError = this.createResponseMessage("Note"),
+			oPOSTRequest = {
+				created : true,
+				data : {
+					__metadata : {
+						type : "gwsample_basic.SalesOrderLineItem"
+					}
+				},
+				deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
+				headers : {"Content-ID": "~key~", "sap-messages": "transientOnly"},
+				method : "POST",
+				requestUri : "SalesOrderSet('1')/ToLineItems"
+			},
+			sView = '\
+<FlexBox id="productDetails"\
+	binding="{path : \'ToProduct\', parameters : {select : \'Name\'}}">\
+	<Text id="productName" text="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("productName", null);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oErrorGET = createErrorResponse({message : "GET failed", statusCode : 400}),
+				oErrorPOST = createErrorResponse({message : "POST failed", statusCode : 400}),
+				bHandlerCalled;
+
+			function fnHandleError (oEvent) {
+				var oResponse = oEvent.getParameter("response");
+
+				if (!bHandlerCalled) {
+					assert.strictEqual(oResponse.expandAfterCreateFailed, undefined);
+					bHandlerCalled = true;
+				} else {
+					assert.strictEqual(oResponse.expandAfterCreateFailed, true);
+					oModel.detachRequestFailed(fnHandleError);
+				}
+			}
+
+			that.expectHeadRequest()
+				.expectRequest(Object.assign({batchNo : iBatchNo}, oPOSTRequest), oErrorPOST)
+				.expectRequest(Object.assign({batchNo : iBatchNo}, oGETRequest), oErrorGET)
+				.expectMessages([{
+					code : "UF0",
+					descriptionUrl : "",
+					fullTarget : "/SalesOrderSet('1')/ToLineItems('~key~')",
+					message : "POST failed",
+					persistent : false,
+					target : "/SalesOrderLineItemSet('~key~')",
+					technical : true,
+					type : "Error"
+				}, {
+					code : "UF0",
+					descriptionUrl : "",
+					fullTarget : "/$~key~",
+					message : "GET failed",
+					persistent : false,
+					target : "/$~key~",
+					technical : true,
+					type : "Error"
+				}]);
+
+			oModel.attachRequestFailed(fnHandleError);
+
+			// code under test
+			oCreatedContext = oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {
+				expand : "ToProduct",
+				properties : {}
+			});
+
+			that.oLogMock.expects("fatal")
+				.withExactArgs("The following problem occurred: HTTP request failed400,FAILED,"
+					+ oErrorPOST.body);
+			that.oLogMock.expects("fatal")
+				.withExactArgs("The following problem occurred: HTTP request failed400,FAILED,"
+					+ oErrorGET.body);
+
+			oModel.submitChanges();
+
+			iBatchNo += 1;
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest(Object.assign({batchNo : iBatchNo}, oPOSTRequest), {
+					data : {
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+						},
+						ItemPosition : "10",
+						SalesOrderID : "1"
+					},
+					statusCode : 201
+				})
+				.expectRequest(Object.assign({batchNo : iBatchNo}, oGETRequest), {
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+					},
+					ToProduct : {
+						__metadata : {uri : "ProductSet(ProductID='P1')"},
+						Name : "Product 1",
+						ProductID : "P1"
+					}
+				}, {
+					"sap-message" : getMessageHeader([oNoteError])
+				})
+				.expectMessage(oNoteError,
+					"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/",
+					"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')/");
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("productName", "Product 1");
+
+			// code under test
+			that.oView.byId("productDetails").setBindingContext(oCreatedContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			[
+				"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')/ToProduct",
+				"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct",
+				"/ProductSet(ProductID='P1')"
+			].forEach(function (sPath) {
+				var oData = oModel.getObject(sPath, null, {select : "Name"});
+
+				assert.strictEqual(oData.Name, "Product 1", "getObject for " + sPath);
+			});
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: The creation (POST) of a new entity leads to an automatic expand of the given
+	// navigation properties within the same $batch. Calling resetChanges on the model removes also
+	// the GET request for the automatic expansion of the given navigation properties.
+	// JIRA: CPOUI5MODELS-198
+	QUnit.test("createEntry: abort automatic expand of navigation properties", function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+			that = this;
+
+		return this.createView(assert, /*sView*/"", oModel).then(function () {
+			// code under test
+			oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {
+				expand : "ToProduct",
+				properties : {}
+			});
+
+			// code under test
+			oModel.resetChanges();
+			oModel.submitChanges();
 
 			return that.waitForChanges(assert);
 		});

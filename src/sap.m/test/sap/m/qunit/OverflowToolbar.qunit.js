@@ -1580,7 +1580,7 @@ sap.ui.define([
 
 	QUnit.module("Layout");
 
-	QUnit.test("Changing a control'с property does not change the order in controls' collections", function (assert) {
+	QUnit.test("Changing a control's property does not change the order in controls' collections", function (assert) {
 		// Arrange
 		var aContent = getDefaultContent(),
 			oOverflowTB,
@@ -1756,30 +1756,6 @@ sap.ui.define([
 			"_containerWidthChanged event is not fired when SegmentedButton is in the Associative Popover, even though the SegmentedButton's size is changed");
 
 		oOverflowTB.destroy();
-	});
-
-	QUnit.test("_contentSizeChange event is fired with invalidate = true", function (assert) {
-		// Arrange
-		var oGenericTag = new GenericTag({
-					text: "Test1"
-				}),
-				oOverflowTB = new OverflowToolbar({content: [oGenericTag]}),
-				fnCheckContentSize = function(oEvent) {
-					// Assert
-					assert.ok(oEvent.getParameter("invalidate"), "invalidate property of the Event object is true");
-					assert.ok(oOverflowTB._bHasFlexibleContent, "_bHasFlexibleContent is true");
-
-					// Clean up
-					done();
-				},
-				done = assert.async();
-
-		assert.expect(2);
-
-		// Act
-		oOverflowTB.placeAt("qunit-fixture");
-		oOverflowTB.attachEventOnce("_contentSizeChange", fnCheckContentSize);
-		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.test("Changing selected item's data model of sap.m.Select, which has autoAdjustWidth: true (affects control size), forces recalculation of the layout", function (assert) {
@@ -2082,7 +2058,7 @@ sap.ui.define([
 		}, 200);
 	});
 
-	QUnit.test("changing property of an invisible control inside OT, does nоt force it to rerender", function (assert) {
+	QUnit.test("changing property of an invisible control inside OT, does not force it to rerender", function (assert) {
 
 	// Arrange
 		var oLabel = new Label({text: "Text", visible: false, id: "label_0"}),

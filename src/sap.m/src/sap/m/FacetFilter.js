@@ -1274,7 +1274,7 @@ sap.ui.define([
 		var oButton = this._buttons[oList.getId()];
 
 		//store the full count of list items initially and when there's items
-		if (oList._iAllItemsCount === undefined && oList.getMaxItemsCount()) {
+		if (oList._iAllItemsCount === undefined && oList.getMaxItemsCount() || !oList._bSearchEventDefaultBehavior) {
 			oList._iAllItemsCount = oList.getMaxItemsCount();
 		}
 

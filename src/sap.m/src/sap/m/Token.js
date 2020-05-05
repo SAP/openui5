@@ -96,7 +96,12 @@ sap.ui.define([
 			/**
 			 * Indicates the editable status of the token's parent (Tokenizer). If it is set to <code>true</code>, the ARIA attributes of the token are updated accordingly.
 			 */
-			editableParent : {type : "boolean", group : "Behavior", defaultValue : true, visibility: "hidden"}
+			editableParent : {type : "boolean", group : "Behavior", defaultValue : true, visibility: "hidden"},
+
+			/**
+			 * Indicates if the token's text should be truncated.
+			 */
+			truncated : {type : "boolean", group : "Appearance", defaultValue : false, visibility: "hidden"}
 		},
 		aggregations : {
 
@@ -208,7 +213,9 @@ sap.ui.define([
 			bNewSelectedValue = !bSelected;
 		}
 
-		this.setSelected(bNewSelectedValue);
+		if (!this.getTruncated()) {
+			this.setSelected(bNewSelectedValue);
+		 }
 
 		this.firePress();
 
@@ -274,7 +281,6 @@ sap.ui.define([
 			this.fireDeselect();
 		}
 	};
-
 
 	/**
 	 * Event handler called when control is on tap
@@ -375,6 +381,34 @@ sap.ui.define([
 		if (this._deleteIcon.getSrc() !== sSrcIcon) {
 			this._deleteIcon.setSrc(sSrcIcon);
 		}
+	};
+
+	/**
+	 * Returns the value of Token's <code>truncated</code> property.
+	 *
+	 * @returns {boolean} true if the Token is truncated.
+	 * @private
+	 * @ui5-restricted sap.m.Tokenizer
+	 */
+	Token.prototype.getTruncated = function () {
+		return this.getProperty("truncated");
+	};
+
+	/**
+	 * Sets the Token's <code>truncated</code> property.
+	 *
+	 * @param {boolean} bValue The new property value.
+	 * @param {boolean} bSkipInvalidation true if control invalidation should not happen.
+	 * @returns {sap.m.Token} this reference for method chaining.
+	 * @private
+	 * @ui5-restricted sap.m.Tokenizer
+	 */
+	Token.prototype.setTruncated = function (bValue, bSkipInvalidation) {
+		if (this.getTruncated() === bValue) {
+			return this;
+		}
+
+		return this.setProperty("truncated", bValue, bSkipInvalidation);
 	};
 
 	return Token;

@@ -133,6 +133,7 @@ sap.ui.define([
 			//For compatibility with XMLTreeModifier the value should be serializable
 			if (oMetadata) {
 				if (this._isSerializable(vPropertyValue)) {
+					vPropertyValue = this._escapeCurlyBracketsInString(vPropertyValue);
 					var sPropertySetter = oMetadata._sMutator;
 					oControl[sPropertySetter](vPropertyValue);
 				} else {

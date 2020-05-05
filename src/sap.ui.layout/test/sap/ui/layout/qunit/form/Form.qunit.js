@@ -679,23 +679,23 @@ sap.ui.define([
 		oUiArea.addContent(oFieldAfter);
 		sap.ui.getCore().applyChanges();
 
-		jQuery("#I-B").focus();
+		jQuery("#I-B").trigger("focus");
 		qutils.triggerKeydown(jQuery("#I-B").get(0), KeyCodes.F6, false, false, false);
 		assert.equal(document.activeElement.getAttribute("id"), "I1-inner", "Container1 focused after F6 on content before");
 
-		jQuery("#I1").focus();
+		jQuery("#I1").trigger("focus");
 		qutils.triggerKeydown(jQuery("#I1").get(0), KeyCodes.F6, false, false, false);
 		assert.equal(document.activeElement.getAttribute("id"), "I3-inner", "Container2 focused after F6 on Container1");
 
-		jQuery("#I3").focus();
+		jQuery("#I3").trigger("focus");
 		qutils.triggerKeydown(jQuery("#I3").get(0), KeyCodes.F6, false, false, false);
 		assert.equal(document.activeElement.getAttribute("id"), "I-A-inner", "Content after Form focused after Shift+F6 on Container2");
 
-		jQuery("#I-A").focus();
+		jQuery("#I-A").trigger("focus");
 		qutils.triggerKeydown(jQuery("#I-A").get(0), KeyCodes.F6, true, false, false);
 		assert.equal(document.activeElement.getAttribute("id"), "I3-inner", "Container2 focused after Shift+F6 on content after Form");
 
-		jQuery("#I3").focus();
+		jQuery("#I3").trigger("focus");
 		qutils.triggerKeydown(jQuery("#I3").get(0), KeyCodes.F6, true, false, false);
 		assert.equal(document.activeElement.getAttribute("id"), "I1-inner", "Container1 focused after Shift+F6 on Container2");
 

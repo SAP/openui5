@@ -107,7 +107,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', './TextField', './library', './TextAr
 	 */
 	TextArea.prototype._attachEventHandler = function() {
 		var $this = this.$();
-		this.proChHandlerId = $this.bind('propertychange', jQuery.proxy(this.oninput, this)); // for IE
+		this.proChHandlerId = $this.on('propertychange', jQuery.proxy(this.oninput, this)); // for IE
 	};
 
 	/**
@@ -117,7 +117,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', './TextField', './library', './TextAr
 		// Unbind events
 		var $this = this.$();
 		if (this.proChHandlerId) {
-			$this.unbind('propertychange', this.oninput);
+			$this.off('propertychange', this.oninput);
 			this.proChHandlerId = null;
 		}
 	};

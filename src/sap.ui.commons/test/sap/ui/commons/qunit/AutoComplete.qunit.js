@@ -86,7 +86,7 @@ sap.ui.define([
 			clear(this.oAuto0);
 			this.oAuto0.destroy();
 
-			jQuery("#focusDummy").focus();
+			jQuery("#focusDummy").trigger("focus");
 			sap.ui.getCore().applyChanges();
 		}
 	});
@@ -139,7 +139,7 @@ sap.ui.define([
 			clear(this.oAuto1);
 			this.oAuto1.destroy();
 
-			jQuery("#focusDummy").focus();
+			jQuery("#focusDummy").trigger("focus");
 			sap.ui.getCore().applyChanges();
 		}
 	});
@@ -173,7 +173,7 @@ sap.ui.define([
 
 	QUnit.test("Change Items (No Focus)", function(assert) {
 		var done = assert.async();
-		jQuery("#focusDummy").focus();
+		jQuery("#focusDummy").trigger("focus");
 		this.oAuto1.setValue("c");
 		sap.ui.getCore().applyChanges();
 
@@ -219,7 +219,7 @@ sap.ui.define([
 			clear(this.oAuto2);
 			this.oAuto2.destroy();
 
-			jQuery("#focusDummy").focus();
+			jQuery("#focusDummy").trigger("focus");
 			sap.ui.getCore().applyChanges();
 		}
 	});
@@ -281,7 +281,7 @@ sap.ui.define([
 			clear(this.oAuto1);
 			this.oAuto1.destroy();
 
-			jQuery("#focusDummy").focus();
+			jQuery("#focusDummy").trigger("focus");
 			sap.ui.getCore().applyChanges();
 		}
 	});
@@ -315,9 +315,9 @@ sap.ui.define([
 		assert.expect(3);
 		popupClosingTest(assert, this.oAuto1, function(oAuto){
 			if (Device.system.combi) {
-				oButton.click().mousedown().mouseup();
+				oButton.trigger("click").trigger("mousedown").trigger("mouseup");
 			} else {
-				oButton.focus();
+				oButton.trigger("focus");
 			}
 
 		});
@@ -366,7 +366,7 @@ sap.ui.define([
 			clear(this.oAuto1);
 			this.oAuto1.destroy();
 
-			jQuery("#focusDummy").focus();
+			jQuery("#focusDummy").trigger("focus");
 			sap.ui.getCore().applyChanges();
 		}
 	});

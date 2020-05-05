@@ -32,12 +32,9 @@
 	background: @sapUiObjectHeaderBackground;
 
 	.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainInner {
-		.sapFDynamicPageTitleMainContent {
-			padding-left: 1rem;
-
-			.sapMTB {
-				padding-right: 0.5rem;
-			}
+		.sapFDynamicPageTitleMainContent .sapMTB {
+			padding-left: 0.5rem;
+			padding-right: 0.5rem;
 		}
 
 		.sapFDynamicPageTitleMainActions {
@@ -200,7 +197,7 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 		-webkit-flex-direction: column;
 		justify-content: space-between;
 		-webkit-justify-content: space-between;
-		min-width: 0;
+		min-width: 0%;
 
 		.sapFDynamicPageTitleMainHeadingInner,
 		.sapFDynamicPageTitleMainHeadingSnappedExpandContent {

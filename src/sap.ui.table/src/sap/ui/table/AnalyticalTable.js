@@ -434,20 +434,20 @@ sap.ui.define([
 		var oBindingInfo = this.getBindingInfo("rows");
 		var oNode = oState.context;
 
-		oState.context = oNode.context ? oNode.context : null; // The AnalyticalTable requests nodes from the binding.
+		oState.context = oNode.context; // The AnalyticalTable requests nodes from the binding.
 
 		if (!oState.context) {
 			return;
 		}
 
-		if (oBinding.nodeHasChildren && oBinding.nodeHasChildren(oNode)) {
+		if (oBinding.nodeHasChildren(oNode)) {
 			oState.type = oState.Type.GroupHeader;
+			oState.expandable = true;
 		} else if (oNode.nodeState.sum) {
 			oState.type = oState.Type.Summary;
 		}
 		oState.level = oNode.level + (oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures() ? 1 : 0);
-		oState.expandable = oState.type === oState.Type.GroupHeader;
-		oState.expanded = oState.expandable ? oNode.nodeState.expanded : false;
+		oState.expanded = oNode.nodeState.expanded;
 		oState.contentHidden = oState.expanded && !oBindingInfo.parameters.sumOnTop;
 		oState.title = oState.type === oState.Type.GroupHeader ? oBinding.getGroupName(oNode.context, oNode.level) : "";
 	};

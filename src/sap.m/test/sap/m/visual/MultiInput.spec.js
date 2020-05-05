@@ -151,4 +151,14 @@ describe('sap.m.MultiInput', function() {
 			expect(takeScreenshot(oMultiInput)).toLookAs("input_field_focused");
 		});
 	});
+
+	it("Should truncate one long token and not show the n-more label", function () {
+		var oMultiInput = element(by.id("multiInputWithOneLongToken"));
+		browser.executeScript("document.getElementById('multiInputWithOneLongToken').scrollIntoView()").then(function() {
+			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_one_long_token");
+
+			oMultiInput.click();
+			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_one_long_token_focused_in");
+		});
+	});
 });

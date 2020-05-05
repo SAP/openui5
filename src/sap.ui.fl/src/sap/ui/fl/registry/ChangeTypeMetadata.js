@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/requireAsync"
 ], function(
 	Log,
-	Utils
+	Utils,
+	requireAsync
 ) {
 	"use strict";
 
@@ -80,7 +82,7 @@ sap.ui.define([
 		var oPromise = new Utils.FakePromise();
 		if (typeof this._changeHandler === "string") {
 			// load the module asynchronously
-			oPromise = Utils.requireAsync(this._changeHandler.replace(/\./g, "/"))
+			oPromise = requireAsync(this._changeHandler.replace(/\./g, "/"))
 				.then(function (oChangeHandlerImpl) {
 					this._changeHandler = oChangeHandlerImpl;
 				}.bind(this));

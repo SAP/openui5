@@ -109,7 +109,7 @@ sap.ui.define([
 			 * so the user can select specific tab filter easier.
 			 * @deprecated as of 1.75
 			 */
-			showOverflowSelectList : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true },
+			showOverflowSelectList : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
 			/**
 			 * Specifies the background color of the header.
@@ -179,7 +179,7 @@ sap.ui.define([
 	/**
 	 * Library internationalization resource bundle.
 	 *
-	 * @type {sap.base.i18n.ResourceBundle}
+	 * @type {module:sap/base/i18n/ResourceBundle}
 	 */
 	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
@@ -187,10 +187,8 @@ sap.ui.define([
 
 	IconTabHeader.prototype.init = function () {
 		this._aTabKeys = [];
-		this._oAriaHeadText = new InvisibleText({
-			id: this.getId() + "-ariaHeadText"
-			// text: oResourceBundle.getText("ICONTABHEADER_DESCRIPTION")
-		});
+		this._oAriaHeadText = null;
+		this._oAriaTexts = {};
 	};
 
 	IconTabHeader.prototype.exit = function () {
@@ -219,8 +217,11 @@ sap.ui.define([
 			this._oOverflowEventDelegate = null;
 		}
 
-		this._oAriaHeadText.destroy();
-		this._oAriaHeadText = null;
+		if (this._oAriaHeadText) {
+			this._oAriaHeadText.destroy();
+			this._oAriaHeadText = null;
+		}
+		this._oAriaTexts = null;
 		this._bRtl = null;
 	};
 
@@ -277,19 +278,29 @@ sap.ui.define([
 			});
 			oOverflow._bIsOverflow = true;
 
-			this._oOverflowEventDelegate = {
-				onlongdragover: this._handleOnLongDragOver,
-				ondragover: this._handleOnDragOver,
-				ondragleave: this._handleOnDragLeave,
-				ondrop: this._handleOnDrop
-			};
-			oOverflow.addEventDelegate(this._oOverflowEventDelegate, this);
 			oOverflow.addEventDelegate({ onsapnext: oOverflow.onsapdown }, oOverflow);
+			oOverflow.addEventDelegate({ onlongdragover: oOverflow._handleOnLongDragOver }, oOverflow);
 
 			this.setAggregation("_overflow", oOverflow);
 		}
 
 		return oOverflow;
+	};
+
+	/**
+	 * Returns invisible text, used for the head.
+	 * @returns {sap.ui.core.InvisibleText} InvisibleText
+	 * @private
+	 */
+	IconTabHeader.prototype._getInvisibleHeadText = function () {
+		if (!this._oAriaHeadText) {
+			this._oAriaHeadText = new InvisibleText({
+				id: this.getId() + "-ariaHeadText"
+			});
+		}
+
+		this._oAriaHeadText.setText(this._oAriaTexts.headerDescription);
+		return this._oAriaHeadText;
 	};
 
 	IconTabHeader.prototype._onItemNavigationFocusLeave = function () {
@@ -331,43 +342,6 @@ sap.ui.define([
 		});
 
 		return aTabFilters;
-	};
-
-	/**
-	 * Handles onLongDragOver of overflow.
-	 * @private
-	 */
-	IconTabHeader.prototype._handleOnLongDragOver = function () {
-		var oOverflow = this._getOverflow();
-		if (!oOverflow._oPopover || !oOverflow._oPopover.isOpen()) {
-			oOverflow._expandButtonPress();
-		}
-	};
-
-	/**
-	 * Handles onDragOver of the overflow.
-	 * @private
-	 * @param {jQuery.Event} oEvent The jQuery drag over event
-	 */
-	IconTabHeader.prototype._handleOnDragOver = function (oEvent) {
-		this._getOverflow()._getExpandButton().addStyleClass("sapMBtnDragOver");
-		oEvent.preventDefault(); // allow drop, so that the cursor is correct
-	};
-
-	/**
-	 * Handles onDrop on the overflow.
-	 * @private
-	 */
-	IconTabHeader.prototype._handleOnDrop = function () {
-		this._getOverflow()._getExpandButton().removeStyleClass("sapMBtnDragOver");
-	};
-
-	/**
-	 * Handles onDragLeave on the overflow.
-	 * @private
-	 */
-	IconTabHeader.prototype._handleOnDragLeave = function () {
-		this._getOverflow()._getExpandButton().removeStyleClass("sapMBtnDragOver");
 	};
 
 	/**
@@ -946,7 +920,7 @@ sap.ui.define([
 					if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof IconTabSeparator)) {
 
 						if (this._isUnselectable(oControl)) {
-							if (oControl.getItems().length) {
+							if (oControl.getItems().length || oControl._bIsOverflow) {
 								oControl._expandButtonPress();
 							}
 							return;
@@ -963,7 +937,7 @@ sap.ui.define([
 					// select item if it is an iconTab but not a separator
 
 					if (this._isUnselectable(oControl)) {
-						if (oControl.getItems().length) {
+						if (oControl.getItems().length || oControl._bIsOverflow) {
 							oControl._expandButtonPress();
 						}
 						return;
@@ -981,7 +955,7 @@ sap.ui.define([
 				if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof IconTabSeparator)) {
 
 					if (this._isUnselectable(oControl)) {
-						if (oControl.getItems().length) {
+						if (oControl.getItems().length || oControl._bIsOverflow) {
 							oControl._expandButtonPress();
 						}
 						return;
@@ -1023,7 +997,8 @@ sap.ui.define([
 		var oFilter = oIconTabFilter._getRealTab();
 
 		return !oFilter.getEnabled() || (this._isInsideIconTabBar() && !this.getParent().getContent().length &&
-			oFilter._getNestedLevel() === 1 && oFilter.getItems().length && !oFilter.getContent().length);
+			oFilter._getNestedLevel() === 1 && oFilter.getItems().length && !oFilter.getContent().length) ||
+			oFilter._bIsOverflow;
 	};
 
 	/**
@@ -1188,6 +1163,13 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * @private
+	 */
+	IconTabHeader.prototype._setAriaTexts = function (oAriaTexts) {
+		this._oAriaTexts = oAriaTexts || {};
+	};
+
 	/* =========================================================== */
 	/*           begin: event handlers                             */
 	/* =========================================================== */
@@ -1268,15 +1250,25 @@ sap.ui.define([
 	IconTabHeader.prototype._handleDragAndDrop = function (oEvent) {
 		var sDropPosition = oEvent.getParameter("dropPosition"),
 			oDraggedControl = oEvent.getParameter("draggedControl"),
-			oDroppedControl = oEvent.getParameter("droppedControl");
+			oDroppedControl = oEvent.getParameter("droppedControl"),
+			oContext = this;
 
-		IconTabBarDragAndDropUtil.handleDrop(this, sDropPosition, oDraggedControl._getRealTab(), oDroppedControl, false);
+		if (sDropPosition === "On") {
+			oContext = oDroppedControl._getRealTab();
+		}
+
+		IconTabBarDragAndDropUtil.handleDrop(oContext, sDropPosition, oDraggedControl._getRealTab(), oDroppedControl, false);
 
 		this._setItemsForStrip();
 		this._initItemNavigation();
+		this._getOverflow()._setSelectListItems();
 		this._getSelectList()._initItemNavigation();
 
 		oDraggedControl._getRealTab().$().focus();
+
+		if (sDropPosition === "On") {
+			oDroppedControl._getRealTab().$().focus();
+		}
 	};
 
 	/* =========================================================== */
@@ -1291,18 +1283,19 @@ sap.ui.define([
 	 * Moves a tab by a specific key code
 	 *
 	 * @param {object} oTab The event object
-	 * @param {number} iKeyCode Key code
+	 * @param {integer} iKeyCode Key code
+	 * @param {integer} iMaxIndex The end of the tab strip`
 	 * @private
 	 */
-	IconTabHeader.prototype._moveTab = function (oTab, iKeyCode) {
-		IconTabBarDragAndDropUtil.moveItem.call(this, oTab, iKeyCode);
+	IconTabHeader.prototype._moveTab = function (oTab, iKeyCode, iMaxIndex) {
+		IconTabBarDragAndDropUtil.moveItem.call(this, oTab, iKeyCode, iMaxIndex);
 		this._setItemsForStrip();
 		this._initItemNavigation();
 	};
 
 	/**
-	 * Handle keyboard drag&drop
-	 * @param {jQuery.Event} oEvent
+	 * Handles keyboard drag&drop
+	 * @param {jQuery.Event} oEvent The jQuery event object
 	 * @private
 	 */
 	IconTabHeader.prototype.ondragrearranging = function (oEvent) {
@@ -1310,8 +1303,10 @@ sap.ui.define([
 			return;
 		}
 
-		var oTab = oEvent.srcControl;
-		this._moveTab(oTab, oEvent.keyCode);
+		var oTab = oEvent.srcControl,
+			iTabStripEnd = this.indexOfItem(this._getItemsInStrip().pop());
+
+		this._moveTab(oTab, oEvent.keyCode, iTabStripEnd);
 		oTab.$().focus();
 	};
 
@@ -1331,14 +1326,14 @@ sap.ui.define([
 
 	/**
 	 * Moves tab for Drag&Drop keyboard handling
-	 * Ctrl + Left Right || Ctrl + Arrow Up
+	 * Modifier + Right Arrow || Modifier + Arrow Up
 	 * @param {jQuery.Event} oEvent
 	 */
 	IconTabHeader.prototype.onsapincreasemodifiers = IconTabHeader.prototype.ondragrearranging;
 
 	/**
 	 * Moves tab for Drag&Drop keyboard handling
-	 * Ctrl + Left Arrow || Ctrl + Arrow Down
+	 * Modifier + Left Arrow || Modifier + Arrow Down
 	 * @param {jQuery.Event} oEvent
 	 */
 	IconTabHeader.prototype.onsapdecreasemodifiers = IconTabHeader.prototype.ondragrearranging;

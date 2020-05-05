@@ -88,25 +88,30 @@ sap.ui.define([
 	});
 
 	HeaderFactory.prototype.create = function (mConfiguration) {
+		var oHeader,
+			oCard = this._oCard,
+			oActions,
+			oActionsToolbar = this._createActionsToolbar();
 
-		if (!mConfiguration) {
+		if (!mConfiguration && !oActionsToolbar) {
 			return null;
 		}
 
-		var oHeader,
-			oCard = this._oCard,
-			oActions = new CardActions({
-				card: oCard,
-				areaType: AreaType.Header
-			}),
-			oActionsToolbar = this._createActionsToolbar();
+		if (!mConfiguration) {
+			mConfiguration = {};
+		}
+
+		oActions = new CardActions({
+			card: oCard,
+			areaType: AreaType.Header
+		});
 
 		switch (mConfiguration.type) {
 			case "Numeric":
 				oHeader = new NumericHeader(mConfiguration, oActionsToolbar, oCard._sAppId);
 				break;
 			default:
-				oHeader = new Header(mConfiguration, oActionsToolbar, oCard._sAppId);
+				oHeader = new Header(mConfiguration, oActionsToolbar, oCard._sAppId, oCard._oIconFormatter);
 				break;
 		}
 

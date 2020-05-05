@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/f/sample/GridContainer/RevealGrid/RevealGrid"
-], function (Controller, JSONModel, RevealGrid) {
+	"sap/f/sample/GridContainer/RevealGrid/RevealGrid",
+	"sap/m/MessageToast"
+], function (Controller, JSONModel, RevealGrid, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.f.sample.GridContainer.C", {
@@ -47,7 +48,10 @@ sap.ui.define([
 
 		onInlineBlockLayoutChange: function (oEvent) {
 			this.getView().byId("demoGrid").setInlineBlockLayout(oEvent.getParameter("state"));
-		}
+		},
 
+		onPress: function (oEvent) {
+			MessageToast.show("Press was fired on - " + oEvent.getSource().getMetadata()._sClassName);
+		}
 	});
 });

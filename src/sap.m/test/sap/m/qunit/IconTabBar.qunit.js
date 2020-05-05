@@ -20,7 +20,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/m/ObjectHeader",
 	"sap/ui/Device",
-	"jquery.sap.global"
+	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -40,8 +40,11 @@ sap.ui.define([
 	HTML,
 	Core,
 	ObjectHeader,
-	Device
+	Device,
+	jQuery
 ) {
+	"use strict";
+
 	// shortcut for sap.m.IconTabDensityMode
 	var IconTabDensityMode = mobileLibrary.IconTabDensityMode;
 
@@ -990,7 +993,7 @@ sap.ui.define([
 
 		// Assert
 		assert.equal(oIconTabFilter.getText(), "new text", "the text is changed");
-		assert.equal(oIconTabFilter.$("text").html(), "new text", "the new text is rendered");
+		assert.equal(document.getElementsByClassName("sapMITHTextContent")[0].textContent, "new text", "the new text is rendered");
 
 		// Clean up
 		oIconTabBar.destroy();
@@ -2161,16 +2164,14 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act
-		var oButton = oITH.$().find('.sapMITHOverflow button');
-		oButton.trigger('tap');
+		oITH._getOverflow()._expandButtonPress();
 
 		// Assert
 		var oSelectList = oITH._getSelectList().getItems();
 		assert.strictEqual(oSelectList.pop().getEnabled(), bTabEnabled, "property has propagated");
 
 		// act (reopen)
-		oButton = oITH.$().find('.sapMITHOverflow button');
-		oButton.trigger('tap');
+		oITH._getOverflow()._expandButtonPress();
 		Core.applyChanges();
 
 		// Assert
@@ -2269,12 +2270,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Rendering", function (assert) {
-		assert.strictEqual(this.oIconTabBar.$().find('.sapMITHOverflow button').length, 1, "Overflow button is rendered");
+		assert.strictEqual(this.oIconTabBar.$().find('.sapMITHOverflow .sapMITHShowSubItemsIcon').length, 1, "Overflow button is rendered");
 
-		var oButton = this.oIconTabBar.$().find('.sapMITHOverflow button');
-		oButton.trigger('tap');
-
-		Core.applyChanges();
+		this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 
 		assert.strictEqual(jQuery('.sapMITBSelectList').length, 1, "Select list is open");
 	});
@@ -2285,20 +2283,13 @@ sap.ui.define([
 
 		Core.applyChanges();
 
-		// Act
-		this.oIconTabBar.$().find('.sapMITHOverflow button').trigger('tap');
-
-		Core.applyChanges();
-
 		// Assert
 		assert.strictEqual(document.querySelector(".sapMITBSelectList .sapMITBSelectItemSelected"), null, "Selected item should not be in the overflow list");
 	});
 
 	QUnit.test("Selection must result in the tab filter to show up in the strip", function (assert) {
 		// Arrange
-		this.oIconTabBar.$().find('.sapMITHOverflow button').trigger('tap');
-
-		Core.applyChanges();
+		this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 
 		var selectItems = document.querySelectorAll(".sapMITBSelectList .sapMITBSelectItem");
 
@@ -2318,13 +2309,12 @@ sap.ui.define([
 	QUnit.test("Filters cloning", function (assert) {
 		// Arrange
 		var oIconTabHeader = this.oIconTabBar.getAggregation("_header"),
-			oOverflowButton = this.oIconTabBar.$().find('.sapMITHOverflow button'),
 			aItems = oIconTabHeader.getItems(),
 			aItemsInStrip = oIconTabHeader._getItemsInStrip(),
 			aClonedItems;
 
 		// Act
-		oOverflowButton.trigger('tap');
+		this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 		aClonedItems = oIconTabHeader._getSelectList().getItems();
 
 		var iOverflowListItems = aItems.length - aItemsInStrip.length; // delta
@@ -2333,6 +2323,30 @@ sap.ui.define([
 		assert.strictEqual(aClonedItems.length, iOverflowListItems, "Items of the select list should represent the delta between the total items and the items already in the tab strip");
 		assert.strictEqual(aItems.pop().getContent().length, 1, "Original filter should have 1 item");
 		assert.strictEqual(aClonedItems.pop().getContent().length, 0, "Cloned filter should NOT have items");
+	});
+
+	QUnit.test("Selection after re-opening the Select List", function (assert) {
+		// Arrange
+		var oIconTabHeader = this.oIconTabBar.getAggregation("_header"),
+			oOverflowButton = oIconTabHeader._getOverflow(),
+			oSelectList = oIconTabHeader._getSelectList();
+
+		// Act
+		oOverflowButton._expandButtonPress();
+		this.clock.tick(500);
+
+		// Assert - check initial focus
+		assert.strictEqual(oSelectList._oItemNavigation.getFocusedIndex(), 0, "The first item in the Select List should be focused.");
+
+		// Act - focus the 5th item in the Select List, then close and open it again
+		oSelectList._oItemNavigation.setSelectedIndex(5);
+		oSelectList.getItems()[0]._getRealTab().setVisible(false);
+		oOverflowButton._closeOverflow();
+		oOverflowButton._expandButtonPress();
+		this.clock.tick(500);
+
+		// Assert - check initial focus again
+		assert.strictEqual(oOverflowButton._oPopover.getInitialFocus(), oSelectList.getVisibleItems()[0].getId(), "The first visible item in the Select List should be focused.");
 	});
 
 	QUnit.module("ARIA",{
@@ -2352,16 +2366,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Posinset, Setsize, Level", function (assert) {
-		Core.applyChanges();
-
 		var $tabFilters = this.oIconTabBar.$().find('.sapMITBHead .sapMITBFilter');
 
 		assert.strictEqual($tabFilters[1].getAttribute('aria-posinset'), "2", "posinset is set correctly");
 		assert.strictEqual($tabFilters[1].getAttribute('aria-setsize'), "29", "setsize is set correctly");
 		assert.strictEqual($tabFilters[1].getAttribute('aria-level'), null, "level is not set while tab is in tab strip");
 
-		this.oIconTabBar.$().find('.sapMITHOverflow button').trigger('tap');
-		Core.applyChanges();
+		this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 
 		var $selectList = jQuery('.sapMITBSelectList');
 		var $selectItems = $selectList.find('.sapMITBSelectItem');
@@ -2373,6 +2384,22 @@ sap.ui.define([
 		assert.strictEqual($selectItems[1].getAttribute('aria-level'), "1", "level is set correctly");
 	});
 
+	QUnit.test("ariaTexts", function (assert) {
+		var oITH = this.oIconTabBar._getIconTabHeader();
+
+		assert.notOk(oITH.$().attr("aria-label"), "'aria-label' attribute should NOT be set.");
+		assert.notOk(oITH.$("head").attr("aria-describedby"), "'aria-describedby' attribute should NOT be set.");
+
+		this.oIconTabBar.setAriaTexts({
+			headerLabel: "Available spaces",
+			headerDescription: "Select tab to show a space"
+		});
+		Core.applyChanges();
+
+		assert.strictEqual(oITH.$().attr("aria-label"), "Available spaces", "'aria-label' attribute should be set");
+		assert.strictEqual(oITH.$("head").attr("aria-describedby"), oITH._getInvisibleHeadText().getId(), "'aria-describedby' attribute should be set.");
+	});
+
 	QUnit.module("Padding");
 
 	QUnit.test("Container Padding Classes", function (assert) {
@@ -2381,7 +2408,6 @@ sap.ui.define([
 			sContentSelector = ".sapMITBContainerContent > .sapMITBContent",
 			sResponsiveSize = (Device.resize.width <= 599 ? "0px" : (Device.resize.width <= 1023 ? "16px" : "16px 32px")), // eslint-disable-line no-nested-ternary
 			aResponsiveSize = sResponsiveSize.split(" "),
-			$container,
 			$containerContent;
 
 		// Act
@@ -2781,6 +2807,7 @@ sap.ui.define([
 		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 2');
 		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-setsize"), "3" , 'Aria-setsize should be 3');
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Right", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
@@ -2788,116 +2815,154 @@ sap.ui.define([
 		assert.strictEqual(this.oIconTabBar1.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
 		assert.strictEqual(Core.byId("tab1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(39, "tabReorder1"));
-		this.oIconTabHeader1.ondragrearranging(this.returnMockEvent(39, "tabReorder1"));
+		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
+		this.oIconTabHeader1.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "First tab", 'First Tab is "Second Tab"');
 		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 		assert.strictEqual(this.oIconTabBar1.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
 		assert.strictEqual(Core.byId("tab1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Right of last element", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Third tab", 'Third Tab is "Third Tab"');
 		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
 		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(39, "tabReorder1"));
+		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Third tab", 'Third Tab is "Third Tab"');
 		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Left of first element", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
 		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 		//ACT
 
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(37, "tabReorder1"));
+		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_LEFT, "tabReorder1"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
 		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Left", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "Second tab", 'Second Tab is "Second Tab"');
 		assert.strictEqual(Core.byId("tabReorder2").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(37, "tabReorder2"));
+		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_LEFT, "tabReorder2"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "First tab", 'First Tab is "Second Tab"');
 		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Home", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "Second tab", 'Second Tab is "Second Tab"');
 		assert.strictEqual(Core.byId("tabReorder2").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(36, "tabReorder2"));
+		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.HOME, "tabReorder2"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "First tab", 'First Tab is "Second Tab"');
 		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: CTRL + End", function(assert) {
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
 		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
 		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(35, "tabReorder1"));
+		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.END, "tabReorder1"));
 		// Assert
 		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "First tab", 'First Tab is "Last Tab"');
 		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: Event Calling: onsapincreasemodifiers", function(assert) {
 		// Assert
 		var oEventSpyIncrease = this.spy(this.oIconTabHeader, "onsapincreasemodifiers");
 		assert.ok(oEventSpyIncrease.callCount === 0, "The method is skipped and the event went to the global KH");
 		//ACT
-		this.oIconTabHeader.onsapincreasemodifiers(this.returnMockEvent(39, "tabReorder1"));
+		this.oIconTabHeader.onsapincreasemodifiers(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
 		// Assert
 		assert.ok(oEventSpyIncrease.callCount === 1, "The method is skipped and the event went to the global KH");
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: Event Calling: onsapdecreasemodifiers", function(assert) {
 		// Assert
 		var oEventSpyDecrease = this.spy(this.oIconTabHeader, "onsapdecreasemodifiers");
 		assert.ok(oEventSpyDecrease.callCount === 0, "The method is skipped and the event went to the global KH");
 		//ACT
-		this.oIconTabHeader.onsapdecreasemodifiers(this.returnMockEvent(37, "tabReorder1"));
+		this.oIconTabHeader.onsapdecreasemodifiers(this.returnMockEvent(KeyCodes.ARROW_LEFT, "tabReorder1"));
 		// Assert
 		assert.ok(oEventSpyDecrease.callCount === 1, "The method is skipped and the event went to the global KH");
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: Event Calling: onsaphomemodifiers", function(assert) {
 		// Assert
 		var oEventSpyHome  = this.spy(this.oIconTabHeader, "onsaphomemodifiers");
 		assert.ok(oEventSpyHome.callCount === 0, "The method is skipped and the event went to the global KH");
 		//ACT
-		this.oIconTabHeader.onsaphomemodifiers(this.returnMockEvent(36, "tabReorder2"));
+		this.oIconTabHeader.onsaphomemodifiers(this.returnMockEvent(KeyCodes.HOME, "tabReorder2"));
 		// Assert
 		assert.ok(oEventSpyHome.callCount === 1, "The method is skipped and the event went to the global KH");
-
-
 	});
+
 	QUnit.test("Drag&Drop Keyboard Handling: Event Calling: onsapendmodifiers", function(assert) {
 		// Assert
 		var oEventSpyEnd  = this.spy(this.oIconTabHeader, "onsapendmodifiers");
 		assert.ok(oEventSpyEnd.callCount === 0, "The method is skipped and the event went to the global KH");
 		//ACT
-		this.oIconTabHeader.onsapendmodifiers(this.returnMockEvent(35, "tabReorder1"));
+		this.oIconTabHeader.onsapendmodifiers(this.returnMockEvent(KeyCodes.END, "tabReorder1"));
 		// Assert
 		assert.ok(oEventSpyEnd.callCount === 1, "The method is skipped and the event went to the global KH");
+	});
 
+	QUnit.test("Drag&Drop Keyboard Handling: Event Calling: onsapincreasemodifiers", function(assert) {
+		// Assert
+		var oEventSpyIncrease = this.spy(this.oIconTabHeader, "onsapincreasemodifiers");
+		assert.ok(oEventSpyIncrease.callCount === 0, "The method is skipped and the event went to the global KH");
+		//ACT
+		this.oIconTabHeader.onsapincreasemodifiers(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
+		// Assert
+		assert.ok(oEventSpyIncrease.callCount === 1, "The method is skipped and the event went to the global KH");
+	});
+
+	QUnit.test("Drag&Drop Keyboard Handling: Drag through hidden tabs", function(assert) {
+		// arrange
+		this.oIconTabBar.$().width("150px");
+		this.oIconTabHeader.invalidate();
+		Core.applyChanges();
+		// assert
+		assert.strictEqual(this.oIconTabHeader._getItemsInStrip().length, 1, "There should be 1 visible item and 2 in the 'More' menu");
+		// act
+		this.oIconTabHeader.onsapincreasemodifiers(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
+		// assert
+		assert.strictEqual(this.oIconTabHeader.indexOfItem(Core.byId("tabReorder1")), 0, "The item should remain on the same position.");
+	});
+
+	QUnit.test("Drag&Drop Keyboard Handling: Drag through invisible tab", function(assert) {
+		// arrange
+		this.oIconTabHeader.getItems()[1].setVisible(false);
+		Core.applyChanges();
+		// act
+		this.oIconTabHeader.onsapincreasemodifiers(this.returnMockEvent(KeyCodes.ARROW_RIGHT, "tabReorder1"));
+		// assert
+		assert.strictEqual(this.oIconTabHeader.indexOfItem(Core.byId("tabReorder1")), 2, "Tab index should have changed from 0 to 2.");
 	});
 
 	QUnit.module("Drag&Drop: Overflow rearranging", {
 		beforeEach: function() {
 			this.oIconTabBar = getIconTabBar();
 			this.oIconTabBar.placeAt('qunit-fixture');
-			Core.applyChanges();
-
 			this.oIconTabHeader = this.oIconTabBar.getAggregation("_header");
 			this.oSelectList = this.oIconTabHeader._getSelectList();
+			this.oIconTabHeader.setEnableTabReordering(true);
+			Core.applyChanges();
 
-			var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
-			oButton.trigger('tap');
+			this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 
 			var selectListItems = this.oSelectList.getAggregation("items");
 
@@ -2992,6 +3057,35 @@ sap.ui.define([
 		assert.strictEqual(oListItem2.getText(), oTab0.getText(), "Third Tab in Overflow is now - " + oTab0.getText());
 	});
 
+	QUnit.test("Drag&Drop with Arrow Up outside of the SelectList", function(assert) {
+		// Arrange
+		var oFirstTabInSelectList = this.oSelectList.getItems()[0];
+		var iIndexBeforeMove = this.oIconTabHeader.indexOfItem(oFirstTabInSelectList._getRealTab());
+
+		// Act
+		this.oSelectList.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_UP, oFirstTabInSelectList.getId()));
+
+		// Assert
+		assert.strictEqual(this.oIconTabHeader.indexOfItem(oFirstTabInSelectList._getRealTab()), iIndexBeforeMove, "First item in the select list should NOT be able to move up.");
+	});
+
+	QUnit.test("Drag&Drop: Select item from overflow, then move it with Arrow Left", function(assert) {
+		// Arrange
+		var oSixthTabInSelectList = this.oSelectList.getItems()[5],
+			sIndexBeforeMove = this.oIconTabHeader.indexOfItem(oSixthTabInSelectList._getRealTab()),
+			iPositionAfterJump = sIndexBeforeMove - 6; // should jump over the 5 hidden items before it
+
+		// Act - select and move the item left
+		this.oSelectList.ontap({
+			target: oSixthTabInSelectList.getDomRef(),
+			preventDefault: jQuery.noop
+		});
+		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_LEFT, oSixthTabInSelectList._getRealTab().getId()));
+
+		// Assert
+		assert.strictEqual(this.oIconTabHeader.indexOfItem(oSixthTabInSelectList._getRealTab()), iPositionAfterJump - 1, "Item should have moved enough to be able to drag it by pressing arrow left once.");
+	});
+
 	QUnit.test("Drag&Drop dropPosition: 'Before'", function(assert) {
 		// Arrange
 
@@ -3043,8 +3137,7 @@ sap.ui.define([
 			this.oIconTabHeader = this.oIconTabBar.getAggregation("_header");
 			this.oSelectList = this.oIconTabHeader._getSelectList();
 
-			var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
-			oButton.trigger('tap');
+			this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 
 			var selectListItems = this.oSelectList.getAggregation("items");
 
@@ -3087,17 +3180,19 @@ sap.ui.define([
 		}
 	});
 
+
 	QUnit.test("Overflow button", function(assert) {
-		var oOverflowButton = this.oIconTabHeader._getOverflow()._getExpandButton();
-		assert.ok(!oOverflowButton.$().hasClass("sapMBtnDragOver"), "Overflow button has default state");
+		var oOverflow = this.oIconTabHeader._getOverflow();
+		var oOverflowTrigger = this.oIconTabHeader._getOverflow()._getDragOverDomRef();
+		assert.ok(!oOverflowTrigger.classList.contains("sapMITHDragOver"), "Overflow button has default state");
 
-		this.oIconTabHeader._handleOnDragOver({preventDefault: function () {}});
+		oOverflow._handleOnDragOver({preventDefault: function () {}});
 
-		assert.ok(oOverflowButton.$().hasClass("sapMBtnDragOver"), "Overflow button is in 'drag over' state ");
+		assert.ok(oOverflowTrigger.classList.contains("sapMITHDragOver"), "Overflow button is in 'drag over' state ");
 
-		this.oIconTabHeader._handleOnDragLeave();
+		oOverflow._handleOnDragLeave();
 
-		assert.ok(!oOverflowButton.$().hasClass("sapMBtnDragOver"), "Overflow button has default state");
+		assert.ok(!oOverflowTrigger.classList.contains("sapMITHDragOver"), "Overflow button has default state");
 	});
 
 	QUnit.test("Drag&Drop dropPosition: 'After'", function(assert) {
@@ -3127,8 +3222,7 @@ sap.ui.define([
 		assert.strictEqual(this.oIconTabBar.getItems()[4].getText(), oTabInOverflow.getText(), "Tab at index " + (4) + " in items aggregation is now - " + oTabInOverflow.getText());
 
 		// Arrange
-		var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
-		oButton.trigger('tap');
+		this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 
 		// Assert
 		assert.notStrictEqual(this.oSelectList.getItems()[0].getText(), oTabInOverflow.getText(), "First Tab in Overflow is not '" + oTabInOverflow.getText() + "' anymore after it was moved");
@@ -3162,8 +3256,7 @@ sap.ui.define([
 		assert.strictEqual(this.oIconTabBar.getItems()[4].getText(), oTabInStrip3.getText(), "Tab at index " + (4) + " in items aggregation is now - " + oTabInStrip3.getText());
 
 		// Arrange
-		var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
-		oButton.trigger('tap');
+		this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 
 		// Assert
 		assert.notStrictEqual(this.oSelectList.getItems()[0].getText(), oTabInOverflow.getText(), "First Tab in Overflow is not '" + oTabInOverflow.getText() + "' anymore after it was moved");
@@ -3180,8 +3273,7 @@ sap.ui.define([
 			this.oIconTabHeader = this.oIconTabBar.getAggregation("_header");
 			this.oSelectList = this.oIconTabHeader._getSelectList();
 
-			var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
-			oButton.trigger('tap');
+			this.oIconTabBar._getIconTabHeader()._getOverflow()._expandButtonPress();
 
 			var selectListItems = this.oSelectList.getAggregation("items");
 
@@ -3252,10 +3344,6 @@ sap.ui.define([
 		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 2].getText(), oTabInOverflow3.getText(), "Tab at index " + (iDelta + 2) + " in items aggregation is now - " + oTabInOverflow3.getText());
 		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 3].getText(), oTabInStrip2.getText(), "Tab at index " + (iDelta + 3) + " in items aggregation is now - " + oTabInStrip2.getText());
 
-		// Arrange
-		var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
-		oButton.trigger('tap');
-
 		// Assert
 		assert.notStrictEqual(this.oIconTabHeader._getItemsInStrip()[2].getText(), oTabInStrip2.getText(), "Third Tab in Tab Strip is not '" + oTabInStrip2.getText() + "' anymore after it was moved");
 		assert.strictEqual(this.oSelectList.getItems()[2].getText(), oTabInOverflow3.getText(), "Third Tab in Overflow is now - " + oTabInOverflow3.getText());
@@ -3288,14 +3376,191 @@ sap.ui.define([
 		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 2].getText(), oTabInStrip2.getText(), "Tab at index " + (iDelta + 2) + " in items aggregation is now - " + oTabInStrip2.getText());
 		assert.strictEqual(this.oIconTabBar.getItems()[iDelta + 3].getText(), oTabInOverflow3.getText(), "Tab at index " + (iDelta + 3) + " in items aggregation is now - " + oTabInOverflow3.getText());
 
-		// Arrange
-		var oButton = this.oIconTabHeader.$().find('.sapMITHOverflow button');
-		oButton.trigger('tap');
-
 		// Assert
 		assert.notStrictEqual(this.oIconTabHeader._getItemsInStrip()[2].getText(), oTabInStrip2.getText(), "Third Tab in Tab Strip is not '" + oTabInStrip2.getText() + "' anymore after it was moved");
 		assert.strictEqual(this.oSelectList.getItems()[2].getText(), oTabInStrip2.getText(), "Fourth Tab in Overflow is now - " + oTabInStrip2.getText());
 		assert.strictEqual(this.oSelectList.getItems()[3].getText(), oTabInOverflow3.getText(), "Third Tab in Overflow is now - " + oTabInOverflow3.getText());
+	});
+
+	QUnit.module("Drag&Drop: Nesting", {
+		beforeEach: function() {
+		this.oIconTabBar = new IconTabBar({
+			enableTabReordering: true,
+			items: [
+				new IconTabFilter({
+					id: 'tabReorder1',
+					text: "First tab",
+					count: "3",
+					content: [
+						new Text({ text: "Text 1" })
+					],
+					items: [
+						new IconTabFilter({ id: 'subItem1', text: "child 1", content: new Text({ text: "text 1" })}),
+						new IconTabFilter({  id: 'subItem2',text: "child 2", content: new Text({ text: "text 2" })})
+					]
+				}),
+				new IconTabFilter({
+					id: 'tabReorder2',
+					text: "Second tab",
+					count: "1",
+					content: [
+						new Text({ text: "Text 2" })
+					]
+				}),
+				new IconTabFilter({
+					id: 'tabReorder3',
+					text: "Third tab",
+					count: "Count",
+					content: [
+						new Text({ text: "Text 3" })
+					]
+				})
+			]
+		});
+
+		this.oIconTabBar.placeAt('qunit-fixture');
+		Core.applyChanges();
+
+		this.oMockEventOn = {
+			getParameter: function(parameter) {
+				switch (parameter) {
+					case "dropPosition" :
+						return "On";
+					case "draggedControl" :
+						return  Core.byId("tabReorder3");
+					case "droppedControl" :
+						return Core.byId("tabReorder1");
+				}
+			}
+		};
+
+		this.oMockEventDropOnOwnChild = {
+			getParameter: function(parameter) {
+				switch (parameter) {
+					case "dropPosition" :
+						return "On";
+					case "draggedControl" :
+						return  Core.byId("tabReorder1");
+					case "droppedControl" :
+						return Core.byId("subItem1");
+				}
+			}
+		};
+
+		this.oMockEventOnSubItem = {
+			getParameter: function(parameter) {
+				switch (parameter) {
+					case "dropPosition" :
+						return "On";
+					case "draggedControl" :
+						return  Core.byId("tabReorder3");
+					case "droppedControl" :
+						return Core.byId("subItem1");
+				}
+			}
+		};
+
+		this.oMockEventSubItemBeforeMainItem = {
+			getParameter: function(parameter) {
+				switch (parameter) {
+					case "dropPosition" :
+						return "Before";
+					case "draggedControl" :
+						return  Core.byId("subItem1");
+					case "droppedControl" :
+						return Core.byId("tabReorder3");
+				}
+			}
+		};
+
+		this.returnMockEvent = function(iKeyCode, sId) {
+			var oMockEventTest = {
+				keyCode: iKeyCode,
+				srcControl: Core.byId(sId)
+			};
+
+			return oMockEventTest;
+		};
+		this.oIconTabHeader = this.oIconTabBar.getAggregation("_header");
+	},
+	afterEach: function() {
+		this.oIconTabBar.destroy();
+		this.oIconTabHeader.destroy();
+
+		this.oMockEventOn = null;
+		this.oMockEventOnSubItem = null;
+		this.returnMockEvent = null;
+
+	}
+});
+
+	QUnit.test("Drag&Drop on expand button", function(assert) {
+		var oIconTabFilterWithChildren = this.oIconTabHeader.getItems()[0];
+		var oExpandButton = oIconTabFilterWithChildren._getExpandButton();
+		assert.ok(!oExpandButton.$().hasClass("sapMITHDragOver"), "Expand button has default state");
+
+		oIconTabFilterWithChildren._handleOnDragOver({preventDefault: function () {}});
+
+		assert.ok(oExpandButton.$().hasClass("sapMITHDragOver"), "Expand button is in 'drag over' state ");
+
+		oIconTabFilterWithChildren._handleOnDragLeave();
+
+		assert.ok(!oExpandButton.$().hasClass("sapMITHDragOver"), "Expand button has default state");
+		assert.ok(!oIconTabFilterWithChildren._oPopover, "There is no popover before long drag over");
+
+		oIconTabFilterWithChildren._handleOnLongDragOver();
+
+		assert.ok(oIconTabFilterWithChildren._oPopover, "There is a popover on long drag over");
+
+	});
+
+	QUnit.test("Drag&Drop dropPosition: 'On' items in header", function(assert) {
+
+		assert.strictEqual(this.oIconTabHeader.getItems().length, 3, "There are three tabs in IconTabHeader strip");
+		assert.strictEqual(this.oIconTabHeader.getItems()[0].getItems().length, 2, "There are two items in the IconTabHeader first tab of the IconTabHeader");
+
+		this.oIconTabHeader._handleDragAndDrop(this.oMockEventOn);
+
+		assert.strictEqual( this.oIconTabHeader.getItems().length, 2, "There are two tabs in IconTabHeader strip");
+		assert.strictEqual(this.oIconTabHeader.getItems()[0].getItems().length, 3, "There are three items in the IconTabHeader first tab of the IconTabHeader");
+	});
+
+	QUnit.test("Drag&Drop dropPosition: 'On' sub items ", function(assert) {
+
+		var aFirstItem = this.oIconTabHeader.getItems()[0].getItems()[0];
+
+		assert.strictEqual(aFirstItem.getItems().length, 0, "There are no sub items in the first item of the first tab");
+
+		this.oIconTabHeader._handleDragAndDrop(this.oMockEventOnSubItem);
+
+		assert.strictEqual(aFirstItem.getItems().length, 1, "There is one sub item in the first item of the first tab");
+	});
+
+	QUnit.test("Drag&Drop: Can't drop on own child item", function(assert) {
+
+		var aFirstItem = this.oIconTabHeader.getItems()[0].getItems()[0];
+
+		assert.strictEqual(this.oIconTabHeader.getItems().length, 3, "There are three tabs in IconTabHeader strip");
+		assert.strictEqual(aFirstItem.getItems().length, 0, "There are no sub items in the first item of the first tab");
+
+		this.oIconTabHeader._handleDragAndDrop(this.oMockEventDropOnOwnChild);
+
+		assert.strictEqual(aFirstItem.getItems().length, 0, "There are still no sub items in the first item of the first tab");
+		assert.strictEqual(this.oIconTabHeader.getItems().length, 3, "There are  still three tabs in IconTabHeader strip");
+
+	});
+
+	QUnit.test("Drag&Drop: Dropping a sub item between header items", function (assert) {
+
+		assert.strictEqual(this.oIconTabHeader.getItems()[this.oIconTabHeader.getItems().length - 1].getText(), "Third tab", "The item with text 'Third tab' is the last item");
+		assert.strictEqual(this.oIconTabHeader.getItems()[this.oIconTabHeader.getItems().length - 2].getText(), "Second tab", "The item with text 'Second tab' is the item before the last");
+
+		this.oIconTabHeader._handleDragAndDrop(this.oMockEventSubItemBeforeMainItem);
+
+		assert.strictEqual(this.oIconTabHeader.getItems()[this.oIconTabHeader.getItems().length - 1].getText(), "Third tab", "The item with text 'Third tab' is the last item");
+		assert.strictEqual(this.oIconTabHeader.getItems()[this.oIconTabHeader.getItems().length - 2].getText(), "child 1", "The item with text 'child 1' is the item before the last");
+		assert.strictEqual(this.oIconTabHeader.getItems()[this.oIconTabHeader.getItems().length - 3].getText(), "Second tab", "The item with text 'Second tab' is the second to last item");
+
 	});
 
 	QUnit.module("Sticky Content Support");
@@ -3464,19 +3729,20 @@ sap.ui.define([
 		var oFireSelectionChangeSpy = this.spy(oOverflow._getSelectList(), "fireSelectionChange");
 		// open overflow
 
-		var oButton = oITH.$().find('.sapMITHOverflow button');
-		oButton.trigger('tap');
+		oITB._getIconTabHeader()._getOverflow()._expandButtonPress();
 
 		// Assert
 		assert.strictEqual(oOverflow._oPopover.isOpen(), true, "ITB overflow's popover has been opened");
 		assert.ok(oOverflow._oPopover.$().find(".sapMITBSelectList").length, "ITB has its overflow select list shown");
 		assert.strictEqual(oITB.getSelectedKey(), "1", "At start, first tab is selected");
 
-		var oSelectList = oITH._getSelectList().getItems();
-		assert.deepEqual(oSelectList[oSelectList.length - 1].getKey(), oUnselectableTab.getKey(), "Last item in overflow is the unselectable item");
+		var aITHItems = oITH.getItems();
+		var oLastItem = aITHItems.pop();
+
+		assert.strictEqual(oLastItem.getKey(), oUnselectableTab.getKey(), "Last item in overflow is the unselectable item");
 
 		// Act
-		qutils.triggerEvent("tap", oSelectList[oSelectList.length - 1].$());
+		qutils.triggerEvent("tap", oLastItem.$());
 
 		assert.strictEqual(oITB.getSelectedKey(), "1", "Selected item should not have changed");
 		assert.strictEqual(oFireSelectionChangeSpy.callCount, 0, "IconTabBarSelectList#fireSelectionChange should not have been called");
@@ -3487,220 +3753,5 @@ sap.ui.define([
 		oSetSelectedItemSpy.restore();
 		oITB.destroy();
 	});
-
-	QUnit.module("Drag&Drop: RTL", {
-		beforeEach: function() {
-			this.oIconTabBar = new IconTabBar({
-				enableTabReordering: true,
-				items: [
-					new IconTabFilter({
-						id: 'tabReorder1',
-						text: "First tab",
-						count: "3",
-						content: [
-							new Button({ text: "Text 1" })
-						]
-					}),
-					new IconTabFilter({
-						id: 'tabReorder2',
-						text: "Second tab",
-						count: "1",
-						content: [
-							new Button({ text: "Text 2" })
-						]
-					}),
-					new IconTabFilter({
-						id: 'tabReorder3',
-						text: "Third tab",
-						count: "Count",
-						content: [
-							new Button({ text: "Text 3" })
-						]
-					})
-				]
-			});
-
-			this.oIconTabBar1 = new IconTabBar({
-				items: [
-					new IconTabFilter({
-						id: 'tab1',
-						text: "First tab",
-						count: "3",
-						content: [
-							new Button({ text: "Text 1" })
-						]
-					}),
-					new IconTabFilter({
-						id: 'tab2',
-						text: "Second tab",
-						count: "1",
-						content: [
-							new Button({ text: "Text 2" })
-						]
-					})
-				]
-			});
-
-			this.oIconTabBar.placeAt('qunit-fixture');
-			this.oIconTabBar1.placeAt('qunit-fixture');
-			Core.applyChanges();
-
-			this.oMockEvent = {
-				getParameter: function(parameter) {
-					switch (parameter) {
-						case "dropPosition" :
-							return "After";
-						case "draggedControl" :
-							return  Core.byId("tabReorder1");
-						case "droppedControl" :
-							return Core.byId("tabReorder3");
-					}
-				}
-			};
-
-			this.oMockEvent2 = {
-				getParameter: function(parameter) {
-					switch (parameter) {
-						case "dropPosition" :
-							return "Before";
-						case "draggedControl" :
-							return  Core.byId("tabReorder1");
-						case "droppedControl" :
-							return Core.byId("tabReorder3");
-					}
-				}
-			};
-
-			 this.returnMockEvent = function(iKeyCode, sId) {
-				var oMockEventTest = {
-					keyCode: iKeyCode,
-					srcControl: Core.byId(sId)
-				};
-
-				return oMockEventTest;
-			};
-			sap.ui.getCore().getConfiguration().setRTL(true);
-			this.oIconTabHeader = this.oIconTabBar.getAggregation("_header");
-			this.oIconTabHeader1 = this.oIconTabBar1.getAggregation("_header");
-
-
-		},
-		afterEach: function() {
-			this.oIconTabBar.destroy();
-			this.oIconTabHeader.destroy();
-			this.oIconTabBar1.destroy();
-			this.oIconTabHeader1.destroy();
-			this.oIconTabBar = null;
-			this.oIconTabHeader = null;
-			this.oIconTabBar1 = null;
-			this.oIconTabHeader1 = null;
-			this.returnMockEvent = null;
-			this.oMockEvent = null;
-			this.oMockEvent2 = null;
-			sap.ui.getCore().getConfiguration().setRTL(false);
-		}
-	});
-
-
-	QUnit.test("Drag&Drop dropPosition: 'After' RTL", function(assert) {
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		// Act
-		this.oIconTabHeader._handleDragAndDrop(this.oMockEvent2);
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Second tab", "In 'First tab' position is 'Second tab'");
-		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "First tab", "'Firs tab' is at last position");
-	});
-
-	QUnit.test("Drag&Drop dropPosition: 'Before' RTL", function(assert) {
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		// Act
-		this.oIconTabHeader._handleDragAndDrop(this.oMockEvent);
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Second tab", "In 'First tab' position is 'Second tab'");
-		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "First tab", "'First tab' is at the middle");
-	});
-
-	QUnit.test("Drag&Drop accessibility: RTL", function(assert) {
-		// Assert
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-		assert.strictEqual(Core.byId("tabReorder2").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 2');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 3');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-setsize"), "3" , 'Aria-setsize should be 3');
-		// Act
-		this.oIconTabHeader._handleDragAndDrop(this.oMockEvent2);
-		// Assert
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 3');
-		assert.strictEqual(Core.byId("tabReorder2").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 2');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-setsize"), "3" , 'Aria-setsize should be 3');
-	});
-	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Right RTL", function(assert) {
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-		assert.strictEqual(this.oIconTabBar1.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tab1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(39,"tabReorder2"));
-		this.oIconTabHeader1.ondragrearranging(this.returnMockEvent(39,"tab2"));
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "First tab", 'First Tab is "Second Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
-		assert.strictEqual(this.oIconTabBar1.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tab1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-	});
-	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Right of last element RTL", function(assert) {
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Third tab", 'Third Tab is "Third Tab"');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
-		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(39,"tabReorder3"));
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Second tab", 'Third Tab is "Second Tab"');
-		assert.strictEqual(Core.byId("tabReorder3").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 2');
-	});
-	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Left of first element RTL", function(assert) {
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(37,"tabReorder1"));
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Second tab", 'Second Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
-	});
-	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Arrow Left RTL", function(assert) {
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'Fisrt Tab is "Fisrt Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(37,"tabReorder1"));
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "First tab", 'First Tab is "Second Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
-	});
-	QUnit.test("Drag&Drop Keyboard Handling: CTRL + Home RTL", function(assert) {
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "Second tab", 'Second Tab is "Second Tab"');
-		assert.strictEqual(Core.byId("tabReorder2").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
-		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(36,"tabReorder2"));
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Second tab", 'Second Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "2" , 'Aria-pointset should be 1');
-	});
-	QUnit.test("Drag&Drop Keyboard Handling: CTRL + End RTL", function(assert) {
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "First tab", 'First Tab is "First Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "1" , 'Aria-pointset should be 1');
-		//ACT
-		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(35,"tabReorder1"));
-		// Assert
-		assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "First tab", 'First Tab is "Last Tab"');
-		assert.strictEqual(Core.byId("tabReorder1").getDomRef().getAttribute("aria-posinset"), "3" , 'Aria-pointset should be 1');
-	});
-
 
 });

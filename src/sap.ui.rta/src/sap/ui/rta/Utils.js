@@ -59,7 +59,7 @@ function(
 	/**
 	 * Returns the rta specific Style Class
 	 *
-	 * @return {string} styleClass for RTA
+	 * @returns{string} styleClass for RTA
 	 */
 	Utils.getRtaStyleClassName = function() {
 		return Utils._sRtaStyleClassName;
@@ -130,6 +130,32 @@ function(
 	};
 
 	/**
+	 * Fetching entity metadata by specified path.
+	 * @param {sap.ui.model.Model} oModel - Model
+	 * @param {string} sPath Path to resolve
+	 * @returns {object|null} Plain object with entity description
+	 */
+	function getEntityTypeByPath (oModel, sPath) {
+		return oModel.oMetadata && oModel.oMetadata._getEntityTypeByPath(sPath);
+	}
+	/**
+	 * Get the entity type based on the binding of a control
+	 *
+	 * @param {sap.ui.core.Element} oElement - Any Object
+	 * @param {sap.ui.model.odata.ODataModel} oModel - Data model
+	 * @returns{object} Entity type without namespace
+	 */
+	function getBoundEntityType(oElement, oModel) {
+		oModel || (oModel = oElement.getModel());
+
+		var oBindingContext = oElement.getBindingContext();
+
+		if (oBindingContext) {
+			return getEntityTypeByPath(oModel, oBindingContext.getPath()) || {};
+		}
+		return {};
+	}
+	/**
 	 * Utility function to check via backend calls if the custom field button shall be enabled or not
 	 *
 	 * @param {sap.ui.core.Control} oControl - Control to be checked
@@ -148,7 +174,7 @@ function(
 					"sap/ui/fl/fieldExt/Access"
 				], function(Access) {
 					var sServiceUrl = oControl.getModel().sServiceUrl;
-					var sEntityType = this.getBoundEntityType(oControl).name;
+					var sEntityType = getBoundEntityType(oControl).name;
 					var $Deferred;
 					try {
 						$Deferred = Access.getBusinessContexts(sServiceUrl, sEntityType);
@@ -175,17 +201,17 @@ function(
 						}
 						return fnResolve(false);
 					});
-				}.bind(this), fnReject);
-			}.bind(this));
-		}.bind(this));
+				}, fnReject);
+			});
+		});
 	};
 
 	/**
 	 * Opens a confirmation dialog indicating mandatory fields if necessary.
 	 *
-	 * @param {Object} oElement - The analyzed control
-	 * @param {String} sText - Custom text for the dialog
-	 * @return {Promise} The Promise which resolves when popup is closed (via Remove OR Cancel actions)
+	 * @param {object} oElement - The analyzed control
+	 * @param {string} sText - Custom text for the dialog
+	 * @returns{Promise} The Promise which resolves when popup is closed (via Remove OR Cancel actions)
 	 */
 	Utils.openRemoveConfirmationDialog = function(oElement, sText) {
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
@@ -254,7 +280,7 @@ function(
 	 * Utility function for retrieving property values for a specified Element
 	 *
 	 * @param {sap.ui.core.Element} oElement - Any element
-	 * @param {String} sPropertyName - Name of the property
+	 * @param {string} sPropertyName - Name of the property
 	 * @returns {*} value of the property, could be any value
 	 */
 	Utils.getPropertyValue = function(oElement, sPropertyName) {
@@ -378,7 +404,7 @@ function(
 	 * Returns an element overlay which is sibling to the given element overlay
 	 * @param  {sap.ui.dt.ElementOverlay} oOverlay The overlay to get the information from
 	 * @param  {boolean} bNext true for next sibling, false for previous sibling
-	 * @return {sap.ui.dt.ElementOverlay} the element overlay which is sibling to the given overlay
+	 * @returns{sap.ui.dt.ElementOverlay} the element overlay which is sibling to the given overlay
 	 * @private
 	 */
 	Utils._findSiblingOverlay = function(oOverlay, bNext) {
@@ -405,7 +431,7 @@ function(
 	 *
 	 * @param {sap.ui.core.Element} oParentElement - Parent Element
 	 * @param {sap.ui.core.Element} oChildElement - Element which position is being looked for
-	 * @param {String} sAggregationName - Aggregation name
+	 * @param {string} sAggregationName - Aggregation name
 	 * @param {Function} [fnGetIndex] - Custom handler for retreiving index
 	 * @returns {Number} index of the element
 	 */
@@ -433,37 +459,20 @@ function(
 	 * Creates a unique id for a new control based on its parent control, entityType and binding path.
 	 *
 	 * @param {*} oParentControl - Parent control.
-	 * @param {String} sEntityType - EntityType which is bound to the parent control
-	 * @param {String} sBindingPath - Binding path of the control for which a new Id should be created
-	 * @returns {String} New string Id
+	 * @param {string} sEntityType - EntityType which is bound to the parent control
+	 * @param {string} sBindingPath - Binding path of the control for which a new Id should be created
+	 * @returns {string} New string Id
 	 * @private
 	 */
 	Utils.createFieldLabelId = function(oParentControl, sEntityType, sBindingPath) {
 		return (oParentControl.getId() + "_" + sEntityType + "_" + sBindingPath).replace("/", "_");
 	};
 
-	/**
-	 * Get the entity type based on the binding of a control
-	 *
-	 * @param {sap.ui.core.Element} oElement - Any Object
-	 * @param {sap.ui.model.odata.ODataModel} oModel - Data model
-	 * @return {Object} Entity type without namespace
-	 */
-	Utils.getBoundEntityType = function(oElement, oModel) {
-		oModel || (oModel = oElement.getModel());
-
-		var oBindingContext = oElement.getBindingContext();
-
-		if (oBindingContext) {
-			return Utils.getEntityTypeByPath(oModel, oBindingContext.getPath()) || {};
-		}
-		return {};
-	};
 
 	/**
 	 * Allow window.open to be stubbed in tests
 	 *
-	 * @param {String} sUrl - url string
+	 * @param {string} sUrl - url string
 	 */
 	Utils.openNewWindow = function(sUrl) {
 		window.open(sUrl, "_blank");
@@ -473,7 +482,7 @@ function(
 	 * Function to find the binding paths of a given UI5 Element
 	 *
 	 * @param {sap.ui.core.Element} oElement - Element for which the binding info should be found
-	 * @returns {Object} valueProperty: the name of the property which is bound
+	 * @returns {object} valueProperty: the name of the property which is bound
 	 * @private
 	 */
 	Utils.getElementBindingPaths = function(oElement) {
@@ -503,21 +512,11 @@ function(
 	};
 
 	/**
-	 * Fetching entity metadata by specified path.
-	 * @param {sap.ui.model.Model} oModel - Model
-	 * @param {string} sPath Path to resolve
-	 * @returns {Object|null} Plain object with entity description
-	 */
-	Utils.getEntityTypeByPath = function (oModel, sPath) {
-		return oModel.oMetadata && oModel.oMetadata._getEntityTypeByPath(sPath);
-	};
-
-	/**
 	 * Extending helper which allows custom function
 	 * for extending.
 	 *
-	 * @param {Object} mDestination - Destionation object
-	 * @param {Object} mSource - Source object
+	 * @param {object} mDestination - Destionation object
+	 * @param {object} mSource - Source object
 	 * @param {Function} fnCustomizer - The customizer is invoked with five arguments:
 	 *                                  (vDestinationValue, vSourceValue, sProperty, mDestination, mSource).
 	 */
@@ -545,7 +544,7 @@ function(
 	 * Returns if the <code>oDomElement</code> is currently visible on the screen.
 	 *
 	 * @param {HTMLElement|jQuery} oDomElement Element to be evaluated
-	 * @return {boolean} - Returns if <code>oDomElement</code> is currently visible on the screen.
+	 * @returns{boolean} - Returns if <code>oDomElement</code> is currently visible on the screen.
 	 */
 	Utils.isElementInViewport = function(oDomElement) {
 		if (oDomElement instanceof jQuery) {
@@ -571,7 +570,7 @@ function(
 	 * @param  {object} [mPropertyBag] - Object with additional information; error and titleKey are evaluated, the rest is passed as option to the MessageBox
 	 * @param  {any} [mPropertyBag.error] - If an error is passed on, the message box text is derived from it
 	 * @param  {string} [mPropertyBag.titleKey] - The text key for the title of the message box; if none is provided the default of the selectde MessageBox type  will be displayed
-	 * @return {Promise} Promise displaying the message box; resolves when it is closed
+	 * @returns{Promise} Promise displaying the message box; resolves when it is closed
 	 */
 	Utils.showMessageBox = function(sMessageType, sMessageKey, mPropertyBag) {
 		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta", true)
@@ -601,7 +600,7 @@ function(
 	 * @param {sap.ui.core.Element|sap.ui.core.Component} oSource - Source control to be checked for binding compatibility with target control
 	 * @param {sap.ui.core.Element|sap.ui.core.Component} oTarget - Target control to be checked for binding compatibility with source control
 	 * @param {sap.ui.model.Model} [oModel] - Model for filtering irrelevant binding paths. If empty, the default model from first element is used
-	 * @return {boolean} <code>true</code> when the controls have compatible bindings.
+	 * @returns{boolean} <code>true</code> when the controls have compatible bindings.
 	 */
 	Utils.checkSourceTargetBindingCompatibility = function(oSource, oTarget, oModel) {
 		oModel = oModel || oSource.getModel();
@@ -657,7 +656,7 @@ function(
 	 *
 	 * @param  {string} sParameterName - The parameter name for which should be checked
 	 * @param  {string} sParameterValue - The parameter value for which should be checked
-	 * @return {boolean} True if the parameter and the given value is in the url
+	 * @returns{boolean} True if the parameter and the given value is in the url
 	 */
 	Utils.hasUrlParameterWithValue = function(sParameterName, sParameterValue) {
 		var oUshellContainer = FlexUtils.getUshellContainer();
@@ -682,7 +681,7 @@ function(
 	 * @param  {string} sUrl - The url which be modify
 	 * @param  {string} sParameterName - The parameter name which can be remove or add
 	 * @param  {string} sParameterValue - The parameter value form the parameter name which can be remove or add
-	 * @return {string} The modified url
+	 * @returns{string} The modified url
 	 */
 	Utils.handleUrlParameter = function(sUrl, sParameterName, sParameterValue) {
 		if (Utils.hasUrlParameterWithValue(sParameterName, sParameterValue)) {

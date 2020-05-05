@@ -451,12 +451,17 @@ html[data-sap-ui-browser^=ie] .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps 
 			.sapUiCalItemText,
 			.sapUiCalDayName {
 				padding: 0;
-				line-height: 2rem;
-				height: auto;
+				height: 100%;
 				position: static;
 			}
 
+			&.sapUiCalItemNow .sapUiCalDayName,
+			.sapUiCalItemText {
+				line-height: 1.725rem;
+			}
+
 			.sapUiCalDayName {
+				line-height: 1.875rem;
 				text-align: end;
 				padding-right: 0.5rem;
 			}

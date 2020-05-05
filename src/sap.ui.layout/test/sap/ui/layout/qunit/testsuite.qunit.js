@@ -131,6 +131,7 @@ sap.ui.define([
 					only: ["sap/ui/layout/AssociativeSplitter"]
 				}
 			},
+			"PaneContainer": { },
 			"FixFlex": {
 				coverage: {
 					only: ["sap/ui/layout/FixFlex"]

@@ -174,14 +174,14 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 		if (!fnScrollProxy) {
 			fnScrollProxy = this.__scrollproxy__ = typeof this.onscroll === "function" ? this.onscroll.bind(this) : undefined; // function seems not to exist?
 		}
-		this.$("cont").bind("scroll", fnScrollProxy);
+		this.$("cont").on("scroll", fnScrollProxy);
 
 	};
 
 	AccordionSection.prototype.onBeforeRendering = function() {
 		var fnScrollProxy = this.__scrollproxy__;
 		if (fnScrollProxy) {
-			this.$("cont").unbind("scroll", fnScrollProxy);
+			this.$("cont").off("scroll", fnScrollProxy);
 		}
 	};
 

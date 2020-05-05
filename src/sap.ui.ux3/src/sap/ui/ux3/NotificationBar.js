@@ -556,7 +556,7 @@ sap.ui.define([
 			 * ResizeHandler, but this might need more discussion about the Pros and
 			 * Cons (ResizeHandler does some kind of polling which is nasty...)
 			 */
-			jQuery(window).bind("resize", jQuery.proxy(fnOnResize, this));
+			jQuery(window).on("resize", jQuery.proxy(fnOnResize, this));
 
 			this._proxyEnableMessageSelect = jQuery.proxy(fnEnableMessageSelect, this);
 
@@ -599,7 +599,7 @@ sap.ui.define([
 
 			delete this._sSeverestMessageLevel;
 
-			jQuery(window).unbind("resize", fnOnResize);
+			jQuery(window).off("resize", fnOnResize);
 
 			delete this._proxyEnableMessageSelect;
 		};
@@ -1163,7 +1163,7 @@ sap.ui.define([
 			 * Prevent that the NotificationBar itselft gets the focus and causes a
 			 * (dotted) border around the hover item and/or the bar iteslef
 			 */
-			this.$().blur();
+			this.$().trigger("blur");
 			var $activeElement = jQuery(document.activeElement);
 
 			fnCloseAllCallouts(this);
@@ -1208,22 +1208,22 @@ sap.ui.define([
 					this._formerVisibleStatus = sVisibleStatus;
 					this.setVisibleStatus("Min");
 
-					$activeElement.blur();
+					$activeElement.trigger("blur");
 					break;
 
 				default:
 					if ($activeElement.hasClass("sapUiNotifier")) {
-						$activeElement.focus();
+						$activeElement.trigger("focus");
 					} else {
 						if (this.hasItems()) {
 							var aNotifiers = this.getNotifiers();
 							if (aNotifiers.length > 0) {
 								var $firstNoti = jQuery(aNotifiers[0]);
-								$firstNoti.focus();
+								$firstNoti.trigger("focus");
 							} else {
 								var messageNoti = this.getMessageNotifier();
 								if (messageNoti) {
-									jQuery(messageNoti).focus();
+									jQuery(messageNoti).trigger("focus");
 								}
 							}
 						}

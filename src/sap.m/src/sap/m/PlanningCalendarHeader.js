@@ -2,6 +2,11 @@
  * ${copyright}
  */
 
+// Ensure that sap.ui.unified is loaded before the module dependencies will be required.
+// Loading it synchronously is the only compatible option and doesn't harm when sap.ui.unified
+// already has been loaded asynchronously (e.g. via a dependency declared in the manifest)
+sap.ui.getCore().loadLibrary("sap.ui.unified");
+
 // Provides control sap.m.PlanningCalendarHeader.
 sap.ui.define([
 	'sap/ui/core/Element',
@@ -62,7 +67,7 @@ function(
 	 *
 	 * <h3>Overview</h3>
 	 *
-	 * Тhe calendar header contains the action controls which you can use to manipulate the calendar and facilitate
+	 * The calendar header contains the action controls which you can use to manipulate the calendar and facilitate
 	 * navigation.
 	 *
 	 * <b>Note:</b> The <code>PlanningCalendarHeader</code> uses parts of the <code>sap.ui.unified</code> library.

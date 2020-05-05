@@ -1910,6 +1910,26 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("set a selected item asynchronously", function(assert) {
+		var oVDFItem = new ViewSettingsFilterItem({
+			key: "item"
+		});
+		this.oVSD.addFilterItem(oVDFItem);
+
+		var oPreSelectKeys = {
+			"item": {
+				"subItem": true
+			}
+		};
+
+		this.oVSD.setSelectedFilterCompoundKeys(oPreSelectKeys);
+		oVDFItem.addItem(new ViewSettingsItem({
+			key: "subItem"
+		}));
+
+		assert.deepEqual(this.oVSD.getSelectedFilterCompoundKeys(), oPreSelectKeys, "there is a selected item");
+	});
+
 	//BCP: 1570899196
 	QUnit.test("removeFilterItem works with index as a parameter", function(assert) {
 		oVsdConfig.addFilterItems(this.oVSD);
@@ -1973,6 +1993,54 @@ sap.ui.define([
 		this.oVSD.open();
 		assert.ok(this.oVSD.$().length === 1, "The inner dialogs jQuery object is returned");
 		assert.ok(this.oVSD.getDomRef().id === this.oVSD.getId() + "-dialog", "The inner dialogs DOM reference is returned");
+	});
+
+	QUnit.test("Check setSelectedFilterCompoundKeys and getSelectedFilterCompoundKeys method", function (assert) {
+		var oCompoundKeys1 = {
+			"myNameFilter": {
+				"name1": true,
+				"name3": true
+			}
+		},
+		oCompoundKeys2 = {
+			"myNameFilter": {
+				"name3": true
+			}
+		},
+		oCompoundKeys3 = {
+			"myStatusFilter": {
+				"status1": true,
+				"status2": true
+			}
+		},
+		aSelected,
+		oCompoundResult;
+
+		oVsdConfig.addFilterItems(this.oVSD);
+
+		// act
+		this.oVSD.setSelectedFilterCompoundKeys(oCompoundKeys1);
+		aSelected = this.oVSD.getSelectedFilterKeys();
+		oCompoundResult = this.oVSD.getSelectedFilterCompoundKeys();
+		// assert
+		assert.ok(Object.keys(aSelected).length === 2 && aSelected["name1"] && aSelected["name3"], "There are proper items selected after applying the first preset");
+		assert.deepEqual(oCompoundResult, oCompoundKeys1, "There are proper items returned by getSelectedFilterCompoundKeys()");
+
+		// act
+		this.oVSD.setSelectedFilterCompoundKeys(oCompoundKeys2);
+		aSelected = this.oVSD.getSelectedFilterKeys();
+		oCompoundResult = this.oVSD.getSelectedFilterCompoundKeys();
+		// assert
+		assert.ok(Object.keys(aSelected).length === 1 && aSelected["name3"], "There are proper items selected after applying the second preset");
+		assert.deepEqual(oCompoundResult, oCompoundKeys2, "There are proper items returned by getSelectedFilterCompoundKeys()");
+
+		// act
+		this.oVSD.setSelectedFilterCompoundKeys(oCompoundKeys3);
+		aSelected = this.oVSD.getSelectedFilterKeys();
+		oCompoundResult = this.oVSD.getSelectedFilterCompoundKeys();
+		// assert
+		assert.ok(Object.keys(aSelected).length === 3 && aSelected["name3"] && aSelected["status1"] && aSelected["status2"], "There are proper items selected after applying the third preset");
+		assert.deepEqual(oCompoundResult, Object.assign(oCompoundKeys2, oCompoundKeys3), "There are proper items returned by getSelectedFilterCompoundKeys()");
 	});
 
 	QUnit.module("Re-rendering after changing selections", {
@@ -3277,6 +3345,70 @@ sap.ui.define([
 		//since the header is the 0 element, get the actual first item
 		assert.ok(oViewSettingsDialog._sortList.getItems()[1].getTooltip(),
 			"Tooltip from ViewSettingsItem is passed to the StandardListItem");
+
+		// Cleanup
+		oViewSettingsDialog.destroy();
+	});
+
+	QUnit.test("When there is a custom sort item, the reset button is always enabled", function (assert) {
+		// Arrange
+		var oViewSettingsDialog = new ViewSettingsDialog({
+			sortItems: new ViewSettingsCustomItem({})
+		});
+
+		// Act
+		oViewSettingsDialog.open();
+
+		// Assert
+		assert.ok(oViewSettingsDialog._getResetButton().getEnabled(), "Reset button is enabled, when there is a custom sort item.");
+
+		// Cleanup
+		oViewSettingsDialog.destroy();
+	});
+
+	QUnit.test("When there is a custom group item, the reset button is always enabled", function (assert) {
+		// Arrange
+		var oViewSettingsDialog = new ViewSettingsDialog({
+			groupItems: new ViewSettingsCustomItem({})
+		});
+
+		// Act
+		oViewSettingsDialog.open();
+
+		// Assert
+		assert.ok(oViewSettingsDialog._getResetButton().getEnabled(), "Reset button is enabled, when there is a custom goup item.");
+
+		// Cleanup
+		oViewSettingsDialog.destroy();
+	});
+
+	QUnit.test("When there is a custom filter item, the reset button is always enabled", function (assert) {
+		// Arrange
+		var oViewSettingsDialog = new ViewSettingsDialog({
+			filterItems: new ViewSettingsCustomItem({})
+		});
+
+		// Act
+		oViewSettingsDialog.open();
+
+		// Assert
+		assert.ok(oViewSettingsDialog._getResetButton().getEnabled(), "Reset button is enabled, when there is a custom filter item.");
+
+		// Cleanup
+		oViewSettingsDialog.destroy();
+	});
+
+	QUnit.test("When there is a custom preset filter item, the reset button is always enabled", function (assert) {
+		// Arrange
+		var oViewSettingsDialog = new ViewSettingsDialog({
+			presetFilterItems: new ViewSettingsCustomItem({})
+		});
+
+		// Act
+		oViewSettingsDialog.open();
+
+		// Assert
+		assert.ok(oViewSettingsDialog._getResetButton().getEnabled(), "Reset button is enabled, when there is a custom preset filter item.");
 
 		// Cleanup
 		oViewSettingsDialog.destroy();

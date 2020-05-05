@@ -1,4 +1,4 @@
-sap.ui.define(function(require) {
+sap.ui.define(["sap/ui/Device"], function(Device) {
 
 	"use strict";
 
@@ -6,25 +6,35 @@ sap.ui.define(function(require) {
 		name: "Package 'sap.ui.core.routing'",
 		defaults: {
 			page: "test-resources/sap/ui/core/qunit/routing/RoutingTest.qunit.html?test={name}",
-			sinon: {
-				version: 4,
-				useFakeTimers: false
-			},
 			loader: {
 				paths: {
 					"qunit/view": "./fixture",
 					"test/routing/target": "./fixture",
-					"sap/ui/core/qunit/routing": "./",
 					"testdata": "../testdata"
 				}
 			}
 		},
 		tests: {
+			"jquery.sap.history": {
+				title: "QUnit Page for jquery.sap.history",
+				group: "jQuery plugins",
+				qunit: {
+					// FIXME: Quick fix for the moment
+					version: 1
+				},
+				skip: Device.browser.msie,
+				module: "test-resources/sap/ui/core/qunit/util/jquery.sap.history.qunit"
+			},
 			"async/Route": {
 				title: "QUnit Page for sap.ui.core.routing.Route (async)"
 			},
 			"async/Router": {
-				title: "QUnit Page for sap.ui.core.routing.Router (async)"
+				title: "QUnit Page for sap.ui.core.routing.Router (async)",
+				loader: {
+					paths: {
+						"routing": "../testdata/routing"
+					}
+				}
 			},
 			"async/Target": {
 				title: "QUnit Page for sap.ui.core.routing.Target (async)"
@@ -66,20 +76,25 @@ sap.ui.define(function(require) {
 			"sync/Views": {
 				title: "QUnit Page for sap.ui.core.routing.Views (sync)"
 			},
-			"HashChanger": {
+			HashChanger: {
 				title: "QUnit Page for sap.ui.core.navigation.HashChanger"
 			},
-			"History": {
+			History: {
 				title: "QUnit Page for sap.ui.core.navigation.History",
+				loader: {
+					paths: {
+						"sap/ui/core/qunit/routing": "./"
+					}
+				},
 				autostart: false // starts itself after async loading of HistoryQUnit.js
 			},
-			"TargetCache": {
+			TargetCache: {
 				title: "QUnit Page for sap.ui.core.routing.TargetCache"
 			},
-			"HashChangerBase": {
+			HashChangerBase: {
 				title: "QUnit Page for sap.ui.core.routing.HashChangerBase"
 			},
-			"RouterHashChanger": {
+			RouterHashChanger: {
 				title: "QUnit Page for sap.ui.core.routing.RouterHashChanger"
 			}
 		}

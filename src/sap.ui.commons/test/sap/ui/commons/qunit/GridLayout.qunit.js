@@ -631,7 +631,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Keyboard Navigation", function(assert) {
-		jQuery("#C1E1_T1").focus();
+		jQuery("#C1E1_T1").trigger("focus");
 		assert.equal(jQuery("#C1E1_T1").is(":focus"), true, "Mouseclick: Container 1, Element 1, Field 1 - Selected");
 		qutils.triggerKeyboardEvent("C1E1_T1", "ARROW_DOWN");
 		assert.equal(jQuery("#C1E2_T1").is(":focus"), true, "Arrow Down: Container 1, Element 2, Field 1 - Selected");
@@ -655,7 +655,7 @@ sap.ui.define([
 		assert.equal(jQuery("#C7E1_T1").is(":focus"), true, "HOME: Container 7, Element 1, Field 1 - Selected");
 		qutils.triggerKeyboardEvent("C7E1_T1", "F6");
 		assert.equal(jQuery("#C1E1_T1").is(":focus"), false, "F6: Container 1, Element 1, Field 1 - NOT Selected (No cycling!)");
-		jQuery("#C1E1_T1").focus();
+		jQuery("#C1E1_T1").trigger("focus");
 		qutils.triggerKeyboardEvent("C1E1_T1", "F6");
 		assert.equal(jQuery("#C2E1_T1").is(":focus"), true, "F6: Container 2, Element 1, Field 1 - Selected");
 		qutils.triggerKeyboardEvent("C2E1_T1", "ARROW_RIGHT");

@@ -21,6 +21,10 @@ function() {
 			if (oControl.getShowNotifications()) {
 				oRm.class("sapFShellBarNotifications");
 			}
+			if (oControl.getShowCopilot()) {
+				oRm.class("sapFShellBarCopilot");
+			}
+
 			oRm.accessibilityState({
 				role: oRootAttributes.role,
 				label: oRootAttributes.label
@@ -37,9 +41,28 @@ function() {
 
 				oRm.text(sTitle).close("div");
 			}
+			if (oControl._aLeftControls && oControl._aLeftControls.length) {
+				oRm.openStart("div")
+					.class("sapFShellBarOLHB")
+					.openEnd();
+				oControl._aLeftControls.forEach(oRm.renderControl);
 
-			oRm.renderControl(oControl._getOverflowToolbar());
+				oRm.close("div");
 
+			}
+			if (oControl._oCopilot) {
+				oRm.renderControl(oControl._oCopilot);
+			}
+
+			if (oControl._aRightControls && oControl._aRightControls.length) {
+				oRm.openStart("div")
+					.class("sapFShellBarORHB")
+					.openEnd();
+
+				oControl._aRightControls.forEach(oRm.renderControl);
+
+				oRm.close("div");
+			}
 			oRm.close("div");
 		},
 		shouldAddIBarContext: function () {

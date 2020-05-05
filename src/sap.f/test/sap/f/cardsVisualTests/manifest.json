@@ -3,7 +3,13 @@
   "sap.app": {
 	"id": "sap.f.cardsVisualTests",
 	"type": "application",
-	"i18n": "i18n/i18n.properties",
+	"i18n": {
+		"bundleUrl": "i18n/i18n.properties",
+		"supportedLocales": [
+			""
+		],
+		"fallbackLocale": ""
+	},
 	"title": "{{appTitle}}",
 	"description": "{{appDescription}}",
 	"applicationVersion": {
@@ -54,7 +60,11 @@
 	  "i18n": {
 		"type": "sap.ui.model.resource.ResourceModel",
 		"settings": {
-		  "bundleName": "sap.f.cardsVisualTests.i18n.i18n"
+		  "bundleName": "sap.f.cardsVisualTests.i18n.i18n",
+		  "supportedLocales": [
+		  	""
+		  ],
+		  "fallbackLocale": ""
 		},
 		"preload": true
 	  }

@@ -39,7 +39,7 @@
 			<l:HorizontalLayout>
 				<Label
 					design="Bold"
-					text="{i18n>demoAppTileLibrary}"
+					text="{i18n>DEMO_APPS_LIBRARY}"
 					class="sapUiTinyMarginEnd"/>
 				<Link
 					text="sap.m"

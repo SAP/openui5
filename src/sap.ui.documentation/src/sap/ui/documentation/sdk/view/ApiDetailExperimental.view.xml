@@ -8,7 +8,7 @@
 					  upperCaseAnchorBar="false"
 					  sections="{/}">
 		<headerTitle>
-			<ObjectPageHeader objectTitle="Index of Experimental APIs"/>
+			<ObjectPageHeader objectTitle="{i18n>API_DETAIL_EXPERIMENTAL_TITLE}"/>
 		</headerTitle>
 		<headerContent>
 			<m:MessageStrip
@@ -20,8 +20,13 @@
 		</headerContent>
 		<ObjectPageSection
 				titleUppercase="false"
-				title="{parts : [{path : 'name'}],
-								  formatter : '.formatter.formatVersionTitle'}">
+				title="{
+					parts: [
+						'i18n>API_DETAIL_AS_OF_VERSION',
+						'name'
+					],
+					formatter: '.formatter.formatVersionTitle'
+				}">
 			<ObjectPageSubSection>
 				<m:List items="{path: 'apis', templateShareable: false}"
 						updateFinished="._modifyLinks"

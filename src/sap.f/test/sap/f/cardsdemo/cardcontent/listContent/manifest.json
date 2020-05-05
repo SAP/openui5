@@ -65,7 +65,7 @@
 			"value": "{Name}"
 		  },
 		  "info": {
-			"value": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Еxceeded' : 'In Range' }",
+			"value": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Exceeded' : 'In Range' }",
 			"state": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Error' : 'Success' }"
 		  }
 		}

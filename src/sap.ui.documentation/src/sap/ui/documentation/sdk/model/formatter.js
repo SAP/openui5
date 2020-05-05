@@ -54,9 +54,11 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (
 		 * @returns {string} the formatted text
 		 */
 		categoryName: function (sCategoryId) {
-			var oResourceBundle = this.getView().getModel("i18n").getResourceBundle();
+			var oResourceBundle = this.getModel("i18n").getResourceBundle();
 
-			return oResourceBundle.getText("demoAppCategory" + sCategoryId);
+			sCategoryId = sCategoryId.toUpperCase();
+
+			return oResourceBundle.getText("DEMO_APPS_CATEGORY_" + sCategoryId);
 		},
 
 		/**
@@ -83,8 +85,12 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (
 			return altTypes && altTypes.join(", ");
 		},
 
-		formatVersionTitle: function (sTitle) {
-			return sTitle ? "As of " + sTitle : "Version N/A";
+		formatVersionTitle: function (sPattern, sTitle) {
+			if (sTitle) {
+				return this.formatMessage(sPattern, sTitle);
+			}
+
+			return this.getModel("i18n").getResourceBundle().getText("API_DETAIL_NA_VERSION");
 		},
 
 		formatSenderLink: function (sControlName, sEntityName, sEntityType) {

@@ -18,4 +18,4 @@ sap.ui.define([
 			MessageToast.show("Page 2 long link clicked");
 		}
 	});
-}, true);
+});

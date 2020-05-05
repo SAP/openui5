@@ -30,18 +30,12 @@
 			border-radius: 0.25rem;
 		}
 		//week views
+		&.sapUiCalItem.sapUiCalItemSel .sapUiCalItemText,
 		&.sapUiCalItem .sapUiCalItemText {
 			box-shadow: none;
 		}
 		&.sapUiCalItem:not(.sapUiCalItemSel) {
 			box-shadow: inset 0 -0.25rem 0 @color;
-		}
-		//week views selected
-		&.sapUiCalItem.sapUiCalItemSel {
-			box-shadow: inset 0 -0.25rem 0 @color, inset 0 -0.33rem white;
-			.sapUiCalItemText {
-				box-shadow: none;
-			}
 		}
 		//day view
 		.sapMSinglePCBlockersColumn {
@@ -61,6 +55,7 @@
 
 	.sapMSinglePCColumnHeader .sapUiCalItem.sapUiCalItemNow {
 		border-color: @sapUiLegendCurrentDateTime;
+		border-radius: 0.25rem;
 	}
 
 	.sapMSinglePCNowMarker {
@@ -98,28 +93,24 @@
 
 	.sapMSinglePCColumnHeader {
 		.sapUiCalItem.sapUiCalItemNow {
-			&:not(:focus) {
-				outline-color: white;
+			.sapUiCalItemText {
+				border: 0.0625rem solid white;
 			}
-		}
-		.sapUiCalItem.sapUiCalItemNow {
-			&:not(:focus) {
-				outline: 0.0625rem solid white;
-				outline-offset: -3px;
-			}
-		}
-		.sapUiCalItem.sapUiCalItemNow {
-			.sapUiCalItemText,
-			.sapUiCalItemSel.sapUiItemText {
-				border: 1px solid @sapUiListBackground;
-			}
+
 			.sapUiCalSpecialDate {
 				position: absolute;
-				width: ~"calc(100% - 0.125rem)";
-				height: 0.154rem;
 				left: 0;
 				bottom: 0px;
+				height: 0.28125rem;
 			}
+		}
+
+		.sapUiCalItem .sapUiCalSpecialDate {
+			height: 0.25rem;
+		}
+
+		.sapUiCalItem.sapUiCalItemNow.sapUiCalItemSel .sapUiCalItemText {
+			border: 0.0625rem solid black;
 		}
 	}
 }
@@ -133,21 +124,36 @@
 
 .sapUiSizeCompact .sapMSinglePC {
 	.sapMSinglePCColumnHeader {
-	.sapUiCalItem.sapUiCalItemNow {
-		&.sapUiCalItemSel {
-			background-color: @sapUiActive;
-		}
-		.sapUiCalItemText,
-		.sapUiCalItemSel.sapUiItemText {
-			border: none;
-			box-shadow: none;
-		}
-	}
-	}
-	.sapMSinglePCColumnHeader {
-		.sapUiCalItem.sapUiCalItemNow:focus {
+		.sapUiCalItem.sapUiCalItemNow {
 			outline: 0.0625rem solid white;
 			box-shadow: inset white;
+			&.sapUiCalItemSel {
+				background-color: @sapUiActive;
+				outline: 0.0625rem solid black;
+				box-shadow: inset black;
+				border: 0.125rem solid @sapUiLegendCurrentDateTime;
+			}
+			&.sapUiCalItemSel .sapUiCalItemText,
+			.sapUiCalItemText {
+				box-shadow: none;
+				border: transparent;
+				line-height: 1.75rem;
+			}
+		}
+		.sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemText,
+		.sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalItemText {
+			border: transparent;
+		}
+
+		.sapUiCalItem.sapUiCalItemSel {
+			border: 0.0625rem solid black;
+			.sapUiCalItemText {
+				line-height: 1.825rem;
+			}
+		}
+
+		.sapUiCalItem:focus > .sapUiCalItemText {
+			outline: none;
 		}
 	}
 }

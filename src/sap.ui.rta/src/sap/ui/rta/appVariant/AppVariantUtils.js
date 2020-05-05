@@ -490,13 +490,13 @@ function(
 		var oComponentInstance = oApplication.componentHandle.getInstance();
 
 		if (oComponentInstance) {
-			var oUshellContainer = FlexUtils.getUshellContainer();
-			var oCrossAppNav = oUshellContainer && oUshellContainer.getService("CrossApplicationNavigation");
-			if (oCrossAppNav && oCrossAppNav.toExternal) {
-				oCrossAppNav.toExternal({target: {shellHash: "#"}}, oComponentInstance);
-			}
+			FlexUtils.ifUShellContainerThen(function(aServices) {
+				var oCrossAppNav = aServices[0];
+				if (oCrossAppNav && oCrossAppNav.toExternal) {
+					oCrossAppNav.toExternal({target: {shellHash: "#"}}, oComponentInstance);
+				}
+			}, ["CrossApplicationNavigation"]);
 		}
-
 		return Promise.resolve();
 	};
 

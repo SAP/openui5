@@ -1340,6 +1340,36 @@ sap.ui.define([
 			"The input's value is not decreased");
 	});
 
+	QUnit.test("mousewheel up/down not increases/decreases the value if the input is disabled or readonly", function (assert) {
+		//arrange
+		var bFirefox = Device.browser.firefox;
+		var sWheelEventType = bFirefox ? "DOMMouseScroll" : "mousewheel";
+		var oWheelUpEvent = jQuery.Event(sWheelEventType, { originalEvent: { detail: bFirefox ? -1 : 0, wheelDelta: 13 } });
+		var oWheelDownEvent = jQuery.Event(sWheelEventType, { originalEvent: { detail: bFirefox ? 1 : 0 , wheelDelta: -13 } });
+
+		//act
+		this.stepInput.focus();
+		this.stepInput.setEnabled(false);
+		qutils.triggerEvent(sWheelEventType, this.stepInput.getDomRef(), oWheelUpEvent);
+
+		//assert
+		assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 4,
+			"The input's value is not increased");
+
+		//act
+		this.stepInput.setEnabled(true);
+		this.stepInput.setEditable(false);
+		this.stepInput.focus();
+		qutils.triggerEvent(sWheelEventType, this.stepInput.getDomRef(), oWheelDownEvent);
+
+		//assert
+		assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 4,
+			"The input's value is not decreased");
+
+		//cleanup
+		this.stepInput.setEditable(true);
+	});
+
 
 	function calcTime(oStepInput, val) {
 		var time = 0;

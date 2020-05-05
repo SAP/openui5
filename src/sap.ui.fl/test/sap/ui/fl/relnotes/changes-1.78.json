@@ -1,0 +1,41 @@
+{
+  "1.78.0": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "12dd9edefa777077f5f1ec058d3b6482e46e3922",
+        "type": "FIX",
+        "text": " sap.ui.fl - fix partial FlexState overwrite",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070161667"
+          }
+        ]
+      },
+      {
+        "id": "e8a1aef0a238ecfc697c34ef080697ccabfda3ff",
+        "type": "FIX",
+        "text": " sap.ui.fl: Fixing the behavior of UI2 personalization changes",
+        "references": []
+      },
+      {
+        "id": "d9ef949ee799684b62f8ab94adf17c93c4c49e29",
+        "type": "FIX",
+        "text": " disabling of ui adaptation extensionPoint functionality",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002752872020"
+          }
+        ]
+      },
+      {
+        "id": "81db9459c7a8a2935e6f59480f0a0164ecaf0241",
+        "type": "FIX",
+        "text": " sap.ui.fl - Fix qunit error assertion for nightly build",
+        "references": []
+      }
+    ]
+  }
+}

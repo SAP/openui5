@@ -381,7 +381,7 @@ sap.ui.define([
 		oSuggestionsPopover.destroy();
 	});
 
-	QUnit.test("ComboBox: The following condition is met: hеight != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", function (assert) {
+	QUnit.test("ComboBox: The following condition is met: height != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", function (assert) {
 		var oComboBox;
 
 		// Arrange
@@ -408,7 +408,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("MultiComboBox: The following condition is met: hеight != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", function (assert) {
+	QUnit.test("MultiComboBox: The following condition is met: height != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", function (assert) {
 		var oMultiComboBox;
 
 		// Arrange

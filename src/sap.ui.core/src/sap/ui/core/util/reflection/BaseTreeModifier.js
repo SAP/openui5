@@ -370,6 +370,10 @@ sap.ui.define([
 			return isPlainObject(vPropertyValue) || Array.isArray(vPropertyValue) || Object(vPropertyValue) !== vPropertyValue;
 		},
 
+		_escapeCurlyBracketsInString: function (vPropertyValue) {
+			return typeof vPropertyValue === "string" ? vPropertyValue.replace(/({|})/g, "\\$&") : vPropertyValue;
+		},
+
 		/**
 		 * Checks if there is a property binding and returns it if available, otherwise returns the value of the property.
 		 *

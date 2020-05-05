@@ -471,8 +471,27 @@
 				controls: [
 					new sap.m.Link({
 						text: "link",
-						href: "#",
-						target: "_blank"
+						href: "",
+						press: function() {
+							var oDialog = new sap.m.Dialog({
+								title: 'Recomendations are based on:',
+								type: sap.m.Dialog.DialogType.Message,
+								state: sap.ui.core.ValueState.Warning,
+								content: new sap.m.Text({
+									text: 'Machine learning information and more details'
+								}),
+								beginButton: new sap.m.Button({
+									text: 'OK',
+									press: function () {
+										oDialog.close();
+									}
+								}),
+								afterClose: function () {
+									oDialog.destroy();
+								}
+							});
+							oDialog.open();
+						}
 					})
 				]
 			}),
@@ -486,16 +505,22 @@
 			suggestionColumns : aEvenMoreSuggestionColumns,
 			formattedValueStateText: new sap.m.FormattedText({
 				htmlText: "Warning value state message with formatted text containing %%0 %%1",
-				controls: [new sap.m.Link({
-					text: "multiple",
-					href: "#",
-					target: "_blank"
-				}),
-				new sap.m.Link({
-					text: "links",
-					href: "#",
-					target: "_blank"
-				})]
+				controls: [
+					new sap.m.Link({
+						text: "multiple",
+						href: "#",
+						press: function() {
+							sap.m.MessageToast.show("You have pressed a link in value state message", { my: sap.ui.core.Popup.Dock.CenterCenter, at: sap.ui.core.Popup.Dock.CenterCenter });
+						}
+					}),
+					new sap.m.Link({
+						text: "links",
+						href: "#",
+						press: function() {
+							sap.m.MessageToast.show("You have pressed a link in value state message", { my: sap.ui.core.Popup.Dock.CenterCenter, at: sap.ui.core.Popup.Dock.CenterCenter });
+						}
+					})
+				]
 			}),
 		});
 
@@ -1176,6 +1201,34 @@
 			]
 		});
 
+
+		//*******************************
+		var oMultiInput10 = new sap.m.MultiInput({
+			id: "multiInputWithOneLongToken",
+			placeholder: "1 item example",
+			valueHelpRequest: function () {
+				var oDialog = new sap.m.Dialog({
+					endButton: new sap.m.Button({
+						text: "Close",
+						press: function () {
+							oDialog.close();
+						}
+					})
+				}).open();
+			},
+			width:"25%",
+			tokens: [
+				new sap.m.Token({text: "Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, Very long text, "}),
+		 	],
+		});
+
+		var readOnlyButtonMI10 = new sap.m.ToggleButton({
+			text : "Toggle Read-Only mode MI with long token",
+			press : function() {
+				oMultiInput10.setEditable(!oMultiInput10.getEditable());
+			}
+		});
+
 		var oMultiInputReadOnly = new sap.m.MultiInput("multiInputReadOnlyInitial", {
 			width : "400px",
 			tokens : [
@@ -1405,6 +1458,9 @@
 					new sap.m.Label({labelFor: oMultiInput9.getId(), text:"MultiInput with toggle button for read only"}),
 					oMultiInput9,
 					readOnlyButton,
+					new sap.m.Label({labelFor: oMultiInput10.getId(), text : "One token with extra long text", width:"100%"}),
+					oMultiInput10,
+					readOnlyButtonMI10,
 					new sap.m.Label({labelFor: oMultiInputReadOnly.getId(), text:"MultiInput in read-only state(editable=false). Should contain 11 tokens."}),
 					oMultiInputReadOnly,
 					new sap.m.Label({labelFor: multiInputWithSelectDialog.getId(), text : "MultiInput with SelectDialog", width: "100%"}),

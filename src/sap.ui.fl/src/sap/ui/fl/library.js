@@ -15,6 +15,81 @@ sap.ui.define([
 ) {
 	"use strict";
 
+
+	/**
+	 * The <code>sap.ui.fl.initial</code> namespace should contain all code that is
+	 * necessary to hook into the UI5 core and detect if SAPUI5 flexibility has
+	 * changes or other flex objects that need processing. If there is nothing to
+	 * process, any further flex processing is stopped to avoid runtime impact for end users.
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.initial
+	 * @public
+	 */
+
+	/**
+	 * The <code>sap.ui.fl.initial.api</code> namespace contains public APIs that can be used
+	 * during app startup, e.g. to inherit classes to create their own logic for retrieving data for flexibility.
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.initial.api
+	 * @public
+	 */
+
+	/**
+	 * The <code>sap.ui.fl.apply</code> namespace should contain all code necessary to
+	 * start a UI5 app for an end user with changes. Be aware that only the <code>api</code>
+	 * sub-namespace contains public and stable APIs.
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.apply
+	 * @public
+	 */
+
+	/**
+	 * The <code>sap.ui.fl.apply.api</code> namespace contains public APIs that can be used
+	 * during app startup, e.g. to wait for changes to be applied or to access the current variant.
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.apply.api
+	 * @public
+	 */
+
+	/**
+	 * The <code>sap.ui.fl.write</code> namespace should contain all code necessary to
+	 * create, update, and reset changes or other flex objects. Additional common functionality needed
+	 * by personalization dialogs or 'tools' like key user adaptation will be part of this namespace.
+	 * Be aware that only the <code>api</code> sub-namespace contains public and stable APIs.
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.write
+	 * @public
+	 */
+
+	/**
+	 * The <code>sap.ui.fl.write.api</code> namespace contains public APIs to work with flex objects.
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.write.api
+	 * @public
+	 */
+
+	/**
+	 * The <code>sap.ui.fl.interfaces</code> namespace contains only interface jsdoc descriptions.
+	 * It does not contain running code.
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.interfaces
+	 * @public
+	 */
+
 	/**
 	* Object containing information about a control if no instance is available.
 	 *
@@ -57,7 +132,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 */
-
 
 	/**
 	 * SAPUI5 Library for SAPUI5 Flexibility and Descriptor Changes, App Variants, Control Variants (Views) and Personalization.

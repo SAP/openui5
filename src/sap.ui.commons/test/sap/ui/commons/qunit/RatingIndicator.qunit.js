@@ -86,7 +86,7 @@ sap.ui.define([
 
 	QUnit.test("Keyboard", function(assert) {
 		var oRating = oRatings["oRating1"];
-		jQuery("#oRating1").focus();
+		jQuery("#oRating1").trigger("focus");
 		qutils.triggerKeyboardEvent("oRating1", "ARROW_RIGHT");
 		qutils.triggerKeyboardEvent("oRating1", "ARROW_RIGHT");
 		qutils.triggerKeyboardEvent("oRating1", "ARROW_UP");
@@ -183,8 +183,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("#Symbols", function(assert) {
-		assert.equal(jQuery("#oRating1").children().size(), 5, "#Symbols:");
-		assert.equal(jQuery("#oRating2").children().size(), oRatings["oRating2"].getMaxValue(), "#Symbols:");
+		assert.equal(jQuery("#oRating1").children().length, 5, "#Symbols:");
+		assert.equal(jQuery("#oRating2").children().length, oRatings["oRating2"].getMaxValue(), "#Symbols:");
 	});
 
 	QUnit.test("ItemValue Properties", function(assert) {
@@ -198,7 +198,7 @@ sap.ui.define([
 		var oSymbols = jQuery("#oRating4").children();
 		oSymbols.each(function(index){
 			var oChilds = jQuery(this).children();
-			assert.equal(oChilds.size(), 2, "# DOM Childs of Symbol:");
+			assert.equal(oChilds.length, 2, "# DOM Childs of Symbol:");
 			var oOverflow = jQuery(oChilds.get(1));
 			var overflowStyle = oOverflow.attr("style");
 			if (index < 3) {
@@ -215,7 +215,7 @@ sap.ui.define([
 		var oSymbols = jQuery("#oRating5").children();
 		oSymbols.each(function(index){
 			var oChilds = jQuery(this).children();
-			assert.equal(oChilds.size(), 2, "# DOM Childs of Symbol:");
+			assert.equal(oChilds.length, 2, "# DOM Childs of Symbol:");
 			var oOverflow = jQuery(oChilds.get(1));
 			var overflowStyle = oOverflow.attr("style");
 			if (index < 3) {
@@ -232,7 +232,7 @@ sap.ui.define([
 		var oSymbols = jQuery("#oRating6").children();
 		oSymbols.each(function(index){
 			var oChilds = jQuery(this).children();
-			assert.equal(oChilds.size(), 2, "# DOM Childs of Symbol:");
+			assert.equal(oChilds.length, 2, "# DOM Childs of Symbol:");
 			var oOverflow = jQuery(oChilds.get(1));
 			var overflowStyle = oOverflow.attr("style");
 			if (index < 3) {

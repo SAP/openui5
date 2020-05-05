@@ -3,7 +3,7 @@ sap.ui.define(function() {
 	"use strict";
 
 	return {
-		name: "TestSuite for sap.ui.core: GTP testcase CORE/COMPONENT",
+		name: "TestSuite for Topic: Component",
 		defaults: {
 			loader: {
 				paths: {
@@ -70,32 +70,27 @@ sap.ui.define(function() {
 				}
 			},
 			ExtensionPoint: {
-				title: "ExtensionPoints with nProvider",
+				title: "ExtensionPoints with ExtensionProvider",
 				qunit: {
 					reorder: false
-				},
-				module: [
-					"./ExtensionPoint.qunit"
-				]
+				}
 			},
-			Customizing_debug: {
+			"Customizing_debug": {
 				page: "resources/sap/ui/test/starter/Test.qunit.html?testsuite={suite}&test={name}&sap-ui-xx-debugCustomizing",
 				title: "CustomizingConfiguration and Customizing in general - sap.ui.core",
 				qunit: {
 					// Test seems to make assumptions when customizing data is loaded
 					reorder: false
 				},
-				module: [
-					"./Customizing.qunit"
-				]
+				module: "test-resources/sap/ui/core/qunit/component/Customizing.qunit"
 			},
-			Customizing_disabled: {
+			"Customizing_disabled": {
 				title: "CustomizingConfiguration and Customizing in general - sap.ui.core (customizing disabled)",
 				ui5: {
 					"xx-disableCustomizing": true
 				}
 			},
-			Customizing_multi: {
+			"Customizing_multi": {
 				title: "CustomizingConfiguration and Customizing in general - sap.ui.core"
 			},
 			Manifest: {
@@ -104,7 +99,7 @@ sap.ui.define(function() {
 			Metadata: {
 				title: "QUnit tests: Component Metadata"
 			},
-			Metadata_unavoidablySync: {
+			"Metadata_unavoidablySync": {
 				title: "QUnit tests: Component Metadata (sync tests)"
 			},
 			Models: {

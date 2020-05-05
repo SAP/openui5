@@ -302,7 +302,7 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 
 			var isRtl = sap.ui.getCore().getConfiguration().getRTL();
 
-			//  jQuery.sap.KeyCodes.MINUS is not returning 189
+			//  KeyCodes.MINUS is not returning 189
 			if ((event.shiftKey && event.which == 189) ||
 				event.which == KeyCodes.NUMPAD_MINUS ||
 				(event.which == KeyCodes.ARROW_RIGHT && isRtl) ||
@@ -334,7 +334,7 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 			}
 
 			this.setProperty('expanded', true, true);
-			this.$().find('.sapTntNavLIGroup').attr('aria-expanded', true).addClass('sapTntNavLIGroupExpandedItems');
+			this.$().find('.sapTntNavLIGroup').attr('aria-expanded', true);
 
 			var expandIconControl = this._getExpandIconControl();
 			expandIconControl.setSrc(NavigationListItem.collapseIcon);
@@ -360,7 +360,7 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 			}
 
 			this.setProperty('expanded', false, true);
-			this.$().find('.sapTntNavLIGroup').attr('aria-expanded', false).removeClass('sapTntNavLIGroupExpandedItems');
+			this.$().find('.sapTntNavLIGroup').attr('aria-expanded', false);
 
 			var expandIconControl = this._getExpandIconControl();
 			expandIconControl.setSrc(NavigationListItem.expandIcon);
@@ -476,10 +476,6 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 
 			if (!isListExpanded && this._hasSelectedChild(control._selectedItem)) {
 				rm.class("sapTntNavLIItemSelected");
-			}
-
-			if (isNavListItemExpanded && this.getItems().length !== 0) {
-				rm.class("sapTntNavLIGroupExpandedItems");
 			}
 
 			if (!this.getEnabled()) {

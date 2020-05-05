@@ -1403,7 +1403,7 @@ function($, Core, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, Obj
 
 			assert.expect(5);
 
-			// Аct
+			// Act
 			oPage.setHeaderTitle(new ObjectPageDynamicHeaderTitle());
 			oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
 
@@ -1491,6 +1491,36 @@ function($, Core, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, Obj
 				assert.ok(oPage._$opWrapper.scrollTop() >= oPage._getSnapPosition(), "header is snapped with scroll");
 				done();
 			}, this);
+	});
+
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer with tabs - rebuild anchorBar",
+		function (assert) {
+			var oPage = this.oObjectPage,
+				oSection1 = oPage.getSections()[0],
+				oSection2 = new ObjectPageSection({ subSections: [new ObjectPageSubSectionClass({ blocks: [ new Text()]})]}),
+				oSection1SubSection1 = oSection1.getSubSections()[0],
+				done = assert.async();
+
+			assert.expect(2);
+
+			// Setup: current tab fits the container
+			oPage.setUseIconTabBar(true); // tabs mode
+			oPage.addSection(oSection2); // more than one tab
+			oSection1SubSection1.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS); // current tab fits the container
+
+			oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				// Assert init state
+				assert.strictEqual(oPage._bAllContentFitsContainer, true, "_bAllContentFitsContainer is correct");
+
+				// Act: take an action that requires rebuilding of anchor bar
+				oSection1.setTitle("another"); // setTitle requires rebuilding of anchorBar => internally _adjustLayoutAndUxRules is called
+				oPage._adjustLayoutAndUxRules(true); // call synchronously to speed up the test
+
+				// Assert
+				assert.strictEqual(oPage._bAllContentFitsContainer, true, "_bAllContentFitsContainer is still correct");
+
+				done();
+			});
 	});
 
 	QUnit.module("Invalidation", {

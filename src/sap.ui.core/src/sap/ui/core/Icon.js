@@ -358,91 +358,6 @@ sap.ui.define([
 		this._addColorClass(sBackgroundColor || "", "background-color");
 	};
 
-	/* =========================================================== */
-	/* API method                                                  */
-	/* =========================================================== */
-
-	Icon.prototype.setSrc = function(sSrc) {
-		assert(sSrc == null || IconPool.isIconURI(sSrc), this + ": Property 'src' (value: '" + sSrc + "') should be a valid Icon URI (sap-icon://...)");
-
-		var vIconInfo = IconPool.getIconInfo(sSrc, undefined, "mixed"),
-			$Icon = this.$(),
-			sIconLabel, sTooltip, bUseIconTooltip, aLabelledBy, oInvisibleText;
-
-		// when the given sSrc can't be found in IconPool
-		// rerender the icon is needed.
-		this.setProperty("src", sSrc, !!vIconInfo);
-
-		if (vIconInfo instanceof Promise) {
-			// trigger a rerendering once the icon info is available
-			vIconInfo.then(this.invalidate.bind(this));
-		} else if (vIconInfo && $Icon.length) {
-			$Icon.css("font-family", vIconInfo.fontFamily);
-			$Icon.attr("data-sap-ui-icon-content", vIconInfo.content);
-			$Icon.toggleClass("sapUiIconMirrorInRTL", !vIconInfo.suppressMirroring);
-
-			sTooltip = this.getTooltip_AsString();
-			aLabelledBy = this.getAriaLabelledBy();
-			bUseIconTooltip = this.getUseIconTooltip();
-			sIconLabel = this._getIconLabel(vIconInfo);
-
-			if (sTooltip || (bUseIconTooltip && vIconInfo.text)) {
-				$Icon.attr("title", sTooltip || vIconInfo.text);
-			} else {
-				$Icon.attr("title", null);
-			}
-
-			if (aLabelledBy.length === 0) { // Only adapt "aria-label" if there is no "labelledby" as this is managed separately
-				if (sIconLabel) {
-					$Icon.attr("aria-label", sIconLabel);
-				} else {
-					$Icon.attr("aria-label", null);
-				}
-			} else { // adapt the text in InvisibleText control
-				oInvisibleText = this.getAggregation("_invisibleText");
-				if (oInvisibleText) {
-					oInvisibleText.setText(sIconLabel);
-				}
-			}
-
-		}
-
-		return this;
-	};
-
-	Icon.prototype.setWidth = function(sWidth) {
-		this.setProperty("width", sWidth, true);
-		this.$().css("width", sWidth);
-
-		return this;
-	};
-
-	Icon.prototype.setHeight = function(sHeight) {
-		this.setProperty("height", sHeight, true);
-		this.$().css({
-			"height": sHeight,
-			"line-height": sHeight
-		});
-
-		return this;
-	};
-
-	Icon.prototype.setSize = function(sSize) {
-		this.setProperty("size", sSize, true);
-		this.$().css("font-size", sSize);
-
-		return this;
-	};
-
-	Icon.prototype.setColor = function(sColor) {
-		if (isColorValid(sColor)) {
-			this.setProperty("color", sColor, true);
-			this._addColorClass(sColor, "color");
-		}
-
-		return this;
-	};
-
 	Icon.prototype._addColorClass = function(sColor, sCSSPropName) {
 		var $Icon = this.$(),
 				that = this;
@@ -469,9 +384,28 @@ sap.ui.define([
 		}
 	};
 
+	/* =========================================================== */
+	/* API method                                                  */
+	/* =========================================================== */
+
+	Icon.prototype.setSrc = function(sSrc) {
+		assert(sSrc == null || IconPool.isIconURI(sSrc), this + ": Property 'src' (value: '" + sSrc + "') should be a valid Icon URI (sap-icon://...)");
+
+		return this.setProperty("src", sSrc);
+	};
+
+	Icon.prototype.setColor = function(sColor) {
+		if (isColorValid(sColor)) {
+			this.setProperty("color", sColor, true);
+			this._addColorClass(sColor, "color");
+		}
+
+		return this;
+	};
+
 	Icon.prototype.setActiveColor = function(sColor) {
 		if (isColorValid(sColor)) {
-			return this.setProperty("activeColor", sColor, true);
+			this.setProperty("activeColor", sColor, true);
 		}
 
 		return this;
@@ -479,7 +413,7 @@ sap.ui.define([
 
 	Icon.prototype.setHoverColor = function(sColor) {
 		if (isColorValid(sColor)) {
-			return this.setProperty("hoverColor", sColor, true);
+			this.setProperty("hoverColor", sColor, true);
 		}
 
 		return this;
@@ -496,7 +430,7 @@ sap.ui.define([
 
 	Icon.prototype.setActiveBackgroundColor = function(sColor) {
 		if (isColorValid(sColor)) {
-			return this.setProperty("activeBackgroundColor", sColor, true);
+			this.setProperty("activeBackgroundColor", sColor, true);
 		}
 
 		return this;
@@ -504,41 +438,27 @@ sap.ui.define([
 
 	Icon.prototype.setHoverBackgroundColor = function(sColor) {
 		if (isColorValid(sColor)) {
-			return this.setProperty("hoverBackgroundColor", sColor, true);
+			this.setProperty("hoverBackgroundColor", sColor, true);
 		}
 
 		return this;
 	};
 
-	Icon.prototype.attachPress = function () {
-		var aMyArgs = Array.prototype.slice.apply(arguments);
-		aMyArgs.unshift("press");
+	Icon.prototype.attachEvent = function (sEventId) {
+		Control.prototype.attachEvent.apply(this, arguments);
 
-		Control.prototype.attachEvent.apply(this, aMyArgs);
-
-		if (this.hasListeners("press")) {
-			this.$().toggleClass("sapUiIconPointer", true)
-					.attr({
-						role: "button",
-						tabindex: this.getNoTabStop() ? undefined : 0
-					});
+		if (sEventId == "press" && this.hasListeners("press")) {
+			this.invalidate();
 		}
 
 		return this;
 	};
 
-	Icon.prototype.detachPress = function() {
-		var aMyArgs = Array.prototype.slice.apply(arguments);
-		aMyArgs.unshift("press");
+	Icon.prototype.detachEvent = function (sEventId) {
+		Control.prototype.detachEvent.apply(this, arguments);
 
-		Control.prototype.detachEvent.apply(this, aMyArgs);
-
-		if (!this.hasListeners("press")) {
-			this.$().toggleClass("sapUiIconPointer", false)
-					.attr({
-						role: this.getDecorative() ? "presentation" : "img"
-					})
-					.removeAttr("tabindex");
+		if (sEventId == "press" && !this.hasListeners("press")) {
+			this.invalidate();
 		}
 
 		return this;

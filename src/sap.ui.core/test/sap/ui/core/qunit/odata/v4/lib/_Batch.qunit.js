@@ -472,7 +472,7 @@ sap.ui.define([
 		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
 		"MIME-Version" : "1.0"
 	}, {
-		testTitle : "batch request with content-ID references",
+		testTitle : "batch request with Content-ID references",
 		expectedBoundaryIDs :
 			["id-1450426018742-911", "id-1450426018742-912", "id-1450426018742-913"],
 		requests : [
@@ -507,7 +507,8 @@ sap.ui.define([
 				}
 			}, {
 				method : "POST",
-				url : "TEAMS",
+				// Note: do not confuse with Content-ID reference! BCP: 2070180250
+				url : "TEAMS?$expand=TEAM_2_EMPLOYEES($filter=STATUS%20eq%20'$42')",
 				headers : {
 					"Content-Type" : "application/json"
 				},
@@ -526,7 +527,23 @@ sap.ui.define([
 					"Content-Type" : "application/json"
 				},
 				body : oNewEmployeeBody
-			}]
+			}, {
+				method : "DELETE",
+				// Note: This is unrealistic as key predicates use encodeURIComponent and entity set
+				// names cannot contain a dollar, but still we should not confuse it with a
+				// Content-ID reference!
+				url : "$TEAMS('$1')",
+				headers : {
+					"Content-Type" : "application/json"
+				}
+			}], {
+				method : "GET",
+				// Note: do not confuse with Content-ID reference! BCP: 2070180250
+				url : "EMPLOYEES?$filter=STATUS%20eq%20'$42'",
+				headers : {
+					"Content-Type" : "application/json"
+				}
+			}
 		],
 		body : "--batch_id-1450426018742-911\r\n" +
 		"Content-Type: multipart/mixed;boundary=changeset_id-1450426018742-912\r\n" +
@@ -572,7 +589,7 @@ sap.ui.define([
 		"Content-Transfer-Encoding:binary\r\n" +
 		"Content-ID:1.1\r\n" +
 		"\r\n" +
-		"POST TEAMS HTTP/1.1\r\n" +
+		"POST TEAMS?$expand=TEAM_2_EMPLOYEES($filter=STATUS%20eq%20'$42') HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
 		'{"Team_Id":"TEAM_06",'
@@ -590,7 +607,24 @@ sap.ui.define([
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
 		JSON.stringify(oNewEmployeeBody) + "\r\n" +
+		"--changeset_id-1450426018742-913\r\n" +
+		"Content-Type:application/http\r\n" +
+		"Content-Transfer-Encoding:binary\r\n" +
+		"Content-ID:3.1\r\n" +
+		"\r\n" +
+		"DELETE $TEAMS('$1') HTTP/1.1\r\n" +
+		"Content-Type:application/json\r\n" +
+		"\r\n" +
+		"\r\n" +
 		"--changeset_id-1450426018742-913--\r\n" +
+		"--batch_id-1450426018742-911\r\n" +
+		"Content-Type:application/http\r\n" +
+		"Content-Transfer-Encoding:binary\r\n" +
+		"\r\n" +
+		"GET EMPLOYEES?$filter=STATUS%20eq%20'$42' HTTP/1.1\r\n" +
+		"Content-Type:application/json\r\n" +
+		"\r\n" +
+		"\r\n" +
 		"--batch_id-1450426018742-911--\r\n",
 		"Content-Type" : "multipart/mixed; boundary=batch_id-1450426018742-911",
 		"MIME-Version" : "1.0"

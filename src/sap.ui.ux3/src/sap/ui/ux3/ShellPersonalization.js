@@ -239,26 +239,26 @@ sap.ui.define([
 		if (window.FileReader) {
 			var sId = this.shell.getId() + "-p13n_";
 			jQuery(document.getElementById(sId + sPrefix + "ImageImg"))
-				.bind('dragover', jQuery.proxy(this._handleDragover, this))
-				.bind('dragend',jQuery.proxy(this._handleDragend, this))
-				.bind('drop', jQuery.proxy(this._handleDrop, this));
+				.on('dragover', jQuery.proxy(this._handleDragover, this))
+				.on('dragend',jQuery.proxy(this._handleDragend, this))
+				.on('drop', jQuery.proxy(this._handleDrop, this));
 			jQuery(document.getElementById(sId + sPrefix + "ImageHolder"))
-				.bind('dragover', jQuery.proxy(this._handleDragover, this))
-				.bind('dragend',jQuery.proxy(this._handleDragend, this))
-				.bind('drop', jQuery.proxy(this._handleDrop, this));
+				.on('dragover', jQuery.proxy(this._handleDragover, this))
+				.on('dragend',jQuery.proxy(this._handleDragend, this))
+				.on('drop', jQuery.proxy(this._handleDrop, this));
 		}
 	};
 	ShellPersonalization.prototype._unbindDragAndDrop = function(sPrefix) {
 		if (window.FileReader) {
 			var sId = this.shell.getId() + "-p13n_";
 			jQuery(document.getElementById(sId + "hdrImageImg"))
-				.unbind('dragover', this._handleDragover)
-				.unbind('dragend', this._handleDragend)
-				.unbind('drop', this._handleDrop);
+				.off('dragover', this._handleDragover)
+				.off('dragend', this._handleDragend)
+				.off('drop', this._handleDrop);
 			jQuery(document.getElementById(sId + "hdrImageHolder"))
-				.unbind('dragover', this._handleDragover)
-				.unbind('dragend', this._handleDragend)
-				.unbind('drop', this._handleDrop);
+				.off('dragover', this._handleDragover)
+				.off('dragend', this._handleDragend)
+				.off('drop', this._handleDrop);
 		}
 	};
 

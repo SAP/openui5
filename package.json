@@ -51,11 +51,11 @@
     "url": "https://github.com/SAP/openui5.git"
   },
   "engines": {
-    "node": ">= 8.5"
+    "node": ">= 10"
   },
   "devDependencies": {
-    "@ui5/project": "^1.2.0",
-    "@ui5/server": "^1.6.0",
+    "@ui5/project": "^2.0.3",
+    "@ui5/server": "^2.0.1",
     "async": "^0.9.0",
     "cheerio": "^1.0.0-rc.2",
     "coffee-script": "^1.9.1",
@@ -79,11 +79,11 @@
     "grunt-text-replace": "^0.4.0",
     "grunt-timer": "^0.5.4",
     "json2json": "^0.2.4",
-    "karma": "^4.2.0",
+    "karma": "^5.0.2",
     "karma-chrome-launcher": "^3.1.0",
     "karma-coverage": "^1.1.2",
     "karma-junit-reporter": "^2.0.1",
-    "karma-ui5": "^1.1.0",
+    "karma-ui5": "^2.1.0",
     "load-grunt-config": "^3.0.1",
     "mkdirp": "^0.5.0",
     "mocha": "^5.2.0",

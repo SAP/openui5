@@ -2511,6 +2511,7 @@ sap.ui.define([
 		function prepareTest (assert, oTest) {
 			oBinding = new ODataParentBinding(Object.assign({
 				_fireChange : function () {},
+				oModel : {addPrerenderingTask : function () {}},
 				resumeInternal : function () {},
 				toString : function () { return "~"; }
 			}, oFixture));
@@ -2529,7 +2530,7 @@ sap.ui.define([
 
 			prepareTest(assert, this);
 			oBindingMock.expects("createReadGroupLock").withExactArgs("groupId", true, 1);
-			this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+			this.mock(oBinding.oModel).expects("addPrerenderingTask")
 				.withExactArgs(sinon.match.func)
 				.callsFake(function (fnCallback) {
 					// simulate async nature of prerendering task
@@ -2605,6 +2606,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_resume: async, destroyed in the meantime", function (assert) {
 		var oBinding = new ODataParentBinding({
+				oModel : {addPrerenderingTask : function () {}},
 				toString : function () { return "~"; }
 			}),
 			oPromise;
@@ -2612,7 +2614,7 @@ sap.ui.define([
 		oBinding.bSuspended = true;
 		this.mock(oBinding).expects("getGroupId").withExactArgs().returns("groupId");
 		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("groupId", true, 1);
-		this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+		this.mock(oBinding.oModel).expects("addPrerenderingTask")
 			.withExactArgs(sinon.match.func)
 			.callsFake(function (fnCallback) {
 				// simulate async nature of prerendering task
@@ -2691,6 +2693,7 @@ sap.ui.define([
 		QUnit.test("createReadGroupLock: bLocked=" + bLocked, function (assert) {
 			var oBinding = new ODataParentBinding({
 					oModel : {
+						addPrerenderingTask : function () {},
 						lockGroup : function () {}
 					}
 				}),
@@ -2700,7 +2703,7 @@ sap.ui.define([
 
 			oBindingMock.expects("lockGroup").withExactArgs("groupId", bLocked)
 				.returns(oGroupLock1);
-			this.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
+			this.mock(oBinding.oModel).expects("addPrerenderingTask").never();
 
 			// code under test
 			oBinding.createReadGroupLock("groupId", bLocked);
@@ -2725,15 +2728,16 @@ sap.ui.define([
 
 		QUnit.test(sTitle, function (assert) {
 			var oBinding = new ODataParentBinding({
+					oModel : {addPrerenderingTask : function () {}},
 					sPath : "/SalesOrderList('42')"
 				}),
-				oCoreMock = this.mock(sap.ui.getCore()),
 				iCount = bLockIsUsedAndRemoved ? 1 : undefined,
 				oExpectation,
 				oGroupLock = {
 					toString: function () { return "~groupLock~"; },
 					unlock : function () {}
 				},
+				oModelMock = this.mock(oBinding.oModel),
 				oPromiseMock = this.mock(Promise),
 				oThenable1 = {then : function () {}},
 				oThenable2 = {then : function () {}};
@@ -2741,18 +2745,18 @@ sap.ui.define([
 			this.mock(oBinding).expects("lockGroup").withExactArgs("groupId", true)
 				.returns(oGroupLock);
 			// first prerendering task
-			oCoreMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func).callsArg(0);
+			oModelMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func).callsArg(0);
 			// second prerendering task
 			oPromiseMock.expects("resolve").withExactArgs().returns(oThenable1);
 			this.mock(oThenable1).expects("then").withExactArgs(sinon.match.func).callsArg(0);
 			if (iCount) {
-				oCoreMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func)
+				oModelMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func)
 					.callsArg(0);
 				// third prerendering task
 				oPromiseMock.expects("resolve").withExactArgs().returns(oThenable2);
 				this.mock(oThenable2).expects("then").withExactArgs(sinon.match.func).callsArg(0);
 			}
-			oExpectation = oCoreMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func);
+			oExpectation = oModelMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func);
 
 			// code under test
 			oBinding.createReadGroupLock("groupId", true, iCount);
@@ -2778,13 +2782,14 @@ sap.ui.define([
 	QUnit.test("createReadGroupLock: lock re-created", function (assert) {
 		var oBinding = new ODataParentBinding({
 				oModel : {
+					addPrerenderingTask : function () {},
 					lockGroup : function () {}
 				}
 			}),
-			oCoreMock = this.mock(sap.ui.getCore()),
 			oExpectation,
 			oGroupLock1 = {},
 			oGroupLock2 = {},
+			oModelMock = this.mock(oBinding.oModel),
 			oPromiseMock = this.mock(Promise),
 			oThenable1 = {then : function () {}};
 
@@ -2792,11 +2797,11 @@ sap.ui.define([
 			.returns(oGroupLock1);
 
 		// first prerendering task
-		oCoreMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func).callsArg(0);
+		oModelMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func).callsArg(0);
 		// second prerendering task
 		oPromiseMock.expects("resolve").withExactArgs().returns(oThenable1);
 		this.mock(oThenable1).expects("then").withExactArgs(sinon.match.func).callsArg(0);
-		oExpectation = oCoreMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func);
+		oExpectation = oModelMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func);
 
 		// code under test
 		oBinding.createReadGroupLock("groupId", true);

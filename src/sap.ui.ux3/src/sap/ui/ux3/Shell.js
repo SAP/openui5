@@ -394,7 +394,7 @@ sap.ui.define([
 		}
 		this._oSearchField = null;
 
-		jQuery(window).unbind("resize", this._checkResizeClosure);
+		jQuery(window).off("resize", this._checkResizeClosure);
 		clearTimeout(this._checkPaneBarOverflowDelayId);
 		this._checkPaneBarOverflowDelayId = null;
 	};
@@ -405,18 +405,18 @@ sap.ui.define([
 		// unbind the tool palette mouse (hover effect) handlers
 		this._beforeRenderingToolPalette();
 
-		this.$("focusDummyPane").unbind("focusin");
+		this.$("focusDummyPane").off("focusin");
 
 		// drag&drop for images with local file API
 		if (window.FileReader) {
 			var $hdr = this.$("hdr");
-			$hdr.unbind('dragover', this._handleDragover)
-			.unbind('dragend', this._handleDragend)
-			.unbind('drop', this._handleDrop);
+			$hdr.off('dragover', this._handleDragover)
+			.off('dragend', this._handleDragend)
+			.off('drop', this._handleDrop);
 			var $bg = this.$("bgImg");
-			$bg.unbind('dragover', jQuery.proxy(this._handleDragover))
-			.unbind('dragend', this._handleDragend)
-			.unbind('drop', this._handleDrop);
+			$bg.off('dragover', jQuery.proxy(this._handleDragover))
+			.off('dragend', this._handleDragend)
+			.off('drop', this._handleDrop);
 		}
 
 	};
@@ -428,19 +428,19 @@ sap.ui.define([
 		this._afterRenderingToolPalette();
 
 		if (this._topSyncRefId && this._mSyncRefs[this._topSyncRefId].focusLast) {
-			this.$("focusDummyPane").focusin(this._mSyncRefs[this._topSyncRefId].focusLast);
+			this.$("focusDummyPane").on("focusin", this._mSyncRefs[this._topSyncRefId].focusLast);
 		}
 
 		// drag&drop for images with local file API
 		if (window.FileReader) {
 			var $hdr = this.$("hdr");
-			$hdr.bind('dragover', jQuery.proxy(this._handleDragover, this))
-			.bind('dragend',jQuery.proxy(this._handleDragend, this))
-			.bind('drop', jQuery.proxy(this._handleDrop, this));
+			$hdr.on('dragover', jQuery.proxy(this._handleDragover, this))
+			.on('dragend',jQuery.proxy(this._handleDragend, this))
+			.on('drop', jQuery.proxy(this._handleDrop, this));
 			var $bg = this.$("bgImg");
-			$bg.bind('dragover', jQuery.proxy(this._handleDragover, this))
-			.bind('dragend',jQuery.proxy(this._handleDragend, this))
-			.bind('drop', jQuery.proxy(this._handleDrop, this));
+			$bg.on('dragover', jQuery.proxy(this._handleDragover, this))
+			.on('dragend',jQuery.proxy(this._handleDragend, this))
+			.on('drop', jQuery.proxy(this._handleDrop, this));
 		}
 
 		// hide or show the facet bar depending on whether the current workset item has sub-items
@@ -467,7 +467,7 @@ sap.ui.define([
 		this._setNotifyVisibility();
 
 		if (Shell.FIRST_RENDERING) {
-			jQuery(window).bind("resize", this._checkResizeClosure);
+			jQuery(window).on("resize", this._checkResizeClosure);
 		}
 		this._checkResize();
 
@@ -1557,11 +1557,11 @@ sap.ui.define([
 
 			//Cleanup Shell
 			this.$("canvas").removeAttr("aria-hidden");
-			this.$("focusDummyTPStart").removeAttr("tabindex").unbind("focusin");
-			this.$("focusDummyTPEnd").removeAttr("tabindex").unbind("focusin");
-			this.$("focusDummyHdrStart").removeAttr("tabindex").unbind("focusin");
-			this.$("focusDummyHdrEnd").removeAttr("tabindex").unbind("focusin");
-			this.$("focusDummyPane").removeAttr("tabindex").unbind("focusin");
+			this.$("focusDummyTPStart").removeAttr("tabindex").off("focusin");
+			this.$("focusDummyTPEnd").removeAttr("tabindex").off("focusin");
+			this.$("focusDummyHdrStart").removeAttr("tabindex").off("focusin");
+			this.$("focusDummyHdrEnd").removeAttr("tabindex").off("focusin");
+			this.$("focusDummyPane").removeAttr("tabindex").off("focusin");
 			this.$().toggleClass("sapUiUx3ShellBlockHeaderAccess", false);
 			delete this._topSyncRefId;
 
@@ -1582,11 +1582,11 @@ sap.ui.define([
 				$DomRefs.css("top", this.getDomRef(this.getAllowOverlayHeaderAccess() ? "hdr" : "hdrLine").offsetHeight + "px");
 				$DomRefs.css("bottom", "0");
 				jQuery(oCanvas).attr("aria-hidden", "true");
-				this.$("focusDummyTPEnd").attr("tabindex", "0").focusin(oRef.focusFirst);
-				this.$("focusDummyHdrStart").attr("tabindex", "0").focusin(jQuery.proxy(this.focusPaneEnd, this));
-				this.$("focusDummyHdrEnd").attr("tabindex", "0").focusin(jQuery.proxy(this.focusFirstTool, this));
-				this.$("focusDummyTPStart").attr("tabindex", "0").focusin(jQuery.proxy(this.focusLastHdr, this));
-				this.$("focusDummyPane").attr("tabindex", "0").focusin(oRef.focusLast);
+				this.$("focusDummyTPEnd").attr("tabindex", "0").on("focusin", oRef.focusFirst);
+				this.$("focusDummyHdrStart").attr("tabindex", "0").on("focusin", jQuery.proxy(this.focusPaneEnd, this));
+				this.$("focusDummyHdrEnd").attr("tabindex", "0").on("focusin", jQuery.proxy(this.focusFirstTool, this));
+				this.$("focusDummyTPStart").attr("tabindex", "0").on("focusin", jQuery.proxy(this.focusLastHdr, this));
+				this.$("focusDummyPane").attr("tabindex", "0").on("focusin", oRef.focusLast);
 				this.$().toggleClass("sapUiUx3ShellBlockHeaderAccess", !this.getAllowOverlayHeaderAccess());
 				this._topSyncRefId = oRef.id;
 			}
@@ -2135,10 +2135,10 @@ sap.ui.define([
 
 	Shell.prototype._beforeRenderingToolPalette = function() {
 		// unbind the tool palette mouse (hover effect) handlers
-		this.$("tp").find(".sapUiUx3ShellTool").unbind("mouseenter mouseleave");
+		this.$("tp").find(".sapUiUx3ShellTool").off("mouseenter mouseleave");
 
-		this.$("focusDummyTPEnd").unbind("focusin");
-		this.$("focusDummyTPStart").unbind("focusin");
+		this.$("focusDummyTPEnd").off("focusin");
+		this.$("focusDummyTPStart").off("focusin");
 	};
 
 	Shell.prototype._afterRenderingToolPalette = function() {
@@ -2174,10 +2174,10 @@ sap.ui.define([
 		}
 
 		if (this._topSyncRefId && this._mSyncRefs[this._topSyncRefId].focusFirst) {
-			this.$("focusDummyTPEnd").attr("tabindex", "0").focusin(this._mSyncRefs[this._topSyncRefId].focusFirst);
+			this.$("focusDummyTPEnd").attr("tabindex", "0").on("focusin", this._mSyncRefs[this._topSyncRefId].focusFirst);
 		}
 		if (this._aSyncRefStack.length > 0) {
-			this.$("focusDummyTPStart").attr("tabindex", "0").focusin(jQuery.proxy(this.focusLastHdr, this));
+			this.$("focusDummyTPStart").attr("tabindex", "0").on("focusin", jQuery.proxy(this.focusLastHdr, this));
 		}
 	};
 

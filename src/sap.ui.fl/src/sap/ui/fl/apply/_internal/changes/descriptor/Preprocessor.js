@@ -5,12 +5,14 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/Applier",
+	"sap/ui/fl/apply/_internal/changes/descriptor/ApplyStrategyFactory",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/performance/Measurement",
 	"sap/ui/fl/Utils"
 ], function(
 	Applier,
+	ApplyStrategyFactory,
 	FlexState,
 	ManifestUtils,
 	Measurement,
@@ -21,7 +23,7 @@ sap.ui.define([
 	/**
 	 * Flex hook for preprocessing manifest early. Merges descriptor changes if needed.
 	 *
-	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.Applier
+	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.Preprocessor
 	 * @experimental
 	 * @since 1.74
 	 * @version ${version}
@@ -40,9 +42,6 @@ sap.ui.define([
 		 * @returns {Promise<object>} - Processed manifest
 		 */
 		preprocessManifest: function(oManifest, oConfig) {
-			// Measurement for the whole flex processing until the VariantModel is attached to the component; this does not include actual CodeExt or UI change applying
-			Measurement.start("flexProcessing", "Complete flex processing", ["sap.ui.fl"]);
-
 			// stop processing if the component is not of the type application or component ID is missing
 			if (!Utils.isApplication(oManifest, true) || !oConfig.id) {
 				return Promise.resolve(oManifest);
@@ -56,6 +55,20 @@ sap.ui.define([
 				componentData: oComponentData
 			});
 
+			// in case the asyncHints already mention that there is no change for the manifest, just trigger the loading
+			if (!ManifestUtils.getChangeManifestFromAsyncHints(oConfig.asyncHints)) {
+				FlexState.initialize({
+					componentData: oComponentData,
+					asyncHints: oConfig.asyncHints,
+					rawManifest: oManifest,
+					componentId: oConfig.id,
+					reference: sReference,
+					partialFlexState: true
+				}).then(Measurement.end.bind(undefined, "flexStateInitialize"));
+
+				return Promise.resolve(oManifest);
+			}
+
 			return FlexState.initialize({
 				componentData: oComponentData,
 				asyncHints: oConfig.asyncHints,
@@ -66,10 +79,13 @@ sap.ui.define([
 			}).then(function() {
 				Measurement.end("flexStateInitialize");
 				Measurement.start("flexAppDescriptorMerger", "Client side app descriptor merger", ["sap.ui.fl"]);
+				return ApplyStrategyFactory.getRuntimeStrategy();
+			}).then(function(RuntimeStrategy) {
 				var aAppDescriptorChanges = FlexState.getAppDescriptorChanges(sReference);
-				var oUpdatedManifest = Applier.applyChanges(oManifest, aAppDescriptorChanges);
+				return Applier.applyChanges(oManifest, aAppDescriptorChanges, RuntimeStrategy);
+			}).then(function(oManifest) {
 				Measurement.end("flexAppDescriptorMerger");
-				return oUpdatedManifest;
+				return oManifest;
 			});
 		}
 	};

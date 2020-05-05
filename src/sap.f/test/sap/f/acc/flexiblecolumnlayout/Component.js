@@ -1,10 +1,13 @@
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/base/util/UriParameters",
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
+	"sap/f/library",
 	"sap/f/FlexibleColumnLayoutSemanticHelper"
-], function (jQuery, UIComponent, JSONModel, FlexibleColumnLayoutSemanticHelper) {
+], function (UriParameters, UIComponent, JSONModel, library, FlexibleColumnLayoutSemanticHelper) {
 	"use strict";
+
+	var LayoutType = library.LayoutType;
 
 	var Component = UIComponent.extend("flexiblecolumnlayout.Component", {
 		metadata: {
@@ -33,10 +36,10 @@ sap.ui.define([
 		 */
 		getHelper: function () {
 			var oFCL = this.getRootControl().byId("fcl"),
-				oParams = jQuery.sap.getUriParameters(),
+				oParams = UriParameters.fromQuery(location.search),
 				oSettings = {
-					defaultTwoColumnLayoutType: sap.f.LayoutType.TwoColumnsMidExpanded,
-					defaultThreeColumnLayoutType: sap.f.LayoutType.ThreeColumnsMidExpanded,
+					defaultTwoColumnLayoutType: LayoutType.TwoColumnsMidExpanded,
+					defaultThreeColumnLayoutType: LayoutType.ThreeColumnsMidExpanded,
 					mode: oParams.get("mode"),
 					initialColumnsCount: oParams.get("initial"),
 					maxColumnsCount: oParams.get("max")

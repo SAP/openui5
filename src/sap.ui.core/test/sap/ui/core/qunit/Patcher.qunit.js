@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/core/Patcher",
 	"sap/base/security/encodeXML",
 	"sap/base/security/encodeCSS"
-], function(Device, Patcher, encodeXML, encodeCSS, createAndAppendDiv) {
+], function(Device, Patcher, encodeXML, encodeCSS) {
 
 	"use strict";
 	/*global QUnit,sinon*/

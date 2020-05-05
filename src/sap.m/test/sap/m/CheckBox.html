@@ -34,25 +34,29 @@
 						id:"cb_selected_enabled",
 						visible: true,
 						selected:true,
-						enabled: true
+						enabled: true,
+						tooltip: "Checkbox"
 					}),
 					new sap.m.CheckBox({
 						id:"cb_selected_disabled",
 						visible: true,
 						selected: true,
-						enabled: false
+						enabled: false,
+						tooltip: "Checkbox"
 					}),
 					new sap.m.CheckBox({
 						id:"cb_deselected_enabled",
 						visible: true,
 						selected: false,
-						enabled: true
+						enabled: true,
+						tooltip: "Checkbox"
 					}),
 					new sap.m.CheckBox({
 						id:"cb_disabled_deselected",
 						visible: true,
 						selected: false,
-						enabled: false
+						enabled: false,
+						tooltip: "Checkbox"
 					}),
 					new sap.m.CheckBox({
 						id:"cb_with_label_size",
@@ -204,7 +208,7 @@
 					oToolbar,
 					new sap.ui.layout.form.SimpleForm({
 						id: "sf_with_checkbox",
-						title: "Form containing a CheckBox",
+						title: new sap.ui.core.Title({text: "Form containing a CheckBox", level: sap.ui.core.TitleLevel.H2}),
 						editable : true,
 						content : [
 							new sap.m.CheckBox({id: "cb_in_a_form", selected:true, text:"CheckBox in a Form"})

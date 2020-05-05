@@ -19,16 +19,16 @@
 		<subHeader>
 			<Bar id="header" class="sapContrast sapContrastPlus">
 				<contentLeft>
-					<Button type="Back" press="onNavBack" tooltip="Back to sample"/>
+					<Button type="Back" press="onNavBack" tooltip="{i18n>CODE_BACK_BTN_TOOLTIP}"/>
 				</contentLeft>
 				<contentMiddle>
 					<Title text="{/title}"/>
 				</contentMiddle>
 				<contentRight>
-					<Button id="apiRefButton" text="API Reference" type="Emphasized" press="onAPIRefPress" visible="false"/>
+					<Button id="apiRefButton" text="{i18n>CODE_API_REFERENCE}" type="Emphasized" press="onAPIRefPress" visible="false"/>
 					<Button
 							class="sapUiHideOnPhone"
-							text="Download"
+							text="{i18n>CODE_DOWNLOAD_BTN}"
 							icon="sap-icon://download"
 							press="onDownload" />
 					<Button

@@ -13,8 +13,8 @@
 		<!-- Header -->
 		<customHeader>
 			<Toolbar width="100%">
-				<SearchField id="searchField" placeholder="Filter" liveChange="handleListFilter" class="sapUiDocumentationFilterField" />
-				<Button id="listFilterSettings" icon="sap-icon://drop-down-list" press="handleListSettings" tooltip="Group / Filter"/>
+				<SearchField id="searchField" placeholder="{i18n>CONTROLS_MASTER_FILTER_PLACERHOLDER}" liveChange="handleListFilter" class="sapUiDocumentationFilterField" />
+				<Button id="listFilterSettings" icon="sap-icon://drop-down-list" press="handleListSettings" tooltip="{i18n>CONTROLS_MASTER_FILTER_BTN_TOOLTIP}"/>
 				<Button id="sampleSettings" icon="sap-icon://action-settings" press="handleSettings" />
 			</Toolbar>
 		</customHeader>
@@ -24,7 +24,7 @@
 			<List id="exploredMasterList"
 				  mode="{viewModel>/listMode}"
 				  selectionChange="onNavToEntity"
-				  noDataText="No data, please try with the global search"
+				  noDataText="{i18n>CONTROLS_MASTER_NO_DATA_TEXT}"
 				  items="{path: '/entities',
 				  groupHeaderFactory: '.getGroupHeader',
 				  sorter: [{

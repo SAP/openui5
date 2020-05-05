@@ -1,5 +1,5 @@
-sap.ui.define(['sap/m/Token','sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
-	function(Token, Controller, JSONModel) {
+sap.ui.define(['sap/m/Token', 'sap/m/MessageToast', 'sap/ui/core/Popup', 'sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
+	function(Token, MessageToast, Popup, Controller, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.MultiInputFilteringSuggestions.controller.MultiInputFilteringSuggestions", {
@@ -32,6 +32,16 @@ sap.ui.define(['sap/m/Token','sap/ui/core/mvc/Controller','sap/ui/model/json/JSO
 				}
 				return null;
 			});
+		},
+
+		handleFormattedTextLinkPress: function(oEvent) {
+			oEvent.preventDefault();
+			MessageToast.show('You have pressed a link in value state message',
+				{
+					my: Popup.Dock.CenterCenter,
+					at: Popup.Dock.CenterCenter
+				}
+			);
 		}
 	});
 });

@@ -439,8 +439,8 @@ sap.ui.define([
 				};
 
 				if (!oEvent.targetTouches) {
-					jQuery(window.document).bind('mousemove', this.handleMoveCall);
-					jQuery(window.document).bind('selectstart', this.preventSelect);
+					jQuery(window.document).on('mousemove', this.handleMoveCall);
+					jQuery(window.document).on('selectstart', this.preventSelect);
 					ControlEvents.bindAnyEvent(jQuery.proxy(this.onAnyEvent, this));
 				}
 			}
@@ -482,8 +482,8 @@ sap.ui.define([
 			this.bGripMousedown = false;
 
 			if (this.handleMoveCall) {
-				jQuery(window.document).unbind('mousemove', this.handleMoveCall);
-				jQuery(window.document).unbind('selectstart', this.preventSelect);
+				jQuery(window.document).off('mousemove', this.handleMoveCall);
+				jQuery(window.document).off('selectstart', this.preventSelect);
 				ControlEvents.unbindAnyEvent(this.onAnyEvent);
 
 				if ( this.iStartLeft != ( this.getOffsetLeft(this.oMovingGrip) + this.iShiftGrip )) {

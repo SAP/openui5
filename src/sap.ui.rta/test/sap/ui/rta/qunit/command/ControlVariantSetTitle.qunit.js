@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	Layer,
@@ -21,6 +22,7 @@ sap.ui.define([
 	VariantManagement,
 	VariantModel,
 	FlexTestAPI,
+	VariantManagementState,
 	sinon
 ) {
 	"use strict";
@@ -28,7 +30,7 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a variant management control ...", {
-		before: function () {
+		before: function() {
 			var oManifestObj = {
 				"sap.app": {
 					id: "MyComponent",
@@ -41,14 +43,14 @@ sap.ui.define([
 			this.oManifest = new Manifest(oManifestObj);
 
 			this.oMockedAppComponent = {
-				getLocalId: function () {},
-				getModel: function () {
+				getLocalId: function() {},
+				getModel: function() {
 					return this.oModel;
 				}.bind(this),
 				getId: function() {
 					return "RTADemoAppMD";
 				},
-				getManifest: function () {
+				getManifest: function() {
 					return this.oManifest;
 				}.bind(this)
 			};
@@ -81,48 +83,49 @@ sap.ui.define([
 
 			var oVariant = {
 				content: {
-					fileName:"variant0",
+					fileName: "variant0",
 					content: {
 						title: "variant A"
 					},
 					layer: Layer.CUSTOMER,
-					variantReference:"variant00",
+					variantReference: "variant00",
 					reference: "Dummy.Component"
 				},
-				controlChanges : [
+				controlChanges: [
 					{
-						fileName:"change44",
+						fileName: "change44",
 						layer: Layer.CUSTOMER
 					},
 					{
-						fileName:"change45",
+						fileName: "change45",
 						layer: Layer.CUSTOMER
 					}
 				]
 			};
 
 			sinon.stub(this.oModel, "getVariant").returns(oVariant);
-			sinon.stub(this.oModel.oVariantController, "_setVariantData").returns(1);
-			sinon.stub(this.oModel.oVariantController, "_updateChangesForVariantManagementInMap");
+			sinon.stub(VariantManagementState, "setVariantData").returns(1);
+			sinon.stub(VariantManagementState, "updateChangesForVariantManagementInMap");
+			sinon.stub(VariantManagementState, "getContent").returns({});
 		},
-		after: function () {
+		after: function() {
 			this.oManifest.destroy();
 			this.oModel.destroy();
 			this.oGetAppComponentForControlStub.restore();
 			this.oGetComponentClassNameStub.restore();
 		},
-		beforeEach : function () {
+		beforeEach: function() {
 			this.oVariantManagement = new VariantManagement("variantMgmtId1");
 			this.oVariantManagement.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 		},
-		afterEach : function () {
+		afterEach: function() {
 			this.oVariantManagement.destroy();
 			sandbox.restore();
 		}
-	}, function () {
-		QUnit.test("when calling command factory for setTitle and undo", function (assert) {
+	}, function() {
+		QUnit.test("when calling command factory for setTitle and undo", function(assert) {
 			var oDummyOverlay = {
-				getVariantManagement : function() {
+				getVariantManagement: function() {
 					return "idMain1--variantManagementOrdersTable";
 				}
 			};
@@ -136,12 +139,12 @@ sap.ui.define([
 			return CommandFactory.getCommandFor(this.oVariantManagement, "setTitle", {
 				newText: sNewText
 			}, oDesignTimeMetadata, mFlexSettings)
-				.then(function (oCommand) {
+				.then(function(oCommand) {
 					oControlVariantSetTitleCommand = oCommand;
 					assert.ok(oControlVariantSetTitleCommand, "control variant setTitle command exists for element");
 					return oControlVariantSetTitleCommand.execute();
 				})
-				.then(function () {
+				.then(function() {
 					var oTitleChange = oControlVariantSetTitleCommand.getVariantChange();
 					var oPreparedChange = oControlVariantSetTitleCommand.getPreparedChange();
 					assert.equal(oPreparedChange, oTitleChange, "then the prepared change is available");
@@ -153,7 +156,7 @@ sap.ui.define([
 					assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 					return oControlVariantSetTitleCommand.undo();
 				}.bind(this))
-				.then(function () {
+				.then(function() {
 					var oPreparedChange = oControlVariantSetTitleCommand.getPreparedChange();
 					assert.notOk(oPreparedChange, "then no prepared change is available after undo");
 					var oData = oControlVariantSetTitleCommand.oModel.getData();
@@ -162,13 +165,13 @@ sap.ui.define([
 					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
 					assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 				}.bind(this))
-				.catch(function (oError) {
+				.catch(function(oError) {
 					assert.ok(false, "catch must never be called - Error: " + oError);
 				});
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
 });

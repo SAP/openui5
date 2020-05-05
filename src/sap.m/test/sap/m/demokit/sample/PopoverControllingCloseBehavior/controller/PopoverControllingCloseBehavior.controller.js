@@ -1,17 +1,16 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/m/MessageToast',
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageToast, Fragment, Controller, JSONModel) {
+	], function(MessageToast, Fragment, Controller, JSONModel) {
 	"use strict";
 
 	var PopoverController = Controller.extend("sap.m.sample.PopoverControllingCloseBehavior.controller.PopoverControllingCloseBehavior", {
 
 		onInit: function () {
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			oModel.setSizeLimit(10);
 			this.getView().setModel(oModel);
 		},

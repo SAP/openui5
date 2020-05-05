@@ -2,6 +2,12 @@
  * ${copyright}
  */
 
+// Ensure that sap.ui.unified is loaded before the module dependencies will be required.
+// Loading it synchronously is the only compatible option and doesn't harm when sap.ui.unified
+// already has been loaded asynchronously (e.g. via a dependency declared in the manifest)
+sap.ui.getCore().loadLibrary("sap.ui.unified");
+
+
 // Provides control sap.m.ColorPalette
 sap.ui.define([
 	'sap/ui/core/Control',
@@ -883,7 +889,7 @@ sap.ui.define([
 			if (oItemInfo.bIsLastItem && oItemInfo.bIsInTheLastColumn) {
 				oEvent.preventDefault(); //browser's scrolling should be prevented
 
-				this.fireEvent(ItemNavigation.Events.BorderReached, {// Arrow down on last item should fire the event "BorderRеached"
+				this.fireEvent(ItemNavigation.Events.BorderReached, {// Arrow down on last item should fire the event "BorderReached"
 					index: iCurrentIndex,
 					event: oEvent
 				});

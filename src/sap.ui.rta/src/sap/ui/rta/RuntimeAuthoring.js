@@ -1065,6 +1065,7 @@ function(
 
 	RuntimeAuthoring.prototype._handleDiscard = function() {
 		var sLayer = this.getLayer();
+		this.getCommandStack().removeAllCommands();
 		RuntimeAuthoring.enableRestart(sLayer, this.getRootControlInstance());
 		if (!FlexUtils.getUshellContainer()) {
 			var oReloadInfo = {
@@ -1075,7 +1076,6 @@ function(
 			return this._triggerHardReload(oReloadInfo);
 		}
 		var mParsedHash = this._handleDraftParameter(FlexUtils.getParsedURLHash());
-		this.getCommandStack().removeAllCommands();
 		this._triggerCrossAppNavigation(mParsedHash);
 		return this.stop(true, true);
 	};
@@ -1599,10 +1599,11 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._triggerCrossAppNavigation = function(mParsedHash) {
-		if (FlexUtils.getUshellContainer() && this.getLayer() !== Layer.USER) {
-			var oCrossAppNav = FlexUtils.getUshellContainer().getService("CrossApplicationNavigation");
-			oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
-			return Promise.resolve(true);
+		if (this.getLayer() !== Layer.USER) {
+			return FlexUtils.ifUShellContainerThen(function(aServices) {
+				aServices[0].toExternal(this._buildNavigationArguments(mParsedHash));
+				return Promise.resolve(true);
+			}.bind(this), ["CrossApplicationNavigation"]);
 		}
 	};
 
@@ -1648,15 +1649,17 @@ function(
 			return;
 		}
 
-		var oCrossAppNav = FlexUtils.getUshellContainer().getService("CrossApplicationNavigation");
-		var mParsedHash = FlexUtils.getParsedURLHash();
-		if (!oCrossAppNav.toExternal || !mParsedHash) {
-			return;
-		}
+		return FlexUtils.ifUShellContainerThen(function(aServices) {
+			var oCrossAppNav = aServices[0];
+			var mParsedHash = FlexUtils.getParsedURLHash();
+			if (!oCrossAppNav.toExternal || !mParsedHash) {
+				return;
+			}
 
-		mParsedHash = this._handleMaxLayerParameter(mParsedHash, bDeleteMaxLayer);
-		mParsedHash = this._handleDraftParameter(mParsedHash);
-		return mParsedHash;
+			mParsedHash = this._handleMaxLayerParameter(mParsedHash, bDeleteMaxLayer);
+			mParsedHash = this._handleDraftParameter(mParsedHash);
+			return mParsedHash;
+		}.bind(this), ["CrossApplicationNavigation"]);
 	};
 
 	/**
@@ -1722,19 +1725,22 @@ function(
 			oReloadInfo.hasHigherLayerChanges = aReloadInfo[0];
 			oReloadInfo.hasDraftChanges = aReloadInfo[1];
 			if (oReloadInfo.hasHigherLayerChanges || oReloadInfo.hasDraftChanges) {
-				return this._handleReloadMessageBoxOnStart(oReloadInfo).then(function () {
-					var oUshellContainer = FlexUtils.getUshellContainer();
-					if (oUshellContainer) {
-						var oCrossAppNav = oUshellContainer.getService("CrossApplicationNavigation");
-						var mParsedHash = FlexUtils.getParsedURLHash();
-						if (oCrossAppNav.toExternal && mParsedHash) {
-							return this._reloadWithMaxLayerOrDraftParam(mParsedHash, oCrossAppNav, oReloadInfo);
+				return this._handleReloadMessageBoxOnStart(oReloadInfo)
+					.then(function() {
+						var oCrossAppNav;
+						FlexUtils.ifUShellContainerThen(function(aServices) {
+							oCrossAppNav = aServices[0];
+						}, ["CrossApplicationNavigation"]);
+						if (oCrossAppNav) {
+							var mParsedHash = FlexUtils.getParsedURLHash();
+							if (oCrossAppNav.toExternal && mParsedHash) {
+								return this._reloadWithMaxLayerOrDraftParam(mParsedHash, oCrossAppNav, oReloadInfo);
+							}
+						} else {
+							RuntimeAuthoring.enableRestart(oReloadInfo.layer, oReloadInfo.selector);
+							this._triggerHardReload(oReloadInfo);
 						}
-					} else {
-						RuntimeAuthoring.enableRestart(oReloadInfo.layer, oReloadInfo.selector);
-						this._triggerHardReload(oReloadInfo);
-					}
-				}.bind(this));
+					}.bind(this));
 			}
 		}.bind(this));
 	};

@@ -1938,7 +1938,7 @@ sap.ui.define([
 	DynamicPage.prototype._onTitleMouseOut = DynamicPage.prototype._onVisualIndicatorMouseOut;
 
 	/**
-	 * Еxpands/collapses the header when allowed to do so by the internal rules of the <code>DynamicPage</code>.
+	 * Expands/collapses the header when allowed to do so by the internal rules of the <code>DynamicPage</code>.
 	 * @param {boolean} bUserInteraction - indicates if title expand/collapse was caused by user interaction (scroll, collapse button press, etc.)
 	 * @private
 	 */

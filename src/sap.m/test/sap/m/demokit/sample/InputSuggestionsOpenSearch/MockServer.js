@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/util/MockServer'],
 
 				// use explored app's demo data
 				this._productCount = 0;
-				jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
+				jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 					async: false,
 					success: function (data) {
 						this._productData = data;
@@ -47,4 +47,4 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/util/MockServer'],
 
 	return MockServer;
 
-}, /* bExport= */ true);
+});

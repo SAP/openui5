@@ -3,7 +3,13 @@
 	"sap.app": {
 		"id": "test.sap.ui.fl.testApps.controlPersonalizationAPIChanges",
 		"type": "application",
-		"i18n": "i18n/i18n.properties",
+		"i18n": {
+		  "bundleUrl": "i18n/i18n.properties",
+		  "supportedLocales": [
+		    ""
+		  ],
+		  "fallbackLocale": ""
+		},
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
@@ -61,7 +67,11 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "test.sap.ui.fl.testApps.controlPersonalizationAPIChanges.i18n.i18n"
+					"bundleName": "test.sap.ui.fl.testApps.controlPersonalizationAPIChanges.i18n.i18n",
+					"supportedLocales": [
+					  ""
+					],
+					"fallbackLocale": ""
 				}
 			}
 		},

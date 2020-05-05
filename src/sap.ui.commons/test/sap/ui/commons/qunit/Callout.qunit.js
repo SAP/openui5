@@ -73,7 +73,7 @@ sap.ui.define([
 	});
 
 	function isCalloutVisible(){
-		return jQuery("#callout").filter(":visible").size() > 0;
+		return jQuery("#callout").filter(":visible").length > 0;
 	}
 
 	QUnit.module("Callout: open and close");

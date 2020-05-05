@@ -129,6 +129,7 @@ sap.ui.define([
 	BaseContent.prototype.exit = function () {
 		this._oServiceManager = null;
 		this._oDataProviderFactory = null;
+		this._oIconFormatter = null;
 
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();
@@ -369,6 +370,11 @@ sap.ui.define([
 
 	BaseContent.prototype.setDataProviderFactory = function (oDataProviderFactory) {
 		this._oDataProviderFactory = oDataProviderFactory;
+		return this;
+	};
+
+	BaseContent.prototype.setIconFormatter = function (oIconFormatter) {
+		this._oIconFormatter = oIconFormatter;
 		return this;
 	};
 

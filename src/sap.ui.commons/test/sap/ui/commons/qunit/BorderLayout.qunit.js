@@ -232,23 +232,23 @@ sap.ui.define([
 
 	QUnit.test("Getting Area DOM Elements", function(assert) {
 		var oArea = oLayout.getAreaById("top");
-		assert.equal(oArea.$().size(), 1, "Area Element Top");
+		assert.equal(oArea.$().length, 1, "Area Element Top");
 		assert.ok(oArea.$().hasClass("sapUiBorderLayoutTop"), "Area Element Top");
 
 		oArea = oLayout.getAreaById("begin");
-		assert.equal(oArea.$().size(), 1, "Area Element Begin");
+		assert.equal(oArea.$().length, 1, "Area Element Begin");
 		assert.ok(oArea.$().hasClass("sapUiBorderLayoutBegin"), "Area Element Begin");
 
 		oArea = oLayout.getAreaById("center");
-		assert.equal(oArea.$().size(), 1, "Area Element Center");
+		assert.equal(oArea.$().length, 1, "Area Element Center");
 		assert.ok(oArea.$().hasClass("sapUiBorderLayoutCenter"), "Area Element Center");
 
 		oArea = oLayout.getAreaById("end");
-		assert.equal(oArea.$().size(), 1, "Area Element End");
+		assert.equal(oArea.$().length, 1, "Area Element End");
 		assert.ok(oArea.$().hasClass("sapUiBorderLayoutEnd"), "Area Element End");
 
 		oArea = oLayout.getAreaById("bottom");
-		assert.equal(oArea.$().size(), 1, "Area Element Bottom");
+		assert.equal(oArea.$().length, 1, "Area Element Bottom");
 		assert.ok(oArea.$().hasClass("sapUiBorderLayoutBottom"), "Area Element Bottom");
 	});
 });

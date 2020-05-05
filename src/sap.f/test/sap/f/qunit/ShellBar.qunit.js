@@ -1,13 +1,13 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/f/SearchManager",
 	"sap/f/ShellBar",
 	"sap/f/shellBar/Factory",
 	"sap/f/ShellBarRenderer",
 	"sap/f/shellBar/ResponsiveHandler",
 	"sap/f/shellBar/AdditionalContentSupport",
 	"sap/f/shellBar/ContentButton",
-	"sap/f/shellBar/ControlSpacer",
 	"sap/m/ToolbarSpacer",
 	"sap/m/OverflowToolbarButton",
 	"sap/ui/core/theming/Parameters",
@@ -17,13 +17,13 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ],
 function (
+	SearchManager,
 	ShellBar,
 	Factory,
 	ShellBarRenderer,
 	ResponsiveHandler,
 	AdditionalContentSupport,
 	ContentButton,
-	ControlSpacer,
 	ToolbarSpacer,
 	OverflowToolbarButton,
 	Parameters,
@@ -39,8 +39,8 @@ function (
 	var _getVisibleControlsCount = function (oControl) {
 		var iVisibleControls = 0;
 
-		oControl._oOverflowToolbar.getContent().forEach(function (oItem) {
-			iVisibleControls += oItem.getVisible() ? 1 : 0;
+		oControl._aControls.forEach(function (oItem) {
+			iVisibleControls += oItem.$().css("visibility") === "visible" ? 1 : 0 ;
 		});
 
 		return iVisibleControls;
@@ -50,10 +50,12 @@ function (
 
 	QUnit.test("Proper initialization", function (assert) {
 		// Arrange
-		var oSB;
+		var oSB,
+			_aOverflowControls;
 
 		// Act
 		oSB = new ShellBar();
+		_aOverflowControls = oSB._getOverflowToolbar().getContent();
 
 		// Factory
 		assert.ok(oSB._oFactory instanceof Factory, "Factory is instance of correct class");
@@ -66,9 +68,8 @@ function (
 		// Others
 		assert.ok(oSB._bOTBUpdateNeeded, "Initial update requirement registered");
 		assert.ok(oSB._oToolbarSpacer instanceof ToolbarSpacer, "Toolbar spacer initialized");
-		assert.ok(oSB._oControlSpacer instanceof ControlSpacer, "Control spacer initialized");
 		assert.ok(oSB._oResponsiveHandler instanceof ResponsiveHandler, "ResponsiveHandler initialized");
-		assert.ok(Array.isArray(oSB._aOverflowControls), "Overflow controls collection initialized");
+		assert.ok(Array.isArray(_aOverflowControls), "Overflow controls collection initialized");
 
 		// Cleanup
 		oSB.destroy();
@@ -309,7 +310,7 @@ function (
 		// Act
 		this.oSB.setTitle("Title");
 		this.oSB.setShowMenuButton(true);
-		this.oSB._assignControlsToOverflowToolbar();
+		this.oSB._assignControls();
 
 
 		// Assert
@@ -322,7 +323,7 @@ function (
 		// Act
 		this.oSB.setMenu(new Menu({}));
 		this.oSB.setShowMenuButton(false);
-		this.oSB._assignControlsToOverflowToolbar();
+		this.oSB._assignControls();
 
 		// Assert
 		assert.strictEqual(this.oSB._oTitleControl, this.oSB._oMegaMenu,
@@ -333,7 +334,7 @@ function (
 
 		// Act
 		this.oSB.setTitle("");
-		this.oSB._assignControlsToOverflowToolbar();
+		this.oSB._assignControls();
 		// Assert
 		assert.strictEqual(this.oSB._oTitleControl,null,
 			"Configuration without MenuButton is correctly rendered");
@@ -377,7 +378,7 @@ function (
 
 	QUnit.test("onBeforeRendering", function (assert) {
 		// Arrange
-		var oAssignControlsToOverflowToolbarSpy = sinon.spy(this.oSB, "_assignControlsToOverflowToolbar");
+		var oAssignControlsToOverflowToolbarSpy = sinon.spy(this.oSB, "_assignControls");
 
 		// Act
 		this.oSB.onBeforeRendering();
@@ -453,50 +454,55 @@ function (
 		assert.ok(oOTB.isA("sap.m.OverflowToolbar"), "Method returned correct object");
 	});
 
-	QUnit.test("_assignControlsToOverflowToolbar - robustness and optimization", function (assert) {
+	QUnit.test("_assignControls - robustness and optimization", function (assert) {
 		// Arrange
 		this.oSB._bOTBUpdateNeeded = false;
-		this.oSB._aOverflowControls = undefined;
+		this.oSB._bLeftBoxUpdateNeeded = false;
+		this.oSB._bRightBoxUpdateNeeded = false;
+		this.oSB._aControls = undefined;
 
 		// Act
-		this.oSB._assignControlsToOverflowToolbar();
+		this.oSB._assignControls();
 
 		// Assert
-		assert.strictEqual(this.oSB._aOverflowControls, undefined, "Internal array remains undefined");
+		assert.strictEqual(this.oSB._aControls, undefined, "Internal array remains undefined");
 
 		// Arrange
 		this.oSB._bOTBUpdateNeeded = true;
 		this.oSB._oOverflowToolbar = undefined;
 
 		// Act
-		this.oSB._assignControlsToOverflowToolbar();
+		this.oSB._assignControls();
 
 		// Assert
-		assert.strictEqual(this.oSB._aOverflowControls, undefined, "Internal array remains undefined");
+		assert.strictEqual(this.oSB._getOverflowToolbar(), undefined, "Internal array remains undefined");
 	});
 
-	QUnit.test("_assignControlsToOverflowToolbar - empty ShellBar", function (assert) {
+	QUnit.test("_assignControls - empty ShellBar", function (assert) {
 		// Arrange
-		var oOTB = this.oSB._oOverflowToolbar;
+		var oOTB = this.oSB._oOverflowToolbar,
+			oControls = this.oSB._aControls;
 
 		// Act
 		this.oSB._bOTBUpdateNeeded = true;
-		this.oSB._assignControlsToOverflowToolbar();
+		this.oSB._assignControls();
 
 		// Assert
-		assert.strictEqual(oOTB.getContent().length, 2, "Only 2 spacers added to OverflowToolbar");
-		assert.ok(Array.isArray(this.oSB._aOverflowControls), "Property '_aOverflowControls' of type array is created");
-		assert.strictEqual(this.oSB._aOverflowControls.length, 0, "Array '_aOverflowControls' is empty");
+		assert.strictEqual(oOTB.getContent().length, 1, "Only OverflowToolbar spacer added to OverflowToolbar");
+		assert.ok(Array.isArray(oControls), "Property '_aOverflowControls' of type array is created");
+		assert.strictEqual(oControls.length, 1, "Array '_aControls' is tracking all controls inside SB");
 		assert.strictEqual(this.oSB._bOTBUpdateNeeded, false,
 			"Property '_bOTBUpdateNeeded' set to false after method called");
 	});
 
-	QUnit.test("_assignControlsToOverflowToolbar - Full ShellBar", function (assert) {
+	QUnit.test("_assignControls - Full ShellBar", function (assert) {
 		// Arrange
 		var oOTB = this.oSB._oOverflowToolbar,
 			oAdditionalButton1 = new OverflowToolbarButton(),
 			oAdditionalButton2 = new OverflowToolbarButton(),
-			aContent;
+			aContent,
+			aItems,
+			aOverflowControls;
 
 		this.oSB.setShowNavButton(true);
 		this.oSB.setShowMenuButton(true);
@@ -504,7 +510,7 @@ function (
 		this.oSB.setTitle("Test title");
 		this.oSB.setSecondTitle("Test second title");
 		this.oSB.setShowCopilot(true);
-		this.oSB.setSearchManager(new sap.f.SearchManager());
+		this.oSB.setSearchManager(new SearchManager());
 		this.oSB.setShowSearch(true);
 		this.oSB.setShowNotifications(true);
 		this.oSB.setShowProductSwitcher(true);
@@ -514,39 +520,43 @@ function (
 		this.oSB.addAdditionalContent(oAdditionalButton2);
 
 		// Act
-		this.oSB._bOTBUpdateNeeded = true;
-		this.oSB._assignControlsToOverflowToolbar();
+
+		this.oSB.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
 
 		// Arrange
 		aContent = oOTB.getContent();
-
+		aItems = this.oSB._aControls;
+		aOverflowControls = this.oSB._getOverflowToolbar().getContent();
 		// Assert
-		assert.strictEqual(aContent.length, 15, "Expected number of controls added to OverflowToolbar");
+		assert.strictEqual(aContent.length, 6, "Expected number of controls added to OverflowToolbar");
+		// Assert
+		assert.strictEqual(aItems.length, 14, "Expected number of controls added to OverflowToolbar");
 
 		// Assert - Order of controls in aggregation
-		assert.ok(aContent[0] === this.oSB._oNavButton, "Control at index 0 is NavButton");
-		assert.ok(aContent[1] === this.oSB._oMenuButton, "Control at index 1 is MenuButton");
-		assert.ok(aContent[2] === this.oSB._oHomeIcon, "Control at index 2 is HomeIcon");
-		assert.ok(aContent[3] === this.oSB._oPrimaryTitle, "Control at index 3 is PrimaryTitle");
-		assert.ok(aContent[4] === this.oSB._oSecondTitle, "Control at index 4 is SecondTitle");
-		assert.ok(aContent[5] === this.oSB._oControlSpacer, "Control at index 5 is ControlSpacer");
-		assert.ok(aContent[6] === this.oSB._oCopilot, "Control at index 6 is CoPilot");
-		assert.ok(aContent[7] === this.oSB._oToolbarSpacer, "Control at index 7 is ToolbarSpcer");
-		assert.ok(aContent[8] === this.oSB._oManagedSearch, "Control at index 8 is Managed Search");
-		assert.ok(aContent[9] === this.oSB._oSearch, "Control at index 8 is Search");
-		assert.ok(aContent[10] === this.oSB._oNotifications, "Control at index 9 is Notifications");
-		assert.ok(aContent[11] === oAdditionalButton1, "Control at index 10 is AdditionalButton 1");
-		assert.ok(aContent[12] === oAdditionalButton2, "Control at index 11 is AdditionalButton 2");
-		assert.ok(aContent[13] === this.oSB._oAvatarButton, "Control at index 12 is AvatarButton");
-		assert.ok(aContent[14] === this.oSB._oProductSwitcher, "Control at index 13 is ProductSwitcher");
+		assert.ok(aItems[0] === this.oSB._oNavButton, "Control at index 0 in SB is NavButton");
+		assert.ok(aItems[1] === this.oSB._oMenuButton, "Control at index 2 in SB is MenuButton");
+		assert.ok(aItems[2] === this.oSB._oHomeIcon, "Control at index 3 in SB is HomeIcon");
+		assert.ok(aItems[3] === this.oSB._oPrimaryTitle, "Control at index 4 in SB is PrimaryTitle");
+		assert.ok(aItems[4] === this.oSB._oSecondTitle, "Control at index 5 in SB is SecondTitle");
+		assert.ok(aItems[5] === this.oSB._oCopilot, "Control at index 6 in SB is CoPilot");
+		assert.ok(aItems[6] === this.oSB._oToolbarSpacer, "Control at index 7 in SB is ToolbarSpcer");
+		assert.ok(aItems[7] === this.oSB._oManagedSearch, "Control at index 8 in SB is Managed Search");
+		assert.ok(aItems[8] === this.oSB._oSearch, "Control at index 9 in SB is Search");
+		assert.ok(aItems[9] === this.oSB._oNotifications, "Control at index 10 in SB is Notifications");
+		assert.ok(aItems[10] === oAdditionalButton1, "Control at index 11 in SB is AdditionalButton 1");
+		assert.ok(aItems[11] === oAdditionalButton2, "Control at index 12 in SB is AdditionalButton 2");
+		assert.ok(aItems[12] === this.oSB._oAvatarButton, "Control at index 13 in SB is AvatarButton");
+		assert.ok(aItems[13] === this.oSB._oProductSwitcher, "Control at index 9 in OT is ProductSwitcher");
 
 		// Assert - _aOverflowControls
-		assert.strictEqual(this.oSB._aOverflowControls.length, 5, "Array '_aOverflowControls' has 5 controls in it");
-		assert.ok(this.oSB._aOverflowControls[0] === this.oSB._oManagedSearch, "Control at index 8 is Managed Search");
-		assert.ok(this.oSB._aOverflowControls[1] === this.oSB._oSearch, "Control at index 0 is Search");
-		assert.ok(this.oSB._aOverflowControls[2] === this.oSB._oNotifications, "Control at index 1 is Notifications");
-		assert.ok(this.oSB._aOverflowControls[3] === oAdditionalButton1, "Control at index 2 is AdditionalButton 1");
-		assert.ok(this.oSB._aOverflowControls[4] === oAdditionalButton2, "Control at index 3 is AdditionalButton 2");
+		assert.strictEqual(aOverflowControls.length, 6, "Overflow Toolbar has 5 controls in it");
+		assert.ok(aOverflowControls[0] === this.oSB._oToolbarSpacer, "Control at index 0 is Toolbar Spacer");
+		assert.ok(aOverflowControls[1] === this.oSB._oManagedSearch, "Control at index 1 is Managed Search");
+		assert.ok(aOverflowControls[2] === this.oSB._oSearch, "Control at index 2 is Search");
+		assert.ok(aOverflowControls[3] === this.oSB._oNotifications, "Control at index 3 is Notifications");
+		assert.ok(aOverflowControls[4] === oAdditionalButton1, "Control at index 4 is AdditionalButton 1");
+		assert.ok(aOverflowControls[5] === oAdditionalButton2, "Control at index 5 is AdditionalButton 2");
 	});
 
 	// Responsiveness
@@ -557,21 +567,6 @@ function (
 		afterEach: function () {
 			this.oSB.destroy();
 		}
-	});
-
-	QUnit.test("ControlSpacer's width change", function (assert) {
-
-		// Arrange
-		var oControl = this.oSB;
-
-		oControl.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
-
-		// Act
-		oControl._oControlSpacer.setWidth("200px");
-
-		// Assert
-		assert.strictEqual(oControl._oControlSpacer.$().width(), 200, "Width is set on the DomRef without rerendering");
 	});
 
 	QUnit.test("ResponsiveHandler _handleResize on size changed", function (assert) {
@@ -595,41 +590,16 @@ function (
 		oControl = null; oStub = null;
 	});
 
-	QUnit.test("ResponsiveHandler _initSizes method", function (assert) {
-
-		// Arrange
-		var oControl = this.oSB;
-
-		oControl.setHomeIcon(sap.ui.require.toUrl("sap/ui/documentation/sdk/images/logo_sap.png"));
-		oControl.setShowNavButton(true);
-		oControl.setShowMenuButton(true);
-		oControl.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
-
-			// Act
-			oControl._oResponsiveHandler._initResize();
-
-			// Assert
-			assert.strictEqual(oControl._oResponsiveHandler._iStaticWidth, oControl._oHomeIcon.$().outerWidth(true) /*logo*/ + 36 + 4 * 2 /*nav button*/ + 36 + 4 * 1 /*menu button*/,
-			"We calculate size of the logo image " +
-			"side margins of the three elements + twice incrementing with 36 (size of the button)");
-
-
-	});
-
 	QUnit.test("Sizes are cought when the theme is loaded", function (assert) {
 			// asert
-			var oInitResizeSpy = sinon.spy(this.oSB._oResponsiveHandler, "_initResize");
 			var oHandleResizeSpy = sinon.spy(this.oSB._oResponsiveHandler, "_handleResize");
 
 			// act
 			this.oSB.onThemeChanged();
 
 			// asert
-			assert.strictEqual(oInitResizeSpy.callCount, 1, "_initResize is called when the theme is applied");
 			assert.strictEqual(oHandleResizeSpy.callCount, 1, "_handleResize is called when the theme is applied and the values are cought");
 
-			oInitResizeSpy.restore();
 			oHandleResizeSpy.restore();
 	});
 
@@ -877,10 +847,9 @@ function (
 
 	QUnit.module("Managed Search", {
 		beforeEach: function () {
-			var oSearchManager = new sap.f.SearchManager();
+			var oSearchManager = new SearchManager();
 
 			oSearchManager._oSearch.setIsOpen(true);
-			oSearchManager._oSearch.setPhoneMode(true);
 
 			this.oSB = new ShellBar({
 				title: "Application title",
@@ -894,6 +863,8 @@ function (
 				showProductSwitcher: true,
 				showMenuButton: true
 			});
+
+
 			this.oSB.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
@@ -905,30 +876,36 @@ function (
 
 	QUnit.test("ResponsiveHandler with open search", function (assert) {
 		// Assert
-		assert.strictEqual(_getVisibleControlsCount(this.oSB), 12, "phone mode requirements passed");
+		assert.strictEqual(_getVisibleControlsCount(this.oSB), 11, "phone mode requirements passed");
+		assert.strictEqual(this.oSB.hasStyleClass("sapFShellBarFullSearch"), false,
+			"Full width search class list was added to Shell Bar.");
 
 		// Act
 		this.oSB._oResponsiveHandler._transformToPhoneState();
 
 		// Assert
 		assert.strictEqual(_getVisibleControlsCount(this.oSB), 1, "phone mode requirements passed");
+		assert.strictEqual(this.oSB.hasStyleClass("sapFShellBarFullSearch"), true,
+			"Full width search class list was added to Shell Bar.");
 
 		// Act
 		this.oSB._oResponsiveHandler._transformToRegularState();
 
 		// Assert
-		assert.strictEqual(_getVisibleControlsCount(this.oSB), 12, "phone mode requirements passed");
+		assert.strictEqual(_getVisibleControlsCount(this.oSB), 11, "phone mode requirements passed");
+		assert.strictEqual(this.oSB.hasStyleClass("sapFShellBarFullSearch"), false,
+			"Full width search class list was added to Shell Bar.");
 	});
 
 	QUnit.test("LayoutData of Search", function (assert) {
 		// Arrange
-		var oSearchManager = this.oSB.getSearchManager(),
+		var oSB = this.oSB,
+		oSearchManager = this.oSB.getSearchManager(),
 			oSearchEventDelegate = {
 					"onAfterRendering": function() {
 						oSearchManager._oSearch.removeEventDelegate(oSearchEventDelegate);
-
 						// Assert
-						assert.strictEqual(oSearchManager._oSearch.getLayoutData().getPriority(), "AlwaysOverflow",
+						assert.strictEqual(oSB._oSearch.getLayoutData().getPriority(), "AlwaysOverflow",
 							"Always priority is set when Search is not open and it is in the overflow menu of the OFT");
 
 						// Clean up
@@ -953,6 +930,7 @@ function (
 		oSearchManager._oSearch.addEventDelegate(oSearchEventDelegate);
 		this.oSB.addEventDelegate(oOSBEventDelegate, this);
 		this.oSB._oResponsiveHandler._transformToPhoneState();
+		Core.applyChanges();
 	});
 
 	QUnit.test("Mobile requirements with both configuration - with or without menu button", function (assert) {
@@ -963,15 +941,17 @@ function (
 		this.oSB._oSearch.firePress();
 
 		// Assert
-		assert.strictEqual(this.oSB._oHomeIcon.getVisible() || this.oSB._oMenuButton.getVisible(), false, "Search " +
+		assert.strictEqual(this.oSB._oHomeIcon.$().css("visibility"), "hidden", true, "Search " +
+			"bar hides home button on left on mobile with menu button");
+		assert.strictEqual(this.oSB._oMenuButton.$().css("visibility"), "hidden", true, "Search " +
 			"bar hides all the content on left on mobile with menu button");
-
 		// Act
 		this.oSB.setShowMenuButton(false);
+		Core.applyChanges();
 
 		// Assert
-		assert.strictEqual(this.oSB._oHomeIcon.getVisible() || this.oSB._oMegaMenu.getVisible(), false, "Search bar " +
-			"hides all the content on left on mobile with mega menu");
+		assert.strictEqual(this.oSB._oMegaMenu.$().css("visibility"), "hidden", true, "Search " +
+			"bar hides all the content on left on mobile with menu button");
 
 	});
 

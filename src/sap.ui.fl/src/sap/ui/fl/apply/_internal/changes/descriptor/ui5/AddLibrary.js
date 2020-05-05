@@ -38,7 +38,11 @@ sap.ui.define([
 	}
 
 	/**
-	 * Descriptor Change Merger for changeType "appdescr_ui5_addLibraries".
+	 * Descriptor change merger for change type <code>appdescr_ui5_addLibraries</code>.
+	 * Loops over one change which might contain several libraries.
+	 * If one library already exists, merge it, else add new library to manifest.
+	 *
+	 * Available for both runtime and build {@link sap.ui.fl.apply._internal.changes.descriptor.Registration}.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.changes.descriptor.ui5.AddLibrary
 	 * @experimental
@@ -50,11 +54,10 @@ sap.ui.define([
 	var AddLibrary = {
 
 		/**
-		 * Loops over one changes, which might contain several libraries.
-		 * If one library already exists, merge it, else add new library to manifest.
-		 *
+		 * Method to apply the <code>appdescr_ui5_addLibraries</code> change to the manifest.
 		 * @param {object} oManifest Original manifest
-		 * @param {object} oChange Change with type "appdescr_ui5_addLibraries"
+		 * @param {object} oChange Change with type <code>appdescr_ui5_addLibraries</code>
+		 * @param {object} oChange.content.libraries Change content containing libraries names and minVersion
 		 * @returns {object} Updated manifest with merged dependencies
 		 *
 		 * @private
@@ -70,9 +73,9 @@ sap.ui.define([
 
 			Object.keys(oChangeLibs).forEach(function(sLibName) {
 				if (oManifestLibs[sLibName]) {
-					oManifest["sap.ui5"]["dependencies"]["libs"][sLibName] = _mergeExistingLibrary(oManifestLibs[sLibName], oChangeLibs[sLibName]);
+					oManifestLibs[sLibName] = _mergeExistingLibrary(oManifestLibs[sLibName], oChangeLibs[sLibName]);
 				} else {
-					oManifest["sap.ui5"]["dependencies"]["libs"][sLibName] = oChangeLibs[sLibName];
+					oManifestLibs[sLibName] = oChangeLibs[sLibName];
 				}
 			});
 			return oManifest;

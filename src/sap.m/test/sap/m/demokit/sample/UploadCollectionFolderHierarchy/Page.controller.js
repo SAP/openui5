@@ -10,7 +10,7 @@ sap.ui.define([
 	return Controller.extend("sap.m.sample.UploadCollectionFolderHierarchy.Page", {
 		onInit: function() {
 			// set mock data
-			this.oModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/UploadCollectionFolderHierarchy") + "/UploadCollectionData.json");
+			this.oModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/UploadCollectionFolderHierarchy/UploadCollectionData.json"));
 			this.getView().setModel(this.oModel);
 
 			this.oUploadCollection = this.byId("UploadCollection");
@@ -32,7 +32,7 @@ sap.ui.define([
 			var sUploadedFile = oEvent.getParameter("files")[0].fileName;
 
 			oItem = {
-				"documentId": jQuery.now().toString(), // generate Id,
+				"documentId": Date.now().toString(), // generate Id,
 				"fileName": sUploadedFile,
 				"mimeType": "",
 				"thumbnailUrl": "",
@@ -50,9 +50,9 @@ sap.ui.define([
 				}
 			}
 			this.oModel.setProperty(sCurrentPath + "/items", aItems);
-			jQuery.sap.delayedCall(2000, this, function() {
+			setTimeout(function() {
 				MessageToast.show("UploadComplete event triggered.");
-			});
+			}, 2000);
 		},
 
 		onFileDeleted: function(oEvent) {

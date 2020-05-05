@@ -14,7 +14,7 @@ sap.ui.define([
 
 	/**
 	 * <h3>Overview</h3>
-	 * The WindowCommunicationBus is responsible for core communication between а tool frame and an application window
+	 * The WindowCommunicationBus is responsible for core communication between a tool frame and an application window
 	 * Note that in each window there will be one "copy" of the class, so e.g. static properties will be instantiated again for each new window
 	 * Since we need to configure the bus for multiple tools, for each tool we should create one inheriting class.
 	 * Each of these child classes are singletons, so they will have one instance per window.

@@ -258,7 +258,7 @@ sap.ui.define([
 			assert.equal( jQuery("#myDatePicker7-input").val(), "Date", "Placeholder set");
 		}
 
-		jQuery("#myDatePicker7-icon").focus();
+		jQuery("#myDatePicker7-icon").trigger("focus");
 		qutils.triggerMouseEvent("myDatePicker7-icon", "click");
 		if (Device.support.input.placeholder) {
 			assert.equal( jQuery("#myDatePicker7-input").attr("placeholder"), "Date", "Placeholder still set after opened");

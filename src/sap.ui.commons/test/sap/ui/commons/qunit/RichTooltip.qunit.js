@@ -42,7 +42,7 @@ sap.ui.define([
 	}
 
 	function isRttVisible(sId){
-		return jQuery(sId ? document.getElementById(sId) : null).filter(":visible").size() > 0;
+		return jQuery(sId ? document.getElementById(sId) : null).filter(":visible").length > 0;
 	}
 
 	var sText, sTitle, sDefaultTitle, sImageSrc, oRtt0, oRtt1, oButton1, sRtt2Offset, sRtt2HtmlText,
@@ -249,22 +249,22 @@ sap.ui.define([
 			var jRtt1 = jQuery("#rtt1");
 
 			var jObj = jRtt1.find(".sapUiRttText");
-			assert.ok(jObj.size() == 1, "RichTooltip text section is available");
+			assert.ok(jObj.length == 1, "RichTooltip text section is available");
 			assert.equal(jObj.text(), sText, "Text in text section ok:");
 
 			jObj = jRtt1.find(".sapUiRttImage");
-			assert.ok(jObj.size() == bIconExpected ? 1 : 0, "RichTooltip image section is " + (bIconExpected ? "" : "not ") + "available");
+			assert.ok(jObj.length == bIconExpected ? 1 : 0, "RichTooltip image section is " + (bIconExpected ? "" : "not ") + "available");
 			if (bIconExpected){
 				assert.equal(jObj.attr("src"), sImageSrc, "Image Source ok:");
 			}
 
 			jObj = jRtt1.find(".sapUiRttTitle");
-			assert.ok(jObj.size() == bTitleExpected ? 1 : 0, "RichTooltip title section is " + (bTitleExpected ? "" : "not ") + "available");
+			assert.ok(jObj.length == bTitleExpected ? 1 : 0, "RichTooltip title section is " + (bTitleExpected ? "" : "not ") + "available");
 			if (bTitleExpected){
 				assert.equal(jObj.text(), sTitle, "Text in title section ok:");
 			}
 
-			assert.ok(jRtt1.find(".sapUiRttSep").size() == bTitleExpected ? 1 : 0, "RichTooltip title seperator section is " + (bTitleExpected ? "" : "not ") + "available");
+			assert.ok(jRtt1.find(".sapUiRttSep").length == bTitleExpected ? 1 : 0, "RichTooltip title seperator section is " + (bTitleExpected ? "" : "not ") + "available");
 			done();
 		});
 	}
@@ -298,8 +298,8 @@ sap.ui.define([
 			var jObjValueStateText = jQuery("#rtt2").find(".sapUiRttValueStateText");
 			var jObjText = jQuery("#rtt2").find(".sapUiRttText");
 
-			assert.ok(jObjValueStateText.size() == 1, "ValueState text section is available");
-			assert.ok(jObjText.size() == 1, "RichTooltip text section is available");
+			assert.ok(jObjValueStateText.length == 1, "ValueState text section is available");
+			assert.ok(jObjText.length == 1, "RichTooltip text section is available");
 
 			// fetch the default text to prevent any wrongly set language
 			var valueStateText = ValueStateSupport.getAdditionalText(oRtt2.getParent());

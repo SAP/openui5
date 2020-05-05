@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/ui/core/HTML",
 	"sap/ui/Device",
-	"sap/ui/core/mvc/XMLView"],
-function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, ObjectPageDynamicHeaderTitle, Text, Title, Panel, HTML, Device, XMLView) {
+	"sap/ui/core/mvc/XMLView",
+	"sap/uxap/library"],
+function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, ObjectPageDynamicHeaderTitle, Text, Title, Panel, HTML, Device, XMLView, lib) {
 
 	"use strict";
 
@@ -547,6 +548,35 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		oObjectPage._initializeScroller();
 
 		assert.ok(oObjectPage._oScroller._$Container, "ScrollEnablement private API is OK.");
+	});
+
+	QUnit.test("Section position top", function (assert) {
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			oSection = oObjectPage.getSections()[1],
+			$mobileAnchor,
+			iPositionTopBefore,
+			iPositionTopAfter,
+			fnCheckPosition = function() {
+				$mobileAnchor = oSection.$("header");
+				iPositionTopBefore = lib.Utilities.getChildPosition($mobileAnchor, oObjectPage._$contentContainer).top;
+				iPositionTopAfter;
+
+				// Act
+				oObjectPage.getDomRef().style.position = "relative";
+				iPositionTopAfter = lib.Utilities.getChildPosition($mobileAnchor, oObjectPage._$contentContainer).top;
+
+				// Check
+				assert.strictEqual(iPositionTopBefore, iPositionTopAfter, "position within contentContainer is still correct");
+				done();
+			},
+			done = assert.async();
+		if (oObjectPage.isActive()) {
+			fnCheckPosition();
+		} else {
+			oObjectPage.addEventDelegate({
+				onAfterRendering: fnCheckPosition
+			});
+		}
 	});
 
 	QUnit.module("ObjectPage scrolling without view");

@@ -99,9 +99,9 @@ sap.ui.define([
 		statArea.removeChild(dummyDiv);
 		dummyDiv = null;
 
-		jQuery(document.getElementById(this.id)).bind("mousedown", jQuery.proxy(this.handleGeneralMouseDown, this));
-		jQuery(document.getElementById(this.id + "-img")).bind("mousedown", jQuery.proxy(this.handleMouseDown, this));
-		jQuery(document.getElementById(this.id + "-marker")).bind("mousedown", jQuery.proxy(this.handleMouseDown, this));
+		jQuery(document.getElementById(this.id)).on("mousedown", jQuery.proxy(this.handleGeneralMouseDown, this));
+		jQuery(document.getElementById(this.id + "-img")).on("mousedown", jQuery.proxy(this.handleMouseDown, this));
+		jQuery(document.getElementById(this.id + "-marker")).on("mousedown", jQuery.proxy(this.handleMouseDown, this));
 		this._imgOffset = jQuery(document.getElementById(this.id + "-img")).offset();
 
 		this.adaptSliderBar(this.oCurrentColor);
@@ -179,15 +179,15 @@ sap.ui.define([
 		this.handleMousePos(e);
 		e.preventDefault(); // no drag&drop of the color image!
 		jQuery(document)
-			.bind("mousemove", jQuery.proxy(this.handleMousePos, this))
-			.bind("mouseup", jQuery.proxy(this.handleMouseUp, this));
+			.on("mousemove", jQuery.proxy(this.handleMousePos, this))
+			.on("mouseup", jQuery.proxy(this.handleMouseUp, this));
 	};
 
 	ShellColorPicker.prototype.handleMouseUp = function(e) {
 		this.handleMousePos(e);
 		jQuery(document)
-			.unbind("mousemove", this.handleMousePos)
-			.unbind("mouseup", this.handleMouseUp);
+			.off("mousemove", this.handleMousePos)
+			.off("mouseup", this.handleMouseUp);
 	};
 
 	ShellColorPicker.prototype.handleMousePos = function(e) {
@@ -219,14 +219,14 @@ sap.ui.define([
 	ShellColorPicker.prototype.handleClose = function() {
 		// clean up event handlers, DOM, child controls and popup
 		jQuery(document.getElementById(this.id + "-img"))
-			.unbind("mousedown", this.handleMouseDown);
+			.off("mousedown", this.handleMouseDown);
 		jQuery(document.getElementById(this.id + "-marker"))
-			.unbind("mousedown", this.handleMouseDown);
+			.off("mousedown", this.handleMouseDown);
 		jQuery(document)
-			.unbind("mousemove", this.handleMousePos)
-			.unbind("mouseup", this.handleMouseUp);
+			.off("mousemove", this.handleMousePos)
+			.off("mouseup", this.handleMouseUp);
 		jQuery(document.getElementById(this.id))
-			.unbind("mousedown", this.handleGeneralMouseDown);
+			.off("mousedown", this.handleGeneralMouseDown);
 
 		this.oSlider.destroy();
 		this.oSlider = null;

@@ -18,8 +18,7 @@ sap.ui.define([
 		"sap/ui/core/library",
 		"sap/m/library",
 		"sap/ui/integration/util/BindingResolver",
-		"sap/ui/integration/util/BindingHelper",
-	"sap/ui/integration/formatters/IconFormatter"
+		"sap/ui/integration/util/BindingHelper"
 	], function (
 		library,
 		ManagedObject,
@@ -36,8 +35,7 @@ sap.ui.define([
 		coreLibrary,
 		mobileLibrary,
 		BindingResolver,
-		BindingHelper,
-		IconFormatter
+		BindingHelper
 	) {
 		"use strict";
 
@@ -301,7 +299,7 @@ sap.ui.define([
 
 			if (oColumn.icon) {
 				var vSrc = BindingHelper.formattedProperty(oColumn.icon.src, function (sValue) {
-					return IconFormatter.formatSrc(sValue, this._sAppId);
+					return this._oIconFormatter.formatSrc(sValue, this._sAppId);
 				}.bind(this));
 				return new Avatar({
 					src: vSrc,

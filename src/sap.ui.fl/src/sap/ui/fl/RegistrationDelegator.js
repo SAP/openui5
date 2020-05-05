@@ -74,9 +74,10 @@ sap.ui.define([
 		Component._fnPreprocessManifest = Preprocessor.preprocessManifest;
 	}
 
-	function _registerExtensionPointProvider() {
-		ExtensionPoint.registerExtensionProvider("sap/ui/fl/apply/_internal/extensionPoint/Processor");
-	}
+	// TODO: temporarily disabled due to customer inciden: 275287
+	// function _registerExtensionPointProvider() {
+	// 	ExtensionPoint.registerExtensionProvider("sap/ui/fl/apply/_internal/extensionPoint/Processor");
+	// }
 
 	/**
 	 * Registers everything in one call
@@ -91,7 +92,7 @@ sap.ui.define([
 		_registerChangesInComponent();
 		_registerXMLPreprocessor();
 		_registerDescriptorChangeHandler();
-		_registerExtensionPointProvider();
+		// _registerExtensionPointProvider(); TODO: temporarily disabled due to customer inciden: 275287
 	};
 
 	return RegistrationDelegator;

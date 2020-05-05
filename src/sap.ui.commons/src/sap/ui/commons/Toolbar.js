@@ -137,7 +137,7 @@ sap.ui.define([
 			ToolbarRenderer.emptyOverflowPopup(this, false); // if rerendering happens while there are still items in the popup (and it is open), the items will be duplicated
 			this.cleanup();
 
-			this.$("mn").unbind("keydown", this._handleKeyDown);
+			this.$("mn").off("keydown", this._handleKeyDown);
 
 			this.bFirstTime = true;
 			this._bRendering = true;
@@ -163,7 +163,7 @@ sap.ui.define([
 
 			// cannot use sapspace because this triggers onkeydown and sets the focus to the first button in the overflow popup
 			// and the subsequent keydown will make the browser fire a click event on that button
-			this.$("mn").bind("keydown", jQuery.proxy(this._handleKeyDown, this));
+			this.$("mn").on("keydown", jQuery.proxy(this._handleKeyDown, this));
 
 			this.sResizeListenerId = ResizeHandler.register(this.oDomRef, jQuery.proxy(this.ontoolbarresize, this));
 			var iRightItemsLength = this.getRightItems().length;
@@ -213,7 +213,7 @@ sap.ui.define([
 			}
 
 			this.oItemDelegate = undefined;
-			jQuery(window).unbind("resize", this.onwindowresize);
+			jQuery(window).off("resize", this.onwindowresize);
 
 			removeOverflowContentAndPopup.call(this);
 			// No super.exit() to call
@@ -570,7 +570,7 @@ sap.ui.define([
 			this.popup.attachEvent("closed", this.handlePopupClosed, this);
 
 			// Register for window resize event during the popup is opened, so that the popup will be closed if the window is resized.
-			jQuery(window).bind("resize", jQuery.proxy(this.onwindowresize, this));
+			jQuery(window).on("resize", jQuery.proxy(this.onwindowresize, this));
 
 			var iDuration = 0;
 			this.popup.open(iDuration, Popup.Dock.EndTop, Popup.Dock.EndBottom, this.$("mn"), "", "fit", true);
@@ -603,7 +603,7 @@ sap.ui.define([
 			this._bResetFocus = bResetFocus;
 			this.popup.close();
 			// We do not need to close the popup on window resize if it already closed
-			jQuery(window).unbind("resize", this.onwindowresize);
+			jQuery(window).off("resize", this.onwindowresize);
 		};
 
 		Toolbar.prototype.handlePopupClosed = function () {

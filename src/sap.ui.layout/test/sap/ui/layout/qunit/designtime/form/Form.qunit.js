@@ -234,11 +234,13 @@ sap.ui.define([
 			assert.equal(oField.getBindingPath("text"), "binding/path", "and the field inside is bound correctly");
 
 			var sValueHelpId = getValueHelpId(oView.byId("idForm"));
+			var aDependents = oFormContainer.getDependents();
 			if (sValueHelpId) {
-				var aDependents = oFormContainer.getDependents();
 				assert.equal(aDependents.length, 1, "then one dependent was added");
 				var oValueHelp = oView.byId(sValueHelpId);
 				assert.equal(aDependents.indexOf(oValueHelp), 0, "then the value help element was added as a dependent");
+			} else {
+				assert.equal(aDependents.length, 0, "then no dependents were added");
 			}
 		}
 
@@ -258,11 +260,12 @@ sap.ui.define([
 			}
 		}
 
-		elementActionTest("Checking the add action via delegate with a payload (add form element) for a form container, returning a value help", {
+		var sTestDelegatePath = "sap/ui/rta/enablement/TestDelegate";
+		elementActionTest("Checking the add action via delegate for a form container, returning a value help from payload, where Delegate.createLayout() is not responsible for controls", {
 			xmlView: buildViewContentForAddDelegate(
 				'<f:Form id="idForm" ' +
 					"fl:delegate='{" +
-						'"name":"sap/ui/rta/enablement/TestDelegate",' +
+						'"name":"' + sTestDelegatePath + '",' +
 						'"payload":{' +
 							'"valueHelpId":"valueHelp"' +
 						'}' +
@@ -277,8 +280,7 @@ sap.ui.define([
 						index: 0,
 						newControlId: oView.createId("my_new_control"),
 						bindingString: "binding/path",
-						parentId: oView.createId("group"),
-						oDataServiceVersion: "4.0"
+						parentId: oView.createId("group")
 					};
 				}
 			},
@@ -287,11 +289,11 @@ sap.ui.define([
 			afterRedo : confirmFieldIsAdded
 		});
 
-		elementActionTest("Checking the add action via delegate without a payload (add form element) for a form container, not returning a value help", {
+		elementActionTest("Checking the add action via delegate for a form container, where Delegate.createLayout() is not responsible for controls", {
 			xmlView:buildViewContentForAddDelegate(
 				'<f:Form id="idForm" ' +
 					"fl:delegate='{" +
-						'"name":"sap/ui/rta/enablement/TestDelegate"' +
+						'"name":"' + sTestDelegatePath + '"' +
 					"}'" +
 				'>'
 			),
@@ -303,8 +305,67 @@ sap.ui.define([
 						index: 0,
 						newControlId: oView.createId("my_new_control"),
 						bindingString: "binding/path",
-						parentId: oView.createId("group"),
-						oDataServiceVersion: "4.0"
+						parentId: oView.createId("group")
+					};
+				}
+			},
+			afterAction: confirmFieldIsAdded,
+			afterUndo: confirmFieldIsRemoved,
+			afterRedo : confirmFieldIsAdded
+		});
+
+		elementActionTest("Checking the add action via delegate, returning a value help from payload, where Delegate.createLayout() is responsible for controls", {
+			xmlView: buildViewContentForAddDelegate(
+				'<f:Form id="idForm" ' +
+					"fl:delegate='{" +
+						'"name":"' + sTestDelegatePath + '",' +
+						'"payload":{' +
+							'"useCreateLayout":"true",' +
+							'"valueHelpId":"valueHelp",' +
+							'"layoutType":"sap.ui.layout.form.FormElement",' +
+							'"labelAggregation": "label",' +
+							'"aggregation": "fields"' +
+						'}' +
+					"}'" +
+				'>'
+			),
+			action: {
+				name: ["add", "delegate"],
+				controlId: "group",
+				parameter: function (oView) {
+					return {
+						index: 0,
+						newControlId: oView.createId("my_new_control"),
+						bindingString: "binding/path",
+						parentId: oView.createId("group")
+					};
+				}
+			},
+			afterAction: confirmFieldIsAdded,
+			afterUndo: confirmFieldIsRemoved,
+			afterRedo : confirmFieldIsAdded
+		});
+
+		elementActionTest("Checking the add action via delegate with a payload (add form element) for a form container, returning a value help, where Delegate.createLayout() is not responsible for delegate controls", {
+			xmlView:buildViewContentForAddDelegate(
+				'<f:Form id="idForm" ' +
+					"fl:delegate='{" +
+						'"name":"' + sTestDelegatePath + '",' +
+						'"payload":{' +
+							'"valueHelpId":"valueHelp"' +
+						'}' +
+					"}'" +
+				'>'
+			),
+			action: {
+				name: ["add", "delegate"],
+				controlId: "group",
+				parameter: function (oView) {
+					return {
+						index: 0,
+						newControlId: oView.createId("my_new_control"),
+						bindingString: "binding/path",
+						parentId: oView.createId("group")
 					};
 				}
 			},
@@ -313,4 +374,5 @@ sap.ui.define([
 			afterRedo : confirmFieldIsAdded
 		});
 	});
+
 });

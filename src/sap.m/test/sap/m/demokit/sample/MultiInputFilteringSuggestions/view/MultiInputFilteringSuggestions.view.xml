@@ -123,9 +123,9 @@
 					</ColumnListItem>
 				</suggestionRows>
 				<formattedValueStateText>
-					<FormattedText htmlText="Information message with sap.m.FormattedText containing a %%0.">
+					<FormattedText htmlText="Recommendantion based on: %%0.">
 						<controls>
-							<Link text="link" href="#" target="_blank"/>
+							<Link text="link" href="" press=".handleFormattedTextLinkPress"/>
 						</controls>
 					</FormattedText>
 				</formattedValueStateText>

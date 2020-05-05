@@ -24,7 +24,8 @@ sap.ui.define([
 	"sap/ui/integration/util/Destinations",
 	"sap/ui/integration/util/LoadingProvider",
 	"sap/ui/integration/util/HeaderFactory",
-	"sap/ui/integration/util/ContentFactory"
+	"sap/ui/integration/util/ContentFactory",
+	"sap/ui/integration/formatters/IconFormatter"
 ], function (
 	jQuery,
 	Core,
@@ -48,7 +49,8 @@ sap.ui.define([
 	Destinations,
 	LoadingProvider,
 	HeaderFactory,
-	ContentFactory
+	ContentFactory,
+	IconFormatter
 ) {
 	"use strict";
 	/* global Map */
@@ -475,7 +477,7 @@ sap.ui.define([
 	/**
 	 * Enhances or creates the i18n model for the card.
 	 *
-	 * @param {sap.base.i18n.ResourceBundle} oResourceBundle The resource bundle which will be used to create the model or will enhance it.
+	 * @param {module:sap/base/i18n/ResourceBundle} oResourceBundle The resource bundle which will be used to create the model or will enhance it.
 	 * @private
 	 */
 	Card.prototype._enhanceI18nModel = function (oResourceBundle) {
@@ -575,6 +577,11 @@ sap.ui.define([
 		if (this._oDestinations) {
 			this._oDestinations.destroy();
 			this._oDestinations = null;
+		}
+
+		if (this._oIconFormatter) {
+			this._oIconFormatter.destroy();
+			this._oIconFormatter = null;
 		}
 
 		this.destroyAggregation("_header");
@@ -718,6 +725,7 @@ sap.ui.define([
 		}
 
 		this._oDestinations = new Destinations(this.getHostInstance(), this._oCardManifest.get(MANIFEST_PATHS.DESTINATIONS));
+		this._oIconFormatter = new IconFormatter(this._oDestinations);
 		this._oDataProviderFactory = new DataProviderFactory(this._oDestinations);
 		this._oLoadingProvider = new LoadingProvider();
 
@@ -903,6 +911,7 @@ sap.ui.define([
 			contentManifest: oContentManifest,
 			serviceManager:  this._oServiceManager,
 			dataProviderFactory: this._oDataProviderFactory,
+			iconFormatter: this._oIconFormatter,
 			appId: this._sAppId
 		}).then(function (oContent) {
 				this._setCardContent(oContent);
@@ -920,7 +929,7 @@ sap.ui.define([
 		var oManifestHeader = this._oCardManifest.get(MANIFEST_PATHS.HEADER),
 			oHeaderFactory = new HeaderFactory(this);
 
-		return oHeaderFactory.create(oManifestHeader, this._oCardManifest);
+		return oHeaderFactory.create(oManifestHeader);
 	};
 
 	Card.prototype.getContentManifest = function () {
@@ -1179,6 +1188,16 @@ sap.ui.define([
 	 */
 	Card.prototype.isLoading = function () {
 		return this._oLoadingProvider ? this._oLoadingProvider.getLoadingState() : false;
+	};
+
+	/**
+	 * Returns the DOM Element that should get the focus.
+	 *
+	 * @return {Element} Returns the DOM Element that should get the focus
+	 * @protected
+	 */
+	Card.prototype.getFocusDomRef = function () {
+		return this.getCardHeader() ? this.getCardHeader().getDomRef() : this.getDomRef();
 	};
 
 	return Card;

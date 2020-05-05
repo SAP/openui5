@@ -306,14 +306,14 @@ sap.ui.define([
 				 * Visual indication for expanding while using SnappedTitleOnMobile.
 				 * @since 1.63
 				 */
-				_snappedTitleOnMobileIcon: {type: "sap.ui.core.Icon", multiple: false,  visibility: "hidden"},
-
+				_snappedTitleOnMobileIcon: {type: "sap.ui.core.Icon", multiple: false,  visibility: "hidden"}
+			},
+			associations : {
 				/**
-				 * Internal span tag for correct representation of the accessibility requirements.
-				 * Upon focus, the <code>DynamicPageTitle</code> control has the focus outline, but the <code>_focusSpan</code> is the real focused DOM element.
-				 * @since 1.60
+				 * Association to controls / IDs which describe this control (see WAI-ARIA attribute aria-describedby).
+				 * @since 1.78
 				 */
-				_focusSpan: {type: "sap.ui.core.HTML", multiple: false,  visibility: "hidden"}
+				ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}
 			},
 			events: {
 				/**
@@ -416,11 +416,14 @@ sap.ui.define([
 	DynamicPageTitle.prototype.onBeforeRendering = function () {
 		this._getActionsToolbar();
 		this._observeControl(this.getBreadcrumbs());
+		this._detachFocusSpanHandlers();
 	};
 
 	DynamicPageTitle.prototype.onAfterRendering = function () {
 		this._cacheDomElements();
+		this._attachFocusSpanHandlers();
 		this._toggleState(this._bExpandedState);
+		this._toggleFocusableState(this._bIsFocusable);
 		this._doNavigationActionsLayout();
 		// Needs update in order to determine its visibility by visibility of its content.
 		this._updateTopAreaVisibility();
@@ -692,6 +695,7 @@ sap.ui.define([
 		this.$expandHeadingWrapper = this.$("expand-heading-wrapper");
 		this.$snappedWrapper = this.$("snapped-wrapper");
 		this.$expandWrapper = this.$("expand-wrapper");
+		this._$focusSpan = this.$("focusSpan");
 	};
 
 	/**
@@ -751,9 +755,11 @@ sap.ui.define([
 
 		this._bIsFocusable = bFocusable;
 
-		$oTitleFocusSpan = this._getFocusSpan().$();
+		$oTitleFocusSpan = this._getFocusSpan();
 
-		bFocusable ? $oTitleFocusSpan.attr("tabindex", 0) : $oTitleFocusSpan.removeAttr("tabindex");
+		if ($oTitleFocusSpan) {
+			bFocusable ? $oTitleFocusSpan.show() : $oTitleFocusSpan.hide();
+		}
 	};
 
 	/* ========== DynamicPageTitle actions and navigationActions processing ========== */
@@ -1316,19 +1322,12 @@ sap.ui.define([
 	/**
 	 * Called whenever the content size of an overflow toolbar, used in the content aggregation, changes.
 	 * Content size is defined as the total width of the toolbar's overflow-enabled content, not the toolbar's own width.
-	 * Invalidates if OverflowToolbar has flexible content, in order flex basis to be calculated correctly.
 	 * @param oEvent
 	 * @private
 	 */
 	DynamicPageTitle.prototype._onContentSizeChange = function (oEvent) {
-		var iContentSize = oEvent.getParameter("contentSize"),
-			bNeedsInvalidation =  oEvent.getParameter("invalidate");
-
-		if (bNeedsInvalidation) {
-			this.invalidate();
-		} else {
+		var iContentSize = oEvent.getParameter("contentSize");
 			this._setContentAreaFlexBasis(iContentSize, oEvent.getSource().$().parent());
-		}
 	};
 
 	/**
@@ -1358,10 +1357,12 @@ sap.ui.define([
 
 	DynamicPageTitle.prototype._updateARIAState = function (bExpanded) {
 		var sARIAText = this._getARIALabelReferences(bExpanded) || DynamicPageTitle.DEFAULT_HEADER_TEXT_ID,
-			$oFocusSpan = this._getFocusSpan().$();
+			$oFocusSpan = this._getFocusSpan();
 
-		$oFocusSpan.attr("aria-labelledby", sARIAText);
-		$oFocusSpan.attr("aria-expanded", bExpanded);
+		if ($oFocusSpan) {
+			$oFocusSpan.attr("aria-labelledby", sARIAText);
+			$oFocusSpan.attr("aria-expanded", bExpanded);
+		}
 		return this;
 	};
 
@@ -1377,38 +1378,46 @@ sap.ui.define([
 	};
 
 	DynamicPageTitle.prototype._focus = function () {
-		this._getFocusSpan().$().focus();
+		this._getFocusSpan().trigger("focus");
+	};
+
+	DynamicPageTitle.prototype._getAriaDescribedByReferences = function () {
+		var aTexts = this.getAriaDescribedBy(),
+			sDescribedBy = DynamicPageTitle.TOGGLE_HEADER_TEXT_ID;
+
+		if (aTexts.length > 0) {
+			sDescribedBy += " " + aTexts.join(" ");
+		}
+
+		return sDescribedBy;
+	};
+
+	DynamicPageTitle.prototype._attachFocusSpanHandlers = function () {
+		this._$focusSpan.on("focusin", this._addFocusClass.bind(this));
+		this._$focusSpan.on("focusout", this._removeFocusClass.bind(this));
+		this._$focusSpan.on("keyup", function (oEvent) {
+			if (oEvent && oEvent.which === KeyCodes.SPACE && !oEvent.shiftKey) {
+				this.fireEvent("_titlePress");
+			}
+		}.bind(this));
+		this._$focusSpan.on("keydown", function (oEvent) {
+			if (oEvent && oEvent.which === KeyCodes.ENTER) {
+				this.fireEvent("_titlePress");
+			}
+		}.bind(this));
+	};
+
+	DynamicPageTitle.prototype._detachFocusSpanHandlers = function () {
+		if (this._$focusSpan) {
+			this._$focusSpan.off("focusin");
+			this._$focusSpan.off("focusout");
+			this._$focusSpan.off("keyup");
+			this._$focusSpan.off("keydown");
+		}
 	};
 
 	DynamicPageTitle.prototype._getFocusSpan = function () {
-		if (!this.getAggregation("_focusSpan")) {
-			var sTabIndex = this._bIsFocusable ? 'tabindex="0"' : '',
-				sLabelledBy = this._getARIALabelReferences(this._bExpandedState) || DynamicPageTitle.DEFAULT_HEADER_TEXT_ID,
-				oFocusSpan = new HTML({
-					id: this.getId() + "-focusSpan",
-					preferDOM: false,
-					content: '<span class="sapFDynamicPageTitleFocusSpan" role="button" ' + sTabIndex +
-							'data-sap-ui="' + this.getId() + '-focusSpan"' +
-							' aria-expanded="' + this._bExpandedState +
-							'" aria-labelledby="' + sLabelledBy +
-							'" aria-describedby="' + DynamicPageTitle.TOGGLE_HEADER_TEXT_ID + '"></span>'
-				});
-
-			oFocusSpan.onfocusin = this._addFocusClass.bind(this);
-			oFocusSpan.onfocusout = this._removeFocusClass.bind(this);
-			oFocusSpan.onsapenter = function () {
-				this.fireEvent("_titlePress");
-			}.bind(this);
-			oFocusSpan.onkeyup = function (oEvent) {
-				if (oEvent && oEvent.which === KeyCodes.SPACE && !oEvent.shiftKey) {
-					this.fireEvent("_titlePress");
-				}
-			}.bind(this);
-
-			this.setAggregation("_focusSpan", oFocusSpan, true);
-		}
-
-		return this.getAggregation("_focusSpan");
+		return this._$focusSpan;
 	};
 
 	DynamicPageTitle.prototype._addFocusClass = function () {

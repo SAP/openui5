@@ -3,7 +3,7 @@
  */
 
 sap.ui.define(["./DragDropBase"],
-	function(DragDropBase, Log) {
+	function(DragDropBase) {
 	"use strict";
 
 	/**
@@ -134,4 +134,4 @@ sap.ui.define(["./DragDropBase"],
 
 	return DragInfo;
 
-}, /* bExport= */ true);
+});

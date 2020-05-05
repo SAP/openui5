@@ -20,14 +20,14 @@
 		}
 	},
 	"sap.card": {
-		"type": "Table",
+		"type": "List",
 		"data": {
 			"request": {
-				"url": "{{destinations.myDestination}}/Orders",
+				"url": "{{destinations.myDestination}}/Products",
 				"parameters": {
 					"$format": "json",
 					"$top": "{{parameters.maxItems}}",
-					"$orderby": "Freight desc"
+					"$orderby": "ProductID asc"
 				}
 			}
 		},
@@ -35,21 +35,21 @@
 			"destinations": {
 				"myDestination": {
 					"name": "Northwind"
+				},
+				"myDestinationForImages": {
+					"name": "NorthwindImages"
 				}
 			},
 			"parameters": {
 				"maxItems": {
-					"value": 7,
+					"value": 3,
 					"type": "integer"
 				}
 			}
 		},
 		"header": {
 			"title": "Destinations sample",
-			"subTitle": "Top orders from destination 'Northwind'",
-			"icon": {
-				"src": "sap-icon://compare-2"
-			},
+			"subTitle": "First {{parameters.maxItems}} products from destination 'Northwind'",
 			"status": {
 				"text": "top {{parameters.maxItems}}"
 			}
@@ -59,20 +59,12 @@
 				"path": "/value/"
 			},
 			"maxItems": "{{parameters.maxItems}}",
-			"row": {
-				"columns": [{
-						"title": "Customer",
-						"value": "{ShipName}"
-					},
-					{
-						"title": "Country",
-						"value": "{ShipCountry}"
-					},
-					{
-						"title": "Freight",
-						"value": "{Freight}"
-					}
-				]
+			"item": {
+				"title": "{ProductName}",
+				"description": "Unit Price {= format.currency(${UnitPrice}, 'EUR')}",
+				"icon": {
+					"src": "{{destinations.myDestinationForImages}}/Product_{ProductID}.png"
+				}
 			}
 		}
 	}

@@ -1,11 +1,14 @@
-sap.ui.define(['jquery.sap.global','sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
-	function(jQuery, Controller, JSONModel) {
+sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel','sap/m/library'],
+	function(Controller, JSONModel, mobileLibrary) {
 	"use strict";
+
+	var CarouselArrowsPlacement = mobileLibrary.CarouselArrowsPlacement,
+		PlacementType = mobileLibrary.PlacementType;
 
 	var CarouselController = Controller.extend("sap.m.sample.CarouselWithDisplayOptions.Carousel", {
 		onInit: function (evt) {
 			// set explored app's demo model on this sample
-			var oImgModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/img.json");
+			var oImgModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/img.json"));
 			this.getView().setModel(oImgModel, "img");
 
 			// set the possible screen sizes
@@ -27,18 +30,18 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/mvc/Controller','sap/ui/model/js
 			var oCarousel = this.byId("carouselSample");
 			var sSelectedValue = oEvent.getSource().getSelectedButton().getText();
 			if (sSelectedValue === "Content") {
-				oCarousel.setArrowsPlacement(sap.m.CarouselArrowsPlacement.Content);
+				oCarousel.setArrowsPlacement(CarouselArrowsPlacement.Content);
 			} else if (sSelectedValue === "PageIndicator") {
-				oCarousel.setArrowsPlacement(sap.m.CarouselArrowsPlacement.PageIndicator);
+				oCarousel.setArrowsPlacement(CarouselArrowsPlacement.PageIndicator);
 			}
 		},
 		onPageIndicatorPlacementSelect: function (oEvent) {
 			var oCarousel = this.byId("carouselSample");
 			var sSelectedValue = oEvent.getSource().getSelectedButton().getText();
 			if (sSelectedValue === "Bottom") {
-				oCarousel.setPageIndicatorPlacement(sap.m.PlacementType.Bottom);
+				oCarousel.setPageIndicatorPlacement(PlacementType.Bottom);
 			} else if (sSelectedValue === "Top") {
-				oCarousel.setPageIndicatorPlacement(sap.m.PlacementType.Top);
+				oCarousel.setPageIndicatorPlacement(PlacementType.Top);
 			}
 		},
 		onShowPageIndicatorSelect: function (oEvent) {

@@ -150,7 +150,7 @@ sap.ui.define([
 	});
 
 	function isQuickViewVisible(){
-		return jQuery("#QuickView").filter(":visible").size() > 0;
+		return jQuery("#QuickView").filter(":visible").length > 0;
 	}
 
 	QUnit.module("QuickView: open and close");

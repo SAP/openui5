@@ -17,9 +17,11 @@ sap.ui.define([
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
 	"use strict";
 
-	// Copied from ExpressionParser.performance.qunit
-	var iCount = 1000;
+	var sClassName = "sap.ui.model.odata.v2.ODataModel",
+		iCount = 1000,
+		rTemporaryKey = /\('(id-[^']+)'\)$/;
 
+	// Copied from ExpressionParser.performance.qunit
 	function repeatedTest(assert, fnTest) {
 		var i, iStart = Date.now(), iDuration;
 
@@ -314,6 +316,7 @@ sap.ui.define([
 			},
 			oPayload = "~payload",
 			oRequest = {requestUri : "~requestUri"},
+			oResult,
 			sUpdateMethod,
 			sUrl = "~url";
 
@@ -337,9 +340,11 @@ sap.ui.define([
 			.returns(oRequest);
 
 		// code under test
-		assert.strictEqual(
-			ODataModel.prototype._processChange.call(oModel, sKey, oData, sUpdateMethod, sDeepPath),
-			oRequest);
+		oResult = ODataModel.prototype._processChange.call(oModel, sKey, oData, sUpdateMethod,
+			sDeepPath);
+
+		assert.strictEqual(oResult, oRequest);
+		assert.deepEqual(oResult, {requestUri : "~requestUri"});
 	});
 
 	//*********************************************************************************************
@@ -1086,4 +1091,651 @@ sap.ui.define([
 		assert.strictEqual(oModel.sUpdateTimer, null);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_createEventInfo: expandAfterCreateFailed", function (assert) {
+		var oEventInfo,
+			oModel = {},
+			oRequest = {
+				async : "~async",
+				headers : "~requestHeader",
+				method : "~method",
+				requestID : "~requestID",
+				requestUri : "~requestUri"
+			},
+			oResponseHeaders = {},
+			oResponse = {
+				response : {
+					body : "~body",
+					expandAfterCreateFailed : "~expandAfterCreateFailed",
+					headers : oResponseHeaders,
+					statusCode : 201,
+					statusText : "~statusText"
+				}
+			};
+
+		// code under test
+		oEventInfo = ODataModel.prototype._createEventInfo.call(oModel, oRequest, oResponse);
+
+		assert.deepEqual(oEventInfo, {
+			ID : "~requestID",
+			async : "~async",
+			headers : "~requestHeader",
+			method : "~method",
+			response : {
+				expandAfterCreateFailed : "~expandAfterCreateFailed",
+				headers : oResponseHeaders,
+				responseText : "~body",
+				statusCode : 201,
+				statusText : "~statusText"
+			},
+			success : true,
+			url : "~requestUri"
+		});
+		assert.strictEqual(oEventInfo.response.headers, oResponseHeaders);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_processChange: restore expandRequest", function (assert) {
+		var oData = {
+				__metadata : {
+					created : {
+						key : "~createdKey",
+						expandRequest : "~expandRequest",
+						withContentID : "~withContentID"
+					}
+				}
+			},
+			oModel = {
+				mChangedEntities : {
+					"~sKey" : {__metadata : {deepPath : "~deepPath"}}
+				},
+				oMetadata : {
+					_getEntityTypeByPath : function () {},
+					_getNavigationPropertyNames : function () {}
+				},
+				_createRequest : function () {},
+				_createRequestUrl : function () {},
+				_getHeaders : function () {},
+				_getObject : function () {},
+				_removeReferences : function () {},
+				getETag : function () {}
+			},
+			oRequest = {},
+			oResult;
+
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
+			.withExactArgs("~sKey")
+			.returns("~oEntityType");
+		this.mock(oModel).expects("_getObject")
+			.withExactArgs("/~sKey", true)
+			.returns({});
+		this.mock(oModel.oMetadata).expects("_getNavigationPropertyNames")
+			.withExactArgs("~oEntityType")
+			.returns([]);
+		this.mock(oModel).expects("_removeReferences")
+			.withExactArgs({__metadata : {}})
+			.returns("~oPayload");
+		this.mock(oModel).expects("_getHeaders").withExactArgs(undefined).returns("~mHeaders");
+		this.mock(oModel).expects("getETag").withExactArgs("~oPayload").returns("~sETag");
+		this.mock(oModel).expects("_createRequestUrl")
+			.withExactArgs("/~createdKey", null, undefined, undefined)
+			.returns("~sUrl");
+		this.mock(oModel).expects("_createRequest")
+			.withExactArgs("~sUrl", "~deepPath", "POST", "~mHeaders", "~oPayload", "~sETag",
+				undefined, true)
+			.returns(oRequest);
+
+		// code under test
+		oResult = ODataModel.prototype._processChange.call(oModel, "~sKey", oData, "POST");
+
+		assert.deepEqual(oResult, {
+			created : true,
+			expandRequest : "~expandRequest",
+			withContentID : "~withContentID"
+		});
+		assert.strictEqual(oResult, oRequest);
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bExpandRequest, i) {
+	QUnit.test("_processRequestQueue: push expandRequest to queue, " + i, function (assert) {
+		var oRequest = {
+				data : "~data",
+				expandRequest : bExpandRequest ? "~expandRequest" : undefined
+			},
+			oChange = {
+				parts : [{
+					fnError : "~fnChangeError",
+					request : {},
+					requestHandle : "~changeRequestHandle",
+					fnSuccess : "~fnChangeSuccess"
+				}],
+				request : oRequest
+			},
+			oModel = {
+				mLaunderingState : "~mLaunderingState",
+				bUseBatch : true,
+				_collectChangedEntities : function () {},
+				_createBatchRequest : function () {},
+				_pushToRequestQueue : function () {},
+				_submitBatchRequest : function () {},
+				checkDataState : function () {},
+				getKey : function () {},
+				increaseLaundering : function () {},
+				removeInternalMetadata : function () {}
+			},
+			oRequestGroup = {
+				changes : {"~sChangeSetId" : [oChange]}
+			},
+			mRequests = {"~sGroupId" : oRequestGroup};
+
+		this.mock(oModel).expects("_collectChangedEntities")
+			.withExactArgs(sinon.match.same(oRequestGroup), {}, {});
+		this.mock(oModel).expects("getKey").withExactArgs("~data").returns("~key");
+		this.mock(oModel).expects("increaseLaundering").withExactArgs("/~key", "~data");
+		this.mock(oModel).expects("removeInternalMetadata").withExactArgs("~data");
+		this.mock(oModel).expects("_pushToRequestQueue")
+			.withExactArgs(sinon.match.same(mRequests), "~sGroupId", undefined, "~expandRequest",
+				"~fnChangeSuccess", "~fnChangeError", "~changeRequestHandle", false)
+			.exactly(bExpandRequest ? 1 : 0);
+		this.mock(oModel).expects("_createBatchRequest")
+			.withExactArgs([{__changeRequests:[sinon.match.same(oRequest)]}])
+			.returns("~oBatchRequest");
+		this.mock(oModel).expects("_submitBatchRequest")
+			.withExactArgs("~oBatchRequest", [[sinon.match.same(oChange)]], "~fnSuccess",
+				"~fnError");
+		this.mock(oModel).expects("checkDataState").withExactArgs("~mLaunderingState");
+
+		// code under test
+		ODataModel.prototype._processRequestQueue.call(oModel, mRequests, "~sGroupId", "~fnSuccess",
+			"~fnError");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("createEntry: expand without bUseBatch leads to an error", function (assert) {
+		var oModel = {bUseBatch : false};
+
+		// code under test
+		assert.throws(function () {
+			ODataModel.prototype.createEntry.call(oModel, "~path", {expand : "ToNavigation"});
+		}, new Error("The 'expand' parameter is only supported if batch mode is used"));
+	});
+
+	//*********************************************************************************************
+[undefined, "~expand"].forEach(function (sExpand) {
+	[true, false].forEach(function (bWithCallbackHandlers) {
+		(!sExpand
+		? [function () {/*no further tests*/}]
+		: [
+			// POST and GET succeed
+			function (assert, oEventHandlersMock, fnError, fnSuccess) {
+				var oDataGET = {GET : true},
+					oDataPOST = {POST : true},
+					oResponseGET = "~oResponseGET",
+					oResponsePOST = "~oResponsePOST";
+
+				// code under test - POST request succeeds
+				fnSuccess(oDataPOST, oResponsePOST);
+
+				oEventHandlersMock.expects("fnSuccess")
+					.exactly(bWithCallbackHandlers ? 1 : 0)
+					.withExactArgs({GET : true, POST : true}, oResponsePOST);
+
+				// code under test - GET request succeeds
+				fnSuccess(oDataGET, oResponseGET);
+			},
+			// POST and GET fail; after retrying the creation both requests succeed
+			function (assert, oEventHandlersMock, fnError, fnSuccess) {
+				var oDataGET = {GET : true},
+					oDataPOST = {POST : true},
+					oErrorGET = {},
+					oErrorPOST = {},
+					oResponseGET = "~oResponseGET",
+					oResponsePOST = "~oResponsePOST";
+
+				oEventHandlersMock.expects("fnError")
+					.exactly(bWithCallbackHandlers ? 1 : 0)
+					.withExactArgs(sinon.match.same(oErrorPOST));
+
+				// code under test - POST request fails
+				fnError(oErrorPOST);
+
+				// code under test - GET request fails
+				fnError(oErrorGET);
+
+				assert.strictEqual(oErrorGET.expandAfterCreateFailed, true);
+
+				// retry creation
+
+				// code under test - POST request succeeds
+				fnSuccess(oDataPOST, oResponsePOST);
+
+				oEventHandlersMock.expects("fnSuccess")
+					.exactly(bWithCallbackHandlers ? 1 : 0)
+					.withExactArgs({GET : true, POST : true}, oResponsePOST);
+
+				// code under test - GET request succeeds
+				fnSuccess(oDataGET, oResponseGET);
+			},
+			// POST succeeds and GET fails
+			function (assert, oEventHandlersMock, fnError, fnSuccess) {
+				var oDataPOST = "~oDataPOST",
+					oErrorGET = {},
+					oResponsePOST = {};
+
+				// code under test - POST request succeeds
+				fnSuccess(oDataPOST, oResponsePOST);
+
+				this.oLogMock.expects("error")
+					.withExactArgs("Entity creation was successful but expansion of navigation"
+						+ " properties failed",
+						sinon.match.same(oErrorGET),
+						sClassName);
+				oEventHandlersMock.expects("fnSuccess")
+					.exactly(bWithCallbackHandlers ? 1 : 0)
+					.withExactArgs(oDataPOST,
+						sinon.match.same(oResponsePOST)
+							.and(sinon.match({expandAfterCreateFailed : true})));
+
+				// code under test - GET request fails
+				fnError(oErrorGET);
+
+				assert.strictEqual(oErrorGET.expandAfterCreateFailed, true);
+			},
+			// POST and GET fail; after retrying the creation both requests fail again
+			function (assert, oEventHandlersMock, fnError, fnSuccess) {
+				var oErrorGET0 = {},
+					oErrorGET1 = {},
+					oErrorPOST0 = {},
+					oErrorPOST1 = {};
+
+				oEventHandlersMock.expects("fnError")
+					.exactly(bWithCallbackHandlers ? 1 : 0)
+					.withExactArgs(sinon.match.same(oErrorPOST0));
+
+				// code under test - POST request fails
+				fnError(oErrorPOST0);
+
+				// code under test - GET request fails
+				fnError(oErrorGET0);
+
+				assert.strictEqual(oErrorGET0.expandAfterCreateFailed, true);
+
+				// retry creation
+
+				oEventHandlersMock.expects("fnError")
+					.exactly(bWithCallbackHandlers ? 1 : 0)
+					.withExactArgs(sinon.match.same(oErrorPOST1));
+
+				// code under test - POST request fails again
+				fnError(oErrorPOST1);
+
+				assert.strictEqual(oErrorPOST1.expandAfterCreateFailed, undefined);
+
+				// code under test - GET request succeeds
+				fnError(oErrorGET1);
+
+				assert.strictEqual(oErrorGET1.expandAfterCreateFailed, true);
+			},
+			// POST and GET fail; after retrying the creation POST succeeds and GET fails
+			function (assert, oEventHandlersMock, fnError, fnSuccess) {
+				var oDataPOST = "~oDataPOST",
+					oErrorGET0 = {},
+					oErrorGET1 = {},
+					oErrorPOST = {},
+					oResponsePOST = {};
+
+				oEventHandlersMock.expects("fnError")
+					.exactly(bWithCallbackHandlers ? 1 : 0)
+					.withExactArgs(sinon.match.same(oErrorPOST));
+
+				// code under test - POST request fails
+				fnError(oErrorPOST);
+
+				// code under test - GET request fails
+				fnError(oErrorGET0);
+
+				assert.strictEqual(oErrorGET0.expandAfterCreateFailed, true);
+
+				// retry after failed POST
+
+				// code under test - POST request succeeds
+				fnSuccess(oDataPOST, oResponsePOST);
+
+				this.oLogMock.expects("error")
+					.withExactArgs("Entity creation was successful but expansion of navigation"
+						+ " properties failed",
+						sinon.match.same(oErrorGET1),
+						sClassName);
+				oEventHandlersMock.expects("fnSuccess")
+					.exactly(bWithCallbackHandlers ? 1 : 0)
+					.withExactArgs(oDataPOST,
+						sinon.match.same(oResponsePOST)
+							.and(sinon.match({expandAfterCreateFailed : true})));
+
+				// code under test - GET request succeeds
+				fnError(oErrorGET1);
+
+				assert.strictEqual(oErrorGET1.expandAfterCreateFailed, true);
+			}
+		]).forEach(function (fnTestEventHandlers, i) {
+	var sTitle = "createEntry: expand = " + sExpand + ", "
+			+ (bWithCallbackHandlers ? "with" : "without") + " callback handlers, i = " + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var fnAfterMetadataLoaded,
+			oCreatedContext = {},
+			oEntity,
+			oEntityMetadata = {entityType : "~entityType"},
+			fnError,
+			oEventHandlers = {
+				fnError : function () {},
+				fnSuccess : function () {}
+			},
+			oEventHandlersMock = this.mock(oEventHandlers),
+			oExpandRequest = {},
+			mHeaders,
+			mHeadersInput = {input : true},
+			oModel = {
+				mChangedEntities : {},
+				mDeferredGroups : {},
+				oMetadata : {
+					_getEntitySetByType : function () {},
+					_getEntityTypeByPath : function () {},
+					_isCollection : function () {},
+					isLoaded : function () {},
+					loaded : function () {}
+				},
+				bRefreshAfterChange : false,
+				mRequests : "~mRequests",
+				sServiceUrl : "~sServiceUrl",
+				bUseBatch : true,
+				_addEntity : function () {},
+				_createRequest : function () {},
+				_createRequestUrlWithNormalizedPath : function () {},
+				_getHeaders : function () {},
+				_getRefreshAfterChange : function () {},
+				_isCanonicalRequestNeeded : function () {},
+				_normalizePath : function () {},
+				_processRequestQueueAsync : function () {},
+				_pushToRequestQueue : function () {},
+				getContext : function () {},
+				resolveDeep : function () {}
+			},
+			oMetadataMock = this.mock(oModel.oMetadata),
+			oModelMock = this.mock(oModel),
+			oRequest = {},
+			oRequestHandle,
+			oResult,
+			fnSuccess,
+			sUid;
+
+		oEventHandlersMock.expects("fnError").never();
+		oEventHandlersMock.expects("fnSuccess").never();
+		oModelMock.expects("_isCanonicalRequestNeeded")
+			.withExactArgs("~canonicalRequest")
+			.returns("~bCanonical");
+		oModelMock.expects("_getRefreshAfterChange")
+			.withExactArgs("~refreshAfterChange", "~groupId")
+			.returns("~bRefreshAfterChange");
+		this.mock(ODataUtils).expects("_createUrlParamsArray")
+			.withExactArgs("~urlParameters")
+			.returns("~aUrlParams");
+		oModelMock.expects("_normalizePath")
+			.withExactArgs("~path", "~context", "~bCanonical")
+			.returns("/~sNormalizedPath");
+		oModelMock.expects("resolveDeep").withExactArgs("~path", "~context").returns("~sDeepPath");
+		oMetadataMock.expects("isLoaded").withExactArgs().returns(true);
+		// function create()
+		oMetadataMock.expects("_getEntityTypeByPath")
+			.withExactArgs("/~sNormalizedPath")
+			.returns(oEntityMetadata);
+		oMetadataMock.expects("_getEntitySetByType")
+			.withExactArgs(sinon.match.same(oEntityMetadata))
+			.returns({name : "~entitySetName"});
+		oMetadataMock.expects("_isCollection").withExactArgs("~sDeepPath").returns(true);
+		oModelMock.expects("_addEntity")
+			.withExactArgs(sinon.match(function (oEntity0) {
+				sUid = rTemporaryKey.exec(oEntity0.__metadata.deepPath)[1];
+				fnError = oEntity0.__metadata.created.error;
+				mHeaders = oEntity0.__metadata.created.headers;
+				fnSuccess = oEntity0.__metadata.created.success;
+				oEntity = {
+					__metadata : {
+						created : {
+							changeSetId : "~changeSetId",
+							error : fnError,
+							eTag : "~eTag",
+							groupId : "~groupId",
+							headers : mHeaders,
+							key : "~sNormalizedPath",
+							success : fnSuccess,
+							urlParameters : "~urlParameters"
+						},
+						deepPath : "~sDeepPath('" + sUid + "')",
+						type : "~entityType",
+						uri : "~sServiceUrl/~entitySetName('" + sUid + "')"
+					}
+				};
+				assert.deepEqual(oEntity0, oEntity);
+				assert.deepEqual(mHeaders,
+					sExpand
+						? Object.assign({}, mHeadersInput, {
+							"Content-ID" : sUid,
+							"sap-messages" : "transientOnly"
+						})
+						: mHeadersInput);
+				assert.strictEqual(
+					fnError === (bWithCallbackHandlers ? oEventHandlers.fnError : undefined),
+					!sExpand);
+				assert.strictEqual(
+					fnSuccess === (bWithCallbackHandlers ? oEventHandlers.fnSuccess : undefined),
+					!sExpand);
+				return true;
+			}))
+			.returns("~sKey");
+		oModelMock.expects("_createRequestUrlWithNormalizedPath")
+			.withExactArgs("/~sNormalizedPath", "~aUrlParams", true)
+			.returns("~sUrl");
+		oModelMock.expects("_createRequest")
+			.withExactArgs("~sUrl",
+				sinon.match(function (sDeepPath0) {
+					return sDeepPath0 === "~sDeepPath('" + sUid + "')";
+				}),
+				"POST",
+				sinon.match(function (mHeaders0) {
+					// not strict equal, as it is a clone of oEntity
+					assert.deepEqual(mHeaders0, mHeaders);
+					return true;
+				}),
+				sinon.match(function (oEntity0) {
+					// not strict equal, as it is a clone of oEntity
+					assert.deepEqual(oEntity0, oEntity);
+					return true;
+				}),
+				"~eTag")
+			.returns(oRequest);
+
+		if (sExpand) {
+			this.mock(ODataUtils).expects("_encodeURLParameters")
+				.withExactArgs({$expand : sExpand, $select : sExpand})
+				.returns("~expandselect");
+			oModelMock.expects("_getHeaders").withExactArgs(undefined, true).returns("~GETheaders");
+			oModelMock.expects("_createRequest")
+				.withExactArgs(sinon.match(function (sUri) {
+						return sUri === "$" + sUid + "?~expandselect";
+					}), sinon.match(function (sDeepPath0) {
+						return sDeepPath0 === "/$" + sUid;
+					}), "GET", "~GETheaders", null, undefined, undefined, true)
+				.returns(oExpandRequest);
+		}
+
+		oModelMock.expects("getContext")
+			.withExactArgs("/~sKey", sinon.match(function (sDeepPath0) {
+				return sDeepPath0 === "~sDeepPath('" + sUid + "')";
+			}))
+			.returns(oCreatedContext);
+		oMetadataMock.expects("loaded").withExactArgs().returns({then : function (fnFunc) {
+			fnAfterMetadataLoaded = fnFunc;
+		}});
+
+		// code under test
+		oResult = ODataModel.prototype.createEntry.call(oModel, "~path", {
+			canonicalRequest : "~canonicalRequest",
+			changeSetId : "~changeSetId",
+			context : "~context",
+			error : bWithCallbackHandlers ? oEventHandlers.fnError : undefined,
+			eTag : "~eTag",
+			expand : sExpand,
+			groupId : "~groupId",
+			headers : mHeadersInput,
+			properties : {},
+			refreshAfterChange : "~refreshAfterChange",
+			success : bWithCallbackHandlers ? oEventHandlers.fnSuccess : undefined,
+			urlParameters : "~urlParameters"
+		});
+
+		if (sExpand) {
+			oEntity.__metadata.created.expandRequest = oExpandRequest;
+			oEntity.__metadata.created.withContentID = sUid;
+			assert.deepEqual(oExpandRequest, {withContentID : sUid});
+		}
+		assert.deepEqual(oModel.mChangedEntities["~sKey"], oEntity);
+		assert.strictEqual(oResult, oCreatedContext);
+		assert.deepEqual(oResult, {
+			bCreated : true
+		});
+		assert.deepEqual(oRequest, sExpand
+			? {created : true, key : "~sKey", expandRequest : oExpandRequest, withContentID : sUid}
+			: {created : true, key : "~sKey"});
+
+		// async functionality
+		oModelMock.expects("_pushToRequestQueue")
+			.withExactArgs("~mRequests", "~groupId", "~changeSetId", sinon.match.same(oRequest),
+				sinon.match(function (fnSuccess0) {
+					return fnSuccess0 === fnSuccess;
+				}),
+				sinon.match(function (fnError0) {
+					return fnError0 === fnError;
+				}),
+				sinon.match(function (oRequestHandle0) {
+					oRequestHandle = oRequestHandle0;
+					return true;
+				}),
+				"~bRefreshAfterChange");
+		oModelMock.expects("_processRequestQueueAsync").withExactArgs("~mRequests");
+
+		// code under test
+		fnAfterMetadataLoaded();
+
+		// test abort handler
+		assert.strictEqual(oRequest._aborted, undefined);
+		if (sExpand) {
+			assert.strictEqual(oRequest.expandRequest._aborted, undefined);
+		}
+
+		// code under test
+		oRequestHandle.abort();
+
+		assert.strictEqual(oRequest._aborted, true);
+		if (sExpand) {
+			assert.strictEqual(oRequest.expandRequest._aborted, true);
+		}
+
+		fnTestEventHandlers.call(this, assert, oEventHandlersMock, fnError, fnSuccess);
+	});
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_submitBatchRequest: with content-IDs", function (assert) {
+		var oBatchRequest = {},
+			oBatchResponse = {
+				headers : "~batchResponseHeaders"
+			},
+			oRequestPOST = {},
+			oRequest0 = {
+				parts : [{
+					request : oRequestPOST,
+					fnSuccess : "~fnSuccess0"
+				}],
+				request : {
+					created : true,
+					deepPath : "~deepPath('~contentID')",
+					requestUri : "~serviceUri/Foo?bar",
+					withContentID : "~contentID"
+				}
+			},
+			oRequestGET = {},
+			oRequest1 = {
+				parts : [{
+					request : oRequestGET,
+					fnSuccess : "~fnSuccess1"
+				}],
+				request : {
+					deepPath : "/$~contentID",
+					requestUri : "~serviceUri/$~contentID?bar",
+					withContentID : "~contentID"
+				}
+			},
+			oResponseGET = {headers : "~getHeaders"},
+			oResponsePOST = {data : "~postData", headers : "~postHeaders"},
+			oData = {
+				__batchResponses : [oResponsePOST, oResponseGET]
+			},
+			aRequests = [oRequest0, oRequest1],
+			oEventInfo = {requests : sinon.match.same(aRequests), batch : true},
+			fnHandleSuccess,
+			oModel = {
+				_getHeader : function () {},
+				_getKey : function () {},
+				_invalidatePathCache : function () {},
+				_processSuccess : function () {},
+				_setSessionContextIdHeader : function () {},
+				_submitRequest : function () {},
+				checkUpdate : function () {}
+			},
+			oModelMock = this.mock(oModel);
+
+		oModelMock.expects("_submitRequest")
+			.withExactArgs(sinon.match.same(oBatchRequest)
+					.and(sinon.match({eventInfo : oEventInfo})),
+				sinon.match.func.and(sinon.match(function (fnSuccess) {
+					fnHandleSuccess = fnSuccess;
+					return true;
+				})),
+				sinon.match.func);
+
+		// code under test
+		ODataModel.prototype._submitBatchRequest.call(oModel, oBatchRequest, aRequests,
+			"~fnSuccess");
+
+		oModelMock.expects("_getKey").withExactArgs("~postData")
+			.returns("Foo('~key')");
+		oModelMock.expects("_processSuccess")
+			.withExactArgs(sinon.match.same(oRequestPOST), sinon.match.same(oResponsePOST),
+				"~fnSuccess0", sinon.match.object, sinon.match.object, sinon.match.object);
+		oModelMock.expects("_processSuccess")
+			.withExactArgs(sinon.match.same(oRequestGET), sinon.match.same(oResponseGET),
+				"~fnSuccess1", sinon.match.object, sinon.match.object, sinon.match.object);
+		oModelMock.expects("_invalidatePathCache").withExactArgs();
+		oModelMock.expects("checkUpdate").withExactArgs(false, false, sinon.match.object);
+		oModelMock.expects("_processSuccess")
+			.withExactArgs(sinon.match.same(oBatchRequest), sinon.match.same(oBatchResponse),
+				"~fnSuccess", sinon.match.object, sinon.match.object, sinon.match.object, true,
+				sinon.match.same(aRequests));
+		oModelMock.expects("_getHeader")
+			.withExactArgs("sap-contextid", "~batchResponseHeaders")
+			.returns("~sap-contextid");
+		oModelMock.expects("_setSessionContextIdHeader").withExactArgs("~sap-contextid");
+
+		// code under test
+		fnHandleSuccess(oData, oBatchResponse);
+
+		assert.strictEqual(oRequest1.request.requestUri, "~serviceUri/Foo('~key')?bar");
+		assert.strictEqual(oRequest1.request.deepPath, "~deepPath('~key')");
+	});
 });

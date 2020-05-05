@@ -171,33 +171,42 @@
 /* Phone                                         */
 /* ============================================= */
 
-html.sap-phone .sapMTabStrip {
-	.sapMTSTouchArea {
-		position: inherit;
-		right: inherit;
-		margin: 0 0.25rem;
-		padding-right: 2.75rem;
-		.sapMTSSlt .sapMSltLabel {
-			position: absolute;
-			left: 0;
-			padding: 0 0 0 1rem;
+html.sap-phone {
+	.sapMTabStrip {
+		.sapMSltWithArrow {
+			visibility: visible;
+			display: none;
 		}
-		.sapMSltIcon.sapUiIcon.sapUiIconMirrorInRTL {
-			position: absolute;
-			right: 2.5rem;
-			border-width: @sapButton_BorderWidth;
-			border-radius: @sapButton_BorderCornerRadius;
-			border-color: @sapButton_BorderColor;
-			height: 2.375rem;
+
+		.sapMTabStripItem {
+			line-height: 2.5rem;
+			.sapMTSItemCloseBtnCnt {
+				position: absolute;
+				right: 0;
+			}
 		}
-		.sapMBtn.sapMBtnBase {
-			position: absolute;
-			right: 0;
+
+		.sapMTSTabs,
+		.sapMTabStripItem {
+			width: 100%;
 		}
 	}
-	.sapMSltWithArrow {
-		visibility: visible;
-		width: 100%;
+
+	.sapMTabStrip.sapUiSelectable .sapMSltWithArrow {
+		display: inline-block;
+	}
+
+	.sapMTabContainer.sapUiShowAddNewButton .sapMTabStrip.sapUiSelectable .sapMTSTabsContainer {
+		right: 5.8rem;
+	}
+
+	.sapMTabContainer.sapUiShowAddNewButton .sapMTabStrip .sapMTSTabsContainer,
+	.sapMTabContainer .sapMTabStrip.sapUiSelectable .sapMTSTabsContainer {
+		right: 2.75rem;
+	}
+
+	.sapMTabContainer .sapMTabStrip .sapMTSTabsContainer {
+		right: 0rem;
 	}
 }
 
@@ -363,7 +372,7 @@ html .sapMTabStripSelectListItemCloseBtn .sapMBtnInner {
 	}
 	.sapMTabStripSelectListItemCloseBtn {
 		height: 100%;
-		width: 2rem;
+		width: 2.25rem;
 		padding: 0;
 		float: right;
 	}
@@ -392,9 +401,7 @@ html .sapMTabStripSelectListItemCloseBtn .sapMBtnInner {
 
 .sapUiSizeCompact {
 	.sapMTabStripSelectListItemCloseBtn {
-		.sapMTSOverflowSelectListItem .sapMTabStripSelectListItemCloseBtn  {
-			width: 1.5rem;
-		}
+		width: 2rem;
 		.sapMBtnContent {
 			line-height: 1.25rem;
 		}

@@ -1,16 +1,15 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Fragment, Controller, JSONModel) {
+	], function(Fragment, Controller, JSONModel) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.layout.sample.SimpleForm480.Page", {
 
 		onInit: function () {
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/supplier.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/supplier.json"));
 			oModel.attachRequestCompleted(function() {
 				this.byId('edit').setEnabled(true);
 			}.bind(this));
@@ -36,7 +35,7 @@ sap.ui.define([
 		handleEditPress : function () {
 
 			//Clone the data
-			this._oSupplier = jQuery.extend({}, this.getView().getModel().getData().SupplierCollection[0]);
+			this._oSupplier = Object.assign({}, this.getView().getModel().getData().SupplierCollection[0]);
 			this._toggleButtonsAndView(true);
 
 		},

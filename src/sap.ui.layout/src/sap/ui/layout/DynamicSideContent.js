@@ -7,10 +7,11 @@ sap.ui.define([
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/core/Control',
 	'sap/ui/core/ResizeHandler',
+	'sap/ui/core/delegate/ScrollEnablement',
 	'sap/ui/layout/library',
 	'./DynamicSideContentRenderer'
 ],
-	function(jQuery, Control, ResizeHandler, library, DynamicSideContentRenderer) {
+	function(jQuery, Control, ResizeHandler, ScrollEnablement, library, DynamicSideContentRenderer) {
 		"use strict";
 
 		// shortcut for sap.ui.layout.SideContentPosition
@@ -157,7 +158,6 @@ sap.ui.define([
 				}
 			},
 			aggregations : {
-
 				/**
 				 * Main content controls.
 				 */
@@ -411,7 +411,7 @@ sap.ui.define([
 				this._adjustToScreenSize();
 			} else {
 				var that = this;
-				jQuery(window).resize(function() {
+				jQuery(window).on("resize", function() {
 					that._adjustToScreenSize();
 				});
 			}
@@ -435,6 +435,41 @@ sap.ui.define([
 				this._oMCScroller.destroy();
 				this._oMCScroller = null;
 			}
+		};
+
+		/**
+		 * Returns a scroll helper object used to handle scrolling.
+		 * @public
+		 * @param {object} oControl The control instance that requested the scroll helper
+		 * @returns {sap.ui.core.delegate.ScrollEnablement} The scroll helper instance
+		 * @since 1.78
+		 */
+		DynamicSideContent.prototype.getScrollDelegate = function (oControl) {
+			var oControlInQuestion = oControl,
+				oContainerOfDSC = this.getParent(),
+				sBreakpoint = this._getBreakPointFromWidth();
+
+			//for cases with main and side content - one above the other - use the scroll delegate of the parent container
+			if (sBreakpoint && sBreakpoint !== L && sBreakpoint !== XL ) {
+				while (!oContainerOfDSC.getScrollDelegate()) {
+					oContainerOfDSC = oContainerOfDSC.getParent();
+				}
+				return oContainerOfDSC.getScrollDelegate();
+			}
+
+			if (this._oMCScroller && this._oSCScroller) {
+				while (oControlInQuestion.getId() !== this.getId()) {
+					if (oControlInQuestion.sParentAggregationName === "mainContent") {
+						return this._oMCScroller;
+					}
+					if (oControlInQuestion.sParentAggregationName === "sideContent") {
+						return this._oSCScroller;
+					}
+					oControlInQuestion = oControlInQuestion.getParent();
+				}
+			}
+
+			return;
 		};
 
 		/**
@@ -464,7 +499,6 @@ sap.ui.define([
 				sMainContentId = sControlId + "-" + MC_GRID_CELL_SELECTOR;
 
 			if (!this._oSCScroller && !this._oMCScroller) {
-				var ScrollEnablement = sap.ui.requireSync("sap/ui/core/delegate/ScrollEnablement");
 				this._oSCScroller = new ScrollEnablement(this, null, {
 					scrollContainerId: sSideContentId,
 					horizontal: false,
@@ -708,6 +742,9 @@ sap.ui.define([
 				$mainContent.addClass(HIDDEN_CLASS);
 				$sideContent.addClass(HIDDEN_CLASS);
 			}
+
+			$mainContent.addClass("sapUiDSCM");
+			$sideContent.addClass("sapUiDSCS");
 		};
 
 		/**

@@ -1,4 +1,4 @@
-/* global QUnit sinon */
+/* global QUnit */
 
 QUnit.config.autostart = false;
 sap.ui.test.qunit.delayTestStart();
@@ -130,12 +130,15 @@ sap.ui.require([
 		afterEach: function(assert) {
 
 			// cleanup
-			this.oAlignedFlowLayout.destroy();
+			if (this.oAlignedFlowLayout) {
+				this.oAlignedFlowLayout.destroy();
+				this.oAlignedFlowLayout = null;
+			}
+
 			Core.applyChanges();
 			this.oContentDomRef.style.width = "";
 			this.oContentDomRef.style.height = "";
 			this.oContentDomRef = null;
-			this.oAlignedFlowLayout = null;
 		}
 	});
 
@@ -158,7 +161,7 @@ sap.ui.require([
 
 	QUnit.test("it should render a flow layout container with one item", function(assert) {
 
-		// system under test
+		// arrange
 		var oInput = new Input();
 
 		// act
@@ -177,14 +180,12 @@ sap.ui.require([
 		assert.strictEqual(oStyles.flexShrink, "0", 'it should set the "flex-shrink" CSS property to "0"');
 		assert.strictEqual(oItemDomRef.style.flexBasis, "240px", 'it should set the "flex-basis" CSS property to "240px"');
 		assert.strictEqual(sItemMaxWidth, "480px", 'it should set the "max-width" CSS property to "480px"');
-
-		// cleanup
-		oInput.destroy();
 	});
 
 	QUnit.test("the end item should not overflow its container", function(assert) {
+		var done = assert.async();
 
-		// system under test
+		// arrange
 		var oButton = new Button();
 
 		// act
@@ -193,22 +194,25 @@ sap.ui.require([
 		// arrange
 		this.oAlignedFlowLayout.addStyleClass("sapUiLargeMargin"); // add margin to detect overflow
 		Core.applyChanges();
-		var oDomRef = this.oAlignedFlowLayout.getDomRef(),
-			oItemDomRef = oButton.getDomRef().parentElement,
-			oItemStyles = getComputedStyle(oItemDomRef);
 
-		// assert
-		assert.ok(oDomRef.offsetHeight > 0, 'it should set the height of the layout content area to a value greater than "0px"');
-		assert.ok(oDomRef.offsetHeight === oItemDomRef.offsetHeight, "the end item should not overflow its container");
-		assert.strictEqual(oItemDomRef.offsetTop, 0, "the end item should not overflow its container");
-		assert.strictEqual(oItemDomRef.style.width, "", "it should not set the width to prevent a collisions when the end item is the only child");
-		assert.strictEqual(oItemStyles.flexBasis, "auto", 'it should set the "flex-basis" CSS property to "auto"');
+		// wait some time until the browser layout is finished
+		window.requestAnimationFrame(function() {
+			var oDomRef = this.oAlignedFlowLayout.getDomRef(),
+				oItemDomRef = oButton.getDomRef().parentElement,
+				oItemStyles = getComputedStyle(oItemDomRef);
 
-		// cleanup
-		oButton.destroy();
+			// assert
+			assert.ok(oDomRef.offsetHeight > 0, 'it should set the height of the layout content area to a value greater than "0px"');
+			assert.ok(oDomRef.offsetHeight === oItemDomRef.offsetHeight, "the end item should not overflow its container");
+			assert.strictEqual(oItemDomRef.offsetTop, 0, "the end item should not overflow its container");
+			assert.strictEqual(oItemDomRef.style.width, "", "it should not set the width to prevent a collisions when the end item is the only child");
+			assert.strictEqual(oItemStyles.flexBasis, "auto", 'it should set the "flex-basis" CSS property to "auto"');
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("the end item should not overflow its container if its height is higher than the other items", function(assert) {
+		var done = assert.async();
 
 		// system under test
 		var oInput1 = new Input();
@@ -232,17 +236,15 @@ sap.ui.require([
 		this.oAlignedFlowLayout.setMinItemWidth("200px");
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
 		Core.applyChanges();
-		var oItemDomRef = oTextArea.getDomRef().parentElement;
 
-		// assert
-		assert.strictEqual(oItemDomRef.offsetTop, 0, "the end item should not overflow its container");
+		// wait some time until the browser layout is finished
+		window.requestAnimationFrame(function() {
+			var oItemDomRef = oTextArea.getDomRef().parentElement;
 
-		// cleanup
-		oInput1.destroy();
-		oInput2.destroy();
-		oInput3.destroy();
-		oInput4.destroy();
-		oTextArea.destroy();
+			// assert
+			assert.strictEqual(oItemDomRef.offsetTop, 0, "the end item should not overflow its container");
+			done();
+		});
 	});
 
 	// BCP: 1970272412
@@ -264,6 +266,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("it should set the maximum width of items", function(assert) {
+		var done = assert.async();
 
 		// system under test
 		var oInput1 = new Input();
@@ -280,13 +283,14 @@ sap.ui.require([
 		this.oAlignedFlowLayout.setMaxItemWidth(iExpectedWidth + "px");
 		Core.applyChanges();
 
-		// assert
-		assert.strictEqual(oInput1.getDomRef().parentElement.offsetWidth, iExpectedWidth);
-		assert.strictEqual(oInput2.getDomRef().parentElement.offsetWidth, iExpectedWidth);
+		// wait some time until the browser layout is finished
+		window.requestAnimationFrame(function() {
 
-		// cleanup
-		oInput1.destroy();
-		oInput2.destroy();
+			// assert
+			assert.strictEqual(oInput1.getDomRef().parentElement.offsetWidth, iExpectedWidth);
+			assert.strictEqual(oInput2.getDomRef().parentElement.offsetWidth, iExpectedWidth);
+			done();
+		});
 	});
 
 	QUnit.test("the maximum width win over the minimum width", function(assert) {
@@ -310,10 +314,6 @@ sap.ui.require([
 		// assert
 		assert.strictEqual(oInput1.getDomRef().parentElement.offsetWidth, iExpectedWidth);
 		assert.strictEqual(oInput2.getDomRef().parentElement.offsetWidth, iExpectedWidth);
-
-		// cleanup
-		oInput1.destroy();
-		oInput2.destroy();
 	});
 
 	QUnit.test("getLastItemDomRef should return the last item DOM reference", function(assert) {
@@ -329,9 +329,6 @@ sap.ui.require([
 
 		// assert
 		assert.ok(this.oAlignedFlowLayout.getLastItemDomRef() === this.oAlignedFlowLayout.getContent()[0].getDomRef().parentElement);
-
-		// cleanup
-		oInput.destroy();
 	});
 
 	QUnit.test("getLastItemDomRef should not return the null empty object reference", function(assert) {
@@ -353,9 +350,6 @@ sap.ui.require([
 
 		// assert
 		assert.ok(this.oAlignedFlowLayout.getLastVisibleDomRef() === this.oAlignedFlowLayout.getLastItemDomRef());
-
-		// cleanup
-		oInput.destroy();
 	});
 
 	QUnit.test("getLastVisibleDomRef should return the last visible DOM reference", function(assert) {
@@ -373,10 +367,6 @@ sap.ui.require([
 
 		// assert
 		assert.ok(this.oAlignedFlowLayout.getLastVisibleDomRef() === this.oAlignedFlowLayout.getDomRef("endItem"));
-
-		// cleanup
-		oInput.destroy();
-		oButton.destroy();
 	});
 
 	QUnit.test("getLastVisibleDomRef should return the null empty object reference", function(assert) {
@@ -399,9 +389,6 @@ sap.ui.require([
 
 		// assert
 		assert.strictEqual(this.oAlignedFlowLayout.getContent().length, 0);
-
-		// cleanup
-		oButton.destroy();
 	});
 
 	QUnit.test("it should not set maximum width to the end item", function(assert) {
@@ -422,9 +409,6 @@ sap.ui.require([
 		// assert
 		assert.strictEqual(oEndItem.style.maxWidth, "");
 		assert.strictEqual(Rem.fromPx(oEndItem.offsetWidth) + "rem", sMaxItemWidth);
-
-		// cleanup
-		oButton.destroy();
 	});
 
 	// BCP: 1880394379
@@ -445,10 +429,6 @@ sap.ui.require([
 
 		// assert
 		assert.ok(true);
-
-		// cleanup
-		oInput.destroy();
-		oButton.destroy();
 	});
 
 	if (typeof ResizeObserver === "function") {
@@ -495,13 +475,14 @@ sap.ui.require([
 			// enforces a sync rendering of the AlignedFlowLayout control
 			Core.applyChanges();
 
+			var spy = this.spy;
+
 			// wait some time after the initial rendering cycle finishes
-			// (this timeout timer is not required for the test to run successful,
-			// but rather to ensure that the reflows caused by the initial rendering
-			// cycle is finish)
+			// to ensure that the reflows caused by the initial rendering
+			// cycle is finish
 			setTimeout(function() {
 				var oLayoutDomRef = oAlignedFlowLayout.getDomRef();
-				var oReflowStub = sinon.stub(oAlignedFlowLayout, "reflow");
+				var oReflowSpy = spy(oAlignedFlowLayout, "reflow");
 
 				// act + arrange, update height of the AlignedFlowLayout control,
 				// this should not trigger a function call to the .reflow() method
@@ -514,21 +495,21 @@ sap.ui.require([
 				oAlignedFlowLayout.fLayoutWidth = fLayoutWidth;
 
 				// wait some time until the browser layout is finished
-				setTimeout(fnAfterBrowserReflow.bind(this), 100);
+				setTimeout(fnAfterBrowserReflow, 100);
 
 				function fnAfterBrowserReflow() {
 
 					// assert
 					var sMessage = "a function call to the .reflow() method should not be" +
                     " triggered when the height of the layout control changes";
-					assert.strictEqual(oReflowStub.callCount, 0, sMessage);
+					assert.strictEqual(oReflowSpy.callCount, 0, sMessage);
 
 					// cleanup
-					oReflowStub.restore();
+					oReflowSpy.restore();
 					oAlignedFlowLayout.destroy();
 					done();
 				}
-			}.bind(this), 100);
+			}, 100);
 		});
 
 		QUnit.test("it should not trigger unnecessary function calls to the .reflow() method to" +
@@ -556,13 +537,14 @@ sap.ui.require([
 			// enforces a sync rendering of the AlignedFlowLayout control
 			Core.applyChanges();
 
+			var spy = this.spy;
+
 			// wait some time after the initial rendering cycle finishes
-			// (this timeout timer is not required for the test to run successful,
-			// but rather to ensure that the reflows caused by the initial rendering
-			// cycle is finish)
+			// to ensure that the reflows caused by the initial rendering
+			// cycle is finish
 			setTimeout(function() {
 				var oEndItemDomRef = oAlignedFlowLayout.getDomRef("endItem");
-				var oReflowStub = sinon.stub(oAlignedFlowLayout, "reflow");
+				var oReflowSpy = spy(oAlignedFlowLayout, "reflow");
 
 				// act + arrange, update height of the item holding the `endContent`
 				// aggregation, this should not trigger a function call to the .reflow()
@@ -576,7 +558,7 @@ sap.ui.require([
 				oAlignedFlowLayout.fEndItemWidth = fEndItemWidth;
 
 				// wait some time until the browser layout is finished
-				setTimeout(fnAfterBrowserReflow.bind(this), 100);
+				setTimeout(fnAfterBrowserReflow, 100);
 
 				function fnAfterBrowserReflow() {
 
@@ -584,14 +566,14 @@ sap.ui.require([
 					var sMessage = "a function call to the .reflow() method should not be" +
 					" triggered when the height of the item holding the `endContent` aggregation" +
 					" changes";
-					assert.strictEqual(oReflowStub.callCount, 0, sMessage);
+					assert.strictEqual(oReflowSpy.callCount, 0, sMessage);
 
 					// cleanup
-					oReflowStub.restore();
+					oReflowSpy.restore();
 					oAlignedFlowLayout.destroy();
 					done();
 				}
-			}.bind(this), 100);
+			}, 100);
 		});
 	}
 
@@ -609,15 +591,18 @@ sap.ui.require([
 		afterEach: function(assert) {
 
 			// cleanup
-			this.oAlignedFlowLayout.destroy();
+			if (this.oAlignedFlowLayout) {
+				this.oAlignedFlowLayout.destroy();
+				this.oAlignedFlowLayout = null;
+			}
+
 			this.oContentDomRef.style.width = "";
 			this.oContentDomRef = null;
 			this.CSS_CLASS_ONE_LINE = "";
-			this.oAlignedFlowLayout = null;
 		}
 	});
 
-	QUnit.test("checkItemsWrapping should return false when no child controls are rendered", function(assert) {
+	QUnit.test("checkItemsWrapping should return false when no child controls are rendered (test case 1)", function(assert) {
 
 		// arrange
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
@@ -627,6 +612,22 @@ sap.ui.require([
 		assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), false);
 	});
 
+	QUnit.test("checkItemsWrapping should return false when no child controls are rendered (test case 2)", function(assert) {
+		var done = assert.async();
+
+		// arrange
+		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
+		Core.applyChanges();
+
+		// wait some time until the browser layout is finished
+		window.requestAnimationFrame(function() {
+
+			// assert
+			assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), false);
+			done();
+		}.bind(this));
+	});
+
 	QUnit.test("checkItemsWrapping should return false when the control is not rendered", function(assert) {
 
 		// assert
@@ -634,6 +635,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("it should not wrap the items onto multiple lines", function(assert) {
+		var done = assert.async();
 
 		// system under test
 		var oInput = new Input();
@@ -645,14 +647,17 @@ sap.ui.require([
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
 		Core.applyChanges();
 
-		// assert
-		assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), false);
+		// wait some time until the browser layout is finished
+		window.requestAnimationFrame(function() {
 
-		// cleanup
-		oInput.destroy();
+			// assert
+			assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), false);
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("it should not wrap the items onto multiple lines", function(assert) {
+		var done = assert.async();
 
 		// system under test
 		var oInput1 = new Input();
@@ -676,19 +681,18 @@ sap.ui.require([
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
 		Core.applyChanges();
 
-		// assert
-		assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), false);
-		assert.ok(this.oAlignedFlowLayout.getDomRef().classList.contains(this.CSS_CLASS_ONE_LINE));
+		// wait some time until the browser layout is finished
+		window.requestAnimationFrame(function() {
 
-		// cleanup
-		oInput1.destroy();
-		oInput2.destroy();
-		oInput3.destroy();
-		oInput4.destroy();
-		oButton.destroy();
+			// assert
+			assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), false);
+			assert.ok(this.oAlignedFlowLayout.getDomRef().classList.contains(this.CSS_CLASS_ONE_LINE));
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("it should not wrap the items onto multiple lines", function(assert) {
+		var done = assert.async();
 
 		// system under test
 		var oInput1 = new Input();
@@ -713,19 +717,18 @@ sap.ui.require([
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
 		Core.applyChanges();
 
-		// assert
-		assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), false);
-		assert.ok(this.oAlignedFlowLayout.getDomRef().classList.contains(this.CSS_CLASS_ONE_LINE));
+		// wait some time until the browser layout is finished
+		window.requestAnimationFrame(function() {
 
-		// cleanup
-		oInput1.destroy();
-		oInput2.destroy();
-		oInput3.destroy();
-		oInput4.destroy();
-		oButton.destroy();
+			// assert
+			assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), false);
+			assert.ok(this.oAlignedFlowLayout.getDomRef().classList.contains(this.CSS_CLASS_ONE_LINE));
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("it should not wrap the items onto multiple lines", function(assert) {
+		var done = assert.async();
 
 		// system under test
 		var oInput1 = new Input();
@@ -741,12 +744,13 @@ sap.ui.require([
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
 		Core.applyChanges();
 
-		// assert
-		assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), false);
+		// wait some time until the browser layout is finished
+		window.requestAnimationFrame(function() {
 
-		// cleanup
-		oInput1.destroy();
-		oInput2.destroy();
+			// assert
+			assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), false);
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("it should not wrap the items onto multiple lines and arrange the items evenly across the available horizontal space", function(assert) {
@@ -778,26 +782,23 @@ sap.ui.require([
 
 		function fnAfterResize() {
 
-			// assert
-			assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), false);
-			assert.strictEqual(oInput1.getDomRef().parentElement.offsetWidth, 206);
-			assert.strictEqual(oInput2.getDomRef().parentElement.offsetWidth, 206);
-			assert.strictEqual(oInput3.getDomRef().parentElement.offsetWidth, 206);
-			assert.strictEqual(oInput4.getDomRef().parentElement.offsetWidth, 206);
-			assert.strictEqual(oButton.getDomRef().parentElement.offsetWidth, 200);
-			assert.ok(this.oAlignedFlowLayout.getDomRef().classList.contains(this.CSS_CLASS_ONE_LINE));
-			done();
+			window.requestAnimationFrame(function() {
 
-			// cleanup
-			oInput1.destroy();
-			oInput2.destroy();
-			oInput3.destroy();
-			oInput4.destroy();
-			oButton.destroy();
+				// assert
+				assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), false);
+				assert.strictEqual(oInput1.getDomRef().parentElement.offsetWidth, 206);
+				assert.strictEqual(oInput2.getDomRef().parentElement.offsetWidth, 206);
+				assert.strictEqual(oInput3.getDomRef().parentElement.offsetWidth, 206);
+				assert.strictEqual(oInput4.getDomRef().parentElement.offsetWidth, 206);
+				assert.strictEqual(oButton.getDomRef().parentElement.offsetWidth, 200);
+				assert.ok(this.oAlignedFlowLayout.getDomRef().classList.contains(this.CSS_CLASS_ONE_LINE));
+				done();
+			}.bind(this));
 		}
 	});
 
 	QUnit.test("the end item should not overlap the items on the first line if its height is higher than the other items", function(assert) {
+		var done = assert.async();
 
 		// system under test
 		var oInput1 = new Input({
@@ -828,17 +829,15 @@ sap.ui.require([
 		this.oAlignedFlowLayout.setMinItemWidth("200px");
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
 		Core.applyChanges();
-		var oItemDomRef = oTextArea.getDomRef().parentElement;
 
-		// assert
-		assert.strictEqual(oItemDomRef.offsetTop, 20, "the end item should not overlap the items on the first line");
+		// wait some time until the browser layout is finished
+		window.requestAnimationFrame(function() {
+			var oItemDomRef = oTextArea.getDomRef().parentElement;
 
-		// cleanup
-		oInput1.destroy();
-		oInput2.destroy();
-		oInput3.destroy();
-		oInput4.destroy();
-		oTextArea.destroy();
+			// assert
+			assert.strictEqual(oItemDomRef.offsetTop, 20, "the end item should not overlap the items on the first line");
+			done();
+		});
 	});
 
 	// BCP: 1980003456
@@ -886,27 +885,25 @@ sap.ui.require([
 		IntervalTrigger.addListener(fnAfterResize, this);
 
 		function fnAfterResize() {
-			var oEndItemDomRef = oButton.getDomRef().parentElement,
-				oPreviousItemDomRef = oInput4.getDomRef().parentElement,
-				bOverlapX;
-
-			if (Core.getConfiguration().getRTL()) {
-				bOverlapX = oPreviousItemDomRef.offsetLeft < (oEndItemDomRef.offsetLeft + oEndItemDomRef.offsetWidth);
-			} else {
-				bOverlapX = oEndItemDomRef.offsetLeft < (oPreviousItemDomRef.offsetLeft + oPreviousItemDomRef.offsetWidth);
-			}
-
-			// assert
-			assert.strictEqual(bOverlapX, false);
-
-			// cleanup
 			IntervalTrigger.removeListener(fnAfterResize, this);
-			oInput1.destroy();
-			oInput2.destroy();
-			oInput3.destroy();
-			oInput4.destroy();
-			oButton.destroy();
-			done();
+
+			// wait some time until the browser layout is finished
+			window.requestAnimationFrame(function() {
+
+				var oEndItemDomRef = oButton.getDomRef().parentElement,
+					oPreviousItemDomRef = oInput4.getDomRef().parentElement,
+					bOverlapX;
+
+				if (Core.getConfiguration().getRTL()) {
+					bOverlapX = oPreviousItemDomRef.offsetLeft < (oEndItemDomRef.offsetLeft + oEndItemDomRef.offsetWidth);
+				} else {
+					bOverlapX = oEndItemDomRef.offsetLeft < (oPreviousItemDomRef.offsetLeft + oPreviousItemDomRef.offsetWidth);
+				}
+
+				// assert
+				assert.strictEqual(bOverlapX, false);
+				done();
+			});
 		}
 	});
 
@@ -962,37 +959,41 @@ sap.ui.require([
 		IntervalTrigger.addListener(fnAfterResize, this);
 
 		function fnAfterResize() {
-			var oItemDomRef1 = oInput1.getDomRef().parentElement,
-				oItemDomRef2 = oInput2.getDomRef().parentElement,
-				oItemDomRef3 = oInput3.getDomRef().parentElement,
-				oEndContendItemDomRef = oAdaptFiltersButton.getDomRef().parentElement,
-				bOverlapX;
-
-			if (Core.getConfiguration().getRTL()) {
-				bOverlapX = oItemDomRef3.offsetLeft < (oEndContendItemDomRef.offsetLeft + oEndContendItemDomRef.offsetWidth);
-			} else {
-				bOverlapX = oEndContendItemDomRef.offsetLeft < (oItemDomRef3.offsetLeft + oItemDomRef3.offsetWidth);
-			}
-
-			// - the available container width is 791px
-			// - the min item width is set to 192px (default) and there are 3 flexible item (192 * 3) = 576px
-			// - the the end content item width is set to 135px + 80px = 215px
-			// So, it should be possible to display all items in the first line without overlapping
-			var iItemsComputedWidth = oItemDomRef1.offsetWidth + oItemDomRef2.offsetWidth + oItemDomRef3.offsetWidth + oEndContendItemDomRef.offsetWidth;
-
-			// assert
-			assert.strictEqual(oItemDomRef1.offsetWidth, 192, "the item should have the minimum specified width");
-			assert.strictEqual(oItemDomRef2.offsetWidth, 192, "the item should have the minimum specified width");
-			assert.strictEqual(oItemDomRef3.offsetWidth, 192, "the item should have the minimum specified width");
-			assert.strictEqual(oEndContendItemDomRef.offsetWidth, 215, "the end content item should have the specified width");
-			assert.strictEqual(iItemsComputedWidth, 791, "the computed width of the items should be equal to the container width");
-			assert.strictEqual(oAlignedFlowLayout.checkItemsWrapping(), false, "the items should fit into a single line (no wrapping onto multiple lines)");
-			assert.strictEqual(bOverlapX, false, "the last two items should not overlap");
-
-			// cleanup
 			IntervalTrigger.removeListener(fnAfterResize, this);
-			oAlignedFlowLayout.destroy();
-			done();
+
+			// wait some time until the browser layout is finished
+			window.requestAnimationFrame(function() {
+				var oItemDomRef1 = oInput1.getDomRef().parentElement,
+					oItemDomRef2 = oInput2.getDomRef().parentElement,
+					oItemDomRef3 = oInput3.getDomRef().parentElement,
+					oEndContendItemDomRef = oAdaptFiltersButton.getDomRef().parentElement,
+					bOverlapX;
+
+				if (Core.getConfiguration().getRTL()) {
+					bOverlapX = oItemDomRef3.offsetLeft < (oEndContendItemDomRef.offsetLeft + oEndContendItemDomRef.offsetWidth);
+				} else {
+					bOverlapX = oEndContendItemDomRef.offsetLeft < (oItemDomRef3.offsetLeft + oItemDomRef3.offsetWidth);
+				}
+
+				// - the available container width is 791px
+				// - the min item width is set to 192px (default) and there are 3 flexible item (192 * 3) = 576px
+				// - the the end content item width is set to 135px + 80px = 215px
+				// So, it should be possible to display all items in the first line without overlapping
+				var iItemsComputedWidth = oItemDomRef1.offsetWidth + oItemDomRef2.offsetWidth + oItemDomRef3.offsetWidth + oEndContendItemDomRef.offsetWidth;
+
+				// assert
+				assert.strictEqual(oItemDomRef1.offsetWidth, 192, "the item should have the minimum specified width");
+				assert.strictEqual(oItemDomRef2.offsetWidth, 192, "the item should have the minimum specified width");
+				assert.strictEqual(oItemDomRef3.offsetWidth, 192, "the item should have the minimum specified width");
+				assert.strictEqual(oEndContendItemDomRef.offsetWidth, 215, "the end content item should have the specified width");
+				assert.strictEqual(iItemsComputedWidth, 791, "the computed width of the items should be equal to the container width");
+				assert.strictEqual(oAlignedFlowLayout.checkItemsWrapping(), false, "the items should fit into a single line (no wrapping onto multiple lines)");
+				assert.strictEqual(bOverlapX, false, "the last two items should not overlap");
+
+				// cleanup
+				oAlignedFlowLayout.destroy();
+				done();
+			});
 		}
 	});
 
@@ -1122,52 +1123,56 @@ sap.ui.require([
 		IntervalTrigger.addListener(fnAfterResize, this);
 
 		function fnAfterResize() {
-			var oItemDomRef1 = oInput1.getDomRef().parentElement,
-				oItemDomRef2 = oInput2.getDomRef().parentElement,
-				oItemDomRef3 = oInput3.getDomRef().parentElement,
-				oEndContendItemDomRef = oAdaptFiltersButton.getDomRef().parentElement;
-
-			// assert
-			assert.strictEqual(oItemDomRef1.offsetWidth, 195, "the item should have a computed width of 195px");
-			assert.strictEqual(oItemDomRef1.offsetTop, 0, "the item should be in the first line");
-
-			if (Core.getConfiguration().getRTL()) {
-				assert.strictEqual(oItemDomRef1.offsetLeft, 195, "the item should be aligned to the upper right corner");
-			} else {
-				assert.strictEqual(oItemDomRef1.offsetLeft, 0, "the item should be aligned to the upper left corner");
-			}
-
-			assert.strictEqual(oItemDomRef2.offsetWidth, 195, "the item should have a computed width of 195px");
-			assert.strictEqual(oItemDomRef2.offsetTop, 0, "the item should be in the first line");
-
-			if (Core.getConfiguration().getRTL()) {
-				assert.strictEqual(oItemDomRef2.offsetLeft, 0, "the item should be aligned to the left of the first item");
-			} else {
-				assert.strictEqual(oItemDomRef2.offsetLeft, 195, "the item should be aligned to the right of the first item");
-			}
-
-			assert.strictEqual(oItemDomRef3.offsetWidth, 195, "the item should have a computed width of 195px");
-			assert.strictEqual(oItemDomRef3.offsetTop, 20, "the item should be in the second line");
-
-			if (Core.getConfiguration().getRTL()) {
-				assert.strictEqual(oItemDomRef3.offsetLeft, 195, "the item should be aligned to the right corner");
-			} else {
-				assert.strictEqual(oItemDomRef3.offsetLeft, 0, "the item should be aligned to the left corner");
-			}
-
-			assert.strictEqual(oEndContendItemDomRef.offsetWidth, 215, "the end content item should have the specified width");
-			assert.strictEqual(oEndContendItemDomRef.offsetTop, 40, "the end content item should be in the third line");
-
-			if (Core.getConfiguration().getRTL()) {
-				assert.strictEqual(oEndContendItemDomRef.offsetLeft, 0, "the item should be aligned to the right");
-			} else {
-				assert.strictEqual(oEndContendItemDomRef.offsetLeft, 175, "the item should be aligned to the left");
-			}
-
-			// cleanup
 			IntervalTrigger.removeListener(fnAfterResize, this);
-			oAlignedFlowLayout.destroy();
-			done();
+
+			// wait some time until the browser layout is finished
+			window.requestAnimationFrame(function() {
+				var oItemDomRef1 = oInput1.getDomRef().parentElement,
+					oItemDomRef2 = oInput2.getDomRef().parentElement,
+					oItemDomRef3 = oInput3.getDomRef().parentElement,
+					oEndContendItemDomRef = oAdaptFiltersButton.getDomRef().parentElement;
+
+				// assert
+				assert.strictEqual(oItemDomRef1.offsetWidth, 195, "the item should have a computed width of 195px");
+				assert.strictEqual(oItemDomRef1.offsetTop, 0, "the item should be in the first line");
+
+				if (Core.getConfiguration().getRTL()) {
+					assert.strictEqual(oItemDomRef1.offsetLeft, 195, "the item should be aligned to the upper right corner");
+				} else {
+					assert.strictEqual(oItemDomRef1.offsetLeft, 0, "the item should be aligned to the upper left corner");
+				}
+
+				assert.strictEqual(oItemDomRef2.offsetWidth, 195, "the item should have a computed width of 195px");
+				assert.strictEqual(oItemDomRef2.offsetTop, 0, "the item should be in the first line");
+
+				if (Core.getConfiguration().getRTL()) {
+					assert.strictEqual(oItemDomRef2.offsetLeft, 0, "the item should be aligned to the left of the first item");
+				} else {
+					assert.strictEqual(oItemDomRef2.offsetLeft, 195, "the item should be aligned to the right of the first item");
+				}
+
+				assert.strictEqual(oItemDomRef3.offsetWidth, 195, "the item should have a computed width of 195px");
+				assert.strictEqual(oItemDomRef3.offsetTop, 20, "the item should be in the second line");
+
+				if (Core.getConfiguration().getRTL()) {
+					assert.strictEqual(oItemDomRef3.offsetLeft, 195, "the item should be aligned to the right corner");
+				} else {
+					assert.strictEqual(oItemDomRef3.offsetLeft, 0, "the item should be aligned to the left corner");
+				}
+
+				assert.strictEqual(oEndContendItemDomRef.offsetWidth, 215, "the end content item should have the specified width");
+				assert.strictEqual(oEndContendItemDomRef.offsetTop, 40, "the end content item should be in the third line");
+
+				if (Core.getConfiguration().getRTL()) {
+					assert.strictEqual(oEndContendItemDomRef.offsetLeft, 0, "the item should be aligned to the right");
+				} else {
+					assert.strictEqual(oEndContendItemDomRef.offsetLeft, 175, "the item should be aligned to the left");
+				}
+
+				// cleanup
+				oAlignedFlowLayout.destroy();
+				done();
+			});
 		}
 	});
 
@@ -1227,45 +1232,49 @@ sap.ui.require([
 		IntervalTrigger.addListener(fnAfterResize, this);
 
 		function fnAfterResize() {
-			var oItemDomRef1 = oInput1.getDomRef().parentElement,
-				oItemDomRef2 = oInput2.getDomRef().parentElement,
-				oItemDomRef3 = oInput3.getDomRef().parentElement,
-				oEndContendItemDomRef = oAdaptFiltersButton.getDomRef().parentElement;
-
-			// assert
-			assert.strictEqual(oItemDomRef1.offsetWidth, 320, "the item should have a computed width of 320px");
-			assert.strictEqual(oItemDomRef1.offsetTop, 0, "the item should be in the first line");
-
-			if (Core.getConfiguration().getRTL()) {
-				assert.strictEqual(oItemDomRef1.offsetLeft, 640, "the item should be aligned to the upper right corner");
-			} else {
-				assert.strictEqual(oItemDomRef1.offsetLeft, 0, "the item should be aligned to the upper left corner");
-			}
-
-			assert.strictEqual(oItemDomRef2.offsetWidth, 320, "the item should have a computed width of 320px");
-			assert.strictEqual(oItemDomRef2.offsetTop, 0, "the item should be in the first line");
-			assert.strictEqual(oItemDomRef2.offsetLeft, 320, "the item should be aligned to the left of the first item");
-
-			assert.strictEqual(oItemDomRef3.offsetWidth, 320, "the item should have a computed width of 320px");
-			assert.strictEqual(oItemDomRef3.offsetTop, 0, "the item should be in the first line");
-
-			if (Core.getConfiguration().getRTL()) {
-				assert.strictEqual(oItemDomRef3.offsetLeft, 0, "the item should be aligned to the upper left corner");
-			} else {
-				assert.strictEqual(oItemDomRef3.offsetLeft, 640, "the item should be aligned to the upper right corner");
-			}
-
-			assert.strictEqual(oEndContendItemDomRef.offsetLeft + oEndContendItemDomRef.offsetWidth, 960, "the end content item should be aligned to the right corner");
-			assert.strictEqual(oEndContendItemDomRef.offsetTop, 20, "the end content item should be in the second line");
-
-			// cleanup
 			IntervalTrigger.removeListener(fnAfterResize, this);
-			oAlignedFlowLayout.destroy();
-			done();
+
+			window.requestAnimationFrame(function() {
+				var oItemDomRef1 = oInput1.getDomRef().parentElement,
+					oItemDomRef2 = oInput2.getDomRef().parentElement,
+					oItemDomRef3 = oInput3.getDomRef().parentElement,
+					oEndContendItemDomRef = oAdaptFiltersButton.getDomRef().parentElement;
+
+				// assert
+				assert.strictEqual(oItemDomRef1.offsetWidth, 320, "the item should have a computed width of 320px");
+				assert.strictEqual(oItemDomRef1.offsetTop, 0, "the item should be in the first line");
+
+				if (Core.getConfiguration().getRTL()) {
+					assert.strictEqual(oItemDomRef1.offsetLeft, 640, "the item should be aligned to the upper right corner");
+				} else {
+					assert.strictEqual(oItemDomRef1.offsetLeft, 0, "the item should be aligned to the upper left corner");
+				}
+
+				assert.strictEqual(oItemDomRef2.offsetWidth, 320, "the item should have a computed width of 320px");
+				assert.strictEqual(oItemDomRef2.offsetTop, 0, "the item should be in the first line");
+				assert.strictEqual(oItemDomRef2.offsetLeft, 320, "the item should be aligned to the left of the first item");
+
+				assert.strictEqual(oItemDomRef3.offsetWidth, 320, "the item should have a computed width of 320px");
+				assert.strictEqual(oItemDomRef3.offsetTop, 0, "the item should be in the first line");
+
+				if (Core.getConfiguration().getRTL()) {
+					assert.strictEqual(oItemDomRef3.offsetLeft, 0, "the item should be aligned to the upper left corner");
+				} else {
+					assert.strictEqual(oItemDomRef3.offsetLeft, 640, "the item should be aligned to the upper right corner");
+				}
+
+				assert.strictEqual(oEndContendItemDomRef.offsetLeft + oEndContendItemDomRef.offsetWidth, 960, "the end content item should be aligned to the right corner");
+				assert.strictEqual(oEndContendItemDomRef.offsetTop, 20, "the end content item should be in the second line");
+
+				// cleanup
+				oAlignedFlowLayout.destroy();
+				done();
+			});
 		}
 	});
 
 	QUnit.test("it should adapt the position of the absolute-positioned end item when a standard CSS padding class is added", function(assert) {
+		var done = assert.async();
 
 		// system under test
 		var oInput = new Input();
@@ -1281,22 +1290,25 @@ sap.ui.require([
 		this.oAlignedFlowLayout.addStyleClass("sapUiAFLayoutWithPadding"); // add a padding of 30px
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
 		Core.applyChanges();
-		var oEndItemComputedStyle = window.getComputedStyle(oButton.getDomRef().parentElement, null);
 
-		// assert
-		if (Core.getConfiguration().getRTL()) {
-			assert.strictEqual(oEndItemComputedStyle.getPropertyValue("left"), "30px");
-		} else {
-			assert.strictEqual(oEndItemComputedStyle.getPropertyValue("right"), "30px");
-		}
-		assert.strictEqual(oEndItemComputedStyle.getPropertyValue("bottom"), "30px");
+		// wait some time until the browser layout is finished
+		window.requestAnimationFrame(function() {
+			var oEndItemComputedStyle = window.getComputedStyle(oButton.getDomRef().parentElement, null);
 
-		// cleanup
-		oInput.destroy();
-		oButton.destroy();
+			// assert
+			if (Core.getConfiguration().getRTL()) {
+				assert.strictEqual(oEndItemComputedStyle.getPropertyValue("left"), "30px");
+			} else {
+				assert.strictEqual(oEndItemComputedStyle.getPropertyValue("right"), "30px");
+			}
+
+			assert.strictEqual(oEndItemComputedStyle.getPropertyValue("bottom"), "30px");
+			done();
+		});
 	});
 
 	QUnit.test("it should wrap the items onto multiple lines", function(assert) {
+		var done = assert.async();
 
 		// system under test
 		var oInput1 = new Input();
@@ -1312,15 +1324,17 @@ sap.ui.require([
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
 		Core.applyChanges();
 
-		// assert
-		assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), true);
+		// wait some time until the browser layout is finished
+		window.requestAnimationFrame(function() {
 
-		// cleanup
-		oInput1.destroy();
-		oInput2.destroy();
+			// assert
+			assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), true);
+			done();
+		}.bind(this));
 	});
 
-	QUnit.test('it should wrap the items onto multiple lines', function(assert) {
+	QUnit.test("it should wrap the items onto multiple lines", function(assert) {
+		var done = assert.async();
 
 		// system under test
 		var oInput1 = new Input();
@@ -1349,21 +1363,19 @@ sap.ui.require([
 			oItemDomRef4 = oInput3.getDomRef().parentElement,
 			oEndContendItemDomRef = oButton.getDomRef().parentElement;
 
-		// assert
-		assert.strictEqual(oItemDomRef1.offsetWidth, 200, "the item should have the minimum specified width");
-		assert.strictEqual(oItemDomRef2.offsetWidth, 200, "the item should have the minimum specified width");
-		assert.strictEqual(oItemDomRef3.offsetWidth, 200, "the item should have the minimum specified width");
-		assert.strictEqual(oItemDomRef4.offsetWidth, 200, "the item should have the minimum specified width");
-		assert.strictEqual(oEndContendItemDomRef.offsetWidth, 200, "the end content item should have the specified width");
-		assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), true, "the items should wraps onto multiple lines");
-		assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(undefined, { excludeEndItem: true }), false, "the items (excluding the end content item) should fit into a single line (no wrapping onto multiple lines)");
+		// wait some time until the browser layout is finished
+		window.requestAnimationFrame(function() {
 
-		// cleanup
-		oInput1.destroy();
-		oInput2.destroy();
-		oInput3.destroy();
-		oInput4.destroy();
-		oButton.destroy();
+			// assert
+			assert.strictEqual(oItemDomRef1.offsetWidth, 200, "the item should have the minimum specified width");
+			assert.strictEqual(oItemDomRef2.offsetWidth, 200, "the item should have the minimum specified width");
+			assert.strictEqual(oItemDomRef3.offsetWidth, 200, "the item should have the minimum specified width");
+			assert.strictEqual(oItemDomRef4.offsetWidth, 200, "the item should have the minimum specified width");
+			assert.strictEqual(oEndContendItemDomRef.offsetWidth, 200, "the end content item should have the specified width");
+			assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), true, "the items should wraps onto multiple lines");
+			assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(undefined, { excludeEndItem: true }), false, "the items (excluding the end content item) should fit into a single line (no wrapping onto multiple lines)");
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("it should wrap the items onto multiple lines and the end item should not overlap other items", function(assert) {
@@ -1406,17 +1418,11 @@ sap.ui.require([
 			assert.strictEqual(oButton.getDomRef().parentElement.offsetWidth, iButtonWidth);
 			assert.notOk(this.oAlignedFlowLayout.getDomRef().classList.contains(this.CSS_CLASS_ONE_LINE));
 			done();
-
-			// cleanup
-			oInput1.destroy();
-			oInput2.destroy();
-			oInput3.destroy();
-			oInput4.destroy();
-			oButton.destroy();
 		}
 	});
 
 	QUnit.test("it should arrange child controls evenly across the available horizontal space without exceeding its maximum width", function(assert) {
+		var done = assert.async();
 
 		// system under test
 		var oInput = new Input();
@@ -1429,14 +1435,17 @@ sap.ui.require([
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
 		Core.applyChanges();
 
-		// assert
-		assert.strictEqual(oInput.getDomRef().parentElement.offsetWidth, 480);
+		// wait some time until the browser layout is finished
+		window.requestAnimationFrame(function() {
 
-		// cleanup
-		oInput.destroy();
+			// assert
+			assert.strictEqual(oInput.getDomRef().parentElement.offsetWidth, 480);
+			done();
+		});
 	});
 
 	QUnit.test("it should arrange child controls evenly across the available horizontal space without exceeding its maximum width", function(assert) {
+		var done = assert.async();
 
 		// system under test
 		var oInput1 = new Input();
@@ -1451,13 +1460,14 @@ sap.ui.require([
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
 		Core.applyChanges();
 
-		// assert
-		assert.strictEqual(oInput1.getDomRef().parentElement.offsetWidth, 480);
-		assert.strictEqual(oInput2.getDomRef().parentElement.offsetWidth, 480);
+		// wait some time until the browser layout is finished
+		window.requestAnimationFrame(function() {
 
-		// cleanup
-		oInput1.destroy();
-		oInput2.destroy();
+			// assert
+			assert.strictEqual(oInput1.getDomRef().parentElement.offsetWidth, 480);
+			assert.strictEqual(oInput2.getDomRef().parentElement.offsetWidth, 480);
+			done();
+		});
 	});
 
 	QUnit.test("getLastItemDomRef should return the null empty object reference", function(assert) {
@@ -1470,8 +1480,5 @@ sap.ui.require([
 
 		// assert
 		assert.ok(this.oAlignedFlowLayout.getLastItemDomRef() === null);
-
-		// cleanup
-		oInput.destroy();
 	});
 });

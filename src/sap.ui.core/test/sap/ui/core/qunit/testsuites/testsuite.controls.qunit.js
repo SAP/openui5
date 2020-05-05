@@ -2,32 +2,20 @@ sap.ui.define(function() {
 
 	"use strict";
 	return {
-		name: "TestSuite for sap.ui.core: GTP testcase CORE/CONTROLS",
+		name: "TestSuite for Topic: Controls",
 		defaults: {
 			qunit: {
 				version: 2
 			},
 			module: "test-resources/sap/ui/core/qunit/{name}.qunit"
+
 		},
 		tests: {
-			BlockLayerUtils: {
-				title: "QUnit Page for sap.ui.core.BlockLayerUtils",
-				ui5: {
-					libs: "sap.ui.commons, sap.m"
-				},
-				sinon: {
-					version: 4,
-					qunitBridge: true
-				}
-			},
 			FieldGroup: {
 				title: "QUnit page for FieldGroup",
 				ui5: {
 					libs: "sap.ui.layout,sap.ui.commons",
 					theme: "sap_bluecrystal"
-				},
-				qunit: {
-					reorder: false
 				}
 			},
 			HTML: {
@@ -56,12 +44,9 @@ sap.ui.define(function() {
 				}
 			},
 			Icon: {
-				title: "QUnit Page for Icon control",
+				title: "sap.ui.core.Icon",
 				ui5: {
 					libs: "sap.ui.core"
-				},
-				qunit: {
-					reorder: false
 				},
 				sinon: {
 					version: 4,
@@ -69,6 +54,7 @@ sap.ui.define(function() {
 				}
 			},
 			InvisibleText: {
+				title: "sap.ui.core.InvisibleText",
 				ui5: {
 					libs: "sap.ui.core",
 					language: "en"
@@ -79,7 +65,7 @@ sap.ui.define(function() {
 				}
 			},
 			LocalBusyIndicator: {
-				title: "QUnit Page for sap.ui.core.LocalBusyIndicator",
+				title: "sap.ui.core.LocalBusyIndicator",
 				ui5: {
 					libs: "sap.ui.commons, sap.m"
 				},
@@ -90,14 +76,17 @@ sap.ui.define(function() {
 				}
 			},
 			ScrollBar: {
-				title: "QUnit tests: sap.ui.core.ScrollBar",
-				qunit: {
-					reorder: false
-				},
+				title: "sap.ui.core.ScrollBar",
 				sinon: {
 					version: 4,
 					qunitBridge: true
 				}
+			},
+			TooltipBase: {
+				title: "sap.ui.core.TooltipBase"
+			},
+			"util/SelectionModel": {
+				title: "sap.ui.core.SelectionModel"
 			}
 		}
 	};

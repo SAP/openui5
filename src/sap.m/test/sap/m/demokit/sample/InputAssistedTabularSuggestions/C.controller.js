@@ -1,10 +1,10 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/Filter',
+		'sap/ui/model/FilterOperator',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Fragment, Controller, Filter, JSONModel) {
+	], function(Fragment, Controller, Filter, FilterOperator, JSONModel) {
 	"use strict";
 
 	var CController = Controller.extend("sap.m.sample.InputAssistedTabularSuggestions.C", {
@@ -12,7 +12,7 @@ sap.ui.define([
 
 		onInit: function () {
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
 		},
 
@@ -35,7 +35,7 @@ sap.ui.define([
 			var sValue = evt.getParameter("value");
 			var oFilter = new Filter(
 				"Name",
-				sap.ui.model.FilterOperator.Contains, sValue
+				FilterOperator.Contains, sValue
 			);
 			evt.getSource().getBinding("items").filter([oFilter]);
 		},

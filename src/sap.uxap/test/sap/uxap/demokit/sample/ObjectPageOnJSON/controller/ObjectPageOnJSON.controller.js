@@ -26,5 +26,5 @@ sap.ui.define([
 			oObjectPageLayout.setShowFooter(!oObjectPageLayout.getShowFooter());
 		}
 	});
-}, true);
+});
 

@@ -768,7 +768,7 @@ sap.ui.define([
 
 	QUnit.test("Keyboard Navigation", function(assert) {
 		// no arrow navigation in sap.m nvironment
-		jQuery("#I2-inner").focus();
+		jQuery("#I2-inner").trigger("focus");
 		assert.equal(jQuery("#I2-inner").is(":focus"), true, "Mouseclick: Container1, Field2 - Selected");
 		qutils.triggerKeyboardEvent("I2-inner", "F6");
 		assert.equal(jQuery("#I4-inner").is(":focus"), true, "F6: Container2, Field1 - Selected");
@@ -776,10 +776,10 @@ sap.ui.define([
 		assert.equal(jQuery("#I1-inner").is(":focus"), true, "Shift + F6: Container1, Field2 - Selected");
 		qutils.triggerKeyboardEvent("I4-inner", "F6");
 		assert.equal(jQuery("#I1-inner").is(":focus"), false, "F6: Container1, Field1 - NOT Selected (No cycling!)");
-		jQuery("#I1-inner").focus();
+		jQuery("#I1-inner").trigger("focus");
 		qutils.triggerKeyboardEvent("I1-inner", "F6");
 		assert.equal(jQuery("#I4-inner").is(":focus"), true, "F6: Container2, Field1 - Selected");
-		jQuery("#I1-inner").focus();
+		jQuery("#I1-inner").trigger("focus");
 		qutils.triggerKeyboardEvent("I1-inner", KeyCodes.TAB);
 		assert.equal(jQuery("#I2-inner").is(":focus"), true, "Tab: Container1, Field2 - Selected");
 		qutils.triggerKeyboardEvent("I2-inner", KeyCodes.TAB);
@@ -788,7 +788,7 @@ sap.ui.define([
 		assert.equal(jQuery("#I2-inner").is(":focus"), true, "Shift+Tab: Container1, Field2 - Selected");
 		qutils.triggerKeyboardEvent("I2-inner", KeyCodes.TAB, true, false, false);
 		assert.equal(jQuery("#I1-inner").is(":focus"), true, "Shift+Tab: Container1, Field1 - Selected");
-		jQuery("#I3-inner").focus();
+		jQuery("#I3-inner").trigger("focus");
 		qutils.triggerKeyboardEvent("I3-inner", KeyCodes.TAB);
 		assert.equal(jQuery("#FC2--Exp").is(":focus"), true, "Tab: Container2 Expander - Selected");
 		qutils.triggerKeyboardEvent("FC2--Exp", KeyCodes.TAB);

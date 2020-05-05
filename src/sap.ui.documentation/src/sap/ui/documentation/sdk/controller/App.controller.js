@@ -56,9 +56,9 @@ sap.ui.define([
 		// shortcut for sap.m.URLHelper
 		var URLHelper = mobileLibrary.URLHelper,
 			sNeoAppJsonPath = "/neo-app.json", /* Load neo-app.json always from root URL */
-			ABOUT_TEXT = "About",
-			FEEDBACK_TEXT = "Feedback",
-			CHANGE_VERSION_TEXT = "Change version",
+			ABOUT_TEXT = "about",
+			FEEDBACK_TEXT = "feedback",
+			CHANGE_VERSION_TEXT = "change_version",
 			DEMOKIT_COOKIE_NAME = "dkc";
 
 		// We need to hardcode theme depending height of Toolbar to calculate ScrollContainer
@@ -130,13 +130,13 @@ sap.ui.define([
 				});
 
 				this.MENU_LINKS_MAP = {
-					"Legal": "https://www.sap.com/corporate/en/legal/impressum.html",
-					"Privacy": "https://www.sap.com/corporate/en/legal/privacy.html",
-					"Terms of Use": "https://www.sap.com/corporate/en/legal/terms-of-use.html",
-					"Copyright": "https://www.sap.com/corporate/en/legal/copyright.html",
-					"Trademark": "https://www.sap.com/corporate/en/legal/trademark.html",
-					"Disclaimer": "https://help.sap.com/viewer/disclaimer",
-					"License": "LICENSE.txt"
+					"legal": "https://www.sap.com/corporate/en/legal/impressum.html",
+					"privacy": "https://www.sap.com/corporate/en/legal/privacy.html",
+					"terms_of_use": "https://www.sap.com/corporate/en/legal/terms-of-use.html",
+					"copyright": "https://www.sap.com/corporate/en/legal/copyright.html",
+					"trademark": "https://www.sap.com/corporate/en/legal/trademark.html",
+					"disclaimer": "https://help.sap.com/viewer/disclaimer",
+					"license": "LICENSE.txt"
 				};
 
 				this.getOwnerComponent().loadVersionInfo().then(function () {
@@ -294,7 +294,7 @@ sap.ui.define([
 			},
 
 			handleMenuItemClick: function (oEvent) {
-				var sTargetText = oEvent.getParameter("item").getText(),
+				var sTargetText = oEvent.getParameter("item").getKey(),
 					sTarget = this.MENU_LINKS_MAP[sTargetText];
 
 				if (sTargetText === ABOUT_TEXT) {
@@ -415,7 +415,7 @@ sap.ui.define([
 						that._oNotesView.getModel().setData(oRelNotes);
 						that._oNotesView.bindObject("/" + sVersion);
 					} else {
-						oDialogData.noDataMessage = "No changes for this library!";
+						oDialogData.noData = true;
 					}
 					oDialogData.library = sLibrary;
 					oDialogModel.setData(oDialogData);
@@ -513,8 +513,11 @@ sap.ui.define([
 			 */
 			feedbackDialogOpen: function () {
 				var that = this;
+				var oResourceBundle;
 
 				if (!this._oFeedbackDialog) {
+					oResourceBundle = this.getModel("i18n").getResourceBundle();
+
 					this._oFeedbackDialog = new sap.ui.xmlfragment("feedbackDialogFragment", "sap.ui.documentation.sdk.view.FeedbackDialog", this);
 					this._oView.addDependent(this._oFeedbackDialog);
 
@@ -527,23 +530,28 @@ sap.ui.define([
 					this._oFeedbackDialog.ratingBar = [
 						{
 							button : Fragment.byId("feedbackDialogFragment", "excellent"),
-							status : "Excellent"
+							status : "Excellent",
+							displayStatus: oResourceBundle.getText("FEEDBACK_DIALOG_STATUS_EXCELLENT")
 						},
 						{
 							button : Fragment.byId("feedbackDialogFragment", "good"),
-							status : "Good"
+							status : "Good",
+							displayStatus: oResourceBundle.getText("FEEDBACK_DIALOG_STATUS_GOOD")
 						},
 						{
 							button : Fragment.byId("feedbackDialogFragment", "average"),
-							status : "Average"
+							status : "Average",
+							displayStatus: oResourceBundle.getText("FEEDBACK_DIALOG_STATUS_AVERAGE")
 						},
 						{
 							button : Fragment.byId("feedbackDialogFragment", "poor"),
-							status : "Poor"
+							status : "Poor",
+							displayStatus: oResourceBundle.getText("FEEDBACK_DIALOG_STATUS_POOR")
 						},
 						{
 							button : Fragment.byId("feedbackDialogFragment", "veryPoor"),
-							status : "Very Poor"
+							status : "Very Poor",
+							displayStatus: oResourceBundle.getText("FEEDBACK_DIALOG_STATUS_VERY_POOR")
 						}
 					];
 					this._oFeedbackDialog.reset = function () {
@@ -675,19 +683,19 @@ sap.ui.define([
 						} else {
 							switch (oRatingBarElement.status) {
 								case "Excellent":
-									setRatingStatus("Success", oRatingBarElement.status, 5);
+									setRatingStatus("Success", oRatingBarElement.displayStatus, 5);
 									break;
 								case "Good":
-									setRatingStatus("Success", oRatingBarElement.status, 4);
+									setRatingStatus("Success", oRatingBarElement.displayStatus, 4);
 									break;
 								case "Average":
-									setRatingStatus("None", oRatingBarElement.status, 3);
+									setRatingStatus("None", oRatingBarElement.displayStatus, 3);
 									break;
 								case "Poor":
-									setRatingStatus("Warning", oRatingBarElement.status, 2);
+									setRatingStatus("Warning", oRatingBarElement.displayStatus, 2);
 									break;
 								case "Very Poor":
-									setRatingStatus("Error", oRatingBarElement.status, 1);
+									setRatingStatus("Error", oRatingBarElement.displayStatus, 1);
 							}
 						}
 					}

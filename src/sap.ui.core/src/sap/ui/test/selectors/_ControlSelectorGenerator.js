@@ -51,7 +51,8 @@
                         .catch(function () {
                             return  _ControlSelectorGenerator._generateHierarchicalDown(oOptions.control);
                         }).then(function (mSelector) {
-                            return _ControlSelectorGenerator._filterUnique(mSelector, oOptions.validationRoot, oOptions.multiple);
+                            var aSelectors = _ControlSelectorGenerator._filterUnique(mSelector, oOptions);
+                            return oOptions.includeAll ? aSelectors : aSelectors[0];
                         });
                 }
             });

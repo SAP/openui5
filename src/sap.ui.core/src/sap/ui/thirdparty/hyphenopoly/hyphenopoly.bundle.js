@@ -167,11 +167,15 @@
 					xhr.open('GET', path);
 					xhr.responseType = "arraybuffer";
 					xhr.onload = function () {
-						if (xhr.status === 200) {
-							resolve(new Uint8Array(xhr.response).buffer);
-						} else {
-							reject(xhr.status);
+						if (xhr.status !== 200) {
+							return reject(xhr.status);
 						}
+
+						if (!(xhr.response instanceof ArrayBuffer)) {
+							return reject("The response for '" + path + "' is invalid. Expected ArrayBuffer.");
+						}
+
+						resolve(new Uint8Array(xhr.response).buffer);
 					};
 					xhr.send();
 				}

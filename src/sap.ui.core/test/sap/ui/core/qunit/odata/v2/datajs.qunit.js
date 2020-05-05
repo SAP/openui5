@@ -1,5 +1,5 @@
 /*global QUnit */
-sap.ui.define([], function(jQuery) {
+sap.ui.define([], function() {
 	"use strict";
 
 	QUnit.test("datajs loaded and executed", function(assert) {

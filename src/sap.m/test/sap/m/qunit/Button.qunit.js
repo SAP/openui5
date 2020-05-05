@@ -437,16 +437,34 @@ sap.ui.define([
 			safari: true
 		});
 
-		var oButton = new Button({text: "MyText", icon: "sap-icon://search"}).placeAt("qunit-fixture");
-		oRenderSpy = this.spy(oButton, "focus");
-		sap.ui.getCore().applyChanges();
+		var oButton = new Button({text: "MyText", icon: "sap-icon://search"}).placeAt("qunit-fixture"),
+			oFocusSpy = this.spy(oButton, "focus");
 
 		// Act
-		oButton.ontouchstart({ setMarked: this.stub(), preventDefault: this.stub(), targetTouches: { length: 1 }, originalEvent: { type: "mousedown" }, target: { id: 'fake-button-id' }});
-		this.clock.tick(1000);
+		oButton.ontouchstart({ setMarked: this.stub() , preventDefault: this.stub(), targetTouches: { length: 1 }, originalEvent: { type: "mousedown" }, target: { id: 'fake-button-id' }});
 
 		// Assert
-		assert.strictEqual(oRenderSpy.callCount, 1, "The button is focused on touch start");
+		assert.strictEqual(oFocusSpy.callCount, 1, "The button is focused on touch start");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
+	QUnit.test("For firefox the button should gain explicitly focus on touch start", function(assert) {
+		// Arrange
+		// stub the browser to be only firefox
+		this.stub(Device, "browser", {
+			firefox: true
+		});
+
+		var oButton = new Button({text: "MyText", icon: "sap-icon://search"}).placeAt("qunit-fixture"),
+			oFocusSpy = this.spy(oButton, "focus");
+
+		// Act
+		oButton.ontouchstart({ setMarked: this.stub() , preventDefault: this.stub(), targetTouches: { length: 1 }, originalEvent: { type: "mousedown" }, target: { id: 'fake-button-id' }});
+
+		// Assert
+		assert.strictEqual(oFocusSpy.callCount, 1, "The button is focused on touch start");
 
 		// Cleanup
 		oButton.destroy();

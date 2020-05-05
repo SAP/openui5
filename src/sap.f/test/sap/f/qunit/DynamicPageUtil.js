@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/m/OverflowToolbar",
 	"sap/m/ToolbarSpacer",
 	"sap/m/Breadcrumbs",
-	"sap/m/Link"
+	"sap/m/Link",
+	"sap/m/GenericTag"
 ],
 	function (
 	$,
@@ -34,7 +35,8 @@ sap.ui.define([
 	OverflowToolbar,
 	ToolbarSpacer,
 	Breadcrumbs,
-	Link
+	Link,
+	GenericTag
 ) {
 	"use strict";
 
@@ -323,6 +325,11 @@ sap.ui.define([
 				text: "Anna Maria Luisa"
 			});
 		},
+		getGenericTag: function (sText) {
+			return new GenericTag({
+				text: sText
+			});
+		},
 		getOverflowToolbar: function () {
 			return new OverflowToolbar({
 				content: [
@@ -372,7 +379,7 @@ sap.ui.define([
 			sap.ui.Device.system.phone = false;
 		},
 		testExpandedCollapsedARIA: function (assert, oDynamicPage, bShouldBeExpanded, sAriaLabelledBy, sMessage) {
-			var	$oFocusSpan = oDynamicPage.getTitle()._getFocusSpan().$(),
+			var	$oFocusSpan = oDynamicPage.getTitle()._getFocusSpan(),
 					bAriaExpanded = $oFocusSpan.attr("aria-expanded"),
 					sAriaLabelledById = $oFocusSpan.attr("aria-labelledby");
 

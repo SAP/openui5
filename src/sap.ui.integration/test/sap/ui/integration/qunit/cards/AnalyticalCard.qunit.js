@@ -167,7 +167,7 @@ sap.ui.define([
 				"data": {
 					"json": {
 						"n": 6547394.45496,
-						"u": "М $",
+						"u": "M $",
 						"trend": "Down",
 						"valueColor": "Critical"
 					}
@@ -243,7 +243,7 @@ sap.ui.define([
 				"data": {
 					"json": {
 						"n": 6547394.45496,
-						"u": "М $",
+						"u": "M $",
 						"trend": "Down",
 						"valueColor": "Critical"
 					}
@@ -321,7 +321,7 @@ sap.ui.define([
 				"data": {
 					"json": {
 						"n": 6547394.45496,
-						"u": "М $",
+						"u": "M $",
 						"trend": "Down",
 						"valueColor": "Critical"
 					}

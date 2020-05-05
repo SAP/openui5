@@ -24,6 +24,7 @@ sap.ui.define([
 	'./Page',
 	'./ViewSettingsItem',
 	'sap/ui/base/ManagedObject',
+	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/base/EventProvider',
 	'sap/ui/Device',
 	'sap/ui/core/InvisibleText',
@@ -55,6 +56,7 @@ function(
 	Page,
 	ViewSettingsItem,
 	ManagedObject,
+	ManagedObjectObserver,
 	EventProvider,
 	Device,
 	InvisibleText,
@@ -108,13 +110,14 @@ function(
 	 * the footer toolbar if they refer to a table. Place group, sort, and filter buttons
 	 * in the footer toolbar if they refer to a master list.
 	 *
-	 * <b>Note:</b> Reset button, when used in <code>ViewSettingsDialog</code> without custom tabs,
-	 * is enabled when there are some Filters or presetFilters selected as well as there are changes
-	 * in Sort by, Sort order, Group By or Group order values compared to initial state of the dialog,
-	 * and disabled, if there are no changes or filters set. If the <code>ViewSettingsDialog</code>
-	 * have one or more custom tabs, the Reset button is always enabled, because there is no way
-	 * to determine the initial state of the custom tabs content and compare to their current state
-	 * in order to determine enable/disable state of the Reset button.
+	 * <b>Note:</b> If <code>ViewSettingsDialog</code> is used without custom tabs or custom items
+	 * in any of its aggregations, then Reset button is enabled if the user selects any Filters or
+	 * presetFilters or changes any of the Sort by, Sort order, Group by, or Group order values.
+	 * When <code>ViewSettingsDialog</code> is used with custom tabs or custom items
+	 * in any of its aggregations (sortItems, groupItems, filterItems or presetFilterItems),
+	 * the Reset button is always enabled, because there is no way to determine
+	 * the initial state of the custom tabs and compare it to their current state in order to
+	 * determine the enable/disable state of the Reset button.
 	 *
 	 * <h3>Usage</h3>
 	 *
@@ -524,6 +527,9 @@ function(
 		if (this._oStringFilter) {
 			this._oStringFilter = null;
 		}
+		if (this._oSelectedFilterKeys) {
+			this._oSelectedFilterKeys = null;
+		}
 	};
 
 	ViewSettingsDialog.prototype._aggregationToListItems = function(sAggregationName, oItemPropertyMap, oItemAggregationMap, oListItemInitials, oListOptions) {
@@ -754,6 +760,10 @@ function(
 			this._attachItemEventHandlers(sAggregationName, oObject);
 		}
 
+		if (sAggregationName === "filterItems") {
+			this._observeItem(oObject);
+		}
+
 		return this;
 	};
 
@@ -788,6 +798,10 @@ function(
 			this._attachItemEventHandlers(sAggregationName, oObject);
 		}
 
+		if (sAggregationName === "filterItems") {
+			this._observeItem(oObject);
+		}
+
 		return this;
 	};
 
@@ -803,6 +817,13 @@ function(
 			var oRemovedListItem = oList.removeItem(oListItem);
 			oRemovedListItem.destroy();
 			this._detachItemPropertyChange(vRemovedObject);
+		}
+
+		if (sAggregationName === "filterItems") {
+			this._unobserveItem(vRemovedObject);
+			if (!this.getFilterItems().length) {
+				this._disconnectAndDestroyFilterItemsObserver();
+			}
 		}
 
 		return vRemovedObject;
@@ -829,6 +850,10 @@ function(
 			}, this);
 		}
 
+		if (sAggregationName === "filterItems") {
+			this._disconnectAndDestroyFilterItemsObserver();
+		}
+
 		return vRemovedObjects;
 	};
 
@@ -843,6 +868,10 @@ function(
 			if (oList) {
 				oList.destroyItems();
 			}
+		}
+
+		if (sAggregationName === "filterItems") {
+			this._disconnectAndDestroyFilterItemsObserver();
 		}
 
 		return this;
@@ -875,6 +904,60 @@ function(
 
 			oListItem.getMetadata().getAllProperties()[sListProp].set(oListItem, vListPropVal);
 		}, this);
+	};
+
+	/**
+	 * Returns the ManagedObjectObserver for the filterItems
+	 *
+	 * @return {sap.ui.base.ManagedObjectObserver} the filterItems observer object
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._getFilterItemsObserver = function () {
+		if (!this._oFilterItemsObserver) {
+			this._oFilterItemsObserver = new ManagedObjectObserver(function() {
+				if (this._oSelectedFilterKeys) {
+					this.setSelectedFilterCompoundKeys(this._oSelectedFilterKeys);
+				}
+			}.bind(this));
+		}
+		return this._oFilterItemsObserver;
+	};
+
+	/**
+	 * Observes the items aggregation of the passed filterItem
+	 *
+	 * @param {sap.m.ViewSettingsDialogFilterItem} oFilterItem the filterItem, which aggregation will be observed
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._observeItem = function (oFilterItem) {
+		this._getFilterItemsObserver().observe(oFilterItem, {
+			aggregations: ["items"]
+		});
+	};
+
+	/**
+	 * Unobserves the items aggregation of the passed filterItem
+	 *
+	 * @param {sap.m.ViewSettingsDialogFilterItem} oFilterItem the filterItem, which aggregation will be unobserved
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._unobserveItem = function (oFilterItem) {
+		this._getFilterItemsObserver().unobserve(oFilterItem, {
+			aggregations: ["items"]
+		});
+	};
+
+	/**
+	 * Disconnects and destroys the ManagedObjectObserver observing the used filterItem
+	 *
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._disconnectAndDestroyFilterItemsObserver = function () {
+		if (this._oFilterItemsObserver) {
+			this._oFilterItemsObserver.disconnect();
+			this._oFilterItemsObserver.destroy();
+			this._oFilterItemsObserver = null;
+		}
 	};
 
 	/**
@@ -1517,57 +1600,59 @@ function(
 	 * @since 1.42
 	 */
 	ViewSettingsDialog.prototype.setSelectedFilterCompoundKeys = function(oSelectedFilterKeys) {
-		var aFilterItems = this.getFilterItems();
-		var fnGetSelectedItemFromFilterKey = function (aFilterItems, oFilterKeys, sKey) {
-			if (!oFilterKeys.hasOwnProperty(sKey)) {
-				return;
-			}
+		var aFilterItems = this.getFilterItems(),
+			sParentKey,
+			sKey,
+			oParentItem,
+			oSelectedSubFilterKeys,
+			aSubFilterItems,
+			bMultiSelect,
+			bSelected,
+			bOneSelected,
+			iIndex;
 
-			var oItem = getViewSettingsItemByKey(aFilterItems, sKey);
+		this._oSelectedFilterKeys = oSelectedFilterKeys;
 
-			return oItem;
-		};
-
-		// clear preset filters (only one mode is allowed, preset filters or filters)
 		if (Object.keys(oSelectedFilterKeys).length) {
+
+			// clear preset filters (only one mode is allowed, preset filters or filters)
 			this._clearPresetFilter();
-		}
 
-		// loop through the provided object array {key -> subKey -> boolean}
-		for (var sParentKey in oSelectedFilterKeys) { // filter key
-			var oParentItem = fnGetSelectedItemFromFilterKey(aFilterItems, oSelectedFilterKeys, sParentKey);
-
-			if (!oParentItem) {
-				Log.warning('No filter with key "' + sParentKey);
-				continue;
-			}
-
-			if (oParentItem instanceof sap.m.ViewSettingsCustomItem) {
-				oParentItem.setProperty('selected', oSelectedFilterKeys[sParentKey], true);
-			} else if (oParentItem instanceof sap.m.ViewSettingsFilterItem) {
-				var oSelectedSubFilterKeys = oSelectedFilterKeys[sParentKey];
-				var aSubFilterItems = oParentItem.getItems();
-				var bMultiSelect = oParentItem.getMultiSelect();
-
-				for (var sKey in oSelectedSubFilterKeys) {
-					var oItem = fnGetSelectedItemFromFilterKey(aSubFilterItems, oSelectedSubFilterKeys, sKey);
-
-					if (!oItem) {
-						Log.warning('No filter with key "' + sKey);
-						continue;
+			// loop through the provided object array {key -> subKey -> boolean}
+			for (sParentKey in oSelectedFilterKeys) { // filter key
+				oParentItem = null;
+				for (iIndex = 0; iIndex < aFilterItems.length; iIndex++) {
+					sKey = aFilterItems[iIndex].getKey();
+					if ( sKey === sParentKey) {
+						oParentItem = aFilterItems[iIndex];
+						break;
 					}
-
-					if (!bMultiSelect) {
-						aSubFilterItems.forEach(function(item) {
-							item.setProperty('selected', false, true);
-						});
+				}
+				if (oParentItem instanceof sap.m.ViewSettingsCustomItem) {
+					oParentItem.setProperty('selected', oSelectedFilterKeys[sParentKey], true);
+				} else if (oParentItem instanceof sap.m.ViewSettingsFilterItem) {
+					oSelectedSubFilterKeys = oSelectedFilterKeys[sParentKey];
+					aSubFilterItems = oParentItem.getItems();
+					bMultiSelect = oParentItem.getMultiSelect();
+					// loop through the sub-items
+					for (iIndex = 0; iIndex < aSubFilterItems.length; iIndex++) {
+						sKey = aSubFilterItems[iIndex].getKey();
+						if (oSelectedSubFilterKeys[sKey]) {
+							// get passed value; respect multi-select
+							bSelected = bOneSelected ? false : oSelectedSubFilterKeys[sKey];
+						} else {
+							// clear omitted sub-items
+							bSelected = false;
+						}
+						aSubFilterItems[iIndex].setProperty("selected", bSelected, true);
+						if (bSelected && !bMultiSelect) {
+							// if not multi-select, only one TRUE value can be set
+							bOneSelected = true;
+						}
 					}
-
-					oItem.setProperty('selected', oSelectedSubFilterKeys[sKey], true);
 				}
 			}
 		}
-
 		return this;
 	};
 
@@ -1580,6 +1665,36 @@ function(
 	/* =========================================================== */
 
 	/**
+	 * Checks if there is a custom item in the given aggregation, one of sortItems, groupItems, filterItems or presetFilterItems.
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._checkForInnerCustomItems = function(aItems) {
+		for (var i = 0; i < aItems.length; i++) {
+			if (aItems[i].isA("sap.m.ViewSettingsCustomItem")) {
+				return true;
+			}
+		}
+		return false;
+	};
+
+	/**
+	 * Checks if there is a custom tab or a custom item in the aggregations sortItems, groupItems, filterItems and presetFilterItems.
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._checkForCustomItems = function() {
+		var aSortItems = this.getSortItems(),
+			aGroupItems = this.getGroupItems(),
+			aFilterItems = this.getFilterItems(),
+			aPresetFilterItems = this.getPresetFilterItems();
+
+		return this.getAggregation("customTabs").length ||
+			aSortItems.length && this._checkForInnerCustomItems(aSortItems) ||
+			aGroupItems.length && this._checkForInnerCustomItems(aGroupItems) ||
+			aFilterItems.length && this._checkForInnerCustomItems(aFilterItems) ||
+			aPresetFilterItems.length && this._checkForInnerCustomItems(aPresetFilterItems);
+	};
+
+	/**
 	 * Checks if there are changes made since the initial VSD open and enables/disables reset buttons accordingly
 	 * @private
 	 */
@@ -1587,7 +1702,7 @@ function(
 		var bChanges = false,
 			oFilterKeys = this.getSelectedFilterItems();
 
-		if (this.getAggregation("customTabs").length > 0) {
+		if (this._checkForCustomItems()) {
 			// there are custom tabs defined, enable Reset button in any case
 			bChanges = true;
 		} else {

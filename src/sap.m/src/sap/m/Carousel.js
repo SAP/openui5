@@ -1062,7 +1062,7 @@ function(
 		switch (oEvent.keyCode) {
 
 			// Minus keys
-			// TODO  jQuery.sap.KeyCodes.MINUS is not returning 189
+			// TODO  KeyCodes.MINUS is not returning 189
 			case 189:
 			case KeyCodes.NUMPAD_MINUS:
 				this._fnSkipToIndex(oEvent, -1);

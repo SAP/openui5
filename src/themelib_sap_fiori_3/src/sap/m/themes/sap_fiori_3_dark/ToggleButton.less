@@ -7,15 +7,28 @@
 .sapMBtn:hover > .sapMBtnHoverable.sapMToggleBtnPressed:not(.sapMBtnActive),
 .sapMBtn .sapMBtnHoverable.sapMToggleBtnPressed:hover {
 	&.sapMBtnReject {
-		background-color: darken(@sapUiButtonRejectActiveBackground, 5);
-		border-color: darken(@sapUiButtonRejectActiveBackground, 5);
+		background-color: @sapUiButtonRejectSelectedHoverBackground;
+		border-color: @sapUiButtonRejectSelectedHoverBorderColor;
+		color: @sapUiButtonRejectSelectedTextColor;
+		& .sapUiIcon {
+			color: @sapUiButtonRejectSelectedTextColor;
+		}
 	}
 	&.sapMBtnAccept {
-		background-color: darken(@sapUiButtonAcceptActiveBackground, 5);
-		border-color: darken(@sapUiButtonAcceptActiveBackground, 5);
+		background-color: @sapUiButtonAcceptSelectedHoverBackground;
+		border-color: @sapUiButtonAcceptSelectedHoverBorderColor;
+		color: @sapUiButtonAcceptSelectedTextColor;
+		& .sapUiIcon {
+			color: @sapUiButtonAcceptSelectedTextColor;
+		}
 	}
-	&.sapMBtnActtention {
-		background-color: darken(@sapUiButtonAttentionActiveBackground, 5);
-		border-color: darken(@sapUiButtonAttentionActiveBackground, 5);
+	&.sapMBtnAttention {
+		background-color: @sapUiButtonAttentionSelectedHoverBackground;
+		border-color: @sapUiButtonAttentionSelectedHoverBorderColor;
+		color: @sapUiButtonAttentionSelectedTextColor;
+		& .sapUiIcon {
+			color: @sapUiButtonAttentionSelectedTextColor;
+		}
 	}
 }
+

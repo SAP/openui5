@@ -1,0 +1,28 @@
+{
+  "1.78.0": {
+    "date": "April 2020",
+    "notes": [
+      {
+        "id": "a2d966e20e29971520924ef012905c6b0577c28f",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Border of selected item is now visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070148602"
+          }
+        ]
+      },
+      {
+        "id": "429af7dd953772f337127ba19d5778d404caa4ed",
+        "type": "FIX",
+        "text": " sap.tnt.ToolPage demokit app",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      }
+    ]
+  }
+}

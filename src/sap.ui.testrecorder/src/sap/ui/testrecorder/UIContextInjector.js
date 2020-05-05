@@ -197,9 +197,9 @@ sap.ui.define([
 	};
 
 	UIContextInjector.prototype._generateTestRecorderUrl = function () {
-		this._sUrl = jQuery.sap.getModulePath("sap.ui.testrecorder.ui",
-			"/overlay.html?sap-ui-testrecorder-origin=" + window.location.protocol +
-			"//" + window.location.host + "&" + "sap-ui-testrecorder-frame-identifier=" + this._sIdentifier);
+		this._sUrl = sap.ui.require.toUrl("sap/ui/testrecorder/ui/overlay.html") +
+			"?sap-ui-testrecorder-origin=" + window.location.protocol +
+			"//" + window.location.host + "&" + "sap-ui-testrecorder-frame-identifier=" + this._sIdentifier;
 		var frameURI = new window.URI(this._sUrl);
 		this._sOrigin = ( frameURI.protocol() || window.location.protocol.replace(':', '') ) +
 			'://' + ( frameURI.host() || window.location.host );

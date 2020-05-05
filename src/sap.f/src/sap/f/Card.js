@@ -170,5 +170,14 @@ sap.ui.define([
 		return this.getContent();
 	};
 
+	/**
+	 * Returns the DOM Element that should get the focus.
+	 *
+	 * @return {Element} Returns the DOM Element that should get the focus
+	 * @protected
+	 */
+	Card.prototype.getFocusDomRef = function () {
+		return this.getCardHeader() ? this.getCardHeader().getDomRef() : this.getDomRef() ;
+	};
 	return Card;
 });

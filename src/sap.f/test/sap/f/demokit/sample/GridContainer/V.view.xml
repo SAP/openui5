@@ -5,6 +5,7 @@
 	xmlns:f="sap.f"
 	xmlns:card="sap.f.cards"
 	xmlns:core="sap.ui.core"
+	xmlns:w="sap.ui.integration.widgets"
 	displayBlock="true"
 	height="100%">
 	<ScrollContainer height="100%" width="100%" vertical="true">
@@ -38,7 +39,7 @@
 				<f:GridContainerSettings rowSize="70px" columnSize="70px" gap="8px" />
 			</f:layoutXS>
 
-			<GenericTile header="Sales Fulfillment Application Title" subheader="Subtitle">
+			<GenericTile header="Sales Fulfillment Application Title" press="onPress" subheader="Subtitle">
 				<layoutData>
 					<f:GridContainerItemLayoutData minRows="2" columns="2" />
 				</layoutData>
@@ -46,6 +47,11 @@
 					<ImageContent src="sap-icon://home-share" />
 				</TileContent>
 			</GenericTile>
+			<w:Card manifest="test-resources/sap/f/demokit/sample/GridContainer/cardManifest.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData minRows="3" columns="4" />
+				</w:layoutData>
+			</w:Card>
 			<GenericTile header="Manage Activity Master Data Type" subheader="Subtitle">
 				<layoutData>
 					<f:GridContainerItemLayoutData minRows="2" columns="2" />
@@ -62,7 +68,8 @@
 					<card:Header
 						title="Buy bus ticket on-line"
 						subtitle="Buy a single drive ticket for a date"
-						iconSrc="sap-icon://bus-public-transport" />
+						iconSrc="sap-icon://bus-public-transport"
+						press="onPress"/>
 				</f:header>
 				<f:content>
 					<VBox

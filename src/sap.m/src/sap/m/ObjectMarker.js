@@ -146,7 +146,7 @@ sap.ui.define([
 	/**
 	 * Library internationalization resource bundle.
 	 *
-	 * @type {jQuery.sap.util.ResourceBundle}
+	 * @type {module:sap/base/i18n/ResourceBundle}
 	 */
 	var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 

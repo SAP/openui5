@@ -2,6 +2,11 @@
  * ${copyright}
  */
 
+// Ensure that sap.ui.unified is loaded before the module dependencies will be required.
+// Loading it synchronously is the only compatible option and doesn't harm when sap.ui.unified
+// already has been loaded asynchronously (e.g. via a dependency declared in the manifest)
+sap.ui.getCore().loadLibrary("sap.ui.unified");
+
 //Provides control sap.m.PlanningCalendar.
 sap.ui.define([
 	'sap/m/delegate/DateNavigation',
@@ -652,7 +657,8 @@ sap.ui.define([
 		this._oInfoToolbar = new Toolbar(sId + "-InfoToolbar", {
 			height: "auto",
 			design: ToolbarDesign.Transparent,
-			content: [this._oCalendarHeader, this._oTimesRow]
+			content: [this._oCalendarHeader, this._oTimesRow],
+			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "PC_INTERVAL_TOOLBAR")
 		});
 
 		var oTable = new Table(sId + "-Table", {
@@ -1460,7 +1466,6 @@ sap.ui.define([
 						this._oTimesRow.setItems(iIntervals);
 						this._dateNav.setStep(iIntervals);
 					}
-					this._oTimesRow.addAriaLabelledBy(InvisibleText.getStaticId("sap.m", "PC_INTERVAL_TOOLBAR"));
 					this._insertInterval(this._oTimesRow);
 					oHeader.setAssociation("currentPicker", oHeader.getAggregation("_calendarPicker"));
 					break;
@@ -1497,7 +1502,6 @@ sap.ui.define([
 						oInterval.setDays(iIntervals);
 						this._dateNav.setStep(iIntervals);
 					}
-					oInterval.addAriaLabelledBy(InvisibleText.getStaticId("sap.m", "PC_INTERVAL_TOOLBAR"));
 					this._insertInterval(oInterval);
 					this[oIntervalMetadata.sInstanceName] = oInterval;
 					if (sIntervalType === CalendarIntervalType.OneMonth) {
@@ -1527,7 +1531,6 @@ sap.ui.define([
 						this._oMonthsRow.setMonths(iIntervals);
 						this._dateNav.setStep(iIntervals);
 					}
-					this._oMonthsRow.addAriaLabelledBy(InvisibleText.getStaticId("sap.m", "PC_INTERVAL_TOOLBAR"));
 					this._insertInterval(this._oMonthsRow);
 					oHeader.setAssociation("currentPicker", oHeader.getAggregation("_yearPicker"));
 					break;

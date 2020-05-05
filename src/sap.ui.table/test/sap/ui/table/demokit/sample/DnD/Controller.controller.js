@@ -2,8 +2,10 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageToast",
-	"sap/m/ToolbarSpacer"
-], function(Controller, JSONModel, MessageToast, ToolbarSpacer) {
+	"sap/m/ToolbarSpacer",
+	"sap/ui/table/Row",
+	"jquery.sap.sjax"
+], function(Controller, JSONModel, MessageToast, ToolbarSpacer, TableRow, jQuery) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.DnD.Controller", {
@@ -45,7 +47,7 @@ sap.ui.define([
 
 		initSampleProductsModel: function() {
 			var oData = jQuery.sap.sjax({
-				url: sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json",
+				url: sap.ui.require.toUrl("sap/ui/demo/mock/products.json"),
 				dataType: "json"
 			}).data;
 
@@ -121,7 +123,7 @@ sap.ui.define([
 			var iNewRank = oConfig.defaultRank;
 			var oDroppedRow = oEvent.getParameter("droppedControl");
 
-			if (oDroppedRow && oDroppedRow instanceof sap.ui.table.Row) {
+			if (oDroppedRow && oDroppedRow instanceof TableRow) {
 				// get the dropped row data
 				var sDropPosition = oEvent.getParameter("dropPosition");
 				var oDroppedRowContext = oDroppedRow.getBindingContext();

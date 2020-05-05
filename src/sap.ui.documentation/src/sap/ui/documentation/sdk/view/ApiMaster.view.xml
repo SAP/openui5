@@ -15,14 +15,14 @@
 
 		<customHeader>
 			<Toolbar width="100%">
-				<SearchField id="searchField" placeholder="Filter" liveChange="onTreeFilter" class="sapUiDocumentationFilterField"/>
-				<Button id="expandAllButton" icon="sap-icon://expand-all" press="onTreeExpandAll" tooltip="Expand All"/>
-				<Button id="collapseAllButton" icon="sap-icon://collapse-all" press="onTreeCollapseAll" tooltip="Collapse All"/>
+				<SearchField id="searchField" placeholder="{i18n>API_MASTER_PLACEHOLDER}" liveChange="onTreeFilter" class="sapUiDocumentationFilterField"/>
+				<Button id="expandAllButton" icon="sap-icon://expand-all" press="onTreeExpandAll" tooltip="{i18n>API_MASTER_EXPAND_BTN_TOOLTIP}"/>
+				<Button id="collapseAllButton" icon="sap-icon://collapse-all" press="onTreeCollapseAll" tooltip="{i18n>API_MASTER_COLLAPSE_BTN_TOOLTIP}"/>
 			</Toolbar>
 		</customHeader>
 		<subHeader>
 			<Toolbar>
-				<CheckBox id="includeDeprecated" text="Include deprecated" class="sapUiNoMarginBegin" select="onIncludeDeprecatedItemsChange"/>
+				<CheckBox id="includeDeprecated" text="{i18n>API_MASTER_DEPRECATED_CB}" class="sapUiNoMarginBegin" select="onIncludeDeprecatedItemsChange"/>
 			</Toolbar>
 		</subHeader>
 
@@ -31,7 +31,7 @@
 			<Tree
 				id="tree"
 				mode="SingleSelectMaster"
-				noDataText="No data, please try with the global search"
+				noDataText="{i18n>API_MASTER_NO_DATA_TEXT}"
 				selectionChange="onNodeSelect"
 				items="{treeData>/}">
 				<custom:DemokitTreeItem

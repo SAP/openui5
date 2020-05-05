@@ -511,7 +511,7 @@ function(
 			}
 
 			this.setProperty("value", sThatValue, true); // no rerendering
-			this._lastValue = sValue;
+			this.setLastValue(sValue);
 			if (this._bValid) {
 				this.setProperty("dateValue", oDate, true); // no rerendering
 			}
@@ -607,7 +607,7 @@ function(
 					this.updateDomValue(sValue);
 				} else {
 					this.setProperty("value", sValue, true); // no rerendering
-					this._lastValue = sValue;
+					this.setLastValue(sValue);
 					this._sLastChangeValue = sValue;
 				}
 			}
@@ -655,7 +655,7 @@ function(
 
 			var sOutputValue = this._formatValue(oDateValue);
 			this.updateDomValue(sOutputValue);
-			this._lastValue = sOutputValue;
+			this.setLastValue(sOutputValue);
 
 			return this;
 		};
@@ -717,7 +717,7 @@ function(
 
 			// do not call InputBase.setValue because the displayed value and the output value might have different pattern
 			this.updateDomValue(sOutputValue);
-			this._lastValue = sOutputValue;
+			this.setLastValue(sOutputValue);
 
 			return this;
 

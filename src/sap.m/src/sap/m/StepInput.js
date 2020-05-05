@@ -1048,7 +1048,7 @@ function(
 
 		StepInput.prototype._onmousewheel = function (oEvent) {
 			var bIsFocused = this.getDomRef().contains(document.activeElement);
-			if (bIsFocused) {
+			if (bIsFocused && this.getEditable() && this.getEnabled()) {
 				oEvent.preventDefault();
 				var oOriginalEvent = oEvent.originalEvent,
 					bDirectionPositive = oOriginalEvent.detail ? (-oOriginalEvent.detail > 0) : (oOriginalEvent.wheelDelta > 0);

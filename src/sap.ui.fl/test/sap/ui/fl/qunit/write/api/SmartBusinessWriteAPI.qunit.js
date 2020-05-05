@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/write/api/SmartBusinessWriteAPI",
-	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/connectors/Utils",
@@ -15,7 +14,6 @@ sap.ui.define([
 ], function(
 	ChangesController,
 	SmartBusinessWriteAPI,
-	LrepConnector,
 	Layer,
 	Settings,
 	WriteUtils,
@@ -117,8 +115,6 @@ sap.ui.define([
 		QUnit.test("(S4/Hana onPremise system) when create is called to save an app variant in CUSTOMER layer, with a descriptor change already added into persistence", function(assert) {
 			simulateSystemConfig(false);
 
-			// sandbox.stub(LrepConnector.prototype, "send").resolves();
-
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 
 			// Creates a descriptor change
@@ -176,8 +172,6 @@ sap.ui.define([
 		QUnit.test("(S4/Hana Cloud system) when create is called to save an app variant in CUSTOMER with descriptor change already added into own persistence", function(assert) {
 			simulateSystemConfig(true);
 
-			sandbox.stub(LrepConnector.prototype, "send").resolves();
-
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 
 			// Creates a descriptor change
@@ -210,8 +204,6 @@ sap.ui.define([
 
 		QUnit.test("(S4/Hana onPremise system) when create is called with a descriptor change already added into own persistence and submitting app variant to backend in VENDOR layer in a valid package failed", function(assert) {
 			simulateSystemConfig(false);
-
-			sandbox.stub(LrepConnector.prototype, "send").resolves();
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").rejects({message: "App variant failed to save"});
 
@@ -250,8 +242,6 @@ sap.ui.define([
 		QUnit.test("(S4/Hana onPremise system) when create is called with a descriptor change already added into own persistence and submitting app variant to backend in VENDOR layer in an empty package failed", function(assert) {
 			simulateSystemConfig(false);
 
-			sandbox.stub(LrepConnector.prototype, "send").resolves();
-
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 
 			sandbox.stub(Log, "error").callThrough().withArgs("the app variant could not be created.", "Package must be provided or is valid").returns();
@@ -285,8 +275,6 @@ sap.ui.define([
 
 		QUnit.test("(S4/Hana onPremise system) when create is called with a descriptor change already added into own persistence, no transport passed and submitting app variant to backend in VENDOR layer as a local object", function(assert) {
 			simulateSystemConfig(false);
-
-			sandbox.stub(LrepConnector.prototype, "send").resolves();
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 
@@ -323,8 +311,6 @@ sap.ui.define([
 
 		QUnit.test("(S4/Hana onPremise system) when create is called with a descriptor change already added into own persistence and submitting app variant to backend in CUSTOMER_BASE layer in an empty package failed", function(assert) {
 			simulateSystemConfig(false);
-
-			sandbox.stub(LrepConnector.prototype, "send").resolves();
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 

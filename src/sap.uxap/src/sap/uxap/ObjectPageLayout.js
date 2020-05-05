@@ -524,7 +524,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrieves thе next entry starting from the given one within the <code>sap.ui.core.TitleLevel</code> enumeration.
+	 * Retrieves the next entry starting from the given one within the <code>sap.ui.core.TitleLevel</code> enumeration.
 	 * <br><b>Note:</b>
 	 * <ul>
 	 * <li> If the provided starting entry is not found, the <code>sap.ui.core.TitleLevel.Auto</code> is returned.</li>
@@ -688,6 +688,9 @@ sap.ui.define([
 		if (this.getFooter() && this._bIsFooterAanimationGoing) {
 			this._onToggleFooterAnimationEnd(this.getFooter());
 		}
+		// clear the cached DOM element to prevent obsolete layout calculations
+		// of the old <code>this._$titleArea</code> before rendering is finalized
+		this._$titleArea = [];
 	};
 
 	/**
@@ -859,7 +862,7 @@ sap.ui.define([
 			this._snapHeader(bAppendHeaderToContent);
 		}
 
-		this.getHeaderTitle()._getFocusSpan().$().trigger("focus");
+		this.getHeaderTitle()._getFocusSpan().trigger("focus");
 	};
 
 	/**
@@ -1866,6 +1869,7 @@ sap.ui.define([
 			this._setSelectedSectionId(sSelectedSectionId); //reselect the current section in the navBar (because the anchorBar was freshly rebuilt from scratch)
 			if (this.getUseIconTabBar()) {
 				this._setCurrentTabSection(oSelectedSection);
+				this._bAllContentFitsContainer = this._hasSingleVisibleFullscreenSubSection(oSelectedSection);
 			}
 			this._requestAdjustLayout(true)
 				.then(function (bSuccess) { // scrolling must be done after the layout adjustment is done (so the latest section positions are determined)
@@ -2380,7 +2384,9 @@ sap.ui.define([
 
 			//calculate the mobile position
 			if (!bPromoted) {
-				oInfo.positionTopMobile = Math.ceil($mobileAnchor.position().top) + $mobileAnchor.outerHeight();
+				oInfo.positionTopMobile =
+					Math.ceil(library.Utilities.getChildPosition($mobileAnchor, this._$contentContainer).top)
+					+ $mobileAnchor.outerHeight();
 			} else {
 				//title wasn't found (=first section, hidden title, promoted subsection), scroll to the same position as desktop
 				oInfo.positionTopMobile = oInfo.positionTop;
@@ -2608,7 +2614,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._getSectionPositionTop = function(oSectionBase, bShouldStick) {
-		var iPosition = Math.ceil(oSectionBase.$().position().top);
+		var iPosition = Math.ceil(library.Utilities.getChildPosition(oSectionBase.$(), this._$contentContainer).top);
 
 		if (!this._bStickyAnchorBar && !this._bHeaderInTitleArea && bShouldStick) { // in sticky mode the anchor bar is not part of the content
 			iPosition -= this.iAnchorBarHeight;
@@ -2626,7 +2632,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines thе <code>ObjectPageSectionBase</code> internal <code>titleLevel</code>.
+	 * Determines the <code>ObjectPageSectionBase</code> internal <code>titleLevel</code>.
 	 * For <code>ObjectPageSection</code>, the internal <code>titleLevel</code> is the current <code>sectionTitleLevel</code>.
 	 * For <code>ObjectPageSubSection</code>, the internal <code>titleLevel</code> is one level lower than the current <code>sectionTitleLevel</code>.
 	 * If the <code>sectionTitleLevel</code> has value of <code>sap.ui.core.TitleLevel.Auto</code>,

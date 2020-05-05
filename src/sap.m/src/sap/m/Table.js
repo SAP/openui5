@@ -1132,9 +1132,12 @@ sap.ui.define([
 			return oColumn.getVisible() && oColumn.getDemandPopin();
 		});
 
-		return aVisiblePopinColumns.filter(function(oVisibleColumn) {
+		var aHiddenPopinColumns = aVisiblePopinColumns.filter(function(oVisibleColumn) {
 			return oVisibleColumn._media && !oVisibleColumn._media.matches && !oVisibleColumn.isPopin();
 		});
+
+		this._iHiddenPopinColumns = aHiddenPopinColumns.length;
+		return aHiddenPopinColumns;
 	};
 
 	Table.prototype._firePopinChangedEvent = function() {

@@ -130,6 +130,10 @@
 @_sap_m_IconTabBar_SelectedTextHoverColor: darken(@sapUiSelected, 10);
 @_sap_m_IconTabBar_ArrowScroll_AfterHeight: 1px;
 
+// =========== Shell ===========
+@_sap_m_IconTabBar_ShellHeaderShadow: @sapUiShellShadow;
+@_sap_m_IconTabBar_ShellContentArrowHeight: 0.313rem;
+
 /* Head Container */
 .sapMITH {
 	z-index: 1; // shows the bottom shadow of the ITHeader over the content of the ITB
@@ -283,7 +287,7 @@
 .sapMITBSelected {
 
 	.sapMITBContentArrow::after {
-		background: @_sap_m_IconTabBar_SelectedTextColor;
+		background: @sapUiListSelectionBorderColor;
 	}
 
 	.sapMITBFilterDefault,

@@ -308,7 +308,7 @@ sap.ui.define([
 			}
 			oNextElement = aFocusableElements[iNextIndex];
 			if (oNextElement) {
-				jQuery(oNextElement).focus();
+				jQuery(oNextElement).trigger("focus");
 				oEvent.preventDefault();
 				oEvent.stopPropagation();
 			}
@@ -320,7 +320,7 @@ sap.ui.define([
 				oNextElement = aFocusableElements[iNextIndex - 1];
 			}
 			if (oNextElement) {
-				jQuery(oNextElement).focus();
+				jQuery(oNextElement).trigger("focus");
 				oEvent.preventDefault();
 				oEvent.stopPropagation();
 			}
@@ -342,7 +342,7 @@ sap.ui.define([
 
 		//Tabbing --> Focus the last active element then let the browser focus the next active element
 		if (!shiftKeyPressed) {
-			jQuery(aFocusableElements[aFocusableElements.length - 1]).focus();
+			jQuery(aFocusableElements[aFocusableElements.length - 1]).trigger("focus");
 		} else { //Shift/Tab keys pressed --> Focus the 2nd active element then let the browser focus the first active element
 
 			//Which element triggered the event
@@ -350,7 +350,7 @@ sap.ui.define([
 
 			//If the focus is already on the first active element, let the browser move the focus
 			if (iCurrentIndex != 0) {
-				jQuery(aFocusableElements[0]).focus();
+				jQuery(aFocusableElements[0]).trigger("focus");
 			}
 		}
 	};
@@ -366,7 +366,7 @@ sap.ui.define([
 
 	Paginator.prototype.applyFocusInfo = function(mFocusInfo) {
 		if (mFocusInfo && mFocusInfo.customId) {
-			this.$().find("#" + mFocusInfo.customId).focus();
+			this.$().find("#" + mFocusInfo.customId).trigger("focus");
 		} else {
 			Control.prototype.getFocusInfo.apply(this, arguments);
 		}

@@ -92,9 +92,9 @@ sap.ui.define([
 	 });
 	QUnit.test("TextOk", function(assert) {
 	   b1.detachPress(pressEventHandler1);
-	   jQuery("#b1").focus().click().mousedown().mouseup().mouseleave().blur();
+	   jQuery("#b1").trigger("focus").trigger("click").trigger("mousedown").trigger("mouseup").trigger("mouseleave").trigger("blur");
 	   b1.attachPress(pressEventHandler1);
-	   jQuery("#b2").focus().click().mousedown().mouseup().mouseleave().blur();
+	   jQuery("#b2").trigger("focus").trigger("click").trigger("mousedown").trigger("mouseup").trigger("mouseleave").trigger("blur");
 
 	   assert.equal(b1.getText(),sText,"Text for button1 is correct using 'equals()'!");
 	   assert.equal(b2.getText(),sText,"Text for button2 is correct using 'equals()'!");

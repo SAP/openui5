@@ -272,8 +272,12 @@ sap.ui.define([
 
 		if (this.getParent()) {
 			this._getRestartButton().setVisible(sUploadState === UploadState.Error);
-			this._getEditButton().setVisible(!bUploading);
-			this._getDeleteButton().setVisible(!bUploading);
+			if (this.getVisibleEdit()) {
+				this._getEditButton().setVisible(!bUploading);
+			}
+			if (this.getVisibleRemove()) {
+				this._getDeleteButton().setVisible(!bUploading);
+			}
 			this._getTerminateButton().setVisible(this.getParent().getTerminationEnabled() && bUploading);
 		}
 

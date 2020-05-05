@@ -2,10 +2,10 @@
 * ${copyright}
 */
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
+	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/testrecorder/CommunicationBus"
-], function (jQuery, ManagedObject, CommunicationBus) {
+], function (Log, ManagedObject, CommunicationBus) {
 	"use strict";
 
 	var oUIContextInjector = null;
@@ -18,7 +18,7 @@ sap.ui.define([
 			if (!oRecorder) {
 				ManagedObject.apply(this, arguments);
 			} else {
-				jQuery.sap.log.warning("Only one Recorder allowed");
+				Log.warning("Only one Recorder allowed");
 				return oRecorder;
 			}
 		}

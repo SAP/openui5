@@ -480,7 +480,7 @@ sap.ui.define([
 		 *
 		 * Sample: this.getResourceBundle().then(function(oBundle) {oBundle.getText(<messagebundle_key>)})
 		 *
-		 * @returns {jQuery.sap.util.ResourceBundle|Promise} loaded resource bundle or ECMA Script 6 Promise in asynchronous case
+		 * @returns {module:sap/base/i18n/ResourceBundle|Promise} loaded resource bundle or ECMA Script 6 Promise in asynchronous case
 		 *
 		 * @public
 		 */

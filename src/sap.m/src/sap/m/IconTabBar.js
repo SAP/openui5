@@ -42,9 +42,9 @@ sap.ui.define([
 	 * <h3>Structure</h3>
 	 * The IconTabBar can hold two types of entities {@link sap.m.IconTabFilter sap.m.IconTabFilter} and {@link sap.m.IconTabSeparator sap.m.IconTabSeparator}
 	 *
-	 * The IconTabBarFilter holds all information on an item - text, icon and count.
+	 * The IconTabFilter holds all information on an item - text, icon and count.
 	 *
-	 * The IconTabBarSeparator holds an icon that can be used to show a process that runs from item to item.
+	 * The IconTabSeparator holds an icon that can be used to show a process that runs from item to item.
 	 *<h3>Usage</h3>
 	 *<h4>Text only</h4>
 	 *Uses text labels as tabs with optional counter
@@ -79,7 +79,7 @@ sap.ui.define([
 	 *<li>Text-only tabs are never truncated.</li>
 	 *<li>Use the <code>expandable</code> property to specify whether users can collapse the tab container (default = true).</li>
 	 *<li>On desktop, tabs can be dragged and dropped (property <code>enableTabReordering</code>).</li>
-	 *<li>If you have a large number of tabs, you can scroll through them with the arrows. Additionally all tabs are available in an overflow button (property <code>showOverflowSelectList</code>).</li>
+	 *<li>If you have a large number of tabs, only the tabs that can fit on screen will be visible. All other tabs that can't fit on the screen are available in an overflow tab "More".</li>
 	 *</ul>
 	 * When using the <code>sap.m.IconTabBar</code> in SAP Quartz themes, the breakpoints and layout paddings could be determined by the Icon Tab Bar's width. To enable this concept and add responsive paddings to an element of the Icon Tab Bar control, you have to add the following classes depending on your use case: <code>sapUiResponsivePadding--header</code>, <code>sapUiResponsivePadding--content</code>.
 	 * @extends sap.ui.core.Control
@@ -208,9 +208,18 @@ sap.ui.define([
 			 * For compatibility reasons, the default value is <code>Cozy</code>.
 			 * @since 1.56
 			 */
-			tabDensityMode : {type : "sap.m.IconTabDensityMode", group : "Appearance", defaultValue : IconTabDensityMode.Cozy}
+			tabDensityMode : {type : "sap.m.IconTabDensityMode", group : "Appearance", defaultValue : IconTabDensityMode.Cozy},
 
-			},
+			/**
+			 * Specifies optional texts for the screen reader.
+			 *
+			 * The given object can contain the following keys:
+			 * <code>headerLabel</code> - text to serve as a label for the header,
+			 * <code>headerDescription</code> - text to serve as a description for the header.
+			 * @since 1.78
+			 */
+			ariaTexts : {type : "object", group : "Accessibility", defaultValue : null}
+		},
 		aggregations : {
 
 			/**
@@ -552,6 +561,8 @@ sap.ui.define([
 
 	IconTabBar.prototype.onBeforeRendering = function () {
 		var ITHDomRef = this._getIconTabHeader().$();
+
+		this._getIconTabHeader()._setAriaTexts(this.getAriaTexts());
 
 		if (this._bStickyContentSticked && ITHDomRef) {
 			delete this._bStickyContentSticked;

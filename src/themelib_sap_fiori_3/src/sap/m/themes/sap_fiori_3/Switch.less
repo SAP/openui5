@@ -61,7 +61,7 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 /* disabled */
 
 .sapMSwtDisabled {
-	opacity: 0.5;
+	opacity: @sapUiContentDisabledOpacity;
 }
 
 /* ------------------------------ */
@@ -72,11 +72,11 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 	width: 1.75rem;
 	&.sapMSwtTextOn {
 		margin: 0 0 0 0.125rem;
-		color: @sapUiBaseText;
+		color: @sapUiButtonTrackSelectedTextColor;
 	}
 	&.sapMSwtTextOff {
 		margin: 0 0.125rem 0 0;
-		color: @sapUiBaseText;
+		color: @sapUiButtonTrackTextColor;
 		left: 3.8rem;
 	}
 	.sapMSwtLabel {
@@ -103,7 +103,7 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 
 //on
 .sapMSwt.sapMSwtOn:not(.sapMSwtAcceptReject) {
-	background: lighten(@sapUiButtonSelectedBackground,63);
+	background: @sapUiButtonTrackSelectedBackground;
 	border-color: @sapUiButtonSelectedBorderColor;
 	.sapMSwtHandle {
 		box-sizing: border-box;
@@ -111,7 +111,7 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 		border-color: @sapUiButtonSelectedBorderColor;
 	}
 	&.sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
-	  background: lighten(@sapUiButtonSelectedBackground,63);
+	  background: @sapUiButtonTrackSelectedBackground;
 	  border-color: @sapUiButtonSelectedHoverBorderColor;
 		.sapMSwtHandle {
 			background: @sapUiButtonSelectedHoverBackground;
@@ -122,7 +122,7 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 
 //off
 .sapMSwt.sapMSwtOff:not(.sapMSwtAcceptReject) {
-	background: darken(@sapUiButtonBackground,7);
+	background: @sapUiButtonTrackBackground;
 	border-color: @sapUiContentForegroundBorderColor;
 	.sapMSwtHandle {
 		background: @sapUiButtonBackground;

@@ -155,7 +155,8 @@ sap.ui.define([
 		 * @returns {object} oResponse Response from the endpoint
 		 */
 		logAndResolveDefault: function (oResponse, oConnectorConfig, sFunctionName, sErrorMessage) {
-			Log.error("Connector (" + oConnectorConfig.connector + ") failed call '" + sFunctionName + "': " + sErrorMessage);
+			Log.error("Connector (" + oConnectorConfig.connector + ") failed call '" + sFunctionName + "': "
+				+ sErrorMessage + "\nApplication startup continues without data from this storage.");
 			return oResponse;
 		},
 

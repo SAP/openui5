@@ -30,18 +30,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Extend sap.ui.core.Control", function(assert) {
-		assert.expect(2); // includes rerendering
-
-		var myControl = new MyControlClass("myControl", assert);
-
-		myControl.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		assert.equal(myControl.$().length, 1, "The control should be rendered");
-		myControl.destroy();
-	});
-
 	QUnit.module("CustomStyleClassSupport", {
 		onThemeScopingChanged: function() {
 			var oDomRef = this.myControl.getDomRef();
