@@ -815,7 +815,7 @@ sap.ui.define([
 		}
 
 		var oTabStrip = this.getDomRef("head"),
-			oSelectedItem = (this.oSelectedItem && this.oSelectedItem.getVisible()) ?  this.oSelectedItem : aTabFilters[0];
+			oSelectedItem = (this.oSelectedItem && this.oSelectedItem.getVisible()) ? this.oSelectedItem : aTabFilters[0];
 
 		if (!oTabStrip) {
 			// control has not been rendered, exit

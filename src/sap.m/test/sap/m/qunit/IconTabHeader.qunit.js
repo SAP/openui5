@@ -45,6 +45,8 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(oITH._findItemByKey("nested"), oNestedItem, "Nested item should be found.");
+
+		oITH.destroy();
 	});
 
 	QUnit.module("Resize");
@@ -70,9 +72,9 @@ sap.ui.define([
 		oITH.destroy();
 	});
 
-	QUnit.module("shifting behavior");
+	QUnit.module("Shifting behavior");
 
-	QUnit.test("selecting an overflown tab causes it to show up in the tab strip", function (assert) {
+	QUnit.test("Selecting an overflown tab causes it to show up in the tab strip", function (assert) {
 		// Arrange
 		var oITH = createHeaderWithItems(100);
 		var oTargetTab = oITH.getItems()[99];
@@ -96,4 +98,5 @@ sap.ui.define([
 		// Clean-up
 		oITH.destroy();
 	});
+
 });

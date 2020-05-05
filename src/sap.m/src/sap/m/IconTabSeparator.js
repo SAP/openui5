@@ -7,12 +7,14 @@ sap.ui.define([
 	"./library",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
-	"sap/ui/core/Item"
+	"sap/ui/core/Item",
+	"sap/m/IconTabFilter"
 ], function (
 	library,
 	Core,
 	Element,
-	Item
+	Item,
+	IconTabFilter
 ) {
 	"use strict";
 
@@ -107,6 +109,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * @returns {sap.m.IconTabSeparator} the underlying instance of a separator
+	 * @private
+	 */
+	IconTabSeparator.prototype._getRealTab = function () {
+		return IconTabFilter.prototype._getRealTab.call(this);
+	};
+
+	/**
+	 * @returns {int} the level at which this item has been nested, or 1 if an item has not been nested
+	 * @private
+	 */
+	IconTabSeparator.prototype._getNestedLevel = function () {
+		return IconTabFilter.prototype._getNestedLevel.call(this);
+	};
+
+	/**
 	 * Renders the item in the IconTabHeader.
 	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
 	 * @protected
@@ -148,12 +166,50 @@ sap.ui.define([
 
 	/**
 	 * Renders this item in the IconTabSelectList.
-	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.RenderManager} oRM RenderManager used for writing to the render output buffer
 	 * @param {sap.m.IconTabBarSelectList} oSelectList the select list in which this filter is rendered
+	 * @param {int} iIndexInSet this item's index within the aggregation of items
+	 * @param {int} iSetSize total length of the aggregation of items
+	 * @param {float} fPaddingValue the padding with which the item should be indented
 	 * @protected
 	 */
-	IconTabSeparator.prototype.renderInSelectList = function (oRM, oSelectList) {
-		// TODO
+	IconTabSeparator.prototype.renderInSelectList = function (oRM, oSelectList, iIndexInSet, iSetSize, fPaddingValue) {
+		if (!this.getVisible()) {
+			return;
+		}
+
+		var sIcon = this.getIcon(),
+			oIconTabHeader = oSelectList._oIconTabHeader,
+			oRB = Core.getLibraryResourceBundle('sap.m'),
+			mAriaParams = {};
+
+		if (sIcon) {
+			mAriaParams.role = "img";
+			mAriaParams.label = oRB.getText("ICONTABBAR_NEXTSTEP");
+		} else {
+			mAriaParams.role = "separator";
+		}
+
+		oRM.openStart("li", this)
+			.class("sapMITBSelectItem")
+			.class("sapMITBSep")
+			.accessibilityState(mAriaParams);
+
+		if (fPaddingValue && !sIcon) {
+			oRM.style("padding-left", fPaddingValue + "rem");
+		}
+
+		if (!sIcon) {
+			oRM.class("sapMITBSepLine");
+		}
+
+		oRM.openEnd();
+
+		if (sIcon) {
+			oRM.renderControl(this._getImageControl(["sapMITBSepIcon"], oIconTabHeader));
+		}
+
+		oRM.close("li");
 	};
 
 	return IconTabSeparator;
