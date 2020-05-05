@@ -13,7 +13,7 @@ sap.ui.define([
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			oView.setModel(oModel);
 
-			var oMultiInput1 = oView.byId("multiInput2");
+			var oMultiInput1 = oView.byId("multiInput1");
 			oMultiInput1.setTokens([
 				new Token({text: "Token 1", key: "0001"}),
 				new Token({text: "Token 2", key: "0002"}),
@@ -23,12 +23,20 @@ sap.ui.define([
 				new Token({text: "Token 6", key: "0006"})
 			]);
 
+			var oMultiInput2 = oView.byId("multiInput2");
+			oMultiInput2.setTokens([
+				new Token({text: "Very long long long long long long long text", key: "longText"})
+			]);
+
 			// add validator
-			oMultiInput1.addValidator(function(args){
+			var fnValidator = function(args){
 				var text = args.text;
 
 				return new Token({key: text, text: text});
-			});
+			};
+
+			oMultiInput1.addValidator(fnValidator);
+			oMultiInput2.addValidator(fnValidator);
 		}
 	});
 });
