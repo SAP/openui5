@@ -2996,13 +2996,15 @@ sap.ui.define([
 
 	QUnit.test("Test for triggerLink method when factory binding is used.", function (assert) {
 		//Arrange
-		var oSpy = sinon.spy(this.oUploadCollection, "_triggerLink");
+		var oStub = sinon.stub(this.oUploadCollection, "_triggerLink");
 		var oItem = this.oUploadCollection.getItems()[0];
 		oItem.setUrl("test.jpg");
 		//Act
 		var oFileName = this.oUploadCollection._getFileNameControl(oItem, this);
 		oFileName.firePress();
 		//Assert
-		assert.equal(oSpy.calledOnce,true, "Download Success");
+		assert.equal(this.oUploadCollection._triggerLink.callCount, 1, "Download Success");
+		//Cleanup
+		oStub.restore();
 	});
 });
