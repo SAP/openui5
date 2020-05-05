@@ -2959,7 +2959,7 @@ sap.ui.define([
 
 		// Act
 		qutils.triggerKeydown(this.oMultiInput, KeyCodes.I, false, false, true); // trigger Control key + I
-		this.clock.tick(nPopoverAnimationTick);
+		this.clock.tick(1000);
 
 		// Assert
 		assert.ok(this.oMultiInput._getReadOnlyPopover().isOpen(), "Should open suggestion popover");
