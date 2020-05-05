@@ -263,6 +263,8 @@ sap.ui.define([
 		if (iTokensCount === 1 && (iFirstTokenToHide !== -1 || !this.getEditable())) {
 			this.setFirstTokenTruncated(true);
 			return;
+		} else {
+			this.setFirstTokenTruncated(false);
 		}
 
 		// adjust the visibility of the tokens

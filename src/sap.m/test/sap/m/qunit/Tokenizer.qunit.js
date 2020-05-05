@@ -1568,4 +1568,22 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), false, "hasOneTruncatedToken should return false");
 	});
+
+	QUnit.test("Removes token truncation after resize", function(assert) {
+		// Arrange
+		this.tokenizer._setAdjustable(true);
+		this.tokenizer.setFirstTokenTruncated(true);
+
+		// Act
+		this.tokenizer.setMaxWidth("500px");
+		this.clock.tick();
+
+		// Assert
+		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), false, "Token's truncation was removed.");
+
+		this.tokenizer.setMaxWidth("100px");
+		this.clock.tick();
+
+		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), true, "Token's truncation was set again after resize.");
+	});
 });
