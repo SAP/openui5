@@ -1588,7 +1588,7 @@ sap.ui.define([
 		$oBlockersAreaRef = oSPC.$().find(".sapMSinglePCBlockers");
 
 		// Assert
-		assert.strictEqual($oBlockersAreaRef.attr("role"), "grid", "Blockers area has correct ARIA role");
+		assert.strictEqual($oBlockersAreaRef.attr("role"), "list", "Blockers area has correct ARIA role");
 		assert.ok($oBlockersAreaRef.attr("aria-labelledby").indexOf(sBlockersAreaLabelId) > -1,
 			"Blockers area has appropriate hidden label");
 
@@ -1627,6 +1627,42 @@ sap.ui.define([
 
 		// Assert
 		jQuery.each(oBlockerCells, function(iKey, oRef) {
+			assert.strictEqual(jQuery(oRef).attr("role"), "gridcell", "Column " + iKey + " has role=gridcell.");
+		});
+
+		// Cleanup
+		oSPC.destroy();
+	});
+
+	QUnit.test("Appointments cells' wrapper ARIA", function (assert) {
+		var oSPC = new SinglePlanningCalendar(),
+			$oAppointmentsCellsWrapper;
+
+		oSPC.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		$oAppointmentsCellsWrapper = oSPC.$().find(".sapMSinglePCColumn");
+
+		// Assert
+		assert.strictEqual($oAppointmentsCellsWrapper.attr("role"), "row", "Appointments' cells are wrapped in an element with role=\"row\"");
+
+		// Cleanup
+		oSPC.destroy();
+	});
+
+	QUnit.test("Appointments cells ARIA", function (assert) {
+		var oSPC = new SinglePlanningCalendar(),
+			$oAppointmentsCells,
+			$oAppointmentsCellsWrapper;
+
+		oSPC.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		$oAppointmentsCellsWrapper = oSPC.$().find(".sapMSinglePCColumn");
+		$oAppointmentsCells = $oAppointmentsCellsWrapper.find(".sapMSinglePCRow");
+
+		// Assert
+		$oAppointmentsCells.each(function(iKey, oRef) {
 			assert.strictEqual(jQuery(oRef).attr("role"), "gridcell", "Column " + iKey + " has role=gridcell.");
 		});
 
@@ -1673,27 +1709,29 @@ sap.ui.define([
 				appointments: [oAppointment, oBlocker]
 			}),
 			sAppointmentLabelId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT"),
-			$oBlockerRef,
-			$oAppointmentRef;
+			$oAppointmentRef,
+			$oAppointmentsWrapperRef,
+			sHiddenSelectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 
 		oSPC.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		$oAppointmentRef = oAppointment.$();
-		$oBlockerRef = oBlocker.$();
+		$oAppointmentsWrapperRef = oSPC.$().find(".sapMSinglePCAppointments");
 
 		// Assert
-		assert.strictEqual($oAppointmentRef.attr("role"), "gridcell", "Appointments have correct ARIA role");
-		assert.strictEqual($oAppointmentRef.attr("aria-selected"), "false", "Appointments have correct ARIA selected attribute value");
+		assert.strictEqual($oAppointmentsWrapperRef.attr("role"), "list", "Appointments wrapper has correct ARIA role list");
+		assert.strictEqual($oAppointmentRef.attr("role"), "listitem", "Appointments have correct ARIA role");
+		assert.ok($oAppointmentRef.attr("aria-labelledby").indexOf(sHiddenSelectedTextId) === -1, "Non-selected appointments don't have a hidden \"Selected\" text in aria-labelledby");
 		assert.ok($oAppointmentRef.attr("aria-labelledby").indexOf(sAppointmentLabelId) > -1,
 				"Appointments have an appropriate hidden label");
 
 		// Act
 		oSPC.getAggregation("_grid")._toggleAppointmentSelection(oAppointment, true);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual($oAppointmentRef.attr("aria-selected"), "true", "Selected appointments have correct ARIA selected attribute value");
-		assert.strictEqual($oBlockerRef.attr("aria-selected"), "false", "Selected blockers have correct ARIA selected attribute value");
+		assert.ok($oAppointmentRef.attr("aria-labelledby").indexOf(sHiddenSelectedTextId) > -1, "Selected appointments have a hidden \"Selected\" text in aria-labelledby");
 
 		// Clean up
 		oSPC.destroy();
@@ -1720,26 +1758,25 @@ sap.ui.define([
 			}),
 			sBlockerLabelId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT"),
 			$oBlockerRef,
-			$oAppointmentRef;
+			sHiddenSelectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 
 		oSPC.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		$oBlockerRef = oBlocker.$();
-		$oAppointmentRef = oAppointment.$();
 
 		// Assert
-		assert.strictEqual($oBlockerRef.attr("role"), "gridcell", "Blockers have correct ARIA role");
-		assert.strictEqual($oBlockerRef.attr("aria-selected"), "false", "Blockers have correct ARIA selected attribute value");
+		assert.strictEqual($oBlockerRef.attr("role"), "listitem", "Blockers have correct ARIA role");
+		assert.ok($oBlockerRef.attr("aria-labelledby").indexOf(sHiddenSelectedTextId) === -1, "Non-selected blocker don't have a hidden \"Selected\" text in aria-labelledby");
 		assert.ok($oBlockerRef.attr("aria-labelledby").indexOf(sBlockerLabelId) > -1,
 			"Blockers have an appropriate hidden label");
 
 		// Act
 		oSPC.getAggregation("_grid")._toggleAppointmentSelection(oBlocker, true);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual($oBlockerRef.attr("aria-selected"), "true", "Selected blockers have correct ARIA selected attribute value");
-		assert.strictEqual($oAppointmentRef.attr("aria-selected"), "false", "Selected appointments have correct ARIA selected attribute value");
+		assert.ok($oBlockerRef.attr("aria-labelledby").indexOf(sHiddenSelectedTextId) > -1, "Selected blocker have a hidden \"Selected\" text in aria-labelledby");
 
 		// Clean up
 		oSPC.destroy();

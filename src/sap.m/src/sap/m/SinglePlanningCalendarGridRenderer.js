@@ -132,7 +132,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				oBlockersList = oControl._getBlockersToRender().oBlockersList;
 
 			oRm.openStart("div");
-			oRm.attr("role", "grid");
+			oRm.attr("role", "list");
 			oRm.attr("aria-labelledby", InvisibleText.getStaticId("sap.m", "SPC_BLOCKERS"));
 			oRm.class("sapMSinglePCBlockers");
 			oRm.class("sapUiCalendarRowVisFilled"); // TODO: when refactor the CSS of appointments maybe we won't need this class
@@ -163,13 +163,13 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				sIcon = oBlocker.getIcon(),
 				sId = oBlocker.getId(),
 				mAccProps = {
-					role: "gridcell",
+					role: "listitem",
 					labelledby: {
 						value: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT"),
 						append: true
 					},
-					// Setting aria-selected attribute to all blockers
-					selected: !!oBlocker.getSelected()
+					// Prevents aria-selected from being added on the Blocker appointment
+					selected: null
 				},
 				aAriaLabels = oControl.getAriaLabelledBy(),
 				iLeftPosition = iStartDayDiff * (100 / iColumns),
@@ -194,6 +194,10 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 
 			if (oBlocker.getTentative()) {
 				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_TENTATIVE");
+			}
+
+			if (oBlocker.getSelected()) {
+				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 			}
 
 			oRm.openStart("div", oBlocker);
@@ -345,6 +349,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 					sDate = oFormat.format(oColumnCalDate.toLocalJSDate());
 
 				oRm.openStart("div");
+				oRm.attr("role", "row");
 				oRm.attr("data-sap-day", sDate);
 				oRm.class("sapMSinglePCColumn");
 
@@ -388,6 +393,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				oCellEndDate = new Date(oCellStartDate.getFullYear(), oCellStartDate.getMonth(), oCellStartDate.getDate(), oCellStartDate.getHours() + 1);
 
 				oRm.openStart("div");
+				oRm.attr("role", "gridcell");
 				oRm.class("sapMSinglePCRow");
 
 				if (!oControl._isVisibleHour(i)) {
@@ -416,6 +422,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 
 			if (oAppointmentsByDate) {
 				oRm.openStart("div");
+				oRm.attr("role", "list");
 				oRm.class("sapMSinglePCAppointments");
 				oRm.class("sapUiCalendarRowVisFilled"); // TODO: when refactor the CSS of appointments maybe we won't need this class
 
@@ -451,13 +458,13 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				sId = oAppointment.getId(),
 				sLineClamp = this._getLineClamp(oAppStartDate, oAppEndDate),
 				mAccProps = {
-					role: "gridcell",
+					role: "listitem",
 					labelledby: {
 						value: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT"),
 						append: true
 					},
-					// Setting aria-selected attribute to all appointments
-					selected: !!oAppointment.getSelected()
+					// Prevents aria-selected from being added on the appointment
+					selected: null
 				},
 				aAriaLabels = oControl.getAriaLabelledBy(),
 				bAppStartIsOutsideVisibleStartHour = oColumnStartDateAndHour.getTime() > oAppStartDate.getTime(),
@@ -494,6 +501,10 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 
 			if (oAppointment.getTentative()) {
 				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_TENTATIVE");
+			}
+
+			if (oAppointment.getSelected()) {
+				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 			}
 
 			oRm.openStart("div", oAppointment);
