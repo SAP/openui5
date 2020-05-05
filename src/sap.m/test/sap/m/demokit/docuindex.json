@@ -1937,8 +1937,8 @@
 		},
 		{
 		  "id": "sap.m.sample.IconTabBarOverflowSelectList",
-		  "name": "Icon Tab Bar - Overflow Select List",
-		  "description": "In this example when some of the tab items are not visible, they are displayed in an overflow select list for easier selection."
+		  "name": "Icon Tab Bar - Overflow Behavior",
+		  "description": "In this example when there is not enough space for all tab items to fit on the screen, the rest are displayed in an overflow select list for easier selection."
 		},
 		{
 		  "id": "sap.m.sample.IconTabBarBackgroundDesign",
@@ -1948,7 +1948,7 @@
 		{
 		  "id": "sap.m.sample.IconTabBarDragDrop",
 		  "name": "Icon Tab Bar - Tabs drag and drop",
-		  "description": "This example shows how the tab filters can be reordered with drag and drop. Works only on desktop devices."
+		  "description": "This example shows how the tab filters can be reordered and nested with drag and drop. Works only on desktop devices."
 		},
 		{
 		  "id": "sap.m.sample.IconTabBarTabDensityMode",
@@ -1963,7 +1963,7 @@
 		{
 		  "id": "sap.m.sample.IconTabBarSubTabs",
 		  "name": "Icon Tab Bar - Sub tabs",
-		  "description": "In this example the Icon Tab Bar tabs have sub tabs."
+		  "description": "This sample illustrates nested tabs with or without own content in their root-level tab."
 		},
 		{
 		  "id": "sap.m.sample.BusyIndicator",
