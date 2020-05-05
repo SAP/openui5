@@ -46,7 +46,7 @@ function(
 			var mExtensionPointInfo = merge({defaultContent: []}, oExtensionPoint);
 			oExtensionPointRegistry.registerExtensionPoints(mExtensionPointInfo);
 
-			return oChangePersistence.getChangesForExtensionPoint(mPropertyBag).then(function (aChanges) {
+			var oPromise = oChangePersistence.getChangesForExtensionPoint(mPropertyBag).then(function (aChanges) {
 				if (aChanges.length === 0) {
 					//default content
 					oExtensionPoint.createDefault().then(function (aControls) {
@@ -77,6 +77,9 @@ function(
 					});
 				}
 			});
+			oExtensionPointRegistry.addApplyExtensionPointPromise(oPromise);
+			Applier.setPreConditionForApplyAllChangesOnControl(oExtensionPointRegistry.getApplyExtensionPointsPromise());
+			return oPromise;
 		}
 	};
 

@@ -27,6 +27,7 @@ sap.ui.define([
 		this._mObservers = {};
 		this._aExtensionPointsByParent = [];
 		this._mExtensionPointsByViewId = {};
+		this._aApplyExtensionPointPromises = [];
 	};
 
 	ExtensionPointRegistry._instance = undefined;
@@ -148,6 +149,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Adds a promise of applying an extension point into a list.
+	 *
+	 * @param {Promise} oPromise - Promise of applying an extension point
+	 */
+	ExtensionPointRegistry.prototype.addApplyExtensionPointPromise = function (oPromise) {
+		return this._aApplyExtensionPointPromises.push(oPromise);
+	};
+
+	/**
+	 * Gets a promise from list of all applying extension points.
+	 *
+	 * @returns {Promise} Promise of all applying extension points
+	 */
+	ExtensionPointRegistry.prototype.getApplyExtensionPointsPromise = function () {
+		return Promise.all(this._aApplyExtensionPointPromises);
+	};
+
+	/**
 	 * Destroys the registered observers and initializes the registry.
 	 */
 	ExtensionPointRegistry.prototype.exit = function() {
@@ -158,6 +177,7 @@ sap.ui.define([
 		this._mObservers = {};
 		this._aExtensionPointsByParent = [];
 		this._mExtensionPointsByViewId = {};
+		this._aApplyExtensionPointPromises = [];
 		ExtensionPointRegistry._instance = undefined;
 	};
 
