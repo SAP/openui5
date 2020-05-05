@@ -4351,4 +4351,64 @@ usePreliminaryContext : false}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Read an entity (SalesOrderLineItem) with an expand on a 0..1 navigation property
+	// (ToProduct) plus an expand of a second 0..1 navigation property from the first one
+	// (ToProduct/ToSupplier). Element bindings on the second navigation property have a valid
+	// context (not null), so that relative bindings underneath hold data as expected.
+	// BCP: 2070126588
+	//TODO use testViewStart to shorten test
+	QUnit.test("BCP 2070126588: binding to nested 0..1 navigation property", function (assert) {
+		var sView = '\
+<FlexBox id="objectPage" binding="{\
+path : \'/SalesOrderLineItemSet(SalesOrderID=\\\'0500000005\\\',ItemPosition=\\\'0000000010\\\')\',\
+parameters : {expand : \'ToProduct,ToProduct/ToSupplier\',\
+	select : \'SalesOrderID,ItemPosition,ToProduct/ProductID,\
+ToProduct/ToSupplier/BusinessPartnerID\'}}">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Text id="itemPosition" text="{ItemPosition}" />\
+	<FlexBox binding="{path : \'ToProduct\', parameters : {expand : \'ToSupplier\',\
+			select : \'ProductID,ToSupplier/BusinessPartnerID\'}}">\
+		<Text id="productID" text="{ProductID}" />\
+		<FlexBox binding="{path : \'ToSupplier\', parameters : {select : \'BusinessPartnerID\'}}">\
+			<Text id="businessPartnerID" text="{BusinessPartnerID}" />\
+		</FlexBox>\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderLineItemSet"
+					+ "(SalesOrderID='0500000005',ItemPosition='0000000010')"
+					+ "?$expand=ToProduct%2cToProduct%2fToSupplier"
+					+ "&$select=SalesOrderID%2cItemPosition%2cToProduct%2fProductID"
+						+ "%2cToProduct%2fToSupplier%2fBusinessPartnerID", {
+				SalesOrderID : "0500000005",
+				ItemPosition : "0000000010",
+				ToProduct : {
+					__metadata : {
+						uri : "/sap/opu/odata/sap/GWSAMPLE_BASIC/ProductSet('HT-1500')"
+					},
+					ProductID : "HT-1500",
+					ToSupplier : {
+						__metadata : {
+							uri : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/BusinessPartnerSet('0100000069')"
+						},
+						BusinessPartnerID : "0100000069"
+					}
+				}
+			})
+			.expectChange("salesOrderID", null)
+			.expectChange("salesOrderID", "0500000005")
+			.expectChange("itemPosition", null)
+			.expectChange("itemPosition", "0000000010")
+			.expectChange("productID", null)
+			.expectChange("productID", "HT-1500")
+			.expectChange("businessPartnerID", null)
+			.expectChange("businessPartnerID", "0100000069");
+
+		return this.createView(assert, sView).then(function () {
+			return that.waitForChanges(assert);
+		});
+	});
 });
