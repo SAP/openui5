@@ -1,0 +1,122 @@
+{
+	"useIconTabBar": true,
+	"height": "100%",
+	"enableLazyLoading": true,
+	"subSectionLayout": "TitleOnLeft",
+	"headerTitle": {
+	  "headerDesign": "Dark",
+	  "Type": "sap.uxap.ObjectPageHeader",
+	  "objectImageURI": "test-resources/sap/uxap/qunit/img/imageID_275314.png",
+	  "objectTitle": "Denise Smith",
+	  "objectImageDensityAware": false,
+	  "isObjectTitleAlwaysVisible": true,
+	  "isObjectIconAlwaysVisible": true,
+	  "isObjectSubtitleAlwaysVisible": true,
+	  "isActionAreaAlwaysVisible": true,
+	  "objectSubtitle": "Senior UI Developper & Visual Designer",
+	  "actions": [
+		{
+		  "Type": "sap.uxap.ObjectPageHeaderActionButton",
+		  "icon": "sap-icon://show",
+		  "hideIcon": true
+		},
+		{
+		  "Type": "sap.uxap.ObjectPageHeaderActionButton",
+		  "icon": "sap-icon://show",
+		  "hideText": false
+		}
+	  ],
+	  "navigationBar": {
+		"Type": "sap.m.Bar"
+	  }
+	},
+	"sections": [
+	  {
+		"title": "",
+		"subSections": [
+		  {
+			"title": "",
+			"mode": "Collapsed"
+		  },
+		  {
+			"title": "",
+			"mode": "Collapsed"
+		  }
+		]
+	  },
+	  {
+		"title": "",
+		"showTitle": true,
+		"subSections": [
+		  {
+			"title": "",
+			"mode": "Collapsed"
+		  }
+		]
+	  },
+	  {
+		"title": "",
+		"showTitle": true,
+		"subSections": [
+		  {
+			"title": "",
+			"mode": "Collapsed",
+			"actions": [
+			  {
+				"Type": "sap.m.Button",
+				"icon": "sap-icon://show"
+			  }
+			]
+		  },
+		  {
+			"title": "",
+			"mode": "Collapsed"
+		  }
+		]
+	  },
+	  {
+		"title": "",
+		"subSections": [
+		  {
+			"title": "",
+			"mode": "Collapsed"
+		  },
+		  {
+			"title": "",
+			"mode": "Collapsed"
+		  }
+		]
+	  },
+	  {
+		"title": "",
+		"subSections": [
+		  {
+			"title": "",
+			"mode": "Collapsed"
+		  },
+		  {
+			"title": "",
+			"mode": "Collapsed"
+		  }
+		]
+	  },
+	  {
+		"title": "",
+		"subSections": [
+		  {
+			"title": "",
+			"mode": "Collapsed"
+		  }
+		]
+	  },
+	  {
+		"title": "",
+		"subSections": [
+		  {
+			"title": "",
+			"mode": "Collapsed"
+		  }
+		]
+	  }
+	]
+  }

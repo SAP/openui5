@@ -1022,20 +1022,24 @@ sap.ui.define([
 	ObjectPageLayout.prototype._grepCurrentTabSectionBases = function () {
 		var oFiltered = [],
 			oSectionToLoad,
-			oSectionParent;
+			sSectionToLoadId,
+			oSectionParent,
+			sParentId;
 
 		this._adjustSelectedSectionByUXRules();
 		oSectionToLoad = this.oCore.byId(this.getSelectedSection());
 
 		if (oSectionToLoad) {
-			var sSectionToLoadId = oSectionToLoad.getId();
-			this._aSectionBases.forEach(function (oSection) {
-				oSectionParent = oSection.getParent();
-				if (oSectionParent && oSectionParent.getId() === sSectionToLoadId) {
-					oFiltered.push(oSection);
+			sSectionToLoadId = oSectionToLoad.getId();
+			this._aSectionBases.forEach(function (oSectionBase) {
+				oSectionParent = oSectionBase.getParent();
+				sParentId = oSectionParent && oSectionParent.getId();
+				if (oSectionBase.getId() === sSectionToLoadId || sParentId === sSectionToLoadId) {
+					oFiltered.push(oSectionBase);
 				}
 			});
 		}
+
 		return oFiltered;
 	};
 
