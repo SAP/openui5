@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/security/encodeXML",
 	"sap/ui/core/Core",
+	"sap/base/Log",
 	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ],
 	function(
@@ -38,6 +39,7 @@ sap.ui.define([
 		assert,
 		encodeXML,
 		core,
+		Log,
 		jQuery
 	) {
 		"use strict";
@@ -1075,7 +1077,7 @@ sap.ui.define([
 				this.onChange(null, mParam);
 			}
 
-			this.setProperty("value", sText, true);
+			this._setPropertyProtected("value", sText, true);
 
 			// deselect the text and move the text cursor at the endmost position
 			if (this.getPickerType() === "Dropdown" && !this.isPlatformTablet()) {
@@ -1653,7 +1655,7 @@ sap.ui.define([
 				oListItem, sKey;
 
 			this.setAssociation("selectedItem", vItem, true);
-			this.setProperty("selectedItemId", (vItem instanceof Item) ? vItem.getId() : vItem, true);
+			this._setPropertyProtected("selectedItemId", (vItem instanceof Item) ? vItem.getId() : vItem, true);
 
 			if (typeof vItem === "string") {
 				vItem = core.byId(vItem);
@@ -1670,7 +1672,7 @@ sap.ui.define([
 			}
 
 			sKey = vItem ? vItem.getKey() : "";
-			this.setProperty("selectedKey", sKey, true);
+			this._setPropertyProtected("selectedKey", sKey, true);
 			this._handleAriaActiveDescendant(vItem);
 
 			if (this._oSuggestionPopover) {
@@ -1710,7 +1712,7 @@ sap.ui.define([
 			if (vItem && (sKey !== "")) {
 
 				this.setAssociation("selectedItem", vItem, true);
-				this.setProperty("selectedItemId", vItem.getId(), true);
+				this._setPropertyProtected("selectedItemId", vItem.getId(), true);
 
 				// sets the value if it has not changed
 				if (this._sValue === this.getValue()) {
@@ -2222,7 +2224,28 @@ sap.ui.define([
 			}
 
 			this._sValue = this.getValue();
-			return this.setProperty("selectedKey", sKey);
+			return this._setPropertyProtected("selectedKey", sKey);
+		};
+
+		/**
+		 * Sets property avoiding model exceptions
+		 *
+		 * A temporary fix for OData v4 exception, until a better solution is found or the exception there is removed.
+		 *
+		 * @param sPropertyName
+		 * @param sValue
+		 * @param bSuppressInvalidate
+		 * @returns {*}
+		 * @private
+		 */
+		ComboBox.prototype._setPropertyProtected = function (sPropertyName, sValue, bSuppressInvalidate) {
+			try {
+				return this.setProperty(sPropertyName, sValue, bSuppressInvalidate);
+			} catch (e) {
+				Log.warning("setSelectedKey update failed due to exception. Loggable in support mode log", null, null, function () {
+					return {exception: e};
+				});
+			}
 		};
 
 		/**
