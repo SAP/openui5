@@ -154,6 +154,17 @@ sap.ui.define([
 
 	var Applier = {
 		/**
+		 * Sets a specific precondition, which has to be fulfilled before applying all changes on control.
+		 *
+		 * @param {Promise} oPromise - Promise which is resolved when precondition fulfilled
+		 */
+		setPreConditionForApplyAllChangesOnControl: function(oPromise) {
+			oLastPromise = oLastPromise.then(function () {
+				return oPromise;
+			});
+		},
+
+		/**
 		 * Applying a specific change on the passed control, if it is not already applied.
 		 *
 		 * @param {sap.ui.fl.Change} oChange - Change object which should be applied on the passed control
