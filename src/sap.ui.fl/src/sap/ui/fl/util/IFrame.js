@@ -72,6 +72,11 @@ sap.ui.define([
 				height : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : "100%"},
 
 				/**
+				 * Defines the title of the item.
+				 */
+				title : {type : "string", group : "Misc", defaultValue : undefined},
+
+				/**
 				 * Backup of the initial settings for the dialogs
 				 *
 				 * @ui5-restricted sap.ui.fl

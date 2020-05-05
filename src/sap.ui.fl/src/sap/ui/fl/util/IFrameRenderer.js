@@ -38,6 +38,10 @@ sap.ui.define([
 		oRm.style("border", "none");
 
 		oRm.attr("src", oIFrame.getUrl());
+		var sTitle = oIFrame.getTitle();
+		if (sTitle) {
+			oRm.attr("title", sTitle);
+		}
 
 		oRm.openEnd();
 
