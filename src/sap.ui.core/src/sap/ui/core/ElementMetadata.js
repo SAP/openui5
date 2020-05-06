@@ -37,6 +37,7 @@ sap.ui.define([
 
 	//chain the prototypes
 	ElementMetadata.prototype = Object.create(ManagedObjectMetadata.prototype);
+	ElementMetadata.prototype.constructor = ElementMetadata;
 
 	/**
 	 * Calculates a new id based on a prefix.
@@ -186,6 +187,7 @@ sap.ui.define([
 	}
 
 	Aggregation.prototype = Object.create(fnMetaFactoryAggregation.prototype);
+	Aggregation.prototype.constructor = Aggregation;
 	ElementMetadata.prototype.metaFactoryAggregation = Aggregation;
 
 	/**

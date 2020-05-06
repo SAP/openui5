@@ -48,6 +48,7 @@ sap.ui.define([
 
 	//chain the prototypes
 	ComponentMetadata.prototype = Object.create(ManagedObjectMetadata.prototype);
+	ComponentMetadata.prototype.constructor = ComponentMetadata;
 
 	ComponentMetadata.preprocessClassInfo = function(oClassInfo) {
 		// if the component is a string we convert this into a "_src" metadata entry
