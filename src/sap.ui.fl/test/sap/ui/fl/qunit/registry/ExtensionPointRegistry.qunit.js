@@ -51,7 +51,6 @@ sap.ui.define([
 	QUnit.module("sap.ui.fl.registry.ExtensionPointRegistry", {
 		beforeEach: function() {
 			sandbox.stub(Processor, "applyExtensionPoint");
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 
 			var sXmlString =
 				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
@@ -103,6 +102,7 @@ sap.ui.define([
 		QUnit.test("when calling function 'exit'", function(assert) {
 			var oObserverDisconnectSpy = sandbox.spy(ManagedObjectObserver.prototype, "disconnect");
 			var oObserverDestroySpy = sandbox.spy(ManagedObjectObserver.prototype, "destroy");
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 			_createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
 			assert.equal(Object.keys(this.oExtensionPointRegistry._aExtensionPointsByParent).length, 1, "then after registration one item is registered by parent");
 			assert.equal(Object.keys(this.oExtensionPointRegistry._mExtensionPointsByViewId).length, 1, "then after registration one item is registered by viewId");
@@ -116,6 +116,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("given the extensionpoint is the single node in aggregation when calling 'registerExtensionPoints'", function(assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 			_createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName5, this.oHBoxWithSingleEP, "items", 0);
 			assert.equal(Object.keys(this.oExtensionPointRegistry._aExtensionPointsByParent).length, 1, "then after registration one item is registered by parent");
 			assert.equal(Object.keys(this.oExtensionPointRegistry._mExtensionPointsByViewId).length, 1, "then after registration one item is registered by viewId");
@@ -123,6 +124,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("given a control containing two extension points in an aggregation", function(assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 			var mExtensionPointInfo2 = _createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
 			_createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName3, this.oPanel, "content", 1);
 			var sParentId = mExtensionPointInfo2.targetControl.getId();
@@ -149,6 +151,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("given a control containing an two extension points in two aggregations", function(assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 			var mExtensionPointInfo1 = _createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName1, this.oHBox, "items", 1);
 			var mExtensionPointInfo4 = _createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName4, this.oHBox, "dependents", 1);
 			var sParentId = mExtensionPointInfo1.targetControl.getId();

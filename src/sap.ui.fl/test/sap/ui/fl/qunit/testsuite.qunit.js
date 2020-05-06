@@ -322,7 +322,18 @@ sap.ui.define([
 			"apply/_internal/extensionPoint/Processor": {
 				group: "Apply Internal",
 				coverage: {
-					only: ["sap/ui/fl/extensionPointProcessor"]
+					only: ["sap/ui/fl/extensionPoint/Processor"]
+				},
+				ui5: {
+					resourceroots: {
+						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
+					}
+				}
+			},
+			"apply/_internal/extensionPoint/BaseProcessor": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/extensionPoint/BaseProcessor"]
 				},
 				ui5: {
 					resourceroots: {
