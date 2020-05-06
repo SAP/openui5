@@ -1888,6 +1888,50 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("requestSideEffectsInternal: delegate up refreshes binding", function (assert) {
+		var oParentContext = {
+				getPath : function () { return "/SalesOrder('42')"; },
+				requestSideEffectsInternal : function () {}
+			},
+			oBinding = {
+				oCache : {},
+				getContext : function () { return oParentContext; },
+				getPath : function () { return "SO_2_SOITEM"; },
+				requestSideEffects : function () {}
+			},
+			sPath = "/SalesOrder('42')/SO_2_SOITEM('0010')",
+			oContext = Context.create({}, oBinding, sPath),
+			oHelperMock = this.mock(_Helper);
+
+		oHelperMock.expects("getRelativePath")
+			.withExactArgs("/SalesOrderList('42')/SO_2_SOITEM('0010')/*", sPath)
+			.returns("*");
+		oHelperMock.expects("getRelativePath").withExactArgs(
+				"/SalesOrderList('42')/SO_2_SOITEM('0010')/SOITEM_2_SO/SO_2_SOITEM", sPath)
+			.returns("SOITEM_2_SO/SO_2_SOITEM");
+		oHelperMock.expects("getRelativePath")
+			.withExactArgs("/SalesOrderList('42')/SO_2_SOITEM", sPath)
+			.returns(undefined);
+		this.mock(oParentContext).expects("requestSideEffectsInternal")
+			.withExactArgs(["/SalesOrderList('42')/SO_2_SOITEM"], "groupId")
+			.callsFake(function () {
+				oBinding.oCache = undefined; // simulate a refresh
+				return SyncPromise.resolve("~");
+			});
+		this.mock(oBinding).expects("requestSideEffects").never();
+
+		// code under test
+		return oContext.requestSideEffectsInternal([
+			"/SalesOrderList('42')/SO_2_SOITEM('0010')/*",
+			"/SalesOrderList('42')/SO_2_SOITEM('0010')/SOITEM_2_SO/SO_2_SOITEM",
+			"/SalesOrderList('42')/SO_2_SOITEM"
+			], "groupId"
+		).then(function (aResult) {
+			assert.deepEqual(aResult, ["~"]);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("requestSideEffectsInternal without own cache: error case unsupported list binding",
 			function (assert) {
 		var oListBinding = {
