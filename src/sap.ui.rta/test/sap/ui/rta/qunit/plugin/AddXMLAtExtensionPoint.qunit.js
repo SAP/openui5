@@ -3,6 +3,8 @@
 sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/AddXMLAtExtensionPoint",
+	"sap/ui/rta/command/CompositeCommand",
+	"sap/ui/rta/command/AppDescriptorCommand",
 	"sap/ui/rta/plugin/AddXMLAtExtensionPoint",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
@@ -15,6 +17,8 @@ sap.ui.define([
 function (
 	CommandFactory,
 	AddXMLAtExtensionPointCommand,
+	CompositeCommand,
+	AppDescriptorCommand,
 	AddXMLAtExtensionPointPlugin,
 	Layer,
 	ManifestUtils,
@@ -173,8 +177,12 @@ function (
 			var oPropertyBag = {};
 			this.oAddXmlAtExtensionPointPlugin.attachElementModified(function (oEvent) {
 				var oCommand = oEvent.getParameters().command;
-				assert.ok(oCommand instanceof AddXMLAtExtensionPointCommand, "then the plugin fired the elementModified event with the AddXmlAtExtensionPoint command");
-				assert.strictEqual(oCommand.getFragmentPath(), this.sInitialFragmentPath, "then the returned command contains the fragment path from the initial fragmentHandler function");
+				assert.ok(oCommand instanceof CompositeCommand, "then the plugin fired the elementModified event with the CompositeCommand");
+				assert.ok(oCommand.getCommands()[0] instanceof AddXMLAtExtensionPointCommand, "then the CompositeCommand contains AddXMLAtExtensionPointCommand");
+				assert.ok(oCommand.getCommands()[1] instanceof AppDescriptorCommand, "then the CompositeCommand contains AppDescriptorCommand");
+				assert.strictEqual(oCommand.getCommands()[0].getFragmentPath(), this.sInitialFragmentPath, "then the returned command contains the fragment path from the initial fragmentHandler function");
+				var mAppDescriptorparameters = { flexExtensionPointEnabled: true };
+				assert.deepEqual(oCommand.getCommands()[1].getParameters(), mAppDescriptorparameters, "then the CompositeCommand contains AppDescriptorCommand");
 				fnDone();
 			}.bind(this));
 			this.oAddXmlAtExtensionPointPlugin.handler([this.oPanelOverlay], oPropertyBag)
@@ -199,8 +207,12 @@ function (
 			};
 			this.oAddXmlAtExtensionPointPlugin.attachElementModified(function (oEvent) {
 				var oCommand = oEvent.getParameters().command;
-				assert.ok(oCommand instanceof AddXMLAtExtensionPointCommand, "then the plugin fired the elementModified event with the AddXmlAtExtensionPoint command");
-				assert.strictEqual(oCommand.getFragmentPath(), sSecondFragmentPath, "then the returned command contains the fragment path from the passed as property fragmentHandler function");
+				assert.ok(oCommand instanceof CompositeCommand, "then the plugin fired the elementModified event with the CompositeCommand");
+				assert.ok(oCommand.getCommands()[0] instanceof AddXMLAtExtensionPointCommand, "then the CompositeCommand contains AddXMLAtExtensionPointCommand");
+				assert.ok(oCommand.getCommands()[1] instanceof AppDescriptorCommand, "then the CompositeCommand contains AppDescriptorCommand");
+				assert.strictEqual(oCommand.getCommands()[0].getFragmentPath(), sSecondFragmentPath, "then the returned command contains the fragment path from the passed as property fragmentHandler function");
+				var mAppDescriptorparameters = { flexExtensionPointEnabled: true };
+				assert.deepEqual(oCommand.getCommands()[1].getParameters(), mAppDescriptorparameters, "then the CompositeCommand contains AppDescriptorCommand");
 				fnDone();
 			});
 			this.oAddXmlAtExtensionPointPlugin.handler([this.oPanelOverlay], oPropertyBag)
