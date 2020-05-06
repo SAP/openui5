@@ -6,11 +6,12 @@ sap.ui.define([
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/support/RuleAnalyzer",
+	"sap/ui/test/actions/Press",
 	"sap/ui/test/Opa",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/TestUtils",
 	"sap/ui/test/matchers/Properties"
-], function (Log, Helper, QUnitUtils, RuleAnalyzer, Opa, Opa5, TestUtils, Properties) {
+], function (Log, Helper, QUnitUtils, RuleAnalyzer, Press, Opa, Opa5, TestUtils, Properties) {
 	"use strict";
 
 	/*
@@ -274,6 +275,55 @@ sap.ui.define([
 									} else {
 										Opa5.assert.ok(false, "Duplicate Message: " + sMessage);
 									}
+								}
+							});
+						}
+					});
+				},
+				/*
+				 * Selects the message with title <code>sMessage</code> in the message popover.
+				 * Checks whether the input field, identified by <code>sId</code> and table row
+				 * index <code>iRow</code>, gets focused after message title is selected. The check
+				 * whether the right control is focused is skipped if the browser window has no
+				 * focus during that check.
+				 * Note: Only working for message popover with enabled activeTitlePress
+				 * @see sap.ui.core.sample.common.Controller#initMessagePopover.
+				 */
+				selectMessageTitle : function (sMessage, sId, iRow) {
+					return this.waitFor({
+						controlType : "sap.m.Input",
+						id : sId,
+						matchers : function (oControl) {
+							return oControl.getBindingContext().getIndex() === iRow;
+						},
+						success : function (aControls) {
+							var sTargetId = aControls[0].getId();
+
+							Opa5.assert.ok(aControls.length === 1, "Found: " + sTargetId);
+							this.waitFor({
+								actions : new Press(),
+								controlType : "sap.m.Link",
+								matchers : new Properties({text : sMessage}),
+								success : function () {
+									var bDocumentHasFocus;
+
+									Opa5.assert.ok(true, "Message link pressed: " + sMessage);
+									this.waitFor({
+										controlType : "sap.m.Input",
+										check : function () {
+											// check not possible when document lost focus
+											bDocumentHasFocus = document.hasFocus();
+											return !bDocumentHasFocus
+												|| sTargetId ===
+													sap.ui.getCore().getCurrentFocusedControlId();
+										},
+										id : sTargetId,
+										success : function () {
+											Opa5.assert.ok(true, bDocumentHasFocus
+												? "Control focused: " + sTargetId
+												: "Document lost focus, check skipped");
+										}
+									});
 								}
 							});
 						}
