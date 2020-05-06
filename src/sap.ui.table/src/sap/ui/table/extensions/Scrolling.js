@@ -1531,6 +1531,8 @@ sap.ui.define([
 		onRowsUpdated: function(oEvent) {
 			log("VerticalScrollingHelper.onRowsUpdated: Reason " + oEvent.getParameters().reason, this);
 
+			this._getScrollExtension().updateVerticalScrollbarVisibility();
+
 			if (internal(this).aOnRowsUpdatedPreprocessors.length > 0) {
 				log("VerticalScrollingHelper.onRowsUpdated (preprocessors)", this);
 
