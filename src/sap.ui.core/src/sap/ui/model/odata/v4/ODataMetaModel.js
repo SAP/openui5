@@ -1928,7 +1928,7 @@ sap.ui.define([
 	 *   If this flag is set, only the completely reduced path is returned (a single path)
 	 * @param {boolean} [bNoReduceBeforeCollection]
 	 *   If this flag is set, there is no reduction in the part of the path before a
-	 *   collection-valued (navigation) property
+	 *   collection-valued (navigation) property (see {@link #getReducedPath})
 	 * @returns {string|string[]}
 	 *   The completely reduced absolute path if bSinglePath is set; otherwise a list of all
 	 *   absolute paths in case multiple reductions are possible incl. the path itself; no path will
@@ -2243,6 +2243,11 @@ sap.ui.define([
 	 * "/Employees(42)/name.space.AcIncreaseSalaryByFactor(...)/$Parameter/_it/Name" is reduced to
 	 * "/Employees(42)/Name" if "_it" is the binding parameter.
 	 *
+	 * The function does not reduce a path to a collection-valued navigation property. This would
+	 * possibly add a late property to an existing list binding (causing one request for each
+	 * row), or it would possibly try to merge two list bindings with conflicting parameters.
+	 * However the property itself and subsequent properties may be reduced.
+	 *
 	 * The metadata for <code>sPath</code> must be available synchronously.
 	 *
 	 * @param {string} sPath
@@ -2256,7 +2261,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaModel.prototype.getReducedPath = function (sPath, sBasePath) {
-		return this.getAllPathReductions(sPath, sBasePath, true, true);
+		return this.getAllPathReductions(sPath, sBasePath, /*bSinglePath*/true,
+			/*bNoReduceBeforeCollection*/true);
 	};
 
 	/**
