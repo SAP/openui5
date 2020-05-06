@@ -174,6 +174,10 @@ sap.ui.define([
 					"@Common.Label" : "OverloadAction import's label"
 				},
 				"tea_busi.DefaultContainer/T€AMS" : {
+					"@Session.StickySessionSupported" : {
+						NewAction : "tea_busi.NewAction",
+						"NewAction@Common.Label" : "New Team"
+					},
 					"@T€AMS" : {}
 				},
 				"tea_busi.NewAction" : {
@@ -219,6 +223,9 @@ sap.ui.define([
 					},
 					"@Common.Text@UI.TextArrangement" : {
 						"$EnumMember" : "UI.TextArrangementType/TextLast"
+					},
+					"@Session.StickySessionSupported#EntityType" : {
+						NewAction : "tea_busi.NewAction"
 					},
 					"@UI.Badge" : {
 						"@Common.Label" : "Label inside",
@@ -1645,6 +1652,8 @@ sap.ui.define([
 			: mScope.$Annotations["name.space.OverloadedFunction"]["@Common.Label"],
 		"/name.space.OverloadedFunction@" : mScope.$Annotations["name.space.OverloadedFunction"],
 		"/T€AMS/tea_busi.NewAction@Common.QuickInfo" : "Hello, world!",
+		"/tea_busi.NewAction@Core.OperationAvailable"
+			: mScope.$Annotations["tea_busi.NewAction"]["@Core.OperationAvailable"],
 		// annotations at specific operation overload - - - - - - - - - - - - - - - - - - - - - - -
 		"/T€AMS/name.space.OverloadedAction@Core.OperationAvailable"
 			: mScope.$Annotations["name.space.OverloadedAction(tea_busi.TEAM)"]
@@ -1669,6 +1678,15 @@ sap.ui.define([
 		"/OverloadedAction/@$ui5.overload@Core.OperationAvailable" // at unbound overload
 			: mScope.$Annotations["name.space.OverloadedAction()"]["@Core.OperationAvailable"],
 		"/OverloadedAction/@$ui5.overload@Core.OperationAvailable#2" : false,
+		// Note: no slash before "@Core.OperationAvailable", else annotation targets return type
+		"/T€AMS@Session.StickySessionSupported/NewAction@Core.OperationAvailable"
+			: mScope.$Annotations["tea_busi.NewAction(Collection(tea_busi.TEAM))"]
+				["@Core.OperationAvailable"],
+		"/T€AMS/@Session.StickySessionSupported#EntityType/NewAction@Core.OperationAvailable"
+			: mScope.$Annotations["tea_busi.NewAction(Collection(tea_busi.TEAM))"]
+				["@Core.OperationAvailable"],
+		// Note: annotation at "NewAction" property itself is preferred, if it exists:
+		"/T€AMS@Session.StickySessionSupported/NewAction@Common.Label" : "New Team",
 		// annotations at $ReturnType of specific overload or across all overloads (ODATA-1178) - -
 		"/ChangeManagerOfTeam/$ReturnType@Common.Label" : "Hail to the Chief",
 		// Note: there are two overloads with (Collection of) Worker, avoid these!
