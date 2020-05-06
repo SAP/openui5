@@ -492,7 +492,7 @@ sap.ui.define([
 				"plugin/additionalElements/AdditionalElementsAnalyzerOData": {
 					group: "Plugin",
 					coverage: {
-						only: ["sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzerOData"]
+						only: ["sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer"]
 					},
 					ui5: {
 						resourceroots: {
