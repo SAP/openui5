@@ -14,20 +14,17 @@ sap.ui.define([
 	function(ODataUtils, coreLibrary, URI, MessageParser, Message, Log, jQuery) {
 	"use strict";
 
-// shortcuts for enums
-var MessageType = coreLibrary.MessageType;
-
-/**
- * This map is used to translate back-end response severity values to the values defined in the
- * enumeration sap.ui.core.MessageType
- * @see sap.ui.core.ValueState
- */
-var mSeverityMap = {
-	"error":   MessageType.Error,
-	"warning": MessageType.Warning,
-	"success": MessageType.Success,
-	"info":    MessageType.Information
-};
+var sClassName = "sap.ui.model.odata.ODataMessageParser",
+	// shortcuts for enums
+	MessageType = coreLibrary.MessageType,
+	// This map is used to translate back-end response severity values to the values defined in the
+	// enumeration sap.ui.core.MessageType
+	mSeverity2MessageType = {
+		"error" : MessageType.Error,
+		"info" : MessageType.Information,
+		"success" : MessageType.Success,
+		"warning" : MessageType.Warning
+	};
 
 /**
  * A plain error object as returned by the server. Either "@sap-severity"- or "severity"-property
@@ -301,7 +298,7 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 		});
 		if (bStateMessages) {
 			Log.error("Unexpected non-persistent message in response, but requested only "
-				+ "transition messages", undefined, "sap.ui.model.odata.ODataMessageParser");
+				+ "transition messages", undefined, sClassName);
 		}
 	} else {
 		mAffectedTargets = this._getAffectedTargets(aMessages, mRequestInfo, mGetEntities,
@@ -344,72 +341,46 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 };
 
 /**
- * Creates an sap.ui.core.message.Message from the given JavaScript object. Since 1.78.0 unbound
- * non-technical messages are supported if the message scope for the request is
- * <code>BusinessObject</code>.
+ * Creates a <code>sap.ui.core.message.Message</code> from the given JavaScript object parsed from a
+ * server response. Since 1.78.0 unbound non-technical messages are supported if the message scope
+ * for the request is <code>BusinessObject</code>.
  *
- * @param {ODataMessageParser~ServerError} oMessageObject - The object containing the message data
- * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
- * @param {boolean} bIsTechnical - Whether this is a technical error (like 404 - not found)
- * @return {sap.ui.core.message.Message} The message for the given error
+ * @param {ODataMessageParser~ServerError} oMessageObject
+ *   The object containing the message data
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo
+ *   Info object about the request and the response; both properties <code>request</code> and
+ *   <code>response</code> of <code>mRequestInfo</code> are mandatory
+ * @param {boolean} bIsTechnical
+ *   Whether the given message object is a technical error (like 404 - not found)
+ * @return {sap.ui.core.message.Message}
+ *   The message for the given error
  */
-ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestInfo, bIsTechnical) {
-	var sType = oMessageObject["@sap.severity"]
-		? oMessageObject["@sap.severity"]
-		: oMessageObject["severity"];
-	// Map severity value to value defined in sap.ui.core.ValueState, use actual value if not found
-	sType = mSeverityMap[sType] ? mSeverityMap[sType] : sType;
+ODataMessageParser.prototype._createMessage = function (oMessageObject, mRequestInfo,
+		bIsTechnical) {
+	var bPersistent = oMessageObject.target && oMessageObject.target.indexOf("/#TRANSIENT#") === 0
+			|| oMessageObject.transient
+			|| oMessageObject.transition,
+		sText = typeof oMessageObject.message === "object"
+			? oMessageObject.message.value
+			: oMessageObject.message,
+		sType = oMessageObject["@sap.severity"] || oMessageObject.severity;
 
-	var sCode = oMessageObject.code ? oMessageObject.code : "";
-
-	var sText = typeof oMessageObject["message"] === "object" && oMessageObject["message"]["value"]
-		? oMessageObject["message"]["value"]
-		: oMessageObject["message"];
-
-	var sDescriptionUrl = oMessageObject.longtext_url ? oMessageObject.longtext_url : "";
-
-	var bPersistent = false;
-	// propertyRef is deprecated and should not be used if a target is specified
-	if (!oMessageObject.target && oMessageObject.propertyref) {
-		oMessageObject.target = oMessageObject.propertyref;
-	}
-	if (oMessageObject.target === undefined
-			&& (bIsTechnical || !mRequestInfo.request || !mRequestInfo.request.headers
-				|| mRequestInfo.request.headers["sap-message-scope"] !== "BusinessObject")) {
-		oMessageObject.target = "";
-	}
-
-	if (oMessageObject.target && oMessageObject.target.indexOf("/#TRANSIENT#") === 0) {
-		bPersistent = true;
-		oMessageObject.target = oMessageObject.target.substr(12);
-	} else if (oMessageObject.transient) {
-		bPersistent = true;
-	} else if (oMessageObject.transition) {
-		bPersistent = true;
-	}
-
-	if (oMessageObject.target !== undefined) {
-		this._createTarget(oMessageObject, mRequestInfo);
-	}
+	this._createTarget(oMessageObject, mRequestInfo, bIsTechnical);
 
 	return new Message({
-		type:      sType,
-		code:      sCode,
-		message:   sText,
-		descriptionUrl: sDescriptionUrl,
-		target:    oMessageObject.target === undefined
-			? ""
-			: ODataUtils._normalizeKey(oMessageObject.canonicalTarget),
-		processor: this._processor,
-		technical: bIsTechnical,
-		persistent: bPersistent,
-		fullTarget: oMessageObject.target === undefined
-			? ""
-			: oMessageObject.deepPath,
-		technicalDetails: {
-			statusCode: mRequestInfo.response.statusCode,
-			headers: mRequestInfo.response.headers
-		}
+		code : oMessageObject.code || "",
+		descriptionUrl : oMessageObject.longtext_url || "",
+		fullTarget : oMessageObject.deepPath,
+		message : sText,
+		persistent : bPersistent,
+		processor : this._processor,
+		target : oMessageObject.target,
+		technical : bIsTechnical,
+		technicalDetails : {
+			headers : mRequestInfo.response.headers,
+			statusCode : mRequestInfo.response.statusCode
+		},
+		type : mSeverity2MessageType[sType] || sType
 	});
 };
 
@@ -514,9 +485,32 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
  *   The object containing the message data
  * @param {ODataMessageParser~RequestInfo} mRequestInfo
  *   A map containing information about the current request
+ * @param {boolean} bIsTechnical - Whether this is a technical error (like 404 - not found)
  * @private
  */
-ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestInfo) {
+ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestInfo, bIsTechnical) {
+	if (oMessageObject.propertyref !== undefined && oMessageObject.target !== undefined) {
+		Log.warning("Used the message's 'target' property for target calculation; the property"
+			+ " 'propertyref' is deprecated and must not be used together with 'target'",
+			mRequestInfo.url, sClassName);
+	} else if (oMessageObject.target === undefined) {
+		oMessageObject.target = oMessageObject.propertyref;
+	}
+	if (oMessageObject.target === undefined && !bIsTechnical && mRequestInfo.request
+			&& mRequestInfo.request.headers
+			&& mRequestInfo.request.headers["sap-message-scope"] === "BusinessObject") {
+		oMessageObject.deepPath = "";
+		oMessageObject.target = "";
+
+		return;
+	}
+	if (oMessageObject.target === undefined) {
+		oMessageObject.target = "";
+	}
+	if (oMessageObject.target.indexOf("/#TRANSIENT#") === 0) {
+		oMessageObject.target = oMessageObject.target.substr(12);
+	}
+
 	var sTarget = oMessageObject.target;
 	var sDeepPath = "";
 
@@ -600,6 +594,7 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 		oMessageObject.deepPath
 			= this._metadata._getReducedPath(sDeepPath || oMessageObject.canonicalTarget);
 	}
+	oMessageObject.target = ODataUtils._normalizeKey(oMessageObject.canonicalTarget);
 };
 
 /**
