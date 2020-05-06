@@ -1706,7 +1706,7 @@ function(
 				},
 				getLocalId: function(sId) {
 					if (sId === this.oVariantManagement.getId()) {
-						return "localId";
+						return "varMgmtRef1";
 					}
 					return null;
 				}.bind(this)
@@ -1739,9 +1739,61 @@ function(
 			sandbox.stub(this.oModel, "getVariantManagementReferenceForControl").returns("varMgmtRef1");
 			this.oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
 
-			assert.equal(this.oModel.getCurrentVariantReference("varMgmtRef1"), "varMgmtRef1", "then the Current Variant is set to the standard variant");
 			assert.ok(fnRegisterToModelSpy.calledOnce, "then registerToModel called once, when VariantManagement control setModel is called");
 			assert.ok(fnRegisterToModelSpy.calledWith(this.oVariantManagement), "then registerToModel called with VariantManagement control");
+			assert.ok(this.oModel.oData["varMgmtRef1"].init, "the init flag is set");
+		});
+
+		QUnit.test("when waitForVMControlInit is called before the control is initialized", function(assert) {
+			var done = assert.async();
+			var oData = {
+				varMgmtRef1: {
+					defaultVariant: "variant1",
+					originalDefaultVariant: "variant1",
+					variants: [
+						{
+							author: VariantUtil.DEFAULT_AUTHOR,
+							key: "varMgmtRef1",
+							layer: Layer.VENDOR,
+							title: "Standard",
+							favorite: true,
+							visible: true,
+							executeOnSelect: false
+						}
+					]
+				}
+			};
+			this.oModel.setData(oData);
+			this.oModel.waitForVMControlInit("varMgmtRef1").then(function() {
+				assert.ok(true, "the function resolves");
+				done();
+			});
+			this.oModel.registerToModel(this.oVariantManagement);
+		});
+
+		QUnit.test("when waitForVMControlInit is called after the control is initialized", function(assert) {
+			var oData = {
+				varMgmtRef1: {
+					defaultVariant: "variant1",
+					originalDefaultVariant: "variant1",
+					variants: [
+						{
+							author: VariantUtil.DEFAULT_AUTHOR,
+							key: "varMgmtRef1",
+							layer: Layer.VENDOR,
+							title: "Standard",
+							favorite: true,
+							visible: true,
+							executeOnSelect: false
+						}
+					]
+				}
+			};
+			this.oModel.setData(oData);
+			this.oModel.registerToModel(this.oVariantManagement);
+			return this.oModel.waitForVMControlInit("varMgmtRef1").then(function() {
+				assert.ok(true, "the function resolves");
+			});
 		});
 
 		QUnit.test("when variant management controls are initialized with with 'updateVariantInURL' property set and default (false)", function(assert) {
@@ -1776,7 +1828,7 @@ function(
 		});
 
 		QUnit.test("when calling 'getVariantManagementReferenceForControl' with a variant management control with an app component prefix", function(assert) {
-			assert.strictEqual(this.oModel.getVariantManagementReferenceForControl(this.oVariantManagement), "localId", "then the local id of the control is retuned");
+			assert.strictEqual(this.oModel.getVariantManagementReferenceForControl(this.oVariantManagement), "varMgmtRef1", "then the local id of the control is retuned");
 		});
 
 		QUnit.test("when 'save' event event is triggered from a variant management control for a new variant, when variant model is busy", function(assert) {
@@ -1810,7 +1862,7 @@ function(
 
 		QUnit.test("when 'save' event is triggered from a variant management control for an existing variant, when variant model is busy", function(assert) {
 			var done = assert.async();
-			var sVMReference = "localId";
+			var sVMReference = "varMgmtRef1";
 			var fnSwitchPromiseStub = sandbox.stub();
 
 			var oDirtyChange1 = new Change({fileName: "newChange1"});
@@ -1855,7 +1907,7 @@ function(
 		QUnit.test("when 'save' event is triggered from a variant management control for a new variant, with another update variant call being triggered in parallel", function(assert) {
 			var done = assert.async();
 			assert.expect(4);
-			var sVMReference = "localId";
+			var sVMReference = "varMgmtRef1";
 			sandbox.stub(Reverter, "revertMultipleChanges");
 			this.oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
 
