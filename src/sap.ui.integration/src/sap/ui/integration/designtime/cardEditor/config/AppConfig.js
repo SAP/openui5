@@ -79,6 +79,7 @@ sap.ui.define(function () {
 			"label": "{i18n>CARD_EDITOR.APP.DATASOURCES}",
 			"type": "complexMap",
 			"itemLabel": "{i18n>CARD_EDITOR.APP.DATASOURCE}",
+			"addItemLabel": "{i18n>CARD_EDITOR.APP.DATASOURCE}",
 			"path": "/sap.app/dataSources",
 			"template": {
 				"key": {

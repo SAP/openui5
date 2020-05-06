@@ -8,11 +8,17 @@
 			items="{ path: 'itemsModel>/', templateShareable: false}"
 			visible="{= ${itemsModel>/}.length === 0 ? false : true }"
 		>
-			<Panel expandable="true" width="auto">
-				<headerToolbar>
-					<Toolbar style="Clear">
-						<Title text="{itemsModel>itemLabel}" titleStyle="H5" />
-						<ToolbarSpacer />
+			<VBox>
+				<Bar
+					visible="{= ${config/allowSorting} !== false || ${config/allowAddAndRemove} !== false || !!${itemsModel>itemLabel}}"
+				>
+					<contentLeft>
+						<Label
+							text="{itemsModel>itemLabel}"
+							visible="{= !!${itemsModel>itemLabel}}"
+						/>
+					</contentLeft>
+					<contentRight>
 						<Button
 							icon="sap-icon://navigation-up-arrow"
 							tooltip="{i18n>BASE_EDITOR.ARRAY.MOVEUP}"
@@ -54,16 +60,14 @@
 								/>
 							</customData>
 						</Button>
-					</Toolbar>
-				</headerToolbar>
-				<content>
-					<baseEditor:PropertyEditors
-						init="wrapperInit"
-						propertyEditorsChange="_propertyEditorsChange"
-						config="{itemsModel>properties}"
-					/>
-				</content>
-			</Panel>
+					</contentRight>
+				</Bar>
+				<baseEditor:PropertyEditors
+					init="wrapperInit"
+					propertyEditorsChange="_propertyEditorsChange"
+					config="{itemsModel>properties}"
+				/>
+			</VBox>
 		</VBox>
 		<Button
 			text="{

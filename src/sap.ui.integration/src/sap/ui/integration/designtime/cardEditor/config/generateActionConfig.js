@@ -26,6 +26,7 @@ sap.ui.define([
 			"label": "{i18n>CARD_EDITOR.ACTIONS}",
 			"type": "array",
 			"itemLabel": "{i18n>CARD_EDITOR.ACTION}",
+			"addItemLabel": "{i18n>CARD_EDITOR.ACTION}",
 			"template": {
 				"enabled": {
 					"label": "{i18n>CARD_EDITOR.ACTION.ENABLED}",
