@@ -1125,7 +1125,7 @@ sap.ui.define([
 			// load the font asynchronously via CSS
 			var sFontFaceCSS = "@font-face {" +
 					"font-family: '" + sFontFace + "';" +
-					"src: url('" + sFontPath + sFontFace + ".woff2') format('woff2')," + /* Chrome 36+, Firefox 39+, Safari 10+, Edge 14+, Chrome 51+ for Android, PhantomJS 2.1.1+ */
+					"src: url('" + sFontPath + sFontFace + ".woff2') format('woff2')," + /* Chrome 36+, Firefox 39+, Safari 10+, Edge 14+, Chrome 51+ for Android */
 					"url('" + sFontPath + sFontFace + ".woff') format('woff')," + /* IE9+, Safari 5.1+, iOS 5.1+, Android Browser 4.4+, IE Mobile 11+ */
 					"url('" + sFontPath + sFontFace + ".ttf') format('truetype')," + /* Fallback for any older browser (except IE8 and below which are not supported anyway) */
 					"local('" + sFontFace + "');" + /* fallback to local installed font in case it can't be loaded (e.g. font download is disabled due to browser security settings) */

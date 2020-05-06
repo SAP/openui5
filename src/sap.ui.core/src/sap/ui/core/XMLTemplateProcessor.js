@@ -809,7 +809,6 @@ function(
 						var pChild = SyncPromise.resolve();
 						var aChildControlPromises = [];
 						var children = node.childNodes;
-						// for some reasons phantomjs does not work with an Array#forEach here
 						for (var i = 0; i < children.length; i++) {
 							var oChildNode = children[i];
 							if (oChildNode.nodeType === 1 /* ELEMENT_NODE */) { // text nodes are ignored - plaintext inside extension points is not supported; no warning log because even whitespace is a text node

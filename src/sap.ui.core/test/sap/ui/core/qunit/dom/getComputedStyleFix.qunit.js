@@ -1,5 +1,5 @@
 /*global QUnit */
-sap.ui.define(["sap/ui/dom/getComputedStyleFix", "sap/ui/Device"], function(getComputedStyleFix, Device) {
+sap.ui.define(["sap/ui/dom/getComputedStyleFix"], function(getComputedStyleFix) {
 	"use strict";
 
 
@@ -37,38 +37,35 @@ sap.ui.define(["sap/ui/dom/getComputedStyleFix", "sap/ui/Device"], function(getC
 		assert.ok(window.getComputedStyle(oDetachedDiv), "css style is successfully returned for detached div");
 	});
 
-	//stubbing document.body does not work in phantomjs
-	if (!Device.browser.phantomJS) {
+	QUnit.test("simulate getComputedStyle returning null and document.body being null", function(assert) {
 
-		QUnit.test("simulate getComputedStyle returning null and document.body being null", function(assert) {
-
-			var oDetachedDiv = document.createElement("div");
-			var fnGetComputedStyle =  function() {
-				return null;
-			};
-			Object.defineProperty(window, "getComputedStyle", {
-				get: function() {
-					return fnGetComputedStyle;
-				},
-				set: function(vValue) {
-					fnGetComputedStyle = vValue;
-				}
-			});
-			var _oldBody = document.body;
-			var oBody = null;
-			Object.defineProperty(document, "body", {
-				get: function() {
-					return oBody;
-				},
-				set: function(vValue) {
-					oBody = vValue;
-				}
-			});
-			assert.notOk(document.body);
-			getComputedStyleFix();
-			assert.ok(window.getComputedStyle(oDetachedDiv), "css style is successfully returned for detached div");
-			document.body = _oldBody;
-			assert.ok(document.body);
+		var oDetachedDiv = document.createElement("div");
+		var fnGetComputedStyle =  function() {
+			return null;
+		};
+		Object.defineProperty(window, "getComputedStyle", {
+			get: function() {
+				return fnGetComputedStyle;
+			},
+			set: function(vValue) {
+				fnGetComputedStyle = vValue;
+			}
 		});
-	}
+		var _oldBody = document.body;
+		var oBody = null;
+		Object.defineProperty(document, "body", {
+			get: function() {
+				return oBody;
+			},
+			set: function(vValue) {
+				oBody = vValue;
+			}
+		});
+		assert.notOk(document.body);
+		getComputedStyleFix();
+		assert.ok(window.getComputedStyle(oDetachedDiv), "css style is successfully returned for detached div");
+		document.body = _oldBody;
+		assert.ok(document.body);
+	});
+
 });
