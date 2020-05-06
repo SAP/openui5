@@ -1113,11 +1113,13 @@ sap.ui.define([
 		});
 
 		if (aParentPaths.length) {
+			// Note: it is important to first delegate up, because that might refresh oBinding!
 			aPromises.push(
 				oBinding.getContext().requestSideEffectsInternal(aParentPaths, sGroupId));
 		}
 
-		if (aOwnPaths.length) {
+		if (aOwnPaths.length && oBinding.oCache !== undefined) {
+			// only if oBinding not being refreshed already...
 			aPromises.push(oBinding.requestSideEffects(sGroupId, aOwnPaths, oContext));
 		}
 

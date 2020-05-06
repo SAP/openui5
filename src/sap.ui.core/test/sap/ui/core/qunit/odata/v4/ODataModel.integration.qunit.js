@@ -23685,8 +23685,14 @@ sap.ui.define([
 	// Extended with a collection-valued structural property and a collection-valued navigation
 	// property.
 	// JIRA: CPOUI5ODATAV4-221
+	// For a context of a list binding, both a refresh of the whole collection and changes to
+	// structural properties only ({"$PropertyPath":"*"}) are requested at the same time. Also, both
+	// a refresh of the whole collection and of a single item ({$NavigationPropertyPath : ""}) are
+	// requested at the same time. No duplicate requests are triggered, no errors happen.
+	// BCP: 2070206648
 	QUnit.test("requestSideEffects: path reduction", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oContext,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{path : \'/SalesOrderList(\\\'42\\\')\', parameters : {$select : \'Messages\'}}">\
 	<FlexBox binding="{}">\
@@ -23725,7 +23731,7 @@ sap.ui.define([
 			.expectChange("key", ["A"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oContext = that.oView.byId("items").getItems()[0].getBindingContext();
+			oContext = that.oView.byId("items").getItems()[0].getBindingContext();
 
 			that.expectRequest("SalesOrderList('42')?$select=Messages,Note",
 					{Note : "refreshed Note"})
@@ -23749,6 +23755,45 @@ sap.ui.define([
 					{$PropertyPath : "SOITEM_2_SO/Messages"},
 					{$PropertyPath : "SOITEM_2_SO/Note"},
 					{$NavigationPropertyPath : "SOITEM_2_SO/SO_2_SCHDL"}
+				]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=GrossAmount,ItemPosition"
+					+ ",SalesOrderID&$skip=0&$top=100", {
+					value : [
+						{GrossAmount : "10.42", ItemPosition : "0010", SalesOrderID : "42"},
+						{GrossAmount : "30.42", ItemPosition : "0030", SalesOrderID : "42"}
+					]
+				})
+				.expectChange("position", [, "0030"])
+				.expectChange("amount", ["10.42", "30.42"]);
+
+			return Promise.all([
+				// code under test
+				oContext.requestSideEffects([
+					{$PropertyPath : "*"}, // must not lead to failure (original BCP issue)
+					{$NavigationPropertyPath : "SOITEM_2_SO/SO_2_SOITEM"}
+				]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=GrossAmount,ItemPosition"
+					+ ",SalesOrderID&$skip=0&$top=100", {
+					value : [
+						{GrossAmount : "110.42", ItemPosition : "0010", SalesOrderID : "42"},
+						{GrossAmount : "130.42", ItemPosition : "0030", SalesOrderID : "42"},
+						{GrossAmount : "140.42", ItemPosition : "0040", SalesOrderID : "42"}
+					]
+				})
+				.expectChange("position", [,, "0040"])
+				.expectChange("amount", ["110.42", "130.42", "140.42"]);
+
+			return Promise.all([
+				// code under test
+				oContext.requestSideEffects([
+					{$NavigationPropertyPath : ""}, // should not trigger a duplicate request
+					{$NavigationPropertyPath : "SOITEM_2_SO/SO_2_SOITEM"}
 				]),
 				that.waitForChanges(assert)
 			]);
