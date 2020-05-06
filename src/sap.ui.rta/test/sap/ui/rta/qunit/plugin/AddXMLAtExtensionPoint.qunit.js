@@ -5,6 +5,8 @@ sap.ui.define([
 	"sap/ui/rta/command/AddXMLAtExtensionPoint",
 	"sap/ui/rta/plugin/AddXMLAtExtensionPoint",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/core/mvc/XMLView",
@@ -15,6 +17,8 @@ function (
 	AddXMLAtExtensionPointCommand,
 	AddXMLAtExtensionPointPlugin,
 	Layer,
+	ManifestUtils,
+	Loader,
 	OverlayRegistry,
 	DesignTime,
 	XMLView,
@@ -95,6 +99,8 @@ function (
 	QUnit.module("Given an xmlView with extensionPoints and AddXMLAtExtensionPoint plugin without fragment handler function are created and the DesignTime is started ", {
 		beforeEach: function() {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(true);
+			sandbox.stub(Loader, "loadFlexData").resolves({ changes: [] });
 			return _createBeforeEach.call(this);
 		},
 		afterEach: function() {

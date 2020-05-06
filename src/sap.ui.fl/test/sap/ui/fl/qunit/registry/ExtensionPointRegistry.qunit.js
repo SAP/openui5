@@ -2,7 +2,9 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
+	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/registry/ExtensionPointRegistry",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/mvc/XMLView",
@@ -10,7 +12,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	jQuery,
+	Component,
 	Processor,
+	Loader,
 	ExtensionPointRegistry,
 	ManagedObjectObserver,
 	XMLView,
@@ -230,6 +234,7 @@ sap.ui.define([
 	QUnit.module("Given an ExtensionPointRegistry created by the fl extension point processor", {
 		beforeEach: function() {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(Loader, "loadFlexData").resolves({ changes: [] });
 
 			var sXmlString =
 				'<mvc:View id="myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
@@ -253,25 +258,30 @@ sap.ui.define([
 						'</content>' +
 					'</Panel>' +
 				'</mvc:View>';
-			this.oComponent = sap.ui.getCore().createComponent({
+
+			return Component.create({
 				name: "testComponent",
 				id: "testComponent",
-				metadata: {
-					manifest: "json"
-				}
-			});
-			return this.oComponent.runAsOwner(function() {
-				return XMLView.create({
-					id: "myView",
-					definition: sXmlString,
-					async: true
-				});
+				componentData: {}
 			})
-				.then(function(oXMLView) {
-					this.oXMLView = oXMLView;
-					this.oHBox = this.oXMLView.getContent()[0];
-					this.oPanel = this.oXMLView.getContent()[1];
-				}.bind(this));
+				.then(function(_oComp) {
+					this.oComponent = _oComp;
+					return this.oComponent.runAsOwner(function() {
+						return XMLView.create({
+							id: "myView",
+							definition: sXmlString,
+							async: true
+						})
+						.then(function(oXMLView) {
+							this.oXMLView = oXMLView;
+							this.oHBox = this.oXMLView.getContent()[0];
+							this.oPanel = this.oXMLView.getContent()[1];
+						}.bind(this));
+					}.bind(this));
+				}.bind(this))
+				.then(function() {
+					sap.ui.getCore().applyChanges();
+				});
 		},
 		afterEach: function() {
 			this.oComponent.destroy();
