@@ -113,6 +113,7 @@ sap.ui.define([
 			this.oModel = new VariantModel(this.oData, oMockFlexController, this.oAppComponent);
 			this.oAppComponent.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
 			this.oComponent = new Component("EmbeddedComponent");
+			sandbox.stub(this.oModel, "waitForVMControlInit").resolves();
 			sandbox.stub(Utils, "getAppComponentForControl")
 				.callThrough()
 				.withArgs(this.oDummyControl).returns(this.oAppComponent)
@@ -166,6 +167,7 @@ sap.ui.define([
 				variantReference: "variant1"
 			})
 			.then(function() {
+				assert.equal(this.oModel.waitForVMControlInit.callCount, 1, "the function waits for the control");
 				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
 			}.bind(this));
 		});

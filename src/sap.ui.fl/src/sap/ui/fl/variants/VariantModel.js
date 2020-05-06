@@ -1085,6 +1085,25 @@ sap.ui.define([
 			model: this,
 			vmControl: oVariantManagementControl
 		});
+
+		if (this.oData[sVariantManagementReference].initPromise) {
+			this.oData[sVariantManagementReference].initPromise.resolveFunction();
+			delete this.oData[sVariantManagementReference].initPromise;
+		}
+
+		this.oData[sVariantManagementReference].init = true;
+	};
+
+	VariantModel.prototype.waitForVMControlInit = function(sVMReference) {
+		if (this.oData[sVMReference].init) {
+			return Promise.resolve();
+		}
+
+		this.oData[sVMReference].initPromise = {};
+		this.oData[sVMReference].initPromise.promise = new Promise(function(resolve) {
+			this.oData[sVMReference].initPromise.resolveFunction = resolve;
+		}.bind(this));
+		return this.oData[sVMReference].initPromise.promise;
 	};
 
 	/**

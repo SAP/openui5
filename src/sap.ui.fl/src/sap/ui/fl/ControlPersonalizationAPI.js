@@ -165,8 +165,6 @@ sap.ui.define([
 		 *
 		 * Activates the passed variant applicable to the passed control/component.
 		 *
-		 * Currently directly used by sap/fe!
-		 *
 		 * @param {sap.ui.base.ManagedObject|string} vElement - The component or control (instance or ID) on which the variantModel is set
 		 * @param {string} sVariantReference - The variant reference which needs to be activated
 		 *
@@ -176,9 +174,9 @@ sap.ui.define([
 		 * @public
 		 */
 		activateVariant : function(vElement, sVariantReference) {
-			var oElement;
 			return Promise.resolve()
 			.then(function () {
+				var oElement;
 				if (typeof vElement === 'string' || vElement instanceof String) {
 					oElement = Component.get(vElement);
 
@@ -208,13 +206,11 @@ sap.ui.define([
 				}
 
 				// sap/fe is using this API very early during app start, sometimes before FlexState is initialized
-				return FlexState.initialize({
-					componentId: oAppComponent.getId()
-				}).then(function() {
+				return oVariantModel.waitForVMControlInit(sVariantManagementReference).then(function() {
 					return oVariantModel.updateCurrentVariant(sVariantManagementReference, sVariantReference, oAppComponent);
 				});
 			})
-			["catch"](function (oError) {
+			["catch"](function(oError) {
 				Log.error(oError);
 				return Promise.reject(oError);
 			});
