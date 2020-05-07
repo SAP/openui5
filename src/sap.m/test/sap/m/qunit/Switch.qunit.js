@@ -338,6 +338,17 @@ sap.ui.define([
 		oSwitch.destroy();
 	});
 
+	QUnit.test("getOverflowToolbarConfig", function (assert) {
+		var oSwitch = new Switch(),
+			oOverflowToolbarConfig = oSwitch.getOverflowToolbarConfig();
+
+		assert.ok(oSwitch.isA("sap.m.IOverflowToolbarContent"), "Switch implements IOverflowToolbarContent interface");
+		assert.ok(oOverflowToolbarConfig.propsUnrelatedToSize.indexOf("enabled") > -1, "'enabled' is included in propsUnrelatedToSize array");
+		assert.ok(oOverflowToolbarConfig.propsUnrelatedToSize.indexOf("state") > -1, "'state' is included in propsUnrelatedToSize array");
+
+		oSwitch.destroy();
+	});
+
 	/* =========================================================== */
 	/* HTML module                                                 */
 	/* =========================================================== */
