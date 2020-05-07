@@ -239,8 +239,10 @@ sap.ui.define([
 			this._oPopover = null;
 		}
 
-		if (this.getAggregation("_expandButton")) {
-			this._getExpandButton().removeEventDelegate(this._oDragEventDelegate);
+		if (this._oExpandButton) {
+			this._oExpandButton.removeEventDelegate(this._oDragEventDelegate);
+			this._oExpandButton.destroy();
+			this._oExpandButton = null;
 		}
 
 		this.removeEventDelegate(this._oDragEventDelegate);
@@ -749,20 +751,21 @@ sap.ui.define([
 	};
 
 	IconTabFilter.prototype._getExpandButton = function () {
-		var oButton = this.getAggregation("_expandButton");
+		this._oExpandButton = this.getAggregation("_expandButton");
 
 		if (this._getRootTab().getParent()._isUnselectable(this)) {
-			if (oButton) {
-				oButton.removeEventDelegate(this._oDragEventDelegate);
+			if (this._oExpandButton) {
+				this._oExpandButton.removeEventDelegate(this._oDragEventDelegate);
 				this.addEventDelegate(this._oDragEventDelegate, this);
 				this.destroyAggregation("_expandButton");
 			}
-			return null;
+			this._oExpandButton = null;
+			return this._oExpandButton;
 		}
 
-		if (!oButton) {
+		if (!this._oExpandButton) {
 			// oButton is null and Button should be created
-			oButton = new AccButton(this.getId() + "-expandButton", {
+			this._oExpandButton = new AccButton(this.getId() + "-expandButton", {
 				type: ButtonType.Transparent,
 				icon: IconPool.getIconURI("slim-arrow-down"),
 				tooltip: oResourceBundle.getText("ICONTABHEADER_OVERFLOW_MORE"),
@@ -771,11 +774,11 @@ sap.ui.define([
 			}).addStyleClass("sapMITBFilterExpandBtn");
 
 			this.removeEventDelegate(this._oDragEventDelegate);
-			oButton.addEventDelegate(this._oDragEventDelegate, this);
-			this.setAggregation("_expandButton", oButton);
+			this._oExpandButton.addEventDelegate(this._oDragEventDelegate, this);
+			this.setAggregation("_expandButton", this._oExpandButton);
 		}
 
-		return oButton;
+		return this._oExpandButton;
 	};
 
 	/**
