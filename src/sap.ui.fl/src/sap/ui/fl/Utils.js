@@ -731,8 +731,8 @@ function(
 		 * Calls the passed function with the desired ushell services, if ushell container is available
 		 *
 		 * @param {function} fnCallBack - Callback function
-		 * @param {string[]} aServiceNames - array of ushell service names
-		 * @returns {any|undefined} Returns the value from the callback
+		 * @param {string[]} aServiceNames - Array of ushell service names
+		 * @returns {any|undefined} Returns the Value from the callback
 		 */
 		ifUShellContainerThen: function(fnCallBack, aServiceNames) {
 			var oUShellContainer = Utils.getUshellContainer();
@@ -1262,6 +1262,56 @@ function(
 		 */
 		normalizeReference: function(sReference) {
 			return sReference.replace(/(.Component)$/g, "");
+		},
+
+		/**
+		 * Standalone: Adds the given search parameter to the URL or removes it.
+		 *
+		 * @param  {string} sParameters - The URL parameters to be modified
+		 * @param  {string} sParameterName - The parameter name that can be removed or added
+		 * @param  {string} sParameterValue - The parameter value of the parameter name that can be removed or added
+		 * @returns {string} The modified URL
+		 */
+		handleUrlParameters: function(sParameters, sParameterName, sParameterValue) {
+			if (this.hasParameterAndValue(sParameterName, sParameterValue)) {
+				if (sParameters.startsWith("?")) {
+					sParameters = sParameters.substr(1, sParameters.length);
+				}
+				var aFilterUrl = sParameters.split("&").filter(function(sParameter) {
+					return sParameter !== sParameterName + "=" + sParameterValue;
+				});
+				sParameters = "";
+				if (aFilterUrl.length > 0) {
+					sParameters = "?" + aFilterUrl.toString();
+				}
+			} else {
+				sParameters += (sParameters.length > 0 ? '&' : '?') + sParameterName + "=" + sParameterValue;
+			}
+			return sParameters;
+		},
+
+		/**
+		 * Checks if the passed parameter name with the parameter value is contained in the URL.
+		 *
+		 * @param  {string} sParameterName - The parameter name to be checked
+		 * @param  {string} sParameterValue - The parameter value to be checked
+		 * @returns {boolean} <code>true</code> if the parameter and the given value are in the URL
+		 */
+		hasParameterAndValue: function(sParameterName, sParameterValue) {
+			var oUshellContainer = this.getUshellContainer();
+			if (oUshellContainer) {
+				var mParsedHash = this.getParsedURLHash();
+				return (mParsedHash.params &&
+					mParsedHash.params[sParameterName] &&
+					mParsedHash.params[sParameterName][0] === sParameterValue) || false;
+			}
+			var oUriParams = UriParameters.fromQuery(document.location.search);
+			if (!oUriParams) {
+				return false;
+			}
+			var sUriValue = oUriParams.get(sParameterName);
+
+			return sUriValue === sParameterValue;
 		}
 	};
 	return Utils;

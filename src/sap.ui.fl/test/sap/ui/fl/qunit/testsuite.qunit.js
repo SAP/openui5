@@ -389,6 +389,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/api/VersionsAPI"]
 				}
 			},
+			"write/api/ReloadInfoAPI": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/ReloadInfoAPI"]
+				}
+			},
 			"write/api/UI2PersonalizationWriteAPI": {
 				group: "Write API",
 				coverage: {

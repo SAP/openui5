@@ -1901,6 +1901,86 @@ function(
 		});
 	});
 
+	QUnit.module("_hasParameterAndValue is called", {
+		before : function() {
+			this.sParameterName = "parameterName";
+			this.sParameterValue = "parameterValue";
+		},
+		afterEach : function () {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("parameter name doesnt exist", function(assert) {
+			sandbox.stub(UriParameters.prototype, "get").withArgs(this.sParameterName).returns(null);
+			var bResult = Utils.hasParameterAndValue(this.sParameterName, this.sParameterValue);
+			assert.equal(bResult, false, "the function returns false");
+		});
+
+		QUnit.test("parameter value empty string", function(assert) {
+			sandbox.stub(UriParameters.prototype, "get").withArgs(this.sParameterName).returns("");
+			var bResult = Utils.hasParameterAndValue(this.sParameterName, this.sParameterValue);
+			assert.equal(bResult, false, "the function returns false");
+		});
+
+		QUnit.test("parameter value not equal", function(assert) {
+			sandbox.stub(UriParameters.prototype, "get").withArgs(this.sParameterName).returns("notEqual");
+			var bResult = Utils.hasParameterAndValue(this.sParameterName, this.sParameterValue);
+			assert.equal(bResult, false, "the function returns false");
+		});
+
+		QUnit.test("parameter value is equal", function(assert) {
+			sandbox.stub(UriParameters.prototype, "get").withArgs(this.sParameterName).returns(this.sParameterValue);
+			var bResult = Utils.hasParameterAndValue(this.sParameterName, this.sParameterValue);
+			assert.equal(bResult, true, "the function returns true");
+		});
+	});
+
+	QUnit.module("handleUrlParameter is called", {
+		before : function() {
+			this.sParameterName = "parameterName";
+			this.sParameterValue = "parameterValue";
+			this.sSearchParameter = this.sParameterName + "=" + this.sParameterValue;
+			this.sAnotherParameter = "test=true";
+		},
+		afterEach : function () {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("with hasUrlParameterWithValue is true", function(assert) {
+			var sUrl = "?" + this.sSearchParameter;
+			sandbox.stub(Utils, "hasParameterAndValue").returns(true);
+			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
+			assert.equal(bResult, "", "no change in the url");
+		});
+
+		QUnit.test("with hasUrlParameterWithValue is true and another parameter", function(assert) {
+			var sUrl = "?" + this.sAnotherParameter + "&" + this.sSearchParameter;
+			sandbox.stub(Utils, "hasParameterAndValue").returns(true);
+			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
+			assert.equal(bResult, "?" + this.sAnotherParameter, "no change in the url");
+		});
+
+		QUnit.test("with hasUrlParameterWithValue is true and another parameter at the end", function(assert) {
+			var sUrl = "?" + this.sSearchParameter + "&" + this.sAnotherParameter;
+			sandbox.stub(Utils, "hasParameterAndValue").returns(true);
+			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
+			assert.equal(bResult, "?" + this.sAnotherParameter, "no change in the url");
+		});
+
+		QUnit.test("with hasUrlParameterWithValue is false", function(assert) {
+			var sUrl = "";
+			sandbox.stub(Utils, "hasParameterAndValue").returns(false);
+			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
+			assert.equal(bResult, "?" + this.sSearchParameter, "no change in the url");
+		});
+
+		QUnit.test("with hasUrlParameterWithValue is false and another parameter", function(assert) {
+			var sUrl = "?" + this.sAnotherParameter;
+			sandbox.stub(Utils, "hasParameterAndValue").returns(false);
+			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
+			assert.equal(bResult, "?" + this.sAnotherParameter + "&" + this.sSearchParameter, "no change in the url");
+		});
+	});
 	QUnit.done(function() {
 		jQuery('#qunit-fixture').hide();
 	});

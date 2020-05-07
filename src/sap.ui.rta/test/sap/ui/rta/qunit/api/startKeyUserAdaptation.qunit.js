@@ -63,7 +63,7 @@ sap.ui.define([
 					done();
 				});
 				assert.strictEqual(oRta.getRootControl(), oAppComponent.getId(), "then correct root control was set");
-				sandbox.stub(oRta, "_handleReloadOnExit").resolves(oRta._RESTART.NOT_NEEDED);
+				sandbox.stub(oRta, "_handleReloadOnExit").resolves(oRta._RELOAD.NOT_NEEDED);
 				oRta.stop(true);
 			}.bind(this));
 	});
