@@ -1452,9 +1452,11 @@ sap.ui.define([
 		var oHeaderTitle = this.getHeaderTitle();
 
 		// note that <code>this._$titleArea</code> is the placeholder [of the sticky area] where both the header title and header content are placed
-		this._$titleArea.toggleClass("sapUxAPObjectPageHeaderStickied", !bExpand);
-		this._$titleArea.toggleClass("sapUxAPObjectPageHeaderSnappedTitleOnMobile",
+		if (this._$titleArea.length) {
+			this._$titleArea.toggleClass("sapUxAPObjectPageHeaderStickied", !bExpand);
+			this._$titleArea.toggleClass("sapUxAPObjectPageHeaderSnappedTitleOnMobile",
 				this._hasDynamicTitleWithSnappedTitleOnMobile() && !bExpand);
+		}
 
 		if (bExpand) {
 			oHeaderTitle && oHeaderTitle.unSnap(bUserInteraction);
