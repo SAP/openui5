@@ -80,6 +80,9 @@ sap.ui.define([
 		if (ManifestUtils.isFlexExtensionPointHandlingEnabled(oView)) {
 			return "sap/ui/fl/apply/_internal/extensionPoint/Processor";
 		}
+		if (sap.ui.getCore().getConfiguration().getDesignMode()) {
+			return "sap/ui/fl/apply/_internal/extensionPoint/BaseProcessor";
+		}
 		return undefined;
 	}
 
