@@ -25,7 +25,7 @@ sap.ui.define([
 		return _merge({}, {
 			"label": "{i18n>CARD_EDITOR.ACTIONS}",
 			"type": "array",
-			"itemLabel": "{i18n>CARD_EDITOR.ACTION}",
+			"itemLabel": "{type}",
 			"addItemLabel": "{i18n>CARD_EDITOR.ACTION}",
 			"template": {
 				"enabled": {
