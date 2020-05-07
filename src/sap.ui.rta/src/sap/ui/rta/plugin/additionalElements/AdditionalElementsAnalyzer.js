@@ -114,11 +114,10 @@ sap.ui.define([
 			if (_isComplexType(mProperty)) {
 				var mComplexType = oMetaModel.getODataComplexType(mProperty.type);
 				if (mComplexType) {
-					//deep properties
+					//deep properties (TODO make recursive as complex types could be many levels deep)
 					mProp.properties = mComplexType.property.map(function(mComplexProperty) {
 						var mInnerProp = _enrichProperty(mComplexProperty, mODataEntity, oElement, sAggregationName, sModelName);
 						mInnerProp.bindingPath = mProperty.name + "/" + mComplexProperty.name;
-						mInnerProp.referencedComplexPropertyName = mProp.label || mProp.name; //TODO find a more generic name here and in dialog
 						return mInnerProp;
 					});
 				}
@@ -148,9 +147,12 @@ sap.ui.define([
 	function _flattenProperties(aProperties) {
 		var aFlattenedProperties = aProperties.reduce(function(aFlattened, oProperty) {
 			if (Array.isArray(oProperty.properties)) {
-				//currently only one level supported by our dialogs, etc.
-				//Only take the leaves
-				aFlattened = aFlattened.concat(oProperty.properties);
+				//currently only one level supported by our dialogs, etc. => TODO make deep types possible
+				//Only take the leaves, but attach the parent property name/label to it
+				aFlattened = aFlattened.concat(oProperty.properties.map(function(mInnerProp) {
+					mInnerProp.parentPropertyName = oProperty.label || oProperty.name;
+					return mInnerProp;
+				}));
 			} else {
 				aFlattened.push(oProperty);
 			}
@@ -250,7 +252,7 @@ sap.ui.define([
 		}
 		return fnGetAllProperties() //arguments bound before
 			.then(function(aProperties) {
-				return _checkForComplexDuplicates(aProperties);
+				return _checkForDuplicatesProperties(aProperties);
 			});
 	}
 
@@ -274,8 +276,8 @@ sap.ui.define([
 		return {
 			selected : false,
 			label : oProperty.label || oProperty.name,
-			referencedComplexPropertyName: oProperty.referencedComplexPropertyName ? oProperty.referencedComplexPropertyName : "",
-			duplicateComplexName: oProperty.duplicateComplexName ? oProperty.duplicateComplexName : false,
+			parentPropertyName: oProperty.parentPropertyName ? oProperty.parentPropertyName : "",
+			duplicateName: oProperty.duplicateName ? oProperty.duplicateName : false,
 			tooltip :  oProperty.tooltip || oProperty.label,
 			originalLabel: "",
 			//command relevant data
@@ -289,14 +291,14 @@ sap.ui.define([
 	function _elementToAdditionalElementInfo (mData) {
 		var oElement = mData.element;
 		var mAction = mData.action;
-		var mBindingPathCollection = mData.bindingPathCollection;
+		var aBindingPaths = mData.bindingPaths;
 		return {
 			selected : false,
 			label : oElement.label || ElementUtil.getLabelForElement(oElement, mAction.getLabel),
 			tooltip : oElement.tooltip || ElementUtil.getLabelForElement(oElement, mAction.getLabel) || oElement.name,
-			referencedComplexPropertyName: oElement.referencedComplexPropertyName ? oElement.referencedComplexPropertyName : "",
-			duplicateComplexName: oElement.duplicateComplexName ? oElement.duplicateComplexName : false,
-			bindingPaths: mBindingPathCollection.bindingPaths,
+			parentPropertyName: oElement.parentPropertyName ? oElement.parentPropertyName : "",
+			duplicateName: oElement.duplicateName ? oElement.duplicateName : false,
+			bindingPaths: aBindingPaths,
 			originalLabel: oElement.renamedLabel && oElement.label !== oElement.originalLabel ? oElement.originalLabel : "",
 			//command relevant data
 			type : "invisible",
@@ -330,13 +332,13 @@ sap.ui.define([
 		return [oElement];
 	}
 
-	function _checkForComplexDuplicates(aProperties) {
+	function _checkForDuplicatesProperties(aProperties) {
 		aProperties.forEach(function(oModelProperty, index, aProperties) {
-			if (oModelProperty["duplicateComplexName"] !== true) {
+			if (oModelProperty["duplicateName"] !== true) {
 				for (var j = index + 1; j < aProperties.length - 1; j++) {
 					if (oModelProperty.label === aProperties[j].label) {
-						oModelProperty["duplicateComplexName"] = true;
-						aProperties[j]["duplicateComplexName"] = true;
+						oModelProperty["duplicateName"] = true;
+						aProperties[j]["duplicateName"] = true;
 					}
 				}
 			}
@@ -344,9 +346,8 @@ sap.ui.define([
 		return aProperties;
 	}
 
-	//check for duplicate labels to later add the referenced complexTypeName if available
+	//check for duplicate labels to later add the parent property name/label if available
 	function _checkForDuplicateLabels(oInvisibleElement, aProperties) {
-		//TODO find a more generic name here and in dialog
 		return aProperties.some(function(oModelProperty) {
 			return oModelProperty.label === oInvisibleElement.label;
 		});
@@ -422,7 +423,7 @@ sap.ui.define([
 					return !bHasBindingPath && fnFilter(mAction.relevantContainer, oModelProperty);
 				});
 
-				aUnrepresentedProperties = _checkForComplexDuplicates(aUnrepresentedProperties);
+				aUnrepresentedProperties = _checkForDuplicatesProperties(aUnrepresentedProperties);
 
 				return aUnrepresentedProperties;
 			}).then(function(aUnrepresentedProperties) {
@@ -449,8 +450,8 @@ sap.ui.define([
 		if (oInvisibleElement.label !== oInvisibleElement.originalLabel) {
 			oInvisibleElement.renamedLabel = true;
 		}
-		if (mSomeItem.referencedComplexPropertyName) {
-			oInvisibleElement.referencedComplexPropertyName = mSomeItem.referencedComplexPropertyName;
+		if (mSomeItem.parentPropertyName) {
+			oInvisibleElement.parentPropertyName = mSomeItem.parentPropertyName;
 		}
 	}
 
@@ -463,15 +464,13 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.Element} oInvisibleElement - Invisible Element
 	 * @param {object[]} aProperties - Array of Fields
-	 * @param {object} mBindingPaths - Map of all binding paths and binding context paths of the passed invisible element
+	 * @param {string[]} aBindingPaths - Map of all binding paths and binding context paths of the passed invisible element
 	 *
 	 * @return {boolean} - whether this field should be included
 	 *
 	 * @private
 	 */
-	function _checkAndEnhanceByModelProperty(oInvisibleElement, aProperties, mBindingPaths) {
-		var aBindingPaths = mBindingPaths.bindingPaths;
-
+	function _checkAndEnhanceByModelProperty(oInvisibleElement, aProperties, aBindingPaths) {
 		if (!_hasBindings(aBindingPaths)) {
 			// include it if the field has no bindings (bindings can be added in runtime)
 			return true;
@@ -522,20 +521,20 @@ sap.ui.define([
 						var oInvisibleElement = mInvisibleElement.element;
 						var mAction = mInvisibleElement.action;
 						var bIncludeElement = true;
-						var mBindingPathCollection = {};
+						var aBindingPaths = [];
 						oInvisibleElement.label = ElementUtil.getLabelForElement(oInvisibleElement, mAction.getLabel);
 
 						// BCP: 1880498671
 						if (mAddODataProperty || mAddViaDelegate) {
 							if (_getBindingPath(oElement, sAggregationName, sModelName) === _getBindingPath(oInvisibleElement, sAggregationName, sModelName)) {
 								//TODO fix with stashed type support
-								mBindingPathCollection = BindingsExtractor.collectBindingPaths(oInvisibleElement, oModel);
-								oInvisibleElement.duplicateComplexName = _checkForDuplicateLabels(oInvisibleElement, aProperties);
+								aBindingPaths = BindingsExtractor.collectBindingPaths(oInvisibleElement, oModel).bindingPaths;
+								oInvisibleElement.duplicateName = _checkForDuplicateLabels(oInvisibleElement, aProperties);
 
 								bIncludeElement = _checkAndEnhanceByModelProperty(
 									oInvisibleElement,
 									aProperties,
-									mBindingPathCollection);
+									aBindingPaths);
 							} else if (BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0) {
 								bIncludeElement = false;
 							}
@@ -554,7 +553,7 @@ sap.ui.define([
 							aAllElementData.push({
 								element : oInvisibleElement,
 								action : mAction,
-								bindingPathCollection: mBindingPathCollection
+								bindingPaths: aBindingPaths
 							});
 						}
 					});
