@@ -448,7 +448,7 @@ function(
 			canOverflow: true,
 			listenForEvents: ["select"],
 			autoCloseEvents: ["select"],
-			noInvalidationProps: ["enabled", "selectedKey"],
+			propsUnrelatedToSize: ["enabled", "selectedKey"],
 			invalidationEvents: ["_containerWidthChanged"],
 			onBeforeEnterOverflow: this._onBeforeEnterOverflow,
 			onAfterExitOverflow: this._onAfterExitOverflow
