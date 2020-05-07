@@ -152,7 +152,7 @@ sap.ui.define([
 			};
 			var fnPersistenceStub = getMethodStub(mPropertyBag.changeSpecificData, sReturnValue);
 
-			mockFlexController(mPropertyBag.selector, { createChangeWithExtensionPointSelector : fnPersistenceStub });
+			mockFlexController(mPropertyBag.selector.view, { createChangeWithExtensionPointSelector : fnPersistenceStub });
 
 			assert.strictEqual(ChangesWriteAPI.create(mPropertyBag), sReturnValue, "then the flex persistence was called with correct parameters");
 		});
