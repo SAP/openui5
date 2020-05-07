@@ -20,9 +20,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal.Storage, sap.ui.fl.write._internal.Storage
 	 */
-	var LocalStorageConnector = merge({}, ObjectStorageConnector, /** @lends sap.ui.fl.apply._internal.connectors.LocalStorageConnector */ {
+	return merge({}, ObjectStorageConnector, /** @lends sap.ui.fl.apply._internal.connectors.LocalStorageConnector */ {
 		oStorage: window.localStorage
 	});
-
-	return LocalStorageConnector;
-}, true);
+});

@@ -3,17 +3,15 @@
  */
 
 sap.ui.define([
-	"sap/base/util/merge",
-	"sap/ui/fl/apply/connectors/BaseConnector",
 	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/base/util/LoaderExtensions"
 ], function(
-	merge,
-	BaseConnector,
 	StorageUtils,
 	LoaderExtensions
 ) {
 	"use strict";
+
+	var sJsonPath;
 
 	/**
 	 * Connector that retrieves data from a json loaded from a specified path;
@@ -21,19 +19,20 @@ sap.ui.define([
 	 * or set in the connector configuration.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.connectors.ObjectPathConnector
+	 * @implements {sap.ui.fl.interfaces.BaseApplyConnector}
 	 * @since 1.73
 	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal.Storage
 	 */
-	var ObjectPathConnector = merge({}, BaseConnector, /** @lends sap.ui.fl.apply._internal.connectors.ObjectPathConnector */ {
+	return {
 		layers: [],
 
 		setJsonPath: function (sInitialJsonPath) {
-			ObjectPathConnector.jsonPath = sInitialJsonPath;
+			sJsonPath = sInitialJsonPath;
 		},
 
 		loadFlexData: function (mPropertyBag) {
-			var sPath = ObjectPathConnector.jsonPath || mPropertyBag.path;
+			var sPath = sJsonPath || mPropertyBag.path;
 			if (sPath) {
 				return LoaderExtensions.loadResource({
 					dataType: "json",
@@ -45,7 +44,5 @@ sap.ui.define([
 			}
 			return Promise.resolve();
 		}
-	});
-
-	return ObjectPathConnector;
-}, true);
+	};
+});

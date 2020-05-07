@@ -8,20 +8,19 @@ sap.ui.define([], function() {
 	/**
 	 * Base class for connectors.
 	 *
-	 * @namespace sap.ui.fl.apply.connectors.BaseConnector
-	 * @experimental Since 1.67
-	 * @since 1.67
+	 * @namespace sap.ui.fl.interfaces.BaseApplyConnector
+	 * @since 1.79
 	 * @version ${version}
 	 * @public
 	 */
-	var BaseConnector = /** @lends sap.ui.fl.apply.api.connectors.BaseConnector */ {
+	var BaseConnector = /** @lends sap.ui.fl.interfaces.BaseApplyConnector */ {
 		/**
 		 * Interface called to get the flex data, including changes and variants.
 		 *
 		 * @param {object} mPropertyBag Properties needed by the connectors
 		 * @param {string} mPropertyBag.flexReference Reference of the application
 		 * @param {string} [mPropertyBag.appVersion] Version of the application
-		 * @param {string} [mPropertyBag.url] Configured url for the connector
+		 * @param {string} [mPropertyBag.url] Configured URL for the connector
 		 * @param {string} [mPropertyBag.cacheKey] Key which can be used to etag / cachebuster the request
 		 * @returns {Promise<Object>} Promise resolving with an object containing a flex data response
 		 * @private
@@ -33,4 +32,4 @@ sap.ui.define([], function() {
 	};
 
 	return BaseConnector;
-}, true);
+});
