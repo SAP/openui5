@@ -174,7 +174,7 @@ sap.ui.define([
 		if (aParts.length) {
 			oObject = ObjectPath.get(aParts, oObject);
 		}
-		this.bindProperty("_value", oBindingInfo);
+		this.bindProperty("_value", deepClone(oBindingInfo));
 		// to avoid changes influencing the model, if oValue is an object (since it is one-way only binding)
 		var oValue = deepClone(this.getProperty("_value"));
 		this.unbindProperty("_value");
