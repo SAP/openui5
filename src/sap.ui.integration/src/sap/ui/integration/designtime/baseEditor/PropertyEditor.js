@@ -330,7 +330,6 @@ sap.ui.define([
 			oPropertyEditor.detachReady(this._onPropertyEditorReady, this);
 			oPropertyEditor.destroy();
 			this._sCreatedBy = null;
-			this.setValue(undefined);
 			this.firePropertyEditorChange({
 				propertyEditor: null
 			});
