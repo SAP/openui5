@@ -14639,6 +14639,54 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Calling the API functions filter, sort, changeParameters, setAggregation on an
+	// unresolved binding are stored. As soon as the binding gets resolved and requests data
+	// they reflect inside the request.
+	// BCP: 2070187260
+	QUnit.test("API calls before binding is resolved", function (assert) {
+		var that = this;
+
+		return this.createView(assert, "", createBusinessPartnerTestModel()).then(function () {
+			var oListBinding = that.oModel.bindList("BusinessPartners");
+
+			// code under test
+			oListBinding.setAggregation({
+				aggregate : {
+					SalesNumber : {grandTotal : true}
+				},
+				group : {
+					Region : {}
+				}
+			});
+
+			// code under test
+			oListBinding.filter([
+				new Filter("Name", FilterOperator.EQ, "Foo"),
+				new Filter("SalesNumber", FilterOperator.GT, 0)
+			]);
+
+			// code under test
+			oListBinding.sort(new Sorter("Name"));
+
+			// code under test
+			oListBinding.changeParameters({custom : "foo"});
+
+			// resolve the binding to see that the API changes work
+			oListBinding.setContext(that.oModel.createBindingContext("/"));
+
+			that.expectRequest("BusinessPartners?custom=foo&$apply=filter(Name eq 'Foo')"
+				+ "/groupby((Region),aggregate(SalesNumber))/filter(SalesNumber gt 0)"
+				+ "/orderby(Name)/concat(aggregate(SalesNumber),top(99))",
+				{value : [{/* response does not matter here */}]});
+
+			return Promise.all([
+				oListBinding.requestContexts(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Filtering on a list binding with data aggregation splits the filters in two parts:
 	// - those filters that can be applied before aggregating
 	// - those filters that must be applied after aggregating
@@ -17768,6 +17816,9 @@ sap.ui.define([
 			that.expectChange("employeeName", null);
 
 			that.oView.byId("employeeDetails").setBindingContext(null);
+
+			// code under test (BCP: 2070187260)
+			assert.notOk(that.oView.byId("employeeDetails").getObjectBinding().hasPendingChanges());
 
 			assert.ok(oContext0.hasPendingChanges());
 			assert.throws(function () {
