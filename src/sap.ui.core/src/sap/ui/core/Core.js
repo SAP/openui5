@@ -2414,7 +2414,7 @@ sap.ui.define([
 			}
 
 			// determine CSS Variables / RTL
-			var sCssVars = (/^(true|x)$/i.test(this.oConfiguration['xx-cssVariables']) ? "-skeleton" : "");
+			var sCssVars = (/^(true|x)$/i.test(this.oConfiguration['xx-cssVariables']) ? "_skeleton" : "");
 			var sRtl = (this.oConfiguration.getRTL() ? "-RTL" : "");
 
 			// create the library file name
@@ -2436,7 +2436,7 @@ sap.ui.define([
 			// include the css variables
 			var cssPathAndName;
 			if (/^(true|x|additional)$/i.test(this.oConfiguration['xx-cssVariables'])) {
-				cssPathAndName = this._getThemePath(sLibName, this.sTheme) + "css-variables.css" + (sQuery ? sQuery : "");
+				cssPathAndName = this._getThemePath(sLibName, this.sTheme) + "css_variables.css" + (sQuery ? sQuery : "");
 				Log.info("Including " + cssPathAndName + " -  sap.ui.core.Core.includeLibraryTheme()");
 				includeStylesheet(cssPathAndName, sLinkId);
 				// include the skeleton css next to the css variables
