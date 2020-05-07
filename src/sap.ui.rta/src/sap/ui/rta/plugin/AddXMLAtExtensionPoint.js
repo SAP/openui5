@@ -6,11 +6,13 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/dt/Util",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/registry/ExtensionPointRegistry"
 ], function(
 	Plugin,
 	DtUtil,
 	FlUtils,
+	ManifestUtils,
 	ExtensionPointRegistry
 ) {
 	"use strict";
@@ -44,7 +46,8 @@ sap.ui.define([
 		}
 	});
 
-	var CHANGE_TYPE = "addXMLAtExtensionPoint";
+	var FLEX_CHANGE_TYPE = "addXMLAtExtensionPoint";
+	var APP_DESCRIPTOR_CHANGE_TYPE = "appdescr_ui5_setFlexExtensionPointEnabled";
 
 	function getExtensionPointInfo(oElement) {
 		var oExtensionPointRegistry = ExtensionPointRegistry.getInstance();
@@ -59,6 +62,8 @@ sap.ui.define([
 		return sap.ui.getCore().getConfiguration().getDesignMode();
 	}
 
+	AddXMLAtExtensionPoint.prototype.bAppDescriptorCommandAlreadyAvailable = false;
+
 	/**
 	 * Check if the given overlay is editable.
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Overlay to be checked for editable
@@ -68,7 +73,7 @@ sap.ui.define([
 	AddXMLAtExtensionPoint.prototype._isEditable = function (oOverlay) {
 		if (isDesignMode()) {
 			var oElement = oOverlay.getElement();
-			return this.hasChangeHandler(CHANGE_TYPE, oElement)
+			return this.hasChangeHandler(FLEX_CHANGE_TYPE, oElement)
 				.then(function(bHasChangeHandler) {
 					return bHasChangeHandler
 						&& hasExtensionPoints(oElement)
@@ -87,6 +92,80 @@ sap.ui.define([
 	AddXMLAtExtensionPoint.prototype.isEnabled = function (aElementOverlays) {
 		return aElementOverlays.length === 1;
 	};
+
+	function handleAddXmlAtExtensionPointCommand(oElement, mExtensionData, oCompositeCommand) {
+		var sExtensionPointName = mExtensionData.extensionPointName;
+		var oView = FlUtils.getViewForControl(oElement);
+		var mExtensionPointReference = {
+			name: sExtensionPointName,
+			view: oView
+		};
+		var mExtensionPointSettings = {
+			fragment: mExtensionData.fragment,
+			fragmentPath: mExtensionData.fragmentPath
+		};
+
+		return this.getCommandFactory().getCommandFor(
+			mExtensionPointReference,
+			FLEX_CHANGE_TYPE,
+			mExtensionPointSettings
+		)
+			.then(function (oAddXmlAtExtensionPointCommand) {
+				return oCompositeCommand.addCommand(oAddXmlAtExtensionPointCommand);
+			});
+	}
+
+	function handleAppDescriptorChangeCommand(oElement, oCompositeCommand) {
+		// without appDescriptor change when the FlexExtensionPointEnabled flag is already set
+		var bFlexExtensionPointHandlingEnabled = ManifestUtils.isFlexExtensionPointHandlingEnabled(oElement);
+		if (bFlexExtensionPointHandlingEnabled || this.bAppDescriptorCommandAlreadyAvailable) {
+			return Promise.resolve();
+		}
+
+		var oComponent = FlUtils.getAppComponentForControl(oElement);
+		var sReference = oComponent.getManifestEntry("sap.app").id;
+		return this.getCommandFactory().getCommandFor(
+			oElement,
+			"appDescriptor",
+			{
+				reference : sReference,
+				appComponent : oComponent,
+				changeType : APP_DESCRIPTOR_CHANGE_TYPE,
+				parameters : { flexExtensionPointEnabled: true },
+				texts : {}
+			}
+		)
+		.then(function(oAppDescriptorCommand) {
+			this.bAppDescriptorCommandAlreadyAvailable = true;
+			return oCompositeCommand.addCommand(oAppDescriptorCommand);
+		}.bind(this));
+	}
+
+	function handleCompositeCommand(aElementOverlays, mExtensionData) {
+		var oCompositeCommand;
+		var oOverlay = aElementOverlays[0];
+		var oElement = oOverlay.getElement();
+
+		return this.getCommandFactory().getCommandFor(oElement, "composite")
+
+		.then(function(_oCompositeCommand) {
+			oCompositeCommand = _oCompositeCommand;
+		})
+
+		// Flex Change
+		.then(function() {
+			return handleAddXmlAtExtensionPointCommand.call(this, oElement, mExtensionData, oCompositeCommand);
+		}.bind(this))
+
+		// App Descriptor Change
+		.then(function() {
+			return handleAppDescriptorChangeCommand.call(this, oElement, oCompositeCommand);
+		}.bind(this))
+
+		.then(function() {
+			return oCompositeCommand;
+		});
+	}
 
 	/**
 	 * Triggers the plugin execution.
@@ -107,6 +186,7 @@ sap.ui.define([
 				var aExtensionPointInfos = getExtensionPointInfo(oElement);
 				return fnFragmentHandler(oOverlay, aExtensionPointInfos);
 			}.bind(this))
+
 			.then(function (mExtensionData) {
 				if (!mExtensionData.extensionPointName || !(typeof mExtensionData.extensionPointName === "string")) {
 					return Promise.reject("Extension point name is not selected!");
@@ -116,26 +196,24 @@ sap.ui.define([
 				}
 				return mExtensionData;
 			})
+
 			.then(function (mExtensionData) {
-				var sExtensionPointName = mExtensionData.extensionPointName;
-				var oView = FlUtils.getViewForControl(aElementOverlays[0].getElement());
-				var mExtensionPointReference = {
-					name: sExtensionPointName,
-					view: oView
-				};
-				return this.getCommandFactory().getCommandFor(
-					mExtensionPointReference,
-					CHANGE_TYPE,
-					mExtensionData
-				);
+				return handleCompositeCommand.call(this, aElementOverlays, mExtensionData);
 			}.bind(this))
-			.then(function(oAddXMLAtExtensionPointCommand) {
+
+			.then(function(oCompositeCommand) {
 				this.fireElementModified({
-					command : oAddXMLAtExtensionPointCommand
+					command : oCompositeCommand
 				});
 			}.bind(this))
+
 			.catch(function(vError) {
-				throw DtUtil.propagateError(vError, "AddXMLAtExtensionPoint#handler", "Error occured in AddXMLAtExtensionPoint handler function", "sap.ui.rta");
+				throw DtUtil.propagateError(
+					vError,
+					"AddXMLAtExtensionPoint#handler",
+					"Error occured in AddXMLAtExtensionPoint handler function",
+					"sap.ui.rta"
+				);
 			});
 	};
 
@@ -162,7 +240,7 @@ sap.ui.define([
 	 * @returns {object} Object with the action data from the design time metadata
 	 */
 	Plugin.prototype.getAction = function() {
-		return { changeType: CHANGE_TYPE };
+		return { changeType: FLEX_CHANGE_TYPE };
 	};
 
 	return AddXMLAtExtensionPoint;
