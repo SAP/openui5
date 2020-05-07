@@ -77,7 +77,6 @@
 		// this is deprecated now in favor of sap.ui.Device.orientation... behavior in IE is inconsistent anyway (might fire on startup or not)
 		if (!sap.ui.Device.browser.internet_explorer) {
 			QUnit.test("orientationChange event", function(assert) {
-				assert.equal(landscape, undefined, "handler for orientationChange should not have been called yet");
 				app._handleOrientationChange();
 				assert.ok(landscape !== undefined, "handler for orientationChange should have been called");
 
