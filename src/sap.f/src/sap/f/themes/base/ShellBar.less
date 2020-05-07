@@ -12,6 +12,7 @@
 	box-sizing: border-box;
 	overflow: hidden;
 	position: relative;
+	z-index: 1;
 	padding: 0 @_sap_f_ShellBar_PaddingDesktop;
 	display: flex;
 	.sapFShellBarCopilot& {
@@ -250,6 +251,30 @@
 		}
 	}
 
+	.sapFShellBarProfile {
+		user-select: none;
+		-ms-user-select: none;
+
+		&::before {
+			content: "";
+			position: absolute;
+			top: -0.125rem;
+			left: -0.125rem;
+			bottom: -0.125rem;
+			right: -0.125rem;
+			z-index: -1;
+			border-radius: @sapUiButtonBorderCornerRadius;
+		}
+
+		&:hover::before {
+			background-color: @sapUiShellHoverBackground;
+		}
+
+		&:active::before {
+			background-color: @sapUiShellActiveBackground;
+		}
+	}
+
 	.sapFShellBarPrimaryTitle,
 	.sapFShellBarSecondTitle {
 		vertical-align: middle;
@@ -289,13 +314,9 @@
 		.sapFShellBarProfile {
 			padding-top: 0;
 			height: 2.125rem;
-			.sapFAvatar {
-				margin-top: 0;
-			}
-			.sapMBtnInner {
-				height: 2.125rem;
-			}
+			margin-top: 0;
 		}
+
 		.sapFShellBarSearch {
 			max-width: 27.5rem; // max width of searchField + button width
 
