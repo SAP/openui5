@@ -2025,6 +2025,9 @@ sap.ui.define([
 	/**
 	 * Asynchronously creates a new component instance from the given configuration.
 	 *
+	 * If the component class does not already exists, the component class is loaded and
+	 * afterwards the new component instance is created.
+	 *
 	 * To optimize the loading process, additional <code>asyncHints</code> can be provided. The structure of
 	 * these hints and how they impact the loading of components is an internal feature of this API and reserved
 	 * for UI5 internal use only. Code that wants to be safe wrt. version updates, should not use the
