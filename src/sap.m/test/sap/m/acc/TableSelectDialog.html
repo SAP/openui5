@@ -174,36 +174,22 @@
 		var oTableSelectDialog11 = new sap.m.TableSelectDialog({
             title: "Title two",
 			columns : [
-				new sap.m.Column({
-					header : new sap.m.Label({text : "Item"})
-				})
+				fnCreateSimpleDialogColumns()
 			],
+			liveChange: fnDoSearch,
 			multiSelect : true,
 			rememberSelections: true,
 			contentWidth: "200px",
 			growing: false
 		});
 
-		oTableSelectDialog11.setModel(new sap.ui.model.json.JSONModel(aData));
-		oTableSelectDialog11.bindItems("/", new sap.m.ColumnListItem({
-			cells : [
-				new sap.m.Label({text : "{text}"})
-			],
-			selected : "{selected}"
-		}));
-
-		oTableSelectDialog11.setModel(new sap.ui.model.json.JSONModel(aData));
-		oTableSelectDialog11.bindItems("/", new sap.m.ColumnListItem({
-			cells : [
-				new sap.m.Label({text : "{text}"})
-			],
-			selected : "{selected}"
-		}));
-
 		var oButton11 = new sap.m.Button("Button11", {
 			text: "Open TableSelectDialog with property growing false",
 			press: function () {
 				oTableSelectDialog11.open();
+				// then set model & bind Aggregation
+				oTableSelectDialog11.bindAggregation("items", "/items", oItemTemplate1);
+				oTableSelectDialog11.setModel(oModel1);
 			}
 		});
 
