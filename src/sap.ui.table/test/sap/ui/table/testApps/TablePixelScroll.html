@@ -35,145 +35,157 @@
 
 		oTable.setToolbar(new sap.m.OverflowToolbar({
 			content: [
-				new sap.m.Button({
-					text: "Start/Stop Scroll Simulation",
+				new sap.m.ToggleButton({
+					id: "scrollDown",
+					text: "Scroll down",
 					press: function(oEvent) {
+						var bPressed = oEvent.getParameter("pressed");
+
+						sap.ui.getCore().byId("scrollUp").setPressed(false);
 						window.clearInterval(iReverseScrollAutomationIntervalId);
 						iReverseScrollAutomationIntervalId = null;
 
-						if (iScrollAutomationIntervalId != null) {
-							window.clearInterval(iScrollAutomationIntervalId);
-							iScrollAutomationIntervalId = null;
-						} else {
+						if (bPressed) {
 							iScrollAutomationIntervalId = window.setInterval(function() {
 								var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
-								oVsb.scrollTop = oVsb.scrollTop + iScrollDelta;
+								oVsb.scrollTop += iScrollDelta;
 							}, iScrollInterval);
+						} else {
+							window.clearInterval(iScrollAutomationIntervalId);
+							iScrollAutomationIntervalId = null;
 						}
 					}
 				}),
-				new sap.m.Button({
-					text: "Start/Stop Reverse Scroll Simulation",
+				new sap.m.ToggleButton({
+					id: "scrollUp",
+					text: "Scroll up",
 					press: function(oEvent) {
+						var bPressed = oEvent.getParameter("pressed");
+
+						sap.ui.getCore().byId("scrollDown").setPressed(false);
 						window.clearInterval(iScrollAutomationIntervalId);
 						iScrollAutomationIntervalId = null;
 
-						if (iReverseScrollAutomationIntervalId != null) {
-							window.clearInterval(iReverseScrollAutomationIntervalId);
-							iReverseScrollAutomationIntervalId = null;
-						} else {
+						if (bPressed) {
 							iReverseScrollAutomationIntervalId = window.setInterval(function() {
 								var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
 								oVsb.scrollTop = oVsb.scrollTop - iScrollDelta;
 							}, iScrollInterval);
+						} else {
+							window.clearInterval(iReverseScrollAutomationIntervalId);
+							iReverseScrollAutomationIntervalId = null;
 						}
 					}
 				}),
-				new sap.m.HBox({
-					alignItems: "Center",
-					items: [
-						new sap.m.Label({
-							id: "row-count-label",
-							text: "Row Count"
-						}).addStyleClass("sapUiTinyMarginEnd"),
-						new sap.m.Input({
-							ariaLabelledBy: "row-count-label",
-							width: "200px",
-							value: {
-								path: "/rowCount",
-								type: new sap.ui.model.type.Integer()
-							}
-						})
-					]
+				new sap.m.ToolbarSeparator(),
+				new sap.m.Label({
+					id: "row-count-label",
+					text: "Row Count"
 				}),
-				new sap.m.HBox({
-					alignItems: "Center",
-					items: [
-						new sap.m.Label({
-							id: "row-height-label",
-							text: "Row Height"
-						}).addStyleClass("sapUiTinyMarginEnd"),
-						new sap.m.Slider({
-							ariaLabelledBy: "row-height-label",
-							width: "200px",
-							value: 0,
-							min: 0,
-							max: 250,
-							liveChange: function() {
-								var iValue = this.getValue();
-								var aData = oModel.getProperty("/customRowConfig");
-								var bAlternatingRowHeights = oModel.getProperty("/alternatingRowHeights");
-
-								aData.forEach(function(oData) {
-									var iHeight = bAlternatingRowHeights ? iValue : (iValue * Math.random());
-									oData.rowHeight = iHeight + "px";
-								});
-
-								oModel.setProperty("/customRowConfig/rowHeight", iValue === 0 ? "auto" : iValue + "px");
-								oModel.setProperty("/customRowConfig/", aData);
-								oTable.getBinding("rows").refresh(true);
-							}
-						}),
-						new sap.m.Text({
-							text: {
-								path: "/customRowConfig/rowHeight",
-								formatter: function(sRowHeight) {
-									return "(" + sRowHeight + ")";
-								}
-							}
-						}),
-						new sap.m.CheckBox({
-							text: "Alternating row heights",
-							selected: {
-								path: "/alternatingRowHeights",
-								type: new sap.ui.model.type.Boolean()
-							},
-							select: function(oEvent) {
-								oModel.setProperty("/alternatingRowHeights", oEvent.getParameter("selected"));
-							}
-						})
-					]
-				})
+				new sap.m.Input({
+					ariaLabelledBy: "row-count-label",
+					width: "125px",
+					value: {
+						path: "config>/rowCount",
+						type: new sap.ui.model.type.Integer()
+					}
+				}),
+				new sap.m.Label({
+					id: "row-height-label",
+					text: "Row Height"
+				}),
+				new sap.m.Slider({
+					ariaLabelledBy: "row-height-label",
+					width: "200px",
+					value: 0,
+					min: 0,
+					max: 250,
+					liveChange: function() {
+						configureRowHeights(this.getValue());
+					}
+				}),
+				new sap.m.Text({
+					text: {
+						path: "config>/rowHeight",
+						formatter: function(sRowHeight) {
+							return "(" + sRowHeight + ")";
+						}
+					}
+				}),
+				new sap.m.CheckBox({
+					text: "Alternating",
+					selected: {
+						path: "config>/alternatingRowHeights",
+						type: new sap.ui.model.type.Boolean()
+					},
+					select: function() {
+						configureRowHeights();
+					}
+				}),
+				new sap.m.ToolbarSeparator()
 			]
 		}));
+
+		function configureRowHeights(iHeight) {
+			var aData = oRowModel.getProperty("/custom");
+			var bAlternatingRowHeights = oConfigModel.getProperty("/alternatingRowHeights");
+
+			if (iHeight == null) {
+				var sHeight = oConfigModel.getProperty("/rowHeight");
+				iHeight = sHeight === "auto" ? 0 : parseInt(sHeight);
+			}
+
+			aData.forEach(function(oData) {
+				oData.height = (bAlternatingRowHeights ? iHeight : iHeight * Math.random()) + "px";
+			});
+
+			oConfigModel.setProperty("/rowHeight", iHeight === 0 ? "auto" : iHeight + "px");
+			oRowModel.setProperty("/custom/", aData);
+			oTable.getBinding("rows").refresh(true);
+		}
 
 		// Variable row heights test control
 		var VariableRowHeightControl = sap.ui.core.Control.extend("sap.ui.table.test.VariableRowHeightControl", {
 			metadata: {
 				properties: {
-					height: "string",
-					text: "string"
+					height: {type: "string", defaultValue: "auto"},
+					text: {type: "string", defaultValue: ""}
 				}
 			},
-			renderer: function(oRm, oControl) {
-				var sHeight = oControl.getHeight() || "auto";
-				var sText = oControl.getText() || "";
+			renderer: {
+				apiVersion: 2,
+				render: function(oRm, oControl) {
+					var sText = oControl.getText();
 
-				oRm.write("<div style='height: " + sHeight + "; position: relative; display: flex; align-items: center'");
-				oRm.writeControlData(oControl);
-				oRm.write(">");
-				oRm.write("<span style='position: absolute; top: 0'>" + sText + "</span>");
-				oRm.write("<span style='z-index: 1; background-color: white'>" + sText + "</span>");
-				oRm.write("<span style='position: absolute; bottom: 0'>" + sText + "</span>");
-				oRm.write("</div>");
-			},
-			setHeight: function(sHeight) {
-				this.setProperty("height", sHeight, true);
+					oRm.openStart("div", oControl);
+					oRm.style("height", oControl.getHeight());
+					oRm.style("position", "relative");
+					oRm.style("display", "flex");
+					oRm.style("align-items", "center");
+					oRm.openEnd();
 
-				var oDomRef = this.getDomRef();
-				if (oDomRef != null) {
-					oDomRef.style.height = sHeight || "auto";
-				}
-			},
-			setText: function(sText) {
-				this.setProperty("text", sText, true);
+					oRm.openStart("span");
+					oRm.style("position", "absolute");
+					oRm.style("top", "0");
+					oRm.openEnd();
+					oRm.text(sText);
+					oRm.close("span");
 
-				var oDomRef = this.getDomRef();
-				if (oDomRef != null) {
-					var aSpans = oDomRef.children;
-					for (var i = 0; i < aSpans.length; i++) {
-						aSpans[i].innerHTML = sText || "";
-					}
+					oRm.openStart("span");
+					oRm.style("z-index", "1");
+					oRm.style("background-color", "white");
+					oRm.openEnd();
+					oRm.text(sText);
+					oRm.close("span");
+
+					oRm.openStart("span");
+					oRm.style("position", "absolute");
+					oRm.style("bottom", "0");
+					oRm.openEnd();
+					oRm.text(sText);
+					oRm.close("span");
+
+					oRm.close("div");
 				}
 			}
 		});
@@ -184,9 +196,9 @@
 		oTable.addColumn(new sap.ui.table.Column({
 			label: new sap.m.Label({text: "VariableRowHeightControl"}),
 			template: new VariableRowHeightControl({
-				height: "{rowHeight}",
+				height: "{height}",
 				text: {
-					path: "/firstRowIndex",
+					path: "config>/firstRowIndex",
 					formatter: function(iFirstRowIndex) {
 						var oRow = this.getParent();
 
@@ -319,58 +331,64 @@
 		}));
 
 		// set Model and bind Table
-		var oModel = new sap.ui.model.json.JSONModel({
-			alternatingRowHeights: false,
-			defaultRowConfig: {
-				rowHeight: undefined
+		var oRowModel = new sap.ui.model.json.JSONModel({
+			default: {
+				height: undefined
 			},
-			customRowConfig: [
-				{rowHeight: "auto"},
-				{rowHeight: "auto"},
-				{rowHeight: "auto"},
-				{rowHeight: "auto"},
-				{rowHeight: "auto"},
-				{rowHeight: "auto"},
-				{rowHeight: "auto"},
-				{rowHeight: "auto"},
-				{rowHeight: "auto"}
-			],
-			rowCount: 1000000000,
-			firstRowIndex: 0
+			custom: [
+				{height: "auto"},
+				{height: "auto"},
+				{height: "auto"},
+				{height: "auto"},
+				{height: "auto"},
+				{height: "auto"},
+				{height: "auto"},
+				{height: "auto"},
+				{height: "auto"},
+				{height: "auto"}
+			]
 		});
-		oTable.setModel(oModel);
+		var oConfigModel = new sap.ui.model.json.JSONModel({
+			rowWiseScrolling: false,
+			alternatingRowHeights: false,
+			rowCount: 1000000000,
+			firstRowIndex: 0,
+			rowHeight: "auto"
+		});
+		oTable.setModel(oRowModel);
+		oTable.setModel(oConfigModel, "config");
 		oTable.bindRows("/");
 		oTable.getBinding("rows").getLength = function() {
-			return oModel.getProperty("/rowCount");
+			return oConfigModel.getProperty("/rowCount");
 		};
 		oTable.getBinding("rows").getContexts = function(iStartIndex, iLength) {
 			var aContexts = [];
 			var iBindingLength = this.getLength();
 			var iCount = iStartIndex + iLength > iBindingLength ? iBindingLength - iStartIndex : iLength;
-			var bAlternatingRowHeights = oModel.getProperty("/alternatingRowHeights");
+			var bAlternatingRowHeights = oConfigModel.getProperty("/alternatingRowHeights");
 
 			for (var i = 0; i < iCount; i++) {
 				var iIndex = iStartIndex + i;
-				var sPath = "/defaultRowConfig";
+				var sPath = "/default";
 
 				if (bAlternatingRowHeights) {
 					if (iIndex % 2 > 0) {
-						sPath = "/customRowConfig/0"
+						sPath = "/custom/0"
 					}
 				} else {
 					if (iIndex % 10 > 0) {
-						sPath = "/customRowConfig/" + (iIndex % 10);
+						sPath = "/custom/" + (iIndex % 10);
 					}
 				}
 
-				aContexts.push(new sap.ui.model.Context(oModel, sPath));
+				aContexts.push(new sap.ui.model.Context(oRowModel, sPath));
 			}
 
-			var iOldFirstRowIndex = oModel.getProperty("/firstRowIndex");
+			var iOldFirstRowIndex = oConfigModel.getProperty("/firstRowIndex");
 			var iNewFirstRowIndex = iStartIndex;
 
 			if (iOldFirstRowIndex !== iNewFirstRowIndex) {
-				oModel.setProperty("/firstRowIndex", iNewFirstRowIndex, null, true);
+				oConfigModel.setProperty("/firstRowIndex", iNewFirstRowIndex, null, true);
 			}
 
 			return aContexts;
