@@ -449,7 +449,7 @@ sap.ui.define([
 			},
 
 			/**
-			 * Stops to listen to the <code>hashChange</code> of the browser.
+			 * Stops to listen to the <code>hashchange</code> of the browser.
 			 *
 			 * If you want the router to start again, call {@link #initialize} again.
 			 * @returns { sap.ui.core.routing.Router } this for chaining.
@@ -751,6 +751,18 @@ sap.ui.define([
 			 *
 			 * If the given route name can't be found, an error message is logged to the console and the hash will be
 			 * changed to the empty string.
+			 *
+			 * This method excecutes following steps:
+			 * 1. Interpolates the pattern with the given parameters
+			 * 2. Sets the interpolated pattern to the browser's hash
+			 * 3. Reacts to the browser's <code>hashchange</code> event to find out the route which matches the hash
+			 *
+			 * If there are multiple routes that have the same pattern,
+			 * the call of navTo with a specific route won't necessarily trigger the matching process of this route.
+			 * In the end, the first route in the router configuration list that matches the browser hash will be chosen.
+			 *
+			 * If the browser hash is already set with the interpolated pattern from the navTo call,
+			 * nothing will happen because the browser won't fire <code>hashchange</code> event in this case.
 			 *
 			 * @param {string} sName The name of the route
 			 * @param {object} [oParameters] The parameters for the route.
