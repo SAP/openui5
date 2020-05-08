@@ -2883,6 +2883,11 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Token should be truncated initially", function (assert) {
+		// Assert
+		assert.ok(this.oMultiInput._tokenizer.hasOneTruncatedToken(), "Token is truncated initially.");
+	});
+
 	QUnit.test("Should remove truncation on focusin", function (assert) {
 		// Arrange
 		var oSpy = sinon.spy(this.oMultiInput._tokenizer, "_useCollapsedMode"),
