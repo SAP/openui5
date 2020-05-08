@@ -99,4 +99,36 @@ sap.ui.define([
 		oITH.destroy();
 	});
 
+	QUnit.module("tab properties");
+
+	QUnit.test("tabs with items aggregation and property enabled=false should not open their dropdown", function (assert) {
+		// Arrange
+		var oITH = createHeaderWithItems(1);
+		var oTab = oITH.getItems()[0];
+		oTab.addItem(new IconTabFilter({ text: "SAP" }));
+		oITH.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Act
+		oTab._expandButtonPress();
+
+		// Assert
+		assert.ok(oTab._oPopover, "Tab's own popover is initialised");
+		assert.strictEqual(oTab._oPopover.isOpen(), true, "Tab's popover is open");
+
+		oTab._closePopover();
+		this.clock.tick(250);
+
+		// Act
+		oTab.setEnabled(false);
+		oTab._expandButtonPress();
+		this.clock.tick(250);
+
+		// Assert
+		assert.strictEqual(oTab._oPopover.isOpen(), false, "Tab's popover does not open");
+
+		// Clean-up
+		oITH.destroy();
+	});
+
 });

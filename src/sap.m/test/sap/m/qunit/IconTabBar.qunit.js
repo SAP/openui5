@@ -2341,7 +2341,7 @@ sap.ui.define([
 		// Act - focus the 5th item in the Select List, then close and open it again
 		oSelectList._oItemNavigation.setSelectedIndex(5);
 		oSelectList.getItems()[0]._getRealTab().setVisible(false);
-		oOverflowButton._closeOverflow();
+		oOverflowButton._closePopover();
 		oOverflowButton._expandButtonPress();
 		this.clock.tick(500);
 
