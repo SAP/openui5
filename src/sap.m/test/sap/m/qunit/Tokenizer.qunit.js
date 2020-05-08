@@ -1514,8 +1514,6 @@ sap.ui.define([
 
 		// Act
 		this.tokenizer._adjustTokensVisibility();
-		// await to set the truncation
-		this.clock.tick(500);
 
 		// Assert
 		assert.ok(oSpy.calledOnce, "Truncation function should be called once.");
@@ -1530,8 +1528,6 @@ sap.ui.define([
 
 		// Act
 		this.tokenizer._adjustTokensVisibility();
-		// await to set the truncation
-		this.clock.tick(500);
 
 		// Assert
 		oIndicator = this.tokenizer.$().find(".sapMTokenizerIndicator")[0];
@@ -1576,13 +1572,11 @@ sap.ui.define([
 
 		// Act
 		this.tokenizer.setMaxWidth("500px");
-		this.clock.tick();
 
 		// Assert
 		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), false, "Token's truncation was removed.");
 
 		this.tokenizer.setMaxWidth("100px");
-		this.clock.tick();
 
 		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), true, "Token's truncation was set again after resize.");
 	});
