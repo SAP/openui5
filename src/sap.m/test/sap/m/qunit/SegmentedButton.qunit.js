@@ -2228,7 +2228,7 @@ sap.ui.define([
 				canOverflow: true,
 				listenForEvents: ["select"],
 				autoCloseEvents: ["select"], // BCP: 1970012411 In overflow - selection should close the popover.
-				noInvalidationProps: ["enabled", "selectedKey"],
+				propsUnrelatedToSize: ["enabled", "selectedKey"],
 				invalidationEvents: ["_containerWidthChanged"],
 				onBeforeEnterOverflow: oSB._onBeforeEnterOverflow,
 				onAfterExitOverflow: oSB._onAfterExitOverflow
