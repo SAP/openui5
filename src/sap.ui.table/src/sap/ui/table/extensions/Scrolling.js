@@ -1309,36 +1309,17 @@ sap.ui.define([
 				iScrollTop = Math.round(nScrollPosition);
 			}
 
-			window.cancelAnimationFrame(_internal.mAnimationFrames.verticalScrollbarUpdate);
-			delete _internal.mAnimationFrames.verticalScrollbarUpdate;
+			var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
 
-			return new Promise(function(resolve) {
-				_internal.mAnimationFrames.verticalScrollbarUpdate = window.requestAnimationFrame(function() {
-					var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
+			if (oVSb) {
+				log("VerticalScrollingHelper.scrollScrollbar: Scroll from " + oVSb.scrollTop + " to " + iScrollTop, oTable);
+				oVSb.scrollTop = iScrollTop;
+				oVSb._scrollTop = oVSb.scrollTop;
+			} else {
+				log("VerticalScrollingHelper.scrollScrollbar: Not scrolled - No scrollbar available", oTable);
+			}
 
-					delete _internal.mAnimationFrames.verticalScrollbarUpdate;
-
-					if (oVSb) {
-						log("VerticalScrollingHelper.scrollScrollbar (async): Scroll from " + oVSb.scrollTop + " to " + iScrollTop, oTable);
-						oVSb.scrollTop = iScrollTop;
-						oVSb._scrollTop = oVSb.scrollTop;
-					} else {
-						log("VerticalScrollingHelper.scrollScrollbar (async): Not scrolled - No scrollbar available", oTable);
-					}
-
-					resolve();
-				});
-
-				if (oProcessInterface) {
-					oProcessInterface.addCancelListener(function() {
-						if (_internal.mAnimationFrames.verticalScrollbarUpdate != null) {
-							window.cancelAnimationFrame(_internal.mAnimationFrames.verticalScrollbarUpdate);
-							delete _internal.mAnimationFrames.verticalScrollbarUpdate;
-							resolve();
-						}
-					});
-				}
-			});
+			return Promise.resolve();
 		},
 
 		/**
