@@ -9,6 +9,7 @@
 @_sap_ui_table_Row_AlternateBackgroundHovered: darken(@sapUiListHoverBackground, 3);
 @_sap_ui_table_Row_AlternateBackgroundSelected: darken(@sapUiListSelectionBackgroundColor, 2);
 @_sap_ui_table_Row_AlternateBackgroundSelectedHovered: darken(@sapUiListSelectionHoverBackground, 2);
+@_sap_ui_table_Row_NavigationIndicatorColor: @sapUiSelected;
 
 .sapUiTableHeaderRow {
 	background-color: @sapUiListHeaderBackground;
@@ -82,5 +83,5 @@
 	position: absolute;
 	top: 0;
 	right: 0;
-	background-color: @sapUiSelected;
+	background-color: @_sap_ui_table_Row_NavigationIndicatorColor;
 }
