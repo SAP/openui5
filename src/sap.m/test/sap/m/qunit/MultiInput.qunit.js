@@ -3018,4 +3018,39 @@ sap.ui.define([
 		// Assert
 		assert.ok(this.oMultiInput._tokenizer.hasOneTruncatedToken(), "The token should be truncated");
 	});
+
+	QUnit.module("API");
+
+	QUnit.test("showItems should always set all items list visibility to true", function (assert) {
+		var oMultiInput = new MultiInput({
+			width: "200px",
+			tokens: [
+				new Token({ text: "lorem" }),
+				new Token({ text: "ipsum" }),
+				new Token({ text: "test" }),
+				new Token({ text: "Bulgaria" })
+			],
+			showSuggestion: true,
+			suggestionItems: [
+				new Item({ text: "lorem ipsum" })
+			]
+		});
+
+		oMultiInput.placeAt("content");
+		Core.applyChanges();
+
+		oMultiInput._handleIndicatorPress();
+
+		Core.applyChanges();
+		this.clock.tick(nPopoverAnimationTick);
+
+		oMultiInput.showItems();
+
+		Core.applyChanges();
+		this.clock.tick(nPopoverAnimationTick);
+
+		assert.ok(oMultiInput._oSuggPopover._oList.getVisible(), true, "List should be visible");
+
+		oMultiInput.destroy();
+	});
 });
