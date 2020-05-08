@@ -76,56 +76,6 @@ sap.ui.define([
 
 	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);
 
-
-
-	// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-	//  ==> PhantomJS fails with strange errors when evaluating setTimeout
-	//      e.g.: null is not a constructor (evaluating setTimeout) as a follow
-	//      up of the destroy calls of the Input control
-	if (Device.browser.phantomJS) {
-		var fnSetTimeout = window.setTimeout;
-		window.setTimeout = function() {
-			try {
-				fnSetTimeout.apply(this, arguments);
-			} catch (e) {
-				// ignore
-			}
-		};
-		var fnClearTimeout = window.clearTimeout;
-		window.clearTimeout = function() {
-			try {
-				fnClearTimeout.apply(this, arguments);
-			} catch (e) {
-				// ignore
-			}
-		};
-	}
-
-
-
-	// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-	//  ==> PhantomJS fails with strange errors when evaluating setTimeout
-	//      e.g.: null is not a constructor (evaluating setTimeout) as a follow
-	//      up of the destroy calls of the Input control
-	if (Device.browser.phantomJS) {
-		var fnSetTimeout = window.setTimeout;
-		window.setTimeout = function() {
-			try {
-				fnSetTimeout.apply(this, arguments);
-			} catch (e) {
-				// ignore
-			}
-		};
-		var fnClearTimeout = window.clearTimeout;
-		window.clearTimeout = function() {
-			try {
-				fnClearTimeout.apply(this, arguments);
-			} catch (e) {
-				// ignore
-			}
-		};
-	}
-
 	function getPopupItemsContent(oPopup) {
 		var aContents = oPopup.getContent();
 		return oPopup.isA("sap.m.Popover") ? aContents[0] : aContents[1];
@@ -1812,11 +1762,7 @@ sap.ui.define([
 		assert.ok(!oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class on desktop");
 
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
-
-		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
-		if (!Device.browser.phantomJS) {
-			assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
-		}
+		assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 
 		// checks for the show more button (tabular suggestions only)
 		assert.strictEqual(oPopup.getFooter().getContent().length, 2, "The footer has two items (spacer and button)");
@@ -1968,10 +1914,7 @@ sap.ui.define([
 
 
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
-		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
-		if (!Device.browser.phantomJS) {
-			assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
-		}
+		assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 
 		//close the popoup when nothing is typed in input
 		oInput._$input.trigger("focus").val("").trigger("input");
@@ -2148,8 +2091,6 @@ sap.ui.define([
 		}
 		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-		var bPhantomJS = Device.browser.phantomJS;
-
 		var oSystem = {
 				desktop: false,
 				phone: true,
@@ -2300,10 +2241,7 @@ sap.ui.define([
 		this.clock.tick(400);
 
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now123");
-		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
-		if (!bPhantomJS) {
-			assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
-		}
+		assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 		assert.strictEqual(oDialogRendererSpy.callCount, 1, "Dialog is not re-rendered when changing the input value to a another value");
 		assert.ok(!oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
 
@@ -2323,10 +2261,7 @@ sap.ui.define([
 		oInput._oSuggPopover._oPopupInput._$input.trigger("focus").val("Product").trigger("input");
 		this.clock.tick(400);
 
-		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
-		if (!bPhantomJS) {
-			assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children().length, 3, "3 suggestions are displayed");
-		}
+		assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children().length, 3, "3 suggestions are displayed");
 		assert.strictEqual(oDialogRendererSpy.callCount, 1, "Dialog is not re-rendered during filtering of suggestions");
 		assert.ok(!oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
 
@@ -2468,10 +2403,7 @@ sap.ui.define([
 		oPopup = oInput._oSuggPopover._oPopover;
 
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
-		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
-		if (!Device.browser.phantomJS) {
-			assert.strictEqual(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
-		}
+		assert.strictEqual(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 		assert.strictEqual(getPopupItemsContent(oPopup).$().find("tbody").find("tr>td>span" || "tr>td>label")[0].textContent, oSuggestionData.tabularSuggestionItems[1].name, "Product 2 is filtered");
 
 		getPopupItemsContent(oPopup).getItems()[1].ontap(new jQuery.Event());
