@@ -55,6 +55,83 @@ sap.ui.define([
 	 * With method {@link #byId}, elements or controls can be found with their view-local ID.
 	 * Also see {@link topic:91f28be26f4d1014b6dd926db0e91070 "Support for Unique IDs"} in the documentation.
 	 *
+	 * <h3>View Definition</h3>
+	 * A view can be defined by {@link sap.ui.core.mvc.View.extend extending} this class and implementing
+	 * the {@link #createContent} method. The method must return one or many root controls that will be
+	 * rendered as content of the view.
+	 *
+	 * Views that are defined that way are referred to as <b>typed views</b>, as each view definition is
+	 * represented by its own class (type).
+	 *
+	 * <b>Example:</b> Defining a typed view (module 'myapp/views/MainView.js')
+	 * <pre>
+	 *   // view definition
+	 *   sap.ui.define([
+	 *     "sap/ui/core/mvc/View",
+	 *     "sap/m/Panel"
+	 *   ], function(View, Panel) {
+	 *
+	 *     return View.extend("myapp.views.MainView", {
+	 *
+	 *       // define, which controller to use
+	 *       getControllerName: function() {
+	 *         return "myapp.controller.Main";
+	 *       },
+	 *
+	 *       // whether the ID of content controls should be prefixed automatically with the view's ID
+	 *       getAutoPrefixId: function() {
+	 *         return true; // default is false
+	 *       }
+	 *
+	 *       // create view content and return the root control(s)
+	 *       createContent: function() {
+	 *         return new Promise(function(res, rej) {
+	 *             res(new Panel({...}));
+	 *         }).catch(function(err) {
+	 *             rej(err);
+	 *         });
+	 *       }
+	 *     });
+	 *   });
+	 * </pre>
+	 *
+	 * <h3>View Instantiation</h3>
+	 * The preferred ways of instantiating a typed View is via the generic factory {@link sap.ui.core.mvc.View.create
+	 * View.create}.
+	 *
+	 * When the <code>viewName</code> starts with prefix <code>"module:"</code>, the remainder of the name
+	 * is assumed to be the name of a module that exports a typed view (a subclass of <code>View</code>).
+	 * The module name must use the same syntax as for <code>sap.ui.define/sap.ui.require</code>
+	 * (slash-separated name).
+	 *
+	 * <b>Example:</b> Instantiating a typed view with <code>View.create</code>
+	 * <pre>
+	 *   View.create({
+	 *     viewName: "module:myapp/views/MainView"
+	 *   }).then(oView) {
+	 *     oView.placeAt("content");
+	 *   });
+	 * </pre>
+	 *
+	 * A typed view can also be instantiated by calling its constructor without any arguments:
+	 * <pre>
+	 *   sap.ui.require(["myapp/views/MainView"], function(MainView) {
+	 *     new MainView().placeAt("content");
+	 *   });
+	 * </pre>
+	 *
+	 *
+	 * <h3>Other Methods</h3>
+	 * Besides <code>createContent</code>, there are two other methods that a view can implement:
+	 * Method {@link #getControllerName getControllerName} defines the name of the controller that should
+	 * be instantiated and used for the view. The name must be in class name notation (dot notation),
+	 * without the <code>".controller"</code> suffix. The suffix will be added by the framework when
+	 * loading the module containing the controller.
+	 *
+	 * {@link #getAutoPrefixId getAutoPrefixId} defines whether the IDs of controls created during
+	 * the execution of <code>createContent</code> will be prefixed with the ID of the view automatically.
+	 * The default implementation of this method returns <code>false</code>.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
@@ -392,7 +469,7 @@ sap.ui.define([
 				}
 			}
 
-			if ( oController ) {
+			if (oController) {
 				var connectToView = function(oController) {
 					oThis.oController = oController;
 					oController.oView = oThis;
@@ -423,6 +500,9 @@ sap.ui.define([
 	* @private
 	*/
 	View.prototype._initCompositeSupport = function(mSettings) {
+
+		mSettings = mSettings || {};
+
 		// if preprocessors available and this != XMLView
 		assert(!mSettings.preprocessors || this.getMetadata().getName().indexOf("XMLView"), "Preprocessors only available for XMLView");
 
@@ -485,51 +565,49 @@ sap.ui.define([
 			}
 		};
 
-		var fnFireOnControllerConnected = function () {
+		var fnFireOnControllerConnected = function (mSettings) {
 			if (that.onControllerConnected) {
-				return that.onControllerConnected(that.oController);
+				return that.onControllerConnected(that.oController, mSettings);
 			}
 		};
 
-		if (this.initViewSettings) {
-			if (mSettings.async) {
-				// async processing starts here
-				this.oAsyncState.promise = this.initViewSettings(mSettings)
-					.then(function() {
-						return fnPropagateOwner(createAndConnectController.bind(null, that, mSettings), true);
-					})
-					.then(function() {
-						return fnPropagateOwner(fnFireOnControllerConnected, true);
-					})
-					.then(function() {
-						// attach after controller and control tree are fully initialized
-						return fnAttachControllerToViewEvents(that);
-					})
-					.then(function() {
-						return that.runPreprocessor("controls", that, false);
-					})
-					.then(function() {
-						return fnPropagateOwner(that.fireAfterInit.bind(that), true);
-					})
-					.then(function() {
-						// async processing ends by resolving with the view
-						return that;
-					})
-					.catch(function(e) {
-						// deregister an erroneous instance from the Core's Elements registry
-						// in sync Views this is done automatically by the ManagedObject constructor
-						this.deregister();
-						throw e;
-					}.bind(this));
-			} else {
-				this.initViewSettings(mSettings);
-				createAndConnectController(this, mSettings);
-				fnFireOnControllerConnected();
-				fnAttachControllerToViewEvents(this);
+		if (mSettings.async) {
+			// async processing starts here
+			this.oAsyncState.promise = this.initViewSettings(mSettings)
+				.then(function() {
+					return fnPropagateOwner(createAndConnectController.bind(null, that, mSettings), true);
+				})
+				.then(function() {
+					return fnPropagateOwner(fnFireOnControllerConnected.bind(null, mSettings), true);
+				})
+				.then(function() {
+					// attach after controller and control tree are fully initialized
+					return fnAttachControllerToViewEvents(that);
+				})
+				.then(function() {
+					return that.runPreprocessor("controls", that, false);
+				})
+				.then(function() {
+					return fnPropagateOwner(that.fireAfterInit.bind(that), true);
+				})
+				.then(function() {
+					// async processing ends by resolving with the view
+					return that;
+				})
+				.catch(function(e) {
+					// deregister an erroneous instance from the Core's Elements registry
+					// in sync Views this is done automatically by the ManagedObject constructor
+					this.deregister();
+					throw e;
+				}.bind(this));
+		} else {
+			this.initViewSettings(mSettings);
+			createAndConnectController(this, mSettings);
+			fnFireOnControllerConnected(mSettings);
+			fnAttachControllerToViewEvents(this);
 
-				this.runPreprocessor("controls", this, true);
-				this.fireAfterInit();
-			}
+			this.runPreprocessor("controls", this, true);
+			this.fireAfterInit();
 		}
 	};
 
@@ -664,7 +742,7 @@ sap.ui.define([
 		var mSettings = {}, sKey, oClone;
 		//Clone properties (only those with non-default value)
 		for (sKey in this.mProperties  && !(this.isBound && this.isBound(sKey))) {
-			if ( this.mProperties.hasOwnProperty(sKey) ) {
+			if (this.mProperties.hasOwnProperty(sKey)) {
 				mSettings[sKey] = this.mProperties[sKey];
 			}
 		}
@@ -885,6 +963,22 @@ sap.ui.define([
 	 *
 	 * If the option <code>viewName</code> is given, the corresponding view module is loaded if needed.
 	 *
+	 * When the <code>viewName</code> starts with prefix <code>"module:"</code>, the remainder of the name
+	 * is assumed to be the name of a module that exports a typed view (subclass of <code>View</code>).
+	 * The module name must use the same syntax as for <code>sap.ui.define/sap.ui.require</code>
+	 * (slash-separated name).
+	 *
+	 * @example <caption>Create an Instance of a typed View</caption>
+	 *   View.create({
+	 *      viewName:'module:myapp/views/Main'
+	 *   });
+	 *
+	 * @example <caption>Create an Instance of a non-typed View</caption>
+	 *   View.create({
+	 *      type: 'JS',
+	 *      viewName:'myapp.views.Detail'
+	 *   });
+	 *
 	 * See also the API references for the specific view factories:
 	 * <ul>
 	 * <li>{@link sap.ui.core.mvc.XMLView.create}</li>
@@ -900,7 +994,8 @@ sap.ui.define([
 	 *     Specifies an ID for the View instance. If no ID is given, one will be generated
 	 * @param {string} [oOptions.viewName]
 	 *     Name of the view resource in module name notation (dot-separated, without suffix); either
-	 *     <code>viewName</code> or <code>definition</code> must be given
+	 *     <code>viewName</code> or <code>definition</code> must be given. A <code>viewName</code>
+	 *     can be given in the form <code>module:my/views/Main</code> to load a typed view.
 	 * @param {any} [oOptions.definition]
 	 *     The view definition. Only supported for XML and HTML views. See also {@link sap.ui.core.mvc.XMLView.create}
 	 *     and {@link sap.ui.core.mvc.HTMLView.create} for more information
@@ -1116,9 +1211,12 @@ sap.ui.define([
 	}
 
 	function getViewClassName(oViewSettings) {
-		var sViewClass;
+		var sViewClass = View._getModuleName(oViewSettings);
 
 		// view creation
+		if (sViewClass) {
+			return sViewClass;
+		}
 		if (!oViewSettings.type) {
 			throw new Error("No view type specified.");
 		} else if (oViewSettings.type === ViewType.JS) {
@@ -1151,16 +1249,16 @@ sap.ui.define([
 	}
 
 	/**
-	* Returns a Promise representing the state of the view initialization.
-	*
-	* For views that are loading asynchronously (by setting async=true) this Promise is created by view
-	* initialization. Synchronously loading views get wrapped in an immediately resolving Promise.
-	*
-	* @since 1.30
-	* @public
-	* @deprecated since 1.66: Use {@link sap.ui.core.mvc.View.create View.create} instead
-	* @return {Promise} resolves with the complete view instance, reject with any thrown error
-	*/
+	 * Returns a Promise representing the state of the view initialization.
+	 *
+	 * For views that are loading asynchronously (by setting async=true) this Promise is created by view
+	 * initialization. Synchronously loading views get wrapped in an immediately resolving Promise.
+	 *
+	 * @since 1.30
+	 * @public
+	 * @deprecated since 1.66: Use {@link sap.ui.core.mvc.View.create View.create} instead
+	 * @return {Promise} resolves with the complete view instance, rejects with any thrown error
+	 */
 	View.prototype.loaded = function() {
 		if (this.oAsyncState && this.oAsyncState.promise) {
 			return this.oAsyncState.promise;
@@ -1170,6 +1268,20 @@ sap.ui.define([
 		}
 	};
 
+	/*
+	 * Extract module name from viewName property.
+	 *
+	 * @param {object} mSettings Settings as given to the view factory
+	 * @returns {string|undefined} Name of the module (in sap.ui.define syntax) from which to load the view definition.
+	 * @private
+	 */
+	View._getModuleName = function(mSettings) {
+		var sModuleName;
+		if (mSettings.viewName && mSettings.viewName.startsWith("module:")) {
+			sModuleName = mSettings.viewName.slice("module:".length);
+		}
+		return sModuleName;
+	};
 
 	/**
 	 * Interface for Preprocessor implementations that can be hooked in the view life cycle.
@@ -1232,6 +1344,79 @@ sap.ui.define([
 	 * @param {string} oViewInfo.componentId ID of the owning Component
 	 * @return {string|Promise} String or Promise resolving with a string
 	 */
+
+	/**
+	 * A method to be implemented by typed <code>View</code>s, returning the view UI.
+	 *
+	 * While for declarative view types like <code>XMLView</code> or <code>JSONView</code> the user interface definition
+	 * is declared in a separate file, <code>View</code>s programmatically constructs the UI. This happens in the
+	 * <code>createContent</code> method, which every <code>View</code> needs to implement. The view implementation
+	 * can construct the complete UI in this method, or only return the root control and create the remainder of the UI
+	 * lazily later on.
+	 *
+	 * @returns {sap.ui.core.Control|sap.ui.core.Control[]} A control or array of controls representing the view user interface
+	 * @public
+	 * @name sap.ui.core.mvc.View#createContent
+	 * @function
+	 */
+
+	 /**
+	 * A method to be implemented by typed views, returning the flag whether to prefix the IDs of controls
+	 * automatically or not, if the controls are created inside the {@link sap.ui.core.mvc.View#createContent}
+	 * function. By default this feature is not activated.
+	 *
+	 * You can overwrite this function and return <code>true</code> to activate the automatic prefixing.
+	 *
+	 * @since 1.80
+	 * @returns {boolean} Whether the control IDs should be prefixed automatically
+	 * @protected
+	 */
+	View.prototype.getAutoPrefixId = function() {
+		return false;
+	};
+
+	View.prototype.onControllerConnected = function(oController, mSettings) {
+		if (!this.createContent && typeof this.createContent !== 'function') {
+			return;
+		}
+
+		var mPreprocessorSettings = {
+			// when auto prefixing is enabled, we add the prefix
+			id: this.getAutoPrefixId() ? this.createId.bind(this) : undefined,
+			settings: this._fnSettingsPreprocessor
+		};
+
+		return ManagedObject.runWithPreprocessors(function() {
+			if (mSettings.async) {
+				return this.createContent(oController).then(function(vContent) {
+					ManagedObject.runWithPreprocessors(function() {
+						this.applySettings({
+							content : vContent
+						});
+					}.bind(this), mPreprocessorSettings);
+				}.bind(this));
+			} else {
+				this.applySettings({
+					content : this.createContent(oController)
+				});
+			}
+		}.bind(this), mPreprocessorSettings);
+	};
+
+	View.prototype.initViewSettings = function(mSettings) {
+		// check if renderer exists, otherwise default it
+		if (!this.getMetadata()._oRenderer) {
+			this.getMetadata().getRenderer = function() {
+				return View.getMetadata().getRenderer();
+			};
+			this.getMetadata().getRendererName = function() {
+				return View.getMetadata().getRendererName();
+			};
+		}
+		if (mSettings.async) {
+			return Promise.resolve();
+		}
+	};
 
 	return View;
 

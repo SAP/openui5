@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/thirdparty/sinon-4"
@@ -17,7 +17,7 @@ function(
 	FlexUtils,
 	UIComponent,
 	ComponentContainer,
-	View,
+	XMLView,
 	ChangesWriteAPI,
 	PersistenceWriteAPI,
 	sinon
@@ -29,26 +29,30 @@ function(
 
 	function before() {
 		QUnit.config.fixture = null;
-		this.oView = new View({});
-		var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
-			metadata: {
-				manifest: {
-					"sap.app": {
-						id: "fixture.application"
+		return XMLView.create({
+			definition: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core"></mvc:View>'
+		}).then(function(oView) {
+			this.oView = oView;
+			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							id: "fixture.application"
+						}
 					}
-				}
-			},
-			createContent: function() {
-				return this.oView;
-			}.bind(this)
-		});
+				},
+				createContent: function() {
+					return this.oView;
+				}.bind(this)
+			});
 
-		this.oComponent = new FixtureComponent('Comp');
-		this.oComponentContainer = new ComponentContainer('CompCont', {
-			component: this.oComponent
-		});
-		this.oComponentContainer.placeAt('qunit-fixture');
-		sap.ui.getCore().applyChanges();
+			this.oComponent = new FixtureComponent('Comp');
+			this.oComponentContainer = new ComponentContainer('CompCont', {
+				component: this.oComponent
+			});
+			this.oComponentContainer.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+		}.bind(this));
 	}
 
 	function after() {

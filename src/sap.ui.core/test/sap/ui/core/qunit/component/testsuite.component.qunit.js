@@ -116,6 +116,9 @@ sap.ui.define(function() {
 				title: "QUnit tests: Component Models",
 				ui5: {
 					language: "en-US"
+				},
+				qunit: {
+					reorder: false
 				}
 			},
 			Preloading: {
