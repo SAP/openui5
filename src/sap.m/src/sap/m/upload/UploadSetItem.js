@@ -324,6 +324,33 @@ sap.ui.define([
 		return this;
 	};
 
+	UploadSetItem.prototype.setThumbnailUrl = function(sUrl) {
+		if (this.getThumbnailUrl() != sUrl) {
+			this.setProperty("thumbnailUrl", sUrl, true);
+			// Below we handle change of icon case for existing uploadSetItem.For creation of uploadSetItem icon is created using _getIcon method.
+			if (this._oListItem) {
+				for (var i = 0; i < this._oListItem.getContent().length; i++) {
+					if (this._oListItem.getContent()[i] instanceof sap.ui.core.Icon || this._oListItem.getContent()[i] instanceof sap.m.Image) {
+						var oItem = this._oListItem.getContent()[i];
+						this._oListItem.removeContent(oItem);
+						if (this._oIcon) {
+							this._oIcon.destroy();
+							this._oIcon = null;
+						}
+						this._oIcon = IconPool.createControlByURI({
+							id: this.getId() + "-thumbnail",
+							src: sUrl,
+							decorative: false
+						}, Image);
+						this._oIcon.addStyleClass("sapMUCItemImage sapMUCItemIcon");
+						this._oListItem.insertContent(this._oIcon, 0);
+					}
+				}
+			}
+		}
+		return this;
+	};
+
 	/* ============== */
 	/* Public methods */
 	/* ============== */
