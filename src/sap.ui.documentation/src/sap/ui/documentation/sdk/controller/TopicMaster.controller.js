@@ -118,7 +118,7 @@ sap.ui.define([
 				for (var i = 0; i < oData.length; i++) {
 					oData[i].name = sParentText ? sParentText + " " + oData[i].text : oData[i].text;
 					if (oData[i].links) {
-						oData[i].links = this._addSearchMetadata(oData[i].links, oData[i].text);
+						oData[i].links = this._addSearchMetadata(oData[i].links, oData[i].name);
 					}
 				}
 				return oData;
