@@ -1676,6 +1676,15 @@ sap.ui.define([
 					}
 				}
 			});
+
+			if (bNoEditUrl) {
+				return SyncPromise.resolve({
+					editUrl : undefined,
+					entityPath : sEntityPath,
+					propertyPath : sPropertyPath
+				});
+			}
+
 			// aEditUrl may still contain key predicate requests, run them and wait for the promises
 			return SyncPromise.all(aEditUrl.map(function (vSegment) {
 				if (typeof vSegment === "string") {
@@ -1686,9 +1695,6 @@ sap.ui.define([
 					var sPredicate;
 
 					if (!oEntity) {
-						if (bNoEditUrl) {
-							return undefined;
-						}
 						error("No instance to calculate key predicate at " + vSegment.path);
 					}
 					if (_Helper.hasPrivateAnnotation(oEntity, "transient")) {

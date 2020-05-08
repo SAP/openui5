@@ -3422,14 +3422,16 @@ sap.ui.define([
 
 		this.oMetaModelMock.expects("fetchEntityContainer").twice()
 			.returns(SyncPromise.resolve(mScope));
+		// Note: we try to "calculate key predicate" because context path alone is no indication
+		// that entity is still transient! @see "@$ui5.keepTransientPath"
 		this.mock(oContext).expects("fetchValue").withExactArgs("/TEAMS($uid=id-1-23)")
 			.returns(SyncPromise.resolve({"@$ui5._" : {"transient" : "update"}}));
 
 		// code under test
 		return this.oMetaModel.fetchUpdateData("Name", oContext).then(function (oResult) {
 			assert.deepEqual(oResult, {
-				entityPath : "/TEAMS($uid=id-1-23)",
 				editUrl : undefined,
+				entityPath : "/TEAMS($uid=id-1-23)",
 				propertyPath : "Name"
 			});
 		});
@@ -3441,16 +3443,15 @@ sap.ui.define([
 
 		this.oMetaModelMock.expects("fetchEntityContainer").twice()
 			.returns(SyncPromise.resolve(mScope));
-		this.mock(oContext).expects("fetchValue").withExactArgs("/TEAMS('42')/TEAM_2_MANAGER")
-			.returns(SyncPromise.resolve(null));
+		this.mock(oContext).expects("fetchValue").never();
 
 		return this.oMetaModel
 			// code under test
 			.fetchUpdateData("/TEAMS('42')/TEAM_2_MANAGER/TEAM_ID", oContext, true)
 			.then(function (oResult) {
 				assert.deepEqual(oResult, {
-					entityPath : "/TEAMS('42')/TEAM_2_MANAGER",
 					editUrl : undefined,
+					entityPath : "/TEAMS('42')/TEAM_2_MANAGER",
 					propertyPath : "TEAM_ID"
 				});
 			});
@@ -3561,8 +3562,8 @@ sap.ui.define([
 		this.mock(this.oMetaModel).expects("fetchUpdateData")
 			.withExactArgs("", sinon.match.same(oContext))
 			.returns(SyncPromise.resolve(Promise.resolve({
-				entityPath : "/TEAMS('4711')",
 				editUrl : "TEAMS('4711')",
+				entityPath : "/TEAMS('4711')",
 				propertyPath : "Name"
 			})));
 

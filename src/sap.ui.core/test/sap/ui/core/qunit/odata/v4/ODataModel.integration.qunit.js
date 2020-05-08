@@ -13223,7 +13223,10 @@ sap.ui.define([
 	// Scenario: call filter, sort, changeParameters on a suspended ODLB
 	// JIRA: CPOUI5ODATAV4-102: call ODLB#create on a just resumed binding
 	QUnit.test("suspend/resume: call read APIs on a suspended ODLB", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "DoNotSend"}),
+		var oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "doNotSubmit"
+			}),
 			sView = '\
 <Table id="table" items="{path : \'/BusinessPartnerList\', suspended : true}">\
 	<ColumnListItem>\
@@ -24668,6 +24671,20 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: For a transient entity, a text property from a *:1 related entity is updated w/o a
+	// PATCH. This must not fail, even though there is (of course) no key predicate for that related
+	// entity known (yet).
+	// BCP: 2070199671
+	QUnit.test("BCP: 2070199671", function (assert) {
+		var oModel = createTeaBusiModel({updateGroupId : "doNotSubmit"}),
+			oListBinding = oModel.bindList("/TEAMS"),
+			oTransientContext = oListBinding.create({TEAM_2_MANAGER : {}});
+
+		// code under test
+		return oTransientContext.setProperty("TEAM_2_MANAGER/TEAM_ID", "42", null);
 	});
 
 	//*********************************************************************************************
