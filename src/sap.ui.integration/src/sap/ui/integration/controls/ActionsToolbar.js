@@ -137,19 +137,28 @@ sap.ui.define([
 		};
 
 
-		ActionsToolbar.prototype.initializeContent = function (oHost, oCard) {
+		ActionsToolbar.prototype.initializeContent = function (oHost, oCard, oExtension) {
 
 			var that = this,
 				oActionButton,
 				aButtons = [],
-				aActions;
+				aActions = [];
 
 			this._oCard = oCard;
 
-			this._aActions = aActions = oHost.getActions();
-			if (!aActions || !aActions.length) {
+			if (oHost) {
+				aActions = aActions.concat(oHost.getActions() || []);
+			}
+
+			if (oExtension) {
+				aActions = aActions.concat(oExtension.getActions() || []);
+			}
+
+			if (!aActions.length) {
 				return false;
 			}
+
+			this._aActions = aActions;
 
 			aActions.forEach(function (actionConfig) {
 				oActionButton = that._createActionButton(oHost, oCard, actionConfig);

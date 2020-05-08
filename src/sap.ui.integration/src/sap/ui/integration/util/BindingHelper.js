@@ -162,6 +162,15 @@ sap.ui.define([
 			return vValue.replace(rCardPlaceholderPattern, "\\{\\{$1\\}\\}");
 		};
 
+		/**
+		 * Adds new functions in the given namespace, which can be used in expression binding.
+		 * @param {string} sNamespace The namespace.
+		 * @param {object} oValue The functions, that will be available in this namespace.
+		 */
+		BindingHelper.addNamespace = function (sNamespace, oValue) {
+			BindingHelper.mLocals[sNamespace] = oValue;
+		};
+
 		return BindingHelper;
 	});
 

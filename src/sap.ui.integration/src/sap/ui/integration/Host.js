@@ -3,37 +3,46 @@
  */
 sap.ui.define([
 	'sap/ui/thirdparty/jquery',
-	'./Extension'
+	'sap/ui/core/Element'
 ],
-	function (jQuery, Extension) {
+	function (jQuery, Element) {
 		"use strict";
 
 		/**
 		 * Constructor for a new <code>Host</code>.
 		 *
-		 * @param {string} [sId] ID for the new data provider, generated automatically if no ID is given.
-		 * @param {object} [mSettings] Initial settings for the new data provider.
+		 * @param {string} [sId] ID for the new host, generated automatically if no ID is given.
+		 * @param {object} [mSettings] Initial settings for the new host.
 		 *
 		 * @class
 		 * Provides application-level functions and services to an integration card.
 		 *
 		 * Examples may include, but are not limited to options like: share a card, remove a card.
 		 *
-		 * @extends sap.ui.integration.Extension
+		 * @extends sap.ui.core.Element
 		 *
 		 * @author SAP SE
 		 * @version ${version}
 		 *
 		 * @constructor
 		 * @public
-		 * @experimental
+		 * @experimental since 1.75
 		 * @since 1.75
 		 * @alias sap.ui.integration.Host
 		 */
-		var Host = Extension.extend("sap.ui.integration.Host", {
+		var Host = Element.extend("sap.ui.integration.Host", {
 			metadata: {
 				library: "sap.ui.integration",
 				properties: {
+					/**
+					 * The actions configuration.
+					 * @experimental since 1.75
+					 * Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+					 */
+					actions: {
+						type: "array"
+					},
+
 					/**
 					 * A function that resolves the given destination name to a URL.
 					 *
@@ -56,7 +65,51 @@ sap.ui.define([
 						}
 					}
 				},
-				events: {}
+				events: {
+
+					/**
+					 * Fired when an action is triggered.
+					 * @experimental since 1.75
+					 * Disclaimer: this event is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+					 */
+					action: {
+
+						allowPreventDefault: true,
+
+						parameters: {
+							/**
+							 * The card the action is fired from.
+							 */
+							card: {type: "sap.ui.core.Control"},
+
+							/**
+							 * The action configuration.
+							 */
+							actionConfig: {type: 'object'},
+
+							/**
+							 * The action source.
+							 */
+							actionSource: {
+								type: "sap.ui.core.Control"
+							},
+
+							/**
+							 * The parameters related to the triggered action.
+							 */
+							parameters: {
+								type: "object"
+							},
+
+							/**
+							 * The type of the action.
+							 */
+							type: {
+								type: "sap.ui.integration.CardActionType"
+							}
+						}
+					}
+				}
 			}
 		});
 

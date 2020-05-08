@@ -361,6 +361,7 @@ sap.ui.define([
 		CardActions.fireAction = function (mConfig) {
 			var oHost = mConfig.host,
 				oCard = mConfig.card,
+				oExtension = oCard._oExtension,
 				oAction = mConfig.action,
 				mParameters = mConfig.parameters || {},
 				mActionParams = {
@@ -378,6 +379,14 @@ sap.ui.define([
 
 			if (oHost) {
 				bActionResult = oHost.fireAction(mActionParams);
+			}
+
+			if (!bActionResult) {
+				return false;
+			}
+
+			if (oExtension) {
+				bActionResult = oExtension.fireAction(mActionParams);
 			}
 
 			if (bActionResult) {

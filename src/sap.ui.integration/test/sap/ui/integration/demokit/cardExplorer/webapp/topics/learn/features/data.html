@@ -37,6 +37,7 @@
 		<ol>
 			<li>Using static data by providing the "json" property.</li>
 			<li>Requesting data by providing the "request" property.</li>
+			<li>Use the <a href="../../../index.html#/learn/features/extension" target="_parent">Extension</a> to get data by providing the "extension" property.</li>
 			<li>Provide "path" only to specify the context path of the current level.</li>
 		</ol>
 
@@ -67,6 +68,15 @@
 					<td>A data object.</td>
 					<td>1.14.0</td>
 					<td>1.65</td>
+				</tr>
+				<tr>
+					<td>extension</td>
+					<td>Extension</td>
+					<td>No</td>
+					<td>An object defining which method of an Extension to be called for fetching the data.
+					</td>
+					<td></td>
+					<td>1.79</td>
 				</tr>
 				<tr>
 					<td>path</td>
@@ -151,6 +161,39 @@
 					<td>Indicates whether cross-site requests should be made using credentials.</td>
 					<td>1.17.0</td>
 					<td>1.71</td>
+				</tr>
+			</table>
+		</div>
+
+		
+		<p>Extension:</p>
+
+		<div class="tableWrapper">
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Schema Version</th>
+					<th>Since</th>
+				</tr>
+				<tr>
+					<td>method</td>
+					<td>string</td>
+					<td>Yes</td>
+					<td>The name of the Extension method, which returns a promise and resolves with JSON.
+					</td>
+					<td></td>
+					<td>1.79</td>
+				</tr>
+				<tr>
+					<td>args</td>
+					<td>array</td>
+					<td>No</td>
+					<td>The arguments with which the method will be called.</td>
+					<td></td>
+					<td>1.79</td>
 				</tr>
 			</table>
 		</div>
