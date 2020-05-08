@@ -631,7 +631,7 @@ sap.ui.define([
 
 		// Act:
 		// (1) focus the select
-		oSelect.onfocusin();
+		oSelect.onfocusin({target: oSelect.getFocusDomRef()});
 		// (2) mock a call from ObjectPage to rebuild content (e.g. when change in the content has to be reflected in the anchorBar)
 		this.oAnchorBar._resetControl();
 		try {
