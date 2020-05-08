@@ -2564,41 +2564,32 @@ sap.ui.define([
 
 			qutils.triggerEvent("mousedown", $Target);
 			qutils.triggerEvent("mouseup", $Target);
-		},
-		assertButtonAppearance: function (fnDone) {
-			var oHeader = this.oDP._oCalendar.getAggregation("header");
-			// We use 200 ms timeout here to place the test on a safe place on the event loop queue
-			// to catch all the ui updates happening with multiple delayed calls.
-			setTimeout(function () {
-				assert.strictEqual(oHeader.getVisibleButton1(), true, "Month button is visible again after the Month Picker closing");
-				fnDone();
-			}, 200);
 		}
 	});
 
 	QUnit.test("Changing month using the month picker", function (assert) {
-		var fnDone = assert.async();
+		var fnDone = assert.async(),
+			oHeader = this.oDP._oCalendar.getAggregation("header");
 
-		// Act
-		var that = this;
-		setTimeout(function () {
-			var oHeader = that.oDP._oCalendar.getAggregation("header");
+		var afterRenderDelegate = {
+			onAfterRendering: function () {
+				// Assert
+				assert.strictEqual(oHeader.getVisibleButton1(), true, "Month button is visible again after the Month Picker closing");
+				oHeader.removeDelegate(afterRenderDelegate);
+				fnDone();
+			}
+		};
 
-			assert.equal(oHeader.getVisibleButton1(), true, "Month button is visible before the Month Picker opening");
+		assert.equal(oHeader.getVisibleButton1(), true, "Month button is visible before the Month Picker opening");
 
-			// Open month picker
-			qutils.triggerEvent("click", "SDP-cal--Head-B1");
+		// Open month picker
+		qutils.triggerEvent("click", "SDP-cal--Head-B1");
 
-			assert.equal(oHeader.getVisibleButton1(), false, "Month button is hidden after the Month Picker opening");
+		assert.equal(oHeader.getVisibleButton1(), false, "Month button is hidden after the Month Picker opening");
+		oHeader.addDelegate(afterRenderDelegate);
 
-			// Click on March
-			that.clickOnMonth(2);
-
-			// Assert
-			that.assertButtonAppearance(fnDone);
-
-		}, 0);
-
+		// Click on March
+		this.clickOnMonth(2);
 	});
 
 	QUnit.module("Keyboard Interaction", {
