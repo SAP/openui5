@@ -78,13 +78,21 @@
 	margin-right: 2rem;
 }
 
+.sapFCard .sapFCardFilterBar {
+	padding: 0.5rem @_sap_f_Card_ContentPadding;
+	background: @sapUiTileBackground;
+	border-bottom: @_sap_f_Card_HeaderBorderBottom;
+	box-shadow: @_sap_f_card_HeaderBoxShadow;
+	z-index: 1;
+}
+
 .sapFCard .sapFCardHeader {
 	position: relative;
 	flex-shrink: 0;
 	background: @sapUiTileBackground;
 	border-bottom: @_sap_f_Card_HeaderBorderBottom;
 	box-shadow: @_sap_f_card_HeaderBoxShadow;
-	z-index: 1;
+	z-index: 2;
 	padding: @_sap_f_Card_ContentPadding;
 	display: flex;
 	outline: none;

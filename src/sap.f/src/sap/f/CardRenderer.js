@@ -29,7 +29,8 @@ sap.ui.define([
 		var oHeader = oCard.getCardHeader(),
 			sHeight = oCard.getHeight(),
 			bCardHeaderBottom = oHeader && oCard.getCardHeaderPosition() === HeaderPosition.Bottom,
-			sTooltip = oCard.getTooltip_AsString();
+			sTooltip = oCard.getTooltip_AsString(),
+			oFilterBar = oCard.getAggregation("_filterBar");
 
 		//start
 		oRm.write("<div");
@@ -64,6 +65,17 @@ sap.ui.define([
 		//header at the top
 		if (oHeader && oCard.getCardHeaderPosition() === "Top") {
 			oRm.renderControl(oHeader);
+		}
+
+		if (oFilterBar) {
+			oRm.write("<div");
+			oRm.addClass("sapFCardFilterBar");
+			oRm.writeClasses();
+			oRm.write(">");
+
+			oRm.renderControl(oFilterBar);
+
+			oRm.write("</div>");
 		}
 
 		//content

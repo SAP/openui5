@@ -2398,6 +2398,29 @@ sap.ui.define([
 			Core.applyChanges();
 		});
 
+		QUnit.test("Setting single parameter", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEventOnce("_ready", function () {
+				this.oCard.attachEventOnce("_ready", function () {
+					Core.applyChanges();
+
+					// Assert
+					var oListItems = this.oCard.getCardContent()._getList().getItems();
+					assert.ok(oListItems[0].getDescription().indexOf("Tokyo") > -1, "Card parameter 'city' should be replaced in rendered html with 'Tokyo'");
+					done();
+				}.bind(this));
+
+				// Act
+				this.oCard.setParameter("city", "Tokyo");
+			}.bind(this));
+
+			this.oCard.setManifest(oManifest_DefaultParameters);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
 		QUnit.test("Only TODAY_ISO or NOW_ISO are used", function (assert) {
 
 			// Arrange

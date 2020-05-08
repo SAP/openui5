@@ -334,11 +334,13 @@ sap.ui.define([
 							{
 								title: 'Top Products',
 								key: 'topProducts',
+								mockServer: true,
 								manifestUrl: '/samples/dataSources/topProducts.json'
 							},
 							{
 								title: 'Product',
 								key: 'product',
+								mockServer: true,
 								settings: {
 									columns: 6
 								},
@@ -383,6 +385,14 @@ sap.ui.define([
 								key: 'i18n/i18n.properties'
 							}
 						]
+					},
+					{
+						key: 'filtering',
+						target: 'exploreSamples',
+						title: 'Filtering',
+						experimental: true,
+						mockServer: true,
+						manifestUrl: '/samples/filtering/products.json'
 					},
 					{
 						key: 'parameters',

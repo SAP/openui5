@@ -82,7 +82,8 @@ sap.ui.define(function () {
 						"sap/ui/integration/util/RequestDataProvider",
 						"sap/ui/integration/util/ServiceDataProvider",
 						"sap/ui/integration/cards/TableContent",
-						"sap/ui/integration/cards/BaseContent"
+						"sap/ui/integration/cards/BaseContent",
+						"sap/ui/integration/CardFiltering"
 					]
 				},
 				module: [
@@ -202,6 +203,14 @@ sap.ui.define(function () {
 			"cards/AdaptiveCard": { },
 			"cards/AnalyticalCard": { },
 			"cards/CalendarCard": { },
+			"CardFiltering": {
+				coverage: {
+					only: [
+						"sap/ui/integration/widgets/Card",
+						"sap/ui/integration/util/FilterBarFactory"
+					]
+				}
+			},
 			"customElements/CustomElements": {
 				ui5: {
 					libs: ["sap.ui.integration"]
