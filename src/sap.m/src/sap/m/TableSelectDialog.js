@@ -14,7 +14,7 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/base/ManagedObject',
 	'sap/m/Toolbar',
-	'sap/m/Label',
+	'sap/m/Text',
 	'sap/m/BusyIndicator',
 	'sap/m/Bar',
 	'sap/ui/core/theming/Parameters',
@@ -33,7 +33,7 @@ sap.ui.define([
 		Device,
 		ManagedObject,
 		Toolbar,
-		Label,
+		Text,
 		BusyIndicator,
 		Bar,
 		Parameters,
@@ -347,7 +347,7 @@ sap.ui.define([
 				visible: false,
 				active: false,
 				content: [
-					new Label({
+					new Text({
 						text: this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [0])
 					})
 				]
