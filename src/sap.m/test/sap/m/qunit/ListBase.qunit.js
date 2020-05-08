@@ -39,7 +39,7 @@ sap.ui.define([
 			qutils, ListBaseRenderer, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, ThemeParameters, library, StandardListItem, App, Page, ListBase, List, Toolbar,
 			ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title, DataStateIndicator) {
 		"use strict";
-		createAndAppendDiv("content").setAttribute("data-sap-ui-fastnavgroup", "true");
+		jQuery("#qunit-fixture").attr("data-sap-ui-fastnavgroup", "true");
 
 
 		/*******************************************************************************
@@ -322,7 +322,7 @@ sap.ui.define([
 			});
 
 		// init app
-		oApp.addPage(oPage).placeAt("content");
+		oApp.addPage(oPage).placeAt("qunit-fixture");
 
 		/********************************************************************************/
 		QUnit.module("Basic Control API checks", {
@@ -373,7 +373,7 @@ sap.ui.define([
 			assert.ok(oEvents.beforeOpenContextMenu, 'Event "beforeOpenContextMenu" exists');
 
 			oList.setMode("MultiSelect");
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			assert.strictEqual(oList.getItems().length, 3, "List has exactly 3 items");
@@ -929,7 +929,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("setEnableBusyIndicator", function(assert) {
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 			var oRenderSpy = this.spy(oList.getRenderer(), "render");
 
@@ -942,6 +942,17 @@ sap.ui.define([
 		window.IntersectionObserver && QUnit.test("BusyIndicator in the middle", function(assert) {
 			this.clock.restore();
 			createAndAppendDiv("uiArea1");
+
+			var $qunitFixture = jQuery("#qunit-fixture"),
+				sPosition = $qunitFixture.css("position"),
+				sTop = $qunitFixture.css("top"),
+				sLeft = $qunitFixture.css("left"),
+				sWidth = $qunitFixture.css("width");
+
+			$qunitFixture.css("position", "inherit");
+			$qunitFixture.css("top", "inherit");
+			$qunitFixture.css("left", "inherit");
+			$qunitFixture.css("width", "inherit");
 
 			var oMutationObserver, observedDomRef;
 			var done = assert.async();
@@ -985,6 +996,12 @@ sap.ui.define([
 
 							oList.setBusy(false);
 							oMutationObserver.disconnect();
+
+							// restore style
+							$qunitFixture.css("position", sPosition);
+							$qunitFixture.css("top", sTop);
+							$qunitFixture.css("left", sLeft);
+							$qunitFixture.css("width", sWidth);
 							done();
 						}
 					});
@@ -1281,7 +1298,7 @@ sap.ui.define([
 				content: oList
 			});
 
-			oScrollContainer.placeAt("content");
+			oScrollContainer.placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			var oItem,
@@ -1362,7 +1379,7 @@ sap.ui.define([
 			// let the item navigation run for testing
 			this.stub(Device.system, "desktop", true);
 
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 			oList.focus();
 
@@ -1465,7 +1482,7 @@ sap.ui.define([
 			oPage.addContent(oBeforeList);
 			oPage.addContent(oList);
 			oPage.addContent(oAfterList);
-			oPage.placeAt("content");
+			oPage.placeAt("qunit-fixture");
 				Core.applyChanges();
 				oList.forwardTab = fnSpy;
 
@@ -1511,7 +1528,7 @@ sap.ui.define([
 			// let the item navigation run for testing
 			this.stub(Device.system, "desktop", true);
 
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			var oFocusedInput = oListItem1.getTabbables()[0];
@@ -1575,7 +1592,7 @@ sap.ui.define([
 					items : [oListItem1, oListItem2]
 				});
 
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			// let the item navigation run for testing
@@ -1628,7 +1645,7 @@ sap.ui.define([
 			var aResponsiveSize = sResponsiveSize.split(" ");
 
 			// Act
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 			oList.addStyleClass("sapUiNoContentPadding");
 			$containerContent = oList.$();
@@ -1689,7 +1706,7 @@ sap.ui.define([
 					items: [oButton1, oList, oButton2]
 				});
 
-			oContainer.placeAt("content");
+			oContainer.placeAt("qunit-fixture");
 			Core.applyChanges();
 			oList.focus();
 
@@ -1783,7 +1800,7 @@ sap.ui.define([
 
 			bindListData(oList, data3, "/items", createTemplateListItem());
 
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			oList.getVisibleItems()[0].focus();
@@ -1891,7 +1908,7 @@ sap.ui.define([
 
 			bindListData(oList, data3, "/items", createTemplateListItem());
 
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			oList.insertItem(oGroupHeaderListItem, 3);
@@ -1940,7 +1957,7 @@ sap.ui.define([
 
 			bindListData(oList, data3, "/items", createTemplateListItem());
 
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			oList.getVisibleItems()[1].focus();
@@ -2020,7 +2037,7 @@ sap.ui.define([
 
 			bindListData(oList, data3, "/items", createTemplateListItem());
 
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			oList.getVisibleItems()[0].focus();
@@ -2060,7 +2077,7 @@ sap.ui.define([
 
 			bindListData(oList, data3, "/items", createTemplateListItem());
 
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			oList.getVisibleItems()[0].focus();
@@ -2100,7 +2117,7 @@ sap.ui.define([
 		QUnit.test("Highlight should be rendered", function (assert) {
 			var oLI = new StandardListItem({
 				title: "Title of the item"
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 
 			var fnTestHighlight = function(sHighlight) {
 				oLI.setHighlight(sHighlight);
@@ -2145,7 +2162,7 @@ sap.ui.define([
 					items: [oListItem1, oListItem2]
 				});
 
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			assert.ok(oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is added");
@@ -2181,7 +2198,7 @@ sap.ui.define([
 					items: [oListItem1]
 				});
 
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			oListItem1.getDeleteControl(true);
@@ -2220,7 +2237,7 @@ sap.ui.define([
 		QUnit.test("Navigated indicator should be rendered", function(assert) {
 			var oLI = new StandardListItem({
 				title: "Title of the item"
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 			Core.applyChanges();
 			assert.notOk(oLI.$().find(".sapMLIBNavigated").length > 0, "navigated property is not enabled, hence class is not rendered");
 
@@ -2246,7 +2263,7 @@ sap.ui.define([
 				items: [oListItem1, oListItem2]
 			});
 
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 			assert.notOk(oList.getDomRef("listUl").classList.contains("sapMListNavigated"), "Navigated class is not added as navigated property is not enabled");
 
@@ -2271,10 +2288,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("aria-labelledby association should only be in the DOM", function(assert) {
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			var oText1 = new Text({
 				text: "text1"
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			oList.addAriaLabelledBy(oText1);
@@ -2304,7 +2321,7 @@ sap.ui.define([
 				}),
 				oList = new List({
 					items: [oGroupHeader1, oListItem1, oGroupHeader2, oListItem2]
-				}).placeAt("content");
+				}).placeAt("qunit-fixture");
 
 			Core.applyChanges();
 
@@ -2320,7 +2337,7 @@ sap.ui.define([
 		QUnit.test("highlight text of the item", function(assert) {
 			var oListItem1 = new StandardListItem({
 				title: "Title of the item"
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 
 			var fnTestHighlight = function(sHighlight, sHighlightText, sExpectedHighlightText) {
 				oListItem1.setHighlight(sHighlight);
@@ -2460,7 +2477,7 @@ sap.ui.define([
 			});
 
 			oList.addItem(oListItem);
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			var fnPress = this.spy(oListItem, "firePress");
@@ -2509,7 +2526,7 @@ sap.ui.define([
 				sticky: ["HeaderToolbar"],
 				items: [oStdLI]
 			});
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			assert.ok(ListBase.getStickyBrowserSupport(), "sticky css supported in Chrome");
@@ -2534,7 +2551,7 @@ sap.ui.define([
 				sticky: ["HeaderToolbar"],
 				items: [oStdLI]
 			});
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			assert.ok(ListBase.getStickyBrowserSupport(), "sticky css supported in Chrome");
@@ -2559,7 +2576,7 @@ sap.ui.define([
 				sticky: ["HeaderToolbar"],
 				items: [oStdLI]
 			});
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			assert.ok(ListBase.getStickyBrowserSupport(), "sticky css supported in Chrome");
@@ -2584,7 +2601,7 @@ sap.ui.define([
 				sticky: ["HeaderToolbar"],
 				items: [oStdLI]
 			});
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			assert.ok(ListBase.getStickyBrowserSupport(), "sticky css supported in Chrome");
@@ -2609,7 +2626,7 @@ sap.ui.define([
 				sticky: ["HeaderToolbar"],
 				items: [oStdLI]
 			});
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			assert.ok(!ListBase.getStickyBrowserSupport(), "sticky css not supported");
@@ -2635,7 +2652,7 @@ sap.ui.define([
 					sticky: ["ColumnHeaders"],
 					items: [oStdLI]
 				});
-				oList.placeAt("content");
+				oList.placeAt("qunit-fixture");
 				Core.applyChanges();
 
 				var aClassList = oList.getDomRef().classList;
@@ -2685,7 +2702,7 @@ sap.ui.define([
 					content: sut
 				});
 				sut.setSticky(["InfoToolbar"]);
-				oScrollContainer.placeAt("content");
+				oScrollContainer.placeAt("qunit-fixture");
 				Core.applyChanges();
 
 				var aClassList = sut.$()[0].classList;
@@ -2776,7 +2793,7 @@ sap.ui.define([
 					content: sut
 				});
 				sut.setSticky(["HeaderToolbar"]);
-				oScrollContainer.placeAt("content");
+				oScrollContainer.placeAt("qunit-fixture");
 				Core.applyChanges();
 
 				var aClassList = sut.$()[0].classList;
@@ -2889,7 +2906,7 @@ sap.ui.define([
 					content: sut
 				});
 				sut.setSticky(["HeaderToolbar", "InfoToolbar"]);
-				oScrollContainer.placeAt("content");
+				oScrollContainer.placeAt("qunit-fixture");
 				Core.applyChanges();
 
 				var aClassList = sut.$()[0].classList;
@@ -3000,7 +3017,7 @@ sap.ui.define([
 				content: oList
 			});
 
-			oScrollContainer.placeAt("content");
+			oScrollContainer.placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			var iHeaderToolbarHeight = (oList.getHeaderToolbar() && oList.getHeaderToolbar().getDomRef() || this.getDomRef("header")).offsetHeight;
