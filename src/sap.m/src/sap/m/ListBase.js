@@ -1470,8 +1470,16 @@ function(
 	};
 
 	ListBase.prototype.onItemKeyDown = function (oItem, oEvent) {
-		// prevent rangeSelection object creation when SHIFT key is used with an additional key combination (e.g. CTRL + SHIFT + TAB)
-		if (!oEvent.shiftKey || oEvent.ctrlKey || oEvent.altKey || oEvent.metaKey || this.getMode() !== ListMode.MultiSelect || !oItem.isSelectable() || this.bPreventMassSelection) {
+		// prevent rangeSelection when SHIFT key is used with an additional key combination (e.g. CTRL + SHIFT + TAB)
+		// prevent rangeSelection also for fast navigation (SHIFT + F6)
+		if (!oEvent.shiftKey ||
+			oEvent.ctrlKey ||
+			oEvent.altKey ||
+			oEvent.metaKey ||
+			this.getMode() !== ListMode.MultiSelect ||
+			!oItem.isSelectable() ||
+			this.bPreventMassSelection ||
+			oEvent.which === KeyCodes.F6) {
 			if (this._mRangeSelection) {
 				this._mRangeSelection = null;
 			}
