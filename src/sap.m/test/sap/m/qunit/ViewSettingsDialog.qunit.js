@@ -297,6 +297,67 @@ sap.ui.define([
 			}));
 		},
 
+		addKeylessFilterItems: function (oVsdInst) {
+			oVsdInst.addFilterItem(new ViewSettingsFilterItem({
+				key: "myNameFilter",
+				text: "Name",
+				items: [
+					new ViewSettingsItem({
+						key: "",
+						text: "Headphone"
+					}),
+					new ViewSettingsItem({
+						key: "",
+						text: "Mousepad",
+						selected: true
+					}),
+					new ViewSettingsItem({
+						key: "name3",
+						text: "Monitor",
+						selected: true
+					}),
+					new ViewSettingsItem({
+						key: "name4",
+						text: "Backpack"
+					}),
+					new ViewSettingsItem({
+						key: "",
+						text: "Printer",
+						selected: true
+					}),
+					new ViewSettingsItem({
+						key: "",
+						text: "Optic Mouse"
+					}),
+					new ViewSettingsItem({
+						key: "name7",
+						text: "Dock Station"
+					})
+				]
+			}));
+
+			oVsdInst.addFilterItem(new ViewSettingsFilterItem({
+				key: "myStatusFilter",
+				text: "Status",
+				items: [
+					new ViewSettingsItem({
+						key: "",
+						text: "Approved"
+					}),
+					new ViewSettingsItem({
+						key: "",
+						text: "Open",
+						selected: true
+					}),
+					new ViewSettingsItem({
+						key: "status3",
+						text: "Denied"
+					})
+				]
+			}));
+
+		},
+
 		addPresetFilterItems: function(oVsdInst) {
 			// preset filters
 			oVsdInst.addPresetFilterItem(new ViewSettingsItem({
@@ -2042,6 +2103,29 @@ sap.ui.define([
 		assert.ok(Object.keys(aSelected).length === 3 && aSelected["name3"] && aSelected["status1"] && aSelected["status2"], "There are proper items selected after applying the third preset");
 		assert.deepEqual(oCompoundResult, Object.assign(oCompoundKeys2, oCompoundKeys3), "There are proper items returned by getSelectedFilterCompoundKeys()");
 	});
+
+	QUnit.test("Check setSelectedFilterCompoundKeys and getSelectedFilterCompoundKeys methods with empty keys", function (assert) {
+		var oCompoundKeys,
+			aSelectedBefore,
+			aSelectedAfter;
+
+		// set filter items, some of them without keys; some of them selected
+		oVsdConfig.addKeylessFilterItems(this.oVSD);
+
+		// act
+		aSelectedBefore = this.oVSD.getSelectedFilterItems();
+		oCompoundKeys = this.oVSD.getSelectedFilterCompoundKeys();
+		this.oVSD.setSelectedFilterCompoundKeys(oCompoundKeys);
+		aSelectedAfter = this.oVSD.getSelectedFilterItems();
+
+		// assert
+		assert.equal(aSelectedAfter.length, aSelectedBefore.length, "There are correct number of items selected");
+		assert.equal(aSelectedAfter[0].getText(), "Mousepad", "First item is correctly selected");
+		assert.equal(aSelectedAfter[1].getText(), "Monitor", "Second item is correctly selected");
+		assert.equal(aSelectedAfter[2].getText(), "Printer", "Third item is correctly selected");
+		assert.equal(aSelectedAfter[3].getText(), "Open", "Fourth item is correctly selected");
+	});
+
 
 	QUnit.module("Re-rendering after changing selections", {
 		beforeEach : function () {
