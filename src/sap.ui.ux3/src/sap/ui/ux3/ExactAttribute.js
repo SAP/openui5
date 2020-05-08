@@ -305,7 +305,6 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 
 	//*** Internal (may also used by Exact Control) functions ***
 
-	ExactAttribute.prototype._setProperty_Orig = ExactAttribute.prototype.setProperty;
 	/**
 	 * @param {string} sPropertyName
 	 * @param {object} oValue
@@ -314,7 +313,7 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 * @protected
 	 */
 	ExactAttribute.prototype.setProperty = function(sPropertyName, oValue, bSuppressRerendering) {
-		this._setProperty_Orig(sPropertyName, oValue, bSuppressRerendering);
+		Element.prototype.setProperty.call(this, sPropertyName, oValue, bSuppressRerendering);
 
 		if (sPropertyName == "selected") {
 			if (oValue) {

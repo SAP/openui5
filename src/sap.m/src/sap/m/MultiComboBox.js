@@ -628,6 +628,8 @@ function(
 	 */
 	MultiComboBox.prototype.onsapenter = function(oEvent) {
 		var oTokenizer = this.getAggregation("tokenizer");
+
+		// intentionally skip implementation of ComboTextField.prototype.onsapenter
 		InputBase.prototype.onsapenter.apply(this, arguments);
 
 		// validate if an item is already selected

@@ -2071,7 +2071,7 @@ function(
 		}
 	};
 
-	SplitContainer.prototype._callMethodInManagedObject = function(sFunctionName, sAggregationName){
+	SplitContainer.prototype._callSuperMethod = function(sFunctionName, sAggregationName){
 		var args = Array.prototype.slice.call(arguments);
 		if (sAggregationName === "masterPages") {
 			if (sFunctionName === "indexOfAggregation") {
@@ -2086,7 +2086,7 @@ function(
 				return this._callNavContainerMethod(sFunctionName, this._oDetailNav, args);
 			}
 		} else {
-			return ManagedObject.prototype[sFunctionName].apply(this, args.slice(1));
+			return Control.prototype[sFunctionName].apply(this, args.slice(1));
 		}
 	};
 
@@ -2118,42 +2118,42 @@ function(
 	* START - forward aggregation related methods to NavContainer
 	**************************************************************/
 	SplitContainer.prototype.validateAggregation = function(sAggregationName, oObject, bMultiple){
-		return this._callMethodInManagedObject("validateAggregation", sAggregationName, oObject, bMultiple);
+		return this._callSuperMethod("validateAggregation", sAggregationName, oObject, bMultiple);
 	};
 
 	SplitContainer.prototype.setAggregation = function(sAggregationName, oObject, bSuppressInvalidate){
-		this._callMethodInManagedObject("setAggregation", sAggregationName, oObject, bSuppressInvalidate);
+		this._callSuperMethod("setAggregation", sAggregationName, oObject, bSuppressInvalidate);
 		return this;
 	};
 
 	SplitContainer.prototype.getAggregation = function(sAggregationName, oDefaultForCreation){
-		return this._callMethodInManagedObject("getAggregation", sAggregationName, oDefaultForCreation);
+		return this._callSuperMethod("getAggregation", sAggregationName, oDefaultForCreation);
 	};
 
 	SplitContainer.prototype.indexOfAggregation = function(sAggregationName, oObject){
-		return this._callMethodInManagedObject("indexOfAggregation", sAggregationName, oObject);
+		return this._callSuperMethod("indexOfAggregation", sAggregationName, oObject);
 	};
 
 	SplitContainer.prototype.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate){
-		this._callMethodInManagedObject("insertAggregation", sAggregationName, oObject, iIndex, bSuppressInvalidate);
+		this._callSuperMethod("insertAggregation", sAggregationName, oObject, iIndex, bSuppressInvalidate);
 		return this;
 	};
 
 	SplitContainer.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate){
-		this._callMethodInManagedObject("addAggregation", sAggregationName, oObject, bSuppressInvalidate);
+		this._callSuperMethod("addAggregation", sAggregationName, oObject, bSuppressInvalidate);
 		return this;
 	};
 
 	SplitContainer.prototype.removeAggregation = function(sAggregationName, oObject, bSuppressInvalidate){
-		return this._callMethodInManagedObject("removeAggregation", sAggregationName, oObject, bSuppressInvalidate);
+		return this._callSuperMethod("removeAggregation", sAggregationName, oObject, bSuppressInvalidate);
 	};
 
 	SplitContainer.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate){
-		return this._callMethodInManagedObject("removeAllAggregation", sAggregationName, bSuppressInvalidate);
+		return this._callSuperMethod("removeAllAggregation", sAggregationName, bSuppressInvalidate);
 	};
 
 	SplitContainer.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate){
-		this._callMethodInManagedObject("destroyAggregation", sAggregationName, bSuppressInvalidate);
+		this._callSuperMethod("destroyAggregation", sAggregationName, bSuppressInvalidate);
 		return this;
 	};
 	/**************************************************************

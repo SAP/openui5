@@ -598,7 +598,7 @@ sap.ui.define([
 					oTabStrip.setSelectedItem(this._toTabStripItem(oSelectedItem));
 					this._rerenderContent(oSelectedItem.getContent());
 				}
-				TabContainer.prototype.setAssociation.call(this, "selectedItem", oSelectedItem, true); //render manually;
+				this.setAssociation("selectedItem", oSelectedItem, true); //render manually;
 				return this;
 			}
 			if (oEvent) {

@@ -5,7 +5,6 @@
 sap.ui.define([
 		'./library',
 		'sap/ui/core/Core',
-		'sap/ui/core/Control',
 		'sap/ui/core/Element',
 		'sap/ui/Device',
 		'./ListItemBase',
@@ -18,7 +17,6 @@ sap.ui.define([
 		'sap/ui/core/library'],
 	function (library,
 			  Core,
-			  Control,
 			  Element,
 			  Device,
 			  ListItemBase,

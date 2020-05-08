@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	'sap/ui/core/InvisibleMessage',
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Control",
 	'sap/ui/Device',
 	"sap/m/BadgeCustomData",
 	"sap/m/Button",
@@ -32,7 +31,6 @@ sap.ui.define([
 	IconPool,
 	InvisibleMessage,
 	InvisibleText,
-	Control,
 	Device,
 	BadgeCustomData,
 	Button,
@@ -337,7 +335,7 @@ sap.ui.define([
 				if (this.getProperty(sPropertyName) === oValue) {
 					return this;
 				}
-				Control.prototype.setProperty.call(this, sPropertyName, oValue, true);
+				Item.prototype.setProperty.call(this, sPropertyName, oValue, true);
 				if (!bSuppressInvalidate) {
 					var oIconTabHeader = this.getParent();
 					if (oIconTabHeader instanceof sap.m.IconTabHeader) {
@@ -346,7 +344,7 @@ sap.ui.define([
 				}
 				break;
 			default:
-				Control.prototype.setProperty.apply(this, arguments);
+				Item.prototype.setProperty.apply(this, arguments);
 				break;
 		}
 

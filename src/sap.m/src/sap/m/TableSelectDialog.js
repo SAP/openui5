@@ -908,10 +908,7 @@ sap.ui.define([
 	 * @param {string} sName The optional model name
 	 * @returns {sap.m.TableSelectDialog} This pointer for chaining
 	 */
-	TableSelectDialog.prototype._setModel = TableSelectDialog.prototype.setModel;
 	TableSelectDialog.prototype.setModel = function (oModel, sModelName) {
-		var aArgs = Array.prototype.slice.call(arguments);
-
 		// reset busy mode if model was changed
 		this._setBusy(false);
 		this._bInitBusy = false;
@@ -925,7 +922,7 @@ sap.ui.define([
 
 		// pass the model to the table and also to the local control to allow binding of own properties
 		this._oTable.setModel(oModel, sModelName);
-		TableSelectDialog.prototype._setModel.apply(this, aArgs);
+		Control.prototype.setModel.apply(this, arguments);
 
 		// clear the selection label when setting the model
 		this._updateSelectionIndicator();
@@ -941,13 +938,10 @@ sap.ui.define([
 	 * @param {string} [sModelName] The optional model name
 	 * @returns {sap.m.TableSelectDialog} <code>this</code> pointer for chaining
 	 */
-	TableSelectDialog.prototype._setBindingContext = TableSelectDialog.prototype.setBindingContext;
 	TableSelectDialog.prototype.setBindingContext = function (oContext, sModelName) {
-		var args = Array.prototype.slice.call(arguments);
-
 		// pass the model to the table and also to the local control to allow binding of own properties
 		this._oTable.setBindingContext(oContext, sModelName);
-		TableSelectDialog.prototype._setBindingContext.apply(this, args);
+		Control.prototype.setBindingContext.apply(this, arguments);
 
 		return this;
 	};

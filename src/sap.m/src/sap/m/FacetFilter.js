@@ -13,7 +13,6 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/IntervalTrigger',
 	'sap/ui/Device',
-	'sap/ui/base/ManagedObject',
 	'sap/ui/core/Icon',
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
@@ -54,7 +53,6 @@ sap.ui.define([
 		InvisibleText,
 		IntervalTrigger,
 		Device,
-		ManagedObject,
 		Icon,
 		Filter,
 		FilterOperator,
@@ -439,26 +437,13 @@ sap.ui.define([
 		}
 	}
 
-	/*
-	 * Removes the specified FacetFilterList by cleaning up facet buttons.
-	 * Removes facet icons for the given FacetFilterList.
-	 * @param {object} vObject List that is to be removed
-	 * @returns {sap.m.FacetFilterList} oList that is removed and passed to private method
-	 */
-	FacetFilter.prototype.removeList = function(vObject) {
-
-			var oList = ManagedObject.prototype.removeAggregation.call(this, "lists", vObject);
-			this._removeList(oList);
-			return oList;
-	};
-
 	/**
 	 * Removes the aggregation from the FacetFilterList.
 	 * @returns {sap.m.FacetFilterList} oList that is to be removed
 	 */
 	FacetFilter.prototype.removeAggregation = function() {
 
-		var oList = ManagedObject.prototype.removeAggregation.apply(this, arguments);
+		var oList = Control.prototype.removeAggregation.apply(this, arguments);
 		if (arguments[0] === "lists") {
 			this._removeList(oList);
 		}
@@ -1885,7 +1870,7 @@ sap.ui.define([
 		this._listAggrIndex = this.indexOfAggregation("lists", oList);
 		assert(this._listAggrIndex > -1, "The lists index should be valid.");
 		// Suppress invalidate when removing the list from the FacetFilter since this will cause the Popover to close
-		ManagedObject.prototype.removeAggregation.call(this, "lists", oList, true);
+		Control.prototype.removeAggregation.call(this, "lists", oList, true);
 		oContainer.addAggregation("content", oList, false);
 
 		// Make the FacetFilter available from the list even after it is moved. This is actually no longer

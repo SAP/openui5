@@ -166,7 +166,7 @@ sap.ui.define([
 	/**
 	 * A shorthand for calling Toolbar.prototype methods
 	 * @param {string} sFuncName - the name of the method
-	 * @param aArguments - the arguments to pass in the form of array
+	 * @param {any[]} aArguments - the arguments to pass in the form of array
 	 * @returns {*}
 	 * @private
 	 */

@@ -579,9 +579,8 @@ sap.ui.define([
 		return -1;
 	};
 
-	ResponsivePopover.prototype._oldSetProperty = ResponsivePopover.prototype.setProperty;
 	ResponsivePopover.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate){
-		this._oldSetProperty(sPropertyName, oValue, true);
+		Control.prototype.setProperty.call(this, sPropertyName, oValue, true);
 		var sSetterName = "set" + this._firstLetterUpperCase(sPropertyName);
 		if (this._aNotSupportedProperties.indexOf(sPropertyName) === -1 &&
 			sSetterName in this._oControl) {
@@ -590,10 +589,9 @@ sap.ui.define([
 		return this;
 	};
 
-	ResponsivePopover.prototype._oldSetModel = ResponsivePopover.prototype.setModel;
 	ResponsivePopover.prototype.setModel = function(oModel, sName){
 		this._oControl.setModel(oModel, sName);
-		return this._oldSetModel(oModel, sName);
+		return Control.prototype.setModel.call(this, oModel, sName);
 	};
 
 	/**

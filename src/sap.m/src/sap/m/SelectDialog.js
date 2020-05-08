@@ -896,10 +896,7 @@ function(
 	 * @param {string} sModelName the optional model name
 	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 */
-	SelectDialog.prototype._setModel = SelectDialog.prototype.setModel;
 	SelectDialog.prototype.setModel = function (oModel, sModelName) {
-		var aArgs = Array.prototype.slice.call(arguments);
-
 		// reset busy mode if model was changed
 		this._setBusy(false);
 		this._bInitBusy = false;
@@ -909,7 +906,7 @@ function(
 
 		// pass the model to the list and also to the local control to allow binding of own properties
 		this._oList.setModel(oModel, sModelName);
-		SelectDialog.prototype._setModel.apply(this, aArgs);
+		Control.prototype.setModel.apply(this, arguments);
 
 		// clear the selection label when setting the model
 		this._updateSelectionIndicator();
@@ -927,13 +924,10 @@ function(
 	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 */
 
-	SelectDialog.prototype._setBindingContext = SelectDialog.prototype.setBindingContext;
 	SelectDialog.prototype.setBindingContext = function (oContext, sModelName) {
-		var args = Array.prototype.slice.call(arguments);
-
 		// pass the model to the list and also to the local control to allow binding of own properties
 		this._oList.setBindingContext(oContext, sModelName);
-		SelectDialog.prototype._setBindingContext.apply(this, args);
+		Control.prototype.setBindingContext.apply(this, arguments);
 
 		return this;
 	};

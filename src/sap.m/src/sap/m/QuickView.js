@@ -453,22 +453,16 @@ sap.ui.define([
 
 	["setModel", "bindAggregation", "setAggregation", "insertAggregation", "addAggregation",
 		"removeAggregation", "removeAllAggregation", "destroyAggregation"].forEach(function (sFuncName) {
-			QuickView.prototype["_" + sFuncName + "Old"] = QuickView.prototype[sFuncName];
 			QuickView.prototype[sFuncName] = function () {
-				var newArgs = [],
-					result,
-					i;
-
-				for (i = 0; i < arguments.length; i++) {
-					newArgs.push(arguments[i]);
-				}
+				var newArgs = Array.prototype.slice.call(arguments),
+					result;
 
 				// suppress invalidation
 				if (["setModel", "bindAggregation"].indexOf(sFuncName) === -1) {
 					newArgs.push(true);
 				}
 
-				result = QuickView.prototype["_" + sFuncName + "Old"].apply(this, newArgs);
+				result = QuickViewBase.prototype[sFuncName].apply(this, newArgs);
 
 				// Marks items aggregation as changed and invalidate popover to trigger rendering
 				this._bItemsChanged = true;

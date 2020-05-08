@@ -671,9 +671,8 @@ sap.ui.define([
 
 	["setModel", "bindAggregation", "setAggregation", "insertAggregation", "addAggregation",
 		"removeAggregation", "removeAllAggregation", "destroyAggregation"].forEach(function (sFuncName) {
-			QuickViewPage.prototype["_" + sFuncName + "Old"] = QuickViewPage.prototype[sFuncName];
 			QuickViewPage.prototype[sFuncName] = function () {
-				var result = QuickViewPage.prototype["_" + sFuncName + "Old"].apply(this, arguments);
+				var result = Control.prototype[sFuncName].apply(this, arguments);
 
 				this._updatePage();
 
