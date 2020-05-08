@@ -11,7 +11,6 @@ sap.ui.getCore().loadLibrary("sap.ui.unified");
 sap.ui.define([
 	'sap/m/delegate/DateNavigation',
 	'sap/ui/core/Control',
-	'sap/ui/base/ManagedObject',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/unified/library',
 	'sap/ui/unified/calendar/CalendarUtils',
@@ -61,7 +60,6 @@ sap.ui.define([
 ], function(
 	DateNavigation,
 	Control,
-	ManagedObject,
 	ManagedObjectObserver,
 	unifiedLibrary,
 	CalendarUtils,
@@ -2694,7 +2692,7 @@ sap.ui.define([
 	}
 
 	PlanningCalendar.prototype._applyContextualSettings = function (oSettings) {
-		return Control.prototype._applyContextualSettings.call(this, oSettings || ManagedObject._defaultContextualSettings);
+		return Control.prototype._applyContextualSettings.call(this, oSettings);
 	};
 
 	function adaptCalHeaderForWeekNumbers(bShowWeekNumbers, bCurrentIntervalAllowsWeekNumbers) {

@@ -2648,11 +2648,11 @@ sap.ui.define([
 
 	/**
 	 * Applies new contextual settings to a managed object, and propagates them to its children
-	 * @param oContextualSettings
+	 * @param {object} [oContextualSettings={}]
 	 * @private
 	 */
 	ManagedObject.prototype._applyContextualSettings = function(oContextualSettings) {
-
+		oContextualSettings = oContextualSettings || ManagedObject._defaultContextualSettings;
 		if (this._oContextualSettings !== oContextualSettings) {
 			this._oContextualSettings = oContextualSettings;
 			this._propagateContextualSettings();

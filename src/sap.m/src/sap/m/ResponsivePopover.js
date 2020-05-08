@@ -10,7 +10,6 @@ sap.ui.define([
 	'./TitleAlignmentMixin',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
-	'sap/ui/base/ManagedObject',
 	'sap/ui/Device',
 	'./ResponsivePopoverRenderer',
 	'./Toolbar',
@@ -25,7 +24,6 @@ sap.ui.define([
 		TitleAlignmentMixin,
 		Control,
 		IconPool,
-		ManagedObject,
 		Device,
 		ResponsivePopoverRenderer,
 		Toolbar,
@@ -783,7 +781,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsivePopover.prototype._applyContextualSettings = function () {
-		ManagedObject.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
+		Control.prototype._applyContextualSettings.call(this);
 	};
 
 	return ResponsivePopover;
