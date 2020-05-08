@@ -1525,7 +1525,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("click on delete icon should not trigger Input.prototype.ontap", function(assert) {
-		var spy = sinon.spy(Input.prototype, "ontap"),
+		var oDeleteIcon,
+			spy = sinon.spy(Input.prototype, "ontap"),
 			token1 = new Token();
 
 		this.multiInput1.addToken(token1);
@@ -1535,7 +1536,8 @@ sap.ui.define([
 
 		sap.ui.getCore().applyChanges();
 
-		qutils.triggerEvent("tap", this.multiInput1.getTokens()[0]._deleteIcon.getDomRef());
+		oDeleteIcon = token1.getAggregation("deleteIcon");
+		qutils.triggerEvent("tap", oDeleteIcon.getDomRef());
 
 		// assert
 		assert.notOk(spy.called, "Input's ontap method is not called");
