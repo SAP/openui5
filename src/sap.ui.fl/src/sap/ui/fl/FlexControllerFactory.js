@@ -36,6 +36,10 @@ sap.ui.define([
 
 	FlexControllerFactory._instanceCache = {};
 
+	// in this object a promise is stored for every application component instance
+	// if the same instance is initialized twice the promise is replaced
+	FlexControllerFactory._componentInstantiationPromises = {};
+
 	/**
 	 * Creates or returns an instance of the FlexController
 	 *
@@ -139,16 +143,21 @@ sap.ui.define([
 		// if component's manifest is of type 'application' then only a flex controller and change persistence instances are created.
 		// if component's manifest is of type 'component' then no flex controller and change persistence instances are created. The variant model is fetched from the outer app component and applied on this component type.
 		if (Utils.isApplicationComponent(oComponent)) {
-			return FlexState.initialize({
-				componentId: vConfig.id || oComponent.getId(),
+			var sComponentId = vConfig.id || oComponent.getId();
+			FlexControllerFactory._componentInstantiationPromises[sComponentId] = FlexState.initialize({
+				componentId: sComponentId,
 				asyncHints: vConfig.asyncHints
-			})
-				.then(_propagateChangesForAppComponent.bind(this, oComponent));
+			}).then(_propagateChangesForAppComponent.bind(this, oComponent));
+			return FlexControllerFactory._componentInstantiationPromises[sComponentId];
 		} else if (Utils.isEmbeddedComponent(oComponent)) {
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
 			// Some embedded components might not have an app component, e.g. sap.ushell.plugins.rta, sap.ushell.plugins.rta-personalize
 			if (oAppComponent) {
-				return Promise.resolve().then(function() {
+				var oInitialPromise = Promise.resolve();
+				if (FlexControllerFactory._componentInstantiationPromises[oAppComponent.getId()]) {
+					oInitialPromise = FlexControllerFactory._componentInstantiationPromises[oAppComponent.getId()];
+				}
+				return oInitialPromise.then(function() {
 					var oExistingVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
 					if (!oExistingVariantModel) {
 						// If variant model is not present on the app component
