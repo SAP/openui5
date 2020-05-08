@@ -2,7 +2,7 @@
 		  xmlns="sap.uxap"
 		  xmlns:m="sap.m"
 		  xmlns:mvc="sap.ui.core.mvc"
-		  xmlns:custom="sap.ui.documentation.sdk.controls"
+		  xmlns:custom="sap.ui.documentation"
 		  xmlns:blocks="sap.ui.documentation.sdk.blocks"
 		  xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 	<ObjectPageLayout id="objectPage"

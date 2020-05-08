@@ -12,7 +12,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sdk
 	 */
-	return TreeItemBase.extend("sap.ui.documentation.sdk.controls.DemokitTreeItem", {
+	return TreeItemBase.extend("sap.ui.documentation.DemokitTreeItem", {
 		metadata : {
 			library: "sap.ui.documentation",
 			properties: {

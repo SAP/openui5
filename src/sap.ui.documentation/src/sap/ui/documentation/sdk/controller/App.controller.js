@@ -17,7 +17,7 @@ sap.ui.define([
     "sap/base/Log",
     "sap/base/util/Version",
 	"sap/ui/core/syncStyleClass",
-	"sap/ui/documentation/sdk/controls/WebPageTitleUtil",
+	"sap/ui/documentation/WebPageTitleUtil",
 	"sap/ui/core/Core"
 ], function(
     jQuery,

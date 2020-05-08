@@ -139,22 +139,6 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 
 /************************************************* Custom control styles *********************************************/
 
-/* Search */
-.sapUiDocumentationSearch {
-	display: flex;
-	justify-content: flex-end;
-}
-
-.sapUiDocumentationSearch .sapMSF {
-	width: auto;
-	flex-grow: 1;
-
-	max-width: 10%;
-	transition-delay: 0s;
-	transition-duration: 0.4s;
-	transition-property: max-width;
-	transition-timing-function: linear;
-}
 
 /* ActionButton */
 .sapUiDemokit .sapMBtn.actionButton {
@@ -209,20 +193,6 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 		line-height: 3.25rem;
 		font-size: 1.375rem;
 	}
-}
-
-/* TitleLink */
-.sapUiDemokit .sapUiDocTitleLink a {
-	font-size: inherit;
-}
-
-.sapUiDemokit .sapUiDocTitleLink.wrap a {
-	text-overflow: inherit;
-	white-space: inherit;
-}
-.sapUiDemokit .sapUiDocTitleLink.wrap {
-	white-space: normal;
-	text-overflow: inherit;
 }
 
 /********************************************* Header navigation on phone *********************************************/
@@ -1208,24 +1178,8 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitIni
 	background-color: #ffffff;
 }
 
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesColorPatternB {
-	background-color: #eff4f9;
-}
-
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesColorPatternBContrast {
-	background-color: #3F5161;
-}
-
 html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesColorPatternC {
 	background-color: #d5e2ef;
-}
-
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesColorPatternD {
-	background-color: #cadbeb;
-}
-
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesColorPatternE {
-	background-color: #bbd0e6;
 }
 
 html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiBlockLayout .sapUiBlockLayoutRow.sapUiBlockHorizontalCellsRow .sapUiBlockLayoutCell.demokitInitialPagesColorPatternFContrast {
@@ -1243,10 +1197,6 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitIni
 
 html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesWhiteText .sapMLnk:hover:not(.sapMLnkDsbl) {
 	color: #7ed0ff;
-}
-
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesBrightIcon {
-	color: #CAE4FB;
 }
 
 html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesBrightLink.sapMLnk,
@@ -1576,11 +1526,6 @@ html:not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_belize_hcb) .sapUiJSD a
 /* ==========================================================================
    DemoApps Page styles
   ========================================================================== */
-
-/* override header cell background color for non-accessibility themes */
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemoApps .headlineCell {
-	background-color: white !important;
-}
 
 /* override default styles for panel headers */
 .sapUiDemokit .sapUiDemoApps .headlineCell {
@@ -1932,303 +1877,6 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 .sapUiCustomTitleText .sapMLnk {
 	display: inline;
 }
-
-/*
- * Param Text custom control related CSS - Start
- */
-.sapUiDocLightTable .sapUiParamText.sapUiDocumentationParamBold {
-	font-weight: bold;
-	word-wrap: break-word;
-	white-space: initial;
-}
-
-.sapUiDocLightTable .sapUiParamText.sapUiDocumentationParamPhone {
-	font-weight: normal;
-}
-
-.sapUiParamText {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	font-size: 0.875rem;
-}
-
-.sapUiParamText.sapMLnk.depth-0 {
-	font-weight: normal;
-}
-
-.sapUiParamText .parameterDefault {
-	font-weight: normal;
-	padding-left: 0.3rem;
-}
-
-.sapUiParamText .deprecated {
-	font-weight: normal;
-	color: #bb0000;
-}
-
-.sapUiParamText .deprecated .deprecatedText {
-	vertical-align: top;
-	padding-left: 0.5rem;
-}
-
-.sapUiParamText .experimental {
-	font-weight: normal;
-	color: #e78c07;
-}
-
-.sapUiParamText .experimental .experimentalText {
-	vertical-align: top;
-	padding-left: 0.5rem;
-}
-
-html.sapUiMedia-Std-Phone .sapUiParamText,
-.sapUiParamText.depth-0 {
-	font-weight: bold;
-}
-
-/* 5 Depths are handled - if more than 5 levels should be displayed we should think of another approach */
-html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-1 {
-	padding-left: 2rem;
-}
-html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-2 {
-	padding-left: 4rem;
-}
-html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-3 {
-	padding-left: 6rem;
-}
-html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-4 {
-	padding-left: 8rem;
-}
-html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
-	padding-left: 10rem;
-}
-/*
- * Param Text custom control related CSS - End
- */
-
-/*
- * Start of DemokitLightTable CSS
- */
-
-/* Structure */
-.sapUiMedia-StdExt-Tablet .sapUiDocLightTable,
-.sapUiMedia-StdExt-Phone .sapUiDocLightTable {
-	display: flex;
-	flex-flow: row wrap;
-	width: 100%;
-}
-
-.sapUiMedia-StdExt-Tablet .sapUiDocLightTable .row,
-.sapUiMedia-StdExt-Tablet .sapUiDocLightTable .head,
-.sapUiMedia-StdExt-Phone .sapUiDocLightTable .row,
-.sapUiMedia-StdExt-Phone .sapUiDocLightTable .head {
-	display: flex;
-	flex-flow: row wrap;
-	flex: 1 100%;
-	width: calc(100% - 10px);
-}
-
-/* 5 columns */
-.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-5 .cell {
-	flex: 2 0;
-}
-.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-5 .cell:nth-child(4),
-.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-5 .cell:nth-child(3) {
-	flex: 1.5 0;
-}
-
-/* 4 columns */
-.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-4 .cell {
-	flex: 2 0;
-}
-.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-4 .cell:nth-child(3) {
-	flex: 1.5 0;
-}
-
-/* 3 columns */
-.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-3 .cell {
-	flex: 1 0;
-}
-
-/* 2 columns */
-.sapUiMedia-StdExt-Tablet .sapUiDocLightTable.columns-2 .cell {
-	flex: 1 0;
-}
-
-.sapUiMedia-StdExt-Phone .sapUiDocLightTable .head .cell:nth-child(1n + 2) {
-	display: none;
-}
-
-.sapUiMedia-StdExt-Phone .sapUiDocLightTable .row .cell {
-	flex: 1 100%;
-}
-
-.sapUiMedia-StdExt-Phone .sapUiDocLightTable:not(.columns-2) .cell .inTitle {
-	display: block;
-	font-size: 0.875rem;
-	color: #666666;
-}
-
-.sapUiMedia-StdExt-Tablet .sapUiDocLightTable .head .cell:last-child {
-	display: none;
-}
-
-.sapUiMedia-StdExt-Tablet .sapUiDocLightTable .row .cell:last-child {
-	flex: 1 100%;
-}
-
-/* Look */
-.sapUiMedia-Std-Desktop .sapUiDocLightTable {
-	display: table;
-	width: 100%;
-	border-collapse: collapse;
-}
-
-.sapUiMedia-Std-Desktop .sapUiDocLightTable .row,
-.sapUiMedia-Std-Desktop .sapUiDocLightTable .head {
-	display: table-row;
-}
-
-.sapUiMedia-Std-Desktop .sapUiDocLightTable .cell {
-	display: table-cell;
-}
-
-.sapUiMedia-Std-Desktop .sapUiDocLightTable.sapUiDocumentationParamsTable,
-.sapUiMedia-Std-Desktop .sapUiDocLightTable.columns-3,
-.sapUiMedia-Std-Desktop .sapUiDocLightTable.columns-2:not(.sapUiDocumentation2ColumnsEqualTable) {
-	table-layout: fixed;
-}
-
-.sapUiMedia-Std-Desktop .sapUiDocLightTable.sapUiDocumentationParamsTable .cell:last-child,
-.sapUiMedia-Std-Desktop .sapUiDocLightTable.sapUiDocumentation2ColumnsEqualTable .cell:last-child,
-.sapUiMedia-Std-Desktop .sapUiDocLightTable.sapUiDocumentationSpecialSettingsTable .cell:last-child {
-	width: 50%;
-}
-
-.sapUiMedia-Std-Desktop .sapUiDocLightTable.columns-2:not(.sapUiDocumentation2ColumnsEqualTable) .cell:last-child {
-	width: 70%
-}
-
-.sapUiDocLightTable .row .cell:last-child {
-	word-wrap: break-word;
-}
-
-.sapUiDocLightTable .head .cell,
-.sapUiDocLightTable .cell div {
-	line-height: 1.4rem;
-	font-size: 0.875rem;
-}
-
-.sapUiDocLightTable .inTitle {
-	display: none;
-}
-
-.sapUiDocLightTable .cell {
-	padding: 0.5rem;
-	vertical-align: top;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	min-width: 6rem;
-}
-
-.sapUiDocLightTable .cell:first-child,
-.sapUiMedia-StdExt-Phone .sapUiDocLightTable .cell,
-.sapUiMedia-StdExt-Tablet .sapUiDocLightTable .cell {
-	padding-left: 16px;
-}
-
-.sapUiDocLightTable .sapUiJSD p {
-    margin: 0;
-}
-
-.sapUiDocLightTable .head {
-	background-color: #e5e5e5;
-	border-bottom: solid 1px #e5e5e5;
-	border-left: solid 1px #e5e5e5;
-	border-right: solid 1px #e5e5e5;
-}
-
-.sapUiDocLightTable .row {
-	background-color: #ffffff;
-	border-bottom: solid 1px #e5e5e5;
-	border-left: solid 1px #e5e5e5;
-	border-right: solid 1px #e5e5e5;
-}
-
-.sapUiTheme-sap_belize_hcb .sapUiDocLightTable .head,
-.sapUiTheme-sap_belize_hcb .sapUiDocLightTable .row {
-	background-color: #000000;
-	border-bottom: solid 1px #ffffff;
-	border-left: solid 1px #ffffff;
-	border-right: solid 1px #ffffff;
-}
-
-.sapUiTheme-sap_belize_hcb .sapUiDocLightTable .head {
-	border-top: 1px solid #ffffff;
-	border-bottom: 0.125rem solid #ffffff;
-}
-
-.sapUiTheme-sap_belize_hcw .sapUiDocLightTable .head,
-.sapUiTheme-sap_belize_hcw .sapUiDocLightTable .row {
-	background-color: #ffffff;
-	border-bottom: solid 1px #000000;
-	border-left: solid 1px #000000;
-	border-right: solid 1px #000000;
-}
-
-.sapUiTheme-sap_belize_hcw .sapUiDocLightTable .head {
-	border-top: 1px solid #000000;
-	border-bottom: 0.125rem solid #000000;
-}
-
-/*
- * End of DemokitLightTable CSS
- */
-
-/*
-* Start of DemokitTreeItem CSS
-*/
-
-.sapDemokitTreeItem > .sapMLIBContent {
-	display: block;
-	overflow: hidden;
-	word-break: break-word;
-}
-
-.sapDemokitTreeItemTitle {
-	color: #fff;
-}
-
-.sapDemokitTreeItemLabel,
-.sapDemokitTreeItemTitle {
-	display: inline-block;
-}
-
-.sapDemokitTreeItemLabel {
-	font-size: 0.75rem;
-	color: #d3d7d9;
-}
-
-.sapUiTheme-sap_belize_hcw .sapDemokitTreeItemLabel {
-	color: #000;
-}
-
-.sapUiTheme-sap_belize_hcb .sapDemokitTreeItemLabel {
-	color: #fff;
-}
-
-.sapUiTheme-sap_fiori_3_hcw .sapDemokitTreeItemTitle {
-	color: #000000;
-}
-
-.sapUiTheme-sap_belize_hcw .sapDemokitTreeItemTitle {
-	color: #000000;
-}
-
-/*
-* End of DemokitTreeItem CSS
-*/
 
 /* Special list */
 .specialListsMessageStrip {

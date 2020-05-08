@@ -15,7 +15,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sdk
 	 */
-	var ParamText = Control.extend("sap.ui.documentation.sdk.controls.ParamText", {
+	var ParamText = Control.extend("sap.ui.documentation.ParamText", {
 		metadata: {
 			library: "sap.ui.documentation",
 			properties: {

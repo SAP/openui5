@@ -14,7 +14,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sdk
 	 */
-	return Control.extend("sap.ui.documentation.sdk.controls.JSDocText", {
+	return Control.extend("sap.ui.documentation.JSDocText", {
 		metadata: {
 			library: "sap.ui.documentation",
 			properties: {
