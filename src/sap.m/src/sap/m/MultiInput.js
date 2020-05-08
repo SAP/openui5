@@ -549,6 +549,13 @@ function(
 		// the method is left for backwards compatibility
 	};
 
+	MultiInput.prototype.showItems = function () {
+		Input.prototype.showItems.apply(this, arguments);
+
+		// All items list should always be visible when calling showItems
+		this._manageListsVisibility(false);
+	};
+
 	/**
 	 * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
 	 * @returns {sap.ui.core.ScrollEnablement} The scroll delegate
