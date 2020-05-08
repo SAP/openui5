@@ -748,9 +748,11 @@ sap.ui.define([
 		 * Creates an instance of {@link sap.ui.core.Icon} if the given URI is an icon URI, otherwise the given constructor is called.
 		 * The given URI is set to the src property of the control.
 		 *
-		 * @param {string|object} setting contains the properties which will be used to instantiate the returned control. It should contain at least a property named src. If it's given with a string type, it will be taken as the value of src property.
-		 * @param {function} constructor the constructor function which is called when the given URI isn't an icon URI
-		 * @return {sap.ui.core.Control} either an instance of sap.ui.core.Icon or instance created by calling the given constructor
+		 * @param {string|object} setting Contains the properties which will be used to instantiate the returned control.
+		 *  All properties of the associated constructor can be used. Unknown properties are ignored.
+		 *  It should contain at least a property named src. If it's given with a string type, it will be taken as the value of src property.
+		 * @param {function} constructor The constructor function which is called when the given URI isn't an icon URI
+		 * @return {sap.ui.core.Control} Either an instance of sap.ui.core.Icon or instance created by calling the given constructor
 		 * @static
 		 * @public
 		 */
