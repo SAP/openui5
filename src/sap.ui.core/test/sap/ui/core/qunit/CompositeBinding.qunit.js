@@ -248,6 +248,51 @@ sap.ui.define([
 		this.composite.resume();
 	});
 
+[{
+	aModels : [{}, null /*static binding*/],
+	bMultipleModels : false
+}, {
+	aModels : [null /*static binding*/, {}],
+	bMultipleModels : false
+}, {
+	aModels : [{}, {}], // two different models
+	bMultipleModels : true
+}, {
+	aModels : [{}], // same model
+	bMultipleModels : false
+}].forEach(function (oFixture, i) {
+	QUnit.test("Constructor, bMultipleModels, # " + i, function (assert) {
+		var aBinding0 = {getModel : function () {}},
+			aBinding1 = {getModel : function () {}},
+			aModels = oFixture.aModels;
+
+		this.mock(aBinding0).expects("getModel").withExactArgs().returns(aModels[0]);
+		this.mock(aBinding1).expects("getModel").withExactArgs()
+			.returns(aModels[aModels.length === 1 ? 0 : 1]);
+
+		// code under test
+		assert.strictEqual(new CompositeBinding([aBinding0, aBinding1]).bMultipleModels,
+			oFixture.bMultipleModels);
+	});
+});
+
+	QUnit.test("CheckUpdate, multiple models: Model is destroyed ", function(assert) {
+		var oBinding0 = {getModel : function () {}},
+			oBinding1 = {getModel : function () {}},
+			oBinding2 = {getModel : function () {}},
+			oCompositeBinding = {
+				aBindings : [oBinding0, oBinding1, oBinding2],
+				bMultipleModels : true
+			};
+
+		this.mock(oBinding0).expects("getModel").withExactArgs().returns({bDestroyed : false});
+		this.mock(oBinding1).expects("getModel").withExactArgs().returns(null); // static binding
+		this.mock(oBinding2).expects("getModel").withExactArgs().returns({bDestroyed : true});
+
+		// code under test
+		CompositeBinding.prototype.checkUpdate.call(oCompositeBinding);
+	});
+
 	QUnit.module("sap.ui.model.CompositeBinding: With inner types/formatters", {
 		beforeEach: function() {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
