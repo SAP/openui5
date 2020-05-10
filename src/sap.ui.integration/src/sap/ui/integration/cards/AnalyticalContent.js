@@ -75,6 +75,9 @@ sap.ui.define([
 	 * @alias sap.ui.integration.cards.AnalyticalContent
 	 */
 	var AnalyticalContent = BaseContent.extend("sap.ui.integration.cards.AnalyticalContent", {
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: AnalyticalContentRenderer
 	});
 

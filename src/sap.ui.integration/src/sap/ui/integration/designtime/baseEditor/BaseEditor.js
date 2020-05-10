@@ -134,6 +134,7 @@ sap.ui.define([
 	 */
 	var BaseEditor = Control.extend("sap.ui.integration.designtime.baseEditor.BaseEditor", {
 		metadata: {
+			library: "sap.ui.integration",
 			properties: {
 				/**
 				 * JSON to be changed in the editor. Note: If an object is passed as a parameter, it won't be mutated. <code>.getJson()</code> or

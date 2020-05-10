@@ -54,7 +54,9 @@ sap.ui.define([
 	 */
 	var HandlebarsTemplate = Template.extend("sap.ui.core.tmpl.HandlebarsTemplate", /** @lends sap.ui.core.tmpl.HandlebarsTemplate.prototype */
 	{
-
+		metadata: {
+			library: "sap.ui.core"
+		},
 		constructor : function(sId, mSettings) {
 			Template.apply(this, arguments);
 		}

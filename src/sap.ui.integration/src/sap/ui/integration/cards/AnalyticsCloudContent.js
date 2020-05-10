@@ -40,6 +40,9 @@ sap.ui.define([
 	 * @alias sap.ui.integration.cards.AnalyticsCloudContent
 	 */
 	var AnalyticsCloudContent = BaseContent.extend("sap.ui.integration.cards.AnalyticsCloudContent", {
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: AnalyticsCloudContentRenderer
 	});
 

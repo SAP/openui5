@@ -45,9 +45,6 @@ sap.ui.define([
 	 * @alias sap.ui.integration.util.ContentFactory
 	 */
 	var ContentFactory = BaseObject.extend("sap.ui.integration.util.ContentFactory", {
-		metadata: {
-			library: "sap.ui.integration"
-		},
 		constructor: function (oCard) {
 			BaseObject.call(this);
 

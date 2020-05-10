@@ -44,9 +44,6 @@ sap.ui.define([
 	 * @alias sap.ui.integration.util.ServiceManager
 	 */
 	var ServiceManager = EventProvider.extend("sap.ui.integration.util.ServiceManager", {
-		metadata: {
-			library: "sap.ui.integration"
-		},
 		constructor: function (mServiceFactoryReferences, oServiceContext) {
 			if (!mServiceFactoryReferences) {
 				throw new Error("Missing manifest services reference!");

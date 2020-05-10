@@ -39,6 +39,9 @@ function(
 	 * @experimental Since 1.48. This class is experimental. API might be changed in future.
 	 */
 	var Fiori = Adaptation.extend("sap.ui.rta.toolbar.Fiori", {
+		metadata: {
+			library: "sap.ui.rta"
+		},
 		renderer: 'sap.ui.rta.toolbar.AdaptationRenderer',
 		type: 'fiori'
 	});

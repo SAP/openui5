@@ -96,9 +96,13 @@ sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log", "
 		"sap.ui.core.util.Export",
 		"sap.ui.documentation.BorrowedList",
 		"sap.ui.documentation.LightTable",
+		"sap.ui.integration.cards.AnalyticalContent", // requires an associated card instance in onAfterRendering
+		"sap.ui.integration.cards.AnalyticsCloudContent", // requires an associated card instance in onAfterRendering
+		"sap.ui.integration.cards.CalendarContent", // requires a model in onBeforeRendering
 		"sap.ui.layout.BlockLayoutRow",
 		"sap.ui.layout.form.ResponsiveGridLayoutPanel", // control not for stand alone usage. Only inside ResponsiveGridLayout
 		"sap.ui.layout.form.ResponsiveLayoutPanel", // control not for stand alone usage. Only inside ResponsiveLayout
+		"sap.ui.mdc.chart.ChartTypeButton", // requires a chart
 		"sap.ui.richtexteditor.RichTextEditor",
 		"sap.ui.richtexteditor.ToolbarWrapper",
 		"sap.ui.rta.AddElementsDialog",

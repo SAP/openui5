@@ -42,6 +42,7 @@ sap.ui.define([
 	 */
 	var PropertyEditor = Control.extend("sap.ui.integration.designtime.baseEditor.PropertyEditor", {
 		metadata: {
+			library: "sap.ui.integration",
 			interfaces : ["sap.ui.core.IFormContent"],
 			properties: {
 				/**

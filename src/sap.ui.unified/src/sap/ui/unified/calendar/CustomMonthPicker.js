@@ -26,6 +26,9 @@ sap.ui.define([
 	CustomMonthPickerRenderer.apiVersion = 2;
 
 	var CustomMonthPicker = Calendar.extend("sap.ui.unified.internal.CustomMonthPicker", {
+		metadata: {
+			library: "sap.ui.unified"
+		},
 		renderer: CustomMonthPickerRenderer
 	});
 

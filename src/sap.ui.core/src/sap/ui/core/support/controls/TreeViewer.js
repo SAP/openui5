@@ -8,6 +8,9 @@ sap.ui.define([
 function(ManagedObject, encodeXML) {
 	'use strict';
 	var TreeViewer = ManagedObject.extend("sap.ui.core.support.controls.TreeViewer", {
+		metadata: {
+			library: "sap.ui.core"
+		},
 		constructor: function() {
 			ManagedObject.apply(this, arguments);
 			this._oRenderParent = null;

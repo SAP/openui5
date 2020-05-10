@@ -30,6 +30,9 @@ sap.ui.define([
 	 */
 	var JsonEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.jsonEditor.JsonEditor", {
 		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.jsonEditor.JsonEditor",
+		metadata: {
+			library: "sap.ui.integration"
+		},
 
 		_onLiveChange: function() {
 			var oInput = this.getContent();

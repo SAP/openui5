@@ -50,6 +50,7 @@ sap.ui.define([
 	 * @alias sap.ui.table.plugins.MultiSelectionPlugin
 	 */
 	var MultiSelectionPlugin = SelectionPlugin.extend("sap.ui.table.plugins.MultiSelectionPlugin", {metadata : {
+		library: "sap.ui.table",
 		properties : {
 			/**
 			 * Number of indices which can be selected in a range.

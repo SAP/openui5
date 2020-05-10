@@ -46,6 +46,9 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var DestinationsEditor = ComplexMapEditor.extend("sap.ui.integration.designtime.cardEditor.propertyEditor.destinationsEditor.DestinationsEditor", {
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 

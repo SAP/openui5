@@ -30,6 +30,9 @@ sap.ui.define([
 	 */
 	var IntegerEditor = NumberEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.integerEditor.IntegerEditor", {
 		invalidInputError: "BASE_EDITOR.INTEGER.INVALID_BINDING_OR_INTEGER",
+		metadata: {
+			library: "sap.ui.integration"
+		},
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 

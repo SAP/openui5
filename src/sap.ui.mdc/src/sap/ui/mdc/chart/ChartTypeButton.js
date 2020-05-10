@@ -9,6 +9,9 @@ sap.ui.define([
 	var ResponsivePopover, List, Bar, SearchField, StandardListItem, InvisibleText, Device, oRb;
 
 	var ChartTypeButton = Button.extend("sap.ui.mdc.chart.ChartTypeButton", {
+		metadata: {
+			library: "sap.ui.mdc"
+		},
 		constructor: function(oChart) {
 			this.oChartModel = oChart.getManagedObjectModel();
 			var mSettings = {

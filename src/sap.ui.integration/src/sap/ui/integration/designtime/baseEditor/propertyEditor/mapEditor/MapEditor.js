@@ -95,6 +95,9 @@ sap.ui.define([
 	 */
 	var MapEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.mapEditor.MapEditor", {
 		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.mapEditor.MapEditor",
+		metadata: {
+			library: "sap.ui.integration"
+		},
 
 		init: function() {
 			BasePropertyEditor.prototype.init.apply(this, arguments);

@@ -41,6 +41,7 @@ sap.ui.define([
 	 */
 	var CardEditor = BaseEditor.extend("sap.ui.integration.designtime.cardEditor.CardEditor", {
 		metadata: {
+			library: "sap.ui.integration",
 			properties: {
 				layout: {
 					type: "string",

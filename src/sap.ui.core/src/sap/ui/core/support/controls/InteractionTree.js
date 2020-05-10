@@ -35,7 +35,10 @@ sap.ui.define([
        var PlacementType = mobileLibrary.PlacementType;
 
        var InteractionTree = ManagedObject.extend("sap.ui.core.support.controls.InteractionTree", {
-          constructor: function () {
+         metadata: {
+           library: "sap.ui.core"
+         },
+         constructor: function () {
              this.start = 0;
              this.end = 1;
           }

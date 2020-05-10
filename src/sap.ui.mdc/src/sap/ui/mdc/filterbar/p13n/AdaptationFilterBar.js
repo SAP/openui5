@@ -22,6 +22,7 @@ sap.ui.define([
 	 */
 	var AdaptationFilterBar = FilterBarBase.extend("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar", {
 		metadata: {
+			library: "sap.ui.mdc",
 			properties: {
 				/**
 				 * Determines the parent on which the condition changes should be applied on.

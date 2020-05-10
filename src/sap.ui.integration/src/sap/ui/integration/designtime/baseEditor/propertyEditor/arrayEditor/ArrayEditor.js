@@ -89,6 +89,7 @@ sap.ui.define([
 	var ArrayEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.arrayEditor.ArrayEditor", {
 		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.arrayEditor.ArrayEditor",
 		metadata: {
+			library: "sap.ui.integration",
 			properties: {
 				value: {
 					type: "any"

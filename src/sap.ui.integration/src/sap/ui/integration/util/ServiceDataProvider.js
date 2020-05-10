@@ -24,6 +24,7 @@ sap.ui.define(["sap/ui/integration/util/DataProvider"], function (DataProvider) 
 	 */
 	var ServiceDataProvider = DataProvider.extend("sap.ui.integration.util.ServiceDataProvider", {
 		metadata: {
+			library: "sap.ui.integration",
 			interfaces: ["sap.ui.integration.util.IServiceDataProvider"]
 		}
 	});

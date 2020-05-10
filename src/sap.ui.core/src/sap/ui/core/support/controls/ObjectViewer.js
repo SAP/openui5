@@ -9,6 +9,9 @@ sap.ui.define([
 function(ManagedObject, encodeXML) {
 	'use strict';
 	var ObjectViewer = ManagedObject.extend("sap.ui.core.support.controls.ObjectViewer", {
+		metadata: {
+			library: "sap.ui.core"
+		},
 		constructor: function() {
 			ManagedObject.apply(this, arguments);
 			this._oRenderParent = null;

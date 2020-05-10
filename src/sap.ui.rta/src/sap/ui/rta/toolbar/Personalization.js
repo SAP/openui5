@@ -32,6 +32,7 @@ function(
 		renderer: 'sap.ui.rta.toolbar.BaseRenderer',
 		type: 'personalization',
 		metadata: {
+			library: "sap.ui.rta",
 			events: {
 				/**
 				 * Events are fired when the Toolbar - Buttons are pressed

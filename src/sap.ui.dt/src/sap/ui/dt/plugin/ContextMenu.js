@@ -41,6 +41,7 @@ sap.ui.define([
 	 */
 	var ContextMenu = Plugin.extend("sap.ui.dt.plugin.ContextMenu", /** @lends sap.ui.rta.plugin.ContextMenu.prototype */ {
 		metadata: {
+			library: "sap.ui.dt",
 			properties: {
 				contextElement: {
 					type: "object"

@@ -133,6 +133,9 @@ sap.ui.define([
 
 	//Private extension of the ListBox control
 	ListBox.extend("sap.ui.ux3.ExactList.LB", {
+		metadata: {
+			library: "sap.ui.ux3"
+		},
 		init : function() {
 			ListBox.prototype.init.apply(this, arguments);
 			this.setAllowMultiSelect(true);

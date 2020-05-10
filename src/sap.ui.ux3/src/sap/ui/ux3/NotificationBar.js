@@ -184,6 +184,7 @@ sap.ui.define([
 		},
 
 		metadata : {
+			library: "sap.ui.ux3",
 			properties : {
 				"title" : "string",
 				"visibleItems" : "int",
@@ -288,6 +289,7 @@ sap.ui.define([
 	 */
 	Control.extend("sap.ui.ux3.NotificationBar.MessageView", {
 		metadata : {
+			library: "sap.ui.ux3",
 			properties : {
 				"text" : "string",
 				"timestamp" : "string",

@@ -28,9 +28,8 @@ sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
 	BaseContentRenderer.render = function (oRm, oCardContent) {
 		// Add class the simple way. Add renderer hooks only if needed.
 		var sClass = "sapFCard",
-			sLibrary = oCardContent.getMetadata().getLibraryName(),
 			sName = oCardContent.getMetadata().getName(),
-			sType = sName.slice(sLibrary.length + 1, sName.length),
+			sType = sName.slice(sName.lastIndexOf(".") + 1),
 			oCard = oCardContent.getParent(),
 			bIsCardValid = oCard && oCard.isA("sap.f.ICard");
 

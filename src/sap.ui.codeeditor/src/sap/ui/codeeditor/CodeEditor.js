@@ -71,7 +71,7 @@ sap.ui.define([
 	 */
 	var CodeEditor = Control.extend("sap.ui.codeeditor.CodeEditor", {
 		metadata: {
-			library: "sap.ui.core",
+			library: "sap.ui.codeeditor",
 			properties: {
 				/**
 				 * The value displayed in the code editor

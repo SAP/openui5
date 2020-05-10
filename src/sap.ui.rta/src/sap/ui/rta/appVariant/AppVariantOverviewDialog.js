@@ -22,6 +22,7 @@ sap.ui.define([
 
 	var AppVariantOverviewDialog = Dialog.extend("sap.ui.rta.appVariant.AppVariantOverviewDialog", {
 		metadata : {
+			library: "sap.ui.rta",
 			properties: {
 				idRunningApp : "string",
 				isOverviewForKeyUser: {

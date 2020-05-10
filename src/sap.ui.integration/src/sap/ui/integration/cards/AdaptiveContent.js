@@ -53,6 +53,9 @@ sap.ui.define([
 		 * @alias sap.ui.integration.cards.AdaptiveContent
 		 */
 		var AdaptiveContent = BaseContent.extend("sap.ui.integration.cards.AdaptiveContent", {
+			metadata: {
+				library: "sap.ui.integration"
+			},
 			renderer: {
 				apiVersion: 2,
 				render: function (oRm, oControl) {

@@ -40,6 +40,7 @@ sap.ui.define([
 	 */
 	var BaseContent = Control.extend("sap.ui.integration.cards.BaseContent", {
 		metadata: {
+			library: "sap.ui.integration",
 			aggregations: {
 
 				/**

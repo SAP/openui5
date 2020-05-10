@@ -10,6 +10,9 @@ sap.ui.define([
 	"use strict";
 
 	var MutationObserver = ManagedObject.extend("sap.ui.testrecorder.mutationObservers.MutationObserver", {
+		metadata: {
+			library: "sap.ui.testrecorder"
+		},
 		constructor: function (fnCallback) {
 			this._fnObservationCb = fnCallback;
 			this._observer = new window.MutationObserver(this._onObservation.bind(this));
