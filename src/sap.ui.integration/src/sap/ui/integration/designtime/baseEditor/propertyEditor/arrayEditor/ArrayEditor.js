@@ -10,7 +10,9 @@ sap.ui.define([
 	"sap/base/util/restricted/_merge",
 	"sap/ui/integration/designtime/baseEditor/util/binding/resolveBinding",
 	"sap/ui/integration/designtime/baseEditor/util/unset",
-	"sap/base/strings/formatMessage"
+	"sap/ui/integration/designtime/baseEditor/util/isNil",
+	"sap/base/strings/formatMessage",
+	"sap/base/util/isEmptyObject"
 ], function (
 	BasePropertyEditor,
 	deepClone,
@@ -20,7 +22,9 @@ sap.ui.define([
 	_merge,
 	resolveBinding,
 	unset,
-	formatMessage
+	isNil,
+	formatMessage,
+	isEmptyObject
 ) {
 	"use strict";
 
@@ -229,6 +233,15 @@ sap.ui.define([
 		}
 
 		this.setValue(aEditorValue);
+	};
+
+	ArrayEditor.prototype._isNewItem = function (mArrayItem) {
+		return (mArrayItem && mArrayItem.properties || []).every(function (oArrayItemProperty) {
+			var vValue = oArrayItemProperty.value;
+			return isNil(vValue)
+				|| Array.isArray(vValue) && vValue.length === 0
+				|| isEmptyObject(vValue);
+		});
 	};
 
 	ArrayEditor.prototype.formatAddItemText = function(sAddText, sItemLabel, sFallbackItemLabel) {
