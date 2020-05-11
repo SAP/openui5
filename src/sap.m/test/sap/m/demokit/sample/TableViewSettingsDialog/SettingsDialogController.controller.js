@@ -149,7 +149,9 @@ sap.ui.define([
 		},
 
 		onToggleContextMenu: function (oEvent) {
+			var oToggleButton = oEvent.getSource();
 			if (oEvent.getParameter("pressed")) {
+				oToggleButton.setTooltip("Disable Custom Context Menu");
 				this.byId("idProductsTable").setContextMenu(new Menu({
 					items: [
 						new MenuItem({text: "{Name}"}),
@@ -157,6 +159,7 @@ sap.ui.define([
 					]
 				}));
 			} else {
+				oToggleButton.setTooltip("Enable Custom Context Menu");
 				this.byId("idProductsTable").destroyContextMenu();
 			}
 		}
