@@ -312,14 +312,14 @@ sap.ui.define([
 		if (!this._oInvisibleText) {
 			this._oInvisibleText = new InvisibleText({
 				text: sText
-			});
+			}).toStatic();
 		} else {
 			this._oInvisibleText.setText(sText);
 		}
 
 		if (oCloseButton) {
 			oCloseButton.removeAllAriaLabelledBy();
-			oCloseButton.addAriaLabelledBy(this._oInvisibleText.toStatic().getId());
+			oCloseButton.addAriaLabelledBy(this._oInvisibleText.getId());
 		}
 	};
 
