@@ -61,6 +61,8 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/Device"],
 		DynamicSideContentRenderer._renderMainContent = function(oRm, oSideControl, iSideContentId, bShouldSetHeight) {
 			oRm.write("<div id='" + iSideContentId + "-MCGridCell'");
 
+			oRm.class("sapUiDSCM");
+
 			if (oSideControl._iMcSpan) {
 				oRm.addClass("sapUiDSCSpan" + oSideControl._iMcSpan);
 				oRm.writeClasses();
@@ -80,6 +82,8 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/Device"],
 			var sSideContentTag = Device.browser.firefox ? "div" : "aside";
 
 			oRm.write("<" + sSideContentTag + " id='" + iSideContentId + "-SCGridCell'");
+
+			oRm.class("sapUiDSCS");
 
 			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
 			oRm.writeAttribute("aria-label", oMessageBundle.getText(SIDE_CONTENT_LABEL));

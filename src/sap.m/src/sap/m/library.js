@@ -3915,7 +3915,7 @@ sap.ui.define([
 		/*eslint-disable no-cond-assign */
 		for (var parent = oControl; parent = doGetParent(parent);) {
 			if (parent && typeof parent.getScrollDelegate == "function") {
-				return parent.getScrollDelegate();
+				return parent.getScrollDelegate(oControl);
 			}
 		}
 		/*eslint-enable no-cond-assign */
