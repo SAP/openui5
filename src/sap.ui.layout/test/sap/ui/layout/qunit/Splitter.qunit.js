@@ -1,5 +1,4 @@
 /*global QUnit sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	'sap/ui/layout/Splitter',
 	'sap/ui/layout/SplitterLayoutData',
@@ -40,11 +39,9 @@ sap.ui.define([
 		return oContent;
 	}
 
-
 	var oSplitter = new Splitter("mySplitter0", {
 		contentAreas: [createExampleContent("100px"), createExampleContent("200px"), createExampleContent("300px")]
 	});
-
 
 	var iResizes = 0;
 	var fnResize = function (oEvent) {
@@ -72,7 +69,6 @@ sap.ui.define([
 		oSplitter.getContentAreas()[2].getLayoutData().setSize("300px");
 		var oDelegate = {
 			onAfterRendering: function () {
-				var aAreas = oSplitter.getContentAreas();
 				var aSizes = oSplitter.getCalculatedSizes();
 
 				assert.ok(aSizes[0] === 100, "Content size #1 is correct.");
@@ -93,7 +89,6 @@ sap.ui.define([
 		oSplitter.getContentAreas()[2].getLayoutData().setSize("300px");
 		var oDelegate = {
 			onAfterRendering: function () {
-				var aAreas = oSplitter.getContentAreas();
 				var aSizes = oSplitter.getCalculatedSizes();
 
 				assert.ok(aSizes[0] === 100, "Content size #1 is correct.");
@@ -148,7 +143,7 @@ sap.ui.define([
 
 	QUnit.test("Should calculate properly percentage containers", function (assert) {
 		// Arrange
-		var i, oCurContainer,
+		var oCurContainer,
 			aSizes = [],
 			aWidths = [];
 
@@ -218,7 +213,6 @@ sap.ui.define([
 		oSplitter.getContentAreas()[2].getLayoutData().setSize("auto");
 		var oDelegate = {
 			onAfterRendering: function () {
-				var aAreas = oSplitter.getContentAreas();
 				var aSizes = oSplitter.getCalculatedSizes();
 
 				// Sizes should be about the same (rounding errors should be within 2px)
@@ -239,7 +233,6 @@ sap.ui.define([
 		oSplitter.getContentAreas()[2].getLayoutData().setSize("auto");
 		var oDelegate = {
 			onAfterRendering: function () {
-				var aAreas = oSplitter.getContentAreas();
 				var aSizes = oSplitter.getCalculatedSizes();
 				// Sizes should be about the same (rounding errors should be within 1px)
 				assert.ok(aSizes[0] >= aSizes[1] - 2 && aSizes[0] <= aSizes[1] + 2, "Content size #1 is correct.");
@@ -262,7 +255,6 @@ sap.ui.define([
 		oSplitter.getContentAreas()[2].getLayoutData().setSize("10px");
 		var oDelegate = {
 			onAfterRendering: function () {
-				var aAreas = oSplitter.getContentAreas();
 				var aSizes = oSplitter.getCalculatedSizes();
 
 				// Fixed sizes should be exact
@@ -288,7 +280,6 @@ sap.ui.define([
 		oSplitter.getContentAreas()[2].getLayoutData().setSize("10px");
 		var oDelegate = {
 			onAfterRendering: function () {
-				var aAreas = oSplitter.getContentAreas();
 				var aSizes = oSplitter.getCalculatedSizes();
 
 				// Fixed sizes should be exact
@@ -420,15 +411,10 @@ sap.ui.define([
 			}),
 			addedItem = new Button();
 		oSplitter.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-
 		oSplitter.addContentArea(addedItem);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(oSplitter.getContentAreas());
-		assert.strictEqual(oSplitter.getContentAreas().length, 3, "Has 3 content areas");
-		assert.strictEqual(oSplitter.getContentAreas()[2], addedItem, "Added an item at the end");
+		assert.strictEqual(oSplitter.$().children(".sapUiLoSplitterContent").length, 3, "Has 3 content areas rendered");
 
 		oSplitter.destroy();
 	});
@@ -442,15 +428,10 @@ sap.ui.define([
 			}),
 			addedItem = new Button();
 		oSplitter.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-
 		oSplitter.insertContentArea(addedItem, 1);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(oSplitter.getContentAreas());
-		assert.strictEqual(oSplitter.getContentAreas().length, 3, "Has 3 content areas");
-		assert.strictEqual(oSplitter.getContentAreas()[1], addedItem, "Added an item at the proper index");
+		assert.strictEqual(oSplitter.$().children(".sapUiLoSplitterContent").length, 3, "Has 3 content areas");
 
 		oSplitter.destroy();
 	});
@@ -463,67 +444,10 @@ sap.ui.define([
 				]
 			});
 		oSplitter.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		assert.ok(oSplitter.getContentAreas());
-		assert.strictEqual(oSplitter.getContentAreas().length, 1, "Has 1 content areas");
-
-
 		oSplitter.removeContentArea(addedItem);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(oSplitter.getContentAreas());
-		assert.strictEqual(oSplitter.getContentAreas().length, 0, "Has 3 content areas");
-
-		oSplitter.destroy();
-	});
-
-	QUnit.test("removeAllContentArea", function (assert) {
-		var oSplitter = new Splitter({
-			contentAreas: [
-				new Button(),
-				new Button(),
-				new Button(),
-				new Button(),
-				new Button()
-			]
-		});
-		oSplitter.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		assert.ok(oSplitter.getContentAreas());
-		assert.strictEqual(oSplitter.getContentAreas().length, 5, "Has 5 content areas");
-
-
-		oSplitter.removeAllContentArea();
-		sap.ui.getCore().applyChanges();
-
-		assert.ok(oSplitter.getContentAreas());
-		assert.strictEqual(oSplitter.getContentAreas().length, 0, "Has 0 content areas");
-
-		oSplitter.destroy();
-	});
-
-	QUnit.test("destroyContentArea", function (assert) {
-		var oBtn = new Button(),
-			oSplitter = new Splitter({
-				contentAreas: [
-					oBtn
-				]
-			});
-		oSplitter.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		assert.ok(oSplitter.getContentAreas());
-		assert.strictEqual(oSplitter.getContentAreas().length, 1, "Has 1 content areas");
-
-
-		oSplitter.destroyContentArea();
-		sap.ui.getCore().applyChanges();
-
-		assert.ok(oSplitter.getContentAreas());
-		assert.strictEqual(oSplitter.getContentAreas().length, 0, "Has 0 content areas");
-		assert.ok(oBtn.bIsDestroyed, "Content inside has been destroyed");
+		assert.strictEqual(oSplitter.$().children(".sapUiLoSplitterContent").length, 0, "Has 0 content areas");
 
 		oSplitter.destroy();
 	});

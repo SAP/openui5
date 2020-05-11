@@ -1,18 +1,23 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/core/library"],
-	function(coreLibrary) {
+sap.ui.define([
+	"sap/ui/core/library",
+	"sap/ui/core/Core"
+], function(coreLibrary, Core) {
 	"use strict";
 
 	// shortcut for sap.ui.core.Orientation
 	var Orientation = coreLibrary.Orientation;
+
+	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.layout");
 
 	/**
 	 * Splitter renderer.
 	 * @namespace
 	 */
 	var SplitterRenderer = {
+		apiVersion: 2
 	};
 
 	/**
@@ -20,91 +25,103 @@ sap.ui.define(["sap/ui/core/library"],
 	 * hidden area inside the splitter. The content of that hidden area is shown after rendering to
 	 * avoid flickering.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.layout.Splitter} oSplitter An instance of Splitter, which will be rendered
 	 */
-	SplitterRenderer.render = function(oRm, oControl){
-		var bHorizontal       = oControl.getOrientation() === Orientation.Horizontal;
-		var sOrientationClass = bHorizontal ? "sapUiLoSplitterH" : "sapUiLoSplitterV";
-		var bAnimate          = sap.ui.getCore().getConfiguration().getAnimation();
-
+	SplitterRenderer.render = function(oRm, oSplitter) {
+		var bHorizontal = oSplitter.getOrientation() === Orientation.Horizontal,
+			sOrientationClass = bHorizontal ? "sapUiLoSplitterH" : "sapUiLoSplitterV",
+			bAnimate = Core.getConfiguration().getAnimation();
 
 		// Make sure we have the main element available before rendering the children so we can use
 		// the element width to calculate before rendering the children.
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
-		oRm.addClass("sapUiLoSplitter");
-		oRm.addClass(sOrientationClass);
-		if (bAnimate && !oControl._liveResize) {
-			// Do not animate via CSS when liveResize is enabled
-			oRm.addClass("sapUiLoSplitterAnimated");
+		oRm.openStart("div", oSplitter)
+			.class("sapUiLoSplitter")
+			.class(sOrientationClass);
+
+		// Do not animate via CSS when liveResize is enabled
+		if (bAnimate && !oSplitter._liveResize) {
+			oRm.class("sapUiLoSplitterAnimated");
 		}
-		oRm.writeClasses();
-		oRm.addStyle("width", oControl.getWidth());
-		oRm.addStyle("height", oControl.getHeight());
-		oRm.writeStyles();
-		oRm.write(">"); // main div
 
-		this.renderInitialContent(oRm, oControl);
+		oRm.style("width", oSplitter.getWidth())
+			.style("height", oSplitter.getHeight())
+			.openEnd();
 
-		oRm.write("</div>"); // main control
+		this.renderContentAreas(oRm, oSplitter);
+
+		oRm.close("div");
 	};
 
-	SplitterRenderer.renderInitialContent = function(oRm, oControl) {
-		var sId         = oControl.getId();
-		var bHorizontal = oControl.getOrientation() === Orientation.Horizontal;
-		var sSizeType   = bHorizontal ? "width" : "height";
-		var aContents = oControl._getContentAreas();
-		var iLen = aContents.length;
-		var aCalculatedSizes = oControl.getCalculatedSizes();
+	/**
+	 * Renders the content areas.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.layout.Splitter} oSplitter An instance of Splitter, which will be rendered
+	 */
+	SplitterRenderer.renderContentAreas = function(oRm, oSplitter) {
+		var sId = oSplitter.getId(),
+			bHorizontal = oSplitter.getOrientation() === Orientation.Horizontal,
+			sSizeType = bHorizontal ? "width" : "height",
+			aContentAreas = oSplitter._getContentAreas(),
+			iLen = aContentAreas.length,
+			aCalculatedSizes = oSplitter.getCalculatedSizes();
 
-		for (var i = 0; i < iLen; ++i) {
-			var oLayoutData = aContents[i].getLayoutData();
-			var sSize = "0";
+		aContentAreas.forEach(function (oContentArea, i) {
+			var oLayoutData = oContentArea.getLayoutData(),
+				sSize = "0";
+
 			if (aCalculatedSizes[i]) {
-				// Use precalculated sizes if available
+				// Use precalculated size if available
 				sSize = aCalculatedSizes[i] + "px";
 			} else if (oLayoutData) {
 				sSize = oLayoutData.getSize();
 			}
 
-			// Render content control
-			oRm.write(
-				"<section " +
-				"id=\"" + sId + "-content-" + i + "\" " +
-				"style=\"" + sSizeType + ": " + sSize + ";\" " +
-				"class=\"sapUiLoSplitterContent\">"
-			);
-			oRm.renderControl(aContents[i]);
-			oRm.write("</section>");
+			oRm.openStart("section", sId + "-content-" + i)
+				.style(sSizeType, sSize)
+				.class("sapUiLoSplitterContent")
+				.openEnd();
+
+			oRm.renderControl(oContentArea);
+
+			oRm.close("section");
 
 			if (i < iLen - 1) {
-				// Render splitter if this is not the last control
-				oRm.write(
-					"<div id=\"" + sId + "-splitbar-" + i + "\" " +
-						"role=\"separator\" " +
-						"title=\"" + oControl._getText("SPLITTER_MOVE") + "\" " +
-						"class=\"sapUiLoSplitterBar\" " +
-						"aria-orientation=\"" + (bHorizontal ? "vertical" : "horizontal") + "\" " +
-						"tabindex=\"0\">"
-				);
-
-				this.renderSplitterBarGripAndDecorations(oRm, bHorizontal);
-				oRm.write("</div>");
+				SplitterRenderer.renderBar(oRm, bHorizontal, oSplitter.getId() + "-splitbar-" + i, "sapUiLoSplitterBar");
 			}
-		}
+		});
 
-		oRm.write(
-			"<div id=\"" + sId + "-overlay\" class=\"sapUiLoSplitterOverlay\" style=\"display: none;\">" +
-			"<div id=\"" + sId + "-overlayBar\" class=\"sapUiLoSplitterOverlayBar\">"
-		);
+		// render overlay and overlay bar
+		oRm.openStart("div", sId + "-overlay")
+			.class("sapUiLoSplitterOverlay")
+			.openEnd();
 
-		this.renderSplitterBarGripAndDecorations(oRm, bHorizontal);
+		SplitterRenderer.renderBar(oRm, bHorizontal,  sId + "-overlayBar", "sapUiLoSplitterOverlayBar");
 
-		oRm.write(
-			"</div>" +
-			"</div>"
-		);
+		oRm.close("div");
+	};
+
+	/**
+	 * Renders a single bar.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {boolean} bHorizontal An instance of Splitter, which will be rendered
+	 * @param {string} sBarId The ID of the bar
+	 * @param {string} sClass The CSS class of the bar
+	 */
+	SplitterRenderer.renderBar = function (oRm, bHorizontal, sBarId, sClass) {
+		oRm.openStart("div", sBarId)
+			.attr("role", "separator")
+			.attr("title", oResourceBundle.getText("SPLITTER_MOVE"))
+			.attr("aria-orientation", (bHorizontal ? "vertical" : "horizontal"))
+			.attr("tabindex", 0)
+			.class(sClass)
+			.openEnd();
+
+		SplitterRenderer.renderBarGripAndDecorations(oRm, bHorizontal);
+
+		oRm.close("div");
 	};
 
 	/**
@@ -113,27 +130,24 @@ sap.ui.define(["sap/ui/core/library"],
 	 * @param {sap.ui.core.RenderManager} oRm RenderManager that can is used for writing to the render output buffer
 	 * @param {boolean} bHorizontal Whether the orientation of the Splitter is horizontal
 	 */
-	SplitterRenderer.renderSplitterBarGripAndDecorations = function(oRm, bHorizontal) {
+	SplitterRenderer.renderBarGripAndDecorations = function(oRm, bHorizontal) {
 		var sIcon = bHorizontal ? "sap-icon://vertical-grip" : "sap-icon://horizontal-grip";
 
-		oRm.write("<div");
-		oRm.addClass("sapUiLoSplitterBarDecorationBefore");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.write("</div>");
+		oRm.openStart("div")
+			.class("sapUiLoSplitterBarDecorationBefore")
+			.openEnd()
+			.close("div");
 
-		oRm.write("<div");
-		oRm.addClass("sapUiLoSplitterBarGrip");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.writeIcon(sIcon, ["sapUiLoSplitterBarGripIcon"]);
-		oRm.write("</div>");
+		oRm.openStart("div")
+			.class("sapUiLoSplitterBarGrip")
+			.openEnd()
+				.icon(sIcon, ["sapUiLoSplitterBarGripIcon"])
+			.close("div");
 
-		oRm.write("<div");
-		oRm.addClass("sapUiLoSplitterBarDecorationAfter");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.write("</div>");
+		oRm.openStart("div")
+			.class("sapUiLoSplitterBarDecorationAfter")
+			.openEnd()
+			.close("div");
 	};
 
 	return SplitterRenderer;
