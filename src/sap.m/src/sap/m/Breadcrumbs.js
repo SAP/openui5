@@ -104,17 +104,17 @@ sap.ui.define([
 		}
 	});
 
-	/**
+	/*
 	 * STATIC MEMBERS
 	 */
 
 	Breadcrumbs.STYLE_MAPPER = {
-		Slash: "&#047;",
-		BackSlash: "&#092;",
-		DoubleSlash: "&#047;&#047;",
-		DoubleBackSlash: "&#092;&#092;",
-		GreaterThan: "&gt;",
-		DoubleGreaterThan: "&#187;"
+		Slash: "/",
+		BackSlash: "\\",
+		DoubleSlash: "//",
+		DoubleBackSlash: "\\\\",
+		GreaterThan: ">",
+		DoubleGreaterThan: ">>"
 	};
 
 	/*************************************** Framework lifecycle events ******************************************/
@@ -596,21 +596,20 @@ sap.ui.define([
 	};
 
 	/**
-	* Custom setter for the <code>Breadcrumbs</code> separator style.
-	*
-	* @returns {object} this
-	* @param {string} sSeparatorStyle
-	* @public
-	* @since 1.71
-	*/
+	 * Custom setter for the <code>Breadcrumbs</code> separator style.
+	 *
+	 * @returns {sap.m.Breadcrumbs} this
+	 * @param {sap.m.BreadcrumbsSeparatorStyle} sSeparatorStyle
+	 * @public
+	 * @since 1.71
+	 */
 	Breadcrumbs.prototype.setSeparatorStyle = function (sSeparatorStyle) {
-		var sSeparatorSymbol = Breadcrumbs.STYLE_MAPPER[sSeparatorStyle];
-		if (!sSeparatorSymbol){
-			return this;
+		this.setProperty("separatorStyle", sSeparatorStyle);
+		var sSeparatorSymbol = Breadcrumbs.STYLE_MAPPER[this.getSeparatorStyle()];
+		if (sSeparatorSymbol){
+			this._sSeparatorSymbol = sSeparatorSymbol;
 		}
-
-		this._sSeparatorSymbol = sSeparatorSymbol;
-		return this.setProperty("separatorStyle", sSeparatorStyle);
+		return this;
 	};
 
 	/**
