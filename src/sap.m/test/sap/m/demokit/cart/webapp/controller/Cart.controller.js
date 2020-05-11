@@ -29,6 +29,13 @@ sap.ui.define([
 			var oCfgModel = new JSONModel({});
 			this.getView().setModel(oCfgModel, "cfg");
 			this._toggleCfgModel();
+
+			var oEditButton = this.byId("editButton");
+			oEditButton.addEventDelegate({
+				onAfterRendering : function () {
+					oEditButton.focus();
+				}
+			});
 		},
 
 		onExit: function () {
