@@ -149,6 +149,30 @@ function (
 				Core.applyChanges();
 				return oSapUiObject;
 			},
+			toPhoneMode: function (oObjectPage) {
+				oObjectPage.$().removeClass("sapUxAPObjectPageLayout-Std-Desktop")
+						.removeClass("sapUxAPObjectPageLayout-Std-Tablet")
+						.addClass("sapUxAPObjectPageLayout-Std-Phone");
+				sap.ui.Device.system.desktop = false;
+				sap.ui.Device.system.tablet = false;
+				sap.ui.Device.system.phone = true;
+			},
+			toTabletMode: function (oObjectPage) {
+				oObjectPage.$().removeClass("sapUxAPObjectPageLayout-Std-Desktop")
+						.removeClass("sapUxAPObjectPageLayout-Std-Phone")
+						.addClass("sapUxAPObjectPageLayout-Std-Tablet");
+				sap.ui.Device.system.desktop = false;
+				sap.ui.Device.system.phone = false;
+				sap.ui.Device.system.tablet = true;
+			},
+			toDesktopMode: function (oObjectPage) {
+				oObjectPage.$().addClass("sapUxAPObjectPageLayout-Std-Desktop")
+						.removeClass("sapUxAPObjectPageLayout-Std-Tablet")
+						.removeClass("sapUxAPObjectPageLayout-Std-Phone");
+				sap.ui.Device.system.desktop = true;
+				sap.ui.Device.system.tablet = false;
+				sap.ui.Device.system.phone = false;
+			},
 			exists: function (vObject) {
 				if (arguments.length === 1) {
 					return vObject && ("length" in vObject) ? vObject.length > 0 : !!vObject;
@@ -515,14 +539,28 @@ function (
 		oObjectPage.addHeaderContent(oFactory.getHeaderContent());
 		oObjectPage.setIsHeaderContentAlwaysExpanded(true);
 
+		// ensure desktop mode
+		helpers.toDesktopMode(oObjectPage);
+		var oPhoneStub = this.stub(lib.Utilities, "isPhoneScenario", function() {
+			return false;
+		});
+		var oTabletStub =  this.stub(lib.Utilities, "isTabletScenario", function() {
+			return false;
+		});
+
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
 			// Act: unset the currently selected section
 			oObjectPage.setSelectedSection(null);
 
 			// Check: the header is still expanded in the title
 			setTimeout(function() {
+				// Assert
 				assert.equal(oObjectPage._bHeaderExpanded, true, "Header is expnded");
 				assert.equal(oObjectPage._bHeaderInTitleArea, true, "Header is still in the title area");
+
+				// Clean up
+				oPhoneStub.restore();
+				oTabletStub.restore();
 				done();
 			}, 0);
 		});
@@ -2178,11 +2216,25 @@ function (
 				oObjectPage.rerender();
 			},
 			fnOnRerenderedDomReady2 = function() {
+				// Assert
 				assert.equal(oObjectPage._bHeaderExpanded, true, "Flag for expandedHeader has correct value");
 				oHeaderContent = oObjectPage._getHeaderContent();
 				assert.equal(oHeaderContent.$().hasClass("sapUxAPObjectPageHeaderContentHidden"), false, "Header content is not hidden");
+
+				// Clean up
+				oPhoneStub.restore();
+				oTabletStub.restore();
 				done();
 			};
+
+			// ensure desktop mode
+			helpers.toDesktopMode(oObjectPage);
+			var oPhoneStub = this.stub(lib.Utilities, "isPhoneScenario", function() {
+				return false;
+			});
+			var oTabletStub =  this.stub(lib.Utilities, "isTabletScenario", function() {
+				return false;
+			});
 
 			assert.expect(3);
 			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
