@@ -13,18 +13,18 @@
 						<Title text="Products" level="H2"/>
 						<ToolbarSpacer/>
 						<Button
-							tooltip="View Sort Settings"
+							tooltip="Sort"
 							icon="sap-icon://sort"
 							press="handleSortButtonPressed" />
 						<Button
-							tooltip="View Filter Settings"
+							tooltip="Filter"
 							icon="sap-icon://filter"
 							press="handleFilterButtonPressed" />
 						<Button
-							tooltip="View Group Settings"
+							tooltip="Group"
 							icon="sap-icon://group-2"
 							press="handleGroupButtonPressed" />
-						<ToggleButton icon="sap-icon://menu" tooltip="Enable / Disable Custom Context Menu" press="onToggleContextMenu" />
+						<ToggleButton icon="sap-icon://menu" tooltip="Enable Custom Context Menu" press="onToggleContextMenu" />
 					</OverflowToolbar>
 				</headerToolbar>
 				<infoToolbar>
