@@ -3386,6 +3386,7 @@ sap.ui.define([
 		beforeEach: function() {
 		this.oIconTabBar = new IconTabBar({
 			enableTabReordering: true,
+			tabNestingViaInteraction: true,
 			items: [
 				new IconTabFilter({
 					id: 'tabReorder1',
@@ -3494,7 +3495,7 @@ sap.ui.define([
 	}
 });
 
-	QUnit.test("Drag&Drop on expand button", function(assert) {
+	QUnit.test("Drag&Drop on Tab with own content and sub items", function(assert) {
 		var oIconTabFilterWithChildren = this.oIconTabHeader.getItems()[0];
 		var oExpandButton = oIconTabFilterWithChildren._getExpandButton();
 		assert.ok(!oExpandButton.$().hasClass("sapMITHDragOver"), "Expand button has default state");
@@ -3506,6 +3507,27 @@ sap.ui.define([
 		oIconTabFilterWithChildren._handleOnDragLeave();
 
 		assert.ok(!oExpandButton.$().hasClass("sapMITHDragOver"), "Expand button has default state");
+		assert.ok(!oIconTabFilterWithChildren._oPopover, "There is no popover before long drag over");
+
+		oIconTabFilterWithChildren._handleOnLongDragOver();
+
+		assert.ok(oIconTabFilterWithChildren._oPopover, "There is a popover on long drag over");
+
+	});
+
+	QUnit.test("Drag&Drop on Tab with no own content and sub items", function(assert) {
+		var oIconTabFilterWithChildren = this.oIconTabHeader.getItems()[0];
+		oIconTabFilterWithChildren.destroyContent();
+
+		assert.ok(!oIconTabFilterWithChildren.$().hasClass("sapMITHDragOver"), "Expand button has default state");
+
+		oIconTabFilterWithChildren._handleOnDragOver({preventDefault: function () {}});
+
+		assert.ok(oIconTabFilterWithChildren.$().hasClass("sapMITHDragOver"), "Expand button is in 'drag over' state ");
+
+		oIconTabFilterWithChildren._handleOnDragLeave();
+
+		assert.ok(!oIconTabFilterWithChildren.$().hasClass("sapMITHDragOver"), "Expand button has default state");
 		assert.ok(!oIconTabFilterWithChildren._oPopover, "There is no popover before long drag over");
 
 		oIconTabFilterWithChildren._handleOnLongDragOver();
@@ -3665,7 +3687,7 @@ sap.ui.define([
 		oITB.destroy();
 	});
 
-	QUnit.test("Selecting on a tab that has no content set, but has child items, opens its overflow list", function (assert) {
+	QUnit.test("Selecting on a tab that has no content set, but has sub items, opens its overflow list", function (assert) {
 		// Arrange
 		var oTab = new IconTabFilter({
 			text: "unselectable tab",

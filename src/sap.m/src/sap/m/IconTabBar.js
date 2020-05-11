@@ -193,11 +193,19 @@ sap.ui.define([
 
 			/**
 			 * Specifies whether tab reordering is enabled. Relevant only for desktop devices.
-			 * The {@link sap.m.IconTabSeparator sap.m.IconTabSeparator} cannot be dragged  and dropped
+			 * The {@link sap.m.IconTabSeparator sap.m.IconTabSeparator} cannot be dragged and dropped
 			 * Items can be moved around {@link sap.m.IconTabSeparator sap.m.IconTabSeparator}
 			 * @since 1.46
 			 */
 			enableTabReordering : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Specifies whether nesting tabs within one another using drag and drop is possible.
+			 * This property allows nesting via user interaction only, and does not restrict adding items
+			 * to the <code>items</code> aggregation of {@link sap.m.IconTabFilter sap.m.IconTabFilter}.
+			 * @experimental Since 1.78. This property is experimental. The API may change.
+			 */
+			tabNestingViaInteraction: { type: "boolean", group : "Behavior", defaultValue: false},
 
 			/**
 			 * Specifies the visual density mode of the tabs.
@@ -560,11 +568,13 @@ sap.ui.define([
 	};
 
 	IconTabBar.prototype.onBeforeRendering = function () {
-		var ITHDomRef = this._getIconTabHeader().$();
+		var oITH = this._getIconTabHeader(),
+			$ITH = oITH.$();
 
-		this._getIconTabHeader()._setAriaTexts(this.getAriaTexts());
+		oITH._setAriaTexts(this.getAriaTexts());
+		oITH.setTabNestingViaInteraction(this.getTabNestingViaInteraction());
 
-		if (this._bStickyContentSticked && ITHDomRef) {
+		if (this._bStickyContentSticked && $ITH) {
 			delete this._bStickyContentSticked;
 			this._getIconTabHeader().$().remove();
 		}
