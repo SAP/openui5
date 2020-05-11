@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/Opa5"
-], function(Button, ResourceModel, I18NText, JSONModel, opaTest, Opa5) {
+], function (Button, ResourceModel, I18NText, JSONModel, opaTest, Opa5) {
 
 	"use strict";
 
@@ -29,7 +29,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Shall match a matching property", function (assert) {
+	QUnit.test("Should match a property with matching value", function (assert) {
 		// Arrange
 		this.oMatcher.setPropertyName("text");
 		this.oMatcher.setKey("buttonText");
@@ -39,7 +39,21 @@ sap.ui.define([
 		assert.ok(bResult, "Did match");
 	});
 
-	QUnit.test("Shall not match and log debug for a key for a different value", function (assert) {
+	QUnit.test("Should match when property and value match, and the key is equal to the value", function (assert) {
+		// Arrange
+		this.oMatcher.setPropertyName("text");
+		this.oMatcher.setKey("PressMe");
+		// Act
+		var bResult = this.oMatcher.isMatching(this.oButton);
+		// Assert
+		assert.ok(bResult, "Did match");
+	});
+
+	/**
+	 * test false cases due to difference in the key
+	 */
+
+	QUnit.test("Should not match when the key is different", function (assert) {
 		// Arrange
 		this.oMatcher.setPropertyName("text");
 		this.oMatcher.setKey("labelText");
@@ -50,18 +64,7 @@ sap.ui.define([
 		sinon.assert.calledWith(this.oDebugSpy, sinon.match(/The text 'IAmALabel' does not match the value 'PressMe' of the 'text' property for 'Element sap.m.Button#button'/));
 	});
 
-	QUnit.test("Shall not match and log debug for a non matching property", function (assert) {
-		// Arrange
-		this.oMatcher.setPropertyName("type");
-		this.oMatcher.setKey("buttonText");
-		// Act
-		var bResult = this.oMatcher.isMatching(this.oButton);
-		// Assert
-		assert.ok(!bResult, "Did not match");
-		sinon.assert.calledWith(this.oDebugSpy, sinon.match(/The text 'PressMe' does not match the value 'Default' of the 'type' property for 'Element sap.m.Button#button'/));
-	});
-
-	QUnit.test("Shall not match and log debug if there is no value for the key (even though the resource bundle return the key which is also shown in the UI)", function (assert) {
+	QUnit.test("Should not match if there is no value for the key", function (assert) {
 		// Arrange
 		this.oMatcher.setPropertyName("text");
 		this.oMatcher.setKey("aKeyThatDoesExist");
@@ -72,18 +75,7 @@ sap.ui.define([
 		sinon.assert.calledWith(this.oDebugSpy, sinon.match(/No value for the key 'aKeyThatDoesExist' in the model 'i18n' of 'Element sap.m.Button#button'/));
 	});
 
-	QUnit.test("Shall not match and log debug for nonexistent property", function (assert) {
-		// Arrange
-		this.oMatcher.setPropertyName("aPropertyThatWillNeverEverExistOnTheButton");
-		this.oMatcher.setKey("buttonText");
-		// Act
-		var bResult = this.oMatcher.isMatching(this.oButton);
-		// Assert
-		assert.ok(!bResult, "Did not match");
-		sinon.assert.calledWith(this.oDebugSpy, sinon.match(/The 'Element sap.m.Button#button' has no 'aPropertyThatWillNeverEverExistOnTheButton' property/));
-	});
-
-	QUnit.test("Shall not match and log debug for a null key", function (assert) {
+	QUnit.test("Should not match when the key is null", function (assert) {
 		// Arrange
 		this.oMatcher.setPropertyName("text");
 		this.oMatcher.setKey(null);
@@ -94,7 +86,33 @@ sap.ui.define([
 		sinon.assert.calledWith(this.oDebugSpy, sinon.match(/No value for the key 'undefined' in the model 'i18n' of 'Element sap.m.Button#button'/));
 	});
 
-	QUnit.test("Shall not match and log debug a null property", function (assert) {
+	/**
+	 * test false cases due to difference in the property
+	 */
+
+	QUnit.test("Should not match when the property is different", function (assert) {
+		// Arrange
+		this.oMatcher.setPropertyName("type");
+		this.oMatcher.setKey("buttonText");
+		// Act
+		var bResult = this.oMatcher.isMatching(this.oButton);
+		// Assert
+		assert.ok(!bResult, "Did not match");
+		sinon.assert.calledWith(this.oDebugSpy, sinon.match(/The text 'PressMe' does not match the value 'Default' of the 'type' property for 'Element sap.m.Button#button'/));
+	});
+
+	QUnit.test("Should not match when the property doesn't exist", function (assert) {
+		// Arrange
+		this.oMatcher.setPropertyName("aPropertyThatWillNeverEverExistOnTheButton");
+		this.oMatcher.setKey("buttonText");
+		// Act
+		var bResult = this.oMatcher.isMatching(this.oButton);
+		// Assert
+		assert.ok(!bResult, "Did not match");
+		sinon.assert.calledWith(this.oDebugSpy, sinon.match(/The 'Element sap.m.Button#button' has no 'aPropertyThatWillNeverEverExistOnTheButton' property/));
+	});
+
+	QUnit.test("Should not match a property with null value", function (assert) {
 		// Arrange
 		this.oButton.setText(null);
 		this.oMatcher.setPropertyName("text");
@@ -106,7 +124,11 @@ sap.ui.define([
 		sinon.assert.calledWith(this.oDebugSpy, sinon.match(/The text 'PressMe' does not match the value '' of the 'text' property/));
 	});
 
-	QUnit.test("Shall not match and log debug for a matching property with non matching custom model", function (assert) {
+	/**
+	 * test cases with difference in the model
+	 */
+
+	QUnit.test("Should not match when the model is different (even when everything else matches)", function (assert) {
 		// Arrange
 		this.oMatcher.setPropertyName("text");
 		this.oMatcher.setKey("buttonText");
@@ -118,7 +140,7 @@ sap.ui.define([
 		sinon.assert.calledWith(this.oDebugSpy, sinon.match(/The 'Element sap.m.Button#button' has no model with name 'someNonExistendModelName'/));
 	});
 
-	QUnit.test("Shall match a matching property for a custom model", function (assert) {
+	QUnit.test("Should match when the custom model matches (and everytihng else matches)", function (assert) {
 		// Arrange
 		this.oButton.setModel(this.oModel, "customModelName");
 		this.oMatcher.setPropertyName("text");
@@ -130,7 +152,7 @@ sap.ui.define([
 		assert.ok(bResult, "Did match");
 	});
 
-	QUnit.test("Shall match a matching property for a custom model without name", function (assert) {
+	QUnit.test("Should match when the custom model matches and it has no name (and everytihng else matches)", function (assert) {
 		// Arrange
 		this.oButton.setModel(this.oModel);
 		this.oMatcher.setPropertyName("text");
@@ -161,7 +183,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Shall match a matching property with matching parameters", function (assert) {
+	QUnit.test("Should match a matching property with matching parameters", function (assert) {
 		// Arrange
 		this.oMatcher.setPropertyName("text");
 		this.oMatcher.setKey("buttonTextParams");
@@ -172,7 +194,7 @@ sap.ui.define([
 		assert.ok(bResult, "Did match");
 	});
 
-	QUnit.test("Shall not match  and log debug for a matching key with non matching parameters", function (assert) {
+	QUnit.test("Should not match  and log debug for a matching key with non matching parameters", function (assert) {
 		// Arrange
 		this.oMatcher.setPropertyName("text");
 		this.oMatcher.setKey("buttonTextParams");
@@ -199,7 +221,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Shall not match and log debug if not loaded yet", function (assert) {
+	QUnit.test("Should not match and log debug if not loaded yet", function (assert) {
 		// Act
 		var bResult = this.oMatcher.isMatching(this.oButton);
 		// Assert
@@ -207,7 +229,7 @@ sap.ui.define([
 		sinon.assert.calledWith(this.oDebugSpy, sinon.match(/The model 'i18n' of 'Element sap.m.Button#button' is in async mode and not loaded yet/));
 	});
 
-	QUnit.test("Shall match if loaded", function (assert) {
+	QUnit.test("Should match if loaded", function (assert) {
 		var that = this;
 		var fnDone = assert.async();
 		this.oModel.getResourceBundle().then(function () {
@@ -285,12 +307,12 @@ sap.ui.define([
 
 	QUnit.module("JSON Model");
 
-	QUnit.test("Shall not match and log debug", function (assert) {
+	QUnit.test("Should not match and log debug", function (assert) {
 
 		// Arrange
 		var oModel = new JSONModel({ bundleUrl: BUNDLE_URL }),
 			oButton = new Button({ id: "button", text: "{i18n>buttonText}" }).setModel(oModel, "i18n"),
-			oMatcher = new I18NText({ propertyName: "text",	key: "buttonText" }),
+			oMatcher = new I18NText({ propertyName: "text", key: "buttonText" }),
 			oDebugSpy = sinon.spy(oMatcher._oLogger, "debug");
 
 		// Act
@@ -315,7 +337,7 @@ sap.ui.define([
 		// Act
 		var oModel = new ResourceModel({
 			bundleUrl: BUNDLE_URL,
-			async : true
+			async: true
 		});
 
 		// Assert
