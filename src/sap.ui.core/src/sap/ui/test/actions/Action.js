@@ -164,22 +164,21 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 		_tryOrSimulateFocusin: function ($DomRef, oControl) {
 			var oDomRef = $DomRef[0];
 			var bFireArtificialEvents = false;
-			var isAlreadyFocused = $DomRef.is(":focus");
+			var isAlreadyFocused = this._isFocused(oDomRef);
 			var bIsIE11 = Device.browser.msie && Device.browser.version < 12;
 			var bIsNewFF = Device.browser.firefox && Device.browser.version >= 60;
 
 			if (isAlreadyFocused || bIsIE11 || bIsNewFF) {
-				// If the event is already focused, make sure onfocusin event of the control will be properly fired when executing this action,
+				// 1. If the event is already focused, make sure onfocusin event of the control will be properly fired when executing this action,
 				// otherwise the next blur will not be able to safely remove the focus.
-				// In IE11 (and often in Firefox v61.0/v60.0 ESR, if the focus action fails and focusin is dispatched, onfocusin will be called twice
-				// to avoid this, directly dispatch the artificial events
+				// 2. In IE11 (and often in Firefox v61.0/v60.0 ESR), if the focus action fails and focusin is dispatched, onfocusin will be called twice.
+				// To avoid this, directly dispatch the artificial events
 				bFireArtificialEvents = true;
 			} else {
 				$DomRef.trigger("focus");
-				// This check will only return false if you have the focus in the dev tools console,
-				// or a background tab, or the browser is not focused at all. We still want onfocusin to work
-				var bWasFocused = $DomRef.is(":focus");
-				// do not fire the artificial events in this case since we would recieve onfocusin twice
+				var bWasFocused = this._isFocused(oDomRef);
+				// if focus was successful, skip the artificial events and thus avoid recieving onfocusin twice.
+				// else, fire the artificial events because we still want onfocusin to work.
 				bFireArtificialEvents = !bWasFocused;
 			}
 
@@ -191,8 +190,8 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 				this._createAndDispatchFocusEvent("activate", oDomRef);
 			}
 
-			if (!$DomRef.is(":focus")) {
-				this.oLogger.error("Control " + oControl + " could not be focused!");
+			if (!this._isFocused(oDomRef)) {
+				this.oLogger.trace("Control " + oControl + " could not be focused-in correctly. This may lead to lost interactions with the control");
 			}
 		},
 
@@ -335,6 +334,16 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 				default:
 					return mCenterCoordinates;
 			}
+		},
+
+		_isFocused: function (oDomRef) {
+			// This check returns false if:
+			// 1. you have the focus in the dev tools console, or a background tab, or the browser is not focused at all. (bDocumentHasFocus will be false)
+			// 2. in IE11 and Firefox, because the document.activeElement wasn't updated. (bIsActiveElement will be false)
+			var bIsActiveElement = oDomRef === document.activeElement;
+			var bDocumentHasFocus = !document.hasFocus || document.hasFocus();
+			var bIsElemInBody = !!(oDomRef.type || oDomRef.href || ~oDomRef.tabIndex);
+			return bIsActiveElement && bDocumentHasFocus && bIsElemInBody;
 		}
 	});
 
