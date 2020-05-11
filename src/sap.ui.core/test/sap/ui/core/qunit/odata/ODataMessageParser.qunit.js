@@ -469,6 +469,7 @@ sap.ui.define([
 			var oParser = new ODataMessageParser(sServiceURI, oMetadata);
 
 			var oRequest = {
+				headers : {},
 				requestUri: "fakeservice://testdata/odata/northwind/Test"
 			};
 
@@ -739,6 +740,7 @@ sap.ui.define([
 			var oParser = new ODataMessageParser(sServiceURI, oMetadata);
 
 			var oRequest = {
+				headers : {},
 				requestUri: "fakeservice://testdata/odata/northwind/Test"
 			};
 
@@ -1575,6 +1577,7 @@ sap.ui.define([
 
 			//SETUP
 			var oRequest = {
+				headers : {},
 				method: "GET",
 				key: "Products(1)",
 				created: true,
@@ -1635,6 +1638,7 @@ sap.ui.define([
 
 			//SETUP
 			var oRequest = {
+				headers : {},
 				method: "GET",
 				key: "Products(1)",
 				created: true,
@@ -1695,6 +1699,7 @@ sap.ui.define([
 
 			//SETUP
 			var oRequest = {
+				headers : {},
 				method: "POST",
 				key: "EditProduct",
 				created: true,
