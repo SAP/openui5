@@ -1033,7 +1033,6 @@ sap.ui.define([
 		QUnit.test("when _onActivateDraft is called ", function(assert) {
 			var oActivateDraftStub;
 			var oShowMessageToastStub;
-			var oRemoveAllCommandsSpy;
 			var oSetVersionLabelStub;
 			var oToolbarSetDraftEnabledSpy;
 			var oToolbarSetRestoreEnabledSpy;
@@ -1049,7 +1048,6 @@ sap.ui.define([
 				oRta.bInitialDraftAvailable = true;
 				oActivateDraftStub = sandbox.stub(VersionsAPI, "activateDraft").resolves(true);
 				oShowMessageToastStub = sandbox.stub(oRta, "_showMessageToast");
-				oRemoveAllCommandsSpy = sandbox.spy(oRta.getCommandStack(), "removeAllCommands");
 				oSetVersionLabelStub = sandbox.stub(oRta, "_setVersionLabel");
 				oToolbarSetDraftEnabledSpy = sandbox.spy(oRta.getToolbar(), "setDraftEnabled");
 				oToolbarSetRestoreEnabledSpy = sandbox.spy(oRta.getToolbar(), "setRestoreEnabled");
@@ -1061,13 +1059,11 @@ sap.ui.define([
 				assert.equal(oActivationCallPropertyBag.selector, this.oRta.getRootControlInstance(), "with the correct selector");
 				assert.equal(oActivationCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
 				assert.equal(oActivationCallPropertyBag.title, sVersionTitle, "and version title");
-				assert.equal(oRemoveAllCommandsSpy.callCount, 1, "and all commands were removed");
 				assert.equal(oRta.bInitialResetEnabled, true, "and the initialRestEnabled is true");
-				assert.equal(oRta.bInitialDraftAvailable, false, "and the initialDraftAvailable is removed");
 				assert.equal(oToolbarSetDraftEnabledSpy.callCount, 1, "and the draft info is set once");
 				assert.equal(oToolbarSetDraftEnabledSpy.getCall(0).args[0], false, "to false");
-				assert.equal(oToolbarSetRestoreEnabledSpy.callCount, 2, "and the restore enabled is called again");
-				assert.equal(oToolbarSetRestoreEnabledSpy.getCall(1).args[0], true, "to true");
+				assert.equal(oToolbarSetRestoreEnabledSpy.callCount, 2, "and the restore enabled is called");
+				assert.equal(oToolbarSetRestoreEnabledSpy.getCall(0).args[0], true, "to true");
 				assert.equal(oShowMessageToastStub.callCount, 1, "and a message is shown");
 				assert.equal(oSetVersionLabelStub.callCount, 1, "and set version title is called");
 			}.bind(this));
@@ -1146,7 +1142,7 @@ sap.ui.define([
 			return _mockStateCallIsDraftAvailableAndCheckResult(assert, this.oRta, true, true, false, true);
 		});
 		QUnit.test("and versioning and a undo is available", function (assert) {
-			return _mockStateCallIsDraftAvailableAndCheckResult(assert, this.oRta, true, false, true, true);
+			return _mockStateCallIsDraftAvailableAndCheckResult(assert, this.oRta, true, false, true, false);
 		});
 		QUnit.test("and versioning, a draft and undo is available", function (assert) {
 			return _mockStateCallIsDraftAvailableAndCheckResult(assert, this.oRta, true, true, true, true);
