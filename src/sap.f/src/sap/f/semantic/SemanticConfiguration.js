@@ -6,12 +6,12 @@
 * Provides a private class <code>sap.f.semantic.SemanticConfiguration</code>.
 */
 sap.ui.define([
-	"sap/ui/base/Metadata",
+	"sap/ui/base/Object",
 	"sap/ui/core/IconPool",
 	"sap/m/library",
 	"sap/m/OverflowToolbarLayoutData",
 	"sap/ui/core/InvisibleText"
-], function(Metadata,
+], function(BaseObject,
 			IconPool,
 			mobileLibrary,
 			OverflowToolbarLayoutData,
@@ -36,7 +36,11 @@ sap.ui.define([
 	* @alias sap.f.semantic.SemanticConfiguration
 	* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	*/
-	var SemanticConfiguration = Metadata.createClass("sap.f.semantic.SemanticConfiguration", {});
+	var SemanticConfiguration = BaseObject.extend("sap.f.semantic.SemanticConfiguration", {
+		getInterface: function() {
+			return this; // no facade
+		}
+	});
 
 	/**
 	* The placement map of all supported semantic types.

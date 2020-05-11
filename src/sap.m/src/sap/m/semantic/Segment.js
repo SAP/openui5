@@ -10,7 +10,7 @@
  */
 
 // Provides class sap.m.semantic.Segment
-sap.ui.define(['sap/ui/base/Metadata', "sap/base/Log"], function(Metadata, Log) {
+sap.ui.define(['sap/ui/base/Object', "sap/base/Log"], function(BaseObject, Log) {
 	"use strict";
 
 	/**
@@ -24,7 +24,7 @@ sap.ui.define(['sap/ui/base/Metadata', "sap/base/Log"], function(Metadata, Log) 
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
-	var Segment = Metadata.createClass("sap.m.semantic.Segment", {
+	var Segment = BaseObject.extend("sap.m.semantic.Segment", {
 
 		constructor : function(aContent, oContainer, sContainerAggregationName, fnSortFunction) {
 			if (!oContainer) {
@@ -38,6 +38,10 @@ sap.ui.define(['sap/ui/base/Metadata', "sap/base/Log"], function(Metadata, Log) 
 			this._oContainer = oContainer;
 			this._sContainerAggregationName = sContainerAggregationName;
 			this._fnSortFunction = fnSortFunction;
+		},
+
+		getInterface: function() {
+			return this; // no facade
 		}
 
 	});
