@@ -129,10 +129,6 @@ html.sap-desktop .sapUiCalYearPicker .sapUiCalItem:focus {
 	outline-offset: -3px;
 }
 
-html.sap-desktop .sapUiCalItem:focus > .sapUiCalItemText.sapUiCalItemTextCustomColor{
-	box-shadow: none;
-}
-
 html.sap-desktop .sapUiCalMonthPicker .sapUiCalItem:focus,
 html.sap-desktop .sapUiCalYearPicker .sapUiCalItem:focus {
 	outline-offset: -4px;
@@ -209,6 +205,27 @@ html.sap-desktop .sapUiCalItemWeekEnd:focus {
 		width: 100%;
 		height: 0.25rem;
 		bottom: 0;
+	}
+	&:focus > .sapUiCalItemText {
+		position: static;
+		outline: none;
+		&:after {
+			position: absolute;
+			top: 0.125rem;
+			left: 0.125rem;
+			right: 0.125rem;
+			bottom: 0.125rem;
+			border: 0.0625rem dotted @sapUiContentFocusColor;
+			content: "";
+		}
+	}
+	&.sapUiCalItemSel:not(.sapUiCalItemNow) {
+		&:not(.sapUiCalItemSelBetween):focus > .sapUiCalItemText:after {
+			border-color: @sapUiContentContrastFocusColor;
+		}
+	}
+	.sapUiCalSpecialDate{
+		pointer-events: none;
 	}
 }
 
@@ -444,16 +461,22 @@ and (orientation: landscape) {
 
 /* colors for special days */
 .dayColorMixIn(@class, @color){
-	.@{class} > .sapUiCalItemText{
-		box-shadow: inset 0 -0.25rem 0 @color;
+	.@{class} > .sapUiCalSpecialDate{
+		background-color: @color;
+	}
+
+	html.sap-desktop .sapUiCal:not(.sapUiCalDateInt) .sapUiCalItem:not(.sapUiCalItemSel) {
+		&.@{class} > .sapUiCalSpecialDate:hover {
+			background-color: @color;
+		}
+	}
+
+	.@{class}.sapUiCalItemSel:not(.sapUiCalItemNow) > .sapUiCalSpecialDate {
+		border-top: 0.0625rem solid @_sap_ui_unified_Calendar_ItemBorderColor;
 	}
 
 	.@{class}.sapUiCalItemSel > .sapUiCalItemText {
 		box-shadow: inset 0 -0.25rem 0 @color, inset 0 -0.33rem @_sap_ui_unified_Calendar_ItemBorderColor;
-	}
-
-	.@{class}.sapUiCalItemNow > .sapUiCalItemText{
-		box-shadow: inset 0.0625rem 0.0625rem 0 0 @_sap_ui_unified_Calendar_ItemBorderColor, inset -0.0625rem -0.0625rem 0 0 @_sap_ui_unified_Calendar_ItemBorderColor, inset 0 -0.1875rem 0 @color;
 	}
 
 	.@{class}.sapUiCalItemSel.sapUiCalItemNow > .sapUiCalItemText{
