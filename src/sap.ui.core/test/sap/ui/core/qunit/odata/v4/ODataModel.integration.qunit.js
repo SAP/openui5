@@ -13334,18 +13334,20 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: call setAggregation on a suspended ODLB
+	//
+	// Ensure that auto-$expand/$select does not add $select
+	// JIRA: CPOUI5ODATAV4-270
 	QUnit.test("suspend/resume: call setAggregation on a suspended ODLB", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/BusinessPartnerList\', suspended : true}">\
 	<ColumnListItem>\
-		<Text id="id" text="{BusinessPartnerID}" />\
 		<Text id="role" text="{BusinessPartnerRole}" />\
 	</ColumnListItem>\
 </Table>',
 			that = this;
 
-		this.expectChange("id", []);
+		this.expectChange("role", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oBinding = that.oView.byId("table").getBinding("items");
@@ -13353,20 +13355,14 @@ sap.ui.define([
 			oBinding.setAggregation({groupLevels : ["BusinessPartnerRole"]});
 
 			that.expectRequest("BusinessPartnerList?$apply=groupby((BusinessPartnerRole))"
-				+ "&$select=BusinessPartnerID,BusinessPartnerRole&$count=true"
-				+ "&$skip=0&$top=100", {
+				+ "&$count=true&$skip=0&$top=100", {
 					value : [{
-						BusinessPartnerID : "0100000000",
 						BusinessPartnerRole : "01"
 					}, {
-						BusinessPartnerID : "0100000001",
 						BusinessPartnerRole : "02"
 					}]
 				})
-				.expectChange("id", [
-					"0100000000",
-					"0100000001"
-				]);
+				.expectChange("role", ["01", "02"]);
 
 			oBinding.attachEventOnce("change", function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Change);
@@ -14075,7 +14071,8 @@ sap.ui.define([
 	// Scenario: Binding-specific parameter $$aggregation is used (CPOUI5UISERVICESV3-1195)
 	//TODO support $filter : \'GrossAmount gt 0\',\
 	QUnit.test("Data Aggregation: $$aggregation w/ groupLevels, paging", function (assert) {
-		var sView = '\
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\',\
 		parameters : {\
 			$$aggregation : {\
@@ -14117,7 +14114,6 @@ sap.ui.define([
 		</t:template>\
 	</t:Column>\
 </t:Table>',
-			oModel = createSalesOrdersModel(),
 			that = this;
 
 		this.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
@@ -14210,7 +14206,8 @@ sap.ui.define([
 	// Scenario: Data aggregation with grand total, but no visual grouping. Observe the node status.
 	// BCP: 2080089628
 	QUnit.test("Data Aggregation: $$aggregation w/ grand total", function (assert) {
-		var sView = '\
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
 <Table items="{path : \'/SalesOrderList\',\
 		parameters : {\
 			$$aggregation : {\
@@ -14229,8 +14226,7 @@ sap.ui.define([
 		<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
 		<Text id="grossAmount" text="{= %{GrossAmount}}" />\
 	</ColumnListItem>\
-</Table>',
-			oModel = createSalesOrdersModel();
+</Table>';
 
 		this.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
 				+ "/concat(aggregate(GrossAmount),top(99))", {
@@ -14254,7 +14250,8 @@ sap.ui.define([
 	// Scenario: Table with aggregation and visual grouping. Expand the first group.
 	// JIRA: CPOUI5ODATAV4-162
 	QUnit.test("Data Aggregation: $$aggregation w/ groupLevels, expand", function (assert) {
-		var sView = '\
+		var oModel = createAggregationModel({autoExpandSelect : true}),
+			sView = '\
 <Table id="table" items="{path : \'/BusinessPartners\',\
 		parameters : {\
 			$$aggregation : {\
@@ -14280,7 +14277,6 @@ sap.ui.define([
 		<Text id="salesNumber" text="{SalesNumber}" />\
 	</ColumnListItem>\
 </Table>',
-			oModel = createAggregationModel(),
 			oTable,
 			that = this;
 
@@ -14367,6 +14363,9 @@ sap.ui.define([
 					"SalesNumber@odata.type" : "#Decimal"
 				},
 				oListBinding,
+				// TODO does not work with fixed row count because this causes two parallel requests
+				// -> JIRA: CPOUI5ODATAV4-297
+				oModel = createBusinessPartnerTestModel({autoExpandSelect : false}),
 				oTable,
 				sView = '\
 <Text id="count" text="{$count}"/>\
@@ -14424,8 +14423,7 @@ sap.ui.define([
 				.expectChange("region", ["",, "Y", "X", "W", "V"])
 				.expectChange("salesNumber", ["351",, "2", "3", "4", "5"]);
 
-			return this.createView(assert, sView, createBusinessPartnerTestModel())
-			.then(function () {
+			return this.createView(assert, sView, oModel).then(function () {
 				oTable = that.oView.byId("table");
 				oListBinding = oTable.getBinding("rows");
 
@@ -14484,6 +14482,7 @@ sap.ui.define([
 					= "BusinessPartners?$apply=groupby((Country,Region),aggregate(SalesNumber))"
 					+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc)",
 				oListBinding,
+				oModel = createBusinessPartnerTestModel({autoExpandSelect : true}),
 				oTable,
 				aValues = [
 					{Country : "a", Region : "Z", SalesNumber : 1},
@@ -14540,8 +14539,7 @@ sap.ui.define([
 				.expectChange("region", [, "Z", "Y", "X", "W", "V"])
 				.expectChange("salesNumber", [, "1", "2", "3", "4", "5"]);
 
-			return this.createView(assert, sView, createBusinessPartnerTestModel())
-			.then(function () {
+			return this.createView(assert, sView, oModel).then(function () {
 				oTable = that.oView.byId("table");
 				oListBinding = oTable.getBinding("rows");
 
@@ -14593,7 +14591,8 @@ sap.ui.define([
 	// but a grand total row using with/as (CPOUI5UISERVICESV3-1418)
 	QUnit.test("Data Aggregation: $$aggregation grandTotal w/o groupLevels using with/as",
 			function (assert) {
-		var sView = '\
+		var oModel = createBusinessPartnerTestModel({autoExpandSelect : true}),
+			sView = '\
 <t:Table rows="{path : \'/BusinessPartners\',\
 		parameters : {\
 			$$aggregation : {\
@@ -14673,7 +14672,7 @@ sap.ui.define([
 			.expectChange("salesAmountSum", [351, 1, 2, 3, 4])
 			.expectChange("salesAmountCurrency", ["EUR", "EUR", "EUR", "EUR", "EUR"]);
 
-		return this.createView(assert, sView, createBusinessPartnerTestModel());
+		return this.createView(assert, sView, oModel);
 	});
 
 	//*********************************************************************************************
@@ -14730,9 +14729,10 @@ sap.ui.define([
 	// - those filters that must be applied after aggregating
 	// JIRA: CPOUI5ODATAV4-119
 	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _AggregationCache", function (assert) {
-		var that = this;
+		var oModel = createBusinessPartnerTestModel({autoExpandSelect : true}),
+			that = this;
 
-		return this.createView(assert, "", createBusinessPartnerTestModel()).then(function () {
+		return this.createView(assert, "", oModel).then(function () {
 			var oListBinding = that.oModel.bindList("/BusinessPartners");
 
 			oListBinding.setAggregation({
@@ -14768,9 +14768,10 @@ sap.ui.define([
 	// - those filters that must be applied after aggregating
 	// JIRA: CPOUI5ODATAV4-119
 	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _Cache.CollectionCache", function (assert) {
-		var that = this;
+		var oModel = createBusinessPartnerTestModel({autoExpandSelect : true}),
+			that = this;
 
-		return this.createView(assert, "", createBusinessPartnerTestModel()).then(function () {
+		return this.createView(assert, "", oModel).then(function () {
 			var oListBinding = that.oModel.bindList("/BusinessPartners");
 
 			// code under test - filter should be applied before aggregating
@@ -14803,7 +14804,6 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used without group or groupLevels
 	// Note: usage of min/max simulates a Chart, which would actually call ODLB#updateAnalyticalInfo
-	// Note: Key properties are omitted from response data to improve readability.
 	[false, true].forEach(function (bCount) {
 		var sTitle = "Data Aggregation: $$aggregation, aggregate but no group; $count : "
 				+ bCount;
@@ -14813,6 +14813,7 @@ sap.ui.define([
 					UI5min__AGE : 42,
 					UI5max__AGE : 77
 				},
+				oModel = createSalesOrdersModel({autoExpandSelect : true}),
 				sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\',\
 		parameters : {\
@@ -14832,7 +14833,6 @@ sap.ui.define([
 		</t:template>\
 	</t:Column>\
 </t:Table>',
-				oModel = createSalesOrdersModel(),
 				that = this;
 
 			if (bCount) {
@@ -14872,13 +14872,13 @@ sap.ui.define([
 	// BCP: 2080047558
 	QUnit.test("BCP: 2080047558", function (assert) {
 		var oListBinding,
+			oModel = createSalesOrdersModel(),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<ColumnListItem>\
 		<Text id="grossAmount" text="{= %{GrossAmount}}" />\
 	</ColumnListItem>\
 </Table>',
-			oModel = createSalesOrdersModel(),
 			that = this;
 
 		this.expectRequest("SalesOrderList?$skip=0&$top=100", {
@@ -14972,6 +14972,7 @@ sap.ui.define([
 	// BPC: 2070044134
 	QUnit.test("BCP: 2070044134", function (assert) {
 		var oListBinding,
+			oModel = createSalesOrdersModel(),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<ColumnListItem>\
@@ -14979,7 +14980,6 @@ sap.ui.define([
 		<Text id="grossAmount" text="{= %{GrossAmount}}" />\
 	</ColumnListItem>\
 </Table>',
-			oModel = createSalesOrdersModel(),
 			that = this;
 
 		this.expectRequest("SalesOrderList?$skip=0&$top=100", {

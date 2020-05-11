@@ -651,7 +651,10 @@ sap.ui.define([
 		}
 
 		if (bDependsOnOperation && !sResolvedChildPath.includes("/$Parameter/")
-				|| this.getRootBinding().isSuspended()) {
+				|| this.getRootBinding().isSuspended()
+				|| this.mParameters && this.mParameters.$$aggregation) {
+			// With $$aggregation, no auto-$expand/$select is needed, but the child may still use
+			// the parent's cache
 			// Note: Operation bindings do not support auto-$expand/$select yet
 			return SyncPromise.resolve(sResolvedChildPath);
 		}

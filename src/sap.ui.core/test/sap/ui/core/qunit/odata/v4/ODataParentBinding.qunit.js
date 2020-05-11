@@ -1466,6 +1466,36 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("fetchIfChildCanUseCache: $$aggregation", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oContext : {},
+				oModel : {
+					getMetaModel : function () { return {}; },
+					resolve : function () {}
+				},
+				mParameters : {
+					$$aggregation : {/*irrelevant*/}
+				},
+				sPath : "path"
+			}),
+			oContext = {},
+			oModelMock = this.mock(oBinding.oModel);
+
+		this.mock(oBinding).expects("getBaseForPathReduction").withExactArgs().returns("n/a");
+		oModelMock.expects("resolve")
+			.withExactArgs("path", sinon.match.same(oBinding.oContext))
+			.returns("/Foo/Bar/path");
+		oModelMock.expects("resolve")
+			.withExactArgs("childPath", sinon.match.same(oContext))
+			.returns("/resolved/child/path");
+
+		// code under test
+		assert.strictEqual(
+			oBinding.fetchIfChildCanUseCache(oContext, "childPath").getResult(),
+			"/resolved/child/path");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("fetchIfChildCanUseCache: operation binding or dependent", function (assert) {
 		var oBinding = new ODataParentBinding({
 				oContext : {},

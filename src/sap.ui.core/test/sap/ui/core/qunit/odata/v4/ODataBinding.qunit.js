@@ -566,16 +566,24 @@ sap.ui.define([
 	//*********************************************************************************************
 	[
 		{
-			oTemplate : {oModel : {}, sPath : "/absolute", bRelative : false}
+			oTemplate : {sPath : "/absolute", bRelative : false}
 		}, {
 			oContext : {getPath : function () { return "/baseContext"; }},
-			oTemplate : {oModel : {}, sPath : "quasiAbsolute", bRelative : true}
+			oTemplate : {sPath : "quasiAbsolute", bRelative : true}
 		}, {
 			oContext : Context.create({}, {}, "/v4Context"),
 			oTemplate : {
-				oModel : {},
-				sPath : "relativeWithParameters",
 				mParameters : {"$$groupId" : "myGroup"},
+				sPath : "relativeWithParameters",
+				bRelative : true
+			}
+		}, {
+			oContext : Context.create({}, {}, "/v4Context"),
+			oTemplate : {
+				aChildCanUseCachePromises : [],
+				oModel : {bAutoExpandSelect : true},
+				mParameters : {"$$aggregation" : {/*irrelevant*/}},
+				sPath : "relativeWithAggregation",
 				bRelative : true
 			}
 		}
@@ -587,10 +595,10 @@ sap.ui.define([
 					mQueryOptions = {},
 					oResult;
 
-				oFixture.oTemplate.oModel = {
-					resolve : function () {}
-				};
 				oBinding = new ODataBinding(oFixture.oTemplate);
+				oBinding.oModel = Object.assign({
+					resolve : function () {}
+				}, oFixture.oTemplate.oModel);
 				this.mock(oBinding.oModel).expects("resolve")
 					.withExactArgs(oBinding.sPath, sinon.match.same(oFixture.oContext))
 					.returns("/resolved/path");

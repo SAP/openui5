@@ -41,7 +41,8 @@ sap.ui.define([
 	 *   A map of key-value pairs representing the query string
 	 * @throws {Error}
 	 *   If the system query options "$count" or "$filter" are used together with group levels, or
-	 *   if group levels are combined with min/max
+	 *   if group levels are combined with min/max, or if the system query options "$expand" or
+	 *   "$select" are used at all
 	 *
 	 * @private
 	 */
@@ -52,6 +53,12 @@ sap.ui.define([
 
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, true);
 		this.oAggregation = oAggregation;
+		if ("$expand" in mQueryOptions) {
+			throw new Error("Unsupported system query option: $expand");
+		}
+		if ("$select" in mQueryOptions) {
+			throw new Error("Unsupported system query option: $select");
+		}
 
 		if (_AggregationHelper.hasMinOrMax(oAggregation.aggregate)) {
 			// Note: ignore existing mQueryOptions.$apply, e.g. from ODLB#updateAnalyticalInfo
