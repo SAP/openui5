@@ -3229,7 +3229,7 @@ sap.ui.define([
 		this.clock.reset();
 	});
 
-	QUnit.test("Scenario 'EVENT_VALUE_ENTER_OPENLIST': 'alg' + ALT+DOWNKEY + ENTER + ALT+UPKEY Case insensitive", function(assert) {
+	QUnit.test("Scenario 'EVENT_VALUE_ENTER_OPENLIST': 'alg' + ENTER + ALT+UPKEY Case insensitive", function(assert) {
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -3257,7 +3257,6 @@ sap.ui.define([
 
 		// act - 'alg' + OpenList + Enter
 		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), "alg");
-		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ENTER);
 		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_UP, false, true);
 		this.clock.tick(500);
@@ -3298,14 +3297,17 @@ sap.ui.define([
 
 		// act - 'al' + OpenList + Enter
 		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), "al");
+		this.clock.tick(500);
 		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+		this.clock.tick(500);
 		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ENTER);
+		this.clock.tick(500);
 		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_UP, false, true);
 		this.clock.tick(500);
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [], "should not select anything");
-		assert.strictEqual(oMultiComboBox.getValue(), "al", "Value should not be deleted");
+		assert.strictEqual(oMultiComboBox.getValue(), "", "Value should be deleted");
 
 		// cleanup
 		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ESCAPE);
