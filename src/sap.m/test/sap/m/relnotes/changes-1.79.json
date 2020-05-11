@@ -1,0 +1,57 @@
+{
+  "1.79.0": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "fd079dcefd4334113f523f78b7ccf7a8e919bd1f",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.DynamicSideContent: Support Scrolling related functionality",
+        "references": []
+      },
+      {
+        "id": "bcce7be106009f0eb9829c2fc062e8f5f47c8062",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Disabled filters don\u0027t expand their dropdowns anymore",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070173489"
+          }
+        ]
+      },
+      {
+        "id": "16abb8fbad4d961871bce4937568b2a659ca17fe",
+        "type": "FIX",
+        "text": " sap.m.Switch: Prevent uneeded OverflowToolbar invalidation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070107629"
+          }
+        ]
+      },
+      {
+        "id": "332261c058666c5dc984287ba87ecbeae302b4ca",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: fixed items selection restoration on Cancel",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070123388"
+          }
+        ]
+      },
+      {
+        "id": "82b5206aa28c798216712fcce012d80529c82c7c",
+        "type": "FIX",
+        "text": " sap.m.upload.UploadSet : setThumbnailUrl does not change icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001152812020"
+          }
+        ]
+      }
+    ]
+  }
+}
