@@ -24,6 +24,7 @@ sap.ui.loader.config({
 
 
 sap.ui.define([
+	"./library",
 	'sap/ui/core/Core',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
@@ -34,7 +35,7 @@ sap.ui.define([
 	'sap/ui/codeeditor/js/ace/ext-beautify',
 	'sap/ui/codeeditor/js/ace/mode-javascript',
 	'sap/ui/codeeditor/js/ace/mode-json'
-], function(Core, Control, Device, ResizeHandler, jQuery, ace) {
+], function(library, Core, Control, Device, ResizeHandler, jQuery, ace) {
 	"use strict";
 
 	// TODO remove after the end of support for Internet Explorer
