@@ -86,10 +86,6 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider) {
 			oDataProvider.createServiceInstances(oServiceManager);
 		}
 
-		if (oDataSettings.updateInterval) {
-			oDataProvider.setUpdateInterval(oDataSettings.updateInterval);
-		}
-
 		this._aDataProviders.push(oDataProvider);
 
 		return oDataProvider;

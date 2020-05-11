@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+	<edmx:DataServices xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+					   m:DataServiceVersion="1.0">
+		<Schema Namespace="ActivityModel"
+				xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+				xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+				xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="Activity">
+				<Property Name="Name" Type="Edm.String" />
+				<Property Name="icon" Type="Edm.String" Unicode="true" FixedLength="false"/>
+				<Property Name="url" Type="Edm.String" Unicode="true" FixedLength="false"/>
+			</EntityType>
+
+			<EntityType Name="Title">
+				<Property Name="text" Type="Edm.String" />
+			</EntityType>
+
+			<EntityContainer Name="NavigationEntities"
+							 m:IsDefaultEntityContainer="true"
+							 xmlns:p7="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+				<EntitySet Name="Activities" EntityType="ActivityModel.Activity"/>
+				<EntitySet Name="Titles" EntityType="ActivityModel.Title"/>
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

@@ -1,0 +1,68 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "sap.ui.CardsCaching.Card1",
+		"type": "card",
+		"title": "Sample of Host Actions in Cards",
+		"subTitle": "Sample of  Host Actions in Cards",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Action",
+				"Host",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://action"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "{title}",
+			"data": {
+				"request": {
+					"url": "./getData/Titles",
+					"type": "OData"
+				},
+				"path": "/d/results",
+
+				"updateInterval": "2"
+			}
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "./getData/Activities",
+					"type": "OData"
+				},
+				"path": "/d/results/data",
+
+				"updateInterval": "1",
+
+				"timePath": "/d/results/time",
+				"updateRequest": {
+					"url": "./shouldUpdateData/Activities",
+					"type": "OData"
+				},
+				"updateRequestPath": "/d/results/{0}"
+			},
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": "{Name}"
+			}
+		}
+	}
+}
