@@ -2,9 +2,12 @@
  * ${copyright}
  */
 
-// Provides control sap.ui.layout.AssociativeSplitter.
-sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/thirdparty/jquery", "sap/ui/layout/SplitterLayoutData"],
-	function(Splitter, SplitterRenderer, Log, jQuery, SplitterLayoutData) {
+sap.ui.define([
+	'./Splitter',
+	'./SplitterRenderer',
+	"sap/base/Log",
+	"sap/ui/layout/SplitterLayoutData"
+], function(Splitter, SplitterRenderer, Log, SplitterLayoutData) {
 	"use strict";
 
 	/**
@@ -31,7 +34,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/third
 		metadata : {
 			associations : {
 				/**
-				 * The same as content, but provided in the form of an association
+				 * The same as <code>contentAreas</code>, but provided in the form of an association.
 				 */
 				associatedContentAreas: {type : "sap.ui.core.Control", multiple : true, singularName : "associatedContentArea"}
 			}
@@ -57,6 +60,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/third
 	 * Adds shift + arrows keyboard handling to the existing one
 	 * @returns {void}
 	 * @private
+	 * @override
 	 */
 	AssociativeSplitter.prototype._enableKeyboardListeners = function () {
 		Splitter.prototype._enableKeyboardListeners.call(this);
@@ -74,47 +78,9 @@ sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/third
 		this._keyboardEnabled = true;
 	};
 
-	AssociativeSplitter.prototype.addAssociatedContentArea = function (oContent) {
-		_ensureLayoutData(oContent);
-		return this.addAssociation("associatedContentAreas", oContent);
-	};
-
-	AssociativeSplitter.prototype.indexOfAssociatedContentArea = function (area) {
-		var contentAreas = this._getContentAreas();
-		for (var i = 0; i < contentAreas.length; i++) {
-			if (area == contentAreas[i]) {
-				return i;
-			}
-		}
-		return -1;
-	};
-
-	//TODO: Review this with caution, and check whether there will be any side effects
-	AssociativeSplitter.prototype.insertAssociatedContentArea = function (oContent, iIndex) {
-		var id = oContent.getId();
-		_ensureLayoutData(oContent);
-		var content = this.getAssociatedContentAreas();
-
-		//Remove duplicate IDs
-		for (var i = 0; i < content.length; i++) {
-			if (content[i] === id) {
-				content.splice(i,1);
-			}
-		}
-
-		content.splice(iIndex, 0, id);
-		this.setAssociation("associatedContentAreas", null);
-		var that = this;
-
-		content.forEach(function (id) {
-			that.addAssociation("associatedContentAreas", id);
-		});
-	};
-
-	AssociativeSplitter.prototype.removeAssociatedContentArea = function (area) {
-		this.removeAssociation("associatedContentAreas", area);
-	};
-
+	/**
+	 * @override
+	 */
 	AssociativeSplitter.prototype._getContentAreas = function () {
 		var aAssociatedContentAreas = this.getAssociatedContentAreas() || [];
 		var aContentAreas = this.getContentAreas();
@@ -155,8 +121,8 @@ sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/third
 	 *
 	 * @param {Number} [iLeftContent] Number of the first (left) content that is resized
 	 * @param {Number} [iPixels] Number of pixels to increase the first and decrease the second content
-	 * @param {boolean} [bFinal] Whether this is the final position (sets the size in the layoutData of the
-	 * content areas)
+	 * @param {boolean} [bFinal] Whether this is the final position (sets the size in the layoutData of the content areas)
+	 * @override
 	 */
 	AssociativeSplitter.prototype._resizeContents = function (iLeftContent, iPixels, bFinal) {
 		var aContentAreas, oLd1, oLd2, sSize1,
@@ -243,6 +209,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/third
 	 *  3. Divides the rest of the space uniformly between all contents with "auto" size values
 	 *
 	 * @private
+	 * @override
 	 */
 	AssociativeSplitter.prototype._recalculateSizes = function () {
 		// TODO: (?) Use maxSize value from layoutData
@@ -376,22 +343,6 @@ sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/third
 			}
 		}
 	};
-
-	function _ensureLayoutData(oContent) {
-		var oLd = oContent.getLayoutData();
-		// Make sure LayoutData is set on the content
-		// But this approach has the advantage that "compatible" LayoutData can be used.
-		if (oLd && (!oLd.getResizable || !oLd.getSize || !oLd.getMinSize)) {
-			Log.warning(
-				"Content \"" + oContent.getId() + "\" for the Splitter contained wrong LayoutData. " +
-				"The LayoutData has been replaced with default values."
-			);
-			oLd = null;
-		}
-		if (!oLd) {
-			oContent.setLayoutData(new SplitterLayoutData());
-		}
-	}
 
 	return AssociativeSplitter;
 });

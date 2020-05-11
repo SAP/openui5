@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-// Provides control sap.ui.layout.PaneContainer.
 sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap/ui/core/library'],
 	function(library, Element, AssociativeSplitter, coreLibrary) {
 	"use strict";
@@ -70,7 +69,6 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 		this._oSplitter.setOrientation(sOrientation);
 		return this.setProperty("orientation", sOrientation, true);
 	};
-
 
 	PaneContainer.prototype._getPanesInInterval = function (iFrom) {
 		return this.getPanes().filter(function(oPane) {
@@ -145,5 +143,4 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 	};
 
 	return PaneContainer;
-
 });

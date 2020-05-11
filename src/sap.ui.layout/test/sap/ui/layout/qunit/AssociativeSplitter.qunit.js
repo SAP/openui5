@@ -11,7 +11,7 @@ sap.ui.define([
 	ScrollContainer,
 	Rem
 ) {
-	'use strict';
+	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
@@ -26,46 +26,6 @@ sap.ui.define([
 			this.oSplitter.destroy();
 			this.oSplitter = null;
 		}
-	});
-
-	QUnit.test("Finding index of associated content area", function (assert) {
-		// arrange
-		var oArea1 = new Button(),
-			oArea2 = new Button(),
-			iIndex1,
-			iIndex2;
-
-		// act
-		this.oSplitter.addAssociatedContentArea(oArea1);
-		iIndex1 = this.oSplitter.indexOfAssociatedContentArea(oArea1);
-		iIndex2 = this.oSplitter.indexOfAssociatedContentArea(oArea2);
-
-		// assert
-		assert.strictEqual(iIndex1, 0, "Index of the first added area should be 1.");
-		assert.strictEqual(iIndex2, -1, "Should return -1 for area, which is not added to the splitter.");
-	});
-
-	QUnit.test("Inserting content area at given index", function (assert) {
-		// arrange
-		var oArea1 = new Button(),
-			oArea2 = new Button(),
-			oArea3 = new Button();
-
-		// act
-		this.oSplitter.insertAssociatedContentArea(oArea1, 0);
-		this.oSplitter.insertAssociatedContentArea(oArea2, 1);
-		this.oSplitter.insertAssociatedContentArea(oArea3, 0);
-
-		// assert
-		assert.strictEqual(this.oSplitter.indexOfAssociatedContentArea(oArea1), 1, "Area1 should be shifted with 1 position.");
-		assert.strictEqual(this.oSplitter.indexOfAssociatedContentArea(oArea2), 2, "Area2 should be shifted with 1 position.");
-		assert.strictEqual(this.oSplitter.indexOfAssociatedContentArea(oArea3), 0, "Area3 should be inserted at the beginning.");
-
-		// act
-		this.oSplitter.insertAssociatedContentArea(oArea1, 0);
-
-		// assert
-		assert.strictEqual(this.oSplitter.indexOfAssociatedContentArea(oArea1), 0, "Inserting area with the same ID should move it to the new index.");
 	});
 
 	QUnit.module("Events", {
