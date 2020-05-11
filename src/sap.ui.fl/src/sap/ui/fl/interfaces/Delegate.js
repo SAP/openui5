@@ -36,9 +36,8 @@ sap.ui.define([
 	 *
 	 * @typedef {object} sap.ui.fl.interfaces.delegate.RepresentedPropertyInfo
 	 * @property {string} id - Control ID that represents this metadata property
-	 * @property {string[]} bindingPaths - Binding path that represents this property
-	 * @property {string} bindingContext - Binding context for the binding path to prevent name clashes if the relative
-	 * 		binding path can exist with multiple binding contexts
+	 * @property {string[]} bindingPaths - Binding path that represents this property, the binding path doesn't
+	 * 		need to be used in a real binding.
 	 */
 
 	/**
@@ -119,6 +118,8 @@ sap.ui.define([
 		* @param {string} mPropertyBag.aggregationName - Name of the aggregation for which delegate should provide
 		* 		the property information
 		* @returns {Promise<sap.ui.fl.interfaces.delegate.RepresentedPropertyInfo[]>} Data about properties represented.
+				Resolve <code>undefined</code> or don't implement the method if you don't want to take over the check for representation.
+				Resolve an empty array if no property is represented at the moment.
 		* @experimental we still need some more use cases/pilot usage to finalize the API
 		* @abstract
 		*/

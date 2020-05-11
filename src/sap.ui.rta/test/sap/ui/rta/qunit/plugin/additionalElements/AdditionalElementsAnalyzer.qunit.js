@@ -124,24 +124,21 @@ function(
 					label : "Invisible ObjectPage Section",
 					tooltip : "Invisible ObjectPage Section",
 					type : "invisible",
-					elementId : "idMain1--ObjectPageSectionInvisible",
-					bindingPaths: []
+					elementId : "idMain1--ObjectPageSectionInvisible"
 				}, "the invisible section is found", assert);
 				TestUtils.assertElementsEqual(aAdditionalElements[1], {
 					selected : false,
 					label : "idMain1--ObjectPageSectionStashed1",
 					tooltip : "idMain1--ObjectPageSectionStashed1",
 					type : "invisible",
-					elementId : "idMain1--ObjectPageSectionStashed1",
-					bindingPaths: []
+					elementId : "idMain1--ObjectPageSectionStashed1"
 				}, "the 1. stashed section is found", assert);
 				TestUtils.assertElementsEqual(aAdditionalElements[2], {
 					selected : false,
 					label : "idMain1--ObjectPageSectionStashed2",
 					tooltip : "idMain1--ObjectPageSectionStashed2",
 					type : "invisible",
-					elementId : "idMain1--ObjectPageSectionStashed2",
-					bindingPaths: []
+					elementId : "idMain1--ObjectPageSectionStashed2"
 				}, "the 2. stashed section is found", assert);
 			});
 		});
