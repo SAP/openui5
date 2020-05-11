@@ -5,19 +5,19 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/RadioButton",
 	"sap/ui/core/library",
+	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/util/Mobile",
 	"sap/m/Label",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/message/Message"
-], function(
+], function (
 	qutils,
 	createAndAppendDiv,
 	RadioButton,
 	coreLibrary,
+	Core,
 	KeyCodes,
-	EventExtension,
 	Mobile,
 	Label,
 	JSONModel,
@@ -32,21 +32,15 @@ sap.ui.define([
 	// shortcut for sap.ui.core.message.MessageType
 	var MessageType = coreLibrary.MessageType;
 
-
 	createAndAppendDiv("content");
-
-
 
 	Mobile.init();
 
 	QUnit.module("Rendering");
 
-
 	/* ------------------------------ */
 	/* 		tests initial Check       */
 	/* ------------------------------ */
-
-
 	QUnit.test("Initial Check", function(assert) {
 
 		// arrange
@@ -57,7 +51,7 @@ sap.ui.define([
 		});
 		oRadioButton2.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(oRadioButton1.$().hasClass('sapMRb'), true);
@@ -71,7 +65,6 @@ sap.ui.define([
 	/* ------------------------------ */
 	/* 		Group Check     		  */
 	/* ------------------------------ */
-
 	QUnit.test("Button Group", function(assert) {
 
 		// arrange
@@ -79,7 +72,7 @@ sap.ui.define([
 			groupName:"Gruppe1"
 		});
 		oRadioButton1.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.equal(oRadioButton1.$("RB").attr("name"), 'Gruppe1', "Group name should be Gruppe1");
@@ -93,18 +86,18 @@ sap.ui.define([
 
 		// arrange
 		var oDisabledRadioButton  = new RadioButton({
-			enabled:false
+			enabled: false
 		});
 		oDisabledRadioButton.placeAt("qunit-fixture");
 		var oEnabledRadioButton = new RadioButton({
-			enabled:true
+			enabled: true
 		});
 		oEnabledRadioButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
-		assert.equal(oDisabledRadioButton.$().hasClass('sapMRbDis'), true, 'The button should have class sapMRbDis');
-		assert.equal(oEnabledRadioButton.$().hasClass('sapMRbDis'), false, 'The button should not have class sapMRbDis');
+		assert.equal(oDisabledRadioButton.$().hasClass('sapMRbDis'), true, 'The disabled radio button should have class sapMRbDis');
+		assert.equal(oEnabledRadioButton.$().hasClass('sapMRbDis'), false, 'The enabled radio button should not have class sapMRbDis');
 
 		// cleanup
 		oDisabledRadioButton.destroy();
@@ -119,12 +112,18 @@ sap.ui.define([
 			text: "Text"
 		});
 		oRadioButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
 
-		oRadioButton.setText("");
+		Core.applyChanges();
 
 		// assertions
-		assert.equal(oRadioButton.$().hasClass('sapMRbHasLabel'), false, 'The button should not have class sapMRbDis');
+		assert.equal(oRadioButton.$().hasClass('sapMRbHasLabel'), true, 'The button should have class sapMRbHasLabel');
+
+		// act
+		oRadioButton.setText("");
+		Core.applyChanges();
+
+		// assertions
+		assert.equal(oRadioButton.$().hasClass('sapMRbHasLabel'), false, 'The button should not have class sapMRbHasLabel');
 
 		// cleanup
 		oRadioButton.destroy();
@@ -150,7 +149,7 @@ sap.ui.define([
 		oRadioButton._setEditableParent(false);
 
 		oRadioButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(!oRadioButton.getDomRef().getAttribute("aria-readonly"), "Readonly should not be present");
@@ -205,7 +204,7 @@ sap.ui.define([
 			selected: true
 		});
 		oRadioButton2.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.equal(oRadioButton1.getSelected(),false, "The Radio Button should not be selected");
@@ -224,7 +223,7 @@ sap.ui.define([
 		var oRadioButton = new RadioButton();
 
 		oRadioButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oRadioButton.setSelected(null);
 
@@ -244,12 +243,12 @@ sap.ui.define([
 			oRadioButton4 = new RadioButton({ selected: true, groupName: "Other" }),
 			oRadioButton5 = new RadioButton({ groupName: "Other" });
 
-		oRadioButton1.placeAt("content");
-		oRadioButton2.placeAt("content");
-		oRadioButton3.placeAt("content");
-		oRadioButton4.placeAt("content");
-		oRadioButton5.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oRadioButton1.placeAt("qunit-fixture");
+		oRadioButton2.placeAt("qunit-fixture");
+		oRadioButton3.placeAt("qunit-fixture");
+		oRadioButton4.placeAt("qunit-fixture");
+		oRadioButton5.placeAt("qunit-fixture");
+		Core.applyChanges();
 
 		// act
 		qutils.triggerEvent("tap", oRadioButton2.getId());
@@ -278,9 +277,12 @@ sap.ui.define([
 		oRadioButton1.placeAt("qunit-fixture");
 		oRadioButton2.placeAt("qunit-fixture");
 
+		Core.applyChanges();
+
 		// act
 		oRadioButton1.setSelected(true);
 		oRadioButton2.setSelected(true);
+
 
 		// assert
 		assert.ok(!oRadioButton1.getSelected(), "RadioButton should not be selected");
@@ -302,7 +304,7 @@ sap.ui.define([
 			text: 'Foo'
 		});
 		oRadioButton1.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oRadioButton1.getText(), 'Foo', "The Radion Button should have text 'Foo' ");
@@ -320,11 +322,11 @@ sap.ui.define([
 			text: 'Foo'
 		});
 		oRadioButton1.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oRadioButton1.setText("Bar");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oRadioButton1.getText(), 'Bar', "The Radion Button should have text 'Bar'");
@@ -345,7 +347,7 @@ sap.ui.define([
 			width:'10px'
 		});
 		oRadioButton1.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oRadioButton1.getWidth(), '10px', 'The width of the Radio Button should be 10px');
@@ -362,7 +364,7 @@ sap.ui.define([
 			useEntireWidth: true
 		});
 		oRadioButton1.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oRadioButton1.$().width(), 50, "Width of both RadioButton and Lable should be 50");
@@ -386,7 +388,7 @@ sap.ui.define([
 			textDirection: "RTL"
 		});
 		oRadioButton2.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oRadioButton1.$('label').css('direction'),'ltr','The text is with left ro right direction');
@@ -405,7 +407,7 @@ sap.ui.define([
 		var iTabIndex = 1,
 			oRadioButton1 = new RadioButton();
 		oRadioButton1.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oRadioButton1.setTabIndex(iTabIndex);
@@ -426,7 +428,7 @@ sap.ui.define([
 				tooltip: sTooltip
 			});
 			oRadioButton1.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oRadioButton1.$().attr("title"), sTooltip, "Tooltip title attribute is set");
@@ -444,7 +446,7 @@ sap.ui.define([
 		});
 
 		oRadioButton1.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(oRadioButton1.$('label'), 'Label should be created');
@@ -463,7 +465,7 @@ sap.ui.define([
 		});
 
 		oRadioButton1.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oRadioButton1.$("label").css("text-align"), "left", "Text Align should be left");
@@ -482,9 +484,10 @@ sap.ui.define([
 		oRadioButton1.placeAt("qunit-fixture");
 		oRadioButton2.placeAt("qunit-fixture");
 		oRadioButton3.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oRadioButton1.setGroupName("test");
+		Core.applyChanges();
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), KeyCodes.ENTER);
@@ -512,7 +515,7 @@ sap.ui.define([
 		var _sLabelText = 'foobar';
 		var oRadioButton1 = new RadioButton({text: _sLabelText, width: '20px' });
 		oRadioButton1.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.equal(oRadioButton1.$('label').css('width'), '20px', "Label width should be 20px");
@@ -524,14 +527,19 @@ sap.ui.define([
 	});
 
 	QUnit.test("Destroying a RadioButton should not leak", function (assert) {
+		// arrange
 		var oRadioButton1 = new RadioButton({
 			groupName: "group1"
 		});
+		oRadioButton1.placeAt("qunit-fixture");
+		Core.applyChanges();
 
+		// act
 		oRadioButton1.destroy();
 		this.clock.tick(1);
 
-		assert.strictEqual(oRadioButton1._groupNames["group1"].length, 0, "RB instance should be removed from the group");
+		// assert
+		assert.strictEqual(oRadioButton1._groupNames["group1"].length, 0, "Destroyed RB instance should be removed from the group");
 	});
 
 	QUnit.module("Focus Handling");
@@ -541,7 +549,7 @@ sap.ui.define([
 		// arrange
 		var oRadioButton = new RadioButton();
 		oRadioButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		var oFocusDomRef = oRadioButton.getFocusDomRef();
@@ -558,7 +566,7 @@ sap.ui.define([
 		// arrange
 		var oRadioButton = new RadioButton();
 		oRadioButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oRadioButton.applyFocusInfo();
@@ -576,7 +584,7 @@ sap.ui.define([
 		var oSelectSpy = this.spy();
 		var oRadioButton = new RadioButton();
 		oRadioButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oRadioButton.attachSelect(oSelectSpy);
@@ -606,7 +614,7 @@ sap.ui.define([
 
 		// arrange
 		oRadioButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oRadioButton.$().attr("tabindex"), "0" , "'getTabindex' should return 0");
@@ -623,12 +631,12 @@ sap.ui.define([
 		// arrange
 		var oRadioButton = new RadioButton();
 		oRadioButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oRadioButton.attachSelect(function () {
 			oRadioButton.rerender();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assertions
 			assert.ok(oRadioButton.$().is(":focus"), "The focus was set on the button wrapper");
@@ -650,7 +658,7 @@ sap.ui.define([
 		// arrange
 		var oRadioButton1 = new RadioButton();
 		oRadioButton1.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		sap.ui.test.qunit.triggerTouchEvent("touchstart", oRadioButton1.getDomRef());
@@ -668,7 +676,7 @@ sap.ui.define([
 		// arrange
 		var oRadioButton1 = new RadioButton();
 		oRadioButton1.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		sap.ui.test.qunit.triggerTouchEvent("touchstart", oRadioButton1.getDomRef());
@@ -694,7 +702,7 @@ sap.ui.define([
 			var oRadioButton1 = new RadioButton();
 
 			oRadioButton1.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			var fnFireSelectSpy = this.spy(oRadioButton1, "fireSelect");
@@ -734,7 +742,7 @@ sap.ui.define([
 
 			oRadioButton1.placeAt("qunit-fixture");
 			oRadioButton2.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			oRadioButton1.applyFocusInfo();
 			sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), iKeyCode);
@@ -763,7 +771,7 @@ sap.ui.define([
 
 		oRadioButton1.placeAt("qunit-fixture");
 		oRadioButton2.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		var fnFireSelectSpy1 = this.spy(oRadioButton1, "fireSelect");
@@ -791,7 +799,7 @@ sap.ui.define([
 		oRadioButton1.placeAt("qunit-fixture");
 		oRadioButton2.placeAt("qunit-fixture");
 		oRadioButton3.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oRadioButton1.applyFocusInfo();
 		sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), KeyCodes.ARROW_RIGHT);
@@ -817,7 +825,7 @@ sap.ui.define([
 		oRadioButton1.placeAt("qunit-fixture");
 		oRadioButton2.placeAt("qunit-fixture");
 		oRadioButton3.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 
 		oRadioButton3.applyFocusInfo();
@@ -840,7 +848,7 @@ sap.ui.define([
 		oRadioButton.addAriaLabelledBy(oLabel.getId());
 		oRadioButton.addAriaDescribedBy(oLabel.getId());
 		oRadioButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		aAriaLabelledBy = oRadioButton.$().attr("aria-labelledby").split(" ");
 
 		assert.strictEqual(aAriaLabelledBy.length, 2, "should append to the existing label's ID");
@@ -851,7 +859,7 @@ sap.ui.define([
 		oRadioButton.destroy();
 	});
 
-	QUnit.test("Aria-checked must be set explicitely", function(assert) {
+	QUnit.test("Aria-checked must be set explicitly", function(assert) {
 
 		// arrange
 		var oRadioButton1 = new RadioButton({selected: true}),
@@ -864,11 +872,12 @@ sap.ui.define([
 		oRadioButton2.placeAt("qunit-fixture");
 		oRadioButton3.placeAt("qunit-fixture");
 		oRadioButton4.placeAt("qunit-fixture");
+		Core.applyChanges();
 
 		// act
 		oRadioButton3.setSelected(false);
 		oRadioButton4.setSelected(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		$oRadio1 = oRadioButton1.$();
 		$oRadio2 = oRadioButton2.$();
@@ -890,7 +899,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+		var oBundle = Core.getLibraryResourceBundle("sap.m"),
 				oRadioButton = new RadioButton({ text: "testLabel", selected: true }),
 				sExpectedType = oBundle.getText("ACC_CTR_TYPE_RADIO"),
 				sExpectedRole = 'radio',
@@ -898,7 +907,7 @@ sap.ui.define([
 				oAccInfo = oRadioButton.getAccessibilityInfo();
 
 		oRadioButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oAccInfo.type, sExpectedType, "input type set correctly");
 		assert.strictEqual(oAccInfo.role, sExpectedRole, "role set correctly");
@@ -911,7 +920,7 @@ sap.ui.define([
 		var oRadioButton = new RadioButton({ text: "test" });
 
 		oRadioButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oSvg = oRadioButton.getDomRef().getElementsByClassName('sapMRbSvg')[0];
 
 		assert.strictEqual(oSvg.getAttribute('role'), "presentation", "The SVG icon should have a role=presentation");
@@ -925,7 +934,7 @@ sap.ui.define([
 				selected:"{/selected}"
 			});
 			this.oRadioButton.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			sinon.config.useFakeTimers = false;
 		},
 		afterEach: function () {
@@ -940,13 +949,13 @@ sap.ui.define([
 			oModel = new JSONModel({
 				selected:true
 			}),
-			oMessageManager = sap.ui.getCore().getMessageManager(),
+			oMessageManager = Core.getMessageManager(),
 			oMessage = new Message({
 				type: MessageType.Error,
 				target: "/selected",
 				processor: oModel
 			}),
-			sExpectedTooltipText = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR");
+			sExpectedTooltipText = Core.getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR");
 
 		// act
 		this.oRadioButton.setModel(oModel);
@@ -980,6 +989,8 @@ sap.ui.define([
 		this.oRadioButton.setModel(oModel);
 		oMessageManager.registerObject(this.oRadioButton, true);
 		oMessageManager.addMessages([oMessage]);
+		this.oRadioButton.setValueStateText(sMessage);
+		Core.applyChanges();
 
 		setTimeout(function() {
 			// assert

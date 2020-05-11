@@ -2,72 +2,67 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/Device'],
-	function(ValueStateSupport, coreLibrary, Device) {
+sap.ui.define([
+	"sap/ui/core/Core",
+	"sap/ui/core/ValueStateSupport",
+	"sap/ui/core/library",
+	"sap/ui/Device"
+], function (Core, ValueStateSupport, coreLibrary, Device) {
 	"use strict";
-
 
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
-
 
 	/**
 	 * RadioButton renderer.
 	 * @namespace
 	 */
-	var RadioButtonRenderer = {};
+	var RadioButtonRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oRadioButton an object representation of the control that should be rendered
 	 */
-	RadioButtonRenderer.render = function(oRm, oRadioButton) {
+	RadioButtonRenderer.render = function (oRM, oRadioButton) {
+		this.addWOuterDivStyles(oRM, oRadioButton);
+		this.addInnerDivStyles(oRM, oRadioButton);
 
-		this.addWOuterDivStyles(oRm, oRadioButton);
-		this.addInnerDivStyles(oRm, oRadioButton);
+		this.renderSvg(oRM, oRadioButton);
+		this.renderInput(oRM, oRadioButton);
 
-		this.renderSvg(oRm, oRadioButton);
-		this.renderInput(oRm, oRadioButton);
+		this.closeDiv(oRM);
 
-		this.closeDiv(oRm);
-		oRm.renderControl(oRadioButton._oLabel);
+		oRM.renderControl(oRadioButton._oLabel);
 
-		this.renderTooltip(oRm, oRadioButton);
-		this.closeDiv(oRm);
+		this.renderTooltip(oRM, oRadioButton);
+
+		this.closeDiv(oRM);
 	};
 
-	RadioButtonRenderer.addWOuterDivStyles = function(oRm, oRadioButton) {
+	RadioButtonRenderer.addWOuterDivStyles = function (oRM, oRadioButton) {
 		var sId = oRadioButton.getId(),
 			bEnabled = oRadioButton.getEnabled(),
 			bNonEditableParent = !oRadioButton.getProperty("editableParent"),
 			bNonEditable = !oRadioButton.getEditable() || bNonEditableParent,
-			bInErrorState = ValueState.Error === oRadioButton.getValueState(),
-			bInWarningState = ValueState.Warning === oRadioButton.getValueState(),
-			bInSuccessState = ValueState.Success === oRadioButton.getValueState(),
-			bInInformationState = ValueState.Information === oRadioButton.getValueState(),
-			bUseEntireWidth = oRadioButton.getUseEntireWidth();
+			oValueState = oRadioButton.getValueState();
 
-		// Radio Button style class
-		oRm.addClass("sapMRb");
+		oRM.openStart("div", oRadioButton)
+			.class("sapMRb");
 
-		// write the HTML into the render manager
-		oRm.write("<div"); // Control - DIV
-		oRm.writeControlData(oRadioButton);
-
-		if (bUseEntireWidth) {
-			oRm.addStyle("width", oRadioButton.getWidth());
-			oRm.writeStyles();
+		if (oRadioButton.getUseEntireWidth()) {
+			oRM.style("width", oRadioButton.getWidth());
 		}
 
 		var sTooltipWithStateMessage = this.getTooltipText(oRadioButton);
 		if (sTooltipWithStateMessage) {
-			oRm.writeAttributeEscaped("title", sTooltipWithStateMessage);
+			oRM.attr("title", sTooltipWithStateMessage);
 		}
 
-		// ARIA
-		oRm.writeAccessibilityState(oRadioButton, {
+		oRM.accessibilityState(oRadioButton, {
 			role: "radio",
 			readonly: null,
 			selected: null, // Avoid output aria-selected
@@ -77,120 +72,112 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/D
 			describedby: { value: (sTooltipWithStateMessage ? sId + "-Descr" : undefined), append: true }
 		});
 
-		// Add classes and properties depending on the state
 		if (oRadioButton.getSelected()) {
-			oRm.addClass("sapMRbSel");
+			oRM.class("sapMRbSel");
 		}
 
 		if (!bEnabled) {
-			oRm.addClass("sapMRbDis");
+			oRM.class("sapMRbDis");
 		}
 
 		if (bNonEditable) {
-			oRm.addClass("sapMRbRo");
+			oRM.class("sapMRbRo");
 		}
 
-		if (bInErrorState) {
-			oRm.addClass("sapMRbErr");
+		if (oValueState === ValueState.Error) {
+			oRM.class("sapMRbErr");
 		}
 
-		if (bInWarningState) {
-			oRm.addClass("sapMRbWarn");
+		if (oValueState === ValueState.Warning) {
+			oRM.class("sapMRbWarn");
 		}
 
-		if (bInSuccessState) {
-			oRm.addClass("sapMRbSucc");
+		if (oValueState === ValueState.Success) {
+			oRM.class("sapMRbSucc");
 		}
 
-		if (bInInformationState) {
-			oRm.addClass("sapMRbInfo");
+		if (oValueState === ValueState.Information) {
+			oRM.class("sapMRbInfo");
 		}
-
-		oRm.writeClasses();
 
 		if (bEnabled) {
-			oRm.writeAttribute("tabindex", oRadioButton.hasOwnProperty("_iTabIndex") ? oRadioButton._iTabIndex : 0);
+			oRM.attr("tabindex", oRadioButton.hasOwnProperty("_iTabIndex") ? oRadioButton._iTabIndex : 0);
 		}
 
-		oRm.write(">"); // DIV element
+		oRM.openEnd();
 	};
 
-	RadioButtonRenderer.addInnerDivStyles = function(oRm, oRadioButton) {
-		var bReadOnly = this.isButtonReadOnly(oRadioButton);
+	RadioButtonRenderer.addInnerDivStyles = function (oRM, oRadioButton) {
+		oRM.openStart("div")
+			.class("sapMRbB");
 
-		oRm.write("<div ");
-		oRm.addClass('sapMRbB');
-
-		if (!bReadOnly && Device.system.desktop) {
-			oRm.addClass('sapMRbHoverable');
+		if (!this.isButtonReadOnly(oRadioButton) && Device.system.desktop) {
+			oRM.class("sapMRbHoverable");
 		}
 
-		oRm.writeClasses();
-		oRm.write(">");
+		oRM.openEnd();
 	};
 
-	RadioButtonRenderer.renderSvg = function(oRm, oRadioButton) {
-		var sId = oRadioButton.getId();
-
-		oRm.write("<svg xmlns='http://www.w3.org/2000/svg' version='1.0'");
-		oRm.addClass('sapMRbSvg');
-		oRm.writeClasses();
-		oRm.writeAttribute("role", "presentation");
-		oRm.write(">");
-
-		oRm.write('<circle stroke="black" r="50%" stroke-width="2" fill="none"');
-		oRm.addClass("sapMRbBOut");
+	RadioButtonRenderer.renderSvg = function(oRM, oRadioButton) {
+		oRM.openStart("svg")
+			.attr("xmlns", "http://www.w3.org/2000/svg").attr("version", "1.0")
+			.accessibilityState({ role: "presentation" })
+			.class("sapMRbSvg")
+			.openEnd();
 
 		//set an id on this this to be able to focus it, on ApplyFocusInfo (rerenderAllUiAreas)
-		oRm.writeAttribute("id", sId + "-Button");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.write("</circle>");
+		oRM.openStart("circle", oRadioButton.getId() + "-Button")
+			.attr("stroke", "black")
+			.attr("r", "50%")
+			.attr("stroke-width", "2")
+			.attr("fill", "none")
+			.class("sapMRbBOut")
+			.openEnd().close("circle");
 
-		oRm.write('<circle r="22%" stroke-width="10"');
-		oRm.addClass("sapMRbBInn");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.write("</circle>");
 
-		oRm.write("</svg>");
+		oRM.openStart("circle")
+			.attr("r", "22%")
+			.attr("stroke-width", "10")
+			.class("sapMRbBInn")
+			.openEnd().close("circle");
+
+		oRM.close("svg");
 	};
 
-	RadioButtonRenderer.renderInput = function (oRm, oRadioButton) {
-		var sId = oRadioButton.getId(),
-			bReadOnly = this.isButtonReadOnly(oRadioButton);
-
+	RadioButtonRenderer.renderInput = function (oRM, oRadioButton) {
 		// Write the real - potentially hidden - HTML RadioButton element
-		oRm.write("<input type='radio' tabindex='-1'");
-		oRm.writeAttribute("id", sId + "-RB");
-		oRm.writeAttributeEscaped("name", oRadioButton.getGroupName());
+		oRM.voidStart("input", oRadioButton.getId() + "-RB")
+			.attr("type", "radio")
+			.attr("tabindex", "-1")
+			.attr("name", oRadioButton.getGroupName());
+
 		if (oRadioButton.getSelected()) {
-			oRm.writeAttribute("checked", "checked");
+			oRM.attr("checked", "checked");
 		}
 
-		if (bReadOnly) {
-			oRm.writeAttribute("readonly", "readonly");
-			oRm.writeAttribute("disabled", "disabled");
+		if (this.isButtonReadOnly(oRadioButton)) {
+			oRM.attr("readonly", "readonly");
+			oRM.attr("disabled", "disabled");
 		}
 
-		oRm.write(">"); // Close RadioButton-input-element
+		oRM.voidEnd();
 	};
 
-	RadioButtonRenderer.renderTooltip = function (oRm, oRadioButton) {
-		var sId = oRadioButton.getId(),
-			sTooltipWithStateMessage = this.getTooltipText(oRadioButton);
+	RadioButtonRenderer.renderTooltip = function (oRM, oRadioButton) {
+		var sTooltipWithStateMessage = this.getTooltipText(oRadioButton);
 
-		if (sTooltipWithStateMessage && sap.ui.getCore().getConfiguration().getAccessibility()) {
+		if (sTooltipWithStateMessage && Core.getConfiguration().getAccessibility()) {
 			// for ARIA, the tooltip must be in a separate SPAN and assigned via aria-describedby.
 			// otherwise, JAWS does not read it.
-			oRm.write("<span id=\"" + sId + "-Descr\" style=\"display: none;\">");
-			oRm.writeEscaped(sTooltipWithStateMessage);
-			oRm.write("</span>");
+			oRM.openStart("span", oRadioButton.getId() + "-Descr")
+				.style("display", "none")
+				.openEnd()
+				.text(sTooltipWithStateMessage)
+				.close("span");
 		}
 	};
 
 	RadioButtonRenderer.isButtonReadOnly = function(oRadioButton) {
-
 		var bEnabled = oRadioButton.getEnabled(),
 			bNonEditableParent = !oRadioButton.getProperty("editableParent"),
 			bNonEditable = !oRadioButton.getEditable() || bNonEditableParent;
@@ -199,8 +186,8 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/D
 
 	};
 
-	RadioButtonRenderer.closeDiv = function (oRm) {
-		oRm.write("</div>");
+	RadioButtonRenderer.closeDiv = function (oRM) {
+		oRM.close("div");
 	};
 
 	/**
@@ -221,5 +208,4 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/D
 	};
 
 	return RadioButtonRenderer;
-
 }, /* bExport= */ true);
