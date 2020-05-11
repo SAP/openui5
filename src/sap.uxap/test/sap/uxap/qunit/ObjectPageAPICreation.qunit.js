@@ -562,14 +562,28 @@ function (
 		oObjectPage.addHeaderContent(oFactory.getHeaderContent());
 		oObjectPage.setIsHeaderContentAlwaysExpanded(true);
 
+		// ensure desktop mode
+		helpers.toDesktopMode(oObjectPage);
+		var oPhoneStub = this.stub(lib.Utilities, "isPhoneScenario", function() {
+			return false;
+		});
+		var oTabletStub =  this.stub(lib.Utilities, "isTabletScenario", function() {
+			return false;
+		});
+
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
 			// Act: unset the currently selected section
 			oObjectPage.setSelectedSection(null);
 
 			// Check: the header is still expanded in the title
 			setTimeout(function() {
+				// Assert
 				assert.equal(oObjectPage._bHeaderExpanded, true, "Header is expnded");
 				assert.equal(oObjectPage._bHeaderInTitleArea, true, "Header is still in the title area");
+
+				// Clean up
+				oPhoneStub.restore();
+				oTabletStub.restore();
 				done();
 			}, 0);
 		});
@@ -2540,11 +2554,25 @@ function (
 				oObjectPage.rerender();
 			},
 			fnOnRerenderedDomReady2 = function() {
+				// Assert
 				assert.equal(oObjectPage._bHeaderExpanded, true, "Flag for expandedHeader has correct value");
 				oHeaderContent = oObjectPage._getHeaderContent();
 				assert.equal(oHeaderContent.$().hasClass("sapUxAPObjectPageHeaderContentHidden"), false, "Header content is not hidden");
+
+				// Clean up
+				oPhoneStub.restore();
+				oTabletStub.restore();
 				done();
 			};
+
+			// ensure desktop mode
+			helpers.toDesktopMode(oObjectPage);
+			var oPhoneStub = this.stub(lib.Utilities, "isPhoneScenario", function() {
+				return false;
+			});
+			var oTabletStub =  this.stub(lib.Utilities, "isTabletScenario", function() {
+				return false;
+			});
 
 			assert.expect(3);
 			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
