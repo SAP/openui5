@@ -1499,7 +1499,37 @@ sap.ui.define([
 						Title : "Title3",
 						Description: "Description4",
 						Selected: false
-					}
+					},
+					{Title: "Entry1"},
+					{Title: "Entry2"},
+					{Title: "Entry3"},
+					{Title: "Entry4"},
+					{Title: "Entry5"},
+					{Title: "Entry6"},
+					{Title: "Entry7"},
+					{Title: "Entry8"},
+					{Title: "Entry9"},
+					{Title: "Entry10"},
+					{Title: "Entry11"},
+					{Title: "Entry12"},
+					{Title: "Entry13"},
+					{Title: "Entry14"},
+					{Title: "Entry15"},
+					{Title: "Entry16"},
+					{Title: "Entry17"},
+					{Title: "Entry18"},
+					{Title: "Entry19"},
+					{Title: "Entry20"},
+					{Title: "Entry21"},
+					{Title: "Entry22"},
+					{Title: "Entry23"},
+					{Title: "Entry24"},
+					{Title: "Entry25"},
+					{Title: "Entry26"},
+					{Title: "Entry27"},
+					{Title: "Entry28"},
+					{Title: "Entry29"},
+					{Title: "Entry30"}
 				]
 			}, path: "/items", template: createTemplateListItem() });
 		}, afterEach: function() {
@@ -1520,13 +1550,38 @@ sap.ui.define([
 			done();
 		});
 
-		jQuery.when(this.oSelectDialog.open()).then(function () {
+		this.oSelectDialog._oDialog.attachAfterOpen(function () {
 			// Act
 			that.oSelectDialog._executeSearch("Tes", false, "search");
 			that.oSelectDialog.getItems()[0].setSelected(true);
 			that.oSelectDialog._getOkButton().firePress();
 		});
 
+		this.oSelectDialog.open();
+	});
 
+	QUnit.test("Selected items after search have to be all the selected items - selected items go outside the growing number", function (assert) {
+		// Arrange
+		var that = this,
+			done = assert.async();
+
+		this.oSelectDialog.attachConfirm(function (oEvent) {
+			var aSelectedItems = oEvent.getParameter("selectedItems");
+
+			assert.strictEqual(aSelectedItems.length, 4, '4 items where selected');
+			done();
+		});
+
+
+		this.oSelectDialog._oDialog.attachAfterOpen(function () {
+			// Act
+			that.oSelectDialog._executeSearch("Entry2", false, "search");
+			that.oSelectDialog.getItems()[0].setSelected(true);
+			that.oSelectDialog.getItems()[1].setSelected(true);
+			that.oSelectDialog.getItems()[2].setSelected(true);
+			that.oSelectDialog._getOkButton().firePress();
+		});
+
+		this.oSelectDialog.open();
 	});
 });
