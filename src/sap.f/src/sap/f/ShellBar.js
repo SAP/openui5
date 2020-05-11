@@ -142,9 +142,11 @@ function(
 				 * <b>Note:</b> Only controls implementing the <code>{@link sap.f.IShellBar}</code> interface are allowed.
 				 */
 				additionalContent: {type: "sap.f.IShellBar", multiple: true, singularName: "additionalContent"},
+
 				/**
 				 * Holds the internally created OverflowToolbar.
 				 */
+
 				_overflowToolbar: {type: "sap.m.OverflowToolbar", multiple: false, visibility: "hidden"},
 				/**
 				 * Holds the internally created HBox with text content.
@@ -258,6 +260,7 @@ function(
 		this._oOverflowToolbar = this._oFactory.getOverflowToolbar();
 		this._oAdditionalBox = this._oFactory.getAdditionalBox();
 		this._aControls = [];
+		this._aAdditionalContent = [];
 		this.setAggregation("_overflowToolbar", this._oOverflowToolbar);
 		this.setAggregation("_additionalBox", this._oAdditionalBox);
 
@@ -281,6 +284,7 @@ function(
 	ShellBar.prototype.exit = function () {
 		this._aLeftControls = [];
 		this._aRightControls = [];
+		this._aControls = [];
 		this._oResponsiveHandler.exit();
 		this._oFactory.destroy();
 		this._oAcc.exit();
@@ -617,9 +621,6 @@ function(
 		if (aAdditionalContent) {
 			aAdditionalContent.forEach(function (oControl) {
 				this.addControlToCollection(oControl, this._oOverflowToolbar);
-				oControl.setLayoutData(new OverflowToolbarLayoutData({
-					priority: "Low"
-				}));
 			}, this);
 		}
 

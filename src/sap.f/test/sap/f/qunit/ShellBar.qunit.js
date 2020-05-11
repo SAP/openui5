@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/f/Avatar",
 	"sap/m/Menu",
 	"sap/ui/core/Core",
+	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ],
 function (
@@ -24,6 +25,7 @@ function (
 	Avatar,
 	Menu,
 	Core,
+	Log,
 	jQuery
 ) {
 	"use strict";
@@ -266,6 +268,7 @@ function (
 		"content on index '1' is the First Button");
 
 		// Act
+		this.oSB.removeAdditionalContent(oAdditionalButtonFirst);
 		this.oSB.insertAdditionalContent(oAdditionalButtonFirst, 100);
 
 		// Assert
@@ -273,13 +276,9 @@ function (
 		"content on index '0' is the Second Button");
 		assert.strictEqual(this.oSB._aAdditionalContent[1], oAdditionalButtonFirst, "Additional " +
 		"content on index '1' is the First Button");
-		assert.strictEqual(this.oSB._aAdditionalContent[2], oAdditionalButtonFirst, "Additional " +
-		"content on index '2' is the First Button");
 
 		// Act
-		this.oSB.removeAdditionalContent(oAdditionalButtonFirst);
 		this.oSB.removeAdditionalContent(oAdditionalButtonSecond);
-		this.oSB.destroyAdditionalContent();
 		// Assert
 		assert.strictEqual(this.oSB.indexOfAdditionalContent(oAdditionalButtonFirst), 0, "Additional " +
 		"content removed properly and index returned correctly");
@@ -295,6 +294,8 @@ function (
 		// Cleanup
 		oAdditionalButtonFirst.destroy();
 		oAdditionalButtonSecond.destroy();
+		this.oSB.exit();
+		assert.strictEqual(this.oSB.getAdditionalContent().length, 0, "Additional content with all the items is removed");
 	});
 
 	QUnit.test("Configurations", function (assert) {
@@ -1173,4 +1174,116 @@ function (
 		// Act
 		this.oSB._oSearch.firePress();
 	});
+
+	QUnit.module("AdditionalDataSupport", {
+		beforeEach: function () {
+			this.oSB = new ShellBar({
+				additionalContent: [
+					new OverflowToolbarButton({
+						id: "additionalContentFirst",
+						text: "Text of First Additional Button"}),
+					new OverflowToolbarButton({
+						id: "additionalContentSecond",
+						text: "Text of Second Additional Button"}),
+					new OverflowToolbarButton({
+						id: "additionalContentThird"
+					})
+				]
+			});
+			this.oSB.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oSB.destroy();
+		}
+	});
+
+	QUnit.test("Methods", function (assert) {
+		//Arrange
+		var oACFirst = this.oSB.getAdditionalContent()[0],
+			oACSecond = this.oSB.getAdditionalContent()[1],
+			oACThird = this.oSB.getAdditionalContent()[2],
+			aRemovedChildren,
+			oLogSpy = sinon.spy(Log, "warning");
+
+		//Assert
+		assert.equal(this.oSB.removeAdditionalContent(2), oACThird, "removing additional content by index" +
+			" returns removed object");
+		assert.equal(this.oSB.removeAdditionalContent(oACSecond), oACSecond, "removing additional content by " +
+			"object itself returns removed object");
+		assert.equal(this.oSB.removeAdditionalContent("additionalContentFirst"), oACFirst, "removing " +
+			"additional content by id returns removed object");
+
+		assert.equal(this.oSB.removeAdditionalContent(null), null, "removing " +
+			"additional content by invalid parameter (null) returns null");
+
+		assert.equal(this.oSB.removeAdditionalContent(undefined), null, "removing " +
+			"additional content by invalid parameter (undefined) returns null");
+
+		//Act
+		this.oSB.addAdditionalContent(oACFirst).addAdditionalContent(oACSecond).addAdditionalContent(oACThird);
+
+		//Assert
+		assert.equal(this.oSB.getAdditionalContent().length, 3, "additional content is added correctly");
+
+		aRemovedChildren = this.oSB.removeAllAdditionalContent();
+
+		assert.ok(aRemovedChildren[0] === oACFirst && aRemovedChildren[1] === oACSecond &&
+			aRemovedChildren[2] === oACThird,
+			"Removing all additional" +
+			" content method returns array of removed items");
+		//Act
+		this.oSB.insertAdditionalContent(oACFirst, -1);
+		//Assert
+		assert.equal(this.oSB.indexOfAdditionalContent(oACFirst), 0, "Passing negative value for index parameter of " +
+			"insertAdditionalContent method moves object to the very first position");
+
+		//Act
+		this.oSB.insertAdditionalContent(oACSecond, 1000);
+		//Assert
+		assert.equal(this.oSB.indexOfAdditionalContent(oACSecond), this.oSB.getAdditionalContent().length - 1 , "Passing" +
+			" too high value for index parameter of insertAdditionalContent method moves object to the last position");
+
+		//Act
+		this.oSB.insertAdditionalContent(oACThird);
+		//Assert
+		assert.equal(this.oSB.indexOfAdditionalContent(oACThird), 0 , "Passing" +
+			" no index parameter of insertAdditionalContent method moves object to the very first position");
+
+		//Act
+		this.oSB.removeAllAdditionalContent();
+		this.oSB.insertAdditionalContent(oACFirst, null);
+		//Assert
+		assert.equal(this.oSB.indexOfAdditionalContent(oACFirst), 0, "Passing invalid value(null) for index parameter of " +
+			"insertAdditionalContent method moves object to the very first position");
+
+		//Act
+		this.oSB.insertAdditionalContent(oACSecond, "index");
+		//Assert
+		assert.equal(this.oSB.indexOfAdditionalContent(oACSecond), 0 , "Passing invalid value(string) for index parameter" +
+			" of insertAdditionalContent method moves object to the last position");
+
+		//Act
+		this.oSB.insertAdditionalContent(oACSecond);
+		//Assert
+		assert.ok(oLogSpy.calledOnce , "Trying" +
+			" to insert an element, already in the Additional Content collection fails");
+
+		//Act
+		this.oSB.addAdditionalContent(oACFirst);
+		//Assert
+		assert.equal(oLogSpy.callCount, 2, "Trying" +
+			" to insert an element, already in the Additional Content collection fails");
+
+		assert.equal(this.oSB.removeAdditionalContent([]), null, "Passing invalid parameter to" +
+			" removeAdditionalContent([]) returns null");
+
+		assert.equal(this.oSB.removeAdditionalContent(undefined), null, "Passing invalid parameter to" +
+			" removeAdditionalContent(undefined) returns null");
+
+		assert.equal(this.oSB.removeAdditionalContent("index"), null, "Passing invalid parameter to" +
+			" removeAdditionalContent(string) returns null");
+
+	});
+
 });
