@@ -589,4 +589,53 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, XMLView) {
 		Core.getConfiguration().setAnimationMode(oOrigAnimationMode);
 	});
 
+	QUnit.module("Focus on selection, selected state", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-70_KeyboardHandling",
+				viewName: "view.UxAP-70_KeyboardHandling"
+			}).then(function (oView) {
+				this.anchorBarView = oView;
+				this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
+				this.anchorBarView.placeAt("qunit-fixture");
+				Core.applyChanges();
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.anchorBarView.destroy();
+			this.oObjectPage = null;
+		}
+	});
+
+	//This test is written to cover a timing problem in IE, when focus outruns scrolling to section
+	QUnit.test("Focus a section on selection with animation mode 'none'", function (assert) {
+		var oAnchorBar = getAnchorBar(),
+			oSectionButton = oAnchorBar.getContent()[2],
+			oOrigAnimationMode = Core.getConfiguration().getAnimationMode(),
+			done = assert.async();
+
+		assert.expect(1);
+
+		// Setup
+		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
+
+
+		// Check
+		setTimeout(function() {
+
+			// Act
+			oSectionButton.firePress();
+			setTimeout(function() {
+
+				assert.strictEqual(this.oObjectPage.getSelectedSection(), oSectionButton.data("sectionId"), "Section is properly selected");
+
+				// restore state
+				Core.getConfiguration().setAnimationMode(oOrigAnimationMode);
+				done();
+			}.bind(this), 500);
+		}.bind(this), 500);
+
+	});
 });

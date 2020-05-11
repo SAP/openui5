@@ -2230,7 +2230,9 @@ sap.ui.define([
 
 			//calculate the mobile position
 			if (!bPromoted) {
-				oInfo.positionTopMobile = Math.ceil($mobileAnchor.position().top) + $mobileAnchor.outerHeight();
+				oInfo.positionTopMobile =
+					Math.ceil(library.Utilities.getChildPosition($mobileAnchor, this._$contentContainer).top)
+					+ $mobileAnchor.outerHeight();
 			} else {
 				//title wasn't found (=first section, hidden title, promoted subsection), scroll to the same position as desktop
 				oInfo.positionTopMobile = oInfo.positionTop;
@@ -2450,8 +2452,8 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._getSectionPositionTop = function(oSectionBase, bShouldStick) {
-		var iPosition = oSectionBase.$().position().top;
 
+		var iPosition = Math.ceil(library.Utilities.getChildPosition(oSectionBase.$(), this._$contentContainer).top);
 		if (!this._bStickyAnchorBar && !this._bHeaderInTitleArea && bShouldStick) { // in sticky mode the anchor bar is not part of the content
 			iPosition -= this.iAnchorBarHeight;
 		}
