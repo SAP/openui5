@@ -3272,9 +3272,13 @@ function(
 	* @private
 	*/
 	MultiComboBox.prototype._getItemByValue = function (sValue) {
-	   return this.getSelectableItems().find(function (oItem) {
-		   return oItem.getText().toLowerCase() === sValue.toLowerCase();
-	   });
+		var oSelectedItem;
+		this.getSelectableItems().forEach(function(oItem) {
+			if (oItem.getText().toLowerCase() === sValue.toLowerCase()) {
+				oSelectedItem = oItem;
+			}
+		});
+		return oSelectedItem;
 	};
 
 	/**
