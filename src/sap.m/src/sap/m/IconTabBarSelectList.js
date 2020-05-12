@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	'sap/ui/core/delegate/ItemNavigation',
 	'./IconTabBarDragAndDropUtil',
+	'sap/ui/core/dnd/DropPosition',
 	'./IconTabBarSelectListRenderer',
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -17,6 +18,7 @@ sap.ui.define([
 	Core,
 	ItemNavigation,
 	IconTabBarDragAndDropUtil,
+	DropPosition,
 	IconTabBarSelectListRenderer,
 	jQuery
 ) {
@@ -101,6 +103,7 @@ sap.ui.define([
 		if (!this._oIconTabHeader) {
 			return;
 		}
+		this.destroyDragDropConfig();
 		this._setsDragAndConfiguration();
 	};
 
@@ -118,11 +121,8 @@ sap.ui.define([
 	 * @private
 	 */
 	IconTabBarSelectList.prototype._setsDragAndConfiguration = function () {
-		if (!this._oIconTabHeader.getEnableTabReordering() && this.getDragDropConfig().length) {
-			//Destroying Drag&Drop aggregation
-			this.destroyDragDropConfig();
-		} else if (this._oIconTabHeader.getEnableTabReordering() && !this.getDragDropConfig().length) {
-			IconTabBarDragAndDropUtil.setDragDropAggregations(this, "Vertical");
+		if (this._oIconTabHeader.getEnableTabReordering() && !this.getDragDropConfig().length) {
+			IconTabBarDragAndDropUtil.setDragDropAggregations(this, "Vertical", this._oIconTabHeader._getDropPosition());
 		}
 	};
 
@@ -255,7 +255,7 @@ sap.ui.define([
 			oContext = this._oIconTabHeader;
 		}
 
-		if (sDropPosition === "On") {
+		if (sDropPosition === DropPosition.On) {
 			oContext = oDroppedControl._getRealTab();
 		}
 
