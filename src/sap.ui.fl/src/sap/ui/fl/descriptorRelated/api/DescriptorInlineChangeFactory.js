@@ -867,5 +867,22 @@ sap.ui.define([
 		return AppVariantInlineChangeFactory.create_fiori_setRegistrationIds(mPropertyBag);
 	};
 
+	/**
+	 * Creates an inline change of change type appdescr_ui5_setFlexExtensionPointEnabled
+	 *
+	 * @param {object} mParameters parameters of the change type
+	 * @param {boolean} mParameters.flexExtensionPointEnabled the flexExtensionPointEnabled property
+	 *
+	 * @return {Promise} resolving when creating the descriptor inline change was successful (without backend access)
+	 *
+	 * @private
+	 * @deprecated Since version 1.78
+	 * @ui5-restricted WebIDE
+	 */
+	DescriptorInlineChangeFactory.create_ui5_setFlexExtensionPointEnabled = function(mParameters) {
+		var mPropertyBag = _preparePropertyBag("appdescr_ui5_setFlexExtensionPointEnabled", mParameters);
+		return AppVariantInlineChangeFactory.create_ui5_setFlexExtensionPointEnabled(mPropertyBag);
+	};
+
 	return DescriptorInlineChangeFactory;
 }, true);
