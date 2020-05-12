@@ -470,6 +470,59 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[{
+	request : {method : "POST"},
+	response : {headers : {}},
+	result : undefined
+}, {
+	request : {method : "POST"},
+	response : {
+		headers : {},
+		statusCode : 201
+	},
+	result : undefined
+}, {
+	request : {method : "POST"},
+	response : {
+		headers : {location : "foo"},
+		statusCode : 201
+	},
+	result : true
+}, {
+	request : {method : "GET"},
+	response : {
+		headers : {location : "foo"},
+		statusCode : 201
+	},
+	result : undefined
+}, {
+	request : {key : "~foo"},
+	response : {headers : {}},
+	result : undefined
+}, {
+	request : {created : true, key : "~foo"},
+	response : {headers : {}},
+	result : undefined
+}, {
+	request : {created : true, key : "~foo"},
+	response : {
+		headers : {},
+		statusCode : 400
+	},
+	result : false
+}].forEach(function (oFixture, i) {
+	QUnit.test("_isResponseForCreate: " + i, function (assert) {
+		var mRequestInfo = {
+				request : oFixture.request,
+				response : oFixture.response
+			};
+
+		// code under test
+		assert.strictEqual(ODataMessageParser._isResponseForCreate(mRequestInfo), oFixture.result);
+	});
+});
+
+	//*********************************************************************************************
 [
 	{propertyref : "foo", target : "/~target", warning : true},
 	{propertyref : "foo", target : "/#TRANSIENT#/~target", warning : true},
@@ -584,6 +637,9 @@ sap.ui.define([
 						+ " with 'target'",
 					"~requestURL", sClassName);
 		}
+		this.mock(ODataMessageParser).expects("_isResponseForCreate")
+			.withExactArgs(sinon.match.same(mRequestInfo))
+			.returns(undefined);
 		this.mock(oODataMessageParser).expects("_parseUrl")
 			.withExactArgs("~requestURL")
 			.returns(mUrlData);
@@ -647,6 +703,9 @@ sap.ui.define([
 						+ " with 'target'",
 					"~requestURL", sClassName);
 		}
+		this.mock(ODataMessageParser).expects("_isResponseForCreate")
+			.withExactArgs(sinon.match.same(mRequestInfo))
+			.returns(undefined);
 		this.mock(oODataMessageParser).expects("_parseUrl")
 			.withExactArgs("~requestURL")
 			.returns(mUrlData);
@@ -674,6 +733,106 @@ sap.ui.define([
 		assert.strictEqual(oMessageObject.target, "~normalizedTarget");
 	});
 });
+
+	//*********************************************************************************************
+	//*********************************************************************************************
+	QUnit.test("_createTarget: created entity", function (assert) {
+		var oMessageObject = {target : "~target"},
+			oODataMessageParser = {
+				_serviceUrl : "~serviceUrl",
+				_metadata : {
+					_getFunctionImportMetadata : function () {},
+					_getReducedPath : function () {},
+					_isCollection : function () {}
+				},
+				_parseUrl : function () {},
+				_processor : {
+					resolve : function () {}
+				}
+			},
+			mRequestInfo = {
+				request : {deepPath : "~deepPath", method : "POST"},
+				response : {
+					headers : {location : "https://foo.com/~serviceUrl/~uriFromLocation"}
+				},
+				url : "~requestURL"
+			},
+			mUrlData = {url : "https://foo.com/~serviceUrl/~parsedUrl"};
+
+		this.mock(ODataMessageParser).expects("_isResponseForCreate")
+			.withExactArgs(sinon.match.same(mRequestInfo))
+			.returns(true);
+		this.mock(oODataMessageParser).expects("_parseUrl")
+			.withExactArgs("https://foo.com/~serviceUrl/~uriFromLocation")
+			.returns(mUrlData);
+		this.mock(oODataMessageParser._metadata).expects("_getFunctionImportMetadata").never();
+		this.mock(oODataMessageParser._metadata).expects("_isCollection")
+			.withExactArgs("/~parsedUrl")
+			.returns(true);
+		this.mock(oODataMessageParser._processor).expects("resolve")
+			// collection -> no / between path and target
+			.withExactArgs("/~parsedUrl~target", undefined, true)
+			.returns("~canonicalTarget");
+		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
+			.withExactArgs("~deepPath~target") // collection -> no / between path and target
+			.returns("~reducedPath");
+		this.mock(ODataUtils).expects("_normalizeKey")
+			.withExactArgs("~canonicalTarget")
+			.returns("~normalizedTarget");
+
+		// code under test
+		ODataMessageParser.prototype._createTarget.call(oODataMessageParser, oMessageObject,
+			mRequestInfo);
+
+		assert.strictEqual(oMessageObject.deepPath, "~reducedPath");
+		assert.strictEqual(oMessageObject.target, "~normalizedTarget");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_createTarget: entity creation failed, no processor", function (assert) {
+		var oMessageObject = {},
+			oODataMessageParser = {
+				_metadata : {
+					_getFunctionImportMetadata : function () {},
+					_isCollection : function () {}
+				},
+				_parseUrl : function () {}
+				// test without processor
+			},
+			mRequestInfo = {
+				request : {
+					created : true,
+					deepPath : "~deepPath",
+					key : "~tempKey",
+					method : "POST"
+				},
+				response : {statusCode : 400}
+			},
+			mUrlData = {url : "~parsedUrl"};
+
+		this.mock(ODataMessageParser).expects("_isResponseForCreate")
+			.withExactArgs(sinon.match.same(mRequestInfo))
+			.returns(false);
+		this.mock(oODataMessageParser).expects("_parseUrl")
+			.withExactArgs("~tempKey")
+			.returns(mUrlData);
+		this.mock(oODataMessageParser._metadata).expects("_getFunctionImportMetadata")
+			.withExactArgs("/~parsedUrl", "POST")
+			.returns(null);
+		this.mock(oODataMessageParser._metadata).expects("_isCollection")
+			.withExactArgs("/~parsedUrl")
+			.returns(false);
+		this.mock(ODataUtils).expects("_normalizeKey")
+			.withExactArgs("/~parsedUrl")
+			.returns("~normalizedTarget");
+
+		// code under test
+		ODataMessageParser.prototype._createTarget.call(oODataMessageParser, oMessageObject,
+			mRequestInfo, true);
+
+		assert.strictEqual(oMessageObject.deepPath, undefined);
+		assert.strictEqual(oMessageObject.target, "~normalizedTarget");
+	});
 
 	//*********************************************************************************************
 	QUnit.test("_createTarget: no target; unbound message", function (assert) {

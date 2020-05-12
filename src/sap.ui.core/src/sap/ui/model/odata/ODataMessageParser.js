@@ -469,6 +469,31 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
 	return sTarget;
 };
 
+/**
+ * Whether the given response is the response for a successful entity creation.
+ *
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo
+ *   A map containing information about the current request
+ * @return {boolean|undefined}
+ *   <code>true</code> if the response is for a successful creation and the response header has a
+ *   "location" property, <code>false</code> if the response is an error response for a failed
+ *   creation, and <code>undefined</code> otherwise.
+ *
+ * @private
+ */
+ODataMessageParser._isResponseForCreate = function (mRequestInfo) {
+	var oRequest = mRequestInfo.request,
+		oResponse = mRequestInfo.response;
+
+	if (oRequest.method === "POST" && oResponse.statusCode == 201
+			&& oResponse.headers["location"]) {
+		return true;
+	}
+	if (oRequest.key && oRequest.created && oResponse.statusCode >= 400) {
+		return false;
+	}
+	// return undefined; otherwise
+};
 
 /**
  * Determines the absolute target URL (relative to the service URL) from the given message object
@@ -489,6 +514,8 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
  * @private
  */
 ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestInfo, bIsTechnical) {
+	var bCreate, sUrlForTargetCalculation;
+
 	if (oMessageObject.propertyref !== undefined && oMessageObject.target !== undefined) {
 		Log.warning("Used the message's 'target' property for target calculation; the property"
 			+ " 'propertyref' is deprecated and must not be used together with 'target'",
@@ -496,8 +523,7 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 	} else if (oMessageObject.target === undefined) {
 		oMessageObject.target = oMessageObject.propertyref;
 	}
-	if (oMessageObject.target === undefined && !bIsTechnical && mRequestInfo.request
-			&& mRequestInfo.request.headers
+	if (oMessageObject.target === undefined && !bIsTechnical
 			&& mRequestInfo.request.headers["sap-message-scope"] === "BusinessObject") {
 		oMessageObject.deepPath = "";
 		oMessageObject.target = "";
@@ -519,18 +545,12 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 
 		// special case for 201 POST requests which create a resource
 		// The target is a relative resource path segment that can be appended to the Location response header (for POST requests that create a new entity)
-		var sMethod = (mRequestInfo.request && mRequestInfo.request.method) ? mRequestInfo.request.method : "GET";
-		var bRequestCreatePost = (sMethod === "POST"
-			&& mRequestInfo.response
-			&& mRequestInfo.response.statusCode == 201
-			&& mRequestInfo.response.headers
-			&& mRequestInfo.response.headers["location"]);
+		var sMethod = mRequestInfo.request.method || "GET";
+		bCreate = ODataMessageParser._isResponseForCreate(mRequestInfo);
 
-		var sUrlForTargetCalculation;
-		if (bRequestCreatePost) {
+		if (bCreate === true) { // successful create
 			sUrlForTargetCalculation = mRequestInfo.response.headers["location"];
-		} else if (mRequestInfo.request && mRequestInfo.request.key && mRequestInfo.request.created && mRequestInfo.response && mRequestInfo.response.statusCode >= 400) {
-			// If a create request returns an error the target should be set to the internal entity key
+		} else if (bCreate === false) { // failed create
 			sUrlForTargetCalculation = mRequestInfo.request.key;
 		} else {
 			sUrlForTargetCalculation = mRequestInfo.url;
@@ -547,8 +567,8 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 			sRequestTarget = "/" + sUrl;
 		}
 
-		// function import case
-		if (!bRequestCreatePost) {
+		// function import case; bCreate === false might also be a function import call
+		if (!bCreate) {
 			var mFunctionInfo = this._metadata._getFunctionImportMetadata(sRequestTarget, sMethod);
 
 			if (mFunctionInfo) {
@@ -563,7 +583,7 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 		var iSlashPos = sRequestTarget.lastIndexOf("/");
 		var sRequestTargetName = iSlashPos > -1 ? sRequestTarget.substr(iSlashPos) : sRequestTarget;
 
-		if (!sDeepPath && mRequestInfo.request && mRequestInfo.request.deepPath){
+		if (!sDeepPath && mRequestInfo.request.deepPath){
 			sDeepPath = mRequestInfo.request.deepPath;
 		}
 		if (sRequestTargetName.indexOf("(") > -1) {
