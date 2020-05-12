@@ -68,12 +68,20 @@ sap.ui.define([
 	var CompositeBinding = PropertyBinding.extend("sap.ui.model.CompositeBinding", /** @lends sap.ui.model.CompositeBinding.prototype */ {
 
 		constructor : function (aBindings, bRawValues, bInternalValues) {
+			var oModel;
+
 			PropertyBinding.apply(this, [null,""]);
 			this.aBindings = aBindings;
 			this.aValues = null;
 			this.bRawValues = bRawValues;
 			this.bPreventUpdate = false;
 			this.bInternalValues = bInternalValues;
+			this.bMultipleModels = this.aBindings.some(function (oBinding) {
+				var oCurrentModel = oBinding.getModel();
+
+				oModel = oModel || oCurrentModel;
+				return oModel && oCurrentModel && oCurrentModel !== oModel;
+			});
 		},
 		metadata : {
 
@@ -766,6 +774,17 @@ sap.ui.define([
 		if (this.bPreventUpdate || (this.bSuspended && !bForceUpdate)) {
 			return;
 		}
+		// do not fire change event in case the destruction of the model for one part leads to the
+		// update of a model for another part of this binding
+		if (this.bMultipleModels
+			&& this.aBindings.some(function (oBinding) {
+				var oModel = oBinding.getModel();
+
+				return oModel && oModel.bDestroyed;
+			})) {
+			return;
+		}
+
 		var oDataState = this.getDataState();
 		var aOriginalValues = this.getOriginalValue();
 		if (bForceUpdate || !deepEqual(aOriginalValues, this.aOriginalValues)) {
