@@ -1121,14 +1121,22 @@ sap.ui.define([
 		// get the last focused element from the ItemNavigation
 		var aNavigationDomRefs = this._itemNavigation.getItemDomRefs(),
 			iLastFocusedIndex = this._itemNavigation.getFocusedIndex(),
-			$LastFocused = jQuery(aNavigationDomRefs[iLastFocusedIndex]);
+			$LastFocused = jQuery(aNavigationDomRefs[iLastFocusedIndex]),
+			Tabbables = [];
 
-		// last tabbable element in wrapper
-		var $LastTabbables = $LastFocused.find(":sapTabbable"),
-			focusubleIndex = $LastTabbables.length === 1 ? 0 : $LastTabbables.length  - 1;
+		// Tabbable elements in wrapper
+		var $AllTabbables = $LastFocused.find(":sapTabbable");
 
-		//TODO When we have a list/table inside gridContainer handle it, because of its dummyarea
-		if ($LastTabbables.control(focusubleIndex) && $LastTabbables.control(focusubleIndex).getId() === oEvent.target.id) {
+		//leave only real tabbable elements in the tab chain, GridContainer and List types have dummy areas
+		$AllTabbables.map(function (index, element) {
+			if (element.className.indexOf("DummyArea") === -1) {
+				Tabbables.push(element);
+			}
+		});
+		var $Tabbables = jQuery(Tabbables),
+			focusableIndex = $Tabbables.length === 1 ? 0 : $Tabbables.length  - 1;
+
+		if ($Tabbables.control(focusableIndex) && $Tabbables.control(focusableIndex).getId() === oEvent.target.id) {
 			this._lastFocusedElement = oEvent.target;
 			this.forwardTab(true);
 		}
