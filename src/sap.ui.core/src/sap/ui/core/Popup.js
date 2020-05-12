@@ -663,7 +663,7 @@ sap.ui.define([
 	 *
 	 * If the Popup's OpenState is different from "CLOSED" (i.e. if the Popup is already open, opening or closing), the call is ignored.
 	 *
-	 * @param {int} [iDuration] animation duration in milliseconds; default is the jQuery preset "fast". For iDuration == 0 the opening happens synchronously without animation.
+	 * @param {int} [iDuration=jQuery.fx.speed.fast] animation duration in milliseconds. For <code>iDuration</code> == 0 the opening happens synchronously without animation.
 	 * @param {sap.ui.core.Popup.Dock} [my=sap.ui.core.Popup.Dock.CenterCenter] the popup content's reference position for docking
 	 * @param {sap.ui.core.Popup.Dock} [at=sap.ui.core.Popup.Dock.CenterCenter] the "of" element's reference point for docking to
 	 * @param {string | sap.ui.core.Element | Element | jQuery | jQuery.Event} [of=document] specifies the reference element to which the given content should dock to
@@ -1181,7 +1181,7 @@ sap.ui.define([
 	 * If the Popup is in the process of being opened and closed with an animation duration, the animation will be chained, but this functionality is dangerous,
 	 * may lead to inconsistent behavior and is thus not recommended and may even be removed.
 	 *
-	 * @param {int} [iDuration] animation duration in milliseconds; default is the jQuery preset "fast".  For iDuration == 0 the closing happens synchronously without animation.
+	 * @param {int} [iDuration=jQuery.fx.speed.fast] Animation duration in milliseconds. For <code>iDuration</code> == 0 the closing happens synchronously without animation.
 	 * @public
 	 */
 	Popup.prototype.close = function(iDuration) {
@@ -2129,10 +2129,9 @@ sap.ui.define([
 	 * Sets the durations for opening and closing animations.
 	 * Null values and values < 0 are ignored.
 	 * A duration of 0 means no animation.
-	 * Default value is "fast" which is the jQuery constant for "200 ms".
 	 *
-	 * @param {int} iOpenDuration in milliseconds
-	 * @param {int} iCloseDuration in milliseconds
+	 * @param {int} [iOpenDuration=jQuery.fx.speed.fast] in milliseconds
+	 * @param {int} [iCloseDuration=jQuery.fx.speed.fast] in milliseconds
 	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
 	 * @public
 	 */

@@ -168,7 +168,7 @@ sap.ui.define([
 		 *          }
 		 *     });
 		 * </pre>
-		 * @param {boolean} [oConfig.async=false] @since 1.34. Whether the views which are loaded within this router instance asyncly. The default value is set to false.
+		 * @param {boolean} [oConfig.async=false] @since 1.34. Whether the views which are loaded within this router instance asyncly
 		 * @param {sap.ui.core.UIComponent} [oOwner] the Component of all the views that will be created by this Router,<br/>
 		 * will get forwarded to the {@link sap.ui.core.routing.Views#constructor}.<br/>
 		 * If you are using the componentMetadata to define your routes you should skip this parameter.
@@ -194,7 +194,7 @@ sap.ui.define([
 		 *         path: "my.application.namespace",
 		 *         viewType: "XML"
 		 *     },
-		 *     // You should only use this constructor when you are not using a router with a component.
+		 *     // You should only use this constructor when you are using a router without a component.
 		 *     // Please use the metadata of a component to define your routes and targets.
 		 *     // The documentation can be found here: {@link sap.ui.core.UIComponent.extend}.
 		 *     null,

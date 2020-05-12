@@ -404,7 +404,7 @@ sap.ui.define([
 	 * inside the manifest. The path syntax always starts with a slash (/).
 	 *
 	 * @param {string} sKey Either the manifest section name (namespace) or a concrete path
-	 * @param {boolean} [bMerged] Indicates whether the custom configuration is merged with the parent custom configuration of the Component.
+	 * @param {boolean} [bMerged=false] Indicates whether the custom configuration is merged with the parent custom configuration of the Component.
 	 * @return {any|null} Value of the manifest section or the key (could be any kind of value)
 	 * @public
 	 * @since 1.27.1
@@ -453,7 +453,7 @@ sap.ui.define([
 	 * The configuration above can be accessed via <code>sample.Component.getMetadata().getCustomEntry("my.custom.config")</code>.
 	 *
 	 * @param {string} sKey Key of the custom configuration (must be prefixed with a namespace)
-	 * @param {boolean} bMerged Indicates whether the custom configuration is merged with the parent custom configuration of the Component.
+	 * @param {boolean} [bMerged=false] Indicates whether the custom configuration is merged with the parent custom configuration of the Component.
 	 * @return {Object} custom Component configuration with the specified key.
 	 * @public
 	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifestEntry
@@ -644,7 +644,7 @@ sap.ui.define([
 	 * If no key is specified it returns the complete configuration property
 	 *
 	 * @param {string} [sKey] Key of the configuration property
-	 * @param {boolean} [bDoNotMerge] If set to <code>true</code>, only the local configuration is returned
+	 * @param {boolean} [bDoNotMerge=false] If set to <code>true</code>, only the local configuration is returned
 	 * @return {object} the value of the configuration property
 	 * @public
 	 * @since 1.15.1

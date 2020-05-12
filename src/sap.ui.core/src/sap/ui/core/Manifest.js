@@ -155,7 +155,7 @@ sap.ui.define([
 	 *            flag is set to <code>true</code>, the given terminologies will be respected when replacing placeholders with resource
 	 *            bundle values.
 	 *            To use active terminologies, the <code>sap.app.i18n</code> section in the manifest
-	 *            must be defined in object syntax as described here: {@link topic:CPOUI5FRAMEWORK-57_Docu_Chapter Text Verticalization}.
+	 *            must be defined in object syntax as described here: {@link topic:eba8d25a31ef416ead876e091e67824e Text Verticalization}.
 	 *            The order of the given active terminologies is significant. The {@link sap.base.i18n.ResourceBundle ResourceBundle} API
 	 *            documentation describes the processing behavior in more detail.
 	 *
@@ -825,14 +825,18 @@ sap.ui.define([
 	 * @param {object} mOptions the configuration options
 	 * @param {string} mOptions.manifestUrl URL of the manifest
 	 * @param {string} [mOptions.componentName] name of the component
-	 * @param {boolean} [mOptions.async] Flag whether to load the manifest async or not (defaults to false)
-	 * @param {boolean} [mOptions.failOnError] Flag whether to fail if an error occurs or not (defaults to true).
+	 * @param {boolean} [mOptions.async=false] Flag whether to load the manifest async or not
+	 * @param {boolean} [mOptions.failOnError=true] Flag whether to fail if an error occurs or not
 	 * If set to <code>false</code>, errors during the loading of the manifest.json file (e.g. 404) will be ignored and
 	 * the resulting manifest object will be <code>null</code>.
 	 * For asynchronous calls the returned Promise will not reject but resolve with <code>null</code>.
 	 * @param {function} [mOptions.processJson] Callback for asynchronous processing of the loaded manifest.
 	 * The callback receives the parsed manifest object and must return a Promise which resolves with an object.
 	 * It allows to early access and modify the manifest object.
+	 * @param {string[]} [mOptions.activeTerminologies] A list of active terminologies.
+	 * The order of the given active terminologies is significant. The {@link sap.base.i18n.ResourceBundle ResourceBundle} API
+	 * documentation describes the processing behavior in more detail.
+	 * Please have a look at this dev-guide chapter for general usage instructions: {@link topic:eba8d25a31ef416ead876e091e67824e Text Verticalization}.
 	 * @return {sap.ui.core.Manifest|Promise} Manifest object or for asynchronous calls an ECMA Script 6 Promise object will be returned.
 	 * @protected
 	 */
