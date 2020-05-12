@@ -1806,6 +1806,46 @@ sap.ui.define([
 				});
 			});
 		});
+
+		QUnit.test("create_ui5_setFlexExtensionPointEnabled correct change", function(assert) {
+			return AppVariantInlineChangeFactory.create_ui5_setFlexExtensionPointEnabled({
+				changeType: "appdescr_ui5_setFlexExtensionPointEnabled",
+				content: {
+					flexExtensionPointEnabled: true
+				}
+			}).then(function(oDescriptorInlineChange) {
+				assert.notEqual(oDescriptorInlineChange, null);
+				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_setFlexExtensionPointEnabled");
+				assert.equal(oDescriptorInlineChange.getContent().flexExtensionPointEnabled, true);
+			});
+		});
+
+		QUnit.test("create_ui5_setFlexExtensionPointEnabled incorrect change content", function (assert) {
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_ui5_setFlexExtensionPointEnabled({
+					content: {
+						flexExtensionPointEnabled: []
+					}
+				});
+			});
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_ui5_setFlexExtensionPointEnabled({
+					content: {
+						flexExtensionPointEnabled: {}
+					}
+				});
+			});
+		});
+
+		QUnit.test("create_ui5_setFlexExtensionPointEnabled without changetype", function (assert) {
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_ui5_setFlexExtensionPointEnabled({
+					content: {
+						flexExtensionPointEnabled: false
+					}
+				});
+			});
+		});
 	});
 
 	QUnit.done(function () {
