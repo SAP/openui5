@@ -1796,6 +1796,10 @@ sap.ui.define([
 
 				var oConditionGrid = oEvent.srcControl.getParent();
 				var aSeparatedText = sOriginalText.split(/\r\n|\r|\n/g);
+				if (aSeparatedText && aSeparatedText[aSeparatedText.length - 1].trim() === "" ) {
+					//ignore the last empty array item
+					aSeparatedText.pop();
+				}
 
 				var oOperation = oConditionGrid.operation;
 				var op = oOperation.getSelectedKey();
@@ -1834,6 +1838,7 @@ sap.ui.define([
 								}
 
 								var oCondition = {
+									"index": that._iConditions,
 									"key": that._createConditionKey(),
 									"exclude": that.getExclude(),
 									"operation": oOperation.getSelectedKey(),
