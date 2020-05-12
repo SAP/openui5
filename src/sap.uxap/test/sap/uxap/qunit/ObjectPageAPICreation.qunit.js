@@ -2116,6 +2116,44 @@ function (
 		oObjectPage.placeAt("qunit-fixture");
 	});
 
+	QUnit.test("setShowHeaderContent does not invalidate the objectPage", function (assert) {
+		// Arrange
+		var oObjectPage = new ObjectPageLayout({
+			headerTitle: new ObjectPageDynamicHeaderTitle({
+				backgroundDesign: "Solid"
+			}),
+			headerContent: new Button({
+				text: "Button"
+			})}),
+			oObjectPageRenderSpy = this.spy(),
+			oAdjustHeaderHeightsSpy = this.spy(oObjectPage, "_adjustHeaderHeights"),
+			oRequestAdjustLayoutSpy = this.spy(oObjectPage, "_requestAdjustLayout"),
+			oHeaderContentRenderSpy = this.spy(oObjectPage._getHeaderContent(), "rerender"),
+			done = assert.async();
+
+		assert.expect(4);
+		helpers.renderObject(oObjectPage);
+
+		oObjectPage.addEventDelegate({
+			onAfterRendering: oObjectPageRenderSpy
+		});
+
+		// Act
+		oObjectPage.setShowHeaderContent(false);
+
+		setTimeout(function() {
+			// Assert
+			assert.equal(oObjectPageRenderSpy.callCount, 0, "OPL is not rerendered");
+			assert.equal(oHeaderContentRenderSpy.callCount, 1, "headerContent is rerendered");
+			assert.equal(oAdjustHeaderHeightsSpy.callCount, 1, "_adjustHeaderHeights is called once");
+			assert.equal(oRequestAdjustLayoutSpy.callCount, 1, "_requestAdjustLayout is called once");
+
+			// Clean up
+			oObjectPage.destroy();
+			done();
+		}, 0);
+	});
+
 	QUnit.module("ObjectPage API: Header", {
 		beforeEach: function () {
 			this.oObjectPageLayout = new ObjectPageLayout();

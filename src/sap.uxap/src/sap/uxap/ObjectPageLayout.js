@@ -2813,10 +2813,15 @@ sap.ui.define([
 			return;
 		}
 
+		this._deregisterOnContentResize();
+
+		this._iContentResizeId = ResizeHandler.register($container, this._onUpdateContentSize.bind(this));
+	};
+
+	ObjectPageLayout.prototype._deregisterOnContentResize = function () {
 		if (this._iContentResizeId) {
 			ResizeHandler.deregister(this._iContentResizeId);
 		}
-		this._iContentResizeId = ResizeHandler.register($container, this._onUpdateContentSize.bind(this));
 	};
 
 	ObjectPageLayout.prototype._onUpdateContentSize = function (oEvent) {
@@ -3707,10 +3712,18 @@ sap.ui.define([
 				this._moveHeaderToContentArea();
 				this._toggleHeaderTitle(false /* snap */);
 			}
-			this.setProperty("showHeaderContent", bShow);
+			this.setProperty("showHeaderContent", bShow, true);
 			oHeaderContent = this._getHeaderContent();
 			if (oHeaderContent) {
-				oHeaderContent.setProperty("visible", bShow);
+				oHeaderContent.setProperty("visible", bShow, true);
+
+				if (this.getDomRef()) {
+					this._deregisterOnContentResize();
+					oHeaderContent.rerender();
+					this._adjustHeaderHeights();
+					this._requestAdjustLayout(true);
+					this._registerOnContentResize();
+				}
 			}
 		}
 		return this;
