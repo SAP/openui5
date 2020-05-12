@@ -56,7 +56,7 @@ sap.ui.define([
 	 *     />
 	 * </pre>
 	 *
-	 * See also {@link sap.ui.core.ComponentSupport}.
+	 * See also {@link module:sap/ui/core/ComponentSupport}.
 	 *
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
