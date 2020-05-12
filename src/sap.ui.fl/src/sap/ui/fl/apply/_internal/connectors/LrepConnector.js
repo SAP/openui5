@@ -3,15 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/base/util/merge",
-	"sap/ui/fl/apply/connectors/BaseConnector",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/Utils",
 	"sap/ui/dom/includeScript",
 	"sap/base/util/restricted/_pick"
 ], function(
-	merge,
-	BaseConnector,
 	ApplyUtils,
 	FlexUtils,
 	includeScript,
@@ -28,13 +24,13 @@ sap.ui.define([
 	 * Connector for requesting data from an LRep based back end.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.connectors.LrepConnector
+	 * @implements {sap.ui.fl.interfaces.BaseApplyConnector}
 	 * @experimental Since 1.67
 	 * @since 1.67
 	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal.Storage, sap.ui.fl.write._internal.Storage, sap.ui.fl.write._internal.transport
 	 */
-	var LrepConnector = merge({}, BaseConnector,  /** @lends sap.ui.fl.apply._internal.connectors.LrepConnector */ {
-
+	return {
 		layers: [
 			"ALL"
 		],
@@ -130,7 +126,5 @@ sap.ui.define([
 				});
 			}.bind(this));
 		}
-	});
-
-	return LrepConnector;
-}, true);
+	};
+});

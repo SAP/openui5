@@ -3,13 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/base/util/merge",
-	"sap/ui/fl/apply/connectors/BaseConnector",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/base/util/restricted/_pick"
 ], function(
-	merge,
-	BaseConnector,
 	ApplyUtils,
 	_pick
 ) {
@@ -19,12 +15,12 @@ sap.ui.define([
 	 * Base connector for requesting flexibility data from a back end.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.connectors.BackendConnector
+	 * @implements {sap.ui.fl.interfaces.BaseApplyConnector}
 	 * @since 1.72
 	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal.connectors, sap.ui.fl.write._internal.connectors
 	 */
-	var BackendConnector = merge({}, BaseConnector, { /** @lends sap.ui.fl.apply.api._internal.connectors.BackendConnector */
-
+	return {
 		xsrfToken: undefined,
 		settings: undefined,
 		/**
@@ -60,7 +56,5 @@ sap.ui.define([
 				return oResponse;
 			}.bind(this));
 		}
-	});
-
-	return BackendConnector;
-}, true);
+	};
+});

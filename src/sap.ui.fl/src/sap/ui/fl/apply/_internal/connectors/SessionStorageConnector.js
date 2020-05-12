@@ -25,4 +25,4 @@ sap.ui.define([
 	});
 
 	return SessionStorageConnector;
-}, true);
+});
