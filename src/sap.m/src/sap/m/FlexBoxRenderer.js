@@ -30,61 +30,61 @@ sap.ui.define([
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.m.FlexBox} oFlexBox an object representation of the control that should be rendered
 	 */
-	FlexBoxRenderer.render = function(oRm, oControl) {
+	FlexBoxRenderer.render = function(oRm, oFlexBox) {
 		// Open FlexBox HTML element
-		oRm.openStart(oControl.getRenderType() == FlexRendertype.List ? "ul" : "div", oControl);
+		oRm.openStart(oFlexBox.getRenderType() === FlexRendertype.List ? "ul" : "div", oFlexBox);
 
 		// Special treatment if FlexBox is itself an item of a parent FlexBox
-		var oParent = oControl.getParent();
+		var oParent = oFlexBox.getParent();
 		if (oParent && oParent.isA("sap.m.FlexBox")) {
-
-			if (!oControl.hasStyleClass("sapMFlexItem")) {
+			if (!oFlexBox.hasStyleClass("sapMFlexItem")) {
 				oRm.class("sapMFlexItem");
 			}
 
 			// Set layout properties for flex item
-			var oLayoutData = oControl.getLayoutData();
+			var oLayoutData = oFlexBox.getLayoutData();
 			if (oLayoutData instanceof FlexItemData) {
 				FlexBoxStylingHelper.setFlexItemStyles(oRm, oLayoutData);
 			}
-		} else if (oControl.getFitContainer()) {
+		} else if (oFlexBox.getFitContainer()) {
 			oRm.class("sapMFlexBoxFit");
 		}
 
 		// Add classes for flex styling
 		oRm.class("sapMFlexBox");
-		if (oControl.getDisplayInline()) {
+		if (oFlexBox.getDisplayInline()) {
 			oRm.class("sapMFlexBoxInline");
 		}
 
-		if (oControl.getDirection() === FlexDirection.Column || oControl.getDirection() === FlexDirection.ColumnReverse) {
+		if (oFlexBox.getDirection() === FlexDirection.Column || oFlexBox.getDirection() === FlexDirection.ColumnReverse) {
 			oRm.class("sapMVBox");
 		} else {
 			oRm.class("sapMHBox");
 		}
 
-		if (oControl.getDirection() === FlexDirection.RowReverse || oControl.getDirection() === FlexDirection.ColumnReverse) {
+		if (oFlexBox.getDirection() === FlexDirection.RowReverse || oFlexBox.getDirection() === FlexDirection.ColumnReverse) {
 			oRm.class("sapMFlexBoxReverse");
 		}
 
-		oRm.class("sapMFlexBoxJustify" + oControl.getJustifyContent());
-		oRm.class("sapMFlexBoxAlignItems" + oControl.getAlignItems());
-		oRm.class("sapMFlexBoxWrap" + oControl.getWrap());
-		oRm.class("sapMFlexBoxAlignContent" + oControl.getAlignContent());
+		oRm.class("sapMFlexBoxJustify" + oFlexBox.getJustifyContent());
+		oRm.class("sapMFlexBoxAlignItems" + oFlexBox.getAlignItems());
+		oRm.class("sapMFlexBoxWrap" + oFlexBox.getWrap());
+		oRm.class("sapMFlexBoxAlignContent" + oFlexBox.getAlignContent());
 
-		var sBGClass = "sapMFlexBoxBG" + oControl.getBackgroundDesign();
-		if (!oControl.hasStyleClass(sBGClass)) {
+		var sBGClass = "sapMFlexBoxBG" + oFlexBox.getBackgroundDesign();
+
+		if (!oFlexBox.hasStyleClass(sBGClass)) {
 			oRm.class(sBGClass);
 		}
 
 		// Add inline styles
-		oRm.style("height", oControl.getHeight());
-		oRm.style("width", oControl.getWidth());
+		oRm.style("height", oFlexBox.getHeight());
+		oRm.style("width", oFlexBox.getWidth());
 
 		// Add tooltip
-		var sTooltip = oControl.getTooltip_AsString();
+		var sTooltip = oFlexBox.getTooltip_AsString();
 		if (sTooltip) {
 			oRm.attr("title", sTooltip);
 		}
@@ -93,25 +93,25 @@ sap.ui.define([
 		oRm.openEnd();
 
 		// Render the flex items
-		FlexBoxRenderer.renderItems(oControl, oRm);
+		FlexBoxRenderer.renderItems(oFlexBox, oRm);
 
 		// Close FlexBox HTML element
-		if (oControl.getRenderType() === FlexRendertype.List) {
+		if (oFlexBox.getRenderType() === FlexRendertype.List) {
 			oRm.close("ul");
 		} else {
 			oRm.close("div");
 		}
 	};
 
-	FlexBoxRenderer.renderItems = function(oControl, oRm) {
-		var aChildren = oControl.getItems(),
+	FlexBoxRenderer.renderItems = function(oFlexBox, oRm) {
+		var aChildren = oFlexBox.getItems(),
 			sWrapperTag = '';
 
 		for (var i = 0; i < aChildren.length; i++) {
 			// Don't wrap if it's a FlexBox control
-			if (aChildren[i].isA('sap.m.FlexBox') || oControl.getRenderType() === FlexRendertype.Bare) {
+			if (aChildren[i].isA('sap.m.FlexBox') || oFlexBox.getRenderType() === FlexRendertype.Bare) {
 				sWrapperTag = "";
-			} else if (oControl.getRenderType() === FlexRendertype.List) {
+			} else if (oFlexBox.getRenderType() === FlexRendertype.List) {
 				sWrapperTag = "li";
 			} else {
 				sWrapperTag = "div";

@@ -1167,6 +1167,7 @@ sap.ui.define([
 
 		//Act
 		this.oParent.setWidth("500px");
+		sap.ui.getCore().applyChanges();
 
 		//Assert
 		sap.ui.getCore().attachIntervalTimer(checkAssertions);

@@ -163,8 +163,6 @@ function(
 
 	/**
 	 * Initializes the control.
-	 *
-	 * @public
 	 */
 	FlexBox.prototype.init = function() {
 		this._oItemDelegate = {
@@ -277,18 +275,18 @@ function(
 
 		// Sync visibility of flex item wrapper, if visibility changes
 		var oItem = sap.ui.getCore().byId(oControlEvent.getParameter("id")),
-			oWrapper = null;
+			$wrapper = null;
 
 		if (oItem.getLayoutData()) {
-			oWrapper = jQuery(document.getElementById(oItem.getLayoutData().getId()));
+			$wrapper = jQuery(document.getElementById(oItem.getLayoutData().getId()));
 		} else {
-			oWrapper = jQuery(document.getElementById(InvisibleRenderer.createInvisiblePlaceholderId(oItem))).parent();
+			$wrapper = jQuery(document.getElementById(InvisibleRenderer.createInvisiblePlaceholderId(oItem))).parent();
 		}
 
 		if (oControlEvent.getParameter("newValue")) {
-			oWrapper.removeClass("sapUiHiddenPlaceholder").removeAttr("aria-hidden");
+			$wrapper.removeClass("sapUiHiddenPlaceholder").removeAttr("aria-hidden");
 		} else {
-			oWrapper.addClass("sapUiHiddenPlaceholder").attr("aria-hidden", "true");
+			$wrapper.addClass("sapUiHiddenPlaceholder").attr("aria-hidden", "true");
 		}
 	};
 
@@ -334,161 +332,6 @@ function(
 	};
 
 	/**
-	 * Sets display inline for nested or contained FlexBox.
-	 *
-	 * @public
-	 * @param {boolean} bInline Indication for display inline.
-	 * @returns {sap.m.FlexBox} <code>this</code> FlexBox reference for chaining.
-	 */
-	FlexBox.prototype.setDisplayInline = function(bInline) {
-		this.setProperty("displayInline", bInline, true);
-		this.$().toggleClass("sapMFlexBoxInline", this.getDisplayInline());
-
-		return this;
-	};
-
-	/**
-	 * Sets direction for the FlexBox. It could be row, row-reverse, column or column-reverse.
-	 *
-	 * @public
-	 * @param {string} sValue FlexBox direction in string format.
-	 * @returns {sap.m.FlexBox} <code>this</code> FlexBox reference for chaining.
-	 */
-	FlexBox.prototype.setDirection = function(sValue) {
-		this.setProperty("direction", sValue, true);
-		if (this.getDirection() === FlexDirection.Column || this.getDirection() === FlexDirection.ColumnReverse) {
-			this.$().removeClass("sapMHBox").addClass("sapMVBox");
-		} else {
-			this.$().removeClass("sapMVBox").addClass("sapMHBox");
-		}
-
-		if (this.getDirection() === FlexDirection.RowReverse || this.getDirection() === FlexDirection.ColumnReverse) {
-			this.$().addClass("sapMFlexBoxReverse");
-		} else {
-			this.$().removeClass("sapMFlexBoxReverse");
-		}
-
-		return this;
-	};
-
-	/**
-	 * Sets <code>fitContainer</code> so you can have nested FlexBox containers in columns or rows.
-	 *
-	 * @public
-	 * @param {string} sValue Fit container in string format.
-	 * @returns {sap.m.FlexBox} <code>this</code> FlexBox reference for chaining.
-	 */
-	FlexBox.prototype.setFitContainer = function(sValue) {
-		this.setProperty("fitContainer", sValue, true);
-		this.$().toggleClass("sapMFlexBoxFit", this.getFitContainer());
-
-		return this;
-	};
-
-	/**
-	 * Sets the wrapping.
-	 *
-	 * @public
-	 * @param {string} sValue Wrapping in the flexbox.
-	 * @returns {sap.m.FlexBox} <code>this</code> FlexBox reference for chaining.
-	 */
-	FlexBox.prototype.setWrap = function(sValue) {
-		var sOldValue = this.getWrap();
-		this.setProperty("wrap", sValue, true);
-		this.$().removeClass("sapMFlexBoxWrap" + sOldValue).addClass("sapMFlexBoxWrap" + this.getWrap());
-
-		return this;
-	};
-
-	/**
-	 * Sets the <code>justifyContent</code> - it can be flex-start, flex-end, center, space-between, space-around, space-evenly.
-	 *
-	 * @public
-	 * @param {string} sValue Justify content;
-	 * @returns {sap.m.FlexBox} this FlexBox reference for chaining.
-	 */
-	FlexBox.prototype.setJustifyContent = function(sValue) {
-		var sOldValue = this.getJustifyContent();
-		this.setProperty("justifyContent", sValue, true);
-		this.$().removeClass("sapMFlexBoxJustify" + sOldValue).addClass("sapMFlexBoxJustify" + this.getJustifyContent());
-
-		return this;
-	};
-
-	/**
-	 * Sets the alignment of items in the FlexBox.
-	 *
-	 * @public
-	 * @param {string} sValue Align items.
-	 * @returns {sap.m.FlexBox} this FlexBox reference for chaining.
-	 */
-	FlexBox.prototype.setAlignItems = function(sValue) {
-		var sOldValue = this.getAlignItems();
-		this.setProperty("alignItems", sValue, true);
-		this.$().removeClass("sapMFlexBoxAlignItems" + sOldValue).addClass("sapMFlexBoxAlignItems" + this.getAlignItems());
-
-		return this;
-	};
-
-	/**
-	 * Sets the alignment of content in the FlexBox.
-	 *
-	 * @public
-	 * @param {string} sValue Align content.
-	 * @returns {sap.m.FlexBox} this FlexBox reference for chaining.
-	 */
-	FlexBox.prototype.setAlignContent = function(sValue) {
-		var sOldValue = this.getAlignContent();
-		this.setProperty("alignContent", sValue, true);
-		this.$().removeClass("sapMFlexBoxAlignContent" + sOldValue).addClass("sapMFlexBoxAlignContent" + this.getAlignContent());
-
-		return this;
-	};
-
-	/**
-	 * Sets the FlexBox height.
-	 *
-	 * @public
-	 * @param {string} sValue Height in string format.
-	 * @returns {sap.m.FlexBox} this FlexBox reference for chaining.
-	 */
-	FlexBox.prototype.setHeight = function(sValue) {
-		this.setProperty("height", sValue, true);
-		this.$().css("height", this.getHeight());
-
-		return this;
-	};
-
-	/**
-	 * Sets the FlexBox width.
-	 *
-	 * @public
-	 * @param {string} sValue Width in string format.
-	 * @returns {sap.m.FlexBox} this FlexBox reference for chaining.
-	 */
-	FlexBox.prototype.setWidth = function(sValue) {
-		this.setProperty("width", sValue, true);
-		this.$().css("width", this.getWidth());
-
-		return this;
-	};
-
-	/**
-	 * Sets the background design.
-	 *
-	 * @public
-	 * @param {string} sValue Background design in string format.
-	 * @returns {sap.m.FlexBox} this FlexBox for reference chaining.
-	 */
-	FlexBox.prototype.setBackgroundDesign = function(sValue) {
-		var sOldValue = this.getBackgroundDesign();
-		this.setProperty("backgroundDesign", sValue, true);
-		this.$().removeClass("sapMFlexBoxBG" + sOldValue).addClass("sapMFlexBoxBG" + this.getBackgroundDesign());
-
-		return this;
-	};
-
-	/**
 	 * Gets the accessibility information.
 	 *
 	 * @protected
@@ -500,5 +343,4 @@ function(
 	};
 
 	return FlexBox;
-
 });
