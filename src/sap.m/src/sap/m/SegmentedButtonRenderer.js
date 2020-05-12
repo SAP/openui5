@@ -33,10 +33,6 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"],
 			sButtonWidth,
 			sButtonTextDirection;
 
-		if (aVisibleButtons.length) {
-			aVisibleButtons[aVisibleButtons.length - 1].addStyleClass("sapMSegBtnLastVisibleButton");
-		}
-
 		// Select representation mockup
 		if (oControl._bInOverflow) {
 			oRM.openStart("div", oControl);
@@ -77,7 +73,6 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"],
 					oImage;
 
 				++iVisibleButtonPos;
-
 				if (oButtonIcon) {
 					oImage = oButton._getImage((oButton.getId() + "-img"), oButtonIcon);
 					if (oImage instanceof sap.m.Image) {
@@ -93,6 +88,9 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"],
 				oRM.attr("aria-posinset", iVisibleButtonPos);
 				oRM.attr("aria-setsize", aVisibleButtons.length);
 				oRM.class("sapMSegBBtn");
+				if (oButton.getId() === aVisibleButtons[aVisibleButtons.length - 1].getId()) {
+					oRM.class("sapMSegBtnLastVisibleButton");
+				}
 				if (oButton.aCustomStyleClasses !== undefined && oButton.aCustomStyleClasses instanceof Array) {
 					for (var j = 0; j < oButton.aCustomStyleClasses.length; j++) {
 						oRM.class(oButton.aCustomStyleClasses[j]);
