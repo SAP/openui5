@@ -978,6 +978,46 @@ sap.ui.define([
 		}
 	};
 
+	Tokenizer.prototype.ontap = function (oEvent) {
+		var bShiftKey = oEvent.shiftKey,
+			bCtrlKey = (oEvent.ctrlKey || oEvent.metaKey),
+			oTargetToken = oEvent.getMark("tokenTap"),
+			aTokens = this._getVisibleTokens(),
+			oFocusedToken, iFocusIndex, iIndex, iMinIndex, iMaxIndex;
+
+		if (!oTargetToken || (!bShiftKey && bCtrlKey)) { // Ctrl
+			this._oSelectionOrigin = null;
+			return;
+		}
+
+		if (!bShiftKey) { // Simple click/tap
+			// simple select, neither ctrl nor shift key was pressed, deselects other tokens
+			this._oSelectionOrigin = oTargetToken;
+			this._changeAllTokensSelection(false, oTargetToken);
+		}
+
+		// Shift
+		oFocusedToken = oTargetToken;
+		if (this._oSelectionOrigin) {
+			oFocusedToken = this._oSelectionOrigin;
+		} else {
+			this._oSelectionOrigin = oFocusedToken;
+		}
+
+		iFocusIndex = this.indexOfToken(oFocusedToken);
+		iIndex = this.indexOfToken(oTargetToken);
+		iMinIndex = Math.min(iFocusIndex, iIndex);
+		iMaxIndex = Math.max(iFocusIndex, iIndex);
+
+		aTokens.forEach(function (oToken, i) {
+			if (i >= iMinIndex && i <= iMaxIndex) {
+				oToken.setSelected(true);
+			} else if (!bCtrlKey) {
+				oToken.setSelected(false);
+			}
+		});
+	};
+
 	/**
 	 * Called when the user presses the left arrow key, focuses previous token.
 	 * @param {jQuery.Event} oEvent The event triggered by the user
@@ -1016,7 +1056,6 @@ sap.ui.define([
 			currentToken = aTokens[index];
 			targetToken.setSelected(true);
 			currentToken.setSelected(true);
-
 		}
 
 		this._deactivateScrollToEnd();
@@ -1499,15 +1538,7 @@ sap.ui.define([
 			bSelect = true;
 		}
 
-		var tokens = this._getVisibleTokens(),
-			length = tokens.length,
-			i;
-
-		for (i = 0; i < length; i++) {
-			tokens[i].setSelected(bSelect);
-		}
-
-		this._doSelect();
+		this._changeAllTokensSelection(bSelect);
 
 		return this;
 	};
@@ -1515,21 +1546,19 @@ sap.ui.define([
 	/**
 	 * Function selects/deselects all tokens and fires the correct "select" or "deselect" events.
 	 * @param {boolean} bSelect Whether the tokens should be selected
-	 * @param {sap.m.Token} skipToken  [optional] this token will be skipped when changing the selection
+	 * @param {sap.m.Token} oTokenToSkip  [optional] this token will be skipped when changing the selection
 	 * @private
 	 */
-	Tokenizer.prototype._changeAllTokensSelection = function(bSelect, skipToken) {
-		var tokens = this._getVisibleTokens(),
-			length = tokens.length,
-			token,
-			i;
+	Tokenizer.prototype._changeAllTokensSelection = function (bSelect, oTokenToSkip) {
+		var aTokens = this._getVisibleTokens();
 
-		for (i = 0; i < length; i++) {
-			token = tokens[i];
-			if (token !== skipToken) {
-				token._changeSelection(bSelect);
-			}
-		}
+		aTokens
+			.filter(function (oToken) {
+				return oToken !== oTokenToSkip;
+			})
+			.forEach(function (oToken) {
+				oToken.setSelected(bSelect);
+			});
 
 		this._doSelect();
 
@@ -1542,20 +1571,11 @@ sap.ui.define([
 	 * @public
 	 * @returns {sap.m.Token[]} Array of selected tokens or empty array
 	 */
-	Tokenizer.prototype.getSelectedTokens = function() {
-		var aSelectedTokens = [],
-			tokens = this._getVisibleTokens(),
-			i,
-			token,
-			length = tokens.length;
-
-		for (i = 0; i < length; i++) {
-			token = tokens[i];
-			if (token.getSelected()) {
-				aSelectedTokens.push(token);
-			}
-		}
-		return aSelectedTokens;
+	Tokenizer.prototype.getSelectedTokens = function () {
+		return this._getVisibleTokens()
+			.filter(function (oToken) {
+				return oToken.getSelected();
+			});
 	};
 
 	/**
@@ -1586,73 +1606,6 @@ sap.ui.define([
 				type : Tokenizer.TokenChangeType.TokensChanged
 			});
 		}
-	};
-
-	Tokenizer.prototype._onTokenSelect = function(oTokenSource, ctrlKey, shiftKey) {
-		var aTokens = this._getVisibleTokens(),
-			oToken,
-			i;
-
-		if (shiftKey) {
-			var oFocusedToken = this._getFocusedToken();
-			if (!oFocusedToken) {
-				this._oSelectionOrigin = null;
-				return;
-			}
-
-			if (this._oSelectionOrigin) {
-				oFocusedToken = this._oSelectionOrigin;
-			} else {
-				this._oSelectionOrigin = oFocusedToken;
-			}
-
-			var iFocusIndex = this.indexOfToken(oFocusedToken),
-				iIndex = this.indexOfToken(oTokenSource),
-				iMinIndex = Math.min(iFocusIndex, iIndex),
-				iMaxIndex = Math.max(iFocusIndex, iIndex);
-
-			for (i = 0; i < aTokens.length; i++) {
-				oToken = aTokens[i];
-				if (i >= iMinIndex && i <= iMaxIndex) {
-					oToken._changeSelection(true);
-				} else if (!ctrlKey) {
-					oToken._changeSelection(false);
-				}
-			}
-
-			return;
-		}
-
-		this._oSelectionOrigin = null;
-
-		// ctrl key was pressed, do nothing, the token handled it
-		if (ctrlKey) {
-			return;
-		}
-
-		// simple select, neither ctrl nor shift key was pressed, deselects other tokens
-		this._oSelectionOrigin = oTokenSource;
-
-		for (i = 0; i < aTokens.length; i++) {
-			oToken = aTokens[i];
-
-			if (oToken !== oTokenSource) {
-				oToken._changeSelection(false);
-			}
-		}
-	};
-
-	Tokenizer.prototype._getFocusedToken = function() {
-		var oFocusedToken = sap.ui.getCore().byId(document.activeElement.id);
-
-		// if the focus is not on a Token in this Tokenizer do nothing
-		if (!oFocusedToken ||
-			!(oFocusedToken instanceof sap.m.Token) ||
-			this.indexOfToken(oFocusedToken) === -1) {
-			return null;
-		}
-
-		return oFocusedToken;
 	};
 
 	/**
