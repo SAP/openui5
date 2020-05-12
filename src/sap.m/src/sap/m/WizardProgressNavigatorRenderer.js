@@ -27,7 +27,7 @@ sap.ui.define([], function () {
 		OPEN_STEP: "data-sap-ui-wpn-step-open",
 		OPEN_STEP_PREV: "data-sap-ui-wpn-step-open-prev",
 		OPEN_STEP_NEXT: "data-sap-ui-wpn-step-open-next",
-		ARIA_SELECTED: "aria-selected",
+		ARIA_CURRENT: "aria-current",
 		ARIA_DISABLED: "aria-disabled"
 	};
 
