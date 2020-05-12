@@ -155,6 +155,70 @@ function (
 			return FlexControllerFactory.getChangesAndPropagate(oComponent, {});
 		});
 
+		QUnit.test("when getChangesForPropagate() is called for an embedded component with a preexisting VariantModel on it's application component before it's done initializing", function(assert) {
+			assert.expect(5);
+			sandbox.stub(FlexControllerFactory, "createForControl").returns({
+				_oChangePersistence: {
+					loadChangesMapForComponent: sandbox.stub().resolves(),
+					getComponentName: function() {return "foo";}
+				}
+			});
+			var oExistingModel;
+			var oAppComponent = {
+				name: "appComponent",
+				setModel: function(oModel, sModelName) {
+					assert.strictEqual(sModelName, Utils.VARIANT_MODEL_NAME, "then VariantModel was set on the embedded component with the correct name");
+					if (oExistingModel) {
+						assert.notOk(true, "should only go here once");
+					}
+					oExistingModel = oModel;
+				},
+				getManifestObject: function() {},
+				getModel: function(sModelName) {
+					assert.strictEqual(sModelName, Utils.VARIANT_MODEL_NAME, "then variant model called on the app component");
+					return oExistingModel;
+				},
+				addPropagationListener: sandbox.stub(),
+				getId: function() {return "appComponent";},
+				getComponentData: function() {}
+			};
+
+			var oComponent = {
+				name: "embeddedComponent",
+				setModel: function(oModel, sModelName) {
+					assert.strictEqual(sModelName, Utils.VARIANT_MODEL_NAME, "then VariantModel was set on the embedded component with the correct name");
+					assert.deepEqual(oModel, oExistingModel, "then the correct model was set");
+				},
+				getManifestObject: function() {},
+				addPropagationListener: function() {
+					assert.notOk(true, "addPropagationListener shouldn't be called for an embedded component");
+				},
+				getId: function() {return "embeddedComponent";},
+				getComponentData: function() {}
+			};
+
+			sandbox.stub(Utils, "isEmbeddedComponent").callsFake(function(oComponent) {
+				if (oComponent.name === "embeddedComponent") {
+					return true;
+				}
+				return false;
+			});
+			sandbox.stub(Utils, "isApplicationComponent").callsFake(function(oComponent) {
+				if (oComponent.name === "appComponent") {
+					return true;
+				}
+				return false;
+			});
+			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oComponent).returns(oAppComponent).withArgs(oAppComponent).returns(oAppComponent);
+
+			return Promise.all([
+				FlexControllerFactory.getChangesAndPropagate(oAppComponent, {}),
+				FlexControllerFactory.getChangesAndPropagate(oComponent, {})
+			]).then(function() {
+				assert.equal(oAppComponent.addPropagationListener.callCount, 1, "should only be called once");
+			});
+		});
+
 		QUnit.test("when getChangesForPropagate() is called for an embedded component with no preexisting VariantModel on it's application component", function(assert) {
 			assert.expect(4);
 			var oAppComponent = new Component();
