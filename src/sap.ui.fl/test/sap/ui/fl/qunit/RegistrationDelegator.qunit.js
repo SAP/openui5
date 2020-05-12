@@ -58,6 +58,9 @@ sap.ui.define([
 		});
 	});
 
+	var sBaseProcessorPath = "sap/ui/fl/apply/_internal/extensionPoint/BaseProcessor";
+	var sProcessorPath = "sap/ui/fl/apply/_internal/extensionPoint/Processor";
+
 	QUnit.module("sap.ui.fl.RegistrationDelegator getExtensionPointProvider function", {
 		beforeEach: function () {
 			var oRegisterExtensionProviderStub = sandbox.stub(ExtensionPoint, "registerExtensionProvider");
@@ -69,14 +72,32 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("When extension point handling is disabled", function (assert) {
-			var oIsFlexExtensionPointHandlingEnabledStub = sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(false);
+			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled")
+				.onCall(0).returns(false)
+				.onCall(1).returns(undefined)
+				.onCall(2).returns([])
+				.onCall(3).returns("");
 			assert.notOk(this.fnExtensionProvider({}), "then 'undefined' is returned");
-			assert.equal(oIsFlexExtensionPointHandlingEnabledStub.callCount, 1, "the function was called once");
+			assert.notOk(this.fnExtensionProvider({}), "then 'undefined' is returned");
+			assert.notOk(this.fnExtensionProvider({}), "then 'undefined' is returned");
+			assert.notOk(this.fnExtensionProvider({}), "then 'undefined' is returned");
 		});
+
+		QUnit.test("When extension point handling is disabled and design mode (adaptation project) is enabled", function (assert) {
+			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(false);
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
+			assert.strictEqual(this.fnExtensionProvider({}), sBaseProcessorPath, "then the base processor module path is returned");
+		});
+
 		QUnit.test("When extension point handling is enabled", function (assert) {
-			var oIsFlexExtensionPointHandlingEnabledStub = sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(true);
-			assert.strictEqual(this.fnExtensionProvider({}), "sap/ui/fl/apply/_internal/extensionPoint/Processor", "then the processor module path is returned");
-			assert.equal(oIsFlexExtensionPointHandlingEnabledStub.callCount, 1, "the function was called once");
+			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(true);
+			assert.strictEqual(this.fnExtensionProvider({}), sProcessorPath, "then the processor module path is returned");
+		});
+
+		QUnit.test("When extension point handling is enabled and design mode (adaptation project) is enabled", function (assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(true);
+			assert.strictEqual(this.fnExtensionProvider({}), sProcessorPath, "then the processor module path is returned");
 		});
 	});
 
