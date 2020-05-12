@@ -91,6 +91,7 @@ sap.ui.define([
 								Log.error("Handler '" + sName + "' could not be resolved. No CommandExecution defined for command: " + sCommand);
 							}
 						};
+						fnHandler._sapui_commandName = sCommand;
 					} else {
 						// check for extended event handler syntax
 						iStartBracket = sName.indexOf("(");

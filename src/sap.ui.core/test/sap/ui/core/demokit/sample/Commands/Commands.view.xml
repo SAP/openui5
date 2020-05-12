@@ -40,7 +40,7 @@
 				</Popover>
 			</dependents>
 			<Panel headerText="Button">
-				<Button text="Save" press="cmd:Save"/>
+				<Button text="Save" press="cmd:Save" tooltip="Save" />
 			</Panel>
 			<!-- Input -->
 			<Panel headerText="sap.m.Input">

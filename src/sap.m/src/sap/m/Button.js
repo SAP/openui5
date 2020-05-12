@@ -6,6 +6,7 @@
 sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
+	'sap/ui/core/CommandShortcutHintsMixin',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/IconPool',
 	'sap/ui/Device',
@@ -17,6 +18,7 @@ sap.ui.define([
 ], function(
 	library,
 	Control,
+	CommandShortcutHintsMixin,
 	EnabledPropagator,
 	IconPool,
 	Device,
@@ -171,6 +173,10 @@ sap.ui.define([
 
 	EnabledPropagator.call(Button.prototype);
 	ContextMenuSupport.apply(Button.prototype);
+	CommandShortcutHintsMixin.call(Button.prototype, {
+		position: "0 4",
+		addAccessibilityLabel: false
+	});
 
 	Button.prototype.init = function() {
 		this._onmouseenter = this._onmouseenter.bind(this);
