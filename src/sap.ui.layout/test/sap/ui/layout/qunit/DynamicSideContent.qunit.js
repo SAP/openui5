@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/layout/DynamicSideContent",
 	"sap/m/Button",
+	"sap/m/Page",
 	"sap/ui/Device"
-], function(DynamicSideContent, Button, Device) {
+], function(DynamicSideContent, Button, Page, Device) {
 	"use strict";
 
 	(function ($) {
@@ -260,6 +261,41 @@ sap.ui.define([
 			assert.strictEqual(this._oDSC._MCVisible, true, "'showMainContent' property is 'true'");
 			assert.strictEqual(this._oDSC._SCVisible, false, "'showSideContent' property is 'false'");
 
+		});
+
+		QUnit.test("getScrollDelegate",function(assert) {
+			// prepare
+			var oDSC = new DynamicSideContent(),
+				oPage = new Page({
+					content: oDSC
+				}),
+				oList = new sap.m.List("list1", {
+					items: new sap.m.StandardListItem({
+						title : "123 456"
+					})
+			});
+			oPage.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oDSC._currentBreakpoint = "M";
+			oDSC.addMainContent(oList);
+
+			// assert
+			assert.strictEqual(oDSC.getScrollDelegate(), oPage.getScrollDelegate(),
+				"getScrollDelegate returns the parent's scroll delegate when breakpoint is below L");
+
+			// act
+			oDSC._currentBreakpoint = "L";
+
+			// assert
+			assert.notEqual(oDSC._oMCScroller, undefined,
+				"the scroller in the mainContent is not undefined");
+			assert.strictEqual(oDSC.getScrollDelegate(oList), oDSC._oMCScroller,
+				"getScrollDelegate returns the correct scroller when breakpoint is above L included");
+
+			//destroy
+			oPage.destroy();
 		});
 
 		QUnit.module("Helper functionality", {
