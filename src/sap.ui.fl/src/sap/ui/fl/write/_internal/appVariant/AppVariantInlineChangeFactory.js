@@ -887,6 +887,24 @@ sap.ui.define([
 		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
+	/**
+	 * Creates an inline change of change type <code>appdescr_ui5_setFlexExtensionPointEnabled</code>.
+	 *
+	 * @param {object} mPropertyBag Parameters of the change type
+	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
+	 * @param {boolean} mPropertyBag.content.flexExtensionPointEnabled FlexExtension point to be enabled
+	 *
+	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
+	 *
+	 * @private
+	 * @ui5-restricted WebIDE
+	 */
+	AppVariantInlineChangeFactory.create_ui5_setFlexExtensionPointEnabled = function(mPropertyBag) {
+		Utils.checkParameterAndType(mPropertyBag.content, "flexExtensionPointEnabled", "boolean");
+		Utils.checkParameterAndType(mPropertyBag, "changeType", "string");
+		return _createAppVariantInlineChange(mPropertyBag);
+	};
 
 	return AppVariantInlineChangeFactory;
 }, true);
