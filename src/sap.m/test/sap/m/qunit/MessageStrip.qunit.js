@@ -504,4 +504,22 @@ sap.ui.define([
 		//Assert
 		assert.equal(jQuery(".sapUiIcon").attr("aria-hidden"), "true", "The icon has an aria-hidden attribute set to true");
 	});
+
+
+	QUnit.test("Close button invisible text should be rendered only once", function(assert) {
+		//Arrange
+		var oMessageStrip = new MessageStrip({
+				type: "Error"
+			}),
+			oCloseButton = oMessageStrip.getAggregation("_closeButton");
+
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(document.querySelectorAll("#" + oCloseButton.getAriaLabelledBy()).length, 1,
+			"There should be only 1 invisible text element present in the dom");
+
+		// Cleanup
+		oMessageStrip.destroy();
+	});
 });
