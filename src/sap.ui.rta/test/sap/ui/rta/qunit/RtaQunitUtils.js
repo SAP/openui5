@@ -180,5 +180,38 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	RtaQunitUtils.closeContextMenuWithKeyboard = function(oTarget) {
+		return new Promise(function(resolve) {
+			var oPopover = oTarget.getPopover();
+			if (!oPopover.isOpen()) {
+				return resolve();
+			}
+			oPopover.attachEventOnce("afterClose", resolve);
+
+			oPopover.focus();
+			var oParams = {};
+			oParams.keyCode = KeyCodes.ESCAPE;
+			QUnitUtils.triggerEvent("keyup", oPopover.getDomRef(), oParams);
+		});
+	};
+
+	RtaQunitUtils.getContextMenuItemCount = function(oTarget) {
+		return new Promise(function(resolve) {
+			var iItemCount;
+			oTarget.focus();
+			oTarget.setSelected();
+			RtaQunitUtils.openContextMenuWithKeyboard.call(this, oTarget)
+				.then(function () {
+					var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+					iItemCount = oContextMenuControl.getButtons().length;
+					return oContextMenuControl;
+				}.bind(this))
+				.then(RtaQunitUtils.closeContextMenuWithKeyboard)
+				.then(function () {
+					resolve(iItemCount);
+				});
+		}.bind(this));
+	};
+
 	return RtaQunitUtils;
 });
