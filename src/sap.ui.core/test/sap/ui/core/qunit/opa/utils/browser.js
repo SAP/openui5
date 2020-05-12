@@ -5,10 +5,6 @@ sap.ui.define([
 
 	return {
 		supportsStacktraces: function () {
-			if (Device.browser.phantomJS) {
-				return false;
-			}
-
 			//Incident 1580223677: IOS does not support stacktraces
 			if (Device.os.ios) {
 				return false;
