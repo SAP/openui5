@@ -47,6 +47,12 @@ sap.ui.define(['./ViewSettingsItem', 'sap/ui/base/ManagedObject', './library'],
 		}
 	}});
 
+	ViewSettingsCustomItem.prototype.init = function () {
+		this.attachEvent("modelContextChange", function() {
+			this._control && this._control.setModel(this.getModel());
+		}.bind(this));
+	};
+
 	/**
 	 * Destroys the control.
 	 * @private

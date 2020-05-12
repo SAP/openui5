@@ -3113,6 +3113,25 @@ sap.ui.define([
 
 	QUnit.module("Others");
 
+	// BCP: 002075129400002801682020
+	QUnit.test("model is propagated to the customControl", function(assert){
+		var oViewSettingsCustomItem = new ViewSettingsCustomItem({
+				text: "SomeText",
+				key: "SomeKey",
+				customControl: new Input()
+			}),
+			oVSD = new ViewSettingsDialog({
+				filterItems: [
+					oViewSettingsCustomItem
+				]
+			}),
+			sData = "this is the model",
+			oModel = new JSONModel({ data: sData});
+
+		oVSD.setModel(oModel);
+		assert.equal(oViewSettingsCustomItem.getCustomControl().getModel().oData["data"], sData, "the model is propagated to the customControl");
+	});
+
 	QUnit.test("customControl is cloned as expected", function (assert) {
 		var oViewSettingsCustomItem = new ViewSettingsCustomItem({
 			text     : "SomeText",
