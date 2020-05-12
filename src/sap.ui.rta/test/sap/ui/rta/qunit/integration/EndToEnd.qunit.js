@@ -153,7 +153,7 @@ sap.ui.define([
 										var iIndex = oGroupElements.indexOf(this.oCompanyCodeField) + 1;
 										assert.equal(oGroupElements[iIndex].getLabelText(), oFieldToAdd.label, "the added element is at the correct position");
 										assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
-										assert.equal(this.oBoundButton35Field.label, oFieldToAdd.label, "the new field is the one that got deleted");
+										assert.equal(this.oBoundButton35Field.__label, oFieldToAdd.label, "the new field is the one that got deleted");
 										iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 										assert.strictEqual(iDirtyChangesCount, 3, "then there are three dirty changes in the flex persistence");
 										return this.oRta.stop();

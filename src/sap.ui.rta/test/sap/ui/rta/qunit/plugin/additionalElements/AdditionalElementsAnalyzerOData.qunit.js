@@ -316,6 +316,7 @@ function(
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(mTestData.container, mActionsObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 1, "then single invisible element is returned");
 				assert.equal(aAdditionalElements[0].originalLabel, sOriginalLabel, "then the element is enhanced by metadata information like original label");
+				assert.equal(aAdditionalElements[0].bindingPath, "Property02", "then the element is enhanced by bindingPath, that is used in OPA tests and for debugging");
 			}).then(function() {
 				mTestData.form.destroy();
 			});

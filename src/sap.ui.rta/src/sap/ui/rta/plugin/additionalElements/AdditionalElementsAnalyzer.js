@@ -293,11 +293,12 @@ sap.ui.define([
 		var mAction = mData.action;
 		return {
 			selected : false,
-			label : oElement.label || ElementUtil.getLabelForElement(oElement, mAction.getLabel),
-			tooltip : oElement.tooltip || ElementUtil.getLabelForElement(oElement, mAction.getLabel) || oElement.name,
-			parentPropertyName: oElement.parentPropertyName ? oElement.parentPropertyName : "",
-			duplicateName: oElement.duplicateName ? oElement.duplicateName : false,
-			originalLabel: oElement.renamedLabel && oElement.label !== oElement.originalLabel ? oElement.originalLabel : "",
+			label : oElement.__label || ElementUtil.getLabelForElement(oElement, mAction.getLabel),
+			tooltip : oElement.__tooltip || ElementUtil.getLabelForElement(oElement, mAction.getLabel) || oElement.__bindingPath,
+			parentPropertyName: oElement.__parentPropertyName ? oElement.__parentPropertyName : "",
+			duplicateName: oElement.__duplicateName ? oElement.__duplicateName : false,
+			originalLabel: oElement.__renamedLabel && oElement.__label !== oElement.__originalLabel ? oElement.__originalLabel : "",
+			bindingPath: oElement.__bindingPath, //used for OPA tests and debugging
 			//command relevant data
 			type : "invisible",
 			elementId : oElement.getId()
@@ -347,7 +348,7 @@ sap.ui.define([
 	//check for duplicate labels to later add the parent property name/label if available
 	function _checkForDuplicateLabels(oInvisibleElement, aProperties) {
 		return aProperties.some(function(oModelProperty) {
-			return oModelProperty.label === oInvisibleElement.label;
+			return oModelProperty.label === oInvisibleElement.__label;
 		});
 	}
 
@@ -478,18 +479,19 @@ sap.ui.define([
 	 * @private
 	 */
 	function _enhanceInvisibleElement(oInvisibleElement, mSomeItem) {
-		oInvisibleElement.originalLabel = mSomeItem.label;
+		oInvisibleElement.__originalLabel = mSomeItem.label;
 
-		oInvisibleElement.tooltip = mSomeItem.tooltip;
+		oInvisibleElement.__tooltip = mSomeItem.tooltip;
 
-		oInvisibleElement.name = mSomeItem.name;
+		//found element
+		oInvisibleElement.__bindingPath = mSomeItem.name;
 
-		// oInvisibleElement.label has the current label
-		if (oInvisibleElement.label !== oInvisibleElement.originalLabel) {
-			oInvisibleElement.renamedLabel = true;
+		// oInvisibleElement.__label has the current label retrieved before in the analysis
+		if (oInvisibleElement.__label !== oInvisibleElement.__originalLabel) {
+			oInvisibleElement.__renamedLabel = true;
 		}
 		if (mSomeItem.parentPropertyName) {
-			oInvisibleElement.parentPropertyName = mSomeItem.parentPropertyName;
+			oInvisibleElement.__parentPropertyName = mSomeItem.parentPropertyName;
 		}
 	}
 
@@ -562,7 +564,7 @@ sap.ui.define([
 			}
 
 			if (bIncludeElement) {
-				oInvisibleElement.duplicateName = _checkForDuplicateLabels(oInvisibleElement, aProperties);
+				oInvisibleElement.__duplicateName = _checkForDuplicateLabels(oInvisibleElement, aProperties);
 
 				bIncludeElement = _checkAndEnhanceByModelProperty(
 					oInvisibleElement,
@@ -622,7 +624,7 @@ sap.ui.define([
 						var oInvisibleElement = mInvisibleElement.element;
 						var mRevealAction = mInvisibleElement.action;
 
-						oInvisibleElement.label = ElementUtil.getLabelForElement(oInvisibleElement, mRevealAction.getLabel);
+						oInvisibleElement.__label = ElementUtil.getLabelForElement(oInvisibleElement, mRevealAction.getLabel);
 
 						var bIncludeElement = _enhanceByMetadata(oElement, sAggregationName, oInvisibleElement, mActions, aRepresentedProperties, aProperties);
 
