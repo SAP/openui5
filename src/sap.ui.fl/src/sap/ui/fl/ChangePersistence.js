@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
-	"sap/ui/fl/apply/_internal/StorageUtils",
+	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Variant",

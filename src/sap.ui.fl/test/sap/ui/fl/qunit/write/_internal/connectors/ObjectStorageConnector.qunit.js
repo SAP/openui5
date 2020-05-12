@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/ObjectStorageConnector",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
-	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
+	"sap/ui/fl/write/_internal/connectors/ObjectStorageUtils",
 	"sap/ui/fl/Layer",
 	"sap/base/util/values",
 	"sap/base/util/restricted/_uniq"

@@ -8,11 +8,11 @@ sap.ui.define([], function () {
 	/**
 	 * Util class for Connector implementations (apply and write)
 	 *
-	 * @namespace sap.ui.fl.apply._internal.connectors.Utils
+	 * @namespace sap.ui.fl.initial._internal.connectors.Utils
 	 * @since 1.70
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
+	 * @ui5-restricted sap.ui.fl.initial._internal, sap.ui.fl.write._internal
 	 */
 
 	 // avoid working with other entries in the storage, e.g. some demokit entries in localStorage

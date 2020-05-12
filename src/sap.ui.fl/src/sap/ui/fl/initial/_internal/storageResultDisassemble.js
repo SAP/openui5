@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/StorageUtils",
+	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/base/util/merge",
 	"sap/base/util/isEmptyObject"
 ],
@@ -32,11 +32,11 @@ function(
 	}
 
 	/**
-	 * @namespace sap.ui.fl.apply._internal.StorageResultDisassemble
+	 * @namespace sap.ui.fl.initial._internal.StorageResultDisassemble
 	 * @since 1.70
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted sap.ui.fl._internal.apply.Storage
+	 * @ui5-restricted sap.ui.fl.initial._internal.Storage
 	 * Disassembles a response with a variant section into one or more plain responses.
 	 *
 	 * @param {object} oResponse Flexibility data response from a <code>sap.ui.connectors.BaseConnector</code> implementation

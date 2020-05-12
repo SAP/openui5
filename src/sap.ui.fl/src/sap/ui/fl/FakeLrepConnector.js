@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/connectors/ObjectPathConnector",
-	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"
+	"sap/ui/fl/write/_internal/connectors/ObjectPathConnector",
+	"sap/ui/fl/write/_internal/connectors/ObjectStorageUtils"
 ], function(
 	ObjectPathConnector,
 	ObjectStorageUtils

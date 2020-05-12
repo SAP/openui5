@@ -3,16 +3,16 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/apply/_internal/connectors/PersonalizationConnector",
+	"sap/ui/fl/initial/_internal/connectors/PersonalizationConnector",
 	"sap/ui/fl/write/_internal/connectors/PersonalizationConnector",
-	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils"
 ], function(
 	sinon,
 	Layer,
-	ApplyPersonalizationConnector,
+	InitialPersonalizationConnector,
 	WritePersonalizationConnector,
-	ApplyUtils,
+	InitialUtils,
 	WriteUtils
 ) {
 	"use strict";
@@ -21,10 +21,10 @@ sap.ui.define([
 
 	QUnit.module("Connector", {
 		beforeEach : function () {
-			ApplyPersonalizationConnector.xsrfToken = "123";
+			InitialPersonalizationConnector.xsrfToken = "123";
 		},
 		afterEach: function() {
-			ApplyPersonalizationConnector.xsrfToken = undefined;
+			InitialPersonalizationConnector.xsrfToken = undefined;
 			sandbox.restore();
 		}
 	}, function() {
@@ -36,8 +36,8 @@ sap.ui.define([
 			var sExpectedUrl = "/flexPersonalization/flex/personalization/v1/changes/";
 			var sExpectedMethod = "POST";
 
-			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
-			var oSpyGetUrl = sandbox.spy(ApplyUtils, "getUrl");
+			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});
+			var oSpyGetUrl = sandbox.spy(InitialUtils, "getUrl");
 
 			return WritePersonalizationConnector.write(mPropertyBag).then(function() {
 				assert.equal(oSpyGetUrl.getCall(0).args[0], "/flex/personalization/v1/changes/", "with correct route path");
@@ -62,9 +62,9 @@ sap.ui.define([
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 			return WritePersonalizationConnector.update(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
-					xsrfToken: ApplyPersonalizationConnector.xsrfToken,
+					xsrfToken: InitialPersonalizationConnector.xsrfToken,
 					tokenUrl: "/flexPersonalization/flex/personalization/v1/actions/getcsrftoken",
-					applyConnector: ApplyPersonalizationConnector,
+					initialConnector: InitialPersonalizationConnector,
 					contentType: "application/json; charset=utf-8",
 					dataType: "json",
 					payload: JSON.stringify(oFlexObject)
@@ -89,9 +89,9 @@ sap.ui.define([
 
 			return WritePersonalizationConnector.remove(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken: ApplyPersonalizationConnector.xsrfToken,
+					xsrfToken: InitialPersonalizationConnector.xsrfToken,
 					tokenUrl: "/flexPersonalization/flex/personalization/v1/actions/getcsrftoken",
-					applyConnector: ApplyPersonalizationConnector,
+					initialConnector: InitialPersonalizationConnector,
 					contentType: "application/json; charset=utf-8",
 					dataType: "json"
 				}), "a send request with correct parameters and options is sent");
@@ -111,8 +111,8 @@ sap.ui.define([
 			var sExpectedUrl = "/flexPersonalization/flex/personalization/v1/changes/?reference=reference&appVersion=1.0.1&generator=generator&selector=id1,id2&changeType=rename";
 			var sExpectedMethod = "DELETE";
 
-			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
-			var oSpyGetUrl = sandbox.spy(ApplyUtils, "getUrl");
+			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});
+			var oSpyGetUrl = sandbox.spy(InitialUtils, "getUrl");
 
 			return WritePersonalizationConnector.reset(mPropertyBag).then(function() {
 				assert.equal(oSpyGetUrl.getCall(0).args[0], "/flex/personalization/v1/changes/", "with correct route path");
@@ -136,8 +136,8 @@ sap.ui.define([
 			var sExpectedUrl = "/flexPersonalization/flex/personalization/v1/changes/?reference=reference&appVersion=1.0.1";
 			var sExpectedMethod = "DELETE";
 
-			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
-			var oSpyGetUrl = sandbox.spy(ApplyUtils, "getUrl");
+			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});
+			var oSpyGetUrl = sandbox.spy(InitialUtils, "getUrl");
 
 			return WritePersonalizationConnector.reset(mPropertyBag).then(function() {
 				assert.equal(oSpyGetUrl.getCall(0).args[0], "/flex/personalization/v1/changes/", "with correct route path");
@@ -165,16 +165,16 @@ sap.ui.define([
 		beforeEach : function () {
 		},
 		afterEach: function() {
-			ApplyUtils.sendRequest.restore();
+			InitialUtils.sendRequest.restore();
 			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("given a mock server, when write is triggered and the apply connectors xsrf token is outdated", function (assert) {
 			var newToken = "newToken456";
 
-			ApplyPersonalizationConnector.xsrfToken = "oldToken123";
+			InitialPersonalizationConnector.xsrfToken = "oldToken123";
 
-			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest");
+			var oStubSendRequest = sinon.stub(InitialUtils, "sendRequest");
 			oStubSendRequest.onCall(0).rejects({status: 403});
 			oStubSendRequest.onCall(1).resolves({xsrfToken: newToken});
 			oStubSendRequest.onCall(2).resolves({response: "something"});
@@ -185,7 +185,7 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the first request was a POST request");
 				assert.equal(oStubSendRequest.getCall(1).args[1], "HEAD", "the second request was a HEAD request");
 				assert.equal(oStubSendRequest.getCall(2).args[1], "POST", "the third request was a POST request");
-				assert.equal(ApplyPersonalizationConnector.xsrfToken, newToken, "a new token was stored in the apply connector");
+				assert.equal(InitialPersonalizationConnector.xsrfToken, newToken, "a new token was stored in the apply connector");
 				assert.equal(oStubSendRequest.getCall(2).args[2].xsrfToken, newToken, "and the new token was used to resend the request");
 			});
 		});
@@ -193,9 +193,9 @@ sap.ui.define([
 		QUnit.test("given a mock server, when write is triggered and the apply connectors has no token", function (assert) {
 			var newToken = "newToken456";
 
-			ApplyPersonalizationConnector.xsrfToken = undefined;
+			InitialPersonalizationConnector.xsrfToken = undefined;
 
-			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest");
+			var oStubSendRequest = sinon.stub(InitialUtils, "sendRequest");
 			oStubSendRequest.onCall(0).resolves({xsrfToken: newToken});
 			oStubSendRequest.onCall(1).resolves({response: "something"});
 
@@ -205,7 +205,7 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(0).args[1], "HEAD", "the first request was a HEAD request");
 				assert.equal(oStubSendRequest.getCall(1).args[2].xsrfToken, newToken, "and the new token was used to resend the request");
 				assert.equal(oStubSendRequest.getCall(1).args[1], "POST", "the second request was a POST request");
-				assert.equal(ApplyPersonalizationConnector.xsrfToken, newToken, "a new token was stored in the apply connector");
+				assert.equal(InitialPersonalizationConnector.xsrfToken, newToken, "a new token was stored in the apply connector");
 				assert.equal(oStubSendRequest.getCall(1).args[2].xsrfToken, newToken, "and the new token was used to resend the request");
 			});
 		});

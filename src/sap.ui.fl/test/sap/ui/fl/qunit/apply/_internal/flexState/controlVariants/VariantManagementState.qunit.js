@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/StorageUtils",
+	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ], function(

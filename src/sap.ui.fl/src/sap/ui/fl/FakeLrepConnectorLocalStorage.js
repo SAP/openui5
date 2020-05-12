@@ -4,13 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/FakeLrepConnector",
-	"sap/ui/fl/apply/_internal/connectors/LocalStorageConnector",
 	"sap/ui/fl/write/_internal/connectors/LocalStorageConnector"
 ],
 function(
 	FakeLrepConnector,
-	ApplyLocalStorageConnector,
-	WriteLocalStorageConnector
+	LocalStorageConnector
 ) {
 	"use strict";
 
@@ -38,10 +36,10 @@ function(
 		},
 		forTesting: {
 			spyWrite: function (sandbox, assert) {
-				return FakeLrepConnector.forTesting.spyMethod(sandbox, assert, WriteLocalStorageConnector, "write");
+				return FakeLrepConnector.forTesting.spyMethod(sandbox, assert, LocalStorageConnector, "write");
 			},
 			getNumberOfChanges: function (sReference) {
-				return FakeLrepConnector.forTesting.getNumberOfChanges(ApplyLocalStorageConnector, sReference);
+				return FakeLrepConnector.forTesting.getNumberOfChanges(LocalStorageConnector, sReference);
 			},
 			synchronous: {
 				clearAll: function () {

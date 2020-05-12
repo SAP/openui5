@@ -5,8 +5,8 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/write/connectors/BaseConnector",
-	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
-	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
+	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
 	"sap/ui/fl/registry/Settings",
@@ -22,8 +22,8 @@ sap.ui.define([
 ], function(
 	merge,
 	BaseConnector,
-	ApplyConnector,
-	ApplyUtils,
+	InitialConnector,
+	InitialUtils,
 	WriteUtils,
 	TransportSelection,
 	Settings,
@@ -79,19 +79,19 @@ sap.ui.define([
 		if (mPropertyBag.skipIam) {
 			mParameters.skipIam = mPropertyBag.skipIam;
 		}
-		ApplyUtils.addLanguageInfo(mParameters);
-		ApplyConnector._addClientInfo(mParameters);
+		InitialUtils.addLanguageInfo(mParameters);
+		InitialConnector._addClientInfo(mParameters);
 		//single update --> fileName needs to be in the url
 		if (mPropertyBag.flexObject && !mPropertyBag.isAppVariant) {
 			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
 		}
-		var sWriteUrl = ApplyUtils.getUrl(sRoute, mPropertyBag, mParameters);
+		var sWriteUrl = InitialUtils.getUrl(sRoute, mPropertyBag, mParameters);
 		delete mPropertyBag.reference;
 		delete mPropertyBag.fileName;
-		var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
+		var sTokenUrl = InitialUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
 
 		var oRequestOption = WriteUtils.getRequestOptions(
-			ApplyConnector,
+			InitialConnector,
 			sTokenUrl,
 			mPropertyBag.flexObjects || mPropertyBag.flexObject,
 			"application/json; charset=utf-8", "json"
@@ -142,8 +142,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.write._internal.Storage
 	 */
 	return merge({}, BaseConnector, /** @lends sap.ui.fl.write._internal.connectors.LrepConnector */ {
-		applyConnector: ApplyConnector,
-		layers: ApplyConnector.layers,
+		initialConnector: InitialConnector,
+		layers: InitialConnector.layers,
 		/**
 		 * Resets flexibility files for a given application and layer.
 		 *
@@ -187,7 +187,7 @@ sap.ui.define([
 				var aParameters = ["reference", "layer", "appVersion", "changelist", "generator"];
 				var mParameters = _pick(mPropertyBag, aParameters);
 
-				ApplyConnector._addClientInfo(mParameters);
+				InitialConnector._addClientInfo(mParameters);
 
 				if (mPropertyBag.selectorIds) {
 					mParameters.selector = mPropertyBag.selectorIds;
@@ -197,10 +197,10 @@ sap.ui.define([
 				}
 
 				delete mPropertyBag.reference;
-				var sResetUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag, mParameters);
-				var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
+				var sResetUrl = InitialUtils.getUrl(ROUTES.CHANGES, mPropertyBag, mParameters);
+				var sTokenUrl = InitialUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
 				var oRequestOption = WriteUtils.getRequestOptions(
-					ApplyConnector,
+					InitialConnector,
 					sTokenUrl
 				);
 				return WriteUtils.sendRequest(sResetUrl, "DELETE", oRequestOption).then(function (oResponse) {
@@ -284,10 +284,10 @@ sap.ui.define([
 			var aParameters = ["layer", "appVersion"];
 			var mParameters = _pick(mPropertyBag, aParameters);
 
-			ApplyConnector._addClientInfo(mParameters);
+			InitialConnector._addClientInfo(mParameters);
 
-			var sDataUrl = ApplyUtils.getUrl(ROUTES.FLEX_INFO, mPropertyBag, mParameters);
-			return ApplyUtils.sendRequest(sDataUrl).then(function (oResult) {
+			var sDataUrl = InitialUtils.getUrl(ROUTES.FLEX_INFO, mPropertyBag, mParameters);
+			return InitialUtils.sendRequest(sDataUrl).then(function (oResult) {
 				return oResult.response;
 			});
 		},
@@ -300,16 +300,16 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolves with an object containing the flex features
 		 */
 		loadFeatures: function (mPropertyBag) {
-			if (ApplyConnector.settings) {
-				ApplyConnector.settings.isVersioningEnabled = false;
-				return Promise.resolve(ApplyConnector.settings);
+			if (InitialConnector.settings) {
+				InitialConnector.settings.isVersioningEnabled = false;
+				return Promise.resolve(InitialConnector.settings);
 			}
 			var mParameters = {};
 
-			ApplyConnector._addClientInfo(mParameters);
+			InitialConnector._addClientInfo(mParameters);
 
-			var sFeaturesUrl = ApplyUtils.getUrl(ROUTES.SETTINGS, mPropertyBag, mParameters);
-			return ApplyUtils.sendRequest(sFeaturesUrl).then(function (oResult) {
+			var sFeaturesUrl = InitialUtils.getUrl(ROUTES.SETTINGS, mPropertyBag, mParameters);
+			return InitialUtils.sendRequest(sFeaturesUrl).then(function (oResult) {
 				// ensure that even an enabled back end is not consumed in this version
 				oResult.response.isVersioningEnabled = false;
 				return oResult.response;
@@ -366,17 +366,17 @@ sap.ui.define([
 			if (mPropertyBag.transport) {
 				mParameters.changelist = mPropertyBag.transport;
 			}
-			ApplyConnector._addClientInfo(mParameters);
+			InitialConnector._addClientInfo(mParameters);
 			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
 			var sRoute = mPropertyBag.flexObject.fileType === "variant" ? ROUTES.VARIANTS : ROUTES.CHANGES;
-			var sDeleteUrl = ApplyUtils.getUrl(sRoute, mPropertyBag, mParameters);
+			var sDeleteUrl = InitialUtils.getUrl(sRoute, mPropertyBag, mParameters);
 			//decode url before sending to ABAP back end which does not expect encoded special character such as "/" in the namespace
 			sDeleteUrl = decodeURIComponent(sDeleteUrl);
 			delete mPropertyBag.fileName;
-			var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
+			var sTokenUrl = InitialUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
 
 			var oRequestOption = WriteUtils.getRequestOptions(
-				ApplyConnector,
+				InitialConnector,
 				sTokenUrl,
 				undefined,
 				"application/json; charset=utf-8", "json"
@@ -387,7 +387,7 @@ sap.ui.define([
 			getManifest: function (mPropertyBag) {
 				var sAppVariantManifestUrl = mPropertyBag.appVarUrl;
 				var oRequestOption = WriteUtils.getRequestOptions(
-					ApplyConnector,
+					InitialConnector,
 					undefined,
 					undefined,
 					"application/json; charset=utf-8", "json"
@@ -395,9 +395,9 @@ sap.ui.define([
 				return WriteUtils.sendRequest(sAppVariantManifestUrl, "GET", oRequestOption);
 			},
 			load: function (mPropertyBag) {
-				var sAppVariantUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag);
+				var sAppVariantUrl = InitialUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag);
 				var oRequestOption = WriteUtils.getRequestOptions(
-					ApplyConnector,
+					InitialConnector,
 					undefined,
 					undefined,
 					"application/json; charset=utf-8", "json"
@@ -416,12 +416,12 @@ sap.ui.define([
 				mParameters.assignFromAppId = mPropertyBag.assignFromAppId;
 				delete mPropertyBag.assignFromAppId;
 
-				var sCatalogAssignmentUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
+				var sCatalogAssignmentUrl = InitialUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
 				delete mPropertyBag.reference;
-				var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
+				var sTokenUrl = InitialUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
 
 				var oRequestOption = WriteUtils.getRequestOptions(
-					ApplyConnector,
+					InitialConnector,
 					sTokenUrl,
 					undefined,
 					"application/json; charset=utf-8", "json"
@@ -433,12 +433,12 @@ sap.ui.define([
 				mParameters.action = mPropertyBag.action;
 				delete mPropertyBag.action;
 
-				var sCatalogUnAssignmentUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
+				var sCatalogUnAssignmentUrl = InitialUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
 				delete mPropertyBag.reference;
-				var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
+				var sTokenUrl = InitialUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
 
 				var oRequestOption = WriteUtils.getRequestOptions(
-					ApplyConnector,
+					InitialConnector,
 					sTokenUrl,
 					undefined,
 					"application/json; charset=utf-8", "json"
@@ -463,12 +463,12 @@ sap.ui.define([
 						mParameters.changelist = sTransport;
 					}
 					delete mPropertyBag.isForSmartBusiness;
-					var sDeleteUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
+					var sDeleteUrl = InitialUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
 					delete mPropertyBag.reference;
-					var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
+					var sTokenUrl = InitialUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
 
 					var oRequestOption = WriteUtils.getRequestOptions(
-						ApplyConnector,
+						InitialConnector,
 						sTokenUrl,
 						undefined,
 						"application/json; charset=utf-8", "json"
@@ -485,10 +485,10 @@ sap.ui.define([
 				delete mPropertyBag.layer;
 				delete mPropertyBag.reference;
 
-				var sAppVarOverviewUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS_OVERVIEW, mPropertyBag, mParameters);
+				var sAppVarOverviewUrl = InitialUtils.getUrl(ROUTES.APPVARIANTS_OVERVIEW, mPropertyBag, mParameters);
 
 				var oRequestOption = WriteUtils.getRequestOptions(
-					ApplyConnector,
+					InitialConnector,
 					undefined,
 					undefined,
 					"application/json; charset=utf-8", "json"
@@ -498,10 +498,10 @@ sap.ui.define([
 		},
 		ui2Personalization: {
 			create: function (mPropertyBag) {
-				mPropertyBag.applyConnector = this.applyConnector;
+				mPropertyBag.initialConnector = this.initialConnector;
 				var sPrefix = Utils.getLrepUrl();
 				var oRequestOptions = WriteUtils.getRequestOptions(
-					ApplyConnector,
+					InitialConnector,
 					sPrefix + ROUTES.TOKEN,
 					mPropertyBag.flexObjects || mPropertyBag.flexObject,
 					"application/json; charset=utf-8", "json"
@@ -510,8 +510,8 @@ sap.ui.define([
 				return WriteUtils.sendRequest(sUrl, "PUT", oRequestOptions);
 			},
 			remove: function (mPropertyBag) {
-				mPropertyBag.applyConnector = this.applyConnector;
-				var sUrl = ApplyUtils.getUrl(ROUTES.UI2PERSONALIZATION, {
+				mPropertyBag.initialConnector = this.initialConnector;
+				var sUrl = InitialUtils.getUrl(ROUTES.UI2PERSONALIZATION, {
 					url: Utils.getLrepUrl()
 				}, {
 					reference: mPropertyBag.reference,

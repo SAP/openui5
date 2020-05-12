@@ -4,14 +4,14 @@
 /*global Promise */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
+	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils"
 ], function(
 	ApplyLrepConnector,
 	FlexUtils,
-	ApplyUtils,
+	InitialUtils,
 	WriteUtils
 ) {
 	"use strict";
@@ -54,10 +54,10 @@ sap.ui.define([
 			if (FlexUtils.getClient()) {
 				mParameters["sap-client"] = FlexUtils.getClient();
 			}
-			var sGetTransportsUrl = ApplyUtils.getUrl(ROUTES.ACTION_GET_TRANSPORTS, {url: FlexUtils.getLrepUrl()}, mParameters);
+			var sGetTransportsUrl = InitialUtils.getUrl(ROUTES.ACTION_GET_TRANSPORTS, {url: FlexUtils.getLrepUrl()}, mParameters);
 			//decode url before sending to ABAP back end which does not expect encoded special character such as "/" in the package name
 			sGetTransportsUrl = decodeURIComponent(sGetTransportsUrl);
-			return ApplyUtils.sendRequest(sGetTransportsUrl, "GET").then(function (oResponse) {
+			return InitialUtils.sendRequest(sGetTransportsUrl, "GET").then(function (oResponse) {
 				if (oResponse.response) {
 					if (!oResponse.response.localonly) {
 						oResponse.response.localonly = false;
@@ -95,8 +95,8 @@ sap.ui.define([
 			}
 			var mUrlParams = FlexUtils.getClient() ? {"sap-client" : FlexUtils.getClient()} : {};
 
-			var sMakeChangesTransportableUrl = ApplyUtils.getUrl(ROUTES.ACTION_MAKE_CHANGE_TRANSPORTABLE, {url: FlexUtils.getLrepUrl()}, mUrlParams);
-			var sTokenUrl = ApplyUtils.getUrl(ROUTES.ACTION_GET_TOKEN, {url: FlexUtils.getLrepUrl()});
+			var sMakeChangesTransportableUrl = InitialUtils.getUrl(ROUTES.ACTION_MAKE_CHANGE_TRANSPORTABLE, {url: FlexUtils.getLrepUrl()}, mUrlParams);
+			var sTokenUrl = InitialUtils.getUrl(ROUTES.ACTION_GET_TOKEN, {url: FlexUtils.getLrepUrl()});
 			var oRequestOption = WriteUtils.getRequestOptions(
 				ApplyLrepConnector,
 				sTokenUrl,

@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/apply/_internal/StorageUtils"
+	"sap/ui/fl/initial/_internal/StorageUtils"
 ], function(
 	sinon,
 	Layer,
@@ -160,8 +160,8 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("getApplyConnectors", function(assert) {
-			return Utils.getApplyConnectors().then(function(mConnectors) {
+		QUnit.test("getLoadConnectors", function(assert) {
+			return Utils.getLoadConnectors().then(function(mConnectors) {
 				var mConnectorsSorted = sortConnectors(mConnectors);
 				assert.equal(this.oGetConnectorsSpy.callCount, 1, "the getConnector is called once");
 				assert.equal(this.oConfigurationSpy.callCount, 1, "configuration is called once");
@@ -193,8 +193,8 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("getApplyConnectors", function(assert) {
-			return Utils.getApplyConnectors().then(function(mConnectors) {
+		QUnit.test("getLoadConnectors", function(assert) {
+			return Utils.getLoadConnectors().then(function(mConnectors) {
 				var mConnectorsSorted = sortConnectors(mConnectors);
 				assert.equal(this.oGetConnectorsSpy.callCount, 1, "the getConnector is called once");
 				assert.equal(this.oConfigurationStub.callCount, 1, "configuration is called once");

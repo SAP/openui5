@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
 	"sap/ui/fl/Layer",
@@ -29,7 +29,7 @@ sap.ui.define([
 	ChangeRegistry,
 	LrepConnector,
 	Storage,
-	ApplyUtils,
+	InitialUtils,
 	WriteUtils,
 	TransportSelection,
 	Layer,
@@ -588,7 +588,7 @@ sap.ui.define([
 				}
 			};
 
-			var oNewApplyConnectorCall = sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse);
+			var oNewApplyConnectorCall = sandbox.stub(InitialUtils, "sendRequest").resolves(oTransportResponse);
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			oNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
@@ -650,7 +650,7 @@ sap.ui.define([
 				}
 			};
 
-			var oNewApplyConnectorCall = sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse);
+			var oNewApplyConnectorCall = sandbox.stub(InitialUtils, "sendRequest").resolves(oTransportResponse);
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			oNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
 			oNewConnectorCall.onSecondCall().resolves(); // Delete call to backend
@@ -695,7 +695,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse);
+			sandbox.stub(InitialUtils, "sendRequest").resolves(oTransportResponse);
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			oNewConnectorCall.onFirstCall().rejects({message: "Loading app variant failed"}); // Get Descriptor variant call
@@ -758,7 +758,7 @@ sap.ui.define([
 				}
 			};
 
-			var oNewApplyConnectorCall = sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse);
+			var oNewApplyConnectorCall = sandbox.stub(InitialUtils, "sendRequest").resolves(oTransportResponse);
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			oNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
@@ -825,7 +825,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse);
+			sandbox.stub(InitialUtils, "sendRequest").resolves(oTransportResponse);
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			oNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
@@ -871,7 +871,7 @@ sap.ui.define([
 				}
 			};
 
-			var oNewApplyConnectorCall = sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse);
+			var oNewApplyConnectorCall = sandbox.stub(InitialUtils, "sendRequest").resolves(oTransportResponse);
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			oNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
@@ -918,7 +918,7 @@ sap.ui.define([
 				}
 			};
 
-			var oNewApplyConnectorCall = sandbox.stub(ApplyUtils, "sendRequest").resolves(oTransportResponse);
+			var oNewApplyConnectorCall = sandbox.stub(InitialUtils, "sendRequest").resolves(oTransportResponse);
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			oNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call

@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/StorageUtils",
+	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/apply/_internal/StorageResultMerger",
-	"sap/ui/fl/apply/_internal/storageResultDisassemble"
+	"sap/ui/fl/initial/_internal/StorageResultMerger",
+	"sap/ui/fl/initial/_internal/storageResultDisassemble"
 ], function(
 	StorageUtils,
 	FlUtils,
@@ -31,7 +31,7 @@ sap.ui.define([
 	/**
 	 * Abstraction providing an API to handle communication with persistence like back ends, local & session storage or work spaces.
 	 *
-	 * @namespace sap.ui.fl.apply._internal.Storage
+	 * @namespace sap.ui.fl.initial._internal.Storage
 	 * @since 1.67
 	 * @version ${version}
 	 * @private
@@ -48,7 +48,7 @@ sap.ui.define([
 			var sDraftLayer = mPropertyBag.draftLayer || FlUtils.getUrlParameter(LayerUtils.FL_VERSION_PARAM) || "";
 			oConnectorSpecificPropertyBag = _addDraftLayerToResponsibleConnectorsPropertyBag(oConnectorSpecificPropertyBag, oConnectorConfig, sDraftLayer);
 
-			return oConnectorConfig.applyConnectorModule.loadFlexData(oConnectorSpecificPropertyBag)
+			return oConnectorConfig.loadConnectorModule.loadFlexData(oConnectorSpecificPropertyBag)
 				.then(function (oResponse) {
 					// ensure an object with the corresponding properties
 					return oResponse || StorageUtils.getEmptyFlexDataResponse();
@@ -126,7 +126,7 @@ sap.ui.define([
 			return Promise.reject("No reference was provided");
 		}
 
-		return StorageUtils.getApplyConnectors()
+		return StorageUtils.getLoadConnectors()
 			.then(_loadFlexDataFromConnectors.bind(this, mPropertyBag))
 			.then(_flattenAndMergeResultPromise);
 	};

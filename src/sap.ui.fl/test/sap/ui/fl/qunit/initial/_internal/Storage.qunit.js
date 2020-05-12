@@ -2,19 +2,19 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/apply/_internal/Storage",
+	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Variant",
-	"sap/ui/fl/apply/_internal/StorageUtils",
+	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/apply/_internal/connectors/StaticFileConnector",
-	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
-	"sap/ui/fl/apply/_internal/connectors/JsObjectConnector",
-	"sap/ui/fl/apply/_internal/connectors/KeyUserConnector",
-	"sap/ui/fl/apply/_internal/connectors/PersonalizationConnector",
-	"sap/ui/fl/apply/_internal/connectors/ObjectPathConnector",
-	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
+	"sap/ui/fl/initial/_internal/connectors/StaticFileConnector",
+	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
+	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
+	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
+	"sap/ui/fl/initial/_internal/connectors/PersonalizationConnector",
+	"sap/ui/fl/write/_internal/connectors/ObjectPathConnector",
+	"sap/ui/fl/write/_internal/connectors/ObjectStorageUtils",
 	"sap/base/util/merge"
 ], function (
 	sinon,
@@ -709,11 +709,10 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Storage with a custom & borken connector", {
+	QUnit.module("Storage with a custom & broken connector", {
 		beforeEach : function() {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([{
-				applyConnector: "my/connectors/BrokenApplyConnector",
-				custom: true,
+				loadConnector: "my/connectors/BrokenInitialConnector",
 				layers: []}
 			]);
 			// enforce the bundle loading by simulating the no-preload scenario
@@ -723,12 +722,12 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("given a custom connector is configured when loading apply connectors", function(assert) {
-			return StorageUtils.getApplyConnectors().then(function (aConnectors) {
+		QUnit.test("given a custom connector is configured when loading load connectors", function(assert) {
+			return StorageUtils.getLoadConnectors().then(function (aConnectors) {
 				assert.equal(aConnectors.length, 2, "two connectors are loaded");
 				assert.equal(aConnectors[0].connector, "StaticFileConnector", "the StaticFileConnector is the first connector");
-				assert.equal(aConnectors[1].applyConnector, "my/connectors/BrokenApplyConnector", "the BrokenConnector is the second connector");
-				assert.equal(aConnectors[1].applyConnectorModule.testApplyCheckProperty, true, "the test property identifying the BrokenConnector is present");
+				assert.equal(aConnectors[1].loadConnector, "my/connectors/BrokenInitialConnector", "the BrokenConnector is the second connector");
+				assert.equal(aConnectors[1].loadConnectorModule.testInitialCheckProperty, true, "the test property identifying the BrokenConnector is present");
 			});
 		});
 

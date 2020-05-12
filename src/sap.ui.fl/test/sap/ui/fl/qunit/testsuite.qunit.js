@@ -28,6 +28,69 @@ sap.ui.define([
 			autostart: true
 		},
 		tests: {
+			"initial/_internal/connectors/StaticFileConnector": {
+				group: "Initial Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/initial/_internal/connectors/StaticFileConnector"
+					]
+				},
+				ui5: {
+					flexibilityServices: '[{"connector": "StaticFileConnector", "layers": []}]'
+				}
+			},
+			"initial/_internal/connectors/LrepConnector": {
+				group: "Initial Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/initial/_internal/connectors/LrepConnector",
+						"sap/ui/fl/initial/_internal/connectors/Utils"
+					]
+				}
+			},
+			"initial/_internal/connectors/PersonalizationConnector": {
+				group: 'Apply Internal',
+				coverage: {
+					only: ["sap/ui/fl/initial/_internal/connectors/PersonalizationConnector"]
+				}
+			},
+			"initial/_internal/connectors/KeyUserConnector": {
+				group: "Initial Internal",
+				coverage: {
+					only: ["sap/ui/fl/initial/_internal/connectors/KeyUserConnector"]
+				}
+			},
+			"initial/api/connectors/FileListBaseConnector": {
+				group: "Initial API",
+				coverage: {
+					only: ["sap/ui/fl/initial/api/connectors/FileListBaseConnector"]
+				}
+			},
+			"initial/_internal/Storage": {
+				group: "Initial Internal",
+				ui5: {
+					resourceroots: {
+						"my.connectors": "./test-resources/sap/ui/fl/qunit/testConnectors/",
+						"test.app": "./test-resources/sap/ui/fl/qunit/testResources/"
+					},
+					flexibilityServices: '[{"connector": "JsObjectConnector", "layers": ["ALL"]},{"connector": "LrepConnector", "layers": ["ALL"], "url": "someURL"}]'
+				},
+				coverage: {
+					only: ["sap/ui/fl/initial/_internal/Storage"]
+				}
+			},
+			"initial/_internal/StorageUtils": {
+				group: "Initial Internal",
+				coverage: {
+					only: ["sap/ui/fl/initial/_internal/StorageUtils"]
+				}
+			},
+			"initial/_internal/storageResultDisassemble": {
+				group: "Initial Internal",
+				coverage: {
+					only: ["sap/ui/fl/initial/_internal/storageResultDisassemble"]
+				}
+			},
 			"apply/api/FlexRuntimeInfoAPI": {
 				group: "Apply API",
 				coverage: {
@@ -142,76 +205,6 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ApplyUtil"]
 				}
 			},
-			"apply/_internal/connectors/ObjectStorageConnector": {
-				group: "Apply Internal",
-				coverage: {
-					only: [
-						"sap/ui/fl/apply/_internal/connectors/ObjectStorageConnector",
-						"sap/ui/fl/apply/_internal/connectors/LocalStorageConnector",
-						"sap/ui/fl/apply/_internal/connectors/SessionStorageConnector"
-					]
-				},
-				ui5: {
-					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
-				}
-			},
-			"apply/_internal/connectors/ObjectStorageUtils": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"]
-				}
-			},
-			"apply/_internal/connectors/JsObjectConnector": {
-				group: "Apply Internal",
-				coverage: {
-					only: [
-						"sap/ui/fl/apply/_internal/connectors/JsObjectConnector"
-					]
-				},
-				ui5: {
-					flexibilityServices: '[{"connector": "JsObjectConnector", "layers": []}]'
-				}
-			},
-			"apply/_internal/connectors/StaticFileConnector": {
-				group: "Apply Internal",
-				coverage: {
-					only: [
-						"sap/ui/fl/apply/_internal/connectors/StaticFileConnector"
-					]
-				},
-				ui5: {
-					flexibilityServices: '[{"connector": "StaticFileConnector", "layers": []}]'
-				}
-			},
-			"apply/_internal/connectors/LrepConnector": {
-				group: "Apply Internal",
-				coverage: {
-					only: [
-						"sap/ui/fl/apply/_internal/connectors/LrepConnector",
-						"sap/ui/fl/apply/_internal/connectors/Utils"
-					]
-				}
-			},
-			"apply/_internal/connectors/PersonalizationConnector": {
-				group: 'Apply Internal',
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/connectors/PersonalizationConnector"]
-				}
-			},
-			"apply/_internal/connectors/KeyUserConnector": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/connectors/KeyUserConnector"]
-				}
-			},
-			"apply/_internal/connectors/ObjectPathConnector": {
-				group: "Apply Internal",
-				coverage: {
-					only: [
-						"sap/ui/fl/apply/_internal/connectors/ObjectPathConnector"
-					]
-				}
-			},
 			"apply/_internal/controlVariants/URLHandler": {
 				group: "Apply Internal",
 				coverage: {
@@ -301,31 +294,6 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/ChangesController"]
 				}
 			},
-			"apply/_internal/Storage": {
-				group: "Apply Internal",
-				ui5: {
-					resourceroots: {
-						"my.connectors": "./test-resources/sap/ui/fl/qunit/testConnectors/",
-						"test.app": "./test-resources/sap/ui/fl/qunit/testResources/"
-					},
-					flexibilityServices: '[{"connector": "JsObjectConnector", "layers": ["ALL"]},{"connector": "LrepConnector", "layers": ["ALL"], "url": "someURL"}]'
-				},
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/Storage"]
-				}
-			},
-			"apply/_internal/StorageUtils": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/StorageUtils"]
-				}
-			},
-			"apply/_internal/storageResultDisassemble": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/storageResultDisassemble"]
-				}
-			},
 			"apply/_internal/extensionPoint/Processor": {
 				group: "Apply Internal",
 				coverage: {
@@ -335,12 +303,6 @@ sap.ui.define([
 					resourceroots: {
 						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
 					}
-				}
-			},
-			"initial/api/connectors/FileListBaseConnector": {
-				group: "Initial API",
-				coverage: {
-					only: ["sap/ui/fl/initial/api/connectors/FileListBaseConnector"]
 				}
 			},
 			"write/api/ChangesWriteAPI": {
@@ -438,6 +400,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/_internal/connectors/Utils"]
 				}
 			},
+			"write/_internal/connectors/ObjectStorageUtils": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/connectors/ObjectStorageUtils"]
+				}
+			},
 			"write/_internal/connectors/PersonalizationConnector": {
 				group: "Write Internal",
 				coverage: {
@@ -480,7 +448,7 @@ sap.ui.define([
 					only: [
 						"sap/ui/fl/write/_internal/connectors/LrepConnector",
 						"sap/ui/fl/write/_internal/connectors/Utils",
-						"sap/ui/fl/apply/_internal/connectors/Utils"
+						"sap/ui/fl/initial/_internal/connectors/Utils"
 					]
 				}
 			},

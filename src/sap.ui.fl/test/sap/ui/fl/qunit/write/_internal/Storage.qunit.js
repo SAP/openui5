@@ -4,31 +4,31 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/apply/_internal/StorageUtils",
-	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/initial/_internal/StorageUtils",
+	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
+	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
-	"sap/ui/fl/apply/_internal/connectors/KeyUserConnector",
+	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
-	"sap/ui/fl/apply/_internal/connectors/PersonalizationConnector",
+	"sap/ui/fl/initial/_internal/connectors/PersonalizationConnector",
 	"sap/ui/fl/write/_internal/connectors/PersonalizationConnector"
 ], function(
 	sinon,
 	Layer,
 	Storage,
 	StorageUtils,
-	ApplyUtils,
+	InitialUtils,
 	WriteUtils,
 	FeaturesAPI,
-	ApplyLrepConnector,
+	InitialLrepConnector,
 	WriteLrepConnector,
-	ApplyKeyUserConnector,
+	InitialKeyUserConnector,
 	WriteKeyUserConnector,
 	JsObjectConnector,
-	ApplyPersonalizationConnector,
+	InitialPersonalizationConnector,
 	WritePersonalizationConnector
 ) {
 	"use strict";
@@ -52,14 +52,14 @@ sap.ui.define([
 
 	QUnit.module("Given Storage when write is called", {
 		beforeEach: function () {
-			ApplyLrepConnector.xsrfToken = "123";
-			ApplyKeyUserConnector.xsrfToken = "123";
-			ApplyPersonalizationConnector.xsrfToken = "123";
+			InitialLrepConnector.xsrfToken = "123";
+			InitialKeyUserConnector.xsrfToken = "123";
+			InitialPersonalizationConnector.xsrfToken = "123";
 		},
 		afterEach: function() {
-			ApplyLrepConnector.xsrfToken = undefined;
-			ApplyKeyUserConnector.xsrfToken = undefined;
-			ApplyPersonalizationConnector.xsrfToken = undefined;
+			InitialLrepConnector.xsrfToken = undefined;
+			InitialKeyUserConnector.xsrfToken = undefined;
+			InitialPersonalizationConnector.xsrfToken = undefined;
 			sandbox.restore();
 		}
 	}, function() {
@@ -146,8 +146,8 @@ sap.ui.define([
 			var sExpectedUrl = sUrl + "/changes/";
 			var sExpectedMethod = "POST";
 
-			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
-			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
+			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});
+			var oStubGetUrl = sandbox.stub(InitialUtils, "getUrl").returns(sExpectedUrl);
 			//sandbox.stub(WriteUtils, "getRequestOptions").returns({});
 
 			return Storage.write(mPropertyBag).then(function() {
@@ -182,8 +182,8 @@ sap.ui.define([
 			var sExpectedWriteUrl = sUrl + "/v1/changes/";
 			var sExpectedMethod = "POST";
 
-			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
-			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedWriteUrl);
+			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});
+			var oStubGetUrl = sandbox.stub(InitialUtils, "getUrl").returns(sExpectedWriteUrl);
 
 			return Storage.write(mPropertyBag).then(function() {
 				var oGetWriteUrlCallArgs = oStubGetUrl.getCall(0).args;
@@ -272,8 +272,8 @@ sap.ui.define([
 			var sExpectedUrl = sUrl1 + "/v1/changes/";
 			var sExpectedMethod = "POST";
 
-			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
-			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
+			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});
+			var oStubGetUrl = sandbox.stub(InitialUtils, "getUrl").returns(sExpectedUrl);
 
 			return Storage.write(mPropertyBag).then(function() {
 				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
@@ -305,8 +305,8 @@ sap.ui.define([
 			var sExpectedUrl = sUrl1 + "/flex/keyuser/v1/changes/";
 			var sExpectedMethod = "POST";
 
-			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
-			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
+			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});
+			var oStubGetUrl = sandbox.stub(InitialUtils, "getUrl").returns(sExpectedUrl);
 
 			return Storage.write(mPropertyBag).then(function() {
 				var oGetWriteUrlCallArgs = oStubGetUrl.getCall(0).args;
@@ -329,12 +329,12 @@ sap.ui.define([
 	QUnit.module("Given Storage when loadFeatures is called", {
 		beforeEach : function() {
 			this.url = "/some/url";
-			ApplyLrepConnector.xsrfToken = "123";
-			ApplyPersonalizationConnector.xsrfToken = "123";
+			InitialLrepConnector.xsrfToken = "123";
+			InitialPersonalizationConnector.xsrfToken = "123";
 		},
 		afterEach: function() {
-			ApplyLrepConnector.xsrfToken = undefined;
-			ApplyPersonalizationConnector.xsrfToken = undefined;
+			InitialLrepConnector.xsrfToken = undefined;
+			InitialPersonalizationConnector.xsrfToken = undefined;
 			sandbox.restore();
 		}
 	}, function() {
@@ -563,14 +563,14 @@ sap.ui.define([
 
 	QUnit.module("Given Storage when reset is called", {
 		beforeEach: function () {
-			ApplyLrepConnector.xsrfToken = "123";
-			ApplyKeyUserConnector.xsrfToken = "123";
-			ApplyPersonalizationConnector.xsrfToken = "123";
+			InitialLrepConnector.xsrfToken = "123";
+			InitialKeyUserConnector.xsrfToken = "123";
+			InitialPersonalizationConnector.xsrfToken = "123";
 		},
 		afterEach: function() {
-			ApplyLrepConnector.xsrfToken = undefined;
-			ApplyKeyUserConnector.xsrfToken = undefined;
-			ApplyPersonalizationConnector.xsrfToken = undefined;
+			InitialLrepConnector.xsrfToken = undefined;
+			InitialKeyUserConnector.xsrfToken = undefined;
+			InitialPersonalizationConnector.xsrfToken = undefined;
 			sandbox.restore();
 		}
 	}, function() {
@@ -665,7 +665,7 @@ sap.ui.define([
 			var sExpectedMethod = "DELETE";
 
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({});
-			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
+			var oStubGetUrl = sandbox.stub(InitialUtils, "getUrl").returns(sExpectedUrl);
 
 			return Storage.reset(mPropertyBag).then(function () {
 				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
@@ -703,7 +703,7 @@ sap.ui.define([
 			var sExpectedMethod = "DELETE";
 
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({});
-			var oSpyGetUrl = sandbox.spy(ApplyUtils, "getUrl");
+			var oSpyGetUrl = sandbox.spy(InitialUtils, "getUrl");
 
 			return Storage.reset(mPropertyBag).then(function () {
 				var oGetUrlCallArgs = oSpyGetUrl.getCall(0).args;
@@ -743,7 +743,7 @@ sap.ui.define([
 			var sExpectedMethod = "DELETE";
 
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({});
-			var oSpyGetUrl = sandbox.spy(ApplyUtils, "getUrl");
+			var oSpyGetUrl = sandbox.spy(InitialUtils, "getUrl");
 
 			return Storage.reset(mPropertyBag).then(function () {
 				var oGetUrlCallArgs = oSpyGetUrl.getCall(0).args;
@@ -783,7 +783,7 @@ sap.ui.define([
 			var sExpectedMethod = "DELETE";
 
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({});
-			var oStubGetUrl = sandbox.spy(ApplyUtils, "getUrl");
+			var oStubGetUrl = sandbox.spy(InitialUtils, "getUrl");
 
 			return Storage.reset(mPropertyBag).then(function () {
 				var oGetResetUrlCallArgs = oStubGetUrl.getCall(0).args;

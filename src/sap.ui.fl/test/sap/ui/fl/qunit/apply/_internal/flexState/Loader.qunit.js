@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
-	"sap/ui/fl/apply/_internal/Storage",
+	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"

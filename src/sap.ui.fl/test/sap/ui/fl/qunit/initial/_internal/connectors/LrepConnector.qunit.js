@@ -2,12 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
-	"sap/ui/fl/apply/_internal/connectors/Utils"
+	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
+	"sap/ui/fl/initial/_internal/connectors/Utils"
 ], function(
 	sinon,
 	LrepConnector,
-	ApplyUtils
+	InitialUtils
 ) {
 	"use strict";
 
@@ -123,7 +123,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when loadFlexData is called with <NO CHANGES> as cache key", function(assert) {
-			var oSendRequestStub = sandbox.stub(ApplyUtils, "sendRequest");
+			var oSendRequestStub = sandbox.stub(InitialUtils, "sendRequest");
 			return LrepConnector.loadFlexData({cacheKey: "<NO CHANGES>"}).then(function(oResponse) {
 				assert.equal(oSendRequestStub.callCount, 0, "no request was sent");
 				assert.equal(oResponse, undefined, "the function returns no data");
@@ -132,6 +132,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery('#qunit-fixture').hide();
+		jQuery("#qunit-fixture").hide();
 	});
 });

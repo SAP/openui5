@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/apply/_internal/connectors/StaticFileConnector",
+	"sap/ui/fl/initial/_internal/connectors/StaticFileConnector",
 	"sap/base/Log",
 	"sap/base/util/LoaderExtensions"
 ], function(

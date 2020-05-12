@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
+	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
@@ -12,8 +12,8 @@ sap.ui.define([
 	"sap/ui/core/BusyIndicator"
 ], function(
 	sinon,
-	ApplyConnector,
-	LrepConnector,
+	InitialLrepConnector,
+	WriteLrepConnector,
 	WriteUtils,
 	TransportSelection,
 	Layer,
@@ -56,7 +56,7 @@ sap.ui.define([
 			fnReturnData(500, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
 
 			var mPropertyBag = {url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0", layer: Layer.VENDOR};
-			return LrepConnector.getFlexInfo(mPropertyBag).catch(function (oError) {
+			return WriteLrepConnector.getFlexInfo(mPropertyBag).catch(function (oError) {
 				assert.equal(oError.userMessage, "Error text 1\nError text 2\n", "Correct user message is returned in the error object");
 				assert.equal(oError.status, "500", "Correct status is returned in the error object");
 				assert.equal(oError.message, "Internal Server Error", "Correct message is returned in the error object");
@@ -72,7 +72,7 @@ sap.ui.define([
 
 			var mPropertyBag = {url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0", layer: Layer.VENDOR};
 			var sUrl = "/sap/bc/lrep/flex/info/reference?layer=VENDOR&appVersion=1.0.0";
-			return LrepConnector.getFlexInfo(mPropertyBag).then(function (oResponse) {
+			return WriteLrepConnector.getFlexInfo(mPropertyBag).then(function (oResponse) {
 				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
 				assert.equal(sandbox.server.getRequest(0).url, sUrl, "a flex info request is send containing the reference in the url and the app version and the layer as query parameters");
 				assert.deepEqual(oResponse, oExpectedResponse, "getFlexInfo response flow is correct");
@@ -139,7 +139,7 @@ sap.ui.define([
 			var fnCheckTransportInfoStub = sandbox.stub(TransportSelection.prototype, "checkTransportInfo").returns(true);
 			var fnPrepareChangesForTransportStub = sandbox.stub(TransportSelection.prototype, "_prepareChangesForTransport").returns(Promise.resolve());
 
-			return LrepConnector.publish({
+			return WriteLrepConnector.publish({
 				transportDialogSettings: {
 					rootControl: null,
 					styleClass: null
@@ -164,7 +164,7 @@ sap.ui.define([
 		QUnit.test("when calling publish unsuccessfully", function(assert) {
 			sandbox.stub(TransportSelection.prototype, "openTransportSelection").rejects();
 			sandbox.stub(MessageBox, "show");
-			return LrepConnector.publish({
+			return WriteLrepConnector.publish({
 				transportDialogSettings: {
 					rootControl: null,
 					styleClass: null
@@ -176,7 +176,7 @@ sap.ui.define([
 
 		QUnit.test("when calling publish successfully, but with cancelled transport selection", function(assert) {
 			sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves();
-			return LrepConnector.publish({
+			return WriteLrepConnector.publish({
 				transportDialogSettings: {
 					rootControl: null,
 					styleClass: null
@@ -239,7 +239,7 @@ sap.ui.define([
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=VENDOR&appVersion=1.0.0&changelist=transportId&generator=Change.createInitialFileContent";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
-			return LrepConnector.reset({
+			return WriteLrepConnector.reset({
 				url: "/sap/bc/lrep",
 				appVersion: "1.0.0",
 				layer: Layer.VENDOR,
@@ -252,9 +252,9 @@ sap.ui.define([
 				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
 				assert.deepEqual(aChanges, [], "empty array is returned");
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector
+					initialConnector : InitialLrepConnector
 				}), "a send request with correct parameters and options is sent");
 				WriteUtils.sendRequest.restore();
 			});
@@ -315,7 +315,7 @@ sap.ui.define([
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=VENDOR&appVersion=1.0.0&changelist=transportId&selector=abc123&changeType=labelChange";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
 
-			return LrepConnector.reset({
+			return WriteLrepConnector.reset({
 				url: "/sap/bc/lrep",
 				appVersion: "1.0.0",
 				layer: Layer.VENDOR,
@@ -326,9 +326,9 @@ sap.ui.define([
 			}).then(function() {
 				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector
+					initialConnector : InitialLrepConnector
 				}), "a send request with correct parameters and options is sent");
 				WriteUtils.sendRequest.restore();
 			});
@@ -404,7 +404,7 @@ sap.ui.define([
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=CUSTOMER&appVersion=1.0.0&changelist=ATO_NOTIFICATION&generator=Change.createInitialFileContent";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
 
-			return LrepConnector.reset({
+			return WriteLrepConnector.reset({
 				url: "/sap/bc/lrep",
 				appVersion: "1.0.0",
 				layer: Layer.CUSTOMER,
@@ -414,9 +414,9 @@ sap.ui.define([
 			}).then(function() {
 				assert.equal(fnOpenTransportSelectionStub.callCount, 3, "then openTransportSelection called three times");
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector
+					initialConnector : InitialLrepConnector
 				}), "a send request with correct parameters and options is sent");
 				WriteUtils.sendRequest.restore();
 			});
@@ -438,7 +438,7 @@ sap.ui.define([
 				"view--control1",
 				"feview--control2"
 			];
-			return LrepConnector.reset({
+			return WriteLrepConnector.reset({
 				url: "/sap/bc/lrep",
 				appVersion: "1.0.0",
 				layer: Layer.CUSTOMER,
@@ -447,9 +447,9 @@ sap.ui.define([
 				selectorIds: aControlIds
 			}).then(function() {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector
+					initialConnector : InitialLrepConnector
 				}), "a send request with correct parameters and options is sent");
 				WriteUtils.sendRequest.restore();
 			});
@@ -471,7 +471,7 @@ sap.ui.define([
 				"view--control1",
 				"feview--control2"
 			];
-			return LrepConnector.reset({
+			return WriteLrepConnector.reset({
 				url: "/sap/bc/lrep",
 				appVersion: "1.0.0",
 				layer: Layer.USER,
@@ -482,9 +482,9 @@ sap.ui.define([
 			}).then(function() {
 				assert.equal(oTransportStub.callCount, 0, "no transport data was requested");
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector
+					initialConnector : InitialLrepConnector
 				}), "a send request with correct parameters and options is sent");
 				WriteUtils.sendRequest.restore();
 			});
@@ -499,7 +499,7 @@ sap.ui.define([
 			var mPropertyBag = {url: "/sap/bc/lrep"};
 			var sUrl = "/sap/bc/lrep/flex/settings";
 
-			return LrepConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
+			return WriteLrepConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
 				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
 				assert.equal(sandbox.server.getRequest(0).url, sUrl, "Url is correct");
 				assert.deepEqual(oResponse, oExpectedResponse, "loadFeatures response flow is correct");
@@ -512,8 +512,8 @@ sap.ui.define([
 				isVersioningEnabled: false
 			};
 			var mPropertyBag = {url: "/sap/bc/lrep"};
-			ApplyConnector.settings = {isKeyUser: false};
-			return LrepConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
+			InitialLrepConnector.settings = {isKeyUser: false};
+			return WriteLrepConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
 				assert.deepEqual(oResponse, oExpectedResponse, "the settings object is obtain from apply connector correctly");
 				assert.equal(sandbox.server.requestCount, 0, "no request is sent to back end");
 			});
@@ -527,11 +527,11 @@ sap.ui.define([
 			var sUrl = "/sap/bc/lrep/changes/?sap-language=en";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
-			return LrepConnector.write(mPropertyBag).then(function () {
+			return WriteLrepConnector.write(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector,
+					initialConnector : InitialLrepConnector,
 					contentType : "application/json; charset=utf-8",
 					dataType : "json",
 					payload : "[]"
@@ -552,11 +552,11 @@ sap.ui.define([
 			var sUrl = "/sap/bc/lrep/changes/myFileName?sap-language=en";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
-			return LrepConnector.update(mPropertyBag).then(function () {
+			return WriteLrepConnector.update(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector,
+					initialConnector : InitialLrepConnector,
 					contentType : "application/json; charset=utf-8",
 					dataType : "json",
 					payload : JSON.stringify(oFlexObject)
@@ -578,11 +578,11 @@ sap.ui.define([
 			var sUrl = "/sap/bc/lrep/variants/myFileName?changelist=transportID&sap-language=en";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
-			return LrepConnector.update(mPropertyBag).then(function () {
+			return WriteLrepConnector.update(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector,
+					initialConnector : InitialLrepConnector,
 					contentType : "application/json; charset=utf-8",
 					dataType : "json",
 					payload : JSON.stringify(oFlexObject)
@@ -606,11 +606,11 @@ sap.ui.define([
 			var sUrl = "/sap/bc/lrep/changes/myFileName?namespace=level1/level2/level3&layer=VENDOR&changelist=transportID";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
-			return LrepConnector.remove(mPropertyBag).then(function () {
+			return WriteLrepConnector.remove(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector,
+					initialConnector : InitialLrepConnector,
 					contentType : "application/json; charset=utf-8",
 					dataType : "json"
 				}), "a send request with correct parameters and options is sent");
@@ -633,11 +633,11 @@ sap.ui.define([
 			var sUrl = "/sap/bc/lrep/variants/myFileName?namespace=level1/level2/level3&layer=VENDOR&changelist=transportID";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
-			return LrepConnector.remove(mPropertyBag).then(function () {
+			return WriteLrepConnector.remove(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector,
+					initialConnector : InitialLrepConnector,
 					contentType : "application/json; charset=utf-8",
 					dataType : "json"
 				}), "a send request with correct parameters and options is sent");
@@ -664,11 +664,11 @@ sap.ui.define([
 				url: "/sap/bc/lrep"
 			};
 
-			return LrepConnector.appVariant.getManifest(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.getManifest(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(mPropertyBag.appVarUrl, "GET", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : undefined,
-					applyConnector : ApplyConnector,
+					initialConnector : InitialLrepConnector,
 					contentType : "application/json; charset=utf-8",
 					dataType : "json"
 				}), "a send request with correct parameters and options is sent");
@@ -683,11 +683,11 @@ sap.ui.define([
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId";
 
-			return LrepConnector.appVariant.load(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.load(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "GET", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : undefined,
-					applyConnector : ApplyConnector,
+					initialConnector : InitialLrepConnector,
 					contentType : "application/json; charset=utf-8",
 					dataType : "json"
 				}), "a send request with correct parameters and options is sent");
@@ -716,11 +716,11 @@ sap.ui.define([
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/?changelist=aTransport&sap-language=en";
 
-			return LrepConnector.appVariant.create(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.create(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector,
+					initialConnector : InitialLrepConnector,
 					contentType : "application/json; charset=utf-8",
 					dataType : "json",
 					payload : JSON.stringify(oFlexObject)
@@ -751,11 +751,11 @@ sap.ui.define([
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=en";
 
-			return LrepConnector.appVariant.create(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.create(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector,
+					initialConnector : InitialLrepConnector,
 					contentType : "application/json; charset=utf-8",
 					dataType : "json",
 					payload : JSON.stringify(oFlexObject)
@@ -789,11 +789,11 @@ sap.ui.define([
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/?sap-language=en";
 
-			return LrepConnector.appVariant.create(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.create(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector,
+					initialConnector : InitialLrepConnector,
 					contentType : "application/json; charset=utf-8",
 					dataType : "json",
 					payload : JSON.stringify(oFlexObject)
@@ -810,11 +810,11 @@ sap.ui.define([
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/?action=assignCatalogs&assignFromAppId=someBaseApplicationId";
 
-			return LrepConnector.appVariant.assignCatalogs(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.assignCatalogs(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector,
+					initialConnector : InitialLrepConnector,
 					dataType : "json",
 					contentType : "application/json; charset=utf-8"
 				}), "a send request with correct parameters and options is sent");
@@ -829,11 +829,11 @@ sap.ui.define([
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/?action=unassignCatalogs";
 
-			return LrepConnector.appVariant.unassignCatalogs(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.unassignCatalogs(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector,
+					initialConnector : InitialLrepConnector,
 					dataType : "json",
 					contentType : "application/json; charset=utf-8"
 				}), "a send request with correct parameters and options is sent");
@@ -850,11 +850,11 @@ sap.ui.define([
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId?changelist=aTransport&sap-language=en";
 
-			return LrepConnector.appVariant.update(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.update(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "PUT", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector,
+					initialConnector : InitialLrepConnector,
 					dataType : "json",
 					contentType : "application/json; charset=utf-8"
 				}), "a send request with correct parameters and options is sent");
@@ -885,13 +885,13 @@ sap.ui.define([
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId?changelist=aTransport&sap-language=en";
 			var oStubOpenTransportSelection = sinon.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: "aTransport"});
-			return LrepConnector.appVariant.update(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.update(mPropertyBag).then(function () {
 				assert.ok(oStubOpenTransportSelection.calledOnce);
 				assert.equal(oStubOpenTransportSelection.getCalls()[0].args[0].getPackage(), "", "no package information is sent to get transport info");
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "PUT", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector,
+					initialConnector : InitialLrepConnector,
 					dataType : "json",
 					contentType : "application/json; charset=utf-8"
 				}), "a send request with correct parameters and options is sent");
@@ -922,7 +922,7 @@ sap.ui.define([
 				}
 			};
 			var oStubOpenTransportSelection = sinon.stub(TransportSelection.prototype, "openTransportSelection").resolves(undefined);
-			return LrepConnector.appVariant.update(mPropertyBag).then(function () {},
+			return WriteLrepConnector.appVariant.update(mPropertyBag).then(function () {},
 				function(oError) {
 					assert.ok(oStubOpenTransportSelection.calledOnce);
 					assert.equal(oError.message, "Transport information could not be determined", "promise rejected with correct error message");
@@ -939,11 +939,11 @@ sap.ui.define([
 				transport: "aTransport"
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId?changelist=aTransport";
-			return LrepConnector.appVariant.remove(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.remove(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector,
+					initialConnector : InitialLrepConnector,
 					dataType : "json",
 					contentType : "application/json; charset=utf-8"
 				}), "a send request with correct parameters and options is sent");
@@ -973,12 +973,12 @@ sap.ui.define([
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId?changelist=aTransport";
 			var oStubOpenTransportSelection = sinon.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: "aTransport"});
-			return LrepConnector.appVariant.remove(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.remove(mPropertyBag).then(function () {
 				assert.ok(oStubOpenTransportSelection.calledOnce);
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					applyConnector : ApplyConnector,
+					initialConnector : InitialLrepConnector,
 					dataType : "json",
 					contentType : "application/json; charset=utf-8"
 				}), "a send request with correct parameters and options is sent");
@@ -1008,7 +1008,7 @@ sap.ui.define([
 				}
 			};
 			var oStubOpenTransportSelection = sinon.stub(TransportSelection.prototype, "openTransportSelection").resolves(undefined);
-			return LrepConnector.appVariant.remove(mPropertyBag).then(function () {},
+			return WriteLrepConnector.appVariant.remove(mPropertyBag).then(function () {},
 				function(oError) {
 					assert.ok(oStubOpenTransportSelection.calledOnce);
 					assert.equal(oError.message, "Transport information could not be determined", "promise rejected with correct error message");
@@ -1038,7 +1038,7 @@ sap.ui.define([
 				}
 			};
 			var oStubOpenTransportSelection = sinon.stub(TransportSelection.prototype, "openTransportSelection").resolves("cancel");
-			return LrepConnector.appVariant.remove(mPropertyBag).then(function () {},
+			return WriteLrepConnector.appVariant.remove(mPropertyBag).then(function () {},
 				function(oError) {
 					assert.ok(oStubOpenTransportSelection.calledOnce);
 					assert.equal(oError, "cancel", "promise rejected with cancel value");
@@ -1054,11 +1054,11 @@ sap.ui.define([
 			};
 			var sUrl = "/sap/bc/lrep/app_variant_overview/?layer=VENDOR&sap.app%2fid=someId";
 
-			return LrepConnector.appVariant.list(mPropertyBag).then(function () {
+			return WriteLrepConnector.appVariant.list(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "GET", {
-					xsrfToken : ApplyConnector.xsrfToken,
+					xsrfToken : InitialLrepConnector.xsrfToken,
 					tokenUrl : undefined,
-					applyConnector : ApplyConnector,
+					initialConnector : InitialLrepConnector,
 					dataType : "json",
 					contentType : "application/json; charset=utf-8"
 				}), "a send request with correct parameters and options is sent");
@@ -1089,7 +1089,7 @@ sap.ui.define([
 				flexObject : oContainerData
 			};
 
-			return LrepConnector.ui2Personalization.create(mPropertyBag).then(function () {
+			return WriteLrepConnector.ui2Personalization.create(mPropertyBag).then(function () {
 				assert.equal(this.oStubSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubSendRequest.getCall(0).args;
 				assert.equal(oCallArguments[0], "/sap/bc/lrep/ui2personalization/", "the correct url was passed");
@@ -1105,7 +1105,7 @@ sap.ui.define([
 				itemName: "tablePersonalization"
 			};
 
-			return LrepConnector.ui2Personalization.remove(mPropertyBag).then(function () {
+			return WriteLrepConnector.ui2Personalization.remove(mPropertyBag).then(function () {
 				assert.equal(this.oStubSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubSendRequest.getCall(0).args;
 				assert.equal(oCallArguments[0], "/sap/bc/lrep/ui2personalization/?reference=test.app" +

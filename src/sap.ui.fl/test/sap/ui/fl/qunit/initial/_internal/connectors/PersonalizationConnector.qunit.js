@@ -2,12 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/apply/_internal/connectors/PersonalizationConnector",
-	"sap/ui/fl/apply/_internal/connectors/Utils"
+	"sap/ui/fl/initial/_internal/connectors/PersonalizationConnector",
+	"sap/ui/fl/initial/_internal/connectors/Utils"
 ], function(
 	sinon,
 	PersonalizationConnector,
-	ApplyUtils
+	InitialUtils
 ) {
 	"use strict";
 
@@ -76,8 +76,8 @@ sap.ui.define([
 				appVersion: "1.0.0"
 			};
 			var sExpectedUrl = "/flexPersonalization/flex/personalization/v1/data/reference?appVersion=1.0.0";
-			var oStubGetUrlWithQueryParameters = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
-			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({
+			var oStubGetUrlWithQueryParameters = sandbox.stub(InitialUtils, "getUrl").returns(sExpectedUrl);
+			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({
 				response : {
 					changes: [1],
 					compVariants: [2]

@@ -18,7 +18,7 @@ sap.ui.define([
 	/**
 	 * Util class for Applier/ChangeReverter.
 	 *
-	 * @namespace sap.ui.fl.apply._internal.connectors.Utils
+	 * @namespace sap.ui.fl.apply._internal.connectors.changes.Utils
 	 * @since 1.70
 	 * @version ${version}
 	 * @private

@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/rta/api/startKeyUserAdaptation",
 	"sap/base/Log",
-	"sap/ui/fl/apply/_internal/StorageUtils",
+	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
