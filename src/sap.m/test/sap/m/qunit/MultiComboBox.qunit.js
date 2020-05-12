@@ -5175,13 +5175,13 @@ sap.ui.define([
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
-		oSpy = this.spy(oMultiComboBox._oTokenizer, "scrollToEnd");
+		oSpy = this.spy(oTokenizer, "scrollToEnd");
 		oTokenizer.getTokens()[0].focus();
 		sap.ui.getCore().applyChanges();
 
 		// assert
 		setTimeout(function(){
-			assert.strictEqual(oSpy.callCount, 1, "Tokenizer's scrollToEnd should be called once on focusining a token.");
+			assert.strictEqual(oSpy.callCount, 0, "Tokenizer's scrollToEnd should not be called.");
 			done();
 			oMultiComboBox.destroy();
 		}, 0);
@@ -8105,6 +8105,11 @@ sap.ui.define([
 		afterEach: function() {
 			this.oMultiComboBox.destroy();
 		}
+	});
+
+	QUnit.test("Token should be truncated initially", function (assert) {
+		// Assert
+		assert.ok(this.oMultiComboBox._oTokenizer.hasOneTruncatedToken(), "Token is truncated initially.");
 	});
 
 	QUnit.test("Should set/remove truncation on focusin/focusout", function (assert) {

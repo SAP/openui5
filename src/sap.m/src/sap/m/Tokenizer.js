@@ -263,7 +263,7 @@ sap.ui.define([
 		if (iTokensCount === 1 && (iFirstTokenToHide !== -1 || !this.getEditable())) {
 			this.setFirstTokenTruncated(true);
 			return;
-		} else {
+		} else if (iTokensCount === 1 && aTokens[0].getTruncated()) {
 			this.setFirstTokenTruncated(false);
 		}
 
@@ -309,19 +309,13 @@ sap.ui.define([
 	Tokenizer.prototype.setFirstTokenTruncated = function (bValue) {
 		var oToken = this.getTokens()[0];
 
-		if (this._iTruncateTokenTimeout) {
-			clearTimeout(this._iTruncateTokenTimeout);
+		oToken && oToken.setTruncated(bValue);
+		if (bValue) {
+			this.addStyleClass("sapMTokenizerOneLongToken");
+		} else {
+			this.removeStyleClass("sapMTokenizerOneLongToken");
+			this.scrollToEnd();
 		}
-
-		this._iTruncateTokenTimeout = setTimeout(function() {
-			oToken && oToken.setTruncated(bValue);
-			if (bValue) {
-				this.addStyleClass("sapMTokenizerOneLongToken");
-			} else {
-				this.removeStyleClass("sapMTokenizerOneLongToken");
-				this.scrollToEnd();
-			}
-		}.bind(this));
 
 		return this;
 	};
@@ -581,7 +575,7 @@ sap.ui.define([
 		}
 
 		this.getTokens().forEach(function(oToken){
-			if (oToken.getDomRef()  && !oToken.$().hasClass("sapMHiddenToken")) {
+			if (oToken.getDomRef() && !oToken.$().hasClass("sapMHiddenToken") && !oToken.getTruncated()) {
 				this._oTokensWidthMap[oToken.getId()] = oToken.$().outerWidth(true);
 			}
 		}.bind(this));
@@ -1366,7 +1360,7 @@ sap.ui.define([
 
 		oToken.addEventDelegate({
 			onAfterRendering: function () {
-				if (sap.ui.getCore().isThemeApplied() && oToken.getDomRef() && !oToken.$().hasClass("sapMHiddenToken")) {
+				if (sap.ui.getCore().isThemeApplied() && oToken.getDomRef() && !oToken.getTruncated() && !oToken.$().hasClass("sapMHiddenToken")) {
 					this._oTokensWidthMap[oToken.getId()] = oToken.$().outerWidth(true);
 				}
 			}.bind(this)
