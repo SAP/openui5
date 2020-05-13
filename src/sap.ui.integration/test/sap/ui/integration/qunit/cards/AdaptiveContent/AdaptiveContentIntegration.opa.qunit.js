@@ -50,6 +50,7 @@ sap.ui.define([
 					oCard.attachAction(function (oEvent) {
 						oEventType = oEvent.getParameter("type");
 						oData = oEvent.getParameter("parameters");
+						oEvent.preventDefault();
 					});
 					oCard.$().find("ui5-button").eq(2).trigger("click");
 				},
