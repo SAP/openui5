@@ -24,6 +24,7 @@
 <script>
 
 	var sLongTextSuffix = "\nLorem ipsum dolor sit amet";
+	var sLongTextWithoutSpaces = "Loremipsumdolorsitamet";
 	var sColumnWidth = "150px";
 
 	new sap.ui.table.Table({
@@ -96,6 +97,22 @@
 				hAlign: "Center",
 				label: new sap.m.Text({text: "Col-Center"}),
 				template: new sap.m.Text({text: "Col-Center"}),
+				width: sColumnWidth,
+				sorted: true,
+				filtered: true
+			}),
+			new sap.ui.table.Column({
+				hAlign: "Begin",
+				label: new sap.m.Text({text: "Col-Begin" + sLongTextSuffix, wrapping: false}),
+				template: new sap.m.Text({text: "Col-Begin" + sLongTextSuffix, wrapping: false}),
+				width: sColumnWidth,
+				sorted: true,
+				filtered: true
+			}),
+			new sap.ui.table.Column({
+				hAlign: "End",
+				label: new sap.m.Text({text: "Col-End" + sLongTextSuffix, wrapping: false}),
+				template: new sap.m.Text({text: "Col-End" + sLongTextSuffix, wrapping: false}),
 				width: sColumnWidth,
 				sorted: true,
 				filtered: true
@@ -641,6 +658,38 @@
 				label: new sap.m.Text({text: "Col-Begin\nCell-Center" + sLongTextSuffix, textAlign: "Center"}),
 				template: new sap.m.Text({text: "Col-Begin\nCell-Center" + sLongTextSuffix, textAlign: "Center"}),
 				width: sColumnWidth
+			}),
+			new sap.ui.table.Column({
+				hAlign: "Begin",
+				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox"}), new sap.m.Text({text: sLongTextWithoutSpaces})]}),
+				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox"}), new sap.m.Text({text: sLongTextWithoutSpaces})]}),
+				width: sColumnWidth,
+				sorted: true,
+				filtered: true
+			}),
+			new sap.ui.table.Column({
+				hAlign: "End",
+				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox"}), new sap.m.Text({text: sLongTextWithoutSpaces})]}),
+				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox"}), new sap.m.Text({text: sLongTextWithoutSpaces})]}),
+				width: sColumnWidth,
+				sorted: true,
+				filtered: true
+			}),
+			new sap.ui.table.Column({
+				hAlign: "Begin",
+				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})]}),
+				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})]}),
+				width: sColumnWidth,
+				sorted: true,
+				filtered: true
+			}),
+			new sap.ui.table.Column({
+				hAlign: "End",
+				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})]}),
+				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})]}),
+				width: sColumnWidth,
+				sorted: true,
+				filtered: true
 			})
 		],
 		rows: {
@@ -682,6 +731,38 @@
 				label: new sap.m.Text({text: "Col-Begin\nCell-Center" + sLongTextSuffix, textAlign: "Center", width: "100%"}),
 				template: new sap.m.Text({text: "Col-Begin\nCell-Center" + sLongTextSuffix, textAlign: "Center", width: "100%"}),
 				width: sColumnWidth
+			}),
+			new sap.ui.table.Column({
+				hAlign: "Begin",
+				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox"}), new sap.m.Text({text: sLongTextWithoutSpaces})], width: "100%"}),
+				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox"}), new sap.m.Text({text: sLongTextWithoutSpaces})], width: "100%"}),
+				width: sColumnWidth,
+				sorted: true,
+				filtered: true
+			}),
+			new sap.ui.table.Column({
+				hAlign: "End",
+				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox"}), new sap.m.Text({text: sLongTextWithoutSpaces})], width: "100%"}),
+				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox"}), new sap.m.Text({text: sLongTextWithoutSpaces})], width: "100%"}),
+				width: sColumnWidth,
+				sorted: true,
+				filtered: true
+			}),
+			new sap.ui.table.Column({
+				hAlign: "Begin",
+				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})], width: "100%"}),
+				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})], width: "100%"}),
+				width: sColumnWidth,
+				sorted: true,
+				filtered: true
+			}),
+			new sap.ui.table.Column({
+				hAlign: "End",
+				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})], width: "100%"}),
+				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})], width: "100%"}),
+				width: sColumnWidth,
+				sorted: true,
+				filtered: true
 			}),
 			new sap.ui.table.Column({
 				label: new sap.m.Label({text: "Label width = 100%"}),
