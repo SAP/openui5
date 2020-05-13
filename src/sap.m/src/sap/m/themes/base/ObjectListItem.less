@@ -120,9 +120,15 @@ html[dir=rtl] .sapMObjLAttrDiv {
 			overflow: hidden;
 			max-width: 50%;
 		}
+		&.sapMObjectAttributeTextOnly {
+			.sapMObjectAttributeTitle,
+			.sapMObjectAttributeText {
+				max-width: 100%;
+			}
+		}
+
 	}
 }
-
 
 /* First and second attributes get one line with ellipsis */
 .sapMObjLAttrRow:nth-child(1)>.sapMObjLAttrDiv .sapMObjectAttributeDiv,

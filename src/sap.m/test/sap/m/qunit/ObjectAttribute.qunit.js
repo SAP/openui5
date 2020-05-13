@@ -218,6 +218,45 @@ sap.ui.define([
 		}, 500);
 	});
 
+	QUnit.test("Attributes widths in active ObjectListItem", function(assert) {
+		// arrange
+		var oAttr1 = new ObjectAttribute({
+				active: true,
+				text: "Text Only"
+			}),
+			oAttr2 = new ObjectAttribute({
+				active: true,
+				title: "Title Only"
+			}),
+			oAttr3 = new ObjectAttribute({
+				active: true,
+				title: "Title",
+				text: "Text"
+			}),
+			oAttr4 = new ObjectAttribute({
+				active: true,
+				title: "",
+				text: ""
+			}),
+			oObjectListItem = new ObjectListItem({
+				attributes : [oAttr1, oAttr2, oAttr3, oAttr4]
+			});
+
+		oObjectListItem.placeAt("objectAttributesWrap");
+
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.ok(oAttr1.$().hasClass("sapMObjectAttributeTextOnly"), "sapMObjectAttributeTextOnly class is present in case of text-only ObjectAttribute.");
+		assert.ok(!oAttr2.$().hasClass("sapMObjectAttributeTextOnly"), "sapMObjectAttributeTextOnly class is not present in case of titie-only ObjectAttribute.");
+		assert.ok(!oAttr3.$().hasClass("sapMObjectAttributeTextOnly"), "sapMObjectAttributeTextOnly class is not present in case of ObjectAttribute with text and title.");
+		assert.ok(!oAttr4.$().hasClass("sapMObjectAttributeTextOnly"), "sapMObjectAttributeTextOnly class is not present in case of ObjectAttribute without text and title.");
+
+		//Cleanup
+		oObjectListItem.destroy();
+
+	});
+
 	QUnit.test("Text aggregation has multiLine set to undefined", function(assert) {
 
 		// Prepare
