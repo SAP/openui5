@@ -18,7 +18,7 @@
 	}
 
 	.sapMLIBFocusable:focus::after {
-		border: 1px dotted @sapUiContentFocusColor;
+		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 		position: absolute;
 		content: " ";
 		top: 1px;
@@ -30,7 +30,7 @@
 
 		[data-sap-ui-browser^="ie"] &,
 		[data-sap-ui-browser^="ed"] & {
-			border: 1px dashed @sapUiContentFocusColor;
+			border: @sapUiContentFocusWidth dashed @sapUiContentFocusColor;
 		}
 	}
 }
