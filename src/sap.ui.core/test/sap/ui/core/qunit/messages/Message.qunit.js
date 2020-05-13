@@ -31,8 +31,13 @@ sap.ui.define([
 		assert.ok(oMessage.type === MessageType.None, "Property 'type' has expected value");
 	});
 
-
-	QUnit.test("Create message with all properties", function(assert) {
+[
+	{vTarget : "foo", aTargets : ["foo"], target : "foo"},
+	{vTarget : ["foo", "bar"], aTargets : ["foo", "bar"], target : "foo"},
+	{vTarget : undefined, aTargets : [], target : undefined},
+	{vTarget : "", aTargets : [""], target : ""}
+].forEach(function (oFixture, i) {
+	QUnit.test("Create message with all properties and target access, " + i, function(assert) {
 
 		// Arrange
 		var mParameters = {
@@ -43,7 +48,7 @@ sap.ui.define([
 			date: new Date(),
 			additionalText: "test",
 			code: 123,
-			target: "123",
+			target: oFixture.vTarget,
 			persistent: true,
 			technical: true,
 			technicalDetails: {foo: 'bar'},
@@ -62,14 +67,66 @@ sap.ui.define([
 
 		// Assert
 		var oMessageValues = {};
-		for (var i in oMessage){
-			if (typeof oMessage[i] !== 'function'){
-				oMessageValues[i] = oMessage[i];
+		for (var p in oMessage){
+			if (typeof oMessage[p] !== 'function'){
+				oMessageValues[p] = oMessage[p];
 			}
 		}
 		assert.ok(oMessage, "Object successfully created.");
 		assert.ok(oMessage instanceof Message, "Object has expected Data Type.");
+		mParameters.aTargets = oFixture.aTargets;
+		mParameters.target = oFixture.target;
 		assert.deepEqual(oMessageValues, mParameters, "Properties set correctly.");
+		if (Array.isArray(oFixture.vTarget)) {
+			assert.notStrictEqual(oMessageValues.aTargets, oFixture.vTarget,
+				"store copy of targets");
+		}
+		assert.strictEqual(oMessage.getTarget(), oFixture.target);
+	});
+});
+
+["foo", ["foo", "bar"], undefined, ""].forEach(function (vTarget, i) {
+	QUnit.test("set target, " + i, function (assert) {
+		var oMessage = new Message({target : vTarget});
+
+		// check that only first target is modified
+		function checkOtherTargets() {
+			var aTargets = oMessage.getTargets();
+
+			assert.strictEqual(aTargets.length, Array.isArray(vTarget) ? vTarget.length : 1);
+			if (Array.isArray(vTarget)) {
+				assert.deepEqual(aTargets.slice(1), vTarget.slice(1));
+			}
+		}
+
+		// code under test
+		oMessage.setTarget("new");
+
+		assert.strictEqual(oMessage.getTarget(), "new");
+		assert.strictEqual(oMessage.target, "new");
+		checkOtherTargets();
+
+		// code under test
+		oMessage.target = "newer";
+
+		assert.strictEqual(oMessage.getTarget(), "newer");
+		assert.strictEqual(oMessage.target, "newer");
+		checkOtherTargets();
+	});
+});
+
+	QUnit.test("target property is not configurable", function (assert) {
+		var oMessage = new Message({target : ["foo", "bar"]});
+
+		// code under test
+		assert.throws(function () {
+			delete oMessage.target;
+		});
+
+		// code under test
+		assert.throws(function () {
+			Object.defineProperty(oMessage, "target", {get : function () {}});
+		});
 	});
 
 	QUnit.test("Create message:  getTechnicalDetails", function(assert) {
@@ -125,4 +182,32 @@ sap.ui.define([
 		});
 	});
 });
+
+[
+	{input : undefined, output : []},
+	{input : "target", output : ["target"]},
+	{input : ["target0", "target1"], output : ["target0", "target1"]}
+].forEach(function (oFixture, i) {
+	QUnit.test("getTargets, " + i, function (assert) {
+		var oMessage = new Message({target : oFixture.input}),
+			aTargets;
+
+		// code under test
+		aTargets = oMessage.getTargets();
+
+		assert.deepEqual(aTargets, oFixture.output);
+		assert.notStrictEqual(aTargets, oMessage.aTargets, "return value is a copy");
+	});
+});
+
+	QUnit.test("setTargets", function (assert) {
+		var oMessage = new Message(),
+			aTargets = ["target"];
+
+		// code under test
+		oMessage.setTargets(aTargets);
+
+		assert.deepEqual(oMessage.getTargets(), aTargets);
+		assert.notStrictEqual(aTargets, oMessage.aTargets, "message stores a copy");
+	});
 });
