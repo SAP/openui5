@@ -76,7 +76,7 @@
 				<h4>Action.Submit</h4>
 				<p>
 				The developers of the Adaptive Card manifest are able to specify the target endpoint for each request by defining the URL property of the Submit action handler in the 'configuration/actionHandlers' section of the card.
-				Тhe request type can be defined using the "method" property in the same configuration section. This allows them to configure where the data from the card will be sent. It is essential, as this information is not always 
+				Тhe request type can be defined using the "method" property in the same configuration section. This allows them to configure where the data from the card will be sent. It is essential, as this information is not always
 				available for the host environment developers. For more information see the <a target="_blank" href="../../../index.html#/explore/adaptive/adaptive-action-submit">Submit action example</a>.
 				</p>
 				<table>
@@ -100,7 +100,7 @@
 		</ul>
 
 		<h2 id="example">Example</h2>
-		<p>Define the type and data for the card:</p>
+		<p>Define the type of the card:</p>
 <pre class="prettyprint">{
 	"sap.card": {
 		"type": "AdaptiveCard",
@@ -198,6 +198,23 @@
 		"url": "./adaptiveCard.json"
 	}
 }</pre>
+
+		<p>You could also include configuration for the <code>Action.Submit</code>:</p>
+<pre class="prettyprint">{
+	"sap.card": {
+		"configuration": {
+			"actionHandlers": {
+				"submit": {
+					"url": "./NorthwindSvc/formData",
+					"method": "POST"
+				}
+			}
+		},
+		"type": "AdaptiveCard",
+		"content": {}
+	}
+}</pre>
+
 		<p>Create the view to display the card:</p>
 		<pre class="prettyprint">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
