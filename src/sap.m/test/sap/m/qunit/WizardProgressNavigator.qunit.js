@@ -433,37 +433,37 @@ sap.ui.define([
 			"third anchor should have aria-disabled=true attribute");
 	});
 
-	QUnit.test("Current step should have aria-selected=true", function(assert) {
+	QUnit.test("Current step should have aria-current=step", function(assert) {
 		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
 
-		assert.strictEqual($steps.eq(0).attr("aria-selected"), "true",
-			"aria-label=Selected should be present on first step");
+		assert.strictEqual($steps.eq(0).attr("aria-current"), "step",
+			"aria-current=step should be present on first step");
 	});
 
-	QUnit.test("Open steps should have aria-selected=false", function(assert) {
+	QUnit.test("aria-current should not be presented", function(assert) {
 		this.oProgressNavigator.nextStep();
 
 		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
 
-		assert.strictEqual($steps.eq(0).attr("aria-selected"), "false",
-			"aria-label=Processed should be present on first step");
+		assert.strictEqual($steps.eq(0).attr("aria-current"), undefined,
+			"aria-current should not be present on first step");
 	});
 
 
-	QUnit.test("Discarding progress should remove aria-selected", function(assert) {
+	QUnit.test("Discarding progress should remove aria-current", function(assert) {
 		this.oProgressNavigator.nextStep().nextStep().nextStep();
 		this.oProgressNavigator.discardProgress(1);
 
 		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
 
-		assert.strictEqual($steps.eq(0).attr("aria-selected"), "true",
-			"first step should have aria-label=Selected");
+		assert.strictEqual($steps.eq(0).attr("aria-current"), "step",
+			"first step should have aria-current=step");
 
-		assert.strictEqual($steps.eq(1).attr("aria-selected"), "false",
-			"second step should NOT have aria-label attribute");
+		assert.strictEqual($steps.eq(1).attr("aria-current"), undefined,
+			"second step should NOT have aria-current attribute");
 
-		assert.strictEqual($steps.eq(2).attr("aria-selected"), "false",
-			"third step should NOT have aria-label attribute");
+		assert.strictEqual($steps.eq(2).attr("aria-current"), undefined,
+			"third step should NOT have aria-current attribute");
 	});
 
 	QUnit.test("WizardProgressNavigator aria-label attribute", function (assert) {
