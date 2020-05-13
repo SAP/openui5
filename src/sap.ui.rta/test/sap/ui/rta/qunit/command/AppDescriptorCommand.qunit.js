@@ -22,6 +22,7 @@ function (
 ) {
 	'use strict';
 
+	var sandbox = sinon.sandbox.create();
 	QUnit.module("Given the parameters required to create an app descriptor change...", {
 		before: function () {
 			this.oMockedAppComponent = {
@@ -46,7 +47,8 @@ function (
 					};
 				}
 			};
-			this.oFlUtilsStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
+			this.oFlUtilsStub = sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
+			this.sLayer = Layer.CUSTOMER;
 		},
 		after: function () {
 			this.oFlUtilsStub.restore();
@@ -83,11 +85,12 @@ function (
 		},
 		afterEach: function () {
 			this.oButton.destroy();
+			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("when calling command factory for a generic app descriptor change type ...", function(assert) {
 			var done = assert.async();
-			var fnAssertSpy = sinon.spy(ManagedObject.prototype, "applySettings");
+			var fnAssertSpy = sandbox.spy(ManagedObject.prototype, "applySettings");
 
 			var oMockDescriptorInlineChange = {
 				mockName : "mocked"
@@ -106,7 +109,7 @@ function (
 				}
 			};
 
-			this.createDescriptorInlineChangeStub = sinon.stub(AppVariantInlineChangeFactory, "createDescriptorInlineChange").callsFake(function(mPropertyBag) {
+			this.createDescriptorInlineChangeStub = sandbox.stub(AppVariantInlineChangeFactory, "createDescriptorInlineChange").callsFake(function(mPropertyBag) {
 				assert.equal(mPropertyBag.changeType, this.sChangeType, "change type is properly passed to the 'createDescriptorInlineChange' function");
 				assert.equal(mPropertyBag.content, this.mParameters, "parameters are properly passed to the 'createDescriptorInlineChange' function");
 				assert.equal(mPropertyBag.texts, this.mTexts, "texts are properly passed to the 'createDescriptorInlineChange' function");
@@ -114,7 +117,7 @@ function (
 				return Promise.resolve(oMockDescriptorInlineChange);
 			}.bind(this));
 
-			this.createNewChangeStub = sinon.stub(DescriptorChangeFactory.prototype, "createNew").callsFake(function (sReference, oInlineChange, sLayer, oAppComponent) {
+			this.createNewChangeStub = sandbox.stub(DescriptorChangeFactory.prototype, "createNew").callsFake(function (sReference, oInlineChange, sLayer, oAppComponent) {
 				assert.equal(sReference, this.sReference, "reference is properly passed to createNew function");
 				assert.equal(oInlineChange.mockName, oMockDescriptorInlineChange.mockName, "Inline Change is properly passed to createNew function");
 				assert.equal(sLayer, this.sLayer, "layer is properly passed to createNew function");
@@ -138,6 +141,50 @@ function (
 				assert.ok(oAppDescriptorCommand.needsReload, "App Descriptor commands need restart to be applied");
 				oAppDescriptorCommand.createAndStoreChange();
 			})
+
+			.catch(function (oError) {
+				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			});
+		});
+
+		QUnit.test("when calling command factory for 'appdescr_ui5_setFlexExtensionPointEnabled' app descriptor change type ...", function(assert) {
+			var createDescriptorInlineChangeSpy = sandbox.spy(AppVariantInlineChangeFactory, "createDescriptorInlineChange");
+			var createNewChangeSpy = sandbox.spy(DescriptorChangeFactory.prototype, "createNew");
+			var oAppDescriptorCommand;
+			var mParameters = { flexExtensionPointEnabled: true };
+			var mTexts = {};
+			var sChangeType = "appdescr_ui5_setFlexExtensionPointEnabled";
+
+			return CommandFactory.getCommandFor(this.oButton, "appDescriptor", {
+				reference: this.sReference,
+				parameters: mParameters,
+				texts: mTexts,
+				changeType: sChangeType,
+				appComponent: this.oMockedAppComponent
+			}, {}, {layer: this.sLayer})
+
+			.then(function(_appDescriptorCommand) {
+				oAppDescriptorCommand = _appDescriptorCommand;
+				assert.ok(oAppDescriptorCommand, "App Descriptor command exists for element");
+				assert.ok(oAppDescriptorCommand.needsReload, "App Descriptor commands need restart to be applied");
+				return oAppDescriptorCommand.createAndStoreChange();
+			})
+
+			.then(function () {
+				assert.equal(createDescriptorInlineChangeSpy.getCall(0).args[0].changeType, sChangeType, "change type is properly passed to the 'createDescriptorInlineChange' function");
+				assert.deepEqual(createDescriptorInlineChangeSpy.getCall(0).args[0].content, mParameters, "parameters are properly passed to the 'createDescriptorInlineChange' function");
+				assert.deepEqual(createDescriptorInlineChangeSpy.getCall(0).args[0].texts, mTexts, "texts are properly passed to the 'createDescriptorInlineChange' function");
+				assert.equal(createNewChangeSpy.getCall(0).args[0], this.sReference, "reference is properly passed to createNew function");
+				assert.equal(createNewChangeSpy.getCall(0).args[2], this.sLayer, "layer is properly passed to createNew function");
+				assert.equal(createNewChangeSpy.getCall(0).args[3], this.oMockedAppComponent, "App Component is properly passed to createNew function");
+				var oChangeDefinition = oAppDescriptorCommand.getPreparedChange().getDefinition();
+				assert.ok(oChangeDefinition.appDescriptorChange, "appDescriptorChange flag is properly set to the change created by the command");
+				assert.equal(oChangeDefinition.changeType, sChangeType, "change type is properly set to the change created by the command");
+				assert.deepEqual(oChangeDefinition.content, mParameters, "parameters are properly set to the change created by the command");
+				assert.deepEqual(oChangeDefinition.texts, mTexts, "texts are properly set to the change created by the command");
+				assert.equal(oChangeDefinition.reference, this.sReference, "reference is properly set to the change created by the command");
+				assert.equal(oChangeDefinition.layer, this.sLayer, "layer is properly set to the change created by the command");
+			}.bind(this))
 
 			.catch(function (oError) {
 				assert.ok(false, 'catch must never be called - Error: ' + oError);
