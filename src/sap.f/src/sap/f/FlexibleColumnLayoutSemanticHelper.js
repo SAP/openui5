@@ -53,13 +53,13 @@ sap.ui.define([
 	 *
 	 * @param {object} oSettings Determines the rules that will be used by the helper.
 	 *
-	 * @param {sap.f.LayoutType} oSettings.defaultTwoColumnLayoutType
+	 * @param {sap.f.LayoutType} [oSettings.defaultTwoColumnLayoutType=sap.f.LayoutType.TwoColumnsBeginExpanded]
 	 * Determines what two-column layout type will be suggested by default:
-	 * <code>sap.f.LayoutType.TwoColumnsBeginExpanded</code> (default) or <code>sap.f.LayoutType.TwoColumnsMidExpanded</code>.
+	 * <code>sap.f.LayoutType.TwoColumnsBeginExpanded</code> or <code>sap.f.LayoutType.TwoColumnsMidExpanded</code>.
 	 *
-	 * @param {sap.f.LayoutType} oSettings.defaultThreeColumnLayoutType
+	 * @param {sap.f.LayoutType} [oSettings.defaultThreeColumnLayoutType=sap.f.LayoutType.ThreeColumnsMidExpanded]
 	 * Determines what three-column layout type will be suggested by default:
-	 * <code>sap.f.LayoutType.ThreeColumnsMidExpanded</code> (default) or <code>sap.f.LayoutType.ThreeColumnsEndExpanded</code>.
+	 * <code>sap.f.LayoutType.ThreeColumnsMidExpanded</code> or <code>sap.f.LayoutType.ThreeColumnsEndExpanded</code>.
 	 *
 	 * @param {int} oSettings.maxColumnsCount
 	 * Determines the maximum number of columns that will be displayed side by side.
