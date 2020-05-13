@@ -1240,6 +1240,10 @@ sap.ui.define([
 			this._oScroller.destroy();
 			this._oScroller = null;
 		}
+		if (this._oLazyLoading) {
+			this._oLazyLoading.destroy();
+			this._oLazyLoading = null;
+		}
 
 		this._deregisterScreenSizeListener();
 
