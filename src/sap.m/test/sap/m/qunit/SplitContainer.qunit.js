@@ -1,5 +1,5 @@
 /*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -35,6 +35,8 @@ sap.ui.define([
 	NavContainer,
 	JSONModel
 ) {
+	"use strict";
+
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
 
@@ -398,8 +400,7 @@ sap.ui.define([
 					phone: true,
 					tablet: false
 				},
-				oOldSystem = sap.ui.Device.system,
-				oOldOrientation = sap.ui.Device.orientation;
+				oOldSystem = sap.ui.Device.system;
 
 		// stub the system object on sap.ui.Device
 		sap.ui.Device.system = oSystem;
@@ -796,17 +797,18 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "visible class is set to master");
-		assert.ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
+		assert.notOk(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
 		assert.ok(oSplitContainer._bMasterisOpen, "flag of whether master is open is set");
 
 		oSplitContainer.setMode(SplitAppMode.HideMode);
-		assert.ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "hidden class is set to master after switching to HideMode");
-		assert.ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "visible class is removed from master after switching to HideMode");
-		assert.ok(!oSplitContainer._bMasterisOpen, "flag of whether master is open is correctly maintained after switching to HideMode");
+		sap.ui.getCore().applyChanges();
+		assert.notOk(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "visible class is removed from master after switching to HideMode");
+		assert.ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class is added to master after switching to HideMode");
+		assert.notOk(oSplitContainer._bMasterisOpen, "flag of whether master is open is correctly maintained after switching to HideMode");
 
 		oSplitContainer.showMaster();
 		assert.ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "visible class is set to master");
-		assert.ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
+		assert.notOk(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
 
 		oSplitContainer.attachAfterMasterOpen(function() {
 			var oOldOrientation = sap.ui.Device.orientation;
@@ -814,6 +816,7 @@ sap.ui.define([
 			oSplitContainer._handleResize();
 
 			oSplitContainer.setMode(SplitAppMode.ShowHideMode);
+			sap.ui.getCore().applyChanges();
 			qutils.triggerEvent("tap", oSplitContainer._oDetailNav.getDomRef());
 			assert.ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "hidden class isn't set to master");
 			assert.ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class is set to master");
@@ -1211,8 +1214,6 @@ sap.ui.define([
 				new Page("master2", { title : "master2"})
 			]
 		});
-
-		var oMasterPage1 = sap.ui.getCore().byId("master1");
 
 		//assert
 		assert.strictEqual(this.sut._oMasterNav.getPages()[0].getId(), "master1", "First page should be master1");
