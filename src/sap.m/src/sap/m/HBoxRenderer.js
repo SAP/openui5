@@ -6,7 +6,6 @@ sap.ui.define(['./FlexBoxRenderer'],
 	function(FlexBoxRenderer) {
 	"use strict";
 
-
 	/**
 	 * HBox renderer.
 	 * @namespace
@@ -14,7 +13,6 @@ sap.ui.define(['./FlexBoxRenderer'],
 	var HBoxRenderer = {
 		apiVersion: 2
 	};
-
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -25,7 +23,6 @@ sap.ui.define(['./FlexBoxRenderer'],
 	HBoxRenderer.render = function(oRm, oControl){
 		FlexBoxRenderer.render.apply(this, [oRm, oControl]);
 	};
-
 
 	return HBoxRenderer;
 
