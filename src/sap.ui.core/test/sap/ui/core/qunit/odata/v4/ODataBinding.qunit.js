@@ -396,15 +396,27 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("hasPendingChanges", function (assert) {
-		var oBinding = new ODataBinding(),
+		var oBinding = new ODataBinding({
+				isResolved : function () {}
+			}),
 			oBindingMock = this.mock(oBinding),
 			bResult = {/*some boolean*/};
 
+		oBindingMock.expects("isResolved").withExactArgs().returns(false);
+		oBindingMock.expects("hasPendingChangesForPath").never();
+		oBindingMock.expects("hasPendingChangesInDependents").never();
+
+		// code under test
+		assert.strictEqual(oBinding.hasPendingChanges(), false);
+
+		oBindingMock.expects("isResolved").withExactArgs().returns(true);
 		oBindingMock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
+		oBindingMock.expects("hasPendingChangesInDependents").never();
 
 		// code under test
 		assert.strictEqual(oBinding.hasPendingChanges(), true);
 
+		oBindingMock.expects("isResolved").withExactArgs().returns(true);
 		oBindingMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oBindingMock.expects("hasPendingChangesInDependents").withExactArgs().returns(bResult);
 
