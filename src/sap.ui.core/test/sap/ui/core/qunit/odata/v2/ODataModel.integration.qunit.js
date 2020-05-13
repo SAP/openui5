@@ -30,6 +30,7 @@ sap.ui.define([
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		MessageType = coreLibrary.MessageType, // shortcut for sap.ui.core.MessageType
 		NO_CONTENT = {/*204 no content*/},
+		sODataModelClassName = "sap.ui.model.odata.v2.ODataModel",
 		// determine the row in which the entity is expected from the context path
 		rRowIndex = /~(\d+)~/,
 		/**
@@ -88,7 +89,7 @@ sap.ui.define([
 				}
 			}),
 			crashBatch : oErrorResponseInfo.crashBatch,
-			headers : {},
+			headers : {"Content-Type" : "application/json;charset=utf-8"},
 			statusCode : oErrorResponseInfo.statusCode || 500,
 			statusText : "FAILED"
 		};
@@ -406,6 +407,7 @@ sap.ui.define([
 			aCurrentMessages = aCurrentMessages.map(function (oMessage) {
 				return {
 					code : oMessage.code,
+					description : oMessage.description,
 					descriptionUrl : oMessage.descriptionUrl,
 					fullTarget : oMessage.fullTarget
 						&& oMessage.fullTarget.replace(rTemporaryKey, "~key~"),
@@ -991,6 +993,7 @@ sap.ui.define([
 
 				this.aMessages.push({
 					code : oODataMessage.code,
+					description : oODataMessage.description,
 					descriptionUrl : "",
 					fullTarget : (sFullTargetPrefix || sTargetPrefix) + oODataMessage.target,
 					message : oODataMessage.message,
@@ -1021,6 +1024,9 @@ sap.ui.define([
 				vExpectedMessages = [vExpectedMessages];
 			}
 			this.aMessages = vExpectedMessages.map(function (oMessage) {
+				oMessage.description = oMessage.hasOwnProperty("description")
+					?  oMessage.description
+					: undefined;
 				oMessage.descriptionUrl = oMessage.hasOwnProperty("descriptionUrl")
 					?  oMessage.descriptionUrl
 					: "";
@@ -1375,9 +1381,9 @@ sap.ui.define([
 		oModel.attachRequestCompleted(oEventHandlers.requestCompleted);
 		oModel.attachRequestFailed(oEventHandlers.requestFailed);
 		oModel.attachRequestSent(oEventHandlers.requestSent);
-		this.oLogMock.expects("fatal")
-			.withExactArgs("The following problem occurred: HTTP request failed400,FAILED,"
-				+ oErrorResponse.body);
+		this.oLogMock.expects("error")
+			.withExactArgs("HTTP request failed (400 FAILED): " + oErrorResponse.body, undefined,
+				sODataModelClassName);
 
 		// code under test
 		return this.createView(assert, sView, oModel);
@@ -1415,15 +1421,6 @@ sap.ui.define([
 			.expectMessages([{
 				code : "UF0",
 				descriptionUrl : "",
-				fullTarget : "/SalesOrderSet('1')",
-				message : "Internal Server Error",
-				persistent : false,
-				target : "/SalesOrderSet('1')",
-				technical : true,
-				type : "Error"
-			}, {
-				code : "UF0",
-				descriptionUrl : "",
 				fullTarget : "/$batch",
 				message : "Internal Server Error",
 				persistent : false,
@@ -1446,9 +1443,60 @@ sap.ui.define([
 		oModel.attachRequestCompleted(oEventHandlers.requestCompleted);
 		oModel.attachRequestFailed(oEventHandlers.requestFailed);
 		oModel.attachRequestSent(oEventHandlers.requestSent);
-		this.oLogMock.expects("fatal").exactly(3)
-			.withExactArgs("The following problem occurred: HTTP request failed"
-				+ "500,FAILED," + oErrorResponse.body);
+		this.oLogMock.expects("error")
+			.withExactArgs("HTTP request failed (500 FAILED): " + oErrorResponse.body, undefined,
+				sODataModelClassName);
+
+		// code under test
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Complete $batch fails with a technical error and the response has Content-Type
+	// "text/plain": A persistent, generic UI message is created to show the issue on the UI.
+	// BCP: 002075129500003079342020
+	QUnit.test("$batch error handling: complete batch fails, plain error", function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+			sView = '\
+<Table id="table" items="{/SalesOrderSet}">\
+	<ColumnListItem>\
+		<Text text="{SalesOrderID}" />\
+	</ColumnListItem>\
+</Table>';
+
+		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
+			.expectRequest({
+				deepPath : "/SalesOrderSet",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				method : "GET",
+				requestUri : "SalesOrderSet?$skip=0&$top=100"
+			}, {
+				body : "A plain error text",
+				crashBatch : true,
+				headers : {
+					"Content-Type" : "text/plain;charset=utf-8"
+				},
+				statusCode : 503
+			})
+			.expectMessages([{
+				code : "",
+				description : "A plain error text",
+				descriptionUrl : "",
+				fullTarget : "",
+				message : "Communication Error",
+				persistent : true,
+				target : "",
+				technical : true,
+				type : "Error"
+			}]);
+
+		this.oLogMock.expects("error")
+			.withExactArgs("HTTP request failed (503 undefined): A plain error text", undefined,
+				sODataModelClassName);
+		this.oLogMock.expects("error")
+			.withExactArgs("Error message returned by server could not be parsed");
+
+		oModel.setMessageScope(MessageScope.BusinessObject);
 
 		// code under test
 		return this.createView(assert, sView, oModel);
@@ -1528,7 +1576,7 @@ sap.ui.define([
 	<Text text="{SalesOrderID}" />\
 </FlexBox>';
 
-		this.oLogMock.expects("fatal").once();
+		this.oLogMock.expects("error").once();
 
 		this.expectRequest("SalesOrderSet('1')", createErrorResponse(oFixture))
 			.expectMessages([{
@@ -4130,9 +4178,9 @@ usePreliminaryContext : false}}">\
 				}, oFixture.aResponses[2])
 				.expectMessages(oFixture.aExpectedMessages);
 			if (bWithError) {
-				that.oLogMock.expects("fatal").twice()
-					.withExactArgs("The following problem occurred: HTTP request failed500,FAILED,"
-						+ oFixture.aResponses[0].body);
+				that.oLogMock.expects("error").twice()
+					.withExactArgs("HTTP request failed (500 FAILED): "
+						+ oFixture.aResponses[0].body, undefined, sODataModelClassName);
 			}
 
 			// don't care about passed arguments
@@ -4273,12 +4321,12 @@ usePreliminaryContext : false}}">\
 				properties : {}
 			});
 
-			that.oLogMock.expects("fatal")
-				.withExactArgs("The following problem occurred: HTTP request failed400,FAILED,"
-					+ oErrorPOST.body);
-			that.oLogMock.expects("fatal")
-				.withExactArgs("The following problem occurred: HTTP request failed400,FAILED,"
-					+ oErrorGET.body);
+			that.oLogMock.expects("error")
+				.withExactArgs("HTTP request failed (400 FAILED): " + oErrorPOST.body, undefined,
+					sODataModelClassName);
+			that.oLogMock.expects("error")
+				.withExactArgs("HTTP request failed (400 FAILED): " + oErrorGET.body, undefined,
+					sODataModelClassName);
 
 			oModel.submitChanges();
 
