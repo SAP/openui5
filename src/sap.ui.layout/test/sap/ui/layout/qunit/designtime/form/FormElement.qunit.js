@@ -65,6 +65,10 @@ sap.ui.define([
 				assert.ok(FormElementDesignTime.domRef(this.oElement), "domRef is retrieved when label is present");
 				assert.ok(FormElementDesignTime.domRef(this.oElement2), "domRef is retrieved when label is not present");
 			});
+
+			QUnit.test("Check rename action of Form Element without label inside Responsive Grid Layout", function (assert) {
+				assert.notOk(FormElementDesignTime.actions.rename(this.oElement2), "rename is disabled");
+			});
 		});
 
 
