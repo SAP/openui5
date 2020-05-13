@@ -93,5 +93,21 @@
         "references": []
       }
     ]
+  },
+  "1.75.3": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "3e5443dec39b8bb453992d3f9b2fe4e394ee6fbd",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: month button shown in all languages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070078306"
+          }
+        ]
+      }
+    ]
   }
 }
