@@ -3,6 +3,8 @@
 module.exports = [
 	"BlockLayout.spec.js",
 	"CSSGridVisualTests.spec.js",
+	"DynamicSideContent.spec.js",
+	"ResponsiveColumnLayout.spec.js",
 	"ResponsiveGridLayoutVisual.spec.js",
 	"ResponsiveLayoutVisual.spec.js",
 	"ResponsiveSplitter.spec.js",
