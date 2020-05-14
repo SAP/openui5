@@ -124,16 +124,6 @@ sap.ui.define([
 			library: "sap.ui.fl",
 			designtime: "sap/ui/fl/designtime/variants/VariantManagement.designtime",
 			properties: {
-
-				/**
-				 * Indicates that <i>Apply Automatically</i> is visible in the <i>Save View</i> and the <i>Manage Views</i> dialogs.
-				 */
-				showExecuteOnSelection: {
-					type: "boolean",
-					group: "Misc",
-					defaultValue: false
-				},
-
 				/**
 				 * Indicates that <i>Set as Default</i> is visible in the <i>Save View</i> and the <i>Manage Views</i> dialogs.
 				 */
@@ -442,10 +432,6 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._bindProperties = function() {
-		this.bindProperty("showExecuteOnSelection", {
-			path: "/showExecuteOnSelection",
-			model: VariantManagement.INNER_MODEL_NAME
-		});
 		this.bindProperty("showSetAsDefault", {
 			path: "/showSetAsDefault",
 			model: VariantManagement.INNER_MODEL_NAME
@@ -454,6 +440,30 @@ sap.ui.define([
 			path: "/editable",
 			model: VariantManagement.INNER_MODEL_NAME
 		});
+	};
+
+	VariantManagement.prototype._getShowExecuteOnSelection = function() {
+		var oModel = this.getModel(VariantManagement.INNER_MODEL_NAME);
+		if (oModel) {
+			return oModel.getProperty("/showExecuteOnSelection");
+		}
+
+		return false;
+	};
+
+	VariantManagement.prototype._setShowExecuteOnSelection = function(bValue) {
+		var oInnerModel = this.getModel(VariantManagement.INNER_MODEL_NAME);
+		if (oInnerModel) {
+			oInnerModel.setProperty("/showExecuteOnSelection", bValue);
+		}
+	};
+
+
+	VariantManagement.prototype.setExecuteOnSelection = function(bValue) {
+		var oModel = this.getModel(this._sModelName);
+		if (oModel && this.oContext) {
+			oModel.setProperty(this.oContext + "/executeOnSelection", bValue);
+		}
 	};
 
 	VariantManagement.prototype.getOriginalDefaultVariantKey = function() {
@@ -697,13 +707,23 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._registerPropertyChanges = function(oModel) {
-		var oBinding = new PropertyBinding(oModel, this.oContext + "/variantsEditable");
+		var oBinding = new PropertyBinding(oModel, this.oContext + "/showExecuteOnSelection");
+		oBinding.attachChange(function(oData) {
+			if (oData && oData.oSource && oData.oSource.oModel && oData.oSource.sPath) {
+				var bFlag = oData.oSource.oModel.getProperty(oData.oSource.sPath);
+				if (bFlag !== undefined) {
+					this._setShowExecuteOnSelection(bFlag);
+				}
+			}
+		}.bind(this));
+
+		oBinding = new PropertyBinding(oModel, this.oContext + "/variantsEditable");
 		oBinding.attachChange(function(oData) {
 			if (oData && oData.oSource && oData.oSource.oModel && oData.oSource.sPath) {
 				var oInnerModel;
 				var bFlag = oData.oSource.oModel.getProperty(oData.oSource.sPath);
 				oInnerModel = this.getModel(VariantManagement.INNER_MODEL_NAME);
-				if (oInnerModel) {
+				if (oInnerModel && (bFlag !== undefined)) {
 					oInnerModel.setProperty("/editable", bFlag);
 				}
 			}
@@ -1114,7 +1134,8 @@ sap.ui.define([
 			if (this.getShowSetAsDefault()) {
 				oSaveAsDialogOptionsGrid.addContent(this.oDefault);
 			}
-			if (this.getShowExecuteOnSelection()) {
+
+			if (this._getShowExecuteOnSelection()) {
 				oSaveAsDialogOptionsGrid.addContent(this.oExecuteOnSelect);
 			}
 
