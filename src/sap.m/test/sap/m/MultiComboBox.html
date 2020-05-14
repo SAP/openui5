@@ -606,6 +606,76 @@
 					+ oControlEvent.getParameter("changedItem") + " on " + this);
 		}
 	});
+
+	var oMultiComboBoxErrorWithLink = new sap.m.MultiComboBox({
+		id : "MultiComboBoxErrorWithLink",
+		width : "300px",
+		placeholder : "Error message with link",
+		valueState : "Error",
+		items : [new sap.ui.core.Item({
+			key : "0",
+			text : "item 0"
+		}), new sap.ui.core.Item({
+			key : "1",
+			text : "item 1"
+		})],
+		formattedValueStateText: new sap.m.FormattedText({
+			htmlText: "Error value state message with %%0",
+			controls: [new sap.m.Link({
+				text: "link",
+				href: "#",
+				target: "_blank"
+			})]
+		}),
+		change : function(oControlEvent) {
+			jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("value") + " on "
+					+ this);
+		},
+
+		selectionChange : function(oControlEvent) {
+			jQuery.sap.log.info('Event fired: "selectionChange" value property to '
+					+ oControlEvent.getParameter("changedItem") + " on " + this);
+		}
+	});
+
+	var oMultiComboBoxWarningWithLinks = new sap.m.MultiComboBox({
+		id : "MultiComboBoxWarningWithLinks",
+		width : "300px",
+		placeholder : "Warning message with link",
+		valueState : "Warning",
+		items : [new sap.ui.core.Item({
+			key : "0",
+			text : "item 0"
+		}), new sap.ui.core.Item({
+			key : "1",
+			text : "item 1"
+		})],
+		formattedValueStateText: new sap.m.FormattedText({
+			htmlText: "Warning value state message with %%0 %%1",
+			controls: [
+				new sap.m.Link({
+					text: "multiple",
+					href: "#",
+					target: "_blank"
+				}),
+				new sap.m.Link({
+					text: "link",
+					href: "#",
+					target: "_blank"
+				})
+			]
+		}),
+		change : function(oControlEvent) {
+			jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("value") + " on "
+					+ this);
+		},
+
+		selectionChange : function(oControlEvent) {
+			jQuery.sap.log.info('Event fired: "selectionChange" value property to '
+					+ oControlEvent.getParameter("changedItem") + " on " + this);
+		}
+	});
+
 	var oMultiComboBoxWarning = new sap.m.MultiComboBox({
 		id : "MultiComboBoxWarning",
 		width : "300px",
@@ -827,9 +897,8 @@
 	oApp.addPage(new sap.m.Page("page1", {
 		content : [theCompactMode,oMultiComboBox2, oMultiComboBox, oMultiComboBox1,
 				oMultiComboBoxDisabledListItemSelectable, oMultiComboBoxDisabledListItemDisabled, oMultiComboBoxReadOnly,
-				oMultiComboBoxDisabled, oMultiComboBoxWithoutKey, oMultiComboBoxError, oMultiComboBoxWarning,
-				oMultiComboBoxSuccess, oMultiComboBoxOneToken, readOnlyButtonOneToken,
-				oMultiComboBoxBinding, oToolbar],
+				oMultiComboBoxDisabled, oMultiComboBoxWithoutKey, oMultiComboBoxError, oMultiComboBoxErrorWithLink, oMultiComboBoxWarningWithLinks, oMultiComboBoxWarning,
+				oMultiComboBoxSuccess, oMultiComboBoxBinding, oToolbar],
 		showNavButton : true,
 		navButtonPress : function() {
 			oApp.to("page2")
@@ -873,4 +942,3 @@
 </head>
 <body id="body" class="sapUiBody"></body>
 </html>
-
