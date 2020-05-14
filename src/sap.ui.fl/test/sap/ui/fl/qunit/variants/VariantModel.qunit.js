@@ -1796,6 +1796,43 @@ function(
 			});
 		});
 
+		QUnit.test("when waitForVMControlInit is called before the control is initialized and with no variant data yet", function(assert) {
+			var oStandardVariant = {
+				currentVariant: "varMgmtRef1",
+				originalCurrentVariant: "varMgmtRef1",
+				defaultVariant: "varMgmtRef1",
+				originalDefaultVariant: "varMgmtRef1",
+				init: true,
+				modified: false,
+				showFavorites: true,
+				updateVariantInURL: false,
+				variantsEditable: true,
+				_isEditable: true,
+				variants: [{
+					change: false,
+					remove: false,
+					rename: false,
+					key: "varMgmtRef1",
+					title: "Standard",
+					originalTitle: "Standard",
+					favorite: true,
+					originalFavorite: true,
+					visible: true,
+					originalVisible: true,
+					executeOnSelect: false,
+					originalExecuteOnSelect: false,
+					author: VariantUtil.DEFAULT_AUTHOR
+				}]
+			};
+			var oReturnPromise = this.oModel.waitForVMControlInit("varMgmtRef1").then(function() {
+				assert.ok(true, "the function resolves");
+				assert.deepEqual(oStandardVariant, this.oModel.oData["varMgmtRef1"], "the standard variant is properly set");
+			}.bind(this));
+			this.oModel.registerToModel(this.oVariantManagement);
+
+			return oReturnPromise;
+		});
+
 		QUnit.test("when variant management controls are initialized with with 'updateVariantInURL' property set and default (false)", function(assert) {
 			this.oRegisterControlStub.resetHistory();
 			var oVariantManagementWithURLUpdate = new VariantManagement("varMgmtRef2", {updateVariantInURL: true});
