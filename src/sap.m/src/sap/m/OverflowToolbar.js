@@ -139,7 +139,8 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> When this property is set to <code>true</code>, the <code>OverflowToolbar</code>
 				 * makes its layout recalculations asynchronously. This way it is not blocking the thread
-				 * immediately after re-rendering or resizing.
+				 * immediately after re-rendering or resizing. However, it may lead to flickering, when there is
+				 * a change in the width of the content of the <code>OverflowToolbar</code>.
 				 *
 				 * @since 1.67
 				 */
