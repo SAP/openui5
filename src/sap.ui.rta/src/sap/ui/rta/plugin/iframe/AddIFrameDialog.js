@@ -25,7 +25,7 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 	var _oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-	var _sDocumentationURL = "https://help.sap.com/viewer/DRAFT/d3bac4f3fe1f4e728b2f61888b4dac83/dev_internal/en-US/8db25610e91342919fcf63d4e5868ae9.html";
+	var _sDocumentationURL = "https://help.sap.com/viewer/4fc8d03390c342da8a60f8ee387bca1a/latest/en-US/8db25610e91342919fcf63d4e5868ae9.html";
 	var _sDocumentationHTML = _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_URL_WARNING_TEXT") + " (" + "<a href=" + _sDocumentationURL + ">" + _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_URL_WARNING_LINKTEXT") + "</a>" + ")";
 	var _mText = {
 		dialogTitle: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_TITLE"),
