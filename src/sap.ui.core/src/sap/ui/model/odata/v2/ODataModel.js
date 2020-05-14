@@ -150,6 +150,8 @@ sap.ui.define([
 	 *            to share an <code>SID</code> between different browser windows
 	 * @param {string[]} [mParameters.bindableResponseHeaders=null]
 	 *            Set this array to make custom response headers bindable via the entity's "__metadata/headers" property
+	 * @param {boolean} [mParameters.tokenHandlingForGet=false] Send CSRF token for GET requests in
+	 *            case read access logging is activated for the oData Service in the backend.
 	 *
 	 * @class
 	 * Model implementation based on the OData protocol.
@@ -194,6 +196,7 @@ sap.ui.define([
 				bDisableSoftStateHeader,
 				aBindableResponseHeaders,
 				sWarmupUrl,
+				bTokenHandlingForGet,
 				that = this;
 
 			if (typeof (sServiceUrl) === "object") {
@@ -228,6 +231,7 @@ sap.ui.define([
 				bDisableSoftStateHeader = mParameters.disableSoftStateHeader;
 				aBindableResponseHeaders = mParameters.bindableResponseHeaders;
 				sWarmupUrl = mParameters.warmupUrl;
+				bTokenHandlingForGet = mParameters.tokenHandlingForGet;
 			}
 
 			this.sWarmupUrl = sWarmupUrl;
@@ -235,6 +239,7 @@ sap.ui.define([
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
 			this.mUnsupportedFilterOperators = {"Any": true, "All": true};
 			this.sDefaultBindingMode = sDefaultBindingMode || BindingMode.OneWay;
+			this.bTokenHandlingForGet = !!bTokenHandlingForGet;
 
 			this.bJSON = bJSON !== false;
 			this.aPendingRequestHandles = [];
@@ -2816,7 +2821,7 @@ sap.ui.define([
 		}
 
 		function readyForRequest(oRequest) {
-			if (that.bTokenHandling && oRequest.method !== "GET") {
+			if (that.bTokenHandling && (oRequest.method !== "GET" || that.bTokenHandlingForGet)) {
 				that.pReadyForRequest = that.securityTokenAvailable();
 			}
 			return that.pReadyForRequest;
@@ -2831,7 +2836,7 @@ sap.ui.define([
 			// token needs to be set directly on request headers, as request is already created
 			readyForRequest(oRequest).then(function(sToken) {
 				// Check bTokenHandling again, as updating the token might disable token handling
-				if (that.bTokenHandling && oRequest.method !== "GET") {
+				if (that.bTokenHandling && (oRequest.method !== "GET" || that.bTokenHandlingForGet)) {
 					oRequest.headers["x-csrf-token"] = sToken;
 				}
 				submit();
