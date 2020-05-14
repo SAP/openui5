@@ -453,14 +453,19 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 				isNavListItemExpanded = this.getExpanded(),
 				text = this.getText(),
 				tooltip,
-				ariaProps = {
-					level: '1'
-				};
+				ariaProps = {};
 
 			//checking if there are items level 2 in the NavigationListItem
 			//of yes - there is need of aria-expanded property
-			if (isListExpanded && this.getItems().length !== 0) {
-				ariaProps.expanded = isNavListItemExpanded;
+			if (isListExpanded) {
+
+				if (!control.hasStyleClass("sapTntNavLIPopup")) {
+					ariaProps.level = '1';
+				}
+
+				if (this.getItems().length !== 0) {
+					ariaProps.expanded = isNavListItemExpanded;
+				}
 			}
 
 			rm.openStart("div");
@@ -490,8 +495,8 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 					rm.attr("title", tooltip);
 				}
 
-				ariaProps.role = 'menuitem';
-				if (!control.hasStyleClass("sapTntNavLIPopup")) {
+				ariaProps.role = 'menuitemradio';
+				if (!control.hasStyleClass("sapTntNavLIPopup") && this.getItems().length > 0) {
 					ariaProps.haspopup = true;
 				}
 			} else {
@@ -578,9 +583,10 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 		NavigationListItem.prototype.renderSecondLevelNavItem = function (rm, control) {
 
 			var group = this.getParent(),
+				isInPopup = control.hasStyleClass("sapTntNavLIPopup"),
 				ariaProps = {
-					role: control.hasStyleClass("sapTntNavLIPopup") ? 'menuitem' : 'treeitem',
-					level: '2'
+					role: isInPopup ? 'menuitemradio' : 'treeitem',
+					level: !isInPopup ? '2' : undefined
 				};
 
 			rm.openStart('li', this);
