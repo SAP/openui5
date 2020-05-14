@@ -202,9 +202,7 @@ sap.ui.define([
 	}
 
 	function _clearPreparedMaps(sReference) {
-		if (_mInstances[sReference]) {
-			_mInstances[sReference].preparedMaps = {};
-		}
+		_mInstances[sReference].preparedMaps = {};
 	}
 
 	function checkPartialFlexState(mInitProperties) {
@@ -318,8 +316,10 @@ sap.ui.define([
 	 * @param {string} sReference - Flex reference of the app
 	 */
 	FlexState.clearFilteredResponse = function(sReference) {
-		delete _mInstances[sReference].storageResponse;
-		_clearPreparedMaps(sReference);
+		if (_mInstances[sReference]) {
+			_clearPreparedMaps(sReference);
+			delete _mInstances[sReference].storageResponse;
+		}
 	};
 
 	FlexState.getUIChanges = function(sReference) {

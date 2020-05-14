@@ -363,15 +363,12 @@ sap.ui.define([
 			var sReference = "com.sap.app";
 			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
 			var oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves(true);
-			var oLoadDraftForApplicationStub = sandbox.stub(VersionsAPI, "loadDraftForApplication").resolves(true);
-
 			return VersionsAPI.discardDraft(mPropertyBag)
 				.then(function(oResult) {
 					assert.equal(oResult, true, "then result was returned");
 					var oCallingPropertyBag = oDiscardStub.getCall(0).args[0];
 					assert.equal(oCallingPropertyBag.reference, sReference, "the reference was passed");
 					assert.equal(oCallingPropertyBag.layer, mPropertyBag.layer, "the layer was passed");
-					assert.equal(oLoadDraftForApplicationStub.callCount, 1, "loadDraftForApplication was called");
 				});
 		});
 
@@ -386,15 +383,12 @@ sap.ui.define([
 			var sReference = "com.sap.app";
 			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
 			var oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves(true);
-			var oLoadDraftForApplicationStub = sandbox.stub(VersionsAPI, "loadDraftForApplication").resolves(true);
-
 			return VersionsAPI.discardDraft(mPropertyBag)
 				.then(function(oResult) {
 					assert.equal(oResult, true, "then result was returned");
 					assert.deepEqual(oDiscardStub.getCall(0).args[0].appVersion, sAppVersion, "the app version was passed");
 					assert.deepEqual(oDiscardStub.getCall(0).args[0].reference, sReference, "the reference was passed");
 					assert.deepEqual(oDiscardStub.getCall(0).args[0].layer, Layer.CUSTOMER, "the layer was passed");
-					assert.equal(oLoadDraftForApplicationStub.callCount, 1, "loadDraftForApplication was called");
 				});
 		});
 	});

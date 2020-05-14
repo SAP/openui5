@@ -223,16 +223,6 @@ sap.ui.define([
 			reference: Utils.normalizeReference(sReference),
 			layer: mPropertyBag.layer,
 			appVersion: sAppVersion
-		}).then(function (bDiscarded) {
-			if (bDiscarded) {
-				// clears FlexState and triggers a new flex data request without blocking
-				// it is actually not loading the draft, because we just discarded it
-				VersionsAPI.loadDraftForApplication({
-					selector: mPropertyBag.selector,
-					layer: mPropertyBag.layer
-				});
-			}
-			return bDiscarded;
 		});
 	};
 
