@@ -75,7 +75,6 @@ sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/third
 	};
 
 	AssociativeSplitter.prototype.addAssociatedContentArea = function (oContent) {
-		this._needsInvalidation = true;
 		_ensureLayoutData(oContent);
 		return this.addAssociation("associatedContentAreas", oContent);
 	};
@@ -93,7 +92,6 @@ sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/third
 	//TODO: Review this with caution, and check whether there will be any side effects
 	AssociativeSplitter.prototype.insertAssociatedContentArea = function (oContent, iIndex) {
 		var id = oContent.getId();
-		this._needsInvalidation = true;
 		_ensureLayoutData(oContent);
 		var content = this.getAssociatedContentAreas();
 

@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-// Provides control sap.ui.layout.Splitter.
 sap.ui.define([
 	'sap/ui/core/Control',
 	'./library',
@@ -129,13 +128,7 @@ sap.ui.define([
 		designtime: "sap/ui/layout/designtime/Splitter.designtime"
 	}});
 
-	// "Hidden" resource bundle instance
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
-
-	////////////////////////////////////////// Public Methods //////////////////////////////////////////
-
 	Splitter.prototype.init = function() {
-		this._needsInvalidation = false;
 		this._liveResize        = true;
 		this._keyboardEnabled   = true;
 		this._bHorizontal       = true;
@@ -158,7 +151,7 @@ sap.ui.define([
 		this._boundBarMove      = this._onBarMove.bind(this);
 
 		// Switch resizing parameters based on orientation - this must be done to initialize the values
-		this._switchOrientation();
+		this._initOrientationProperties();
 
 		this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
 
@@ -186,20 +179,19 @@ sap.ui.define([
 	};
 
 	Splitter.prototype.onBeforeRendering = function() {
-		this._switchOrientation();
+		this.getContentAreas().forEach(_ensureLayoutData);
+		this._initOrientationProperties();
 	};
 
 	Splitter.prototype.onAfterRendering = function() {
-		// move the previously rendered DOM from the hidden area to the main splitter area and apply correct sizing.
-
-		// Create overlay DOM element for resizing
 		this._$SplitterOverlay = this.$("overlay");
 		this._$SplitterOverlayBar = this.$("overlayBar");
-		this._$SplitterOverlay.detach();
 
 		// Calculate and apply correct sizes to the Splitter contents
 		this._resize();
 	};
+
+	////////////////////////////////////////// Public Methods //////////////////////////////////////////
 
 	/**
 	 * This method  triggers a resize on the Splitter - meaning it forces the Splitter to recalculate
@@ -301,7 +293,7 @@ sap.ui.define([
 	 */
 	Splitter.prototype.enableLiveResize = function() {
 		this._liveResize = true;
-		this.$().toggleClass("sapUiLoSplitterAnimated", false);
+		this.removeStyleClass("sapUiLoSplitterAnimated");
 	};
 
 	/**
@@ -313,7 +305,7 @@ sap.ui.define([
 	 */
 	Splitter.prototype.disableLiveResize = function() {
 		this._liveResize = false;
-		this.$().toggleClass("sapUiLoSplitterAnimated", true);
+		this.addStyleClass("sapUiLoSplitterAnimated");
 	};
 
 	/**
@@ -444,7 +436,7 @@ sap.ui.define([
 			// The number of the bar that is moved
 			barNum : iBar,
 			// The splitter bar that is moved
-			bar : $bar,
+			$bar : $bar,
 			// The content sizes for fast resize bound calculation
 			c1Size : mCalcSizes[iBar],
 			c1MinSize : oLd1 ? parseInt(oLd1.getMinSize()) : 0,
@@ -462,10 +454,9 @@ sap.ui.define([
 			document.addEventListener("mousemove", this._boundBarMove);
 		}
 
-		this._$SplitterOverlay.css("display", "block"); // Needed because it is set to none in renderer
-		this._$SplitterOverlay.appendTo(this.getDomRef());
+		this._$SplitterOverlay.css("display", "block"); // Show the overlay while moving
 		this._$SplitterOverlayBar.css(this._sizeDirNot, "");
-		this._move["bar"].css("visibility", "hidden");
+		this._move.$bar.css("visibility", "hidden"); // Hide the moved bar
 		this._onBarMove(oEvent);
 	};
 
@@ -561,11 +552,8 @@ sap.ui.define([
 			/* also change layoutData: */ true
 		);
 
-		// Remove resizing overlay
-		this._move["bar"].css("visibility", "");
-		this._$SplitterOverlay.css("display", ""); // Remove?
-
-		// this._$SplitterOverlay.detach(); TODO move to better position
+		this._move.$bar.css("visibility", ""); // Return the moved bar
+		this._$SplitterOverlay.css("display", ""); // Remove resizing overlay
 
 		// Uses bound handler methods - see init()
 		document.removeEventListener("mouseup",   this._boundBarMoveEnd);
@@ -575,8 +563,8 @@ sap.ui.define([
 
 		// Enable auto resize after bar move if it was enabled before
 		this.enableAutoResize(/* temporarily: */ true);
-		if (this._move.bar){
-			this._move.bar.focus();
+		if (this._move.$bar){
+			this._move.$bar.focus();
 		}
 	};
 
@@ -760,7 +748,6 @@ sap.ui.define([
 		}
 	};
 
-
 	/**
 	 * Calculates how much space is actually available inside the splitter to distribute the content
 	 * areas in.
@@ -771,7 +758,6 @@ sap.ui.define([
 	 */
 	Splitter.prototype._calculateAvailableContentSize = function(aSizes) {
 		var i = 0;
-
 		var $Splitter = this.$();
 		var iFullSize      = this._bHorizontal ? $Splitter.innerWidth() : $Splitter.innerHeight();
 		// Due to rounding errors when zoom is activated, we need 1px of error margin for every element
@@ -930,12 +916,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Stores the respective values that differ when resizing the splitter in horizontal vs. vertical
-	 * mode
-	 *
+	 * Stores the respective values that differ when resizing the splitter in horizontal vs. vertical mode
 	 * @private
 	 */
-	Splitter.prototype._switchOrientation = function() {
+	Splitter.prototype._initOrientationProperties = function() {
 		this._bHorizontal = this.getOrientation() === Orientation.Horizontal;
 		if (this._bHorizontal) {
 			this._sizeDirNot  = "top";
@@ -955,10 +939,6 @@ sap.ui.define([
 			this._sizeDir     = "top";
 			this._sizeDirNot  = "left";
 		}
-
-		var $This = this.$();
-		$This.toggleClass("sapUiLoSplitterH", this._bHorizontal);
-		$This.toggleClass("sapUiLoSplitterV", !this._bHorizontal);
 	};
 
 	/**
@@ -1044,19 +1024,6 @@ sap.ui.define([
 
 		this._keyboardEnabled = false;
 	};
-
-	/**
-	 * Gets the text for the given key from the current resourcebundle
-	 *
-	 * @param {string} [sKey] Text key to look for in the resource bundle
-	 * @param {array} [aArgs] Additional arguments for the getText method of the ResourceBundle
-	 * @returns {string} The translated string
-	 * @private
-	 */
-	Splitter.prototype._getText = function(sKey, aArgs) {
-		return (oResourceBundle ? oResourceBundle.getText(sKey, aArgs) : sKey);
-	};
-
 
 	///////////////////////////////////////// Hidden Functions /////////////////////////////////////////
 
@@ -1153,7 +1120,7 @@ sap.ui.define([
 	 * Makes sure the LayoutData for the given control is set and compatible. In case nothing is set,
 	 * a default sap.ui.layout.SplitterLayoutData is set on the Element
 	 *
-	 * @param {sap.ui.core.Element} [oContent] The Element for which the existance of LayoutData should be ensured
+	 * @param {sap.ui.core.Element} oContent The Element for which the existence of LayoutData should be ensured
 	 * @private
 	 */
 	function _ensureLayoutData(oContent) {
@@ -1172,9 +1139,7 @@ sap.ui.define([
 		}
 	}
 
-
 	//////////////////////////////////////// Overridden Methods ////////////////////////////////////////
-
 
 	Splitter.prototype.invalidate = function(oOrigin) {
 		var bForce =
@@ -1190,75 +1155,9 @@ sap.ui.define([
 		 || (oOrigin === undefined);
 
 		// Only really invalidate/rerender if needed
-		if (bForce || this._needsInvalidation) {
-			this._needsInvalidation = false;
+		if (bForce) {
 			Control.prototype.invalidate.apply(this, arguments);
 		}
-	};
-
-	//////////////////////////////////// Property "orientation" ///////////////////////////////////
-
-	Splitter.prototype.setOrientation = function(sOrientation) {
-		var vReturn = this.setProperty("orientation", sOrientation, true);
-
-		this._switchOrientation();
-		this._delayedResize();
-
-		this.$().find(".sapUiLoSplitterBar").attr("aria-orientation", this._bHorizontal ? "vertical" : "horizontal");
-
-		return vReturn;
-	};
-
-
-	///////////////////////////////////// Property "width" ///////////////////////////////
-
-	Splitter.prototype.setWidth = function(sWidth) {
-		// Do not invalidate for size change
-		this.setProperty("width", sWidth, true);
-		// Set validated width on control
-		this.$().css("width", this.getProperty("width"));
-		return this;
-	};
-
-	///////////////////////////////////// Property "height" ///////////////////////////////
-
-	Splitter.prototype.setHeight = function(sHeight) {
-		// Do not invalidate for size change
-		this.setProperty("height", sHeight, true);
-		// Set validated height on control
-		this.$().css("height", this.getProperty("height"));
-		return this;
-	};
-
-	//////////////////////////////////////// Event "xxx" ///////////////////////////////////////
-
-	///////////////////////////////////// Aggregation "contents" ///////////////////////////////
-
-	Splitter.prototype.addContentArea = function(oContent) {
-		this._needsInvalidation = true;
-		_ensureLayoutData(oContent);
-		return this.addAggregation("contentAreas", oContent);
-	};
-
-	Splitter.prototype.removeContentArea = function(oContent) {
-		this._needsInvalidation = true;
-		return this.removeAggregation("contentAreas", oContent);
-	};
-
-	Splitter.prototype.removeAllContentArea = function() {
-		this._needsInvalidation = true;
-		return this.removeAllAggregation("contentAreas");
-	};
-
-	Splitter.prototype.destroyContentArea = function() {
-		this._needsInvalidation = true;
-		return this.destroyAggregation("contentAreas");
-	};
-
-	Splitter.prototype.insertContentArea = function(oContent, iIndex) {
-		this._needsInvalidation = true;
-		_ensureLayoutData(oContent);
-		return this.insertAggregation("contentAreas", oContent, iIndex);
 	};
 
 	Splitter.prototype._getContentAreas = function() {
