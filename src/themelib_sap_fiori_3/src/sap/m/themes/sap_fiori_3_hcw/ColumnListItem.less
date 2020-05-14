@@ -1,11 +1,8 @@
 /* ==================================== */
 /* CSS for control sap.m/ColumnListItem */
-/* Quartz Dark theme                    */
+/* Quartz High Contrast White theme     */
 /* ==================================== */
 
-@_sap_m_table_Row_Alternate_Background: lighten(@sapUiListBackground, 2);
-@_sap_m_table_Row_Alternate_BackgroundHovered: lighten(@sapUiListHoverBackground, 3);
-@_sap_m_table_Row_Alternate_BackgroundSelected: lighten(@sapUiListSelectionBackgroundColor, 2);
 @_sap_m_table_SelectionControlWidth: 2.75rem;
 
 /* selection border indicator */
@@ -21,11 +18,12 @@
 .sapMTableTBody:not(.sapMListTblHasPopin) > .sapMLIBSelected:last-child,
 .sapMTableTBody.sapMListTblHasPopin > .sapMLIBSelected + .sapMListTblSubRow:last-child {
 	box-shadow: inset 0px -0.125rem @sapUiListSelectionBorderColor;
+
 }
 
 // Safari work-around as box-shadow is not supported on the <tr> element,
 // hence adding the selection indicator box-shadow to the <td> element
 html[data-sap-ui-browser^="sf"] .sapMTableTBody:not(.sapMListTblHasPopin) > .sapMLIBSelected > td,
 html[data-sap-ui-browser^="sf"] .sapMTableTBody.sapMListTblHasPopin > .sapMLIBSelected + .sapMListTblSubRow > td {
-	box-shadow: inset 0px -0.0625rem @sapUiListSelectionBorderColor;
+	box-shadow: inset 0px -10.0625rem @sapUiListSelectionBorderColor;
 }
