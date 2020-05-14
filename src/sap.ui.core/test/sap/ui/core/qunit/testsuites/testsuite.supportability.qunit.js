@@ -1,4 +1,4 @@
-sap.ui.define(["sap/ui/Device"], function(Device) {
+sap.ui.define([], function() {
 
 	"use strict";
 	return {
@@ -12,7 +12,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			},
 			"util/jquery.sap.trace": {
 				title: "jQuery.sap.trace",
-				skip: Device.browser.phantomJS,
 				beforeBootstrap: "test-resources/sap/ui/core/qunit/util/beforeBootstrap/jQuery.sap.trace"
 			},
 			AppCacheBuster: {

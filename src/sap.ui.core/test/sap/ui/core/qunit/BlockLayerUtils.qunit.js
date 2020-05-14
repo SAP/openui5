@@ -36,7 +36,6 @@ sap.ui.define([
 
 	QUnit.test("Static/Relative Positioning - Reset", function (assert) {
 		// set static positioning
-		// NOTE: Direct DOM manipulation of the "style" attribute fails under PhantomJS (v2.2+) and IE10.
 		var $button = this.oButton.$();
 		$button.css("position", "static");
 
@@ -54,7 +53,6 @@ sap.ui.define([
 
 	QUnit.test("Static/Relative Positioning - NO Reset", function (assert) {
 		// set static positioning
-		// NOTE: Direct DOM manipulation of the "style" attribute fails under PhantomJS (v2.2+) and IE10.
 		var $button = this.oButton.$();
 		$button.css("position", "fixed");
 

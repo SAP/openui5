@@ -2,14 +2,13 @@
 
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/ui/Device',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/AppCacheBuster',
 	'sap/ui/core/Control',
 	"sap/base/Log",
 	'jquery.sap.dom',
 	'jquery.sap.sjax'
-	], function(jQuery, Device, ManagedObject, AppCacheBuster, Control, Log) {
+	], function(jQuery, ManagedObject, AppCacheBuster, Control, Log) {
 		"use strict";
 
 	// create a control with an URI property to validate URI replacement
@@ -28,68 +27,6 @@ sap.ui.define([
 	var sTimestamp = "1234567890";
 	var sTimestampComp1 = sTimestamp;
 	var sTimestampComp2 = "0987654321";
-
-	// >>> PhantomJS fix to override getter/setters for Node objects:
-	// usage of Object.getOwnPropertyDescriptor doesn't work (returns undefined)
-	// unfortunately this doesn't fix overwriting the getter/setters but
-	// at least the functions can be used without any issue.
-	// ==> https://github.com/DevExpress/testcafe-hammerhead/issues/823
-	// ==> https://github.com/ariya/phantomjs/issues/13895
-
-	// dummy function to correct the property value of a DomRef if needed
-	var fnCorrectProperty = function(oDomRef, sPropName) {
-		return oDomRef && oDomRef[sPropName];
-	};
-
-	// install the property correction fix
-	if (Device.browser.phantomJS) {
-
-		// Object.getOwnPropertyDescriptor fix for PhantomJS:
-		var fnGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
-		Object.getOwnPropertyDescriptor = function(obj, prop) {
-			var descriptor = fnGetOwnPropertyDescriptor.apply(this, arguments);
-			if (!descriptor && obj instanceof Node) {
-				descriptor = {
-					get: function() {
-						return this.val;
-					},
-					set: function(val) {
-						this.val = val;
-					},
-					enumerable: true,
-					configurable: true
-				};
-				Object.defineProperty(obj, prop, descriptor);
-			}
-			return descriptor;
-		};
-
-		// check the neccessity of the property fix
-		var desc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, "src");
-		Object.defineProperty(HTMLScriptElement.prototype, "src", {
-			get: function() { return "Works"; },
-			set: function(val) {},
-			enumerable: true,
-			configurable: true
-		});
-		if (document.createElement("script").src !== "Works!") {
-			// helper to correct the property for DomRefs with the overridden property descriptor functions
-			// which deactivates itself ones the PhantomJS browser supports the Object.defineProperty correct
-			fnCorrectProperty = function(oDomRef, sPropName) {
-				Log.info("Correcting property " + sPropName + " of DOM element " + oDomRef);
-				var tagName = oDomRef.tagName;
-				var HTMLXXXElement = window["HTML" + (tagName.charAt(0).toUpperCase() + tagName.substr(1).toLowerCase()) + "Element"];
-				var descriptor = Object.getOwnPropertyDescriptor(HTMLXXXElement.prototype, sPropName);
-				descriptor.set.call(oDomRef, oDomRef[sPropName]);
-				return descriptor.get.call(oDomRef);
-			};
-		} else {
-			Log.warning("\n\n\n\n\nPhantomJS supports Object.defineProperty now correctly. Workaround not required anymore!\n\n\n\n\n");
-		}
-		Object.defineProperty(HTMLScriptElement.prototype, "src", desc);
-
-	}
-
 
 	QUnit.module("intercept");
 
@@ -277,9 +214,6 @@ sap.ui.define([
 			// check script prefixing
 			jQuery.sap.includeScript("js/script.js", "myjs");
 			var sSource = jQuery.sap.byId("myjs").attr("src");
-			if (Device.browser.phantomJS) {
-				sSource = fnCorrectProperty(jQuery.sap.byId("myjs")[0], "src");
-			}
 			assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 
 		});
@@ -290,9 +224,6 @@ sap.ui.define([
 			// check script prefixing
 			jQuery.sap.includeStyleSheet("css/style.css", "mycss");
 			var sSource = jQuery.sap.byId("mycss").attr("href");
-			if (Device.browser.phantomJS) {
-				sSource = fnCorrectProperty(jQuery.sap.byId("mycss")[0], "href");
-			}
 			assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 
 		});
@@ -327,16 +258,10 @@ sap.ui.define([
 				// check for script.js
 				var oScript = document.querySelectorAll("[data-sap-ui-module='anyapp/js/script.js']"),
 					sSource = oScript && oScript[0] && oScript[0].src || "";
-				if (Device.browser.phantomJS) {
-					sSource = fnCorrectProperty(oScript[0], "src");
-				}
 				assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 				// check for script1.js
 				oScript = document.querySelectorAll("[data-sap-ui-module='anyapp/js/script1.js']");
 				sSource = oScript && oScript[0] && oScript[0].src || "";
-				if (Device.browser.phantomJS) {
-					sSource = fnCorrectProperty(oScript[0], "src");
-				}
 				assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") == -1, "URL \"" + sSource + "\" should not be prefixed!");
 				done();
 			});
@@ -448,9 +373,6 @@ sap.ui.define([
 		// check script prefixing
 		jQuery.sap.includeScript(document.baseURI + "anyapp/js/script.js", "myjs");
 		var sSource = jQuery.sap.byId("myjs").attr("src");
-		if (Device.browser.phantomJS) {
-			sSource = fnCorrectProperty(jQuery.sap.byId("myjs")[0], "src");
-		}
 		assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 
 	});
@@ -461,9 +383,6 @@ sap.ui.define([
 		// check script prefixing
 		jQuery.sap.includeStyleSheet(document.baseURI + "anyapp/css/style.css", "mycss");
 		var sSource = jQuery.sap.byId("mycss").attr("href");
-		if (Device.browser.phantomJS) {
-			sSource = fnCorrectProperty(jQuery.sap.byId("mycss")[0], "href");
-		}
 		assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 
 	});
@@ -498,16 +417,10 @@ sap.ui.define([
 			// check for script.js
 			var oScript = document.querySelectorAll("[data-sap-ui-module='remoteanyapp/js/script.js']"),
 				sSource = oScript && oScript[0] && oScript[0].src || "";
-			if (Device.browser.phantomJS) {
-				sSource = fnCorrectProperty(oScript[0], "src");
-			}
 			assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 			// check for script1.js
 			oScript = document.querySelectorAll("[data-sap-ui-module='remoteanyapp/js/script1.js']");
 			sSource = oScript && oScript[0] && oScript[0].src || "";
-			if (Device.browser.phantomJS) {
-				sSource = fnCorrectProperty(oScript[0], "src");
-			}
 			assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") == -1, "URL \"" + sSource + "\" should not be prefixed!");
 			done();
 		});

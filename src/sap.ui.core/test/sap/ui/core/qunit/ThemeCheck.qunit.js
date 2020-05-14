@@ -1,9 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/Device",
 	"sap/ui/core/ThemeCheck",
 	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(Device, ThemeCheck, themeApplied) {
+], function(ThemeCheck, themeApplied) {
 	"use strict";
 
 	// Wait until the theme is changed
@@ -219,28 +218,6 @@ sap.ui.define([
 	QUnit.module("CORS", {
 		beforeEach: function(assert) {
 
-			// Apply Object.getOwnPropertyDescriptor fix for PhantomJS
-			if (Device.browser.phantomJS) {
-				var fnOriginalGetOwnPropertyDescriptor = this.fnOriginalGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
-				Object.getOwnPropertyDescriptor = function(obj, prop) {
-					var descriptor = fnOriginalGetOwnPropertyDescriptor.apply(this, arguments);
-					if (!descriptor && obj instanceof Node) {
-						descriptor = {
-							get: function() {
-								return this.val;
-							},
-							set: function(val) {
-								this.val = val;
-							},
-							enumerable: true,
-							configurable: true
-						};
-						Object.defineProperty(obj, prop, descriptor);
-					}
-					return descriptor;
-				};
-			}
-
 			this.descLinkSheet = Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, "sheet");
 
 			Object.defineProperty(HTMLLinkElement.prototype, "sheet", {
@@ -264,11 +241,6 @@ sap.ui.define([
 			sinon.spy(Log, "error");
 		},
 		afterEach: function(assert) {
-
-			// Reset Object.getOwnPropertyDescriptor fix for PhantomJS
-			if (Device.browser.phantomJS) {
-				Object.getOwnPropertyDescriptor = this.fnOriginalGetOwnPropertyDescriptor;
-			}
 
 			Object.defineProperty(HTMLLinkElement.prototype, "sheet", this.descLinkSheet);
 			var Log = sap.ui.require("sap/base/Log");

@@ -31,11 +31,12 @@
 	}
 
 	if (/(trident|msie)\/[\w.]+;.*rv:([\w.]+)/i.test(window.navigator.userAgent)) {
+		// add polyfills for IE11
 		loadAndExecSync("../../../../../../resources/sap/ui/thirdparty/baseuri.js");
 		loadAndExecSync("../../../../../../resources/sap/ui/thirdparty/es6-promise.js");
 		loadAndExecSync("../../../../../../resources/sap/ui/thirdparty/es6-shim-nopromise.js");
 	} else if (/(edge)[ \/]([\w.]+)/i.test(window.navigator.userAgent) ||
-			/(Version\/(11\.0)|PhantomJS).*Safari/.test(window.navigator.userAgent)) {
+			/Version\/(11\.0).*Safari/.test(window.navigator.userAgent)) {
 		// for Microsoft Edge and Safari 11.0 the Promise polyfill is still needed
 		loadAndExecSync("../../../../../../resources/sap/ui/thirdparty/es6-promise.js");
 	}

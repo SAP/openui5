@@ -5,9 +5,6 @@ sap.ui.define([
 ], function(Interaction, Device) {
 	"use strict";
 
-	// skip tests for phantomjs, which does not support window.performance.getEntriesByType
-	var sMethod = Device.browser.phantomJS ? "skip" : "test";
-
 	QUnit.module("Interaction API", {
 		before: function() {
 			Interaction.setActive(true);
@@ -17,7 +14,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit[sMethod]("add BusyIndicator duration", function(assert) {
+	QUnit.test("add BusyIndicator duration", function(assert) {
 
 		assert.expect(4);
 		Interaction.start();
@@ -46,7 +43,7 @@ sap.ui.define([
 
 	});
 
-	QUnit[sMethod]("set component name", function(assert) {
+	QUnit.test("set component name", function(assert) {
 
 		assert.expect(5);
 		Interaction.start();
@@ -126,12 +123,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit[sMethod]("retrieved requests", function(assert) {
+	QUnit.test("retrieved requests", function(assert) {
 		assert.deepEqual(this.interaction.requests, this.requests, "requests are added to interaction");
 		assert.strictEqual(this.interaction.completeRoundtrips, 4, "only complete requests are counted");
 	});
 
-	QUnit[sMethod]("setRequestHeader parameters", function(assert) {
+	QUnit.test("setRequestHeader parameters", function(assert) {
 		var xhr = new XMLHttpRequest();
 		xhr.open("www.sap.com", "GET");
 		xhr.setRequestHeader("header", "value");
