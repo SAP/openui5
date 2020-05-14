@@ -5,6 +5,7 @@
 // Provides control sap.m.OverflowToolbar.
 sap.ui.define([
 	"./library",
+	"sap/ui/core/Control",
 	"sap/m/ToggleButton",
 	"sap/ui/core/InvisibleText",
 	"sap/m/Toolbar",
@@ -22,6 +23,7 @@ sap.ui.define([
 	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "lastFocusableDomRef"
 ], function(
 	library,
+	Control,
 	ToggleButton,
 	InvisibleText,
 	Toolbar,
@@ -246,6 +248,7 @@ sap.ui.define([
 	 * Called after the control is rendered
 	 */
 	OverflowToolbar.prototype.onAfterRendering = function () {
+		this._bInvalidatedAndNotRendered = false;
 		// TODO: refactor with addEventDelegate for onAfterRendering for both overflow button and its label
 		this._getOverflowButton().$().attr("aria-haspopup", "true");
 
@@ -411,6 +414,13 @@ sap.ui.define([
 
 	// Resize Handler
 	OverflowToolbar.prototype._handleResize = function() {
+		// fully executing _doLayout at this point poses risk of
+		// measuring the wrong DOM, since the control is invalidated
+		// but not yet rerendered
+		if (this._bInvalidatedAndNotRendered) {
+			return;
+		}
+
 		if (this.getAsyncMode()) {
 			this._doLayoutAsync();
 		} else {
@@ -845,6 +855,12 @@ sap.ui.define([
 			this._preserveChildControlFocusInfo();
 			this.invalidate();
 		}
+	};
+
+	OverflowToolbar.prototype.invalidate = function() {
+		this._bInvalidatedAndNotRendered = true;
+
+		Control.prototype.invalidate.apply(this, arguments);
 	};
 
 
