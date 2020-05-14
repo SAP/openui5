@@ -185,7 +185,15 @@ function (
 		oOPL.destroy();
 	});
 
-	QUnit.module("Invalidation");
+	QUnit.module("Invalidation", {
+		beforeEach: function () {
+			this.oObjectPage = createPage("page1");
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+			this.oObjectPage = null;
+		}
+	});
 
 	QUnit.test("do not invalidate parent upon first rendering", function (assert) {
 
@@ -232,6 +240,41 @@ function (
 		oApp.attachAfterNavigate(afterNavigatePage2);
 
 		oApp.to("page02");
+	});
+
+	QUnit.test("toggleTitle upon rerendering", function (assert) {
+
+		var oObjectPage = this.oObjectPage,
+			oSection = oObjectPage.getSections()[0],
+			done = assert.async();
+
+		// Setup step1: wait for page to render
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			// Setup step3: wait to onBeforeRendering
+			oObjectPage.addEventDelegate({
+
+				onBeforeRendering: function() {
+					// Setup step4: mock state after user scrolled to snap the header
+					oObjectPage._bHeaderInTitleArea = true;
+
+					// Act: app requests to scroll to a section that requires snapped header
+					oObjectPage.scrollToSection(oSection.getId());
+				},
+				onAfterRendering: function() {
+					// Check
+					assert.ok(oObjectPage._$titleArea.hasClass("sapUxAPObjectPageHeaderStickied"));
+					done();
+				}
+			});
+
+			// Setup step2: cause rerendering
+			oObjectPage.invalidate();
+			Core.applyChanges();
+		});
+
+		oObjectPage.placeAt("qunit-fixture");
+		Core.applyChanges();
 	});
 
 
