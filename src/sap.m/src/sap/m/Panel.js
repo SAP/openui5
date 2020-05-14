@@ -221,7 +221,7 @@ sap.ui.define([
 			return this;
 		}
 
-		this.setProperty("expanded", bExpanded, true);
+		this.setProperty("expanded", bExpanded);
 
 		if (!this.getExpandable()) {
 			return this;
