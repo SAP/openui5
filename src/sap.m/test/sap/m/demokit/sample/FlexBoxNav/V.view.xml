@@ -22,9 +22,9 @@
 				justifyContent="Center"
 				alignItems="Center">
 				<items>
-					<core:HTML content="&lt;a href='javascript:return false;'&gt;Item 1&lt;/a&gt;" />
-					<core:HTML content="&lt;a href='javascript:return false;'&gt;Long item 2&lt;/a&gt;" />
-					<core:HTML content="&lt;a href='javascript:return false;'&gt;Item 3&lt;/a&gt;" />
+					<core:HTML content="&lt;a &gt;Item 1&lt;/a&gt;" />
+					<core:HTML content="&lt;a &gt;Long item 2&lt;/a&gt;" />
+					<core:HTML content="&lt;a &gt;Item 3&lt;/a&gt;" />
 				</items>
 			</FlexBox>
 			</Panel>
@@ -44,21 +44,21 @@
 					alignItems="Center">
 					<items>
 						<core:HTML
-							content="&lt;a href='javascript:return false;'&gt;Item 1&lt;/a&gt;">
+							content="&lt;a &gt;Item 1&lt;/a&gt;">
 							<core:layoutData>
-								<FlexItemData growFactor="1" />
+								<FlexItemData growFactor="1" baseSize="25%" />
 							</core:layoutData>
 						</core:HTML>
 						<core:HTML
-							content="&lt;a href='javascript:return false;'&gt;Long item 2&lt;/a&gt;">
+							content="&lt;a &gt;Long item 2&lt;/a&gt;">
 							<core:layoutData>
-								<FlexItemData growFactor="1" />
+								<FlexItemData growFactor="1" baseSize="25%" />
 							</core:layoutData>
 						</core:HTML>
 						<core:HTML
-							content="&lt;a href='javascript:return false;'&gt;Item 3&lt;/a&gt;">
+							content="&lt;a &gt;Item 3&lt;/a&gt;">
 							<core:layoutData>
-								<FlexItemData growFactor="1" />
+								<FlexItemData growFactor="1" baseSize="25%" />
 							</core:layoutData>
 						</core:HTML>
 					</items>
