@@ -437,6 +437,8 @@ sap.ui.define([
 			assert.ok(!this.oVariantManagement.oLabelKey.getVisible());
 			assert.ok(!this.oVariantManagement.oInputManualKey.getVisible());
 
+			assert.ok(!this.oVariantManagement._getShowExecuteOnSelection());
+
 			var oGrid = fGetGrid(this.oVariantManagement.oSaveAsDialog);
 			var oGridContent = oGrid.getContent();
 			assert.ok(oGridContent);
@@ -446,13 +448,15 @@ sap.ui.define([
 			this.oVariantManagement.oSaveAsDialog = undefined;
 			this.oVariantManagement.oExecuteOnSelect.destroy();
 
-			this.oVariantManagement.setShowExecuteOnSelection(true);
+			this.oVariantManagement._setShowExecuteOnSelection(true);
 			this.oVariantManagement._createSaveAsDialog();
 
 			assert.ok(this.oVariantManagement.oSaveAsDialog);
 			sinon.stub(this.oVariantManagement.oSaveAsDialog, "open");
 
 			this.oVariantManagement._openSaveAsDialog();
+
+			assert.ok(this.oVariantManagement._getShowExecuteOnSelection());
 			oGrid = fGetGrid(this.oVariantManagement.oSaveAsDialog);
 			oGridContent = oGrid.getContent();
 			assert.ok(oGridContent);
