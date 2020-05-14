@@ -260,7 +260,7 @@ sap.ui.define([
 			}
 		}, this);
 
-		if (iTokensCount === 1 && (iFirstTokenToHide !== -1 || !this.getEditable())) {
+		if (iTokensCount === 1 && iFirstTokenToHide !== -1) {
 			this.setFirstTokenTruncated(true);
 			return;
 		} else if (iTokensCount === 1 && aTokens[0].getTruncated()) {
