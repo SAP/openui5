@@ -25,6 +25,7 @@
 					"routingApp/view/Detail2.view.xml",
 					"routingApp/view/Master.view.xml",
 					"routingApp/Component.js",
+					"routingApp/manifest.json",
 					"RoutingMasterDetail.html",
 					"manifest.json"
 				]
