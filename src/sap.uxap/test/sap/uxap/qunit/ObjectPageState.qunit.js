@@ -493,6 +493,34 @@ function (
 		});
 	}
 
+	QUnit.test("skips layout calculations if rendering not completed", function (assert) {
+
+		var oObjectPage = this.oObjectPage,
+			oCacheDomElementsSpy = sinon.spy(oObjectPage, "_cacheDomElements"),
+			oObtainLayoutSpy = sinon.spy(oObjectPage, "_obtainExpandedTitleHeight"),
+			oHeaderTitle = oObjectPage.getHeaderTitle(),
+			done = assert.async();
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			// assert initial state
+			assert.ok(oObjectPage._$titleArea.length > 0, "DOM reference is cached");
+
+			oHeaderTitle.addEventDelegate({
+				onAfterRendering: function() { // at this point onAfterRendering of ObjectPage is not called yet
+					assert.ok(oCacheDomElementsSpy.notCalled, "DOM references are not yet cached");
+					assert.ok(oObjectPage._$titleArea.length === 0, "DOM reference is not yet available");
+					assert.ok(oObtainLayoutSpy.notCalled, "layout of title is not calculated");
+					done();
+				}
+			});
+
+			// Act
+			oCacheDomElementsSpy.reset();
+			oObtainLayoutSpy.reset();
+			oObjectPage.rerender(); // after rerender the old cached references will no longer be valid
+		});
+	});
+
 	QUnit.module("Header expand|collapse", {
 		beforeEach: function () {
 			this.oObjectPage = new ObjectPageLayout({
