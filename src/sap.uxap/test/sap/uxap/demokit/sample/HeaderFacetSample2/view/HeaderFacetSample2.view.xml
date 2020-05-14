@@ -107,32 +107,30 @@
                     </m:HBox>
                 </m:VBox>
 
-                <m:VBox width="320px" wrap="Wrap" class="sapUiSmallMarginBottom">
+                <m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
                     <m:Title text="Product Description" class="sapUiTinyMarginBottom"/>
-                    <m:Text text="Top-design high-quality coffee mug - ideal for a comforting moment; Pack: 6; material: Porcelain - durable dishwasher and microwave-safe porcelain that cleans easily and is ideal for everyday service. Comes in two bright colors."/>
+                    <m:Text  width="320px" text="Top-design high-quality coffee mug - ideal for a comforting moment; Pack: 6; material: Porcelain - durable dishwasher and microwave-safe porcelain that cleans easily and is ideal for everyday service. Comes in two bright colors."/>
                 </m:VBox>
 
-                <m:HBox wrap="Wrap" class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-                    <m:VBox class="sapUiMediumMarginEnd">
-                        <m:Title text="Status:" class="sapUiTinyMarginBottom"/>
-                        <m:ObjectStatus text="Delivery" state="Success" class="sapMObjectStatusLarge"/>
-                    </m:VBox>
+                <m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+                    <m:Title text="Status:" class="sapUiTinyMarginBottom"/>
+                    <m:ObjectStatus text="Delivery" state="Success" class="sapMObjectStatusLarge"/>
+                </m:VBox>
 
-                    <m:VBox class="sapUiMediumMarginEnd sapUiSmallMarginBottom">
-                        <m:Title text="Delivery Time:" class="sapUiTinyMarginBottom"/>
-                        <m:ObjectStatus text="12 Days" icon="sap-icon://shipping-status" class="sapMObjectStatusLarge"/>
-                    </m:VBox>
+                <m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+                    <m:Title text="Delivery Time:" class="sapUiTinyMarginBottom"/>
+                    <m:ObjectStatus text="12 Days" icon="sap-icon://shipping-status" class="sapMObjectStatusLarge"/>
+                </m:VBox>
 
-                    <m:VBox class="sapUiMediumMarginEnd sapUiSmallMarginBottom">
-                        <m:Title text="Assembly Option:" class="sapUiTinyMarginBottom"/>
-                        <m:ObjectStatus text="To Be Selected" state="Error" class="sapMObjectStatusLarge"/>
-                    </m:VBox>
+                <m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+                    <m:Title text="Assembly Option:" class="sapUiTinyMarginBottom"/>
+                    <m:ObjectStatus text="To Be Selected" state="Error" class="sapMObjectStatusLarge"/>
+                </m:VBox>
 
-                    <m:VBox class="sapUiMediumMarginEnd">
-                        <m:Title text="Price:" class="sapUiTinyMarginBottom"/>
-                        <m:ObjectStatus text="579 EUR" class="sapMObjectStatusLarge"/>
-                    </m:VBox>
-                 </m:HBox>
+                <m:VBox class="sapUiLargeMarginEnd">
+                    <m:Title text="Price:" class="sapUiTinyMarginBottom"/>
+                    <m:ObjectStatus text="579 EUR" class="sapMObjectStatusLarge"/>
+                </m:VBox>
 
                 <m:VBox class="sapUiMediumMarginEnd sapUiSmallMarginBottom">
                     <m:Title text="Average User Rating" class="sapUiTinyMarginBottom"/>
