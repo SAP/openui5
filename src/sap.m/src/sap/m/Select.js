@@ -2540,7 +2540,7 @@ function(
 		 *
 		 * Default value is an empty string <code>""</code> or <code>undefined</code>.
 		 *
-		 * @param {string | undefined} vItem New value for property <code>selectedItemId</code>.
+		 * @param {string | undefined} [vItem] New value for property <code>selectedItemId</code>.
 		 * If the provided <code>vItem</code> has a default value, the first enabled item will be selected (if any items exist).
 		 *
 		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.

@@ -806,8 +806,7 @@ function(
 	 *
 	 *
 	 * @public
-	 * @param {sap.ui.core.Item} oItem New value for the <code>selectedItem</code> association.
-	 * Default value is <code>null</code>.
+	 * @param {sap.ui.core.Item} [oItem=null] New value for the <code>selectedItem</code> association.
 	 * If an ID of a <code>sap.ui.core.Item</code> is given, the item with this ID becomes the
 	 * <code>selectedItem</code> association.
 	 * Alternatively, a <code>sap.ui.core.Item</code> instance may be given or <code>null</code> to clear
