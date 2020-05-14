@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/m/MenuItem"
 ],
 function (
 	SearchManager,
@@ -28,7 +29,8 @@ function (
 	Core,
 	Log,
 	jQuery,
-	JSONModel
+	JSONModel,
+	MenuItem
 ) {
 	"use strict";
 
@@ -321,7 +323,7 @@ function (
 		this.oSB._assignControls();
 
 		// Assert
-		assert.strictEqual(this.oSB._oTitleControl, this.oSB._oMegaMenu,
+		assert.strictEqual(this.oSB._oTitleControl, this.oSB._oPrimaryTitle,
 			"Configuration without MenuButton is correctly rendered");
 		assert.strictEqual(this.oSB._oPrimaryTitle !== null, true,  "PrimaryTitle element instance is hold by the control");
 		assert.strictEqual(this.oSB._oOverflowToolbar.getContent().indexOf(this.oSB._oPrimaryTitle ), -1,
@@ -593,7 +595,7 @@ function (
 		Core.applyChanges();
 
 		// Act
-		document.getElementById(DOM_RENDER_LOCATION).style.width = 300 + "px";
+		document.getElementById(DOM_RENDER_LOCATION).style.width = 320 + "px";
 		this.oSB._oResponsiveHandler._handleResize();
 
 		// Assert
@@ -612,16 +614,22 @@ function (
 
 
 		// Act
-		document.getElementById(DOM_RENDER_LOCATION).style.width = 300 + "px";
+		document.getElementById(DOM_RENDER_LOCATION).style.width = 320 + "px";
 		oControl.setShowMenuButton(false);
 		this.oSB._oResponsiveHandler._handleResize();
 
 		// Assert
 
-		assert.strictEqual(oControl._oHomeIcon.getVisible(), true, "regular mode requirements passed");
+		assert.strictEqual(oControl._oSecondTitle.getVisible(), false, "phone mode requirements passed");
+		this.oSB.setMenu(new Menu({items:[new MenuItem()]}));
+		this.oSB.setHomeIcon("");
+		assert.strictEqual(oControl._oMegaMenu.getText(), oControl.getTitle(), "phone mode requirements passed - if there is a " +
+			"menu configured and no home icon, we show primary title text inside the MenuButton");
 
 		//Cleanup
 		document.getElementById(DOM_RENDER_LOCATION).style.width = 1024 + "px";
+
+
 	});
 
 	// Accessibility related tests
@@ -918,6 +926,7 @@ function (
 	QUnit.test("Mobile requirements with both configuration - with or without menu button", function (assert) {
 
 		// Act
+		this.oSB.setMenu(new Menu({items:[new MenuItem()]}));
 		this.oSB._oResponsiveHandler._transformToPhoneState();
 		this.oSB.setShowMenuButton(true);
 		this.oSB._oSearch.firePress();
