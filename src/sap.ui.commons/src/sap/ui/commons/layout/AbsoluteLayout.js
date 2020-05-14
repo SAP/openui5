@@ -243,9 +243,9 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.Control} oContent
 	 *         The content to add; if empty, nothing is inserted.
-	 * @param {object} oPos
-	 *         JSON-like object which defines the position of the child control in the layout. The object is expected to have one or more from the attribute set
-	 *         top, bottom, left, right; each with a value of type sap.ui.core.CSSSize. If no object is given, the default is left=0px,right=0px
+	 * @param {object} [oPos=\{left: "0px", right: "0px"\}]
+	 *         JSON-like object which defines the position of the child control in the layout.
+	 *         The object is expected to have one or more from the attribute set top, bottom, left, right; each with a value of type sap.ui.core.CSSSize.
 	 * @type sap.ui.commons.layout.AbsoluteLayout
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -266,9 +266,9 @@ sap.ui.define([
 	 * @param {int} iIndex
 	 *         The '0'-based index where the content shall be inserted at. For a negative value of iIndex, the content is inserted at position '0';
 	 *         for a value greater than the current size of the aggregation, the content is inserted at the last position.
-	 * @param {object} oPos
-	 *         JSON-like object which defines the position of the child control within the layout. The object is expected to have one or more
-	 *         from the attribute set top, bottom, left, right; each with a value of type sap.ui.core.CSSSize. If no object is given, the default is left=0px,right=0px.
+	 * @param {object} [oPos=\{left: "0px", right: "0px"\}]
+	 *         JSON-like object which defines the position of the child control in the layout.
+	 *         The object is expected to have one or more from the attribute set top, bottom, left, right; each with a value of type sap.ui.core.CSSSize.
 	 * @type sap.ui.commons.layout.AbsoluteLayout
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -363,10 +363,9 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.Control} oControl
 	 *         The child control for which to change the position information; if empty or not aggregated, nothing is changed
-	 * @param {object} oPos
-	 *         JSON-like object which defines the position of the child control. The object is expected to have one or more from the attribute set
-	 *         top, bottom, left, right; each with a value of type sap.ui.core.CSSSize.
-	 *         If no object is given, the default is used which is left=0px,right=0px.
+	 * @param {object} [oPos=\{left: "0px", right: "0px"\}]
+	 *         JSON-like object which defines the position of the child control in the layout.
+	 *         The object is expected to have one or more from the attribute set top, bottom, left, right; each with a value of type sap.ui.core.CSSSize.
 	 * @type boolean
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
