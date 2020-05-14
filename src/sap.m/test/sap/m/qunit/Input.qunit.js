@@ -5148,8 +5148,9 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		this.oInput._openSuggestionsPopover();
-		this.clock.tick();
+
+		this.oInput._$input.focus().val("on").trigger("input");
+		this.clock.tick(300);
 
 		this.oInput._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
 		sap.ui.getCore().applyChanges();
@@ -5159,10 +5160,13 @@ sap.ui.define([
 		assert.strictEqual(oSuggPopoverHeaderValueState, "New value state message containing a link", "The FormattedText aggregation is correctly updated in the popover's value state header while it's open");
 
 		// Act
-		this.oInput._closeSuggestionPopup();
+		qutils.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick();
+		qutils.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ENTER);
 		this.clock.tick();
 
 		oPopup = this.oInput._oValueStateMessage._oPopup;
+
 		// Assert
 		assert.strictEqual(oPopup.getContent().childNodes[1].textContent, "New value state message containing a link", "The updated FormattedText aggregation is also correctly displayed in the Input's value state popup after the suggestion popover is closed");
 	});
