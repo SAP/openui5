@@ -24,6 +24,12 @@ html[data-sap-ui-browser="sf10"] {
 	}
 }
 
+//BCP: 0020751295 0000279538 2020
+.sapMText.sapMTextMaxLineWrapper {
+	// needed for line clamp to work
+	overflow: hidden;
+}
+
 .sapMTextNoWrap,
 .sapMTextMaxLine {
 	overflow: hidden;
@@ -97,7 +103,7 @@ html[data-sap-ui-browser="sf10"] {
 
 /* HorizontalLayout */
 .sapUiHLayoutChildWrapper > .sapMText {
-    vertical-align: text-bottom;
+	vertical-align: text-bottom;
 }
 
 /* Transparent Toolbar Context*/
