@@ -14,8 +14,15 @@
 		"config": {
 			"sample": {
 				"files": [
+					"Async.view.html",
+					"Async.view.js",
+					"Async.view.json",
+					"Async.view.xml",
+					"Component.js",
+					"Root.view.js",
 					"Sample.view.xml",
 					"Sample.controller.js",
+					"SyncSample.view.xml",
 					"manifest.json"
 				]
 			}
