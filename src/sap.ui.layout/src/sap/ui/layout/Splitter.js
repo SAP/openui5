@@ -72,61 +72,63 @@ sap.ui.define([
 	 * @alias sap.ui.layout.Splitter
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var Splitter = Control.extend("sap.ui.layout.Splitter", /** @lends sap.ui.layout.Splitter.prototype */ { metadata : {
+	var Splitter = Control.extend("sap.ui.layout.Splitter", /** @lends sap.ui.layout.Splitter.prototype */ {
+		metadata: {
+			library : "sap.ui.layout",
+			properties : {
 
-		library : "sap.ui.layout",
-		properties : {
+				/**
+				 * Whether to split the contents horizontally (default) or vertically.
+				 */
+				orientation : {type : "sap.ui.core.Orientation", group : "Behavior", defaultValue : Orientation.Horizontal},
 
-			/**
-			 * Whether to split the contents horizontally (default) or vertically.
-			 */
-			orientation : {type : "sap.ui.core.Orientation", group : "Behavior", defaultValue : Orientation.Horizontal},
+				/**
+				 * The width of the control
+				 */
+				width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : '100%'},
 
-			/**
-			 * The width of the control
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : '100%'},
+				/**
+				 * The height of the control
+				 */
+				height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : '100%'}
+			},
+			defaultAggregation : "contentAreas",
+			aggregations : {
 
-			/**
-			 * The height of the control
-			 */
-			height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : '100%'}
-		},
-		defaultAggregation : "contentAreas",
-		aggregations : {
+				/**
+				 * The content areas to be split. The control will show n-1 splitter bars between n controls in this aggregation.
+				 */
+				contentAreas : {type : "sap.ui.core.Control", multiple : true, singularName : "contentArea"}
+			},
+			events : {
 
-			/**
-			 * The content areas to be split. The control will show n-1 splitter bars between n controls in this aggregation.
-			 */
-			contentAreas : {type : "sap.ui.core.Control", multiple : true, singularName : "contentArea"}
-		},
-		events : {
+				/**
+				 * Event is fired when contents are resized.
+				 */
+				resize : {
+					parameters : {
 
-			/**
-			 * Event is fired when contents are resized.
-			 */
-			resize : {
-				parameters : {
+						/**
+						 * The ID of the splitter control. The splitter control can also be accessed by calling getSource() on the event.
+						 */
+						id : {type : "string"},
 
-					/**
-					 * The ID of the splitter control. The splitter control can also be accessed by calling getSource() on the event.
-					 */
-					id : {type : "string"},
+						/**
+						 * An array of values representing the old (pixel-)sizes of the splitter contents
+						 */
+						oldSizes : {type : "int[]"},
 
-					/**
-					 * An array of values representing the old (pixel-)sizes of the splitter contents
-					 */
-					oldSizes : {type : "int[]"},
-
-					/**
-					 * An array of values representing the new (pixel-)sizes of the splitter contents
-					 */
-					newSizes : {type : "int[]"}
+						/**
+						 * An array of values representing the new (pixel-)sizes of the splitter contents
+						 */
+						newSizes : {type : "int[]"}
+					}
 				}
-			}
+			},
+			designtime: "sap/ui/layout/designtime/Splitter.designtime"
 		},
-		designtime: "sap/ui/layout/designtime/Splitter.designtime"
-	}});
+		renderer: SplitterRenderer
+	});
 
 	Splitter.prototype.init = function() {
 		this._liveResize        = true;
@@ -179,7 +181,7 @@ sap.ui.define([
 	};
 
 	Splitter.prototype.onBeforeRendering = function() {
-		this.getContentAreas().forEach(_ensureLayoutData);
+		this._getContentAreas().forEach(_ensureLayoutData);
 		this._initOrientationProperties();
 	};
 

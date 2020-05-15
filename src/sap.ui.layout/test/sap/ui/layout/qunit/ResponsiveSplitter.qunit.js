@@ -1,5 +1,4 @@
 /*global QUnit sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	'jquery.sap.global',
@@ -21,8 +20,9 @@ sap.ui.define([
 	Button,
 	Text,
 	ScrollContainer,
-	HTML) {
-	'use strict';
+	HTML
+) {
+	"use strict";
 
 	window._setTimeout = window.setTimeout;
 
@@ -118,7 +118,6 @@ sap.ui.define([
 		}
 	});
 
-
 	QUnit.test("Rendering of two demand panes", function (assert) {
 		var done = assert.async();
 
@@ -172,8 +171,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").css("height"), "0px", "Paginator's height should be 0");
-		assert.strictEqual(this.oResponsiveSplitter.getAggregation("_pages")[0].getVisible(), true, "The first page sohuld be visible");
-		assert.strictEqual(this.oResponsiveSplitter.getAggregation("_pages")[0].getContent(), this.oButton2, "The first page's content should be button from the defaultPane");
+		assert.strictEqual(this.oResponsiveSplitter.getAggregation("_pages")[0].getVisible(), true, "The first page should be visible");
+		assert.strictEqual(sap.ui.getCore().byId(this.oResponsiveSplitter.getAggregation("_pages")[0].getContent()), this.oButton2, "The first page's content should be button from the defaultPane");
 		assert.ok(this.oButton2.getDomRef(), "Second button should be visible");
 		assert.ok(!this.oButton1.getDomRef(), "First button should be visible");
 	});
