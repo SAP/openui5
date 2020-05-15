@@ -896,28 +896,10 @@ sap.ui.define([
 
 		var $identifierLine = this._findById($domRef, "identifierLine"),
 			iIdentifierContWidth = $identifierLine.width(),
-			$subtitle = this._findById($domRef, "subtitle"),
-			$innerTitle = this._findById($domRef, "innerTitle"),
 			$identifierLineContainer = this._findById($domRef, "identifierLineContainer"),
-			iSubtitleBottom,
-			iTitleBottom,
 			$actions = this._findById($domRef, "actions"),
 			$imageContainer = $domRef ? $domRef.find(".sapUxAPObjectPageHeaderObjectImageContainer") : this.$().find(".sapUxAPObjectPageHeaderObjectImageContainer"),
-			iActionsAndImageWidth = $actions.width() + $imageContainer.width(),
-			iPixelTolerance = this.$().parents().hasClass('sapUiSizeCompact') ? 7 : 3;  // the tolerance of pixels from which we can tell that the title and subtitle are on the same row
-
-		if ($subtitle.length) {
-			if ($subtitle.hasClass("sapOPHSubtitleBlock")) {
-				$subtitle.removeClass("sapOPHSubtitleBlock");
-			}
-
-			iSubtitleBottom = $subtitle.outerHeight() + $subtitle.position().top;
-			iTitleBottom = $innerTitle.outerHeight() + $innerTitle.position().top;
-			// check if subtitle is below the title and add it a display block class
-			if (Math.abs(iSubtitleBottom - iTitleBottom) > iPixelTolerance) {
-				$subtitle.addClass("sapOPHSubtitleBlock");
-			}
-		}
+			iActionsAndImageWidth = $actions.width() + $imageContainer.width();
 
 		$identifierLineContainer.width((0.95 - (iActionsAndImageWidth / iIdentifierContWidth)) * 100 + "%");
 	};
