@@ -4,9 +4,10 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/Image",
 	"sap/m/FlexItemData",
+	"sap/m/Button",
 	"sap/ui/Device",
 	"sap/m/VBox"
-], function(FlexBox, HTML, jQuery, Image, FlexItemData, Device, VBox) {
+], function(FlexBox, HTML, jQuery, Image, FlexItemData, Button, Device, VBox) {
 	/*global document, jQuery, sap, QUnit*/
 	"use strict";
 
@@ -800,6 +801,43 @@ sap.ui.define([
 		var iClassesLengthWithoutDuplicate = Array.from(new Set(aClassesList)).toString().split(",").length;
 
 		assert.equal(iClassesLength, iClassesLengthWithoutDuplicate, "There are no duplicated class names" );
+	});
+
+	QUnit.module("FlexItemData", {
+		beforeEach: function() {
+
+			this.oLayoutData = new FlexItemData({
+				styleClass: "class1",
+				growFactor: 1
+			});
+
+			this.oBox = new FlexBox({
+				items: [
+					new Button({
+						text : "Text",
+						layoutData: this.oLayoutData
+					})
+				]
+			});
+
+			this.oBox.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+
+			this.oLayoutData = null;
+
+			this.oBox.destroy();
+			this.oBox = null;
+		}
+	});
+
+	QUnit.test("FlexItemData properties", function(assert) {
+
+		this.oLayoutData.setGrowFactor(0);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(window.getComputedStyle(this.oBox.$()[0].firstChild).flexGrow, "0", "flex grow is correctly set");
 	});
 
 	QUnit.module("Accessibility", {
