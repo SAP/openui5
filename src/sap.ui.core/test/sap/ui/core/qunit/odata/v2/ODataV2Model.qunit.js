@@ -4792,6 +4792,47 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Token request for GET requests (read access logging set)", function(assert) {
+		var done = assert.async();
+
+		var oModel = new ODataModel(sURI, {
+			tokenHandlingForGet: true,
+			useBatch: false
+		});
+
+		var fnRequestHandlerSpy = sinon.spy(oModel, "_request");
+
+		oModel.oMetadata.loaded().then(function() {
+			oModel.read("/Categories(1)", {
+				success: function() {
+					assert.ok(fnRequestHandlerSpy.getCall(1).args[0].method === "GET", "GET Request send");
+					assert.ok(fnRequestHandlerSpy.getCall(1).args[0].headers["x-csrf-token"], "CSRF token set");
+					done();
+				}
+			});
+		});
+	});
+
+	QUnit.test("Token request for GET requests (tokenHandlingForGet = false)", function(assert) {
+		var done = assert.async();
+
+		var oModel = new ODataModel(sURI, {
+			useBatch: false
+		});
+
+		var fnRequestHandlerSpy = sinon.spy(oModel, "_request");
+
+		oModel.oMetadata.loaded().then(function() {
+			oModel.read("/Categories(1)", {
+				success: function() {
+					assert.ok(fnRequestHandlerSpy.getCall(0).args[0].method === "GET", "GET Request send");
+					assert.ok(!fnRequestHandlerSpy.getCall(0).args[0].headers["x-csrf-token"], "CSRF token not set");
+					done();
+				}
+			});
+		});
+	});
+
 	QUnit.test("Token request for POST requests", function(assert) {
 		var done = assert.async();
 
