@@ -1,0 +1,1074 @@
+[
+	{
+		"id": "id_1579844823982_41_addFields",
+		"changeType": "addFields",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"field": {
+				"value": [
+					"AccountingDocumentKeyComplex/ComplexProperty01"
+				],
+				"valueProperty": [
+					"value"
+				],
+				"selector": {
+					"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty01",
+					"idIsLocal": true
+				},
+				"jsTypes": [
+					"sap.ui.comp.smartfield.SmartField"
+				],
+				"index": 1
+			}
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T05:47:21.558Z"
+	},
+	{
+		"id": "id_1579844828912_43_addFields",
+		"changeType": "addFields",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"field": {
+				"value": [
+					"AccountingDocumentKeyComplex/ComplexProperty02"
+				],
+				"valueProperty": [
+					"value"
+				],
+				"selector": {
+					"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty02",
+					"idIsLocal": true
+				},
+				"jsTypes": [
+					"sap.ui.comp.smartfield.SmartField"
+				],
+				"index": 3
+			}
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T05:47:21.559Z"
+	},
+	{
+		"id": "id_1579844834534_45_addFields",
+		"changeType": "addFields",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"field": {
+				"value": [
+					"AccountingDocumentKeyComplex/ComplexProperty03"
+				],
+				"valueProperty": [
+					"value"
+				],
+				"selector": {
+					"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty03",
+					"idIsLocal": true
+				},
+				"jsTypes": [
+					"sap.ui.comp.smartfield.SmartField"
+				],
+				"index": 5
+			}
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T05:47:21.560Z"
+	},
+	{
+		"id": "id_1579855106890_40_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty01",
+						"idIsLocal": true
+					},
+					"sourceIndex": 1,
+					"targetIndex": 0
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.292Z"
+	},
+	{
+		"id": "id_1579855109019_41_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty02",
+						"idIsLocal": true
+					},
+					"sourceIndex": 3,
+					"targetIndex": 2
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.293Z"
+	},
+	{
+		"id": "id_1579855110845_42_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty03",
+						"idIsLocal": true
+					},
+					"sourceIndex": 5,
+					"targetIndex": 4
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.294Z"
+	},
+	{
+		"id": "id_1579855113923_43_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty02",
+						"idIsLocal": true
+					},
+					"sourceIndex": 2,
+					"targetIndex": 4
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.295Z"
+	},
+	{
+		"id": "id_1579855117013_44_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty01",
+						"idIsLocal": true
+					},
+					"sourceIndex": 0,
+					"targetIndex": 5
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.296Z"
+	},
+	{
+		"id": "id_1579855118745_45_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty03",
+						"idIsLocal": true
+					},
+					"sourceIndex": 2,
+					"targetIndex": 0
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.297Z"
+	},
+	{
+		"id": "id_1579855120122_46_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty02",
+						"idIsLocal": true
+					},
+					"sourceIndex": 3,
+					"targetIndex": 2
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.298Z"
+	},
+	{
+		"id": "id_1579855122110_47_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty01",
+						"idIsLocal": true
+					},
+					"sourceIndex": 5,
+					"targetIndex": 4
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.299Z"
+	},
+	{
+		"id": "id_1579855123356_48_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty01",
+						"idIsLocal": true
+					},
+					"sourceIndex": 4,
+					"targetIndex": 3
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.300Z"
+	},
+	{
+		"id": "id_1579855124620_49_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty02",
+						"idIsLocal": true
+					},
+					"sourceIndex": 2,
+					"targetIndex": 3
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.301Z"
+	},
+	{
+		"id": "id_1579855126789_50_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty03",
+						"idIsLocal": true
+					},
+					"sourceIndex": 0,
+					"targetIndex": 2
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.302Z"
+	},
+	{
+		"id": "id_1579855128060_51_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty02",
+						"idIsLocal": true
+					},
+					"sourceIndex": 3,
+					"targetIndex": 2
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.303Z"
+	},
+	{
+		"id": "id_1579855129035_52_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty01",
+						"idIsLocal": true
+					},
+					"sourceIndex": 1,
+					"targetIndex": 2
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.304Z"
+	},
+	{
+		"id": "id_1579855130266_53_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty02",
+						"idIsLocal": true
+					},
+					"sourceIndex": 1,
+					"targetIndex": 0
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.305Z"
+	},
+	{
+		"id": "id_1579855131869_54_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty03",
+						"idIsLocal": true
+					},
+					"sourceIndex": 3,
+					"targetIndex": 5
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.306Z"
+	},
+	{
+		"id": "id_1579855133793_55_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty01",
+						"idIsLocal": true
+					},
+					"sourceIndex": 2,
+					"targetIndex": 0
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.307Z"
+	},
+	{
+		"id": "id_1579855136308_56_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty02",
+						"idIsLocal": true
+					},
+					"sourceIndex": 1,
+					"targetIndex": 2
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.308Z"
+	},
+	{
+		"id": "id_1579855140156_57_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty02",
+						"idIsLocal": true
+					},
+					"sourceIndex": 2,
+					"targetIndex": 1
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.309Z"
+	},
+	{
+		"id": "id_1579855143277_58_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty03",
+						"idIsLocal": true
+					},
+					"sourceIndex": 5,
+					"targetIndex": 2
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.310Z"
+	},
+	{
+		"id": "id_1579855144532_59_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty02",
+						"idIsLocal": true
+					},
+					"sourceIndex": 1,
+					"targetIndex": 2
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.311Z"
+	},
+	{
+		"id": "id_1579855146003_60_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty01",
+						"idIsLocal": true
+					},
+					"sourceIndex": 0,
+					"targetIndex": 1
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.312Z"
+	},
+	{
+		"id": "id_1579855147530_61_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty01",
+						"idIsLocal": true
+					},
+					"sourceIndex": 1,
+					"targetIndex": 2
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.313Z"
+	},
+	{
+		"id": "id_1579855149610_62_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty03",
+						"idIsLocal": true
+					},
+					"sourceIndex": 0,
+					"targetIndex": 5
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.314Z"
+	},
+	{
+		"id": "id_1579855152876_63_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty01",
+						"idIsLocal": true
+					},
+					"sourceIndex": 1,
+					"targetIndex": 5
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.315Z"
+	},
+	{
+		"id": "id_1579855155620_64_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty02",
+						"idIsLocal": true
+					},
+					"sourceIndex": 0,
+					"targetIndex": 3
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.316Z"
+	},
+	{
+		"id": "id_1579855156571_65_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty02",
+						"idIsLocal": true
+					},
+					"sourceIndex": 3,
+					"targetIndex": 4
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--GeneralLedgerDocument",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-24T08:39:32.318Z"
+	}
+]

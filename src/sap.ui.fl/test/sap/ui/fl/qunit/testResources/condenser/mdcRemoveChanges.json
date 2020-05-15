@@ -1,0 +1,32 @@
+[
+	{
+		"id": "id_01_removeColumn",
+		"changeType": "removeColumn",
+		"reference": "test.Component",
+		"content": {
+			"name": "column0",
+			"id": "mdcTable--column0"
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": true
+		},
+		"layer": "USER",
+		"creation": "2020-01-31T06:33:51.192Z"
+	},
+	{
+		"id": "id_02_removeColumn",
+		"changeType": "removeColumn",
+		"reference": "test.Component",
+		"content": {
+			"name": "column2",
+			"id": "mdcTable--column2"
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": true
+		},
+		"layer": "USER",
+		"creation": "2020-01-31T06:33:51.193Z"
+	}
+]

@@ -300,6 +300,33 @@ function(
 		}), MoveControls.MOVED_ELEMENTS_ALIAS, mPropertyBag);
 	};
 
+	/**
+	 * Retrieves the condenser-specific information.
+	 *
+	 * @param {sap.ui.fl.Change} oChange - Change object with instructions to be applied on the control map
+	 * @returns {object} - Condenser-specific information
+	 * @public
+	 */
+	MoveControls.getCondenserInfo = function(oChange) {
+		var oChangeContent = oChange.getContent();
+		var oRevertData = oChange.getRevertData()[0];
+		return {
+			affectedControl: oChangeContent.movedElements[0].selector,
+			type: sap.ui.fl.ClassificationType.IndexRelated,
+			subtype: sap.ui.fl.ClassificationSubtypes.Move,
+			sourceContainer: oRevertData.sourceParent,
+			targetContainer: oChangeContent.target.selector,
+			sourceIndex: oRevertData.index,
+			sourceAggregation: oRevertData.aggregation,
+			targetAggregation: oChangeContent.target.selector.aggregation,
+			setTargetIndex: function(oChange, iNewTargetIndex) {
+				oChange.getContent().movedElements[0].targetIndex = iNewTargetIndex;
+			},
+			getTargetIndex: function(oChange) {
+				return oChange.getContent().movedElements[0].targetIndex;
+			}
+		};
+	};
 	return MoveControls;
 },
 /* bExport= */true);

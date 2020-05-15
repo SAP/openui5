@@ -1,0 +1,164 @@
+[
+	{
+		"id": "id_1579844823982_40_addFields",
+		"changeType": "addFields",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"field": {
+				"value": [
+					"AccountingDocumentKeyComplex/ComplexProperty01"
+				],
+				"valueProperty": [
+					"value"
+				],
+				"selector": {
+					"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty01",
+					"idIsLocal": true
+				},
+				"jsTypes": [
+					"sap.ui.comp.smartfield.SmartField"
+				],
+				"index": 1
+			}
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument",
+			"idIsLocal": true
+		}
+	},
+	{
+		"id": "id_1579844823982_41_addFields",
+		"changeType": "addFields",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"field": {
+				"value": [
+					"AccountingDocumentKeyComplex/ComplexProperty01"
+				],
+				"valueProperty": [
+					"value"
+				],
+				"selector": {
+					"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty01",
+					"idIsLocal": true
+				},
+				"jsTypes": [
+					"sap.ui.comp.smartfield.SmartField"
+				],
+				"index": 0
+			}
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument",
+			"idIsLocal": true
+		}
+	},
+	{
+		"id": "id_1579844828912_42_addFields",
+		"changeType": "addFields",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"field": {
+				"value": [
+					"AccountingDocumentKeyComplex/ComplexProperty02"
+				],
+				"valueProperty": [
+					"value"
+				],
+				"selector": {
+					"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty02",
+					"idIsLocal": true
+				},
+				"jsTypes": [
+					"sap.ui.comp.smartfield.SmartField"
+				],
+				"index": 3
+			}
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument",
+			"idIsLocal": true
+		}
+	},
+	{
+		"id": "id_1579844828912_43_addFields",
+		"changeType": "addFields",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"field": {
+				"value": [
+					"AccountingDocumentKeyComplex/ComplexProperty02"
+				],
+				"valueProperty": [
+					"value"
+				],
+				"selector": {
+					"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty02",
+					"idIsLocal": true
+				},
+				"jsTypes": [
+					"sap.ui.comp.smartfield.SmartField"
+				],
+				"index": 2
+			}
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument",
+			"idIsLocal": true
+		}
+	},
+	{
+		"id": "id_1579844834534_44_addFields",
+		"changeType": "addFields",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"field": {
+				"value": [
+					"AccountingDocumentKeyComplex/ComplexProperty03"
+				],
+				"valueProperty": [
+					"value"
+				],
+				"selector": {
+					"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty03",
+					"idIsLocal": true
+				},
+				"jsTypes": [
+					"sap.ui.comp.smartfield.SmartField"
+				],
+				"index": 5
+			}
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument",
+			"idIsLocal": true
+		}
+	},
+	{
+		"id": "id_1579844834534_45_addFields",
+		"changeType": "addFields",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"field": {
+				"value": [
+					"AccountingDocumentKeyComplex/ComplexProperty03"
+				],
+				"valueProperty": [
+					"value"
+				],
+				"selector": {
+					"id": "idMain1--GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty03",
+					"idIsLocal": true
+				},
+				"jsTypes": [
+					"sap.ui.comp.smartfield.SmartField"
+				],
+				"index": 4
+			}
+		},
+		"selector": {
+			"id": "idMain1--GeneralLedgerDocument",
+			"idIsLocal": true
+		}
+	}
+]

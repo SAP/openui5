@@ -1,0 +1,77 @@
+[
+	{
+		"id": "id_01_moveColumn",
+		"changeType": "moveColumn",
+		"reference": "test.Component",
+		"content": {
+			"name": "column0",
+			"index": 2
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": true
+		},
+		"layer": "USER",
+		"creation": "2020-01-31T06:33:51.192Z"
+	},
+	{
+		"id": "id_02_moveColumn",
+		"changeType": "moveColumn",
+		"reference": "test.Component",
+		"content": {
+			"name": "column0",
+			"index": 1
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": true
+		},
+		"layer": "USER",
+		"creation": "2020-01-31T06:33:51.193Z"
+	},
+	{
+		"id": "id_03_moveColumn",
+		"changeType": "moveColumn",
+		"reference": "test.Component",
+		"content": {
+			"name": "column0",
+			"index": 0
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": true
+		},
+		"layer": "USER",
+		"creation": "2020-01-31T06:33:51.194Z"
+	},
+	{
+		"id": "id_04_moveColumn",
+		"changeType": "moveColumn",
+		"reference": "test.Component",
+		"content": {
+			"name": "column0",
+			"index": 1
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": true
+		},
+		"layer": "USER",
+		"creation": "2020-01-31T06:33:51.195Z"
+	},
+	{
+		"id": "id_05_moveColumn",
+		"changeType": "moveColumn",
+		"reference": "test.Component",
+		"content": {
+			"name": "column0",
+			"index": 2
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": true
+		},
+		"layer": "USER",
+		"creation": "2020-01-31T06:33:51.196Z"
+	}
+]
