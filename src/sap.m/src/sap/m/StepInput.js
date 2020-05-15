@@ -401,6 +401,11 @@ function(
 		NumericInput.prototype.onBeforeRendering = function() {
 			InputBase.prototype.onBeforeRendering.call(this);
 
+			// The Input is handling its width in its onBeforeRendering method - if noting is set, the width is 100%.
+			// As the NumericInput is using the InputBase's onBeforeRendering method, the width must be handled here too.
+			// The real width of the StepInput is handled from its width property, so the NumericInput's width should be 100%.
+			this.setWidth("100%");
+
 			this._deregisterEvents();
 		};
 
