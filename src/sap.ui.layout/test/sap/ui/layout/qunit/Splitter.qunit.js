@@ -60,6 +60,27 @@ sap.ui.define([
 
 	sap.ui.getCore().applyChanges();
 
+	QUnit.module("API", {
+		beforeEach: function () {
+			this.oSplitter = new Splitter();
+		},
+		afterEach: function () {
+			this.oSplitter.destroy();
+		}
+	});
+
+	QUnit.test("layoutData is added, after adding a contentArea", function (assert) {
+		var oButton = new Button();
+		this.oSplitter.addContentArea(oButton);
+		assert.ok(oButton.getLayoutData(), "Adding content area without layoutData should directly receive such.");
+	});
+
+	QUnit.test("layoutData is added, after inserting a contentArea", function (assert) {
+		var oButton = new Button();
+		this.oSplitter.insertContentArea(oButton);
+		assert.ok(oButton.getLayoutData(), "Adding content area without layoutData should directly receive such.");
+	});
+
 	QUnit.module("Absolute Area Sizes");
 
 	QUnit.test("Absolute Horizontal sizing", function (assert) {

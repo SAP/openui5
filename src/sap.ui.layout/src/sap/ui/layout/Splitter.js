@@ -181,7 +181,6 @@ sap.ui.define([
 	};
 
 	Splitter.prototype.onBeforeRendering = function() {
-		this._getContentAreas().forEach(_ensureLayoutData);
 		this._initOrientationProperties();
 	};
 
@@ -1125,7 +1124,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Element} oContent The Element for which the existence of LayoutData should be ensured
 	 * @private
 	 */
-	function _ensureLayoutData(oContent) {
+	Splitter.prototype._ensureLayoutData = function (oContent) {
 		var oLd = oContent.getLayoutData();
 		// Make sure LayoutData is set on the content
 		// But this approach has the advantage that "compatible" LayoutData can be used.
@@ -1139,7 +1138,7 @@ sap.ui.define([
 		if (!oLd) {
 			oContent.setLayoutData(new SplitterLayoutData());
 		}
-	}
+	};
 
 	//////////////////////////////////////// Overridden Methods ////////////////////////////////////////
 
@@ -1160,6 +1159,16 @@ sap.ui.define([
 		if (bForce) {
 			Control.prototype.invalidate.apply(this, arguments);
 		}
+	};
+
+	Splitter.prototype.addContentArea = function(oContent) {
+		this._ensureLayoutData(oContent);
+		return this.addAggregation("contentAreas", oContent);
+	};
+
+	Splitter.prototype.insertContentArea = function(oContent, iIndex) {
+		this._ensureLayoutData(oContent);
+		return this.insertAggregation("contentAreas", oContent, iIndex);
 	};
 
 	Splitter.prototype._getContentAreas = function() {
