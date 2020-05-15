@@ -1298,7 +1298,95 @@ sap.ui.define([
 		oTogglePrevNexYearPicker.restore();
 	});
 
-QUnit.module("Misc");
+	QUnit.test("Set proper year when year is selected from the first month in multiple month calendar", function (assert) {
+		// Prepare
+		var oCal = new Calendar({
+				months: 2
+			}),
+			oCalId = oCal.getId(),
+			oFirstYearButton,
+			oSecondYearButton;
+
+		// initial setup
+		oCal.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oFirstYearButton = jQuery("#" + oCalId + "--Head-B2");
+		oSecondYearButton = jQuery("#" + oCalId + "--Head-B4");
+
+		// set calendar to November-December 2019 and select year 2020 using first calendar's year button
+		oCal.focusDate(new Date(2019,10,15));
+		setYearWithButton(oCal, "2024", oFirstYearButton);
+
+		// assert
+		assert.equal(oFirstYearButton.html(), "2024", "First month is November, first YearPicker is used, first calendar's year is set properly");
+		assert.equal(oSecondYearButton.html(), "2024", "Second month is December, first YearPicker is used, first calendar's year is set properly");
+
+		// set calendar to December 2019-January 2020 and select year 2024 using first calendar's year button
+		oCal.focusDate(new Date(2019,11,15));
+		setYearWithButton(oCal, "2024", oFirstYearButton);
+
+		// assert
+		assert.equal(oFirstYearButton.html(), "2024", "First month is December, first YearPicker is used, first calendar's year is set properly");
+		assert.equal(oSecondYearButton.html(), "2025", "Second month is January, first YearPicker is used, first calendar's year is set properly");
+
+		// cleanup
+		oCal.destroy();
+
+	});
+
+	QUnit.test("Set proper year when year is selected from the second month in multiple month calendar", function (assert) {
+		// Prepare
+		var oCal = new Calendar({
+				months: 2
+			}),
+			oCalId = oCal.getId(),
+			oFirstYearButton,
+			oSecondYearButton;
+
+		// initial setup
+		oCal.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oFirstYearButton = jQuery("#" + oCalId + "--Head-B2");
+		oSecondYearButton = jQuery("#" + oCalId + "--Head-B4");
+
+		// set calendar to November-December 2019 and select year 2020 using second calendar's year button
+		oCal.focusDate(new Date(2019,10,15));
+		setYearWithButton(oCal, "2024", oSecondYearButton);
+
+		// assert
+		assert.equal(oFirstYearButton.html(), "2024", "First month is November, first YearPicker is used, first calendar's year is set properly");
+		assert.equal(oSecondYearButton.html(), "2024", "Second month is December, first YearPicker is used, first calendar's year is set properly");
+
+		// set calendar to December 2019-January 2020 and select year 2024 using second calendar's year button
+		oCal.focusDate(new Date(2019,11,15));
+		setYearWithButton(oCal, "2024", oSecondYearButton);
+
+		// assert
+		assert.equal(oFirstYearButton.html(), "2023", "First month is December, first YearPicker is used, first calendar's year is set properly");
+		assert.equal(oSecondYearButton.html(), "2024", "Second month is January, first YearPicker is used, first calendar's year is set properly");
+
+		// cleanup
+		oCal.destroy();
+
+	});
+
+	/** helper function that simulates selection of an year */
+	function setYearWithButton(oCal, sYear, oButton) {
+		var oYearPickerButton,
+			oCalId = oCal.getId();
+
+		// simulate year button press
+		qutils.triggerEvent("click", oButton.attr("id"));
+		sap.ui.getCore().applyChanges();
+
+		// select given year
+		oYearPickerButton = jQuery("#" + oCalId + "--YP-y" + sYear + "0101");
+		oYearPickerButton.trigger("focus");
+		qutils.triggerKeyboardEvent(oYearPickerButton.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+		sap.ui.getCore().applyChanges();
+	}
+
+	QUnit.module("Misc");
 
 	QUnit.test("Invalidate month ", function(assert) {
 		var oCal5 = new Calendar("Cal5",{

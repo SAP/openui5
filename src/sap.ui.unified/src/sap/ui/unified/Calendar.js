@@ -2268,16 +2268,17 @@ sap.ui.define([
 	 * @returns {void}
 	 */
 	Calendar.prototype._selectYear = function () {
-		var oFocusedDate = new CalendarDate(this._getFocusedDate(), this.getPrimaryCalendarType());
-		var oYearPicker = this._getYearPicker();
-		var oDate = CalendarDate.fromLocalJSDate(oYearPicker.getDate(), this.getPrimaryCalendarType());
+		var oFocusedDate = new CalendarDate(this._getFocusedDate(), this.getPrimaryCalendarType()),
+			oFocusedMonth = oFocusedDate.getMonth(),
+			oYearPicker = this._getYearPicker(),
+			oDate = CalendarDate.fromLocalJSDate(oYearPicker.getDate(), this.getPrimaryCalendarType());
 
 		// to keep day and month stable also for islamic date
 		if (!this._bActionTriggeredFromSecondHeader){
-			oDate.setMonth(oFocusedDate.getMonth(), oFocusedDate.getDate());
+			oDate.setMonth(oFocusedMonth, oFocusedDate.getDate());
 		} else {
-			oDate.setYear(oDate.getYear() - 1);
-			oDate.setMonth(oFocusedDate.getMonth(), oFocusedDate.getDate());
+			oDate.setYear(oFocusedMonth === 11 ? oDate.getYear() - 1 : oDate.getYear());
+			oDate.setMonth(oFocusedMonth, oFocusedDate.getDate());
 		}
 
 		oFocusedDate = oDate;
