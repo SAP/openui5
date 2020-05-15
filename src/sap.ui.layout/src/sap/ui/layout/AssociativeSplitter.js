@@ -56,6 +56,11 @@ sap.ui.define([
 		this._enableKeyboardListeners();
 	};
 
+	AssociativeSplitter.prototype.addAssociatedContentArea = function (oContent) {
+		this._ensureLayoutData(oContent);
+		return this.addAssociation("associatedContentAreas", oContent);
+	};
+
 	/**
 	 * Adds shift + arrows keyboard handling to the existing one
 	 * @returns {void}

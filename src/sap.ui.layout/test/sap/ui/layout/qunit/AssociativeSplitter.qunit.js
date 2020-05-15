@@ -28,6 +28,12 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("layoutData is added, after adding an associatedContentArea", function (assert) {
+		var oButton = new Button();
+		this.oSplitter.addAssociatedContentArea(oButton);
+		assert.ok(oButton.getLayoutData(), "Adding associated content area without layoutData should directly receive such.");
+	});
+
 	QUnit.module("Events", {
 		beforeEach: function () {
 			this.oSplitter = new AssociativeSplitter("splitter");
