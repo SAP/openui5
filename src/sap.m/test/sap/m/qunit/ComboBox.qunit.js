@@ -8771,13 +8771,13 @@ sap.ui.define([
 	QUnit.test("it should clear the selection when the backspace/delete keyboard key is pressed and the remaining text doesn't match any items", function (assert) {
 
 		// system under test
-		var oComboBox = new ComboBox({
-			items: [
-				new Item({
-					text: "lorem ipsum"
-				})
-			]
-		});
+		var oItem = new Item({
+				text: "lorem ipsum"
+			}),
+			oComboBox = new ComboBox({
+				items: [oItem]
+			}),
+			oSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
 		// arrange
 		oComboBox.placeAt("content");
@@ -8792,12 +8792,26 @@ sap.ui.define([
 		// wait for the word completion feature
 		this.clock.tick(0);
 
+		// Assert
+		assert.ok(oSelectionChangeSpy.calledOnce, "selectionChange fired");
+		assert.ok(oComboBox.getSelectedItem() === oItem);
+
 		// remove the autocompleted text ("rem ipsum" by pressing the backspace keyboard key
 		sap.ui.qunit.QUnitUtils.triggerKeydown(oFocusDomRef, KeyCodes.BACKSPACE);
 		oFocusDomRef.value = "lo";
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef, {value: "lo"});
 
 		// assert
+		assert.ok(oSelectionChangeSpy.calledTwice, "selectionChange fired again");
+		assert.ok(oComboBox.getSelectedItem() === null);
+
+		// Clear the input, but do not fire any more events
+		sap.ui.qunit.QUnitUtils.triggerKeydown(oFocusDomRef, KeyCodes.BACKSPACE);
+		oFocusDomRef.value = "";
+		sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef, {value: ""});
+
+		// assert
+		assert.ok(!oSelectionChangeSpy.calledThrice, "selectionChange did not fire anymore");
 		assert.ok(oComboBox.getSelectedItem() === null);
 
 		// cleanup
