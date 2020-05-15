@@ -16078,7 +16078,7 @@ sap.ui.define([
 			// Delete creation row context before switching back to the active version
 
 			that.expectChange("price", null)
-			    .expectChange("artistName", null);
+				.expectChange("artistName", null);
 
 			return Promise.all([
 				oCreationRowContext.delete(),
