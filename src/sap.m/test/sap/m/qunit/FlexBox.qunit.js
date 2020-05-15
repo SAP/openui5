@@ -466,7 +466,7 @@ sap.ui.define([
 		this.oBox.setJustifyContent("End");
 		this.oBox.setAlignItems("End");
 		Core.applyChanges();
-		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 259) <= 1, "Item 1 should be placed at the horizontal end");
+		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 259) <= 5, "Item 1 should be placed at the horizontal end");
 		assert.ok(Math.abs(this.oItem1DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 346) <= 2, "Item 1 should be placed at the vertical end");
 	});
 
@@ -854,7 +854,8 @@ sap.ui.define([
 		beforeEach: function() {
 
 			this.oLayoutData = new FlexItemData({
-				styleClass: "class1"
+				styleClass: "class1",
+				growFactor: 1
 			});
 
 			this.oBox = new FlexBox({
@@ -896,6 +897,11 @@ sap.ui.define([
 		Core.applyChanges();
 
 		assert.ok(this.oBox.$()[0].firstChild.classList.contains('class3'), "class3 is added");
+
+		this.oLayoutData.setGrowFactor(0);
+		Core.applyChanges();
+
+		assert.strictEqual(window.getComputedStyle(this.oBox.$()[0].firstChild).flexGrow, "0", "flex grow is correctly set");
 	});
 
 	QUnit.module("Accessibility", {

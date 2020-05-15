@@ -72,6 +72,8 @@ sap.ui.define(['./FlexBoxCssPropertyMap', 'sap/ui/Device'],
 		if (typeof (sValue) === "string") {
 			// Convert camel-case to lower-case and dashes
 			sValue = sValue.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+		} else if (typeof (sValue) === "number") {
+			sValue = sValue.toString();
 		}
 
 		FlexBoxStylingHelper.writeStyle(oRm, oLayoutData, sProperty, sValue);
