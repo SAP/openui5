@@ -199,7 +199,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 }
 
 .sapUiCalItemWeekEnd,
-html.sap-desktop .sapUiCalItemWeekEnd:focus {
+html.sap-desktop .sapUiCalItemWeekEnd:not(.sapUiCalItemSel):focus {
 	background-color: @_sap_ui_unified_Calendar_ItemWeekEndColor;
 }
 
@@ -242,7 +242,7 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 			bottom: 0.125rem;
 			border: 0.0625rem dotted @sapUiContentFocusColor;
 			content: "";
-			
+
 		}
 	}
 	&.sapUiCalItemSelBetween .sapUiCalItemText {
