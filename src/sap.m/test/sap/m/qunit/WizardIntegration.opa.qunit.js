@@ -109,11 +109,6 @@ sap.ui.define([
 		Then.theNextButtonShouldBeHidden("linear-wiz-step3");
 	});
 
-	OpaTest('Should discard progress.', function (Given, When, Then) {
-		When.iSkipTheStep();
-		Then.theWizProgressShouldBeUpdatedCorrectly("linear-wiz", 1);
-	});
-
 	// Test wizard in branching mode
 
 	QUnit.module('Branching Wizard');
@@ -142,13 +137,6 @@ sap.ui.define([
 		When.iPressOnTheButton("Card_Contents-nextButton");
 		Then.theWizProgressShouldBeUpdatedCorrectly("branch-wiz", 4);
 		Then.theCurrentStepShouldBeUpdated("branch-wiz", "Dummy_Step");
-	});
-
-	OpaTest('Should discard progress.', function (Given, When, Then) {
-		When.iPressOnTheButton("credit-card-radio");
-		Then.theWizProgressShouldBeUpdatedCorrectly("branch-wiz", 2);
-		Then.theCurrentStepShouldBeUpdated("branch-wiz", "Payment_Details");
-		Then.theNextButtonShouldBeVisible("Payment_Details-nextButton");
 
 		Then.iTeardownMyApp();
 	});
