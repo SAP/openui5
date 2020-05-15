@@ -466,10 +466,11 @@ sap.ui.define([
 			"third step should NOT have aria-current attribute");
 	});
 
-	QUnit.test("WizardProgressNavigator aria-label attribute", function (assert) {
-		var sAriaLabel = this.oProgressNavigator.$().attr("aria-label");
-		var sWizardProgressNavLabel = this.oResourceBundle.getText("WIZARD_LABEL");
-		assert.strictEqual(sAriaLabel, sWizardProgressNavLabel, "'aria-label' attribute should be set to '" + sWizardProgressNavLabel + "'");
+	QUnit.test("WizardProgressNavigator aria-roledescription attributes", function (assert) {
+		var sAriaRoleDescription = this.oProgressNavigator.getDomRef().getAttribute("aria-roledescription");
+		var sWizardProgressNavRoleDescription = this.oResourceBundle.getText("WIZARD_PROGRESS_NAVIGATOR_ARIA_ROLE_DESCRIPTION");
+
+		assert.strictEqual(sAriaRoleDescription, sWizardProgressNavRoleDescription, "'aria-roledescription' attribute should be set to '" + sWizardProgressNavRoleDescription + "'");
 	});
 
 	QUnit.test("WizardProgressNavigator role attribute", function (assert) {
@@ -489,12 +490,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("WizardProgressNavigator step title attribute", function (assert) {
+	QUnit.test("WizardProgressNavigator step roledescription attribute must be rendered correctly with the step title text", function (assert) {
 		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep"),
 			sStepText = this.oResourceBundle.getText("WIZARD_PROG_NAV_STEP_TITLE");
 		for (var i = 0; i < $steps.length; i++){
 			var sStepTitle = sStepText + " " + (i + 1);
-			assert.strictEqual($steps.eq(i).attr("aria-label"), sStepTitle, "'aria-label' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + sStepTitle + "'");
+			assert.strictEqual($steps.eq(i).attr("aria-roledescription"), sStepTitle, "'aria-roledescription' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + sStepTitle + "'");
 		}
 	});
 

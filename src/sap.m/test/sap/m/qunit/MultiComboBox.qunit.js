@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/m/ComboBoxBaseRenderer",
 	"sap/ui/Device",
 	"jquery.sap.mobile",
+	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/m/InputBase",
 	"sap/m/Link",
@@ -33,6 +34,7 @@ sap.ui.define([
 	ComboBoxBaseRenderer,
 	Device,
 	jQuery,
+	Core,
 	coreLibrary,
 	InputBase,
 	Link,
@@ -5223,6 +5225,7 @@ sap.ui.define([
 	QUnit.module("Accessibility");
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 		var oMultiComboBox = new MultiComboBox({
 			value: "Value",
 			tooltip: "Tooltip",
@@ -5233,11 +5236,16 @@ sap.ui.define([
 				new Item({key: "Item3", text: "Item3"})
 			]
 		});
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		Core.applyChanges();
+
 		assert.ok(!!oMultiComboBox.getAccessibilityInfo, "MultiComboBox has a getAccessibilityInfo function");
 		var oInfo = oMultiComboBox.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oMultiComboBox.getRenderer().getAriaRole(), "AriaRole");
-		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTICOMBO"), "Type");
+		assert.strictEqual(oInfo.type, oResourceBundle.getText("ACC_CTR_TYPE_MULTICOMBO"), "Type");
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-roledescription"), oResourceBundle.getText("MULTICOMBOBOX_ARIA_ROLE_DESCRIPTION"), "aria-roledescription attribute is rendered correctly in the DOM");
 		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
