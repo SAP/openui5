@@ -174,6 +174,17 @@
 			right: auto;
 		}
 
+		.positioned15 {
+			position: absolute !important;
+			top: 500px;
+			right: 10px;
+		}
+
+		html[dir="rtl"] .positioned14 {
+			left: 10px;
+			right: auto;
+		}
+
 		.vbox {
 			position: absolute !important;
 			top: 100px;
@@ -534,6 +545,16 @@
 		oPopover11.addStyleClass("sapUiResponsivePadding--content");
 		oPopover11.addStyleClass("sapUiResponsivePadding--footer");
 
+		var oPopover12 = new sap.m.Popover("popover12", {
+			placement: sap.m.PlacementType.Left,
+			showHeader: false,
+			content: [
+				new sap.m.CheckBox("popover12CheckBox1",{text:"test1"}),
+				new sap.m.CheckBox("popover12CheckBox2",{text:"test2"}),
+				new sap.m.CheckBox("popover12CheckBox3",{text:"test3"})
+			]
+		});
+
 		var oChangeToFioriTheme = new sap.m.Button({
 			id: "change-fiori-theme",
 			text: "Change theme to sap_fiori_3",
@@ -562,6 +583,14 @@
 		});
 
 		oButton14.addStyleClass("positioned14");
+
+		var oButton15 = new sap.m.Button("btn15", {
+			text: "Popover with checkboxes",
+			press: function () {
+				oPopover12.openBy(this);
+			}
+		});
+		oButton15.addStyleClass("positioned15");
 
 		var oSearchProvider = new sap.ui.core.search.OpenSearchProvider({
 			suggestUrl: "../../../proxy/http/en.wikipedia.org/w/api.php?action=opensearch&namespace=0&search={searchTerms}",
@@ -668,7 +697,7 @@
 		var page1 = new sap.m.Page("page1", {
 			title: "Page 1",
 			content: [
-				oButton, oButton1, oButton2, oButton3, oButton4, oButton5, oButton6, oOverflowingPopover, oButton7, oButton8, oButton9, oVBox, oButton14, oChangeToFioriTheme, oChangeToBelizeTheme
+				oButton, oButton1, oButton2, oButton3, oButton4, oButton5, oButton6, oOverflowingPopover, oButton7, oButton8, oButton9, oVBox, oButton14, oButton15, oChangeToFioriTheme, oChangeToBelizeTheme
 			]
 		});
 

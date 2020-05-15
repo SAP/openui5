@@ -151,6 +151,29 @@ sap.ui.require([
 			template: new Item({text: "{name}"})
 		});
 
+		var oInputWithStickySuggestions = new Input("inputWithStickySuggestions", {
+			showSuggestion: true,
+			suggestionColumns: [
+				new Column({
+					header: new Label({text : "Name"})
+				}),
+				new Column({
+					header: new Label({text : "Group"})
+				})
+			],
+			showTableSuggestionValueHelp: false
+		});
+		oInputWithStickySuggestions.setModel(oModel);
+		oInputWithStickySuggestions.bindAggregation("suggestionRows", {
+			path: "/",
+			template: new ColumnListItem({
+				cells: [
+					new Label({text: "{name}"}),
+					new Label({text: "{group}"})
+				]
+			})
+		});
+
 		var initialPage = new Page("inpPage", {
 			showHeader: false,
 			content: [
@@ -250,7 +273,8 @@ sap.ui.require([
 				new VBox("suggestions", {
 					items: [
 						new Label("suggestionsLabel", {text: "Input with suggestions", labelFor: "inputWithSuggestions"}),
-						oSuggestionsInput
+						oSuggestionsInput,
+						oInputWithStickySuggestions
 					]
 				})
 

@@ -1405,7 +1405,28 @@
 			template: new sap.ui.core.Item({text: "{name}"})
 		});
 
-
+		var oMultiInputWithStickySuggestions = new sap.m.MultiInput("multiInputWithStickySuggestions", {
+			showSuggestion: true,
+			suggestionColumns: [
+				new sap.m.Column({
+					header: new sap.m.Label({text: "Name"})
+				}),
+				new sap.m.Column({
+					header: new sap.m.Label({text: "Group"})
+				})
+			],
+			showTableSuggestionValueHelp: false
+		});
+		oMultiInputWithStickySuggestions.setModel(oModel);
+		oMultiInputWithStickySuggestions.bindAggregation("suggestionRows", {
+			path: "/",
+			template: new sap.m.ColumnListItem({
+				cells: [
+					new sap.m.Label({text: "{name}"}),
+					new sap.m.Label({text: "{group}"})
+				]
+			})
+		});
 
 		var page1 = new sap.m.Page("page1", {
 			title:"Mobile MultiInput Control",
@@ -1471,8 +1492,8 @@
 					multiInputWithDataBinding,
 					oCondensedTable,
 					new sap.m.Label("suggestionsLabel", {text: "MultiInput with suggestions", labelFor: "mIWithSuggestions"}),
-					oSuggestionsMultiInput
-
+					oSuggestionsMultiInput,
+					oMultiInputWithStickySuggestions
 			],
 			showNavButton: true,
 			navButtonPress: function(){ app.to("page2"); }
