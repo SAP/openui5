@@ -731,7 +731,7 @@ sap.ui.define([
 			}
 
 			if ((oTimeStamp == oStartTimeStamp && !oEndDate) || (oTimeStamp >= oStartTimeStamp && oTimeStamp <= oEndTimeStamp)) {
-				oType = {type: oRange.getType(), tooltip: oRange.getTooltip_AsString()};
+				oType = {type: oRange.getType(), tooltip: oRange.getTooltip_AsString(), color: oRange.getColor()};
 				break;
 			}
 		}
