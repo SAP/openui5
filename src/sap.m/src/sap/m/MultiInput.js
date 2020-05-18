@@ -1831,13 +1831,20 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._handleNMoreAccessibility = function () {
-		var sInvisibleTextId = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER");
-		var bHasAriaLabelledBy = this.getAriaLabelledBy().indexOf(sInvisibleTextId) !== -1;
+		var sInvisibleTextId = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER"),
+			oFocusDomRef = this.getFocusDomRef(),
+			sAriaLabeledBy = (oFocusDomRef && oFocusDomRef.getAttribute("aria-labelledby")) || "",
+			aAriaLabeledBy = sAriaLabeledBy.split(" "),
+			iNMoreIndex = aAriaLabeledBy.indexOf(sInvisibleTextId);
 
-		if (!this.getEditable() && this._tokenizer._hasMoreIndicator()) {
-			!bHasAriaLabelledBy && this.addAriaLabelledBy(sInvisibleTextId);
-		} else {
-			bHasAriaLabelledBy && this.removeAriaLabelledBy(sInvisibleTextId);
+		if (!this.getEditable() && this._tokenizer._hasMoreIndicator() && iNMoreIndex === -1) {
+			aAriaLabeledBy.push(sInvisibleTextId);
+		} else if (iNMoreIndex !== -1) {
+			aAriaLabeledBy.splice(iNMoreIndex, 1);
+		}
+
+		if (oFocusDomRef) {
+			oFocusDomRef.setAttribute("aria-labelledby", aAriaLabeledBy.join(" "));
 		}
 	};
 
