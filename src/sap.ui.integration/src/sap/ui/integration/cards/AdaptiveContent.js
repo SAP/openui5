@@ -417,9 +417,13 @@ sap.ui.define([
 			if (this.adaptiveCardInstance && oCard && oDom.length) {
 				this.adaptiveCardInstance.parse(oCard);
 				oDom.html(this.adaptiveCardInstance.render());
-
 				this._bAdaptiveCardElementsReady = true;
 				this._fireCardReadyEvent();
+
+				// avoid additional tab stop
+				if (this.adaptiveCardInstance.renderedElement) {
+					this.adaptiveCardInstance.renderedElement.tabIndex = -1;
+				}
 			}
 		};
 
