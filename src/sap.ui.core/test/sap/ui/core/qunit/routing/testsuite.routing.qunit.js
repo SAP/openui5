@@ -15,16 +15,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			}
 		},
 		tests: {
-			"jquery.sap.history": {
-				title: "QUnit Page for jquery.sap.history",
-				group: "jQuery plugins",
-				qunit: {
-					// FIXME: Quick fix for the moment
-					version: 1
-				},
-				skip: Device.browser.msie,
-				module: "test-resources/sap/ui/core/qunit/util/jquery.sap.history.qunit"
-			},
 			"async/Route": {
 				title: "QUnit Page for sap.ui.core.routing.Route (async)"
 			},
