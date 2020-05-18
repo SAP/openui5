@@ -26597,6 +26597,125 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Multiple absolute list bindings share the same requests in order to avoid redundant
+	// value help requests.
+	// JIRA: CPOUI5ODATAV4-269
+	QUnit.test("CPOUI5ODATAV4-269: Avoid redundant value help requests", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/EMPLOYEES}">\
+	<ColumnListItem>\
+		<Text id="name" text="{Name}" />\
+		<List growing="true" growingThreshold="3" \
+				items="{parameters : {$$sharedRequest : true}, path: \'/MANAGERS\',\
+				templateShareable: false}">\
+			<CustomListItem>\
+				<Text id="id" text="{ID}" />\
+			</CustomListItem>\
+		</List>\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		// returns the List in the given row of the Table
+		function getList(iRow) {
+			return that.oView.byId("table").getItems()[iRow].getCells()[1];
+		}
+
+		this.expectRequest("EMPLOYEES?$select=ID,Name&$skip=0&$top=100", {
+				value : [
+					{ID : "2", Name : "Frederic Fall"},
+					{ID : "3", Name : "Jonathan Smith"}
+				]
+			})
+			.expectChange("name", ["Frederic Fall", "Jonathan Smith"])
+			.expectRequest("MANAGERS?$select=ID&$skip=0&$top=3", {
+				value : [{ID: "M1"}, {ID: "M2"}, {ID: "M3"}]
+			})
+			.expectChange("id", ["M1", "M2", "M3"])
+			.expectChange("id", ["M1", "M2", "M3"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("MANAGERS?$select=ID&$orderby=ID desc&$skip=0&$top=3", {
+					value : [{ID: "M9"}, {ID: "M8"}, {ID: "M7"}]
+				})
+				.expectChange("id", ["M9", "M8" , "M7"]);
+
+			// code under test - sort list binding in 1st row
+			getList(0).getBinding("items").sort(new Sorter("ID", true));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("MANAGERS?$select=ID&$skip=3&$top=3", {
+					value : [{ID: "M4"}, {ID: "M5"}, {ID: "M6"}]
+				})
+				.expectChange("id", [,,, "M4", "M5" , "M6"]);
+
+			// code under test - press "More" button in list binding of 2nd row
+			sap.ui.getCore().byId(getList(1).getId() + "-trigger").firePress();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Call sort and immediately afterwards filter. The response of sort comes while the
+	// new cache for filter has already been created and must be ignored by the binding.
+	// JIRA: CPOUI5ODATAV4-269
+[false, true].forEach(function (bSharedRequest) {
+	var sTitle = "CPOUI5ODATAV4-269: obsoleted response, $$sharedRequest=" + bSharedRequest;
+
+	QUnit.test(sTitle, function (assert) {
+		var sParameters = bSharedRequest ? "$$sharedRequest : true" : "",
+			fnRespond,
+			sView = '\
+<Table id="table" items="{path : \'/EMPLOYEES\', parameters : {' + sParameters + '}}">\
+	<ColumnListItem>\
+		<Text id="name" text="{Name}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$skip=0&$top=100", {
+				value : [
+					{Name : "Frederic Fall"},
+					{Name : "Jonathan Smith"},
+					{Name : "Peter Burke"}
+				]
+			})
+			.expectChange("name", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
+
+		return this.createView(assert, sView).then(function () {
+			var oBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectRequest("EMPLOYEES?$orderby=Name&$skip=0&$top=100", {
+					value : [
+						{Name : "Peter Burke"},
+						{Name : "Frederic Fall"},
+						{Name : "Jonathan Smith"}
+					]
+				})
+				.expectRequest("EMPLOYEES?$orderby=Name&$filter=AGE gt 42&$skip=0&$top=100",
+					new Promise(function (resolve) {
+						fnRespond = resolve;
+					})
+				);
+
+			oBinding.sort(new Sorter("Name"));
+			oBinding.filter(new Filter("AGE", FilterOperator.GT, 42));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("name", ["Jonathan Smith"]);
+
+			fnRespond({value : [{Name : "Jonathan Smith"}]});
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: You want to use AnnotationHelper.value for a property in the following cases:
 	// 1. /Artists/Name - structural property of an entity type
 	// 2. /Artists/BestFriend/IsActiveEntity - structural property reached via navigation

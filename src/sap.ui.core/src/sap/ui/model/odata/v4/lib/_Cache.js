@@ -90,12 +90,16 @@ sap.ui.define([
 	 *   A function that returns the cache's original resource path to be used to build the target
 	 *   path for bound messages; if it is not given or returns nothing, <code>sResourcePath</code>
 	 *   is used instead. See {@link #getOriginalResourcePath}.
+	 * @param {boolean} [bSharedRequest=false]
+	 *   If this parameter is set, the cache is read-only and modifying calls lead to an exception.
 	 *
 	 * @private
 	 */
 	function Cache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			fnGetOriginalResourcePath) {
-		this.bActive = true;
+			fnGetOriginalResourcePath, bSharedRequest) {
+		// the number of active usages of this cache (initially 1 because the first usage that
+		// creates the cache does not call #setActive)
+		this.iActiveUsages = 1;
 		this.mChangeListeners = {}; // map from path to an array of change listeners
 		this.fnGetOriginalResourcePath = fnGetOriginalResourcePath;
 		this.mPatchRequests = {}; // map from path to an array of (PATCH) promises
@@ -109,6 +113,7 @@ sap.ui.define([
 		this.bSortExpandSelect = bSortExpandSelect;
 		this.setResourcePath(sResourcePath);
 		this.setQueryOptions(mQueryOptions);
+		this.bSharedRequest = bSharedRequest; // must be set after the functions!
 	}
 
 	/**
@@ -130,6 +135,7 @@ sap.ui.define([
 	 *   entity and the entity list are passed as parameter
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise for the DELETE request
+	 * @throws {Error} If the cache is shared
 	 *
 	 * @public
 	 */
@@ -139,6 +145,7 @@ sap.ui.define([
 			sParentPath = aSegments.join("/"),
 			that = this;
 
+		this.checkSharedRequest();
 		this.addPendingRequest();
 
 		return this.fetchValue(_GroupLock.$cached, sParentPath).then(function (vCacheData) {
@@ -246,19 +253,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Throws an error if the cache is not active.
+	 * Throws an error if the cache shares requests.
 	 *
-	 * @throws {Error} If the cache is not active
+	 * @throws {Error} If the cache has bSharedRequest
 	 *
 	 * @private
 	 */
-	Cache.prototype.checkActive = function () {
-		var oError;
-
-		if (!this.bActive) {
-			oError = new Error("Response discarded: cache is inactive");
-			oError.canceled = true;
-			throw oError;
+	Cache.prototype.checkSharedRequest = function () {
+		if (this.bSharedRequest) {
+			throw new Error(this + " has $$sharedRequest, modification is not allowed");
 		}
 	};
 
@@ -287,6 +290,7 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved with the created entity when the POST request has been
 	 *   successfully sent and the entity has been marked as non-transient
+	 * @throws {Error} If the cache is shared
 	 *
 	 * @public
 	 */
@@ -374,6 +378,7 @@ sap.ui.define([
 			});
 		}
 
+		this.checkSharedRequest();
 		// clone data to avoid modifications outside the cache
 		oEntityData = _Helper.merge({}, oEntityData);
 		// remove any property starting with "@$ui5."
@@ -407,7 +412,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deregisters the given change listener.
+	 * Deregisters the given change listener. Note: shared caches have no listeners anyway.
 	 *
 	 * @param {string} sPath
 	 *   The path
@@ -417,7 +422,9 @@ sap.ui.define([
 	 * @public
 	 */
 	Cache.prototype.deregisterChange = function (sPath, oListener) {
-		_Helper.removeByPath(this.mChangeListeners, sPath, oListener);
+		if (!this.bSharedRequest) {
+			_Helper.removeByPath(this.mChangeListeners, sPath, oListener);
+		}
 	};
 
 	/**
@@ -876,12 +883,14 @@ sap.ui.define([
 	 * @param {object} oData The data to patch with
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the patched data
+	 * @throws {Error} If the cache is shared
 	 *
 	 * @private
 	 */
 	Cache.prototype.patch = function (sPath, oData) {
 		var that = this;
 
+		this.checkSharedRequest();
 		return this.fetchValue(_GroupLock.$cached, sPath).then(function (oCacheValue) {
 			_Helper.updateExisting(that.mChangeListeners, sPath, oCacheValue, oData);
 
@@ -903,12 +912,14 @@ sap.ui.define([
 	 *   If no back-end request is needed, the function is not called.
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which resolves with the new entity when it is updated in the cache.
+	 * @throws {Error} If the cache is shared
 	 *
 	 * @public
 	 */
 	Cache.prototype.refreshSingle = function (oGroupLock, sPath, iIndex, fnDataRequested) {
 		var that = this;
 
+		this.checkSharedRequest();
 		return this.fetchValue(_GroupLock.$cached, sPath).then(function (aElements) {
 			var sPredicate = _Helper.getPrivateAnnotation(aElements[iIndex], "predicate"),
 				sReadUrl = _Helper.buildPath(that.sResourcePath, sPath, sPredicate),
@@ -958,6 +969,7 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which resolves with <code>undefined</code> when the entity is updated in
 	 *   the cache.
+	 * @throws {Error} If the cache is shared
 	 *
 	 * @private
 	 */
@@ -965,6 +977,7 @@ sap.ui.define([
 			fnOnRemove) {
 		var that = this;
 
+		this.checkSharedRequest();
 		return SyncPromise.all([
 			this.fetchValue(_GroupLock.$cached, sPath),
 			this.fetchTypes()
@@ -1007,17 +1020,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * Registers the listener for the path.
+	 * Registers the listener for the path. Shared caches do not register listeners because they are
+	 * read-only.
 	 *
 	 * @param {string} sPath The path
 	 * @param {object} [oListener] The listener
-	 * @throws {Error} If the cache is not active
 	 *
 	 * @private
 	 */
 	Cache.prototype.registerChange = function (sPath, oListener) {
-		this.checkActive();
-		_Helper.addByPath(this.mChangeListeners, sPath, oListener);
+		if (!this.bSharedRequest) {
+			_Helper.addByPath(this.mChangeListeners, sPath, oListener);
+		}
 	};
 
 	/**
@@ -1036,6 +1050,8 @@ sap.ui.define([
 	 *   <code>""</code>
 	 * @returns {number} The index at which the element actually was (it might have moved due to
 	 *   parallel insert/delete)
+	 *
+	 * @private
 	 */
 	Cache.prototype.removeElement = function (aElements, iIndex, sPredicate, sPath) {
 		var oElement, sTransientPredicate;
@@ -1156,19 +1172,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the active state of the cache. If the cache becomes inactive, all change listeners are
-	 * deregistered. If it is inactive, all read requests will be rejected, even if they have been
-	 * started while the cache still was active.
+	 * Adds or removes a usage of this cache. A cache with active usages must not be destroyed.
+	 * If a usage is removed, all change listeners are removed too. Note: shared caches have no
+	 * listeners.
 	 *
 	 * @param {boolean} bActive
-	 *   Whether the cache shell be active
+	 *   Whether a usage is added or removed
 	 *
 	 * @public
 	 */
 	Cache.prototype.setActive = function (bActive) {
-		this.bActive = bActive;
-		if (!bActive) {
-			this.mChangeListeners = {};
+		if (bActive) {
+			this.iActiveUsages += 1;
+		} else {
+			this.iActiveUsages -= 1;
+			this.mChangeListeners = {}; // Note: shared caches have no listeners anyway
 		}
 	};
 
@@ -1202,12 +1220,14 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise which resolves with <code>undefined</code> once the value has been set, or is
 	 *   rejected with an error if setting fails somehow
+	 * @throws {Error} If the cache is shared
 	 *
 	 * @public
 	 */
 	Cache.prototype.setProperty = function (sPropertyPath, vValue, sEntityPath) {
 		var that = this;
 
+		this.checkSharedRequest();
 		return this.fetchValue(_GroupLock.$cached, sEntityPath, null, null, true)
 			.then(function (oEntity) {
 				_Helper.updateSelected(that.mChangeListeners, sEntityPath, oEntity,
@@ -1221,11 +1241,12 @@ sap.ui.define([
 	 *
 	 * @param {object} [mQueryOptions]
 	 *   The new query options
-	 * @throws {Error} If the cache has already sent a read request
+	 * @throws {Error} If the cache has already sent a read request or if the cache is shared
 	 *
 	 * @public
 	 */
 	Cache.prototype.setQueryOptions = function (mQueryOptions) {
+		this.checkSharedRequest();
 		if (this.bSentRequest) {
 			throw new Error("Cannot set query options: Cache has already sent a request");
 		}
@@ -1243,10 +1264,13 @@ sap.ui.define([
 	 * collection).
 	 *
 	 * @param {string} sResourcePath The new resource path
+	 * @throws {Error} If the cache is shared
 	 *
 	 * @public
 	 */
 	Cache.prototype.setResourcePath = function (sResourcePath) {
+		this.checkSharedRequest();
+
 		this.sResourcePath = sResourcePath;
 		this.sMetaPath = _Helper.getMetaPath("/" + sResourcePath);
 
@@ -1297,6 +1321,7 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise for the PATCH request (resolves with <code>undefined</code>); rejected in case of
 	 *   cancellation or if no <code>fnErrorCallback</code> is given
+	 * @throws {Error} If the cache is shared
 	 *
 	 * @public
 	 */
@@ -1306,6 +1331,8 @@ sap.ui.define([
 			aPropertyPath = sPropertyPath.split("/"),
 			aUnitOrCurrencyPath,
 			that = this;
+
+		this.checkSharedRequest();
 
 		try {
 			oPromise = this.fetchValue(_GroupLock.$cached, sEntityPath);
@@ -1670,12 +1697,14 @@ sap.ui.define([
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @param {string} [sDeepResourcePath=sResourcePath]
 	 *   The deep resource path to be used to build the target path for bound messages
+	 * @param {boolean} [bSharedRequest=false]
+	 *   If this parameter is set, the cache is read-only and modifying calls lead to an exception.
 	 */
 	function CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			sDeepResourcePath) {
+			sDeepResourcePath, bSharedRequest) {
 		Cache.call(this, oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, function () {
 				return sDeepResourcePath;
-			});
+			}, bSharedRequest);
 
 		this.sContext = undefined; // the "@odata.context" from the responses
 		this.aElements = []; // the available elements
@@ -1735,9 +1764,6 @@ sap.ui.define([
 	 *   Whether to create missing objects on demand, in order to avoid drill-down errors
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the requested data.
-	 *
-	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
-	 *   arrives.
 	 *
 	 * @public
 	 */
@@ -2045,9 +2071,6 @@ sap.ui.define([
 	 *   <code>$count</code> may be <code>undefined</code>, but not <code>Infinity</code>). If an
 	 *   HTTP request fails, the error from the _Requestor is returned and the requested range is
 	 *   reset to <code>undefined</code>.
-	 *
-	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
-	 *   arrives.
 	 * @throws {Error} If given index or length is less than 0
 	 *
 	 * @public
@@ -2103,16 +2126,14 @@ sap.ui.define([
 			aElementsRange.push(this.aElements.$tail);
 		}
 		return SyncPromise.all(aElementsRange).then(function () {
-			var oResult;
+			var aElements = that.aElements.slice(iIndex, iEnd);
 
-			that.checkActive();
-			oResult = {
+			aElements.$count = that.aElements.$count;
+
+			return {
 				"@odata.context" : that.sContext,
-				value : that.aElements.slice(iIndex, iEnd)
+				value : aElements
 			};
-			oResult.value.$count = that.aElements.$count;
-
-			return oResult;
 		});
 	};
 
@@ -2189,7 +2210,8 @@ sap.ui.define([
 	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
 	 *   effects fails, or <code>null</code> if a key property is missing.
 	 * @throws {Error}
-	 *   If group ID is '$cached'. The error has a property <code>$cached = true</code>
+	 *   If group ID is '$cached' (the error has a property <code>$cached = true</code> then) or if
+	 *   the cache is shared
 	 *
 	 * @public
 	 */
@@ -2216,6 +2238,8 @@ sap.ui.define([
 			aFilters.push(sFilter);
 			return sFilter;
 		}
+
+		this.checkSharedRequest();
 
 		if (this.oPendingRequestsPromise) {
 			return this.oPendingRequestsPromise.then(function () {
@@ -2361,8 +2385,6 @@ sap.ui.define([
 	 *   Unsupported
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the element.
-	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
-	 *   arrives.
 	 * @throws {Error}
 	 *   If <code>bCreateOnDemand</code> is set or if group ID is '$cached' (the error
 	 *   has a property <code>$cached = true</code> then)
@@ -2432,7 +2454,8 @@ sap.ui.define([
 	 */
 	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 			fnGetOriginalResourcePath, bPost, sMetaPath) {
-		Cache.apply(this, arguments);
+		Cache.call(this, oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+			fnGetOriginalResourcePath);
 
 		this.sMetaPath = sMetaPath || this.sMetaPath; // overrides Cache c'tor
 		this.bPost = bPost;
@@ -2463,9 +2486,6 @@ sap.ui.define([
 	 *   Whether to create missing objects on demand, in order to avoid drill-down errors
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the element.
-	 *
-	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
-	 *   arrives.
 	 * @throws {Error}
 	 *   If the cache is using POST but no POST request has been sent yet, or if group ID is
 	 *   '$cached' (the error has a property <code>$cached = true</code> then)
@@ -2532,7 +2552,8 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the result of the request.
 	 * @throws {Error}
-	 *   If the cache does not allow POST or another POST is still being processed.
+	 *   If the cache does not allow POST, another POST is still being processed, or the cache is
+	 *   shared
 	 *
 	 * @public
 	 */
@@ -2541,6 +2562,7 @@ sap.ui.define([
 			sHttpMethod = "POST",
 			that = this;
 
+		this.checkSharedRequest();
 		if (!this.bPost) {
 			throw new Error("POST request not allowed");
 		}
@@ -2601,21 +2623,24 @@ sap.ui.define([
 	 * @returns {Promise|sap.ui.base.SyncPromise}
 	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
 	 *   effects fails.
-	 * @throws {Error} If the side effects require a $expand, or if group ID is '$cached' (the error
-	 *   has a property <code>$cached = true</code> then)
+	 * @throws {Error} If the side effects require a $expand, if group ID is '$cached' (the error
+	 *   has a property <code>$cached = true</code> then), or if the cache is shared
 	 *
 	 * @public
 	 */
 	SingleCache.prototype.requestSideEffects = function (oGroupLock, aPaths,
 			mNavigationPropertyPaths, sResourcePath) {
 		var oOldValuePromise = this.oPromise,
-			mQueryOptions = oOldValuePromise && _Helper.intersectQueryOptions(
-				this.mLateQueryOptions || this.mQueryOptions, aPaths,
-				this.oRequestor.getModelInterface().fetchMetadata,
-				this.sMetaPath, mNavigationPropertyPaths),
+			mQueryOptions,
 			oResult,
 			that = this;
 
+		this.checkSharedRequest();
+
+		mQueryOptions = oOldValuePromise && _Helper.intersectQueryOptions(
+			this.mLateQueryOptions || this.mQueryOptions, aPaths,
+			this.oRequestor.getModelInterface().fetchMetadata,
+			this.sMetaPath, mNavigationPropertyPaths);
 		if (!mQueryOptions) {
 			return SyncPromise.resolve();
 		}
@@ -2670,13 +2695,39 @@ sap.ui.define([
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @param {string} [sDeepResourcePath=sResourcePath]
 	 *   The deep resource path to be used to build the target path for bound messages
+	 * @param {boolean} [bSharedRequest=false]
+	 *   If this parameter is set, multiple requests for a cache using the same resource path will
+	 *   always return the same, shared cache. This cache is read-only, modifying calls lead to an
+	 *   exception.
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 *
 	 * @public
 	 */
 	Cache.create = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			sDeepResourcePath) {
+			sDeepResourcePath, bSharedRequest) {
+		var sPath, oSharedCollectionCache, mSharedCollectionCacheByPath;
+
+		if (bSharedRequest) {
+			sPath = sResourcePath
+				+ oRequestor.buildQueryString(_Helper.getMetaPath("/" + sResourcePath),
+					mQueryOptions, false, bSortExpandSelect);
+			mSharedCollectionCacheByPath = oRequestor.$mSharedCollectionCacheByPath;
+			if (!mSharedCollectionCacheByPath) {
+				mSharedCollectionCacheByPath = oRequestor.$mSharedCollectionCacheByPath = {};
+			}
+			oSharedCollectionCache = mSharedCollectionCacheByPath[sPath];
+			if (oSharedCollectionCache) {
+				oSharedCollectionCache.setActive(true);
+			} else {
+				oSharedCollectionCache = mSharedCollectionCacheByPath[sPath]
+					= new CollectionCache(oRequestor, sResourcePath, mQueryOptions,
+						bSortExpandSelect, sDeepResourcePath, bSharedRequest);
+			}
+
+			return oSharedCollectionCache;
+		}
+
 		return new CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 				sDeepResourcePath);
 	};

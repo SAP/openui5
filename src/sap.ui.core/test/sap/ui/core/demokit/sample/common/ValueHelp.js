@@ -160,6 +160,7 @@ sap.ui.define([
 				oComboBox.setModel(oValueListMapping.$model, "ValueList");
 				oComboBox.bindItems({
 					model : "ValueList",
+					parameters : {$$sharedRequest : true},
 					path : "/" + oValueListMapping.CollectionPath,
 					template : oItem
 				});
@@ -222,6 +223,7 @@ sap.ui.define([
 					oColumnListItem.addCell(new Text({text : "{" + sParameterPath + "}"}));
 				});
 				oTable.bindItems({
+					parameters : {$$sharedRequest : true},
 					path : "/" + oValueListMapping.CollectionPath,
 					template : oColumnListItem
 				});

@@ -101,7 +101,7 @@ sap.ui.define([
 				mParameters = _Helper.clone(mParameters) || {};
 				this.checkBindingParameters(mParameters, ["$$aggregation", "$$canonicalPath",
 					"$$groupId", "$$operationMode", "$$ownRequest", "$$patchWithoutSideEffects",
-					"$$updateGroupId"]);
+					"$$sharedRequest", "$$updateGroupId"]);
 				this.aApplicationFilters = _Helper.toArray(vFilters);
 				this.sChangeReason = oModel.bAutoExpandSelect ? "AddVirtualContext" : undefined;
 				this.oDiff = undefined;
@@ -114,6 +114,7 @@ sap.ui.define([
 				this.sOperationMode = mParameters.$$operationMode || oModel.sOperationMode;
 				this.mPreviousContextsByPath = {};
 				this.aPreviousData = [];
+				this.bSharedRequest = mParameters.$$sharedRequest;
 				this.aSorters = _Helper.toArray(vSorters);
 				this.sUpdateGroupId = mParameters.$$updateGroupId;
 				// Note: $$operationMode is validated before, oModel.sOperationMode also
@@ -895,7 +896,7 @@ sap.ui.define([
 			? _AggregationCache.create(this.oModel.oRequestor, sResourcePath, oAggregation,
 				mQueryOptions)
 			: _Cache.create(this.oModel.oRequestor, sResourcePath, mQueryOptions,
-				this.oModel.bAutoExpandSelect, sDeepResourcePath);
+				this.oModel.bAutoExpandSelect, sDeepResourcePath, this.bSharedRequest);
 	};
 
 	/**
@@ -1050,8 +1051,10 @@ sap.ui.define([
 	 *   The function is called just before a back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise to be resolved with the requested range as described in _Cache#read, or
-	 *   <code>undefined</code> w/o reading if the result is irrelevant because the context changed
+	 *   A promise to be resolved with the requested range as described in _Cache#read or with
+	 *   <code>undefined</code> if the context changed before reading; it is rejected to discard a
+	 *   response because the cache is no longer active, in this case the error has the property
+	 *   <code>canceled</code> with value <code>true</code>.
 	 *
 	 * @private
 	 */
@@ -1068,7 +1071,12 @@ sap.ui.define([
 
 			if (oCache) {
 				return oCache.read(iIndex, iLength, iMaximumPrefetchSize, oGroupLock,
-					fnDataRequested);
+					fnDataRequested
+				).then(function (oResult) {
+					that.assertSameCache(oCache);
+
+					return oResult;
+				});
 			}
 
 			oGroupLock.unlock();

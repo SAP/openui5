@@ -834,7 +834,8 @@ sap.ui.define([
 	 *   Whether to return cached values only and not trigger a request
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the cache's <code>fetchValue</code> call; it is rejected in
-	 *   case cached values are asked for, but not found
+	 *   case cached values are asked for, but not found, or if the cache is no longer the active
+	 *   cache when the response arrives
 	 * @throws {Error} If the binding's root binding is suspended, a "canceled" error is thrown
 	 *
 	 * @private
@@ -895,6 +896,10 @@ sap.ui.define([
 						that.fireDataRequested();
 					}, oListener)
 				).then(function (vValue) {
+					that.assertSameCache(oCache);
+
+					return vValue;
+				}).then(function (vValue) {
 					if (bDataRequested) {
 						that.fireDataReceived({data : {}});
 					}

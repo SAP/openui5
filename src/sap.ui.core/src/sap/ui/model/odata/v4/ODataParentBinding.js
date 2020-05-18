@@ -763,8 +763,14 @@ sap.ui.define([
 				// Note: in operation bindings mAggregatedQueryOptions misses the options from
 				// $$inheritExpandSelect
 				if (oCache && !oCache.bSentRequest && !that.oOperation) {
-					oCache.setQueryOptions(_Helper.merge({}, that.oModel.mUriParameters,
-						that.mAggregatedQueryOptions));
+					if (oCache.bSharedRequest) {
+						oCache.setActive(false);
+						oCache = that.createAndSetCache(that.mAggregatedQueryOptions,
+							oCache.sResourcePath, oContext);
+					} else {
+						oCache.setQueryOptions(_Helper.merge({}, that.oModel.mUriParameters,
+							that.mAggregatedQueryOptions));
+					}
 				}
 				return oCache;
 			});
