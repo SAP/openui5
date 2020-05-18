@@ -1,12 +1,9 @@
 /*global QUnit */
 sap.ui.define([
 	'sap/ui/test/opaQunit',
-	'sap/ui/test/Opa5',
-	'./utils/phantomJS'
-], function (opaTest, Opa5, phantomJSUtils) {
+	'sap/ui/test/Opa5'
+], function (opaTest, Opa5) {
 	"use strict";
-
-	phantomJSUtils.introduceSinonXHR();
 
 	function suppressFailedAssertions() {
 		// suppress error on QUnit timeout: "Cannot read property 'failedAssertions' of null"
