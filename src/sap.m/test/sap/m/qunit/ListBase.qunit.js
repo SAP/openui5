@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"jquery.sap.global",
 	"sap/ui/qunit/QUnitUtils",
@@ -34,11 +35,11 @@ sap.ui.define([
 	"sap/m/ScrollContainer",
 	"sap/m/Title",
 	"sap/m/plugins/DataStateIndicator"
-], function(createAndAppendDiv, jQuery,
+], function(Core, createAndAppendDiv, jQuery,
 			qutils, ListBaseRenderer, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, ThemeParameters, library, StandardListItem, App, Page, ListBase, List, Toolbar,
 			ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title, DataStateIndicator) {
 		"use strict";
-		createAndAppendDiv("content").setAttribute("data-sap-ui-fastnavgroup", "true");
+		jQuery("#qunit-fixture").attr("data-sap-ui-fastnavgroup", "true");
 
 
 		/*******************************************************************************
@@ -172,7 +173,7 @@ sap.ui.define([
 
 			// add item to page & render
 			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			vSelectionMode = oList.getMode();
 			// call method & do tests
@@ -314,14 +315,14 @@ sap.ui.define([
 		}
 
 		// app
-		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+		var oRB = Core.getLibraryResourceBundle("sap.m"),
 			oApp = new App("myApp", { initialPage: "myFirstPage" }),
 			oPage = new Page("myFirstPage", {
 				title : "ListBase Test Page"
 			});
 
 		// init app
-		oApp.addPage(oPage).placeAt("content");
+		oApp.addPage(oPage).placeAt("qunit-fixture");
 
 		/********************************************************************************/
 		QUnit.module("Basic Control API checks", {
@@ -373,7 +374,7 @@ sap.ui.define([
 
 			oList.setMode("MultiSelect");
 			oList.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.strictEqual(oList.getItems().length, 3, "List has exactly 3 items");
 
@@ -472,7 +473,7 @@ sap.ui.define([
 
 			// add item to page & render
 			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// check again after rendering
 			sAddText = " (state: after rendering)";
@@ -497,11 +498,11 @@ sap.ui.define([
 
 			// add item to page & render
 			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// call destructor
 			oList.destroy();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assertions
 			assert.strictEqual(oList.getItems().length, 0, "Items aggregation is empty after destroying " + oList.getId());
@@ -539,7 +540,7 @@ sap.ui.define([
 
 			// add item to page & render
 			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			$list = oList.$();
 			$listUl = $list.children("ul");
 			$listLi = $list.children("ul").children("li");
@@ -570,7 +571,7 @@ sap.ui.define([
 
 			// add item to page & render
 			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.ok(oToolbar.hasStyleClass("sapMTBHeader-CTX"), "Toolbar has style class sapMTBHeader-CTX");
 			assert.ok(oToolbar.hasStyleClass("sapMListHdrTBar"), "Toolbar has style class sapMListHdrTBar");
@@ -609,18 +610,18 @@ sap.ui.define([
 
 			// add item to page & render
 			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// check again after rendering
 			sAddText = " (state: after rendering)";
 			oList.setInset(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			$list = oList.$();
 			assert.strictEqual(oList.getInset(), true, 'The property "inset" is "true" on ' + oList + sAddText);
 			assert.ok($list.hasClass("sapMListInsetBG"), 'The HTML div container for the list has class "sapMListInsetBG" on ' + oList + sAddText);
 
 			oList.setInset(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			$list = oList.$();
 			assert.strictEqual(oList.getInset(), false, 'The property "inset" is "false" on ' + oList + sAddText);
 			assert.ok(!$list.hasClass("sapMListInsetBG"), 'The HTML div container for the list has no class "sapMListInsetBG" on ' + oList + sAddText);
@@ -641,7 +642,7 @@ sap.ui.define([
 			// add item to page & render
 			oList.addItem(oListItem);
 			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// call method & do tests
 			assert.strictEqual(oList.setMode(library.ListMode.None).getMode(), library.ListMode.None, 'The property "mode" is "None" on ' + oList);
@@ -688,7 +689,7 @@ sap.ui.define([
 
 			// add item to page & render
 			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			$list = oList.$();
 			iWidth100Percent = $list.width();
 
@@ -696,7 +697,7 @@ sap.ui.define([
 			sWidth = "0px";
 			sWidthPx = 0;
 			oList.setWidth(sWidth);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			$list = oList.$();
 			assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
 			assert.strictEqual($list.css("width"), sWidth, 'The CSS property "width" is now "' + sWidth + '" on ' + oList);
@@ -705,7 +706,7 @@ sap.ui.define([
 			sWidth = "500px";
 			sWidthPx = 500;
 			oList.setWidth(sWidth);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			$list = oList.$();
 			assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
 			assert.strictEqual($list.css("width"), sWidth, 'The CSS property "width" is now "' + sWidth + '" on ' + oList);
@@ -727,7 +728,7 @@ sap.ui.define([
 			assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is still "' + sWidth + '" after setting value "false" on ' + oList);
 
 			oList.setWidth("");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			$list = oList.$();
 			assert.strictEqual(oList.getWidth(), "", 'The control property "width" is now "" after setting value "" on ' + oList);
 			assert.strictEqual($list.width(), iWidth100Percent, 'The CSS property "width" is now 100% after setting value "" on ' + oList);
@@ -735,7 +736,7 @@ sap.ui.define([
 			sWidth = "20rem";
 			sWidthPx = "320px";
 			oList.setWidth(sWidth);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			$list = oList.$();
 			assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
 			assert.strictEqual($list.css("width"), sWidthPx, 'The CSS property "width" is now "' + sWidth + '" on ' + oList);
@@ -744,20 +745,20 @@ sap.ui.define([
 			sWidth = "50%";
 			sWidthPx = Math.ceil(parseInt($list.parent().css("width")) / 2.0) + "px";
 			oList.setWidth(sWidth);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			$list = oList.$();
 			assert.strictEqual(oList.getWidth(), sWidth, 'The property "width" is now "' + sWidth + '" on ' + oList);
 
 			sWidth = "auto";
 			oList.setWidth(sWidth);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			$list = oList.$();
 			assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
 			assert.strictEqual($list.css("width"), $list.parent().css("width"), 'The CSS property "width" is now "' + $list.parent().css("width") + '" on ' + oList);
 
 			sWidth = "inherit";
 			oList.setWidth(sWidth);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			$list = oList.$();
 			assert.strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
 			assert.strictEqual($list.css("width"), $list.parent().css("width"), 'The CSS property "width" is now "' + $list.parent().css("width") + '" on ' + oList);
@@ -777,7 +778,7 @@ sap.ui.define([
 
 			// add item to page & render
 			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// call method & do tests
 			sText = "Test1234567890!\"§$%&/()=?`´@€-_.:,;#'+*~1²³456{[]}\\";
@@ -808,7 +809,7 @@ sap.ui.define([
 
 			// add item to page & render
 			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// call method & do tests
 			bGrowing = true;
@@ -861,7 +862,7 @@ sap.ui.define([
 
 			// add item to page & render
 			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// call method & do tests
 			iThreshold = 5;
@@ -900,22 +901,22 @@ sap.ui.define([
 
 			// add item to page & render
 			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// call method & do tests
 			sText = "Test1234567890!\"§$%&/()=?`´@€-_.:,;#'+*~1²³456{[]}\\";
 			assert.strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'The control property "growingTriggerText" is "' + sText + '" on ' + oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
 
 			sText = "~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>";
 			assert.strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'Javascript code injection is not possible on ' + oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
 
 			sText = "";
 			assert.strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'The control property "growingTriggerText" is "' + sText + '" on ' + oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), oRB.getText("LOAD_MORE_DATA"), 'The dom element has the text "' + sText + '" on ' + oList);
 
 			// standard setter tests
@@ -929,18 +930,29 @@ sap.ui.define([
 
 		QUnit.test("setEnableBusyIndicator", function(assert) {
 			oList.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			var oRenderSpy = this.spy(oList.getRenderer(), "render");
 
 			oList.setEnableBusyIndicator(false);
 			oList.setEnableBusyIndicator(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.strictEqual(oRenderSpy.callCount, 0, "The list should not be rerendered when enableBusyIndicator is changed");
 		});
 
 		window.IntersectionObserver && QUnit.test("BusyIndicator in the middle", function(assert) {
 			this.clock.restore();
 			createAndAppendDiv("uiArea1");
+
+			var $qunitFixture = jQuery("#qunit-fixture"),
+				sPosition = $qunitFixture.css("position"),
+				sTop = $qunitFixture.css("top"),
+				sLeft = $qunitFixture.css("left"),
+				sWidth = $qunitFixture.css("width");
+
+			$qunitFixture.css("position", "inherit");
+			$qunitFixture.css("top", "inherit");
+			$qunitFixture.css("left", "inherit");
+			$qunitFixture.css("width", "inherit");
 
 			var oMutationObserver, observedDomRef;
 			var done = assert.async();
@@ -952,7 +964,7 @@ sap.ui.define([
 
 			oList.setBusyIndicatorDelay(0);
 			oScrollContainer.placeAt("uiArea1");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			oList.getDomRef().style.height = "500px";
 
@@ -984,6 +996,12 @@ sap.ui.define([
 
 							oList.setBusy(false);
 							oMutationObserver.disconnect();
+
+							// restore style
+							$qunitFixture.css("position", sPosition);
+							$qunitFixture.css("top", sTop);
+							$qunitFixture.css("left", sLeft);
+							$qunitFixture.css("width", sWidth);
 							done();
 						}
 					});
@@ -1005,7 +1023,7 @@ sap.ui.define([
 
 			// add item to page & render
 			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			$listUl = jQuery(oList.$().children("ul")[0]);
 
 			// call method & do tests
@@ -1015,14 +1033,14 @@ sap.ui.define([
 			assert.ok(!$listUl.hasClass("sapMListShowSeparatorsNone"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsNone" on ' + oList);
 
 			assert.strictEqual(oList.setShowSeparators(library.ListSeparators.Inner).getShowSeparators(), library.ListSeparators.Inner, 'The property "showSeparators" is "Inner" on ' + oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			$listUl = jQuery(oList.$().children("ul")[0]);
 			assert.ok(!$listUl.hasClass("sapMListShowSeparatorsAll"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsAll" on ' + oList);
 			assert.ok($listUl.hasClass("sapMListShowSeparatorsInner"), 'The HTML div container for the list has class "sapMListShowSeparatorsInner" on ' + oList);
 			assert.ok(!$listUl.hasClass("sapMListShowSeparatorsNone"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsNone" on ' + oList);
 
 			assert.strictEqual(oList.setShowSeparators(library.ListSeparators.None).getShowSeparators(), library.ListSeparators.None, 'The property "showSeparators" is "None" on ' + oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			$listUl = jQuery(oList.$().children("ul")[0]);
 			assert.ok(!$listUl.hasClass("sapMListShowSeparatorsAll"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsAll" on ' + oList);
 			assert.ok(!$listUl.hasClass("sapMListShowSeparatorsInner"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsInner" on ' + oList);
@@ -1062,13 +1080,13 @@ sap.ui.define([
 
 			// add item to page & render
 			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelectionItem = oList.getItems()[3];
 
 			// call method & do tests
 			bIncludeItemInSelection = true;
 			assert.strictEqual(oList.setIncludeItemInSelection(bIncludeItemInSelection).getIncludeItemInSelection(), bIncludeItemInSelection, 'The control property "includeItemInSelection" is "' + bIncludeItemInSelection + '" on ' + oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oList.getItems().forEach(function (oItem) {
 				assert.strictEqual(oItem.$().hasClass("sapMLIBActionable"), true, 'Each item has css class "sapMLIBActionable" on ' + oList);
 			});
@@ -1080,7 +1098,7 @@ sap.ui.define([
 
 			bIncludeItemInSelection = false;
 			assert.strictEqual(oList.setIncludeItemInSelection(bIncludeItemInSelection).getIncludeItemInSelection(), bIncludeItemInSelection, 'The control property "includeItemInSelection" is "' + bIncludeItemInSelection + '" on ' + oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oList.getItems().forEach(function (oItem) {
 				assert.strictEqual(oItem.$().hasClass("sapMLIBActionable"), false, 'Each item does not have has css class "sapMLIBCursor" on ' + oList);
 			});
@@ -1164,7 +1182,7 @@ sap.ui.define([
 			// add item to page & render
 			oList.setNoDataText();
 			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// call method & do tests
 			assert.strictEqual(oList.getNoDataText(), sText, 'The control property "noDataText" is "' + sText + '" when the property value is empty on ' + oList);
@@ -1188,7 +1206,7 @@ sap.ui.define([
 			// add item to page & render
 			oList.setMode(library.ListMode.None);
 			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// no binding
 			iCounter = 0;
@@ -1281,7 +1299,7 @@ sap.ui.define([
 			});
 
 			oScrollContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			var oItem,
 				oScrollDelegate = library.getScrollDelegate(oList, true),
@@ -1361,8 +1379,8 @@ sap.ui.define([
 			// let the item navigation run for testing
 			this.stub(Device.system, "desktop", true);
 
-			oList.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
 			oList.focus();
 
 			assert.strictEqual(oList.getDomRef("before").getAttribute("tabindex"), "-1", "Before dummy element is not at the tab chain");
@@ -1423,7 +1441,7 @@ sap.ui.define([
 			assert.strictEqual(fnDeleteSpy.callCount, 0, "Delete event is not called since List is not in Delete mode");
 
 			oList.setMode("Delete");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oList.focus();
 
 			qutils.triggerKeydown(document.activeElement, "DELETE");
@@ -1464,8 +1482,8 @@ sap.ui.define([
 			oPage.addContent(oBeforeList);
 			oPage.addContent(oList);
 			oPage.addContent(oAfterList);
-			oPage.placeAt("content");
-				sap.ui.getCore().applyChanges();
+			oPage.placeAt("qunit-fixture");
+				Core.applyChanges();
 				oList.forwardTab = fnSpy;
 
 				// tab key
@@ -1510,8 +1528,8 @@ sap.ui.define([
 			// let the item navigation run for testing
 			this.stub(Device.system, "desktop", true);
 
-			oList.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
 
 			var oFocusedInput = oListItem1.getTabbables()[0];
 			oFocusedInput.focus();
@@ -1532,26 +1550,26 @@ sap.ui.define([
 			});
 
 			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oList.onItemDOMUpdate = fnSpy;
 
 			oListItem.setVisible(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.strictEqual(fnSpy.callCount, 1, "List is informed when item visibility is changed from visible to invisible");
 			assert.strictEqual(fnSpy.args[0][0], oListItem, "Correct list item is informed");
 			fnSpy.reset();
 
 			oListItem.setVisible(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.strictEqual(fnSpy.callCount, 0, "Visibility did not changed and list is not informed");
 			fnSpy.reset();
 
 			oListItem.setVisible(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.strictEqual(fnSpy.callCount, 1, "List is informed when item visibility is changed from invisible to visible");
 			assert.strictEqual(fnSpy.args[0][0], oListItem, "Correct list item is informed");
@@ -1575,7 +1593,7 @@ sap.ui.define([
 				});
 
 			oList.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// let the item navigation run for testing
 			this.stub(Device.system, "desktop", true);
@@ -1583,7 +1601,7 @@ sap.ui.define([
 			var fnRenderSpy = this.spy(oList.getRenderer(), "render");
 
 			oListItem1.setVisible(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			oListItem2.focus();
 			this.clock.tick(1);
@@ -1594,7 +1612,7 @@ sap.ui.define([
 			}
 
 			oListItem1.setVisible(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			oListItem1.focus();
 			this.clock.tick(1);
@@ -1605,7 +1623,7 @@ sap.ui.define([
 			}
 
 			oListItem1.setVisible(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.strictEqual(fnRenderSpy.callCount, 0, "The list should not be rerendered with item visibility changes");
 
@@ -1627,8 +1645,8 @@ sap.ui.define([
 			var aResponsiveSize = sResponsiveSize.split(" ");
 
 			// Act
-			oList.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
 			oList.addStyleClass("sapUiNoContentPadding");
 			$containerContent = oList.$();
 
@@ -1688,8 +1706,8 @@ sap.ui.define([
 					items: [oButton1, oList, oButton2]
 				});
 
-			oContainer.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oContainer.placeAt("qunit-fixture");
+			Core.applyChanges();
 			oList.focus();
 
 			qutils.triggerKeydown(oListItem1.getFocusDomRef(), "TAB", true, false, false);
@@ -1715,7 +1733,7 @@ sap.ui.define([
 				onAfterRendering: fnOnAfterRenderingSpy
 			});
 			oList.setKeyboardMode("Edit");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.strictEqual(fnPressSpy.callCount, 0, "Mode change did not rerender!");
 
 			oListItem1.focus();
@@ -1746,7 +1764,7 @@ sap.ui.define([
 			assert.strictEqual(document.activeElement, oInput1.getFocusDomRef(), "Focus is moved to the first input");
 
 			oInput2.setEnabled(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN");
 			assert.strictEqual(document.activeElement, oListItem2.getFocusDomRef(), "Focus is moved to the item since second input is disabled");
 
@@ -1754,7 +1772,7 @@ sap.ui.define([
 			assert.notStrictEqual(document.activeElement, oList.getItemsContainerDomRef(), "Focus is not forwarded before the table");
 
 			oInput2.setEnabled(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oListItem2.focus();
 			qutils.triggerKeydown(document.activeElement, "F7");
 			assert.strictEqual(document.activeElement, oInput2.getFocusDomRef(), "Focus is moved to input but keyboard mode did not change with F7");
@@ -1782,13 +1800,13 @@ sap.ui.define([
 
 			bindListData(oList, data3, "/items", createTemplateListItem());
 
-			oList.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
 
 			oList.getVisibleItems()[0].focus();
 			// select the item
 			qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.equal(fnFireSelectionChangeEvent.callCount, 1, "selectionChange event fired");
 
 			// trigger shift keydown so that oList._mRangeSelectionIndex object is available
@@ -1796,11 +1814,11 @@ sap.ui.define([
 			assert.ok(oList._mRangeSelection, "Range selection mode enabled");
 			// trigger SHIFT + Arrow Down to perform range selection
 			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(oList.getVisibleItems()[1].getSelected(), "Item at position 1 is selected via keyboard range selection");
 			assert.equal(fnFireSelectionChangeEvent.callCount, 2, "selectionChange event fired");
 			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(oList.getVisibleItems()[2].getSelected(), "Item at position 2 is selected via keyboard range selection");
 			assert.equal(fnFireSelectionChangeEvent.callCount, 3, "selectionChange event fired");
 
@@ -1818,7 +1836,7 @@ sap.ui.define([
 			oList.getVisibleItems()[5].focus();
 			// select the item
 			qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.equal(fnFireSelectionChangeEvent.callCount, 1, "selectionChange event fired");
 
 			// trigger shift keydown so that oList._mRangeSelection object is available
@@ -1861,7 +1879,7 @@ sap.ui.define([
 			var oListItem = oList.getVisibleItems()[5];
 			oListItem.setSelected(false);
 			oListItem.setVisible(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			oList.getVisibleItems()[4].focus();
 			// trigger shift keydown so that oList._mRangeSelection object is available
@@ -1890,16 +1908,16 @@ sap.ui.define([
 
 			bindListData(oList, data3, "/items", createTemplateListItem());
 
-			oList.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
 
 			oList.insertItem(oGroupHeaderListItem, 3);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			oList.getVisibleItems()[1].focus();
 			// select the item
 			qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.equal(fnFireSelectionChangeEvent.callCount, 1, "selectionChange event fired");
 
 			// trigger shift keydown so that oList._mRangeSelectionIndex object is available
@@ -1907,19 +1925,19 @@ sap.ui.define([
 			assert.ok(oList._mRangeSelection, "Range selection mode enabled");
 			// trigger SHIFT + Arrow Down to perform range selection
 			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(oList.getVisibleItems()[2].getSelected(), "Item at position 2 is selected via keyboard range selection");
 			assert.equal(fnFireSelectionChangeEvent.callCount, 2, "selectionChange event fired");
 
 			// trigger SHIFT + Arrow Down to perform range selection
 			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(!oList.getVisibleItems()[3].getSelected(), "Item at position 3 is not selected via keyboard range selection as it is a sap.m.GroupHeaderListItem control");
 			assert.equal(fnFireSelectionChangeEvent.callCount, 2, "selectionChange event not fired");
 
 			// trigger SHIFT + Arrow Down to perform range selection
 			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(oList.getVisibleItems()[4].getSelected(), "Item at position 4 is selected via keyboard range selection");
 			assert.equal(fnFireSelectionChangeEvent.callCount, 3, "selectionChange event fired");
 
@@ -1939,8 +1957,8 @@ sap.ui.define([
 
 			bindListData(oList, data3, "/items", createTemplateListItem());
 
-			oList.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
 
 			oList.getVisibleItems()[1].focus();
 			// select the item
@@ -1958,7 +1976,7 @@ sap.ui.define([
 			// select the item
 			qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.equal(oList.getSelectedItems().length, 4, "4 items are selected");
 
 			fnFireSelectionChangeEvent.reset();
@@ -1974,30 +1992,30 @@ sap.ui.define([
 
 			// trigger SHIFT + Arrow Down to perform range selection
 			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(fnFireSelectionChangeEvent.notCalled, "action is selection and the item is already selected, then selectionChange event should not be fired");
 			assert.equal(oList._mRangeSelection.direction, 1, "Direction of index stored in _mRangeSelection object");
 
 			// trigger SHIFT + Arrow Down to perform range selection
 			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(fnFireSelectionChangeEvent.notCalled, "action is selection and the item is already selected, then selectionChange event should not be fired");
 
 			// trigger SHIFT + Arrow Up to perform range selection
 			qutils.triggerKeydown(document.activeElement, "ARROW_UP", true, false, false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.equal(fnFireSelectionChangeEvent.callCount, 1, "direction changed, so selectionChange event should be fired");
 			assert.ok(!oList.getVisibleItems()[4].getSelected(), "Item at position 4 is deselected");
 
 			// trigger SHIFT + Arrow Up to perform range selection
 			qutils.triggerKeydown(document.activeElement, "ARROW_UP", true, false, false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.equal(fnFireSelectionChangeEvent.callCount, 2, "direction changed, so selectionChange event should be fired");
 			assert.ok(!oList.getVisibleItems()[3].getSelected(), "Item at position 3 is deselected");
 
 			// trigger SHIFT + Arrow Up to perform range selection
 			qutils.triggerKeydown(document.activeElement, "ARROW_UP", true, false, false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.equal(fnFireSelectionChangeEvent.callCount, 2, "index of item and range selection item index matched, selection Cange no fired, item is already selected");
 			assert.equal(oList._mRangeSelection.direction, -1, "Direction change updated in _mRangeSelection object");
 
@@ -2019,13 +2037,13 @@ sap.ui.define([
 
 			bindListData(oList, data3, "/items", createTemplateListItem());
 
-			oList.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
 
 			oList.getVisibleItems()[0].focus();
 			// select the item
 			qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.equal(fnFireSelectionChangeEvent.callCount, 1, "selectionChange event fired");
 
 			// trigger shift keydown so that oList._mRangeSelection object is available
@@ -2047,6 +2065,46 @@ sap.ui.define([
 			oList.destroy();
 		});
 
+		QUnit.test("Do not create range seletion object when CTRL + SHIFT is pressed", function(assert) {
+			var oListItemTemplate = createListItem(),
+				oList = new List({
+					mode: library.ListMode.MultiSelect,
+					includeItemInSelection: true,
+					items: [
+						oListItemTemplate
+					]
+				});
+
+			bindListData(oList, data3, "/items", createTemplateListItem());
+
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			oList.getVisibleItems()[0].focus();
+			// select the item
+			qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
+			Core.applyChanges();
+			assert.ok(oList.getVisibleItems()[0].getSelected(), "First item selected");
+
+			// trigger shift + ctrlKey keydown
+			qutils.triggerKeydown(document.activeElement, "", true, false, true);
+			assert.notOk(oList._mRangeSelection, "rangeSelection object not created (SHIFT + CTRL)");
+
+			// trigger shift + altKey keydown
+			qutils.triggerKeydown(document.activeElement, "", true, true, false);
+			assert.notOk(oList._mRangeSelection, "rangeSelection object not created (SHIFT + ALT)");
+
+			// trigger shift + altKey + ctrlKey keydown
+			qutils.triggerKeydown(document.activeElement, "", true, true, true);
+			assert.notOk(oList._mRangeSelection, "rangeSelection object not created (SHIFT + ALT + CTRL)");
+
+			// trigger shift keydown so that oList._mRangeSelection object is available
+			qutils.triggerKeydown(document.activeElement, "", true, false, false);
+			assert.ok(oList._mRangeSelection, "Range selection mode enabled");
+
+			oList.destroy();
+		});
+
 		QUnit.module("Highlight", {
 			beforeEach: function() {
 				oList = new List();
@@ -2059,11 +2117,11 @@ sap.ui.define([
 		QUnit.test("Highlight should be rendered", function (assert) {
 			var oLI = new StandardListItem({
 				title: "Title of the item"
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 
 			var fnTestHighlight = function(sHighlight) {
 				oLI.setHighlight(sHighlight);
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 				assert.ok(oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlight"), "Highlight is rendered");
 				assert.ok(oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlight" + sHighlight), sHighlight + " Highlight is rendered");
 			};
@@ -2074,7 +2132,7 @@ sap.ui.define([
 			}
 
 			oLI.setHighlight("None");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(!oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlight"), "Highlight is not rendered");
 			assert.ok(!oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlightNone"), "No highlight class for None");
 
@@ -2104,29 +2162,29 @@ sap.ui.define([
 					items: [oListItem1, oListItem2]
 				});
 
-			oList.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
 
 			assert.ok(oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is added");
 
 			oListItem2.setHighlight("None");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(!oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is removed");
 
 			oListItem1.setHighlight("Information");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is added");
 
 			oListItem1.setVisible(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(!oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is removed");
 
 			oListItem1.setVisible(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is removed");
 
 			oListItem1.destroy();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(!oList.getDomRef("listUl").classList.contains("sapMListHighlight"), "Highlight class is removed");
 
 			oList.destroy();
@@ -2140,8 +2198,8 @@ sap.ui.define([
 					items: [oListItem1]
 				});
 
-			oList.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
 
 			oListItem1.getDeleteControl(true);
 			var sDeleteIcon = oListItem1._oDeleteControl.getIcon();
@@ -2179,16 +2237,16 @@ sap.ui.define([
 		QUnit.test("Navigated indicator should be rendered", function(assert) {
 			var oLI = new StandardListItem({
 				title: "Title of the item"
-			}).placeAt("content");
-			sap.ui.getCore().applyChanges();
+			}).placeAt("qunit-fixture");
+			Core.applyChanges();
 			assert.notOk(oLI.$().find(".sapMLIBNavigated").length > 0, "navigated property is not enabled, hence class is not rendered");
 
 			oLI.setNavigated(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(oLI.$().find(".sapMLIBNavigated").length > 0, "navigated property is set correctly and class is also rendered");
 
 			// accessibility
-			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 			assert.ok(oLI.getAccessibilityInfo().description.indexOf(oResourceBundle.getText("LIST_ITEM_NAVIGATED")) > -1, "Navigated info added to the accessibility announcement");
 
 			oLI.destroy();
@@ -2205,16 +2263,16 @@ sap.ui.define([
 				items: [oListItem1, oListItem2]
 			});
 
-			oList.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
 			assert.notOk(oList.getDomRef("listUl").classList.contains("sapMListNavigated"), "Navigated class is not added as navigated property is not enabled");
 
 			oListItem2.setNavigated(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(oList.getDomRef("listUl").classList.contains("sapMListNavigated"), "List informed to add navigated class");
 
 			oListItem2.setNavigated(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.notOk(oList.getDomRef("listUl").classList.contains("sapMListNavigated"), "Navigated class is removed, as non of the items are navigated");
 
 			oList.destroy();
@@ -2230,19 +2288,19 @@ sap.ui.define([
 		});
 
 		QUnit.test("aria-labelledby association should only be in the DOM", function(assert) {
-			oList.placeAt("content");
+			oList.placeAt("qunit-fixture");
 			var oText1 = new Text({
 				text: "text1"
-			}).placeAt("content");
-			sap.ui.getCore().applyChanges();
+			}).placeAt("qunit-fixture");
+			Core.applyChanges();
 
 			oList.addAriaLabelledBy(oText1);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.ok(oList.getNavigationRoot().getAttribute("aria-labelledby") == oText1.getId(), "Accessibility info of text1 is in the list dom");
 
 			oList.removeAriaLabelledBy(oText1);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(oList.getNavigationRoot().getAttribute("aria-labelledby") == null, "Accessibility info of text1 is removed from the dom");
 
 			oText1.destroy();
@@ -2263,9 +2321,9 @@ sap.ui.define([
 				}),
 				oList = new List({
 					items: [oGroupHeader1, oListItem1, oGroupHeader2, oListItem2]
-				}).placeAt("content");
+				}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			oListItem1.focus();
 			assert.ok(oListItem1.getAccessibilityInfo().description.indexOf(oGroupHeader1.getTitle()) > -1, "group headers info exist in the accessibility info of the item");
@@ -2279,12 +2337,12 @@ sap.ui.define([
 		QUnit.test("highlight text of the item", function(assert) {
 			var oListItem1 = new StandardListItem({
 				title: "Title of the item"
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 
 			var fnTestHighlight = function(sHighlight, sHighlightText, sExpectedHighlightText) {
 				oListItem1.setHighlight(sHighlight);
 				oListItem1.setHighlightText(sHighlightText);
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 				assert.ok(oListItem1.getAccessibilityInfo().description.indexOf(sExpectedHighlightText) > -1,
 					"highlight text exists in the accessibility info of the item");
 			};
@@ -2294,7 +2352,7 @@ sap.ui.define([
 
 			// Default text
 			aMessageTypes.forEach(function(sHighlight) {
-				var sDefaultText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIST_ITEM_STATE_" + sHighlight.toUpperCase());
+				var sDefaultText = Core.getLibraryResourceBundle("sap.m").getText("LIST_ITEM_STATE_" + sHighlight.toUpperCase());
 				fnTestHighlight(sHighlight, undefined, sDefaultText);
 			});
 
@@ -2337,7 +2395,7 @@ sap.ui.define([
 
 			bindListData(oList, data4, "/items", createTemplateListItem());
 			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(oList.getContextMenu(), "ContextMenu was set correctly");
 
 			var oItem = oList.getItems()[0];
@@ -2376,9 +2434,9 @@ sap.ui.define([
 			var fnOpenAsContextMenu = this.spy(oMenu, "openAsContextMenu");
 
 			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
-			var $input = oInput.$("inner").focus();
+			var $input = oInput.$("inner").trigger("focus");
 			$input.trigger("contextmenu");
 			assert.equal(fnOpenAsContextMenu.callCount, 0, "Menu#OpenAsContextMenu is not called");
 
@@ -2388,7 +2446,7 @@ sap.ui.define([
 			oMenu.close();
 
 			oList.setMode("SingleSelectLeft");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			oListItem.getSingleSelectControl().focus();
 			oListItem.getSingleSelectControl().$().trigger("contextmenu");
@@ -2419,8 +2477,8 @@ sap.ui.define([
 			});
 
 			oList.addItem(oListItem);
-			oList.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
 
 			var fnPress = this.spy(oListItem, "firePress");
 			oListItem.focus();
@@ -2469,7 +2527,7 @@ sap.ui.define([
 				items: [oStdLI]
 			});
 			oList.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.ok(ListBase.getStickyBrowserSupport(), "sticky css supported in Chrome");
 			assert.ok(oList.getDomRef().classList.contains("sapMSticky"), "Sticky style class added");
@@ -2494,7 +2552,7 @@ sap.ui.define([
 				items: [oStdLI]
 			});
 			oList.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.ok(ListBase.getStickyBrowserSupport(), "sticky css supported in Chrome");
 			assert.ok(oList.getDomRef().classList.contains("sapMSticky"), "Sticky style class added");
@@ -2519,7 +2577,7 @@ sap.ui.define([
 				items: [oStdLI]
 			});
 			oList.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.ok(ListBase.getStickyBrowserSupport(), "sticky css supported in Chrome");
 			assert.ok(oList.getDomRef().classList.contains("sapMSticky"), "Sticky style class added");
@@ -2544,7 +2602,7 @@ sap.ui.define([
 				items: [oStdLI]
 			});
 			oList.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.ok(ListBase.getStickyBrowserSupport(), "sticky css supported in Chrome");
 			assert.ok(oList.getDomRef().classList.contains("sapMSticky"), "Sticky style class added");
@@ -2569,7 +2627,7 @@ sap.ui.define([
 				items: [oStdLI]
 			});
 			oList.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.ok(!ListBase.getStickyBrowserSupport(), "sticky css not supported");
 			assert.ok(!oList.getDomRef().classList.contains("sapMSticky"), "Sticky style class not added");
@@ -2595,7 +2653,7 @@ sap.ui.define([
 					items: [oStdLI]
 				});
 				oList.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 
 				var aClassList = oList.getDomRef().classList;
 				assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky4"), "Sticky column headers is not supported with List");
@@ -2645,18 +2703,18 @@ sap.ui.define([
 				});
 				sut.setSticky(["InfoToolbar"]);
 				oScrollContainer.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 
 				var aClassList = sut.$()[0].classList;
 				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky class added for sticky infoToolbar only");
 
 				sut.getInfoToolbar().setVisible(false);
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 				aClassList = sut.$()[0].classList;
 				assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky2"), "Sticky classes removed");
 
 				sut.getInfoToolbar().setVisible(true);
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 				aClassList = sut.$()[0].classList;
 				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky classes added");
 
@@ -2736,18 +2794,18 @@ sap.ui.define([
 				});
 				sut.setSticky(["HeaderToolbar"]);
 				oScrollContainer.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 
 				var aClassList = sut.$()[0].classList;
 				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky1"), "Sticky class added for sticky headerToolbar only");
 
 				sut.getHeaderToolbar().setVisible(false);
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 				aClassList = sut.$()[0].classList;
 				assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky1"), "Sticky classes removed as no element is sticky");
 
 				sut.getHeaderToolbar().setVisible(true);
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 				aClassList = sut.$()[0].classList;
 				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky1"), "Sticky classes added");
 
@@ -2849,24 +2907,24 @@ sap.ui.define([
 				});
 				sut.setSticky(["HeaderToolbar", "InfoToolbar"]);
 				oScrollContainer.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 
 				var aClassList = sut.$()[0].classList;
 				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky3"), "Sticky class added for sticky headerToolbar and infoToolbar");
 
 				sut.getHeaderToolbar().setVisible(false);
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 				aClassList = sut.$()[0].classList;
 				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky class updated for sticky infoToolbar");
 
 				sut.getInfoToolbar().setVisible(false);
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 				aClassList = sut.$()[0].classList;
 				assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky1") && !aClassList.contains("sapMSticky2"), "No sticky classes present");
 
 				sut.getHeaderToolbar().setVisible(true);
 				sut.getInfoToolbar().setVisible(true);
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 				aClassList = sut.$()[0].classList;
 				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky3"), "Sticky class added for sticky headerToolbar, infoToolbar and column headers");
 
@@ -2960,7 +3018,7 @@ sap.ui.define([
 			});
 
 			oScrollContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			var iHeaderToolbarHeight = (oList.getHeaderToolbar() && oList.getHeaderToolbar().getDomRef() || this.getDomRef("header")).offsetHeight;
 			var iInfoToolbarHeight = oList.getInfoToolbar().getDomRef().offsetHeight;

@@ -74,7 +74,7 @@ sap.ui.define([
 
 		_modifyUrlParameter: function (sParameter, sNewValue) {
 			if (document.location.href.indexOf(sParameter) > -1) {
-				document.location.href = document.location.href.replace(new RegExp(sParameter + "=[A-Za-z0-9]*"), sParameter + "=" + sNewValue);
+				document.location.href = document.location.href.replace(new RegExp(sParameter + "=[A-Za-z0-9_-]*"), sParameter + "=" + sNewValue);
 			} else if (document.location.href.indexOf("?") > -1) {
 				document.location.href += "&" + sParameter + "=" + sNewValue;
 			} else {

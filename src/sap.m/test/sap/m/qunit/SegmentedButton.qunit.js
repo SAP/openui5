@@ -1774,6 +1774,7 @@ sap.ui.define([
 		assert.strictEqual(aButtons[0].getText(), aItems[0].getText(), "The button text should equal the item test");
 		assert.strictEqual(this.oSB.getSelectedButton(), aButtons[0].getId(),
 			"The button created should be the selected button");
+		assert.ok(aButtons[0].getDomRef().classList.contains("sapMSegBtnLastVisibleButton"), "The last button have sapMSegBtnLastVisibleButton styleClass");
 
 		// Act - add second button and set selection to the newly added button
 		this.oSB.addItem(new SegmentedButtonItem({text: "Button 2"}));
@@ -1786,6 +1787,8 @@ sap.ui.define([
 		assert.strictEqual(aButtons.length, 2, "There should be two buttons created from items");
 		assert.strictEqual(this.oSB.getSelectedButton(), aButtons[1].getId(),
 			"The second button created should be selected");
+		assert.notOk(aButtons[0].getDomRef().classList.contains("sapMSegBtnLastVisibleButton"), "The old last button is remove styleClass sapMSegBtnLastVisibleButton");
+		assert.ok(aButtons[1].getDomRef().classList.contains("sapMSegBtnLastVisibleButton"), "The last button have correct style class");
 
 		// Act - add third item
 		this.oSB.addItem(new SegmentedButtonItem({text: "Button 3"}));
@@ -2228,7 +2231,7 @@ sap.ui.define([
 				canOverflow: true,
 				listenForEvents: ["select"],
 				autoCloseEvents: ["select"], // BCP: 1970012411 In overflow - selection should close the popover.
-				noInvalidationProps: ["enabled", "selectedKey"],
+				propsUnrelatedToSize: ["enabled", "selectedKey"],
 				invalidationEvents: ["_containerWidthChanged"],
 				onBeforeEnterOverflow: oSB._onBeforeEnterOverflow,
 				onAfterExitOverflow: oSB._onAfterExitOverflow

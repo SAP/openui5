@@ -1207,7 +1207,7 @@ sap.ui.define([
 					return log.apply(this, arguments);
 				}
 
-				vBindingParameterType = vResult && vResult.$Type;
+				vBindingParameterType = vResult && vResult.$Type || vBindingParameterType;
 				if (that.bSupportReferences && !(sQualifiedName in mScope)) {
 					// unknown qualified name: maybe schema is referenced and can be included?
 					sSchema = schema(sQualifiedName);
@@ -1421,6 +1421,7 @@ sap.ui.define([
 						// annotation(s) via external targeting
 						// Note: inline annotations can only be reached via pure "JSON" drill-down,
 						//       e.g. ".../$ReferentialConstraint/...@..."
+						vBindingParameterType = vResult.$Type || vBindingParameterType;
 						vResult = mScope.$Annotations[sTarget] || {};
 						bODataMode = false; // switch to pure "JSON" drill-down
 					} else if (sSegment === "$" && i + 1 < aSegments.length) {
@@ -1676,6 +1677,15 @@ sap.ui.define([
 					}
 				}
 			});
+
+			if (bNoEditUrl) {
+				return SyncPromise.resolve({
+					editUrl : undefined,
+					entityPath : sEntityPath,
+					propertyPath : sPropertyPath
+				});
+			}
+
 			// aEditUrl may still contain key predicate requests, run them and wait for the promises
 			return SyncPromise.all(aEditUrl.map(function (vSegment) {
 				if (typeof vSegment === "string") {
@@ -1686,9 +1696,6 @@ sap.ui.define([
 					var sPredicate;
 
 					if (!oEntity) {
-						if (bNoEditUrl) {
-							return undefined;
-						}
 						error("No instance to calculate key predicate at " + vSegment.path);
 					}
 					if (_Helper.hasPrivateAnnotation(oEntity, "transient")) {

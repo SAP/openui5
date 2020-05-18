@@ -150,20 +150,18 @@ sap.ui.define([
 	 * This file defines behavior for the control,
 	 */
 	Token.prototype.init = function() {
-		var that = this,
-			bSysCancelIconUsed = Parameters.get("_sap_m_Token_Sys_Cancel_Icon") === "true",
-			sSrcIcon = bSysCancelIconUsed ? "sap-icon://sys-cancel" : "sap-icon://decline";
+		var bSysCancelIconUsed = Parameters.get("_sap_m_Token_Sys_Cancel_Icon") === "true",
+			sSrcIcon = bSysCancelIconUsed ? "sap-icon://sys-cancel" : "sap-icon://decline",
+			oDeleteIcon = new Icon({
+				id : this.getId() + "-icon",
+				src : sSrcIcon,
+				noTabStop: true,
+				press : this._tokenIconPress.bind(this)
+			});
 
-		this._deleteIcon = new Icon({
-			id : that.getId() + "-icon",
-			src : sSrcIcon,
-			noTabStop: true,
-			press : this._tokenIconPress.bind(this)
-		});
-
-		this._deleteIcon.addStyleClass("sapMTokenIcon");
-		this.setAggregation("deleteIcon", this._deleteIcon);
-		this._deleteIcon.setUseIconTooltip(false);
+		oDeleteIcon.addStyleClass("sapMTokenIcon");
+		oDeleteIcon.setUseIconTooltip(false);
+		this.setAggregation("deleteIcon", oDeleteIcon);
 	};
 
 	/**
@@ -205,9 +203,7 @@ sap.ui.define([
 	Token.prototype._onTokenPress = function(oEvent) {
 		var bSelected = this.getSelected(),
 			bCtrlKey = oEvent.ctrlKey || oEvent.metaKey,
-			bShiftKey = oEvent.shiftKey,
-			bNewSelectedValue = true,
-			oParent;
+			bNewSelectedValue = true;
 
 		if (bCtrlKey || (oEvent.which === KeyCodes.SPACE)) {
 			bNewSelectedValue = !bSelected;
@@ -219,17 +215,12 @@ sap.ui.define([
 
 		this.firePress();
 
-		if (bSelected != bNewSelectedValue) {
+		if (bSelected !== bNewSelectedValue) {
 			if (bNewSelectedValue) {
 				this.fireSelect();
 			} else {
 				this.fireDeselect();
 			}
-		}
-
-		oParent = this.getParent();
-		if (oParent instanceof Tokenizer) {
-			oParent._onTokenSelect(this, bCtrlKey, bShiftKey);
 		}
 
 		if (this.getSelected()) {
@@ -263,36 +254,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the selection status of the token and fires the correct "select" or "deselect" event.
-	 *
-	 * @param {boolean} bSelected Indicates if the token is selected.
-	 * @private
-	 */
-	Token.prototype._changeSelection = function(bSelected) {
-		if (this.getSelected() == bSelected) {
-			return;
-		}
-
-		this.setSelected(bSelected);
-
-		if (bSelected) {
-			this.fireSelect();
-		} else {
-			this.fireDeselect();
-		}
-	};
-
-	/**
 	 * Event handler called when control is on tap
 	 *
 	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
-	Token.prototype.ontap = function(oEvent) {
-		if (oEvent.target.id == this._deleteIcon.getId()){
+	Token.prototype.ontap = function (oEvent) {
+		var oDeleteIcon = this.getAggregation("deleteIcon");
+
+		if (oDeleteIcon && oEvent.target.id === oDeleteIcon.getId()) {
 			oEvent.setMark("tokenDeletePress", true);
 			return;
 		}
+
+		oEvent.setMark("tokenTap", this);
+
 		this._onTokenPress(oEvent);
 	};
 
@@ -375,11 +351,12 @@ sap.ui.define([
 	};
 
 	Token.prototype.onThemeChanged = function () {
-		var bSysCancelIconUsed = Parameters.get("_sap_m_Token_Sys_Cancel_Icon") === "true",
+		var oDeleteIcon = this.getAggregation("deleteIcon"),
+			bSysCancelIconUsed = Parameters.get("_sap_m_Token_Sys_Cancel_Icon") === "true",
 			sSrcIcon = bSysCancelIconUsed ? "sap-icon://sys-cancel" : "sap-icon://decline";
 
-		if (this._deleteIcon.getSrc() !== sSrcIcon) {
-			this._deleteIcon.setSrc(sSrcIcon);
+		if (oDeleteIcon && oDeleteIcon.getSrc() !== sSrcIcon) {
+			oDeleteIcon.setSrc(sSrcIcon);
 		}
 	};
 

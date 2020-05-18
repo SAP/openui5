@@ -55,7 +55,10 @@ function(
 		 */
 		var Switch = Control.extend("sap.m.Switch", /** @lends sap.m.Switch.prototype */ { metadata: {
 
-			interfaces: ["sap.ui.core.IFormContent"],
+			interfaces: [
+				"sap.ui.core.IFormContent",
+				"sap.m.IOverflowToolbarContent"
+			],
 			library: "sap.m",
 			properties: {
 
@@ -453,6 +456,20 @@ function(
 				enabled: this.getEnabled()
 			};
 		};
+
+	/**
+	 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
+	 *
+	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.OverflowToolBar
+	 */
+	Switch.prototype.getOverflowToolbarConfig = function() {
+		return {
+			propsUnrelatedToSize: ["enabled", "state"]
+		};
+	};
 
 		return Switch;
 	});

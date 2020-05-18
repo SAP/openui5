@@ -428,6 +428,68 @@
             "reference": "2070146104"
           }
         ]
+      },
+      {
+        "id": "62d016f66e59bc22424440a040e87a90b0a6cc18",
+        "type": "FEATURE",
+        "text": " sap.m.IconTabBar: Filters with sub tabs with or without own content differentiated",
+        "references": []
+      },
+      {
+        "id": "b78feb626b4a87f4432ff26b1c392dea365b24fc",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.DynamicSideContent: Support Scrolling related functionality",
+        "references": []
+      },
+      {
+        "id": "4a52cc6118b08ba55cf72ddf740536dbf53d5f16",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: QUnit test in IE 11 fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070208747"
+          }
+        ]
+      },
+      {
+        "id": "be7b5dcf32cb2ced5cc91db3f24f5f81fe490aec",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Visual focus adjustment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070188251"
+          }
+        ]
+      },
+      {
+        "id": "60a8384c8c85f89e84414711fca068dc63a1b83d",
+        "type": "FIX",
+        "text": " sap.m.Input: ValueState popup no longer opened on dialog close",
+        "references": []
+      },
+      {
+        "id": "460aff6b2842828ee040ba1dbf8928a3024f1e1d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: interval toolbar now has correct hidden label defining it\u0027s purpose",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080043381"
+          }
+        ]
+      },
+      {
+        "id": "04c181e13ce74d28eb6662e7ff81143899acc5b6",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar, sap.m.PlanningCalendar, sap.m.SinglePlanningCalendar - visual issues fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070040553"
+          }
+        ]
       }
     ]
   }

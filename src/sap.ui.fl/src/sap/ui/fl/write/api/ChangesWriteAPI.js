@@ -84,7 +84,11 @@ sap.ui.define([
 			}
 
 			// flex change
-			oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
+			if (mPropertyBag.selector.name && mPropertyBag.selector.view) {
+				oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector.view);
+			} else {
+				oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
+			}
 
 			// if a component instance is passed only a base change is created
 			if (mPropertyBag.selector instanceof Component) {

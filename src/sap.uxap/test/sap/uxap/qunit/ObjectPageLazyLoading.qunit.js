@@ -174,53 +174,6 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 		}, iLoadingDelay);
 	});
 
-	QUnit.test("scrollToSection with animation does not load intermediate sections", function (assert) {
-		var oComponentContainer = this.oView.byId("objectPageContainer"),
-			oObjectPageLayout = oComponentContainer.getObjectPageLayoutInstance(),
-			oData = oConfigModel.getData(),
-			done = assert.async();
-
-		_loadBlocksData(oData);
-
-		oConfigModel.setData(oData);
-		Core.applyChanges();
-
-		assert.expect(1);
-
-		function checkOnDomReady() {
-			var iSectionsCount = oObjectPageLayout.getSections().length,
-				oLastSection = oObjectPageLayout.getSections()[iSectionsCount - 1],
-				oSectionBeforeLast = oObjectPageLayout.getSections()[iSectionsCount - 2],
-				iSectionBeforeLastPositionTo = oObjectPageLayout._computeScrollPosition(oSectionBeforeLast);
-
-			// Setup: mock scrollTop of a section before the target section
-			sinon.stub(oObjectPageLayout, "_getHeightRelatedParameters", function() {
-				// return value is not important for this test
-				return {
-					iScrollTop: iSectionBeforeLastPositionTo
-				};
-			});
-
-			// Act: scroll with animation
-			oObjectPageLayout.scrollToSection(oLastSection.getId());
-
-			// Act: mock lazyLoading call *during animated scroll*
-			oObjectPageLayout._oLazyLoading.doLazyLoading();
-
-			// Checl on scroll end:
-			setTimeout(function() {
-				assert.strictEqual(oSectionBeforeLast.getSubSections()[0].getBlocks()[0]._bConnected, false, "section above the target section is not loaded");
-				done();
-			}, iLoadingDelay);
-		}
-
-		if (oObjectPageLayout._bDomReady) {
-			checkOnDomReady();
-		} else {
-			oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", checkOnDomReady);
-		}
-	});
-
 	QUnit.test("BCP: 1970115549 - _grepCurrentTabSectionBases should always return a value", function (assert) {
 		var oComponentContainer = this.oView.byId("objectPageContainer"),
 			oObjectPageLayout = oComponentContainer.getObjectPageLayoutInstance(),
@@ -231,11 +184,11 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 
 		oObjectPageLayout.setSelectedSection(aSectionBases[0].getId());
 
-		assert.equal(oObjectPageLayout._grepCurrentTabSectionBases().length, 2, "_grepCurrentTabSectionBases returns 2 filtered sections initially");
+		assert.equal(oObjectPageLayout._grepCurrentTabSectionBases().length, 3, "_grepCurrentTabSectionBases returns 3 filtered sections + subsections initially");
 
 		aSectionBases[1].getParent = fnCustomGetParent;
 
-		assert.equal(oObjectPageLayout._grepCurrentTabSectionBases().length, 1, "_grepCurrentTabSectionBases returns a valid value if some of the sections parent is undefined");
+		assert.equal(oObjectPageLayout._grepCurrentTabSectionBases().length, 2, "_grepCurrentTabSectionBases returns a valid value if some of the sections parent is undefined");
 	});
 
 	QUnit.module("ObjectPageAfterRendering");

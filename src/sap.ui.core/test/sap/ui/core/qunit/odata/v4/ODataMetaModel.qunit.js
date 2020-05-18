@@ -174,6 +174,10 @@ sap.ui.define([
 					"@Common.Label" : "OverloadAction import's label"
 				},
 				"tea_busi.DefaultContainer/T€AMS" : {
+					"@Session.StickySessionSupported" : {
+						NewAction : "tea_busi.NewAction",
+						"NewAction@Common.Label" : "New Team"
+					},
 					"@T€AMS" : {}
 				},
 				"tea_busi.NewAction" : {
@@ -219,6 +223,9 @@ sap.ui.define([
 					},
 					"@Common.Text@UI.TextArrangement" : {
 						"$EnumMember" : "UI.TextArrangementType/TextLast"
+					},
+					"@Session.StickySessionSupported#EntityType" : {
+						NewAction : "tea_busi.NewAction"
 					},
 					"@UI.Badge" : {
 						"@Common.Label" : "Label inside",
@@ -1645,6 +1652,8 @@ sap.ui.define([
 			: mScope.$Annotations["name.space.OverloadedFunction"]["@Common.Label"],
 		"/name.space.OverloadedFunction@" : mScope.$Annotations["name.space.OverloadedFunction"],
 		"/T€AMS/tea_busi.NewAction@Common.QuickInfo" : "Hello, world!",
+		"/tea_busi.NewAction@Core.OperationAvailable"
+			: mScope.$Annotations["tea_busi.NewAction"]["@Core.OperationAvailable"],
 		// annotations at specific operation overload - - - - - - - - - - - - - - - - - - - - - - -
 		"/T€AMS/name.space.OverloadedAction@Core.OperationAvailable"
 			: mScope.$Annotations["name.space.OverloadedAction(tea_busi.TEAM)"]
@@ -1669,6 +1678,15 @@ sap.ui.define([
 		"/OverloadedAction/@$ui5.overload@Core.OperationAvailable" // at unbound overload
 			: mScope.$Annotations["name.space.OverloadedAction()"]["@Core.OperationAvailable"],
 		"/OverloadedAction/@$ui5.overload@Core.OperationAvailable#2" : false,
+		// Note: no slash before "@Core.OperationAvailable", else annotation targets return type
+		"/T€AMS@Session.StickySessionSupported/NewAction@Core.OperationAvailable"
+			: mScope.$Annotations["tea_busi.NewAction(Collection(tea_busi.TEAM))"]
+				["@Core.OperationAvailable"],
+		"/T€AMS/@Session.StickySessionSupported#EntityType/NewAction@Core.OperationAvailable"
+			: mScope.$Annotations["tea_busi.NewAction(Collection(tea_busi.TEAM))"]
+				["@Core.OperationAvailable"],
+		// Note: annotation at "NewAction" property itself is preferred, if it exists:
+		"/T€AMS@Session.StickySessionSupported/NewAction@Common.Label" : "New Team",
 		// annotations at $ReturnType of specific overload or across all overloads (ODATA-1178) - -
 		"/ChangeManagerOfTeam/$ReturnType@Common.Label" : "Hail to the Chief",
 		// Note: there are two overloads with (Collection of) Worker, avoid these!
@@ -3422,14 +3440,16 @@ sap.ui.define([
 
 		this.oMetaModelMock.expects("fetchEntityContainer").twice()
 			.returns(SyncPromise.resolve(mScope));
+		// Note: we try to "calculate key predicate" because context path alone is no indication
+		// that entity is still transient! @see "@$ui5.keepTransientPath"
 		this.mock(oContext).expects("fetchValue").withExactArgs("/TEAMS($uid=id-1-23)")
 			.returns(SyncPromise.resolve({"@$ui5._" : {"transient" : "update"}}));
 
 		// code under test
 		return this.oMetaModel.fetchUpdateData("Name", oContext).then(function (oResult) {
 			assert.deepEqual(oResult, {
-				entityPath : "/TEAMS($uid=id-1-23)",
 				editUrl : undefined,
+				entityPath : "/TEAMS($uid=id-1-23)",
 				propertyPath : "Name"
 			});
 		});
@@ -3441,16 +3461,15 @@ sap.ui.define([
 
 		this.oMetaModelMock.expects("fetchEntityContainer").twice()
 			.returns(SyncPromise.resolve(mScope));
-		this.mock(oContext).expects("fetchValue").withExactArgs("/TEAMS('42')/TEAM_2_MANAGER")
-			.returns(SyncPromise.resolve(null));
+		this.mock(oContext).expects("fetchValue").never();
 
 		return this.oMetaModel
 			// code under test
 			.fetchUpdateData("/TEAMS('42')/TEAM_2_MANAGER/TEAM_ID", oContext, true)
 			.then(function (oResult) {
 				assert.deepEqual(oResult, {
-					entityPath : "/TEAMS('42')/TEAM_2_MANAGER",
 					editUrl : undefined,
+					entityPath : "/TEAMS('42')/TEAM_2_MANAGER",
 					propertyPath : "TEAM_ID"
 				});
 			});
@@ -3561,8 +3580,8 @@ sap.ui.define([
 		this.mock(this.oMetaModel).expects("fetchUpdateData")
 			.withExactArgs("", sinon.match.same(oContext))
 			.returns(SyncPromise.resolve(Promise.resolve({
-				entityPath : "/TEAMS('4711')",
 				editUrl : "TEAMS('4711')",
+				entityPath : "/TEAMS('4711')",
 				propertyPath : "Name"
 			})));
 

@@ -189,6 +189,38 @@ sap.ui.define([
 		});
 	});
 
+	function createAppComponent(bFlexExtensionPointEnabled) {
+		return {
+			getManifestEntry: function () {
+				return {
+					flexExtensionPointEnabled: bFlexExtensionPointEnabled
+				};
+			}
+		};
+	}
+
+	QUnit.module("ManifestUtils.isFlexExtensionPointHandlingEnabled", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("without existing appComponent", function(assert) {
+			var oGetAppComponentForControlStub = sandbox.stub(Utils, "getAppComponentForControl").returns(undefined);
+			assert.notOk(ManifestUtils.isFlexExtensionPointHandlingEnabled({}), "the extension point handling is disabled");
+			assert.equal(oGetAppComponentForControlStub.callCount, 1, "the function was called once");
+		});
+		QUnit.test("without 'flexExtensionPointEnabled' flag is set", function(assert) {
+			var oGetAppComponentForControlStub = sandbox.stub(Utils, "getAppComponentForControl").returns(createAppComponent(false));
+			assert.notOk(ManifestUtils.isFlexExtensionPointHandlingEnabled({}), "the extension point handling is disabled");
+			assert.equal(oGetAppComponentForControlStub.callCount, 1, "the function was called once");
+		});
+		QUnit.test("with 'flexExtensionPointEnabled' flag is set", function(assert) {
+			var oGetAppComponentForControlStub = sandbox.stub(Utils, "getAppComponentForControl").returns(createAppComponent(true));
+			assert.ok(ManifestUtils.isFlexExtensionPointHandlingEnabled({}), "the extension point handling is enabled");
+			assert.equal(oGetAppComponentForControlStub.callCount, 1, "the function was called once");
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});

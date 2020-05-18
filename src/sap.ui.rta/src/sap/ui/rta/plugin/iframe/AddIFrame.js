@@ -8,14 +8,16 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/dt/Util",
 	"sap/base/util/uid",
-	"sap/ui/rta/plugin/iframe/SettingsDialog"
+	"sap/ui/core/IconPool",
+	"sap/ui/rta/plugin/iframe/AddIFrameDialog"
 ], function(
 	BaseCreate,
 	FlexUtils,
 	RtaUtils,
 	DtUtil,
 	uid,
-	IFrameSettingsDialog
+	IconPool,
+	AddIFrameDialog
 ) {
 	"use strict";
 
@@ -70,12 +72,12 @@ sap.ui.define([
 
 		var sVariantManagementReference = this.getVariantManagementReference(oParentOverlay);
 
-		var oIFrameSettingsDialog = new IFrameSettingsDialog();
-		var mDialogSettings = {
-			urlBuilderParameters: IFrameSettingsDialog.buildUrlBuilderParametersFor(oParent)
+		var oAddIFrameDialog = new AddIFrameDialog();
+		var mAddIFrameDialogSettings = {
+			parameters: AddIFrameDialog.buildUrlBuilderParametersFor(oParent)
 		};
-		oIFrameSettingsDialog.open(mDialogSettings)
-			.then(function (mSettings) {
+		oAddIFrameDialog.open(mAddIFrameDialogSettings)
+			.then(function(mSettings) {
 				if (!mSettings) {
 					return Promise.reject(); // Cancel
 				}
@@ -83,7 +85,7 @@ sap.ui.define([
 				mSettings.aggregation = oAction.aggregation;
 				return getAddIFrameCommand.call(this, oParent, mSettings, oDesignTimeMetadata, sVariantManagementReference);
 			}.bind(this))
-			.then(function (oCommand) {
+			.then(function(oCommand) {
 				// providing an action will trigger the rename plugin, which we only want in case of addIFrame as section
 				// in that case the function getCreatedContainerId has to be provided
 				this.fireElementModified({
@@ -92,12 +94,13 @@ sap.ui.define([
 					action: oAction.getCreatedContainerId ? oAction : undefined
 				});
 			}.bind(this))
-			.catch(function(oMessage) {
-				if (oMessage) {
-					throw DtUtil.createError("AddIFrame#handler", oMessage, "sap.ui.rta");
+			.catch(function(vError) {
+				if (vError) {
+					throw DtUtil.createError("AddIFrame#handler", vError, "sap.ui.rta");
 				}
 			});
 	}
+
 
 	/**
 	 * Constructor for a new AddIFrame plugin.
@@ -143,19 +146,27 @@ sap.ui.define([
 	 * @return {array} Array of context menu items
 	 * @override
 	 */
-	AddIFrame.prototype.getMenuItems = function (aElementOverlays) {
+	AddIFrame.prototype.getMenuItems = function(aElementOverlays) {
 		function getCommonProperties(sAggregationName) {
 			var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-			var sIframeGroupText = oTextResources.getText("CTX_ADDIFRAME_GROUP");
+			var sIFrameGroupText = oTextResources.getText("CTX_ADDIFRAME_GROUP");
 			return {
 				text: getCreateMenuItemText.bind(this, sAggregationName, "CTX_ADDIFRAME"),
 				handler: handleCreate.bind(this, sAggregationName),
 				enabled: this.isEnabled.bind(this, sAggregationName),
 				isSibling: !sAggregationName,
-				icon: "sap-icon://add-product",
-				group: sIframeGroupText
+				icon: "sap-icon://tnt/content-enricher",
+				group: sIFrameGroupText
 			};
 		}
+
+		// register TNT icon font
+		IconPool.registerFont({
+			collectionName: "tnt",
+			fontFamily: "SAP-icons-TNT",
+			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
+			lazy: true
+		});
 
 		var iBaseRank = 140;
 		var aMenuItems = [];
@@ -178,7 +189,7 @@ sap.ui.define([
 		bIsSibling = false;
 		if (this.isAvailable(bIsSibling, aElementOverlays)) {
 			aMenuItems = aMenuItems.concat(this.getCreateActions(bIsSibling, aElementOverlays[0])
-				.map(function (oAction, iIndex) {
+				.map(function(oAction, iIndex) {
 					var oParentMenuItem = Object.assign({
 						action: oAction,
 						id: "CTX_CREATE_CHILD_IFRAME_" + oAction.aggregation.toUpperCase(),

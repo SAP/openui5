@@ -2414,7 +2414,7 @@ sap.ui.define([
 			}
 
 			// determine CSS Variables / RTL
-			var sCssVars = (/^(true|x)$/i.test(this.oConfiguration['xx-cssVariables']) ? "-skeleton" : "");
+			var sCssVars = (/^(true|x)$/i.test(this.oConfiguration['xx-cssVariables']) ? "_skeleton" : "");
 			var sRtl = (this.oConfiguration.getRTL() ? "-RTL" : "");
 
 			// create the library file name
@@ -2436,7 +2436,7 @@ sap.ui.define([
 			// include the css variables
 			var cssPathAndName;
 			if (/^(true|x|additional)$/i.test(this.oConfiguration['xx-cssVariables'])) {
-				cssPathAndName = this._getThemePath(sLibName, this.sTheme) + "css-variables.css" + (sQuery ? sQuery : "");
+				cssPathAndName = this._getThemePath(sLibName, this.sTheme) + "css_variables.css" + (sQuery ? sQuery : "");
 				Log.info("Including " + cssPathAndName + " -  sap.ui.core.Core.includeLibraryTheme()");
 				includeStylesheet(cssPathAndName, sLinkId);
 				// include the skeleton css next to the css variables
@@ -2861,9 +2861,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * This method can be called to trigger realignment of controls after changing the cozy/compact CSS class of a DOM
-	 * element, for example, the <code>&lt;body&gt;</code> tag.
+	 * Triggers a realignment of controls
 	 *
+	 * This method should be called after changing the cozy/compact CSS class of a DOM element at runtime,
+	 *  for example at the <code>&lt;body&gt;</code> tag.
+	 *  Controls can listen to the themeChanged event to realign their appearance after changing the theme.
+	 *  Changing the cozy/compact CSS class should then also be handled as a theme change.
+	 *  In more simple scenarios where the cozy/compact CSS class is added to a DOM element which contains only a few controls
+	 *  it might not be necessary to trigger the realigment of all controls placed in the DOM,
+	 *  for example changing the cozy/compact CSS class at a single control
 	 * @public
 	 */
 	Core.prototype.notifyContentDensityChanged = function() {

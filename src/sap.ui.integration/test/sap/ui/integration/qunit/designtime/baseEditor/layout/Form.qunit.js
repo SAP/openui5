@@ -1,10 +1,16 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/integration/designtime/baseEditor/layout/Form"
+	"sap/ui/integration/designtime/baseEditor/layout/Form",
+	"sap/base/util/includes",
+	"sap/base/util/restricted/_pick",
+	"sap/base/util/deepClone"
 ],
 function (
-	prepareData
+	prepareData,
+	includes,
+	_pick,
+	deepClone
 ) {
 	"use strict";
 
@@ -49,7 +55,8 @@ function (
 								"path": "/bar"
 							}
 						}
-					]
+					],
+					visible: true
 				}],
 				"default group is created properly"
 			);
@@ -59,6 +66,23 @@ function (
 		QUnit.test("group creation out of empty array", function (assert) {
 			var mResult = prepareData([]);
 			assert.deepEqual(mResult.groups, [], "group is not created");
+		});
+
+		QUnit.test("group creation with invisible fields (1 visible field + 1 invisible)", function (assert) {
+			var aPropertyEditorsConfig = deepClone(this.aPropertyEditorsConfig);
+			aPropertyEditorsConfig[0].visible = false;
+			var mResult = prepareData(aPropertyEditorsConfig);
+
+			assert.strictEqual(mResult.groups[0].visible, true, "default group is visible");
+		});
+
+		QUnit.test("group creation with invisible fields (both 2 fields are invisible)", function (assert) {
+			var aPropertyEditorsConfig = deepClone(this.aPropertyEditorsConfig);
+			aPropertyEditorsConfig[0].visible = false;
+			aPropertyEditorsConfig[1].visible = false;
+			var mResult = prepareData(aPropertyEditorsConfig);
+
+			assert.strictEqual(mResult.groups[0].visible, false, "default group is invisible");
 		});
 	});
 
@@ -151,7 +175,8 @@ function (
 									"path": "/foobar"
 								}
 							}
-						]
+						],
+						visible: true
 					},
 					{
 						label: "Group Bar",
@@ -164,7 +189,8 @@ function (
 									"path": "/bar"
 								}
 							}
-						]
+						],
+						visible: true
 					}
 				],
 				"groups are created properly"
@@ -204,7 +230,8 @@ function (
 									"path": "/foobar"
 								}
 							}
-						]
+						],
+						visible: true
 					}
 				],
 				"group is created properly"
@@ -245,7 +272,8 @@ function (
 									"__propertyName": "foo1"
 								}
 							}
-						]
+						],
+						visible: true
 					}
 				],
 				"group is created properly"
@@ -346,7 +374,8 @@ function (
 									"path": "/bar"
 								}
 							}
-						]
+						],
+						visible: true
 					},
 					{
 						label: "Group Foo",
@@ -368,7 +397,8 @@ function (
 									"path": "/foo2"
 								}
 							}
-						]
+						],
+						visible: true
 					}
 				],
 				"groups are created properly"
@@ -418,7 +448,8 @@ function (
 									"__propertyName": "foo1"
 								}
 							}
-						]
+						],
+						visible: true
 					},
 					{
 						label: "Group Foo",
@@ -439,7 +470,8 @@ function (
 									"path": "/foobar"
 								}
 							}
-						]
+						],
+						visible: true
 					}
 				],
 				"groups are created properly"
@@ -472,6 +504,92 @@ function (
 			);
 
 			assert.deepEqual(mResult.responsiveGridLayout, mResponsiveGridLayout, "configuration for ResponsiveGridLayout is propagated properly");
+		});
+
+		QUnit.test("groups creation with invisible fields", function (assert) {
+			var aPropertyEditorsConfig = this.aPropertyEditorsConfig.map(function (mConfig) {
+				return (
+					includes(mConfig.tags, "foo")
+						? (
+							Object.assign({}, mConfig, {
+								visible: false
+							})
+						)
+						: mConfig
+				);
+			});
+
+			var mResult = prepareData(
+				aPropertyEditorsConfig,
+				{
+					groups: [
+						{
+							"label": "Group Foo",
+							"items": [
+								{
+									type: "tag",
+									value: "foo"
+								}
+							]
+						},
+						{
+							"label": "Group Bar",
+							"items": [
+								{
+									type: "tag",
+									value: "bar"
+								}
+							]
+						}
+					]
+				}
+			);
+
+			assert.strictEqual(mResult.groups[0].visible, false, "group with `foo` fields is invisible");
+			assert.strictEqual(mResult.groups[1].visible, true, "group with `bar` fields is visible");
+		});
+
+		QUnit.test("groups creation with mix of visible and invisible fields", function (assert) {
+			var aPropertyEditorsConfig = this.aPropertyEditorsConfig.map(function (mConfig) {
+				if (includes(mConfig.tags, "foo", "bar")) {
+					return mConfig;
+				} else if (includes(mConfig.tags, "foo")) {
+					return Object.assign({}, mConfig, {
+						visible: false
+					});
+				}
+
+				return mConfig;
+			});
+
+			var mResult = prepareData(
+				aPropertyEditorsConfig,
+				{
+					groups: [
+						{
+							"label": "Group Foo",
+							"items": [
+								{
+									type: "tag",
+									value: "foo"
+								}
+							]
+						},
+						{
+							"label": "Group Bar",
+							"items": [
+								{
+									type: "tag",
+									value: "bar"
+								}
+							]
+						}
+					]
+				}
+			);
+
+			assert.strictEqual(mResult.groups[0].visible, true, "group with `foo` fields is visible");
+			assert.strictEqual(mResult.groups[1].visible, true, "group with `bar` fields is visible");
 		});
 	});
 

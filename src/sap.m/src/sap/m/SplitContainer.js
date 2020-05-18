@@ -600,6 +600,16 @@ function(
 		}
 
 		this._updateMasterButtonTooltip();
+
+		this._oMasterNav.setInitialPage(sap.ui.getCore().byId(this.getInitialMaster()));
+		this._oMasterNav.setDefaultTransitionName(this.getDefaultTransitionNameMaster());
+
+		if (!Device.system.phone) {
+			this._oDetailNav.setInitialPage(sap.ui.getCore().byId(this.getInitialDetail()));
+			this._oShowMasterBtn.setText(this.getMasterButtonText() || this._rb.getText("SPLITCONTAINER_NAVBUTTON_TEXT"));
+		}
+
+		this._oDetailNav.setDefaultTransitionName(this.getDefaultTransitionNameDetail());
 	};
 
 	SplitContainer.prototype.exit = function() {
@@ -1499,118 +1509,14 @@ function(
 	//**************************************************************
 	//* START - Setters/Getters of the SplitContainer control
 	//**************************************************************
-	SplitContainer.prototype.setInitialMaster = function(sPage) {
-		this._oMasterNav.setInitialPage(sPage);
-		this.setAssociation('initialMaster', sPage, true);
-		return this;
-	};
-
-	SplitContainer.prototype.setInitialDetail = function(sPage) {
-		if (!Device.system.phone) {
-			this._oDetailNav.setInitialPage(sPage);
-		}
-		this.setAssociation('initialDetail', sPage, true);
-		return this;
-	};
-
-	SplitContainer.prototype.setDefaultTransitionNameDetail = function(sTransition) {
-		this.setProperty("defaultTransitionNameDetail", sTransition, true);
-		this._oDetailNav.setDefaultTransitionName(sTransition);
-		return this;
-	};
-
-	SplitContainer.prototype.setDefaultTransitionNameMaster = function(sTransition) {
-		this.setProperty("defaultTransitionNameMaster", sTransition, true);
-		this._oMasterNav.setDefaultTransitionName(sTransition);
-		return this;
-	};
-
-	SplitContainer.prototype.setMasterButtonText = function(sText) {
-		if (!Device.system.phone) {
-			if (!sText) {
-				sText = this._rb.getText("SplitContainer_NAVBUTTON_TEXT");
-			}
-			this._oShowMasterBtn.setText(sText);
-		}
-		this.setProperty("masterButtonText", sText, true);
-		return this;
-	};
-
-	SplitContainer.prototype.setMode = function(sMode) {
-		var sOldMode = this.getMode();
-		if (sOldMode === sMode) {
-			return this;
-		}
-		this.setProperty("mode", sMode, true);
-		//the reposition of master and detail area only occurs in tablet and after it's rendered
-		if (!Device.system.phone && this.getDomRef()) {
-			if (sOldMode === "HideMode" && this._oldIsLandscape) {
-				//remove the master button
-				this._removeMasterButton(this._oDetailNav.getCurrentPage());
-			}
-
-			var $this = this.$();
-
-			if (sMode !== "PopoverMode" && this._oPopOver.getContent().length > 0) {
-				this._updateMasterPosition("landscape");
-			} else if (sMode == "PopoverMode") {
-				if (!this._oldIsLandscape) {
-					if (this._oPopOver.getContent().length === 0) {
-						this._updateMasterPosition("popover");
-					}
-					this._setMasterButton(this._oDetailNav.getCurrentPage());
-				}
-				$this.toggleClass("sapMSplitContainerShowHide", false);
-				$this.toggleClass("sapMSplitContainerStretchCompress", false);
-				$this.toggleClass("sapMSplitContainerHideMode", false);
-				$this.toggleClass("sapMSplitContainerPopover", true);
-			}
-
-			if (sMode == "StretchCompressMode") {
-				$this.toggleClass("sapMSplitContainerShowHide", false);
-				$this.toggleClass("sapMSplitContainerPopover", false);
-				$this.toggleClass("sapMSplitContainerHideMode", false);
-				$this.toggleClass("sapMSplitContainerStretchCompress", true);
-				this._removeMasterButton(this._oDetailNav.getCurrentPage());
-			}
-
-			if (sMode == "ShowHideMode") {
-				$this.toggleClass("sapMSplitContainerPopover", false);
-				$this.toggleClass("sapMSplitContainerStretchCompress", false);
-				$this.toggleClass("sapMSplitContainerHideMode", false);
-				$this.toggleClass("sapMSplitContainerShowHide", true);
-
-				if (!Device.orientation.landscape) {
-					this._setMasterButton(this._oDetailNav.getCurrentPage());
-				}
-			}
-
-			if (sMode === "HideMode") {
-				$this.toggleClass("sapMSplitContainerPopover", false);
-				$this.toggleClass("sapMSplitContainerStretchCompress", false);
-				$this.toggleClass("sapMSplitContainerShowHide", false);
-				$this.toggleClass("sapMSplitContainerHideMode", true);
-
-				// always hide the master area after changing mode to HideMode
-				this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterVisible", false);
-				this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterHidden", true);
-				this._bMasterisOpen = false;
-
-				this._setMasterButton(this._oDetailNav.getCurrentPage());
-			}
-		}
-		return this;
-	};
 
 	SplitContainer.prototype.setBackgroundOpacity = function(fOpacity) {
 		if (fOpacity > 1 || fOpacity < 0) {
 			Log.warning("Invalid value " + fOpacity + " for SplitContainer.setBackgroundOpacity() ignored. Valid values are: floats between 0 and 1.");
 			return this;
 		}
-		this.$("BG").css("opacity", fOpacity);
-		return this.setProperty("backgroundOpacity", fOpacity, true); // no rerendering - live opacity change looks cooler
+		return this.setProperty("backgroundOpacity", fOpacity);
 	};
-
 
 	/**************************************************************
 	* START - Private methods
@@ -2027,8 +1933,8 @@ function(
 
 						this._oShowMasterBtn.destroy();
 						/*eslint-disable no-loop-func */
-						this._oShowMasterBtn.$().parent().bind("webkitAnimationEnd animationend", function(){
-							jQuery(this).unbind("webkitAnimationEnd animationend");
+						this._oShowMasterBtn.$().parent().on("webkitAnimationEnd animationend", function(){
+							jQuery(this).off("webkitAnimationEnd animationend");
 							that._oShowMasterBtn.addStyleClass("sapMSplitContainerMasterBtnHidden");
 							if (fnCallBack) {
 								fnCallBack(oPage);

@@ -67,11 +67,12 @@
 	// define the necessary polyfills to be loaded
 	var aPolyfills = [];
 	if (/(trident)\/[\w.]+;.*rv:([\w.]+)/i.test(window.navigator.userAgent)) {
+		// add polyfills for IE11
 		aPolyfills.push("sap/ui/thirdparty/baseuri.js");
 		aPolyfills.push("sap/ui/thirdparty/es6-promise.js");
 		aPolyfills.push("sap/ui/thirdparty/es6-shim-nopromise.js");
 	} else if (/(edge)[ \/]([\w.]+)/i.test(window.navigator.userAgent) ||
-			/(Version\/(11\.0)|PhantomJS).*Safari/.test(window.navigator.userAgent)) {
+			/Version\/(11\.0).*Safari/.test(window.navigator.userAgent)) {
 		// for Microsoft Edge and Safari 11.0 the Promise polyfill is still needed
 		aPolyfills.push("sap/ui/thirdparty/es6-promise.js");
 	}

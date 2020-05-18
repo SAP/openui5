@@ -747,10 +747,13 @@ sap.ui.define([
 		}
 
 		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
-		this._oLoadingProvider.createLoadingState(this._oDataProvider);
 
 		if (this._oDataProvider) {
 			this.setModel(new JSONModel());
+
+			this._oDataProvider.attachDataRequested(function () {
+				this.onDataRequested();
+			}.bind(this));
 
 			this._oDataProvider.attachDataChanged(function (oEvent) {
 				this.getModel().setData(oEvent.getParameter("data"));
@@ -759,16 +762,15 @@ sap.ui.define([
 						oContent.onDataChanged();
 					});
 				}
+				this.onDataRequestComplete();
 			}.bind(this));
 
 			this._oDataProvider.attachError(function (oEvent) {
 				this._handleError("Data service unavailable. " + oEvent.getParameter("message"));
+				this.onDataRequestComplete();
 			}.bind(this));
 
-			this._oDataProvider.triggerDataUpdate().then(function () {
-				this.fireEvent("_cardReady");
-				this._handleCardLoading();
-			}.bind(this));
+			this._oDataProvider.triggerDataUpdate();
 		}
 	};
 
@@ -1198,6 +1200,15 @@ sap.ui.define([
 	 */
 	Card.prototype.getFocusDomRef = function () {
 		return this.getCardHeader() ? this.getCardHeader().getDomRef() : this.getDomRef();
+	};
+
+	Card.prototype.onDataRequested = function () {
+		this._oLoadingProvider.createLoadingState(this._oDataProvider);
+	};
+
+	Card.prototype.onDataRequestComplete = function () {
+		this.fireEvent("_cardReady");
+		this._handleCardLoading();
 	};
 
 	return Card;

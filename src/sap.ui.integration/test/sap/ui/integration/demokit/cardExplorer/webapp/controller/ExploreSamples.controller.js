@@ -89,7 +89,11 @@ sap.ui.define([
 				this._sEditSource = "codeEditor";
 			}
 			var oCardEditor = this.byId("cardEditor");
+
+			// in the OPA tests in IE sometimes this is null
+			if (oCardEditor) {
 				oCardEditor.setJson(sValue);
+			}
 
 			this._sEditSource = null;
 
@@ -281,6 +285,10 @@ sap.ui.define([
 					at: "center center",
 					width: "25rem"
 				});
+			}
+
+			if (sType === "Navigation") {
+				oEvent.preventDefault();
 			}
 		},
 

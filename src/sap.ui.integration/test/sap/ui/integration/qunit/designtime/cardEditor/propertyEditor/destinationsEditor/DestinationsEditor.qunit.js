@@ -16,7 +16,10 @@ sap.ui.define([
 		var aComplexMapItems = oEditor.getContent().getItems()[0].getItems();
 		return aComplexMapItems.map(function (oDestinations) {
 			var aNestedComplexMapEditors = {};
-			oDestinations.getItems()[1]._getPropertyEditors().forEach(function (oPropertyEditor) {
+			var oArrayEditor = oEditor.getConfig().collapsibleItems === false
+				? oDestinations.getItems()[1]
+				: oDestinations.getContent()[0];
+			oArrayEditor._getPropertyEditors().forEach(function (oPropertyEditor) {
 				var sPropertyName = oPropertyEditor.getConfig().path.split("/")[1];
 				aNestedComplexMapEditors[sPropertyName] = oPropertyEditor;
 			});
@@ -143,6 +146,7 @@ sap.ui.define([
 				return oNestedArrayEditor.ready().then(function () {
 					var oComplexEditors = _getComplexMapEditors(oNestedArrayEditor)[0];
 					assert.deepEqual(Object.keys(oComplexEditors), ["name"], "Then only the name field is editable");
+
 					assert.deepEqual(
 						oComplexEditors.name.getConfig().enum,
 						mConfig.properties.sampleDestination.allowedValues,

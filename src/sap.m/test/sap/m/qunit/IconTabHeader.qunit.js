@@ -45,6 +45,8 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(oITH._findItemByKey("nested"), oNestedItem, "Nested item should be found.");
+
+		oITH.destroy();
 	});
 
 	QUnit.module("Resize");
@@ -70,9 +72,9 @@ sap.ui.define([
 		oITH.destroy();
 	});
 
-	QUnit.module("shifting behavior");
+	QUnit.module("Shifting behavior");
 
-	QUnit.test("selecting an overflown tab causes it to show up in the tab strip", function (assert) {
+	QUnit.test("Selecting an overflown tab causes it to show up in the tab strip", function (assert) {
 		// Arrange
 		var oITH = createHeaderWithItems(100);
 		var oTargetTab = oITH.getItems()[99];
@@ -96,4 +98,37 @@ sap.ui.define([
 		// Clean-up
 		oITH.destroy();
 	});
+
+	QUnit.module("tab properties");
+
+	QUnit.test("tabs with items aggregation and property enabled=false should not open their dropdown", function (assert) {
+		// Arrange
+		var oITH = createHeaderWithItems(1);
+		var oTab = oITH.getItems()[0];
+		oTab.addItem(new IconTabFilter({ text: "SAP" }));
+		oITH.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Act
+		oTab._expandButtonPress();
+
+		// Assert
+		assert.ok(oTab._oPopover, "Tab's own popover is initialised");
+		assert.strictEqual(oTab._oPopover.isOpen(), true, "Tab's popover is open");
+
+		oTab._closePopover();
+		this.clock.tick(250);
+
+		// Act
+		oTab.setEnabled(false);
+		oTab._expandButtonPress();
+		this.clock.tick(250);
+
+		// Assert
+		assert.strictEqual(oTab._oPopover.isOpen(), false, "Tab's popover does not open");
+
+		// Clean-up
+		oITH.destroy();
+	});
+
 });

@@ -748,9 +748,11 @@ sap.ui.define([
 		 * Creates an instance of {@link sap.ui.core.Icon} if the given URI is an icon URI, otherwise the given constructor is called.
 		 * The given URI is set to the src property of the control.
 		 *
-		 * @param {string|object} setting contains the properties which will be used to instantiate the returned control. It should contain at least a property named src. If it's given with a string type, it will be taken as the value of src property.
-		 * @param {function} constructor the constructor function which is called when the given URI isn't an icon URI
-		 * @return {sap.ui.core.Control} either an instance of sap.ui.core.Icon or instance created by calling the given constructor
+		 * @param {string|object} setting Contains the properties which will be used to instantiate the returned control.
+		 *  All properties of the associated constructor can be used. Unknown properties are ignored.
+		 *  It should contain at least a property named src. If it's given with a string type, it will be taken as the value of src property.
+		 * @param {function} constructor The constructor function which is called when the given URI isn't an icon URI
+		 * @return {sap.ui.core.Control} Either an instance of sap.ui.core.Icon or instance created by calling the given constructor
 		 * @static
 		 * @public
 		 */
@@ -1125,7 +1127,7 @@ sap.ui.define([
 			// load the font asynchronously via CSS
 			var sFontFaceCSS = "@font-face {" +
 					"font-family: '" + sFontFace + "';" +
-					"src: url('" + sFontPath + sFontFace + ".woff2') format('woff2')," + /* Chrome 36+, Firefox 39+, Safari 10+, Edge 14+, Chrome 51+ for Android, PhantomJS 2.1.1+ */
+					"src: url('" + sFontPath + sFontFace + ".woff2') format('woff2')," + /* Chrome 36+, Firefox 39+, Safari 10+, Edge 14+, Chrome 51+ for Android */
 					"url('" + sFontPath + sFontFace + ".woff') format('woff')," + /* IE9+, Safari 5.1+, iOS 5.1+, Android Browser 4.4+, IE Mobile 11+ */
 					"url('" + sFontPath + sFontFace + ".ttf') format('truetype')," + /* Fallback for any older browser (except IE8 and below which are not supported anyway) */
 					"local('" + sFontFace + "');" + /* fallback to local installed font in case it can't be loaded (e.g. font download is disabled due to browser security settings) */

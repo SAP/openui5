@@ -17,6 +17,9 @@ sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/write/api/ReloadInfoAPI",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	MessageBox,
@@ -35,6 +38,9 @@ sap.ui.define([
 	RtaQunitUtils,
 	PersistenceWriteAPI,
 	VersionsAPI,
+	FeaturesAPI,
+	ReloadInfoAPI,
+	LayerUtils,
 	sinon
 ) {
 	"use strict";
@@ -62,7 +68,8 @@ sap.ui.define([
 						}
 						return mHash;
 					},
-					unregisterNavigationFilter: function() {}
+					unregisterNavigationFilter: function() {},
+					registerNavigationFilter: function() {}
 				};
 			},
 			getLogonSystem: function() {
@@ -118,8 +125,8 @@ sap.ui.define([
 	function personalizationChanges(bExist) {
 		sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(bExist);
 	}
-	function whenHigherLayerChangesExist() {
-		personalizationChanges(true);
+	function whenHigherLayerChangesExist(sLayer) {
+		personalizationChanges(true, sLayer);
 	}
 	function whenNoHigherLayerChangesExist() {
 		personalizationChanges(false);
@@ -216,6 +223,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when we check the plugins on RTA", function(assert) {
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			assert.equal(this.oRta.getPlugins()['contextMenu'], this.oContextMenuPlugin, " then the custom ContextMenuPlugin is set");
 			assert.equal(this.oRta.getPlugins()['rename'], undefined, " and the default plugins are not loaded");
 			assert.equal(this.fnDestroy.callCount, 1, " and _destroyDefaultPlugins have been called 1 time after oRta.start()");
@@ -263,7 +271,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when we check the plugins on RTA", function (assert) {
 			var done = assert.async();
-
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			this.oRta.attachStop(function() {
 				this.oRta.destroy();
 				assert.equal(this.fnDestroy.callCount, 2, " and _destroyDefaultPlugins have been called once again after oRta.stop()");
@@ -296,6 +304,9 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when there are higher layer (e.g personalization) changes during startup", function(assert) {
 			whenHigherLayerChangesExist();
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
+			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(Promise.resolve(false));
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
 
 			whenUserConfirmsMessage.call(this, "MSG_PERSONALIZATION_EXISTS", assert);
 
@@ -363,7 +374,7 @@ sap.ui.define([
 				//The test will timeout if the reload handling is not called
 				assert.ok("then the check for reload was executed");
 				done();
-				return Promise.resolve(this.oRta._RESTART.NOT_NEEDED);
+				return Promise.resolve(this.oRta._RELOAD.NOT_NEEDED);
 			}.bind(this));
 
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
@@ -425,7 +436,8 @@ sap.ui.define([
 			whenNoAppDescriptorChangesExist(this.oRta);
 			this.fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
 			this.fnReloadPageStub = sandbox.stub(this.oRta, "_reloadPage");
-			this.fnHandleParametersOnExitSpy = sandbox.spy(this.oRta, "_handleParametersOnExit");
+			this.fnTriggerCrossAppNavigationSpy = sandbox.spy(this.oRta, "_triggerCrossAppNavigation");
+			this.fnHandleParametersOnExitStub = sandbox.spy(this.oRta, "_handleUrlParameterOnExit");
 			this.fnFLPToExternalStub = sandbox.spy();
 		},
 		afterEach : function() {
@@ -434,28 +446,34 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when draft changes are available, RTA is started and user exists", function(assert) {
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
 			givenAnFLP(function() {return true;}, {"sap-ui-fl-version": [Layer.CUSTOMER]});
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITHOUT_DRAFT", assert);
 
-			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
+			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount, 0,
 					"then RTA restart will not be enabled");
-				assert.strictEqual(sShouldReload, this.oRta._RESTART.VIA_HASH,
+				assert.strictEqual(oReloadInfo.reloadMethod, this.oRta._RELOAD.VIA_HASH,
 					"then the correct reload reason is triggered");
 			}.bind(this));
 		});
 
 		QUnit.test("when draft changes already existed when entering and user exits RTA...", function(assert) {
 			givenDraftParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
-			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(this.oRta._RESTART.VIA_HASH);
+			var oReloadInfo = {
+				reloadMethod: this.oRta._RELOAD.VIA_HASH
+			};
+			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(oReloadInfo);
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 
 			return this.oRta.stop().then(function() {
-				assert.equal(this.fnHandleParametersOnExitSpy.callCount,
+				assert.equal(this.fnHandleParametersOnExitStub.callCount,
 					1,
-					"then crossAppNavigation was triggered");
+					"then handleParametersOnExit was called");
+				assert.equal(this.fnTriggerCrossAppNavigationSpy.callCount,
+					1, "then crossAppNavigation was triggered");
 				assert.equal(isReloadedWithDraftParameter(this.fnFLPToExternalStub),
 					false,
 					"then draft parameter is removed");
@@ -463,14 +481,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("when draft changes already existed and the draft was activated and user exits RTA...", function(assert) {
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(true);
 			givenDraftParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 			sandbox.stub(this.oRta, "_handleReloadMessageBoxOnExit").resolves();
 
 			return this.oRta.stop().then(function() {
-				assert.equal(this.fnHandleParametersOnExitSpy.callCount,
+				assert.equal(this.fnHandleParametersOnExitStub.callCount,
 					1,
-					"then crossAppNavigation was triggered");
+					"then handleParametersOnExit was called");
+				assert.equal(this.fnTriggerCrossAppNavigationSpy.callCount,
+					1, "then crossAppNavigation was triggered");
 				assert.equal(isReloadedWithDraftParameter(this.fnFLPToExternalStub),
 					false,
 					"then draft parameter is removed");
@@ -478,13 +499,21 @@ sap.ui.define([
 		});
 
 		QUnit.test("when no draft was present and dirty changes were made after entering RTA and user exits RTA...", function(assert) {
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub);
-			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(this.oRta._RESTART.VIA_HASH);
+			var oReloadInfo = {
+				reloadMethod: this.oRta._RELOAD.VIA_HASH,
+				hasHigherLayerChanges: true
+			};
+			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(oReloadInfo);
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
 
 			return this.oRta.stop().then(function() {
-				assert.equal(this.fnHandleParametersOnExitSpy.callCount,
+				assert.equal(this.fnHandleParametersOnExitStub.callCount,
+					1,
+					"then handleParametersOnExit was called");
+				assert.equal(this.fnTriggerCrossAppNavigationSpy.callCount,
 					1, "then crossAppNavigation was triggered");
 				assert.equal(isReloadedWithDraftFalseParameter(this.fnFLPToExternalStub),
 					true, "then draft parameter is set to false");
@@ -493,12 +522,17 @@ sap.ui.define([
 
 		QUnit.test("when no versioning is available and dirty changes were made after entering RTA and user exits RTA...", function(assert) {
 			givenNoParameterIsSet.call(this, this.fnFLPToExternalStub);
-			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(this.oRta._RESTART.VIA_HASH);
-			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
+			var oReloadInfo = {
+				reloadMethod: this.oRta._RELOAD.VIA_HASH
+			};
+			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(oReloadInfo);			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(false);
 
 			return this.oRta.stop().then(function() {
-				assert.equal(this.fnHandleParametersOnExitSpy.callCount,
+				assert.equal(this.fnHandleParametersOnExitStub.callCount,
+					1,
+					"then handleParametersOnExit was called");
+				assert.equal(this.fnTriggerCrossAppNavigationSpy.callCount,
 					1, "then crossAppNavigation was triggered");
 				assert.equal(isReloadedWithDraftFalseParameter(this.fnFLPToExternalStub),
 					false, "then draft parameter is not set");
@@ -515,7 +549,8 @@ sap.ui.define([
 			whenNoAppDescriptorChangesExist(this.oRta);
 
 			this.fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
-			this.fnReloadPageStub = sandbox.stub(this.oRta, "_reloadPage");
+			this.fnTriggerCrossAppNavigationSpy = sandbox.stub(this.oRta, "_triggerCrossAppNavigation");
+			sandbox.spy(this.oRta, "_handleUrlParameterOnExit");
 			this.fnFLPToExternalStub = sandbox.spy();
 		},
 		afterEach : function() {
@@ -524,51 +559,55 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when personalized changes exist and user exits and started in FLP reloading the personalization...", function(assert) {
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			whenHigherLayerChangesExist();
 
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
 
-			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
+			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount,
 					0,
 					"then RTA restart will not be enabled");
-				assert.strictEqual(sShouldReload, this.oRta._RESTART.VIA_HASH,
+				assert.strictEqual(oReloadInfo.reloadMethod, this.oRta._RELOAD.VIA_HASH,
 					"then the page is reloaded");
 			}.bind(this));
 		});
 
 		QUnit.test("when higher layer changes exist, RTA is started above CUSTOMER layer and user exits and started in FLP reloading the personalization...", function(assert) {
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			givenMaxLayerParameterIsSetTo.call(this, Layer.VENDOR, this.fnFLPToExternalStub);
 			whenStartedWithLayer(this.oRta, Layer.VENDOR);
-			whenHigherLayerChangesExist();
+			whenHigherLayerChangesExist(Layer.VENDOR);
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_ALL_CHANGES", assert);
 
-			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
+			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount,
 					0,
 					"then RTA restart will not be enabled");
-				assert.strictEqual(sShouldReload, this.oRta._RESTART.VIA_HASH,
+				assert.strictEqual(oReloadInfo.reloadMethod, this.oRta._RELOAD.VIA_HASH,
 					"then the page is reloaded");
 			}.bind(this));
 		});
 
 		QUnit.test("when app descriptor and personalized changes exist and user exits reloading the personalization...", function(assert) {
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			whenAppDescriptorChangesExist(this.oRta);
 			whenHigherLayerChangesExist();
 
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
 
-			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
+			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount, 0,
 					"then RTA restart will not be enabled");
-				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
+				assert.strictEqual(oReloadInfo.reloadMethod, this.oRta._RELOAD.RELOAD_PAGE,
 					"then the reload page is triggered to update the flp cache");
 			}.bind(this));
 		});
 
 		QUnit.test("when no app descriptor changes exist at first save and later they exist and user exits ...", function(assert) {
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			this.oRta._oSerializer = {
 				needsReload : function(bReload) {
 					return Promise.resolve(bReload);
@@ -578,96 +617,101 @@ sap.ui.define([
 				}
 			};
 			var fnNeedsReloadStub = sandbox.stub(this.oRta._oSerializer, "needsReload");
+			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			fnNeedsReloadStub.onFirstCall().resolves(false);
 			fnNeedsReloadStub.onSecondCall().resolves(true);
-
-			whenUserConfirmsMessage.call(this, "MSG_RELOAD_NEEDED", assert);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
 
 			return this.oRta._serializeToLrep()
 			.then(this.oRta._handleReloadOnExit.bind(this.oRta))
-			.then(function(sShouldReload) {
+			.then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount, 0,
 					"then RTA restart will not be enabled");
 				assert.equal(fnNeedsReloadStub.callCount, 2,
 					"then the reload check is called once");
-				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
+				assert.strictEqual(oReloadInfo.reloadMethod, this.oRta._RELOAD.RELOAD_PAGE,
 					"then the reload page is triggered to update the flp cache");
 			}.bind(this));
 		});
 
 		QUnit.test("when app descriptor changes exist and user publishes and afterwards exits ...", function(assert) {
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			whenAppDescriptorChangesExist(this.oRta);
 			var fnNeedsReloadSpy = sandbox.spy(this.oRta._oSerializer, "needsReload");
 
-			whenUserConfirmsMessage.call(this, "MSG_RELOAD_NEEDED", assert);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
 
 			return this.oRta._serializeToLrep()
 			.then(this.oRta._handleReloadOnExit.bind(this.oRta))
-			.then(function(sShouldReload) {
+			.then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount, 0,
 					"then RTA restart will not be enabled");
 				assert.equal(fnNeedsReloadSpy.callCount, 1,
 					"then the reload check is called once");
-				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
+				assert.strictEqual(oReloadInfo.reloadMethod, this.oRta._RELOAD.RELOAD_PAGE,
 					"then the reload page is triggered to update the flp cache");
 			}.bind(this));
 		});
 
 		QUnit.test("when app descriptor changes exist and user exits ...", function(assert) {
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			whenAppDescriptorChangesExist(this.oRta);
 			var fnNeedsReloadSpy = sandbox.spy(this.oRta._oSerializer, "needsReload");
 
-			whenUserConfirmsMessage.call(this, "MSG_RELOAD_NEEDED", assert);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
 
 			return this.oRta._handleReloadOnExit()
-			.then(function(sShouldReload) {
+			.then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount, 0,
 					"then RTA restart will not be enabled");
 				assert.equal(fnNeedsReloadSpy.callCount, 1,
 					"then the reload check is called once");
-				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
+				assert.strictEqual(oReloadInfo.reloadMethod, this.oRta._RELOAD.RELOAD_PAGE,
 					"then the reload page is triggered to update the flp cache");
 			}.bind(this));
 		});
 
 		QUnit.test("when there are no personalized and appDescriptor changes and _handleReloadOnExit() is called", function(assert) {
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
-			whenNoHigherLayerChangesExist();
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
 
-			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
+			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount,
 					0,
 					"then RTA restart will not be enabled");
-				assert.strictEqual(sShouldReload, this.oRta._RESTART.NOT_NEEDED,
-					"then the reload page is not necessary");
+				assert.strictEqual(oReloadInfo.reloadMethod, this.oRta._RELOAD.VIA_HASH,
+					"then we reload to remove the max-layer parameter");
 			}.bind(this));
 		});
 
 		QUnit.test("when app descriptor and no personalized changes exist and user exits reloading the personalization...", function(assert) {
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
 			whenAppDescriptorChangesExist(this.oRta);
-			whenNoHigherLayerChangesExist();
 
-			whenUserConfirmsMessage.call(this, "MSG_RELOAD_NEEDED", assert);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
 
-			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
+			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount,
 					0,
 					"then RTA restart will not be enabled");
-				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
+				assert.strictEqual(oReloadInfo.reloadMethod, this.oRta._RELOAD.RELOAD_PAGE,
 					"then the reload page is triggered to update the flp cache");
 			}.bind(this));
 		});
 
 		QUnit.test("when reloadable changes exist and user exits RTA...", function(assert) {
 			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
-			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(this.oRta._RESTART.RELOAD_PAGE);
+
+			sandbox.spy(this.oRta, "_handleReloadOnExit");
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
 
 			return this.oRta.stop().then(function() {
-				assert.equal(this.fnReloadPageStub.callCount,
+				assert.equal(this.fnTriggerCrossAppNavigationSpy.callCount,
 					1,
 					"then page reload is triggered");
 				assert.strictEqual(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub),
@@ -686,13 +730,11 @@ sap.ui.define([
 			whenNoAppDescriptorChangesExist(this.oRta);
 
 			this.fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
-			this.fnHandleUrlParameterStub = sandbox.stub(Utils, "handleUrlParameter");
-			this.fnHandleParametersOnExitSpy =
-				sandbox.spy(this.oRta, "_handleParametersOnExit");
-			this.fnReloadWithMaxLayerOrDraftParam =
-				sandbox.spy(this.oRta, "_reloadWithMaxLayerOrDraftParam");
-			this.fnReloadPageStub =
-				sandbox.stub(this.oRta, "_reloadPage");
+			this.fnHandleParametersForStandalone = sandbox.stub(ReloadInfoAPI, "handleUrlParametersForStandalone");
+			this.fnHandleParametersOnExitStub =
+				sandbox.stub(this.oRta, "_handleUrlParameterOnExit");
+			this.fnTriggerHardReloadStub = sandbox.stub(this.oRta, "_triggerHardReload");
+			sandbox.stub(this.oRta, "_reloadPage");
 		},
 		afterEach : function() {
 			this.oRta.destroy();
@@ -702,102 +744,120 @@ sap.ui.define([
 		QUnit.test("when the _determineReload() method is called", function(assert) {
 			return this.oRta._determineReload().then(function() {
 				assert.equal(this.fnEnableRestartSpy.callCount, 0, "then RTA restart will not be enabled");
-				assert.equal(this.fnHandleParametersOnExitSpy.callCount,
+				assert.equal(this.fnHandleParametersOnExitStub.callCount,
 					0,
-					"then _handleParametersOnExit() is not called");
+					"then _handleMaxLayerAndVersionParametersOnExit() is not called");
 			}.bind(this));
 		});
 
 		QUnit.test("when the _determineReload() method is called with draft", function(assert) {
-			this.oRta._bVersioningEnabled = true;
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
-			var fnHasUrlParameterWithValueSpy = sandbox.spy(Utils, "hasUrlParameterWithValue");
-			this.fnHandleUrlParameterStub.returns(document.location.search);
+			var oHasMaxLayerParameterSpy = sandbox.spy(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
+			var oHasVersionParameterSpy = sandbox.spy(ReloadInfoAPI, "hasVersionParameterWithValue");
+
+			this.fnHandleParametersForStandalone.returns(document.location.search);
 			return this.oRta._determineReload().then(function() {
-				assert.equal(fnHasUrlParameterWithValueSpy.callCount, 2, "hasUrlParameterWithValue is called");
-				assert.equal(this.fnHandleUrlParameterStub.callCount, 1, "handleUrlParameter is called");
-				assert.equal(this.fnReloadWithMaxLayerOrDraftParam.callCount, 0, "not called reloadWithMaxLaywerOrDraftParm");
+				assert.equal(oHasMaxLayerParameterSpy.callCount, 1, "hasMaxLayerParameterWithValue is called");
+				assert.equal(oHasVersionParameterSpy.callCount, 1, "hasVersionParameterWithValue is called");
+				assert.equal(this.fnTriggerHardReloadStub.callCount, 1, "_triggerHardReload is called");
 			}.bind(this));
 		});
 
 		QUnit.test("when the _determineReload() method is called with draft but parameter already set", function(assert) {
-			this.oRta._bVersioningEnabled = true;
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
-			sandbox.stub(Utils, "hasUrlParameterWithValue").returns(true);
-			var fnHandleReloadMessageBoxOnStartSpy = sandbox.spy(this.oRta, "_handleReloadMessageBoxOnStart");
-			this.fnHandleUrlParameterStub.returns(document.location.search);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
+			var fnGetReloadMessageOnStartSpy = sandbox.spy(this.oRta, "_getReloadMessageOnStart");
+			this.fnHandleParametersForStandalone.returns(document.location.search);
 			return this.oRta._determineReload().then(function() {
-				assert.equal(this.fnHandleUrlParameterStub.callCount, 0, "handleUrlParameter is not called");
-				assert.equal(this.fnReloadWithMaxLayerOrDraftParam.callCount, 0, "reloadWithMaxLaywerOrDraftParm is not called");
-				assert.equal(fnHandleReloadMessageBoxOnStartSpy.callCount, 0, "_handleReloadMessageBoxOnStart is not called");
+				assert.equal(this.fnHandleParametersForStandalone.callCount, 0, "handleUrlParameterForStandalone is not called");
+				assert.equal(fnGetReloadMessageOnStartSpy.callCount, 0, "_getReloadMessageOnStart is not called");
+				assert.equal(this.fnTriggerHardReloadStub.callCount, 0, "_triggerHardReload is not called");
 			}.bind(this));
 		});
 
 		QUnit.test("when the _handleReloadOnExit() method is called", function(assert) {
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			return this.oRta._handleReloadOnExit().then(function() {
 				assert.equal(this.fnEnableRestartSpy.callCount, 0, "then RTA restart will not be enabled");
-				assert.equal(this.fnReloadWithMaxLayerOrDraftParam.callCount,
-					0,
-					"then _reloadWithMaxLayerOrDraftParam() is not called");
 			}.bind(this));
 		});
 
 		QUnit.test("when _handleReloadOnExit() is called and personalized changes and user exits reloading the personalization...", function(assert) {
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			whenHigherLayerChangesExist();
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
 
-			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
+			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount, 0,
 					"then RTA restart will not be enabled");
-				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
+				assert.strictEqual(oReloadInfo.reloadMethod, this.oRta._RELOAD.RELOAD_PAGE,
 					"then the page is reloaded");
 			}.bind(this));
 		});
 
-		QUnit.test("when _handleReloadOnExit() is called and draft changes are available", function(assert) {
+		QUnit.test("when _handleReloadOnExit() is called, draft url parameter is set and draft changes are available", function(assert) {
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
 
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITHOUT_DRAFT", assert);
 
-			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
+			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount, 0,
 					"then RTA restart will not be enabled");
-				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
+				assert.strictEqual(oReloadInfo.reloadMethod, this.oRta._RELOAD.RELOAD_PAGE,
 					"then the page is reloaded");
 			}.bind(this));
 		});
 
-		QUnit.test("when _handleReloadOnExit() is called and draft url parameter is set", function(assert) {
+		QUnit.test("when _handleReloadOnExit() is called, draft url parameter is set and initial draft got activated", function(assert) {
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(true);
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
-			sandbox.stub(this.oRta, "_isDraftAvailable").returns(false);
-			sandbox.stub(Utils, "hasUrlParameterWithValue").returns(true);
+			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_ACTIVATED_DRAFT", assert);
 
-			whenUserConfirmsMessage.call(this, "MSG_RELOAD_REMOVE_DRAFT_PARAMETER", assert);
-
-			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
+			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
 				assert.equal(this.fnEnableRestartSpy.callCount, 0,
 					"then RTA restart will not be enabled");
-				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
+				assert.strictEqual(oReloadInfo.reloadMethod, this.oRta._RELOAD.RELOAD_PAGE,
+					"then the page is reloaded to remove the parameter anyways");
+			}.bind(this));
+		});
+
+		QUnit.test("when _handleReloadOnExit() is called and draft url parameter is set and no draft exists", function(assert) {
+			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
+			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
+			sandbox.stub(this.oRta, "_isDraftAvailable").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITHOUT_DRAFT", assert);
+
+			return this.oRta._handleReloadOnExit().then(function(oReloadInfo) {
+				assert.equal(this.fnEnableRestartSpy.callCount, 0,
+					"then RTA restart will not be enabled");
+				assert.strictEqual(oReloadInfo.reloadMethod, this.oRta._RELOAD.RELOAD_PAGE,
 					"then the page is reloaded");
 			}.bind(this));
 		});
 
 		QUnit.test("when _handleDiscard() is called", function(assert) {
-			var fnTriggerHardReloadStub = sandbox.stub(this.oRta, "_triggerHardReload");
 			this.oRta._handleDiscard();
-			assert.equal(fnTriggerHardReloadStub.callCount, 1, "then _triggerHardReload is called");
-			var oReloadInfo = fnTriggerHardReloadStub.getCall(0).args[0];
+			assert.equal(this.fnTriggerHardReloadStub.callCount, 1, "then _triggerHardReload is called");
+			var oReloadInfo = this.fnTriggerHardReloadStub.getCall(0).args[0];
 			assert.equal(oReloadInfo.layer, Layer.CUSTOMER, "with CUSTOMER layer");
 			assert.equal(oReloadInfo.hasDraftChanges, false, "and with no draft change");
 		});
 
 		QUnit.test("when _deleteChanges() is called", function(assert) {
-			this.fnTriggerHardReloadStub = sandbox.stub(this.oRta, "_triggerHardReload");
 			return this.oRta._deleteChanges().then(function() {
-				assert.equal(this.fnTriggerHardReloadStub.callCount, 1, "then _triggerHardReload is called");
-				var oReloadInfo = this.fnTriggerHardReloadStub.getCall(0).args[0];
+				assert.equal(this.fnHandleParametersOnExitStub.callCount, 1, "then _handleParameterOnExit is called");
+				var oReloadInfo = this.fnHandleParametersOnExitStub.getCall(0).args[0];
 				assert.equal(oReloadInfo.layer, Layer.CUSTOMER, "with CUSTOMER layer");
 				assert.equal(oReloadInfo.hasDraftChanges, false, "and with no draft change");
 			}.bind(this));
@@ -989,7 +1049,7 @@ sap.ui.define([
 		QUnit.test("when _onDiscardDraft is called", function(assert) {
 			var oDiscardDraftStub = sandbox.stub(VersionsAPI, "discardDraft").resolves();
 			var oHandleDiscardDraftStub = sandbox.spy(this.oRta, "_handleDiscard");
-			var oHandleDraftParameterStub = sandbox.spy(this.oRta, "_handleDraftParameter");
+			var oRemoveVersionParameterStub = sandbox.spy(this.oRta, "_removeVersionParameterForFLP");
 			var oRemoveAllCommandsStub = sandbox.stub(this.oRta.getCommandStack(), "removeAllCommands");
 			var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves("MessageBox.Action.CANCEL");
 			var oStopStub = sandbox.stub(this.oRta, "stop");
@@ -1007,7 +1067,7 @@ sap.ui.define([
 				assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown");
 				assert.equal(oHandleDiscardDraftStub.callCount, 0, "then _handleDiscard was not called");
 				assert.equal(oDiscardDraftStub.callCount, 0, "then VersionsAPI was not called");
-				assert.equal(oHandleDraftParameterStub.callCount, 0, "then _handleDraftParameter was not called");
+				assert.equal(oRemoveVersionParameterStub.callCount, 0, "then _removeVersionParameterForFLP was not called");
 
 				oShowMessageBoxStub.reset();
 				oShowMessageBoxStub.resolves(MessageBox.Action.OK);
@@ -1018,8 +1078,8 @@ sap.ui.define([
 				assert.equal(oShowMessageBoxStub.lastCall.args[1], "MSG_DRAFT_DISCARD_DIALOG", "then the message is correct");
 				assert.equal(oDiscardDraftStub.callCount, 1, "then the discardDraft() method is called once");
 				assert.equal(oHandleDiscardDraftStub.callCount, 1, "then _handleDiscard was called");
-				assert.equal(oHandleDraftParameterStub.callCount, 1, "then _handleDraftParameter was called");
-				assert.equal(oHandleDraftParameterStub.getCall(0).args[0], mParsedHash, "then _handleDraftParameter was called with the correct parameters");
+				assert.equal(oRemoveVersionParameterStub.callCount, 1, "then _removeVersionParameterForFLP was called");
+				assert.equal(oRemoveVersionParameterStub.getCall(0).args[0], mParsedHash, "then _removeVersionParameterForFLP was called with the correct parameters");
 				var oDiscardCallPropertyBag = oDiscardDraftStub.getCall(0).args[0];
 				assert.equal(oDiscardCallPropertyBag.selector, this.oRta.getRootControlInstance(), "with the correct selector");
 				assert.equal(oDiscardCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
@@ -1075,13 +1135,13 @@ sap.ui.define([
 				showToolbars : false
 			});
 			this.oReloadInfo = {
-				hasHigherLayerChanges: false,
-				hasDraftChanges: true,
 				layer: this.oRta.getLayer(),
 				selector: this.oRta.getRootControlInstance(),
-				ignoreMaxLayerParameter: false
+				ignoreMaxLayerParameter: false,
+				parsedHash: {params: {}}
 			};
-			this.mParsedHash = {params: {}};
+
+			sandbox.stub(FlexUtils, "getParsedURLHash").returns(this.oReloadInfo.parsedHash);
 		},
 		afterEach: function() {
 			this.oRta.destroy();
@@ -1089,66 +1149,88 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("and versioning is available and a draft is available,", function(assert) {
-			sandbox.stub(FlexUtils, "getParsedURLHash").returns(this.mParsedHash);
+			var oHasMaxLayerParameterSpy = sandbox.spy(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
+			var oHasVersionParameterSpy = sandbox.spy(ReloadInfoAPI, "hasVersionParameterWithValue");
 
-			var oHasParameterSpy = sandbox.spy(Utils, "hasUrlParameterWithValue");
 			var oHasHigherLayerChangesSpy = sandbox.spy(PersistenceWriteAPI, "hasHigherLayerChanges");
-			var oHandleReloadMessageBoxOnStart = sandbox.stub(this.oRta, "_handleReloadMessageBoxOnStart").returns(Promise.resolve());
-			var oReloadWithoutHigherLayerOrDraftChangesOnStart = sandbox.stub(this.oRta, "_reloadWithMaxLayerOrDraftParam").returns(Promise.resolve());
+			var oGetReloadMessageOnStart = sandbox.stub(this.oRta, "_getReloadMessageOnStart").returns("MSG_DRAFT_EXISTS");
+			var oIsVersioningEnabledStub = sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
+			this.oReloadInfo.hasHigherLayerChanges = false;
+			this.oReloadInfo.hasDraftChanges = true;
 			var oIsDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
-			this.oRta._bVersioningEnabled = true;
+			var oGetReloadReasonsSpy = sandbox.spy(ReloadInfoAPI, "getReloadReasonsForStart");
+			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
 
 			return this.oRta._determineReload().then(function () {
+				assert.equal(oIsVersioningEnabledStub.callCount, 1, "then isVersioningEnabled is called once");
 				assert.equal(oIsDraftAvailableStub.callCount, 1, "then isDraftAvailable is called once");
 
-				assert.equal(oHasParameterSpy.callCount, 2, "then hasUrlParameterWithValue is called twice");
+				assert.equal(oHasMaxLayerParameterSpy.callCount, 1, "then hasMaxLayerParameterWithValue is called once");
+				assert.equal(oHasVersionParameterSpy.callCount, 1, "then hasVersionParameterWithValue is called once");
 				assert.equal(oHasHigherLayerChangesSpy.callCount, 1, "then hasHigherLayerChanges is called once");
 				assert.deepEqual(oHasHigherLayerChangesSpy.lastCall.args[0], {
 					selector: this.oReloadInfo.selector,
 					ignoreMaxLayerParameter: this.oReloadInfo.ignoreMaxLayerParameter
 				}, "then hasHigherLayerChanges is called with the correct parameters");
 
-				assert.equal(oHandleReloadMessageBoxOnStart.callCount, 1, "then _handleReloadMessageBoxOnStart is called once");
-				assert.deepEqual(oHandleReloadMessageBoxOnStart.lastCall.args[0], this.oReloadInfo, "then _handleReloadMessageBoxOnStart is called with the correct reload info");
-
-				assert.equal(oReloadWithoutHigherLayerOrDraftChangesOnStart.callCount, 1, "then _reloadWithMaxLayerOrDraftParam is called once");
-
-				var oReloadTriggerCallArguments = oReloadWithoutHigherLayerOrDraftChangesOnStart.lastCall.args;
-				assert.deepEqual(oReloadTriggerCallArguments[0], this.mParsedHash, "then _reloadWithMaxLayerOrDraftParam is called with the parsed hash");
-				assert.deepEqual(oReloadTriggerCallArguments[2], this.oReloadInfo, "then _reloadWithMaxLayerOrDraftParam is called with the correct reload info");
+				assert.equal(oGetReloadMessageOnStart.callCount, 1, "then _getReloadMessageOnStart is called once");
+				assert.deepEqual(oGetReloadMessageOnStart.lastCall.args[0].hasHigherLayerChanges, this.oReloadInfo.hasHigherLayerChanges, "then _getReloadMessageOnStart is called with the correct reload reason");
+				assert.deepEqual(oGetReloadMessageOnStart.lastCall.args[0].hasDraftChanges, this.oReloadInfo.hasDraftChanges, "then _getReloadMessageOnStart is called with the correct reload reason");
+				assert.equal(oGetReloadReasonsSpy.callCount, 1, "then getReloadReasonsForStart is called once");
 			}.bind(this));
 		});
 
 		QUnit.test("and versioning is not available,", function(assert) {
-			sandbox.stub(FlexUtils, "getParsedURLHash").returns(this.mParsedHash);
 			var oIsDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable");
 
-			var oHasParameterSpy = sandbox.spy(Utils, "hasUrlParameterWithValue");
-			var oHandleReloadMessageBoxOnStart = sandbox.stub(this.oRta, "_handleReloadMessageBoxOnStart").returns(Promise.resolve());
-			var oReloadWithoutHigherLayerOrDraftChangesOnStart = sandbox.stub(this.oRta, "_reloadWithMaxLayerOrDraftParam").returns(Promise.resolve());
+			var oHasMaxLayerParameterSpy = sandbox.spy(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
+			var oHasVersionParameterSpy = sandbox.spy(ReloadInfoAPI, "hasVersionParameterWithValue");
+			var oGetReloadMessageOnStart = sandbox.stub(this.oRta, "_getReloadMessageOnStart").returns();
 			this.oRta._bVersioningEnabled = false;
+			this.oReloadInfo.hasHigherLayerChanges = false;
+			this.oReloadInfo.hasDraftChanges = false;
+			var oGetReloadReasonsStub = sandbox.stub(ReloadInfoAPI, "getReloadReasonsForStart").returns(Promise.resolve(this.oReloadInfo));
 
 			return this.oRta._determineReload().then(function () {
 				assert.equal(oIsDraftAvailableStub.callCount, 0, "then isDraftAvailable is not called");
-				assert.equal(oHasParameterSpy.callCount, 2, "then hasUrlParameterWithValue is called twice");
-				assert.equal(oHandleReloadMessageBoxOnStart.callCount, 0, "then _handleReloadMessageBoxOnStart is not called");
-				assert.equal(oReloadWithoutHigherLayerOrDraftChangesOnStart.callCount, 0, "then _reloadWithMaxLayerOrDraftParam is not called");
+				assert.equal(oHasMaxLayerParameterSpy.callCount, 0, "then hasMaxLayerParameterWithValue is not called");
+				assert.equal(oHasVersionParameterSpy.callCount, 0, "then hasVersionParameterWithValue is not called");
+				assert.equal(oGetReloadMessageOnStart.callCount, 0, "then _getReloadMessageOnStart is not called");
+				assert.equal(oGetReloadReasonsStub.callCount, 1, "then getReloadReasonsForStart is called once");
 			});
 		});
 	});
 	QUnit.module("Given that a CrossAppNavigation is needed because of a draft", {
 		beforeEach: function() {
+			sandbox.stub(FlexUtils, "getUshellContainer").returns({
+				getService: function () {
+					return {
+						toExternal: function() {
+							return true;
+						},
+						parseShellHash: function () {
+							return {params: {}};
+						}
+					};
+				}
+			});
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
 				rootControl : this.oRootControl,
 				showToolbars : false
 			});
+			this.mParsedHash = {
+				params: {
+					"sap-ui-fl-version": [Layer.CUSTOMER]
+				}
+			};
 			this.oReloadInfo = {
 				hasHigherLayerChanges: false,
 				hasDraftChanges: true,
 				layer: this.oRta.getLayer(),
 				selector: this.oRta.getRootControlInstance(),
-				ignoreMaxLayerParameter: false
+				ignoreMaxLayerParameter: false,
+				parsedHash: this.mParsedHash
 			};
 			this.oCrossAppNav = {
 				toExternal: function() {
@@ -1161,44 +1243,21 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("and the url parameter for draft is present in the parsed hash", function(assert) {
-			var mParsedHash = {
-				params: {
-					"sap-ui-fl-version": [Layer.CUSTOMER]
-				}
-			};
+		QUnit.test("and versioning is not available,", function(assert) {
+			var oGetReloadMessageOnStart = sandbox.stub(this.oRta, "_getReloadMessageOnStart").returns(Promise.resolve());
+			this.oRta._bVersioningEnabled = false;
+			this.oReloadInfo.hasHigherLayerChanges = false;
+			this.oReloadInfo.hasDraftChanges = false;
+			var oGetReloadReasonsStub = sandbox.stub(ReloadInfoAPI, "getReloadReasonsForStart").returns(Promise.resolve(this.oReloadInfo));
 
-			var oLoadForApplicationStub = sandbox.stub(VersionsAPI, "loadDraftForApplication");
-			var fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
-
-			return this.oRta._reloadWithMaxLayerOrDraftParam(mParsedHash, this.oCrossAppNav, this.oReloadInfo).then(function () {
-				assert.equal(oLoadForApplicationStub.callCount, 0, "then loadDraftForApplication is not called");
-				assert.equal(fnEnableRestartSpy.callCount, 1, "the enableRestart was callCount");
-				assert.equal(fnEnableRestartSpy.getCall(0).args[1], this.oRta.getRootControlInstance(), "the root control was passed");
-			}.bind(this));
-		});
-
-		QUnit.test("and the url parameter for draft is not present in the parsed hash", function(assert) {
-			var mParsedHash = {
-				params: {
-					"sap-ui-fl-parameter": ["test"]
-				}
-			};
-
-			var oExpectedBag = {
-				selector: this.oReloadInfo.selector,
-				layer: this.oReloadInfo.layer
-			};
-			var oLoadForApplicationStub = sandbox.stub(VersionsAPI, "loadDraftForApplication");
-
-			return this.oRta._reloadWithMaxLayerOrDraftParam(mParsedHash, this.oCrossAppNav, this.oReloadInfo).then(function () {
-				assert.equal(oLoadForApplicationStub.callCount, 1, "then loadDraftForApplication is called once");
-				assert.deepEqual(oLoadForApplicationStub.lastCall.args[0], oExpectedBag, "then _hasParameter is called with the parsed hash");
+			return this.oRta._determineReload().then(function () {
+				assert.equal(oGetReloadMessageOnStart.callCount, 0, "then _getReloadMessageOnStart is not called");
+				assert.equal(oGetReloadReasonsStub.callCount, 1, "then getReloadReasons is called once");
 			});
 		});
 	});
 
-	QUnit.module("Given that RuntimeAuthoring wants to determine if a reload is needed on exit", {
+	QUnit.module("Given that RuntimeAuthoring wants to determine if a reload is needed on start", {
 		beforeEach: function() {
 			givenAnFLP(function() {return true;}, {});
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
@@ -1206,14 +1265,16 @@ sap.ui.define([
 				rootControl : this.oRootControl,
 				showToolbars : false
 			});
+			this.mParsedHash = {params: {}};
+
 			this.oReloadInfo = {
 				hasHigherLayerChanges: false,
 				hasDraftChanges: true,
 				layer: this.oRta.getLayer(),
 				selector: this.oRta.getRootControlInstance(),
-				ignoreMaxLayerParameter: false
+				ignoreMaxLayerParameter: false,
+				parsedHash: this.mParsedHash
 			};
-			this.mParsedHash = {params: {}};
 		},
 		afterEach: function() {
 			this.oRta.destroy();
@@ -1222,31 +1283,30 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("and a draft is available", function (assert) {
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(this.mParsedHash);
+			sandbox.stub(this.oRta, "_buildNavigationArguments").returns({});
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
 
-			var oHasParameterSpy = sandbox.spy(Utils, "hasUrlParameterWithValue");
+			var oHasMaxLayerParameterSpy = sandbox.spy(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
+			var oHasVersionParameterSpy = sandbox.spy(ReloadInfoAPI, "hasVersionParameterWithValue");
 			var oHasHigherLayerChangesSpy = sandbox.spy(PersistenceWriteAPI, "hasHigherLayerChanges");
-			var oHandleReloadMessageBoxOnStart = sandbox.stub(this.oRta, "_handleReloadMessageBoxOnStart").returns(Promise.resolve());
-			var oReloadWithoutHigherLayerOrDraftChangesOnStart = sandbox.stub(this.oRta, "_reloadWithMaxLayerOrDraftParam").returns(Promise.resolve());
+			var oGetReloadMessageOnStart = sandbox.stub(this.oRta, "_getReloadMessageOnStart").returns("MSG_DRAFT_EXISTS");
+			var oHandleParameterOnStartStub = sandbox.stub(ReloadInfoAPI, "handleParametersOnStart");
 			var oIsDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
-			this.oRta._bVersioningEnabled = true;
+			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
 
 			return this.oRta._determineReload().then(function () {
 				assert.equal(oIsDraftAvailableStub.callCount, 1, "then isDraftAvailable is called once");
 
-				assert.equal(oHasParameterSpy.callCount, 2, "then hasUrlParameterWithValue is called twice");
+				assert.equal(oHasMaxLayerParameterSpy.callCount, 1, "then hasMaxLayerParameterWithValue is called twice");
+				assert.equal(oHasVersionParameterSpy.callCount, 1, "then hasVersionParameterWithValue is called twice");
 				assert.equal(oHasHigherLayerChangesSpy.callCount, 1, "then hasHigherLayerChanges is called once");
 				assert.deepEqual(oHasHigherLayerChangesSpy.lastCall.args[0], {
 					selector: this.oReloadInfo.selector,
 					ignoreMaxLayerParameter: this.oReloadInfo.ignoreMaxLayerParameter
 				}, "then hasHigherLayerChanges is called with the correct parameters");
 
-				assert.equal(oHandleReloadMessageBoxOnStart.callCount, 1, "then _handleReloadMessageBoxOnStart is called once");
-				assert.deepEqual(oHandleReloadMessageBoxOnStart.lastCall.args[0], this.oReloadInfo, "then _handleReloadMessageBoxOnStart is called with the correct reload info");
-				assert.equal(oReloadWithoutHigherLayerOrDraftChangesOnStart.callCount, 1, "then _reloadWithMaxLayerOrDraftParam is called once");
-
-				var oReloadTriggerCallArguments = oReloadWithoutHigherLayerOrDraftChangesOnStart.lastCall.args;
-				assert.deepEqual(oReloadTriggerCallArguments[0], this.mParsedHash, "then _reloadWithMaxLayerOrDraftParam is called with the parsed hash");
-				assert.deepEqual(oReloadTriggerCallArguments[2], this.oReloadInfo, "then _reloadWithMaxLayerOrDraftParam is called with the correct reload info");
+				assert.equal(oGetReloadMessageOnStart.callCount, 1, "then _getReloadMessageOnStart is called once");
+				assert.equal(oHandleParameterOnStartStub.callCount, 1, "then handleParametersOnStart is called once");
 			}.bind(this));
 		});
 	});

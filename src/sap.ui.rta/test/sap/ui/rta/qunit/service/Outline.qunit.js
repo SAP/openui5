@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/registry/ExtensionPointRegistry",
+	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
 	"sap/m/Page",
@@ -28,7 +28,7 @@ sap.ui.define([
 	OverlayRegistry,
 	DesignTime,
 	PersistenceWriteAPI,
-	ExtensionPointRegistry,
+	Loader,
 	VerticalLayout,
 	Button,
 	Page,
@@ -595,13 +595,22 @@ sap.ui.define([
 	'</mvc:View>';
 
 	function _createComponent() {
-		return sap.ui.getCore().createComponent({
-			name: "testComponent",
-			id: "testComponent",
+		var MockComponent = UIComponent.extend("MockController", {
 			metadata: {
-				manifest: "json"
+				manifest: {
+					"sap.app": {
+						id: "myApp",
+						applicationVersion : {
+							version : "1.2.3"
+						}
+					},
+					"sap.ui5": {
+						flexExtensionPointEnabled: true
+					}
+				}
 			}
 		});
+		return new MockComponent("testComponent");
 	}
 
 	function _createAsyncView(sViewName, oComponent) {
@@ -617,6 +626,7 @@ sap.ui.define([
 	QUnit.module("Given that xmlView with extensionPoints, RuntimeAuthoring and Outline service are created ", {
 		beforeEach: function() {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(Loader, "loadFlexData").resolves({ changes: [] });
 			this.oComponent = _createComponent();
 			return _createAsyncView("myView", this.oComponent)
 				.then(function (oXmlView) {
@@ -645,8 +655,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		// TODO: temporarily disabled due to customer incident: 275287
-		QUnit.skip("when get() is called", function (assert) {
+		QUnit.test("when get() is called", function (assert) {
 			var mExtensionPointOutlineItem = {
 				name: "ExtensionPoint2",
 				technicalName: "sap.ui.extensionpoint",

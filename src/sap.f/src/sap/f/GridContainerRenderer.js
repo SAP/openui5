@@ -11,7 +11,9 @@ sap.ui.define([ "sap/ui/Device"],
 		 * GridContainer renderer
 		 * @namespace
 		 */
-		var GridContainerRenderer = {};
+		var GridContainerRenderer = {
+			apiVersion: 2
+		};
 
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -21,54 +23,51 @@ sap.ui.define([ "sap/ui/Device"],
 		 */
 		GridContainerRenderer.render = function(rm, control) {
 
-			rm.write('<div');
-			rm.writeControlData(control);
+			rm.openStart('div', control);
 
-
-			//TODO roledescription
-			rm.writeAccessibilityState(control, {
+			rm.accessibilityState(control, {
 				role: "list",
 				roledescription: control._oRb.getText("GRIDCONTAINER_ROLEDESCRIPTION")
 			});
-			rm.addClass("sapFGridContainer");
+			rm.class("sapFGridContainer");
 
 			if (control.getSnapToRow()) {
-				rm.addClass("sapFGridContainerSnapToRow");
+				rm.class("sapFGridContainerSnapToRow");
 			}
 
 			if (control.getAllowDenseFill()) {
-				rm.addClass("sapFGridContainerDenseFill");
+				rm.class("sapFGridContainerDenseFill");
 			}
-
-			rm.writeClasses();
 
 			// Add inline styles
 			if (control.getWidth()) {
-				rm.addStyle("width", control.getWidth());
+				rm.style("width", control.getWidth());
 			}
 			this.addGridStyles(rm, control);
-			rm.writeStyles();
 
 			// Add tooltip
 			var tooltip = control.getTooltip_AsString();
 			if (tooltip) {
-				rm.writeAttributeEscaped("title", tooltip);
+				rm.attr("title", tooltip);
 			}
 
 			// Close opening tag
-			rm.write(">");
+			rm.openEnd();
+
 			// dummy keyboard handling area
 			this.renderDummyArea(rm, control, "before", -1);
 
 			var iIndex = 0,
 				aItems = control.getItems();
-			 for (iIndex = 0; iIndex < aItems.length; iIndex++) {
+
+			for (iIndex = 0; iIndex < aItems.length; iIndex++) {
 				 this.renderItem(rm, aItems[iIndex], control, iIndex, aItems.length);
 			}
 
 			// dummy keyboard handling area
 			this.renderDummyArea(rm, control, "after", -1);
-			rm.write("</div>");
+
+			rm.close("div");
 		};
 
 		/**
@@ -80,7 +79,7 @@ sap.ui.define([ "sap/ui/Device"],
 		GridContainerRenderer.addGridStyles = function(rm, oControl) {
 			var mStyles = oControl._getActiveGridStyles();
 			for (var sName in mStyles) {
-				rm.addStyle(sName, mStyles[sName]);
+				rm.style(sName, mStyles[sName]);
 			}
 		};
 
@@ -95,31 +94,29 @@ sap.ui.define([ "sap/ui/Device"],
 				mStyles = mStylesInfo.styles,
 				aClasses = mStylesInfo.classes;
 
-			rm.write("<div");
+			rm.openStart("div", oControl.getId() + "-item-" + iIndex);
 
-			rm.writeAttribute("id", oControl.getId() + "-item-" + iIndex);
-			rm.writeAccessibilityState(oControl, {
+			rm.accessibilityState(oControl, {
 				role: "listitem",
 				keyshortcuts: oControl._oRb.getText("GRIDCONTAINER_ITEM_KEYSHORTCUTS"),
 				labelledby: oItem.getId()
 			});
+
 			mStyles.forEach(function (sValue, sKey) {
-				rm.addStyle(sKey, sValue);
+				rm.style(sKey, sValue);
 			});
 
 			aClasses.forEach(function (sValue) {
-				rm.addClass(sValue);
+				rm.class(sValue);
 			});
 
-			rm.writeAttribute("tabindex", "0");
-			rm.writeClasses();
-			rm.writeStyles();
-			rm.write(">");
+			rm.attr("tabindex", "0");
+			rm.openEnd();
 
 			oItem.addStyleClass("sapFGridContainerItemInnerWrapper");
-			rm.writeClasses();
+
 			rm.renderControl(oItem);
-			rm.write("</div>");
+			rm.close("div");
 		};
 
 		/**
@@ -168,14 +165,11 @@ sap.ui.define([ "sap/ui/Device"],
 		};
 
 		GridContainerRenderer.renderDummyArea = function(rm, control, sAreaId, iTabIndex) {
-			rm.write("<div");
-			rm.writeAttribute("id", control.getId() + "-" + sAreaId);
-			rm.writeAttribute("tabindex", iTabIndex);
+			rm.openStart("div", control.getId() + "-" + sAreaId);
+			rm.attr("tabindex", iTabIndex);
 			rm.class("sapFGridContainerDummyArea");
-			rm.writeClasses();
-			rm.writeStyles();
-			rm.write(">");
-			rm.write("</div>");
+			rm.openEnd();
+			rm.close("div");
 		};
 
 		return GridContainerRenderer;

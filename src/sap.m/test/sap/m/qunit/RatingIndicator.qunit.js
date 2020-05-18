@@ -595,7 +595,7 @@ sap.ui.define([
 		oRating.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		oRating.$().focus(); // set focus on RatingIndicator
+		oRating.$().trigger("focus"); // set focus on RatingIndicator
 
 		qutils.triggerKeyup(oRating.$(), KeyCodes.DIGIT_1); // trigger number 1 on RatingIndicator
 		assert.strictEqual(oRating.getValue(), 1, "Number 1 is pressed, RatingIndicator has value 1");

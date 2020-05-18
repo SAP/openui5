@@ -243,7 +243,7 @@ sap.ui.define([
 		dti0.focus();
 		oDatePicker.$().find("input").val("33 May, 2012");
 		qutils.triggerKeyboardEvent("__input0-Picker-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		oDatePicker.$().find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		oDatePicker.$().find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, dti0.getId(), "Change event fired");
 		assert.equal(sValue, "33 May, 2012", "Value of event has entered value if invalid");
 		assert.ok(!bValid, "Value is not valid");
@@ -257,7 +257,7 @@ sap.ui.define([
 		dti0.focus();
 		oDatePicker.$().find("input").val("30 May, 2012");
 		qutils.triggerKeyboardEvent("__input0-Picker-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		oDatePicker.$().find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		oDatePicker.$().find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, dti0.getId(), "Change event fired");
 		assert.equal(sValue, "2012-05-30", "Value in internal format priovided");
 		assert.ok(bValid, "Value is valid");
@@ -287,7 +287,7 @@ sap.ui.define([
 			//Act
 			oDTI.focus();
 			this.clock.tick(500);
-			jQuery("#" + oDTI.getId() + "-Picker-icon").click();
+			jQuery("#" + oDTI.getId() + "-Picker-icon").trigger("click");
 
 			//Assert
 			var oPicker = jQuery("#" + oDTI.getId() + "-Picker-cal");

@@ -8771,13 +8771,13 @@ sap.ui.define([
 	QUnit.test("it should clear the selection when the backspace/delete keyboard key is pressed and the remaining text doesn't match any items", function (assert) {
 
 		// system under test
-		var oComboBox = new ComboBox({
-			items: [
-				new Item({
-					text: "lorem ipsum"
-				})
-			]
-		});
+		var oItem = new Item({
+				text: "lorem ipsum"
+			}),
+			oComboBox = new ComboBox({
+				items: [oItem]
+			}),
+			oSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
 		// arrange
 		oComboBox.placeAt("content");
@@ -8792,12 +8792,26 @@ sap.ui.define([
 		// wait for the word completion feature
 		this.clock.tick(0);
 
+		// Assert
+		assert.ok(oSelectionChangeSpy.calledOnce, "selectionChange fired");
+		assert.ok(oComboBox.getSelectedItem() === oItem);
+
 		// remove the autocompleted text ("rem ipsum" by pressing the backspace keyboard key
 		sap.ui.qunit.QUnitUtils.triggerKeydown(oFocusDomRef, KeyCodes.BACKSPACE);
 		oFocusDomRef.value = "lo";
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef, {value: "lo"});
 
 		// assert
+		assert.ok(oSelectionChangeSpy.calledTwice, "selectionChange fired again");
+		assert.ok(oComboBox.getSelectedItem() === null);
+
+		// Clear the input, but do not fire any more events
+		sap.ui.qunit.QUnitUtils.triggerKeydown(oFocusDomRef, KeyCodes.BACKSPACE);
+		oFocusDomRef.value = "";
+		sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef, {value: ""});
+
+		// assert
+		assert.ok(!oSelectionChangeSpy.calledThrice, "selectionChange did not fire anymore");
 		assert.ok(oComboBox.getSelectedItem() === null);
 
 		// cleanup
@@ -11163,11 +11177,11 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// act
+		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(2000);
 
 		sap.ui.test.qunit.triggerEvent("tap", oComboBox.getListItem(oComboBox.getFirstItem()).getDomRef());
-
 		this.clock.tick(2000);
 
 		// assert
@@ -11212,6 +11226,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// act
+		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(500);
 
@@ -11488,21 +11503,21 @@ sap.ui.define([
 
 	QUnit.test('Selection when typing and focus in', function (assert) {
 		// Act
-		this.comboBox._$input.focus().val("a").trigger("input");
+		this.comboBox._$input.trigger("focus").val("a").trigger("input");
 		var selectedText = selectedText = this.comboBox._$input.getSelectedText();
 
 		// Assert
 		assert.equal(selectedText, "", "There is no selected text when matching a suggestion");
 
 		// Act
-		this.comboBox._$input.focus().val("aa").trigger("input");
+		this.comboBox._$input.trigger("focus").val("aa").trigger("input");
 		selectedText = this.comboBox._$input.getSelectedText();
 
 		// Assert
 		assert.equal(selectedText, "a", "The next suggestions is autocompleted");
 
 		// Act
-		this.comboBox._$input.focus().val("aaaa").trigger("input");
+		this.comboBox._$input.trigger("focus").val("aaaa").trigger("input");
 		selectedText = this.comboBox._$input.getSelectedText();
 
 		// Assert
@@ -11512,7 +11527,7 @@ sap.ui.define([
 			// Act
 			this.comboBox.onsapfocusleave({});
 			this.clock.tick(500);
-			this.comboBox._$input.focus();
+			this.comboBox._$input.trigger("focus");
 			this.comboBox.onfocusin({});
 			this.clock.tick(500);
 
@@ -11556,7 +11571,7 @@ sap.ui.define([
 
 	QUnit.test('Input text selection "without" re-rendering on selection change', function (assert) {
 
-		this.comboBox._$input.focus().val("n").trigger("input");
+		this.comboBox._$input.trigger("focus").val("n").trigger("input");
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(500);
 
@@ -11569,7 +11584,7 @@ sap.ui.define([
 			this.comboBox.rerender();
 		}.bind(this));
 
-		this.comboBox._$input.focus().val("n").trigger("input");
+		this.comboBox._$input.trigger("focus").val("n").trigger("input");
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(500);
 
@@ -13118,6 +13133,7 @@ sap.ui.define([
 		var oPopup;
 
 		// Act
+		this.oErrorComboBox.focus();
 		this.oErrorComboBox.open();
 		this.clock.tick();
 
@@ -13168,6 +13184,10 @@ sap.ui.define([
 				setMarked: function () { },
 				preventDefault: function() { return false; }
 			};
+
+		this.stub(Device, "browser", {
+			msie: false
+		});
 
 		// Act
 		sap.ui.test.qunit.triggerKeyboardEvent(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);

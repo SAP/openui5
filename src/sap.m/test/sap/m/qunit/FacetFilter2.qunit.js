@@ -1050,7 +1050,7 @@ sap.ui.define([
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[3];
 		assert.ok(jQuery(oFF.onsapup(oEvent)), "keyboard onsapup tested - case 2");
-//		assert.ok(jQuery(oEvent.target).focus(), "keyboard onsapup tested");
+//		assert.ok(jQuery(oEvent.target).trigger("focus"), "keyboard onsapup tested");
 
 //onsapleft
 		//*why need to comment out oEvent.hover in facetfilter.js -?????

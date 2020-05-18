@@ -72,8 +72,7 @@ sap.ui.define([
 				this._sEntityType = oArguments.entityType;
 				this._sEntityId = oArguments.entityId;
 
-				if (this._oView && !this._oView.bIsDestroyed) {
-					this._oView.destroy();
+				if (this._oView) {
 					// If we had a view that means this is a navigation so we need to init the busy state
 					this._oContainerPage.setBusy(true);
 				}
@@ -112,19 +111,30 @@ sap.ui.define([
 			 * @private
 			 */
 			_initSubView: function (oView) {
-				var oController = oView.getController();
+				var oController,
+					oCustomData;
 
-				// check if the view become outdated
-				// (as the view is created asynchronously, another topic may have been chosen meanwhile)
-				if (oView.data("topicid") !== this._sTopicid) {
-					oView.destroy();
-					return;
+				if (oView) {
+					this._oView = oView;
 				}
 
-				this._oView = oView;
+				oController = this._oView.getController();
+				oCustomData = this._oView.getCustomData();
 
-				// Add the sub view to the current one
-				this._oContainerPage.addContent(oView);
+				if (!oCustomData.length) {
+					this._oView.addCustomData(new CustomData({
+						key: "topicid",
+						value: this._sTopicid
+					}));
+				} else {
+					this._oView.getCustomData()[0].setValue(this._sTopicid);
+				}
+
+				// Add the sub view to the current one only once
+				if (oView) {
+					this._oContainerPage.addContent(oView);
+				}
+
 				this._oContainerPage.setBusy(false);
 
 				// Init the sub view and controller with the needed references.The view's are nested and work in a
@@ -141,6 +151,9 @@ sap.ui.define([
 					oContainerView: this.getView(),
 					oContainerController: this
 				});
+
+				// Scroll to the top of the page
+				this._oView.byId("apiDetailObjectPage").setSelectedSection(null);
 			},
 
 			/**
@@ -154,26 +167,29 @@ sap.ui.define([
 				// Attach resolved borrowed data
 				this._oControlData.borrowed = oBorrowedData;
 
-				// Pre-process data and create model
 				this._bindData(this._sTopicid);
 
-				// Create the sub-view and controller
-				return XMLView.create({
-					height: "100%",
-					customData: new CustomData({
-						key: "topicid",
-						value: this._sTopicid
-					}),
-					viewName: "sap.ui.documentation.sdk.view.SubApiDetail",
-					async: true,
-					preprocessors: {
-						xml: {
-							models: {
-								data: this._oModel
+				if (!this._oView) {
+					// Create the sub-view and controller
+					return XMLView.create({
+						height: "100%",
+						customData: new CustomData({
+							key: "topicid",
+							value: this._sTopicid
+						}),
+						viewName: "sap.ui.documentation.sdk.view.SubApiDetail",
+						async: true,
+						preprocessors: {
+							xml: {
+								models: {
+									data: this._oModel
+								}
 							}
 						}
-					}
-				});
+					});
+				}
+
+				return Promise.resolve(null);
 			},
 
 			/**

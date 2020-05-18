@@ -307,7 +307,10 @@ sap.ui.define([
 			oView.byId("objectPage").bindElement(sContextPath, {createPreliminaryContext : true});
 			oTable.clearSelection();
 			oView.byId("messagePopover").getBinding("items")
-				.filter(new Filter("fullTarget", FilterOperator.StartsWith, sContextPath));
+				.filter([
+					new Filter("fullTarget", FilterOperator.StartsWith, sContextPath),
+					new Filter("fullTarget", FilterOperator.EQ, "")
+				]);
 		},
 
 		onShowMessageDetails : function (oEvent) {

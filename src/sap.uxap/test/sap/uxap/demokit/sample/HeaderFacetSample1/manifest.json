@@ -21,7 +21,9 @@
 				"stretch": true,
 				"files": [
 					"view/HeaderFacetSample1.view.xml",
-					"view/fragments/SupplierDetails.fragment.xml",
+					"../SharedBlocks/employment/EmploymentBlockJob.js",
+					"../SharedBlocks/employment/EmploymentBlockJobCollapsed.view.xml",
+					"../SharedBlocks/employment/EmploymentBlockJobExpanded.view.xml",
 					"manifest.json"
 				]
 			}

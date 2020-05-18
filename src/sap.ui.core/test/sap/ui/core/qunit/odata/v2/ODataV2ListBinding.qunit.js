@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/model/FilterType",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/Filter",
-	"sap/ui/Device",
 	"sap/m/Panel",
 	"sap/m/List",
 	"sap/m/DisplayListItem",
@@ -26,7 +25,6 @@ sap.ui.define([
 		FilterType,
 		FilterOperator,
 		ODataFilter,
-		Device,
 		Panel,
 		List,
 		DisplayListItem,
@@ -385,28 +383,25 @@ sap.ui.define([
 		});
 	});
 
-	// TODO: Find out why this fails in PhantomJS and rewrite test
-	if (!Device.browser.phantomJS) {
-		QUnit.test("ListBinding getCurrentContexts", function(assert){
-			var done = assert.async();
-			var oBinding = oModel.bindList("/Categories");
+	QUnit.test("ListBinding getCurrentContexts", function(assert){
+		var done = assert.async();
+		var oBinding = oModel.bindList("/Categories");
 
-			var handler = function() {
-				oBinding.getContexts(0, 5);
-				var aCurrentContexts = oBinding.getCurrentContexts();
+		var handler = function() {
+			oBinding.getContexts(0, 5);
+			var aCurrentContexts = oBinding.getCurrentContexts();
 
-				assert.equal(aCurrentContexts.length, 5, "amount of items in current contexts");
-				aCurrentContexts.forEach(function(context, i) {
-					assert.equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
-				});
-				oBinding.detachChange(handler);
-				done(); // resume normal testing
-			};
-			oBinding.attachRefresh(function() {oBinding.getContexts();});
-			oBinding.attachChange(handler);
-			// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
-		});
-	}
+			assert.equal(aCurrentContexts.length, 5, "amount of items in current contexts");
+			aCurrentContexts.forEach(function(context, i) {
+				assert.equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
+			});
+			oBinding.detachChange(handler);
+			done(); // resume normal testing
+		};
+		oBinding.attachRefresh(function() {oBinding.getContexts();});
+		oBinding.attachChange(handler);
+		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+	});
 
 	QUnit.test("ListBinding relative with context", function(assert){
 		var done = assert.async();

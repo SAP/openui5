@@ -272,6 +272,17 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/Univer
 
 		oRm.accessibilityState(null, mAccProps);
 		oRm.openEnd();
+
+		if (oType && oType.type != CalendarDayType.None){ //if there's a special date, render it
+			oRm.openStart("div");
+			oRm.class("sapUiCalSpecialDate");
+			if (oType.color) { // if there's a custom color, render it
+				oRm.style("background-color", oType.color);
+			}
+			oRm.openEnd(); // div
+			oRm.close("div");
+		}
+
 		oRm.openStart("span");
 		oRm.class("sapUiCalItemText");
 		oRm.openEnd();

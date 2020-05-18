@@ -8,6 +8,31 @@
 	.sapMLIBCounter {
 		padding-right: 1rem;
 	}
+
+	.sapMLIBFocusable:focus {
+		outline: none;
+	}
+
+	.sapMLIBLegacyOutline:focus::before {
+		content: none;
+	}
+
+	.sapMLIBFocusable:focus::after {
+		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		position: absolute;
+		content: " ";
+		top: 1px;
+		right: 1px;
+		bottom: 1px;
+		left: 1px;
+		z-index: 2;
+		pointer-events: none;
+
+		[data-sap-ui-browser^="ie"] &,
+		[data-sap-ui-browser^="ed"] & {
+			border: @sapUiContentFocusWidth dashed @sapUiContentFocusColor;
+		}
+	}
 }
 
 .sapFGridList ul:not(.sapUiLayoutCSSGridBoxLayoutPolyfill) {

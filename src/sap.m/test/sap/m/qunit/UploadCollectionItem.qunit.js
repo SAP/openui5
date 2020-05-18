@@ -306,7 +306,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test that XMLHttpRequest is correct", function(assert) {
-		if (Device.browser.name === "sf" || !Device.browser.phantomJS) {
+		if (Device.browser.name === "sf") {
 			assert.expect(0);
 			return;
 		}
@@ -324,7 +324,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check that sap.ui.core.util.File.save was called and it was called with the right arguments", function(assert) {
-		if (Device.browser.name === "sf" || !Device.browser.phantomJS) {
+		if (Device.browser.name === "sf") {
 			assert.expect(0);
 			return;
 		}
@@ -344,9 +344,9 @@ sap.ui.define([
 		assert.ok(stub.calledWith(undefined, sFileName, sFileExtension, "image/jpg", 'utf-8'), "sap.ui.core.util.File.save was called with the right arguments");
 	});
 
-	// REMARK: phantom.js reacts like Safari
+
 	QUnit.test("Check if in case of safari sap.m.URLHelper is called", function(assert) {
-		if (Device.browser.name !== "sf" || Device.browser.phantomJS) {
+		if (Device.browser.name !== "sf") {
 			assert.expect(0);
 			return;
 		}

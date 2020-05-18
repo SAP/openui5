@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
@@ -18,6 +19,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ], function(
+	FlexState,
 	Layer,
 	Utils,
 	LayerUtils,
@@ -172,9 +174,9 @@ sap.ui.define([
 		 * @public
 		 */
 		activateVariant : function(vElement, sVariantReference) {
-			var oElement;
 			return Promise.resolve()
 			.then(function () {
+				var oElement;
 				if (typeof vElement === 'string' || vElement instanceof String) {
 					oElement = Component.get(vElement);
 
@@ -203,9 +205,12 @@ sap.ui.define([
 					throw new Error("A valid control or component, and a valid variant/ID combination are required");
 				}
 
-				return oVariantModel.updateCurrentVariant(sVariantManagementReference, sVariantReference, oAppComponent);
+				// sap/fe is using this API very early during app start, sometimes before FlexState is initialized
+				return oVariantModel.waitForVMControlInit(sVariantManagementReference).then(function() {
+					return oVariantModel.updateCurrentVariant(sVariantManagementReference, sVariantReference, oAppComponent);
+				});
 			})
-			["catch"](function (oError) {
+			["catch"](function(oError) {
 				Log.error(oError);
 				return Promise.reject(oError);
 			});

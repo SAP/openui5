@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/integration/designtime/baseEditor/util/findClosestInstance",
 	"sap/ui/integration/designtime/baseEditor/util/createPromise",
-	"sap/ui/integration/designtime/baseEditor/util/isAggregationTemplate",
+	"sap/ui/integration/designtime/baseEditor/util/isTemplate",
 	"sap/ui/integration/designtime/baseEditor/util/StylesheetManager",
 	"sap/base/util/restricted/_intersection",
 	"sap/base/util/restricted/_omit",
@@ -17,7 +17,7 @@ sap.ui.define([
 	Control,
 	findClosestInstance,
 	createPromise,
-	isAggregationTemplate,
+	isTemplate,
 	StylesheetManager,
 	_intersection,
 	_omit,
@@ -674,7 +674,7 @@ sap.ui.define([
 	 */
 	PropertyEditors.prototype.wrapperInit = function (oEvent) {
 		var oWrapper = oEvent.getSource();
-		if (isAggregationTemplate(oWrapper)) {
+		if (isTemplate(oWrapper, this)) {
 			// The element is part of the template of the aggregation binding
 			// and not a real wrapper
 			return;

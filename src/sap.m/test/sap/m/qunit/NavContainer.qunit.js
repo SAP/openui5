@@ -332,7 +332,7 @@ sap.ui.define([
 		});
 
 		// Act - place focus outside the Nav container current page and navigate to second page
-		oOutsideButton.$().focus();
+		oOutsideButton.$().trigger("focus");
 		oNavContainer.to("secondPage");
 
 		// Cleanup
@@ -2305,13 +2305,13 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// Act
-		oInsideButton.$().focus();
+		oInsideButton.$().trigger("focus");
 
 		// Assert
 		oAssert.strictEqual(this.nc._isFocusInControl(oPage), true, "A child of the page control is focused");
 
 		// Act
-		oOutsideButton.$().focus();
+		oOutsideButton.$().trigger("focus");
 
 		// Assert
 		oAssert.strictEqual(this.nc._isFocusInControl(oPage), false, "A child of the page control is not focused");

@@ -18,7 +18,8 @@ sap.ui.define([
 			"label": "{i18n>CARD_EDITOR.OBJECT.GROUPS}",
 			"type": "array",
 			"path": "content/groups",
-			"itemLabel": "{i18n>CARD_EDITOR.OBJECT.GROUP}",
+			"itemLabel": "{title}",
+			"addItemLabel": "{i18n>CARD_EDITOR.OBJECT.GROUP}",
 			"template": {
 				"title": {
 					"label": "{i18n>CARD_EDITOR.OBJECT.GROUP.TITLE}",
@@ -30,7 +31,8 @@ sap.ui.define([
 					"label": "{i18n>CARD_EDITOR.OBJECT.GROUP.ITEMS}",
 					"type": "array",
 					"path": "items",
-					"itemLabel": "{i18n>CARD_EDITOR.OBJECT.GROUP.ITEM}",
+					"itemLabel": "{label}",
+					"addItemLabel": "{i18n>CARD_EDITOR.OBJECT.GROUP.ITEM}",
 					"template": {
 						"icon": {
 							"tags": ["content", "objectGroupItem"],

@@ -989,7 +989,7 @@ sap.ui.define([
 		oDP2.focus();
 		jQuery("#DP2").find("input").val("32+04+2014");
 		qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DP2").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DP2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DP2", "Change event fired");
 		assert.equal(sValue, "32+04+2014", "Value of event has entered value if invalid");
 		assert.ok(!bValid, "Value is not valid");
@@ -1003,7 +1003,7 @@ sap.ui.define([
 		oDP2.focus();
 		jQuery("#DP2").find("input").val("02+04+2014");
 		qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DP2").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DP2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DP2", "Change event fired");
 		assert.equal(sValue, "2014-04-02", "Value in internal format priovided");
 		assert.ok(bValid, "Value is valid");
@@ -1019,7 +1019,7 @@ sap.ui.define([
 		oDP6.focus();
 		jQuery("#DP6").find("input").val("13/23/2015");
 		qutils.triggerKeyboardEvent("DP6-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DP6").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DP6").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.ok(bParseError, "parse error fired");
 		assert.ok(!bValidationSuccess, "no validation success fired");
 		assert.equal(sId, "DP6", "ID of control");
@@ -1036,7 +1036,7 @@ sap.ui.define([
 		oDP6.focus();
 		jQuery("#DP6").find("input").val("01/01/15");
 		qutils.triggerKeyboardEvent("DP6-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DP6").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DP6").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.ok(!bParseError, "no parse error fired");
 		assert.ok(bValidationSuccess, "validation success fired");
 		assert.equal(sId, "DP6", "ID of control");
@@ -1114,21 +1114,21 @@ sap.ui.define([
 		sap.ui.Device.system.desktop = true;
 		sap.ui.getCore().byId("DP5").focus();
 		qutils.triggerEvent("click", "DP5-icon");
-		jQuery("#DP5-cal--Month0-20151124").focus();
+		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
 		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
 		assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after date selection");
 
 		qutils.triggerEvent("click", "DP5-icon");
-		jQuery("#DP5-cal--Month0-20151124").focus();
+		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
 		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
 		assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after selecting the same date");
 
 		oDP5.focus();
 		jQuery("#DP5").find("input").val("4"); // enter invalid date
 		qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DP5").find("input").change();
+		jQuery("#DP5").find("input").trigger("change");
 		qutils.triggerEvent("click", "DP5-icon");
-		jQuery("#DP5-cal--Month0-20151124").focus(); // choose previous valid date
+		jQuery("#DP5-cal--Month0-20151124").trigger("focus"); // choose previous valid date
 		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
 		assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after first entering invalid date and then selecting the previous valid date");
 
@@ -1140,12 +1140,12 @@ sap.ui.define([
 		sap.ui.Device.support.touch = true;
 		sap.ui.Device.system.desktop = false;
 		qutils.triggerEvent("click", "DP5-icon");
-		jQuery("#DP5-cal--Month0-20151124").focus();
+		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
 		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
 		assert.notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after date selection");
 
 		qutils.triggerEvent("click", "DP5-icon");
-		jQuery("#DP5-cal--Month0-20151124").focus();
+		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
 		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
 		assert.notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after selecting the same date");
 
@@ -1204,14 +1204,14 @@ sap.ui.define([
 		qutils.triggerEvent("click", "DP5-icon");
 		assert.equal(oDP5._getCalendar().getPrimaryCalendarType(), "Islamic", "DP5: Primary calendar type set");
 		assert.equal(oDP5._getCalendar().getSecondaryCalendarType(), "Gregorian", "DP5: Secondary calendar type set");
-		jQuery("#DP5-cal--Month0-20151124").focus();
+		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
 		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
 		assert.equal(oDP5.getValue(), "11/24/15", "Value in internal format set");
 
 		oDP7.focus();
 		qutils.triggerEvent("click", "DP7-icon");
 		assert.equal(oDP7._getCalendar().getPrimaryCalendarType(), "Islamic", "DP7: Primary calendar type set");
-		jQuery("#DP7-cal--Month0-20151124").focus();
+		jQuery("#DP7-cal--Month0-20151124").trigger("focus");
 		qutils.triggerKeyboardEvent("DP7-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
 		assert.equal(oDP7.getValue(), "2/11/1437 AH", "Value in binding format set");
 
@@ -1223,7 +1223,7 @@ sap.ui.define([
 		oDP3.focus();
 		jQuery("#DP3").find("input").val("invalid");
 		qutils.triggerKeyboardEvent("DP3-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DP3").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DP3").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DP3", "Change event fired");
 		assert.equal(sValue, "invalid", "Value of event has entered value if invalid");
 		assert.ok(!bValid, "Value is not valid");
@@ -1237,7 +1237,7 @@ sap.ui.define([
 		qutils.triggerEvent("click", "DP3-icon");
 		assert.ok(jQuery("#DP3-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
-		jQuery("#DP3-cal--Month0-20140410").focus();
+		jQuery("#DP3-cal--Month0-20140410").trigger("focus");
 		qutils.triggerKeyboardEvent("DP3-cal--Month0-20140410", jQuery.sap.KeyCodes.ENTER, false, false, false);
 		assert.ok(!jQuery("#DP3-cal").is(":visible"), "calendar is not invisible");
 		assert.equal(sId, "DP3", "Change event fired");
@@ -1347,7 +1347,7 @@ sap.ui.define([
 		oDP3.focus();
 		jQuery("#DP3").find("input").val("December 31, 2015");
 		qutils.triggerKeydown("DP3-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DP3").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DP3").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		//Assert
 		assert.ok(bChange, "DP3: change event fired by typing invalid date");
 		assert.ok(!bValid, "DP3: invalid typed date is described in <change> event by its non-public parameter <valid>");
@@ -1724,7 +1724,7 @@ sap.ui.define([
 		oDP._$input.get(0).selectionStart = 3;
 		oDP._$input.get(0).selectionEnd = 3;
 
-		oDP.$().find(".sapUiIcon").click(); //simulate opening
+		oDP.$().find(".sapUiIcon").trigger("click"); //simulate opening
 		this.clock.tick(100);
 
 		//Assert
@@ -2316,7 +2316,7 @@ sap.ui.define([
 		sId = "";
 		jQuery("#DP2").find("input").val("11/190/2016");
 		qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		jQuery("#DP2").find("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+		jQuery("#DP2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DP2", "Change event fired");
 		assert.equal(sValue, "11/190/2016", "The new value is set to an invalid one");
 		assert.ok(!bValid, "Value is not valid");
@@ -2328,7 +2328,7 @@ sap.ui.define([
 		oDP2.focus();
 		qutils.triggerEvent("click", "DP2-icon");
 		var $Date = jQuery("#DP2-cal--Month0-20140401");
-		$Date.focus();
+		$Date.trigger("focus");
 		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 		assert.ok(oDP2.getValue() !== "11/190/2016",
 			"The value has successfully changed after a selection from the calendar");
@@ -2564,41 +2564,32 @@ sap.ui.define([
 
 			qutils.triggerEvent("mousedown", $Target);
 			qutils.triggerEvent("mouseup", $Target);
-		},
-		assertButtonAppearance: function (fnDone) {
-			var oHeader = this.oDP._oCalendar.getAggregation("header");
-			// We use 200 ms timeout here to place the test on a safe place on the event loop queue
-			// to catch all the ui updates happening with multiple delayed calls.
-			setTimeout(function () {
-				assert.strictEqual(oHeader.getVisibleButton1(), true, "Month button is visible again after the Month Picker closing");
-				fnDone();
-			}, 200);
 		}
 	});
 
 	QUnit.test("Changing month using the month picker", function (assert) {
-		var fnDone = assert.async();
+		var fnDone = assert.async(),
+			oHeader = this.oDP._oCalendar.getAggregation("header");
 
-		// Act
-		var that = this;
-		setTimeout(function () {
-			var oHeader = that.oDP._oCalendar.getAggregation("header");
+		var afterRenderDelegate = {
+			onAfterRendering: function () {
+				// Assert
+				assert.strictEqual(oHeader.getVisibleButton1(), true, "Month button is visible again after the Month Picker closing");
+				oHeader.removeDelegate(afterRenderDelegate);
+				fnDone();
+			}
+		};
 
-			assert.equal(oHeader.getVisibleButton1(), true, "Month button is visible before the Month Picker opening");
+		assert.equal(oHeader.getVisibleButton1(), true, "Month button is visible before the Month Picker opening");
 
-			// Open month picker
-			qutils.triggerEvent("click", "SDP-cal--Head-B1");
+		// Open month picker
+		qutils.triggerEvent("click", "SDP-cal--Head-B1");
 
-			assert.equal(oHeader.getVisibleButton1(), false, "Month button is hidden after the Month Picker opening");
+		assert.equal(oHeader.getVisibleButton1(), false, "Month button is hidden after the Month Picker opening");
+		oHeader.addDelegate(afterRenderDelegate);
 
-			// Click on March
-			that.clickOnMonth(2);
-
-			// Assert
-			that.assertButtonAppearance(fnDone);
-
-		}, 0);
-
+		// Click on March
+		this.clickOnMonth(2);
 	});
 
 	QUnit.module("Keyboard Interaction", {

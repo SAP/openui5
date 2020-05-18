@@ -125,7 +125,7 @@ function(
 					tooltip : "Invisible ObjectPage Section",
 					type : "invisible",
 					elementId : "idMain1--ObjectPageSectionInvisible",
-					bindingPaths: undefined
+					bindingPath: undefined
 				}, "the invisible section is found", assert);
 				TestUtils.assertElementsEqual(aAdditionalElements[1], {
 					selected : false,
@@ -133,7 +133,7 @@ function(
 					tooltip : "idMain1--ObjectPageSectionStashed1",
 					type : "invisible",
 					elementId : "idMain1--ObjectPageSectionStashed1",
-					bindingPaths: undefined
+					bindingPath: undefined
 				}, "the 1. stashed section is found", assert);
 				TestUtils.assertElementsEqual(aAdditionalElements[2], {
 					selected : false,
@@ -141,7 +141,7 @@ function(
 					tooltip : "idMain1--ObjectPageSectionStashed2",
 					type : "invisible",
 					elementId : "idMain1--ObjectPageSectionStashed2",
-					bindingPaths: undefined
+					bindingPath: undefined
 				}, "the 2. stashed section is found", assert);
 			});
 		});
@@ -167,8 +167,8 @@ function(
 					name : "Property06",
 					bindingPath : "Property06",
 					originalLabel: "",
-					duplicateComplexName: false,
-					referencedComplexPropertyName: ""
+					duplicateName: false,
+					parentPropertyName: ""
 				}, "the unbound property is found");
 				assert.deepEqual(aAdditionalElements[1], {
 					selected : false,
@@ -179,8 +179,8 @@ function(
 					name : "Property07",
 					bindingPath : "Property07",
 					originalLabel: "",
-					duplicateComplexName: false,
-					referencedComplexPropertyName: ""
+					duplicateName: false,
+					parentPropertyName: ""
 				}, "the 2nd unbound property is found");
 				assert.deepEqual(aAdditionalElements[2], {
 					selected : false,
@@ -191,8 +191,8 @@ function(
 					name : "Property08",
 					bindingPath : "Property08",
 					originalLabel: "",
-					duplicateComplexName: false,
-					referencedComplexPropertyName: ""
+					duplicateName: false,
+					parentPropertyName: ""
 				}, "the 3rd unbound property without sap:label is returned with technical name as label");
 			});
 		});
@@ -222,8 +222,8 @@ function(
 					name : "Property06",
 					bindingPath : "Property06",
 					originalLabel: "",
-					duplicateComplexName: false,
-					referencedComplexPropertyName: ""
+					duplicateName: false,
+					parentPropertyName: ""
 				}, "the unbound property is found");
 				assert.deepEqual(aAdditionalElements[1], {
 					selected : false,
@@ -234,8 +234,8 @@ function(
 					name : "Property07",
 					bindingPath : "Property07",
 					originalLabel: "",
-					duplicateComplexName: false,
-					referencedComplexPropertyName: ""
+					duplicateName: false,
+					parentPropertyName: ""
 				}, "the 2nd unbound property is found");
 				assert.deepEqual(aAdditionalElements[2], {
 					selected : false,
@@ -246,8 +246,8 @@ function(
 					name : "Property08",
 					bindingPath : "Property08",
 					originalLabel: "",
-					duplicateComplexName: false,
-					referencedComplexPropertyName: ""
+					duplicateName: false,
+					parentPropertyName: ""
 				}, "the 3rd unbound property without sap:label is returned with technical name as label");
 			});
 		});
@@ -274,8 +274,8 @@ function(
 					name : "Property06",
 					bindingPath : "Property06",
 					originalLabel: "",
-					duplicateComplexName: false,
-					referencedComplexPropertyName: ""
+					duplicateName: false,
+					parentPropertyName: ""
 				}, "the unbound property is found");
 			});
 		});
@@ -300,8 +300,8 @@ function(
 					name : "Property06",
 					bindingPath : "Property06",
 					originalLabel: "",
-					duplicateComplexName: false,
-					referencedComplexPropertyName: ""
+					duplicateName: false,
+					parentPropertyName: ""
 				}, "the unbound property is found");
 				assert.deepEqual(aAdditionalElements[1], {
 					selected : false,
@@ -312,8 +312,8 @@ function(
 					name : "Property07",
 					bindingPath : "Property07",
 					originalLabel: "",
-					duplicateComplexName: false,
-					referencedComplexPropertyName: ""
+					duplicateName: false,
+					parentPropertyName: ""
 				}, "the 2nd unbound property is found");
 			});
 		});
@@ -341,8 +341,8 @@ function(
 					name : "Property06",
 					bindingPath : "Property06",
 					originalLabel: "",
-					duplicateComplexName: false,
-					referencedComplexPropertyName: ""
+					duplicateName: false,
+					parentPropertyName: ""
 				}, "the unbound property is found");
 				assert.deepEqual(aAdditionalElements[1], {
 					selected : false,
@@ -353,8 +353,8 @@ function(
 					name : "Property07",
 					bindingPath : "Property07",
 					originalLabel: "",
-					duplicateComplexName: false,
-					referencedComplexPropertyName: ""
+					duplicateName: false,
+					parentPropertyName: ""
 				}, "the 2nd unbound property is found");
 			});
 		});
@@ -379,8 +379,8 @@ function(
 					name : "EntityType02_Property01",
 					bindingPath : "EntityType02_Property01",
 					originalLabel: "",
-					duplicateComplexName: false,
-					referencedComplexPropertyName: ""
+					duplicateName: false,
+					parentPropertyName: ""
 				}, "the unbound normal property is found");
 				assert.deepEqual(aAdditionalElements[1], {
 					selected : false,
@@ -391,8 +391,8 @@ function(
 					name : "ComplexProperty03",
 					bindingPath : "EntityType02_Complex/ComplexProperty03",
 					originalLabel: "",
-					duplicateComplexName: true,
-					referencedComplexPropertyName: "EntityType02_Complex"
+					duplicateName: true,
+					parentPropertyName: "EntityType02_Complex"
 				}, "the unbound complex property is found");
 				assert.deepEqual(aAdditionalElements[2], {
 					selected : false,
@@ -403,8 +403,8 @@ function(
 					name : "ComplexProperty01",
 					bindingPath : "EntityType02_SameComplexType/ComplexProperty01",
 					originalLabel: "",
-					duplicateComplexName: true,
-					referencedComplexPropertyName: "Same Complex Type Property with label"
+					duplicateName: true,
+					parentPropertyName: "Same Complex Type Property with label"
 				}, "the unbound complex property with a custom name is found");
 				assert.equal(aAdditionalElements[3].bindingPath, "EntityType02_SameComplexType/ComplexProperty02");
 				assert.equal(aAdditionalElements[4].bindingPath, "EntityType02_SameComplexType/ComplexProperty03");
@@ -420,8 +420,8 @@ function(
 					name : "ComplexProperty05",
 					bindingPath : "EntityType02_OtherComplexTypeSameComplexProperties/ComplexProperty05",
 					originalLabel: "",
-					duplicateComplexName: false,
-					referencedComplexPropertyName: "EntityType02_OtherComplexTypeSameComplexProperties"
+					duplicateName: false,
+					parentPropertyName: "EntityType02_OtherComplexTypeSameComplexProperties"
 				}, "the unbound complex property with a custom name is found");
 				assert.equal(aAdditionalElements[9].bindingPath, "EntityType02_Property07_with_implicit_nav");
 			});
@@ -451,8 +451,8 @@ function(
 					name : "EntityType02_Property01",
 					bindingPath : "EntityType02_Property01",
 					originalLabel: "",
-					duplicateComplexName: false,
-					referencedComplexPropertyName: ""
+					duplicateName: false,
+					parentPropertyName: ""
 				}, "the unbound normal property is found");
 				assert.deepEqual(aAdditionalElements[1], {
 					selected : false,
@@ -463,8 +463,8 @@ function(
 					name : "ComplexProperty03",
 					bindingPath : "EntityType02_Complex/ComplexProperty03",
 					originalLabel: "",
-					duplicateComplexName: true,
-					referencedComplexPropertyName: "EntityType02_Complex"
+					duplicateName: true,
+					parentPropertyName: "EntityType02_Complex"
 				}, "the unbound complex property is found");
 				assert.deepEqual(aAdditionalElements[2], {
 					selected : false,
@@ -475,8 +475,8 @@ function(
 					name : "ComplexProperty01",
 					bindingPath : "EntityType02_SameComplexType/ComplexProperty01",
 					originalLabel: "",
-					duplicateComplexName: true,
-					referencedComplexPropertyName: "Same Complex Type Property with label"
+					duplicateName: true,
+					parentPropertyName: "Same Complex Type Property with label"
 				}, "the unbound complex property with a custom name is found");
 				assert.equal(aAdditionalElements[3].bindingPath, "EntityType02_SameComplexType/ComplexProperty02");
 				assert.equal(aAdditionalElements[4].bindingPath, "EntityType02_SameComplexType/ComplexProperty03");
@@ -492,8 +492,8 @@ function(
 					name : "ComplexProperty05",
 					bindingPath : "EntityType02_OtherComplexTypeSameComplexProperties/ComplexProperty05",
 					originalLabel: "",
-					duplicateComplexName: false,
-					referencedComplexPropertyName: "EntityType02_OtherComplexTypeSameComplexProperties"
+					duplicateName: false,
+					parentPropertyName: "EntityType02_OtherComplexTypeSameComplexProperties"
 				}, "the unbound complex property with a custom name is found");
 				assert.equal(aAdditionalElements[9].bindingPath, "EntityType02_Property07_with_implicit_nav");
 			});
@@ -881,14 +881,6 @@ function(
 			oGroupElement1.setLabel(sRenamedLabel);
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.strictEqual(oGroupElement1.label, aAdditionalElements[0].label, "then first invisible element has label property set");
-				assert.strictEqual(oGroupElement1.renamedLabel, true, "then first invisible element has the renamedLabel property set");
-				assert.strictEqual(oGroupElement1.tooltip, oActionsObject.addViaCustom.items[0].tooltip, "then first invisible element has the correct tooltip property");
-
-				assert.strictEqual(oGroupElement2.label, aAdditionalElements[1].label, "then second invisible element has label property set");
-				assert.notOk(oGroupElement2.renamedlabel, "then second invisible element has no renamedLabel property");
-				assert.strictEqual(oGroupElement2.tooltip, oActionsObject.addViaCustom.items[1].tooltip, "then second invisible element has the correct tooltip property");
-
 				assert.equal(aAdditionalElements.length, 2, "then the 2 invisible elements with oData are returned");
 
 				assert.equal(aAdditionalElements[0].label, sRenamedLabel, "then the first invisible item has the renamed label");

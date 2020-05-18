@@ -681,7 +681,7 @@ sap.ui.define([
 		if (Device.support.touch) {
 			sLinkText.tap();
 		} else {
-			sLinkText.click();
+			sLinkText.trigger("click");
 		}
 
 		sap.ui.getCore().applyChanges();
@@ -776,7 +776,7 @@ sap.ui.define([
 		if (Device.support.touch) {
 			sLinkText.tap();
 		} else {
-			sLinkText.click();
+			sLinkText.trigger("click");
 		}
 
 		sap.ui.getCore().applyChanges();
@@ -804,7 +804,7 @@ sap.ui.define([
 		if (Device.support.touch) {
 			sLinkText.tap();
 		} else {
-			sLinkText.click();
+			sLinkText.trigger("click");
 		}
 
 		sap.ui.getCore().applyChanges();
@@ -835,7 +835,7 @@ sap.ui.define([
 		if (Device.support.touch) {
 			sLinkText.tap();
 		} else {
-			sLinkText.click();
+			sLinkText.trigger("click");
 		}
 
 		sap.ui.getCore().applyChanges();

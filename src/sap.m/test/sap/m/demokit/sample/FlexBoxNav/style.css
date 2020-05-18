@@ -17,7 +17,9 @@
 	list-style-type: none;
 	text-align: center;
 	background-color: #193441;
+	cursor: pointer;
 }
+
 .navigationExamples .ne-flexbox1 li:hover {
 	background-color: orange;
 }
@@ -35,12 +37,20 @@
 	text-align: center;
 	background-color: #193441;
 	padding: 0.4em;
-	-webkit-transition: width 0.5s ease-out, background-color 0.5s ease-out;
+	transition: width 0.5s ease-out, background-color 0.5s ease-out, flex-basis 0.5s ease-out;
+	cursor: pointer;
 }
-.navigationExamples .ne-flexbox2 li:hover {
-	width: 35%;
+
+html:not([data-sap-ui-browser^="ie"]) .navigationExamples .ne-flexbox2 li:hover {
+	flex-basis: 35% !important;
 	background-color: orange;
 }
+
+html[data-sap-ui-browser='ie11'] .navigationExamples .ne-flexbox2 li:hover {
+	width: 35% !important;
+	background-color: orange;
+}
+
 .navigationExamples .ne-flexbox1 li a,
 .navigationExamples .ne-flexbox2 li a {
 	color: #fff;

@@ -33,6 +33,7 @@
 				"sap.m": {},
 				"sap.ui.layout": {}
 			}
-		}
+		},
+		"flexExtensionPointEnabled": true
 	}
 }

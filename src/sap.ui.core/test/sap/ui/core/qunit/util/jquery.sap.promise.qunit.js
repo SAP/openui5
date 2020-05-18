@@ -20,9 +20,9 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/Core"], function(Device, Core) {
 				;
 
 		if ( knownToSupportPromisesNatively ) {
-			assert.ok(hasNativePromise(), "All browsers except IE11 / PhantomJS support Promises natively.");
+			assert.ok(hasNativePromise(), "All browsers except IE11 support Promises natively.");
 		} else {
-			assert.ok(!hasNativePromise(), "IE11 / PhantomJS do not support Promises natively.");
+			assert.ok(!hasNativePromise(), "IE11 does not support Promises natively.");
 		}
 	});
 

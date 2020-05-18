@@ -2258,7 +2258,8 @@ function(
 					this._oSuggPopover._bSuggestionItemTapped = true;
 					var oSelectedListItem = oEvent.getParameter("listItem");
 					this.setSelectionRow(oSelectedListItem, true);
-				}.bind(this)
+				}.bind(this),
+				sticky: [library.Sticky.ColumnHeaders]
 			});
 
 			this._oSuggestionTable.addEventDelegate({

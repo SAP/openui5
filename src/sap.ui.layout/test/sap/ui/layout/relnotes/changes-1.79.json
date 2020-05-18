@@ -1,0 +1,13 @@
+{
+  "1.79.0": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "fd079dcefd4334113f523f78b7ccf7a8e919bd1f",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.DynamicSideContent: Support Scrolling related functionality",
+        "references": []
+      }
+    ]
+  }
+}

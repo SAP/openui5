@@ -1,0 +1,13 @@
+{
+  "1.78.0": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "31382e34fd3f6fd42b09267099b55b8859832e64",
+        "type": "FIX",
+        "text": ": RTA Context Menu Buttons fix",
+        "references": []
+      }
+    ]
+  }
+}

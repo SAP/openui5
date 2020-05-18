@@ -2,7 +2,9 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
+	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/registry/ExtensionPointRegistry",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/mvc/XMLView",
@@ -10,7 +12,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	jQuery,
+	Component,
 	Processor,
+	Loader,
 	ExtensionPointRegistry,
 	ManagedObjectObserver,
 	XMLView,
@@ -47,7 +51,6 @@ sap.ui.define([
 	QUnit.module("sap.ui.fl.registry.ExtensionPointRegistry", {
 		beforeEach: function() {
 			sandbox.stub(Processor, "applyExtensionPoint");
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 
 			var sXmlString =
 				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
@@ -99,6 +102,7 @@ sap.ui.define([
 		QUnit.test("when calling function 'exit'", function(assert) {
 			var oObserverDisconnectSpy = sandbox.spy(ManagedObjectObserver.prototype, "disconnect");
 			var oObserverDestroySpy = sandbox.spy(ManagedObjectObserver.prototype, "destroy");
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 			_createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
 			assert.equal(Object.keys(this.oExtensionPointRegistry._aExtensionPointsByParent).length, 1, "then after registration one item is registered by parent");
 			assert.equal(Object.keys(this.oExtensionPointRegistry._mExtensionPointsByViewId).length, 1, "then after registration one item is registered by viewId");
@@ -112,6 +116,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("given the extensionpoint is the single node in aggregation when calling 'registerExtensionPoints'", function(assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 			_createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName5, this.oHBoxWithSingleEP, "items", 0);
 			assert.equal(Object.keys(this.oExtensionPointRegistry._aExtensionPointsByParent).length, 1, "then after registration one item is registered by parent");
 			assert.equal(Object.keys(this.oExtensionPointRegistry._mExtensionPointsByViewId).length, 1, "then after registration one item is registered by viewId");
@@ -119,6 +124,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("given a control containing two extension points in an aggregation", function(assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 			var mExtensionPointInfo2 = _createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
 			_createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName3, this.oPanel, "content", 1);
 			var sParentId = mExtensionPointInfo2.targetControl.getId();
@@ -145,6 +151,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("given a control containing an two extension points in two aggregations", function(assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 			var mExtensionPointInfo1 = _createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName1, this.oHBox, "items", 1);
 			var mExtensionPointInfo4 = _createAndRegisterExtensionPoint.call(this, this.oXMLView, sExtensionPointName4, this.oHBox, "dependents", 1);
 			var sParentId = mExtensionPointInfo1.targetControl.getId();
@@ -230,6 +237,7 @@ sap.ui.define([
 	QUnit.module("Given an ExtensionPointRegistry created by the fl extension point processor", {
 		beforeEach: function() {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(Loader, "loadFlexData").resolves({ changes: [] });
 
 			var sXmlString =
 				'<mvc:View id="myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
@@ -253,25 +261,30 @@ sap.ui.define([
 						'</content>' +
 					'</Panel>' +
 				'</mvc:View>';
-			this.oComponent = sap.ui.getCore().createComponent({
+
+			return Component.create({
 				name: "testComponent",
 				id: "testComponent",
-				metadata: {
-					manifest: "json"
-				}
-			});
-			return this.oComponent.runAsOwner(function() {
-				return XMLView.create({
-					id: "myView",
-					definition: sXmlString,
-					async: true
-				});
+				componentData: {}
 			})
-				.then(function(oXMLView) {
-					this.oXMLView = oXMLView;
-					this.oHBox = this.oXMLView.getContent()[0];
-					this.oPanel = this.oXMLView.getContent()[1];
-				}.bind(this));
+				.then(function(_oComp) {
+					this.oComponent = _oComp;
+					return this.oComponent.runAsOwner(function() {
+						return XMLView.create({
+							id: "myView",
+							definition: sXmlString,
+							async: true
+						})
+						.then(function(oXMLView) {
+							this.oXMLView = oXMLView;
+							this.oHBox = this.oXMLView.getContent()[0];
+							this.oPanel = this.oXMLView.getContent()[1];
+						}.bind(this));
+					}.bind(this));
+				}.bind(this))
+				.then(function() {
+					sap.ui.getCore().applyChanges();
+				});
 		},
 		afterEach: function() {
 			this.oComponent.destroy();

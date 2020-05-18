@@ -5,26 +5,28 @@
 // Provides control sap.ui.layout.ResponsiveSplitter.
 sap.ui.define([
 	"./library",
-	"sap/ui/core/Control",
-	"./ResponsiveSplitterUtilities",
-	"./ResponsiveSplitterPage",
 	"./PaneContainer",
+	"./ResponsiveSplitterPage",
+	"./ResponsiveSplitterRenderer",
+	"./ResponsiveSplitterUtilities",
 	"./SplitPane",
+	"./Splitter",
+	"sap/ui/core/Control",
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/core/RenderManager",
-	"./ResponsiveSplitterRenderer"
+	"sap/ui/core/RenderManager"
 ], function(
 	library,
-	Control,
-	RSUtil,
-	ResponsiveSplitterPage,
 	PaneContainer,
+	ResponsiveSplitterPage,
+	ResponsiveSplitterRenderer,
+	RSUtil,
 	SplitPane,
+	Splitter,
+	Control,
 	ItemNavigation,
 	ResizeHandler,
-	RenderManager,
-	ResponsiveSplitterRenderer
+	RenderManager
 ) {
 	"use strict";
 
@@ -56,7 +58,7 @@ sap.ui.define([
 	 * <h3>Responsive Behavior</h3>
 	 * <ul>
 	 * <li>As soon as views are in the off-canvas mode, the pagination bar at the bottom of the application allows the user to switch between them.</li>
-	 * <li>On touch-enabled devices, the splitters show explicit handles with larger touch areas.</li>
+	 * <li>On touch-enabled devices the bars of the splitter can be moved by touching the grip.</li>
 	 * <li>Double-clicking on a splitter will collapse or expand it back to its original position.</li>
 	 * </ul>
 	 *
@@ -107,7 +109,8 @@ sap.ui.define([
 			events: {
 
 			}
-		}
+		},
+		renderer: ResponsiveSplitterRenderer
 	});
 
 	var CONSTANTS = {
@@ -187,7 +190,8 @@ sap.ui.define([
 				aSplitterBars[i].setAttribute("title", sTooltip);
 				sTooltip = "";
 			}
-			if (oAreaContent instanceof sap.ui.layout.Splitter) {
+
+			if (oAreaContent instanceof Splitter) {
 				this._setSplitterBarsTooltips(oAreaContent, iCurrentPaneIndex);
 			}
 		}
@@ -237,7 +241,6 @@ sap.ui.define([
 	ResponsiveSplitter.prototype.onsapleft = function (oEvent) {
 		this._handleArrowNavigation(0, "Back", oEvent);
 	};
-
 
 	/**
 	 * Creates an ItemNavigation
@@ -422,14 +425,14 @@ sap.ui.define([
 
 		$Buttons.addClass("sapUiResponsiveSplitterHiddenElement");
 		if (iPageCount > 1) {
-			this.getDomRef().classList.add("sapUiRSVisiblePaginator");
+			this.addStyleClass("sapUiRSVisiblePaginator");
 			$Buttons = $Buttons.slice(0, bShowNavButtons ? iPageCount : CONSTANTS.MAX_VISIBLE_BUTTONS);
 			$Buttons.removeClass("sapUiResponsiveSplitterHiddenElement");
 			$Buttons.removeClass("sapUiResponsiveSplitterHiddenPaginatorButton");
 			$NavButtons.toggleClass("sapUiResponsiveSplitterHiddenPaginatorButton", bShowNavButtons);
 			$Paginator.toggleClass("sapUiResponsiveSplitterWithNavButtons", !bShowNavButtons);
 		} else {
-			this.getDomRef().classList.remove("sapUiRSVisiblePaginator");
+			this.removeStyleClass("sapUiRSVisiblePaginator");
 		}
 	};
 

@@ -364,9 +364,6 @@ sap.ui.define([
 
 	});
 
-	// skip Interaction tests for phantomjs, which does not support window.performance.getEntriesByType
-	var sMethod = Device.browser.phantomJS ? "skip" : "test";
-
 	QUnit.module("Interaction", {
 		beforeEach: function() {
 			this.oButton = new CommonsButton();
@@ -382,19 +379,19 @@ sap.ui.define([
 		}
 	});
 
-	QUnit[sMethod]("startInteraction", function(assert) {
+	QUnit.test("startInteraction", function(assert) {
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		assert.ok(!jQuery.sap.measure.getAllInteractionMeasurements().length, "No completed interaction");
 	});
 
-	QUnit[sMethod]("endInteraction", function(assert) {
+	QUnit.test("endInteraction", function(assert) {
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		jQuery.sap.measure.endInteraction(true);
 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 		assert.ok(oMeasurement, "Measurement has been created");
 	});
 
-	QUnit[sMethod]("getAllInteractionMeasurements", function(assert) {
+	QUnit.test("getAllInteractionMeasurements", function(assert) {
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		var aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
 		assert.ok(Array.isArray(aMeasurements), "An array was returned");
@@ -411,7 +408,7 @@ sap.ui.define([
 		assert.strictEqual(aMeasurements.length, 3, "Measurements count is correct - pending interaction has been added");
 	});
 
-	QUnit[sMethod]("filterInteractionMeasurements", function(assert) {
+	QUnit.test("filterInteractionMeasurements", function(assert) {
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		jQuery.sap.measure.endInteraction(true);
 		jQuery.sap.measure.startInteraction("flick", this.oButton);
@@ -431,14 +428,14 @@ sap.ui.define([
 		assert.equal(aFilteredMeasurements.length, 1, "Filter applied correctly");
 	});
 
-	QUnit[sMethod]("getPendingInteractionMeasurement", function(assert) {
+	QUnit.test("getPendingInteractionMeasurement", function(assert) {
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		var oMeasurement = jQuery.sap.measure.getPendingInteractionMeasurement();
 		assert.ok(oMeasurement, "Measuerement was returned");
 		assert.strictEqual(oMeasurement.end, 0, "Measurements has not been finalized yet");
 	});
 
-	QUnit[sMethod]("Interaction properties", function(assert) {
+	QUnit.test("Interaction properties", function(assert) {
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		jQuery.sap.measure.endInteraction(true);
 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
@@ -464,7 +461,7 @@ sap.ui.define([
 	// do not test safari as it does not seem to work in testing environments
 	var bStablePerformanceAPI = window.performance && window.performance.getEntries && !Device.browser.safari;
 
-	QUnit[sMethod]("Performance API depending measures", function(assert) {
+	QUnit.test("Performance API depending measures", function(assert) {
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		var oReq = new XMLHttpRequest();
 		oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
@@ -483,7 +480,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit[sMethod]("Request depending measures", function(assert) {
+	QUnit.test("Request depending measures", function(assert) {
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		var oReq = new XMLHttpRequest();
 		oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
@@ -502,7 +499,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit[sMethod]("jQuery.sap.measure Measurements", function(assert) {
+	QUnit.test("jQuery.sap.measure Measurements", function(assert) {
 		jQuery.sap.measure.setActive(true);
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		// Tests synchronous time intensive API which makes use of measurement API
@@ -516,7 +513,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit[sMethod]("Component determination", function(assert) {
+	QUnit.test("Component determination", function(assert) {
 		// setup
 		var oButton = this.oButton;
 		var sComponentName = "MyComponent";

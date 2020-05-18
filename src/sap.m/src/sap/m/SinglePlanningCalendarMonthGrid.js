@@ -369,25 +369,15 @@ sap.ui.define([
 					// Deselecting all selected appointments if a grid cell is focused or
 					// all selected appointments different than the currently focused appointment
 					if ( (!oAppointment || aAppointments[i].getId() !== oAppointment.getId()) && aAppointments[i].getSelected()) {
-						aAppointments[i].setProperty("selected", false, true); // do not invalidate
+						aAppointments[i].setProperty("selected", false);
 						aChangedApps.push(aAppointments[i]);
-						// Get appointment element(s) (it might be rendered in several columns)
-						// remove its selection class and set aria-selected attribute to false
-						jQuery('[data-sap-ui=' + aAppointments[i].getId() + ']')
-							.attr("aria-selected", "false")
-							.find(".sapUiCalendarApp").removeClass("sapUiCalendarAppSel");
 					}
 				}
 			}
 
 			if (oAppointment) {
-				oAppointment.setProperty("selected", !oAppointment.getSelected(), true); // do not invalidate
+				oAppointment.setProperty("selected", !oAppointment.getSelected());
 				aChangedApps.push(oAppointment);
-
-				// Get appointment element(s) and toggle its selection class and aria-selected attribute
-				jQuery('[data-sap-ui=' + oAppointment.getId() + ']')
-					.attr("aria-selected", oAppointment.getSelected())
-					.find(".sapUiCalendarApp").toggleClass("sapUiCalendarAppSel", oAppointment.getSelected());
 			}
 
 			return aChangedApps;

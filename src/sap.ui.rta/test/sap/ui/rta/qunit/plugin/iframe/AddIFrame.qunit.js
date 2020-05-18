@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/rta/plugin/iframe/AddIFrame",
-	"sap/ui/rta/plugin/iframe/SettingsDialog",
+	"sap/ui/rta/plugin/iframe/AddIFrameDialog",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/base/util/includes",
 	"sap/m/Button"
@@ -29,7 +29,7 @@ function (
 	ObjectPageSection,
 	ObjectPageSubSection,
 	AddIFramePlugin,
-	AddIFrameSettingsDialog,
+	AddIFrameDialog,
 	sinon,
 	includes,
 	Button
@@ -76,7 +76,7 @@ function (
 		beforeEach : function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedComponent);
 			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
-			sandbox.stub(AddIFrameSettingsDialog.prototype, "open").callsFake(function () {
+			sandbox.stub(AddIFrameDialog.prototype, "open").callsFake(function () {
 				return Promise.resolve({
 					frameUrl: TEST_URL
 				});

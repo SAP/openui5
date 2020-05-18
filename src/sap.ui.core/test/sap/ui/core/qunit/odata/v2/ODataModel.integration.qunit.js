@@ -505,28 +505,36 @@ sap.ui.define([
 		 * Creates an OData message object that can be passed as input parameter to
 		 * <code>getMessageHeader</code>.
 		 *
-		 * @param {string} [sTarget=""]
+		 * @param {string} [sTarget]
 		 *   The target
 		 * @param {string} [sMessage="message-~i~"]
 		 *   The message text; if not given, "message-~i~" is used, where ~i~ is a generated number
 		 * @param {string} [sSeverity="error"]
 		 *   The message severity; either "error", "warning", "success" or "info"
+		 * @param {boolean} [bTransition]
+		 *   Whether the message is a transition message
 		 * @returns {object}
 		 *   An OData message object with following properties: <code>code</code> with the value
 		 *   "code-~i~" (where ~i~ is a generated number), <code>message</code>,
-		 *   <code>severity</code> and <code>target</code>
+		 *   <code>severity</code>, <code>target</code> and <code>transition</code>
 		 */
-		createResponseMessage : function (sTarget, sMessage, sSeverity) {
-			var i = this.iODataMessageCount;
+		createResponseMessage : function (sTarget, sMessage, sSeverity, bTransition) {
+			var i = this.iODataMessageCount,
+				oResponseMessage;
 
 			this.iODataMessageCount += 1;
 
-			return {
+			oResponseMessage = {
 				code : "code-" + i,
 				message : sMessage || "message-" + i,
 				severity : sSeverity || "error",
-				target : sTarget || ""
+				transition : bTransition
 			};
+			if (sTarget !== undefined) {
+				oResponseMessage.target = sTarget;
+			}
+
+			return oResponseMessage;
 		},
 
 		/**
@@ -1451,7 +1459,7 @@ sap.ui.define([
 [false, true].forEach(function (bUseBatch) {
 	QUnit.test("Messages: empty target (useBatch=" + bUseBatch + ")", function (assert) {
 		var oModel = createSalesOrdersModel({useBatch : bUseBatch}),
-			oResponseMessage = this.createResponseMessage(),
+			oResponseMessage = this.createResponseMessage(""),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="id" text="{SalesOrderID}" />\
@@ -1796,7 +1804,7 @@ sap.ui.define([
 				"ToLineItems(SalesOrderID='1',ItemPosition='3')/ToProduct('A')/Name"),
 			oMsgProductAViaSalesOrderItem = cloneODataMessage(oMsgProductAViaSalesOrder,
 				"(SalesOrderID='1',ItemPosition='3')/ToProduct('A')/Name"),
-			oMsgSalesOrder = this.createResponseMessage(),
+			oMsgSalesOrder = this.createResponseMessage(""),
 			oMsgSalesOrderToLineItems1 = this.createResponseMessage(
 				"ToLineItems(SalesOrderID='1',ItemPosition='1')/ItemPosition"),
 			oMsgSalesOrderToLineItems3 = this.createResponseMessage(
@@ -4351,4 +4359,114 @@ usePreliminaryContext : false}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Read an entity (SalesOrderLineItem) with an expand on a 0..1 navigation property
+	// (ToProduct) plus an expand of a second 0..1 navigation property from the first one
+	// (ToProduct/ToSupplier). Element bindings on the second navigation property have a valid
+	// context (not null), so that relative bindings underneath hold data as expected.
+	// BCP: 2070126588
+	//TODO use testViewStart to shorten test
+	QUnit.test("BCP 2070126588: binding to nested 0..1 navigation property", function (assert) {
+		var sView = '\
+<FlexBox id="objectPage" binding="{\
+path : \'/SalesOrderLineItemSet(SalesOrderID=\\\'0500000005\\\',ItemPosition=\\\'0000000010\\\')\',\
+parameters : {expand : \'ToProduct,ToProduct/ToSupplier\',\
+	select : \'SalesOrderID,ItemPosition,ToProduct/ProductID,\
+ToProduct/ToSupplier/BusinessPartnerID\'}}">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Text id="itemPosition" text="{ItemPosition}" />\
+	<FlexBox binding="{path : \'ToProduct\', parameters : {expand : \'ToSupplier\',\
+			select : \'ProductID,ToSupplier/BusinessPartnerID\'}}">\
+		<Text id="productID" text="{ProductID}" />\
+		<FlexBox binding="{path : \'ToSupplier\', parameters : {select : \'BusinessPartnerID\'}}">\
+			<Text id="businessPartnerID" text="{BusinessPartnerID}" />\
+		</FlexBox>\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderLineItemSet"
+					+ "(SalesOrderID='0500000005',ItemPosition='0000000010')"
+					+ "?$expand=ToProduct%2cToProduct%2fToSupplier"
+					+ "&$select=SalesOrderID%2cItemPosition%2cToProduct%2fProductID"
+						+ "%2cToProduct%2fToSupplier%2fBusinessPartnerID", {
+				SalesOrderID : "0500000005",
+				ItemPosition : "0000000010",
+				ToProduct : {
+					__metadata : {
+						uri : "/sap/opu/odata/sap/GWSAMPLE_BASIC/ProductSet('HT-1500')"
+					},
+					ProductID : "HT-1500",
+					ToSupplier : {
+						__metadata : {
+							uri : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/BusinessPartnerSet('0100000069')"
+						},
+						BusinessPartnerID : "0100000069"
+					}
+				}
+			})
+			.expectChange("salesOrderID", null)
+			.expectChange("salesOrderID", "0500000005")
+			.expectChange("itemPosition", null)
+			.expectChange("itemPosition", "0000000010")
+			.expectChange("productID", null)
+			.expectChange("productID", "HT-1500")
+			.expectChange("businessPartnerID", null)
+			.expectChange("businessPartnerID", "0100000069");
+
+		return this.createView(assert, sView).then(function () {
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: UI5 messages are not created with a target for unbound transition messages that are
+	// sent without a target. The empty ("") target leads still to a target creation for UI5
+	// messages.
+	// JIRA: CPOUI5MODELS-153
+["", undefined].forEach(function (sTarget) {
+	[MessageScope.BusinessObject, MessageScope.RequestedObjects].forEach(function (sMessageScope) {
+	var sTitle = "Messages: unbound transition messages; target = '" + sTarget + "'; scope = "
+			+ sMessageScope;
+
+	QUnit.test(sTitle, function (assert) {
+		var bIsBusinessObject = sMessageScope === MessageScope.BusinessObject,
+			oErrorWithoutTarget = this.createResponseMessage(sTarget, undefined, undefined, true),
+			bHasTarget = sTarget !== undefined || !bIsBusinessObject,
+			sExpectedTarget = bHasTarget ? "/SalesOrderSet('1')" : "",
+			oModel = createSalesOrdersModelMessageScope(),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Input id="note" value="{Note}" />\
+</FlexBox>';
+
+		this.expectRequest({
+				deepPath : "/SalesOrderSet('1')",
+				headers : bIsBusinessObject ? {"sap-message-scope" : "BusinessObject"} : {},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				SalesOrderID : "1",
+				Note : "Foo"
+			}, {
+				"sap-message" : getMessageHeader(oErrorWithoutTarget)
+			})
+			.expectChange("note", null)
+			.expectChange("note", "Foo")
+			.expectMessages([{
+				code : "code-0",
+				fullTarget : sExpectedTarget,
+				message : "message-0",
+				persistent : true,
+				target : sExpectedTarget,
+				type : MessageType.Error
+			}]);
+
+		oModel.setMessageScope(sMessageScope);
+
+		return this.createView(assert, sView, oModel);
+	});
+	});
+});
 });

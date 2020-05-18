@@ -86,6 +86,8 @@ sap.ui.define([
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
 			});
+
+			return this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oTable.destroy();

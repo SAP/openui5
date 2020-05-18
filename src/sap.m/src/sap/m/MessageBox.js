@@ -398,9 +398,10 @@ sap.ui.define([
 								oFT.setVisible(true);
 								oShowLink.setVisible(false);
 
-								if (oInitialFocus && oInitialFocus !== oShowLink.getId()) {
-									oDialog._setInitialFocus();
-								} else {
+								// focus the dialog, so the screen readers can read the details text
+								oDialog._setInitialFocus();
+
+								if (!oInitialFocus || oInitialFocus === oShowLink.getId()) {
 									// if the initialFocus is not set or is set to the "Show details" link
 									// focus the first action button
 									aButtons[0].focus();

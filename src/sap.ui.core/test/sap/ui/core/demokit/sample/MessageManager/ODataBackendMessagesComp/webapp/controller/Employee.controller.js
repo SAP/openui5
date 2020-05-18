@@ -12,8 +12,7 @@ sap.ui.define([
 
 			//create a view model
 			var oViewModel = new JSONModel({
-				busy : false,
-				dirty : false
+				busy : false
 			});
 			oViewModel.setDefaultBindingMode("TwoWay");
 			this.getView().setModel(oViewModel, "view");
@@ -26,25 +25,15 @@ sap.ui.define([
 				path : "/Employees(3)",		//hard coded in this demo
 				events : {
 					change: function(){
-						var oElementBinding, oModel;
+						var oElementBinding;
 
 						oElementBinding	= this.getView().getElementBinding();
 						if (oElementBinding && !oElementBinding.getBoundContext()) {
 							MessageToast.show("No data - do something here...");
-						} else {
-							oModel = this.getView().getModel();
-							oModel.attachPropertyChange(function(oEvent) {
-								this.setViewDirty(oModel.hasPendingChanges());
-							}.bind(this));
 						}
 					}.bind(this)
 				}
 			});
-		},
-
-		setViewDirty: function (bDirty) {
-			var oViewModel = this.getView().getModel("view");
-			oViewModel.setProperty("/dirty", bDirty);
 		},
 
 		onCheckHasPendingChanges : function (oEvent) {
@@ -54,17 +43,11 @@ sap.ui.define([
 		onRevertChanges : function (oEvent) {
 			var oModel = this.getView().getModel();
 			oModel.resetChanges();
-			this.setViewDirty(oModel.hasPendingChanges());
 			sap.ui.getCore().getMessageManager().removeAllMessages();
 		},
 
 		onSave : function (oEvent) {
-			this.getView().getModel().submitChanges({
-				success: function(oData, oResponse) {
-					var oModel = this.getView().getModel();
-					this.setViewDirty(oModel.hasPendingChanges());
-				}.bind(this)
-			});
+			this.getView().getModel().submitChanges();
 		}
 
 	});

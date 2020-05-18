@@ -397,7 +397,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// act
-		oItem.$().focus();
+		oItem.$().trigger("focus");
 
 		//assert
 		assert.strictEqual(oItem.$().attr("tabindex"), "0", "TabStripSelectList has tabindex 0 set");
@@ -493,7 +493,7 @@ sap.ui.define([
 		var oTabStripItemToBeSelectedAndFocused = this.items[1];
 		this.sut.setSelectedItem(oTabStripItemToRemove);
 		this.clock.tick(1000);
-		jQuery(oTabStripItemToRemove).focus();
+		jQuery(oTabStripItemToRemove).trigger("focus");
 		this.sut._removeItem(oTabStripItemToRemove);
 		this.clock.tick(1000);
 		//assert
@@ -510,7 +510,7 @@ sap.ui.define([
 		var oTabStripItemToBeSelectedAndFocused = this.items[3];
 		this.sut.setSelectedItem(oTabStripItemToRemove);
 		this.clock.tick(1000);
-		jQuery(oTabStripItemToRemove).focus();
+		jQuery(oTabStripItemToRemove).trigger("focus");
 		this.sut._removeItem(oTabStripItemToRemove);
 		this.clock.tick(1000);
 		//assert
@@ -528,7 +528,7 @@ sap.ui.define([
 		var oTabStripItemToBeFocused = this.items[4];
 		this.sut.setSelectedItem(oTabStripItemToBeSelected);
 		this.clock.tick(1000);
-		jQuery(oTabStripItemToRemove).focus();
+		jQuery(oTabStripItemToRemove).trigger("focus");
 		this.sut._removeItem(oTabStripItemToRemove);
 		this.clock.tick(1000);
 		//assert

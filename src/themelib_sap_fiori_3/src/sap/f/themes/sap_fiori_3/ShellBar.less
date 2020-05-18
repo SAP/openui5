@@ -25,7 +25,8 @@
 			border-color: @sapUiContentContrastFocusColor;
 		}
 	}
-	.sapFShellBarHomeIcon:focus {
+	.sapFShellBarHomeIcon:focus,
+	.sapFShellBarProfile:focus {
 		outline-color: @sapUiContentContrastFocusColor;
 	}
 
@@ -66,8 +67,7 @@
 				padding: 0.250rem 0;
 			}
 
-			.sapMBtnInner,
-			.sapFShellBarProfile .sapMBtnInner {
+			.sapMBtnInner {
 				height: 2.25rem;
 				min-width: 2.25rem;
 			}
@@ -204,12 +204,12 @@
 				background: transparent;
 				color: @sapUiShellTextColor;
 			}
-			&:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnTransparent.sapMBtnActive {
+			&:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnActive {
 				background: @sapUiShellActiveBackground;
 				border-color: @sapUiShellActiveBackground;
 			}
 			&:hover:not(.sapMBtnDisabled) {
-				>span.sapMBtnInner.sapMBtnHoverable.sapMBtnTransparent:not(.sapMToggleBtnPressed) {
+				>span.sapMBtnInner.sapMBtnHoverable:not(.sapMToggleBtnPressed) {
 					&:not(.sapMBtnActive) {
 						background: @sapUiShellHoverBackground;
 						border-color: @sapUiShellHoverBackground;

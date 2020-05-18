@@ -124,8 +124,8 @@ sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], f
 			var sPropertyValue =  fnProperty.call(oControl);
 
 			// check key
-			var sText = oBundle.getText(sKey, aParameters);
-			if (sText === sKey) {
+			var sText = oBundle.getText(sKey, aParameters, true);
+			if (!sText) {
 				var sMessage = "No value for the key '" + sKey + "' in the model '" + sModelName + "' of '" + oControl + "'";
 				this._oLogger.debug(sMessage);
 				return false;

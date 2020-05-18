@@ -692,7 +692,7 @@ sap.ui.define([
 
 			sap.ui.getCore().applyChanges();
 
-			this.multiInput1.$().focus();
+			this.multiInput1.$().trigger("focus");
 		},
 		afterEach : function() {
 			this.multiInput1.destroy();
@@ -930,7 +930,7 @@ sap.ui.define([
 			return new Token({text: args.text, key: args.text});
 		});
 
-		this.multiInput1._$input.focus();
+		this.multiInput1._$input.trigger("focus");
 		this.multiInput1._$input[0].setSelectionRange(3, 3);
 
 		sap.ui.getCore().applyChanges();
@@ -957,7 +957,7 @@ sap.ui.define([
 		this.multiInput1.addToken(token1);
 		this.multiInput1.setValue("text");
 
-		this.multiInput1._$input.focus();
+		this.multiInput1._$input.trigger("focus");
 
 		this.multiInput1.onsapprevious(oFakeEvent);
 
@@ -1109,7 +1109,7 @@ sap.ui.define([
 		// Act
 		// create new token by user input
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.D });
-		this.multiInput1._$input.focus().trigger(oFakeKeydown).val("D").trigger("input");
+		this.multiInput1._$input.trigger("focus").trigger(oFakeKeydown).val("D").trigger("input");
 		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ENTER);
 		sap.ui.getCore().applyChanges();
 
@@ -1294,7 +1294,7 @@ sap.ui.define([
 		oMultiInput1.placeAt("content");
 
 		// Act
-		oMI._tokenizer.$().click();
+		oMI._tokenizer.$().trigger("click");
 		this.clock.tick(1);
 
 		// Assert
@@ -1306,7 +1306,7 @@ sap.ui.define([
 		oSpy.restore();
 
 		oSpy1 = sinon.spy(oMultiInput1, "_manageListsVisibility");
-		oMultiInput1._tokenizer.$().click();
+		oMultiInput1._tokenizer.$().trigger("click");
 
 		// Assert
 		assert.ok(oSpy1.called, "_manageListsVisibility is called");
@@ -1525,7 +1525,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("click on delete icon should not trigger Input.prototype.ontap", function(assert) {
-		var spy = sinon.spy(Input.prototype, "ontap"),
+		var oDeleteIcon,
+			spy = sinon.spy(Input.prototype, "ontap"),
 			token1 = new Token();
 
 		this.multiInput1.addToken(token1);
@@ -1535,7 +1536,8 @@ sap.ui.define([
 
 		sap.ui.getCore().applyChanges();
 
-		qutils.triggerEvent("tap", this.multiInput1.getTokens()[0]._deleteIcon.getDomRef());
+		oDeleteIcon = token1.getAggregation("deleteIcon");
+		qutils.triggerEvent("tap", oDeleteIcon.getDomRef());
 
 		// assert
 		assert.notOk(spy.called, "Input's ontap method is not called");
@@ -1939,7 +1941,7 @@ sap.ui.define([
 
 		// act
 		if (Device.browser.internet_explorer) {
-			this.multiInput._tokenizer.$().click();
+			this.multiInput._tokenizer.$().trigger("click");
 		} else {
 			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		}
@@ -1970,7 +1972,7 @@ sap.ui.define([
 
 		// act
 		if (Device.browser.internet_explorer) {
-			this.multiInput._tokenizer.$().click();
+			this.multiInput._tokenizer.$().trigger("click");
 		} else {
 			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		}
@@ -1988,7 +1990,7 @@ sap.ui.define([
 		oPicker.close();
 		// act
 		if (Device.browser.internet_explorer) {
-			this.multiInput._tokenizer.$().click();
+			this.multiInput._tokenizer.$().trigger("click");
 		} else {
 			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		}
@@ -2184,7 +2186,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		// act
 		if (Device.browser.internet_explorer) {
-			this.multiInput1._tokenizer.$().click();
+			this.multiInput1._tokenizer.$().trigger("click");
 		} else {
 			this.multiInput1.$().find(".sapMTokenizerIndicator")[0].click();
 		}
@@ -2390,7 +2392,7 @@ sap.ui.define([
 
 		// act
 		if (Device.browser.msie) {
-			this.multiInput._tokenizer.$().click();
+			this.multiInput._tokenizer.$().trigger("click");
 		} else {
 			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		}
@@ -2415,7 +2417,7 @@ sap.ui.define([
 
 		// act
 		if (Device.browser.msie) {
-			this.multiInput._tokenizer.$().click();
+			this.multiInput._tokenizer.$().trigger("click");
 		} else {
 			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		}
@@ -2436,7 +2438,7 @@ sap.ui.define([
 
 		// act
 		if (Device.browser.msie) {
-			this.multiInput._tokenizer.$().click();
+			this.multiInput._tokenizer.$().trigger("click");
 		} else {
 			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		}
@@ -2883,6 +2885,11 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Token should be truncated initially", function (assert) {
+		// Assert
+		assert.ok(this.oMultiInput._tokenizer.hasOneTruncatedToken(), "Token is truncated initially.");
+	});
+
 	QUnit.test("Should remove truncation on focusin", function (assert) {
 		// Arrange
 		var oSpy = sinon.spy(this.oMultiInput._tokenizer, "_useCollapsedMode"),
@@ -2959,7 +2966,7 @@ sap.ui.define([
 
 		// Act
 		qutils.triggerKeydown(this.oMultiInput, KeyCodes.I, false, false, true); // trigger Control key + I
-		this.clock.tick(nPopoverAnimationTick);
+		this.clock.tick(1000);
 
 		// Assert
 		assert.ok(this.oMultiInput._getReadOnlyPopover().isOpen(), "Should open suggestion popover");
@@ -3017,5 +3024,40 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(this.oMultiInput._tokenizer.hasOneTruncatedToken(), "The token should be truncated");
+	});
+
+	QUnit.module("API");
+
+	QUnit.test("showItems should always set all items list visibility to true", function (assert) {
+		var oMultiInput = new MultiInput({
+			width: "200px",
+			tokens: [
+				new Token({ text: "lorem" }),
+				new Token({ text: "ipsum" }),
+				new Token({ text: "test" }),
+				new Token({ text: "Bulgaria" })
+			],
+			showSuggestion: true,
+			suggestionItems: [
+				new Item({ text: "lorem ipsum" })
+			]
+		});
+
+		oMultiInput.placeAt("content");
+		Core.applyChanges();
+
+		oMultiInput._handleIndicatorPress();
+
+		Core.applyChanges();
+		this.clock.tick(nPopoverAnimationTick);
+
+		oMultiInput.showItems();
+
+		Core.applyChanges();
+		this.clock.tick(nPopoverAnimationTick);
+
+		assert.ok(oMultiInput._oSuggPopover._oList.getVisible(), true, "List should be visible");
+
+		oMultiInput.destroy();
 	});
 });

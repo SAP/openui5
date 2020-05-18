@@ -61,7 +61,15 @@ sap.ui.define([
 		"listItemHighlight": {
 			"tags": ["content", "listItem"],
 			"label": "{i18n>CARD_EDITOR.LIST_ITEM.HIGHLIGHT}",
-			"type": "string",
+			"type": "enum",
+			"enum": [
+				"Success",
+				"Error",
+				"Warning",
+				"None",
+				"Information"
+			],
+			"defaultValue": "None",
 			"path": "content/item/highlight",
 			"visible": "{= ${context>type} === 'List' }"
 		},

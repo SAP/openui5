@@ -1789,7 +1789,7 @@ sap.ui.define([
 		var oRb = Core.getLibraryResourceBundle("sap.m"),
 			fnToggleExpandCollapse = sinon.spy(oStdLI, "_toggleExpandCollapse");
 
-		// varialbles for title elements
+		// variables for title elements
 		var $titleText = oStdLI.getDomRef("titleText"),
 			$titleThreeDots = oStdLI.getDomRef("titleThreeDots"),
 			$titleButton = oStdLI.getDomRef("titleButton");

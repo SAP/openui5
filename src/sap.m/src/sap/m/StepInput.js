@@ -401,6 +401,11 @@ function(
 		NumericInput.prototype.onBeforeRendering = function() {
 			InputBase.prototype.onBeforeRendering.call(this);
 
+			// The Input is handling its width in its onBeforeRendering method - if noting is set, the width is 100%.
+			// As the NumericInput is using the InputBase's onBeforeRendering method, the width must be handled here too.
+			// The real width of the StepInput is handled from its width property, so the NumericInput's width should be 100%.
+			this.setWidth("100%");
+
 			this._deregisterEvents();
 		};
 
@@ -450,7 +455,7 @@ function(
 			this._getOrCreateIncrementButton().setVisible(bEditable);
 
 			this._disableButtons(vValue, fMax, fMin);
-			this.$().unbind(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
+			this.$().off(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
 			if (this._bNeedsVerification) {
 				this._verifyValue();
 				this._bNeedsVerification = false;
@@ -458,11 +463,11 @@ function(
 		};
 
 		StepInput.prototype.onAfterRendering = function () {
-			this.$().bind(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
+			this.$().on(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
 		};
 
 		StepInput.prototype.exit = function () {
-			this.$().unbind(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
+			this.$().off(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
 		};
 
 		StepInput.prototype.setProperty = function (sPropertyName, oValue, bSuppressInvalidate) {

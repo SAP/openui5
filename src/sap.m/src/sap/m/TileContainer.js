@@ -181,7 +181,7 @@ function(
 					var oFirstTile = this._getVisibleTiles()[iTargetTileIndex];
 
 					if (!!oFirstTile) {
-						this._findTile(oFirstTile.$()).focus();
+						this._findTile(oFirstTile.$()).trigger("focus");
 						// event should not trigger any further actions
 						oEvent.stopPropagation();
 					}
@@ -201,7 +201,7 @@ function(
 						: iRowLastTileIndex;
 
 					if (oTiles.length > 0) {
-						this._findTile(oTiles[iTargetTileIndex].$()).focus();
+						this._findTile(oTiles[iTargetTileIndex].$()).trigger("focus");
 						// event should not trigger any further actions
 						oEvent.stopPropagation();
 					}
@@ -219,7 +219,7 @@ function(
 
 					if (!!oNextTile) {
 						this._renderTilesInTheSamePage(iNextIndex, aTiles);
-						this._findTile(oNextTile.$()).focus();
+						this._findTile(oNextTile.$()).trigger("focus");
 						// event should not trigger any further actions
 						oEvent.stopPropagation();
 					}
@@ -238,7 +238,7 @@ function(
 
 					if (!!oNextTile) {
 						this._renderTilesInTheSamePage(iNextIndex, aTiles);
-						this._findTile(oNextTile.$()).focus();
+						this._findTile(oNextTile.$()).trigger("focus");
 						// event should not trigger any further actions
 						oEvent.stopPropagation();
 					}
@@ -256,20 +256,20 @@ function(
 
 						if (!!oNextTile) {
 							if (iNextIndex < this._iCurrentTileStartIndex + this._iMaxTiles) { // tile on same page?
-								this._findTile(oNextTile.$()).focus();
+								this._findTile(oNextTile.$()).trigger("focus");
 							} else {
 								this._renderTilesInTheSamePage(iNextIndex, aTiles);
 								this.scrollIntoView(oNextTile, true, aTiles);
 								var that = this;
 								setTimeout(function() {
-									that._findTile(oNextTile.$()).focus();
+									that._findTile(oNextTile.$()).trigger("focus");
 								}, 400);
 							}
 						}
 					} else if (this.getEditable()) {
 						var oTile = aTiles[this._iCurrentFocusIndex];
 						this.moveTile(oTile, iNextIndex);
-						oTile.$().focus();
+						oTile.$().trigger("focus");
 					}
 					this._handleAriaActiveDescendant();
 
@@ -288,20 +288,20 @@ function(
 
 						if (!!oNextTile) {
 							if (iNextIndex >= this._iCurrentTileStartIndex) { // tile on same page?
-								this._findTile(oNextTile.$()).focus();
+								this._findTile(oNextTile.$()).trigger("focus");
 							} else {
 								this._renderTilesInTheSamePage(iNextIndex, aTiles);
 								this.scrollIntoView(oNextTile, true, aTiles);
 								var that = this;
 								setTimeout(function () {
-									that._findTile(oNextTile.$()).focus();
+									that._findTile(oNextTile.$()).trigger("focus");
 								}, 400);
 							}
 						}
 					} else if (this.getEditable()) {
 						var oTile = aTiles[this._iCurrentFocusIndex];
 						this.moveTile(oTile, iNextIndex);
-						oTile.$().focus();
+						oTile.$().trigger("focus");
 					}
 					this._handleAriaActiveDescendant();
 					// event should not trigger any further actions
@@ -322,12 +322,12 @@ function(
 
 						if ((iModNext > iModCurr) && !!oNextTile) {
 							// '(iModNext > iModCurr)' means: still on same page
-							this._findTile(oNextTile.$()).focus();
+							this._findTile(oNextTile.$()).trigger("focus");
 						}
 					} else if (this.getEditable()) {
 						var oTile = oTiles[this._iCurrentFocusIndex];
 						this.moveTile(oTile, iNextIndex);
-						oTile.$().focus();
+						oTile.$().trigger("focus");
 					}
 					this._handleAriaActiveDescendant();
 					// event should not trigger any further actions
@@ -347,12 +347,12 @@ function(
 						var oNextTile = oTiles[iNextIndex];
 						if ((iModNext < iModCurr) && !!oNextTile) {
 							// '(iModNext < iModCurr)' means: still on same page
-							this._findTile(oNextTile.$()).focus();
+							this._findTile(oNextTile.$()).trigger("focus");
 						}
 					} else if (this.getEditable()) {
 						var oTile = oTiles[this._iCurrentFocusIndex];
 						this.moveTile(oTile, iNextIndex);
-						oTile.$().focus();
+						oTile.$().trigger("focus");
 					}
 					this._handleAriaActiveDescendant();
 					// event should not trigger any further actions
@@ -372,12 +372,12 @@ function(
 
 						if (this._iCurrentFocusIndex === oTiles.length) {
 							if (oTiles.length !== 0) {
-								oTiles[this._iCurrentFocusIndex - 1].$().focus();
+								oTiles[this._iCurrentFocusIndex - 1].$().trigger("focus");
 							} else {
-								this._findNextTabbable().focus();
+								this._findNextTabbable().trigger("focus");
 							}
 						} else {
-							oTiles[this._iCurrentFocusIndex].$().focus();
+							oTiles[this._iCurrentFocusIndex].$().trigger("focus");
 						}
 						this._handleAriaActiveDescendant();
 					}
@@ -1958,7 +1958,7 @@ function(
 			this.scrollIntoView(oTile, false);
 
 			if (Device.system.desktop || Device.system.combi) {
-				this._findTile(oTile.$()).focus();
+				this._findTile(oTile.$()).trigger("focus");
 			}
 			this._handleAriaActiveDescendant();
 

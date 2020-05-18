@@ -88,6 +88,7 @@ function(
 
 	// chain the prototypes
 	ManagedObjectMetadata.prototype = Object.create(Metadata.prototype);
+	ManagedObjectMetadata.prototype.constructor = ManagedObjectMetadata;
 
 	var hasOwnProperty = Object.prototype.hasOwnProperty;
 

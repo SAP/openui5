@@ -1177,7 +1177,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPageTitle.prototype._focusExpandButton = function () {
-		this._getExpandButton().$().focus();
+		this._getExpandButton().$().trigger("focus");
 	};
 
 	/**
@@ -1395,24 +1395,12 @@ sap.ui.define([
 	DynamicPageTitle.prototype._attachFocusSpanHandlers = function () {
 		this._$focusSpan.on("focusin", this._addFocusClass.bind(this));
 		this._$focusSpan.on("focusout", this._removeFocusClass.bind(this));
-		this._$focusSpan.on("keyup", function (oEvent) {
-			if (oEvent && oEvent.which === KeyCodes.SPACE && !oEvent.shiftKey) {
-				this.fireEvent("_titlePress");
-			}
-		}.bind(this));
-		this._$focusSpan.on("keydown", function (oEvent) {
-			if (oEvent && oEvent.which === KeyCodes.ENTER) {
-				this.fireEvent("_titlePress");
-			}
-		}.bind(this));
 	};
 
 	DynamicPageTitle.prototype._detachFocusSpanHandlers = function () {
 		if (this._$focusSpan) {
 			this._$focusSpan.off("focusin");
 			this._$focusSpan.off("focusout");
-			this._$focusSpan.off("keyup");
-			this._$focusSpan.off("keydown");
 		}
 	};
 

@@ -94,7 +94,7 @@ function(
 		SliderTooltipContainer.prototype._handleRangeSliderF2 = function (oEvent) {
 			var oHandle = this._oParentSlider._getHandleForTooltip(oEvent.srcControl);
 
-			jQuery(oHandle).focus();
+			jQuery(oHandle).trigger("focus");
 		};
 
 		SliderTooltipContainer.prototype.onsaptabnext = SliderTooltipContainer.prototype._handleTabNavigation;

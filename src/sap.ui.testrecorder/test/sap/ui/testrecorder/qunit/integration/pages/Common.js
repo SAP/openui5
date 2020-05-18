@@ -5,9 +5,18 @@ sap.ui.define([
 
 	return Opa5.extend("sap.ui.testrecorder.qunit.integration.pages.Common", {
 		iStartMyMockRecorder: function () {
-			return this.iStartMyAppInAFrame({
+			this.iStartMyAppInAFrame({
 				source: sap.ui.require.toUrl("sap/ui/testrecorder/recorderMock/overlay.html"),
 				autoWait:true
+			});
+
+			return this.waitFor({
+				check: function () {
+					return checkTreeLoaded(Opa5.getJQuery());
+				},
+				success: function () {
+					Opa5.assert.ok(true, "Recorder started");
+				}
 			});
 		},
 		iStartMyMockApp: function () {
@@ -46,9 +55,7 @@ sap.ui.define([
 								return oRecorderJQuery;
 							},
 							function (oRecorderJQuery) {
-								// wait for the control tree to be loaded and visible
-								var oTree = oRecorderJQuery("tree");
-								return !!oTree.length && oTree.is(":visible") && oTree.css("visibility") !== "hidden";
+								return checkTreeLoaded(oRecorderJQuery);
 							},
 							function () {
 								Opa5.assert.ok(true, "Recorder started");
@@ -72,4 +79,10 @@ sap.ui.define([
 			});
 		}
 	});
+
+	function checkTreeLoaded(jQuery) {
+		// wait for the control tree to be loaded and visible
+		var oTree = jQuery("tree");
+		return !!oTree.length && oTree.is(":visible") && oTree.css("visibility") !== "hidden";
+	}
 });

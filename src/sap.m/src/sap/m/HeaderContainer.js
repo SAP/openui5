@@ -391,7 +391,7 @@ sap.ui.define([
 			if (!oToCell || oFromCell && oFromCell.id !== oToCell.id) { // attempt to jump out of HeaderContainer
 				var sTabIndex = this.$().attr("tabindex"); // save tabindex
 				this.$().attr("tabindex", "0");
-				this.$().focus(); // set focus before the control
+				this.$().trigger("focus"); // set focus before the control
 				if (!sTabIndex) { // restore tabindex
 					this.$().removeAttr("tabindex");
 				} else {
@@ -1024,7 +1024,7 @@ sap.ui.define([
 			var $Tabbables = oRelatedControl.getTabbables ? oRelatedControl.getTabbables() : $LastFocused.find(":sapTabbable");
 
 			// get the last tabbable item or itself and focus
-			$Tabbables.eq(-1).add($LastFocused).eq(-1).focus();
+			$Tabbables.eq(-1).add($LastFocused).eq(-1).trigger("focus");
 		};
 
 		return HeaderContainer;

@@ -1043,7 +1043,7 @@ function(
 			this._afterRenderFocusCell = {
 				onAfterRendering: function() {
 					if (this._sGridCellFocusSelector) {
-						jQuery(this._sGridCellFocusSelector).focus();
+						jQuery(this._sGridCellFocusSelector).trigger("focus");
 						this._sGridCellFocusSelector = null;
 					}
 				}.bind(this)

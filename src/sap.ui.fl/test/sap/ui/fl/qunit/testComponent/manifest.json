@@ -34,6 +34,7 @@
 		},
 		"models": {},
 		"routing": {},
-		"contentDensities": {}
+		"contentDensities": {},
+		"flexExtensionPointEnabled": true
 	}
 }

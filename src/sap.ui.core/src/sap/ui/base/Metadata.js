@@ -269,15 +269,6 @@ sap.ui.define([
 	};
 
 	/*
-	 * Yet another PhantomJS issue:
-	 * Under certain circumstances, PhantomJS continues to call the previously defined getter,
-	 * although the property meanwhile has been reconfigured to a fixed value.
-	 * To avoid errors like "trying to write non-writable property", the property is redefined
-	 * as 'writable:true' in PhantomJS.
-	 */
-	var WRITABLE_IFF_PHANTOM = !!Device.browser.phantomJS;
-
-	/*
 	 * Lazy calculation of the set of implemented types.
 	 *
 	 * A calculation function is configured as getter for the <code>_mImplementedTypes</code>
@@ -321,7 +312,7 @@ sap.ui.define([
 			// write instance property, hiding the getter on the prototype
 			Object.defineProperty(this, "_mImplementedTypes", {
 				value: Object.freeze(result),
-				writable: WRITABLE_IFF_PHANTOM,
+				writable: false,
 				configurable: false
 			});
 

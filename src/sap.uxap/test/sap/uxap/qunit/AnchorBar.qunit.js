@@ -623,6 +623,26 @@ sap.ui.define([
 		assert.strictEqual(this.oAnchorBarButton1.$().attr('tabindex'), '-1', "Rest of the button remains with tabindex of -1");
 	});
 
+	QUnit.test("focus change before rerendering", function (assert) {
+		var oSelect = this.oAnchorBar._getHierarchicalSelect();
+
+		this.oAnchorBar.placeAt('qunit-fixture');
+		Core.applyChanges();
+
+		// Act:
+		// (1) focus the select
+		oSelect.onfocusin({target: oSelect.getFocusDomRef()});
+		// (2) mock a call from ObjectPage to rebuild content (e.g. when change in the content has to be reflected in the anchorBar)
+		this.oAnchorBar._resetControl();
+		try {
+			// (3) remove focus
+			oSelect.onfocusout();
+			assert.ok(true, "no error");
+		} catch (e) {
+			assert.notOk(e, "error upon focusout");
+		}
+	});
+
 	QUnit.module("Scrolling", {
 		beforeEach: function () {
 			this.NUMBER_OF_SECTIONS = 15;

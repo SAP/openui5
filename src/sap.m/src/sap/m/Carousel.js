@@ -523,11 +523,11 @@ function(
 
 		// Fixes wrong focusing in IE// TODO remove after the end of support for Internet Explorer
 		// BCP: 1670008915
-		this.$().find('.sapMCrslItemTableCell').focus(function(e) {
+		this.$().find('.sapMCrslItemTableCell').on("focus", function(e) {
 
 			e.preventDefault();
 
-			jQuery(e.target).parents('.sapMCrsl').focus();
+			jQuery(e.target).parents('.sapMCrsl').trigger("focus");
 
 			return false;
 		});
@@ -688,7 +688,7 @@ function(
 
 		// close the soft keyboard
 		if (!Device.system.desktop) {
-			jQuery(document.activeElement).blur();
+			jQuery(document.activeElement).trigger("blur");
 		}
 
 		this.firePageChanged({
@@ -1254,7 +1254,7 @@ function(
 
 		// Prevent the event and focus Carousel control
 		oEvent.preventDefault();
-		this.$().focus();
+		this.$().trigger("focus");
 
 		oEventF6.target = oEvent.target;
 		oEventF6.key = 'F6';
@@ -1407,7 +1407,7 @@ function(
 		if (oEvent.target === this.$()[0] && oActivePageLastFocusedElement) {
 			oActivePageLastFocusedElement.focus();
 		} else {
-			this.$().focus();
+			this.$().trigger("focus");
 		}
 	};
 

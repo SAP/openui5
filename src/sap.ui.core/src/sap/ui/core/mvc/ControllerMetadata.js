@@ -29,6 +29,7 @@ sap.ui.define([
 
 	// chain the prototypes
 	ControllerMetadata.prototype = Object.create(Metadata.prototype);
+	ControllerMetadata.prototype.constructor = ControllerMetadata;
 
 	ControllerMetadata.prototype.applySettings = function(oClassInfo) {
 		// property 'override' needs to be handled separately and must not be attached to the prototype

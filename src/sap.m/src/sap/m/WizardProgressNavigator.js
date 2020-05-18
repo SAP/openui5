@@ -425,7 +425,7 @@ function(
 	};
 
 	/**
-	 * Updates the step aria-selected attribute in the DOM structure of the Control.
+	 * Updates the step aria-current attribute in the DOM structure of the Control.
 	 * @param {number} iNewIndex The new index at which the attribute should be set. Zero-based.
 	 * @param {number} iOldIndex The old index at which the attribute was set. Zero-based.
 	 * @private
@@ -433,14 +433,13 @@ function(
 	WizardProgressNavigator.prototype._updateStepAriaLabelAttribute = function (iNewIndex, iOldIndex) {
 		if (iOldIndex !== undefined && this._aCachedSteps[iOldIndex]) {
 			this._aCachedSteps[iOldIndex]
-				.setAttribute(
-					WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_SELECTED, "false");
+				.removeAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_CURRENT);
 		}
 
 		if (this._aCachedSteps[iNewIndex]) {
 			this._aCachedSteps[iNewIndex]
 				.setAttribute(
-					WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_SELECTED, "true");
+					WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_CURRENT, "step");
 		}
 
 	};

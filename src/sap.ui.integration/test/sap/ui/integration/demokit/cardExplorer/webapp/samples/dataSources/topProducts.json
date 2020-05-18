@@ -20,7 +20,9 @@
 			"parameters": {
 				"numberOfProducts": {
 					"value": 8,
-					"type": "integer"
+					"type": "integer",
+					"label": "Maximum Products",
+					"description": "Defines how many products will be displayed at most."
 				}
 			}
 		},

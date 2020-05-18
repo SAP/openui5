@@ -53,4 +53,26 @@
 	<core:ExtensionPoint name="EP23">
 		<core:Fragment id="tn1" fragmentName="testdata.customizing.customer.ext.Custom" type="XML" />
 	</core:ExtensionPoint>
+
+	<!--
+		Table binding will be created during Controller onInit
+		The column template is taken from the default content of an extension point.
+	-->
+	<Table id="myTable"
+		inset="false">
+		<columns>
+			<Column
+				width="12em">
+				<Text text="Product" />
+			</Column>
+		</columns>
+	</Table>
+
+	<core:ExtensionPoint name="EPTable">
+		<ColumnListItem id="myListItem">
+			<cells>
+				<Text text="{ProductName}" />
+			</cells>
+		</ColumnListItem>
+	</core:ExtensionPoint>
 </mvc:View>

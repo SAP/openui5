@@ -128,7 +128,7 @@ sap.ui.define([
 			assert.ok(oPositionChangedEvent.calledTwice, "PositionChanged is twice");
 
 			oPagingButton.setPosition(oPagingButton.getCount());
-			oPagingButton._getNextButton().$().click();
+			oPagingButton._getNextButton().$().trigger("click");
 			assert.ok(oPositionChangedEvent.calledTwice, "PositionChanged is not fired when the position doesn't change");
 		});
 	});

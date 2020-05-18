@@ -1627,7 +1627,7 @@ sap.ui.define([
 		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-		$tab1.focus(); // set focus on first filter
+		$tab1.trigger("focus"); // set focus on first filter
 
 		sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_RIGHT); // trigger Arrow right on first filter
 		assert.ok($tab2.is(":focus"), "ARROW_RIGHT is pressed, focus moved on second filter");
@@ -1640,7 +1640,7 @@ sap.ui.define([
 		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-		$tab2.focus(); // set focus on second filter
+		$tab2.trigger("focus"); // set focus on second filter
 
 		sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_LEFT); // trigger Arrow left on second filter
 		assert.ok($tab1.is(":focus"), "ARROW_LEFT is pressed, focus moved on first filter");
@@ -1653,7 +1653,7 @@ sap.ui.define([
 		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-		$tab1.focus(); // set focus on first filter
+		$tab1.trigger("focus"); // set focus on first filter
 
 		sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_DOWN); // trigger Arrow down on first filter
 		assert.ok($tab2.is(":focus"), "ARROW_DOWN is pressed, focus moved on second filter");
@@ -1666,7 +1666,7 @@ sap.ui.define([
 		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-		$tab2.focus(); // set focus on second filter
+		$tab2.trigger("focus"); // set focus on second filter
 
 		sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_UP); // trigger Arrow up on second filter
 		assert.ok($tab1.is(":focus"), "ARROW_UP is pressed, focus moved on first filter");
@@ -1679,7 +1679,7 @@ sap.ui.define([
 		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-		$tab1.focus(); // set focus on first filter
+		$tab1.trigger("focus"); // set focus on first filter
 
 		sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.END); // trigger End on first filter
 		assert.ok($tab2.is(":focus"), "END is pressed, focus moved on last filter");
@@ -1689,7 +1689,7 @@ sap.ui.define([
 		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-		$tab2.focus(); // set focus on second filter
+		$tab2.trigger("focus"); // set focus on second filter
 
 		sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.HOME); // trigger Home on second filter
 		assert.ok($tab1.is(":focus"), "HOME is pressed, focus moved on first filter");
@@ -1699,7 +1699,7 @@ sap.ui.define([
 		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-		$tab1.focus(); // set focus on first filter
+		$tab1.trigger("focus"); // set focus on first filter
 
 		sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.PAGE_DOWN); // trigger PAGEDOWN on first filter
 		assert.ok($tab2.is(":focus"), "PAGEDOWN is pressed, focus moved on last filter");
@@ -1710,7 +1710,7 @@ sap.ui.define([
 	var $tab1 = this.oIconTabBar.getItems()[0].$();
 	var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-	$tab2.focus(); // set focus on second filter
+	$tab2.trigger("focus"); // set focus on second filter
 
 	sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.PAGE_UP); // trigger PAGEUP on second filter
 	assert.ok($tab1.is(":focus"), "PAGEUP is pressed, focus moved on first filter");
@@ -1721,7 +1721,7 @@ sap.ui.define([
 		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-		$tab2.focus(); // set focus on second filter
+		$tab2.trigger("focus"); // set focus on second filter
 
 		sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.SPACE); // trigger Space on second filter
 		sap.ui.test.qunit.triggerKeyup($tab2, jQuery.sap.KeyCodes.SPACE); // trigger Space on second filter
@@ -1736,7 +1736,7 @@ sap.ui.define([
 		var $tab1 = this.oIconTabBar.getItems()[0].$();
 		var $tab2 = this.oIconTabBar.getItems()[1].$();
 
-		$tab2.focus(); // set focus on second filter
+		$tab2.trigger("focus"); // set focus on second filter
 
 		sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ENTER); // trigger Enter on second filter
 
@@ -2341,7 +2341,7 @@ sap.ui.define([
 		// Act - focus the 5th item in the Select List, then close and open it again
 		oSelectList._oItemNavigation.setSelectedIndex(5);
 		oSelectList.getItems()[0]._getRealTab().setVisible(false);
-		oOverflowButton._closeOverflow();
+		oOverflowButton._closePopover();
 		oOverflowButton._expandButtonPress();
 		this.clock.tick(500);
 
@@ -3077,7 +3077,7 @@ sap.ui.define([
 
 		// Act - select and move the item left
 		this.oSelectList.ontap({
-			target: oSixthTabInSelectList.getDomRef(),
+			srcControl: oSixthTabInSelectList,
 			preventDefault: jQuery.noop
 		});
 		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_LEFT, oSixthTabInSelectList._getRealTab().getId()));
@@ -3386,6 +3386,7 @@ sap.ui.define([
 		beforeEach: function() {
 		this.oIconTabBar = new IconTabBar({
 			enableTabReordering: true,
+			tabNestingViaInteraction: true,
 			items: [
 				new IconTabFilter({
 					id: 'tabReorder1',
@@ -3494,7 +3495,7 @@ sap.ui.define([
 	}
 });
 
-	QUnit.test("Drag&Drop on expand button", function(assert) {
+	QUnit.test("Drag&Drop on Tab with own content and sub items", function(assert) {
 		var oIconTabFilterWithChildren = this.oIconTabHeader.getItems()[0];
 		var oExpandButton = oIconTabFilterWithChildren._getExpandButton();
 		assert.ok(!oExpandButton.$().hasClass("sapMITHDragOver"), "Expand button has default state");
@@ -3506,6 +3507,27 @@ sap.ui.define([
 		oIconTabFilterWithChildren._handleOnDragLeave();
 
 		assert.ok(!oExpandButton.$().hasClass("sapMITHDragOver"), "Expand button has default state");
+		assert.ok(!oIconTabFilterWithChildren._oPopover, "There is no popover before long drag over");
+
+		oIconTabFilterWithChildren._handleOnLongDragOver();
+
+		assert.ok(oIconTabFilterWithChildren._oPopover, "There is a popover on long drag over");
+
+	});
+
+	QUnit.test("Drag&Drop on Tab with no own content and sub items", function(assert) {
+		var oIconTabFilterWithChildren = this.oIconTabHeader.getItems()[0];
+		oIconTabFilterWithChildren.destroyContent();
+
+		assert.ok(!oIconTabFilterWithChildren.$().hasClass("sapMITHDragOver"), "Expand button has default state");
+
+		oIconTabFilterWithChildren._handleOnDragOver({preventDefault: function () {}});
+
+		assert.ok(oIconTabFilterWithChildren.$().hasClass("sapMITHDragOver"), "Expand button is in 'drag over' state ");
+
+		oIconTabFilterWithChildren._handleOnDragLeave();
+
+		assert.ok(!oIconTabFilterWithChildren.$().hasClass("sapMITHDragOver"), "Expand button has default state");
 		assert.ok(!oIconTabFilterWithChildren._oPopover, "There is no popover before long drag over");
 
 		oIconTabFilterWithChildren._handleOnLongDragOver();
@@ -3665,7 +3687,7 @@ sap.ui.define([
 		oITB.destroy();
 	});
 
-	QUnit.test("Selecting on a tab that has no content set, but has child items, opens its overflow list", function (assert) {
+	QUnit.test("Selecting on a tab that has no content set, but has sub items, opens its overflow list", function (assert) {
 		// Arrange
 		var oTab = new IconTabFilter({
 			text: "unselectable tab",

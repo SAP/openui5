@@ -53,7 +53,8 @@ sap.ui.define([
 			assert.equal(mActualAdditionalElement.tooltip, mExpected.tooltip, msg + " -tooltip");
 			assert.equal(mActualAdditionalElement.type, mExpected.type, msg + " -type");
 			assert.equal(mActualAdditionalElement.elementId, mExpected.elementId, msg + " -element id");
-			assert.deepEqual(mActualAdditionalElement.bindingPaths, mExpected.bindingPaths, msg + " -bindingPaths");
+			assert.equal(mActualAdditionalElement.elementId, mExpected.elementId, msg + " -element id");
+			assert.equal(mActualAdditionalElement.bindingPath, mExpected.bindingPath, msg + " -bindingPath (used for OPA tests and debugging)");
 		},
 
 		isFieldPresent: function(oControl, oInvisibleElement) {

@@ -258,4 +258,12 @@ sap.ui.define([
 		assert.notOk(oItemUrlUndefined._getFileNameLink().getEnabled(), "Link is not clickable");
 		assert.ok(oItemUrlDefined._getFileNameLink().getEnabled(), "Link is clicklable");
 	});
+
+	QUnit.test("Test for setThumbnailUrl API", function(assert) {
+		var oItem = this.oUploadSet.getItems()[0];
+		oItem.setThumbnailUrl("./image/test.jpg");
+		var sActualSrc = oItem._oListItem.getContent()[0].getSrc();
+		assert.equal(sActualSrc, "./image/test.jpg", "setThumbnailUrl api gets called and creates new icon");
+
+	});
 });

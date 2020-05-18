@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
-	"./../util/isAggregationTemplate",
+	"./../util/isTemplate",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Label",
 	"sap/ui/core/Fragment",
@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/base/util/deepEqual"
 ], function (
 	Control,
-	isAggregationTemplate,
+	isTemplate,
 	JSONModel,
 	Label,
 	Fragment,
@@ -235,6 +235,9 @@ sap.ui.define([
 
 	BasePropertyEditor.prototype.init = function () {
 		this.attachFragmentChange(function (oEvent) {
+			if (this.getContent()) {
+				this.getContent().destroy();
+			}
 			var sFragmentName = oEvent.getParameter("fragment");
 			this._initFragment(sFragmentName);
 		}, this);
@@ -365,12 +368,48 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent - Init event of the nested editor
 	 */
 	BasePropertyEditor.prototype.wrapperInit = function (oEvent) {
+		if (!this._oWrapperObserver) {
+			this._oWrapperObserver = new ManagedObjectObserver(function (mutation) {
+				var oObservedWrapper = mutation.object;
+				switch (mutation.type) {
+					case 'destroy':
+						// Observe wrappers which are registered on the complex editor
+						// to remove them from the ready check list when they are destroyed
+						this._aEditorWrappers = this._aEditorWrappers.filter(function (oEditorWrapper) {
+							return oEditorWrapper !== oObservedWrapper;
+						});
+						break;
+					case 'parent':
+						if (!isTemplate(oObservedWrapper, this)) {
+							this._oWrapperObserver.unobserve(oObservedWrapper);
+							this._registerWrapper(oObservedWrapper);
+						}
+						break;
+					default:
+						return;
+				}
+			}.bind(this));
+		}
+
 		var oWrapper = oEvent.getSource();
-		if (isAggregationTemplate(oWrapper)) {
-			// The element is part of the template of the aggregation binding
-			// and not a real wrapper
+		if (isTemplate(oWrapper, this)) {
+			// The element was not cloned from an aggregation template, therefore it is
+			// not registered immediately
+			// If the element is the aggregation template it must be ignored
+			// Otherwise, if the element is not part of an aggregation inside its fragment
+			// it should be registered as a wrapper nevertheless
+			// In such a case, observing the parent change of the element ensures that it
+			// is properly registered when added to the content aggregation of the BasePropertyEditor
+			this._oWrapperObserver.observe(oWrapper, {
+				parent: true
+			});
 			return;
 		}
+
+		this._registerWrapper(oWrapper);
+	};
+
+	BasePropertyEditor.prototype._registerWrapper = function (oWrapper) {
 		this._aEditorWrappers.push(oWrapper);
 		oWrapper.attachReady(function () {
 			// If a nested editor got unready without a value change on the parent editor
@@ -378,17 +417,7 @@ sap.ui.define([
 			this._setReady(false);
 			this._checkReadyState();
 		}.bind(this));
-		// If the editor contains nested editors and setValue is called for the first time
-		// an observer is created to handle the destruction of nested wrappers
-		if (!this._oWrapperObserver) {
-			// Observe wrappers which are registered on the complex editor
-			// to remove them from the ready check list when they are destroyed
-			this._oWrapperObserver = new ManagedObjectObserver(function (mutation) {
-				this._aEditorWrappers = this._aEditorWrappers.filter(function (oEditorWrapper) {
-					return oEditorWrapper !== mutation.object;
-				});
-			}.bind(this));
-		}
+
 		this._oWrapperObserver.observe(oWrapper, {
 			destroy: true
 		});
@@ -424,10 +453,13 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	BasePropertyEditor.prototype.setFragment = function (sFragmentName) {
+	BasePropertyEditor.prototype.setFragment = function (sFragmentName, fnGetExpectedWrapperCount) {
 		if (this._currentXmlFragment !== sFragmentName) {
 			var sPreviousFragmentName = this._currentXmlFragment;
 			this._currentXmlFragment = sFragmentName;
+			if (typeof fnGetExpectedWrapperCount === 'function') {
+				this.getExpectedWrapperCount = fnGetExpectedWrapperCount;
+			}
 			this.fireFragmentChange({
 				previousFragment: sPreviousFragmentName,
 				fragment: sFragmentName

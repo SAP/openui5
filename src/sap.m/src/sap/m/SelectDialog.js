@@ -1082,7 +1082,13 @@ function(
 			//after searching we need all the items
 			var oBindings = that._oList.getBinding("items");
 			if (oBindings && oBindings.aFilters && oBindings.aFilters.length) {
+
+				// When reset the filter, the selected items might go outside
+				// the currently visible items (outside the current growing number).
+				// Set the growing to false to prevent this.
+				that._oList.setGrowing(false);
 				oBindings.filter([]);
+				that._oList.setGrowing(that.getGrowing());
 			}
 			that._oSelectedItem = that._oList.getSelectedItem();
 			that._aSelectedItems = that._oList.getSelectedItems();

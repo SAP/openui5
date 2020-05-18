@@ -92,6 +92,7 @@ function(
 			},
 			afterEach: function() {
 				sandbox.restore();
+				return RtaQunitUtils.closeContextMenuWithKeyboard(this.oRta.getPlugins()["contextMenu"].oContextMenuControl);
 			},
 			after: function() {
 				this.oRta.destroy();
@@ -215,8 +216,6 @@ function(
 					} else {
 						assert.ok(false, sText);
 					}
-
-					this.oRta._oDesignTime.getSelectionManager().reset();
 				}.bind(this));
 			});
 
@@ -244,8 +243,6 @@ function(
 					} else {
 						assert.ok(false, sText);
 					}
-
-					this.oRta._oDesignTime.getSelectionManager().reset();
 				}.bind(this));
 			});
 
@@ -356,6 +353,7 @@ function(
 
 			QUnit.test("when context menu (context menu) is opened (via keyboard) for a sap.m.Page without title", function(assert) {
 				this.oPage._headerTitle.destroy();
+				sap.ui.getCore().applyChanges();
 				this.oPage._headerTitle = null;
 				var oPageOverlay = OverlayRegistry.getOverlay(this.oPage);
 				oPageOverlay.focus();
@@ -456,7 +454,7 @@ function(
 					}
 				};
 
-				oContextMenuPlugin._aMenuItems = [{
+				sandbox.stub(oContextMenuPlugin, '_aMenuItems').value([{
 					menuItem : {
 						id : "CTX_TEST",
 						handler : function() {
@@ -464,8 +462,43 @@ function(
 							done();
 						}
 					}
-				}];
+				}]);
 				oContextMenuPlugin._onItemSelected(oEvent);
+			});
+
+			QUnit.test("when the context menu is opened twice on the same element", function(assert) {
+				var oGroupElementOverlay = OverlayRegistry.getOverlay(this.oBoundGroupElement);
+
+				return RtaQunitUtils.getContextMenuItemCount.call(this, oGroupElementOverlay).then(function (iExpectedMenuItemsCount) {
+					oGroupElementOverlay.focus();
+					oGroupElementOverlay.setSelected(true);
+
+					RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay);
+					return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
+						var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+						assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
+						assert.equal(oContextMenuControl.getButtons().length, iExpectedMenuItemsCount, "the second open is ignored and the five menu items are only added once");
+					}.bind(this));
+				}.bind(this));
+			});
+
+			QUnit.test("when the context menu is opened twice on different elements", function (assert) {
+				var oGroupElementOverlay = OverlayRegistry.getOverlay(this.oBoundGroupElement);
+				var oFormOverlay = OverlayRegistry.getOverlay(this.oSmartForm);
+
+				return RtaQunitUtils.getContextMenuItemCount.call(this, oGroupElementOverlay).then(function (iExpectedMenuItemsCount) {
+					oFormOverlay.focus();
+					oFormOverlay.setSelected(true);
+					RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFormOverlay);
+
+					oGroupElementOverlay.focus();
+					oGroupElementOverlay.setSelected(true);
+					return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
+						var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+						assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
+						assert.equal(oContextMenuControl.getButtons().length, iExpectedMenuItemsCount, "the first open is canceled and the five menu items are only added once");
+					}.bind(this));
+				}.bind(this));
 			});
 		});
 

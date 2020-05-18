@@ -29,6 +29,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 	 */
 	TokenRenderer.render = function(oRm, oControl){
 		var sTooltip = oControl._getTooltip(oControl, oControl.getEditable() && oControl.getProperty("editableParent")),
+			oDeleteIcon = oControl.getAggregation("deleteIcon"),
 			aAccDescribebyValues = [], // additional accessibility attributes
 			oAccAttributes = {
 				role: "option"
@@ -77,8 +78,8 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 
 		TokenRenderer._renderInnerControl(oRm, oControl);
 
-		if (oControl.getEditable()) {
-			oRm.renderControl(oControl._deleteIcon);
+		if (oControl.getEditable() && oDeleteIcon) {
+			oRm.renderControl(oDeleteIcon);
 		}
 
 		oRm.close("div");

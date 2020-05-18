@@ -30,6 +30,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/core/ElementMetadata", "sap/b
 
 	//chain the prototypes
 	BlockBaseMetadata.prototype = Object.create(ElementMetadata.prototype);
+	BlockBaseMetadata.prototype.constructor = BlockBaseMetadata;
 
 	BlockBaseMetadata.prototype.applySettings = function (oClassInfo) {
 		var vRenderer = oClassInfo.hasOwnProperty("renderer") ? (oClassInfo.renderer || "") : undefined;

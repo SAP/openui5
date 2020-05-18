@@ -419,7 +419,7 @@ function(
 		var eventResult = this.fireTokenUpdate(args.getParameters());
 
 		if (!this.getTokens().length) {
-			this.$().find("input").focus();
+			this.$().find("input").trigger("focus");
 		}
 
 		if (!eventResult) {
@@ -547,6 +547,13 @@ function(
 	MultiInput.prototype.closeMultiLine = function () {
 		// the multiline functionality is deprecated
 		// the method is left for backwards compatibility
+	};
+
+	MultiInput.prototype.showItems = function () {
+		Input.prototype.showItems.apply(this, arguments);
+
+		// All items list should always be visible when calling showItems
+		this._manageListsVisibility(false);
 	};
 
 	/**
@@ -936,7 +943,7 @@ function(
 		this._tokenizer.scrollToEnd();
 		// we set the focus back via jQuery instead of this.focus() since the latter on phones lead to unwanted opening of the
 		// suggest popup
-		this.$().find("input").focus();
+		this.$().find("input").trigger("focus");
 	};
 
 	/**

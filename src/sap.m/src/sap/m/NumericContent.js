@@ -265,15 +265,15 @@ sap.ui.define([
 	};
 
 	NumericContent.prototype.onBeforeRendering = function () {
-		this.$().unbind("mouseenter");
-		this.$().unbind("mouseleave");
+		this.$().off("mouseenter");
+		this.$().off("mouseleave");
 
 		this._iMaxLength = null;
 	};
 
 	NumericContent.prototype.onAfterRendering = function () {
-		this.$().bind("mouseenter", this._addTooltip.bind(this));
-		this.$().bind("mouseleave", this._removeTooltip.bind(this));
+		this.$().on("mouseenter", this._addTooltip.bind(this));
+		this.$().on("mouseleave", this._removeTooltip.bind(this));
 
 		if (!sap.ui.getCore().isThemeApplied()) {
 			sap.ui.getCore().attachThemeChanged(this._checkIfIconFits, this);
@@ -437,7 +437,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	NumericContent.prototype.ontap = function (oEvent) {
-		this.$().focus();
+		this.$().trigger("focus");
 		this.firePress();
 		oEvent.preventDefault();
 	};

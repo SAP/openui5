@@ -86,16 +86,22 @@ sap.ui.define([
 					"tags": ["general"],
 					"label": "{i18n>CARD_EDITOR.TYPE}",
 					"type": "enum",
-					"enum": [
-						"List",
-						"Analytical",
-						"Table",
-						"Object",
-						"Timeline",
-						"Component",
-						"Calendar",
-						"AdaptiveCard"
-					],
+					"enum": sap.ui.version.includes('SNAPSHOT') && !window.location.host.includes("openui5nightly")
+						? [
+							"List",
+							"Analytical",
+							"Table",
+							"Object",
+							"Timeline",
+							"Component",
+							"Calendar",
+							"AdaptiveCard"
+						]
+						: [
+							"List",
+							"Table",
+							"Object"
+						],
 					"path": "type"
 				},
 				"parameters": {
@@ -109,6 +115,7 @@ sap.ui.define([
 					"tags": ["general"],
 					"label": "{i18n>CARD_EDITOR.DESTINATIONS}",
 					"itemLabel": "{i18n>CARD_EDITOR.DESTINATION}",
+					"addItemLabel": "{i18n>CARD_EDITOR.DESTINATION}",
 					"path": "configuration/destinations",
 					"type": "destinations",
 					"allowedValues": ["Northwind", "JAM"]

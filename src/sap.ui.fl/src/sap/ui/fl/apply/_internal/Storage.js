@@ -45,7 +45,7 @@ sap.ui.define([
 				path: oConnectorConfig.path
 			});
 
-			var sDraftLayer = mPropertyBag.draftLayer || FlUtils.getUrlParameter(LayerUtils.FL_DRAFT_PARAM) || "";
+			var sDraftLayer = mPropertyBag.draftLayer || FlUtils.getUrlParameter(LayerUtils.FL_VERSION_PARAM) || "";
 			oConnectorSpecificPropertyBag = _addDraftLayerToResponsibleConnectorsPropertyBag(oConnectorSpecificPropertyBag, oConnectorConfig, sDraftLayer);
 
 			return oConnectorConfig.applyConnectorModule.loadFlexData(oConnectorSpecificPropertyBag)

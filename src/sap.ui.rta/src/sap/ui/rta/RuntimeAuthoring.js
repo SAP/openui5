@@ -39,6 +39,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
@@ -96,6 +97,7 @@ function(
 	FlexUtils,
 	LayerUtils,
 	Layer,
+	ReloadInfoAPI,
 	FeaturesAPI,
 	VersionsAPI,
 	PersistenceWriteAPI,
@@ -282,10 +284,10 @@ function(
 				this.attachEvent("start", validateFlexEnabled.bind(null, this));
 			}
 		},
-		_RESTART : {
-			NOT_NEEDED : "no restart",
-			VIA_HASH : "CrossAppNavigation",
-			RELOAD_PAGE : "reload"
+		_RELOAD : {
+			NOT_NEEDED : "NO_RELOAD",
+			VIA_HASH : "CROSS_APP_NAVIGATION",
+			RELOAD_PAGE : "HARD_RELOAD"
 		}
 	});
 
@@ -757,7 +759,7 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._handleVersionToolbar = function(bCanUndo) {
-		var bDraftEnabled = this.bInitialDraftAvailable || bCanUndo;
+		var bDraftEnabled = this.bInitialDraftAvailable || bCanUndo; // ask FL if there is a draft
 		this.getToolbar().setDraftEnabled(bDraftEnabled);
 		return this._setVersionLabel(bDraftEnabled);
 	};
@@ -765,8 +767,8 @@ function(
 	RuntimeAuthoring.prototype._setVersionLabel = function(bDraftEnabled) {
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		if (bDraftEnabled) {
-			this.getToolbar().setVersionLabelAccentColor(true);
-			return this.getToolbar().setVersionLabel(oTextResources.getText("LBL_DRAFT"));
+			this.getToolbar().setVersionLabel(oTextResources.getText("LBL_DRAFT"));
+			return this.getToolbar().setVersionLabelAccentColor(true);
 		}
 		var aVersions = VersionsAPI.getVersions({
 			selector: this.getRootControlInstance(),
@@ -793,13 +795,13 @@ function(
 		return this.getToolbar().setVersionLabel(sLabel);
 	};
 
-	RuntimeAuthoring.prototype._isDraftAvailable = function() {
+	RuntimeAuthoring.prototype._isDraftAvailable = function() { // TODO VersionsAPI
 		if (this._bVersioningEnabled) {
 			var bDraftAvailable = VersionsAPI.isDraftAvailable({
 				selector: this.getRootControlInstance(),
 				layer: this.getLayer()
 			});
-			return bDraftAvailable || this.canUndo();
+			return bDraftAvailable || this.canUndo(); // TODO Versions.getVersions needs to know if a dirty change was made
 		}
 
 		return false;
@@ -872,7 +874,7 @@ function(
 			this.getToolbar().setUndoRedoEnabled(bCanUndo, bCanRedo);
 			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled || bCanUndo);
 			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled || bCanUndo);
-			if (this._bVersioningEnabled) {
+			if (this._bVersioningEnabled) { // TODO move to fl
 				this._handleVersionToolbar(bCanUndo);
 			}
 		}
@@ -906,24 +908,16 @@ function(
 	 * @returns {Promise} promise with no parameters
 	 */
 	RuntimeAuthoring.prototype.stop = function(bDontSaveChanges, bSkipRestart) {
-		return ((bSkipRestart) ? Promise.resolve(this._RESTART.NOT_NEEDED) : this._handleReloadOnExit())
-			.then(function(sReload) {
+		return this._handleReloadOnExit(bSkipRestart)
+			.then(function(oReloadInfo) {
 				return ((bDontSaveChanges) ? Promise.resolve() : this._serializeToLrep(this))
 				.then(this._closeToolbar.bind(this))
 				.then(function() {
 					this.fireStop();
-					if (sReload !== this._RESTART.NOT_NEEDED) {
-						var mParsedHash = this._handleParametersOnExit(true);
-						this._triggerCrossAppNavigation(mParsedHash);
-						if (sReload === this._RESTART.RELOAD_PAGE) {
-							var sLayer = this.getLayer();
-							var oReloadInfo = {
-								hasHigherLayerChanges: Utils.hasUrlParameterWithValue(LayerUtils.FL_MAX_LAYER_PARAM, sLayer),
-								hasDraftChanges: Utils.hasUrlParameterWithValue(LayerUtils.FL_DRAFT_PARAM, sLayer),
-								layer: sLayer
-							};
-							return this._triggerHardReload(oReloadInfo);
-						}
+					if (oReloadInfo.reloadMethod && (oReloadInfo.reloadMethod !== this._RELOAD.NOT_NEEDED)) {
+						oReloadInfo.deleteMaxLayer = true; // true for normal exit, false for reset
+						oReloadInfo.triggerHardReload = (oReloadInfo.reloadMethod === this._RELOAD.RELOAD_PAGE); // StandAlone or AppDescriptorChanges case
+						return this._handleUrlParameterOnExit(oReloadInfo);
 					}
 				}.bind(this));
 			}.bind(this))
@@ -1065,17 +1059,18 @@ function(
 
 	RuntimeAuthoring.prototype._handleDiscard = function() {
 		var sLayer = this.getLayer();
-		this.getCommandStack().removeAllCommands();
 		RuntimeAuthoring.enableRestart(sLayer, this.getRootControlInstance());
+
 		if (!FlexUtils.getUshellContainer()) {
 			var oReloadInfo = {
-				hasHigherLayerChanges: false, // do not touch max-layer parameter in url on discard
-				hasDraftChanges: Utils.hasUrlParameterWithValue(LayerUtils.FL_DRAFT_PARAM, sLayer),
+				hasDraftChanges: ReloadInfoAPI.hasVersionParameterWithValue({value: sLayer}),
 				layer: sLayer
 			};
+			this.getCommandStack().removeAllCommands();
 			return this._triggerHardReload(oReloadInfo);
 		}
-		var mParsedHash = this._handleDraftParameter(FlexUtils.getParsedURLHash());
+		var mParsedHash = this._removeVersionParameterForFLP(FlexUtils.getParsedURLHash());
+		this.getCommandStack().removeAllCommands();
 		this._triggerCrossAppNavigation(mParsedHash);
 		return this.stop(true, true);
 	};
@@ -1270,14 +1265,13 @@ function(
 			layer: sLayer,
 			generator: "Change.createInitialFileContent"
 		}).then(function () {
-			var mParsedHash = this._handleParametersOnExit(false);
-			this._triggerCrossAppNavigation(mParsedHash);
 			var oReloadInfo = {
-				hasHigherLayerChanges: false, // do not touch max-layer parameter in url on reset
-				hasDraftChanges: Utils.hasUrlParameterWithValue(LayerUtils.FL_DRAFT_PARAM, sLayer),
-				layer: sLayer
+				hasDraftChanges: ReloadInfoAPI.hasVersionParameterWithValue({value: sLayer}),
+				layer: sLayer,
+				deleteMaxLayer: false,
+				triggerHardReload: true
 			};
-			return this._triggerHardReload(oReloadInfo);
+			return this._handleUrlParameterOnExit(oReloadInfo);
 		}.bind(this))
 		.catch(function (oError) {
 			if (oError !== "cancel") {
@@ -1368,8 +1362,6 @@ function(
 			emphasizedAction: MessageBox.Action.OK
 		}).then(function(sAction) {
 			if (sAction === MessageBox.Action.OK) {
-				//this.bInitialDraftAvailable = false; maybe no need
-				//this.getToolbar().setDraftEnabled(false);
 				RuntimeAuthoring.enableRestart(sLayer, this.getRootControlInstance());
 				this._deleteChanges();
 				this.getCommandStack().removeAllCommands();
@@ -1538,66 +1530,6 @@ function(
 		};
 	};
 
-	/**
-	 * Returns true if the max layer / draft parameter is set to current layer
-	 * (skips personalization and other higher level changes) / applies draft changes
-	 *
-	 * @param  {map} mParsedHash The parsed URL hash
-	 * @param  {string} sParameterName The parameter for which the layer should be checked
-	 * @return {boolean} True if the parameter is in the hash
-	 */
-	RuntimeAuthoring.prototype._hasParameter = function(mParsedHash, sParameterName) {
-		var sCurrentLayer = this.getLayer();
-		return mParsedHash.params &&
-			mParsedHash.params[sParameterName] &&
-			mParsedHash.params[sParameterName][0] === sCurrentLayer;
-	};
-
-	/**
-	 * Check if the given parameter has a false value
-	 *
-	 * @param  {map} mParsedHash The parsed URL hash
-	 * @param  {string} sParameterName The parameter for which the layer should be checked
-	 * @return {boolean} True if the parameter value is false
-	 */
-	RuntimeAuthoring.prototype._hasDraftFalseParameter = function(mParsedHash, sParameterName) {
-		return mParsedHash.params &&
-			mParsedHash.params[sParameterName] &&
-			mParsedHash.params[sParameterName][0] === "false";
-	};
-
-	/**
-	 * Reload the app inside FLP adding the parameter to skip personalization changes
-	 *
-	 * @param  {map} mParsedHash URL Parsed hash
-	 * @param  {sap.ushell.services.CrossApplicationNavigation} oCrossAppNav Ushell service
-	 * @param  {Object} oReloadInfo Contains the information needed to set the correct url parameters
-	 * @return {Promise} Resolving to true if reload was triggered
-	 */
-	RuntimeAuthoring.prototype._reloadWithMaxLayerOrDraftParam = function(mParsedHash, oCrossAppNav, oReloadInfo) {
-		if (!mParsedHash.params) {
-			mParsedHash.params = {};
-		}
-		if (!this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM) && oReloadInfo.hasHigherLayerChanges) {
-			mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM] = [oReloadInfo.layer];
-		}
-
-		if (!this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM) && oReloadInfo.hasDraftChanges) {
-			mParsedHash.params[LayerUtils.FL_DRAFT_PARAM] = [oReloadInfo.layer];
-
-			// clears FlexState and triggers reloading of the flex data without blocking
-			VersionsAPI.loadDraftForApplication({
-				selector: oReloadInfo.selector,
-				layer: oReloadInfo.layer
-			});
-		}
-
-		RuntimeAuthoring.enableRestart(oReloadInfo.layer, this.getRootControlInstance());
-		// triggers the navigation without leaving FLP
-		oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
-		return Promise.resolve(true);
-	};
-
 	RuntimeAuthoring.prototype._triggerCrossAppNavigation = function(mParsedHash) {
 		if (this.getLayer() !== Layer.USER) {
 			return FlexUtils.ifUShellContainerThen(function(aServices) {
@@ -1607,69 +1539,84 @@ function(
 		}
 	};
 
-	RuntimeAuthoring.prototype._handleDraftParameter = function(mParsedHash) {
-		if (!FlexUtils.getUshellContainer() || this.getLayer() === Layer.USER) {
-			return;
+	RuntimeAuthoring.prototype._removeVersionParameterForFLP = function(mParsedHash) {
+		var sLayer = this.getLayer();
+		if (sLayer === Layer.USER) {
+			return mParsedHash;
 		}
 
-		if (this._hasParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM)) {
-			delete mParsedHash.params[LayerUtils.FL_DRAFT_PARAM];
-		} else if (this._hasDraftFalseParameter(mParsedHash, LayerUtils.FL_DRAFT_PARAM)) {
+		if (ReloadInfoAPI.hasVersionParameterWithValue({value: sLayer})) {
+			delete mParsedHash.params[LayerUtils.FL_VERSION_PARAM];
+		} else if (ReloadInfoAPI.hasVersionParameterWithValue({value: "false"})) {
 			/*
 			In case we discarded our draft we add the false flag there, thats why we need to
 			remove it on exit again to trigger the CrossAppNavigation
 			*/
-			delete mParsedHash.params[LayerUtils.FL_DRAFT_PARAM];
-		} else if (this._isDraftAvailable()) { // only add the draft = false flag when versioning and draft is available
+			delete mParsedHash.params[LayerUtils.FL_VERSION_PARAM];
+		} else if (this._isDraftAvailable()) { // only add the version = false flag when versioning and draft is available
 			/*
 			In case we entered RTA without a draft and created dirty changes,
 			we need to add sap-ui-fl-version=false, to trigger the CrossAppNavigation on exit.
 			*/
-			mParsedHash.params[LayerUtils.FL_DRAFT_PARAM] = ["false"];
+			mParsedHash.params[LayerUtils.FL_VERSION_PARAM] = ["false"];
 		}
 		return mParsedHash;
 	};
 
-	RuntimeAuthoring.prototype._handleMaxLayerParameter = function(mParsedHash, bDeleteMaxLayer) {
+	RuntimeAuthoring.prototype._removeMaxLayerParameterForFLP = function(oReloadInfo, mParsedHash) {
 		// keep max layer parameter when reset was called, remove it on save & exit
-		if (bDeleteMaxLayer && this._hasParameter(mParsedHash, LayerUtils.FL_MAX_LAYER_PARAM)) {
+		if (oReloadInfo.deleteMaxLayer && oReloadInfo.hasHigherLayerChanges) {
 			delete mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM];
 		}
 		return mParsedHash;
 	};
 
 	/**
-	 * Reload the app inside FLP by removing max layer / draft parameter;
+	 * Reload the app inside FLP or Standalone by removing max layer / draft parameter;
 	 *
-	 * @param {boolean} bDeleteMaxLayer - Indicates if max layer parameter should be removed or not (reset / exit)
+	 * @param {boolean} oReloadInfo - Information needed to
+	 * @param {boolean} oReloadInfo.deleteMaxLayer - Indicates if the <code>sap-ui-fl-max-layer</code> parameter should be removed or not (reset / exit)
+	 * @param  {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
+	 * @param  {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
+	 *
 	 * @return {map} parsedHash
 	 */
-	RuntimeAuthoring.prototype._handleParametersOnExit = function(bDeleteMaxLayer) {
-		if (!FlexUtils.getUshellContainer() || this.getLayer() === Layer.USER) {
+	RuntimeAuthoring.prototype._handleUrlParameterOnExit = function(oReloadInfo) {
+		if (oReloadInfo.layer === Layer.USER) {
 			return;
 		}
 
-		return FlexUtils.ifUShellContainerThen(function(aServices) {
-			var oCrossAppNav = aServices[0];
-			var mParsedHash = FlexUtils.getParsedURLHash();
-			if (!oCrossAppNav.toExternal || !mParsedHash) {
-				return;
-			}
+		if (!FlexUtils.getUshellContainer()) {
+			this._triggerHardReload(oReloadInfo);
+		}
 
-			mParsedHash = this._handleMaxLayerParameter(mParsedHash, bDeleteMaxLayer);
-			mParsedHash = this._handleDraftParameter(mParsedHash);
-			return mParsedHash;
-		}.bind(this), ["CrossApplicationNavigation"]);
+		var mParsedHash = FlexUtils.getParsedURLHash();
+		if (!mParsedHash) {
+			return;
+		}
+
+		mParsedHash = this._removeMaxLayerParameterForFLP(oReloadInfo, mParsedHash);
+		mParsedHash = this._removeVersionParameterForFLP(mParsedHash);
+		this._triggerCrossAppNavigation(mParsedHash);
+
+		// In FLP scenario we need to remove all parameters and also trigger an hard reload on reset
+		if (oReloadInfo.triggerHardReload) {
+			this._triggerHardReload(oReloadInfo);
+		}
 	};
 
+
 	/**
-	 * Handler for the message box warning the user that personalization changes exist
-	 * and the app will be reloaded
+	 * Returns the correct message - why a reload is needed.
 	 *
-	 * @param  {Object} oReloadInfo Information to determine which message to show
-	 * @return {Promise} Resolving when the user clicks on OK
+	 * @param  {object}  oReloadInfo - Contains the information needed to return the correct reload message
+	 * @param  {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
+	 * @param  {boolean} oReloadInfo.hasDraftChanges - Indicates if a draft is available
+	 * @param  {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
+	 *
+	 * @return {string} sReason Reload message
 	 */
-	RuntimeAuthoring.prototype._handleReloadMessageBoxOnStart = function(oReloadInfo) {
+	RuntimeAuthoring.prototype._getReloadMessageOnStart = function(oReloadInfo) {
 		var sReason;
 		var bIsCustomerLayer = oReloadInfo.layer === Layer.CUSTOMER;
 
@@ -1679,11 +1626,81 @@ function(
 			sReason = bIsCustomerLayer ? "MSG_PERSONALIZATION_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_EXIST";
 		} else if (oReloadInfo.hasDraftChanges) {
 			sReason = "MSG_DRAFT_EXISTS";
+		} // TODO add app descr changes case for start?
+		return sReason;
+	};
+
+	/**
+	 * Returns the correct message - why a reload is needed.
+	 *
+	 * @param  {object}  oReloadInfo - Contains the information needed to return the correct reload message
+	 * @param  {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if sap-ui-fl-max-layer parameter is present in the url
+	 * @param  {boolean} oReloadInfo.hasDraftChanges - Indicates if a draft is available
+	 * @param  {boolean} oReloadInfo.changesNeedReload - Indicates if app descriptor changes need hard reload
+	 * @param  {boolean} oReloadInfo.initialDraftGotActivated - Indicates if a draft got activated and had a draft initially when entering UI adaptation
+
+	 * @param  {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
+	 *
+	 * @returns {string} sReason Reload message
+	 */
+	RuntimeAuthoring.prototype._getReloadMessageOnExit = function(oReloadInfo) {
+		var sReason;
+		var bIsCustomerLayer = oReloadInfo.layer === Layer.CUSTOMER;
+
+		if (oReloadInfo.hasHigherLayerChanges && oReloadInfo.hasDraftChanges) {
+			sReason = bIsCustomerLayer ? "PERSONALIZATION_AND_WITHOUT_DRAFT" : "MSG_RELOAD_WITH_ALL_CHANGES";
+		} else if (oReloadInfo.hasHigherLayerChanges) {
+			sReason = bIsCustomerLayer ? "MSG_RELOAD_WITH_PERSONALIZATION" : "MSG_RELOAD_WITH_ALL_CHANGES";
+		} else if (oReloadInfo.initialDraftGotActivated) {
+			sReason = "MSG_RELOAD_ACTIVATED_DRAFT";
+		} else if (oReloadInfo.hasDraftChanges) {
+			sReason = "MSG_RELOAD_WITHOUT_DRAFT";
+		} else if (oReloadInfo.changesNeedReload) {
+			sReason = "MSG_RELOAD_NEEDED";
 		}
+		return sReason;
+	};
+
+	/**
+	 * Handler for the message box warning the user that personalization changes exist
+	 * and the app will be reloaded
+	 *
+	 * @param  {Object} oReloadReasons Information to determine which message to show
+	 * @returns {Promise} Resolving when the user clicks on OK
+	 */
+	RuntimeAuthoring.prototype._handleReloadMessageBoxOnExit = function(oReloadReasons) {
+		var sReason = this._getReloadMessageOnExit(oReloadReasons);
 
 		if (sReason) {
-			return Utils.showMessageBox("information", sReason);
+			return Utils.showMessageBox("information", sReason, {
+				titleKey: "HEADER_RELOAD_NEEDED"
+			});
 		}
+		return Promise.resolve();
+	};
+
+	RuntimeAuthoring.prototype._triggerReloadOnStart = function(oReloadInfo) {
+		FlexUtils.ifUShellContainerThen(function() {
+			// clears FlexState and triggers reloading of the flex data without blocking
+			VersionsAPI.loadDraftForApplication({
+				selector: oReloadInfo.selector,
+				layer: oReloadInfo.layer
+			});
+		}, ["CrossApplicationNavigation"]);
+		var sReason = this._getReloadMessageOnStart(oReloadInfo);
+		if (!sReason) {
+			return Promise.resolve();
+		}
+		return Utils.showMessageBox("information", sReason)
+		.then(function() {
+			RuntimeAuthoring.enableRestart(oReloadInfo.layer);
+			if (FlexUtils.getUshellContainer()) {
+				// clears FlexState and triggers reloading of the flex data without blocking
+				var oParsedHash = ReloadInfoAPI.handleParametersOnStart(oReloadInfo);
+				return this._triggerCrossAppNavigation(oParsedHash);
+			}
+			return this._triggerHardReload(oReloadInfo);
+		}.bind(this));
 	};
 
 	/**
@@ -1701,133 +1718,54 @@ function(
 			selector: this.getRootControlInstance(),
 			ignoreMaxLayerParameter: false
 		};
-		var oHigherLayerChangesValidationPromise = false;
-		var bDraftAvailable = false;
-
-		if (!Utils.hasUrlParameterWithValue(LayerUtils.FL_MAX_LAYER_PARAM, oReloadInfo.layer) && oReloadInfo.layer !== Layer.USER) {
-			oHigherLayerChangesValidationPromise = PersistenceWriteAPI.hasHigherLayerChanges({
-				selector: oReloadInfo.selector,
-				ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter
-			});
-		}
-
-		if (!Utils.hasUrlParameterWithValue(LayerUtils.FL_DRAFT_PARAM, oReloadInfo.layer) && this._bVersioningEnabled) {
-			bDraftAvailable = VersionsAPI.isDraftAvailable({
-				selector: oReloadInfo.selector,
-				layer: oReloadInfo.layer
-			});
-		}
-		return Promise.all([
-			oHigherLayerChangesValidationPromise,
-			bDraftAvailable
-		])
-		.then(function(aReloadInfo) {
-			oReloadInfo.hasHigherLayerChanges = aReloadInfo[0];
-			oReloadInfo.hasDraftChanges = aReloadInfo[1];
+		return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo)
+		.then(function (oReloadInfo) {
 			if (oReloadInfo.hasHigherLayerChanges || oReloadInfo.hasDraftChanges) {
-				return this._handleReloadMessageBoxOnStart(oReloadInfo)
-					.then(function() {
-						var oCrossAppNav;
-						FlexUtils.ifUShellContainerThen(function(aServices) {
-							oCrossAppNav = aServices[0];
-						}, ["CrossApplicationNavigation"]);
-						if (oCrossAppNav) {
-							var mParsedHash = FlexUtils.getParsedURLHash();
-							if (oCrossAppNav.toExternal && mParsedHash) {
-								return this._reloadWithMaxLayerOrDraftParam(mParsedHash, oCrossAppNav, oReloadInfo);
-							}
-						} else {
-							RuntimeAuthoring.enableRestart(oReloadInfo.layer, oReloadInfo.selector);
-							this._triggerHardReload(oReloadInfo);
-						}
-					}.bind(this));
+				return this._triggerReloadOnStart(oReloadInfo);
 			}
 		}.bind(this));
 	};
 
 	/**
-	 * Change url paramter if necessary, which will trigger a reload
+	 * Change URL parameters if necessary, which will trigger an reload.
 	 *
 	 * @param  {Object} oReloadInfo - Information to determine reload is needed
-	 * @return {Promise<boolean>} Resolving to false when there is no change in the url and reload will not trigger
 	 */
 	RuntimeAuthoring.prototype._triggerHardReload = function(oReloadInfo) {
-		var sUrl = document.location.search;
-		if (oReloadInfo.hasHigherLayerChanges) {
-			sUrl = Utils.handleUrlParameter(sUrl, LayerUtils.FL_MAX_LAYER_PARAM, oReloadInfo.layer);
-		}
-		if (oReloadInfo.hasDraftChanges) {
-			sUrl = Utils.handleUrlParameter(sUrl, LayerUtils.FL_DRAFT_PARAM, oReloadInfo.layer);
-		}
-		if (document.location.search !== sUrl) {
-			document.location.search = sUrl;
+		oReloadInfo.parameters = document.location.search;
+		var sParameters = ReloadInfoAPI.handleUrlParametersForStandalone(oReloadInfo);
+		if (document.location.search !== sParameters) {
+			document.location.search = sParameters;
 			return Promise.resolve();
 		}
 		return this._reloadPage();
 	};
 
 	/**
-	 * Handler for the message box warning the user that personalization changes exist
-	 * and the app will be reloaded
-	 *
-	 * @param  {Object} oReloadInfo - Information to determine which message to show
-	 * @return {Promise} Resolving when the user clicks on OK
-	 */
-	RuntimeAuthoring.prototype._handleReloadMessageBoxOnExit = function(oReloadInfo) {
-		var sReason;
-
-		var bIsCustomerLayer = this.getLayer() === Layer.CUSTOMER;
-		if (oReloadInfo.hasHigherLayerChanges && oReloadInfo.hasDraftChanges) {
-			sReason = bIsCustomerLayer ? "MSG_RELOAD_WITH_PERSONALIZATION_AND_WITHOUT_DRAFT" : "MSG_RELOAD_WITH_ALL_CHANGES";
-		} else if (oReloadInfo.hasHigherLayerChanges) {
-			sReason = bIsCustomerLayer ? "MSG_RELOAD_WITH_PERSONALIZATION" : "MSG_RELOAD_WITH_ALL_CHANGES";
-		} else if (oReloadInfo.hasDraftChanges) {
-			sReason = "MSG_RELOAD_WITHOUT_DRAFT";
-		} else if (oReloadInfo.changesNeedReload) {
-			sReason = "MSG_RELOAD_NEEDED";
-		} else if (oReloadInfo.hasDraftParameter) {
-			sReason = "MSG_RELOAD_REMOVE_DRAFT_PARAMETER";
-		}
-
-		return Utils.showMessageBox("information", sReason, {
-			titleKey: "HEADER_RELOAD_NEEDED"
-		});
-	};
-
-	/**
 	 * When exiting RTA and personalization changes exist, the user can choose to
 	 * reload the app with personalization or stay in the app without the personalization
-	 * @return {Promise} Resolving to RESTART enum indicating if reload is necessary
+	 * @param {boolean} bSkipRestart - Stop RTA without reloading the app in any way
+	 *
+	 * @return {Promise<object>} Resolving to an object containing information about if an reload is needed and how to handle it
 	 */
-	RuntimeAuthoring.prototype._handleReloadOnExit = function() {
+	RuntimeAuthoring.prototype._handleReloadOnExit = function(bSkipRestart) {
+		if (bSkipRestart) {
+			return Promise.resolve({reloadMethod: this._RELOAD.NOT_NEEDED});
+		}
 		return Promise.all([
-			(!this._bReloadNeeded) ?
-				this._oSerializer.needsReload() :
-				Promise.resolve(this._bReloadNeeded),
-			// When working with RTA, the MaxLayer parameter will be present in the URL and must
-			// be ignored in the decision to bring up the pop-up (ignoreMaxLayerParameter = true)
-			PersistenceWriteAPI.hasHigherLayerChanges({selector: this.getRootControlInstance(), ignoreMaxLayerParameter: true})
-		]).then(function (aArgs) {
+			(!this._bReloadNeeded) ? this._oSerializer.needsReload() : Promise.resolve(this._bReloadNeeded)
+		]).then(function (aChangesNeedReload) {
 			var oReloadInfo = {
-				changesNeedReload: aArgs[0],
-				hasHigherLayerChanges: aArgs[1],
-				hasDraftChanges: this._isDraftAvailable(),
-				hasDraftParameter: Utils.hasUrlParameterWithValue(LayerUtils.FL_DRAFT_PARAM, this.getLayer())
+				layer: this.getLayer(),
+				selector: this.getRootControlInstance(),
+				changesNeedReload: aChangesNeedReload[0],
+				hasDirtyDraftChanges: this._bVersioningEnabled && this.canUndo(),
+				versioningEnabled: this._bVersioningEnabled
 			};
-			if (oReloadInfo.changesNeedReload || oReloadInfo.hasHigherLayerChanges || oReloadInfo.hasDraftChanges
-				// If a draft was initially available, the url parameter must be removed on exit - which triggers a soft reload
-				|| oReloadInfo.hasDraftParameter) {
-				var sRestart = this._RESTART.RELOAD_PAGE;
-				// always try cross app navigation (via hash)
-				// we only need a hard reload because of appdescr changes (changesNeedReload = true) and in standalone case
-				if (!oReloadInfo.changesNeedReload && FlexUtils.getUshellContainer()) {
-					sRestart = this._RESTART.VIA_HASH;
-				}
-				return this._handleReloadMessageBoxOnExit(oReloadInfo).then(function() {
-					return sRestart;
-				});
-			}
-			return this._RESTART.NOT_NEEDED;
+			oReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
+			return this._handleReloadMessageBoxOnExit(oReloadInfo).then(function () {
+				return oReloadInfo;
+			});
 		}.bind(this));
 	};
 

@@ -254,10 +254,6 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 	background-color: fade(lighten(@sapUiContentForegroundColor,5), 50);
 }
 
-html.sap-desktop .sapUiCalItem:focus{
-	background-color: darken(@sapUiContentForegroundColor,5);
-}
-
 .sapUiCalWeekNum {
 	clear: left;
 	float: left;
@@ -338,7 +334,7 @@ html.sap-desktop .sapUiCalItem:focus{
 }
 
 
-.sapUiCalNoNameLine .sapUiCalItem > .sapUiCalDayName{
+.sapUiCalNoNameLine .sapUiCalItem > .sapUiCalDayName {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -348,6 +344,10 @@ html.sap-desktop .sapUiCalItem:focus{
 	overflow: hidden;
 	white-space: nowrap;
 	line-height: 100%;
+}
+
+.sapUiCalNoNameLine .sapUiCalItem > .sapUiCalDayName {
+	color: inherit;
 }
 
 .sapUiCalItemTextAmPm{

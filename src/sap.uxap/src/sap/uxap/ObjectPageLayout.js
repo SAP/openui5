@@ -1022,20 +1022,24 @@ sap.ui.define([
 	ObjectPageLayout.prototype._grepCurrentTabSectionBases = function () {
 		var oFiltered = [],
 			oSectionToLoad,
-			oSectionParent;
+			sSectionToLoadId,
+			oSectionParent,
+			sParentId;
 
 		this._adjustSelectedSectionByUXRules();
 		oSectionToLoad = this.oCore.byId(this.getSelectedSection());
 
 		if (oSectionToLoad) {
-			var sSectionToLoadId = oSectionToLoad.getId();
-			this._aSectionBases.forEach(function (oSection) {
-				oSectionParent = oSection.getParent();
-				if (oSectionParent && oSectionParent.getId() === sSectionToLoadId) {
-					oFiltered.push(oSection);
+			sSectionToLoadId = oSectionToLoad.getId();
+			this._aSectionBases.forEach(function (oSectionBase) {
+				oSectionParent = oSectionBase.getParent();
+				sParentId = oSectionParent && oSectionParent.getId();
+				if (oSectionBase.getId() === sSectionToLoadId || sParentId === sSectionToLoadId) {
+					oFiltered.push(oSectionBase);
 				}
 			});
 		}
+
 		return oFiltered;
 	};
 
@@ -1235,6 +1239,10 @@ sap.ui.define([
 		if (this._oScroller) {
 			this._oScroller.destroy();
 			this._oScroller = null;
+		}
+		if (this._oLazyLoading) {
+			this._oLazyLoading.destroy();
+			this._oLazyLoading = null;
 		}
 
 		this._deregisterScreenSizeListener();
@@ -1448,9 +1456,11 @@ sap.ui.define([
 		var oHeaderTitle = this.getHeaderTitle();
 
 		// note that <code>this._$titleArea</code> is the placeholder [of the sticky area] where both the header title and header content are placed
-		this._$titleArea.toggleClass("sapUxAPObjectPageHeaderStickied", !bExpand);
-		this._$titleArea.toggleClass("sapUxAPObjectPageHeaderSnappedTitleOnMobile",
+		if (this._$titleArea.length) {
+			this._$titleArea.toggleClass("sapUxAPObjectPageHeaderStickied", !bExpand);
+			this._$titleArea.toggleClass("sapUxAPObjectPageHeaderSnappedTitleOnMobile",
 				this._hasDynamicTitleWithSnappedTitleOnMobile() && !bExpand);
+		}
 
 		if (bExpand) {
 			oHeaderTitle && oHeaderTitle.unSnap(bUserInteraction);
@@ -1978,11 +1988,7 @@ sap.ui.define([
 	ObjectPageLayout.prototype.scrollToSection = function (sId, iDuration, iOffset, bIsTabClicked, bRedirectScroll) {
 		var oSection = this.oCore.byId(sId),
 			iSnapPosition,
-			oTargetSubSection,
-			bAnimationsEnabled = (sap.ui.getCore().getConfiguration().getAnimationMode()
-				!== Configuration.AnimationMode.none),
-			bAnimatedScroll,
-			bScrollOverAnotherSubSection;
+			oTargetSubSection;
 
 		if (!this.getDomRef()){
 			Log.warning("scrollToSection can only be used after the ObjectPage is rendered", this);
@@ -2082,19 +2088,6 @@ sap.ui.define([
 			this.getHeaderTitle() && this._shiftHeaderTitle();
 
 			iScrollTo += iOffset;
-			bAnimatedScroll = bAnimationsEnabled && iDuration;
-			bScrollOverAnotherSubSection = (this._sScrolledSubSectionId !== oTargetSubSection.getId())
-				&& this._$opWrapper.length && (this._$opWrapper.get(0).scrollTop !== iScrollTo);
-
-			if (bAnimatedScroll && this.getEnableLazyLoading() && bScrollOverAnotherSubSection) {
-				// suppress lazyLoading during the animated scroll
-				// to avoid loading of intermediate sections
-				this._oLazyLoading.suppress();
-				setTimeout(function() {
-					this._oLazyLoading.resume();
-					this._oLazyLoading.doLazyLoading();
-				}.bind(this), iDuration);
-			}
 
 			if (!this._bStickyAnchorBar && this._shouldSnapHeaderOnScroll(iScrollTo)) {
 				iSnapPosition = this._getSnapPosition();

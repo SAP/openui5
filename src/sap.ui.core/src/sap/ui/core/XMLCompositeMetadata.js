@@ -94,6 +94,7 @@ sap.ui.define([
 	};
 
 	XMLCompositeMetadata.prototype = Object.create(ElementMetadata.prototype);
+	XMLCompositeMetadata.prototype.constructor = XMLCompositeMetadata;
 	XMLCompositeMetadata.uid = ElementMetadata.uid;
 
 	XMLCompositeMetadata.extend = function(mSettings) {

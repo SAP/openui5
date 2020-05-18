@@ -299,6 +299,7 @@ sap.ui.define([
 				group: "Apply Internal",
 				ui5: {
 					resourceroots: {
+						"my.connectors": "./test-resources/sap/ui/fl/qunit/testConnectors/",
 						"test.app": "./test-resources/sap/ui/fl/qunit/testResources/"
 					},
 					flexibilityServices: '[{"connector": "JsObjectConnector", "layers": ["ALL"]},{"connector": "LrepConnector", "layers": ["ALL"], "url": "someURL"}]'
@@ -319,18 +320,28 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/storageResultDisassemble"]
 				}
 			},
-			// TODO: temporarily disabled due to issues
-			// "apply/_internal/extensionPoint/Processor": {
-			// 	group: "Apply Internal",
-			// 	coverage: {
-			// 		only: ["sap/ui/fl/extensionPointProcessor"]
-			// 	},
-			// 	ui5: {
-			// 		resourceroots: {
-			// 			"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
-			// 		}
-			// 	}
-			// },
+			"apply/_internal/extensionPoint/Processor": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/extensionPoint/Processor"]
+				},
+				ui5: {
+					resourceroots: {
+						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
+					}
+				}
+			},
+			"apply/_internal/extensionPoint/BaseProcessor": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/extensionPoint/BaseProcessor"]
+				},
+				ui5: {
+					resourceroots: {
+						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
+					}
+				}
+			},
 			"initial/api/connectors/FileListBaseConnector": {
 				group: "Initial API",
 				coverage: {
@@ -377,6 +388,12 @@ sap.ui.define([
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/VersionsAPI"]
+				}
+			},
+			"write/api/ReloadInfoAPI": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/ReloadInfoAPI"]
 				}
 			},
 			"write/api/UI2PersonalizationWriteAPI": {
@@ -470,23 +487,6 @@ sap.ui.define([
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/connectors/KeyUserConnector"]
-				}
-			},
-			"write/_internal/StorageWithCustomBrokenConnector": {
-				group: "Write Internal",
-				ui5: {
-					resourceroots: {
-						"my.lib": "./test-resources/sap/ui/fl/qunit/write/_internal/",
-						"test.app": "./test-resources/sap/ui/fl/qunit/testResources/"
-					},
-					"xx-componentPreload": "off",
-					flexibilityServices: '[{"applyConnector": "my/lib/apply/BrokenConnector",' +
-						'"writeConnector": "my/lib/write/BrokenConnector",' +
-						'"custom": true,' +
-						'"layers": []}]'
-				},
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/Storage"]
 				}
 			},
 			// Team Gravity tests
@@ -991,19 +991,18 @@ sap.ui.define([
 					only: ["sap/ui/fl/registry/ChangeTypeMetadata"]
 				}
 			},
-			// TODO: temporarily disabled due to issues
-			// "registry/ExtensionPointRegistry": {
-			// 	group: "registry",
-			// 	coverage: {
-			// 		only: ["sap/ui/fl/registry/ExtensionPointRegistry"]
-			// 	},
-			// 	ui5: {
-			// 		resourceroots: {
-			// 			testComponent: "test-resources/sap/ui/fl/qunit/testComponent",
-			// 			"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
-			// 		}
-			// 	}
-			// },
+			"registry/ExtensionPointRegistry": {
+				group: "registry",
+				coverage: {
+					only: ["sap/ui/fl/registry/ExtensionPointRegistry"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent",
+						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
+					}
+				}
+			},
 			"registry/Settings": {
 				group: "registry",
 				coverage: {

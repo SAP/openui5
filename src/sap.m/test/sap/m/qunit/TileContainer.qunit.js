@@ -709,14 +709,16 @@ sap.ui.define([
 		var done = assert.async(),
 			oTile2 = this.sut.getTiles()[2],
 			oTile3 = this.sut.getTiles()[3],
-			oJQueryFocusSpy = sinon.spy(jQuery.fn, "focus");
+			oJQueryTriggerSpy = sinon.spy(jQuery.fn, "trigger");
 
 		this.sut.setEditable(true);
 		this.sut._iCurrentFocusIndex = 2;
 
 		setTimeout(function() {
 			this.sut.onsapdelete({ stopPropagation: function() { } });
-			assert.equal(oJQueryFocusSpy.getCall(0).thisValue.attr("id"), oTile3.getId(), "focus is called on the next item");
+			assert.ok(oJQueryTriggerSpy.getCall(0).calledWith("focus"), "trigger is called with type 'focus' on the next item");
+			assert.equal(oJQueryTriggerSpy.getCall(0).thisValue.attr("id"), oTile3.getId(), "trigger is called on the next item");
+			oJQueryTriggerSpy.restore();
 			oTile2.destroy();
 			done();
 		}.bind(this), delay);
@@ -1062,39 +1064,39 @@ sap.ui.define([
 	QUnit.test("Initial rendering renders only the tiles that should be visible on the 1st page", function(assert) {
 
 		//Assert
-		assert.equal(this.oSut.$("cnt").children().size(), 2, "Render only the tiles of the initial page");
-		assert.equal(this.oSut.$("pager").children().size(), 3, "Pager: total count is correct");
+		assert.equal(this.oSut.$("cnt").children().length, 2, "Render only the tiles of the initial page");
+		assert.equal(this.oSut.$("pager").children().length, 3, "Pager: total count is correct");
 		assert.equal(this.oSut.$("pager").children().first().hasClass("sapMTCActive"), true, "The first page is active");
 
 	});
 
 	QUnit.test("Navigation after initial rendering should lazily render needed tiles", function(assert) {
 		//Act
-		this.oSut.$("rightscroller").click();
+		this.oSut.$("rightscroller").trigger("click");
 
 		//Assert
-		assert.equal(this.oSut.$("cnt").children().size(), 4, "After forward button click the rendered 2 tiles more, so now are 4");
-		assert.equal(this.oSut.$("pager").children().size(), 3, "Pager: total count is correct");
+		assert.equal(this.oSut.$("cnt").children().length, 4, "After forward button click the rendered 2 tiles more, so now are 4");
+		assert.equal(this.oSut.$("pager").children().length, 3, "Pager: total count is correct");
 		assert.equal(this.oSut.$("pager").children().first().hasClass("sapMTCActive"), false, "The first page is not active anymore");
 		assert.equal(this.oSut.$("pager").children().eq(1).hasClass("sapMTCActive"), true, "The second page is active");
 
 		//Act
-		this.oSut.$("leftscroller").click();
+		this.oSut.$("leftscroller").trigger("click");
 
 		//Assert
-		assert.equal(this.oSut.$("cnt").children().size(), 4, "After backward button click no new tiles are rendered (still 4)");
-		assert.equal(this.oSut.$("pager").children().size(), 3, "Pager: total count is correct");
+		assert.equal(this.oSut.$("cnt").children().length, 4, "After backward button click no new tiles are rendered (still 4)");
+		assert.equal(this.oSut.$("pager").children().length, 3, "Pager: total count is correct");
 		assert.equal(this.oSut.$("pager").children().first().hasClass("sapMTCActive"), true, "The first page become active again");
 		assert.equal(this.oSut.$("pager").children().eq(1).hasClass("sapMTCActive"), false, "The second page is not active anymore");
 		assert.equal(this.oSut.$("leftscroller").is(":visible"), false, "When on the first page, backward button should not be visible");
 
 		//Act - go the to last page
-		this.oSut.$("rightscroller").click();
-		this.oSut.$("rightscroller").click();
+		this.oSut.$("rightscroller").trigger("click");
+		this.oSut.$("rightscroller").trigger("click");
 
 		//Assert
-		assert.equal(this.oSut.$("cnt").children().size(), 6, "After navigation to the last page 2 more tiles are rendered, so now are 6");
-		assert.equal(this.oSut.$("pager").children().size(), 3, "Pager: total count is correct");
+		assert.equal(this.oSut.$("cnt").children().length, 6, "After navigation to the last page 2 more tiles are rendered, so now are 6");
+		assert.equal(this.oSut.$("pager").children().length, 3, "Pager: total count is correct");
 		assert.equal(this.oSut.$("pager").children().first().hasClass("sapMTCActive"), false, "The first page is not active");
 		assert.equal(this.oSut.$("pager").children().eq(1).hasClass("sapMTCActive"), false, "The second page is not active");
 		assert.equal(this.oSut.$("pager").children().eq(2).hasClass("sapMTCActive"), true, "The second page is active");
@@ -1106,16 +1108,16 @@ sap.ui.define([
 		this.oSut.addTile(new StandardTile("id6", {title: "seventh"}));
 
 		//Assert
-		assert.equal(this.oSut.$("cnt").children().size(), 2, "Adding a tile to the last page does not render new tiles nor rearranges them");
-		assert.equal(this.oSut.$("pager").children().size(), 4, "Pager: total count is increased to 4, as this tile is the 7th where 2 tiles per page are rendered");
+		assert.equal(this.oSut.$("cnt").children().length, 2, "Adding a tile to the last page does not render new tiles nor rearranges them");
+		assert.equal(this.oSut.$("pager").children().length, 4, "Pager: total count is increased to 4, as this tile is the 7th where 2 tiles per page are rendered");
 		assert.equal(this.oSut.$("pager").children().first().hasClass("sapMTCActive"), true, "The first page is active");
 
 		//Act
 		this.oSut.insertTile(new StandardTile("id7", {title: "eight"}), 1);
 
 		//Assert
-		assert.equal(this.oSut.$("cnt").children().size(), 3, "Adding a tile to the to the current page renders it and does not destroy the one that goes outside the page");
-		assert.equal(this.oSut.$("pager").children().size(), 4, "Pager: total count is increased to 4, as this tile is the 7th where 2 tiles per page are rendered");
+		assert.equal(this.oSut.$("cnt").children().length, 3, "Adding a tile to the to the current page renders it and does not destroy the one that goes outside the page");
+		assert.equal(this.oSut.$("pager").children().length, 4, "Pager: total count is increased to 4, as this tile is the 7th where 2 tiles per page are rendered");
 		assert.equal(this.oSut.$("pager").children().first().hasClass("sapMTCActive"), true, "The first page is active");
 	});
 
@@ -1124,19 +1126,19 @@ sap.ui.define([
 		this.oSut.deleteTile(this.oSut.getTiles()[1]);
 
 		//Assert
-		assert.equal(this.oSut.$("cnt").children().size(), 2, "Removing the second tile at the active page will render new");
+		assert.equal(this.oSut.$("cnt").children().length, 2, "Removing the second tile at the active page will render new");
 		assert.equal(document.getElementById('id1'), null, "The second tile should not be part of the DOM");
 		assert.ok(document.getElementById('id2'), "The third tile should be rendered");
-		assert.equal(this.oSut.$("pager").children().size(), 3, "Pager: total count is not changed");
+		assert.equal(this.oSut.$("pager").children().length, 3, "Pager: total count is not changed");
 		assert.equal(this.oSut.$("pager").children().first().hasClass("sapMTCActive"), true, "The first page is active");
 
 
 		//Act
 		this.oSut.deleteTile(sap.ui.getCore().byId('id5')); //delete the six tile, now we have only 4 left
 		//Assert
-		assert.equal(this.oSut.$("cnt").children().size(), 2, "Removing the last tile at the inactive page does not change the rendered tiles");
+		assert.equal(this.oSut.$("cnt").children().length, 2, "Removing the last tile at the inactive page does not change the rendered tiles");
 		assert.equal(document.getElementById('id5'), null, "The last tile should not be part of the DOM");
-		assert.equal(this.oSut.$("pager").children().size(), 2, "Pager: total count is not changed");
+		assert.equal(this.oSut.$("pager").children().length, 2, "Pager: total count is not changed");
 		assert.equal(this.oSut.$("pager").children().first().hasClass("sapMTCActive"), true, "The first page is active");
 	});
 
@@ -1193,7 +1195,7 @@ sap.ui.define([
 		var done = assert.async();
 		// arrange
 		// scroll to the second page
-		this.sut.$("rightscroller").click();
+		this.sut.$("rightscroller").trigger("click");
 
 		// act
 		// shrink the container to show only 2 tiles

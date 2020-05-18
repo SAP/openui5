@@ -4,6 +4,7 @@
 
 // Provides control sap.f.ShellBar
 sap.ui.define([
+	'sap/f/library',
 	"sap/ui/core/Control",
 	"./shellBar/Factory",
 	"./shellBar/AdditionalContentSupport",
@@ -14,6 +15,7 @@ sap.ui.define([
 	"./ShellBarRenderer"
 ],
 function(
+	library,
 	Control,
 	Factory,
 	AdditionalContentSupport,
@@ -24,6 +26,8 @@ function(
 	/*, ShellBarRenderer */
 ) {
 	"use strict";
+
+	var AvatarSize = library.AvatarSize;
 
 	/**
 	 * Constructor for a new <code>ShellBar</code>.
@@ -131,19 +135,18 @@ function(
 				/**
 				 * The profile avatar.
 				 */
-				profile: {type: "sap.f.Avatar", multiple: false, forwarding: {
-					getter: "_getProfile",
-					aggregation: "avatar"
-				}},
+				profile: {type: "sap.f.Avatar", multiple: false},
 				/**
 				 * Additional content to be displayed in the control.
 				 *
 				 * <b>Note:</b> Only controls implementing the <code>{@link sap.f.IShellBar}</code> interface are allowed.
 				 */
 				additionalContent: {type: "sap.f.IShellBar", multiple: true, singularName: "additionalContent"},
+
 				/**
 				 * Holds the internally created OverflowToolbar.
 				 */
+
 				_overflowToolbar: {type: "sap.m.OverflowToolbar", multiple: false, visibility: "hidden"},
 				/**
 				 * Holds the internally created HBox with text content.
@@ -257,11 +260,12 @@ function(
 		this._oOverflowToolbar = this._oFactory.getOverflowToolbar();
 		this._oAdditionalBox = this._oFactory.getAdditionalBox();
 		this._aControls = [];
+		this._aAdditionalContent = [];
 		this.setAggregation("_overflowToolbar", this._oOverflowToolbar);
 		this.setAggregation("_additionalBox", this._oAdditionalBox);
 
 		this._oToolbarSpacer = this._oFactory.getToolbarSpacer();
-
+		this._oAvatarButton = null;
 		// Init responsive handler
 		this._oResponsiveHandler = new ResponsiveHandler(this);
 
@@ -280,6 +284,7 @@ function(
 	ShellBar.prototype.exit = function () {
 		this._aLeftControls = [];
 		this._aRightControls = [];
+		this._aControls = [];
 		this._oResponsiveHandler.exit();
 		this._oFactory.destroy();
 		this._oAcc.exit();
@@ -300,6 +305,35 @@ function(
 		this._bLeftBoxUpdateNeeded = true;
 
 		return this.setProperty("homeIcon", sSrc);
+	};
+
+	ShellBar.prototype.setProfile = function (oAvatar) {
+		this.validateAggregation("profile", oAvatar, false);
+
+		if (oAvatar) {
+			oAvatar.setDisplaySize(AvatarSize.XS);
+			oAvatar.setTooltip(this._oAcc.getEntityTooltip("PROFILE"));
+			oAvatar.attachPress(function () {
+				this.fireEvent("avatarPressed", {avatar: oAvatar});
+			}, this);
+
+			oAvatar.addStyleClass("sapFShellBarProfile");
+		}
+
+		this._oAvatarButton = oAvatar;
+
+		return this;
+	};
+
+	ShellBar.prototype.getProfile = function () {
+		return this._oAvatarButton;
+	};
+
+	ShellBar.prototype.destroyProfile =  function () {
+		this._oAvatarButton.destroy();
+		this._oAvatarButton = null;
+
+		return this;
 	};
 
 	ShellBar.prototype.setHomeIconTooltip = function (sTooltip) {
@@ -587,9 +621,6 @@ function(
 		if (aAdditionalContent) {
 			aAdditionalContent.forEach(function (oControl) {
 				this.addControlToCollection(oControl, this._oOverflowToolbar);
-				oControl.setLayoutData(new OverflowToolbarLayoutData({
-					priority: "Low"
-				}));
 			}, this);
 		}
 
@@ -617,11 +648,6 @@ function(
 		if (this._oNotifications) {
 			this._oNotifications.data("notifications", sNotificationsNumber, true);
 		}
-	};
-
-	ShellBar.prototype._getProfile = function () {
-		this._oAvatarButton = this._oFactory.getAvatarButton();
-		return this._oAvatarButton;
 	};
 
 	ShellBar.prototype._getMenu = function () {

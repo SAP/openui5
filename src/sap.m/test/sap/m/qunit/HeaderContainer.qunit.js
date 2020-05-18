@@ -383,10 +383,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("When focusing from outside (through shift + tab) on the surrogate div element, the focus is set on the previous focused element of the itemnavigation", function (assert) {
-			if (Device.browser.phantomJS) {
-				assert.expect(0);
-				return;
-			}
 			//Arrange
 			this.oHeaderContainer._oItemNavigation.setFocusedIndex(0);
 			var oEvt = {
@@ -402,7 +398,7 @@ sap.ui.define([
 
 		QUnit.test("Test tab button click event", function (assert) {
 			//Arrange
-			this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(0).focus();
+			this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(0).trigger("focus");
 			var oEvt = {
 				preventDefault: function () {
 				},
@@ -417,7 +413,7 @@ sap.ui.define([
 
 		QUnit.test("Test shift Tab button click event", function (assert) {
 			//Arrange
-			this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(0).focus();
+			this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(0).trigger("focus");
 			var oEvt = {
 				preventDefault: function () {
 				},
@@ -432,7 +428,7 @@ sap.ui.define([
 
 		QUnit.test("Focus is set to next content after the button to the right of the element was clicked", function (assert) {
 			//Arrange
-			this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(0).focus();
+			this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(0).trigger("focus");
 			var oEvt = {
 				preventDefault: function () {
 				},
@@ -449,7 +445,7 @@ sap.ui.define([
 
 		QUnit.test("Focus is set to previous content after the button to the left of the element was clicked", function (assert) {
 			//Arrange
-			this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(1).focus();
+			this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(1).trigger("focus");
 			var oEvt = {
 				preventDefault: function () {
 				},

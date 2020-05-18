@@ -96,7 +96,7 @@ describe("sap.m.IconTabBarGeneric3", function() {
 		it("should see Horizontal IconTabBar with filters with NO own content (non selectable) and only sub filters", function() {
 			var itb6a = element(by.id("itb6a"));
 			browser.executeScript("document.getElementById('itb6a').scrollIntoView()").then(function() {
-				expect(takeScreenshot(itb6a)).toLookAs(sType + "_12_horizontal_text_and_icons_single_click");
+				expect(takeScreenshot(itb6a)).toLookAs(sType + "_12_horizontal_text_and_icons_single");
 			});
 		});
 

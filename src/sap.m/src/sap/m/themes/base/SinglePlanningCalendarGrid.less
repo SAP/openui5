@@ -451,17 +451,12 @@ html[data-sap-ui-browser^=ie] .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps 
 			.sapUiCalItemText,
 			.sapUiCalDayName {
 				padding: 0;
-				height: 100%;
+				line-height: 2rem;
+				height: auto;
 				position: static;
 			}
 
-			&.sapUiCalItemNow .sapUiCalDayName,
-			.sapUiCalItemText {
-				line-height: 1.725rem;
-			}
-
 			.sapUiCalDayName {
-				line-height: 1.875rem;
 				text-align: end;
 				padding-right: 0.5rem;
 			}
@@ -470,6 +465,10 @@ html[data-sap-ui-browser^=ie] .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps 
 
 	.sapMSinglePCRow {
 		height: @_sap_m_SinglePlanningCalendarGrid_CompactRowHeight;
+	}
+
+	.sapMSinglePCColumnHeader .sapUiCalItem:focus > .sapUiCalItemText {
+		outline: none;
 	}
 }
 

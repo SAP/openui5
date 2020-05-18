@@ -16,6 +16,7 @@ sap.ui.define([
 	'sap/m/IconTabFilter',
 	'sap/m/IconTabSeparator',
 	'sap/m/IconTabBarDragAndDropUtil',
+	'sap/ui/core/dnd/DropPosition',
 	'sap/m/IconTabHeaderRenderer',
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
@@ -32,6 +33,7 @@ sap.ui.define([
 	IconTabFilter,
 	IconTabSeparator,
 	IconTabBarDragAndDropUtil,
+	DropPosition,
 	IconTabHeaderRenderer,
 	jQuery,
 	Log,
@@ -128,6 +130,14 @@ sap.ui.define([
 			 * @since 1.46
 			 */
 			enableTabReordering : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Specifies whether nesting tabs within one another using drag and drop is possible.
+			 * This property allows nesting via user interaction only, and does not restrict adding items
+			 * to the <code>items</code> aggregation of {@link sap.m.IconTabFilter sap.m.IconTabFilter}.
+			 * @experimental Since 1.78. This property is experimental. The API may change.
+			 */
+			tabNestingViaInteraction: { type: "boolean", group : "Behavior", defaultValue: false},
 
 			/**
 			 * Specifies the visual density mode of the tabs.
@@ -234,6 +244,7 @@ sap.ui.define([
 		}
 
 		this._updateSelection();
+		this.destroyDragDropConfig();
 		this._setsDragAndDropConfigurations();
 	};
 
@@ -349,13 +360,18 @@ sap.ui.define([
 	 * @private
 	 */
 	IconTabHeader.prototype._setsDragAndDropConfigurations = function () {
-		if (!this.getEnableTabReordering() && this.getDragDropConfig().length) {
-			//Destroying Drag&Drop aggregation
-			this.destroyDragDropConfig();
-		} else if (this.getEnableTabReordering() && !this.getDragDropConfig().length) {
-			//Adding Drag&Drop configuration to the dragDropConfig aggregation if needed
-			IconTabBarDragAndDropUtil.setDragDropAggregations(this, "Horizontal");
+		// Adding Drag&Drop configuration to the dragDropConfig aggregation
+		if (this.getEnableTabReordering() && !this.getDragDropConfig().length) {
+			IconTabBarDragAndDropUtil.setDragDropAggregations(this, "Horizontal", this._getDropPosition());
 		}
+	};
+
+	/**
+	 * Returns the correct DropPosition configuration based on the setTabNestingViaInteraction property.
+	 * @private
+	 */
+	IconTabHeader.prototype._getDropPosition = function () {
+		return this.getTabNestingViaInteraction() ? DropPosition.OnOrBetween : DropPosition.Between;
 	};
 
 	/**
@@ -815,7 +831,7 @@ sap.ui.define([
 		}
 
 		var oTabStrip = this.getDomRef("head"),
-			oSelectedItem = (this.oSelectedItem && this.oSelectedItem.getVisible()) ?  this.oSelectedItem : aTabFilters[0];
+			oSelectedItem = (this.oSelectedItem && this.oSelectedItem.getVisible()) ? this.oSelectedItem : aTabFilters[0];
 
 		if (!oTabStrip) {
 			// control has not been rendered, exit
@@ -1036,7 +1052,7 @@ sap.ui.define([
 	IconTabHeader.prototype.applyFocusInfo = function (oFocusInfo) {
 		//sets the focus depending on the used IconTabFilter
 		if (oFocusInfo.focusDomRef) {
-			jQuery(oFocusInfo.focusDomRef).focus();
+			jQuery(oFocusInfo.focusDomRef).trigger("focus");
 		}
 	};
 
@@ -1248,26 +1264,26 @@ sap.ui.define([
 	 * @private
 	 */
 	IconTabHeader.prototype._handleDragAndDrop = function (oEvent) {
-		var sDropPosition = oEvent.getParameter("dropPosition"),
+		var oEventDropPosition = oEvent.getParameter("dropPosition"),
 			oDraggedControl = oEvent.getParameter("draggedControl"),
 			oDroppedControl = oEvent.getParameter("droppedControl"),
 			oContext = this;
 
-		if (sDropPosition === "On") {
+		if (oEventDropPosition === DropPosition.On) {
 			oContext = oDroppedControl._getRealTab();
 		}
 
-		IconTabBarDragAndDropUtil.handleDrop(oContext, sDropPosition, oDraggedControl._getRealTab(), oDroppedControl, false);
+		IconTabBarDragAndDropUtil.handleDrop(oContext, oEventDropPosition, oDraggedControl._getRealTab(), oDroppedControl, false);
 
 		this._setItemsForStrip();
 		this._initItemNavigation();
 		this._getOverflow()._setSelectListItems();
 		this._getSelectList()._initItemNavigation();
 
-		oDraggedControl._getRealTab().$().focus();
+		oDraggedControl._getRealTab().$().trigger("focus");
 
-		if (sDropPosition === "On") {
-			oDroppedControl._getRealTab().$().focus();
+		if (oEventDropPosition === DropPosition.On) {
+			oDroppedControl._getRealTab().$().trigger("focus");
 		}
 	};
 
@@ -1307,7 +1323,7 @@ sap.ui.define([
 			iTabStripEnd = this.indexOfItem(this._getItemsInStrip().pop());
 
 		this._moveTab(oTab, oEvent.keyCode, iTabStripEnd);
-		oTab.$().focus();
+		oTab.$().trigger("focus");
 	};
 
 	/**

@@ -168,4 +168,86 @@ sap.ui.define([
 			done();
 		}.bind(this));
 	});
+
+	QUnit.test("Link control test when messageLinkText is set before MessageStrip is initialized", function(assert) {
+		var done = assert.async(),
+			bMessageLinkPressed = false;
+		assert.ok(this.oPlugin.getMetadata().getAllPrivateProperties().hasOwnProperty("messageLinkText"), "messageLinkText is a private property of the DataPluginIndicator");
+		this.oPlugin.setMessageLinkText("Test");
+		assert.ok(this.oPlugin.getMetadata().getAllPrivateProperties().hasOwnProperty("messageLinkVisible"), "messageLinkVisible is a private property of the DataPluginIndicator");
+		assert.ok(this.oPlugin.getMessageLinkVisible(), "messageLinkVisible=true by default");
+		this.oPlugin.attachEventOnce("messageLinkPressed", function() {
+			bMessageLinkPressed = true;
+		});
+		this.addMessage("Error");
+
+		this.oPromise.then(function() {
+			var oMsgStrp = this.oPlugin._oMessageStrip;
+			assert.equal(oMsgStrp.getText(), "Error");
+			assert.equal(oMsgStrp.getType(), "Error");
+			assert.equal(this.oPlugin.getMessageLinkText(), "Test");
+			assert.ok(this.oPlugin._oLink, "Link control created");
+			assert.equal(oMsgStrp.getLink(), this.oPlugin._oLink, "MessageStrip aggregation set correctly");
+			assert.equal(this.oPlugin._oLink.getVisible(), this.oPlugin.getMessageLinkVisible());
+			this.oPlugin._oLink.firePress();
+			assert.ok(bMessageLinkPressed, "messageLinkPressed event fired");
+
+			this.oPlugin.setMessageLinkText("Test2");
+			assert.equal(this.oPlugin.getMessageLinkText(), "Test2", "property value updated correctly");
+			assert.equal(this.oPlugin._oLink.getText(), this.oPlugin.getMessageLinkText(), "Link text updated");
+
+			this.oPlugin.setMessageLinkVisible(false);
+			assert.equal(this.oPlugin.getMessageLinkVisible(), false, "property value updated correctly");
+			assert.equal(this.oPlugin._oLink.getVisible(), this.oPlugin.getMessageLinkVisible(), "link hidden");
+
+			this.oPlugin.setMessageLinkVisible(true);
+			assert.equal(this.oPlugin.getMessageLinkVisible(), true, "property value updated correctly");
+			assert.equal(this.oPlugin._oLink.getVisible(), this.oPlugin.getMessageLinkVisible(), "link visible");
+
+			this.oPlugin.setMessageLinkText("");
+			assert.equal(this.oPlugin.getMessageLinkText(), "", "property value updated correctly");
+			assert.equal(oMsgStrp.getLink(), null, "link aggregation set to null");
+			assert.ok(this.oPlugin._oLink, "Link control available");
+
+			this.oPlugin.setMessageLinkText("Test");
+			assert.equal(this.oPlugin.getMessageLinkText(), "Test", "property value updated correctly");
+			assert.equal(oMsgStrp.getLink(), this.oPlugin._oLink, "MessageStrip aggregation set correctly");
+			assert.equal(this.oPlugin._oLink.getText(), this.oPlugin.getMessageLinkText(), "Link text updated");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Link control test when messageLinkText is set after MessageStrip is initialized", function(assert) {
+		var done = assert.async(),
+			bMessageLinkPressed = false;
+		this.oPlugin.attachEventOnce("messageLinkPressed", function() {
+			bMessageLinkPressed = true;
+		});
+		this.addMessage("Error");
+
+		this.oPromise.then(function() {
+			var oMsgStrp = this.oPlugin._oMessageStrip;
+			assert.equal(oMsgStrp.getText(), "Error");
+			assert.equal(oMsgStrp.getType(), "Error");
+			assert.notOk(this.oPlugin._oLink, "Link control not created yet");
+			assert.notOk(oMsgStrp.getLink(), "link aggreagtion not set for the MessageStrip");
+
+			this.oPlugin.setMessageLinkText("Test");
+			assert.equal(this.oPlugin.getMessageLinkText(), "Test", "property value updated correctly");
+
+			var oPromise = new Promise(function(resolve) {
+				oMsgStrp.addEventDelegate({
+					onAfterRendering: resolve
+				});
+			});
+
+			oPromise.then(function() {
+				assert.ok(this.oPlugin._oLink, "Link control created");
+				assert.equal(oMsgStrp.getLink(), this.oPlugin._oLink);
+				this.oPlugin._oLink.firePress();
+				assert.ok(bMessageLinkPressed, "messageLinkPressed event fired");
+				done();
+			}.bind(this));
+		}.bind(this));
+	});
 });

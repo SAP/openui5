@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-// Provides control sap.ui.layout.SplitPane.
 sap.ui.define(['./library', 'sap/ui/core/Element'],
 	function(library, Element) {
 	"use strict";
@@ -88,5 +87,4 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 	};
 
 	return SplitPane;
-
 });

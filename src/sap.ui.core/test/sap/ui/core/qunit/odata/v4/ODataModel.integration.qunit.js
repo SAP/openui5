@@ -13223,7 +13223,10 @@ sap.ui.define([
 	// Scenario: call filter, sort, changeParameters on a suspended ODLB
 	// JIRA: CPOUI5ODATAV4-102: call ODLB#create on a just resumed binding
 	QUnit.test("suspend/resume: call read APIs on a suspended ODLB", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "DoNotSend"}),
+		var oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "doNotSubmit"
+			}),
 			sView = '\
 <Table id="table" items="{path : \'/BusinessPartnerList\', suspended : true}">\
 	<ColumnListItem>\
@@ -14636,6 +14639,54 @@ sap.ui.define([
 			.expectChange("salesAmountCurrency", ["EUR", "EUR", "EUR", "EUR", "EUR"]);
 
 		return this.createView(assert, sView, createBusinessPartnerTestModel());
+	});
+
+	//*********************************************************************************************
+	// Scenario: Calling the API functions filter, sort, changeParameters, setAggregation on an
+	// unresolved binding are stored. As soon as the binding gets resolved and requests data
+	// they reflect inside the request.
+	// BCP: 2070187260
+	QUnit.test("API calls before binding is resolved", function (assert) {
+		var that = this;
+
+		return this.createView(assert, "", createBusinessPartnerTestModel()).then(function () {
+			var oListBinding = that.oModel.bindList("BusinessPartners");
+
+			// code under test
+			oListBinding.setAggregation({
+				aggregate : {
+					SalesNumber : {grandTotal : true}
+				},
+				group : {
+					Region : {}
+				}
+			});
+
+			// code under test
+			oListBinding.filter([
+				new Filter("Name", FilterOperator.EQ, "Foo"),
+				new Filter("SalesNumber", FilterOperator.GT, 0)
+			]);
+
+			// code under test
+			oListBinding.sort(new Sorter("Name"));
+
+			// code under test
+			oListBinding.changeParameters({custom : "foo"});
+
+			// resolve the binding to see that the API changes work
+			oListBinding.setContext(that.oModel.createBindingContext("/"));
+
+			that.expectRequest("BusinessPartners?custom=foo&$apply=filter(Name eq 'Foo')"
+				+ "/groupby((Region),aggregate(SalesNumber))/filter(SalesNumber gt 0)"
+				+ "/orderby(Name)/concat(aggregate(SalesNumber),top(99))",
+				{value : [{/* response does not matter here */}]});
+
+			return Promise.all([
+				oListBinding.requestContexts(),
+				that.waitForChanges(assert)
+			]);
+		});
 	});
 
 	//*********************************************************************************************
@@ -17768,6 +17819,9 @@ sap.ui.define([
 			that.expectChange("employeeName", null);
 
 			that.oView.byId("employeeDetails").setBindingContext(null);
+
+			// code under test (BCP: 2070187260)
+			assert.notOk(that.oView.byId("employeeDetails").getObjectBinding().hasPendingChanges());
 
 			assert.ok(oContext0.hasPendingChanges());
 			assert.throws(function () {
@@ -23682,8 +23736,14 @@ sap.ui.define([
 	// Extended with a collection-valued structural property and a collection-valued navigation
 	// property.
 	// JIRA: CPOUI5ODATAV4-221
+	// For a context of a list binding, both a refresh of the whole collection and changes to
+	// structural properties only ({"$PropertyPath":"*"}) are requested at the same time. Also, both
+	// a refresh of the whole collection and of a single item ({$NavigationPropertyPath : ""}) are
+	// requested at the same time. No duplicate requests are triggered, no errors happen.
+	// BCP: 2070206648
 	QUnit.test("requestSideEffects: path reduction", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oContext,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{path : \'/SalesOrderList(\\\'42\\\')\', parameters : {$select : \'Messages\'}}">\
 	<FlexBox binding="{}">\
@@ -23722,7 +23782,7 @@ sap.ui.define([
 			.expectChange("key", ["A"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oContext = that.oView.byId("items").getItems()[0].getBindingContext();
+			oContext = that.oView.byId("items").getItems()[0].getBindingContext();
 
 			that.expectRequest("SalesOrderList('42')?$select=Messages,Note",
 					{Note : "refreshed Note"})
@@ -23746,6 +23806,45 @@ sap.ui.define([
 					{$PropertyPath : "SOITEM_2_SO/Messages"},
 					{$PropertyPath : "SOITEM_2_SO/Note"},
 					{$NavigationPropertyPath : "SOITEM_2_SO/SO_2_SCHDL"}
+				]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=GrossAmount,ItemPosition"
+					+ ",SalesOrderID&$skip=0&$top=100", {
+					value : [
+						{GrossAmount : "10.42", ItemPosition : "0010", SalesOrderID : "42"},
+						{GrossAmount : "30.42", ItemPosition : "0030", SalesOrderID : "42"}
+					]
+				})
+				.expectChange("position", [, "0030"])
+				.expectChange("amount", ["10.42", "30.42"]);
+
+			return Promise.all([
+				// code under test
+				oContext.requestSideEffects([
+					{$PropertyPath : "*"}, // must not lead to failure (original BCP issue)
+					{$NavigationPropertyPath : "SOITEM_2_SO/SO_2_SOITEM"}
+				]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=GrossAmount,ItemPosition"
+					+ ",SalesOrderID&$skip=0&$top=100", {
+					value : [
+						{GrossAmount : "110.42", ItemPosition : "0010", SalesOrderID : "42"},
+						{GrossAmount : "130.42", ItemPosition : "0030", SalesOrderID : "42"},
+						{GrossAmount : "140.42", ItemPosition : "0040", SalesOrderID : "42"}
+					]
+				})
+				.expectChange("position", [,, "0040"])
+				.expectChange("amount", ["110.42", "130.42", "140.42"]);
+
+			return Promise.all([
+				// code under test
+				oContext.requestSideEffects([
+					{$NavigationPropertyPath : ""}, // should not trigger a duplicate request
+					{$NavigationPropertyPath : "SOITEM_2_SO/SO_2_SOITEM"}
 				]),
 				that.waitForChanges(assert)
 			]);
@@ -24668,6 +24767,20 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: For a transient entity, a text property from a *:1 related entity is updated w/o a
+	// PATCH. This must not fail, even though there is (of course) no key predicate for that related
+	// entity known (yet).
+	// BCP: 2070199671
+	QUnit.test("BCP: 2070199671", function (assert) {
+		var oModel = createTeaBusiModel({updateGroupId : "doNotSubmit"}),
+			oListBinding = oModel.bindList("/TEAMS"),
+			oTransientContext = oListBinding.create({TEAM_2_MANAGER : {}});
+
+		// code under test
+		return oTransientContext.setProperty("TEAM_2_MANAGER/TEAM_ID", "42", null);
 	});
 
 	//*********************************************************************************************

@@ -1109,7 +1109,7 @@ sap.ui.define([
 
 	QUnit.test("Test token selection with Shift and Ctrl", function(assert){
 		// arrange
-		this.t3.focus();
+		sap.ui.test.qunit.triggerEvent("tap", this.t3.getDomRef(), {target : this.t3.getDomRef()});
 
 		// act
 		sap.ui.test.qunit.triggerEvent("tap", this.t1.getDomRef(), {target : this.t1.getDomRef(), shiftKey: true});
@@ -1514,8 +1514,6 @@ sap.ui.define([
 
 		// Act
 		this.tokenizer._adjustTokensVisibility();
-		// await to set the truncation
-		this.clock.tick(500);
 
 		// Assert
 		assert.ok(oSpy.calledOnce, "Truncation function should be called once.");
@@ -1530,8 +1528,6 @@ sap.ui.define([
 
 		// Act
 		this.tokenizer._adjustTokensVisibility();
-		// await to set the truncation
-		this.clock.tick(500);
 
 		// Assert
 		oIndicator = this.tokenizer.$().find(".sapMTokenizerIndicator")[0];
@@ -1567,5 +1563,21 @@ sap.ui.define([
 		this.tokenizer.addToken(new Token({text: "test"}));
 		// Assert
 		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), false, "hasOneTruncatedToken should return false");
+	});
+
+	QUnit.test("Removes token truncation after resize", function(assert) {
+		// Arrange
+		this.tokenizer._setAdjustable(true);
+		this.tokenizer.setFirstTokenTruncated(true);
+
+		// Act
+		this.tokenizer.setMaxWidth("500px");
+
+		// Assert
+		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), false, "Token's truncation was removed.");
+
+		this.tokenizer.setMaxWidth("100px");
+
+		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), true, "Token's truncation was set again after resize.");
 	});
 });

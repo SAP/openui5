@@ -2275,7 +2275,7 @@ sap.ui.define([
 			}
 
 			callCount = 0;
-			oInput._$input.focus().val("ab").trigger("input");
+			oInput._$input.trigger("focus").val("ab").trigger("input");
 
 			setTimeout(function () {
 				assert.strictEqual(callCount, 1, "the oninput event is fired");
@@ -2320,7 +2320,7 @@ sap.ui.define([
 				}
 
 				callCount = 0;
-				oInput._$input.focus().val("ab").trigger("input");
+				oInput._$input.trigger("focus").val("ab").trigger("input");
 
 				setTimeout(function () {
 					assert.strictEqual(callCount, 1, "the oninput event is fired");
@@ -2369,7 +2369,7 @@ sap.ui.define([
 				}
 
 				callCount = 0;
-				oInput._$input.focus().val("ab").trigger("input");
+				oInput._$input.trigger("focus").val("ab").trigger("input");
 
 				setTimeout(function () {
 					assert.strictEqual(callCount, 1, "the oninput event is fired");

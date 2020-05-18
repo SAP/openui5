@@ -457,7 +457,7 @@ sap.ui.define([
 
 		// Act
 		var oRenderSpy = this.spy(oTable, "invalidate");
-		var $trigger = oTable.$("trigger").focus();
+		var $trigger = oTable.$("trigger").trigger("focus");
 		qutils.triggerKeydown($trigger, jQuery.sap.KeyCodes.SPACE);
 
 		// Assert

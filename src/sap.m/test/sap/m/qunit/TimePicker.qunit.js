@@ -2686,7 +2686,7 @@ sap.ui.define([
 		oTp.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		//focus is explicitly needed, because sending a single key ('7' - see below) does not focus the element.
-		jQuery(oTp).focus();
+		jQuery(oTp).trigger("focus");
 		this.clock.tick(1000);
 
 		//act
@@ -3436,7 +3436,7 @@ sap.ui.define([
 		// act
 		this.oTp.focus();
 		jQuery(this.oTp.getFocusDomRef()).val("11");
-		jQuery(this.oTp.getFocusDomRef()).blur();
+		jQuery(this.oTp.getFocusDomRef()).trigger("blur");
 
 		// assert
 		assert.equal(oChangeSpy.callCount, 1, "change event should be called once");
@@ -3888,7 +3888,7 @@ sap.ui.define([
 
 		//act
 		triggerMultipleKeypress(this.oTp, "09");
-		jQuery(oTp2.getFocusDomRef()).focus();
+		jQuery(oTp2.getFocusDomRef()).trigger("focus");
 
 		assert.equal(this.oSpy.callCount, 1, "changed event must be fired only once");
 
@@ -3906,8 +3906,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//act
-		jQuery(this.oTp.getFocusDomRef()).focus();
-		jQuery(oTp2.getFocusDomRef()).focus();
+		jQuery(this.oTp.getFocusDomRef()).trigger("focus");
+		jQuery(oTp2.getFocusDomRef()).trigger("focus");
 
 		assert.equal(this.oSpy.callCount, 0, "changed event must not be fired");
 

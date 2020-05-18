@@ -49,7 +49,12 @@ sap.ui.define(["sap/ui/core/library"],
 			oRm.accessibilityState(oOA, {
 				role: "link"
 			});
+			if (!oOA.getTitle() && oOA.getText()) {
+			// in case of title only or text only, allow 100% of width to be taken
+				oRm.class("sapMObjectAttributeTextOnly");
+			}
 		}
+
 
 		if (sTooltip) {
 			oRm.attr("title", sTooltip);

@@ -15,6 +15,9 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 		/**
 		 * Creates a view and puts it in an aggregation of a control that has been defined in the {@link #constructor}.
 		 *
+		 * This method can be used to display a target without changing the browser hash. If the browser hash should be changed,
+		 *  the {@link sap.ui.core.routing.Router#navTo} method should be used instead
+		 *
 		 * @param {*} [vData] an object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
 		 * @returns {object} The place info
 		 * @private

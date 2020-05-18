@@ -86,7 +86,7 @@ sap.ui.define([
 			bOk;
 
 		// Act
-		$oAvatar.focus();
+		$oAvatar.trigger("focus");
 		sOffset = $oAvatar.css("outline-offset");
 		bOk = sOffset === "0px" || sOffset === undefined; // IE does not support outline-offset
 

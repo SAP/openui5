@@ -1067,7 +1067,7 @@ sap.ui.define([
 		}
 
 		if (this.sDeletedItemId) {
-			jQuery(document.activeElement).blur();
+			jQuery(document.activeElement).trigger("blur");
 		}
 
 		// This function checks if instantUpload needs to be set. In case of the properties like fileType are set by the
@@ -1091,11 +1091,11 @@ sap.ui.define([
 					if ($oEditBox) {
 						var sId = this.editModeItem;
 						if (!Device.os.ios) {
-							$oEditBox.focus(function() {
+							$oEditBox.on("focus", function() {
 								$oEditBox.selectText(0, $oEditBox.val().length);
 							});
 						}
-						$oEditBox.focus();
+						$oEditBox.trigger("focus");
 						this._oListEventDelegate = {
 							onclick: function(event) {
 								this._handleClick(event, sId);
@@ -1192,17 +1192,17 @@ sap.ui.define([
 
 		// bind events on body element
 		this._$RootNode = jQuery(document.body);
-		this._$RootNode.bind("dragenter", this._oDragDropHandler.dragEnterUIArea);
-		this._$RootNode.bind("dragleave", this._oDragDropHandler.dragLeaveUIArea);
-		this._$RootNode.bind("dragover", this._oDragDropHandler.dragOverUIArea);
-		this._$RootNode.bind("drop", this._oDragDropHandler.dropOnUIArea);
+		this._$RootNode.on("dragenter", this._oDragDropHandler.dragEnterUIArea);
+		this._$RootNode.on("dragleave", this._oDragDropHandler.dragLeaveUIArea);
+		this._$RootNode.on("dragover", this._oDragDropHandler.dragOverUIArea);
+		this._$RootNode.on("drop", this._oDragDropHandler.dropOnUIArea);
 
 		// bind events on UploadCollection
 		this._$DragDropArea = this.$("drag-drop-area");
-		this.$().bind("dragenter", this._oDragDropHandler.dragEnterUploadCollection);
-		this.$().bind("dragleave", this._oDragDropHandler.dragLeaveUploadCollection);
-		this.$().bind("dragover", this._oDragDropHandler.dragOverUploadCollection);
-		this.$().bind("drop", this._oDragDropHandler.dropOnUploadCollection);
+		this.$().on("dragenter", this._oDragDropHandler.dragEnterUploadCollection);
+		this.$().on("dragleave", this._oDragDropHandler.dragLeaveUploadCollection);
+		this.$().on("dragover", this._oDragDropHandler.dragOverUploadCollection);
+		this.$().on("drop", this._oDragDropHandler.dropOnUploadCollection);
 	};
 
 	/**
@@ -1215,15 +1215,15 @@ sap.ui.define([
 			return;
 		}
 		if (this._$RootNode) {
-			this._$RootNode.unbind("dragenter", this._oDragDropHandler.dragEnterUIArea);
-			this._$RootNode.unbind("dragleave", this._oDragDropHandler.dragLeaveUIArea);
-			this._$RootNode.unbind("dragover", this._oDragDropHandler.dragOverUIArea);
-			this._$RootNode.unbind("drop", this._oDragDropHandler.dropOnUIArea);
+			this._$RootNode.off("dragenter", this._oDragDropHandler.dragEnterUIArea);
+			this._$RootNode.off("dragleave", this._oDragDropHandler.dragLeaveUIArea);
+			this._$RootNode.off("dragover", this._oDragDropHandler.dragOverUIArea);
+			this._$RootNode.off("drop", this._oDragDropHandler.dropOnUIArea);
 		}
-		this.$().unbind("dragenter", this._oDragDropHandler.dragEnterUploadCollection);
-		this.$().unbind("dragleave", this._oDragDropHandler.dragLeaveUploadCollection);
-		this.$().unbind("dragover", this._oDragDropHandler.dragOverUploadCollection);
-		this.$().unbind("drop", this._oDragDropHandler.dropOnUploadCollection);
+		this.$().off("dragenter", this._oDragDropHandler.dragEnterUploadCollection);
+		this.$().off("dragleave", this._oDragDropHandler.dragLeaveUploadCollection);
+		this.$().off("dragover", this._oDragDropHandler.dragOverUploadCollection);
+		this.$().off("drop", this._oDragDropHandler.dropOnUploadCollection);
 	};
 
 	/**
@@ -1418,7 +1418,7 @@ sap.ui.define([
 					// Other ones can be hidden.
 					if (this._oHeaderToolbar.getContent()[i] instanceof FileUploader) {
 						if (i === this._iFileUploaderPH && this._bFocusFileUploader) {
-							this._oHeaderToolbar.getContent()[i].$().find("button").focus();
+							this._oHeaderToolbar.getContent()[i].$().find("button").trigger("focus");
 						} else {
 							this._oHeaderToolbar.getContent()[i].$().hide();
 						}
@@ -3065,7 +3065,7 @@ sap.ui.define([
 	 * @private
 	 */
 	UploadCollection.prototype._setFocusToLineItem = function(itemId) {
-		jQuery(document.getElementById(itemId)).focus();
+		jQuery(document.getElementById(itemId)).trigger("focus");
 	};
 
 	/**

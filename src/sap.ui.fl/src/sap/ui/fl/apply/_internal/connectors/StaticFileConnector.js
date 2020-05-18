@@ -3,13 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/base/util/merge",
-	"sap/ui/fl/apply/connectors/BaseConnector",
 	"sap/base/Log",
 	"sap/base/util/LoaderExtensions"
 ], function(
-	merge,
-	BaseConnector,
 	Log,
 	LoaderExtensions
 ) {
@@ -38,11 +34,12 @@ sap.ui.define([
 	 * Connector for requesting flexibility data gereneated as part of the applications build step.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.connectors.StaticFileConnector
+	 * @implements {sap.ui.fl.interfaces.BaseApplyConnector}
 	 * @since 1.67
 	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal.Storage
 	 */
-	var StaticFileConnector = merge({}, BaseConnector, /** sap.ui.fl.apply._internal.connectors.StaticFileConnector */ {
+	return {
 		/**
 		 * Provides the flex data stored in the built flexibility- or changes-bundle JSON file.
 		 *
@@ -76,7 +73,5 @@ sap.ui.define([
 
 			return Promise.resolve();
 		}
-	});
-
-	return StaticFileConnector;
-}, true);
+	};
+});

@@ -43,7 +43,7 @@
 		demandPane: true
 	})
 
-	oResponsiveSplitter = new sap.ui.layout.ResponsiveSplitter("responsiveSplitter", {
+	var oResponsiveSplitter = new sap.ui.layout.ResponsiveSplitter("responsiveSplitter", {
 		defaultPane: "defaultPane",
 		rootPaneContainer: [
 			new sap.ui.layout.PaneContainer({
@@ -176,12 +176,12 @@
 	// });
 
 	oResponsiveSplitter.placeAt("content");
-	
+
 	// oResponsiveSplitter1.placeAt("content");
 
 	</script>
 </head>
-<body>
+<body class="sapUiBody">
 	<div id = "content"></div>
 </body>
 </html>

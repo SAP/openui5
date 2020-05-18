@@ -289,11 +289,27 @@
 				]
 			});
 
+			var oIconTabBarWithIcons = new sap.m.IconTabBar({
+				items: [
+					new sap.m.IconTabFilter({
+						icon: "sap-icon://home",
+						text: 'TymgggYMym',
+						count: '1'
+					}),
+					new sap.m.IconTabFilter({
+						icon: "sap-icon://home",
+						text: 'Tymgggy',
+						count: '2'
+					})
+				]
+			});
+
 			var oPage = new sap.m.Page("page", {
 				showHeader: false,
 				content: [
 					oShellBar,
-					oIconTabBar
+					oIconTabBar,
+					oIconTabBarWithIcons
 				]
 			}).addStyleClass('sapUshellShell');
 

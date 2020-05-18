@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	'sap/ui/core/delegate/ItemNavigation',
 	'./IconTabBarDragAndDropUtil',
+	'sap/ui/core/dnd/DropPosition',
 	'./IconTabBarSelectListRenderer',
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -17,6 +18,7 @@ sap.ui.define([
 	Core,
 	ItemNavigation,
 	IconTabBarDragAndDropUtil,
+	DropPosition,
 	IconTabBarSelectListRenderer,
 	jQuery
 ) {
@@ -47,7 +49,7 @@ sap.ui.define([
 			/**
 			 * The items displayed in the list.
 			 */
-			items : {type : "sap.m.IconTabFilter", multiple : true, singularName : "item", dnd : true}
+			items : {type : "sap.m.IconTab", multiple : true, singularName : "item", dnd : true}
 		},
 		events: {
 			/**
@@ -101,6 +103,7 @@ sap.ui.define([
 		if (!this._oIconTabHeader) {
 			return;
 		}
+		this.destroyDragDropConfig();
 		this._setsDragAndConfiguration();
 	};
 
@@ -118,11 +121,8 @@ sap.ui.define([
 	 * @private
 	 */
 	IconTabBarSelectList.prototype._setsDragAndConfiguration = function () {
-		if (!this._oIconTabHeader.getEnableTabReordering() && this.getDragDropConfig().length) {
-			//Destroying Drag&Drop aggregation
-			this.destroyDragDropConfig();
-		} else if (this._oIconTabHeader.getEnableTabReordering() && !this.getDragDropConfig().length) {
-			IconTabBarDragAndDropUtil.setDragDropAggregations(this, "Vertical");
+		if (this._oIconTabHeader.getEnableTabReordering() && !this.getDragDropConfig().length) {
+			IconTabBarDragAndDropUtil.setDragDropAggregations(this, "Vertical", this._oIconTabHeader._getDropPosition());
 		}
 	};
 
@@ -172,6 +172,17 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Returns all IconTabFilters marked as visible.
+	 * @private
+	 * @returns {sap.m.IconTabFilter[]} Array of visible tab filters.
+	 */
+	IconTabBarSelectList.prototype.getVisibleTabFilters = function () {
+		return this.getVisibleItems().filter(function (oItem) {
+			return oItem.isA("sap.m.IconTabFilter");
+		});
+	};
+
 	IconTabBarSelectList.prototype.setSelectedItem = function (item) {
 		this._selectedItem = item;
 	};
@@ -185,23 +196,25 @@ sap.ui.define([
 	 * @private
 	 */
 	IconTabBarSelectList.prototype.ontap = function (oEvent) {
-		var $target = jQuery(oEvent.target);
+		var oTappedItem = oEvent.srcControl;
 
-		if (!$target.hasClass("sapMITBSelectItem")) {
-			$target = $target.parent(".sapMITBSelectItem");
+		if (!oTappedItem) {
+			return;
 		}
 
-		var oFilter = Core.byId($target[0].id);
+		if (!oTappedItem.isA("sap.m.IconTabFilter")) {
+			return;
+		}
 
-		if (!oFilter || this._oIconTabHeader._isUnselectable(oFilter)) {
+		if (this._oIconTabHeader._isUnselectable(oTappedItem)) {
 			return;
 		}
 
 		oEvent.preventDefault();
 
-		if (oFilter != this.getSelectedItem()) {
+		if (oTappedItem != this.getSelectedItem()) {
 			this.fireSelectionChange({
-				selectedItem: oFilter
+				selectedItem: oTappedItem
 			});
 		}
 
@@ -216,9 +229,7 @@ sap.ui.define([
 	 * @returns {boolean} Flag indicating if all items are without text or count.
 	 */
 	IconTabBarSelectList.prototype.checkIconOnly = function () {
-		var aItems = this.getVisibleItems();
-
-		this._bIconOnly = aItems.every(function (oItem) {
+		this._bIconOnly = this.getVisibleTabFilters().every(function (oItem) {
 			return !oItem.getText() && !oItem.getCount();
 		});
 
@@ -244,7 +255,7 @@ sap.ui.define([
 			oContext = this._oIconTabHeader;
 		}
 
-		if (sDropPosition === "On") {
+		if (sDropPosition === DropPosition.On) {
 			oContext = oDroppedControl._getRealTab();
 		}
 
@@ -256,7 +267,7 @@ sap.ui.define([
 		this._oTabFilter._setSelectListItems();
 		this._initItemNavigation();
 
-		oDroppedControl._getRealTab().getParent().$().focus();
+		oDroppedControl._getRealTab().getParent().$().trigger("focus");
 	};
 
 	/* =========================================================== */
@@ -279,7 +290,7 @@ sap.ui.define([
 
 		IconTabBarDragAndDropUtil.moveItem.call(this, oTabToBeMoved, iKeyCode, this.getItems().length - 1);
 		this._initItemNavigation();
-		oTabToBeMoved.$().focus();
+		oTabToBeMoved.$().trigger("focus");
 
 		if (iIndexBeforeMove !== this.indexOfItem(oTabToBeMoved)) {
 			this._oIconTabHeader._moveTab(oTabToBeMoved._getRealTab(), iKeyCode, this._oIconTabHeader.getItems().length - 1);

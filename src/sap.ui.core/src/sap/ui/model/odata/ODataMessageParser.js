@@ -14,20 +14,17 @@ sap.ui.define([
 	function(ODataUtils, coreLibrary, URI, MessageParser, Message, Log, jQuery) {
 	"use strict";
 
-// shortcuts for enums
-var MessageType = coreLibrary.MessageType;
-
-/**
- * This map is used to translate back-end response severity values to the values defined in the
- * enumeration sap.ui.core.MessageType
- * @see sap.ui.core.ValueState
- */
-var mSeverityMap = {
-	"error":   MessageType.Error,
-	"warning": MessageType.Warning,
-	"success": MessageType.Success,
-	"info":    MessageType.Information
-};
+var sClassName = "sap.ui.model.odata.ODataMessageParser",
+	// shortcuts for enums
+	MessageType = coreLibrary.MessageType,
+	// This map is used to translate back-end response severity values to the values defined in the
+	// enumeration sap.ui.core.MessageType
+	mSeverity2MessageType = {
+		"error" : MessageType.Error,
+		"info" : MessageType.Information,
+		"success" : MessageType.Success,
+		"warning" : MessageType.Warning
+	};
 
 /**
  * A plain error object as returned by the server. Either "@sap-severity"- or "severity"-property
@@ -301,7 +298,7 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 		});
 		if (bStateMessages) {
 			Log.error("Unexpected non-persistent message in response, but requested only "
-				+ "transition messages", undefined, "sap.ui.model.odata.ODataMessageParser");
+				+ "transition messages", undefined, sClassName);
 		}
 	} else {
 		mAffectedTargets = this._getAffectedTargets(aMessages, mRequestInfo, mGetEntities,
@@ -344,62 +341,46 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 };
 
 /**
- * Creates an sap.ui.core.message.Message from the given JavaScript object
+ * Creates a <code>sap.ui.core.message.Message</code> from the given JavaScript object parsed from a
+ * server response. Since 1.78.0 unbound non-technical messages are supported if the message scope
+ * for the request is <code>BusinessObject</code>.
  *
- * @param {ODataMessageParser~ServerError} oMessageObject - The object containing the message data
- * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
- * @param {boolean} bIsTechnical - Whether this is a technical error (like 404 - not found)
- * @return {sap.ui.core.message.Message} The message for the given error
+ * @param {ODataMessageParser~ServerError} oMessageObject
+ *   The object containing the message data
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo
+ *   Info object about the request and the response; both properties <code>request</code> and
+ *   <code>response</code> of <code>mRequestInfo</code> are mandatory
+ * @param {boolean} bIsTechnical
+ *   Whether the given message object is a technical error (like 404 - not found)
+ * @return {sap.ui.core.message.Message}
+ *   The message for the given error
  */
-ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestInfo, bIsTechnical) {
-	var sType = oMessageObject["@sap.severity"]
-		? oMessageObject["@sap.severity"]
-		: oMessageObject["severity"];
-	// Map severity value to value defined in sap.ui.core.ValueState, use actual value if not found
-	sType = mSeverityMap[sType] ? mSeverityMap[sType] : sType;
+ODataMessageParser.prototype._createMessage = function (oMessageObject, mRequestInfo,
+		bIsTechnical) {
+	var bPersistent = oMessageObject.target && oMessageObject.target.indexOf("/#TRANSIENT#") === 0
+			|| oMessageObject.transient
+			|| oMessageObject.transition,
+		sText = typeof oMessageObject.message === "object"
+			? oMessageObject.message.value
+			: oMessageObject.message,
+		sType = oMessageObject["@sap.severity"] || oMessageObject.severity;
 
-	var sCode = oMessageObject.code ? oMessageObject.code : "";
-
-	var sText = typeof oMessageObject["message"] === "object" && oMessageObject["message"]["value"]
-		? oMessageObject["message"]["value"]
-		: oMessageObject["message"];
-
-	var sDescriptionUrl = oMessageObject.longtext_url ? oMessageObject.longtext_url : "";
-
-	var bPersistent = false;
-	if (!oMessageObject.target && oMessageObject.propertyref) {
-		oMessageObject.target = oMessageObject.propertyref;
-	}
-	// propertyRef is deprecated and should not be used if a target is specified
-	if (typeof oMessageObject.target === "undefined") {
-		oMessageObject.target = "";
-	}
-
-	if (oMessageObject.target.indexOf("/#TRANSIENT#") === 0) {
-		bPersistent = true;
-		oMessageObject.target = oMessageObject.target.substr(12);
-	} else if (oMessageObject.transient) {
-		bPersistent = true;
-	} else if (oMessageObject.transition) {
-		bPersistent = true;
-	}
-
-	this._createTarget(oMessageObject, mRequestInfo);
+	this._createTarget(oMessageObject, mRequestInfo, bIsTechnical);
 
 	return new Message({
-		type:      sType,
-		code:      sCode,
-		message:   sText,
-		descriptionUrl: sDescriptionUrl,
-		target:    ODataUtils._normalizeKey(oMessageObject.canonicalTarget),
-		processor: this._processor,
-		technical: bIsTechnical,
-		persistent: bPersistent,
-		fullTarget: oMessageObject.deepPath,
-		technicalDetails: {
-			statusCode: mRequestInfo.response.statusCode,
-			headers: mRequestInfo.response.headers
-		}
+		code : oMessageObject.code || "",
+		descriptionUrl : oMessageObject.longtext_url || "",
+		fullTarget : oMessageObject.deepPath,
+		message : sText,
+		persistent : bPersistent,
+		processor : this._processor,
+		target : oMessageObject.target,
+		technical : bIsTechnical,
+		technicalDetails : {
+			headers : mRequestInfo.response.headers,
+			statusCode : mRequestInfo.response.statusCode
+		},
+		type : mSeverity2MessageType[sType] || sType
 	});
 };
 
@@ -488,6 +469,31 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
 	return sTarget;
 };
 
+/**
+ * Whether the given response is the response for a successful entity creation.
+ *
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo
+ *   A map containing information about the current request
+ * @return {boolean|undefined}
+ *   <code>true</code> if the response is for a successful creation and the response header has a
+ *   "location" property, <code>false</code> if the response is an error response for a failed
+ *   creation, and <code>undefined</code> otherwise.
+ *
+ * @private
+ */
+ODataMessageParser._isResponseForCreate = function (mRequestInfo) {
+	var oRequest = mRequestInfo.request,
+		oResponse = mRequestInfo.response;
+
+	if (oRequest.method === "POST" && oResponse.statusCode == 201
+			&& oResponse.headers["location"]) {
+		return true;
+	}
+	if (oRequest.key && oRequest.created && oResponse.statusCode >= 400) {
+		return false;
+	}
+	// return undefined; otherwise
+};
 
 /**
  * Determines the absolute target URL (relative to the service URL) from the given message object
@@ -504,9 +510,33 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
  *   The object containing the message data
  * @param {ODataMessageParser~RequestInfo} mRequestInfo
  *   A map containing information about the current request
+ * @param {boolean} bIsTechnical - Whether this is a technical error (like 404 - not found)
  * @private
  */
-ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestInfo) {
+ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestInfo, bIsTechnical) {
+	var bCreate, sUrlForTargetCalculation;
+
+	if (oMessageObject.propertyref !== undefined && oMessageObject.target !== undefined) {
+		Log.warning("Used the message's 'target' property for target calculation; the property"
+			+ " 'propertyref' is deprecated and must not be used together with 'target'",
+			mRequestInfo.url, sClassName);
+	} else if (oMessageObject.target === undefined) {
+		oMessageObject.target = oMessageObject.propertyref;
+	}
+	if (oMessageObject.target === undefined && !bIsTechnical
+			&& mRequestInfo.request.headers["sap-message-scope"] === "BusinessObject") {
+		oMessageObject.deepPath = "";
+		oMessageObject.target = "";
+
+		return;
+	}
+	if (oMessageObject.target === undefined) {
+		oMessageObject.target = "";
+	}
+	if (oMessageObject.target.indexOf("/#TRANSIENT#") === 0) {
+		oMessageObject.target = oMessageObject.target.substr(12);
+	}
+
 	var sTarget = oMessageObject.target;
 	var sDeepPath = "";
 
@@ -515,18 +545,12 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 
 		// special case for 201 POST requests which create a resource
 		// The target is a relative resource path segment that can be appended to the Location response header (for POST requests that create a new entity)
-		var sMethod = (mRequestInfo.request && mRequestInfo.request.method) ? mRequestInfo.request.method : "GET";
-		var bRequestCreatePost = (sMethod === "POST"
-			&& mRequestInfo.response
-			&& mRequestInfo.response.statusCode == 201
-			&& mRequestInfo.response.headers
-			&& mRequestInfo.response.headers["location"]);
+		var sMethod = mRequestInfo.request.method || "GET";
+		bCreate = ODataMessageParser._isResponseForCreate(mRequestInfo);
 
-		var sUrlForTargetCalculation;
-		if (bRequestCreatePost) {
+		if (bCreate === true) { // successful create
 			sUrlForTargetCalculation = mRequestInfo.response.headers["location"];
-		} else if (mRequestInfo.request && mRequestInfo.request.key && mRequestInfo.request.created && mRequestInfo.response && mRequestInfo.response.statusCode >= 400) {
-			// If a create request returns an error the target should be set to the internal entity key
+		} else if (bCreate === false) { // failed create
 			sUrlForTargetCalculation = mRequestInfo.request.key;
 		} else {
 			sUrlForTargetCalculation = mRequestInfo.url;
@@ -543,8 +567,8 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 			sRequestTarget = "/" + sUrl;
 		}
 
-		// function import case
-		if (!bRequestCreatePost) {
+		// function import case; bCreate === false might also be a function import call
+		if (!bCreate) {
 			var mFunctionInfo = this._metadata._getFunctionImportMetadata(sRequestTarget, sMethod);
 
 			if (mFunctionInfo) {
@@ -559,7 +583,7 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 		var iSlashPos = sRequestTarget.lastIndexOf("/");
 		var sRequestTargetName = iSlashPos > -1 ? sRequestTarget.substr(iSlashPos) : sRequestTarget;
 
-		if (!sDeepPath && mRequestInfo.request && mRequestInfo.request.deepPath){
+		if (!sDeepPath && mRequestInfo.request.deepPath){
 			sDeepPath = mRequestInfo.request.deepPath;
 		}
 		if (sRequestTargetName.indexOf("(") > -1) {
@@ -590,6 +614,7 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 		oMessageObject.deepPath
 			= this._metadata._getReducedPath(sDeepPath || oMessageObject.canonicalTarget);
 	}
+	oMessageObject.target = ODataUtils._normalizeKey(oMessageObject.canonicalTarget);
 };
 
 /**

@@ -1,0 +1,18 @@
+/* ==================================== */
+/* CSS for control sap.ui.commons/Link  */
+/* Quartz High Contrast Black theme     */
+/* ==================================== */
+
+.sapUiLnk,
+.sapUiLnkDsbl {
+	text-decoration: underline;
+	font-size: @sapUiDesktopFontSize;
+}
+.sapUiLnk:hover {
+	text-decoration: none;
+}
+
+html[data-sap-ui-browser^="ie"] .sapUiTableDataCell > .sapUiTableCellInner > .sapUiLnk:focus:before,
+html[data-sap-ui-browser^="ed"] .sapUiTableDataCell > .sapUiTableCellInner > .sapUiLnk:focus:before {
+	border-width: 2px;
+}

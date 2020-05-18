@@ -1,13 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/qunit/odata/data/ODataAnnotationsFakeService",
 	"sap/ui/model/odata/ODataModel",
-	"sap/ui/model/odata/v2/ODataModel",
-	'sap/ui/Device'
+	"sap/ui/model/odata/v2/ODataModel"
 ], function(
 	fakeService,
 	V1ODataModel,
-	V2ODataModel,
-	Device
+	V2ODataModel
 ) {
 	"use strict";
 
@@ -430,11 +428,7 @@ sap.ui.define([
 		mModelOptions.loadMetadataAsync = false;
 		mModelOptions.skipMetadataAnnotationParsing = true;
 
-		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-		//  ==> PhantomJS doesn't fail when loading malformed XML!
-		if (!Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
-			QUnit.test(sTestType, fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid));
-		}
+		QUnit.test(sTestType, fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid));
 	}
 
 	QUnit.module("Asynchronous loading");
@@ -573,14 +567,10 @@ sap.ui.define([
 
 		jQuery.sap.log.debug("testtype: " + sTestType);
 
-		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-		//  ==> PhantomJS doesn't fail when loading malformed XML!
-		if (!Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
-			QUnit.test(
-				"Asynchronous loading - " + sTestType,
-				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
-			);
-		}
+		QUnit.test(
+			"Asynchronous loading - " + sTestType,
+			fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
+		);
 	}
 
 	QUnit.module("V2: Asynchronous loading");
@@ -719,14 +709,10 @@ sap.ui.define([
 
 		jQuery.sap.log.debug("testtype: " + sTestType);
 
-		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-		//  ==> PhantomJS doesn't fail when loading malformed XML!
-		if (!Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
-			QUnit.test(
-				"Asynchronous loading - " + sTestType,
-				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
-			);
-		}
+		QUnit.test(
+			"Asynchronous loading - " + sTestType,
+			fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
+		);
 	}
 
 
@@ -873,14 +859,10 @@ sap.ui.define([
 			(bSharedMetadata ?  "/Shared Metadata" : "") +
 			")";
 
-		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-		//  ==> PhantomJS doesn't fail when loading malformed XML!
-		if (!Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
-			QUnit.test(
-				"Asynchronous loading (joined events) - " + sTestType,
-				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
-			);
-		}
+		QUnit.test(
+			"Asynchronous loading (joined events) - " + sTestType,
+			fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid)
+		);
 	}
 
 
@@ -1030,13 +1012,9 @@ sap.ui.define([
 			(bSharedMetadata ?  "/Shared Metadata" : "") +
 			")";
 
-		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-		//  ==> PhantomJS doesn't fail when loading malformed XML!
-		if (!Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
-			QUnit.test(
-				"Asynchronous loading (joined events) - " + sTestType,
-				fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid));
-		}
+		QUnit.test(
+			"Asynchronous loading (joined events) - " + sTestType,
+			fnTest(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid));
 	}
 
 
@@ -1097,11 +1075,7 @@ sap.ui.define([
 
 		var mTest = mAdditionalTestsServices["Joined Loading with automated $metadata parsing"];
 
-		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-		//  ==> PhantomJS doesn't fail when loading malformed XML!
-		if (!Device.browser.phantomJS || (bServiceValid && bAnnotationsValid)) {
-			QUnit.test("V1 only: Synchronous Metadata loading and Metamodel - " + sTestType, fnTestSynchronousLoading.bind(this, aServices[i]));
-		}
+		QUnit.test("V1 only: Synchronous Metadata loading and Metamodel - " + sTestType, fnTestSynchronousLoading.bind(this, aServices[i]));
 	}
 
 

@@ -159,7 +159,7 @@ sap.ui.define([
 			preventScroll: !this._debugZoomAndScroll,
 			rootId: this.getId()
 		});
-		jQuery(window).bind("resize", jQuery.proxy(this._handleOrientationChange, this));
+		jQuery(window).on("resize", jQuery.proxy(this._handleOrientationChange, this));
 	};
 
 
@@ -197,7 +197,7 @@ sap.ui.define([
 	 * @private
 	 */
 	App.prototype.exit = function() {
-		jQuery(window).unbind("resize", this._handleOrientationChange);
+		jQuery(window).off("resize", this._handleOrientationChange);
 
 		if (this._sInitTimer) {
 			clearTimeout(this._sInitTimer);

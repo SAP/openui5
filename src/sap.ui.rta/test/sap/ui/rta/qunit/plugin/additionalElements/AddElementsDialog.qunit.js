@@ -37,7 +37,7 @@ sap.ui.define([
 				selected: true,
 				label: "label3",
 				tooltip: "tooltip3",
-				referencedComplexPropertyName: "complexPropName",
+				parentPropertyName: "complexPropName",
 				name: "field3",
 				type: "odata"
 			},
@@ -45,8 +45,8 @@ sap.ui.define([
 				selected: false,
 				label: "label4",
 				tooltip: "tooltip4",
-				referencedComplexPropertyName: "duplicateComplexPropName",
-				duplicateComplexName: true,
+				parentPropertyName: "duplicateComplexPropName",
+				duplicateName: true,
 				name: "field4",
 				type: "odata"
 			},
@@ -164,7 +164,7 @@ sap.ui.define([
 			this.oAddElementsDialog.open();
 		});
 
-		QUnit.test("when AddElementsDialog gets initialized with customFieldsEnabled set and three Bussiness Contexts are available", function(assert) {
+		QUnit.test("when AddElementsDialog gets initialized with customFieldsEnabled set and three Business Contexts are available", function(assert) {
 			var done = assert.async();
 
 			this.oAddElementsDialog = createDialog(true);
@@ -260,7 +260,7 @@ sap.ui.define([
 				assert.equal(this._oList.getItems().length, 6, "then after clearing 6 entries are there");
 				this._updateModelFilter({getParameter: function() {return "complex";}});
 				assert.equal(this._oList.getItems().length, 1, "when filtering for 'complex' then 1 entry is shown");
-				assert.equal(this._oList.getItems()[0].getContent()[0].getItems()[0].getText(), "label4 (duplicateComplexPropName)", "then only label4 where complex is part of the label (duplicateComplexName)");
+				assert.equal(this._oList.getItems()[0].getContent()[0].getItems()[0].getText(), "label4 (duplicateComplexPropName)", "then only label4 where complex is part of the label (duplicateName)");
 				this._updateModelFilter({getParameter: function() {return null;}});
 				this._updateModelFilter({getParameter: function() {return "orig";}});
 				assert.equal(this._oList.getItems().length, 1, "when filtering for 'orig' then 1 entry is shown");

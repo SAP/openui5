@@ -112,6 +112,7 @@ sap.ui.define([
 				oRm.openStart("div");
 				oRm.class("sapMSPCMonthDays");
 				oRm.class("sapMSPCMonthDaysMax" + iWeekMaxAppCount);
+				oRm.attr("role", "row");
 				oRm.openEnd();
 
 				for (j = 0; j < iColumns; j++) {
@@ -123,6 +124,7 @@ sap.ui.define([
 				oRm.openStart("div");
 				oRm.class("sapMSinglePCBlockers");
 				oRm.class("sapUiCalendarRowVisFilled");
+				oRm.attr("role", "list" );
 				oRm.openEnd();
 
 				for (j = 0; j < iColumns; j++) {
@@ -152,6 +154,7 @@ sap.ui.define([
 
 			oRm.openStart("div");
 			oRm.class("sapMSPCMonthDay");
+			oRm.attr("role", "gridcell");
 
 			if (CalendarUtils._isWeekend(oDay, oLocaleData)) {
 				oRm.class("nonWorkingTimeframe");
@@ -230,13 +233,13 @@ sap.ui.define([
 				sIcon = oAppointment.getIcon(),
 				sId = oAppointment.getId(),
 				mAccProps = {
-					role: "gridcell",
+					role: "listitem",
 					labelledby: {
 						value: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT"),
 						append: true
 					},
-					// Setting aria-selected attribute to all blockers
-					selected: !!oAppointment.getSelected()
+					// Prevents aria-selected from being added on the appointment
+					selected: null
 				},
 				// aAriaLabels = oControl.getAriaLabelledBy(),
 				iRight = iColumns - iColumn - iWidth,
@@ -259,6 +262,10 @@ sap.ui.define([
 
 			if (oAppointment.getTentative()) {
 				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_TENTATIVE");
+			}
+
+			if (oAppointment.getSelected()) {
+				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 			}
 
 			oRm.openStart("div", oAppointment);

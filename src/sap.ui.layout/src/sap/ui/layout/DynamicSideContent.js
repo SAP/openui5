@@ -158,6 +158,7 @@ sap.ui.define([
 				}
 			},
 			aggregations : {
+
 				/**
 				 * Main content controls.
 				 */
@@ -447,22 +448,31 @@ sap.ui.define([
 		DynamicSideContent.prototype.getScrollDelegate = function (oControl) {
 			var oControlInQuestion = oControl,
 				oContainerOfDSC = this.getParent(),
-				sBreakpoint = this._getBreakPointFromWidth();
+				sBreakpoint = this._getBreakPointFromWidth(),
+				bMCVisible = this.getShowMainContent() && this._MCVisible,
+				bSCVisible = this.getShowSideContent() && this._SCVisible;
 
 			//for cases with main and side content - one above the other - use the scroll delegate of the parent container
 			if (sBreakpoint && sBreakpoint !== L && sBreakpoint !== XL ) {
-				while (!oContainerOfDSC.getScrollDelegate()) {
-					oContainerOfDSC = oContainerOfDSC.getParent();
+				// check whether the control is in visible aggregation; if not - don't get its scrollDelegate
+				if (oControlInQuestion &&
+				   ((oControlInQuestion.sParentAggregationName === "sideContent" && !bSCVisible) ||
+				   (oControlInQuestion.sParentAggregationName === "mainContent" && !bMCVisible)) ){
+					return;
+				} else {
+					while (oContainerOfDSC && (!oContainerOfDSC.getScrollDelegate || !oContainerOfDSC.getScrollDelegate())) {
+						oContainerOfDSC = oContainerOfDSC.getParent();
+					}
+					return oContainerOfDSC.getScrollDelegate();
 				}
-				return oContainerOfDSC.getScrollDelegate();
 			}
 
 			if (this._oMCScroller && this._oSCScroller) {
-				while (oControlInQuestion.getId() !== this.getId()) {
-					if (oControlInQuestion.sParentAggregationName === "mainContent") {
+				while (oControlInQuestion && oControlInQuestion.getId() !== this.getId()) {
+					if (oControlInQuestion.sParentAggregationName === "mainContent" && bMCVisible) {
 						return this._oMCScroller;
 					}
-					if (oControlInQuestion.sParentAggregationName === "sideContent") {
+					if (oControlInQuestion.sParentAggregationName === "sideContent" && bSCVisible) {
 						return this._oSCScroller;
 					}
 					oControlInQuestion = oControlInQuestion.getParent();
@@ -499,6 +509,7 @@ sap.ui.define([
 				sMainContentId = sControlId + "-" + MC_GRID_CELL_SELECTOR;
 
 			if (!this._oSCScroller && !this._oMCScroller) {
+				var ScrollEnablement = sap.ui.requireSync("sap/ui/core/delegate/ScrollEnablement");
 				this._oSCScroller = new ScrollEnablement(this, null, {
 					scrollContainerId: sSideContentId,
 					horizontal: false,

@@ -629,12 +629,8 @@ sap.ui.define([
 	};
 
 	for (var i = 0; i < aServices.length; ++i) {
-		if (aServices[i].serviceValid && aServices[i].annotations) {
-			// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-			//  ==> PhantomJS doesn't fail when loading malformed XML!
-			if (!Device.browser.phantomJS || (aServices[i].serviceValid && aServices[i].annotationsValid !== "none")) {
-				QUnit.test("Annotations - Service Case: " + aServices[i].name, fnTestModelLoading.bind(undefined, aServices[i]));
-			}
+		if (aServices[i].serviceValid && aServices[i].annotations ) {
+			QUnit.test("Annotations - Service Case: " + aServices[i].name, fnTestModelLoading.bind(undefined, aServices[i]));
 		}
 	}
 
@@ -731,13 +727,7 @@ sap.ui.define([
 						type: "xml",
 						xml: "I am not valid XML"
 					}).then(function() {
-						// This is a phantomJS bug...
-						assert.ok(!!Device.browser.phantomJS, "Adding sources with invalid XML content should not be successful");
-
-						if (Device.browser.phantomJS) {
-							throw "Continue in catch block";
-						}
-
+						assert.ok(false, "Adding sources with invalid XML content should not be successful");
 					}).catch(function() {
 						assert.ok(true, "Adding sources with invalid XML content should lead to an error");
 
@@ -745,13 +735,7 @@ sap.ui.define([
 							type: "xml",
 							document: { invalid: "I ain't no XML document..." }
 						}).then(function() {
-							// This is a phantomJS bug...
-							assert.ok(!!Device.browser.phantomJS, "Adding sources with invalid XML content should not be successful");
-
-							if (Device.browser.phantomJS) {
-								throw "Continue in catch block";
-							}
-
+							assert.ok(false, "Adding sources with invalid XML content should not be successful");
 						}).catch(function() {
 							assert.ok(true, "Adding sources with invalid XML documents should lead to an error");
 

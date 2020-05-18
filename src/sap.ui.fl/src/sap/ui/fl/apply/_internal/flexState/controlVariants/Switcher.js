@@ -41,18 +41,6 @@ sap.ui.define([
 				}
 			)
 		);
-		var aCurrentChangesKeys = aCurrentVariantChanges.map(function(oCurrentVariantChange) {
-			return oCurrentVariantChange.getId();
-		});
-		var aMapChanges = Object.keys(mPropertyBag.changesMap).reduce(
-			function(aControlChanges, sControlId) {
-				return aControlChanges.concat(mPropertyBag.changesMap[sControlId]);
-			}, []);
-
-		var aFilteredChangesFromMap = aMapChanges.filter(function(oChangeInMap) {
-			return includes(aCurrentChangesKeys, oChangeInMap.getId());
-		});
-
 		var aNewChanges = VariantManagementState.getVariantChanges(
 			Object.assign(
 				_pick(mPropertyBag, ["vmReference", "variantsMap", "reference"]), {
@@ -61,6 +49,20 @@ sap.ui.define([
 				}
 			)
 		);
+		var aMapChanges = Object.keys(mPropertyBag.changesMap).reduce(function(aControlChanges, sControlId) {
+			return aControlChanges.concat(mPropertyBag.changesMap[sControlId]);
+		}, []);
+		var aChangeKeysFromMap = aMapChanges.map(function(oCurrentVariantChange) {
+			return oCurrentVariantChange.getId();
+		});
+
+		var aFilteredChangesFromMap = aCurrentVariantChanges.reduce(function(aFilteredChanges, oChange) {
+			var iMapIndex = aChangeKeysFromMap.indexOf(oChange.getId());
+			if (iMapIndex > -1) {
+				aFilteredChanges = aFilteredChanges.concat(aMapChanges[iMapIndex]);
+			}
+			return aFilteredChanges;
+		}, []);
 
 		var aRevertChanges = [];
 		if (aNewChanges.length > 0) {
@@ -88,7 +90,7 @@ sap.ui.define([
 	/**
 	 * Provides functionality to switch variants in a variants map. See also {@link sap.ui.fl.variants.VariantManagement}.
 	 *
-	 * @namespace sap.ui.fl.apply.api.apply._internal.flexState.controlVariants.Switcher
+	 * @namespace sap.ui.fl.apply._internal.flexState.controlVariants.Switcher
 	 * @experimental Since 1.74
 	 * @since 1.74
 	 * @version ${version}

@@ -345,10 +345,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("GenericTile focus rendered - blue crystal", function(assert) {
-		if (Device.browser.phantomJS) {
-			assert.expect(0);
-			return;
-		}
 		var done = assert.async();
 		this.applyTheme("sap_bluecrystal", function() {
 			assert.ok(jQuery.sap.byId("generic-tile-hover-overlay"), "Hover overlay div was rendered successfully");
@@ -358,10 +354,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("GenericTile border rendered - HCB", function(assert) {
-		if (Device.browser.phantomJS) {
-			assert.expect(0);
-			return;
-		}
 		var done = assert.async();
 		this.applyTheme("sap_hcb", function() {
 			this.oGenericTile.rerender();
@@ -376,10 +368,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("GenericTile focus rendered - HCB", function(assert) {
-		if (Device.browser.phantomJS) {
-			assert.expect(0);
-			return;
-		}
 		var done = assert.async();
 		this.applyTheme("sap_hcb", function() {
 			this.oGenericTile.rerender();
@@ -390,10 +378,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("GenericTile border rendered - Belize", function(assert) {
-		if (Device.browser.phantomJS) {
-			assert.expect(0);
-			return;
-		}
 		var done = assert.async();
 		this.applyTheme("sap_belize", function() {
 			this.oGenericTile.rerender();
@@ -408,10 +392,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("GenericTile focus and hover overlay rendered - Belize", function(assert) {
-		if (Device.browser.phantomJS) {
-			assert.expect(0);
-			return;
-		}
 		var done = assert.async();
 		this.applyTheme("sap_belize", function() {
 			this.oGenericTile.rerender();
@@ -427,10 +407,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("GenericTile focus and hover overlay rendered - Fiori 3", function (assert) {
-		if (Device.browser.phantomJS) {
-			assert.expect(0);
-			return;
-		}
 		var done = assert.async();
 		this.applyTheme("sap_fiori_3", function () {
 			this.oGenericTile.rerender();
@@ -460,7 +436,7 @@ sap.ui.define([
 			var beforeHeight = $tile.outerHeight();
 
 			//set :focus on tile
-			$tile.focus();
+			$tile.trigger("focus");
 			if (!this.checkFocus($tile)){
 				assert.expect(0);
 				done();
@@ -489,7 +465,7 @@ sap.ui.define([
 			var beforeHeight = $tile.outerHeight();
 
 			//set :focus on tile
-			$tile.focus();
+			$tile.trigger("focus");
 			if (!this.checkFocus($tile)){
 				assert.expect(0);
 				done();
@@ -520,10 +496,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("GenericTile is dragged", function (assert) {
-		if (Device.browser.phantomJS) {
-			assert.expect(0);
-			return;
-		}
 		this.oGenericTile.rerender();
 		//Style class which gets added when Generic Tile when it is Dragged.
 		this.oGenericTile.addStyleClass("sapMGTPressActive");
@@ -1167,6 +1139,7 @@ sap.ui.define([
 
 		//Act
 		this.oParent.setWidth("500px");
+		sap.ui.getCore().applyChanges();
 
 		//Assert
 		sap.ui.getCore().attachIntervalTimer(checkAssertions);
@@ -1366,11 +1339,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Mutex mechanism for animation/transition handling", function(assert) {
-		if (Device.browser.phantomJS) {
-			assert.expect(0);
-			return;
-		}
-
 		//Arrange
 		sinon.spy(this.oGenericTile, "_queueAnimationEnd");
 		sinon.spy(this.oGenericTile, "_handleAnimationEnd");
@@ -2387,10 +2355,6 @@ sap.ui.define([
 		}
 	});
 	QUnit.test("Tooltip for GenericTile with short header text and long subheader text", function(assert) {
-		if (Device.browser.phantomJS) {
-			assert.expect(0);
-			return;
-		}
 		//Arrange
 		this.oGenericTile.setSubheader("A long long subheader text");
 		sap.ui.getCore().applyChanges();
@@ -2403,10 +2367,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Tooltip for GenericTile with long header text truncated, short subheader text", function(assert) {
-		if (Device.browser.phantomJS) {
-			assert.expect(0);
-			return;
-		}
 		//Arrange
 		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
 		this.oGenericTile._oTitle.invalidate(); // needs to invalidate since the sap.m.Text doesn't invalidate (on purpose)
@@ -2420,10 +2380,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Tooltip for GenericTile with long header text and long subheader text truncated", function(assert) {
-		if (Device.browser.phantomJS) {
-			assert.expect(0);
-			return;
-		}
 		//Arrange
 		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
 		this.oGenericTile.setSubheader("A long long subheader text");
@@ -2437,10 +2393,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Truncated header text tooltip is removed when mouse leaves the GenericTile", function(assert) {
-		if (Device.browser.phantomJS) {
-			assert.expect(0);
-			return;
-		}
 		//Arrange
 		var $Tile = this.oGenericTile.$();
 		this.oGenericTile.setHeader("A long long long long long long long long long long");
@@ -2455,10 +2407,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("GenericTile tooltip provided by the control when TileContent is available", function(assert) {
-        if (Device.browser.phantomJS) {
-            assert.expect(0);
-            return;
-        }
         //Arrange
         this.oGenericTile.getTileContent()[0].setFooter("Tile Footer");
         this.oGenericTile.getTileContent()[0].setUnit("Tile Unit");

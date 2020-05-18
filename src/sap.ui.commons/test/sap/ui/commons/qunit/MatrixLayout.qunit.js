@@ -201,10 +201,7 @@ sap.ui.define([
 
 		var oCellDom = document.getElementById('Matrix1-0-0');
 		assert.equal(oCellDom.offsetWidth, 100, "Width of Cell 0.0:");
-		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-		if (!Device.browser.phantomJS) {
-			assert.equal(oCellDom.offsetHeight, 20, "Height of Cell 0.0:");
-		}
+		assert.equal(oCellDom.offsetHeight, 20, "Height of Cell 0.0:");
 		assert.equal(oCellDom.offsetLeft, 0, "Left offset of Cell 0.0:");
 		assert.equal(oCellDom.offsetTop, 0, "Top offset of Cell 0.0:");
 
@@ -212,37 +209,25 @@ sap.ui.define([
 		assert.equal(oCellDom.offsetWidth, 150, "Width of Cell 1.1:");
 		assert.equal(oCellDom.offsetHeight, 25, "Height of Cell 1.1:");
 		assert.equal(oCellDom.offsetLeft, 100, "Left offset of Cell 1.1:");
-		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-		if (!Device.browser.phantomJS) {
-			assert.equal(oCellDom.offsetTop, 20, "Top offset of Cell 1.1:");
-		}
+		assert.equal(oCellDom.offsetTop, 20, "Top offset of Cell 1.1:");
 
 		oCellDom = document.getElementById('Matrix1-2-2');
 		assert.equal(oCellDom.offsetWidth, 300, "Width of Cell 2.2:");
 		assert.equal(oCellDom.offsetHeight, 30, "Height of Cell 2.2:");
 		assert.equal(oCellDom.offsetLeft, 250, "Left offset of Cell 2.2:");
-		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-		if (!Device.browser.phantomJS) {
-			assert.equal(oCellDom.offsetTop, 45, "Top offset of Cell 2.2:");
-		}
+		assert.equal(oCellDom.offsetTop, 45, "Top offset of Cell 2.2:");
 
 		oCellDom = document.getElementById('Matrix1-3-3');
 		assert.equal(oCellDom.offsetWidth, 250, "Width of Cell 3.3:");
 		assert.equal(oCellDom.offsetHeight, 35, "Height of Cell 3.3:");
 		assert.equal(oCellDom.offsetLeft, 550, "Left offset of Cell 3.3:");
-		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-		if (!Device.browser.phantomJS) {
-			assert.equal(oCellDom.offsetTop, 75, "Top offset of Cell 3.3:");
-		}
+		assert.equal(oCellDom.offsetTop, 75, "Top offset of Cell 3.3:");
 
 		oCellDom = document.getElementById('Matrix1-4-4');
 		assert.equal(oCellDom.offsetWidth, 200, "Width of Cell 4.4:");
 		assert.equal(oCellDom.offsetHeight, 40, "Height of Cell 4.4:");
 		assert.equal(oCellDom.offsetLeft, 800, "Left offset of Cell 4.4:");
-		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-		if (!Device.browser.phantomJS) {
-			assert.equal(oCellDom.offsetTop, 110, "Top offset of Cell 4.4:");
-		}
+		assert.equal(oCellDom.offsetTop, 110, "Top offset of Cell 4.4:");
 
 		var oMLDom = document.getElementById('Matrix2');
 		assert.equal(oMLDom.offsetWidth, 101, "Width of the Matrix2:");

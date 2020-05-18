@@ -116,16 +116,10 @@ sap.ui.define([
 					only: ["sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin"]
 				}
 			},
-			"plugin/iframe/SettingsDialog": {
+			"plugin/iframe/AddIFrameDialog": {
 				group: "Plugin",
 				coverage: {
-					only: ["sap/ui/rta/plugin/iframe/SettingsDialog"]
-				}
-			},
-			"plugin/iframe/URLBuilderDialog": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/iframe/URLBuilderDialog"]
+					only: ["sap/ui/rta/plugin/iframe/AddIFrameDialog"]
 				}
 			},
 			"plugin/iframe/urlCleaner": {
@@ -143,18 +137,17 @@ sap.ui.define([
 					]
 				}
 			},
-			// TODO: temporarily disabled due to customer incident: 275287
-			// "plugin/AddXMLAtExtensionPoint": {
-			// 	group: "Plugin",
-			// 	coverage: {
-			// 		only: ["sap/ui/rta/plugin/AddXMLAtExtensionPoint"]
-			// 	},
-			// 	ui5: {
-			// 		resourceroots: {
-			// 			testComponent: "test-resources/sap/ui/rta/qunit/testComponent"
-			// 		}
-			// 	}
-			// },
+			"plugin/AddXMLAtExtensionPoint": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/AddXMLAtExtensionPoint"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/rta/qunit/testComponent"
+					}
+				}
+			},
 			"plugin/Combine": {
 				group: "Plugin",
 				coverage: {
@@ -499,7 +492,7 @@ sap.ui.define([
 				"plugin/additionalElements/AdditionalElementsAnalyzerOData": {
 					group: "Plugin",
 					coverage: {
-						only: ["sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzerOData"]
+						only: ["sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer"]
 					},
 					ui5: {
 						resourceroots: {

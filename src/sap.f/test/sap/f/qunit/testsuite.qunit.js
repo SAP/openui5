@@ -180,7 +180,6 @@ sap.ui.define(function () {
 						"sap/f/shellBar/Factory",
 						"sap/f/shellBar/ResponsiveHandler",
 						"sap/f/shellBar/AdditionalContentSupport",
-						"sap/f/shellBar/ContentButton",
 						"sap/f/shellBar/ControlSpacer",
 						"sap/f/shellBar/ToolbarSpacer"
 					]

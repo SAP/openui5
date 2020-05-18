@@ -139,7 +139,8 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> When this property is set to <code>true</code>, the <code>OverflowToolbar</code>
 				 * makes its layout recalculations asynchronously. This way it is not blocking the thread
-				 * immediately after re-rendering or resizing.
+				 * immediately after re-rendering or resizing. However, it may lead to flickering, when there is
+				 * a change in the width of the content of the <code>OverflowToolbar</code>.
 				 *
 				 * @since 1.67
 				 */
@@ -350,7 +351,7 @@ sap.ui.define([
 		}
 
 		if ($FocusedChildControl && $FocusedChildControl.length){
-			$FocusedChildControl.focus();
+			$FocusedChildControl.trigger("focus");
 
 		} else if (this._bControlWasFocused) {
 			// If a control of the toolbar was focused, and we're here, then the focused control overflowed, so set the focus to the overflow button
@@ -1006,7 +1007,7 @@ sap.ui.define([
 		var bWindowsPhone = Device.os.windows_phone || Device.browser.edge && Device.browser.mobile;
 
 		this._getOverflowButton().setPressed(false); // Turn off the toggle button
-		this._getOverflowButton().$().focus(); // Focus the toggle button so that keyboard handling will work
+		this._getOverflowButton().$().trigger("focus"); // Focus the toggle button so that keyboard handling will work
 
 		if (this._isNestedInsideAPopup() || bWindowsPhone) {
 			return;
@@ -1020,7 +1021,7 @@ sap.ui.define([
 
 			// In order to restore focus, we must wait another tick here to let the renderer enable it first
 			setTimeout(function () {
-				this._getOverflowButton().$().focus();
+				this._getOverflowButton().$().trigger("focus");
 			}.bind(this), 0);
 		}.bind(this), 0);
 	};

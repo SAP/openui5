@@ -392,8 +392,9 @@ function(
 	function fnTriggerExtensionPointProvider(bAsync, oTargetControl, mAggregationsWithExtensionPoints) {
 		var pProvider = SyncPromise.resolve();
 
-		if (ExtensionPoint._sExtensionProvider && !isEmptyObject(mAggregationsWithExtensionPoints)) {
-			var pExtensionPoints = [];
+		// if no extension points are given, we don't have to do anything here
+		if (!isEmptyObject(mAggregationsWithExtensionPoints)) {
+			var aAppliedExtensionPoints = [];
 
 			// in the async case we can collect the ExtensionPointProvider promises and
 			// then can delay the view.loaded() promise until all extension points are
@@ -404,19 +405,36 @@ function(
 				});
 			}
 
-			sap.ui.require([ExtensionPoint._sExtensionProvider], function(ExtensionPointProvider) {
-				Object.keys(mAggregationsWithExtensionPoints).forEach(function(sAggregationName) {
-					var aExtensionPoints = mAggregationsWithExtensionPoints[sAggregationName];
-					aExtensionPoints.forEach(function(oExtensionPoint) {
-						oExtensionPoint.targetControl = oTargetControl;
-						pExtensionPoints.push(ExtensionPointProvider.applyExtensionPoint(oExtensionPoint));
-					});
+			Object.keys(mAggregationsWithExtensionPoints).forEach(function(sAggregationName) {
+				var aExtensionPoints = mAggregationsWithExtensionPoints[sAggregationName];
+
+				aExtensionPoints.forEach(function(oExtensionPoint) {
+					oExtensionPoint.targetControl = oTargetControl;
+
+					var fnExtClass = sap.ui.require(oExtensionPoint.providerClass);
+
+					// apply directly if class was already loaded
+					if (fnExtClass) {
+						aAppliedExtensionPoints.push(fnExtClass.applyExtensionPoint(oExtensionPoint));
+					} else {
+						// load provider class and apply
+						var p = new Promise(function(resolve, reject) {
+							sap.ui.require([oExtensionPoint.providerClass], function(ExtensionPointProvider) {
+								resolve(ExtensionPointProvider);
+							}, reject);
+						}).then(function(ExtensionPointProvider) {
+							return ExtensionPointProvider.applyExtensionPoint(oExtensionPoint);
+						});
+
+						aAppliedExtensionPoints.push(p);
+					}
 				});
-				// we collect the ExtensionProvider Promises
-				if (bAsync) {
-					Promise.all(pExtensionPoints).then(fnResolveExtensionPoints);
-				}
 			});
+
+			// we collect the ExtensionProvider Promises
+			if (bAsync) {
+				Promise.all(aAppliedExtensionPoints).then(fnResolveExtensionPoints);
+			}
 		}
 		return pProvider;
 	}
@@ -791,7 +809,6 @@ function(
 						var pChild = SyncPromise.resolve();
 						var aChildControlPromises = [];
 						var children = node.childNodes;
-						// for some reasons phantomjs does not work with an Array#forEach here
 						for (var i = 0; i < children.length; i++) {
 							var oChildNode = children[i];
 							if (oChildNode.nodeType === 1 /* ELEMENT_NODE */) { // text nodes are ignored - plaintext inside extension points is not supported; no warning log because even whitespace is a text node

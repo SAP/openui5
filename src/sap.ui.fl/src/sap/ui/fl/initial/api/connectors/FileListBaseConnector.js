@@ -18,11 +18,12 @@ sap.ui.define([
 	 * The <code>loadFlexData</code> already ensures that all <code>sap.ui.fl</code>-internals are handled accordingly.
 	 *
 	 * @public
+	 * @abstract
 	 */
 	return {
 		/**
 		 * @param {string} sReference - Application ID for which changes should be loaded
-		 * @returns{Promise<string[]>} List of URLs that should be requested and will contain a JSON of a flex object like changes,
+		 * @returns {Promise<string[]>} List of URLs that should be requested and will contain a JSON of a flex object like changes,
 		 * i.e.: <code>["/some/url/id_12345_123_propertyChange.change", "/some/url/id_67890_456_.ctrl_variant", ...]</code>
 		 */
 		getFileList: function (/* sReference */) {
@@ -32,9 +33,9 @@ sap.ui.define([
 		/**
 		 * Loads a list of files and returns them in a format understood by <code>sap.ui.fl</code>.
 		 *
-		 * @param{object} mPropertyBag - Properties needed by the connectors
-		 * @param{string}mPropertyBag.reference - Reference of the application
-		 * @returns{Promise<Object>} Promise resolving with an object containing flex data
+		 * @param {object} mPropertyBag - Properties needed by the connectors
+		 * @param {string} mPropertyBag.reference - Reference of the application
+		 * @returns {Promise<Object>} Promise resolving with an object containing flex data
 		 */
 		loadFlexData: function(mPropertyBag) {
 			return this.getFileList(mPropertyBag.reference)

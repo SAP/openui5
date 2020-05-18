@@ -35,6 +35,7 @@ sap.ui.define(['./ComponentMetadata', './library'],
 
 	//chain the prototypes
 	UIComponentMetadata.prototype = Object.create(ComponentMetadata.prototype);
+	UIComponentMetadata.prototype.constructor = UIComponentMetadata;
 
 	UIComponentMetadata.preprocessClassInfo = function(oClassInfo) {
 		// if the component is a string we convert this into a "_src" metadata entry

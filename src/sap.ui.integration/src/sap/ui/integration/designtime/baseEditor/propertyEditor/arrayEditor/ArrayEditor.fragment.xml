@@ -4,18 +4,15 @@
 	xmlns:baseEditor="sap.ui.integration.designtime.baseEditor"
 >
 	<VBox>
-		<VBox items="{ path: 'itemsModel>/', templateShareable: false}">
-			<VBox>
-				<Bar
-					visible="{= ${config/allowSorting} !== false || ${config/allowAddAndRemove} !== false || !!${itemsModel>itemLabel}}"
-				>
-					<contentLeft>
-						<Label
-							text="{itemsModel>itemLabel}"
-							visible="{= !!${itemsModel>itemLabel}}"
-						/>
-					</contentLeft>
-					<contentRight>
+		<VBox
+			items="{ path: 'itemsModel>/', templateShareable: false}"
+			visible="{= ${itemsModel>/}.length === 0 ? false : true }"
+		>
+			<Panel expandable="true" width="auto">
+				<headerToolbar>
+					<Toolbar style="Clear">
+						<Title text="{itemsModel>itemLabel}" titleStyle="H5" />
+						<ToolbarSpacer />
 						<Button
 							icon="sap-icon://navigation-up-arrow"
 							tooltip="{i18n>BASE_EDITOR.ARRAY.MOVEUP}"
@@ -45,7 +42,7 @@
 							</customData>
 						</Button>
 						<Button
-							icon="sap-icon://less"
+							icon="sap-icon://delete"
 							tooltip="{i18n>BASE_EDITOR.ARRAY.REMOVE}"
 							press="_removeItem"
 							visible="{= ${config/allowAddAndRemove} !== false}"
@@ -57,18 +54,26 @@
 								/>
 							</customData>
 						</Button>
-					</contentRight>
-				</Bar>
-				<baseEditor:PropertyEditors
-					init="wrapperInit"
-					propertyEditorsChange="_propertyEditorsChange"
-					config="{itemsModel>properties}"
-				/>
-			</VBox>
+					</Toolbar>
+				</headerToolbar>
+				<content>
+					<baseEditor:PropertyEditors
+						init="wrapperInit"
+						propertyEditorsChange="_propertyEditorsChange"
+						config="{itemsModel>properties}"
+					/>
+				</content>
+			</Panel>
 		</VBox>
 		<Button
-			icon="sap-icon://add"
-			tooltip="{i18n>BASE_EDITOR.ARRAY.ADD}"
+			text="{
+				parts: [
+					'i18n>BASE_EDITOR.ARRAY.ADD',
+					'config/addItemLabel',
+					'i18n>BASE_EDITOR.ARRAY.ITEM_LABEL'
+				],
+				formatter: '.formatAddItemText'
+			}"
 			enabled="{= !${config/maxItems} || (Array.isArray(${itemsModel>/}) &amp;&amp; ${itemsModel>/} || []).length &lt; ${config/maxItems} }"
 			press="_addItem"
 			visible="{= ${config/allowAddAndRemove} !== false}"

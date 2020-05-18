@@ -620,14 +620,20 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.Context#delete}) and the execution of OData operations
 	 * (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}).
 	 *
+	 * Note: If this binding is relative, its data is cached separately for each parent context
+	 * path. This method returns <code>true</code> if there are pending changes for the current
+	 * parent context path of this binding. If this binding is unresolved, it returns
+	 * <code>false</code>.
+	 *
 	 * @returns {boolean}
-	 *   <code>true</code> if the binding has pending changes
+	 *   <code>true</code> if the binding is resolved and has pending changes
 	 *
 	 * @public
 	 * @since 1.39.0
 	 */
 	ODataBinding.prototype.hasPendingChanges = function () {
-		return this.hasPendingChangesForPath("") || this.hasPendingChangesInDependents();
+		return this.isResolved()
+			&& (this.hasPendingChangesForPath("") || this.hasPendingChangesInDependents());
 	};
 
 	/**

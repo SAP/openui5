@@ -76,56 +76,6 @@ sap.ui.define([
 
 	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);
 
-
-
-	// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-	//  ==> PhantomJS fails with strange errors when evaluating setTimeout
-	//      e.g.: null is not a constructor (evaluating setTimeout) as a follow
-	//      up of the destroy calls of the Input control
-	if (Device.browser.phantomJS) {
-		var fnSetTimeout = window.setTimeout;
-		window.setTimeout = function() {
-			try {
-				fnSetTimeout.apply(this, arguments);
-			} catch (e) {
-				// ignore
-			}
-		};
-		var fnClearTimeout = window.clearTimeout;
-		window.clearTimeout = function() {
-			try {
-				fnClearTimeout.apply(this, arguments);
-			} catch (e) {
-				// ignore
-			}
-		};
-	}
-
-
-
-	// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-	//  ==> PhantomJS fails with strange errors when evaluating setTimeout
-	//      e.g.: null is not a constructor (evaluating setTimeout) as a follow
-	//      up of the destroy calls of the Input control
-	if (Device.browser.phantomJS) {
-		var fnSetTimeout = window.setTimeout;
-		window.setTimeout = function() {
-			try {
-				fnSetTimeout.apply(this, arguments);
-			} catch (e) {
-				// ignore
-			}
-		};
-		var fnClearTimeout = window.clearTimeout;
-		window.clearTimeout = function() {
-			try {
-				fnClearTimeout.apply(this, arguments);
-			} catch (e) {
-				// ignore
-			}
-		};
-	}
-
 	function getPopupItemsContent(oPopup) {
 		var aContents = oPopup.getContent();
 		return oPopup.isA("sap.m.Popover") ? aContents[0] : aContents[1];
@@ -278,7 +228,7 @@ sap.ui.define([
 		});
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().val("abc").trigger("input");
+		oInput._$input.trigger("focus").val("abc").trigger("input");
 		this.clock.tick(300);
 		oPopup = oInput._oSuggPopover._oPopover;
 
@@ -560,7 +510,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			oInput.onfocusin();
-			oInput._$input.focus().val("abc").trigger("input");
+			oInput._$input.trigger("focus").val("abc").trigger("input");
 			this.clock.tick(300);
 
 			assert.ok(oInput._oSuggPopover && oInput._oSuggPopover._oPopover.isOpen && oInput._oSuggPopover._oPopover.isOpen(), "Suggestion Popup is open now");
@@ -594,7 +544,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			oInput.onfocusin();
-			oInput._$input.focus().val(" ").trigger("input");
+			oInput._$input.trigger("focus").val(" ").trigger("input");
 			this.clock.tick(300);
 
 			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
@@ -620,7 +570,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Value help event check
-		oInputVHO._$input.focus().trigger("tap");
+		oInputVHO._$input.trigger("focus").trigger("tap");
 		this.clock.tick(500);
 		assert.strictEqual(spy.callCount, 1, "Value Help Request has been fired and received successfully");
 	});
@@ -646,7 +596,7 @@ sap.ui.define([
 		assert.ok(oInputVHO.$().hasClass("sapMInputVHO") === false, "showValueHelp = false: Outer div has no additional CSS class\"sapMInputVHO\"");
 
 		// Value help event check
-		oInputVHO._$input.focus().trigger("tap");
+		oInputVHO._$input.trigger("focus").trigger("tap");
 		this.clock.tick(500);
 		assert.strictEqual(spy.callCount, 0, "showValueHelp = false: Tap has been fired and no Value Help Request is submitted");
 
@@ -669,7 +619,7 @@ sap.ui.define([
 		assert.ok(oInputVHO1.$().hasClass("sapMInputVHO") === false, "valueHelponly = false: Outer div has no additional CSS class\"sapMInputVHO\"");
 
 		// Value help event check
-		oInputVHO1._$input.focus().trigger("tap");
+		oInputVHO1._$input.trigger("focus").trigger("tap");
 		this.clock.tick(500);
 		assert.strictEqual(spy1.callCount, 0, "valueHelponly = false: Tap has been fired and no Value Help Request is submitted");
 
@@ -692,7 +642,7 @@ sap.ui.define([
 		assert.ok(oInputVHO2.$().hasClass("sapMInputVHO") === false, "editable = false: Outer div has no additional CSS class\"sapMInputVHO\"");
 
 		// Value help event check
-		oInputVHO2._$input.focus().trigger("tap");
+		oInputVHO2._$input.trigger("focus").trigger("tap");
 		this.clock.tick(500);
 		assert.strictEqual(spy2.callCount, 0, "editable = false: Tap has been fired and no Value Help Request is submitted");
 
@@ -715,7 +665,7 @@ sap.ui.define([
 		assert.ok(oInputVHO3.$().hasClass("sapMInputVHO") === false, "enabled = false: Outer div has no additional CSS class\"sapMInputVHO\"");
 
 		// Value help event check
-		oInputVHO3._$input.focus().trigger("tap");
+		oInputVHO3._$input.trigger("focus").trigger("tap");
 		this.clock.tick(500);
 		assert.strictEqual(spy3.callCount, 0, "enabled = false: Tap has been fired and no Value Help Request is submitted");
 	});
@@ -833,7 +783,7 @@ sap.ui.define([
 		$Input = oInput.$();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().val("De").trigger("input");
+		oInput._$input.trigger("focus").val("De").trigger("input");
 		this.clock.tick(300);
 
 		oInput.destroy();
@@ -856,7 +806,7 @@ sap.ui.define([
 		$Input = oInput.$();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().val("abc").trigger("input");
+		oInput._$input.trigger("focus").val("abc").trigger("input");
 		this.clock.tick(300);
 
 		// suggestions are not active, list and popup should not be initialized
@@ -883,7 +833,7 @@ sap.ui.define([
 		});
 
 		oInput6.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput6._$input.focus().val("abc").trigger("input");
+		oInput6._$input.trigger("focus").val("abc").trigger("input");
 
 		this.clock.tick(300);
 
@@ -893,13 +843,13 @@ sap.ui.define([
 		assert.equal(getPopupItemsContent(oPopup).getItems().length, aNames.length, "Suggestions are inserted");
 		assert.ok(getPopupItemsContent(oPopup) instanceof sap.m.List, "Suggestions are list-based)");
 
-		oInput6._$input.focus().val("abcT").trigger("input");
+		oInput6._$input.trigger("focus").val("abcT").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
 		assert.equal(getPopupItemsContent(oPopup).getItems().length, 1, "Suggestions are filtered");
 
 		//close the popoup when nothing is typed in input
-		oInput6._$input.focus().val("").trigger("input");
+		oInput6._$input.trigger("focus").val("").trigger("input");
 		this.clock.tick(300);
 		assert.ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 		assert.equal(getPopupItemsContent(oPopup).getItems().length, 0, "Suggestions are destroyed");
@@ -925,7 +875,7 @@ sap.ui.define([
 		oInput.attachSuggest(oSpy);
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().val("abc").trigger("input");
+		oInput._$input.trigger("focus").val("abc").trigger("input");
 		// Enter key is pressed directly after typing "abc"
 		qutils.triggerKeyboardEvent(oInput._$input[0], KeyCodes.ENTER);
 
@@ -966,7 +916,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().val("abc").trigger("input");
+		oInput._$input.trigger("focus").val("abc").trigger("input");
 
 		this.clock.tick(300);
 
@@ -1008,7 +958,7 @@ sap.ui.define([
 		});
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().val("abc").trigger("input");
+		oInput._$input.trigger("focus").val("abc").trigger("input");
 
 		this.clock.tick(300);
 
@@ -1060,7 +1010,7 @@ sap.ui.define([
 		});
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().val("abc").trigger("input");
+		oInput._$input.trigger("focus").val("abc").trigger("input");
 
 		this.clock.tick(300);
 
@@ -1111,7 +1061,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().val("abc").trigger("input");
+		oInput._$input.trigger("focus").val("abc").trigger("input");
 
 		this.clock.tick(300);
 
@@ -1148,7 +1098,7 @@ sap.ui.define([
 		});
 
 		oInput7.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput7._$input.focus().val("abc").trigger("input");
+		oInput7._$input.trigger("focus").val("abc").trigger("input");
 
 		this.clock.tick(300);
 		oPopup1 = oInput7._oSuggPopover._oPopover;
@@ -1159,7 +1109,7 @@ sap.ui.define([
 		assert.equal(aItems.length, aNames.length, "Suggestions are inserted");
 		assert.ok(aItems[0] instanceof sap.m.DisplayListItem, "Suggestion item is a DisplayListItem");
 
-		oInput7._$input.focus().val("abcT").trigger("input");
+		oInput7._$input.trigger("focus").val("abcT").trigger("input");
 		this.clock.tick(400);
 
 		aItems = oPopup1.getContent()[0].getItems();
@@ -1177,7 +1127,7 @@ sap.ui.define([
 		assert.equal(oInput7.getValue(), aNames[0], "Input value is set to first value of selected suggestion item");
 
 		//close the popoup when nothing is typed in input
-		oInput7._$input.focus().val("").trigger("input");
+		oInput7._$input.trigger("focus").val("").trigger("input");
 		this.clock.tick(300);
 
 		aItems = oPopup1.getContent()[0].getItems();
@@ -1213,7 +1163,7 @@ sap.ui.define([
 		});
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().val("abc").trigger("input");
+		oInput._$input.trigger("focus").val("abc").trigger("input");
 
 		this.clock.tick(300);
 		oPopup = oInput._oSuggPopover._oPopover;
@@ -1352,7 +1302,7 @@ sap.ui.define([
 		});
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().val("Prod").trigger("input");
+		oInput._$input.trigger("focus").val("Prod").trigger("input");
 
 		this.clock.tick(300);
 		oPopup = oInput._oSuggPopover._oPopover;
@@ -1376,7 +1326,7 @@ sap.ui.define([
 		assert.ok(oInput._oSuggPopover._oList.getItems()[0].$().hasClass("sapMLIBSelected"), "The first item is selected after pressing keyUp twice");
 
 		//close the popoup when nothing is typed in input
-		oInput._$input.focus().val("").trigger("input");
+		oInput._$input.trigger("focus").val("").trigger("input");
 		this.clock.tick(300);
 		assert.ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 
@@ -1433,21 +1383,21 @@ sap.ui.define([
 
 		assert.equal(oInput._oSuggPopover._oPopupInput.getType(), mobileLibrary.InputType.Tel, "The type of the Input inside the Suggestion Popup is the same as the type of the original Input"); // BCP 1970125027
 
-		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.trigger("focus").val("abc").trigger("input");
 		this.clock.tick(400);
 		assert.equal(getPopupItemsContent(oPopup).getItems().length, aNames.length, "Suggestions are inserted");
 
-		oInput._oSuggPopover._oPopupInput._$input.focus().val("abcT").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.trigger("focus").val("abcT").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
 		assert.equal(getPopupItemsContent(oPopup).getItems().length, 1, "Suggestions are filtered");
 
-		oInput._oSuggPopover._oPopupInput._$input.focus().val("").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.trigger("focus").val("").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
 		assert.equal(getPopupItemsContent(oPopup).getItems().length, 0, "Suggestions are destroyed");
 
-		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.trigger("focus").val("abc").trigger("input");
 		this.clock.tick(400);
 
 		qutils.triggerTouchEvent("tap", getPopupItemsContent(oPopup).getItems()[1].getDomRef());
@@ -1508,7 +1458,7 @@ sap.ui.define([
 
 		assert.equal(oInput._oSuggPopover._oPopupInput.getType(), mobileLibrary.InputType.Tel, "The type of the Input inside the Suggestion Popup is the same as the type of the original Input"); // BCP 1970125027
 
-		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.trigger("focus").val("abc").trigger("input");
 		this.clock.tick(400);
 		qutils.triggerTouchEvent("tap", getPopupItemsContent(oPopup).getItems()[1].getDomRef());
 		this.clock.tick(500);
@@ -1566,21 +1516,21 @@ sap.ui.define([
 		assert.ok(oPopup instanceof Dialog, "Two value Suggestion Popup is created and is a Dialog instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
-		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.trigger("focus").val("abc").trigger("input");
 		this.clock.tick(400);
 		assert.equal(getPopupItemsContent(oPopup).getItems().length, aNames.length, "Suggestions are inserted");
 
-		oInput._oSuggPopover._oPopupInput._$input.focus().val("abcT").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.trigger("focus").val("abcT").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Two value Suggestion Popup is still open now");
 		assert.equal(getPopupItemsContent(oPopup).getItems().length, 1, "Suggestions are filtered");
 
-		oInput._oSuggPopover._oPopupInput._$input.focus().val("").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.trigger("focus").val("").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Two value Suggestion Popup is still open now");
 		assert.equal(getPopupItemsContent(oPopup).getItems().length, 0, "Suggestions are destroyed");
 
-		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.trigger("focus").val("abc").trigger("input");
 		this.clock.tick(400);
 
 		qutils.triggerTouchEvent("tap", getPopupItemsContent(oPopup).getItems()[1].getDomRef());
@@ -1624,7 +1574,7 @@ sap.ui.define([
 		});
 		this.clock.tick(500);
 
-		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.trigger("focus").val("abc").trigger("input");
 
 		assert.equal(fnLC1.callCount, 1, "liveChange handler on original input is called");
 
@@ -1669,7 +1619,7 @@ sap.ui.define([
 		});
 		this.clock.tick(500);
 		var oSpy = this.spy(oInput._oSuggPopover._oPopover, "invalidate");
-		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.trigger("focus").val("abc").trigger("input");
 		this.clock.tick(400);
 
 		assert.equal(oInput.getSuggestionItems().length, 1, "Suggestion Item is inserted");
@@ -1791,7 +1741,7 @@ sap.ui.define([
 		});
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().val("Prod").trigger("input");
+		oInput._$input.trigger("focus").val("Prod").trigger("input");
 
 		this.clock.tick(300);
 		oPopup = oInput._oSuggPopover._oPopover;
@@ -1806,17 +1756,13 @@ sap.ui.define([
 		assert.ok(getPopupItemsContent(oPopup) instanceof sap.m.Table, "Suggestions are tabular)");
 		assert.strictEqual(oPopup.getContentWidth(), "100px", "Suggestion popup has 100px width");
 
-		oInput._$input.focus().val("Product1").trigger("input");
+		oInput._$input.trigger("focus").val("Product1").trigger("input");
 		this.clock.tick(400);
 
 		assert.ok(!oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class on desktop");
 
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
-
-		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
-		if (!Device.browser.phantomJS) {
-			assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
-		}
+		assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 
 		// checks for the show more button (tabular suggestions only)
 		assert.strictEqual(oPopup.getFooter().getContent().length, 2, "The footer has two items (spacer and button)");
@@ -1824,7 +1770,7 @@ sap.ui.define([
 		assert.strictEqual(oPopup.getFooter().getContent()[1].getText(), oMessageBundle.getText("INPUT_SUGGESTIONS_SHOW_ALL"), "The show more button shows the correct text from the message bundle");
 
 		//close the popoup when nothing is typed in input
-		oInput._$input.focus().val("").trigger("input");
+		oInput._$input.trigger("focus").val("").trigger("input");
 		this.clock.tick(300);
 		assert.ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 
@@ -1940,7 +1886,7 @@ sap.ui.define([
 		});
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().val("Prod").trigger("input");
+		oInput._$input.trigger("focus").val("Prod").trigger("input");
 
 		this.clock.tick(300);
 		oPopup = oInput._oSuggPopover._oPopover;
@@ -1954,7 +1900,7 @@ sap.ui.define([
 		assert.strictEqual(getPopupItemsContent(oPopup).$().length, 1, "Suggestion table is rendered");
 		assert.ok(getPopupItemsContent(oPopup) instanceof sap.m.Table, "Suggestions are tabular)");
 
-		oInput._$input.focus().val("Product1").trigger("input");
+		oInput._$input.trigger("focus").val("Product1").trigger("input");
 		this.clock.tick(400);
 
 		// check for re-rendering when changing the "suggestionRows" aggregation
@@ -1968,13 +1914,10 @@ sap.ui.define([
 
 
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
-		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
-		if (!Device.browser.phantomJS) {
-			assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
-		}
+		assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 
 		//close the popoup when nothing is typed in input
-		oInput._$input.focus().val("").trigger("input");
+		oInput._$input.trigger("focus").val("").trigger("input");
 		this.clock.tick(300);
 		assert.ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 		oInput.destroy();
@@ -2131,7 +2074,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().val("Prod").trigger("input");
+		oInput._$input.trigger("focus").val("Prod").trigger("input");
 
 		this.clock.tick(300);
 
@@ -2147,8 +2090,6 @@ sap.ui.define([
 			return;
 		}
 		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
-		var bPhantomJS = Device.browser.phantomJS;
 
 		var oSystem = {
 				desktop: false,
@@ -2284,31 +2225,28 @@ sap.ui.define([
 		assert.ok(oPopup instanceof Dialog, "Suggestion Popup is created and is a Dialog instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
-		oInput._oSuggPopover._oPopupInput._$input.focus().val("Product").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.trigger("focus").val("Product").trigger("input");
 		this.clock.tick(400);
 		assert.equal(getPopupItemsContent(oPopup).getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
 		assert.strictEqual(oDialogRendererSpy.callCount, 1, "Dialog has been renderded after opening");
 		assert.ok(!oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
 
 		// remove input in between (to check if dialog is not re-rendered, this would cause the soft-keyboard to hide)
-		oInput._oSuggPopover._oPopupInput._$input.focus().val("").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.trigger("focus").val("").trigger("input");
 		this.clock.tick(400);
 		assert.strictEqual(oDialogRendererSpy.callCount, 1, "Dialog is not re-rendered when changing the input value to empty string");
 		assert.ok(oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table has the hidden style class when no items are displayed");
 
-		oInput._oSuggPopover._oPopupInput._$input.focus().val("Product1").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.trigger("focus").val("Product1").trigger("input");
 		this.clock.tick(400);
 
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now123");
-		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
-		if (!bPhantomJS) {
-			assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
-		}
+		assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 		assert.strictEqual(oDialogRendererSpy.callCount, 1, "Dialog is not re-rendered when changing the input value to a another value");
 		assert.ok(!oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
 
 		// enter a string that is not found in suggestions
-		oInput._oSuggPopover._oPopupInput._$input.focus().val("thisWillNotBeFound").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.trigger("focus").val("thisWillNotBeFound").trigger("input");
 		this.clock.tick(400);
 
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
@@ -2320,13 +2258,10 @@ sap.ui.define([
 		assert.ok(oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table has the hidden style class when no items are found");
 
 		// filter with a string that will display 3 items
-		oInput._oSuggPopover._oPopupInput._$input.focus().val("Product").trigger("input");
+		oInput._oSuggPopover._oPopupInput._$input.trigger("focus").val("Product").trigger("input");
 		this.clock.tick(400);
 
-		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
-		if (!bPhantomJS) {
-			assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children().length, 3, "3 suggestions are displayed");
-		}
+		assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children().length, 3, "3 suggestions are displayed");
 		assert.strictEqual(oDialogRendererSpy.callCount, 1, "Dialog is not re-rendered during filtering of suggestions");
 		assert.ok(!oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class when items are displayed");
 
@@ -2462,16 +2397,13 @@ sap.ui.define([
 		});
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().val("25").trigger("input");
+		oInput._$input.trigger("focus").val("25").trigger("input");
 
 		this.clock.tick(300);
 		oPopup = oInput._oSuggPopover._oPopover;
 
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
-		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
-		if (!Device.browser.phantomJS) {
-			assert.strictEqual(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
-		}
+		assert.strictEqual(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 		assert.strictEqual(getPopupItemsContent(oPopup).$().find("tbody").find("tr>td>span" || "tr>td>label")[0].textContent, oSuggestionData.tabularSuggestionItems[1].name, "Product 2 is filtered");
 
 		getPopupItemsContent(oPopup).getItems()[1].ontap(new jQuery.Event());
@@ -2480,7 +2412,7 @@ sap.ui.define([
 		assert.equal(oInput.getValue(), "You chose: " + oSuggestionData.tabularSuggestionItems[1].limit, "The input value has been formatted with the custom row result function");
 
 		//close the popoup when nothing is typed in input
-		oInput._$input.focus().val("").trigger("input");
+		oInput._$input.trigger("focus").val("").trigger("input");
 		this.clock.tick(300);
 		assert.ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 
@@ -2565,7 +2497,7 @@ sap.ui.define([
 		oInput._oSuggPopover._oPopover.open();
 
 		// act
-		oInput._$input.focus().trigger(oFakeKeydown).val("p").trigger("input");
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("p").trigger("input");
 		this.clock.tick(300);
 
 		// check selected (highlighted in blue) row in the suggestion table
@@ -2574,7 +2506,7 @@ sap.ui.define([
 		assert.equal(oSelectedRow1.getCells()[0].getText().toLowerCase(), oInput.getValue().toLowerCase(), "The value of the input is the same as the value of the selected row");
 
 		// act
-		oInput._$input.focus().trigger(oFakeKeydown).val("ph").trigger("input");
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("ph").trigger("input");
 		this.clock.tick(300);
 
 		// check selected (highlighted in blue) row in the suggestion table
@@ -2702,15 +2634,15 @@ sap.ui.define([
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		oInput._$input.focus().val("25").trigger("input");
+		oInput._$input.trigger("focus").val("25").trigger("input");
 		this.clock.tick(400);
 		assert.equal(spy.callCount, 0, "2 letters shouldn't fire suggest event");
 
-		oInput._$input.focus().val("2524").trigger("input");
+		oInput._$input.trigger("focus").val("2524").trigger("input");
 		this.clock.tick(400);
 		assert.equal(spy.callCount, 1, "4 letters shouldn fire suggest event");
 
-		oInput._$input.focus().val("25245").trigger("input");
+		oInput._$input.trigger("focus").val("25245").trigger("input");
 		this.clock.tick(400);
 		assert.equal(spy.callCount, 2, "5 letters should fire suggest event again");
 
@@ -2737,20 +2669,20 @@ sap.ui.define([
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		oInput._$input.focus();
+		oInput._$input.trigger("focus");
 		this.clock.tick(400);
 		assert.equal(spy.callCount, 1, "Focus should fire suggest event");
 
-		oInput._$input.focus().val("25").trigger("input");
+		oInput._$input.trigger("focus").val("25").trigger("input");
 		this.clock.tick(400);
 		assert.equal(spy.callCount, 2, "2 letters shouldn fire suggest event");
 
-		oInput._$input.blur();
-		oInput._$input.focus();
+		oInput._$input.trigger("blur");
+		oInput._$input.trigger("focus");
 		this.clock.tick(400);
 		assert.equal(spy.callCount, 2, "Focus with text in input shouldn't fire suggest event");
 
-		oInput._$input.focus().val("").trigger("input");
+		oInput._$input.trigger("focus").val("").trigger("input");
 		this.clock.tick(400);
 		assert.equal(spy.callCount, 3, "no text should fire suggest event again");
 
@@ -2973,7 +2905,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().val("It").trigger("input");
+		oInput._$input.trigger("focus").val("It").trigger("input");
 
 		this.clock.tick(300);
 
@@ -3042,7 +2974,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.onfocusin();
-		oInput._$input.focus().val("te").trigger("input");
+		oInput._$input.trigger("focus").val("te").trigger("input");
 
 		this.clock.tick(400);
 
@@ -3058,7 +2990,7 @@ sap.ui.define([
 		oInput.setShowSuggestion(false);
 		fnTriggerSuggestSpy.reset();
 		oInput.onfocusin();
-		oInput._$input.focus().val("te").trigger("input");
+		oInput._$input.trigger("focus").val("te").trigger("input");
 
 		this.clock.tick(300);
 
@@ -3073,7 +3005,7 @@ sap.ui.define([
 		oInput.setShowSuggestion(true);
 		fnTriggerSuggestSpy.reset();
 		oInput.onfocusin();
-		oInput._$input.focus().val("te").trigger("input");
+		oInput._$input.trigger("focus").val("te").trigger("input");
 
 		this.clock.tick(300);
 
@@ -3168,7 +3100,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().val("It").trigger("input");
+		oInput._$input.trigger("focus").val("It").trigger("input");
 
 		this.clock.tick(300);
 
@@ -3610,7 +3542,7 @@ sap.ui.define([
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		oInput._$input.focus().val("Au").trigger("input");
+		oInput._$input.trigger("focus").val("Au").trigger("input");
 		this.clock.tick(300);
 
 		qutils.triggerKeydown(document.activeElement, "40"); // bottom (arrow)
@@ -3634,7 +3566,7 @@ sap.ui.define([
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		oInput._$input.focus().val("Au").trigger("input");
+		oInput._$input.trigger("focus").val("Au").trigger("input");
 		this.clock.tick(300);
 
 		qutils.triggerKeydown(document.activeElement, "40"); // bottom (arrow)
@@ -3740,7 +3672,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput._$input.focus().val("It").trigger("input");
+		oInput._$input.trigger("focus").val("It").trigger("input");
 
 		this.clock.tick(300);
 
@@ -3824,7 +3756,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.onfocusin();
-		oInput._$input.focus().val("I").trigger("input");
+		oInput._$input.trigger("focus").val("I").trigger("input");
 		this.clock.tick(400);
 
 		// assert
@@ -3998,7 +3930,7 @@ sap.ui.define([
 		var fnChangeCallback = this.spy();
 		oInput.attachChange(fnChangeCallback);
 
-		oInput._$input.focus().val("abc").trigger("input");
+		oInput._$input.trigger("focus").val("abc").trigger("input");
 
 		var oValueHelpIcon = oInput._getValueHelpIcon();
 
@@ -4060,7 +3992,7 @@ sap.ui.define([
 		oInput._oSuggPopover._oPopover.open();
 
 		// act
-		oInput._$input.focus().trigger(oFakeKeydown).val("p").trigger("input");
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("p").trigger("input");
 		this.clock.tick(300);
 		oInput._getShowMoreButton().firePress();
 
@@ -4148,7 +4080,7 @@ sap.ui.define([
 		var scrollDiv = this.dialog.$().find(".sapMDialogScroll")[0];
 		assert.equal(scrollDiv.offsetWidth, scrollDiv.scrollWidth, "Dialog doesn't have a scrollbar");
 
-		input._$input.focus().val("abc").trigger("input");
+		input._$input.trigger("focus").val("abc").trigger("input");
 
 		this.dialog.focus();
 		this.clock.tick(300);
@@ -4186,7 +4118,7 @@ sap.ui.define([
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
 
 		// act
-		oInput._$input.focus().trigger(oFakeKeydown).val("G").trigger("input");
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("G").trigger("input");
 		this.clock.tick(300);
 
 		// assert
@@ -4216,7 +4148,7 @@ sap.ui.define([
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
 
 		// act
-		oInput._$input.focus().trigger(oFakeKeydown).val("G").trigger("input");
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("G").trigger("input");
 		this.clock.tick(300);
 
 		// assert
@@ -4304,7 +4236,7 @@ sap.ui.define([
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
 		// act
-		oInput._$input.focus().trigger(oFakeKeydown).val("G").trigger("input");
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("G").trigger("input");
 		this.clock.tick(300);
 
 		// assert
@@ -4314,7 +4246,7 @@ sap.ui.define([
 		assert.strictEqual(oInput._oSuggestionPopup.getContent()[0].getItems()[0].getSelected(), true, "Correct item in the Suggestions list is selected.");
 
 		// act
-		oInput._$input.focus().trigger(oFakeKeydown).val("Gr").trigger("input");
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("Gr").trigger("input");
 		this.clock.tick(300);
 
 		// assert
@@ -4328,7 +4260,7 @@ sap.ui.define([
 		assert.strictEqual(oInput.getSelectedText(), "", "Text shouldn't be selected after pressing 'enter'");
 
 		// act
-		oInput._$input.focus().val("gre").trigger("input");
+		oInput._$input.trigger("focus").val("gre").trigger("input");
 		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
 		this.clock.tick(300);
 
@@ -4356,7 +4288,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Arrange - open the suggestions
-		oInput._$input.focus().val("Germ").trigger("input");
+		oInput._$input.trigger("focus").val("Germ").trigger("input");
 
 		// Act - move the cursor
 		var iCursorPosition = 2;
@@ -4410,7 +4342,7 @@ sap.ui.define([
 		oPopover._oPopover.open();
 		this.clock.tick(300);
 		oPopupInput.onfocusin();
-		oPopupInput._$input.focus().trigger("keydown").val("uni").trigger("input");
+		oPopupInput._$input.trigger("focus").trigger("keydown").val("uni").trigger("input");
 		this.clock.tick(300);
 
 		// assert
@@ -4538,7 +4470,7 @@ sap.ui.define([
 		oInput._oSuggPopover._oPopover.open();
 
 		// act
-		oInput._$input.focus().trigger(oFakeKeydown).val("p").trigger("input");
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("p").trigger("input");
 		this.clock.tick(300);
 
 		// check selected (highlighted in blue) row in the suggestion table
@@ -4547,7 +4479,7 @@ sap.ui.define([
 		assert.equal(oSelectedRow1.getCells()[0].getText().toLowerCase(), oInput.getValue().toLowerCase(), "The value of the input is the same as the value of the selected row");
 
 		// act
-		oInput._$input.focus().trigger(oFakeKeydown).val("ph").trigger("input");
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("ph").trigger("input");
 		this.clock.tick(300);
 
 		// check selected (highlighted in blue) row in the suggestion table
@@ -4598,7 +4530,7 @@ sap.ui.define([
 
 		this.inputWithSuggestions.setValueState("Error");
 		this.inputWithSuggestions.onfocusin();
-		this.inputWithSuggestions._$input.focus().val("on").trigger("input");
+		this.inputWithSuggestions._$input.trigger("focus").val("on").trigger("input");
 		this.clock.tick(300);
 
 		this.inputWithSuggestions._closeSuggestionPopup();
@@ -4677,7 +4609,7 @@ sap.ui.define([
 		assert.ok(this.inputWithSuggestions._oValueStateMessage._oPopup.getContent().classList.contains("sapMValueStateMessage"), "Value state message is displayed");
 
 		// Act
-		this.inputWithSuggestions._$input.focus().val("on").trigger("input");
+		this.inputWithSuggestions._$input.trigger("focus").val("on").trigger("input");
 		this.clock.tick(300);
 
 		// Assert
@@ -4884,7 +4816,7 @@ sap.ui.define([
 		assert.ok(this.oInput._oValueStateMessage._oPopup.getContent().classList.contains("sapMValueStateMessage"), "Value state message is displayed");
 
 		// Act
-		this.oInput._$input.focus().val("on").trigger("input");
+		this.oInput._$input.trigger("focus").val("on").trigger("input");
 		this.clock.tick(300);
 
 		oSuggestionsPopoverHeader = this.oInput._getSuggestionsPopover()._oPopover.getCustomHeader();
@@ -5148,8 +5080,9 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		this.oInput._openSuggestionsPopover();
-		this.clock.tick();
+
+		this.oInput._$input.focus().val("on").trigger("input");
+		this.clock.tick(300);
 
 		this.oInput._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
 		sap.ui.getCore().applyChanges();
@@ -5159,10 +5092,13 @@ sap.ui.define([
 		assert.strictEqual(oSuggPopoverHeaderValueState, "New value state message containing a link", "The FormattedText aggregation is correctly updated in the popover's value state header while it's open");
 
 		// Act
-		this.oInput._closeSuggestionPopup();
+		qutils.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick();
+		qutils.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ENTER);
 		this.clock.tick();
 
 		oPopup = this.oInput._oValueStateMessage._oPopup;
+
 		// Assert
 		assert.strictEqual(oPopup.getContent().childNodes[1].textContent, "New value state message containing a link", "The updated FormattedText aggregation is also correctly displayed in the Input's value state popup after the suggestion popover is closed");
 	});
@@ -5315,10 +5251,10 @@ sap.ui.define([
 
 		var fnFireChangeSpy = this.spy(this.oInput, "fireChange");
 		this.oInput.onfocusin();
-		this.oInput._$input.focus().val("u2").trigger("input");
+		this.oInput._$input.trigger("focus").val("u2").trigger("input");
 		this.clock.tick(300);
 
-		this.oInput._$input.focus().val("U21").trigger("input");
+		this.oInput._$input.trigger("focus").val("U21").trigger("input");
 		this.clock.tick(300);
 		//ASSERT
 		assert.equal(this.oInput.getValue() ,"U21", "Value is set");
@@ -5333,7 +5269,7 @@ sap.ui.define([
 
 		var fnFireChangeSpy = this.spy(this.oInput, "fireChange");
 		this.oInput.onfocusin();
-		this.oInput._$input.focus().val("u").trigger("input");
+		this.oInput._$input.trigger("focus").val("u").trigger("input");
 		this.clock.tick(300);
 
 		this.oInput._oSuggPopover._bDoTypeAhead = true;
@@ -5350,7 +5286,7 @@ sap.ui.define([
 
 		var fnFireChangeSpy = this.spy(this.oInput, "fireChange");
 		this.oInput.setAutocomplete(false);
-		this.oInput._$input.focus().val("u").trigger("input");
+		this.oInput._$input.trigger("focus").val("u").trigger("input");
 		this.clock.tick(300);
 
 		this.oInput._oSuggPopover._bDoTypeAhead = true;
@@ -5373,7 +5309,7 @@ sap.ui.define([
 		});
 
 		oInput.onfocusin();
-		oInput._$input.focus().val("u").trigger("input");
+		oInput._$input.trigger("focus").val("u").trigger("input");
 		this.clock.tick(300);
 
 		qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
@@ -5428,7 +5364,7 @@ sap.ui.define([
 		var aVisibleItems;
 
 		this.oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		this.oInput._$input.focus().val("A").trigger("input");
+		this.oInput._$input.trigger("focus").val("A").trigger("input");
 		this.clock.tick(300);
 
 		aVisibleItems = this.oInput._oSuggPopover._oList.getItems().filter(function(oItem){
@@ -5486,7 +5422,7 @@ sap.ui.define([
 		var aVisibleItems, oGroupHeader;
 
 		this.oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		this.oInput._$input.focus().val("A").trigger("input");
+		this.oInput._$input.trigger("focus").val("A").trigger("input");
 		this.clock.tick(300);
 
 		aVisibleItems = this.oInput._oSuggPopover._oList.getItems().filter(function(oItem){

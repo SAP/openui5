@@ -2374,7 +2374,7 @@ sap.ui.define([
 		//change view
 		oPC1.setViewKey(CalendarIntervalType.Hour);
 		sap.ui.getCore().applyChanges();
-		jQuery("#PC1-Header-ViewSwitch").focus();
+		jQuery("#PC1-Header-ViewSwitch").trigger("focus");
 
 		qutils.triggerKeydown("PC1-Header-ViewSwitch-select", "ARROW_DOWN"); //to Days
 		qutils.triggerKeydown("PC1-Header-ViewSwitch-select", "ARROW_DOWN"); //to Months
@@ -2415,7 +2415,7 @@ sap.ui.define([
 
 	QUnit.test("viewChange", function(assert) {
 		bViewChange = false;
-		jQuery("#PC1-Header-ViewSwitch-select").focus();
+		jQuery("#PC1-Header-ViewSwitch-select").trigger("focus");
 		qutils.triggerKeyboardEvent("PC1-Header-ViewSwitch-select", "ARROW_DOWN");
 		qutils.triggerKeyboardEvent("PC1-Header-ViewSwitch-select", "ENTER");
 		sap.ui.getCore().applyChanges();
@@ -2435,7 +2435,7 @@ sap.ui.define([
 		oIntervalEndDate = undefined;
 		bSubInterval = undefined;
 		oIntervalRow = undefined;
-		jQuery("#PC1-TimesRow-201501011200").focus();
+		jQuery("#PC1-TimesRow-201501011200").trigger("focus");
 		qutils.triggerKeyboardEvent("PC1-TimesRow-201501011200", "ENTER");
 		sap.ui.getCore().applyChanges();
 		assert.ok(bIntervalSelect, "intervalSelect fired");
@@ -2696,7 +2696,7 @@ sap.ui.define([
 		// test here only interaction between rows, other things are tested on CalendarRow
 		var fnDone = assert.async();
 
-		jQuery("#PC1-R1A1").focus();
+		jQuery("#PC1-R1A1").trigger("focus");
 		assert.equal(document.activeElement.id, "PC1-R1A1", "Appointment1 focused");
 		qutils.triggerKeydown("PC1-R1A1", "END");
 		assert.equal(document.activeElement.id, "PC1-R2A1", "Appointment1 focused");
@@ -2723,7 +2723,7 @@ sap.ui.define([
 		this.oPC2.rerender();
 		var sMonthIdPrefix = this.oPC2.getId() + "-OneMonthsRow-";
 
-		jQuery("#" +  sMonthIdPrefix + "20160901").focus();
+		jQuery("#" +  sMonthIdPrefix + "20160901").trigger("focus");
 		assert.equal(document.activeElement.id, sMonthIdPrefix + "20160901", "1st of September focused");
 
 		qutils.triggerKeydown(sMonthIdPrefix + "20160901", "END");
@@ -2734,7 +2734,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.equal(document.activeElement.id, sMonthIdPrefix + "20160901", "1st of September focused");
 
-		jQuery("#" +  sMonthIdPrefix + "20160910").focus();
+		jQuery("#" +  sMonthIdPrefix + "20160910").trigger("focus");
 		assert.equal(document.activeElement.id, sMonthIdPrefix + "20160910", "10th of September focused");
 
 		qutils.triggerKeydown(sMonthIdPrefix + "20160910", "END");
@@ -3206,7 +3206,7 @@ sap.ui.define([
 		qutils.triggerEvent("tap", "startDateAtTheMiddleOfTheWeek-Header-NavToolbar-PickerBtn");
 
 		var $Day = jQuery("#startDateAtTheMiddleOfTheWeek-Header-Cal--Month0-20160902");
-		$Day.focus();
+		$Day.trigger("focus");
 
 		setTimeout(function(){
 			$Day = jQuery("#startDateAtTheMiddleOfTheWeek-Header-Cal--Month0-20160902");
@@ -3247,7 +3247,7 @@ sap.ui.define([
 
 		var $Day = jQuery("#startDateAtTheMiddleOfTheWeek-Header-Cal--Month0-20160830");
 
-		$Day.focus();
+		$Day.trigger("focus");
 
 		setTimeout(function(){
 			$Day = jQuery("#startDateAtTheMiddleOfTheWeek-Header-Cal--Month0-20160830");
@@ -3288,7 +3288,7 @@ sap.ui.define([
 
 		var $Day = jQuery("#startDateAtTheMiddleOfTheWeek-WeeksRow--Cal--Month0-20160830");
 
-		$Day.focus();
+		$Day.trigger("focus");
 
 		setTimeout(function(){
 			$Day = jQuery("#startDateAtTheMiddleOfTheWeek-WeeksRow--Cal--Month0-20160830");
@@ -3466,11 +3466,11 @@ sap.ui.define([
 		var aWeekDays = this.oPC2Interval.$("days").children();
 
 		//Act
-		aWeekDays.eq(1).focus();
+		aWeekDays.eq(1).trigger("focus");
 		sap.ui.getCore().applyChanges();
-		aWeekDays.eq(2).focus();
+		aWeekDays.eq(2).trigger("focus");
 		sap.ui.getCore().applyChanges();
-		aWeekDays.eq(3).focus();
+		aWeekDays.eq(3).trigger("focus");
 		sap.ui.getCore().applyChanges();
 
 		//assert initial state

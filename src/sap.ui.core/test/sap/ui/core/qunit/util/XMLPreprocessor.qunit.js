@@ -3930,4 +3930,4 @@ sap.ui.define([
 	});
 });
 //TODO we have completely missed support for unique IDs in fragments via the "id" property!
-//TODO somehow trace ex.stack, but do not duplicate ex.message and take care of PhantomJS
+//TODO somehow trace ex.stack, but do not duplicate ex.message

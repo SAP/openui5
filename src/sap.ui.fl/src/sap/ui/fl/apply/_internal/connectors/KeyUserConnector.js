@@ -34,4 +34,4 @@ sap.ui.define([
 	});
 
 	return KeyUserConnector;
-}, true);
+});

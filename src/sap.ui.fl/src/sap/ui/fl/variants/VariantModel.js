@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/util/restricted/_omit"
 ], function(
 	JSONModel,
 	JsControlTreeModifier,
@@ -41,7 +42,8 @@ sap.ui.define([
 	Switcher,
 	VariantManagementState,
 	VariantUtil,
-	Log
+	Log,
+	_omit
 ) {
 	"use strict";
 
@@ -794,11 +796,13 @@ sap.ui.define([
 	VariantModel.prototype._ensureStandardVariantExists = function(sVariantManagementReference) {
 		// variant model data
 		var oData = this.getData();
-		if (!oData[sVariantManagementReference]) { // Ensure standard variant exists
+		var oVMDataSection = oData[sVariantManagementReference] || {};
+		var oVMDataSectionWithoutInit = _omit(oVMDataSection, ["initPromise"]);
+		if (!oData[sVariantManagementReference] || isEmptyObject(oVMDataSectionWithoutInit)) { // Ensure standard variant exists
 			// Standard Variant should always contain the value: "SAP" in "author" / "Created by" field
 
 			// Set Standard Data to VariantModel
-			oData[sVariantManagementReference] = {
+			oData[sVariantManagementReference] = merge(oVMDataSection, {
 				currentVariant: sVariantManagementReference,
 				originalCurrentVariant: sVariantManagementReference,
 				defaultVariant: sVariantManagementReference,
@@ -817,7 +821,7 @@ sap.ui.define([
 						author: VariantUtil.DEFAULT_AUTHOR
 					}
 				]
-			};
+			});
 			this.setData(oData);
 
 			// variants state
@@ -1085,6 +1089,27 @@ sap.ui.define([
 			model: this,
 			vmControl: oVariantManagementControl
 		});
+
+		if (this.oData[sVariantManagementReference].initPromise) {
+			this.oData[sVariantManagementReference].initPromise.resolveFunction();
+			delete this.oData[sVariantManagementReference].initPromise;
+		}
+
+		this.oData[sVariantManagementReference].init = true;
+	};
+
+	VariantModel.prototype.waitForVMControlInit = function(sVMReference) {
+		if (!this.oData[sVMReference]) {
+			this.oData[sVMReference] = {};
+		} else if (this.oData[sVMReference].init) {
+			return Promise.resolve();
+		}
+
+		this.oData[sVMReference].initPromise = {};
+		this.oData[sVMReference].initPromise.promise = new Promise(function(resolve) {
+			this.oData[sVMReference].initPromise.resolveFunction = resolve;
+		}.bind(this));
+		return this.oData[sVMReference].initPromise.promise;
 	};
 
 	/**

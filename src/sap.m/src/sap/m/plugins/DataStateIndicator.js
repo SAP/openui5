@@ -33,7 +33,19 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			 * This callback gets called using the {@link sap.ui.core.message.Message message} and {@link sap.ui.core.Control related control} parameters.
 			 * Returns <code>true</code> to keep the message, <code>false</code> otherwise.
 			 */
-			filter: {type: "function", invalidate: false}
+			filter: {type: "function", invalidate: false},
+
+			/**
+			 * Defines the text for the link in the message strip.
+			 * @since 1.79
+			 */
+			messageLinkText: {type: "string", visibility: "hidden"},
+
+			/**
+			 * Defines the visibility of the link control in the message strip.
+			 * @since 1.79
+			 */
+			messageLinkVisible: {type: "boolean", defaultValue: true, visibility: "hidden"}
 		},
 		events: {
 			/**
@@ -50,6 +62,57 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			}
 		}
 	}});
+
+	/**
+	 * Defines the text to be shown for the link control of the message strip.
+	 * @param {string} [sLinkText] The text for the link control
+	 * @returns {sap.m.plugins.DataStateIndicator} The control instance
+	 * @since 1.79
+	 * @private
+	 */
+	DataStateIndicator.prototype.setMessageLinkText = function(sLinkText) {
+		this.setProperty("messageLinkText", sLinkText, true);
+		// update the link aggregation of the message strip
+		this._updateMessageLinkControl();
+		return this;
+	};
+
+	/**
+	 * Returns the message link text.
+	 * @returns {string} message link text
+	 * @since 1.79
+	 * @private
+	 */
+	DataStateIndicator.prototype.getMessageLinkText = function() {
+		return this.getProperty("messageLinkText");
+	};
+
+	/**
+	 * Defines the visibility of the link control in the message strip.
+	 * @param {boolean} [bVisible] Visibility of the link control
+	 * @return {sap.m.plugins.DataStateIndicator} The control instance
+	 * @since 1.79
+	 * @private
+	 */
+	DataStateIndicator.prototype.setMessageLinkVisible = function(bVisible) {
+		this.setProperty("messageLinkVisible", bVisible, true);
+
+		if (this._oLink) {
+			this._oLink.setVisible(bVisible);
+		}
+
+		return this;
+	};
+
+	/**
+	 * Returns the property value of <code>messageLinkVisible</code>.
+	 * @returns {boolean} The <code>messageLinkVisible</code> property value
+	 * @since 1.79
+	 * @private
+	 */
+	DataStateIndicator.prototype.getMessageLinkVisible = function() {
+		return this.getProperty("messageLinkVisible");
+	};
 
 	DataStateIndicator.prototype.isApplicable = function(oControl) {
 		if (!oControl.addAriaLabelledBy ||
@@ -91,6 +154,11 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			this._oMessageStrip = null;
 		}
 
+		if (this._oLink) {
+			this._oLink.destroy();
+			this._oLink = null;
+		}
+
 		this._oObserver.unobserve(oControl, { bindings: [sBindingName] });
 		this._oObserver.destroy();
 		this._oObserver = null;
@@ -121,12 +189,48 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 				showIcon: true
 			}).addStyleClass("sapUiTinyMargin");
 
+			// update the link aggregation of the message strip
+			this._updateMessageLinkControl();
+
 			oControl.setAggregation("_messageStrip", this._oMessageStrip);
 			oControl.addAriaLabelledBy(this._oMessageStrip);
 			this.showMessage(sText, sType);
 		}.bind(this));
 	};
 
+	/**
+	 * Creates or updates the link control of the message strip.
+	 * @since 1.79
+	 * @private
+	 */
+	DataStateIndicator.prototype._updateMessageLinkControl = function() {
+		if (!this._oMessageStrip) {
+			return;
+		}
+
+		var sMessageLinkText = this.getMessageLinkText();
+		if (!sMessageLinkText) {
+			this._oMessageStrip.setLink(null);
+			return;
+		} else if (this._oLink) {
+			this._oLink.setText(sMessageLinkText);
+			this._oMessageStrip.setLink(this._oLink);
+		}
+
+		if (!this._oLink) {
+			sap.ui.require(["sap/m/Link"], function(Link) {
+				this._oLink = new Link({
+					text: sMessageLinkText,
+					visible: this.getMessageLinkVisible(),
+					press: [function() {
+						// private event fired when the link is pressed
+						this.fireEvent("messageLinkPressed");
+					}, this]
+				});
+				this._oMessageStrip.setLink(this._oLink);
+			}.bind(this));
+		}
+	};
 
 	/**
 	 * Refreshes the messages displayed for the current data state.

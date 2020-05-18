@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect,browser*/
+/*global describe,it,element,by,takeScreenshot,expect,browser,protractor*/
 
 describe('sap.m.MultiComboBox', function() {
 	"use strict";
@@ -112,4 +112,17 @@ describe('sap.m.MultiComboBox', function() {
 			expect(takeScreenshot(successStateMultiComboBox)).toLookAs("multiComboBox_binding");
 		});
 	});
+
+	//MultiComboBox - Binding
+    it("should visualize a MultiComboBox and select the last item to check if the popover have unnecessary scroll", function(){
+        browser.executeScript('document.getElementById("MultiComboBoxFourItems").scrollIntoView()').then(function() {
+            element(by.id("MultiComboBoxFourItems-arrow")).click();
+            browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+            browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+            browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+            browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+            browser.actions().sendKeys(protractor.Key.SPACE).perform();
+            expect(takeScreenshot()).toLookAs("multiComboBox_with_selected_last_item");
+        });
+    });
 });

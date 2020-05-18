@@ -22,7 +22,9 @@ sap.ui.define([
 				iSelectItem: function (sText) {
 					this.waitFor({
 						matchers: function () {
-							return Opa5.getJQuery()("tag:contains(" + sText + ")");
+							var treeItemWithText = Opa5.getJQuery()("tag:contains(" + sText + ")");
+							Opa5.assert.ok(treeItemWithText.is(":visible"), "Tree.iSelectItem - Tree item is visible. text = " + sText);
+							return treeItemWithText;
 						},
 						actions: function ($item) {
 							$item.click();
@@ -67,8 +69,9 @@ sap.ui.define([
 				iShouldSeeTheHighlightedItem: function (sText) {
 					this.waitFor({
 						matchers: function () {
-							var oTag = Opa5.getJQuery()("tag:contains(" + sText + ")");
-							return oTag.parent().attr("selected");
+							var treeItemWithText = Opa5.getJQuery()("tag:contains(" + sText + ")");
+							var isSelected = treeItemWithText.parent().attr("selected");
+							return isSelected;
 						},
 						success: function (bSelected) {
 							Opa5.assert.ok(bSelected, "Item should be highlighted");

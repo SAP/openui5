@@ -9,7 +9,7 @@ sap.ui.define([
 	'sap/ui/core/dnd/DragInfo',
 	'sap/ui/core/dnd/DropInfo',
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/dnd/DropPosition"
+	'sap/ui/core/dnd/DropPosition'
 ],
 	function(DragInfo, DropInfo, KeyCodes, DropPosition) {
 		"use strict";
@@ -40,7 +40,7 @@ sap.ui.define([
 			/**
 			 * Handles drop event.
 			 * @param {object} context from which context function is called (sap.m.IconTabHeader or sap.m.IconTabSelectList)
-			 * @param {String} sDropPosition comes from drop event, it can be "Before" or "After"
+			 * @param {String} sDropPosition comes from drop event, it can be "Before", "After", or "On"
 			 * @param {object} oDraggedControl control that is being dragged
 			 * @param {object} oDroppedControl control that the dragged control will be dropped on
 			 * @param {boolean} bIgnoreRTL should RTL configuration be ignored for drag and drop logic
@@ -86,7 +86,7 @@ sap.ui.define([
 
 				IconTabBarDragAndDropUtil._insertControl(sInsertAfterBeforePosition, $DraggedControl, $DroppedControl);
 
-				if (sDropPosition === "On") {
+				if (sDropPosition === DropPosition.On) {
 					if (oDroppedControl === oDraggedControl) {
 						return;
 					}
@@ -275,7 +275,7 @@ sap.ui.define([
 			 * @param {object} context from which context function is called (sap.m.IconTabHeader or sap.m.IconTabSelectList)
 			 * @param {string} sDropLayout Depending on the control we are dragging in, it could be Vertical or Horizontal
 			 */
-			setDragDropAggregations: function (context, sDropLayout) {
+			setDragDropAggregations: function (context, sDropLayout, oDropPosition) {
 				var oIconTabHeader = context._oIconTabHeader ? context._oIconTabHeader : context;
 				var sIconTabHeaderId = oIconTabHeader.getId();
 				//Adding Drag&Drop configuration to the dragDropConfig aggregation if needed
@@ -285,7 +285,7 @@ sap.ui.define([
 				}));
 				context.addDragDropConfig(new DropInfo({
 					targetAggregation: "items",
-					dropPosition: DropPosition.OnOrBetween,
+					dropPosition: oDropPosition,
 					dropLayout: sDropLayout,
 					drop: context._handleDragAndDrop.bind(context),
 					groupName: DRAG_DROP_GROUP_NAME + sIconTabHeaderId

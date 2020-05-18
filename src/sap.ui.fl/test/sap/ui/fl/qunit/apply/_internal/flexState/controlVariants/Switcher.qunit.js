@@ -1,7 +1,6 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/base/util/includes",
 	"sap/base/util/restricted/_pick",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher",
@@ -9,7 +8,6 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	includes,
 	_pick,
 	VariantManagementState,
 	Switcher,
@@ -32,16 +30,19 @@ sap.ui.define([
 					control1: [{
 						getId: function() {
 							return "change1";
-						}
+						},
+						id: "change1"
 					}],
 					control2: [{
 						getId: function() {
 							return "change2";
-						}
+						},
+						id: "change2"
 					}, {
 						getId: function() {
 							return "change3";
-						}
+						},
+						id: "change3"
 					}]
 				}
 			};

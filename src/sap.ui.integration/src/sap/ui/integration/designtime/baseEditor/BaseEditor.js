@@ -357,7 +357,7 @@ sap.ui.define([
 					this.setModel(this._oI18nModel, "i18n");
 
 					// Setup config observer
-					this._oConfigObserver.addToIgnore("template"); // Ignore array templates
+					this._oConfigObserver.addToIgnore(["template", "itemLabel"]); // Ignore array templates and itemLabels
 					this._oConfigObserver.setModel(this._oDataModel);
 					this._oConfigObserver.setModel(this._oI18nModel, "i18n");
 
