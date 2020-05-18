@@ -29,6 +29,7 @@ function(
 			this.ID_OF_CONTROL_WITH_PROP_TYPE_ARRAY = "controlWithPropertyTypeArray";
 			this.ID_OF_CONTROL_WITH_PROP_BINDING = "controlWithPropertyBinding";
 			this.CHANGE_HANDLER_PATH = "path/to/changehandler/definition";
+			this.ID_OF_CONTROL_WITH_CUSTOM_DATA = "controlWithCustomData";
 
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "sap.ui.test.other",
@@ -40,6 +41,7 @@ function(
 					'xmlns:mvc="sap.ui.core.mvc" ' +
 					'xmlns="sap.m" ' +
 					'xmlns:f="sap.f" ' +
+					'xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" ' +
 					'xmlns:fl="sap.ui.fl">' +
 					'<VBox>\n' +
 						'<tooltip>\n</tooltip>' +	//empty 0..1 aggregation
@@ -74,7 +76,7 @@ function(
 						'<Button text="Button2"></Button>' +
 						'<Button text="Button3"></Button>' +
 					'</VBox>' +
-					'<f:DynamicPageTitle id="title2" fl:flexibility="' + this.CHANGE_HANDLER_PATH + '">' +
+					'<f:DynamicPageTitle id="' + this.ID_OF_CONTROL_WITH_CUSTOM_DATA + '" fl:flexibility="' + this.CHANGE_HANDLER_PATH + '" app:someInlineAppCustomData="inlineValue" >' +
 						'<f:actions>' +
 							'<Button text="Action1"></Button>' +
 							'<Button text="Action2"></Button>' +
@@ -85,6 +87,9 @@ function(
 							'<Text text="text2"></Text>' +
 							'<Text text="text3"></Text>' +
 						'</f:snappedContent>' +
+						'<f:customData>' +
+							'<CustomData xmlns="sap.ui.core" key="fullCustomData" value="full"></CustomData>' + //inline namespace as sap.ui.core is use case for not existing namespace
+						'</f:customData>' +
 					'</f:DynamicPageTitle>' +
 					'<VBox id="stashedExperiments">' +
 						'<Label text="visibleLabel" stashed="false"></Label>' +
@@ -230,6 +235,23 @@ function(
 			var oBar = XmlTreeModifier._children(this.oXmlView)[2];
 			var vAggregationElements = XmlTreeModifier.getAggregation(oBar, 'tooltip');
 			assert.equal(vAggregationElements, "barTooltip");
+		});
+
+		QUnit.test("all the namespaced attributes are returned in custom data aggregation", function (assert) {
+			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_CUSTOM_DATA, this.oXmlView);
+
+			var aCustomData = XmlTreeModifier.getAggregation(oControl, 'customData');
+			assert.equal(aCustomData.length, 3, "all 3 cases for custom data are returned");
+			assert.equal(XmlTreeModifier.getProperty(aCustomData[0], "key"), "fullCustomData", " fully specified custom data is available");
+			assert.equal(XmlTreeModifier.getProperty(aCustomData[0], "value"), "full", " fully specified custom data is available");
+			assert.equal(XmlTreeModifier.getProperty(aCustomData[1], "key"), "someInlineAppCustomData", " inline specified custom data is available");
+			assert.equal(XmlTreeModifier.getProperty(aCustomData[1], "value"), "inlineValue", " inline specified custom data is available");
+			assert.equal(XmlTreeModifier.getProperty(aCustomData[2], "key"), "sap-ui-custom-settings", " fully specified custom data is available");
+			assert.deepEqual(XmlTreeModifier.getProperty(aCustomData[2], "value"), {
+				"sap.ui.fl" : {
+					"flexibility" : this.CHANGE_HANDLER_PATH
+				}
+			}, " sap-ui-custom-settings custom data is available");
 		});
 
 		QUnit.test("the first non default aggregation childNode is added under a newly created aggregation node ", function (assert) {
