@@ -33,6 +33,14 @@
 	padding-bottom: 1rem;
 }
 
+/* Added to remove unwanted padding when FeedListItem is used in table*/
+.sapMListTblCell {
+	.sapMFeedListShowSeparatorsAll .sapMFeedListItem {
+		padding-top: 0rem;
+		padding-bottom: 0rem;
+	}
+}
+
 /* Makes sure that floating image is not displayed in the next list item. */
 .sapMFeedListItem:after {
 	content: " ";
