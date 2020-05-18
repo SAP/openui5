@@ -247,7 +247,7 @@ sap.ui.define([
 
 			this._oShareMenuBtn.addEventDelegate({
 				onAfterRendering: function() {
-					this._oShareMenuBtn.$().attr("aria-haspopup", true);
+					this._oShareMenuBtn.$().attr("aria-haspopup", "menu");
 				}.bind(this)
 			}, this);
 		}
