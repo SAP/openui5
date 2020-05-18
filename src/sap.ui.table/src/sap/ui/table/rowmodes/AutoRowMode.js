@@ -57,8 +57,19 @@ sap.ui.define([
 
 	AutoRowMode.prototype.init = function() {
 		RowMode.prototype.init.apply(this, arguments);
+
 		this.bRowCountAutoAdjustmentActive = false;
 		this.iLastAvailableSpace = 0;
+
+		/*
+		 * Flag indicating whether the table is a CSS flex item.
+		 *   - The parent of the table has the style "display: flex"
+		 *
+		 * Do not use for rendering! It is set/updated asynchronously after rendering.
+		 *
+		 * @type {boolean}
+		 */
+		this.bTableIsFlexItem = false;
 
 		/**
 		 * Asynchronously calculates and applies the row count based on the available vertical space.
@@ -274,7 +285,7 @@ sap.ui.define([
 			return undefined;
 		}
 
-		var iRowCountDelta = 0;
+		var iRowCountDelta;
 
 		if (this.isPropertyInitial("rowCount")) {
 			iRowCountDelta = this._getMinRowCount();
@@ -337,10 +348,9 @@ sap.ui.define([
 	AutoRowMode.prototype._onTableRefreshRows = function() {
 		// The computed row count cannot be used here, because the table's total row count (binding length) is not known yet.
 		var iConfiguredRowCount = this.getConfiguredRowCount();
-		var bRowCountIsKnown = !this.isPropertyInitial("rowCount");
 
 		if (iConfiguredRowCount > 0) {
-			if (bRowCountIsKnown) {
+			if (!this.isPropertyInitial("rowCount")) {
 				this.initTableRowsAfterDataRequested(iConfiguredRowCount);
 			}
 			this.getRowContexts(iConfiguredRowCount, true); // Trigger data request.
