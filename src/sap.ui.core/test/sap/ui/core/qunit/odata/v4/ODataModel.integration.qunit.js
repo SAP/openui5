@@ -25450,6 +25450,49 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: A bound action is executed, accompanied by a side effect. The action returns a
+	// wrong response, but the side effect must win anyway!
+	// BCP: 2070200175
+	QUnit.test("BCP: 2070200175", function (assert) {
+		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
+			oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
+	<Text id="status" text="{LifecycleStatus}"/>\
+	<FlexBox id="action" binding="{' + sAction + '(...)}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=LifecycleStatus,SalesOrderID", {
+				LifecycleStatus : "N",
+				SalesOrderID : "1"
+			})
+			.expectChange("status", "N");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList('1')/" + sAction,
+					payload : {}
+				}, {
+					LifecycleStatus : "N", // Note: wrong response, should be "C"
+					SalesOrderID : "1"
+				})
+				.expectRequest("SalesOrderList('1')?$select=LifecycleStatus", {
+					LifecycleStatus : "C"
+				})
+				.expectChange("status", "C");
+
+			return Promise.all([
+				that.oView.byId("action").getElementBinding().execute(),
+				that.oView.byId("form").getBindingContext()
+					.requestSideEffects([{$PropertyPath : "LifecycleStatus"}]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: You want to use AnnotationHelper.value for a property in the following cases:
 	// 1. /Artists/Name - structural property of an entity type
 	// 2. /Artists/BestFriend/IsActiveEntity - structural property reached via navigation
