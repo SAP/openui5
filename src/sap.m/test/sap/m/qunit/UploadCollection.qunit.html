@@ -1359,7 +1359,7 @@
 
 	QUnit.test("Display", function(assert) {
 		assert.expect(8); // verifies the event handler was executed
-		var oSpy = sinon.spy(sap.m.UploadCollection.prototype, "_triggerLink");
+		var oStub = sinon.stub(sap.m.UploadCollection.prototype, "_triggerLink");
 		var iLength = this.oUploadCollection.aItems.length;
 		for (var i = 0; i < iLength; i++) {
 			assert.equal( this.oUploadCollection.aItems[i]._status, "display", "Status of item " + i + " is correct");
@@ -1378,10 +1378,10 @@
 		qutils.triggerEvent(sap.ui.Device.system.desktop ? "click" : "tap", this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oSpy.callCount, 1, "Link has been triggered.");
+		assert.equal(this.oUploadCollection._triggerLink.callCount, 1, "Link has been triggered.");
 
 		//Cleanup
-		oSpy.restore();
+		oStub.restore();
 	});
 
 	QUnit.module("Properties", {
