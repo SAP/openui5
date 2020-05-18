@@ -77,11 +77,11 @@ sap.ui.define([
 	}
 
 	function getExtensionPointProvider(oView) {
-		if (ManifestUtils.isFlexExtensionPointHandlingEnabled(oView) === true) {
+		if (ManifestUtils.isFlexExtensionPointHandlingEnabled(oView)) {
 			return "sap/ui/fl/apply/_internal/extensionPoint/Processor";
 		}
 		if (sap.ui.getCore().getConfiguration().getDesignMode()) {
-			return "sap/ui/fl/apply/_internal/extensionPoint/BaseProcessor";
+			return "sap/ui/fl/write/_internal/extensionPoint/Processor";
 		}
 		return undefined;
 	}

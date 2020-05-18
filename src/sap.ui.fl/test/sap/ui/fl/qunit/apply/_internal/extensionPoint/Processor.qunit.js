@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/ExtensionPoint",
-	"sap/ui/fl/registry/ExtensionPointRegistry",
+	"sap/ui/fl/write/_internal/extensionPoint/Registry",
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/ChangePersistenceFactory",
@@ -35,12 +35,13 @@ sap.ui.define([
 	var oComponentContainer;
 	var oSpyApplyExtensionPoint;
 	var oSpyAddXMLAtExtensionPointApply;
-	var oSpyRegisterExtensionPoints;
+	var oSpyRegisterExtensionPoint;
 
 	function createComponentAndContainer(bSync) {
 		oSpyApplyExtensionPoint = sandbox.spy(ExtensionPointProcessor, "applyExtensionPoint");
 		oSpyAddXMLAtExtensionPointApply = sandbox.spy(AddXMLAtExtensionPoint, "applyChange");
-		oSpyRegisterExtensionPoints = sandbox.spy(ExtensionPointRegistry.getInstance(), "registerExtensionPoints");
+		oSpyRegisterExtensionPoint = sandbox.spy(ExtensionPointRegistry, "registerExtensionPoint");
+		sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
 		if (bSync) {
 			sandbox.stub(Loader, "loadFlexData").resolves({changes: {changes: createChanges("sap.ui.fl.qunit.extensionPoint.testApp")}});
 			oComponent = sap.ui.component({
@@ -112,6 +113,8 @@ sap.ui.define([
 	}
 
 	function check(bSync, assert) {
+		var done = assert.async();
+		var oView = oComponent.getRootControl();
 		var sReference = bSync ? "sap.ui.fl.qunit.extensionPoint.testApp" : "sap.ui.fl.qunit.extensionPoint.testApp.async";
 		var checkView = function(sView) {
 			var aPanelContent = oView.byId(sView).byId("Panel").getContent();
@@ -158,9 +161,6 @@ sap.ui.define([
 			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(5).args[0].getId(), sReference + "_EP1_async_CUSTOMER_BASE_addXMLAtExtensionPoint", "sixth change applied with correct order");
 		};
 
-		var done = assert.async();
-		var oView = oComponent.getRootControl();
-
 		var fnAssert = function() {
 			assert.ok(ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
 
@@ -168,7 +168,7 @@ sap.ui.define([
 			checkView("async");
 			checkChangesContent(sReference);
 			assert.equal(oSpyApplyExtensionPoint.callCount, 6, "number of applyExtensionPoint called correct");
-			assert.equal(oSpyRegisterExtensionPoints.callCount, 6, "number of registerExtensionPoints called correct in the ExtensionPointRegistry");
+			assert.equal(oSpyRegisterExtensionPoint.callCount, 6, "number of registerExtensionPoint called correct in the ExtensionPointRegistry");
 			checkApplyOrder(bSync);
 
 			done();

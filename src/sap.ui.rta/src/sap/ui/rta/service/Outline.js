@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/AggregationOverlay",
 	"sap/ui/dt/Util",
-	"sap/ui/fl/registry/ExtensionPointRegistry",
+	"sap/ui/fl/write/api/ExtensionPointRegistryAPI",
 	"sap/base/util/deepEqual",
 	"sap/base/util/merge",
 	"sap/base/util/restricted/_omit",
@@ -18,7 +18,7 @@ sap.ui.define([
 	ElementOverlay,
 	AggregationOverlay,
 	DtUtil,
-	ExtensionPointRegistry,
+	ExtensionPointRegistryAPI,
 	deepEqual,
 	merge,
 	_omit,
@@ -124,10 +124,9 @@ sap.ui.define([
 		};
 
 		oOutline._getExtensionPoints = function (oData) {
-			var oExtensionPointRegistry = ExtensionPointRegistry.getInstance();
 			var sParentId = oData.id;
 			var sAggregationName = oData.technicalName;
-			return oExtensionPointRegistry.getExtensionPointInfoByParentId(sParentId)
+			return ExtensionPointRegistryAPI.getExtensionPointInfoByParentId({parentId: sParentId})
 				.filter(function (mExtenstionPoint) {
 					return mExtenstionPoint.aggregationName === sAggregationName;
 				});
