@@ -2399,6 +2399,45 @@ sap.ui.define([
 		openPopover(oFF, 0);
 	});
 
+	QUnit.test("List binding before anything is rendered", function(assert) {
+		// prepare
+		var oModel = new JSONModel({
+				values: [{key: "1", text: "Val1"}]
+			}),
+			oFF = new FacetFilter({
+				showPersonalization : true,
+				liveSearch : false
+			}),
+			oFFL = new FacetFilterList(),
+			oBody = document.querySelector("body"),
+			oHtml = document.querySelector("html");
+
+		oHtml.removeChild(oBody);
+		oFFL.bindItems("/values", new FacetFilterItem({
+			text: "{text}",
+			key: "{key}"
+		}));
+
+		oFF.addList(oFFL);
+
+		// act
+		try {
+			oFFL.setModel(oModel);
+		} catch (oError) {
+			oHtml.appendChild(oBody);
+			throw oError;
+		}
+
+		// act
+		oHtml.appendChild(oBody);
+
+		// assert
+		assert.ok(true, "No error is thrown");
+
+		// clean
+		oFF.destroy();
+	});
+
 	QUnit.test("_updateFacetFilterButtonText is called from setSelectedKeys", function (assert) {
 		var oFFL = new FacetFilterList({
 				items: [
