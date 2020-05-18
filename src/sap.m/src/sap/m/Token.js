@@ -273,20 +273,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Event handler called when control is loosing the focus, removes selection from token
-	 *
-	 * @param {jQuery.Event} oEvent The event object
-	 * @private
-	 */
-	Token.prototype.onsapfocusleave = function(oEvent) {
-		if (this.getParent() instanceof Tokenizer) {
-			return;
-		}
-
-		this.setSelected(false);
-	};
-
-	/**
 	 * Function is called on keyboard backspace, deletes token
 	 *
 	 * @private
