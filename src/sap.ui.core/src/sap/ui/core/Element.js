@@ -719,7 +719,20 @@ sap.ui.define([
 	 * See {@link topic:bdf3e9818cd84d37a18ee5680e97e1c1 Event Handler Methods} for a general explanation of
 	 * event handling in controls.
 	 *
-	 * @param {object} oDelegate The delegate object
+	 * @example <caption>Adding a delegate for the keydown and afterRendering event</caption>
+	 * <pre>
+	 * var oDelegate = {
+	 *   onkeydown: function(){
+	 *     // Act when the keydown event is fired on the element
+	 *   },
+	 *   onAfterRendering: function(){
+	 *     // Act when the afterRendering event is fired on the element
+	 *   }
+	 * };
+	 * oElement.addEventDelegate(oDelegate);
+	 * </pre>
+	 *
+	 * @param {object} oDelegate The delegate object which consists of the event handler names and the corresponding event handler functions
 	 * @param {object} [oThis] If given, this object will be the "this" context in the listener methods; default is the delegate object itself
 	 * @returns {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
 	 * @since 1.9.0
@@ -734,7 +747,19 @@ sap.ui.define([
 	 *
 	 * This method will remove all registrations of the given delegate, not only one.
 	 *
-	 * @param {object} oDelegate the delegate object
+	 * @example <caption>Removing a delegate for the keydown and afterRendering event. The delegate object which was used when adding the event delegate</caption>
+	 * <pre>
+	 * var oDelegate = {
+	 *   onkeydown: function(){
+	 *     // Act when the keydown event is fired on the element
+	 *   },
+	 *   onAfterRendering: function(){
+	 *     // Act when the afterRendering event is fired on the element
+	 *   }
+	 * };
+	 * oElement.removeEventDelegate(oDelegate);
+	 * </pre>
+	 * @param {object} oDelegate The delegate object which consists of the event handler names and the corresponding event handler functions
 	 * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
 	 * @since 1.9.0
 	 * @public
