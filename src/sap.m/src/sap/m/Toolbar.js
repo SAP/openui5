@@ -126,7 +126,13 @@ function(
 			 * <b>Note:</b> The visual styles are theme-dependent.
 			 * @since 1.54
 			 */
-			style : {type : "sap.m.ToolbarStyle", group : "Appearance", defaultValue : ToolbarStyle.Standard}
+			style : {type : "sap.m.ToolbarStyle", group : "Appearance", defaultValue : ToolbarStyle.Standard},
+
+			/**
+			 * Defines the aria-haspopup attribute of the <code>Toolbar</code>. if the active <code>design</code> is true.
+			 * @since 1.79.0
+			 */
+			ariaHasPopup: {type : "string", group : "Accessibility", defaultValue : null}
 		},
 		defaultAggregation : "content",
 		aggregations : {
