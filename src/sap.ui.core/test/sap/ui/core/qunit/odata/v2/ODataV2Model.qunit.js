@@ -5551,6 +5551,30 @@ sap.ui.define([
 		});
 	});
 
+[true, "foo"].forEach(function (bEarlyTokenRequest) {
+	QUnit.test("Early request for security token: " + bEarlyTokenRequest, function (assert) {
+		this.mock(ODataModel.prototype).expects("securityTokenAvailable").withExactArgs();
+
+		// code under test
+		new ODataModel(sURI, {earlyTokenRequest : bEarlyTokenRequest});
+	});
+});
+
+[false, undefined, "", null, 0].forEach(function (bEarlyTokenRequest) {
+	QUnit.test("No early request for security token: " + bEarlyTokenRequest, function (assert) {
+		this.mock(ODataModel.prototype).expects("securityTokenAvailable").never();
+
+		// code under test
+		new ODataModel(sURI, {earlyTokenRequest : bEarlyTokenRequest});
+	});
+});
+
+	QUnit.test("No early request for security token without parameters", function (assert) {
+		this.mock(ODataModel.prototype).expects("securityTokenAvailable").never();
+
+		// code under test
+		new ODataModel(sURI);
+	});
 
 	QUnit.module("Soft State Header Support");
 
