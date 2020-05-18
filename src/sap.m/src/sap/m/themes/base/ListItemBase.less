@@ -10,6 +10,7 @@
 @_sap_m_ListItemBase_compact_SelectionControlHeight: 2rem;
 @_sap_m_ListItemBase_Highlight_InformationColor: @sapUiInformationBorder;
 @_sap_m_ListItemBase_Navigated: @sapUiSelected;
+@_sap_m_ListItemBase_Detail_Delete_MarginLeft: 0.125rem;
 
 .sapMLIB,
 .sapMLIBImgNav {
@@ -29,7 +30,7 @@
 
 .sapMLIBIconDet,
 .sapMLIBIconDel {
-	margin-left: 0.125rem;
+	margin-left: @_sap_m_ListItemBase_Detail_Delete_MarginLeft;
 }
 
 .sapMLIBContent {
