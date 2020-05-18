@@ -12,38 +12,31 @@ sap.ui.define([
 	'./TitleAlignmentMixin',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
-	'sap/ui/base/ManagedObject',
 	'sap/m/Toolbar',
 	'sap/m/Text',
 	'sap/m/BusyIndicator',
 	'sap/m/Bar',
 	'sap/ui/core/theming/Parameters',
 	'sap/m/Title',
-	'./TableSelectDialogRenderer',
 	'sap/base/Log'
-],
-	function(
-		Button,
-		Dialog,
-		SearchField,
-		Table,
-		library,
-		TitleAlignmentMixin,
-		Control,
-		Device,
-		ManagedObject,
-		Toolbar,
-		Text,
-		BusyIndicator,
-		Bar,
-		Parameters,
-		Title,
-		TableSelectDialogRenderer,
-		Log
-	) {
+], function (
+	Button,
+	Dialog,
+	SearchField,
+	Table,
+	library,
+	TitleAlignmentMixin,
+	Control,
+	Device,
+	Toolbar,
+	Text,
+	BusyIndicator,
+	Bar,
+	Parameters,
+	Title,
+	Log) {
+
 	"use strict";
-
-
 
 	// shortcut for sap.m.ListMode
 	var ListMode = library.ListMode;
@@ -114,201 +107,206 @@ sap.ui.define([
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/table-select-dialog/ Table Select Dialog}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var TableSelectDialog = Control.extend("sap.m.TableSelectDialog", /** @lends sap.m.TableSelectDialog.prototype */ { metadata : {
+	var TableSelectDialog = Control.extend("sap.m.TableSelectDialog", /** @lends sap.m.TableSelectDialog.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Specifies the title text in the dialog header.
-			 */
-			title : {type : "string", group : "Appearance", defaultValue : null},
+				/**
+				 * Specifies the title text in the dialog header.
+				 */
+				title : {type : "string", group : "Appearance", defaultValue : null},
 
-			/**
-			 * Specifies the text displayed when the table has no data.
-			 */
-			noDataText : {type : "string", group : "Appearance", defaultValue : null},
+				/**
+				 * Specifies the text displayed when the table has no data.
+				 */
+				noDataText : {type : "string", group : "Appearance", defaultValue : null},
 
-			/**
-			 * Enables the user to select several options from the table.
-			 */
-			multiSelect : {type : "boolean", group : "Dimension", defaultValue : false},
+				/**
+				 * Enables the user to select several options from the table.
+				 */
+				multiSelect : {type : "boolean", group : "Dimension", defaultValue : false},
 
-			/**
-			 * Determines the progressive loading. When set to <code>true</code>, enables the growing feature of the control to load more items by requesting from the bound model.
-			 * <b>Note:</b> This feature only works when an <code>items</code> aggregation is bound. Growing must not be used together with two-way binding.
-			 * <b>Note:</b> If the property is set to true, the features <code>selected count</code> in info bar and <code>select/deselect all</code>, if present, work only for the currently loaded items.
-			 * To make sure that all items in the table are loaded at once and the above features work properly, we recommend setting the <code>growing</code> property to false.
-			 * @since 1.56
-			 */
-			growing : {type : "boolean", group : "Behavior", defaultValue : true},
+				/**
+				 * Determines the progressive loading. When set to <code>true</code>, enables the growing feature of the control to load more items by requesting from the bound model.
+				 * <b>Note:</b> This feature only works when an <code>items</code> aggregation is bound. Growing must not be used together with two-way binding.
+				 * <b>Note:</b> If the property is set to true, the features <code>selected count</code> in info bar and <code>select/deselect all</code>, if present, work only for the currently loaded items.
+				 * To make sure that all items in the table are loaded at once and the above features work properly, we recommend setting the <code>growing</code> property to false.
+				 * @since 1.56
+				 */
+				growing : {type : "boolean", group : "Behavior", defaultValue : true},
 
-			/**
-			 * Determines the number of items initially displayed in the table and defines the number of items to be requested from the model for each grow.
-			 * This property can only be used if the property <code>growing</code> is set to <code>true</code>.
-			 */
-			growingThreshold : {type : "int", group : "Misc", defaultValue : null},
+				/**
+				 * Determines the number of items initially displayed in the table and defines the number of items to be requested from the model for each grow.
+				 * This property can only be used if the property <code>growing</code> is set to <code>true</code>.
+				 */
+				growingThreshold : {type : "int", group : "Misc", defaultValue : null},
 
-			/**
-			 * Determines the content width of the inner dialog. For more information, see the Dialog documentation.
-			 * @since 1.18
-			 */
-			contentWidth : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+				/**
+				 * Determines the content width of the inner dialog. For more information, see the Dialog documentation.
+				 * @since 1.18
+				 */
+				contentWidth : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
-			/**
-			 * Controls whether the dialog clears the selection or not. When the dialog is opened multiple times in the same context to allow for corrections of previous user inputs, set this flag to "true". When the dialog should reset the selection to allow for a new selection each time set it to "false"
-			 * Note: This property must be set before the Dialog is opened to have an effect.
-			 * @since 1.18
-			 */
-			rememberSelections : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * Controls whether the dialog clears the selection or not. When the dialog is opened multiple times in the same context to allow for corrections of previous user inputs, set this flag to "true". When the dialog should reset the selection to allow for a new selection each time set it to "false"
+				 * Note: This property must be set before the Dialog is opened to have an effect.
+				 * @since 1.18
+				 */
+				rememberSelections : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Specifies the content height of the inner dialog. For more information, see the Dialog documentation.
-			 */
-			contentHeight : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+				/**
+				 * Specifies the content height of the inner dialog. For more information, see the Dialog documentation.
+				 */
+				contentHeight : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
-			/**
-			 * This flag controls whether the Clear button is shown. When set to <code>true</code>, it provides a way to clear a selection made in Table Select Dialog.
-			 *
-			 * We recommend enabling of the Clear button in the following cases, where a mechanism to clear the value is needed:
-			 * In case the Table Select Dialog is in single-selection mode (default mode) and <code>rememberSelections</code> is set to <code>true</code>. The Clear button needs to be enabled in order to allow users to clear the selection.
-			 * In case of using <code>sap.m.Input</code> with <code>valueHelpOnly</code> set to <code>true</code>, the Clear button can be used for clearing the selection.
-			 * In case the application stores a value and uses only Table Select Dialog to edit/maintain it.
-			 *
-			 * Optional:
-			 * In case <code>multiSelect</code> is set to <code>true</code>, the selection can be easily cleared with one click.
-			 *
-			 * <b>Note:</b> When used with OData, only the loaded selections will be cleared.
-			 * @since 1.58
-			 */
-			showClearButton : {type : "boolean", group : "Behavior", defaultValue : false},
-			/**
-			 * Overwrites the default text for the confirmation button.
-			 * Note: This property applies only when the property <code>multiSelect</code> is set to <code>true</code>.
-			 * @since 1.68
-			 */
-			confirmButtonText: {type : "string", group : "Appearance"},
-						/**
-			 * When set to <code>true</code>, the TableSelectDialog is draggable by its header. The default value is <code>false</code>. <b>Note</b>: The TableSelectDialog can be draggable only in desktop mode.
-			 * @since 1.71
-			 */
-			draggable: {type: "boolean", group: "Behavior", defaultValue: false},
-			/**
-			 * When set to <code>true</code>, the TableSelectDialog will have a resize handler in its bottom right corner. The default value is <code>false</code>. <b>Note</b>: The TableSelectDialog can be resizable only in desktop mode.
-			 * @since 1.71
-			 */
-			resizable: {type: "boolean", group: "Behavior", defaultValue: false},
+				/**
+				 * This flag controls whether the Clear button is shown. When set to <code>true</code>, it provides a way to clear a selection made in Table Select Dialog.
+				 *
+				 * We recommend enabling of the Clear button in the following cases, where a mechanism to clear the value is needed:
+				 * In case the Table Select Dialog is in single-selection mode (default mode) and <code>rememberSelections</code> is set to <code>true</code>. The Clear button needs to be enabled in order to allow users to clear the selection.
+				 * In case of using <code>sap.m.Input</code> with <code>valueHelpOnly</code> set to <code>true</code>, the Clear button can be used for clearing the selection.
+				 * In case the application stores a value and uses only Table Select Dialog to edit/maintain it.
+				 *
+				 * Optional:
+				 * In case <code>multiSelect</code> is set to <code>true</code>, the selection can be easily cleared with one click.
+				 *
+				 * <b>Note:</b> When used with OData, only the loaded selections will be cleared.
+				 * @since 1.58
+				 */
+				showClearButton : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * Overwrites the default text for the confirmation button.
+				 * Note: This property applies only when the property <code>multiSelect</code> is set to <code>true</code>.
+				 * @since 1.68
+				 */
+				confirmButtonText: {type : "string", group : "Appearance"},
+							/**
+				 * When set to <code>true</code>, the TableSelectDialog is draggable by its header. The default value is <code>false</code>. <b>Note</b>: The TableSelectDialog can be draggable only in desktop mode.
+				 * @since 1.71
+				 */
+				draggable: {type: "boolean", group: "Behavior", defaultValue: false},
+				/**
+				 * When set to <code>true</code>, the TableSelectDialog will have a resize handler in its bottom right corner. The default value is <code>false</code>. <b>Note</b>: The TableSelectDialog can be resizable only in desktop mode.
+				 * @since 1.71
+				 */
+				resizable: {type: "boolean", group: "Behavior", defaultValue: false},
 
-			/**
-			 * Specifies the Title alignment (theme specific).
-			 * If set to <code>TitleAlignment.Auto</code>, the Title will be aligned as it is set in the theme (if not set, the default value is <code>center</code>);
-			 * Other possible values are <code>TitleAlignment.Start</code> (left or right depending on LTR/RTL), and <code>TitleAlignment.Center</code> (centered)
-			 * @since 1.72
-			 * @public
-			 */
-			titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.Auto}
-		},
-		defaultAggregation : "items",
-		aggregations : {
-
-			/**
-			 * The items of the table.
-			 */
-			items: {
-				type: "sap.m.ColumnListItem", multiple : true, singularName: "item", bindable: "bindable",
-				forwarding: { idSuffix: "-table", aggregation: "items", forwardBinding: true }
+				/**
+				 * Specifies the Title alignment (theme specific).
+				 * If set to <code>TitleAlignment.Auto</code>, the Title will be aligned as it is set in the theme (if not set, the default value is <code>center</code>);
+				 * Other possible values are <code>TitleAlignment.Start</code> (left or right depending on LTR/RTL), and <code>TitleAlignment.Center</code> (centered)
+				 * @since 1.72
+				 * @public
+				 */
+				titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.Auto}
 			},
+			defaultAggregation : "items",
+			aggregations : {
 
-			/**
-			 * The internal dialog that is displayed when method open is called.
-			 */
-			_dialog: {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
+				/**
+				 * The items of the table.
+				 */
+				items: {
+					type: "sap.m.ColumnListItem", multiple : true, singularName: "item", bindable: "bindable",
+					forwarding: { idSuffix: "-table", aggregation: "items", forwardBinding: true }
+				},
 
-			/**
-			 * The columns bindings.
-			 */
-			columns: {
-				type : "sap.m.Column", multiple : true, singularName : "column", bindable : "bindable",
-				forwarding: { idSuffix: "-table", aggregation: "columns", forwardBinding: true }
+				/**
+				 * The internal dialog that is displayed when method open is called.
+				 */
+				_dialog: {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
+
+				/**
+				 * The columns bindings.
+				 */
+				columns: {
+					type : "sap.m.Column", multiple : true, singularName : "column", bindable : "bindable",
+					forwarding: { idSuffix: "-table", aggregation: "columns", forwardBinding: true }
+				}
+			},
+			events : {
+
+				/**
+				 * Fires when the dialog is confirmed by selecting an item in single-selection mode or by pressing the confirmation button in multi-selection mode. The items being selected are returned as event parameters.
+				 */
+				confirm : {
+					parameters : {
+
+						/**
+						 * Returns the selected list item. When no item is selected, "null" is returned. When multi-selection is enabled and multiple items are selected, only the first selected item is returned.
+						 */
+						selectedItem : {type : "sap.m.StandardListItem"},
+
+						/**
+						 * Returns an array containing the visible selected list items. If no items are selected, an empty array is returned.
+						 */
+						selectedItems : {type : "sap.m.StandardListItem[]"},
+
+						/**
+						 * Returns the binding contexts of the selected items including the non-visible items.
+						 * Note: In contrast to the parameter "selectedItems", this parameter includes the selected but NOT visible items (due to list filtering). An empty array is set for this parameter if no Databinding is used.
+						 */
+						selectedContexts : {type : "string"}
+					}
+				},
+
+
+				/**
+				 * Fires when the search button has been clicked on dialog.
+				 */
+				search : {
+					parameters : {
+
+						/**
+						 * Specifies the value entered in the search field.
+						 */
+						value : {type : "string"},
+
+						/**
+						 * Determines the Items binding of the Table Select Dialog. Only available if the items aggregation is bound to a model.
+						 */
+						itemsBinding : {type : "any"},
+
+						/**
+						 * Returns if the Clear button is pressed.
+						 * @since 1.70
+						 */
+						clearButtonPressed: {type: "boolean"}
+					}
+				},
+
+				/**
+				 * Fires when the value of the search field is changed by a user (for example at each key press).
+				 */
+				liveChange : {
+					parameters : {
+
+						/**
+						 * Specifies the value entered in the search field.
+						 */
+						value : {type : "string"},
+
+						/**
+						 * The Items binding of the Table Select Dialog.
+						 * Only available if the items aggregation is bound to a model.
+						 */
+						itemsBinding : {type : "any"}
+					}
+				},
+
+				/**
+				 * Fires when the Cancel button is clicked.
+				 */
+				cancel : {}
 			}
 		},
-		events : {
 
-			/**
-			 * Fires when the dialog is confirmed by selecting an item in single-selection mode or by pressing the confirmation button in multi-selection mode. The items being selected are returned as event parameters.
-			 */
-			confirm : {
-				parameters : {
-
-					/**
-					 * Returns the selected list item. When no item is selected, "null" is returned. When multi-selection is enabled and multiple items are selected, only the first selected item is returned.
-					 */
-					selectedItem : {type : "sap.m.StandardListItem"},
-
-					/**
-					 * Returns an array containing the visible selected list items. If no items are selected, an empty array is returned.
-					 */
-					selectedItems : {type : "sap.m.StandardListItem[]"},
-
-					/**
-					 * Returns the binding contexts of the selected items including the non-visible items.
-					 * Note: In contrast to the parameter "selectedItems", this parameter includes the selected but NOT visible items (due to list filtering). An empty array is set for this parameter if no Databinding is used.
-					 */
-					selectedContexts : {type : "string"}
-				}
-			},
-
-
-			/**
-			 * Fires when the search button has been clicked on dialog.
-			 */
-			search : {
-				parameters : {
-
-					/**
-					 * Specifies the value entered in the search field.
-					 */
-					value : {type : "string"},
-
-					/**
-					 * Determines the Items binding of the Table Select Dialog. Only available if the items aggregation is bound to a model.
-					 */
-					itemsBinding : {type : "any"},
-
-					/**
-					 * Returns if the Clear button is pressed.
-					 * @since 1.70
-					 */
-					clearButtonPressed: {type: "boolean"}
-				}
-			},
-
-			/**
-			 * Fires when the value of the search field is changed by a user (for example at each key press).
-			 */
-			liveChange : {
-				parameters : {
-
-					/**
-					 * Specifies the value entered in the search field.
-					 */
-					value : {type : "string"},
-
-					/**
-					 * The Items binding of the Table Select Dialog.
-					 * Only available if the items aggregation is bound to a model.
-					 */
-					itemsBinding : {type : "any"}
-				}
-			},
-
-			/**
-			 * Fires when the Cancel button is clicked.
-			 */
-			cancel : {}
+		renderer: {
+			apiVersion: 2
 		}
-	}});
-
+	});
 
 	/* =========================================================== */
 	/*           begin: API methods                                */
@@ -460,7 +458,7 @@ sap.ui.define([
 
 				return this.getCustomHeader().getAggregation("contentMiddle")[0].getText();
 			}.bind(this._oDialog);
-		};
+	};
 
 	/**
 	 * Destroys the control
