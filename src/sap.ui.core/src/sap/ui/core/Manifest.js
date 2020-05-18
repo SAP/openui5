@@ -4,7 +4,6 @@
 
 // Provides base class sap.ui.core.Component for all components
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
 	'sap/ui/base/Object',
 	'sap/ui/thirdparty/URI',
 	'sap/base/util/Version',
@@ -12,12 +11,12 @@ sap.ui.define([
 	'sap/ui/dom/includeStylesheet',
 	'sap/base/i18n/ResourceBundle',
 	'sap/base/util/uid',
+	'sap/base/util/merge',
 	'sap/base/util/isPlainObject',
 	'sap/base/util/LoaderExtensions',
 	"sap/base/util/isEmptyObject"
 ],
 	function(
-		jQuery,
 		BaseObject,
 		URI,
 		Version,
@@ -25,6 +24,7 @@ sap.ui.define([
 		includeStylesheet,
 		ResourceBundle,
 		uid,
+		merge,
 		isPlainObject,
 		LoaderExtensions,
 		isEmptyObject
@@ -215,7 +215,7 @@ sap.ui.define([
 			// store the raw manifest for the time being and process the
 			// i18n placeholders in the manifest later
 			// remark: clone the frozen raw manifest to enable changes
-			this._oManifest = jQuery.extend(true, {}, this._oRawManifest);
+			this._oManifest = merge({}, this._oRawManifest);
 
 			// resolve the i18n texts immediately when manifest should be processed
 			if (this._bProcess) {

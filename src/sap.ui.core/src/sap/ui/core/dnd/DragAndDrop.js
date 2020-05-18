@@ -4,11 +4,12 @@
 sap.ui.define([
 	"sap/ui/Device",
 	"../UIArea",
+	'sap/base/util/extend',
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "control"
 	"sap/ui/dom/jquery/control"
 ],
-function(Device, UIArea, jQuery) {
+function(Device, UIArea, extend, jQuery) {
 	"use strict";
 
 	/**
@@ -419,7 +420,7 @@ function(Device, UIArea, jQuery) {
 			mLastIndicatorStyle.height != mStyle.height) {
 			$Indicator.attr("data-drop-layout", sDropLayout);
 			$Indicator.attr("data-drop-position", sDropPosition);
-			$Indicator.css(jQuery.extend(mStyle, mIndicatorConfig)).show();
+			$Indicator.css(extend(mStyle, mIndicatorConfig)).show();
 			mLastIndicatorStyle = mStyle;
 		}
 

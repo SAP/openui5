@@ -7,8 +7,8 @@ sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/base/util/ObjectPath",
 	"sap/base/assert",
-	"sap/ui/thirdparty/jquery"
-], function(isPlainObject, ObjectPath, assert, jQuery) {
+	"sap/base/util/extend"
+], function(isPlainObject, ObjectPath, assert, extend) {
 	"use strict";
 
 	/**
@@ -47,7 +47,7 @@ sap.ui.define([
 		var oChildRenderer = Object.create(this);
 		// subclasses should expose the modern signature variant only
 		oChildRenderer.extend = createExtendedRenderer;
-		jQuery.extend(oChildRenderer, oRendererInfo);
+		extend(oChildRenderer, oRendererInfo);
 
 		// expose the renderer globally
 		ObjectPath.set(sName, oChildRenderer);

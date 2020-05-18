@@ -4,15 +4,15 @@
 
 // Provides class sap.ui.core.ComponentMetadata
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
 	'sap/ui/base/ManagedObjectMetadata',
 	'sap/ui/core/Manifest',
-	'sap/ui/thirdparty/URI',
 	'sap/base/Log',
+	'sap/base/util/extend',
+	'sap/base/util/deepExtend',
 	'sap/base/util/isPlainObject',
 	'sap/base/util/LoaderExtensions'
 ],
-	function(jQuery, ManagedObjectMetadata, Manifest, URI, Log, isPlainObject, LoaderExtensions) {
+	function(ManagedObjectMetadata, Manifest, Log, extend, deepExtend, isPlainObject, LoaderExtensions) {
 	"use strict";
 
 	var oCfgData = window["sap-ui-config"] || {};
@@ -84,7 +84,7 @@ sap.ui.define([
 				var oResponse = LoaderExtensions.loadResource(sResource, {
 					dataType: "json"
 				});
-				jQuery.extend(oStaticInfo, oResponse);
+				extend(oStaticInfo, oResponse);
 			} catch (err) {
 				Log.error("Failed to load component metadata from \"" + sResource + "\" (component " + sName + ")! Reason: " + err);
 			}
@@ -428,7 +428,7 @@ sap.ui.define([
 		// only extend / clone if there is data
 		// otherwise "null" will be converted into an empty object
 		if (oParentData || oData) {
-				oData = jQuery.extend(true, {}, oParentData, oData);
+				oData = deepExtend({}, oParentData, oData);
 		}
 
 		return oData;
@@ -473,9 +473,9 @@ sap.ui.define([
 		}
 
 		if (bMerged && (oParent = this.getParent()) instanceof ComponentMetadata) {
-			return jQuery.extend(true, {}, oParent.getCustomEntry(sKey, bMerged), oData);
+			return deepExtend({}, oParent.getCustomEntry(sKey, bMerged), oData);
 		}
-		return jQuery.extend(true, {}, oData);
+		return deepExtend({}, oData);
 	};
 
 
@@ -720,10 +720,10 @@ sap.ui.define([
 
 		// deep copy of the legacy models object
 		var oParent,
-		    mModels = jQuery.extend(true, {}, this._oLegacyModels);
+		    mModels = deepExtend({}, this._oLegacyModels);
 		// merge the models object if defined via parameter
 		if (!bDoNotMerge && (oParent = this.getParent()) instanceof ComponentMetadata) {
-			mModels = jQuery.extend(true, {}, oParent.getModels(), mModels);
+			mModels = deepExtend({}, oParent.getModels(), mModels);
 		}
 
 		// return a clone of the models

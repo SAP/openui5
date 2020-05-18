@@ -7,7 +7,6 @@ sap.ui.define([
 	'sap/ui/thirdparty/jquery',
 	'../base/EventProvider',
 	'./Popup',
-	'./Core',
 	'./BusyIndicatorUtils',
 	'sap/ui/core/library',
 	"sap/ui/performance/trace/FESR",
@@ -20,7 +19,6 @@ sap.ui.define([
 		jQuery,
 		EventProvider,
 		Popup,
-		Core,
 		BusyIndicatorUtils,
 		library,
 		FESR,
@@ -42,7 +40,7 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.core.BusyIndicator
 	 */
-	var BusyIndicator = jQuery.extend( new EventProvider(), {
+	var BusyIndicator = Object.assign( new EventProvider(), {
 		oPopup: null,
 		oDomRef: null,
 		bOpenRequested: false,

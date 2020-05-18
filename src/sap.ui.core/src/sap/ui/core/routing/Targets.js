@@ -8,9 +8,9 @@ sap.ui.define([
 	'./sync/Targets',
 	"sap/base/util/UriParameters",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/base/util/deepExtend"
 ],
-	function(EventProvider, Target, asyncTargets, syncTargets, UriParameters, Log, jQuery) {
+	function(EventProvider, Target, asyncTargets, syncTargets, UriParameters, Log, deepExtend) {
 		"use strict";
 
 		/**
@@ -661,7 +661,7 @@ sap.ui.define([
 				var oTarget,
 					oOptions;
 
-				oOptions = jQuery.extend(true, { _name: sName }, this._oConfig, oTargetOptions);
+				oOptions = deepExtend({ _name: sName }, this._oConfig, oTargetOptions);
 				oTarget = this._constructTarget(oOptions);
 				oTarget.attachDisplay(function (oEvent) {
 					var oParameters = oEvent.getParameters();

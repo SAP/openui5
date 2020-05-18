@@ -20,6 +20,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/Version",
 	"sap/base/util/uid",
+	"sap/base/util/extend",
+	"sap/base/util/deepExtend",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/F6Navigation",
@@ -43,6 +45,8 @@ sap.ui.define([
 	Log,
 	Version,
 	uid,
+	extend,
+	deepExtend,
 	containsOrEquals,
 	jQuery,
 	F6Navigation,
@@ -150,7 +154,7 @@ sap.ui.define([
 				collision: "flip"
 			};
 
-			this._oPosition = jQuery.extend({},this._oDefaultPosition);
+			this._oPosition = Object.assign({},this._oDefaultPosition);
 
 			this._bModal = !!bModal;
 			this._oPreviousFocus = null;
@@ -1561,7 +1565,7 @@ sap.ui.define([
 			offset = null;
 		}
 
-		var oPosition = jQuery.extend({},this._oDefaultPosition, {
+		var oPosition = extend({},this._oDefaultPosition, {
 			"my": my || this._oDefaultPosition.my, // to use default my if empty string
 			"at": at || this._oDefaultPosition.at, // to use default at if empty string
 			"of": of,
@@ -1761,7 +1765,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype._convertPositionRTL = function(oPosition, bRtl) {
-		var oFixedPos = jQuery.extend({}, oPosition); // don't modify the original object
+		var oFixedPos = Object.assign({}, oPosition); // don't modify the original object
 
 		if (bRtl) {
 			var bNewOffset = false;
@@ -1874,7 +1878,7 @@ sap.ui.define([
 	Popup.prototype._resolveReference = function(oPosition) {
 		var oResult = oPosition;
 		if ( oPosition.of instanceof Element ) {
-			oResult = jQuery.extend({}, oPosition, { of : oPosition.of.getDomRef()});
+			oResult = Object.assign({}, oPosition, { of : oPosition.of.getDomRef()});
 		}
 
 		return oResult;
@@ -2772,8 +2776,8 @@ sap.ui.define([
 					if (this._followOfHandler) {
 						// provide the last position additionally if the call back needs it also
 						// e.g. the Callout needs it => create deep copy of old positioning object
-						var oLastPositionCopy = jQuery.extend(true, {}, this._oLastPosition),
-							oLastOfRectCopy = jQuery.extend(true, {}, this._oLastOfRect);
+						var oLastPositionCopy = deepExtend({}, this._oLastPosition),
+							oLastOfRectCopy = deepExtend({}, this._oLastOfRect);
 						this._followOfHandler({
 							lastPosition: oLastPositionCopy,
 							lastOfRect: oLastOfRectCopy,

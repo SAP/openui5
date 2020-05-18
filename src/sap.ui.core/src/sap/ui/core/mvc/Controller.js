@@ -5,6 +5,7 @@
 // Provides base class for controllers (part of MVC concept)
 sap.ui.define([
 	'sap/base/util/ObjectPath',
+	'sap/base/util/extend',
 	'sap/ui/base/EventProvider',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/mvc/ControllerMetadata',
@@ -14,6 +15,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ], function(
 	ObjectPath,
+	extend,
 	EventProvider,
 	ManagedObject,
 	ControllerMetadata,
@@ -67,7 +69,7 @@ sap.ui.define([
 				EventProvider.apply(this,arguments);
 
 				if (oToExtend) {
-					jQuery.extend(this, mRegistry[sName]);
+					extend(this, mRegistry[sName]);
 				}
 
 				if (this.extension) {
@@ -653,7 +655,7 @@ sap.ui.define([
 				Object.keys(oExtensionInterface).forEach(function(sMethod) {
 					//extension member should not be exposed
 					delete mPublicFunctions[oExtensionInfo.location];
-					var oMethodMetadata = jQuery.extend({}, mAllMethods[sMethod], {reloadNeeded: oExtensionInfo.reloadNeeded});
+					var oMethodMetadata = extend({}, mAllMethods[sMethod], {reloadNeeded: oExtensionInfo.reloadNeeded});
 					mPublicFunctions[oExtensionInfo.location + "." + sMethod] = oMethodMetadata;
 				});
 			});
