@@ -534,6 +534,26 @@ sap.ui.define([
 		oAnotherText.destroy();
 	});
 
+	QUnit.test("ariaDetails", function (assert) {
+		var oSampleText = new Text("sampleText", {
+			text: "Sample text"
+		}), oAnotherText = new Text("anotherText", {
+			text: "Another text"
+		}), oDescribedImage = new Image("describedImage", {
+			decorative: false,
+			ariaDetails: [oSampleText, oAnotherText]
+		});
+
+		oDescribedImage.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.strictEqual(oDescribedImage.$().attr("aria-details"), "sampleText anotherText", "aria-details association is set correctly");
+
+		oDescribedImage.destroy();
+		oSampleText.destroy();
+		oAnotherText.destroy();
+	});
+
 
 	QUnit.module("Dimensions");
 
