@@ -1,0 +1,18 @@
+{
+  "1.79.0": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "979a972646f6a8a7052103a345073fbc0a7237de",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: AdditionalContent methods are now working",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070177398"
+          }
+        ]
+      }
+    ]
+  }
+}

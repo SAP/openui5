@@ -1,0 +1,18 @@
+{
+  "1.79.0": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "0a5f5925d56820511c156116bbe39f63595bef0f",
+        "type": "FIX",
+        "text": " Opa: allow equal key and value in I18NText matcher",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070175878"
+          }
+        ]
+      }
+    ]
+  }
+}

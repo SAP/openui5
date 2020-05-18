@@ -23,6 +23,17 @@
             "reference": "2070205321"
           }
         ]
+      },
+      {
+        "id": "84483eb7087e89129daf16f602d485ce75cb275f",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Missing header shadow is added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070175609"
+          }
+        ]
       }
     ]
   }

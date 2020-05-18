@@ -51,6 +51,293 @@
             "reference": "002075129400001152812020"
           }
         ]
+      },
+      {
+        "id": "7f70affd8b2760662d9763f184a98935c874412d",
+        "type": "FEATURE",
+        "text": " sap.m.IconTabBar: introduce property tabNesting",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070219677"
+          }
+        ]
+      },
+      {
+        "id": "2bc7fc93db3ddfd0b1193034cb0dfcd8bb713ef4",
+        "type": "FIX",
+        "text": " m.Table: correcting tooltip for the explored sample",
+        "references": []
+      },
+      {
+        "id": "979a972646f6a8a7052103a345073fbc0a7237de",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: AdditionalContent methods are now working",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070177398"
+          }
+        ]
+      },
+      {
+        "id": "1eaa21fe631fab94dcec2159f735529dddb8ce58",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Correctly handle Type Ahead functionality",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070183544"
+          }
+        ]
+      },
+      {
+        "id": "21c73677c73d28663d382943d5c8fc5b4e0b8334",
+        "type": "FIX",
+        "text": " sap.m.FlexBox: Styles are now changed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070225113"
+          }
+        ]
+      },
+      {
+        "id": "523e7f746de87b433081227fd0e1e163587a6b0e",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: clears event handlers on rerender",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070208905"
+          }
+        ]
+      },
+      {
+        "id": "9432ac531b986bdf2bcbcf323fae92d2277083cf",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Texts are no longer cropped in Shell",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070209940"
+          }
+        ]
+      },
+      {
+        "id": "f7e9709f57c8ee2b69d937c5f675828d49cfeee5",
+        "type": "FIX",
+        "text": " sap.m.Input: QUnit test adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070216202"
+          }
+        ]
+      },
+      {
+        "id": "6fea39f743ce72b955318d94fc35695b38c70d35",
+        "type": "FIX",
+        "text": " sap.m.Input: Sticky column headers in table with suggestions enabled",
+        "references": []
+      },
+      {
+        "id": "9c0b4a4f80b524d50aecd248e7685aa5de6382c1",
+        "type": "FIX",
+        "text": " sap.m.Label: Longer words are now wrapped correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070183881"
+          }
+        ]
+      },
+      {
+        "id": "8b4359640e6c919615de0ca46ca1fde0953414af",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Now closes after button press when all items disabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070171986"
+          }
+        ]
+      },
+      {
+        "id": "c84c6cbc022703ac2aa3441b6adc432ff6f01ece",
+        "type": "FIX",
+        "text": " sap.m.MessageBox: Details text is now read by JAWS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070152011"
+          }
+        ]
+      },
+      {
+        "id": "384e4b06ba259f9cd4c0df326eb936ea21bae441",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Invisible text is now rendered only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070219787"
+          }
+        ]
+      },
+      {
+        "id": "347e40ad2ec7cc1d0f8091e12363d48905dfc962",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: showItems should always show all items popover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070210468"
+          }
+        ]
+      },
+      {
+        "id": "044a8f4163112054695a16575e3aa0e454a7776b",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Active text is displayed at 100% if no title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070016181"
+          }
+        ]
+      },
+      {
+        "id": "f8cddd455cf9e12d751015acdfe7efe229aed05a",
+        "type": "FIX",
+        "text": " sap.m.Panel: Style classes are correctly applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070230557"
+          }
+        ]
+      },
+      {
+        "id": "6c15a559664a8b180299265c82e96f503cb9b346",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Last item now has correct style",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070223918"
+          }
+        ]
+      },
+      {
+        "id": "cca3ace170254f7227db7d3171a68d49e129cd63",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Selected items are now returned correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070223390"
+          }
+        ]
+      },
+      {
+        "id": "556de1a31f8a11160d1f00631054b37ebd6f25a1",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog: InfoToolbar contrast ratio is correct now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070171989"
+          }
+        ]
+      },
+      {
+        "id": "c1ca390227212738bd99983d6cb68fcf7db2a5db",
+        "type": "FIX",
+        "text": " sap.m.Text: Line-clamp works on Safari now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2040279538"
+          }
+        ]
+      },
+      {
+        "id": "f5e34e6398b50c1f475476676c46f4b49af367d5",
+        "type": "FIX",
+        "text": " sap.m.Title: Text is now correctly wrapped",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070186424"
+          }
+        ]
+      },
+      {
+        "id": "00aee60731beac251d04062dcf7fd358c47d1da6",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Initial truncation now working correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070215576"
+          }
+        ]
+      },
+      {
+        "id": "71dd954742903d79fcf7eefa62bcbcc5f5dd7f79",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: No longer endless rerendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070227899"
+          }
+        ]
+      },
+      {
+        "id": "a9ac55ef29fd1a560b4e2150577b06739d4e5f23",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: data model is now propagated to the customControl aggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002801682020"
+          }
+        ]
+      },
+      {
+        "id": "199c4abb1230aa42d60c3a5048abd82bb45c7a3b",
+        "type": "FIX",
+        "text": " sap.m.Wizard: OPA tests adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070223158"
+          }
+        ]
+      },
+      {
+        "id": "b97596e927611a676425bab1beefcfab182934a9",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator: Aria-current attribute is now added to the active step",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070193478"
+          }
+        ]
+      },
+      {
+        "id": "6a6900d76bbe016b9650093867b81e7ed1053d0c",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: getScrollDelegate() method now works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070219620"
+          }
+        ]
       }
     ]
   }
