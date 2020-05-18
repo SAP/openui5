@@ -352,8 +352,6 @@ sap.ui.define([
 		// Make the whole editor read only
 		this._oEditor.setReadOnly(!bValue);
 
-		// This is required for BCP:1880235178
-		this._oEditor.textInput.setReadOnly(!bValue);
 		return this;
 	};
 
@@ -569,11 +567,6 @@ sap.ui.define([
 	};
 
 	CodeEditor.prototype.onfocusin = function () {
-		if (!this.getEditable()) {
-			if (!Device.browser.firefox) { // in Firefox, when text has been selected, and the activeElement gets blurred, Firefox loses its selected text
-				document.activeElement.blur(); // prevent virtual keyboard from opening when control is not editable
-			}
-		}
 		this._oEditor.getSession().setUseWorker(true);
 	};
 
