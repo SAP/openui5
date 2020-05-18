@@ -597,13 +597,21 @@ sap.ui.define([
 ].forEach(function (oTargetFixture, i) {
 	[{
 		isTechnical : false,
-		request : {deepPath : "~deepPath", headers : {"sap-message-scope" : "foo"}}
+		request : {
+			deepPath : "~deepPath",
+			headers : {"sap-message-scope" : "foo"},
+			method : "~method"
+		}
 	}, {
 		isTechnical : false,
-		request : {deepPath : "~deepPath"}
+		request : {deepPath : "~deepPath", method : "~method"}
 	}, {
 		isTechnical : true,
-		request : {deepPath : "~deepPath", headers : {"sap-message-scope" : "BusinessObject"}}
+		request : {
+			deepPath : "~deepPath",
+			headers : {"sap-message-scope" : "BusinessObject"},
+			method : "~method"
+		}
 	}].forEach(function (oFixture, j) {
 	var sTitle = "_createTarget: relative target with processor; #" + i + "/" + j;
 
@@ -644,7 +652,7 @@ sap.ui.define([
 			.withExactArgs("~requestURL")
 			.returns(mUrlData);
 		this.mock(oODataMessageParser._metadata).expects("_getFunctionImportMetadata")
-			.withExactArgs("/~parsedUrl", "GET")
+			.withExactArgs("/~parsedUrl", "~method")
 			.returns(null);
 		this.mock(oODataMessageParser._metadata).expects("_isCollection")
 			.withExactArgs("/~parsedUrl")
@@ -690,7 +698,7 @@ sap.ui.define([
 				}
 			},
 			mRequestInfo = {
-				request : {},
+				request : {headers : {}, method : "~method"},
 				response : {},
 				url : "~requestURL"
 			},
@@ -710,7 +718,7 @@ sap.ui.define([
 			.withExactArgs("~requestURL")
 			.returns(mUrlData);
 		this.mock(oODataMessageParser._metadata).expects("_getFunctionImportMetadata")
-			.withExactArgs("/~parsedUrl", "GET")
+			.withExactArgs("/~parsedUrl", "~method")
 			.returns(null);
 		this.mock(oODataMessageParser._metadata).expects("_isCollection")
 			.withExactArgs("/~parsedUrl")
@@ -735,6 +743,184 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("_createTarget: target relative to an entity", function (assert) {
+		var oMessageObject = {target : "~target"},
+			oODataMessageParser = {
+				_metadata : {
+					_getFunctionImportMetadata : function () {},
+					_getReducedPath : function () {},
+					_isCollection : function () {}
+				},
+				_parseUrl : function () {},
+				_processor : {
+					resolve : function () {}
+				}
+			},
+			mRequestInfo = {
+				request : {deepPath : "~deepPath", headers : {}, method : "~method"},
+				response : {},
+				url : "~requestURL"
+			},
+			mUrlData = {url : "~parsedUrl('key')"};
+
+		this.mock(ODataMessageParser).expects("_isResponseForCreate")
+			.withExactArgs(sinon.match.same(mRequestInfo))
+			.returns(undefined);
+		this.mock(oODataMessageParser).expects("_parseUrl")
+			.withExactArgs("~requestURL")
+			.returns(mUrlData);
+		this.mock(oODataMessageParser._metadata).expects("_getFunctionImportMetadata")
+			.withExactArgs("/~parsedUrl('key')", "~method")
+			.returns(null);
+		this.mock(oODataMessageParser._metadata).expects("_isCollection").never();
+		this.mock(oODataMessageParser._processor).expects("resolve")
+			.withExactArgs("/~parsedUrl('key')/~target", undefined, true)
+			.returns("~canonicalTarget");
+		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
+			.withExactArgs("~deepPath/~target")
+			.returns("~reducedPath");
+		this.mock(ODataUtils).expects("_normalizeKey")
+			.withExactArgs("~canonicalTarget")
+			.returns("~normalizedTarget");
+
+		// code under test
+		ODataMessageParser.prototype._createTarget.call(oODataMessageParser, oMessageObject,
+			mRequestInfo);
+
+		assert.strictEqual(oMessageObject.deepPath, "~reducedPath");
+		assert.strictEqual(oMessageObject.target, "~normalizedTarget");
+	});
+
+	//*********************************************************************************************
+[{
+	resolveCalls : [{
+		path : "/BusinessPartnerSet('2')/ToSalesOrders('1')/"
+			+ "ToLineItems(SalesOrderID='1',ItemPosition='10')",
+		result : "/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')"
+	}, {
+		path : "/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')",
+		result : "/SalesOrderLineItemsSet(SalesOrderID='1',ItemPosition='10')"
+	}],
+	target : "ToSalesOrders('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')",
+	targetToNormalize : "/SalesOrderLineItemsSet(SalesOrderID='1',ItemPosition='10')"
+}, {
+	resolveCalls : [{
+		path : "/BusinessPartnerSet('2')/ToSalesOrders('1')/ToProduct",
+		result : "/SalesOrderSet('1')/ToProduct"
+	}, {
+		path : "/SalesOrderSet('1')/ToProduct",
+		result : undefined
+	}],
+	target : "ToSalesOrders('1')/ToProduct",
+	targetToNormalize : "/SalesOrderSet('1')/ToProduct"
+}].forEach(function (oFixture, i) {
+	QUnit.test("_createTarget: multiple resolve steps needed", function (assert) {
+		var oMessageObject = {target : oFixture.target},
+			oODataMessageParser = {
+				_metadata : {
+					_getFunctionImportMetadata : function () {},
+					_getReducedPath : function () {},
+					_isCollection : function () {}
+				},
+				_parseUrl : function () {},
+				_processor : {
+					resolve : function () {}
+				}
+			},
+			oProcessorMock = this.mock(oODataMessageParser._processor),
+			mRequestInfo = {
+				request : {deepPath : "~deepPath", headers : {}, method : "~method"},
+				response : {},
+				url : "BusinessPartnerSet('2')"
+			},
+			mUrlData = {url : "BusinessPartnerSet('2')"};
+
+		this.mock(ODataMessageParser).expects("_isResponseForCreate")
+			.withExactArgs(sinon.match.same(mRequestInfo))
+			.returns(undefined);
+		this.mock(oODataMessageParser).expects("_parseUrl")
+			.withExactArgs("BusinessPartnerSet('2')")
+			.returns(mUrlData);
+		this.mock(oODataMessageParser._metadata).expects("_getFunctionImportMetadata")
+			.withExactArgs("/BusinessPartnerSet('2')", "~method")
+			.returns(null);
+		this.mock(oODataMessageParser._metadata).expects("_isCollection").never();
+		oFixture.resolveCalls.forEach(function (oResolveCall) {
+			oProcessorMock.expects("resolve")
+				.withExactArgs(oResolveCall.path, undefined, true)
+				.returns(oResolveCall.result);
+		});
+		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
+			.withExactArgs("~deepPath/" + oFixture.target)
+			.returns("~reducedPath");
+		this.mock(ODataUtils).expects("_normalizeKey")
+			.withExactArgs(oFixture.targetToNormalize)
+			.returns("~normalizedTarget");
+
+		// code under test
+		ODataMessageParser.prototype._createTarget.call(oODataMessageParser, oMessageObject,
+			mRequestInfo);
+
+		assert.strictEqual(oMessageObject.deepPath, "~reducedPath");
+		assert.strictEqual(oMessageObject.target, "~normalizedTarget");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_createTarget: function call", function (assert) {
+		var oMessageObject = {target : "~target"},
+			oODataMessageParser = {
+				_getFunctionTarget : function () {},
+				_metadata : {
+					_getFunctionImportMetadata : function () {},
+					_getReducedPath : function () {},
+					_isCollection : function () {}
+				},
+				_parseUrl : function () {},
+				_processor : {
+					resolve : function () {}
+				}
+			},
+			mRequestInfo = {
+				request : {deepPath : "~deepPath", headers : {}, method : "~method"},
+				response : {},
+				url : "~requestURL"
+			},
+			mUrlData = {url : "~parsedUrl"};
+
+		this.mock(ODataMessageParser).expects("_isResponseForCreate")
+			.withExactArgs(sinon.match.same(mRequestInfo))
+			.returns(undefined);
+		this.mock(oODataMessageParser).expects("_parseUrl")
+			.withExactArgs("~requestURL")
+			.returns(mUrlData);
+		this.mock(oODataMessageParser._metadata).expects("_getFunctionImportMetadata")
+			.withExactArgs("/~parsedUrl", "~method")
+			.returns("~mFunctionInfo");
+		this.mock(oODataMessageParser).expects("_getFunctionTarget")
+			.withExactArgs("~mFunctionInfo", sinon.match.same(mRequestInfo),
+				sinon.match.same(mUrlData))
+			.returns("/~functionTarget");
+		this.mock(oODataMessageParser._metadata).expects("_isCollection")
+			.withExactArgs("/~functionTarget")
+			.returns(false);
+		this.mock(oODataMessageParser._processor).expects("resolve")
+			.withExactArgs("/~functionTarget/~target", undefined, true)
+			.returns("~canonicalTarget");
+		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
+			.withExactArgs("/~functionTarget/~target").returns("~reducedPath");
+		this.mock(ODataUtils).expects("_normalizeKey")
+			.withExactArgs("~canonicalTarget")
+			.returns("~normalizedTarget");
+
+		// code under test
+		ODataMessageParser.prototype._createTarget.call(oODataMessageParser, oMessageObject,
+			mRequestInfo);
+
+		assert.strictEqual(oMessageObject.deepPath, "~reducedPath");
+		assert.strictEqual(oMessageObject.target, "~normalizedTarget");
+	});
+
 	//*********************************************************************************************
 	QUnit.test("_createTarget: created entity", function (assert) {
 		var oMessageObject = {target : "~target"},
