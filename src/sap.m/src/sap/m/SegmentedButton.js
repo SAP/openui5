@@ -460,7 +460,11 @@ function(
 	};
 
 	SegmentedButton.prototype._onAfterExitOverflow = function(oControl) {
-		oControl._toNormalMode();
+		if (oControl._bForcedSelectMode) {
+			oControl._toSelectMode();
+		} else {
+			oControl._toNormalMode();
+		}
 	};
 
 	/**
