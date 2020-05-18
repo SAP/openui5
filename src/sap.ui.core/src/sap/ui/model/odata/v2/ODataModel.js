@@ -5074,31 +5074,72 @@ sap.ui.define([
 	/**
 	 * Returns a promise for the loaded state of the metadata.
 	 *
-	 * The promise won't get rejected in case the metadata loading failed but is only resolved if the metadata is loaded successfully.
-	 * If <code>refreshMetadata</code> function is called after this promise is already resolved you should rely on the promise returned by
-	 * <code>refreshMetadata</code> to get information about the refreshed metadata loaded state.
+	 * The metadata needs to be loaded prior to performing OData calls.
+	 * Chaining to the returned promise ensures that all required parameters have been loaded, e.g.
+	 * the security token, see {@link #getSecurityToken}.
 	 *
-	 * The Metadata needs to be loaded prior to performing OData calls.
-	 * Chaining to the returned promise ensures that all required parameters have been loaded, e.g. authentication token.
+	 * The returned promise depends on the optional parameter <code>bRejectOnFailure</code>.
+	 *
+	 * <code>bRejectOnFailure=false</code>:
+	 * The promise won't get rejected in case the metadata or annotation loading failed but is
+	 * only resolved if
+	 * <ol>
+	 * <li>the metadata are loaded successfully,</li>
+	 * <li>the annotations are processed, provided the model parameter
+	 * <code>loadAnnotationsJoined</code> has been set.</li>
+	 * </ol>
+	 * Use this promise for delaying OData calls until all required information is available, i.e.
+	 * this promise is resolved.
+	 *
+	 * <code>bRejectOnFailure=true</code>:
+	 * Since 1.79, the parameter <code>bRejectOnFailure</code> allows to request a promise that is
+	 * rejected when one of the following fails:
+	 * <ul>
+	 * <li>the loading of the metadata,</li>
+	 * <li>the loading of the annotations, provided the model parameter
+	 * <code>loadAnnotationsJoined</code> has been set.</li>
+	 * </ul>
+	 * The promise is fulfilled upon successful loading of both. This promise can be used to start
+	 * processing OData calls when it is fulfilled and to display an error message when it is
+	 * rejected. See also the example below.
+	 *
+	 * If the method <code>refreshMetadata</code> is called after the returned promise is already
+	 * resolved or rejected, you should use the promise returned by <code>refreshMetadata</code>
+	 * to get information about the refreshed state.
 	 *
 	 * @example
-	 * var oModel  = this.oModel; // v2.ODataModel
-	 * oModel.metadataLoaded().then(function() {
-	 *      // model is ready now
-	 *      oModel.createKey("PERSON", {"ID" : 4711, "TASK_GUID": "myguid"});
-	 * });
+	 * var oModel  = this.oModel, // v2.ODataModel
+	 *     that = this;
+	 * oModel.metadataLoaded(true).then(
+	 *     function () {
+	 *         // model is ready now
+	 *         oModel.createKey("PERSON", {"ID" : 4711, "TASK_GUID": "myguid"});
+	 *     },
+	 *     function () {
+	 *         // Display error information so that the user knows that the application does not work.
+	 *         that.navigateToErrorPage();
+	 *     });
 	 *
+	 * @param {boolean} [bRejectOnFailure=false]
+	 *   Determines since 1.79 whether the returned promise is rejected when the initial loading
+	 *   of the metadata fails. In case the model parameter <code>loadAnnotationsJoined</code> is
+	 *   set, the returned promise fails also if loading the annotations fails.
 	 *
-	 * @public
 	 * @returns {Promise} A promise on metadata loaded state
 	 *
+	 * @public
 	 * @since 1.30
 	 */
-	ODataModel.prototype.metadataLoaded = function() {
-		var pMetadataLoaded = this.oMetadata.loaded();
+	ODataModel.prototype.metadataLoaded = function (bRejectOnFailure) {
+		var pMetadataLoaded = this.oMetadata.loaded(bRejectOnFailure);
 		if (this.bLoadAnnotationsJoined) {
-			// In case annotations are loaded "joined" with metadata, delay the metadata promise until annotations are
-			// either loaded or failed
+			// In case the metadata promise can be rejected, the resulting promise will also fail
+			// if the annotation loading failed.
+			if (bRejectOnFailure) {
+				return Promise.all([pMetadataLoaded, this.pAnnotationsLoaded]);
+			}
+			// In case annotations are loaded "joined" with metadata, delay the metadata promise
+			// until annotations are either loaded or failed.
 			var fnChainMetadataLoaded = function() {
 				return pMetadataLoaded;
 			};
