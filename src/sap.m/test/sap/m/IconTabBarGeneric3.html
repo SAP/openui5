@@ -51,7 +51,7 @@
 				label2a.addStyleClass("label");
 
 				var label2b = new Label({
-					text: "Drag and Drop IconTabBar (tabNestingViaInteraction=true)"
+					text: "Drag and Drop IconTabBar (maxNestingLevel=5)"
 				});
 				label2b.addStyleClass("label");
 
@@ -750,7 +750,7 @@
 
 				var itb2b = new IconTabBar("itb2b", {
 					enableTabReordering: true,
-					tabNestingViaInteraction: true,
+					maxNestingLevel: 5,
 					items: lotsOfTabs2
 				});
 
