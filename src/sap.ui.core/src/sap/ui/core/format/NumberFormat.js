@@ -301,7 +301,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
 	 * @param {int} [oFormatOptions.shortRefNumber] @since 1.40 specifies a number from which the scale factor for 'short' or 'long' style format is generated. The generated scale factor is
 	 *  used for all numbers which are formatted with this format instance. This option has effect only when the option 'style' is set to 'short' or 'long'. This option is by default set
-	 *  with undefined which means the scale factor is selected automatically for each number being formatted.
+	 *  with <code>undefined</code> which means the scale factor is selected automatically for each number being formatted.
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
 	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
@@ -356,7 +356,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
 	 * @param {int} [oFormatOptions.shortRefNumber] @since 1.40 specifies a number from which the scale factor for 'short' or 'long' style format is generated. The generated scale factor is
 	 *  used for all numbers which are formatted with this format instance. This option has effect only when the option 'style' is set to 'short' or 'long'. This option is by default set
-	 *  with undefined which means the scale factor is selected automatically for each number being formatted.
+	 *  with <code>undefined</code> which means the scale factor is selected automatically for each number being formatted.
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
 	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
@@ -454,7 +454,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
 	 * @param {int} [oFormatOptions.shortRefNumber] @since 1.40 specifies a number from which the scale factor for 'short' or 'long' style format is generated. The generated scale factor is
 	 *  used for all numbers which are formatted with this format instance. This option has effect only when the option 'style' is set to 'short' or 'long'. This option is by default set
-	 *  with undefined which means the scale factor is selected automatically for each number being formatted.
+	 *  with <code>undefined</code> which means the scale factor is selected automatically for each number being formatted.
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
@@ -472,7 +472,7 @@ sap.ui.define([
 	 *  defined by maxFractionDigits. Rounding will only be applied, if the passed value if of type number. This can be assigned by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode}
 	 *  or a function which will be used for rounding the number. The function is called with two parameters: the number and how many decimal digits should be reserved.
 	 * @param {boolean} [oFormatOptions.trailingCurrencyCode] Overrides the global configuration value {@link sap.ui.core.Configuration.FormatSettings#getTrailingCurrencyCode} whose default value is <code>true</>.
-	 *  This is ignored if <code>oFormatOptions.currencyCode</code> is set to false or if <code>oFormatOptions.pattern</code> is supplied
+	 *  This is ignored if <code>oFormatOptions.currencyCode</code> is set to <code>false</code> or if <code>oFormatOptions.pattern</code> is supplied
 	 * @param {boolean} [oFormatOptions.showMeasure=true] defines whether the measure according to the format is shown in the formatted string
 	 * @param {boolean} [oFormatOptions.currencyCode=true] defines whether the currency is shown as code in currency format. The currency symbol is displayed when this is set to false and there is a symbol defined
 	 *  for the given currency code.
@@ -543,7 +543,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
 	 * @param {int} [oFormatOptions.shortRefNumber] @since 1.40 specifies a number from which the scale factor for 'short' or 'long' style format is generated. The generated scale factor is
 	 *  used for all numbers which are formatted with this format instance. This option has effect only when the option 'style' is set to 'short' or 'long'. This option is by default set
-	 *  with undefined which means the scale factor is selected automatically for each number being formatted.
+	 *  with <code>undefined</code> which means the scale factor is selected automatically for each number being formatted.
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
 	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
@@ -608,7 +608,7 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.shortLimit] only use short number formatting for values above this limit
 	 * @param {int} [oFormatOptions.shortRefNumber] @since 1.40 specifies a number from which the scale factor for 'short' or 'long' style format is generated. The generated scale factor is
 	 *  used for all numbers which are formatted with this format instance. This option has effect only when the option 'style' is set to 'short' or 'long'. This option is by default set
-	 *  with undefined which means the scale factor is selected automatically for each number being formatted.
+	 *  with <code>undefined</code> which means the scale factor is selected automatically for each number being formatted.
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
 	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number

@@ -905,8 +905,8 @@ sap.ui.define([
 		 *   must not be empty
 		 * @param {string} [collectionName] Name of the icon collection; to access built-in icons,
 		 *   omit the collection name
-		 * @param {string} [loadingMode] The approach for loading the icon info, if it is not already available:
-		 *   sync (default) - font metadata is loaded synchronously and the icon info is returned immediately
+		 * @param {string} [loadingMode="sync"] The approach for loading the icon info, if it is not already available:
+		 *   sync - font metadata is loaded synchronously and the icon info is returned immediately
 		 *   async - a promise is returned that returns the icon info when the font metadata is loaded
 		 *   mixed - until the font metadata is loaded a promise is returned, afterwards the icon info
 		 * @return {object|Promise|undefined} Info object or Promise for the icon depending on the loadingMode
