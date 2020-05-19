@@ -12,7 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Object to register extension points to track their locations
+	 * Object to register extension points to track their locations.
 	 * @constructor
 	 * @alias sap.ui.fl.write._internal.extensionPoint.Registry
 	 *
@@ -116,9 +116,9 @@ sap.ui.define([
 	 * @param {Object} mExtensionPointInfo.view - View object
 	 * @param {string} mExtensionPointInfo.name - Name of the extension point
 	 * @param {Object} mExtensionPointInfo.targetControl - Parent control of the extension point
-	 * @param {string} mExtensionPointInfo.aggregationName - Name of the aggregation where the extension point is
+	 * @param {string} mExtensionPointInfo.aggregationName - Name of the aggregation where the extension point is located
 	 * @param {number} mExtensionPointInfo.index - Index of the extension point
-	 * @param {Array} mExtensionPointInfo.defaultContent - Array of control ids which belong to the default aggregation
+	 * @param {Array} mExtensionPointInfo.defaultContent - Array of control IDs, which belong to the default aggregation
 	 */
 	ExtensionPointRegistry.registerExtensionPoint = function(mExtensionPointInfo) {
 		var oParent = mExtensionPointInfo.targetControl;
@@ -140,10 +140,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the extension point information by parent id.
+	 * Returns the extension point information by parent ID.
 	 *
-	 * @param {string} sParentId - Id of the extension point parent control
-	 * @returns {Array} of extension point informations.
+	 * @param {string} sParentId - ID of the extension point parent control
+	 * @returns {Array} Array of extension point information
 	 */
 	ExtensionPointRegistry.getExtensionPointInfoByParentId = function (sParentId) {
 		return aExtensionPointsByParent[sParentId] || [];
