@@ -1038,6 +1038,7 @@ function(
 			oEvent.preventDefault(); //prevents the value to increase by one (Chrome and Firefox default behavior)
 			this._bDelayedEventFire = true;
 			this._changeValueWithStep(1);
+			oEvent.setMarked();
 		};
 
 		/**
@@ -1049,6 +1050,7 @@ function(
 			oEvent.preventDefault(); //prevents the value to decrease by one (Chrome and Firefox default behavior)
 			this._bDelayedEventFire = true;
 			this._changeValueWithStep(-1);
+			oEvent.setMarked();
 		};
 
 		StepInput.prototype._onmousewheel = function (oEvent) {
