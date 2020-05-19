@@ -957,14 +957,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("FacetFilter._addOKButtonToPopover", function(assert) {
-
-		var oFF = new FacetFilter();
-		var oPopover = oFF._getPopover();
+		var oFF = new FacetFilter(),
+			oPopover = oFF._getPopover(),
+			oButton, oToolbarSpacer, oFooter;
 
 		oFF._addOKButtonToPopover(oPopover);
-		var oButton = oPopover.getFooter();
+
+		oFooter = oPopover.getFooter();
+		oToolbarSpacer = oFooter.getContent()[0];
+		oButton = oFooter.getContent()[1];
+
 		assert.ok(oButton, "Popover OK button should be created and added to the popover footer");
-		assert.equal(oButton.getWidth(), "100%", "Popover OK button width should be 100%");
+		assert.ok(oToolbarSpacer, "sap.m.ToolbarSpacer is added as a first element in the footer content");
 		assert.ok(oButton.getText(), "Button text should be set");
 		assert.ok(oButton.getTooltip(), "Button tooltip should be set");
 
@@ -2822,7 +2826,8 @@ sap.ui.define([
 			oPopoverOKButton;
 
 		this.oFacetFilter.setShowPopoverOKButton(true);
-		oPopoverOKButton = this.oFacetFilter._addOKButtonToPopover(oPopover);
+		this.oFacetFilter._addOKButtonToPopover(oPopover);
+		oPopoverOKButton = oPopover.getFooter().getContent()[1];
 		this.oFacetFilter.attachEvent("confirm", null, fnConfirmSpy, this);
 		this.oFacetFilter.getLists().forEach(function (oList) {
 			if (oList) {
