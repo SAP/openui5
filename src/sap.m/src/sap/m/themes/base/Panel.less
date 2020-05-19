@@ -82,6 +82,17 @@
 	}
 }
 
+.sapMPanelWrappingDiv .sapUiIcon {
+	position: absolute;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+	padding: 0.25rem;
+	font-size: 1rem;
+	cursor: inherit;
+	color: @sapUiContentIconColor;
+}
+
 /* if Panel is expandable, we do not wish toolbar to come with own border */
 .sapMPanelWrappingDivTb > .sapMTB {
 	border-width: 0;
@@ -123,4 +134,15 @@ html[data-sap-ui-animation='on'][data-sap-ui-browser^="ie"] .sapMPanelContent {
 /* workaround for drawing issue in Edge - ensures that the content will be redrawn */
 html[data-sap-ui-animation='on'][data-sap-ui-browser^="ed"] .sapMPanelContent {
 	transform: translate(0, 0);
+}
+
+.sapMPanelExpandable .sapMPanelWrappingDiv {
+	&:focus {
+		outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		outline-offset: -0.1875rem;
+	}
+
+	&:hover {
+		cursor: pointer;
+	}
 }

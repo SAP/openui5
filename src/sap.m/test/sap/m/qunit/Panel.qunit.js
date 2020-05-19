@@ -230,16 +230,73 @@ sap.ui.define([
 	});
 
 	QUnit.test("triggeredByInteraction when setting expanded by an user interaction", function(assert) {
-		var bPassedArg,
+		var bPassedArg, bExpand,
 			fnEventSpy = sinon.spy(function (oEvent) {
 				bPassedArg = oEvent.getParameter('triggeredByInteraction');
+				bExpand = oEvent.getParameter('expand');
 			});
 
 		this.createPanel({ expanded: false });
 		this.oPanel.attachExpand(fnEventSpy);
-		this.oPanel._oExpandButton.firePress();
+		this.oPanel.ontap({
+			target: this.oPanel._oExpandButton.getDomRef()
+		});
 
 		assert.ok(bPassedArg, "Event should be triggered by an user interaction");
+		assert.ok(bExpand, "The expand parameter should be true");
+	});
+
+	QUnit.test("onsapspace()", function(assert) {
+		var bPassedArg, bExpand,
+			fnEventSpy = sinon.spy(function (oEvent) {
+				bPassedArg = oEvent.getParameter('triggeredByInteraction');
+				bExpand = oEvent.getParameter('expand');
+			});
+
+		this.createPanel({ expanded: false });
+		this.oPanel.attachExpand(fnEventSpy);
+		this.oPanel.onsapspace({
+			target: this.oPanel._oExpandButton.getDomRef()
+		});
+
+		assert.ok(bPassedArg, "Event should be triggered by an user interaction");
+		assert.ok(bExpand, "Event should be triggered by an user interaction");
+	});
+
+	QUnit.test("onsapenter()", function(assert) {
+		var bPassedArg, bExpand,
+			fnEventSpy = sinon.spy(function (oEvent) {
+				bPassedArg = oEvent.getParameter('triggeredByInteraction');
+				bExpand = oEvent.getParameter('expand');
+			});
+
+		this.createPanel({ expanded: false });
+		this.oPanel.attachExpand(fnEventSpy);
+		this.oPanel.onsapenter({
+			target: this.oPanel._oExpandButton.getDomRef()
+		});
+
+		assert.ok(bPassedArg, "Event should be triggered by an user interaction");
+		assert.ok(bExpand, "Event should be triggered by an user interaction");
+	});
+
+	QUnit.test("ontap()", function(assert) {
+		this.createPanel({ expanded: false });
+		this.oPanel.ontap({
+			target: this.oPanel.getDomRef('content')
+		});
+
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(this.oPanel.getExpanded(), "Triggering tap on the content should not expand the Panel");
+
+		this.oPanel.ontap({
+			target: this.oPanel._oExpandButton.getDomRef()
+		});
+
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(this.oPanel.getExpanded(), "Triggering tap on the content should not expand the Panel");
 	});
 
 	QUnit.module("Rendering", {
@@ -372,14 +429,14 @@ sap.ui.define([
 		var oButton = this.oPanel._oExpandButton;
 
 		// Assert
-		assert.strictEqual(oButton.getIcon(), "sap-icon://slim-arrow-down", "should have sapMPanelExpandableButton class present once");
+		assert.strictEqual(oButton.getSrc(), "sap-icon://slim-arrow-down", "should have sapMPanelExpandableButton class present once");
 
 		// Act
 		this.oPanel.setExpanded(false);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oButton.getIcon(), "sap-icon://slim-arrow-right", "should have sapMPanelExpandableButton class present once");
+		assert.strictEqual(oButton.getSrc(), "sap-icon://slim-arrow-right", "should have sapMPanelExpandableButton class present once");
 	});
 
 	QUnit.test("Panel with solid backgroundDesign", function(assert) {
@@ -692,7 +749,6 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(oPanel.$().attr("aria-labelledby"), sPanelHeaderId, "should have a labelledby reference to the header");
-		assert.strictEqual(oPanel._oExpandButton.$().attr("aria-labelledby"), sPanelHeaderId, "should have collapse button having a labelledby reference to the header");
 
 		oPanel.setAggregation("headerToolbar", this.createToolbar());
 		sap.ui.getCore().applyChanges();
