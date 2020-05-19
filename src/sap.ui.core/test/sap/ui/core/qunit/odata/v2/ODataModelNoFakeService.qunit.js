@@ -2049,4 +2049,65 @@ sap.ui.define([
 		assert.strictEqual(oError.$reported, true);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_updateChangedEntities: skip __metadata", function (assert) {
+		var mChangedEntitiesNew = {
+				"~key" : {
+					__metadata : {
+						etag : "~etag_new",
+						uri : "~uri"
+					},
+					foo : "bar"
+				}
+			},
+			mChangedEntitiesOld = {
+				"~key" : {
+					__metadata : {
+						etag : "~etag_old",
+						uri : "~uri"
+					},
+					foo : "bar"
+				}
+			},
+			mChangedEntities4oChangedEntry = Object.assign({}, mChangedEntitiesOld["~key"]),
+			mChangedEntities4oEntry = Object.assign({}, mChangedEntitiesNew["~key"]),
+			oModel = {
+				mChangedEntities : mChangedEntitiesOld,
+				oMetadata : {
+					_getEntityTypeByPath : function () {},
+					_getNavPropertyRefInfo : function () {}
+				},
+				_getObject : function () {},
+				_resolveGroup : function () {},
+				abortInternalRequest : function () {},
+				isLaundering : function () {},
+				removeInternalMetadata : function () {}
+			},
+			oModelMock = this.mock(oModel);
+
+		oModelMock.expects("_getObject")
+			.withExactArgs("/~key", null, true)
+			.returns(mChangedEntities4oEntry);
+		oModelMock.expects("_getObject")
+			.withExactArgs("/~key")
+			.returns(mChangedEntities4oChangedEntry);
+		oModelMock.expects("removeInternalMetadata")
+			.withExactArgs(sinon.match.same(mChangedEntities4oChangedEntry))
+			.returns("~removedMetadata");
+		oModelMock.expects("isLaundering").withExactArgs("/~key/foo");
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
+			.withExactArgs("/~key")
+			.returns("~oEntityType");
+		this.mock(oModel.oMetadata).expects("_getNavPropertyRefInfo")
+			.withExactArgs("~oEntityType", "foo")
+			.returns(null);
+		oModelMock.expects("_resolveGroup").withExactArgs("~key").returns({groupId : "~group"});
+		oModelMock.expects("abortInternalRequest").withExactArgs("~group", {requestKey : "~key"});
+
+		// code under test
+		ODataModel.prototype._updateChangedEntities.call(oModel, mChangedEntitiesNew);
+
+		assert.deepEqual(oModel.mChangedEntities, {});
+	});
 });

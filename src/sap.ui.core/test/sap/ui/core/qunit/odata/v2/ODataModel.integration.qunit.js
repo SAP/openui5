@@ -4517,4 +4517,73 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: The OData response of an updated entity contains changed __metadata (new ETag).
+	// This must not lead to pending changes.
+	// BCP: 2070060665
+	QUnit.test("BCP 2070060665: Ignore __metadata while updating the changed entities",
+			function (assert) {
+		var oModel = createSalesOrdersModel({refreshAfterChange : false, useBatch : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Input id="note" value="{Note}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest({
+				deepPath : "/SalesOrderSet('1')",
+				method : "GET",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				__metadata : {
+					etag : "W/\"2020-05-19T08:08:58.312Z\"",
+					uri : "SalesOrderSet('1')"
+				},
+				Note : "Foo",
+				SalesOrderID : "1"
+			})
+			.expectChange("note", null)
+			.expectChange("note", "Foo");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					data : {
+						__metadata : {
+							etag : "W/\"2020-05-19T08:08:58.312Z\"",
+							uri : "SalesOrderSet('1')"
+						},
+						Note : "Bar"
+					},
+					deepPath : "/SalesOrderSet('1')",
+					headers : {
+						"If-Match" : "W/\"2020-05-19T08:08:58.312Z\""
+					},
+					key : "SalesOrderSet('1')",
+					method : "MERGE",
+					requestUri : "SalesOrderSet('1')"
+				}, {
+					data : {
+						__metadata : {
+							etag : "W/\"2020-05-19T08:09:00.146Z\"",
+							uri : "SalesOrderSet('1')"
+						},
+						Note : "Bar",
+						SalesOrderID : "1"
+					},
+					headers : {etag : "W/\"2020-05-19T08:09:00.146Z\""},
+					statusCode : 200
+				})
+				.expectChange("note", "Bar");
+
+			// code under test
+			oModel.setProperty("/SalesOrderSet('1')/Note", "Bar");
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(oModel.getPendingChanges(), {});
+		});
+	});
 });
