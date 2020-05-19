@@ -394,16 +394,21 @@ sap.ui.define([
 				sUrl,
 				sTarget;
 
+			if (mParameters) {
+				var sParametersUrl = mParameters.url,
+					sParametersTarget = mParameters.target;
+			}
+
 			switch (oAction.type) {
 				case CardActionType.Navigation:
 					if (oAction.service) {
 						break;
 					}
 
-					sUrl = mConfig.url || mParameters.url;
-					sTarget = oAction.target || mParameters.target || "_blank";
+					sUrl = mConfig.url || sParametersUrl;
+					sTarget = oAction.target || sParametersTarget || "_blank";
 					if (sUrl) {
-						window.open(sUrl, sTarget);
+						CardActions.openUrl(sUrl, sTarget);
 					}
 					break;
 				case CardActionType.Custom:
@@ -418,6 +423,17 @@ sap.ui.define([
 					}
 					break;
 			}
+		};
+
+		/**
+		 * Navigates to url
+		 *
+		 * @param sUrl url to navigate to.
+		 * @param sTarget target of the url
+		 * @private
+		 */
+		CardActions.openUrl = function (sUrl, sTarget) {
+			window.open(sUrl, sTarget);
 		};
 
 		/**

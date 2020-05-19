@@ -14,7 +14,8 @@ sap.ui.define([
 		"sap/ui/core/ComponentContainer",
 		"sap/ui/integration/util/CardActions",
 		"sap/ui/qunit/QUnitUtils",
-		"../services/SampleServices"
+		"../services/SampleServices",
+		"sap/ui/events/KeyCodes"
 	],
 	function (
 		library,
@@ -30,7 +31,8 @@ sap.ui.define([
 		ComponentContainer,
 		CardActions,
 		qutils,
-		SampleServices
+		SampleServices,
+		KeyCodes
 	) {
 		"use strict";
 
@@ -432,7 +434,8 @@ sap.ui.define([
 					}
 				}
 			};
-			var oManifest_List_Hidden_Items = {
+
+		var oManifest_List_Hidden_Items = {
 				"_version": "1.8.0",
 				"sap.app": {
 					"type": "card"
@@ -481,7 +484,6 @@ sap.ui.define([
 					}
 				}
 			};
-
 
 		var objectContent_service = {
 			"sap.app": {
@@ -693,6 +695,73 @@ sap.ui.define([
 			}
 		};
 
+		var oIntegrationCardManifest = {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"actions": [
+						{
+							"type": "Navigation",
+							"url": "https://www.sap.com"
+						}
+					],
+					"title": "Integration Card with action",
+					"subTitle": "Card subtitle",
+					"icon": {
+						"src": "sap-icon://activities"
+					},
+					"status": {
+						"text": "100 of 200"
+					}
+				},
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Notebook Basic 15",
+								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1000",
+								"SubCategoryId": "Notebooks",
+								"icon": "sap-icon://laptop",
+								"state": "Information",
+								"info": "27.45 EUR",
+								"infoState": "Success"
+							},
+							{
+								"Name": "Notebook Basic 17",
+								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1001",
+								"SubCategoryId": "Notebooks",
+								"icon": "sap-icon://laptop",
+								"state": "Success",
+								"info": "27.45 EUR",
+								"infoState": "Success"
+
+							}
+						]
+					},
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						},
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		};
+
 		function testNavigationServiceListContent(oManifest, assert) {
 			// Arrange
 			var done = assert.async(),
@@ -885,6 +954,36 @@ sap.ui.define([
 				//Clean up
 				oStubOpenUrl.restore();
 				oActionSpy.restore();
+				done();
+
+			}.bind(this));
+		});
+
+		QUnit.test("Action URL should navigate without parameters", function (assert) {
+			var done = assert.async(),
+				oStubOpenUrl = sinon.stub(CardActions, "openUrl").callsFake( function () {
+					Log.error(LOG_MESSAGE);
+				});
+
+			// Act
+			this.oCard.setManifest(oIntegrationCardManifest);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				var oCardHeader = this.oCard.getCardHeader();
+
+				//Act
+				oCardHeader.firePress();
+				Core.applyChanges();
+
+				// Assert
+				assert.strictEqual(oStubOpenUrl.callCount, 1, "Header has navigate to new url");
+
+				//Clean up
+				oStubOpenUrl.restore();
 				done();
 
 			}.bind(this));
