@@ -57,7 +57,7 @@
     "node": ">= 10"
   },
   "devDependencies": {
-    "@ui5/builder": "^2.0.2",
+    "@ui5/builder": "^2.0.3",
     "@ui5/project": "^2.0.3",
     "@ui5/server": "^2.0.1",
     "async": "^0.9.0",
