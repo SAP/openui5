@@ -28,7 +28,16 @@ sap.ui.define([
 	var aExtensionPointsByParent = [];
 	var mExtensionPointsByViewId = {};
 
-	function observeIndex(oEvent) {
+	function onParentDestroy(oEvent) {
+		var sParentId = oEvent.object.getId();
+		aExtensionPointsByParent[sParentId].forEach(function (oExtensionPoint) {
+			delete mExtensionPointsByViewId[oExtensionPoint.view.getId()][oExtensionPoint.name];
+		});
+		delete mObservers[sParentId];
+		delete aExtensionPointsByParent[sParentId];
+	}
+
+	function onAggregationChange(oEvent) {
 		var sParentId = oEvent.object.getId();
 		aExtensionPointsByParent[sParentId].forEach(function(oExtensionPoint) {
 			var sAggregationName = oExtensionPoint.aggregationName;
@@ -49,12 +58,21 @@ sap.ui.define([
 		});
 	}
 
+	function observeIndex(oEvent) {
+		if (oEvent.type === "destroy") {
+			onParentDestroy(oEvent);
+		} else {
+			onAggregationChange(oEvent);
+		}
+	}
+
 	function startObserver(oParent, sAggregationName) {
 		var sParentId = oParent.getId();
 		if (!mObservers[sParentId]) {
 			var oObserver = new ManagedObjectObserver(observeIndex.bind(this));
 			oObserver.observe(oParent, {
-				aggregations: [sAggregationName]
+				aggregations: [sAggregationName],
+				destroy: true
 			});
 			mObservers[sParentId] = {
 				observer: oObserver,
@@ -65,7 +83,8 @@ sap.ui.define([
 			if (!bIsObserved) {
 				mObservers[sParentId].aggregations.push(sAggregationName);
 				mObservers[sParentId].observer.observe(oParent, {
-					aggregations: mObservers[sParentId].aggregations
+					aggregations: mObservers[sParentId].aggregations,
+					destroy: true
 				});
 			}
 		}
