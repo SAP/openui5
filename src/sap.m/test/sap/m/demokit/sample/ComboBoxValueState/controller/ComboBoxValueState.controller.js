@@ -1,7 +1,8 @@
 sap.ui.define([
 		'sap/ui/core/mvc/Controller',
+		'sap/m/MessageToast',
 		'sap/ui/model/json/JSONModel'
-	], function(Controller, JSONModel) {
+	], function(Controller, MessageToast, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.ComboBoxValueState.controller.ComboBoxValueState", {
@@ -15,6 +16,10 @@ sap.ui.define([
 
 		handleLoadItems: function(oControlEvent) {
 			oControlEvent.getSource().getBinding("items").resume();
+		},
+
+		handleValueStateLinkPress: function(oEvent) {
+			MessageToast.show("Link in value state pressed");
 		}
 	});
 });
