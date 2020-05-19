@@ -481,6 +481,23 @@ sap.ui.define([
 		assert.strictEqual(fnFireChangeSpy.callCount, 2, "The change event is fired");
 	});
 
+	QUnit.test("Order of clear and focus of the input is correct when pressing reset", function (assert) {
+		// Arrange
+		var fnClearSpy = this.spy(SearchField.prototype, "clear"),
+			fnFocusInputSpy = this.spy(this.oSearchField.getInputElement(), "focus"),
+			oTouchResetMockEvent = {
+				target: this.oSearchField.getDomRef("reset"),
+				originalEvent: {},
+				id: this.oSearchField.getId() + "-reset"
+			};
+
+		// Act
+		this.oSearchField.ontouchend(oTouchResetMockEvent);
+
+		// Assert
+		assert.ok(fnFocusInputSpy.calledBefore(fnClearSpy), "The clear is performed after input is focused again.");
+	});
+
 	QUnit.module("Suggestions on mobile phone", {
 		beforeEach: function () {
 			this.isPhone = Device.system.phone;
