@@ -8,7 +8,7 @@
 		"description" : "Example for OData V2 Sales Orders (UI5 GWSAMPLE_BASIC)",
 		"dataSources" : {
 			"default" : {
-				"uri" : "/testsuite/proxy/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/?sap-client=120",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC",
 				"type" : "OData",
 				"settings" : {
 					"odataVersion" : "2.0"
@@ -36,8 +36,8 @@
 			"minUI5Version" : "1.71",
 			"libs" : {
 				"sap.m" : {},
-				"sap.ui.core": {},
-				"sap.ui.layout": {}
+				"sap.ui.core" : {},
+				"sap.ui.layout" : {}
 			}
 		},
 		"handleValidation" : true,
@@ -51,14 +51,15 @@
 					"defaultCountMode" : "None",
 					"earlyTokenRequest" : true
 				},
-				"type" : "sap.ui.model.odata.v2.ODataModel"
+				"type" : "sap.ui.core.internal.samples.odata.v2.SalesOrders.SandboxModel",
+				"uriSettingName" : "serviceUrl"
 			}
 		},
-		"rootView": {
-			"viewName": "sap.ui.core.internal.samples.odata.v2.SalesOrders.Main",
-			"type": "XML",
-			"async": true,
-			"id": "SalesOrdersMain"
+		"rootView" : {
+			"async" : true,
+			"id" : "SalesOrdersMain",
+			"type" : "XML",
+			"viewName" : "sap.ui.core.internal.samples.odata.v2.SalesOrders.Main"
 		}
 	}
 }

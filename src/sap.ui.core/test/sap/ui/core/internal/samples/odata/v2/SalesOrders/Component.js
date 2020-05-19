@@ -21,7 +21,7 @@ sap.ui.define([
 			manifest : "json"
 		},
 
-		init: function () {
+		init : function () {
 			var aItemFilter = [{
 					icon : "",
 					text : "Show all",

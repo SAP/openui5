@@ -1,0 +1,12 @@
+{
+    "d" : {
+        "__metadata" : {
+            "id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('0500000001')",
+            "uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('0500000001')",
+            "type" : "GWSAMPLE_BASIC.SalesOrder"
+        },
+        "SalesOrderID" : "0500000001",
+        "GrossAmount" : "1337.34",
+        "ChangedAt" : "/Date(1589809069043)/"
+    }
+}

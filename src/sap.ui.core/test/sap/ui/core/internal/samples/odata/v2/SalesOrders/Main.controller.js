@@ -233,7 +233,7 @@ sap.ui.define([
 					'messageModel>/',
 					'' // ensure formatter is called on scrolling
 				],
-				formatter: this.rowHighlight
+				formatter : this.rowHighlight
 			});
 		},
 
