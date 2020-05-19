@@ -53,13 +53,16 @@ sap.ui.define([
 				ACTIVATE: PREFIX + API_VERSION + "/versions/activate/",
 				DISCARD: PREFIX + API_VERSION + "/versions/draft/"
 			}
-		}
+		},
+		isLanguageInfoRequired: true
 	});
 
 	KeyUserConnector.versions = {
 		load: function (mPropertyBag) {
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
-			var sVersionsUrl = ApplyUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.GET, mPropertyBag);
+			var mParameter = {};
+			ApplyUtils.addLanguageInfo(mParameter);
+			var sVersionsUrl = ApplyUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.GET, mPropertyBag, mParameter);
 			return ApplyUtils.sendRequest(sVersionsUrl, "GET", mPropertyBag).then(function (oResult) {
 				return oResult.response;
 			});
@@ -67,7 +70,9 @@ sap.ui.define([
 		activate: function (mPropertyBag) {
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
 			_enhancePropertyBagForDraftActivation(mPropertyBag);
-			var sVersionsUrl = ApplyUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.ACTIVATE, mPropertyBag, {version: 0});
+			var mParameter = {version: 0};
+			ApplyUtils.addLanguageInfo(mParameter);
+			var sVersionsUrl = ApplyUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.ACTIVATE, mPropertyBag, mParameter);
 			return ApplyUtils.sendRequest(sVersionsUrl, "POST", mPropertyBag).then(function (oResult) {
 				return oResult.response;
 			});

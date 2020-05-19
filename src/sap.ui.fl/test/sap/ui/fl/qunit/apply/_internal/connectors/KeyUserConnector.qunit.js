@@ -32,7 +32,8 @@ sap.ui.define([
 			};
 			var mParameter = {
 				appVersion: "1.0.0",
-				version: "0"
+				version: "0",
+				"sap-language": "en"
 			};
 			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?appVersion=1.0.0";
 			var oStubGetUrlWithQueryParameters = sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);

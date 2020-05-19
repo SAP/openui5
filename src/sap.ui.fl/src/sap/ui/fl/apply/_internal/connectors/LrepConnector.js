@@ -53,23 +53,19 @@ sap.ui.define([
 		},
 
 		/**
-		 * Adds client and language info from browser url into request parameters
+		 * Adds client information from browser url into request parameters
 		 *
 		 * @param {object} mParameters Parameters of the request
 		 * @private
 		 * @ui5-restricted sap.ui.fl.write._internal.connectors.LrepConnector
 		 */
-		_addClientAndLanguageInfo: function (mParameters) {
+		_addClientInfo: function (mParameters) {
 			var sClient = FlexUtils.getUrlParameter("sap-client");
-			var sLanguage = FlexUtils.getUrlParameter("sap-language") || FlexUtils.getUrlParameter("sap-ui-language");
-			if (!mParameters && (sClient || sLanguage)) {
+			if (!mParameters && sClient) {
 				mParameters = {};
 			}
 			if (sClient) {
 				mParameters["sap-client"] = sClient;
-			}
-			if (sLanguage) {
-				mParameters["sap-language"] = sLanguage;
 			}
 		},
 
@@ -92,7 +88,8 @@ sap.ui.define([
 			}
 
 			var mParameters = _pick(mPropertyBag, ["appVersion"]);
-			this._addClientAndLanguageInfo(mParameters);
+			this._addClientInfo(mParameters);
+			ApplyUtils.addLanguageInfo(mParameters);
 			var sAppDescriptorId;
 			if (mPropertyBag.appDescriptor && mPropertyBag.appDescriptor["sap.app"]) {
 				sAppDescriptorId = mPropertyBag.appDescriptor["sap.app"].id;
