@@ -965,13 +965,22 @@ sap.ui.define([
 	 *   effects fails. Use it to set fields affected by side effects to read-only before
 	 *   {@link #requestSideEffects} and make them editable again when the promise resolves; in the
 	 *   error handler, you can repeat the loading of side effects.
-	 * @throws {Error}
-	 *   If <code>aPathExpressions</code> contains objects other than
-	 *   "14.5.11 Expression edm:NavigationPropertyPath" or "14.5.13 Expression edm:PropertyPath",
-	 *   or if this context is not supported, or if the root binding of this context's binding is
-	 *   suspended, or if the context is transient, or if the binding of this context is unresolved,
-	 *   or for invalid group IDs
-	 *
+	 * @throws {Error} If
+	 *   <ul>
+	 *    <li> <code>aPathExpressions</code> contains objects other than
+	 *     "14.5.11 Expression edm:NavigationPropertyPath" or "14.5.13 Expression edm:PropertyPath"
+	 *    <li> this context is not supported
+	 *    <li> the root binding of this context's binding is suspended (see {@link #getBinding} and
+	 *    {@link sap.ui.model.odata.v4.ODataContextBinding#getRootBinding},
+	 *    {@link sap.ui.model.odata.v4.ODataListBinding#getRootBinding}, or
+	 *    {@link sap.ui.model.odata.v4.ODataPropertyBinding#getRootBinding}, and
+	 *    {@link sap.ui.model.Binding#isSuspended})
+	 *    <li> this context is transient (see {@link #isTransient})
+	 *    <li> the binding of this context is unresolved
+	 *    <li> the group ID is invalid
+	 *    <li> a <code>$PropertyPath</code> has been requested which contains a navigation
+	 *    property that was changed on the server and now targets a different entity (since 1.79.0)
+	 *   </ul>
 	 * @public
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#execute
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#getBoundContext

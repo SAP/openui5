@@ -608,9 +608,8 @@ sap.ui.define([
 			that = this;
 
 		/*
-		 * Visits the query options recursively descending $expand. Determines the target type and
-		 * adds key properties to the contained $select. Adds key properties, ETag and key predicate
-		 * to aUpdateProperties.
+		 * Visits the query options recursively descending $expand. Determines the target type, adds
+		 * key properties, ETag and key predicate to aUpdateProperties.
 		 *
 		 * @param {object} mQueryOptions0 The query options
 		 * @param {string} [sBasePath=""] The base (meta) path relative to oResource
@@ -626,25 +625,20 @@ sap.ui.define([
 			if (!oEntityType) {
 				oEntityType = that.fetchType(mTypeForMetaPath, sMetaPath).getResult();
 			}
-			(oEntityType.$Key || []).forEach(function (vKey) {
-				if (typeof vKey === "object") {
-					vKey = vKey[Object.keys(vKey)[0]]; // the path for the alias
-				}
-				if (mQueryOptions0.$select.indexOf(vKey) < 0) {
-					mQueryOptions0.$select.push(vKey);
-					aUpdateProperties.push(_Helper.buildPath(sBasePath, vKey));
-				}
-			});
 			if (sBasePath) {
+				// Key properties, ETag and predicate must only be copied from the result for nested
+				// properties. The root property is already loaded and has them already. We check
+				// that they are unchanged in this case.
+				(oEntityType.$Key || []).forEach(function (vKey) {
+					if (typeof vKey === "object") {
+						vKey = vKey[Object.keys(vKey)[0]]; // the path for the alias
+					}
+					aUpdateProperties.push(_Helper.buildPath(sBasePath, vKey));
+				});
 				aUpdateProperties.push(sBasePath + "/@odata.etag");
 				aUpdateProperties.push(sBasePath + "/@$ui5._/predicate");
 			}
 			if (mQueryOptions0.$expand) {
-				if (mQueryOptions0.$select.length > 1) {
-					// the first entry in $select is the one in $expand (from intersectQueryOptions)
-					// and is unnecessary now
-					mQueryOptions0.$select = mQueryOptions0.$select.slice(1);
-				}
 				// intersecting the query options with sRequestedPropertyPath delivers exactly one
 				// entry in $expand at each level (one for each navigation property binding)
 				sExpand = Object.keys(mQueryOptions0.$expand)[0];
@@ -692,11 +686,11 @@ sap.ui.define([
 		// even when two late properties lead to the same request, each of them must be copied to
 		// the cache.
 		return oPromise.then(function (oData) {
-			if (_Helper.getPrivateAnnotation(oResource, "predicate")
-					!== _Helper.getPrivateAnnotation(oData, "predicate")) {
+			var sPredicate = _Helper.getPrivateAnnotation(oData, "predicate");
+
+			if (sPredicate && _Helper.getPrivateAnnotation(oResource, "predicate") !== sPredicate) {
 				throw new Error("GET " + sRequestPath + ": Key predicate changed from "
-					+ _Helper.getPrivateAnnotation(oResource, "predicate")
-					+ " to " + _Helper.getPrivateAnnotation(oData, "predicate"));
+					+ _Helper.getPrivateAnnotation(oResource, "predicate") + " to " + sPredicate);
 			}
 			if (oData["@odata.etag"] !== oResource["@odata.etag"]) {
 				throw new Error("GET " + sRequestPath + ": ETag changed");
@@ -2279,6 +2273,11 @@ sap.ui.define([
 		return this.oRequestor.request("GET", sResourcePath, oGroupLock).then(function (oResult) {
 				var oElement, sPredicate, i, n;
 
+				function preventKeyPredicateChange(sPath) {
+					sPath = sPath.slice(sPredicate.length + 1); // strip sPredicate
+					return aPaths.indexOf(sPath) < 0; // not a $NavigationPropertyPath
+				}
+
 				if (oResult.value.length !== aFilters.length) {
 					throw new Error("Expected " + aFilters.length + " row(s), but instead saw "
 						+ oResult.value.length);
@@ -2290,7 +2289,8 @@ sap.ui.define([
 					oElement = oResult.value[i];
 					sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 					_Helper.updateAll(that.mChangeListeners, sPredicate,
-						that.aElements.$byPredicate[sPredicate], oElement);
+						that.aElements.$byPredicate[sPredicate], oElement,
+						preventKeyPredicateChange);
 				}
 			});
 	};
@@ -2632,7 +2632,9 @@ sap.ui.define([
 
 			// visit response to report the messages
 			that.visitResponse(oNewValue, aResult[1]);
-			_Helper.updateAll(that.mChangeListeners, "", oOldValue, oNewValue);
+			_Helper.updateAll(that.mChangeListeners, "", oOldValue, oNewValue, function (sPath) {
+				return aPaths.indexOf(sPath) < 0; // not a $NavigationPropertyPath
+			});
 
 			return oOldValue;
 		});
