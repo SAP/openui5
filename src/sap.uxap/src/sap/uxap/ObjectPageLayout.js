@@ -1988,7 +1988,10 @@ sap.ui.define([
 	ObjectPageLayout.prototype.scrollToSection = function (sId, iDuration, iOffset, bIsTabClicked, bRedirectScroll) {
 		var oSection = this.oCore.byId(sId),
 			iSnapPosition,
-			oTargetSubSection;
+			oTargetSubSection,
+			bAnimationsEnabled = (sap.ui.getCore().getConfiguration().getAnimationMode()
+				!== Configuration.AnimationMode.none),
+			bSuppressLazyLoadingDuringScroll;
 
 		if (!this.getDomRef()){
 			Log.warning("scrollToSection can only be used after the ObjectPage is rendered", this);
@@ -2102,7 +2105,9 @@ sap.ui.define([
 				}
 			}
 
-			this._scrollTo(iScrollTo, iDuration);
+			// explicitly suppress lazy-loading to avoid loading of intermediate sections during scroll on slow machines
+			bSuppressLazyLoadingDuringScroll = bAnimationsEnabled && iDuration && this.getEnableLazyLoading();
+			this._scrollTo(iScrollTo, iDuration, bSuppressLazyLoadingDuringScroll);
 		}
 	};
 
@@ -2229,9 +2234,10 @@ sap.ui.define([
 	 * Scroll to the y position in dom
 	 * @param y the position in pixel
 	 * @param time the animation time
+	 * @param bSuppressLazyLoadingDuringScroll flag if lazyLoading should be suppressed during the scroll
 	 * @private
 	 */
-	ObjectPageLayout.prototype._scrollTo = function (y, time) {
+	ObjectPageLayout.prototype._scrollTo = function (y, time, bSuppressLazyLoadingDuringScroll) {
 		if (this._oScroller && this._bDomReady && !this._bSuppressScroll) {
 			Log.debug("ObjectPageLayout :: scrolling to " + y);
 
@@ -2239,9 +2245,21 @@ sap.ui.define([
 				this._toggleHeader(true);
 			}
 
-			this._oScroller.scrollTo(0, y, time);
+			if (bSuppressLazyLoadingDuringScroll && this._oLazyLoading) {
+				this._oLazyLoading.suppress();
+				this._oScroller.scrollTo(0, y, time, this._resumeLazyLoading.bind(this));
+			} else {
+				this._oScroller.scrollTo(0, y, time);
+			}
 		}
 		return this;
+	};
+
+	ObjectPageLayout.prototype._resumeLazyLoading = function () {
+		if (this._oLazyLoading) { // page might be destroyed before scheduled task started => safe-check
+			this._oLazyLoading.resume();
+			this._oLazyLoading.lazyLoadDuringScroll(true);
+		}
 	};
 
 	/**
