@@ -1793,12 +1793,18 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Request contexts from an ODataListBinding not bound to any control
 	// JIRA: CPOUI5UISERVICESV3-1396
-	QUnit.test("OLDB#requestContexts standalone", function (assert) {
-		var oPromise,
+	// BCP: 2070245603 (regarding $select and autoExpandSelect)
+[false, true].forEach(function (bAutoExpandSelect) {
+	var sTitle = "OLDB#requestContexts standalone, autoExpandSelect=" + bAutoExpandSelect;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : bAutoExpandSelect}),
+			oPromise,
 			that = this;
 
-		return this.createView(assert, "", createSalesOrdersModel()).then(function () {
-			var oBinding = that.oModel.bindList("/SalesOrderList");
+		return this.createView(assert, "", oModel).then(function () {
+			var oBinding = that.oModel.bindList("/SalesOrderList", undefined, undefined, undefined,
+					{$select : ["Note", "SalesOrderID"]});
 
 			// code under test
 			oPromise = oBinding.requestContexts(0, 3, "group").then(function (aContexts) {
@@ -1813,11 +1819,11 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("SalesOrderList?$skip=0&$top=3", {
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=3", {
 				value : [
-					{SalesOrderID : "01"},
-					{SalesOrderID : "02"},
-					{SalesOrderID : "03"}
+					{Note : "Note 01", SalesOrderID : "01"},
+					{Note : "Note 02", SalesOrderID : "02"},
+					{Note : "Note 03", SalesOrderID : "03"}
 				]
 			});
 
@@ -1828,6 +1834,7 @@ sap.ui.define([
 			]);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Request contexts from an ODataListBinding not bound to any control, request
