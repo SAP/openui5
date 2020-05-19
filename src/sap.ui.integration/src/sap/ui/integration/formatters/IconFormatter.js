@@ -32,6 +32,10 @@ sap.ui.define([
 			return sUrl;
 		}
 
+		if (sUrl.startsWith("data:")) {
+			return sUrl;
+		}
+
 		if (this._oDestinations.hasDestination(sUrl)) {
 			return this._oDestinations.processString(sUrl);
 		}
