@@ -64,6 +64,7 @@ sap.ui.define([
 
 
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
+			oModel.setSizeLimit(200);
 			this.oView.setModel(oModel);
 
 			this.oPageTable.attachSelectionChange(fnTableSelectionChange, this);
