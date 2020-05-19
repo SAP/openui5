@@ -29,7 +29,7 @@ sap.ui.define([
 	) {
 
 	"use strict";
-
+	/*global Map */
 
 	/**
 	 *
@@ -167,15 +167,22 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageManager.prototype._importMessage = function(oMessage) {
-		var sMessageKey = oMessage.getTarget(),
-				oProcessor = oMessage.getMessageProcessor(),
-				sProcessorId = oProcessor && oProcessor.getId();
+		var oProcessor = oMessage.getMessageProcessor(),
+			sProcessorId = oProcessor && oProcessor.getId(),
+			aTargets = oMessage.getTargets(),
+			that = this;
+
 		if (!this.mMessages[sProcessorId]) {
 			this.mMessages[sProcessorId] = {};
 		}
-		var aMessages = this.mMessages[sProcessorId][sMessageKey] ? this.mMessages[sProcessorId][sMessageKey] : [];
-		aMessages.push(oMessage);
-		this.mMessages[sProcessorId][sMessageKey] = aMessages;
+		if (!aTargets.length) { // unbound message => add it to undefined entry
+			aTargets = [undefined];
+		}
+		aTargets.forEach(function (sTarget) {
+			var aMessages = that.mMessages[sProcessorId][sTarget] ? that.mMessages[sProcessorId][sTarget] : [];
+			aMessages.push(oMessage);
+			that.mMessages[sProcessorId][sTarget] = aMessages;
+		});
 	};
 
 	/**
@@ -222,21 +229,22 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageManager.prototype._updateMessageModel = function(mProcessors) {
-		var aMessages = [],
+		var mAllMessages = new Map(),
 			sProcessorId,
-			sKey,
-			mMessages,
-			oMessageModel = this.getMessageModel();
+			oMessageModel = this.getMessageModel(),
+			sTarget;
+
+		function setMessage(oMessage) {
+			mAllMessages.set(oMessage, true);
+		}
 
 		for (sProcessorId in this.mMessages) {
-			mMessages = this.mMessages[sProcessorId];
-			for (sKey in mMessages) {
-				aMessages = aMessages.concat(mMessages[sKey]);
-				uniqueSort(aMessages);
+			for (sTarget in this.mMessages[sProcessorId]) {
+				this.mMessages[sProcessorId][sTarget].forEach(setMessage);
 			}
 		}
 		this._pushMessages(mProcessors);
-		oMessageModel.setData(aMessages);
+		oMessageModel.setData(Array.from(mAllMessages.keys()));
 	};
 
 	/**
@@ -310,27 +318,34 @@ sap.ui.define([
 	MessageManager.prototype._removeMessage = function(oMessage) {
 		var oProcessor = oMessage.getMessageProcessor(),
 			sProcessorId = oProcessor && oProcessor.getId(),
-			mMessages = this.mMessages[sProcessorId];
+			mMessages = this.mMessages[sProcessorId],
+			aTargets;
 
 		if (!mMessages) {
 			return;
 		}
 
-		var aMessages = mMessages[oMessage.getTarget()];
+		aTargets = oMessage.getTargets();
+		if (!aTargets.length) { // unbound message => remove it from undefined entry
+			aTargets = [undefined];
+		}
+		aTargets.forEach(function (sTarget) {
+			var aMessages = mMessages[sTarget];
 
-		if (aMessages) {
-			for (var i = 0; i < aMessages.length; i++) {
-				var oMsg = aMessages[i];
-				if (deepEqual(oMsg, oMessage)) {
-					aMessages.splice(i,1);
-					--i; // Decrease counter as one element has been removed
+			if (aMessages) {
+				for (var i = 0; i < aMessages.length; i++) {
+					var oMsg = aMessages[i];
+					if (deepEqual(oMsg, oMessage)) {
+						aMessages.splice(i,1);
+						--i; // Decrease counter as one element has been removed
+					}
+				}
+				// delete empty message array
+				if (mMessages[sTarget].length === 0) {
+					delete mMessages[sTarget];
 				}
 			}
-			// delete empty message array
-			if (mMessages[oMessage.getTarget()].length === 0) {
-				delete mMessages[oMessage.getTarget()];
-			}
-		}
+		});
 	};
 
 	/**
