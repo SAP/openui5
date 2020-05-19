@@ -2377,9 +2377,20 @@ sap.ui.define([
 		aggregated : {$filter : "foo"},
 		current : {},
 		result : {}
+	}, {
+		aggregated : {},
+		initial : true,
+		current : {$expand : {foo : {}}, $orderby : "bar"},
+		result : {$expand : {foo : {}}, $orderby : "bar"}
+	}, {
+		aggregated : {},
+		initial : true,
+		current : {$select : ["foo"], $orderby : "bar"},
+		result : {$select : ["foo"], $orderby : "bar"}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("updateAggregatedQueryOptions " + i, function (assert) {
 			var oBinding = new ODataParentBinding({
+					bAggregatedQueryOptionsInitial : oFixture.initial,
 					mAggregatedQueryOptions : oFixture.aggregated
 				}),
 				fnDestroy = function () {this.mAggregatedQueryOptions = undefined;};
