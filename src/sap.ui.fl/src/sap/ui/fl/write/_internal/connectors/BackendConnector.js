@@ -127,7 +127,14 @@ sap.ui.define([
 		 */
 		write: function (mPropertyBag) {
 			mPropertyBag.method = "POST";
-			return _doWrite.call(this, mPropertyBag);
+			return _doWrite.call(this, mPropertyBag).then(function (oResponse) {
+				//Single save of Personalization and Keyuser service return single JSON object
+				//It needs to be put into an array so output of this function is the same format for both saving of single or multiple changes
+				if (oResponse.response && !Array.isArray(oResponse.response)) {
+					oResponse.response = [oResponse.response];
+				}
+				return oResponse;
+			});
 		},
 
 		/**

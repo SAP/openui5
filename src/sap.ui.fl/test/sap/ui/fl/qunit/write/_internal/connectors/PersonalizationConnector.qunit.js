@@ -36,10 +36,10 @@ sap.ui.define([
 			var sExpectedUrl = "/flexPersonalization/flex/personalization/v1/changes/";
 			var sExpectedMethod = "POST";
 
-			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});
+			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({response: {}});
 			var oSpyGetUrl = sandbox.spy(InitialUtils, "getUrl");
 
-			return WritePersonalizationConnector.write(mPropertyBag).then(function() {
+			return WritePersonalizationConnector.write(mPropertyBag).then(function(oResponse) {
 				assert.equal(oSpyGetUrl.getCall(0).args[0], "/flex/personalization/v1/changes/", "with correct route path");
 				assert.equal(oSpyGetUrl.getCall(0).args[1], mPropertyBag, "with correct property bag");
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
@@ -49,6 +49,8 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(0).args[2].xsrfToken, "123", "with correct token");
 				assert.equal(oStubSendRequest.getCall(0).args[2].contentType, "application/json; charset=utf-8", "with correct contentType");
 				assert.equal(oStubSendRequest.getCall(0).args[2].dataType, "json", "with correct dataType");
+				assert.ok(Array.isArray(oResponse.response));
+				assert.deepEqual(oResponse.response[0], {});
 			});
 		});
 
