@@ -80,7 +80,7 @@ sap.ui.define([
 		);
 	}
 
-	QUnit.module("Given PersistenceWriteAPI", {
+	QUnit.module("Given AppVariantWriteAPI and app variant is created based on the original application which is running in the background", {
 		beforeEach: function () {
 			this.oDescrChangeSpecificData1 = {
 				changeType: 'appdescr_ovp_addNewCard',
@@ -1010,6 +1010,250 @@ sap.ui.define([
 			return AppVariantWriteAPI.unassignCatalogs({})
 				.catch(function() {
 					assert.ok("Layer must be passed");
+				});
+		});
+	});
+
+	QUnit.module("Given AppVariantWriteAPI and app variant is created based on an app variant which is not running in the background", {
+		beforeEach: function () {
+			this.oDescrChangeSpecificData1 = {
+				changeType: 'appdescr_ovp_addNewCard',
+				content: {
+					card : {
+						"customer.acard" : {
+							model : "customer.boring_model",
+							template : "sap.ovp.cards.list",
+							settings : {
+								category : "{{reference.app_sap.app.ovp.cards.customer.acard.category}}",
+								title : "{{reference.app_sap.app.ovp.cards.customer.acard.title}}",
+								description : "extended",
+								entitySet : "Zme_Overdue",
+								sortBy : "OverdueTime",
+								sortOrder : "desc",
+								listType : "extended"
+							}
+						}
+					}
+				},
+				texts: {
+					"reference.app_sap.app.ovp.cards.customer.acard.category": {
+						type: "XTIT",
+						maxLength: 20,
+						comment: "example",
+						value: {
+							"": "Category example default text",
+							en: "Category example text in en",
+							de: "Kategorie Beispieltext in de",
+							en_US: "Category example text in en_US"
+						}
+					},
+					"reference.app_sap.app.ovp.cards.customer.acard.title": {
+						type: "XTIT",
+						maxLength: 20,
+						comment: "example",
+						value: {
+							"": "Title example default text",
+							en: "Title example text in en",
+							de: "Titel Beispieltext in de",
+							en_US: "Title example text in en_US"
+						}
+					}
+				}
+			};
+
+			this.oDescrChangeSpecificData2 = {
+				changeType: 'appdescr_ovp_addNewCard',
+				content: {
+					card : {
+						"customer.acard" : {
+							model : "customer.boring_model",
+							template : "sap.ovp.cards.list",
+							settings : {
+								category : "{{reference.app_sap.app.ovp.cards.customer.acard.category}}",
+								title : "{{reference.app_sap.app.ovp.cards.customer.acard.title}}",
+								description : "extended",
+								entitySet : "Zme_Overdue",
+								sortBy : "OverdueTime",
+								sortOrder : "desc",
+								listType : "extended"
+							}
+						}
+					}
+				},
+				texts: {
+					"reference.app_sap.app.ovp.cards.customer.acard.category": {
+						type: "XTIT",
+						maxLength: 20,
+						comment: "example",
+						value: {
+							"": "Category example default text",
+							en: "Category example text in en",
+							de: "Kategorie Beispieltext in de",
+							en_US: "Category example text in en_US"
+						}
+					},
+					"reference.app_sap.app.ovp.cards.customer.acard.title": {
+						type: "XTIT",
+						maxLength: 20,
+						comment: "example",
+						value: {
+							"": "Title example default text",
+							en: "Title example text in en",
+							de: "Titel Beispieltext in de",
+							en_US: "Title example text in en_US"
+						}
+					}
+				}
+			};
+
+			this.oDescrChangeSpecificData3 = {
+				changeType: 'appdescr_app_setTitle',
+				content: {
+					type: "XTIT",
+					maxLength: 20,
+					comment: "example",
+					value: {
+						"": "Title example default text",
+						en: "Title example text in en",
+						de: "Titel Beispieltext in de",
+						en_US: "Title example text in en_US"
+					}
+				}
+			};
+
+			this.oUIChangeSpecificData = {
+				variantReference:"",
+				fileName:"id_1445501120486_26",
+				fileType:"change",
+				changeType:"hideControl",
+				reference:"reference.app.Component",
+				packageName:"",
+				content:{},
+				selector:{
+					id:"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+				},
+				layer:Layer.CUSTOMER,
+				texts:{},
+				namespace:"reference.app.Component",
+				creation:"2018-10-16T08:00:02",
+				originalLanguage:"EN",
+				conditions:{},
+				support:{
+					generator:"Change.createInitialFileContent",
+					service:"",
+					user:""
+				}
+			};
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("(Save As scenario - onPrem system) when saveAs is called with 4 descriptor and 1 UI changes already added into their own persistences", function(assert) {
+			var oDescriptor = {
+				"sap.app" : {
+					id : "customer.reference.app.variant.id_123456",
+					applicationVersion: {
+						version: "1.0.0"
+					}
+				}
+			};
+
+			var oManifest = new Manifest(oDescriptor);
+			var oAppVariantComponent = {
+				name: "customer.reference.app.variant.id_123456",
+				getManifest : function() {
+					return oManifest;
+				},
+				getId: function() {
+					return "Control---demo--test";
+				},
+				getLocalId: function() {}
+			};
+
+			var oAppComponent = createAppComponent();
+			simulateSystemConfig(false);
+
+			var getComponentClassNameStub = sandbox.stub(flexUtils, "getComponentClassName");
+			var getAppComponentForControlStub = sandbox.stub(flexUtils, "getAppComponentForControl");
+
+			getComponentClassNameStub.withArgs(oAppComponent).returns("testComponent");
+			getAppComponentForControlStub.withArgs(oAppComponent).returns(oAppComponent);
+
+			getComponentClassNameStub.withArgs(oAppVariantComponent).returns("customer.reference.app.variant.id_123456");
+			getAppComponentForControlStub.withArgs(oAppVariantComponent).returns(oAppVariantComponent);
+
+			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").resolves({
+				completeChangeContent: function() {
+				},
+				applyChange: function() {
+				},
+				revertChange: function() {
+				}
+			});
+
+			var fnCreateBackendCall = sandbox.stub(Storage, "write").resolves();
+
+			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
+
+			sandbox.stub(flexUtils, "getControlType").returns("sap.ui.fl.DummyControl");
+
+			var oUIChange;
+
+			var vSelector = {
+				appId: "customer.reference.app.variant.id_123456",
+				appVersion: "1.0.0"
+			};
+			// Creates a first descriptor change
+			return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData1, selector: oAppComponent})
+				.then(function(oDescriptorInlineChange) {
+					// Adds a first descriptor change to its own persistence
+					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: oAppComponent});
+				})
+				.then(function() {
+					// Creates a second descriptor change
+					return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData2, selector: oAppComponent});
+				}.bind(this))
+				.then(function(oDescriptorInlineChange) {
+					// Adds a second descriptor change to its own persistence
+					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: oAppComponent});
+				})
+				.then(function() {
+					// Creates a third descriptor change
+					return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData3, selector: oAppComponent});
+				}.bind(this))
+				.then(function(oDescriptorInlineChange) {
+					// Adds a third descriptor change to its own persistence
+					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: oAppComponent});
+				})
+				.then(function() {
+					// Creates a UI change
+					return ChangesWriteAPI.create({changeSpecificData: this.oUIChangeSpecificData, selector: oAppComponent});
+				}.bind(this))
+				.then(function(oCreatedUIChange) {
+					oUIChange = oCreatedUIChange;
+					// Adds a UI change to its own persistence
+					return PersistenceWriteAPI.add({change: oUIChange, selector: oAppComponent});
+				})
+				.then(function() {
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance(vSelector)._oChangePersistence.getDirtyChanges().length, 0, "then no Descriptor changes have been added to the persistence");
+					// ChangesWriteAPI.create does not work with selector which contains appId and appVersion.
+					// TODO: When the fix is there, uncomment the following commented test.
+					//assert.equal(ChangesController.getFlexControllerInstance(vSelector)._oChangePersistence.getDirtyChanges().length, 0, "then no UI change has been added to the persistence");
+					return AppVariantWriteAPI.saveAs({selector: vSelector, id: "customer.reference.app.variant.id_456789", version: "1.0.0", layer: Layer.CUSTOMER})
+						.then(function() {
+							assert.equal(ChangesController.getDescriptorFlexControllerInstance(vSelector)._oChangePersistence.getDirtyChanges().length, 0, "then there were no Descriptor changes to be removed from the persistence");
+							// Get the UI change to be saved to backend
+							assert.equal(fnCreateBackendCall.callCount, 0, "then backend call to save the UI change is not triggered");
+							// Get the app variant to be saved to backend
+							var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
+							assert.strictEqual(oAppVariant.reference, "customer.reference.app.variant.id_123456", "then the reference is correct");
+							assert.strictEqual(oAppVariant.namespace, "apps/customer.reference.app.variant.id_123456/appVariants/customer.reference.app.variant.id_456789/", "then the namespace is correct");
+							assert.strictEqual(oAppVariant.packageName, "", "then the app variant will be saved with an empty package");
+							assert.strictEqual(oAppVariant.id, "customer.reference.app.variant.id_456789", "then the app variant id is correct");
+							assert.equal(oAppVariant.content.length, 0, "then the length of inline changes is equal to 0");
+							assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?sap-language=en", "POST"), "then backend call is triggered with correct parameters");
+						});
 				});
 		});
 	});

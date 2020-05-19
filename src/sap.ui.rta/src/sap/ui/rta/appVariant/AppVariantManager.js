@@ -34,10 +34,6 @@ sap.ui.define([
 		metadata : {
 			library : "sap.ui.rta",
 			properties : {
-				/** The root control which is needed for the Flex Persistence */
-				rootControl : {
-					type: "sap.ui.core.Control"
-				},
 				commandSerializer : {
 					type: "object" // has to be of type sap.ui.rta.command.LrepSerializer
 				},
@@ -73,7 +69,7 @@ sap.ui.define([
 	 */
 	AppVariantManager.prototype._prepareAppVariantData = function(oDescriptor, mParameters) {
 		return {
-			idRunningApp: oDescriptor["sap.app"].id,
+			referenceAppId: oDescriptor["sap.app"].id,
 			title: mParameters.title,
 			subTitle: mParameters.subTitle,
 			description: mParameters.description,
@@ -88,26 +84,26 @@ sap.ui.define([
 	 * @returns {Promise[]} returns all the descriptor inline changes
 	 * @description Creates all the descriptor inline changes for different change types.
 	 */
-	AppVariantManager.prototype.createAllInlineChanges = function(oAppVariantSpecificData) {
-		var sAppVariantId = AppVariantUtils.getId(oAppVariantSpecificData.idRunningApp);
+	AppVariantManager.prototype.createAllInlineChanges = function(oAppVariantSpecificData, vSelector) {
+		var sAppVariantId = AppVariantUtils.getId(oAppVariantSpecificData.referenceAppId);
 		var aAllInlineChangeOperations = [];
 		var oPropertyChange;
 
 		// create a inline change using a change type 'appdescr_app_setTitle'
 		oPropertyChange = AppVariantUtils.getInlinePropertyChange("title", oAppVariantSpecificData.title);
-		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setTitle", this.getRootControl()));
+		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setTitle", vSelector));
 
 		// create a inline change using a change type 'appdescr_app_setSubTitle'
 		oPropertyChange = AppVariantUtils.getInlinePropertyChange("subtitle", oAppVariantSpecificData.subTitle);
-		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setSubTitle", this.getRootControl()));
+		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setSubTitle", vSelector));
 
 		// create a inline change using a change type 'create_app_setDescription'
 		oPropertyChange = AppVariantUtils.getInlinePropertyChange("description", oAppVariantSpecificData.description);
-		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setDescription", this.getRootControl()));
+		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setDescription", vSelector));
 
 		// create a inline change using a change type 'appdescr_ui_setIcon'
 		oPropertyChange = AppVariantUtils.getInlineChangeInputIcon(oAppVariantSpecificData.icon);
-		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_ui_setIcon", this.getRootControl()));
+		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_ui_setIcon", vSelector));
 
 		// ***********************************************************Inbounds handling******************************************************************
 		var oInboundInfo = AppVariantUtils.getInboundInfo(oAppVariantSpecificData.inbounds);
@@ -118,28 +114,28 @@ sap.ui.define([
 		if (sCurrentRunningInboundId === "customer.savedAsAppVariant" && bAddNewInboundRequired) {
 			oPropertyChange = AppVariantUtils.getInlineChangeCreateInbound(sCurrentRunningInboundId);
 			// create a inline change using a change type 'appdescr_app_addNewInbound'
-			aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_addNewInbound", this.getRootControl()));
+			aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_addNewInbound", vSelector));
 		}
 
 		// create a inline change using a change type 'appdescr_app_changeInbound'
 		oPropertyChange = AppVariantUtils.getInlineChangeForInboundPropertySaveAs(sCurrentRunningInboundId, sAppVariantId);
-		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", this.getRootControl()));
+		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", vSelector));
 
 		// create a inline change using a change type 'appdescr_app_removeAllInboundsExceptOne'
 		oPropertyChange = AppVariantUtils.getInlineChangeRemoveInbounds(sCurrentRunningInboundId);
-		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_removeAllInboundsExceptOne", this.getRootControl()));
+		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_removeAllInboundsExceptOne", vSelector));
 
 		// create a inline change using a change type 'appdescr_app_changeInbound'
-		oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, oAppVariantSpecificData.idRunningApp, "title", oAppVariantSpecificData.title);
-		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", this.getRootControl()));
+		oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, oAppVariantSpecificData.referenceAppId, "title", oAppVariantSpecificData.title);
+		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", vSelector));
 
 		// create a inline change using a change type 'appdescr_app_changeInbound'
-		oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, oAppVariantSpecificData.idRunningApp, "subTitle", oAppVariantSpecificData.subTitle);
-		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", this.getRootControl()));
+		oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, oAppVariantSpecificData.referenceAppId, "subTitle", oAppVariantSpecificData.subTitle);
+		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", vSelector));
 
 		// create a inline change using a change type 'appdescr_app_changeInbound'
-		oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, oAppVariantSpecificData.idRunningApp, "icon", oAppVariantSpecificData.icon);
-		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", this.getRootControl()));
+		oPropertyChange = AppVariantUtils.getInlineChangesForInboundProperties(sCurrentRunningInboundId, oAppVariantSpecificData.referenceAppId, "icon", oAppVariantSpecificData.icon);
+		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", vSelector));
 
 		return Promise.all(aAllInlineChangeOperations);
 	};
@@ -149,12 +145,12 @@ sap.ui.define([
 	 * @returns {Promise} Resolved promise
 	 * @description Creates the app variant with all inline changes in backend.
 	 */
-	AppVariantManager.prototype.createAppVariant = function(sAppVariantId) {
+	AppVariantManager.prototype.createAppVariant = function(sAppVariantId, vSelector) {
 		var mPropertyBag = {
 			id: sAppVariantId,
 			layer: this.getLayer()
 		};
-		return AppVariantUtils.createAppVariant(this.getRootControl(), mPropertyBag);
+		return AppVariantUtils.createAppVariant(vSelector, mPropertyBag);
 	};
 
 	/**
