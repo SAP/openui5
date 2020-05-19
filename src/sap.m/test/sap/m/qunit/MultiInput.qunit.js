@@ -1798,7 +1798,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//assert
-		assert.ok(this.multiInput1.getFocusDomRef().getAttribute('aria-labelledBy').indexOf(sInvisibleTextId) !== -1, "Input has aria-labelledby attribute to indicate Enter press possibility");
+		assert.ok(this.multiInput1.getFocusDomRef().getAttribute('aria-labelledby').indexOf(sInvisibleTextId) !== -1, "Input has aria-labelledby attribute to indicate Enter press possibility");
 	});
 
 	QUnit.test("Placeholder opacity", function(assert) {
@@ -2757,11 +2757,13 @@ sap.ui.define([
 		oMI.destroy();
 	});
 
-	QUnit.test("Read-only popover is opened after N-more is pressed", function(assert){
+	QUnit.test("Read-only popover is opened after N-more is pressed", function (assert) {
 		//Arrange
 		var oMultiInput = new sap.m.MultiInput({
-			editable: true
-		}), bVisible;
+				editable: true
+			}),
+			oRenderingSpy = this.spy(oMultiInput, "onBeforeRendering"),
+			bVisible;
 
 		oMultiInput.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -2772,14 +2774,15 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Arrange
-		var oToken1 = new Token({text:"Token with a very long text content"}),
-			oToken2 = new Token({text:"Token with a very long text content"}),
-			oToken3 = new Token({text:"Token with a very long text content"}),
-			oToken4 = new Token({text:"Token with a very long text content"}),
-			oToken5 = new Token({text:"Token with a very long text content"}),
-			oToken6 = new Token({text:"Token with a very long text content"});
+		var oToken1 = new Token({text: "Token with a very long text content"}),
+			oToken2 = new Token({text: "Token with a very long text content"}),
+			oToken3 = new Token({text: "Token with a very long text content"}),
+			oToken4 = new Token({text: "Token with a very long text content"}),
+			oToken5 = new Token({text: "Token with a very long text content"}),
+			oToken6 = new Token({text: "Token with a very long text content"});
 
 		//Act
+		oRenderingSpy.reset();
 		oMultiInput.setTokens([oToken1, oToken2, oToken3, oToken4, oToken5, oToken6]);
 		oMultiInput.setEditable(false);
 		sap.ui.getCore().applyChanges();
@@ -2789,6 +2792,7 @@ sap.ui.define([
 
 		//Assert
 		assert.strictEqual(bVisible, true, "Tokens list is visible");
+		assert.strictEqual(oRenderingSpy.callCount, 1, "The rendering should have been called only once");
 
 		//Clean up
 		oMultiInput.destroy();
