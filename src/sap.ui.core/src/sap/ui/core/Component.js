@@ -2066,7 +2066,7 @@ sap.ui.define([
 	 * @param {string[]} [mOptions.activeTerminologies] List of active terminologies.
 	 *              The order of the given active terminologies is significant. The {@link sap.base.i18n.ResourceBundle ResourceBundle} API
 	 *              documentation describes the processing behavior in more detail.
-	 *              Please have a look at this dev-guide chapter for general usage instructions: {@link topic:CPOUI5FRAMEWORK-57_Docu_Chapter Text Verticalization}.
+	 *              Please have a look at this dev-guide chapter for general usage instructions: {@link topic:eba8d25a31ef416ead876e091e67824e Text Verticalization}.
 	 * @param {object} [mOptions.settings] Settings of the new Component
 	 * @param {boolean|string|object} [mOptions.manifest=true] Whether and from where to load the manifest.json for the Component.
 	 *     When set to any truthy value, the manifest will be loaded and evaluated before the Component controller.
@@ -2158,7 +2158,7 @@ sap.ui.define([
 	 * @param {string[]} [vConfig.activeTerminologies] List of active terminologies.
 	 *              The order of the given active terminologies is significant. The {@link sap.base.i18n.ResourceBundle ResourceBundle} API
 	 *              documentation describes the processing behavior in more detail.
-	 *              Please also have a look at this dev-guide chapter for general usage instructions: {@link topic:CPOUI5FRAMEWORK-57_Docu_Chapter Text Verticalization}.
+	 *              Please also have a look at this dev-guide chapter for general usage instructions: {@link topic:eba8d25a31ef416ead876e091e67824e Text Verticalization}.
 	 * @param {boolean} [vConfig.async] Indicates whether the Component creation should be done asynchronously; defaults to true when using the manifest property with a truthy value otherwise the default is false (experimental setting)
 	 * @param {object} [vConfig.asyncHints] @since 1.27.0 Hints for the asynchronous loading.
 	 *     <b>Beware:</b> This parameter is only used internally by the UI5 framework and compatibility cannot be guaranteed.

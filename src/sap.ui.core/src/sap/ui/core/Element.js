@@ -632,7 +632,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oDelegate the delegate object
 	 * @param {boolean} [bCallBefore=false] if true, the delegate event listeners are called before the event listeners of the element; default is "false". In order to also set bClone, this parameter must be given.
-	 * @param {object} [oThis] if given, this object will be the "this" context in the listener methods; default is the delegate object itself
+	 * @param {object} [oThis=oDelegate] if given, this object will be the "this" context in the listener methods; default is the delegate object itself
 	 * @param {boolean} [bClone=false] if true, this delegate will also be attached to any clones of this element; default is "false"
 	 * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
 	 * @private
@@ -733,7 +733,7 @@ sap.ui.define([
 	 * </pre>
 	 *
 	 * @param {object} oDelegate The delegate object which consists of the event handler names and the corresponding event handler functions
-	 * @param {object} [oThis] If given, this object will be the "this" context in the listener methods; default is the delegate object itself
+	 * @param {object} [oThis=oDelegate] If given, this object will be the "this" context in the listener methods; default is the delegate object itself
 	 * @returns {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
 	 * @since 1.9.0
 	 * @public
