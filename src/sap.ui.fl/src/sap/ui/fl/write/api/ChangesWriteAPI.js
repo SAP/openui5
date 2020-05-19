@@ -67,11 +67,16 @@ sap.ui.define([
 					delete mPropertyBag.changeSpecificData.layer;
 				}
 
-				return AppVariantInlineChangeFactory.createDescriptorInlineChange({
+				var oInlineChange = {
 					changeType: mPropertyBag.changeSpecificData.changeType,
-					content: mPropertyBag.changeSpecificData.content,
-					texts: mPropertyBag.changeSpecificData.texts
-				})
+					content: mPropertyBag.changeSpecificData.content
+				};
+
+				if (mPropertyBag.changeSpecificData.texts) {
+					oInlineChange.texts = mPropertyBag.changeSpecificData.texts;
+				}
+
+				return AppVariantInlineChangeFactory.createDescriptorInlineChange(oInlineChange)
 					.then(function (oAppDescriptorChangeContent) {
 						return new DescriptorChangeFactory().createNew(
 							sReference, oAppDescriptorChangeContent, sLayer, mPropertyBag.selector
