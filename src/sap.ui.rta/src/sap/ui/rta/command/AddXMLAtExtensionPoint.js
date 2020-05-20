@@ -5,11 +5,13 @@ sap.ui.define([
 	"sap/ui/rta/command/FlexCommand",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/registry/ExtensionPointRegistry",
 	"sap/ui/fl/Utils"
 ], function(
 	FlexCommand,
 	JsControlTreeModifier,
 	ChangesWriteAPI,
+	ExtensionPointRegistry,
 	Utils
 ) {
 	"use strict";
@@ -80,7 +82,10 @@ sap.ui.define([
 		var oAppComponent = this.getAppComponent();
 		var oSelector = oChange.getSelector();
 		var oView = JsControlTreeModifier.bySelector(oSelector.viewSelector, oAppComponent);
-		var oSelectorElement = JsControlTreeModifier.getExtensionPointInfo(oSelector.name, oView).parent;
+		var oExtensionPointRegistry = ExtensionPointRegistry.getInstance();
+		var oExtensionPointInfo = oExtensionPointRegistry.getExtensionPointInfo(oSelector.name, oView);
+		var oSelectorElement = oExtensionPointInfo.targetControl;
+		oChange.setExtensionPointInfo(oExtensionPointInfo);
 
 		var mPropertyBag = {
 			modifier: JsControlTreeModifier,

@@ -246,6 +246,10 @@ function(
 			assert.equal(oExtensionPointInfo1.defaultContent.length, 1, "and the defaultContent contains one item");
 			assert.equal(oExtensionPointInfo1.defaultContent[0].getId(), "testapp---view--default-label1", "and the default label is returned");
 
+			oExtensionPointInfo1.defaultContent[0].destroy();
+			oExtensionPointInfo1 = JsControlTreeModifier.getExtensionPointInfo("ExtensionPoint1", this.oXmlView);
+			assert.equal(oExtensionPointInfo1.defaultContent.length, 0, "and after destroy default content and call modifier again the defaultContent contains no items anymore");
+
 			var oExtensionPointInfo2 = JsControlTreeModifier.getExtensionPointInfo("ExtensionPoint2", this.oXmlView);
 			assert.equal(oExtensionPointInfo2.parent.getId(), "testapp---view--panel", "then the returned object contains the parent control");
 			assert.equal(oExtensionPointInfo2.aggregationName, "content", "and the aggregation name");
