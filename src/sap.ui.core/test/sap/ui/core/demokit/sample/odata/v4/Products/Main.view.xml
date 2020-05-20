@@ -10,6 +10,8 @@
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 	<template:alias name="format" value="AnnotationHelper.format">
 	<template:alias name="label" value="AnnotationHelper.label">
+	<App>
+	<Page id="page" floatingFooter="true" showHeader="false">
 	<VBox>
 		<HBox>
 			<ToggleButton icon="sap-icon://syntax" press="onSourceCode"
@@ -94,6 +96,8 @@
 			</form:SimpleForm>
 		</template:with>
 	</VBox>
+	</Page>
+	</App>
 	</template:alias>
 	</template:alias>
 </mvc:View>

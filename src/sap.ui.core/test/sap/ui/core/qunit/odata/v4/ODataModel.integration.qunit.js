@@ -2061,14 +2061,15 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("SalesOrderList('1')/SO_2_BP"
-				+ "?$select=Address/City,Address/GeoLocation/Longitude", {
+				+ "?$select=Address/City,Address/GeoLocation/Longitude,BusinessPartnerID", {
 					"@odata.etag" : "etag",
 					Address : {
 						City : "Heidelberg",
 						GeoLocation : {
 							Longitude : "8.71"
 						}
-					}
+					},
+					BusinessPartnerID : "2"
 				})
 				.expectChange("longitude1", "8.710000000000")
 				.expectChange("longitude2", "8.710000000000")
@@ -2134,11 +2135,11 @@ sap.ui.define([
 			var oReturnValueContext = aResults[0];
 
 			that.expectChange("id2", "1")
-				.expectRequest("SalesOrderList('1')?$select=Note,NoteLanguage,SalesOrderID"
+				// three late property requests (one had only a $expand, so SO_2_BP is selected too)
+				.expectRequest("SalesOrderList('1')?$select=Note,NoteLanguage,SO_2_BP"
 					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,LegalForm)", {
 					Note : "Note #1",
 					NoteLanguage : "en",
-					SalesOrderID : "1",
 					SO_2_BP : {
 						BusinessPartnerID : "2",
 						CompanyName : "TECUM",
@@ -2248,9 +2249,7 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest(
 				"SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
-				+ "?$select=ItemPosition,Quantity,SalesOrderID", {
-					ItemPosition : "0010",
-					SalesOrderID : "1",
+				+ "?$select=Quantity", {
 					Quantity : "5"
 				})
 				.expectChange("quantity", "5.000");
@@ -2333,15 +2332,14 @@ sap.ui.define([
 		}).then(function (aResults) {
 			that.expectChange("id2", "1") // from setBindingContext
 				// late property request
-				.expectRequest("SalesOrderList('1')?$select=Note,SalesOrderID",
-					{Note : "Note #1", SalesOrderID : "1"})
+				.expectRequest("SalesOrderList('1')?$select=Note", {Note : "Note #1"})
 				.expectChange("note", "Note #1");
 
 			that.oView.byId("returnValue").setBindingContext(aResults[0]);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("SalesOrderList('1')?$select=Messages,Note", {});
+			that.expectRequest("SalesOrderList('1')?$select=Messages,Note", {Note : "Note #1"});
 
 			// code under test
 			that.oView.byId("returnValue").getBindingContext()
@@ -2375,8 +2373,7 @@ sap.ui.define([
 					]
 				})
 				// late property request
-				.expectRequest("SalesOrderList('1')?$select=Note,SalesOrderID",
-					{Note : "Note #1", SalesOrderID : "1"});
+				.expectRequest("SalesOrderList('1')?$select=Note", {Note : "Note #1"});
 
 			// code under test
 			that.oView.byId("returnValue").getBindingContext().refresh();
@@ -2426,12 +2423,12 @@ sap.ui.define([
 			.expectChange("budget");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?$select=AGE,ID"
+			// two late property requests (one had only a $expand, so EMPLOYEE_2_TEAM is selected)
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?$select=AGE,EMPLOYEE_2_TEAM"
 					+ "&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
 					+ "$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))", {
 					"@odata.etag" : "etag0",
 					AGE : 42,
-					ID : "2",
 					EMPLOYEE_2_TEAM : {
 						"@odata.etag" : "etag1",
 						Team_Id : "1",
@@ -5220,9 +5217,8 @@ sap.ui.define([
 			.expectChange("value");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest("As('1')?$select=AID"
+			that.expectRequest("As('1')?$select=AtoEntityWithComplexKey"
 				+ "&$expand=AtoEntityWithComplexKey($select=Key/P1,Key/P2,Value)", {
-					AID : "1",
 					AtoEntityWithComplexKey : {
 						Key : {
 							P1 : "p1",
@@ -9601,9 +9597,8 @@ sap.ui.define([
 			.expectChange("teamId");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest("EMPLOYEES('1')?$select=AGE,ID", {
+			that.expectRequest("EMPLOYEES('1')?$select=AGE", {
 					AGE : 23,
-					ID : "1",
 					"@odata.etag" : "ETag"
 				})
 				.expectChange("parameterName", "Jonathan Smith")
@@ -10359,8 +10354,8 @@ sap.ui.define([
 			var oContext = that.oView.byId("master").getItems()[0].getBindingContext();
 
 			// 'Budget' and 'Name' are added to the table row
-			that.expectRequest("TEAMS('TEAM_01')?$select=Budget,Name,Team_Id",
-					{Budget : "456", Name : "Team #1", Team_Id : "TEAM_01"})
+			that.expectRequest("TEAMS('TEAM_01')?$select=Budget,Name",
+					{Budget : "456", Name : "Team #1"})
 				.expectChange("text1", "Team #1")
 				.expectChange("text2", "456");
 
@@ -12036,12 +12031,9 @@ sap.ui.define([
 
 			// 'flightDetails' is added to the table row
 			that.expectRequest("FlightCollection(carrid='AA',connid='0017',fldate=datetime"
-					+ "'2017-08-10T00%3A00%3A00')?$select=carrid,connid,fldate,flightDetails", {
+					+ "'2017-08-10T00%3A00%3A00')?$select=flightDetails", {
 					d : {
 						__metadata : {type : "RMTSAMPLEFLIGHT.Flight"},
-						carrid : "AA",
-						connid : "0017",
-						fldate : "/Date(1502323200000)/",
 						flightDetails : {
 							__metadata : {type : "RMTSAMPLEFLIGHT.FlightDetails"},
 							cityFrom : "New York",
@@ -16129,7 +16121,7 @@ sap.ui.define([
 			// Delete creation row context before switching back to the active version
 
 			that.expectChange("price", null)
-			    .expectChange("artistName", null);
+				.expectChange("artistName", null);
 
 			return Promise.all([
 				oCreationRowContext.delete(),
@@ -16209,11 +16201,10 @@ sap.ui.define([
 
 			oReturnValueContext = oReturnValueContext0;
 
+			// two late property requests (one had only a $expand, so BestFriend is selected too)
 			that.expectRequest("Artists(ArtistID='23',IsActiveEntity=false)"
-				+ "?$select=ArtistID,IsActiveEntity,Name"
+				+ "?$select=BestFriend,Name"
 				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
-					ArtistID : "23",
-					IsActiveEntity : false,
 					Name : "DJ Bobo",
 					BestFriend : {
 						ArtistID : "32",
@@ -16305,11 +16296,10 @@ sap.ui.define([
 
 				oReturnValueContext = aPromiseResults[0];
 
+				// two late property requests (one had only a $expand, so BestFriend is selected)
 				that.expectRequest("Artists(ArtistID='23',IsActiveEntity=true)"
-					+ "?$select=ArtistID,IsActiveEntity,Name"
+					+ "?$select=BestFriend,Name"
 					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
-						ArtistID : "23",
-						IsActiveEntity : true,
 						Name : "DJ Bobo",
 						BestFriend : {
 							ArtistID : "32",
@@ -16689,8 +16679,11 @@ sap.ui.define([
 
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
 				+ "?$select=DraftAdministrativeData"
-				+ "&$expand=DraftAdministrativeData($select=InProcessByUser)", {
-					DraftAdministrativeData : {InProcessByUser : "bar"}
+				+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
+					DraftAdministrativeData : {
+						DraftID : "1",
+						InProcessByUser : "bar"
+					}
 				})
 				.expectChange("inProcessByUser", "bar");
 				// no change in messages
@@ -18601,8 +18594,8 @@ sap.ui.define([
 					+ "&$select=GrossAmount,NetAmount,SalesOrderID", {
 				"@odata.etag" : "ETag0",
 				GrossAmount : "119.00",
-				NetAmount : "100.00"
-//				SalesOrderID : "42"
+				NetAmount : "100.00",
+				SalesOrderID : "42"
 			})
 			.expectChange("netAmount", "100.00")
 			.expectChange("grossAmount", "119.00");
@@ -18672,8 +18665,8 @@ sap.ui.define([
 				}, {
 					"@odata.etag" : "ETag1",
 					GrossAmount : "238.00", // side effect
-					NetAmount : "200.00" // "side effect": decimal places added
-//					SalesOrderID : "42"
+					NetAmount : "200.00", // "side effect": decimal places added
+					SalesOrderID : "42"
 				});
 
 			that.oView.byId("netAmount").getBinding("value").setValue("200");
@@ -18715,8 +18708,8 @@ sap.ui.define([
 						message : "n/a",
 						numericSeverity : 3,
 						target : "NetAmount"
-					}]
-//					SalesOrderID : "42"
+					}],
+					SalesOrderID : "42"
 				})
 				.expectRequest({
 					batchNo : 3,
@@ -18847,47 +18840,51 @@ sap.ui.define([
 			}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
-	<Input id="id" value="{ArtistID}" />\
+	<Input id="name" value="{Name}" />\
 	<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
 	<Text binding="{DraftAdministrativeData}" id="inProcessByUser2" text="{InProcessByUser}" />\
 </FlexBox>',
 			that = this;
 
 		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
-				+ "?$select=ArtistID,IsActiveEntity"
+				+ "?$select=ArtistID,IsActiveEntity,Name"
 				+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
 				"@odata.etag" : "ETag0",
 				ArtistID : "42",
 				DraftAdministrativeData : {
 					DraftID : "23",
 					InProcessByUser : "foo"
-				}
-//				IsActiveEntity : true
+				},
+				IsActiveEntity : true,
+				Name : "Prince"
 			})
-			.expectChange("id", "42")
+			.expectChange("name", "Prince")
 			.expectChange("inProcessByUser", "foo")
 			.expectChange("inProcessByUser2", "foo");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectChange("id", "TAFKAP");
+			that.expectChange("name", "TAFKAP");
 
-			that.oView.byId("id").getBinding("value").setValue("TAFKAP");
+			that.oView.byId("name").getBinding("value").setValue("TAFKAP");
 
 			that.expectRequest({
 					batchNo : 1,
 					method : "PATCH",
 					url : "Artists(ArtistID='42',IsActiveEntity=true)",
 					headers : {"If-Match" : "ETag0"},
-					payload : {ArtistID : "TAFKAP"}
+					payload : {Name : "TAFKAP"}
 				}, {/* response does not matter here */})
 				.expectRequest({
 					batchNo : 1,
 					method : "GET",
 					url : "Artists(ArtistID='42',IsActiveEntity=true)"
 						+ "?$select=DraftAdministrativeData"
-						+ "&$expand=DraftAdministrativeData($select=InProcessByUser)"
+						+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)"
 				}, {
-					DraftAdministrativeData : {InProcessByUser : "bar"}
+					DraftAdministrativeData : {
+						DraftID : "23",
+						InProcessByUser : "bar"
+					}
 				})
 				.expectChange("inProcessByUser", "bar")
 				.expectChange("inProcessByUser2", "bar");
@@ -18920,13 +18917,13 @@ sap.ui.define([
 
 		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
 				+ "?$select=DraftID,InProcessByUser", {
-//				DraftID : "23",
+				DraftID : "23",
 				InProcessByUser : "foo"
 			})
 			.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
 				+ "?$select=ArtistID,IsActiveEntity", {
-				ArtistID : "42"
-//				IsActiveEntity : true
+				ArtistID : "42",
+				IsActiveEntity : true
 			})
 			.expectChange("id", "42")
 			.expectChange("inProcessByUser", "foo");
@@ -18934,12 +18931,12 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
 					+ "?$select=ArtistID,IsActiveEntity", {
-					ArtistID : "42"
-//					IsActiveEntity : true
+					ArtistID : "42",
+					IsActiveEntity : true
 				})
 				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
 					+ "?$select=DraftID,InProcessByUser", {
-//					DraftID : "23",
+					DraftID : "23",
 					InProcessByUser : "bar"
 				})
 				.expectChange("inProcessByUser", "bar");
@@ -18956,7 +18953,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
 					+ "?$select=DraftID,InProcessByUser", {
-//					DraftID : "23",
+					DraftID : "23*", // key property has changed
 					InProcessByUser : "foo"
 				})
 				.expectChange("inProcessByUser", "foo");
@@ -19019,6 +19016,59 @@ sap.ui.define([
 			that.oView.byId("company").getBinding("value").setValue("changed");
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')?$select=SO_2_BP"
+				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
+				SO_2_BP : null
+			})
+			.expectChange("company", null);
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("form").getBindingContext().requestSideEffects([{
+					$NavigationPropertyPath : "SO_2_BP"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: requestSideEffects deletes an entity when only changes in its properties where
+	// expected.
+	// JIRA: CPOUI5ODATAV4-225
+	QUnit.skip("requestSideEffects unexpectedly deletes an entity", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'1\')}" id="form">\
+	<Input id="company" value="{SO_2_BP/CompanyName}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
+				SalesOrderID : "1",
+				SO_2_BP : {
+					BusinessPartnerID : "42",
+					CompanyName : "Company"
+				}
+			})
+			.expectChange("company", "Company");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList('1')?$select=SO_2_BP"
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
+					SO_2_BP : null
+				});
+
+			return Promise.all([
+				// code under test
+				// TODO this should fail because SO_2_BP becomes null
+				that.oView.byId("form").getBindingContext().requestSideEffects([{
+					$PropertyPath : "SO_2_BP/CompanyName"
+				}]),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -19045,15 +19095,16 @@ sap.ui.define([
 			})
 			.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
 				+ "?$select=ArtistID,IsActiveEntity", {
-				ArtistID : "42"
-//				IsActiveEntity : true
+				ArtistID : "42",
+				IsActiveEntity : true
 			})
 			.expectChange("id", "42")
 			.expectChange("inProcessByUser", "foo");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
-					+ "?$select=InProcessByUser", {
+					+ "?$select=DraftID,InProcessByUser", {
+					DraftID : "23",
 					InProcessByUser : "bar"
 				})
 				.expectChange("inProcessByUser", "bar");
@@ -19098,14 +19149,15 @@ sap.ui.define([
 				//TODO CPOUI5UISERVICESV3-1677: Avoid unnecessary $expand
 				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
 					+ ";$expand=BestFriend($select=ArtistID,IsActiveEntity))", {
-				ArtistID : "42"
-//				IsActiveEntity : true
+				ArtistID : "42",
+				IsActiveEntity : true
 			})
 			.expectChange("id", "42")
 			.expectChange("inProcessByUser", "foo");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest(sDraftAdministrativeData + "?$select=InProcessByUser", {
+			that.expectRequest(sDraftAdministrativeData + "?$select=DraftID,InProcessByUser", {
+					DraftID : "23",
 					InProcessByUser : "bar"
 				})
 				.expectChange("inProcessByUser", "bar");
@@ -19144,8 +19196,8 @@ sap.ui.define([
 
 		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
 				/*+ "?$select=ArtistID,IsActiveEntity"*/, {
-				ArtistID : "42"
-//				IsActiveEntity : true
+				ArtistID : "42",
+				IsActiveEntity : true
 			})
 			.expectRequest(sDraftAdministrativeData/* + "?$select=DraftID,InProcessByUser"*/, {
 				DraftID : "23",
@@ -19155,7 +19207,8 @@ sap.ui.define([
 			.expectChange("inProcessByUser", "foo");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest(sDraftAdministrativeData + "?$select=InProcessByUser", {
+			that.expectRequest(sDraftAdministrativeData + "?$select=DraftID,InProcessByUser", {
+					DraftID : "23",
 					InProcessByUser : "bar"
 				})
 				.expectChange("inProcessByUser", "bar");
@@ -19199,27 +19252,29 @@ sap.ui.define([
 					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
 						+ ";$expand=_Publication($select=Price,PublicationID))", {
 					ArtistID : "42",
-//					IsActiveEntity : true,
 					BestFriend : {
 						ArtistID : "23",
-//						IsActiveEntity : true,
+						IsActiveEntity : true,
 						_Publication : [{
-							Price : "9.99"
-//							"PublicationID" "42-0":
+							Price : "9.99",
+							PublicationID : "42-0"
 						}]
-					}
+					},
+					IsActiveEntity : true
 				})
 				.expectChange("id", "42")
 				.expectChange("price", ["9.99"]);
 
 			return this.createView(assert, sView, oModel).then(function () {
 				that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=BestFriend"
-						+ "&$expand=BestFriend($select=_Publication"
-							+ ";$expand=_Publication($select=Price,PublicationID))", {
+						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
+						+ ";$expand=_Publication($select=Price,PublicationID))", {
 						BestFriend : {
+							ArtistID : "23",
+							IsActiveEntity : true,
 							_Publication : [{
-								Price : "7.77"
-//								"PublicationID" "42-0":
+								Price : "7.77",
+								PublicationID : "42-0"
 							}]
 						}
 					})
@@ -19276,8 +19331,8 @@ sap.ui.define([
 				+ "?sap-client=123&$select=ArtistID,IsActiveEntity"
 				//TODO CPOUI5UISERVICESV3-1677: Avoid unnecessary $expand
 				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity)", {
-				ArtistID : "42"
-//					IsActiveEntity : true
+				ArtistID : "42",
+				IsActiveEntity : true
 			})
 			.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend/_Publication"
 				+ "?sap-client=123&$count=true&$filter=CurrencyCode eq 'EUR'"
@@ -19295,7 +19350,10 @@ sap.ui.define([
 					PublicationID : "42-1"
 				}, {
 					CurrencyCode : "EUR",
-					DraftAdministrativeData : null,
+					DraftAdministrativeData : {
+						DraftID : "42-2-A",
+						InProcessByUser : "Schroeder"
+					},
 					Price : "9.22",
 					PublicationID : "42-2"
 				}]
@@ -19304,7 +19362,7 @@ sap.ui.define([
 			.expectChange("id", "42")
 			.expectChange("price", [, "9.11", "9.22"])
 			.expectChange("currency", [, "EUR", "EUR"])
-			.expectChange("inProcessByUser", [, "Charlie Brown"]);
+			.expectChange("inProcessByUser", [, "Charlie Brown", "Schroeder"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectChange("count", "10"); // must not be affected by side effects below!
@@ -19318,13 +19376,17 @@ sap.ui.define([
 					+ "?sap-client=123"
 					+ "&$filter=PublicationID eq '42-1' or PublicationID eq '42-2'"
 					+ "&$select=Price,PublicationID"
-					+ "&$expand=DraftAdministrativeData($select=InProcessByUser)", {
+					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
 					value : [{
-						DraftAdministrativeData : null, // side effect
+						DraftAdministrativeData : {
+							DraftID : "42-1-A",
+							InProcessByUser : "Jane Doe"
+						},
 						Price : "7.11", // side effect
 						PublicationID : "42-1"
 					}, {
-						DraftAdministrativeData : { // side effect
+						DraftAdministrativeData : {
+							DraftID : "42-2-A", // side effect
 							InProcessByUser : "John Doe"
 						},
 						Messages : [{ // side effect: reported, even if not selected
@@ -19338,7 +19400,7 @@ sap.ui.define([
 					}]
 				})
 				.expectChange("price", [, "7.11", "7.22"])
-				.expectChange("inProcessByUser", [, null, "John Doe"])
+				.expectChange("inProcessByUser", [, "Jane Doe", "John Doe"])
 				.expectMessages([{
 					code : "23",
 					message : "This looks pretty cheap now",
@@ -19390,6 +19452,7 @@ sap.ui.define([
 				.expectChange("currency", null, null)
 				// "inProcessByUser" temporarily loses its binding context and thus fires a change
 				.expectChange("inProcessByUser", null, null)
+				.expectChange("inProcessByUser", null, null)
 				.expectChange("price", [,,,,,,, "7.77", "7.88"])
 				.expectChange("currency", [,,,,,,, "EUR", "EUR"]);
 
@@ -19427,17 +19490,24 @@ sap.ui.define([
 					"@odata.count" : "10",
 					value : [{
 						CurrencyCode : "EUR",
-						DraftAdministrativeData : null,
+						DraftAdministrativeData : {
+							DraftID : "42-1-A",
+							InProcessByUser : "Charlie Brown"
+						},
 						Price : "5.11",
 						PublicationID : "42-1"
 					}, {
 						CurrencyCode : "EUR",
-						DraftAdministrativeData : null,
+						DraftAdministrativeData : {
+							DraftID : "42-2-A",
+							InProcessByUser : "Schroeder"
+						},
 						Price : "5.22",
 						PublicationID : "42-2"
 					}]
 				})
-				.expectChange("price", [, "5.11", "5.22"]);
+				.expectChange("price", [, "5.11", "5.22"])
+				.expectChange("inProcessByUser", [, "Charlie Brown", "Schroeder"]);
 				// Note: "currency" cells do not change
 
 			// Note: invisible, cached data was not updated and thus must be read again
@@ -19497,8 +19567,8 @@ sap.ui.define([
 				+ "?$select=ArtistID,IsActiveEntity"
 				//TODO CPOUI5UISERVICESV3-1677: Avoid unnecessary $expand
 				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity)", {
-				ArtistID : "42"
-//					IsActiveEntity : true
+				ArtistID : "42",
+				IsActiveEntity : true
 			})
 			.expectChange("id", "42")
 			.expectChange("price", ["9", "9.11"])
@@ -19543,12 +19613,15 @@ sap.ui.define([
 				})
 				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend"
 					+ "/_Publication('42-0')?$select=Price"
-					+ "&$expand=DraftAdministrativeData($select=InProcessByUser)", {
-					DraftAdministrativeData : {InProcessByUser : "JANEDOE"},
+					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
+					DraftAdministrativeData : {
+						DraftID : "1",
+						InProcessByUser : "Jane Doe"
+					},
 					Price : "7.00"
 				})
 				.expectChange("priceDetail", "7")
-				.expectChange("inProcessByUser", "JANEDOE")
+				.expectChange("inProcessByUser", "Jane Doe")
 				.expectChange("price", ["7", "7.11"]);
 
 			return Promise.all([
@@ -19829,12 +19902,15 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=BestFriend"
-					+ "&$expand=BestFriend($select=Name;"
-						+ "$expand=BestPublication($select=CurrencyCode))", {
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name;"
+						+ "$expand=BestPublication($select=CurrencyCode,PublicationID))", {
 					BestFriend : {
+						ArtistID : "23",
 						BestPublication : {
-							CurrencyCode : "JPY2"
+							CurrencyCode : "JPY2",
+							PublicationID : "13"
 						},
+						IsActiveEntity : true,
 						Name : "Best Friend2"
 					}
 				})
@@ -19842,10 +19918,10 @@ sap.ui.define([
 					+ "?$select=CurrencyCode,PublicationID&$skip=0&$top=100", {
 					value : [{
 						CurrencyCode : "EUR2",
-						PublicationID : "1"
+						PublicationID : "1*" // key property has changed
 					}, {
 						CurrencyCode : "USD2",
-						PublicationID : "2"
+						PublicationID : "2*" // key property has changed
 					}]
 				})
 				.expectChange("currency", ["EUR2",  "USD2"])
@@ -19865,12 +19941,15 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=BestFriend"
-					+ "&$expand=BestFriend($select=BestPublication;"
-						+ "$expand=BestPublication($select=CurrencyCode))", {
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity;"
+						+ "$expand=BestPublication($select=CurrencyCode,PublicationID))", {
 					BestFriend : {
+						ArtistID : "23",
 						BestPublication : {
-							CurrencyCode : "USD"
-						}
+							CurrencyCode : "USD",
+							PublicationID : "13"
+						},
+						IsActiveEntity : true
 					}
 				})
 				.expectChange("bestPublication::currency", "USD");
@@ -19945,15 +20024,18 @@ sap.ui.define([
 			oBestFriendBox = that.oView.byId("table").getItems()[1].getCells()[0];
 
 			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity"
-					+ "&$expand=BestFriend($select=Name;"
-						+ "$expand=BestPublication($select=CurrencyCode))"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name;"
+						+ "$expand=BestPublication($select=CurrencyCode,PublicationID))"
 					+ "&$filter=ArtistID eq '24' and IsActiveEntity eq true", {
 					value : [{
 						ArtistID : "24",
 						BestFriend : {
+							ArtistID : "44",
 							BestPublication : {
-								CurrencyCode : "JPY2"
+								CurrencyCode : "JPY2",
+								PublicationID : "14"
 							},
+							IsActiveEntity : true,
 							Name : "New Best Friend of 24"
 						},
 						IsActiveEntity : true
@@ -19976,15 +20058,18 @@ sap.ui.define([
 			var oBestPublicationBox = oBestFriendBox.getItems()[1];
 
 			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity"
-					+ "&$expand=BestFriend($select=BestPublication;"
-						+ "$expand=BestPublication($select=CurrencyCode))"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity;"
+						+ "$expand=BestPublication($select=CurrencyCode,PublicationID))"
 					+ "&$filter=ArtistID eq '24' and IsActiveEntity eq true", {
 					value : [{
 						ArtistID : "24",
 						BestFriend : {
+							ArtistID : "44",
 							BestPublication : {
-								CurrencyCode : "JPY3"
-							}
+								CurrencyCode : "JPY3",
+								PublicationID : "14"
+							},
+							IsActiveEntity : true
 						},
 						IsActiveEntity : true
 					}]
@@ -21264,8 +21349,8 @@ sap.ui.define([
 //		+ ";$expand=_Friend($select=ArtistID,IsActiveEntity))"
 		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
 				+ "?$select=ArtistID,IsActiveEntity", {
-				ArtistID : "42"
-//				IsActiveEntity : true
+				ArtistID : "42",
+				IsActiveEntity : true
 			})
 			.expectChange("id", "42");
 
@@ -21290,8 +21375,8 @@ sap.ui.define([
 				+ "?$select=ArtistID,IsActiveEntity"
 				//TODO CPOUI5UISERVICESV3-1677: Avoid unnecessary $expand
 				+ "&$expand=_Friend($select=ArtistID,IsActiveEntity)", {
-				ArtistID : "42"
-//				IsActiveEntity : true
+				ArtistID : "42",
+				IsActiveEntity : true
 			})
 			.expectChange("id", "42")
 			.expectChange("id", "23");
@@ -21320,10 +21405,10 @@ sap.ui.define([
 				+ "?$select=ArtistID,IsActiveEntity"
 				+ "&$expand=_Publication($select=Price,PublicationID)", {
 				ArtistID : "42",
-//				IsActiveEntity : true,
+				IsActiveEntity : true,
 				_Publication : [{
-					Price : "9.99"
-//						"PublicationID" "42-0":
+					Price : "9.99",
+					PublicationID : "42-0"
 				}]
 			})
 			.expectChange("id", "42")
@@ -21828,8 +21913,6 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)?$select=Name", {
-					ArtistID : "42",
-					IsActiveEntity : false,
 					Name : "Hour Frustrated"
 				})
 				.expectChange("name", "Hour Frustrated");
@@ -22972,7 +23055,7 @@ sap.ui.define([
 			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
 						+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
 					value : [{
-						ItemPosition : "10",
+						ItemPosition : "10*", // key property has changed
 						Note : "Foo - side effect",
 						SalesOrderID : "1"
 					}]
@@ -23905,8 +23988,7 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			// combined late property requests
-			that.expectRequest("As(1)/AtoCs(2)?$select=CID&$expand=CtoD($select=DID,DValue)", {
-					CID : 2,
+			that.expectRequest("As(1)/AtoCs(2)?$select=CtoD&$expand=CtoD($select=DID,DValue)", {
 					CtoD : {
 						DID : 3,
 						DValue : 103
@@ -23922,11 +24004,12 @@ sap.ui.define([
 			that.expectRequest("As(1)?$select=AValue",
 					{AValue : 121}) // unrealistic, but shows the link between response and control
 				.expectChange("avalue::form", "121")
-				.expectRequest("As(1)/AtoCs?$select=CID&$expand=CtoA($select=AValue)"
+				.expectRequest("As(1)/AtoCs?$select=CID&$expand=CtoA($select=AID,AValue)"
 					+ "&$filter=CID eq 2", {
 					value : [{
 						CID : 2,
 						CtoA : {
+							AID : 1,
 							AValue : 122 // unrealistic, see above
 						}
 					}]
@@ -23973,9 +24056,10 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oContext = that.oView.byId("bInstance").getElementBinding().getBoundContext();
 
-			that.expectRequest("As(1)?$select=AValue&$expand=AtoB($select=BValue)", {
+			that.expectRequest("As(1)?$select=AValue&$expand=AtoB($select=BID,BValue)", {
 					AValue : 111,
 					AtoB : {
+						BID : 2,
 						BValue : 112
 					}
 				})
@@ -24614,8 +24698,7 @@ sap.ui.define([
 			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=100",
 					{value : [{ID : "2", Name : "Frederic Fall"}]})
 				.expectChange("name", ["Frederic Fall"])
-				.expectRequest("TEAMS('TEAM_01')?$select=MANAGER_ID,Team_Id",
-					{MANAGER_ID : "5", Team_Id : "TEAM_01"})
+				.expectRequest("TEAMS('TEAM_01')?$select=MANAGER_ID", {MANAGER_ID : "5"})
 				.expectChange("managerId", "5");
 
 			// code under test: bindings inside "detail" form need to send their own requests
@@ -25196,6 +25279,7 @@ sap.ui.define([
 
 		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
 				+ "?$select=DraftID,InProcessByUser", {
+				DraftID : "1",
 				InProcessByUser : "foo"
 			})
 			.expectChange("inProcessByUser", "foo")
@@ -25217,17 +25301,23 @@ sap.ui.define([
 				Address : {
 					City : "Heidelberg"
 				},
+				ArtistID : "42",
 				BestFriend : {
+					ArtistID : "23",
 					BestFriend : {
+						ArtistID : "24",
 						BestPublication : {
 							Price : "8.88"
 						},
-						Name : "Best Friend"
-					}
+						Name : "Best Friend",
+						IsActiveEntity : true
+					},
+					IsActiveEntity : true
 				},
 				BestPublication : {
 					Price : "9.99"
 				},
+				IsActiveEntity : true,
 				Name : "Hour Frustrated"
 			})
 			.expectChange("city", "Heidelberg")
@@ -25245,6 +25335,8 @@ sap.ui.define([
 					Address : {
 						City : "Walldorf"
 					},
+					ArtistID : "42",
+					IsActiveEntity : true,
 					Name : "Minute Frustrated"
 				})
 				.expectChange("city", "Walldorf")
@@ -25256,28 +25348,53 @@ sap.ui.define([
 				that.waitForChanges(assert, "*")
 			]);
 		}).then(function () {
+			var sError = "Key predicate of 'BestFriend' changed"
+					+ " from (ArtistID='23',IsActiveEntity=true)"
+					+ " to (ArtistID='s.o.else',IsActiveEntity=true)";
+
 			// Note: BestFriend/BestFriend unaffected!
-			//TODO this request for key properties only looks pretty useless, but...we could add an
-			// assertion that no key property has changed unexpectedly!
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=BestFriend"
 					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity)", {
-					BestFriend : {}
-				});
+					BestFriend : {
+						ArtistID : "s.o.else", // this is NOT expected to happen --> see error below
+						IsActiveEntity : true
+					}
+				})
+				.expectMessages([{
+					code : undefined,
+					descriptionUrl : undefined,
+					message : sError,
+					persistent : true,
+					target : "",
+					technical : true,
+					technicalDetails : {},
+					type : "Error"
+				}]);
+			that.oLogMock.expects("error").withArgs("Failed to request side effects");
 
 			return Promise.all([
 				// code under test
-				oContext.requestSideEffects([{$PropertyPath : "BestFriend/*"}]),
+				oContext.requestSideEffects([{$PropertyPath : "BestFriend/*"}])
+					.then(function () {
+						assert.ok(false, "unexpected success");
+					}, function (oError) {
+						assert.strictEqual(oError.message, sError);
+					}),
 				that.waitForChanges(assert, "BestFriend/*")
 			]);
 		}).then(function () {
 			// Note: BestFriend/BestFriend's BestPublication unaffected!
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=BestFriend"
-					+ "&$expand=BestFriend($select=BestFriend"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
 						+ ";$expand=BestFriend($select=ArtistID,IsActiveEntity,Name))", {
 					BestFriend : {
+						ArtistID : "23",
 						BestFriend : {
+							ArtistID : "24",
+							IsActiveEntity : true,
 							Name : "TAFKAP"
-						}
+						},
+						IsActiveEntity : true
 					}
 				})
 				.expectChange("friend", "TAFKAP");
@@ -25289,8 +25406,8 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=BestFriend"
-					+ "&$expand=BestFriend($select=BestFriend"
-						+ ";$expand=BestFriend($select=BestPublication"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
+						+ ";$expand=BestFriend($select=ArtistID,IsActiveEntity"
 							+ ";$expand=BestPublication($select=Price,PublicationID)))", {});
 
 			return Promise.all([
@@ -25579,4 +25696,70 @@ sap.ui.define([
 			constraints:{\'maxLength\':255},formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
 		<Input value="{path:\'Name\',type:\'sap.ui.model.odata.type.String\',\
 			constraints:{\'maxLength\':255},formatOptions:{\'parseKeepsEmptyString\':true}}"/>');
+
+	//*********************************************************************************************
+	// Scenario: for a list binding, side effects are requested which should only affect structural
+	// properties of a related entity, but in fact that entity's identity changes unexpectedly.
+	// The requestSideEffects API detects this situation and throws an error.
+	QUnit.test("requestSideEffects: key predicate changed beneath ODLB", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/Artists}">\
+	<ColumnListItem>\
+		<Text id="friend" text="{BestFriend/Name}" />\
+		<Text id="name" text="{Name}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)&$skip=0&$top=100", {
+				value : [{
+					ArtistID : "XYZ",
+					BestFriend : {
+						ArtistID : "23",
+						IsActiveEntity : true,
+						Name : "Best Friend"
+					},
+					IsActiveEntity : true,
+					Name : "Missy Eliot"
+				}]
+			})
+			.expectChange("friend", "Best Friend")
+			.expectChange("name", "Missy Eliot");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oHeaderContext = that.oView.byId("table").getBinding("items").getHeaderContext();
+
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+					+ "&$filter=ArtistID eq 'XYZ' and IsActiveEntity eq true", {
+					value : [{
+						ArtistID : "XYZ",
+						BestFriend : {
+							ArtistID : "s.o.else",
+							IsActiveEntity : true,
+							Name : "Yet Another Best Friend"
+						},
+						IsActiveEntity : true
+					}]
+				})
+				.expectChange("friend", "Yet Another Best Friend");
+			that.oLogMock.expects("error").withArgs("Failed to request side effects");
+
+			return Promise.all([
+				// code under test
+				oHeaderContext.requestSideEffects([{$PropertyPath : "BestFriend/*"}])
+					.then(function () {
+						assert.ok(false, "unexpected success");
+					}, function (oError) {
+						assert.strictEqual(oError.message, "Key predicate of"
+							+ " '(ArtistID='XYZ',IsActiveEntity=true)/BestFriend'"
+							+ " changed from (ArtistID='23',IsActiveEntity=true)"
+							+ " to (ArtistID='s.o.else',IsActiveEntity=true)");
+					}),
+				that.waitForChanges(assert, "*")
+			]);
+		});
+	});
 });
