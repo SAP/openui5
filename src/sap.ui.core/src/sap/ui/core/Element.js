@@ -354,12 +354,35 @@ sap.ui.define([
 	};
 
 	/**
-	 * Cleans up the element instance before destruction.
+	 * Hook method for cleaning up the element instance before destruction.
 	 *
 	 * Applications must not call this hook method directly, it is called by the framework
 	 * when the element is {@link #destroy destroyed}.
 	 *
 	 * Subclasses of Element should override this hook to implement any necessary cleanup.
+	 *
+	 * <pre>
+	 * init: function() {
+	 *     if (Element.prototype.init) {
+	 *         Element.prototype.init.apply(this, arguments);
+	 *     }
+	 *
+	 *     //... do any further initialization of your subclass e.g. ...
+	 *     this.$().bind("click", this.handleClick.bind(this));
+	 * }
+	 *
+	 * exit: function() {
+	 *     // ... do any further cleanups of your subclass e.g. detach events...
+	 *     this.$().unbind("click", this.handleClick);
+	 *
+	 *     if (Element.prototype.exit) {
+	 *         Element.prototype.exit.apply(this, arguments);
+	 *     }
+	 * }
+	 * </pre>
+	 *
+	 * For a more detailed description how to to use the exit hook, see Section
+	 * {@link topic:d4ac0edbc467483585d0c53a282505a5 exit() Method} in the documentation.
 	 *
 	 * @protected
 	 */
