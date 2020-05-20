@@ -13,8 +13,7 @@ sap.ui.define([
 	ListBase,
 	ManagedObjectObserver,
 	GridLayoutDelegate,
-	GridLayoutBase,
-	GridListRenderer
+	GridLayoutBase
 ) {
 	"use strict";
 
