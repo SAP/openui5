@@ -620,7 +620,7 @@ function(
 		this._oActionSheet.removeAllButtons();
 		for (var i = iFromStep; i < iToStep; i++) {
 			sIcon = this.getStepIcons()[i];
-			sTitle = this._aCachedSteps[i].getAttribute("aria-label");
+			sTitle = this._aCachedSteps[i].getAttribute("aria-roledescription");
 
 			this._oActionSheet.addButton(new Button({
 				width: "200px",

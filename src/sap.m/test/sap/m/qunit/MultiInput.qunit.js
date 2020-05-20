@@ -1722,6 +1722,8 @@ sap.ui.define([
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
+		assert.strictEqual(this.multiInput1.getFocusDomRef().getAttribute("aria-roledescription"), oResourceBundle.getText("MULTIINPUT_ARIA_ROLE_DESCRIPTION"), "aria-roledescription attribute is rendered correctly to the DOM");
+
 
 		// act
 		this.multiInput1.setValue("");
