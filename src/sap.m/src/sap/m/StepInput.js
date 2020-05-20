@@ -918,6 +918,7 @@ function(
 			oEvent.preventDefault(); //prevents the value to increase by one (Chrome and Firefox default behavior)
 			this._applyValue(this._calculateNewValue(1, true).displayValue);
 			this._verifyValue();
+			oEvent.setMarked();
 		};
 
 		/**
@@ -929,6 +930,7 @@ function(
 			oEvent.preventDefault(); //prevents the value to decrease by one (Chrome and Firefox default behavior)
 			this._applyValue(this._calculateNewValue(1, false).displayValue);
 			this._verifyValue();
+			oEvent.setMarked();
 		};
 
 		StepInput.prototype._onmousewheel = function (oEvent) {
