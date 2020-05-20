@@ -3612,6 +3612,41 @@ sap.ui.define([
 		assert.equal(oSpyCancel.callCount,1, "Close event was thrown once");
 	});
 
+	QUnit.module("Miscellaneous", {
+		beforeEach: function() {
+			this.oPC = new PlanningCalendar();
+		},
+		afterEach: function() {
+			this.oPC.destroy();
+		}
+	});
+
+	QUnit.test("View Switch remains the same type after Overflow", function(assert) {
+		var fnDone = assert.async(),
+			oViewSwitch,
+			oContainer = document.getElementById("smallUiArea"),
+			bIsSelectBeforeOverflow,
+			bIsSelectAfterOverflow;
+
+		this.oPC.placeAt("smallUiArea");
+		sap.ui.getCore().applyChanges();
+
+		oViewSwitch = this.oPC._getHeader()._oViewSwitch;
+		bIsSelectBeforeOverflow = oViewSwitch.getDomRef().classList.contains("sapMSegBSelectWrapper");
+
+		// shrink width to force overflow
+		oContainer.style.width = "80px";
+		setTimeout(function() {
+			// return width back to previous
+			oContainer.style.width = "600px";
+			setTimeout(function() {
+				bIsSelectAfterOverflow = oViewSwitch.getDomRef().classList.contains("sapMSegBSelectWrapper");
+				assert.equal(bIsSelectBeforeOverflow, bIsSelectAfterOverflow, "The View Switch is the same type before and after Overflow");
+				fnDone();
+			}, 200);
+		}, 200);
+	});
+
 	function _getAppointmentsCount(oPC) {
 		var aRows = oPC.getRows(),
 			iAppointments = 0;
