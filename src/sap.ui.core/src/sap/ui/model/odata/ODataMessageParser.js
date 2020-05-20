@@ -15,6 +15,7 @@ sap.ui.define([
 	"use strict";
 
 var sClassName = "sap.ui.model.odata.ODataMessageParser",
+	rEnclosingSlashes = /^\/+|\/$/g,
 	// shortcuts for enums
 	MessageType = coreLibrary.MessageType,
 	// This map is used to translate back-end response severity values to the values defined in the
@@ -169,90 +170,60 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 ////////////////////////////////////////// Private Methods /////////////////////////////////////////
 
 /**
- * Checks whether the property with the given name on the parent entity referenced by thegiven path is a
- * NavigationProperty.
+ * Computes the affected targets from the given messages contained in the response for the given
+ * request, the request and entities read from or changed in the back-end.
+ * These "affected targets" are used to check which currently available messages should be replaced
+ * with the new ones.
  *
- * @param {string} sParentEntity - The path of the parent entity in which to search for the NavigationProperty
- * @param {string} sPropertyName - The name of the property which should be checked whether it is a NavigationProperty
- * @returns {boolean} Returns true if the given property is a NavigationProperty
- * @private
+ * @param {sap.ui.core.message.Message[]} aMessages
+ *   All messages returned from the back-end in this request
+ * @param {object} mRequestInfo
+ *   The request info
+ * @param {object} mGetEntities
+ *   A map with the the keys of the entities requested from the back-end mapped to true
+ * @param {object} mChangeEntities
+ *   A map with the the keys of the entities changed in the back-end mapped to true
+ * @returns {object}
+ *   A map of affected targets as keys mapped to true
  */
-ODataMessageParser.prototype._isNavigationProperty = function(sParentEntity, sPropertyName) {
-	var mEntityType = this._metadata._getEntityTypeByPath(sParentEntity);
-	if (mEntityType) {
-		var aNavigationProperties = this._metadata._getNavigationPropertyNames(mEntityType);
-		return aNavigationProperties.indexOf(sPropertyName) > -1;
-	}
-
-	return false;
-};
-
-/**
- * Parses the request URL as well as all message targets for paths that are affected, i.e. which have messages meaning
- * that currently available messages for that path will be replaced with the new ones
- *
- * @param {sap.ui.core.message.Message[]} aMessages - All messaged returned from the back-end in this request
- * @param {string} sRequestUri - The request URL
- * @param {map} mGetEntities - A map containing the entities requested from the back-end as keys
- * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
- * @returns {map} A map of affected targets where every affected target
- */
-ODataMessageParser.prototype._getAffectedTargets = function(aMessages, mRequestInfo, mGetEntities, mChangeEntities) {
-	var mAffectedTargets = jQuery.extend({
-		"": true // Allow global messages by default
-	}, mGetEntities, mChangeEntities);
+ODataMessageParser.prototype._getAffectedTargets = function (aMessages, mRequestInfo, mGetEntities,
+		mChangeEntities) {
+	// root entity is always affected => add target ""
+	var mAffectedTargets = Object.assign({"" : true}, mGetEntities, mChangeEntities),
+		oEntitySet,
+		sRequestTarget = this._parseUrl(mRequestInfo.url).url;
 
 	if (mRequestInfo.request && mRequestInfo.request.key && mRequestInfo.request.created){
 		mAffectedTargets[mRequestInfo.request.key] = true;
 	}
 
-	// Get EntitySet for Requested resource
-	var sRequestTarget = this._parseUrl(mRequestInfo.url).url;
-	if (sRequestTarget.indexOf(this._serviceUrl) === 0) {
-		// This is an absolute URL, remove the service part at the front
-		sRequestTarget = sRequestTarget.substr(this._serviceUrl.length + 1);
+	if (sRequestTarget.startsWith(this._serviceUrl)) {
+		sRequestTarget = sRequestTarget.slice(this._serviceUrl.length + 1);
+	}
+	oEntitySet = this._metadata._getEntitySetByPath(sRequestTarget);
+	if (oEntitySet) {
+		mAffectedTargets[oEntitySet.name] = true;
 	}
 
-	var mEntitySet = this._metadata._getEntitySetByPath(sRequestTarget);
-	if (mEntitySet) {
-		mAffectedTargets[mEntitySet.name] = true;
-	}
+	aMessages.forEach(function (oMessage) {
+		var sParentEntity,
+			iSlashPos,
+			sTarget = oMessage.getTarget(),
+			sTrimmedTarget;
 
-
-	// Get the EntitySet for every single target
-	for (var i = 0; i < aMessages.length; ++i) {
-		var sTarget = aMessages[i].getTarget();
-
-		if (sTarget) {
-			var sTrimmedTarget = sTarget.replace(/^\/+|\/$/g, "");
-			mAffectedTargets[sTrimmedTarget] = true;
-
-			var iSlashPos = sTrimmedTarget.lastIndexOf("/");
-			if (iSlashPos > 0) {
-				// This seems to be a property...
-				// But is it a NavigationProperty?
-				var sParentEntity = sTrimmedTarget.substr(0, iSlashPos);
-				var sProperty = sTrimmedTarget.substr(iSlashPos);
-
-				// If this is a property (but no NavigationProperty!), also remove the messages for the entity containing it
-				var bIsNavigationProperty = this._isNavigationProperty(sParentEntity, sProperty);
-				if (!bIsNavigationProperty) {
-					// It isn't a NavigationProperty, which means that the messages for this target belong to the
-					// entity. The entity must be added to the affected targets.
-					mAffectedTargets[sParentEntity] = true;
-				}
-			}
-
-			// Info: As of 2015-11-12 the "parent" EntitySet should not be part of the affected targets, meaning that
-			//       messages for the entire collection should not be deleted just because one entry of that selection
-			//       has been requested.
-			//       Before this all messages for the parent collection were deleted when an entry returned anything.
-			//       This only concerns messages for the EntitySet itself, not for its entities.
-			//       Example:
-			//         GET /Products(1) used to delete all messages for /Products(1) and /Products
-			//         now it only deletes all messages for the single entity /Products(1)
+		if (!sTarget) {
+			return;
 		}
-	}
+
+		sTrimmedTarget = sTarget.replace(rEnclosingSlashes, "");
+		mAffectedTargets[sTrimmedTarget] = true;
+		iSlashPos = sTrimmedTarget.lastIndexOf("/");
+		if (iSlashPos > 0) {
+			// this may be no entity, but we keep the existing logic to avoid regressions
+			sParentEntity = sTrimmedTarget.slice(0, iSlashPos);
+			mAffectedTargets[sParentEntity] = true;
+		}
+	});
 
 	return mAffectedTargets;
 };
@@ -308,7 +279,7 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 		this._lastMessages.forEach(function (oCurrentMessage) {
 			// Note: mGetEntities and mChangeEntities contain the keys without leading or trailing
 			// "/", so all targets must be trimmed here
-			sTarget = oCurrentMessage.getTarget().replace(/^\/+|\/$/g, "");
+			sTarget = oCurrentMessage.getTarget().replace(rEnclosingSlashes, "");
 
 			// Get entity for given target (properties are not affected targets as all messages must
 			// be sent for affected entity)

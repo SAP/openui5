@@ -1328,4 +1328,77 @@ sap.ui.define([
 		ODataMessageParser.prototype._parseBodyJSON.call(oODataMessageParser, "~aMessages",
 			oResponse, mRequestInfo);
 	});
+
+	//*********************************************************************************************
+[{
+	oResult : {"" : true}
+}, {
+	mGetEntities : {"get" : true},
+	mChangeEntities : {"change" : true},
+	oResult : {"" : true, "get" : true, "change" : true}
+}, {
+	oRequest : {key : "key", created : true},
+	oResult : {"" : true, "key" : true}
+}, {
+	sUrl : "serviceUrl/requestTarget",
+	oResult : {"" : true}
+}, {
+	oEntitySet : {name : "name"},
+	oResult : {"" : true, "name" : true}
+}, {
+	aMessageTargets : [undefined, ""], // unbound message + message with response entity as target
+	oResult : {"" : true}
+}, {
+	aMessageTargets : ["target0", "/target1", "target2/", "/target3/"], // single segment targets
+	oResult : {"" : true, "target0" : true, "target1" : true, "target2" : true, "target3" : true}
+}, {
+	// multi segment targets
+	aMessageTargets : ["parentEntity/property", "parentEntity/navProperty/property2"],
+	bNavPropCalled : true,
+	oResult : {
+		"" : true,
+		"parentEntity/property" : true,
+		"parentEntity" : true,
+		"parentEntity/navProperty/property2" : true,
+		"parentEntity/navProperty" : true
+	}
+}].forEach(function (oFixture, i) {
+	QUnit.test("_getAffectedTargets, " + i, function (assert) {
+		var mAffectedTargets,
+			aMessages = [],
+			oODataMessageParser = {
+				_metadata : {
+					_getEntitySetByPath : function () {}
+				},
+				_parseUrl : function () {},
+				_serviceUrl : "serviceUrl"
+			},
+			mRequestInfo = {
+				request : oFixture.oRequest,
+				url : "url"
+			},
+			that = this;
+
+		this.mock(oODataMessageParser).expects("_parseUrl").withExactArgs("url")
+			.returns({url : oFixture.sUrl || "requestTarget"});
+		this.mock(oODataMessageParser._metadata).expects("_getEntitySetByPath")
+			.withExactArgs("requestTarget")
+			.returns(oFixture.oEntitySet);
+		if (oFixture.aMessageTargets) {
+			oFixture.aMessageTargets.forEach(function (sTarget) {
+				var oMessage = {getTarget : function () {}};
+
+				that.mock(oMessage).expects("getTarget").withExactArgs().returns(sTarget);
+				aMessages.push(oMessage);
+			});
+		}
+
+		// code under test
+		mAffectedTargets = ODataMessageParser.prototype._getAffectedTargets.call(
+			oODataMessageParser, aMessages, mRequestInfo, oFixture.mGetEntities || {},
+			oFixture.mChangeEntities || {});
+
+		assert.deepEqual(mAffectedTargets, oFixture.oResult);
+	});
+});
 });
