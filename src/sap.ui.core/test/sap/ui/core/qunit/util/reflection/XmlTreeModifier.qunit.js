@@ -738,6 +738,37 @@ function(
 			assert.equal(aControls[0].getAttribute("id"), "foo.button123", "the ID got prefixed");
 		});
 
+		QUnit.test("when templating a fragment", function(assert) {
+			var REPLACED_TEXT = "is replaced as well";
+			var mData = {
+				foo: true,
+				secondValue: REPLACED_TEXT
+			};
+			var oThis = new JSONModel(mData);
+			var mPreprocessorSettings = {
+				bindingContexts: {
+					"this": oThis.createBindingContext("/")
+				},
+				models: {
+					"this": oThis
+				}
+			};
+
+			return XmlTreeModifier.templateControlFragment(
+				"sap.ui.test.other.fragment-withTemplating",
+				mPreprocessorSettings,
+				undefined
+			).then(function(aControls) {
+				assert.equal(aControls.length, 2, "the root controls are returned");
+				assert.equal(aControls[0].getAttribute("id"), "hbox", "the parent is returned");
+				var oText = XmlTreeModifier._children(aControls[0])[0];
+				assert.equal(oText.getAttribute("id"), "inner", "the inner control is templated based on the model parameters");
+				assert.equal(oText.getAttribute("text"), REPLACED_TEXT, "the inner control's attributed is templated based on the model parameters");
+				assert.equal(aControls[1].getAttribute("id"), "otherRoot", "the parent is returned");
+			});
+		});
+
+
 		QUnit.test("when getExtensionPointInfo is called", function (assert) {
 			var oExtensionPointInfo1 = XmlTreeModifier.getExtensionPointInfo("ExtensionPoint1", this.oXmlView2);
 			assert.equal(oExtensionPointInfo1.parent.getAttribute("id"), "hbox1", "then the returned object contains the parent control");

@@ -7,6 +7,8 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectMetadata",
 	"sap/base/util/ObjectPath",
 	"sap/ui/util/XMLHelper",
+	"sap/ui/core/XMLTemplateProcessor",
+	"sap/ui/core/util/XMLPreprocessor",
 	"sap/base/util/isPlainObject",
 	"sap/base/Log"
 ], function(
@@ -14,6 +16,8 @@ sap.ui.define([
 	ManagedObjectMetadata,
 	ObjectPath,
 	XMLHelper,
+	XMLTemplateProcessor,
+	XMLPreprocessor,
 	isPlainObject,
 	Log
 ) {
@@ -32,7 +36,7 @@ sap.ui.define([
 	 *
 	 * @namespace sap.ui.core.util.reflection.BaseTreeModifier
 	 * @private
-	 * @ui5-restricted sap.ui.fl, sap.ui.rta, sap.ui.model.meta, control change handler and provider
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta, sap.ui.model.meta, implementations of sap.ui.fl.interfaces.Delegate, control change handler and provider
 	 * @since 1.56.0
 	 */
 	return /** @lends sap.ui.core.util.reflection.BaseTreeModifier */{
@@ -375,6 +379,16 @@ sap.ui.define([
 			return typeof vPropertyValue === "string" ? vPropertyValue.replace(/({|})/g, "\\$&") : vPropertyValue;
 		},
 
+		_templateFragment: function(sFragmentName, mPreprocessorSettings) {
+			return Promise.resolve(
+				// process might be sync, therefore stay async and wrap result in a promise
+				XMLPreprocessor.process(
+					XMLTemplateProcessor.loadTemplate(sFragmentName, "fragment"),
+					{ name: sFragmentName },
+					mPreprocessorSettings
+				)
+			);
+		},
 		/**
 		 * Checks if there is a property binding and returns it if available, otherwise returns the value of the property.
 		 *
@@ -728,6 +742,20 @@ sap.ui.define([
 		 * @public
 		 */
 		instantiateFragment: function(sFragment, sNamespace, oView) {},
+
+		/**
+		 * Loads a fragment, processes the XML templating and turns the result into an array of nodes or controls.
+		 * See {@link sap.ui.core.util.XMLPreprocessor#process}
+		 *
+		 * @param {string} sFragmentName - XML fragment name (e.g. some.path.fragmentName)
+		 * @param {object} [mPreprocessorSettings={}] - Map/JSON object with initial property values, etc.
+		 * @param {object} mPreprocessorSettings.bindingContexts - Binding contexts relevant for template pre-processing
+		 * @param {object} mPreprocessorSettings.models - Models relevant for template pre-processing
+		 * @param {sap.ui.core.mvc.View} oView - View for the fragment, only needed on JS side
+		 * @returns {Promise.<Element[]|sap.ui.core.Element[]>} Array with the nodes/instances of the controls of the fragment
+		 * @public
+		 */
+		templateControlFragment: function(sFragmentName, mPreprocessorSettings, oView) {},
 
 		/**
 		 * Cleans up the resources associated with this object and all its aggregated children.

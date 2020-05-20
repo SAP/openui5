@@ -1,0 +1,12 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+
+	<HBox id="hbox">
+		<template:if test="{= ${this>foo} }" >
+			<Text id="inner" text="{this>secondValue}"/>
+		</template:if>
+	</HBox>
+	<Text id="otherRoot" />
+</core:FragmentDefinition>
