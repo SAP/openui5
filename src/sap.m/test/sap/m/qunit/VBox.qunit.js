@@ -5,15 +5,13 @@ sap.ui.define([
 	"sap/m/Image",
 	"sap/m/FlexBox",
 	"sap/m/VBox",
-	"jquery.sap.global",
-	"sap/ui/Device"
+	"jquery.sap.global"
 ], function(
 	createAndAppendDiv,
 	Image,
 	FlexBox,
 	VBox,
-	jQuery,
-	Device
+	jQuery
 ) {
 	"use strict";
 
@@ -93,9 +91,8 @@ sap.ui.define([
 	QUnit.module('Final spec property tests');
 
 	QUnit.test("display", function(assert){
-		// phantomjs wants to add the webkit prefix here...
-		assert.equal(jQuery("#vbox1").css('display'), (Device.browser.phantomJS ? "-webkit-" : "") + "flex", "VBox display property should be set correctly in standard-compatible browsers");
-		assert.equal(jQuery("#vbox2").css('display'), (Device.browser.phantomJS ? "-webkit-" : "") + "inline-flex", "VBox display property should be set correctly in standard-compatible browsers");
+		assert.equal(jQuery("#vbox1").css('display'), "flex", "VBox display property should be set correctly in standard-compatible browsers");
+		assert.equal(jQuery("#vbox2").css('display'), "inline-flex", "VBox display property should be set correctly in standard-compatible browsers");
 	});
 
 	QUnit.test("flex-direction", function(assert){
