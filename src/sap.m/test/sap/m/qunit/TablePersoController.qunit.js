@@ -189,16 +189,17 @@ sap.ui.define([
 		// Get the privately aggregated TPD and the inner dialog
 		var oTPD = oTPC.getAggregation("_tablePersoDialog"),
 			oDialog = oTPD._oDialog;
-			oList = oDialog.getContent()[1].getContent()[0];
+			oList = oDialog.getContent()[0];
 
 		// Move "Color" column up by one:
 		// - select item
 		// - press the "move up" button
 		oList.getItems()[1].setSelected(true);
-		oDialog.getSubHeader().getContent()[0].firePress();
+		oTPD._oSelectedItem = oList.getItems()[1];
+		oTPD._oButtonUp.firePress();
 
 		// Set visibility of "Number" to false
-		oList.getItems()[2].getContent()[0].setSelected(false);
+		oList.getItems()[2].setSelected(false);
 
 		// Close dialog with "OK"
 		var bPersonalizationDoneTriggered = false;
@@ -236,16 +237,17 @@ sap.ui.define([
 		// Get the privately aggregated TPD and the inner dialog
 		var oTPD = oTPC.getAggregation("_tablePersoDialog"),
 			oDialog = oTPD._oDialog;
-			oList = oDialog.getContent()[1].getContent()[0];
+			oList = oDialog.getContent()[0];
 
 		// Move "Name" column up by one:
 		// - select item
 		// - press the "move up" button
 		oList.getItems()[1].setSelected(true);
-		oDialog.getSubHeader().getContent()[0].firePress();
+		oTPD._oSelectedItem = oList.getItems()[1];
+		oTPD._oButtonUp.firePress();
 
 		// Set visibility of "Name" to false
-		oList.getItems()[0].getContent()[0].setSelected(false);
+		oList.getItems()[0].setSelected(false);
 
 		// Status at this point should be:
 		// Name   OFF
@@ -263,7 +265,7 @@ sap.ui.define([
 
 		// Hit "Reset" button
 
-		oDialog.getContent()[0].getContent()[1].firePress();
+		oTPD._resetAllButton.firePress();
 
 		// Close dialog with "OK"
 		sap.ui.getCore().byId(oDialog.getLeftButton()).firePress();
@@ -296,10 +298,11 @@ sap.ui.define([
 		// - select item
 		// - press the "move down" button
 		oList.getItems()[1].setSelected(true);
-		oDialog.getSubHeader().getContent()[1].firePress();
+		oTPD._oSelectedItem = oList.getItems()[1];
+		oTPD._oButtonDown.firePress();
 
 		// Set visibility of "Color" to false
-		oList.getItems()[0].getContent()[0].setSelected(false);
+		oList.getItems()[0].setSelected(false);
 
 		// Close dialog with "OK"
 		sap.ui.getCore().byId(oDialog.getLeftButton()).firePress();
