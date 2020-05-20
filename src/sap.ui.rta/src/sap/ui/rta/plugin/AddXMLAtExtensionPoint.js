@@ -20,18 +20,17 @@ sap.ui.define([
 	/**
 	 * Callback function responsible for fragment handling.
 	 *
-	 * The fragment handling function needs to be provided from outside of rta. It is called during the execution of the plugin handler
-	 * with the target overlay and a list of existing extension point informations related to the target overlay. The main responsibility
-	 * is to select an extensionPoint from the list an create a xml fragment as an extension for it. After the fragment is created the
+	 * The fragment handling function needs to be provided from outside of key user adaptation. It is called during the execution of the plugin handler
+	 * with the target overlay and a list of existing extension point information related to the target overlay. The main responsibility
+	 * is to select an extension point from the list an create an XML fragment as an extension for it. After the fragment is created, the
 	 * fragment handler needs to resolve the returned promise with the information of the selected extension point name, the path and the
-	 * name of the created fragment. If no extension point selection is done into the fragment handler an empty object needs to be returned.
+	 * name of the created fragment. If no extension point selection is done into the fragment handler, an empty object needs to be returned.
 	 *
 	 * @typedef {function} sap.ui.rta.plugin.AddXMLAtExtensionPoint.fragmentHandler
 	 * @since 1.78
 	 * @param {sap.ui.fl.ElementOverlay} oOverlay - Target overlay for the extension by fragment change
-	 * @param {object[]} aExtensionPointInfos - List available extension point informations for the target overlay
-	 * @returns {Promise<{extensionPointName: string, fragmentPath: string, fragment: string}>} Object wrapped in a promise containing addXMLAtExtensionPoint command relevant values
-	 */
+	 * @param {object[]} aExtensionPointInfos - List of available extension point information for the target overlay
+	 * @returns {Promise<{extensionPointName: string, fragmentPath: string, fragment: string}>} Object wrapped in a Promise containing values that are relevant for the <code>addXMLAtExtensionPoint</code> command
 
 	/**
 	 * Constructor for a new AddXMLAtExtensionPoint plugin.
@@ -183,7 +182,7 @@ sap.ui.define([
 	 * Triggers the plugin execution.
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @param {Object} mPropertyBag - Property bag
-	 * @param {sap.ui.rta.plugin.AddXMLAtExtensionPoint.fragmentHandler} [mPropertyBag.fragmentHandler] - Handler function for fragment handling. The fragment handler is a callback function that needs to be passed here into the propertyBag or alternatively on instantiation of the plugin.
+	 * @param {sap.ui.rta.plugin.AddXMLAtExtensionPoint.fragmentHandler} [mPropertyBag.fragmentHandler] - Handler function for fragment handling. The fragment handler is a callback function that needs to be passed here into the <code>propertyBag</code> or alternatively on instantiation of the plugin.
 	 * @returns {Promise} Resolves when handler is executed successfully
 	 */
 	AddXMLAtExtensionPoint.prototype.handler = function (aElementOverlays, mPropertyBag) {

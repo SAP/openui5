@@ -13,8 +13,7 @@ function(
 
 	/**
 	 * Implements the <code>Extension Points</code> provider by SAPUI5 flexibility that can be hooked in the <code>sap.ui.core.ExtensionPoint</code> life cycle.
-	 * It is used only in design mode and does not consider the UI changes availability. Therefor the Processor is not a precondition for internal flex change applying
-	 * unlike the extension point processor.
+	 * It is used only in design mode and does not consider the availability of UI changes. Therefore, the processor is not a precondition for applying internal flex changes.
 	 *
 	 * @name sap.ui.fl.write._internal.extensionPoint.Processor
 	 * @class

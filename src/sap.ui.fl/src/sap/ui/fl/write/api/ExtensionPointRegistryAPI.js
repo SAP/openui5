@@ -10,7 +10,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Provides an API to handle specific information about the Extension Points into the Application.
+	 * Provides an API to handle specific information about the extension points into the application.
 	 *
 	 * @namespace sap.ui.fl.write.api.ExtensionPointRegistryAPI
 	 * @experimental Since 1.78
@@ -32,11 +32,11 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the extension point information by parent id.
+		 * Returns the extension point information by parent ID.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {string} mPropertyBag.parentId - Id of the extension point parent control
-		 * @returns {object[]} of extension point informations.
+		 * @param {string} mPropertyBag.parentId - ID of the extension point parent control
+		 * @returns {object[]} Extension point information
 		 */
 		getExtensionPointInfoByParentId: function (mPropertyBag) {
 			return ExtensionPointRegistry.getExtensionPointInfoByParentId(mPropertyBag.parentId);

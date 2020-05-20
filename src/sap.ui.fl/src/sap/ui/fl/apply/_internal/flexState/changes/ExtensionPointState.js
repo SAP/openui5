@@ -13,7 +13,7 @@ sap.ui.define([
 
 	/**
 	 * Handler class to manipulate extension point changes.
-	 * Extension point changes are extended by the extension point information, that is required during the flex change applying.
+	 * Extension point changes are extended by the extension point information that is required when the flex change is applied.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.flexState.changes.ExtensionPointState
 	 * @experimental Since 1.79
@@ -35,12 +35,12 @@ sap.ui.define([
 	 * Gets the changes for the given extension point.
 	 *
 	 * @param {object} oChangePersistence - Change persistence to get changes from
-	 * @param {object} mPropertyBag - Additional data that are needed for reading of changes
-	 * @param {string} mPropertyBag.viewId - Id of the view
+	 * @param {object} mPropertyBag - Additional data that are needed to read the changes
+	 * @param {string} mPropertyBag.viewId - ID of the view
 	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Application component for the extension point
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Responsible modifier
-	 * @param {string} mPropertyBag.extensionPointName - Name of the extensionpoint
-	 * @returns {Promise} Resolving with an array of changes
+	 * @param {string} mPropertyBag.extensionPointName - Name of the extension point
+	 * @returns {Promise} Promise that resolves with an array of changes
 	 * @private
 	 * @restricted sap.ui.fl.apply._internal.extensionPoint.Processor
 	 */
@@ -61,9 +61,9 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Application component
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Manifest that belongs to current component
-	 * @param {string} mPropertyBag.viewId - View id
-	 * @param {object} mPropertyBag.extensionPointInfo - map of extension point informations
-	 * @param {object} mExtensionPointInfo - map of extension point informations
+	 * @param {string} mPropertyBag.viewId - View ID
+	 * @param {object} mPropertyBag.targetControl - Target control instance
+	 * @param {object} mExtensionPointInfo - Map of extension point information
 	 * @returns {Promise} Promise that resolves with enhanced extension point changes if available, or is rejected if an error occurs
 	 *
 	 * @private
