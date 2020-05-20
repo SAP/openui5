@@ -197,7 +197,9 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		}
 		var aWeekDaysWide = oLocaleData.getDaysStandAlone("wide", sCalendarType);
 
-		this.renderDummyCell(oRm, "sapUiCalWH", "columnheader");
+		if (oMonth.getShowWeekNumbers()) {
+			this.renderDummyCell(oRm, "sapUiCalWH", "columnheader");
+		}
 
 		for ( var i = 0; i < iDays; i++) {
 			if (bDayNumberAsId) {
