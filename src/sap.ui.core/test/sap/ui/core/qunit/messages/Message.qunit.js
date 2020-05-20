@@ -76,12 +76,53 @@ sap.ui.define([
 		assert.ok(oMessage instanceof Message, "Object has expected Data Type.");
 		mParameters.aTargets = oFixture.aTargets;
 		mParameters.target = oFixture.target;
+		mParameters.aFullTargets = [""];
 		assert.deepEqual(oMessageValues, mParameters, "Properties set correctly.");
 		if (Array.isArray(oFixture.vTarget)) {
 			assert.notStrictEqual(oMessageValues.aTargets, oFixture.vTarget,
 				"store copy of targets");
 		}
 		assert.strictEqual(oMessage.getTarget(), oFixture.target);
+	});
+});
+
+[{
+	vFullTarget : undefined,
+	aExpectedFullTargets : [""],
+	sExpectedFullTarget : ""
+}, {
+	vFullTarget : [],
+	aExpectedFullTargets : [""],
+	sExpectedFullTarget : ""
+}, {
+	vFullTarget : "foo",
+	aExpectedFullTargets : ["foo"],
+	sExpectedFullTarget : "foo"
+}, {
+	vFullTarget : ["foo", "bar"],
+	aExpectedFullTargets : ["foo", "bar"],
+	sExpectedFullTarget : "foo"
+}].forEach(function (oFixture, i) {
+	QUnit.test("Create message with full target, " + i, function(assert) {
+		var oMessage = new Message({fullTarget: oFixture.vFullTarget});
+
+		assert.strictEqual(oMessage.fullTarget, oFixture.sExpectedFullTarget);
+		assert.deepEqual(oMessage.aFullTargets, oFixture.aExpectedFullTargets);
+		if (Array.isArray(oFixture.vFullTarget)) {
+			assert.notStrictEqual(oMessage.aFullTargets, oFixture.vFullTarget,
+				"store copy of full targets");
+		}
+
+		// code under test
+		oMessage.fullTarget = "baz";
+
+		oFixture.aExpectedFullTargets[0] = "baz";
+		assert.deepEqual(oMessage.aFullTargets, oFixture.aExpectedFullTargets);
+
+		// code under test
+		oMessage.aFullTargets[0] = "baz2";
+
+		assert.strictEqual(oMessage.fullTarget, "baz2");
 	});
 });
 
@@ -126,6 +167,20 @@ sap.ui.define([
 		// code under test
 		assert.throws(function () {
 			Object.defineProperty(oMessage, "target", {get : function () {}});
+		});
+	});
+
+	QUnit.test("fullTarget property is not configurable", function (assert) {
+		var oMessage = new Message({fullTarget : ["foo", "bar"]});
+
+		// code under test
+		assert.throws(function () {
+			delete oMessage.fullTarget;
+		});
+
+		// code under test
+		assert.throws(function () {
+			Object.defineProperty(oMessage, "fullTarget", {get : function () {}});
 		});
 	});
 
