@@ -1777,7 +1777,7 @@ function(
 				if (!oPopup.isOpen() && !this._sOpenTimer && bOpenCondition !== false) {
 					this._sOpenTimer = setTimeout(function () {
 						this._sOpenTimer = null;
-						this._openSuggestionsPopover();
+						this._oSuggPopover && this._openSuggestionsPopover();
 					}.bind(this), 0);
 				}
 			}
@@ -2872,7 +2872,7 @@ function(
 	Input.prototype._updateSuggestionsPopoverValueState = function() {
 		var oSuggPopover = this._oSuggPopover,
 			sValueState = this.getValueState(),
-			bNewValueState = this.getValueState() !== this._oSuggPopover._getValueStateHeader().getValueState(),
+			bNewValueState = this.getValueState() !== oSuggPopover._getValueStateHeader().getValueState(),
 			oNewFormattedValueStateText = this.getFormattedValueStateText(),
 			sValueStateText = this.getValueStateText();
 
