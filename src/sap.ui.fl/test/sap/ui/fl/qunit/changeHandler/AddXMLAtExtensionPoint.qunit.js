@@ -301,11 +301,9 @@ sap.ui.define([
 		QUnit.test("When applying changes on different extension points", function(assert) {
 			var oChange1 = _createAndCompleteAddXmlAtExtensionPointChange.call(this, sFragmentPath, "fragments/Fragment", "ExtensionPoint1");
 			var oChange2 = _createAndCompleteAddXmlAtExtensionPointChange.call(this, sSecondFragmentPath, "fragments/SecondFragment", "ExtensionPoint2");
-			// var oChange3 = _createAndCompleteAddXmlAtExtensionPointChange.call(this, sFourthFragmentPath, "fragments/FourthFragment", "ExtensionPoint4");
 			var oChange4 = _createAndCompleteAddXmlAtExtensionPointChange.call(this, sThirdFragmentPath, "fragments/ThirdFragment", "ExtensionPoint1");
 			this.oChangeHandler.applyChange(oChange1, this.oHBox, this.oPropertyBag);
 			this.oChangeHandler.applyChange(oChange2, this.oPanel, this.oPropertyBag);
-			// this.oChangeHandler.applyChange(oChange3, this.oPanel, this.oPropertyBag);
 			this.oChangeHandler.applyChange(oChange4, this.oHBox, this.oPropertyBag);
 			var aHBoxItems = this.oHBox.getItems();
 			var aPanelContent = this.oPanel.getContent();
@@ -315,7 +313,6 @@ sap.ui.define([
 			assert.equal(aPanelContent.length, 4, "then there are four children of the Panel");
 			assert.equal(aPanelContent[0].getId(), "myView--projectId.second_button", "then the control added to the second extension point is placed behind the second extension point.");
 			assert.equal(aPanelContent[1].getId(), "myView--label2", "then the control label is now on the second position.");
-			// assert.equal(aPanelContent[2].getId(), "myView--projectId.fourth_button", "then the control added to the fourth extension point is placed behind the fourth extension poin.");
 		});
 
 		QUnit.test("When applying changes on extension point with default value", function(assert) {
