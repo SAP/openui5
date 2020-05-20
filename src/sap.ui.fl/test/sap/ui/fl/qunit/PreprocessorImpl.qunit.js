@@ -32,7 +32,7 @@ function(
 
 	QUnit.module("sap.ui.fl.PreprocessorImpl", {
 		beforeEach: function() {
-			sandbox.stub(VariantManagementState, "loadInitialChanges").returns([]);
+			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
 			this.sControllerName = "ui.s2p.mm.purchorder.approve.view.S2";
 			this.oExtensionProvider = new PreprocessorImpl();
 		},

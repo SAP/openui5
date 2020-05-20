@@ -7,6 +7,8 @@ sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"sap/base/util/values",
 	"sap/base/util/merge",
+	"sap/base/util/includes",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Variant",
@@ -14,13 +16,15 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	VariantManagementState,
 	prepareVariantsMap,
 	VariantUtil,
 	LoaderExtensions,
 	values,
 	merge,
+	includes,
+	JsControlTreeModifier,
 	Change,
 	Layer,
 	Variant,
@@ -85,14 +89,14 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function () {
-		QUnit.test("when 'fillVariantModel' and then 'loadInitialChanges' are called with parameters containing no technical parameters", function(assert) {
+		QUnit.test("when 'fillVariantModel' and then 'getInitialChanges' are called with parameters containing no technical parameters", function(assert) {
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
 
 			var oData = VariantManagementState.fillVariantModel({reference: this.sReference});
 
 			assert.deepEqual(oData, this.oVariantModelData, "then correct variant model data is returned");
 
-			var aResultantInitialChanges = VariantManagementState.loadInitialChanges({reference: this.sReference});
+			var aResultantInitialChanges = VariantManagementState.getInitialChanges({reference: this.sReference});
 			var aExpectedInitialChanges = [];
 			Object.keys(oData).forEach(function(sVMReference) {
 				aExpectedInitialChanges = aExpectedInitialChanges.concat(
@@ -102,7 +106,7 @@ sap.ui.define([
 			assert.deepEqual(aResultantInitialChanges, aExpectedInitialChanges, "then correct initial changes were returned");
 		});
 
-		QUnit.test("when 'fillVariantModel' and then 'loadInitialChanges' are called with parameters containing technical parameters for multiple variant management references", function(assert) {
+		QUnit.test("when 'fillVariantModel' and then 'getInitialChanges' are called with parameters containing technical parameters for multiple variant management references", function(assert) {
 			this.mPropertyBag.componentData.technicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["vmReference1", "variant11"];
 
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
@@ -113,7 +117,7 @@ sap.ui.define([
 
 			assert.deepEqual(oData, this.oVariantModelData, "then correct variant model data is returned");
 
-			var aResultantInitialChanges = VariantManagementState.loadInitialChanges({reference: this.sReference});
+			var aResultantInitialChanges = VariantManagementState.getInitialChanges({reference: this.sReference});
 			var aExpectedInitialChanges = [];
 			Object.keys(oData).forEach(function(sVMReference) {
 				aExpectedInitialChanges = aExpectedInitialChanges.concat(
@@ -123,7 +127,7 @@ sap.ui.define([
 			assert.deepEqual(aResultantInitialChanges, aExpectedInitialChanges, "then correct initial changes were returned");
 		});
 
-		QUnit.test("when 'fillVariantModel' and then 'loadInitialChanges' are called with parameters containing technical parameters for a single variant management reference", function(assert) {
+		QUnit.test("when 'fillVariantModel' and then 'getInitialChanges' are called with parameters containing technical parameters for a single variant management reference", function(assert) {
 			this.mPropertyBag.componentData.technicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["vmReference1"];
 
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
@@ -133,7 +137,7 @@ sap.ui.define([
 
 			assert.deepEqual(oData, this.oVariantModelData, "then correct variant model data is returned");
 
-			var aResultantInitialChanges = VariantManagementState.loadInitialChanges({reference: this.sReference});
+			var aResultantInitialChanges = VariantManagementState.getInitialChanges({reference: this.sReference});
 			var aExpectedInitialChanges = [];
 			Object.keys(oData).forEach(function(sVMReference) {
 				aExpectedInitialChanges = aExpectedInitialChanges.concat(
@@ -143,7 +147,7 @@ sap.ui.define([
 			assert.deepEqual(aResultantInitialChanges, aExpectedInitialChanges, "then correct initial changes were returned");
 		});
 
-		QUnit.test("when 'fillVariantModel' and then 'loadInitialChanges' are called with parameters containing multiple technical parameters for a single variant management reference", function(assert) {
+		QUnit.test("when 'fillVariantModel' and then 'getInitialChanges' are called with parameters containing multiple technical parameters for a single variant management reference", function(assert) {
 			this.mPropertyBag.componentData.technicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["vmReference2", "variant11"];
 
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
@@ -153,7 +157,7 @@ sap.ui.define([
 
 			assert.deepEqual(oData, this.oVariantModelData, "then correct variant model data is returned");
 
-			var aResultantInitialChanges = VariantManagementState.loadInitialChanges({reference: this.sReference});
+			var aResultantInitialChanges = VariantManagementState.getInitialChanges({reference: this.sReference});
 			var aExpectedInitialChanges = [];
 			Object.keys(oData).forEach(function(sVMReference) {
 				aExpectedInitialChanges = aExpectedInitialChanges.concat(
@@ -163,7 +167,7 @@ sap.ui.define([
 			assert.deepEqual(aResultantInitialChanges, aExpectedInitialChanges, "then correct initial changes were returned");
 		});
 
-		QUnit.test("when 'fillVariantModel' and then 'loadInitialChanges' are called with parameters containing valid and invalid technical parameters", function(assert) {
+		QUnit.test("when 'fillVariantModel' and then 'getInitialChanges' are called with parameters containing valid and invalid technical parameters", function(assert) {
 			this.mPropertyBag.componentData.technicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["nonExistenceVariantManagement", "vmReference1"];
 
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
@@ -173,7 +177,7 @@ sap.ui.define([
 
 			assert.deepEqual(oData, this.oVariantModelData, "then correct variant model data is returned");
 
-			var aResultantInitialChanges = VariantManagementState.loadInitialChanges({reference: this.sReference});
+			var aResultantInitialChanges = VariantManagementState.getInitialChanges({reference: this.sReference});
 			var aExpectedInitialChanges = [];
 			Object.keys(oData).forEach(function(sVMReference) {
 				aExpectedInitialChanges = aExpectedInitialChanges.concat(
@@ -183,7 +187,7 @@ sap.ui.define([
 			assert.deepEqual(aResultantInitialChanges, aExpectedInitialChanges, "then correct initial changes were returned");
 		});
 
-		QUnit.test("when 'fillVariantModel' and then 'loadInitialChanges' are called with parameters containing technical parameters for an invalid variant management reference", function(assert) {
+		QUnit.test("when 'fillVariantModel' and then 'getInitialChanges' are called with parameters containing technical parameters for an invalid variant management reference", function(assert) {
 			this.mPropertyBag.componentData.technicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["variant2"];
 
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
@@ -192,7 +196,7 @@ sap.ui.define([
 
 			assert.deepEqual(oData, this.oVariantModelData, "then correct variant model data is returned");
 
-			var aResultantInitialChanges = VariantManagementState.loadInitialChanges({reference: this.sReference});
+			var aResultantInitialChanges = VariantManagementState.getInitialChanges({reference: this.sReference});
 			var aExpectedInitialChanges = [];
 			Object.keys(oData).forEach(function(sVMReference) {
 				aExpectedInitialChanges = aExpectedInitialChanges.concat(
@@ -202,14 +206,14 @@ sap.ui.define([
 			assert.deepEqual(aResultantInitialChanges, aExpectedInitialChanges, "then correct initial changes were returned");
 		});
 
-		QUnit.test("when 'fillVariantModel' and then 'loadInitialChanges' are called with parameters containing an invisible default variant", function(assert) {
+		QUnit.test("when 'fillVariantModel' and then 'getInitialChanges' are called with parameters containing an invisible default variant", function(assert) {
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
 
 			var oData = VariantManagementState.fillVariantModel({reference: this.sReference});
 
 			assert.deepEqual(oData, this.oVariantModelData, "then correct variant model data is returned");
 
-			var aResultantInitialChanges = VariantManagementState.loadInitialChanges({reference: this.sReference});
+			var aResultantInitialChanges = VariantManagementState.getInitialChanges({reference: this.sReference});
 			var aExpectedInitialChanges = [];
 			Object.keys(oData).forEach(function(sVMReference) {
 				aExpectedInitialChanges = aExpectedInitialChanges.concat(
@@ -217,6 +221,40 @@ sap.ui.define([
 				);
 			}.bind(this));
 			assert.deepEqual(aResultantInitialChanges, aExpectedInitialChanges, "then correct initial changes were returned");
+		});
+
+		QUnit.test("when 'getInitialChanges' is called with a vmReference", function(assert) {
+			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
+			var oGetVariantChangesStub = sandbox.stub(VariantManagementState, "getVariantChanges").returns(["foo"]);
+
+			assert.deepEqual(VariantManagementState.getInitialChanges({
+				vmReference: "vmReference1",
+				reference: this.sReference,
+				changeInstance: true
+			}), ["foo"], "the function returns what 'getVariantChanges' returns for that variant");
+			assert.equal(oGetVariantChangesStub.callCount, 1, "getVariantChanges was called once");
+			var mExpectedParameters = {
+				vmReference: "vmReference1",
+				reference: this.sReference,
+				vReference: "variant0",
+				changeInstance: true
+			};
+			assert.deepEqual(oGetVariantChangesStub.lastCall.args[0], mExpectedParameters, "the correct variant was asked for changes");
+
+			this.oVariantsMap.vmReference1.currentVariant = "variant2";
+			mExpectedParameters = {
+				vmReference: "vmReference1",
+				reference: this.sReference,
+				vReference: "variant2",
+				changeInstance: false
+			};
+			VariantManagementState.getInitialChanges({
+				vmReference: "vmReference1",
+				reference: this.sReference,
+				changeInstance: false
+			});
+			assert.equal(oGetVariantChangesStub.callCount, 2, "getVariantChanges was called once again");
+			assert.deepEqual(oGetVariantChangesStub.lastCall.args[0], mExpectedParameters, "the correct variant was asked for changes");
 		});
 
 		QUnit.test("when 'setVariantData' is called with a changed title and previous index", function(assert) {
@@ -254,7 +292,7 @@ sap.ui.define([
 			assert.deepEqual(oExpectedVariant, oVariant, "then the correct variant object is returned");
 		});
 
-		QUnit.test("when 'getVariantChanges' is called  with changeInstance parameter not set", function(assert) {
+		QUnit.test("when 'getVariantChanges' is called with changeInstance parameter not set", function(assert) {
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
 
 			var aExpectedDefaultVariantChanges = this.oVariantsMap["vmReference2"].variants[1].controlChanges;
@@ -287,10 +325,72 @@ sap.ui.define([
 			assert.strictEqual(this.oVariantsMap["vmReference1"].currentVariant, "variant2", "then current variant is set correctly");
 		});
 
-		QUnit.test("when 'resetContent'  is called", function(assert) {
-			sandbox.stub(FlexState, "clearFilteredResponse");
-			VariantManagementState.resetContent(this.sReference);
-			assert.ok(FlexState.clearFilteredResponse.calledWith(this.sReference), "then storage response and prepared variants map were reset");
+		QUnit.test("when 'getVariantManagementReferences'  is called", function(assert) {
+			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
+			var aVMReferences = VariantManagementState.getVariantManagementReferences(this.sReference);
+			assert.equal(aVMReferences.length, 4, "there are 4 references");
+			assert.ok(includes(aVMReferences, "vmReference1"));
+			assert.ok(includes(aVMReferences, "vmReference2"));
+			assert.ok(includes(aVMReferences, "nonExistingVariant1"));
+			assert.ok(includes(aVMReferences, "nonExistingVariant2"));
+		});
+
+		QUnit.test("when 'getCurrentVariantReference' is called", function(assert) {
+			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
+			var sCurrentVariantReference = VariantManagementState.getCurrentVariantReference({
+				reference: this.sReference,
+				vmReference: "vmReference1"
+			});
+			assert.equal(sCurrentVariantReference, "variant0", "the default is the current variant reference");
+
+			this.oVariantsMap.vmReference1.currentVariant = "variant2";
+			sCurrentVariantReference = VariantManagementState.getCurrentVariantReference({
+				reference: this.sReference,
+				vmReference: "vmReference1"
+			});
+			assert.equal(sCurrentVariantReference, "variant2", "the default is the current variant reference");
+		});
+
+		QUnit.test("when waitForInitialVariantChanges is called", function(assert) {
+			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
+			var oFlexControllerStub = {
+				waitForChangesToBeApplied: sandbox.stub().resolves("foo")
+			};
+			sandbox.stub(JsControlTreeModifier, "bySelector").callsFake(function(oSelector) {
+				return oSelector.id;
+			});
+			return VariantManagementState.waitForInitialVariantChanges({
+				vmReference: "vmReference1",
+				reference: this.sReference,
+				appComponent: {},
+				flexController: oFlexControllerStub
+			})
+			.then(function(vReturn) {
+				assert.equal(vReturn, "foo", "the function returns the return value of waitForChanges");
+				assert.equal(oFlexControllerStub.waitForChangesToBeApplied.callCount, 1, "waitForChanges was called once");
+				var aArguments = oFlexControllerStub.waitForChangesToBeApplied.lastCall.args[0];
+				assert.ok(aArguments.indexOf("RTADemoAppMD---detail--GroupElementDatesShippingStatus") > -1, "the first selector was passed");
+				assert.ok(aArguments.indexOf("RTADemoAppMD---detail--GroupElementDatesShippingStatus1") > -1, "the second selector was passed");
+			});
+		});
+
+		QUnit.test("when waitForInitialVariantChanges is called with unavailable controls", function(assert) {
+			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
+			var oFlexControllerStub = {
+				waitForChangesToBeApplied: sandbox.stub().resolves("foo")
+			};
+			sandbox.stub(JsControlTreeModifier, "bySelector");
+			return VariantManagementState.waitForInitialVariantChanges({
+				vmReference: "vmReference1",
+				reference: this.sReference,
+				appComponent: {},
+				flexController: oFlexControllerStub
+			})
+			.then(function(vReturn) {
+				assert.equal(vReturn, "foo", "the function returns the return value of waitForChanges");
+				assert.equal(oFlexControllerStub.waitForChangesToBeApplied.callCount, 1, "waitForChanges was called once");
+				assert.deepEqual(oFlexControllerStub.waitForChangesToBeApplied.lastCall.args[0], [], "no controls were passed");
+			});
 		});
 	});
 

@@ -264,6 +264,38 @@ sap.ui.define([
 				}.bind(this)
 			);
 		});
+
+		QUnit.test("when calling 'attachVariantApplied'", function(assert) {
+			var oModelAttachStub = sandbox.stub(this.oModel, "attachVariantApplied");
+			var oCallbackStub = sinon.stub();
+			ControlVariantApplyAPI.attachVariantApplied({
+				selector: this.oAppComponent,
+				vmControlId: "vmcontrolId",
+				callback: oCallbackStub,
+				callAfterInitialVariant: true
+			});
+			var mExpectedPropertyBag = {
+				vmControlId: "vmcontrolId",
+				control: this.oAppComponent,
+				callback: oCallbackStub,
+				callAfterInitialVariant: true
+			};
+			var mPropertyBag = oModelAttachStub.lastCall.args[0];
+			assert.equal(oModelAttachStub.callCount, 1, "the model was called");
+			assert.deepEqual(mPropertyBag, mExpectedPropertyBag, "the function is called with the correct properties");
+		});
+
+		QUnit.test("when calling 'detachVariantApplied'", function(assert) {
+			var oModelDetachStub = sandbox.stub(this.oModel, "detachVariantApplied");
+			ControlVariantApplyAPI.detachVariantApplied({
+				selector: this.oAppComponent,
+				vmControlId: "vmcontrolId"
+			});
+			var aArguments = oModelDetachStub.lastCall.args;
+			assert.equal(oModelDetachStub.callCount, 1, "the model was called");
+			assert.equal(aArguments[0], "vmcontrolId", "the function is called with the correct properties");
+			assert.equal(aArguments[1], this.oAppComponent.getId(), "the function is called with the correct properties");
+		});
 	});
 
 	QUnit.done(function() {
