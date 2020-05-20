@@ -1183,7 +1183,7 @@ sap.ui.define([
 		 *     change set, the error is used as a response for the complete change set (the
 		 *     following requests do not need a response). GET requests following an error request
 		 *     are rejected automatically and do not need a response.
-	     *   <li> If the error was created without an error object, the complete $batch fails with
+		 *   <li> If the error was created without an error object, the complete $batch fails with
 		 *     status code 500.
 		 * </ul>
 		 *
@@ -2592,9 +2592,9 @@ sap.ui.define([
 		var oModel = createModel(sSalesOrderService + "?sap-client=123", {autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList(\'1\')/SO_2_SOITEM}">\
-   <ColumnListItem>\
-      <Text id="product" text="{SOITEM_2_PRODUCT/Name}"/>\
-   </ColumnListItem>\
+	<ColumnListItem>\
+		<Text id="product" text="{SOITEM_2_PRODUCT/Name}"/>\
+	</ColumnListItem>\
 </Table>\
 <Text id="businessPartner" text="{SOITEM_2_PRODUCT/PRODUCT_2_BP/CompanyName}"/>',
 			that = this;
@@ -2646,7 +2646,7 @@ sap.ui.define([
 		var oModel = createModel(sSalesOrderService + "?sap-client=123", {autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')/SO_2_SOITEM(\'0010\')}">\
-      <Text id="product" text="{SOITEM_2_PRODUCT/Name}"/>\
+	<Text id="product" text="{SOITEM_2_PRODUCT/Name}"/>\
 </FlexBox>\
 <Text id="businessPartner" text="{SOITEM_2_PRODUCT/PRODUCT_2_BP/CompanyName}"/>',
 			that = this;
@@ -15731,7 +15731,7 @@ sap.ui.define([
 		 * @param {string} sId - The artist ID
 		 * @param {string} [sName] - The resulting artist's name if it differs from the default
 		 * @returns {Promise} - A promise that waits for the expected changes
- 		 */
+		 */
 		function action(sAction, sId, sName) {
 			var bIsActive = sAction === "ActivationAction", // The resulting artist's bIsActive
 				// TODO The object page's parent context may be the return value context of the

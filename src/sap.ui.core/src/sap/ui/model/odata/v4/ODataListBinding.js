@@ -1693,7 +1693,7 @@ sap.ui.define([
 	 *
 	 * @returns {string}
 	 *   The download URL
-     * @throws {Error}
+	 * @throws {Error}
 	 *   If the binding is unresolved or if the URL determination is not finished yet
 	 *
 	 * @function

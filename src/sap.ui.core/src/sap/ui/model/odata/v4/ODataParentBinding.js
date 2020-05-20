@@ -1137,7 +1137,7 @@ sap.ui.define([
 			// dependent bindings are only removed in a *new task* in ManagedObject#updateBindings
 			// => must only resume in prerendering task
 			this.oModel.addPrerenderingTask(doResume);
-		 } else {
+		} else {
 			this.createReadGroupLock(this.getGroupId(), true);
 			doResume();
 		}
