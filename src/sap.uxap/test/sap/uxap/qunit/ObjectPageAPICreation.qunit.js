@@ -511,10 +511,14 @@ function (
 	});
 
 	QUnit.test("unset selected section", function (assert) {
+		// Arrange
 		var oObjectPage = this.oObjectPage,
 			oFirstSection = this.oObjectPage.getSections()[0],
 			oSecondSection = this.oSecondSection,
 			oExpected,
+			oAnchorBarRebuildSpy,
+			oSubSectionVisibilityEventSpy,
+			oSectionPreloadSpy,
 			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
 
 		setTimeout(function () {
@@ -524,8 +528,13 @@ function (
 				oSelectedSection: oSecondSection,
 				sSelectedTitle: oSecondSection.getSubSections()[0].getTitle()
 			};
+
+			// Assert
 			sectionIsSelected(oObjectPage, assert, oExpected);
 
+			oAnchorBarRebuildSpy = sinon.spy(oObjectPage._oABHelper, "_buildAnchorBar");
+			oSubSectionVisibilityEventSpy = sinon.spy(oObjectPage, "_checkSubSectionVisibilityChange");
+			oSectionPreloadSpy = sinon.spy(oObjectPage, "_preloadSectionsOnBeforeScroll");
 
 			// Act: unset the currently selected section
 			oObjectPage.setSelectedSection(null);
@@ -535,7 +544,14 @@ function (
 				oSelectedSection: oFirstSection,
 				sSelectedTitle: oFirstSection.getSubSections()[0].getTitle() //subsection is promoted
 			};
+
+			// Assert
 			sectionIsSelected(oObjectPage, assert, oExpected);
+			assert.ok(oAnchorBarRebuildSpy.notCalled, "AnchorBar is not rebuilt in IconTabBar mode when setSelectedSection is called with null");
+			assert.ok(oSubSectionVisibilityEventSpy.calledOnce, "_checkSubSectionVisibilityChange is called once");
+			assert.ok(oSectionPreloadSpy.calledOnce, "Section is loaded");
+
+			// Clean up
 			done();
 		}, this.iLoadingDelay);
 
@@ -543,10 +559,12 @@ function (
 	});
 
 	QUnit.test("unset selected section resets expanded state", function (assert) {
+		// Arrange
 		var oObjectPage = this.oObjectPage,
 			oFirstSection = this.oObjectPage.getSections()[0],
 			oSecondSection = this.oSecondSection,
 			oExpected,
+			oAnchorBarRebuildSpy,
 			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
 
 		// add header content
@@ -561,9 +579,12 @@ function (
 					oSelectedSection: oSecondSection,
 					sSelectedTitle: oSecondSection.getSubSections()[0].getTitle()
 				};
+
+				// Assert
 				sectionIsSelected(oObjectPage, assert, oExpected);
 				assert.equal(oObjectPage._bHeaderExpanded, false, "Header is snapped");
 
+				oAnchorBarRebuildSpy = sinon.spy(oObjectPage._oABHelper, "_buildAnchorBar");
 
 				// Act: unset the currently selected section
 				oObjectPage.setSelectedSection(null);
@@ -573,9 +594,14 @@ function (
 					oSelectedSection: oFirstSection,
 					sSelectedTitle: oFirstSection.getSubSections()[0].getTitle() //subsection is promoted
 				};
-				sectionIsSelected(oObjectPage, assert, oExpected);
+
 				setTimeout(function () {
+					// Assert
+					sectionIsSelected(oObjectPage, assert, oExpected);
 					assert.equal(oObjectPage._bHeaderExpanded, true, "Header is expnded");
+					assert.ok(oAnchorBarRebuildSpy.notCalled, "AnchorBar is not rebuilt when setSelectedSection is called with null");
+
+					// Clean up
 					done();
 				}, 0);
 			}, this.iLoadingDelay);
@@ -651,10 +677,9 @@ function (
 
 			// Act
 			oObjectPage.getDomRef().style.display = "none";
+			oSpy.reset();
 			oObjectPage.setSelectedSection(null);
 
-			// Restore the page visibility
-			oSpy.reset();
 			oObjectPage.getDomRef().style.display = sOrigDisplay;
 			oObjectPage._onUpdateScreenSize({ // mock resize handler call after size restored
 				size: { width: 1000, height: 1000 },
@@ -831,7 +856,7 @@ function (
 			// (1) call the scroll listener synchronously to speed-up the test
 			oObjectPage._onScroll({target: { scrollTop:  iScrollTopAfter }});
 			// (2) call the resize listener synchronously to speed up the test
-			oObjectPage._onUpdateContentSize();
+			oObjectPage._onUpdateContentSize({ size: {}});
 
 
 			// Check
@@ -886,7 +911,7 @@ function (
 			// Act: change height without invalidating any control
 			Core.byId("b1").getDomRef().style.height = "250px";
 			oSpy.reset();
-			oObjectPage._onUpdateContentSize();
+			oObjectPage._onUpdateContentSize({ size: {}});
 
 			assert.equal(oSpy.callCount, 1, "recalculation of heights is called");
 			done();
@@ -2579,7 +2604,7 @@ function (
 			assert.ok(oObjectPage._bHeaderInTitleArea);
 
 			// act: resize and check if the page invalidates in the resize listener
-			oObjectPage._onUpdateContentSize();
+			oObjectPage._onUpdateContentSize({ size: {}});
 
 			setTimeout(function() {
 				assert.strictEqual(oObjectPage._bHeaderInTitleArea, true, "page is not snapped on resize");
