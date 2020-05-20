@@ -31,7 +31,9 @@ sap.ui.define([
 	 */
 	function getFetchMetadata(mMetaPath2Type) {
 		return function (sMetaPath) {
-			switch (mMetaPath2Type[sMetaPath]) {
+			var vResult = mMetaPath2Type[sMetaPath];
+
+			switch (vResult) {
 				case "":
 					return SyncPromise.resolve({
 						$kind : "Property"
@@ -50,6 +52,9 @@ sap.ui.define([
 					});
 
 				default:
+					if (vResult && typeof vResult === "object") {
+						return SyncPromise.resolve(vResult);
+					}
 					throw new Error(sMetaPath);
 			}
 		};
@@ -1456,6 +1461,7 @@ sap.ui.define([
 	QUnit.test("updateAll: recursion", function (assert) {
 		var aAdded = [],
 			mChangeListeners = {},
+			fnCheckKeyPredicate = "fnCheckKeyPredicate",
 			oHelperMock = this.mock(_Helper),
 			oSource = {
 				updated : {},
@@ -1467,20 +1473,21 @@ sap.ui.define([
 
 		oHelperMock.expects("updateAll") // obviously :-)
 			.withExactArgs(sinon.match.same(mChangeListeners), "path", sinon.match.same(oTarget),
-				sinon.match.same(oSource))
+				sinon.match.same(oSource), fnCheckKeyPredicate)
 			.callThrough();
 		oHelperMock.expects("buildPath").withExactArgs("path", "updated").returns("~updated");
 		oHelperMock.expects("updateAll")
 			.withExactArgs(sinon.match.same(mChangeListeners), "~updated",
-				sinon.match.same(oTarget.updated), sinon.match.same(oSource.updated));
+				sinon.match.same(oTarget.updated), sinon.match.same(oSource.updated),
+				fnCheckKeyPredicate);
 		oHelperMock.expects("buildPath").withExactArgs("path", "added").returns("~added");
 		oHelperMock.expects("updateAll")
 			.withExactArgs(sinon.match.same(mChangeListeners), "~added", {},
-				sinon.match.same(oSource.added))
+				sinon.match.same(oSource.added), fnCheckKeyPredicate)
 			.returns(aAdded);
 
 		// code under test
-		_Helper.updateAll(mChangeListeners, "path", oTarget, oSource);
+		_Helper.updateAll(mChangeListeners, "path", oTarget, oSource, fnCheckKeyPredicate);
 
 		assert.strictEqual(oTarget.added, aAdded);
 	});
@@ -1550,6 +1557,65 @@ sap.ui.define([
 
 		// code under test
 		_Helper.updateAll(mChangeListeners, "path", oTarget, oSource);
+
+		assert.deepEqual(oTarget, oSource);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateAll: check key predicate, unchanged", function (assert) {
+		var o = { // only a container for checkPredicate so that we can mock it
+				checkKeyPredicate : function () {}
+			},
+			oMock = this.mock(o),
+			oSource = {
+				"@$ui5._" : {
+					predicate : "('1')"
+				},
+				property : "new"
+			},
+			oTarget = {
+				"@$ui5._" : {
+					predicate : "('1')"
+				},
+				property : "old"
+			};
+
+		oMock.expects("checkKeyPredicate").withExactArgs("path").returns(true);
+
+		// code under test
+		_Helper.updateAll({}, "path", oTarget, oSource, o.checkKeyPredicate);
+
+		assert.deepEqual(oTarget, oSource);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateAll: check key predicate, changed", function (assert) {
+		var o = { // only a container for checkPredicate so that we can mock it
+				checkKeyPredicate : function () {}
+			},
+			oMock = this.mock(o),
+			oSource = {
+				"@$ui5._" : {
+					predicate : "('1')"
+				}
+			},
+			oTarget = {
+				"@$ui5._" : {
+					predicate : "('0')"
+				}
+			};
+
+		this.mock(_Helper).expects("buildPath").twice().withExactArgs("path", "@$ui5._");
+		oMock.expects("checkKeyPredicate").withExactArgs("path").returns(true);
+
+		assert.throws(function () {
+			// code under test
+			_Helper.updateAll({}, "path", oTarget, oSource, o.checkKeyPredicate);
+		}, new Error("Key predicate of 'path' changed from ('0') to ('1')"));
+
+		oMock.expects("checkKeyPredicate").withExactArgs("path").returns(false);
+
+		_Helper.updateAll({}, "path", oTarget, oSource, o.checkKeyPredicate);
 
 		assert.deepEqual(oTarget, oSource);
 	});
@@ -2013,6 +2079,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[
+	{$kind : "Entity"},
+	{$kind : "NavigationProperty"},
+	{$kind : "NavigationProperty", $isCollection : true}
+].forEach(function (oRootMetadata, i) {
 	QUnit.test("intersectQueryOptions: real intersection", function (assert) {
 		var aCacheSelects = [/*"A", "B/b", "C", ...*/],
 			mCacheQueryOptions = {
@@ -2022,7 +2093,15 @@ sap.ui.define([
 			},
 			sCacheQueryOptions = JSON.stringify(mCacheQueryOptions),
 			mChildren,
+			mExpectedResult = {
+				$expand : {to1 : null},
+				$select: ["A/a", "B/b"],
+				"sap-client" : "123"
+			},
+			oType = {},
 			fnFetchMetadata = getFetchMetadata({
+				"/Me" : oRootMetadata,
+				"/Me/" : oType,
 				"/Me/A/a" : "",
 				"/Me/B/b" : "",
 				"/Me/to1" : "1"
@@ -2049,16 +2128,19 @@ sap.ui.define([
 			.callsFake(function (aChildren, aAncestors, mSet) {
 				mSet.to1 = true;
 			});
+		oHelperMock.expects("selectKeyProperties").exactly(i % 2)
+			.withExactArgs(mExpectedResult, sinon.match.same(oType));
 
 		assert.deepEqual(
 			// code under test
 			_Helper.intersectQueryOptions(mCacheQueryOptions, aPaths, fnFetchMetadata, "/Me",
 				mNavigationPropertyPaths),
-			{$expand : {"to1" : null}, $select : ["A/a", "B/b"], "sap-client" : "123"});
+			mExpectedResult);
 
 		assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions, "unmodified");
 		assert.deepEqual(mNavigationPropertyPaths, {});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("intersectQueryOptions: no query options", function (assert) {
@@ -2129,14 +2211,22 @@ sap.ui.define([
 					},
 					$select : []
 				},
-				sCacheQueryOptions = JSON.stringify(mCacheQueryOptions);
+				sCacheQueryOptions = JSON.stringify(mCacheQueryOptions),
+				mExpectedResult = {$expand : {"A/toN" : null, "toN" : null}, $select : ["A/toN"]},
+				oType = {},
+				fnFetchMetadata = getFetchMetadata({
+					"/Me" : {},
+					"/Me/" : oType,
+					"/Me/A" : "",
+					"/Me/A/toN" : "N",
+					"/Me/toN" : "N"
+				});
 
 			// code under test
 			assert.deepEqual(
 				_Helper.intersectQueryOptions(mCacheQueryOptions, ["A", "toN"],
-					getFetchMetadata({"/Me/A" : "", "/Me/A/toN" : "N", "/Me/toN" : "N"}), "/Me",
-					mNavigationPropertyPaths, oFixture.sPrefix),
-				{$expand : {"A/toN" : null, "toN" : null}, $select : ["A/toN"]}
+					fnFetchMetadata, "/Me", mNavigationPropertyPaths, oFixture.sPrefix),
+				mExpectedResult
 			);
 
 			assert.deepEqual(mNavigationPropertyPaths, oFixture.mExpectedNavigationPropertyPaths);
@@ -2207,6 +2297,9 @@ sap.ui.define([
 			},
 			$select : ["toA"], // avoid $select= in URL, use any navigation property
 			"sap-client" : "123"
+		},
+		mSelectKeyProperties : {
+			"/Me/toA/" : {$select : ["a"]}
 		}
 	}, {
 		aPaths : ["A", "toA/a"],
@@ -2218,6 +2311,9 @@ sap.ui.define([
 			},
 			$select : ["A"],
 			"sap-client" : "123"
+		},
+		mSelectKeyProperties : {
+			"/Me/toA/" : {$select : ["a"]}
 		}
 	}, {
 		aPaths : ["toE/e", "toG/g"],
@@ -2232,6 +2328,10 @@ sap.ui.define([
 			},
 			$select : ["toE"], // avoid $select= in URL, use any navigation property
 			"sap-client" : "123"
+		},
+		mSelectKeyProperties : {
+			"/Me/toE/" : {$select : ["e"]},
+			"/Me/toG/" : {$select : ["g"]}
 		}
 //	}, { //TODO who would need this?
 //		aPaths : ["E"],
@@ -2262,7 +2362,9 @@ sap.ui.define([
 					"sap-client" : "123"
 				},
 				sCacheQueryOptions = JSON.stringify(mCacheQueryOptions),
-				fnFetchMetadata = getFetchMetadata({
+				mMetaPath2Type = {
+					"/Me" : {},
+					"/Me/" : {},
 					"/Me/A" : "",
 					"/Me/A/C" : "",
 					"/Me/A/to1" : "1",
@@ -2272,16 +2374,28 @@ sap.ui.define([
 					"/Me/D/E/toD" : "1",
 					"/Me/E/toF" : "1",
 					"/Me/toA" : "1",
+					"/Me/toA/" : {},
 					"/Me/toA/a" : "",
 					"/Me/toB" : "1",
 					"/Me/toC" : "1",
 					"/Me/toE" : "1",
+					"/Me/toE/" : {},
 					"/Me/toE/e" : "",
 					"/Me/toG" : "1",
+					"/Me/toG/" : {},
 					"/Me/toG/g" : ""
-				}),
+				},
+				fnFetchMetadata = getFetchMetadata(mMetaPath2Type),
+				oHelperMock = this.mock(_Helper),
 				mNavigationPropertyPaths = {};
 
+			if (o.mSelectKeyProperties) {
+				Object.keys(o.mSelectKeyProperties).forEach(function (sEntityPath) {
+					oHelperMock.expects("selectKeyProperties")
+						.withExactArgs(o.mSelectKeyProperties[sEntityPath],
+							sinon.match.same(mMetaPath2Type[sEntityPath]));
+				});
+			}
 			assert.deepEqual(
 				// code under test
 				_Helper.intersectQueryOptions(mCacheQueryOptions, o.aPaths, fnFetchMetadata, "/Me",
@@ -2305,6 +2419,7 @@ sap.ui.define([
 			},
 			sCacheQueryOptions = JSON.stringify(mCacheQueryOptions),
 			fnFetchMetadata = getFetchMetadata({
+				"/Me" : {},
 				"/Me/toA" : "1"
 			}),
 			mNavigationPropertyPaths = {};
@@ -2341,7 +2456,18 @@ sap.ui.define([
 				},
 				mCacheQueryOptions0 = {},
 				mCacheQueryOptions1 = {},
+				mExpectedResult = {
+					$expand : {
+						"toC" : mCacheQueryOptions0,
+						"D/E/toD" : mCacheQueryOptions1
+					},
+					$select : ["toC"],
+					"sap-client" : "123"
+				},
+				oType = {},
 				fnFetchMetadata = getFetchMetadata({
+					"/Me" : {},
+					"/Me/" : oType,
 					"/Me/D/E/toD" : "1",
 					"/Me/toC" : "1"
 				}),
@@ -2386,14 +2512,7 @@ sap.ui.define([
 				// code under test
 				_Helper.intersectQueryOptions(mCacheQueryOptions, aPaths, fnFetchMetadata, "/Me",
 					mNavigationPropertyPaths, sPrefix),
-				{
-					$expand : {
-						"toC" : mCacheQueryOptions0,
-						"D/E/toD" : mCacheQueryOptions1
-					},
-					$select : ["toC"], // avoid $select= in URL, use any navigation property
-					"sap-client" : "123"
-				});
+				mExpectedResult);
 			assert.deepEqual(mNavigationPropertyPaths, {});
 		});
 	});
@@ -2409,12 +2528,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("intersectQueryOptions: * inside $select", function (assert) {
+		this.mock(_Helper);
 		var  mCacheQueryOptions = {
 				$expand : {"n/a" : null},
 				$select : ["A", "*", "Z"],
 				"sap-client" : "123"
 			},
+			oType = {},
 			fnFetchMetadata = getFetchMetadata({
+				"/Me" : {},
+				"/Me/" : oType,
 				"/Me/B" : "",
 				"/Me/B/C" : "",
 				"/Me/B/toN" : "N",

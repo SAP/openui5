@@ -8,6 +8,8 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
 	width="100%">
+	<App>
+	<Page id="page" floatingFooter="true" showHeader="false">
 	<VBox width="100%">
 		<HBox>
 			<Button id="saveButton" text="Save" press="onSave" visible="{ui>/realOData}"/>
@@ -220,4 +222,6 @@
 		</form:SimpleForm>
 		<HBox id="identificationBox"/>
 	</VBox>
+	</Page>
+	</App>
 </mvc:View>

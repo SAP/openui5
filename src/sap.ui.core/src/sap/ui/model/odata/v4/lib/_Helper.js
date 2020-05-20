@@ -892,6 +892,13 @@ sap.ui.define([
 		 * Returns a copy of given query options where "$expand" and "$select" are replaced by the
 		 * intersection with the given (navigation) property paths.
 		 *
+		 * Note: In case the meta path <code>sRootMetaPath</code> points to a single-valued
+		 * navigation property, for example "/SalesOrderList/SO_2_BP", this methods adds the key
+		 * properties of the related entity type to the "$select" query options. Although this
+		 * not needed in order to obtain the correct nested entity it enables
+		 * {@link sap.ui.model.odata.v4.Context#requestSideEffects}) to check the consistency of the
+		 * key predicates.
+		 *
 		 * @param {object} [mCacheQueryOptions]
 		 *   A map of query options as returned by
 		 *   {@link sap.ui.model.odata.v4.ODataModel#buildQueryOptions}
@@ -925,6 +932,7 @@ sap.ui.define([
 			var aExpands = [],
 				mExpands = {},
 				mResult,
+				oRootMetaData,
 				aSelects,
 				mSelects = {};
 
@@ -995,8 +1003,7 @@ sap.ui.define([
 						// recursively
 						mChildQueryOptions = _Helper.intersectQueryOptions(
 							mCacheQueryOptions.$expand[sNavigationPropertyPath] || {},
-							aStrippedPaths, fnFetchMetadata,
-							sRootMetaPath + "/" + sNavigationPropertyPath,
+							aStrippedPaths, fnFetchMetadata, sMetaPath,
 							mNavigationPropertyPaths, sPrefixedNavigationPropertyPath);
 						if (mChildQueryOptions) {
 							mExpands[sNavigationPropertyPath] = mChildQueryOptions;
@@ -1009,12 +1016,16 @@ sap.ui.define([
 				return null;
 			}
 
-			if (!aSelects.length && !bAllowEmptySelect) {
-				// avoid $select= in URL, use any navigation property
-				aSelects = Object.keys(mExpands).slice(0, 1);
-			}
-
 			mResult = Object.assign({}, mCacheQueryOptions, {$select : aSelects});
+			oRootMetaData = fnFetchMetadata(sRootMetaPath).getResult();
+			if (oRootMetaData.$kind === "NavigationProperty" && !oRootMetaData.$isCollection) {
+				// for a collection we already have the key in the resource path
+				_Helper.selectKeyProperties(mResult,
+					fnFetchMetadata(sRootMetaPath + "/").getResult());
+			} else if (!aSelects.length && !bAllowEmptySelect) {
+				// avoid $select= in URL, use any navigation property
+				mResult.$select = Object.keys(mExpands).slice(0, 1);
+			}
 			if (isEmptyObject(mExpands)) {
 				delete mResult.$expand;
 			} else {
@@ -1336,8 +1347,9 @@ sap.ui.define([
 		/**
 		 * Updates the target object with the source object. All properties of the source object are
 		 * taken into account. Fires change events for all changed properties. The function
-		 * recursively handles modified, added or removed structural properties and fires change
-		 * events for all modified/added/removed primitive properties therein.
+		 * recursively handles modified, added or removed structural properties (or single-valued
+		 * navigation properties) and fires change events for all modified/added/removed primitive
+		 * properties therein.
 		 *
 		 * Restrictions:
 		 * - oTarget and oSource are expected to have the same structure; when there is an
@@ -1350,17 +1362,31 @@ sap.ui.define([
 		 * @param {string} sPath The path of the old object in mChangeListeners
 		 * @param {object} oTarget The target object
 		 * @param {object} oSource The source object
+		 * @param {function} [fnCheckKeyPredicate] Callback function which tells whether the key
+		 *   predicate for the given path is checked for equality instead of just being copied
+		 *   from source to target
 		 * @returns {object} The target object
+		 * @throws {Error} If a key predicate check fails
 		 */
-		updateAll : function (mChangeListeners, sPath, oTarget, oSource) {
+		updateAll : function (mChangeListeners, sPath, oTarget, oSource, fnCheckKeyPredicate) {
 			Object.keys(oSource).forEach(function (sProperty) {
 				var sPropertyPath = _Helper.buildPath(sPath, sProperty),
+					sSourcePredicate,
 					vSourceProperty = oSource[sProperty],
+					sTargetPredicate,
 					vTargetProperty = oTarget[sProperty];
 
 				if (sProperty === "@$ui5._") {
-					_Helper.setPrivateAnnotation(oTarget, "predicate",
-						_Helper.getPrivateAnnotation(oSource, "predicate"));
+					sSourcePredicate = _Helper.getPrivateAnnotation(oSource, "predicate");
+					if (fnCheckKeyPredicate && fnCheckKeyPredicate(sPath)) {
+						sTargetPredicate = _Helper.getPrivateAnnotation(oTarget, "predicate");
+						if (sSourcePredicate !== sTargetPredicate) {
+							throw new Error("Key predicate of '" + sPath + "' changed from "
+								+ sTargetPredicate + " to " + sSourcePredicate);
+						}
+					} else {
+						_Helper.setPrivateAnnotation(oTarget, "predicate", sSourcePredicate);
+					}
 				} else if (Array.isArray(vSourceProperty)) {
 					// copy complete collection; no change events as long as collection-valued
 					// properties are not supported
@@ -1368,7 +1394,7 @@ sap.ui.define([
 				} else if (vSourceProperty && typeof vSourceProperty === "object") {
 					oTarget[sProperty]
 						= _Helper.updateAll(mChangeListeners, sPropertyPath, vTargetProperty || {},
-								vSourceProperty);
+								vSourceProperty, fnCheckKeyPredicate);
 				} else if (vTargetProperty !== vSourceProperty) {
 					oTarget[sProperty] = vSourceProperty;
 					if (vTargetProperty && typeof vTargetProperty === "object") {
