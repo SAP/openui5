@@ -49,6 +49,7 @@ sap.ui.define([
 		(mExtensionPointInfo.defaultContent || []).forEach(function (vControl) {
 			// Remove default implementation of extension points in async apply (xml-preprocessing) and create (via action handler) sceanrios
 			oModifier.destroy(vControl);
+			mExtensionPointInfo.defaultContent = [];
 		});
 		var aNewControls = BaseAddXml.applyChange(oChange, oControl, mPropertyBag, mExtensionPointInfo);
 		if (mExtensionPointInfo.ready) {
