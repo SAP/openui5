@@ -135,6 +135,48 @@ sap.ui.define([
 		assert.equal(stepContainer.onscroll, null, " should be null when wizard is destroyed");
 	});
 
+	QUnit.test("ScrollHandler methods check", function (assert) {
+		var oStub,
+			oSpyPreviousStep,
+			oSpyNextStep,
+			aWizardSteps,
+			oWizard = new Wizard({
+				steps: [ new WizardStep(), new WizardStep(), new WizardStep() ]
+			});
+
+		// Arrange
+		oSpyPreviousStep = sinon.spy(oWizard._getProgressNavigator(), "previousStep");
+		oSpyNextStep = sinon.spy(oWizard._getProgressNavigator(), "nextStep");
+		aWizardSteps = oWizard.getSteps();
+		oWizard.placeAt("qunit-fixture");
+		Core.applyChanges();
+		oWizard.goToStep(oWizard.getSteps()[2]);
+
+		// Act
+		oWizard._scrollHandler({target: {scrollTop: -100}});
+		this.clock.tick(300);
+
+		// Assert
+		assert.equal(oSpyPreviousStep.callCount, aWizardSteps.length, "Previous step should be called once");
+
+		// Arrange
+		this.clock.tick(300);
+		oStub = sinon.stub(oWizard._getProgressNavigator(), '_isActiveStep', function(){ return true;});
+		oWizard._bScrollLocked = false;
+
+		// Act
+		oWizard._scrollHandler({target: {scrollTop: 900}});
+
+		// Assert
+		assert.ok(oSpyNextStep.calledOnce, "Next step should be called once");
+
+		// cleanup
+		oStub.restore();
+		oSpyPreviousStep.restore();
+		oSpyNextStep.restore();
+		oWizard.destroy();
+	});
+
 	QUnit.test("goToStep should be applied on id, containing with special symbols (::)", function (assert) {
 		var oWizard = new Wizard({
 			id: "wizard::complex::id",
