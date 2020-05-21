@@ -1652,8 +1652,6 @@ sap.ui.define([
 		oCore.applyChanges();
 		$Input = oInput.$("inner");
 		//assert
-		assert.ok($Input.is("[role]"), "Internal Input has 'role' attribute");
-		assert.strictEqual($Input.attr("role"), "spinbutton", "Internal input's 'role' attribute has correct value");
 		assert.ok($Input.is("[aria-valuenow]"), "Internal Input has 'aria-valuenow' attribute");
 		assert.strictEqual($Input.attr("aria-valuenow"), "0", "Internal input's 'aria-valuenow' attribute has correct value");
 		assert.notOk($Input.is("[aria-valuemin]"), "Internal Input doesn't have 'aria-valuemin' attribute");
@@ -1692,8 +1690,6 @@ sap.ui.define([
 		oCore.applyChanges();
 		$Input = oInput.$("inner");
 		//assert
-		assert.ok($Input.is("[role]"), "Internal Input has 'role' attribute");
-		assert.strictEqual($Input.attr("role"), "spinbutton", "Internal input's 'role' attribute has correct value");
 		assert.ok($Input.is("[aria-valuenow]"), "Internal Input has 'aria-valuenow' attribute");
 		assert.strictEqual($Input.attr("aria-valuenow"), "15", "Internal input's 'aria-valuenow' attribute has correct value");
 		assert.ok($Input.is("[aria-valuemin]"), "Internal Input has 'aria-valuemin' attribute");
