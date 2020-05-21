@@ -169,7 +169,7 @@ Mobify.UI.Carousel = (function($, Utils) {
     Carousel.defaults = defaults;
 
     Carousel.prototype.setOptions = function(opts) {
-        var options = this.options || $.extend({}, defaults, opts);
+        var options = $.extend(this.options || {}, defaults, opts);
 
         /* classNames requires a deep copy */
         options.classNames = $.extend({}, options.classNames, opts.classNames || {});
@@ -697,9 +697,14 @@ Mobify.UI.Carousel = (function($, Utils) {
             var $this = $(this)
               , carousel = this._carousel;
 
-
             if (!carousel) {
                 carousel = new Mobify.UI.Carousel(this, initOptions);
+            } else {
+                carousel.setOptions(initOptions);
+                carousel.initElements(this);
+                carousel.initOffsets();
+                carousel.initAnimation();
+                carousel.bind();
             }
 
             if (action) {
