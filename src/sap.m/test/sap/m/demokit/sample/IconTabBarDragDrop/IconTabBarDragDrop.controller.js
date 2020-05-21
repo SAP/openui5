@@ -23,7 +23,7 @@ sap.ui.define([
 
 		onTabNestingChange: function (oEvent) {
 			var oIconTabBar = this.byId("idIconTabBar");
-			oIconTabBar.setTabNestingViaInteraction(oEvent.getParameter("state"));
+			oIconTabBar.setMaxNestingLevel(oEvent.getParameter("value"));
 		}
 
 	});
