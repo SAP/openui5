@@ -3683,6 +3683,31 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("aria-haspopup should be correctly applied", function(assert) {
+		//Arrange
+		var oInputWithoutSuggestions = new Input({}),
+			oInputWithSuggestions =  new Input({showSuggestion: true});
+
+		oInputWithoutSuggestions.placeAt("content");
+		oInputWithSuggestions.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(oInputWithoutSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be  presented.");
+		assert.strictEqual(oInputWithSuggestions._$input.attr("aria-haspopup"), "listbox", "aria-haspopup should have value 'listbox'.");
+
+		//Act
+		oInputWithoutSuggestions.setShowSuggestion(true);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(oInputWithoutSuggestions._$input.attr("aria-haspopup"), "listbox", "aria-haspopup should have value 'listbox'.");
+
+		//Clean up
+		oInputWithoutSuggestions.destroy();
+		oInputWithSuggestions.destroy();
+	});
+
 	QUnit.module("Input clone", {
 		beforeEach: function () {
 			this.oTabularInputToClone = createInputWithTabularSuggestions();
