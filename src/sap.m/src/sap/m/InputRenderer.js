@@ -62,7 +62,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 		}
 
 		if ((!oControl.getEnabled() && oControl.getType() == "Password")
-			|| (oControl.getShowSuggestion() && oControl._bUseDialog)
+			|| (oControl.getShowSuggestion() && oControl.isMobileDevice())
 			|| (oControl.getValueHelpOnly() && oControl.getEnabled() && oControl.getEditable() && oControl.getShowValueHelp())) {
 			// required for JAWS reader on password fields on desktop and in other cases:
 			oRm.attr("readonly", "readonly");

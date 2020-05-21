@@ -803,7 +803,13 @@ sap.ui.define([
 
 		oSpy = sinon.spy(oInput, "_openSuggestionsPopover");
 		// Arrange
-		oInput._bUseDialog = false;
+		var oSystem = {
+			desktop: true,
+			phone: false,
+			tablet: false
+		};
+
+		this.stub(Device, "system", oSystem);
 		// Act
 		oInput._openSuggestionPopup();
 		oInput._oSuggPopover = null;
@@ -3145,7 +3151,13 @@ sap.ui.define([
 
 	QUnit.test("Selected item from value help is set to the input", function(assert) {
 
-		var oInput = createInputWithSuggestions();
+		var oInput = createInputWithSuggestions(),
+			oSystem = {
+				desktop: false,
+				phone: true,
+				tablet: false
+			};
+
 		oInput.setShowValueHelp(true);
 		oInput.setType("Text");
 		oInput.setTextFormatMode("KeyValue");
@@ -3153,11 +3165,11 @@ sap.ui.define([
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		oInput._bUseDialog = true;
 		oInput.setSelectedKey("2");
 		assert.equal(oInput.getDOMValue(), "(2) Item 2", "Selected input value is " + oInput.getDOMValue());
 
-		oInput._bUseDialog = false;
+		this.stub(Device, "system", oSystem);
+
 		oInput.setSelectedKey("3");
 		assert.equal(oInput.getDOMValue(), "(3) Item 3", "Selected input value is " + oInput.getDOMValue());
 
@@ -4245,8 +4257,13 @@ sap.ui.define([
 
 		var oApplyFocusInfoSpy = sinon.spy(oInput, "applyFocusInfo");
 		var oSetDOMValueSpy = sinon.spy(oInput, "setDOMValue");
+		var oSystem = {
+			desktop: true,
+			phone: false,
+			tablet: false
+		};
 
-		oInput._bUseDialog = false;
+		this.stub(Device, "system", oSystem);
 		sap.ui.getCore().applyChanges();
 		oInput._oSuggPopover._sTypedInValue = sTestTypedInValue;
 
