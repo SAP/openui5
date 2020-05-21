@@ -26,8 +26,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.testrecorder.ui.controllers.Main", {
 		onInit: function () {
-			this._hidden = false;
-			this._frameHeight = 1;
+			this._minimized = false;
 			this._treeSelectionId = null;
 			this._localStorage = new Storage(Storage.Type.local, "sap-ui-test-recorder");
 
@@ -58,35 +57,31 @@ sap.ui.define([
 		},
 		toggleHeaderToolbars: function () {
 			// When hidden is true - the frame is minimized and we show the "show" button
-			this.byId("ttMaximizeHeaderBar").setVisible(this._hidden);
+			this.byId("ttMaximizeHeaderBar").setVisible(this._minimized);
 		},
-		toggleHide: function () {
-			this._hidden = !this._hidden;
+		toggleMinimize: function () {
+			this._minimized = !this._minimized;
 			this.toggleHeaderToolbars();
-			if (this._hidden) {
-				CommunicationBus.publish(CommunicationChannels.HIDE_IFRAME);
+			if (this._minimized) {
+				CommunicationBus.publish(CommunicationChannels.MINIMIZE_IFRAME);
 			} else {
 				CommunicationBus.publish(CommunicationChannels.SHOW_IFRAME);
 			}
 		},
-		resizeDown: function () {
-			this._frameHeight -= 1;
-			CommunicationBus.publish(CommunicationChannels.RESIZE_IFRAME_DOWN);
+		dockBottom: function () {
+			CommunicationBus.publish(CommunicationChannels.DOCK_IFRAME_BOTTOM);
 		},
-		resizeUp: function () {
-			this._frameHeight += 1;
-			CommunicationBus.publish(CommunicationChannels.RESIZE_IFRAME_UP);
+		dockRight: function () {
+			CommunicationBus.publish(CommunicationChannels.DOCK_IFRAME_RIGHT);
+		},
+		dockLeft: function () {
+			CommunicationBus.publish(CommunicationChannels.DOCK_IFRAME_LEFT);
 		},
 		openWindow: function () {
-			this._frameHeight = 1;
 			CommunicationBus.publish(CommunicationChannels.OPEN_NEW_WINDOW);
 		},
 		close: function () {
 			CommunicationBus.publish(CommunicationChannels.CLOSE_IFRAME);
-		},
-		dockFrame: function () {
-			this._frameHeight = 1;
-			CommunicationBus.publish(CommunicationChannels.DOCK_IFRAME);
 		},
 		copyCodeSnippet: function () {
 			var sCodeSnippet = this.byId("codeEditor").getValue();
@@ -207,7 +202,7 @@ sap.ui.define([
 				});
 			}
 
-			if (this._frameHeight > 0 && !this._hidden) {
+			if (!this._minimized) {
 				MessageToast.show(this.getView().getModel("i18n").getProperty("TestRecorder.ControlTree.MessageToast"), {
 					duration: 1000
 				});
