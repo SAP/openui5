@@ -1068,18 +1068,21 @@ sap.ui.define([
 				oProgressNavigator.nextStep();
 			}
 
+			var aSteps = this.getSteps();
 			// change the navigator current step
-			while (iScrollTop + iStepChangeThreshold <= iStepOffset) {
-				oProgressNavigator.previousStep();
+			for (var index = 0; index < aSteps.length; index++) {
+				if (iScrollTop + iStepChangeThreshold <= iStepOffset) {
+					oProgressNavigator.previousStep();
 
-				// update the currentStep reference
-				oCurrentStepDOM = this._aStepPath[oProgressNavigator.getCurrentStep() - 1].getDomRef();
+					// update the currentStep reference
+					oCurrentStepDOM = this._aStepPath[oProgressNavigator.getCurrentStep() - 1].getDomRef();
 
-				if (!oCurrentStepDOM) {
-					return;
+					if (!oCurrentStepDOM) {
+						break;
+					}
+
+					iStepOffset = oCurrentStepDOM.offsetTop;
 				}
-
-				iStepOffset = oCurrentStepDOM.offsetTop;
 			}
 		};
 
