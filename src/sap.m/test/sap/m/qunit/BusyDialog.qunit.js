@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	'sap/ui/core/Core'
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -19,7 +20,8 @@ sap.ui.define([
 	JSONModel,
 	RenderManager,
 	InvisibleText,
-	KeyCodes
+	KeyCodes,
+	Core
 ) {
 	"use strict";
 	createAndAppendDiv("content");
@@ -172,21 +174,21 @@ sap.ui.define([
 
 		//set title for BusyDialog
 		this.oBusyDialog.setTitle('test');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//check if header exists & has a title set
 		assert.equal(jQuery(this.sId + '-Dialog-header').length, 1, 'BusyDialog should have rendered header when the title is set.');
 		assert.equal(jQuery(this.sId + '-Dialog-title > span').text(), 'test', 'BusyDialog should have the corrected string set as title.');
 
 		this.oBusyDialog.setTitle('test2');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//check if header exists & has a title set
 		assert.equal(jQuery(this.sId + '-Dialog-header').length, 1, 'BusyDialog should have rendered header.');
 		assert.equal(jQuery(this.sId + '-Dialog-title > span').text(), 'test2', 'Title should have the correct string after changing the title.');
 
 		this.oBusyDialog.setTitle('');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//check if header exists & has a title set
 		assert.equal(jQuery(this.sId + '-Dialog-header').length, 0, 'BusyDialog should not have a header when the title is set to an empty string.');
@@ -200,21 +202,21 @@ sap.ui.define([
 		assert.equal(jQuery(this.sId + '-TextLabel').text(), '', 'Text should be undefined before being set.');
 
 		this.oBusyDialog.setText('SetText');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//check if text is set & exists
 		assert.equal(jQuery(this.sId + '-TextLabel').length, 1, 'Text should be rendered after set.');
 		assert.equal(jQuery(this.sId + '-TextLabel').text(), 'SetText', 'Text should be as it is set.');
 
 		this.oBusyDialog.setText('SetText2');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//check if text is set & exists
 		assert.equal(jQuery(this.sId + '-TextLabel').length, 1, 'Text should be rendered after set.');
 		assert.equal(jQuery(this.sId + '-TextLabel').text(), 'SetText2', 'Text should be as it is reset.');
 
 		this.oBusyDialog.setText('');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//check if text is set to '' & exists
 		assert.equal(jQuery(this.sId + '-TextLabel').length, 0, 'Text should not be rendered after setting it to an empty string.');
@@ -229,14 +231,14 @@ sap.ui.define([
 
 		this.oBusyDialog.setCancelButtonText('test');
 		this.oBusyDialog.setShowCancelButton(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//check if footer exists & has cancel button
 		assert.equal(jQuery(this.sId + '-Dialog-footer').length, 0, 'BusyDialog should not render footer before it is set to true.');
 		assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtn').length, 0, 'Should not render the set button if the setShowCancelButton is not set to true.');
 
 		this.oBusyDialog.setShowCancelButton(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//check if footer exists & has cancel button
 		assert.equal(jQuery(this.sId + '-Dialog-footer').length, 1, 'BusyDialog should have footer after being set.');
@@ -250,14 +252,14 @@ sap.ui.define([
 		}
 
 		this.oBusyDialog.setCancelButtonText('');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//check if footer exists & has cancel button
 		assert.equal(jQuery(this.sId + '-Dialog-footer').length, 0, 'BusyDialog should not have rendered footer if the CancelButton text is set to an empty string.');
 		assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtn').length, 0, 'BusyDialog should not have rendered button if the CancelButton text is set to an empty string.');
 
 		this.oBusyDialog.setCancelButtonText('test2');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//check if footer exists & has cancel button
 		assert.equal(jQuery(this.sId + '-Dialog-footer').length, 1, 'BusyDialog should render the footer if the CancelButtonText is changed from an empty string.');
@@ -448,7 +450,7 @@ sap.ui.define([
 			text: 'Updated text',
 			title: 'Updated title'
 		});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(jQuery(this.sId + '-TextLabel').text(), 'Updated text', 'should have updated text from the binding.');
 		assert.equal(jQuery(this.sId + '-Dialog-title').text(), 'Updated title', 'should have updated title from the binding.');
@@ -481,7 +483,7 @@ sap.ui.define([
 
 		// test the rendering with the XMLView will fail if there is no renderer
 		myView.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// destroy the XMLView
 		myView.destroy();
