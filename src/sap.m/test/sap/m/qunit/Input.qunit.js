@@ -792,6 +792,31 @@ sap.ui.define([
 		assert.ok(oInput._oSuggPopover === null || oInput._oSuggPopover === undefined, "The internal popup is destroyed");
 	});
 
+	// BCP - 2070197223
+	QUnit.test("Should handle cases when there is no SuggestionPopover and _openSuggestionPopup is called", function (assert) {
+		var oSpy,
+			oInput = new Input({
+				type: "Text",
+				showSuggestion: true
+			});
+		sap.ui.getCore().applyChanges();
+
+		oSpy = sinon.spy(oInput, "_openSuggestionsPopover");
+		// Arrange
+		oInput._bUseDialog = false;
+		// Act
+		oInput._openSuggestionPopup();
+		oInput._oSuggPopover = null;
+		this.clock.tick(300);
+
+		// Assert
+		assert.equal(oSpy.callCount, 0, "The _openSuggestionsPopover should not be called");
+
+		// cleanup
+		oSpy.restore();
+		oInput.destroy();
+	});
+
 	QUnit.module("Suggestions");
 
 	QUnit.test("Suggestions deactivated and aggregations are not filled - list and popup should not be initialized", function(assert){
