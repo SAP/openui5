@@ -9,7 +9,9 @@ sap.ui.define(['./library', 'sap/ui/core/library', "sap/base/Log"],
 		// shortcut for sap.ui.core.TitleLevel
 		var TitleLevel = coreLibrary.TitleLevel;
 
-		var BlockLayoutCellRenderer = {};
+		var BlockLayoutCellRenderer = {
+			apiVersion: 2
+		};
 
 		BlockLayoutCellRenderer.render = function (rm, blockLayoutCell) {
 			this.startCell(rm, blockLayoutCell);
@@ -20,15 +22,12 @@ sap.ui.define(['./library', 'sap/ui/core/library', "sap/base/Log"],
 		BlockLayoutCellRenderer.startCell = function (oRm, oBlockLayoutCell) {
 			var sCellColor = this.getCellColor(oRm, oBlockLayoutCell);
 
-			oRm.write("<div");
-			oRm.writeControlData(oBlockLayoutCell);
-			oRm.addClass("sapUiBlockLayoutCell");
-			sCellColor && oRm.addClass(sCellColor); // Set any of the predefined cell colors
+			oRm.openStart("div", oBlockLayoutCell)
+				.class("sapUiBlockLayoutCell");
+			sCellColor && oRm.class(sCellColor); // Set any of the predefined cell colors
 			this.setWidth(oRm, oBlockLayoutCell);
 
-			oRm.writeStyles();
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openEnd();
 		};
 
 		BlockLayoutCellRenderer.getCellColor = function (oRm, oBlockLayoutCell) {
@@ -50,20 +49,21 @@ sap.ui.define(['./library', 'sap/ui/core/library', "sap/base/Log"],
 		};
 
 		BlockLayoutCellRenderer.setWidth = function (rm, blockLayoutCell) {
+			var width = blockLayoutCell.getWidth();
 			if (blockLayoutCell._getParentRowScrollable()) {
-				var width = blockLayoutCell.getWidth();
 				if (width !== 0) {
-					rm.addStyle("width", width + "%");
+					rm.style("width", width + "%");
 				}
 			} else {
 				this.addFlex(rm, blockLayoutCell._getFlexWidth());
 			}
+
 		};
 
 		BlockLayoutCellRenderer.addFlex = function (rm, flex) {
-			rm.addStyle("-webkit-flex", flex);
-			rm.addStyle("-ms-flex", flex);
-			rm.addStyle("flex", flex);
+			rm.style("-webkit-flex", flex);
+			rm.style("-ms-flex", flex);
+			rm.style("flex", flex);
 		};
 
 		BlockLayoutCellRenderer.addTitle = function (rm, blockLayoutCell) {
@@ -84,15 +84,23 @@ sap.ui.define(['./library', 'sap/ui/core/library', "sap/base/Log"],
 					autoLevel = level === TitleLevel.Auto,
 					tag = autoLevel ? "h2" : level;
 
-				rm.write("<" + tag + " id='" + this.getTitleId(blockLayoutCell) + "' class='" + titleClass + "'>");
+				var aTitleClassesSeparated = titleClass.split(" ");
+
+				rm.openStart(tag, this.getTitleId(blockLayoutCell));
+
+				for (var index = 0; index < aTitleClassesSeparated.length; index++) {
+					rm.class(aTitleClassesSeparated[index]);
+				}
+
+				rm.openEnd();
 
 				if (oTitleLink) {
 					rm.renderControl(oTitleLink);
 				} else {
-					rm.writeEscaped(sTitleText);
+					rm.text(sTitleText);
 				}
 
-				rm.write("</" + tag + ">");
+				rm.close(tag);
 			}
 		};
 
@@ -108,31 +116,29 @@ sap.ui.define(['./library', 'sap/ui/core/library', "sap/base/Log"],
 			var content = blockLayoutCell.getContent(),
 				bHasTitle = this.hasTitle(blockLayoutCell);
 
-			rm.write("<div");
-			rm.addClass("sapUiBlockCellContent");
+			rm.openStart("div")
+				.class("sapUiBlockCellContent");
 
 			if (blockLayoutCell.getTitleAlignment() === "Center") {
-				rm.addClass("sapUiBlockCellCenteredContent");
+				rm.class("sapUiBlockCellCenteredContent");
 			}
-
-			rm.writeClasses();
 
 			if (bHasTitle) {
-				rm.writeAttribute("aria-labelledby", this.getTitleId(blockLayoutCell));
+				rm.attr("aria-labelledby", this.getTitleId(blockLayoutCell));
 			}
 
-			rm.write(">");
+			rm.openEnd();
 
 			if (bHasTitle) {
 				this.addTitle(rm, blockLayoutCell);
 			}
 
 			content.forEach(rm.renderControl, rm);
-			rm.write("</div>");
+			rm.close("div");
 		};
 
 		BlockLayoutCellRenderer.endCell = function (rm) {
-			rm.write("</div>");
+			rm.close("div");
 		};
 
 		return BlockLayoutCellRenderer;
