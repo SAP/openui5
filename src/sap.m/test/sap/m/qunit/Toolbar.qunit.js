@@ -296,6 +296,29 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
+	QUnit.test("Active toolbar aria-haspopup", function(assert) {
+		// Arrange
+		var oToolbar = new Toolbar({
+			active: true,
+			ariaHasPopup: 'dialog'
+		});
+		oToolbar.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		//Assert
+		assert.equal(oToolbar.$().attr("aria-haspopup"), "dialog", "Active toolbar should have correct aria-haspopup");
+
+		// Act
+		oToolbar.setActive(false);
+		Core.applyChanges();
+
+		//Assert
+		assert.equal(oToolbar.$().attr("aria-haspopup"), undefined, "Toolbar should not have aria-haspopup if active property is false");
+
+		//Cleanup
+		oToolbar.destroy();
+	});
+
 	QUnit.module("Properties");
 
 	QUnit.test("Should be able to add/remove undefined controls", function(assert) {
