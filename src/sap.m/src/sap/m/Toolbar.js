@@ -253,6 +253,22 @@ function(
 		}
 	};
 
+	 /**
+	 * Sets the accessibility enablement
+	 * @param {string} bEnabled
+	 * @returns {sap.m.IBar} this for chaining
+	 * @private
+	 */
+	Toolbar.prototype._setEnableAccessibilty = function (bEnabled) {
+		var bFastGroupValue = bEnabled ? "true" : "false",
+			sRoleValue = bEnabled ? "toolbar" : "none";
+
+		this.data("sap-ui-fastnavgroup", bFastGroupValue, bEnabled);
+		this._setRootAccessibilityRole(sRoleValue);
+
+		return this;
+	};
+
 	Toolbar.prototype.init = function() {
 		// define group for F6 handling
 		this.data("sap-ui-fastnavgroup", "true", true);

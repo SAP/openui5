@@ -319,6 +319,28 @@ sap.ui.define([
 		oToolbar.destroy();
 	});
 
+	QUnit.test("_setEnableAccessibilty", function(assert) {
+		// Arrange
+		var oTB = new Toolbar();
+		oTB.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		//Assert
+		assert.strictEqual(oTB.$().attr("role"), "toolbar", "Toolbar has attribute role='toolbar'");
+		assert.strictEqual(oTB.$().attr("data-sap-ui-fastnavgroup"), "true", "Toolbar has attribute data-sap-ui-fastnavgroup='true'");
+
+		// Arrange
+		oTB._setEnableAccessibilty(false);
+		Core.applyChanges();
+
+		//Assert
+		assert.strictEqual(oTB.$().attr("role"), "none", "Toolbar hasn't attribute role");
+		assert.strictEqual(oTB.$().attr("data-sap-ui-fastnavgroup"), undefined, "Toolbar hasn't attribute data-sap-ui-fastnavgroup");
+
+		// Clean
+		oTB.destroy();
+	});
+
 	QUnit.module("Properties");
 
 	QUnit.test("Should be able to add/remove undefined controls", function(assert) {
