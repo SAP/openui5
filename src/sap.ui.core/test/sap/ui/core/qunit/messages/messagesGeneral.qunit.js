@@ -249,7 +249,7 @@ sap.ui.define([
 		spyDataState(oZip, function(sName, oDataState) {
 			assert.ok(oDataState.getMessages().length == 1, 'ParseError Message propagated to control');
 			assert.ok(oZip.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
-			assert.ok(oZip.getValueStateText() === 'Enter a valid number', 'Input: ValueStateText set correctly');
+			assert.ok(oZip.getValueStateText() === 'Enter a number with no decimal places', 'Input: ValueStateText set correctly');
 		});
 		oZip.setValue('bbb');
 		jQuery.sap.delayedCall(0, this, function() {
