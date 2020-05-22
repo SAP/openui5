@@ -304,7 +304,8 @@ sap.ui.define([
 		},
 
 		renderer: {
-			apiVersion: 2
+			apiVersion: 2,
+			render: function () {}
 		}
 	});
 
