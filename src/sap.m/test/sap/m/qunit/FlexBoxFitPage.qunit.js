@@ -1,7 +1,6 @@
 /*global QUnit */
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/HBox",
 	"sap/ui/core/HTML",
@@ -10,10 +9,8 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/Page",
 	"jquery.sap.global",
-	"sap/ui/dom/includeStylesheet",
-	"sap/ui/Device"
+	"sap/ui/dom/includeStylesheet"
 ], function(
-	qutils,
 	createAndAppendDiv,
 	HBox,
 	HTML,
@@ -22,8 +19,7 @@ sap.ui.define([
 	App,
 	Page,
 	jQuery,
-	includeStylesheet,
-	Device
+	includeStylesheet
 ) {
 	createAndAppendDiv("content");
 
@@ -101,44 +97,38 @@ sap.ui.define([
 	}));
 
 
-	if (!Device.browser.phantomJS) {
-		QUnit.test("Flex Boxes rendered", function(assert) {
-			assert.ok(jQuery.sap.domById("outerHBox"), "Outer HBox should be rendered");
-			assert.ok(jQuery.sap.domById("item1"), "item 1 should be rendered");
-			assert.ok(jQuery.sap.domById("item2"), "Item 2 should be rendered");
-			assert.ok(jQuery.sap.domById("vbox"), "VBox should be rendered");
-			assert.ok(jQuery.sap.domById("item3"), "Item 3 should be rendered");
-			assert.ok(jQuery.sap.domById("innerHBox"), "Inner HBox should be rendered");
-			assert.ok(jQuery.sap.domById("item4"), "Item 4 should be rendered");
-			assert.ok(jQuery.sap.domById("item5"), "Item 5 should be rendered");
-			assert.ok(jQuery.sap.domById("item6"), "Item 6 should be rendered");
-		});
+	QUnit.test("Flex Boxes rendered", function(assert) {
+		assert.ok(jQuery.sap.domById("outerHBox"), "Outer HBox should be rendered");
+		assert.ok(jQuery.sap.domById("item1"), "item 1 should be rendered");
+		assert.ok(jQuery.sap.domById("item2"), "Item 2 should be rendered");
+		assert.ok(jQuery.sap.domById("vbox"), "VBox should be rendered");
+		assert.ok(jQuery.sap.domById("item3"), "Item 3 should be rendered");
+		assert.ok(jQuery.sap.domById("innerHBox"), "Inner HBox should be rendered");
+		assert.ok(jQuery.sap.domById("item4"), "Item 4 should be rendered");
+		assert.ok(jQuery.sap.domById("item5"), "Item 5 should be rendered");
+		assert.ok(jQuery.sap.domById("item6"), "Item 6 should be rendered");
+	});
 
-		QUnit.test("Width and height correct", function(assert) {
-			assert.ok(Math.abs(jQuery.sap.domById("outerHBox").offsetWidth - outerhboxWidth) <= 1, "Outer HBox should have the correct width");
-			assert.ok(Math.abs(jQuery.sap.domById("outerHBox").offsetHeight - outerhboxHeight) <= 1, "Outer HBox should have the correct height");
-			assert.ok(Math.abs(jQuery.sap.domById("vbox").offsetWidth - vboxWidth) <= 1, "VBox should have the correct width");
-			assert.ok(Math.abs(jQuery.sap.domById("vbox").offsetHeight - vboxHeight) <= 1, "VBox should have the correct height");
-			assert.ok(Math.abs(jQuery.sap.domById("innerHBox").offsetWidth - innerhboxWidth) <= 1, "Inner HBox should have the correct width");
-			assert.ok(Math.abs(jQuery.sap.domById("innerHBox").offsetHeight - innerhboxHeight) <= 1, "Inner HBox should have the correct height");
-			assert.ok(Math.abs(jQuery.sap.domById("item1").offsetWidth - item1Width) <= 1, "Item 1 should have the correct width");
-			assert.ok(Math.abs(jQuery.sap.domById("item1").offsetHeight - item1Height) <= 1, "Item 1 should have the correct height");
-			assert.ok(Math.abs(jQuery.sap.domById("item2").offsetWidth - item2Width) <= 1, "Item 2 should have the correct width");
-			assert.ok(Math.abs(jQuery.sap.domById("item2").offsetHeight - item2Height) <= 1, "Item 2 should have the correct height");
-			assert.ok(Math.abs(jQuery.sap.domById("item3").offsetWidth - item3Width) <= 1, "Item 3 should have the correct width");
-			assert.ok(Math.abs(jQuery.sap.domById("item3").offsetHeight - item3Height) <= 1, "Item 3 should have the correct height");
-			assert.ok(Math.abs(jQuery.sap.domById("item4").offsetWidth - item4Width) <= 1, "Item 4 should have the correct width");
-			assert.ok(Math.abs(jQuery.sap.domById("item4").offsetHeight - item4Height) <= 1, "Item 4 should have the correct height");
-			assert.ok(Math.abs(jQuery.sap.domById("item5").offsetWidth - item5Width) <= 1, "Item 5 should have the correct width");
-			assert.ok(Math.abs(jQuery.sap.domById("item5").offsetHeight - item5Height) <= 1, "Item 5 should have the correct height");
-			assert.ok(Math.abs(jQuery.sap.domById("item6").offsetWidth - item6Width) <= 1, "Item 6 should have the correct width");
-			assert.ok(Math.abs(jQuery.sap.domById("item6").offsetHeight - item6Height) <= 1, "Item 6 should have the correct height");
-		});
-	} else {
-		QUnit.test("Dummy Test", function(assert) {
-			assert.ok(true, "At least one test needs to run to avoid test timeouts!");
-		});
-	}
+	QUnit.test("Width and height correct", function(assert) {
+		assert.ok(Math.abs(jQuery.sap.domById("outerHBox").offsetWidth - outerhboxWidth) <= 1, "Outer HBox should have the correct width");
+		assert.ok(Math.abs(jQuery.sap.domById("outerHBox").offsetHeight - outerhboxHeight) <= 1, "Outer HBox should have the correct height");
+		assert.ok(Math.abs(jQuery.sap.domById("vbox").offsetWidth - vboxWidth) <= 1, "VBox should have the correct width");
+		assert.ok(Math.abs(jQuery.sap.domById("vbox").offsetHeight - vboxHeight) <= 1, "VBox should have the correct height");
+		assert.ok(Math.abs(jQuery.sap.domById("innerHBox").offsetWidth - innerhboxWidth) <= 1, "Inner HBox should have the correct width");
+		assert.ok(Math.abs(jQuery.sap.domById("innerHBox").offsetHeight - innerhboxHeight) <= 1, "Inner HBox should have the correct height");
+		assert.ok(Math.abs(jQuery.sap.domById("item1").offsetWidth - item1Width) <= 1, "Item 1 should have the correct width");
+		assert.ok(Math.abs(jQuery.sap.domById("item1").offsetHeight - item1Height) <= 1, "Item 1 should have the correct height");
+		assert.ok(Math.abs(jQuery.sap.domById("item2").offsetWidth - item2Width) <= 1, "Item 2 should have the correct width");
+		assert.ok(Math.abs(jQuery.sap.domById("item2").offsetHeight - item2Height) <= 1, "Item 2 should have the correct height");
+		assert.ok(Math.abs(jQuery.sap.domById("item3").offsetWidth - item3Width) <= 1, "Item 3 should have the correct width");
+		assert.ok(Math.abs(jQuery.sap.domById("item3").offsetHeight - item3Height) <= 1, "Item 3 should have the correct height");
+		assert.ok(Math.abs(jQuery.sap.domById("item4").offsetWidth - item4Width) <= 1, "Item 4 should have the correct width");
+		assert.ok(Math.abs(jQuery.sap.domById("item4").offsetHeight - item4Height) <= 1, "Item 4 should have the correct height");
+		assert.ok(Math.abs(jQuery.sap.domById("item5").offsetWidth - item5Width) <= 1, "Item 5 should have the correct width");
+		assert.ok(Math.abs(jQuery.sap.domById("item5").offsetHeight - item5Height) <= 1, "Item 5 should have the correct height");
+		assert.ok(Math.abs(jQuery.sap.domById("item6").offsetWidth - item6Width) <= 1, "Item 6 should have the correct width");
+		assert.ok(Math.abs(jQuery.sap.domById("item6").offsetHeight - item6Height) <= 1, "Item 6 should have the correct height");
+	});
 
 	// include stylesheet, wait for it + 1000ms then calculate expected sizes.
 	// test starter will wait for the returned promise
