@@ -220,7 +220,7 @@
 							<Input value="{Name}" />
 						</form:SimpleForm>
 					</Dialog>
-					<Dialog id="messageDetails" title="Message Details">
+					<Dialog contentWidth="50%" id="messageDetails" title="Message Details">
 						<buttons>
 							<Button press="onCloseMessageDetails" text="Close" type="Emphasized" />
 						</buttons>
@@ -231,6 +231,14 @@
 							<Text text="{messages>type}" />
 							<Label text="Message" />
 							<Text text="{messages>message}" />
+							<Label text="Additional Text" />
+							<Text text="{messages>additionalText}" />
+							<Label text="Description" />
+							<Text text="{messages>description}" />
+							<Label text="Technical" />
+							<Text text="{messages>technical}" />
+							<Label text="Persistent" />
+							<Text text="{messages>persistent}" />
 							<Label text="Code" />
 							<Text text="{messages>code}" />
 							<Label text="Target" />
@@ -257,10 +265,13 @@
 								path : 'messages>/'
 							}">
 							<MessageItem activeTitle="true"
-								description="See technical details for more information"
+								description="{
+									formatter : '.formatMessageDescription',
+									path : 'messages>'
+								}"
 								subtitle="{
 									formatter : '.formatMessageSubtitle',
-									path : 'messages>fullTarget'
+									path : 'messages>'
 								}" title="{messages>message}"
 								type="{messages>type}">
 								<Link binding="{messages>}" press="onShowMessageDetails"
