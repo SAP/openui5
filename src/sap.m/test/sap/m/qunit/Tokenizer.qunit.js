@@ -1027,6 +1027,25 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
+	QUnit.test("onsaphome + hidden tokens", function() {
+		var oEvent = new jQuery.Event(),
+			oTokenizer = new Tokenizer({
+				tokens: [new Token(), new Token(), new Token()]
+			}).placeAt("content");
+
+		oTokenizer.getTokens()[0].addStyleClass("sapMHiddenToken");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oTokenizer.onsaphome(oEvent);
+
+		// assert
+		assert.strictEqual(oTokenizer.getTokens()[1].getDomRef(), document.activeElement, "The second token (first visible) is focused.");
+
+		// clean up
+		oTokenizer.destroy();
+	});
+
 	QUnit.test("HOME + SHIFT", function() {
 		var oSpySelection = this.spy(this.tokenizer, "_selectRange");
 
