@@ -7,7 +7,7 @@
 		propertyEditorsChange="_propertyEditorsChange"
 		config="{
 			path: 'itemsModel>/',
-			formatter: '._itemsFormatter'
+			formatter: '._configItemsFormatter'
 		}"
 	/>
 </core:FragmentDefinition>

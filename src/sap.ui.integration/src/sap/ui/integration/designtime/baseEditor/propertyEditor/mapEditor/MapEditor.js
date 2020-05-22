@@ -114,11 +114,10 @@ sap.ui.define([
 
 		setValue: function(mValue) {
 			mValue = isPlainObject(mValue) ? mValue : {};
+			BasePropertyEditor.prototype.setValue.call(this, mValue);
 
 			var aItems = this._processValue(mValue);
-
 			this._itemsModel.setData(aItems);
-			BasePropertyEditor.prototype.setValue.call(this, mValue);
 		},
 
 		_processValue: function(mValue) {
@@ -128,11 +127,10 @@ sap.ui.define([
 					mFormattedValue.type = this._mTypes[sKey] || this._getDefaultType(mFormattedValue.value);
 				}
 				this._mTypes[sKey] = mFormattedValue.type;
-				mFormattedValue.path = sKey;
 
 				var oItem = {
 					key: sKey,
-					value: [mFormattedValue]
+					value: mFormattedValue
 				};
 
 				return this.getConfig().includeInvalidEntries !== false || this._isValidItem(oItem, deepClone(mValue[sKey])) ? oItem : undefined;
@@ -147,7 +145,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_isValidItem: function(oItem) {
-			var sType = oItem.value[0].type;
+			var sType = oItem.value.type;
 			return sType && includes(this._getAllowedTypes(), sType);
 		},
 
@@ -171,6 +169,50 @@ sap.ui.define([
 			this._supportedTypesModel.setData(this._aSupportedTypes.filter(function (oSupportedType) {
 				return includes(aAllowedTypes, oSupportedType.key);
 			}));
+		},
+
+		/**
+		 * Formatter function which is called for every item config
+		 * @param {object} oConfigValue - Original map item config
+		 * @param {string} oConfigValue.key - Item key
+		 * @param {object} oConfigValue.value - Formatted item value
+		 * @param {string} oConfigValue.value.type - Property type
+		 * @param {any} oConfigValue.value.value - Property value
+		 * @returns {object} Formatted map item config
+		 */
+		formatItemConfig: function(oConfigValue) {
+			var sKey = oConfigValue.key;
+			var sType = oConfigValue.value.type;
+			var vValue = oConfigValue.value.value;
+
+			return [
+				{
+					label: this.getI18nProperty("BASE_EDITOR.MAP.KEY"),
+					path: "key",
+					value: sKey,
+					type: "string",
+					enabled: this.getConfig().allowKeyChange !== false,
+					itemKey: sKey,
+					allowBindings: false
+				},
+				{
+					label: this.getI18nProperty("BASE_EDITOR.MAP.TYPE"),
+					path: "type",
+					value: sType,
+					type: "enum",
+					"enum": this._getAllowedTypes(),
+					visible: this.getConfig().allowTypeChange !== false,
+					itemKey: sKey,
+					allowBindings: false
+				},
+				{
+					label: this.getI18nProperty("BASE_EDITOR.MAP.VALUE"),
+					path: "value",
+					value: vValue,
+					type: sType,
+					itemKey: sKey
+				}
+			];
 		},
 
 		getExpectedWrapperCount: function (mValue) {
@@ -223,36 +265,66 @@ sap.ui.define([
 			return sKey;
 		},
 
-		_onKeyChange: function(oEvent) {
-			var aItems = (this._itemsModel.getData() || []).slice();
-			var oInput = oEvent.getSource();
+		_propertyEditorsChange: function (oEvent) {
+			var aPreviousPropertyEditors = oEvent.getParameter("previousPropertyEditors");
+			var aPropertyEditors = oEvent.getParameter("propertyEditors");
+			if (Array.isArray(aPreviousPropertyEditors)) {
+				aPreviousPropertyEditors.forEach(function (oPreviousPropertyEditor) {
+					oPreviousPropertyEditor.detachValueChange(this._onItemChange, this);
+				}, this);
+			}
+			if (Array.isArray(aPropertyEditors)) {
+				aPropertyEditors.forEach(function (oPropertyEditor) {
+					oPropertyEditor.attachValueChange(this._onItemChange, this);
+				}, this);
+			}
+		},
+
+		_onItemChange: function (oEvent) {
+			var sKey = oEvent.getSource().getConfig().itemKey;
+			var sChangeType = oEvent.getParameter("path");
+
+			var fnHandler = this._getItemChangeHandlers()[sChangeType];
+			if (typeof fnHandler !== 'function') {
+				// No specific handler is registered for the change, use generic handler
+				fnHandler = this._onFieldChange;
+			}
+
+			fnHandler.call(this, sKey, oEvent);
+		},
+
+		_getItemChangeHandlers: function () {
+			return {
+				"key": this._onKeyChange,
+				"type": this._onTypeChange
+			};
+		},
+
+		_onKeyChange: function(sOldKey, oEvent) {
+			// Ignore changes triggered by editor initialization to avoid duplicate key errors for the initial value
+			if (oEvent.getParameter("previousValue") === undefined) {
+				return;
+			}
+
+			var oEditorValue = _merge({}, this.getValue());
+			var oInput = oEvent.getSource().getAggregation("propertyEditor").getContent();
 			var sNewKey = oEvent.getParameter("value");
-			var sOldKey = oInput.getBindingContext("itemsModel").getObject().key;
 
-			var aItemKeys = aItems.map(function (oItem) {
-				return oItem.key;
-			});
-			var oValue = this.getValue();
-			var iElementToModifyIndex = aItemKeys.indexOf(sOldKey);
-
-			if (iElementToModifyIndex >= 0 && (!oValue.hasOwnProperty(sNewKey) || sNewKey === sOldKey)) {
+			if (oEditorValue.hasOwnProperty(sOldKey) && (!oEditorValue.hasOwnProperty(sNewKey) || sNewKey === sOldKey)) {
 				oInput.setValueState("None");
 
-				var oItem = deepClone(aItems[iElementToModifyIndex]);
-				oItem.key = sNewKey;
-				aItems.splice(
-					iElementToModifyIndex,
-					1,
-					oItem
-				);
 				if (sNewKey !== sOldKey) {
-					var oMap = {};
-					aItems.forEach(function (oItem) {
-						oMap[oItem.key] = this.processOutputValue(_omit(oItem.value[0], 'path'));
-					}, this);
+					var oNewValue = {};
+					// Iterate over items to keep the order
+					Object.keys(oEditorValue).forEach(function (sItemKey) {
+						var sNewItemKey = sItemKey === sOldKey ? sNewKey : sItemKey;
+						oNewValue[sNewItemKey] = oEditorValue[sItemKey];
+					});
+
 					this._mTypes[sNewKey] = this._mTypes[sOldKey];
 					delete this._mTypes[sOldKey];
-					this.setValue(oMap);
+
+					this.setValue(oNewValue);
 				}
 			} else {
 				oInput.setValueState("Error");
@@ -260,9 +332,14 @@ sap.ui.define([
 			}
 		},
 
-		_onTypeChange: function (oEvent, sKey) {
+		_onTypeChange: function (sKey, oEvent) {
+			// Ignore changes triggered by editor initialization as the item type has not actually changed
+			if (oEvent.getParameter("previousValue") === undefined) {
+				return;
+			}
+
 			var oEditorValue = _merge({}, this.getValue());
-			var sNewType =  oEvent.getParameter("selectedItem").getKey();
+			var sNewType =  oEvent.getParameter("value");
 
 			var oItemToEdit = this.processInputValue(oEditorValue[sKey]);
 			oItemToEdit.type = sNewType;
@@ -272,27 +349,14 @@ sap.ui.define([
 			this.setValue(oEditorValue);
 		},
 
-		_propertyEditorsChange: function (oEvent) {
-			var aPreviousPropertyEditors = oEvent.getParameter("previousPropertyEditors");
-			var aPropertyEditors = oEvent.getParameter("propertyEditors");
-			if (Array.isArray(aPreviousPropertyEditors)) {
-				aPreviousPropertyEditors.forEach(function (oPreviousPropertyEditor) {
-					oPreviousPropertyEditor.detachValueChange(this._onPropertyValueChange, this);
-				}, this);
-			}
-			if (Array.isArray(aPropertyEditors)) {
-				aPropertyEditors.forEach(function (oPropertyEditor) {
-					oPropertyEditor.attachValueChange(this._onPropertyValueChange, this);
-				}, this);
-			}
-		},
-
-		_onPropertyValueChange: function (oEvent) {
+		// Generic field change
+		_onFieldChange: function (sKey, oEvent) {
 			var oEditorValue = _merge({}, this.getValue());
-			var sKey = oEvent.getParameter("path");
+			var sPath = oEvent.getParameter("path");
+			var vValue = oEvent.getParameter("value");
 
 			var oItemToEdit = this.processInputValue(oEditorValue[sKey]);
-			oItemToEdit.value = oEvent.getParameter("value");
+			oItemToEdit[sPath] = vValue;
 			oEditorValue[sKey] = this.processOutputValue(oItemToEdit);
 
 			this.setValue(oEditorValue);

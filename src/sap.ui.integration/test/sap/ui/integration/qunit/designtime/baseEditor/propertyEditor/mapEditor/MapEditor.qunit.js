@@ -16,12 +16,13 @@ sap.ui.define([
 	function getMapEditorContent (oEditor) {
 		return {
 			addButton: oEditor.getContent().getItems()[1],
-			items: oEditor.getContent().getItems()[0].getItems().map(function (item) {
+			items: oEditor.getContent().getItems()[0].getItems().map(function (oItem) {
+				var oNestedEditors = oItem.getContent()[0]._getPropertyEditors();
 				return {
-					key: item.getCells()[0],
-					type: item.getCells()[1],
-					value: item.getCells()[2],
-					deleteButton: item.getCells()[3]
+					key: oNestedEditors[0],
+					type: oNestedEditors[1],
+					value: oNestedEditors[2],
+					deleteButton: oItem.getHeaderToolbar().getContent()[2]
 				};
 			})
 		};
@@ -41,7 +42,8 @@ sap.ui.define([
 					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
-					"boolean": "sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor"
+					"boolean": "sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor",
+					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
 				}
 			};
 			var mJson = {
@@ -78,12 +80,18 @@ sap.ui.define([
 		QUnit.test("When a value is set", function (assert) {
 			assert.deepEqual(
 				this.aItems[0].value.getConfig(),
-				[{
+				{
 					type: "string",
-					path: "foo",
-					value: "bar"
-				}],
-				"Then the nested editor receives the correct config"
+					path: "value",
+					itemKey: "foo"
+				},
+				"Then the nested value editor receives the correct config"
+			);
+
+			assert.strictEqual(
+				this.aItems[0].value.getValue(),
+				"bar",
+				"Then the nested value editor receives the correct value"
 			);
 		});
 
@@ -163,16 +171,16 @@ sap.ui.define([
 					);
 					fnDone();
 				});
-				EditorQunitUtils.setInputValue(this.aItems[0].key, "foo2");
+				EditorQunitUtils.setInputValue(this.aItems[0].key.getContent(), "foo2");
 			}, this);
 			QUnitUtils.triggerEvent("tap", this.oAddButton.getDomRef());
 		});
 
 		QUnit.test("When an element key is changed to an existing value", function (assert) {
-			var fnDone = assert.async();
-			this.oMapEditor.attachEventOnce("valueChange", function () {
+			QUnitUtils.triggerEvent("tap", this.oAddButton.getDomRef());
+			return this.oMapEditor.ready().then(function () {
 				this.oMapEditorContent = getMapEditorContent(this.oMapEditor);
-				EditorQunitUtils.setInputValue(this.aItems[0].key, "key");
+				EditorQunitUtils.setInputValue(this.aItems[0].key.getContent(), "key");
 
 				assert.deepEqual(
 					this.oMapEditor.getValue(),
@@ -182,22 +190,20 @@ sap.ui.define([
 					},
 					"Then the key is not updated"
 				);
-				assert.strictEqual(this.aItems[0].key.getValueState(), "Error", "Then the error is displayed");
-				fnDone();
-			}, this);
-			QUnitUtils.triggerEvent("tap", this.oAddButton.getDomRef());
+				assert.strictEqual(this.aItems[0].key.getContent().getValueState(), "Error", "Then the error is displayed");
+			}.bind(this));
 		});
 
 		QUnit.test("When the type of an element is changed", function (assert) {
 			var fnDone = assert.async();
-			assert.strictEqual(this.aItems[0].value.getConfig()[0].type, "string", "Then the initial type is set");
+			assert.strictEqual(this.aItems[0].value.getConfig().type, "string", "Then the initial type is set");
 
 			this.aItems[0].value.attachEventOnce("configChange", function () {
-				assert.strictEqual(this.aItems[0].value.getConfig()[0].type, "number", "Then the change is reflected in the nested editor config");
+				assert.strictEqual(this.aItems[0].value.getConfig().type, "number", "Then the change is reflected in the nested editor config");
 				fnDone();
 			}, this);
 
-			var oTypeSelector = this.aItems[0].type;
+			var oTypeSelector = this.aItems[0].type.getContent();
 			EditorQunitUtils.selectComboBoxValue(oTypeSelector, "number");
 		});
 
@@ -211,7 +217,7 @@ sap.ui.define([
 				}
 			);
 
-			this.aItems[0].value._getPropertyEditors()[0].attachEventOnce("valueChange", function () {
+			this.aItems[0].value.attachEventOnce("valueChange", function () {
 				assert.deepEqual(
 					this.oMapEditor.getValue(),
 					{
@@ -222,12 +228,12 @@ sap.ui.define([
 				fnDone();
 			}, this);
 
-			var oInput = this.aItems[0].value._getPropertyEditors()[0].getContent();
+			var oInput = this.aItems[0].value.getContent();
 			EditorQunitUtils.setInputValue(oInput, "baz");
 		});
 
 		QUnit.test("When a value is updated and the new value is not valid", function (assert) {
-			var oInput = this.aItems[0].value._getPropertyEditors()[0].getContent();
+			var oInput = this.aItems[0].value.getContent();
 			EditorQunitUtils.setInputValue(oInput, "{someInvalidBindingString");
 
 			assert.deepEqual(
@@ -238,6 +244,50 @@ sap.ui.define([
 				"Then the value is not updated"
 			);
 			assert.strictEqual(oInput.getValueState(), "Error", "Then the error is displayed");
+		});
+
+		QUnit.test("When the configuration formatter is called for an item", function (assert) {
+			var oItem = {
+				key: "test",
+				value: {
+					type: "string",
+					value: "Test value"
+				}
+			};
+			var oExpectedItemConfig = [
+				{
+					allowBindings: false,
+					enabled: true,
+					itemKey: "test",
+					label: "Key",
+					path: "key",
+					type: "string",
+					value: "test"
+				},
+				{
+					allowBindings: false,
+					"enum": ["string", "number", "boolean"],
+					itemKey: "test",
+					label: "Type",
+					path: "type",
+					type: "enum",
+					value: "string",
+					visible: true
+				},
+				{
+					itemKey: "test",
+					label: "Value",
+					path: "value",
+					type: "string",
+					value: "Test value"
+				}
+			];
+
+			assert.deepEqual(
+				this.oMapEditor.getAggregation("propertyEditor").formatItemConfig(oItem),
+				oExpectedItemConfig,
+				"Then configurations for the nested editors are returned"
+			);
 		});
 	});
 
@@ -262,7 +312,8 @@ sap.ui.define([
 				"propertyEditors": {
 					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
+					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
+					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
 				}
 			});
 
@@ -277,7 +328,7 @@ sap.ui.define([
 				var oMapEditorContent = getMapEditorContent(this.oMapEditor);
 				var aItems = oMapEditorContent.items;
 
-				var oTypeSelector = aItems[0].type;
+				var oTypeSelector = aItems[0].type.getContent();
 				assert.strictEqual(oTypeSelector.getItems().length, 2, "Then only the provided types are available");
 			}.bind(this));
 		});
@@ -293,7 +344,8 @@ sap.ui.define([
 				},
 				"propertyEditors": {
 					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
-					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
 				}
 			});
 
@@ -308,8 +360,7 @@ sap.ui.define([
 				var oMapEditorContent = getMapEditorContent(this.oMapEditor);
 				var aItems = oMapEditorContent.items;
 
-				var oTypeSelector = aItems[0].key;
-				assert.notOk(oTypeSelector.getEnabled(), "Then the key field is disabled");
+				assert.notOk(aItems[0].key.getContent().getEnabled(), "Then the key field is disabled");
 			}.bind(this));
 		});
 
@@ -324,7 +375,8 @@ sap.ui.define([
 				},
 				"propertyEditors": {
 					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
-					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
 				}
 			});
 
@@ -340,7 +392,7 @@ sap.ui.define([
 				var aItems = oMapEditorContent.items;
 
 				var oTypeSelector = aItems[0].type;
-				assert.notOk(oTypeSelector.getVisible(), "Then the type field is hidden");
+				assert.notOk(oTypeSelector.getParent().getVisible(), "Then the type field is hidden");
 			}.bind(this));
 		});
 
@@ -356,7 +408,8 @@ sap.ui.define([
 				},
 				"propertyEditors": {
 					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
-					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
 				}
 			});
 
@@ -388,7 +441,9 @@ sap.ui.define([
 				},
 				"propertyEditors": {
 					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
-					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
+					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
 				}
 			});
 
@@ -408,7 +463,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("When a key is changed in a map with invalid filtered items", function (assert) {
+		QUnit.test("When a key is changed in a map with invalid filtered items and the new key is a duplicate of a filtered item", function (assert) {
 			this.oBaseEditor.setConfig({
 				"properties": {
 					"sampleMap": {
@@ -420,7 +475,9 @@ sap.ui.define([
 				},
 				"propertyEditors": {
 					"map": "sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
-					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
+					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
 				}
 			});
 
@@ -437,7 +494,7 @@ sap.ui.define([
 				var aItems = oMapEditorContent.items;
 
 				sap.ui.getCore().applyChanges();
-				EditorQunitUtils.setInputValue(aItems[0].key, "foo");
+				EditorQunitUtils.setInputValue(aItems[0].key.getContent(), "foo");
 
 				assert.deepEqual(
 					oMapEditor.getValue(),
@@ -447,7 +504,7 @@ sap.ui.define([
 					},
 					"Then the key is not updated"
 				);
-				assert.strictEqual(aItems[0].key.getValueState(), "Error", "Then the error is displayed");
+				assert.strictEqual(aItems[0].key.getContent().getValueState(), "Error", "Then the error is displayed");
 			});
 		});
 	});

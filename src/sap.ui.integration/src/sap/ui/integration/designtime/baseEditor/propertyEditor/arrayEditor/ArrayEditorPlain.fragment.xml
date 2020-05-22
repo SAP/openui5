@@ -6,7 +6,7 @@
 	<VBox>
 		<VBox
 			items="{ path: 'itemsModel>/', templateShareable: false}"
-			visible="{= ${itemsModel>/}.length === 0 ? false : true }"
+			visible="{= !!${itemsModel>/}.length }"
 		>
 			<VBox>
 				<Bar

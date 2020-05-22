@@ -16,13 +16,14 @@ sap.ui.define([
 	function getParameterEditorContent (oEditor) {
 		return {
 			addButton: oEditor.getContent().getItems()[1],
-			items: oEditor.getContent().getItems()[0].getItems().map(function (item) {
+			items: oEditor.getContent().getItems()[0].getItems().map(function (oItem) {
+				var oNestedEditors = oItem.getContent()[0]._getPropertyEditors();
 				return {
-					key: item.getCells()[0],
-					label: item.getCells()[1],
-					type: item.getCells()[2],
-					value: item.getCells()[3],
-					deleteButton: item.getCells()[4]
+					key: oNestedEditors[0],
+					label: oNestedEditors[1],
+					type: oNestedEditors[2],
+					value: oNestedEditors[3],
+					deleteButton: oItem.getHeaderToolbar().getContent()[2]
 				};
 			})
 		};
@@ -39,7 +40,8 @@ sap.ui.define([
 				},
 				"propertyEditors": {
 					"parameters": "sap/ui/integration/designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor",
-					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
 				}
 			};
 			var mJson = {
@@ -79,13 +81,18 @@ sap.ui.define([
 		QUnit.test("When a value is set", function (assert) {
 			assert.deepEqual(
 				this.aItems[0].value.getConfig(),
-				[{
+				{
 					type: "string",
-					label: "Test Parameter",
-					path: "foo",
-					value: "bar"
-				}],
+					itemKey: "foo",
+					path: "value"
+				},
 				"Then the nested editor receives the correct config"
+			);
+
+			assert.strictEqual(
+				this.aItems[0].value.getValue(),
+				"bar",
+				"Then the nested editor receives the correct value"
 			);
 		});
 
@@ -135,7 +142,7 @@ sap.ui.define([
 					type: "string"
 				}
 			});
-			EditorQunitUtils.setInputValue(this.aItems[0].key, "foo2");
+			EditorQunitUtils.setInputValue(this.aItems[0].key.getContent(), "foo2");
 		});
 
 		QUnit.test("When an element key is changed to an unique value", function (assert) {
@@ -155,7 +162,7 @@ sap.ui.define([
 				);
 				fnDone();
 			});
-			EditorQunitUtils.setInputValue(this.aItems[0].key, "foo2");
+			EditorQunitUtils.setInputValue(this.aItems[0].key.getContent(), "foo2");
 		});
 
 		QUnit.test("When the label is changed in the editor", function (assert) {
@@ -175,7 +182,7 @@ sap.ui.define([
 				);
 				fnDone();
 			});
-			EditorQunitUtils.setInputValue(this.aItems[0].label, "Changed Label");
+			EditorQunitUtils.setInputValue(this.aItems[0].label.getContent(), "Changed Label");
 		});
 	});
 
@@ -201,7 +208,8 @@ sap.ui.define([
 				"propertyEditors": {
 					"parameters": "sap/ui/integration/designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor",
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
+					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
+					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
 				}
 			});
 
@@ -278,7 +286,8 @@ sap.ui.define([
 					},
 					"propertyEditors": {
 						"parameters": "sap/ui/integration/designtime/cardEditor/propertyEditor/parametersEditor/ParametersEditor",
-						"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+						"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+						"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
 					}
 				},
 				json: {
