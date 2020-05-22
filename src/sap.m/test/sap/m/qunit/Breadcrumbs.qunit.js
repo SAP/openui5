@@ -484,6 +484,19 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 		});
 	});
 
+	QUnit.test("Current location aria attributes", function (assert) {
+		// Arrange
+		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl,
+			oCurrentLocation = oStandardBreadCrumbsControl._getCurrentLocation();
+
+		// Act
+		oStandardBreadCrumbsControl.placeAt("qunit-fixture");
+		helpers.waitForUIUpdates();
+
+		// Assert
+		assert.strictEqual(oCurrentLocation.$().attr("aria-current"), "page", "Current location should have correct aria attribute");
+	});
+
 	QUnit.test("Keyboard Handling", function (assert) {
 		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl;
 
