@@ -35,6 +35,7 @@ sap.ui.define(['sap/m/library', "sap/base/security/encodeCSS"],
 			sUseMap = oImage.getUseMap(),
 			aLabelledBy = oImage.getAriaLabelledBy(),
 			aDescribedBy = oImage.getAriaDescribedBy(),
+			aDetails = oImage.getAriaDetails(),
 			bIsImageMode = sMode === ImageMode.Image;
 
 		// Additional element for Image with LightBox
@@ -53,14 +54,21 @@ sap.ui.define(['sap/m/library', "sap/base/security/encodeCSS"],
 			oRm.openStart("span", !oLightBox ? oImage : oImage.getId() + "-inner");
 		}
 
-		// aria-labelledby references
-		if (!oImage.getDecorative() && aLabelledBy && aLabelledBy.length > 0) {
-			oRm.attr("aria-labelledby", aLabelledBy.join(" "));
-		}
+		if (!oImage.getDecorative()) {
+			// aria-labelledby references
+			if (aLabelledBy && aLabelledBy.length > 0) {
+				oRm.attr("aria-labelledby", aLabelledBy.join(" "));
+			}
 
-		// aria-describedby references
-		if (!oImage.getDecorative() && aDescribedBy && aDescribedBy.length > 0) {
-			oRm.attr("aria-describedby", aDescribedBy.join(" "));
+			// aria-describedby references
+			if (aDescribedBy && aDescribedBy.length > 0) {
+				oRm.attr("aria-describedby", aDescribedBy.join(" "));
+			}
+
+			// aria-details references
+			if (aDetails && aDetails.length > 0) {
+				oRm.attr("aria-details", aDetails.join(" "));
+			}
 		}
 
 		if (bIsImageMode) {
