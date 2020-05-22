@@ -2046,6 +2046,7 @@ sap.ui.define([
 
 		// Check
 		assert.strictEqual(oSpy.callCount, 1, "current page was invalidated");
+		localNc.destroy();
 	});
 
 	QUnit.test("Invalidation upon removePage by id", function(assert) {
@@ -2065,6 +2066,7 @@ sap.ui.define([
 
 		// Check
 		assert.strictEqual(oSpy.callCount, 1, "current page was invalidated");
+		localNc.destroy();
 	});
 
 	QUnit.test("Invalidation upon removePage by index", function(assert) {
@@ -2084,6 +2086,7 @@ sap.ui.define([
 
 		// Check
 		assert.strictEqual(oSpy.callCount, 1, "current page was invalidated");
+		localNc.destroy();
 	});
 
 	QUnit.test("No invalidation upon removePage by invalid index", function(assert) {
@@ -2103,6 +2106,66 @@ sap.ui.define([
 
 		// Check
 		assert.strictEqual(oSpy.callCount, 0, "current page was not invalidated");
+		localNc.destroy();
+	});
+
+	QUnit.test("Clear stack upon removeAllPages", function(assert) {
+		var pageA = new Page("pageA", {
+				title: "pageA"
+			}),
+			pageB = new Page("pageB", {
+				title: "pageB"
+			}),
+			localNc = new NavContainer({
+				pages: [
+					pageA, pageB
+				]
+			});
+
+		localNc.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Assert init state
+		assert.strictEqual(localNc._pageStack.length, 1, "page stack is initialized");
+
+		// Act
+		localNc.removeAllPages();
+
+		// Check
+		assert.strictEqual(localNc._pageStack.length, 0, "page stack is cleared");
+		localNc.destroy();
+		pageA.destroy();
+		pageB.destroy();
+	});
+
+	QUnit.test("Clear stack upon removePage", function(assert) {
+		var pageA = new Page("pageA", {
+				title: "pageA"
+			}),
+			pageB = new Page("pageB", {
+				title: "pageB"
+			}),
+			localNc = new NavContainer({
+				pages: [
+					pageA, pageB
+				]
+			});
+
+		localNc.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Assert init state
+		assert.strictEqual(localNc._pageStack.length, 1, "page stack is initialized");
+
+		// Act
+		localNc.removePage(pageA);
+		localNc.removePage(pageB);
+
+		// Check
+		assert.strictEqual(localNc._pageStack.length, 0, "page stack is cleared");
+		localNc.destroy();
+		pageA.destroy();
+		pageB.destroy();
 	});
 
 	QUnit.module("NavContainer in Dialog", {
