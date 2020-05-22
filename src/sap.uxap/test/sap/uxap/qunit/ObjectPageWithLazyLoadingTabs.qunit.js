@@ -9,9 +9,11 @@ function (Core, JSONModel, XMLView) {
 
 	// global vars
 	var	oConfigModel = new JSONModel(),
+		oConfigModelNoTitles = new JSONModel(),
 		iLoadingDelay = 2500;
 
 	oConfigModel.loadData("test-resources/sap/uxap/qunit/model/OPLazyLoadingWithTabs.json", {}, false);
+	oConfigModelNoTitles.loadData("test-resources/sap/uxap/qunit/model/OPLazyLoadingWithTabsNoTitles.json", {}, false);
 
 	// utility function that will be used in these tests
 	var fnGetOneBlock = function () {
@@ -161,4 +163,30 @@ function (Core, JSONModel, XMLView) {
 		assert.ok(!fnSubSectionIsloaded(precedingSubSection), "preceding subsection is still not loaded");
 	});
 
+	QUnit.test("loading in IconTab mode", function (assert) {
+		// Arrange
+		var oObjectPageLayout = this.oView.byId("objectPageContainer").getObjectPageLayoutInstance(),
+			oData = oConfigModelNoTitles.getData(),
+			aSections = oObjectPageLayout.getSections(),
+			oTargetSection;
+
+		fnLoadMoreBlocks(oData);
+		oConfigModel.setData(oData);
+
+		Core.applyChanges();
+		this.clock.tick(iLoadingDelay);
+
+		// Act
+		oTargetSection = aSections[6];
+		oObjectPageLayout.scrollToSection(oTargetSection.getId(), 0, undefined, true); // Simulate click on IconTabBar
+		Core.applyChanges();
+		this.clock.tick(iLoadingDelay);
+
+		// Assert
+		assert.ok(fnSubSectionIsloaded(oTargetSection.getSubSections()[0]),"target subsection is loaded");
+		assert.ok(oObjectPageLayout._grepCurrentTabSectionBases().length === 2, "Section and SubSection are returned");
+
+		// Cleanup
+		oObjectPageLayout.destroy();
+	});
 });
