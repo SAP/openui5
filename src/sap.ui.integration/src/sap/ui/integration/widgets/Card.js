@@ -737,10 +737,13 @@ sap.ui.define([
 
 	Card.prototype._applyDataManifestSettings = function () {
 		var oDataSettings = this._oCardManifest.get(MANIFEST_PATHS.DATA);
+
 		if (!oDataSettings) {
 			this.fireEvent("_cardReady");
 			return;
 		}
+
+		this.bindObject(oDataSettings.path || "/");
 
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();

@@ -152,12 +152,11 @@ sap.ui.define([
 		};
 
 		/**
-		 * Updates model when data is received and set chart as content.
+		 * Creates the chart when data in the model is changed.
 		 *
 		 * @private
 		 */
-		AnalyticalContent.prototype._updateModel = function () {
-			BaseContent.prototype._updateModel.apply(this, arguments);
+		AnalyticalContent.prototype.onDataChanged = function () {
 			this._createChart();
 		};
 
