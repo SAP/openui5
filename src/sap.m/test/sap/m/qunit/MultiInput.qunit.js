@@ -1816,6 +1816,31 @@ sap.ui.define([
 		assert.ok(this.multiInput1.$().hasClass("sapMMultiInputHasTokens"), "MultiInput placeholder doesn't show placeholder");
 	});
 
+	QUnit.test("aria-haspopup should be correctly applied", function(assert) {
+		//Arrange
+		var oMultiInputWithoutSuggestions = new MultiInput({showSuggestion: false}),
+			oMultiInputWithSuggestions =  new MultiInput({});
+
+		oMultiInputWithoutSuggestions.placeAt("content");
+		oMultiInputWithSuggestions.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(oMultiInputWithoutSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be  presented.");
+		assert.strictEqual(oMultiInputWithSuggestions._$input.attr("aria-haspopup"), "listbox", "aria-haspopup should have value 'listbox'.");
+
+		//Act
+		oMultiInputWithSuggestions.setShowSuggestion(false);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(oMultiInputWithSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be  presented.");
+
+		//Clean up
+		oMultiInputWithoutSuggestions.destroy();
+		oMultiInputWithSuggestions.destroy();
+	});
+
 	QUnit.module("Copy/Cut Functionality", {
 		beforeEach: function() {
 			this.multiInput1 = new MultiInput();

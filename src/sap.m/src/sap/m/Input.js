@@ -1756,7 +1756,6 @@ function(
 			}
 
 			this.$("SuggDescr").text(""); // clear suggestion text
-			this.$("inner").removeAttr("aria-haspopup");
 			this.$("inner").removeAttr("aria-activedescendant");
 		};
 
@@ -1781,8 +1780,6 @@ function(
 					}.bind(this), 0);
 				}
 			}
-
-			this.$("inner").attr("aria-haspopup", "true");
 		};
 
 		/**
@@ -2100,7 +2097,6 @@ function(
 					this.openValueStateMessage();
 				}
 				this.$("SuggDescr").text(""); // initialize suggestion ARIA text
-				this.$("inner").removeAttr("aria-haspopup");
 				this.$("inner").removeAttr("aria-activedescendant");
 
 				this._sPrevSuggValue = null;
