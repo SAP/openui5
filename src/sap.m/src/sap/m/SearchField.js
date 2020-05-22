@@ -451,7 +451,6 @@ sap.ui.define([
 			this._bSuggestionSuppressed = true; // never open suggestions after reset
 
 			var bEmpty = !this.getValue();
-			this.clear({ clearButton: true });
 
 			// When a user presses "x":
 			// - always focus input on desktop
@@ -465,6 +464,8 @@ sap.ui.define([
 				) && (active !== oInputElement)) {
 				oInputElement.focus();
 			}
+
+			this.clear({ clearButton: true });
 		} else if (oSrc.id == this.getId() + "-search" && bValidTouchStartTarget) {
 
 			closeSuggestions(this);
