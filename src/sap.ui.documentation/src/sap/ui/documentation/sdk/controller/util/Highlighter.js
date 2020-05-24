@@ -96,9 +96,6 @@ function() {
 			return false;
 		}
 
-		this._aOldTerms.sort();
-		aTerms.sort();
-
 		for (i = 0; i < iOldQueryLength; i++) {
 			if (this._aOldTerms[i] !== aTerms[i]) {
 				return false;
@@ -119,9 +116,8 @@ function() {
 	};
 
 	Highlighter.prototype._processNode = function (oNode) {
-		var sText, oRegEx,
-			i, aMatchedRegEx,
-			bIsNodeReplacementNeeded;
+		var sText, oRegEx, i, j, oMatches, sCurrentMatch,
+			oCurrentMatch, aBlockedIndices, iCurrMatchIndex;
 
 		if (oNode.nodeName === "IFRAME") {
 			this._highlightSubTree(oNode.contentDocument.body);
@@ -133,21 +129,33 @@ function() {
 
 		} else if (oNode.nodeType === document.TEXT_NODE) {
 			sText = oNode.data;
-			aMatchedRegEx = [];
+			oMatches = Object.create(null); // Object containing matched queries and their indices.
+			aBlockedIndices = []; // Array which serves for preservation of the already matched indices.
 
 			for (i = 0; i < this._aRegExTerms.length; i++) {
 				oRegEx = this._aRegExTerms[i];
 
-				if (sText.search(oRegEx) !== -1) {
-					bIsNodeReplacementNeeded = true;
-					aMatchedRegEx.push(oRegEx);
+				while ((oCurrentMatch = oRegEx.exec(sText)) !== null) {
+					iCurrMatchIndex = oCurrentMatch["index"];
+
+					// We check if the iCurrMatchIndex isn't part of the blocked indices.
+					// If it isn't, we process the matched query and its indices. If it is, we don't.
+					if (aBlockedIndices.indexOf(iCurrMatchIndex) === -1) {
+						sCurrentMatch = oCurrentMatch["0"];
+						oMatches[iCurrMatchIndex] = sCurrentMatch;
+
+						// We populate the aBlockedIndices array with the iCurrMatchIndex and
+						// the following indices which belong to the characters of the matched query (sCurrentMatch).
+						for (j = iCurrMatchIndex; j < iCurrMatchIndex + sCurrentMatch.length; j++) {
+							aBlockedIndices.push(j);
+						}
+					}
 				}
 			}
 
-			if (bIsNodeReplacementNeeded) {
-				sText = this._highlightTerms(aMatchedRegEx, sText);
+			if (Object.keys(oMatches).length !== 0) {
+				sText = this._highlightTerms(oMatches, sText);
 				this._replaceNode(oNode, sText);
-				bIsNodeReplacementNeeded = false;
 			}
 		}
 	};
@@ -166,8 +174,10 @@ function() {
 			return accumulator;
 		}, []);
 
-		// we return only the unique terms
-		return aUniqueTerms;
+		// we return only the unique terms sorted in descending order by their length
+		return aUniqueTerms.sort(function(a, b) {
+			  return b.length - a.length;
+		});
 	};
 
 	Highlighter.prototype._replaceNode = function (oNode, sHtml) {
@@ -205,24 +215,14 @@ function() {
 		this._toggleMutationObserver(true);
 	};
 
-	Highlighter.prototype._highlightTerms = function (aMatchedRegEx, sText) {
+	Highlighter.prototype._highlightTerms = function (oMatches, sText) {
 		var sOpeningTag = this._bUseExternalStyles ? '<span class="highlightedText">'
 			: '<span class="defaultHighlightedText">',
 			sClosingTag = '</span>',
-			sCurrentMatch,
-			oCurrentMatch,
-			oMatches = {},
 			sCurrMatch,
 			iUpdatedIndex,
 			iCounter = 0,
 			iIndex;
-
-		aMatchedRegEx.forEach(function (oRegex) {
-			while ((oCurrentMatch = oRegex.exec(sText)) !== null) {
-				sCurrentMatch = oCurrentMatch["0"];
-				oMatches[oCurrentMatch["index"]] = sCurrentMatch;
-			}
-		});
 
 		for (iIndex in oMatches) {
 			iUpdatedIndex = +iIndex + (iCounter * (sOpeningTag.length + sClosingTag.length));
