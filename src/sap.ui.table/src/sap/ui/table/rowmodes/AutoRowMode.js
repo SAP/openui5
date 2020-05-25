@@ -72,7 +72,7 @@ sap.ui.define([
 			oRowElement.classList.add("sapUiTableTr");
 
 			if (iRowContentHeight > 0) {
-				oRowElement.style.height = this.getBaseRowHeightOfTable() + "px";
+				oRowElement.style.height = oRowMode.getBaseRowHeightOfTable() + "px";
 			}
 
 			oRowContainer.appendChild(oTableElement);
