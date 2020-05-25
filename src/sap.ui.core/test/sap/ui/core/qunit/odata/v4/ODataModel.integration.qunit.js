@@ -23988,6 +23988,7 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			// combined late property requests
+			// see that DID does not occur twice in $Select when requested late
 			that.expectRequest("As(1)/AtoCs(2)?$select=CtoD&$expand=CtoD($select=DID,DValue)", {
 					CtoD : {
 						DID : 3,

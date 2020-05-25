@@ -2253,7 +2253,7 @@ sap.ui.define([
 	 * The function does not reduce a path to a collection-valued navigation property. This would
 	 * possibly add a late property to an existing list binding (causing one request for each
 	 * row), or it would possibly try to merge two list bindings with conflicting parameters.
-	 * However the property itself and subsequent properties may be reduced.
+	 * However the property itself and subsequent properties are possible partners to be reduced.
 	 *
 	 * The metadata for <code>sPath</code> must be available synchronously.
 	 *
