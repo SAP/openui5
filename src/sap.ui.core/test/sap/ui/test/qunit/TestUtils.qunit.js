@@ -25,12 +25,13 @@ sap.ui.define([
 			}],
 			"DELETE /Foo/bar" : {
 				code : 500,
-				headers : {"Content-Type" : "text/plain;charset=utf-8"},
 				message : "Guru meditation"
+			},
+			"MERGE /Foo/bar" : {
+				code: 204
 			},
 			"PATCH /Foo/bar" : {
 				code: 200,
-				headers : {"Content-Type" : "application/json;charset=utf-8"},
 				message: '{"@odata.etag":"abc123"}'
 			},
 			"POST /Foo/bar" : {code: 200, source: "bar.json"},
@@ -134,18 +135,40 @@ sap.ui.define([
 		url : "/Foo/any",
 		status : 204,
 		responseHeaders : {
-			"OData-Version" : "4.0",
-			"Content-Type" : "text/plain;charset=utf-8"
+			"OData-Version" : "4.0"
 		}
 	}, {
 		method : "DELETE",
 		url : "/Foo/bar",
 		status : 500,
 		responseHeaders : {
-			"OData-Version" : "4.0",
-			"Content-Type" : "text/plain;charset=utf-8"
+			"OData-Version" : "4.0"
 		},
 		responseBody : "Guru meditation"
+	}, {
+		method : "MERGE",
+		url : "/Foo/any",
+		requestHeaders : {
+			"Content-Type" : "application/json"
+		},
+		requestBody : '{"foo":"bar"}',
+		status : 204,
+		responseHeaders : {
+			"dataserviceversion" : "2.0"
+		},
+		responseBody : ''
+	}, {
+		method: "MERGE",
+		url : "/Foo/bar",
+		requestHeaders : {
+			"Content-Type" : "application/json"
+		},
+		requestBody : '{"foo":"bar"}',
+		status : 204,
+		responseHeaders : {
+			"dataserviceversion" : "2.0"
+		},
+		responseBody : ''
 	}, { // "auto responder"
 		method : "PATCH",
 		url : "/Foo/any",
@@ -155,8 +178,7 @@ sap.ui.define([
 		requestBody : '{"foo":"bar"}',
 		status : 204,
 		responseHeaders : {
-			"OData-Version" : "4.0",
-			"Content-Type" : "text/plain;charset=utf-8"
+			"OData-Version" : "4.0"
 		},
 		responseBody : ''
 	}, { // "server fixture"
@@ -168,8 +190,7 @@ sap.ui.define([
 		requestBody : '{"@odata.etag":"abc123"}',
 		status : 200,
 		responseHeaders : {
-			"OData-Version" : "4.0",
-			"Content-Type" : "application/json;charset=utf-8"
+			"OData-Version" : "4.0"
 		},
 		responseBody : '{"@odata.etag":"abc123"}'
 	}, {
@@ -230,7 +251,8 @@ sap.ui.define([
 		var sRequest = oFixture.method + " " + oFixture.url;
 
 		QUnit.test("useFakeServer: " + sRequest + " (direct)", function (assert) {
-			var mHeaders = {"OData-Version" : "4.0"};
+			var mHeaders = oFixture.method === "MERGE" ? {"dataserviceversion" : "2.0"}
+				: {"OData-Version" : "4.0"};
 
 			Object.keys(oFixture.requestHeaders || {}).forEach(function (sKey) {
 				mHeaders[sKey] = oFixture.requestHeaders[sKey];
@@ -249,13 +271,25 @@ sap.ui.define([
 		});
 
 		QUnit.test("useFakeServer: " + sRequest + " (batch)", function (assert) {
-			var sUrl = oFixture.url.replace("/Foo/", "");
+			var mBatchHeaders = {},
+				mInitialHeaders = {},
+				sUrl = oFixture.url.replace("/Foo/", "");
+
+			if (oFixture.method === "MERGE") {
+				mInitialHeaders["dataserviceversion"] = "2.0";
+				mBatchHeaders["dataserviceversion"] = "2.0";
+			} else {
+				mInitialHeaders["OData-Version"] = "4.0";
+				mBatchHeaders["OData-Version"] = "4.0";
+			}
+
+			mBatchHeaders["Content-Type"] = "multipart/mixed;boundary=batch_id-0123456789012-345";
 
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture);
 			this.oLogMock.expects("info").withExactArgs(oFixture.method + " " + oFixture.url,
 				'{"If-Match":undefined}', "sap.ui.test.TestUtils");
 
-			return request("POST", "/Foo/$batch", {"OData-Version" : "4.0"},
+			return request("POST", "/Foo/$batch", mInitialHeaders,
 				"--batch_id-0123456789012-345\r\n"
 				+ "Content-Type: application/http\r\n"
 				+ "Content-Transfer-Encoding: binary\r\n"
@@ -281,10 +315,8 @@ sap.ui.define([
 					+ "--batch_id-0123456789012-345--\r\n",
 					"body"
 				);
-				assert.strictEqual(oXHR.getAllResponseHeaders(), headerString({
-					"OData-Version": "4.0",
-					"Content-Type": "multipart/mixed;boundary=batch_id-0123456789012-345"
-				}), "batch headers");
+				assert.strictEqual(oXHR.getAllResponseHeaders(), headerString(mBatchHeaders),
+					"batch headers");
 			});
 		});
 	});
@@ -353,7 +385,6 @@ sap.ui.define([
 				"",
 				"HTTP/1.1 204 ", // "auto responder"
 				"OData-Version: 4.0",
-				"Content-Type: text/plain;charset=utf-8",
 				"",
 				"", // <-- No Content
 				"--changeset_id-1538663822135-20",
@@ -363,7 +394,6 @@ sap.ui.define([
 				"",
 				"HTTP/1.1 200 ", // "server fixture"
 				"OData-Version: 4.0",
-				"Content-Type: application/json;charset=utf-8",
 				"",
 				'{"@odata.etag":"abc123"}',
 				"--changeset_id-1538663822135-20--",
