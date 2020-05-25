@@ -67,6 +67,8 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.vmControlId - ID of the variant management control
 		 * @param {function} mPropertyBag.callback - Callback that will be called after a variant has been applied
 		 * @param {boolean} [mPropertyBag.callAfterInitialVariant] - The callback will also be called after the initial variant is applied
+		 *
+		 * @public
 		 */
 		attachVariantApplied: function(mPropertyBag) {
 			var oControl = mPropertyBag.selector.id && sap.ui.getCore().byId(mPropertyBag.selector.id) || mPropertyBag.selector;
@@ -87,6 +89,8 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector of the control
 		 * @param {string} mPropertyBag.vmControlId - ID of the variant management control
+		 *
+		 * @public
 		 */
 		detachVariantApplied: function(mPropertyBag) {
 			var oControl = mPropertyBag.selector.id && sap.ui.getCore().byId(mPropertyBag.selector.id) || mPropertyBag.selector;
