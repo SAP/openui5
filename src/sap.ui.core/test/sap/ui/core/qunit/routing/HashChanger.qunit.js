@@ -158,6 +158,41 @@ sap.ui.define([
 		oHashChanger.destroy();
 	});
 
+	QUnit.test("Should only replace the hash with the existence of a base tag", function(assert) {
+		// create a base tag and insert into head tag
+		var oHeadTag = document.getElementsByTagName("head").item(0);
+		var oBaseTag = document.createElement("base");
+		oBaseTag.setAttribute("href", "/foo/bar");
+		oHeadTag.appendChild(oBaseTag);
+
+		var sPath = window.location.pathname,
+			sNewHash = "newHashWithBaseHref",
+			aCalls = [];
+		var fnHashChanged = function(oEvent) {
+			aCalls.push(oEvent.getParameter("newHash"));
+		};
+		var done = assert.async();
+
+		var oHashChanger = new HashChanger();
+		oHashChanger.init();
+		oHashChanger.attachEvent("hashChanged", fnHashChanged);
+
+		// Act
+		// If the base tag were taken into consideration during replacing hash, the whole site would be
+		// redirected to an invalid url, and the test would not run to the end.
+		oHashChanger.replaceHash(sNewHash);
+
+		// A timeout is needed because changing the url is async
+		setTimeout(function() {
+			assert.equal(aCalls.length, 1, "hash is changed once");
+			assert.strictEqual(aCalls[0], sNewHash, "The hashChanged event parameter is correct");
+			assert.strictEqual(window.location.pathname, sPath, "replaceHash should keep the location path unchanged");
+
+			oHeadTag.removeChild(oBaseTag);
+			done();
+		}, 100);
+	});
+
 	QUnit.test("Should use a Singleton ", function (assert) {
 		//System under Test + Act
 
