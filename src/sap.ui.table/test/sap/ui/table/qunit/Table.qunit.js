@@ -473,6 +473,25 @@ sap.ui.define([
 		oErrorLogSpy.restore();
 	});
 
+	QUnit.test("RowActionCount", function(assert) {
+		assert.strictEqual(oTable.getRowActionCount(), 0, "Default is 0");
+
+		oTable.setRowActionCount(1);
+		assert.equal(oTable.getRowActionCount(), 1, "Set to 1, count is 1");
+
+		oTable.setRowActionCount(2);
+		assert.equal(oTable.getRowActionCount(), 2, "Set to 2, count is 2");
+
+		oTable.setRowActionCount(0);
+		assert.equal(oTable.getRowActionCount(), 0, "Set to 0, count is 0");
+
+		oTable.setRowActionCount(3);
+		assert.equal(oTable.getRowActionCount(), 2, "Set to 3, count is 2");
+
+		oTable.setRowActionCount(-1);
+		assert.equal(oTable.getRowActionCount(), 0, "Set to -1, count is 0");
+	});
+
 	QUnit.test("EnableColumnReordering", function(assert) {
 		oTable.setEnableColumnReordering(true);
 		assert.equal(oTable.getEnableColumnReordering(), true, "Reordering is allowed");
@@ -1031,28 +1050,28 @@ sap.ui.define([
 	});
 
 	QUnit.test("Row Actions", function(assert) {
-		assert.equal(TableUtils.getRowActionCount(oTable), 0, "Table has no row actions");
-		assert.ok(!oTable.$().hasClass("sapUiTableRAct"), "No CSS class sapUiTableRAct");
-		assert.ok(!oTable.$().hasClass("sapUiTableRActS"), "No CSS class sapUiTableRActS");
-		assert.ok(!oTable.$("sapUiTableRowActionScr").length, "Action Area");
+		assert.equal(oTable.getRowActionCount(), 0, "RowActionCount is 0: Table has no row actions");
+		assert.ok(!oTable.$().hasClass("sapUiTableRAct"), "RowActionCount is 0: No CSS class sapUiTableRAct");
+		assert.ok(!oTable.$().hasClass("sapUiTableRActS"), "RowActionCount is 0: No CSS class sapUiTableRActS");
+		assert.ok(!oTable.$("sapUiTableRowActionScr").length, "RowActionCount is 0: No action area");
+
 		oTable.setRowActionCount(2);
 		sap.ui.getCore().applyChanges();
-		assert.equal(TableUtils.getRowActionCount(oTable), 0, "Table still has no row actions");
-		assert.ok(!oTable.$().hasClass("sapUiTableRAct"), "No CSS class sapUiTableRAct");
-		assert.ok(!oTable.$().hasClass("sapUiTableRActS"), "No CSS class sapUiTableRActS");
-		assert.ok(!oTable.$("sapUiTableRowActionScr").length, "Action Area");
+		assert.ok(!oTable.$().hasClass("sapUiTableRAct"), "No row action template: No CSS class sapUiTableRAct");
+		assert.ok(!oTable.$().hasClass("sapUiTableRActS"), "No row action template: No CSS class sapUiTableRActS");
+		assert.ok(!oTable.$("sapUiTableRowActionScr").length, "No row action template: No action area");
+
 		oTable.setRowActionTemplate(new RowAction());
 		sap.ui.getCore().applyChanges();
-		assert.equal(TableUtils.getRowActionCount(oTable), 2, "Table has 2 row actions");
 		assert.ok(oTable.$().hasClass("sapUiTableRAct"), "CSS class sapUiTableRAct");
 		assert.ok(!oTable.$().hasClass("sapUiTableRActS"), "No CSS class sapUiTableRActS");
-		assert.ok(oTable.$("sapUiTableRowActionScr").length, "Action Area available");
+		assert.ok(oTable.$("sapUiTableRowActionScr").length, "Action area exists");
+
 		oTable.setRowActionCount(1);
 		sap.ui.getCore().applyChanges();
-		assert.equal(TableUtils.getRowActionCount(oTable), 1, "Table has 1 row action");
-		assert.ok(!oTable.$().hasClass("sapUiTableRAct"), "No CSS class sapUiTableRAct");
-		assert.ok(oTable.$().hasClass("sapUiTableRActS"), "CSS class sapUiTableRActS");
-		assert.ok(oTable.$("sapUiTableRowActionScr").length, "Action Area available");
+		assert.ok(!oTable.$().hasClass("sapUiTableRAct"), "RowActionCount is 1: No CSS class sapUiTableRAct");
+		assert.ok(oTable.$().hasClass("sapUiTableRActS"), "RowActionCount is 1: CSS class sapUiTableRActS");
+		assert.ok(oTable.$("sapUiTableRowActionScr").length, "Action area exists");
 	});
 
 	QUnit.test("Row Settings Template", function(assert) {

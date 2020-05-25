@@ -24,16 +24,20 @@ sap.ui.define(['sap/ui/table/Row'],
 	RowActionRenderer.render = function(rm, oAction) {
 		rm.openStart("div", oAction);
 		rm.class("sapUiTableAction");
-		if (!(oAction.getParent() instanceof Row)) {
+
+		if (!oAction.getRow()) {
 			rm.style("display", "none");
 		}
+
 		if (!oAction.getVisible()) {
 			rm.class("sapUiTableActionHidden");
 		}
+
 		var sTooltip = oAction.getTooltip_AsString();
 		if (sTooltip) {
 			rm.attr("title", sTooltip);
 		}
+
 		rm.openEnd();
 
 		var aIcons = oAction.getAggregation("_icons");
