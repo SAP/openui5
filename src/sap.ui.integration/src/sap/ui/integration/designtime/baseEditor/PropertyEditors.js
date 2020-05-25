@@ -563,6 +563,9 @@ sap.ui.define([
 	};
 
 	PropertyEditors.prototype._initLayout = function (sLayout) {
+		// Destory old layout
+		this.destroyContent();
+
 		var sPath = this._getLayoutPath(sLayout);
 
 		this._bLayoutReady = false;

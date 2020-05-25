@@ -148,6 +148,26 @@ sap.ui.define([
 				assert.strictEqual(oPropertyEditors._getPropertyEditors()[0].getValue(), "baz value", "then priority is over config object");
 			});
 		});
+
+		QUnit.test("when the layout is changed", function (assert) {
+			var oPropertyEditors = new PropertyEditors({
+				tags: "foo"
+			});
+
+			this.oBaseEditor.addContent(oPropertyEditors);
+			this.oBaseEditor.placeAt("qunit-fixture");
+
+			return oPropertyEditors.ready().then(function () {
+				sap.ui.getCore().applyChanges();
+				var oOldContent = oPropertyEditors.getContent();
+				oPropertyEditors.setLayout("form");
+				assert.strictEqual(
+					oOldContent.bIsDestroyed || oOldContent._bIsBeingDestroyed,
+					true,
+					"then the old layout is properly cleaned up"
+				);
+			});
+		});
 	});
 
 	QUnit.module("Initialisation via setters", {
