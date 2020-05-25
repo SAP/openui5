@@ -201,6 +201,12 @@ sap.ui.define([
 			}
 			return Promise.resolve(false);
 		},
+		_determineSelector: function(bIsRunningApp, oDescriptor) {
+			return bIsRunningApp ? oRootControlRunningApp : {
+				appId: oDescriptor["sap.app"].id,
+				appVersion: oDescriptor["sap.app"].applicationVersion.version
+			};
+		},
 		/**
 		 * @param {boolean} bSaveAsFromRta - Boolean value which tells if 'Save As' is triggered from the UI adaptation header bar
 		 * @param {boolean} bCopyUnsavedChanges - Boolean value which tells if the UI changes needs to be copied
@@ -215,12 +221,25 @@ sap.ui.define([
 			var bIsS4HanaCloud;
 			var oAppVariantSaveClosure;
 			var oDescriptor = fnGetDescriptor();
+			var bIsRunningApp = true;
 
-			if (oSelectedAppVariant && oSelectedAppVariant["sap.app"].id === oDescriptor["sap.app"].id) {
+			if (
+				oSelectedAppVariant
+				&& oSelectedAppVariant["sap.app"].id === oDescriptor["sap.app"].id
+			) {
+				// When an app variant is created on top of base app/app variant from the app variant overview dialog and root control is from the latter
 				bCopyUnsavedChanges = true;
 				oDescriptor = merge({}, oSelectedAppVariant);
 				oSelectedAppVariant = null;
+			} else if (oSelectedAppVariant) {
+				// When an app variant is created on top of app variant from the app variant overview dialog and root control is from base application
+				bIsRunningApp = false;
+				oDescriptor = merge({}, oSelectedAppVariant);
+				oSelectedAppVariant = null;
 			}
+
+			// Determine the selector
+			var vSelector = this._determineSelector(bIsRunningApp, oDescriptor);
 
 			return new Promise(function(resolve) {
 				var fnProcessSaveAsDialog = function() {
@@ -229,18 +248,19 @@ sap.ui.define([
 
 				var fnCreateInlineChanges = function(oAppVariantSpecificData) {
 					BusyIndicator.show();
-					return oAppVariantManager.createAllInlineChanges(oAppVariantSpecificData);
+					return oAppVariantManager.createAllInlineChanges(oAppVariantSpecificData, vSelector);
 				};
 
 				var fnAddChangesToPersistence = function(aChanges) {
 					var aAllInlineChanges = aChanges.slice();
-					return AppVariantUtils.addChangesToPersistence(aAllInlineChanges, oRootControlRunningApp);
+					return AppVariantUtils.addChangesToPersistence(aAllInlineChanges, vSelector);
 				};
 
 				var fnCreateAppVariant = function() {
 					var sAppVariantId = AppVariantUtils.getNewAppVariantId();
+
 					// Based on the key user provided info, app variant descriptor is created
-					return oAppVariantManager.createAppVariant(sAppVariantId)
+					return oAppVariantManager.createAppVariant(sAppVariantId, vSelector)
 						.catch(function(oError) {
 							var sMessageKey = oError.messageKey;
 							if (!sMessageKey) {
@@ -313,7 +333,6 @@ sap.ui.define([
 				sap.ui.require(["sap/ui/rta/appVariant/AppVariantManager"], function(AppVariantManager) {
 					if (!oAppVariantManager) {
 						oAppVariantManager = new AppVariantManager({
-							rootControl: oRootControlRunningApp,
 							commandSerializer: oCommandSerializer,
 							layer: sCurrentLayer
 						});

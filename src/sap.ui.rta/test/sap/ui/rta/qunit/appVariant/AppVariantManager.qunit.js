@@ -55,7 +55,7 @@ function (
 			var oRootControl = new Control();
 			var oRtaCommandStack = new Stack();
 			this.oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: oRootControl});
-			this.oAppVariantManager = new AppVariantManager({rootControl: oRootControl, commandSerializer: this.oCommandSerializer, layer: Layer.CUSTOMER});
+			this.oAppVariantManager = new AppVariantManager({commandSerializer: this.oCommandSerializer, layer: Layer.CUSTOMER});
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -127,7 +127,7 @@ function (
 				assert.strictEqual(oAppVariantData.subTitle, "App Variant Subtitle", "then the subtitle is correct");
 				assert.strictEqual(oAppVariantData.description, "App Variant Description", "then the description is correct");
 				assert.strictEqual(oAppVariantData.icon, "App Variant Icon", "then the icon is correct");
-				assert.strictEqual(oAppVariantData.idRunningApp, "TestId", "then the running app id is correct");
+				assert.strictEqual(oAppVariantData.referenceAppId, "TestId", "then the running app id is correct");
 			});
 		});
 	});
@@ -155,7 +155,7 @@ function (
 
 			var oRtaCommandStack = new Stack();
 			this.oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: this.oAppComponent});
-			this.oAppVariantManager = new AppVariantManager({rootControl: this.oAppComponent, commandSerializer: this.oCommandSerializer, layer: Layer.CUSTOMER});
+			this.oAppVariantManager = new AppVariantManager({commandSerializer: this.oCommandSerializer, layer: Layer.CUSTOMER});
 
 			oServer = sinon.fakeServer.create();
 
@@ -172,8 +172,7 @@ function (
 
 			this.oAppVariantData = {
 				description: "App Variant Description",
-				idRunningApp : "TestId",
-				idBaseApp: "TestIdBaseApp",
+				referenceAppId : "TestId",
 				title : "App Variant Title",
 				subTitle: "App Variant Subtitle",
 				icon: "App Variant Icon"
@@ -192,7 +191,7 @@ function (
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oAppComponent);
 			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
-			return this.oAppVariantManager.createAllInlineChanges(this.oAppVariantData)
+			return this.oAppVariantManager.createAllInlineChanges(this.oAppVariantData, this.oAppComponent)
 				.then(function(aAllInlineChanges) {
 					assert.equal(fnCreateChangesSpy.callCount, aAllInlineChanges.length, "then ChangesWriteAPI.create method is called " + fnCreateChangesSpy.callCount + " times");
 					aAllInlineChanges.forEach(function(oInlineChange) {
@@ -244,7 +243,7 @@ function (
 			var oRtaCommandStack = new Stack();
 			this.oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: this.oRootControl});
 
-			this.oAppVariantManager = new AppVariantManager({rootControl: this.oRootControl, commandSerializer: this.oCommandSerializer, layer: Layer.CUSTOMER});
+			this.oAppVariantManager = new AppVariantManager({commandSerializer: this.oCommandSerializer, layer: Layer.CUSTOMER});
 			oServer = sinon.fakeServer.create();
 		},
 		afterEach: function () {
@@ -255,7 +254,7 @@ function (
 		QUnit.test("When createAppVariant() method is called", function (assert) {
 			var fnSaveAsAppVariantStub = sandbox.stub(AppVariantWriteAPI, "saveAs").resolves();
 
-			return this.oAppVariantManager.createAppVariant("customer.appvar.id")
+			return this.oAppVariantManager.createAppVariant("customer.appvar.id", this.oRootControl)
 				.then(function() {
 					assert.ok(fnSaveAsAppVariantStub.calledWithExactly({selector: this.oRootControl, id: "customer.appvar.id", layer: Layer.CUSTOMER, version: "1.0.0"}));
 				}.bind(this));
