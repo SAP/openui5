@@ -4222,7 +4222,8 @@ sap.ui.define([
 
 			if (aParts) {
 				for (i = 0; i < aParts.length; i++) {
-					if ( !that.getModel(aParts[i].model) ) {
+					// check if model exists - ignore static bindings
+					if ( !that.getModel(aParts[i].model) && aParts[i].value === undefined) {
 						return false;
 					}
 				}
@@ -4497,7 +4498,7 @@ sap.ui.define([
 					if (aParts && aParts.length > 1) {
 						// composite binding: update required  when a part use the model with the same name
 						for (i = 0; i < aParts.length; i++) {
-							if ( aParts[i].model == sModelName ) {
+							if ( aParts[i].model == sModelName && aParts[i].value === undefined) {
 								oBinding.aBindings[i].setContext(oContext);
 							}
 						}
@@ -4507,11 +4508,9 @@ sap.ui.define([
 							oBinding.setContext(oContext);
 						}
 
-					} else {
+					} else if (aParts[0].model == sModelName && aParts[0].value === undefined) {
 						// simple property binding: update required when the model has the same name
-						if ( aParts[0].model == sModelName) {
-							oBinding.setContext(oContext);
-						}
+						oBinding.setContext(oContext);
 					}
 				}
 			}
