@@ -7,6 +7,11 @@ sap.ui.define(['sap/base/assert'], function(assert) {
 	/**
 	 * Sorts the given array in-place and removes any duplicates (identified by "===").
 	 *
+	 * Uses Array#sort()
+	 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+	 *
+	 * Note: In IE11 a stable sorting is not supported.
+	 *
 	 * Use <code>jQuery.uniqueSort()</code> for arrays of DOMElements.
 	 *
 	 * @function
@@ -18,19 +23,19 @@ sap.ui.define(['sap/base/assert'], function(assert) {
 	 */
 	var fnUniqueSort = function(aArray) {
 		assert(aArray instanceof Array, "uniqueSort: input parameter must be an Array");
-		var l = aArray.length;
-		if ( l > 1 ) {
+		var iLength = aArray.length;
+		if ( iLength > 1 ) {
 			aArray.sort();
 			var j = 0;
-			for (var i = 1; i < l; i++) {
+			for (var i = 1; i < iLength; i++) {
 				// invariant: i is the entry to check, j is the last unique entry known so far
-				if ( aArray[i] !== aArray[j] ) {
+				if ( aArray.indexOf(aArray[i]) === i ) {
 					aArray[++j] = aArray[i];
 				}
 			}
 			// cut off the rest - if any
-			if ( ++j < l ) {
-				aArray.splice(j, l - j);
+			if ( ++j < iLength ) {
+				aArray.splice(j, iLength - j);
 			}
 		}
 		return aArray;
