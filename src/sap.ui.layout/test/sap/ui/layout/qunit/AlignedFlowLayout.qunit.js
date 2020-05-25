@@ -477,22 +477,25 @@ sap.ui.require([
 
 			var spy = this.spy;
 
-			// wait some time after the initial rendering cycle finishes
-			// to ensure that the reflows caused by the initial rendering
-			// cycle is finish
-			setTimeout(function() {
-				var oLayoutDomRef = oAlignedFlowLayout.getDomRef();
-				var oReflowSpy = spy(oAlignedFlowLayout, "reflow");
-
-				// act + arrange, update height of the AlignedFlowLayout control,
-				// this should not trigger a function call to the .reflow() method
-				oLayoutDomRef.style.height = "100px";
-
-				var fLayoutWidth = Number.parseFloat(oLayoutDomRef.offsetWidth);
+			// wait some time until the browser layout is finished
+			window.requestAnimationFrame(function() {
+				var oLayoutDomRef = oAlignedFlowLayout.getDomRef(),
+					oEndItemDomRef = oAlignedFlowLayout.getDomRef("endItem"),
+					oReflowSpy = spy(oAlignedFlowLayout, "reflow"),
+					fLayoutWidth = oLayoutDomRef.offsetWidth,
+					fEndItemWidth = oEndItemDomRef.offsetWidth;
 
 				// override the AlignedFlowLayout's internal field member named
 				// "fLayoutWidth", so that no width change is detected by the control
 				oAlignedFlowLayout.fLayoutWidth = fLayoutWidth;
+
+				// override the AlignedFlowLayout's internal field member named
+				// "fEndItemWidth", so that no width change is detected by the control
+				oAlignedFlowLayout.fEndItemWidth = fEndItemWidth;
+
+				// act + arrange, update height of the AlignedFlowLayout control,
+				// this should not trigger a function call to the .reflow() method
+				oLayoutDomRef.style.height = "100px";
 
 				// wait some time until the browser layout is finished
 				setTimeout(fnAfterBrowserReflow, 100);
@@ -509,7 +512,7 @@ sap.ui.require([
 					oAlignedFlowLayout.destroy();
 					done();
 				}
-			}, 100);
+			});
 		});
 
 		QUnit.test("it should not trigger unnecessary function calls to the .reflow() method to" +
@@ -518,7 +521,7 @@ sap.ui.require([
 			var done = assert.async();
 
 			// system under test
-			var oAlignedFlowLayout = new AlignedFlowLayout({
+			var oAlignedFlowLayout = new AlignedFlowLayout("lorem", {
 				content: [
 					new Input()
 				],
@@ -539,23 +542,26 @@ sap.ui.require([
 
 			var spy = this.spy;
 
-			// wait some time after the initial rendering cycle finishes
-			// to ensure that the reflows caused by the initial rendering
-			// cycle is finish
-			setTimeout(function() {
-				var oEndItemDomRef = oAlignedFlowLayout.getDomRef("endItem");
-				var oReflowSpy = spy(oAlignedFlowLayout, "reflow");
+			// wait some time until the browser layout is finished
+			window.requestAnimationFrame(function() {
+				var oLayoutDomRef = oAlignedFlowLayout.getDomRef(),
+					oEndItemDomRef = oAlignedFlowLayout.getDomRef("endItem"),
+					oReflowSpy = spy(oAlignedFlowLayout, "reflow"),
+					fLayoutWidth = oLayoutDomRef.offsetWidth,
+					fEndItemWidth = oEndItemDomRef.offsetWidth;
+
+				// override the AlignedFlowLayout's internal field member named
+				// "fLayoutWidth", so that no width change is detected by the control
+				oAlignedFlowLayout.fLayoutWidth = fLayoutWidth;
+
+				// override the AlignedFlowLayout's internal field member named
+				// "fEndItemWidth", so that no width change is detected by the control
+				oAlignedFlowLayout.fEndItemWidth = fEndItemWidth;
 
 				// act + arrange, update height of the item holding the `endContent`
 				// aggregation, this should not trigger a function call to the .reflow()
 				// method
 				oEndItemDomRef.style.height = "40px";
-
-				var fEndItemWidth = Number.parseFloat(oEndItemDomRef.offsetWidth);
-
-				// override the AlignedFlowLayout's internal field member named
-				// "fEndItemWidth", so that no width change is detected by the control
-				oAlignedFlowLayout.fEndItemWidth = fEndItemWidth;
 
 				// wait some time until the browser layout is finished
 				setTimeout(fnAfterBrowserReflow, 100);
@@ -573,7 +579,7 @@ sap.ui.require([
 					oAlignedFlowLayout.destroy();
 					done();
 				}
-			}, 100);
+			});
 		});
 	}
 
