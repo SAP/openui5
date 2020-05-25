@@ -33,6 +33,17 @@
             "type": "BCP"
           }
         ]
+      },
+      {
+        "id": "699f269abd2338610949f189c67d3798bc5a7f7a",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar - proper appointment background color when selected+not focused+hovered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2040306340"
+          }
+        ]
       }
     ]
   }

@@ -34,6 +34,17 @@
             "reference": "2070175609"
           }
         ]
+      },
+      {
+        "id": "429ff4929864d87da89c84733fb041c725cb0c53",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: No lazyLoading during animation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970593988"
+          }
+        ]
       }
     ]
   }

@@ -12,6 +12,17 @@
             "reference": "2070232933"
           }
         ]
+      },
+      {
+        "id": "b48dc2152f4a50d141b68f01ec229aaf43f2d986",
+        "type": "FIX",
+        "text": " sap.ui.integration.cards.CalendarContent: correct date is selected after resize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070197035"
+          }
+        ]
       }
     ]
   }

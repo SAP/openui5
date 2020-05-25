@@ -338,6 +338,129 @@
             "reference": "2070219620"
           }
         ]
+      },
+      {
+        "id": "3d1a98357bc3558c6387277ac08ae93e52c91b7a",
+        "type": "FEATURE",
+        "text": " sap.m.Breadcrumbs: Set aria-current to the _currentLocation aggregation",
+        "references": []
+      },
+      {
+        "id": "3ad9896ee186113deb17686e23024e30098d4b98",
+        "type": "FEATURE",
+        "text": " sap.m.Image: Introduce new association ariaDetails",
+        "references": []
+      },
+      {
+        "id": "300920eb88210a0aa9f5fe487d80b96dd199d9b3",
+        "type": "FEATURE",
+        "text": " sap.m.MultiComboBox: Accessibility in the options list enhanced",
+        "references": []
+      },
+      {
+        "id": "d6067fc193b7517c0b14a6389f868f4da066c1fe",
+        "type": "FEATURE",
+        "text": " sap.m.Toolbar: Introduce new ariaHasPopup property",
+        "references": []
+      },
+      {
+        "id": "1a82d23868491ea03ad161098a5108a4a0f2e879",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: button in the popover footer is now properly displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070139214"
+          }
+        ]
+      },
+      {
+        "id": "a5cb2f8d3a453d69c68c17bd852591218762a390",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Prevent rerendering of the control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070235127"
+          }
+        ]
+      },
+      {
+        "id": "40cd023f09a361a8c4f5f7b478c9dbc55e1ef946",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: fixed concurrent measuring",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070222480"
+          }
+        ]
+      },
+      {
+        "id": "99b35a5c0396c2b2c55dc8ed7b8491e1a9f0db7d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendarHeader - View switch remains the same after overflow",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2040306340"
+          }
+        ]
+      },
+      {
+        "id": "9dc5807af09b4a94415d1fe3ee5c3a020c1de655",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Reorder to focus before clear when Reset is pressed on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2040289888"
+          }
+        ]
+      },
+      {
+        "id": "fd3b087d7d11adcec8450fcebf6f43840c43e6a3",
+        "type": "FIX",
+        "text": " sap.m.StepInput - key navigation now works fine in table after pressing of F2",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000013742020"
+          }
+        ]
+      },
+      {
+        "id": "308ddf92cb6adcaab9dd96d31e5816e22356f63a",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: demokit sample now working properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070232836"
+          }
+        ]
+      },
+      {
+        "id": "673bccc3877c39e159d6f85bd624522b9b2d92bd",
+        "type": "FIX",
+        "text": " sap.m.Tile: doesn\u0027t set position if hidden from parent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751294 0000276828 2020"
+          }
+        ]
+      },
+      {
+        "id": "b48dc2152f4a50d141b68f01ec229aaf43f2d986",
+        "type": "FIX",
+        "text": " sap.ui.integration.cards.CalendarContent: correct date is selected after resize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070197035"
+          }
+        ]
       }
     ]
   }
