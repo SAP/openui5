@@ -37,7 +37,7 @@
                 <CheckBox text="{i18n>LIVE_EDITOR_LIVE_PREVIEW_TEXT}"
                           selected="{viewModel>/autoPreview}"/>
             </Toolbar>
-            <core:HTML id="outputWindowWrapper" content="&#x3C;div &#x3C;/div&#x3E;"/>
+            <core:HTML id="outputWindowWrapper" content="&#x3C;div&#x3E; &#x3C;/div&#x3E;"/>
         </VBox>
     </html:div>
 </mvc:View>
