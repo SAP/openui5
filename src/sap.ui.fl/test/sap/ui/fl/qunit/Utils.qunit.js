@@ -126,26 +126,25 @@ function(
 			var sAppVariantName = "myTestVariant";
 			var oControl = {};
 
-			var oComponentMock = {
-				getMetadata: function() {
-					return {
-						getName: function() {
-							return sComponentName;
-						},
-						getEntry: function(sEntryKey) {
-							return sEntryKey === "sap.ui5" ? {} : undefined;
-						}
-					};
-				},
-				getComponentData: function() {
-					return {
-						startupParameters: {
-							"sap-app-id": [
-								sAppVariantName
-							]
-						}
-					};
-				}
+			var oComponentMock = new UIComponent();
+			oComponentMock.getMetadata = function() {
+				return {
+					getName: function() {
+						return sComponentName;
+					},
+					getEntry: function(sEntryKey) {
+						return sEntryKey === "sap.ui5" ? {} : undefined;
+					}
+				};
+			};
+			oComponentMock.getComponentData = function() {
+				return {
+					startupParameters: {
+						"sap-app-id": [
+							sAppVariantName
+						]
+					}
+				};
 			};
 			var oSmartTemplateCompMock = {
 				getAppComponent: function() {
@@ -555,6 +554,9 @@ function(
 
 		QUnit.test("getAppComponentForControl searches further for the app component if the passed component is not of the type application", function(assert) {
 			var oComponent = new UIComponent();
+			oComponent.getAppComponent = function() {
+				return "something is not an appComponent";
+			};
 			var oParentComponent = {};
 			var oSapAppEntry = {
 				type: "definitelyNotAnApplication"
