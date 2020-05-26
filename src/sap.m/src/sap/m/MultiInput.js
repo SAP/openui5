@@ -1649,7 +1649,7 @@ function(
 			// on desktop create separate popover for tokens
 			var oPicker = this._getSelectedItemsPicker();
 			if (oPicker) {
-				oPicker.open();
+				oPicker.openBy(this);
 			}
 		}
 
@@ -1743,7 +1743,7 @@ function(
 		}
 	};
 
-	/**
+		/**
 	 * Generates a StandardListItem from token
 	 *
 	 * @param {sap.m.Token} oToken The token
@@ -1864,7 +1864,7 @@ function(
 			return this._oSelectedItemPicker;
 		}
 
-		this._oSelectedItemPicker = this._createDropdown();
+		this._oSelectedItemPicker = new Popover(this._getDropdownSettings()).setInitialFocus(this);
 
 		if (!this._bUseDialog) {
 			// configuration
@@ -1876,19 +1876,6 @@ function(
 	};
 
 	/**
-	 * Creates an instance type of <code>sap.m.Popover</code>.
-	 *
-	 * @returns {sap.m.Popover} The Popover instance
-	 * @private
-	 */
-	MultiInput.prototype._createDropdown = function() {
-		var oDropdown = new Popover(this._getDropdownSettings());
-		oDropdown.setInitialFocus(this);
-		this._decoratePopover(oDropdown);
-		return oDropdown;
-	};
-
-	/**
 	 * Returns a modified instance type of <code>sap.m.Popover</code> used in read-only mode.
 	 *
 	 * @returns {sap.m.Popover} The Popover instance
@@ -1896,40 +1883,17 @@ function(
 	 */
 	MultiInput.prototype._getReadOnlyPopover = function() {
 		if (!this._oReadOnlyPopover) {
-			this._oReadOnlyPopover = this._createReadOnlyPopover();
+			this._oReadOnlyPopover = new Popover({
+				showArrow: true,
+				placement: PlacementType.Auto,
+				showHeader: false,
+				contentMinWidth: "auto"
+			}).addStyleClass("sapMMultiInputReadOnlyPopover");
 		}
 
 		return this._oReadOnlyPopover;
 	};
 
-	/**
-	 * Creates an instance type of <code>sap.m.Popover</code> used in read-only mode.
-	 *
-	 * @returns {sap.m.Popover} The Popover instance
-	 * @private
-	 */
-	MultiInput.prototype._createReadOnlyPopover = function() {
-		return new Popover({
-			showArrow: true,
-			placement: PlacementType.Auto,
-			showHeader: false,
-			contentMinWidth: "auto"
-		}).addStyleClass("sapMMultiInputReadOnlyPopover");
-	};
-
-	/**
-	 * Decorate a Popover instance by adding some private methods.
-	 *
-	 * @param {sap.m.Popover} oPopover The popover to be decorated
-	 * @private
-	 */
-	MultiInput.prototype._decoratePopover = function(oPopover) {
-		var that = this;
-
-		oPopover.open = function() {
-			return this.openBy(that);
-		};
-	};
 
 	/*
 	 * Gets the dropdown default settings.
