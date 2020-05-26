@@ -35,7 +35,7 @@ sap.ui.define([
 
 		var oMonth = oCal1.getAggregation("month")[0].getDomRef();
 
-		assert.equal(oMonth.querySelectorAll(".sapUiCalWH:not([style='visibility: hidden;'])").length, 7, "Islamic week has 7 days");
+		assert.equal(oMonth.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)").length, 7, "Islamic week has 7 days");
 		assert.equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpectedMonth - 1], "Islamic Month is correct");
 		assert.equal(oCal1.$("-Head-B2").text(), iExpectedYear + " AH", "Islamic Year is correct");
 
