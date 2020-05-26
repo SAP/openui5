@@ -1542,6 +1542,24 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
+	QUnit.test("Small container + One long truncated token should call setFirstTokenTruncated with false", function(assert) {
+		// Arrange
+		var oSpy = this.spy(this.tokenizer, 'setFirstTokenTruncated');
+		this.tokenizer._setAdjustable(true);
+		this.tokenizer.getTokens()[0].setTruncated(true);
+
+		// Act
+		this.tokenizer.setMaxWidth("500px");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oSpy.calledOnce, "Truncation function should be called once.");
+		assert.notOk(this.tokenizer.$().hasClass("sapMTokenizerOneLongToken"), "Should not have class for one long token.");
+		assert.ok(oSpy.calledWith(false), "Truncation function should be called with false");
+		// cleanup
+		oSpy.restore();
+	});
+
 	QUnit.test("Small containers usage (1 Item):", function(assert) {
 		var oIndicator;
 
