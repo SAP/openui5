@@ -338,5 +338,44 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/core/mvc/View", "sap/ui/core/mv
 		}
 	};
 
-	return [oControllerSyncCodeCheckRule, oGlobalAPIRule, oJquerySapRule, oSyncFactoryLoadingRule, oGlobalSyncXhrRule, oDeprecatedAPIRule, oControllerExtensionRule];
+	/**
+	 * With jQuery 3.x we provide a compatibility layer to bridge gaps between jQuery 3.x and 2.x.
+	 * Our compatibility module logs warnings when deprecated jQuery APIs are used.
+	 */
+	var oJQueryThreeDeprecationRule = {
+		id: "jQueryThreeDeprecation",
+		audiences: [Audiences.Application, Audiences.Control, Audiences.Internal],
+		categories: [Categories.Usage],
+		enabled: true,
+		minversion: "1.79",
+		title: "Usage of deprecated jQuery API",
+		description: "With the upgrade from jQuery 2.x to jQuery 3.x, some jQuery APIs have been deprecated and might be removed in future jQuery versions. To be future-proof for jQuery 4.x, the deprecated API calls should be removed or replaced with current alternatives.",
+		resolution: "Please see the browser console warnings containing the string 'JQMIGRATE' to identify the code locations which cause the issue. Please also see the jQuery migration guide for further information on the deprecated APIs and their newer alternatives.",
+		resolutionurls: [{
+			text: "jQuery Migrate",
+			href: "https://github.com/jquery/jquery-migrate"
+		},
+		{
+			text: "jQuery 3 Upgrade Guide",
+			href: "https://jquery.com/upgrade-guide/3.0/"
+		},
+		{
+			text: "jQuery 3 Migrate warnings",
+			href: "https://github.com/jquery/jquery-migrate"
+		}],
+		check: function(oIssueManager, oCoreFacade, oScope) {
+			var oLoggedObjects = oScope.getLoggedObjects("jQueryThreeDeprecation");
+			oLoggedObjects.forEach(function(oLoggedObject) {
+				oIssueManager.addIssue({
+					severity: Severity.Medium,
+					details: oLoggedObject.message,
+					context: {
+						id: "WEBPAGE"
+					}
+				});
+			});
+		}
+	};
+
+	return [oControllerSyncCodeCheckRule, oGlobalAPIRule, oJquerySapRule, oSyncFactoryLoadingRule, oGlobalSyncXhrRule, oDeprecatedAPIRule, oControllerExtensionRule, oJQueryThreeDeprecationRule];
 }, true);

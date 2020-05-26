@@ -342,7 +342,8 @@
 			},
 			'sap/ui/thirdparty/jquery': {
 				amd: true,
-				exports: 'jQuery'
+				exports: 'jQuery',
+				deps: ['sap/ui/thirdparty/jquery-compat']
 			},
 			'sap/ui/thirdparty/jqueryui/jquery-ui-datepicker': {
 				deps: ['sap/ui/thirdparty/jqueryui/jquery-ui-core'],
