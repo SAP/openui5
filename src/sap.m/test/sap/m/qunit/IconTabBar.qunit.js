@@ -3319,9 +3319,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Drag&Drop dropPosition: 'After'", function(assert) {
-		this.clock.tick(500);
-		Core.applyChanges();
-
 		// length of items in tab strip used to offset the index of items aggregation with
 		var aTabsInStrip = this.oIconTabHeader._getItemsInStrip(),
 			iDelta = aTabsInStrip.length;
@@ -3351,9 +3348,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Drag&Drop dropPosition: 'Before'", function(assert) {
-		this.clock.tick(500);
-		Core.applyChanges();
-
 		// length of items in tab strip used to offset the index of items aggregation with
 		var aTabsInStrip = this.oIconTabHeader._getItemsInStrip(),
 			iDelta = aTabsInStrip.length;
@@ -3727,8 +3721,6 @@ sap.ui.define([
 
 	QUnit.test("Correct Responsive padding is applied", function (assert) {
 		// Arrange
-		this.stub(window, "requestAnimationFrame", window.setTimeout);
-
 		var oITB = getIconTabBar();
 		oITB.addStyleClass("sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer");
 

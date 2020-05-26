@@ -249,8 +249,9 @@ sap.ui.define(function() {
 				title: "qunit Test for TabStrip",
 				_alternativeTitle: "QUnit tests: sap.ui.commons.TabStrip",
 				sinon: {
-					version: 1,  // use sinon 1 because new bridge for sinon-4 doesn't support fake timers yet
-					useFakeTimers: true
+					version: 4,
+					useFakeTimers: true,
+					qunitBridge: true
 				}
 			},
 			TextArea: {

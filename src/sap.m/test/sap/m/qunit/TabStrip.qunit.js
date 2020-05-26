@@ -810,8 +810,8 @@ sap.ui.define([
 			phone : true,
 			tablet : false
 		};
-		oSandbox.stub(Device, "system", oSystem);
-		oSandbox.stub(jQuery.device, "is", oSystem);
+		oSandbox.stub(Device, "system").value(oSystem);
+		oSandbox.stub(jQuery.device, "is").value(oSystem);
 		jQuery('body').addClass('sap-phone');
 	}
 
