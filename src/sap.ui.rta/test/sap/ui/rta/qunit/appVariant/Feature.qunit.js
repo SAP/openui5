@@ -643,6 +643,26 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when onSaveAs() is bound with null and is triggered from RTA toolbar", function(assert) {
+			var oSelectedAppVariant = {
+				"sap.app" : {
+					id : "TestId",
+					crossNavigation: {
+						inbounds: {}
+					}
+				},
+				"sap.ui5" : {
+					componentName: "TestIdBaseApp"
+				}
+			};
+
+			var fnTriggerSaveAs = RtaAppVariantFeature.onSaveAs.bind(null, true, false, Layer.CUSTOMER, oSelectedAppVariant);
+
+			assert.throws(function() {
+				fnTriggerSaveAs();
+			});
+		});
+
 		QUnit.test("when onSaveAs() is triggered from RTA toolbar on S/4HANA on Premise", function(assert) {
 			var oSelectedAppVariant = {
 				"sap.app" : {
@@ -700,7 +720,9 @@ sap.ui.define([
 			var oNotifyKeyUserWhenPublishingIsReadySpy = sandbox.spy(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady");
 			var oGetOverviewStub = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 
-			return RtaAppVariantFeature.onSaveAs(true, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
+			var fnTriggerSaveAs = RtaAppVariantFeature.onSaveAs.bind(RtaAppVariantFeature, true, false, Layer.CUSTOMER, oSelectedAppVariant);
+
+			return fnTriggerSaveAs().then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
 				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
