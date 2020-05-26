@@ -11334,6 +11334,29 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
+	QUnit.test("highlighting first letter of a word should be applied", function (assert) {
+		var oComboBox = new ComboBox({
+			items: [
+				new Item({ text: "Bulgaria" })
+			]
+		});
+
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oFocusDomRef = oComboBox.getFocusDomRef();
+
+		oFocusDomRef.value = "b";
+		sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef);
+		sap.ui.getCore().applyChanges();
+
+		var highlightedPart = oComboBox._getList().getItems()[0].getDomRef().querySelector(".sapMInputHighlight");
+
+		assert.strictEqual(highlightedPart.innerText, "B", "B should be highlighted");
+
+		oComboBox.destroy();
+	});
+
 	QUnit.module("setFilter", {
 		beforeEach: function () {
 			this.oComboBox = new ComboBox({
