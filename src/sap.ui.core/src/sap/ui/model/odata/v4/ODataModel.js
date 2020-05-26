@@ -1869,7 +1869,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.withUnresolvedBindings = function (sCallbackName, vParameter) {
 		return this.aAllBindings.filter(function (oBinding) {
-			return oBinding.isRelative() && !oBinding.getContext();
+			return !oBinding.isResolved();
 		}).some(function (oBinding) {
 			return oBinding[sCallbackName](vParameter);
 		});

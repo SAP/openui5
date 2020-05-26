@@ -167,7 +167,9 @@ sap.ui.define([
 				this.oElementContext = this.bRelative
 					? null
 					: Context.create(this.oModel, this, sPath);
-				if (!this.oOperation && (!this.bRelative || oContext && !oContext.fetchValue)) {
+				if (!this.oOperation
+					&& (!this.bRelative || oContext && !oContext.fetchValue)) { // @see #isRoot
+					// do this before #setContext fires an event!
 					this.createReadGroupLock(this.getGroupId(), true);
 				}
 				this.setContext(oContext);
@@ -779,10 +781,11 @@ sap.ui.define([
 	 *   control's property bindings use the return value context as binding context.
 	 * @throws {Error} If the binding's root binding is suspended, the given group ID is invalid, if
 	 *   the binding is not a deferred operation binding (see
-	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}), if the binding is not resolved or
-	 *   relative to a transient context (see {@link sap.ui.model.odata.v4.Context#isTransient}), or
-	 *   if deferred operation bindings are nested, or if the OData resource path for a deferred
-	 *   operation binding's context cannot be determined.
+	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}), if the binding is unresolved (see
+	 *   {@link sap.ui.model.Binding#isResolved}) or relative to a transient context (see
+	 *   {@link sap.ui.model.odata.v4.Context#isTransient}), or if deferred operation bindings are
+	 *   nested, or if the OData resource path for a deferred operation binding's context cannot be
+	 *   determined.
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -1051,7 +1054,7 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#initialize
 	ODataContextBinding.prototype.initialize = function () {
-		if ((!this.bRelative || this.oContext) && !this.getRootBinding().isSuspended()) {
+		if (this.isResolved() && !this.getRootBinding().isSuspended()) {
 			this._fireChange({reason : ChangeReason.Change});
 		}
 	};

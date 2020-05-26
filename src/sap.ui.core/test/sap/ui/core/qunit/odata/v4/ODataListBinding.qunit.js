@@ -3704,7 +3704,7 @@ sap.ui.define([
 		// code under test
 		assert.throws(function () {
 			oBinding.create();
-		}, new Error("Binding is not yet resolved: " + oBinding.toString()));
+		}, new Error("Binding is unresolved: " + oBinding));
 	});
 
 	//*********************************************************************************************

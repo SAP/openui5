@@ -1337,10 +1337,9 @@ sap.ui.define([
 				getPath : function () {}
 			},
 			oBinding = {
-				oCache : {/*oCache*/},
 				checkSuspended : function () {},
 				getRootBinding : function () { return oRootBinding; },
-				isRelative : function () { return false; }
+				isResolved : function () { return true; }
 			},
 			oModel = {
 				checkGroupId : function () {},
@@ -1395,8 +1394,7 @@ sap.ui.define([
 	text : "unpark for auto group (no group ID)"
 }, {
 	auto : false,
-	context : {},
-	text : "relative binding, no auto group"
+	text : "no auto group"
 }, {
 	async : true,
 	auto : true,
@@ -1426,9 +1424,8 @@ sap.ui.define([
 				},
 				checkSuspended : function () {},
 				getRootBinding : function () { return oRootBinding; },
-				getContext : function () { return oFixture.context; },
 				getPath : function () { return "/EMPLOYEES('42')"; },
-				isRelative : function () { return !!oFixture.context; }
+				isResolved : function () { return true; }
 			},
 			oMetaModel = {
 				getAllPathReductions : function () {}
@@ -1571,12 +1568,10 @@ sap.ui.define([
 				getPath : function () { return "root/path"; }
 			},
 			oBinding = {
-				oCache : {/*oCache*/},
 				checkSuspended : function () {},
-				getContext : function () {},
 				getPath : function () { return "/EMPLOYEES('42')"; },
 				getRootBinding : function () { return oRootBinding; },
-				isRelative : function () { return false; }
+				isResolved : function () { return true; }
 			},
 			oMetaModel = {
 				getAllPathReductions : function () {}
@@ -1687,7 +1682,6 @@ sap.ui.define([
 	// oParentBinding has cache, but empty path
 	// --> please think of "/..." as "/TEAMS('1')"
 	var oIntermediateBinding = {
-			oCache : {/*oCache*/},
 			getBoundContext : function () {},
 			getContext : function () { /*return oParentContext;*/ },
 			getPath : function () { return ""; }
@@ -1956,7 +1950,6 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: error on transient context", function (assert) {
 		var oBinding = {
-				oCache : {/*oCache*/},
 				checkSuspended : function () {}
 			},
 			oModel = {
@@ -1979,10 +1972,8 @@ sap.ui.define([
 	// the binding becomes unresolved.
 	QUnit.test("requestSideEffects: error on unresolved binding", function (assert) {
 		var oBinding = {
-				oCache : {/*oCache*/},
 				checkSuspended : function () {},
-				getContext : function () { return undefined; },
-				isRelative : function () { return true; }
+				isResolved : function () { return false; }
 			},
 			oModel = {
 				checkGroupId : function () {},

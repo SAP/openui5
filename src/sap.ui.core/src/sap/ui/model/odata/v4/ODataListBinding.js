@@ -125,7 +125,8 @@ sap.ui.define([
 
 				// Note: clone() dropped $$aggregation : undefined, which is good
 				this.applyParameters(mParameters); // calls #reset
-				if (!this.bRelative || oContext && !oContext.fetchValue) {
+				if (!this.bRelative || oContext && !oContext.fetchValue) { // @see #isRoot
+					// do this before #setContext fires an event!
 					this.createReadGroupLock(this.getGroupId(), true);
 				}
 				this.setContext(oContext);
@@ -595,7 +596,7 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.Context#created} returns a promise that is resolved when the
 	 *   creation is finished
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended, if a relative binding is not yet resolved, if
+	 *   If the binding's root binding is suspended, if a relative binding is unresolved, if
 	 *   entities are created both at the start and at the end, or if <code>bAtEnd</code> is
 	 *   <code>true</code> and the binding does not use the parameter <code>$count=true</code>
 	 *
@@ -613,7 +614,7 @@ sap.ui.define([
 			that = this;
 
 		if (!sResolvedPath) {
-			throw new Error("Binding is not yet resolved: " + this);
+			throw new Error("Binding is unresolved: " + this);
 		}
 
 		bAtEnd = !!bAtEnd; // normalize to simplify comparisons
@@ -1098,7 +1099,7 @@ sap.ui.define([
 	ODataListBinding.prototype.fetchDownloadUrl = function () {
 		var oModel = this.oModel;
 
-		if (this.isRelative() && !this.oContext) {
+		if (!this.isResolved()) {
 			throw new Error("Binding is unresolved");
 		}
 		return this.withCache(function (oCache, sPath) {
@@ -1454,7 +1455,7 @@ sap.ui.define([
 				+ " third parameter must not be set if extended change detection is enabled");
 		}
 
-		if (this.bRelative && !this.oContext) { // unresolved relative binding
+		if (!this.isResolved()) { // unresolved relative binding
 			this.aPreviousData = []; // compute diff from scratch when binding is resolved again
 			return [];
 		}
@@ -1781,7 +1782,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.getHeaderContext = function () {
 		// Since we never throw the header context away, we may deliver it only when valid
-		return (this.bRelative && !this.oContext) ? null : this.oHeaderContext;
+		return this.isResolved() ? this.oHeaderContext : null;
 	};
 
 	/**
@@ -1960,7 +1961,7 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#initialize
 	ODataListBinding.prototype.initialize = function () {
-		if ((!this.bRelative || this.oContext) && !this.getRootBinding().isSuspended()) {
+		if (this.isResolved() && !this.getRootBinding().isSuspended()) {
 			if (this.oModel.bAutoExpandSelect) {
 				this._fireChange({
 					detailedReason : this.sChangeReason,
@@ -2187,7 +2188,7 @@ sap.ui.define([
 	ODataListBinding.prototype.requestContexts = function (iStart, iLength, sGroupId) {
 		var that = this;
 
-		if (this.bRelative && !this.oContext) {
+		if (!this.isResolved()) {
 			throw new Error("Unresolved binding: " + this.sPath);
 		}
 		this.checkSuspended();
