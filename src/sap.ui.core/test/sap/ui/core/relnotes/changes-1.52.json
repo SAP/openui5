@@ -2033,5 +2033,21 @@
         ]
       }
     ]
+  },
+  "1.52.41": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "dd9ab38f5b20749668a2371efe089fafc0155863",
+        "type": "FIX",
+        "text": " Opa: parse only OPA related params",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070241218"
+          }
+        ]
+      }
+    ]
   }
 }

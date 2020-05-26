@@ -17,7 +17,7 @@
       {
         "id": "6657e51f2ce2456faeb7e3fb1985c501b83ca84b",
         "type": "FEATURE",
-        "text": "PlanningCalendar-accessibility for special dates \u0026 appointments",
+        "text": "PlanningCalendar-accessibility for special dates & appointments",
         "references": []
       },
       {
@@ -252,7 +252,7 @@
       {
         "id": "a5022f7d99b978d2a9dc9be4e3a4724195f04a1c",
         "type": "FIX",
-        "text": "sap.m.BarInPageEnabler: Bars no longer care about the context they\u0027re used in (i.e. header, footer, etc.)",
+        "text": "sap.m.BarInPageEnabler: Bars no longer care about the context they're used in (i.e. header, footer, etc.)",
         "references": [
           {
             "type": "BCP",
@@ -931,7 +931,7 @@
       {
         "id": "a3a5722f891643510e4de089485475dbebd36f5f",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar - appointment row focus outline covers all 4 sides for High Contrast Black \u0026 High Contrast White themes.",
+        "text": "sap.m.PlanningCalendar - appointment row focus outline covers all 4 sides for High Contrast Black & High Contrast White themes.",
         "references": [
           {
             "type": "BCP",
@@ -1110,7 +1110,7 @@
       {
         "id": "ffce4bcd29542a8dcdc01bbd340a3a86ff1bcd9e",
         "type": "FIX",
-        "text": "sap.m.SearchField: Unnecessary \u0027suggest\u0027 events are not fired any more",
+        "text": "sap.m.SearchField: Unnecessary 'suggest' events are not fired any more",
         "references": [
           {
             "type": "BCP",
@@ -1176,7 +1176,7 @@
       {
         "id": "c3f2ab10357d1c94ceaa6580decdffc8eeb43465",
         "type": "FIX",
-        "text": "sap.m.Slider: Focus should not be called manually when tooltip\u0027s value is updated",
+        "text": "sap.m.Slider: Focus should not be called manually when tooltip's value is updated",
         "references": [
           {
             "type": "BCP",
@@ -1615,7 +1615,7 @@
       {
         "id": "dd4c0f3327c01cd324a64aec3c63a641b78e24b2",
         "type": "FIX",
-        "text": "sap.m.MessageView: Header\u0027s visibility adjusted",
+        "text": "sap.m.MessageView: Header's visibility adjusted",
         "references": [
           {
             "type": "BCP",
@@ -1760,7 +1760,7 @@
       {
         "id": "e1d50753cd082f264c310b45d436ba3ce9bf9fd9",
         "type": "FIX",
-        "text": "sap.m.DateTimePicker-when picker is opened for IE \u0026 Edge, input should not be focusable",
+        "text": "sap.m.DateTimePicker-when picker is opened for IE & Edge, input should not be focusable",
         "references": [
           {
             "type": "BCP",
@@ -1860,7 +1860,7 @@
       {
         "id": "14a5f6d5259dbaa593111af1ab20cc36a7a24ebc",
         "type": "FIX",
-        "text": "sap.m.MessageView: Link\u0027s properties are now forwarded in detailsPage",
+        "text": "sap.m.MessageView: Link's properties are now forwarded in detailsPage",
         "references": [
           {
             "type": "BCP",
@@ -1959,7 +1959,7 @@
       {
         "id": "83719240bb87c964b812c27333a3714b5b1a5a52",
         "type": "FIX",
-        "text": "sap.m.SearchField: \u0027search\u0027 event is now correctly fired",
+        "text": "sap.m.SearchField: 'search' event is now correctly fired",
         "references": [
           {
             "type": "BCP",
@@ -2030,7 +2030,7 @@
       {
         "id": "eede502c64b7e664e4f3e60b127147526aaaa210",
         "type": "FIX",
-        "text": "sap.m.Button: fire press event on keydown for \u0027enter\u0027 and keyup for \u0027space\u0027",
+        "text": "sap.m.Button: fire press event on keydown for 'enter' and keyup for 'space'",
         "references": [
           {
             "type": "BCP",
@@ -2590,7 +2590,7 @@
       {
         "id": "a86265725719360e12ffe994ce550661338d8035",
         "type": "FIX",
-        "text": "sap.m.GrowingEnablement: Focus shouldn\u0027t jump out of the control.",
+        "text": "sap.m.GrowingEnablement: Focus shouldn't jump out of the control.",
         "references": [
           {
             "type": "BCP",
@@ -2649,7 +2649,7 @@
       {
         "id": "1346370d95e3885e275d786ee423da4f19a9093f",
         "type": "FIX",
-        "text": "sap.m.StepInput: pressing PageUp or PageDown doesn\u0027t scroll the page now",
+        "text": "sap.m.StepInput: pressing PageUp or PageDown doesn't scroll the page now",
         "references": [
           {
             "type": "GitHub",
@@ -2851,7 +2851,7 @@
       {
         "id": "8497b6c9a2f39d23cd62c7e4b851fc7b78f7e4cf",
         "type": "FIX",
-        "text": "sap.m.DateTimePicker: when picker is opened for IE \u0026 Edge, input should not be focusable",
+        "text": "sap.m.DateTimePicker: when picker is opened for IE & Edge, input should not be focusable",
         "references": [
           {
             "type": "BCP",
@@ -2978,7 +2978,7 @@
       {
         "id": "fda14ff364eb74438c6dead30a7933b1d018cb6f",
         "type": "FIX",
-        "text": "sap.m.DatePicker: Now in IE \u0026 touch devices the focus is correct after closing the picker",
+        "text": "sap.m.DatePicker: Now in IE & touch devices the focus is correct after closing the picker",
         "references": [
           {
             "type": "BCP",
@@ -3197,7 +3197,7 @@
       {
         "id": "34b5850fb0cf39062a0b79e64b78fcfa324d4206",
         "type": "FIX",
-        "text": "sap.m.ObjectIdentifier: The title control is visible if it\u0027s changed back and forth to active",
+        "text": "sap.m.ObjectIdentifier: The title control is visible if it's changed back and forth to active",
         "references": [
           {
             "type": "BCP",
@@ -3715,7 +3715,7 @@
       {
         "id": "e64bc795c95a2d7d948e9f2c6d56d24620d97ded",
         "type": "FIX",
-        "text": "Popover: RTA toolbar don\u0027t disappear anymore during UI Adaptation",
+        "text": "Popover: RTA toolbar don't disappear anymore during UI Adaptation",
         "references": [
           {
             "type": "BCP",
@@ -3726,7 +3726,7 @@
       {
         "id": "dd7456cd18ebe851f7df97613b9f81d38875a79c",
         "type": "FIX",
-        "text": "sap.m.ComboBox: Items\u0027 loading indicator returned back",
+        "text": "sap.m.ComboBox: Items' loading indicator returned back",
         "references": [
           {
             "type": "BCP",
@@ -3785,7 +3785,7 @@
       {
         "id": "3b00e05e22a07fff03a1b9408e5f1b71604cba3c",
         "type": "FIX",
-        "text": "sap.m.ObjectAttribute: doesn\u0027t wrap in ObjectPageHeaderContent in IE",
+        "text": "sap.m.ObjectAttribute: doesn't wrap in ObjectPageHeaderContent in IE",
         "references": [
           {
             "type": "BCP",
@@ -3900,7 +3900,7 @@
       {
         "id": "d1de27a52950de6c0ed08636d49f3036cbb071a6",
         "type": "FIX",
-        "text": "ObjectMarker: New properties ariaLabelledBy \u0026 ariaDescribedBy",
+        "text": "ObjectMarker: New properties ariaLabelledBy & ariaDescribedBy",
         "references": [
           {
             "type": "BCP",
@@ -4313,7 +4313,7 @@
       {
         "id": "da9ebfbd66d29b3bb38f20b50962d4b37b1d42a3",
         "type": "FIX",
-        "text": "sap.m.MessagePopover: MessageView\u0027s auto binding fix",
+        "text": "sap.m.MessagePopover: MessageView's auto binding fix",
         "references": [
           {
             "type": "BCP",
@@ -4484,7 +4484,7 @@
       {
         "id": "9a3bcd8a198f4de2df43f8415293b594a1007143",
         "type": "FIX",
-        "text": " sap.m.DateRangeSelection: including invalid value doesn\u0027t make the control throw an error",
+        "text": " sap.m.DateRangeSelection: including invalid value doesn't make the control throw an error",
         "references": []
       },
       {
@@ -4593,7 +4593,7 @@
       {
         "id": "95752b1bfe22253276e71d0b79af959641d4ade6",
         "type": "FIX",
-        "text": " sap.m.ImageContent: Images on tiles go decorative, no \u0027undefined\u0027 in Aria.",
+        "text": " sap.m.ImageContent: Images on tiles go decorative, no 'undefined' in Aria.",
         "references": [
           {
             "type": "BCP",
@@ -4652,7 +4652,7 @@
       {
         "id": "e6a6c08b0d3f2cecfc10de5b540643c30251bb9b",
         "type": "FIX",
-        "text": " GenericTile breathing \u0026 language fix.",
+        "text": " GenericTile breathing & language fix.",
         "references": [
           {
             "type": "BCP",
@@ -4679,7 +4679,7 @@
       {
         "id": "d54ae8094b73ca3761f8a5e846cf4403f5c958c5",
         "type": "FIX",
-        "text": " sap.m.NumericContent: Property truncateValueTo is not ignored anymore \u0026 Case insensitive NumericContent lang map + add en_US lang.",
+        "text": " sap.m.NumericContent: Property truncateValueTo is not ignored anymore & Case insensitive NumericContent lang map + add en_US lang.",
         "references": [
           {
             "type": "BCP",
@@ -4748,7 +4748,7 @@
       {
         "id": "03cc7114bd4409253910ae6d6a9aded5951ff7db",
         "type": "FIX",
-        "text": " sap.m.DateRangeSelection: doesn\u0027t throw error",
+        "text": " sap.m.DateRangeSelection: doesn't throw error",
         "references": [
           {
             "type": "BCP",
@@ -4764,6 +4764,22 @@
           {
             "type": "BCP",
             "reference": "002075129400007904862019"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.41": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "6296fd41ab7a9e900e805b38f90ec29ef2dd7dc2",
+        "type": "FIX",
+        "text": " sap.m.App: QUnit failure fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070153495"
           }
         ]
       }
