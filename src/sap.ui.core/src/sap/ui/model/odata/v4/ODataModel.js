@@ -1121,7 +1121,7 @@ sap.ui.define([
 
 			return oBinding.isRelative()
 				&& (oContext === oParent
-						|| oContext && oContext.getBinding && oContext.getBinding() === oParent);
+					|| oContext && oContext.getBinding && oContext.getBinding() === oParent);
 		});
 	};
 

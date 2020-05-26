@@ -1124,7 +1124,7 @@ sap.ui.define([
 		if (this.oOperation) {
 			throw new Error("Cannot resume an operation binding: " + this);
 		}
-		if (this.bRelative && (!this.oContext || this.oContext.fetchValue)) {
+		if (!this.isRoot()) {
 			throw new Error("Cannot resume a relative binding: " + this);
 		}
 		if (!this.bSuspended) {
@@ -1221,7 +1221,7 @@ sap.ui.define([
 		if (this.oOperation) {
 			throw new Error("Cannot suspend an operation binding: " + this);
 		}
-		if (this.bRelative && (!this.oContext || this.oContext.fetchValue)) {
+		if (!this.isRoot()) {
 			throw new Error("Cannot suspend a relative binding: " + this);
 		}
 		if (this.bSuspended) {
