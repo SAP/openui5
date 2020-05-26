@@ -2110,4 +2110,74 @@ sap.ui.define([
 
 		assert.deepEqual(oModel.mChangedEntities, {});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("remove: create request with bUpdateAggregatedMessages=true", function (assert) {
+		var fnHandleProcessSuccess,
+			oModel = {
+				mDeferredGroups : {},
+				mRequests : "~mRequests",
+				bUseBatch : "~bUseBatch",
+				_createRequest : function () {},
+				_createRequestUrlWithNormalizedPath : function () {},
+				_getHeaders : function () {},
+				_getRefreshAfterChange : function () {},
+				_isCanonicalRequestNeeded : function () {},
+				_normalizePath : function () {},
+				_processRequest : function () {},
+				_pushToRequestQueue : function () {},
+				resolveDeep : function () {}
+			};
+
+		this.mock(oModel).expects("_isCanonicalRequestNeeded")
+			.withExactArgs("~bCanonical0")
+			.returns("~bCanonical1");
+		this.mock(oModel).expects("_getRefreshAfterChange")
+			.withExactArgs("~bRefreshAfterChange0", "~sGroupId")
+			.returns("~bRefreshAfterChange1");
+		this.mock(ODataUtils).expects("_createUrlParamsArray")
+			.withExactArgs("~mUrlParams")
+			.returns("~aUrlParams");
+		this.mock(oModel).expects("_getHeaders")
+			.withExactArgs("~mHeaders0")
+			.returns("~mHeaders1");
+		this.mock(oModel).expects("_normalizePath")
+			.withExactArgs("~sPath", "~oContext", "~bCanonical1")
+			.returns("~sNormalizedPath");
+		this.mock(oModel).expects("resolveDeep")
+			.withExactArgs("~sPath", "~oContext")
+			.returns("~sDeepPath");
+		this.mock(oModel).expects("_processRequest")
+			.withExactArgs(sinon.match.func, "~fnError", false)
+			.callsFake(function (fnHandleProcessSuccess0, fnError, bDeferred) {
+				fnHandleProcessSuccess = fnHandleProcessSuccess0;
+			});
+
+		// code under test
+		ODataModel.prototype.remove.call(oModel, "~sPath", {
+			canonicalRequest : "~bCanonical0",
+			changeSetId : "~sChangeSetId",
+			context : "~oContext",
+			error : "~fnError",
+			eTag : "~sETag",
+			groupId : "~sGroupId",
+			headers : "~mHeaders0",
+			refreshAfterChange : "~bRefreshAfterChange0",
+			urlParameters : "~mUrlParams"
+		});
+
+		this.mock(oModel).expects("_createRequestUrlWithNormalizedPath")
+			.withExactArgs("~sNormalizedPath", "~aUrlParams", "~bUseBatch")
+			.returns("~sUrl");
+		this.mock(oModel).expects("_createRequest")
+			.withExactArgs("~sUrl", "~sDeepPath", "DELETE", "~mHeaders1", undefined, "~sETag",
+				undefined, true)
+			.returns("~oRequest");
+		this.mock(oModel).expects("_pushToRequestQueue")
+			.withExactArgs("~mRequests", "~sGroupId", "~sChangeSetId", "~oRequest",
+				sinon.match.func, "~fnError", "~requestHandle", "~bRefreshAfterChange1");
+
+		// code under test
+		fnHandleProcessSuccess("~requestHandle");
+	});
 });
