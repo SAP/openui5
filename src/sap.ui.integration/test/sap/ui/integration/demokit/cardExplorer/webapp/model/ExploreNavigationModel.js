@@ -371,7 +371,18 @@ sap.ui.define([
 						key: 'dynamicCounter',
 						target: 'exploreSamples',
 						title: 'Dynamic Counter',
-						manifestUrl: '/samples/dynamicCounter/manifest.json'
+						files: [
+							{
+								url: '/samples/dynamicCounter/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							},
+							{
+								url: '/samples/dynamicCounter/i18n/i18n.properties',
+								name: 'i18n/i18n.properties',
+								key: 'i18n/i18n.properties'
+							}
+						]
 					},
 					{
 						key: 'parameters',
