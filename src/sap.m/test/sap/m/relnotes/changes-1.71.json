@@ -1578,5 +1578,87 @@
         ]
       }
     ]
+  },
+  "1.71.17": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "ededcb7769f619313ed27efc3fe8522e6c3ccd9b",
+        "type": "FIX",
+        "text": " sap.m.Tile: doesn't set position if hidden from parent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002768282020"
+          }
+        ]
+      },
+      {
+        "id": "d64323023daa720212f00163561209accdf6b6f8",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendarHeader - View switch remains the same after overflow",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2040306340"
+          }
+        ]
+      },
+      {
+        "id": "dc110a09ecacdae5ee578c71d300d332ede200ee",
+        "type": "FIX",
+        "text": " sap.m.StepInput - key navigation now works fine in table after pressing of F2",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000013742020"
+          }
+        ]
+      },
+      {
+        "id": "d1511c928f5d0cd762835d3cc9c5ac71aa7f9a37",
+        "type": "FIX",
+        "text": " sap.m.Wizard: OPA tests adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070223158"
+          }
+        ]
+      },
+      {
+        "id": "1426c2dcb25065d48c5b0dc766b7a7fed2884e14",
+        "type": "FIX",
+        "text": " sap.m.FlexBox: Styles are now changed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070225113"
+          }
+        ]
+      },
+      {
+        "id": "b9b8dfc5fa8ceb100abb14e0c6708739bfcf12b6",
+        "type": "FIX",
+        "text": " sap.m.upload.UploadSet : setThumbnailUrl does not change icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001152812020"
+          }
+        ]
+      },
+      {
+        "id": "223f4fc4591f937d7229e9f6ab2f2d7318357f25",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Exception in OData v4 fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001689492020"
+          }
+        ]
+      }
+    ]
   }
 }

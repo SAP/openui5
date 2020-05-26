@@ -75,5 +75,21 @@
         ]
       }
     ]
+  },
+  "1.71.17": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "8f011aeb90afb154071eace8d55773ebcc101b8f",
+        "type": "FIX",
+        "text": " Form: Fiori3 themes align Label, Text and Link with Input",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

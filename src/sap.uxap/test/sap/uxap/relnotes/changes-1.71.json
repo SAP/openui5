@@ -165,5 +165,69 @@
         ]
       }
     ]
+  },
+  "1.71.17": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "51bbb7b3b23de9a5985b5e4ad1c17eb9176de89a",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix lazy loading in IconTab mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070191938"
+          }
+        ]
+      },
+      {
+        "id": "426d319bcbb950a588bd07a9e081fa524bf80ec0",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected error upon rerendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070205321"
+          }
+        ]
+      },
+      {
+        "id": "05ba54b11fb2bb5edf2bd2d46b9e92d788200821",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: IconTabBar only visible section show title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080090841"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070156496"
+          }
+        ]
+      },
+      {
+        "id": "7bd1cca30dfec143e41e3456feb8a1c68d760bae",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Early focus trigger in IE fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070134081"
+          }
+        ]
+      },
+      {
+        "id": "2434ab75d0abaef355f5ce208ee3e4dabdc00add",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevent redundant DOM calculations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070180461"
+          }
+        ]
+      }
+    ]
   }
 }

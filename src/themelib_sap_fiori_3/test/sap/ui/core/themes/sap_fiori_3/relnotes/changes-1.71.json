@@ -167,5 +167,43 @@
         ]
       }
     ]
+  },
+  "1.71.17": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "7babe1b4a6fb120b422a0658447cfae250c82802",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar - proper appointment background color when selected+not focused+hovered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2040306340"
+          }
+        ]
+      },
+      {
+        "id": "8f011aeb90afb154071eace8d55773ebcc101b8f",
+        "type": "FIX",
+        "text": " Form: Fiori3 themes align Label, Text and Link with Input",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "8dad0cf071a4a4ad018fc5b35a9007bf4560afe6",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: is now displayed correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980388311"
+          }
+        ]
+      }
+    ]
   }
 }

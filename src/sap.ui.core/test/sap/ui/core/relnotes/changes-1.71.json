@@ -287,7 +287,7 @@
       {
         "id": "f28d27fe8dc3f167d79fc67e03df2aa6543cf694",
         "type": "FIX",
-        "text": " ODataModel: Don\u0027t send CSRF token for GET requests",
+        "text": " ODataModel: Don't send CSRF token for GET requests",
         "references": [
           {
             "type": "BCP",
@@ -463,7 +463,7 @@
       {
         "id": "0c896c692c066b1914b9fa64c0bbffc2b4374dd4",
         "type": "FIX",
-        "text": " ShortcutHelper: Fix mapping to browser keys between \u0027Space\u0027 and \u0027Plus\u0027",
+        "text": " ShortcutHelper: Fix mapping to browser keys between 'Space' and 'Plus'",
         "references": [
           {
             "type": "BCP",
@@ -500,7 +500,7 @@
       {
         "id": "00a326b70ceec94a3a310be021917805319bf46c",
         "type": "FIX",
-        "text": " v2/ODataModel: Don\u0027t resolve canonical with function imports",
+        "text": " v2/ODataModel: Don't resolve canonical with function imports",
         "references": [
           {
             "type": "BCP",
@@ -574,7 +574,7 @@
       {
         "id": "58dff7843cc8af415cd8b872100b566f024324a0",
         "type": "FIX",
-        "text": " routing: create default hash changer in router\u0027s constructor",
+        "text": " routing: create default hash changer in router's constructor",
         "references": [
           {
             "type": "BCP",
@@ -615,6 +615,33 @@
           {
             "type": "BCP",
             "reference": "002075129500001766652020"
+          }
+        ]
+      }
+    ]
+  },
+  "1.71.17": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "6bfbc7239bad701161923062dacf9b62a316b855",
+        "type": "FIX",
+        "text": " events.pasteEventFix: provide fallback when no ClipboardEvent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070225657"
+          }
+        ]
+      },
+      {
+        "id": "fadf90e24771064f8775b0d3b93582de0a563d81",
+        "type": "FIX",
+        "text": " events.PasteEventFix: use capturing phase to avoid focus change in between",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070103149"
           }
         ]
       }
