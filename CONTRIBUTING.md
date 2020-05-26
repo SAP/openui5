@@ -8,7 +8,7 @@ You want to contribute to OpenUI5? Welcome! Please read this document to underst
 
 ## Help Others
 
-You can help OpenUI5 by helping others who use UI5 and need support. You will find them e.g. on [StackOverflow](http://stackoverflow.com/questions/tagged/sapui5) or in the [SAP.com UI5 Community](https://www.sap.com/community/topic/ui5/all-content.html).
+You can help OpenUI5 by helping others who use UI5 and need support. You will find them e.g. on [StackOverflow](http://stackoverflow.com/questions/tagged/sapui5) or in the [SAP.com UI5 Community](https://answers.sap.com/tags/500983881501772639608291559920477).
 
 ## Analyze Issues
 
