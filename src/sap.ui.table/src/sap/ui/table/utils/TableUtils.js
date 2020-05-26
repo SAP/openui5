@@ -295,17 +295,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the number of row actions in case the table has a row action column, <code>0</code> otherwise.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {int} The number of row actions.
-		 */
-		getRowActionCount: function(oTable) {
-			var oTemplate = oTable ? oTable.getRowActionTemplate() : null;
-			return oTemplate ? oTemplate._getCount() : 0;
-		},
-
-		/**
 		 * Returns whether the table has a row action column.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
@@ -316,7 +305,7 @@ sap.ui.define([
 
 			return oRowActionTemplate != null
 				   && (oRowActionTemplate.isBound("visible") || oRowActionTemplate.getVisible())
-				   && TableUtils.getRowActionCount(oTable) > 0;
+				   && oTable.getRowActionCount() > 0;
 		},
 
 		/**

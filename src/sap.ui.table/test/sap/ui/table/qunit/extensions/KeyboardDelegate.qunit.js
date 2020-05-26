@@ -6688,7 +6688,7 @@ sap.ui.define([
 			var bTableHasRowHeader = bTableHasRowSelectors || bTableIsInGroupMode;
 			var bTableHasRowActions = TableUtils.hasRowActions(oTable);
 			var oKeyboardExtension = oTable._getKeyboardExtension();
-			var iActionItemCount = bTableHasRowActions ? oTable.getRowActionTemplate()._iLen : 0;
+			var iActionItemCount = bTableHasRowActions ? oTable.getRowActionTemplate()._getVisibleItems().length : 0;
 			var iColumnCount = oTable.getColumns().filter(function(oColumn) {
 				return oColumn.getVisible() || oColumn.getGrouped();
 			}).length;
