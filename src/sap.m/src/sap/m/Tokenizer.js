@@ -1615,10 +1615,11 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype.onsaphome = function(oEvent) {
-		var aVisibleTokens = this._getVisibleTokens();
+		var aAvailableTokens = this.getTokens().filter(function (oToken) {
+			return oToken.getDomRef() && !oToken.getDomRef().classList.contains("sapMHiddenToken");
+		});
 
-		(aVisibleTokens.length > 0) && aVisibleTokens[0].focus();
-
+		aAvailableTokens.length && aAvailableTokens[0].focus();
 		this.scrollToStart();
 
 		oEvent.preventDefault();
