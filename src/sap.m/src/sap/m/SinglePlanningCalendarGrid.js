@@ -810,9 +810,8 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarGrid.prototype._calcResizeNewHoursAppPos = function(oAppStartDate, oAppEndDate, iIndex, bBottomHandle) {
-			var oSPCStartDate = new Date(this.getStartDate().getFullYear(), this.getStartDate().getMonth(), this.getStartDate().getDate()),
-				iMinutesStep = 30 * 60 * 1000, // 30 min
-				iPlaceholderStartTime = oSPCStartDate.getTime() + iIndex * iMinutesStep,
+			var iMinutesStep = 30 * 60 * 1000, // 30 min
+				iPlaceholderStartTime = this.getAggregation("_intervalPlaceholders")[iIndex].getDate().getTime(),
 				iPlaceholderEndTime = iPlaceholderStartTime + iMinutesStep,
 				iVariableBoundaryTime = bBottomHandle ? oAppStartDate.getTime() : oAppEndDate.getTime(),
 				iStartTime = Math.min(iVariableBoundaryTime, iPlaceholderStartTime),
