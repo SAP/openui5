@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/commons/TreeNode",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/Device",
 	"sap/ui/commons/library",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -18,7 +17,6 @@ sap.ui.define([
 	TreeNode,
 	JSONModel,
 	jQuery,
-	Device,
 	commonsLibrary,
 	Filter,
 	FilterOperator,
@@ -694,33 +692,30 @@ sap.ui.define([
 
 	});
 
-	// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-	if (!Device.browser.phantomJS) {
-		QUnit.test("Arrow keys", function(assert) {
-			var done = assert.async();
-			sap.ui.getCore().getControl("node11").focus();
+	QUnit.test("Arrow keys", function(assert) {
+		var done = assert.async();
+		sap.ui.getCore().getControl("node11").focus();
 
+		setTimeout(function(){
+			qutils.triggerKeyboardEvent(sStandardTreeId, KeyCodes.ARROW_DOWN, false, false, false);
 			setTimeout(function(){
-				qutils.triggerKeyboardEvent(sStandardTreeId, KeyCodes.ARROW_DOWN, false, false, false);
+				assert.equal( jQuery(document.activeElement).first().attr("id"), "node13",  "Focus is down one node");
+				qutils.triggerKeyboardEvent(sStandardTreeId, KeyCodes.ARROW_UP, false, false, false);
 				setTimeout(function(){
-					assert.equal( jQuery(document.activeElement).first().attr("id"), "node13",  "Focus is down one node");
-					qutils.triggerKeyboardEvent(sStandardTreeId, KeyCodes.ARROW_UP, false, false, false);
+					assert.equal( jQuery(document.activeElement).first().attr("id"), "node11",  "Focus is up one node");
+					qutils.triggerKeyboardEvent("node11", KeyCodes.ARROW_LEFT, false, false, false);
 					setTimeout(function(){
-						assert.equal( jQuery(document.activeElement).first().attr("id"), "node11",  "Focus is up one node");
-						qutils.triggerKeyboardEvent("node11", KeyCodes.ARROW_LEFT, false, false, false);
+						assert.equal( sap.ui.getCore().getControl("node11").getExpanded(), false,  "Node is collapsed");
+						qutils.triggerKeyboardEvent("node11", KeyCodes.ARROW_RIGHT, false, false, false);
 						setTimeout(function(){
-							assert.equal( sap.ui.getCore().getControl("node11").getExpanded(), false,  "Node is collapsed");
-							qutils.triggerKeyboardEvent("node11", KeyCodes.ARROW_RIGHT, false, false, false);
-							setTimeout(function(){
-								assert.equal( sap.ui.getCore().getControl("node11").getExpanded(), true,  "Node is expanded");
-								done();
-							}, 100);
+							assert.equal( sap.ui.getCore().getControl("node11").getExpanded(), true,  "Node is expanded");
+							done();
 						}, 100);
 					}, 100);
 				}, 100);
 			}, 100);
-		});
-	}
+		}, 100);
+	});
 
 	QUnit.test("Plus/Minus", function(assert) {
 

@@ -673,166 +673,18 @@ sap.ui.define([
 		assert.ok(!this.oChangeListenerPassedEvent, "Change event must not be called");
 	});
 
-	// Disabling for phantomJS browser only because keyboard handling does not work - remove this check when resolved
-	if (!Device.browser.phantomJS) {
-		QUnit.module("RTL support", {
-			beforeEach: function () {
-				this.sTestLatinValue = "abcd";
-				this.sTestHebrewValue = "אני רוצה";//"I want" in Hebrew
-				this.sTestMixedValue = "1234אני רוצה";//"1234I want" in Hebrew
-				this.oMaskInputLatin = new MaskInput( {
-					textDirection: TextDirection.RTL,
-					value: this.sTestLatinValue,
-					mask: "aaaa"
-				});
-				this.oMaskInputLatin.placeAt("content");
-
-				this.oMaskInputHebrew = new MaskInput({
-					textDirection: TextDirection.RTL,
-					value: this.sTestHebrewValue,
-					mask: "~~~s~~~~",
-					rules: [
-						new MaskInputRule({
-							maskFormatSymbol: "~",
-							regex: "[\u0591-\u05F4]"
-						}),
-						new MaskInputRule({
-							maskFormatSymbol: "s",
-							regex: "[ ]"
-						})
-					]
-				});
-				this.oMaskInputHebrew.placeAt("content");
-
-				sap.ui.getCore().applyChanges();
-				this.sandbox = sinon.sandbox;
-			},
-
-			afterEach: function () {
-				if (!bSkipDestroy) {
-					this.oMaskInputLatin.destroy();
-					this.oMaskInputHebrew.destroy();
-				}
-
-				this.sandbox.restore();
-			},
-			testSelectedInputWithArrow: function(oControl, oClock, sArrowName, iExpectedPosition, sMessagePrefix) {
-				oControl.focus();
-				oClock.tick(1000);
-				oControl.selectText(0, oControl.getValue().length);
-				qutils.triggerKeydown(oControl.getDomRef(), sArrowName.toLowerCase() === "left" ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
-				oClock.tick(1000);
-				checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
-
-				//consecutive presses should not move the carret
-				qutils.triggerKeydown(oControl.getDomRef(), sArrowName.toLowerCase() === "left" ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
-
-				checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix + " Consecutive presses do nothing");
-			},
-			testCarretAtPositionAndMoveWithArrow: function(oControl, oClock, iStartPosition, sArrowName, iExpectedPosition, sMessagePrefix) {
-				oControl.focus();
-				oClock.tick(1000);
-				setCursorPosition(iStartPosition, oControl);
-				qutils.triggerKeydown(oControl.getDomRef(),  sArrowName.toLowerCase() === "left"  ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
-
-				checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
-			},
-			testTypeInEmptyField: function(oControl, oClock, sUserInput, iExpectedPosition, sMessagePrefix) {
-				var i = 0;
-				oControl.focus();
-				oClock.tick(1000);
-
-				for (i = 0; i < sUserInput.length; i++) {
-					qutils.triggerKeypress(oControl.getDomRef(), sUserInput[i]);
-				}
-				checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
-			}
-		});
-
-		QUnit.test("Left arrow on selected string moves the carret to the most left position", function(assert){
-			this.testSelectedInputWithArrow(this.oMaskInputLatin, this.clock, "left", 0, "Latin content");
-			this.testSelectedInputWithArrow(this.oMaskInputHebrew, this.clock, "left", this.sTestHebrewValue.length, "Hebrew content");
-			//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
-		});
-
-		QUnit.test("Right arrow on selected string moves the carret to the most right position", function(assert){
-			this.testSelectedInputWithArrow(this.oMaskInputLatin, this.clock, "right", this.sTestLatinValue.length, "Latin content");
-			this.testSelectedInputWithArrow(this.oMaskInputHebrew, this.clock, "right", 0, "Hebrew content");
-		});
-
-		QUnit.test("Left arrow when caret is at the middle moves to the left", function(assert){
-			var iStartPositionHebrew = Math.floor(this.oMaskInputHebrew.getValue().length / 2),
-				iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length / 2);
-			this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputHebrew, this.clock, iStartPositionHebrew, "left", iStartPositionHebrew + 1, "Hebrew content");
-			this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, iStartPositionLatin, "left", iStartPositionLatin - 1, "Latin content");
-			//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
-		});
-
-		QUnit.test("Left arrow when caret is at the rightmost position moves to the left", function(assert){
-			var iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length);
-			for (var i = iStartPositionLatin; i > 0; i-- ) {
-				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, i, "left", i - 1, "Latin content. Start position: " + i);
-			}
-		});
-
-		QUnit.test("Navigate the whole field with left arrow when caret is at the middle moves to the left between RTL and LTR characters", function(assert){
-			// this test is needed because the native behavior of some browsers is different - we're mimicking IE11
-			this.oMaskInputMixed = new MaskInput({
-				textDirection: TextDirection.RTL,
-				value: this.sTestMixedValue,
-				mask: "9999~~~s~~~~",
-				rules: [
-					new MaskInputRule({
-						maskFormatSymbol: "~",
-						regex: "[\u0591-\u05F4]"
-					}),
-					new MaskInputRule({
-						maskFormatSymbol: "s",
-						regex: "[ ]"
-					})
-				]
-			});
-			this.oMaskInputMixed.placeAt("content");
-			var iStartPosition = 4;
-			this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputMixed, this.clock, iStartPosition, "left", iStartPosition + 1, "Mixed content");
-			this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputMixed, this.clock, iStartPosition, "right", iStartPosition - 1, "Mixed content");
-			this.oMaskInputMixed.destroy();
-
-			//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
-		});
-
-		QUnit.test("Right arrow when caret is at the middle moves to the right", function(assert){
-			var iStartPositionHebrew = Math.floor(this.oMaskInputHebrew.getValue().length / 2),
-				iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length / 2);
-			this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputHebrew, this.clock, iStartPositionHebrew, "right", iStartPositionHebrew - 1, "Hebrew content");
-			this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, iStartPositionLatin, "right", iStartPositionLatin + 1, "Latin content");
-			//Note: iStartPosition - 1 is correct, since when content is hebrew, selectionStarts & selectionEnd are mirrored.
-		});
-
-		QUnit.test("Navigate the whole field with right arrow when caret is at the leftmost moves to the right", function(assert){
-			var iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length);
-			for (var i = 0; i < iStartPositionLatin; i++ ) {
-				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, i, "right", i + 1, "Latin content. Start position: " + i);
-			}
-		});
-
-		QUnit.test("Typing in a empty field (Latin content)", function(assert){
-			this.oMaskInputLatin.destroy();
+	QUnit.module("RTL support", {
+		beforeEach: function () {
+			this.sTestLatinValue = "abcd";
+			this.sTestHebrewValue = "אני רוצה";//"I want" in Hebrew
+			this.sTestMixedValue = "1234אני רוצה";//"1234I want" in Hebrew
 			this.oMaskInputLatin = new MaskInput( {
 				textDirection: TextDirection.RTL,
+				value: this.sTestLatinValue,
 				mask: "aaaa"
 			});
 			this.oMaskInputLatin.placeAt("content");
-			sap.ui.getCore().applyChanges();
-			this.clock.tick(1000);
-			sContent = "abc";
-			this.testTypeInEmptyField(this.oMaskInputLatin, this.clock, sContent, 3, "Latin content");
-			this.oMaskInputHebrew.focus(); //make sure complete handler for latin mask worked-out
-			assert.equal(this.oMaskInputLatin.getValue(), sContent + "_", "Latin content check.");
-		});
 
-		QUnit.test("Typing in a empty field (Hebrew content)", function(assert){
-			this.oMaskInputHebrew.destroy();
 			this.oMaskInputHebrew = new MaskInput({
 				textDirection: TextDirection.RTL,
 				value: this.sTestHebrewValue,
@@ -849,16 +701,160 @@ sap.ui.define([
 				]
 			});
 			this.oMaskInputHebrew.placeAt("content");
+
 			sap.ui.getCore().applyChanges();
-			this.clock.tick(1000);
-			var sContent =  "וצה"; /*3 chars*/
-			this.testTypeInEmptyField(this.oMaskInputHebrew, this.clock, sContent, 3, "Hebrew content");
-			this.oMaskInputLatin.focus(); //make sure complete handler for hebrew mask worked-out
-			assert.equal(this.oMaskInputHebrew.getValue(), sContent + "_____", "Hebrew content check.");
+			this.sandbox = sinon.sandbox;
+		},
 
+		afterEach: function () {
+			if (!bSkipDestroy) {
+				this.oMaskInputLatin.destroy();
+				this.oMaskInputHebrew.destroy();
+			}
+
+			this.sandbox.restore();
+		},
+		testSelectedInputWithArrow: function(oControl, oClock, sArrowName, iExpectedPosition, sMessagePrefix) {
+			oControl.focus();
+			oClock.tick(1000);
+			oControl.selectText(0, oControl.getValue().length);
+			qutils.triggerKeydown(oControl.getDomRef(), sArrowName.toLowerCase() === "left" ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
+			oClock.tick(1000);
+			checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
+
+			//consecutive presses should not move the carret
+			qutils.triggerKeydown(oControl.getDomRef(), sArrowName.toLowerCase() === "left" ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
+
+			checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix + " Consecutive presses do nothing");
+		},
+		testCarretAtPositionAndMoveWithArrow: function(oControl, oClock, iStartPosition, sArrowName, iExpectedPosition, sMessagePrefix) {
+			oControl.focus();
+			oClock.tick(1000);
+			setCursorPosition(iStartPosition, oControl);
+			qutils.triggerKeydown(oControl.getDomRef(),  sArrowName.toLowerCase() === "left"  ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
+
+			checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
+		},
+		testTypeInEmptyField: function(oControl, oClock, sUserInput, iExpectedPosition, sMessagePrefix) {
+			var i = 0;
+			oControl.focus();
+			oClock.tick(1000);
+
+			for (i = 0; i < sUserInput.length; i++) {
+				qutils.triggerKeypress(oControl.getDomRef(), sUserInput[i]);
+			}
+			checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
+		}
+	});
+
+	QUnit.test("Left arrow on selected string moves the carret to the most left position", function(assert){
+		this.testSelectedInputWithArrow(this.oMaskInputLatin, this.clock, "left", 0, "Latin content");
+		this.testSelectedInputWithArrow(this.oMaskInputHebrew, this.clock, "left", this.sTestHebrewValue.length, "Hebrew content");
+		//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
+	});
+
+	QUnit.test("Right arrow on selected string moves the carret to the most right position", function(assert){
+		this.testSelectedInputWithArrow(this.oMaskInputLatin, this.clock, "right", this.sTestLatinValue.length, "Latin content");
+		this.testSelectedInputWithArrow(this.oMaskInputHebrew, this.clock, "right", 0, "Hebrew content");
+	});
+
+	QUnit.test("Left arrow when caret is at the middle moves to the left", function(assert){
+		var iStartPositionHebrew = Math.floor(this.oMaskInputHebrew.getValue().length / 2),
+			iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length / 2);
+		this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputHebrew, this.clock, iStartPositionHebrew, "left", iStartPositionHebrew + 1, "Hebrew content");
+		this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, iStartPositionLatin, "left", iStartPositionLatin - 1, "Latin content");
+		//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
+	});
+
+	QUnit.test("Left arrow when caret is at the rightmost position moves to the left", function(assert){
+		var iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length);
+		for (var i = iStartPositionLatin; i > 0; i-- ) {
+			this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, i, "left", i - 1, "Latin content. Start position: " + i);
+		}
+	});
+
+	QUnit.test("Navigate the whole field with left arrow when caret is at the middle moves to the left between RTL and LTR characters", function(assert){
+		// this test is needed because the native behavior of some browsers is different - we're mimicking IE11
+		this.oMaskInputMixed = new MaskInput({
+			textDirection: TextDirection.RTL,
+			value: this.sTestMixedValue,
+			mask: "9999~~~s~~~~",
+			rules: [
+				new MaskInputRule({
+					maskFormatSymbol: "~",
+					regex: "[\u0591-\u05F4]"
+				}),
+				new MaskInputRule({
+					maskFormatSymbol: "s",
+					regex: "[ ]"
+				})
+			]
 		});
-	}
+		this.oMaskInputMixed.placeAt("content");
+		var iStartPosition = 4;
+		this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputMixed, this.clock, iStartPosition, "left", iStartPosition + 1, "Mixed content");
+		this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputMixed, this.clock, iStartPosition, "right", iStartPosition - 1, "Mixed content");
+		this.oMaskInputMixed.destroy();
 
+		//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
+	});
+
+	QUnit.test("Right arrow when caret is at the middle moves to the right", function(assert){
+		var iStartPositionHebrew = Math.floor(this.oMaskInputHebrew.getValue().length / 2),
+			iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length / 2);
+		this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputHebrew, this.clock, iStartPositionHebrew, "right", iStartPositionHebrew - 1, "Hebrew content");
+		this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, iStartPositionLatin, "right", iStartPositionLatin + 1, "Latin content");
+		//Note: iStartPosition - 1 is correct, since when content is hebrew, selectionStarts & selectionEnd are mirrored.
+	});
+
+	QUnit.test("Navigate the whole field with right arrow when caret is at the leftmost moves to the right", function(assert){
+		var iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length);
+		for (var i = 0; i < iStartPositionLatin; i++ ) {
+			this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, i, "right", i + 1, "Latin content. Start position: " + i);
+		}
+	});
+
+	QUnit.test("Typing in a empty field (Latin content)", function(assert){
+		this.oMaskInputLatin.destroy();
+		this.oMaskInputLatin = new MaskInput( {
+			textDirection: TextDirection.RTL,
+			mask: "aaaa"
+		});
+		this.oMaskInputLatin.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(1000);
+		sContent = "abc";
+		this.testTypeInEmptyField(this.oMaskInputLatin, this.clock, sContent, 3, "Latin content");
+		this.oMaskInputHebrew.focus(); //make sure complete handler for latin mask worked-out
+		assert.equal(this.oMaskInputLatin.getValue(), sContent + "_", "Latin content check.");
+	});
+
+	QUnit.test("Typing in a empty field (Hebrew content)", function(assert){
+		this.oMaskInputHebrew.destroy();
+		this.oMaskInputHebrew = new MaskInput({
+			textDirection: TextDirection.RTL,
+			value: this.sTestHebrewValue,
+			mask: "~~~s~~~~",
+			rules: [
+				new MaskInputRule({
+					maskFormatSymbol: "~",
+					regex: "[\u0591-\u05F4]"
+				}),
+				new MaskInputRule({
+					maskFormatSymbol: "s",
+					regex: "[ ]"
+				})
+			]
+		});
+		this.oMaskInputHebrew.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(1000);
+		var sContent =  "וצה"; /*3 chars*/
+		this.testTypeInEmptyField(this.oMaskInputHebrew, this.clock, sContent, 3, "Hebrew content");
+		this.oMaskInputLatin.focus(); //make sure complete handler for hebrew mask worked-out
+		assert.equal(this.oMaskInputHebrew.getValue(), sContent + "_____", "Hebrew content check.");
+
+	});
 
 	QUnit.module("Others", {
 		beforeEach: function () {
