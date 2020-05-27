@@ -53,6 +53,7 @@ sap.ui.define([
 		bySelector: function (oSelector, oAppComponent, oView) {
 			var sControlId;
 			if (oSelector && oSelector.name) {
+				oView = oView || this.bySelector(oSelector.viewSelector, oAppComponent);
 				var oExtensionPointInfo = this.getExtensionPointInfo(oSelector.name, oView);
 				return oExtensionPointInfo ? oExtensionPointInfo.parent : undefined;
 			}
