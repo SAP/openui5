@@ -2563,8 +2563,7 @@ sap.ui.define([
 
 	QUnit.test("input's visibility onsapfocusleave + n-more label", function(assert) {
 		var oIndicator,
-			oVisibleInputSpy = this.spy(this.multiInput, "_setValueVisible"),
-			oInvisibleInputSpy = this.spy(this.multiInput, "_setValueInvisible");
+			oVisibleInputSpy = this.spy(this.multiInput, "_setValueVisible");
 
 		this.multiInput.setWidth("200px");
 		this.multiInput.setValue("XXXX");
@@ -2584,15 +2583,14 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.ok(oInvisibleInputSpy.called, "The input field is hidden onfocusout.");
-		assert.notOk(oVisibleInputSpy.called, "The input field is not shown onfocusout.");
+		assert.ok(oVisibleInputSpy.calledWith(false), "The input field is hidden onfocusout.");
+		assert.notOk(oVisibleInputSpy.calledWith(true), "The input field is not shown onfocusout.");
 		assert.notOk(oIndicator.hasClass("sapUiHidden"), "The n-more indicator is visible");
 	});
 
 	QUnit.test("input's visibility onsapfocusleave + without n-more label", function(assert) {
 		var oIndicator,
-			oVisibleInputSpy = this.spy(this.multiInput, "_setValueVisible"),
-			oInvisibleInputSpy = this.spy(this.multiInput, "_setValueInvisible");
+			oVisibleInputSpy = this.spy(this.multiInput, "_setValueVisible");
 
 		this.multiInput.setWidth("200px");
 		this.multiInput.setTokens([
@@ -2608,15 +2606,14 @@ sap.ui.define([
 		this.multiInput.onsapfocusleave({});
 
 		// assert
-		assert.ok(oVisibleInputSpy.called, "The input field is shown onfocusout.");
-		assert.notOk(oInvisibleInputSpy.called, "The input field is not hidden onfocusout.");
+		assert.ok(oVisibleInputSpy.calledWith(true), "The input field is shown onfocusout.");
+		assert.notOk(oVisibleInputSpy.calledWith(false), "The input field is not hidden onfocusout.");
 		assert.ok(oIndicator.hasClass("sapUiHidden"), "The n-more indicator is hidden");
 	});
 
 	QUnit.test("input's visibility on rerendering", function(assert) {
 		var oIndicator,
-			oVisibleInputSpy = this.spy(this.multiInput, "_setValueVisible"),
-			oInvisibleInputSpy = this.spy(this.multiInput, "_setValueInvisible");
+			oVisibleInputSpy = this.spy(this.multiInput, "_setValueVisible");
 
 		this.multiInput.setWidth("200px");
 		this.multiInput.setValue("XXXX");
@@ -2639,8 +2636,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.ok(oInvisibleInputSpy.called, "The input field is hidden.");
-		assert.notOk(oVisibleInputSpy.called, "The input field is not shown.");
+		assert.ok(oVisibleInputSpy.calledWith(false), "The input field is hidden.");
+		assert.notOk(oVisibleInputSpy.calledWith(true), "The input field is not shown.");
 		assert.notOk(oIndicator.hasClass("sapUiHidden"), "The n-more indicator is visible");
 	});
 
