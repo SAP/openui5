@@ -3,14 +3,17 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/library",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/ODataMessageParser",
 	"sap/ui/test/TestUtils"
-], function (Log, Message, MessageScope, ODataMessageParser, TestUtils) {
+], function (Log, coreLibrary, Message, MessageScope, ODataMessageParser, TestUtils) {
 	/*global QUnit,sinon*/
 	/*eslint no-warning-comments: 0*/
 	"use strict";
+
+	var MessageType = coreLibrary.MessageType; // shortcuts for enums
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.ODataMessageParser (ODataMessageParserNoFakeService)", {
@@ -478,4 +481,152 @@ sap.ui.define([
 		assert.deepEqual(oODataMessageParser._lastMessages, aNewLastMessages);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_createMessage: no target for transient and technical message", function (assert) {
+		var oODataMessageParser = {
+				_createTarget : function () {}
+			},
+			oMessage,
+			oMessageObject = {transition: true},
+			mRequestInfo = {
+				response : {
+					headers : "~headers",
+					statusCode : "~statusCode"
+				}
+			};
+
+		this.mock(oODataMessageParser).expects("_createTarget").never();
+
+		// code under test
+		oMessage = ODataMessageParser.prototype._createMessage.call(oODataMessageParser,
+			oMessageObject, mRequestInfo, true);
+
+		assert.strictEqual(oMessage.fullTarget, "");
+		assert.strictEqual(oMessage.target, "");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_addGenericError", function (assert) {
+		var oMessage = "~oMessage",
+			aMessages = ["~message0"],
+			oODataMessageParser = {
+				_createMessage : function () {}
+			},
+			mRequestInfo = {
+				response : {body : "~body"}
+			},
+			oResourceBundle = {
+				getText : function () {}
+			};
+
+		this.mock(sap.ui.getCore()).expects("getLibraryResourceBundle")
+			.withExactArgs()
+			.returns(oResourceBundle);
+		this.mock(oResourceBundle).expects("getText")
+			.withExactArgs("CommunicationError")
+			.returns("~CommunicationError");
+		this.mock(oODataMessageParser).expects("_createMessage")
+			.withExactArgs({
+				description : "~body",
+				message : "~CommunicationError",
+				severity : MessageType.Error,
+				transition : true
+			}, sinon.match.same(mRequestInfo), true)
+			.returns(oMessage);
+
+		// code under test
+		ODataMessageParser.prototype._addGenericError.call(oODataMessageParser, aMessages,
+			mRequestInfo);
+
+		assert.deepEqual(aMessages, ["~message0", "~oMessage"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_parseBodyXML: no error tag", function (assert) {
+		var sContentType = "application/xml",
+			oODataMessageParser = {
+				_addGenericError : function () {}
+			},
+			oResponse = {
+				// valid XML, but no error or errordetail tag
+				body : '<?xml version="1.0" encoding="utf-8"?><foo></foo>'
+			},
+			mRequestInfo = {
+				response : oResponse
+			};
+
+		this.mock(oODataMessageParser).expects("_addGenericError")
+			.withExactArgs("~aMessages", sinon.match.same(mRequestInfo));
+
+		// code under test
+		ODataMessageParser.prototype._parseBodyXML.call(oODataMessageParser, "~aMessages",
+			oResponse, mRequestInfo, sContentType);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_parseBodyXML: DOMParser throws exception", function (assert) {
+		var // wrong content does not cause exception in Chrome but in IE, unsupported content type
+			// throws exception in all browsers
+			sContentType = "unknown-xml-content-type",
+			oODataMessageParser = {
+				_addGenericError : function () {}
+			},
+			oResponse = {body : "~foo"},
+			mRequestInfo = {
+				response : oResponse
+			};
+
+		this.mock(oODataMessageParser).expects("_addGenericError")
+			.withExactArgs("~aMessages", sinon.match.same(mRequestInfo));
+		this.oLogMock.expects("error")
+			.withExactArgs("Error message returned by server could not be parsed");
+
+		// code under test
+		ODataMessageParser.prototype._parseBodyXML.call(oODataMessageParser, "~aMessages",
+			oResponse, mRequestInfo, sContentType);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_parseBodyJSON: no error property", function (assert) {
+		var oODataMessageParser = {
+				_addGenericError : function () {}
+			},
+			oResponse = {
+				// valid JSON, but no error property
+				body : '{"foo" : "bar"}'
+			},
+			mRequestInfo = {
+				response : oResponse
+			};
+
+		this.mock(oODataMessageParser).expects("_addGenericError")
+			.withExactArgs("~aMessages", sinon.match.same(mRequestInfo));
+		this.oLogMock.expects("error")
+			.withExactArgs("Error message returned by server did not contain error-field");
+
+		// code under test
+		ODataMessageParser.prototype._parseBodyJSON.call(oODataMessageParser, "~aMessages",
+			oResponse, mRequestInfo);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_parseBodyJSON: plain text", function (assert) {
+		var oODataMessageParser = {
+				_addGenericError : function () {}
+			},
+			oResponse = {body : "~foo"},
+			mRequestInfo = {
+				response : oResponse
+			};
+
+		this.mock(oODataMessageParser).expects("_addGenericError")
+			.withExactArgs("~aMessages", sinon.match.same(mRequestInfo));
+		this.oLogMock.expects("error")
+			.withExactArgs("Error message returned by server could not be parsed");
+
+		// code under test
+		ODataMessageParser.prototype._parseBodyJSON.call(oODataMessageParser, "~aMessages",
+			oResponse, mRequestInfo);
+	});
 });

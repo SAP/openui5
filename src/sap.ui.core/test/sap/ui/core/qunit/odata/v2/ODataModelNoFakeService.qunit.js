@@ -10,8 +10,10 @@ sap.ui.define([
 	"sap/ui/test/TestUtils"
 ], function (Log, FilterProcessor, MessageScope, ODataUtils, ODataModel, TestUtils) {
 	/*global QUnit,sinon*/
-	/*eslint no-warning-comments: 0*/
+	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
+
+	var sClassName = "sap.ui.model.odata.v2.ODataModel";
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v2.ODataModel (ODataModelNoFakeService)", {
@@ -843,4 +845,184 @@ sap.ui.define([
 	});
 });
 
+
+	//*********************************************************************************************
+	QUnit.test("_submitBatchRequest: with error responses", function (assert) {
+		var oBatchRequest = {},
+			oBatchRequestHandle = {abort : function () {/*not relevant for this test*/}},
+			oBatchResponse = {headers : "~headers", statusCode : 200},
+			oChangesetError = {message : "complete changeset failed"},
+			oData = {__batchResponses : [
+				oChangesetError
+				// don't care about successful requests in the changeset in this test
+			]},
+			oError = {message : "an error message"},
+			fnHandleError,
+			oHandlers = {
+				fnError : function () {},
+				fnSuccess : function () {}
+			},
+			fnHandleSuccess,
+			oModel = {
+				_getHeader : function () {},
+				_invalidatePathCache : function () {},
+				_processAfterUpdate : function () {},
+				_processError : function () {},
+				_processSuccess : function () {},
+				_setSessionContextIdHeader : function () {},
+				_submitRequest : function () {},
+				checkUpdate : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oPart0_0 = {fnError : "~fnErrorPart0_0", request : {}},
+			oPart1_0 = {fnError : "~fnErrorPart1_0", request : {}},
+			oPart1_1 = {fnError : "~fnErrorPart1_1", request : {}},
+			oPart2_0 = {fnError : "~fnErrorPart2_0", request : {}},
+			oRequest0 = {parts : [oPart0_0]},
+			oRequest1 = {parts : [oPart1_0, oPart1_1]},
+			oRequest2 = {parts : [oPart2_0]},
+			aRequests = [
+				// changeset
+				[oRequest1, oRequest2],
+				// single request
+				oRequest0
+			],
+			oEventInfo = {
+				batch : true,
+				requests : aRequests
+			};
+
+		oModelMock.expects("_submitRequest")
+			.withExactArgs(sinon.match.same(oBatchRequest), sinon.match.func, sinon.match.func)
+			.callsFake(function (oBatchRequest0, fnHandleSuccess0, fnHandleError0) {
+				fnHandleError = fnHandleError0;
+				fnHandleSuccess = fnHandleSuccess0;
+				return oBatchRequestHandle;
+			});
+
+		// code under test
+		ODataModel.prototype._submitBatchRequest.call(oModel, oBatchRequest, aRequests,
+			oHandlers.fnSuccess, oHandlers.fnError);
+
+		assert.deepEqual(oBatchRequest.eventInfo, oEventInfo);
+
+		// complete $batch fails
+
+		oModelMock.expects("_processError") // for oRequest1 - part 0
+			.withExactArgs(sinon.match.same(oPart1_0.request),
+				sinon.match.same(oError).and(sinon.match({$reported : true})),
+				"~fnErrorPart1_0");
+		oModelMock.expects("_processError") // for oRequest1 - part 1
+			.withExactArgs(sinon.match.same(oPart1_1.request),
+				sinon.match.same(oError).and(sinon.match({$reported : true})),
+				"~fnErrorPart1_1");
+		oModelMock.expects("_processError") // for oRequest2
+			.withExactArgs(sinon.match.same(oPart2_0.request),
+				sinon.match.same(oError).and(sinon.match({$reported : true})),
+				"~fnErrorPart2_0");
+		oModelMock.expects("_processError") // for oRequest0
+			.withExactArgs(sinon.match.same(oPart0_0.request),
+				sinon.match.same(oError).and(sinon.match({$reported : true})),
+				"~fnErrorPart0_0");
+		oModelMock.expects("_processAfterUpdate").withExactArgs();
+		oModelMock.expects("_processError")
+			.withExactArgs(sinon.match.same(oBatchRequest),
+				sinon.match.same(oError).and(sinon.match({$reported : false})),
+				sinon.match.same(oHandlers.fnError), true, sinon.match.same(aRequests));
+
+		// code under test
+		fnHandleError(oError);
+
+		// $batch succeeds but single request in the batch fail
+
+		oModelMock.expects("_processError") // for oRequest1 - part 0
+			.withExactArgs(sinon.match.same(oPart1_0.request),
+				sinon.match.same(oChangesetError).and(sinon.match({$reported : false})),
+				"~fnErrorPart1_0")
+			.callsFake(function (oRequest, oResponse, fnError0) {
+				oResponse.$reported = true;
+			});
+		oModelMock.expects("_processError") // for oRequest1 - part 1
+			.withExactArgs(sinon.match.same(oPart1_1.request),
+				sinon.match.same(oChangesetError).and(sinon.match({$reported : true})),
+				"~fnErrorPart1_1");
+		oModelMock.expects("_processError") // for oRequest2
+			.withExactArgs(sinon.match.same(oPart2_0.request),
+				sinon.match.same(oChangesetError).and(sinon.match({$reported : false})),
+				"~fnErrorPart2_0");
+		oModelMock.expects("_invalidatePathCache").withExactArgs();
+		oModelMock.expects("checkUpdate").withExactArgs(false, false, {/*mGetEntities*/});
+		oModelMock.expects("_processSuccess")
+			.withExactArgs(sinon.match.same(oBatchRequest), sinon.match.same(oBatchResponse),
+				sinon.match.same(oHandlers.fnSuccess), {/*mGetEntities*/}, {/*mChangeEntities*/},
+				{/*mEntityTypes*/}, true, sinon.match.same(aRequests));
+		oModelMock.expects("_getHeader").withExactArgs("sap-contextid", "~headers")
+			.returns("~contextid");
+		oModelMock.expects("_setSessionContextIdHeader").withExactArgs("~contextid");
+
+		// code under test
+		fnHandleSuccess(oData, oBatchResponse);
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bReported) {
+	QUnit.test("_handleError: $reported = " + bReported, function (assert) {
+		var oError = {
+				$reported : bReported,
+				message : "~message",
+				response : {
+					body : "~body",
+					headers : "~headers",
+					statusCode : "~code",
+					statusText : "~statusText"
+				}
+			},
+			oModel = {
+				_parseResponse : function () {}
+			},
+			oRequest = "~oRequest",
+			oResult;
+
+		this.mock(oModel).expects("_parseResponse").exactly(bReported ? 0 : 1)
+			.withExactArgs(sinon.match.same(oError.response), "~oRequest");
+		this.oLogMock.expects("error").exactly(bReported ? 0 : 1)
+			.withExactArgs("~message (~code ~statusText): ~body", undefined, sClassName);
+
+		// code under test
+		oResult = ODataModel.prototype._handleError.call(oModel, oError, oRequest);
+
+		assert.deepEqual(oResult, {
+			headers : "~headers",
+			message : "~message",
+			responseText : "~body",
+			statusCode : "~code",
+			statusText : "~statusText"
+		});
+		assert.strictEqual(oError.$reported, true);
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bReported) {
+	QUnit.test("_handleError: no response given, $reported = " + bReported, function (assert) {
+		var oError = {
+				$reported : bReported,
+				message : "~message"
+			},
+			oModel = {
+				_parseResponse : function () {}
+			},
+			oResult;
+
+		this.mock(oModel).expects("_parseResponse").never();
+		this.oLogMock.expects("error").exactly(bReported ? 0 : 1)
+			.withExactArgs("The following problem occurred: ~message", undefined, sClassName);
+
+		// code under test
+		oResult = ODataModel.prototype._handleError.call(oModel, oError, "~oRequest");
+
+		assert.deepEqual(oResult, {message : "~message"});
+		assert.strictEqual(oError.$reported, true);
+	});
+});
 });
