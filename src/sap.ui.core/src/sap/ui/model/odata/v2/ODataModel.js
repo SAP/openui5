@@ -5409,7 +5409,9 @@ sap.ui.define([
 					if (isEmptyObject(oChangedObject[sKey])) {
 						delete oChangedObject[sKey];
 					}
-				} else if (deepEqual(oChangedObject[sKey], oOriginalObject[sKey]) && !that.isLaundering(sActPath)) {
+				} else if (sCurPath.endsWith("__metadata")
+						|| deepEqual(oChangedObject[sKey], oOriginalObject[sKey])
+							&& !that.isLaundering(sActPath)) {
 					delete oChangedObject[sKey];
 					// When current object is the entity itself check for matching navigation property in changed
 					// entity data and take care of it as well
