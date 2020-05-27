@@ -3750,11 +3750,12 @@ sap.ui.define([
 	].forEach(function (aAtEnd, i) {
 		QUnit.test("create: bAtEnd #" + i, function (assert) {
 			var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
-					$count : true,
 					$$updateGroupId : "update"
 				}),
 				oGroupLock = {};
 
+			oBinding.bLengthFinal = true;
+			oBinding.iMaxLength = 0;
 			this.mock(oBinding).expects("lockGroup")
 				.withExactArgs("update", true, true, sinon.match.func)
 				.returns(oGroupLock);
@@ -3778,12 +3779,25 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("create: bAtEnd without $count", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES");
+		var oBinding = this.bindList("/EMPLOYEES"),
+			sError = "Must know the final length to create at the end. Consider setting $count";
 
 		// code under test
 		assert.throws(function () {
 			oBinding.create(undefined, true, true);
-		}, new Error("Must set $count to create at the end"));
+		}, new Error(sError));
+
+		oBinding.createContexts(3, 0, createData(3, 0, true)); // simulate a read
+
+		// code under test
+		assert.throws(function () {
+			oBinding.create(undefined, true, true);
+		}, new Error(sError));
+
+		oBinding.createContexts(6, 3, createData(1, 3, true, 1)); // simulate a short read
+		this.mock(oBinding).expects("createInCache").returns(SyncPromise.resolve({}));
+
+		oBinding.create(undefined, true, true);
 
 		oBinding = this.bindList("TEAM_2_EMPLOYEES",
 			Context.create(this.oModel, {/*oBinding*/}, "/TEAMS('42')"));
@@ -3791,7 +3805,7 @@ sap.ui.define([
 		// code under test
 		assert.throws(function () {
 			oBinding.create(undefined, true, true);
-		}, new Error("Must set $count to create at the end"));
+		}, new Error(sError));
 
 		oBinding = this.bindList("TEAM_2_EMPLOYEES",
 			this.oModel.createBindingContext("/TEAMS('42')"));
@@ -3799,13 +3813,12 @@ sap.ui.define([
 		// code under test
 		assert.throws(function () {
 			oBinding.create(undefined, true, true);
-		}, new Error("Must set $count to create at the end"));
+		}, new Error(sError));
 	});
 
 	//*********************************************************************************************
 	QUnit.test("create and delete with bAtEnd varying", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
-				$count : true,
 				$$updateGroupId : "update"
 			}),
 			oBindingMock = this.mock(oBinding),
@@ -3813,6 +3826,8 @@ sap.ui.define([
 			oContext2,
 			oExpectation;
 
+		oBinding.bLengthFinal = true;
+		oBinding.iMaxLength = 0;
 		oExpectation = oBindingMock.expects("lockGroup").atLeast(1).returns({});
 		oBindingMock.expects("createInCache").returns(SyncPromise.resolve({}));
 
