@@ -580,9 +580,10 @@ sap.ui.define([
 	 * Note: A deep create is not supported. The dependent entity has to be created using a second
 	 * list binding. Note that it is not supported to bind relative to a transient context.
 	 *
-	 * Note: The binding must have the parameter <code>$count : true</code> when creating an entity
-	 * at the end. Otherwise the collection length may be unknown and there is no clear position to
-	 * place this entity at.
+	 * Note: Creating at the end is only allowed if the final length of the binding is known (see
+	 * {@link #isLengthFinal}), so that there is a clear position to place this entity at. This is
+	 * the case if the complete collection has been read or if the system parameter
+	 * <code>$count</code> is <code>true</code> and the binding has processed at least one request.
 	 *
 	 * @param {object} [oInitialData={}]
 	 *   The initial data for the created entity
@@ -598,7 +599,7 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If the binding's root binding is suspended, if a relative binding is unresolved, if
 	 *   entities are created both at the start and at the end, or if <code>bAtEnd</code> is
-	 *   <code>true</code> and the binding does not use the parameter <code>$count=true</code>
+	 *   <code>true</code> and the binding does not know the final length.
 	 *
 	 * @public
 	 * @since 1.43.0
@@ -618,8 +619,9 @@ sap.ui.define([
 		}
 
 		bAtEnd = !!bAtEnd; // normalize to simplify comparisons
-		if (bAtEnd && !this.mQueryOptions.$count) {
-			throw new Error("Must set $count to create at the end");
+		if (bAtEnd && !this.bLengthFinal) {
+			throw new Error(
+				"Must know the final length to create at the end. Consider setting $count");
 		}
 		if (this.bCreatedAtEnd !== undefined && this.bCreatedAtEnd !== bAtEnd) {
 			throw new Error("Creating entities at the start and at the end is not supported.");
