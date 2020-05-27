@@ -153,7 +153,7 @@ sap.ui.define([
 			}
 
 			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
+			this._bCheckDomValue &&  oEvent.setMarked();
 
 			var sValue = this.getValue(),
 				iValueLength = sValue.length;
