@@ -48,34 +48,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Utility function to process strings in an object/array recursively
-	 *
-	 * @param {object/Array} oObject Object or array that will be processed
-	 * @param {function} fnCallback function(oObject, sKey, sValue) to call for all strings. Use "oObject[sKey] = X" to change the value.
-	 */
-	function processObject(oObject, fnCallback) {
-		for (var sKey in oObject) {
-			if (!oObject.hasOwnProperty(sKey)) {
-				continue;
-			}
-			var vValue = oObject[sKey];
-			switch (typeof vValue) {
-				case "object":
-					// ignore null objects
-					if (vValue) {
-						processObject(vValue, fnCallback);
-					}
-					break;
-				case "string":
-						fnCallback(oObject, sKey, vValue);
-						break;
-				default:
-					// do nothing in case of other types
-			}
-		}
-	}
-
-	/**
 	 * Utility function to access a child member by a given path
 	 *
 	 * @param {object} oObject Object
@@ -236,7 +208,7 @@ sap.ui.define([
 			// find i18n property paths in the manifest if i18n texts in
 			// the manifest which should be processed
 			var aI18nProperties = [];
-			processObject(this._oManifest, function(oObject, sKey, vValue) {
+			Manifest.processObject(this._oManifest, function(oObject, sKey, vValue) {
 				var match = vValue.match(rManifestTemplate);
 				if (match) {
 					aI18nProperties.push({
@@ -905,6 +877,34 @@ sap.ui.define([
 			});
 		}
 		return new Manifest(oManifestJSON, mSettings);
+	};
+
+	/**
+	 * Utility function to process strings in an object/array recursively
+	 *
+	 * @param {object/Array} oObject Object or array that will be processed
+	 * @param {function} fnCallback function(oObject, sKey, sValue) to call for all strings. Use "oObject[sKey] = X" to change the value.
+	 */
+	Manifest.processObject = function (oObject, fnCallback) {
+		for (var sKey in oObject) {
+			if (!oObject.hasOwnProperty(sKey)) {
+				continue;
+			}
+			var vValue = oObject[sKey];
+			switch (typeof vValue) {
+				case "object":
+					// ignore null objects
+					if (vValue) {
+						Manifest.processObject(vValue, fnCallback);
+					}
+					break;
+				case "string":
+					fnCallback(oObject, sKey, vValue);
+					break;
+				default:
+				// do nothing in case of other types
+			}
+		}
 	};
 
 	return Manifest;

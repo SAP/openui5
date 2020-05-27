@@ -23,7 +23,8 @@ sap.ui.define([
 
 	var MANIFEST_PARAMETERS = "/{SECTION}/configuration/parameters",
 		MANIFEST_CONFIGURATION = "/{SECTION}",
-		APP_DATA_SOURCES = "/sap.app/dataSources";
+		APP_DATA_SOURCES = "/sap.app/dataSources",
+		REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}|\{i18n>([^\}]+)\}/g;
 
 	/**
 	 * Creates a new Manifest object.
@@ -216,6 +217,7 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+
 	/**
 	 * Loads the i18n resources.
 	 *
@@ -223,6 +225,21 @@ sap.ui.define([
 	 * @returns {Promise} A promise resolved when the i18n resources are ready.
 	 */
 	Manifest.prototype.loadI18n = function () {
+
+		// find i18n property paths in the manifest if i18n texts in
+		// the manifest which should be processed
+		var bHasTranslatable = false;
+
+		CoreManifest.processObject(this._oManifest.getJson(), function(oObject, sKey, vValue) {
+			if (!bHasTranslatable && vValue.match(REGEXP_TRANSLATABLE)) {
+				bHasTranslatable = true;
+			}
+		});
+
+		if (!bHasTranslatable) {
+			return Promise.resolve();
+		}
+
 		return this._oManifest._loadI18n(true).then(function (oBundle) {
 			this.oResourceBundle = oBundle;
 		}.bind(this));
