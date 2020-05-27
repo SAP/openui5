@@ -55,6 +55,15 @@ describe('sap.m.Tokenizer', function() {
 	it("should select set width Tokenzier", function () {
 		element(by.id("setWidth")).click();
 		expect(takeScreenshot(element(by.id("setWidth")))).toLookAs("tokenizer-set-width-selected");
+	});
 
+	it("should show editable Tokenzier with single long token", function () {
+		element(by.id("setWidth")).click();
+		expect(takeScreenshot(element(by.id("tokenizerLongToken")))).toLookAs("tokenizer-long-token");
+	});
+
+	it("should show non-editable Tokenzier with single long token", function () {
+		element(by.id("setWidth")).click();
+		expect(takeScreenshot(element(by.id("tokenizerLongTokenReadOnly")))).toLookAs("tokenizer-long-token-read-only");
 	});
 });

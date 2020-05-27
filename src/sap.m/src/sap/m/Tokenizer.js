@@ -1404,6 +1404,8 @@ sap.ui.define([
 
 		var aRemoved = this.removeAllAggregation("tokens");
 
+		this.setFirstTokenTruncated(false);
+
 		if (typeof (bFireEvent) === "boolean" && !bFireEvent) {
 			return aRemoved;
 		}
@@ -1425,6 +1427,7 @@ sap.ui.define([
 	Tokenizer.prototype.updateTokens = function () {
 		this.destroyTokens();
 		this.updateAggregation("tokens");
+		this.setFirstTokenTruncated(false);
 	};
 
 	/**
