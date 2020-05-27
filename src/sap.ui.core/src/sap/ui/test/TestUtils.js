@@ -26,7 +26,7 @@ sap.ui.define([
 		sAutoRespondAfter = oUriParameters.get("autoRespondAfter"),
 		sRealOData = oUriParameters.get("realOData"),
 		rRequestKey = /^(\S+) (\S+)$/,
-		rRequestLine = /^(GET|DELETE|PATCH|POST) (\S+) HTTP\/1\.1$/,
+		rRequestLine = /^(GET|DELETE|MERGE|PATCH|POST) (\S+) HTTP\/1\.1$/,
 		mData = {},
 		rODataHeaders = /^(OData-Version|DataServiceVersion)$/i,
 		bProxy = sRealOData === "true" || sRealOData === "proxy",
@@ -195,7 +195,7 @@ sap.ui.define([
 		 * has been loaded.
 		 *
 		 * POST requests ending on "/$batch" are handled automatically. They are expected to be
-		 * multipart-mime requests where each part is a DELETE, GET, PATCH or POST request.
+		 * multipart-mime requests where each part is a DELETE, GET, PATCH, MERGE or POST request.
 		 * The response has a multipart-mime message containing responses to these inner requests.
 		 * If an inner request is not a DELETE, a PATCH or a POST and it is not found in the
 		 * fixture, or its message is not JSON, it is responded with an error code.
@@ -427,10 +427,10 @@ sap.ui.define([
 							oResponse = {code : 200};
 							break;
 						case "DELETE":
+						case "MERGE":
 						case "PATCH":
 							oResponse = {
-								code : 204,
-								headers : {"Content-Type" : "text/plain;charset=utf-8"}
+								code : 204
 							};
 							break;
 						case "POST":
@@ -582,6 +582,7 @@ sap.ui.define([
 				oServer.respondWith("DELETE", /./, respondFromFixture);
 				oServer.respondWith("HEAD", /./, respondFromFixture);
 				oServer.respondWith("PATCH", /./, respondFromFixture);
+				oServer.respondWith("MERGE", /./, respondFromFixture);
 				oServer.respondWith("POST", /./, post);
 
 				// wrap oServer.restore to also clear the filter
@@ -598,8 +599,9 @@ sap.ui.define([
 				sinon.FakeXMLHttpRequest.useFilters = true;
 				sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl) {
 					// must return true if the request is NOT processed by the fake server
-					return sMethod !== "DELETE" && sMethod !== "HEAD" && sMethod !== "PATCH"
-						&& sMethod !== "POST" && !(sMethod + " " + sUrl in mUrlToResponses);
+					return sMethod !== "DELETE" && sMethod !== "HEAD" && sMethod !== "MERGE"
+						&& sMethod !== "PATCH"	&& sMethod !== "POST"
+						&& !(sMethod + " " + sUrl in mUrlToResponses);
 				});
 			}
 
