@@ -1582,10 +1582,6 @@ function(
 	 * @return {map} parsedHash
 	 */
 	RuntimeAuthoring.prototype._handleUrlParameterOnExit = function(oReloadInfo) {
-		if (oReloadInfo.layer === Layer.USER) {
-			return;
-		}
-
 		if (!FlexUtils.getUshellContainer()) {
 			this._triggerHardReload(oReloadInfo);
 		}
