@@ -92,9 +92,11 @@ sap.ui.define([
 	 */
 	Item.prototype._firePress = function() {
 		var oParent = this.getParent();
+		var oRowAction = TableUtils.isA(oParent, "sap.ui.table.RowAction") ? oParent : null;
+
 		this.firePress({
 			item: this,
-			row: oParent && oParent._getRow ? oParent._getRow() : null
+			row: oRowAction ? oRowAction.getRow() : null
 		});
 	};
 

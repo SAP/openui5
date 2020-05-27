@@ -279,18 +279,14 @@ sap.ui.define([
 
 	QUnit.module("Behavior", {
 		beforeEach: function() {
-			var that = this;
 			this.rowAction = new RowAction();
 			this.rowAction.addItem(new RowActionItem({icon: "sap-icon://search", text: "A"}));
 			this.rowAction.addItem(new RowActionItem({icon: "sap-icon://delete", tooltip: "B"}));
+			this.row = new Row();
+			this.rowAction.getRow = function() {return this.row;}.bind(this);
+			this.aInnerIcons = this.rowAction.getAggregation("_icons");
 			this.rowAction.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			this.row = {};
-			this.rowAction._getRow = function() {
-				return that.row;
-			};
-
-			this.aInnerIcons = this.rowAction.getAggregation("_icons");
 		},
 		afterEach: function() {
 			this.rowAction.destroy();
