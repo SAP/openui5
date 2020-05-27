@@ -86,15 +86,27 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the instance of the row action this control belongs to.
+	 *
+	 * @returns {sap.ui.table.RowAction|null} Row action instance this control belongs to, or <code>null</code> if not a child of a row action.
+	 * @private
+	 */
+	Item.prototype.getRowAction = function() {
+		var oParent = this.getParent();
+		return TableUtils.isA(oParent, "sap.ui.table.RowAction") ? oParent : null;
+	};
+
+	/**
 	 * Fires the press event of this item with the relevant parameters.
 	 *
 	 * @private
 	 */
 	Item.prototype._firePress = function() {
-		var oParent = this.getParent();
+		var oRowAction = this.getRowAction();
+
 		this.firePress({
 			item: this,
-			row: oParent && oParent._getRow ? oParent._getRow() : null
+			row: oRowAction ? oRowAction.getRow() : null
 		});
 	};
 

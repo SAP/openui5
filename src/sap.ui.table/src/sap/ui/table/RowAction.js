@@ -119,7 +119,8 @@ sap.ui.define([
 	};
 
 	RowAction.prototype.onBeforeRendering = function() {
-		var oTable = this.getTable();
+		var oRow = this.getRow();
+		var oTable = oRow ? oRow.getTable() : null;
 		var aIcons = this.getAggregation("_icons");
 		var aItems = this.getItems();
 		var aVisibleItems = this._getVisibleItems();
@@ -210,20 +211,8 @@ sap.ui.define([
 	 * @private
 	 */
 	RowAction.prototype.getRow = function() {
-		var oRow = this.getParent();
-		return TableUtils.isA(oRow, "sap.ui.table.Row") ? oRow : null;
-	};
-
-	/**
-	 * Gets the instance of the table this control belongs to.
-	 *
-	 * @returns {sap.ui.table.Table|null} Table instance this control belongs to, or <code>null</code> if not a child of a table.
-	 * @private
-	 */
-	RowAction.prototype.getTable = function() {
-		var oRow = this.getRow();
-		var oTable = oRow ? oRow.getParent() : null;
-		return TableUtils.isA(oTable, "sap.ui.table.Table") ? oTable : null;
+		var oParent = this.getParent();
+		return TableUtils.isA(oParent, "sap.ui.table.Row") ? oParent : null;
 	};
 
 	/**
@@ -233,7 +222,8 @@ sap.ui.define([
 	 * @private
 	 */
 	RowAction.prototype._getSize = function() {
-		var oTable = this.getTable();
+		var oRow = this.getRow();
+		var oTable = oRow ? oRow.getTable() : null;
 		return oTable ? oTable.getRowActionCount() : 2;
 	};
 
