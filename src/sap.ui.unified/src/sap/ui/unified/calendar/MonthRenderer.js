@@ -198,7 +198,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		var aWeekDaysWide = oLocaleData.getDaysStandAlone("wide", sCalendarType);
 
 		if (oMonth.getShowWeekNumbers()) {
-			this.renderDummyCell(oRm, "sapUiCalWH", "columnheader");
+			this.renderDummyCell(oRm, "sapUiCalWH", true, "columnheader");
 		}
 
 		for ( var i = 0; i < iDays; i++) {
@@ -281,20 +281,24 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 
 		if (iLength === 28) {
 			// there are only 4 full weeks (28 days), add one hidden 'day' div in order to open space for 5-th week
-			this.renderDummyCell(oRm, "sapUiCalItem", "");
+			this.renderDummyCell(oRm, "sapUiCalItem", false, "");
 		}
 	};
 
 	/**
 	 * Generates empty 'day' div that adds space for one more week in the calendar, in case of 4 full weeks only (28 days)
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {string} sClassName css class that will be added to the dummy element styles
+	 * @param {boolean} bVisible if set to true the dummy element will be visible
+	 * @param {string} sRole aria role attribute
 	 * @private
 	 */
-	MonthRenderer.renderDummyCell = function(oRm, sClassName, sRole) {
+	MonthRenderer.renderDummyCell = function(oRm, sClassName, bVisible, sRole) {
 		oRm.openStart("div");
 		oRm.class(sClassName);
+		oRm.class("sapUiCalDummy");
+		oRm.style("visibility", bVisible ? "visible" : "hidden");
 		oRm.attr("role", sRole);
-		oRm.style("visibility", "hidden");
 		oRm.attr("tabindex", "-1");
 		oRm.openEnd();
 		oRm.close('div');
