@@ -364,7 +364,6 @@ function(
 				sDescribedBy = oStepInput.getAriaDescribedBy().join(" "),
 				sResultingLabelledBy;
 
-			mAccAttributes["role"] = "spinbutton";
 			mAccAttributes["valuenow"] = fNow;
 
 			if (sDescription) {
