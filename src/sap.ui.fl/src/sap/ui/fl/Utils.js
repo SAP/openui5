@@ -444,7 +444,7 @@ function(
 		_getAppComponentForComponent: function(oComponent) {
 			var oSapApp = null;
 			// special case for Fiori Elements to reach the real appComponent
-			if (oComponent && oComponent.getAppComponent) {
+			if (oComponent && oComponent.getAppComponent && oComponent.getAppComponent() instanceof Component) {
 				return oComponent.getAppComponent();
 			}
 
