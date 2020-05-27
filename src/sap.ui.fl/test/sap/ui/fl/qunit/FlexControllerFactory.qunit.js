@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function(
 	Component,
 	FlexState,
 	Applier,
@@ -125,6 +124,7 @@ function (
 			assert.expect(3);
 			var oExistingModel = {id: "existingVariantModel"};
 			var oAppComponent = {
+				name: "appComponent",
 				getModel: function(sModelName) {
 					assert.strictEqual(sModelName, Utils.VARIANT_MODEL_NAME, "then variant model called on the app component");
 					return oExistingModel;
@@ -137,6 +137,7 @@ function (
 			};
 
 			var oComponent = {
+				name: "embeddedComponent",
 				setModel: function(oModelSet, sModelName) {
 					assert.strictEqual(sModelName, Utils.VARIANT_MODEL_NAME, "then VariantModel was set on the embedded component with the correct name");
 					assert.deepEqual(oModelSet, oExistingModel, "then the correct model was set");
@@ -149,7 +150,19 @@ function (
 				getComponentData: function() {}
 			};
 
-			sandbox.stub(Utils, "isEmbeddedComponent").returns(true);
+			sandbox.stub(Utils, "isEmbeddedComponent").callsFake(function(oComponent) {
+				if (oComponent.name === "embeddedComponent") {
+					return true;
+				}
+				return false;
+			});
+			sandbox.stub(Utils, "isApplicationComponent").callsFake(function(oComponent) {
+				if (oComponent.name === "appComponent") {
+					return true;
+				}
+				return false;
+			});
+
 			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oComponent).returns(oAppComponent);
 
 			return FlexControllerFactory.getChangesAndPropagate(oComponent, {});
@@ -255,6 +268,34 @@ function (
 				.then(function() {
 					oAppComponent.destroy();
 				});
+		});
+
+		QUnit.test("when getChangesForPropagate() is called for an embedded component with a component not of type application", function(assert) {
+			var oAppComponent = new Component();
+			sandbox.stub(Utils, "getComponentClassName")
+				.callThrough()
+				.withArgs(oAppComponent)
+				.returns("mockName");
+			sandbox.stub(Utils, "isApplicationComponent").returns(false);
+
+			var oComponent = {
+				setModel: sandbox.stub(),
+				getManifestObject: sandbox.stub(),
+				addPropagationListener: sandbox.stub(),
+				getId: sandbox.stub(),
+				getComponentData: sandbox.stub()
+			};
+			sandbox.stub(Utils, "isEmbeddedComponent")
+				.callThrough()
+				.withArgs(oComponent)
+				.returns(true);
+
+			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oComponent).returns(oAppComponent);
+
+			return FlexControllerFactory.getChangesAndPropagate(oComponent, {}).then(function() {
+				assert.equal(oComponent.setModel.callCount, 0, "setModel was not called");
+				oAppComponent.destroy();
+			});
 		});
 
 		QUnit.test("when createForControl() is called for a non application type component", function(assert) {
