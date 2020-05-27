@@ -911,10 +911,11 @@ sap.ui.define([
 		}
 
 		var oSubMenu = oItem.getSubmenu();
-
 		if (!oSubMenu) {
 			// This is a normal item -> Close all menus and fire event.
-			this.getRootMenu().close();
+			// Call Menu.prototype.close with argument value equal to "true"
+			// in order not to ignore the opener DOM reference
+			this.getRootMenu().close(true);
 		} else {
 			if (!Device.system.desktop && this.oOpenedSubMenu === oSubMenu) {
 				this.closeSubmenu();
