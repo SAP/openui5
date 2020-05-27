@@ -137,6 +137,31 @@ sap.ui.define([
 		assert.equal(this.tokenizer.getTokens().length, 0, "Tokenizer contains 0 tokens");
 	});
 
+	QUnit.test("removeAllTokens should call setFirstTokenTruncated with 'false'.", function(assert) {
+		var oSpy = sinon.spy(this.tokenizer, "setFirstTokenTruncated");
+
+		// Act
+		this.tokenizer.removeAllTokens();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "setFirstTokenTruncated was called.");
+		assert.strictEqual(oSpy.firstCall.args[0], false, "setFirstTokenTruncated was called with 'false'.");
+	});
+
+	QUnit.test("updateTokens should call setFirstTokenTruncated with 'false'.", function(assert) {
+		var oSpy = sinon.spy(this.tokenizer, "setFirstTokenTruncated");
+
+		// Arrange
+		this.tokenizer.updateAggregation = sinon.stub().returns(true);
+
+		// Act
+		this.tokenizer.updateTokens();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "setFirstTokenTruncated was called.");
+		assert.strictEqual(oSpy.firstCall.args[0], false, "setFirstTokenTruncated was called with 'false'.");
+	});
+
 	QUnit.test("validate tokens using validator callback", function(assert) {
 		var validationCallbackCount = 0,
 			isValidated = false,

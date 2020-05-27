@@ -108,6 +108,23 @@
 			}
 		});
 
+		var oTokenizer7 = new sap.m.Tokenizer("tokenizerLongToken", {
+			width: "200px",
+			tokens: [
+				new sap.m.Token({text:"Veru long long long long long long long text"})
+			],
+		});
+		oTokenizer7._setAdjustable(true);
+
+		var oTokenizer8 = new sap.m.Tokenizer("tokenizerLongTokenReadonly", {
+			width: "200px",
+			editable: false,
+			tokens: [
+				new sap.m.Token({text:"Veru long long long long long long long text"})
+			],
+		});
+		oTokenizer8._setAdjustable(true);
+
 		var app = new sap.m.App("myApp");
 
 		var page1 = new sap.m.Page("page1", {
@@ -127,7 +144,11 @@
 					oTokenizer5,
 				    new sap.m.Label({ text : "Tokenizer with editable and non-editable tokens", width: "100%"}),
 					oTokenizer6,
-					toggleReadOnlyBtn
+					toggleReadOnlyBtn,
+					new sap.m.Label({ text : "Tokenizer with single long token.", width: "100%"}),
+					oTokenizer7,
+					new sap.m.Label({ text : "Tokenizer with single long token - read only.", width: "100%"}),
+					oTokenizer8
 			]
 		});
 
