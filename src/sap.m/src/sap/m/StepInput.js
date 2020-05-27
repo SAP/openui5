@@ -324,17 +324,25 @@ function(
 
 		var NumericInputRenderer = Renderer.extend(InputRenderer);
 
+		NumericInputRenderer.apiVersion = 2;
+
 		NumericInputRenderer.writeInnerAttributes = function(oRm, oControl) {
-			var oStepInput = oControl.getParent();
+			var oStepInput = oControl.getParent(),
+				mAccAttributes = {};
 			// inside the Input this function also sets explicitly textAlign to "End" if the type
 			// of the Input is Numeric (our case)
 			// so we have to overwrite it by leaving only the text direction
 			// and the textAlign will be controlled by textAlign property of the StepInput
-			oRm.writeAttribute("type", oControl.getType().toLowerCase());
+			oRm.attr("type", oControl.getType().toLowerCase());
+
 			if (sap.ui.getCore().getConfiguration().getRTL()) {
-				oRm.writeAttribute("dir", "ltr");
+				oRm.attr("dir", "ltr");
 			}
-			oRm.writeAccessibilityState(oStepInput);
+			// prevent rendering of aria-disabled attribute to avoid having
+			// both aria-disabled and disabled at the same time
+			mAccAttributes["disabled"] = null;
+
+			oRm.accessibilityState(oStepInput,  mAccAttributes);
 		};
 
 		//Accessibility behavior of the Input needs to be extended
@@ -456,6 +464,19 @@ function(
 				this._verifyValue();
 				this._bNeedsVerification = false;
 			}
+		};
+
+		StepInput.prototype.setDescription = function(sDescription) {
+			this.setProperty("description", sDescription);
+			if (sDescription) {
+				this.addAriaLabelledBy(this._getInput().getId() + "-descr");
+			}
+
+			return this;
+		};
+
+		StepInput.prototype.getDescription = function() {
+			return this.getProperty("description");
 		};
 
 		StepInput.prototype.onAfterRendering = function () {

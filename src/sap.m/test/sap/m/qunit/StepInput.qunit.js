@@ -1735,8 +1735,7 @@ sap.ui.define([
 		assert.notOk($Input.is("[aria-invalid]"), "Internal Input has 'aria-invalid' attribute");
 		assert.ok($Input.is("[aria-readonly]"), "Internal Input has 'aria-readonly' attribute");
 		assert.strictEqual($Input.attr("aria-readonly"), 'true', "Internal input's 'aria-readonly' attribute has correct value");
-		assert.ok($Input.is("[aria-disabled]"), "Internal Input has 'aria-disabled' attribute");
-		assert.strictEqual($Input.attr("aria-disabled"), 'true', "Internal input's 'aria-disabled' attribute has correct value");
+		assert.notOk($Input.is("[aria-disabled]"), "Internal Input has no 'aria-disabled' attribute");
 		assert.ok($Input.is("[aria-required]"), "Internal Input has 'aria-required' attribute");
 		assert.strictEqual($Input.attr("aria-required"), 'true', "Internal input's 'aria-required' attribute has correct value");
 		//clean
@@ -1769,9 +1768,8 @@ sap.ui.define([
 		//act - change the 'enabled' property
 		this.stepInput.setEnabled(false);
 		oCore.applyChanges();
-		//assert - expect 'aria-disabled=true' to be rendered in the DOM
-		assert.ok(oInput.$(sInputSuffix).is('[aria-disabled]'), "'aria-disabled' attribute was rendered");
-		assert.strictEqual(oInput.$(sInputSuffix).attr("aria-disabled"), "true", "'aria-disabled' attribute was updated when the 'enabled' property was changed");
+		//assert - expect no 'aria-disabled' to be rendered in the DOM
+		assert.notOk(oInput.$(sInputSuffix).is('[aria-disabled]'), "'aria-disabled' attribute was not rendered");
 		//act - change the 'enabled' property
 		this.stepInput.setEnabled(true);
 		oCore.applyChanges();
