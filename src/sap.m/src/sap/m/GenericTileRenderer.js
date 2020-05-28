@@ -31,7 +31,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		// Write the HTML into the render manager.
 		var sTooltipText = oControl._getTooltipText();
 		var sAriaText = oControl._getAriaText();
-		sAriaText = "GenericTile" + "\n" + sAriaText;
 		var sHeaderImage = oControl.getHeaderImage();
 		var bHasPress = oControl.hasListeners("press");
 		var sState = oControl.getState();
