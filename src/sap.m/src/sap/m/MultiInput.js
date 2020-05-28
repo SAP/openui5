@@ -1673,16 +1673,6 @@ function(
 	};
 
 	/**
-	 * Gets the filter selected toggle button for the control's picker.
-	 *
-	 * @returns {sap.m.ToggleButton} The button's instance
-	 * @private
-	 */
-	MultiInput.prototype.getFilterSelectedButton = function () {
-		return this._getSuggestionsPopover().getFilterSelectedButton();
-	};
-
-	/**
 	 * Manages the visibility of the suggestion list and the selected items list
 	 *
 	 * @param {boolean} bShowListWithTokens True if the selected items list should be shown
@@ -1693,7 +1683,7 @@ function(
 		this._getSuggestionsList() && this._getSuggestionsList().setVisible(!bShowListWithTokens);
 
 		if (this._bUseDialog) {
-			this.getFilterSelectedButton().setPressed(bShowListWithTokens);
+			this._getSuggestionsPopover().getFilterSelectedButton().setPressed(bShowListWithTokens);
 		}
 	};
 
