@@ -7188,8 +7188,8 @@ sap.ui.define([
 		});
 	};
 
-	/**
-	 * Whether the given message object's <code>fullTarget</code> starts with the given resolved
+	/*
+	 * Returns whether one of the given message object's full targets starts with the given resolved
 	 * binding path prefix.
 	 *
 	 * @param {sap.ui.core.message.Message} oMessage
@@ -7197,20 +7197,21 @@ sap.ui.define([
 	 * @param {string} sPathPrefix
 	 *   The resolved binding path prefix
 	 * @returns {boolean}
-	 *   Whether the given message object's <code>fullTarget</code> starts with the given resolved
+	 *   Whether one of the given message object's full targets starts with the given resolved
 	 *   binding path prefix
 	 *
-	 * @pivate
+	 * @private
 	 */
 	ODataModel.prototype.isMessageMatching = function (oMessage, sPathPrefix) {
-		var sFullTarget = oMessage.fullTarget,
-			iPrefixLength = sPathPrefix.length;
+		var iPrefixLength = sPathPrefix.length;
 
-		return sFullTarget === sPathPrefix
-			|| sFullTarget.startsWith(sPathPrefix)
-				&& (sPathPrefix === "/"
-					|| sFullTarget[iPrefixLength] === "/"
-					|| sFullTarget[iPrefixLength] === "(");
+		return oMessage.aFullTargets.some(function (sFullTarget) {
+			return sFullTarget === sPathPrefix
+				|| sFullTarget.startsWith(sPathPrefix)
+					&& (sPathPrefix === "/"
+						|| sFullTarget[iPrefixLength] === "/"
+						|| sFullTarget[iPrefixLength] === "(");
+		});
 	};
 
 	// @override
