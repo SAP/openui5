@@ -25,6 +25,7 @@ sap.ui.define([
 	"sap/ui/integration/util/LoadingProvider",
 	"sap/ui/integration/util/HeaderFactory",
 	"sap/ui/integration/util/ContentFactory",
+	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/formatters/IconFormatter"
 ], function (
 	jQuery,
@@ -50,6 +51,7 @@ sap.ui.define([
 	LoadingProvider,
 	HeaderFactory,
 	ContentFactory,
+	BindingHelper,
 	IconFormatter
 ) {
 	"use strict";
@@ -736,7 +738,7 @@ sap.ui.define([
 	};
 
 	Card.prototype._applyDataManifestSettings = function () {
-		var oDataSettings = this._oCardManifest.get(MANIFEST_PATHS.DATA);
+		var oDataSettings = BindingHelper.createBindingInfos(this._oCardManifest.get(MANIFEST_PATHS.DATA));
 
 		if (!oDataSettings) {
 			this.fireEvent("_cardReady");

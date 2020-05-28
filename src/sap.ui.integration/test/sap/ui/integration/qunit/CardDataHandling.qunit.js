@@ -627,4 +627,130 @@ function (
 		this.oCard.setManifest(oManifest_CardCase_OverridingModel);
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
+
+	QUnit.module("Data request depending on expression binding", {
+		beforeEach: function () {
+			var fnFake = function () {
+				return Promise.resolve(this.oData);
+			}.bind(this);
+
+			this.oCard = new Card();
+			this.oData = {
+				"key1": "value1",
+				"key2": "value2"
+			};
+			this._fnRequestStub = sinon.stub(RequestDataProvider.prototype, "getData").callsFake(fnFake);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+			this.oData = null;
+			this._fnRequestStub.restore();
+		}
+	});
+
+	QUnit.test("Data request on card level", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oRequestedURL = this.oCard._oDataProvider.getSettings().request.url;
+
+			// Assert
+			assert.strictEqual(oRequestedURL, "someurl/param1", "Expression binding in the 'url' should be resolved.");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest({
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"request": {
+						"url": "someurl/{= 2 < 3 ? 'param1' : 'param2'}"
+					}
+				},
+				"header": {
+					"title": "{title}"
+				},
+				"content": {
+					"item": {
+						"title": "{title}"
+					}
+				}
+			}
+		});
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.test("Data request on header level", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oRequestedURL = this.oCard.getCardHeader()._oDataProvider.getSettings().request.url;
+
+			// Assert
+			assert.strictEqual(oRequestedURL, "someurl/param1", "Expression binding in the 'url' should be resolved.");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest({
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"data": {
+						"request": {
+							"url": "someurl/{= 2 < 3 ? 'param1' : 'param2'}"
+						}
+					},
+					"title": "{title}"
+				},
+				"content": {
+					"item": {
+						"title": "{title}"
+					}
+				}
+			}
+		});
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.test("Data request on content level", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oRequestedURL = this.oCard.getCardContent()._oDataProvider.getSettings().request.url;
+
+			// Assert
+			assert.strictEqual(oRequestedURL, "someurl/param1", "Expression binding in the 'url' should be resolved.");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest({
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "{title}"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "someurl/{= 2 < 3 ? 'param1' : 'param2'}"
+						}
+					},
+					"item": {
+						"title": "{title}"
+					}
+				}
+			}
+		});
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
 });
