@@ -16767,19 +16767,27 @@ sap.ui.define([
 <FlexBox binding="{/SalesOrderList(\'42\')}">\
 	<Text id="id" text="{SalesOrderID}" />\
 	<Text id="LifecycleStatusDesc" text="{LifecycleStatusDesc}" />\
+	<Text id="CompanyName" text="{SO_2_BP/CompanyName}" />\
 	<FlexBox id="action"\
-		binding="{com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm(...)}">\
+		binding="{path : \'com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm(...)\'\
+			, parameters : {$$inheritExpandSelect : true}}">\
 		<layoutData><FlexItemData/></layoutData>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
 
-		that.expectRequest("SalesOrderList('42')?$select=LifecycleStatusDesc,SalesOrderID", {
+		that.expectRequest("SalesOrderList('42')?$select=LifecycleStatusDesc,SalesOrderID"
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
 				SalesOrderID : "42",
-				LifecycleStatusDesc : "New"
+				LifecycleStatusDesc : "New",
+				SO_2_BP : {
+					BusinessPartnerID : "1",
+					CompanyName : "Kunde"
+				}
 			})
 			.expectChange("id", "42")
-			.expectChange("LifecycleStatusDesc", "New");
+			.expectChange("LifecycleStatusDesc", "New")
+			.expectChange("CompanyName", "Kunde");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oOperation = that.oView.byId("action").getObjectBinding();
@@ -16787,13 +16795,20 @@ sap.ui.define([
 			that.expectRequest({
 					method : "POST",
 					url : "SalesOrderList('42')/"
-							+ "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
+						+ "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm"
+						+ "?$select=LifecycleStatusDesc,SalesOrderID"
+						+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)",
 					payload : {}
 				}, {
 					SalesOrderID : "42",
-					LifecycleStatusDesc : "Confirmed"
+					LifecycleStatusDesc : "Confirmed",
+					SO_2_BP : {
+						BusinessPartnerID : "1",
+						CompanyName : "Kunde (glücklich)"
+					}
 				})
-				.expectChange("LifecycleStatusDesc", "Confirmed");
+				.expectChange("LifecycleStatusDesc", "Confirmed")
+				.expectChange("CompanyName", "Kunde (glücklich)");
 
 			return Promise.all([
 				// code under test
