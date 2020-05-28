@@ -2,22 +2,22 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/integration/library",
 	"sap/ui/base/Object",
 	"sap/ui/integration/cards/NumericHeader",
 	"sap/ui/integration/cards/Header",
 	"sap/base/strings/formatMessage",
 	"sap/ui/integration/controls/ActionsToolbar",
+	"sap/ui/integration/util/BindingHelper",
 	"./CardActions"
 ], function (
-	jQuery,
 	library,
 	BaseObject,
 	NumericHeader,
 	Header,
 	formatMessage,
 	ActionsToolbar,
+	BindingHelper,
 	CardActions
 ) {
 	"use strict";
@@ -127,7 +127,7 @@ sap.ui.define([
 
 		oHeader.setServiceManager(oCard._oServiceManager);
 		oHeader.setDataProviderFactory(oCard._oDataProviderFactory);
-		oHeader._setDataConfiguration(mConfiguration.data);
+		oHeader._setDataConfiguration(BindingHelper.createBindingInfos(mConfiguration.data));
 
 		oActions.attach(mConfiguration, oHeader);
 		oHeader._oActions = oActions;
