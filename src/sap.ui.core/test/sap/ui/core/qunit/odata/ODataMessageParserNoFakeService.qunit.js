@@ -67,7 +67,11 @@ sap.ui.define([
 		new Message({message : "keep", target : "/As(2)/y", technical : true}),
 		new Message({message : "keep", target : "/As(1)/toBs(2)/x", technical : true}),
 		// deepPath matches are ignored
-		new Message({fullTarget : "/As(1)/ToB/ToCs(2)/x", message : "keep", target : "/Cs(2)/x"})
+		new Message({fullTarget : "/As(1)/ToB/ToCs(2)/x", message : "keep", target : "/Cs(2)/x"}),
+		// multi-target messages
+		new Message({message : "removed", target : ["/Bs", "/As"]}), // test: consider *all* targets
+		new Message({message : "removed", target : ["/Bs", "/As(1)/y"]}),
+		new Message({message : "keep", target : ["/Bs", "/As(2)"]})
 	]
 }, {
 	sStatusCode : 200,
@@ -159,8 +163,11 @@ sap.ui.define([
 		new Message({message : "keep", target : "/As(2)/y", technical : true}),
 		new Message({message : "keep", target : "/As(1)/toBs(2)/x", technical : true}),
 		// deepPath matches are ignored
-		new Message({fullTarget : "/As(1)/ToB/ToCs(2)/x", message : "keep", target : "/Cs(2)/x"})
-
+		new Message({fullTarget : "/As(1)/ToB/ToCs(2)/x", message : "keep", target : "/Cs(2)/x"}),
+		// multi-target messages
+		new Message({message : "removed", target : ["/Bs", "/As"], technical : true}),
+		new Message({message : "removed", target : ["/Bs", "/As(1)/y"], technical : true}),
+		new Message({message : "keep", target : ["/Bs", "/As(2)"], technical : true})
 	]
 }].forEach(function (oFixture, i) {
 	// deep path match is only done if updateAggregatedMessages is true
@@ -228,7 +235,7 @@ sap.ui.define([
 		ODataMessageParser.prototype._propagateMessages.call(oODataMessageParser, aMessages,
 			mRequestInfo, mGetEntities, mChangeEntities, oFixture.bSimpleMessageLifecycle);
 
-		assert.deepEqual(oODataMessageParser._lastMessages, aNewLastMessages);
+		assert.deepEqual(oODataMessageParser._lastMessages, aNewLastMessages, "last messages");
 	});
 });
 
@@ -278,6 +285,22 @@ sap.ui.define([
 			fullTarget : "/C(1)/ToAs(1)/ToB/ToCs(3)/x",
 			message : "keep",
 			target : "/Cs(3)/x"
+		}),
+		// multi-target messages with deepPath matches
+		new Message({
+			fullTarget : ["/C(2)/ToB", "/C(2)/ToAs(1)/y"],
+			message : "removed",
+			target : ["/Bs(3)", "/As(1)/y"]
+		}),
+		new Message({
+			fullTarget : ["/C(2)/ToB", "/C(2)/ToAs(1)/ToB/ToCs(3)/x"],
+			message : "removed",
+			target : ["/Bs(3)", "/Cs(3)/x"]
+		}),
+		new Message({
+			fullTarget : ["/C(2)/ToB", "/C(1)/ToAs(1)/ToB/ToCs(3)/x"],
+			message : "keep",
+			target : ["/Bs(3)", "/Cs(3)/x"]
 		})
 	]
 }, {

@@ -254,12 +254,13 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 		aRemovedMessages = [],
 		bStateMessages,
 		iStatusCode,
-		bSuccess,
-		sTarget;
+		bSuccess;
 
-	function isTargetMatching(oMessage, sTarget) {
-		return mAffectedTargets[sTarget]
-			|| bPrefixMatch && oMessage.fullTarget.startsWith(sDeepPath);
+	function isTargetMatching(oMessage, aTargets) {
+		return aTargets.some(function (sTarget) { return mAffectedTargets[sTarget]; })
+			|| bPrefixMatch && oMessage.aFullTargets.some(function (sFullTarget) {
+				return sFullTarget.startsWith(sDeepPath);
+			});
 	}
 
 	if (bTransitionMessagesOnly) {
@@ -277,26 +278,29 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 		iStatusCode = mRequestInfo.response.statusCode;
 		bSuccess = (iStatusCode >= 200 && iStatusCode < 300);
 		this._lastMessages.forEach(function (oCurrentMessage) {
-			// Note: mGetEntities and mChangeEntities contain the keys without leading or trailing
-			// "/", so all targets must be trimmed here
-			sTarget = oCurrentMessage.getTarget().replace(rEnclosingSlashes, "");
+			var aTargets = oCurrentMessage.getTargets().map(function (sTarget) {
+				// Note: mGetEntities and mChangeEntities contain the keys without leading or
+				// trailing "/", so all targets must be trimmed here
+				sTarget = sTarget.replace(rEnclosingSlashes, "");
+				// Get entity for given target (properties are not affected targets as all messages
+				// must be sent for affected entity)
+				var iPropertyPos = sTarget.lastIndexOf(")/");
+				if (iPropertyPos > 0) {
+					sTarget = sTarget.substr(0, iPropertyPos + 1);
+				}
 
-			// Get entity for given target (properties are not affected targets as all messages must
-			// be sent for affected entity)
-			var iPropertyPos = sTarget.lastIndexOf(")/");
-			if (iPropertyPos > 0) {
-				sTarget = sTarget.substr(0, iPropertyPos + 1);
-			}
+				return sTarget;
+			});
 
 			if (bSuccess || bSimpleMessageLifecycle){
 				if (!oCurrentMessage.getPersistent()
-						&& isTargetMatching(oCurrentMessage, sTarget)) {
+						&& isTargetMatching(oCurrentMessage, aTargets)) {
 					aRemovedMessages.push(oCurrentMessage);
 				} else {
 					aKeptMessages.push(oCurrentMessage);
 				}
 			} else if (!oCurrentMessage.getPersistent() && oCurrentMessage.getTechnical()
-					&& isTargetMatching(oCurrentMessage, sTarget)) {
+					&& isTargetMatching(oCurrentMessage, aTargets)) {
 				aRemovedMessages.push(oCurrentMessage);
 			} else {
 				aKeptMessages.push(oCurrentMessage);
