@@ -163,6 +163,16 @@ sap.ui.require([
 			],
 			showTableSuggestionValueHelp: false
 		});
+
+		oModel = new JSONModel();
+
+		aData = [];
+
+		for (var index = 0; index < 30; index++) {
+			aData.push({name: "Apple" + index, group: "Fruits"});
+		}
+
+		oModel.setData(aData);
 		oInputWithStickySuggestions.setModel(oModel);
 		oInputWithStickySuggestions.bindAggregation("suggestionRows", {
 			path: "/",
@@ -274,6 +284,7 @@ sap.ui.require([
 					items: [
 						new Label("suggestionsLabel", {text: "Input with suggestions", labelFor: "inputWithSuggestions"}),
 						oSuggestionsInput,
+						new Label({text: "Input with sticky column header suggestions", labelFor: "inputWithStickySuggestions"}),
 						oInputWithStickySuggestions
 					]
 				})
