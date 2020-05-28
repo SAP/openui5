@@ -651,7 +651,7 @@ function(
 	 * @param {jQuery.Event} oEvent The event object
 	 */
 	MultiInput.prototype.onsapbackspace = function (oEvent) {
-		if (this.getCursorPosition() > 0 || !this.getEditable() || this.getValue().length > 0) {
+		if (this._$input.cursorPos() > 0 || !this.getEditable() || this.getValue().length > 0) {
 			// deleting characters, not
 			return;
 		}
@@ -922,7 +922,7 @@ function(
 			return;
 		}
 
-		if (this.getCursorPosition() === 0) {
+		if (this._$input.cursorPos() === 0) {
 			if (oEvent.srcControl === this) {
 				Tokenizer.prototype.onsapprevious.apply(this._tokenizer, arguments);
 			}
@@ -1193,16 +1193,6 @@ function(
 				validationCallback: this._validationCallback.bind(this, iOldLength)
 			});
 		}
-	};
-
-	/**
-	 * Functions returns the current input field's cursor position
-	 *
-	 * @private
-	 * @return {int} The cursor position
-	 */
-	MultiInput.prototype.getCursorPosition = function () {
-		return this._$input.cursorPos();
 	};
 
 	/**
