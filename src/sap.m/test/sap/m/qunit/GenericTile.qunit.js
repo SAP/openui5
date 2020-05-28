@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/events/jquery/EventExtension",
 	"jquery.sap.keycodes"
 ], function(jQuery, GenericTile, TileContent, NumericContent, Device, ResizeHandler, GenericTileLineModeRenderer,
-			Text, ScrollContainer, FlexBox, GenericTileRenderer, library) {
+            Text, ScrollContainer, FlexBox, GenericTileRenderer, library) {
 	"use strict";
 
 	// shortcut for sap.m.Size
@@ -188,27 +188,27 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering tests", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.fnSpyBeforeRendering = sinon.spy(GenericTile.prototype, "onBeforeRendering");
 
 			this.oGenericTile = new GenericTile("generic-tile", {
-				subheader : "Expenses By Region",
-				frameType : FrameType.OneByOne,
-				header : "Comparative Annual Totals",
-				headerImage : IMAGE_PATH + "female_BaySu.jpg",
-				tileContent : new TileContent("tile-cont", {
-					unit : "EUR",
-					footer : "Current Quarter",
-					content : new NumericContent("numeric-cnt", {
-						state : LoadState.Loaded,
-						scale : "M",
-						indicator : DeviationIndicator.Up,
-						truncateValueTo : 4,
-						value : 20,
-						nullifyValue : true,
-						formatterValue : false,
-						valueColor : ValueColor.Good,
-						icon : "sap-icon://customer-financial-fact-sheet"
+				subheader: "Expenses By Region",
+				frameType: FrameType.OneByOne,
+				header: "Comparative Annual Totals",
+				headerImage: IMAGE_PATH + "female_BaySu.jpg",
+				tileContent: new TileContent("tile-cont", {
+					unit: "EUR",
+					footer: "Current Quarter",
+					content: new NumericContent("numeric-cnt", {
+						state: LoadState.Loaded,
+						scale: "M",
+						indicator: DeviationIndicator.Up,
+						truncateValueTo: 4,
+						value: 20,
+						nullifyValue: true,
+						formatterValue: false,
+						valueColor: ValueColor.Good,
+						icon: "sap-icon://customer-financial-fact-sheet"
 					})
 				}),
 				press: jQuery.noop //attach empty press to enable :focus state
@@ -248,7 +248,7 @@ sap.ui.define([
 				return $Control.is(":focus");
 			};
 		},
-		afterEach : function(assert) {
+		afterEach: function(assert) {
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
 
@@ -257,7 +257,7 @@ sap.ui.define([
 
 			this.fnSpyBeforeRendering.restore();
 		},
-		fnWithRenderAsserts: function (assert) {
+		fnWithRenderAsserts: function(assert) {
 			assert.ok(document.getElementById("generic-tile"), "Generic tile was rendered successfully");
 			assert.ok(document.getElementById("generic-tile-hdr-text"), "Generic tile header was rendered successfully");
 			assert.ok(document.getElementById("generic-tile-subHdr-text"), "Generic tile subheader was rendered successfully");
@@ -276,21 +276,21 @@ sap.ui.define([
 		assert.ok(this.fnSpyBeforeRendering.calledOnce, "Generic tile was rendered only once");
 	});
 
-	QUnit.test("GenericTile rendered", function (assert) {
+	QUnit.test("GenericTile rendered", function(assert) {
 		this.fnWithRenderAsserts(assert);
 
 		var oLinkElements = document.getElementById("generic-tile").childNodes;
 		assert.notStrictEqual(oLinkElements.length, 1, "There is no tag wrapped around the tile.");
 	});
 
-	QUnit.test("GenericTile rendered with custom width", function (assert) {
+	QUnit.test("GenericTile rendered with custom width", function(assert) {
 		this.oGenericTile.setWidth("500px");
 		sap.ui.getCore().applyChanges();
 
 		this.fnWithRenderAsserts(assert);
 	});
 
-	QUnit.test("GenericTile not rendered with link when in action mode", function (assert) {
+	QUnit.test("GenericTile not rendered with link when in action mode", function(assert) {
 		//Arrange
 		var sLink = "http://localhost/myLink";
 		this.oGenericTile.setUrl(sLink);
@@ -306,7 +306,7 @@ sap.ui.define([
 		assert.notStrictEqual(oTileElements[0].tagName, "A", "The node is not a link.");
 	});
 
-	QUnit.test("GenericTile rendered with link when not in action mode", function (assert) {
+	QUnit.test("GenericTile rendered with link when not in action mode", function(assert) {
 		//Arrange
 		var sLink = "http://localhost/myLink";
 		this.oGenericTile.setUrl(sLink);
@@ -332,14 +332,14 @@ sap.ui.define([
 		var done = assert.async();
 		this.applyTheme("sap_bluecrystal", function() {
 			// the complete property name should be written for test in 'ie' and 'firefox'
-			assert.equal($tile.css('border-bottom-width'), "1px", "Border bottom width was rendered successfully");
-			assert.equal($tile.css('border-bottom-style'), "solid", "Border bottom style was rendered successfully");
-			assert.equal($tile.css('border-top-width'), "1px", "Border top width was rendered successfully");
-			assert.equal($tile.css('border-top-style'), "solid", "Border top style was rendered successfully");
-			assert.equal($tile.css('border-right-width'), "1px", "Border right width was rendered successfully");
-			assert.equal($tile.css('border-right-style'), "solid", "Border right style was rendered successfully");
-			assert.equal($tile.css('border-left-width'), "1px", "Border left width was rendered successfully");
-			assert.equal($tile.css('border-left-style'), "solid", "Border left style was rendered successfully");
+			assert.equal($tile.css("border-bottom-width"), "1px", "Border bottom width was rendered successfully");
+			assert.equal($tile.css("border-bottom-style"), "solid", "Border bottom style was rendered successfully");
+			assert.equal($tile.css("border-top-width"), "1px", "Border top width was rendered successfully");
+			assert.equal($tile.css("border-top-style"), "solid", "Border top style was rendered successfully");
+			assert.equal($tile.css("border-right-width"), "1px", "Border right width was rendered successfully");
+			assert.equal($tile.css("border-right-style"), "solid", "Border right style was rendered successfully");
+			assert.equal($tile.css("border-left-width"), "1px", "Border left width was rendered successfully");
+			assert.equal($tile.css("border-left-style"), "solid", "Border left style was rendered successfully");
 			done();
 		});
 	});
@@ -359,10 +359,10 @@ sap.ui.define([
 			this.oGenericTile.rerender();
 			var $tile = this.oGenericTile.$();
 			// the complete property name should be written for test in 'ie' and 'firefox'
-			assert.equal($tile.css('border-bottom-style'), "solid", "Border bottom style was rendered successfully");
-			assert.equal($tile.css('border-top-style'), "solid", "Border top style was rendered successfully");
-			assert.equal($tile.css('border-right-style'), "solid", "Border right style was rendered successfully");
-			assert.equal($tile.css('border-left-style'), "solid", "Border left style was rendered successfully");
+			assert.equal($tile.css("border-bottom-style"), "solid", "Border bottom style was rendered successfully");
+			assert.equal($tile.css("border-top-style"), "solid", "Border top style was rendered successfully");
+			assert.equal($tile.css("border-right-style"), "solid", "Border right style was rendered successfully");
+			assert.equal($tile.css("border-left-style"), "solid", "Border left style was rendered successfully");
 			done();
 		}.bind(this));
 	});
@@ -383,10 +383,10 @@ sap.ui.define([
 			this.oGenericTile.rerender();
 			var $tile = this.oGenericTile.$();
 			// the complete property name should be written for test in 'ie' and 'firefox'
-			assert.equal($tile.css('border-bottom-style'), "solid", "Border bottom style was rendered successfully");
-			assert.equal($tile.css('border-top-style'), "solid", "Border top style was rendered successfully");
-			assert.equal($tile.css('border-right-style'), "solid", "Border right style was rendered successfully");
-			assert.equal($tile.css('border-left-style'), "solid", "Border left style was rendered successfully");
+			assert.equal($tile.css("border-bottom-style"), "solid", "Border bottom style was rendered successfully");
+			assert.equal($tile.css("border-top-style"), "solid", "Border top style was rendered successfully");
+			assert.equal($tile.css("border-right-style"), "solid", "Border right style was rendered successfully");
+			assert.equal($tile.css("border-left-style"), "solid", "Border left style was rendered successfully");
 			done();
 		}.bind(this));
 	});
@@ -406,9 +406,9 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("GenericTile focus and hover overlay rendered - Fiori 3", function (assert) {
+	QUnit.test("GenericTile focus and hover overlay rendered - Fiori 3", function(assert) {
 		var done = assert.async();
-		this.applyTheme("sap_fiori_3", function () {
+		this.applyTheme("sap_fiori_3", function() {
 			this.oGenericTile.rerender();
 			// hover overlay is used only in case of tiles with background image
 			assert.ok(jQuery.sap.byId("generic-tile-focus"), "Focus div was rendered successfully");
@@ -429,7 +429,7 @@ sap.ui.define([
 		var $tile = this.oGenericTile.$();
 
 		var done = assert.async();
-		this.applyTheme("sap_hcb", function(){
+		this.applyTheme("sap_hcb", function() {
 
 			//get dimensions
 			var beforeWidth = $tile.outerWidth();
@@ -437,7 +437,7 @@ sap.ui.define([
 
 			//set :focus on tile
 			$tile.trigger("focus");
-			if (!this.checkFocus($tile)){
+			if (!this.checkFocus($tile)) {
 				assert.expect(0);
 				done();
 				return;
@@ -458,7 +458,7 @@ sap.ui.define([
 		var $tile = this.oGenericTile.$();
 
 		var done = assert.async();
-		this.applyTheme("sap_bluecrystal", function(){
+		this.applyTheme("sap_bluecrystal", function() {
 
 			//get dimensions
 			var beforeWidth = $tile.outerWidth();
@@ -466,7 +466,7 @@ sap.ui.define([
 
 			//set :focus on tile
 			$tile.trigger("focus");
-			if (!this.checkFocus($tile)){
+			if (!this.checkFocus($tile)) {
 				assert.expect(0);
 				done();
 				return;
@@ -483,19 +483,19 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Wrapping type is propagated to title", function (assert) {
+	QUnit.test("Wrapping type is propagated to title", function(assert) {
 		this.oGenericTile.setWrappingType(library.WrappingType.Hyphenated);
 		sap.ui.getCore().applyChanges();
 		assert.strictEqual(library.WrappingType.Hyphenated, this.oGenericTile._oTitle.getWrappingType(), "Title wrapping type should be Hyphenated");
 	});
 
-	QUnit.test("Wrapping type is propagated to subTitle", function (assert) {
+	QUnit.test("Wrapping type is propagated to subTitle", function(assert) {
 		this.oGenericTile.setWrappingType(library.WrappingType.Hyphenated);
 		sap.ui.getCore().applyChanges();
 		assert.strictEqual(library.WrappingType.Hyphenated, this.oGenericTile._oSubTitle.getWrappingType(), "Subtitle wrapping type should be Hyphenated");
 	});
 
-	QUnit.test("GenericTile is dragged", function (assert) {
+	QUnit.test("GenericTile is dragged", function(assert) {
 		this.oGenericTile.rerender();
 		//Style class which gets added when Generic Tile when it is Dragged.
 		this.oGenericTile.addStyleClass("sapMGTPressActive");
@@ -514,7 +514,7 @@ sap.ui.define([
 	QUnit.module("FrameType rendering tests", {
 		beforeEach: function() {
 			this.oGenericTile = new GenericTile({
-				frameType : FrameType.Auto,
+				frameType: FrameType.Auto,
 				header: "This is a header",
 				subheader: "This is a subheader"
 			}).placeAt("qunit-fixture");
@@ -550,9 +550,9 @@ sap.ui.define([
 				scope: GenericTileScope.Display,
 				header: "This is a header",
 				subheader: "This is a subheader",
-				tileContent : new TileContent("tile-cont", {
-					unit : "EUR",
-					footer : "Current Quarter"
+				tileContent: new TileContent("tile-cont", {
+					unit: "EUR",
+					footer: "Current Quarter"
 				})
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -731,7 +731,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("All elements found", function (assert) {
+	QUnit.test("All elements found", function(assert) {
 		assert.ok(this.oGenericTile.$().hasClass("sapMGT"), "Tile has class 'sapMGT'");
 		assert.ok(this.oGenericTile.$().hasClass("sapMGTLineMode"), "Tile has class 'sapMGTLineMode'");
 		assert.ok(this.oGenericTile.$("hdr-text").length > 0, "Header was found");
@@ -838,7 +838,7 @@ sap.ui.define([
 
 			this.oParent = new FlexBox({
 				width: "100px",
-				items: [ this.oGenericTile ]
+				items: [this.oGenericTile]
 			}).placeAt("qunit-fixture");
 			this.oParent.addStyleClass("sapUiSizeCompact");
 			sap.ui.getCore().applyChanges();
@@ -886,7 +886,7 @@ sap.ui.define([
 
 			this.oParent = new FlexBox({
 				width: "100px",
-				items: [ this.oGenericTile ]
+				items: [this.oGenericTile]
 			}).placeAt("qunit-fixture");
 			this.oParent.addStyleClass("sapUiSizeCompact");
 			sap.ui.getCore().applyChanges();
@@ -951,7 +951,7 @@ sap.ui.define([
 
 			this.oParent = new FlexBox({
 				width: "100px",
-				items: [ this.oGenericTile ]
+				items: [this.oGenericTile]
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			this.oGenericTile._updateHoverStyle.reset();
@@ -1477,32 +1477,32 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering tests for failing state", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oGenericTile = new GenericTile("generic-tile-failed", {
-				state : LoadState.Failed,
-				subheader : "Expenses By Region",
-				frameType : FrameType.OneByOne,
-				header : "Comparative Annual Totals",
-				headerImage : IMAGE_PATH + "female_BaySu.jpg",
-				tileContent : new TileContent("tile-cont-failed", {
-					unit : "EUR",
-					footer : "Current Quarter",
-					content : new NumericContent("numeric-cnt-failed", {
-						state : LoadState.Loading,
-						scale : "M",
-						indicator : DeviationIndicator.Up,
-						truncateValueTo : 4,
-						value : 20,
-						nullifyValue : true,
-						formatterValue : false,
-						valueColor : ValueColor.Good,
-						icon : "sap-icon://customer-financial-fact-sheet"
+				state: LoadState.Failed,
+				subheader: "Expenses By Region",
+				frameType: FrameType.OneByOne,
+				header: "Comparative Annual Totals",
+				headerImage: IMAGE_PATH + "female_BaySu.jpg",
+				tileContent: new TileContent("tile-cont-failed", {
+					unit: "EUR",
+					footer: "Current Quarter",
+					content: new NumericContent("numeric-cnt-failed", {
+						state: LoadState.Loading,
+						scale: "M",
+						indicator: DeviationIndicator.Up,
+						truncateValueTo: 4,
+						value: 20,
+						nullifyValue: true,
+						formatterValue: false,
+						valueColor: ValueColor.Good,
+						icon: "sap-icon://customer-financial-fact-sheet"
 					})
 				})
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
 		}
@@ -1556,30 +1556,30 @@ sap.ui.define([
 	});
 
 	QUnit.module("GenericTileMode tests", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oGenericTile = new GenericTile("generic-tile", {
-				subheader : "Expenses By Region",
-				frameType : FrameType.OneByOne,
-				header : "Comparative Annual Totals",
-				tileContent : new TileContent("tile-cont", {
-					unit : "EUR",
-					footer : "Current Quarter",
-					content : new NumericContent({
-						state : LoadState.Loading,
-						scale : "M",
-						indicator : DeviationIndicator.Up,
-						truncateValueTo : 4,
-						value : 20,
-						nullifyValue : true,
-						formatterValue : false,
-						valueColor : ValueColor.Good,
-						icon : "sap-icon://customer-financial-fact-sheet"
+				subheader: "Expenses By Region",
+				frameType: FrameType.OneByOne,
+				header: "Comparative Annual Totals",
+				tileContent: new TileContent("tile-cont", {
+					unit: "EUR",
+					footer: "Current Quarter",
+					content: new NumericContent({
+						state: LoadState.Loading,
+						scale: "M",
+						indicator: DeviationIndicator.Up,
+						truncateValueTo: 4,
+						value: 20,
+						nullifyValue: true,
+						formatterValue: false,
+						valueColor: ValueColor.Good,
+						icon: "sap-icon://customer-financial-fact-sheet"
 					})
 				})
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
 		}
@@ -1643,7 +1643,8 @@ sap.ui.define([
 	QUnit.test("GenericTileLineModeRenderer called for LineMode", function(assert) {
 		// Arrange
 		var oSpy = sinon.spy(GenericTileLineModeRenderer, "render");
-		this.oGenericTile.getParent().addStyleClass = function() {};
+		this.oGenericTile.getParent().addStyleClass = function() {
+		};
 		// Act
 		this.oGenericTile.setMode(GenericTileMode.LineMode);
 		sap.ui.getCore().applyChanges();
@@ -1693,7 +1694,7 @@ sap.ui.define([
 	QUnit.test("Test content density class - compact from control parent", function(assert) {
 		//Arrange
 		new FlexBox({
-			items: [ this.oGenericTile ]
+			items: [this.oGenericTile]
 		}).addStyleClass("sapUiSizeCompact").placeAt("qunit-fixture");
 
 		//Act
@@ -1707,14 +1708,14 @@ sap.ui.define([
 	/* Test internal methods                   */
 	/* --------------------------------------- */
 	QUnit.module("Internal method _getEventParams", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oGenericTile = new GenericTile("generic-tile", {
-				header : "header",
-				subheader : "subheader"
+				header: "header",
+				subheader: "subheader"
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
 		}
@@ -1724,8 +1725,8 @@ sap.ui.define([
 		//Arrange
 		var oParams;
 		var oEvent = {
-			target : {
-				id : "dummy"
+			target: {
+				id: "dummy"
 			}
 		};
 
@@ -1744,8 +1745,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		var oParams;
 		var oEvent = {
-			target : {
-				id : "-action-remove"
+			target: {
+				id: "-action-remove"
 			}
 		};
 
@@ -1764,8 +1765,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		var oParams;
 		var oEvent = {
-			target : {
-				id : "-action-more"
+			target: {
+				id: "-action-more"
 			}
 		};
 
@@ -1779,11 +1780,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Internal methods for ARIA-label and tooltip handling", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oGenericTile = new GenericTile("generic-tile", {
-				header : "header text of GenericTile",
-				subheader : "subheader text of GenericTile",
-				tileContent : [new TileContent("tile-cont-1"), new TileContent("tile-cont-2")]
+				header: "header text of GenericTile",
+				subheader: "subheader text of GenericTile",
+				tileContent: [new TileContent("tile-cont-1"), new TileContent("tile-cont-2")]
 			}).placeAt("qunit-fixture");
 			// stub function _getAriaAndTooltipText of the content
 			this.oGenericTile.getTileContent()[0]._getAriaAndTooltipText = function() {
@@ -1795,7 +1796,7 @@ sap.ui.define([
 			};
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
 		}
@@ -1861,16 +1862,16 @@ sap.ui.define([
 		assert.equal(sAriaAndTooltipText, "someTooltipText", "Expected text for ARIA-label and tooltip generated if an explicite tooltip is set");
 
 		//Arrange - stubs GenericTile's functions, no store & restore needed on the instance level
-		this.oGenericTile.getTooltip_AsString = function () {
+		this.oGenericTile.getTooltip_AsString = function() {
 			return "";
 		};
-		this.oGenericTile._isTooltipSuppressed = function () {
+		this.oGenericTile._isTooltipSuppressed = function() {
 			return false;
 		};
-		this.oGenericTile._getHeaderAriaAndTooltipText = function () {
+		this.oGenericTile._getHeaderAriaAndTooltipText = function() {
 			return "";
 		};
-		this.oGenericTile._getContentAriaAndTooltipText = function () {
+		this.oGenericTile._getContentAriaAndTooltipText = function() {
 			return " ";
 		};
 		//Act
@@ -1941,30 +1942,30 @@ sap.ui.define([
 	});
 
 	QUnit.module("Tests for ARIA-label", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oGenericTile = new GenericTile("generic-tile", {
-				subheader : "Expenses By Region",
-				frameType : FrameType.OneByOne,
-				header : "Comparative Annual Totals",
-				tileContent : new TileContent("tile-cont", {
-					unit : "EUR",
-					footer : "Current Quarter",
-					content : new NumericContent("numeric-cnt", {
-						state : LoadState.Loaded,
-						scale : "M",
-						indicator : DeviationIndicator.Up,
-						truncateValueTo : 4,
-						value : 20,
-						nullifyValue : true,
-						formatterValue : false,
-						valueColor : ValueColor.Good,
-						icon : "sap-icon://customer-financial-fact-sheet"
+				subheader: "Expenses By Region",
+				frameType: FrameType.OneByOne,
+				header: "Comparative Annual Totals",
+				tileContent: new TileContent("tile-cont", {
+					unit: "EUR",
+					footer: "Current Quarter",
+					content: new NumericContent("numeric-cnt", {
+						state: LoadState.Loaded,
+						scale: "M",
+						indicator: DeviationIndicator.Up,
+						truncateValueTo: 4,
+						value: 20,
+						nullifyValue: true,
+						formatterValue: false,
+						valueColor: ValueColor.Good,
+						icon: "sap-icon://customer-financial-fact-sheet"
 					})
 				})
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
 		}
@@ -2056,11 +2057,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Tooltip handling", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oGenericTile = new GenericTile("generic-tile", {
-				header : "Header text",
-				subheader : "subheader text",
-				tileContent : [new TileContent("tile-cont-1"), new TileContent("tile-cont-2")]
+				header: "Header text",
+				subheader: "subheader text",
+				tileContent: [new TileContent("tile-cont-1"), new TileContent("tile-cont-2")]
 			}).placeAt("qunit-fixture");
 			// stub function _getAriaAndTooltipText of the content
 			this.oGenericTile.getTileContent()[0]._getAriaAndTooltipText = function() {
@@ -2072,7 +2073,7 @@ sap.ui.define([
 			};
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function(assert) {
+		afterEach: function(assert) {
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
 
@@ -2103,7 +2104,9 @@ sap.ui.define([
 		var sGenericTileAriaLabel = this.oGenericTile.$()[0].getAttribute("aria-label");
 		//Assert
 		assert.equal(sGenericTileTooltip, "tooltip", "Explicit tooltip of GenericTile is consistent");
-		assert.equal(sGenericTileAriaLabel,sGenericTileAriaLabel, "Explicit tooltip of GenericTile is identical with ARIA-label");
+		assert.equal(sGenericTileAriaLabel, sGenericTileTooltip, "Explicit tooltip of GenericTile is identical with ARIA-label");
+		assert.equal(sGenericTileAriaLabel.indexOf("Generic Tile") === -1, true, "ARIA-label should not contain control specific information such as Generic Tile applications can use ariaLabel property for additional info");
+		assert.equal(sGenericTileAriaLabel.indexOf("GenericTile") === -1, true, "ARIA-label should not contain control specific information such as GenericTile applications can use ariaLabel property for additional info");
 	});
 
 	QUnit.test("Explicit tooltip set by user with long header text, long subheader text", function(assert) {
@@ -2148,10 +2151,10 @@ sap.ui.define([
 
 	QUnit.test("Tooltip for GenericTile with long Header-subheader text and Tilecontent", function(assert) {
 		//Arrange
-        this.oGenericTile.setHeader("A long long long long long long long long long long header text");
+		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
 		this.oGenericTile.setSubheader("A long long subheader text");
-        this.oGenericTile.getTileContent()[0].setFooter("Tile Footer");
-        this.oGenericTile.getTileContent()[0].setUnit("Tile Unit");
+		this.oGenericTile.getTileContent()[0].setFooter("Tile Footer");
+		this.oGenericTile.getTileContent()[0].setUnit("Tile Unit");
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile.$().trigger("mouseenter");
 		//Act
@@ -2182,13 +2185,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Tooltip handling in LineMode (large screens)", {
-		beforeEach : function() {
+		beforeEach: function() {
 			sinon.stub(Device.media, "attachHandler");
 			this.oGenericTile = new GenericTile("generic-tile", {
-				header : "header",
-				subheader : "subheader",
+				header: "header",
+				subheader: "subheader",
 				mode: GenericTileMode.LineMode,
-				tileContent : [new TileContent("tile-cont-1"), new TileContent("tile-cont-2")]
+				tileContent: [new TileContent("tile-cont-1"), new TileContent("tile-cont-2")]
 			});
 
 			jQuery("html").addClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
@@ -2205,11 +2208,11 @@ sap.ui.define([
 
 			this.oParent = new ScrollContainer({
 				width: "100px",
-				content: [ this.oGenericTile ]
+				content: [this.oGenericTile]
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			Device.media.attachHandler.restore();
 			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
 			this.oGenericTile.destroy();
@@ -2232,18 +2235,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("GenericTile tooltip provided by the control when TileContent is available", function(assert) {
-        //Arrange
-        var sAriaLabel = "header\nsubheader\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
-        this.oGenericTile.getTileContent()[0].setFooter("Tile Footer");
-        this.oGenericTile.getTileContent()[0].setUnit("Tile Unit");
+		//Arrange
+		var sAriaLabel = "header\nsubheader\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		this.oGenericTile.getTileContent()[0].setFooter("Tile Footer");
+		this.oGenericTile.getTileContent()[0].setUnit("Tile Unit");
 
-        //Act
-        this.oGenericTile.$().trigger("mouseenter");
+		//Act
+		this.oGenericTile.$().trigger("mouseenter");
 
-        //Assert
-        assert.equal(this.oGenericTile.$().attr("title"), "header\nsubheader", "In LineMode only Header-SubHeader considered and TileContent omitted from tooltip");
-        assert.equal(this.oGenericTile.$().attr("aria-label"), sAriaLabel, "GenericTile has correct ARIA-label");
-    });
+		//Assert
+		assert.equal(this.oGenericTile.$().attr("title"), "header\nsubheader", "In LineMode only Header-SubHeader considered and TileContent omitted from tooltip");
+		assert.equal(this.oGenericTile.$().attr("aria-label"), sAriaLabel, "GenericTile has correct ARIA-label");
+	});
 
 	QUnit.test("Explicit tooltip set by user with short header text, short subheader text", function(assert) {
 		//Arrange
@@ -2318,13 +2321,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Tooltip handling in LineMode (small screens)", {
-		beforeEach : function() {
+		beforeEach: function() {
 			sinon.stub(Device.media, "attachHandler");
 			this.oGenericTile = new GenericTile("generic-tile", {
-				header : "header",
-				subheader : "subheader",
+				header: "header",
+				subheader: "subheader",
 				mode: GenericTileMode.LineMode,
-				tileContent : [new TileContent("tile-cont-1"), new TileContent("tile-cont-2")]
+				tileContent: [new TileContent("tile-cont-1"), new TileContent("tile-cont-2")]
 			});
 
 			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").addClass("sapUiMedia-GenericTileDeviceSet-small");
@@ -2341,11 +2344,11 @@ sap.ui.define([
 
 			this.oParent = new ScrollContainer({
 				width: "100px",
-				content: [ this.oGenericTile ]
+				content: [this.oGenericTile]
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			Device.media.attachHandler.restore();
 			jQuery("html").removeClass("sapUiMedia-GenericTileDeviceSet-large").removeClass("sapUiMedia-GenericTileDeviceSet-small");
 			this.oGenericTile.destroy();
@@ -2407,35 +2410,38 @@ sap.ui.define([
 	});
 
 	QUnit.test("GenericTile tooltip provided by the control when TileContent is available", function(assert) {
-        //Arrange
-        this.oGenericTile.getTileContent()[0].setFooter("Tile Footer");
-        this.oGenericTile.getTileContent()[0].setUnit("Tile Unit");
+		//Arrange
+		this.oGenericTile.getTileContent()[0].setFooter("Tile Footer");
+		this.oGenericTile.getTileContent()[0].setUnit("Tile Unit");
 
-        //Act
-        this.oGenericTile.$().trigger("mouseenter");
+		//Act
+		this.oGenericTile.$().trigger("mouseenter");
 
-        //Assert
-        assert.equal(this.oGenericTile.$().attr("title"), "header\nsubheader", "In LineMode only Header-SubHeader considered and TileContent omitted from tooltip");
-    });
+		//Assert
+		assert.equal(this.oGenericTile.$().attr("title"), "header\nsubheader", "In LineMode only Header-SubHeader considered and TileContent omitted from tooltip");
+	});
 
 	QUnit.module("Tooltip handling on content elements", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oGenericTile = new GenericTile("generic-tile", {
-				header : "header text of GenericTile",
-				subheader : "subheader text of GenericTile",
-				tileContent : [new TileContent("tile-cont-1", {
-					tooltip : "tooltip of TileContent 1"
-				}), new TileContent("tile-cont-2", {
-					tooltip : "tooltip of TileContent 2",
-					content : new NumericContent("numeric-content")})]
+				header: "header text of GenericTile",
+				subheader: "subheader text of GenericTile",
+				tileContent: [
+					new TileContent("tile-cont-1", {
+						tooltip: "tooltip of TileContent 1"
+					}), new TileContent("tile-cont-2", {
+						tooltip: "tooltip of TileContent 2",
+						content: new NumericContent("numeric-content")
+					})
+				]
 			}).placeAt("qunit-fixture");
 			// stub function _getAriaAndTooltipText of the NumericContent
-			this.oGenericTile.getTileContent()[1].getContent()._getAriaAndTooltipText = function () {
+			this.oGenericTile.getTileContent()[1].getContent()._getAriaAndTooltipText = function() {
 				return "ARIA and tooltip text of NumericContent";
 			};
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
 		}
@@ -2465,10 +2471,10 @@ sap.ui.define([
 		var sAriaLabelOfContent2 = jQuery.sap.byId("tile-cont-2").attr("aria-label");
 		var sTitleOfTileContent2 = jQuery.sap.byId("tile-cont-2").attr("title");
 		//Assert
-		assert.ok(!sAriaLabelOfContent1,"GenericTile 1 doesn't contain attribute aria-label");
-		assert.ok(!sTitleOfTileContent1,"GenericTile 1 doesn't contain attribute title");
-		assert.ok(!sAriaLabelOfContent2,"GenericTile 1 doesn't contain attribute aria-label");
-		assert.ok(!sTitleOfTileContent2,"GenericTile 1 doesn't contain attribute title");
+		assert.ok(!sAriaLabelOfContent1, "GenericTile 1 doesn't contain attribute aria-label");
+		assert.ok(!sTitleOfTileContent1, "GenericTile 1 doesn't contain attribute title");
+		assert.ok(!sAriaLabelOfContent2, "GenericTile 1 doesn't contain attribute aria-label");
+		assert.ok(!sTitleOfTileContent2, "GenericTile 1 doesn't contain attribute title");
 	});
 
 	QUnit.test("NumericContent doesn't contain attributes ARIA-label and title", function(assert) {
@@ -2478,16 +2484,16 @@ sap.ui.define([
 		var sAriaLabelOfNumericContent = jQuery.sap.byId("numeric-content").attr("aria-label");
 		var sTitleOfNumericContent = jQuery.sap.byId("numeric-content").attr("title");
 		//Assert
-		assert.ok(!sAriaLabelOfNumericContent,"NumericContent doesn't contain attribute ARIA-label");
-		assert.ok(!sTitleOfNumericContent,"NumericContent doesn't contain attribute title");
+		assert.ok(!sAriaLabelOfNumericContent, "NumericContent doesn't contain attribute ARIA-label");
+		assert.ok(!sTitleOfNumericContent, "NumericContent doesn't contain attribute title");
 	});
 
 	QUnit.module("Tooltip handling if content elements changed", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oGenericTile = new GenericTile("generic-tile", {
-				header : "header text of GenericTile",
-				subheader : "subheader text of GenericTile",
-				tileContent : [
+				header: "header text of GenericTile",
+				subheader: "subheader text of GenericTile",
+				tileContent: [
 					new TileContent("tile-cont-1", {
 						content: new NumericContent("numeric-content", {
 							value: 111
@@ -2497,7 +2503,7 @@ sap.ui.define([
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function () {
+		afterEach: function() {
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
 		}
@@ -2509,7 +2515,7 @@ sap.ui.define([
 		//Act
 		var sAriaLabelOfGenericTile = $Tile.attr("aria-label");
 		//Assert
-		assert.equal(sAriaLabelOfGenericTile,sAriaLabelOfGenericTile ,"GenericTile has correct ARIA-label attribute before content changed");
+		assert.equal(sAriaLabelOfGenericTile, sAriaLabelOfGenericTile, "GenericTile has correct ARIA-label attribute before content changed");
 
 		//Arrange
 		this.oGenericTile.getTileContent()[0].getContent().setValue("999");
@@ -2523,7 +2529,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Event Tests", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.ftnPressHandler = function() {
 			};
 			this.hasAttribute = function(sAttribute, oCurrentObject) {
@@ -2535,30 +2541,30 @@ sap.ui.define([
 				}
 			};
 			this.oGenericTile = new GenericTile("generic-tile", {
-				subheader : "Expenses By Region",
-				frameType : FrameType.OneByOne,
-				header : "Comparative Annual Totals",
-				headerImage : IMAGE_PATH + "female_BaySu.jpg",
-				tileContent : new TileContent("tile-cont", {
-					unit : "EUR",
-					footer : "Current Quarter",
-					content : new NumericContent("numeric-cnt", {
-						state : LoadState.Loaded,
-						scale : "M",
-						indicator : DeviationIndicator.Up,
-						truncateValueTo : 4,
-						value : 20,
-						nullifyValue : true,
-						formatterValue : false,
-						valueColor : ValueColor.Good,
-						icon : "sap-icon://customer-financial-fact-sheet"
+				subheader: "Expenses By Region",
+				frameType: FrameType.OneByOne,
+				header: "Comparative Annual Totals",
+				headerImage: IMAGE_PATH + "female_BaySu.jpg",
+				tileContent: new TileContent("tile-cont", {
+					unit: "EUR",
+					footer: "Current Quarter",
+					content: new NumericContent("numeric-cnt", {
+						state: LoadState.Loaded,
+						scale: "M",
+						indicator: DeviationIndicator.Up,
+						truncateValueTo: 4,
+						value: 20,
+						nullifyValue: true,
+						formatterValue: false,
+						valueColor: ValueColor.Good,
+						icon: "sap-icon://customer-financial-fact-sheet"
 					})
 				})
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			sinon.spy(this, "ftnPressHandler");
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.ftnPressHandler.restore();
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
@@ -2568,7 +2574,7 @@ sap.ui.define([
 	QUnit.test("No press event test", function(assert) {
 		//Arrange
 		//Act
-		this.oGenericTile.$().trigger('tap');
+		this.oGenericTile.$().trigger("tap");
 
 		//Assert
 		assert.equal(this.hasAttribute("tabindex", this.oGenericTile), true, "GenericTile can have focus no matter it has press event or not");
@@ -2582,12 +2588,13 @@ sap.ui.define([
 		this.oGenericTile.setPressEnabled(false);
 
 		//Act
-		this.oGenericTile.$().trigger('tap');
+		this.oGenericTile.$().trigger("tap");
 
 		//Assert
 		function handlePress(oEvent) {
 			bEventNotTriggered = false;
 		}
+
 		assert.ok(bEventNotTriggered, "Press event of GenericTile is not triggered on mouse click.");
 	});
 
@@ -2596,7 +2603,7 @@ sap.ui.define([
 		this.oGenericTile.attachEvent("press", handlePress);
 
 		//Act
-		this.oGenericTile.$().trigger('tap');
+		this.oGenericTile.$().trigger("tap");
 
 		//Assert
 		function handlePress(oEvent) {
@@ -2613,7 +2620,7 @@ sap.ui.define([
 		this.oGenericTile.attachEvent("press", handlePress);
 
 		//Act
-		this.oGenericTile.$().trigger('tap');
+		this.oGenericTile.$().trigger("tap");
 
 		//Assert
 		function handlePress(oEvent) {
@@ -2626,7 +2633,7 @@ sap.ui.define([
 	QUnit.test("ENTER key down event in Display scope", function(assert) {
 		//Arrange
 		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
-		var e = jQuery.Event('keydown');
+		var e = jQuery.Event("keydown");
 		e.keyCode = jQuery.sap.KeyCodes.ENTER;
 
 		//Act
@@ -2639,7 +2646,7 @@ sap.ui.define([
 	QUnit.test("ENTER key event in Display scope", function(assert) {
 		//Arrange
 		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
-		var e = jQuery.Event('keyup');
+		var e = jQuery.Event("keyup");
 		e.keyCode = jQuery.sap.KeyCodes.ENTER;
 
 		//Act
@@ -2654,7 +2661,7 @@ sap.ui.define([
 		this.oGenericTile.setScope(GenericTileScope.Actions);
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
-		var e = jQuery.Event('keyup');
+		var e = jQuery.Event("keyup");
 		e.keyCode = jQuery.sap.KeyCodes.ENTER;
 
 		//Act
@@ -2667,7 +2674,7 @@ sap.ui.define([
 	QUnit.test("SPACE key event in Display scope", function(assert) {
 		//Arrange
 		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
-		var e = jQuery.Event('keyup');
+		var e = jQuery.Event("keyup");
 		e.keyCode = jQuery.sap.KeyCodes.SPACE;
 
 		//Act
@@ -2683,7 +2690,7 @@ sap.ui.define([
 		this.oGenericTile.setScope(GenericTileScope.Display);
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", handlePress);
-		var e = jQuery.Event('keyup');
+		var e = jQuery.Event("keyup");
 		e.keyCode = jQuery.sap.KeyCodes.SPACE;
 
 		//Act
@@ -2702,7 +2709,7 @@ sap.ui.define([
 		this.oGenericTile.setScope(GenericTileScope.Actions);
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
-		var e = jQuery.Event('keyup');
+		var e = jQuery.Event("keyup");
 		e.keyCode = jQuery.sap.KeyCodes.SPACE;
 
 		//Act
@@ -2718,7 +2725,7 @@ sap.ui.define([
 		this.oGenericTile.setScope(GenericTileScope.Actions);
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", handlePress);
-		var e = jQuery.Event('keyup');
+		var e = jQuery.Event("keyup");
 		e.keyCode = jQuery.sap.KeyCodes.SPACE;
 
 		//Act
@@ -2735,7 +2742,7 @@ sap.ui.define([
 	QUnit.test("DELETE key event in Display scope", function(assert) {
 		//Arrange
 		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
-		var e = jQuery.Event('keyup');
+		var e = jQuery.Event("keyup");
 		e.keyCode = jQuery.sap.KeyCodes.DELETE;
 
 		//Act
@@ -2748,7 +2755,7 @@ sap.ui.define([
 	QUnit.test("BACKSPACE key event in Display scope", function(assert) {
 		//Arrange
 		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
-		var e = jQuery.Event('keyup');
+		var e = jQuery.Event("keyup");
 		e.keyCode = jQuery.sap.KeyCodes.BACKSPACE;
 
 		//Act
@@ -2764,7 +2771,7 @@ sap.ui.define([
 		this.oGenericTile.setScope(GenericTileScope.Actions);
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", handlePress);
-		var e = jQuery.Event('keyup');
+		var e = jQuery.Event("keyup");
 		e.keyCode = jQuery.sap.KeyCodes.DELETE;
 
 		//Act
@@ -2784,7 +2791,7 @@ sap.ui.define([
 		this.oGenericTile.setScope(GenericTileScope.Actions);
 		sap.ui.getCore().applyChanges();
 		this.oGenericTile.attachEvent("press", handlePress);
-		var e = jQuery.Event('keyup');
+		var e = jQuery.Event("keyup");
 		e.keyCode = jQuery.sap.KeyCodes.BACKSPACE;
 
 		//Act
