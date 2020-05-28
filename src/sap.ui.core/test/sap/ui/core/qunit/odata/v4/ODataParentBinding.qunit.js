@@ -2412,13 +2412,13 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("suspend: absolute binding", function (assert) {
+	QUnit.test("suspend: root binding", function (assert) {
 		var oBinding = new ODataParentBinding({
-				sPath : "/Employees",
 				toString : function () { return "~"; }
 			}),
 			oResult = {};
 
+		this.mock(oBinding).expects("isRoot").twice().withExactArgs().returns(true);
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(false);
 		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
 
@@ -2438,45 +2438,39 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("suspend: quasi-absolute binding", function (assert) {
+	QUnit.test("suspend: error on operation binding", function (assert) {
 		var oBinding = new ODataParentBinding({
-				oContext : {/* sap.ui.model.Context */},
-				sPath : "SO_2_SCHEDULE",
-				bRelative : true
-			}),
-			oResult = {};
+				oOperation : {},
+				toString : function () { return "~"; }
+			});
 
-		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(false);
-
-		// code under test
-		oBinding.suspend();
-
-		assert.strictEqual(oBinding.bSuspended, true);
-		assert.strictEqual(oBinding.oResumePromise.isPending(), true);
-		oBinding.oResumePromise.$resolve(oResult);
-		assert.strictEqual(oBinding.oResumePromise.isPending(), false);
-		assert.strictEqual(oBinding.oResumePromise.getResult(), oResult);
+		assert.throws(function () {
+			// code under test
+			oBinding.suspend();
+		}, new Error("Cannot suspend an operation binding: ~"));
 	});
 
 	//*********************************************************************************************
-	QUnit.test("suspend: error on operation binding", function (assert) {
+	QUnit.test("suspend: error on non-root binding", function (assert) {
+		var oBinding = new ODataParentBinding({
+				toString : function () { return "~"; }
+			});
+
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(false);
+
 		assert.throws(function () {
 			// code under test
-			new ODataParentBinding({
-				oOperation : {},
-				sPath : "/operation",
-				toString : function () { return "~"; }
-			}).suspend();
-		}, new Error("Cannot suspend an operation binding: ~"));
+			oBinding.suspend();
+		}, new Error("Cannot suspend a relative binding: ~"));
 	});
 
 	//*********************************************************************************************
 	QUnit.test("suspend: error on binding with pending changes", function (assert) {
 		var oBinding = new ODataParentBinding({
-				sPath : "/operation",
 				toString : function () { return "~"; }
 			});
 
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(true);
 
 		assert.throws(function () {
@@ -2486,132 +2480,128 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[
-		undefined, // unresolved
-		{/* sap.ui.model.odata.v4.Context */fetchValue : function () {}} // resolved
-	].forEach(function (oContext, i) {
-		QUnit.test("suspend: error on relative binding, " + i, function (assert) {
-			assert.throws(function () {
-				// code under test
-				new ODataParentBinding({
-					oContext : oContext,
-					sPath : "SO_2_SCHEDULE",
-					bRelative : true,
-					toString : function () { return "~"; }
-				}).suspend();
-			}, new Error("Cannot suspend a relative binding: ~"));
-		});
-	});
-
-	//*********************************************************************************************
-	[{
-		oContext : undefined,
-		sPath : "/Employees",
-		bRelative : false,
-		sTitle : "_resume: absolute binding"
-	}, {
-		oContext : {/* sap.ui.model.Context */},
-		sPath : "SO_2_SCHEDULE",
-		bRelative : true,
-		sTitle : "_resume: quasi-absolute binding"
-	}].forEach(function (oFixture) {
-		var oBinding,
-			oBindingMock,
-			oResumePromise;
-
-		function prepareTest (assert, oTest) {
-			oBinding = new ODataParentBinding(Object.assign({
+	QUnit.test("_resume: root binding (asynchronous)", function (assert) {
+		var oBinding = new ODataParentBinding({
 				_fireChange : function () {},
 				oModel : {addPrerenderingTask : function () {}},
 				resumeInternal : function () {},
 				toString : function () { return "~"; }
-			}, oFixture));
-			oBindingMock = oTest.mock(oBinding);
-			assert.strictEqual(oBinding.getResumePromise(), undefined, "initially");
-			oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
-			oBinding.suspend();
-			oResumePromise = oBinding.getResumePromise();
-			oBindingMock.expects("_fireChange").never();
-			oBindingMock.expects("resumeInternal").never();
-			oBindingMock.expects("getGroupId").withExactArgs().returns("groupId");
-		}
+			}),
+			oBindingMock = this.mock(oBinding),
+			oPromise,
+			oResumePromise;
 
-		QUnit.test(oFixture.sTitle + "(asynchron)", function (assert) {
-			var oPromise;
-
-			prepareTest(assert, this);
-			oBindingMock.expects("createReadGroupLock").withExactArgs("groupId", true, 1);
-			this.mock(oBinding.oModel).expects("addPrerenderingTask")
-				.withExactArgs(sinon.match.func)
-				.callsFake(function (fnCallback) {
-					// simulate async nature of prerendering task
-					oPromise = Promise.resolve().then(function () {
-						assert.strictEqual(oBinding.bSuspended, true, "not yet!");
-						assert.strictEqual(oResumePromise.isPending(), true);
-
-						oBindingMock.expects("resumeInternal").withExactArgs(true)
-							.callsFake(function () {
-								// before we fire events to the world, suspend is over
-								assert.strictEqual(oBinding.bSuspended, false, "now!");
-								// must not resolve until resumeInternal() is over
-								assert.strictEqual(oResumePromise.isPending(), true);
-							});
-
-						// code under test
-						fnCallback();
-
-						assert.strictEqual(oResumePromise.isPending(), false);
-						assert.strictEqual(oResumePromise.getResult(), undefined);
-						assert.strictEqual(oBinding.getResumePromise(), undefined, "cleaned up");
-					});
-				});
-
-			// code under test
-			oBinding._resume(true);
-
-			return oPromise.then(function () {
-				assert.throws(function () {
-					// code under test
-					oBinding._resume(true);
-				}, new Error("Cannot resume a not suspended binding: ~"));
-			});
-		});
-
-		QUnit.test(oFixture.sTitle + "(synchron)", function (assert) {
-			prepareTest(assert, this);
-			oBindingMock.expects("createReadGroupLock").withExactArgs("groupId", true);
-			oBindingMock.expects("resumeInternal").withExactArgs(true)
-				.callsFake(function () {
-					// before we fire events to the world, suspend is over
-					assert.strictEqual(oBinding.bSuspended, false, "now!");
-					// must not resolve until resumeInternal() is over
+		assert.strictEqual(oBinding.getResumePromise(), undefined, "initially");
+		oBindingMock.expects("isRoot").thrice().withExactArgs().returns(true);
+		oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
+		oBinding.suspend();
+		oResumePromise = oBinding.getResumePromise();
+		oBindingMock.expects("_fireChange").never();
+		oBindingMock.expects("resumeInternal").never();
+		oBindingMock.expects("getGroupId").withExactArgs().returns("groupId");
+		oBindingMock.expects("createReadGroupLock").withExactArgs("groupId", true, 1);
+		this.mock(oBinding.oModel).expects("addPrerenderingTask")
+			.withExactArgs(sinon.match.func)
+			.callsFake(function (fnCallback) {
+				// simulate async nature of prerendering task
+				oPromise = Promise.resolve().then(function () {
+					assert.strictEqual(oBinding.bSuspended, true, "not yet!");
 					assert.strictEqual(oResumePromise.isPending(), true);
+
+					oBindingMock.expects("resumeInternal").withExactArgs(true)
+						.callsFake(function () {
+							// before we fire events to the world, suspend is over
+							assert.strictEqual(oBinding.bSuspended, false, "now!");
+							// must not resolve until resumeInternal() is over
+							assert.strictEqual(oResumePromise.isPending(), true);
+						});
+
+					// code under test
+					fnCallback();
+
+					assert.strictEqual(oResumePromise.isPending(), false);
+					assert.strictEqual(oResumePromise.getResult(), undefined);
+					assert.strictEqual(oBinding.getResumePromise(), undefined, "cleaned up");
 				});
+			});
 
-			// code under test
-			oBinding._resume(false);
+		// code under test
+		oBinding._resume(true);
 
-			assert.strictEqual(oResumePromise.isPending(), false);
-			assert.strictEqual(oResumePromise.getResult(), undefined);
-			assert.strictEqual(oBinding.getResumePromise(), undefined, "cleaned up");
-
+		return oPromise.then(function () {
 			assert.throws(function () {
 				// code under test
-				oBinding._resume(false);
+				oBinding._resume(true);
 			}, new Error("Cannot resume a not suspended binding: ~"));
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_resume: error on operation binding", function (assert) {
+	QUnit.test("_resume: root binding (synchronous)", function (assert) {
+		var oBinding = new ODataParentBinding({
+				_fireChange : function () {},
+				oModel : {addPrerenderingTask : function () {}},
+				resumeInternal : function () {},
+				toString : function () { return "~"; }
+			}),
+			oBindingMock = this.mock(oBinding),
+			oResumePromise;
+
+		assert.strictEqual(oBinding.getResumePromise(), undefined, "initially");
+		oBindingMock.expects("isRoot").thrice().withExactArgs().returns(true);
+		oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
+		oBinding.suspend();
+		oResumePromise = oBinding.getResumePromise();
+		oBindingMock.expects("_fireChange").never();
+		oBindingMock.expects("resumeInternal").never();
+		oBindingMock.expects("getGroupId").withExactArgs().returns("groupId");
+		oBindingMock.expects("createReadGroupLock").withExactArgs("groupId", true);
+		oBindingMock.expects("resumeInternal").withExactArgs(true)
+			.callsFake(function () {
+				// before we fire events to the world, suspend is over
+				assert.strictEqual(oBinding.bSuspended, false, "now!");
+				// must not resolve until resumeInternal() is over
+				assert.strictEqual(oResumePromise.isPending(), true);
+			});
+
+		// code under test
+		oBinding._resume(false);
+
+		assert.strictEqual(oResumePromise.isPending(), false);
+		assert.strictEqual(oResumePromise.getResult(), undefined);
+		assert.strictEqual(oBinding.getResumePromise(), undefined, "cleaned up");
+
 		assert.throws(function () {
 			// code under test
-			new ODataParentBinding({
+			oBinding._resume(false);
+		}, new Error("Cannot resume a not suspended binding: ~"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_resume: error on operation binding", function (assert) {
+		var oBinding = new ODataParentBinding({
 				oOperation : {},
-				sPath : "/operation",
 				toString : function () { return "~"; }
-			})._resume();
+			});
+
+		assert.throws(function () {
+			// code under test
+			oBinding._resume();
 		}, new Error("Cannot resume an operation binding: ~"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_resume: error on non-root binding", function (assert) {
+		var oBinding = new ODataParentBinding({
+				toString : function () { return "~"; }
+			});
+
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(false);
+
+		assert.throws(function () {
+			// code under test
+			oBinding._resume();
+		}, new Error("Cannot resume a relative binding: ~"));
 	});
 
 	//*********************************************************************************************
@@ -2623,6 +2613,7 @@ sap.ui.define([
 			oPromise;
 
 		oBinding.bSuspended = true;
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
 		this.mock(oBinding).expects("getGroupId").withExactArgs().returns("groupId");
 		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("groupId", true, 1);
 		this.mock(oBinding.oModel).expects("addPrerenderingTask")
@@ -2679,24 +2670,6 @@ sap.ui.define([
 			}, function(oError0) {
 				assert.strictEqual(oError0, oError);
 			});
-	});
-
-	//*********************************************************************************************
-	[
-		undefined, // unresolved
-		{/* sap.ui.model.odata.v4.Context */fetchValue : function () {}} // resolved
-	].forEach(function (oContext, i) {
-		QUnit.test("_resume: error on relative binding, " + i, function (assert) {
-			assert.throws(function () {
-				// code under test
-				new ODataParentBinding({
-					oContext : oContext,
-					sPath : "SO_2_SCHEDULE",
-					bRelative : true,
-					toString : function () { return "~"; }
-				})._resume();
-			}, new Error("Cannot resume a relative binding: ~"));
-		});
 	});
 
 	//*********************************************************************************************
