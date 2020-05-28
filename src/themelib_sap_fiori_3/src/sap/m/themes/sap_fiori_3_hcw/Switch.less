@@ -14,7 +14,33 @@
 	//in order to have a touchable area of 2.75rem
 	padding-top: 0.6875rem;
 	padding-bottom: 0.6875rem;
-	width: 4rem;
+	padding-left: 0.125rem;
+	width: 4.125rem;
+}
+
+/* focus */
+
+html.sap-desktop {
+	.sapMSwtCont:focus > .sapMSwt:before {
+		content: " ";
+		position: absolute;
+		display: block;
+		top: -0.375rem;
+		left: -0.125rem;
+		bottom: -0.375rem;
+		right: -0.125rem;
+		outline: 2px dotted @sapUiContentFocusColor;
+	}
+	.sapUiSizeCompact {
+		.sapMSwtCont:focus > .sapMSwt:before {
+			top: -0.25rem;
+			bottom: -0.25rem;
+		}
+		.sapMSwtCont:focus > .sapMSwt.sapMSwtNoLabel:before {
+			top: -0.375rem;
+			bottom: -0.375rem;
+		}
+	}
 }
 
 /* ------------------------------ */
@@ -232,6 +258,8 @@
 			&.sapMSwtNoLabel {
 				width: 2.5rem;
 				height: 1rem;
+				margin-top: 0.125rem;
+				margin-bottom: 0.125rem;
 				&.sapMSwtOn .sapMSwtHandle {
 					left: 1rem;
 				}
