@@ -4,18 +4,16 @@
 
 // Provides control sap.m.QuickView.
 sap.ui.define([
-	'./library',
-	'sap/ui/Device',
-	'sap/ui/core/IconPool',
-	'./QuickViewBase',
-	'./ResponsivePopover',
-	'./NavContainer',
-	'./Page',
-	'./Bar',
-	'./Button',
-	'./QuickViewRenderer'
-],
-	function(
+	"./library",
+	"sap/ui/Device",
+	"sap/ui/core/IconPool",
+	"./QuickViewBase",
+	"./ResponsivePopover",
+	"./NavContainer",
+	"./Page",
+	"./Bar",
+	"./Button"
+], function (
 	library,
 	Device,
 	IconPool,
@@ -24,9 +22,8 @@ sap.ui.define([
 	NavContainer,
 	Page,
 	Bar,
-	Button,
-	QuickViewRenderer
-	) {
+	Button
+) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -70,107 +67,92 @@ sap.ui.define([
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var QuickView = QuickViewBase.extend("sap.m.QuickView", /** @lends sap.m.QuickView.prototype */	{
-				metadata: {
+		metadata: {
 
-					library: "sap.m",
-					properties: {
-						/**
-						 * This property is reused from sap.m.Popover and only takes effect when running on desktop or tablet. Please refer the documentation of the placement property of sap.m.Popover.
-						 */
-						placement : {
-							type : "sap.m.PlacementType",
-							group : "Misc",
-							defaultValue : PlacementType.Right
-						},
-						/**
-						 * The width of the QuickView. The property takes effect only when running on desktop or tablet.
-						 */
-						width : {
-							type : 'sap.ui.core.CSSSize',
-							group : 'Dimension',
-							defaultValue : '320px'
-						}
-					},
-					aggregations: {
-					},
-					designtime: "sap/m/designtime/QuickView.designtime",
-					events: {
-						/**
-						 * This event fires after the QuickView is opened.
-						 */
-						afterOpen: {
-							parameters: {
-								/**
-								 * This parameter refers to the control, which opens the QuickView.
-								 */
-								openBy: {
-									type: "sap.ui.core.Control"
-								}
-							}
-						},
+			library: "sap.m",
+			properties: {
 
-						/**
-						 * This event fires after the QuickView is closed.
-						 */
-						afterClose: {
-							parameters: {
-								/**
-								 * This parameter refers to the control, which opens the QuickView.
-								 */
-								openBy: {
-									type: "sap.ui.core.Control"
-								},
+				/**
+				 * This property is reused from sap.m.Popover and only takes effect when running on desktop or tablet. Please refer the documentation of the placement property of sap.m.Popover.
+				 */
+				placement : { type : "sap.m.PlacementType", group : "Misc", defaultValue : PlacementType.Right },
 
-								/**
-								 * This parameter contains the control,
-								 * which triggers the close of the QuickView.
-								 * It is undefined when running on desktop or tablet.
-								 */
-								origin : {
-									type : "sap.m.Button"
-								}
-							}
-						},
+				/**
+				 * The width of the QuickView. The property takes effect only when running on desktop or tablet.
+				 */
+				width : { type : 'sap.ui.core.CSSSize', group : 'Dimension', defaultValue : '320px' }
+			},
+			aggregations: {},
+			designtime: "sap/m/designtime/QuickView.designtime",
+			events: {
+				/**
+				 * This event fires after the QuickView is opened.
+				 */
+				afterOpen: {
+					parameters: {
+						/**
+						 * This parameter refers to the control, which opens the QuickView.
+						 */
+						openBy: { type: "sap.ui.core.Control" }
+					}
+				},
+
+				/**
+				 * This event fires after the QuickView is closed.
+				 */
+				afterClose: {
+					parameters: {
+						/**
+						 * This parameter refers to the control, which opens the QuickView.
+						 */
+						openBy: { type: "sap.ui.core.Control" },
 
 						/**
-						 * This event fires before the QuickView is opened.
+						 * This parameter contains the control,
+						 * which triggers the close of the QuickView.
+						 * It is undefined when running on desktop or tablet.
 						 */
-						beforeOpen: {
-							parameters: {
-								/**
-								 * This parameter refers to the control, which opens the QuickView.
-								 */
-								openBy: {
-									type: "sap.ui.core.Control"
-								}
-							}
-						},
+						origin : { type : "sap.m.Button" }
+					}
+				},
+
+				/**
+				 * This event fires before the QuickView is opened.
+				 */
+				beforeOpen: {
+					parameters: {
+						/**
+						 * This parameter refers to the control, which opens the QuickView.
+						 */
+						openBy: { type: "sap.ui.core.Control" }
+					}
+				},
+
+				/**
+				 * This event fires before the QuickView is closed.
+				 */
+				beforeClose: {
+					parameters: {
+						/**
+						 * This parameter refers to the control, which opens the QuickView.
+						 */
+						openBy: { type: "sap.ui.core.Control" },
 
 						/**
-						 * This event fires before the QuickView is closed.
+						 * This parameter contains the control,
+						 * which triggers the close of the QuickView.
+						 * It is undefined when running on desktop or tablet.
 						 */
-						beforeClose: {
-							parameters: {
-								/**
-								 * This parameter refers to the control, which opens the QuickView.
-								 */
-								openBy: {
-									type: "sap.ui.core.Control"
-								},
-
-								/**
-								 * This parameter contains the control,
-								 * which triggers the close of the QuickView.
-								 * It is undefined when running on desktop or tablet.
-								 */
-								origin : {
-									type : "sap.m.Button"
-								}
-							}
-						}
+						origin : { type : "sap.m.Button" }
 					}
 				}
-			});
+			}
+		},
+		renderer: {
+			apiVersion: 2,
+			render: function () {}
+		}
+	});
 
 	/**
 	 * Initialize the control.
@@ -178,7 +160,6 @@ sap.ui.define([
 	 * @private
 	 */
 	QuickView.prototype.init = function() {
-
 		var oNavConfig = {
 			pages: [new Page()],
 			navigate: this._navigate.bind(this),
@@ -222,7 +203,7 @@ sap.ui.define([
 			}
 		});
 
-		this._oPopover.addStyleClass('sapMQuickView');
+		this._oPopover.addStyleClass("sapMQuickView");
 
 		var oPopupControl = this._oPopover.getAggregation("_popup");
 		oPopupControl.addEventDelegate({
@@ -243,8 +224,6 @@ sap.ui.define([
 		}
 
 		this._bItemsChanged = true;
-
-		this._oPopover.addStyleClass("sapMQuickView");
 	};
 
 	/**
@@ -252,7 +231,6 @@ sap.ui.define([
 	 * @private
 	 */
 	QuickView.prototype._initializeQuickView = function() {
-
 		this._bRendered = true;
 
 		// Update pages only if items aggregation is changed
@@ -514,5 +492,4 @@ sap.ui.define([
 		});
 
 	return QuickView;
-
 });

@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Core",
 	"sap/m/library",
 	"sap/m/App",
 	"sap/m/Page",
@@ -13,9 +14,10 @@ sap.ui.define([
 	"sap/m/Button",
 	"jquery.sap.keycodes",
 	"jquery.sap.global"
-], function(
+], function (
 	qutils,
 	JSONModel,
+	Core,
 	mobileLibrary,
 	App,
 	Page,
@@ -357,7 +359,7 @@ sap.ui.define([
 
 			oPage.addContent(this.oButton);
 			oPage.addContent(this.oButton2);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oButton.destroy();
@@ -369,7 +371,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Testing if the QuickView is created", function (assert) {
-		assert.ok(sap.ui.getCore().byId(this.oQuickView.getId()), "should render");
+		assert.ok(Core.byId(this.oQuickView.getId()), "should render");
 	});
 
 	QUnit.test("Test binding", function (assert) {
@@ -417,8 +419,8 @@ sap.ui.define([
 	QUnit.module("Render", {
 		beforeEach: function () {
 			this.oQuickView = getQuickView();
-
 			this.oQuickView.setModel(oModel);
+
 			var that = this;
 			this.oButton = new Button({
 				text: "Open Quick View",
@@ -428,7 +430,7 @@ sap.ui.define([
 			});
 
 			oPage.addContent(this.oButton);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oButton.destroy();
@@ -459,7 +461,7 @@ sap.ui.define([
 		this.clock.tick(500);
 		assert.ok(this.oQuickView._oPopover.isOpen(), "QuickView is already open");
 
-		assert.ok(sap.ui.getCore().byId(this.oQuickView.getId()), "QuickView is rendered after it's opened.");
+		assert.ok(Core.byId(this.oQuickView.getId()), "QuickView is rendered after it's opened.");
 		assert.strictEqual(this.oQuickView._oPopover.$().is(':visible'), true, "QuickView is visible after it's opened.");
 
 		this.oQuickView._oPopover.close();
@@ -473,6 +475,8 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		this.oButton.invalidate();
+		Core.applyChanges();
+
 		assert.strictEqual(this.oQuickView._oPopover.$().is(':visible'), true, "Should not close the QuickView control.");
 	});
 
@@ -501,7 +505,7 @@ sap.ui.define([
 		this.oQuickView.openBy(document.body);
 		this.oQuickView.setTooltip(sTooltip);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oQuickView.getDomRef().getAttribute("title"), sTooltip, "Tooltip should be " + sTooltip);
 	});
@@ -511,7 +515,7 @@ sap.ui.define([
 		this.oQuickView.setBusyIndicatorDelay(0);
 		this.oQuickView.setBusy(true);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(this.oQuickView.getDomRef("busyIndicator"), "QuickView should have a busy indicator");
 	});
@@ -564,7 +568,7 @@ sap.ui.define([
 			});
 
 			oPage.addContent(this.oButton);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 		},
 		afterEach: function () {
@@ -632,7 +636,7 @@ sap.ui.define([
 			});
 
 			oPage.addContent(this.oButton);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oButton.destroy();
@@ -691,7 +695,7 @@ sap.ui.define([
 			});
 
 			oPage.addContent(this.oButton);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oButton.destroy();
@@ -722,7 +726,7 @@ sap.ui.define([
 			});
 
 			oPage.addContent(this.oButton);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oButton.destroy();
@@ -760,8 +764,8 @@ sap.ui.define([
 	QUnit.module("Updating", {
 		beforeEach: function () {
 			this.oQuickView = getQuickView();
-
 			this.oQuickView.setModel(oModelNoHeader);
+
 			var that = this;
 			this.oButton = new Button({
 				text: "Open",
@@ -771,7 +775,7 @@ sap.ui.define([
 			});
 
 			oPage.addContent(this.oButton);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oButton.destroy();
@@ -783,7 +787,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Remove page", function (assert) {
-
 		assert.strictEqual(this.oQuickView.getPages().length, 1, 'page size is correct');
 
 		this.oQuickView.removeAggregation('pages', this.oQuickView.getPages()[0]);
@@ -792,7 +795,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Invalidation", function (assert) {
-
 		var fnQuickViewInvalidate = sinon.spy(this.oQuickView, "invalidate");
 		var fnQuickViewPopoverInvalidate = sinon.spy(this.oQuickView._oPopover, "invalidate");
 
@@ -827,7 +829,6 @@ sap.ui.define([
 
 		var newData = {};
 		jQuery.extend(true, newData, data);
-
 		this.oQuickView.getModel().setData(newData);
 
 		assert.strictEqual(fnQuickViewInvalidate.callCount, 0, "QuickView.invalidate should not be called");
@@ -875,7 +876,6 @@ sap.ui.define([
 		this.oQuickView.getModel().setData(newData);
 
 		this.oQuickView.getPages()[0].setTitle('New Title');
-
 		assert.strictEqual(fnPageInvalidate.callCount, 0, "Page.invalidate should not be called");
 	});
 
@@ -886,7 +886,7 @@ sap.ui.define([
 
 		this.oQuickView.getPages()[0].getGroups()[0].setHeading('new heading');
 
-		assert.strictEqual(fnQuickViewInvalidate.callCount, 0, "QuickView.invalidate should not be called");
+		assert.strictEqual(fnQuickViewInvalidate.callCount, 1, "QuickView.invalidate should be called");
 		assert.strictEqual(fnQuickViewPopoverInvalidate.callCount, 0, "QuickView.Popover.invalidate should not be called");
 	});
 
@@ -952,7 +952,7 @@ sap.ui.define([
 			});
 
 			oPage.addContent(this.oButton);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oButton.destroy();
