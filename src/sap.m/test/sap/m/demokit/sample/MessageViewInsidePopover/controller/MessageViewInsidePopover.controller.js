@@ -84,6 +84,7 @@ sap.ui.define([
 					visible: false,
 					press: function () {
 						that.oMessageView.navigateBack();
+						that._oPopover.focus();
 						this.setVisible(false);
 					}
 				});
