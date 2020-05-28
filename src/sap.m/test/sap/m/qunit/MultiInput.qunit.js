@@ -1060,8 +1060,7 @@ sap.ui.define([
 
 	QUnit.test("onsapnext when a token is focused", function(assert) {
 
-		var oMISpy = sinon.spy(MultiInput.prototype, "_scrollAndFocus"),
-			oTokenizerSpy = sinon.spy(Tokenizer.prototype, "scrollToEnd");
+		var oTokenizerSpy = sinon.spy(Tokenizer.prototype, "scrollToEnd");
 
 		this.multiInput1.addToken(new Token({}));
 
@@ -1072,11 +1071,11 @@ sap.ui.define([
 		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ARROW_RIGHT, false, false, false);
 
 		// assert
-		assert.ok(oMISpy.called, "MultiInputs's _scrollAndFocus is called");
-		assert.ok(oTokenizerSpy.called, "Tokenizer's scrollToEnd is not called");
+		assert.ok(oTokenizerSpy.called, "Tokenizer's scrollToEnd is called");
+		assert.strictEqual(this.multiInput1._$input[0].id, document.activeElement.id,
+			"The first token in the multiinput is focused.");
 
 		// cleanup
-		oMISpy.restore();
 		oTokenizerSpy.restore();
 	});
 

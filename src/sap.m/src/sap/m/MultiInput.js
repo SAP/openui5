@@ -640,7 +640,10 @@ function(
 		if (this._tokenizer === oFocusedElement || this._tokenizer.$().find(oFocusedElement.$()).length > 0) {
 			// focus is on the tokenizer or on some descendant of the tokenizer and the event was not handled ->
 			// we therefore handle the event and focus the input element
-			this._scrollAndFocus();
+			this._tokenizer.scrollToEnd();
+			// we set the focus back via jQuery instead of this.focus() since the latter on phones lead to unwanted opening of the
+			// suggest popup
+			this.$().find("input").trigger("focus");
 		}
 	};
 
@@ -932,18 +935,6 @@ function(
 			// prevent scroll of the page
 			oEvent.preventDefault();
 		}
-	};
-
-	/**
-	 * Function scrolls the tokens to the end and focuses the input field.
-	 *
-	 * @private
-	 */
-	MultiInput.prototype._scrollAndFocus = function () {
-		this._tokenizer.scrollToEnd();
-		// we set the focus back via jQuery instead of this.focus() since the latter on phones lead to unwanted opening of the
-		// suggest popup
-		this.$().find("input").trigger("focus");
 	};
 
 	/**
