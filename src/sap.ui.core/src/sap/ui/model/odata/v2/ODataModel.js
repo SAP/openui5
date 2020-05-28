@@ -85,7 +85,7 @@ sap.ui.define([
 	 *            server side authentication instead. Password for the service.
 	 * @param {Object<string,string>} [mParameters.headers]
 	 *            Map of custom headers (name/value pairs) like {"myHeader":"myHeaderValue",...}
-	 * @param {boolean} [mParameters.tokenHandling=true] Enable/disable XCSRF-Token handling
+	 * @param {boolean} [mParameters.tokenHandling=true] Enable/disable security token handling
 	 * @param {boolean} [mParameters.withCredentials]
 	 *            Experimental - <code>true</code> when user credentials are to be included in a
 	 *            cross-origin request; please note that this only works if all requests are asynchronous
@@ -132,7 +132,7 @@ sap.ui.define([
 	 *            by invoking the parser) if there are not annotations inside the metadata document
 	 * @param {boolean} [mParameters.disableHeadRequestForToken=false]
 	 *            Set this flag to <code>true</code> if your service does not support <code>HEAD</code>
-	 *            requests for fetching the service document (and thus the CSRF-token) to avoid sending
+	 *            requests for fetching the service document (and thus the security token) to avoid sending
 	 *            a <code>HEAD</code>-request before falling back to <code>GET</code>
 	 * @param {boolean} [mParameters.sequentializeRequests=false]
 	 *            Whether to sequentialize all requests, needed in case the service cannot handle parallel requests
@@ -144,7 +144,10 @@ sap.ui.define([
 	 *            Set this array to make custom response headers bindable via the entity's "__metadata/headers" property
 	 * @param {boolean} [mParameters.canonicalRequests=false]
 	 *            When setting this flag to <code>true</code> the model tries to calculate a canonical url to the data.
-	 * @param {boolean} [mParameters.tokenHandlingForGet=false] Send CSRF token for GET requests in case read access logging is activated for the OData Service in the backend.
+	 * @param {boolean} [mParameters.tokenHandlingForGet=false] Send security token for GET requests in case read access logging is activated for the OData Service in the backend.
+	 * @param {boolean} [mParameters.earlyTokenRequest=false]
+	 *            Whether the security token is requested at the earliest convenience, if parameter
+	 *            <code>tokenHandling</code> is <code>true</code>; supported since 1.79.0.
 	 *
 	 * @class
 	 * Model implementation based on the OData protocol.
@@ -199,6 +202,7 @@ sap.ui.define([
 				sWarmupUrl,
 				bCanonicalRequests,
 				bTokenHandlingForGet,
+				bEarlyTokenRequest,
 				that = this;
 
 			if (typeof (sServiceUrl) === "object") {
@@ -235,6 +239,7 @@ sap.ui.define([
 				sWarmupUrl = mParameters.warmupUrl;
 				bCanonicalRequests = mParameters.canonicalRequests;
 				bTokenHandlingForGet = mParameters.tokenHandlingForGet;
+				bEarlyTokenRequest = mParameters.earlyTokenRequest;
 			}
 
 			/* Path cache to avoid multiple expensive resolve operations
@@ -423,6 +428,9 @@ sap.ui.define([
 				} else if (this.oSharedServerData.securityToken) {
 					this.oSharedServiceData.securityToken = this.oSharedServerData.securityToken;
 					this.oHeaders["x-csrf-token"] = this.oSharedServiceData.securityToken;
+				}
+				if (bEarlyTokenRequest) {
+					this.securityTokenAvailable();
 				}
 			}
 			this.oHeaders["Accept-Language"] = sap.ui.getCore().getConfiguration().getLanguageTag();
@@ -2875,7 +2883,7 @@ sap.ui.define([
 	 *
 	 * If the token has not been requested from the server it will be requested first (synchronously).
 	 *
-	 * @returns {string} The CSRF security token
+	 * @returns {string} The security token
 	 *
 	 * @public
 	 */
@@ -2891,7 +2899,7 @@ sap.ui.define([
 	/**
 	 * Returns a promise, which will resolve with the security token as soon as it is available.
 	 *
-	 * @returns {Promise} A promise on the CSRF security token
+	 * @returns {Promise} A promise on the security token
 	 *
 	 * @public
 	 */
@@ -2945,7 +2953,7 @@ sap.ui.define([
 					that.oSharedServiceData.securityToken = sToken;
 					that.pSecurityToken = Promise.resolve(sToken);
 					// For compatibility with applications, that are using getHeaders() to retrieve the current
-					// CSRF token additionally keep it in the oHeaders object
+					// security token additionally keep it in the oHeaders object
 					that.oHeaders["x-csrf-token"] = sToken;
 				} else {
 					// Disable token handling, if service does not return tokens
@@ -3045,7 +3053,7 @@ sap.ui.define([
 		}
 
 		function submitWithToken() {
-			// Make sure requests not requiring a CSRF token don't send one.
+			// Make sure requests not requiring a security token don't send one.
 			if (that.bTokenHandling) {
 				delete oRequest.headers["x-csrf-token"];
 			}
@@ -5860,7 +5868,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Enable/Disable XCSRF-Token handling.
+	 * Enable/Disable security token handling.
 	 * @param {boolean} [bTokenHandling=true] Whether to use token handling or not
 	 * @public
 	 */
