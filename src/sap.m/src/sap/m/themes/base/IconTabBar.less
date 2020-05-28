@@ -119,6 +119,8 @@
 // =========== Shell ===========
 @_sap_m_IconTabBar_ShellHeaderShadow: @_sap_m_IconTabBar_HeaderShadow;
 @_sap_m_IconTabBar_ShellContentArrowHeight: 0.1875rem;
+@_sap_m_IconTabBar_ShellTextColor: @sapUiShellNavigationTextColor;
+@_sap_m_IconTabBar_ShellSelectedTextColor: @sapUiShellNavigationSelectedTextColor;
 
 /* ------------------------------------------------ */
 /* IconTabBar main class                            */
@@ -1161,48 +1163,47 @@ html[dir=rtl] {
 /* Shell overrides                        */
 /* ------------------------------------------------ */
 
-.sapUshellShell {
-	.sapMITH {
+.sapUshellShellTabBar .sapMITH,
+.sapUshellShellTabBar.sapMITH {
 
-		box-shadow: @_sap_m_IconTabBar_ShellHeaderShadow;
-		background-color: @sapUiShellNavigationBackground;
+	box-shadow: @_sap_m_IconTabBar_ShellHeaderShadow;
+	background-color: @sapUiShellNavigationBackground;
 
-		.sapMITBFilterDefault.sapMITBSelected .sapMITBText {
-			color: @sapUiShellNavigationSelectedTextColor;
+	.sapMITBFilterDefault.sapMITBSelected .sapMITBText {
+		color: @_sap_m_IconTabBar_ShellSelectedTextColor;
+	}
+
+	.sapMITBSelected .sapMITBContentArrow::after {
+		background: @sapUiShellNavigationSelectedColor;
+		height: @_sap_m_IconTabBar_ShellContentArrowHeight;
+	}
+
+	.sapMITBFilter {
+		.sapMITBText,
+		.sapMITBCount {
+			color: @_sap_m_IconTabBar_ShellTextColor;
+			font-family: @sapUiFontFamily;
+			font-size: @sapMFontMediumSize;
 		}
+	}
 
-		.sapMITBSelected .sapMITBContentArrow::after {
-			background: @sapUiShellNavigationSelectedColor;
-			height: @_sap_m_IconTabBar_ShellContentArrowHeight;
-		}
-
+	&:not(.sapMITBTextOnly) {
 		.sapMITBFilter {
-			.sapMITBText,
-			.sapMITBCount {
-				color: @sapUiShellNavigationTextColor;
-				font-family: @sapUiFontFamily;
-				font-size: @sapMFontMediumSize;
+			.sapMITBText {
+				line-height: 0.9375rem;
+				padding: 0.3125rem 0 0;
 			}
 		}
+	}
 
-		&:not(.sapMITBTextOnly) {
-			.sapMITBFilter {
-				.sapMITBText {
-					line-height: 0.9375rem;
-					padding: 0.3125rem 0 0;
-				}
-			}
+	.sapMITHUnselectable {
+		button .sapUiIcon {
+			color: @_sap_m_IconTabBar_ShellTextColor;
 		}
 
-		.sapMITHUnselectable {
+		&.sapMITBSelected {
 			button .sapUiIcon {
-				color: @sapUiShellNavigationTextColor;
-			}
-
-			&.sapMITBSelected {
-				button .sapUiIcon {
-					color: @sapUiShellNavigationSelectedTextColor;
-				}
+				color: @_sap_m_IconTabBar_ShellSelectedTextColor;
 			}
 		}
 	}
