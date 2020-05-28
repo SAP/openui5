@@ -58,16 +58,6 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 		Popover.prototype.onBeforeRendering.apply(this, arguments);
 		this.addStyleClass("sapMOTAPopover");
 		this.addStyleClass("sapMOverflowToolbarMenu-CTX");
-
-		var bHasButtonsWithIcons = this._getAllContent().some(function(oControl) {
-			return oControl.hasStyleClass("sapMOTAPButtonWithIcon");
-		});
-
-		if (bHasButtonsWithIcons) {
-			this.addStyleClass("sapMOTAPButtonsWithIcons");
-		} else {
-			this.removeStyleClass("sapMOTAPButtonsWithIcons");
-		}
 	};
 
 	/* Override API methods */
