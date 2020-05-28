@@ -25705,6 +25705,50 @@ sap.ui.define([
 			constraints:{\'maxLength\':255},formatOptions:{\'parseKeepsEmptyString\':true}}"/>');
 
 	//*********************************************************************************************
+	// Scenario: Nested list binding inside table:Table with auto-$expand/$select (virtual context).
+	// Note: Avoid nested absolute bindings until CPOUIFTEAMB-1379 is solved.
+	// Note: Equipment's ID should not matter here.
+	// BCP: 2080140429
+	QUnit.test("BCP: 2080140429", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<t:Table rows="{/EMPLOYEES}">\
+	<t:Column>\
+		<t:template>\
+			<Text id="name" text="{Name}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<List items="{path : \'EMPLOYEE_2_EQUIPMENTS\', templateShareable : false}">\
+				<CustomListItem>\
+					<Text id="category" text="{Category}" />\
+				</CustomListItem>\
+			</List>\
+		</t:template>\
+	</t:Column>\
+</Table>';
+
+		this.expectRequest("EMPLOYEES?$select=ID,Name"
+				+ "&$expand=EMPLOYEE_2_EQUIPMENTS($select=Category,ID)&$skip=0&$top=110", {
+				value : [{
+					EMPLOYEE_2_EQUIPMENTS : [{Category: "F1"}, {Category: "F2"}, {Category: "F3"}],
+					ID : "2",
+					Name : "Frederic Fall"
+				}, {
+					EMPLOYEE_2_EQUIPMENTS : [{Category: "J1"}, {Category: "J2"}, {Category: "J3"}],
+					ID : "3",
+					Name : "Jonathan Smith"
+				}]
+			})
+			.expectChange("name", ["Frederic Fall", "Jonathan Smith"])
+			.expectChange("category", ["J1", "J2", "J3"])
+			.expectChange("category", ["F1", "F2", "F3"]);
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
 	// Scenario: for a list binding, side effects are requested which should only affect structural
 	// properties of a related entity, but in fact that entity's identity changes unexpectedly.
 	// The requestSideEffects API detects this situation and throws an error.
