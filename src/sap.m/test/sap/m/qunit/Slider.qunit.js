@@ -1,6 +1,7 @@
 /*global QUnit */
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/App",
@@ -16,6 +17,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/InvisibleText"
 ], function(
+	Core,
 	qutils,
 	createAndAppendDiv,
 	App,
@@ -2292,21 +2294,29 @@ sap.ui.define([
 
 		QUnit.test("Tooltips: Setting the editable property should toggle a class", function (assert) {
 			// arrange
-			var oSliderTooltip = this.oSlider.getUsedTooltips()[0];
+			var oSliderTooltip = this.oSlider.getUsedTooltips()[0],
+				oRb = Core.getLibraryResourceBundle("sap.m"),
+				sAriaLabel;
 
 			// act
 			this.oSlider.getAggregation("_tooltipContainer").show(this.oSlider);
 			var oLeftTooltip = jQuery("#" + this.oSlider.getId() + "-" + "leftTooltip-input");
 			sap.ui.getCore().applyChanges();
 
+			sAriaLabel = oLeftTooltip.attr('aria-label');
+
 			// assert
+			assert.strictEqual(sAriaLabel, undefined, "'aria-label' attribute should not be presented");
 			assert.ok(oLeftTooltip.hasClass("sapMSliderTooltipNotEditable"), "'sapMSliderTooltipNotEditable' class should be applied");
 
 			//act
 			oSliderTooltip.setEditable(true);
 			sap.ui.getCore().applyChanges();
 
-			//assert
+			sAriaLabel = oLeftTooltip.attr('aria-label');
+
+			// assert
+			assert.strictEqual(sAriaLabel, oRb.getText("SLIDER_INPUT_LABEL"), "'aria-label' should be set to the native input element");
 			assert.notOk(oLeftTooltip.hasClass("sapMSliderTooltipNotEditable"), "'sapMSliderTooltipNotEditable' class should not be applied");
 		});
 	});
