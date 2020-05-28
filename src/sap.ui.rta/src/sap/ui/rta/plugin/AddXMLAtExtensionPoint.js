@@ -247,10 +247,9 @@ sap.ui.define([
 
 	/**
 	 * Retrieves the action data for addXMLAtExtensionPoint.
-	 * @param  {sap.ui.dt.ElementOverlay} oOverlay - Overlay containing the design time metadata
-	 * @returns {object} Object with the action data from the design time metadata
+	 * @returns {object} Object with the action data
 	 */
-	Plugin.prototype.getAction = function() {
+	AddXMLAtExtensionPoint.prototype.getAction = function() {
 		return { changeType: FLEX_CHANGE_TYPE };
 	};
 
