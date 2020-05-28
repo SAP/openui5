@@ -67,7 +67,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 	 */
 	PaneContainer.prototype.setOrientation = function(sOrientation) {
 		this._oSplitter.setOrientation(sOrientation);
-		return this.setProperty("orientation", sOrientation, true);
+		return this.setProperty("orientation", sOrientation);
 	};
 
 	PaneContainer.prototype._getPanesInInterval = function (iFrom) {
