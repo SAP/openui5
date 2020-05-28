@@ -1407,6 +1407,7 @@
 
 		var oMultiInputWithStickySuggestions = new sap.m.MultiInput("multiInputWithStickySuggestions", {
 			showSuggestion: true,
+			ariaLabelledBy: "stickySuggestionsLabel",
 			suggestionColumns: [
 				new sap.m.Column({
 					header: new sap.m.Label({text: "Name"})
@@ -1417,6 +1418,16 @@
 			],
 			showTableSuggestionValueHelp: false
 		});
+
+		var oModel = new sap.ui.model.json.JSONModel();
+
+		var aData = [];
+
+		for (var index = 1; index < 30; index++) {
+			aData.push({name: "Apple" + index, group: "Fruits"})
+		}
+
+		oModel.setData(aData);
 		oMultiInputWithStickySuggestions.setModel(oModel);
 		oMultiInputWithStickySuggestions.bindAggregation("suggestionRows", {
 			path: "/",
@@ -1493,6 +1504,7 @@
 					oCondensedTable,
 					new sap.m.Label("suggestionsLabel", {text: "MultiInput with suggestions", labelFor: "mIWithSuggestions"}),
 					oSuggestionsMultiInput,
+					new sap.m.Label("stickySuggestionsLabel", {text: "MultiInput with sticky suggestions header", labelFor: "multiInputWithStickySuggestions"}),
 					oMultiInputWithStickySuggestions
 			],
 			showNavButton: true,
