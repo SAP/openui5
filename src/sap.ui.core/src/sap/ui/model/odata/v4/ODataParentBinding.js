@@ -1241,8 +1241,8 @@ sap.ui.define([
 
 	/**
 	 * Updates the aggregated query options of this binding with the values from the given
-	 * query options except the values for "$select" and "$expand" as these are computed by
-	 * auto-$expand/$select and are only changed in {@link #fetchIfChildCanUseCache}.
+	 * query options. "$select" and "$expand" are only updated if the aggregated query options are
+	 * still initial because these have been computed in {@link #fetchIfChildCanUseCache} otherwise.
 	 * Note: If the aggregated query options contain a key which is not contained in the given
 	 * query options, it is deleted from the aggregated query options.
 	 *
@@ -1258,13 +1258,15 @@ sap.ui.define([
 		if (this.mAggregatedQueryOptions) {
 			aAllKeys = aAllKeys.concat(Object.keys(this.mAggregatedQueryOptions));
 			aAllKeys.forEach(function (sName) {
-				if (sName === "$select" || sName === "$expand") {
-					return;
-				}
-				if (mNewQueryOptions[sName] === undefined) {
-					delete that.mAggregatedQueryOptions[sName];
-				} else {
-					that.mAggregatedQueryOptions[sName] = mNewQueryOptions[sName];
+				// if the aggregated query options are not initial any more, $select and $expand
+				// have already been merged
+				if (that.bAggregatedQueryOptionsInitial
+						|| sName !== "$select" && sName !== "$expand") {
+					if (mNewQueryOptions[sName] === undefined) {
+						delete that.mAggregatedQueryOptions[sName];
+					} else {
+						that.mAggregatedQueryOptions[sName] = mNewQueryOptions[sName];
+					}
 				}
 			});
 		}
