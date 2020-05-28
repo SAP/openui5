@@ -149,21 +149,28 @@ function(
 			this.setScrollTop(oSourceDomNode.scrollTop);
 			this.setScrollLeft(oSourceDomNode.scrollLeft);
 
-			if (!this._bSyncing) {
-				this._bSyncing = true;
-				this.animationFrame = window.requestAnimationFrame(function () {
-					this.getTargets()
-						.filter(function (oDomNode) {
-							return oSourceDomNode !== oDomNode;
-						})
-						.forEach(function (oDomNode) {
-							DOMUtil.syncScroll(oSourceDomNode, oDomNode);
-						});
-					this.fireSynced();
-					this._bSyncing = false;
-				}.bind(this));
+			if (this._bSyncing) {
+				this._abortSync();
 			}
+
+			this._bSyncing = true;
+			this.animationFrame = window.requestAnimationFrame(function () {
+				this.getTargets()
+					.filter(function (oDomNode) {
+						return oSourceDomNode !== oDomNode;
+					})
+					.forEach(function (oDomNode) {
+						DOMUtil.syncScroll(oSourceDomNode, oDomNode);
+					});
+				this._bSyncing = false;
+				this.fireSynced();
+			}.bind(this));
 		}
+	};
+
+	ScrollbarSynchronizer.prototype._abortSync = function () {
+		window.cancelAnimationFrame(this.animationFrame);
+		this._bSyncing = false;
 	};
 
 	/**
@@ -173,8 +180,7 @@ function(
 		this.getTargets().forEach(function (oDomNode) {
 			this.removeTarget(oDomNode);
 		}, this);
-		window.cancelAnimationFrame(this.animationFrame);
-		this._bSyncing = false;
+		this._abortSync();
 		this.fireDestroyed();
 
 		ManagedObject.prototype.destroy.apply(this, arguments);
