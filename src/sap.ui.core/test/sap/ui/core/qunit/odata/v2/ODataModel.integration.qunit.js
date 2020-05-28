@@ -4586,4 +4586,75 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.deepEqual(oModel.getPendingChanges(), {});
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Child messages are cleared when an entity is removed.
+	// BCP: 2070222122
+	// JIRA: CPOUI5MODELS-79
+[MessageScope.BusinessObject, MessageScope.RequestedObjects].forEach(function (sMessageScope) {
+	var sTitle = "BCP 2070222122: cleanup child messages for #remove, scope: " + sMessageScope;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
+			oSalesOrderNoteError = this.createResponseMessage("Note"),
+			oSalesOrderToItem10ToProductPriceError = this.createResponseMessage(
+				"ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+			oSalesOrderItem10ToProductPriceError
+				= cloneODataMessage(oSalesOrderToItem10ToProductPriceError,
+					"(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+</FlexBox>',
+			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
+			that = this;
+
+		this.expectHeadRequest(bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {})
+			.expectRequest({
+				batchNo : 1,
+				deepPath : "/SalesOrderSet('1')",
+				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
+				method : "GET",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				__metadata : {uri : "SalesOrderSet('1')"},
+				SalesOrderID : "1"
+			}, {
+				"sap-message" : getMessageHeader([
+					oSalesOrderNoteError,
+					oSalesOrderToItem10ToProductPriceError
+				])
+			})
+			.expectChange("salesOrderID", null)
+			.expectChange("salesOrderID", "1")
+			.expectMessage(oSalesOrderNoteError, "/SalesOrderSet('1')/")
+			.expectMessage(oSalesOrderItem10ToProductPriceError, "/SalesOrderLineItemSet",
+				"/SalesOrderSet('1')/ToLineItems");
+
+		oModel.setMessageScope(sMessageScope);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					batchNo : 2,
+					deepPath : "/SalesOrderSet('1')",
+					headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
+					method : "DELETE",
+					requestUri : "SalesOrderSet('1')"
+				}, {})
+				.expectChange("salesOrderID", undefined)
+				.expectMessages([]);
+
+			if (!bWithMessageScope) {
+				that.expectMessage(oSalesOrderItem10ToProductPriceError, "/SalesOrderLineItemSet",
+					"/SalesOrderSet('1')/ToLineItems");
+			}
+
+			// code under test
+			oModel.remove("/SalesOrderSet('1')");
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
 });
