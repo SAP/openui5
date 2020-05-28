@@ -317,7 +317,7 @@ function(
 
 	MultiInput.prototype._handleInnerVisibility = function () {
 		var bHideInnerInput = this._tokenizer._hasMoreIndicator();
-		this[bHideInnerInput ? "_setValueInvisible" : "_setValueVisible"].call(this);
+		this._setValueVisible(!bHideInnerInput);
 	};
 
 	/**
@@ -334,7 +334,7 @@ function(
 			return;
 		}
 
-		this._setValueVisible();
+		this._setValueVisible(true);
 		this._manageListsVisibility(false);
 		this._getSelectedItemsPicker().close();
 	};
@@ -493,24 +493,17 @@ function(
 	MultiInput.prototype._onLiveChange = function (eventArgs) {
 		this._tokenizer._removeSelectedTokens();
 	};
-	/**
-	 * Set value in input field invisible.
-	 *
-	 * @since 1.38
-	 * @private
-	 */
-	MultiInput.prototype._setValueInvisible = function () {
-		this.$("inner").css("opacity", "0");
-	};
 
 	/**
 	 * Show value in input field
 	 *
 	 * @since 1.38
+	 * @param {boolean} bVisible Determines if the value should be visible or not
 	 * @private
 	 */
-	MultiInput.prototype._setValueVisible = function () {
-		this.$("inner").css("opacity", "1");
+	MultiInput.prototype._setValueVisible = function (bVisible) {
+		var sVisibility = bVisible ? "1" : "0";
+		this.$("inner").css("opacity", sVisibility);
 	};
 
 	MultiInput.prototype.onmousedown = function (e) {
@@ -825,7 +818,7 @@ function(
 		// the MultiInput itself, as otherwise the focus will be returned to the token.
 		this.focus();
 		if (oPicker.isOpen()) {
-			this._setValueVisible();
+			this._setValueVisible(true);
 			oPicker.close();
 		} else {
 			this._openSelectedItemsPicker();
@@ -1111,7 +1104,7 @@ function(
 			!(this._oSuggestionPopup && this._oSuggestionPopup.isOpen())
 		) {
 			this._tokenizer._useCollapsedMode(false);
-			this._setValueVisible();
+			this._setValueVisible(true);
 			this._tokenizer.scrollToEnd();
 		}
 
@@ -1522,7 +1515,7 @@ function(
 				}
 
 				that._validateCurrentText();
-				that._setValueInvisible();
+				that._setValueVisible(false);
 
 				// Fire through the MultiInput Popup's input value and save it
 				that.onChange(oEvent, null, oPopupInput.getValue());
@@ -1559,7 +1552,7 @@ function(
 			oDomRef = this.getDomRef(),
 			sWidth;
 
-		this._setValueInvisible();
+		this._setValueVisible(false);
 		this._fillList();
 
 		if (oDomRef && oPopover) {
@@ -1625,7 +1618,7 @@ function(
 		}
 
 		this._manageListsVisibility(true);
-		this._setValueVisible();
+		this._setValueVisible(true);
 
 		return this;
 	};
