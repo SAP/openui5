@@ -99,9 +99,6 @@ sap.ui.define([
 				oPopoverBar = new Bar({
 						contentLeft: [oBackButton],
 						contentMiddle: [
-							new Icon({
-								color: "#bb0000",
-								src: "sap-icon://message-error"}),
 							new Text({
 								text: "Messages"
 							})
