@@ -1673,7 +1673,10 @@ function(
 		}
 
 		if (!this._oSelectedItemsList) {
-			this._oSelectedItemsList = this._createTokensList();
+			this._oSelectedItemsList = new List({
+				width: "auto",
+				mode: ListMode.Delete
+			}).attachDelete(this._handleNMoreItemDelete, this);
 		}
 
 		return this._oSelectedItemsList;
@@ -1687,19 +1690,6 @@ function(
 	 */
 	MultiInput.prototype._getSuggestionsList = function() {
 		return this._oSuggPopover && this._oSuggPopover._oList;
-	};
-
-	/**
-	 * Creates a list for items generated from token
-	 *
-	 * @returns {sap.m.List} The list
-	 * @private
-	 */
-	MultiInput.prototype._createTokensList = function() {
-		return new List({
-			width: "auto",
-			mode: ListMode.Delete
-		}).attachDelete(this._handleNMoreItemDelete, this);
 	};
 
 	/**
