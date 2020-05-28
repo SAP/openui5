@@ -987,23 +987,20 @@ sap.ui.define([
 	 * @protected
 	 */
 	Model.prototype.getMessagesByPath = function (sPath, bPrefixMatch) {
-		var aMessages,
+		var oMessageSet = new Set(),
 			that = this;
 
 		if (!bPrefixMatch) {
 			return this.mMessages[sPath] || [];
 		}
 
-		aMessages = [];
 		Object.keys(this.mMessages).forEach(function (sMessagePath) {
-			var aMatchingMessages = that.filterMatchingMessages(sMessagePath, sPath);
-
-			if (aMatchingMessages.length) {
-				aMessages = aMessages.concat(aMatchingMessages);
-			}
+			that.filterMatchingMessages(sMessagePath, sPath).forEach(function (oMessage) {
+				oMessageSet.add(oMessage);
+			});
 		});
 
-		return aMessages;
+		return Array.from(oMessageSet);
 	};
 
 	/**
