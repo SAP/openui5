@@ -916,33 +916,34 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("isMessageMatching", function (assert) {
-		var oModel = {};
+[{
+	sFullTarget : "/foo", sPathPrefix : "", bResult : true
+}, {
+	sFullTarget : "/foo", sPathPrefix : "/", bResult : true
+}, {
+	sFullTarget : "/foo", sPathPrefix : "/f", bResult : false
+}, {
+	sFullTarget : "/foo", sPathPrefix : "/foo", bResult : true
+}, {
+	sFullTarget : "/foo(42)", sPathPrefix : "/foo", bResult : true
+}, {
+	sFullTarget : "/foo/bar", sPathPrefix : "/foo", bResult : true
+}, {
+	sFullTarget : "/foo", sPathPrefix : "/foo/bar", bResult : false
+}, {
+	sFullTarget : "/foo", sPathPrefix : "/baz", bResult : false
+}].forEach(function (oFixture, i) {
+	[false, true].forEach(function (bMulti) {
+	QUnit.test("isMessageMatching, " + i + ", multi-target=" + bMulti, function (assert) {
+		var vFullTarget = bMulti ? ["/xyz"].concat([oFixture.sFullTarget]) : oFixture.sFullTarget;
 
 		// code under test
-		assert.strictEqual(
-			ODataModel.prototype.isMessageMatching.call(oModel, {fullTarget : "/foo"}, ""), true);
-		assert.strictEqual(
-			ODataModel.prototype.isMessageMatching.call(oModel, {fullTarget : "/foo"}, "/"), true);
-		assert.strictEqual(
-			ODataModel.prototype.isMessageMatching.call(oModel, {fullTarget : "/foo"}, "/f"),
-			false);
-		assert.strictEqual(
-			ODataModel.prototype.isMessageMatching.call(oModel, {fullTarget : "/foo"}, "/foo"),
-			true);
-		assert.strictEqual(
-			ODataModel.prototype.isMessageMatching.call(oModel, {fullTarget : "/foo(42)"}, "/foo"),
-			true);
-		assert.strictEqual(
-			ODataModel.prototype.isMessageMatching.call(oModel, {fullTarget : "/foo/bar"}, "/foo"),
-			true);
-		assert.strictEqual(
-			ODataModel.prototype.isMessageMatching.call(oModel, {fullTarget : "/foo"}, "/foo/bar"),
-			false);
-		assert.strictEqual(
-			ODataModel.prototype.isMessageMatching.call(oModel, {fullTarget : "/foo"}, "/baz"),
-			false);
+		assert.strictEqual(ODataModel.prototype.isMessageMatching
+				.call({}, new Message({fullTarget : vFullTarget}), oFixture.sPathPrefix),
+			 oFixture.bResult);
 	});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("filterMatchingMessages", function (assert) {
