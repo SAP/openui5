@@ -538,22 +538,11 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype.onAfterRendering = function() {
-		var aTokens = this.getTokens(),
-			iTokensSize = aTokens.length;
-
 		this.scrollToEnd();
 
 		this._oIndicator = this.$().find(".sapMTokenizerIndicator");
 
-		// update ARIA information of Tokens depending on size and position in Tokenizer
-		for (var i = 0; i < iTokensSize; i++) {
-			var oTokenDomRef = aTokens[i].getDomRef();
-
-			if (oTokenDomRef) {
-				oTokenDomRef.setAttribute("aria-posinset", i + 1);
-				oTokenDomRef.setAttribute("aria-setsize", iTokensSize);
-			}
-		}
+		this._updateTokensAriaSetAttributes();
 
 		if (this._getAdjustable()) {
 			// refresh the expanded/collapsed mode based on whether a indicator should be shown
@@ -1410,6 +1399,8 @@ sap.ui.define([
 	Tokenizer.prototype.removeToken = function(oToken) {
 		oToken = this.removeAggregation("tokens", oToken);
 
+		this._updateTokensAriaSetAttributes();
+
 		!this.getTokens().length && this.setFirstTokenTruncated(false);
 
 		this.fireTokenChange({
@@ -1736,6 +1727,26 @@ sap.ui.define([
 			}
 
 			oInvisibleText.setText(sTokenizerAria);
+		}
+	};
+
+	/**
+	 * Sets accessibility attributes aria-setsize and aria-posinset to the tokens.
+	 *
+	 * @private
+	 */
+	Tokenizer.prototype._updateTokensAriaSetAttributes = function () {
+		var aTokens = this.getTokens(),
+			iTokensSize = aTokens.length;
+
+		// update ARIA information of Tokens depending on size and position in Tokenizer
+		for (var i = 0; i < iTokensSize; i++) {
+			var oTokenDomRef = aTokens[i].getDomRef();
+
+			if (oTokenDomRef) {
+				oTokenDomRef.setAttribute("aria-posinset", i + 1);
+				oTokenDomRef.setAttribute("aria-setsize", iTokensSize);
+			}
 		}
 	};
 

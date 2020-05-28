@@ -1434,6 +1434,20 @@ sap.ui.define([
 		assert.strictEqual(token2.$().attr("aria-setsize"), "2", "Token has correct aria-setsize attribute");
 	});
 
+	QUnit.test("posinset and setsize ARIA attributes are correct after removing token", function(assert) {
+		var token1, token2;
+
+		this.tokenizer.addToken(token1 = new Token());
+		this.tokenizer.addToken(token2 = new Token());
+		sap.ui.getCore().applyChanges();
+
+		this.tokenizer.removeToken(token1);
+
+		assert.strictEqual(token2.$().attr("aria-setsize"), "1", "Token 2 has correct aria-setsize attribute");
+		assert.strictEqual(token2.$().attr("aria-posinset"), "1", "Token 2 has correct aria-posinset attribute");
+
+	});
+
 	QUnit.test("Adjust Tokens' title on editable property", function(assert) {
 		var token1, token2;
 		// Setup
