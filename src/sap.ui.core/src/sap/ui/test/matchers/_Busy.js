@@ -6,7 +6,7 @@
 sap.ui.define([
 	'sap/ui/test/matchers/Matcher',
 	'sap/ui/test/matchers/_Visitor'
-], function(Matcher, _Visitor) {
+], function (Matcher, _Visitor) {
 	"use strict";
 
 	var oVisitor = new _Visitor();
