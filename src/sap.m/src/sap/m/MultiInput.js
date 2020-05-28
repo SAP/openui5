@@ -1009,16 +1009,6 @@ function(
 		this.focus();
 	};
 
-
-	/**
-	 * Checks whether the MultiInput or one of its internal DOM elements has the focus.
-	 * @returns {boolean} True if the input or its children elements have focus
-	 * @private
-	 */
-	MultiInput.prototype._checkFocus = function () {
-		return this.getDomRef() && containsOrEquals(this.getDomRef(), document.activeElement);
-	};
-
 	/**
 	 * Event handler called when control is losing the focus, checks if token validation is necessary
 	 *
@@ -1030,7 +1020,7 @@ function(
 			oSelectedItemsPopup = this._oSelectedItemPicker,
 			bNewFocusIsInSuggestionPopup = false,
 			bNewFocusIsInTokenizer = false,
-			bNewFocusIsInMultiInput = this._checkFocus(),
+			bNewFocusIsInMultiInput = this.getDomRef() && containsOrEquals(this.getDomRef(), document.activeElement),
 			oRelatedControlDomRef,
 			bFocusIsInSelectedItemPopup;
 
