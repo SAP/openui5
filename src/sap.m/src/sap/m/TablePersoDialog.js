@@ -207,6 +207,9 @@ sap.ui.define([
 		});
 
 		this._fnUpdateArrowButtons = function() {
+			if (this.getHasGrouping()) {
+				return;
+			}
 			// Initialisation of the enabled property
 			var aFields = this._oInnerTable.getModel("Personalization").getProperty("/aColumns");
 			var bButtonUpEnabled,bButtonDownEnabled;
