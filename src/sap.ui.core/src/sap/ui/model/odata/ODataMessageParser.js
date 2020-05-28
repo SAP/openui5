@@ -188,7 +188,7 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
  */
 ODataMessageParser.prototype._getAffectedTargets = function (aMessages, mRequestInfo, mGetEntities,
 		mChangeEntities) {
-	// root entity is always affected => add target ""
+	// unbound messages are always affected => add target ""
 	var mAffectedTargets = Object.assign({"" : true}, mGetEntities, mChangeEntities),
 		oEntitySet,
 		sRequestTarget = this._parseUrl(mRequestInfo.url).url;
@@ -206,23 +206,24 @@ ODataMessageParser.prototype._getAffectedTargets = function (aMessages, mRequest
 	}
 
 	aMessages.forEach(function (oMessage) {
-		var sParentEntity,
-			iSlashPos,
-			sTarget = oMessage.getTarget(),
-			sTrimmedTarget;
+		oMessage.getTargets().forEach(function (sTarget) {
+			var sParentEntity,
+				iSlashPos,
+				sTrimmedTarget;
 
-		if (!sTarget) {
-			return;
-		}
+			if (!sTarget) {
+				return;
+			}
 
-		sTrimmedTarget = sTarget.replace(rEnclosingSlashes, "");
-		mAffectedTargets[sTrimmedTarget] = true;
-		iSlashPos = sTrimmedTarget.lastIndexOf("/");
-		if (iSlashPos > 0) {
-			// this may be no entity, but we keep the existing logic to avoid regressions
-			sParentEntity = sTrimmedTarget.slice(0, iSlashPos);
-			mAffectedTargets[sParentEntity] = true;
-		}
+			sTrimmedTarget = sTarget.replace(rEnclosingSlashes, "");
+			mAffectedTargets[sTrimmedTarget] = true;
+			iSlashPos = sTrimmedTarget.lastIndexOf("/");
+			if (iSlashPos > 0) {
+				// this may be no entity, but we keep the existing logic to avoid regressions
+				sParentEntity = sTrimmedTarget.slice(0, iSlashPos);
+				mAffectedTargets[sParentEntity] = true;
+			}
+		});
 	});
 
 	return mAffectedTargets;
