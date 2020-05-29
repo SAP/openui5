@@ -1569,7 +1569,7 @@ sap.ui.define([
 		prebuildTree(function() {
 			var fnSelectionChangeHandler1 = function(oEvent) {
 				oBinding.detachChange(fnSelectionChangeHandler1);
-				assert.equal(oEvent.mParameters.leadIndex, 55, "Event: leadIndex should be515");
+				assert.equal(oEvent.mParameters.leadIndex, 55, "Event: leadIndex should be 55");
 				assert.equal(oEvent.mParameters.oldIndex, -1, "Event: oldIndex should be -1");
 				assert.equal(oEvent.mParameters.rowIndices.length, 56, "Event: length of changedIndices should be 56");
 				done();
@@ -1618,7 +1618,7 @@ sap.ui.define([
 			var fnSelectionChangeHandler1 = function(oEvent) {
 				oBinding.detachChange(fnSelectionChangeHandler1);
 				assert.equal(oEvent.mParameters.leadIndex, -1, "Event: leadIndex should be -1 (no lead selection)");
-				assert.equal(oEvent.mParameters.oldIndex, 2, "Event: oldIndex should be 3");
+				assert.equal(oEvent.mParameters.oldIndex, 2, "Event: oldIndex should be 2");
 				assert.equal(oEvent.mParameters.rowIndices.length, 1, "Event: length of changedIndices should be 1");
 
 				assert.deepEqual(oEvent.mParameters.rowIndices, [2], "Changed indices after collapse is correct");
