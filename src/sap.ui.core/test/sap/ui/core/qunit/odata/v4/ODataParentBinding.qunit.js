@@ -2416,11 +2416,12 @@ sap.ui.define([
 		var oBinding = new ODataParentBinding({
 				toString : function () { return "~"; }
 			}),
+			oBindingMock = this.mock(oBinding),
 			oResult = {};
 
-		this.mock(oBinding).expects("isRoot").twice().withExactArgs().returns(true);
-		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(false);
-		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
+		oBindingMock.expects("isRoot").withExactArgs().returns(true);
+		oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
+		oBindingMock.expects("removeReadGroupLock").withExactArgs();
 
 		// code under test
 		oBinding.suspend();
@@ -2432,6 +2433,8 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oResumePromise.getResult(), oResult);
 
 		assert.throws(function () {
+			oBindingMock.expects("isRoot").withExactArgs().returns(true);
+
 			// code under test
 			oBinding.suspend();
 		}, new Error("Cannot suspend a suspended binding: ~"));
@@ -2489,14 +2492,15 @@ sap.ui.define([
 			}),
 			oBindingMock = this.mock(oBinding),
 			oPromise,
-			oResumePromise;
+			fnResolve,
+			oResumePromise = new SyncPromise(function (resolve, reject) {
+				fnResolve = resolve;
+			});
 
-		assert.strictEqual(oBinding.getResumePromise(), undefined, "initially");
-		oBindingMock.expects("isRoot").thrice().withExactArgs().returns(true);
-		oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
-		oBinding.suspend();
-		oResumePromise = oBinding.getResumePromise();
-		oBindingMock.expects("_fireChange").never();
+		oBinding.bSuspended = true;
+		oBinding.oResumePromise = oResumePromise;
+		oBinding.oResumePromise.$resolve = fnResolve;
+		oBindingMock.expects("isRoot").withExactArgs().returns(true);
 		oBindingMock.expects("resumeInternal").never();
 		oBindingMock.expects("getGroupId").withExactArgs().returns("groupId");
 		oBindingMock.expects("createReadGroupLock").withExactArgs("groupId", true, 1);
@@ -2521,7 +2525,7 @@ sap.ui.define([
 
 					assert.strictEqual(oResumePromise.isPending(), false);
 					assert.strictEqual(oResumePromise.getResult(), undefined);
-					assert.strictEqual(oBinding.getResumePromise(), undefined, "cleaned up");
+					assert.strictEqual(oBinding.oResumePromise, undefined, "cleaned up");
 				});
 			});
 
@@ -2529,6 +2533,8 @@ sap.ui.define([
 		oBinding._resume(true);
 
 		return oPromise.then(function () {
+			oBindingMock.expects("isRoot").withExactArgs().returns(true);
+
 			assert.throws(function () {
 				// code under test
 				oBinding._resume(true);
@@ -2545,14 +2551,15 @@ sap.ui.define([
 				toString : function () { return "~"; }
 			}),
 			oBindingMock = this.mock(oBinding),
-			oResumePromise;
+			fnResolve,
+			oResumePromise = new SyncPromise(function (resolve, reject) {
+				fnResolve = resolve;
+			});
 
-		assert.strictEqual(oBinding.getResumePromise(), undefined, "initially");
-		oBindingMock.expects("isRoot").thrice().withExactArgs().returns(true);
-		oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
-		oBinding.suspend();
-		oResumePromise = oBinding.getResumePromise();
-		oBindingMock.expects("_fireChange").never();
+		oBinding.bSuspended = true;
+		oBinding.oResumePromise = oResumePromise;
+		oBinding.oResumePromise.$resolve = fnResolve;
+		oBindingMock.expects("isRoot").withExactArgs().returns(true);
 		oBindingMock.expects("resumeInternal").never();
 		oBindingMock.expects("getGroupId").withExactArgs().returns("groupId");
 		oBindingMock.expects("createReadGroupLock").withExactArgs("groupId", true);
@@ -2569,9 +2576,11 @@ sap.ui.define([
 
 		assert.strictEqual(oResumePromise.isPending(), false);
 		assert.strictEqual(oResumePromise.getResult(), undefined);
-		assert.strictEqual(oBinding.getResumePromise(), undefined, "cleaned up");
+		assert.strictEqual(oBinding.oResumePromise, undefined, "cleaned up");
 
 		assert.throws(function () {
+			oBindingMock.expects("isRoot").withExactArgs().returns(true);
+
 			// code under test
 			oBinding._resume(false);
 		}, new Error("Cannot resume a not suspended binding: ~"));
@@ -2625,7 +2634,7 @@ sap.ui.define([
 					fnCallback();
 
 					assert.strictEqual(oBinding.bSuspended, false);
-					assert.strictEqual(oBinding.getResumePromise(), undefined, "cleaned up");
+					assert.strictEqual(oBinding.oResumePromise, undefined, "cleaned up");
 				});
 			});
 
