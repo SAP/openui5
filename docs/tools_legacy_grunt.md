@@ -78,9 +78,9 @@ grunt build [--libs=<library-1>,<library-n>] [--production] [--minify-css] [--in
 
 ## test
 
-Argument   | Description                                                                                   | Default
----------- | --------------------------------------------------------------------------------------------- | -------------
-browsers   | Browser name(s) to test on (comma-separated) `chrome`, `firefox`, `ie`, `safari`, `phantomjs` | `chrome`
+Argument   | Description                                                                      | Default
+---------- | -------------------------------------------------------------------------------- | -------------
+browsers   | Browser name(s) to test on (comma-separated) `chrome`, `firefox`, `ie`, `safari` | `chrome`
 
 Runs QUnit tests with Selenium WebDriver on a local server.
 
@@ -141,17 +141,17 @@ grunt cldr-generate [--output=<output-folder-path>] [--no-prettyPrint]
 
 ## visualtest
 
-Argument         | Description                                                                                   | Default
------------------| --------------------------------------------------------------------------------------------- | -------------
-browsers         | Browser name(s) to test on (comma-separated) `chrome`, `firefox`, `ie`, `safari`, `phantomjs` | `chrome`
-libs             | Library name(s) suites to execute (comma-separated), supports partial match                   | all suites
-specs            | Spec names(s) to execute (comma-separated), supports partial match                            | all specs
-seleniumAddress  | Address (host:port/wd/hub) of remote Selenium server to use                                   | auto start locally
-seleniumHost     | Starts selenium server on this local host or IP                                               | primary non-loopback ip
-seleniumPort     | Starts selenium server on this local port                                                     | 4444
-take             | Take actual screenshots                                                                       | true
-compare          | Compare actual to reference screenshots, raquires taking screenshots                          | true
-update           | Update different reference screenshots, requires comparing                                    | false
+Argument         | Description                                                                      | Default
+-----------------| -------------------------------------------------------------------------------- | -------------
+browsers         | Browser name(s) to test on (comma-separated) `chrome`, `firefox`, `ie`, `safari` | `chrome`
+libs             | Library name(s) suites to execute (comma-separated), supports partial match      | all suites
+specs            | Spec names(s) to execute (comma-separated), supports partial match               | all specs
+seleniumAddress  | Address (host:port/wd/hub) of remote Selenium server to use                      | auto start locally
+seleniumHost     | Starts selenium server on this local host or IP                                  | primary non-loopback ip
+seleniumPort     | Starts selenium server on this local port                                        | 4444
+take             | Take actual screenshots                                                          | true
+compare          | Compare actual to reference screenshots, raquires taking screenshots             | true
+update           | Update different reference screenshots, requires comparing                       | false
 
 Runs visual tests with Selenium WebDriver on a local server.
 
