@@ -1438,9 +1438,16 @@ sap.ui.define([
 		assert.strictEqual(this.tokenizer.$().attr("role"), "listbox", "Tokenizer has role listbox");
 	});
 
-	QUnit.test("ARIA Read only attribute is not present", function(assert) {
-		// aria-readonly is not valid for the current role of the tokenizer.
+	QUnit.test("aria-readonly attribute", function(assert) {
+		// Assert
 		assert.ok(!this.tokenizer.$().attr("aria-readonly"), "Tokenizer has no aria-readonly attribute");
+
+		// Act
+		this.tokenizer.setEditable(false);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.tokenizer.$().attr("aria-readonly"), "true", "Tokenizer has aria-readonly attribute set.");
 	});
 
 	QUnit.test("posinset and setsize ARIA attributes are set on the Tokens", function(assert) {
