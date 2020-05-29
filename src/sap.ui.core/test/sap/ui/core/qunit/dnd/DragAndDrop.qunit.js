@@ -19,14 +19,29 @@ sap.ui.define([
 				elementTag: {type: "string", defaultValue: "div"}
 			}
 		},
-		renderer: function(rm, oControl) {
-			rm.write("<div><" + oControl.getElementTag());
-			rm.writeControlData(oControl);
-			rm.writeAttribute("tabindex", 0);
-			rm.addStyle("width", "100px");
-			rm.addStyle("height", "50px");
-			rm.writeStyles();
-			rm.write("></" + oControl.getElementTag() + "></div>");
+		renderer: {
+			apiVersion: 2,
+			render: function(rm, oControl) {
+				var sElementTag = oControl.getElementTag(),
+					bIsVoid = /^(?:area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr)$/i.test(sElementTag);
+
+				rm.openStart("div").openEnd();
+					if ( bIsVoid ) {
+						rm.voidStart(sElementTag, oControl);
+					} else {
+						rm.openStart(sElementTag, oControl);
+					}
+					rm.attr("tabindex", 0);
+					rm.style("width", "100px");
+					rm.style("height", "50px");
+					if ( bIsVoid ) {
+						rm.voidEnd();
+					} else {
+						rm.openEnd();
+						rm.close(sElementTag);
+					}
+				rm.close("div");
+			}
 		},
 		getDragGhost: function() {
 			return this.getDomRef().cloneNode(true);
@@ -58,42 +73,43 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: function(rm, oControl) {
-			var aTopItems = oControl.getTopItems();
-			var aBottomItems = oControl.getBottomItems();
-			var i;
+		renderer: {
+			apiVersion: 2,
+			render: function(rm, oControl) {
 
-			rm.write("<div");
-			rm.writeControlData(oControl);
-			rm.writeAttribute("tabindex", 0);
-			rm.write(">");
+				var aTopItems = oControl.getTopItems();
+				var aBottomItems = oControl.getBottomItems();
+				var i;
 
-			rm.write("<div");
-			rm.writeAttribute("id", oControl.getId() + "-topItems");
-			rm.write(">");
+				rm.openStart("div", oControl).attr("tabindex", 0).openEnd();
+					rm.openStart("div", oControl.getId() + "-topItems").openEnd();
+					if (!aTopItems.length) {
+						rm.openStart("div", oControl.getId() + "-topNoData")
+							.openEnd()
+							.text("No top items")
+							.close("div");
+					} else {
+						for (i = 0; i < aTopItems.length; i++) {
+							rm.renderControl(aTopItems[i]);
+						}
+					}
+					rm.close("div");
 
-			if (!aTopItems.length) {
-				rm.write('<div id="' + oControl.getId() + '-topNoData">No top items</div>"');
-			} else {
-				for (i = 0; i < aTopItems.length; i++) {
-					rm.renderControl(aTopItems[i]);
-				}
+					rm.openStart("div", oControl.getId() + "-bottomItems").openEnd();
+					if (!aBottomItems.length) {
+						rm.openStart("div", oControl.getId() + "-bottomNoData")
+							.openEnd()
+							.text("No bottom items")
+							.close("div");
+					} else {
+						for (i = 0; i < aBottomItems.length; i++) {
+							rm.renderControl(aBottomItems[i]);
+						}
+					}
+					rm.close("div");
+
+				rm.close("div");
 			}
-			rm.write("</div>");
-
-			rm.write("<div");
-			rm.writeAttribute("id", oControl.getId() + "-bottomItems");
-			rm.write(">");
-			if (!aBottomItems.length) {
-				rm.write('<div id="' + oControl.getId() + '-bottomNoData">No bottom items</div>"');
-			} else {
-				for (i = 0; i < aBottomItems.length; i++) {
-					rm.renderControl(aBottomItems[i]);
-				}
-			}
-			rm.write("</div>");
-
-			rm.write("</div>");
 		}
 	});
 

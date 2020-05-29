@@ -177,14 +177,14 @@ sap.ui.define([
 				}
 			},
 
-			renderer: function(oRm, oControl) {
-				oRm.write("<div");
-				oRm.addStyle("height", "100px");
-				oRm.writeControlData(oControl);
-				oRm.writeStyles();
-				oRm.write(">");
-
-				oRm.write("</div>");
+			renderer: {
+				apiVersion: 2,
+				render: function(oRm, oControl) {
+					oRm.openStart("div", oControl)
+						.style("height", "100px")
+						.openEnd()
+						.close("div");
+				}
 			}
 		});
 
@@ -2158,12 +2158,13 @@ sap.ui.define([
 						}
 					}
 				},
-				renderer: function (oRm, oControl) {
-					oRm.write("<div");
-					oRm.writeControlData(oControl);
-					oRm.write(">");
-					oRm.write("<input id='" + oControl.getId() + "-input' />");
-					oRm.write("</div>");
+				renderer: {
+					apiVersion: 2,
+					render: function (oRm, oControl) {
+						oRm.openStart("div", oControl).openEnd();
+							oRm.voidStart("input", oControl.getId() + "-input").voidEnd();
+						oRm.close("div");
+					}
 				},
 				getFocusDomRef: function() {
 					return this.getDomRef("input");

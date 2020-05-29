@@ -12,12 +12,13 @@ sap.ui.define([
 			aggregations: { content: {type: "sap.ui.core.Control", multiple: false} }
 		},
 
-		renderer : function(oRenderManager, oControl) {
-			oRenderManager.write("<span");
-			oRenderManager.writeControlData(oControl);
-			oRenderManager.write(">");
-			oRenderManager.renderControl(oControl.getContent());
-			oRenderManager.write("</span>");
+		renderer : {
+			apiVersion: 2,
+			render: function(oRenderManager, oControl) {
+				oRenderManager.openStart("span", oControl).openEnd();
+				oRenderManager.renderControl(oControl.getContent());
+				oRenderManager.close("span");
+			}
 		}
 	});
 
@@ -29,8 +30,11 @@ sap.ui.define([
 			aggregations: { content: {type: "sap.ui.core.Control", multiple: false} }
 		},
 
-		renderer : function(oRenderManager, oControl) {
-			oRenderManager.write("<span></span>");
+		renderer : {
+			apiVersion: 2,
+			render: function(oRenderManager, oControl) {
+				oRenderManager.openStart("span").openEnd().close("span");
+			}
 		}
 	});
 	MyMenuControl.prototype.openAsContextMenu = function(){};

@@ -12,16 +12,21 @@ sap.ui.define([
 			library: "test",
 			aggregations: {"child" : {name : "child", type : "sap.ui.core.Control", multiple : false}}
 		},
-		renderer: function(rm, ctrl){
-			rm.write("<div");
-			rm.writeControlData(ctrl);
-			rm.addClass("testCtrl");
-			rm.writeClasses();
-			rm.write("><div class=\"testCtrlInner\" id=\"" + ctrl.getId() + "-Inner\">");
-			if (ctrl.getChild()){
-				rm.renderControl(ctrl.getChild());
+		renderer: {
+			apiVersion: 2,
+			render: function(rm, ctrl){
+				rm.openStart("div", ctrl);
+				rm.class("testCtrl");
+				rm.openEnd();
+					rm.openStart("div", ctrl.getId() + "-Inner")
+						.class("testCtrlInner")
+						.openEnd();
+					if (ctrl.getChild()) {
+						rm.renderControl(ctrl.getChild());
+					}
+					rm.close("div");
+				rm.close("div");
 			}
-			rm.write("</div></div>");
 		}
 	});
 

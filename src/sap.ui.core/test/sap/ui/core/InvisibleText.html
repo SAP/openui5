@@ -34,21 +34,21 @@
 			},
 
 			renderer: {
-				render: function(rm, ctrl){
-					rm.write("<div");
-					rm.writeControlData(ctrl);
-					rm.write(">");
-					var sLabelled = sap.ui.core.TestControl._STATIC_LABEL_TEXT.getId();
-					var aTexts = ctrl.getAggregation("_texts");
-					for(var i=0; i<aTexts.length; i++){
-						sLabelled += " " + aTexts[i].getId();
-						rm.renderControl(aTexts[i]);
-					}
-					rm.write("<input");
-					rm.writeAccessibilityState(ctrl, {
-						labelledby : {value: sLabelled, append: true}
-					})
-					rm.write("></div>");
+				apiVersion: 2,
+				render: function(rm, ctrl) {
+					rm.openStart("div", ctrl).openEnd();
+						var sLabelled = sap.ui.core.TestControl._STATIC_LABEL_TEXT.getId();
+						var aTexts = ctrl.getAggregation("_texts");
+						for(var i = 0; i < aTexts.length; i++){
+							sLabelled += " " + aTexts[i].getId();
+							rm.renderControl(aTexts[i]);
+						}
+						rm.voidStart("input");
+						rm.accessibilityState(ctrl, {
+							labelledby : {value: sLabelled, append: true}
+						})
+						rm.voidEnd();
+					rm.close("div");
 				}
 			}
 		});

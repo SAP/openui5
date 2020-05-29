@@ -17,18 +17,19 @@ sap.ui.define([
 				children: { type: "test.TestControl", multiple: true }
 			}
 		},
-		renderer: function(rm, oControl) {
-			rm.write("<div");
-			rm.writeControlData(oControl);
-			rm.write("><span ");
-			rm.writeAttribute("id", oControl.getId() + "-text");
-			rm.write(">");
-			rm.writeEscaped(oControl.getText());
-			rm.write("</span>");
-			oControl.getChildren().forEach(function(oChild) {
-				rm.renderControl(oChild);
-			});
-			rm.write("</div>");
+		renderer: {
+			apiVersion: 2,
+
+			render: function(rm, oControl) {
+				rm.openStart("div", oControl).openEnd();
+					rm.openStart("span", oControl.getId() + "-text").openEnd();
+					rm.text(oControl.getText());
+					rm.close("span");
+					oControl.getChildren().forEach(function(oChild) {
+						rm.renderControl(oChild);
+					});
+				rm.close("div");
+			}
 		}
 	});
 
