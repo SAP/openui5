@@ -193,38 +193,35 @@ sap.ui.define([
 				Control.apply(this, arguments);
 				delete this._bIsCreating;
 			},
-			renderer: function (oRm, oControl) {
-				Log.debug("Start rendering '" + oControl.sId, sXMLComposite);
-				Measurement.start(oControl.getId() + "---renderControl","Rendering of " + oControl.getMetadata().getName(), ["rendering","control"]);
-				oRm.write("<div");
-				oRm.writeControlData(oControl);
-				oRm.writeAccessibilityState(oControl);
+			renderer: {
+				apiVersion: 2,
 
-				// compare ViewRenderer.js - we negate since opposite default
-				if (!oControl.getDisplayBlock() && (oControl.getWidth() !== "100%" || oControl.getHeight() !== "100%")) {
-					oRm.addStyle("display", "inline-block");
-				}
-				oRm.writeClasses(); // to make class="..." in XMLViews and addStyleClass() work
+				render: function (oRm, oControl) {
+					Log.debug("Start rendering '" + oControl.sId, sXMLComposite);
+					Measurement.start(oControl.getId() + "---renderControl","Rendering of " + oControl.getMetadata().getName(), ["rendering","control"]);
+					oRm.openStart("div", oControl);
+					oRm.accessibilityState(oControl);
 
-				// add inline styles
-				if (oControl.getHeight()) {
-					oRm.addStyle("height", oControl.getHeight());
-				}
-				if (oControl.getWidth()) {
-					oRm.addStyle("width", oControl.getWidth());
-				}
-				oRm.writeStyles();
+					// compare ViewRenderer.js - we negate since opposite default
+					if (!oControl.getDisplayBlock() && (oControl.getWidth() !== "100%" || oControl.getHeight() !== "100%")) {
+						oRm.style("display", "inline-block");
+					}
 
-				oRm.write(">");
+					// add inline styles
+					oRm.style("height", oControl.getHeight());
+					oRm.style("width", oControl.getWidth());
 
-				// render the content
-				var oContent = oControl._renderingContent ? oControl._renderingContent() : oControl._getCompositeAggregation();
-				if (oContent) {
-					oRm.renderControl(oContent);
+					oRm.openEnd();
+
+					// render the content
+					var oContent = oControl._renderingContent ? oControl._renderingContent() : oControl._getCompositeAggregation();
+					if (oContent) {
+						oRm.renderControl(oContent);
+					}
+					oRm.close("div");
+					Measurement.end(oControl.getId() + "---renderControl");
+					Log.debug("Stop rendering '" + oControl.sId, sXMLComposite);
 				}
-				oRm.write("</div>");
-				Measurement.end(oControl.getId() + "---renderControl");
-				Log.debug("Stop rendering '" + oControl.sId, sXMLComposite);
 			}
 		}, XMLCompositeMetadata);
 

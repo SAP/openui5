@@ -136,11 +136,20 @@ sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
 	var LabelEnablement = {};
 
 	/**
-	 * Helper function for the <code>Label</code> control to render the HTML 'for' attribute. This function should be called
-	 * at the desired location in the renderer code of the <code>Label</code> control.
+	 * Helper function for the <code>Label</code> control to render the HTML 'for' attribute.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the render-output-buffer.
-	 * @param {sap.ui.core.Label} oLabel The <code>Label</code> for which the 'for' HTML attribute should be written to the render-output-buffer.
+	 * This function should be called at the desired location in the renderer code of the <code>Label</code> control.
+	 * It can be used with both rendering APIs, with the new semantic rendering API (<code>apiVersion 2</code>)
+	 * as well as with the old, string-based API.
+	 *
+	 * As this method renders an attribute, it can only be called while a start tag is open. For the new semantic
+	 * rendering API, this means it can only be called between an <code>openStart/voidStart</code> call and the
+	 * corresponding <code>openEnd/voidEnd</code> call. In the context of the old rendering API, it can be called
+	 * only after the prefix of a start tag has been written (e.g. after <code>rm.write("&lt;span id=\"foo\"");</code>),
+	 * but before the start tag ended, e.g before the right-angle ">" of the start tag has been written.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for rendering.
+	 * @param {sap.ui.core.Label} oLabel The <code>Label</code> for which the 'for' HTML attribute should be rendered.
 	 * @protected
 	 */
 	LabelEnablement.writeLabelForAttribute = function(oRenderManager, oLabel) {
