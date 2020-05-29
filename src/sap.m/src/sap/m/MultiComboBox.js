@@ -1189,7 +1189,9 @@ function(
 		ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
 		this._bInitialSelectedKeysSettersCompleted = true;
 		this._oTokenizer.setEnabled(this.getEnabled());
-		this.setEditable(this.getEditable());
+		if (this._getList()) {
+			this.syncPickerContent(true);
+		}
 		this._deregisterResizeHandler();
 		this._synchronizeSelectedItemAndKey();
 
@@ -1220,8 +1222,9 @@ function(
 		}
 
 		if (bForceListSync) {
-			aItems = this.getItems();
 			oList = this._getList();
+			aItems = this.getEditable() ?
+				this.getItems() : this.getSelectedItems();
 
 			this._synchronizeSelectedItemAndKey();
 
@@ -2136,7 +2139,6 @@ function(
 			oPicker = this.getPicker();
 			oPicker.open();
 		} else {
-			this._updatePopoverBasedOnEditMode(false);
 			this._toggleReadonlyPopover(this._oTokenizer);
 		}
 
