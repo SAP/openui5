@@ -1763,7 +1763,8 @@ function(
 		})[0];
 
 		if (oTokenToDelete && oTokenToDelete.getEditable()) {
-			this._tokenizer._onTokenDelete(oTokenToDelete);
+			oTokenToDelete = this.removeToken(oTokenToDelete);
+			oTokenToDelete.destroy();
 			this._getTokensList().removeItem(oListItem);
 		}
 

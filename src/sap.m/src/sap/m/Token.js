@@ -156,7 +156,7 @@ sap.ui.define([
 				id : this.getId() + "-icon",
 				src : sSrcIcon,
 				noTabStop: true,
-				press : this._tokenIconPress.bind(this)
+				press : this._fireDeleteToken.bind(this)
 			});
 
 		oDeleteIcon.addStyleClass("sapMTokenIcon");
@@ -229,31 +229,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function is called when token's icon is pressed to delete token.
-	 * @private
-	 * @param {jQuery.Event} oEvent The event object
-	 */
-	Token.prototype._tokenIconPress = function(oEvent) {
-		var oParent = this.getParent();
-
-		if (!oParent.getEnabled()) {
-			return;
-		}
-
-		// fire "delete" event before Tokenizer's _onTokenDelete because the Tokenizer will destroy the token
-		// and the token's delete handler will not be executed
-		this.fireDelete({
-			token : this
-		});
-
-		if (oParent.isA("sap.m.Tokenizer")) {
-			oParent._onTokenDelete(this);
-		}
-
-		oEvent.preventDefault();
-	};
-
-	/**
 	 * Event handler called when control is on tap
 	 *
 	 * @param {jQuery.Event} oEvent The event object
@@ -279,7 +254,7 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent The event object
 	 */
 	Token.prototype.onsapbackspace = function(oEvent) {
-		this._deleteToken(oEvent);
+		this._fireDeleteToken(oEvent);
 	};
 
 	/**
@@ -289,18 +264,12 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent The event object
 	 */
 	Token.prototype.onsapdelete = function(oEvent) {
-		this._deleteToken(oEvent);
+		this._fireDeleteToken(oEvent);
 	};
 
-	Token.prototype._deleteToken = function(oEvent) {
-		if (this.getParent() instanceof Tokenizer) {
-			return;
-		}
-
-		if (this.getEditable()) {
-			this.fireDelete({
-				token : this
-			});
+	Token.prototype._fireDeleteToken = function (oEvent) {
+		if (this.getEditable() && this.getProperty("editableParent")) {
+			this.fireDelete({token: this});
 		}
 
 		oEvent.preventDefault();

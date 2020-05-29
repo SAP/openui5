@@ -982,10 +982,11 @@ sap.ui.define([
 		var bShiftKey = oEvent.shiftKey,
 			bCtrlKey = (oEvent.ctrlKey || oEvent.metaKey),
 			oTargetToken = oEvent.getMark("tokenTap"),
+			bDeleteToken = oEvent.getMark("tokenDeletePress"),
 			aTokens = this._getVisibleTokens(),
 			oFocusedToken, iFocusIndex, iIndex, iMinIndex, iMaxIndex;
 
-		if (!oTargetToken || (!bShiftKey && bCtrlKey)) { // Ctrl
+		if (bDeleteToken || !oTargetToken || (!bShiftKey && bCtrlKey)) { // Ctrl
 			this._oSelectionOrigin = null;
 			return;
 		}
@@ -1404,6 +1405,13 @@ sap.ui.define([
 				}
 			}.bind(this)
 		});
+
+		oToken.getAggregation("deleteIcon").attachPress(function () {
+			if (this.getEnabled()) {
+				this.handleTokenDeletion(oToken);
+			}
+		}.bind(this));
+
 		return this;
 	};
 
@@ -1579,36 +1587,6 @@ sap.ui.define([
 			.filter(function (oToken) {
 				return oToken.getSelected();
 			});
-	};
-
-	/**
-	 * Function is called when token's delete icon was pressed function destroys token from Tokenizer's aggregation.
-	 *
-	 * @private
-	 * @param {sap.m.Token} token  The deleted token
-	 */
-	Tokenizer.prototype._onTokenDelete = function(token) {
-		if (token && this.getEditable() && this.getEnabled()) {
-
-			var eventResult = this.fireTokenUpdate({
-				addedTokens : [],
-				removedTokens : [token],
-				type : Tokenizer.TokenUpdateType.Removed
-			});
-
-			if (!eventResult) {
-				return;
-			}
-
-			delete this._oTokensWidthMap[token.getId()];
-			token.destroy();
-
-			this.fireTokenChange({
-				addedTokens : [],
-				removedTokens : [token],
-				type : Tokenizer.TokenChangeType.TokensChanged
-			});
-		}
 	};
 
 	/**
