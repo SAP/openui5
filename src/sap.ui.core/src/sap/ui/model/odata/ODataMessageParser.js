@@ -336,7 +336,8 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
  * @return {sap.ui.core.message.Message} The message for the given error
  */
 ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestInfo, bIsTechnical) {
-	var sType = oMessageObject["@sap.severity"]
+	var sDeepPath, sTarget,
+		sType = oMessageObject["@sap.severity"]
 		? oMessageObject["@sap.severity"]
 		: oMessageObject["severity"];
 	// Map severity value to value defined in sap.ui.core.ValueState, use actual value if not found
@@ -368,18 +369,26 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestI
 		bPersistent = true;
 	}
 
-	this._createTarget(oMessageObject, mRequestInfo);
+	if (bPersistent && bIsTechnical) {
+		sDeepPath = "";
+		sTarget = "";
+	} else {
+		this._createTarget(oMessageObject, mRequestInfo);
+		sDeepPath = oMessageObject.deepPath;
+		sTarget = ODataUtils._normalizeKey(oMessageObject.canonicalTarget);
+	}
 
 	return new Message({
 		type:      sType,
 		code:      sCode,
+		description : oMessageObject.description,
 		message:   sText,
 		descriptionUrl: sDescriptionUrl,
-		target:    ODataUtils._normalizeKey(oMessageObject.canonicalTarget),
+		target:    sTarget,
 		processor: this._processor,
 		technical: bIsTechnical,
 		persistent: bPersistent,
-		fullTarget: oMessageObject.deepPath,
+		fullTarget: sDeepPath,
 		technicalDetails: {
 			statusCode: mRequestInfo.response.statusCode,
 			headers: mRequestInfo.response.headers
@@ -641,6 +650,24 @@ ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oRespon
 
 
 /**
+ * Adds a technical generic error message to the given array of messages. The
+ * <code>description</code> of the error message is the response body.
+ *
+ * @param {sap.ui.core.message.Message[]} aMessages
+ *   The array to which to add the generic error message
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo
+ *   Info object about the request and the response
+ */
+ODataMessageParser.prototype._addGenericError = function (aMessages, mRequestInfo) {
+	aMessages.push(this._createMessage({
+		description : mRequestInfo.response.body,
+		message : sap.ui.getCore().getLibraryResourceBundle().getText("CommunicationError"),
+		severity : MessageType.Error,
+		transition : true
+	}, mRequestInfo, true));
+};
+
+/**
  * Parses the body of a JSON request and tries to extract the messages from it.
  *
  * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
@@ -650,10 +677,12 @@ ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oRespon
  */
 ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oResponse, mRequestInfo, sContentType) {
 	try {
-		// TODO: I do not have a V4 service to test this with.
-
 		var oDoc = new DOMParser().parseFromString(oResponse.body, sContentType);
 		var aElements = getAllElements(oDoc, [ "error", "errordetail" ]);
+		if (!aElements.length) {
+			this._addGenericError(aMessages, mRequestInfo);
+			return;
+		}
 		for (var i = 0; i < aElements.length; ++i) {
 			var oNode = aElements[i];
 
@@ -685,6 +714,7 @@ ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oRes
 			aMessages.push(this._createMessage(oError, mRequestInfo, true));
 		}
 	} catch (ex) {
+		this._addGenericError(aMessages, mRequestInfo);
 		Log.error("Error message returned by server could not be parsed");
 	}
 };
@@ -710,6 +740,7 @@ ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oRe
 		}
 
 		if (!oError) {
+			this._addGenericError(aMessages, mRequestInfo);
 			Log.error("Error message returned by server did not contain error-field");
 			return;
 		}
@@ -736,6 +767,7 @@ ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oRe
 			aMessages.push(this._createMessage(aFurtherErrors[i], mRequestInfo, true));
 		}
 	} catch (ex) {
+		this._addGenericError(aMessages, mRequestInfo);
 		Log.error("Error message returned by server could not be parsed");
 	}
 };
