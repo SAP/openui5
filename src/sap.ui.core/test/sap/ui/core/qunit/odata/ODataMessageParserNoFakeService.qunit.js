@@ -1346,7 +1346,7 @@ sap.ui.define([
 	oEntitySet : {name : "name"},
 	oResult : {"" : true, "name" : true}
 }, {
-	aMessageTargets : [undefined, ""], // unbound message + message with response entity as target
+	aMessageTargets : [""], // unbound message
 	oResult : {"" : true}
 }, {
 	aMessageTargets : ["target0", "/target1", "target2/", "/target3/"], // single segment targets
@@ -1361,6 +1361,22 @@ sap.ui.define([
 		"parentEntity" : true,
 		"parentEntity/navProperty/property2" : true,
 		"parentEntity/navProperty" : true
+	}
+}, {
+	aMessageTargets : [ // multi-target messages
+		["parentEntity/property", "parentEntity/navProperty/property2"],
+		["target0", "/target1", "target2/", "/target3/"]
+	],
+	oResult : {
+		"" : true,
+		"parentEntity/property" : true,
+		"parentEntity" : true,
+		"parentEntity/navProperty/property2" : true,
+		"parentEntity/navProperty" : true,
+		"target0" : true,
+		"target1" : true,
+		"target2" : true,
+		"target3" : true
 	}
 }].forEach(function (oFixture, i) {
 	QUnit.test("_getAffectedTargets, " + i, function (assert) {
@@ -1385,10 +1401,11 @@ sap.ui.define([
 			.withExactArgs("requestTarget")
 			.returns(oFixture.oEntitySet);
 		if (oFixture.aMessageTargets) {
-			oFixture.aMessageTargets.forEach(function (sTarget) {
-				var oMessage = {getTarget : function () {}};
+			oFixture.aMessageTargets.forEach(function (vTarget) {
+				var oMessage = {getTargets : function () {}};
 
-				that.mock(oMessage).expects("getTarget").withExactArgs().returns(sTarget);
+				that.mock(oMessage).expects("getTargets").withExactArgs()
+					.returns(Array.isArray(vTarget) ? vTarget : [vTarget]);
 				aMessages.push(oMessage);
 			});
 		}
