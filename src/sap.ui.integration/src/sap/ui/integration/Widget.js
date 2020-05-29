@@ -281,9 +281,6 @@ sap.ui.define([
 			vManifest = null;
 		}
 
-		// Let the Component loading trigger translation loading and processing.
-		mOptions.processI18n = false;
-
 		this.setBusy(true);
 		this._oWidgetManifest = new WidgetManifest("sap.widget", vManifest, sBaseUrl, this.getManifestChanges());
 

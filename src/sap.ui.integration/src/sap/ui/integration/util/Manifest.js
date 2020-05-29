@@ -169,12 +169,6 @@ sap.ui.define([
 	Manifest.prototype.load = function (mSettings) {
 
 		if (!mSettings || !mSettings.manifestUrl) {
-
-			if (mSettings && mSettings.processI18n === false) {
-				this.processManifest();
-				return new Promise(function (resolve) { resolve(); });
-			}
-
 			// When the manifest JSON is already set and there is a base URL, try to load i18n files.
 			if (this._sBaseUrl && this._oManifest) {
 				return this.loadI18n().then(function () {
@@ -204,11 +198,6 @@ sap.ui.define([
 		}).then(function (oManifest) {
 			this._oManifest = oManifest;
 			this.oJson = this._oManifest.getRawJson();
-
-			if (mSettings && mSettings.processI18n === false) {
-				this.processManifest();
-				return new Promise(function (resolve) { resolve(); });
-			}
 
 			return this.loadI18n().then(function () {
 				this.processManifest();
