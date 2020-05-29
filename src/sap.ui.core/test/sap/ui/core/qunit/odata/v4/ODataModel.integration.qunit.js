@@ -2165,6 +2165,42 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Immediately after execute the parameter is changed again. See that the request uses
+	// the old value. Even refresh must still use it.
+	// BCP: 2070180785
+	// TODO What about changing the context for the binding parameter?
+	QUnit.test("BCP: 2070180785", function (assert) {
+		var oBinding,
+			that = this;
+
+		return this.createView(assert, "").then(function () {
+			var oPromise;
+
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')");
+
+			oBinding = that.oModel.bindContext("/GetEmployeeByID(...)");
+			oBinding.setParameter("EmployeeID", "1");
+			oPromise = oBinding.execute();
+			oBinding.setParameter("EmployeeID", "2");
+
+			return Promise.all([oPromise, that.waitForChanges(assert)]);
+		}).then(function () {
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')");
+
+			oBinding.refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("GetEmployeeByID(EmployeeID='2')");
+
+			return Promise.all([
+				oBinding.execute(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: relative ODCB without cache; late property must be added to the parent cache.
 	// BCP: 2080093480
 	QUnit.test("ODCB w/o cache: late property", function (assert) {

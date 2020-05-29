@@ -246,6 +246,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID to be used for the request
+	 * @param {map} mParameters
+	 *   The parameter map at the time of the execute
 	 * @returns {Promise}
 	 *   A promise that is resolved without data or a return value context when the operation call
 	 *   succeeded, or rejected with an instance of <code>Error</code> in case of failure. A return
@@ -257,7 +259,7 @@ sap.ui.define([
 	 * @private
 	 * @see #execute for details
 	 */
-	ODataContextBinding.prototype._execute = function (oGroupLock) {
+	ODataContextBinding.prototype._execute = function (oGroupLock, mParameters) {
 		var oMetaModel = this.oModel.getMetaModel(),
 			oOperationMetadata,
 			oPromise,
@@ -291,7 +293,7 @@ sap.ui.define([
 				}
 				oOperationMetadata = aOperationMetadata[0];
 				return that.createCacheAndRequest(oGroupLock, sResolvedPath, oOperationMetadata,
-					fnGetEntity);
+					mParameters, fnGetEntity);
 			}).then(function (oResponseEntity) {
 				var sContextPredicate, oOldValue, sResponsePredicate;
 
@@ -584,6 +586,8 @@ sap.ui.define([
 	 *   "/Entity('0815')/bound.Operation(...)" or "/OperationImport(...)"
 	 * @param {object} oOperationMetadata
 	 *   The operation's metadata
+	 * @param {map} mParameters
+	 *   The parameter map at the time of the execute
 	 * @param {function} [fnGetEntity]
 	 *   An optional function which may be called to access the existing entity data (if already
 	 *   loaded) in case of a bound operation
@@ -596,14 +600,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.createCacheAndRequest = function (oGroupLock, sPath,
-		oOperationMetadata, fnGetEntity) {
+		oOperationMetadata, mParameters, fnGetEntity) {
 		var bAction = oOperationMetadata.$kind === "Action",
 			oCache,
 			vEntity = fnGetEntity,
 			oModel = this.oModel,
 			sMetaPath = oModel.getMetaModel().getMetaPath(sPath) + "/@$ui5.overload/0/$ReturnType",
 			sOriginalResourcePath = sPath.slice(1),
-			mParameters = Object.assign({}, this.oOperation.mParameters),
 			oRequestor = oModel.oRequestor,
 			that = this;
 
@@ -641,6 +644,8 @@ sap.ui.define([
 		if (bAction && fnGetEntity) {
 			vEntity = fnGetEntity();
 		}
+		this.oOperation.mRefreshParameters = mParameters;
+		mParameters = Object.assign({}, mParameters);
 		this.mCacheQueryOptions = this.computeOperationQueryOptions();
 		sPath = oRequestor.getPathAndAddQueryOptions(sPath, oOperationMetadata, mParameters,
 			this.mCacheQueryOptions, vEntity);
@@ -808,7 +813,8 @@ sap.ui.define([
 			}
 		}
 
-		return this._execute(this.lockGroup(sGroupId, true));
+		return this._execute(this.lockGroup(sGroupId, true),
+			_Helper.clone(this.oOperation.mParameters));
 	};
 
 	/**
@@ -1115,7 +1121,7 @@ sap.ui.define([
 			}
 			if (that.oOperation) {
 				that.oReadGroupLock = undefined;
-				return that._execute(oReadGroupLock);
+				return that._execute(oReadGroupLock, that.oOperation.mRefreshParameters);
 			}
 			if (oCache && !oPromise) { // do not refresh twice
 				// remove all cached Caches before fetching a new one
