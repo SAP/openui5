@@ -549,34 +549,13 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[
-	{propertyref : "foo", target : "/~target", warning : true},
-	{propertyref : "foo", target : "/#TRANSIENT#/~target", warning : true},
-	// use deprecated propertyref only if no target is given
-	{propertyref : "/~target", target : undefined, warning : false},
-	{propertyref : "/#TRANSIENT#/~target", target : undefined, warning : false}
-].forEach(function (oTargetFixture, i) {
-	[{
-		isTechnical : false,
-		request : {headers : {"sap-message-scope" : "foo"}}
-	}, {
-		isTechnical : false,
-		request : {}
-	}, {
-		isTechnical : false,
-		request : undefined
-	}, {
-		isTechnical : true,
-		request : {headers : {"sap-message-scope" : "BusinessObject"}}
-	}].forEach(function (oFixture, j) {
-	var sTitle = "_createTarget: absolute target with processor; #" + i + "/" + j;
+["/~target", "/#TRANSIENT#/~target"].forEach(function (sODataTarget) {
+	[false, true].forEach(function (bIsTechnical) {
+		var sTitle = "_createTarget: absolute target with processor, " + sODataTarget
+			+ ", bIsTechnical=" + bIsTechnical;
 
 	QUnit.test(sTitle, function (assert) {
-		var oMessageObject = {
-				propertyref : oTargetFixture.propertyref,
-				target : oTargetFixture.target
-			},
-			oODataMessageParser = {
+		var oODataMessageParser = {
 				_metadata : {
 					_getReducedPath : function () {}
 				},
@@ -584,15 +563,9 @@ sap.ui.define([
 					resolve : function () {}
 				}
 			},
-			mRequestInfo = {request : oFixture.request, response : {}, url : "~requestURL"};
+			mRequestInfo = {request : {}, response : {}, url : "~requestURL"},
+			oTargetInfo;
 
-		if (oTargetFixture.warning) {
-			this.oLogMock.expects("warning")
-				.withExactArgs("Used the message's 'target' property for target calculation;"
-						+ " the property 'propertyref' is deprecated and must not be used together"
-						+ " with 'target'",
-					"~requestURL", sClassName);
-		}
 		this.mock(oODataMessageParser._processor).expects("resolve")
 			.withExactArgs("/~target", undefined, true)
 			.returns("~canonicalTarget");
@@ -604,23 +577,17 @@ sap.ui.define([
 			.returns("~normalizedTarget");
 
 		// code under test
-		ODataMessageParser.prototype._createTarget.call(oODataMessageParser, oMessageObject,
-			mRequestInfo, oFixture.isTechnical);
+		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
+			sODataTarget, mRequestInfo, bIsTechnical, /*bODataTransition*/ false);
 
-		assert.strictEqual(oMessageObject.deepPath, "~reducedPath");
-		assert.strictEqual(oMessageObject.target, "~normalizedTarget");
+		assert.strictEqual(oTargetInfo.deepPath, "~reducedPath");
+		assert.strictEqual(oTargetInfo.target, "~normalizedTarget");
 	});
 	});
 });
 
 	//*********************************************************************************************
-[
-	{propertyref : "foo", target : "~target", warning : true},
-	{propertyref : "foo", target : "/#TRANSIENT#~target", warning : true},
-	// use deprecated propertyref only if no target is given
-	{propertyref : "~target", target : undefined, warning : false},
-	{propertyref : "/#TRANSIENT#~target", target : undefined, warning : false}
-].forEach(function (oTargetFixture, i) {
+["~target", "/#TRANSIENT#~target"].forEach(function (sODataTarget, i) {
 	[{
 		isTechnical : false,
 		request : {
@@ -642,11 +609,7 @@ sap.ui.define([
 	var sTitle = "_createTarget: relative target with processor; #" + i + "/" + j;
 
 	QUnit.test(sTitle, function (assert) {
-		var oMessageObject = {
-				propertyref : oTargetFixture.propertyref,
-				target : oTargetFixture.target
-			},
-			oODataMessageParser = {
+		var oODataMessageParser = {
 				_metadata : {
 					_getFunctionImportMetadata : function () {},
 					_getReducedPath : function () {},
@@ -662,15 +625,9 @@ sap.ui.define([
 				response : {},
 				url : "~requestURL"
 			},
+			oTargetInfo,
 			mUrlData = {url : "~parsedUrl"};
 
-		if (oTargetFixture.warning) {
-			this.oLogMock.expects("warning")
-				.withExactArgs("Used the message's 'target' property for target calculation;"
-						+ " the property 'propertyref' is deprecated and must not be used together"
-						+ " with 'target'",
-					"~requestURL", sClassName);
-		}
 		this.mock(ODataMessageParser).expects("_isResponseForCreate")
 			.withExactArgs(sinon.match.same(mRequestInfo))
 			.returns(undefined);
@@ -694,25 +651,21 @@ sap.ui.define([
 			.returns("~normalizedTarget");
 
 		// code under test
-		ODataMessageParser.prototype._createTarget.call(oODataMessageParser, oMessageObject,
-			mRequestInfo, oFixture.isTechnical);
+		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
+			sODataTarget, mRequestInfo, oFixture.isTechnical, /*bODataTransition*/ false);
 
-		assert.strictEqual(oMessageObject.deepPath, "~reducedPath");
-		assert.strictEqual(oMessageObject.target, "~normalizedTarget");
+		assert.strictEqual(oTargetInfo.deepPath, "~reducedPath");
+		assert.strictEqual(oTargetInfo.target, "~normalizedTarget");
 	});
 	});
 });
 
 	//*********************************************************************************************
-[
-	{propertyref : "foo", target : "", warning : true},
-	{propertyref : undefined, target : undefined, warning : false}
-].forEach(function (oFixture, i) {
+["", undefined].forEach(function (sODataTarget, i) {
 	var sTitle = "_createTarget: no or empty target for technical message; # " + i;
 
 	QUnit.test(sTitle, function (assert) {
-		var oMessageObject = {propertyref : oFixture.propertyref, target : oFixture.target},
-			oODataMessageParser = {
+		var oODataMessageParser = {
 				_metadata : {
 					_getFunctionImportMetadata : function () {},
 					_getReducedPath : function () {},
@@ -728,15 +681,9 @@ sap.ui.define([
 				response : {},
 				url : "~requestURL"
 			},
+			oTargetInfo,
 			mUrlData = {url : "~parsedUrl"};
 
-		if (oFixture.warning) {
-			this.oLogMock.expects("warning")
-				.withExactArgs("Used the message's 'target' property for target calculation;"
-						+ " the property 'propertyref' is deprecated and must not be used together"
-						+ " with 'target'",
-					"~requestURL", sClassName);
-		}
 		this.mock(ODataMessageParser).expects("_isResponseForCreate")
 			.withExactArgs(sinon.match.same(mRequestInfo))
 			.returns(undefined);
@@ -760,18 +707,17 @@ sap.ui.define([
 			.returns("~normalizedTarget");
 
 		// code under test
-		ODataMessageParser.prototype._createTarget.call(oODataMessageParser, oMessageObject,
-			mRequestInfo, true);
+		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
+			sODataTarget, mRequestInfo, true, /*bODataTransition*/ false);
 
-		assert.strictEqual(oMessageObject.deepPath, "~reducedPath");
-		assert.strictEqual(oMessageObject.target, "~normalizedTarget");
+		assert.strictEqual(oTargetInfo.deepPath, "~reducedPath");
+		assert.strictEqual(oTargetInfo.target, "~normalizedTarget");
 	});
 });
 
 	//*********************************************************************************************
 	QUnit.test("_createTarget: target relative to an entity", function (assert) {
-		var oMessageObject = {target : "~target"},
-			oODataMessageParser = {
+		var oODataMessageParser = {
 				_metadata : {
 					_getFunctionImportMetadata : function () {},
 					_getReducedPath : function () {},
@@ -787,6 +733,7 @@ sap.ui.define([
 				response : {},
 				url : "~requestURL"
 			},
+			oTargetInfo,
 			mUrlData = {url : "~parsedUrl('key')"};
 
 		this.mock(ODataMessageParser).expects("_isResponseForCreate")
@@ -810,11 +757,11 @@ sap.ui.define([
 			.returns("~normalizedTarget");
 
 		// code under test
-		ODataMessageParser.prototype._createTarget.call(oODataMessageParser, oMessageObject,
-			mRequestInfo);
+		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
+			"~target", mRequestInfo, false, /*bODataTransition*/ false);
 
-		assert.strictEqual(oMessageObject.deepPath, "~reducedPath");
-		assert.strictEqual(oMessageObject.target, "~normalizedTarget");
+		assert.strictEqual(oTargetInfo.deepPath, "~reducedPath");
+		assert.strictEqual(oTargetInfo.target, "~normalizedTarget");
 	});
 
 	//*********************************************************************************************
@@ -841,8 +788,7 @@ sap.ui.define([
 	targetToNormalize : "/SalesOrderSet('1')/ToProduct"
 }].forEach(function (oFixture, i) {
 	QUnit.test("_createTarget: multiple resolve steps needed", function (assert) {
-		var oMessageObject = {target : oFixture.target},
-			oODataMessageParser = {
+		var oODataMessageParser = {
 				_metadata : {
 					_getFunctionImportMetadata : function () {},
 					_getReducedPath : function () {},
@@ -859,6 +805,7 @@ sap.ui.define([
 				response : {},
 				url : "BusinessPartnerSet('2')"
 			},
+			oTargetInfo,
 			mUrlData = {url : "BusinessPartnerSet('2')"};
 
 		this.mock(ODataMessageParser).expects("_isResponseForCreate")
@@ -884,18 +831,17 @@ sap.ui.define([
 			.returns("~normalizedTarget");
 
 		// code under test
-		ODataMessageParser.prototype._createTarget.call(oODataMessageParser, oMessageObject,
-			mRequestInfo);
+		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
+			oFixture.target, mRequestInfo, false, false);
 
-		assert.strictEqual(oMessageObject.deepPath, "~reducedPath");
-		assert.strictEqual(oMessageObject.target, "~normalizedTarget");
+		assert.strictEqual(oTargetInfo.deepPath, "~reducedPath");
+		assert.strictEqual(oTargetInfo.target, "~normalizedTarget");
 	});
 });
 
 	//*********************************************************************************************
 	QUnit.test("_createTarget: function call", function (assert) {
-		var oMessageObject = {target : "~target"},
-			oODataMessageParser = {
+		var oODataMessageParser = {
 				_getFunctionTarget : function () {},
 				_metadata : {
 					_getFunctionImportMetadata : function () {},
@@ -912,6 +858,7 @@ sap.ui.define([
 				response : {},
 				url : "~requestURL"
 			},
+			oTargetInfo,
 			mUrlData = {url : "~parsedUrl"};
 
 		this.mock(ODataMessageParser).expects("_isResponseForCreate")
@@ -940,17 +887,16 @@ sap.ui.define([
 			.returns("~normalizedTarget");
 
 		// code under test
-		ODataMessageParser.prototype._createTarget.call(oODataMessageParser, oMessageObject,
-			mRequestInfo);
+		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
+			"~target", mRequestInfo, false, false);
 
-		assert.strictEqual(oMessageObject.deepPath, "~reducedPath");
-		assert.strictEqual(oMessageObject.target, "~normalizedTarget");
+		assert.strictEqual(oTargetInfo.deepPath, "~reducedPath");
+		assert.strictEqual(oTargetInfo.target, "~normalizedTarget");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("_createTarget: created entity", function (assert) {
-		var oMessageObject = {target : "~target"},
-			oODataMessageParser = {
+		var oODataMessageParser = {
 				_serviceUrl : "~serviceUrl",
 				_metadata : {
 					_getFunctionImportMetadata : function () {},
@@ -969,6 +915,7 @@ sap.ui.define([
 				},
 				url : "~requestURL"
 			},
+			oTargetInfo,
 			mUrlData = {url : "https://foo.com/~serviceUrl/~parsedUrl"};
 
 		this.mock(ODataMessageParser).expects("_isResponseForCreate")
@@ -993,17 +940,16 @@ sap.ui.define([
 			.returns("~normalizedTarget");
 
 		// code under test
-		ODataMessageParser.prototype._createTarget.call(oODataMessageParser, oMessageObject,
-			mRequestInfo);
+		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
+			"~target", mRequestInfo, false, false);
 
-		assert.strictEqual(oMessageObject.deepPath, "~reducedPath");
-		assert.strictEqual(oMessageObject.target, "~normalizedTarget");
+		assert.strictEqual(oTargetInfo.deepPath, "~reducedPath");
+		assert.strictEqual(oTargetInfo.target, "~normalizedTarget");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("_createTarget: entity creation failed, no processor", function (assert) {
-		var oMessageObject = {},
-			oODataMessageParser = {
+		var oODataMessageParser = {
 				_metadata : {
 					_getFunctionImportMetadata : function () {},
 					_isCollection : function () {}
@@ -1020,6 +966,7 @@ sap.ui.define([
 				},
 				response : {statusCode : 400}
 			},
+			oTargetInfo,
 			mUrlData = {url : "~parsedUrl"};
 
 		this.mock(ODataMessageParser).expects("_isResponseForCreate")
@@ -1039,39 +986,95 @@ sap.ui.define([
 			.returns("~normalizedTarget");
 
 		// code under test
-		ODataMessageParser.prototype._createTarget.call(oODataMessageParser, oMessageObject,
-			mRequestInfo, true);
+		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
+			/*sTarget*/ undefined, mRequestInfo, true, false);
 
-		assert.strictEqual(oMessageObject.deepPath, undefined);
-		assert.strictEqual(oMessageObject.target, "~normalizedTarget");
+		assert.strictEqual(oTargetInfo.deepPath, undefined);
+		assert.strictEqual(oTargetInfo.target, "~normalizedTarget");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("_createTarget: no target; unbound message", function (assert) {
-		var oMessageObject = {},
-			oODataMessageParser = {},
+		var oODataMessageParser = {},
 			mRequestInfo = {
 				request : {headers : {"sap-message-scope" : "BusinessObject"}}
-			};
+			},
+			oTargetInfo;
 
 		// code under test
-		ODataMessageParser.prototype._createTarget.call(oODataMessageParser, oMessageObject,
-			mRequestInfo, false);
+		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
+			/*sTarget*/ undefined, mRequestInfo, false, false);
 
-		assert.strictEqual(oMessageObject.deepPath, "");
-		assert.strictEqual(oMessageObject.target, "");
+		assert.strictEqual(oTargetInfo.deepPath, "");
+		assert.strictEqual(oTargetInfo.target, "");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("_createTarget: no target; unbound transient technical message", function (assert) {
-		var oMessageObject = {transition: true};
+		var oTargetInfo;
 
 		// code under test
-		ODataMessageParser.prototype._createTarget.call({}, oMessageObject, "~mRequestInfo", true);
+		oTargetInfo = ODataMessageParser.prototype._createTarget.call({}, /*sTarget*/ undefined,
+			"~mRequestInfo", true, true);
 
-		assert.strictEqual(oMessageObject.deepPath, "");
-		assert.strictEqual(oMessageObject.target, "");
+		assert.strictEqual(oTargetInfo.deepPath, "");
+		assert.strictEqual(oTargetInfo.target, "");
 	});
+
+
+	//*********************************************************************************************
+[
+	{propertyref : undefined, target : "target", warning : false},
+	{propertyref : "foo", target : "target", warning : true},
+	{propertyref : "target", target : undefined, warning : false},
+	{additionalTargets : ["bar"], target : "target"}
+].forEach(function (oFixture, i) {
+	QUnit.test("_createTargets, " + i, function (assert) {
+		var oMessageObject = {
+				additionalTargets : oFixture.additionalTargets,
+				propertyref : oFixture.propertyref,
+				target : oFixture.target,
+				transition : "transition"
+			},
+			oODataMessageParser = {
+				_createTarget : function () {}
+			},
+			oParserMock = this.mock(oODataMessageParser),
+			mRequestInfo = {
+				url : "~requestURL"
+			},
+			oTargetInfo;
+
+		if (oFixture.warning) {
+			this.oLogMock.expects("warning")
+				.withExactArgs("Used the message's 'target' property for target calculation;"
+						+ " the property 'propertyref' is deprecated and must not be used together"
+						+ " with 'target'",
+					"~requestURL", sClassName);
+		}
+		oParserMock.expects("_createTarget")
+			.withExactArgs("target", sinon.match.same(mRequestInfo), "bIsTechnical", "transition")
+			.returns({deepPath : "deepPath", target : "ui5MessageTarget"});
+		if (oFixture.additionalTargets) {
+			oParserMock.expects("_createTarget")
+				.withExactArgs("bar", sinon.match.same(mRequestInfo), "bIsTechnical", "transition")
+				.returns({deepPath : "barDeepPath", target : "barUi5MessageTarget"});
+		}
+
+		// code under test
+		oTargetInfo = ODataMessageParser.prototype._createTargets
+			.call(oODataMessageParser, oMessageObject, mRequestInfo, "bIsTechnical");
+
+		assert.strictEqual(oTargetInfo.aDeepPaths.length, oFixture.additionalTargets ? 2 : 1);
+		assert.strictEqual(oTargetInfo.aDeepPaths[0], "deepPath");
+		assert.strictEqual(oTargetInfo.aTargets.length, oFixture.additionalTargets ? 2 : 1);
+		assert.strictEqual(oTargetInfo.aTargets[0], "ui5MessageTarget");
+		if (oFixture.additionalTargets) {
+			assert.strictEqual(oTargetInfo.aDeepPaths[1], "barDeepPath");
+			assert.strictEqual(oTargetInfo.aTargets[1], "barUi5MessageTarget");
+		}
+	});
+});
 
 	//*********************************************************************************************
 [{
@@ -1188,24 +1191,28 @@ sap.ui.define([
 	}
 }].forEach(function (oFixture, i) {
 	QUnit.test("_createMessage: " + i, function (assert) {
-		var oExpectedMessage = oFixture.oExpectedMessage,
+		var aDeepPaths = ["~fullTargetFrom_createTarget0", "~fullTargetFrom_createTarget1"],
+			oExpectedMessage = oFixture.oExpectedMessage,
 			oMessage,
 			oMessageObject = oFixture.oMessageObject,
 			oODataMessageParser = {
-				_createTarget : function () {},
+				_createTargets : function () {},
 				_processor : "~_processor"
 			},
 			mRequestInfo = {
 				response : {headers : "~headers", statusCode : "~statusCode"}
-			};
+			},
+			aTargets = ["~targetFrom_createTarget0", "~targetFrom_createTarget1"];
 
-		this.mock(oODataMessageParser).expects("_createTarget")
+		this.mock(oODataMessageParser).expects("_createTargets")
 			.withExactArgs(sinon.match.same(oMessageObject)
 					.and(sinon.match.has("transition", oExpectedMessage.persistent)),
 				sinon.match.same(mRequestInfo), "~bIsTechnical")
 			.callsFake(function (oMessageObject) {
-				oMessageObject.deepPath = "~fullTargetFrom_createTarget";
-				oMessageObject.target = "~targetFrom_createTarget";
+				return {
+					aDeepPaths : aDeepPaths,
+					aTargets : aTargets
+				};
 			});
 
 		// code under test
@@ -1216,11 +1223,13 @@ sap.ui.define([
 		assert.strictEqual(oMessage.code, oExpectedMessage.code);
 		assert.strictEqual(oMessage.description, oExpectedMessage.description);
 		assert.strictEqual(oMessage.descriptionUrl, oExpectedMessage.descriptionUrl);
-		assert.strictEqual(oMessage.fullTarget, "~fullTargetFrom_createTarget");
+		assert.strictEqual(oMessage.fullTarget, "~fullTargetFrom_createTarget0");
+		assert.deepEqual(oMessage.aFullTargets, aDeepPaths);
 		assert.strictEqual(oMessage.message, oExpectedMessage.message);
 		assert.strictEqual(oMessage.persistent, oExpectedMessage.persistent);
 		assert.strictEqual(oMessage.processor, "~_processor");
-		assert.strictEqual(oMessage.target, "~targetFrom_createTarget");
+		assert.strictEqual(oMessage.target, "~targetFrom_createTarget0");
+		assert.deepEqual(oMessage.aTargets, aTargets);
 		assert.strictEqual(oMessage.technical, "~bIsTechnical");
 		assert.deepEqual(oMessage.technicalDetails,
 			{headers : "~headers", statusCode : "~statusCode"});

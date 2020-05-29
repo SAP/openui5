@@ -336,23 +336,24 @@ ODataMessageParser.prototype._createMessage = function (oMessageObject, mRequest
 	var bPersistent = oMessageObject.target && oMessageObject.target.indexOf("/#TRANSIENT#") === 0
 			|| oMessageObject.transient
 			|| oMessageObject.transition,
+		oTargetInfos,
 		sText = typeof oMessageObject.message === "object"
 			? oMessageObject.message.value
 			: oMessageObject.message,
 		sType = oMessageObject["@sap.severity"] || oMessageObject.severity;
 
 	oMessageObject.transition = !!bPersistent;
-	this._createTarget(oMessageObject, mRequestInfo, bIsTechnical);
+	oTargetInfos = this._createTargets(oMessageObject, mRequestInfo, bIsTechnical);
 
 	return new Message({
 		code : oMessageObject.code || "",
 		description : oMessageObject.description,
 		descriptionUrl : oMessageObject.longtext_url || "",
-		fullTarget : oMessageObject.deepPath,
+		fullTarget : oTargetInfos.aDeepPaths,
 		message : sText,
 		persistent : !!bPersistent,
 		processor : this._processor,
-		target : oMessageObject.target,
+		target : oTargetInfos.aTargets,
 		technical : bIsTechnical,
 		technicalDetails : {
 			headers : mRequestInfo.response.headers,
@@ -474,56 +475,54 @@ ODataMessageParser._isResponseForCreate = function (mRequestInfo) {
 };
 
 /**
- * Determines the absolute target URL (relative to the service URL) from the given message object
- * and from the given request info and updates the message object's <code>target</code> and
+ * Determines the absolute target URL (relative to the service URL) from the given
+ * <code>sODataTarget</code> and from the given request info and calculates <code>target</code> and
+ * <code>deepPath</code> used for the creation of a UI5 message object.
+ * If the given <code>sODataTarget</code> is not absolute, it uses the location header of the
+ * response (in case of a successful creation of an entity), the internal entity key (in case of a
+ * failed creation of an entity) or the request URL to determine the <code>target</code> and
  * <code>deepPath</code>.
- * If the message object's target is not absolute, it uses the location header of the response (in
- * case of a successful creation of an entity), the internal entity key (in case of a failed
- * creation of an entity) or the request URL to determine the message object's <code>target</code>
- * and <code>deepPath</code>.
  * The <code>deepPath</code> is always reduced, that means all adjacent partner attributes have been
  * removed from the target path.
- * If the message object is for a technical transition message, or if no target is contained in the
- * given message object, the request used the message scope <code>BusinessObject</code> and the
- * response is no technical error, then the message object's <code>target</code> and
- * <code>deepPath</code> are set to empty string.
+ * If given <code>sODataTarget</code> is for a technical transition message, or if no
+ * <code>sODataTarget</code> is given, the request used the message scope
+ * <code>BusinessObject</code> and the response is no technical error, then the <code>target</code>
+ * and <code>deepPath</code> are set to empty string.
  *
- * @param {ODataMessageParser~ServerError} oMessageObject
- *   The object containing the message data; <code>target</code> and <code>deepPath</code> are
- *   updated
+ * @param {string} sODataTarget
+ *   The target
  * @param {ODataMessageParser~RequestInfo} mRequestInfo
  *   A map containing information about the current request
  * @param {boolean} bIsTechnical
  *   Whether this is a technical error (like 404 - not found)
+ * @param {boolean} bODataTransition
+ *   Whether this is a transition error
+ * @returns {object}
+ *   An object with the target info for the creation of a UI5 message object with the properties
+ *   <code>deepPath</code> and <code>target</code>
  * @private
  */
-ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestInfo, bIsTechnical) {
+ODataMessageParser.prototype._createTarget = function (sODataTarget, mRequestInfo, bIsTechnical,
+		bODataTransition) {
 	var sCanonicalTarget, bCreate, mFunctionInfo, iPos, sPreviousCanonicalTarget, sRequestTarget,
 		sUrl, mUrlData, sUrlForTargetCalculation,
 		sDeepPath = "",
 		oRequest = mRequestInfo.request,
 		oResponse = mRequestInfo.response,
-		sTarget = oMessageObject.target;
+		oTargetInfo = {};
 
-	if (oMessageObject.propertyref !== undefined && sTarget !== undefined) {
-		Log.warning("Used the message's 'target' property for target calculation; the property"
-			+ " 'propertyref' is deprecated and must not be used together with 'target'",
-			mRequestInfo.url, sClassName);
-	} else if (sTarget === undefined) {
-		sTarget = oMessageObject.propertyref;
+	if (sODataTarget === undefined && !bIsTechnical
+			&& oRequest.headers["sap-message-scope"] === "BusinessObject"
+		|| bIsTechnical && bODataTransition) {
+		oTargetInfo.deepPath = "";
+		oTargetInfo.target = "";
+
+		return oTargetInfo;
 	}
-	if (sTarget === undefined && !bIsTechnical
-			&& mRequestInfo.request.headers["sap-message-scope"] === "BusinessObject"
-		|| bIsTechnical && oMessageObject.transition) {
-		oMessageObject.deepPath = "";
-		oMessageObject.target = "";
+	sODataTarget = sODataTarget || "";
+	sODataTarget = sODataTarget.startsWith("/#TRANSIENT#") ? sODataTarget.slice(12) : sODataTarget;
 
-		return;
-	}
-	sTarget = sTarget || "";
-	sTarget = sTarget.startsWith("/#TRANSIENT#") ? sTarget.slice(12) : sTarget;
-
-	if (sTarget[0] !== "/") {
+	if (sODataTarget[0] !== "/") {
 		bCreate = ODataMessageParser._isResponseForCreate(mRequestInfo);
 
 		if (bCreate === true) { // successful create
@@ -562,16 +561,16 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 		// would not have the brackets
 		if (sRequestTarget.slice(sRequestTarget.lastIndexOf("/")).indexOf("(") > -1
 				|| !this._metadata._isCollection(sRequestTarget)) {// references a single entity
-			sDeepPath = sTarget ? sDeepPath + "/" + sTarget : sDeepPath;
-			sTarget = sTarget ? sRequestTarget + "/" + sTarget : sRequestTarget;
+			sDeepPath = sODataTarget ? sDeepPath + "/" + sODataTarget : sDeepPath;
+			sODataTarget = sODataTarget ? sRequestTarget + "/" + sODataTarget : sRequestTarget;
 		} else { // references a collection or the complete $batch
-			sDeepPath = sDeepPath + sTarget;
-			sTarget = sRequestTarget + sTarget;
+			sDeepPath = sDeepPath + sODataTarget;
+			sODataTarget = sRequestTarget + sODataTarget;
 		}
 	}
 
-	if (this._processor){
-		sCanonicalTarget = this._processor.resolve(sTarget, undefined, true);
+	if (this._processor) {
+		sCanonicalTarget = this._processor.resolve(sODataTarget, undefined, true);
 		// Multiple resolve steps are necessary for paths containing multiple navigation properties
 		// with to n relation, e.g. /SalesOrder(1)/toItem(2)/toSubItem(3)
 		while (sCanonicalTarget && sCanonicalTarget.lastIndexOf("/") > 0
@@ -581,11 +580,58 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 				// if canonical path cannot be determined, take the previous
 				|| sPreviousCanonicalTarget;
 		}
-		sTarget = sCanonicalTarget || sTarget;
-		oMessageObject.deepPath
-			= this._metadata._getReducedPath(sDeepPath || sTarget);
+		sODataTarget = sCanonicalTarget || sODataTarget;
+		oTargetInfo.deepPath = this._metadata._getReducedPath(sDeepPath || sODataTarget);
 	}
-	oMessageObject.target = ODataUtils._normalizeKey(sTarget);
+	oTargetInfo.target = ODataUtils._normalizeKey(sODataTarget);
+
+	return oTargetInfo;
+};
+
+/**
+ * Computes arrays of targets and deep paths from an OData message object for the creation of a UI5
+ * message object see {@link sap.ui.core.message.Message}.
+ *
+ * @param {ODataMessageParser~ServerError} oMessageObject
+ *   The object containing the message data
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo
+ *   A map containing information about the current request
+ * @param {boolean} bIsTechnical
+ *   Whether this is a technical error (like 404 - not found)
+ * @returns {object}
+ *   An object with the target info for the creation of a UI5 message object with the properties
+ *   <code>aDeepPaths</code>, an array containing the deep paths and <code>aTargets</code>, an array
+ *   containing the targets
+ * @private
+ */
+ODataMessageParser.prototype._createTargets = function(oMessageObject, mRequestInfo, bIsTechnical) {
+	var aDeepPaths = [],
+		aMessageObjectTargets = Array.isArray(oMessageObject.additionalTargets)
+			? [oMessageObject.target].concat(oMessageObject.additionalTargets)
+			: [oMessageObject.target],
+		oTargetInfo,
+		aTargets = [],
+		that = this;
+
+	if (oMessageObject.propertyref !== undefined && aMessageObjectTargets[0] !== undefined) {
+		Log.warning("Used the message's 'target' property for target calculation; the property"
+			+ " 'propertyref' is deprecated and must not be used together with 'target'",
+			mRequestInfo.url, sClassName);
+	} else if (aMessageObjectTargets[0] === undefined) {
+		aMessageObjectTargets[0] = oMessageObject.propertyref;
+	}
+
+	aMessageObjectTargets.forEach(function (sAdditionalTarget) {
+		oTargetInfo = that._createTarget(sAdditionalTarget, mRequestInfo, bIsTechnical,
+			oMessageObject.transition);
+		aDeepPaths.push(oTargetInfo.deepPath);
+		aTargets.push(oTargetInfo.target);
+	});
+
+	return {
+		aDeepPaths : aDeepPaths,
+		aTargets : aTargets
+	};
 };
 
 /**

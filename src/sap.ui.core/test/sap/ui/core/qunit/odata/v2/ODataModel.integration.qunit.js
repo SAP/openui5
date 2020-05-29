@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/library",
+	"sap/ui/core/message/Message",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/BindingMode",
@@ -21,8 +22,9 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper"
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
-], function (Log, uid, Device, SyncPromise, coreLibrary, Controller, View, BindingMode, Filter,
-		FilterOperator, Sorter, CountMode, MessageScope, ODataModel, TestUtils, datajs, XMLHelper) {
+], function (Log, uid, Device, SyncPromise, coreLibrary, Message, Controller, View, BindingMode,
+		Filter, FilterOperator, Sorter, CountMode, MessageScope, ODataModel, TestUtils, datajs,
+		XMLHelper) {
 	/*global QUnit*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
 	"use strict";
@@ -53,11 +55,14 @@ sap.ui.define([
 	 *   An OData message object as returned by <code>createResponseMessage</code>
 	 * @param {string} sTarget
 	 *   The new target
+	 * @param {string[]} aAdditionalTargets
+	 *   The new additional targets in case of a multi-target message
 	 * @returns {object}
 	 *   The cloned OData message object with the replaced target
 	 */
-	function cloneODataMessage(oODataMessage, sTarget) {
-		return Object.assign({}, oODataMessage, {target : sTarget});
+	function cloneODataMessage(oODataMessage, sTarget, aAdditionalTargets) {
+		return Object.assign({}, oODataMessage,
+			{target : sTarget, additionalTargets : aAdditionalTargets});
 	}
 
 	/**
@@ -403,22 +408,31 @@ sap.ui.define([
 				return oMessage1.message.localeCompare(oMessage2.message);
 			}
 
-			// check only a subset of properties
-			aCurrentMessages = aCurrentMessages.map(function (oMessage) {
+			/*
+			 * Maps the given message object to an object containing only the properties relevant
+			 * for comparing expected and actual message leaving out properties like "id".
+			 */
+			function mapMessage(oMessage) {
 				return {
 					code : oMessage.code,
 					description : oMessage.description,
 					descriptionUrl : oMessage.descriptionUrl,
-					fullTarget : oMessage.fullTarget
-						&& oMessage.fullTarget.replace(rTemporaryKey, "~key~"),
+					aFullTargets : oMessage.aFullTargets.map(function (sFullTarget) {
+						return sFullTarget.replace(rTemporaryKey, "~key~");
+					}),
 					message : oMessage.message,
 					persistent : oMessage.persistent,
-					target : oMessage.target
-						&& oMessage.target.replace(rTemporaryKey, "~key~"),
+					aTargets : oMessage.aTargets.map(function (sTarget) {
+						return sTarget.replace(rTemporaryKey, "~key~");
+					}),
 					technical : oMessage.technical,
 					type : oMessage.type
 				};
-			});
+			}
+
+			// check only a subset of properties
+			aCurrentMessages = aCurrentMessages.map(mapMessage);
+			aExpectedMessages = aExpectedMessages.map(mapMessage);
 
 			assert.deepEqual(aCurrentMessages, aExpectedMessages,
 				this.aMessages.length + " expected messages in message manager");
@@ -507,8 +521,8 @@ sap.ui.define([
 		 * Creates an OData message object that can be passed as input parameter to
 		 * <code>getMessageHeader</code>.
 		 *
-		 * @param {string} [sTarget]
-		 *   The target
+		 * @param {string|string[]} [vTarget]
+		 *   The target or an array of targets in case of a multi-target message
 		 * @param {string} [sMessage="message-~i~"]
 		 *   The message text; if not given, "message-~i~" is used, where ~i~ is a generated number
 		 * @param {string} [sSeverity="error"]
@@ -520,7 +534,7 @@ sap.ui.define([
 		 *   "code-~i~" (where ~i~ is a generated number), <code>message</code>,
 		 *   <code>severity</code>, <code>target</code> and <code>transition</code>
 		 */
-		createResponseMessage : function (sTarget, sMessage, sSeverity, bTransition) {
+		createResponseMessage : function (vTarget, sMessage, sSeverity, bTransition) {
 			var i = this.iODataMessageCount,
 				oResponseMessage;
 
@@ -532,8 +546,14 @@ sap.ui.define([
 				severity : sSeverity || "error",
 				transition : bTransition
 			};
-			if (sTarget !== undefined) {
-				oResponseMessage.target = sTarget;
+			if (vTarget !== undefined) {
+				if (Array.isArray(vTarget)) {
+					if (vTarget.length > 1) {
+						oResponseMessage.additionalTargets = vTarget.slice(1);
+					}
+					vTarget = vTarget[0];
+				}
+				oResponseMessage.target = vTarget;
 			}
 
 			return oResponseMessage;
@@ -976,32 +996,50 @@ sap.ui.define([
 		 * @param {string} [sFullTargetPrefix=vTargetPrefix]
 		 *   The prefix for the full target; if not given <code>vTargetPrefix</code> is also used as
 		 *   prefix for the <code>fullTarget</code>
+		 * @param {boolean} [bResetMessages]
+		 *   Whether existing expected messages are reset before the new message is added
 		 * @returns {object}
 		 *   The test instance for chaining
 		 */
-		expectMessage : function (oODataMessage, vTargetPrefix, sFullTargetPrefix) {
-			var sTarget, sTargetPrefix;
+		expectMessage : function (oODataMessage, vTargetPrefix, sFullTargetPrefix, bResetMessages) {
+			var aAdditionalTargets,
+				aFullTargets,
+				sTargetPrefix,
+				aTargets;
+
+			function computeFullTarget(sODataMessageTarget) {
+				return (sFullTargetPrefix || sTargetPrefix) + sODataMessageTarget;
+			}
+
+			function computeTarget(sODataMessageTarget) {
+				return vTargetPrefix.isComplete
+					? vTargetPrefix.path
+					: sTargetPrefix + sODataMessageTarget;
+			}
+
+			if (bResetMessages) {
+				this.aMessages = [];
+			}
 
 			if (oODataMessage !== null) {
-				if (vTargetPrefix.isComplete) {
-					sTargetPrefix = "";
-					sTarget = vTargetPrefix.path;
-				} else {
-					sTargetPrefix = vTargetPrefix.path || vTargetPrefix;
-					sTarget = sTargetPrefix + oODataMessage.target;
-				}
+				sTargetPrefix = vTargetPrefix.isComplete ? "" : vTargetPrefix.path || vTargetPrefix;
+				aAdditionalTargets = oODataMessage.additionalTargets || [];
+				aTargets = [computeTarget(oODataMessage.target)]
+					.concat(aAdditionalTargets.map(computeTarget));
+				aFullTargets = [computeFullTarget(oODataMessage.target)]
+					.concat(aAdditionalTargets.map(computeFullTarget));
 
-				this.aMessages.push({
+				this.aMessages.push(new Message({
 					code : oODataMessage.code,
 					description : oODataMessage.description,
 					descriptionUrl : "",
-					fullTarget : (sFullTargetPrefix || sTargetPrefix) + oODataMessage.target,
+					fullTarget : aFullTargets,
 					message : oODataMessage.message,
 					persistent : false,
-					target : sTarget,
+					target : aTargets,
 					technical : false,
 					type : mSeverityMap[oODataMessage.severity]
-				});
+				}));
 			}
 
 			return this;
@@ -1020,6 +1058,14 @@ sap.ui.define([
 		 *   The test instance for chaining
 		 */
 		expectMessages : function (vExpectedMessages) {
+			//TODO expectMessages takes sap.ui.core.message.Message like objects while
+			// expectMessage takes an ODataMessage like object => make uniform, separate change
+			// this.aMessages = [];
+			//
+			// if (!Array.isArray(vExpectedMessages)) {
+			// 	vExpectedMessages = [vExpectedMessages];
+			// }
+			// vExpectedMessages.forEach(this.expectMessage.bind(this));
 			if (!Array.isArray(vExpectedMessages)) {
 				vExpectedMessages = [vExpectedMessages];
 			}
@@ -1031,7 +1077,7 @@ sap.ui.define([
 					?  oMessage.descriptionUrl
 					: "";
 				oMessage.technical = oMessage.technical || false;
-				return oMessage;
+				return new Message(oMessage);
 			});
 
 			return this;
@@ -3729,14 +3775,16 @@ usePreliminaryContext : false}}">\
 			oSalesOrderToItem20NoteWarning = this.createResponseMessage(
 				"ToLineItems(SalesOrderID='1',ItemPosition='20~1~')/Note", undefined, "warning"),
 			oSalesOrderToItem30NoteError = this.createResponseMessage(
-				"ToLineItems(SalesOrderID='1',ItemPosition='30~1~')/Note"),
+				["ToLineItems(SalesOrderID='1',ItemPosition='30~1~')/Note",
+				 "ToLineItems(SalesOrderID='1',ItemPosition='30~1~')/GrossAmount"]),
 			oSalesOrderItem10ToProductPriceError
 				= cloneODataMessage(oSalesOrderToItem10ToProductPriceError,
 					"(SalesOrderID='1',ItemPosition='10~0~')/ToProduct/Price"),
 			oSalesOrderItem20NoteWarning = cloneODataMessage(oSalesOrderToItem20NoteWarning,
 				"(SalesOrderID='1',ItemPosition='20~1~')/Note"),
 			oSalesOrderItem30NoteError = cloneODataMessage(oSalesOrderToItem30NoteError,
-				"(SalesOrderID='1',ItemPosition='30~1~')/Note"),
+				"(SalesOrderID='1',ItemPosition='30~1~')/Note",
+				["(SalesOrderID='1',ItemPosition='30~1~')/GrossAmount"]),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="salesOrderID" text="{SalesOrderID}" />\
@@ -4657,4 +4705,67 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: Messages with multiple targets are visualized at controls that are bound against
+	// one the the messages' targets. The lifecycle of multi-targets messages is correct, i.e.
+	// a new messages where one target matches the target of an existing messages leads to removal
+	// of this existing message.
+	// JIRA: CPOUI5MODELS-197
+	QUnit.test("Messages with multiple targets: value state and lifecycle", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			oMsgNoteAndGrossAmount = this.createResponseMessage(["Note", "GrossAmount"], "Foo",
+				"warning"),
+			oMsgGrossAmountAndLifecycleStatus = this.createResponseMessage(
+				["Note", "LifecycleStatusDescription"], "Bar", "error"),
+			that = this,
+			sView = '\
+<FlexBox id="objectPage" binding="{/SalesOrderSet(\'1\')}">\
+	<Input id="Note" value="{Note}" />\
+	<Input id="GrossAmount" value="{GrossAmount}" />\
+	<Input id="LifecycleStatusDescription" value="{LifecycleStatusDescription}" />\
+</FlexBox>';
+
+		this.expectRequest("SalesOrderSet('1')", {
+				GrossAmount : "GrossAmount A",
+				LifecycleStatusDescription : "LifecycleStatusDescription A",
+				Note : "Note A"
+			}, {"sap-message" : getMessageHeader(oMsgNoteAndGrossAmount)})
+			.expectChange("Note", null)
+			.expectChange("Note", "Note A")
+			.expectChange("GrossAmount", null)
+			.expectChange("GrossAmount", "GrossAmount A")
+			.expectChange("LifecycleStatusDescription", null)
+			.expectChange("LifecycleStatusDescription", "LifecycleStatusDescription A")
+			.expectMessage(oMsgNoteAndGrossAmount, "/SalesOrderSet('1')/");
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			return Promise.all([
+				that.checkValueState(assert, "Note", "Warning", "Foo"),
+				that.checkValueState(assert, "GrossAmount", "Warning", "Foo"),
+				that.checkValueState(assert, "LifecycleStatusDescription", "None", ""),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderSet('1')", {
+					GrossAmount : "GrossAmount A",
+					LifecycleStatusDescription : "LifecycleStatusDescription A",
+					Note : "Note A"
+				}, {"sap-message" : getMessageHeader(oMsgGrossAmountAndLifecycleStatus)})
+				.expectMessage(oMsgGrossAmountAndLifecycleStatus, "/SalesOrderSet('1')/",
+					undefined, /*bResetMessages*/ true);
+
+			// code under test: refresh => new multi-target message removes old one
+			that.oView.byId("objectPage").getObjectBinding().refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			return Promise.all([
+				that.checkValueState(assert, "Note", "Error", "Bar"),
+				that.checkValueState(assert, "GrossAmount", "None", ""),
+				that.checkValueState(assert, "LifecycleStatusDescription", "Error", "Bar")
+			]);
+		});
+	});
 });
