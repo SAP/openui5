@@ -983,7 +983,7 @@ sap.ui.define([
 		if (!bShiftKey) { // Simple click/tap
 			// simple select, neither ctrl nor shift key was pressed, deselects other tokens
 			this._oSelectionOrigin = oTargetToken;
-			this._changeAllTokensSelection(false, oTargetToken);
+			this._changeAllTokensSelection(false, oTargetToken, true);
 		}
 
 		// Shift
@@ -1549,9 +1549,10 @@ sap.ui.define([
 	 * Function selects/deselects all tokens and fires the correct "select" or "deselect" events.
 	 * @param {boolean} bSelect Whether the tokens should be selected
 	 * @param {sap.m.Token} oTokenToSkip  [optional] this token will be skipped when changing the selection
+	 * @param {boolean} bSkipClipboardSelect  [optional] selecting the hidden cli div to enable copy to clipboard will be skipped
 	 * @private
 	 */
-	Tokenizer.prototype._changeAllTokensSelection = function (bSelect, oTokenToSkip) {
+	Tokenizer.prototype._changeAllTokensSelection = function (bSelect, oTokenToSkip, bSkipClipboardSelect) {
 		var aTokens = this._getVisibleTokens();
 
 		aTokens
@@ -1562,7 +1563,10 @@ sap.ui.define([
 				oToken.setSelected(bSelect);
 			});
 
-		this._doSelect();
+			if (!bSkipClipboardSelect) {
+				this._doSelect();
+			}
+
 
 		return this;
 	};
