@@ -2714,11 +2714,6 @@ function(
 						._getInputValue(oSuggPopover._oPopupInput
 							.getValue()));
 					this.onChange();
-
-					if (this instanceof sap.m.MultiInput && this.isMobileDevice()) {
-						this._onDialogClose();
-					}
-
 				}, this)
 				.attachAfterClose(function() {
 					var oList = oSuggPopover._oList;
