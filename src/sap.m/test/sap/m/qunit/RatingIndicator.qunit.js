@@ -246,6 +246,7 @@ sap.ui.define([
 		assert.strictEqual(oRating.$().hasClass("sapMRIReadOnly"), false, 'Initially the control does not have class "sapMRIReadOnly" on ' + oRating);
 		assert.strictEqual(oRating.$().attr('aria-disabled'), "false", "aria-disabled is set to false on " + oRating);
 		assert.strictEqual(oRating.$().attr("tabindex"), "0", "The control is in the tab chain");
+		assert.strictEqual(oRating.$().attr("aria-readonly"), undefined, "'aria-readonly' attribute should not be presented.");
 
 		// act
 		oRating.setEditable(false);
@@ -256,6 +257,7 @@ sap.ui.define([
 		assert.strictEqual(oRating.$().hasClass("sapMRIReadOnly"), true, 'The control have class "sapMRIReadOnly" on ' + oRating);
 		assert.strictEqual(oRating.$().attr('aria-disabled'), "false", "aria-disabled is set to true on " + oRating);
 		assert.strictEqual(oRating.$().attr("tabindex"), "0", "The control is in the tab chain");
+		assert.strictEqual(oRating.$().attr("aria-readonly"), "true", "The control should have 'aria-readonly' attribute set.");
 
 		// clean
 		oRating.destroy();
