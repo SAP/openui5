@@ -3046,6 +3046,9 @@ sap.ui.define([
 						//changeSet failed
 						if (oResponse.message) {
 							for (j = 0; j < aRequests[i].length; j++) {
+								// ensure that messages are reported for each request in a changeset
+								// as we cannot assign the error to a specific request
+								oResponse.$reported = false;
 								oRequestObject = aRequests[i][j];
 								processResponse(oRequestObject, oResponse);
 								oRequestObject.response = oResponse;
@@ -3075,6 +3078,7 @@ sap.ui.define([
 		function handleError(oError) {
 			var bAborted = oError.message == "Request aborted";
 
+			oError.$reported = true; // avoid that individual requests log the error
 			// Call procesError for all contained requests first
 			jQuery.each(aRequests, function(i, oRequest) {
 				if (Array.isArray(oRequest)) {
@@ -3091,6 +3095,8 @@ sap.ui.define([
 			if (bAborted) {
 				that._processAborted(oBatchRequest, oError, true);
 			} else {
+				// ensure that the error is reported for the complete $batch
+				oError.$reported = false;
 				that._processError(oBatchRequest, oError, fnError, true, aRequests);
 			}
 		}
@@ -3898,32 +3904,39 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._handleError = function(oError, oRequest) {
-		var mParameters = {}, /* fnHandler, */ sToken;
-		var sErrorMsg = "The following problem occurred: " + oError.message;
+		var sErrorMsg,
+			mParameters = {message : oError.message},
+			sToken;
 
+		if (oError.response) {
+			if (!oError.$reported) {
+				// Parse messages from the back-end
+				this._parseResponse(oError.response, oRequest);
 
-		mParameters.message = oError.message;
-		if (oError.response){
-			// Parse messages from the back-end
-			this._parseResponse(oError.response, oRequest);
-
-			if (this.bTokenHandling) {
-				// if XSRFToken is not valid we get 403 with the x-csrf-token header : Required.
-				// a new token will be fetched in the refresh afterwards.
-				sToken = this._getHeader("x-csrf-token", oError.response.headers);
-				if (oError.response.statusCode == '403' && sToken && sToken.toLowerCase() === "required") {
-					this.resetSecurityToken();
+				if (this.bTokenHandling) {
+					// if XSRFToken is not valid we get 403 with the x-csrf-token header : Required.
+					// a new token will be fetched in the refresh afterwards.
+					sToken = this._getHeader("x-csrf-token", oError.response.headers);
+					if (oError.response.statusCode == '403' && sToken
+							&& sToken.toLowerCase() === "required") {
+						this.resetSecurityToken();
+					}
 				}
+				sErrorMsg = oError.message + " (" + oError.response.statusCode + " "
+					+ oError.response.statusText + "): "
+					+ oError.response.body;
 			}
-			sErrorMsg += oError.response.statusCode + "," +
-			oError.response.statusText + "," +
-			oError.response.body;
 			mParameters.statusCode = oError.response.statusCode;
 			mParameters.statusText = oError.response.statusText;
 			mParameters.headers = oError.response.headers;
 			mParameters.responseText = oError.response.body;
+		} else {
+			sErrorMsg = "The following problem occurred: " + oError.message;
 		}
-		Log.fatal(sErrorMsg);
+		if (!oError.$reported) {
+			Log.error(sErrorMsg, undefined, "sap.ui.model.odata.v2.ODataModel");
+		}
+		oError.$reported = true;
 
 		return mParameters;
 	};
