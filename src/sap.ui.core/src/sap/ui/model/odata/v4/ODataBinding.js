@@ -567,16 +567,22 @@ sap.ui.define([
 	 * {@link topic:54e0ddf695af4a6c978472cecb01c64d Initialization and Read Requests}.
 	 *
 	 * @returns {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding|sap.ui.model.odata.v4.ODataPropertyBinding}
-	 *   The root binding or <code>undefined</code> if this binding is not yet resolved.
+	 *   The root binding or <code>undefined</code> if this binding is unresolved (see
+	 *   {@link sap.ui.model.Binding#isResolved}).
 	 *
 	 * @public
 	 * @since 1.53.0
 	 */
 	ODataBinding.prototype.getRootBinding = function () {
-		if (this.bRelative && this.oContext && this.oContext.getBinding) {
-			return this.oContext.getBinding().getRootBinding();
+		if (this.bRelative) {
+			if (!this.oContext) {
+				return undefined;
+			}
+			if (this.oContext.getBinding) {
+				return this.oContext.getBinding().getRootBinding();
+			}
 		}
-		return this.bRelative && !this.oContext ? undefined : this;
+		return this;
 	};
 
 	/**
@@ -622,8 +628,8 @@ sap.ui.define([
 	 *
 	 * Note: If this binding is relative, its data is cached separately for each parent context
 	 * path. This method returns <code>true</code> if there are pending changes for the current
-	 * parent context path of this binding. If this binding is unresolved, it returns
-	 * <code>false</code>.
+	 * parent context path of this binding. If this binding is unresolved (see
+	 * {@link sap.ui.model.Binding#isResolved}), it returns <code>false</code>.
 	 *
 	 * @returns {boolean}
 	 *   <code>true</code> if the binding is resolved and has pending changes
@@ -1052,7 +1058,7 @@ sap.ui.define([
 					? fnProcessor(null, that.getRelativePath(sPath), that)
 					: undefined; // no cache
 			}
-			if (that.isRelative() && that.oContext && that.oContext.withCache) {
+			if (that.bRelative && that.oContext && that.oContext.withCache) {
 				return that.oContext.withCache(fnProcessor,
 					sPath[0] === "/" ? sPath : _Helper.buildPath(that.sPath, sPath),
 					bSync, bWithOrWithoutCache);

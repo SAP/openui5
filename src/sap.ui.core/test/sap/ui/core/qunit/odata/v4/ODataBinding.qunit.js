@@ -1792,7 +1792,7 @@ sap.ui.define([
 				oCachePromise : bSync ? {/*must not be used*/} : SyncPromise.resolve(null),
 				oContext : oContext,
 				sPath : "binding/path",
-				isRelative : function () {}
+				bRelative : true
 			}),
 			oContextResult = {},
 			sPath = "foo",
@@ -1800,7 +1800,6 @@ sap.ui.define([
 			oPromise,
 			bWithOrWithoutCache = {};
 
-		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
 		this.mock(_Helper).expects("buildPath").withExactArgs(oBinding.sPath, sPath).returns("~");
 		this.mock(oContext).expects("withCache")
 			.withExactArgs(sinon.match.same(fnProcessor), "~", bSync,
@@ -1826,7 +1825,7 @@ sap.ui.define([
 				oCache : bSync ? null : {/*must not be used*/},
 				oCachePromise : bSync ? {/*must not be used*/} : SyncPromise.resolve(null),
 				oContext : oContext,
-				isRelative : function () {}
+				bRelative : true
 			}),
 			oContextResult = {},
 			sPath = "/foo",
@@ -1835,7 +1834,6 @@ sap.ui.define([
 			bWithOrWithoutCache = {};
 
 		// oBinding binding might still be relative but while bubbling up sPath is already absolute
-		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
 		this.mock(_Helper).expects("buildPath").never();
 		this.mock(oContext).expects("withCache")
 			.withExactArgs(sinon.match.same(fnProcessor), sPath, bSync,
@@ -1863,7 +1861,7 @@ sap.ui.define([
 				oCachePromise : bSync ? {/*must not be used*/} : SyncPromise.resolve(oCache),
 				oContext : oContext,
 				sPath : "binding/path",
-				isRelative : function () {}
+				bRelative : true
 			}),
 			oContextResult = {},
 			sPath = "/foo",
@@ -1872,7 +1870,6 @@ sap.ui.define([
 			bWithOrWithoutCache = {};
 
 		this.mock(oBinding).expects("getRelativePath").withExactArgs(sPath).returns(undefined);
-		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
 		this.mock(oContext).expects("withCache")
 			.withExactArgs(sinon.match.same(fnProcessor), sPath, bSync,
 				sinon.match.same(bWithOrWithoutCache))
@@ -1896,13 +1893,12 @@ sap.ui.define([
 				oCachePromise : SyncPromise.resolve(oCache),
 				oContext : oContext,
 				sPath : "binding/path",
-				isRelative : function () {}
+				bRelative : false
 			}),
 			sPath = "/foo",
 			oPromise;
 
 		this.mock(oBinding).expects("getRelativePath").withExactArgs(sPath).returns(undefined);
-		this.mock(oBinding).expects("isRelative").withExactArgs().returns(false);
 		this.mock(oContext).expects("withCache").never();
 
 		// code under test
@@ -1954,7 +1950,6 @@ sap.ui.define([
 		var oBinding = new ODataBinding({
 				oCache : undefined,
 				oCachePromise : SyncPromise.resolve(Promise.resolve(null))
-//				isRelative : function () {}
 			});
 
 		// code under test
@@ -1966,10 +1961,8 @@ sap.ui.define([
 		var oBinding = new ODataBinding({
 				oCache : null,
 				oCachePromise : SyncPromise.resolve(null),
-				isRelative : function () {}
+				bRelative : false
 			});
-
-		this.mock(oBinding).expects("isRelative").withExactArgs().returns(false);
 
 		// code under test
 		assert.strictEqual(oBinding.withCache().unwrap(), undefined);

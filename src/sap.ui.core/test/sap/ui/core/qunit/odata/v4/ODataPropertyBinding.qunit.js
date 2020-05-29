@@ -1884,7 +1884,7 @@ sap.ui.define([
 			.returns(undefined);
 		assert.throws(function () {
 			oPropertyBinding[sFunctionName]();
-		}, new Error(oPropertyBinding + " is not resolved yet"));
+		}, new Error(oPropertyBinding + " is unresolved"));
 	});
 });
 
