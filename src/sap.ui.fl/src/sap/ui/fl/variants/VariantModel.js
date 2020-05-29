@@ -579,6 +579,7 @@ sap.ui.define([
 			title: oDuplicateVariantData.content.content.title,
 			originalTitle: oDuplicateVariantData.content.content.title,
 			originalExecuteOnSelect: oDuplicateVariantData.content.content.executeOnSelect,
+			executeOnSelect: false,
 			favorite: true,
 			originalFavorite: true,
 			rename: true,
