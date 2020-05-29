@@ -1370,6 +1370,7 @@ html:not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_belize_hcb) .sapUiJSD a
 	left: 0;
 	top: 2.5rem;
 	margin-left: -0.2rem;
+	box-sizing: border-box;
 }
 
 .sapUiDemokit .sapUiVlt.sapUiDocumentationDocumentationHeading .sapMText {
