@@ -20,7 +20,7 @@
 					<Button type="Back" press="onNavBack" tooltip="{i18n>SAMPLE_BACK_BTN_TOOLTIP}" enabled="{= ${/disableNavBack} === undefined }"/>
 				</contentLeft>
 				<contentMiddle>
-					<Title text="{/title}"/>
+					<Title text="{/title}" tooltip="{/title}"/>
 				</contentMiddle>
 				<contentRight>
 					<Button id="apiRefButton" text="{i18n>SAMPLE_API_REFERENCE_BTN}" type="Emphasized" press="onAPIRefPress" visible="false"/>
