@@ -69,14 +69,14 @@ sap.ui.define([
 				valueState: ValueState.None
 			},
 			frameWidth: {
-				value: undefined,
+				value: 100,
 				valueState: ValueState.None
 			},
 			frameWidthUnit: {
 				value: "%"
 			},
 			frameHeight: {
-				value: undefined,
+				value: 100,
 				valueState: ValueState.None
 			},
 			frameHeightUnit: {
