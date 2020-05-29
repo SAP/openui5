@@ -107,7 +107,6 @@ sap.ui.define(
 				role: "slider",
 				orientation: "horizontal",
 				valuemin: 0,
-				readonly: null,
 				disabled: !oControl.getEnabled() || oControl.getDisplayOnly(),
 				roledescription: oResourceBundle.getText("RATING_INDICATOR_ARIA_ROLEDESCRIPTION")
 			});
