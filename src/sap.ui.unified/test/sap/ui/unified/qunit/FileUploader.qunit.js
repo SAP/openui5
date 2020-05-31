@@ -15,7 +15,7 @@ sap.ui.define([
  	 */
 	var createFileUploader = function (mProps) {
 		mProps = mProps || {};
-		return new FileUploader("upload_1", {
+		return new FileUploader({
 			name: mProps.name || "test1",
 			enabled: true,
 			uploadUrl: mProps.uploadUrl || "../../../../upload/",
