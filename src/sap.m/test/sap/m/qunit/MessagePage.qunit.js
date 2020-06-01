@@ -324,4 +324,28 @@ sap.ui.define([
 			this.oMessagePage = null;
 		}
 	});
+
+	/* --------------------------- Accessibility -------------------------------------- */
+	QUnit.module("Accessibility", {
+		beforeEach: function() {
+			this.oMessagePage = createMessagePageWithAggregations();
+			this.oMessagePage.placeAt('content');
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oMessagePage.destroy();
+			this.oMessagePage = null;
+		}
+	});
+
+	QUnit.test("ARIA attributes", function(assert) {
+		// Arrange
+		var $oMessagePage = this.oMessagePage.$(),
+			sExpectedRoleDescription = sap.ui.getCore().getLibraryResourceBundle("sap.m")
+				.getText(this.oMessagePage.constructor.ARIA_ROLE_DESCRIPTION);
+
+		// Assert
+		assert.strictEqual($oMessagePage.attr('aria-roledescription'), sExpectedRoleDescription, "aria-roledescription is set");
+	});
+
 });

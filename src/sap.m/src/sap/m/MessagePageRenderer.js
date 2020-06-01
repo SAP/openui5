@@ -38,6 +38,7 @@ sap.ui.define(['sap/ui/core/library'],
 
 			MessagePageRenderer.startOpeningDiv = function(oRm, oMessagePage) {
 				oRm.openStart("div", oMessagePage);
+				oRm.attr("aria-roledescription", oMessagePage._sAriaRoleDescription);
 				oRm.class("sapMMessagePage");
 
 				if (oMessagePage.getTextDirection() !== TextDirection.Inherit) {

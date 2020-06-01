@@ -39,7 +39,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		if (oDynamicPage.getToggleHeaderOnTitleClick()) {
 			oRm.class("sapFDynamicPageTitleClickEnabled");
 		}
-
+		oRm.attr("aria-roledescription", oDynamicPage._getAriaRoleDescription());
 		oRm.accessibilityState(oDynamicPage, oDynamicPage._formatLandmarkInfo(oLandmarkInfo, "Root"));
 		oRm.openEnd();
 		// Renders Dynamic Page Custom ScrollBar for Desktop mode

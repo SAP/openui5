@@ -2561,4 +2561,37 @@ function (
 		// assert
 		assert.ok(oUpdateMediaStyleSpy.notCalled, "Media styles were not changed");
 	});
+
+	/* --------------------------- Accessibility -------------------------------------- */
+	QUnit.module("Accessibility", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPage();
+			oUtil.renderObject(this.oDynamicPage);
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("ARIA attributes", function(assert) {
+		// Arrange
+		var $oDynamicPage = this.oDynamicPage.$(),
+		    sExpectedRoleDescription = Core.getLibraryResourceBundle("sap.f")
+			    .getText(DynamicPage.ARIA_ROLE_DESCRIPTION);
+
+		// Assert
+		assert.strictEqual($oDynamicPage.attr('aria-roledescription'),sExpectedRoleDescription, "aria-roledescription is set");
+	});
+
+	QUnit.test("_setAriaRoleDescription/_getAriaRoleDescription", function(assert) {
+		// Arrange
+		var sRoleDescription = "Some Role Description";
+
+		// Act
+		this.oDynamicPage._setAriaRoleDescription(sRoleDescription);
+
+		// Assert
+		assert.strictEqual(this.oDynamicPage._getAriaRoleDescription(), sRoleDescription);
+	});
 });
