@@ -157,6 +157,11 @@ sap.ui.define([
 	});
 
 	/**
+	 * STATIC MEMBERS
+	 */
+	OverflowToolbar.ARIA_ROLE_DESCRIPTION = "OVERFLOW_TOOLBAR_ROLE_DESCRIPTION";
+
+	/**
 	 * A shorthand for calling Toolbar.prototype methods
 	 * @param {string} sFuncName - the name of the method
 	 * @param aArguments - the arguments to pass in the form of array
@@ -212,6 +217,10 @@ sap.ui.define([
 		this._aAllCollections = [this._aMovableControls, this._aToolbarOnlyControls, this._aPopoverOnlyControls];
 
 		this.addStyleClass("sapMOTB");
+
+		this._sAriaRoleDescription = sap.ui.getCore()
+			.getLibraryResourceBundle("sap.m")
+			.getText(OverflowToolbar.ARIA_ROLE_DESCRIPTION);
 	};
 
 	OverflowToolbar.prototype.exit = function () {
