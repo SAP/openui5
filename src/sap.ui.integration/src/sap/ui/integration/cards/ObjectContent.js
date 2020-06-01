@@ -175,10 +175,10 @@ sap.ui.define([
 								break;
 							case 'email':
 								if (oItem.value) {
-									aBindingParts.push(jQuery.extend({}, oItem.value));
+									aBindingParts.push(oItem.value);
 								}
 								if (oItem.emailSubject) {
-									aBindingParts.push(jQuery.extend({}, oItem.emailSubject));
+									aBindingParts.push(oItem.emailSubject);
 								}
 
 								vHref = BindingHelper.formattedProperty(aBindingParts, function (sValue, sEmailSubject) {

@@ -141,14 +141,14 @@ function (
 				return sFirstValue + sSecondValue + sThirdValue;
 			},
 			vFormattedValue = BindingHelper.formattedProperty(aParts, fnFormatter);
-
 		// assert
 		assert.strictEqual(typeof vFormattedValue, "object", "Should return new object - binding info.");
 		assert.ok(vFormattedValue.hasOwnProperty("parts"), "The new binding info should have 'parts'.");
-		assert.deepEqual(aParts, vFormattedValue.parts, "The new binding info 'parts' should be as given.");
+		assert.deepEqual(aParts[0], vFormattedValue.parts[0], "Objects in the new binding info 'parts' should be as given.");
+		assert.deepEqual(typeof vFormattedValue.parts[0], "object", "Strings in the new binding info 'parts' should be returned as objects.");
 		assert.ok(vFormattedValue.hasOwnProperty("formatter"), "The new binding info should have attached formatter.");
 		assert.strictEqual(vFormattedValue.formatter, fnFormatter,"The formatter should be the passed formatter.");
-		assert.strictEqual(vFormattedValue.parts[1], "second text with no binding", "Plain strings should NOT generate something different than string.");
+		assert.strictEqual(vFormattedValue.parts[1].value, "second text with no binding", "Plain strings should return always with key 'value' and value the string itself.");
 	});
 
 	QUnit.test("Call #formattedProperty with binding info 'object' and complex binding", function (assert) {

@@ -121,7 +121,7 @@ sap.ui.define([
 
 			if (Array.isArray(vValue)) { // multiple values - create binding info with 'parts' and 'formatter'
 				vBindingInfo.parts = vValue.map(function (vInfo) {
-					return typeof vInfo === "object" ? extend({} , vInfo) : vInfo;
+					return typeof vInfo === "object" ? extend({} , vInfo) : {value: vInfo};
 				});
 
 				vBindingInfo.formatter = fnFormatter;
