@@ -86,21 +86,14 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oItem The item which styles have to be updated
 	 */
 	GridItemLayoutData.prototype.setItemStyles = function (oItem) {
-
-		var oLayoutData = this,
-			oProperties,
-			sProp,
-			sPropValue;
-
 		if (!oItem) {
 			return;
 		}
 
-		oProperties = oLayoutData.getMetadata().getProperties();
-
-		for (sProp in mGridItemProperties) {
+		var oProperties = this.getMetadata().getProperties();
+		for (var sProp in mGridItemProperties) {
 			if (oProperties[sProp]) {
-				sPropValue = oLayoutData.getProperty(sProp);
+				var sPropValue = this.getProperty(sProp);
 
 				if (typeof sPropValue !== "undefined") {
 					GridItemLayoutData._setItemStyle(oItem, mGridItemProperties[sProp], sPropValue);

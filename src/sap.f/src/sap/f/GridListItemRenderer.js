@@ -47,7 +47,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oLI An object representation of the control that is rendered.
 	 * @override
 	 */
-	GridListItemRenderer.renderContentFormer =  function (oRm, oLI) {
+	GridListItemRenderer.renderContentFormer = function (oRm, oLI) {
 		this.renderHighlight(oRm, oLI);
 	};
 
@@ -59,7 +59,6 @@ sap.ui.define([
 	 * @override
 	 */
 	GridListItemRenderer.renderLIContentWrapper = function (oRm, oLI) {
-
 		oRm.openStart("div").class("sapFGLIWrapper").openEnd();
 			this.renderToolbar(oRm, oLI);
 			ListItemBaseRenderer.renderLIContentWrapper.apply(this, arguments);
@@ -131,4 +130,4 @@ sap.ui.define([
 	};
 
 	return GridListItemRenderer;
-});
+}, /* bExport= */ true);

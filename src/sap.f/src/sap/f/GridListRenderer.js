@@ -13,23 +13,24 @@ sap.ui.define([
 	 * @namespace
 	 */
 	var GridListRenderer = Renderer.extend(ListBaseRenderer);
+	GridListRenderer.apiVersion = 2;
 
 	/**
 	 * This hook method is called to render container attributes.
 	 * @override
 	 */
-	GridListRenderer.renderContainerAttributes = function (rm, oControl) {
+	GridListRenderer.renderContainerAttributes = function (oRM, oControl) {
 		ListBaseRenderer.renderContainerAttributes.apply(this, arguments);
-		rm.addClass("sapFGridList");
+		oRM.class("sapFGridList");
 	};
 
 	/**
 	 * This hook method is called to render list tag
 	 * @override
 	 */
-	GridListRenderer.renderListStartAttributes = function (rm, oControl) {
+	GridListRenderer.renderListStartAttributes = function (oRM, oControl) {
 		ListBaseRenderer.renderListStartAttributes.apply(this, arguments);
-		this.renderGridAttributes(rm, oControl);
+		this.renderGridAttributes(oRM, oControl);
 	};
 
 	/**
@@ -38,18 +39,18 @@ sap.ui.define([
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	GridListRenderer.renderGridAttributes = function (rm, oControl) {
+	GridListRenderer.renderGridAttributes = function (oRM, oControl) {
 		var oGridLayout = oControl.getGridLayoutConfiguration();
 		if (oGridLayout) {
-			oGridLayout.renderSingleGridLayout(rm);
+			oGridLayout.renderSingleGridLayout(oRM);
 		} else {
-			rm.addClass("sapFGridListDefault");
+			oRM.class("sapFGridListDefault");
 		}
 
 		if (oControl.isGrouped()) {
-			rm.addClass("sapFGridListGroup");
+			oRM.class("sapFGridListGroup");
 		}
 	};
 
 	return GridListRenderer;
-});
+}, /* bExport= */ true);

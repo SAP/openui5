@@ -269,15 +269,13 @@ sap.ui.define([
 	/**
 	 * Render display:grid styles. Used for non-responsive grid layouts.
 	 *
-	 * @param {sap.ui.core.RenderManager} rm The render manager of the Control which wants to render display:grid styles
+	 * @param {sap.ui.core.RenderManager} oRM The render manager of the Control which wants to render display:grid styles
 	 * @param {sap.ui.layout.cssgrid.GridLayoutBase} oGridLayout The grid layout to use to apply display:grid styles
 	 */
-	GridLayoutBase.prototype.renderSingleGridLayout = function (rm) {
-		var oGridSettings = this && this.getActiveGridSettings(),
-			sProp,
-			sPropValue;
+	GridLayoutBase.prototype.renderSingleGridLayout = function (oRM) {
+		var oGridSettings = this.getActiveGridSettings();
 
-		rm.addStyle("display", "grid");
+		oRM.style("display", "grid");
 
 		// If the GridLayoutBase is responsive the grid styles will be applied onAfterRendering.
 		if (!oGridSettings || this.isResponsive()) {
@@ -285,14 +283,15 @@ sap.ui.define([
 		}
 
 		var oProperties = oGridSettings.getMetadata().getProperties();
-
-		for (sProp in mGridProperties) {
+		for (var sProp in mGridProperties) {
 			if (oProperties[sProp]) {
-				sPropValue = oGridSettings.getProperty(sProp);
+				var sPropValue = oGridSettings.getProperty(sProp);
+
 				if (sProp === "gridAutoFlow") {
 					sPropValue = mGridAutoFlow[sPropValue];
 				}
-				rm.addStyle(mGridProperties[sProp], sPropValue);
+
+				oRM.style(mGridProperties[sProp], sPropValue);
 			}
 		}
 	};

@@ -15,7 +15,6 @@ sap.ui.define([], function() {
 	 * @constructor
 	 */
 	var GridBoxLayoutStyleHelper = {};
-
 	GridBoxLayoutStyleHelper._mInstanceStyles = {};
 
 	/**
@@ -40,9 +39,9 @@ sap.ui.define([], function() {
 		if (!oHelper) {
 			oHelper = document.createElement("style");
 			oHelper.id = "sapUiLayoutCSSGridGridBoxLayoutStyleHelper";
-			oHelper.type = "text/css";
-			document.getElementsByTagName("head")[0].appendChild(oHelper);
+			document.head.appendChild(oHelper);
 		}
+
 		return oHelper;
 	};
 
