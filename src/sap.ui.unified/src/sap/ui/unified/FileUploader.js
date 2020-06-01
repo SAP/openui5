@@ -1212,7 +1212,7 @@ sap.ui.define([
 
 		if ((Device.browser.edge || Device.browser.internet_explorer) && oXhr.file.type && oXhr.xhr.readyState == 1) {
 			var sContentType = oXhr.file.type;
-			oXhr.xhr.setRequestHeader("Content-Type", sContentType);
+			oXhr.xhr.setRequestHeader("Content-Type", encodeURIComponent(sContentType));
 			oXhr.requestHeaders.push({name: "Content-Type", value: sContentType});
 		}
 
@@ -1617,7 +1617,7 @@ sap.ui.define([
 					}
 					sHeader = aRequestHeaders[k].name;
 					sValue = aRequestHeaders[k].value;
-					oXhrEntry.xhr.setRequestHeader(sHeader, sValue);
+					oXhrEntry.xhr.setRequestHeader(sHeader, encodeURIComponent(sValue));
 				}
 			}
 			if (this.getUseMultipart()) {

@@ -3,11 +3,12 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/FileUploader",
+	"sap/ui/unified/FileUploaderParameter",
 	"sap/ui/core/TooltipBase",
 	"sap/m/Label",
 	"sap/m/Text",
 	"sap/ui/Device"
-], function(qutils, FileUploader, TooltipBase, Label, Text, Device) {
+], function(qutils, FileUploader, FileUploaderParameter, TooltipBase, Label, Text, Device) {
 	"use strict";
 
 	/**
@@ -599,6 +600,36 @@ sap.ui.define([
 				"length" : 2
 			},
 			oSpy = this.spy(window.XMLHttpRequest.prototype, "send");
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oFileUploader._sendFilesWithXHR(aFiles);
+
+		assert.ok(oSpy.called, "XHR request is made");
+
+		//cleanup
+		oFileUploader.destroy();
+	});
+
+	QUnit.test("Testing sending passed files with XHR", function (assert) {
+		var oFileUploader = createFileUploader(),
+			aFiles = {
+				"0": createFakeFile({
+					name: "příjemce.html",
+					type: "text/html",
+					size: 404450
+				}),
+				"length" : 1
+			},
+			oSpy = this.spy(window.XMLHttpRequest.prototype, "send");
+
+		oFileUploader.addHeaderParameter(
+			new FileUploaderParameter({
+				name: "one",
+				value: "příjemce.html"
+			})
+		);
 
 		oFileUploader.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
