@@ -169,10 +169,10 @@
 		"configuration": {
 			"parameters": {
 				"city": {
-					"value": "Walldorf",
+					"value": "Berlin",
 					"type": "string"
 				},
-				"numberOfArticles": {
+				"numberOfCustomers": {
 					"value": 5,
 					"type": "integer"
 				}
@@ -180,23 +180,27 @@
 		},
 		"type": "List",
 		"header": {
-			"title": "News for {{parameters.city}}"
+			"title": "Customers & Suppliers of '{{parameters.companyName}}'",
+			"subTitle": "Situated in {{parameters.city}}.",
+			"icon": {
+				"src": "sap-icon://customer-briefing"
+			}
 		},
 		"content": {
 			"data": {
 				"request": {
-					"url": "https://newsapi.org/v2/everything?q={{parameters.city}}&pageSize={{parameters.numberOfArticles}}&apiKey=da959b2d34334e1db76c53f54a1303aa"
+					"url": "https://services.odata.org/V2/Northwind/Northwind.svc/Customer_and_Suppliers_by_Cities",
+					"parameters": {
+						"$filter": "{{parameters.city}}",
+					}
 				},
 				"path": "/articles"
 			},
-			"maxItems": "{{parameters.numberOfArticles}}",
 			"item": {
-				"icon": {
-					"src": "{urlToImage}"
-				},
-				"title": "{title}",
-				"description": "{description}"
-			}
+				"title": "{CompanyName}",
+				"description": "{ContactName}",
+			},
+			"maxItems": {{parameters.numberOfCustomers}}
 		}
 	}
 }</pre>

@@ -1,10 +1,10 @@
 {
 	"_version": "1.15.0",
 	"sap.app": {
-		"id": "card.explorer.parameters.list.card",
+		"id": "card.explorer.parameters.table.card",
 		"type": "card",
 		"title": "Sample of a Card with Parameters",
-		"subTitle": "Sample of an Card with Parameters",
+		"subTitle": "Sample of a Card with Parameters",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
@@ -26,102 +26,102 @@
 		}
 	},
 	"sap.card": {
+		"type": "Table",
 		"configuration": {
 			"parameters": {
-				"city": {
-					"value": "Berlin",
+				"country": {
+					"value": "Germany",
 					"type": "string",
-					"label": "City",
-					"description": "The city for which the news is displayed."
+					"label": "Ship Country",
+					"description": "The country in which the order will be shipped."
 				},
-				"agencyName": {
-					"value": "NewsAPI",
+				"northwindServiceUrl": {
+					"value": "https://services.odata.org/V4/Northwind/Northwind.svc",
 					"type": "string",
-					"label": "News Agency Name",
-					"description": "The name of the agency, which provides the news."
+					"label": "Northwind Service URL",
+					"description": "The URL of the web service."
 				},
-				"agencyUrl": {
-					"value": "https://newsapi.org",
-					"type": "string",
-					"label": "News Agency URL",
-					"description": "The URL address of the news agency."
-				},
-				"numberOfArticles": {
-					"value": 4,
-					"type": "integer",
-					"label": "Maximum Articles",
-					"description": "Defines how many articles will be displayed at most."
-				},
-				"fakeNewsIndex": {
-					"value": 0.035,
+				"freightLimit": {
+					"value": 40.45,
 					"type": "number",
-					"label": "Fake News Index",
-					"description": "Shows what percent of the news is fake."
+					"label": "Freight Limit",
+					"description": "Defines the freight limit of the order."
 				},
 				"clickable": {
 					"value": true,
 					"type": "boolean",
-					"label": "Read Article Details",
-					"description": "Defines whether articles can be clicked and show more information."
+					"label": "Are the table rows clickable",
+					"description": "View order details."
 				},
-				"from": {
-					"value": "{{parameters.TODAY_ISO}}",
-					"type": "date",
+				"maxNumberOfOrders": {
+					"value": 7,
+					"type": "integer",
+					"label": "Maximum number of orders",
+					"description": "Defines how many orders will be displayed at most."
+				},
+				"fromDate": {
+					"value": "1995-09-01T00:00:00Z",
+					"type": "datetime",
 					"label": "From",
 					"description": "Start date for the searched period."
 				},
 				"to": {
-					"value": "{{parameters.NOW_ISO}}",
-					"type": "datetime",
+					"value": "{{parameters.TODAY_ISO}}",
+					"type": "date",
 					"label": "To",
-					"description": "End date and time for the searched period."
+					"description": "End date for the searched period."
 				}
 			}
 		},
-		"type": "List",
 		"header": {
-			"title": "Recent news in  {{parameters.city}}",
-			"subTitle": "Provided by {{parameters.agencyName}}. Fake news index {= format.percent({{parameters.fakeNewsIndex}})}.",
+			"title": "Orders update until {{parameters.to}}",
+			"subTitle": "Situated in {{parameters.country}} with freight limit {{parameters.freightLimit}}",
 			"icon": {
-				"src": "sap-icon://newspaper"
-			},
-			"status": {
-				"text": "4 of 10"
-			},
-			"actions": [
-				{
-					"type": "Navigation",
-					"parameters": {
-						"url": "{{parameters.agencyUrl}}"
-					}
-				}
-			]
+				"src": "sap-icon://choropleth-chart"
+			}
 		},
 		"content": {
 			"data": {
 				"request": {
-					"url": "{{parameters.agencyUrl}}/v2/everything?from={{parameters.from}}&to={{parameters.to}}&q={{parameters.city}}&sortBy=relevancy&apiKey=da959b2d34334e1db76c53f54a1303aa&language=en&pageSize={{parameters.numberOfArticles}}"
+					"url": "{{parameters.northwindServiceUrl}}/Orders",
+					"parameters": {
+						"$format": "json",
+						"$filter": "OrderDate gt {{parameters.fromDate}} and OrderDate lt {{parameters.to}} and ShipCountry eq '{{parameters.country}}'",
+						"$orderby": "CustomerID"
+					}
 				},
-				"path": "/articles"
+				"path": "/value/"
 			},
-			"item": {
-				"icon": {
-					"src": "{urlToImage}"
-				},
-				"title": "{title}",
-				"description": "{description}",
-				"info": {
-					"value": "{= format.dateTime(${publishedAt}, {format: 'yMMMd'})}"
-				},
+			"maxItems": "{{parameters.maxNumberOfOrders}}",
+
+			"row": {
+				"columns": [{
+						"title": "City",
+						"subTitile": "date",
+						"value": "{ShipCity}",
+						"identifier": true
+					},
+					{
+						"title": "Company",
+						"value": "{CustomerID}"
+					},
+					{
+						"title": "Freight",
+						"value": "{Freight}",
+						"hAlign": "End",
+						"state": "{= ${Freight} < {{parameters.freightLimit}} ? 'Success' : 'Error'}"
+					}
+				],
 				"actions": [
 					{
 						"type": "Navigation",
 						"enabled": "{{parameters.clickable}}",
-						"url": "{url}"
+						"parameters": {
+							"url": "https://sap.com"
+						}
 					}
 				]
-			},
-			"maxItems": "{{parameters.numberOfArticles}}"
+			}
 		}
 	}
 }
