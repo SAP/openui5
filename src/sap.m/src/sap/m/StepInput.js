@@ -328,7 +328,7 @@ function(
 
 		NumericInputRenderer.writeInnerAttributes = function(oRm, oControl) {
 			var oStepInput = oControl.getParent(),
-				mAccAttributes = {};
+				mAccAttributes = this.getAccessibilityState(oControl);
 			// inside the Input this function also sets explicitly textAlign to "End" if the type
 			// of the Input is Numeric (our case)
 			// so we have to overwrite it by leaving only the text direction
@@ -340,7 +340,7 @@ function(
 			}
 			// prevent rendering of aria-disabled attribute to avoid having
 			// both aria-disabled and disabled at the same time
-			mAccAttributes["disabled"] = null;
+			mAccAttributes.disabled = null;
 
 			oRm.accessibilityState(oStepInput,  mAccAttributes);
 		};
@@ -350,10 +350,10 @@ function(
 		 * Overwrites the accessibility state using the <code>getAccessibilityState</code> method of the <code>InputBaseRenderer</code>.
 		 *
 		 * @param {NumericInput} oNumericInput The numeric input instance
-		 * @returns {Array} mAccAttributes
+		 * @returns {Array} mAccessibilityState
 		 */
 		NumericInputRenderer.getAccessibilityState = function(oNumericInput) {
-			var mAccAttributes = InputRenderer.getAccessibilityState(oNumericInput),
+			var mAccessibilityState = InputRenderer.getAccessibilityState(oNumericInput),
 				oStepInput = oNumericInput.getParent(),
 				fMin = oStepInput._getMin(),
 				fMax = oStepInput._getMax(),
@@ -367,7 +367,7 @@ function(
 				sDescribedBy = oStepInput.getAriaDescribedBy().join(" "),
 				sResultingLabelledBy;
 
-			mAccAttributes["valuenow"] = fNow;
+				mAccessibilityState.valuenow = fNow;
 
 			if (sDescription) {
 				// If there is a description, we should add a reference to it in the aria-labelledby
@@ -377,22 +377,26 @@ function(
 			sResultingLabelledBy = aReferencingLabels.concat(aAriaLabelledByRefs).join(" ");
 
 			if (typeof fMin === "number") {
-				mAccAttributes["valuemin"] = fMin;
+				mAccessibilityState.valuemin = fMin;
 			}
 
 			if (typeof fMax === "number") {
-				mAccAttributes["valuemax"] = fMax;
+				mAccessibilityState.valuemax = fMax;
+			}
+
+			if (!oStepInput.getEditable()) {
+				mAccessibilityState.readonly = true;
 			}
 
 			if (sDescribedBy){
-				mAccAttributes["describedby"] = sDescribedBy;
+				mAccessibilityState.describedby = sDescribedBy;
 			}
 
 			if (sResultingLabelledBy){
-				mAccAttributes["labelledby"] = sResultingLabelledBy;
+				mAccessibilityState.labelledby = sResultingLabelledBy;
 			}
 
-			return mAccAttributes;
+			return mAccessibilityState;
 		};
 
 		var NumericInput = Input.extend("sap.m.internal.NumericInput", {
@@ -468,19 +472,6 @@ function(
 				this._verifyValue();
 				this._bNeedsVerification = false;
 			}
-		};
-
-		StepInput.prototype.setDescription = function(sDescription) {
-			this.setProperty("description", sDescription);
-			if (sDescription) {
-				this.addAriaLabelledBy(this._getInput().getId() + "-descr");
-			}
-
-			return this;
-		};
-
-		StepInput.prototype.getDescription = function() {
-			return this.getProperty("description");
 		};
 
 		StepInput.prototype.onAfterRendering = function () {
