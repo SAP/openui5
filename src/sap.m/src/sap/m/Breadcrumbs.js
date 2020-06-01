@@ -191,7 +191,7 @@ sap.ui.define([
 				id: this._getAugmentedId("currentText"),
 				text: this.getCurrentLocationText(),
 				wrapping: false
-			});
+			}).addStyleClass("sapMBreadcrumbsCurrentLocation");
 
 			oCurrentLocation.addEventDelegate({
 				onAfterRendering: function () {

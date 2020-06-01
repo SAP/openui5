@@ -187,6 +187,7 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 
 		assert.ok(oStandardBreadCrumbsControl.getCurrentLocationText(), "has current location text setted");
 		assert.ok(oStandardBreadCrumbsControl._getCurrentLocation(), "has current location text control instantiated");
+		assert.ok(oStandardBreadCrumbsControl._getCurrentLocation().hasStyleClass("sapMBreadcrumbsCurrentLocation"), "current location has a correct class");
 
 		oStandardBreadCrumbsControl.setCurrentLocationText(sNewCurrentLocationVal);
 		assert.strictEqual(oStandardBreadCrumbsControl.getCurrentLocationText(), sNewCurrentLocationVal, "current location value changed to sNewCurrentLocationVal");
