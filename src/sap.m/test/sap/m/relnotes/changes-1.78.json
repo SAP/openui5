@@ -66,5 +66,55 @@
         ]
       }
     ]
+  },
+  "1.78.1": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "098aa2e9a54667fd861e4d85f6a066fccb612d1e",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Texts are no longer cropped in Shell",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080138602"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080137529"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080135424"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070209940"
+          }
+        ]
+      },
+      {
+        "id": "f36e40af3e114a94e8980d4350ac6fbb9cf84e74",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Token truncation set correctly when aggregation is updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070228761"
+          }
+        ]
+      },
+      {
+        "id": "64bc804efc566b83bd4a825114ebc94270104750",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: fixed concurrent measuring",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070222480"
+          }
+        ]
+      }
+    ]
   }
 }
