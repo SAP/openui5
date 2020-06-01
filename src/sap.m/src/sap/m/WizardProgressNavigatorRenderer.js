@@ -119,6 +119,14 @@ sap.ui.define([], function () {
 			oRm.attr("aria-disabled", "true");
 		}
 
+		oRm.attr("aria-posinset", iStepNumber);
+
+		if (!oControl.getVaryingStepCount()) {
+			oRm.attr("aria-setsize", oControl.getStepCount());
+		} else {
+			oRm.attr("aria-setsize", "-1");
+		}
+
 		oRm.openEnd();
 
 		oRm.openStart("div").class("sapMWizardProgressNavStepContainer");

@@ -371,14 +371,22 @@ sap.ui.define([
 				stepCount: 5
 			});
 
+			this.oBranchingProgressNavigator = new WizardProgressNavigator({
+				varyingStepCount: true
+			});
+
 			this.oProgressNavigator.placeAt("qunit-fixture");
+			this.oBranchingProgressNavigator.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		},
 		afterEach: function () {
 			this.oProgressNavigator.destroy();
+			this.oBranchingProgressNavigator.destroy();
+
 			this.oProgressNavigator = null;
+			this.oBranchingProgressNavigator = null;
 		}
 	});
 
@@ -496,6 +504,33 @@ sap.ui.define([
 		for (var i = 0; i < $steps.length; i++){
 			var sStepTitle = sStepText + " " + (i + 1);
 			assert.strictEqual($steps.eq(i).attr("aria-roledescription"), sStepTitle, "'aria-roledescription' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + sStepTitle + "'");
+		}
+	});
+
+	QUnit.test("WizardProgressNavigator aria-posinset and aria-setsize attribute should be set correctly.", function (assert) {
+		//Arrange
+		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep"),
+			$branchingSteps = this.oBranchingProgressNavigator.$().find(".sapMWizardProgressNavStep");
+
+		//Assert
+		for (var i = 0; i < $steps.length; i++){
+			assert.strictEqual($steps.eq(i).attr("aria-posinset"), "" + (i + 1) + "", "'aria-posinset' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + i + "'");
+			assert.strictEqual($steps.eq(i).attr("aria-setsize"), "5", "'aria-setsize' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + 5 + "'");
+		}
+
+		for (var i = 0; i < $branchingSteps.length; i++){
+			assert.strictEqual($branchingSteps.eq(i).attr("aria-posinset"), "" + (i + 1) + "", "'aria-posinset' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + i + "'");
+			assert.strictEqual($branchingSteps.eq(i).attr("aria-setsize"), "-1", "'aria-setsize' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + -1 + "'");
+		}
+
+		//Act
+		this.oBranchingProgressNavigator.setVaryingStepCount(false);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		for (var i = 0; i < $branchingSteps.length; i++){
+			assert.strictEqual($branchingSteps.eq(i).attr("aria-posinset"), "" + (i + 1) + "", "'aria-posinset' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + i + "'");
+			assert.strictEqual($branchingSteps.eq(i).attr("aria-setsize"), "3", "'aria-setsize' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + 3 + "'");
 		}
 	});
 
