@@ -433,6 +433,7 @@ function(
 			this._attachChange();
 			this._bPaste = false; //needed to indicate when a paste is made
 			this._bNeedsVerification = false; // the control needs verification of the value state
+			this._bValueStatePreset = true; //If there is a pre-defined value it will be set
 			this._onmousewheel = this._onmousewheel.bind(this);
 			window.addEventListener("contextmenu", function(e) {
 				if (this._btndown === false && e.target.className.indexOf("sapMInputBaseIconContainer") !== -1) {
@@ -460,7 +461,7 @@ function(
 
 			this._disableButtons(vValue, fMax, fMin);
 			this.$().off(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
-			if (this._bNeedsVerification) {
+			if (this._bNeedsVerification && !this._bValueStatePreset) {
 				this._verifyValue();
 				this._bNeedsVerification = false;
 			}
@@ -865,6 +866,14 @@ function(
 
 		};
 
+		StepInput.prototype.setValueState = function(sValueState) {
+			this._bValueStatePreset = true;
+			this.setProperty("valueState", sValueState);
+			this._getInput().setValueState(sValueState);
+
+			return this;
+		};
+
 		/*
 		 * Sets the <code>value</code> by doing some rendering optimizations in case the first rendering was completed.
 		 * Otherwise the value is set in onBeforeRendering, where we have all needed parameters for obtaining correct value.
@@ -896,6 +905,8 @@ function(
 			}
 			this._iRealPrecision = this._getRealValuePrecision();
 			this._fTempValue = oValue;
+			this._bValueStatePreset = false;
+
 			return oResult;
 		};
 

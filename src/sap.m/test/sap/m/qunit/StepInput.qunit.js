@@ -336,6 +336,31 @@ sap.ui.define([
 		assert.equal(this.stepInput._getInput().getValueState(), sValue, "valueState is properly propagated to the input aggregation");
 	});
 
+	QUnit.test("setValueState on value change", function (assert) {
+		//prepare
+		var tempStepInput = new StepInput({
+				valueState:"Warning",
+				min:10,
+				max:20,
+				change: function(){
+					tempStepInput.setValueState("Error");
+					tempStepInput.focus();
+		}});
+
+		tempStepInput.placeAt('qunit-fixture');
+		oCore.applyChanges();
+
+		//act
+		tempStepInput._handleButtonPress(1);
+		oCore.applyChanges();
+
+		//assert
+		assert.equal(tempStepInput.getValueState(), "Error", "valueState is set to Error");
+
+		//destroy
+		tempStepInput.destroy();
+	});
+
 	QUnit.test("setValueStateText", function (assert) {
 		assert.ok(this.stepInput.setValueStateText, "method setValueStateText exists");
 
