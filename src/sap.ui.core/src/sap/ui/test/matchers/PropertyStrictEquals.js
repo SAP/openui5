@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], function(Matcher, capitalize) {
+sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], function (Matcher, capitalize) {
 	"use strict";
 
 	/**
@@ -27,20 +27,20 @@ sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], f
 	 */
 	return Matcher.extend("sap.ui.test.matchers.PropertyStrictEquals", /** @lends sap.ui.test.matchers.PropertyStrictEquals.prototype */ {
 
-		metadata : {
-			publicMethods : [ "isMatching" ],
-			properties : {
+		metadata: {
+			publicMethods: ["isMatching"],
+			properties: {
 				/**
 				 * The Name of the property that is used for matching.
 				 */
-				name : {
-					type : "string"
+				name: {
+					type: "string"
 				},
 				/**
 				 * The value of the property that is used for matching.
 				 */
-				value : {
-					type : "any"
+				value: {
+					type: "any"
 				}
 			}
 		},
@@ -52,7 +52,7 @@ sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], f
 		 * @return {boolean} true if the property has a strictly matching value.
 		 * @public
 		 */
-		isMatching : function (oControl) {
+		isMatching: function (oControl) {
 			var sPropertyName = this.getName(),
 				fnProperty = oControl["get" + capitalize(sPropertyName, 0)];
 

@@ -7,7 +7,7 @@ sap.ui.define([
 	'sap/ui/test/matchers/Visible',
 	'sap/ui/test/matchers/_Busy',
 	'sap/ui/test/matchers/_Visitor'
-], function(Matcher, Visible, _Busy, _Visitor) {
+], function (Matcher, Visible, _Busy, _Visitor) {
 	"use strict";
 
 	var oVisibleMatcher = new Visible();
@@ -46,7 +46,7 @@ sap.ui.define([
 	 * @since 1.34
 	 */
 	return Matcher.extend("sap.ui.test.matchers.Interactable", {
-		isMatching:  function(oControl) {
+		isMatching: function (oControl) {
 			// control must be visible
 			if (!oVisibleMatcher.isMatching(oControl)) {
 				return false;
@@ -58,7 +58,7 @@ sap.ui.define([
 			}
 
 			var bInAreaForRerendering = oVisitor.isMatching(oControl, function (oControl) {
-				return oControl.getMetadata().getName() === "sap.ui.core.UIArea"  && oControl.bNeedsRerendering;
+				return oControl.getMetadata().getName() === "sap.ui.core.UIArea" && oControl.bNeedsRerendering;
 			});
 
 			if (bInAreaForRerendering) {
@@ -69,6 +69,7 @@ sap.ui.define([
 			var oAppWindowJQuery = this._getApplicationWindow().jQuery;
 			var bControlIsInStaticArea = oControl.$().closest("#sap-ui-static").length;
 			var bOpenStaticBlockingLayer = oAppWindowJQuery("#sap-ui-blocklayer-popup").is(":visible");
+
 			if (!bControlIsInStaticArea && bOpenStaticBlockingLayer) {
 				this._oLogger.debug("The control '" + oControl + "' is hidden behind a blocking popup layer");
 				return false;
