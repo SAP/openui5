@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/cards/ListContent",
 	"sap/ui/core/Core",
+	"sap/ui/core/Manifest",
 	"sap/f/cards/NumericSideIndicator",
 	"sap/ui/integration/cards/NumericHeader",
 	"sap/ui/integration/cards/Header",
@@ -16,6 +17,7 @@ sap.ui.define([
 		Card,
 		ListContent,
 		Core,
+		CoreManifest,
 		NumericSideIndicator,
 		NumericHeader,
 		Header,
@@ -1373,26 +1375,68 @@ sap.ui.define([
 			testContentInitialization(oManifest_TableCard, assert);
 		});
 
-		QUnit.module("Methods");
+		QUnit.module("Methods", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					width: "400px",
+					height: "600px"
+				});
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
 
 		QUnit.test("createManifest called twice", function (assert) {
 			var done = assert.async(),
-				oCard = new Card({
-					width: "600px"
-				}),
-				oStub = sinon.stub(oCard, "_setCardContent").callsFake(function () {
+				oStub = sinon.stub(this.oCard, "_setCardContent").callsFake(function () {
 					assert.ok("_setCardContent is called only once and error is not thrown.");
 
-					oCard.destroy();
 					oStub.restore();
 
 					done();
 				});
 
-			oCard.createManifest(oManifest_ListCard);
+			this.oCard.createManifest(oManifest_ListCard);
 
-			oCard.destroyManifest();
-			oCard.createManifest(oManifest_ListCard);
+			this.oCard.destroyManifest();
+			this.oCard.createManifest(oManifest_ListCard);
+		});
+
+
+		QUnit.test("setManifest with and without translated texts", function (assert) {
+
+			var done = assert.async(),
+				oLoadI18nSpy = sinon.spy(CoreManifest.prototype, "_loadI18n");
+
+			// Arrange
+			this.oCard.attachEventOnce("_ready", function () {
+
+				Core.applyChanges();
+
+				// Assert
+				assert.ok(oLoadI18nSpy.notCalled, "translation file is not fetched");
+
+				// Arrange
+				this.oCard.attachEventOnce("_ready", function () {
+
+					Core.applyChanges();
+
+					// Assert
+					assert.ok(oLoadI18nSpy.called, "translation file is fetched");
+
+					// Clean up
+					oLoadI18nSpy.restore();
+					done();
+				});
+
+				this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/translation/manifest.json");
+
+			}.bind(this));
+
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
 		QUnit.module("Card headers", {
