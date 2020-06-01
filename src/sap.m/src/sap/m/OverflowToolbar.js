@@ -1306,6 +1306,14 @@ sap.ui.define([
 		// the cached controls' sizes will be updated, as they might not be accurate
 		if (sParameterName === "visible") {
 			this._bContentVisibilityChanged = true;
+
+			// If a flexible control becomes visible (after it was invisible), we should notify DynamicPageTitle
+			// to reset the flex-basis of its content area
+			if (oSourceControl.isA("sap.m.IOverflowToolbarFlexibleContent") && oSourceControl.getVisible()) {
+				this.fireEvent("_contentSizeChange", {
+					contentSize: null
+				});
+			}
 		}
 
 		// Trigger a recalculation
