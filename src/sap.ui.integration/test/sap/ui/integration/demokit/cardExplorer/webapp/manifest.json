@@ -93,7 +93,12 @@
 				{
 					"pattern": "",
 					"name": "default",
-					"target": "learnDetail"
+					"target": "overview"
+				},
+				{
+					"pattern": "overview/{group}/:key:",
+					"name": "overview",
+					"target": "overview"
 				},
 				{
 					"pattern": "learn/{group}/:key:",
@@ -117,6 +122,11 @@
 				}
 			],
 			"targets": {
+				"overview": {
+					"viewName": "Overview",
+					"viewId": "overview",
+					"viewLevel": 2
+				},
 				"learnDetail": {
 					"viewName": "LearnDetail",
 					"viewId": "learnDetail",

@@ -17,55 +17,66 @@
 		<div class="content">
 
 			<h1 id="overview">Overview</h1>
-
 			<p>
-				Cards integration into a host environment - applications, dashboards, or any HTML page?
-				Although cards are acting as self-contained UI elements, there are integration capabilities and requirements, that should be enabled and handled by the host environment.
-				Examples: passing parameters, handling events, etc., which we are covering in details in the next sections.
+				Card are reusable entities which can be used in different places and products.
+				Therefore the integration of cards can be specific in each scenario.
+				Parameters, actions and data sources should be handled in the hosting environment.
 			</p>
+
+			<img src="../images/integrateOverviewDiagram.png" alt="Diagram" style="max-width: 100%; width: 1000px;">
+			
 
 			<h2 id="hostEnvironment">Responsibilities of the host environment</h2>
 
 			<p>
-				Depending on the cards content, it is necessary for the host environment to provide additional functionality such as:
-				<ul>
-					<li>Ensuring that the backend data required by the card is accessible.</li>
-					<li>Passing global parameters.</li>
-					<li>Handling of actions and events, that occur on the cards content during user interactions.</li>
-					<li>Providing the layout, that the card is used in.</li>
-				</ul>
+				Depending on the specifics of the cards, the hosting environment is responsible to provide additional functionalities.
 			</p>
+			<table>
+				<tr>
+					<th>Responsibility</th>
+					<th>Description</th>
+				</tr>
+				<tr>
+					<td><a href="../../index.html#/integrate/api" target="_parent">Consuming in UI5 or HTML</a></td>
+					<td>Based on the project structure and used technologies, the card can be consumed as a UI5 Control or as an HTML custom element.</td>
+				</tr>
+				<tr>
+					<td><a href="../../index.html#/integrate/api" target="_parent">Layout and sizing</a></td>
+					<td>Cards don't have their own specific size and depend on the container which they are placed and its responsiveness.</td>
+				</tr>
+				<tr>
+					<td><a href="../../index.html#/integrate/api" target="_parent">Handling of card actions</a></td>
+					<td>Handling of actions and events, that occur on the cards content during user interactions.</td>
+				</tr>
+				<tr>
+					<td><a href="../../index.html#/integrate/hostActions" target="_parent">Host Actions</a></td>
+					<td>Optional application-level actions.</td>
+				</tr>
+				<tr>
+					<td><a href="../../index.html#/integrate/api" target="_parent">Passing global parameters</a></td>
+					<td>Passing parameters to the integrated cards.</td>
+				</tr>
+				<tr>
+					<td><a href="../../index.html#/integrate/destinations" target="_parent">Resolving destinations</a></td>
+					<td>Ensuring that the backend data required by the card is accessible.</td>
+				</tr>
+			</table>
 
-			<h2 id="ui5delivery">OpenUI5 vs SAPUI5</h2>
-
-			Depending on the UI5 delivery you are using (SAPUI5 or OpenUI5) there are different card types:
-			<p>OpenUI5</p>
-			<ul>
-				<li>Adaptive Card (Experimental)</li>
-				<li>Calendar Card (Experimental)</li>
-				<li>Component Card</li>
-				<li>List Card</li>
-				<li>Object Card</li>
-				<li>Table Card</li>
-			</ul>
-			<p>SAPUI5 - adds Timeline and Analytical</p>
-			<ul>
-				<li>Adaptive Card (Experimental)</li>
-				<li>Analytical Card</li>
-				<li>Calendar Card (Experimental)</li>
-				<li>Component Card</li>
-				<li>List Card</li>
-				<li>Object Card</li>
-				<li>Table Card</li>
-				<li>Timeline Card</li>
-			</ul>
+			<h2 id="integrationScenarios">Integration Scenarios</h2>
+			<p>
+				You can see existing solutions and details how cards are integrated in different products:
+				<ul>
+					<li><a href="https://help.sap.com/viewer/b03c84105ff74f809631e494bd612e83/Cloud/en-US/f23f25fdf57d4bc3ac4367b4ea119fee.html" target="_blank">SAP Work Zone</a></li>
+				</ul>
+				<p>Or if you are developing a solution yourself see <a href="../../index.html#/integrate/usage" target="_parent">Use Cards in Apps</a></li>
+			</p>
 
 		</div>
 		<div class="navigation">
 			<h4>Table of Contents</h4>
 			<div><a href="#overview">Overview</a></div>
 			<div><a href="#hostEnvironment">Host Environment</a></div>
-			<div><a href="#ui5delivery">OpenUI5 vs SAPUI5</a></div>
+			<div><a href="#integrationScenarios">Integration Scenarios</a></div>
 		</div>
 	</div>
 </body>

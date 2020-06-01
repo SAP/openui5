@@ -1,23 +1,25 @@
 sap.ui.define([
+	"../model/OverviewNavigationModel",
 	"sap/ui/demo/cardExplorer/controller/BaseController",
 	"sap/ui/model/json/JSONModel",
-	"../model/DocumentationNavigationModel",
 	"sap/ui/Device"
 ], function(
+	OverviewNavigationModel,
 	BaseController,
 	JSONModel,
-	DocumentationNavigationModel,
 	Device
 ) {
 	"use strict";
 
-	return BaseController.extend("sap.ui.demo.cardExplorer.controller.LearnDetail", {
+	return BaseController.extend("sap.ui.demo.cardExplorer.controller.Overview", {
 
 		/**
 		 * Called when the controller is instantiated.
 		 */
 		onInit : function () {
-			this.getRouter().getRoute("learnDetail").attachPatternMatched(this._onTopicMatched, this);
+			this.getRouter().getRoute("overview").attachPatternMatched(this._onTopicMatched, this);
+			this.getRouter().getRoute("default").attachPatternMatched(this._onTopicMatched, this);
+
 			this.jsonDefModel = new JSONModel();
 			this.getView().setModel(this.jsonDefModel);
 		},
@@ -25,16 +27,17 @@ sap.ui.define([
 		/**
 		 * Binds the view to the object path and expands the aggregated line items.
 		 * @function
-		 * @param {sap.ui.base.Event} event pattern match event in route 'topicId'
+		 * @param {sap.ui.base.Event} event pattern match event in route "topicId"
 		 * @private
 		 */
 		_onTopicMatched: function (event) {
 			var oArgs = event.getParameter("arguments"),
-				sGroup = oArgs.group || "gettingStarted", // group is mandatory (described in the manifest)
+				sGroup = oArgs.group || "introduction", // group is mandatory (described in the manifest)
 				sTopicId = oArgs.key ? "/" + oArgs.key : "",
 				oNavEntry = this._findNavEntry(sGroup),
-				sTopicURL = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/topics/learn/" + sGroup + sTopicId + '.html'),
+				sTopicURL = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/topics/overview/" + sGroup + sTopicId + ".html"),
 				sPageTitle = oNavEntry.topicTitle || oNavEntry.title;
+
 			var jsonObj = {
 				pageTitle: sPageTitle,
 				topicURL : sTopicURL,
@@ -46,7 +49,7 @@ sap.ui.define([
 		},
 
 		_findNavEntry: function (key) {
-			var navEntries = DocumentationNavigationModel.getProperty('/navigation'),
+			var navEntries = OverviewNavigationModel.getProperty("/navigation"),
 				navEntry,
 				subItems,
 				i,

@@ -5,15 +5,8 @@ sap.ui.define([
 
 	// Please order topics alphabetically by "title"
 	return new JSONModel({
-		selectedKey: 'overview',
+		selectedKey: 'gettingStarted',
 		navigation: [
-			{
-				title: 'Overview',
-				topicTitle: 'Integration Card Overview',
-				icon: 'sap-icon://home',
-				target: 'learnDetail',
-				key: 'overview'
-			},
 			{
 				title: 'Getting Started',
 				topicTitle: 'Integration Card Getting Started',
