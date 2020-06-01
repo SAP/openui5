@@ -56,6 +56,28 @@
             "reference": "2070232590"
           }
         ]
+      },
+      {
+        "id": "b31d41ceb07078ed983c2404421c0476a7bebe20",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Data request with expression binding now works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080142117"
+          }
+        ]
+      },
+      {
+        "id": "977f9b02b468f2996e0bcb3908afe5b00da76620",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Download bundle now includes the i18n.properties",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080131791"
+          }
+        ]
       }
     ]
   }

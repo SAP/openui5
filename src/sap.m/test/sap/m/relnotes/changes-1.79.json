@@ -461,6 +461,128 @@
             "reference": "2070197035"
           }
         ]
+      },
+      {
+        "id": "90b5acdf774408afecadb825013a3201184d9412",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: highlighting items is turned on again",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070137645"
+          }
+        ]
+      },
+      {
+        "id": "7a3635829fea6a7bbf062efa097ce78da85e9c80",
+        "type": "FIX",
+        "text": " sap.m.GenericTile : Default Aria-label contains \u0027GenericTile\u0027 info which is not required.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002994992020"
+          }
+        ]
+      },
+      {
+        "id": "c17d198164e27085e9ad73176c55762dd7a7ca14",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Texts in horizontal tabs are no longer truncated",
+        "references": []
+      },
+      {
+        "id": "a4605cee14b86dbd546f4fda53966f2dca085231",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Sample adjusted",
+        "references": []
+      },
+      {
+        "id": "04afc0729d2df29474af49c5f24aa2debdf4b31c",
+        "type": "FIX",
+        "text": " sap.m.Popover: Sample adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070259290"
+          }
+        ]
+      },
+      {
+        "id": "f39b8009d8e6878b69c617d3348f402fb211a79d",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Focus bottom and top line fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070244874"
+          }
+        ]
+      },
+      {
+        "id": "b825682371c35566f421d031b3cc0ee52e50fd13",
+        "type": "FIX",
+        "text": " sap.m.Slider: aria-label attribute added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070193380"
+          }
+        ]
+      },
+      {
+        "id": "671d7753e90df7dd1a3da839b70faa6e43774875",
+        "type": "FIX",
+        "text": " sap.m.StepInput: removed redundant aria-disabled attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070244784"
+          }
+        ]
+      },
+      {
+        "id": "c7f603785e1f6f689ad8c842c7e4cd68399b63ce",
+        "type": "FIX",
+        "text": " sap.m.StepInput: removed redundant role",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070244782"
+          }
+        ]
+      },
+      {
+        "id": "10123a7a1dc4d410fb30595b6701335ac76f654c",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Token truncation set correctly when aggregation is updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070228761"
+          }
+        ]
+      },
+      {
+        "id": "9c1378daf4b865b3a0e9d9e85876cbf9d65be34b",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Tokens count read fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070232045"
+          }
+        ]
+      },
+      {
+        "id": "fc8d08fa8bfec6305fe63a9e2121a588a7abc540",
+        "type": "FIX",
+        "text": " sap.m.Wizard: iOS/Safari scroll fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751294 0000254875 2020"
+          }
+        ]
       }
     ]
   }

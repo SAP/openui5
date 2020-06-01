@@ -12,6 +12,17 @@
             "reference": "2070175878"
           }
         ]
+      },
+      {
+        "id": "fb728765e4962e61a4ff362337cfe7ab44b82eda",
+        "type": "FIX",
+        "text": " hasher.js: replace hash should not affect the path in href",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070234256"
+          }
+        ]
       }
     ]
   }
