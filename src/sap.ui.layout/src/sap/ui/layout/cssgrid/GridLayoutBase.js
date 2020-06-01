@@ -68,7 +68,7 @@ sap.ui.define([
 		}
 
 		var oLayoutData = GridLayoutBase._getLayoutDataForControl(oItem),
-			oElement = GridLayoutBase._getElement(oItem);
+			oElement = oItem.getDomRef();
 
 		if (!oElement) {
 			return;
@@ -116,28 +116,6 @@ sap.ui.define([
 				}
 			}
 		}
-	};
-
-	/**
-	 * Returns the DOM ref of the item or the item's wrapper
-	 *
-	 * @private
-	 * @param {sap.ui.core.Control} oItem The item
-	 */
-	GridLayoutBase._getElement = function (oItem) {
-		var oItemDom = oItem.getDomRef();
-
-		if (!oItemDom) {
-			return undefined;
-		}
-
-		var oWrapper = oItemDom.parentNode;
-
-		if (oWrapper && oWrapper.classList.contains("sapUiLayoutCSSGridItemWrapper")) {
-			return oWrapper;
-		}
-
-		return oItemDom;
 	};
 
 	/**
