@@ -27,7 +27,7 @@
       {
         "id": "9b23babc9e99562d8edb6cc6c411a153a6189f47",
         "type": "FIX",
-        "text": "AnchorBar: Overlapping MenuButton\u0027s text is fixed",
+        "text": "AnchorBar: Overlapping MenuButton's text is fixed",
         "references": [
           {
             "type": "BCP",
@@ -404,6 +404,22 @@
           {
             "type": "BCP",
             "reference": "002075129500000277352020"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.27": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "6f3888f2459fffec4cc2698c442d3fe29c265919",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: IconTabBar only visible section show title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080090841"
           }
         ]
       }

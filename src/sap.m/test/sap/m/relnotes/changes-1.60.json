@@ -3298,5 +3298,110 @@
         ]
       }
     ]
+  },
+  "1.60.27": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "a265f5d2d0f944da1a7547a55f0129848f7a93a0",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Control is now rendered correctly on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003368802020"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080072543"
+          }
+        ]
+      },
+      {
+        "id": "fdf0eb8964ca1fdaf704a7464149be5b053c7f1a",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Disabled MenuButtonin split mode doesn't get the focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070243292"
+          }
+        ]
+      },
+      {
+        "id": "8adb671bdb4e9a1e4a70c86248ce6df550f0af9a",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Fixed failing tests for IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070195516"
+          }
+        ]
+      },
+      {
+        "id": "0d053abb1cd379fd3b791492e7dd1fad1bb57794",
+        "type": "FIX",
+        "text": " sap.m.Fiori20Adapter: Ensure first NavContainer page is adapted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870329009"
+          }
+        ]
+      },
+      {
+        "id": "0e91c3a014d4185d1b2c932bd65cf07077fe69fc",
+        "type": "FIX",
+        "text": " sap.m.VBox: Default Column direction is now set properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002620552020"
+          }
+        ]
+      },
+      {
+        "id": "a8ed3f6ee32ecdc201a94c1276a76ef6ebc551e4",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: QUnit fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070195595"
+          }
+        ]
+      },
+      {
+        "id": "a09cf844f261b04fa820cdf3d1c872e0c2dfe59f",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Texts are no longer blurred in Chrome",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004104102019"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400002683242020"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400002526122020"
+          }
+        ]
+      },
+      {
+        "id": "a27e823ec20a7dcf8efb8a4722a0522f4f4ba1c0",
+        "type": "FIX",
+        "text": " sap.m.Input: Clone method fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070123110"
+          }
+        ]
+      }
+    ]
   }
 }
