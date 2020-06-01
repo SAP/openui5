@@ -582,6 +582,11 @@ sap.ui.define([
 		assert.strictEqual($oAvatar.prop("title"), "sampleTooltip", "Tooltip is present");
 	});
 
+	QUnit.test("Check ARIA specific attributes", function (assert) {
+		var $oAvatar = this.oAvatar.$();
+		assert.ok($oAvatar.attr("aria-roledescription") !== undefined, "aria-roledescription is present");
+	});
+
 	QUnit.test("Check ARIA specific roles", function (assert) {
 		var $oAvatar = this.oAvatar.$(),
 			sDefaultTooltip = oCore.getLibraryResourceBundle("sap.m").getText("AVATAR_TOOLTIP");
