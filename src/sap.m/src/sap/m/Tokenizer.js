@@ -35,7 +35,7 @@ sap.ui.define([
 	) {
 	"use strict";
 
-
+	var RenderMode = library.TokenizerRenderMode;
 
 	/**
 	 * Constructor for a new Tokenizer.
@@ -79,11 +79,28 @@ sap.ui.define([
 			/**
 			 * Defines the width of the Tokenizer.
 			 */
+
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+
 			/**
 			 * Defines the maximum width of the Tokenizer.
 			 */
-			maxWidth : {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue : "100%"}
+			maxWidth : {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue : "100%"},
+
+			/**
+			 * Defines the mode that the Tokenizer will use:
+			 * <ul>
+			 * <li><code>sap.m.TokenizerRenderMode.Loose</code> mode shows all tokens, no matter the width of the Tokenizer</li>
+			 * <li><code>sap.m.TokenizerRenderMode.Narrow</code> mode forces the Tokenizer to show only as much tokens as possible in its width and add an n-More indicator</li>
+			 * </ul>
+			 */
+			renderMode: {type : "string", group : "Misc", defaultValue : RenderMode.Loose},
+
+			/**
+			 * Defines the count of hidden tokens if any. If this property is set to 0, the n-More indicator will not be shown.
+			 */
+			hiddenTokensCount: {type : "int", group : "Misc", defaultValue : 0, visibility: "hidden"}
+
 		},
 		defaultAggregation : "tokens",
 		aggregations : {
@@ -189,10 +206,13 @@ sap.ui.define([
 	// */
 
 	Tokenizer.prototype.init = function() {
-		this.bAllowTextSelection = false;
+		// Do not allow text selection in the Tokenizer
+		// If called with 'false', the method prevents the
+		// default behavior and propagation of the 'selectstart' event.
+		// For more info - check sap.ui.core.Control.js
+		this.allowTextSelection(false);
 		this._oTokensWidthMap = {};
 		this._oIndicator = null;
-		this._bAdjustable = false;
 
 		this._aTokenValidators = [];
 
@@ -221,16 +241,35 @@ sap.ui.define([
 		this._fnOnNMorePress = fCallback;
 	};
 
-	/**
-	 * Function determines if the N-more state is active.
+	/** Gets the width of the tokenizer that will be used for the calculation for hiding
+	 * or revealing the tokens.
 	 *
+	 * @returns {number} The width of the DOM in pixels.
 	 * @private
-	 * @returns {boolean} true if there are hidden tokens.
 	 */
-	Tokenizer.prototype._hasMoreIndicator = function () {
-		var domRef = this.$();
+	Tokenizer.prototype._getPixelWidth = function ()  {
+		var sMaxWidth = this.getMaxWidth(),
+			iTokenizerWidth,
+			oDomRef = this.getDomRef(),
+			iPaddingLeft;
 
-		return !!domRef.length && this.$().find(".sapMHiddenToken").length > 0;
+		if (!oDomRef) {
+			return;
+		}
+
+		// The padding needs to be exluded from the calculations later on
+		// as it is actually not an available space.
+		iPaddingLeft = parseInt(this.$().css("padding-left"));
+
+		if (sMaxWidth.indexOf("px") === -1) {
+			// We need to use pixel width in order to calculate the space left for the Tokens.
+			// In standalone Tokenizer, we take the width of the Tokenizer itself.
+			iTokenizerWidth = oDomRef.clientWidth;
+		} else {
+			iTokenizerWidth = parseInt(this.getMaxWidth());
+		}
+
+		return iTokenizerWidth - iPaddingLeft;
 	};
 
 	/**
@@ -243,7 +282,7 @@ sap.ui.define([
 			return;
 		}
 
-		var iTokenizerWidth = parseInt(this.getMaxWidth()),
+		var iTokenizerWidth = this._getPixelWidth(),
 			aTokens = this._getVisibleTokens().reverse(),
 			iTokensCount = aTokens.length,
 			iLabelWidth, iFreeSpace,
@@ -252,7 +291,7 @@ sap.ui.define([
 		// find the index of the first overflowing token
 		aTokens.some(function (oToken, iIndex) {
 			iTokenizerWidth = iTokenizerWidth - this._oTokensWidthMap[oToken.getId()];
-			if (iTokenizerWidth <= 0) {
+			if (iTokenizerWidth < 0) {
 				iFirstTokenToHide = iIndex;
 				return true;
 			} else {
@@ -290,12 +329,11 @@ sap.ui.define([
 				aTokens[iFirstTokenToHide].addStyleClass("sapMHiddenToken");
 			}
 
-			this.removeStyleClass("sapMTokenizerNoNMore");
+			this._setHiddenTokensCount(iTokensCount - iFirstTokenToHide);
 		} else {
 			// if no token needs to be hidden, show all
+			this._setHiddenTokensCount(0);
 			this._showAllTokens();
-
-			this.addStyleClass("sapMTokenizerNoNMore");
 		}
 	};
 
@@ -346,7 +384,6 @@ sap.ui.define([
 			var sLabelKey = "MULTIINPUT_SHOW_MORE_TOKENS";
 
 			if (iHiddenTokensCount === this._getVisibleTokens().length) {
-				this.$().css("overflow", "visible");
 				if (iHiddenTokensCount === 1) {
 					sLabelKey = "TOKENIZER_SHOW_ALL_ITEM";
 				} else {
@@ -354,11 +391,7 @@ sap.ui.define([
 				}
 			}
 
-			this._oIndicator.removeClass("sapUiHidden");
 			this._oIndicator.html(oRb.getText(sLabelKey, iHiddenTokensCount));
-		} else {
-			this.$().css("overflow", "hidden");
-			this._oIndicator.addClass("sapUiHidden");
 		}
 
 		return this;
@@ -382,9 +415,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype._showAllTokens = function() {
-		this._handleNMoreIndicator(0);
-
 		this._getVisibleTokens().forEach(function(oToken) {
+			// TODO: Token should provide proper API for this
 			oToken.removeStyleClass("sapMHiddenToken");
 		});
 	};
@@ -406,68 +438,30 @@ sap.ui.define([
 	 */
 	Tokenizer.prototype.scrollToEnd = function() {
 		var domRef = this.getDomRef(),
-			that;
+			scrollDiv;
 
-		if (!domRef) {
+		if (!this.getDomRef()) {
 			return;
 		}
 
-		if (!this._sResizeHandlerId) {
-			that = this;
-			this._sResizeHandlerId = ResizeHandler.register(domRef, function() {
-				that.scrollToEnd();
+		scrollDiv = this.$().find(".sapMTokenizerScrollContainer")[0];
+		if (Device.browser.msie) {
+			setTimeout(function () {
+				domRef.scrollLeft = scrollDiv.scrollWidth;
 			});
+		} else {
+			domRef.scrollLeft = scrollDiv.scrollWidth;
 		}
-
-		var scrollDiv = this.$().find(".sapMTokenizerScrollContainer")[0];
-		domRef.scrollLeft = scrollDiv.scrollWidth;
 	};
 
-	/**
-	 * Function sets the maximum width of the Tokenizer.
-	 *
-	 * @public
-	 * @param {string} sWidth The new maximal width
-	 * @returns {sap.m.Tokenizer} this instance for method chaining
-	 */
-	Tokenizer.prototype.setMaxWidth = function(sWidth) {
-		this.setProperty("maxWidth", sWidth, true);
-		this.$().css("max-width", this.getMaxWidth());
-
-		if (this.getDomRef() && this._getAdjustable()) {
-			this._adjustTokensVisibility();
+	Tokenizer.prototype._registerResizeHandler = function(){
+		if (!this._sResizeHandlerId) {
+			this._sResizeHandlerId = ResizeHandler.register(this.getDomRef(), this._handleResize.bind(this));
 		}
-		return this;
-	 };
-
-	/**
-	 * Function returns whether the n-more indicator is visible.
-	 *
-	 * @protected
-	 * @returns {boolean} If true the indicator is visible
-	 */
-	Tokenizer.prototype._getIndicatorVisibility = function() {
-		return this._oIndicator && !this._oIndicator.hasClass("sapUiHidden");
 	};
 
-	/**
-	 * Function sets whether the visibility of the tokens should be adjusted.
-	 *
-	 * @protected
-	 * @param {boolean} If true, the tokenizer should adjust the visibility of the tokens
-	 */
-	Tokenizer.prototype._setAdjustable = function(bAdjust) {
-		this._bAdjustable = bAdjust;
-	};
-
-	/**
-	 * Function returns whether the visibility of the tokens should be adjusted.
-	 *
-	 * @protected
-	 * @returns {boolean} If true, the tokenizer should adjust the visibility of the tokens
-	 */
-	Tokenizer.prototype._getAdjustable = function() {
-		return this._bAdjustable;
+	Tokenizer.prototype._handleResize = function(){
+		this._useCollapsedMode(this.getRenderMode());
 	};
 
 	/**
@@ -503,13 +497,7 @@ sap.ui.define([
 			return;
 		}
 
-		this._deactivateScrollToEnd();
-
 		domRef.scrollLeft = 0;
-	};
-
-	Tokenizer.prototype._deactivateScrollToEnd = function(){
-		this._deregisterResizeHandler();
 	};
 
 	/**
@@ -529,7 +517,6 @@ sap.ui.define([
 
 	Tokenizer.prototype.onBeforeRendering = function() {
 		this._setTokensAria();
-		this._deregisterResizeHandler();
 	};
 
 	/**
@@ -538,18 +525,19 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype.onAfterRendering = function() {
-		this.scrollToEnd();
+		var sRenderMode = this.getRenderMode();
 
 		this._oIndicator = this.$().find(".sapMTokenizerIndicator");
-
 		this._updateTokensAriaSetAttributes();
 
-		if (this._getAdjustable()) {
-			// refresh the expanded/collapsed mode based on whether a indicator should be shown
-			// to ensure that the N-more label is rendered correctly
-			this._useCollapsedMode(this._hasMoreIndicator(), true);
-		}
+		// refresh the render mode (loose/narrow) based on whether an indicator should be shown
+		// to ensure that the N-more label is rendered correctly
+		this._useCollapsedMode(sRenderMode);
+		this._registerResizeHandler();
 
+		if (sRenderMode === RenderMode.Loose) {
+			this.scrollToEnd();
+		}
 	};
 
 	/**
@@ -558,52 +546,33 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype.onThemeChanged = function() {
-
-		if (!this._getAdjustable()) {
-			return;
-		}
-
 		this.getTokens().forEach(function(oToken){
 			if (oToken.getDomRef() && !oToken.$().hasClass("sapMHiddenToken") && !oToken.getTruncated()) {
 				this._oTokensWidthMap[oToken.getId()] = oToken.$().outerWidth(true);
 			}
 		}.bind(this));
 
-		this._adjustTokensVisibility();
+		this._useCollapsedMode(this.getRenderMode());
 	};
 
 	/**
 	 * Handles the setting of collapsed state.
 	 *
-	 * @param {boolean} bCollapse If true collapses the tokenizer's content
-	 * @param {boolean} bSkipSizeAdjustment If true the tokenizer won't trigger input width adjustment
+	 * @param {string} sRenderMode If true collapses the tokenizer's content
 	 * @private
 	 */
-	Tokenizer.prototype._useCollapsedMode = function(bCollapse, bSkipSizeAdjustment) {
-		var oParent = this.getParent(),
-			aTokens = this._getVisibleTokens();
+	Tokenizer.prototype._useCollapsedMode = function(sRenderMode) {
+		var aTokens = this._getVisibleTokens();
 
 		if (!aTokens.length) {
 			return;
 		}
 
-		if (bCollapse) {
+		if (sRenderMode === RenderMode.Narrow) {
 			this._adjustTokensVisibility();
 		} else {
+			this._setHiddenTokensCount(0);
 			this._showAllTokens();
-		}
-
-		if (!bSkipSizeAdjustment) {
-			oParent._syncInputWidth && setTimeout(oParent["_syncInputWidth"].bind(oParent, this), 0);
-		}
-	};
-
-	Tokenizer.prototype.invalidate = function(oOrigin) {
-		var oParent = this.getParent();
-		if (oParent instanceof sap.m.MultiInput) {
-			oParent.invalidate(oOrigin);
-		} else {
-			Control.prototype.invalidate.call(this, oOrigin);
 		}
 	};
 
@@ -619,20 +588,6 @@ sap.ui.define([
 			this._changeAllTokensSelection(false);
 			this._oSelectionOrigin = null;
 		}
-	};
-
-	/**
-	 * check if all tokens in the tokenizer are selected.
-	 * @returns {boolean} True if all tokens are selected
-	 * @private
-	 */
-	Tokenizer.prototype.isAllTokenSelected = function() {
-		if (this._getVisibleTokens().length === this.getSelectedTokens().length) {
-
-			return true;
-		}
-		return false;
-
 	};
 
 	/**
@@ -1048,10 +1003,6 @@ sap.ui.define([
 			currentToken.setSelected(true);
 		}
 
-		this._deactivateScrollToEnd();
-
-		this._ensureTokenVisible(targetToken);
-
 		// mark the event that it is handled by the control
 		oEvent.setMarked();
 		oEvent.preventDefault();
@@ -1093,8 +1044,6 @@ sap.ui.define([
 			oEvent.setMarked("forwardFocusToParent");
 			return;
 		}
-
-		this._deactivateScrollToEnd();
 
 		// mark the event that it is handled by the control
 		oEvent.setMarked();
@@ -1772,13 +1721,34 @@ sap.ui.define([
 		aTokens.forEach(function (oToken) {
 			oToken.setProperty("editableParent", bEditable);
 		});
-		this.setProperty("editable", bEditable, false);
-
-		if (this.getTokens().length === 1) {
-			this._adjustTokensVisibility();
-		}
+		this.setProperty("editable", bEditable);
 
 		return this;
+	};
+
+	/**
+	 * Sets the count of hidden tokens that will be used for the n-More indicator.
+	 * This also determines if the n-More indicator will be shown or not.
+	 *
+	 * @param {number} iCount The number of hidden tokens
+	 * @returns {sap.m.Tokenizer} this instance for method chaining
+	 * @private
+	 */
+	Tokenizer.prototype._setHiddenTokensCount = function (iCount) {
+		iCount = this.validateProperty("hiddenTokensCount", iCount);
+		return this.setProperty("hiddenTokensCount", iCount);
+	};
+
+	/**
+	 * Gets the count of hidden tokens that will be used for the n-More indicator.
+	 * If the count is 0, there is no n-More indicator shown.
+	 *
+	 * @since 1.80
+	 * @public
+	 * @returns {number} The number of hidden tokens
+	 */
+	Tokenizer.prototype.getHiddenTokensCount = function () {
+		return this.getProperty("hiddenTokensCount");
 	};
 
 	/**
