@@ -78,4 +78,11 @@ describe('sap.m.NotificationListItem', function() {
 			expect(takeScreenshot(notification)).toLookAs('13_no_truncation_show_less');
 		});
 	});
+
+	it('should show notification with a long word', function () {
+		var notification = element(by.id('smallNotif'));
+		browser.executeScript('document.getElementById("smallNotif").scrollIntoView()').then(function() {
+			expect(takeScreenshot(notification)).toLookAs('14_wrapping');
+		});
+	});
 });

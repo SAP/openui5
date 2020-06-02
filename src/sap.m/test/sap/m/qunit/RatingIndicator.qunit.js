@@ -7,11 +7,12 @@ sap.ui.define([
 	'sap/m/App',
 	'sap/m/Page',
 	'sap/m/RatingIndicator',
+	'sap/ui/core/Core',
 	'sap/ui/core/IconPool',
 	'sap/m/library',
 	'sap/ui/qunit/QUnitUtils',
 	'sap/ui/events/KeyCodes'
-], function(QUnitUtils, createAndAppendDiv, EventExtension, App, Page, RatingIndicator, IconPool, mobileLibrary, qutils, KeyCodes) {
+], function(QUnitUtils, createAndAppendDiv, EventExtension, App, Page, RatingIndicator, Core, IconPool, mobileLibrary, qutils, KeyCodes) {
 	createAndAppendDiv("content");
 	var styleElement = document.createElement("style");
 	styleElement.textContent =
@@ -170,6 +171,7 @@ sap.ui.define([
 	// check if the ARIA attributes are rendered
 	QUnit.test("aria attributes", function (assert) {
 		var i = 0;
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
 		// check HTML divs
 		for (; i < aRatings.length; i++) {
@@ -180,6 +182,7 @@ sap.ui.define([
 				assert.ok($RatingContainer.attr('aria-valuenow') == oRating.getValue(), "aria-valuenow is correct on " + oRating);
 				assert.ok($RatingContainer.attr('aria-valuemin') == 0, "aria-valuemin is correct on " + oRating);
 				assert.ok($RatingContainer.attr('aria-valuemax') == oRating.getMaxValue(), "aria-valuemax is correct on " + oRating);
+				assert.strictEqual($RatingContainer.attr('aria-roledescription'), oResourceBundle.getText("RATING_INDICATOR_ARIA_ROLEDESCRIPTION"), "aria-roledescription attribute is rendered correctly");
 			}
 		}
 	});
@@ -243,6 +246,7 @@ sap.ui.define([
 		assert.strictEqual(oRating.$().hasClass("sapMRIReadOnly"), false, 'Initially the control does not have class "sapMRIReadOnly" on ' + oRating);
 		assert.strictEqual(oRating.$().attr('aria-disabled'), "false", "aria-disabled is set to false on " + oRating);
 		assert.strictEqual(oRating.$().attr("tabindex"), "0", "The control is in the tab chain");
+		assert.strictEqual(oRating.$().attr("aria-readonly"), undefined, "'aria-readonly' attribute should not be presented.");
 
 		// act
 		oRating.setEditable(false);
@@ -253,6 +257,7 @@ sap.ui.define([
 		assert.strictEqual(oRating.$().hasClass("sapMRIReadOnly"), true, 'The control have class "sapMRIReadOnly" on ' + oRating);
 		assert.strictEqual(oRating.$().attr('aria-disabled'), "false", "aria-disabled is set to true on " + oRating);
 		assert.strictEqual(oRating.$().attr("tabindex"), "0", "The control is in the tab chain");
+		assert.strictEqual(oRating.$().attr("aria-readonly"), "true", "The control should have 'aria-readonly' attribute set.");
 
 		// clean
 		oRating.destroy();

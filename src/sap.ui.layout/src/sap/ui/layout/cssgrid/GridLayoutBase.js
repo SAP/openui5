@@ -68,7 +68,7 @@ sap.ui.define([
 		}
 
 		var oLayoutData = GridLayoutBase._getLayoutDataForControl(oItem),
-			oElement = GridLayoutBase._getElement(oItem);
+			oElement = oItem.getDomRef();
 
 		if (!oElement) {
 			return;
@@ -116,28 +116,6 @@ sap.ui.define([
 				}
 			}
 		}
-	};
-
-	/**
-	 * Returns the DOM ref of the item or the item's wrapper
-	 *
-	 * @private
-	 * @param {sap.ui.core.Control} oItem The item
-	 */
-	GridLayoutBase._getElement = function (oItem) {
-		var oItemDom = oItem.getDomRef();
-
-		if (!oItemDom) {
-			return undefined;
-		}
-
-		var oWrapper = oItemDom.parentNode;
-
-		if (oWrapper && oWrapper.classList.contains("sapUiLayoutCSSGridItemWrapper")) {
-			return oWrapper;
-		}
-
-		return oItemDom;
 	};
 
 	/**
@@ -269,15 +247,13 @@ sap.ui.define([
 	/**
 	 * Render display:grid styles. Used for non-responsive grid layouts.
 	 *
-	 * @param {sap.ui.core.RenderManager} rm The render manager of the Control which wants to render display:grid styles
+	 * @param {sap.ui.core.RenderManager} oRM The render manager of the Control which wants to render display:grid styles
 	 * @param {sap.ui.layout.cssgrid.GridLayoutBase} oGridLayout The grid layout to use to apply display:grid styles
 	 */
-	GridLayoutBase.prototype.renderSingleGridLayout = function (rm) {
-		var oGridSettings = this && this.getActiveGridSettings(),
-			sProp,
-			sPropValue;
+	GridLayoutBase.prototype.renderSingleGridLayout = function (oRM) {
+		var oGridSettings = this.getActiveGridSettings();
 
-		rm.addStyle("display", "grid");
+		oRM.style("display", "grid");
 
 		// If the GridLayoutBase is responsive the grid styles will be applied onAfterRendering.
 		if (!oGridSettings || this.isResponsive()) {
@@ -285,14 +261,15 @@ sap.ui.define([
 		}
 
 		var oProperties = oGridSettings.getMetadata().getProperties();
-
-		for (sProp in mGridProperties) {
+		for (var sProp in mGridProperties) {
 			if (oProperties[sProp]) {
-				sPropValue = oGridSettings.getProperty(sProp);
+				var sPropValue = oGridSettings.getProperty(sProp);
+
 				if (sProp === "gridAutoFlow") {
 					sPropValue = mGridAutoFlow[sPropValue];
 				}
-				rm.addStyle(mGridProperties[sProp], sPropValue);
+
+				oRM.style(mGridProperties[sProp], sPropValue);
 			}
 		}
 	};

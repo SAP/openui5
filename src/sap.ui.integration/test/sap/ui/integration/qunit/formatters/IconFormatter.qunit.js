@@ -27,7 +27,8 @@ function (
 				"./my/image.png",
 				"../my/image.png",
 				"http://my/image.png",
-				"sap-icon://accept"
+				"sap-icon://accept",
+				"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
 			],
 			aExpected = [
 				null,
@@ -35,7 +36,8 @@ function (
 				sap.ui.require.toUrl("test/app/id/my/image.png"),
 				sap.ui.require.toUrl("test/app/id/my/image.png"),
 				"http://my/image.png",
-				"sap-icon://accept"
+				"sap-icon://accept",
+				"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
 			];
 
 		this.oDestinationsStub.hasDestination.returns(false);

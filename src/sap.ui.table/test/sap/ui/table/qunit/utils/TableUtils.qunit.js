@@ -137,24 +137,13 @@ sap.ui.define([
 
 	QUnit.test("hasRowActions", function(assert) {
 		assert.ok(!TableUtils.hasRowActions(), "No table passed: Returned false");
-
 		assert.ok(!TableUtils.hasRowActions(oTable), "Table has no row actions");
+
 		oTable.setRowActionCount(2);
 		assert.ok(!TableUtils.hasRowActions(oTable), "Table has still no row actions");
+
 		oTable.setRowActionTemplate(new RowAction());
 		assert.ok(TableUtils.hasRowActions(oTable), "Table has row actions");
-	});
-
-	QUnit.test("getRowActionCount", function(assert) {
-		assert.strictEqual(TableUtils.getRowActionCount(), 0, "No table passed: Returned 0");
-
-		assert.equal(TableUtils.getRowActionCount(oTable), 0, "Table has no row actions");
-		oTable.setRowActionCount(2);
-		assert.equal(TableUtils.getRowActionCount(oTable), 0, "Table still has no row actions");
-		oTable.setRowActionTemplate(new RowAction());
-		assert.equal(TableUtils.getRowActionCount(oTable), 2, "Table has 2 row actions");
-		oTable.setRowActionCount(1);
-		assert.equal(TableUtils.getRowActionCount(oTable), 1, "Table has 1 row action");
 	});
 
 	QUnit.test("hasFixedColumns", function(assert) {

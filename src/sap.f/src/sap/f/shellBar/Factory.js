@@ -72,7 +72,8 @@ sap.ui.define([
 					minWidth: "0px",
 					maxWidth: "100%"
 				})
-			);
+			)
+			._setEnableAccessibilty(false);
 			this._oControls.oOverflowToolbar._getOverflowButton().addStyleClass("sapFShellBarItem sapFShellBarOverflowButton");
 		}
 		return this._oControls.oOverflowToolbar;

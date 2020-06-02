@@ -38,9 +38,37 @@ OPENUI5_SRV_ACC_RMT_CON=true npm start
 ```
 
 ##### Available Server Configurations
-- `OPENUI5_SRV_OPEN=index.html`
-- `OPENUI5_SRV_ACC_RMT_CON=true`
-- `OPENUI5_SRV_PORT=9090`
+- `OPENUI5_SRV_OPEN=index.html`: Relative path to open after the server is started
+- `OPENUI5_SRV_ACC_RMT_CON=true`: Accept remote connections. By default the server only accepts connections from localhost
+- `OPENUI5_SRV_PORT=9090`: Port to bind on (default: 8080)
+
+#### Building the OpenUI5 SDK (Demo Kit)
+With the basic setup, there are three npm scripts available that can be executed in the **root directory** of the OpenUI5 project:
+
+- `npm run build-sdk`: Build the SDK to `src/testsuite/dist`
+- `npm run serve-sdk`: Start a local HTTP server for the directory `src/testsuite/dist`
+- `npm run sdk`: Combination of the above
+
+##### Test the SDK
+
+1. After you have executed the `npm run build-sdk` command in the OpenUI5 root directory project, a `dist` directory is created inside the testsuite project.
+
+2. Start the HTTP server for the  `dist` directory
+```sh
+npm run serve-sdk
+```
+
+3. Launch the Demo Kit at [http://localhost:8000/documentation.html](http://localhost:8000/documentation.html)
+
+##### Available Build Configurations
+- `OPENUI5_LIBRARIES="sap.m,sap.ui.core"`: Filter libraries to build
+
+##### Shortcuts
+In the OpenUI5 **root directory**:
+- You can **build and serve** the SDK using this command:  
+`npm run sdk`
+- You can build **specific** libraries by specifying them in the `OPENUI5_LIBRARIES` environment variable:  
+`OPENUI5_LIBRARIES="sap.m,sap.ui.core" npm run sdk`
 
 ### Advanced Setup
 The basic setup described above uses a custom setup focused on starting the [UI5 Server](https://sap.github.io/ui5-tooling/pages/Server/) for the OpenUI5 TestSuite project in an easy way.
@@ -48,8 +76,7 @@ The basic setup described above uses a custom setup focused on starting the [UI5
 The advanced setup allows you to use the [UI5 CLI](https://github.com/SAP/ui5-cli) and all of its features. The use of [Yarn](https://yarnpkg.com) is required in this setup, as npm can't handle workspaces yet, see [What's the thing with Yarn](https://sap.github.io/ui5-tooling/pages/FAQ/#whats-the-thing-with-yarn) in the FAQ.
 
 **You need to use the advanced setup if you plan to do any of the following:**
-- **Build** an OpenUI5 project.
-- **Build** the OpenUI5 SDK (Demo Kit).
+- **Build** an OpenUI5 project
 - **Serve** a project with HTTPS or HTTP/2.
 - Use any of the other **[UI5 CLI](https://sap.github.io/ui5-tooling/pages/CLI/) features** and parameters.
 
@@ -128,49 +155,6 @@ If you encounter errors like the one below, execute `yarn` in the OpenUI5 root d
 ```
 Error: Cannot find module 'xyz'
 ```
-
-### Building JSDoc
-
-Since version [1.2.2.](https://github.com/SAP/ui5-cli/blob/master/CHANGELOG.md#v122---2019-03-21) the UI5 CLI supports a new mode `jsdoc` for the `ui5 build` command to execute a JSDoc build for your project.
-
-Usage:
-```
-ui5 build jsdoc
-```
-By default, the `jsdoc` command generates an API summary file `api.json` for your project.
-
-⚠️ **Note:** Currently there are known issues with the JSDoc build when using Node.js `v12.x`. If you are facing issues, you may try using Node.js `v10.x`.
-
-#### Building the OpenUI5 SDK (Demo Kit)
-Before you start building the SDK, make sure you have followed the [advanced setup](#advanced-setup) of your OpenUI5 development environment at first.
-
-Execute the build:
-```
-cd src/testsuite
-ui5 build jsdoc --all
-```
-With the `--all` option the JSDoc build generates an `api.json` of all project dependencies. This can then be used to launch the Demo Kit and find the full API reference for all OpenUI5 libraries.
-
-⚠️ **Note:** Currently there are known issues with the JSDoc build when using Node.js `v12.x`. If you are facing issues, you may try using Node.js `v10.x`.
-
-##### Test the SDK
-
-1. After you have run the `ui5 build jsdoc --all` command in the testsuite project, a `dist` folder is created.
-
-2. Start an HTTP server for the `dist` folder
-```sh
-npm run serve-sdk
-```
-
-3. Launch the Demo Kit at [http://localhost:8000/documentation.html](http://localhost:8000/documentation.html)
-
-##### Shortcuts
-Within the testsuite project:
-- You can **build and serve** the SDK using this command:  
-`npm run sdk`
-- You can **update** an already built SDK using this command:  
-`npm run update-sdk` *(followed by `npm run serve-sdk` to start the server if necessary)*
-
 
 Testing UI5
 -----------

@@ -9794,6 +9794,19 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test("Aria attributes", function (assert) {
+			// arrange
+			var oSelect = new Select();
+			oSelect.placeAt("content");
+			Core.applyChanges();
+
+			// assert
+			assert.ok(oSelect.$().attr("aria-roledescription") !== undefined, "aria-roledescription is correct");
+
+			// clean
+			oSelect.destroy();
+		});
+
 		QUnit.module("value state");
 
 		QUnit.test("it should open the value state message popup on focusin", function (assert) {

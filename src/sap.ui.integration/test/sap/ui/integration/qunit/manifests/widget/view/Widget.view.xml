@@ -1,0 +1,3 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="sap.my.test.widget.component.controller.Widget" displayBlock="true">
+	<Text text="Testing widget" />
+</mvc:View>

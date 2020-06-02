@@ -68,95 +68,102 @@ sap.ui.define([
 	 * Constructor for a new ODataModel.
 	 *
 	 * @param {string|object} serviceUrl
-	 *            Base URI of the service to request data from; additional URL parameters appended here
-	 *            will be appended to every request. If you pass an object it will be interpreted as
-	 *            the parameter object (second parameter). Then <code>mParameters.serviceUrl</code>
-	 *            becomes a mandatory parameter.
+	 *   Base URI of the service to request data from; additional URL parameters appended here will
+	 *   be appended to every request. If you pass an object, it will be interpreted as the
+	 *   parameter object (second parameter). Then <code>mParameters.serviceUrl</code> becomes a
+	 *   mandatory parameter.
 	 * @param {object} [mParameters]
-	 *            Map which contains the following parameter properties:
-	 * @param {object} [mParameters.serviceUrl]
-	 *            Base URI of the service to request data from; this property is mandatory when the
-	 *            first method parameter <code>serviceUrl</code> is omitted, but ignored otherwise
-	 * @param {boolean} [mParameters.json=true]
-	 *            If set to <code>true</code>, request payloads will be JSON, XML for <code>false</code>
-	 * @param {string} [mParameters.user] <b>Deprecated</b> for security reasons. Use strong server
-	 *            side authentication instead. UserID for the service.
-	 * @param {string} [mParameters.password] <b>Deprecated</b> for security reasons. Use strong
-	 *            server side authentication instead. Password for the service.
-	 * @param {Object<string,string>} [mParameters.headers]
-	 *            Map of custom headers (name/value pairs) like {"myHeader":"myHeaderValue",...}
-	 * @param {boolean} [mParameters.tokenHandling=true] Enable/disable XCSRF-Token handling
-	 * @param {boolean} [mParameters.withCredentials]
-	 *            Experimental - <code>true</code> when user credentials are to be included in a
-	 *            cross-origin request; please note that this only works if all requests are asynchronous
-	 * @param {string}[mParameters.maxDataServiceVersion='2.0']
-	 *            Please use the following string format e.g. '2.0' or '3.0'.
-	 *            OData version supported by the ODataModel: '2.0'
-	 * @param {boolean} [mParameters.useBatch=true]
-	 *            Whether all requests should be sent in batch requests
-	 * @param {boolean} [mParameters.refreshAfterChange=true]
-	 *            Enable/disable automatic refresh after change operations
+	 *   Map which contains the following parameter properties:
 	 * @param {string|string[]} [mParameters.annotationURI]
-	 *            The URL (or an array of URLs) from which the annotation metadata should be loaded
-	 * @param {boolean} [mParameters.loadAnnotationsJoined]
-	 *            Whether the <code>metadataLoaded</code> event will be fired only after all annotations have
-	 *            been loaded as well
-	 * @param {Object<string,string>} [mParameters.serviceUrlParams]
-	 *            Map of URL parameters (name/value pairs) - these parameters will be attached to all requests, except for the <code>$metadata</code> request
-	 * @param {Object<string,string>} [mParameters.metadataUrlParams]
-	 *            Map of URL parameters for metadata requests - only attached to a <code>$metadata</code> request
-	 * @param {sap.ui.model.BindingMode} [mParameters.defaultBindingMode=OneWay]
-	 *            Sets the default binding mode for the model
-	 * @param {sap.ui.model.odata.CountMode} [mParameters.defaultCountMode=Request]
-	 *            Sets the default count mode for the model
-	 * @param {boolean} [mParameters.preliminaryContext=false]
-	 *            Whether a preliminary Context will be created/used by a binding
-	 * @param {sap.ui.model.odata.OperationMode} [mParameters.defaultOperationMode=Default]
-	 *            Sets the default operation mode for the model
-	 * @param {sap.ui.model.odata.UpdateMethod} [mParameters.defaultUpdateMethod=Merge]
-	 *            Default update method which is used for all update requests
-	 * @param {Object<string,string>} [mParameters.metadataNamespaces]
-	 *            Map of namespace aliases (alias => URI) that can be used in metadata binding paths;
-	 *            each alias is mapped to a corresponding namespace URI; when an alias is used
-	 *            in a metadata binding path, it addresses a metadata extension that belongs to
-	 *            the corresponding namespace URI; if <code>metadataNamespaces</code> is not given,
-	 *            the following default mappings will be used:
-	 *            <ul>
-	 *            <li><code>"sap": "sap:"http://www.sap.com/Protocols/SAPData"</code></li>
-	 *            <li><code>  "m": "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"</code></li>
-	 *            <li><code>   "": "http://schemas.microsoft.com/ado/2007/06/edmx</code></li>
-	 *            </ul>
-	 * @param {boolean} [mParameters.skipMetadataAnnotationParsing]
-	 *            Whether to skip the automated loading of annotations from the metadata document.
-	 *            Loading annotations from metadata does not have any effects (except the lost performance
-	 *            by invoking the parser) if there are not annotations inside the metadata document
-	 * @param {boolean} [mParameters.disableHeadRequestForToken=false]
-	 *            Set this flag to <code>true</code> if your service does not support <code>HEAD</code>
-	 *            requests for fetching the service document (and thus the CSRF-token) to avoid sending
-	 *            a <code>HEAD</code>-request before falling back to <code>GET</code>
-	 * @param {boolean} [mParameters.sequentializeRequests=false]
-	 *            Whether to sequentialize all requests, needed in case the service cannot handle parallel requests
-	 * @param {boolean} [mParameters.disableSoftStateHeader=false]
-	 *            Set this flag to <code>true</code> if you don´t want to start a new soft state session
-	 *            with context ID (<code>SID</code>) through header mechanism. This is useful if you want
-	 *            to share an <code>SID</code> between different browser windows
+	 *   The URL (or an array of URLs) from which the annotation metadata should be loaded
 	 * @param {string[]} [mParameters.bindableResponseHeaders=null]
-	 *            Set this array to make custom response headers bindable via the entity's "__metadata/headers" property
+	 *   Set this array to make custom response headers bindable via the entity's
+	 *   "__metadata/headers" property
 	 * @param {boolean} [mParameters.canonicalRequests=false]
-	 *            When setting this flag to <code>true</code> the model tries to calculate a canonical url to the data.
-	 * @param {boolean} [mParameters.tokenHandlingForGet=false] Send CSRF token for GET requests in case read access logging is activated for the OData Service in the backend.
+	 *   When setting this flag to <code>true</code> the model tries to calculate a canonical url to
+	 *   the data.
+	 * @param {sap.ui.model.BindingMode} [mParameters.defaultBindingMode=OneWay]
+	 *   Sets the default binding mode for the model
+	 * @param {sap.ui.model.odata.CountMode} [mParameters.defaultCountMode=Request]
+	 *   Sets the default count mode for the model
+	 * @param {sap.ui.model.odata.OperationMode} [mParameters.defaultOperationMode=Default]
+	 *   Sets the default operation mode for the model
+	 * @param {sap.ui.model.odata.UpdateMethod} [mParameters.defaultUpdateMethod=Merge]
+	 *   Default update method which is used for all update requests
+	 * @param {boolean} [mParameters.disableHeadRequestForToken=false]
+	 *   Set this flag to <code>true</code> if your service does not support <code>HEAD</code>
+	 *   requests for fetching the service document (and thus the security token) to avoid sending a
+	 *   <code>HEAD</code>-request before falling back to <code>GET</code>
+	 * @param {boolean} [mParameters.disableSoftStateHeader=false]
+	 *   Set this flag to <code>true</code> if you don´t want to start a new soft state session with
+	 *   context ID (<code>SID</code>) through header mechanism. This is useful if you want to share
+	 *   a <code>SID</code> between different browser windows
+	 * @param {boolean} [mParameters.earlyTokenRequest=false]
+	 *   Whether the security token is requested at the earliest convenience, if parameter
+	 *   <code>tokenHandling</code> is <code>true</code>; supported since 1.79.0.
+	 * @param {Object<string,string>} [mParameters.headers]
+	 *   Map of custom headers (name/value pairs) like {"myHeader":"myHeaderValue",...}
+	 * @param {boolean} [mParameters.json=true]
+	 *   If set to <code>true</code>, request payloads will be JSON, XML for <code>false</code>
+	 * @param {boolean} [mParameters.loadAnnotationsJoined]
+	 *   Whether the <code>metadataLoaded</code> event will be fired only after all annotations have
+	 *   been loaded as well
+	 * @param {string}[mParameters.maxDataServiceVersion='2.0']
+	 *   Please use the following string format e.g. '2.0' or '3.0'. OData version supported by the
+	 *   ODataModel: '2.0'
+	 * @param {Object<string,string>} [mParameters.metadataNamespaces]
+	 *   Map of namespace aliases (alias => URI) that can be used in metadata binding paths; each
+	 *   alias is mapped to a corresponding namespace URI; when an alias is used in a metadata
+	 *   binding path, it addresses a metadata extension that belongs to the corresponding namespace
+	 *   URI; if <code>metadataNamespaces</code> is not given, the following default mappings will
+	 *   be used:
+	 *   <ul>
+	 *   <li><code>"sap": "sap:"http://www.sap.com/Protocols/SAPData"</code></li>
+	 *   <li><code>"m": "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"</code></li>
+	 *   <li><code>"": "http://schemas.microsoft.com/ado/2007/06/edmx</code></li>
+	 *   </ul>
+	 * @param {Object<string,string>} [mParameters.metadataUrlParams]
+	 *   Map of URL parameters for metadata requests - only attached to a <code>$metadata</code>
+	 *   request
+	 * @param {boolean} [mParameters.preliminaryContext=false]
+	 *   Whether a preliminary Context will be created/used by a binding
+	 * @param {boolean} [mParameters.refreshAfterChange=true]
+	 *   Enable/disable automatic refresh after change operations
+	 * @param {boolean} [mParameters.sequentializeRequests=false]
+	 *   Whether to sequentialize all requests, needed in case the service cannot handle parallel
+	 *   requests
+	 * @param {string} [mParameters.serviceUrl]
+	 *   Base URI of the service to request data from; this property is mandatory when the first
+	 *   method parameter <code>serviceUrl</code> is omitted, but ignored otherwise
+	 * @param {Object<string,string>} [mParameters.serviceUrlParams]
+	 *   Map of URL parameters (name/value pairs) - these parameters will be attached to all
+	 *   requests, except for the <code>$metadata</code> request
+	 * @param {boolean} [mParameters.skipMetadataAnnotationParsing]
+	 *   Whether to skip the automated loading of annotations from the metadata document. Loading
+	 *   annotations from metadata does not have any effects (except the lost performance by
+	 *   invoking the parser) if there are not annotations inside the metadata document
+	 * @param {boolean} [mParameters.tokenHandling=true]
+	 *   Enable/disable security token handling
+	 * @param {boolean} [mParameters.tokenHandlingForGet=false]
+	 *   Send security token for GET requests in case read access logging is activated for the OData
+	 *   Service in the backend.
+	 * @param {boolean} [mParameters.useBatch=true]
+	 *   Whether all requests should be sent in batch requests
+	 * @param {boolean} [mParameters.withCredentials]
+	 *   Experimental - <code>true</code> when user credentials are to be included in a cross-origin
+	 *   request; please note that this only works if all requests are asynchronous
+	 * @param {string} [mParameters.password]
+	 *   <b>Deprecated</b> for security reasons. Use strong server side authentication instead.
+	 *   Password for the service.
+	 * @param {string} [mParameters.user]
+	 *   <b>Deprecated</b> for security reasons. Use strong server side authentication instead.
+	 *   UserID for the service.
 	 *
 	 * @class
 	 * Model implementation based on the OData protocol.
 	 *
-	 * See chapter {@link topic:6c47b2b39db9404582994070ec3d57a2 OData V2 Model} for a general introduction.
-	 *
-	 * @example authentication
-	 * oModel = new ODataModel(sURL, {
-	 *      user : "myuser",
-	 *      password : "mypass"
-	 * });
-	 * // will use the respective authentication token
+	 * See chapter {@link topic:6c47b2b39db9404582994070ec3d57a2 OData V2 Model} for a general
+	 * introduction.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -199,6 +206,7 @@ sap.ui.define([
 				sWarmupUrl,
 				bCanonicalRequests,
 				bTokenHandlingForGet,
+				bEarlyTokenRequest,
 				that = this;
 
 			if (typeof (sServiceUrl) === "object") {
@@ -235,6 +243,7 @@ sap.ui.define([
 				sWarmupUrl = mParameters.warmupUrl;
 				bCanonicalRequests = mParameters.canonicalRequests;
 				bTokenHandlingForGet = mParameters.tokenHandlingForGet;
+				bEarlyTokenRequest = mParameters.earlyTokenRequest;
 			}
 
 			/* Path cache to avoid multiple expensive resolve operations
@@ -423,6 +432,9 @@ sap.ui.define([
 				} else if (this.oSharedServerData.securityToken) {
 					this.oSharedServiceData.securityToken = this.oSharedServerData.securityToken;
 					this.oHeaders["x-csrf-token"] = this.oSharedServiceData.securityToken;
+				}
+				if (bEarlyTokenRequest) {
+					this.securityTokenAvailable();
 				}
 			}
 			this.oHeaders["Accept-Language"] = sap.ui.getCore().getConfiguration().getLanguageTag();
@@ -2875,7 +2887,7 @@ sap.ui.define([
 	 *
 	 * If the token has not been requested from the server it will be requested first (synchronously).
 	 *
-	 * @returns {string} The CSRF security token
+	 * @returns {string} The security token
 	 *
 	 * @public
 	 */
@@ -2891,7 +2903,7 @@ sap.ui.define([
 	/**
 	 * Returns a promise, which will resolve with the security token as soon as it is available.
 	 *
-	 * @returns {Promise} A promise on the CSRF security token
+	 * @returns {Promise} A promise on the security token
 	 *
 	 * @public
 	 */
@@ -2945,7 +2957,7 @@ sap.ui.define([
 					that.oSharedServiceData.securityToken = sToken;
 					that.pSecurityToken = Promise.resolve(sToken);
 					// For compatibility with applications, that are using getHeaders() to retrieve the current
-					// CSRF token additionally keep it in the oHeaders object
+					// security token additionally keep it in the oHeaders object
 					that.oHeaders["x-csrf-token"] = sToken;
 				} else {
 					// Disable token handling, if service does not return tokens
@@ -3045,7 +3057,7 @@ sap.ui.define([
 		}
 
 		function submitWithToken() {
-			// Make sure requests not requiring a CSRF token don't send one.
+			// Make sure requests not requiring a security token don't send one.
 			if (that.bTokenHandling) {
 				delete oRequest.headers["x-csrf-token"];
 			}
@@ -3290,6 +3302,9 @@ sap.ui.define([
 						//changeSet failed
 						if (oResponse.message) {
 							for (j = 0; j < aRequests[i].length; j++) {
+								// ensure that messages are reported for each request in a changeset
+								// as we cannot assign the error to a specific request
+								oResponse.$reported = false;
 								oRequestObject = aRequests[i][j];
 								processResponse(oRequestObject, oResponse);
 								oRequestObject.response = oResponse;
@@ -3320,6 +3335,7 @@ sap.ui.define([
 		function handleError(oError) {
 			var bAborted = oError.message == "Request aborted";
 
+			oError.$reported = true; // avoid that individual requests log the error
 			// Call procesError for all contained requests first
 			each(aRequests, function(i, oRequest) {
 				if (Array.isArray(oRequest)) {
@@ -3336,6 +3352,8 @@ sap.ui.define([
 			if (bAborted) {
 				that._processAborted(oBatchRequest, oError, true);
 			} else {
+				// ensure that the error is reported for the complete $batch
+				oError.$reported = false;
 				that._processError(oBatchRequest, oError, fnError, true, aRequests);
 			}
 		}
@@ -4252,32 +4270,39 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._handleError = function(oError, oRequest) {
-		var mParameters = {}, /* fnHandler, */ sToken;
-		var sErrorMsg = "The following problem occurred: " + oError.message;
+		var sErrorMsg,
+			mParameters = {message : oError.message},
+			sToken;
 
+		if (oError.response) {
+			if (!oError.$reported) {
+				// Parse messages from the back-end
+				this._parseResponse(oError.response, oRequest);
 
-		mParameters.message = oError.message;
-		if (oError.response){
-			// Parse messages from the back-end
-			this._parseResponse(oError.response, oRequest);
-
-			if (this.bTokenHandling) {
-				// if XSRFToken is not valid we get 403 with the x-csrf-token header : Required.
-				// a new token will be fetched in the refresh afterwards.
-				sToken = this._getHeader("x-csrf-token", oError.response.headers);
-				if (oError.response.statusCode == '403' && sToken && sToken.toLowerCase() === "required") {
-					this.resetSecurityToken();
+				if (this.bTokenHandling) {
+					// if XSRFToken is not valid we get 403 with the x-csrf-token header : Required.
+					// a new token will be fetched in the refresh afterwards.
+					sToken = this._getHeader("x-csrf-token", oError.response.headers);
+					if (oError.response.statusCode == '403' && sToken
+							&& sToken.toLowerCase() === "required") {
+						this.resetSecurityToken();
+					}
 				}
+				sErrorMsg = oError.message + " (" + oError.response.statusCode + " "
+					+ oError.response.statusText + "): "
+					+ oError.response.body;
 			}
-			sErrorMsg += oError.response.statusCode + "," +
-			oError.response.statusText + "," +
-			oError.response.body;
 			mParameters.statusCode = oError.response.statusCode;
 			mParameters.statusText = oError.response.statusText;
 			mParameters.headers = oError.response.headers;
 			mParameters.responseText = oError.response.body;
+		} else {
+			sErrorMsg = "The following problem occurred: " + oError.message;
 		}
-		Log.fatal(sErrorMsg);
+		if (!oError.$reported) {
+			Log.error(sErrorMsg, undefined, sClassName);
+		}
+		oError.$reported = true;
 
 		return mParameters;
 	};
@@ -4750,7 +4775,8 @@ sap.ui.define([
 
 		return this._processRequest(function(requestHandle) {
 			sUrl = that._createRequestUrlWithNormalizedPath(sNormalizedPath, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, undefined, sETag);
+			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, undefined, sETag,
+				undefined, true);
 
 			mRequests = that.mRequests;
 			if (bDeferred) {
@@ -5074,31 +5100,72 @@ sap.ui.define([
 	/**
 	 * Returns a promise for the loaded state of the metadata.
 	 *
-	 * The promise won't get rejected in case the metadata loading failed but is only resolved if the metadata is loaded successfully.
-	 * If <code>refreshMetadata</code> function is called after this promise is already resolved you should rely on the promise returned by
-	 * <code>refreshMetadata</code> to get information about the refreshed metadata loaded state.
+	 * The metadata needs to be loaded prior to performing OData calls.
+	 * Chaining to the returned promise ensures that all required parameters have been loaded, e.g.
+	 * the security token, see {@link #getSecurityToken}.
 	 *
-	 * The Metadata needs to be loaded prior to performing OData calls.
-	 * Chaining to the returned promise ensures that all required parameters have been loaded, e.g. authentication token.
+	 * The returned promise depends on the optional parameter <code>bRejectOnFailure</code>.
+	 *
+	 * <code>bRejectOnFailure=false</code>:
+	 * The promise won't get rejected in case the metadata or annotation loading failed but is
+	 * only resolved if
+	 * <ol>
+	 * <li>the metadata are loaded successfully,</li>
+	 * <li>the annotations are processed, provided the model parameter
+	 * <code>loadAnnotationsJoined</code> has been set.</li>
+	 * </ol>
+	 * Use this promise for delaying OData calls until all required information is available, i.e.
+	 * this promise is resolved.
+	 *
+	 * <code>bRejectOnFailure=true</code>:
+	 * Since 1.79, the parameter <code>bRejectOnFailure</code> allows to request a promise that is
+	 * rejected when one of the following fails:
+	 * <ul>
+	 * <li>the loading of the metadata,</li>
+	 * <li>the loading of the annotations, provided the model parameter
+	 * <code>loadAnnotationsJoined</code> has been set.</li>
+	 * </ul>
+	 * The promise is fulfilled upon successful loading of both. This promise can be used to start
+	 * processing OData calls when it is fulfilled and to display an error message when it is
+	 * rejected. See also the example below.
+	 *
+	 * If the method <code>refreshMetadata</code> is called after the returned promise is already
+	 * resolved or rejected, you should use the promise returned by <code>refreshMetadata</code>
+	 * to get information about the refreshed state.
 	 *
 	 * @example
-	 * var oModel  = this.oModel; // v2.ODataModel
-	 * oModel.metadataLoaded().then(function() {
-	 *      // model is ready now
-	 *      oModel.createKey("PERSON", {"ID" : 4711, "TASK_GUID": "myguid"});
-	 * });
+	 * var oModel  = this.oModel, // v2.ODataModel
+	 *     that = this;
+	 * oModel.metadataLoaded(true).then(
+	 *     function () {
+	 *         // model is ready now
+	 *         oModel.createKey("PERSON", {"ID" : 4711, "TASK_GUID": "myguid"});
+	 *     },
+	 *     function () {
+	 *         // Display error information so that the user knows that the application does not work.
+	 *         that.navigateToErrorPage();
+	 *     });
 	 *
+	 * @param {boolean} [bRejectOnFailure=false]
+	 *   Determines since 1.79 whether the returned promise is rejected when the initial loading
+	 *   of the metadata fails. In case the model parameter <code>loadAnnotationsJoined</code> is
+	 *   set, the returned promise fails also if loading the annotations fails.
 	 *
-	 * @public
 	 * @returns {Promise} A promise on metadata loaded state
 	 *
+	 * @public
 	 * @since 1.30
 	 */
-	ODataModel.prototype.metadataLoaded = function() {
-		var pMetadataLoaded = this.oMetadata.loaded();
+	ODataModel.prototype.metadataLoaded = function (bRejectOnFailure) {
+		var pMetadataLoaded = this.oMetadata.loaded(bRejectOnFailure);
 		if (this.bLoadAnnotationsJoined) {
-			// In case annotations are loaded "joined" with metadata, delay the metadata promise until annotations are
-			// either loaded or failed
+			// In case the metadata promise can be rejected, the resulting promise will also fail
+			// if the annotation loading failed.
+			if (bRejectOnFailure) {
+				return Promise.all([pMetadataLoaded, this.pAnnotationsLoaded]);
+			}
+			// In case annotations are loaded "joined" with metadata, delay the metadata promise
+			// until annotations are either loaded or failed.
 			var fnChainMetadataLoaded = function() {
 				return pMetadataLoaded;
 			};
@@ -5355,7 +5422,9 @@ sap.ui.define([
 					if (isEmptyObject(oChangedObject[sKey])) {
 						delete oChangedObject[sKey];
 					}
-				} else if (deepEqual(oChangedObject[sKey], oOriginalObject[sKey]) && !that.isLaundering(sActPath)) {
+				} else if (sCurPath.endsWith("__metadata")
+						|| deepEqual(oChangedObject[sKey], oOriginalObject[sKey])
+							&& !that.isLaundering(sActPath)) {
 					delete oChangedObject[sKey];
 					// When current object is the entity itself check for matching navigation property in changed
 					// entity data and take care of it as well
@@ -5803,7 +5872,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Enable/Disable XCSRF-Token handling.
+	 * Enable/Disable security token handling.
 	 * @param {boolean} [bTokenHandling=true] Whether to use token handling or not
 	 * @public
 	 */
@@ -7132,8 +7201,8 @@ sap.ui.define([
 		});
 	};
 
-	/**
-	 * Whether the given message object's <code>fullTarget</code> starts with the given resolved
+	/*
+	 * Returns whether one of the given message object's full targets starts with the given resolved
 	 * binding path prefix.
 	 *
 	 * @param {sap.ui.core.message.Message} oMessage
@@ -7141,20 +7210,21 @@ sap.ui.define([
 	 * @param {string} sPathPrefix
 	 *   The resolved binding path prefix
 	 * @returns {boolean}
-	 *   Whether the given message object's <code>fullTarget</code> starts with the given resolved
+	 *   Whether one of the given message object's full targets starts with the given resolved
 	 *   binding path prefix
 	 *
-	 * @pivate
+	 * @private
 	 */
 	ODataModel.prototype.isMessageMatching = function (oMessage, sPathPrefix) {
-		var sFullTarget = oMessage.fullTarget,
-			iPrefixLength = sPathPrefix.length;
+		var iPrefixLength = sPathPrefix.length;
 
-		return sFullTarget === sPathPrefix
-			|| sFullTarget.startsWith(sPathPrefix)
-				&& (sPathPrefix === "/"
-					|| sFullTarget[iPrefixLength] === "/"
-					|| sFullTarget[iPrefixLength] === "(");
+		return oMessage.aFullTargets.some(function (sFullTarget) {
+			return sFullTarget === sPathPrefix
+				|| sFullTarget.startsWith(sPathPrefix)
+					&& (sPathPrefix === "/"
+						|| sFullTarget[iPrefixLength] === "/"
+						|| sFullTarget[iPrefixLength] === "(");
+		});
 	};
 
 	// @override

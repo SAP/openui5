@@ -25,7 +25,9 @@ sap.ui.define([
 	"sap/ui/integration/util/LoadingProvider",
 	"sap/ui/integration/util/HeaderFactory",
 	"sap/ui/integration/util/ContentFactory",
-	"sap/ui/integration/formatters/IconFormatter"
+	"sap/ui/integration/util/BindingHelper",
+	"sap/ui/integration/formatters/IconFormatter",
+	"sap/ui/integration/util/FilterBarFactory"
 ], function (
 	jQuery,
 	Core,
@@ -50,7 +52,9 @@ sap.ui.define([
 	LoadingProvider,
 	HeaderFactory,
 	ContentFactory,
-	IconFormatter
+	BindingHelper,
+	IconFormatter,
+	FilterBarFactory
 ) {
 	"use strict";
 	/* global Map */
@@ -233,6 +237,16 @@ sap.ui.define([
 					visibility: "hidden"
 				},
 
+
+				/**
+				 * Defines the filters section of the card.
+				 */
+				_filterBar: {
+					type: "sap.ui.core.Control",
+					multiple: false,
+					visibility: "hidden"
+				},
+
 				/**
 				 * Defines the content of the card.
 				 */
@@ -363,12 +377,13 @@ sap.ui.define([
 			this.addStyleClass(sConfig.replace(/-/g, "_"));
 		}
 
-		if (this._bApplyManifest) {
-			this._bApplyManifest = false;
-			var vManifest = this.getManifest();
-
+		if (this._bApplyManifest || this._bApplyParameters) {
 			this._clearReadyState();
 			this._initReadyState();
+		}
+
+		if (this._bApplyManifest) {
+			var vManifest = this.getManifest();
 
 			if (!vManifest) {
 				// Destroy the manifest when null/undefined/empty string are passed
@@ -377,6 +392,15 @@ sap.ui.define([
 				this.createManifest(vManifest, this.getBaseUrl());
 			}
 		}
+
+		if (!this._bApplyManifest && this._bApplyParameters) {
+			this._oCardManifest.processParameters(this.getParameters());
+
+			this._applyManifestSettings();
+		}
+
+		this._bApplyManifest = false;
+		this._bApplyParameters = false;
 	};
 
 	Card.prototype.setManifest = function (vValue) {
@@ -396,7 +420,18 @@ sap.ui.define([
 	 */
 	Card.prototype.setParameters = function (vValue) {
 		this.setProperty("parameters", vValue);
-		this._bApplyManifest = true;
+		this._bApplyParameters = true;
+		return this;
+	};
+
+	/**
+	 * Sets a single parameter in the parameters property
+	 */
+	Card.prototype.setParameter = function (sKey, vValue) {
+		var mParameters = this.getParameters() || {};
+		mParameters[sKey] = vValue;
+		this.setParameters(mParameters);
+
 		return this;
 	};
 
@@ -469,9 +504,15 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._loadDefaultTranslations = function () {
+		if (this._defaultTranslationsLoaded) {
+			return;
+		}
+
 		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 
 		this._enhanceI18nModel(oResourceBundle);
+
+		this._defaultTranslationsLoaded = true;
 	};
 
 	/**
@@ -585,6 +626,7 @@ sap.ui.define([
 		}
 
 		this.destroyAggregation("_header");
+		this.destroyAggregation("_filterBar");
 		this.destroyAggregation("_content");
 
 		this._aReadyPromises = null;
@@ -732,15 +774,19 @@ sap.ui.define([
 		this._applyServiceManifestSettings();
 		this._applyDataManifestSettings();
 		this._applyHeaderManifestSettings();
+		this._applyFilterBarManifestSettings();
 		this._applyContentManifestSettings();
 	};
 
 	Card.prototype._applyDataManifestSettings = function () {
-		var oDataSettings = this._oCardManifest.get(MANIFEST_PATHS.DATA);
+		var oDataSettings = BindingHelper.createBindingInfos(this._oCardManifest.get(MANIFEST_PATHS.DATA));
+
 		if (!oDataSettings) {
 			this.fireEvent("_cardReady");
 			return;
 		}
+
+		this.bindObject(oDataSettings.path || "/");
 
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();
@@ -873,6 +919,18 @@ sap.ui.define([
 		}
 	};
 
+	Card.prototype._applyFilterBarManifestSettings = function () {
+		var oFilterBar = this.createFilterBar();
+
+		this.destroyAggregation("_filterBar");
+
+		if (!oFilterBar) {
+			return;
+		}
+
+		this.setAggregation("_filterBar", oFilterBar);
+	};
+
 	/**
 	 * Gets the instance of the <code>host</code> association.
 	 *
@@ -932,6 +990,14 @@ sap.ui.define([
 			oHeaderFactory = new HeaderFactory(this);
 
 		return oHeaderFactory.create(oManifestHeader);
+	};
+
+	Card.prototype.createFilterBar = function () {
+		var mParameters = this.getManifestEntry("/sap.card/configuration/parameters"),
+			mValues = this.getCombinedParameters(),
+			oFactory = new FilterBarFactory(this);
+
+		return oFactory.create(mParameters, mValues);
 	};
 
 	Card.prototype.getContentManifest = function () {

@@ -261,11 +261,15 @@ sap.ui.define([
 	 */
 	MessageStripRenderer.getAccessibilityState = function () {
 		var mAccessibilityState = MSUtils.getAccessibilityState.call(this),
-			oLink = this.getLink();
+			oLink = this.getLink(),
+			oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+
 
 		if (!oLink) {
 			mAccessibilityState.labelledby = this.getId();
 		}
+
+		mAccessibilityState.roledescription = oResourceBundle.getText("MESSAGE_STRIP_ARIA_ROLE_DESCRIPTION");
 		return mAccessibilityState;
 	};
 

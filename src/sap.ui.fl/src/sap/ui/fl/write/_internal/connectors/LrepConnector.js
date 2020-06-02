@@ -79,8 +79,8 @@ sap.ui.define([
 		if (mPropertyBag.skipIam) {
 			mParameters.skipIam = mPropertyBag.skipIam;
 		}
-
-		ApplyConnector._addClientAndLanguageInfo(mParameters);
+		ApplyUtils.addLanguageInfo(mParameters);
+		ApplyConnector._addClientInfo(mParameters);
 		//single update --> fileName needs to be in the url
 		if (mPropertyBag.flexObject && !mPropertyBag.isAppVariant) {
 			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
@@ -187,7 +187,7 @@ sap.ui.define([
 				var aParameters = ["reference", "layer", "appVersion", "changelist", "generator"];
 				var mParameters = _pick(mPropertyBag, aParameters);
 
-				ApplyConnector._addClientAndLanguageInfo(mParameters);
+				ApplyConnector._addClientInfo(mParameters);
 
 				if (mPropertyBag.selectorIds) {
 					mParameters.selector = mPropertyBag.selectorIds;
@@ -284,7 +284,7 @@ sap.ui.define([
 			var aParameters = ["layer", "appVersion"];
 			var mParameters = _pick(mPropertyBag, aParameters);
 
-			ApplyConnector._addClientAndLanguageInfo(mParameters);
+			ApplyConnector._addClientInfo(mParameters);
 
 			var sDataUrl = ApplyUtils.getUrl(ROUTES.FLEX_INFO, mPropertyBag, mParameters);
 			return ApplyUtils.sendRequest(sDataUrl).then(function (oResult) {
@@ -306,7 +306,7 @@ sap.ui.define([
 			}
 			var mParameters = {};
 
-			ApplyConnector._addClientAndLanguageInfo(mParameters);
+			ApplyConnector._addClientInfo(mParameters);
 
 			var sFeaturesUrl = ApplyUtils.getUrl(ROUTES.SETTINGS, mPropertyBag, mParameters);
 			return ApplyUtils.sendRequest(sFeaturesUrl).then(function (oResult) {
@@ -366,7 +366,7 @@ sap.ui.define([
 			if (mPropertyBag.transport) {
 				mParameters.changelist = mPropertyBag.transport;
 			}
-			ApplyConnector._addClientAndLanguageInfo(mParameters);
+			ApplyConnector._addClientInfo(mParameters);
 			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
 			var sRoute = mPropertyBag.flexObject.fileType === "variant" ? ROUTES.VARIANTS : ROUTES.CHANGES;
 			var sDeleteUrl = ApplyUtils.getUrl(sRoute, mPropertyBag, mParameters);

@@ -18,7 +18,6 @@
     "@openui5/sap.ui.codeeditor": "1.79.0-SNAPSHOT",
     "@openui5/sap.ui.core": "1.79.0-SNAPSHOT",
     "@openui5/sap.ui.fl": "1.79.0-SNAPSHOT",
-    "@openui5/sap.ui.layout": "1.79.0-SNAPSHOT",
-    "@openui5/themelib_sap_belize": "1.79.0-SNAPSHOT"
+    "@openui5/sap.ui.layout": "1.79.0-SNAPSHOT"
   }
 }

@@ -775,7 +775,7 @@ sap.ui.define([
 						jQuery.event.special.swipe.scrollSupressionThreshold = 120;
 					}
 
-					jQuery.extend(this, oNativeScrollDelegate);
+					Object.assign(this, oNativeScrollDelegate);
 
 					if (oConfig.nonTouchScrolling === true) {
 						this._bDragScroll = true; // optional drag instead of native scrolling
@@ -794,7 +794,7 @@ sap.ui.define([
 				}
 			};
 			// Copy over members to prototype
-			jQuery.extend(oScrollerInstance, oDelegateMembers);
+			Object.assign(oScrollerInstance, oDelegateMembers);
 		}
 
 	return ScrollEnablement;

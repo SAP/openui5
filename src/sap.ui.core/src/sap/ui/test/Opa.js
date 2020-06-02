@@ -338,9 +338,7 @@ sap.ui.define([
 	// I don't have a proper explanation for this.
 	var executionDelayDefault = 0;
 
-	// phantom is flagged as safari but actually we do not want to set the tiemout higher in phantomjs
-	var bIsSafariButNotPhantom = Device.browser.safari && !Device.browser.phantomJS;
-	if (Device.browser.msie || Device.browser.edge || bIsSafariButNotPhantom) {
+	if (Device.browser.msie || Device.browser.edge || Device.browser.safari) {
 		executionDelayDefault = 50;
 	}
 

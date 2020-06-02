@@ -157,7 +157,7 @@
 						"packageName": "$TMP",
 						"content": {},
 						"selector": {
-							"id": "RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+							"id": "RTADemoAppMD---detail--GroupElementDatesShippingStatus1"
 						},
 						"layer": "VENDOR",
 						"texts": {},
@@ -312,7 +312,7 @@
 						"packageName": "$TMP",
 						"content": {},
 						"selector": {
-							"id": "RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+							"id": "RTADemoAppMD---detail--GroupElementDatesShippingStatus1"
 						},
 						"layer": "VENDOR",
 						"texts": {},

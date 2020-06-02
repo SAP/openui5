@@ -513,7 +513,10 @@ sap.ui.define([
 					.map(function (oNode) {
 						var sId = oView.createId(oNode.getAttribute("id"));
 						return this._byId(sId);
-					}.bind(this));
+					}.bind(this))
+					.filter(function (oControl) {
+						return !!oControl;
+					});
 			}
 			return oExtensionPointInfo;
 		}

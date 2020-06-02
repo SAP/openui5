@@ -130,9 +130,9 @@ function(
 		return sChangedId;
 	};
 
-	AppVariantUtils.createAppVariant = function(oRootControl, mPropertyBag) {
+	AppVariantUtils.createAppVariant = function(vSelector, mPropertyBag) {
 		mPropertyBag.version = "1.0.0"; // Application variant version should be 1.0.0 which is expected by backend
-		return AppVariantWriteAPI.saveAs(Object.assign({selector: oRootControl}, mPropertyBag));
+		return AppVariantWriteAPI.saveAs(Object.assign({selector: vSelector}, mPropertyBag));
 	};
 
 	AppVariantUtils.getInlineChangeInput = function(sValue, sComment) {
@@ -258,7 +258,7 @@ function(
 		return oProperty;
 	};
 
-	AppVariantUtils.createInlineChange = function(oContent, sInlineChangeType, oRootControl) {
+	AppVariantUtils.createInlineChange = function(oContent, sInlineChangeType, vSelector) {
 		var oChangeSpecificData = {
 			changeType: sInlineChangeType,
 			content: oContent
@@ -268,14 +268,14 @@ function(
 			oChangeSpecificData.texts = oChangeSpecificData.content.texts;
 			delete oChangeSpecificData.content.texts;
 		}
-		return ChangesWriteAPI.create({changeSpecificData: oChangeSpecificData, selector: oRootControl});
+		return ChangesWriteAPI.create({changeSpecificData: oChangeSpecificData, selector: vSelector});
 	};
 
-	AppVariantUtils.addChangesToPersistence = function(aAllInlineChanges, oRootControl) {
+	AppVariantUtils.addChangesToPersistence = function(aAllInlineChanges, vSelector) {
 		aAllInlineChanges.forEach(function(oChange) {
 			return PersistenceWriteAPI.add({
 				change: oChange,
-				selector: oRootControl
+				selector: vSelector
 			});
 		});
 

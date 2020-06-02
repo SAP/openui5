@@ -1663,6 +1663,40 @@
 				"description": {
 					"description": "Description of the parameter for user-friendly visualization in the design-time editor.",
 					"type": "string"
+				},
+				"contextType": {
+					"description": "[Experimental] Represents the context type of the parameter. For example WorkZoneUserId or SuccessFactorsUserId.",
+				},
+				"filter": {
+					"$ref": "#/definitions/Configuration.Parameter.Filter"
+				}
+			}
+		},
+		"Configuration.Parameter.Filter": {
+			"description": "[Experimental] Represents a filter definition for a parameter.",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"items":  {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Configuration.Parameter.Filter.Item"
+					}
+				}
+			}
+		},
+		"Configuration.Parameter.Filter.Item": {
+			"description": "A single filter selection option",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"title": {
+					"description": "The title of the filter option.",
+					"type": "string"
+				},
+				"key": {
+					"description": "The unique key of the filter option. Mapped to the parameter's value.",
+					"type": "string"
 				}
 			}
 		},

@@ -55,10 +55,51 @@ sap.ui.define([
 
 	var TableDelegate = {};
 
+	// TODO: This function can be removed and replaced with #getBaseRowHeightOfTable once the table is changed to a div-based layout.
+	function getRowHeight(oRowMode) {
+		var oTable = oRowMode.getTable();
+		var oRowContainer = oTable ? oTable.getDomRef("tableCCnt") : null;
+
+		if (oRowContainer && Device.browser.chrome && window.devicePixelRatio !== 1) {
+			// Because of a bug in the zoom algorithm of Chrome, the actual height of a DOM element can be different
+			// to what is set in inline styles or CSS. Therefore, we need to get the height of a row from the DOM.
+			var oTableElement = document.createElement("table");
+			var oRowElement = oTableElement.insertRow();
+			var iRowContentHeight = oRowMode.getRowContentHeight();
+			var nRowHeight;
+
+			oTableElement.classList.add("sapUiTableCtrl");
+			oRowElement.classList.add("sapUiTableTr");
+
+			if (iRowContentHeight > 0) {
+				oRowElement.style.height = oRowMode.getBaseRowHeightOfTable() + "px";
+			}
+
+			oRowContainer.appendChild(oTableElement);
+			nRowHeight = oRowElement.getBoundingClientRect().height;
+			oRowContainer.removeChild(oTableElement);
+
+			return nRowHeight;
+		} else {
+			return oRowMode.getBaseRowHeightOfTable();
+		}
+	}
+
 	AutoRowMode.prototype.init = function() {
 		RowMode.prototype.init.apply(this, arguments);
+
 		this.bRowCountAutoAdjustmentActive = false;
 		this.iLastAvailableSpace = 0;
+
+		/*
+		 * Flag indicating whether the table is a CSS flex item.
+		 *   - The parent of the table has the style "display: flex"
+		 *
+		 * Do not use for rendering! It is set/updated asynchronously after rendering.
+		 *
+		 * @type {boolean}
+		 */
+		this.bTableIsFlexItem = false;
 
 		/**
 		 * Asynchronously calculates and applies the row count based on the available vertical space.
@@ -274,7 +315,7 @@ sap.ui.define([
 			return undefined;
 		}
 
-		var iRowCountDelta = 0;
+		var iRowCountDelta;
 
 		if (this.isPropertyInitial("rowCount")) {
 			iRowCountDelta = this._getMinRowCount();
@@ -292,7 +333,7 @@ sap.ui.define([
 	 */
 	AutoRowMode.prototype.getRowContainerStyles = function() {
 		return {
-			height: this.getComputedRowCounts().count * this.getBaseRowHeightOfTable() + "px"
+			height: this.getComputedRowCounts().count * Math.max(this.getBaseRowHeightOfTable(), getRowHeight(this)) + "px"
 		};
 	};
 
@@ -337,10 +378,9 @@ sap.ui.define([
 	AutoRowMode.prototype._onTableRefreshRows = function() {
 		// The computed row count cannot be used here, because the table's total row count (binding length) is not known yet.
 		var iConfiguredRowCount = this.getConfiguredRowCount();
-		var bRowCountIsKnown = !this.isPropertyInitial("rowCount");
 
 		if (iConfiguredRowCount > 0) {
-			if (bRowCountIsKnown) {
+			if (!this.isPropertyInitial("rowCount")) {
 				this.initTableRowsAfterDataRequested(iConfiguredRowCount);
 			}
 			this.getRowContexts(iConfiguredRowCount, true); // Trigger data request.
@@ -476,7 +516,8 @@ sap.ui.define([
 
 		var iNewHeight = this.determineAvailableSpace();
 		var oOldRowCount = this.getConfiguredRowCount();
-		var iNewRowCount = Math.floor(iNewHeight / this.getBaseRowHeightOfTable());
+		var iNewRowCount = Math.floor(iNewHeight / getRowHeight(this));
+
 		var iOldComputedRowCount = this.getComputedRowCounts().count;
 		var iNewComputedRowCount;
 
@@ -494,7 +535,8 @@ sap.ui.define([
 		if (iOldComputedRowCount !== iNewComputedRowCount) {
 			this.updateTable(sReason);
 		} else {
-			if (oOldRowCount !== iNewRowCount) {
+			// TODO: The check for reason=Zoom can be removed once the table is changed to a div-based layout.
+			if (oOldRowCount !== iNewRowCount || sReason === TableUtils.RowsUpdateReason.Zoom) {
 				this.applyTableStyles();
 				this.applyRowContainerStyles();
 				this.applyTableBottomPlaceholderStyles();

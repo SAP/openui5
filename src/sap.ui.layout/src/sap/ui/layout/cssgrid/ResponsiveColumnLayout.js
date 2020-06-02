@@ -159,14 +159,13 @@ sap.ui.define([
 	/**
 	 * Render display:grid styles. Used for non-responsive grid layouts.
 	 *
-	 * @param {sap.ui.core.RenderManager} rm The render manager of the Control which wants to render display:grid styles
+	 * @param {sap.ui.core.RenderManager} oRM The render manager of the Control which wants to render display:grid styles
 	 */
-	ResponsiveColumnLayout.prototype.renderSingleGridLayout = function (rm) {
-
+	ResponsiveColumnLayout.prototype.renderSingleGridLayout = function (oRM) {
 		if (this.isGridSupportedByBrowser()) {
-			rm.addClass("sapUiLayoutCSSResponsiveColumnLayoutGrid");
+			oRM.class("sapUiLayoutCSSResponsiveColumnLayoutGrid");
 		} else {
-			rm.addClass("sapUiLayoutCSSResponsiveColumnLayoutGridPolyfill");
+			oRM.class("sapUiLayoutCSSResponsiveColumnLayoutGridPolyfill");
 		}
 	};
 
@@ -178,8 +177,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveColumnLayout.prototype._applyLayout = function (oGrid, bTriggerLayoutChange) {
-		var $parent = oGrid.$().parent(),
-			iWidth = $parent.outerWidth(),
+		var iWidth = oGrid.$().parent().outerWidth(),
 			oRange = Device.media.getCurrentRange("StdExt", iWidth),
 			sClassName = mSizeClasses[oRange.name],
 			bGridSupportedByBrowser = this.isGridSupportedByBrowser();

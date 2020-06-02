@@ -45,7 +45,8 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				aDescribedBy = oAvatar.getAriaDescribedBy(),
 				sAriaLabelTooltip = sTooltip && sInitials ? sDefaultTooltip + " " + sTooltip : sDefaultTooltip,
 				sAriaLabelInitials = sInitials ? sDefaultTooltip + " " + sInitials : sDefaultTooltip,
-				oBadge = oAvatar.hasListeners("press") ?  oAvatar._getBadge() : null;
+				oBadge = oAvatar.hasListeners("press") ?  oAvatar._getBadge() : null,
+				sAriaRoledescription = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("AVATAR_ROLE_DESCRIPTION");
 
 			oRm.openStart("span", oAvatar);
 			oRm.class(sAvatarClass);
@@ -61,6 +62,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			} else {
 				oRm.attr("role", "img");
 			}
+			oRm.attr("aria-roledescription", sAriaRoledescription);
 			if (oAvatar.getShowBorder()) {
 				oRm.class("sapFAvatarBorder");
 			}

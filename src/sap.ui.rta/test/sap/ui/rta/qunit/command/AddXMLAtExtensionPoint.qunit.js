@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
+	"sap/ui/fl/write/api/ExtensionPointRegistryAPI",
 	"sap/ui/rta/command/AddXMLAtExtensionPoint",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/apply/_internal/ChangesController",
@@ -16,6 +17,7 @@ sap.ui.define([
 function (
 	CommandFactory,
 	AddXMLAtExtensionPoint,
+	ExtensionPointRegistryAPI,
 	AddXMLAtExtensionPointCommand,
 	Change,
 	ChangesController,
@@ -99,6 +101,7 @@ function (
 			sandbox.stub(Change.prototype, "getModuleName").returns(sPath);
 			sandbox.stub(ChangesController, "getAppComponentForSelector").returns(oMockedAppComponent);
 			sandbox.stub(FlexController.prototype, "checkForOpenDependenciesForControl").returns(false);
+			var oGetExtensionPointInfoSpy = sandbox.spy(ExtensionPointRegistryAPI, "getExtensionPointInfo");
 			var oPreloadSpy = sandbox.spy(sap.ui.require, "preload");
 
 			var oCommandFactory = new CommandFactory({
@@ -144,6 +147,7 @@ function (
 			})
 
 			.then(function(oAddXMLAtExtensionPointCommand) {
+				assert.equal(oGetExtensionPointInfoSpy.callCount, 1, "then getExtensionPointInfo was called once");
 				assert.equal(oCompleteChangeContentSpy.callCount, 2, "then completeChangeContent is called twice");
 				assert.equal(oApplyChangeStub.callCount, 1, "then applyChange is called once");
 				assert.notOk(oAddXMLAtExtensionPointCommand._oPreparedChange.getDefinition().content.fragment, "after applying, the fragment content is not in the change anymore");

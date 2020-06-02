@@ -7,7 +7,7 @@ sap.ui.define([
 	'sap/ui/thirdparty/jquery',
 	'./View',
 	"./XMLViewRenderer",
-	"sap/base/util/merge",
+	"sap/base/util/deepExtend",
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/XMLTemplateProcessor',
 	'sap/ui/core/library',
@@ -25,7 +25,7 @@ sap.ui.define([
 		jQuery,
 		View,
 		XMLViewRenderer,
-		merge,
+		deepExtend,
 		ManagedObject,
 		XMLTemplateProcessor,
 		library,
@@ -211,7 +211,7 @@ sap.ui.define([
 		 * @return {Promise<sap.ui.core.mvc.XMLView>} A Promise that resolves with the view instance or rejects with any thrown error.
 		 */
 		XMLView.create = function (oOptions) {
-			var mParameters = merge({}, oOptions);
+			var mParameters = deepExtend({}, oOptions);
 
 			// mapping renamed parameters
 			mParameters.viewContent = mParameters.definition;
@@ -452,7 +452,7 @@ sap.ui.define([
 					mCacheOutput.xml = XMLHelper.parse(mCacheOutput.xml, "application/xml").documentElement;
 					if (mCacheOutput.additionalData) {
 						// extend the additionalData which was passed into cache configuration dynamically
-						jQuery.extend(true, mCacheInput.additionalData, mCacheOutput.additionalData);
+						deepExtend(mCacheInput.additionalData, mCacheOutput.additionalData);
 					}
 					return mCacheOutput;
 				}
@@ -472,7 +472,7 @@ sap.ui.define([
 				that._xContent = xContent;
 
 				if (View._supportInfo) {
-					View._supportInfo({context: that._xContent, env: {caller:"view", viewinfo: jQuery.extend(true, {}, that), settings: jQuery.extend(true, {}, mSettings || {}), type: "xmlview"}});
+					View._supportInfo({context: that._xContent, env: {caller:"view", viewinfo: deepExtend({}, that), settings: deepExtend({}, mSettings || {}), type: "xmlview"}});
 				}
 
 				// extract the properties of the view from the XML element

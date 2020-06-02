@@ -103,6 +103,7 @@ sap.ui.require([
 		"sap/ui/core/qunit/odata/ODataMessageParserNoFakeService.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses MockServer
 		// "sap/ui/core/qunit/odata/ODataMetadata.qunit",
+		"sap/ui/core/qunit/odata/ODataMetadataNoFakeService.qunit",
 		"sap/ui/core/qunit/odata/ODataMetaModel.qunit",
 		"sap/ui/core/qunit/odata/ODataUtils.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataMessagesFakeService

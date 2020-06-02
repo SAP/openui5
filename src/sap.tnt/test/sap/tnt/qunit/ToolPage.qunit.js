@@ -1,8 +1,8 @@
-/*global QUnit sinon */
+/*global QUnit */
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/base/Log',
+	'sap/ui/core/Core',
+	'sap/ui/Device',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/Text',
 	'sap/m/App',
@@ -11,8 +11,6 @@ sap.ui.define([
 	'sap/m/NavContainer',
 	'sap/m/OverflowToolbarLayoutData',
 	'sap/m/ToolbarSpacer',
-	'sap/m/IconTabHeader',
-	'sap/m/IconTabFilter',
 	'sap/tnt/ToolHeader',
 	'sap/tnt/ToolPage',
 	'sap/tnt/ToolHeaderUtilitySeparator',
@@ -20,9 +18,9 @@ sap.ui.define([
 	'sap/tnt/NavigationList',
 	'sap/tnt/NavigationListItem',
 	'sap/ui/qunit/utils/waitForThemeApplied'
-], function(
-	jQuery,
-	Log,
+], function (
+	Core,
+	Device,
 	JSONModel,
 	Text,
 	App,
@@ -31,19 +29,15 @@ sap.ui.define([
 	NavContainer,
 	OverflowToolbarLayoutData,
 	ToolbarSpacer,
-	IconTabHeader,
-	IconTabFilter,
 	ToolHeader,
 	ToolPage,
 	ToolHeaderUtilitySeparator,
 	SideNavigation,
 	NavigationList,
 	NavigationListItem,
-	waitForThemeApplied) {
+	waitForThemeApplied
+) {
 	'use strict';
-
-	//create JSON model instance
-	var oModel = new JSONModel();
 
 	// create and add app
 	var oApp = new App("myApp", {initialPage: "toolPage"});
@@ -509,7 +503,7 @@ sap.ui.define([
 			this.toolPage = getToolPage();
 			oPage.addContent(this.toolPage);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.toolPage.destroy();
@@ -522,7 +516,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Creation", function (assert) {
-		assert.ok(sap.ui.getCore().byId(this.toolPage.getId()), "ToolPage is not created");
+		assert.ok(Core.byId(this.toolPage.getId()), "ToolPage is not created");
 	});
 
 	QUnit.test("contains elements and classes", function (assert) {
@@ -544,6 +538,8 @@ sap.ui.define([
 		assert.strictEqual(this.toolPage.getSideExpanded(), true, "ToolPage should be expanded");
 
 		this.toolPage.setSideExpanded(false);
+
+		Core.applyChanges();
 
 		assert.equal(this.toolPage.$('aside').parent().hasClass('sapTntToolPageAsideCollapsed'), true, "ToolPage should be collapsed");
 		assert.strictEqual(this.toolPage.getSideExpanded(), false, "ToolPage should be collapsed");
@@ -572,7 +568,7 @@ sap.ui.define([
 			this.toolPage = getToolPage();
 			oPage.addContent(this.toolPage);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.toolPage.destroy();
@@ -582,35 +578,32 @@ sap.ui.define([
 
 	QUnit.test("Media Query Handler - Tablet", function (assert) {
 		// Arrange
-		sap.ui.Device.system.tablet = true;
-		var isCombiDevice = sap.ui.Device.system.combi;
-		sap.ui.Device.system.combi = false; // Otherwise test fails on combi devices.
-
+		var oDeviceStub = this.stub(Device, "system",  {
+			tablet: true
+		});
 		// Act
 		this.toolPage._mediaQueryHandler();
 
 		// Assert
 		assert.strictEqual(this.toolPage.getSideExpanded(), false, "ToolPage should be collapsed in Tablet mode");
 
-		sap.ui.Device.system.tablet = false;
-		sap.ui.Device.system.combi = isCombiDevice;
+		oDeviceStub.restore();
 	});
 
 	QUnit.test("Media Query Handler - Phone", function (assert) {
 		// Arrange
-		sap.ui.Device.system.phone = true;
-		var isCombiDevice = sap.ui.Device.system.combi;
-		sap.ui.Device.system.combi = false; // Otherwise test fails on combi devices.
+		var oDeviceStub = this.stub(Device, "system",  {
+			phone: true
+		});
 
 		// Act
 		this.toolPage._mediaQueryHandler();
 
 		// Assert
 		assert.strictEqual(this.toolPage.getSideExpanded(), false, "ToolPage should be collapsed in Phone mode");
-		assert.strictEqual(this.toolPage.getAggregation('sideContent').getExpanded(), true, "SideContent should be expanded in Phone mode");
+		assert.strictEqual(this.toolPage.getSideContent().getExpanded(), true, "SideContent should be expanded in Phone mode");
 
-		sap.ui.Device.system.phone = false;
-		sap.ui.Device.system.combi = isCombiDevice;
+		oDeviceStub.restore();
 	});
 
 	return waitForThemeApplied();

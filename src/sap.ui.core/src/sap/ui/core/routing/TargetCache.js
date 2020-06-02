@@ -6,16 +6,14 @@ sap.ui.define([
 	'sap/ui/core/routing/async/TargetCache',
 	'sap/ui/core/routing/sync/TargetCache',
 	"sap/base/assert",
-	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/base/Log"
 ],
 	function (
 		EventProvider,
 		asyncCache,
 		syncCache,
 		assert,
-		Log,
-		jQuery
+		Log
 	) {
 		"use strict";
 
@@ -295,7 +293,7 @@ sap.ui.define([
 
 			_createId: function (oOptions) {
 				if (this._oComponent && oOptions.id) {
-					oOptions = jQuery.extend({}, oOptions, { id : this._oComponent.createId(oOptions.id) });
+					oOptions = Object.assign({}, oOptions, { id : this._oComponent.createId(oOptions.id) });
 				}
 				return oOptions;
 			},

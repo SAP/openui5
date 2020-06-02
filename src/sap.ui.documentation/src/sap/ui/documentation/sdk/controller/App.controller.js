@@ -592,7 +592,8 @@ sap.ui.define([
 			 * Event handler for the send feedback button
 			 */
 			onFeedbackDialogSend: function() {
-				var data = {};
+				var data = {},
+					oResourceBundle = this.getModel("i18n").getResourceBundle();
 
 				if (this._oFeedbackDialog.contextCheckBox.getSelected()) {
 					data = {
@@ -628,7 +629,9 @@ sap.ui.define([
 				}).
 				done(
 					function () {
-						MessageBox.success("Your feedback has been sent.", {title: "Thank you!"});
+						MessageBox.success(oResourceBundle.getText("FEEDBACK_DIALOG_TEXT_SUCCESS"), {
+							title: oResourceBundle.getText("FEEDBACK_DIALOG_TITLE_SUCCESS")
+						});
 						this._oFeedbackDialog.reset();
 						this._oFeedbackDialog.close();
 						this._oFeedbackDialog.setBusy(false);
@@ -637,7 +640,9 @@ sap.ui.define([
 				fail(
 					function (oRequest, sStatus, sError) {
 						var sErrorDetails = sError; // + "\n" + oRequest.responseText;
-						MessageBox.error("An error occurred sending your feedback:\n" + sErrorDetails, {title: "Sorry!"});
+						MessageBox.error(oResourceBundle.getText("FEEDBACK_DIALOG_TEXT_ERROR") + sErrorDetails, {
+							title: oResourceBundle.getText("FEEDBACK_DIALOG_TITLE_ERROR")
+						});
 						this._oFeedbackDialog.setBusy(false);
 					}.bind(this)
 				);

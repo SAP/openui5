@@ -22,8 +22,6 @@ sap.ui.define([
 			};
 		},
 		onInit: function (oEvent) {
-			this.addHighlightStyle();
-
 			this.oSampleDataModel = new SimulatedServerModel();
 
 //			this.oSampleDataModel.attachPropertyChangeDelayed(this.onPropertyChangeDelayed,this);
@@ -168,25 +166,7 @@ sap.ui.define([
 				oMessage.setTooltip("Server Models can have laundering or dirty state handling.");
 			}
 		},
-		applyPropertyHighlight : function(aDataStates) {
-			var that = this;
-			setTimeout(function(){
-				for (var i = 0; i < aDataStates.length; i++) {
-					var oPropText = that.byId("property_" + aDataStates[i] + "_new");
-					if (oPropText) {
-						oPropText.addStyleClass("highlight").removeStyleClass("diminished");
-					}
-				}
-			}, 1);
-		},
-		removePropertyHighlight: function() {
-			var aDataStates = ["invalidValue", "value","internalValue","originalValue","originalInternalValue","laundering","dirty"];
-			for (var i = 0; i < aDataStates.length; i++) {
-				this.byId("property_" + aDataStates[i] + "_new").removeStyleClass("highlight").addStyleClass("diminished");
-			}
-		},
 		applyDataStateChanged: function(oDataState) {
-			this.removePropertyHighlight();
 			var aChangedProperties = [],
 				that = this,
 				oChanges = oDataState.getChanges();
@@ -225,13 +205,6 @@ sap.ui.define([
 					}
 				}
 			}
-			this.applyPropertyHighlight(aChangedProperties);
-		},
-		addHighlightStyle: function() {
-			var oStyle = document.createElement("STYLE");
-			oStyle.innerText = "@keyframes animationFrames{ 0% { background-color: #B664B9; } 100% { background-color: #F9F8F6;} }.diminished {color:#999 !important; background-color: #FFF; } .highlight { color:#B664B9!important; background-color:#FFF!important; animation: animationFrames ease-out 500ms;}";
-			oStyle.setAttribute("type","text/css");
-			document.getElementsByTagName("HEAD")[0].appendChild(oStyle);
 		}
 	});
 

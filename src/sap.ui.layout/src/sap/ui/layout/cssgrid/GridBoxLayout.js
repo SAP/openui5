@@ -100,15 +100,15 @@ sap.ui.define([
 	/**
 	 * Render display:grid styles. Used for non-responsive grid layouts.
 	 *
-	 * @param {sap.ui.core.RenderManager} rm The render manager of the Control which wants to render display:grid styles
+	 * @param {sap.ui.core.RenderManager} oRM The render manager of the Control which wants to render display:grid styles
 	 */
-	GridBoxLayout.prototype.renderSingleGridLayout = function (rm) {
-		this._addSpanClasses(rm);
+	GridBoxLayout.prototype.renderSingleGridLayout = function (oRM) {
+		this._addSpanClasses(oRM);
 
 		if (this.isGridSupportedByBrowser()) {
-			rm.addClass("sapUiLayoutCSSGridBoxLayoutContainer");
+			oRM.class("sapUiLayoutCSSGridBoxLayoutContainer");
 		} else {
-			rm.addClass("sapUiLayoutCSSGridBoxLayoutPolyfill");
+			oRM.class("sapUiLayoutCSSGridBoxLayoutPolyfill");
 		}
 	};
 
@@ -346,12 +346,11 @@ sap.ui.define([
 	/**
 	 * Adds the breakpoint classes depending on boxesPerRowConfig property
 	 *
-	 * @param {sap.ui.core.RenderManager} rm - RenderManager of the layout which will be rendered
+	 * @param {sap.ui.core.RenderManager} oRM - RenderManager of the layout which will be rendered
 	 * @private
 	 */
-	GridBoxLayout.prototype._addSpanClasses = function (rm) {
+	GridBoxLayout.prototype._addSpanClasses = function (oRM) {
 		var aSpan,
-			sSpan,
 			sSpanPattern = this.getBoxesPerRowConfig(),
 			sSpanXLargeClass,
 			sSpanLargeClass,
@@ -371,29 +370,29 @@ sap.ui.define([
 
 		if (aSpan) {
 			for (var i = 1; i < aSpan.length; i++) {
-				sSpan = aSpan[i];
+				var sSpan = aSpan[i];
+				if (!sSpan) {
+					continue;
+				}
 
-				if (sSpan) {
-					sSpan = sSpan.toUpperCase();
-
-					switch (sSpan.substr(0, 1)) {
-						case "X":
-							if (sSpan.substr(1, 1) === "L") {
-								sSpanXLargeClass = this._getBoxesPerRowClass(sSpan, 2);
-							}
-							break;
-						case "L":
-							sSpanLargeClass = this._getBoxesPerRowClass(sSpan, 1);
-							break;
-						case "M":
-							sSpanMediumClass = this._getBoxesPerRowClass(sSpan, 1);
-							break;
-						case "S":
-							sSpanSmallClass = this._getBoxesPerRowClass(sSpan, 1);
-							break;
-						default:
-							break;
-					}
+				sSpan = sSpan.toUpperCase();
+				switch (sSpan.substr(0, 1)) {
+					case "X":
+						if (sSpan.substr(1, 1) === "L") {
+							sSpanXLargeClass = this._getBoxesPerRowClass(sSpan, 2);
+						}
+						break;
+					case "L":
+						sSpanLargeClass = this._getBoxesPerRowClass(sSpan, 1);
+						break;
+					case "M":
+						sSpanMediumClass = this._getBoxesPerRowClass(sSpan, 1);
+						break;
+					case "S":
+						sSpanSmallClass = this._getBoxesPerRowClass(sSpan, 1);
+						break;
+					default:
+						break;
 				}
 			}
 		}
@@ -403,12 +402,10 @@ sap.ui.define([
 		sSpanMediumClass = sSpanMediumClass || DEFAULT_SPAN_CLASSES.M;
 		sSpanSmallClass = sSpanSmallClass || DEFAULT_SPAN_CLASSES.S;
 
-		rm.addClass([
-			sSpanXLargeClass,
-			sSpanLargeClass,
-			sSpanMediumClass,
-			sSpanSmallClass
-		].join(" "));
+		oRM.class(sSpanXLargeClass)
+			.class(sSpanLargeClass)
+			.class(sSpanMediumClass)
+			.class(sSpanSmallClass);
 	};
 
 	/**

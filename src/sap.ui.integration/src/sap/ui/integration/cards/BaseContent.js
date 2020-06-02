@@ -217,12 +217,12 @@ sap.ui.define([
 	 * @param {Object} oDataSettings The data part of the configuration object
 	 */
 	BaseContent.prototype._setDataConfiguration = function (oDataSettings) {
-		var sPath = "/";
-		if (oDataSettings && oDataSettings.path) {
-			sPath = oDataSettings.path;
+		if (!oDataSettings) {
+			this.fireEvent("_dataReady");
+			return;
 		}
 
-		this.bindObject(sPath);
+		this.bindObject(oDataSettings.path || "/");
 
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();

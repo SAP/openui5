@@ -51,8 +51,7 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 		}
 
 		var oAccAttributes = {
-			role: "listbox",
-			readonly: null
+			role: "listbox"
 		}; // additional accessibility attributes
 
 		//ARIA attributes

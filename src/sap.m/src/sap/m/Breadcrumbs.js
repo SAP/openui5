@@ -187,11 +187,19 @@ sap.ui.define([
 
 	Breadcrumbs.prototype._getCurrentLocation = function () {
 		if (!this.getAggregation("_currentLocation")) {
-			this.setAggregation("_currentLocation", new Text({
+			var oCurrentLocation = new Text({
 				id: this._getAugmentedId("currentText"),
 				text: this.getCurrentLocationText(),
 				wrapping: false
-			}).addStyleClass("sapMBreadcrumbsCurrentLocation"));
+			}).addStyleClass("sapMBreadcrumbsCurrentLocation");
+
+			oCurrentLocation.addEventDelegate({
+				onAfterRendering: function () {
+					oCurrentLocation.$().attr("aria-current", "page");
+				}
+			});
+
+			this.setAggregation("_currentLocation", oCurrentLocation).addStyleClass("sapMBreadcrumbsCurrentLocation");
 		}
 		return this.getAggregation("_currentLocation");
 	};

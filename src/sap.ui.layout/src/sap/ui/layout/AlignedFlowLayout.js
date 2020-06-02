@@ -204,16 +204,16 @@ sap.ui.define([
 			var oDomRef = this.getDomRef(),
 				oEndItemDomRef,
 				oObserverEntry = aObserverEntries[0],
-				bWidthChanged = isWidthChanged(this.fLayoutWidth, oObserverEntry, oDomRef),
+				bWidthChangedSignificantly = hasWidthChangedSignificantly(this.fLayoutWidth, oObserverEntry, oDomRef),
 				fNewWidth = oObserverEntry.contentRect.width;
 
-			if (bWidthChanged) {
+			if (bWidthChangedSignificantly) {
 				this.fLayoutWidth = fNewWidth;
 			} else {
 				oEndItemDomRef = this.getDomRef("endItem");
-				bWidthChanged = isWidthChanged(this.fEndItemWidth, oObserverEntry, oEndItemDomRef);
+				bWidthChangedSignificantly = hasWidthChangedSignificantly(this.fEndItemWidth, oObserverEntry, oEndItemDomRef);
 
-				if (bWidthChanged) {
+				if (bWidthChangedSignificantly) {
 					this.fEndItemWidth = fNewWidth;
 				} else {
 
@@ -373,9 +373,11 @@ sap.ui.define([
 			}
 		};
 
-		function isWidthChanged(fOldWidth, oObserverEntry, oTargetDomRef) {
-			var fNewWidth = oObserverEntry.contentRect.width;
-			return (oTargetDomRef === oObserverEntry.target) && (fNewWidth !== fOldWidth);
+		function hasWidthChangedSignificantly(fOldWidth, oObserverEntry, oTargetDomRef) {
+			var WIDTH_THRESHOLD = 0.25,
+				fNewWidth = oObserverEntry.contentRect.width;
+
+			return (oTargetDomRef === oObserverEntry.target) && (Math.abs(fNewWidth - fOldWidth) >= WIDTH_THRESHOLD);
 		}
 
 		function resetCSS(oDomRef, oLastSpacerDomRef) {

@@ -42,8 +42,8 @@ sap.ui.define([
 				}
 				if (typeof vAncestor === "string") {
 					return oControlAncestor && oControlAncestor.getId() === vAncestor;
-				 }
-				 return oControlAncestor === vAncestor;
+				}
+				return oControlAncestor === vAncestor;
 			}, bDirect);
 
 			oLogger.debug("Control '" + oControl + (bResult ? "' has " : "' does not have ") +

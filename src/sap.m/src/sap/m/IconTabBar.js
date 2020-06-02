@@ -200,12 +200,13 @@ sap.ui.define([
 			enableTabReordering : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * Specifies whether nesting tabs within one another using drag and drop is possible.
+			 * Specifies the allowed level of tabs nesting within one another using drag and drop.
+			 * Default value is 0 which means nesting via interaction is not allowed. Maximum value is 100.
 			 * This property allows nesting via user interaction only, and does not restrict adding items
 			 * to the <code>items</code> aggregation of {@link sap.m.IconTabFilter sap.m.IconTabFilter}.
-			 * @experimental Since 1.78. This property is experimental. The API may change.
+			 * @since 1.79
 			 */
-			tabNestingViaInteraction: { type: "boolean", group : "Behavior", defaultValue: false},
+			maxNestingLevel: { type: "int", group : "Behavior", defaultValue: 0},
 
 			/**
 			 * Specifies the visual density mode of the tabs.
@@ -572,7 +573,7 @@ sap.ui.define([
 			$ITH = oITH.$();
 
 		oITH._setAriaTexts(this.getAriaTexts());
-		oITH.setTabNestingViaInteraction(this.getTabNestingViaInteraction());
+		oITH.setMaxNestingLevel(this.getMaxNestingLevel());
 
 		if (this._bStickyContentSticked && $ITH) {
 			delete this._bStickyContentSticked;

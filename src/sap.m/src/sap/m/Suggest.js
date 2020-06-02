@@ -156,7 +156,7 @@ sap.ui.define(['jquery.sap.global', './Toolbar', './Button', './SuggestionsList'
 				initialFocus: parent,
 				bounce: false,
 				afterOpen: function () {
-					oInput.$("I").attr("aria-autocomplete","list").attr("aria-haspopup","true");
+					oInput.$("I").attr("aria-haspopup","true");
 					oInput._applySuggestionAcc();
 				},
 				beforeClose: function() {

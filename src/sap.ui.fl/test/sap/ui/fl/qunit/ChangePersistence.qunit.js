@@ -59,7 +59,7 @@ function(
 	QUnit.module("sap.ui.fl.ChangePersistence", {
 		beforeEach: function() {
 			sandbox.stub(FlexState, "initialize").resolves();
-			sandbox.stub(VariantManagementState, "loadInitialChanges").returns([]);
+			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
 			this._mComponentProperties = {
 				name: "MyComponent",
 				appVersion: "1.2.3"
@@ -150,7 +150,7 @@ function(
 					oMockResponse.changes[sType].push(sType + "1", sType + "2");
 				}
 			});
-			VariantManagementState.loadInitialChanges.returns(oMockResponse.changes.variantDependentControlChanges);
+			VariantManagementState.getInitialChanges.returns(oMockResponse.changes.variantDependentControlChanges);
 			var aChangesForComponent = this.oChangePersistence._getAllCtrlVariantChanges(oMockResponse, false);
 			assert.equal(aChangesForComponent.length, 2, "then only current variant control changes were returned");
 			assert.equal(aChangesForComponent[0], "variantDependentControlChanges1");
@@ -556,7 +556,7 @@ function(
 			sandbox.stub(Cache, "getChangesFillingCache").resolves({
 				changes: oResponse
 			});
-			VariantManagementState.loadInitialChanges.returns([oResponse.variantDependentControlChanges[0]]);
+			VariantManagementState.getInitialChanges.returns([oResponse.variantDependentControlChanges[0]]);
 			return oVariant;
 		}
 
@@ -1238,105 +1238,6 @@ function(
 				});
 		});
 
-		QUnit.test("when getChangesForExtensionPoint is called with an extension point selector containing a view ID", function(assert) {
-			var oAppComponent = {
-				id: "appComponentReference"
-			};
-
-			var oChange1_EP1_V1_VENDOR = {
-				fileName: "oChange1_EP1_V1_VENDOR",
-				fileType: "change",
-				layer: "VENDOR",
-				reference: "appComponentReference",
-				selector: {
-					name: "EP1",
-					viewSelector: {
-						id: "V1",
-						idIsLocal: true
-					}
-				}
-			};
-
-			var oChange2_EP1_V1_CUSTOMER_BASE = {
-				fileName: "oChange2_EP1_V1_CUSTOMER_BASE",
-				fileType: "change",
-				layer: "CUSTOMER_BASE",
-				reference: "appComponentReference",
-				selector: {
-					name: "EP1",
-					viewSelector: {
-						id: "V1",
-						idIsLocal: true
-					}
-				}
-			};
-
-			var oChange3_EP1_V2_VENDOR = {
-				fileName: "oChange3_EP1_V2_VENDOR",
-				fileType: "change",
-				layer: "VENDOR",
-				reference: "appComponentReference",
-				selector: {
-					name: "EP1",
-					viewSelector: {
-						id: "appComponentReference---V2",
-						idIsLocal: false
-					}
-				}
-			};
-
-			sandbox.stub(Cache, "getChangesFillingCache").resolves({
-				changes: {
-					changes: [oChange1_EP1_V1_VENDOR, oChange2_EP1_V1_CUSTOMER_BASE, oChange3_EP1_V2_VENDOR]
-				}
-			});
-
-			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
-
-			//Default mPropertyBag
-			var mPropertyBag = {
-				modifier: {
-					getControlIdBySelector: function(oSelector) {
-						if (oSelector.idIsLocal) {
-							return "appComponentReference---" + oSelector.id;
-						}
-						return oSelector.id;
-					}
-				},
-				appComponent: oAppComponent
-			};
-
-			//Get changes for EP1 in V1
-			mPropertyBag.name = "EP1";
-			mPropertyBag.viewId = "appComponentReference---V1";
-			return this.oChangePersistence.getChangesForExtensionPoint(mPropertyBag)
-				.then(function(aChanges) {
-					assert.strictEqual(aChanges.length, 2, "then only two change were returned");
-					assert.strictEqual(aChanges[0].getId(), "oChange1_EP1_V1_VENDOR", "then only the change with the correct viewId of the selector was returned");
-					assert.strictEqual(aChanges[1].getId(), "oChange2_EP1_V1_CUSTOMER_BASE", "then only the change with the correct viewId of the selector was returned");
-					//Get change for EP1 in V2
-					mPropertyBag.viewId = "appComponentReference---V2";
-					return this.oChangePersistence.getChangesForExtensionPoint(mPropertyBag)
-						.then(function(aChanges) {
-							assert.strictEqual(aChanges.length, 1, "then only once change were returned");
-							assert.strictEqual(aChanges[0].getId(), "oChange3_EP1_V2_VENDOR", "then only the change with the correct viewId of the selector was returned");
-							//Get change for EP2 in V1
-							mPropertyBag.name = "EP2";
-							mPropertyBag.viewId = "appComponentReference---V1";
-							return this.oChangePersistence.getChangesForExtensionPoint(mPropertyBag)
-								.then(function(aChanges) {
-									assert.strictEqual(aChanges.length, 0, "then no change were returned");
-									//Get changes for an incomplete extension point info
-									mPropertyBag.name = undefined;
-									return this.oChangePersistence.getChangesForExtensionPoint(mPropertyBag)
-										.then(function(aChanges) {
-											assert.strictEqual(aChanges.length, 0, "then no change were returned");
-										});
-								}.bind(this));
-						}.bind(this));
-				}.bind(this));
-		});
-
 		QUnit.test("_getChangesFromMapByNames returns array of changes with corresponding name", function(assert) {
 			var oAppComponent = {
 				id: "mockAppComponent"
@@ -1570,7 +1471,7 @@ function(
 		beforeEach: function() {
 			sandbox.stub(FlexState, "initialize").resolves();
 			sandbox.stub(FlexState, "getAppDescriptorChanges").returns([]);
-			sandbox.stub(VariantManagementState, "loadInitialChanges").returns([]);
+			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
 			this._mComponentProperties = {
 				name: "saveChangeScenario",
 				appVersion: "1.2.3"
@@ -1816,7 +1717,7 @@ function(
 	QUnit.module("sap.ui.fl.ChangePersistence saveChanges", {
 		beforeEach: function() {
 			sandbox.stub(FlexState, "initialize").resolves();
-			sandbox.stub(VariantManagementState, "loadInitialChanges").returns([]);
+			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
 			var oBackendResponse = {changes: StorageUtils.getEmptyFlexDataResponse()};
 			this.oGetFlexObjectsFromStorageResponseStub = sandbox.stub(FlexState, "getFlexObjectsFromStorageResponse").returns(oBackendResponse.changes);
 			this._mComponentProperties = {

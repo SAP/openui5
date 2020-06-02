@@ -8,6 +8,10 @@
 			#content {
 				padding: 30px 0 0 30px;
 			}
+
+			.smallNotif {
+				width:150px;
+			}
 		</style>
 
 		<script src="shared-config.js"></script>
@@ -338,9 +342,17 @@
 				]
 			});
 
+			// BCP: 2080142709
+			 var smallNotif = new sap.m.NotificationListItem("smallNotif", {
+				description: "Hello World Honorificabilitudinitatibus",
+				title: "Data migration results available.",
+				showCloseButton: false,
+				truncate: false
+			}).addStyleClass("smallNotif");
+
 			var initialPage = new sap.m.Page("tabBarPage", {
 				showHeader: false,
-				content: [compactSizeButton, list]
+				content: [compactSizeButton, list, smallNotif]
 			});
 
 			app.addPage(initialPage);

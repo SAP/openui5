@@ -250,24 +250,19 @@ sap.ui.define([
 		assert.equal(document.activeElement, this.token2.getDomRef(), "Token2 is focused after navigation.");
 	});
 
-	QUnit.test("Pressing delete icon", function(assert) {
+	QUnit.test("Pressing delete icon", function (assert) {
 		// arrange
 		var fnFireDeleteSpy = this.spy(this.token1, "fireDelete"),
-			oDeleteTokenSpy = this.spy(this.tokenizer, "_onTokenDelete"),
-			oPreventSpy = this.spy(),
-			oTokenIcon = this.token1.$("icon"),
-			oFakeEvent = {
-				preventDefault: oPreventSpy
-			};
+			oDeleteTokenSpy = this.spy(this.tokenizer, "handleTokenDeletion");
 
 		// act
-		this.token1._tokenIconPress(oFakeEvent);
+		this.token1.getAggregation("deleteIcon").firePress();
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.equal(fnFireDeleteSpy.callCount, 1, "delete event was fired");
 		assert.ok(this.token1.bIsDestroyed, "Token1 is destroyed");
-		assert.strictEqual(oPreventSpy.calledOnce, true, "The event was prevented from bubbling.");
-		assert.strictEqual(oDeleteTokenSpy.calledOnce, true, "The tokenizer's '_onTokenDelete' was called");
+		assert.strictEqual(oDeleteTokenSpy.calledOnce, true, "The tokenizer's '_deleteToken' was called");
 		assert.deepEqual(oDeleteTokenSpy.firstCall.args[0], this.token1, "The deleted token was passed to the tokenizer.");
 	});
 

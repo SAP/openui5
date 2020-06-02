@@ -1944,8 +1944,8 @@ sap.ui
 			 * @param {string} sMetadataString Either the URL to the service metadata document or the metadata document as xml string itself (starting with "<?xml")
 			 * @param {string|object} [vMockdataSettings] (optional) base url which contains the path to the mockdata, or an object which contains the following properties: sMockdataBaseUrl, bGenerateMissingMockData, aEntitySetsNames. See below for descriptions of these parameters. Ommit this parameter to produce random mock data based on the service metadata.
 			 * @param {string} [vMockdataSettings.sMockdataBaseUrl] base url which contains the mockdata as single .json files or the .json file containing the complete mock data
-			 * @param {boolean} [vMockdataSettings.bGenerateMissingMockData] true for the MockServer to generate mock data for missing .json files that are not found in sMockdataBaseUrl. Default value is false.
-			 * @param {array} [vMockdataSettings.aEntitySetsNames] list of entity set names to fetch. This parameter should be used to improve performance in case there are a lot of entity sets but only a few are needed to be fetched. Default value is empty - in this case all entity sets will be retrieved.
+			 * @param {boolean} [vMockdataSettings.bGenerateMissingMockData=false] if the MockServer should generate mock data for missing .json files that are not found in sMockdataBaseUrl
+			 * @param {array} [vMockdataSettings.aEntitySetsNames=[]] list of entity set names to fetch. If the list is empty or <code>undefined</code>, all entity sets will be retrieved. This parameter should be used to improve performance in case there are a lot of entity sets but only a few are needed to be fetched.
 			 *
 			 * @since 1.13.2
 			 * @public

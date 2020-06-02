@@ -74,7 +74,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oGridLayoutBase = new GridLayoutBase();
 			this.oRenderManagerMock = {
-				addStyle: function (sKey, sValue) {
+				style: function (sKey, sValue) {
 					this.styles[sKey] = sValue;
 				},
 				styles: {}

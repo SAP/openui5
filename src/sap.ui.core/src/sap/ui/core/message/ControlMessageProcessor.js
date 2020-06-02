@@ -3,8 +3,8 @@
  */
 
 // Provides the implementation for the ControlControlMessageProcessor implementations
-sap.ui.define(['sap/ui/core/message/MessageProcessor', "sap/ui/thirdparty/jquery"],
-	function(MessageProcessor, jQuery) {
+sap.ui.define(['sap/ui/core/message/MessageProcessor'],
+	function(MessageProcessor) {
 	"use strict";
 
 
@@ -66,18 +66,18 @@ sap.ui.define(['sap/ui/core/message/MessageProcessor', "sap/ui/thirdparty/jquery
 	 */
 	ControlMessageProcessor.prototype.checkMessages = function() {
 		var aMessages,
-			that = this,
-			mMessages = jQuery.extend(this.mMessages, {});
+			sTarget,
+			mMessages = Object.assign({}, this.mMessages);
 
 		//add targets to clear from mOldMessages to the mMessages to check
-		jQuery.each(this.mOldMessages, function(sTarget) {
+		for (sTarget in this.mOldMessages) {
 			if (!(sTarget in mMessages)) {
 				mMessages[sTarget] = [];
 			}
-		});
+		}
 
 		//check messages
-		jQuery.each(mMessages, function(sTarget) {
+		for (sTarget in mMessages) {
 			var oBinding,
 				oControl,
 				aParts = sTarget.split('/');
@@ -94,7 +94,7 @@ sap.ui.define(['sap/ui/core/message/MessageProcessor', "sap/ui/thirdparty/jquery
 			}
 
 			oBinding = oControl.getBinding(aParts[1]);
-			aMessages = that.mMessages[sTarget] ? that.mMessages[sTarget] : [];
+			aMessages = mMessages[sTarget] ? mMessages[sTarget] : [];
 			if (oBinding) {
 				var oDataState = oBinding.getDataState();
 				oDataState.setControlMessages(aMessages);
@@ -103,7 +103,7 @@ sap.ui.define(['sap/ui/core/message/MessageProcessor', "sap/ui/thirdparty/jquery
 				oControl.propagateMessages(aParts[1], aMessages);
 			}
 
-		});
+		}
 	};
 
 	return ControlMessageProcessor;

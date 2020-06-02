@@ -7,6 +7,9 @@
     "start": "node lib/server/testsuiteServer.js",
     "start-grunt": "grunt serve",
     "testsuite": "cross-env OPENUI5_SRV_OPEN=/test-resources/testsuite/testframe.html node lib/server/testsuiteServer.js",
+    "sdk": "npm run build-sdk && npm run serve-sdk",
+    "build-sdk": "node lib/builder/jsdocBuilder.js",
+    "serve-sdk": "ws --compress -d src/testsuite/dist",
     "test": "npm run lint",
     "lint": "eslint ./src --quiet",
     "eslint": "eslint",
@@ -54,6 +57,7 @@
     "node": ">= 10"
   },
   "devDependencies": {
+    "@ui5/builder": "^2.0.3",
     "@ui5/project": "^2.0.3",
     "@ui5/server": "^2.0.1",
     "async": "^0.9.0",
@@ -78,6 +82,7 @@
     "grunt-openui5": "^0.16.0",
     "grunt-text-replace": "^0.4.0",
     "grunt-timer": "^0.5.4",
+    "js-yaml": "^3.13.1",
     "json2json": "^0.2.4",
     "karma": "^4.4.1",
     "karma-chrome-launcher": "^3.1.0",
@@ -85,6 +90,7 @@
     "karma-junit-reporter": "^2.0.1",
     "karma-ui5": "^2.1.0",
     "load-grunt-config": "^3.0.1",
+    "local-web-server": "^4.0.0",
     "mkdirp": "^0.5.0",
     "mocha": "^5.2.0",
     "moment": "^2.22.2",

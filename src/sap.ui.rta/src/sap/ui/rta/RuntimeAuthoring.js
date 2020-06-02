@@ -1127,7 +1127,7 @@ function(
 					modeChange: this._onModeChange.bind(this),
 					manageApps: RtaAppVariantFeature.onGetOverview.bind(null, true, this.getLayer()),
 					appVariantOverview: this._onGetAppVariantOverview.bind(this),
-					saveAs: RtaAppVariantFeature.onSaveAs.bind(null, true, true, this.getLayer(), null),
+					saveAs: RtaAppVariantFeature.onSaveAs.bind(RtaAppVariantFeature, true, true, this.getLayer(), null),
 					activateDraft: this._onActivateDraft.bind(this),
 					discardDraft: this._onDiscardDraft.bind(this)
 				}), 'toolbar');
@@ -1582,10 +1582,6 @@ function(
 	 * @return {map} parsedHash
 	 */
 	RuntimeAuthoring.prototype._handleUrlParameterOnExit = function(oReloadInfo) {
-		if (oReloadInfo.layer === Layer.USER) {
-			return;
-		}
-
 		if (!FlexUtils.getUshellContainer()) {
 			this._triggerHardReload(oReloadInfo);
 		}

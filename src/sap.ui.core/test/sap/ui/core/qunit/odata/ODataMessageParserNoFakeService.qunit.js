@@ -3,17 +3,20 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/library",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/ODataMessageParser",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/test/TestUtils"
-], function (Log, Message, MessageScope, ODataMessageParser, ODataUtils, TestUtils) {
+], function (Log, coreLibrary, Message, MessageScope, ODataMessageParser, ODataUtils, TestUtils) {
 	/*global QUnit,sinon*/
 	/*eslint camelcase: 0, no-warning-comments: 0*/
 	"use strict";
 
-	var sClassName = "sap.ui.model.odata.ODataMessageParser";
+	var sClassName = "sap.ui.model.odata.ODataMessageParser",
+		// shortcuts for enums
+		MessageType = coreLibrary.MessageType;
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.ODataMessageParser (ODataMessageParserNoFakeService)", {
@@ -64,7 +67,11 @@ sap.ui.define([
 		new Message({message : "keep", target : "/As(2)/y", technical : true}),
 		new Message({message : "keep", target : "/As(1)/toBs(2)/x", technical : true}),
 		// deepPath matches are ignored
-		new Message({fullTarget : "/As(1)/ToB/ToCs(2)/x", message : "keep", target : "/Cs(2)/x"})
+		new Message({fullTarget : "/As(1)/ToB/ToCs(2)/x", message : "keep", target : "/Cs(2)/x"}),
+		// multi-target messages
+		new Message({message : "removed", target : ["/Bs", "/As"]}), // test: consider *all* targets
+		new Message({message : "removed", target : ["/Bs", "/As(1)/y"]}),
+		new Message({message : "keep", target : ["/Bs", "/As(2)"]})
 	]
 }, {
 	sStatusCode : 200,
@@ -156,8 +163,11 @@ sap.ui.define([
 		new Message({message : "keep", target : "/As(2)/y", technical : true}),
 		new Message({message : "keep", target : "/As(1)/toBs(2)/x", technical : true}),
 		// deepPath matches are ignored
-		new Message({fullTarget : "/As(1)/ToB/ToCs(2)/x", message : "keep", target : "/Cs(2)/x"})
-
+		new Message({fullTarget : "/As(1)/ToB/ToCs(2)/x", message : "keep", target : "/Cs(2)/x"}),
+		// multi-target messages
+		new Message({message : "removed", target : ["/Bs", "/As"], technical : true}),
+		new Message({message : "removed", target : ["/Bs", "/As(1)/y"], technical : true}),
+		new Message({message : "keep", target : ["/Bs", "/As(2)"], technical : true})
 	]
 }].forEach(function (oFixture, i) {
 	// deep path match is only done if updateAggregatedMessages is true
@@ -225,7 +235,7 @@ sap.ui.define([
 		ODataMessageParser.prototype._propagateMessages.call(oODataMessageParser, aMessages,
 			mRequestInfo, mGetEntities, mChangeEntities, oFixture.bSimpleMessageLifecycle);
 
-		assert.deepEqual(oODataMessageParser._lastMessages, aNewLastMessages);
+		assert.deepEqual(oODataMessageParser._lastMessages, aNewLastMessages, "last messages");
 	});
 });
 
@@ -275,6 +285,22 @@ sap.ui.define([
 			fullTarget : "/C(1)/ToAs(1)/ToB/ToCs(3)/x",
 			message : "keep",
 			target : "/Cs(3)/x"
+		}),
+		// multi-target messages with deepPath matches
+		new Message({
+			fullTarget : ["/C(2)/ToB", "/C(2)/ToAs(1)/y"],
+			message : "removed",
+			target : ["/Bs(3)", "/As(1)/y"]
+		}),
+		new Message({
+			fullTarget : ["/C(2)/ToB", "/C(2)/ToAs(1)/ToB/ToCs(3)/x"],
+			message : "removed",
+			target : ["/Bs(3)", "/Cs(3)/x"]
+		}),
+		new Message({
+			fullTarget : ["/C(2)/ToB", "/C(1)/ToAs(1)/ToB/ToCs(3)/x"],
+			message : "keep",
+			target : ["/Bs(3)", "/Cs(3)/x"]
 		})
 	]
 }, {
@@ -597,13 +623,21 @@ sap.ui.define([
 ].forEach(function (oTargetFixture, i) {
 	[{
 		isTechnical : false,
-		request : {deepPath : "~deepPath", headers : {"sap-message-scope" : "foo"}}
+		request : {
+			deepPath : "~deepPath",
+			headers : {"sap-message-scope" : "foo"},
+			method : "~method"
+		}
 	}, {
 		isTechnical : false,
-		request : {deepPath : "~deepPath"}
+		request : {deepPath : "~deepPath", method : "~method"}
 	}, {
 		isTechnical : true,
-		request : {deepPath : "~deepPath", headers : {"sap-message-scope" : "BusinessObject"}}
+		request : {
+			deepPath : "~deepPath",
+			headers : {"sap-message-scope" : "BusinessObject"},
+			method : "~method"
+		}
 	}].forEach(function (oFixture, j) {
 	var sTitle = "_createTarget: relative target with processor; #" + i + "/" + j;
 
@@ -644,7 +678,7 @@ sap.ui.define([
 			.withExactArgs("~requestURL")
 			.returns(mUrlData);
 		this.mock(oODataMessageParser._metadata).expects("_getFunctionImportMetadata")
-			.withExactArgs("/~parsedUrl", "GET")
+			.withExactArgs("/~parsedUrl", "~method")
 			.returns(null);
 		this.mock(oODataMessageParser._metadata).expects("_isCollection")
 			.withExactArgs("/~parsedUrl")
@@ -690,7 +724,7 @@ sap.ui.define([
 				}
 			},
 			mRequestInfo = {
-				request : {},
+				request : {headers : {}, method : "~method"},
 				response : {},
 				url : "~requestURL"
 			},
@@ -710,7 +744,7 @@ sap.ui.define([
 			.withExactArgs("~requestURL")
 			.returns(mUrlData);
 		this.mock(oODataMessageParser._metadata).expects("_getFunctionImportMetadata")
-			.withExactArgs("/~parsedUrl", "GET")
+			.withExactArgs("/~parsedUrl", "~method")
 			.returns(null);
 		this.mock(oODataMessageParser._metadata).expects("_isCollection")
 			.withExactArgs("/~parsedUrl")
@@ -735,6 +769,184 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("_createTarget: target relative to an entity", function (assert) {
+		var oMessageObject = {target : "~target"},
+			oODataMessageParser = {
+				_metadata : {
+					_getFunctionImportMetadata : function () {},
+					_getReducedPath : function () {},
+					_isCollection : function () {}
+				},
+				_parseUrl : function () {},
+				_processor : {
+					resolve : function () {}
+				}
+			},
+			mRequestInfo = {
+				request : {deepPath : "~deepPath", headers : {}, method : "~method"},
+				response : {},
+				url : "~requestURL"
+			},
+			mUrlData = {url : "~parsedUrl('key')"};
+
+		this.mock(ODataMessageParser).expects("_isResponseForCreate")
+			.withExactArgs(sinon.match.same(mRequestInfo))
+			.returns(undefined);
+		this.mock(oODataMessageParser).expects("_parseUrl")
+			.withExactArgs("~requestURL")
+			.returns(mUrlData);
+		this.mock(oODataMessageParser._metadata).expects("_getFunctionImportMetadata")
+			.withExactArgs("/~parsedUrl('key')", "~method")
+			.returns(null);
+		this.mock(oODataMessageParser._metadata).expects("_isCollection").never();
+		this.mock(oODataMessageParser._processor).expects("resolve")
+			.withExactArgs("/~parsedUrl('key')/~target", undefined, true)
+			.returns("~canonicalTarget");
+		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
+			.withExactArgs("~deepPath/~target")
+			.returns("~reducedPath");
+		this.mock(ODataUtils).expects("_normalizeKey")
+			.withExactArgs("~canonicalTarget")
+			.returns("~normalizedTarget");
+
+		// code under test
+		ODataMessageParser.prototype._createTarget.call(oODataMessageParser, oMessageObject,
+			mRequestInfo);
+
+		assert.strictEqual(oMessageObject.deepPath, "~reducedPath");
+		assert.strictEqual(oMessageObject.target, "~normalizedTarget");
+	});
+
+	//*********************************************************************************************
+[{
+	resolveCalls : [{
+		path : "/BusinessPartnerSet('2')/ToSalesOrders('1')/"
+			+ "ToLineItems(SalesOrderID='1',ItemPosition='10')",
+		result : "/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')"
+	}, {
+		path : "/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')",
+		result : "/SalesOrderLineItemsSet(SalesOrderID='1',ItemPosition='10')"
+	}],
+	target : "ToSalesOrders('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')",
+	targetToNormalize : "/SalesOrderLineItemsSet(SalesOrderID='1',ItemPosition='10')"
+}, {
+	resolveCalls : [{
+		path : "/BusinessPartnerSet('2')/ToSalesOrders('1')/ToProduct",
+		result : "/SalesOrderSet('1')/ToProduct"
+	}, {
+		path : "/SalesOrderSet('1')/ToProduct",
+		result : undefined
+	}],
+	target : "ToSalesOrders('1')/ToProduct",
+	targetToNormalize : "/SalesOrderSet('1')/ToProduct"
+}].forEach(function (oFixture, i) {
+	QUnit.test("_createTarget: multiple resolve steps needed", function (assert) {
+		var oMessageObject = {target : oFixture.target},
+			oODataMessageParser = {
+				_metadata : {
+					_getFunctionImportMetadata : function () {},
+					_getReducedPath : function () {},
+					_isCollection : function () {}
+				},
+				_parseUrl : function () {},
+				_processor : {
+					resolve : function () {}
+				}
+			},
+			oProcessorMock = this.mock(oODataMessageParser._processor),
+			mRequestInfo = {
+				request : {deepPath : "~deepPath", headers : {}, method : "~method"},
+				response : {},
+				url : "BusinessPartnerSet('2')"
+			},
+			mUrlData = {url : "BusinessPartnerSet('2')"};
+
+		this.mock(ODataMessageParser).expects("_isResponseForCreate")
+			.withExactArgs(sinon.match.same(mRequestInfo))
+			.returns(undefined);
+		this.mock(oODataMessageParser).expects("_parseUrl")
+			.withExactArgs("BusinessPartnerSet('2')")
+			.returns(mUrlData);
+		this.mock(oODataMessageParser._metadata).expects("_getFunctionImportMetadata")
+			.withExactArgs("/BusinessPartnerSet('2')", "~method")
+			.returns(null);
+		this.mock(oODataMessageParser._metadata).expects("_isCollection").never();
+		oFixture.resolveCalls.forEach(function (oResolveCall) {
+			oProcessorMock.expects("resolve")
+				.withExactArgs(oResolveCall.path, undefined, true)
+				.returns(oResolveCall.result);
+		});
+		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
+			.withExactArgs("~deepPath/" + oFixture.target)
+			.returns("~reducedPath");
+		this.mock(ODataUtils).expects("_normalizeKey")
+			.withExactArgs(oFixture.targetToNormalize)
+			.returns("~normalizedTarget");
+
+		// code under test
+		ODataMessageParser.prototype._createTarget.call(oODataMessageParser, oMessageObject,
+			mRequestInfo);
+
+		assert.strictEqual(oMessageObject.deepPath, "~reducedPath");
+		assert.strictEqual(oMessageObject.target, "~normalizedTarget");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_createTarget: function call", function (assert) {
+		var oMessageObject = {target : "~target"},
+			oODataMessageParser = {
+				_getFunctionTarget : function () {},
+				_metadata : {
+					_getFunctionImportMetadata : function () {},
+					_getReducedPath : function () {},
+					_isCollection : function () {}
+				},
+				_parseUrl : function () {},
+				_processor : {
+					resolve : function () {}
+				}
+			},
+			mRequestInfo = {
+				request : {deepPath : "~deepPath", headers : {}, method : "~method"},
+				response : {},
+				url : "~requestURL"
+			},
+			mUrlData = {url : "~parsedUrl"};
+
+		this.mock(ODataMessageParser).expects("_isResponseForCreate")
+			.withExactArgs(sinon.match.same(mRequestInfo))
+			.returns(undefined);
+		this.mock(oODataMessageParser).expects("_parseUrl")
+			.withExactArgs("~requestURL")
+			.returns(mUrlData);
+		this.mock(oODataMessageParser._metadata).expects("_getFunctionImportMetadata")
+			.withExactArgs("/~parsedUrl", "~method")
+			.returns("~mFunctionInfo");
+		this.mock(oODataMessageParser).expects("_getFunctionTarget")
+			.withExactArgs("~mFunctionInfo", sinon.match.same(mRequestInfo),
+				sinon.match.same(mUrlData))
+			.returns("/~functionTarget");
+		this.mock(oODataMessageParser._metadata).expects("_isCollection")
+			.withExactArgs("/~functionTarget")
+			.returns(false);
+		this.mock(oODataMessageParser._processor).expects("resolve")
+			.withExactArgs("/~functionTarget/~target", undefined, true)
+			.returns("~canonicalTarget");
+		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
+			.withExactArgs("/~functionTarget/~target").returns("~reducedPath");
+		this.mock(ODataUtils).expects("_normalizeKey")
+			.withExactArgs("~canonicalTarget")
+			.returns("~normalizedTarget");
+
+		// code under test
+		ODataMessageParser.prototype._createTarget.call(oODataMessageParser, oMessageObject,
+			mRequestInfo);
+
+		assert.strictEqual(oMessageObject.deepPath, "~reducedPath");
+		assert.strictEqual(oMessageObject.target, "~normalizedTarget");
+	});
+
 	//*********************************************************************************************
 	QUnit.test("_createTarget: created entity", function (assert) {
 		var oMessageObject = {target : "~target"},
@@ -851,6 +1063,17 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_createTarget: no target; unbound transient technical message", function (assert) {
+		var oMessageObject = {transition: true};
+
+		// code under test
+		ODataMessageParser.prototype._createTarget.call({}, oMessageObject, "~mRequestInfo", true);
+
+		assert.strictEqual(oMessageObject.deepPath, "");
+		assert.strictEqual(oMessageObject.target, "");
+	});
+
+	//*********************************************************************************************
 [{
 	oMessage : undefined,
 	bExpectError : false
@@ -915,11 +1138,13 @@ sap.ui.define([
 [{
 	oMessageObject : {
 		"@sap.severity" : "warning",
+		description : "~description",
 		target : "~target",
 		"transient" : true
 	},
 	oExpectedMessage : {
 		code : "",
+		description : "~description",
 		descriptionUrl : "",
 		persistent : true,
 		type : "Warning"
@@ -975,8 +1200,9 @@ sap.ui.define([
 			};
 
 		this.mock(oODataMessageParser).expects("_createTarget")
-			.withExactArgs(sinon.match.same(oMessageObject), sinon.match.same(mRequestInfo),
-				"~bIsTechnical")
+			.withExactArgs(sinon.match.same(oMessageObject)
+					.and(sinon.match.has("transition", oExpectedMessage.persistent)),
+				sinon.match.same(mRequestInfo), "~bIsTechnical")
 			.callsFake(function (oMessageObject) {
 				oMessageObject.deepPath = "~fullTargetFrom_createTarget";
 				oMessageObject.target = "~targetFrom_createTarget";
@@ -988,6 +1214,7 @@ sap.ui.define([
 
 		assert.ok(oMessage instanceof Message);
 		assert.strictEqual(oMessage.code, oExpectedMessage.code);
+		assert.strictEqual(oMessage.description, oExpectedMessage.description);
 		assert.strictEqual(oMessage.descriptionUrl, oExpectedMessage.descriptionUrl);
 		assert.strictEqual(oMessage.fullTarget, "~fullTargetFrom_createTarget");
 		assert.strictEqual(oMessage.message, oExpectedMessage.message);
@@ -998,6 +1225,220 @@ sap.ui.define([
 		assert.deepEqual(oMessage.technicalDetails,
 			{headers : "~headers", statusCode : "~statusCode"});
 		assert.strictEqual(oMessage.type, oExpectedMessage.type);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_addGenericError", function (assert) {
+		var oMessage = "~oMessage",
+			aMessages = ["~message0"],
+			oODataMessageParser = {
+				_createMessage : function () {}
+			},
+			mRequestInfo = {
+				response : {body : "~body"}
+			},
+			oResourceBundle = {
+				getText : function () {}
+			};
+
+		this.mock(sap.ui.getCore()).expects("getLibraryResourceBundle")
+			.withExactArgs()
+			.returns(oResourceBundle);
+		this.mock(oResourceBundle).expects("getText")
+			.withExactArgs("CommunicationError")
+			.returns("~CommunicationError");
+		this.mock(oODataMessageParser).expects("_createMessage")
+			.withExactArgs({
+				description : "~body",
+				message : "~CommunicationError",
+				severity : MessageType.Error,
+				transition : true
+			}, sinon.match.same(mRequestInfo), true)
+			.returns(oMessage);
+
+		// code under test
+		ODataMessageParser.prototype._addGenericError.call(oODataMessageParser, aMessages,
+			mRequestInfo);
+
+		assert.deepEqual(aMessages, ["~message0", "~oMessage"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_parseBodyXML: no error tag", function (assert) {
+		var sContentType = "application/xml",
+			oODataMessageParser = {
+				_addGenericError : function () {}
+			},
+			oResponse = {
+				// valid XML, but no error or errordetail tag
+				body : '<?xml version="1.0" encoding="utf-8"?><foo></foo>'
+			},
+			mRequestInfo = {
+				response : oResponse
+			};
+
+		this.mock(oODataMessageParser).expects("_addGenericError")
+			.withExactArgs("~aMessages", sinon.match.same(mRequestInfo));
+
+		// code under test
+		ODataMessageParser.prototype._parseBodyXML.call(oODataMessageParser, "~aMessages",
+			oResponse, mRequestInfo, sContentType);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_parseBodyXML: DOMParser throws exception", function (assert) {
+		var // wrong content does not cause exception in Chrome but in IE, unsupported content type
+			// throws exception in all browsers
+			sContentType = "unknown-xml-content-type",
+			oODataMessageParser = {
+				_addGenericError : function () {}
+			},
+			oResponse = {body : "~foo"},
+			mRequestInfo = {
+				response : oResponse
+			};
+
+		this.mock(oODataMessageParser).expects("_addGenericError")
+			.withExactArgs("~aMessages", sinon.match.same(mRequestInfo));
+		this.oLogMock.expects("error")
+			.withExactArgs("Error message returned by server could not be parsed");
+
+		// code under test
+		ODataMessageParser.prototype._parseBodyXML.call(oODataMessageParser, "~aMessages",
+			oResponse, mRequestInfo, sContentType);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_parseBodyJSON: no error property", function (assert) {
+		var oODataMessageParser = {
+				_addGenericError : function () {}
+			},
+			oResponse = {
+				// valid JSON, but no error property
+				body : '{"foo" : "bar"}'
+			},
+			mRequestInfo = {
+				response : oResponse
+			};
+
+		this.mock(oODataMessageParser).expects("_addGenericError")
+			.withExactArgs("~aMessages", sinon.match.same(mRequestInfo));
+		this.oLogMock.expects("error")
+			.withExactArgs("Error message returned by server did not contain error-field");
+
+		// code under test
+		ODataMessageParser.prototype._parseBodyJSON.call(oODataMessageParser, "~aMessages",
+			oResponse, mRequestInfo);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_parseBodyJSON: plain text", function (assert) {
+		var oODataMessageParser = {
+				_addGenericError : function () {}
+			},
+			oResponse = {body : "~foo"},
+			mRequestInfo = {
+				response : oResponse
+			};
+
+		this.mock(oODataMessageParser).expects("_addGenericError")
+			.withExactArgs("~aMessages", sinon.match.same(mRequestInfo));
+		this.oLogMock.expects("error")
+			.withExactArgs("Error message returned by server could not be parsed");
+
+		// code under test
+		ODataMessageParser.prototype._parseBodyJSON.call(oODataMessageParser, "~aMessages",
+			oResponse, mRequestInfo);
+	});
+
+	//*********************************************************************************************
+[{
+	oResult : {"" : true}
+}, {
+	mGetEntities : {"get" : true},
+	mChangeEntities : {"change" : true},
+	oResult : {"" : true, "get" : true, "change" : true}
+}, {
+	oRequest : {key : "key", created : true},
+	oResult : {"" : true, "key" : true}
+}, {
+	sUrl : "serviceUrl/requestTarget",
+	oResult : {"" : true}
+}, {
+	oEntitySet : {name : "name"},
+	oResult : {"" : true, "name" : true}
+}, {
+	aMessageTargets : [""], // unbound message
+	oResult : {"" : true}
+}, {
+	aMessageTargets : ["target0", "/target1", "target2/", "/target3/"], // single segment targets
+	oResult : {"" : true, "target0" : true, "target1" : true, "target2" : true, "target3" : true}
+}, {
+	// multi segment targets
+	aMessageTargets : ["parentEntity/property", "parentEntity/navProperty/property2"],
+	bNavPropCalled : true,
+	oResult : {
+		"" : true,
+		"parentEntity/property" : true,
+		"parentEntity" : true,
+		"parentEntity/navProperty/property2" : true,
+		"parentEntity/navProperty" : true
+	}
+}, {
+	aMessageTargets : [ // multi-target messages
+		["parentEntity/property", "parentEntity/navProperty/property2"],
+		["target0", "/target1", "target2/", "/target3/"]
+	],
+	oResult : {
+		"" : true,
+		"parentEntity/property" : true,
+		"parentEntity" : true,
+		"parentEntity/navProperty/property2" : true,
+		"parentEntity/navProperty" : true,
+		"target0" : true,
+		"target1" : true,
+		"target2" : true,
+		"target3" : true
+	}
+}].forEach(function (oFixture, i) {
+	QUnit.test("_getAffectedTargets, " + i, function (assert) {
+		var mAffectedTargets,
+			aMessages = [],
+			oODataMessageParser = {
+				_metadata : {
+					_getEntitySetByPath : function () {}
+				},
+				_parseUrl : function () {},
+				_serviceUrl : "serviceUrl"
+			},
+			mRequestInfo = {
+				request : oFixture.oRequest,
+				url : "url"
+			},
+			that = this;
+
+		this.mock(oODataMessageParser).expects("_parseUrl").withExactArgs("url")
+			.returns({url : oFixture.sUrl || "requestTarget"});
+		this.mock(oODataMessageParser._metadata).expects("_getEntitySetByPath")
+			.withExactArgs("requestTarget")
+			.returns(oFixture.oEntitySet);
+		if (oFixture.aMessageTargets) {
+			oFixture.aMessageTargets.forEach(function (vTarget) {
+				var oMessage = {getTargets : function () {}};
+
+				that.mock(oMessage).expects("getTargets").withExactArgs()
+					.returns(Array.isArray(vTarget) ? vTarget : [vTarget]);
+				aMessages.push(oMessage);
+			});
+		}
+
+		// code under test
+		mAffectedTargets = ODataMessageParser.prototype._getAffectedTargets.call(
+			oODataMessageParser, aMessages, mRequestInfo, oFixture.mGetEntities || {},
+			oFixture.mChangeEntities || {});
+
+		assert.deepEqual(mAffectedTargets, oFixture.oResult);
 	});
 });
 });

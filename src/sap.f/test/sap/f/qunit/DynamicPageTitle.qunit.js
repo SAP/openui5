@@ -1057,6 +1057,55 @@ function (
 		}, 600);
 	});
 
+	QUnit.test("Changing visibility of GenericTag", function (assert) {
+		// Arrange
+		var oToolbar = oFactory.getEmptyOverflowToolbar(),
+			oGenericTag = oFactory.getGenericTag("Test 1"),
+			oDynamicPageTitle = this.oDynamicPageTitle,
+			fnDone = assert.async(),
+			oSpy,
+			iInitialFlexBasis,
+			iNewFlexBasis;
+
+		assert.expect(4);
+
+		// Act
+		oToolbar.addContent(oGenericTag);
+		this.oDynamicPageTitle.addContent(oToolbar);
+		Core.applyChanges();
+
+		setTimeout(function () {
+			// Act
+			oGenericTag.setVisible(false);
+
+			setTimeout(function () {
+				oSpy = sinon.spy(oDynamicPageTitle, "_setContentAreaFlexBasis");
+				iInitialFlexBasis = parseInt(oDynamicPageTitle.$("content").css("flex-basis"));
+
+				// Assert
+				assert.strictEqual(iInitialFlexBasis, 16, "flex-basis is equal to OFT paddings, the OFT has no width");
+
+				// Act
+				oGenericTag.setVisible(true);
+				Core.applyChanges();
+
+				setTimeout(function () {
+					// Assert
+					iNewFlexBasis = parseInt(oDynamicPageTitle.$("content").css("flex-basis"));
+					assert.ok(iNewFlexBasis > iInitialFlexBasis, "Revealing the GenericTag in the OFT expands the flex-basis area");
+					assert.strictEqual(oSpy.firstCall.args[0], null,
+						"_setContentAreaFlexBasis is called first with null value to reset the flex-basis");
+					assert.strictEqual(oSpy.lastCall.args[0], iNewFlexBasis,
+						"_setContentAreaFlexBasis is called second time with width value, needed for the GenericTag");
+
+					// Clean up
+					fnDone();
+				}, 600);
+			}, 600);
+		}, 600);
+	});
+
+
 
 	/* --------------------------- DynamicPage Title Aggregations ---------------------------------- */
 	QUnit.module("DynamicPage Title - SnappedTitleOnMobile Aggregation", {

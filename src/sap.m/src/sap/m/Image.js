@@ -192,7 +192,13 @@ sap.ui.define([
 			/**
 			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledBy).
 			 */
-			ariaLabelledBy: {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+			ariaLabelledBy: {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"},
+
+			/**
+			 * Association to controls / IDs which are details to this control (see WAI-ARIA attribute aria-details).
+			 * @since 1.79
+			 */
+			ariaDetails: {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDetails"}
 		},
 		events : {
 

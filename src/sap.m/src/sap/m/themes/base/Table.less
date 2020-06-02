@@ -265,6 +265,13 @@ html[data-sap-ui-browser^='ed'] .sapMTableTH,
 	padding: 1px 1px 0 1px;
 }
 
+/* In Safari browser the table content was visible when scrolled with sticky elements,
+hence margin-top is applied instead of padding */
+html[data-sap-ui-browser^="sf"] .sapMSticky > .sapMListTbl {
+	margin-top: 1px;
+	padding: 0 1px;
+}
+
 /* busyIndicator should not block the toolbars if <table> is set busy */
 .sapMSticky > .sapMListTbl > .sapUiLocalBusyIndicator {
 	z-index: 1;

@@ -187,6 +187,7 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 
 		assert.ok(oStandardBreadCrumbsControl.getCurrentLocationText(), "has current location text setted");
 		assert.ok(oStandardBreadCrumbsControl._getCurrentLocation(), "has current location text control instantiated");
+		assert.ok(oStandardBreadCrumbsControl._getCurrentLocation().hasStyleClass("sapMBreadcrumbsCurrentLocation"), "current location has a correct class");
 
 		oStandardBreadCrumbsControl.setCurrentLocationText(sNewCurrentLocationVal);
 		assert.strictEqual(oStandardBreadCrumbsControl.getCurrentLocationText(), sNewCurrentLocationVal, "current location value changed to sNewCurrentLocationVal");
@@ -482,6 +483,19 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 		oStandardBreadCrumbsControl.$().find("li").each(function (index, item) {
 			assert.strictEqual(jQuery(item).attr("role"), undefined, "Role shouldn't be defined for the li element");
 		});
+	});
+
+	QUnit.test("Current location aria attributes", function (assert) {
+		// Arrange
+		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl,
+			oCurrentLocation = oStandardBreadCrumbsControl._getCurrentLocation();
+
+		// Act
+		oStandardBreadCrumbsControl.placeAt("qunit-fixture");
+		helpers.waitForUIUpdates();
+
+		// Assert
+		assert.strictEqual(oCurrentLocation.$().attr("aria-current"), "page", "Current location should have correct aria attribute");
 	});
 
 	QUnit.test("Keyboard Handling", function (assert) {

@@ -174,6 +174,54 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 		}, iLoadingDelay);
 	});
 
+	QUnit.test("scrollToSection with animation does not load intermediate sections", function (assert) {
+		var oComponentContainer = this.oView.byId("objectPageContainer"),
+			oObjectPageLayout = oComponentContainer.getObjectPageLayoutInstance(),
+			oData = oConfigModel.getData(),
+			done = assert.async(),
+			oStub;
+
+		_loadBlocksData(oData);
+
+		oConfigModel.setData(oData);
+		Core.applyChanges();
+
+		assert.expect(1);
+
+		function checkOnDomReady() {
+			var iSectionsCount = oObjectPageLayout.getSections().length,
+				oLastSection = oObjectPageLayout.getSections()[iSectionsCount - 1],
+				oSectionBeforeLast = oObjectPageLayout.getSections()[iSectionsCount - 2],
+				iSectionBeforeLastPositionTo = oObjectPageLayout._computeScrollPosition(oSectionBeforeLast);
+
+			// Setup: mock scrollTop of a section before the target section
+			oStub = sinon.stub(oObjectPageLayout, "_getHeightRelatedParameters", function() {
+				return {
+					// mock a scrollTop where an intermediate [before the target] section is in the viewport
+					iScrollTop: iSectionBeforeLastPositionTo,
+					iScreenHeight: oObjectPageLayout.iScreenHeight
+				};
+			});
+
+			// Act: scroll with animation
+			oObjectPageLayout.scrollToSection(oLastSection.getId());
+
+			// Act: mock lazyLoading call *during animated scroll*
+			oObjectPageLayout._oLazyLoading.doLazyLoading();
+
+			// Check the intermediate [before the target] section is not loaded despite being in the viewport
+			assert.strictEqual(oSectionBeforeLast.getSubSections()[0].getBlocks()[0]._bConnected, false, "section above the target section is not loaded");
+			done();
+			oStub.restore();
+		}
+
+		if (oObjectPageLayout._bDomReady) {
+			checkOnDomReady();
+		} else {
+			oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", checkOnDomReady);
+		}
+	});
+
 	QUnit.test("BCP: 1970115549 - _grepCurrentTabSectionBases should always return a value", function (assert) {
 		var oComponentContainer = this.oView.byId("objectPageContainer"),
 			oObjectPageLayout = oComponentContainer.getObjectPageLayoutInstance(),

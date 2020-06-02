@@ -161,25 +161,25 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Act
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 		qutils.triggerKeypress(oControl.getDomRef(), "1");
 		qutils.triggerKeypress(oControl.getDomRef(), "2");
 		qutils.triggerKeypress(oControl.getDomRef(), "3");
 		this.clock.tick(1000);
 
-		jQuery(oOtherControl).trigger("focus");
+		oOtherControl.focus();
 		this.clock.tick(1000);
 
 		oControl.setValue("");
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 		qutils.triggerKeypress(oControl.getDomRef(), "4");
 		//Assert
 		assert.equal(getMaskInputDomValue(oControl), "ISBN4_-__", "After setValue('') and retyping in the mask, previous value should not retain in DOM");
 
 		//Act
-		jQuery(oOtherControl).trigger("focus");
+		oOtherControl.focus();
 		this.clock.tick(1000);
 		//Assert
 		assert.equal(oControl.getValue(), "ISBN4_-__",  "After setValue('') and retyping in the mask, previous value should not retain as 'value' property.");
@@ -261,7 +261,7 @@ sap.ui.define([
 	QUnit.test("Single escaped character", function (assert){
 		var oControl = this.oMaskInput.setMask("999^9");
 
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		assert.strictEqual(getMaskInputDomValue(oControl), "___9", "Result value should have 1 escaped rule character as " +
 				"immutable on their predefined place");
 	});
@@ -269,7 +269,7 @@ sap.ui.define([
 	QUnit.test("Multiple escape characters in value", function (assert){
 		var oControl = this.oMaskInput.setMask("^99aaa^aaa^a");
 
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		assert.strictEqual(getMaskInputDomValue(oControl), "9____a__a", "Result value should have 3 escaped rule characters as " +
 				"immutable on their predefined place");
 	});
@@ -277,7 +277,7 @@ sap.ui.define([
 	QUnit.test("Escape the escape character", function (assert){
 		var oControl = this.oMaskInput.setMask("99^^99");
 
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		assert.strictEqual(getMaskInputDomValue(oControl), "__^__", "Result value should have 1 immutable character which is the" +
 				"escape character");
 	});
@@ -352,7 +352,7 @@ sap.ui.define([
 			if (oControl._bFocused) {
 				oControl.onfocusin(); // an element can get focus only once, so this time only call the handler
 			} else {
-				jQuery(oControl).trigger("focus");
+				oControl.focus();
 				this.clock.tick(1000);
 				oControl._bFocused = true;
 			}
@@ -418,13 +418,13 @@ sap.ui.define([
 		//since there is no way to really do a paste, set the value and focus the mask input,
 		// so the corresponding mask is applied to the value
 		this.oMaskSerialNumber.setValue("31 / 12 / 1981");
-		jQuery(this.oMaskSerialNumber).trigger("focus");
+		this.oMaskSerialNumber.focus();
 		this.clock.tick(1000);
 		assert.equal(getMaskInputDomValue(this.oMaskSerialNumber), "ZXYI-3112-1981-____", "'31 / 12 / 1981' inside serial" +
 		" number 'ZXYI-9999-9999-9999'");
 
 		this.oMaskPhoneNumber.setValue("31 / 12 / 1981");
-		jQuery(this.oMaskPhoneNumber).trigger("focus");
+		this.oMaskPhoneNumber.focus();
 		this.clock.tick(1000);
 		assert.equal(getMaskInputDomValue(this.oMaskPhoneNumber), "(02)-311-219", "'31 / 12 / 1981' inside phone number" +
 		" '(02)-***-***'");
@@ -449,7 +449,7 @@ sap.ui.define([
 			sMask = '1a9a-aa4';
 
 		oControl.setMask(sMask);
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 
 		assert.strictEqual(getMaskInputDomValue(oControl), '1###-##4', "On intial focus, the mask that the user needs to follow is shown");
@@ -460,7 +460,7 @@ sap.ui.define([
 		//arrange
 		this.oMaskInput.setPlaceholderSymbol("_").setMask("9999-9999-99");
 		sap.ui.getCore().applyChanges();
-		jQuery(this.oMaskInput).trigger("focus");
+		this.oMaskInput.focus();
 		this.clock.tick(1000);
 
 		//assert
@@ -471,13 +471,13 @@ sap.ui.define([
 		//arrange
 		this.oMaskInput.setPlaceholderSymbol("_").setMask("9999-9999-99");
 		sap.ui.getCore().applyChanges();
-		jQuery(this.oMaskInput).trigger("focus");
+		this.oMaskInput.focus();
 		this.clock.tick(1000);
 		qutils.triggerKeypress(this.oMaskInput.getDomRef(), "1");
 		qutils.triggerKeypress(this.oMaskInput.getDomRef(), "2");
 		qutils.triggerKeypress(this.oMaskInput.getDomRef(), "3");
 		this.clock.tick(3000);
-		jQuery(this.oMaskInput).trigger("focus");
+		this.oMaskInput.focus();
 		this.clock.tick(1000);
 
 		//assert
@@ -489,7 +489,7 @@ sap.ui.define([
 		//arrange
 		this.oMaskInput.setPlaceholderSymbol("_").setMask("9999-9999-99");
 		sap.ui.getCore().applyChanges();
-		jQuery(this.oMaskInput).trigger("focus");
+		this.oMaskInput.focus();
 		this.clock.tick(1000);
 		qutils.triggerKeypress(this.oMaskInput.getDomRef(), "1");
 		qutils.triggerKeypress(this.oMaskInput.getDomRef(), "2");
@@ -519,12 +519,12 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(1000);
 
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 		qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.DELETE);
 		this.clock.tick(1000);
 
-		jQuery(oOtherControl).trigger("focus");
+		oOtherControl.focus();
 		this.clock.tick(1000);
 		checkForEmptyValue(oControl);
 		assert.strictEqual(getMaskInputDomValue(oControl), "", "Once deleted the DOM should be empty");
@@ -540,12 +540,12 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		oControl.setValue('#1-23');
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		assert.strictEqual(getMaskInputDomValue(oControl), "#1-23", "The value was not validated on focusin");
 		assert.ok(oControl._oTempValue.differsFromOriginal() && oControl._oTempValue._aContent.join('') == "12-3#", "Buffer is successfully modified with the correct ALREADY VALIDATED value");
 
 
-		jQuery(oOtherControl).trigger("focus");
+		oOtherControl.focus();
 		this.clock.tick(1000);
 
 		assert.strictEqual(getMaskInputDomValue(oControl), '12-3#', "DOM value is validated against MaskInput rules on focusout");
@@ -562,7 +562,7 @@ sap.ui.define([
 
 		// test setting a an invalid value
 		oControl.setValue(12456);
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 
 		assert.strictEqual(getMaskInputDomValue(oControl), '##-##', "On intial focus, the mask that the user needs to follow is shown");
@@ -575,7 +575,7 @@ sap.ui.define([
 		oControl.setMask(sMask);
 		// test setting a an invalid value
 		oControl.setValue('#a-bc');
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 
 		assert.strictEqual(getMaskInputDomValue(oControl), '#a-bc');
@@ -611,11 +611,11 @@ sap.ui.define([
 
 	QUnit.test("Change event is called", function (assert){
 		var oControl = this.oMaskInput;
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 		qutils.triggerKeypress(oControl.getDomRef(), "1");
 
-		jQuery(this.oOtherControl).trigger("focus");
+		this.oOtherControl.focus();
 		this.clock.tick(1000);
 
 		assert.ok(this.spyChangeEvent.called, "Change event must be fired");
@@ -624,7 +624,7 @@ sap.ui.define([
 
 	QUnit.test("Change event must not be called unless ENTER or focusout", function (assert){
 		var oControl = this.oMaskInput;
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 
 		qutils.triggerKeypress(oControl.getDomRef(), "1");
@@ -641,7 +641,7 @@ sap.ui.define([
 
 	QUnit.test("Change event must not be called if Escape", function (assert){
 		var oControl = this.oMaskInput;
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 
 		qutils.triggerKeypress(oControl.getDomRef(), "1");
@@ -653,11 +653,11 @@ sap.ui.define([
 	QUnit.test("Change event must be called if the existing input value is entirely deleted", function(assert){
 		var oControl = this.oMaskInput.setPlaceholder("Enter number").setPlaceholderSymbol("#").setMask("999").setValue("123");
 
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 		qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.DELETE);
 
-		jQuery(this.oOtherControl).trigger("focus");
+		this.oOtherControl.focus();
 		this.clock.tick(1000);
 		assert.ok(this.spyChangeEvent.called, "Change event must be called");
 		assert.equal(this.oChangeListenerPassedEvent.mParameters.value, "", "Change event must have an exact value");
@@ -665,174 +665,26 @@ sap.ui.define([
 
 	QUnit.test("Change event must not be called if existing value is not really changed", function(assert){
 		var oControl = this.oMaskInput.setPlaceholder("Enter number").setPlaceholderSymbol("#").setMask("999").setValue("123");
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 
-		jQuery(this.oOtherControl).trigger("focus");
+		this.oOtherControl.focus();
 		this.clock.tick(1000);
 		assert.ok(!this.oChangeListenerPassedEvent, "Change event must not be called");
 	});
 
-	// Disabling for phantomJS browser only because keyboard handling does not work - remove this check when resolved
-	if (!Device.browser.phantomJS) {
-		QUnit.module("RTL support", {
-			beforeEach: function () {
-				this.sTestLatinValue = "abcd";
-				this.sTestHebrewValue = "אני רוצה";//"I want" in Hebrew
-				this.sTestMixedValue = "1234אני רוצה";//"1234I want" in Hebrew
-				this.oMaskInputLatin = new MaskInput( {
-					textDirection: TextDirection.RTL,
-					value: this.sTestLatinValue,
-					mask: "aaaa"
-				});
-				this.oMaskInputLatin.placeAt("content");
-
-				this.oMaskInputHebrew = new MaskInput({
-					textDirection: TextDirection.RTL,
-					value: this.sTestHebrewValue,
-					mask: "~~~s~~~~",
-					rules: [
-						new MaskInputRule({
-							maskFormatSymbol: "~",
-							regex: "[\u0591-\u05F4]"
-						}),
-						new MaskInputRule({
-							maskFormatSymbol: "s",
-							regex: "[ ]"
-						})
-					]
-				});
-				this.oMaskInputHebrew.placeAt("content");
-
-				sap.ui.getCore().applyChanges();
-				this.sandbox = sinon.sandbox;
-			},
-
-			afterEach: function () {
-				if (!bSkipDestroy) {
-					this.oMaskInputLatin.destroy();
-					this.oMaskInputHebrew.destroy();
-				}
-
-				this.sandbox.restore();
-			},
-			testSelectedInputWithArrow: function(oControl, oClock, sArrowName, iExpectedPosition, sMessagePrefix) {
-				jQuery(oControl).trigger("focus");
-				oClock.tick(1000);
-				oControl.selectText(0, oControl.getValue().length);
-				qutils.triggerKeydown(oControl.getDomRef(), sArrowName.toLowerCase() === "left" ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
-				oClock.tick(1000);
-				checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
-
-				//consecutive presses should not move the carret
-				qutils.triggerKeydown(oControl.getDomRef(), sArrowName.toLowerCase() === "left" ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
-
-				checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix + " Consecutive presses do nothing");
-			},
-			testCarretAtPositionAndMoveWithArrow: function(oControl, oClock, iStartPosition, sArrowName, iExpectedPosition, sMessagePrefix) {
-				jQuery(oControl).trigger("focus");
-				oClock.tick(1000);
-				setCursorPosition(iStartPosition, oControl);
-				qutils.triggerKeydown(oControl.getDomRef(),  sArrowName.toLowerCase() === "left"  ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
-
-				checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
-			},
-			testTypeInEmptyField: function(oControl, oClock, sUserInput, iExpectedPosition, sMessagePrefix) {
-				var i = 0;
-				jQuery(oControl).trigger("focus");
-				oClock.tick(1000);
-
-				for (i = 0; i < sUserInput.length; i++) {
-					qutils.triggerKeypress(oControl.getDomRef(), sUserInput[i]);
-				}
-				checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
-			}
-		});
-
-		QUnit.test("Left arrow on selected string moves the carret to the most left position", function(assert){
-			this.testSelectedInputWithArrow(this.oMaskInputLatin, this.clock, "left", 0, "Latin content");
-			this.testSelectedInputWithArrow(this.oMaskInputHebrew, this.clock, "left", this.sTestHebrewValue.length, "Hebrew content");
-			//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
-		});
-
-		QUnit.test("Right arrow on selected string moves the carret to the most right position", function(assert){
-			this.testSelectedInputWithArrow(this.oMaskInputLatin, this.clock, "right", this.sTestLatinValue.length, "Latin content");
-			this.testSelectedInputWithArrow(this.oMaskInputHebrew, this.clock, "right", 0, "Hebrew content");
-		});
-
-		QUnit.test("Left arrow when caret is at the middle moves to the left", function(assert){
-			var iStartPositionHebrew = Math.floor(this.oMaskInputHebrew.getValue().length / 2),
-				iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length / 2);
-			this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputHebrew, this.clock, iStartPositionHebrew, "left", iStartPositionHebrew + 1, "Hebrew content");
-			this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, iStartPositionLatin, "left", iStartPositionLatin - 1, "Latin content");
-			//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
-		});
-
-		QUnit.test("Left arrow when caret is at the rightmost position moves to the left", function(assert){
-			var iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length);
-			for (var i = iStartPositionLatin; i > 0; i-- ) {
-				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, i, "left", i - 1, "Latin content. Start position: " + i);
-			}
-		});
-
-		QUnit.test("Navigate the whole field with left arrow when caret is at the middle moves to the left between RTL and LTR characters", function(assert){
-			// this test is needed because the native behavior of some browsers is different - we're mimicking IE11
-			this.oMaskInputMixed = new MaskInput({
-				textDirection: TextDirection.RTL,
-				value: this.sTestMixedValue,
-				mask: "9999~~~s~~~~",
-				rules: [
-					new MaskInputRule({
-						maskFormatSymbol: "~",
-						regex: "[\u0591-\u05F4]"
-					}),
-					new MaskInputRule({
-						maskFormatSymbol: "s",
-						regex: "[ ]"
-					})
-				]
-			});
-			this.oMaskInputMixed.placeAt("content");
-			var iStartPosition = 4;
-			this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputMixed, this.clock, iStartPosition, "left", iStartPosition + 1, "Mixed content");
-			this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputMixed, this.clock, iStartPosition, "right", iStartPosition - 1, "Mixed content");
-			this.oMaskInputMixed.destroy();
-
-			//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
-		});
-
-		QUnit.test("Right arrow when caret is at the middle moves to the right", function(assert){
-			var iStartPositionHebrew = Math.floor(this.oMaskInputHebrew.getValue().length / 2),
-				iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length / 2);
-			this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputHebrew, this.clock, iStartPositionHebrew, "right", iStartPositionHebrew - 1, "Hebrew content");
-			this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, iStartPositionLatin, "right", iStartPositionLatin + 1, "Latin content");
-			//Note: iStartPosition - 1 is correct, since when content is hebrew, selectionStarts & selectionEnd are mirrored.
-		});
-
-		QUnit.test("Navigate the whole field with right arrow when caret is at the leftmost moves to the right", function(assert){
-			var iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length);
-			for (var i = 0; i < iStartPositionLatin; i++ ) {
-				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, i, "right", i + 1, "Latin content. Start position: " + i);
-			}
-		});
-
-		QUnit.test("Typing in a empty field (Latin content)", function(assert){
-			this.oMaskInputLatin.destroy();
+	QUnit.module("RTL support", {
+		beforeEach: function () {
+			this.sTestLatinValue = "abcd";
+			this.sTestHebrewValue = "אני רוצה";//"I want" in Hebrew
+			this.sTestMixedValue = "1234אני רוצה";//"1234I want" in Hebrew
 			this.oMaskInputLatin = new MaskInput( {
 				textDirection: TextDirection.RTL,
+				value: this.sTestLatinValue,
 				mask: "aaaa"
 			});
 			this.oMaskInputLatin.placeAt("content");
-			sap.ui.getCore().applyChanges();
-			this.clock.tick(1000);
-			sContent = "abc";
-			this.testTypeInEmptyField(this.oMaskInputLatin, this.clock, sContent, 3, "Latin content");
-			jQuery(this.oMaskInputHebrew).trigger("focus"); //make sure complete handler for latin mask worked-out
-			assert.equal(this.oMaskInputLatin.getValue(), sContent + "_", "Latin content check.");
-		});
 
-		QUnit.test("Typing in a empty field (Hebrew content)", function(assert){
-			this.oMaskInputHebrew.destroy();
 			this.oMaskInputHebrew = new MaskInput({
 				textDirection: TextDirection.RTL,
 				value: this.sTestHebrewValue,
@@ -849,16 +701,160 @@ sap.ui.define([
 				]
 			});
 			this.oMaskInputHebrew.placeAt("content");
+
 			sap.ui.getCore().applyChanges();
-			this.clock.tick(1000);
-			var sContent =  "וצה"; /*3 chars*/
-			this.testTypeInEmptyField(this.oMaskInputHebrew, this.clock, sContent, 3, "Hebrew content");
-			jQuery(this.oMaskInputLatin).trigger("focus"); //make sure complete handler for hebrew mask worked-out
-			assert.equal(this.oMaskInputHebrew.getValue(), sContent + "_____", "Hebrew content check.");
+			this.sandbox = sinon.sandbox;
+		},
 
+		afterEach: function () {
+			if (!bSkipDestroy) {
+				this.oMaskInputLatin.destroy();
+				this.oMaskInputHebrew.destroy();
+			}
+
+			this.sandbox.restore();
+		},
+		testSelectedInputWithArrow: function(oControl, oClock, sArrowName, iExpectedPosition, sMessagePrefix) {
+			oControl.focus();
+			oClock.tick(1000);
+			oControl.selectText(0, oControl.getValue().length);
+			qutils.triggerKeydown(oControl.getDomRef(), sArrowName.toLowerCase() === "left" ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
+			oClock.tick(1000);
+			checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
+
+			//consecutive presses should not move the carret
+			qutils.triggerKeydown(oControl.getDomRef(), sArrowName.toLowerCase() === "left" ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
+
+			checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix + " Consecutive presses do nothing");
+		},
+		testCarretAtPositionAndMoveWithArrow: function(oControl, oClock, iStartPosition, sArrowName, iExpectedPosition, sMessagePrefix) {
+			oControl.focus();
+			oClock.tick(1000);
+			setCursorPosition(iStartPosition, oControl);
+			qutils.triggerKeydown(oControl.getDomRef(),  sArrowName.toLowerCase() === "left"  ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
+
+			checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
+		},
+		testTypeInEmptyField: function(oControl, oClock, sUserInput, iExpectedPosition, sMessagePrefix) {
+			var i = 0;
+			oControl.focus();
+			oClock.tick(1000);
+
+			for (i = 0; i < sUserInput.length; i++) {
+				qutils.triggerKeypress(oControl.getDomRef(), sUserInput[i]);
+			}
+			checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
+		}
+	});
+
+	QUnit.test("Left arrow on selected string moves the carret to the most left position", function(assert){
+		this.testSelectedInputWithArrow(this.oMaskInputLatin, this.clock, "left", 0, "Latin content");
+		this.testSelectedInputWithArrow(this.oMaskInputHebrew, this.clock, "left", this.sTestHebrewValue.length, "Hebrew content");
+		//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
+	});
+
+	QUnit.test("Right arrow on selected string moves the carret to the most right position", function(assert){
+		this.testSelectedInputWithArrow(this.oMaskInputLatin, this.clock, "right", this.sTestLatinValue.length, "Latin content");
+		this.testSelectedInputWithArrow(this.oMaskInputHebrew, this.clock, "right", 0, "Hebrew content");
+	});
+
+	QUnit.test("Left arrow when caret is at the middle moves to the left", function(assert){
+		var iStartPositionHebrew = Math.floor(this.oMaskInputHebrew.getValue().length / 2),
+			iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length / 2);
+		this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputHebrew, this.clock, iStartPositionHebrew, "left", iStartPositionHebrew + 1, "Hebrew content");
+		this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, iStartPositionLatin, "left", iStartPositionLatin - 1, "Latin content");
+		//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
+	});
+
+	QUnit.test("Left arrow when caret is at the rightmost position moves to the left", function(assert){
+		var iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length);
+		for (var i = iStartPositionLatin; i > 0; i-- ) {
+			this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, i, "left", i - 1, "Latin content. Start position: " + i);
+		}
+	});
+
+	QUnit.test("Navigate the whole field with left arrow when caret is at the middle moves to the left between RTL and LTR characters", function(assert){
+		// this test is needed because the native behavior of some browsers is different - we're mimicking IE11
+		this.oMaskInputMixed = new MaskInput({
+			textDirection: TextDirection.RTL,
+			value: this.sTestMixedValue,
+			mask: "9999~~~s~~~~",
+			rules: [
+				new MaskInputRule({
+					maskFormatSymbol: "~",
+					regex: "[\u0591-\u05F4]"
+				}),
+				new MaskInputRule({
+					maskFormatSymbol: "s",
+					regex: "[ ]"
+				})
+			]
 		});
-	}
+		this.oMaskInputMixed.placeAt("content");
+		var iStartPosition = 4;
+		this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputMixed, this.clock, iStartPosition, "left", iStartPosition + 1, "Mixed content");
+		this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputMixed, this.clock, iStartPosition, "right", iStartPosition - 1, "Mixed content");
+		this.oMaskInputMixed.destroy();
 
+		//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
+	});
+
+	QUnit.test("Right arrow when caret is at the middle moves to the right", function(assert){
+		var iStartPositionHebrew = Math.floor(this.oMaskInputHebrew.getValue().length / 2),
+			iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length / 2);
+		this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputHebrew, this.clock, iStartPositionHebrew, "right", iStartPositionHebrew - 1, "Hebrew content");
+		this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, iStartPositionLatin, "right", iStartPositionLatin + 1, "Latin content");
+		//Note: iStartPosition - 1 is correct, since when content is hebrew, selectionStarts & selectionEnd are mirrored.
+	});
+
+	QUnit.test("Navigate the whole field with right arrow when caret is at the leftmost moves to the right", function(assert){
+		var iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length);
+		for (var i = 0; i < iStartPositionLatin; i++ ) {
+			this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, i, "right", i + 1, "Latin content. Start position: " + i);
+		}
+	});
+
+	QUnit.test("Typing in a empty field (Latin content)", function(assert){
+		this.oMaskInputLatin.destroy();
+		this.oMaskInputLatin = new MaskInput( {
+			textDirection: TextDirection.RTL,
+			mask: "aaaa"
+		});
+		this.oMaskInputLatin.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(1000);
+		sContent = "abc";
+		this.testTypeInEmptyField(this.oMaskInputLatin, this.clock, sContent, 3, "Latin content");
+		this.oMaskInputHebrew.focus(); //make sure complete handler for latin mask worked-out
+		assert.equal(this.oMaskInputLatin.getValue(), sContent + "_", "Latin content check.");
+	});
+
+	QUnit.test("Typing in a empty field (Hebrew content)", function(assert){
+		this.oMaskInputHebrew.destroy();
+		this.oMaskInputHebrew = new MaskInput({
+			textDirection: TextDirection.RTL,
+			value: this.sTestHebrewValue,
+			mask: "~~~s~~~~",
+			rules: [
+				new MaskInputRule({
+					maskFormatSymbol: "~",
+					regex: "[\u0591-\u05F4]"
+				}),
+				new MaskInputRule({
+					maskFormatSymbol: "s",
+					regex: "[ ]"
+				})
+			]
+		});
+		this.oMaskInputHebrew.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(1000);
+		var sContent =  "וצה"; /*3 chars*/
+		this.testTypeInEmptyField(this.oMaskInputHebrew, this.clock, sContent, 3, "Hebrew content");
+		this.oMaskInputLatin.focus(); //make sure complete handler for hebrew mask worked-out
+		assert.equal(this.oMaskInputHebrew.getValue(), sContent + "_____", "Hebrew content check.");
+
+	});
 
 	QUnit.module("Others", {
 		beforeEach: function () {
@@ -895,12 +891,12 @@ sap.ui.define([
 
 		assert.strictEqual(getMaskInputDomValue(oControl), "", "Unless focused an empty dom value should remain empty");
 		checkForEmptyValue(oControl);
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 
 		assert.strictEqual(getMaskInputDomValue(oControl), '____', "the maskInput has the expected mask string in the dom after focus is reached");
 		checkForEmptyValue(oControl);
-		jQuery(oOtherControl).trigger("focus");
+		oOtherControl.focus();
 		this.clock.tick(1000);
 
 		assert.strictEqual(getMaskInputDomValue(oControl), '', "the maskInput lost the focus without any user input characters, so the getValue should return an empty string");
@@ -910,7 +906,7 @@ sap.ui.define([
 	});
 	QUnit.test("Entering a rule incompatible characters is forbidden at any position for mask", function (assert){
 		var oControl = this.oMaskInput.setMask("9a-9a").setPlaceholderSymbol("#");
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 		this.sendAndValidate(0, "b", "##-##");
 		this.sendAndValidate(1, "7", "##-##");
@@ -920,7 +916,7 @@ sap.ui.define([
 
 	QUnit.test("Entering a rule compatible character is possible at any position for mask", function (assert){
 		var oControl = this.oMaskInput.setMask("9a-9a").setPlaceholderSymbol("#");
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 		this.sendAndValidate(-1, "1", "1#-##");
 		this.sendAndValidate(-1, "b", "1b-##");
@@ -930,7 +926,7 @@ sap.ui.define([
 
 	QUnit.test("Entering an separator will move the caret after it", function (assert){
 		var oControl = this.oMaskInput.setMask("9-9").setPlaceholderSymbol("#");
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 		this.sendAndValidate(-1, "2", "2-#");
 		var oSelection = getCurrentSelection(oControl);
@@ -941,7 +937,7 @@ sap.ui.define([
 
 	QUnit.test("Escape position the cursor at the first repalcable character", function (assert){
 		var oControl = this.oMaskInput.setMask("9-9").setPlaceholderSymbol("#");
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 		this.sendAndValidate(-1, "2", "2-#");
 		qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
@@ -954,7 +950,7 @@ sap.ui.define([
 
 	QUnit.test("Click on mask input with an existing value selects the whole value", function (assert){
 		var oControl = this.oMaskInput.setMask("a9a9a").setValue("b1c2d");
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 
 		var oSelection = getCurrentSelection(oControl);
@@ -964,7 +960,7 @@ sap.ui.define([
 
 	QUnit.test("Click on mask input with empty value should position the cursor at the first editable position", function (assert){
 		var oControl = this.oMaskInput.setMask("(+35)a9a9a");
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 
 		checkCursorIsAtPosition(oControl, 5);
@@ -973,7 +969,7 @@ sap.ui.define([
 	QUnit.test("Click on mask input with partially completed value should position the cursor at the first editable position", function (assert){
 		var oControl = this.oMaskInput.setMask("(+35)a9a9a");
 		oControl.setValue("a1");
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 
 		checkCursorIsAtPosition(oControl, 7);
@@ -981,7 +977,7 @@ sap.ui.define([
 
 	QUnit.test("Esc key does reset the value back to the original", function (assert){
 		var oControl = this.oMaskInput.setMask("aa-aa").setValue("ab-__");
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 
 		this.sendAndValidate(-1, "c", "ab-c_");
@@ -1012,20 +1008,20 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(1000);
 
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 		this.sendAndValidate(-1, "1", "1##");
 		this.sendAndValidate(-1, "2", "12#");
 
-		jQuery(oOtherControl).trigger("focus");
+		oOtherControl.focus();
 		this.clock.tick(1000);
 		assert.strictEqual(oControl.getValue(), "12#", "On complete the value should change");
 		//user goes back and enters input
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 		this.sendAndValidate(-1, "3", "123");
 
-		jQuery(oOtherControl).trigger("focus");
+		oOtherControl.focus();
 		this.clock.tick(1000);
 		assert.strictEqual(oControl.getValue(), "123", "On complete the value should change");
 
@@ -1276,7 +1272,7 @@ sap.ui.define([
 		var oControl = this.oMaskInput.setMask("h9:99:99 ");
 		oControl.addRule(oRule);
 
-		jQuery(oControl).trigger("focus");
+		oControl.focus();
 		this.clock.tick(1000);
 		this.sendAndValidate(0, "1", "1_:__:__ ", oControl);
 		qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.BACKSPACE);

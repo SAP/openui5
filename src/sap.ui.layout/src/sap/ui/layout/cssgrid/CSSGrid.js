@@ -190,23 +190,6 @@ sap.ui.define([
 	}});
 
 	/**
-	 * Sets the width of the grid.
-	 * @param {sap.ui.core.CSSSize} sWidth The width of the Grid as CSS size.
-	 * @returns {sap.ui.layout.cssgrid.CSSGrid} Pointer to the control instance to allow method chaining.
-	 * @public
-	 */
-	CSSGrid.prototype.setWidth = function (sWidth) {
-		this.setProperty("width", sWidth, true);
-
-		var oDomRef = this.getDomRef();
-		if (oDomRef) {
-			oDomRef.style.width = sWidth;
-		}
-
-		return this;
-	};
-
-	/**
 	 * =================== START of IGridConfigurable interface implementation ===================
 	 */
 
@@ -261,7 +244,7 @@ sap.ui.define([
 			onAfterRendering: this._onAfterItemRendering
 		};
 
-		this._oGridObserver = new ManagedObjectObserver(CSSGrid.prototype._onGridChange.bind(this));
+		this._oGridObserver = new ManagedObjectObserver(this._onGridChange.bind(this));
 		this._oGridObserver.observe(this, { aggregations: ["items"] });
 
 		this._addGridLayoutDelegate();
@@ -308,7 +291,6 @@ sap.ui.define([
 	 * @private
 	 */
 	CSSGrid.prototype._onGridChange = function (oChanges) {
-
 		if (oChanges.name !== "items" || !oChanges.child) {
 			return;
 		}

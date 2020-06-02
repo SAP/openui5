@@ -378,42 +378,15 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onsapshow = function(oEvent) {
-		var oItemToFocus, iItemToFocus, oCurrentFocusedControl,
-			oPicker, oList, aSelectableItems,
-			aSelectedItems, oItemNavigation, sValue;
-
-		this.syncPickerContent();
-
-		oPicker = this.getPicker();
-		oList = this._getList();
-		aSelectableItems = this.getSelectableItems();
-		aSelectedItems = this.getSelectedItems();
-		oItemNavigation = oList.getItemNavigation();
-		sValue = this.getValue();
-		oCurrentFocusedControl = jQuery(document.activeElement).control()[0];
-
-		if (oCurrentFocusedControl instanceof sap.m.Token) {
-			oItemToFocus = this._getItemByToken(oCurrentFocusedControl);
-		} else if (sValue) {
-			oItemToFocus = this._getItemByValue(sValue);
-		}
-
-		if (!oItemToFocus) {
-			// we need to take the list's first selected item not the first selected item by the combobox user
-			oItemToFocus = aSelectedItems.length ? this._getItemByListItem(this._getList().getSelectedItems()[0]) : aSelectableItems[0];
-		}
-
-		iItemToFocus = this.getItems().indexOf(oItemToFocus);
-
-		if (oItemNavigation) {
-			oItemNavigation.setSelectedIndex(iItemToFocus);
-		} else {
-			this._bListItemNavigationInvalidated = true;
-			this._iInitialItemFocus = iItemToFocus;
-		}
-
-		oPicker.setInitialFocus(oList);
+		this._handleItemToFocus();
 		ComboBoxBase.prototype.onsapshow.apply(this, arguments);
+	};
+
+	MultiComboBox.prototype._handlePopupOpenAndItemsLoad = function () {
+		// should sync the content before setting the initial focus and opening the picker
+		// the picker opening is handled in the base function
+		this._handleItemToFocus();
+		ComboBoxBase.prototype._handlePopupOpenAndItemsLoad.apply(this, arguments);
 	};
 
 	/**
@@ -3529,7 +3502,7 @@ function(
 	};
 
 	/**
-	 * Gets item corresponding to given value.
+	 * Gets item corresponding to the given value.
 	 *
 	 * @param {string} sValue The given value
 	 * @return {sap.ui.core.Item} The corresponding item
@@ -3539,6 +3512,52 @@ function(
 		return this.getSelectableItems().find(function (oItem) {
 			return oItem.getText().toLowerCase() === sValue.toLowerCase();
 		});
+	};
+
+	/**
+	 * Handles the initial placement of the focus and item selection before the picker is opened.
+	 *
+	 * @private
+	 */
+	MultiComboBox.prototype._handleItemToFocus = function () {
+		if (this.isOpen()) {
+			return;
+		}
+
+		this.syncPickerContent();
+
+		var iItemToFocus, oItemToFocus,
+			oCurrentlyFocusedObject = core.byId(document.activeElement.id),
+			aSelectedItems = this.getSelectedItems(),
+			aSelectableItems = this.getSelectableItems(),
+			oList = this._getList(),
+			oItemNavigation = oList && oList.getItemNavigation(),
+			sValue = this.getValue(),
+			oPicker = this.getPicker();
+
+
+		if (oCurrentlyFocusedObject && oCurrentlyFocusedObject.isA("sap.m.Token")) {
+			oItemToFocus = this._getItemByToken(oCurrentlyFocusedObject);
+		} else if (sValue) {
+			oItemToFocus = this._getItemByValue(sValue);
+		}
+
+		// If no items are selected focuse the first visible one
+		if (!oItemToFocus) {
+			oItemToFocus = aSelectedItems.length ? this._getItemByListItem(this._getList().getSelectedItems()[0]) : aSelectableItems[0];
+		}
+
+		iItemToFocus = aSelectableItems.indexOf(oItemToFocus);
+
+		// Set the initial selected index and focus
+		if (oItemNavigation) {
+			oItemNavigation.setSelectedIndex(iItemToFocus);
+		} else {
+			this._bListItemNavigationInvalidated = true;
+			this._iInitialItemFocus = iItemToFocus;
+		}
+
+		oPicker.setInitialFocus(oList);
 	};
 
 	/**

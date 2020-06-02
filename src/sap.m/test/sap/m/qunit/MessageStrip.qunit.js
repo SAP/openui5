@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/m/MessageStrip",
 	"sap/m/Link",
 	"sap/m/FormattedText",
+	"sap/ui/core/Core",
 	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/qunit-css",
@@ -13,7 +14,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
-], function(KeyCodes, MessageStrip, Link, FormattedText, Device, JSONModel) {
+], function(KeyCodes, MessageStrip, Link, FormattedText, Core, Device, JSONModel) {
 	"use strict";
 
 
@@ -518,6 +519,25 @@ sap.ui.define([
 		//Assert
 		assert.equal(document.querySelectorAll("#" + oCloseButton.getAriaLabelledBy()).length, 1,
 			"There should be only 1 invisible text element present in the dom");
+
+		// Cleanup
+		oMessageStrip.destroy();
+	});
+
+	QUnit.test("Should render aria-roledescription attribute with the correct text", function(assert) {
+		// Arrange
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m"),
+			oMessageStrip = new MessageStrip({
+				text: "MessageStrip text message",
+				type: "Warning"
+			});
+
+		// Act
+		oMessageStrip.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oMessageStrip.getDomRef().getAttribute("aria-roledescription"), oResourceBundle.getText("MESSAGE_STRIP_ARIA_ROLE_DESCRIPTION"), "aria-roledescription is rendered correctly");
 
 		// Cleanup
 		oMessageStrip.destroy();

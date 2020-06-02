@@ -86,7 +86,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		}
 
 		if (TableUtils.hasRowActions(oTable)) {
-			var iRowActionCount = TableUtils.getRowActionCount(oTable);
+			var iRowActionCount = oTable.getRowActionCount();
 			rm.class(iRowActionCount == 1 ? "sapUiTableRActS" : "sapUiTableRAct");
 		} else if (TableUtils.hasRowNavigationIndicators(oTable)){
 			rm.class("sapUiTableRowNavIndicator");

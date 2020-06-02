@@ -61,7 +61,8 @@ html.sapUiMedia-Std-Phone .sapUiCalendarRowWithHead > .sapUiCalendarRowApps{
 	border-right: none;
 }
 
-.sapUiCalendarRowAppsNoWork{
+.sapMListTblRow:not(.sapMLIBSelected) .sapUiCalendarRowAppsNoWork,
+.sapMListTblSubRow:not(.sapMLIBSelected) .sapUiCalendarRowAppsNoWork {
 	background-color: darken(@sapUiListBackground, 3);
 }
 
@@ -97,7 +98,7 @@ html.sapUiMedia-Std-Phone .sapUiCalendarRowWithHead > .sapUiCalendarRowApps{
 	padding-left: 0.375rem;
 	font-size: 1rem;
 	vertical-align: middle;
-	color: @sapUiElement;
+	color: @sapUiContentLabelColor;
 }
 
 .sapUiCalendarRowAppsIntHeadTitle{

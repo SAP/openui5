@@ -957,14 +957,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("FacetFilter._addOKButtonToPopover", function(assert) {
-
-		var oFF = new FacetFilter();
-		var oPopover = oFF._getPopover();
+		var oFF = new FacetFilter(),
+			oPopover = oFF._getPopover(),
+			oButton, oToolbarSpacer, oFooter;
 
 		oFF._addOKButtonToPopover(oPopover);
-		var oButton = oPopover.getFooter();
+
+		oFooter = oPopover.getFooter();
+		oToolbarSpacer = oFooter.getContent()[0];
+		oButton = oFooter.getContent()[1];
+
 		assert.ok(oButton, "Popover OK button should be created and added to the popover footer");
-		assert.equal(oButton.getWidth(), "100%", "Popover OK button width should be 100%");
+		assert.ok(oToolbarSpacer, "sap.m.ToolbarSpacer is added as a first element in the footer content");
 		assert.ok(oButton.getText(), "Button text should be set");
 		assert.ok(oButton.getTooltip(), "Button tooltip should be set");
 
@@ -2669,7 +2673,6 @@ sap.ui.define([
 	QUnit.test("FacetFilter.reset (no summary bar)", function(assert) {
 		var done = assert.async();
 
-		var oResetEvent = null;
 		var oFF = new FacetFilter();
 
 		oFF.placeAt("content");
@@ -2822,7 +2825,8 @@ sap.ui.define([
 			oPopoverOKButton;
 
 		this.oFacetFilter.setShowPopoverOKButton(true);
-		oPopoverOKButton = this.oFacetFilter._addOKButtonToPopover(oPopover);
+		this.oFacetFilter._addOKButtonToPopover(oPopover);
+		oPopoverOKButton = oPopover.getFooter().getContent()[1];
 		this.oFacetFilter.attachEvent("confirm", null, fnConfirmSpy, this);
 		this.oFacetFilter.getLists().forEach(function (oList) {
 			if (oList) {
@@ -2936,33 +2940,14 @@ sap.ui.define([
 		return oFF._removeFacetIcons[oFF.getLists()[iIndex].getId()];
 	}
 
-	function getAddFacetCtrl(oFF) {
-		return sap.ui.getCore().byId(oFF.getId() + "-add");
-	}
-
 	function openPopover(oFF, iIndex) {
 
 		qutils.triggerMouseEvent(getButtonCtrl(oFF, iIndex), "tap");
 	}
 
-	function openDialogFromAddFacet(oFF) {
-
-		qutils.triggerMouseEvent(getAddFacetCtrl(oFF), "tap");
-	}
-
 	function getDialogFacetSearchField(oFacetPage) {
 
 		return oFacetPage.getSubHeader().getContentMiddle()[0];
-	}
-
-	function getDialogFilterItemsSearchField(oFilterItemsPage) {
-
-		return oFilterItemsPage.getSubHeader().getContentMiddle()[0];
-	}
-
-	function getPopoverFilterItemsSearchField(oPopover) {
-
-		return oPopover.getCustomHeader().getContentMiddle()[0];
 	}
 
 	function getPopoverSelectAllCheckBox(oPopover) {
@@ -3004,40 +2989,6 @@ sap.ui.define([
 		var oDialog = oFF.getAggregation("dialog");
 		var oNavCont = oDialog.getContent()[0];
 		return oNavCont.getPages()[0];
-	}
-
-	function getDialogFacetSearch(oFF) {
-
-		var oFacetPage = getDialogFacetPage(oFF);
-		var oSearchField = oFacetPage.getSubHeader().getContentMiddle()[0];
-		return oFacetPage.getSubHeader().getContentMiddle()[0];
-	}
-
-	function testResetInSummaryBar(oFF, bDisplayed) {
-
-		var oSummaryBar = oFF.getAggregation("summaryBar");
-		if (bDisplayed) {
-			assert.equal(oSummaryBar.getContent().length, 3,
-					"The summary bar should have 3 controls in its content when the reset button is displayed");
-			var oToolbarSpacer = oSummaryBar.getContent()[1];
-			assert.ok(
-					oToolbarSpacer instanceof sap.m.ToolbarSpacer,
-					"The second control in the summary bar content should be a spacer so that the reset button is displayed on the right side of the toolbar");
-			var oResetButton = oSummaryBar.getContent()[2];
-			assert.ok(oResetButton instanceof sap.m.Button, "The third control in the summary bar content should be a button");
-			assert.ok(oResetButton.$().hasClass("sapUiSizeCompact"), "The button should be in compact size");
-		} else {
-
-			assert.equal(oSummaryBar.getContent().length, 1,
-					"The summary bar should have 1 control in its content when the reset button is not displayed");
-		}
-	}
-
-	function getGroupHeader(oGroup) {
-		return new GroupHeaderListItem( {
-			title: "Group: " + oGroup.key,
-			upperCase: false
-		} );
 	}
 
 	/*

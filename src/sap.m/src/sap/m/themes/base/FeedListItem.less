@@ -33,6 +33,14 @@
 	padding-bottom: 1rem;
 }
 
+/* Added to remove unwanted padding when FeedListItem is used in table*/
+.sapMListTblCell {
+	.sapMFeedListShowSeparatorsAll .sapMFeedListItem {
+		padding-top: 0rem;
+		padding-bottom: 0rem;
+	}
+}
+
 /* Makes sure that floating image is not displayed in the next list item. */
 .sapMFeedListItem:after {
 	content: " ";
@@ -385,9 +393,16 @@ html.sap-phone .sapMFeedListItemTimestamp {
 html.sap-phone .sapMFeedListItem .sapMFeedListItemActionButton {
 	margin: -0.1875rem 0px 0px 0.75rem;
 }
+// added to show ellipsis for user name
+.sapMFeedListItemTextName {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
 
-.sapMFeedListItemActionButton + .sapMFeedListItemText .sapMFeedListItemTextName,
-.sapMFeedListItemActionButton + .sapMFeedListItemHeader .sapMFeedListItemTextName {
+// removed sapMFeedListItemActionButton so that the css is applied for every feed list item textnameS
+.sapMFeedListItemText .sapMFeedListItemTextName,
+.sapMFeedListItemHeader .sapMFeedListItemTextName {
 	max-width: ~"calc(100% - 2.8rem)"; /* 2.5rem width of button in cozy mode + 0.3rem margin-right */
 	display: inline-block;
 

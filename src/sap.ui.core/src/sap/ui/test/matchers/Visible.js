@@ -14,7 +14,7 @@ sap.ui.define(['sap/ui/test/matchers/Matcher'], function (Matcher) {
 	 * @since 1.34
 	 */
 	return Matcher.extend("sap.ui.test.matchers.Visible", /** @lends sap.ui.test.matchers.Visible.prototype */ {
-		isMatching:  function(oControl) {
+		isMatching: function (oControl) {
 			var oDomRef = oControl.$();
 			var bVisible = false;
 

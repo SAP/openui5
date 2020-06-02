@@ -4,7 +4,6 @@
 
 //Provides class sap.ui.core.Configuration
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
 	'../Device',
 	'../Global',
 	'../base/Object',
@@ -16,10 +15,10 @@ sap.ui.define([
 	"sap/base/util/Version",
 	"sap/base/Log",
 	"sap/base/assert",
+	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject"
 ],
 	function(
-		jQuery,
 		Device,
 		Global,
 		BaseObject,
@@ -31,6 +30,7 @@ sap.ui.define([
 		Version,
 		Log,
 		assert,
+		extend,
 		isEmptyObject
 	) {
 	"use strict";
@@ -563,7 +563,7 @@ sap.ui.define([
 		 *
 		 * Similar to <code>sap.ui.version</code>.
 		 *
-		 * @return {jQuery.sap.Version} the version
+		 * @return {module:sap/base/util/Version} the version
 		 * @public
 		 */
 		getVersion : function () {
@@ -579,7 +579,7 @@ sap.ui.define([
 		 * Returns the used compatibility version for the given feature.
 		 *
 		 * @param {string} sFeature the key of desired feature
-		 * @return {jQuery.sap.Version} the used compatibility version
+		 * @return {module:sap/base/util/Version} the used compatibility version
 		 * @public
 		 */
 		getCompatibilityVersion : function (sFeature) {
@@ -1821,7 +1821,7 @@ sap.ui.define([
 			// add custom units, or remove the existing ones if none are given
 			var mExistingUnits = this.getCustomUnits();
 			if (mExistingUnits){
-				mUnits = jQuery.extend({}, mExistingUnits, mUnits);
+				mUnits = extend({}, mExistingUnits, mUnits);
 			}
 			this.setCustomUnits(mUnits);
 			return this;
@@ -1860,7 +1860,7 @@ sap.ui.define([
 			// add custom units, or remove the existing ones if none are given
 			var mExistingUnits = this.getUnitMappings();
 			if (mExistingUnits){
-				mUnitMappings = jQuery.extend({}, mExistingUnits, mUnitMappings);
+				mUnitMappings = extend({}, mExistingUnits, mUnitMappings);
 			}
 			this.setUnitMappings(mUnitMappings);
 			return this;
@@ -2054,7 +2054,7 @@ sap.ui.define([
 			// add custom units, or remove the existing ones if none are given
 			var mExistingCurrencies = this.getCustomCurrencies();
 			if (mExistingCurrencies){
-				mCurrencies = jQuery.extend({}, mExistingCurrencies, mCurrencies);
+				mCurrencies = extend({}, mExistingCurrencies, mCurrencies);
 			}
 			this.setCustomCurrencies(mCurrencies);
 			return this;

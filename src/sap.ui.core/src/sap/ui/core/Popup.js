@@ -20,6 +20,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/Version",
 	"sap/base/util/uid",
+	"sap/base/util/extend",
+	"sap/base/util/deepExtend",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/F6Navigation",
@@ -43,6 +45,8 @@ sap.ui.define([
 	Log,
 	Version,
 	uid,
+	extend,
+	deepExtend,
 	containsOrEquals,
 	jQuery,
 	F6Navigation,
@@ -150,7 +154,7 @@ sap.ui.define([
 				collision: "flip"
 			};
 
-			this._oPosition = jQuery.extend({},this._oDefaultPosition);
+			this._oPosition = Object.assign({},this._oDefaultPosition);
 
 			this._bModal = !!bModal;
 			this._oPreviousFocus = null;
@@ -659,7 +663,7 @@ sap.ui.define([
 	 *
 	 * If the Popup's OpenState is different from "CLOSED" (i.e. if the Popup is already open, opening or closing), the call is ignored.
 	 *
-	 * @param {int} [iDuration] animation duration in milliseconds; default is the jQuery preset "fast". For iDuration == 0 the opening happens synchronously without animation.
+	 * @param {int} [iDuration=jQuery.fx.speed.fast] animation duration in milliseconds. For <code>iDuration</code> == 0 the opening happens synchronously without animation.
 	 * @param {sap.ui.core.Popup.Dock} [my=sap.ui.core.Popup.Dock.CenterCenter] the popup content's reference position for docking
 	 * @param {sap.ui.core.Popup.Dock} [at=sap.ui.core.Popup.Dock.CenterCenter] the "of" element's reference point for docking to
 	 * @param {string | sap.ui.core.Element | Element | jQuery | jQuery.Event} [of=document] specifies the reference element to which the given content should dock to
@@ -1177,7 +1181,7 @@ sap.ui.define([
 	 * If the Popup is in the process of being opened and closed with an animation duration, the animation will be chained, but this functionality is dangerous,
 	 * may lead to inconsistent behavior and is thus not recommended and may even be removed.
 	 *
-	 * @param {int} [iDuration] animation duration in milliseconds; default is the jQuery preset "fast".  For iDuration == 0 the closing happens synchronously without animation.
+	 * @param {int} [iDuration=jQuery.fx.speed.fast] Animation duration in milliseconds. For <code>iDuration</code> == 0 the closing happens synchronously without animation.
 	 * @public
 	 */
 	Popup.prototype.close = function(iDuration) {
@@ -1561,7 +1565,7 @@ sap.ui.define([
 			offset = null;
 		}
 
-		var oPosition = jQuery.extend({},this._oDefaultPosition, {
+		var oPosition = extend({},this._oDefaultPosition, {
 			"my": my || this._oDefaultPosition.my, // to use default my if empty string
 			"at": at || this._oDefaultPosition.at, // to use default at if empty string
 			"of": of,
@@ -1761,7 +1765,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype._convertPositionRTL = function(oPosition, bRtl) {
-		var oFixedPos = jQuery.extend({}, oPosition); // don't modify the original object
+		var oFixedPos = Object.assign({}, oPosition); // don't modify the original object
 
 		if (bRtl) {
 			var bNewOffset = false;
@@ -1874,7 +1878,7 @@ sap.ui.define([
 	Popup.prototype._resolveReference = function(oPosition) {
 		var oResult = oPosition;
 		if ( oPosition.of instanceof Element ) {
-			oResult = jQuery.extend({}, oPosition, { of : oPosition.of.getDomRef()});
+			oResult = Object.assign({}, oPosition, { of : oPosition.of.getDomRef()});
 		}
 
 		return oResult;
@@ -2125,10 +2129,9 @@ sap.ui.define([
 	 * Sets the durations for opening and closing animations.
 	 * Null values and values < 0 are ignored.
 	 * A duration of 0 means no animation.
-	 * Default value is "fast" which is the jQuery constant for "200 ms".
 	 *
-	 * @param {int} iOpenDuration in milliseconds
-	 * @param {int} iCloseDuration in milliseconds
+	 * @param {int} [iOpenDuration=jQuery.fx.speed.fast] in milliseconds
+	 * @param {int} [iCloseDuration=jQuery.fx.speed.fast] in milliseconds
 	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -2772,8 +2775,8 @@ sap.ui.define([
 					if (this._followOfHandler) {
 						// provide the last position additionally if the call back needs it also
 						// e.g. the Callout needs it => create deep copy of old positioning object
-						var oLastPositionCopy = jQuery.extend(true, {}, this._oLastPosition),
-							oLastOfRectCopy = jQuery.extend(true, {}, this._oLastOfRect);
+						var oLastPositionCopy = deepExtend({}, this._oLastPosition),
+							oLastOfRectCopy = deepExtend({}, this._oLastOfRect);
 						this._followOfHandler({
 							lastPosition: oLastPositionCopy,
 							lastOfRect: oLastOfRectCopy,

@@ -53,6 +53,24 @@ sap.ui.define([
 							},
 							{
 								type: "tag",
+								value: ["data", "general-data"]
+							}
+						]
+					},
+					{
+						"label": "{i18n>CARD_EDITOR.GROUP.DATAHEADER}",
+						"items": [
+							{
+								type: "tag",
+								value: ["data", "header"]
+							}
+						]
+					},
+					{
+						"label": "{i18n>CARD_EDITOR.GROUP.DATACONTENT}",
+						"items": [
+							{
+								type: "tag",
 								value: ["data", "content"]
 							}
 						]
@@ -125,7 +143,9 @@ sap.ui.define([
 			ListCardConfig,
 			ObjectCardConfig,
 			TableCardConfig,
-			generateDataConfig(["content"], "content/", "card")
+			generateDataConfig(["general-data"], "", "card"),
+			generateDataConfig(["header"], "header/", "header"),
+			generateDataConfig(["content"], "content/", "content")
 		),
 		"propertyEditors": {
 			"enum" : "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor",

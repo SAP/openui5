@@ -324,17 +324,25 @@ function(
 
 		var NumericInputRenderer = Renderer.extend(InputRenderer);
 
+		NumericInputRenderer.apiVersion = 2;
+
 		NumericInputRenderer.writeInnerAttributes = function(oRm, oControl) {
-			var oStepInput = oControl.getParent();
+			var oStepInput = oControl.getParent(),
+				mAccAttributes = this.getAccessibilityState(oControl);
 			// inside the Input this function also sets explicitly textAlign to "End" if the type
 			// of the Input is Numeric (our case)
 			// so we have to overwrite it by leaving only the text direction
 			// and the textAlign will be controlled by textAlign property of the StepInput
-			oRm.writeAttribute("type", oControl.getType().toLowerCase());
+			oRm.attr("type", oControl.getType().toLowerCase());
+
 			if (sap.ui.getCore().getConfiguration().getRTL()) {
-				oRm.writeAttribute("dir", "ltr");
+				oRm.attr("dir", "ltr");
 			}
-			oRm.writeAccessibilityState(oStepInput);
+			// prevent rendering of aria-disabled attribute to avoid having
+			// both aria-disabled and disabled at the same time
+			mAccAttributes.disabled = null;
+
+			oRm.accessibilityState(oStepInput,  mAccAttributes);
 		};
 
 		//Accessibility behavior of the Input needs to be extended
@@ -342,10 +350,10 @@ function(
 		 * Overwrites the accessibility state using the <code>getAccessibilityState</code> method of the <code>InputBaseRenderer</code>.
 		 *
 		 * @param {NumericInput} oNumericInput The numeric input instance
-		 * @returns {Array} mAccAttributes
+		 * @returns {Array} mAccessibilityState
 		 */
 		NumericInputRenderer.getAccessibilityState = function(oNumericInput) {
-			var mAccAttributes = InputRenderer.getAccessibilityState(oNumericInput),
+			var mAccessibilityState = InputRenderer.getAccessibilityState(oNumericInput),
 				oStepInput = oNumericInput.getParent(),
 				fMin = oStepInput._getMin(),
 				fMax = oStepInput._getMax(),
@@ -359,8 +367,7 @@ function(
 				sDescribedBy = oStepInput.getAriaDescribedBy().join(" "),
 				sResultingLabelledBy;
 
-			mAccAttributes["role"] = "spinbutton";
-			mAccAttributes["valuenow"] = fNow;
+				mAccessibilityState.valuenow = fNow;
 
 			if (sDescription) {
 				// If there is a description, we should add a reference to it in the aria-labelledby
@@ -370,22 +377,26 @@ function(
 			sResultingLabelledBy = aReferencingLabels.concat(aAriaLabelledByRefs).join(" ");
 
 			if (typeof fMin === "number") {
-				mAccAttributes["valuemin"] = fMin;
+				mAccessibilityState.valuemin = fMin;
 			}
 
 			if (typeof fMax === "number") {
-				mAccAttributes["valuemax"] = fMax;
+				mAccessibilityState.valuemax = fMax;
+			}
+
+			if (!oStepInput.getEditable()) {
+				mAccessibilityState.readonly = true;
 			}
 
 			if (sDescribedBy){
-				mAccAttributes["describedby"] = sDescribedBy;
+				mAccessibilityState.describedby = sDescribedBy;
 			}
 
 			if (sResultingLabelledBy){
-				mAccAttributes["labelledby"] = sResultingLabelledBy;
+				mAccessibilityState.labelledby = sResultingLabelledBy;
 			}
 
-			return mAccAttributes;
+			return mAccessibilityState;
 		};
 
 		var NumericInput = Input.extend("sap.m.internal.NumericInput", {
@@ -429,6 +440,7 @@ function(
 			this._attachChange();
 			this._bPaste = false; //needed to indicate when a paste is made
 			this._bNeedsVerification = false; // the control needs verification of the value state
+			this._bValueStatePreset = true; //If there is a pre-defined value it will be set
 			this._onmousewheel = this._onmousewheel.bind(this);
 			window.addEventListener("contextmenu", function(e) {
 				if (this._btndown === false && e.target.className.indexOf("sapMInputBaseIconContainer") !== -1) {
@@ -456,7 +468,7 @@ function(
 
 			this._disableButtons(vValue, fMax, fMin);
 			this.$().off(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
-			if (this._bNeedsVerification) {
+			if (this._bNeedsVerification && !this._bValueStatePreset) {
 				this._verifyValue();
 				this._bNeedsVerification = false;
 			}
@@ -861,6 +873,14 @@ function(
 
 		};
 
+		StepInput.prototype.setValueState = function(sValueState) {
+			this._bValueStatePreset = true;
+			this.setProperty("valueState", sValueState);
+			this._getInput().setValueState(sValueState);
+
+			return this;
+		};
+
 		/*
 		 * Sets the <code>value</code> by doing some rendering optimizations in case the first rendering was completed.
 		 * Otherwise the value is set in onBeforeRendering, where we have all needed parameters for obtaining correct value.
@@ -892,6 +912,8 @@ function(
 			}
 			this._iRealPrecision = this._getRealValuePrecision();
 			this._fTempValue = oValue;
+			this._bValueStatePreset = false;
+
 			return oResult;
 		};
 
@@ -1038,6 +1060,7 @@ function(
 			oEvent.preventDefault(); //prevents the value to increase by one (Chrome and Firefox default behavior)
 			this._bDelayedEventFire = true;
 			this._changeValueWithStep(1);
+			oEvent.setMarked();
 		};
 
 		/**
@@ -1049,6 +1072,7 @@ function(
 			oEvent.preventDefault(); //prevents the value to decrease by one (Chrome and Firefox default behavior)
 			this._bDelayedEventFire = true;
 			this._changeValueWithStep(-1);
+			oEvent.setMarked();
 		};
 
 		StepInput.prototype._onmousewheel = function (oEvent) {

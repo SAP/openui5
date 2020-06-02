@@ -792,6 +792,37 @@ sap.ui.define([
 		assert.ok(oInput._oSuggPopover === null || oInput._oSuggPopover === undefined, "The internal popup is destroyed");
 	});
 
+	// BCP - 2070197223
+	QUnit.test("Should handle cases when there is no SuggestionPopover and _openSuggestionPopup is called", function (assert) {
+		var oSpy,
+			oInput = new Input({
+				type: "Text",
+				showSuggestion: true
+			});
+		sap.ui.getCore().applyChanges();
+
+		oSpy = sinon.spy(oInput, "_openSuggestionsPopover");
+		// Arrange
+		var oSystem = {
+			desktop: true,
+			phone: false,
+			tablet: false
+		};
+
+		this.stub(Device, "system", oSystem);
+		// Act
+		oInput._openSuggestionPopup();
+		oInput._oSuggPopover = null;
+		this.clock.tick(300);
+
+		// Assert
+		assert.equal(oSpy.callCount, 0, "The _openSuggestionsPopover should not be called");
+
+		// cleanup
+		oSpy.restore();
+		oInput.destroy();
+	});
+
 	QUnit.module("Suggestions");
 
 	QUnit.test("Suggestions deactivated and aggregations are not filled - list and popup should not be initialized", function(assert){
@@ -3120,7 +3151,13 @@ sap.ui.define([
 
 	QUnit.test("Selected item from value help is set to the input", function(assert) {
 
-		var oInput = createInputWithSuggestions();
+		var oInput = createInputWithSuggestions(),
+			oSystem = {
+				desktop: false,
+				phone: true,
+				tablet: false
+			};
+
 		oInput.setShowValueHelp(true);
 		oInput.setType("Text");
 		oInput.setTextFormatMode("KeyValue");
@@ -3128,11 +3165,11 @@ sap.ui.define([
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		oInput._bUseDialog = true;
 		oInput.setSelectedKey("2");
 		assert.equal(oInput.getDOMValue(), "(2) Item 2", "Selected input value is " + oInput.getDOMValue());
 
-		oInput._bUseDialog = false;
+		this.stub(Device, "system", oSystem);
+
 		oInput.setSelectedKey("3");
 		assert.equal(oInput.getDOMValue(), "(3) Item 3", "Selected input value is " + oInput.getDOMValue());
 
@@ -3683,6 +3720,31 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("aria-haspopup should be correctly applied", function(assert) {
+		//Arrange
+		var oInputWithoutSuggestions = new Input({}),
+			oInputWithSuggestions =  new Input({showSuggestion: true});
+
+		oInputWithoutSuggestions.placeAt("content");
+		oInputWithSuggestions.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(oInputWithoutSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be  presented.");
+		assert.strictEqual(oInputWithSuggestions._$input.attr("aria-haspopup"), "listbox", "aria-haspopup should have value 'listbox'.");
+
+		//Act
+		oInputWithoutSuggestions.setShowSuggestion(true);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(oInputWithoutSuggestions._$input.attr("aria-haspopup"), "listbox", "aria-haspopup should have value 'listbox'.");
+
+		//Clean up
+		oInputWithoutSuggestions.destroy();
+		oInputWithSuggestions.destroy();
+	});
+
 	QUnit.module("Input clone", {
 		beforeEach: function () {
 			this.oTabularInputToClone = createInputWithTabularSuggestions();
@@ -4195,8 +4257,13 @@ sap.ui.define([
 
 		var oApplyFocusInfoSpy = sinon.spy(oInput, "applyFocusInfo");
 		var oSetDOMValueSpy = sinon.spy(oInput, "setDOMValue");
+		var oSystem = {
+			desktop: true,
+			phone: false,
+			tablet: false
+		};
 
-		oInput._bUseDialog = false;
+		this.stub(Device, "system", oSystem);
 		sap.ui.getCore().applyChanges();
 		oInput._oSuggPopover._sTypedInValue = sTestTypedInValue;
 

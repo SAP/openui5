@@ -3,8 +3,10 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Utils",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/includes",
 	"sap/base/util/restricted/_omit",
@@ -15,8 +17,10 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/base/util/isEmptyObject"
 ], function(
+	JsControlTreeModifier,
 	Variant,
 	Change,
+	Utils,
 	ObjectPath,
 	includes,
 	_omit,
@@ -148,7 +152,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.reference - Component reference
 		 * @param {boolean} [mPropertyBag.changeInstance] <code>true</code> if each change has to be an instance of <code>sap.ui.fl.Change</code>
 		 *
-		 * @returns {Array} All changes of the variant
+		 * @returns {object[]|sap.ui.fl.Change[]} All changes of the variant
 		 * @private
 		 * @ui5-restricted
 		 */
@@ -197,6 +201,31 @@ sap.ui.define([
 				}
 			});
 			return oVariant;
+		},
+
+		/**
+		 * Returns the current variant reference for a given variant management reference.
+		 *
+		 * @param {object} mPropertyBag Object with the necessary properties
+		 * @param {String} mPropertyBag.vmReference - Variant management reference
+		 * @param {string} mPropertyBag.reference - Component reference
+		 * @returns {string} Reference of the current variant
+		 */
+		getCurrentVariantReference: function(mPropertyBag) {
+			var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
+			var oVariantManagementSection = oVariantsMap[mPropertyBag.vmReference];
+			return oVariantManagementSection.currentVariant || oVariantManagementSection.defaultVariant;
+		},
+
+		/**
+		 * Returns the variant management references saved in the FlexState.
+		 *
+		 * @param {string} sReference Flexreference of the current app
+		 * @returns {string[]} Array of flexreferences
+		 */
+		getVariantManagementReferences: function(sReference) {
+			var oVariantsMap = VariantManagementState.getContent(sReference);
+			return Object.keys(oVariantsMap);
 		},
 
 		/**
@@ -358,29 +387,37 @@ sap.ui.define([
 		 * Loads the initial changes of all variant managements.
 		 * If the application is started with valid variant references, they are used.
 		 * If no references or invalid references were passed, the changes are loaded from the default variant.
+		 * If a variant management reference is passed, only the changes for that control are returned.
 		 *
 		 * @param {object} mPropertyBag
 		 * @param {string} mPropertyBag.reference - Component reference
+		 * @param {string} [mPropertyBag.vmReference] - Variant management reference
+		 * @param {boolean} [mPropertyBag.changeInstance] <code>true</code> if each change has to be an instance of <code>sap.ui.fl.Change</code>
 		 *
 		 * @returns {Array} All changes of current or default variants
 		 * @private
 		 * @ui5-restricted
 		 */
-		loadInitialChanges: function(mPropertyBag) {
+		getInitialChanges: function(mPropertyBag) {
 			var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
-			return Object.keys(oVariantsMap)
-				.reduce(function(aInitialChanges, sVMReference) {
+			return Object.keys(oVariantsMap).reduce(function(aInitialChanges, sVMReference) {
+				if (
+					(mPropertyBag.vmReference && mPropertyBag.vmReference === sVMReference)
+					|| !mPropertyBag.vmReference
+				) {
 					var sCurrentVReference = oVariantsMap[sVMReference].currentVariant ? "currentVariant" : "defaultVariant";
 					var mArguments = {
 						vmReference: sVMReference,
 						vReference: oVariantsMap[sVMReference][sCurrentVReference],
-						reference: mPropertyBag.reference
+						reference: mPropertyBag.reference,
+						changeInstance: mPropertyBag.changeInstance
 					};
 
 					// Concatenate with the previous flex changes
-					return aInitialChanges.concat(
-						VariantManagementState.getVariantChanges(Object.assign({}, mPropertyBag, mArguments)));
-				}, []);
+					return aInitialChanges.concat(VariantManagementState.getVariantChanges(Object.assign({}, mPropertyBag, mArguments)));
+				}
+				return aInitialChanges;
+			}, []);
 		},
 
 		/**
@@ -504,7 +541,41 @@ sap.ui.define([
 						break;
 				}
 			}
+		},
+
+		/**
+		 * Calls <code>waitForChangesToBeApplied</code> with all the controls that have changes in the initial variant.
+		 *
+		 * @param {object} mPropertyBag - Object with necessary parameters
+		 * @param {string} mPropertyBag.vmReference - Variant management reference
+		 * @param {string} mPropertyBag.reference - Component reference
+		 * @param {sap.ui.core.Component} mPropertyBag.appComponent - App component instance
+		 * @param {sap.ui.fl.FlexController} mPropertyBag.flexController - FlexControllerinstance
+		 * @returns {Promise} Promise that resolves when all changes for the initial variant are applied
+		 */
+		waitForInitialVariantChanges: function(mPropertyBag) {
+			var aCurrentVariantChanges = VariantManagementState.getInitialChanges({
+				vmReference: mPropertyBag.vmReference,
+				reference: mPropertyBag.reference,
+				changeInstance: true
+			});
+			var aSelectors = aCurrentVariantChanges.reduce(function(aCurrentSelectors, oChange) {
+				if (Utils.indexOfObject(aCurrentSelectors, oChange.getSelector()) === -1) {
+					aCurrentSelectors.push(oChange.getSelector());
+				}
+				return aCurrentSelectors;
+			}, []);
+			var aControls = [];
+			aSelectors.map(function(oSelector) {
+				var oControl = JsControlTreeModifier.bySelector(oSelector, mPropertyBag.appComponent);
+				if (oControl) {
+					aControls.push(oControl);
+				}
+			});
+
+			return mPropertyBag.flexController.waitForChangesToBeApplied(aControls);
 		}
 	};
+
 	return VariantManagementState;
 }, true);

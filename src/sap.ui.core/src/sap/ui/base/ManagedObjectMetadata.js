@@ -4,7 +4,6 @@
 
 // Provides class sap.ui.base.ManagedObjectMetadata
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
 	'./DataType',
 	'./Metadata',
 	'sap/base/Log',
@@ -12,10 +11,10 @@ sap.ui.define([
 	'sap/base/util/ObjectPath',
 	'sap/base/strings/escapeRegExp',
 	'sap/base/util/merge',
+	'sap/base/util/extend',
 	'sap/base/util/isPlainObject'
 ],
 function(
-	jQuery,
 	DataType,
 	Metadata,
 	Log,
@@ -23,6 +22,7 @@ function(
 	ObjectPath,
 	escapeRegExp,
 	merge,
+	extend,
 	isPlainObject
 ) {
 	"use strict";
@@ -879,16 +879,16 @@ function(
 		// PERFOPT: this could be done lazily
 		var oParent = this.getParent();
 		if ( oParent instanceof ManagedObjectMetadata ) {
-			this._mAllEvents = jQuery.extend({}, oParent._mAllEvents, this._mEvents);
-			this._mAllPrivateProperties = jQuery.extend({}, oParent._mAllPrivateProperties, this._mPrivateProperties);
-			this._mAllProperties = jQuery.extend({}, oParent._mAllProperties, this._mProperties);
-			this._mAllPrivateAggregations = jQuery.extend({}, oParent._mAllPrivateAggregations, this._mPrivateAggregations);
-			this._mAllAggregations = jQuery.extend({}, oParent._mAllAggregations, this._mAggregations);
-			this._mAllPrivateAssociations = jQuery.extend({}, oParent._mAllPrivateAssociations, this._mPrivateAssociations);
-			this._mAllAssociations = jQuery.extend({}, oParent._mAllAssociations, this._mAssociations);
+			this._mAllEvents = Object.assign({}, oParent._mAllEvents, this._mEvents);
+			this._mAllPrivateProperties = Object.assign({}, oParent._mAllPrivateProperties, this._mPrivateProperties);
+			this._mAllProperties = Object.assign({}, oParent._mAllProperties, this._mProperties);
+			this._mAllPrivateAggregations = Object.assign({}, oParent._mAllPrivateAggregations, this._mPrivateAggregations);
+			this._mAllAggregations = Object.assign({}, oParent._mAllAggregations, this._mAggregations);
+			this._mAllPrivateAssociations = Object.assign({}, oParent._mAllPrivateAssociations, this._mPrivateAssociations);
+			this._mAllAssociations = Object.assign({}, oParent._mAllAssociations, this._mAssociations);
 			this._sDefaultAggregation = this._sDefaultAggregation || oParent._sDefaultAggregation;
 			this._sDefaultProperty = this._sDefaultProperty || oParent._sDefaultProperty;
-			this._mAllSpecialSettings = jQuery.extend({}, oParent._mAllSpecialSettings, this._mSpecialSettings);
+			this._mAllSpecialSettings = Object.assign({}, oParent._mAllSpecialSettings, this._mSpecialSettings);
 			this._sProvider = this._sProvider || oParent._sProvider;
 		} else {
 			this._mAllEvents = this._mEvents;
@@ -1622,7 +1622,7 @@ function(
 		}
 
 		if ( this.getParent() instanceof ManagedObjectMetadata ) {
-			mDefaults = jQuery.extend({}, this.getParent().getPropertyDefaults());
+			mDefaults = Object.assign({}, this.getParent().getPropertyDefaults());
 		} else {
 			mDefaults = {};
 		}

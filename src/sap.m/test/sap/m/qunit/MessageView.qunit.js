@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/MessageItem",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/m/Link",
 	"sap/ui/core/message/Message"
@@ -17,6 +18,7 @@ sap.ui.define([
 	Button,
 	MessageItem,
 	JSONModel,
+	Core,
 	coreLibrary,
 	Link,
 	Message
@@ -818,6 +820,21 @@ sap.ui.define([
 		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
 
 		assert.ok(sAnnouncement.indexOf(sContentAnnouncement) > -1 , "Message List Item should include information for the navigation");
+	});
+
+	QUnit.test("Role and aria-label attribute should be rendered correctly", function (assert) {
+		// Arrange
+		var oFirstMessageItem = new MessageItem({
+			type: "Error"
+		});
+		var	oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+
+		this.oMessageView.addItem(oFirstMessageItem);
+		this.oMessageView.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.strictEqual(this.oMessageView.getDomRef().getAttribute("aria-label"), oResourceBundle.getText("MESSAGE_VIEW_ARIA_LABEL"), "The text for the aria-label attribute is set correctly");
+		assert.strictEqual(this.oMessageView.getDomRef().getAttribute("role"), "region", "The role attribute is rendered correctly");
 	});
 
 	QUnit.module("Binding", {

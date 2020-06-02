@@ -26,6 +26,18 @@ sap.ui.define([
 		assert.equal(sut._posY,2);
 	});
 
+	QUnit.test("Position is not set, when the tile is not shown in parents container", function(assert) {
+		// SUT
+		var sut = new Tile({visible: false});
+		sut._rendered = true;
+
+		// Act
+		sut.setPos(1.8,2.4);
+
+		// Assert
+		assert.ok(true, "The tile doesn't throw an error");
+	});
+
 	QUnit.test("ShouldSetStyledForPosition", function(assert) {
 		var done = assert.async();
 		// Arrange

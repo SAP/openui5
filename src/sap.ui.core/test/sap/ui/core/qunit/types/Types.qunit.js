@@ -1318,7 +1318,10 @@ sap.ui.define([
 		assert.equal(intType.parseValue(-222, "int"), -222, "parse test");
 		assert.equal(intType.parseValue(4444, "float"), 4444, "parse test");
 
-		assert.throws(function () { intType.parseValue("3333.555", "string"); }, ParseException, "parse test");
+		assert.throws(function () { intType.parseValue("3333.555", "string"); },
+			new ParseException("Enter a number with no decimal places"), "parse test");
+		assert.throws(function () { intType.parseValue("true", "float"); },
+			new ParseException("Enter a number with no decimal places"), "parse test");
 		assert.throws(function () { intType.parseValue(true, "untype"); }, ParseException, "parse test");
 		assert.throws(function () { intType.parseValue(true, "boolean"); }, ParseException, "parse test");
 		assert.throws(function () { intType.parseValue("test", "string"); }, checkParseException, "parse test");

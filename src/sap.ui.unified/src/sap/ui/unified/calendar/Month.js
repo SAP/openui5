@@ -1239,7 +1239,7 @@ sap.ui.define([
 			return;
 		}
 
-		var aWeekHeaders = this.getDomRef().querySelectorAll(".sapUiCalWH:not([style='visibility: hidden;'])"),
+		var aWeekHeaders = this.getDomRef().querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)"),
 			oLocaleData = this._getLocaleData(),
 			iStartDay = this._getFirstWeekDay(),
 			aDayNames = oLocaleData.getDaysStandAlone("abbreviated", this.getPrimaryCalendarType()),
@@ -2364,7 +2364,7 @@ sap.ui.define([
 		if (!this._bNamesLengthChecked) {
 			// only once - cannot change by rerendering - only by theme change
 			var oWeekDay,
-				aWeekHeaders = this.getDomRef().querySelectorAll(".sapUiCalWH:not([style='visibility: hidden;'])"),
+				aWeekHeaders = this.getDomRef().querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)"),
 				bTooLong = this._isMonthNameLong(aWeekHeaders),
 				oLocaleData, iStartDay, aDayNames, i;
 

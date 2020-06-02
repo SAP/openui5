@@ -83,14 +83,14 @@ sap.ui.define([
 				iResult = this.oOutputFormat.parse(String(vValue));
 				if (isNaN(iResult)) {
 					oBundle = sap.ui.getCore().getLibraryResourceBundle();
-					throw new ParseException(oBundle.getText("Integer.Invalid"));
+					throw new ParseException(oBundle.getText("EnterInt"));
 				}
 				break;
 			case "float":
 				iResult = Math.floor(vValue);
 				if (iResult != vValue) {
 					oBundle = sap.ui.getCore().getLibraryResourceBundle();
-					throw new ParseException(oBundle.getText("Integer.Invalid"));
+					throw new ParseException(oBundle.getText("EnterInt"));
 				}
 				break;
 			case "int":

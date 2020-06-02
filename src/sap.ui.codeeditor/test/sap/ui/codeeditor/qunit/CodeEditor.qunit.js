@@ -48,53 +48,22 @@ sap.ui.define([
 			assert.ok(this.oCodeEditor._oEditor.getSession().getUseWorker() === false, "should not use worker after blur.");
 		});
 
-		QUnit.test("On Firefox, Focused elements in code editor editable:false", function (assert) {
-			//ARRANGE
-			var oBrowserStub = this.stub(Device, "browser", {
-				firefox: true
-			}),
-			oBlurSpy = sinon.spy(document.activeElement, "blur");
-
-			this.oCodeEditor.setEditable(false);
-			this.oCodeEditor.setVisible(true);
-
-			//ACT
-			this.oCodeEditor.focus();
-
-			// ASSERT
-			assert.strictEqual(document.activeElement.classList.contains("ace_text-input"), true, "On Firefox, When code editor is not editable the focus should remain on the code editor, so FF wouldn't lose its text selection");
-			assert.strictEqual(oBlurSpy.notCalled, true, "document.activeElement.blur() should not have been called on Firefox");
-
-			oBrowserStub.restore();
-			oBlurSpy.restore();
-
-			this.oButton.focus();
-		});
-
-		QUnit.test("On other browsers, Focused elements in code editor editable:false", function (assert) {
-			//ARRANGE
-			var oBrowserStub = this.stub(Device, "browser", {
-				firefox: undefined
-			});
-			this.oButton.focus();
-
-			this.oCodeEditor.setEditable(false);
-			this.oCodeEditor.setVisible(true);
-
-			//ACT
-			this.oCodeEditor.focus();
-
-			// Arrange spy here so it points to the correct element
+		QUnit.test("Focused elements in code editor editable:false", function (assert) {
 			var oBlurSpy = sinon.spy(document.activeElement, "blur");
-			this.oCodeEditor.onfocusin();
+
+			this.oCodeEditor.setEditable(false);
+			this.oCodeEditor.setVisible(true);
+
+			//ACT
+			this.oCodeEditor.focus();
 
 			// ASSERT
-			assert.strictEqual(document.activeElement.classList.contains("ace_text-input"), false, "On other browsers, when code editor is not editable focus should not be on the code editor");
-			assert.strictEqual(oBlurSpy.called, true, "document.activeElement.blur() should have been called on any other browser");
+			assert.strictEqual(document.activeElement.classList.contains("ace_text-input"), true, "When code editor is not editable the focus should remain on the code editor");
+			assert.strictEqual(oBlurSpy.notCalled, true, "document.activeElement.blur() should not have been called");
 
-			oBrowserStub.restore();
 			oBlurSpy.restore();
 
+			this.oButton.focus();
 		});
 
 		QUnit.test("Focused elements in code editor editable:true", function (assert) {

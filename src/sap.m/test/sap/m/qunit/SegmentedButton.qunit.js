@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/ChangeReason",
 	"jquery.sap.keycodes",
-	"sap/ui/Device",
 	"sap/ui/core/CustomData",
 	"sap/ui/core/LayoutData",
 	"sap/ui/qunit/utils/waitForThemeApplied"
@@ -34,7 +33,6 @@ sap.ui.define([
 	JSONModel,
 	ChangeReason,
 	jQuery,
-	Device,
 	CustomData,
 	LayoutData,
 	waitForThemeApplied
@@ -2623,77 +2621,74 @@ sap.ui.define([
 		SegmentedIcons.destroy();
 	}
 
-	// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-	if (!Device.browser.phantomJS) {
-		QUnit.test('Left Arrow after setSelectedButton call on image buttons - fix 619572', function(assert) {
-			// Flip the arrow keys in RTL mode
-			var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_RIGHT : jQuery.sap.KeyCodes.ARROW_LEFT;
-			testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 2, keycode: keyCode});
-		});
+	QUnit.test('Left Arrow after setSelectedButton call on image buttons - fix 619572', function(assert) {
+		// Flip the arrow keys in RTL mode
+		var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_RIGHT : jQuery.sap.KeyCodes.ARROW_LEFT;
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 2, keycode: keyCode});
+	});
 
-		QUnit.test('Left Arrow when the first button has the focus', function(assert) {
-			var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_RIGHT : jQuery.sap.KeyCodes.ARROW_LEFT;
-			testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: keyCode});
-		});
+	QUnit.test('Left Arrow when the first button has the focus', function(assert) {
+		var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_RIGHT : jQuery.sap.KeyCodes.ARROW_LEFT;
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: keyCode});
+	});
 
-		QUnit.test('Right Arrow', function(assert) {
-			var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT;
-			testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 2, keycode: keyCode});
-		});
+	QUnit.test('Right Arrow', function(assert) {
+		var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT;
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 2, keycode: keyCode});
+	});
 
-		QUnit.test('Right Arrow when the last button has the focus', function(assert) {
-			var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT;
-			testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: keyCode});
-		});
+	QUnit.test('Right Arrow when the last button has the focus', function(assert) {
+		var keyCode = (sap.ui.getCore().getConfiguration().getRTL()) ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT;
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: keyCode});
+	});
 
-		QUnit.test('Up Arrow', function(assert) {
-			testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 2, keycode: jQuery.sap.KeyCodes.ARROW_UP});
-		});
+	QUnit.test('Up Arrow', function(assert) {
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 2, keycode: jQuery.sap.KeyCodes.ARROW_UP});
+	});
 
-		QUnit.test('Up Arrow when the first button has the focus', function(assert) {
-			testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.ARROW_UP});
-		});
+	QUnit.test('Up Arrow when the first button has the focus', function(assert) {
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.ARROW_UP});
+	});
 
-		QUnit.test('Down Arrow', function(assert) {
-			testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 2, keycode: jQuery.sap.KeyCodes.ARROW_DOWN});
-		});
+	QUnit.test('Down Arrow', function(assert) {
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 2, keycode: jQuery.sap.KeyCodes.ARROW_DOWN});
+	});
 
-		QUnit.test('Down Arrow when the last button has the focus', function(assert) {
-			testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.ARROW_DOWN});
-		});
+	QUnit.test('Down Arrow when the last button has the focus', function(assert) {
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.ARROW_DOWN});
+	});
 
-		QUnit.test('Home', function(assert) {
-			testNavigationSegmentedButton4Items({initialSelectedIndex: 2, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.HOME});
-		});
+	QUnit.test('Home', function(assert) {
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 2, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.HOME});
+	});
 
-		QUnit.test('Home when the first button has the focus', function(assert) {
-			testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.HOME});
-		});
+	QUnit.test('Home when the first button has the focus', function(assert) {
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.HOME});
+	});
 
-		QUnit.test('Page up', function(assert) {
-			testNavigationSegmentedButton4Items({initialSelectedIndex: 2, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.PAGE_UP});
-		});
+	QUnit.test('Page up', function(assert) {
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 2, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.PAGE_UP});
+	});
 
-		QUnit.test('Page up when the first button has the focus', function(assert) {
-			testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.PAGE_UP});
-		});
+	QUnit.test('Page up when the first button has the focus', function(assert) {
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: jQuery.sap.KeyCodes.PAGE_UP});
+	});
 
-		QUnit.test('End', function(assert) {
-			testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.END});
-		});
+	QUnit.test('End', function(assert) {
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.END});
+	});
 
-		QUnit.test('End when the last button has the focus', function(assert) {
-			testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.END});
-		});
+	QUnit.test('End when the last button has the focus', function(assert) {
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.END});
+	});
 
-		QUnit.test('Page up', function(assert) {
-			testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.PAGE_DOWN});
-		});
+	QUnit.test('Page up', function(assert) {
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.PAGE_DOWN});
+	});
 
-		QUnit.test('Page up when the last button has the focus', function(assert) {
-			testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.PAGE_DOWN});
-		});
-	}
+	QUnit.test('Page up when the last button has the focus', function(assert) {
+		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: jQuery.sap.KeyCodes.PAGE_DOWN});
+	});
 
 	QUnit.test("Press 'SPACE' should not scroll the page", function (assert) {
 		// Arrange

@@ -123,30 +123,6 @@ sap.ui.define([
 			this._onParentResize();
 			this._notifySizeListeners();
 		};
-		/**
-		 * Changes background type
-		 *
-		 * @public
-		 * @param {string} sNewBackground Background's style of type sap.ui.layout.BlockBackgroundType
-		 * @returns {sap.ui.layout.BlockLayout} BlockLayout instance. Allows method chaining
-		 */
-		BlockLayout.prototype.setBackground = function (sNewBackground) {
-			var sCurBackground = this.getBackground(),
-			// Apply here so if there's an exception the code bellow won't be executed
-				oObject = Control.prototype.setProperty.apply(this, ["background"].concat(Array.prototype.slice.call(arguments)));
-
-			if (this.hasStyleClass("sapUiBlockLayoutBackground" + sCurBackground)) {
-				this.removeStyleClass("sapUiBlockLayoutBackground" + sCurBackground, true);
-			}
-
-			sNewBackground = sNewBackground ? sNewBackground : "Default";
-			this.addStyleClass("sapUiBlockLayoutBackground" + sNewBackground, true);
-
-			// Invalidate the whole block layout as the background dependencies, row color sets and accent cells should be resolved properly
-			this.invalidate();
-
-			return oObject;
-		};
 
 		/**
 		 * Handler for the parent resize event

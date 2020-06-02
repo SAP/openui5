@@ -157,7 +157,7 @@ sap.ui.define([
 		 * @param {object} change event of child-element that brought the need to adapt the headerTitle layout
 		 * @private
 		 */
-		ObjectPageDynamicHeaderTitle.prototype._adaptLayoutForDomElement = function ($headerDomRef, oEvent) {
+		ObjectPageDynamicHeaderTitle.prototype._adaptObjectPageHeaderIndentifierLine = function ($headerDomRef, oEvent) {
 			// not supported
 		};
 
