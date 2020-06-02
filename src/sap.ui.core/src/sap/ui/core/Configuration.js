@@ -590,7 +590,7 @@ sap.ui.define([
 		 */
 		_normalizeTheme : function (sTheme, sThemeBaseUrl) {
 			if ( sTheme && sThemeBaseUrl == null && sTheme.match(/^sap_corbu$/i) ) {
-				return "sap_goldreflection"; // TODO: re-check normalization
+				return "sap_fiori_3";
 			}
 			return sTheme;
 		},
