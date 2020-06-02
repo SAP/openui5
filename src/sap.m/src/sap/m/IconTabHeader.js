@@ -901,6 +901,7 @@ sap.ui.define([
 			oItem.classList.add("sapMITBFilterHidden");
 		}
 
+		this._getOverflow().$().toggleClass("sapMITHOverflowVisible", iLastVisible + 1 !== aItems.length);
 		this.$().toggleClass("sapMITHOverflowList", iLastVisible + 1 !== aItems.length);
 	};
 
