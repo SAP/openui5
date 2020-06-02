@@ -5,18 +5,17 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
+	"sap/m/Input",
 	"sap/m/library",
 	"sap/m/MessageBox",
 	"sap/m/Popover",
 	"sap/m/Table",
-	"sap/m/Text",
-	"sap/ui/commons/ValueHelpField"
-], function (Button, Column, ColumnListItem, library, MessageBox, Popover, Table, Text,
-		ValueHelpField) {
+	"sap/m/Text"
+], function (Button, Column, ColumnListItem, Input, library, MessageBox, Popover, Table, Text) {
 	"use strict";
 
 	var PlacementType = library.PlacementType, // shortcut for sap.m.PlacementType
-		ValueHelp = ValueHelpField.extend("sap.ui.core.sample.ViewTemplate.valuelist.ValueHelp", {
+		ValueHelp = Input.extend("sap.ui.core.sample.ViewTemplate.valuelist.ValueHelp", {
 			metadata : {
 				properties : {
 					qualifier : {type : "string", defaultValue : ""}, //value list qualifier
@@ -25,6 +24,7 @@ sap.ui.define([
 			},
 
 			init : function () {
+				Input.prototype.init.call(this);
 				this.setEditable(false);
 				this.attachValueHelpRequest(this._onValueHelp.bind(this));
 			},
@@ -60,7 +60,7 @@ sap.ui.define([
 									+ "\n"
 									+ JSON.stringify(oValueList, undefined, 2);
 								that.updateDetails();
-								that.setIconURL("sap-icon://value-help");
+								that.setShowValueHelp(true);
 								that.setEditable(true);
 							});
 					} else {
@@ -72,9 +72,10 @@ sap.ui.define([
 						icon : MessageBox.Icon.ERROR,
 						title : "Error"});
 				});
+				Input.prototype.onBeforeRendering.call(this);
 			},
 
-			renderer : "sap.ui.commons.ValueHelpFieldRenderer",
+			renderer : "sap.m.InputRenderer",
 
 			setShowDetails : function (bShowDetails) {
 				this.setProperty("showDetails", bShowDetails);
