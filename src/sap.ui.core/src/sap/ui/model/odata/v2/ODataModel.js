@@ -69,9 +69,9 @@ sap.ui.define([
 	 *
 	 * @param {string|object} serviceUrl
 	 *   Base URI of the service to request data from; additional URL parameters appended here will
-	 *   be appended to every request. If you pass an object it will be interpreted as the parameter
-	 *   object (second parameter). Then <code>mParameters.serviceUrl</code> becomes a mandatory
-	 *   parameter.
+	 *   be appended to every request. If you pass an object, it will be interpreted as the
+	 *   parameter object (second parameter). Then <code>mParameters.serviceUrl</code> becomes a
+	 *   mandatory parameter.
 	 * @param {object} [mParameters]
 	 *   Map which contains the following parameter properties:
 	 * @param {string|string[]} [mParameters.annotationURI]
@@ -132,7 +132,7 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.sequentializeRequests=false]
 	 *   Whether to sequentialize all requests, needed in case the service cannot handle parallel
 	 *   requests
-	 * @param {object} [mParameters.serviceUrl]
+	 * @param {string} [mParameters.serviceUrl]
 	 *   Base URI of the service to request data from; this property is mandatory when the first
 	 *   method parameter <code>serviceUrl</code> is omitted, but ignored otherwise
 	 * @param {Object<string,string>} [mParameters.serviceUrlParams]
@@ -164,13 +164,6 @@ sap.ui.define([
 	 *
 	 * See chapter {@link topic:6c47b2b39db9404582994070ec3d57a2 OData V2 Model} for a general
 	 * introduction.
-	 *
-	 * @example authentication
-	 * oModel = new ODataModel(sURL, {
-	 *      user : "myuser",
-	 *      password : "mypass"
-	 * });
-	 * // will use the respective authentication token
 	 *
 	 * @author SAP SE
 	 * @version ${version}
