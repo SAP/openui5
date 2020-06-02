@@ -65,7 +65,7 @@
 									width="1.25rem"
 									press="onDisclaimerLinkPress"/>
 							</html:div>
-							<Text class="sapUiSmallMarginBottom" text="SAP Web IDE on SAP CP is delivered on SAP Cloud Platform, SAP's public cloud, and is used to build modern UI apps for desktop and mobile devices with the latest SAPUI5 and SAP Fiori technologies." />
+							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_1_TEXT}" />
 							<HBox wrap="Wrap">
 								<html:div class="sapUIDisclaimerLink sapUiMediumMarginEnd">
 									<Link text="{i18n>TOOLS_VIEW_DOC}"
