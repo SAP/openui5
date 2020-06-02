@@ -57,7 +57,7 @@
 				"dataSource" : "default",
 				"preload" : true,
 				"settings" : {
-					"autoExpandSelect" : false,
+					"autoExpandSelect" : true,
 					"earlyRequests": true,
 					"groupId" : "$direct",
 					"operationMode" : "Server",
