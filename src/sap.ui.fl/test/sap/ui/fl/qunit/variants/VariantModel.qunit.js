@@ -1411,8 +1411,8 @@ sap.ui.define([
 
 					assert.equal(this.oModel.setVariantProperties.callCount, 2, "then setVariantProperties() was called twice; for setDefault and setExecuteOnSelect");
 					assert.equal(this.oModel.oChangePersistence.saveDirtyChanges.callCount, 1, "then dirty changes were saved");
-					assert.equal(this.oModel.oChangePersistence.saveDirtyChanges.args[0][1].length, 6, "then five dirty changes were saved (new variant, 3 copied ctrl changes, setDefault change, setExecuteOnSelect change");
-					assert.equal(this.oModel.oChangePersistence.saveDirtyChanges.args[0][1][4].fileName, "changeWithSetDefault", "the last change was 'setDefault'");
+					assert.equal(this.oModel.oChangePersistence.saveDirtyChanges.args[0][2].length, 6, "then five dirty changes were saved (new variant, 3 copied ctrl changes, setDefault change, setExecuteOnSelect change");
+					assert.equal(this.oModel.oChangePersistence.saveDirtyChanges.args[0][2][4].fileName, "changeWithSetDefault", "the last change was 'setDefault'");
 					assert.notOk(this.oModel.getData()[sVMReference].modified, "finally the model property 'modified' was set to false");
 					assert.ok(this.oModel.oFlexController.deleteChange.calledBefore(this.oModel.oChangePersistence.saveDirtyChanges), "the changes were deleted from default variant before the copied variant wass saved");
 					[oChange1, oChange2, oChange3].forEach(function(oDirtyChange) {

@@ -207,7 +207,7 @@ sap.ui.define([
 				}, this.oFlexController, this.oComp);
 				sandbox.stub(oVariantModel, "addChange");
 				this.oComp.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
-				this.oCompContainer = new ComponentContainer("sap-ui-static", {
+				this.oCompContainer = new ComponentContainer({
 					component: this.oComp
 				}).placeAt("qunit-fixture");
 

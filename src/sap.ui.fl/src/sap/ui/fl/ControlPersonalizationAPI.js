@@ -416,10 +416,11 @@ sap.ui.define([
 				return Promise.reject(sErrorMessage);
 			}
 			var mParameters = ControlPersonalizationAPI._determineParameters(oManagedObject);
+			var oAppComponent = Utils.getAppComponentForControl(oManagedObject);
 			var aVariantManagementReferences = Object.keys(mParameters.variantManagement).reduce(function (aReferences, sVariantForAssociationId) {
 				return aReferences.concat([mParameters.variantManagement[sVariantForAssociationId]]);
 			}, []);
-			return mParameters.flexController.saveSequenceOfDirtyChanges(aChanges)
+			return mParameters.flexController.saveSequenceOfDirtyChanges(aChanges, oAppComponent)
 				.then(function(oResponse) {
 					mParameters.variantModel.checkDirtyStateForControlModels(aVariantManagementReferences);
 					return oResponse;

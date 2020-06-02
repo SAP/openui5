@@ -116,8 +116,8 @@ sap.ui.define([
 			mPropertyBag.skipUpdateCache = true;
 			mPropertyBag.selector = this.vSelector;
 
-			var fnFlexStub = getMethodStub([mPropertyBag.skipUpdateCache], Promise.resolve());
-			var fnDescriptorStub = getMethodStub([mPropertyBag.skipUpdateCache], Promise.resolve());
+			var fnFlexStub = getMethodStub([this.vSelector.appComponent, mPropertyBag.skipUpdateCache], Promise.resolve());
+			var fnDescriptorStub = getMethodStub([this.vSelector.appComponent, mPropertyBag.skipUpdateCache], Promise.resolve());
 
 			mockFlexController(mPropertyBag.selector, { saveAll : fnFlexStub });
 			mockDescriptorController(mPropertyBag.selector, { saveAll : fnDescriptorStub });
@@ -126,10 +126,9 @@ sap.ui.define([
 				.withArgs(Object.assign({selector: mPropertyBag.selector, invalidateCache: true, componentId: "appComponent"}))
 				.resolves(sReturnValue);
 
-			return PersistenceWriteAPI.save(mPropertyBag)
-				.then(function(sValue) {
-					assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
-				});
+			return PersistenceWriteAPI.save(mPropertyBag).then(function(sValue) {
+				assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
+			});
 		});
 
 		QUnit.test("when save is called for a draft", function(assert) {
@@ -138,8 +137,8 @@ sap.ui.define([
 			mPropertyBag.selector = this.vSelector;
 			mPropertyBag.draft = true;
 
-			var fnFlexStub = getMethodStub([mPropertyBag.skipUpdateCache], Promise.resolve());
-			var fnDescriptorStub = getMethodStub([mPropertyBag.skipUpdateCache], Promise.resolve());
+			var fnFlexStub = getMethodStub([this.vSelector.appComponent, mPropertyBag.skipUpdateCache], Promise.resolve());
+			var fnDescriptorStub = getMethodStub([this.vSelector.appComponent, mPropertyBag.skipUpdateCache], Promise.resolve());
 
 			mockFlexController(mPropertyBag.selector, { saveAll : fnFlexStub });
 			mockDescriptorController(mPropertyBag.selector, { saveAll : fnDescriptorStub });
@@ -148,13 +147,12 @@ sap.ui.define([
 				.withArgs(Object.assign({selector: mPropertyBag.selector, invalidateCache: true, componentId: "appComponent"}))
 				.resolves(sReturnValue);
 
-			return PersistenceWriteAPI.save(mPropertyBag)
-				.then(function() {
-					var aFlexArgs = fnFlexStub.getCall(0).args;
-					assert.equal(aFlexArgs[1], true, "then the draft flag was passed to the flex save operation");
-					var aDescriptorArgs = fnDescriptorStub.getCall(0).args;
-					assert.equal(aDescriptorArgs[1], true, "and the draft flag was passed to the descriptor save operation");
-				});
+			return PersistenceWriteAPI.save(mPropertyBag).then(function() {
+				var aFlexArgs = fnFlexStub.getCall(0).args;
+				assert.equal(aFlexArgs[2], true, "then the draft flag was passed to the flex save operation");
+				var aDescriptorArgs = fnDescriptorStub.getCall(0).args;
+				assert.equal(aDescriptorArgs[2], true, "and the draft flag was passed to the descriptor save operation");
+			});
 		});
 
 		QUnit.test("when reset is called", function(assert) {

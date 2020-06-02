@@ -257,7 +257,7 @@ sap.ui.define([
 					var aUIChanges = _getDirtyUIChanges(mPropertyBag.selector);
 					if (aUIChanges.length) {
 						// Save the dirty UI changes to backend => firing PersistenceWriteApi.save
-						return oFlexController.saveAll(true)
+						return oFlexController.saveAll(ChangesController.getAppComponentForSelector(mPropertyBag.selector), true)
 							.catch(function(oError) {
 								if (bArePersistencesEqual) {
 									_deleteDescrChangesFromPersistence(mPropertyBag.selector);

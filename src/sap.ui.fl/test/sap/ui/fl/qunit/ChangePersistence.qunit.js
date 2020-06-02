@@ -13,13 +13,11 @@ sap.ui.define([
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/apply/_internal/Storage",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/apply/_internal/StorageUtils",
 	"sap/ui/core/Component",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/base/util/merge",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState"
@@ -35,13 +33,11 @@ function(
 	Variant,
 	Cache,
 	Settings,
-	ApplyStorage,
 	WriteStorage,
 	StorageUtils,
 	Component,
 	Log,
 	jQuery,
-	URLHandler,
 	sinon,
 	merge,
 	VariantManagementState
@@ -1775,7 +1771,7 @@ function(
 
 			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
-			return this.oChangePersistence.saveDirtyChanges(undefined, undefined, true).then(function() {
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, undefined, undefined, true).then(function() {
 				assert.equal(this.oWriteStub.callCount, 1, "the Connector was called once");
 				assert.equal(this.oWriteStub.getCall(0).args[0].draft, true, "the draft flag was passed");
 			}.bind(this));
@@ -1810,7 +1806,7 @@ function(
 
 			var oAddChangeSpy = sandbox.spy(Cache, "addChange");
 
-			return this.oChangePersistence.saveDirtyChanges(true).then(function() {
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, true).then(function() {
 				assert.equal(this.oWriteStub.callCount, 1);
 				assert.equal(oAddChangeSpy.callCount, 0, "then addChange was never called for the change related to app variants");
 			}.bind(this));
@@ -1854,7 +1850,7 @@ function(
 			this.oChangePersistence.deleteChange(oChangeToBeSaved);
 
 			assert.equal(this.oChangePersistence.getDirtyChanges().length, 2, "then two dirty changes exists initially");
-			return this.oChangePersistence.saveDirtyChanges(false, [oChangeToBeSaved]).then(function() {
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, false, [oChangeToBeSaved]).then(function() {
 				assert.equal(this.oRemoveStub.callCount, 1);
 				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oChangePersistence.getDirtyChanges().length, 1, "then one dirty change still exists");
@@ -1907,7 +1903,7 @@ function(
 			var oChangeNotToBeSaved = this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
 
 			assert.equal(this.oChangePersistence.getDirtyChanges().length, 2, "then two dirty changes exist initially");
-			return this.oChangePersistence.saveDirtyChanges(false, [oChangeToBeSaved]).then(function() {
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, false, [oChangeToBeSaved]).then(function() {
 				assert.equal(this.oWriteStub.callCount, 1, "the create method of the connector is called once");
 				assert.equal(this.oChangePersistence.getDirtyChanges().length, 1, "then one dirty change still exists");
 				assert.deepEqual(this.oChangePersistence.getDirtyChanges()[0], oChangeNotToBeSaved, "then the correct change was not saved");

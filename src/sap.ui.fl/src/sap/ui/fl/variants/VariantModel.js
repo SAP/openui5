@@ -1071,7 +1071,7 @@ sap.ui.define([
 
 			if (mParameters["overwrite"]) {
 				// handle triggered "Save" button
-				return this.oFlexController.saveSequenceOfDirtyChanges(this._getDirtyChangesFromVariantChanges(aSourceVariantChanges))
+				return this.oFlexController.saveSequenceOfDirtyChanges(this._getDirtyChangesFromVariantChanges(aSourceVariantChanges), oAppComponent)
 					.then(function(oResponse) {
 						this.checkDirtyStateForControlModels([sVariantManagementReference]);
 						return oResponse;
@@ -1124,7 +1124,7 @@ sap.ui.define([
 						vReference: sSourceVariantReference,
 						model: this
 					})
-						.then(this.oFlexController.saveSequenceOfDirtyChanges.bind(this.oFlexController, aCopiedVariantDirtyChanges));
+						.then(this.oFlexController.saveSequenceOfDirtyChanges.bind(this.oFlexController, aCopiedVariantDirtyChanges, oAppComponent));
 				}.bind(this));
 		}.bind(this, sVMReference, oAppComponent, oEvent.getParameters()), this, sVMReference);
 	};

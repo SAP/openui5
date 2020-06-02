@@ -417,13 +417,14 @@ sap.ui.define([
 	/**
 	 * Saves all changes of a persistence instance.
 	 *
+	 * @param {sap.ui.core.UIComponent} [oAppComponent] - AppComponent instance
 	 * @param {boolean} [bSkipUpdateCache=false] - Indicates the cache should not be updated
 	 * @param {boolean} [bDraft=false] - Indicates if changes should be written as a draft
 	 * @returns {Promise} resolving with an array of responses or rejecting with the first error
 	 * @public
 	 */
-	FlexController.prototype.saveAll = function(bSkipUpdateCache, bDraft) {
-		return this._oChangePersistence.saveDirtyChanges(bSkipUpdateCache, undefined, bDraft)
+	FlexController.prototype.saveAll = function(oAppComponent, bSkipUpdateCache, bDraft) {
+		return this._oChangePersistence.saveDirtyChanges(oAppComponent, bSkipUpdateCache, undefined, bDraft)
 			.then(function(oResult) {
 				if (bDraft && oResult && oResult.response) {
 					var vChangeDefinition = oResult.response;
@@ -664,11 +665,12 @@ sap.ui.define([
 	 * This API must be only used in scnarios without draft (like personalization).
 	 *
 	 * @param {sap.ui.fl.Change[]} aDirtyChanges Array of dirty changes to be saved
+	 * @param {sap.ui.core.UIComponent} [oAppComponent] - AppComponent instance
 	 * @returns {Promise} A Promise which resolves when all changes have been saved
 	 * @public
 	 */
-	FlexController.prototype.saveSequenceOfDirtyChanges = function(aDirtyChanges) {
-		return this._oChangePersistence.saveDirtyChanges(false, aDirtyChanges);
+	FlexController.prototype.saveSequenceOfDirtyChanges = function(aDirtyChanges, oAppComponent) {
+		return this._oChangePersistence.saveDirtyChanges(oAppComponent, false, aDirtyChanges);
 	};
 
 	/**

@@ -20,8 +20,10 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/includes",
 	"sap/base/util/merge",
+	"sap/base/util/UriParameters",
 	"sap/base/Log",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState"
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/write/_internal/Condenser"
 ], function(
 	DependencyHandler,
 	StorageUtils,
@@ -40,8 +42,10 @@ sap.ui.define([
 	jQuery,
 	includes,
 	merge,
+	UriParameters,
 	Log,
-	VariantManagementState
+	VariantManagementState,
+	Condenser
 ) {
 	"use strict";
 
@@ -778,38 +782,60 @@ sap.ui.define([
 		}
 	};
 
+	ChangePersistence.prototype._deleteNotSavedChanges = function(aChanges, aCondensedChanges) {
+		aChanges.filter(function(oChange) {
+			return !aCondensedChanges.some(function(oCondensedChange) {
+				return oChange.getId() === oCondensedChange.getId();
+			});
+		}).forEach(function(oChange) {
+			this.deleteChange(oChange, true);
+		}.bind(this));
+	};
+
 	/**
 	 * Saves the passed or all dirty changes by calling the appropriate back-end method (create for new changes, deleteChange for deleted changes);
 	 * to ensure the correct order, the methods are called sequentially;
 	 * after a change was saved successfully, it is removed from the dirty changes and the cache is updated.
+	 * If all changes are new they are condensed before they are passed to the Storage. For this the App Component is necessary.
+	 * Currently this feature is hidden behind the URL Parameter 'sap-ui-xx-condense-changes=true'
 	 *
-	 * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
+	 * @param {sap.ui.core.UIComponent} [oAppComponent] - AppComponent instance
+	 * @param {boolean} [bSkipUpdateCache] - If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
-	 * @param {sap.ui.fl.Change} [aChanges] If passed only those changes are saved
+	 * @param {sap.ui.fl.Change} [aChanges] - If passed only those changes are saved
 	 * @param {boolean} [bDraft=false] - Indicates if changes should be written as a draft
-	 * @returns {Promise} resolving after all changes have been saved
+	 * @returns {Promise} Resolving after all changes have been saved
 	 */
-	ChangePersistence.prototype.saveDirtyChanges = function(bSkipUpdateCache, aChanges, bDraft) {
-		var aDirtyChanges = aChanges || this._aDirtyChanges;
-		var aDirtyChangesClone = aDirtyChanges.slice(0);
-		var aRequests = this._getRequests(aDirtyChanges);
-		var aPendingActions = this._getPendingActions(aDirtyChanges);
+	ChangePersistence.prototype.saveDirtyChanges = function(oAppComponent, bSkipUpdateCache, aChanges, bDraft) {
+		aChanges = aChanges || this._aDirtyChanges;
+		var aChangesClone = aChanges.slice(0);
+		var aRequests = this._getRequests(aChanges);
+		var aPendingActions = this._getPendingActions(aChanges);
 
 		if (aPendingActions.length === 1 && aRequests.length === 1 && aPendingActions[0] === "NEW") {
-			var sRequest = aRequests[0];
-			var aPreparedDirtyChangesBulk = this._prepareDirtyChanges(aDirtyChanges);
-			return Storage.write({
-				layer: aPreparedDirtyChangesBulk[0].layer,
-				flexObjects: aPreparedDirtyChangesBulk,
-				transport: sRequest,
-				isLegacyVariant: false,
-				draft: bDraft
-			}).then(function(oResponse) {
-				this._massUpdateCacheAndDirtyState(aDirtyChangesClone, bSkipUpdateCache);
-				return oResponse;
+			var oUriParameters = new UriParameters(window.location.href);
+			var sCondenserEnabled = oUriParameters.get("sap-ui-xx-condense-changes");
+			var oPromise = Promise.resolve(aChangesClone);
+			if (oAppComponent && sCondenserEnabled === "true") {
+				oPromise = Condenser.condense(oAppComponent, aChangesClone);
+			}
+			return oPromise.then(function(aCondensedChanges) {
+				var sRequest = aRequests[0];
+				var aPreparedDirtyChangesBulk = this._prepareDirtyChanges(aCondensedChanges);
+				return Storage.write({
+					layer: aPreparedDirtyChangesBulk[0].layer,
+					flexObjects: aPreparedDirtyChangesBulk,
+					transport: sRequest,
+					isLegacyVariant: false,
+					draft: bDraft
+				}).then(function(oResponse) {
+					this._massUpdateCacheAndDirtyState(aCondensedChanges, bSkipUpdateCache);
+					this._deleteNotSavedChanges(aChanges, aCondensedChanges);
+					return oResponse;
+				}.bind(this));
 			}.bind(this));
 		}
-		return this.saveSequenceOfDirtyChanges(aDirtyChangesClone, bSkipUpdateCache, bDraft);
+		return this.saveSequenceOfDirtyChanges(aChangesClone, bSkipUpdateCache, bDraft);
 	};
 
 	/**
@@ -882,8 +908,8 @@ sap.ui.define([
 	 * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
 	 */
-	ChangePersistence.prototype._massUpdateCacheAndDirtyState = function(aDirtyChangesClone, bSkipUpdateCache) {
-		aDirtyChangesClone.forEach(function(oDirtyChange) {
+	ChangePersistence.prototype._massUpdateCacheAndDirtyState = function(aDirtyChanges, bSkipUpdateCache) {
+		aDirtyChanges.forEach(function(oDirtyChange) {
 			this._updateCacheAndDirtyState(oDirtyChange, bSkipUpdateCache);
 		}, this);
 	};

@@ -125,27 +125,27 @@ function (
 
 		QUnit.test("when saveAll is called with skipping the cache", function(assert) {
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
-			this.oFlexController.saveAll(true);
-			assert.ok(fnChangePersistenceSaveStub.calledWith(true));
+			this.oFlexController.saveAll(oComponent, true);
+			assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, true), "the app component and the flag were passed");
 		});
 
 		QUnit.test("when saveAll is called for draft", function(assert) {
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
-			this.oFlexController.saveAll(undefined, true);
-			assert.ok(fnChangePersistenceSaveStub.calledWith(undefined, undefined, true));
+			this.oFlexController.saveAll(oComponent, undefined, true);
+			assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, undefined, undefined, true));
 		});
 
 		QUnit.test("when saveAll is called with skipping the cache and for draft", function(assert) {
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
-			this.oFlexController.saveAll(true, true);
-			assert.ok(fnChangePersistenceSaveStub.calledWith(true, undefined, true));
+			this.oFlexController.saveAll(oComponent, true, true);
+			assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, true, undefined, true));
 		});
 
 		function _runSaveAllAndAssumeVersionsCall(assert, vResponse, bDraft, nCallCount) {
 			var oVersionsStub = sandbox.stub(Versions, "ensureDraftVersionExists");
 			var oResult = vResponse ? {response: vResponse} : undefined;
 			sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves(oResult);
-			return this.oFlexController.saveAll(undefined, bDraft).then(function() {
+			return this.oFlexController.saveAll(oComponent, undefined, bDraft).then(function() {
 				assert.equal(oVersionsStub.callCount, nCallCount);
 			});
 		}
@@ -177,8 +177,8 @@ function (
 		QUnit.test("when saveSequenceOfDirtyChanges is called with an array of changes", function(assert) {
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges");
 			var aChanges = ["mockChange1", "mockChange2"];
-			this.oFlexController.saveSequenceOfDirtyChanges(aChanges);
-			assert.ok(fnChangePersistenceSaveStub.calledWith(false, aChanges), "then sap.ui.fl.ChangePersistence.saveSequenceOfDirtyChanges() was called with correct parameters");
+			this.oFlexController.saveSequenceOfDirtyChanges(aChanges, oComponent);
+			assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, false, aChanges), "then sap.ui.fl.ChangePersistence.saveSequenceOfDirtyChanges() was called with correct parameters");
 		});
 
 		QUnit.test("createAndApplyChange shall not crash if Applier.applyChangeOnControl throws an error", function(assert) {
@@ -383,23 +383,20 @@ function (
 			fChangeHandler.applyChange = sandbox.stub();
 			fChangeHandler.completeChangeContent = sandbox.stub();
 			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves(fChangeHandler);
+			var oCreateStub = sandbox.stub(Storage, "write").resolves();
 
-			//Call CUT
-			return this.oFlexController.addChange({}, oControl)
-				.then(function(oChange) {
-					assert.ok(oChange);
+			return this.oFlexController.addChange({}, oControl).then(function(oChange) {
+				assert.ok(oChange);
+				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
+				sandbox.stub(oChangePersistence, "_massUpdateCacheAndDirtyState").returns(undefined);
 
-					var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
-					var oCreateStub = sandbox.stub(Storage, "write").resolves();
-
-					sandbox.stub(oChangePersistence, "_massUpdateCacheAndDirtyState").returns(undefined);
-
-					oChangePersistence.saveDirtyChanges();
-
-					assert.equal(oCreateStub.getCall(0).args[0].flexObjects[0].validAppVersions.creation, "1.2.3");
-					assert.equal(oCreateStub.getCall(0).args[0].flexObjects[0].validAppVersions.from, "1.2.3");
-					oControl.destroy();
-				}.bind(this));
+				return oChangePersistence.saveDirtyChanges();
+			}.bind(this))
+			.then(function() {
+				assert.equal(oCreateStub.getCall(0).args[0].flexObjects[0].validAppVersions.creation, "1.2.3");
+				assert.equal(oCreateStub.getCall(0).args[0].flexObjects[0].validAppVersions.from, "1.2.3");
+				oControl.destroy();
+			});
 		});
 
 		QUnit.test("addChange shall add a change using the local ID with respect to the root component as selector", function(assert) {
@@ -421,7 +418,6 @@ function (
 				}
 			});
 
-			//Call CUT
 			return this.oFlexController.addChange({}, oControl)
 				.then(function(oChange) {
 					assert.ok(oChange);
@@ -457,7 +453,6 @@ function (
 			});
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			var oSetRequestSpy = sandbox.spy(Change.prototype, "setRequest");
-			//Call CUT
 			return this.oFlexController.addChange(oChangeParameters, oControl)
 				.then(function(oChange) {
 					assert.strictEqual(oSetRequestSpy.callCount, 0);
