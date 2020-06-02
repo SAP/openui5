@@ -1567,7 +1567,7 @@ sap.ui.define([
 
 		if (this._oOneMonthsRow && sKey === PlanningCalendarBuiltInView.OneMonth) {
 			this._oOneMonthsRow.setMode(this._iSize);
-			oOldStartDate = this.getStartDate();
+			this._oOldStartDate = new Date(this.getStartDate().getTime());
 			this._adjustSelectedDate(CalendarDate.fromLocalJSDate(oOldStartDate));
 			if (this._iSize < 2) {
 				this._setRowsStartDate(oOldStartDate);
@@ -1576,6 +1576,10 @@ sap.ui.define([
 			&& sOldViewKey === PlanningCalendarBuiltInView.OneMonth
 			&& this._oOneMonthsRow.getSelectedDates().length) {
 			oSelectedDate = this._oOneMonthsRow.getSelectedDates()[0].getStartDate();
+			oSelectedDate.setHours(this._oOldStartDate.getHours());
+			oSelectedDate.setMinutes(this._oOldStartDate.getMinutes());
+			oSelectedDate.setSeconds(this._oOldStartDate.getSeconds());
+			oSelectedDate.setMilliseconds(this._oOldStartDate.getMilliseconds());
 			if (oSelectedDate) {
 				this.setStartDate(oSelectedDate);
 			}
