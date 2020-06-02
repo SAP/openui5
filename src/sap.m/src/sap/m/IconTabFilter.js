@@ -944,7 +944,7 @@ sap.ui.define([
 	* @param {jQuery.Event} oEvent The jQuery drag over event
 	*/
 	IconTabFilter.prototype._handleOnDragOver = function (oEvent) {
-		if (!this._bIsOverflow && !this._getIconTabHeader().getTabNestingViaInteraction()) {
+		if (!this._bIsOverflow && !this._getIconTabHeader().getMaxNestingLevel()) {
 			return;
 		}
 
@@ -956,7 +956,7 @@ sap.ui.define([
 	* @private
 	*/
 	IconTabFilter.prototype._handleOnLongDragOver = function () {
-		if (!this._bIsOverflow && !this._getIconTabHeader().getTabNestingViaInteraction()) {
+		if (!this._bIsOverflow && !this._getIconTabHeader().getMaxNestingLevel()) {
 			return;
 		}
 

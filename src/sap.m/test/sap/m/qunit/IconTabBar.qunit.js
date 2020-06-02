@@ -3386,7 +3386,7 @@ sap.ui.define([
 		beforeEach: function() {
 		this.oIconTabBar = new IconTabBar({
 			enableTabReordering: true,
-			tabNestingViaInteraction: true,
+			maxNestingLevel: 3,
 			items: [
 				new IconTabFilter({
 					id: 'tabReorder1',
@@ -3419,7 +3419,61 @@ sap.ui.define([
 			]
 		});
 
+		this.oIconTabBar1 = new IconTabBar({
+			enableTabReordering: true,
+			maxNestingLevel: 3,
+			items: [
+				new IconTabFilter({
+					id: 'tab1',
+					text: "First tab",
+					count: "3",
+					content: [
+						new Text({ text: "Text 1" })
+					]
+				}),
+				new IconTabFilter({
+					id: 'tab2',
+					text: "Second tab",
+					count: "1",
+					content: [
+						new Text({ text: "Text 2" })
+					]
+				}),
+				new IconTabFilter({
+					id: 'tab3',
+					text: "Third tab",
+					count: "Count",
+					content: [
+						new Text({ text: "Text 3" })
+					]
+				}),
+				new IconTabFilter({
+					id: 'tab4',
+					text: "Fourth tab",
+					count: "Count",
+					content: [
+						new Text({ text: "Text 4" })
+					],
+					items: [
+						new IconTabFilter({
+							id: 'subtab4',
+							text: "child 1",
+							content: new Text({ text: "text 1" }),
+							items: [
+								new IconTabFilter({
+									id: 'subsubtab4',
+									text: "child 2",
+									content: new Text({ text: "text 2" }),
+									items:[]
+								})
+							]
+						})
+					]
+				})
+			]
+		});
 		this.oIconTabBar.placeAt('qunit-fixture');
+		this.oIconTabBar1.placeAt('qunit-fixture');
 		Core.applyChanges();
 
 		this.oMockEventOn = {
@@ -3461,6 +3515,45 @@ sap.ui.define([
 			}
 		};
 
+		this.oMockEventOnSubItemSuccess = {
+			getParameter: function(parameter) {
+				switch (parameter) {
+					case "dropPosition" :
+						return "On";
+					case "draggedControl" :
+						return  Core.byId("tab3");
+					case "droppedControl" :
+						return Core.byId("subtab4");
+				}
+			}
+		};
+
+		this.oMockEventOnSubItemSuccess1 = {
+			getParameter: function(parameter) {
+				switch (parameter) {
+					case "dropPosition" :
+						return "On";
+					case "draggedControl" :
+						return  Core.byId("tab2");
+					case "droppedControl" :
+						return Core.byId("tab3");
+				}
+			}
+		};
+
+			this.oMockEventOnSubItemFail = {
+				getParameter: function(parameter) {
+					switch (parameter) {
+						case "dropPosition" :
+							return "On";
+						case "draggedControl" :
+							return  Core.byId("tab1");
+						case "droppedControl" :
+							return Core.byId("tab2");
+					}
+				}
+			};
+
 		this.oMockEventSubItemBeforeMainItem = {
 			getParameter: function(parameter) {
 				switch (parameter) {
@@ -3483,13 +3576,19 @@ sap.ui.define([
 			return oMockEventTest;
 		};
 		this.oIconTabHeader = this.oIconTabBar.getAggregation("_header");
+		this.oIconTabHeader1 = this.oIconTabBar1.getAggregation("_header");
 	},
 	afterEach: function() {
 		this.oIconTabBar.destroy();
 		this.oIconTabHeader.destroy();
+		this.oIconTabBar1.destroy();
+		this.oIconTabHeader1.destroy();
 
 		this.oMockEventOn = null;
 		this.oMockEventOnSubItem = null;
+		this.oMockEventOnSubItemFail = null;
+		this.oMockEventOnSubItemSuccess1 = null;
+		this.oMockEventOnSubItemSuccess = null;
 		this.returnMockEvent = null;
 
 	}
@@ -3545,6 +3644,21 @@ sap.ui.define([
 
 		assert.strictEqual( this.oIconTabHeader.getItems().length, 2, "There are two tabs in IconTabHeader strip");
 		assert.strictEqual(this.oIconTabHeader.getItems()[0].getItems().length, 3, "There are three items in the IconTabHeader first tab of the IconTabHeader");
+	});
+
+	QUnit.test("Drag&Drop dropPosition: 'On' sub sub items ", function(assert) {
+
+		this.oIconTabBar1.setMaxNestingLevel(3);
+		this.oIconTabHeader1._handleDragAndDrop(this.oMockEventOnSubItemSuccess);
+
+		assert.strictEqual(this.oIconTabHeader1.getItems()[2].getItems()[0].getItems().length, 2, "There is one sub item in the third item of the third tab");
+
+		this.oIconTabHeader1._handleDragAndDrop(this.oMockEventOnSubItemSuccess1);
+
+		this.oIconTabHeader1._handleDragAndDrop(this.oMockEventOnSubItemFail);
+
+
+		assert.strictEqual(this.oIconTabHeader1.getItems().length, 2, "Tab one should not be nested");
 	});
 
 	QUnit.test("Drag&Drop dropPosition: 'On' sub items ", function(assert) {

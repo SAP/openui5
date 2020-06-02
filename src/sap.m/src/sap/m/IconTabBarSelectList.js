@@ -249,7 +249,8 @@ sap.ui.define([
 		var sDropPosition = oEvent.getParameter("dropPosition"),
 			oDraggedControl = oEvent.getParameter("draggedControl"),
 			oDroppedControl = oEvent.getParameter("droppedControl"),
-			oContext = oDroppedControl._getRealTab().getParent();
+			oContext = oDroppedControl._getRealTab().getParent(),
+			allowedNestingLevel = this._oIconTabHeader.getMaxNestingLevel();
 
 		if (this._oTabFilter._bIsOverflow) {
 			oContext = this._oIconTabHeader;
@@ -259,7 +260,7 @@ sap.ui.define([
 			oContext = oDroppedControl._getRealTab();
 		}
 
-		IconTabBarDragAndDropUtil.handleDrop(oContext, sDropPosition, oDraggedControl._getRealTab(), oDroppedControl._getRealTab(), true);
+		IconTabBarDragAndDropUtil.handleDrop(oContext, sDropPosition, oDraggedControl._getRealTab(), oDroppedControl._getRealTab(), true, allowedNestingLevel);
 
 		this._oIconTabHeader._setItemsForStrip();
 		this._oIconTabHeader._initItemNavigation();
