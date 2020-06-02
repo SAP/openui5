@@ -91,11 +91,13 @@ sap.ui.define([
 				oPopup = this.getPopup(),
 				oMessageDomRef = this.createDom(),
 				mDock = Popup.Dock,
-				$Control = jQuery(oControl.getDomRefForValueStateMessage());
+				$Control;
 
-			if (!oControl || !oPopup || !oMessageDomRef) {
+			if (!oControl || !oControl.getDomRef() || !oPopup || !oMessageDomRef) {
 				return;
 			}
+
+			$Control = jQuery(oControl.getDomRefForValueStateMessage());
 
 			oPopup.setContent(oMessageDomRef);
 			oPopup.close(0);
