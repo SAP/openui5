@@ -63,20 +63,20 @@
 					"title": "Contact Details",
 					"items": [
 						{
-							"label": "First Name:",
+							"label": "First Name",
 							"value": "{firstName}"
 						},
 						{
-							"label": "Last Name:",
+							"label": "Last Name",
 							"value": "{lastName}"
 						},
 						{
-							"label": "Phone:",
+							"label": "Phone",
 							"value": "{phone}",
 							"type": "phone"
 						},
 						{
-							"label": "Email:",
+							"label": "Email",
 							"value": "{email}",
 							"type": "email"
 						}
@@ -86,21 +86,21 @@
 					"title": "Company Details",
 					"items": [
 						{
-							"label": "Company Name:",
+							"label": "Company Name",
 							"value": "{company/name}"
 						},
 						{
-							"label": "Address:",
+							"label": "Address",
 							"value": "{company/address}"
 						},
 						{
-							"label": "Email:",
+							"label": "Email",
 							"value": "{company/email}",
 							"emailSubject": "{company/emailSubject}",
 							"type": "email"
 						},
 						{
-							"label": "Website:",
+							"label": "Website",
 							"value": "{company/website}",
 						  	"url": "{company/url}",
 							"type": "link"
@@ -111,7 +111,7 @@
 				  "title": "Organizational Details",
 				  "items": [
 						{
-							"label": "Direct Manager:",
+							"label": "Direct Manager",
 							"value": "{manager/firstName} {manager/lastName}",
 							"icon": {
 								"src": "{manager/photo}"
