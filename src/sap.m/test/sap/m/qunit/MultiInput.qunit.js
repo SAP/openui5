@@ -147,8 +147,8 @@ sap.ui.define([
 
 		var oDetachSuggestionItemSelectedFireSpy = this.spy(this.multiInput1, "detachSuggestionItemSelected"),
 			oDetachLiveChangeireSpy = this.spy(this.multiInput1, "detachLiveChange"),
-			oDetachTokenChangeFireSpy = this.spy(this.multiInput1._tokenizer, "detachTokenChange"),
-			oDetachTokenUpdateFireSpy = this.spy(this.multiInput1._tokenizer, "detachTokenUpdate"),
+			oDetachTokenChangeFireSpy = this.spy(this.multiInput1.getAggregation("tokenizer"), "detachTokenChange"),
+			oDetachTokenUpdateFireSpy = this.spy(this.multiInput1.getAggregation("tokenizer"), "detachTokenUpdate"),
 			oDetachValueHelpRequestSpy = this.spy(this.multiInput1, "detachValueHelpRequest");
 
 
@@ -515,7 +515,7 @@ sap.ui.define([
 
 		// Assert
 		aItems = oMultiInput._getTokensList().getItems();
-		aTokens = oMultiInput._tokenizer.getTokens();
+		aTokens = oMultiInput.getAggregation("tokenizer").getTokens();
 		assert.strictEqual(aItems.length, aTokens.length, "List items and tokens should be equal:" + aItems.length);
 
 		oItem = aItems[0];
@@ -678,7 +678,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		this.multiInput1.removeValidator(oValidator);
 		// assert
-		assert.strictEqual(this.multiInput1._tokenizer._aTokenValidators.length, 0 , "then the MultiInput has no validators");
+		assert.strictEqual(this.multiInput1.getAggregation("tokenizer")._aTokenValidators.length, 0 , "then the MultiInput has no validators");
 		assert.ok(oSpy.called, "Tokenizer's removeValidator is called");
 
 		// cleanup
@@ -754,7 +754,7 @@ sap.ui.define([
 		});
 		sap.ui.getCore().applyChanges();
 
-		this.multiInput1._tokenizer.onsapdelete(
+		this.multiInput1.getAggregation("tokenizer").onsapdelete(
 			{
 				shiftKey: false,
 				setMarked: function(){},
@@ -990,7 +990,7 @@ sap.ui.define([
 		this.multiInput1.setTokens([token1, token2, token3]);
 		sap.ui.getCore().applyChanges();
 
-		qutils.triggerKeydown(this.multiInput1._tokenizer.getDomRef(), KeyCodes.DELETE);
+		qutils.triggerKeydown(this.multiInput1.getAggregation("tokenizer").getDomRef(), KeyCodes.DELETE);
 
 		// assert
 		assert.strictEqual(document.activeElement, token3.getDomRef(),
@@ -1005,7 +1005,7 @@ sap.ui.define([
 		this.multiInput1.setTokens([token1, token2, token3]);
 		sap.ui.getCore().applyChanges();
 
-		qutils.triggerKeydown(this.multiInput1._tokenizer.getDomRef(), KeyCodes.DELETE);
+		qutils.triggerKeydown(this.multiInput1.getAggregation("tokenizer").getDomRef(), KeyCodes.DELETE);
 
 		// assert
 		assert.strictEqual(document.activeElement, this.multiInput1.getFocusDomRef(),
@@ -1020,7 +1020,7 @@ sap.ui.define([
 		this.multiInput1.setTokens([token1, token2, token3]);
 		sap.ui.getCore().applyChanges();
 
-		qutils.triggerKeydown(this.multiInput1._tokenizer.getDomRef(), KeyCodes.BACKSPACE);
+		qutils.triggerKeydown(this.multiInput1.getAggregation("tokenizer").getDomRef(), KeyCodes.BACKSPACE);
 
 		// assert
 		assert.strictEqual(document.activeElement, token1.getDomRef(),
@@ -1035,7 +1035,7 @@ sap.ui.define([
 		this.multiInput1.setTokens([token1, token2, token3]);
 		sap.ui.getCore().applyChanges();
 
-		qutils.triggerKeydown(this.multiInput1._tokenizer.getDomRef(), KeyCodes.BACKSPACE);
+		qutils.triggerKeydown(this.multiInput1.getAggregation("tokenizer").getDomRef(), KeyCodes.BACKSPACE);
 
 		// assert
 		assert.strictEqual(document.activeElement, this.multiInput1.getFocusDomRef(),
@@ -1060,8 +1060,7 @@ sap.ui.define([
 
 	QUnit.test("onsapnext when a token is focused", function(assert) {
 
-		var oMISpy = sinon.spy(MultiInput.prototype, "_scrollAndFocus"),
-			oTokenizerSpy = sinon.spy(Tokenizer.prototype, "scrollToEnd");
+		var oTokenizerSpy = sinon.spy(Tokenizer.prototype, "scrollToEnd");
 
 		this.multiInput1.addToken(new Token({}));
 
@@ -1072,11 +1071,11 @@ sap.ui.define([
 		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ARROW_RIGHT, false, false, false);
 
 		// assert
-		assert.ok(oMISpy.called, "MultiInputs's _scrollAndFocus is called");
-		assert.ok(oTokenizerSpy.called, "Tokenizer's scrollToEnd is not called");
+		assert.ok(oTokenizerSpy.called, "Tokenizer's scrollToEnd is called");
+		assert.strictEqual(this.multiInput1._$input[0].id, document.activeElement.id,
+			"The first token in the multiinput is focused.");
 
 		// cleanup
-		oMISpy.restore();
 		oTokenizerSpy.restore();
 	});
 
@@ -1140,19 +1139,19 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Act
-		oMI._oSuggPopover._oPopover.open();
+		oMI._getSuggestionsPopoverPopup().open();
 		this.clock.tick(1000);
 
 		// Assert
-		assert.ok(oMI._oSuggPopover._oPopover.isOpen(), "The dialog is opened");
+		assert.ok(oMI._getSuggestionsPopoverPopup().isOpen(), "The dialog is opened");
 
 		// Act
-		oPickerTextFieldDomRef = oMI._oSuggPopover._oPopupInput.getFocusDomRef();
+		oPickerTextFieldDomRef = oMI._getSuggestionsPopoverInstance()._oPopupInput.getFocusDomRef();
 
 		sap.ui.test.qunit.triggerCharacterInput(oPickerTextFieldDomRef, "test");
 		qutils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
 
-		sOpenState = oMI._oSuggPopover._oPopover.oPopup.getOpenState();
+		sOpenState = oMI._getSuggestionsPopoverPopup().oPopup.getOpenState();
 
 		// Assert
 		assert.strictEqual(sOpenState === OpenState.CLOSED || sOpenState === OpenState.CLOSING, true, "The dialog is still open after enter key");
@@ -1203,8 +1202,8 @@ sap.ui.define([
 		assert.ok(oSpy.called, "_openSelectedItemsPicker is called when N-more is pressed");
 
 		// Act
-		sap.ui.test.qunit.triggerCharacterInput(oMI._oSuggPopover._oPopupInput.getFocusDomRef(), "d");
-		qutils.triggerEvent("input", oMI._oSuggPopover._oPopupInput.getFocusDomRef());
+		sap.ui.test.qunit.triggerCharacterInput(oMI._getSuggestionsPopoverInstance()._oPopupInput.getFocusDomRef(), "d");
+		qutils.triggerEvent("input", oMI._getSuggestionsPopoverInstance()._oPopupInput.getFocusDomRef());
 		this.clock.tick(100);
 
 		// Assert
@@ -1240,12 +1239,12 @@ sap.ui.define([
 		}).placeAt( "qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		oMI._oSuggPopover._oPopover.open();
+		oMI._getSuggestionsPopoverPopup().open();
 		oMI.setSelectionItem(oMI.getSuggestionItems()[0]);
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(oMI._oSuggPopover._oPopupInput.getValue(), "", "The dialog's input is cleared.");
+		assert.strictEqual(oMI._getSuggestionsPopoverInstance()._oPopupInput.getValue(), "", "The dialog's input is cleared.");
 
 		// clean up
 		oMI.destroy();
@@ -1294,7 +1293,7 @@ sap.ui.define([
 		oMultiInput1.placeAt("content");
 
 		// Act
-		oMI._tokenizer.$().trigger("click");
+		oMI.getAggregation("tokenizer").$().trigger("click");
 		this.clock.tick(1);
 
 		// Assert
@@ -1302,11 +1301,11 @@ sap.ui.define([
 		assert.ok(oSpy.calledWith(true), "Selected items list is visible.");
 
 		// Act
-		oMI._oSuggPopover._oPopover.close();
+		oMI._getSuggestionsPopoverPopup().close();
 		oSpy.restore();
 
 		oSpy1 = sinon.spy(oMultiInput1, "_manageListsVisibility");
-		oMultiInput1._tokenizer.$().trigger("click");
+		oMultiInput1.getAggregation("tokenizer").$().trigger("click");
 
 		// Assert
 		assert.ok(oSpy1.called, "_manageListsVisibility is called");
@@ -1343,12 +1342,12 @@ sap.ui.define([
 
 		// Act
 		oMultiInput._openSuggestionsPopover({});
-		oMultiInput._oSuggPopover._oPopupInput.focus();
-		oMultiInput._oSuggPopover._oPopupInput.updateDomValue("123");
-		qutils.triggerKeydown(oMultiInput._oSuggPopover._oPopupInput.getFocusDomRef(), KeyCodes.ENTER);
+		oMultiInput._getSuggestionsPopoverInstance()._oPopupInput.focus();
+		oMultiInput._getSuggestionsPopoverInstance()._oPopupInput.updateDomValue("123");
+		qutils.triggerKeydown(oMultiInput._getSuggestionsPopoverInstance()._oPopupInput.getFocusDomRef(), KeyCodes.ENTER);
 		this.clock.tick(nPopoverAnimationTick);
 
-		assert.strictEqual(oMultiInput._tokenizer.getTokens().length, 1, "Just a single token gets created");
+		assert.strictEqual(oMultiInput.getAggregation("tokenizer").getTokens().length, 1, "Just a single token gets created");
 
 		// Cleanup
 		oMultiInput.destroy();
@@ -1546,6 +1545,7 @@ sap.ui.define([
 	QUnit.test("Change event is properly fired on different interactions", function (assert) {
 		//Setup
 		var oChangeFireSpy = this.spy(this.multiInput1, "fireChange"),
+			oEnterSpy = this.spy(this.multiInput1, "onsapenter"),
 			oValidatorSpy = this.spy(function (oParams) {
 				return new Token({
 					key: oParams.text,
@@ -1558,14 +1558,16 @@ sap.ui.define([
 		//Act
 		//Emulate use input
 		// Modify DOM's value as we don't want to go trough MultiInput's API.
+		this.multiInput1.focus();
 		this.multiInput1.$("inner").val("Test token");
-		this.multiInput1.onsapenter({});
+		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ENTER);
 		sap.ui.getCore().applyChanges();
 
 		//Assert
 		assert.ok(oChangeFireSpy.calledOnce, "Change is fired");
 		assert.ok(oValidatorSpy.calledOnce, "Validator is fired");
 		assert.ok(oChangeFireSpy.calledBefore(oValidatorSpy), "fireChange is fired before Validator");
+		assert.ok(oEnterSpy.args[0][0].isMarked(), "The change event should be marked, since a token is validated");
 
 		//Act
 		//Emulate use input
@@ -1579,6 +1581,23 @@ sap.ui.define([
 		assert.ok(oChangeFireSpy.calledTwice, "Change is fired");
 		assert.ok(oValidatorSpy.calledTwice, "Validator is fired");
 		assert.ok(oChangeFireSpy.calledBefore(oValidatorSpy), "fireChange is fired before Validator");
+	});
+
+
+	QUnit.test("Enter event, should not be marked, when there are no modifications", function (assert) {
+		// Setup
+		var oEnterSpy = this.spy(this.multiInput1, "onsapenter");
+
+		// Act
+		this.multiInput1.focus();
+		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ENTER);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(oEnterSpy.args[0][0].isMarked());
+
+		// Cleanup
+		oEnterSpy.restore();
 	});
 
 	QUnit.test("Selecting an item should not leave a text in the input", function (assert) {
@@ -1634,7 +1653,7 @@ sap.ui.define([
 		// the suggestion popover when an item is selected
 		oMultiInput.onsapfocusleave({});
 		oMultiInput.setSelectedKey("1");
-		oMultiInput._oSuggPopover._oPopover.close();
+		oMultiInput._getSuggestionsPopoverPopup().close();
 		sap.ui.getCore().applyChanges();
 
 		// Assert
@@ -1722,6 +1741,8 @@ sap.ui.define([
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
+		assert.strictEqual(this.multiInput1.getFocusDomRef().getAttribute("aria-roledescription"), oResourceBundle.getText("MULTIINPUT_ARIA_ROLE_DESCRIPTION"), "aria-roledescription attribute is rendered correctly to the DOM");
+
 
 		// act
 		this.multiInput1.setValue("");
@@ -1798,7 +1819,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//assert
-		assert.ok(this.multiInput1.getFocusDomRef().getAttribute('aria-labelledBy').indexOf(sInvisibleTextId) !== -1, "Input has aria-labelledby attribute to indicate Enter press possibility");
+		assert.ok(this.multiInput1.getFocusDomRef().getAttribute('aria-labelledby').indexOf(sInvisibleTextId) !== -1, "Input has aria-labelledby attribute to indicate Enter press possibility");
 	});
 
 	QUnit.test("Placeholder opacity", function(assert) {
@@ -1812,6 +1833,31 @@ sap.ui.define([
 
 		// assert
 		assert.ok(this.multiInput1.$().hasClass("sapMMultiInputHasTokens"), "MultiInput placeholder doesn't show placeholder");
+	});
+
+	QUnit.test("aria-haspopup should be correctly applied", function(assert) {
+		//Arrange
+		var oMultiInputWithoutSuggestions = new MultiInput({showSuggestion: false}),
+			oMultiInputWithSuggestions =  new MultiInput({});
+
+		oMultiInputWithoutSuggestions.placeAt("content");
+		oMultiInputWithSuggestions.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(oMultiInputWithoutSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be  presented.");
+		assert.strictEqual(oMultiInputWithSuggestions._$input.attr("aria-haspopup"), "listbox", "aria-haspopup should have value 'listbox'.");
+
+		//Act
+		oMultiInputWithSuggestions.setShowSuggestion(false);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(oMultiInputWithSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be  presented.");
+
+		//Clean up
+		oMultiInputWithoutSuggestions.destroy();
+		oMultiInputWithSuggestions.destroy();
 	});
 
 	QUnit.module("Copy/Cut Functionality", {
@@ -1941,7 +1987,7 @@ sap.ui.define([
 
 		// act
 		if (Device.browser.internet_explorer) {
-			this.multiInput._tokenizer.$().trigger("click");
+			this.multiInput.getAggregation("tokenizer").$().trigger("click");
 		} else {
 			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		}
@@ -1972,7 +2018,7 @@ sap.ui.define([
 
 		// act
 		if (Device.browser.internet_explorer) {
-			this.multiInput._tokenizer.$().trigger("click");
+			this.multiInput.getAggregation("tokenizer").$().trigger("click");
 		} else {
 			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		}
@@ -1990,7 +2036,7 @@ sap.ui.define([
 		oPicker.close();
 		// act
 		if (Device.browser.internet_explorer) {
-			this.multiInput._tokenizer.$().trigger("click");
+			this.multiInput.getAggregation("tokenizer").$().trigger("click");
 		} else {
 			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		}
@@ -2002,7 +2048,6 @@ sap.ui.define([
 		// Arrange
 		var oFakeEvent, oItem,
 			oList = this.multiInput._getTokensList(),
-			oTokenDeleteSpy = this.spy(this.multiInput._tokenizer, "_onTokenDelete"),
 			oListRemoveItemSpy = this.spy(oList, "removeItem");
 
 		this.multiInput.setWidth("200px");
@@ -2021,7 +2066,6 @@ sap.ui.define([
 		this.multiInput._handleNMoreItemDelete(oFakeEvent);
 
 		// Assert
-		assert.strictEqual(oTokenDeleteSpy.callCount, 0, "Token was not deleted.");
 		assert.strictEqual(oListRemoveItemSpy.callCount, 0, "List item was not removed.");
 		assert.strictEqual(this.multiInput.getTokens().length, 1, "There is still one token in the multi input.");
 	});
@@ -2066,7 +2110,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Setup
-		oTokenizerSpy = this.spy(this.multiInput._tokenizer, "_useCollapsedMode");
+		oTokenizerSpy = this.spy(this.multiInput.getAggregation("tokenizer"), "_useCollapsedMode");
 
 		// Act. Emulate click on the Icon
 		this.multiInput.onfocusin({target: this.multiInput.getDomRef("vhi")});
@@ -2097,7 +2141,7 @@ sap.ui.define([
 	QUnit.test("_handleNMoreItemDelete", function(assert) {
 		var oListItem = new StandardListItem(), aTokens,
 			oToken = new Token("token", {text: "text123", key: "key123"}),
-			oSpy = this.spy(this.multiInput._tokenizer, "removeToken"),
+			oSpy = this.spy(this.multiInput.getAggregation("tokenizer"), "removeToken"),
 			oTokenDestroySpy = this.spy(Token.prototype, "destroy"),
 			oFakeEvent = new Event(),
 			oSetSelectionStub = sinon.stub(Event.prototype, "getParameter");
@@ -2180,20 +2224,20 @@ sap.ui.define([
 			new Token({text: "XXXX"})
 		]);
 		this.multiInput1.setWidth("200px");
-		var oStub = sinon.stub(	this.multiInput1._oSuggPopover._oPopover, "open");
+		var oStub = sinon.stub(	this.multiInput1._getSuggestionsPopoverPopup(), "open");
 
 
 		sap.ui.getCore().applyChanges();
 		// act
 		if (Device.browser.internet_explorer) {
-			this.multiInput1._tokenizer.$().trigger("click");
+			this.multiInput1.getAggregation("tokenizer").$().trigger("click");
 		} else {
 			this.multiInput1.$().find(".sapMTokenizerIndicator")[0].click();
 		}
 		this.clock.tick(1000);
 
 		assert.ok(oStub.called, "The suggestion dialog is opened on click on N-more");
-		assert.ok(this.multiInput1._oSuggPopover.getFilterSelectedButton(), "The filtering button is pressed on initial opening");
+		assert.ok(this.multiInput1._getSuggestionsPopoverInstance().getFilterSelectedButton(), "The filtering button is pressed on initial opening");
 		assert.ok(this.multiInput1._getTokensList().getVisible(), "The list with tokens is visible");
 
 		// clean up
@@ -2392,7 +2436,7 @@ sap.ui.define([
 
 		// act
 		if (Device.browser.msie) {
-			this.multiInput._tokenizer.$().trigger("click");
+			this.multiInput.getAggregation("tokenizer").$().trigger("click");
 		} else {
 			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		}
@@ -2417,7 +2461,7 @@ sap.ui.define([
 
 		// act
 		if (Device.browser.msie) {
-			this.multiInput._tokenizer.$().trigger("click");
+			this.multiInput.getAggregation("tokenizer").$().trigger("click");
 		} else {
 			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		}
@@ -2438,7 +2482,7 @@ sap.ui.define([
 
 		// act
 		if (Device.browser.msie) {
-			this.multiInput._tokenizer.$().trigger("click");
+			this.multiInput.getAggregation("tokenizer").$().trigger("click");
 		} else {
 			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		}
@@ -2455,7 +2499,7 @@ sap.ui.define([
 		this.multiInput._handleNMoreItemDelete(oEvent);
 		sap.ui.getCore().applyChanges();
 
-		var aTokens = this.multiInput._tokenizer.getTokens();
+		var aTokens = this.multiInput.getAggregation("tokenizer").getTokens();
 		var aItems = this.multiInput._oSelectedItemPicker.getDomRef().querySelectorAll('.sapMLIB');
 
 		// assert
@@ -2468,7 +2512,7 @@ sap.ui.define([
 	QUnit.test("tokenizer's adjustTokensVisibility is called on initial rendering", function(assert) {
 		//arrange
 		var oMultiInput = new MultiInput(),
-			tokenizerSpy = this.spy(oMultiInput._tokenizer, "_adjustTokensVisibility");
+			tokenizerSpy = this.spy(oMultiInput.getAggregation("tokenizer"), "_adjustTokensVisibility");
 
 		// act
 		oMultiInput.placeAt("qunit-fixture");
@@ -2476,7 +2520,7 @@ sap.ui.define([
 		this.clock.tick(100);
 
 		// assert
-		assert.ok(oMultiInput._tokenizer._getAdjustable(), "the tokenizer is adjustable");
+		assert.ok(oMultiInput.getAggregation("tokenizer")._getAdjustable(), "the tokenizer is adjustable");
 		assert.ok(tokenizerSpy.called, "tokenizer's _adjustTokensVisibility is called");
 
 		// clean up
@@ -2536,8 +2580,7 @@ sap.ui.define([
 
 	QUnit.test("input's visibility onsapfocusleave + n-more label", function(assert) {
 		var oIndicator,
-			oVisibleInputSpy = this.spy(this.multiInput, "_setValueVisible"),
-			oInvisibleInputSpy = this.spy(this.multiInput, "_setValueInvisible");
+			oVisibleInputSpy = this.spy(this.multiInput, "_setValueVisible");
 
 		this.multiInput.setWidth("200px");
 		this.multiInput.setValue("XXXX");
@@ -2557,15 +2600,14 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.ok(oInvisibleInputSpy.called, "The input field is hidden onfocusout.");
-		assert.notOk(oVisibleInputSpy.called, "The input field is not shown onfocusout.");
+		assert.ok(oVisibleInputSpy.calledWith(false), "The input field is hidden onfocusout.");
+		assert.notOk(oVisibleInputSpy.calledWith(true), "The input field is not shown onfocusout.");
 		assert.notOk(oIndicator.hasClass("sapUiHidden"), "The n-more indicator is visible");
 	});
 
 	QUnit.test("input's visibility onsapfocusleave + without n-more label", function(assert) {
 		var oIndicator,
-			oVisibleInputSpy = this.spy(this.multiInput, "_setValueVisible"),
-			oInvisibleInputSpy = this.spy(this.multiInput, "_setValueInvisible");
+			oVisibleInputSpy = this.spy(this.multiInput, "_setValueVisible");
 
 		this.multiInput.setWidth("200px");
 		this.multiInput.setTokens([
@@ -2581,15 +2623,14 @@ sap.ui.define([
 		this.multiInput.onsapfocusleave({});
 
 		// assert
-		assert.ok(oVisibleInputSpy.called, "The input field is shown onfocusout.");
-		assert.notOk(oInvisibleInputSpy.called, "The input field is not hidden onfocusout.");
+		assert.ok(oVisibleInputSpy.calledWith(true), "The input field is shown onfocusout.");
+		assert.notOk(oVisibleInputSpy.calledWith(false), "The input field is not hidden onfocusout.");
 		assert.ok(oIndicator.hasClass("sapUiHidden"), "The n-more indicator is hidden");
 	});
 
 	QUnit.test("input's visibility on rerendering", function(assert) {
 		var oIndicator,
-			oVisibleInputSpy = this.spy(this.multiInput, "_setValueVisible"),
-			oInvisibleInputSpy = this.spy(this.multiInput, "_setValueInvisible");
+			oVisibleInputSpy = this.spy(this.multiInput, "_setValueVisible");
 
 		this.multiInput.setWidth("200px");
 		this.multiInput.setValue("XXXX");
@@ -2612,15 +2653,15 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.ok(oInvisibleInputSpy.called, "The input field is hidden.");
-		assert.notOk(oVisibleInputSpy.called, "The input field is not shown.");
+		assert.ok(oVisibleInputSpy.calledWith(false), "The input field is hidden.");
+		assert.notOk(oVisibleInputSpy.calledWith(true), "The input field is not shown.");
 		assert.notOk(oIndicator.hasClass("sapUiHidden"), "The n-more indicator is visible");
 	});
 
 	QUnit.test("Do not listen for resize while resizing", function (assert) {
 		// Setup
 		var oRegisterResizeSpy = this.spy(this.multiInput, "_registerResizeHandler"),
-			oMaxWidthSetterSpy = this.spy(this.multiInput._tokenizer, "setMaxWidth");
+			oMaxWidthSetterSpy = this.spy(this.multiInput.getAggregation("tokenizer"), "setMaxWidth");
 
 		// Act
 		this.multiInput._onResize();
@@ -2757,11 +2798,13 @@ sap.ui.define([
 		oMI.destroy();
 	});
 
-	QUnit.test("Read-only popover is opened after N-more is pressed", function(assert){
+	QUnit.test("Read-only popover is opened after N-more is pressed", function (assert) {
 		//Arrange
 		var oMultiInput = new sap.m.MultiInput({
-			editable: true
-		}), bVisible;
+				editable: true
+			}),
+			oRenderingSpy = this.spy(oMultiInput, "onBeforeRendering"),
+			bVisible;
 
 		oMultiInput.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -2772,14 +2815,15 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Arrange
-		var oToken1 = new Token({text:"Token with a very long text content"}),
-			oToken2 = new Token({text:"Token with a very long text content"}),
-			oToken3 = new Token({text:"Token with a very long text content"}),
-			oToken4 = new Token({text:"Token with a very long text content"}),
-			oToken5 = new Token({text:"Token with a very long text content"}),
-			oToken6 = new Token({text:"Token with a very long text content"});
+		var oToken1 = new Token({text: "Token with a very long text content"}),
+			oToken2 = new Token({text: "Token with a very long text content"}),
+			oToken3 = new Token({text: "Token with a very long text content"}),
+			oToken4 = new Token({text: "Token with a very long text content"}),
+			oToken5 = new Token({text: "Token with a very long text content"}),
+			oToken6 = new Token({text: "Token with a very long text content"});
 
 		//Act
+		oRenderingSpy.reset();
 		oMultiInput.setTokens([oToken1, oToken2, oToken3, oToken4, oToken5, oToken6]);
 		oMultiInput.setEditable(false);
 		sap.ui.getCore().applyChanges();
@@ -2789,6 +2833,7 @@ sap.ui.define([
 
 		//Assert
 		assert.strictEqual(bVisible, true, "Tokens list is visible");
+		assert.strictEqual(oRenderingSpy.callCount, 1, "The rendering should have been called only once");
 
 		//Clean up
 		oMultiInput.destroy();
@@ -2852,7 +2897,7 @@ sap.ui.define([
 		oMultiInput._$input.focus().val("A").trigger("input");
 		this.clock.tick(300);
 
-		aVisibleItems = oMultiInput._oSuggPopover._oList.getItems().filter(function(oItem){
+		aVisibleItems = oMultiInput._getSuggestionsPopoverInstance()._oList.getItems().filter(function(oItem){
 			return oItem.getVisible();
 		});
 		oGroupHeader = aVisibleItems[0];
@@ -2887,12 +2932,12 @@ sap.ui.define([
 
 	QUnit.test("Token should be truncated initially", function (assert) {
 		// Assert
-		assert.ok(this.oMultiInput._tokenizer.hasOneTruncatedToken(), "Token is truncated initially.");
+		assert.ok(this.oMultiInput.getAggregation("tokenizer").hasOneTruncatedToken(), "Token is truncated initially.");
 	});
 
 	QUnit.test("Should remove truncation on focusin", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(this.oMultiInput._tokenizer, "_useCollapsedMode"),
+		var oSpy = sinon.spy(this.oMultiInput.getAggregation("tokenizer"), "_useCollapsedMode"),
 			oMockEvent = {
 				target: this.oMultiInput.getFocusDomRef(),
 				relatedTarget: this.oMultiInput.getTokens()[0].getDomRef()
@@ -2904,15 +2949,15 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(oSpy.calledWith(false), "Collapsed mode called with 'false'");
-		assert.ok(!this.oMultiInput._tokenizer.hasOneTruncatedToken(), "Truncation was removed from the token.");
+		assert.ok(!this.oMultiInput.getAggregation("tokenizer").hasOneTruncatedToken(), "Truncation was removed from the token.");
 	});
 
 	QUnit.test("Should add truncation when focus leaves the MultiInput", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(this.oMultiInput._tokenizer, "_useCollapsedMode");
+		var oSpy = sinon.spy(this.oMultiInput.getAggregation("tokenizer"), "_useCollapsedMode");
 
 		// Mock the tokenizer's check function to pass
-		this.oMultiInput._tokenizer._hasOneTruncatedToken = function () { return true; };
+		this.oMultiInput.getAggregation("tokenizer")._hasOneTruncatedToken = function () { return true; };
 
 		// Act
 		this.oMultiInput.onsapfocusleave({});
@@ -2920,7 +2965,7 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(oSpy.calledWith(true), "Collapsed mode was called with 'true' as parameter.");
-		assert.ok(this.oMultiInput._tokenizer.getTokens()[0].getTruncated(), true, "The token's property was set correctly.");
+		assert.ok(this.oMultiInput.getAggregation("tokenizer").getTokens()[0].getTruncated(), true, "The token's property was set correctly.");
 	});
 
 	QUnit.test("Should open/close suggestion popover on CTRL + I", function (assert) {
@@ -3023,7 +3068,7 @@ sap.ui.define([
 		this.clock.tick(nPopoverAnimationTick);
 
 		// Assert
-		assert.ok(this.oMultiInput._tokenizer.hasOneTruncatedToken(), "The token should be truncated");
+		assert.ok(this.oMultiInput.getAggregation("tokenizer").hasOneTruncatedToken(), "The token should be truncated");
 	});
 
 	QUnit.module("API");
@@ -3056,7 +3101,7 @@ sap.ui.define([
 		Core.applyChanges();
 		this.clock.tick(nPopoverAnimationTick);
 
-		assert.ok(oMultiInput._oSuggPopover._oList.getVisible(), true, "List should be visible");
+		assert.ok(oMultiInput._getSuggestionsPopoverInstance()._oList.getVisible(), true, "List should be visible");
 
 		oMultiInput.destroy();
 	});

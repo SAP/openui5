@@ -172,7 +172,7 @@ sap.ui.define([
 		this.oBox.setRenderType("Bare");
 		Core.applyChanges();
 		assert.equal(this.oBox.getItems()[0].$().get(0).tagName, "IMG", "First item of Flex Box should now be rendered as IMG");
-		if (!Device.browser.phantomJS && !Device.browser.internet_explorer) {// TODO remove after the end of support for Internet Explorer
+		if (!Device.browser.internet_explorer) {// TODO remove after the end of support for Internet Explorer
 			assert.equal(this.oBox.getItems()[1].getDomRef().style.flexGrow, "2", "Inline style for grow factor is set on second item");
 			assert.equal(this.oBox.getItems()[1].getDomRef().style.flexBasis, "58%", "Inline style for base size is set on second item");
 		}
@@ -197,15 +197,13 @@ sap.ui.define([
 
 	QUnit.test("Inline", function(assert) {
 		this.oBox.setDisplayInline(true);
-		// phantomjs wants to add the webkit prefix here...
-		assert.equal(this.oBox.$().css('display'), (Device.browser.phantomJS ? "-webkit-" : "") + "inline-flex", "Flex Box display property should be set to inline");
+		assert.equal(this.oBox.$().css('display'), "inline-flex", "Flex Box display property should be set to inline");
 	});
 
 	QUnit.test("Block", function(assert) {
 		this.oBox.setDisplayInline(false);
 		Core.applyChanges();
-		// phantomjs wants to add the webkit prefix here...
-		assert.equal(this.oBox.$().css('display'), (Device.browser.phantomJS ? "-webkit-" : "") + "flex", "Flex Box display property should be set to block");
+		assert.equal(this.oBox.$().css('display'), "flex", "Flex Box display property should be set to block");
 	});
 
 	QUnit.module("Fit Container", {
@@ -478,9 +476,7 @@ sap.ui.define([
 		assert.ok((this.oItem1DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left) === 0, "Item 1 should be placed at the horizontal start");
 		assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 179) <= 1, "Item 2 should be placed at the horizontal center");
 		assert.ok(Math.abs(this.oItem3DomRef.getBoundingClientRect().left - this.oBoxDomRef.getBoundingClientRect().left - 345) <= 1, "Item 3 should be placed at the horizontal end");
-		if (!Device.browser.phantomJS) {	// Baseline is not supported for align-items by phantomjs
-			assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 22) <= 1, "Item 2 should be pushed down to align with Item 1 baseline");
-		}
+		assert.ok(Math.abs(this.oItem2DomRef.getBoundingClientRect().top - this.oBoxDomRef.getBoundingClientRect().top - 22) <= 1, "Item 2 should be pushed down to align with Item 1 baseline");
 		this.oItem1DomRef.style.fontSize = "";
 	});
 
@@ -710,8 +706,8 @@ sap.ui.define([
 		this.oItem1DomRef.style.width = "100%";
 		this.oItem2DomRef.style.width = "100%";
 		this.oItem3DomRef.style.width = "100%";
-		if (Device.browser.internet_explorer || Device.browser.phantomJS) {
-			// IE 10-11, PhantomJS miscalculate the width of the flex items when box-sizing: border-box// TODO remove after the end of support for Internet Explorer
+		if (Device.browser.internet_explorer) {
+			// IE 10-11 miscalculate the width of the flex items when box-sizing: border-box// TODO remove after the end of support for Internet Explorer
 			assert.ok(Math.abs(this.oItem1DomRef.offsetWidth - 247) <= 1, "Width of Item 1 should be 247 (is " + this.oItem1DomRef.offsetWidth + ")");
 			assert.ok(Math.abs(this.oItem2DomRef.offsetWidth - 107) <= 1, "Width of Item 2 should be 107 (is " + this.oItem2DomRef.offsetWidth + ")");
 			assert.ok(Math.abs(this.oItem3DomRef.offsetWidth - 34) <= 1, "Width of Item 3 should be 34 (is " + this.oItem3DomRef.offsetWidth + ")");

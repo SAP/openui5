@@ -15,7 +15,7 @@
         "title": "{{TITLE}}",
         "subTitle": "{{SUBTITLE}}",
         "shortTitle": "{{SHORTTITLE}}",
-        "info": "{{INTO}}",
+        "info": "{{INFO}}",
         "description": "{{DESCRIPTION}}",
         "tags": {
             "keywords": ["{{KEYWORD1}}","{{KEYWORD2}}"]

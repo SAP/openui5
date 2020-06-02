@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/ui/performance/Measurement",
 	"sap/base/Log",
+	"sap/base/util/extend",
 	"./InvisibleRenderer",
 	"./Patcher"
 ], function(
@@ -29,6 +30,7 @@ sap.ui.define([
 	assert,
 	Measurement,
 	Log,
+	extend,
 	InvisibleRenderer,
 	Patcher
 ) {
@@ -1595,7 +1597,7 @@ sap.ui.define([
 		if (mProps) {
 			var checkValue = function(v){
 				var type = typeof (v);
-				return v === null || v === "" || type === "number" || type === "string" || type === "boolean";
+				return v === null || type === "number" || type === "string" || type === "boolean";
 			};
 
 			var prop = {};
@@ -1615,7 +1617,7 @@ sap.ui.define([
 			}
 
 			//The auto-generated values above can be overridden or reset (via null)
-			jQuery.extend(mAriaProps, prop);
+			Object.assign(mAriaProps, prop);
 		}
 
 		// allow parent (e.g. FormElement) to overwrite or enhance aria attributes
@@ -1707,7 +1709,7 @@ sap.ui.define([
 			};
 		}
 
-		mAttributes = jQuery.extend(mDefaultAttributes, mAttributes);
+		mAttributes = extend(mDefaultAttributes, mAttributes);
 
 		if (!mAttributes.id) {
 			mAttributes.id = uid();

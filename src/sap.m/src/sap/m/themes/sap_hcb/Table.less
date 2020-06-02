@@ -32,6 +32,12 @@ html[data-sap-ui-browser^='ed'] .sapMListTbl {
 	border-bottom: 0.125rem solid @sapUiListHeaderBorderColor;
 }
 
+// to ensure that the bottom focus outline is visible on the table header row,
+// the <th> bottom border color is made transparent
+.sapMLIBFocusable:focus > th {
+	border-bottom-color: transparent;
+}
+
 .sapMColumnHeaderActive:focus {
 	outline-width: 3px;
 }

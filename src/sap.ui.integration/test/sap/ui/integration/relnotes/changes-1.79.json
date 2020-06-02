@@ -1,0 +1,84 @@
+{
+  "1.79.0": {
+    "date": "May 2020",
+    "notes": [
+      {
+        "id": "1074a89d703a04c355a3c8cd49f4c94792d0753d",
+        "type": "FIX",
+        "text": " sap.ui.integration.cards.AdaptiveContent: OPA test adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070211987"
+          }
+        ]
+      },
+      {
+        "id": "df01bcffdd990bb5f4cd99ba86dacc42857fbef9",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Actions are now working",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070238063"
+          }
+        ]
+      },
+      {
+        "id": "702950d9e49df523b076321ebdb0dab75c5f586c",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Adaptive card additional tabstop is now removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070220356"
+          }
+        ]
+      },
+      {
+        "id": "90ca0c2c5a52f4c80fe0ba6b982bcb6addeb6c1c",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Base64 images are now supported",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070156775"
+          }
+        ]
+      },
+      {
+        "id": "b07741a7bdf55186ce3691bc10c74e0a1a46bce8",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Improve data request when defined on card level",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070232590"
+          }
+        ]
+      },
+      {
+        "id": "b31d41ceb07078ed983c2404421c0476a7bebe20",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Data request with expression binding now works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080142117"
+          }
+        ]
+      },
+      {
+        "id": "977f9b02b468f2996e0bcb3908afe5b00da76620",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Download bundle now includes the i18n.properties",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080131791"
+          }
+        ]
+      }
+    ]
+  }
+}

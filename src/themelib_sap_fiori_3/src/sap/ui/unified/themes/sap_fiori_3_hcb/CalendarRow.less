@@ -14,7 +14,8 @@
 	color: @sapUiBaseText;
 }
 
-.sapUiCalendarRowAppsNoWork {
+.sapMListTblRow:not(.sapMLIBSelected) .sapUiCalendarRowAppsNoWork,
+.sapMListTblSubRow:not(.sapMLIBSelected) .sapUiCalendarRowAppsNoWork {
 	background-color: @sapUiLegendNonWorkingBackground;
 }
 
@@ -40,6 +41,10 @@ html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
 html.sap-desktop .sapUiCalendarAppSel:focus > .sapUiCalendarAppCont:after{
 	border-color: @sapUiContentContrastFocusColor;
 	left: 2px;
+}
+
+html.sap-desktop .sapUiCalendarApp:hover:not(:active) > .sapUiCalendarAppCont{
+	border-color: @sapUiListSelectionBorderColor;
 }
 
 .sapUiCalendarAppCont{

@@ -238,7 +238,8 @@ sap.ui.define([
 		assert.ok(sap.ui.getCore().byId(oTablePersoDialog.getId() + "-Dialog"), "Columns dialog exists after open() called");
 		assert.ok(jQuery.sap.domById(oTablePersoDialog.getId() + "-Dialog-title"), "Columns dialog has a title rendered");
 		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		assert.strictEqual(sap.ui.getCore().byId(oTablePersoDialog.getId() + "-Dialog").getTitle(), oRb.getText("PERSODIALOG_COLUMNS_TITLE"), "Columns dialog title is 'Columns'");
+		var sTitle = sap.ui.getCore().byId(oTablePersoDialog.getId() + "-Dialog").getCustomHeader().getContent()[0].getText();
+		assert.strictEqual(sTitle, oRb.getText("PERSODIALOG_COLUMNS_TITLE"), "Columns dialog title is 'Columns'");
 		//Check if Reset ALL Button is invisible
 		assert.ok(jQuery('#' + oTPC.getAggregation("_tablePersoDialog")._oDialog.getId() + '-header-BarRight').children().length == 0, 'Reset All button should be hidden');
 		//Check if Select All is invisible
@@ -248,9 +249,9 @@ sap.ui.define([
 		oTPC.setShowSelectAll(true);
 		sap.ui.getCore().applyChanges();
 		//Check if Reset ALL Button is visible
-		assert.ok(oTPC.getAggregation("_tablePersoDialog")._oDialog.getContent()[0].getContent()[1].$().length > 0, 'Reset All should be shown');
+		assert.ok(oTPC.getAggregation("_tablePersoDialog")._oDialog.getCustomHeader().getContent()[2].$().length  > 0, 'Reset All should be shown');
 		//Check if Select All is visible
-		assert.ok(jQuery('.sapMPersoDialogSelectAllCb').is(':visible'), 'Select All Checkbox should be shown');
+		assert.ok(oTPC.getAggregation("_tablePersoDialog")._oDialog.getContent()[0].getMode(), "MultiSelect", 'Select All Checkbox should be shown');
 	});
 
 
@@ -282,22 +283,24 @@ sap.ui.define([
 		oTPC.setShowResetAll(false);
 		oTPC.setShowSelectAll(false);
 		oTPC.openDialog();
-		var oDataList = oTablePersoDialog._oDialog.getContent()[1].getContent()[0];
+		var oDataList = oTablePersoDialog._oDialog.getContent()[0];
 		var oButtonUp = sap.ui.getCore().byId(oTablePersoDialog.getId() + "-buttonUp");
 		var oButtonDown = sap.ui.getCore().byId(oTablePersoDialog.getId() + "-buttonDown");
 		var length = oDataList.getItems().length;
 
 //			first item is selected => the Down button must be enabled
 		assert.ok(!oButtonUp.getEnabled(), "first item is selected: Button Arrow Up is disabled => OK!");
-		assert.ok(oButtonDown.getEnabled(), "first item is selected: Button Arrow Down is enabled => OK!");
+		assert.ok(!oButtonDown.getEnabled(), "first item is selected: Button Arrow Down is enabled => OK!");
 
 		if (length > 0) {
-			oDataList.setSelectedItem(oDataList.getItems()[0], true, true);
+			oTablePersoDialog._oSelectedItem = oDataList.getItems()[0];
+			oTablePersoDialog._fnUpdateArrowButtons.call(oTablePersoDialog);
 			sap.ui.getCore().applyChanges();
 			assert.ok(oButtonUp.$().hasClass('sapMBtnDisabled'), "More than one item in List, first item is selected: Button Arrow Up is disabled => OK!");
 			assert.ok(!oButtonDown.$().hasClass('sapMBtnDisabled'), "More than one item in List, first item is selected: Button Arrow Down is enabled => OK!");
 
-			oDataList.setSelectedItem(oDataList.getItems()[length - 1], true, true);
+			oTablePersoDialog._oSelectedItem = oDataList.getItems()[length - 1];
+			oTablePersoDialog._fnUpdateArrowButtons();
 			sap.ui.getCore().applyChanges();
 			assert.ok(oButtonDown.$().hasClass('sapMBtnDisabled'), "More than one item in List, last item is selected: Button Arrow Down is disabled => OK!");
 			assert.ok(!oButtonUp.$().hasClass('sapMBtnDisabled'), "More than one item in List, last item is selected: Button Arrow Up is enabled => OK!");
@@ -312,9 +315,9 @@ sap.ui.define([
 		var oTablePersoDialog1 = oTPC1.getTablePersoDialog();
 		oTPC1.openDialog();
 
-		var oDataList1 = oTablePersoDialog1._oDialog.getContent()[1].getContent()[0];
-		var oButtonUp1 = oTablePersoDialog1._oDialog.getSubHeader().getContent()[0];
-		var oButtonDown1 = oTablePersoDialog1._oDialog.getSubHeader().getContent()[1];
+		var oDataList1 = oTablePersoDialog1._oDialog.getContent()[0];
+		var oButtonUp1 = sap.ui.getCore().byId(oTablePersoDialog1.getId() + "-buttonUp");
+		var oButtonDown1 = sap.ui.getCore().byId(oTablePersoDialog1.getId() + "-buttonDown");
 //			only one item in list is available(selected) => both buttons have to be disabled!
 		if (oDataList1.getItems().length == 1) {
 			oDataList1.setSelectedItem(oDataList1.getItems()[0], true, true);
@@ -337,10 +340,11 @@ sap.ui.define([
 		var oButtonOk = sap.ui.getCore().byId("idRandomDataTable-PersoDialog-buttonOk");
 
 		// 1st column invisible
-		sap.ui.getCore().byId("idRandomDataTable-PersoDialog-cb-idRandomDataTable-PersoDialog-colList-0").setSelected(false);
+		sap.ui.getCore().byId("idRandomDataTable-PersoDialog-cli-idRandomDataTable-PersoDialog-colTable-0").setSelected(false);
 
 		// Switch last two around
-		sap.ui.getCore().byId("idRandomDataTable-PersoDialog-li-idRandomDataTable-PersoDialog-colList-1").setSelected(true);
+		sap.ui.getCore().byId("idRandomDataTable-PersoDialog-cli-idRandomDataTable-PersoDialog-colTable-1").setSelected(true);
+		oTablePersoDialog._oSelectedItem = sap.ui.getCore().byId("idRandomDataTable-PersoDialog-cli-idRandomDataTable-PersoDialog-colTable-1");
 		oButtonDown.firePress();
 		sap.ui.getCore().applyChanges();
 
@@ -406,7 +410,7 @@ sap.ui.define([
 
 		//Assert
 		var oTablePersoDialog2 = oTPC2.getTablePersoDialog();
-		assert.strictEqual(oTablePersoDialog2._oList.getItems().length == 110, true, "TablePersoDialog displays 110 rows");
+		assert.strictEqual(oTablePersoDialog2._oInnerTable.getItems().length == 110, true, "TablePersoDialog displays 110 rows");
 
 		//Clean up
 		oTPC2.destroy();
@@ -454,30 +458,27 @@ sap.ui.define([
 		setTimeout( function(){
 
 			var oTablePersoDialog3 = oTPC3.getTablePersoDialog(),
-			oScrollCont = oTablePersoDialog3._oScrollContainer,
 			oButtonUp = oTablePersoDialog3._oButtonUp,
 			oButtonDown = oTablePersoDialog3._oButtonDown;
 
-
 			//Act
 			//Select first item
-			oTablePersoDialog3._oList.setSelectedItem(oTablePersoDialog3._oList.getItems()[0]);
+			oTablePersoDialog3._oInnerTable.setSelectedItem(oTablePersoDialog3._oInnerTable.getItems()[0]);
 			sap.ui.getCore().applyChanges();
 
-
-			var spyScrollTo = sinon.spy(oScrollCont, "scrollTo");
-			//press 'Down button 7 times to trigger scroll down
-			for (var i = 0; i < 7; i++) {
+			var spyScrollTo = sinon.spy(oTablePersoDialog3._oInnerTable, "scrollToIndex");
+			//press 'Down button 8 times to trigger scroll down --> the item will be at the top
+			for (var i = 0; i < 9; i++) {
 				oButtonDown.firePress();
 				sap.ui.getCore().applyChanges();
 			}
-			assert.equal(spyScrollTo.callCount, 1, "scrollTo should be called once when moving down");
-			//now press Up button 5 times to trigger scroll up
-			for (var i = 0; i < 5; i++) {
+			assert.equal(spyScrollTo.callCount, 2, "scrollToIndex should be called once when moving down");
+			//Now press up to check if the scrolls up as the item is at the top
+			for (var i = 0; i < 1; i++) {
 				oButtonUp.firePress();
 				sap.ui.getCore().applyChanges();
 			}
-			assert.equal(spyScrollTo.callCount, 2, "scrollTo should be called once when moving up");
+			assert.equal(spyScrollTo.callCount, 3, "scrollToIndex should be called once when moving up");
 			oTPC3.destroy();
 			oTable3.destroy();
 			fnDone();
@@ -531,15 +532,15 @@ sap.ui.define([
 		oTPC4.openDialog();
 		sap.ui.getCore().applyChanges();
 		var oTablePersoDialog4 = oTPC4.getTablePersoDialog(),
-			oResetButton = oTablePersoDialog4._oDialog.getContent()[0].getContent()[1],
+			oResetButton = oTablePersoDialog4._oDialog.getCustomHeader().getContent()[2],
 			oButtonDown = oTablePersoDialog4._oButtonDown,
-			oList = oTablePersoDialog4._oList;
+			oList = oTablePersoDialog4._oInnerTable;
 
 		//Act
 		//Press 'Reset All'
 		oResetButton.firePress();
 		sap.ui.getCore().applyChanges();
-		assert.equal(oList.getItems()[0].getLabel(), 'Bingo!', 'Even after reset, label should be the last rendered column name');
+		assert.equal(oList.getItems()[0].getCells()[0].getText(), 'Bingo!', 'Even after reset, label should be the last rendered column name');
 		oList.setSelectedItem(oList.getItems()[0]);
 		oButtonDown.firePress();
 		sap.ui.getCore().applyChanges();
@@ -629,8 +630,8 @@ sap.ui.define([
 		var fnDone = assert.async();
 		setTimeout(function () {
 			// assert
-			var actual = oTPC1.getTablePersoDialog()._oList.getSelectedItem().getId();
-			var expected = oTPC1.getTablePersoDialog()._oList.getItems()[0].getId();
+			var actual = oTPC1.getTablePersoDialog()._oInnerTable.getSelectedItem().getId();
+			var expected = oTPC1.getTablePersoDialog()._oInnerTable.getItems()[0].getId();
 			assert.strictEqual(actual, expected, 'The focus should be on the first list item.');
 			oTPC1.destroy();
 			oTable1.destroy();
@@ -703,8 +704,8 @@ sap.ui.define([
 		var fnDone = assert.async();
 		setTimeout(function () {
 			// assert
-			var actual = oTPC1.getTablePersoDialog()._oList.getSelectedItem().getId();
-			var expected = oTPC1.getTablePersoDialog()._oList.getItems()[1].getId();
+			var actual = oTPC1.getTablePersoDialog()._oInnerTable.getSelectedItem().getId();
+			var expected = oTPC1.getTablePersoDialog()._oInnerTable.getItems()[1].getId();
 			assert.strictEqual(actual, expected, 'The focus should be on the first list item.');
 			oTPC1.destroy();
 			oTable1.destroy();

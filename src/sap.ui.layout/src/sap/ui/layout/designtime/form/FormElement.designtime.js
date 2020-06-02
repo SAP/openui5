@@ -77,7 +77,7 @@ sap.ui.define([
 				}
 			},
 			rename: function(oFormElement){
-				if (fnIsLayoutSupported(oFormElement)){
+				if (fnIsLayoutSupported(oFormElement) && oFormElement.getLabelControl()){
 					return {
 						changeType: "renameField",
 						domRef: function (oControl) {

@@ -137,6 +137,31 @@ sap.ui.define([
 		assert.equal(this.tokenizer.getTokens().length, 0, "Tokenizer contains 0 tokens");
 	});
 
+	QUnit.test("removeAllTokens should call setFirstTokenTruncated with 'false'.", function(assert) {
+		var oSpy = sinon.spy(this.tokenizer, "setFirstTokenTruncated");
+
+		// Act
+		this.tokenizer.removeAllTokens();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "setFirstTokenTruncated was called.");
+		assert.strictEqual(oSpy.firstCall.args[0], false, "setFirstTokenTruncated was called with 'false'.");
+	});
+
+	QUnit.test("updateTokens should call setFirstTokenTruncated with 'false'.", function(assert) {
+		var oSpy = sinon.spy(this.tokenizer, "setFirstTokenTruncated");
+
+		// Arrange
+		this.tokenizer.updateAggregation = sinon.stub().returns(true);
+
+		// Act
+		this.tokenizer.updateTokens();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "setFirstTokenTruncated was called.");
+		assert.strictEqual(oSpy.firstCall.args[0], false, "setFirstTokenTruncated was called with 'false'.");
+	});
+
 	QUnit.test("validate tokens using validator callback", function(assert) {
 		var validationCallbackCount = 0,
 			isValidated = false,
@@ -525,21 +550,23 @@ sap.ui.define([
 
 	QUnit.test("Pressing delete icon when Tokenizer is disabled", function(assert) {
 		// arrange
-		var fnFireDeleteSpy,
+		var oFireDeleteSpy, oUpdateTokensSpy,
 			oToken = new Token({text: "test"});
 
-		fnFireDeleteSpy = this.spy(oToken, "fireDelete");
+		oFireDeleteSpy = this.spy(oToken, "fireDelete");
+		oUpdateTokensSpy = this.spy(this.tokenizer, "fireTokenUpdate");
 		this.tokenizer.addToken(oToken);
 		this.tokenizer.setEnabled(false);
 
 		// act
-		oToken._tokenIconPress({preventDefault: function () {}});
+		oToken.getAggregation("deleteIcon").firePress();
 
 		// assert
-		assert.equal(fnFireDeleteSpy.callCount, 0, "delete event was NOT fired");
+		assert.equal(oUpdateTokensSpy.callCount, 0, "TokenUpdate was NOT fired");
+		assert.equal(oFireDeleteSpy.callCount, 1, "delete event was fired");
 		assert.ok(!oToken.bIsDestroyed, "Token1 is NOT destroyed");
 
-		fnFireDeleteSpy.restore();
+		oFireDeleteSpy.restore();
 	});
 
 	QUnit.module("Scrolling public API", {
@@ -1027,6 +1054,25 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
+	QUnit.test("onsaphome + hidden tokens", function() {
+		var oEvent = new jQuery.Event(),
+			oTokenizer = new Tokenizer({
+				tokens: [new Token(), new Token(), new Token()]
+			}).placeAt("content");
+
+		oTokenizer.getTokens()[0].addStyleClass("sapMHiddenToken");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oTokenizer.onsaphome(oEvent);
+
+		// assert
+		assert.strictEqual(oTokenizer.getTokens()[1].getDomRef(), document.activeElement, "The second token (first visible) is focused.");
+
+		// clean up
+		oTokenizer.destroy();
+	});
+
 	QUnit.test("HOME + SHIFT", function() {
 		var oSpySelection = this.spy(this.tokenizer, "_selectRange");
 
@@ -1392,9 +1438,16 @@ sap.ui.define([
 		assert.strictEqual(this.tokenizer.$().attr("role"), "listbox", "Tokenizer has role listbox");
 	});
 
-	QUnit.test("ARIA Read only attribute is not present", function(assert) {
-		// aria-readonly is not valid for the current role of the tokenizer.
+	QUnit.test("aria-readonly attribute", function(assert) {
+		// Assert
 		assert.ok(!this.tokenizer.$().attr("aria-readonly"), "Tokenizer has no aria-readonly attribute");
+
+		// Act
+		this.tokenizer.setEditable(false);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.tokenizer.$().attr("aria-readonly"), "true", "Tokenizer has aria-readonly attribute set.");
 	});
 
 	QUnit.test("posinset and setsize ARIA attributes are set on the Tokens", function(assert) {
@@ -1413,6 +1466,20 @@ sap.ui.define([
 		assert.strictEqual(token2.$().attr("aria-posinset"), "2", "Token 2 has correct aria-posinset attribute");
 		assert.strictEqual(token1.$().attr("aria-setsize"), "2", "Token has correct aria-setsize attribute");
 		assert.strictEqual(token2.$().attr("aria-setsize"), "2", "Token has correct aria-setsize attribute");
+	});
+
+	QUnit.test("posinset and setsize ARIA attributes are correct after removing token", function(assert) {
+		var token1, token2;
+
+		this.tokenizer.addToken(token1 = new Token());
+		this.tokenizer.addToken(token2 = new Token());
+		sap.ui.getCore().applyChanges();
+
+		this.tokenizer.removeToken(token1);
+
+		assert.strictEqual(token2.$().attr("aria-setsize"), "1", "Token 2 has correct aria-setsize attribute");
+		assert.strictEqual(token2.$().attr("aria-posinset"), "1", "Token 2 has correct aria-posinset attribute");
+
 	});
 
 	QUnit.test("Adjust Tokens' title on editable property", function(assert) {
@@ -1519,6 +1586,24 @@ sap.ui.define([
 		assert.ok(oSpy.calledOnce, "Truncation function should be called once.");
 		assert.ok(this.tokenizer.$().hasClass("sapMTokenizerOneLongToken"), "Should have class for one long token.");
 		assert.ok(oSpy.calledWith(true), "Truncation function should be called with True value");
+		// cleanup
+		oSpy.restore();
+	});
+
+	QUnit.test("Small container + One long truncated token should call setFirstTokenTruncated with false", function(assert) {
+		// Arrange
+		var oSpy = this.spy(this.tokenizer, 'setFirstTokenTruncated');
+		this.tokenizer._setAdjustable(true);
+		this.tokenizer.getTokens()[0].setTruncated(true);
+
+		// Act
+		this.tokenizer.setMaxWidth("500px");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oSpy.calledOnce, "Truncation function should be called once.");
+		assert.notOk(this.tokenizer.$().hasClass("sapMTokenizerOneLongToken"), "Should not have class for one long token.");
+		assert.ok(oSpy.calledWith(false), "Truncation function should be called with false");
 		// cleanup
 		oSpy.restore();
 	});

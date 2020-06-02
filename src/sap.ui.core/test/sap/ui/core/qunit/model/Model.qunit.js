@@ -123,14 +123,14 @@ sap.ui.define([
 		};
 		oModelMock.expects("filterMatchingMessages").withExactArgs("/baz", "/foo").returns([]);
 		oModelMock.expects("filterMatchingMessages").withExactArgs("/foo", "/foo")
-			.returns(["oMessage0"]);
+			.returns(["oMessage3", "oMessage0"]);
 		oModelMock.expects("filterMatchingMessages").withExactArgs("/foo/bar", "/foo")
-			.returns(["oMessage1", "oMessage2"]);
+			.returns(["oMessage1", "oMessage2", "oMessage3"]);
 		oModelMock.expects("filterMatchingMessages").withExactArgs("/qux", "/foo").returns([]);
 
 		// code under test
 		assert.deepEqual(oModel.getMessagesByPath("/foo", true),
-			["oMessage0", "oMessage1", "oMessage2"]);
+			["oMessage3", "oMessage0", "oMessage1", "oMessage2"]);
 	});
 
 	//*********************************************************************************************

@@ -3,15 +3,28 @@
  */
 
 sap.ui.define([
+	"sap/base/util/includes",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Variant",
-	"sap/ui/fl/Utils",
-	"sap/ui/core/util/reflection/JsControlTreeModifier"
+	"sap/ui/fl/Utils"
 ], function(
+	includes,
+	JsControlTreeModifier,
 	Variant,
-	Utils,
-	JsControlTreeModifier
+	Utils
 ) {
 	"use strict";
+
+	function getAssociatedControlId(aAssociatedControlIds, oControl) {
+		if (!oControl) {
+			return undefined;
+		}
+
+		if (aAssociatedControlIds.indexOf(oControl.getId()) > -1) {
+			return oControl.getId();
+		}
+		return getAssociatedControlId(aAssociatedControlIds, oControl.getParent());
+	}
 
 	var VariantsApplyUtil = {
 		DEFAULT_AUTHOR: "SAP",
@@ -73,7 +86,31 @@ sap.ui.define([
 			oVariant = new Variant(oVariantFileContent);
 
 			return oVariant;
+		},
+
+		/**
+		 * Finds the responsible variant management control for a given control.
+		 * A prerequisite for this to work is that the variant management control is reachable via the <code>getParent</code> function.
+		 *
+		 * @param {sap.ui.core.Control} oControl - Control instance
+		 * @param {string[]} aVMControlIds - Array of variant management control IDs
+		 * @returns {string} The ID of the responsible variant management control
+		 */
+		getRelevantVariantManagementControlId: function(oControl, aVMControlIds) {
+			var oAssociatedControls = {};
+			var aAssociatedControlIds = aVMControlIds.reduce(function(aCurrentControlIds, sVMControlId) {
+				var oVMControl = sap.ui.getCore().byId(sVMControlId);
+				var aForControls = oVMControl.getFor();
+				aForControls.forEach(function(sControlId) {
+					oAssociatedControls[sControlId] = sVMControlId;
+				});
+				return aCurrentControlIds.concat(aForControls);
+			}, []);
+
+			var sAssociatedVMControlId = getAssociatedControlId(aAssociatedControlIds, oControl);
+			return oAssociatedControls[sAssociatedVMControlId];
 		}
 	};
+
 	return VariantsApplyUtil;
 });

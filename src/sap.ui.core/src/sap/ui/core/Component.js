@@ -4,10 +4,11 @@
 
 // Provides base class sap.ui.core.Component for all components
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
 	'./Manifest',
 	'./ComponentMetadata',
 	'./Element',
+	'sap/base/util/extend',
+	'sap/base/util/deepExtend',
 	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/base/ManagedObjectRegistry',
@@ -21,10 +22,11 @@ sap.ui.define([
 	'sap/base/util/LoaderExtensions',
 	'sap/ui/VersionInfo'
 ], function(
-	jQuery,
 	Manifest,
 	ComponentMetadata,
 	Element,
+	extend,
+	deepExtend,
 	merge,
 	ManagedObject,
 	ManagedObjectRegistry,
@@ -127,7 +129,7 @@ sap.ui.define([
 		// only extend / clone if there is data
 		// otherwise "null" will be converted into an empty object
 		if (oParentData || oData) {
-				oData = jQuery.extend(true, {}, oParentData, oData);
+				oData = deepExtend({}, oParentData, oData);
 		}
 
 		return oData;
@@ -646,23 +648,25 @@ sap.ui.define([
 
 		// error handler (if exists)
 		if (this.onWindowError) {
-			this._fnWindowErrorHandler = jQuery.proxy(function(oEvent) {
+			this._fnWindowErrorHandler = function(oEvent) {
 				var oError = oEvent.originalEvent;
 				this.onWindowError(oError.message, oError.filename, oError.lineno);
-			}, this);
-			jQuery(window).on("error", this._fnWindowErrorHandler);
+
+			}.bind(this);
+			window.addEventListener("error", this._fnWindowErrorHandler);
 		}
 
 		// before unload handler (if exists)
 		if (this.onWindowBeforeUnload) {
-			this._fnWindowBeforeUnloadHandler = jQuery.proxy(this.onWindowBeforeUnload, this);
-			jQuery(window).on("beforeunload", this._fnWindowBeforeUnloadHandler);
+			this._fnWindowBeforeUnloadHandler = this.onWindowBeforeUnload.bind(this);
+			window.addEventListener("beforeunload", this._fnWindowBeforeUnloadHandler);
 		}
 
 		// unload handler (if exists)
 		if (this.onWindowUnload) {
-			this._fnWindowUnloadHandler = jQuery.proxy(this.onWindowUnload, this);
-			jQuery(window).on("unload", this._fnWindowUnloadHandler);
+
+			this._fnWindowUnloadHandler = this.onWindowUnload.bind(this);
+			window.addEventListener("unload", this._fnWindowUnloadHandler);
 		}
 
 	};
@@ -688,15 +692,15 @@ sap.ui.define([
 
 		// remove the event handlers
 		if (this._fnWindowErrorHandler) {
-			jQuery(window).off("error", this._fnWindowErrorHandler);
+			window.removeEventListener("error", this._fnWindowErrorHandler);
 			delete this._fnWindowErrorHandler;
 		}
 		if (this._fnWindowBeforeUnloadHandler) {
-			jQuery(window).off("beforeunload", this._fnWindowBeforeUnloadHandler);
+			window.removeEventListener("beforeunload", this._fnWindowBeforeUnloadHandler);
 			delete this._fnWindowBeforeUnloadHandler;
 		}
 		if (this._fnWindowUnloadHandler) {
-			jQuery(window).off("unload", this._fnWindowUnloadHandler);
+			window.removeEventListener("unload", this._fnWindowUnloadHandler);
 			delete this._fnWindowUnloadHandler;
 		}
 
@@ -1096,7 +1100,7 @@ sap.ui.define([
 			throw new Error("Terminologies vector can't be used in component usages");
 		}
 		// mix in the component configuration on top of the usage configuration
-		return jQuery.extend(true, mUsageConfig, mConfig);
+		return deepExtend(mUsageConfig, mConfig);
 	};
 
 	/**
@@ -1817,8 +1821,8 @@ sap.ui.define([
 		};
 
 		// deep clone is needed as manifest only returns a read-only copy (frozen object)
-		var oManifestDataSources = jQuery.extend(true, {}, oManifest.getEntry("/sap.app/dataSources"));
-		var oManifestModels = jQuery.extend(true, {}, oManifest.getEntry("/sap.ui5/models"));
+		var oManifestDataSources = merge({}, oManifest.getEntry("/sap.app/dataSources"));
+		var oManifestModels = merge({}, oManifest.getEntry("/sap.ui5/models"));
 
 		var mAllModelConfigurations = Component._createManifestModelConfigurations({
 			models: oManifestModels,
@@ -2062,7 +2066,7 @@ sap.ui.define([
 	 * @param {string[]} [mOptions.activeTerminologies] List of active terminologies.
 	 *              The order of the given active terminologies is significant. The {@link sap.base.i18n.ResourceBundle ResourceBundle} API
 	 *              documentation describes the processing behavior in more detail.
-	 *              Please have a look at this dev-guide chapter for general usage instructions: {@link topic:CPOUI5FRAMEWORK-57_Docu_Chapter Text Verticalization}.
+	 *              Please have a look at this dev-guide chapter for general usage instructions: {@link topic:eba8d25a31ef416ead876e091e67824e Text Verticalization}.
 	 * @param {object} [mOptions.settings] Settings of the new Component
 	 * @param {boolean|string|object} [mOptions.manifest=true] Whether and from where to load the manifest.json for the Component.
 	 *     When set to any truthy value, the manifest will be loaded and evaluated before the Component controller.
@@ -2154,7 +2158,7 @@ sap.ui.define([
 	 * @param {string[]} [vConfig.activeTerminologies] List of active terminologies.
 	 *              The order of the given active terminologies is significant. The {@link sap.base.i18n.ResourceBundle ResourceBundle} API
 	 *              documentation describes the processing behavior in more detail.
-	 *              Please also have a look at this dev-guide chapter for general usage instructions: {@link topic:CPOUI5FRAMEWORK-57_Docu_Chapter Text Verticalization}.
+	 *              Please also have a look at this dev-guide chapter for general usage instructions: {@link topic:eba8d25a31ef416ead876e091e67824e Text Verticalization}.
 	 * @param {boolean} [vConfig.async] Indicates whether the Component creation should be done asynchronously; defaults to true when using the manifest property with a truthy value otherwise the default is false (experimental setting)
 	 * @param {object} [vConfig.asyncHints] @since 1.27.0 Hints for the asynchronous loading.
 	 *     <b>Beware:</b> This parameter is only used internally by the UI5 framework and compatibility cannot be guaranteed.
@@ -2258,7 +2262,7 @@ sap.ui.define([
 				mSettings = vConfig.settings;
 
 			// create an instance
-			var oInstance = new oClass(jQuery.extend({}, mSettings, {
+			var oInstance = new oClass(extend({}, mSettings, {
 				id: sId,
 				componentData: oComponentData,
 				_cacheTokens: vConfig.asyncHints && vConfig.asyncHints.cacheTokens,
@@ -2529,7 +2533,7 @@ sap.ui.define([
 			if (typeof Component._fnPreprocessManifest === "function" && oRawJson != null) {
 				try {
 					// secure configuration from manipulation
-					var oConfigCopy = jQuery.extend(true, {}, oConfig);
+					var oConfigCopy = deepExtend({}, oConfig);
 					return Component._fnPreprocessManifest(oRawJson, oConfigCopy);
 				} catch (oError) {
 					// in case the hook itself crashes without 'safely' rejecting, we log the error and reject directly
@@ -2999,8 +3003,8 @@ sap.ui.define([
 					// if a callback is registered to the component load, call it with the configuration
 					if (typeof Component._fnLoadComponentCallback === "function") {
 						// secure configuration and manifest from manipulation
-						var oConfigCopy = jQuery.extend(true, {}, oConfig);
-						var oManifestCopy = jQuery.extend(true, {}, oLoadedManifest);
+						var oConfigCopy = deepExtend({}, oConfig);
+						var oManifestCopy = merge({}, oLoadedManifest);
 						// trigger the callback with a copy of its required data
 						// do not await any result from the callback nor stop component loading on an occurring error
 						try {
@@ -3016,8 +3020,8 @@ sap.ui.define([
 
 			// if a hint about "used" components is given, preload those components
 			if ( hints.components ) {
-				jQuery.each(hints.components, function(i, vComp) {
-					collect(preload(processOptions(vComp), true));
+				Object.keys(hints.components).forEach(function(sComp) {
+					collect(preload(processOptions(hints.components[sComp]), true));
 				});
 			}
 
@@ -3146,8 +3150,8 @@ sap.ui.define([
 				}
 
 				// lookup model classes
-				var mManifestModels = jQuery.extend(true, {}, oManifest.getEntry("/sap.ui5/models"));
-				var mManifestDataSources = jQuery.extend(true, {}, oManifest.getEntry("/sap.app/dataSources"));
+				var mManifestModels = merge({}, oManifest.getEntry("/sap.ui5/models"));
+				var mManifestDataSources = merge({}, oManifest.getEntry("/sap.app/dataSources"));
 				var mAllModelConfigurations = Component._createManifestModelConfigurations({
 					models: mManifestModels,
 					dataSources: mManifestDataSources,

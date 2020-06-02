@@ -9,7 +9,9 @@ sap.ui.define(['./library'],
 		// shortcut for sap.ui.layout.BlockRowColorSets
 		var BlockRowColorSets = library.BlockRowColorSets;
 
-		var BlockLayoutRenderer = {};
+		var BlockLayoutRenderer = {
+			apiVersion: 2
+		};
 
 		BlockLayoutRenderer.render = function (oRm, oBlockLayout) {
 			this.startLayout(oRm, oBlockLayout);
@@ -18,26 +20,20 @@ sap.ui.define(['./library'],
 		};
 
 		BlockLayoutRenderer.startLayout = function (oRm, oBlockLayout) {
-			var backgroundType = oBlockLayout.getBackground();
+			oRm.openStart("div", oBlockLayout)
+				.class("sapUiBlockLayout")
+				.class("sapUiBlockLayoutBackground" + oBlockLayout.getBackground());
 
-			oBlockLayout.addStyleClass("sapUiBlockLayoutBackground" + backgroundType);
-
-			oRm.write("<div");
-			oRm.writeControlData(oBlockLayout);
-			oRm.addClass("sapUiBlockLayout");
 			if (oBlockLayout.getKeepFontSize()) {
-				oRm.addClass("sapUiBlockLayoutKeepFontSize");
+				oRm.class("sapUiBlockLayoutKeepFontSize");
 			}
-			oRm.writeStyles();
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openEnd();
 		};
 
 		BlockLayoutRenderer.addContent = function (oRm, blockLayout) {
 			var aContent = blockLayout.getContent(),
-				oBlockRowType = BlockRowColorSets,
-				aTypes = Object.keys(oBlockRowType).map(function (sKey) {
-					return oBlockRowType[sKey];
+				aTypes = Object.keys(BlockRowColorSets).map(function (sKey) {
+					return BlockRowColorSets[sKey];
 				}),
 				iNumTypes = aTypes.length;
 
@@ -61,7 +57,7 @@ sap.ui.define(['./library'],
 		};
 
 		BlockLayoutRenderer.endLayout = function (oRm) {
-			oRm.write("</div>");
+			oRm.close("div");
 		};
 
 		return BlockLayoutRenderer;

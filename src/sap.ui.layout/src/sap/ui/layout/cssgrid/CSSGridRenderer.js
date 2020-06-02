@@ -2,58 +2,39 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/layout/cssgrid/GridLayoutBase"], function (GridLayoutBase) {
+sap.ui.define([], function () {
 	"use strict";
 
 	/**
 	 * CSSGrid renderer.
 	 * @namespace
 	 */
-	var CSSGridRenderer = {};
+	var CSSGridRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	CSSGridRenderer.render = function(rm, oControl) {
-
-		// container
-		rm.write("<div");
-		rm.addClass("sapUiLayoutCSSGrid");
-		rm.writeControlData(oControl);
+	CSSGridRenderer.render = function (oRM, oControl) {
+		oRM.openStart("div", oControl)
+			.class("sapUiLayoutCSSGrid");
 
 		if (oControl.getWidth()) {
-			rm.addStyle("width", oControl.getWidth());
+			oRM.style("width", oControl.getWidth());
 		}
 
-		oControl.getGridLayoutConfiguration().renderSingleGridLayout(rm);
+		oControl.getGridLayoutConfiguration().renderSingleGridLayout(oRM);
 
-		rm.writeStyles();
-		rm.writeClasses();
-		rm.write(">");
+		oRM.openEnd();
 
-		// Render items
-		oControl.getItems().forEach(function (oItem) {
+		oControl.getItems().forEach(oRM.renderControl, oRM);
 
-			if (oControl._wrapItemsWithDiv) {
-				rm.write("<div");
-                rm.addClass("sapUiLayoutCSSGridItemWrapper");
-				rm.writeClasses();
-				rm.write(">");
-			}
-
-			rm.renderControl(oItem);
-
-			if (oControl._wrapItemsWithDiv) {
-				rm.write("</div>");
-			}
-		});
-
-		rm.write("</div>");
+		oRM.close("div");
 	};
 
 	return CSSGridRenderer;
-
 });

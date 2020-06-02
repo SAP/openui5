@@ -28,6 +28,7 @@ sap.ui.define([
 				this._iScrollProgress = 0;                  //progress done between the 2 last scroll events
 				this._iPreviousScrollTimestamp = 0;         //Timestamp of the last scroll event
 				this._sLazyLoadingTimer = null;
+				this._bSuppressed = false;
 
 				this._oPrevSubSectionsInView = {};
 				this.setLazyLoadingParameters();
@@ -71,6 +72,14 @@ sap.ui.define([
 			this.LAZY_LOADING_FAST_SCROLLING_THRESHOLD = 5;
 		};
 
+		LazyLoading.prototype.suppress = function() {
+			this._bSuppressed = true;
+		};
+
+		LazyLoading.prototype.resume = function() {
+			this._bSuppressed = false;
+		};
+
 		/**
 		 * Resets the internal information of which subsections are in view and immediately
 		 * calls the layout calculation so that an event is fired for the subsections
@@ -89,6 +98,10 @@ sap.ui.define([
 			var iProgressPercentage,
 				iDelay,
 				bFastScrolling = false;
+
+			if (this._bSuppressed) {
+				return;
+			}
 
 			if (bImmediateLazyLoading) {
 				if (this._sLazyLoadingTimer) {
@@ -140,6 +153,9 @@ sap.ui.define([
 				bOnGoingScroll,
 				iShift;
 
+			if (this._bSuppressed) {
+				return;
+			}
 
 			//calculate the limit of visible sections to be lazy loaded
 			iPageHeight = (

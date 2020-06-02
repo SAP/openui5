@@ -1,13 +1,11 @@
 /*global QUnit */
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Image",
 	"sap/m/HBox",
-	"jquery.sap.global",
-	"sap/ui/Device"
-], function(QUnitUtils, createAndAppendDiv, Image, HBox, jQuery, Device) {
+	"jquery.sap.global"
+], function(createAndAppendDiv, Image, HBox, jQuery) {
 	createAndAppendDiv("content");
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
@@ -86,9 +84,8 @@ sap.ui.define([
 	QUnit.module('Final spec property tests');
 
 	QUnit.test("display", function(assert) {
-		// phantomjs wants to add the webkit prefix here...
-		assert.equal(jQuery("#hbox1").css('display'), (Device.browser.phantomJS ? "-webkit-" : "") + "flex", "HBox display property should be set correctly in standard-compatible browsers");
-		assert.equal(jQuery("#hbox2").css('display'), (Device.browser.phantomJS ? "-webkit-" : "") + "inline-flex", "HBox display property should be set correctly in standard-compatible browsers");
+		assert.equal(jQuery("#hbox1").css('display'), "flex", "HBox display property should be set correctly in standard-compatible browsers");
+		assert.equal(jQuery("#hbox2").css('display'), "inline-flex", "HBox display property should be set correctly in standard-compatible browsers");
 	});
 
 	QUnit.test("flex-direction", function(assert) {

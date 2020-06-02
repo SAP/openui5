@@ -23,7 +23,8 @@ sap.ui.define([
 
 	var MANIFEST_PARAMETERS = "/{SECTION}/configuration/parameters",
 		MANIFEST_CONFIGURATION = "/{SECTION}",
-		APP_DATA_SOURCES = "/sap.app/dataSources";
+		APP_DATA_SOURCES = "/sap.app/dataSources",
+		REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}|\{i18n>([^\}]+)\}/g;
 
 	/**
 	 * Creates a new Manifest object.
@@ -169,12 +170,6 @@ sap.ui.define([
 	Manifest.prototype.load = function (mSettings) {
 
 		if (!mSettings || !mSettings.manifestUrl) {
-
-			if (mSettings && mSettings.processI18n === false) {
-				this.processManifest();
-				return new Promise(function (resolve) { resolve(); });
-			}
-
 			// When the manifest JSON is already set and there is a base URL, try to load i18n files.
 			if (this._sBaseUrl && this._oManifest) {
 				return this.loadI18n().then(function () {
@@ -205,16 +200,12 @@ sap.ui.define([
 			this._oManifest = oManifest;
 			this.oJson = this._oManifest.getRawJson();
 
-			if (mSettings && mSettings.processI18n === false) {
-				this.processManifest();
-				return new Promise(function (resolve) { resolve(); });
-			}
-
 			return this.loadI18n().then(function () {
 				this.processManifest();
 			}.bind(this));
 		}.bind(this));
 	};
+
 
 	/**
 	 * Loads the i18n resources.
@@ -223,6 +214,21 @@ sap.ui.define([
 	 * @returns {Promise} A promise resolved when the i18n resources are ready.
 	 */
 	Manifest.prototype.loadI18n = function () {
+
+		// find i18n property paths in the manifest if i18n texts in
+		// the manifest which should be processed
+		var bHasTranslatable = false;
+
+		CoreManifest.processObject(this._oManifest.getJson(), function(oObject, sKey, vValue) {
+			if (!bHasTranslatable && vValue.match(REGEXP_TRANSLATABLE)) {
+				bHasTranslatable = true;
+			}
+		});
+
+		if (!bHasTranslatable) {
+			return Promise.resolve();
+		}
+
 		return this._oManifest._loadI18n(true).then(function (oBundle) {
 			this.oResourceBundle = oBundle;
 		}.bind(this));

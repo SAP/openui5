@@ -313,6 +313,37 @@ sap.ui.define([
 
 	});
 
+	//*********************************************************************************************
+[true, false].forEach(function (bSuccess) {
+	QUnit.test("Metadata promise " + (bSuccess ? "fulfilled" : "rejected"), function(assert) {
+		var done = assert.async(),
+			oTest = {
+				resolved : function () {},
+				rejected : function () {}
+			},
+			oTestMock = this.mock(oTest);
+
+		cleanSharedData();
+		oModel.destroy();
+		oModel = initModel(undefined, bSuccess ? sServiceUri : "/doesnotWork/");
+
+		if (bSuccess) {
+			oTestMock.expects("resolved");
+			oTestMock.expects("rejected").never();
+		} else {
+			oTestMock.expects("resolved").never();
+			oTestMock.expects("rejected");
+		}
+
+		return oModel.metadataLoaded(true).then(oTest.resolved, oTest.rejected)
+			.finally(function () {
+				cleanSharedData();
+				done();
+			});
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("test metadata promise ok then refresh failed", function(assert) {
 		var done = assert.async();
 

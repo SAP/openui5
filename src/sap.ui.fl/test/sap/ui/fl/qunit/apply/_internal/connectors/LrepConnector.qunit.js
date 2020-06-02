@@ -62,7 +62,7 @@ sap.ui.define([
 			mockResponse.call(this, JSON.stringify({changes: [], loadModules: false}));
 
 			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0", cacheKey: sCacheKey}).then(function () {
-				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/reference?appVersion=1.0.0", "the cacheKey is included in the request");
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/reference?appVersion=1.0.0&sap-language=en", "the cacheKey is included in the request");
 			}.bind(this));
 		});
 
@@ -91,7 +91,7 @@ sap.ui.define([
 					}
 				}
 			}).then(function () {
-				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/reference?appVersion=1.0.0", "the cacheKey is included in the request");
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/reference?appVersion=1.0.0&sap-language=en", "the cacheKey is included in the request");
 				assert.equal(this.oXHR.requestHeaders["X-LRep-Site-Id"], "dummySite", "the siteId is included in the request");
 				assert.equal(this.oXHR.requestHeaders["X-LRep-AppDescriptor-Id"], "appDescriptorId", "the appDescriptorId is included in the request");
 			}.bind(this));
@@ -103,7 +103,7 @@ sap.ui.define([
 			mockResponse.call(this, JSON.stringify({changes: [], loadModules: true}));
 			var oStubLoadModule = sandbox.stub(LrepConnector, "_loadModules").resolves();
 			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0", cacheKey: sCacheKey}).then(function (oResult) {
-				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/reference?appVersion=1.0.0", "and the URL was correct");
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/reference?appVersion=1.0.0&sap-language=en", "and the URL was correct");
 				assert.ok(oStubLoadModule.calledOnce, "loadModule triggered");
 				assert.deepEqual(oResult, {changes: [], loadModules: true, cacheKey: "abc123"}, "and the flex_data response resolves the promise");
 			}.bind(this));

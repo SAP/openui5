@@ -538,22 +538,11 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype.onAfterRendering = function() {
-		var aTokens = this.getTokens(),
-			iTokensSize = aTokens.length;
-
 		this.scrollToEnd();
 
 		this._oIndicator = this.$().find(".sapMTokenizerIndicator");
 
-		// update ARIA information of Tokens depending on size and position in Tokenizer
-		for (var i = 0; i < iTokensSize; i++) {
-			var oTokenDomRef = aTokens[i].getDomRef();
-
-			if (oTokenDomRef) {
-				oTokenDomRef.setAttribute("aria-posinset", i + 1);
-				oTokenDomRef.setAttribute("aria-setsize", iTokensSize);
-			}
-		}
+		this._updateTokensAriaSetAttributes();
 
 		if (this._getAdjustable()) {
 			// refresh the expanded/collapsed mode based on whether a indicator should be shown
@@ -982,10 +971,11 @@ sap.ui.define([
 		var bShiftKey = oEvent.shiftKey,
 			bCtrlKey = (oEvent.ctrlKey || oEvent.metaKey),
 			oTargetToken = oEvent.getMark("tokenTap"),
+			bDeleteToken = oEvent.getMark("tokenDeletePress"),
 			aTokens = this._getVisibleTokens(),
 			oFocusedToken, iFocusIndex, iIndex, iMinIndex, iMaxIndex;
 
-		if (!oTargetToken || (!bShiftKey && bCtrlKey)) { // Ctrl
+		if (bDeleteToken || !oTargetToken || (!bShiftKey && bCtrlKey)) { // Ctrl
 			this._oSelectionOrigin = null;
 			return;
 		}
@@ -1404,11 +1394,20 @@ sap.ui.define([
 				}
 			}.bind(this)
 		});
+
+		oToken.getAggregation("deleteIcon").attachPress(function () {
+			if (this.getEnabled()) {
+				this.handleTokenDeletion(oToken);
+			}
+		}.bind(this));
+
 		return this;
 	};
 
 	Tokenizer.prototype.removeToken = function(oToken) {
 		oToken = this.removeAggregation("tokens", oToken);
+
+		this._updateTokensAriaSetAttributes();
 
 		!this.getTokens().length && this.setFirstTokenTruncated(false);
 
@@ -1443,6 +1442,8 @@ sap.ui.define([
 
 		var aRemoved = this.removeAllAggregation("tokens");
 
+		this.setFirstTokenTruncated(false);
+
 		if (typeof (bFireEvent) === "boolean" && !bFireEvent) {
 			return aRemoved;
 		}
@@ -1464,6 +1465,7 @@ sap.ui.define([
 	Tokenizer.prototype.updateTokens = function () {
 		this.destroyTokens();
 		this.updateAggregation("tokens");
+		this.setFirstTokenTruncated(false);
 	};
 
 	/**
@@ -1579,46 +1581,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function is called when token's delete icon was pressed function destroys token from Tokenizer's aggregation.
-	 *
-	 * @private
-	 * @param {sap.m.Token} token  The deleted token
-	 */
-	Tokenizer.prototype._onTokenDelete = function(token) {
-		if (token && this.getEditable() && this.getEnabled()) {
-
-			var eventResult = this.fireTokenUpdate({
-				addedTokens : [],
-				removedTokens : [token],
-				type : Tokenizer.TokenUpdateType.Removed
-			});
-
-			if (!eventResult) {
-				return;
-			}
-
-			delete this._oTokensWidthMap[token.getId()];
-			token.destroy();
-
-			this.fireTokenChange({
-				addedTokens : [],
-				removedTokens : [token],
-				type : Tokenizer.TokenChangeType.TokensChanged
-			});
-		}
-	};
-
-	/**
 	 * Handle the home button, scrolls to the first token.
 	 *
 	 * @param {jQuery.Event}oEvent The occuring event
 	 * @private
 	 */
 	Tokenizer.prototype.onsaphome = function(oEvent) {
-		var aVisibleTokens = this._getVisibleTokens();
+		var aAvailableTokens = this.getTokens().filter(function (oToken) {
+			return oToken.getDomRef() && !oToken.getDomRef().classList.contains("sapMHiddenToken");
+		});
 
-		(aVisibleTokens.length > 0) && aVisibleTokens[0].focus();
-
+		aAvailableTokens.length && aAvailableTokens[0].focus();
 		this.scrollToStart();
 
 		oEvent.preventDefault();
@@ -1735,6 +1708,26 @@ sap.ui.define([
 			}
 
 			oInvisibleText.setText(sTokenizerAria);
+		}
+	};
+
+	/**
+	 * Sets accessibility attributes aria-setsize and aria-posinset to the tokens.
+	 *
+	 * @private
+	 */
+	Tokenizer.prototype._updateTokensAriaSetAttributes = function () {
+		var aTokens = this.getTokens(),
+			iTokensSize = aTokens.length;
+
+		// update ARIA information of Tokens depending on size and position in Tokenizer
+		for (var i = 0; i < iTokensSize; i++) {
+			var oTokenDomRef = aTokens[i].getDomRef();
+
+			if (oTokenDomRef) {
+				oTokenDomRef.setAttribute("aria-posinset", i + 1);
+				oTokenDomRef.setAttribute("aria-setsize", iTokensSize);
+			}
 		}
 	};
 

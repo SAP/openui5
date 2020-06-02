@@ -49,6 +49,19 @@ sap.ui.define([
 
 	return {
 		/**
+		 * Adds current language information into request parameters
+		 *
+		 * @param {object} mParameters - Parameters of the request
+		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
+		 */
+		addLanguageInfo: function (mParameters) {
+			if (!mParameters) {
+				mParameters = {};
+			}
+			mParameters["sap-language"] = sap.ui.getCore().getConfiguration().getLanguage();
+		},
+
+		/**
 		 * Creating a full request url. Generic Method for all Connectors.
 		 * This includes the url prefix and optional cache buster token, flex reference and query parameters.
 		 *

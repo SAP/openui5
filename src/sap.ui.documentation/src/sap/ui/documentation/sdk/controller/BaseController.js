@@ -26,6 +26,11 @@ sap.ui.define([
 			formatMessage: formatMessage,
 
 			onInit: function() {
+
+				sap.ui.getCore().getConfiguration().applySettings({
+					language: 'en'
+				});
+
 				var oMessageBundle = new ResourceModel({
 					bundleName: "sap.ui.documentation.messagebundle"
 				});

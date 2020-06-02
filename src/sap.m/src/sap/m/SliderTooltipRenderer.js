@@ -3,8 +3,8 @@
  */
 
 // Provides the default renderer for control sap.m.SliderTooltip
-sap.ui.define(['sap/ui/core/Renderer'],
-	function(Renderer) {
+sap.ui.define(['sap/ui/core/Renderer', "sap/ui/core/Core"],
+	function(Renderer, Core) {
 	"use strict";
 
 	/**
@@ -45,13 +45,16 @@ sap.ui.define(['sap/ui/core/Renderer'],
 	};
 
 	SliderTooltipRenderer.renderTooltipElement = function (oRM, oControl) {
-		var bAccessibilityOn = sap.ui.getCore().getConfiguration().getAccessibility();
+		var bAccessibilityOn = sap.ui.getCore().getConfiguration().getAccessibility(),
+			oRb = Core.getLibraryResourceBundle("sap.m");
 
 		oRM.openStart("input")
 			.class(SliderTooltipRenderer.CSS_CLASS + "Input");
 
 		if (!oControl.getEditable()) {
 			oRM.class(SliderTooltipRenderer.CSS_CLASS + "NonEditable");
+		} else {
+			oRM.attr("aria-label", oRb.getText("SLIDER_INPUT_LABEL"));
 		}
 
 		if (bAccessibilityOn) {

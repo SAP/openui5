@@ -118,17 +118,17 @@ sap.ui.define([
 
 	QUnit.test("Week day orders", function(assert) {
 		var oMonthDomRef = sap.ui.getCore().byId("Cal1").getAggregation("month")[0].getDomRef(),
-			aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not([style='visibility: hidden;'])");
+			aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
 
 		assert.equal(aWeekHeaders.length, 7, "7 weekheaders rendered");
 		assert.equal(aWeekHeaders[0].textContent, "Sun", "Sunday ist first weekday for en-US");
 
 		oMonthDomRef = sap.ui.getCore().byId("Cal2").getAggregation("month")[0].getDomRef();
-		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not([style='visibility: hidden;'])");
+		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
 		assert.equal(aWeekHeaders[0].textContent, "Mo", "Monday ist first weekday for de-DE");
 
 		oMonthDomRef = sap.ui.getCore().byId("Cal3").getAggregation("month")[0].getDomRef();
-		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not([style='visibility: hidden;'])");
+		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
 		assert.equal(aWeekHeaders[0].textContent, "Di", "Thuesday ist first weekday for custom setting");
 
 		assert.equal(iStartDateChangeFired, 0, "Initially no startdateChange event fired");

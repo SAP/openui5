@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/unified/calendar/MonthPicker",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/calendar/CalendarDate",
+	"sap/ui/Device",
 	"sap/ui/events/KeyCodes"
-], function(MonthPicker, DateRange, CalendarDate, KeyCodes) {
+], function(MonthPicker, DateRange, CalendarDate, Device, KeyCodes) {
 	"use strict";
 	(function () {
 
@@ -47,7 +48,7 @@ sap.ui.define([
 		QUnit.test("Months are properly selected on touch devices mouseup", function (assert) {
 			var iSelectedMonth = 3,
 				oMousePosition = { clientX: 10, clientY: 10 },
-				deviceStub = this.stub(sap.ui.Device.support, "touch", true),
+				deviceStub = this.stub(Device.support, "touch", true),
 				isValueInThresholdStub = this.stub(this.oMP, "_isValueInThreshold", function () { return true; }),
 				itemNavigationStub = this.stub(this.oMP._oItemNavigation, "getFocusedIndex", function () { return iSelectedMonth; }),
 				selectSpy = this.spy(function () {});
@@ -268,6 +269,9 @@ sap.ui.define([
 					}
 				},
 				oSelectedDates = this.MP._getSelectedDates(),
+				// In Microsoft Edge sap.ui.Device.support.touch is "true" on some desktopes
+				// and we are making sure that MonthPicker.prototype._handleMouseDown will work
+				oDeviceStub = this.stub(Device.support, "touch", false),
 				aRefs;
 
 			this.MP.placeAt("qunit-fixture");
@@ -294,6 +298,9 @@ sap.ui.define([
 			assert.strictEqual(aRefs.eq(7).attr("aria-selected"), "true", "aria selected is set to true");
 			assert.ok(aRefs.eq(8).hasClass("sapUiCalItemSel"), "is marked correctly with selected class");
 			assert.strictEqual(aRefs.eq(8).attr("aria-selected"), "true", "aria selected is set to true");
+
+			// clean
+			oDeviceStub.restore();
 		});
 
 		QUnit.test("onmouseover", function(assert) {
@@ -480,7 +487,7 @@ sap.ui.define([
 		QUnit.test("Selecting a month that is disabled due to min/max motnhs set on mobile", function(assert) {
 			// prepare
 			var iFocusedIndex = 8,
-				oDeviceStub = this.stub(sap.ui.Device.support, "touch", true),
+				oDeviceStub = this.stub(Device.support, "touch", true),
 				oIsValueInThresholdStub = this.stub(this.MP, "_isValueInThreshold", function () { return true; }),
 				oItemNavigationStub = this.stub(this.MP._oItemNavigation, "getFocusedIndex", function () { return iFocusedIndex; }),
 				oFakeEvent = {

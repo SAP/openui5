@@ -13,7 +13,9 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"jquery.sap.global",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/integration/cards/Header",
+	"sap/ui/integration/widgets/Card"
 ],
 function (
 	GridContainer,
@@ -28,7 +30,9 @@ function (
 	qutils,
 	KeyCodes,
 	jQuery,
-	Button
+	Button,
+	Header,
+	IntegrationCard
 ) {
 	"use strict";
 
@@ -36,7 +40,7 @@ function (
 		EDGE_VERSION_WITH_GRID_SUPPORT = 16,
 		bIsGridSupported = !Device.browser.msie && !(Device.browser.edge && Device.browser.version < EDGE_VERSION_WITH_GRID_SUPPORT);
 
-	var oManifest_ListCard = {
+	var oIntegrationCardManifest = {
 		"sap.card": {
 			"type": "List",
 			"header": {
@@ -46,10 +50,10 @@ function (
 						"url": "https://www.sap.com"
 					}
 				],
-				"title": "L3 Request list content Card",
+				"title": "Integration Card with action",
 				"subTitle": "Card subtitle",
 				"icon": {
-					"src": "sap-icon://accept"
+					"src": "sap-icon://activities"
 				},
 				"status": {
 					"text": "100 of 200"
@@ -63,7 +67,7 @@ function (
 							"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
 							"Id": "HT-1000",
 							"SubCategoryId": "Notebooks",
-							"icon": "../images/Woman_avatar_01.png",
+							"icon": "sap-icon://laptop",
 							"state": "Information",
 							"info": "27.45 EUR",
 							"infoState": "Success"
@@ -73,71 +77,11 @@ function (
 							"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
 							"Id": "HT-1001",
 							"SubCategoryId": "Notebooks",
-							"icon": "../images/Woman_avatar_01.png",
+							"icon": "sap-icon://laptop",
 							"state": "Success",
 							"info": "27.45 EUR",
 							"infoState": "Success"
 
-						},
-						{
-							"Name": "Notebook Basic 18",
-							"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
-							"Id": "HT-1002",
-							"SubCategoryId": "Notebooks",
-							"icon": "../images/Woman_avatar_01.png",
-							"state": "Warning",
-							"info": "9.45 EUR",
-							"infoState": "Error"
-						},
-						{
-							"Name": "Notebook Basic 19",
-							"Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
-							"Id": "HT-1003",
-							"SubCategoryId": "Notebooks",
-							"icon": "../images/Woman_avatar_01.png",
-							"state": "Error",
-							"info": "9.45 EUR",
-							"infoState": "Error"
-						},
-						{
-							"Name": "ITelO Vault",
-							"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
-							"Id": "HT-1007",
-							"SubCategoryId": "PDAs & Organizers",
-							"icon": "../images/Woman_avatar_01.png",
-							"state": "Success",
-							"info": "29.45 EUR",
-							"infoState": "Success"
-						},
-						{
-							"Name": "Notebook Professional 15",
-							"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
-							"Id": "HT-1010",
-							"SubCategoryId": "Notebooks",
-							"icon": "../images/Woman_avatar_01.png",
-							"state": "Success",
-							"info": "29.45 EUR",
-							"infoState": "Success"
-						},
-						{
-							"Name": "Notebook Professional 26",
-							"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
-							"Id": "HT-1022",
-							"SubCategoryId": "Notebooks",
-							"icon": "../images/Woman_avatar_01.png",
-							"state": "Success",
-							"info": "29.45 EUR",
-							"infoState": "Success"
-						},
-						{
-							"Name": "Notebook Professional 27",
-							"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
-							"Id": "HT-1024",
-							"SubCategoryId": "Notebooks",
-							"icon": "../images/Woman_avatar_01.png",
-							"state": "Success",
-							"info": "29.45 EUR",
-							"infoState": "Success"
 						}
 					]
 				},
@@ -937,20 +881,28 @@ function (
 				layout: oSettings,
 				items: [
 					new Card({
-						manifest: oManifest_ListCard,
+						header: new Header({ title: "Title" }),
+						content: new Button({ text: "Text" }),
 						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
 					}),
 					new Card({
-						manifest: oManifest_ListCard,
+						header: new Header({ title: "Title" }),
+						content: new Button({ text: "Text" }),
 						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
 					}),
 					new Card({
-						manifest: oManifest_ListCard,
+						header: new Header({ title: "Title" }),
+						content: new Button({ text: "Text" }),
 						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
 					}),
-					new GenericTile({
+					this.oTile = new GenericTile({
 						header: "headerText 1",
 						subheader: "subheaderText",
+						press: function () {},
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
+					}),
+					this.oCard = new IntegrationCard({
+						manifest: oIntegrationCardManifest,
 						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
 					})
 				]
@@ -963,7 +915,8 @@ function (
 		afterEach: function () {
 			this.oGrid.destroy();
 			this.oButton.destroy();
-
+			this.oCard.destroy();
+			this.oTile.destroy();
 		}
 	});
 
@@ -1010,5 +963,69 @@ function (
 
 		// Assert
 		assert.strictEqual(oItemWrapper1.getAttribute("tabindex"), "0",  "Focus should be on the first GridItem");
+	});
+
+
+	QUnit.test("Tabbing tough a Card should leave the grid container at last focusable element", function (assert) {
+
+		// Arrange
+		var oItemWrapperTile = this.oGrid.getDomRef().children[4],
+			oTile = oItemWrapperTile.children[0],
+			oForwardTabSpy = this.spy(this.oGrid, "forwardTab");
+
+		oItemWrapperTile.focus();
+		Core.applyChanges();
+		// Act
+		qutils.triggerKeydown(oItemWrapperTile, KeyCodes.TAB, false, false, false);
+
+		// Assert
+		assert.strictEqual(oForwardTabSpy.notCalled, true, "Focus should not leave the GridContainer");
+
+		oTile.focus();
+		Core.applyChanges();
+		// Act
+		qutils.triggerKeydown(oTile, KeyCodes.TAB, false, false, false);
+
+		// Assert
+		assert.strictEqual(oForwardTabSpy.called, true, "Focus should leave the GridContainer");
+	});
+
+	QUnit.test("Tabbing tough a List Card should leave the grid container at last focusable element", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			// Arrange
+			this.oGrid._itemNavigation.setFocusedIndex(4);
+			var listDomRef = this.oCard.getCardContent()._getList().getDomRef(),
+				firstListItem = listDomRef.children[1].children[0],
+				oForwardTabSpy = sinon.spy(this.oGrid, "forwardTab");
+
+			firstListItem.focus();
+			Core.applyChanges();
+			// Act
+			qutils.triggerKeydown(firstListItem, KeyCodes.TAB, false, false, false);
+
+			// Assert
+			assert.strictEqual(oForwardTabSpy.called, true, "Focus should leave the GridContainer");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Press on wrapper should transfer events to the inner control", function (assert) {
+
+		// Arrange
+		var oItemWrapper = this.oGrid.getDomRef().children[4],
+			oAttachPressSpy = sinon.spy(this.oTile, "firePress");
+		oItemWrapper.focus();
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerKeyup(oItemWrapper, KeyCodes.ENTER, false, false, false);
+
+		// Assert
+		assert.strictEqual(oAttachPressSpy.callCount, 1, "Tile is pressed");
 	});
 });

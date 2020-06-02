@@ -6,7 +6,6 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/
 
 		onInit: function (oEvent) {
 			var that = this;
-			this.addHighlightStyle();
 			this.sMockServerBaseUri = "test-resources/sap/ui/core/demokit/sample/DataStateOData/mockdata/";
 			this.sServiceUri = "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/";
 			this.oMockServer = new MockServer({rootUri : this.sServiceUri});
@@ -40,71 +39,20 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/
 				that.applyDataStateChanged(oDataState); //visualize the data state changes on value
 			});
 		},
-		applyPropertyHighlight : function(aDataStates) {
-			var that = this;
-			setTimeout(function(){
-				for (var i = 0; i < aDataStates.length; i++) {
-					var oPropText = that.byId("property_" + aDataStates[i] + "_new");
-					if (oPropText) {
-						oPropText.addStyleClass("highlight").removeStyleClass("diminished");
-					}
-				 }
-			},1);
-		},
-		removePropertyHighlight: function() {
-			var aDataStates = ["invalidValue", "value","originalValue","laundering","dirty"];
-			for (var i = 0; i < aDataStates.length; i++) {
-				this.byId("property_" + aDataStates[i] + "_new").removeStyleClass("highlight").addStyleClass("diminished");
-			}
-		},
 		applyDataStateChanged: function(oDataState) {
-			this.removePropertyHighlight();
 			var aChangedProperties = [],
 				//that = this,
 				oChanges = oDataState.getChanges();
-			/*
-			function applyMessages(sProperty) {
-				if (sProperty === "messages" || sProperty == "controlMessages" || sProperty == "modelMessages") {
-					var oMessageChange = oChanges[sProperty];
-					for (var n in oMessageChange) {
-						var aMessages = oMessageChange[n],
-							aJSONMessages = [];
-						if (aMessages) {
-							for (var i = 0; i < aMessages.length;i++) {
-								aJSONMessages.push({
-									text: aMessages[i].getMessage(),
-									type: aMessages[i].getType()
-								});
-							}
-						}
-						if (!that.oDataStateModel.getProperty("/" + sProperty)) {
-							that.oDataStateModel.setProperty("/" + sProperty,{});
-						}
-						that.oDataStateModel.setProperty("/" + sProperty + "/" + n, aJSONMessages);
-					}
-					return true;
-				}
-			}*/
+
 			for (var n in oDataState.mProperties) {
 					if (n in oChanges) {
 						aChangedProperties.push(n);
 						this.oDataStateModel.setProperty("/" + n, extend({}, oChanges[n]));
-					} else {
-						//clear old value
-						//this.oDataStateModel.setProperty("/" + n + "/oldValue",null);
 					}
 			}
 			if (oChanges['dirty']) {
 				this.oDataStateModel.setProperty("/dirty", extend({}, oChanges['dirty']));
 			}
-
-			this.applyPropertyHighlight(aChangedProperties);
-		},
-		addHighlightStyle: function() {
-			var oStyle = document.createElement("STYLE");
-			oStyle.innerText = "@keyframes animationFrames{ 0% { background-color: #B664B9; } 100% { background-color: #F9F8F6;} }.diminished {color:#999 !important; background-color: #FFF; } .highlight { color:#B664B9!important; background-color:#FFF!important; animation: animationFrames ease-out 500ms;}";
-			oStyle.setAttribute("type","text/css");
-			document.getElementsByTagName("HEAD")[0].appendChild(oStyle);
 		}
 	});
 

@@ -1882,6 +1882,8 @@ sap.ui.define([
 			this.oSPCGrid = new SinglePlanningCalendarGrid({
 				startDate: new Date(2017, 10, 13, 0, 0, 0)
 			});
+			this.oSPCGrid.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
 			this.oSPCGrid.destroy();
@@ -1922,6 +1924,26 @@ sap.ui.define([
 		// assert
 		assert.deepEqual(newAppPos.startDate, oAppEndDate, "Start date hout is correct");
 		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 2, 30, 0), "End date hour is correct");
+	});
+
+	QUnit.test("_calcResizeNewHoursAppPos: Calculate new size of the appointment when 'startHour' and 'endHour' are set", function(assert) {
+		// prepare
+		var	oAppStartDate = new Date(2020, 4, 26, 8, 0, 0),
+			oAppEndDate = new Date(2020, 4, 26, 9, 0, 0),
+			newAppPos;
+
+		this.oSPCGrid.setFullDay(false);
+		this.oSPCGrid.setStartHour(8);
+		this.oSPCGrid.setEndHour(16);
+		this.oSPCGrid.setStartDate(new Date(2020, 4, 26, 0, 0, 0));
+		sap.ui.getCore().applyChanges();
+
+		// act - resize appointment's end to 10:00
+		newAppPos = this.oSPCGrid._calcResizeNewHoursAppPos(oAppStartDate, oAppEndDate, 3, true);
+
+		// assert
+		assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
+		assert.deepEqual(newAppPos.endDate, new Date(2020, 4, 26, 10, 0, 0), "End date hour is correct");
 	});
 
 	QUnit.module("Helper private methods", {

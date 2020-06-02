@@ -40,20 +40,30 @@ sap.ui.define([
 			}
 		},
 
-		formatMessageSubtitle : function (sMessageFullTarget) {
-			var i;
+		formatMessageDescription : function (oMessage) {
+			var sMessageDescription = oMessage.description,
+				sResult = sMessageDescription ? sMessageDescription + "\n\n" : "";
+
+			return sResult + "See technical details for more information.";
+		},
+
+		formatMessageSubtitle : function (oMessage) {
+			var i,
+				sMessageFullTarget = oMessage.fullTarget,
+				sResult = oMessage.additionalText ? oMessage.additionalText + "\n" : "";
 
 			if (sMessageFullTarget) {
 				i = sMessageFullTarget.lastIndexOf("ItemPosition=");
 				if (i >= 0) {
-					return "Sales Order Item " + sMessageFullTarget.slice(i + 13, i + 25);
+					return sResult + "Sales Order Item " + sMessageFullTarget.slice(i + 13, i + 25);
 				} else {
 					i = sMessageFullTarget.lastIndexOf("SalesOrderSet(");
 					if (i >= 0) {
-						return "Sales Order " + sMessageFullTarget.slice(i + 14, i + 26);
+						return sResult + "Sales Order " + sMessageFullTarget.slice(i + 14, i + 26);
 					}
 				}
 			}
+			return sResult;
 		},
 
 		onCloseMessageDetails : function (oEvent) {

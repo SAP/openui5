@@ -404,7 +404,7 @@ sap.ui.define([
 			};
 
 			var oAppVariantData = {
-				idRunningApp: "TestId",
+				referenceAppId: "TestId",
 				title: "Title",
 				subTitle: "Subtitle",
 				description: "Description",
@@ -428,7 +428,7 @@ sap.ui.define([
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
-			sandbox.stub(AppVariantManager.prototype, "getRootControl").returns(oAppComponent);
+			sandbox.stub(RtaAppVariantFeature, "_determineSelector").returns(oAppComponent);
 			var oProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").resolves(oAppVariantData);
 
 			var oSaveAsAppVariantStub = sandbox.stub(AppVariantWriteAPI, "saveAs").returns(Promise.reject({saveAsFailed: true}));
@@ -442,7 +442,7 @@ sap.ui.define([
 
 			var oGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 
-			return RtaAppVariantFeature.onSaveAs(false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
+			return RtaAppVariantFeature.onSaveAs(false, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
 				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called 10 times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
@@ -462,7 +462,7 @@ sap.ui.define([
 			};
 
 			var oAppVariantData = {
-				idRunningApp: "TestId",
+				referenceAppId: "TestId",
 				title: "Title",
 				subTitle: "Subtitle",
 				description: "Description",
@@ -487,7 +487,7 @@ sap.ui.define([
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
-			sandbox.stub(AppVariantManager.prototype, "getRootControl").returns(oAppComponent);
+			sandbox.stub(RtaAppVariantFeature, "_determineSelector").returns(oAppComponent);
 			var oProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").resolves(oAppVariantData);
 			var oSaveAsAppVariantStub = sandbox.stub(AppVariantWriteAPI, "saveAs").resolves({
 				response: {
@@ -501,7 +501,7 @@ sap.ui.define([
 			var oNotifyKeyUserWhenPublishingIsReadySpy = sandbox.spy(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady");
 			var oNavigateToFLPHomepage = sandbox.stub(AppVariantUtils, "navigateToFLPHomepage").resolves();
 
-			return RtaAppVariantFeature.onSaveAs(false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
+			return RtaAppVariantFeature.onSaveAs(false, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
 				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.save method is called once");
@@ -525,7 +525,7 @@ sap.ui.define([
 			};
 
 			var oAppVariantData = {
-				idRunningApp: "TestId",
+				referenceAppId: "TestId",
 				title: "Title",
 				subTitle: "Subtitle",
 				description: "Description",
@@ -550,7 +550,7 @@ sap.ui.define([
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
-			sandbox.stub(AppVariantManager.prototype, "getRootControl").returns(oAppComponent);
+			sandbox.stub(RtaAppVariantFeature, "_determineSelector").returns(oAppComponent);
 
 			var oProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").resolves(oAppVariantData);
 			var oSaveAsAppVariantStub = sandbox.stub(AppVariantWriteAPI, "saveAs").resolves({
@@ -567,7 +567,7 @@ sap.ui.define([
 			var oTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves({response : {IAMId : "IAMId"}});
 			var oNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
 
-			return RtaAppVariantFeature.onSaveAs(false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
+			return RtaAppVariantFeature.onSaveAs(false, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
 				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
@@ -591,7 +591,7 @@ sap.ui.define([
 			};
 
 			var oAppVariantData = {
-				idRunningApp: "TestId",
+				referenceAppId: "TestId",
 				title: "Title",
 				subTitle: "Subtitle",
 				description: "Description",
@@ -616,7 +616,7 @@ sap.ui.define([
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
-			sandbox.stub(AppVariantManager.prototype, "getRootControl").returns(oAppComponent);
+			sandbox.stub(RtaAppVariantFeature, "_determineSelector").returns(oAppComponent);
 
 			var oProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").resolves(oAppVariantData);
 			var oSaveAsAppVariantStub = sandbox.stub(AppVariantWriteAPI, "saveAs").resolves({
@@ -631,7 +631,7 @@ sap.ui.define([
 			var oTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves({response : {IAMId : "IAMId"}});
 			var oNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
 
-			return RtaAppVariantFeature.onSaveAs(false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
+			return RtaAppVariantFeature.onSaveAs(false, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
 				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
@@ -640,6 +640,26 @@ sap.ui.define([
 				assert.equal(oTriggerCatalogPublishing.callCount, 1, "then the triggerCatalogPublishing method is not called once");
 				assert.equal(oNotifyKeyUserWhenPublishingIsReady.callCount, 1, "then the notifyKeyUserWhenPublishingIsReady method is not called once");
 				assert.equal(oGetOverviewStub.callCount, 1, "then the overview loads only once after triggering catalog assignment, since it is closed it will not open again after success messagef");
+			});
+		});
+
+		QUnit.test("when onSaveAs() is bound with null and is triggered from RTA toolbar", function(assert) {
+			var oSelectedAppVariant = {
+				"sap.app" : {
+					id : "TestId",
+					crossNavigation: {
+						inbounds: {}
+					}
+				},
+				"sap.ui5" : {
+					componentName: "TestIdBaseApp"
+				}
+			};
+
+			var fnTriggerSaveAs = RtaAppVariantFeature.onSaveAs.bind(null, true, false, Layer.CUSTOMER, oSelectedAppVariant);
+
+			assert.throws(function() {
+				fnTriggerSaveAs();
 			});
 		});
 
@@ -657,7 +677,7 @@ sap.ui.define([
 			};
 
 			var oAppVariantData = {
-				idRunningApp: "RunningAppId",
+				referenceAppId: "RunningAppId",
 				title: "Title",
 				subTitle: "Subtitle",
 				description: "Description",
@@ -684,7 +704,7 @@ sap.ui.define([
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
-			sandbox.stub(AppVariantManager.prototype, "getRootControl").returns(oAppComponent);
+			sandbox.stub(RtaAppVariantFeature, "_determineSelector").returns(oAppComponent);
 
 			var oProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").resolves(oAppVariantData);
 			var oSaveAsAppVariantStub = sandbox.stub(AppVariantWriteAPI, "saveAs").resolves({
@@ -700,7 +720,9 @@ sap.ui.define([
 			var oNotifyKeyUserWhenPublishingIsReadySpy = sandbox.spy(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady");
 			var oGetOverviewStub = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 
-			return RtaAppVariantFeature.onSaveAs(true, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
+			var fnTriggerSaveAs = RtaAppVariantFeature.onSaveAs.bind(RtaAppVariantFeature, true, false, Layer.CUSTOMER, oSelectedAppVariant);
+
+			return fnTriggerSaveAs().then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
 				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
@@ -724,7 +746,7 @@ sap.ui.define([
 			};
 
 			var oAppVariantData = {
-				idRunningApp: "TestId",
+				referenceAppId: "TestId",
 				title: "Title",
 				subTitle: "Subtitle",
 				description: "Description",
@@ -751,7 +773,7 @@ sap.ui.define([
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
-			sandbox.stub(AppVariantManager.prototype, "getRootControl").returns(oAppComponent);
+			sandbox.stub(RtaAppVariantFeature, "_determineSelector").returns(oAppComponent);
 
 			var oProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").resolves(oAppVariantData);
 			var oSaveAsAppVariantStub = sandbox.stub(AppVariantWriteAPI, "saveAs").resolves({
@@ -766,7 +788,7 @@ sap.ui.define([
 			var oNotifyKeyUserWhenPublishingIsReadySpy = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
 			var oNavigateToFLPHomepage = sandbox.stub(AppVariantUtils, "navigateToFLPHomepage").resolves();
 
-			return RtaAppVariantFeature.onSaveAs(true, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
+			return RtaAppVariantFeature.onSaveAs(true, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
 				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");

@@ -54,7 +54,8 @@ sap.ui.define([
 	return function (oProperties) {
 		return function (oControl) {
 			var bIsMatching = true;
-			jQueryDOM.each(oProperties, function(sPropertyName, oPropertyValue) {
+
+			jQueryDOM.each(oProperties, function (sPropertyName, oPropertyValue) {
 				var fnProperty = oControl["get" + capitalize(sPropertyName, 0)];
 
 				if (!fnProperty) {

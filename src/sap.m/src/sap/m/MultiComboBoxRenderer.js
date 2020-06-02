@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['./ComboBoxBaseRenderer','./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/Device'],
-	function(ComboBoxBaseRenderer, ComboBoxTextFieldRenderer, Renderer, Device) {
+sap.ui.define(['./ComboBoxBaseRenderer','./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/Core'],
+	function(ComboBoxBaseRenderer, ComboBoxTextFieldRenderer, Renderer, Core) {
 	"use strict";
 
 	/**
@@ -43,6 +43,21 @@ sap.ui.define(['./ComboBoxBaseRenderer','./ComboBoxTextFieldRenderer', 'sap/ui/c
 		oInvisibleTextId = oControl._oTokenizer && oControl._oTokenizer.getTokensInfoId();
 
 		return (sAriaDescribedBy || "") + " " + oInvisibleTextId;
+	};
+
+	/**
+	 * Retrieves the accessibility state of the control.
+	 *
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 * @returns {object} The accessibility state of the control
+	 */
+	MultiComboBoxRenderer.getAccessibilityState = function (oControl) {
+		var mAccessibilityState = ComboBoxBaseRenderer.getAccessibilityState.apply(this, arguments),
+			oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+
+		mAccessibilityState.roledescription = oResourceBundle.getText("MULTICOMBOBOX_ARIA_ROLE_DESCRIPTION");
+
+		return mAccessibilityState;
 	};
 
 	MultiComboBoxRenderer.prependInnerContent = function (oRm, oControl) {

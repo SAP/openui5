@@ -471,6 +471,7 @@ function(
 	 * @private
 	 */
 	PlanningCalendarHeader.prototype._convertViewSwitchToSelect = function () {
+		this._oViewSwitch._bForcedSelectMode = true;
 		this._oViewSwitch._toSelectMode();
 	};
 
@@ -479,6 +480,7 @@ function(
 	 * @private
 	 */
 	PlanningCalendarHeader.prototype._convertViewSwitchToSegmentedButton = function () {
+		this._oViewSwitch._bForcedSelectMode = false;
 		this._oViewSwitch._toNormalMode();
 	};
 

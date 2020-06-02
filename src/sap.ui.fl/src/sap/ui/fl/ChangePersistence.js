@@ -291,7 +291,7 @@ sap.ui.define([
 
 	ChangePersistence.prototype._getAllCtrlVariantChanges = function(oChangeFileContent, bIncludeCtrlVariants, fnFilter) {
 		if (!bIncludeCtrlVariants) {
-			return VariantManagementState.loadInitialChanges({reference: this._mComponent.name});
+			return VariantManagementState.getInitialChanges({reference: this._mComponent.name});
 		}
 		return ["variants", "variantChanges", "variantDependentControlChanges", "variantManagementChanges"]
 			.reduce(function(aResult, sVariantChangeType) {
@@ -650,7 +650,7 @@ sap.ui.define([
 		return this._bChangesMapCreated;
 	};
 
-	function _changesHavingCorrectViewPrefix(mPropertyBag, oChange) {
+	ChangePersistence.prototype.changesHavingCorrectViewPrefix = function(mPropertyBag, oChange) {
 		var oModifier = mPropertyBag.modifier;
 		var oAppComponent = mPropertyBag.appComponent;
 		var oSelector = oChange.getSelector();
@@ -682,7 +682,7 @@ sap.ui.define([
 			return sSelectorIdViewPrefix === sViewId;
 		}
 		return false;
-	}
+	};
 
 	/**
 	 * Gets the changes for the given view id. The complete view prefix has to match.
@@ -709,37 +709,8 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.getChangesForView = function(mPropertyBag) {
 		return this.getChangesForComponent(mPropertyBag).then(function(aChanges) {
-			return aChanges.filter(_changesHavingCorrectViewPrefix.bind(this, mPropertyBag));
+			return aChanges.filter(this.changesHavingCorrectViewPrefix.bind(this, mPropertyBag));
 		}.bind(this));
-	};
-
-	/**
-	 * Gets the changes for the given extension point.
-	 *
-	 * @param {object} mPropertyBag Additional data that are needed for reading of changes
-	 * @param {string} mPropertyBag.viewId ID of the view
-	 * @param {string} mPropertyBag.name Name of the extension point
-	 * @param {sap.ui.core.Component} mPropertyBag.appComponent Application component for the extension point
-	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier Responsible modifier
-	 * @returns {Promise} Resolving with an array of changes
-	 * @private
-	 * @restricted sap.ui.fl.ExtensionPointProcessor
-	 */
-	ChangePersistence.prototype.getChangesForExtensionPoint = function(mPropertyBag) {
-		var isChangeValidForExtensionPoint = function(oChange) {
-			var sName = oChange.getSelector().name;
-			if (sName !== mPropertyBag.name) {
-				return false;
-			}
-			return _changesHavingCorrectViewPrefix(mPropertyBag, oChange);
-		};
-		if (!mPropertyBag.name) {
-			Log.warning("Missing name from extension point info!");
-			return Promise.resolve([]);
-		}
-		return this.getChangesForComponent().then(function(aChanges) {
-			return aChanges.filter(isChangeValidForExtensionPoint);
-		});
 	};
 
 	/**

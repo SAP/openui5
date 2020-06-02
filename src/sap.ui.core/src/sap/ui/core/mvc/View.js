@@ -12,7 +12,7 @@ sap.ui.define([
 	"./ViewRenderer",
 	"sap/base/assert",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/base/util/extend"
 ],
 	function(
 		ManagedObject,
@@ -23,7 +23,7 @@ sap.ui.define([
 		ViewRenderer,
 		assert,
 		Log,
-		jQuery
+		extend
 	) {
 	"use strict";
 
@@ -277,7 +277,7 @@ sap.ui.define([
 		//clone static preprocessor settings
 		if (View._mPreprocessors[sViewType] && View._mPreprocessors[sViewType][sType]) {
 			aGlobalPreprocessors = View._mPreprocessors[sViewType][sType].map(function(oProcessor) {
-				return jQuery.extend({}, oProcessor);
+				return Object.assign({}, oProcessor);
 			});
 		}
 
@@ -293,7 +293,7 @@ sap.ui.define([
 			var bIsOnDemand = !aLocalPreprocessors[i].preprocessor;
 			if (bIsOnDemand && oOnDemandPreprocessor) {
 				// ondemand preprocessor activated - extend the local config
-				aPreprocessors.unshift(jQuery.extend(aLocalPreprocessors[i], oOnDemandPreprocessor));
+				aPreprocessors.unshift(extend(aLocalPreprocessors[i], oOnDemandPreprocessor));
 			} else if (!bIsOnDemand) {
 				aPreprocessors.push(aLocalPreprocessors[i]);
 			}
@@ -316,7 +316,7 @@ sap.ui.define([
 		}
 
 		// shallow copy to avoid issues when manipulating the internal object structure
-		oView.mPreprocessors = jQuery.extend({}, mSettings.preprocessors);
+		oView.mPreprocessors = Object.assign({}, mSettings.preprocessors);
 		for (var _sType in oViewClass.PreprocessorType) {
 			// build the array structure
 			var sType = oViewClass.PreprocessorType[_sType];
@@ -450,7 +450,7 @@ sap.ui.define([
 					}
 					var mCustomSettings = CustomizingConfiguration.getCustomProperties(that.sViewName, sId, that);
 					if (mCustomSettings) {
-						mSettings = jQuery.extend(mSettings, mCustomSettings); // override original property initialization with customized property values
+						mSettings = extend(mSettings, mCustomSettings); // override original property initialization with customized property values
 					}
 				}
 			};
@@ -1101,7 +1101,7 @@ sap.ui.define([
 			var customViewConfig = CustomizingConfiguration.getViewReplacement(oView.viewName, ManagedObject._sOwnerId);
 			if (customViewConfig) {
 				Log.info("Customizing: View replacement for view '" + oView.viewName + "' found and applied: " + customViewConfig.viewName + " (type: " + customViewConfig.type + ")");
-				jQuery.extend(oView, customViewConfig);
+				extend(oView, customViewConfig);
 			} else {
 				Log.debug("Customizing: no View replacement found for view '" + oView.viewName + "'.");
 			}

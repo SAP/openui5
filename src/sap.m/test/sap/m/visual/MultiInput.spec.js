@@ -139,16 +139,16 @@ describe('sap.m.MultiInput', function() {
 			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_suggestions_focused");
 
 			browser.actions().sendKeys("A").perform();
-			expect(takeScreenshot(oMultiInput)).toLookAs("suggestions_visible");
+			expect(takeScreenshot()).toLookAs("suggestions_visible");
 
 			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
-			expect(takeScreenshot(oMultiInput)).toLookAs("group_header_focused");
+			expect(takeScreenshot()).toLookAs("group_header_focused");
 
 			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
-			expect(takeScreenshot(oMultiInput)).toLookAs("first_suggestion_focused");
+			expect(takeScreenshot()).toLookAs("first_suggestion_focused");
 
 			browser.actions().sendKeys("A").perform();
-			expect(takeScreenshot(oMultiInput)).toLookAs("input_field_focused");
+			expect(takeScreenshot()).toLookAs("input_field_focused");
 		});
 	});
 

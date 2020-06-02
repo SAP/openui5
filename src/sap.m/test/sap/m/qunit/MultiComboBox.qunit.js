@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/m/ComboBoxBaseRenderer",
 	"sap/ui/Device",
 	"jquery.sap.mobile",
+	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/m/InputBase",
 	"sap/m/Link",
@@ -33,6 +34,7 @@ sap.ui.define([
 	ComboBoxBaseRenderer,
 	Device,
 	jQuery,
+	Core,
 	coreLibrary,
 	InputBase,
 	Link,
@@ -5220,9 +5222,45 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Picker icon user interaction tests", function(assert) {
+		var aItems = [
+			new Item({key: "Item1", text: "Item1"}),
+			new Item({key: "Item2", text: "Item2"}),
+			new Item({key: "Item3", text: "Item3"}),
+			new Item({key: "Item4", text: "Item4"})
+		];
+
+		// Arrange
+		var oMultiComboBox = new MultiComboBox({items: aItems}).placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_UP);
+		this.clock.tick(300);
+
+		// Act
+		oMultiComboBox._handlePopupOpenAndItemsLoad(true); // Icon press
+		this.clock.tick(300);
+
+		assert.strictEqual(oMultiComboBox._getFocusedItem(), aItems[1], "The second item should be focused on icon press");
+
+		// Act
+		oMultiComboBox._bShouldClosePicker = true; // Simulate opened picker
+		oMultiComboBox._handlePopupOpenAndItemsLoad(true); // Icon press
+		this.clock.tick(300);
+
+		assert.strictEqual(oMultiComboBox.getValue(), "", "The value should be cleared when closing the picker with icon press");
+
+		// clean
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.module("Accessibility");
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 		var oMultiComboBox = new MultiComboBox({
 			value: "Value",
 			tooltip: "Tooltip",
@@ -5233,11 +5271,16 @@ sap.ui.define([
 				new Item({key: "Item3", text: "Item3"})
 			]
 		});
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		Core.applyChanges();
+
 		assert.ok(!!oMultiComboBox.getAccessibilityInfo, "MultiComboBox has a getAccessibilityInfo function");
 		var oInfo = oMultiComboBox.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oMultiComboBox.getRenderer().getAriaRole(), "AriaRole");
-		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTICOMBO"), "Type");
+		assert.strictEqual(oInfo.type, oResourceBundle.getText("ACC_CTR_TYPE_MULTICOMBO"), "Type");
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-roledescription"), oResourceBundle.getText("MULTICOMBOBOX_ARIA_ROLE_DESCRIPTION"), "aria-roledescription attribute is rendered correctly in the DOM");
 		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");

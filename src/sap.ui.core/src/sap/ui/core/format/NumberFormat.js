@@ -9,9 +9,9 @@ sap.ui.define([
 	'sap/ui/core/LocaleData',
 	'sap/base/Log',
 	'sap/base/assert',
-	'sap/ui/thirdparty/jquery'
+	'sap/base/util/extend'
 ],
-	function(BaseObject, Locale, LocaleData, Log, assert, jQuery) {
+	function(BaseObject, Locale, LocaleData, Log, assert, extend) {
 	"use strict";
 
 
@@ -330,7 +330,7 @@ sap.ui.define([
 		var oFormat = this.createInstance(oFormatOptions, oLocale),
 			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.FLOAT);
 
-		oFormat.oFormatOptions = jQuery.extend(false, {}, this.oDefaultFloatFormat, oLocaleFormatOptions, oFormatOptions);
+		oFormat.oFormatOptions = extend({}, this.oDefaultFloatFormat, oLocaleFormatOptions, oFormatOptions);
 		return oFormat;
 	};
 
@@ -385,7 +385,7 @@ sap.ui.define([
 		var oFormat = this.createInstance(oFormatOptions, oLocale),
 			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.INTEGER);
 
-		oFormat.oFormatOptions = jQuery.extend(false, {}, this.oDefaultIntegerFormat, oLocaleFormatOptions, oFormatOptions);
+		oFormat.oFormatOptions = extend({}, this.oDefaultIntegerFormat, oLocaleFormatOptions, oFormatOptions);
 		return oFormat;
 	};
 
@@ -504,7 +504,7 @@ sap.ui.define([
 		}
 		var oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.CURRENCY, sContext);
 
-		oFormat.oFormatOptions = jQuery.extend(false, {}, this.oDefaultCurrencyFormat, oLocaleFormatOptions, oFormatOptions);
+		oFormat.oFormatOptions = extend({}, this.oDefaultCurrencyFormat, oLocaleFormatOptions, oFormatOptions);
 
 		// Trailing currency code option
 		//
@@ -582,7 +582,7 @@ sap.ui.define([
 		var oFormat = this.createInstance(oFormatOptions, oLocale),
 			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.UNIT);
 
-		oFormat.oFormatOptions = jQuery.extend(false, {}, this.oDefaultUnitFormat, oLocaleFormatOptions, oFormatOptions);
+		oFormat.oFormatOptions = extend({}, this.oDefaultUnitFormat, oLocaleFormatOptions, oFormatOptions);
 		return oFormat;
 	};
 
@@ -638,7 +638,7 @@ sap.ui.define([
 		var oFormat = this.createInstance(oFormatOptions, oLocale),
 			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.PERCENT);
 
-		oFormat.oFormatOptions = jQuery.extend(false, {}, this.oDefaultPercentFormat, oLocaleFormatOptions, oFormatOptions);
+		oFormat.oFormatOptions = extend({}, this.oDefaultPercentFormat, oLocaleFormatOptions, oFormatOptions);
 		return oFormat;
 	};
 
@@ -668,8 +668,9 @@ sap.ui.define([
 		if (oFormatOptions) {
 			if (oFormatOptions.pattern) {
 				oPatternOptions = this.parseNumberPattern(oFormatOptions.pattern);
-				jQuery.each(oPatternOptions, function(sName, vOption) {
-					oFormatOptions[sName] = vOption;
+
+				Object.keys(oPatternOptions).forEach(function(sName) {
+					oFormatOptions[sName] = oPatternOptions[sName];
 				});
 			}
 			if (oFormatOptions.emptyString !== undefined) {
@@ -936,7 +937,7 @@ sap.ui.define([
 			iBaseGroupSize = 0,
 			bNegative = vValue < 0,
 			iDotPos = -1,
-			oOptions = jQuery.extend({}, this.oFormatOptions),
+			oOptions = Object.assign({}, this.oFormatOptions),
 			oOrigOptions = this.oOriginalFormatOptions,
 			bIndianCurrency = oOptions.type === mNumberType.CURRENCY && sMeasure === "INR" &&
 				this.oLocale.getLanguage() === "en" && this.oLocale.getRegion() === "IN",

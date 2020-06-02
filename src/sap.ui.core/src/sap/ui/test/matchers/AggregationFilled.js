@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/Matcher",
 	"sap/base/strings/capitalize",
 	"sap/ui/thirdparty/jquery"
-], function(Matcher, capitalize, jQueryDOM) {
+], function (Matcher, capitalize, jQueryDOM) {
 	"use strict";
 
 	/**
@@ -30,14 +30,14 @@ sap.ui.define([
 	 */
 	return Matcher.extend("sap.ui.test.matchers.AggregationFilled", /** @lends sap.ui.test.matchers.AggregationFilled.prototype */ {
 
-		metadata : {
-			publicMethods : [ "isMatching" ],
-			properties : {
+		metadata: {
+			publicMethods: ["isMatching"],
+			properties: {
 				/**
 				 * The name of the aggregation that is used for matching.
 				 */
-				name : {
-					type : "string"
+				name: {
+					type: "string"
 				}
 			}
 		},
@@ -49,7 +49,7 @@ sap.ui.define([
 		 * @return {boolean} true if the Aggregation set in the property aggregationName is filled, false if it is not.
 		 * @public
 		 */
-		isMatching : function (oControl) {
+		isMatching: function (oControl) {
 			var sAggregationName = this.getName(),
 				fnAggregation = oControl["get" + capitalize(sAggregationName, 0)];
 

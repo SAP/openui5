@@ -43,7 +43,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery"],
 		 * @param {string} sMimeType file mime-type
 		 * @param {string} sCharset file charset
 		 * @param {boolean} [bByteOrderMark] Whether to prepend a unicode byte order mark (only applies for utf-8 charset).
-		 *                                   Default is <code>false</code> except when <code>sFileExtension</code> = <code>csv</code> it is <code>true</code> (compatibility reasons).
+		 *                                   Default is <code>false</code> except when <code>sFileExtension</code> === 'csv' and <code>sCharset</code> === 'utf-8' it is <code>true</code> (compatibility reasons).
 		 *
 		 * @public
 		 */

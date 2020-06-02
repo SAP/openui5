@@ -2,7 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/test/matchers/Matcher'], function(Matcher) {
+sap.ui.define([
+	'sap/ui/test/matchers/Matcher'
+], function (Matcher) {
 	"use strict";
 
 	/**
@@ -91,18 +93,32 @@ sap.ui.define(['sap/ui/test/matchers/Matcher'], function(Matcher) {
 					var sContextPathToMatch = _getFormattedPath(sContextPath, sModelName);
 					bContextMatches = oObjectBindingInfo.path === sContextPathToMatch;
 
-					this._oLogger.debug("Control '" + oControl + "'" + (bContextMatches ? " has" : " does not have ") +
-						" object binding with context path '" + sContextPathToMatch + "' for model '" + sModelName + "'");
+					if (bContextMatches) {
+						this._oLogger.debug("Control '" + oControl + "' has object binding with the expected context path '" +
+							sContextPathToMatch + "' for model '" + sModelName + "'");
+					} else {
+						this._oLogger.debug("Control '" + oControl + "' has object binding with context path '" +
+							oObjectBindingInfo.path + "' for model '" + sModelName + "' but should have context path '" + sContextPathToMatch + "'");
+					}
 				} else {
 					bContextMatches = !!oBindingContext && oBindingContext.getPath() === sContextPath;
 
-					this._oLogger.debug("Control '" + oControl + "' " + (bContextMatches ? "has" : "does not have") +
-						" binding context with path '" + sContextPath + "' for model '" + sModelName + "'");
+					if (bContextMatches) {
+						this._oLogger.debug("Control '" + oControl + "' has binding context with the expected path '" +
+							sContextPath + "' for model '" + sModelName + "'");
+					} else if (oBindingContext){
+						this._oLogger.debug("Control '" + oControl + "' has binding context with path '" +
+							oBindingContext.getPath() + "' for model '" + sModelName + "' but should have context path '" + sContextPath + "'");
+					} else {
+						this._oLogger.debug("Control '" + oControl + "' does not have a binding context for model '" + sModelName +
+							"' but should have a binding context with path '" + sContextPath + "'");
+					}
 				}
 			}
 
 			if (sPropertyPath) {
 				var sPropertyPathToMatch = _getFormattedPath(sPropertyPath, sModelName, oBindingContext);
+				var aActualPathsForModel = [];
 
 				var aMatchingBindingInfos = Object.keys(oControl.mBindingInfos).filter(function (sBinding) {
 					var mBindingInfo = oControl.mBindingInfos[sBinding];
@@ -111,6 +127,12 @@ sap.ui.define(['sap/ui/test/matchers/Matcher'], function(Matcher) {
 					var aMatchingParts = aBindingParts.filter(function (mPart) {
 						var bPathMatches = mPart.path === sPropertyPathToMatch;
 						var bModelMatches = oObjectBindingInfo || mPart.model === sModelName;
+
+						if (!bPathMatches && bModelMatches) {
+							// for bindings to the matching model, save the actual paths for debug logging
+							aActualPathsForModel.push(mPart.path);
+						}
+
 						return bPathMatches && bModelMatches;
 					});
 
@@ -118,8 +140,17 @@ sap.ui.define(['sap/ui/test/matchers/Matcher'], function(Matcher) {
 				});
 
 				bPropertyPathMatches = !!aMatchingBindingInfos.length;
-				this._oLogger.debug("Control '" + oControl + "' " + (bPropertyPathMatches ? "has" : "does not have") +
-					" binding property path '" + sPropertyPath + "' for model '" + sModelName + "'");
+
+				if (bPropertyPathMatches) {
+					this._oLogger.debug("Control '" + oControl + "' has the expected binding property path '" +
+						sPropertyPath + "' for model '" + sModelName + "'");
+				} else if (aActualPathsForModel.length){
+					this._oLogger.debug("Control '" + oControl + "' has binding property paths ['" +
+						aActualPathsForModel.join("', '") + "'] for model '" + sModelName + "' but should have binding property path '" + sPropertyPathToMatch + "'");
+				} else {
+					this._oLogger.debug("Control '" + oControl + "' has no binding property paths for model '" + sModelName +
+						"' but should have binding property path '" + sPropertyPathToMatch + "'");
+				}
 			}
 
 			return bContextMatches && bPropertyPathMatches;
@@ -135,7 +166,7 @@ sap.ui.define(['sap/ui/test/matchers/Matcher'], function(Matcher) {
 				sFormattedPath = sPath.substring(1);
 			}
 		} else if (sPath.charAt(0) !== sPropertyPathDelimiter) {
-				sFormattedPath = sPropertyPathDelimiter + sPath;
+			sFormattedPath = sPropertyPathDelimiter + sPath;
 		}
 
 		return sFormattedPath;

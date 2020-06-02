@@ -206,7 +206,6 @@ sap.ui.define([
 					this.goToRuleProperties();
 					this.model.setProperty("/selectedRule", newRule);
 					this._updateRuleList();
-					tempLib = [];
 
 					this.treeTable.updateSelectionFromModel();
 				} else {

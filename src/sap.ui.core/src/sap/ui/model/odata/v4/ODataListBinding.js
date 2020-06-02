@@ -1468,6 +1468,10 @@ sap.ui.define([
 			this.oModel.addPrerenderingTask(function () {
 				var bOld = that.bUseExtendedChangeDetection;
 
+				if (that.aContexts === undefined) { // already destroyed
+					oVirtualContext.destroy();
+					return;
+				}
 				if (!that.isRootBindingSuspended()) {
 					// request data (before removing virtual context), but avoid E.C.D.
 					that.bUseExtendedChangeDetection = false;
@@ -1475,7 +1479,7 @@ sap.ui.define([
 					that.bUseExtendedChangeDetection = bOld;
 				}
 				that.oModel.addPrerenderingTask(function () {
-					if (!that.isRootBindingSuspended()) {
+					if (that.aContexts && !that.isRootBindingSuspended()) {
 						// Note: first result of getContexts after refresh is ignored
 						that.sChangeReason = "RemoveVirtualContext";
 						that._fireChange({
@@ -2307,7 +2311,7 @@ sap.ui.define([
 		var bEmpty = this.iCurrentEnd === 0,
 			that = this;
 
-		if (this.aContexts) {
+		if (this.aContexts) { // allow initial call from c'tor via #applyParameters
 			this.aContexts.forEach(function (oContext) {
 				that.mPreviousContextsByPath[oContext.getPath()] = oContext;
 			});

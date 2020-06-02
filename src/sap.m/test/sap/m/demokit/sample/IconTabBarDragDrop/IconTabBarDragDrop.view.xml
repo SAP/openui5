@@ -11,8 +11,14 @@
 		labelSpanL="2"
 		labelSpanM="3"
 		labelSpanS="5">
-		<Label text="Tab Nesting" />
-		<Switch state="false" change=".onTabNestingChange" />
+		<Label text="Maximum Nesting Level" />
+		<StepInput
+				value="0"
+				min="0"
+				max="100"
+				step="1"
+				width="50%"
+				change="onTabNestingChange"/>
 	</f:SimpleForm>
 
 	<IconTabBar

@@ -120,6 +120,27 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		oPage.setShowTitleInHeaderContent(false);
 	});
 
+	QUnit.test("Adapt layout of header clone", function (assert) {
+		var oPage = this.oHeaderView.byId("ObjectPageLayout"),
+			oHeader = Core.byId("UxAP-ObjectPageHeader--header"),
+			oSpy;
+
+		for (var i = 0; i < 10; i++) { // add actions
+			oHeader.addAction(new sap.m.Button({text: "Action to take space"}));
+		}
+		Core.applyChanges();
+		oSpy = sinon.spy(oHeader, "_adaptActions");
+
+		// Act
+		oPage._obtainSnappedTitleHeight(true);
+		// visibility of actions does not affect the final header height
+		// => no adaptation needed when we calculate the header-clone height
+		assert.strictEqual(oSpy.callCount, 0, "actions are not modified");
+
+		//restore
+		oSpy.restore();
+	});
+
 	QUnit.test("titleSelectorTooltip aggregation validation", function (assert) {
 		var oHeader = Core.byId("UxAP-ObjectPageHeader--header"),
 			oLibraryResourceBundleOP = oHeader.oLibraryResourceBundleOP,
@@ -569,9 +590,8 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		QUtils.triggerKeyup(oActionSheetButton.getId(), "SPACE");
 	});
 
-	QUnit.test("_adaptLayoutForDomElement", function (assert) {
+	QUnit.test("_adaptLayout", function (assert) {
 		var oHeader = this.myView.byId("applicationHeader"),
-			$headerDomRef = oHeader.$(),
 			oSpy = sinon.spy(oHeader, "_adaptObjectPageHeaderIndentifierLine");
 
 		this.stub(sap.ui.Device, "system", {
@@ -588,12 +608,12 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		// assert
 		assert.strictEqual(this.myView.byId("installButton").$().css("visibility"), "visible", "Button is visible");
 
-		oHeader._adaptLayoutForDomElement();
+		oHeader._adaptLayout();
 
 		// assert
 		assert.strictEqual(this.myView.byId("installButton").$().css("visibility"), "visible", "Button is visible");
 
-		oHeader._adaptLayoutForDomElement($headerDomRef);
+		oHeader._adaptLayout();
 
 		// assert
 		assert.ok(oSpy.called, "The _adaptObjectPageHeaderIndentifierLine function is called");
@@ -604,7 +624,7 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 
 		var oHeader = this.myView.byId("applicationHeader"),
 			oInvalidateSpy = sinon.spy(oHeader, "invalidate"),
-			oAdaptLayoutSpy = sinon.spy(oHeader, "_adaptLayoutForDomElement");
+			oAdaptLayoutSpy = sinon.spy(oHeader, "_adaptLayout");
 
 		var oActionButton = this.myView.byId("testButton2");
 
@@ -624,18 +644,18 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		oHeader.addEventDelegate(oDelegate);
 
 		assert.notOk(oInvalidateSpy.called, "ObjectPageHeader is not invalidated yet");
-		assert.notOk(oAdaptLayoutSpy.called, "_adaptLayoutForDomElement is not called yet");
+		assert.notOk(oAdaptLayoutSpy.called, "_adaptLayout is not called yet");
 
 		oActionButton.setVisible(false);
 
 		assert.ok(oInvalidateSpy.called, "ObjectPageHeader was invalidated");
 	});
 
-	QUnit.test("_adaptLayoutForDomElement is not called for each action visibility change", function (assert) {
+	QUnit.test("_adaptLayout is not called for each action visibility change", function (assert) {
 		// Arrange
 		var done = assert.async(),
 			oHeader = this.myView.byId("applicationHeader"),
-			oAdaptLayoutSpy = sinon.spy(oHeader, "_adaptLayoutForDomElement"),
+			oAdaptLayoutSpy = sinon.spy(oHeader, "_adaptLayout"),
 			oActionTestButton = this.myView.byId("testButton2"),
 			oActionInstallButton = this.myView.byId("installButton"),
 			oActionCheckBox = this.myView.byId("testCheckBox"),
@@ -644,9 +664,8 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 				oHeader.removeEventDelegate(oDelegate);
 
 				// Assert
-				// "_adaptLayoutForDomElement" is called two times: once from ObjectPageHeader's onAfterRendering function,
-				// and once from ObjectPageLayout's _appendTitleCloneToDOM function.
-				assert.strictEqual(oAdaptLayoutSpy.callCount, 2,
+				// "_adaptLayout" is called once from ObjectPageHeader's onAfterRendering function
+				assert.strictEqual(oAdaptLayoutSpy.callCount, 1,
 					"The layout re-calculations are not triggered for each button visiblity change");
 
 				// Clean up
@@ -663,7 +682,7 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		oActionCheckBox.setVisible(false);
 	});
 
-	QUnit.test("_adaptLayoutForDomElement skips calculations if 0 width", function (assert) {
+	QUnit.test("_adaptObjectPageHeaderIndentifierLine skips calculations if 0 width", function (assert) {
 
 		var oHeader = this.myView.byId("applicationHeader"),
 			$headerDom = oHeader.$(),
@@ -676,7 +695,7 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		assert.strictEqual($headerDomClone.width(), 0, "dom clone has 0 width"); // assert init state
 
 		// Act
-		oHeader._adaptLayoutForDomElement($headerDomClone);
+		oHeader._adaptObjectPageHeaderIndentifierLine($headerDomClone);
 
 		// Check
 		assert.strictEqual(oOverflowButton.getDomRef().style.display, "none", "overflow button is still not visible");
@@ -820,7 +839,7 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 
 	QUnit.test("Resize listener is called after rerender while hidden", function (assert) {
 		var oHeader = this.oHeaderView.byId("header"),
-			oSpy = sinon.spy(oHeader, "_adaptLayoutForDomElement"),
+			oSpy = sinon.spy(oHeader, "_adaptLayout"),
 			done = assert.async();
 
 		// Setup: hide the container where the header is placed

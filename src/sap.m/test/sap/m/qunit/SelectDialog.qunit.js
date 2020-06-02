@@ -157,6 +157,22 @@ sap.ui.define([
 			assert.strictEqual(this.oSelectDialog.getBusyIndicatorDelay(), iDelay, 'The SelectDialog delay value should be ' + iDelay);
 		});
 
+		QUnit.test("Setting of the Title", function (assert) {
+			this.oSelectDialog.setTitle("New title");
+			sap.ui.getCore().applyChanges();
+			this.oSelectDialog.open();
+			assert.strictEqual(document.getElementById("selectDialog-dialog-title-inner").textContent, "New title", "The title is set correctly");
+		});
+
+		QUnit.test("Setting of the ContentWidth", function (assert) {
+			assert.strictEqual(this.oSelectDialog.getContentWidth(), "", "The contentWidth is not set");
+			this.oSelectDialog.setContentWidth("400px");
+			sap.ui.getCore().applyChanges();
+			this.oSelectDialog.open();
+			assert.strictEqual(document.getElementById("selectDialog-dialog").offsetWidth, 400, "The width of the dialog is correctly set");
+			assert.strictEqual(this.oSelectDialog.getContentWidth(), "400px", "The contentWidth is not set");
+		});
+
 		QUnit.module("Growing Behavior", {
 			beforeEach: function() {
 				this.oSelectDialog = new SelectDialog("selectDialog", {
@@ -1144,6 +1160,7 @@ sap.ui.define([
 
 				var browserCalculatedHeight = Math.round(parseFloat(window.getComputedStyle(jQuery("#selectDialog-dialog-cont")[0]).height));
 				assert.strictEqual(browserCalculatedHeight, 286, "content in Dialog should have height of 286px.");
+				assert.strictEqual(that.oSelectDialog.getContentHeight(), "286px", "contentHeight should be 286px.");
 				done();
 
 				// Clean

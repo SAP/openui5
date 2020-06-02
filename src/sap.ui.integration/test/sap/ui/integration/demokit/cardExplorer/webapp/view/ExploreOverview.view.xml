@@ -8,7 +8,7 @@
 			<core:HTML
 				id="topicFrame"
 				preferDOM="false"
-				content='&lt;div style="height:100%; overflow-y: hidden; overflow-x:auto;"&gt;&lt;iframe {/iframeAttribute} class="sapUiTopicsIframe" name="content" src="{/topicURL}" frameborder="0""&gt;&lt;/iframe&gt;&lt;/div&gt;'
+				content='&lt;div style="height:100%; overflow-y: hidden; overflow-x:auto;"&gt;&lt;iframe {/iframeAttribute} class="sapUiTopicsIframe" name="content" src="{/topicURL}" frameborder="0"&gt;&lt;/iframe&gt;&lt;/div&gt;'
 				afterRendering=".onFrameSourceChange">
 			</core:HTML>
 		</content>

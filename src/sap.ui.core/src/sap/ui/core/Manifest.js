@@ -4,7 +4,6 @@
 
 // Provides base class sap.ui.core.Component for all components
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
 	'sap/ui/base/Object',
 	'sap/ui/thirdparty/URI',
 	'sap/base/util/Version',
@@ -12,12 +11,12 @@ sap.ui.define([
 	'sap/ui/dom/includeStylesheet',
 	'sap/base/i18n/ResourceBundle',
 	'sap/base/util/uid',
+	'sap/base/util/merge',
 	'sap/base/util/isPlainObject',
 	'sap/base/util/LoaderExtensions',
 	"sap/base/util/isEmptyObject"
 ],
 	function(
-		jQuery,
 		BaseObject,
 		URI,
 		Version,
@@ -25,6 +24,7 @@ sap.ui.define([
 		includeStylesheet,
 		ResourceBundle,
 		uid,
+		merge,
 		isPlainObject,
 		LoaderExtensions,
 		isEmptyObject
@@ -45,34 +45,6 @@ sap.ui.define([
 	function getVersionWithoutSuffix(sVersion) {
 		var oVersion = Version(sVersion);
 		return oVersion.getSuffix() ? Version(oVersion.getMajor() + "." + oVersion.getMinor() + "." + oVersion.getPatch()) : oVersion;
-	}
-
-	/**
-	 * Utility function to process strings in an object/array recursively
-	 *
-	 * @param {object/Array} oObject Object or array that will be processed
-	 * @param {function} fnCallback function(oObject, sKey, sValue) to call for all strings. Use "oObject[sKey] = X" to change the value.
-	 */
-	function processObject(oObject, fnCallback) {
-		for (var sKey in oObject) {
-			if (!oObject.hasOwnProperty(sKey)) {
-				continue;
-			}
-			var vValue = oObject[sKey];
-			switch (typeof vValue) {
-				case "object":
-					// ignore null objects
-					if (vValue) {
-						processObject(vValue, fnCallback);
-					}
-					break;
-				case "string":
-						fnCallback(oObject, sKey, vValue);
-						break;
-				default:
-					// do nothing in case of other types
-			}
-		}
 	}
 
 	/**
@@ -155,7 +127,7 @@ sap.ui.define([
 	 *            flag is set to <code>true</code>, the given terminologies will be respected when replacing placeholders with resource
 	 *            bundle values.
 	 *            To use active terminologies, the <code>sap.app.i18n</code> section in the manifest
-	 *            must be defined in object syntax as described here: {@link topic:CPOUI5FRAMEWORK-57_Docu_Chapter Text Verticalization}.
+	 *            must be defined in object syntax as described here: {@link topic:eba8d25a31ef416ead876e091e67824e Text Verticalization}.
 	 *            The order of the given active terminologies is significant. The {@link sap.base.i18n.ResourceBundle ResourceBundle} API
 	 *            documentation describes the processing behavior in more detail.
 	 *
@@ -215,7 +187,7 @@ sap.ui.define([
 			// store the raw manifest for the time being and process the
 			// i18n placeholders in the manifest later
 			// remark: clone the frozen raw manifest to enable changes
-			this._oManifest = jQuery.extend(true, {}, this._oRawManifest);
+			this._oManifest = merge({}, this._oRawManifest);
 
 			// resolve the i18n texts immediately when manifest should be processed
 			if (this._bProcess) {
@@ -236,7 +208,7 @@ sap.ui.define([
 			// find i18n property paths in the manifest if i18n texts in
 			// the manifest which should be processed
 			var aI18nProperties = [];
-			processObject(this._oManifest, function(oObject, sKey, vValue) {
+			Manifest.processObject(this._oManifest, function(oObject, sKey, vValue) {
 				var match = vValue.match(rManifestTemplate);
 				if (match) {
 					aI18nProperties.push({
@@ -825,14 +797,18 @@ sap.ui.define([
 	 * @param {object} mOptions the configuration options
 	 * @param {string} mOptions.manifestUrl URL of the manifest
 	 * @param {string} [mOptions.componentName] name of the component
-	 * @param {boolean} [mOptions.async] Flag whether to load the manifest async or not (defaults to false)
-	 * @param {boolean} [mOptions.failOnError] Flag whether to fail if an error occurs or not (defaults to true).
+	 * @param {boolean} [mOptions.async=false] Flag whether to load the manifest async or not
+	 * @param {boolean} [mOptions.failOnError=true] Flag whether to fail if an error occurs or not
 	 * If set to <code>false</code>, errors during the loading of the manifest.json file (e.g. 404) will be ignored and
 	 * the resulting manifest object will be <code>null</code>.
 	 * For asynchronous calls the returned Promise will not reject but resolve with <code>null</code>.
 	 * @param {function} [mOptions.processJson] Callback for asynchronous processing of the loaded manifest.
 	 * The callback receives the parsed manifest object and must return a Promise which resolves with an object.
 	 * It allows to early access and modify the manifest object.
+	 * @param {string[]} [mOptions.activeTerminologies] A list of active terminologies.
+	 * The order of the given active terminologies is significant. The {@link sap.base.i18n.ResourceBundle ResourceBundle} API
+	 * documentation describes the processing behavior in more detail.
+	 * Please have a look at this dev-guide chapter for general usage instructions: {@link topic:eba8d25a31ef416ead876e091e67824e Text Verticalization}.
 	 * @return {sap.ui.core.Manifest|Promise} Manifest object or for asynchronous calls an ECMA Script 6 Promise object will be returned.
 	 * @protected
 	 */
@@ -901,6 +877,34 @@ sap.ui.define([
 			});
 		}
 		return new Manifest(oManifestJSON, mSettings);
+	};
+
+	/**
+	 * Utility function to process strings in an object/array recursively
+	 *
+	 * @param {object/Array} oObject Object or array that will be processed
+	 * @param {function} fnCallback function(oObject, sKey, sValue) to call for all strings. Use "oObject[sKey] = X" to change the value.
+	 */
+	Manifest.processObject = function (oObject, fnCallback) {
+		for (var sKey in oObject) {
+			if (!oObject.hasOwnProperty(sKey)) {
+				continue;
+			}
+			var vValue = oObject[sKey];
+			switch (typeof vValue) {
+				case "object":
+					// ignore null objects
+					if (vValue) {
+						Manifest.processObject(vValue, fnCallback);
+					}
+					break;
+				case "string":
+					fnCallback(oObject, sKey, vValue);
+					break;
+				default:
+				// do nothing in case of other types
+			}
+		}
 	};
 
 	return Manifest;

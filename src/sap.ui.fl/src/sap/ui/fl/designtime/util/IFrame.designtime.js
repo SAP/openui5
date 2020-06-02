@@ -4,21 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/rta/plugin/iframe/AddIFrameDialog",
-	"sap/ui/core/IconPool",
 	"sap/m/library"
 ], function(
-	AddIFrameDialog,
-	IconPool
+	AddIFrameDialog
 ) {
 	"use strict";
-
-	// register TNT icon font
-	IconPool.registerFont({
-		collectionName: "tnt",
-		fontFamily: "SAP-icons-TNT",
-		fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
-		lazy: true
-	});
 
 	function editIFrame (oIFrame/*, mPropertyBag*/) {
 		var oAddIFrameDialog = new AddIFrameDialog();
@@ -65,7 +55,7 @@ sap.ui.define([
 		actions: {
 			settings: function () {
 				return {
-					icon: "sap-icon://tnt/content-enricher",
+					icon: "sap-icon://write-new",
 					name: "CTX_EDIT_IFRAME",
 					isEnabled: true,
 					handler: editIFrame

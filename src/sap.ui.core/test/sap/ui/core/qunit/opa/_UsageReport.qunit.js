@@ -1,11 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/test/_UsageReport",
-	"./utils/phantomJS"
-], function (_UsageReport, phantomJSUtils) {
+	"sap/ui/test/_UsageReport"
+], function (_UsageReport) {
 	"use strict";
-
-	phantomJSUtils.introduceSinonXHR();
 
 	QUnit.module("_UsageReport", {
 		beforeEach: function () {

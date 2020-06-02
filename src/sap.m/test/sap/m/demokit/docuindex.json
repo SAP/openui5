@@ -1132,6 +1132,7 @@
 			"sap.m.sample.MultiComboBox",
 			"sap.m.sample.MultiComboBoxDefaultFiltering",
 			"sap.m.sample.MultiComboBoxCustomFiltering",
+			"sap.m.sample.MultiComboBoxSuggestionsAndValueState",
 			"sap.m.sample.MultiComboBoxTwoColumnsLayout",
 			"sap.m.sample.MultiComboBoxGrouping"
 		  ]
@@ -2272,6 +2273,11 @@
 			"id": "sap.m.sample.MultiComboBoxCustomFiltering",
 			"name": "MultiComboBox - Custom Filtering and Suggestions",
 			"description": "The default filtering for the suggestionsItems aggregation uses a 'starts with per term' style operator. You can override this with your own custom filter function using the setFilterFunction method."
+		},
+		{
+			"id": "sap.m.sample.MultiComboBoxSuggestionsAndValueState",
+			"name": "MultiComboBox - Suggestions with Value State",
+			"description": "MultiComboBox with suggestions and Value State Message containing a link."
 		},
 		{
 			"id": "sap.m.sample.MultiComboBoxGrouping",

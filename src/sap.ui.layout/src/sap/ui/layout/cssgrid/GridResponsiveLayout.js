@@ -85,6 +85,28 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * A map from Std-ext size to CSS class
+	 * @private
+	 */
+	GridResponsiveLayout.mSizeClasses = {
+		"Phone": "sapUiLayoutCSSGridS",
+		"Tablet": "sapUiLayoutCSSGridM",
+		"Desktop": "sapUiLayoutCSSGridL",
+		"LargeDesktop": "sapUiLayoutCSSGridXL"
+	};
+
+	/**
+	 * A map from Std-ext size to GridSettings aggregation name
+	 * @private
+	 */
+	GridResponsiveLayout.mSizeLayouts = {
+		"Phone": "layoutS",
+		"Tablet": "layoutM",
+		"Desktop": "layoutL",
+		"LargeDesktop": "layoutXL"
+	};
+
 	GridResponsiveLayout.prototype.init = function () {
 		this._sActiveLayout = "layout";
 	};
@@ -134,21 +156,19 @@ sap.ui.define([
 	 * Applies a size class on the parent
 	 *
 	 * @private
-	 * @param {jQuery} $grid The grid on which to add the size class
+	 * @param {jQuery} $Grid The grid on which to add the size class
 	 * @param {string} sSizeClass The size class to add on the DOM element
 	 */
-	GridResponsiveLayout.prototype.applySizeClass = function ($grid, sSizeClass) {
-		var aClasses;
-
-		if ($grid.hasClass(sSizeClass)) {
+	GridResponsiveLayout.prototype.applySizeClass = function ($Grid, sSizeClass) {
+		if ($Grid.hasClass(sSizeClass)) {
 			return;
 		}
 
-		aClasses = Object.keys(GridResponsiveLayout.mSizeClasses).map(function (sSize) {
+		var aClasses = Object.keys(GridResponsiveLayout.mSizeClasses).map(function (sSize) {
 			return GridResponsiveLayout.mSizeClasses[sSize];
 		});
-		$grid.removeClass(aClasses.join(" "));
-		$grid.addClass(sSizeClass);
+		$Grid.removeClass(aClasses.join(" "));
+		$Grid.addClass(sSizeClass);
 	};
 
 	/**
@@ -189,31 +209,8 @@ sap.ui.define([
 	GridResponsiveLayout.prototype._getLayoutToApply = function (sLayout) {
 		if (this.getAggregation(sLayout)) {
 			return sLayout;
-		} else {
-			return "layout";
 		}
-	};
-
-	/**
-	 * A map from Std-ext size to CSS class
-	 * @private
-	 */
-	GridResponsiveLayout.mSizeClasses = {
-		"Phone": "sapUiLayoutCSSGridS",
-		"Tablet": "sapUiLayoutCSSGridM",
-		"Desktop": "sapUiLayoutCSSGridL",
-		"LargeDesktop": "sapUiLayoutCSSGridXL"
-	};
-
-	/**
-	 * A map from Std-ext size to GridSettings aggregation name
-	 * @private
-	 */
-	GridResponsiveLayout.mSizeLayouts = {
-		"Phone": "layoutS",
-		"Tablet": "layoutM",
-		"Desktop": "layoutL",
-		"LargeDesktop": "layoutXL"
+		return "layout";
 	};
 
 	return GridResponsiveLayout;

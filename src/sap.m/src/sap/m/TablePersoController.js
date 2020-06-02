@@ -47,8 +47,8 @@ sap.ui.define([
 
 		metadata: {
 			properties: {
-				"contentWidth": {type: "sap.ui.core.CSSSize"},
-				"contentHeight": {type: "sap.ui.core.CSSSize", defaultValue: "20rem", since: "1.22"},
+				"contentWidth": {type: "sap.ui.core.CSSSize", defaultValue:"25rem"}, //TODO: put in TPD itself
+				"contentHeight": {type: "sap.ui.core.CSSSize", defaultValue: "28rem", since: "1.22"},
 				/**
 				 * Available options for the text direction are LTR and RTL. By default the control inherits the text direction from its parent control.
 				 */

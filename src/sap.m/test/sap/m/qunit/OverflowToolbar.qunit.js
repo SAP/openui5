@@ -24,7 +24,8 @@ sap.ui.define([
 	"sap/m/MenuItem",
 	"sap/m/Menu",
 	"sap/m/MenuButton",
-	"sap/m/FlexItemData"
+	"sap/m/FlexItemData",
+	"sap/m/Title"
 ], function(
 	DomUnitsRem,
 	createAndAppendDiv,
@@ -47,7 +48,8 @@ sap.ui.define([
 	MenuItem,
 	Menu,
 	MenuButton,
-	FlexItemData
+	FlexItemData,
+	Title
 ) {
 	"use strict";
 
@@ -1928,7 +1930,7 @@ sap.ui.define([
 
 		this.clock.tick(1000);
 
-		assert.strictEqual(spyCache.callCount, 5,
+		assert.strictEqual(spyCache.callCount, 4,
 			"If visibility of a content Control is changed, cacheControlsInfo func is called again upon rerendering");
 
 		oOverflowTB.destroy();
@@ -3030,5 +3032,53 @@ sap.ui.define([
 
 		// cleanup
 		fnIsRelativeWidth.restore();
+	});
+
+	QUnit.module("Special cases", {
+		beforeEach: function () {
+			sinon.config.useFakeTimers = false;
+
+			var aDefaultContent = [
+				new Title({text: "test1", width: "100px"}),
+				new Button({text: "2", width: "100px"}),
+				new Button({text: "3", width: "100px"}),
+				new Button({text: "4", width: "100px"}),
+				new Button({text: "5", width: "100px"})
+			];
+			var oOverflowTB = createOverflowToolbar({}, aDefaultContent);
+
+			this.content = aDefaultContent;
+			this.otb = oOverflowTB;
+		},
+		afterEach: function () {
+			sinon.config.useFakeTimers = true;
+
+			this.otb.destroy();
+		}
+	});
+
+	QUnit.test("[_doLayout] Concurrency between resize and afterRendering following invalidation", function (assert) {
+
+		var done = assert.async();
+		assert.expect(1);
+
+		var spyDoLayout = this.spy(this.otb, "_doLayout");
+
+		var oDelegate = {
+			onAfterRendering: function() {
+				this.otb.removeEventDelegate(oDelegate);
+
+				// assert
+				assert.equal(spyDoLayout.callCount, 1, "_doLayout should be called once.");
+				done();
+			}.bind(this)
+		};
+
+		this.otb.addEventDelegate(oDelegate);
+
+		this.content[0].setText("test2");
+		this.otb._handleResize();
+		sap.ui.getCore().applyChanges();
+
 	});
 });

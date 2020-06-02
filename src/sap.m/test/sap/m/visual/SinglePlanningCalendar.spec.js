@@ -40,11 +40,11 @@ describe("sap.m.SinglePlanningCalendar", function() {
 			if (presented) {
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
-				element(by.id("__item43")).click();
+				element(by.id("__item33")).click();
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 			} else {
 				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
-				element(by.id("__item28")).click();
+				element(by.id("__item23")).click();
 			}
 		});
 
@@ -58,11 +58,11 @@ describe("sap.m.SinglePlanningCalendar", function() {
 			if (presented) {
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
-				element(by.id("__item66")).click();
+				element(by.id("__item46")).click();
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 			} else {
 				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
-				element(by.id("__item41")).click();
+				element(by.id("__item31")).click();
 			}
 		});
 
@@ -118,7 +118,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 		}
 	});
 
-	it("should select another appointments with CTRL/Cmd + Click", function () {
+	it("should select another appointment with CTRL/Cmd + Click", function () {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 
 		//there is no keyboard on mobile
@@ -143,7 +143,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 		}
 	});
 
-	it("should select another appointments with Ctrl/Cmd + Enter", function () {
+	it("should select another appointment with Ctrl/Cmd + Enter", function () {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 
 		//there is no keyboard on mobile

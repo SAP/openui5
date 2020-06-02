@@ -5850,9 +5850,12 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(fnEnterSpy.callCount, 1, "onsapenter() method was called exactly once");
+		assert.notOk(fnEnterSpy.args[0][0].isMarked(), "The event should not be marked, since there are no modifications");
 		assert.strictEqual(fnCloseSpy.callCount, 1, "close() method was called exactly once");
 
 		// cleanup
+		fnEnterSpy.restore();
+		fnCloseSpy.restore();
 		oComboBox.destroy();
 	});
 
@@ -5860,24 +5863,24 @@ sap.ui.define([
 
 		// system under test
 		var oComboBox = new ComboBox({
-			items: [
-				new Item({
-					text: "Algeria"
-				}),
+				items: [
+					new Item({
+						text: "Algeria"
+					}),
 
-				new Item({
-					text: "Argentina"
-				}),
+					new Item({
+						text: "Argentina"
+					}),
 
-				new Item({
-					text: "Australia"
-				}),
+					new Item({
+						text: "Australia"
+					}),
 
-				new Item({
-					text: "Germany"
-				})
-			]
-		});
+					new Item({
+						text: "Germany"
+					})
+				]
+			});
 
 		// arrange
 		oComboBox.placeAt("content");
@@ -11331,6 +11334,29 @@ sap.ui.define([
 		assert.strictEqual(fnOnAfterOpenSpy.callCount, 1, "onAfterOpen() called exactly once");
 
 		// cleanup
+		oComboBox.destroy();
+	});
+
+	QUnit.test("highlighting first letter of a word should be applied", function (assert) {
+		var oComboBox = new ComboBox({
+			items: [
+				new Item({ text: "Bulgaria" })
+			]
+		});
+
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oFocusDomRef = oComboBox.getFocusDomRef();
+
+		oFocusDomRef.value = "b";
+		sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef);
+		sap.ui.getCore().applyChanges();
+
+		var highlightedPart = oComboBox._getList().getItems()[0].getDomRef().querySelector(".sapMInputHighlight");
+
+		assert.strictEqual(highlightedPart.innerText, "B", "B should be highlighted");
+
 		oComboBox.destroy();
 	});
 

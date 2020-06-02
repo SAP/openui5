@@ -25626,6 +25626,49 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: A bound action is executed, accompanied by a side effect. The action returns a
+	// wrong response, but the side effect must win anyway!
+	// BCP: 2070200175
+	QUnit.test("BCP: 2070200175", function (assert) {
+		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
+			oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
+	<Text id="status" text="{LifecycleStatus}"/>\
+	<FlexBox id="action" binding="{' + sAction + '(...)}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=LifecycleStatus,SalesOrderID", {
+				LifecycleStatus : "N",
+				SalesOrderID : "1"
+			})
+			.expectChange("status", "N");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList('1')/" + sAction,
+					payload : {}
+				}, {
+					LifecycleStatus : "N", // Note: wrong response, should be "C"
+					SalesOrderID : "1"
+				})
+				.expectRequest("SalesOrderList('1')?$select=LifecycleStatus", {
+					LifecycleStatus : "C"
+				})
+				.expectChange("status", "C");
+
+			return Promise.all([
+				that.oView.byId("action").getElementBinding().execute(),
+				that.oView.byId("form").getBindingContext()
+					.requestSideEffects([{$PropertyPath : "LifecycleStatus"}]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: You want to use AnnotationHelper.value for a property in the following cases:
 	// 1. /Artists/Name - structural property of an entity type
 	// 2. /Artists/BestFriend/IsActiveEntity - structural property reached via navigation
@@ -25712,6 +25755,52 @@ sap.ui.define([
 			constraints:{\'maxLength\':255},formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
 		<Input value="{path:\'Name\',type:\'sap.ui.model.odata.type.String\',\
 			constraints:{\'maxLength\':255},formatOptions:{\'parseKeepsEmptyString\':true}}"/>');
+
+	//*********************************************************************************************
+	// Scenario: Nested list binding inside table:Table with auto-$expand/$select (virtual context).
+	// The nested list binding for the virtual context is destroyed before its prerendering task
+	// runs.
+	// Note: Avoid nested absolute bindings until CPOUIFTEAMB-1379 is solved.
+	// Note: Equipment's ID should not matter here.
+	// BCP: 2080140429
+	QUnit.test("BCP: 2080140429", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<t:Table rows="{/EMPLOYEES}">\
+	<t:Column>\
+		<t:template>\
+			<Text id="name" text="{Name}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<List items="{path : \'EMPLOYEE_2_EQUIPMENTS\', templateShareable : false}">\
+				<CustomListItem>\
+					<Text id="category" text="{Category}" />\
+				</CustomListItem>\
+			</List>\
+		</t:template>\
+	</t:Column>\
+</t:Table>';
+
+		this.expectRequest("EMPLOYEES?$select=ID,Name"
+				+ "&$expand=EMPLOYEE_2_EQUIPMENTS($select=Category,ID)&$skip=0&$top=110", {
+				value : [{
+					EMPLOYEE_2_EQUIPMENTS : [{Category: "F1"}, {Category: "F2"}, {Category: "F3"}],
+					ID : "2",
+					Name : "Frederic Fall"
+				}, {
+					EMPLOYEE_2_EQUIPMENTS : [{Category: "J1"}, {Category: "J2"}, {Category: "J3"}],
+					ID : "3",
+					Name : "Jonathan Smith"
+				}]
+			})
+			.expectChange("name", ["Frederic Fall", "Jonathan Smith"])
+			.expectChange("category", ["J1", "J2", "J3"])
+			.expectChange("category", ["F1", "F2", "F3"]);
+
+		return this.createView(assert, sView, oModel);
+	});
 
 	//*********************************************************************************************
 	// Scenario: for a list binding, side effects are requested which should only affect structural

@@ -6,17 +6,17 @@
 
 // Provides class sap.ui.model.odata.ODataMetadata
 sap.ui.define([
-	'sap/ui/base/EventProvider',
-	'sap/ui/thirdparty/datajs',
-	'sap/ui/core/cache/CacheManager',
-	'./_ODataMetaModelUtils',
-	"sap/base/util/uid",
-	"sap/base/Log",
+	"./_ODataMetaModelUtils",
 	"sap/base/assert",
+	"sap/base/Log",
 	"sap/base/util/each",
+	"sap/base/util/uid",
+	"sap/ui/base/EventProvider",
+	"sap/ui/core/cache/CacheManager",
+	"sap/ui/thirdparty/datajs",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(EventProvider, OData, CacheManager, Utils, uid, Log, assert, each, jQuery) {
+	function(Utils, assert, Log, each, uid, EventProvider, CacheManager, OData, jQuery) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0*/
 
@@ -69,11 +69,16 @@ sap.ui.define([
 				"":"http://schemas.microsoft.com/ado/2007/06/edmx"
 			};
 			var that = this;
-			this.fnResolve;
 
-			// global promise
-			this.pLoaded = new Promise(function(resolve, reject) {
+			// global promises
+			this.pLoadedWithReject = new Promise(function (resolve, reject) {
+				that.fnResolve = resolve;
+				that.fnReject = reject;
+			});
+			this.pLoaded = this.pLoadedWithReject.catch(function (oError) {
+				return new Promise(function (resolve, reject) {
 					that.fnResolve = resolve;
+				});
 			});
 
 			function writeCache(mParams) {
@@ -133,7 +138,7 @@ sap.ui.define([
 
 		mParams.entitySets = aEntitySets;
 
-		// resolve global promise
+		// resolve global promises
 		this.fnResolve(mParams);
 
 		if (this.bAsync && !bSuppressEvents) {
@@ -214,6 +219,7 @@ sap.ui.define([
 					delete that.mRequestHandles[oRequestHandle.id];
 				}
 				reject(mParams);
+				that.fnReject(mParams);
 				if (that.bAsync && !bSuppressEvents) {
 					that.fireFailed(mParams);
 				} else if (!that.bAsync && !bSuppressEvents){
@@ -269,11 +275,17 @@ sap.ui.define([
 	/**
 	 * Returns a promise for the loaded state of the metadata.
 	 *
-	 * @public
+	 * @param {boolean} [bRejectOnFailure=false]
+	 *   With <code>bRejectOnFailure=false</code> the returned promise is not rejected. In case of
+	 *   failure this promise stays pending.
+	 *   Since 1.79 with <code>bRejectOnFailure=true</code> the returned promise is rejected when
+	 *   the initial loading of the metadata fails.
+	 *
 	 * @returns {Promise} A promise on metadata loaded state
+	 * @public
 	 */
-	ODataMetadata.prototype.loaded = function() {
-		return this.pLoaded;
+	ODataMetadata.prototype.loaded = function (bRejectOnFailure) {
+		return bRejectOnFailure ? this.pLoadedWithReject : this.pLoaded;
 	};
 
 	/**

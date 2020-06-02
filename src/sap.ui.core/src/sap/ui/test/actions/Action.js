@@ -214,7 +214,7 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 			// See file jquery.sap.events.js for some insights to the magic
 			var iLeftMouseButtonIndex = 0;
 			var oMouseEvent;
-			if (Device.browser.phantomJS || (Device.browser.msie && (Device.browser.version < 12))) {
+			if (Device.browser.msie && Device.browser.version < 12) {
 				oMouseEvent = document.createEvent("MouseEvent");
 				oMouseEvent.initMouseEvent(sName, true, true, window, 0, 0, 0, 0, 0,
 					false, false, false, false, iLeftMouseButtonIndex, oDomRef);
@@ -237,12 +237,7 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 		_createAndDispatchFocusEvent: function (sName, oDomRef) {
 			var oFocusEvent;
 
-			// PhantomJS does not have a FocusEvent constructer and no InitFocusEvent function
-			if (Device.browser.phantomJS) {
-				oFocusEvent = document.createEvent("FocusEvent");
-				oFocusEvent.initEvent(sName, true, false);
-				// IE 11 and below don't really like the FocusEvent constructor - Fire it the IE way
-			} else if (Device.browser.msie && (Device.browser.version < 12)) {
+			if (Device.browser.msie && (Device.browser.version < 12)) {
 				oFocusEvent = document.createEvent("FocusEvent");
 				oFocusEvent.initFocusEvent(sName, true, false, window, 0, oDomRef);
 			} else {
@@ -272,7 +267,7 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 			var oDataTransfer = new DataTransfer();
 			var oDragEvent;
 
-			if (Device.browser.phantomJS || Device.browser.edge) {
+			if (Device.browser.edge) {
 				oDragEvent = document.createEvent("DragEvent");
 				oDragEvent.initDragEvent(sName, true, true, window, 0, mCoordinates.x, mCoordinates.y, mCoordinates.x, mCoordinates.y,
 					false, false, false, false, 1, oDomRef, oDataTransfer);

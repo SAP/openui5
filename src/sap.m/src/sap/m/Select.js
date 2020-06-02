@@ -1242,6 +1242,8 @@ function(
 			this._oValueStateMessage = new ValueStateMessage(this);
 
 			this._bValueStateMessageOpened = false;
+
+			this._sAriaRoleDescription = Core.getLibraryResourceBundle("sap.m").getText("SELECT_ROLE_DESCRIPTION");
 		};
 
 		Select.prototype.onBeforeRendering = function() {

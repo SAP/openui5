@@ -337,6 +337,9 @@ sap.ui.define([
 					this.getLabel("Label 2")
 				]
 			});
+		},
+		getEmptyOverflowToolbar: function () {
+			return new OverflowToolbar();
 		}
 	},
 	oUtil = {

@@ -44,17 +44,24 @@ sap.ui.define([
 			 * @param {object} oDraggedControl control that is being dragged
 			 * @param {object} oDroppedControl control that the dragged control will be dropped on
 			 * @param {boolean} bIgnoreRTL should RTL configuration be ignored for drag and drop logic
+			 * @param {number} allowedNestingLevels allowed number of nesting tabs via drag and drop
 			 */
-			handleDrop: function (context, sDropPosition, oDraggedControl, oDroppedControl, bIgnoreRTL) {
+			handleDrop: function (context, sDropPosition, oDraggedControl, oDroppedControl, bIgnoreRTL, allowedNestingLevels) {
 				var iBeginDragIndex = context.indexOfItem(oDraggedControl),
 					iDropIndex = context.indexOfItem(oDroppedControl),
 					$DraggedControl = oDraggedControl.$(),
 					$DroppedControl = oDroppedControl.$(),
 					iAggregationDropIndex = 0,
 					bRtl = sap.ui.getCore().getConfiguration().getRTL(),
-					bIsDropPositionBefore = sDropPosition === INSERT_POSITION_BEFORE;
+					bIsDropPositionBefore = sDropPosition === INSERT_POSITION_BEFORE,
+					//_getNestedLevel returns 1 there is no nesting
+					currentNestedLevel = oDroppedControl._getNestedLevel()  - 1;
 				// Prevent cycle
 				if (oDraggedControl._isParentOf(oDroppedControl)) {
+					return;
+				}
+
+				if (currentNestedLevel === allowedNestingLevels && sDropPosition === DropPosition.On) {
 					return;
 				}
 
@@ -274,6 +281,7 @@ sap.ui.define([
 			 * Adding aggregations for drag and drop.
 			 * @param {object} context from which context function is called (sap.m.IconTabHeader or sap.m.IconTabSelectList)
 			 * @param {string} sDropLayout Depending on the control we are dragging in, it could be Vertical or Horizontal
+			 * @param {object} oDropPosition Depending on maxNestingLevel, value could be 'On' or 'Between'
 			 */
 			setDragDropAggregations: function (context, sDropLayout, oDropPosition) {
 				var oIconTabHeader = context._oIconTabHeader ? context._oIconTabHeader : context;
