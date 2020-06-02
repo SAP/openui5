@@ -363,6 +363,7 @@ sap.ui.define([
 			"sap.m.SelectionDetailsItem",
 			"sap.m.SelectionDetailsItemLine",
 			"sap.m.SinglePlanningCalendarDayView",
+			"sap.m.SinglePlanningCalendarMonthView",
 			"sap.m.SinglePlanningCalendarWeekView",
 			"sap.m.SinglePlanningCalendarWorkWeekView",
 			"sap.m.SinglePlanningCalendarView",

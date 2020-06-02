@@ -247,6 +247,30 @@ sap.ui.define([
 			assert.equal(aAppointmentNodes.length, 0, "invalid appointments do not play");
 		});
 
+		QUnit.test("Appointments exceeding view port", function(assert) {
+			// arrange
+			var aAppointmentNodes;
+			this.oSPC.destroyAppointments();
+			this.oSPC.addAppointment(new CalendarAppointment({
+				startDate: new Date(2018, 2, 10),
+				endDate: new Date(2018, 7, 11)
+			}));
+			this.oSPC.addAppointment(new CalendarAppointment({
+				startDate: new Date(2018, 7, 10),
+				endDate: new Date(2018, 10, 11)
+			}));
+			this.oSPC.addAppointment(new CalendarAppointment({
+				startDate: new Date(2018, 2, 10),
+				endDate: new Date(2018, 10, 11)
+			}));
+
+			// act
+			aAppointmentNodes = this.oSPC._calculateAppointmentsNodes(this.oSPC.getStartDate());
+
+			// assert
+			assert.equal(aAppointmentNodes.length, 3, "exceeding view port appointments are rendered");
+		});
+
 		QUnit.module("Other", {
 			beforeEach: function() {
 				this.oSPCMG = new SinglePlanningCalendarMonthGrid({
