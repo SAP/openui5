@@ -56,6 +56,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 
 			if (oControl.getInputsAsTooltips()) {
 				oRM.attr("aria-describedby", InvisibleText.getStaticId("sap.m", "SLIDER_INPUT_TOOLTIP"));
+				bEnabled && oRM.attr("aria-keyshortcuts", "F2");
 			}
 		}
 		if (oControl.getShowHandleTooltip() && !oControl.getShowAdvancedTooltip()) {

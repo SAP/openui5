@@ -115,6 +115,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 
 			if (oSlider.getInputsAsTooltips()) {
 				oRm.attr("aria-describedby", InvisibleText.getStaticId("sap.m", "SLIDER_INPUT_TOOLTIP"));
+				bEnabled && oRm.attr("aria-keyshortcuts", "F2");
 			}
 
 			this.addHandleClass(oRm, oSlider);
