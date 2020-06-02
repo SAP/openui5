@@ -167,7 +167,9 @@ sap.ui.define([
 				this.oElementContext = this.bRelative
 					? null
 					: Context.create(this.oModel, this, sPath);
-				if (!this.oOperation && (!this.bRelative || oContext && !oContext.fetchValue)) {
+				if (!this.oOperation
+					&& (!this.bRelative || oContext && !oContext.fetchValue)) { // @see #isRoot
+					// do this before #setContext fires an event!
 					this.createReadGroupLock(this.getGroupId(), true);
 				}
 				this.setContext(oContext);
@@ -434,6 +436,7 @@ sap.ui.define([
 		this.mParameters = mParameters; // store mParameters at binding after validation
 
 		if (this.isRootBindingSuspended()) {
+			this.sResumeChangeReason = sChangeReason || ChangeReason.Change;
 			return;
 		}
 
@@ -784,10 +787,11 @@ sap.ui.define([
 	 *   control's property bindings use the return value context as binding context.
 	 * @throws {Error} If the binding's root binding is suspended, the given group ID is invalid, if
 	 *   the binding is not a deferred operation binding (see
-	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}), if the binding is not resolved or
-	 *   relative to a transient context (see {@link sap.ui.model.odata.v4.Context#isTransient}), or
-	 *   if deferred operation bindings are nested, or if the OData resource path for a deferred
-	 *   operation binding's context cannot be determined.
+	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}), if the binding is unresolved (see
+	 *   {@link sap.ui.model.Binding#isResolved}) or relative to a transient context (see
+	 *   {@link sap.ui.model.odata.v4.Context#isTransient}), or if deferred operation bindings are
+	 *   nested, or if the OData resource path for a deferred operation binding's context cannot be
+	 *   determined.
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -1057,7 +1061,7 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#initialize
 	ODataContextBinding.prototype.initialize = function () {
-		if ((!this.bRelative || this.oContext) && !this.getRootBinding().isSuspended()) {
+		if (this.isResolved() && !this.getRootBinding().isSuspended()) {
 			this._fireChange({reason : ChangeReason.Change});
 		}
 	};
@@ -1265,30 +1269,27 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resumes this binding and all dependent bindings and fires a change event afterwards.
-	 *
-	 * @param {boolean} bCheckUpdate
-	 *   Whether dependent property bindings shall call <code>checkUpdateInternal</code>
-	 *
-	 * @private
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#resumeInternal
 	 */
-	ODataContextBinding.prototype.resumeInternal = function (bCheckUpdate) {
-		var sChangeReason = this.sResumeChangeReason;
+	ODataContextBinding.prototype.resumeInternal = function (bCheckUpdate, bParentHasChanges) {
+		var sResumeChangeReason = this.sResumeChangeReason;
 
-		this.sResumeChangeReason = ChangeReason.Change;
+		this.sResumeChangeReason = undefined;
 
 		if (!this.oOperation) {
-			this.mAggregatedQueryOptions = {};
-			this.bAggregatedQueryOptionsInitial = true;
-			this.removeCachesAndMessages("");
-			this.fetchCache(this.oContext);
+			if (bParentHasChanges || sResumeChangeReason) {
+				this.mAggregatedQueryOptions = {};
+				this.bAggregatedQueryOptionsInitial = true;
+				this.removeCachesAndMessages("");
+				this.fetchCache(this.oContext);
+			}
 			this.getDependentBindings().forEach(function (oDependentBinding) {
-				oDependentBinding.resumeInternal(bCheckUpdate);
+				oDependentBinding.resumeInternal(bCheckUpdate, !!sResumeChangeReason);
 			});
-			this._fireChange({reason : sChangeReason});
-		} else if (this.oOperation.bAction === false) {
-			// ignore returned promise, error handling takes place in execute
-			this.execute();
+			if (sResumeChangeReason) {
+				this._fireChange({reason : sResumeChangeReason});
+			}
 		}
 	};
 

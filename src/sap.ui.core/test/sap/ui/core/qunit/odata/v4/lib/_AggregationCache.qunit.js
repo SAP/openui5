@@ -289,6 +289,28 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("create: $expand not allowed", function (assert) {
+		var oAggregation = {/*irrelevant*/},
+			mQueryOptions = {$expand : undefined}; // even falsy values are forbidden!
+
+		assert.throws(function () {
+			// code under test
+			_AggregationCache.create(this.oRequestor, "Foo", oAggregation, mQueryOptions);
+		}, new Error("Unsupported system query option: $expand"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("create: $select not allowed", function (assert) {
+		var oAggregation = {/*irrelevant*/},
+			mQueryOptions = {$select : undefined}; // even falsy values are forbidden!
+
+		assert.throws(function () {
+			// code under test
+			_AggregationCache.create(this.oRequestor, "Foo", oAggregation, mQueryOptions);
+		}, new Error("Unsupported system query option: $select"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("create: $count not allowed with visual grouping", function (assert) {
 		var oAggregation = {
 				aggregate : {},

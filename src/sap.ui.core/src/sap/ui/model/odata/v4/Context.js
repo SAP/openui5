@@ -710,8 +710,9 @@ sap.ui.define([
 
 	/**
 	 * Returns whether there are pending changes for bindings dependent on this context, or for
-	 * unresolved bindings which were dependent on this context at the time the pending change
-	 * was created. This includes the context itself being transient (see {@link #isTransient}).
+	 * unresolved bindings (see {@link sap.ui.model.Binding#isResolved}) which were dependent on
+	 * this context at the time the pending change was created. This includes the context itself
+	 * being transient (see {@link #isTransient}).
 	 *
 	 * @returns {boolean}
 	 *   Whether there are pending changes
@@ -976,7 +977,8 @@ sap.ui.define([
 	 *    {@link sap.ui.model.odata.v4.ODataPropertyBinding#getRootBinding}, and
 	 *    {@link sap.ui.model.Binding#isSuspended})
 	 *    <li> this context is transient (see {@link #isTransient})
-	 *    <li> the binding of this context is unresolved
+	 *    <li> the binding of this context is unresolved (see
+	 *    {@link sap.ui.model.Binding#isResolved})
 	 *    <li> the group ID is invalid
 	 *    <li> a <code>$PropertyPath</code> has been requested which contains a navigation
 	 *    property that was changed on the server and now targets a different entity (since 1.79.0)
@@ -1023,7 +1025,7 @@ sap.ui.define([
 			throw new Error("Missing edm:(Navigation)PropertyPath expressions");
 		}
 		// Fail fast with a specific error for unresolved bindings
-		if (this.oBinding.isRelative() && !this.oBinding.getContext()) {
+		if (!this.oBinding.isResolved()) {
 			throw new Error("Cannot request side effects of unresolved binding's context: " + this);
 		}
 

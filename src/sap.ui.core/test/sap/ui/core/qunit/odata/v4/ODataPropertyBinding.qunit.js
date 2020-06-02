@@ -1884,7 +1884,7 @@ sap.ui.define([
 			.returns(undefined);
 		assert.throws(function () {
 			oPropertyBinding[sFunctionName]();
-		}, new Error(oPropertyBinding + " is not resolved yet"));
+		}, new Error(oPropertyBinding + " is unresolved"));
 	});
 });
 
@@ -2072,6 +2072,16 @@ sap.ui.define([
 		return oPromise.then(function (vValue) {
 			assert.strictEqual(vValue, "42");
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("suspendInternal has empty implementation", function (assert) {
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
+
+		Object.freeze(oBinding); // ensures that suspendInternal does not change the binding
+
+		// code under test
+		assert.strictEqual(oBinding.suspendInternal(), undefined);
 	});
 
 	//*********************************************************************************************

@@ -141,7 +141,7 @@ sap.ui.define([
 	 * Returns the model path to which this binding binds.
 	 *
 	 * Might be a relative or absolute path. If it is relative, it will be resolved relative
-	 * to the context as returned by {@link getContext()}.
+	 * to the context as returned by {@link #getContext}.
 	 *
 	 * @returns {string} Binding path
 	 * @public
@@ -459,19 +459,24 @@ sap.ui.define([
 	};
 
 	/**
-	 * Check if the binding can be resolved. This is true if the path is absolute or the path is relative and a context is specified.
-	 * @private
+	 * Returns whether the binding is resolved, which means the binding's path is absolute or the
+	 * binding has a model context.
+	 *
+	 * @returns {boolean} Whether the binding is resolved
+	 *
+	 * @public
+	 * @see #getContext
+	 * @see #getPath
+	 * @see #isRelative
+	 * @since 1.79.0
 	 */
 	Binding.prototype.isResolved = function() {
-		if (this.bRelative && !this.oContext) {
-			return false;
-		}
-		return true;
+		return !this.bRelative || !!this.oContext;
 	};
 
 	/**
 	 * Returns whether the binding is initial, which means it did not get an initial value yet
-	 * @returns {boolean} Whether binding is initial
+	 * @returns {boolean} Whether the binding is initial
 	 * @public
 	 */
 	Binding.prototype.isInitial = function() {
@@ -480,7 +485,7 @@ sap.ui.define([
 
 	/**
 	 * Returns whether the binding is relative, which means its path does not start with a slash ('/')
-	 * @returns {boolean} Whether binding is relative
+	 * @returns {boolean} Whether the binding is relative
 	 * @public
 	 */
 	Binding.prototype.isRelative = function() {
@@ -582,7 +587,7 @@ sap.ui.define([
 	/**
 	 * Returns true if the binding is suspended or false if not.
 	 *
-	 * @returns {boolean} Whether binding is suspended
+	 * @returns {boolean} Whether the binding is suspended
 	 * @public
 	 */
 	Binding.prototype.isSuspended = function() {
