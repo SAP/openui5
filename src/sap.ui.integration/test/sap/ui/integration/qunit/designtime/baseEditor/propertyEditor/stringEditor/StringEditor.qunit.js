@@ -43,6 +43,7 @@ sap.ui.define([
 				label: "Test String",
 				type: "string",
 				defaultValue: "Test",
+				placeholder: "Placeholder",
 				path: "content"
 			};
 		},
@@ -71,6 +72,14 @@ sap.ui.define([
 
 		QUnit.test("When a value is set", function (assert) {
 			assert.strictEqual(this.oStringEditorElement.getValue(), "Hello World.", "Then the editor has the correct value");
+		});
+
+		QUnit.test("When a placeholder is configured", function (assert) {
+			assert.strictEqual(
+				this.oStringEditorElement.getPlaceholder(),
+				"Placeholder",
+				"Then the placeholder is displayed in the editor"
+			);
 		});
 
 		QUnit.test("When a value is changed in the editor", function (assert) {

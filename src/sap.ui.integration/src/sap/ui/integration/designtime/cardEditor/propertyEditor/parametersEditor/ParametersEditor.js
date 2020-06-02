@@ -39,12 +39,13 @@ sap.ui.define([
 	ParametersEditor.prototype.formatItemConfig = function(oConfigValue) {
 		var oMapItemConfig = MapEditor.prototype.formatItemConfig.apply(this, arguments);
 		var sKey = oConfigValue.key;
-		var sLabel = oConfigValue.value.label || sKey;
+		var sLabel = oConfigValue.value.label;
 
 		oMapItemConfig.splice(1, 0, {
 			label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.LABEL"),
 			path: "label",
 			value: sLabel,
+			placeholder: sLabel ? undefined : sKey,
 			type: "string",
 			enabled: this.getConfig().allowLabelChange !== false,
 			itemKey: sKey,
