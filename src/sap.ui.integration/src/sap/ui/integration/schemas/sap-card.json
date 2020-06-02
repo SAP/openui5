@@ -97,6 +97,10 @@
 		},
 		"content": {
 			"description": "Represents card content attributes. Content type should be the same as card type e.g. if card type List is used the content type should also be List"
+		},
+		"extension": {
+			"description": "[Experimental] A path to an Extension implementation. It is resolved relatively to the manifest.",
+			"type": "string"
 		}
 	},
 	"oneOf": [
@@ -1412,6 +1416,10 @@
 						{ "type": "number" },
 						{ "$ref": "#/definitions/simpleBinding" }
 					]
+				},
+				"extension": {
+					"description": "[Experimental] Provides a way to request data via extension.",
+					"$ref": "#/definitions/extension"
 				}
 			}
 		},
@@ -1475,6 +1483,24 @@
 						{ "type": "boolean", "default": false },
 						{ "$ref": "#/definitions/simpleBinding" }
 					]
+				}
+			}
+		},
+		"extension": {
+			"description": "[Experimental] Represents attributes, needed to get data via extension.",
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"method"
+			],
+			"properties": {
+				"method": {
+					"description": "The method of the extension, which fetches data.",
+					"type": "string"
+				},
+				"args": {
+					"description": "The arguments, with which the method will be called.",
+					"type": "array"
 				}
 			}
 		},
