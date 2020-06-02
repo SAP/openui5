@@ -330,10 +330,11 @@ sap.ui.define([
 
 			var oCurrentSample = oSubSample || oSample,
 				oFrameWrapperEl = this.byId("iframeWrapper"),
-				bUseIFrame = !!oCurrentSample.useIFrame;
+				bUseIFrame = !!oCurrentSample.useIFrame,
+				bMockServer = !!oCurrentSample.mockServer;
 
 			// init mock server only on demand
-			if (oCurrentSample.key === "topProducts" || oCurrentSample.key === "product") {
+			if (bMockServer) {
 				mockServer.init();
 			}
 
@@ -431,6 +432,7 @@ sap.ui.define([
 					this.byId("cardSample")
 						.setBaseUrl(sBaseUrl)
 						.setManifest(oValue)
+						.setParameters(null)
 						.refresh();
 				} catch (oException) {
 					this.byId("cardSample").setManifest(null);
