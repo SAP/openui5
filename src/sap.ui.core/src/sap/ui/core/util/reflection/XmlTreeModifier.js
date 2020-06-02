@@ -496,7 +496,18 @@ sap.ui.define([
 		 * @private
 		 */
 		_children: function (oParent) {
-			return Array.from(oParent.children);
+			if (oParent.children) {
+				return oParent.children;
+			} else {
+				var aChildren = [];
+				for (var i = 0; i < oParent.childNodes.length; i++) {
+					var oNode = oParent.childNodes[i];
+					if (oNode.nodeType === oNode.ELEMENT_NODE) {
+						aChildren.push(oNode);
+					}
+				}
+				return aChildren;
+			}
 		},
 
 		/**
