@@ -116,10 +116,11 @@ sap.ui.define([
 	 * @param {string} [mParameters.odataVersion="4.0"]
 	 *   The version of the OData service. Supported values are "2.0" and "4.0".
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode]
-	 *   The operation mode for sorting and filtering with the model's operation mode as default.
-	 *   Since 1.39.0, the operation mode {@link sap.ui.model.odata.OperationMode.Server} is
-	 *   supported. All other operation modes including <code>undefined</code> lead to an error if
-	 *   'vFilters' or 'vSorters' are given or if {@link #filter} or {@link #sort} is called.
+	 *   The operation mode for filtering and sorting. Since 1.39.0, the operation mode
+	 *   {@link sap.ui.model.odata.OperationMode.Server} is supported. All other operation modes
+	 *   including <code>undefined</code> lead to an error if 'vFilters' or 'vSorters' are given or
+	 *   if {@link sap.ui.model.odata.v4.ODataListBinding#filter} or
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#sort} is called.
 	 * @param {string} mParameters.serviceUrl
 	 *   Root URL of the service to request data from. The path part of the URL must end with a
 	 *   forward slash according to OData V4 specification ABNF, rule "serviceRoot". You may append
@@ -582,11 +583,6 @@ sap.ui.define([
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
-	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode]
-	 *   The operation mode for sorting. Since 1.39.0, the operation mode
-	 *   {@link sap.ui.model.odata.OperationMode.Server} is supported. All other operation modes
-	 *   including <code>undefined</code> lead to an error if 'vSorters' are given or if
-	 *   {@link sap.ui.model.odata.v4.ODataListBinding#sort} is called.
 	 * @param {object} [mParameters.$$aggregation]
 	 *   An object holding the information needed for data aggregation, see
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation} for details.
@@ -600,6 +596,13 @@ sap.ui.define([
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
+	 * @param {sap.ui.model.odata.OperationMode} [mParameters.$$operationMode]
+	 *   The operation mode for filtering and sorting with the model's operation mode as default.
+	 *   Since 1.39.0, the operation mode {@link sap.ui.model.odata.OperationMode.Server} is
+	 *   supported. All other operation modes including <code>undefined</code> lead to an error if
+	 *   'vFilters' or 'vSorters' are given or if
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#filter} or
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#sort} is called.
 	 * @param {boolean} [mParameters.$$patchWithoutSideEffects]
 	 *   Whether implicit loading of side effects via PATCH requests is switched off; only the value
 	 *   <code>true</code> is allowed. This requires the service to return an ETag header even for
@@ -1118,7 +1121,7 @@ sap.ui.define([
 
 			return oBinding.isRelative()
 				&& (oContext === oParent
-						|| oContext && oContext.getBinding && oContext.getBinding() === oParent);
+					|| oContext && oContext.getBinding && oContext.getBinding() === oParent);
 		});
 	};
 
@@ -1866,7 +1869,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.withUnresolvedBindings = function (sCallbackName, vParameter) {
 		return this.aAllBindings.filter(function (oBinding) {
-			return oBinding.isRelative() && !oBinding.getContext();
+			return !oBinding.isResolved();
 		}).some(function (oBinding) {
 			return oBinding[sCallbackName](vParameter);
 		});

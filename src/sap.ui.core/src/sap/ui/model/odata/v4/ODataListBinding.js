@@ -125,7 +125,8 @@ sap.ui.define([
 
 				// Note: clone() dropped $$aggregation : undefined, which is good
 				this.applyParameters(mParameters); // calls #reset
-				if (!this.bRelative || oContext && !oContext.fetchValue) {
+				if (!this.bRelative || oContext && !oContext.fetchValue) { // @see #isRoot
+					// do this before #setContext fires an event!
 					this.createReadGroupLock(this.getGroupId(), true);
 				}
 				this.setContext(oContext);
@@ -595,7 +596,7 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.Context#created} returns a promise that is resolved when the
 	 *   creation is finished
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended, if a relative binding is not yet resolved, if
+	 *   If the binding's root binding is suspended, if a relative binding is unresolved, if
 	 *   entities are created both at the start and at the end, or if <code>bAtEnd</code> is
 	 *   <code>true</code> and the binding does not use the parameter <code>$count=true</code>
 	 *
@@ -613,7 +614,7 @@ sap.ui.define([
 			that = this;
 
 		if (!sResolvedPath) {
-			throw new Error("Binding is not yet resolved: " + this);
+			throw new Error("Binding is unresolved: " + this);
 		}
 
 		bAtEnd = !!bAtEnd; // normalize to simplify comparisons
@@ -1098,7 +1099,7 @@ sap.ui.define([
 	ODataListBinding.prototype.fetchDownloadUrl = function () {
 		var oModel = this.oModel;
 
-		if (this.isRelative() && !this.oContext) {
+		if (!this.isResolved()) {
 			throw new Error("Binding is unresolved");
 		}
 		return this.withCache(function (oCache, sPath) {
@@ -1454,7 +1455,7 @@ sap.ui.define([
 				+ " third parameter must not be set if extended change detection is enabled");
 		}
 
-		if (this.bRelative && !this.oContext) { // unresolved relative binding
+		if (!this.isResolved()) { // unresolved relative binding
 			this.aPreviousData = []; // compute diff from scratch when binding is resolved again
 			return [];
 		}
@@ -1697,7 +1698,7 @@ sap.ui.define([
 	 *
 	 * @returns {string}
 	 *   The download URL
-     * @throws {Error}
+	 * @throws {Error}
 	 *   If the binding is unresolved or if the URL determination is not finished yet
 	 *
 	 * @function
@@ -1785,7 +1786,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.getHeaderContext = function () {
 		// Since we never throw the header context away, we may deliver it only when valid
-		return (this.bRelative && !this.oContext) ? null : this.oHeaderContext;
+		return this.isResolved() ? this.oHeaderContext : null;
 	};
 
 	/**
@@ -1964,7 +1965,7 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#initialize
 	ODataListBinding.prototype.initialize = function () {
-		if ((!this.bRelative || this.oContext) && !this.getRootBinding().isSuspended()) {
+		if (this.isResolved() && !this.getRootBinding().isSuspended()) {
 			if (this.oModel.bAutoExpandSelect) {
 				this._fireChange({
 					detailedReason : this.sChangeReason,
@@ -2191,7 +2192,7 @@ sap.ui.define([
 	ODataListBinding.prototype.requestContexts = function (iStart, iLength, sGroupId) {
 		var that = this;
 
-		if (this.bRelative && !this.oContext) {
+		if (!this.isResolved()) {
 			throw new Error("Unresolved binding: " + this.sPath);
 		}
 		this.checkSuspended();
@@ -2341,27 +2342,27 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resumes this binding and all dependent bindings and fires a change or refresh event
-	 * afterwards.
-	 *
-	 * @param {boolean} bCheckUpdate
-	 *   Parameter is ignored; dependent property bindings of a list binding never call checkUpdate
-	 *
-	 * @private
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#resumeInternal
 	 */
-	ODataListBinding.prototype.resumeInternal = function () {
+	ODataListBinding.prototype.resumeInternal = function (bCheckUpdate, bParentHasChanges) {
 		var aBindings = this.getDependentBindings(),
-			sChangeReason = this.sResumeChangeReason;
+			sResumeChangeReason = this.sResumeChangeReason,
+			bRefresh = bParentHasChanges || sResumeChangeReason;
 
-		this.sResumeChangeReason = ChangeReason.Change;
+		this.sResumeChangeReason = undefined;
 
-		this.removeCachesAndMessages("");
-		this.reset();
-		this.fetchCache(this.oContext);
+		if (bRefresh) {
+			this.removeCachesAndMessages("");
+			this.reset();
+			// if the parent binding resumes but there are no changes in the parent binding
+			// ignore the parent cache and create an own cache
+			this.fetchCache(this.oContext, !bParentHasChanges);
+		}
 		aBindings.forEach(function (oDependentBinding) {
-			// do not call checkUpdate in dependent property bindings because the cache of this
+			// do not call checkUpdate in dependent property bindings if the cache of this
 			// binding is reset and the binding has not yet fired a change event
-			oDependentBinding.resumeInternal(false);
+			oDependentBinding.resumeInternal(!bRefresh, !!sResumeChangeReason);
 		});
 		if (this.sChangeReason === "AddVirtualContext") {
 			// In a refresh event the table would ignore the result -> no virtual context -> no
@@ -2369,10 +2370,10 @@ sap.ui.define([
 			// reason "RemoveVirtualContext".
 			this._fireChange({
 				detailedReason : this.sChangeReason,
-				reason : sChangeReason
+				reason : sResumeChangeReason
 			});
-		} else {
-			this._fireRefresh({reason : sChangeReason});
+		} else if (sResumeChangeReason) {
+			this._fireRefresh({reason : sResumeChangeReason});
 		}
 
 		// Update after the change event, otherwise $count is fetched before the request

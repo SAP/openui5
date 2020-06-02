@@ -163,9 +163,7 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#adjustPredicate
 	 */
-	ODataPropertyBinding.prototype.adjustPredicate = function () {
-		// nothing to do here
-	};
+	ODataPropertyBinding.prototype.adjustPredicate = function () {};
 
 	// See class documentation
 	// @override
@@ -255,7 +253,7 @@ sap.ui.define([
 							that.fireDataRequested();
 						}, that);
 				}
-				if (!that.sReducedPath || that.bRelative && !that.oContext) {
+				if (!that.sReducedPath || !that.isResolved()) {
 					// binding is unresolved or context was reset by another call to
 					// checkUpdateInternal
 					return undefined;
@@ -433,8 +431,8 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ValueListType}
 	 *   The value list type
 	 * @throws {Error}
-	 *   If the binding is relative and has no context, if the metadata is not loaded yet or if the
-	 *   property cannot be found in the metadata
+	 *   If the binding is unresolved (see {@link sap.ui.model.Binding#isResolved}), if the metadata
+	 *   is not loaded yet or if the property cannot be found in the metadata
 	 *
 	 * @public
 	 * @since 1.45.0
@@ -443,7 +441,7 @@ sap.ui.define([
 		var sResolvedPath = this.getModel().resolve(this.sPath, this.oContext);
 
 		if (!sResolvedPath) {
-			throw new Error(this + " is not resolved yet");
+			throw new Error(this + " is unresolved");
 		}
 		return this.getModel().getMetaModel().getValueListType(sResolvedPath);
 	};
@@ -524,7 +522,7 @@ sap.ui.define([
 	 *    <li> No mappings have been found.
 	 *   </ul>
 	 * @throws {Error}
-	 *   If the binding is relative and has no context
+	 *   If the binding is unresolved (see {@link sap.ui.model.Binding#isResolved})
 	 *
 	 * @public
 	 * @since 1.45.0
@@ -533,7 +531,7 @@ sap.ui.define([
 		var sResolvedPath = this.getModel().resolve(this.sPath, this.oContext);
 
 		if (!sResolvedPath) {
-			throw new Error(this + " is not resolved yet");
+			throw new Error(this + " is unresolved");
 		}
 		return this.getModel().getMetaModel()
 			.requestValueListInfo(sResolvedPath, bAutoExpandSelect);
@@ -546,7 +544,7 @@ sap.ui.define([
 	 *   A promise that is resolved with the type of the value list. It is rejected if the property
 	 *   cannot be found in the metadata.
 	 * @throws {Error}
-	 *   If the binding is relative and has no context
+	 *   If the binding is unresolved (see {@link sap.ui.model.Binding#isResolved})
 	 *
 	 * @public
 	 * @since 1.47.0
@@ -555,7 +553,7 @@ sap.ui.define([
 		var sResolvedPath = this.getModel().resolve(this.sPath, this.oContext);
 
 		if (!sResolvedPath) {
-			throw new Error(this + " is not resolved yet");
+			throw new Error(this + " is unresolved");
 		}
 		return this.getModel().getMetaModel().requestValueListType(sResolvedPath);
 	};
@@ -564,9 +562,7 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#resetChangesInDependents
 	 */
-	ODataPropertyBinding.prototype.resetChangesInDependents = function () {
-		// nothing to do
-	};
+	ODataPropertyBinding.prototype.resetChangesInDependents = function () {};
 
 	/**
 	 * A method to reset invalid data state, to be called by
@@ -751,6 +747,12 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.suspend = function () {
 		throw new Error("Unsupported operation: suspend");
 	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#suspendInternal
+	 */
+	ODataPropertyBinding.prototype.suspendInternal = function () {};
 
 	/**
 	 * @override

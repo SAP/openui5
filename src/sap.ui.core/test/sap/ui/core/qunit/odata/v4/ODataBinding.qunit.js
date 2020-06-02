@@ -566,18 +566,30 @@ sap.ui.define([
 	//*********************************************************************************************
 	[
 		{
-			oTemplate : {oModel : {}, sPath : "/absolute", bRelative : false}
+			oTemplate : {sPath : "/absolute", bRelative : false}
 		}, {
 			oContext : {getPath : function () { return "/baseContext"; }},
-			oTemplate : {oModel : {}, sPath : "quasiAbsolute", bRelative : true}
+			oTemplate : {sPath : "quasiAbsolute", bRelative : true}
 		}, {
 			oContext : Context.create({}, {}, "/v4Context"),
 			oTemplate : {
-				oModel : {},
-				sPath : "relativeWithParameters",
 				mParameters : {"$$groupId" : "myGroup"},
+				sPath : "relativeWithParameters",
 				bRelative : true
 			}
+		}, {
+			oContext : Context.create({}, {}, "/v4Context"),
+			oTemplate : {
+				aChildCanUseCachePromises : [],
+				oModel : {bAutoExpandSelect : true},
+				mParameters : {"$$aggregation" : {/*irrelevant*/}},
+				sPath : "relativeWithAggregation",
+				bRelative : true
+			}
+		}, {
+			oContext : Context.create({}, {}, "/v4Context"),
+			bIgnoreParentCache : true,
+			oTemplate : {sPath : "ignoreParentCache", bRelative : true}
 		}
 	].forEach(function (oFixture) {
 		QUnit.test("fetchQueryOptionsForOwnCache returns query options:" + oFixture.oTemplate.sPath,
@@ -587,10 +599,10 @@ sap.ui.define([
 					mQueryOptions = {},
 					oResult;
 
-				oFixture.oTemplate.oModel = {
-					resolve : function () {}
-				};
 				oBinding = new ODataBinding(oFixture.oTemplate);
+				oBinding.oModel = Object.assign({
+					resolve : function () {}
+				}, oFixture.oTemplate.oModel);
 				this.mock(oBinding.oModel).expects("resolve")
 					.withExactArgs(oBinding.sPath, sinon.match.same(oFixture.oContext))
 					.returns("/resolved/path");
@@ -601,7 +613,8 @@ sap.ui.define([
 					.returns(SyncPromise.resolve(mQueryOptions));
 
 				// code under test
-				oResult = oBinding.fetchQueryOptionsForOwnCache(oFixture.oContext).getResult();
+				oResult = oBinding.fetchQueryOptionsForOwnCache(oFixture.oContext,
+					oFixture.bIgnoreParentCache).getResult();
 
 				assert.strictEqual(oResult.sReducedPath, "/resolved/path");
 				assert.strictEqual(oResult.mQueryOptions, mQueryOptions);
@@ -903,7 +916,7 @@ sap.ui.define([
 			oBindingMock = this.mock(oBinding);
 
 		oBindingMock.expects("fetchQueryOptionsForOwnCache")
-			.withExactArgs(sinon.match.same(oContext))
+			.withExactArgs(sinon.match.same(oContext), undefined)
 			.returns(SyncPromise.resolve(Promise.resolve({
 				mQueryOptions : undefined,
 				sReducedPath : "/resolved/path"
@@ -944,10 +957,12 @@ sap.ui.define([
 			oBindingMock = this.mock(oBinding),
 			oCache = {},
 			oContext = {},
+			bIgnoreParentCache = {},
 			mLocalQueryOptions = {},
 			mResultingQueryOptions = {};
 
-		oBindingMock.expects("fetchQueryOptionsForOwnCache").withExactArgs(undefined)
+		oBindingMock.expects("fetchQueryOptionsForOwnCache")
+			.withExactArgs(undefined, sinon.match.same(bIgnoreParentCache))
 			.returns(SyncPromise.resolve(Promise.resolve({
 				mQueryOptions : mLocalQueryOptions,
 				sReducedPath : "/resolved/path"
@@ -963,7 +978,7 @@ sap.ui.define([
 			.returns(oCache);
 
 		// code under test
-		oBinding.fetchCache(oContext);
+		oBinding.fetchCache(oContext, bIgnoreParentCache);
 
 		assert.strictEqual(oBinding.oCache, undefined);
 		assert.strictEqual(oBinding.mLateQueryOptions, undefined);
@@ -1015,7 +1030,7 @@ sap.ui.define([
 				mResultingQueryOptions = {};
 
 			oBindingMock.expects("fetchQueryOptionsForOwnCache")
-				.withExactArgs(sinon.match.same(oContext))
+				.withExactArgs(sinon.match.same(oContext), undefined)
 				.returns(oQueryOptionsPromise);
 			oBindingMock.expects("fetchResourcePath")
 				.withExactArgs(sinon.match.same(oContext))
@@ -1097,7 +1112,7 @@ sap.ui.define([
 				mResultingQueryOptions = {};
 
 			oBindingMock.expects("fetchQueryOptionsForOwnCache")
-				.withExactArgs(sinon.match.same(oContext0))
+				.withExactArgs(sinon.match.same(oContext0), undefined)
 				.returns(SyncPromise.resolve({
 					mQueryOptions : mLocalQueryOptions,
 					sReducedPath : "/reduced/path"
@@ -1128,7 +1143,7 @@ sap.ui.define([
 
 				oCacheMock.expects("setActive").withExactArgs(false);
 				oBindingMock.expects("fetchQueryOptionsForOwnCache")
-					.withExactArgs(sinon.match.same(oContext1))
+					.withExactArgs(sinon.match.same(oContext1), undefined)
 					.returns(SyncPromise.resolve({
 						mQueryOptions : mLocalQueryOptions,
 						sReducedPath : "/reduced/path"
@@ -1186,7 +1201,7 @@ sap.ui.define([
 			mResultingQueryOptions = {},
 			that = this;
 
-		oBindingMock.expects("fetchQueryOptionsForOwnCache").withExactArgs(undefined)
+		oBindingMock.expects("fetchQueryOptionsForOwnCache").withExactArgs(undefined, undefined)
 			.returns(SyncPromise.resolve({
 				mQueryOptions : mLocalQueryOptions,
 				sReducedPath : "/reduced/path"
@@ -1245,7 +1260,7 @@ sap.ui.define([
 					mResultingQueryOptions = {};
 
 				oBindingMock.expects("fetchQueryOptionsForOwnCache")
-					.withExactArgs(sinon.match.same(oContext))
+					.withExactArgs(sinon.match.same(oContext), undefined)
 					.returns(oQueryOptionsPromise);
 				oBindingMock.expects("fetchResourcePath")
 					.withExactArgs(sinon.match.same(oContext))
@@ -1314,7 +1329,7 @@ sap.ui.define([
 			mResultingQueryOptions = {};
 
 		oBindingMock.expects("fetchQueryOptionsForOwnCache")
-			.withExactArgs(sinon.match.same(oContext))
+			.withExactArgs(sinon.match.same(oContext), undefined)
 			.returns(SyncPromise.resolve({
 				mQueryOptions : mLocalQueryOptions,
 				sReducedPath : "/reduced/path"
@@ -1357,7 +1372,7 @@ sap.ui.define([
 			};
 
 		this.mock(oBinding).expects("fetchQueryOptionsForOwnCache")
-			.withExactArgs(sinon.match.same(oContext))
+			.withExactArgs(sinon.match.same(oContext), undefined)
 			.returns(SyncPromise.resolve({}));
 
 		// code under test
@@ -1549,13 +1564,13 @@ sap.ui.define([
 			mResultingQueryOptions = {};
 
 		oBindingMock.expects("fetchQueryOptionsForOwnCache")
-			.withExactArgs(sinon.match.same(oContext0))
+			.withExactArgs(sinon.match.same(oContext0), undefined)
 			.returns(SyncPromise.resolve({
 				mQueryOptions : {},
 				sReducedPath : "/reduced/path/1"
 			}));
 		oBindingMock.expects("fetchQueryOptionsForOwnCache")
-			.withExactArgs(sinon.match.same(oContext1))
+			.withExactArgs(sinon.match.same(oContext1), undefined)
 			.returns(SyncPromise.resolve({
 				mQueryOptions : mLocalQueryOptions,
 				sReducedPath : "/reduced/path/2"
@@ -1792,7 +1807,7 @@ sap.ui.define([
 				oCachePromise : bSync ? {/*must not be used*/} : SyncPromise.resolve(null),
 				oContext : oContext,
 				sPath : "binding/path",
-				isRelative : function () {}
+				bRelative : true
 			}),
 			oContextResult = {},
 			sPath = "foo",
@@ -1800,7 +1815,6 @@ sap.ui.define([
 			oPromise,
 			bWithOrWithoutCache = {};
 
-		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
 		this.mock(_Helper).expects("buildPath").withExactArgs(oBinding.sPath, sPath).returns("~");
 		this.mock(oContext).expects("withCache")
 			.withExactArgs(sinon.match.same(fnProcessor), "~", bSync,
@@ -1826,7 +1840,7 @@ sap.ui.define([
 				oCache : bSync ? null : {/*must not be used*/},
 				oCachePromise : bSync ? {/*must not be used*/} : SyncPromise.resolve(null),
 				oContext : oContext,
-				isRelative : function () {}
+				bRelative : true
 			}),
 			oContextResult = {},
 			sPath = "/foo",
@@ -1835,7 +1849,6 @@ sap.ui.define([
 			bWithOrWithoutCache = {};
 
 		// oBinding binding might still be relative but while bubbling up sPath is already absolute
-		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
 		this.mock(_Helper).expects("buildPath").never();
 		this.mock(oContext).expects("withCache")
 			.withExactArgs(sinon.match.same(fnProcessor), sPath, bSync,
@@ -1863,7 +1876,7 @@ sap.ui.define([
 				oCachePromise : bSync ? {/*must not be used*/} : SyncPromise.resolve(oCache),
 				oContext : oContext,
 				sPath : "binding/path",
-				isRelative : function () {}
+				bRelative : true
 			}),
 			oContextResult = {},
 			sPath = "/foo",
@@ -1872,7 +1885,6 @@ sap.ui.define([
 			bWithOrWithoutCache = {};
 
 		this.mock(oBinding).expects("getRelativePath").withExactArgs(sPath).returns(undefined);
-		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
 		this.mock(oContext).expects("withCache")
 			.withExactArgs(sinon.match.same(fnProcessor), sPath, bSync,
 				sinon.match.same(bWithOrWithoutCache))
@@ -1896,13 +1908,12 @@ sap.ui.define([
 				oCachePromise : SyncPromise.resolve(oCache),
 				oContext : oContext,
 				sPath : "binding/path",
-				isRelative : function () {}
+				bRelative : false
 			}),
 			sPath = "/foo",
 			oPromise;
 
 		this.mock(oBinding).expects("getRelativePath").withExactArgs(sPath).returns(undefined);
-		this.mock(oBinding).expects("isRelative").withExactArgs().returns(false);
 		this.mock(oContext).expects("withCache").never();
 
 		// code under test
@@ -1954,7 +1965,6 @@ sap.ui.define([
 		var oBinding = new ODataBinding({
 				oCache : undefined,
 				oCachePromise : SyncPromise.resolve(Promise.resolve(null))
-//				isRelative : function () {}
 			});
 
 		// code under test
@@ -1966,10 +1976,8 @@ sap.ui.define([
 		var oBinding = new ODataBinding({
 				oCache : null,
 				oCachePromise : SyncPromise.resolve(null),
-				isRelative : function () {}
+				bRelative : false
 			});
-
-		this.mock(oBinding).expects("isRelative").withExactArgs().returns(false);
 
 		// code under test
 		assert.strictEqual(oBinding.withCache().unwrap(), undefined);

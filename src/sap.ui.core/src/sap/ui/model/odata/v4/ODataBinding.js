@@ -39,7 +39,9 @@ sap.ui.define([
 		this.mLateQueryOptions = undefined;
 		// the absolute binding path (possibly reduced if the binding uses a parent binding's cache)
 		this.sReducedPath = undefined;
-		// change reason to be used when the binding is resumed
+		// change reason to be used when the binding is resumed, defaults to "Change" for the case
+		// that the binding is created while its root binding is suspended; otherwise it is set
+		// accordingly in suspend
 		this.sResumeChangeReason = ChangeReason.Change;
 	}
 
@@ -259,10 +261,14 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context instance to be used, may be undefined for absolute bindings
+	 * @param {boolean} [bIgnoreParentCache]
+	 *   Whether the parent cache is ignored and a new cache shall be created. This is for example
+	 *   needed during the resume process in case this binding has changed but its parent
+	 *   binding has not (see {@link sap.ui.model.odata.v4.ODataListBinding#resumeInternal})
 	 *
 	 * @private
 	 */
-	ODataBinding.prototype.fetchCache = function (oContext) {
+	ODataBinding.prototype.fetchCache = function (oContext, bIgnoreParentCache) {
 		var oCachePromise,
 			oCallToken = {},
 			aPromises,
@@ -277,7 +283,10 @@ sap.ui.define([
 			this.oCache.setActive(false);
 		}
 		this.oCache = undefined;
-		aPromises = [this.fetchQueryOptionsForOwnCache(oContext), this.oModel.oRequestor.ready()];
+		aPromises = [
+			this.fetchQueryOptionsForOwnCache(oContext, bIgnoreParentCache),
+			this.oModel.oRequestor.ready()
+		];
 		this.mCacheQueryOptions = undefined;
 		this.mLateQueryOptions = undefined;
 		oCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
@@ -344,6 +353,9 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context instance to be used, must be undefined for absolute bindings
+	 * @param {boolean} [bIgnoreParentCache]
+	 *   Whether the query options of the parent cache shall be ignored and own query options are
+	 *   determined (see {@link #fetchCache})
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving with an object having two properties:
 	 *   {object} mQueryOptions - The query options to create the cache for this binding or
@@ -352,7 +364,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataBinding.prototype.fetchQueryOptionsForOwnCache = function (oContext) {
+	ODataBinding.prototype.fetchQueryOptionsForOwnCache = function (oContext, bIgnoreParentCache) {
 		var bHasNonSystemQueryOptions,
 			oQueryOptionsPromise,
 			sResolvedPath = this.oModel.resolve(this.sPath, oContext),
@@ -387,8 +399,10 @@ sap.ui.define([
 		// auto-$expand/$select and binding is a parent binding, so that it needs to wait until all
 		// its child bindings know via the corresponding promise in this.aChildCanUseCachePromises
 		// if they can use the parent binding's cache
+		// With $$aggregation, no auto-$expand/$select is needed
 		oQueryOptionsPromise = this.doFetchQueryOptions(oContext);
-		if (this.oModel.bAutoExpandSelect && this.aChildCanUseCachePromises) {
+		if (this.oModel.bAutoExpandSelect && this.aChildCanUseCachePromises
+				&& !(this.mParameters && this.mParameters.$$aggregation)) {
 			// For auto-$expand/$select, wait for query options of dependent bindings:
 			// Promise.resolve() ensures all dependent bindings are created and have sent their
 			// query options promise to this binding via fetchIfChildCanUseCache.
@@ -406,8 +420,9 @@ sap.ui.define([
 			});
 		}
 
-		// (quasi-)absolute binding
-		if (!this.bRelative || !oContext.fetchValue) {
+		// parent cache is ignored or (quasi-)absolute binding
+		if (bIgnoreParentCache || !this.bRelative || !oContext.fetchValue)  {
+			// the binding shall create its own cache
 			return wrapQueryOptions(oQueryOptionsPromise);
 		}
 
@@ -567,16 +582,22 @@ sap.ui.define([
 	 * {@link topic:54e0ddf695af4a6c978472cecb01c64d Initialization and Read Requests}.
 	 *
 	 * @returns {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding|sap.ui.model.odata.v4.ODataPropertyBinding}
-	 *   The root binding or <code>undefined</code> if this binding is not yet resolved.
+	 *   The root binding or <code>undefined</code> if this binding is unresolved (see
+	 *   {@link sap.ui.model.Binding#isResolved}).
 	 *
 	 * @public
 	 * @since 1.53.0
 	 */
 	ODataBinding.prototype.getRootBinding = function () {
-		if (this.bRelative && this.oContext && this.oContext.getBinding) {
-			return this.oContext.getBinding().getRootBinding();
+		if (this.bRelative) {
+			if (!this.oContext) {
+				return undefined;
+			}
+			if (this.oContext.getBinding) {
+				return this.oContext.getBinding().getRootBinding();
+			}
 		}
-		return this.bRelative && !this.oContext ? undefined : this;
+		return this;
 	};
 
 	/**
@@ -622,8 +643,8 @@ sap.ui.define([
 	 *
 	 * Note: If this binding is relative, its data is cached separately for each parent context
 	 * path. This method returns <code>true</code> if there are pending changes for the current
-	 * parent context path of this binding. If this binding is unresolved, it returns
-	 * <code>false</code>.
+	 * parent context path of this binding. If this binding is unresolved (see
+	 * {@link sap.ui.model.Binding#isResolved}), it returns <code>false</code>.
 	 *
 	 * @returns {boolean}
 	 *   <code>true</code> if the binding is resolved and has pending changes
@@ -971,6 +992,14 @@ sap.ui.define([
 	};
 
 	/**
+	 * Suspends this binding and all dependent bindings.
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataBinding#suspendInternal
+	 * @private
+	 */
+
+	/**
 	 * Returns a string representation of this object including the binding path. If the binding is
 	 * relative, the parent path is also given, separated by a '|'.
 	 *
@@ -1052,7 +1081,7 @@ sap.ui.define([
 					? fnProcessor(null, that.getRelativePath(sPath), that)
 					: undefined; // no cache
 			}
-			if (that.isRelative() && that.oContext && that.oContext.withCache) {
+			if (that.bRelative && that.oContext && that.oContext.withCache) {
 				return that.oContext.withCache(fnProcessor,
 					sPath[0] === "/" ? sPath : _Helper.buildPath(that.sPath, sPath),
 					bSync, bWithOrWithoutCache);

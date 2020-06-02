@@ -158,14 +158,15 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bSuspended) {
-		QUnit.test("initialize: absolute, suspended = " + bSuspended, function (assert) {
-			var oBinding = this.bindContext("/absolute"),
-				oBindingMock = this.mock(oBinding);
+		QUnit.test("initialize: resolved, suspended = " + bSuspended, function (assert) {
+			var oBinding = this.bindContext("/resolved"),
+				oRootBinding = {isSuspended : function () {}};
 
-			oBindingMock.expects("getRootBinding").withExactArgs().returns(oBinding);
-			oBindingMock.expects("isSuspended").withExactArgs().returns(bSuspended);
+			this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
+			this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
+			this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(bSuspended);
 
-			oBindingMock.expects("_fireChange")
+			this.mock(oBinding).expects("_fireChange")
 				.exactly(bSuspended ? 0 : 1)
 				.withExactArgs({reason : ChangeReason.Change});
 
@@ -175,32 +176,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("initialize: relative, unresolved", function (assert) {
-		var oBinding = this.bindContext("relative");
+	QUnit.test("initialize: unresolved", function (assert) {
+		var oBinding = this.bindContext("unresolved");
 
+		this.mock(oBinding).expects("isResolved").withExactArgs().returns(false);
 		this.mock(oBinding).expects("_fireChange").never();
 
 		// code under test
 		oBinding.initialize();
-	});
-
-	//*********************************************************************************************
-	[false, true].forEach(function (bSuspended) {
-		QUnit.test("initialize: relative, resolved, bSuspended = " + bSuspended, function (assert) {
-			var oContext = Context.create(this.oModel, {}, "/EMPLOYEES"),
-				oBinding = this.bindContext("relative", oContext),
-				oBindingMock = this.mock(oBinding),
-				oRootBinding = {isSuspended : function () {}};
-
-			oBindingMock.expects("getRootBinding").withExactArgs().returns(oRootBinding);
-			this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(bSuspended);
-			oBindingMock.expects("_fireChange")
-				.exactly(bSuspended ? 0 : 1)
-				.withExactArgs({reason : ChangeReason.Change});
-
-			// code under test
-			oBinding.initialize();
-		});
 	});
 
 	//*********************************************************************************************
@@ -312,6 +295,18 @@ sap.ui.define([
 
 			assert.strictEqual(oBinding.mQueryOptions, mQueryOptions, "mQueryOptions");
 			assert.strictEqual(oBinding.mParameters, mParameters);
+			if (bSuspended) {
+				assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Filter);
+
+				oModelMock.expects("buildQueryOptions")
+					.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
+				oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
+
+				// code under test (as called by ODataParentBinding#changeParameters)
+				oBinding.applyParameters(mParameters);
+
+				assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
+			}
 		});
 	});
 
@@ -3129,11 +3124,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resumeInternal", function (assert) {
+	QUnit.test("resumeInternal: binding has sResumeChangeReason", function (assert) {
 		var bCheckUpdate = {/* true or false */},
 			oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
 			oBinding = this.bindContext("TEAM_2_EMPLOYEE", oContext),
-			oBindingMock = this.mock(oBinding),
 			oDependent0 = {resumeInternal : function () {}},
 			oDependent1 = {resumeInternal : function () {}},
 			oFetchCacheExpectation,
@@ -3144,21 +3138,20 @@ sap.ui.define([
 
 		oBinding.sResumeChangeReason = sResumeChangeReason;
 		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("");
-		oFetchCacheExpectation = oBindingMock.expects("fetchCache")
+		oFetchCacheExpectation = this.mock(oBinding).expects("fetchCache")
 			.withExactArgs(sinon.match.same(oContext))
 			// check correct sequence: on fetchCache call, aggregated query options must be reset
 			.callsFake(function () {
 				assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
 				assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, true);
 			});
-		this.mock(oBinding).expects("getDependentBindings")
-			.withExactArgs()
+		this.mock(oBinding).expects("getDependentBindings").withExactArgs()
 			.returns([oDependent0, oDependent1]);
 		oResumeInternalExpectation0 = this.mock(oDependent0).expects("resumeInternal")
-			.withExactArgs(sinon.match.same(bCheckUpdate));
+			.withExactArgs(sinon.match.same(bCheckUpdate), true);
 		oResumeInternalExpectation1 = this.mock(oDependent1).expects("resumeInternal")
-			.withExactArgs(sinon.match.same(bCheckUpdate));
-		oFireChangeExpectation = oBindingMock.expects("_fireChange")
+			.withExactArgs(sinon.match.same(bCheckUpdate), true);
+		oFireChangeExpectation = this.mock(oBinding).expects("_fireChange")
 			.withExactArgs({reason : sinon.match.same(sResumeChangeReason)});
 		oBinding.mAggregatedQueryOptions = {$select : ["Team_Id"]};
 		oBinding.bAggregatedQueryOptionsInitial = false;
@@ -3169,7 +3162,71 @@ sap.ui.define([
 		assert.ok(oResumeInternalExpectation0.calledAfter(oFetchCacheExpectation));
 		assert.ok(oResumeInternalExpectation1.calledAfter(oFetchCacheExpectation));
 		assert.ok(oFireChangeExpectation.calledAfter(oResumeInternalExpectation1));
-		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
+		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resumeInternal: binding has no sResumeChangeReason", function (assert) {
+		var bCheckUpdate = {/* true or false */},
+			oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
+			oBinding = this.bindContext("TEAM_2_EMPLOYEE", oContext),
+			oDependent0 = {resumeInternal : function () {}},
+			oDependent1 = {resumeInternal : function () {}};
+
+		oBinding.sResumeChangeReason = undefined;
+
+		this.mock(oBinding).expects("removeCachesAndMessages").never();
+		this.mock(oBinding).expects("fetchCache").never();
+		this.mock(oBinding).expects("getDependentBindings").withExactArgs()
+			.returns([oDependent0, oDependent1]);
+		this.mock(oDependent0).expects("resumeInternal")
+			.withExactArgs(sinon.match.same(bCheckUpdate), false);
+		this.mock(oDependent1).expects("resumeInternal")
+			.withExactArgs(sinon.match.same(bCheckUpdate), false);
+		this.mock(oBinding).expects("_fireChange").never();
+
+		// code under test
+		oBinding.resumeInternal(bCheckUpdate);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resumeInternal: binding has no sResumeChangeReason but parent has",
+			function (assert) {
+		var bCheckUpdate = {/* true or false */},
+			oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
+			oBinding = this.bindContext("TEAM_2_EMPLOYEE", oContext);
+
+		oBinding.sResumeChangeReason = undefined;
+
+		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("");
+		this.mock(oBinding).expects("fetchCache")
+			.withExactArgs(sinon.match.same(oContext))
+			// check correct sequence: on fetchCache call, aggregated query options must be reset
+			.callsFake(function () {
+				assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
+				assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, true);
+			});
+		this.mock(oBinding).expects("_fireChange").never();
+
+		// code under test
+		oBinding.resumeInternal(bCheckUpdate, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resumeInternal: suspend in change event of resume", function (assert) {
+		var oBinding = this.bindContext("/TEAMS('42')", undefined);
+
+		oBinding.sResumeChangeReason = ChangeReason.Change;
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change})
+			.callsFake(function () {
+				// simulate a suspend and a refresh
+				oBinding.sResumeChangeReason = ChangeReason.Refresh;
+			});
+
+		// code under test
+		oBinding.resumeInternal(true);
+
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Refresh);
 	});
 
 	//*********************************************************************************************
@@ -3184,10 +3241,10 @@ sap.ui.define([
 			oBindingMock.expects("fetchCache").never();
 			this.mock(oBinding).expects("getDependentBindings").never();
 			oBindingMock.expects("_fireChange").never();
-			oBindingMock.expects("execute").exactly(bAction === false ? 1 : 0).withExactArgs();
+			oBindingMock.expects("execute").never();
 
 			// code under test
-			oBinding.resumeInternal();
+			oBinding.resumeInternal(true);
 		});
 	});
 
