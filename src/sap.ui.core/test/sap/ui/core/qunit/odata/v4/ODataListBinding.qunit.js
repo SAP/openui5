@@ -1480,8 +1480,7 @@ sap.ui.define([
 			oBinding.destroy();
 			this.mock(oVirtualContext).expects("destroy").withExactArgs();
 		} else {
-			oBindingMock.expects("isRootBindingSuspended").exactly(bSuspend === 0 ? 1 : 2)
-				.withExactArgs().returns(bSuspend);
+			oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(bSuspend);
 			if (!bSuspend) {
 				oBindingMock.expects("getContexts").on(oBinding)
 					.withExactArgs(0, 10, bUseExtendedChangeDetection ? undefined : 100)
@@ -1500,14 +1499,17 @@ sap.ui.define([
 		if (oAddTask1) {
 			if (bSuspend === 0) { // destroy late
 				oBinding.destroy();
-			} else if (!bSuspend) {
-				oBindingMock.expects("_fireChange").withExactArgs({
-						detailedReason : "RemoveVirtualContext",
-						reason : ChangeReason.Change
-					}).callsFake(function () {
-						assert.strictEqual(oBinding.sChangeReason, "RemoveVirtualContext");
-					});
-				oBindingMock.expects("reset").withExactArgs(ChangeReason.Refresh);
+			} else {
+				oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(bSuspend);
+				if (!bSuspend) {
+					oBindingMock.expects("_fireChange").withExactArgs({
+							detailedReason : "RemoveVirtualContext",
+							reason : ChangeReason.Change
+						}).callsFake(function () {
+							assert.strictEqual(oBinding.sChangeReason, "RemoveVirtualContext");
+						});
+					oBindingMock.expects("reset").withExactArgs(ChangeReason.Refresh);
+				}
 			}
 			this.mock(oVirtualContext).expects("destroy").withExactArgs();
 

@@ -25742,6 +25742,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Nested list binding inside table:Table with auto-$expand/$select (virtual context).
+	// The nested list binding for the virtual context is destroyed before its prerendering task
+	// runs.
 	// Note: Avoid nested absolute bindings until CPOUIFTEAMB-1379 is solved.
 	// Note: Equipment's ID should not matter here.
 	// BCP: 2080140429
@@ -25763,7 +25765,7 @@ sap.ui.define([
 			</List>\
 		</t:template>\
 	</t:Column>\
-</Table>';
+</t:Table>';
 
 		this.expectRequest("EMPLOYEES?$select=ID,Name"
 				+ "&$expand=EMPLOYEE_2_EQUIPMENTS($select=Category,ID)&$skip=0&$top=110", {
