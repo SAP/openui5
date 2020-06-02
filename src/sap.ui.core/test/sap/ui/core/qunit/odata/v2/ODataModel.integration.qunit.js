@@ -1464,6 +1464,11 @@ sap.ui.define([
 	</ColumnListItem>\
 </Table>';
 
+		this.mock(sap.ui.getCore().getLibraryResourceBundle()).expects("getText")
+			.atLeast(1)
+			.callsFake(function (sKey, aArgs) {
+				return sKey;
+			});
 		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
 			.expectRequest({
 				deepPath : "/SalesOrderSet",
@@ -1483,7 +1488,7 @@ sap.ui.define([
 				description : "A plain error text",
 				descriptionUrl : "",
 				fullTarget : "",
-				message : "Communication Error",
+				message : "CommunicationError",
 				persistent : true,
 				target : "",
 				technical : true,
