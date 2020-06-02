@@ -158,14 +158,15 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bSuspended) {
-		QUnit.test("initialize: absolute, suspended = " + bSuspended, function (assert) {
-			var oBinding = this.bindContext("/absolute"),
-				oBindingMock = this.mock(oBinding);
+		QUnit.test("initialize: resolved, suspended = " + bSuspended, function (assert) {
+			var oBinding = this.bindContext("/resolved"),
+				oRootBinding = {isSuspended : function () {}};
 
-			oBindingMock.expects("getRootBinding").withExactArgs().returns(oBinding);
-			oBindingMock.expects("isSuspended").withExactArgs().returns(bSuspended);
+			this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
+			this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
+			this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(bSuspended);
 
-			oBindingMock.expects("_fireChange")
+			this.mock(oBinding).expects("_fireChange")
 				.exactly(bSuspended ? 0 : 1)
 				.withExactArgs({reason : ChangeReason.Change});
 
@@ -175,32 +176,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("initialize: relative, unresolved", function (assert) {
-		var oBinding = this.bindContext("relative");
+	QUnit.test("initialize: unresolved", function (assert) {
+		var oBinding = this.bindContext("unresolved");
 
+		this.mock(oBinding).expects("isResolved").withExactArgs().returns(false);
 		this.mock(oBinding).expects("_fireChange").never();
 
 		// code under test
 		oBinding.initialize();
-	});
-
-	//*********************************************************************************************
-	[false, true].forEach(function (bSuspended) {
-		QUnit.test("initialize: relative, resolved, bSuspended = " + bSuspended, function (assert) {
-			var oContext = Context.create(this.oModel, {}, "/EMPLOYEES"),
-				oBinding = this.bindContext("relative", oContext),
-				oBindingMock = this.mock(oBinding),
-				oRootBinding = {isSuspended : function () {}};
-
-			oBindingMock.expects("getRootBinding").withExactArgs().returns(oRootBinding);
-			this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(bSuspended);
-			oBindingMock.expects("_fireChange")
-				.exactly(bSuspended ? 0 : 1)
-				.withExactArgs({reason : ChangeReason.Change});
-
-			// code under test
-			oBinding.initialize();
-		});
 	});
 
 	//*********************************************************************************************
