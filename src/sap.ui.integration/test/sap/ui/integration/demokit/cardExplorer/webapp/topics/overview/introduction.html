@@ -18,12 +18,16 @@
 	<div class="content">
 
 		<h1 id="overview">Integration Cards Overview</h1>
+		<img src="../images/overviewPage_groupOfCards.png" alt="Diagram" style="max-width: 100%; background: transparent;">
+		<br>
+		<br>
 		Integration cards present a new means to expose application content to the end user in a unified way. <br>
 		Depending on the use cases cards can be easily embedded in a host environment, such as application, dashboard, or any HTML page.
 		A variety of card types can be configured by a simple JSON configuration (schema) without the need to write code for UI rendering.
 		In this way, even users without programming skill are being enabled to create new cards according to their special needs.
-
-
+		<br>
+		<br>
+		<img src="../images/overviewDiagram.png" alt="Diagram" style="max-width: 100%; width: 1000px;">
 		<h2>Card Configuration</h2>
 		Based on a JSON schema definition,  the card author defines either static or dynamic card content from the REST services.
 		The upcoming design-time capabilities of the cards will help authors in the future.
@@ -31,38 +35,6 @@
 		<h2>Host Environment</h2>
 		The host environment is responsible for the card’s integration. Action events allow the host environment to react on user interactions within the card.
 		For HTML environments UI5 provides two ways of integration: as a Custom Element or as a UI5 control.
-
-		<h2>Card Types</h2>
-
-		<h3>List Card</h3>
-		<img width="300px" src="../images/list.png" alt="List card">
-
-		<h3>Analytical Card</h3>
-		<img width="300px" src="../images/barchart1.png" alt="Analytical card with bar chart">
-		<img width="300px" src="../images/barchart2.png" alt="Analytical card with bar chart">
-		<img width="300px" src="../images/donutchart.png" alt="Analytical card with donut chart">
-		<img width="300px" src="../images/linechart.png" alt="Analytical cars with line chart">
-
-		<h3>Table Card</h3>
-		<img width="300px" src="../images/table.png" alt="Table card">
-
-		<h3>Object Card</h3>
-		<img width="300px" src="../images/object.png" alt="Object card">
-		<h3>Timeline Card</h3>
-
-		<img width="300px" src="../images/timeline.png" alt="Timeline card">
-
-		<h3>Calendar Card (Experimental)</h3>
-
-		<img width="300px" src="../images/calendar.png" alt="Calendar card">
-
-		<h3>Adaptive Card (Experimental)</h3>
-
-		<img width="300px" src="../images/adaptive.png" alt="Adaptive card">
-
-		<h3>Component Card</h3>
-		For more flexible implementations of card content, the Component Card allows the integration of UI5 Components as content.
-		Such cards could only be rendered within an HTML host environment.
 
 		<h1 id="concept">
 			UX Concept
@@ -104,8 +76,9 @@
 			Developing Cards
 		</h1>
 		<p>
-			To create a card you should create a manifest.json file that stores all configurations (card structure, data, functionality, etc...).
+			To develop a card you should create a manifest.json file that stores all configurations (card structure, data, functionality, etc...).
 			The sap.card is the namespace responsible for the card configuration inside the manifest file.
+			Read more about <a href="../../index.html#/overview/cardTypes" target="_parent">Card Types</a>.
 		</p>
 
 	</div>

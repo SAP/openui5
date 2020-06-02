@@ -1,0 +1,16 @@
+<mvc:View
+	controllerName="sap.ui.demo.cardExplorer.controller.Overview"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page class="topicPage" showHeader="true" title="{/pageTitle}">
+		<content>
+			<core:HTML
+				id="topicFrame"
+				preferDOM="false"
+				content='&lt;div style="height:100%; overflow-y: hidden; overflow-x:auto;"&gt;&lt;iframe {/iframeAttribute} class="sapUiTopicsIframe" name="content" src="{/topicURL}" frameborder="0"&gt;&lt;/iframe&gt;&lt;/div&gt;'
+				afterRendering=".onFrameSourceChange">
+			</core:HTML>
+		</content>
+	</Page>
+</mvc:View>
