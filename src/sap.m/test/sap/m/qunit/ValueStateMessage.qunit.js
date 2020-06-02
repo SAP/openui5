@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
@@ -166,6 +166,36 @@ sap.ui.define([
 		assert.strictEqual(oValueStateMessage._oControl, null);
 
 		// cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("it should not throw exception when the parent is destroyed or without domRef", function (assert) {
+		// system under test
+		var oInput = new InputBase();
+		var oValueStateMessage = new mobileLibrary.delegate.ValueState(oInput);
+
+		// arrange
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oInput.focus();
+		oValueStateMessage._oControl = {
+			getDomRef: function() {
+				return null;
+			}
+		};
+
+		var oStubGetPopup = sinon.stub(oValueStateMessage, "getPopup" , function() {return true;});
+		var oStubCreateDom = sinon.stub(oValueStateMessage, "createDom" , function() {return true;});
+
+		// act
+		oValueStateMessage.open();
+
+		// assert
+		assert.ok(true, "No exception should be thrown");
+
+		// cleanup
+		oStubGetPopup.restore();
+		oStubCreateDom.restore();
 		oInput.destroy();
 	});
 
