@@ -500,6 +500,36 @@ function(
 			JsControlTreeModifier.destroy(this.oControl, true);
 			assert.strictEqual(oDestroySpy.getCall(0).args[0], true, "then the destroy function of the button is called in the modifier including the bSuppressInvalidate parameter");
 		});
+
+		QUnit.test("when templating a fragment", function(assert) {
+			var REPLACED_TEXT = "is replaced as well";
+			var mData = {
+				foo: true,
+				secondValue: REPLACED_TEXT
+			};
+			var oThis = new JSONModel(mData);
+			var mPreprocessorSettings = {
+				bindingContexts: {
+					"this": oThis.createBindingContext("/")
+				},
+				models: {
+					"this": oThis
+				}
+			};
+
+			return JsControlTreeModifier.templateControlFragment(
+				"sap.ui.test.other.fragment-withTemplating",
+				mPreprocessorSettings,
+				undefined
+			).then(function(aControls) {
+				assert.equal(aControls.length, 2, "the root controls are returned");
+				assert.equal(aControls[0].getId(), "hbox", "the parent is returned");
+				var oText = aControls[0].getItems()[0];
+				assert.equal(oText.getId(), "inner", "the inner control is templated based on the model parameters");
+				assert.equal(oText.getText(), REPLACED_TEXT, "the inner control's attributed is templated based on the model parameters");
+				assert.equal(aControls[1].getId(), "otherRoot", "the parent is returned");
+			});
+		});
 	});
 
 	QUnit.module("Events", {

@@ -661,6 +661,18 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
+		templateControlFragment: function(sFragmentName, mPreprocessorSettings) {
+			return BaseTreeModifier._templateFragment(
+				sFragmentName,
+				mPreprocessorSettings
+			).then(function(oFragment) {
+				return XmlTreeModifier._children(oFragment);
+			});
+		},
+
+		/**
+		 * @inheritDoc
+		 */
 		destroy: function(oControl) {
 			var oParent = oControl.parentNode;
 			if (oParent) {
