@@ -387,6 +387,62 @@ sap.ui.define([
 						]
 					},
 					{
+						key: 'extension',
+						target: 'exploreSamples',
+						title: 'Extension',
+						experimental: true,
+						subSamples: [
+							{
+								title: 'Getting Data From Multiple Sources',
+								key: 'gettingData',
+								files: [
+									{
+										url: '/samples/extension/gettingData/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/extension/gettingData/myExtension.js',
+										name: 'myExtension.js',
+										key: 'myExtension.js'
+									}
+								]
+							},
+							{
+								title: 'Custom Formatters',
+								key: 'customFormatters',
+								files: [
+									{
+										url: '/samples/extension/customFormatters/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/extension/customFormatters/myExtension.js',
+										name: 'myExtension.js',
+										key: 'myExtension.js'
+									}
+								]
+							},
+							{
+								title: 'Custom Actions',
+								key: 'customActions',
+								files: [
+									{
+										url: '/samples/extension/customActions/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/extension/customActions/myExtension.js',
+										name: 'myExtension.js',
+										key: 'myExtension.js'
+									}
+								]
+							}
+						]
+					},
+					{
 						key: 'filtering',
 						target: 'exploreSamples',
 						title: 'Filtering',
@@ -592,6 +648,50 @@ sap.ui.define([
 										key: 'sampleComponent/Main.view.xml'
 									}
 								]
+							},
+							{
+								title: 'Extension Using Destinations',
+								key: 'extensionUsingDestinations',
+								useIFrame: true,
+								isApplication: true,
+								files: [
+									{
+										url: '/samples/destinations/extensionUsingDestinations/indexTemplate.html',
+										name: 'index.html',
+										key: 'index.html'
+									},
+									{
+										url: '/samples/destinations/extensionUsingDestinations/cardBundle/cardManifest.json',
+										name: 'cardBundle/cardManifest.json',
+										key: 'cardBundle/cardManifest.json'
+									},
+									{
+										url: '/samples/destinations/extensionUsingDestinations/cardBundle/myExtension.js',
+										name: 'cardBundle/myExtension.js',
+										key: 'cardBundle/myExtension.js'
+									},
+									{
+										url: '/samples/destinations/extensionUsingDestinations/View.view.xml',
+										name: 'Destinations.view.xml',
+										key: 'Destinations.view.xml'
+									},
+									{
+										url: '/samples/destinations/extensionUsingDestinations/Controller.controller.js',
+										name: 'Destinations.controller.js',
+										key: 'Destinations.controller.js'
+									},
+									{
+										url: '/samples/destinations/extensionUsingDestinations/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json',
+										isApplicationManifest: true
+									},
+									{
+										url: '/samples/destinations/extensionUsingDestinations/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									}
+								]
 							}
 						]
 					},
@@ -634,6 +734,51 @@ sap.ui.define([
 							},
 							{
 								url: '/samples/hostActions/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							}
+						]
+					},
+					{
+						key: 'hostAndExtensionActions',
+						target: 'exploreSamples',
+						title: 'Host and Extension Actions',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/hostAndExtensionActions/indexTemplate.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/hostAndExtensionActions/cardBundle/cardManifest.json',
+								name: 'cardBundle/cardManifest.json',
+								key: 'cardBundle/cardManifest.json'
+							},
+							{
+								url: '/samples/hostAndExtensionActions/cardBundle/myExtension.js',
+								name: 'cardBundle/myExtension.js',
+								key: 'cardBundle/myExtension.js'
+							},
+							{
+								url: '/samples/hostAndExtensionActions/View.view.xml',
+								name: 'View.view.xml',
+								key: 'View.view.xml'
+							},
+							{
+								url: '/samples/hostAndExtensionActions/Controller.controller.js',
+								name: 'Controller.controller.js',
+								key: 'Controller.controller.js'
+							},
+							{
+								url: '/samples/hostAndExtensionActions/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								isApplicationManifest: true
+							},
+							{
+								url: '/samples/hostAndExtensionActions/Component.js',
 								name: 'Component.js',
 								key: 'Component.js'
 							}

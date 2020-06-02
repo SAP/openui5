@@ -149,6 +149,13 @@ sap.ui.define([
 						topicTitle: 'Integration Card Features'
 					},
 					{
+						title: 'Extension',
+						target: 'learnDetail',
+						key: 'extension',
+						topicTitle: 'Integration Card Features',
+						experimental: true
+					},
+					{
 						title: 'Manifest Parameters',
 						target: 'learnDetail',
 						key: 'manifestParameters',

@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/base/Interface",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
@@ -29,6 +30,7 @@ sap.ui.define([
 	"sap/ui/integration/formatters/IconFormatter",
 	"sap/ui/integration/util/FilterBarFactory"
 ], function (
+	Interface,
 	jQuery,
 	Core,
 	Control,
@@ -332,6 +334,26 @@ sap.ui.define([
 		this._oRb = Core.getLibraryResourceBundle("sap.f");
 		this.setModel(new JSONModel(), "parameters");
 		this._busyStates = new Map();
+		this._oExtension = null;
+
+		/**
+		 * Facade of the {@link sap.ui.integration.widgets.Card} control.
+		 * @class
+		 * @hideconstructor
+		 * @name sap.ui.integration.widgets.CardFacade
+		 * @experimental since 1.79
+		 * @public
+		 * @author SAP SE
+		 * @version ${version}
+		 * @borrows sap.ui.integration.widgets.Card#getParameters as getParameters
+		 * @borrows sap.ui.integration.widgets.Card#getCombinedParameters as getCombinedParameters
+		 * @borrows sap.ui.integration.widgets.Card#getManifestEntry as getManifestEntry
+		 * @borrows sap.ui.integration.widgets.Card#resolveDestination as resolveDestination
+		 * @borrows sap.ui.integration.widgets.Card#request as request
+		 */
+		this._oLimitedInterface = new Interface(this, [
+			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request"
+		]);
 	};
 
 	/**
@@ -466,17 +488,49 @@ sap.ui.define([
 			this._oCardManifest.destroy();
 		}
 
-		// this._startBusyState("applyManifest");
 		this._oCardManifest = new CardManifest("sap.card", vManifest, sBaseUrl, this.getManifestChanges());
 
 		this._oCardManifest
 			.load(mOptions)
 			.then(function () {
+				this._registerManifestModulePath();
 				this._isManifestReady = true;
 				this.fireManifestReady();
+
+				return this._loadExtension();
+			}.bind(this))
+			.then(function () {
 				this._applyManifest();
 			}.bind(this))
 			.catch(this._applyManifest.bind(this));
+	};
+
+	/**
+	 * Loads extension if there is such specified in the manifest.
+	 * @returns {Promise|null} Null if there is no need to load extension, else a promise.
+	 */
+	Card.prototype._loadExtension = function () {
+		var sExtensionPath = this._oCardManifest.get("/sap.card/extension");
+
+		if (!sExtensionPath) {
+			return null;
+		}
+
+		var sFullExtensionPath = this._oCardManifest.get("/sap.app/id").replace(/\./g,"/") + "/" + sExtensionPath;
+
+		return new Promise(function (resolve, reject) {
+			sap.ui.require([sFullExtensionPath], function (oExtension) {
+				this._oExtension = oExtension;
+				oExtension.onCardReady(this._oLimitedInterface);
+				BindingHelper.addNamespace("extension", {
+					formatters: oExtension.getFormatters()
+				});
+				resolve();
+			}.bind(this), function (vErr) {
+				Log.error("Failed to load " + sExtensionPath + ". Check if the path is correct.");
+				reject(vErr);
+			});
+		}.bind(this));
 	};
 
 	/**
@@ -485,8 +539,6 @@ sap.ui.define([
 	Card.prototype._applyManifest = function () {
 		var oParameters = this.getParameters(),
 			oCardManifest = this._oCardManifest;
-
-		this._registerManifestModulePath();
 
 		if (oCardManifest && oCardManifest.getResourceBundle()) {
 			this._enhanceI18nModel(oCardManifest.getResourceBundle());
@@ -579,6 +631,7 @@ sap.ui.define([
 		this.destroyManifest();
 		this._busyStates = null;
 		this._oRb = null;
+		this._oExtension = null;
 
 		if (this._ariaText) {
 			this._ariaText.destroy();
@@ -768,7 +821,7 @@ sap.ui.define([
 
 		this._oDestinations = new Destinations(this.getHostInstance(), this._oCardManifest.get(MANIFEST_PATHS.DESTINATIONS));
 		this._oIconFormatter = new IconFormatter(this._oDestinations);
-		this._oDataProviderFactory = new DataProviderFactory(this._oDestinations);
+		this._oDataProviderFactory = new DataProviderFactory(this._oDestinations, this._oExtension);
 		this._oLoadingProvider = new LoadingProvider();
 
 		this._applyServiceManifestSettings();
@@ -1275,6 +1328,24 @@ sap.ui.define([
 	Card.prototype.onDataRequestComplete = function () {
 		this.fireEvent("_cardReady");
 		this._handleCardLoading();
+	};
+
+	/**
+	 * Performs an HTTP request using the given configuration.
+	 *
+	 * @public
+	 * @experimental since 1.79
+	 * @param {object} oConfiguration The configuration of the request.
+	 * @param {string} oConfiguration.url The URL of the resource.
+	 * @param {string} [oConfiguration.mode="cors"] The mode of the request. Possible values are "cors", "no-cors", "same-origin".
+	 * @param {string} [oConfiguration.method="GET"] The HTTP method. Possible values are "GET", "POST".
+	 * @param {Object} [oConfiguration.parameters] The request parameters. If the method is "POST" the parameters will be put as key/value pairs into the body of the request.
+	 * @param {Object} [oConfiguration.headers] The HTTP headers of the request.
+	 * @param {boolean} [oConfiguration.withCredentials=false] Indicates whether cross-site requests should be made using credentials.
+	 * @returns {Promise} Resolves when the request is successful, rejects otherwise.
+	 */
+	Card.prototype.request = function (oConfiguration) {
+		return this._oDataProviderFactory.create({ request: oConfiguration}).getData();
 	};
 
 	return Card;

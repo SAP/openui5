@@ -124,6 +124,7 @@ sap.ui.define(function () {
 					'./loading/CardLoading.qunit'
 				]
 			},
+			"CardExtension": {},
 			"CardHost": {
 				coverage: {
 					only: [

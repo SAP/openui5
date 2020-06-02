@@ -138,15 +138,16 @@ sap.ui.define([
 	HeaderFactory.prototype._createActionsToolbar = function () {
 		var oCard = this._oCard,
 			oHost = oCard.getHostInstance(),
+			oExtension = oCard._oExtension,
 			oActionsToolbar,
 			bHasActions;
 
-		if (!oHost) {
+		if (!oHost && !oExtension) {
 			return null;
 		}
 
 		oActionsToolbar = new ActionsToolbar();
-		bHasActions = oActionsToolbar.initializeContent(oHost, oCard);
+		bHasActions = oActionsToolbar.initializeContent(oHost, oCard, oExtension);
 
 		if (bHasActions) {
 			return oActionsToolbar;

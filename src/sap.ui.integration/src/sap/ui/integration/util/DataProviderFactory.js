@@ -5,9 +5,10 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/integration/util/ServiceDataProvider",
 	"sap/ui/integration/util/RequestDataProvider",
-	"sap/ui/integration/util/DataProvider"
+	"sap/ui/integration/util/DataProvider",
+	"sap/ui/integration/util/ExtensionDataProvider"
 ],
-function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider) {
+function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider, ExtensionDataProvider) {
 "use strict";
 
 	/**
@@ -23,9 +24,10 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider) {
 	 * @alias sap.ui.integration.util.DataProviderFactory
 	 */
 	var DataProviderFactory = BaseObject.extend("sap.ui.integration.util.DataProviderFactory", {
-		constructor: function (oDestinations) {
+		constructor: function (oDestinations, oExtension) {
 			BaseObject.call(this);
 			this._oDestinations = oDestinations;
+			this._oExtension = oExtension;
 			this._aDataProviders = [];
 		}
 	});
@@ -43,6 +45,7 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider) {
 			this._aDataProviders = null;
 		}
 
+		this._oExtension = null;
 		this._bIsDestroyed = true;
 	};
 
@@ -75,6 +78,8 @@ function (BaseObject, ServiceDataProvider, RequestDataProvider, DataProvider) {
 			oDataProvider = new ServiceDataProvider();
 		} else if (oDataSettings.json) {
 			oDataProvider = new DataProvider();
+		} else if (oDataSettings.extension) {
+			oDataProvider = new ExtensionDataProvider(this._oExtension);
 		} else {
 			return null;
 		}
