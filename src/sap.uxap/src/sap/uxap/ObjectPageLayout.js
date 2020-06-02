@@ -3392,7 +3392,7 @@ sap.ui.define([
 	ObjectPageLayout.prototype.setHeaderTitle = function (oHeaderTitle, bSuppressInvalidate) {
 		if (oHeaderTitle && typeof oHeaderTitle.addEventDelegate === "function"){
 			oHeaderTitle.addEventDelegate({
-				onAfterRendering: this._adjustHeaderHeights.bind(this)
+				onAfterRendering: this._onAfterHeaderTitleRendering.bind(this)
 			});
 		}
 		this.setAggregation("headerTitle", oHeaderTitle, bSuppressInvalidate);
@@ -3410,6 +3410,28 @@ sap.ui.define([
 		}
 
 		return this;
+	};
+
+	/**
+	 * Adjusts Header's height metrics, only if there is a change in the height.
+	 *
+	 * @private
+	 */
+	ObjectPageLayout.prototype._onAfterHeaderTitleRendering = function () {
+		var oHeaderTitle = this.getHeaderTitle(),
+			$headerTitle = oHeaderTitle && oHeaderTitle.$(),
+			iCurrentHeaderTitleHeight;
+
+		if (!oHeaderTitle || !$headerTitle.length) {
+			return;
+		}
+
+		iCurrentHeaderTitleHeight = $headerTitle.height();
+
+		if (iCurrentHeaderTitleHeight !== this._iCachedHeaderTitleHeight) {
+			this._adjustHeaderHeights();
+			this._iCachedHeaderTitleHeight = iCurrentHeaderTitleHeight;
+		}
 	};
 
 	/**

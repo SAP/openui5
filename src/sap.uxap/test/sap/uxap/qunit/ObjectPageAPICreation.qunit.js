@@ -2154,6 +2154,39 @@ function (
 		assert.ok(this.oObjectPageLayout._oObserver.isA("sap.ui.base.ManagedObjectObserver"), true, "ManagedObjectObserver is created");
 	});
 
+	QUnit.test("ObjectPageLayout - update Header Title", function (assert) {
+		// Arrange
+		var oHeaderTitle = new ObjectPageHeader({
+				objectTitle: "First Title"
+			}),
+			oSpy = sinon.spy(this.oObjectPageLayout, "_adjustHeaderHeights"),
+			fnDone = assert.async();
+
+		assert.expect(2);
+
+		this.oObjectPageLayout.setHeaderTitle(oHeaderTitle);
+		this.oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+			oSpy.reset();
+
+			// Act - already have a title, so changing its text should not affect height
+			oHeaderTitle.setObjectTitle("New Title");
+			Core.applyChanges();
+
+			// Assert
+			assert.ok(oSpy.notCalled, "_adjustHeaderHeights is not called when there is no change in Header's height");
+
+			// Act - no subTitle yet, so setting one will change the height
+			oHeaderTitle.setObjectSubtitle("New SubTitle");
+			Core.applyChanges();
+
+			// Assert
+			assert.ok(oSpy.calledOnce, "_adjustHeaderHeights is called when there is a change in Header's height");
+
+			// Clean up
+			fnDone();
+		});
+	});
+
 	QUnit.test("ObjectPageLayout - backgroundDesignAnchorBar", function (assert) {
 		var $oAnchorBarDomRef = this.oObjectPageLayout.$("anchorBar");
 
