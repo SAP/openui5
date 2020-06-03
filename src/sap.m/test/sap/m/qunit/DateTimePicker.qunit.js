@@ -292,6 +292,7 @@ sap.ui.define([
 		// prepare
 		var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8);
 		this.oDTp._oCalendar = { focusDate: this.spy(), destroy: function () {} };
+		this.oDTp._oOKButton = { setEnabled: function() {} };
 		this.oDTp._oDateRange = { getStartDate: function () {}, setStartDate: function () {} };
 		this.oDTp._oSliders = new TimePickerSliders(this.oDTp.getId() + "-Sliders", {
 			displayFormat: "hh:mm:ss"
@@ -314,7 +315,8 @@ sap.ui.define([
 	QUnit.test("_fillDateRange should call Calendar's focusDate method and sliders _setTimeValues with currentDate if initialFocusedDateValue and value are not set", function (assert) {
 		// prepare
 		var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8);
-		this.oDTp._oCalendar = { focusDate: this.spy(), destroy: function () {} };
+		this.oDTp._oCalendar = { focusDate: this.spy(), destroy: function () {}, removeAllSelectedDates: function() {} };
+		this.oDTp._oOKButton = { setEnabled: function() {} };
 		this.oDTp._oDateRange = { getStartDate: function () {}, setStartDate: function () {} };
 		this.oDTp._oSliders = new TimePickerSliders(this.oDTp.getId() + "-Sliders", {
 			displayFormat: "hh:mm:ss"
@@ -338,6 +340,7 @@ sap.ui.define([
 		var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8),
 			oGetDateValue = this.stub(this.oDTp, "getDateValue", function () { return oExpectedDateValue; });
 		this.oDTp._oCalendar = { focusDate: this.spy(), destroy: function () {} };
+		this.oDTp._oOKButton = { setEnabled: function() {} };
 		this.oDTp._oDateRange = { getStartDate: function () {}, setStartDate: function () {} };
 		this.oDTp._oSliders = new TimePickerSliders(this.oDTp.getId() + "-Sliders", {
 			displayFormat: "hh:mm:ss"
@@ -693,37 +696,6 @@ sap.ui.define([
 		oStub.restore();
 		oDPStoreInputSelectionSpy.restore();
 		oDP.destroy();
-	});
-
-	QUnit.test("_getInitialFocusedDateValue should return the initialFocusedDateValue property if it is set", function (assert) {
-		// arrange
-		var oExpectedDate = new Date(2017, 5, 15),
-			oDateTimePicker = new DateTimePicker(),
-			oGetInitialFocusedDateValueStub = this.stub(oDateTimePicker, "getInitialFocusedDateValue", function () {
-				return oExpectedDate;
-			});
-
-		// act && assert
-		assert.equal(oDateTimePicker._getInitialFocusedDateValue(), oExpectedDate, "should return the value of the property initialFocusedDateValue");
-
-		// cleanup
-		oGetInitialFocusedDateValueStub.restore();
-		oDateTimePicker.destroy();
-	});
-
-	QUnit.test("_getInitialFocusedDateValue should return the current Date if initialFocusedDateValue proeprty is not set", function (assert) {
-		// arrange
-		var oExpectedDate = new Date(),
-			oDateTimePicker = new DateTimePicker(),
-			oInitialFocusedDateValue = oDateTimePicker._getInitialFocusedDateValue();
-
-		// act && assert
-		assert.equal(oInitialFocusedDateValue.getYear(), oExpectedDate.getYear(), "year should be the current year");
-		assert.equal(oInitialFocusedDateValue.getMonth(), oExpectedDate.getMonth(), "month should be the current month");
-		assert.equal(oInitialFocusedDateValue.getDay(), oExpectedDate.getDay(), "day should be the current day");
-
-		// cleanup
-		oDateTimePicker.destroy();
 	});
 
 	QUnit.test("_selectFocusedDateValue should remove all selectedDates from the calendar and select the focused date", function (assert) {

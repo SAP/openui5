@@ -226,7 +226,7 @@ sap.ui.define([
 				}
 			},
 			DateTimePicker: {
-				title: "DatePicker - sap.m",
+				title: "DateTimePicker - sap.m",
 				_alternativeTitle: "QUnit tests: sap.m.DateTimePicker",
 				ui5: {
 					language: "en-US"
