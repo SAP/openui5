@@ -3559,6 +3559,10 @@ sap.ui.define([
 					exception: oException,
 					message: oException.message
 				}, false, true); // bAllowPreventDefault, bEnableEventBubbling
+				Log.error("FormatException in property '" + sName + "' of '" + that + "': " + oException.message +
+					"\nHint: single properties referenced in composite bindings and within binding expressions are automatically converted" +
+					"into the type of the bound control property, unless a different 'targetType' is specified. targetType:'any' may avoid" +
+					"the conversion and lead to the expected behavior.");
 				oBindingInfo.skipModelUpdate++;
 				that.resetProperty(sName);
 				oBindingInfo.skipModelUpdate--;

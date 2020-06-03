@@ -516,7 +516,7 @@ sap.ui.define([
 				return oMessage1.message.localeCompare(oMessage2.message);
 			}
 
-			// in order to get a complete diff add technicalDetails only if needed
+			// in order to get a complete diff, add technicalDetails only if needed
 			aExpectedMessages.forEach(function (oExpectedMessage, i) {
 				if (i < aCurrentMessages.length && !("technicalDetails" in oExpectedMessage)) {
 					delete aCurrentMessages[i].technicalDetails;
@@ -5248,15 +5248,16 @@ sap.ui.define([
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/As(\'1\')}">\
-	<Text text="{AValue}"/>\
+	<Text id="avalue" text="{AValue}"/>\
 </FlexBox>\
 <Input id="value" value="{AtoEntityWithComplexKey/Value}"/>',
 			that = this;
 
 		this.expectRequest("As('1')?$select=AID,AValue", {
 				AID : "1",
-				AValue : "avalue"
+				AValue : 23 // Edm.Int16
 			})
+			.expectChange("avalue", "23")
 			.expectChange("value");
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -9179,21 +9180,22 @@ sap.ui.define([
 	QUnit.test("ODCB: asynchronous $select to $expand", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
-<FlexBox id="form" binding="{path : \'/Equipments(Category=\\\'C\\\',ID=\\\'1\\\')\',\
+<FlexBox id="form" binding="{path : \'/Equipments(Category=\\\'C\\\',ID=1)\',\
 		parameters : {$select : \'EQUIPMENT_2_PRODUCT/SupplierIdentifier\'}}">\
-	<Text text="{ID}" />\
+	<Text id="id" text="{ID}" />\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("Equipments(Category='C',ID='1')?$select=Category,ID"
+		this.expectRequest("Equipments(Category='C',ID=1)?$select=Category,ID"
 				+ "&$expand=EQUIPMENT_2_PRODUCT($select=ID,SupplierIdentifier)", {
 				Category : "C",
-				ID : "1",
+				ID : 1, // Edm.Int32
 				EQUIPMENT_2_PRODUCT : {
-					ID : "HT-1010",
-					SupplierIdentifier : 42
+					ID : 1010, // Edm.Int32
+					SupplierIdentifier : 42 // Edm.Int32
 				}
-			});
+			})
+			.expectChange("id", "1");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			assert.strictEqual(
@@ -18666,7 +18668,7 @@ sap.ui.define([
 	QUnit.test("Delete an entity with messages from a relative ODCB w/o cache", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
-<FlexBox binding="{/Equipments(Category=\'foo\',ID=\'0815\')}">\
+<FlexBox binding="{/Equipments(Category=\'foo\',ID=815)}">\
 	<FlexBox id="form" binding="{path : \'EQUIPMENT_2_EMPLOYEE\', \
 		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 		<layoutData><FlexItemData/></layoutData>\
@@ -18675,11 +18677,11 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("Equipments(Category='foo',ID='0815')?$select=Category,ID"
+		this.expectRequest("Equipments(Category='foo',ID=815)?$select=Category,ID"
 				+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=ID,Name,"
 				+ "__CT__FAKE__Message/__FAKE__Messages)", {
 				Category : "foo",
-				ID : "0815",
+				ID : 815, // Edm.Int32
 				EQUIPMENT_2_EMPLOYEE : {
 					ID : "1",
 					Name : "Jonathan Smith",
@@ -18699,7 +18701,7 @@ sap.ui.define([
 				code : "1",
 				message : "Text",
 				persistent : false,
-				target : "/Equipments(Category='foo',ID='0815')/EQUIPMENT_2_EMPLOYEE/Name",
+				target : "/Equipments(Category='foo',ID=815)/EQUIPMENT_2_EMPLOYEE/Name",
 				type : "Warning"
 			}]);
 
