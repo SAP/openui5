@@ -1822,6 +1822,48 @@ sap.ui.define([
 		assert.ok(this.multiInput1.getFocusDomRef().getAttribute('aria-labelledby').indexOf(sInvisibleTextId) !== -1, "Input has aria-labelledby attribute to indicate Enter press possibility");
 	});
 
+	QUnit.test("aria-keyshortcuts attribute", function(assert) {
+		// Arrange
+		var sKeyShortcut,
+			oMultiInput = new MultiInput({
+				width: "300px",
+				editable: false,
+				tokens: [
+					new Token({text: "Long text"}),
+					new Token({text: "Very long text"}),
+					new Token({text: "Very, very long text"}),
+					new Token({text: "Very, very, very long text"})
+				]
+			});
+
+		oMultiInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		sKeyShortcut = oMultiInput.getFocusDomRef().getAttribute('aria-keyshortcuts');
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(sKeyShortcut, "Enter", "'aria-keyshortcuts' attribute should be presented with the correct value");
+
+		// Act
+		oMultiInput.setEnabled(false);
+		sap.ui.getCore().applyChanges();
+		sKeyShortcut = oMultiInput.getFocusDomRef().getAttribute('aria-keyshortcuts');
+
+		// Assert
+		assert.notOk(sKeyShortcut, "'aria-keyshortcuts' attribute should not be presented.");
+
+		// Act
+		oMultiInput.setEnabled(true);
+		oMultiInput.setEditable(true);
+		sap.ui.getCore().applyChanges();
+		sKeyShortcut = oMultiInput.getFocusDomRef().getAttribute('aria-keyshortcuts');
+
+		// Assert
+		assert.notOk(sKeyShortcut, "'aria-keyshortcuts' attribute should not be presented.");
+	});
+
 	QUnit.test("Placeholder opacity", function(assert) {
 		// assert
 		assert.ok(!this.multiInput1.$().hasClass("sapMMultiInputHasTokens"), "MultiInput placeholder shows placeholder");
