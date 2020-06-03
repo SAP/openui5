@@ -749,6 +749,52 @@ sap.ui.define([
 		assert.equal(this.obj.getBinding("value").sInternalType, "any", "targetType is used");
 	});
 
+
+	QUnit.test("Binding creation: model set during object creation", function(assert) {
+		var oModel = new JSONModel({test:"test"});
+
+		var oMyObject = new TestManagedObject({
+			value: {
+				parts: [
+					{
+						path: "a>/test"
+					},
+					{
+						value: "value"
+					}
+				]
+			},
+			models: {
+				"a": oModel
+			}
+		});
+
+		assert.ok(oMyObject.getBinding("value"), "CompositeBinding created");
+		assert.equal(oMyObject.getValue(), "test value", "value set properly");
+	});
+
+	QUnit.test("Binding creation: model set after object creation", function(assert) {
+		var oModel = new JSONModel({test:"test"});
+
+		var oMyObject = new TestManagedObject({
+			value: {
+				parts: [
+					{
+						path: "a>/test"
+					},
+					{
+						value: "value"
+					}
+				]
+			}
+		});
+
+		oMyObject.setModel(oModel, "a");
+
+		assert.ok(oMyObject.getBinding("value"), "CompositeBinding created");
+		assert.equal(oMyObject.getValue(), "test value", "value set properly");
+	});
+
 	QUnit.module("Aggregations", {
 		beforeEach: function() {
 			this.obj = new TestManagedObject();
