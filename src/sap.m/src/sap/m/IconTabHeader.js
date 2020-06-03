@@ -872,13 +872,6 @@ sap.ui.define([
 			// selected item can't fit fully, truncate it's text and put all other items in the overflow
 			oSelectedItemDomRef.style.width = iTabStripWidth - 20 + "px";
 			oSelectedItemDomRef.classList.add("sapMITBFilterTruncated");
-			for (i = 0; i < aItems.length; i++) {
-				oItem = aItems[i];
-				if (oItem) {
-					oItem.classList.add("sapMITBFilterHidden");
-				}
-			}
-			return;
 		}
 
 		var iLastVisible = -1;

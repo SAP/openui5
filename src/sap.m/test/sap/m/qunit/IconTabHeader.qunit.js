@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/m/IconTabHeader",
 	"sap/m/IconTabFilter",
 	"sap/ui/core/Core",
-	"sap/ui/qunit/utils/createAndAppendDiv"
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/m/Panel"
 ], function(
 	IconTabHeader,
 	IconTabFilter,
 	Core,
-	createAndAppendDiv
+	createAndAppendDiv,
+	Panel
 ) {
 	"use strict";
 
@@ -70,6 +72,26 @@ sap.ui.define([
 
 		// clean up
 		oITH.destroy();
+	});
+
+	QUnit.test("when first item is truncated, more button is still visible", function(assert) {
+		// arrange
+		var oITH = createHeaderWithItems(2),
+			oFirstItem = oITH.getItems()[0],
+			oContainer = new Panel({
+				width: "50px",
+				content: [oITH]
+			});
+
+		oContainer.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// assert
+		assert.ok(oFirstItem.$().hasClass("sapMITBFilterTruncated"), "the first item is truncated");
+		assert.ok(oITH._getOverflow().$().hasClass("sapMITHOverflowVisible"), "the more button is visible");
+
+		// clean up
+		oContainer.destroy();
 	});
 
 	QUnit.module("Shifting behavior");
