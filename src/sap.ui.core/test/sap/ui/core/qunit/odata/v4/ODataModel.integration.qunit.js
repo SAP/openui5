@@ -26226,4 +26226,38 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: create at end w/o $count, but after everything has been read
+	QUnit.test("ODLB: create at end w/o $count", function (assert) {
+		var sView = '\
+<Table id="table" items="{/EMPLOYEES}">\
+	<ColumnListItem>\
+		<Text id="name" text="{Name}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$skip=0&$top=100", {
+				value : [{Name : "Frederic Fall"}]
+			})
+			.expectChange("name", ["Frederic Fall"]);
+
+		return this.createView(assert, sView).then(function () {
+			var oBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectChange("name", [, "John Doe"])
+				.expectRequest({
+					method : "POST",
+					url : "EMPLOYEES",
+					payload : {Name : "John Doe"}
+				}, {/*response does not matter here*/});
+
+			return Promise.all([
+				// code under test
+				oBinding.create({Name : "John Doe"}, true, true),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 });
