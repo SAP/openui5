@@ -5305,6 +5305,54 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("aria-keyshortcuts attribute", function(assert) {
+		// Arrange
+		var oItem0, oItem1, oItem2, oItem3, sKeyShortcut,
+			oMultiComboBox = new MultiComboBox({
+				items: [
+					oItem0 = new Item({key: "Item0", text: "Long text"}),
+					oItem1 = new Item({key: "Item1", text: "Very long text"}),
+					oItem2 = new Item({key: "Item2", text: "Very, very long text"}),
+					oItem3 = new Item({key: "Item3", text: "Very, very, very long text"})
+				]
+			});
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oMultiComboBox.setSelectedItems([oItem0, oItem1, oItem2, oItem3]);
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox.setEditable(false);
+		oMultiComboBox.setWidth("50px");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(300);
+
+		sKeyShortcut = oMultiComboBox.getFocusDomRef().getAttribute('aria-keyshortcuts');
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(sKeyShortcut, "Enter", "'aria-keyshortcuts' attribute should be presented with the correct value");
+
+		// Act
+		oMultiComboBox.setEnabled(false);
+		sap.ui.getCore().applyChanges();
+		sKeyShortcut = oMultiComboBox.getFocusDomRef().getAttribute('aria-keyshortcuts');
+
+		//Assert
+		assert.notOk(sKeyShortcut, "'aria-keyshortcuts' attribute should not be presented.");
+
+		// Act
+		oMultiComboBox.setEnabled(true);
+		oMultiComboBox.setEditable(true);
+		sap.ui.getCore().applyChanges();
+		sKeyShortcut = oMultiComboBox.getFocusDomRef().getAttribute('aria-keyshortcuts');
+
+		//Assert
+		assert.notOk(sKeyShortcut, "'aria-keyshortcuts' attribute should not be presented.");
+	});
+
 	QUnit.test("Tokens information should be read out", function(assert) {
 		var oItem1 = new Item({key: "Item1", text: "Item1"}),
 			oItem2 = new Item({key: "Item2", text: "Item2"}),

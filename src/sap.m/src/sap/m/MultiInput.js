@@ -1832,10 +1832,12 @@ function(
 			oFocusDomRef = this.getFocusDomRef(),
 			sAriaLabeledBy = (oFocusDomRef && oFocusDomRef.getAttribute("aria-labelledby")) || "",
 			aAriaLabeledBy = sAriaLabeledBy.split(" "),
-			iNMoreIndex = aAriaLabeledBy.indexOf(sInvisibleTextId);
+			iNMoreIndex = aAriaLabeledBy.indexOf(sInvisibleTextId),
+			bEnabled = this.getEnabled();
 
 		if (!this.getEditable() && this.getAggregation("tokenizer")._hasMoreIndicator() && iNMoreIndex === -1) {
 			aAriaLabeledBy.push(sInvisibleTextId);
+			bEnabled && this.getFocusDomRef().setAttribute("aria-keyshortcuts", "Enter");
 		} else if (iNMoreIndex !== -1) {
 			aAriaLabeledBy.splice(iNMoreIndex, 1);
 		}

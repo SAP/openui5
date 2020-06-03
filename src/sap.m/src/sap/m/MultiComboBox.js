@@ -3631,11 +3631,13 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._handleNMoreAccessibility = function () {
-		var sInvisibleTextId = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER");
-		var bHasAriaLabelledBy = this.getAriaLabelledBy().indexOf(sInvisibleTextId) !== -1;
+		var sInvisibleTextId = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER"),
+			bHasAriaLabelledBy = this.getAriaLabelledBy().indexOf(sInvisibleTextId) !== -1,
+			bEnabled = this.getEnabled();
 
 		if (!this.getEditable() && this._oTokenizer && this._oTokenizer._hasMoreIndicator()) {
 			!bHasAriaLabelledBy && this.addAriaLabelledBy(sInvisibleTextId);
+			bEnabled && this.getFocusDomRef().setAttribute("aria-keyshortcuts", "Enter");
 		} else {
 			bHasAriaLabelledBy && this.removeAriaLabelledBy(sInvisibleTextId);
 		}
