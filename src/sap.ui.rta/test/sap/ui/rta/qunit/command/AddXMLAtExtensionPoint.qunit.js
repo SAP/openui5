@@ -94,11 +94,10 @@ function (
 		}
 	}, function() {
 		QUnit.test("when getting an AddXMLAtExtensionPoint command for the change ...", function(assert) {
-			var sPath = "abc.test";
+			var sPath = "someName/Component/changes/pathToFragment";
 			var sFragment = "fragment";
 			var oApplyChangeStub = sandbox.stub(AddXMLAtExtensionPoint, "applyChange");
 			var oCompleteChangeContentSpy = sandbox.spy(AddXMLAtExtensionPoint, "completeChangeContent");
-			sandbox.stub(Change.prototype, "getModuleName").returns(sPath);
 			sandbox.stub(ChangesController, "getAppComponentForSelector").returns(oMockedAppComponent);
 			sandbox.stub(FlexController.prototype, "checkForOpenDependenciesForControl").returns(false);
 			var oGetExtensionPointInfoSpy = sandbox.spy(ExtensionPointRegistryAPI, "getExtensionPointInfo");

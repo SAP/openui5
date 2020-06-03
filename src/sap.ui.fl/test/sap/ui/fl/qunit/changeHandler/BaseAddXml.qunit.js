@@ -95,7 +95,7 @@ sap.ui.define([
 			var oChangeDefinition = this.oChange.getDefinition();
 			var oSpecificContent = oChangeDefinition.content;
 			assert.deepEqual(oSpecificContent, oExpectedChangeContent, "then the change specific content is in the change, but the fragment not");
-			assert.equal(this.oChange.getModuleName(), "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/Fragment", "and the module name is set correct");
+			assert.equal(oChangeDefinition.moduleName, "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/Fragment", "and the module name is set correct in oChangeDefinition");
 		});
 
 		QUnit.test("When calling 'completeChangeContent' without complete information", function(assert) {
