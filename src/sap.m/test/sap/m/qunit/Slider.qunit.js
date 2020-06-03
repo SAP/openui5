@@ -310,11 +310,14 @@ sap.ui.define([
 	QUnit.test("default Values", function(assert) {
 
 		// system under test
-		var oSlider = new Slider();
+		var oSlider = new Slider(),
+			sKeyShortcut;
 
 		// arrange
 		oPage.addContent(oSlider);
 		sap.ui.getCore().applyChanges();
+
+		sKeyShortcut = oSlider.getDomRef("handle").getAttribute("aria-keyshortcuts");
 
 		// assert
 		assert.strictEqual(oSlider.getWidth(), "100%", "Default slider width");
@@ -334,6 +337,7 @@ sap.ui.define([
 		assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuenow"), "0", 'The "aria-valuenow" attribute is set to its default value');
 		assert.strictEqual(jQuery(oSlider.getFocusDomRef()).attr("aria-disabled"), undefined, 'The "aria-disabled" attribute is set not set by default');
 		assert.strictEqual(oSlider.getDomRef("progress").getAttribute("aria-hidden"), "true");
+		assert.notOk(sKeyShortcut, "'aria-keyshortcuts' attribute should not be presented");
 		assert.strictEqual(oSlider.getShowAdvancedTooltip(), false, "By default the sliders advanced tooltips are not shown");
 		assert.strictEqual(oSlider.getInputsAsTooltips(), false, "By default the sliders advanced tooltips are not of type input");
 
@@ -2324,7 +2328,7 @@ sap.ui.define([
 	QUnit.module("Accessibility");
 
 	QUnit.test("Slider with inputs as tooltip should add an aria", function(assert) {
-		var sInvisibleTextId,
+		var sInvisibleTextId, sKeyShortcut,
 			oSlider = new Slider({
 				step: 1,
 				min: 0,
@@ -2338,16 +2342,28 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		sInvisibleTextId = oSlider.getDomRef("handle").getAttribute("aria-describedby");
+		sKeyShortcut = oSlider.getDomRef("handle").getAttribute("aria-keyshortcuts");
 
 		// assert
 		assert.strictEqual(sap.ui.getCore().byId(sInvisibleTextId).getText(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SLIDER_INPUT_TOOLTIP"));
 		assert.ok(!oSlider.getFocusDomRef().getAttribute("aria-controls"), 'The "aria-controls" should not be set, before the tooltip is rendered');
+		assert.strictEqual(sKeyShortcut, "F2", "The 'aria-keyshortcuts' attribute should be presented with appropriate value");
 
+		// act
 		oSlider.focus();
 		this.clock.tick(1);
 
+		// assert
 		assert.ok(oSlider.getFocusDomRef().getAttribute("aria-controls"), 'The "aria-controls" should be set');
 
+		// act
+		oSlider.setEnabled(false);
+		sap.ui.getCore().applyChanges();
+
+		sKeyShortcut = oSlider.getDomRef("handle").getAttribute("aria-keyshortcuts");
+
+		// assert
+		assert.notOk(sKeyShortcut, "The 'aria-keyshortcuts' attribute should not be presented");
 
 		// cleanup
 		oSlider.destroy();

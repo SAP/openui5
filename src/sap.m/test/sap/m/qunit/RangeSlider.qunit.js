@@ -49,6 +49,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Handles", function (assert) {
+		var sKeyShortcutFirstHandle = this.rangeSlider.getDomRef("handle1").getAttribute("aria-keyshortcuts"),
+			sKeyShortcutSecondHandle = this.rangeSlider.getDomRef("handle2").getAttribute("aria-keyshortcuts");
+
 		assert.strictEqual(jQuery(".sapMSliderHandle").length, 2, "There should be two handles.");
 		assert.strictEqual(jQuery("[id*='-handle']").length, 2, "There should be four elements in the handles section rendered.");
 		assert.strictEqual(jQuery("[id$='-handle1']").length, 1, "There should be only one handle rendered with id \"-handle1\".");
@@ -60,11 +63,13 @@ sap.ui.define([
 		assert.ok(jQuery("[id$='-handle1']").attr("aria-valuemin"), "Aria attribute \"aria-valuemin\" should be rendered for handle1.");
 		assert.ok(jQuery("[id$='-handle1']").attr("aria-valuemax"), "Aria attribute \"aria-valuemax\" should be rendered for handle1.");
 		assert.ok(jQuery("[id$='-handle1']").attr("aria-valuenow"), "Aria attribute \"aria-valuenow\" should be rendered for handle1.");
+		assert.notOk(sKeyShortcutFirstHandle, "The 'aria-keyshortcuts' attribute should not be presented on the first handle");
 
 		assert.ok(jQuery("[id$='-handle2']").attr("aria-orientation"), "Aria attribute \"aria-orientation\" should be rendered for handle2.");
 		assert.ok(jQuery("[id$='-handle2']").attr("aria-valuemin"), "Aria attribute \"aria-valuemin\" should be rendered for handle2.");
 		assert.ok(jQuery("[id$='-handle2']").attr("aria-valuemax"), "Aria attribute \"aria-valuemax\" should be rendered for handle2.");
 		assert.ok(jQuery("[id$='-handle2']").attr("aria-valuenow"), "Aria attribute \"aria-valuenow\" should be rendered for handle2.");
+		assert.notOk(sKeyShortcutSecondHandle, "The 'aria-keyshortcuts' attribute should not be presented on the second handle");
 	});
 
 	QUnit.test("Aria labels forwarding to handles and progress indicator", function (assert) {
@@ -1250,6 +1255,8 @@ sap.ui.define([
 		var clock = sinon.useFakeTimers(),
 			sFirstHandleAriaId,
 			sSecondHandleAriaId,
+			sKeyShortcutFirstHandle,
+			sKeyShortcutSecondHandle,
 			sResourceBundleText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SLIDER_INPUT_TOOLTIP"),
 			oSlider = new RangeSlider({
 				showAdvancedTooltip: true,
@@ -1262,6 +1269,8 @@ sap.ui.define([
 
 		sFirstHandleAriaId = oSlider.getDomRef("handle1").getAttribute("aria-describedby");
 		sSecondHandleAriaId = oSlider.getDomRef("handle2").getAttribute("aria-describedby");
+		sKeyShortcutFirstHandle = oSlider.getDomRef("handle1").getAttribute("aria-keyshortcuts");
+		sKeyShortcutSecondHandle = oSlider.getDomRef("handle2").getAttribute("aria-keyshortcuts");
 
 		// assert
 		assert.strictEqual(sFirstHandleAriaId, sSecondHandleAriaId, "aria-describedby attributes should point to the same element");
@@ -1270,12 +1279,27 @@ sap.ui.define([
 
 		assert.ok(!oSlider.getDomRef("handle1").getAttribute("aria-controls"), 'The "aria-controls" should not be set, before the tooltip is rendered');
 		assert.ok(!oSlider.getDomRef("handle2").getAttribute("aria-controls"), 'The "aria-controls" should not be set, before the tooltip is rendered');
+		assert.strictEqual(sKeyShortcutFirstHandle, "F2", "The 'aria-keyshortcuts' attribute should be presented on the first handle with appropriate value");
+		assert.strictEqual(sKeyShortcutSecondHandle, "F2", "The 'aria-keyshortcuts' attribute should be presented on the second handle with appropriate value");
 
+		// act
 		oSlider.focus();
 		clock.tick(1);
 
+		// assert
 		assert.ok(oSlider.getDomRef("handle1").getAttribute("aria-controls"), 'The "aria-controls" should be set');
 		assert.ok(oSlider.getDomRef("handle2").getAttribute("aria-controls"), 'The "aria-controls" should be set');
+
+		// act
+		oSlider.setEnabled(false);
+		sap.ui.getCore().applyChanges();
+
+		sKeyShortcutFirstHandle = oSlider.getDomRef("handle1").getAttribute("aria-keyshortcuts");
+		sKeyShortcutSecondHandle = oSlider.getDomRef("handle2").getAttribute("aria-keyshortcuts");
+
+		// assert
+		assert.notOk(sKeyShortcutFirstHandle, "The 'aria-keyshortcuts' attribute should not be presented on the first handle");
+		assert.notOk(sKeyShortcutSecondHandle, "The 'aria-keyshortcuts' attribute should not be presented on the second handle");
 
 		// cleanup
 		oSlider.destroy();
