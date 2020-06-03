@@ -21,6 +21,8 @@
     "@openui5/sap.ui.commons": "1.79.0-SNAPSHOT",
     "@openui5/sap.ui.core": "1.79.0-SNAPSHOT",
     "@openui5/sap.ui.dt": "1.79.0-SNAPSHOT",
+    "@openui5/sap.ui.fl": "1.79.0-SNAPSHOT",
+    "@openui5/sap.ui.integration": "1.79.0-SNAPSHOT",
     "@openui5/sap.ui.layout": "1.79.0-SNAPSHOT",
     "@openui5/sap.ui.rta": "1.79.0-SNAPSHOT",
     "@openui5/sap.ui.suite": "1.79.0-SNAPSHOT",
