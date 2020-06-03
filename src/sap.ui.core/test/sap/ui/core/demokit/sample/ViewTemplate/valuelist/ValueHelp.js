@@ -67,7 +67,6 @@ sap.ui.define([
 						that.setTooltip("No value help");
 					}
 				}, function (oError) {
-					//TODO errors cannot seriously be handled per _instance_ of a control
 					MessageBox.alert(oError.message, {
 						icon : MessageBox.Icon.ERROR,
 						title : "Error"});
@@ -90,21 +89,12 @@ sap.ui.define([
 				var oButton = new Button({text : "Close"}),
 					oColumnListItem = new ColumnListItem(),
 					oControl = oEvent.getSource(),
+					oMetaModel = oControl.getModel().getMetaModel(),
+					oEntityType = oMetaModel.getODataEntityType(oMetaModel.getODataEntitySet(
+						oControl._collectionPath).entityType),
 					oPopover = new Popover({endButton : oButton,
 						placement : PlacementType.Auto, modal : true}),
 					oTable = new Table();
-
-				function createTextOrValueHelp(sPropertyPath, bAsColumnHeader) {
-					var oMetaModel = oControl.getModel().getMetaModel(),
-						oEntityType = oMetaModel.getODataEntityType(oMetaModel.getODataEntitySet(
-							oControl._collectionPath).entityType);
-					if (bAsColumnHeader) {
-						return new Text({text : oMetaModel.getODataProperty(oEntityType,
-							sPropertyPath)["sap:label"]});
-					}
-					return new ValueHelp({showDetails : oControl.getShowDetails(),
-						value : "{" + sPropertyPath + "}"});
-				}
 
 				function onClose() {
 					oPopover.close();
@@ -116,11 +106,22 @@ sap.ui.define([
 					path : "/" + oControl._collectionPath,
 					template : oColumnListItem
 				});
-				oControl._parameters.forEach(function (sParameterPath) {
-					oTable.addColumn(new Column(
-						{header : createTextOrValueHelp(sParameterPath, true)}
-					));
-					oColumnListItem.addCell(createTextOrValueHelp(sParameterPath));
+				oControl._parameters.forEach(function (sParameterPath, i) {
+					var oProperty = oMetaModel.getODataProperty(oEntityType, sParameterPath),
+						// 6rem <= column width <= 15rem
+						iMaxLength = Math.max(Math.min(Number(oProperty.maxLength), 15), 6),
+						bAsPopin = i > 3;
+
+					oTable.addColumn(new Column({
+						demandPopin : bAsPopin,
+						header : new Text({text : oProperty["sap:label"]}),
+						minScreenWidth : bAsPopin ? "XLarge" : "",
+						width : iMaxLength + "rem"
+					}));
+					oColumnListItem.addCell(new ValueHelp({
+						showDetails : oControl.getShowDetails(),
+						value : "{" + sParameterPath + "}"
+					}));
 				});
 				oButton.attachPress(onClose);
 				oPopover.addContent(oTable);
