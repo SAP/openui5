@@ -1110,7 +1110,8 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._onAfterRenderingDomReady = function () {
-		var sSectionToSelectID, oSectionToSelect, bAppendHeaderToContent;
+		var sSectionToSelectID, oSectionToSelect, bAppendHeaderToContent,
+			iWidth = this._getWidth(this);
 
 		if (this._bIsBeingDestroyed) {
 			return;
@@ -1168,10 +1169,10 @@ sap.ui.define([
 
 		this.oCore.getEventBus().publish("sap.ui", "ControlForPersonalizationRendered", this);
 
-		this._updateMedia(this._getWidth(this), ObjectPageLayout.MEDIA);
+		this._updateMedia(iWidth, ObjectPageLayout.MEDIA);
 
 		if (this._hasDynamicTitle()) {
-			this._updateMedia(this._getWidth(this), ObjectPageLayout.DYNAMIC_HEADERS_MEDIA);
+			this._updateMedia(iWidth, ObjectPageLayout.DYNAMIC_HEADERS_MEDIA);
 		}
 
 		this._updateToggleHeaderVisualIndicators();
