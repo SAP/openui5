@@ -81,6 +81,7 @@ sap.ui.define([
 			// Config scenario
 			oCustomConfig = {
 				collapsibleItems: false,
+				showItemLabel: false,
 				template: {
 					name: {
 						label: "{= ${label} || ${key}}",

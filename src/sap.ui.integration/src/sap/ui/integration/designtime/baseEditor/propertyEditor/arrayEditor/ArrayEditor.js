@@ -56,6 +56,18 @@ sap.ui.define([
 	 * 	<td><code>true</code></td>
 	 * 	<td>Whether to allow changing the order of array items</td>
 	 * </tr>
+	 * <tr>
+	 * 	<td><code>collapsibleItems</code></td>
+	 *  <td><code>boolean</code></td>
+	 * 	<td><code>true</code></td>
+	 * 	<td>Whether to render collapsible groups for array items or the plain array editor style</td>
+	 * </tr>
+	 * <tr>
+	 * 	<td><code>showItemLabel</code></td>
+	 *  <td><code>boolean</code></td>
+	 * 	<td><code>true</code></td>
+	 * 	<td>Whether to show the item label in the plain array editor</td>
+	 * </tr>
 	 * </table>
 	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
