@@ -23,6 +23,28 @@
             "reference": "2070197035"
           }
         ]
+      },
+      {
+        "id": "9d78e83cf7f831ff5953119d6928fd37098767e4",
+        "type": "FIX",
+        "text": " sap.f.Card: Busy layer is over the header now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080150813"
+          }
+        ]
+      },
+      {
+        "id": "1297f57f3339b0ce6fd2f8665b6017ba5afd5da1",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: GenericTags are not cut in DynamicPageTitle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070194973"
+          }
+        ]
       }
     ]
   }

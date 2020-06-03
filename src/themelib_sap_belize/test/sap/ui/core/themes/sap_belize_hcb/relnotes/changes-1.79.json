@@ -23,6 +23,12 @@
             "reference": "2070127243"
           }
         ]
+      },
+      {
+        "id": "d8741f3bebd87d24a08b93e37f9eaae9c0a54455",
+        "type": "FEATURE",
+        "text": " sap.m.Panel: Active area for expand/collapse enlarged",
+        "references": []
       }
     ]
   }

@@ -583,6 +583,95 @@
             "reference": "0020751294 0000254875 2020"
           }
         ]
+      },
+      {
+        "id": "ddbc54a701a493d85fd9b65fe6637de6acde469d",
+        "type": "FEATURE",
+        "text": " sap.m.IconTabBar: New property for nesting via interaction is now available",
+        "references": []
+      },
+      {
+        "id": "d8741f3bebd87d24a08b93e37f9eaae9c0a54455",
+        "type": "FEATURE",
+        "text": " sap.m.Panel: Active area for expand/collapse enlarged",
+        "references": []
+      },
+      {
+        "id": "a55233537843d9c5321518d566eda95ff0e956d0",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: \"More\" button no longer blinks on initial rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070253730"
+          }
+        ]
+      },
+      {
+        "id": "872db43ffd6a4d811dac743078dbcd79413cc17c",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Long words in description now wrap on the next line",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080142709"
+          }
+        ]
+      },
+      {
+        "id": "1297f57f3339b0ce6fd2f8665b6017ba5afd5da1",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: GenericTags are not cut in DynamicPageTitle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070194973"
+          }
+        ]
+      },
+      {
+        "id": "09b1e021279b6c9e13c17839260b98aabe478e31",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: appointments starting and ending outside view port are rendered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080150932"
+          }
+        ]
+      },
+      {
+        "id": "d612eb5024609a2046590e58db772c28c7185372",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: resizing appointments now works correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070260395"
+          }
+        ]
+      },
+      {
+        "id": "4788d849e3b6f8f0847af63200f8386f6c7aa7b6",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Adopt NumericInput to semantic rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070257404"
+          }
+        ]
+      },
+      {
+        "id": "102e81493b364c66aab0877b451cc7b00fda92ff",
+        "type": "FIX",
+        "text": " sap.m.StepInput: setValueState is now synchronised",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080131034"
+          }
+        ]
       }
     ]
   }

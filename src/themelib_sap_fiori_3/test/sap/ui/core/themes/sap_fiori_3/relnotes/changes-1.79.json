@@ -55,6 +55,34 @@
             "reference": "2070245513"
           }
         ]
+      },
+      {
+        "id": "d8741f3bebd87d24a08b93e37f9eaae9c0a54455",
+        "type": "FEATURE",
+        "text": " sap.m.Panel: Active area for expand/collapse enlarged",
+        "references": []
+      },
+      {
+        "id": "fd048c0b3a5215cb114a57b36397a584e12337e4",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Appointments have correct opacity",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070236654"
+          }
+        ]
+      },
+      {
+        "id": "0ad2a41923cdc9285d63a6b271777c22ab9a6e4f",
+        "type": "FIX",
+        "text": " sap.m.Switch: Proper focus is applied in all Quartz themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070247797"
+          }
+        ]
       }
     ]
   }
