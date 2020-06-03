@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/FlexController",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/variants/VariantModel",
@@ -16,7 +15,6 @@ sap.ui.define([
 	FlexController,
 	Utils,
 	Layer,
-	LayerUtils,
 	Applier,
 	FlexState,
 	VariantModel,
@@ -152,7 +150,7 @@ sap.ui.define([
 		} else if (Utils.isEmbeddedComponent(oComponent)) {
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
 			// Some embedded components might not have an app component, e.g. sap.ushell.plugins.rta, sap.ushell.plugins.rta-personalize
-			if (oAppComponent) {
+			if (oAppComponent && Utils.isApplicationComponent(oAppComponent)) {
 				var oInitialPromise = Promise.resolve();
 				if (FlexControllerFactory._componentInstantiationPromises[oAppComponent.getId()]) {
 					oInitialPromise = FlexControllerFactory._componentInstantiationPromises[oAppComponent.getId()];
@@ -172,6 +170,7 @@ sap.ui.define([
 					oComponent.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
 				});
 			}
+			return Promise.resolve();
 		}
 	};
 
