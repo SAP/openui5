@@ -124,21 +124,27 @@ ODataMessageParser.prototype.setHeaderField = function(sFieldName) {
  * Parses the given response for messages, calculates the delta and fires the messageChange-event
  * on the MessageProcessor if messages are found.
  *
- * @param {object} oResponse - The response from the server containing body and headers
- * @param {object} oRequest - The original request that lead to this response
- * @param {Object<string,any>} mGetEntities - A map containing the entities requested from the back-end as keys
- * @param {Object<string,any>} mChangeEntities - A map containing the entities changed on the back-end as keys
+ * @param {object} oResponse
+ *   The response from the server containing body and headers
+ * @param {object} oRequest
+ *   The original request that leads to this response
+ * @param {object} mGetEntities
+ *   A map with the keys of the entities requested from the back-end mapped to true
+ * @param {object} mChangeEntities
+ *   A map with the keys of the entities changed in the back-end mapped to true
+ * @param {boolean} bMessageScopeSupported
+ *   Whether the used OData service supports the message scope
+ *   {@link sap.ui.model.odata.MessageScope.BusinessObject}
  * @public
  */
-ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities, mChangeEntities, bMessageScopeSupported) {
-	// TODO: Implement filter function
-	var aMessages = [];
-
-	var mRequestInfo = {
-		url: oRequest ? oRequest.requestUri : oResponse.requestUri,
-		request: oRequest,
-		response: oResponse
-	};
+ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities, mChangeEntities,
+		bMessageScopeSupported) {
+	var aMessages = [],
+		mRequestInfo = {
+			request: oRequest,
+			response: oResponse,
+			url: oRequest ? oRequest.requestUri : oResponse.requestUri
+		};
 
 	if (oResponse.statusCode >= 200 && oResponse.statusCode < 300) {
 		// Status is 2XX - parse headers
@@ -148,19 +154,13 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 		this._parseBody(/* ref: */ aMessages, oResponse, mRequestInfo);
 	} else {
 		// Status neither ok nor error - I don't know what to do
-		// TODO: Maybe this is ok and should be silently ignored...?
 		Log.warning(
 			"No rule to parse OData response with status " + oResponse.statusCode + " for messages"
 		);
 	}
 
-	if (this._processor) {
-		this._propagateMessages(aMessages, mRequestInfo, mGetEntities, mChangeEntities, !bMessageScopeSupported /* use simple message lifecycle */);
-	} else {
-		// In case no message processor is attached, at least log to console.
-		// TODO: Maybe we should just output an error and do nothing, since this is not how messages are meant to be used like?
-		this._outputMesages(aMessages);
-	}
+	this._propagateMessages(aMessages, mRequestInfo, mGetEntities, mChangeEntities,
+		!bMessageScopeSupported);
 };
 
 
@@ -180,9 +180,9 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
  * @param {object} mRequestInfo
  *   The request info
  * @param {object} mGetEntities
- *   A map with the the keys of the entities requested from the back-end mapped to true
+ *   A map with the keys of the entities requested from the back-end mapped to true
  * @param {object} mChangeEntities
- *   A map with the the keys of the entities changed in the back-end mapped to true
+ *   A map with the keys of the entities changed in the back-end mapped to true
  * @returns {object}
  *   A map of affected targets as keys mapped to true
  */
@@ -508,16 +508,12 @@ ODataMessageParser.prototype._createTarget = function (sODataTarget, mRequestInf
 		sUrl, mUrlData, sUrlForTargetCalculation,
 		sDeepPath = "",
 		oRequest = mRequestInfo.request,
-		oResponse = mRequestInfo.response,
-		oTargetInfo = {};
+		oResponse = mRequestInfo.response;
 
 	if (sODataTarget === undefined && !bIsTechnical
 			&& oRequest.headers["sap-message-scope"] === "BusinessObject"
 		|| bIsTechnical && bODataTransition) {
-		oTargetInfo.deepPath = "";
-		oTargetInfo.target = "";
-
-		return oTargetInfo;
+		return {deepPath : "", target : ""};
 	}
 	sODataTarget = sODataTarget || "";
 	sODataTarget = sODataTarget.startsWith("/#TRANSIENT#") ? sODataTarget.slice(12) : sODataTarget;
@@ -569,23 +565,22 @@ ODataMessageParser.prototype._createTarget = function (sODataTarget, mRequestInf
 		}
 	}
 
-	if (this._processor) {
-		sCanonicalTarget = this._processor.resolve(sODataTarget, undefined, true);
-		// Multiple resolve steps are necessary for paths containing multiple navigation properties
-		// with to n relation, e.g. /SalesOrder(1)/toItem(2)/toSubItem(3)
-		while (sCanonicalTarget && sCanonicalTarget.lastIndexOf("/") > 0
-				&& sCanonicalTarget !== sPreviousCanonicalTarget) {
-			sPreviousCanonicalTarget = sCanonicalTarget;
-			sCanonicalTarget = this._processor.resolve(sCanonicalTarget, undefined, true)
-				// if canonical path cannot be determined, take the previous
-				|| sPreviousCanonicalTarget;
-		}
-		sODataTarget = sCanonicalTarget || sODataTarget;
-		oTargetInfo.deepPath = this._metadata._getReducedPath(sDeepPath || sODataTarget);
+	sCanonicalTarget = this._processor.resolve(sODataTarget, undefined, true);
+	// Multiple resolve steps are necessary for paths containing multiple navigation properties
+	// with to n relation, e.g. /SalesOrder(1)/toItem(2)/toSubItem(3)
+	while (sCanonicalTarget && sCanonicalTarget.lastIndexOf("/") > 0
+			&& sCanonicalTarget !== sPreviousCanonicalTarget) {
+		sPreviousCanonicalTarget = sCanonicalTarget;
+		sCanonicalTarget = this._processor.resolve(sCanonicalTarget, undefined, true)
+			// if canonical path cannot be determined, take the previous
+			|| sPreviousCanonicalTarget;
 	}
-	oTargetInfo.target = ODataUtils._normalizeKey(sODataTarget);
+	sODataTarget = sCanonicalTarget || sODataTarget;
 
-	return oTargetInfo;
+	return {
+		deepPath : this._metadata._getReducedPath(sDeepPath || sODataTarget),
+		target : ODataUtils._normalizeKey(sODataTarget)
+	};
 };
 
 /**
@@ -855,41 +850,6 @@ ODataMessageParser.prototype._parseUrl = function(sUrl) {
 	}
 
 	return mUrlData;
-};
-
-/**
- * Outputs messages to the browser console. This is a fallback for when there is no MessageProcessor
- * attached to this parser. This should not happen in standard cases, as the ODataModel registers
- * itself as MessageProcessor. Only if used stand-alone, this can at least prevent the messages
- * from being ignored completely.
- *
- * @param {sap.ui.message.Message[]} aMessages - The messages to be displayed on the console
- * @private
- */
-ODataMessageParser.prototype._outputMesages = function(aMessages) {
-	for (var i = 0; i < aMessages.length; ++i) {
-		var oMessage = aMessages[i];
-		var sOutput = "[OData Message] " + oMessage.getMessage() + " - " + oMessage.getDescription() + " (" + oMessage.getTarget() + ")";
-		switch (aMessages[i].getType()) {
-			case MessageType.Error:
-				Log.error(sOutput);
-				break;
-
-			case MessageType.Warning:
-				Log.warning(sOutput);
-				break;
-
-			case MessageType.Success:
-				Log.debug(sOutput);
-				break;
-
-			case MessageType.Information:
-			case MessageType.None:
-			default:
-				Log.info(sOutput);
-				break;
-		}
-	}
 };
 
 ///////////////////////////////////////// Hidden Functions /////////////////////////////////////////

@@ -30,6 +30,7 @@ sap.ui.define([
 
 	var oFakeMsgProcessor = {
 		_getFunctionImportMetadata: function(){},
+		_getReducedPath : function(){},
 		resolve: function(){},
 		_isCollection: function(){return false;}
 	};
@@ -478,7 +479,6 @@ sap.ui.define([
 
 
 	QUnit.test("Message parsing: Not filtering duplicates with messages in response header", function(assert){
-
 		var oOdataMessageParser = new ODataMessageParser("fakeService", oFakeMsgProcessor);
 		var oResponse = {
 			headers: {
@@ -497,6 +497,8 @@ sap.ui.define([
 			}
 		};
 		var aMessages = [];
+
+		oOdataMessageParser.setProcessor({resolve : function(){}});
 		oOdataMessageParser._parseHeader(aMessages, oResponse,
 			{url: "myurl", request : {headers : {}}, response: oResponse});
 		assert.equal(aMessages.length, 3, "Duplicate messages is ignored.");
@@ -535,6 +537,8 @@ sap.ui.define([
 				}
 			};
 		var aMessages = [];
+
+		oOdataMessageParser.setProcessor({resolve : function(){}});
 		oOdataMessageParser._parseBody(aMessages, oResponse,
 			{url: "myurl", request : {headers : {}}, response: oResponse});
 		assert.equal(aMessages.length, 2, "Duplicate messages is ignored.");

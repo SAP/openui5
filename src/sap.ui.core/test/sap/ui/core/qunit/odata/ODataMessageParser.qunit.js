@@ -453,79 +453,78 @@ sap.ui.define([
 
 		var oMetadata = new ODataMetadata(sServiceURI + "/$metadata", {});
 		oMetadata.loaded().then(function() {
+			var aNewMessages = [],
+				oParser = new ODataMessageParser(sServiceURI, oMetadata),
+				oRequest,
+				oResponse;
 
-			var iCounter = 0;
-			var fnCount = function(sMessage) {
-				if (sMessage.indexOf("[OData Message] ") > -1) {
-					iCounter++;
+
+			oParser.setProcessor({
+				fireMessageChange: function(oObj) {
+					aNewMessages = oObj.newMessages;
+				},
+				resolve: function(sPath){
+					return sPath;
 				}
-			};
+			});
 
-			this.stub(Log, "error").callsFake(fnCount);
-			this.stub(Log, "warning").callsFake(fnCount);
-			this.stub(Log, "debug").callsFake(fnCount);
-			this.stub(Log, "info").callsFake(fnCount);
-
-			var oParser = new ODataMessageParser(sServiceURI, oMetadata);
-
-			var oRequest = {
+			oRequest = {
 				headers : {},
 				requestUri: "fakeservice://testdata/odata/northwind/Test"
 			};
 
-			var oResponse = {
+			oResponse = {
 				statusCode: "200", // Parse Header...
 				body: "Ignored",
 				headers: {
 					"Content-Type": "text/plain;charset=utf-8",
 					"DataServiceVersion": "2.0;",
 					"Sap-Message": JSON.stringify({
-						"code":		"999",
-						"message":	"This is test message",
-						"severity":	"error",
+						"code": "999",
+						"message": "This is test message",
+						"severity": "error",
 						"details": []
 					})
 				}
 			};
 			oParser.parse(oResponse, oRequest);
-			assert.equal(iCounter, 1, "Message from 'Sap-Message' header was added");
+			assert.equal(aNewMessages.length, 1, "Message from 'Sap-Message' header was added");
 
-			var oResponse = {
+			oResponse = {
 				statusCode: "200", // Parse Header...
 				body: "Ignored",
 				headers: {
 					"Content-Type": "text/plain;charset=utf-8",
 					"DataServiceVersion": "2.0;",
 					"sap-message": JSON.stringify({
-						"code":		"999",
-						"message":	"This is test message",
-						"severity":	"error",
+						"code": "999",
+						"message": "This is test message",
+						"severity": "error",
 						"details": []
 					})
 				}
 			};
 			oParser.parse(oResponse, oRequest);
-			assert.equal(iCounter, 2, "Message from 'sap-message' header was added");
+			assert.equal(aNewMessages.length, 1, "Message from 'sap-message' header was added");
 
-
-			var oResponse = {
+			oResponse = {
 				statusCode: "200", // Parse Header...
 				body: "Ignored",
 				headers: {
 					"Content-Type": "text/plain;charset=utf-8",
 					"DataServiceVersion": "2.0;",
 					"SAP-Message": JSON.stringify({
-						"code":		"999",
-						"message":	"This is test message",
-						"severity":	"error",
+						"code": "999",
+						"message": "This is test message",
+						"severity": "error",
 						"details": []
 					})
 				}
 			};
 			oParser.parse(oResponse, oRequest);
-			assert.equal(iCounter, 3, "Message from 'SAP-Message' header was added");
+			assert.equal(aNewMessages.length, 1, "Message from 'SAP-Message' header was added");
 			done();
-		}.bind(this));
+		});
 	});
 
 	QUnit.test("ODataMessageParser: target key for created entities", function(assert) {
@@ -713,53 +712,52 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("ODataMessageParser without ODataModel", function(assert) {
+	QUnit.test("ODataMessageParser takes messages from specified header field", function(assert) {
 		var done = assert.async();
 
 		var sServiceURI = "fakeservice://testdata/odata/northwind";
 
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
-		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
+		assert.equal(oMessageModel.getProperty("/").length, 0,
+			"No messages are set at the beginning of the test");
 
 		var oMetadata = new ODataMetadata(sServiceURI + "/$metadata", {});
 		oMetadata.loaded().then(function() {
+			var aNewMessages = [],
+				oParser = new ODataMessageParser(sServiceURI, oMetadata),
+				oRequest,
+				oResponse;
 
-			var iCounter = 0;
-			var fnCount = function(sMessage) {
-				if (sMessage.indexOf("[OData Message] ") > -1) {
-					iCounter++;
+			oParser.setProcessor({
+				fireMessageChange: function(oObj) {
+					aNewMessages = oObj.newMessages;
+				},
+				resolve: function(sPath){
+					return sPath;
 				}
-			};
+			});
 
-			// intercept messages sent to console
-			this.stub(Log, "error").callsFake(fnCount);
-			this.stub(Log, "warning").callsFake(fnCount);
-			this.stub(Log, "debug").callsFake(fnCount);
-			this.stub(Log, "info").callsFake(fnCount);
-
-			var oParser = new ODataMessageParser(sServiceURI, oMetadata);
-
-			var oRequest = {
+			oRequest = {
 				headers : {},
 				requestUri: "fakeservice://testdata/odata/northwind/Test"
 			};
 
-			var oResponse = {
+			oResponse = {
 				statusCode: "200", // Parse Header...
 				body: "Ignored",
 				headers: {
 					"Content-Type": "text/plain;charset=utf-8",
 					"DataServiceVersion": "2.0;",
 					"sap-message": JSON.stringify({
-						"code":		"999",
-						"message":	"This is test message",
-						"severity":	"error",
+						"code": "999",
+						"message": "This is test message",
+						"severity": "error",
 						"details": []
 					})
 				}
 			};
 			oParser.parse(oResponse, oRequest);
-			assert.equal(iCounter, 1, "Message from 'sap-message' header was added");
+			assert.equal(aNewMessages.length, 1, "Message parsed from 'sap-message' header");
 
 			oResponse = {
 				statusCode: "200", // Parse Header...
@@ -768,28 +766,28 @@ sap.ui.define([
 					"Content-Type": "text/plain;charset=utf-8",
 					"DataServiceVersion": "2.0;",
 					"message": JSON.stringify({
-						"code":		"999",
-						"message":	"This is an error test message",
-						"severity":	"error",
+						"code": "999",
+						"message": "This is an error test message",
+						"severity": "error",
 						"details": [{
-							"code":		"999",
-							"message":	"This is a warning test message",
-							"severity":	"warning"
+							"code": "999",
+							"message": "This is a warning test message",
+							"severity": "warning"
 						}, {
-							"code":		"999",
-							"message":	"This is a success test message",
-							"severity":	"success"
+							"code": "999",
+							"message": "This is a success test message",
+							"severity": "success"
 						}, {
-							"code":		"999",
-							"message":	"This is an information test message",
-							"severity":	"info"
+							"code": "999",
+							"message": "This is an information test message",
+							"severity": "info"
 						}]
 					})
 				}
 			};
 			oParser.setHeaderField("message");
 			oParser.parse(oResponse, oRequest);
-			assert.equal(iCounter, 5, "Message from 'message' header was added");
+			assert.equal(aNewMessages.length, 4, "Messages parsed from 'message' header");
 
 			oResponse = {
 				statusCode: "200", // Parse Header...
@@ -802,17 +800,18 @@ sap.ui.define([
 			};
 			oParser.setHeaderField("invalid");
 			oParser.parse(oResponse, oRequest);
-			assert.equal(iCounter, 5, "No message from 'invalid' header was added");
+			assert.equal(aNewMessages.length, 0,
+				"No message parsed from 'invalid' header with invalid content");
 
 			oParser.setHeaderField("none");
 			oParser.parse(oResponse, oRequest);
-			assert.equal(iCounter, 5, "No message from non-existent 'none' header was added");
+			assert.equal(aNewMessages.length, 0, "No message parsed from non-existent header");
 
 			oMetadata.destroy();
 			oParser.destroy();
 			done();
 
-		}.bind(this));
+		});
 
 	});
 
