@@ -1692,6 +1692,7 @@
 				},
 				"contextType": {
 					"description": "[Experimental] Represents the context type of the parameter. For example WorkZoneUserId or SuccessFactorsUserId.",
+					"type": "string"
 				},
 				"filter": {
 					"$ref": "#/definitions/Configuration.Parameter.Filter"
