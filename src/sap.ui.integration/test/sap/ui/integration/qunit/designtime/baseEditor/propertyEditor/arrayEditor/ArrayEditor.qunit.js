@@ -465,7 +465,53 @@ sap.ui.define([
 		afterEach: function () {
 			this.oBaseEditor.destroy();
 		}
-	}, fnBaseTests);
+	}, function (assert) {
+		fnBaseTests(assert);
+
+		QUnit.test("Auto Expand - When a prefilled item is added", function (assert) {
+			var aEditorItems = _getArrayEditorElements(this.oArrayEditor).items;
+			assert.strictEqual(
+				aEditorItems[1].item.getExpanded(),
+				false,
+				"Then the item is initially collapsed"
+			);
+		});
+
+		QUnit.test("Auto Expand - When an empty item is added", function (assert) {
+			var oAddButton = _getArrayEditorElements(this.oArrayEditor).addButton;
+			QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
+
+			return this.oArrayEditor.ready().then(function () {
+				var aEditorItems = _getArrayEditorElements(this.oArrayEditor).items;
+				assert.strictEqual(
+					aEditorItems[2].item.getExpanded(),
+					true,
+					"Then the newly added item is expanded"
+				);
+			}.bind(this));
+		});
+
+		QUnit.test("Auto Expand - When an empty item is manually collapsed", function (assert) {
+			var oAddButton = _getArrayEditorElements(this.oArrayEditor).addButton;
+			QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
+
+			return this.oArrayEditor.ready().then(function () {
+				var oEditorElements = _getArrayEditorElements(this.oArrayEditor);
+				oEditorElements.items[2].item.setExpanded(false);
+
+				// Trigger config change by removing a different element
+				QUnitUtils.triggerEvent("tap", oEditorElements.items[1].deleteButton.getDomRef());
+
+				return this.oArrayEditor.ready().then(function () {
+					assert.strictEqual(
+						_getArrayEditorElements(this.oArrayEditor).items[1].item.getExpanded(),
+						false,
+						"Then the item stays collapsed"
+					);
+				}.bind(this));
+			}.bind(this));
+		});
+	});
 
 	QUnit.module("Plain Array Editor: Given an editor config", {
 		beforeEach: function (assert) {
