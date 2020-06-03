@@ -2,11 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([
-	'sap/ui/core/Renderer'
-], function(
-	Renderer
-) {
+sap.ui.define([], function () {
 	"use strict";
 
 	/**
@@ -23,17 +19,16 @@ sap.ui.define([
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} control An object representation of the control that should be rendered.
+	 * @param {sap.ui.integration.controls.ActionsToolbar} oActionsToolbar An object representation of the control that should be rendered.
 	 */
-	ActionsToolbarRenderer.render = function(rm, control) {
+	ActionsToolbarRenderer.render = function(oRm, oActionsToolbar) {
+		oRm.openStart("div", oActionsToolbar)
+			.class("sapUIActionsToolbar")
+			.openEnd();
 
-		rm.openStart("div", control);
-		rm.class("sapUIActionsToolbar");
-		rm.openEnd();
+		oRm.renderControl(oActionsToolbar._getToolbar());
 
-		rm.renderControl(control._getToolbar());
-
-		rm.close("div");
+		oRm.close("div");
 	};
 
 	return ActionsToolbarRenderer;

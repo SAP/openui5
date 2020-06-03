@@ -12,36 +12,35 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @namespace
 	 */
-	var WidgetRenderer = {},
-		oRb = sap.ui.getCore().getLibraryResourceBundle("sap.f");
+	var WidgetRenderer = {
+		apiVersion: 2
+	};
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.f");
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oWidget an object representation of the control that should be rendered
+	 * @param {sap.ui.integration.Widget} oWidget an object representation of the control that should be rendered
 	 */
 	WidgetRenderer.render = function (oRm, oWidget) {
 		var oContent = oWidget.getAggregation("_content");
 
 		//start
-		oRm.write("<div");
-		oRm.writeElementData(oWidget);
-		oRm.writeClasses();
+		oRm.openStart("div", oWidget);
 
 		//Accessibility state
-		oRm.writeAccessibilityState(oWidget, {
+		oRm.accessibilityState(oWidget, {
 			role: "region",
-			roledescription: {value: oRb.getText("ARIA_ROLEDESCRIPTION_CARD"), append: true}
+			roledescription: { value: oRb.getText("ARIA_ROLEDESCRIPTION_CARD"), append: true }
 		});
-		oRm.write(">");
+		oRm.openEnd();
 
 		if (oContent) {
 			oRm.renderControl(oContent);
 		}
 
-		//end
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	return WidgetRenderer;

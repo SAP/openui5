@@ -2,12 +2,8 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/integration/cards/ListContent",
 	"sap/ui/core/Core",
 	"sap/ui/core/Manifest",
-	"sap/f/cards/NumericSideIndicator",
-	"sap/ui/integration/cards/NumericHeader",
-	"sap/ui/integration/cards/Header",
 	"sap/base/Log",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/base/Event",
@@ -15,12 +11,8 @@ sap.ui.define([
 ],
 	function (
 		Card,
-		ListContent,
 		Core,
 		CoreManifest,
-		NumericSideIndicator,
-		NumericHeader,
-		Header,
 		Log,
 		ComponentContainer,
 		Event,
@@ -1367,7 +1359,6 @@ sap.ui.define([
 			// Act
 			oCard.setManifest(oCardManifest);
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		}
 
 		QUnit.module("Init");
