@@ -5,38 +5,33 @@
 /*global HTMLImageElement*/
 // Provides control sap.m.Carousel.
 sap.ui.define([
-	'./library',
-	'sap/ui/core/Core',
-	'sap/ui/core/Control',
-	'sap/ui/Device',
-	'sap/ui/core/ResizeHandler',
-	'sap/ui/core/library',
-	'sap/ui/core/HTML',
-	'sap/m/ScrollContainer',
-	'sap/m/MessagePage',
-	'sap/ui/core/theming/Parameters',
-	'sap/ui/dom/units/Rem',
-	'./CarouselRenderer',
-	'./CarouselLayout',
+	"./library",
+	"sap/ui/core/Core",
+	"sap/ui/core/Control",
+	"sap/ui/Device",
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/library",
+	"sap/m/MessagePage",
+	"sap/ui/core/theming/Parameters",
+	"sap/ui/dom/units/Rem",
+	"./CarouselRenderer",
+	"./CarouselLayout",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/ui/events/F6Navigation",
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/thirdparty/mobify-carousel',
-	'sap/ui/core/IconPool'
-],
-function(
+	"sap/ui/thirdparty/mobify-carousel",
+	"sap/ui/core/IconPool"
+], function (
 	library,
 	Core,
 	Control,
 	Device,
 	ResizeHandler,
 	coreLibrary,
-	HTML,
-	ScrollContainer,
 	MessagePage,
 	Parameters,
-	DomUnitsRem,
+	Rem,
 	CarouselRenderer,
 	CarouselLayout,
 	KeyCodes,
@@ -58,8 +53,6 @@ function(
 
 	// shortcut for sap.m.PlacementType
 	var PlacementType = library.PlacementType;
-
-
 
 	/**
 	 * Constructor for a new Carousel.
@@ -261,7 +254,6 @@ function(
 		}
 	}});
 
-
 	//Constants convenient class selections
 	Carousel._INNER_SELECTOR = ".sapMCrslInner";
 	Carousel._PAGE_INDICATOR_SELECTOR = ".sapMCrslBulleted";
@@ -281,16 +273,13 @@ function(
 	 * @private
 	 */
 	Carousel.prototype.init = function() {
-		//Scroll container list for clean- up
-		this._aScrollContainers = [];
-
 		//Initialize '_fnAdjustAfterResize' to be used by window
 		//'resize' event
-		this._fnAdjustAfterResize = jQuery.proxy(function() {
+		this._fnAdjustAfterResize = function() {
 			var $carouselInner = this.$().find(Carousel._INNER_SELECTOR);
 			this._oMobifyCarousel.resize($carouselInner);
 			this._setWidthOfPages(this._getNumberOfItemsToShow());
-		}, this);
+		}.bind(this);
 
 		this._aOrderOfFocusedElements = [];
 		this._aAllActivePages = [];
@@ -334,30 +323,11 @@ function(
 		}
 		this.$().off('afterSlide');
 
-		this._cleanUpScrollContainer();
 		this._fnAdjustAfterResize = null;
-		this._aScrollContainers = null;
 		this._$InnerDiv = null;
 		this._aOrderOfFocusedElements = null;
 		this._aAllActivePages = null;
 		this._aAllActivePagesIndexes = null;
-	};
-
-	/**
-	 * Housekeeping for scroll containers: Removes content for each container,
-	 * destroys the contianer and clears the local container list.
-	 *
-	 * @private
-	 */
-	Carousel.prototype._cleanUpScrollContainer = function() {
-		var oScrollCont;
-		while (this._aScrollContainers && this._aScrollContainers.length > 0) {
-			oScrollCont = this._aScrollContainers.pop();
-			oScrollCont.destroyContent();
-			if (oScrollCont && typeof oScrollCont.destroy === 'function') {
-				oScrollCont.destroy();
-			}
-		}
 	};
 
 	/**
@@ -402,8 +372,6 @@ function(
 		}
 	};
 
-
-
 	/**
 	 * Cleans up bindings
 	 *
@@ -422,6 +390,11 @@ function(
 			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = null;
 		}
+
+		// remove event delegates before rendering
+		this.$().off('beforeSlide', this._onBeforePageChangedRef);
+		this.$().off('afterSlide', this._onAfterPageChangedRef);
+		this.$().find(".sapMCrslItemTableCell").off("focus"); // Fixes wrong focusing in IE// TODO remove after the end of support for Internet Explorer
 
 		return this;
 	};
@@ -457,20 +430,22 @@ function(
 	 * @private
 	 */
 	Carousel.prototype.onAfterRendering = function() {
-		var iNumberOfItemsToShow = this._getNumberOfItemsToShow();
-
-		//Check if carousel has been initialized
 		if (this._oMobifyCarousel) {
-			//Clean up existing mobify carousel
+			// Clean up existing mobify carousel listeners
 			this._oMobifyCarousel.unbind();
+
+			setTimeout(function () {
+				if (this._oMobifyCarousel) {
+					this._oMobifyCarousel.onTransitionComplete();
+				}
+			}.bind(this), 0);
 		}
 
 		//Create and initialize new carousel
 		//Undefined is passed as an action, as we do not want to pass any action to be executed
 		//and want to bypass the check whether the typeof of the action is "object" (as null returns true).
-		this.$().carousel(undefined, {
-			numberOfItemsToShow: iNumberOfItemsToShow
-		});
+		var iNumberOfItemsToShow = this._getNumberOfItemsToShow();
+		this.$().carousel(undefined, { numberOfItemsToShow: iNumberOfItemsToShow });
 		this._oMobifyCarousel = this.getDomRef()._carousel;
 		this._oMobifyCarousel.setLoop(this.getLoop());
 		this._oMobifyCarousel.setRTL(Core.getConfiguration().getRTL());
@@ -482,7 +457,6 @@ function(
 		//Go to active page: this may be necessary after adding or
 		//removing pages
 		var sActivePage = this.getActivePage();
-
 		if (sActivePage) {
 			this._updateActivePages(sActivePage);
 			var iIndex = this._getPageNumber(sActivePage);
@@ -503,7 +477,7 @@ function(
 
 				// BCP: 1580078315
 				if (this.getParent() && this.getParent().isA("sap.zen.commons.layout.PositionContainer")) {
-					if (this._isCarouselUsedWithCommonsLayout === undefined){
+					if (this._isCarouselUsedWithCommonsLayout === undefined) {
 						setTimeout(this["invalidate"].bind(this), 0);
 						this._isCarouselUsedWithCommonsLayout = true;
 					}
@@ -523,7 +497,7 @@ function(
 
 		// Fixes wrong focusing in IE// TODO remove after the end of support for Internet Explorer
 		// BCP: 1670008915
-		this.$().find('.sapMCrslItemTableCell').on("focus", function(e) {
+		this.$().find(".sapMCrslItemTableCell").on("focus", function(e) {
 
 			e.preventDefault();
 
@@ -532,13 +506,11 @@ function(
 			return false;
 		});
 
-
 		// Fixes displaying correct page after carousel become visible in an IconTabBar
 		// BCP: 1680019792
-		var sClassName = 'sap.m.IconTabBar';
 		var oParent = this.getParent();
 		while (oParent) {
-			if (oParent.getMetadata().getName() == sClassName) {
+			if (oParent.isA("sap.m.IconTabBar")) {
 				var that = this;
 
 				/*eslint-disable no-loop-func */
@@ -622,7 +594,7 @@ function(
 	 */
 	Carousel.prototype._calculatePagesWidth = function (iNumberOfItemsToShow) {
 		var iWidth = this.$().width(),
-			iMargin = DomUnitsRem.toPx(Parameters.get("_sap_m_Carousel_PagesMarginRight")),
+			iMargin = Rem.toPx(Parameters.get("_sap_m_Carousel_PagesMarginRight")),
 			iItemWidth = (iWidth - (iMargin * (iNumberOfItemsToShow - 1))) / iNumberOfItemsToShow,
 			iItemWidthPercent = (iItemWidth / iWidth) * 100;
 
@@ -792,123 +764,23 @@ function(
 		return this;
 	};
 
-
-
-	/*
-	 * API method to set the carousel's height
-	 *
-	 * @param {sap.ui.core.CSSSize} oHeight the new height as CSSSize
-	 * @public
-	 * @override
-	 */
-	Carousel.prototype.setHeight = function(oHeight) {
-		//do suppress rerendering
-		this.setProperty("height", oHeight, true);
-		this.$().css("height", oHeight);
-		return this;
-	};
-
-	/*
-	 * API method to set the carousel's width
-	 *
-	 * @param {sap.ui.core.CSSSize} oWidth the new width as CSSSize
-	 * @public
-	 * @override
-	 */
-	Carousel.prototype.setWidth = function(oWidth) {
-		//do suppress rerendering
-		this.setProperty("width", oWidth, true);
-		this.$().css("width", oWidth);
-		return this;
-	};
-
-	/*
-	 * API method to set whether the carousel should loop, i.e
-	 * show the first page after the last page is reached and vice
-	 * versa.
-	 *
-	 * @param {boolean} bLoop the new loop property
-	 * @public
-	 * @override
-	 */
-	Carousel.prototype.setLoop = function(bLoop) {
-		//do suppress rerendering
-		this.setProperty("loop", bLoop, true);
-		if (this._oMobifyCarousel) {
-			this._oMobifyCarousel.setLoop(bLoop);
-		}
-		return this;
-	};
-
 	/**
-	 * Gets the icon of the requested arrow (left/right).
+	 * Returns the icon of the requested direction (left/right).
 	 * @private
-	 * @param {string} sName left or right
+	 * @param {string} sDirection Left or Right
 	 * @returns icon of the requested arrow
 	 */
-	Carousel.prototype._getNavigationArrow = function(sName) {
-		var mProperties = {
-			src: "sap-icon://slim-arrow-" + sName,
-			useIconTooltip : false
-		};
-
-		if (sName === "left") {
-			if (!this._oArrowLeft) {
-				this._oArrowLeft = ImageHelper.getImageControl(this.getId() + "-arrowScrollLeft", this._oArrowLeft, this, mProperties);
-			}
-			return this._oArrowLeft;
-		} else if (sName === "right") {
-			if (!this._oArrowRight) {
-				this._oArrowRight = ImageHelper.getImageControl(this.getId() + "-arrowScrollRight", this._oArrowRight, this, mProperties);
-			}
-			return this._oArrowRight;
-		}
-	};
-
-
-	/**
-	 * Private method that places a given page control into
-	 * a scroll container which does not scroll. That container does
-	 * not scroll itself. This is necessary to achieve the 100% height
-	 * effect with an offset for the page indicator.
-	 *
-	 * @param oPage the page to check
-	 * @private
-	 */
-	Carousel.prototype._createScrollContainer = function (oPage) {
-		var imgClass;
-		var bShowIndicatorArrows = Device.system.desktop && this.getArrowsPlacement() === CarouselArrowsPlacement.PageIndicator;
-		if (bShowIndicatorArrows) {
-			imgClass = "sapMCrslImg";
-		} else {
-			imgClass = "sapMCrslImgNoArrows";
+	Carousel.prototype._getNavigationArrow = function (sDirection) {
+		if (!this["_oArrow" + sDirection]) {
+			this["_oArrow" + sDirection] = ImageHelper.getImageControl(
+				this.getId() + "-arrowScroll" + sDirection,
+				this["_oArrow" + sDirection],
+				this,
+				{ src: "sap-icon://slim-arrow-" + sDirection.toLowerCase(), useIconTooltip: false }
+			);
 		}
 
-
-		var cellClasses = oPage.isA("sap.m.Image") ? "sapMCrslItemTableCell " + imgClass : "sapMCrslItemTableCell",
-			oContent = new HTML({
-			content :	"<div class='sapMCrslItemTable'>" +
-							"<div class='" + cellClasses + "'></div>" +
-						"</div>",
-			afterRendering : function(e) {
-				var rm = Core.createRenderManager();
-				oPage.addStyleClass("sapMCrsPage");
-				rm.render(oPage, this.getDomRef().firstChild);
-				rm.destroy();
-				oPage = null;
-			}
-		});
-
-		var oScrollContainer = new ScrollContainer({
-			horizontal: false,
-			vertical: false,
-			content:[oContent],
-			width:'100%',
-			height:'100%'
-		});
-		oScrollContainer.setParent(this, null, true);
-		this._aScrollContainers.push(oScrollContainer);
-		return oScrollContainer;
+		return this["_oArrow" + sDirection];
 	};
 
 	/**
@@ -917,12 +789,9 @@ function(
 	 * @private
 	 */
 	Carousel.prototype._getErrorPage = function () {
-		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		var sErrorMessage = oRb.getText("CAROUSEL_ERROR_MESSAGE");
-
-		if (!this.oMessagePage ) {
+		if (!this.oMessagePage) {
 			this.oMessagePage = new MessagePage({
-				text: sErrorMessage,
+				text: this._oRb.getText("CAROUSEL_ERROR_MESSAGE"),
 				description: "",
 				icon: "sap-icon://document",
 				showHeader: false

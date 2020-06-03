@@ -12,10 +12,11 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
 	"sap/m/ResponsivePopover",
+	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/events/F6Navigation"
-], function(
+], function (
 	qutils,
 	Carousel,
 	CarouselLayout,
@@ -27,6 +28,7 @@ sap.ui.define([
 	KeyCodes,
 	Device,
 	ResponsivePopover,
+	Core,
 	JSONModel,
 	waitForThemeApplied,
 	F6Navigation
@@ -73,11 +75,13 @@ sap.ui.define([
 	// Waiting for CSS transitions to complete is time consuming and not working when tests are run in background tab
 	function forceTransitionComplete (oCarousel) {
 		oCarousel._oMobifyCarousel.onTransitionComplete();
+		Core.applyChanges();
 	}
 
 	function forceUpdate (oCarousel) {
 		oCarousel._oMobifyCarousel._needsUpdate = true;
 		oCarousel._oMobifyCarousel._update();
+		Core.applyChanges();
 	}
 
 	//================================================================================
@@ -87,7 +91,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oCarousel = new Carousel();
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -114,7 +118,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oCarousel = createCarouselWithContent("");
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -147,13 +151,13 @@ sap.ui.define([
 
 	QUnit.test("offsetLeft and clientWidth of _oMobifyCarousel are calculated correctly after all animations", function (assert) {
 		// Arrange
-		var iOffset;
-
 		assert.expect(2);
 
 		// Act
+		var iOffset = this.oCarousel._oMobifyCarousel._offset;
 		this.oCarousel.next();
-		iOffset = this.oCarousel._oMobifyCarousel._offset;
+
+		forceTransitionComplete(this.oCarousel);
 		forceUpdate(this.oCarousel);
 
 		//Assert
@@ -162,7 +166,11 @@ sap.ui.define([
 
 		// Act
 		this.oCarousel.setWidth("400px");
+		Core.applyChanges();
+
 		iOffset = this.oCarousel._oMobifyCarousel._offset;
+
+		forceTransitionComplete(this.oCarousel);
 		forceUpdate(this.oCarousel);
 
 		// Assert
@@ -187,6 +195,7 @@ sap.ui.define([
 		// Arrange
 		this.oCarousel.setActivePage("keyTestPage_6");
 		this.oCarousel.setLoop(true);
+		Core.applyChanges();
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
@@ -201,6 +210,7 @@ sap.ui.define([
 		// Arrange
 		this.oCarousel.setActivePage("keyTestPage_1");
 		this.oCarousel.setLoop(true);
+		Core.applyChanges();
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
@@ -214,7 +224,7 @@ sap.ui.define([
 	QUnit.test("#setShowPageIndicator(false) should make Page Indicator invisible", function (assert) {
 		// Act
 		this.oCarousel.setShowPageIndicator(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oCarousel.$().find(".sapMCrslBulleted").length, 0, "Page Indicator should be invisible");
@@ -234,7 +244,7 @@ sap.ui.define([
 	QUnit.test("#setPageIndicatorPlacement() to 'top' position", function (assert) {
 		// Act
 		this.oCarousel.setPageIndicatorPlacement(PlacementType.Top);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(this.oCarousel.$().children().first().hasClass('sapMCrslControlsTop'), "Page Indicator should be on top");
@@ -261,7 +271,7 @@ sap.ui.define([
 	QUnit.test("#setArrowsPlacement() to 'PageIndicator' position", function (assert) {
 		// Act
 		this.oCarousel.setArrowsPlacement(CarouselArrowsPlacement.PageIndicator);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oCarousel.$().find('.sapMCrslHud').length, 0, "Arrows hud should not be rendered");
@@ -299,6 +309,7 @@ sap.ui.define([
 	QUnit.test("#_setWidthOfPages(6)", function (assert) {
 		// Set up
 		this.oCarousel.setWidth("700px");
+		Core.applyChanges();
 
 		// Act
 		this.oCarousel._setWidthOfPages(6);
@@ -429,7 +440,7 @@ sap.ui.define([
 		this.oCarousel.setCustomLayout(new CarouselLayout({
 			visiblePagesCount: iPagesToShow
 		}));
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		this.oCarousel._adjustHUDVisibility(1);
@@ -508,7 +519,7 @@ sap.ui.define([
 			// Act
 			oCarousel.setActivePage(oCarousel.getPages()[3]);
 			oCarousel.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// Assert
 			assert.ok(oCarousel._aAllActivePages[0] === "keyTestPage_4new" && oCarousel._aAllActivePages[1] === "keyTestPage_5new",
@@ -633,7 +644,7 @@ sap.ui.define([
 				activePage: "keyTestPage_2"
 			});
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -740,7 +751,7 @@ sap.ui.define([
 
 	QUnit.test("When 'pageChanged' event is fired the numeric value of the page indicator should change", function (assert) {
 		// Arrange
-		var sTextBetweenNumbers = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT", [2, 9]);
+		var sTextBetweenNumbers = Core.getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT", [2, 9]);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
@@ -751,7 +762,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
-		sTextBetweenNumbers = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT", [3, 9]);
+		sTextBetweenNumbers = Core.getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT", [3, 9]);
 		assert.strictEqual(document.getElementById("myCrsl-slide-number").innerHTML, sTextBetweenNumbers, "Page indicator should show '3 " + sTextBetweenNumbers + " 9'");
 	});
 
@@ -774,7 +785,7 @@ sap.ui.define([
 				]
 			});
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -796,7 +807,7 @@ sap.ui.define([
 				activePage: "keyTestPage_1"
 			});
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -806,26 +817,12 @@ sap.ui.define([
 	QUnit.test("Destroy rendered Carousels", function (assert) {
 		this.oCarousel.destroy();
 		assert.strictEqual(this.oCarousel.$().length, 0, "Picture Carousel removed from DOM");
-		assert.strictEqual(this.oCarousel._mScrollContainerMap, undefined, "Picture Carousel's container map has been cleaned up");
 	});
 
 	QUnit.test("Destroy not rendered Carousels", function (assert) {
 		var oNotRenderedCarousel = new Carousel();
 		oNotRenderedCarousel.destroy();
-		assert.strictEqual(oNotRenderedCarousel._mScrollContainerMap, undefined, "Empty Carousel's container map has been cleaned up");
-	});
-
-	QUnit.test("Destroy carousel scrollbars' content", function (assert) {
-		// Arrange
-		var oScrollContainer = this.oCarousel._aScrollContainers[0],
-			oHtml = oScrollContainer.getContent()[0],
-			spy = sinon.spy(oHtml, "destroy");
-
-		// Act
-		this.oCarousel.destroy();
-
-		// Assert
-		assert.ok(spy.calledOnce, "'.destroy()' should be called for ScrollContainer's content when Carousel is destroyed");
+		assert.ok(true, "Not rendered carousel does not throw error");
 	});
 
 	//================================================================================
@@ -858,7 +855,7 @@ sap.ui.define([
 
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			this.oCarousel.$().trigger("focus");
 		},
@@ -1209,7 +1206,7 @@ sap.ui.define([
 
 		// Act
 		oContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$().find(sContentSelector);
 
@@ -1262,7 +1259,7 @@ sap.ui.define([
 			text: "Open Carousel"
 		});
 		oButton.placeAt('qunit-fixture');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var	oSystem = {
 			desktop: true,
@@ -1303,7 +1300,7 @@ sap.ui.define([
 
 			this.oCarousel = new sap.m.Carousel();
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			sinon.config.useFakeTimers = false;
 		},
@@ -1335,7 +1332,7 @@ sap.ui.define([
 
 		setTimeout(function () {
 			oModel.setData(this.data);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.strictEqual(this.oCarousel.getPages().length, 3, "There are 3 pages in the carousel");
 			assert.strictEqual(this.oCarousel.getDomRef().getElementsByClassName("sapMMessagePage").length, 0, "When there is late binding there is no sap.m.MessagePage with error message");
@@ -1348,7 +1345,7 @@ sap.ui.define([
 			sinon.config.useFakeTimers = false;
 			this.oCarousel = createCarouselWithContent("");
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -1390,7 +1387,7 @@ sap.ui.define([
 				activePage: "keyTestPage_4"
 			});
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -1461,7 +1458,7 @@ sap.ui.define([
 		this.oCarousel.setCustomLayout(new CarouselLayout({
 			visiblePagesCount: 2
 		}));
-		sap.ui.getCore().applyChanges();
+
 		var oFakeEvent = {
 			target: this.oCarousel.getDomRef(),
 			preventDefault: function () {}
@@ -1485,12 +1482,13 @@ sap.ui.define([
 		this.oCarousel.setCustomLayout(new CarouselLayout({
 			visiblePagesCount: 2
 		}));
-		sap.ui.getCore().applyChanges();
+
 		var oFakeEvent = {
 			target: this.oCarousel.getDomRef(),
 			preventDefault: function () {}
 		};
 		var oFirstActivePage = this.oCarousel.getPages()[0];
+
 		forceTransitionComplete(this.oCarousel);
 
 		// act - press left arrow 10 times
@@ -1511,7 +1509,8 @@ sap.ui.define([
 		}));
 		var oLastActivePage = this.oCarousel.getPages()[this.oCarousel.getPages().length - 2];
 		this.oCarousel.setActivePage(oLastActivePage);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
+
 		forceTransitionComplete(this.oCarousel);
 
 		// act - press right arrow
@@ -1530,7 +1529,8 @@ sap.ui.define([
 		}));
 		var oFirstActivePage = this.oCarousel.getPages()[0];
 		this.oCarousel.setActivePage(oFirstActivePage);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
+
 		forceTransitionComplete(this.oCarousel);
 
 		// act - press left arrow
@@ -1575,6 +1575,7 @@ sap.ui.define([
 		this.oCarousel.ontouchend(oFakeEvent);
 		this.oCarousel.$().find("a.sapMCrslPrev").trigger("click");
 		this.oCarousel.ontouchend(oFakeEvent);
+
 		forceTransitionComplete(this.oCarousel);
 
 		// assert
