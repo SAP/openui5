@@ -408,12 +408,14 @@ sap.ui.define([
 
 
 	TablePersoDialog.prototype.setContentHeight = function(sHeight) {
+		sHeight = sHeight ? sHeight : "28rem";
 		this.setProperty("contentHeight", sHeight, true);
 		this._oDialog.setContentHeight(sHeight);
 		return this;
 	};
 
 	TablePersoDialog.prototype.setContentWidth = function(sWidth) {
+		sWidth = sWidth ? sWidth : "25rem";
 		this.setProperty("contentWidth", sWidth, true);
 		this._oDialog.setContentWidth(sWidth);
 		return this;
