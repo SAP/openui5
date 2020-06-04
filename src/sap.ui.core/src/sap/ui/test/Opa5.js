@@ -1110,7 +1110,7 @@ sap.ui.define([
 		 *   });
 		 * </pre>
 		 *
-		 * For more information, see {@link sap.ui.test.opaQunit}.
+		 * For more information, see {@link module:sap/ui/test/opaQunit}.
 		 *
 		 * @name sap.ui.test.Opa5.assert
 		 * @public

@@ -81,7 +81,7 @@ sap.ui.define([
 	 * </code></pre>
 	 *
 	 * @public
-	 * @alias sap.ui.test.opaQunit
+	 * @alias module:sap/ui/test/opaQunit
 	 * @function
 	 * @static
 	 * @param {string} testName name of the QUnit test.
