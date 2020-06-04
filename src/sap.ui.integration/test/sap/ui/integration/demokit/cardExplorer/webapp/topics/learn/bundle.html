@@ -102,7 +102,7 @@
 		"configuration": {
 			"parameters": {
 				"city": {
-					"value": "Singapore"
+					"value": "Berlin"
 				}
 			}
 		},
@@ -111,13 +111,13 @@
 			"title": "{{cardTitle}} {{parameters.city}}",
 			"subTitle": "{{cardSubTitle}}",
 			"icon": {
-				"src": "sap-icon://newspaper"
+				"src": "sap-icon://customer-briefing"
 			},
 			"actions": [
 				{
 					"type": "Navigation",
 					"parameters": {
-						"url": "https://newsapi.org"
+						"url": "https://services.odata.org/V2/Northwind/Northwind.svc"
 					}
 				}
 			]
@@ -125,31 +125,16 @@
 		"content": {
 			"data": {
 				"request": {
-					"url": "https://newsapi.org/v2/everything",
+					"url": "https://services.odata.org/V2/Northwind/Northwind.svc/Customer_and_Suppliers_by_Cities",
 					"parameters": {
-						"from": "{{parameters.TODAY_ISO}}",
-						"q": "{{parameters.city}}",
-						"sortBy": "relevancy",
-						"apiKey": "da959b2d34334e1db76c53f54a1303aa",
-						"language:": "en",
-						"pageSize": "10"
+						"$filter": "{{parameters.city}}",
 					}
 				},
 				"path": "/articles"
 			},
 			"item": {
-				"icon": {
-					"src": "{urlToImage}"
-				},
-				"title": "{title}",
-				"description": "{description}",
-				"actions": [
-					{
-						"type": "Navigation",
-						"enabled": "{= ${url}}",
-						"url": "{url}"
-					}
-				]
+				"title": "{CompanyName}",
+				"description": "{ContactName}",
 			},
 			"maxItems": 5
 		}
