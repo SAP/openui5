@@ -107,10 +107,10 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			if (oBadge) {
 				oRm.openStart("div");
 				oRm.class(sAvatarClass + "BadgeIconActiveArea");
-				oRm.openEnd("div");
+				oRm.openEnd();
 					oRm.openStart("span");
 					oRm.class(sAvatarClass + "BadgeIcon");
-					oRm.openEnd("span");
+					oRm.openEnd();
 					oRm.renderControl(oBadge);
 					oRm.close("span");
 				oRm.close("div");

@@ -471,9 +471,10 @@ sap.ui.define([
 		this.openEnd = function(bExludeStyleClasses /* private */) {
 			assertOpenTagHasStarted("openEnd");
 			assertOpenTagHasEnded(!bVoidOpen);
+			assert(bExludeStyleClasses === undefined || bExludeStyleClasses === true, "The private parameter bExludeStyleClasses must be true or omitted!");
 			sOpenTag = "";
 
-			this.writeClasses(bExludeStyleClasses ? false : undefined);
+			this.writeClasses(bExludeStyleClasses === true ? false : undefined);
 			this.writeStyles();
 			this.write(">");
 			return this;
@@ -703,7 +704,7 @@ sap.ui.define([
 
 		// @see sap.ui.core.RenderManager#openEnd
 		oDomInterface.openEnd = function(bExludeStyleClasses /* private */) {
-			if (!bExludeStyleClasses) {
+			if (bExludeStyleClasses !== true) {
 				var oStyle = aStyleStack[aStyleStack.length - 1];
 				var aStyleClasses = oStyle.aCustomStyleClasses;
 				if (aStyleClasses) {
@@ -714,6 +715,7 @@ sap.ui.define([
 
 			assertOpenTagHasStarted("openEnd");
 			assertOpenTagHasEnded(!bVoidOpen);
+			assert(bExludeStyleClasses === undefined || bExludeStyleClasses === true, "The private parameter bExludeStyleClasses must be true or omitted!");
 			sOpenTag = "";
 
 			Patcher.openEnd();
@@ -1746,7 +1748,7 @@ sap.ui.define([
 				this.openStart("span");
 				this.style("display", "none");
 				this.attr("id", sInvTextId);
-				this.openEnd("span");
+				this.openEnd();
 				this.text(sLabel);
 				this.close("span");
 			}

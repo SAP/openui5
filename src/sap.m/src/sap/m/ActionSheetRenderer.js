@@ -57,7 +57,7 @@ sap.ui.define(["sap/ui/Device"],
 		// This is needed in order to prevent JAWS from announcing the ActionSheet content multiple times
 		bAccessibilityOn && oRm.attr("role", "presentation");
 
-		oRm.openEnd("div");
+		oRm.openEnd();
 
 		for (i = 0; i < iButtonsCount; i++) {
 			oButton = aActionButtons[i];

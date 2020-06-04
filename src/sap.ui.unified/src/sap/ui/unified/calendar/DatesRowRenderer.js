@@ -67,7 +67,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', '
 
 			oRm.openStart("div", oDatesRow.getId() + "-weeks");
 			oRm.class("sapUiCalRowWeekNumbers");
-			oRm.openEnd(">");
+			oRm.openEnd();
 
 			iDays = oDatesRow.getDays();
 			iDaysWidth = 100 / iDays;

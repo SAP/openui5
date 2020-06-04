@@ -80,7 +80,7 @@ sap.ui.define([
 			oRM.openStart("div", oControl);
 			oRM.attr("type", sControlName);
 			oRM.openEnd();
-			oRM.close();
+			oRM.close("div");
 		};
 		renderFunction.id = sControlName;
 

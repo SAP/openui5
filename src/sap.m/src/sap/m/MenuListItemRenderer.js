@@ -36,7 +36,7 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/m/library'
 				rm.openStart("div");
 				rm.class("sapUiMnuDivL");
 				rm.openEnd();
-				rm.close();
+				rm.close("div");
 				rm.voidStart("hr").voidEnd();
 				rm.openStart("div");
 				rm.class("sapUiMnuDivR");

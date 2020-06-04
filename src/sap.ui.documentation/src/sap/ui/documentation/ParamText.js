@@ -111,7 +111,7 @@ sap.ui.define([
 
 				oRm.openStart("div")
 					.class("deprecated")
-					.openEnd("");
+					.openEnd();
 
 				oRm.icon('sap-icon://message-error');
 
