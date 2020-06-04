@@ -15,7 +15,8 @@ sap.ui.define([
 		onPress: function (evt) {
 			var sButtonId = evt.getSource().getId(),
 				oButton = Core.byId(sButtonId),
-				oText = Core.byId("__xmlview1--statustext"),
+				oViewTextId = this.getView().getId() + "--statustext",
+				oText = Core.byId(oViewTextId),
 				sMessage = "Button with type" + " " +  oButton.getType() + " " + "and text" +  " " + oButton.getText() + " is pressed";
 
 			this.oInvisibleMessage.announce(sMessage, InvisibleMessageMode.Assertive);
