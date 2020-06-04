@@ -39,13 +39,6 @@ sap.ui.define(['sap/ui/base/Metadata', './OverflowToolbarButton', './OverflowToo
 				oControl.setProperty("type", ButtonType.Transparent, true);
 			}
 
-			// Set some css classes to apply the proper paddings in cases of buttons with/without icons
-			if (oControl.getIcon()) {
-				oControl.addStyleClass("sapMOTAPButtonWithIcon");
-			} else {
-				oControl.addStyleClass("sapMOTAPButtonNoIcon");
-			}
-
 			oControl.attachEvent("_change", this._onSapMButtonUpdated, this);
 		};
 
@@ -55,9 +48,6 @@ sap.ui.define(['sap/ui/base/Metadata', './OverflowToolbarButton', './OverflowToo
 			if (oControl.getType() !== oPrevState.buttonType) {
 				oControl.setProperty("type", oPrevState.buttonType, true);
 			}
-
-			oControl.removeStyleClass("sapMOTAPButtonNoIcon");
-			oControl.removeStyleClass("sapMOTAPButtonWithIcon");
 
 			oControl.detachEvent("_change", this._onSapMButtonUpdated, this);
 		};
