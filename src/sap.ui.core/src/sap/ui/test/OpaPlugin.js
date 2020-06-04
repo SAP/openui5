@@ -214,7 +214,8 @@ sap.ui.define([
 
 			// get control in static area that matches a control type, ID (string, array, regex), viewId, viewName, fragmentId
 			_getControlsInStaticArea: function (oOptions) {
-				var vControls = this._getControlsInContainer($("#sap-ui-static")) || [];
+				var oStaticArea = $(sap.ui.getCore().getStaticAreaRef());
+				var vControls = this._getControlsInContainer(oStaticArea) || [];
 
 				if (oOptions.id) {
 					vControls = this._filterUniqueControlsByCondition(vControls, function (oControl) {

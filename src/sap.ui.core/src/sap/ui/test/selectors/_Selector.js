@@ -5,8 +5,9 @@
 sap.ui.define([
     "sap/ui/thirdparty/jquery",
     "sap/ui/base/ManagedObject",
-    "sap/ui/test/_OpaLogger"
-], function ($, ManagedObject, _OpaLogger) {
+    "sap/ui/test/_OpaLogger",
+    'sap/ui/test/_ControlFinder'
+], function ($, ManagedObject, _OpaLogger, _ControlFinder) {
 	"use strict";
 
     /**
@@ -77,6 +78,9 @@ sap.ui.define([
         },
 
         _createSelectorBase: function (oControl, mSelector) {
+            if (_ControlFinder._isControlInStaticArea(oControl)) {
+                mSelector.searchOpenDialogs = true;
+            }
             if (mSelector.skipBasic) {
                 delete mSelector.skipBasic;
                 return mSelector;
@@ -99,7 +103,6 @@ sap.ui.define([
          * @private
          */
         _getControlView: function (oControl) {
-            // TODO: handle controls in static area?
             if (!oControl) {
                 return undefined;
             }
