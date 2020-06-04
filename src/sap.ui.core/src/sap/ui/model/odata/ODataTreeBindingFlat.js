@@ -1454,17 +1454,36 @@ sap.ui.define([
 	 * @param {int} iLevel the number of expanded levels
 	 */
 	ODataTreeBindingFlat.prototype.collapseToLevel = function (iLevel) {
+		var iOldLeadIndex = -1,
+			aChangedIndices = [],
+			iRowIndex;
+
 		if (this.bCollapseRecursive) {
 			// first remove selection up to the given level
 			for (var sKey in this._mSelected) {
 				var oSelectedNode = this._mSelected[sKey];
 				if (oSelectedNode.level > iLevel) {
+					iRowIndex = this.getRowIndexByNode(oSelectedNode);
+					aChangedIndices.push(iRowIndex);
+					// find old lead selection index
+					if (this._sLeadSelectionKey == sKey) {
+						iOldLeadIndex = iRowIndex;
+					}
+
 					this.setNodeSelection(oSelectedNode, false);
 				}
 			}
 		}
 
 		this.setNumberOfExpandedLevels(iLevel);
+
+		if (this.bCollapseRecursive && aChangedIndices.length) {
+			this._publishSelectionChanges({
+				rowIndices: aChangedIndices,
+				oldIndex: iOldLeadIndex,
+				leadIndex: -1
+			});
+		}
 	};
 
 	/**
@@ -1510,6 +1529,13 @@ sap.ui.define([
 				this.setNodeSelection(oSelectedNode, false);
 			}
 		}.bind(this));
+
+		if ((this.bCollapseRecursive || bForceDeselect) && aInvisibleNodes.length) {
+			this._publishSelectionChanges({
+				rowIndices: [],
+				indexChangesCouldNotBeDetermined: true
+			});
+		}
 	};
 
 	/**
@@ -2550,7 +2576,8 @@ sap.ui.define([
 		}
 
 		//only fire event if the selection actually changed somehow
-		if (mParams.rowIndices.length > 0 || (mParams.leadIndex != undefined && mParams.leadIndex !== -1)) {
+		if (mParams.rowIndices.length > 0 || (mParams.leadIndex != undefined && mParams.leadIndex !== -1) ||
+				mParams.indexChangesCouldNotBeDetermined) {
 			this.fireSelectionChanged(mParams);
 		}
 	};
@@ -4261,11 +4288,14 @@ sap.ui.define([
 	 * <ul>
 	 * <li>'leadIndex' of type <code>int</code> Lead selection index.</li>
 	 * <li>'rowIndices' of type <code>int[]</code> Other selected indices (if available)</li>
+	 * <li>'indexChangesCouldNotBeDetermined' of type <code>boolean</code> True in case changed indices could not be determined</li>
 	 * </ul>
 	 *
 	 * @param {object} oParameters Parameters to pass along with the event.
 	 * @param {int} oParameters.leadIndex Lead selection index
 	 * @param {int[]} [oParameters.rowIndices] Other selected indices (if available)
+	 * @param {boolean} [oParameters.indexChangesCouldNotBeDetermined]
+	 *						True in case changed indices could not be determined
 	 * @return {sap.ui.model.odata.ODataTreeBindingFlat} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */

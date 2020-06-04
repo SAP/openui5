@@ -593,4 +593,138 @@ sap.ui.define([
 		oBinding.attachChange(handler1);
 		oBinding.getContexts(0, 128);
 	});
+
+	QUnit.test("selectionChanged event with collapse", function(assert) {
+		assert.expect(4);
+		var done = assert.async();
+
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		var handler1 = function() {
+			oBinding.detachChange(handler1);
+			oBinding.selectAll();
+
+			var fnSelectionChangeHandler1 = function(oEvent) {
+				oBinding.detachChange(fnSelectionChangeHandler1);
+				assert.equal(oEvent.mParameters.leadIndex, 121, "Event: leadIndex should still be 121");
+				assert.equal(oEvent.mParameters.oldIndex, 121, "Event: oldIndex should still be 121");
+				assert.equal(oEvent.mParameters.rowIndices.length, 0, "Event: length of changedIndices should be 0");
+				assert.equal(oEvent.mParameters.indexChangesCouldNotBeDetermined, true, "Index changes could not be determined");
+				done();
+			};
+
+			oBinding.attachSelectionChanged(fnSelectionChangeHandler1);
+			oBinding.collapse(1);
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 128);
+	});
+
+	QUnit.test("selectionChanged event with collapse: deselect of lead selection", function(assert) {
+		assert.expect(4);
+		var done = assert.async();
+
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		var handler1 = function() {
+			oBinding.detachChange(handler1);
+			oBinding.setSelectedIndex(2);
+
+			var fnSelectionChangeHandler1 = function(oEvent) {
+				oBinding.detachChange(fnSelectionChangeHandler1);
+				assert.equal(oEvent.mParameters.leadIndex, -1, "Event: leadIndex should be -1 (no lead selection)");
+				assert.equal(oEvent.mParameters.oldIndex, -1, "Event: oldIndex should be -1 (could not be determined)");
+				assert.equal(oEvent.mParameters.rowIndices.length, 0, "Event: length of changedIndices should be 1");
+				assert.equal(oEvent.mParameters.indexChangesCouldNotBeDetermined, true, "Index changes could not be determined");
+				done();
+			};
+
+			oBinding.attachSelectionChanged(fnSelectionChangeHandler1);
+			oBinding.collapse(1);
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 128);
+	});
+
+	QUnit.test("selectionChanged event with collapseToLevel", function(assert) {
+		assert.expect(4);
+		var done = assert.async();
+
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		var handler1 = function() {
+			oBinding.detachChange(handler1);
+			oBinding.selectAll();
+
+			var fnSelectionChangeHandler1 = function(oEvent) {
+				oBinding.detachChange(fnSelectionChangeHandler1);
+				assert.equal(oEvent.mParameters.leadIndex, -1, "Event: leadIndex should be -1 (no lead selection)");
+				assert.equal(oEvent.mParameters.oldIndex, 127, "Event: oldIndex should still be 127");
+				assert.equal(oEvent.mParameters.rowIndices.length, 99, "Event: length of changedIndices should be 0");
+
+				assert.deepEqual(oEvent.mParameters.rowIndices,
+					[2, 3, 4, 5, 6, 7, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 27, 30, 31, 32, 33, 34, 35, 37, 38, 39, 40, 41, 42,
+					43, 44, 45, 46, 47, 48, 49, 52, 54, 60, 63, 64, 65, 66, 67, 68, 69, 70, 72, 74, 75, 76, 77, 78, 79, 80, 81, 83, 84, 85, 86, 88, 89,
+					90, 91, 92, 94, 95, 96, 97, 98, 99, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 114, 115, 116, 117, 118, 119, 120, 121,
+					124, 125, 126, 127], "Changed indices after collapse is correct");
+				done();
+			};
+
+			oBinding.attachSelectionChanged(fnSelectionChangeHandler1);
+			oBinding.collapseToLevel(1);
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 128);
+	});
+
+	QUnit.test("selectionChanged event with collapseToLevel: deselect of lead selection", function(assert) {
+		assert.expect(4);
+		var done = assert.async();
+
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		var handler1 = function() {
+			oBinding.detachChange(handler1);
+			oBinding.setSelectedIndex(2);
+
+			var fnSelectionChangeHandler1 = function(oEvent) {
+				oBinding.detachChange(fnSelectionChangeHandler1);
+				assert.equal(oEvent.mParameters.leadIndex, -1, "Event: leadIndex should be -1 (no lead selection)");
+				assert.equal(oEvent.mParameters.oldIndex, 2, "Event: oldIndex should be 2");
+				assert.equal(oEvent.mParameters.rowIndices.length, 1, "Event: length of changedIndices should be 1");
+
+				assert.deepEqual(oEvent.mParameters.rowIndices, [2], "Changed indices after collapse is correct");
+				done();
+			};
+
+			oBinding.attachSelectionChanged(fnSelectionChangeHandler1);
+			oBinding.collapseToLevel(1);
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 128);
+	});
 });
