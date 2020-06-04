@@ -36,7 +36,7 @@ sap.ui.define([
 				 * Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 				 */
 				actions: {
-					type: "array"
+					type: "sap.ui.integration.CardMenuAction[]"
 				},
 
 				/**

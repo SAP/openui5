@@ -5,14 +5,14 @@
 /**
  * Initialization Code and shared classes of library sap.ui.integration.
  */
-sap.ui.define(["sap/ui/base/DataType",
-		"sap/ui/Global",
-		"sap/ui/core/library",
-		"sap/m/library",
-		"sap/f/library"
-	], // library dependency
-	function (DataType) {
-
+sap.ui.define([
+	"sap/ui/base/DataType",
+	"sap/ui/Global",
+	// library dependency
+	"sap/ui/core/library",
+	"sap/m/library",
+	"sap/f/library"
+], function (DataType) {
 		"use strict";
 
 		// delegate further initialization of this library to the Core
@@ -22,7 +22,8 @@ sap.ui.define(["sap/ui/base/DataType",
 			dependencies: ["sap.ui.core", "sap.f", "sap.m"],
 			types: [
 				"sap.ui.integration.CardActionType",
-				"sap.ui.integration.CardDataMode"
+				"sap.ui.integration.CardDataMode",
+				"sap.ui.integration.CardMenuAction"
 			],
 			controls: [
 				"sap.ui.integration.widgets.Card",
@@ -120,6 +121,35 @@ sap.ui.define(["sap/ui/base/DataType",
 			Content: 'Content',
 			Header: 'Header'
 		};
+
+		/**
+		 * An object type that represents card menu action properties.
+		 * @typedef {Object}
+		 * @public
+		 * @experimental since 1.79
+		 * @property {sap.ui.integration.CardActionType} type The type of the action.
+		 * @property {string} text The text of the action button.
+		 * @property {sap.ui.core.URI} icon The icon of the action button.
+		 * @property {string} tooltip The tooltip of the action button.
+		 * @property {sap.m.ButtonType} buttonType The type of the action button.
+		 * @property {boolean|function} enabled If the action is enabled. Default value is <code>true</code>.
+		 * @property {boolean|function} visible If the action is visible. Default value is <code>true</code>.
+		 * @property {function} action The action function.
+		 * @property {object} parameters The parameters of the action.
+		 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		thisLib.CardMenuAction = DataType.createType("sap.ui.integration.CardMenuAction", {
+			isValid: function (oValue) {
+				var aPossibleKeys = [
+					"type", "text", "icon", "tooltip", "buttonType", "enabled", "visible", "action", "parameters",
+					"target", "url" // do not document these as they should not be used
+				];
+
+				return Object.keys(oValue).every(function (sKey) {
+					return aPossibleKeys.indexOf(sKey) !== -1;
+				});
+			}
+		}, "object");
 
 		return thisLib;
 	});
