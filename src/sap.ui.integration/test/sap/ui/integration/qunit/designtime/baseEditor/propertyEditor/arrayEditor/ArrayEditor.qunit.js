@@ -328,14 +328,13 @@ sap.ui.define([
 				]
 			});
 
+			this.oArrayEditor.setConfig(oConfig);
 			this.oArrayEditor.ready().then(function () {
 				var aArrayElements = _getArrayEditorElements(this.oArrayEditor).items;
 				assert.strictEqual(aArrayElements[0].editors[1].getConfig().visible, false, "then prop2 is invisible for 1st array item");
 				assert.strictEqual(aArrayElements[1].editors[1].getConfig().visible, true, "then prop2 is visible for 2nd array item");
 				fnDone();
 			}.bind(this));
-
-			this.oArrayEditor.setConfig(oConfig);
 		});
 
 		QUnit.test("when a property in an array item has a visibility binding against another property in the item (defaultValue usecase)", function (assert) {
@@ -378,14 +377,13 @@ sap.ui.define([
 				]
 			});
 
+			this.oArrayEditor.setConfig(oConfig);
 			this.oArrayEditor.ready().then(function () {
 				var aArrayElements = _getArrayEditorElements(this.oArrayEditor).items;
 				assert.strictEqual(aArrayElements[0].editors[1].getConfig().visible, true, "then prop2 is visible for 1st array item");
 				assert.strictEqual(aArrayElements[1].editors[1].getConfig().visible, true, "then prop2 is visible for 2nd array item");
 				fnDone();
 			}.bind(this));
-
-			this.oArrayEditor.setConfig(oConfig);
 		});
 	};
 

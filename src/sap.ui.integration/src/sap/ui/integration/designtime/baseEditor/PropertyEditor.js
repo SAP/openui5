@@ -234,9 +234,23 @@ sap.ui.define([
 				this._initPropertyEditor();
 			});
 
-			this.attachConfigChange(function () {
-				this._removePropertyEditor(this.getEditor());
-				this._initPropertyEditor();
+			this.attachConfigChange(function (oEvent) {
+				var oPreviousConfig = oEvent.getParameter("previousConfig");
+				var oConfig = oEvent.getParameter("config");
+
+				// Recreate the editor if the old editor cannot handle the config change internally
+				if (
+					this._fnCancelInit
+					|| !oPreviousConfig
+					|| !oConfig
+					|| oPreviousConfig.type !== oConfig.type
+					|| oPreviousConfig.path !== oConfig.path
+				) {
+					this._removePropertyEditor(this.getEditor());
+					this._initPropertyEditor();
+				} else {
+					this.getAggregation("propertyEditor").setConfig(oConfig);
+				}
 			});
 
 			this.attachPropertyNameChange(function () {
@@ -310,9 +324,6 @@ sap.ui.define([
 	};
 
 	PropertyEditor.prototype.destroy = function () {
-		if (this._fnCancelInit) {
-			this._fnCancelInit().then(this._cleanupCancelledInit);
-		}
 		this._removePropertyEditor(this.getEditor());
 		Control.prototype.destroy.apply(this, arguments);
 	};
@@ -324,6 +335,10 @@ sap.ui.define([
 	PropertyEditor.prototype._removePropertyEditor = function (oEditor) {
 		var oPropertyEditor = this.getAggregation("propertyEditor");
 
+		if (this._fnCancelInit) {
+			this._fnCancelInit().then(this._cleanupCancelledInit);
+			delete this._fnCancelInit;
+		}
 
 		if (oPropertyEditor) {
 			this.setAggregation("propertyEditor", null);
@@ -442,7 +457,7 @@ sap.ui.define([
 	};
 
 	PropertyEditor.prototype._isAbsolutePath = function (sPath) {
-		return sPath.startsWith("/");
+		return sPath && sPath.startsWith("/");
 	};
 
 	PropertyEditor.prototype._propagationListener = function () {
