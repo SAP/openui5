@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
 	"sap/m/StandardListItemRenderer",
+	"sap/ui/core/Core",
 	"sap/ui/qunit/qunit-css",
 	"sap/ui/thirdparty/qunit",
 	"sap/ui/qunit/qunit-junit",
@@ -27,7 +28,8 @@ sap.ui.define([
 		qutils,
 		KeyCodes,
 		Device,
-		StandardListItemRenderer
+		StandardListItemRenderer,
+		Core
 	) {
 		"use strict";
 
@@ -1248,7 +1250,6 @@ sap.ui.define([
 			beforeEach : function () {
 
 				//arrange
-				sinon.config.useFakeTimers = true;
 				this.oSelectDialog = new SelectDialog("clearButtonSelectDialog", {
 				title: "Very very very very very very very very long title",
 				multiSelect : true,
@@ -1319,7 +1320,6 @@ sap.ui.define([
 			afterEach : function () {
 
 				//cleanup
-				sinon.config.useFakeTimers = false;
 				this.oSelectDialog.destroy();
 				delete this.mockupData;
 				this.oSelectDialog1.destroy();
@@ -1532,6 +1532,7 @@ sap.ui.define([
 					{Title: "Entry30"}
 				]
 			}, path: "/items", template: createTemplateListItem() });
+			Core.applyChanges();
 		}, afterEach: function() {
 			// cleanup
 			this.oSelectDialog.destroy();
@@ -1555,9 +1556,13 @@ sap.ui.define([
 			that.oSelectDialog._executeSearch("Tes", false, "search");
 			that.oSelectDialog.getItems()[0].setSelected(true);
 			that.oSelectDialog._getOkButton().firePress();
-		});
+			Core.applyChanges();
+			this.clock.tick(500);
+		}.bind(this));
 
 		this.oSelectDialog.open();
+		Core.applyChanges();
+		this.clock.tick(500);
 	});
 
 	QUnit.test("Selected items after search have to be all the selected items - selected items go outside the growing number", function (assert) {
@@ -1580,8 +1585,12 @@ sap.ui.define([
 			that.oSelectDialog.getItems()[1].setSelected(true);
 			that.oSelectDialog.getItems()[2].setSelected(true);
 			that.oSelectDialog._getOkButton().firePress();
-		});
+			Core.applyChanges();
+			this.clock.tick(500);
+		}.bind(this));
 
 		this.oSelectDialog.open();
+		Core.applyChanges();
+		this.clock.tick(500);
 	});
 });
