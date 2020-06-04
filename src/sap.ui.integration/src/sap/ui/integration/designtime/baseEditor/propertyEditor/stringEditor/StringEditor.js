@@ -71,7 +71,13 @@ sap.ui.define([
 	StringEditor.prototype._validate = function () {
 		var oInput = this.getContent();
 		var sValue = oInput.getValue();
-		if (!isValidBindingString(sValue)) {
+		var oConfig = this.getConfig();
+
+		if (oConfig["allowBindings"] === false && isValidBindingString(sValue, false)) {
+			oInput.setValueState("Error");
+			oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.PROPERTY.BINDING_NOT_ALLOWED"));
+			return false;
+		} else if (!isValidBindingString(sValue)) {
 			oInput.setValueState("Error");
 			oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.STRING.INVALID_BINDING"));
 			return false;

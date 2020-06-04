@@ -4,14 +4,37 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/model/resource/ResourceModel",
-	"qunit/designtime/EditorQunitUtils"
+	"qunit/designtime/EditorQunitUtils",
+	"sap/ui/integration/designtime/baseEditor/BaseEditor"
 ], function (
 	StringEditor,
 	ResourceBundle,
 	ResourceModel,
-	EditorQunitUtils
+	EditorQunitUtils,
+	BaseEditor
 ) {
 	"use strict";
+
+	function createBaseEditorConfig(mConfigOptions) {
+		var mPropertyConfig = Object.assign(
+			{
+				label: "Test String",
+				type: "string",
+				path: "content"
+			},
+			mConfigOptions
+		);
+
+		return {
+			context: "/",
+			properties: {
+				sampleString: mPropertyConfig
+			},
+			propertyEditors: {
+				"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+			}
+		};
+	}
 
 	QUnit.module("String Editor: Given an editor config", {
 		before: function () {
@@ -105,6 +128,40 @@ sap.ui.define([
 				},
 				"Then the value is not parsed"
 			);
+		});
+	});
+
+	QUnit.module("Custom Configuration", {
+		beforeEach: function () {
+			var mJson = {
+				content: "Sample string"
+			};
+
+			this.oBaseEditor = new BaseEditor({
+				json: mJson
+			});
+			this.oBaseEditor.placeAt("qunit-fixture");
+		},
+		afterEach: function () {
+			this.oBaseEditor.destroy();
+		}
+	}, function () {
+		QUnit.test("When binding strings are forbidden", function (assert) {
+			var mConfig = createBaseEditorConfig({
+				allowBindings: false
+			});
+			this.oBaseEditor.setConfig(mConfig);
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleString").then(function (aPropertyEditors) {
+				var oStringEditor = aPropertyEditors[0];
+				sap.ui.getCore().applyChanges();
+				var oStringEditorElement = oStringEditor.getContent();
+
+				EditorQunitUtils.setInputValue(oStringEditorElement, "{validBindingString}");
+
+				assert.strictEqual(oStringEditorElement.getValueState(), "Error", "Then the error is displayed");
+				assert.strictEqual(oStringEditor.getValue(), "Sample string", "Then the editor value is not updated");
+			});
 		});
 	});
 
