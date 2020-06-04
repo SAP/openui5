@@ -34,10 +34,10 @@
 				A card instance can trigger an <code>action</code> event. This event should be handled by the host environment to make the card interactions fully functional.
 				The type of <code>action</code> event, determines the purpose of the action.
 				Currently the types of actions are limited to <code>Navigation</code>.
-				Actions are defined inside the card manifest. For more information, see <a target="_top" href="../../index.html#/learn/features/actions">actions in Learn section</a>
+				Actions are defined inside the card manifest. For more information, see <a target="_top" href="../../index.html#/learn/features/cardActions">actions in Learn section</a>
 			</p>
 			<p>
-				For all supported parameters, see <a id="linkToAPICardEventsAction" target="_blank">action event API</a>.
+				For all supported parameters, see <a data-demokit-href="/api/sap.ui.integration.widgets.Card/events/action" target="_blank">action event API</a>.
 			</p>
 
 			<h2>When using UI5</h2>
@@ -116,7 +116,7 @@ document.body.appendChild(card);
 				Some cards can refresh their data in a certain interval. This property provides control to the host environment to disable/enable any further requests.
 			</p>
 			<p>
-				For more information, see <a id="linkToAPICardDataMode" target="_blank"><code>dataMode</code> property API</a>.
+				For more information, see <a data-demokit-href="/api/sap.ui.integration.CardDataMode" target="_blank"><code>dataMode</code> property API</a>.
 			</p>
 
 			<h3>When using UI5</h3>
@@ -146,7 +146,7 @@ setTimeout(function () {
 				This functionality depends on the <code>dataMode</code> property of the card, and only works if set to <code>Active</code>.
 			</p>
 			<p>
-				For more information, see <a id="linkToAPICardMethodsRefresh" target="_blank"><code>refresh</code> method API</a>.
+				For more information, see <a data-demokit-href="/api/sap.ui.integration.widgets.Card/methods/refresh" target="_blank"><code>refresh</code> method API</a>.
 			</p>
 
 			<h3>When using UI5</h3>
@@ -202,19 +202,7 @@ customElements.whenDefined("ui-integration-card").then(function () {
 			<div><a href="#settingDimensions">Configuring card dimensions</a></div>
 		</div>
 	</div>
-	<script>
-		var sPathToDemokitLocal = "../../../../../../../../../documentation.html#";
-		var sPathToDemokit = "../../../../../../../../../#";
 
-		if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-			document.getElementById("linkToAPICardEventsAction").href = sPathToDemokitLocal + "/api/sap.ui.integration.widgets.Card/events/action";
-			document.getElementById("linkToAPICardMethodsRefresh").href = sPathToDemokitLocal + "/api/sap.ui.integration.widgets.Card/methods/refresh";
-			document.getElementById("linkToAPICardDataMode").href = sPathToDemokitLocal + "/api/sap.ui.integration.CardDataMode";
-		} else {
-			document.getElementById("linkToAPICardEventsAction").href = sPathToDemokit + "/api/sap.ui.integration.widgets.Card/events/action";
-			document.getElementById("linkToAPICardMethodsRefresh").href = sPathToDemokit + "/api/sap.ui.integration.widgets.Card/methods/refresh";
-			document.getElementById("linkToAPICardDataMode").href = sPathToDemokit + "/api/sap.ui.integration.CardDataMode";
-		}
-	</script>
+	<script src="../../scripts/topic.js"></script>
 </body>
 </html>
