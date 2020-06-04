@@ -169,12 +169,13 @@ describe('sap.m.MultiInput', function() {
 			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_sticky_suggestions_focused");
 
 			browser.actions().sendKeys("A").perform();
-			expect(takeScreenshot(oMultiInput)).toLookAs("sticky_suggestions_visible");
+			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_sticky_suggestions_text_inserted");
 
 			for (var index = 0; index < 25; index++) {
 				browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
 			}
-			expect(takeScreenshot()).toLookAs("sticky_suggestions_table_visible");
+
+			expect(takeScreenshot()).toLookAs("MI_with_sticky_suggestions_table_visible");
 		});
 	});
 });
