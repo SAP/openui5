@@ -39,9 +39,9 @@
 							</Label>
 							<Input id="sapUiRtaAddIFrameDialog_WidthInput" class="sapUiRtaAddIFrameDialogWidthInput"
 								   value="{path: '/frameWidth/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 0}}"
-								   placeholder="100" valueState="{/frameWidth/valueState}"/>
+								   valueState="{/frameWidth/valueState}"/>
 							<Select id="sapUiRtaAddIFrameDialog_WidthUnit" class="sapUiRtaAddIFrameDialogWidthUnit"
-									ariaLabelledBy="sapUiRtaAddIFrameDialog_WidthUnitLabel"
+									ariaLabelledBy="sapUiRtaAddIFrameDialog_WidthUnitLabel" change="onSizeUnitChange"
 									selectedKey="{/frameWidthUnit/value}" items="{/unitsOfMeasure}">
 								<core:Item key="{name}" text="{name}" />
 							</Select>
@@ -58,9 +58,9 @@
 								   text="{/text/heightLabel}"/>
 							<Input id="sapUiRtaAddIFrameDialog_HeightInput" class="sapUiRtaAddIFrameDialogHeightInput"
 								   value="{path: '/frameHeight/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 0}}"
-								   placeholder="100" valueState="{/frameHeight/valueState}"/>
+								   valueState="{/frameHeight/valueState}"/>
 							<Select id="sapUiRtaAddIFrameDialog_HeightUnit" class="sapUiRtaAddIFrameDialogHeightUnit"
-									ariaLabelledBy="sapUiRtaAddIFrameDialog_HeightUnitLabel"
+									ariaLabelledBy="sapUiRtaAddIFrameDialog_HeightUnitLabel" change="onSizeUnitChange"
 									selectedKey="{/frameHeightUnit/value}" items="{/unitsOfMeasure}">
 								<core:Item key="{name}" text="{name}" />
 							</Select>
@@ -73,8 +73,7 @@
 						containerQuery="true"
 						position="Right"
 						defaultSpan="XL12 L12 M12 S12">
-					<Text id="sapUiRtaAddIFrameDialog_PercentText" text="{/text/percentUseLabel}" class="sapUiRtaAddIFrameDialogPercentText"
-						  visible="{= ${/frameWidthUnit/value} === '%' || ${/frameHeightUnit/value} === '%' }"/>
+					<Text id="sapUiRtaAddIFrameDialog_PercentText" text="{/text/percentUseLabel}" class="sapUiRtaAddIFrameDialogPercentText"/>
 				</layout:Grid>
 				<layout:Grid
 						id="sapUiRtaAddIFrameDialog_EditGrid"
