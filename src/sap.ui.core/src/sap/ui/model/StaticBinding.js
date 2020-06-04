@@ -4,17 +4,10 @@
 
 // Provides a static binding.
 sap.ui.define([
-	"./PropertyBinding",
 	"./ChangeReason",
-	"sap/base/assert",
-	"sap/base/Log"
+	"./PropertyBinding"
 ],
-	function(
-		PropertyBinding,
-		ChangeReason,
-		assert,
-		Log
-	) {
+	function(ChangeReason, PropertyBinding) {
 	"use strict";
 
 
@@ -22,8 +15,12 @@ sap.ui.define([
 	 * Constructor for StaticBinding
 	 *
 	 * @class
-	 * The StaticBinding allows to define static values within a CompositeBinding. It behaves like a property
-	 * binding but always returns the value, which is stored in the binding itself.
+	 * The <code>StaticBinding</code> allows to define static values within a
+	 * {@link sap.ui.model.CompositeBinding}. It behaves like a property binding but always returns
+	 * the value that is stored in the binding itself. The binding does not have a
+	 * {@link sap.ui.model.Context}, a {@link sap.ui.model.Model} or a path.
+	 *
+	 * @param {any} vValue The static value of this binding
 	 *
 	 * @public
 	 * @alias sap.ui.model.StaticBinding
@@ -35,18 +32,10 @@ sap.ui.define([
 		constructor : function (vValue) {
 			PropertyBinding.apply(this, [null,""]);
 			this.vValue = vValue;
-		},
-		metadata : {
-
-		  publicMethods : [
-				"attachChange", "detachChange"
-		  ]
 		}
-
 	});
 
 	StaticBinding.prototype.getPath = function() {
-		assert(null, "Static Binding has no path!");
 		return null;
 	};
 
@@ -55,7 +44,6 @@ sap.ui.define([
 	};
 
 	StaticBinding.prototype.getContext = function() {
-		assert(null, "Static Binding has no context!");
 		return null;
 	};
 
