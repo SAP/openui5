@@ -1168,6 +1168,8 @@ sap.ui.define([
 			this._moveControlInSuitableCollection(oControl, this._getControlPriority(oControl));
 		}
 
+		this._informNewFlexibleContentAdded(oControl);
+
 		return this._callToolbarMethod("addContent", arguments);
 	};
 
@@ -1178,6 +1180,8 @@ sap.ui.define([
 		if (oControl) {
 			this._moveControlInSuitableCollection(oControl, this._getControlPriority(oControl));
 		}
+
+		this._informNewFlexibleContentAdded(oControl);
 
 		return this._callToolbarMethod("insertContent", arguments);
 	};
@@ -1217,6 +1221,20 @@ sap.ui.define([
 		this._clearAllControlsCollections();
 
 		return this._callToolbarMethod("destroyContent", arguments);
+	};
+
+	/**
+	 * Every time a flexible control (like sap.m.GenericTag) is added to the content aggregation,
+	 * a "_contentSizeChange" event is fired to reset the DynamicPageTitle's area flex-basis.
+	 * @param oControl
+	 * @private
+	 */
+	OverflowToolbar.prototype._informNewFlexibleContentAdded = function (oControl) {
+		if (oControl && oControl.isA("sap.m.IOverflowToolbarFlexibleContent")) {
+			this.fireEvent("_contentSizeChange", {
+				contentSize: null
+			});
+		}
 	};
 
 	/**
