@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/f/shellBar/ResponsiveHandler",
 	"sap/m/ToolbarSpacer",
 	"sap/m/OverflowToolbarButton",
-	"sap/f/Avatar",
+	"sap/m/Avatar",
 	"sap/m/Menu",
 	"sap/ui/core/Core",
 	"sap/base/Log",
@@ -170,7 +170,7 @@ function (
 			},
 			{
 				name: "profile",
-				type: "sap.f.Avatar",
+				type: "sap.m.Avatar",
 				multiple: false,
 				singularName: undefined,
 				forwarding: undefined
@@ -196,7 +196,7 @@ function (
 			{name: "searchButtonPressed", parameters: {button: {type: "sap.m.Button"}}},
 			{name: "notificationsPressed", parameters: {button: {type: "sap.m.Button"}}},
 			{name: "productSwitcherPressed", parameters: {button: {type: "sap.m.Button"}}},
-			{name: "avatarPressed", parameters: {avatar: {type: "sap.f.Avatar"}}}
+			{name: "avatarPressed", parameters: {avatar: {type: "sap.m.Avatar"}}}
 		];
 
 		assert.deepEqual(this.getEventsObject(), oExpectedObject, "All events setup as expected");

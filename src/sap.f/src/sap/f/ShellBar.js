@@ -135,7 +135,7 @@ function(
 				/**
 				 * The profile avatar.
 				 */
-				profile: {type: "sap.f.Avatar", multiple: false},
+				profile: {type: "sap.m.Avatar", multiple: false},
 				/**
 				 * Additional content to be displayed in the control.
 				 *
@@ -239,7 +239,7 @@ function(
 						/**
 						 * Reference to the button that has been pressed
 						 */
-						avatar: {type: "sap.f.Avatar"}
+						avatar: {type: "sap.m.Avatar"}
 					}
 				}
 			}
