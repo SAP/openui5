@@ -72,7 +72,7 @@ sap.ui.define([
 	EnumStringEditor.prototype._validate = function (sSelectedKey, sValue) {
 		var oConfig = this.getConfig();
 		if (oConfig["allowBindings"] === false && isValidBindingString(sValue, false)) {
-			return "BASE_EDITOR.ENUM.BINDING_NOT_ALLOWED";
+			return "BASE_EDITOR.PROPERTY.BINDING_NOT_ALLOWED";
 		}
 		if (!oConfig["allowCustomValues"] && sValue && !sSelectedKey && !isValidBindingString(sValue, false)) {
 			return "BASE_EDITOR.ENUM.CUSTOM_VALUES_NOT_ALLOWED";
