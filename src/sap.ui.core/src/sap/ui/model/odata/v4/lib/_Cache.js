@@ -2573,13 +2573,10 @@ sap.ui.define([
 			this.fetchTypes()
 		]).then(function (aResult) {
 			that.visitResponse(aResult[0], aResult[1]);
-			that.bPosting = false;
 
 			return aResult[0];
-		}, function (oError) {
-			// BEWARE! Avoid finally here! BCP: 2070200175
+		}).finally(function () {
 			that.bPosting = false;
-			throw oError;
 		});
 
 		return this.oPromise;

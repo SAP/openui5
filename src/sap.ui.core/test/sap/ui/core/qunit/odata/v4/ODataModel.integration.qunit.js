@@ -25990,7 +25990,8 @@ sap.ui.define([
 	// Scenario: A bound action is executed, accompanied by a side effect. The action returns a
 	// wrong response, but the side effect must win anyway!
 	// BCP: 2070200175
-	QUnit.test("BCP: 2070200175", function (assert) {
+	// JIRA: CPOUI5ODATAV4-288
+	QUnit.test("BCP: 2070200175, CPOUI5ODATAV4-288: POST > GET", function (assert) {
 		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
 			oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
 			sView = '\
