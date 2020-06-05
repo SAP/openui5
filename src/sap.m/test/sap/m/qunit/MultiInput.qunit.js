@@ -2943,9 +2943,16 @@ sap.ui.define([
 			return oItem.getVisible();
 		});
 		oGroupHeader = aVisibleItems[0];
+		var sInvisibleTextId = oMultiInput._getSuggestionsList().getItems()[0].getId();
 
 		// Assert
 		assert.ok(oGroupHeader.isA("sap.m.GroupHeaderListItem"), "The first visible item is a group header");
+
+		// Act
+		qutils.triggerKeydown(oMultiInput.getDomRef(), KeyCodes.ARROW_DOWN);
+
+		// Assert
+		assert.strictEqual(oMultiInput.getFocusDomRef().getAttribute('aria-activedescendant'), sInvisibleTextId, "Input has aria-activedescendant attribute set");
 
 		// Act
 		oGroupHeader.focus();
