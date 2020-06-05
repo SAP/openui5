@@ -5,7 +5,7 @@ describe("sap.m.Popover", function () {
 
 	var bPhone = null;
 	var _resolvePopover = function () {
-		return bPhone ? "__dialog1" : "__popover1";
+		return bPhone ? "__dialog1" : "overflowing-popover";
 	};
 
 	it("Should load test page", function () {
