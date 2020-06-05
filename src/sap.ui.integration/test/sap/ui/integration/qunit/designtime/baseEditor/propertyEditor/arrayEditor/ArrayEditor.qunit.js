@@ -47,6 +47,33 @@ sap.ui.define([
 			};
 	}
 
+	function createBaseEditorConfig(mConfigOptions) {
+		var mPropertyConfig = Object.assign(
+			{
+				path: "/content",
+				type: "array",
+				template: {
+					foo: {
+						type: "string",
+						path: "foo"
+					}
+				}
+			},
+			mConfigOptions
+		);
+
+		return {
+			context: "/",
+			properties: {
+				sampleArray: mPropertyConfig
+			},
+			propertyEditors: {
+				"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
+				"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+			}
+		};
+	}
+
 	var fnBaseTests = function () {
 		QUnit.test("When an ArrayEditor is created", function (assert) {
 			assert.ok(this.oArrayEditor.getDomRef() instanceof HTMLElement, "Then it is rendered correctly (1/3)");
@@ -681,7 +708,7 @@ sap.ui.define([
 	QUnit.module("Custom configuration", {
 		beforeEach: function (assert) {
 			var mJson = {
-				"testValues": [
+				"content": [
 					{
 						"foo": "bar"
 					},
@@ -703,25 +730,10 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("When adding/removing items is forbidden", function (assert) {
-			this.oBaseEditor.setConfig({
-				"properties": {
-					"sampleArray": {
-						path: "/testValues",
-						type: "array",
-						template: {
-							foo: {
-								type: "string",
-								path: "foo"
-							}
-						},
-						allowAddAndRemove: false
-					}
-				},
-				"propertyEditors": {
-					"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
-					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
-				}
+			var mConfig = createBaseEditorConfig({
+				allowAddAndRemove: false
 			});
+			this.oBaseEditor.setConfig(mConfig);
 
 			return this.oBaseEditor.getPropertyEditorsByName("sampleArray").then(function (aPropertyEditors) {
 				var oArrayEditor = aPropertyEditors[0];
@@ -737,25 +749,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("When changing the order of items is forbidden", function (assert) {
-			this.oBaseEditor.setConfig({
-				"properties": {
-					"sampleArray": {
-						path: "/testValues",
-						type: "array",
-						template: {
-							foo: {
-								type: "string",
-								path: "foo"
-							}
-						},
-						allowSorting: false
-					}
-				},
-				"propertyEditors": {
-					"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
-					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
-				}
+			var mConfig = createBaseEditorConfig({
+				allowSorting: false
 			});
+			this.oBaseEditor.setConfig(mConfig);
 
 			return this.oBaseEditor.getPropertyEditorsByName("sampleArray").then(function (aPropertyEditor) {
 				var oArrayEditor = aPropertyEditor[0];
@@ -766,6 +763,22 @@ sap.ui.define([
 				assert.notOk(
 					_getArrayEditorElements(oArrayEditor).items[0].moveDownButton.getVisible(),
 					"Then the move down buttons are disabled"
+				);
+			}, this);
+		});
+
+		QUnit.test("When item labels are disabled in the plain editor", function (assert) {
+			var mConfig = createBaseEditorConfig({
+				showItemLabel: false,
+				collapsibleItems: false
+			});
+			this.oBaseEditor.setConfig(mConfig);
+
+			return this.oBaseEditor.getPropertyEditorsByName("sampleArray").then(function (aPropertyEditor) {
+				var oArrayEditor = aPropertyEditor[0];
+				assert.notOk(
+					_getArrayEditorElements(oArrayEditor).items[0].label.getVisible(),
+					"Then the labels are hidden"
 				);
 			}, this);
 		});

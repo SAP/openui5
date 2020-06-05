@@ -10,12 +10,12 @@
 		>
 			<VBox>
 				<Bar
-					visible="{= ${config/allowSorting} !== false || ${config/allowAddAndRemove} !== false || !!${itemsModel>itemLabel}}"
+					visible="{= ${config/allowSorting} !== false || ${config/allowAddAndRemove} !== false || ${config/showItemLabel} !== false}"
 				>
 					<contentLeft>
 						<Label
 							text="{itemsModel>itemLabel}"
-							visible="{= !!${itemsModel>itemLabel}}"
+							visible="{= ${config/showItemLabel} !== false}"
 						/>
 					</contentLeft>
 					<contentRight>
