@@ -1742,16 +1742,13 @@ sap.ui.define([
 	};
 
 	NavContainer.prototype.removeAllPages = function () {
-		var aPages = this.getPages();
-		if (!aPages) {
-			return [];
-		}
+		var aPages = this.removeAllAggregation("pages");
 
 		for (var i = 0; i < aPages.length; i++) {
 			this._onPageRemoved(aPages[i]);
 		}
 
-		return this.removeAllAggregation("pages");
+		return aPages;
 	};
 
 	NavContainer.prototype.addPage = function (oPage) {
