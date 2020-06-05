@@ -792,21 +792,34 @@ sap.ui.define([
 			jQuery.fn.width = this._ojQueryWidthMethod;
 		});
 
-		QUnit.module("Listeners", {
-			beforeEach : function () {
-				this._oDSC = new DynamicSideContent({containerQuery: true});
-				this._oDSC.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-			},
-			afterEach : function () {
-				this._oDSC = null;
-			}
-		});
+		QUnit.test("breakpointChange event not fired initially", function(assert) {
+			var fnDone = assert.async(),
+				oDSC = new DynamicSideContent({containerQuery: true}),
+				oBreakpointChangedSpy = this.spy(oDSC, "fireBreakpointChanged"),
+				oContainer = document.getElementById("content"),
+				sResizeListenerId,
+				oAfterRenderingDelegate = {
+					onAfterRendering: function () {
+						sResizeListenerId = sap.ui.core.ResizeHandler.register(oDSC.getDomRef(), function() {
+							// assert
+							assert.ok(oBreakpointChangedSpy.notCalled, "breakpoinChange event is not fired");
+							// clean
+							oContainer.style.width = "";
+							oDSC.removeDelegate(oBreakpointChangedSpy);
+							sap.ui.core.ResizeHandler.deregister(sResizeListenerId);
+							oDSC.destroy();
+							fnDone();
+						});
 
-		QUnit.test("Listeners are created / removed",function(assert) {
-			assert.notStrictEqual(this._oDSC._sContainerResizeListener, undefined, "Container resize listener is registered if there is container query");
-			this._oDSC.destroy();
-			assert.strictEqual(this._oDSC._sContainerResizeListener, null, "Container resize listener is null if there is container query");
+						// act
+						oContainer.style.width = "50px";
+					}
+				};
+
+			// prepare
+			oDSC.addDelegate(oAfterRenderingDelegate);
+			oDSC.placeAt("content");
+			sap.ui.getCore().applyChanges();
 		});
 
 		QUnit.module("Screen reader", {

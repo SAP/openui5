@@ -9,9 +9,10 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/delegate/ScrollEnablement',
 	'sap/ui/layout/library',
+	"sap/ui/qunit/utils/waitForThemeApplied",
 	'./DynamicSideContentRenderer'
 ],
-	function(jQuery, Control, ResizeHandler, ScrollEnablement, library, DynamicSideContentRenderer) {
+	function(jQuery, Control, ResizeHandler, ScrollEnablement, library, waitForThemeApplied, DynamicSideContentRenderer) {
 		"use strict";
 
 		// shortcut for sap.ui.layout.SideContentPosition
@@ -193,10 +194,6 @@ sap.ui.define([
 			S_M_BREAKPOINT = 720,
 			M_L_BREAKPOINT = 1024,
 			L_XL_BREAKPOINT = 1440;
-
-		DynamicSideContent.prototype.init = function () {
-			this._bSuppressInitialFireBreakPointChange = true;
-		};
 
 		/**
 		 * Sets the sideContentVisibility property.
@@ -391,6 +388,7 @@ sap.ui.define([
 		 * @override
 		 */
 		DynamicSideContent.prototype.onBeforeRendering = function () {
+			this._bSuppressInitialFireBreakPointChange = true;
 			this._detachContainerResizeListener();
 
 			this._SCVisible = this.getProperty("showSideContent");
@@ -530,9 +528,15 @@ sap.ui.define([
 		 * @private
 		 */
 		DynamicSideContent.prototype._attachContainerResizeListener = function () {
-			if (!this._sContainerResizeListener) {
-				this._sContainerResizeListener = ResizeHandler.register(this, jQuery.proxy(this._adjustToScreenSize, this));
-			}
+			waitForThemeApplied().then(function() {
+				if (!this._sContainerResizeListener) {
+					// Ensure that the resize listener will be attached to the control,
+					// after rendering handler is executed and DOM reference adjustments are all done
+					setTimeout(function() {
+						this._sContainerResizeListener = ResizeHandler.register(this, this._adjustToScreenSize.bind(this));
+					}.bind(this), 0);
+				}
+			}.bind(this));
 		};
 
 		/**
