@@ -14,11 +14,11 @@ sap.ui.define([
 	/**
 	 * Util class for Connector implementations (apply).
 	 *
-	 * @namespace sap.ui.fl.apply._internal.connectors.Utils
+	 * @namespace sap.ui.fl.initial._internal.connectors.Utils
 	 * @since 1.70
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted sap.ui.fl.apply._internal.connectors, sap.ui.fl.write._internal.connectors, sap.ui.fl.write._internal.transport
+	 * @ui5-restricted sap.ui.fl.initial._internal.connectors, sap.ui.fl.write._internal.connectors, sap.ui.fl.write._internal.transport
 	 */
 
 	var TIMEOUT = 0; //TODO Define a certain timeout value
@@ -74,7 +74,7 @@ sap.ui.define([
 		 * @param {object} [mParameters] Query-parameters which will be added to the url
 		 * @returns {string} Complete request url
 		 * @private
-		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
+		 * @restricted sap.ui.fl.initial._internal, sap.ui.fl.write._internal
 		 */
 		getUrl: function (sRoute, mPropertyBag, mParameters) {
 			if (!sRoute || !mPropertyBag.url) {

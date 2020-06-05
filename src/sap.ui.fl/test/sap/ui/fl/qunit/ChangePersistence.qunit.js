@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/apply/_internal/StorageUtils",
+	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/core/Component",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",

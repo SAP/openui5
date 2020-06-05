@@ -6,14 +6,14 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Component",
-	"sap/ui/fl/apply/_internal/Storage",
-	"sap/ui/fl/apply/_internal/StorageResultMerger",
+	"sap/ui/fl/initial/_internal/Storage",
+	"sap/ui/fl/initial/_internal/StorageResultMerger",
 	"sap/ui/fl/XmlPreprocessorImpl",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/layout/changeHandler/AddSimpleFormGroup",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/apply/_internal/StorageUtils"
+	"sap/ui/fl/initial/_internal/StorageUtils"
 ],
 function(
 	jQuery,

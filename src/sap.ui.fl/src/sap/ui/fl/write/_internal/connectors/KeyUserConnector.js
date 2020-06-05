@@ -5,13 +5,13 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/write/_internal/connectors/BackendConnector",
-	"sap/ui/fl/apply/_internal/connectors/KeyUserConnector",
-	"sap/ui/fl/apply/_internal/connectors/Utils"
+	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
+	"sap/ui/fl/initial/_internal/connectors/Utils"
 ], function(
 	merge,
 	BackendConnector,
-	ApplyConnector,
-	ApplyUtils
+	InitialConnector,
+	InitialUtils
 ) {
 	"use strict";
 
@@ -19,8 +19,8 @@ sap.ui.define([
 	var API_VERSION = "/v1";
 
 	function _enhancePropertyBagWithTokenInfo(mPropertyBag) {
-		mPropertyBag.applyConnector = ApplyConnector;
-		mPropertyBag.xsrfToken = ApplyConnector.xsrfToken;
+		mPropertyBag.initialConnector = InitialConnector;
+		mPropertyBag.xsrfToken = InitialConnector.xsrfToken;
 		mPropertyBag.tokenUrl = KeyUserConnector.ROUTES.TOKEN;
 	}
 
@@ -42,7 +42,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.write._internal.Storage
 	 */
 	var KeyUserConnector = merge({}, BackendConnector, /** @lends sap.ui.fl.write._internal.connectors.KeyUserConnector */ {
-		layers: ApplyConnector.layers,
+		layers: InitialConnector.layers,
 
 		ROUTES: {
 			CHANGES: PREFIX + API_VERSION + "/changes/",
@@ -61,9 +61,9 @@ sap.ui.define([
 		load: function (mPropertyBag) {
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
 			var mParameter = {};
-			ApplyUtils.addLanguageInfo(mParameter);
-			var sVersionsUrl = ApplyUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.GET, mPropertyBag, mParameter);
-			return ApplyUtils.sendRequest(sVersionsUrl, "GET", mPropertyBag).then(function (oResult) {
+			InitialUtils.addLanguageInfo(mParameter);
+			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.GET, mPropertyBag, mParameter);
+			return InitialUtils.sendRequest(sVersionsUrl, "GET", mPropertyBag).then(function (oResult) {
 				return oResult.response;
 			});
 		},
@@ -71,19 +71,19 @@ sap.ui.define([
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
 			_enhancePropertyBagForDraftActivation(mPropertyBag);
 			var mParameter = {version: 0};
-			ApplyUtils.addLanguageInfo(mParameter);
-			var sVersionsUrl = ApplyUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.ACTIVATE, mPropertyBag, mParameter);
-			return ApplyUtils.sendRequest(sVersionsUrl, "POST", mPropertyBag).then(function (oResult) {
+			InitialUtils.addLanguageInfo(mParameter);
+			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.ACTIVATE, mPropertyBag, mParameter);
+			return InitialUtils.sendRequest(sVersionsUrl, "POST", mPropertyBag).then(function (oResult) {
 				return oResult.response;
 			});
 		},
 		discardDraft: function (mPropertyBag) {
 			_enhancePropertyBagWithTokenInfo(mPropertyBag);
-			var sVersionsUrl = ApplyUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.DISCARD, mPropertyBag);
-			return ApplyUtils.sendRequest(sVersionsUrl, "DELETE", mPropertyBag);
+			var sVersionsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.VERSIONS.DISCARD, mPropertyBag);
+			return InitialUtils.sendRequest(sVersionsUrl, "DELETE", mPropertyBag);
 		}
 	};
 
-	KeyUserConnector.applyConnector = ApplyConnector;
+	KeyUserConnector.initialConnector = InitialConnector;
 	return KeyUserConnector;
 }, true);

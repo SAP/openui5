@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/base/Log",
 	"sap/base/util/restricted/_omit",
 	"sap/ui/thirdparty/jquery",
@@ -17,7 +17,7 @@ sap.ui.define([
 	Layer,
 	Settings,
 	WriteUtils,
-	ApplyUtils,
+	InitialUtils,
 	Log,
 	_omit,
 	jQuery,
@@ -365,7 +365,7 @@ sap.ui.define([
 				}
 			};
 
-			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
+			var oOldConnectorCall = sandbox.stub(InitialUtils, "sendRequest"); // Get transports
 
 			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
@@ -403,7 +403,7 @@ sap.ui.define([
 				}
 			};
 
-			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
+			var oOldConnectorCall = sandbox.stub(InitialUtils, "sendRequest"); // Get transports
 
 			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
@@ -463,7 +463,7 @@ sap.ui.define([
 				}
 			};
 
-			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
+			var oOldConnectorCall = sandbox.stub(InitialUtils, "sendRequest"); // Get transports
 
 			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
@@ -499,7 +499,7 @@ sap.ui.define([
 				}
 			};
 
-			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
+			var oOldConnectorCall = sandbox.stub(InitialUtils, "sendRequest"); // Get transports
 
 			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
@@ -539,7 +539,7 @@ sap.ui.define([
 				}
 			};
 
-			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
+			var oOldConnectorCall = sandbox.stub(InitialUtils, "sendRequest"); // Get transports
 
 			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
 			fnNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
@@ -559,7 +559,7 @@ sap.ui.define([
 				appId: "customer.reference.app.id"
 			};
 
-			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
+			var oOldConnectorCall = sandbox.stub(InitialUtils, "sendRequest"); // Get transports
 			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves(); // Update call to backend
 
 			return SmartBusinessWriteAPI.remove(mPropertyBag)
@@ -576,7 +576,7 @@ sap.ui.define([
 			};
 
 
-			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
+			var oOldConnectorCall = sandbox.stub(InitialUtils, "sendRequest"); // Get transports
 			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves(); // Update call to backend
 
 			return SmartBusinessWriteAPI.remove(mPropertyBag)
@@ -592,7 +592,7 @@ sap.ui.define([
 				appId: "customer.reference.app.id"
 			};
 
-			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
+			var oOldConnectorCall = sandbox.stub(InitialUtils, "sendRequest"); // Get transports
 			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves(); // Update call to backend
 
 			return SmartBusinessWriteAPI.remove(mPropertyBag)
@@ -612,7 +612,7 @@ sap.ui.define([
 				appId: "customer.reference.app.id"
 			};
 
-			var oOldConnectorCall = sandbox.stub(ApplyUtils, "sendRequest"); // Get transports
+			var oOldConnectorCall = sandbox.stub(InitialUtils, "sendRequest"); // Get transports
 			var fnNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves(); // Update call to backend
 
 			return SmartBusinessWriteAPI.remove(mPropertyBag)

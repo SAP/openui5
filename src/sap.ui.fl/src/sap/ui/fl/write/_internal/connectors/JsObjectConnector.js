@@ -4,15 +4,32 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
-	"sap/ui/fl/apply/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/write/_internal/connectors/ObjectStorageConnector"
 ], function(
 	merge,
-	LocalObjectConnectorApply,
 	ObjectStorageConnector
 ) {
 	"use strict";
 
+	var oMyStorage = {
+		_itemsStoredAsObjects: true,
+		_items: {},
+		setItem: function(sKey, vValue) {
+			oMyStorage._items[sKey] = vValue;
+		},
+		removeItem: function(sKey) {
+			delete oMyStorage._items[sKey];
+		},
+		clear: function() {
+			oMyStorage._items = {};
+		},
+		getItem: function(sKey) {
+			return oMyStorage._items[sKey];
+		},
+		getItems: function() {
+			return oMyStorage._items;
+		}
+	};
 
 	/**
 	 * Connector that saves the data in an internal object.
@@ -24,7 +41,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.write._internal.Connector
 	 */
 	var JsObjectConnector = merge({}, ObjectStorageConnector, /** @lends sap.ui.fl.write._internal.connectors.JsObjectConnector */ {
-		oStorage: LocalObjectConnectorApply.oStorage
+		oStorage: oMyStorage
 	});
 
 	return JsObjectConnector;

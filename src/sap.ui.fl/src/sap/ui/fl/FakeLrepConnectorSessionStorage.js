@@ -4,13 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/FakeLrepConnector",
-	"sap/ui/fl/apply/_internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector"
 ],
 function(
 	FakeLrepConnector,
-	ApplySessionStorageConnector,
-	WriteSessionStorageConnector
+	SessionStorageConnector
 ) {
 	"use strict";
 
@@ -38,23 +36,23 @@ function(
 		},
 		forTesting: {
 			spyWrite: function (sandbox, assert) {
-				return FakeLrepConnector.forTesting.spyMethod(sandbox, assert, WriteSessionStorageConnector, "write");
+				return FakeLrepConnector.forTesting.spyMethod(sandbox, assert, SessionStorageConnector, "write");
 			},
 			getNumberOfChanges: function (sReference) {
-				return FakeLrepConnector.forTesting.getNumberOfChanges(ApplySessionStorageConnector, sReference);
+				return FakeLrepConnector.forTesting.getNumberOfChanges(SessionStorageConnector, sReference);
 			},
 			clear: function(mPropertyBag) {
-				return FakeLrepConnector.forTesting.clear(WriteSessionStorageConnector, mPropertyBag);
+				return FakeLrepConnector.forTesting.clear(SessionStorageConnector, mPropertyBag);
 			},
 			setStorage: function(oNewStorage) {
-				FakeLrepConnector.forTesting.setStorage(ApplySessionStorageConnector, oNewStorage);
+				FakeLrepConnector.forTesting.setStorage(SessionStorageConnector, oNewStorage);
 			},
 			synchronous: {
 				clearAll: function () {
 					FakeLrepConnector.forTesting.synchronous.clearAll(window.sessionStorage);
 				},
 				getNumberOfChanges: function(sReference) {
-					return FakeLrepConnector.forTesting.synchronous.getNumberOfChanges(ApplySessionStorageConnector.oStorage, sReference);
+					return FakeLrepConnector.forTesting.synchronous.getNumberOfChanges(SessionStorageConnector.oStorage, sReference);
 				}
 			}
 		}

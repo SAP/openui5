@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/StorageUtils",
+	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/write/_internal/StorageFeaturesMerger",
 	"sap/base/util/ObjectPath"
 ], function(

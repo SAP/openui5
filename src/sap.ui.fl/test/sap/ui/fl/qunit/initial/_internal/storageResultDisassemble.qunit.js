@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/apply/_internal/storageResultDisassemble"
+	"sap/ui/fl/initial/_internal/storageResultDisassemble"
 ], function(
 	Layer,
 	storageResultDisassemble

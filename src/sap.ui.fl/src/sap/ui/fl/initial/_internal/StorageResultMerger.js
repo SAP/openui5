@@ -78,7 +78,7 @@ sap.ui.define([
 	 * @returns {object} Merged result
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.fl._internal.Storage
+	 * @ui5-restricted sap.ui.fl.initial._internal.Storage
 	 */
 	oStorageResultMerger.merge = function(aResponses) {
 		return {

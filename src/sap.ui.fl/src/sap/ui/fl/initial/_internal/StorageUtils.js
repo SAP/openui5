@@ -23,15 +23,42 @@ sap.ui.define([
 	 * Util class for Storage implementations (apply); In addition the ObjectPathConnector and ObjectStorageConnector makes
 	 * use of this class since they are very low level connector implementations without preparing structures of responses.
 	 *
-	 * @namespace sap.ui.fl.apply._internal.StorageUtils
+	 * @namespace sap.ui.fl.initial._internal.StorageUtils
 	 * @since 1.74
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted sap.ui.fl.apply._internal.Storage, sap.ui.fl.write._internal.Storage,
-	 * 	sap.ui.fl.apply._internal.connectors.ObjectStorageConnector, sap.ui.fl.apply._internal.connectors.ObjectPathConnector
+	 * @ui5-restricted sap.ui.fl.initial._internal.Storage, sap.ui.fl.write._internal.Storage,
+	 * 	sap.ui.fl.initial._internal.connectors.ObjectStorageConnector, sap.ui.fl.initial._internal.connectors.ObjectPathConnector
 	 */
 
-	var APPLY_CONNECTOR_NAME_SPACE = "sap/ui/fl/apply/_internal/connectors/";
+	var mConnectorNamespaces = {
+		load: {
+			// Server Connectors
+			LrepConnector: "sap/ui/fl/initial/_internal/connectors/LrepConnector",
+			PersonalizationConnector: "sap/ui/fl/initial/_internal/connectors/PersonalizationConnector",
+			KeyUserConnector: "sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
+			StaticFileConnector: "sap/ui/fl/initial/_internal/connectors/StaticFileConnector",
+			// Test & Demo Connectors
+			JsObjectConnector: "sap/ui/fl/write/_internal/connectors/JsObjectConnector",
+			ObjectPathConnector: "sap/ui/fl/write/_internal/connectors/ObjectPathConnector",
+			LocalStorageConnector: "sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
+			SessionStorageConnector: "sap/ui/fl/write/_internal/connectors/SessionStorageConnector"
+		},
+		write: {
+			// Server Connectors
+			LrepConnector: "sap/ui/fl/write/_internal/connectors/LrepConnector",
+			PersonalizationConnector: "sap/ui/fl/write/_internal/connectors/PersonalizationConnector",
+			KeyUserConnector: "sap/ui/fl/write/_internal/connectors/KeyUserConnector",
+			StaticFileConnector: "sap/ui/fl/write/_internal/connectors/StaticFileConnector",
+			// Test & Demo Connectors
+			JsObjectConnector: "sap/ui/fl/write/_internal/connectors/JsObjectConnector",
+			ObjectPathConnector: "sap/ui/fl/write/_internal/connectors/ObjectPathConnector",
+			LocalStorageConnector: "sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
+			SessionStorageConnector: "sap/ui/fl/write/_internal/connectors/SessionStorageConnector"
+		}
+	};
+
+	var INITIAL_CONNECTOR_NAME_SPACE = "sap/ui/fl/initial/_internal/connectors/";
 	var STATIC_FILE_CONNECTOR_CONFIGURATION = {
 		connector: "StaticFileConnector"
 	};
@@ -66,23 +93,27 @@ sap.ui.define([
 		return mResult;
 	}
 
-	function _getConnectorConfigurations(sNameSpace, bLoadApplyConnectors, mConnectors) {
+	function _getConnectorConfigurations(sNameSpace, bLoadConnectors, mConnectors) {
 		return mConnectors.map(function (mConnectorConfiguration) {
 			var sConnector = mConnectorConfiguration.connector;
 			var sConnectorModuleName;
 
-			if (!mConnectorConfiguration.custom) {
-				sConnectorModuleName = sNameSpace + sConnector;
+			// the applyConnector / loadConnector is used for a custom connector
+			if (!mConnectorConfiguration.applyConnector && !mConnectorConfiguration.loadConnector) {
+				sConnectorModuleName = bLoadConnectors ? mConnectorNamespaces.load[sConnector] : mConnectorNamespaces.write[sConnector];
+			} else if (bLoadConnectors) {
+				// fallback for configured custom connectors which specify a apply connector
+				sConnectorModuleName = mConnectorConfiguration.loadConnector || mConnectorConfiguration.applyConnector;
 			} else {
-				sConnectorModuleName = bLoadApplyConnectors ? mConnectorConfiguration.applyConnector : mConnectorConfiguration.writeConnector;
+				sConnectorModuleName = mConnectorConfiguration.writeConnector;
 			}
 
 			return sConnectorModuleName;
 		});
 	}
 
-	function _requireConnectorsByConfiguration(sNameSpace, bLoadApplyConnectors, mConnectors) {
-		var aConnectors = _getConnectorConfigurations(sNameSpace, bLoadApplyConnectors, mConnectors);
+	function _requireConnectorsByConfiguration(sNameSpace, bLoadConnectors, mConnectors) {
+		var aConnectors = _getConnectorConfigurations(sNameSpace, bLoadConnectors, mConnectors);
 
 		return new Promise(function (resolve) {
 			sap.ui.require(aConnectors, function () {
@@ -93,8 +124,8 @@ sap.ui.define([
 						mConnectors[iIndex].layers = _filterValidLayers(mConnectors[iIndex].layers, oConnector.layers);
 					}
 
-					if (bLoadApplyConnectors) {
-						mConnectors[iIndex].applyConnectorModule = oConnector;
+					if (bLoadConnectors) {
+						mConnectors[iIndex].loadConnectorModule = oConnector;
 					} else {
 						mConnectors[iIndex].writeConnectorModule = oConnector;
 					}
@@ -110,29 +141,29 @@ sap.ui.define([
 		 * Provides all mandatory connectors required to apply or write data depending on the given namespace.
 		 *
 		 * @param {string} sNameSpace Namespace to determine the path to the configured connectors
-		 * @param {boolean} bLoadApplyConnectors Flag to determine if StaticFileConnector should be included and write layers should be checked
+		 * @param {boolean} bLoadConnectors Flag to determine if the loading scenario is used and the StaticFileConnector should be included
 		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured connectors and their requested modules
 		 */
-		getConnectors: function (sNameSpace, bLoadApplyConnectors) {
+		getConnectors: function (sNameSpace, bLoadConnectors) {
 			var aConfiguredConnectors = sap.ui.getCore().getConfiguration().getFlexibilityServices();
 			var mConnectors = [];
-			if (bLoadApplyConnectors) {
+			if (bLoadConnectors) {
 				mConnectors = [STATIC_FILE_CONNECTOR_CONFIGURATION];
 			}
 
 			mConnectors = mConnectors.concat(aConfiguredConnectors);
 
-			return _requireConnectorsByConfiguration(sNameSpace, bLoadApplyConnectors, mConnectors);
+			return _requireConnectorsByConfiguration(sNameSpace, bLoadConnectors, mConnectors);
 		},
 
 		/**
-		 * Provides all mandatory connectors required to read data for the apply case; these are the static file connector as well as all connectors
+		 * Provides all mandatory connectors required to read data for the initial case; these are the static file connector as well as all connectors
 		 * mentioned in the core-Configuration.
 		 *
-		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured apply connectors and their requested modules
+		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured initial connectors and their requested modules
 		 */
-		getApplyConnectors: function () {
-			return this.getConnectors(APPLY_CONNECTOR_NAME_SPACE, true);
+		getLoadConnectors: function () {
+			return this.getConnectors(INITIAL_CONNECTOR_NAME_SPACE, true);
 		},
 
 
@@ -142,7 +173,7 @@ sap.ui.define([
 		 * @returns {Promise<map[]>} Resolving with a list of maps static file connector and its requested modules
 		 */
 		getStaticFileConnector: function () {
-			return _requireConnectorsByConfiguration(APPLY_CONNECTOR_NAME_SPACE, true, [STATIC_FILE_CONNECTOR_CONFIGURATION]);
+			return _requireConnectorsByConfiguration(INITIAL_CONNECTOR_NAME_SPACE, true, [STATIC_FILE_CONNECTOR_CONFIGURATION]);
 		},
 
 		/**
@@ -234,7 +265,7 @@ sap.ui.define([
 		 * Also usable for tests to generate these responses.
 		 *
 		 * @returns {object} Object containing an empty flex data response
-		 * @ui5-restricted sap.ui.fl.apply_internal.flexState.FlexState, sap.ui.fl.apply_internal.connectors.ObjectPathConnector,
+		 * @ui5-restricted sap.ui.fl.apply_internal.flexState.FlexState, sap.ui.fl.initial._internal.connectors.ObjectPathConnector,
 		 * 	sap.ui.fl.apply_internal
 		 */
 		getEmptyFlexDataResponse: function () {
@@ -263,6 +294,19 @@ sap.ui.define([
 				}
 				return !isEmptyObject(oResponse[sKey]);
 			});
+		},
+
+		/** Adds current language information into request parameters
+		 *
+		 *
+		 * @param {object} mParameters - Parameters of the request
+		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
+		 */
+		addLanguageInfo: function (mParameters) {
+			if (!mParameters) {
+				mParameters = {};
+			}
+			mParameters["sap-language"] = sap.ui.getCore().getConfiguration().getLanguage();
 		}
 	};
 });

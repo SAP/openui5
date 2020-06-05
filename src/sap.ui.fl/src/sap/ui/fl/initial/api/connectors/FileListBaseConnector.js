@@ -2,7 +2,7 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/StorageUtils",
+	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/base/util/LoaderExtensions"
 ], function(
 	StorageUtils,

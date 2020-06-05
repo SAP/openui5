@@ -5,9 +5,9 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/Applier",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddLibrary",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/Storage",
-	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
-	"sap/ui/fl/apply/_internal/connectors/StaticFileConnector",
+	"sap/ui/fl/initial/_internal/Storage",
+	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
+	"sap/ui/fl/initial/_internal/connectors/StaticFileConnector",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"

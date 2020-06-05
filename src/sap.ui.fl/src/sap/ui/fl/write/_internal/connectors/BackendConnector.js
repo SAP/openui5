@@ -5,15 +5,15 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/write/connectors/BaseConnector",
-	"sap/ui/fl/apply/_internal/connectors/BackendConnector",
-	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/initial/_internal/connectors/BackendConnector",
+	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/base/util/restricted/_pick"
 ], function(
 	merge,
 	BaseConnector,
-	ApplyConnector,
-	ApplyUtils,
+	InitialConnector,
+	InitialUtils,
 	WriteUtils,
 	_pick
 ) {
@@ -37,15 +37,15 @@ sap.ui.define([
 			mParameters.parentVersion = "";
 		}
 		if (this.isLanguageInfoRequired) {
-			ApplyUtils.addLanguageInfo(mParameters);
+			InitialUtils.addLanguageInfo(mParameters);
 		}
-		var sWriteUrl = ApplyUtils.getUrl(this.ROUTES.CHANGES, mPropertyBag, mParameters);
+		var sWriteUrl = InitialUtils.getUrl(this.ROUTES.CHANGES, mPropertyBag, mParameters);
 		delete mPropertyBag.fileName;
 		delete mParameters["sap-language"];
-		var sTokenUrl = ApplyUtils.getUrl(this.ROUTES.TOKEN, mPropertyBag, mParameters);
+		var sTokenUrl = InitialUtils.getUrl(this.ROUTES.TOKEN, mPropertyBag, mParameters);
 
 		var oRequestOption = WriteUtils.getRequestOptions(
-			this.applyConnector,
+			this.initialConnector,
 			sTokenUrl,
 			mPropertyBag.flexObjects || mPropertyBag.flexObject,
 			"application/json; charset=utf-8",
@@ -104,12 +104,12 @@ sap.ui.define([
 			}
 			delete mPropertyBag.reference;
 
-			var sResetUrl = ApplyUtils.getUrl(this.ROUTES.CHANGES, mPropertyBag, mParameters);
+			var sResetUrl = InitialUtils.getUrl(this.ROUTES.CHANGES, mPropertyBag, mParameters);
 
-			var sTokenUrl = ApplyUtils.getUrl(this.ROUTES.TOKEN, mPropertyBag);
+			var sTokenUrl = InitialUtils.getUrl(this.ROUTES.TOKEN, mPropertyBag);
 
 			var oRequestOption = WriteUtils.getRequestOptions(
-				this.applyConnector,
+				this.initialConnector,
 				sTokenUrl
 			);
 			return WriteUtils.sendRequest(sResetUrl, "DELETE", oRequestOption);
@@ -156,12 +156,12 @@ sap.ui.define([
 				namespace: mPropertyBag.flexObject.namespace
 			};
 			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
-			var sDeleteUrl = ApplyUtils.getUrl(this.ROUTES.CHANGES, mPropertyBag, mParameters);
+			var sDeleteUrl = InitialUtils.getUrl(this.ROUTES.CHANGES, mPropertyBag, mParameters);
 			delete mPropertyBag.fileName;
-			var sTokenUrl = ApplyUtils.getUrl(this.ROUTES.TOKEN, mPropertyBag);
+			var sTokenUrl = InitialUtils.getUrl(this.ROUTES.TOKEN, mPropertyBag);
 
 			var oRequestOption = WriteUtils.getRequestOptions(
-				this.applyConnector,
+				this.initialConnector,
 				sTokenUrl,
 				undefined,
 				"application/json; charset=utf-8",
@@ -176,16 +176,16 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolves with an object containing the flex features
 		 */
 		loadFeatures: function (mPropertyBag) {
-			if (this.applyConnector.settings) {
-				return Promise.resolve({response: this.applyConnector.settings});
+			if (this.initialConnector.settings) {
+				return Promise.resolve({response: this.initialConnector.settings});
 			}
-			var sFeaturesUrl = ApplyUtils.getUrl(this.ROUTES.SETTINGS, mPropertyBag);
-			return ApplyUtils.sendRequest(sFeaturesUrl).then(function (oResult) {
+			var sFeaturesUrl = InitialUtils.getUrl(this.ROUTES.SETTINGS, mPropertyBag);
+			return InitialUtils.sendRequest(sFeaturesUrl).then(function (oResult) {
 				return oResult.response;
 			});
 		}
 	});
 
-	BackendConnector.applyConnector = ApplyConnector;
+	BackendConnector.initialConnector = InitialConnector;
 	return BackendConnector;
 }, true);

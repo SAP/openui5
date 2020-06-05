@@ -5,15 +5,25 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/write/connectors/BaseConnector",
-	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
-	"sap/ui/fl/apply/_internal/connectors/ObjectStorageConnector"
+	"sap/ui/fl/initial/_internal/StorageUtils",
+	"sap/ui/fl/write/_internal/connectors/ObjectStorageUtils"
 ], function(
 	merge,
 	BaseConnector,
-	ObjectStorageUtils,
-	ApplyConnector
+	StorageUtils,
+	ObjectStorageUtils
 ) {
 	"use strict";
+
+	function loadDataFromStorage (mPropertyBag) {
+		var aFlexObjects = [];
+
+		return ObjectStorageUtils.forEachObjectInStorage(mPropertyBag, function(mFlexObject) {
+			aFlexObjects.push(mFlexObject.changeDefinition);
+		}).then(function () {
+			return aFlexObjects;
+		});
+	}
 
 	function shouldChangeBeDeleted(mPropertyBag, oChangeDefinition) {
 		var bDelete = true;
@@ -55,10 +65,30 @@ sap.ui.define([
 	 */
 	var ObjectStorageConnector = merge({}, BaseConnector, /** @lends sap.ui.fl.write._internal.connectors.ObjectStorageConnector */ {
 		/**
-		 * can be either window.sessionStorage or window.localStorage or just a JS map
+		 * can be any storage implementing setItem, removeItem, clear, getItem and getItems
 		 */
 		oStorage: undefined,
-		layers: ApplyConnector.layers,
+		layers: [
+			"ALL"
+		],
+
+		/**
+		 * Provides the flex data stored in the session or local storage;
+		 * Changes can be filtered by reference and layer.
+		 *
+		 * @param {object} mPropertyBag properties needed by the connectors
+		 * @param {string} mPropertyBag.reference reference of the application
+		 * @returns {Promise<Object>} resolving with an object containing a data contained in the changes-bundle
+		 */
+		loadFlexData: function (mPropertyBag) {
+			return loadDataFromStorage({
+				storage: this.oStorage,
+				reference: mPropertyBag.reference
+			}).then(function (aFlexObjects) {
+				var mGroupedFlexObjects = StorageUtils.getGroupedFlexObjects(aFlexObjects);
+				return StorageUtils.filterAndSortResponses(mGroupedFlexObjects);
+			});
+		},
 
 		/**
 		 * @inheritDoc

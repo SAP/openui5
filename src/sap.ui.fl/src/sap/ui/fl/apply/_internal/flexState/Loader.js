@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/apply/_internal/Storage",
+	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/Utils"
 ], function(
 	ManifestUtils,

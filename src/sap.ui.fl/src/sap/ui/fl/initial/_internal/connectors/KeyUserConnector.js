@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
-	"sap/ui/fl/apply/_internal/connectors/BackendConnector",
+	"sap/ui/fl/initial/_internal/connectors/BackendConnector",
 	"sap/ui/fl/Layer"
 ], function(
 	merge,
@@ -19,12 +19,12 @@ sap.ui.define([
 	/**
 	 * Connector for requesting data from SAPUI5 Flexibility KeyUser service.
 	 *
-	 * @namespace sap.ui.fl.apply._internal.connectors.KeyUserConnector
+	 * @namespace sap.ui.fl.initial._internal.connectors.KeyUserConnector
 	 * @since 1.70
 	 * @private
-	 * @ui5-restricted sap.ui.fl.apply._internal.Storage, sap.ui.fl.write._internal.Storage
+	 * @ui5-restricted sap.ui.fl.initial._internal.Storage, sap.ui.fl.write._internal.Storage
 	 */
-	var KeyUserConnector = merge({}, BackendConnector, { /** @lends sap.ui.fl.apply.api._internal.connectors.KeyUserConnector */
+	var KeyUserConnector = merge({}, BackendConnector, { /** @lends sap.ui.fl.initial._internal.connectors.KeyUserConnector */
 		layers: [
 			Layer.CUSTOMER
 		],

@@ -3,10 +3,10 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/base/util/restricted/_pick"
 ], function(
-	ApplyUtils,
+	InitialUtils,
 	_pick
 ) {
 	"use strict";
@@ -14,11 +14,11 @@ sap.ui.define([
 	/**
 	 * Base connector for requesting flexibility data from a back end.
 	 *
-	 * @namespace sap.ui.fl.apply._internal.connectors.BackendConnector
-	 * @implements {sap.ui.fl.interfaces.BaseApplyConnector}
+	 * @namespace sap.ui.fl.initial._internal.connectors.BackendConnector
+	 * @implements {sap.ui.fl.interfaces.BaseInitialConnector}
 	 * @since 1.72
 	 * @private
-	 * @ui5-restricted sap.ui.fl.apply._internal.connectors, sap.ui.fl.write._internal.connectors
+	 * @ui5-restricted sap.ui.fl.initial._internal.connectors, sap.ui.fl.write._internal.connectors
 	 */
 	return {
 		xsrfToken: undefined,
@@ -40,10 +40,10 @@ sap.ui.define([
 				mParameters.version = "0";
 			}
 			if (this.isLanguageInfoRequired) {
-				ApplyUtils.addLanguageInfo(mParameters);
+				InitialUtils.addLanguageInfo(mParameters);
 			}
-			var sDataUrl = ApplyUtils.getUrl(this.ROUTES.DATA, mPropertyBag, mParameters);
-			return ApplyUtils.sendRequest(sDataUrl, "GET", { xsrfToken: this.xsrfToken}).then(function (oResult) {
+			var sDataUrl = InitialUtils.getUrl(this.ROUTES.DATA, mPropertyBag, mParameters);
+			return InitialUtils.sendRequest(sDataUrl, "GET", { xsrfToken: this.xsrfToken}).then(function (oResult) {
 				var oResponse = oResult.response;
 				if (oResult.xsrfToken) {
 					this.xsrfToken = oResult.xsrfToken;

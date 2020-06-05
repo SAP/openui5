@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath",
 	"sap/ui/core/Component",
-	"sap/ui/fl/apply/_internal/StorageUtils",
+	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexState/prepareAppDescriptorMap",

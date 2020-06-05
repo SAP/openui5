@@ -12,6 +12,6 @@ sap.ui.define([], function() {
 		loadFlexData: function () {
 			return Promise.reject();
 		},
-		testApplyCheckProperty: true
+		testInitialCheckProperty: true
 	};
 });

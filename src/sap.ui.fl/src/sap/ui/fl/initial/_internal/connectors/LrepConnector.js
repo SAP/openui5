@@ -3,12 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/Utils",
 	"sap/ui/dom/includeScript",
 	"sap/base/util/restricted/_pick"
 ], function(
-	ApplyUtils,
+	Utils,
 	FlexUtils,
 	includeScript,
 	_pick
@@ -23,12 +23,12 @@ sap.ui.define([
 	/**
 	 * Connector for requesting data from an LRep based back end.
 	 *
-	 * @namespace sap.ui.fl.apply._internal.connectors.LrepConnector
-	 * @implements {sap.ui.fl.interfaces.BaseApplyConnector}
+	 * @namespace sap.ui.fl.initial._internal.connectors.LrepConnector
+	 * @implements {sap.ui.fl.interfaces.BaseInitialConnector}
 	 * @experimental Since 1.67
 	 * @since 1.67
 	 * @private
-	 * @ui5-restricted sap.ui.fl.apply._internal.Storage, sap.ui.fl.write._internal.Storage, sap.ui.fl.write._internal.transport
+	 * @ui5-restricted sap.ui.fl.initial._internal.Storage, sap.ui.fl.write._internal.Storage, sap.ui.fl.write._internal.transport
 	 */
 	return {
 		layers: [
@@ -89,13 +89,13 @@ sap.ui.define([
 
 			var mParameters = _pick(mPropertyBag, ["appVersion"]);
 			this._addClientInfo(mParameters);
-			ApplyUtils.addLanguageInfo(mParameters);
+			Utils.addLanguageInfo(mParameters);
 			var sAppDescriptorId;
 			if (mPropertyBag.appDescriptor && mPropertyBag.appDescriptor["sap.app"]) {
 				sAppDescriptorId = mPropertyBag.appDescriptor["sap.app"].id;
 			}
-			var sDataUrl = ApplyUtils.getUrl(ROUTES.DATA, mPropertyBag, mParameters);
-			return ApplyUtils.sendRequest(sDataUrl, "GET", {
+			var sDataUrl = Utils.getUrl(ROUTES.DATA, mPropertyBag, mParameters);
+			return Utils.sendRequest(sDataUrl, "GET", {
 				xsrfToken: this.xsrfToken,
 				siteId: mPropertyBag.siteId,
 				sAppDescriptorId: sAppDescriptorId
@@ -117,7 +117,7 @@ sap.ui.define([
 					return oResponse;
 				}
 
-				var sModulesUrl = ApplyUtils.getUrl(ROUTES.MODULES, mPropertyBag, mParameters);
+				var sModulesUrl = Utils.getUrl(ROUTES.MODULES, mPropertyBag, mParameters);
 				return this._loadModules(sModulesUrl).then(function () {
 					return oResponse;
 				});

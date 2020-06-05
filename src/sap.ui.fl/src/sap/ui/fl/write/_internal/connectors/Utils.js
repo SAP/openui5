@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/connectors/Utils"
+	"sap/ui/fl/initial/_internal/connectors/Utils"
 ], function (
-	ApplyUtils
+	Utils
 ) {
 	"use strict";
 
@@ -23,16 +23,16 @@ sap.ui.define([
 	 * Gets new X-CSRF token from the back end and update token value in the PropertyBag and apply connector.
 	 *
 	 * @param {object} mPropertyBag Object with parameters as properties
-	 * @param {sap.ui.fl.connector.BaseConnector} mPropertyBag.applyConnector Corresponding apply connector which stores an existing X-CSRF token
+	 * @param {sap.ui.fl.connector.BaseConnector} mPropertyBag.initialConnector Corresponding apply connector which stores an existing X-CSRF token
 	 * @param {string} mPropertyBag.tokenUrl The url to be called when new token fetching is necessary
 	 * @private
 	 * @returns {Promise} Promise resolves when new token is retrieved from response header
 	 */
 	function updateTokenInPropertyBagAndConnector (mPropertyBag) {
-		return ApplyUtils.sendRequest(mPropertyBag.tokenUrl, "HEAD").then(function (oResult) {
+		return Utils.sendRequest(mPropertyBag.tokenUrl, "HEAD").then(function (oResult) {
 			if (oResult && oResult.xsrfToken) {
-				if (mPropertyBag.applyConnector) {
-					mPropertyBag.applyConnector.xsrfToken = oResult.xsrfToken;
+				if (mPropertyBag.initialConnector) {
+					mPropertyBag.initialConnector.xsrfToken = oResult.xsrfToken;
 				}
 				mPropertyBag.xsrfToken = oResult.xsrfToken;
 				return mPropertyBag;
@@ -42,7 +42,7 @@ sap.ui.define([
 
 	function updateTokenInPropertyBagAndConnectorAndSendRequest (mPropertyBag, sUrl, sMethod) {
 		return updateTokenInPropertyBagAndConnector(mPropertyBag)
-			.then(ApplyUtils.sendRequest.bind(undefined, sUrl, sMethod));
+			.then(Utils.sendRequest.bind(undefined, sUrl, sMethod));
 	}
 
 	/**
@@ -80,18 +80,18 @@ sap.ui.define([
 		/**
 		 * Gets options for requests which writing data to the back end.
 		 *
-		 * @param {object} oApplyConnector Corresponding apply connector which stores an existing X-CSRF token
+		 * @param {object} oInitialConnector Corresponding apply connector which stores an existing X-CSRF token
 		 * @param {string} sTokenUrl The url to be called when new token fetching is necessary
 		 * @param {object} [vFlexObjects] The content which is send to the server
 		 * @param {string} [sContentType] Content type of the request
 		 * @param {string} [sDataType] Expected data type of the response
 		 * @returns {object} Resolving with an object of options
 		 */
-		getRequestOptions: function (oApplyConnector, sTokenUrl, vFlexObjects, sContentType, sDataType) {
+		getRequestOptions: function (oInitialConnector, sTokenUrl, vFlexObjects, sContentType, sDataType) {
 			var oOptions = {
-				xsrfToken : oApplyConnector.xsrfToken,
-				tokenUrl : sTokenUrl,
-				applyConnector : oApplyConnector
+				xsrfToken: oInitialConnector.xsrfToken,
+				tokenUrl: sTokenUrl,
+				initialConnector: oInitialConnector
 			};
 			if (vFlexObjects) {
 				oOptions.payload = JSON.stringify(vFlexObjects);
@@ -112,7 +112,7 @@ sap.ui.define([
 		 * @param {string} sUrl Url of the request
 		 * @param {string} sMethod Desired action to be performed for a given resource
 		 * @param {object} mPropertyBag Object with parameters as properties
-		 * @param {object} mPropertyBag.applyConnector Corresponding apply connector which stores an existing X-CSRF token
+		 * @param {object} mPropertyBag.initialConnector Corresponding initial connector which stores an existing X-CSRF token
 		 * @param {string} mPropertyBag.tokenUrl The url to be called when new token fetching is necessary
 		 * @param {string} [mPropertyBag.flexObjects] Payload of the request
 		 * @param {string} [mPropertyBag.contentType] Content type of the request
@@ -121,9 +121,9 @@ sap.ui.define([
 		 */
 		sendRequest:function (sUrl, sMethod, mPropertyBag) {
 			if (
-				!mPropertyBag.applyConnector
+				!mPropertyBag.initialConnector
 				|| (
-					!mPropertyBag.applyConnector.xsrfToken
+					!mPropertyBag.initialConnector.xsrfToken
 					&& !(sMethod === 'GET') // For GET and HEAD operations, there is no need to fetch a token
 					&& !(sMethod === 'HEAD')
 				)
@@ -131,7 +131,7 @@ sap.ui.define([
 				return updateTokenInPropertyBagAndConnectorAndSendRequest(mPropertyBag, sUrl, sMethod);
 			}
 
-			return ApplyUtils.sendRequest(sUrl, sMethod, mPropertyBag).then(function(oResult) {
+			return Utils.sendRequest(sUrl, sMethod, mPropertyBag).then(function(oResult) {
 				return oResult;
 			})
 			.catch(function (oFirstError) {
