@@ -865,11 +865,7 @@ sap.ui.define([
 			oListItem.setSelected(true).updateAccessibilityState();
 			oListItem.addStyleClass("sapMLIBFocused");
 
-			if (oListItem.isA("sap.m.GroupHeaderListItem")) {
-				oInnerRef.removeAttr("aria-activedescendant");
-			} else {
-				oInnerRef.attr("aria-activedescendant", aListItems[iSelectedIndex].getId());
-			}
+			oInnerRef.attr("aria-activedescendant", aListItems[iSelectedIndex].getId());
 		}
 
 		if (Device.system.desktop) {
