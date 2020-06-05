@@ -186,8 +186,22 @@ sap.ui.define([
 	 * @enum {string}
 	 */
 	sap.ui.fl.ClassificationType = {
+		IndexRelated :"indexRelated",
+		NonIndexRelated: "nonIndexRelated"
+	};
+
+	/**
+	 * Available classification subtypes
+	 *
+	 * @enum {string}
+	 */
+	// TODO: we need some docu somewhere that those 3 are only valid for IndexRelated, and the other two only for non-index relateds
+	 sap.ui.fl.ClassificationSubtypes = {
 		LastOneWins: "lastOneWins",
-		Reverse: "reverse"
+		Reverse: "reverse",
+		Move: "move",
+		Create: "create",
+		Destroy: "destroy"
 	};
 
 	RegistrationDelegator.registerAll();

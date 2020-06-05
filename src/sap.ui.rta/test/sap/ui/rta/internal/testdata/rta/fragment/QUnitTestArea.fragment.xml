@@ -9,13 +9,27 @@
 		   xmlns:sap.ui.fl="sap.ui.fl"
 		   xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 	<Text text="START OF TEST FRAGMENT!" />
+	<Bar id="bar">
+		<contentLeft>
+			<Button text="Left button1" id="lb1" />
+			<Button text="Left button2" id="lb2" />
+		</contentLeft>
+		<contentMiddle>
+			<Button text="Middle button1" id="mb1" />
+			<Button text="Middle button2" id="mb2" />
+		</contentMiddle>
+		<contentRight>
+			<Button text="Right button1" id="rb1" />
+			<Button text="Right button2" id="rb2" />
+		</contentRight>
+	</Bar>
 	<smartForm:SmartForm id="MainForm" title="Information" editable="true" entityType="Header" ignoredFields="TransactionCode">
 		<smartForm:Group id="GeneralLedgerDocument" label="General Ledger Document">
 			<smartForm:GroupElement id="GeneralLedgerDocument.Name">
 				<smartField:SmartField editable="true" contextEditable="true" value="{AccountingDocument}" />
 			</smartForm:GroupElement>
 			<smartForm:GroupElement label="Don't rely on me" id="Victim">
-				<Button text="Just a button"></Button>
+				<Button text="Just a button" />
 			</smartForm:GroupElement>
 			<smartForm:GroupElement id="GeneralLedgerDocument.CompanyCode">
 				<smartField:SmartField value="{CompanyCode}" />

@@ -1,0 +1,344 @@
+[
+	{
+		"id": "id_1590140302325_25_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--lb1",
+						"idIsLocal": true
+					},
+					"sourceIndex": 0,
+					"targetIndex": 0
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "contentLeft",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "contentMiddle",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--bar",
+			"idIsLocal": true
+		},
+		"creation": "2020-05-22T09:38:39.641Z"
+	},
+	{
+		"id": "id_1590140302325_26_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--mb1",
+						"idIsLocal": true
+					},
+					"sourceIndex": 1,
+					"targetIndex": 2
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "contentMiddle",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "contentMiddle",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--bar",
+			"idIsLocal": true
+		},
+		"creation": "2020-05-22T09:38:39.642Z"
+	},
+	{
+		"id": "id_1590140302325_27_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--mb2",
+						"idIsLocal": true
+					},
+					"sourceIndex": 1,
+					"targetIndex": 0
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "contentMiddle",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "contentMiddle",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--bar",
+			"idIsLocal": true
+		},
+		"creation": "2020-05-22T09:38:39.643Z"
+	},
+	{
+		"id": "id_1590140302325_28_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--mb1",
+						"idIsLocal": true
+					},
+					"sourceIndex": 2,
+					"targetIndex": 1
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "contentMiddle",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "contentMiddle",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--bar",
+			"idIsLocal": true
+		},
+		"creation": "2020-05-22T09:38:39.644Z"
+	},
+	{
+		"id": "id_1590140302325_29_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--mb2",
+						"idIsLocal": true
+					},
+					"sourceIndex": 0,
+					"targetIndex": 1
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "contentMiddle",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "contentMiddle",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--bar",
+			"idIsLocal": true
+		},
+		"creation": "2020-05-22T09:38:39.645Z"
+	},
+	{
+		"id": "id_1590140302325_30_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--lb1",
+						"idIsLocal": true
+					},
+					"sourceIndex": 2,
+					"targetIndex": 1
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "contentMiddle",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "contentLeft",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--bar",
+			"idIsLocal": true
+		},
+		"creation": "2020-05-22T09:38:39.646Z"
+	},
+	{
+		"id": "id_1590140302325_31_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--lb2",
+						"idIsLocal": true
+					},
+					"sourceIndex": 0,
+					"targetIndex": 1
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "contentLeft",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "contentLeft",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--bar",
+			"idIsLocal": true
+		},
+		"creation": "2020-05-22T09:38:39.647Z"
+	},
+	{
+		"id": "id_1590140302325_32_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--rb2",
+						"idIsLocal": true
+					},
+					"sourceIndex": 1,
+					"targetIndex": 2
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "contentRight",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "contentMiddle",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--bar",
+			"idIsLocal": true
+		},
+		"creation": "2020-05-22T09:40:20.914Z"
+	},
+	{
+		"id": "id_1590140302325_33_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--mb2",
+						"idIsLocal": true
+					},
+					"sourceIndex": 1,
+					"targetIndex": 0
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "contentMiddle",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "contentMiddle",
+					"type": "sap.m.Bar",
+					"id": "idMain1--bar",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--bar",
+			"idIsLocal": true
+		},
+		"creation": "2020-05-22T09:40:20.916Z"
+	}
+]

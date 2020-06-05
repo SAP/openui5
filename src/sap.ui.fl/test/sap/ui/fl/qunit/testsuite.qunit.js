@@ -999,14 +999,19 @@ sap.ui.define([
 	};
 
 	var bCompAvailable = false;
+	var bMdcAvailable = false;
 	var oXhr = new XMLHttpRequest();
 	oXhr.onreadystatechange = function() {
 		if (this.readyState === 4) {
 			switch (this.status) {
 				case 200:
 				case 304:
-					bCompAvailable = JSON.parse(this.responseText).libraries.some(function (mLibrary) {
-						return mLibrary.name === 'sap.ui.comp';
+					var aLibraries = JSON.parse(this.responseText).libraries;
+					bCompAvailable = aLibraries.some(function (mLibrary) {
+						return mLibrary.name === "sap.ui.comp";
+					});
+					bMdcAvailable = aLibraries.some(function (mLibrary) {
+						return mLibrary.name === "sap.ui.mdc";
 					});
 					break;
 				default:
@@ -1018,10 +1023,11 @@ sap.ui.define([
 	oXhr.open("GET", sap.ui.require.toUrl("sap-ui-version.json"), false);
 	oXhr.send();
 
-	if (bCompAvailable) {
+	if (bCompAvailable && bMdcAvailable) {
 		mConfig = merge({}, mConfig, {
 			tests: {
 				Condenser: {
+					group: "Write Internal",
 					coverage: {
 						only: ["sap/ui/fl/Condenser"]
 					},
@@ -1029,8 +1035,12 @@ sap.ui.define([
 						resourceroots: {
 							"rta/qunit": "test-resources/sap/ui/rta/qunit/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
-							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
+							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/",
+							"sap.ui.mdc.app": "test-resources/sap/ui/mdc/sample/table"
 						}
+					},
+					qunit: {
+						reorder: false
 					}
 				}
 			}

@@ -113,10 +113,12 @@ sap.ui.define([
 				 * @returns {object} - Condenser-specific information
 				 * @public
 				 */
-				getCondenserInfo: function(/* oChange */) {
+				getCondenserInfo: function(oChange) {
 					return {
-						classificationType: sap.ui.fl.ClassificationType.LastOneWins,
-						uniqueKey: mRenameSettings.propertyName
+						affectedControl: oChange.getSelector(),
+						type: sap.ui.fl.ClassificationType.NonIndexRelated,
+						subtype: sap.ui.fl.ClassificationSubtypes.LastOneWins,
+						uniqueKey: mRenameSettings.propertyName || mRenameSettings.changePropertyName
 					};
 				}
 			};

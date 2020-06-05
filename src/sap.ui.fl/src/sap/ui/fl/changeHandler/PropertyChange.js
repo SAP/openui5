@@ -132,7 +132,9 @@ sap.ui.define([
 	 */
 	PropertyChange.getCondenserInfo = function(oChange) {
 		return {
-			classificationType: sap.ui.fl.ClassificationType.LastOneWins,
+			affectedControl: oChange.getSelector(),
+			type: sap.ui.fl.ClassificationType.NonIndexRelated,
+			subtype: sap.ui.fl.ClassificationSubtypes.LastOneWins,
 			uniqueKey: oChange.getContent().property
 		};
 	};

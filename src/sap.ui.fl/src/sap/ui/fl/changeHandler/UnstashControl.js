@@ -96,9 +96,11 @@ sap.ui.define([
 	 * @returns {object} - Condenser-specific information
 	 * @public
 	 */
-	UnstashControl.getCondenserInfo = function(/* oChange */) {
+	UnstashControl.getCondenserInfo = function(oChange) {
 		return {
-			classificationType: sap.ui.fl.ClassificationType.Reverse,
+			affectedControl: oChange.getSelector(),
+			type: sap.ui.fl.ClassificationType.NonIndexRelated,
+			subtype: sap.ui.fl.ClassificationSubtypes.Reverse,
 			uniqueKey: "stashed"
 		};
 	};
