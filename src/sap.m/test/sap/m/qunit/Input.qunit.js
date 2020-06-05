@@ -5434,8 +5434,13 @@ sap.ui.define([
 		aVisibleItems = this.oInput._oSuggPopover._oList.getItems().filter(function(oItem){
 			return oItem.getVisible();
 		});
+		var sInvisibleTextId = aVisibleItems[0].getId();
 
-		// assert
+		// Act
+		qutils.triggerKeydown(this.oInput.getDomRef(), KeyCodes.ARROW_DOWN);
+
+		// Assert
+		assert.strictEqual(this.oInput.getFocusDomRef().getAttribute('aria-activedescendant'), sInvisibleTextId, "Input has aria-activedescendant attribute set");
 		assert.strictEqual(aVisibleItems.length, 3, "The correct number of items is displayed");
 		assert.ok(aVisibleItems[0].isA("sap.m.GroupHeaderListItem"), "A group header is added");
 		assert.strictEqual(aVisibleItems[1].getTitle(), "A Item 1", "The first list item has correct text");
