@@ -3670,6 +3670,33 @@ sap.ui.define([
 		}
 	};
 
+	function getRowHeight(oTable) {
+		var oRowContainer = oTable ? oTable.getDomRef("tableCCnt") : null;
+
+		if (oRowContainer && Device.browser.chrome && window.devicePixelRatio !== 1) {
+			// Because of a bug in the zoom algorithm of Chrome, the actual height of a DOM element can be different
+			// to what is set in inline styles or CSS. Therefore, we need to get the height of a row from the DOM.
+			var oTableElement = document.createElement("table");
+			var oRowElement = oTableElement.insertRow();
+			var nRowHeight;
+
+			oTableElement.classList.add("sapUiTableCtrl");
+			oRowElement.classList.add("sapUiTableTr");
+
+			if (oTable.getRowHeight() > 0) {
+				oRowElement.style.height = oTable._getDefaultRowHeight() + "px";
+			}
+
+			oRowContainer.appendChild(oTableElement);
+			nRowHeight = oRowElement.getBoundingClientRect().height;
+			oRowContainer.removeChild(oTableElement);
+
+			return nRowHeight;
+		} else {
+			return oTable._getDefaultRowHeight();
+		}
+	}
+
 	/**
 	 * Determines and sets the height of tableCtrlCnt based upon the VisibleRowCountMode and other conditions.
 	 * @param {int} iHeight
@@ -3713,6 +3740,9 @@ sap.ui.define([
 		} else {
 			if ((sVisibleRowCountMode == VisibleRowCountMode.Fixed || sVisibleRowCountMode == VisibleRowCountMode.Interactive) && this.getRows().length > 0) {
 				jQuery(this.getDomRef("tableCtrlCnt")).css("height", "auto");
+			} else if (sVisibleRowCountMode === VisibleRowCountMode.Auto) {
+				var iRowHeight = Math.floor(iRowContentHeight / iDefaultRowHeight) * getRowHeight(this);
+				jQuery(this.getDomRef("tableCtrlCnt")).css("height", iRowHeight + "px");
 			} else {
 				jQuery(this.getDomRef("tableCtrlCnt")).css("height", this._iTableRowContentHeight + "px");
 			}
