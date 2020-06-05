@@ -6,11 +6,12 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/library',
 	'sap/ui/core/IconPool',
+	'sap/ui/core/ShortcutHintsMixin',
 	'sap/m/library',
 	'sap/ui/core/InvisibleText'
 ],
 
-	function(Device, coreLibrary, IconPool, library, InvisibleText) {
+	function(Device, coreLibrary, IconPool, ShortcutHintsMixin, library, InvisibleText) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -41,6 +42,7 @@ sap.ui.define([
 	ButtonRenderer.render = function(oRm, oButton) {
 
 		// get control properties
+		var sButtonId = oButton.getId();
 		var sType = oButton.getType();
 		var bEnabled = oButton.getEnabled();
 		var sWidth = oButton.getWidth();
@@ -54,6 +56,12 @@ sap.ui.define([
 		// get icon from icon pool
 		var sBackURI = IconPool.getIconURI("nav-back");
 		var sMinWidth;
+		var oHintAccessibilityInfos = oButton._getHintAccessibility();
+		var sAriaKeyShortcuts;
+
+		if (oHintAccessibilityInfos && oHintAccessibilityInfos[sButtonId]) {
+			sAriaKeyShortcuts = oHintAccessibilityInfos[sButtonId].keyShortcuts;
+		}
 
 		// start button tag
 		oRm.openStart("button", oButton);
@@ -71,6 +79,10 @@ sap.ui.define([
 
 		//ARIA attributes
 		var mAccProps = ButtonRenderer.generateAccProps(oButton);
+
+		if (sAriaKeyShortcuts) {
+			mAccProps["keyshortcuts"] = sAriaKeyShortcuts;
+		}
 
 		//descendants (e.g. ToggleButton) callback
 		if (this.renderAccessibilityAttributes) {
@@ -98,7 +110,7 @@ sap.ui.define([
 		}
 
 		// add tooltip if available
-		if (sTooltip) {
+		if (sTooltip && !ShortcutHintsMixin.isDOMIDRegistered(sButtonId)) {
 			oRm.attr("title", sTooltip);
 		}
 
@@ -122,7 +134,7 @@ sap.ui.define([
 		oRm.openEnd();
 
 		// start inner button tag
-		oRm.openStart("span", oButton.getId() + "-inner");
+		oRm.openStart("span", sButtonId + "-inner");
 
 		// button style class
 		if (!oButton._isUnstyled()) {
@@ -188,7 +200,7 @@ sap.ui.define([
 
 		// write button text
 		if (sText) {
-			oRm.openStart("span", oButton.getId() + "-content");
+			oRm.openStart("span", sButtonId + "-content");
 			oRm.class("sapMBtnContent");
 			// check if textDirection property is not set to default "Inherit" and add "dir" attribute
 			if (sTextDir !== TextDirection.Inherit) {
@@ -197,7 +209,7 @@ sap.ui.define([
 			oRm.openEnd();
 
 			if (bRenderBDI) {
-				oRm.openStart("bdi", oButton.getId() + "-BDI-content");
+				oRm.openStart("bdi", sButtonId + "-BDI-content");
 				oRm.openEnd();
 			}
 			oRm.text(sText);
@@ -225,7 +237,7 @@ sap.ui.define([
 
 		// add tooltip if available
 		if (sTooltip) {
-			oRm.openStart("span", oButton.getId() + "-tooltip");
+			oRm.openStart("span", sButtonId + "-tooltip");
 			oRm.class("sapUiInvisibleText");
 			oRm.openEnd();
 			oRm.text(sTooltip);
