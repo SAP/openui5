@@ -189,6 +189,14 @@ sap.ui.define([
 			designtime: "sap/m/designtime/MessagePage.designtime"
 		}});
 
+		/**
+		 * STATIC MEMBERS
+		 */
+		MessagePage.ARIA_ROLE_DESCRIPTION = "MESSAGE_PAGE_ROLE_DESCRIPTION";
+
+		/**
+		 * LIFECYCLE METHODS
+		 */
 		MessagePage.prototype.init = function() {
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
@@ -206,6 +214,8 @@ sap.ui.define([
 
 			this.setProperty("text", oBundle.getText("MESSAGE_PAGE_TEXT"), true);
 			this.setProperty("description", oBundle.getText("MESSAGE_PAGE_DESCRIPTION"), true);
+
+			this._sAriaRoleDescription = oBundle.getText(MessagePage.ARIA_ROLE_DESCRIPTION);
 		};
 
 		MessagePage.prototype.exit = function() {

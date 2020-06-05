@@ -1082,4 +1082,24 @@ function (
 			sSemanticAddType + " should not be preprocessed");
 	});
 
+	/* --------------------------- Accessibility -------------------------------------- */
+	QUnit.module("Accessibility");
+
+	QUnit.test("ARIA attributes", function(assert) {
+		// Arrange
+		var oSemanticPage = oFactory.getSemanticPage(),
+			oDynamicPage = oSemanticPage._getPage(),
+			sExpectedRoleDescription = Core.getLibraryResourceBundle("sap.f")
+				.getText(oSemanticPage.constructor.ARIA_ROLE_DESCRIPTION);
+
+		// Act
+		oUtil.renderObject(oSemanticPage);
+
+		// Assert
+		assert.strictEqual(oDynamicPage.$().attr('aria-roledescription'), sExpectedRoleDescription, "aria-roledescription is set");
+
+		// Clean
+		oSemanticPage.destroy();
+	});
+
 });

@@ -338,6 +338,8 @@ sap.ui.define([
 	// Class which is added to the DynamicPage if we have additional navigation (e.g. IconTabBar)
 	DynamicPage.NAVIGATION_CLASS_NAME = "sapFDynamicPageNavigation";
 
+	DynamicPage.ARIA_ROLE_DESCRIPTION = "DYNAMIC_PAGE_ROLE_DESCRIPTION";
+
 	/**
 	 * LIFECYCLE METHODS
 	 */
@@ -361,6 +363,8 @@ sap.ui.define([
 				this._bStickySubheaderInTitleArea = false; // reset the flag as the stickySubHeader is freshly rerendered with the iconTabBar
 				this._adjustStickyContent();
 			}};
+
+		this._setAriaRoleDescription(Core.getLibraryResourceBundle("sap.f").getText(DynamicPage.ARIA_ROLE_DESCRIPTION));
 	};
 
 	DynamicPage.prototype.onBeforeRendering = function () {
@@ -973,6 +977,28 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._getScrollPosition = function () {
 		return exists(this.$wrapper) ? Math.ceil(this.$wrapper.scrollTop()) : 0;
+	};
+
+	/**
+	 * Sets the value for aria-roledescription attribute
+	 * @param {string} sAriaRoleDescription
+	 * @return {sap.f.DynamicPage} this for chaining
+	 * @private
+	 */
+	DynamicPage.prototype._setAriaRoleDescription = function (sAriaRoleDescription) {
+		this._sAriaRoleDescription = sAriaRoleDescription;
+
+		return this;
+	};
+
+	/**
+	 * Returns the aria-roledescription value
+	 * if not overwritten the default "Dynamic Page" string is returned
+	 * @return {string} aria-roledescription
+	 * @private
+	 */
+	DynamicPage.prototype._getAriaRoleDescription = function () {
+		return this._sAriaRoleDescription;
 	};
 
 	/**
