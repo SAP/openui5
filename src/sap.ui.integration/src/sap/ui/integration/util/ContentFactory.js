@@ -2,15 +2,31 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Core",
+	"./BindingHelper",
+	"./CardActions",
 	"sap/ui/base/Object",
-	"sap/ui/integration/util/BindingHelper",
-	"./CardActions"
+	"sap/ui/integration/cards/AdaptiveContent",
+	"sap/ui/integration/cards/AnalyticalContent",
+	"sap/ui/integration/cards/AnalyticsCloudContent",
+	"sap/ui/integration/cards/CalendarContent",
+	"sap/ui/integration/cards/ComponentContent",
+	"sap/ui/integration/cards/ListContent",
+	"sap/ui/integration/cards/ObjectContent",
+	"sap/ui/integration/cards/TableContent",
+	"sap/ui/integration/cards/TimelineContent"
 ], function (
-	Core,
-	BaseObject,
 	BindingHelper,
-	CardActions
+	CardActions,
+	BaseObject,
+	AdaptiveContent,
+	AnalyticalContent,
+	AnalyticsCloudContent,
+	CalendarContent,
+	ComponentContent,
+	ListContent,
+	ObjectContent,
+	TableContent,
+	TimelineContent
 ) {
 	"use strict";
 
@@ -40,91 +56,64 @@ sap.ui.define([
 	});
 
 	ContentFactory.prototype.create = function (mConfig) {
-
 		var oCard = this._oCard,
 			sType = mConfig.cardType;
 
 		return new Promise(function (resolve, reject) {
-			var fnCreateContentInstance = function (Content) {
+			var oContent = null;
 
-				if ((mConfig.cardManifest && mConfig.cardManifest.isDestroyed()) ||
-					(mConfig.dataProviderFactory && mConfig.dataProviderFactory.isDestroyed())) {
-					// reject creating of the content if a new manifest is loaded meanwhile
-					reject();
-					return;
-				}
+			switch (sType.toLowerCase()) {
+				case "adaptivecard":
+					oContent = new AdaptiveContent(); break;
+				case "analytical":
+					oContent = new AnalyticalContent(); break;
+				case "analyticscloud":
+					oContent = new AnalyticsCloudContent(); break;
+				case "calendar":
+					oContent = new CalendarContent(); break;
+				case "component":
+					oContent = new ComponentContent(); break;
+				case "list":
+					oContent = new ListContent(); break;
+				case "object":
+					oContent = new ObjectContent(); break;
+				case "table":
+					oContent = new TableContent(); break;
+				case "timeline":
+					oContent = new TimelineContent(); break;
+				default:
+					reject(sType.toUpperCase() + " content type is not supported.");
+			}
 
-				var oContent = new Content(),
-					oActions = new CardActions({
+			oContent.loadDependencies(mConfig.contentManifest)
+				.then(function () {
+					if ((mConfig.cardManifest && mConfig.cardManifest.isDestroyed()) ||
+						(mConfig.dataProviderFactory && mConfig.dataProviderFactory.isDestroyed())) {
+						// reject creating of the content if a new manifest is loaded meanwhile
+						reject();
+						return;
+					}
+
+					var oActions = new CardActions({
 						card: oCard
 					});
 
-				oContent._sAppId = mConfig.appId;
-				oContent.setServiceManager(mConfig.serviceManager);
-				oContent.setDataProviderFactory(mConfig.dataProviderFactory);
-				oContent.setIconFormatter(mConfig.iconFormatter);
-				oContent.setActions(oActions);
+					oContent._sAppId = mConfig.appId;
+					oContent.setServiceManager(mConfig.serviceManager);
+					oContent.setDataProviderFactory(mConfig.dataProviderFactory);
+					oContent.setIconFormatter(mConfig.iconFormatter);
+					oContent.setActions(oActions);
 
-				if (sType.toLowerCase() !== "adaptivecard") {
-					oContent.setConfiguration(BindingHelper.createBindingInfos(mConfig.contentManifest), sType);
-				} else {
-					oContent.setConfiguration(mConfig.contentManifest);
-				}
-
-				resolve(oContent);
-			};
-
-			try {
-				switch (sType.toLowerCase()) {
-					case "list":
-						sap.ui.require(["sap/ui/integration/cards/ListContent"], fnCreateContentInstance);
-						break;
-					case "calendar":
-						sap.ui.require(["sap/ui/integration/cards/CalendarContent"], fnCreateContentInstance);
-						break;
-					case "table":
-						sap.ui.require(["sap/ui/integration/cards/TableContent"], fnCreateContentInstance);
-						break;
-					case "object":
-						sap.ui.require(["sap/ui/integration/cards/ObjectContent"], fnCreateContentInstance);
-						break;
-					case "analytical":
-						Core.loadLibrary("sap.viz", {
-							async: true
-						})
-							.then(function () {
-								sap.ui.require(["sap/ui/integration/cards/AnalyticalContent"], fnCreateContentInstance);
-							})
-							.catch(function () {
-								reject("Analytical content type is not available with this distribution.");
-							});
-						break;
-					case "analyticscloud":
-						sap.ui.require(["sap/ui/integration/cards/AnalyticsCloudContent"], fnCreateContentInstance);
-						break;
-					case "timeline":
-						Core.loadLibrary("sap.suite.ui.commons", {
-							async: true
-						})
-							.then(function() {
-								sap.ui.require(["sap/ui/integration/cards/TimelineContent"], fnCreateContentInstance);
-							})
-							.catch(function () {
-								reject("Timeline content type is not available with this distribution.");
-							});
-						break;
-					case "component":
-						sap.ui.require(["sap/ui/integration/cards/ComponentContent"], fnCreateContentInstance);
-						break;
-					case "adaptivecard":
-						sap.ui.require(["sap/ui/integration/cards/AdaptiveContent"], fnCreateContentInstance);
-						break;
-					default:
-						reject(sType.toUpperCase() + " content type is not supported.");
-				}
-			} catch (sError) {
-				reject(sError);
-			}
+					if (sType.toLowerCase() !== "adaptivecard") {
+						oContent.setConfiguration(BindingHelper.createBindingInfos(mConfig.contentManifest), sType);
+					} else {
+						oContent.setConfiguration(mConfig.contentManifest);
+					}
+					resolve(oContent);
+				})
+				.catch(function (sError) {
+					reject(sError);
+				});
 		});
 	};
 

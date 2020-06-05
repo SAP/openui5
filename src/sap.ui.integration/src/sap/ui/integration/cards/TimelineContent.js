@@ -2,17 +2,18 @@
  * ${copyright}
  */
 sap.ui.define([
-		"sap/ui/integration/cards/BaseListContent",
-		"sap/suite/ui/commons/Timeline",
-		"sap/suite/ui/commons/TimelineItem",
+		"./BaseListContent",
+		"sap/ui/core/Core",
 		"sap/ui/integration/util/BindingHelper"
 	], function (
 		BaseListContent,
-		Timeline,
-		TimelineItem,
+		Core,
 		BindingHelper
 	) {
 		"use strict";
+
+		// lazy dependencies, loaded on the first attempt to create TimelineContent
+		var Timeline, TimelineItem;
 
 		/**
 		 * Constructor for a new <code>TimelineContent</code>.
@@ -50,6 +51,30 @@ sap.ui.define([
 				this._oTimeLineItemTemplate.destroy();
 				this._oTimeLineItemTemplate = null;
 			}
+		};
+
+		/**
+		 * @override
+		 */
+		TimelineContent.prototype.loadDependencies = function (oConfig) {
+			return new Promise(function (resolve, reject) {
+				Core.loadLibrary("sap.viz", { async: true})
+					.then(function () {
+						sap.ui.require([
+							"sap/suite/ui/commons/Timeline",
+							"sap/suite/ui/commons/TimelineItem"
+						], function (_Timeline, _TimelineItem) {
+							Timeline = _Timeline;
+							TimelineItem = _TimelineItem;
+							resolve();
+						}, function (sErr) {
+							reject(sErr);
+						});
+					})
+					.catch(function () {
+						reject("Timeline content type is not available with this distribution.");
+					});
+			});
 		};
 
 		/**

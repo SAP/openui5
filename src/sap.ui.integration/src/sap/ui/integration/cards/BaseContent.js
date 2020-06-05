@@ -152,6 +152,15 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Can be used in subclasses to load lazy dependencies.
+	 * @param {object} oConfiguration The manifest configuration for the content.
+	 * @returns {Promise} A promise that would be resolved in case of successful loading or rejected with error message.
+	 */
+	BaseContent.prototype.loadDependencies = function (oConfiguration) {
+		return Promise.resolve();
+	};
+
 	BaseContent.prototype.getActions = function () {
 		return this._oActions;
 	};
