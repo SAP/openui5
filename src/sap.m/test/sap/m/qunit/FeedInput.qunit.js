@@ -4,8 +4,9 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/FeedInput",
 	"sap/ui/core/TooltipBase",
+	"sap/m/FeedListItem",
 	"jquery.sap.keycodes"
-], function(qutils, jQuery, FeedInput, TooltipBase) {
+], function(qutils, jQuery, FeedInput, TooltipBase, FeedListItem) {
 	"use strict";
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
@@ -198,6 +199,24 @@ sap.ui.define([
 		assert.ok(jQuery.sap.domById("input"), "visible=true: FeedInput control should be rendered");
 		this.oFeedInput.setVisible(false);
 		assert.ok(jQuery.sap.domById("input"), "visible=false: FeedInput control should not be rendered");
+	});
+
+	QUnit.test("HTML Sanitization", function (assert) {
+		this.oFeedInput.setValue("<a href='javascript:alert(1);'>Back</a>");
+		function onPostScript(oEvt) {
+			assert.strictEqual(oEvt.getParameter("value"), "<a href=\"#\" class=\"sapMLnk\">Back</a>", "scripts inside html is sanitize");
+		}
+		this.oFeedInput.attachPost(onPostScript);
+		qutils.triggerEvent("tap", "input-button");
+		this.oFeedInput.detachPost(onPostScript);
+
+		this.oFeedInput.setValue("<a href=\"//www.sap.com\">link to sap.com</a>");
+		function onPostUrl(oEvt) {
+			assert.ok(oEvt.getParameter("value").includes("sapMLnk"), "Url is converted to sap.m.Link");
+			assert.strictEqual(oEvt.getParameter("value"), "<a href=\"//www.sap.com\" target=\"_blank\" class=\"sapMLnk\">link to sap.com</a>", "Url inside html is not removed");
+		}
+		this.oFeedInput.attachPost(onPostUrl);
+		qutils.triggerEvent("tap", "input-button");
 	});
 
 
