@@ -392,6 +392,49 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 
 	});
 
+	QUnit.test("Expand button is visible when header is snapped", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			$oExpandButton,
+			oHeader = new sap.uxap.ObjectPageHeader(),
+			oObjectPage = new sap.uxap.ObjectPageLayout({
+				height: "300px",
+				selectedSection: "s2", // to snap the header
+				showTitleInHeaderContent: true,
+				headerTitle: [ oHeader ],
+				sections: [
+					new sap.uxap.ObjectPageSection("s1", {
+						subSections: [
+							new sap.uxap.ObjectPageSubSection({
+								blocks: [new sap.m.Text({ text: "Block content"})]
+							})
+						]
+					}),
+					new sap.uxap.ObjectPageSection("s2", {
+						subSections: [
+							new sap.uxap.ObjectPageSubSection({
+								blocks: [new sap.m.Text({ text: "Block content"})]
+							})
+						]
+					})
+				]
+			});
+
+		// Arrange
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			$oExpandButton = oHeader.getAggregation('_expandButton').$();
+
+			// Assert
+			assert.strictEqual($oExpandButton.css("visibility"), "visible");
+
+			// Clean
+			oObjectPage.destroy();
+			done();
+		});
+
+		oObjectPage.placeAt("qunit-fixture");
+	});
+
 	QUnit.module("Breadcrumbs API", {
 		beforeEach: function (assert) {
 			var done = assert.async();
