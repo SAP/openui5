@@ -948,14 +948,17 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_createTarget: entity creation failed, no processor", function (assert) {
+	QUnit.test("_createTarget: entity creation failed", function (assert) {
 		var oODataMessageParser = {
 				_metadata : {
 					_getFunctionImportMetadata : function () {},
+					_getReducedPath : function () {},
 					_isCollection : function () {}
 				},
-				_parseUrl : function () {}
-				// test without processor
+				_parseUrl : function () {},
+				_processor : {
+					resolve : function () {}
+				}
 			},
 			mRequestInfo = {
 				request : {
@@ -981,15 +984,21 @@ sap.ui.define([
 		this.mock(oODataMessageParser._metadata).expects("_isCollection")
 			.withExactArgs("/~parsedUrl")
 			.returns(false);
+		this.mock(oODataMessageParser._processor).expects("resolve")
+			.withExactArgs("/~parsedUrl", undefined, true)
+			.returns("~canonicalTarget");
+		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
+			.withExactArgs("~deepPath") // collection -> no / between path and target
+			.returns("~reducedPath");
 		this.mock(ODataUtils).expects("_normalizeKey")
-			.withExactArgs("/~parsedUrl")
+			.withExactArgs("~canonicalTarget")
 			.returns("~normalizedTarget");
 
 		// code under test
 		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
 			/*sTarget*/ undefined, mRequestInfo, true, false);
 
-		assert.strictEqual(oTargetInfo.deepPath, undefined);
+		assert.strictEqual(oTargetInfo.deepPath, "~reducedPath");
 		assert.strictEqual(oTargetInfo.target, "~normalizedTarget");
 	});
 
