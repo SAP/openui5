@@ -2804,4 +2804,30 @@ sap.ui.define([
 			assert.equal(oEvent.getParameter("domRef"), oGenericTile._oRemoveButton.getPopupAnchorDomRef(), "Event parameter 'domRef' points to Remove Button");
 		}
 	});
+
+	QUnit.test("GenericTile press state is removed after Kep Up", function(assert) {
+		this.oGenericTile.rerender();
+		assert.ok(jQuery.sap.byId("generic-tile-focus"), "Focus div was rendered successfully");
+		assert.ok(jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTWithoutImageHoverOverlay"), "Hover overlay was rendered successfully");
+		assert.ok(!jQuery.sap.byId("generic-tile").hasClass("sapMGTPressActive"), "Press action is not triggered on GenericTile");
+		assert.ok(!jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is not triggered on GenericTile hover overlay");
+		//Arrange
+		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
+		var down = jQuery.Event("keydown");
+		down.keyCode = jQuery.sap.KeyCodes.ENTER;
+
+		//Act
+		this.oGenericTile.$().trigger(down);
+		assert.ok(jQuery.sap.byId("generic-tile").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added to GenericTile");
+		assert.ok(jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added to GenericTile hover overlay");
+		//Arrange
+		var up = jQuery.Event("keyup");
+		up.keyCode = jQuery.sap.KeyCodes.ENTER;
+
+		//Act
+		this.oGenericTile.$().trigger(up);
+		assert.ok(!jQuery.sap.byId("generic-tile").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed from GenericTile");
+		assert.ok(!jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed from GenericTile hover overlay");
+
+	});
 });

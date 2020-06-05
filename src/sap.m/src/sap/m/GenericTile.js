@@ -884,7 +884,7 @@ sap.ui.define([
 			bFirePress = true;
 		}
 		if (PseudoEvents.events.sapselect.fnCheck(event) && this.getState() !== library.LoadState.Disabled) {
-			this.addStyleClass("sapMGTPressActive");
+			this.removeStyleClass("sapMGTPressActive"); //Class sapMGTPressActive was added instead of remove.
 			if (this.$("hover-overlay").length > 0) {
 				this.$("hover-overlay").removeClass("sapMGTPressActive");
 			}
