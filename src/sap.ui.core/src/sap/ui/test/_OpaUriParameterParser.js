@@ -37,7 +37,7 @@ sap.ui.define([
 		var mUriParams = new URI().search(true);
 
 		for (var sUriParamName in mUriParams) {
-			if (sUriParamName.startsWith(_OpaUriParameterParser.PREFIX)) {
+			if ($.sap.startsWith(sUriParamName, _OpaUriParameterParser.PREFIX)) {
 				var sOpaParamName = sUriParamName.substr(_OpaUriParameterParser.PREFIX.length);
 				sOpaParamName = sOpaParamName.charAt(0).toLowerCase() + sOpaParamName.substr(1);
 				mOpaParams[sOpaParamName] = _OpaUriParameterParser._parseParam(mUriParams[sUriParamName]);
