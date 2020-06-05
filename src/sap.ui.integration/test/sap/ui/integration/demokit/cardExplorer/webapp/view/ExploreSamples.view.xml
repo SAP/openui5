@@ -7,7 +7,6 @@
 	xmlns:core="sap.ui.core"
 	xmlns:editor="sap.ui.codeeditor"
 	xmlns:w="sap.ui.integration.widgets"
-	xmlns:cardEditor="sap.ui.integration.designtime.cardEditor"
 	xmlns:cardExplorer="sap.ui.demo.cardExplorer.controls"
 >
 	<l:ResponsiveSplitter id="splitView">
@@ -49,7 +48,7 @@
 				</Page>
 			</l:SplitPane>
 			<l:SplitPane requiredParentWidth="1">
-				<Page >
+				<Page id="editPage">
 					<customHeader>
 						<Bar>
 							<contentLeft>
@@ -110,12 +109,6 @@
 						manifestChange="onFileEditorManifestChange"
 						fileSwitch="onFileSwitch"
 						visible="{= ${settings>/editorType} === 'text' }"
-					/>
-					<cardEditor:CardEditor
-						id="cardEditor"
-						visible="{= ${settings>/editorType} === 'card' }"
-						jsonChange="onCardEditorChange"
-						class="sapUiSmallMargin"
 					/>
 				</Page>
 			</l:SplitPane>

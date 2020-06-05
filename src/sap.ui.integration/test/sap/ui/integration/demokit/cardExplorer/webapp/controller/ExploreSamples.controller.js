@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/model/BindingMode",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/util/restricted/_debounce"
+	"sap/base/util/restricted/_debounce",
+	"sap/ui/integration/designtime/cardEditor/CardEditor"
 ], function (
 	BaseController,
 	Constants,
@@ -35,7 +36,8 @@ sap.ui.define([
 	BindingMode,
 	Device,
 	jQuery,
-	_debounce
+	_debounce,
+	CardEditor
 ) {
 	"use strict";
 
@@ -88,11 +90,9 @@ sap.ui.define([
 			if (!this._sEditSource) {
 				this._sEditSource = "codeEditor";
 			}
-			var oCardEditor = this.byId("cardEditor");
 
-			// in the OPA tests in IE sometimes this is null
-			if (oCardEditor) {
-				oCardEditor.setJson(sValue);
+			if (this._oCardEditor) {
+				this._oCardEditor.setJson(sValue);
 			}
 
 			this._sEditSource = null;
@@ -143,6 +143,7 @@ sap.ui.define([
 			var sEditorType = exploreSettingsModel.getProperty("/editorType");
 			if (sEditorType === "text") {
 				exploreSettingsModel.setProperty("/editorType", "card");
+				this._initCardEditor();
 			} else {
 				exploreSettingsModel.setProperty("/editorType", "text");
 			}
@@ -202,6 +203,30 @@ sap.ui.define([
 					subSampleKey: item.getKey()
 				}
 			);
+		},
+
+		_initCardEditor: function () {
+			var oCardEditor,
+				oPage = this.byId("editPage");
+
+			if (this._oCardEditor) {
+				// already initialized
+				return;
+			}
+
+			oCardEditor = new CardEditor({
+				visible: "{= ${settings>/editorType} === 'card' }",
+				jsonChange: this.onCardEditorChange.bind(this)
+			});
+			oCardEditor.addStyleClass("sapUiSmallMargin");
+
+			oPage.addContent(oCardEditor);
+
+			this._fileEditor.getManifestContent().then(function (sJson) {
+				oCardEditor.setJson(sJson);
+			});
+
+			this._oCardEditor = oCardEditor;
 		},
 
 		_onCardError: function (oEvent) {
