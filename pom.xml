@@ -99,6 +99,15 @@
 		<!-- internal properties, do not modify -->
 		<effective.npm.package.phase>${npm.package.phase}</effective.npm.package.phase>
 
+		<!-- skip eslint validation -->
+		<sap.ui5.eslint.skip.validation>true</sap.ui5.eslint.skip.validation>
+		<!-- fail on eslint error -->
+		<sap.ui5.eslint.failonerror>true</sap.ui5.eslint.failonerror>
+		<!-- only validate the changed files -->
+		<sap.ui5.eslint.onlyChangedFiles>true</sap.ui5.eslint.onlyChangedFiles>
+		<!-- quite or verbose execution -->
+		<sap.ui5.eslint.quite>true</sap.ui5.eslint.quite>
+
  	</properties>
 
 
@@ -235,19 +244,6 @@
 
 			<id>eslint.build</id>
 
-			<properties>
-
-				<!-- skip eslint validation -->
-				<sap.ui5.eslint.skip.validation>true</sap.ui5.eslint.skip.validation>
-
-				<!-- fail on eslint error -->
-				<sap.ui5.eslint.failonerror>true</sap.ui5.eslint.failonerror>
-
-				<!-- only validate the changed files -->
-				<sap.ui5.eslint.onlyChangedFiles>true</sap.ui5.eslint.onlyChangedFiles>
-
-			</properties>
-
 			<build>
 				<plugins>
 					<plugin>
@@ -309,6 +305,44 @@
 				</plugins>
 			</build>
 
+		</profile>
+		<profile>
+			<id>eslintnode.build</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.sap.ui5.tools.maven</groupId>
+						<artifactId>eslintnode-maven-plugin</artifactId>
+						<version>0.2.0-SNAPSHOT</version>
+						<executions>
+							<execution>
+								<phase>verify</phase>
+								<goals>
+									<goal>eslint</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<version>1.10.3</version>
+							<nodeType>SHARED</nodeType>
+							<nodeVersion>${node.version}</nodeVersion>
+							<nodeLocation>${node.location}</nodeLocation>
+							<npmRegistry>${npm.registry}</npmRegistry>
+							<npmVersion>${npm.version}</npmVersion>
+							<formatters>
+								<formatter>
+									<name>sonar</name>
+									<output>${project.build.directory}/jslint/jslint.xml</output>
+								</formatter>
+							</formatters>
+							<failOnError>${sap.ui5.eslint.failonerror}</failOnError>
+							<onlyChangedFiles>${sap.ui5.eslint.onlyChangedFiles}</onlyChangedFiles>
+							<quiet>${sap.ui5.eslint.quite}</quiet>
+							<skip>${sap.ui5.eslint.skip.validation}</skip>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 
 		<profile>
