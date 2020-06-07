@@ -212,24 +212,26 @@ function(
 		QUnit.test("when panel1 and panel2 are both change scrollbar position simultaneously", function(assert) {
 			var fnDone = assert.async();
 
-			this.oScrollbarSynchronizer.addTarget(this.$Panel1[0]);
-			this.oScrollbarSynchronizer.addTarget(this.$Panel2[0]);
-
 			this.oScrollbarSynchronizer.attachEventOnce('synced', function () {
-				assert.equal(this.$Panel1.scrollTop(), 50, "then vertical scrolling on Panel1 is correct");
-				assert.equal(this.$Panel1.scrollLeft(), 70, "then horizontal scrolling on Panel1 is correct");
+				this.oScrollbarSynchronizer.attachEventOnce('synced', function () {
+					assert.equal(this.$Panel1.scrollTop(), 50, "then vertical scrolling on Panel1 is correct");
+					assert.equal(this.$Panel1.scrollLeft(), 70, "then horizontal scrolling on Panel1 is correct");
 
-				assert.equal(this.$Panel2.scrollTop(), 50, "then vertical scrolling on Panel2 is correct");
-				assert.equal(this.$Panel2.scrollLeft(), 70, "then horizontal scrolling on Panel2 is correct");
+					assert.equal(this.$Panel2.scrollTop(), 50, "then vertical scrolling on Panel2 is correct");
+					assert.equal(this.$Panel2.scrollLeft(), 70, "then horizontal scrolling on Panel2 is correct");
 
-				fnDone();
+					fnDone();
+				}, this);
+
+				this.$Panel1.scrollTop(20);
+				this.$Panel1.scrollLeft(30);
+
+				this.$Panel2.scrollTop(50);
+				this.$Panel2.scrollLeft(70);
 			}, this);
 
-			this.$Panel1.scrollTop(20);
-			this.$Panel1.scrollLeft(30);
-
-			this.$Panel2.scrollTop(50);
-			this.$Panel2.scrollLeft(70);
+			this.oScrollbarSynchronizer.addTarget(this.$Panel1[0]);
+			this.oScrollbarSynchronizer.addTarget(this.$Panel2[0]);
 		});
 	});
 
