@@ -24,18 +24,23 @@
 				title: 'Root Item',
 				icon: 'sap-icon://employee',
 				expanded: true,
+				key: 'rootpage1',
+				href: '#/rootpage1',
 				items: [{
 					title: 'Child Item 1',
-					key: 'page1'
+					key: 'page1',
+					href: '#/page1'
 				}, {
 					title: 'Child Item 2 (Disabled)',
 					enabled: false
 				}, {
 					title: 'Child Item 3',
-					key: 'page2'
+					key: 'page2',
+					href: '#/page2'
 				}, {
 					title: 'Child Item 4',
-					key: 'page3'
+					key: 'page3',
+					href: '#/page3'
 				}]
 			}, {
 				title: 'Root Item (Disabled)',
@@ -247,10 +252,15 @@
 			],
 			fixedNavigation: [{
 				title: 'Fixed Item 1',
-				icon: 'sap-icon://employee'
+				icon: 'sap-icon://employee',
+				key: 'fixeditem',
+				href: '#/fixeditem'
 			}, {
-				title: 'Fixed Item 2',
-				icon: 'sap-icon://building'
+				title: 'www.sap.com',
+				icon: 'sap-icon://building',
+				key: 'fixeditem1',
+				href: 'https://www.sap.com',
+				target: '_blank'
 			}, {
 				title: 'Fixed Item 3',
 				icon: 'sap-icon://card'
@@ -270,10 +280,13 @@
 						icon: '{icon}',
 						enabled: '{enabled}',
 						expanded: '{expanded}',
+						key: '{key}',
+						href: '{href}',
 						items: {
 							template: new sap.tnt.NavigationListItem({
 								text: '{title}',
 								key: '{key}',
+								href: '{href}',
 								enabled: '{enabled}'
 							}),
 							path: 'items',
@@ -288,7 +301,10 @@
 				items: {
 					template: new sap.tnt.NavigationListItem({
 						text: '{title}',
-						icon: '{icon}'
+						icon: '{icon}',
+						key: '{key}',
+						href: '{href}',
+						target: '{target}'
 					}),
 					path: '/fixedNavigation'
 				}
