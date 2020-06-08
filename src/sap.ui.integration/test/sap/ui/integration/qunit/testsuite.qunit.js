@@ -265,6 +265,11 @@ sap.ui.define(function () {
 					version: "edge"
 				}
 			},
+			"util/Destinations": {
+				coverage: {
+					only: ["sap/ui/integration/util/Destinations"]
+				}
+			},
 			"util/ServiceManager": {
 				coverage: {
 					only: [

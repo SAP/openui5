@@ -72,7 +72,7 @@ sap.ui.define([
 
 		return new Promise(function (resolve, reject) {
 
-			if (!oRequestConfig) {
+			if (!oRequestConfig || !oRequestConfig.url) {
 				Log.error(sMessage);
 				reject(sMessage);
 				return;
