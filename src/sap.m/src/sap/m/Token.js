@@ -6,7 +6,6 @@
 sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
-	'./Tokenizer',
 	'sap/ui/core/library',
 	'sap/ui/core/Icon',
 	'./TokenRenderer',
@@ -18,7 +17,6 @@ sap.ui.define([
 	function(
 		library,
 		Control,
-		Tokenizer,
 		coreLibrary,
 		Icon,
 		TokenRenderer,
