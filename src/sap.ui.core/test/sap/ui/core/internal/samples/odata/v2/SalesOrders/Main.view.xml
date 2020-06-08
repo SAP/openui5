@@ -242,9 +242,15 @@
 							<Label text="Code" />
 							<Text text="{messages>code}" />
 							<Label text="Target" />
-							<Text text="{messages>target}" />
+							<Text text="{
+									formatter : '.formatMessageTargets',
+									path : 'messages>aTargets'
+								}" />
 							<Label text="Full Target" />
-							<Text text="{messages>fullTarget}" />
+							<Text text="{
+									formatter : '.formatMessageTargets',
+									path : 'messages>aFullTargets'
+								}" />
 						</form:SimpleForm>
 					</Dialog>
 				</dependents>

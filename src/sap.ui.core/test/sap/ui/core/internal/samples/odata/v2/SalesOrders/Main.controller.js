@@ -66,6 +66,10 @@ sap.ui.define([
 			return sResult;
 		},
 
+		formatMessageTargets : function (aTargets) {
+			return aTargets && aTargets.join("\n");
+		},
+
 		onCloseMessageDetails : function (oEvent) {
 			var oMessageDetails = this.byId("messageDetails");
 
