@@ -333,21 +333,39 @@ sap.ui.define([
 		aMessages : [] // contains sap.ui.core.message.Message objects
 	}, {
 		aFilterForPredicate : bWithFilter ? [] : ["(~keyPredicate~)"],
-		aMessages : [{fullTarget : "~deepPath~(~keyPredicate~)", message : "out"}]
+		aMessages : [{aFullTargets : ["~deepPath~(~keyPredicate~)"], message : "out"}]
 	}, {
 		aFilterForPredicate : ["(~keyPredicate~)"],
-		aMessages : [{fullTarget : "~deepPath~(~keyPredicate~)", message : "in"}]
+		aMessages : [{aFullTargets : ["~deepPath~(~keyPredicate~)"], message : "in"}]
 	}, {
 		aFilterForPredicate : bWithFilter
 			? ["(~keyPredicate0~)", "(~keyPredicate2~)"]
 			: ["(~keyPredicate0~)", "(~keyPredicate1~)", "(~keyPredicate2~)", "(~keyPredicate3~)"],
 		aMessages : [
-			{fullTarget : "~deepPath~", message : "out"},
-			{fullTarget : "~deepPath~(~keyPredicate0~)/foo", message : "in"},
-			{fullTarget : "~deepPath~(~keyPredicate1~)", message : "out"},
-			{fullTarget : "~deepPath~(~keyPredicate2~)", message : "in"},
-			{fullTarget : "~deepPath~(~keyPredicate3~)", message : "out"}
+			{aFullTargets : ["~deepPath~"], message : "out"},
+			{aFullTargets : ["~deepPath~(~keyPredicate0~)/foo"], message : "in"},
+			{aFullTargets : ["~deepPath~(~keyPredicate1~)"], message : "out"},
+			{aFullTargets : ["~deepPath~(~keyPredicate2~)"], message : "in"},
+			{aFullTargets : ["~deepPath~(~keyPredicate3~)"], message : "out"}
 		]
+	}, {
+		aFilterForPredicate : ["(~keyPredicate~)"],
+		aMessages : [{
+			aFullTargets : ["~deepPath~(~keyPredicate~)/A", "~deepPath~(~keyPredicate~)/B"],
+			message : "in"
+		}]
+	}, {
+		aFilterForPredicate : ["(~keyPredicate1~)", "(~keyPredicate2~)"],
+		aMessages : [{
+			aFullTargets : ["~deepPath~(~keyPredicate1~)/A", "~deepPath~(~keyPredicate2~)/B"],
+			message : "in"
+		}]
+	}, {
+		aFilterForPredicate : ["(~keyPredicate~)"],
+		aMessages : [{
+			aFullTargets : ["~parentEntity~", "~deepPath~(~keyPredicate~)/B"],
+			message : "in"
+		}]
 	}].forEach(function (oFixture, i) {
 	var sTitle = "requestFilterForMessages: with filter: " + bWithFilter + ", " + i;
 

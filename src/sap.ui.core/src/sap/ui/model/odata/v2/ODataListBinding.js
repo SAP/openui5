@@ -28,6 +28,8 @@ sap.ui.define([
 		CountMode, ODataFilter, ODataUtils,  OperationMode, jQuery) {
 	"use strict";
 
+	/*global Set */
+
 	/**
 	 * @class
 	 * List binding implementation for OData format.
@@ -1562,6 +1564,7 @@ sap.ui.define([
 		var sDeepPath = this.sDeepPath,
 			oFilter = null,
 			aFilters = [],
+			aPredicateSet = new Set(),
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
 			that = this;
 
@@ -1575,11 +1578,18 @@ sap.ui.define([
 			if (!fnFilter || fnFilter(oMessage)) {
 				// this.oModel.getMessagesByPath returns only messages with full target starting with
 				// deep path
-				sPredicate = oMessage.fullTarget.slice(sDeepPath.length).split("/")[0];
-				if (sPredicate) {
-					aFilters.push(that._getFilterForPredicate(sPredicate));
-				}
+				oMessage.aFullTargets.forEach(function (sFullTarget) {
+					if (sFullTarget.startsWith(sDeepPath)) {
+						sPredicate = sFullTarget.slice(sDeepPath.length).split("/")[0];
+						if (sPredicate) {
+							aPredicateSet.add(sPredicate);
+						}
+					}
+				});
 			}
+		});
+		aPredicateSet.forEach(function (sPredicate) {
+			aFilters.push(that._getFilterForPredicate(sPredicate));
 		});
 
 		if (aFilters.length === 1) {

@@ -985,33 +985,41 @@ sap.ui.define([
 		 * @param {object} oODataMessage
 		 *   An OData message object as returned by <code>createResponseMessage</code> or
 		 *   <code>null</code>
-		 * @param {string|object} vTargetPrefix
-		 *   The prefix for the target; if vTargetPrefix is not of type string the given object may
-		 *   have following properties: <code>path</code> and <code>isComplete</code>
+		 * @param {string|string[]|object} vTargetPrefix
+		 *   The prefix for the target; if vTargetPrefix is not of type string or an array of
+		 *   strings the given object may have following properties: <code>path</code> and
+		 *   <code>isComplete</code>;  note that a given array is modified
 		 * @param {boolean} vTargetPrefix.isComplete
 		 *   Whether <code>vTargetPrefix.path</code> is the complete message target or
 		 *   <code>vTargetPrefix.path</code> is a prefix for the <code>oODataMessage.target</code>
 		 * @param {string} vTargetPrefix.path
 		 *   A path or a path prefix for the target
-		 * @param {string} [sFullTargetPrefix=vTargetPrefix]
+		 * @param {string|string[]} [vFullTargetPrefix=vTargetPrefix]
 		 *   The prefix for the full target; if not given <code>vTargetPrefix</code> is also used as
-		 *   prefix for the <code>fullTarget</code>
+		 *   prefix for the <code>fullTarget</code>; if vTargetPrefix is an array of strings the
+		 *   vFullTargetPrefix must be given as an array with the equivalent number of strings; note
+		 *   that a given array is modified
 		 * @param {boolean} [bResetMessages]
 		 *   Whether existing expected messages are reset before the new message is added
 		 * @returns {object}
 		 *   The test instance for chaining
 		 */
-		expectMessage : function (oODataMessage, vTargetPrefix, sFullTargetPrefix, bResetMessages) {
+		expectMessage : function (oODataMessage, vTargetPrefix, vFullTargetPrefix, bResetMessages) {
 			var aAdditionalTargets,
 				aFullTargets,
 				sTargetPrefix,
 				aTargets;
 
 			function computeFullTarget(sODataMessageTarget) {
-				return (sFullTargetPrefix || sTargetPrefix) + sODataMessageTarget;
+				return Array.isArray(vFullTargetPrefix)
+					? vFullTargetPrefix.shift() + sODataMessageTarget
+					: (vFullTargetPrefix || sTargetPrefix) + sODataMessageTarget;
 			}
 
 			function computeTarget(sODataMessageTarget) {
+				if (Array.isArray(vTargetPrefix)) {
+					sTargetPrefix = vTargetPrefix.shift();
+				}
 				return vTargetPrefix.isComplete
 					? vTargetPrefix.path
 					: sTargetPrefix + sODataMessageTarget;
@@ -3773,6 +3781,11 @@ usePreliminaryContext : false}}">\
 				useBatch : true
 			}),
 			oItemsBinding,
+			oSalesOrderDeliveryStatusAndToItemError = this.createResponseMessage(
+				["DeliveryStatus", "ToLineItems(SalesOrderID='1',ItemPosition='40~2~')/Quantity"]),
+			oSalesOrderDeliveryStatusAndItemError =
+				cloneODataMessage(oSalesOrderDeliveryStatusAndToItemError,
+					"DeliveryStatus", ["(SalesOrderID='1',ItemPosition='40~2~')/Quantity"]),
 			oSalesOrderNoteError = this.createResponseMessage("Note"),
 			oSalesOrderToItemsError = this.createResponseMessage("ToLineItems"),
 			oSalesOrderToItem10ToProductPriceError = this.createResponseMessage(
@@ -3819,6 +3832,7 @@ usePreliminaryContext : false}}">\
 				SalesOrderID : "1"
 			}, {
 				"sap-message" : getMessageHeader([
+					oSalesOrderDeliveryStatusAndToItemError,
 					oSalesOrderNoteError,
 					oSalesOrderToItemsError,
 					oSalesOrderToItem10ToProductPriceError,
@@ -3863,7 +3877,10 @@ usePreliminaryContext : false}}">\
 			.expectMessage(oSalesOrderItem20NoteWarning, "/SalesOrderLineItemSet",
 				"/SalesOrderSet('1')/ToLineItems")
 			.expectMessage(oSalesOrderItem30NoteError, "/SalesOrderLineItemSet",
-				"/SalesOrderSet('1')/ToLineItems");
+				"/SalesOrderSet('1')/ToLineItems")
+			.expectMessage(oSalesOrderDeliveryStatusAndItemError,
+				["/SalesOrderSet('1')/", "/SalesOrderLineItemSet"],
+				["/SalesOrderSet('1')/", "/SalesOrderSet('1')/ToLineItems"]);
 
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
@@ -3884,7 +3901,8 @@ usePreliminaryContext : false}}">\
 						{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
 					method : "GET",
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
-						+ "&$filter=(SalesOrderID eq '1' and ItemPosition eq '10~0~')"
+						+ "&$filter=(SalesOrderID eq '1' and ItemPosition eq '40~2~')"
+						+ " or (SalesOrderID eq '1' and ItemPosition eq '10~0~')"
 						+ " or (SalesOrderID eq '1' and ItemPosition eq '30~1~')"
 				}, {
 					results : [{
