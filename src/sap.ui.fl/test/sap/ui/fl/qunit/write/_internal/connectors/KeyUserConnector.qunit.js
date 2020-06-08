@@ -27,11 +27,14 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("given a mock server, when write is triggered", function (assert) {
+		QUnit.test("given a mock server, when write is triggered for single change", function (assert) {
 			var mPropertyBag = {url: "/flexKeyuser", flexObjects: []};
 			var sUrl = "/flexKeyuser/flex/keyuser/v1/changes/?sap-language=en";
-			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves();
-			return KeyUserConnector.write(mPropertyBag).then(function () {
+			var oChange = {
+				fileName: "change1"
+			};
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: oChange});
+			return KeyUserConnector.write(mPropertyBag).then(function (oResponse) {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
 					xsrfToken: InitialConnector.xsrfToken,
 					tokenUrl: "/flexKeyuser/flex/keyuser/v1/settings",
@@ -40,12 +43,41 @@ sap.ui.define([
 					dataType: "json",
 					payload: "[]"
 				}), "a send request with correct parameters and options is sent");
+				assert.ok(Array.isArray(oResponse.response), "response is an array");
+				assert.deepEqual(oChange, oResponse.response[0]);
+			});
+		});
+		QUnit.test("given a mock server, when write is triggered for multiple change", function (assert) {
+			var mPropertyBag = {url : "/flexKeyuser", flexObjects : []};
+			var sUrl = "/flexKeyuser/flex/keyuser/v1/changes/?sap-language=en";
+			var oChange1 = {
+				fileName: "change1"
+			};
+			var oChange2 = {
+				fileName: "change2"
+			};
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: [oChange1, oChange2]});
+			return KeyUserConnector.write(mPropertyBag).then(function (oResponse) {
+				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
+					xsrfToken : InitialConnector.xsrfToken,
+					tokenUrl : "/flexKeyuser/flex/keyuser/v1/settings",
+					initialConnector : InitialConnector,
+					contentType : "application/json; charset=utf-8",
+					dataType : "json",
+					payload : "[]"
+				}), "a send request with correct parameters and options is sent");
+				assert.ok(Array.isArray(oResponse.response), "response is an array");
+				assert.deepEqual(oChange1, oResponse.response[0]);
+				assert.deepEqual(oChange2, oResponse.response[1]);
 			});
 		});
 		QUnit.test("given a mock server, when write is triggered for a draft", function (assert) {
 			var mPropertyBag = {url: "/flexKeyuser", flexObjects: [], draft: true};
 			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/changes/?parentVersion=&sap-language=en";
-			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves();
+			var oChange = {
+				fileName: "change1"
+			};
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: oChange});
 			return KeyUserConnector.write(mPropertyBag).then(function () {
 				var aArgs = oStubSendRequest.getCall(0).args;
 				var sUrl = aArgs[0];
