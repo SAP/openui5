@@ -1372,6 +1372,42 @@ sap.ui.define([
 			oOverflowTB.destroy();
 	});
 
+	QUnit.test("[addContent] Adding a GenericTag in 'content' aggregation fires '_contentSizeChange' event", function (assert) {
+		var aContent = getDefaultContent(),
+				oOverflowTB = createOverflowToolbar({}, aContent),
+				oGenericTag = new GenericTag(),
+				oSpy = sinon.spy(oOverflowTB, "fireEvent"),
+				oSpyArgs;
+
+			oOverflowTB.addContent(oGenericTag);
+
+			//Assert
+			oSpyArgs = oSpy.args[0];
+			assert.ok(oSpy.called, "fireEvent is called");
+			assert.strictEqual(oSpyArgs[0], "_contentSizeChange", "_contentSizeChange event is fired");
+			assert.strictEqual(oSpyArgs[1].contentSize, null, "the contentSize is null");
+
+			oOverflowTB.destroy();
+	});
+
+	QUnit.test("[insertContent] Inserting a GenericTag in 'content' aggregation fires '_contentSizeChange' event", function (assert) {
+		var aContent = getDefaultContent(),
+				oOverflowTB = createOverflowToolbar({}, aContent),
+				oGenericTag = new GenericTag(),
+				oSpy = sinon.spy(oOverflowTB, "fireEvent"),
+				oSpyArgs;
+
+			oOverflowTB.insertContent(oGenericTag, 0);
+
+			//Assert
+			oSpyArgs = oSpy.args[0];
+			assert.ok(oSpy.called, "fireEvent is called");
+			assert.strictEqual(oSpyArgs[0], "_contentSizeChange", "_contentSizeChange event is fired");
+			assert.strictEqual(oSpyArgs[1].contentSize, null, "the contentSize is null");
+
+			oOverflowTB.destroy();
+	});
+
 	QUnit.test("[insertContent] Calling insertContent with falsy value does not throw an exception", function (assert) {
 		var aContent = getDefaultContent(),
 				oOverflowTB = createOverflowToolbar({}, aContent),
