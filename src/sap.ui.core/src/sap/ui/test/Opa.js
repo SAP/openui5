@@ -472,7 +472,7 @@ sap.ui.define([
 	 * Contains all methods available on QUnit.assert for the running QUnit version.
 	 * Available assertions are: ok, equal, propEqual, deepEqual, strictEqual and their negative counterparts.
 	 *
-	 * For more information, see  {@link sap.ui.test.opaQunit}.
+	 * For more information, see  {@link module:sap/ui/test/opaQunit}.
 	 *
 	 * @name sap.ui.test.Opa.assert
 	 * @public
@@ -496,7 +496,7 @@ sap.ui.define([
 		/**
 		 * Queues up a waitFor command for Opa.
 		 * The Queue will not be emptied until {@link sap.ui.test.Opa.emptyQueue} is called.
-		 * If you are using {@link sap.ui.test.opaQunit}, emptyQueue will be called by the wrapped tests.
+		 * If you are using {@link module:sap/ui/test/opaQunit}, emptyQueue will be called by the wrapped tests.
 		 *
 		 * If you are using Opa5, waitFor takes additional parameters.
 		 * They can be found here: {@link sap.ui.test.Opa5#waitFor}.
