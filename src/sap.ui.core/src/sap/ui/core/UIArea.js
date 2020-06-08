@@ -201,7 +201,7 @@ sap.ui.define([
 			if (oRootNode != null) {
 				this.setRootNode(oRootNode);
 				// Figure out whether UI Area is pre-rendered (server-side JS rendering)!
-				this.bNeedsRerendering = this.bNeedsRerendering && !((oRootNode.id + "-Init" ? window.document.getElementById(oRootNode.id + "-Init") : null));
+				this.bNeedsRerendering = this.bNeedsRerendering && !document.getElementById(oRootNode.id + "-Init");
 			}
 			this.mInvalidatedControls = {};
 
@@ -482,7 +482,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	UIArea.prototype.isActive = function() {
-		return ((this.getId() ? window.document.getElementById(this.getId()) : null)) != null;
+		return !!this.getId() && document.getElementById(this.getId()) != null;
 	};
 
 	/**
@@ -734,7 +734,7 @@ sap.ui.define([
 			oDomRef = oControl.getDomRef();
 			if (!oDomRef || RenderManager.isPreservedContent(oDomRef) ) {
 				// In case no old DOM node was found or only preserved DOM, search for an 'invisible' placeholder
-				oDomRef = (RenderManager.RenderPrefixes.Invisible + oControl.getId() ? window.document.getElementById(RenderManager.RenderPrefixes.Invisible + oControl.getId()) : null);
+				oDomRef = document.getElementById(RenderManager.RenderPrefixes.Invisible + oControl.getId());
 			}
 		}
 

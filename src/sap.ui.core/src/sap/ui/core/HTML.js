@@ -143,7 +143,7 @@ sap.ui.define([
 	 */
 	HTML.prototype.getDomRef = function(sSuffix) {
 		var sId = sSuffix ? this.getId() + "-" + sSuffix : this.getId();
-		return ((RenderPrefixes.Dummy + sId ? window.document.getElementById(RenderPrefixes.Dummy + sId) : null)) || ((sId ? window.document.getElementById(sId) : null));
+		return document.getElementById(RenderPrefixes.Dummy + sId) || document.getElementById(sId);
 	};
 
 	HTML.prototype.setContent = function(sContent) {
@@ -218,7 +218,7 @@ sap.ui.define([
 			return;
 		}
 
-		var $placeholder = jQuery((RenderPrefixes.Dummy + this.getId() ? window.document.getElementById(RenderPrefixes.Dummy + this.getId()) : null));
+		var $placeholder = jQuery(document.getElementById(RenderPrefixes.Dummy + this.getId()));
 		var $oldContent = RenderManager.findPreservedContent(this.getId());
 		var $newContent;
 		var isPreservedDOM = false;

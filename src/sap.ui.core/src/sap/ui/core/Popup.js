@@ -1035,7 +1035,7 @@ sap.ui.define([
 
 			bContains = aChildPopups.some(function(sChildID) {
 				// sChildID can either be the popup id or the DOM id
-				// therefore we need to try with jQuery.sap.domById to check the DOM id case first
+				// therefore we need to try with document.getElementById to check the DOM id case first
 				// only when it doesn't contain the given DOM, we publish an event to the event bus
 				var oContainDomRef = (sChildID ? window.document.getElementById(sChildID) : null);
 				var bContains = containsOrEquals(oContainDomRef, oDomRef);

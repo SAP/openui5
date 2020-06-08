@@ -1323,7 +1323,7 @@ sap.ui.define([
 
 			var sRootNode = oConfig["xx-rootComponentNode"];
 			if (sRootNode && oComponent.isA('sap.ui.core.UIComponent')) {
-				var oRootNode = (sRootNode ? document.getElementById(sRootNode) : null);
+				var oRootNode = document.getElementById(sRootNode);
 				if (oRootNode) {
 					Log.info("Creating ComponentContainer for Root Component: " + sRootComponent,null,METHOD);
 					var ComponentContainer = sap.ui.requireSync('sap/ui/core/ComponentContainer'),
@@ -2677,7 +2677,7 @@ sap.ui.define([
 			if (id == STATIC_UIAREA_ID) {
 				oDomRef = this.getStaticAreaRef();
 			} else {
-				oDomRef = (oDomRef ? document.getElementById(oDomRef) : null);
+				oDomRef = document.getElementById(oDomRef);
 				if (!oDomRef) {
 					throw new Error("DOM element with ID '" + id + "' not found in page, but application tries to insert content.");
 				}
@@ -3325,7 +3325,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Core.prototype.getStaticAreaRef = function() {
-		var oStaticArea = (STATIC_UIAREA_ID ? document.getElementById(STATIC_UIAREA_ID) : null),
+		var oStaticArea = document.getElementById(STATIC_UIAREA_ID),
 			oConfig, oFirstFocusElement;
 
 		if (!oStaticArea) {
