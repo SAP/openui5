@@ -362,18 +362,9 @@ sap.ui.define([
 	 * Subclasses of Element should override this hook to implement any necessary cleanup.
 	 *
 	 * <pre>
-	 * init: function() {
-	 *     if (Element.prototype.init) {
-	 *         Element.prototype.init.apply(this, arguments);
-	 *     }
-	 *
-	 *     //... do any further initialization of your subclass e.g. ...
-	 *     this.$().bind("click", this.handleClick.bind(this));
-	 * }
-	 *
 	 * exit: function() {
 	 *     // ... do any further cleanups of your subclass e.g. detach events...
-	 *     this.$().unbind("click", this.handleClick);
+	 *     this.$().off("click", this.handleClick);
 	 *
 	 *     if (Element.prototype.exit) {
 	 *         Element.prototype.exit.apply(this, arguments);
