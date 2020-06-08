@@ -588,7 +588,7 @@ sap.ui.define([
 				 *     onClose: null,                                       // default
 				 *     styleClass: "",                                      // default
 				 *     actions: [ sap.m.MessageBox.Action.OK,
-				 *                sap.m.MessageBox.Action.Cancel ]          // default
+				 *                sap.m.MessageBox.Action.Cancel ],         // default
 				 *     emphasizedAction: sap.m.MessageBox.Action.OK,        // default
 				 *     initialFocus: null,                                  // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
