@@ -123,6 +123,7 @@ sap.ui.define([
 			var oToolbar = this.getAggregation('_toolbar');
 			if (!oToolbar) {
 				oToolbar = new Button({
+					id: this.getId() + "-overflowButton",
 					icon: 'sap-icon://overflow',
 					type: ButtonType.Transparent,
 					press: function (oEvent) {
