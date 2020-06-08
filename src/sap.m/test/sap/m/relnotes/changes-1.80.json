@@ -1,0 +1,68 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "9aac02b6ed87fabb4924d43b30fede025808fbe2",
+        "type": "FEATURE",
+        "text": " Display shortcut hint on focus and on hover",
+        "references": []
+      },
+      {
+        "id": "2741c83fae7c254d677f868dab738117dc330f81",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Badge affordance position fixed in custom size",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080149132"
+          }
+        ]
+      },
+      {
+        "id": "5bccd0eb9ea7730e634b0632f0878ac4decf58ec",
+        "type": "FIX",
+        "text": " sap.m.IconTabHeader: Fix the logic of truncating the first tab",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080158238"
+          }
+        ]
+      },
+      {
+        "id": "023656a8a921a92d654f4b8b5b058fe55cfa71e5",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: Ensured pages stack cleared upon removeAllPages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070249903"
+          }
+        ]
+      },
+      {
+        "id": "6ca5db83df944597303eca285b9e85fd9017a0f2",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fixed failing qunit test",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080159964"
+          }
+        ]
+      },
+      {
+        "id": "e6afce2bad8141ee738901c80d78c9896caf2678",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Group header is now announced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080158380"
+          }
+        ]
+      }
+    ]
+  }
+}
