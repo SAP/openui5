@@ -60,12 +60,6 @@ sap.ui.define([
 					only: ["sap/ui/fl/initial/_internal/connectors/KeyUserConnector"]
 				}
 			},
-			"initial/api/connectors/FileListBaseConnector": {
-				group: "Initial API",
-				coverage: {
-					only: ["sap/ui/fl/initial/api/connectors/FileListBaseConnector"]
-				}
-			},
 			"initial/_internal/Storage": {
 				group: "Initial Internal",
 				ui5: {
@@ -509,6 +503,12 @@ sap.ui.define([
 						"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 						"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChange"
 					]
+				}
+			},
+			"write/api/connectors/FileListBaseConnector": {
+				group: "Initial API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/connectors/FileListBaseConnector"]
 				}
 			},
 			"descriptorRelated/internal/Utils": {

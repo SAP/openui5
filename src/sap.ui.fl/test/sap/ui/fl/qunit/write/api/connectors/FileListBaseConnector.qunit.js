@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
-	"sap/ui/fl/initial/api/connectors/FileListBaseConnector",
+	"sap/ui/fl/write/api/connectors/FileListBaseConnector",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/thirdparty/sinon-4"
