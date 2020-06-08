@@ -33,9 +33,26 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var ParametersEditor = MapEditor.extend("sap.ui.integration.designtime.cardEditor.propertyEditor.parametersEditor.ParametersEditor", {
-		xmlFragment: "sap.ui.integration.designtime.cardEditor.propertyEditor.parametersEditor.ParametersEditor",
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
+
+	ParametersEditor.prototype.formatItemConfig = function(oConfigValue) {
+		var oMapItemConfig = MapEditor.prototype.formatItemConfig.apply(this, arguments);
+		var sKey = oConfigValue.key;
+		var sLabel = oConfigValue.value.label || sKey;
+
+		oMapItemConfig.splice(1, 0, {
+			label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.LABEL"),
+			path: "label",
+			value: sLabel,
+			type: "string",
+			enabled: this.getConfig().allowLabelChange !== false,
+			itemKey: sKey,
+			allowBindings: false
+		});
+
+		return oMapItemConfig;
+	};
 
 	ParametersEditor.prototype.processInputValue = function(oValue) {
 		return oValue;
@@ -45,25 +62,16 @@ sap.ui.define([
 		return oValue;
 	};
 
-	ParametersEditor.prototype._itemsFormatter = function(aItems) {
+	ParametersEditor.prototype._configItemsFormatter = function(aItems) {
 		return Array.isArray(aItems) ? aItems.map(function (oItem) {
-			var oValue = _merge({}, oItem.value[0]);
-			if (!oValue.label) {
-				oValue.label = oItem.key;
+			var oConfig = _merge({}, oItem.value);
+			if (!oConfig.label) {
+				oConfig.label = oItem.key;
 			}
-			return oValue;
+			oConfig.itemKey = oItem.key;
+			oConfig.path = "value";
+			return oConfig;
 		}) : [];
-	};
-
-	ParametersEditor.prototype._onLabelChange = function(oEvent, sKey) {
-		var oEditorValue = _merge({}, this.getValue());
-		var sNewLabel =  oEvent.getParameter("newValue");
-
-		var oItemToEdit = oEditorValue[sKey];
-		oItemToEdit.label = sNewLabel;
-		oEditorValue[sKey] = this.processOutputValue(oItemToEdit);
-
-		this.setValue(oEditorValue);
 	};
 
 	ParametersEditor.prototype.setConfig = function(oConfig) {
