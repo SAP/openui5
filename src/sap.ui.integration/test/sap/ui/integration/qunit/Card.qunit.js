@@ -535,6 +535,12 @@ sap.ui.define([
 									"type": "email"
 								},
 								{
+									"label": "Alt Email",
+									"value": "newmail@mail.com",
+									"emailSubject": "Mail Subject",
+									"type": "email"
+								},
+								{
 									"label": "Website",
 									"value": "{company/website}",
 									"url": "{company/url}",
@@ -1822,7 +1828,7 @@ sap.ui.define([
 				assert.equal(aGroups[1].getItems()[1].getItems()[1].getItems()[1].getText(), oData.manager.firstName + " " + oData.manager.lastName, "Should have correct item value.");
 
 				// Group 3 assertions
-				assert.equal(aGroups[2].getItems().length, 9, "Should have 9 items.");
+				assert.equal(aGroups[2].getItems().length, 11, "Should have 11 items.");
 				assert.equal(aGroups[2].getItems()[0].getText(), oManifestContent.groups[2].title, "Should have correct group title.");
 				assert.equal(aGroups[2].getItems()[1].getText(), oManifestContent.groups[2].items[0].label + ":", "Should have correct item label.");
 				assert.equal(aGroups[2].getItems()[2].getText(), oData.company.name, "Should have correct item value.");
@@ -1830,9 +1836,11 @@ sap.ui.define([
 				assert.equal(aGroups[2].getItems()[4].getText(), oData.company.address, "Should have correct item value.");
 				assert.equal(aGroups[2].getItems()[5].getText(), oManifestContent.groups[2].items[2].label + ":", "Should have correct item label.");
 				assert.equal(aGroups[2].getItems()[6].getText(), oData.company.email, "Should have correct item value.");
-				assert.equal(aGroups[2].getItems()[6].getHref(), "mailto:" + oData.company.email + "?subject=" + oData.company.emailSubject, "Should have correct item link.");
-				assert.equal(aGroups[2].getItems()[8].getText(), oData.company.website, "Should have correct item value.");
-				assert.equal(aGroups[2].getItems()[8].getHref(), oData.company.url, "Should have correct item URL.");
+				assert.equal(aGroups[2].getItems()[6].getHref(), "mailto:" + oData.company.email + "?subject=" + oData.company.emailSubject, "Should have correct item links.");
+				assert.equal(aGroups[2].getItems()[8].getText(), "newmail@mail.com", "Should have correct item value.");
+				assert.equal(aGroups[2].getItems()[8].getHref(), "mailto:" + "newmail@mail.com" + "?subject=" + "Mail Subject", "Should have correct item link.");
+				assert.equal(aGroups[2].getItems()[10].getText(), oData.company.website, "Should have correct item value.");
+				assert.equal(aGroups[2].getItems()[10].getHref(), oData.company.url, "Should have correct item URL.");
 
 				done();
 			}.bind(this));
