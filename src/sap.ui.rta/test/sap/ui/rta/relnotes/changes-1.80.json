@@ -1,0 +1,18 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "2fd46505aab57b49095f4c30f24ff1ecda1b4819",
+        "type": "FIX",
+        "text": ": RTA Add Iframe Size Input Unit Handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080133801"
+          }
+        ]
+      }
+    ]
+  }
+}

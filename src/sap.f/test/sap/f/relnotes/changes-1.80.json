@@ -1,0 +1,29 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "f3375216a813747ed466fe9804f99c9dc89174cd",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Now sap.m.FacetFilter properly aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070261586"
+          }
+        ]
+      },
+      {
+        "id": "26f354e9a8f2e232fae220adf2d71cbd9470d9f4",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Allowed usage of sap.m.Avatar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080144970"
+          }
+        ]
+      }
+    ]
+  }
+}

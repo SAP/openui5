@@ -1,0 +1,18 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "63bac8a6055ead18c0ac2adc5aae117f9c118375",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Updated samples for Parameters and Manifest Parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080139817"
+          }
+        ]
+      }
+    ]
+  }
+}
