@@ -351,6 +351,8 @@ sap.ui.define([
 		// Make the whole editor read only
 		this._oEditor.setReadOnly(!bValue);
 
+		this._oEditor.resize();
+
 		// This is required for BCP:1880235178
 		this._oEditor.textInput.setReadOnly(!bValue);
 		return this;
