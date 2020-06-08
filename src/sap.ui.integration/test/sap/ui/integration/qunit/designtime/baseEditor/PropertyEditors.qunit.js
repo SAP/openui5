@@ -389,6 +389,32 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when the type of a config property is changed (check for wrapper re-creation)", function (assert) {
+			var fnDone = assert.async();
+			var oSpy = sandbox.spy();
+
+			this.oPropertyEditors.attachEvent("propertyEditorsChange", oSpy);
+
+			this.oPropertyEditors.setConfig([{
+				"label": "Foo1 property",
+				"path": "/foo1",
+				"type": "string"
+			}]);
+
+			this.oPropertyEditors.ready().then(function () {
+				this.oPropertyEditors.setConfig([{
+					"label": "Foo1 property",
+					"path": "/foo1",
+					"type": "number"
+				}]);
+
+				setTimeout(function () {
+					assert.strictEqual(oSpy.callCount, 1, "Then no re-rendering is triggered");
+					fnDone();
+				}, 16);
+			}.bind(this));
+		});
+
 		QUnit.test("when tags parameter is set, then config is set", function (assert) {
 			this.oPropertyEditors.setTags("foo");
 

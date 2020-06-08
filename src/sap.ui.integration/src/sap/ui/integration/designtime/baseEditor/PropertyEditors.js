@@ -283,9 +283,6 @@ sap.ui.define([
 					|| !Array.isArray(aPreviousConfig)
 					|| !Array.isArray(aConfig)
 					|| aPreviousConfig.length !== aConfig.length
-					|| aPreviousConfig.some(function (oPreviousConfig, iIdx) {
-						return oPreviousConfig.type !== aConfig[iIdx].type;
-					})
 				) {
 					this._removePropertyEditors();
 					this._initPropertyEditors();

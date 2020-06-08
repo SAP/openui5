@@ -31,7 +31,8 @@ function (
 			}
 		},
 		"propertyEditors": {
-			"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+			"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
+			"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
 		}
 	};
 
@@ -112,6 +113,27 @@ function (
 
 			this.oBaseEditor.addContent(oPropertyEditor);
 			this.oBaseEditor.placeAt("qunit-fixture");
+		});
+
+		QUnit.test("when config doesn't contain a path", function (assert) {
+			var oPropertyEditor = new PropertyEditor({
+				config: {
+					"label": "Baz property",
+					"type": "string"
+				},
+				value: "Test"
+			});
+			this.oBaseEditor.addContent(oPropertyEditor);
+			this.oBaseEditor.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			return oPropertyEditor.ready().then(function () {
+				assert.strictEqual(
+					oPropertyEditor.getAggregation("propertyEditor").getValue(),
+					"Test",
+					"then the editor is initialized with the provided value"
+				);
+			});
 		});
 
 		QUnit.test("when both propertyName & config are set", function (assert) {
@@ -713,6 +735,134 @@ function (
 				});
 			});
 
+		});
+	});
+
+	QUnit.module("Configuration change handling", {
+		beforeEach: function (assert) {
+			var fnDone = assert.async();
+			this.oBaseEditor = new BaseEditor({
+				config: mConfig,
+				json: mJson
+			});
+
+			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
+				sap.ui.getCore().applyChanges();
+				fnDone();
+			});
+
+			this.oPropertyEditor = new PropertyEditor();
+			this.oBaseEditor.addContent(this.oPropertyEditor);
+			this.oBaseEditor.placeAt("qunit-fixture");
+		},
+		afterEach: function () {
+			this.oBaseEditor.destroy();
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("when an editor-specific configuration option is changed", function (assert) {
+			var fnDone = assert.async();
+			var oSpy = sandbox.spy();
+
+			this.oPropertyEditor.attachEvent("propertyEditorChange", oSpy);
+
+			this.oPropertyEditor.setConfig({
+				"label": "Foo property",
+				"path": "/foo",
+				"type": "string",
+				"someCustomConfigOption": "foo"
+			});
+
+			this.oPropertyEditor.ready().then(function () {
+				this.oPropertyEditor.setConfig({
+					"label": "New Foo property Label",
+					"path": "/foo",
+					"type": "string",
+					"someCustomConfigOption": "bar"
+				});
+
+				setTimeout(function () {
+					assert.strictEqual(oSpy.callCount, 1, "then no re-rendering is triggered");
+					fnDone();
+				}, 16);
+			}.bind(this));
+		});
+
+		QUnit.test("when an editor is removed via setConfig before it was created", function (assert) {
+			var fnDone = assert.async();
+			var oSpy = sandbox.spy();
+
+			this.oPropertyEditor.attachEvent("propertyEditorChange", oSpy);
+
+			this.oPropertyEditor.setConfig({
+				"label": "Foo property",
+				"path": "/foo",
+				"type": "string"
+			});
+
+			this.oPropertyEditor.setConfig(null);
+
+			setTimeout(function () {
+				assert.ok(oSpy.notCalled, "then the editor creation is canceled");
+				fnDone();
+			}, 16);
+		});
+
+		QUnit.test("when the property type is changed", function (assert) {
+			var fnDone = assert.async();
+			var oSpy = sandbox.spy();
+
+			this.oPropertyEditor.attachEvent("propertyEditorChange", oSpy);
+
+			this.oPropertyEditor.setConfig({
+				"label": "Foo property",
+				"path": "/foo",
+				"type": "string"
+			});
+
+			this.oPropertyEditor.ready().then(function () {
+				this.oPropertyEditor.setConfig({
+					"label": "Foo property",
+					"path": "/foo",
+					"type": "number"
+				});
+
+				setTimeout(function () {
+					// Property editor change should be fired for creation of first editor,
+					// removal of first editor and creation of second editor
+					assert.strictEqual(oSpy.callCount, 3, "then a new editor is created");
+					fnDone();
+				}, 16);
+			}.bind(this));
+		});
+
+		QUnit.test("when path is changed to an absolute path", function (assert) {
+			var oSpy = sandbox.spy();
+			var iRegisteredEditors = this.oBaseEditor.getPropertyEditorsSync().length;
+
+			this.oPropertyEditor.attachEvent("propertyEditorChange", oSpy);
+
+			this.oPropertyEditor.setConfig({
+				"label": "Foo property",
+				"path": "foo",
+				"type": "string"
+			});
+
+			return this.oPropertyEditor.ready().then(function () {
+				this.oPropertyEditor.setConfig({
+					"label": "Foo property",
+					"path": "/foo",
+					"type": "string"
+				});
+
+				return this.oPropertyEditor.ready().then(function () {
+					assert.strictEqual(
+						this.oBaseEditor.getPropertyEditorsSync().length,
+						iRegisteredEditors + 1,
+						"then the editor is registered on the BaseEditor"
+					);
+				}.bind(this));
+			}.bind(this));
 		});
 	});
 
