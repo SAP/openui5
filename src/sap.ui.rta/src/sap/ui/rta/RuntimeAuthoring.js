@@ -292,7 +292,8 @@ function(
 	});
 
 	RuntimeAuthoring.prototype._shouldValidateFlexEnabled = function () {
-		return document.location.hostname.endsWith(".sap" + ".corp");
+		var sHostname = document.location.hostname;
+		return sHostname.endsWith(".sap" + ".corp") || sHostname === "localhost";
 	};
 
 	/**
