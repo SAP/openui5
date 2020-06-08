@@ -88,22 +88,6 @@ sap.ui.define([
 		Then.onTheStatisticsPage.iShouldSeeTheBusyIndicator();
 	});
 
-	opaTest("should press the usage statistics button and see a toast message", function (Given, When, Then) {
-		//Actions
-		When.onTheAppPage.iPressTheUsageStatisticsButton();
-
-		//Assertions
-		Then.onTheAppPage.iShouldSeeMessageToast();
-	});
-
-	opaTest("should press the order statistics button and see a toast message", function (Given, When, Then) {
-		//Actions
-		When.onTheAppPage.iPressTheOrderStatisticsButton();
-
-		//Assertions
-		Then.onTheAppPage.iShouldSeeMessageToast();
-	});
-
 	opaTest("should press the home button and navigate to home view", function (Given, When, Then) {
 		//Actions
 		When.onTheAppPage.iPressTheHomeButton();

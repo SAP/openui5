@@ -172,6 +172,26 @@
 					"pattern": "Statistics",
 					"name": "statistics",
 					"target": "statistics"
+				},
+				{
+					"pattern": "UsageStatistics",
+					"name": "usageStatistics",
+					"target": "usageStatistics"
+				},
+				{
+					"pattern": "OrderStatistics",
+					"name": "orderStatistics",
+					"target": "orderStatistics"
+				},
+				{
+					"pattern": "ImportantLinks",
+					"name": "importantLinks",
+					"target": "importantLinks"
+				},
+				{
+					"pattern": "Legal",
+					"name": "legal",
+					"target": "legal"
 				}
 			],
 			"targets": {
@@ -200,6 +220,22 @@
 				"statistics": {
 					"viewId": "statistics",
 					"viewName": "Statistics"
+				},
+				"usageStatistics": {
+					"viewId": "usageStatistics",
+					"viewName": "UsageStatistics"
+				},
+				"orderStatistics": {
+					"viewId": "orderStatistics",
+					"viewName": "OrderStatistics"
+				},
+				"importantLinks": {
+					"viewId": "importantLinks",
+					"viewName": "ImportantLinks"
+				},
+				"legal": {
+					"viewId": "legal",
+					"viewName": "Legal"
 				}
 			}
 		}
