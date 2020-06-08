@@ -84,8 +84,8 @@ sap.ui.define([
 	HideControl.getCondenserInfo = function(oChange) {
 		return {
 			affectedControl: oChange.getSelector(),
-			type: sap.ui.fl.ClassificationType.NonIndexRelated,
-			subtype: sap.ui.fl.ClassificationSubtypes.Reverse,
+			type: sap.ui.fl.condenser.ClassificationType.NonIndexRelated,
+			subtype: sap.ui.fl.condenser.ClassificationSubtypes.Reverse,
 			uniqueKey: PROPERTY_NAME
 		};
 	};

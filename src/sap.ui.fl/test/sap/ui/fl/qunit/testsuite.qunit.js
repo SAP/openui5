@@ -1026,10 +1026,10 @@ sap.ui.define([
 	if (bCompAvailable && bMdcAvailable) {
 		mConfig = merge({}, mConfig, {
 			tests: {
-				Condenser: {
+				"write/_internal/condenser/Condenser": {
 					group: "Write Internal",
 					coverage: {
-						only: ["sap/ui/fl/Condenser"]
+						only: ["sap/ui/fl/write/_internal/condenser/"]
 					},
 					ui5: {
 						resourceroots: {

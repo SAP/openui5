@@ -181,27 +181,22 @@ sap.ui.define([
 	};
 
 	/**
-	 * Available classification types
+	 * Available classification types for the condenser
 	 *
 	 * @enum {string}
 	 */
-	sap.ui.fl.ClassificationType = {
-		IndexRelated :"indexRelated",
-		NonIndexRelated: "nonIndexRelated"
-	};
-
-	/**
-	 * Available classification subtypes
-	 *
-	 * @enum {string}
-	 */
-	// TODO: we need some docu somewhere that those 3 are only valid for IndexRelated, and the other two only for non-index relateds
-	 sap.ui.fl.ClassificationSubtypes = {
-		LastOneWins: "lastOneWins",
-		Reverse: "reverse",
-		Move: "move",
-		Create: "create",
-		Destroy: "destroy"
+	sap.ui.fl.condenser = {
+		ClassificationType: {
+			IndexRelated :"indexRelated",
+			NonIndexRelated: "nonIndexRelated"
+		},
+		ClassificationSubtypes: {
+			LastOneWins: "lastOneWins",
+			Reverse: "reverse",
+			Move: "move",
+			Create: "create",
+			Destroy: "destroy"
+		}
 	};
 
 	RegistrationDelegator.registerAll();
