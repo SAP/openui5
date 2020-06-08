@@ -53,14 +53,18 @@
 						<td>type</td>
 						<td>string</td>
 						<td>Yes</td>
-						<td> A string that represents the unit of measurement type.</td>
+						<td>
+							A string that represents the unit of measurement type.
+							Allowed values are the default units defined in the CLDR.
+							For more details read about <a data-demokit-href="/topic/8e618a8d93cb4f92adc911b96047eb8d" target="_blank">Unit Formatting</a>.
+						</td>
 						<td>1.74</td>
 					</tr>
 					<tr>
 						<td>options</td>
 						<td>object</td>
 						<td>No</td>
-						<td><a id="linkToNumberFormatOptions" target="_blank">Formatting options.</a></td>
+						<td><a data-demokit-href="/api/sap.ui.core.format.NumberFormat/methods/sap.ui.core.format.NumberFormat.getCurrencyInstance" target="_blank">Formatting options.</a></td>
 						<td>1.74</td>
 					</tr>
 					<tr>
@@ -116,15 +120,7 @@
 	</div>
 </div>
 
-<script>
-		var sPathToDemoKitLocal = "../../../../../../../../../../documentation.html#";
-		var sPathToDemoKit = "../../../../../../../../../../#";
 
-		if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-			document.getElementById("linkToNumberFormatOptions").href = sPathToDemoKitLocal + "/api/sap.ui.core.format.NumberFormat/methods/sap.ui.core.format.NumberFormat.getCurrencyInstance";
-		} else {
-			document.getElementById("linkToNumberFormatOptions").href = sPathToDemoKit + "/api/sap.ui.core.format.NumberFormat/methods/sap.ui.core.format.NumberFormat.getCurrencyInstance";
-		}
-	</script>
+<script src="../../../scripts/topic.js"></script>
 </body>
 </html>
