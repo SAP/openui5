@@ -8284,6 +8284,48 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Only selected keys should be in the readonly popover", function (assert) {
+		// Arrange
+		var oMultiComboBox = new MultiComboBox({
+			width: "300px",
+			items: [
+				new Item({text: "Token 1", key: "token1"}),
+				new Item({text: "Token 2", key: "token2"}),
+				new Item({text: "Token 3", key: "token3"}),
+				new Item({text: "Token 4", key: "token4"}),
+				new Item({text: "Token 5", key: "token5"}),
+				new Item({text: "Token 6", key: "token6"}),
+				new Item({text: "Token 7", key: "token7"}),
+				new Item({text: "Token 8", key: "token8"}),
+				new Item({text: "Token 9", key: "token9"}),
+				new Item({text: "Token 10", key: "token10"})
+
+			],
+			selectedKeys: ["token1", "token2", "token3", "token4"],
+			editable: false
+		}).placeAt("MultiComboBox-content");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oMultiComboBox.$().find(".sapMTokenizerIndicator")[0].click();
+		this.clock.tick(nPopoverAnimationTick);
+
+		assert.strictEqual(oMultiComboBox._getList().getItems().length, 4, "Only the selected items should be in the list");
+
+		// Act
+		oMultiComboBox.close();
+		this.clock.tick(nPopoverAnimationTick);
+		oMultiComboBox.setEditable(false);
+		oMultiComboBox.$().find(".sapMTokenizerIndicator")[0].click();
+		this.clock.tick(nPopoverAnimationTick);
+
+		assert.strictEqual(oMultiComboBox._getList().getItems().length, 4, "Only the selected items should be in the list");
+
+		// Cleanup
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.module("One extra long token handling", {
 		beforeEach: function(){
 			this.oMultiComboBox = new MultiComboBox({
