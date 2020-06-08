@@ -1,0 +1,47 @@
+[
+	{
+		"Name": "Comfort Easy",
+		"Description": "32 GB Digital Assistant",
+		"Highlight": "Success",
+		"Expected": 300000,
+		"Actual": 330000,
+		"Target": 280000,
+		"ChartColor": "Good"
+	},
+	{
+		"Name": "ITelO Vault",
+		"Description": "Digital Organizer",
+		"Highlight": "Success",
+		"Expected": 230000,
+		"Actual": 225000,
+		"Target": 210000,
+		"ChartColor": "Good"
+	},
+	{
+		"Name": "Notebook Professional 15",
+		"Description": "Multitouch LCD",
+		"Highlight": "Success",
+		"Expected": 170000,
+		"Actual": 150000,
+		"Target": 149000,
+		"ChartColor": "Good"
+	},
+	{
+		"Name": "Ergo Screen E-I",
+		"Description": "Optimum Hi-Resolution max.",
+		"Highlight": "Warning",
+		"Expected": 120000,
+		"Actual": 100000,
+		"Target": 100000,
+		"ChartColor": "Neutral"
+	},
+	{
+		"Name": "Laser Professional Eco",
+		"Description": "Powerful 500 MHz processor",
+		"Highlight": "Error",
+		"Expected": 90000,
+		"Actual": 60000,
+		"Target": 75000,
+		"ChartColor": "Error"
+	}
+]

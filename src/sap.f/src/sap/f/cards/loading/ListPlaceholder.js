@@ -72,9 +72,18 @@ sap.ui.define([
 					oRm.openStart("div")
 						.class("sapFCardContentShimmerPlaceholderItem");
 
-					if (oItem && !oItem.icon && !oItem.description) {
-						oRm.class("sapFCardContentShimmerPlaceholderNoIcon");
+					if (oItem && oItem.icon) {
+						oRm.class("sapFCardContentShimmerPlaceholderWithIcon");
 					}
+
+					if (oItem && oItem.description) {
+						oRm.class("sapFCardContentShimmerPlaceholderWithDescription");
+					}
+
+					if (oItem && oItem.chart) {
+						oRm.class("sapFCardContentShimmerPlaceholderWithChart");
+					}
+
 					oRm.openEnd();
 
 					if (oItem && oItem.icon) {
@@ -104,6 +113,15 @@ sap.ui.define([
 							.openEnd()
 							.close("div");
 					}
+
+					if (oItem && oItem.chart) {
+						oRm.openStart("div")
+							.class("sapFCardContentShimmerPlaceholderItemText")
+							.class("sapFCardLoadingShimmer")
+							.openEnd()
+							.close("div");
+					}
+
 					oRm.close("div");
 					oRm.close("div");
 				}

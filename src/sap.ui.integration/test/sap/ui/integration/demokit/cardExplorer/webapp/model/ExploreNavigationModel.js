@@ -261,6 +261,40 @@ sap.ui.define([
 									columns: 3
 								},
 								manifestUrl: '/samples/list/quickLinks.json'
+							},
+							{
+								title: 'Bullet Chart',
+								key: 'bulletChart',
+								experimental: true,
+								files: [
+									{
+										url: '/samples/list/bulletChart/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/list/bulletChart/data.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
+							},
+							{
+								title: 'Stacked Bar Chart',
+								key: 'stackedBar',
+								experimental: true,
+								files: [
+									{
+										url: '/samples/list/stackedBar/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/list/stackedBar/data.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
 							}
 						]
 					},

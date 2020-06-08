@@ -4,17 +4,19 @@
 sap.ui.define([
 	"./BaseListContent",
 	"./ListContentRenderer",
+	"sap/m/List",
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/BindingHelper",
-	"sap/m/List",
-	"sap/m/StandardListItem"
+	"sap/ui/integration/controls/Microchart",
+	"sap/ui/integration/controls/ListContentItem"
 ], function (
 	BaseListContent,
 	ListContentRenderer,
+	List,
 	library,
 	BindingHelper,
-	List,
-	StandardListItem
+	Microchart,
+	ListContentItem
 ) {
 	"use strict";
 
@@ -88,7 +90,7 @@ sap.ui.define([
 			}
 		});
 
-		this._oItemTemplate = new StandardListItem({
+		this._oItemTemplate = new ListContentItem({
 			iconDensityAware: false
 		});
 	};
@@ -103,6 +105,17 @@ sap.ui.define([
 			this._oItemTemplate.destroy();
 			this._oItemTemplate = null;
 		}
+	};
+
+	/**
+	 * @override
+	 */
+	ListContent.prototype.loadDependencies = function (oConfiguration) {
+		if (!oConfiguration || !oConfiguration.item || !oConfiguration.item.chart) {
+			return Promise.resolve();
+		}
+
+		return Microchart.loadDependencies();
 	};
 
 	/**
@@ -161,7 +174,11 @@ sap.ui.define([
 			}.bind(this));
 		}
 
-		this._oItemTemplate = new StandardListItem(mSettings);
+		if (mItem.chart) {
+			mSettings.microchart = Microchart.create(mItem.chart);
+		}
+
+		this._oItemTemplate = new ListContentItem(mSettings);
 		this._oActions.setAreaType(AreaType.ContentItem);
 		this._oActions.attach(mItem, this);
 
@@ -181,7 +198,7 @@ sap.ui.define([
 	ListContent.prototype._setStaticItems = function (mItems) {
 		var oList = this._getList();
 		mItems.forEach(function (oItem) {
-			var oListItem = new StandardListItem({
+			var oListItem = new ListContentItem({
 				iconDensityAware: false,
 				title: oItem.title ? oItem.title : "",
 				description: oItem.description ? oItem.description : "",
