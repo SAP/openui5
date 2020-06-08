@@ -3070,6 +3070,22 @@ sap.ui.define([
 		fnIsRelativeWidth.restore();
 	});
 
+	QUnit.module("Accessibility");
+
+	QUnit.test("Aria attributes - OverflowButton", function (assert) {
+		// arrange
+		var oOverflowTB = createOverflowToolbar(),
+			sExpectedAriaRoleDescription = sap.ui.getCore()
+				.getLibraryResourceBundle("sap.m")
+				.getText(oOverflowTB.constructor.ARIA_ROLE_DESCRIPTION);
+
+		// assert
+		assert.strictEqual(oOverflowTB.$().attr("aria-roledescription"), sExpectedAriaRoleDescription,  "aria-roledescription value is as expected");
+
+		// clean
+		oOverflowTB.destroy();
+	});
+
 	QUnit.module("Special cases", {
 		beforeEach: function () {
 			sinon.config.useFakeTimers = false;
