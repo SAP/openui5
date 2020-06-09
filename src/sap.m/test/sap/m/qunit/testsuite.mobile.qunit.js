@@ -519,6 +519,8 @@ sap.ui.define([
 			IconTabBar: {
 				title: "QUnit Page for sap.m.IconTabBar",
 				sinon: {
+					version: 4,
+					qunitBridge: true,
 					useFakeTimers: true
 				}
 			},
@@ -1350,8 +1352,9 @@ sap.ui.define([
 					version: 2
 				},
 				sinon: {
-					version: 1,
-					useFakeTimers: true
+					version: 4,
+					useFakeTimers: true,
+					qunitBridge: true
 				}
 			},
 			TabStripItem: {
@@ -1452,6 +1455,9 @@ sap.ui.define([
 				_alternativeTitle: "QUnit page for sap.m.TimePicker",
 				ui5: {
 					language: "en-US"
+				},
+				sinon: {
+					version: 4
 				}
 			},
 			TimePickerSliders: {
