@@ -13,31 +13,48 @@ sap.ui.define(["./CommandShortcutHints", "./Popup", "./InvisibleText"],
 	 * Please be aware, that only controls supporting a shortcut hint should apply this mixin to their prototype.
 	 *
 	 * @param {object} [options] An object which defines the options
-	 * @param {string} [options.domrefid_suffix] The suffix used to identify the DOM node that
+	 * @param {string} [options.domrefid_suffix] A suffix used to identify the DOM node that
 	 * shows the shortcut hint popup. It is concatenated with the ID of the control that is registered
 	 * for a command execution. (Attaches the popup to the element with ID CONTROL_ID + domrefid_suffix)
+	 * If it is omitted the CONTROL_ID will be used without suffix
 	 * @param {string} [options.position] Left and top offset of the shortcut hint popup from the default positioning
 	 * (center top of the popup appears at center bottom of the referring DOM node)- e.g. "5 0"
 	 * @param {boolean} [options.addAccessibilityLabel] Whether we add an area-describedby label - ID to a hidden
 	 * label with the content of the replaced native tooltip (for screen readers)
 	 *
-	 * @protected
+	 * @private
 	 * @alias sap.ui.core.CommandShortcutHintsMixin
 	 * @mixin
 	 * @since 1.80.0
 	 * @ui5-restricted sap.m.Button
 	 */
 	var CommandShortcutHintsMixin = function(options) {
+		this._shortcutHintOptions = options;
 		this._attachCommand = _attachCommand;
 		this._getHintPopup = _getHintPopup;
-		this._createPopup = _createPopup;
+		this._createShortcutHintPopup = _createShortcutHintPopup;
+		this._getShortcutHintRef = _getShortcutHintRef;
+		this._getShortcutHintText = _getShortcutHintText;
+		this._updateShortcutHintAccLabel = _updateShortcutHintAccLabel;
+
 		this.showShortcutHint = showShortcutHint;
 		this.hideShortcutHint = hideShortcutHint;
-		this.getShortcutHintRef = getShortcutHintRef;
-		this.getShortcutHintText = getShortcutHintText;
-		this.updateAccessibilityLabel = updateAccessibilityLabel;
-		this._shortcutHintOptions = options;
 	};
+
+	CommandShortcutHintsMixin.init = function(oControl) {
+		initShortcutHints.call(oControl);
+	};
+
+	function initShortcutHints() {
+		this.attachEvent("EventHandlerChange", function(oEvent) {
+			var oFn = oEvent.getParameter("func");
+
+			if (oEvent.getParameter("type") === "listenerAttached"
+				&& oFn && oFn._sapui_commandName) {
+				this._attachCommand(oFn._sapui_commandName);
+			}
+		});
+	}
 
 	/**
 	 * Called when a command is attached as an event handler to enhance the control
@@ -55,7 +72,7 @@ sap.ui.define(["./CommandShortcutHints", "./Popup", "./InvisibleText"],
 
 				if (sInnerId) {
 					oElement = document.getElementById(sInnerId);
-					oElement.setAttribute("aria-keyshortcuts", this.getShortcutHintText());
+					oElement.setAttribute("aria-keyshortcuts", this._getShortcutHintText());
 
 					sTitleAttribute = oElement.getAttribute("title");
 					if (sTitleAttribute) {
@@ -87,7 +104,7 @@ sap.ui.define(["./CommandShortcutHints", "./Popup", "./InvisibleText"],
 	/**
 	 * Gets the DOM reference next to which the shortcut hint will be positioned.
 	 */
-	function getShortcutHintRef() {
+	function _getShortcutHintRef() {
 		return document.getElementById(getShortcutHintRefId.call(this));
 	}
 
@@ -100,8 +117,8 @@ sap.ui.define(["./CommandShortcutHints", "./Popup", "./InvisibleText"],
 			sMy = Popup.Dock.CenterTop,
 			sOf = Popup.Dock.CenterBottom,
 			oPopup = this._getHintPopup(),
-			$ShortcutHintRef = this.getShortcutHintRef(),
-			sShortcut = this.getShortcutHintText();
+			$ShortcutHintRef = this._getShortcutHintRef(),
+			sShortcut = this._getShortcutHintText();
 
 		// cancel the opening if the element is not visible
 		if (!_isElementVisible($ShortcutHintRef) || !_isElementInViewport($ShortcutHintRef)) {
@@ -114,9 +131,9 @@ sap.ui.define(["./CommandShortcutHints", "./Popup", "./InvisibleText"],
 		}
 
 		if (!oPopup) {
-			oPopup = this._createPopup(sShortcut);
+			oPopup = this._createShortcutHintPopup(sShortcut);
 		}
-		oPopup.oContent.children[0].innerHTML = sShortcut;
+		oPopup.oContent.children[0].textContent = sShortcut;
 
 		// in the mass case open, only once with the position for the lead control of the group
 		if (!oPopup.isOpen()) {
@@ -151,7 +168,7 @@ sap.ui.define(["./CommandShortcutHints", "./Popup", "./InvisibleText"],
 	/**
 	 * Gets the shortcut hint text for the command attached to this control.
 	 */
-	function getShortcutHintText() {
+	function _getShortcutHintText() {
 		var oCommand = CommandShortcutHints.getCommandForControl(this.getId());
 
 		if (oCommand) {
@@ -196,7 +213,7 @@ sap.ui.define(["./CommandShortcutHints", "./Popup", "./InvisibleText"],
 	/**
 	 * Creates a popup for this shortcut hint.
 	 */
-	function _createPopup(sTextContent) {
+	function _createShortcutHintPopup(sTextContent) {
 		var oPopup,
 			oContainerElement,
 			oTextContentElement;
@@ -206,7 +223,8 @@ sap.ui.define(["./CommandShortcutHints", "./Popup", "./InvisibleText"],
 
 		oTextContentElement = document.createElement("div");
 		oTextContentElement.classList.add("sapUiHintText");
-		oTextContentElement.innerHTML = sTextContent;
+		oTextContentElement.textContent = sTextContent;
+
 		oContainerElement.appendChild(oTextContentElement);
 
 		oPopup = new Popup(
@@ -231,7 +249,7 @@ sap.ui.define(["./CommandShortcutHints", "./Popup", "./InvisibleText"],
 	/**
 	 * Maintains the accessibility label's content and reference to the control's DOM.
 	 */
-	function updateAccessibilityLabel() {
+	function _updateShortcutHintAccLabel() {
 		var oInvText,
 			sInvTextId,
 			oRef;
@@ -242,7 +260,7 @@ sap.ui.define(["./CommandShortcutHints", "./Popup", "./InvisibleText"],
 
 		oInvText = getInvisibleText();
 		sInvTextId = oInvText.getId();
-		oRef = this.getShortcutHintRef();
+		oRef = this._getShortcutHintRef();
 
 		oInvText.setText(this._titleAttribute);
 
@@ -316,4 +334,4 @@ sap.ui.define(["./CommandShortcutHints", "./Popup", "./InvisibleText"],
 	}
 
 	return CommandShortcutHintsMixin;
-}, /* bExport= */ true);
+});

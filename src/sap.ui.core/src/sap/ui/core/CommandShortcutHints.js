@@ -11,16 +11,13 @@ sap.ui.define([
 	function(checkMouseEnterOrLeave, containsOrEquals, Element, CommandExecution) {
 		"use strict";
 
+		/*
+		* This is a registry for all controls interested in showing command shortcuts.
+		*/
+		var CommandShortcutHints = {};
+
 		var oSingletonInstance = Object.create(null);
 		oSingletonInstance.mRegisteredControls = {};
-
-	/*
-	 * A registry for all controls interested in showing command shortcuts.
-	 * @private
-	 */
-		var CommandShortcutHints = function() {
-			throw new Error();
-		};
 
 		/*
 		 * Registers the control for showing a commands' shortcut hint on focus and
@@ -31,7 +28,7 @@ sap.ui.define([
 
 			oControl.addEventDelegate({
 				"onfocusin": function(oEvent) {
-					var oShortcutHintRef = oControl.getShortcutHintRef();
+					var oShortcutHintRef = oControl._getShortcutHintRef();
 
 					if (!containsOrEquals(oShortcutHintRef, oEvent.target)) {
 						return;
@@ -39,14 +36,11 @@ sap.ui.define([
 
 					CommandShortcutHints.hideAll();
 
-					oControl.updateAccessibilityLabel();
+					oControl._updateShortcutHintAccLabel();
 					oControl.showShortcutHint();
-				}
-			}, oControl);
-
-			oControl.addEventDelegate({
+				},
 				"onfocusout": function(oEvent) {
-					var oShortcutHintRef = oControl.getShortcutHintRef();
+					var oShortcutHintRef = oControl._getShortcutHintRef();
 
 					if (!containsOrEquals(oShortcutHintRef, oEvent.target)) {
 						return;
@@ -54,12 +48,9 @@ sap.ui.define([
 
 					var sShortcut = CommandExecution.find(oControl, sCommandName)._getCommandInfo().shortcut;
 					oControl.hideShortcutHint(sShortcut);
-				}
-			}, oControl);
-
-			oControl.addEventDelegate({
+				},
 				"onmouseover": function(oEvent) {
-					var oShortcutHintRef = oControl.getShortcutHintRef();
+					var oShortcutHintRef = oControl._getShortcutHintRef();
 
 					if (!containsOrEquals(oShortcutHintRef, oEvent.target)) {
 						return;
@@ -70,12 +61,9 @@ sap.ui.define([
 
 						oControl.showShortcutHint();
 					}
-				}
-			}, oControl);
-
-			oControl.addEventDelegate({
+				},
 				"onmouseout": function(oEvent) {
-					var oShortcutHintRef = oControl.getShortcutHintRef();
+					var oShortcutHintRef = oControl._getShortcutHintRef();
 
 					if (!containsOrEquals(oShortcutHintRef, oEvent.target)) {
 						return;
