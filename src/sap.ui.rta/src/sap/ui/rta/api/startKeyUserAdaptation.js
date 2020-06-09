@@ -24,9 +24,6 @@ sap.ui.define([
 	 * Starts key user adaptation, initiated for an application at the passed root control instance.
 	 * It subsequently extends to all valid child controls.
 	 *
-	 * Example: If the whole application needs to be adapted,
-	 * then this application's components container {@see sap.ui.core.ComponentContainer} should be passed as the root control to this function.
-	 *
 	 * @function
 	 * @experimental since 1.71
 	 * @since 1.71
