@@ -2,18 +2,18 @@
  * ${copyright}
  */
 sap.ui.define([
-		"sap/ui/integration/library",
-		"sap/ui/integration/cards/BaseContent",
-		"sap/ui/integration/util/BindingResolver",
-		"sap/viz/ui5/controls/VizFrame",
-		"sap/viz/ui5/controls/common/feeds/FeedItem",
-		"sap/viz/ui5/data/FlattenedDataset",
-		"sap/base/Log",
-		"sap/ui/core/Core",
-		"jquery.sap.global"
-	],
-	function (library, BaseContent, BindingResolver, VizFrame, FeedItem, FlattenedDataset, Log, Core, jQuery) {
+	"sap/ui/integration/library",
+	"sap/ui/integration/cards/BaseContent",
+	"sap/ui/integration/util/BindingResolver",
+	"sap/base/Log",
+	"sap/ui/core/Core",
+	"jquery.sap.global"
+],
+	function (library, BaseContent, BindingResolver, Log, Core, jQuery) {
 		"use strict";
+
+		// lazy dependencies, loaded on the first attempt to create AnalyticalContent
+		var VizFrame, FeedItem, FlattenedDataset;
 
 		/**
 		 * Enumeration with supported legend positions.
@@ -77,6 +77,32 @@ sap.ui.define([
 		var AnalyticalContent = BaseContent.extend("sap.ui.integration.cards.AnalyticalContent", {
 			renderer: {}
 		});
+
+		/**
+		 * @override
+		 */
+		AnalyticalContent.prototype.loadDependencies = function (oConfig) {
+			return new Promise(function (resolve, reject) {
+				Core.loadLibrary("sap.viz", { async: true })
+					.then(function () {
+						sap.ui.require([
+							"sap/viz/ui5/controls/VizFrame",
+							"sap/viz/ui5/controls/common/feeds/FeedItem",
+							"sap/viz/ui5/data/FlattenedDataset"
+						], function (_VizFrame, _FeedItem, _FlattenedDataset) {
+							VizFrame = _VizFrame;
+							FeedItem = _FeedItem;
+							FlattenedDataset = _FlattenedDataset;
+							resolve();
+						}, function (sErr) {
+							reject(sErr);
+						});
+					})
+					.catch(function () {
+						reject("Analytical content type is not available with this distribution.");
+					});
+			});
+		};
 
 		/**
 		 * Creates vizFrame readable vizProperties object.
