@@ -481,8 +481,8 @@ sap.ui.define([
 	/**
 	 * Closes the connection.
 	 *
-	 * @param {int} [iCode] Status code that explains why the connection is closed. Must either be 1000, or
-	 *                      between 3000 and 4999 (default 1000)
+	 * @param {int} [iCode=1000] Status code that explains why the connection is closed. Must either be 1000, or
+	 *                      between 3000 and 4999
 	 * @param {string} [sReason] Closing reason as a string
 	 * @returns {sap.ui.core.ws.WebSocket} Reference to <code>this</code> in order to allow method chaining
 	 * @public
