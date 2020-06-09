@@ -1812,6 +1812,13 @@ function(
 
 		if (oTokenToDelete && oTokenToDelete.getEditable()) {
 			oTokenToDelete = this.removeToken(oTokenToDelete);
+
+			this.fireTokenUpdate({
+				addedTokens : [],
+				removedTokens : [oTokenToDelete],
+				type: Tokenizer.TokenUpdateType.Removed
+			});
+
 			oTokenToDelete.destroy();
 			this._getTokensList().removeItem(oListItem);
 		}

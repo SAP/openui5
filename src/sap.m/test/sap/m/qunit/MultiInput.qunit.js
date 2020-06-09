@@ -2184,6 +2184,7 @@ sap.ui.define([
 		var oListItem = new StandardListItem(), aTokens,
 			oToken = new Token("token", {text: "text123", key: "key123"}),
 			oSpy = this.spy(this.multiInput.getAggregation("tokenizer"), "removeToken"),
+			oTokenUpdateSpy = this.spy(this.multiInput, "fireTokenUpdate"),
 			oTokenDestroySpy = this.spy(Token.prototype, "destroy"),
 			oFakeEvent = new Event(),
 			oSetSelectionStub = sinon.stub(Event.prototype, "getParameter");
@@ -2202,6 +2203,8 @@ sap.ui.define([
 		// act
 		this.multiInput._handleNMoreItemDelete(oFakeEvent);
 		assert.ok(oTokenDestroySpy.called, "The token is destroyed on deselection.");
+		assert.ok(oTokenUpdateSpy.calledOnce, "tokenUpdate event is fired once upond token removal.");
+
 		aTokens = this.multiInput.getTokens();
 
 		// assert
