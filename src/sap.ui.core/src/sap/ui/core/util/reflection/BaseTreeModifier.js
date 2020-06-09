@@ -41,18 +41,18 @@ sap.ui.define([
 	 */
 	return /** @lends sap.ui.core.util.reflection.BaseTreeModifier */{
 
-		/** Function determining the control targeted by the change.
-		* The function distinguishes between local IDs generated starting with 1.40 and the global IDs generated in previous versions.
-		*
-		* @param {object} oSelector - Target of a flexibility change
-		* @param {string} [oSelector.id] - ID of the control targeted by the change. (name or id property is mandatory for selector)
-		* @param {boolean} [oSelector.isLocalId] - <code>true</code> if the ID within the selector is a local ID or a global ID
-		* @param {string} [oSelector.name] - Name of the extension point targeted by the change. (name or id property is mandatory for selector)
-		* @param {sap.ui.core.UIComponent} oAppComponent - Application component
-		* @param {Element} oView - For XML processing only: XML node of the view
-		* @returns {sap.ui.base.ManagedObject|Element} Control representation targeted within the selector
-		* @throws {Error} In case no control could be determined, an error is thrown
-		* @public
+		/**
+		 * Function determining the control targeted by the change.
+		 *
+		 * @param {object} oSelector - Target of a flexibility change
+		 * @param {string} [oSelector.id] - ID of the control targeted by the change. (name or id property is mandatory for selector)
+		 * @param {boolean} [oSelector.isLocalId] - <code>true</code> if the ID within the selector is a local ID or a global ID
+		 * @param {string} [oSelector.name] - Name of the extension point targeted by the change. (name or id property is mandatory for selector)
+		 * @param {sap.ui.core.UIComponent} oAppComponent - Application component
+		 * @param {Element} oView - For XML processing only: XML node of the view
+		 * @returns {sap.ui.base.ManagedObject|Element} Control representation targeted within the selector
+		 * @throws {Error} In case no control could be determined, an error is thrown
+		 * @public
 		*/
 		bySelector: function (oSelector, oAppComponent, oView) {
 			var sControlId;
@@ -65,15 +65,16 @@ sap.ui.define([
 			return this._byId(sControlId, oView);
 		},
 
-		/** Function determining the control ID from the selector.
-		* The function distinguishes between local IDs generated starting with 1.40 and the global IDs generated in previous versions.
-		* @param {object} oSelector - Target of a flexiblity change
-		* @param {string} oSelector.id - ID of the control targeted by the change
-		* @param {boolean} oSelector.isLocalId - <code>true</code> if the ID within the selector is a local ID or a global ID
-		* @param {sap.ui.core.UIComponent} oAppComponent - Application component
-		* @returns {string} ID of the control
-		* @throws {Error} In case no control could be determined, an error is thrown
-		* @protected
+		/**
+		 * Function determining the control ID from the selector.
+		 *
+		 * @param {object} oSelector - Target of a flexiblity change
+		 * @param {string} oSelector.id - ID of the control targeted by the change
+		 * @param {boolean} oSelector.isLocalId - <code>true</code> if the ID within the selector is a local ID or a global ID
+		 * @param {sap.ui.core.UIComponent} oAppComponent - Application component
+		 * @returns {string} ID of the control
+		 * @throws {Error} In case no control could be determined, an error is thrown
+		 * @protected
 		*/
 		getControlIdBySelector: function (oSelector, oAppComponent) {
 			if (!oSelector){
@@ -94,26 +95,13 @@ sap.ui.define([
 				} else {
 					throw new Error("App Component instance needed to get a control's ID from selector");
 				}
-			} else {
-				// does nothing except in the case of a FLP prefix
-				var pattern = /^application-[^-]*-[^-]*-component---/igm;
-				var bHasFlpPrefix = !!pattern.exec(oSelector.id);
-				if (bHasFlpPrefix) {
-					sControlId = sControlId.replace(/^application-[^-]*-[^-]*-component---/g, "");
-					if (oAppComponent) {
-					sControlId = oAppComponent.createId(sControlId);
-					} else {
-					throw new Error("App Component instance needed to get a control's ID from selector");
-					}
-				}
 			}
 
 			return sControlId;
 		},
 
-
-		/** Function for determining the selector that is used later to apply a change for a given control.
-		 * The function distinguishes between local IDs generated starting with 1.40 and the global IDs generated in previous versions.
+		/**
+		 * Function for determining the selector that is used later to apply a change for a given control.
 		 *
 		 * @param {sap.ui.base.ManagedObject|Element|string} vControl - Control or ID string for which the selector should be determined
 		 * @param {sap.ui.core.Component} oAppComponent - Application component, needed only if <code>vControl</code> is a string or XML node

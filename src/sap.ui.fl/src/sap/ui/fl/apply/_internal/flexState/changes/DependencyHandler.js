@@ -65,22 +65,7 @@ sap.ui.define([
 		var oSelector = oChange.getSelector();
 		if (oSelector) {
 			if (oSelector.id) {
-				var sSelectorId = getCompleteIdFromSelector(oSelector, oAppComponent);
-
-				addMapEntry(sSelectorId, oChange, mChangesMap);
-
-				// if the localId flag is missing and the selector has a component prefix that is not matching the
-				// application component, adds the change for a second time replacing the component ID prefix with
-				// the application component ID prefix
-				if (oSelector.idIsLocal === undefined && sSelectorId.indexOf("---") !== -1) {
-					var sComponentPrefix = sSelectorId.split("---")[0];
-
-					if (sComponentPrefix !== oAppComponent.getId()) {
-						sSelectorId = sSelectorId.split("---")[1];
-						sSelectorId = oAppComponent.createId(sSelectorId);
-						addMapEntry(sSelectorId, oChange, mChangesMap);
-					}
-				}
+				addMapEntry(getCompleteIdFromSelector(oSelector, oAppComponent), oChange, mChangesMap);
 			} else {
 				//If the selector id is not defined, add the change to the list to make sure it has the correct order
 				addChangeIntoList(mChangesMap, oChange);
