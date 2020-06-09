@@ -101,6 +101,14 @@ sap.ui.define([
 					multiple: true,
 					singularName: "filterItem",
 					bindable: "bindable"
+				},
+
+				/**
+				 * Defines an optional message strip to be displayed in the content area
+				 */
+				messageStrip: {
+					type: "sap.m.MessageStrip",
+					multiple: false
 				}
 			},
 			events: {
@@ -501,6 +509,12 @@ sap.ui.define([
 		if (this._bUpdateRequired) {
 			this._bUpdateRequired = false;
 
+			var oMessageStrip = this.getMessageStrip();
+			if (oMessageStrip) {
+				oMessageStrip.addStyleClass("sapUiResponsiveMargin");
+				this.insertAggregation("content", oMessageStrip, 0);
+			}
+
 			aKeyFields = [];
 			sModelName = (this.getBindingInfo("items") || {}).model;
 			var fGetValueOfProperty = function(sName, oContext, oItem) {
@@ -735,6 +749,24 @@ sap.ui.define([
 		if (sReason === "change" && !this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
 			this.invalidate();
+		}
+	};
+
+	P13nFilterPanel.prototype.setMessageStrip = function(oMessageStrip) {
+		this.setAggregation("messageStrip", oMessageStrip, true);
+
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
+
+		return this;
+	};
+
+	P13nFilterPanel.prototype.updateMessageStrip = function(sReason) {
+		this.updateAggregation("messageStrip");
+
+		if (sReason === "change" && !this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
 		}
 	};
 
