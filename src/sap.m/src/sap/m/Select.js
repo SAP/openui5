@@ -1490,7 +1490,9 @@ function(
 			}
 
 			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
+			if (this.isOpen()) {
+				oEvent.setMarked();
+			}
 
 			this.close();
 			this._checkSelectionChange();

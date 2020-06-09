@@ -8202,6 +8202,51 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test("onsapenter - marking of event", function (assert) {
+
+			// System under test
+			var oSelect = new Select({
+				items: [
+					new Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new Item({
+						key: "1",
+						text: "item 1"
+					})
+				]
+			}),
+			fnEnterSpy = this.spy(oSelect, "onsapenter");
+
+			// Arrange
+			oSelect.placeAt("content");
+			Core.applyChanges();
+			oSelect.focus();
+
+			// Act
+			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ENTER);
+
+			// Assert
+			assert.notOk(fnEnterSpy.args[0][0].isMarked(), "The event should not be marked, since the picker is not opened.");
+
+			// Act
+			fnEnterSpy.reset();
+			oSelect.open();
+			this.clock.tick(1000);
+
+			// Act
+			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ENTER);
+
+			// Assert
+			assert.ok(fnEnterSpy.args[0][0].isMarked(), "The event should be marked, since the picker is opened.");
+
+			// Cleanup
+			fnEnterSpy.restore();
+			oSelect.destroy();
+		});
+
 		QUnit.test("onsapenter when enter key is pressed and the selection has changed", function (assert) {
 
 			// system under test
