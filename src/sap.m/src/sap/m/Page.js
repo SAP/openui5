@@ -637,7 +637,7 @@ function(
 		 * Scrolls to the given position. Only available if enableScrolling is set to "true".
 		 *
 		 * @param {int} y The vertical pixel position to scroll to. Scrolling down happens with positive values.
-		 * @param {int} time The duration of animated scrolling. To scroll immediately without animation, give 0 as value. 0 is also the default value, when this optional parameter is omitted.
+		 * @param {int} [time=0] The duration of animated scrolling in milliseconds. The value <code>0</code> results in immediate scrolling without animation.
 		 * @returns {sap.m.Page} <code>this</code> to facilitate method chaining.
 		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
