@@ -111,7 +111,11 @@ sap.ui.define([
 					},
 					"Then the fallback label is not written to the manifest"
 				);
-				assert.strictEqual(this.aItems[0].label.getValue(), "foo", "Then the key is used as a default label");
+				assert.strictEqual(
+					this.aItems[0].label.getContent().getPlaceholder(),
+					"foo",
+					"Then the key is used as a default label"
+				);
 				fnDone();
 			}.bind(this), 0);
 			this.oEditor.attachValueChange(function (oEvent) {
@@ -132,7 +136,11 @@ sap.ui.define([
 
 			// MapEditor dataflow problem
 			this.oEditor.attachValueChange(_debounce(function () {
-				assert.strictEqual(this.aItems[0].label.getValue(), "foo2", "Then the fallback label is changed to the new key");
+				assert.strictEqual(
+					this.aItems[0].label.getContent().getPlaceholder(),
+					"foo2",
+					"Then the fallback label is changed to the new key"
+				);
 				fnDone();
 			}.bind(this), 0));
 

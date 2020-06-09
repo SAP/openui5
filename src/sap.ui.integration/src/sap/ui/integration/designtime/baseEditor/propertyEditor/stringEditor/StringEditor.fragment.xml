@@ -5,6 +5,7 @@
 	<Input
 		value="{value}"
 		enabled="{config/enabled}"
+		placeholder="{config/placeholder}"
 		liveChange="_onLiveChange"
 	/>
 </core:FragmentDefinition>

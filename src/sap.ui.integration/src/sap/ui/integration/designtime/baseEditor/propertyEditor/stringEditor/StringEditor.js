@@ -37,6 +37,12 @@ sap.ui.define([
 	 * 	<td><code>true</code></td>
 	 * 	<td>Whether the underlying control should be enabled</td>
 	 * </tr>
+	 * <tr>
+	 * 	<td><code>placeholder</code></td>
+	 *  <td><code>string</code></td>
+	 * 	<td></td>
+	 * 	<td>Placeholder for the input field</td>
+	 * </tr>
 	 * </table>
 	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
