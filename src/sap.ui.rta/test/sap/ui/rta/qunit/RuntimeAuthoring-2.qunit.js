@@ -721,6 +721,32 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given the user is leaving RTA on stand-alone applications", {
+		beforeEach : function() {
+			this.oRta = new RuntimeAuthoring({
+				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
+				showToolbars : false
+			});
+		},
+		afterEach : function() {
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when the _handleUrlParameterOnExit() method is called when higher layer changes are present for the user", function(assert) {
+			var oReloadInfo = {
+				layer: "CUSTOMER",
+				hasHigherLayerChanges: true
+			};
+			sandbox.stub(FlexUtils, "getUshellContainer").returns(false);
+			var oTriggerHardReloadStub = sandbox.stub(this.oRta, "_triggerHardReload");
+			var oRemoveMaxLayerParameterForFLPStub = sandbox.stub(this.oRta, "_removeMaxLayerParameterForFLP");
+			this.oRta._handleUrlParameterOnExit(oReloadInfo);
+			assert.equal(oTriggerHardReloadStub.callCount, 1, "_triggerHardReload is called");
+			assert.equal(oRemoveMaxLayerParameterForFLPStub.callCount, 0, "_removeMaxLayerParameterForFLP is not called");
+		});
+	});
+
 	QUnit.module("Given that RTA is started on stand-alone applications", {
 		beforeEach : function() {
 			this.oRta = new RuntimeAuthoring({
