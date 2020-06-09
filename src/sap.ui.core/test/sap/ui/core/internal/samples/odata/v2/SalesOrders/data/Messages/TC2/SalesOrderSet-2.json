@@ -1,19 +1,19 @@
 {
     "d" : {
         "__metadata" : {
-            "id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('0500000001')",
-            "uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('0500000001')",
+            "id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('102.2')",
+            "uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('102.2')",
             "type" : "GWSAMPLE_BASIC.SalesOrder"
         },
-        "SalesOrderID" : "0500000001",
-        "Note" : "I did it",
+        "SalesOrderID" : "102.2",
+        "Note" : "Test Case II, Part 2",
         "NoteLanguage" : "EN",
         "CustomerID" : "0100000009",
         "CustomerName" : "Telecomunicaciones Star",
         "CurrencyCode" : "EUR",
-        "GrossAmount" : "98710.62",
-        "NetAmount" : "82950.10",
-        "TaxAmount" : "15760.52",
+        "GrossAmount" : "92760.62",
+        "NetAmount" : "77950.10",
+        "TaxAmount" : "14810.52",
         "LifecycleStatus" : "N",
         "LifecycleStatusDescription" : "New",
         "BillingStatus" : "",
@@ -21,15 +21,15 @@
         "DeliveryStatus" : "",
         "DeliveryStatusDescription" : "Initial",
         "CreatedAt" : "\/Date(1567634400000)\/",
-        "ChangedAt" : "\/Date(1588753152655)\/",
+        "ChangedAt" : "\/Date(1590400433877)\/",
         "ToBusinessPartner" : {
             "__deferred" : {
-                "uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('0500000001')/ToBusinessPartner"
+                "uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('102.2')/ToBusinessPartner"
             }
         },
         "ToLineItems" : {
             "__deferred" : {
-                "uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('0500000001')/ToLineItems"
+                "uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('102.2')/ToLineItems"
             }
         }
     }

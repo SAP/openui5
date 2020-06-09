@@ -33,6 +33,21 @@
 		following URLs depending on your development setup.<br /> <br />
 		Start the Sales Orders V2 application with English locale:
 		<ul>
+			<li><a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en&realOData=true"
+				target="_blank">
+			http://localhost:8080/testsuite/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en&realOData=true
+			</a></li>
+		</ul>
+		<h3>Testing with mock data</h3>
+		Configure your IDE to be able to execute the Sales Orders application locally or use a
+		centrally deployed version of the Sales Orders application as provided by the test
+		coordinator.<br />
+		Depending on your installation, you have to replace the port 8080 of all following links to
+		the port of your local server hosting the Sales Orders application.<br />
+		It might also be necessary to remove the first URL segment <code>/testsuite</code> from the
+		following URLs depending on your development setup.<br /><br />
+		Start the Sales Orders V2 application with English locale:
+		<ul>
 			<li><a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en"
 				target="_blank">
 			http://localhost:8080/testsuite/test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/index.html?sap-language=en
@@ -110,7 +125,8 @@
 		<br />
 		<h2>REALIZE and CHECK</h2>
 		<h3 id="MessagesForNoteFields">(I) Messages for Note Fields</h3>
-		Search for a sales order with at least 1 item and note down the sales order ID.
+		Search for a sales order with at least 1 item and note down the sales order ID. In case of
+		mock data: Use sales order <code>101</code>.
 		<ol>
 			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
 				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
@@ -157,7 +173,8 @@
 		<h3>(II) Message Strip and Aggregated Table Row Highlighting</h3>
 		Search for a sales order with at least 2 items and with at least one item for the product
 		<code>HT-1000</code> and note down the sales order ID. An item for the product
-		<code>HT-1110</code> should not be contained.
+		<code>HT-1110</code> should not be contained. In case of mock data: Use sales order
+		<code>102</code>.
 		<ol>
 			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
 				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
@@ -181,14 +198,14 @@
 				<b>Check:</b> If the corresponding note field does not start with
 					<code>Error:</code> the row highlighter indicates a warning.
 			</li>
-			<li>Change the note of that sales order item to <code>Error: My message</code> and
-				save.<br />
+			<li>Change the note of that sales order item to <code>Error: My error message</code>
+				and save.<br />
 				<b>Check:</b> There is an error message for the note field and the row highlighter
 					indicates an error.
 			</li>
 		</ol>
-		Search for a sales order with an item for the product <code>HT-1110</code> and note down the
-		sales order ID.
+		Search for a sales order with an item for the product <code>HT-1110</code> and note down
+		the sales order ID. In case of mock data: Use sales order <code>102.2</code>.
 		<ol>
 			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
 				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
@@ -204,7 +221,8 @@
 		<h3>(III) Message Lifecycle - Side-Effects</h3>
 		Search for a sales order with more than 4 items and with an item for the product
 		<code>HT-1000</code> with a quantity less than 2 at the 5th (or later) position in the sales
-		order and note down the sales order ID.
+		order and note down the sales order ID. In case of mock data: Use sales order
+		<code>103</code>.
 		<ol>
 			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
 				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
@@ -238,7 +256,8 @@
 				test.
 			</li>
 		</ul>
-		Search for a sales order with at least 5 items and note down the sales order ID.<br />
+		Search for a sales order with at least 5 items and note down the sales order ID. In case of
+		mock data: Use sales order <code>104</code>.<br />
 		<ol>
 			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
 				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
@@ -256,7 +275,8 @@
 				changes.
 			</li>
 			<li>Remember the number of messages for that sales order.</li>
-			<li>Press the <code>Transition Messages Only</code> button to disable that feature.
+			<li>Scroll to the top of the table and press the <code>Transition Messages Only</code>
+				button to disable that feature.
 				<br />
 				<b>Check:</b> The sales order and the sales order items are reloaded and the number
 					of messages is less than before.<br />
@@ -269,7 +289,7 @@
 		</ol>
 		<h3>(V) Filter Sales Order Items by Items with Messages</h3>
 		Search for a sales order with items with and without messages. The messages should have a
-		different message severity.
+		different message severity. In case of mock data: Use sales order <code>105</code>.
 		<ol>
 			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
 				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
@@ -287,7 +307,8 @@
 			<li>Repeat the steps above with different filter values.</li>
 		</ol>
 		<h3>(VI) Create and Delete Sales Order Items</h3>
-		Search for a sales order with at most two items.
+		Search for a sales order with at most two items. In case of mock data: Use sales order
+		<code>106</code>.
 		<ol>
 			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
 				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
@@ -354,7 +375,8 @@
 			</li>
 		</ol>
 		<h3>(VII) Unbound Messages</h3>
-		Search for a sales order with an ID less than <code>0500000010</code>.
+		Search for a sales order with an ID less than <code>0500000010</code>. In case of mock data:
+		Use sales order <code>107</code>.
 		<ol>
 			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
 				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
@@ -375,7 +397,8 @@
 			</li>
 		</ol>
 		<h3>(VIII) Messages with multiple Targets</h3>
-		Search for a sales order with an item for the product <code>HT-1022</code>.
+		Search for a sales order with an item for the product <code>HT-1022</code>. In case of mock
+		data: Use sales order <code>108</code>.
 		<ol>
 			<li>Enter that sales order ID into the <code>Sales Order</code> input field and press
 				<code>Enter</code> or click the <code>Show Sales Order</code> button.<br />
