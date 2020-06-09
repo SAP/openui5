@@ -866,7 +866,7 @@ sap.ui.define([
 		}
 
 		// Getting back already resolved config!
-		var vValue = ObjectPath.get(sKey, this._oConfigObserver.getObject()).value;
+		var vValue = ObjectPath.get([sKey], this._oConfigObserver.getObject()).value;
 
 		oPropertyEditor.setValue(vValue);
 		oPropertyEditor.attachValueChange(this._onValueChange, this);
@@ -981,7 +981,7 @@ sap.ui.define([
 	 */
 	BaseEditor.prototype.getPropertyConfigByName = function (sPropertyName) {
 		return _omit(
-			ObjectPath.get(sPropertyName, this._oConfigObserver.getObject()),
+			ObjectPath.get([sPropertyName], this._oConfigObserver.getObject()),
 			"value"
 		);
 	};

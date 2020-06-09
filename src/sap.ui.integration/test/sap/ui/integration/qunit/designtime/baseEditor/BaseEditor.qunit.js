@@ -137,6 +137,36 @@ sap.ui.define([
 			this.oBaseEditor.setJson(oJson);
 		});
 
+		QUnit.test("When config with 1 property with dots in its name is set", function (assert) {
+			var done = assert.async();
+			this.oBaseEditor.setConfig({
+				context: "context",
+				properties: {
+					"my.prop.name": {
+						label: "Prop1",
+						path: "prop1",
+						type: "string"
+					}
+				},
+				propertyEditors: {
+					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+				}
+			});
+
+			this.oBaseEditor.placeAt("qunit-fixture");
+
+			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
+				sap.ui.getCore().applyChanges();
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync().length, 1, "Then 1 property editor is created");
+				assert.strictEqual(
+					this.oBaseEditor.getPropertyEditorsByNameSync("my.prop.name")[0].getValue(),
+					"value1",
+					"Then value of the property is correctly set on the property editor"
+				);
+				done();
+			}.bind(this));
+		});
+
 		QUnit.test("When property editor changes value", function (assert) {
 			var done = assert.async();
 			this.oBaseEditor.setConfig({
