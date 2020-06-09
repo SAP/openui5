@@ -132,5 +132,29 @@ sap.ui.define([
 				done();
 			}, 200);
 		});
+
+		QUnit.module("Accessibility");
+
+		QUnit.test("Aria attributes", function(assert) {
+			// Arrange
+			var oPullToRefresh = new PullToRefresh(),
+				sExpectedRole = "button",
+				sExpectedAriaControls,
+				sExpectedAriaKeyshortcuts = "F5";
+
+			oPullToRefresh.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			sExpectedAriaControls = oPullToRefresh.getParent().sId + "-cont";
+
+			// Assert
+			assert.strictEqual(oPullToRefresh.$().attr("role"), sExpectedRole, "Has role button");
+			assert.strictEqual(oPullToRefresh.$().attr("aria-controls"), sExpectedAriaControls, "Has aria-controls");
+			assert.strictEqual(oPullToRefresh.$().attr("aria-keyshortcuts"), sExpectedAriaKeyshortcuts, "Has aria-keyshortcuts");
+			assert.strictEqual(oPullToRefresh.$().attr("aria-describedby"), oPullToRefresh._sAriaF5Text, "Has aria-describedby");
+
+			// Clean
+			oPullToRefresh.destroy();
+		});
 	}
 });
