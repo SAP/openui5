@@ -63,7 +63,7 @@ describe('sap.m.Tokenizer', function() {
 	});
 
 	it("should show non-editable Tokenzier with single long token", function () {
-		element(by.id("tokenizerLongTokenReadOnly")).click();
-		expect(takeScreenshot(element(by.id("tokenizerLongTokenReadOnly")))).toLookAs("tokenizer-long-token-read-only");
+		element(by.id("tokenizerReadOnlyLongToken")).click();
+		expect(takeScreenshot(element(by.id("tokenizerReadOnlyLongToken")))).toLookAs("tokenizer-long-token-read-only");
 	});
 });
