@@ -181,6 +181,8 @@ sap.ui.define([
 	Button.prototype.init = function() {
 		this._onmouseenter = this._onmouseenter.bind(this);
 		this._buttonPressed = false;
+
+		CommandShortcutHintsMixin.init(this);
 	};
 
 	/**

@@ -96,10 +96,6 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 			this.fireEvent(EVENT__LISTENERS_CHANGED, {EventId: sEventId, type: 'listenerAttached', listener: oListener, func: fnFunction, data: oData});
 		}
 
-		if (fnFunction && fnFunction._sapui_commandName && this._attachCommand) {
-			this._attachCommand(fnFunction._sapui_commandName);
-		}
-
 		return this;
 	};
 
