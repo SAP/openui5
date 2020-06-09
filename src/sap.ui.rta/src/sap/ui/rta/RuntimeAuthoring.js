@@ -1584,7 +1584,7 @@ function(
 	 */
 	RuntimeAuthoring.prototype._handleUrlParameterOnExit = function(oReloadInfo) {
 		if (!FlexUtils.getUshellContainer()) {
-			this._triggerHardReload(oReloadInfo);
+			return this._triggerHardReload(oReloadInfo);
 		}
 
 		var mParsedHash = FlexUtils.getParsedURLHash();
