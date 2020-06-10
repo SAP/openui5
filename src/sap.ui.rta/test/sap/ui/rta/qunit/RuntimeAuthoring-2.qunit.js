@@ -373,6 +373,7 @@ sap.ui.define([
 			sandbox.stub(this.oRta, "_handleReloadOnExit").callsFake(function() {
 				//The test will timeout if the reload handling is not called
 				assert.ok("then the check for reload was executed");
+				assert.ok(this.oRta.getToolbar().isBusy(), "then the whole toolbar should be disabled by the busy indicator");
 				done();
 				return Promise.resolve(this.oRta._RELOAD.NOT_NEEDED);
 			}.bind(this));
