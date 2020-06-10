@@ -616,10 +616,11 @@ sap.ui.define([
 		// updates the trigger state
 		_updateTrigger : function(bLoading) {
 			var oTrigger = this._oTrigger,
-				oControl = this._oControl;
+				oControl = this._oControl,
+				bVisibleItems = oControl && oControl.getVisibleItems().length > 0;
 
-			// If there are no visible columns then also hide the trigger.
-			if (!oTrigger || !oControl || !oControl.shouldRenderItems() || !oControl.getDomRef()) {
+			// If there are no visible columns or items then also hide the trigger.
+			if (!oTrigger || !oControl || !bVisibleItems || !oControl.shouldRenderItems() || !oControl.getDomRef()) {
 				return;
 			}
 
