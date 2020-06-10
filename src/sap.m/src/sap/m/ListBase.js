@@ -920,6 +920,8 @@ function(
 	/**
 	 * Select all items in "MultiSelection" mode.
 	 *
+	 * <b>Note:</b> In case <code>growing</code> is enabled, only the visible items in the list will be selected.
+	 *
 	 * @type sap.m.ListBase
 	 * @public
 	 * @since 1.16
@@ -1438,6 +1440,10 @@ function(
 			selected : oListItem.getSelected(),
 			selectAll: !!bSelectAll
 		});
+
+		if (this.getGrowing()) {
+			this._bSelectAll = bSelectAll;
+		}
 
 		// support old API
 		this.fireSelect({
