@@ -1321,6 +1321,30 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when the VM Control fires the manage event in Personalization mode with dirty VM changes and UI Changes", function(assert) {
+			var sVariantManagementReference = "variantMgmtId1";
+			var oVariantManagement = new VariantManagement(sVariantManagementReference);
+			oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+			sandbox.stub(VariantManagementState, "setVariantData");
+			sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap");
+
+			this.oModel.getData()[sVariantManagementReference].variants[1].title = "test";
+			this.oModel.getData()[sVariantManagementReference].variants[1].favorite = false;
+			this.oModel.getData()[sVariantManagementReference].variants[1].visible = false;
+			this.oModel.getData()[sVariantManagementReference].defaultVariant = "variant0";
+
+			var oSaveDirtyChangesStub = sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges");
+
+			oVariantManagement.fireManage(null, {variantManagementReference: sVariantManagementReference});
+			var aArgs = oSaveDirtyChangesStub.lastCall.args;
+			assert.equal(aArgs[0], this.oComponent, "the app component was passed");
+			assert.equal(aArgs[1], false, "the second parameter is false");
+			assert.deepEqual(aArgs[2].length, 4, "an array with 4 changes was passed");
+			aArgs[2].forEach(function(oChange) {
+				assert.ok(oChange instanceof sap.ui.fl.Change);
+			});
+		});
+
 		QUnit.test("when calling '_initializeManageVariantsEvents'", function(assert) {
 			assert.notOk(this.oModel.fnManageClick, "the function 'this.fnManageClick' is not available before");
 			assert.notOk(this.oModel.fnManageClickRta, "the function 'this.fnManageClickRta' is not available before");
