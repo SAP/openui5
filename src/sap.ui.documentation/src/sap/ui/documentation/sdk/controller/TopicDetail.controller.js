@@ -5,13 +5,17 @@
 /*global location */
 sap.ui.define([
 		"jquery.sap.global",
+		"sap/ui/core/ResizeHandler",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/XML2JSONUtils",
 		"sap/ui/Device",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
-		"sap/ui/documentation/sdk/util/Resources"
-	], function (jQuery, BaseController, JSONModel, XML2JSONUtils, Device, ToggleFullScreenHandler, ResourcesUtil) {
+		"sap/ui/documentation/sdk/util/Resources",
+		"sap/ui/documentation/sdk/controller/util/ResponsiveImageMap",
+		"sap/ui/core/HTML",
+		"sap/base/Log"
+	], function (jQuery, ResizeHandler, BaseController, JSONModel, XML2JSONUtils, Device, ToggleFullScreenHandler, ResourcesUtil, ResponsiveImageMap, HTML, Log) {
 		"use strict";
 
 		var GIT_HUB_DOCS_URL = "https://sap.github.io/openui5-docs/#/",
@@ -30,6 +34,11 @@ sap.ui.define([
 			onInit: function () {
 				this.oPage = this.byId("topicDetailPage");
 				this.oPage.addStyleClass('docuPage');
+				this.oHtml = this.byId("staticContent");
+				this.aResponsiveImageMaps = [];
+				this.oLayout = this.byId("staticContentLayout");
+
+				this.oHtml.attachEvent("afterRendering", this._onHtmlRendered.bind(this));
 
 				if ( !window.prettyPrint ) {
 					//TODO: global jquery call found
@@ -37,6 +46,7 @@ sap.ui.define([
 				}
 
 				this.getRouter().getRoute("topicId").attachPatternMatched(this._onTopicMatched, this);
+				this.getRouter().getRoute("subTopicId").attachPatternMatched(this._onTopicMatched, this);
 				this._oConfig = this.getConfig();
 
 				this.jsonDefModel = new JSONModel();
@@ -44,14 +54,27 @@ sap.ui.define([
 			},
 
 			onBeforeRendering: function() {
+				var oViewDom = this.getView().getDomRef();
+				if (oViewDom)  {
+					oViewDom.removeEventListener('click', this._onPageClick);
+				}
+
+				ResizeHandler.deregister(this._onResize.bind(this));
 				Device.orientation.detachHandler(this._onOrientationChange, this);
 			},
 
 			onAfterRendering: function() {
+				var oViewDom = this.getView().getDomRef();
+				if (oViewDom)  {
+					oViewDom.addEventListener('click', this._onPageClick);
+				}
+
+				ResizeHandler.register(this.getView().getDomRef(), this._onResize.bind(this));
 				Device.orientation.attachHandler(this._onOrientationChange, this);
 			},
 
 			onExit: function() {
+				ResizeHandler.deregister(this._onResize.bind(this));
 				Device.orientation.detachHandler(this._onOrientationChange, this);
 			},
 
@@ -59,17 +82,26 @@ sap.ui.define([
 			/* begin: internal methods									 */
 			/* =========================================================== */
 
-			/**
-			 * Binds the view to the object path and expands the aggregated line items.
-			 * @function
-			 * @param {sap.ui.base.Event} event pattern match event in route 'topicId'
-			 * @private
-			 */
-			_onTopicMatched: function (event) {
-				//TODO: global jquery call found
-				var topicId = event.getParameter("arguments").id,
-					topicURL = ResourcesUtil.getResourceOriginPath(this._oConfig.docuPath + topicId + (topicId.match(/\.html/) ? "" : ".html")),
-					htmlContent = jQuery.sap.syncGetText(topicURL).data, jsonObj;
+			_onResize: function () {
+				this.aResponsiveImageMaps.forEach(function (oImageMap) {
+					oImageMap.resize();
+				});
+			},
+
+			_onPageClick: function (oEvent) {
+				var oTarget = oEvent.target,
+					bCollapsible = oTarget.classList.contains('collapsible-icon'),
+					oSection;
+
+				if (bCollapsible) {
+					// collapsible sections
+					oSection = oTarget.parentNode;
+					oSection.classList.toggle("expanded");
+				}
+			},
+
+			_onHtmlResourceLoaded: function (htmlContent) {
+				var jsonObj;
 
 				if (!htmlContent) {
 					setTimeout(function () {
@@ -79,23 +111,139 @@ sap.ui.define([
 				}
 
 				jsonObj = XML2JSONUtils.XML2JSON(htmlContent, this._oConfig);
-				jsonObj.topicURL = topicURL;
 				jsonObj.bIsPhone = Device.system.phone;
+				jsonObj.topicURL = this.sTopicURL;
 				if (jsonObj.shortdesc) {
 					jsonObj.shortdesc = jsonObj.shortdesc.trim().replace(/(\r\n|\n|\r)/gm, ' ');
 				}
 
 				this.jsonDefModel.setData(jsonObj);
 
+				this.oHtml.setContent(jsonObj.html);
+				this.oLayout.invalidate();
+
 				this._scrollContentToTop();
 
 				setTimeout(window.prettyPrint, 0);
 
 				this.searchResultsButtonVisibilitySwitch(this.byId("topicDetailBackToSearch"));
+			},
 
-				if (this.extHookonTopicMatched) {
-					this.extHookonTopicMatched(topicId);
+			/**
+			 * Binds the view to the object path and expands the aggregated line items.
+			 * @function
+			 * @param {sap.ui.base.Event} event pattern match event in route 'topicId'
+			 * @private
+			 */
+			_onTopicMatched: function (event) {
+				//TODO: global jquery call found
+				var sId = event.getParameter("arguments").id,
+					aUrlParts = sId.split("#"),
+					sTopicId = aUrlParts[0],
+					sSubTopicId = aUrlParts[1];
+
+				this.sTopicURL = ResourcesUtil.getResourceOriginPath(this._oConfig.docuPath + sTopicId + (sTopicId.match(/\.html/) ? "" : ".html"));
+				this.sSubTopicId = event.getParameter("arguments").subId || sSubTopicId;
+
+				jQuery.ajax(this.sTopicURL)
+					.success(this._onHtmlResourceLoaded.bind(this))
+					.fail(Log.err);
+			},
+
+			_onHtmlRendered: function () {
+				var newImage,
+					oSection,
+					aImagemaps = this.oPage.$().find('#d4h5-main-container .imagemap'),
+					aSrcResult,
+					rex = /<img[^>]+src="([^">]+)/g;
+
+				this._fixExternalLinks(this.oLayout.getDomRef());
+
+				if (this.sSubTopicId) {
+					oSection = document.getElementById(this.sSubTopicId);
+					if (oSection) {
+						oSection.scrollIntoView(true);
+					}
 				}
+
+				this.aResponsiveImageMaps = [];
+
+				aImagemaps.each(function (index, image) {
+					if (image.complete) {
+						this._addResponsiveImageMap(image);
+					} else {
+						// Image still not loaded
+						// If the src is already set, then the event is firing in the cached case,
+						// before you even get the event handler bound.
+						// Having two images, loading from one src force the second image to wait for
+						// the first to load and takes it's resources without event making new request.
+						newImage = new Image();
+
+						newImage.onload = function () {
+							this._addResponsiveImageMap(image);
+						}.bind(this);
+
+						aSrcResult = rex.exec(image.innerHTML);
+						if (aSrcResult) {
+							newImage.src = aSrcResult && aSrcResult[1];
+						}
+					}
+				}.bind(this));
+
+			},
+
+			_addResponsiveImageMap: function (data) {
+				this.aResponsiveImageMaps.push(new ResponsiveImageMap(
+					data.querySelector('map'),
+					data.querySelector('img')
+				));
+			},
+
+			/**
+			 *  Iterates over all links marked as external and adds a icon and disclaimer proxy
+			 *
+			 * @param oElement, the dom ref to the container
+			 * @private
+			 */
+			_fixExternalLinks: function (oElement) {
+				var aLinks = oElement.querySelectorAll("a.external-link"),
+					i,
+					oLink,
+					sHref,
+					sDisclaimerPath = "http://help.sap.com/disclaimer?site=";
+
+				for (i = 0; i < aLinks.length; i++) {
+					oLink = aLinks[i];
+					sHref = oLink.getAttribute("href");
+
+					oLink.setAttribute("href", sDisclaimerPath + sHref);
+					this._addIconToExternalUrl(oLink, sHref);
+				}
+			},
+
+			/**
+			 *  Create and append an icon to the external link
+			 * 1) The link is a non SAP and the icon image is link-external.png
+			 * 2) The link is a SAP and the icon image is link-sap.png
+			 *
+			 * @param aDomRef, the dom ref to the external link
+			 * @param sHref, the url string
+			 * @private
+			 */
+			_addIconToExternalUrl: function (aDomRef, sHref) {
+				// Check if the external domain is SAP hosted
+				var bSAPHosted = /^https?:\/\/(?:www.)?[\w.]*(?:sap|hana\.ondemand|sapfioritrial)\.com/.test(sHref),
+					sTitle = 'Information published on ' + bSAPHosted ? '' : 'non ' + 'SAP site',
+					newImage = new Image(),
+					sIconName = bSAPHosted ? 'link-sap' : 'link-external';
+
+				newImage.onload = function () {
+					aDomRef.appendChild(newImage);
+				};
+
+				newImage.src = './resources/sap/ui/documentation/sdk/images/' + sIconName + '.png';
+				newImage.setAttribute("title", sTitle);
+				newImage.className = "sapUISDKExternalLink";
 			},
 
 			_scrollContentToTop: function () {

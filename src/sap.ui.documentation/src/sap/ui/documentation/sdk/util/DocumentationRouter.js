@@ -220,8 +220,8 @@ sap.ui.define([
 		}
 
 		var oElement = oEvent.target,
-			$Element = jQuery(oElement),
 			oAnchorElement,
+			bParsed,
 			bCtrlHold = oEvent.ctrlKey || oEvent.metaKey,
 			sTarget;
 
@@ -229,10 +229,16 @@ sap.ui.define([
 			return;
 		}
 
+		// The links from the documentation are already preprocessed at build-time
+		// to the correct format, so we do not need to adjust them here at run-time
+		if (oElement.classList.contains('sap-doc')) {
+			return;
+		}
+
 		if (
-			$Element.hasClass("scrollToMethod") ||
-			$Element.hasClass("scrollToEvent") ||
-			$Element.hasClass("scrollToAnnotation")
+			oElement.classList.contains("scrollToMethod") ||
+			oElement.classList.contains("scrollToEvent") ||
+			oElement.classList.contains("scrollToAnnotation")
 		) {
 			if (oEvent.preventDefault) {
 				oEvent.preventDefault();
@@ -249,36 +255,34 @@ sap.ui.define([
 		oAnchorElement = getClosestParentLink(oElement);
 		sTarget = getHref(oAnchorElement);
 
+		bParsed = /^blob:/.test(sTarget)
+			|| /^https?:\/\//.test(sTarget)
+			|| /^test-resources\//.test(sTarget)
+			|| /^resources\//.test(sTarget);
+
 		// If we have no target by here we give up
-		if (!sTarget ||
-			/^blob:/.test(sTarget) ||
-			/^https?:\/\//.test(sTarget) ||
-			/^test-resources\//.test(sTarget) ||
-			/^resources\//.test(sTarget)
-		) {
-			return;
-		}
+		if (sTarget && !bParsed) {
+			// Stop the event propagation
+			if (oEvent.preventDefault) {
+				oEvent.preventDefault();
+			}
 
-		// Stop the event propagation
-		if (oEvent.preventDefault) {
-			oEvent.preventDefault();
-		}
+			if (sTarget === "#") {
+				sTarget = ""; // translate to base route
+			}
 
-		if (sTarget === "#") {
-			sTarget = ""; // translate to base route
-		}
+			if (window['sap-ui-documentation-static'] && this.shouldConvertHash(sTarget)) {
+				sTarget = sTarget.replace("#", "%23");
+			}
 
-		if (window['sap-ui-documentation-static'] && this.shouldConvertHash(sTarget)) {
-			sTarget = sTarget.replace("#", "%23");
-		}
+			this.parse(sTarget);
 
-		this.parse(sTarget);
-
-		// Add new URL history and update URL
-		if (window['sap-ui-documentation-static']) {
-			window.history.pushState({},undefined,"#/" + sTarget);
-		} else {
-			window.history.pushState({},undefined, sTarget);
+			// Add new URL history and update URL
+			if (window['sap-ui-documentation-static']) {
+				window.history.pushState({},undefined,"#/" + sTarget);
+			} else {
+				window.history.pushState({},undefined, sTarget);
+			}
 		}
 
 	};
@@ -291,6 +295,11 @@ sap.ui.define([
 			sTargetHref;
 
 		if (oAnchorElement) {
+			// The links from the documentation are already preprocessed at build-time
+			// to the correct format, so we do not need to adjust them here at run-time
+			if (oAnchorElement.classList.contains('sap-doc')) {
+				return;
+			}
 			sTargetHref = getHref(oAnchorElement);
 		}
 
