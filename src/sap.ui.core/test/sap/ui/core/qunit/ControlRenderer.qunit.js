@@ -30,6 +30,9 @@ sap.ui.define([
 			}
 		},
 		renderer: function(rm, oControl) {
+			/*
+			 * NOTE: this renderer intentionally uses apiVersion 1 and must not be migrated!
+			 */
 			if (oControl.getRenderNothing()) {
 				return;
 			}

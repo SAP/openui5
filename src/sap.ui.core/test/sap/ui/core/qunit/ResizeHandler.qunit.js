@@ -45,17 +45,22 @@ sap.ui.define([
 			}
 		},
 
-		renderer : function(oRm, oControl) {
-			oRm.write("<div");
-			oRm.writeControlData(oControl);
-			oRm.addStyle("width", oControl.getWidth());
-			oRm.addStyle("height", oControl.getHeight());
-			oRm.writeStyles();
-			oRm.addClass("ResizeAreaContainer");
-			oRm.writeClasses();
-			oRm.write(">");
-			oRm.write("<div id='" + oControl.getId() + "-inner' class='ResizeArea'></div>");
-			oRm.write("</div>");
+		renderer : {
+			apiVersion: 2,
+			render: function(oRm, oControl) {
+				oRm.openStart("div", oControl)
+					.style("width", oControl.getWidth())
+					.style("height", oControl.getHeight())
+					.class("ResizeAreaContainer")
+					.openEnd();
+
+					oRm.openStart("div", oControl.getId() + "-inner")
+						.class("ResizeArea")
+						.openEnd()
+						.close("div");
+
+				oRm.close("div");
+			}
 		}
 	});
 

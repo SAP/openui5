@@ -209,14 +209,13 @@ sap.ui.define([
 						text: "string"
 					}
 				},
-				renderer: function(oRM, oControl) {
-					oRM.write("<div");
-					oRM.writeControlData(oControl);
-					oRM.writeClasses();
-					oRM.writeStyles();
-					oRM.write(">");
-					oRM.writeEscaped(oControl.getText());
-					oRM.write("</div>");
+				renderer: {
+					apiVersion: 2,
+					render: function(oRM, oControl) {
+						oRM.openStart("div", oControl).openEnd();
+						oRM.text(oControl.getText());
+						oRM.close("div");
+					}
 				}
 			});
 		});
@@ -267,14 +266,13 @@ sap.ui.define([
 						text: "string"
 					}
 				},
-				renderer: function(oRM, oControl) {
-					oRM.write("<div");
-					oRM.writeControlData(oControl);
-					oRM.writeClasses();
-					oRM.writeStyles();
-					oRM.write(">");
-					oRM.writeEscaped(oControl.getText());
-					oRM.write("</div>");
+				renderer: {
+					apiVersion: 2,
+					render: function(oRM, oControl) {
+						oRM.openStart("div", oControl).openEnd();
+						oRM.text(oControl.getText());
+						oRM.close("div");
+					}
 				}
 			});
 		});

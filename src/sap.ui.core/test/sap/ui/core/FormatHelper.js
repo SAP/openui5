@@ -43,27 +43,39 @@ var LocaleListItem = sap.m.ListItemBase.extend("LocaleListItem", {
 			text: {type: "string"}
 		}
 	},
-	renderer: function(oRM, oControl) {
-		var sLocale = oControl.getLocale(),
-			sText = oControl.getText();
-		oRM.write("<div ");
-		oRM.writeControlData(oControl);
-		oRM.write("style=\"display:flex;align-items:center;height:40px;\">");
-		oRM.write("<img title=\"" + sLocale + "\" src=\"flags/" + sLocale.substr(3) + ".png\" style=\"width:30px;margin:10px\" />");
+	renderer: {
+		apiVersion: 2,
+		render: function(oRM, oControl) {
+			var sLocale = oControl.getLocale(),
+				sText = oControl.getText();
 
-		oRM.write("<span style=\"margin: 0 5px\">");
-		oRM.writeEscaped("\"" + sLocale + "\"");
-		oRM.write("</span>");
+			oRM.openStart("div", oControl)
+				.style("display", "flex")
+				.style("align-items", "center")
+				.style("height", "40px")
+				.openEnd();
 
-		oRM.write("<span " );
-		if (aRTLLocales.indexOf(sLocale) >= 0) {
-			oRM.write("dir=\"rtl\"");
+				oRM.voidStart("img")
+					.attr("title", sLocale)
+					.attr("src", "flags/" + sLocale.substr(3) + ".png")
+					.style("width", "30px")
+					.style("margin", "10px")
+					.voidEnd();
+				oRM.openStart("span")
+					.style("margin", "0 5px")
+					.openEnd()
+					.text("\"" + sLocale + "\"")
+					.close("span");
+				oRM.openStart("span");
+				if (aRTLLocales.indexOf(sLocale) >= 0) {
+					oRM.attr("dir", "rtl");
+				}
+				oRM.openEnd();
+				oRM.text(sText);
+				oRM.close("span");
+
+			oRM.close("div");
 		}
-		oRM.write(">");
-		oRM.writeEscaped(sText);
-		oRM.write("</span>");
-
-		oRM.write("</div>");
 	}
 });
 

@@ -48,21 +48,21 @@ sap.ui.define([
 		},
 
 		// the part creating the HTML:
-		renderer: function (oRm, oControl) {
-			oRm.write("<ul");
-			oRm.writeControlData(oControl);
-			oRm.writeClasses();
-			oRm.write(">");
-			jQuery.each(oControl.getItems(), function (iIndex, oItem) {
-				oRm.write("<li");
-				if (oItem.getTooltip_AsString()) {
-					oRm.writeAttributeEscaped("title", oItem.getTooltip_AsString());
-				}
-				oRm.write(">");
-				oRm.writeEscaped(oItem.getText());
-				oRm.write("</li>");
-			});
-			oRm.write("</ul>");
+		renderer: {
+			apiVersion: 2,
+			render: function (oRm, oControl) {
+				oRm.openStart("ul", oControl).openEnd();
+					oControl.getItems().forEach(function (oItem) {
+						oRm.openStart("li");
+						if (oItem.getTooltip_AsString()) {
+							oRm.attr("title", oItem.getTooltip_AsString());
+						}
+						oRm.openEnd();
+						oRm.text(oItem.getText());
+						oRm.close("li");
+					});
+				oRm.close("ul");
+			}
 		}
 
 	});
