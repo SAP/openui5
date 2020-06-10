@@ -122,4 +122,27 @@ function (
 
 		assert.strictEqual(this.virtualGrid.getHeight(), 1140, 'total height is correct');
 	});
+
+	QUnit.test("fitElement has to go on next row, but it's too wide to fit on the previous row", function (assert) {
+		initVirtualGrid(this.virtualGrid);
+
+		this.virtualGrid.fitElement('a', 3, 1); // a a a b b b
+		this.virtualGrid.fitElement('b', 3, 2); //       b b b
+		this.virtualGrid.fitElement('c', 6, 2); // c c c c c c
+												// c c c c c c
+
+		this.virtualGrid.calculatePositions();
+
+		var items = this.virtualGrid.items;
+
+		assert.strictEqual(items.a.left, '0px', 'left is correct');
+		assert.strictEqual(items.a.top, '0px', 'top is correct');
+
+		assert.strictEqual(items.b.left, '330px', 'left is correct');
+		assert.strictEqual(items.b.top, '0px', 'top is correct');
+
+		assert.strictEqual(items.c.left, '0px', 'left is correct');
+		assert.strictEqual(items.c.top, '180px', 'top is correct');
+	});
+
 });
