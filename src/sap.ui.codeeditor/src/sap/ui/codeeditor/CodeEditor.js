@@ -242,11 +242,6 @@ sap.ui.define([
 
 		this._oEditor.renderer.setShowGutter(true);
 
-		// Do not scroll to end of input when setting value
-		// it has been reported as annoying to end users
-		// when they have to scroll to the beginning of content
-		this._oEditor.$blockScrolling = Infinity;
-
 		this._oEditor.addEventListener("change", function (oEvent) {
 			if (!this.getEditable()) {
 				return;
@@ -346,6 +341,7 @@ sap.ui.define([
 
 		// force text update
 		this._oEditor.renderer.updateText();
+		this._oEditor.resize();
 
 		this._registerResizeListener();
 	};

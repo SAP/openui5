@@ -115,6 +115,31 @@ sap.ui.define([
 		assert.ok(oSpy2.notCalled, "Should not fire change event when readonly.");
 	});
 
+	QUnit.test("Scrollbar positions are maintained after rerendering", function (assert) {
+		// Arrange
+		var sText = "ui5 \n".repeat(100); // lots of text to show the scrollbar
+		this.oCodeEditor.setValue(sText);
+		this.oCodeEditor.setVisible(true);
+		this.oCodeEditor.setWidth("300px");
+
+		Core.applyChanges();
+
+		var fInitialScrollbarPos = this.oCodeEditor._oEditor.getSession().getScrollTop();
+		this.oCodeEditor._oEditor.gotoLine(Infinity, Infinity, false); // go to last line, last char, do not animate
+
+		// Assert
+		var fNewScrollbarPos = this.oCodeEditor._oEditor.getSession().getScrollTop();
+		assert.notStrictEqual(fInitialScrollbarPos, fNewScrollbarPos, "scrollbar position changed after calling gotoLine");
+
+		// Act
+		this.oCodeEditor.invalidate();
+		Core.applyChanges();
+
+		// Assert
+		var fUnchangedScrollbarPos = this.oCodeEditor._oEditor.getSession().getScrollTop();
+		assert.strictEqual(fNewScrollbarPos, fUnchangedScrollbarPos, "scrollbar position remains the same after rerendering");
+	});
+
 	QUnit.module("Properties", {
 		beforeEach: function () {
 			this.oCodeEditor = new CodeEditor({
