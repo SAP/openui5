@@ -504,7 +504,7 @@
 																		href="api/{parameter>type}"
 																		enabled="{= !!${parameter>linkEnabled} }"/>
 																<layout:VerticalLayout>
-																	<custom:JSDocText sanitizeContent="false" text="{parameter>description}"/>
+																	<custom:JSDocText sanitizeContent="false" text="{path: 'parameter>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 																	<m:MessageStrip
 																			visible="{=${parameter>deprecated} !== undefined}"
 																			text="{parameter>deprecatedText}"
