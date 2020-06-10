@@ -822,12 +822,12 @@ sap.ui.define([
 		}
 
 		if (checkMouseEnterOrLeave(oEvent, this.getDomRef())) {
-			if (!this.oOpenedSubMenu || !(this.oOpenedSubMenu.getParent() === this.oHoveredItem)) {
-				this.setHoveredItem(this.oHoveredItem);
-
-			}
-			this._discardOpenSubMenuDelayed();
+			this.setHoveredItem(null);
+		} else {
+			this.setHoveredItem(this.oHoveredItem);
 		}
+
+		this._discardOpenSubMenuDelayed();
 	};
 
 	/**
