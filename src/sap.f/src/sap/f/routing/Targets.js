@@ -169,10 +169,8 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 * </pre>
 		 *
 		 *
-		 * @param {string} [oOptions.targets.anyName.viewType]
-		 * The type of the view that is going to be created. These are the supported types: <code>{@link sap.ui.core.mvc.ViewType}</code>.
-		 *
-		 * You always have to provide a <code>viewType</code> except if you are using <code>{@link sap.ui.core.routing.Views#setView}</code>.
+		 * @param {string} [oOptions.targets.anyName.viewType=oOptions.config.viewType] The type of the view that is going to be created. These are the supported types: {@link sap.ui.core.mvc.ViewType}.
+		 * You always have to provide a viewType except if <code>oOptions.config.viewType</code> is set or when using {@link sap.ui.core.routing.Views#setView}.
 		 *
 		 * @param {string} [oOptions.targets.anyName.viewPath]
 		 * A prefix that is prepended in front of the <code>viewName</code>.
