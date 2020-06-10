@@ -2,11 +2,47 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/table/utils/TableUtils"
-], function(TableQUnitUtils, TableUtils) {
+	"sap/ui/table/utils/TableUtils",
+	"sap/ui/table/Column"
+], function(TableQUnitUtils, TableUtils, Column) {
 	"use strict";
 
 	var Hook = TableUtils.Hook;
+	var oHookWithArguments = {
+		key: "Table.UpdateRows",
+		validCall: function(oScope) {
+			TableUtils.Hook.call(oScope, this.key, TableUtils.RowsUpdateReason.Change);
+		},
+		invalidCall: function(oScope) {
+			TableUtils.Hook.call(oScope, this.key, TableUtils.RowsUpdateReason.Change, undefined);
+		},
+		assertArguments: function(assert, _arguments) {
+			assert.deepEqual(Array.prototype.slice.call(_arguments), [TableUtils.RowsUpdateReason.Change], "Arguments are correct");
+		}
+	};
+	var oHookWithoutArguments = {
+		key: "Table.RowsUnbound",
+		validCall: function(oScope) {
+			TableUtils.Hook.call(oScope, this.key);
+		},
+		invalidCall: function(oScope) {
+			TableUtils.Hook.call(oScope, this.key, undefined);
+		},
+		assertArguments: function(assert, _arguments) {
+			assert.deepEqual(Array.prototype.slice.call(_arguments), [], "Arguments are correct");
+		}
+	};
+	var oHookWithReturnValue = {
+		key: "Column.MenuItemNotification",
+		validCall: function(oScope) {
+			var oColumn = new Column();
+			var aReturnValues = TableUtils.Hook.call(oScope, this.key, oColumn);
+			oColumn.destroy();
+			return aReturnValues;
+		},
+		validReturnValue: true,
+		invalidReturnValue: 1
+	};
 
 	QUnit.module("Misc");
 
@@ -15,26 +51,245 @@ sap.ui.define([
 		assert.ok(TableUtils.Hook.TableUtils === TableUtils, "Dependency forwarding of TableUtils correct");
 	});
 
-	QUnit.module("Hooks", {
-		before: function() {
-			this.aHookKeys = (function() {
-				function getKeys(mMap) {
-					var aKeys = [];
-
-					Object.keys(mMap).forEach(function(sKey) {
-						if (typeof mMap[sKey] === "string") {
-							aKeys.push(mMap[sKey]);
-						} else {
-							aKeys = aKeys.concat(getKeys(mMap[sKey]));
-						}
-					});
-
-					return aKeys;
-				}
-
-				return getKeys(Hook.Keys);
-			})();
+	QUnit.module("Calling", {
+		beforeEach: function() {
+			this.oFakeTable = {fakeTable: true};
+			this.oTableUtilsIsAStub = sinon.stub(TableUtils, "isA");
+			this.oTableUtilsIsAStub.callThrough();
+			this.oTableUtilsIsAStub.withArgs(this.oFakeTable, "sap.ui.table.Table").returns(true);
 		},
+		afterEach: function() {
+			this.oTableUtilsIsAStub.restore();
+		}
+	});
+
+	QUnit.test("No hooks registered or installed", function(assert) {
+		oHookWithArguments.validCall(this.oFakeTable);
+		assert.ok(true, "Calling a hook does not cause an error");
+	});
+
+	QUnit.test("Invalid key", function(assert) {
+		var oTable = this.oFakeTable;
+		var sCustomHookKey = "My.Custom.HookKey";
+		var oInstallationSpy = sinon.spy();
+		var oRegistrationSpy = sinon.spy();
+		var oObject = {};
+
+		oObject[sCustomHookKey] = oInstallationSpy;
+
+		Hook.install(oTable, oObject);
+		Hook.register(oTable, sCustomHookKey, oRegistrationSpy);
+		Hook.call(oTable, sCustomHookKey);
+
+		assert.ok(oInstallationSpy.notCalled, "Custom hooks are not called in installations");
+		assert.ok(oRegistrationSpy.notCalled, "Custom hooks are not called in registrations");
+	});
+
+	QUnit.test("Invalid scope", function(assert) {
+		var oTable = this.oFakeTable;
+		var oInvalidScope = {};
+		var oInstallationSpy = sinon.spy();
+		var oRegistrationSpy = sinon.spy();
+		var oObject = {};
+
+		oObject[oHookWithArguments.key] = oInstallationSpy;
+
+		Hook.install(oTable, oObject);
+		Hook.register(oTable, oHookWithArguments.key, oRegistrationSpy);
+
+		oTable._bIsBeingDestroyed = true;
+		oHookWithArguments.validCall(oTable);
+		assert.ok(oInstallationSpy.notCalled, "Hooks are not called in installations for tables that are currently being destroyed");
+		assert.ok(oRegistrationSpy.notCalled, "Hooks are not called in registrations for tables that are currently being destroyed");
+		delete oTable._bIsBeingDestroyed;
+
+		oTable.bIsDestroyed = true;
+		oHookWithArguments.validCall(oTable);
+		assert.ok(oInstallationSpy.notCalled, "Hooks are not called in installations for tables that are destroyed");
+		assert.ok(oRegistrationSpy.notCalled, "Hooks are not called in registrations for tables that are destroyed");
+		delete oTable.bIsDestroyed;
+
+		Hook.uninstall(oTable, oObject);
+		Hook.deregister(oTable, oHookWithArguments.key, oRegistrationSpy);
+		Hook.install(oInvalidScope, oObject);
+		Hook.register(oInvalidScope, oHookWithArguments.key, oRegistrationSpy);
+		oHookWithArguments.validCall(oInvalidScope);
+		oHookWithArguments.validCall(oTable);
+		assert.ok(oInstallationSpy.notCalled, "Hooks are not called in installations for an unsupported scope type");
+		assert.ok(oRegistrationSpy.notCalled, "Hooks are not called in registrations for an unsupported scope type");
+	});
+
+	QUnit.test("Foreign scope", function(assert) {
+		var oTable = this.oFakeTable;
+		var oOtherTable = {fakeTable: true};
+		var oInstallationSpy = sinon.spy();
+		var oRegistrationSpy = sinon.spy();
+		var oObject = {};
+
+		this.oTableUtilsIsAStub.withArgs(oOtherTable, "sap.ui.table.Table").returns(true);
+
+		oObject[oHookWithArguments.key] = oInstallationSpy;
+		Hook.install(oOtherTable, oObject);
+		Hook.register(oOtherTable, oHookWithArguments.key, oRegistrationSpy);
+		oHookWithArguments.validCall(oTable);
+
+		assert.ok(oInstallationSpy.notCalled, "Hooks are not called in installations for a foreign scope");
+		assert.ok(oRegistrationSpy.notCalled, "Hooks are not called in registrations for a foreign scope");
+	});
+
+	QUnit.test("Arguments", function(assert) {
+		var oTable = this.oFakeTable;
+		var oObject = {};
+
+		oObject[oHookWithArguments.key] = function() {
+			oHookWithArguments.assertArguments(assert, arguments);
+		};
+		oObject[oHookWithoutArguments.key] = function() {
+			oHookWithoutArguments.assertArguments(assert, arguments);
+		};
+
+		Hook.register(oTable, oHookWithArguments.key, function() {
+			oHookWithArguments.assertArguments(assert, arguments);
+		});
+		Hook.register(oTable, oHookWithoutArguments.key, function() {
+			oHookWithoutArguments.assertArguments(assert, arguments);
+		});
+		Hook.install(oTable, oObject);
+
+		oHookWithArguments.validCall(oTable);
+		oHookWithoutArguments.validCall(oTable);
+	});
+
+	QUnit.test("Invalid arguments", function(assert) {
+		var oTable = this.oFakeTable;
+
+		oHookWithArguments.invalidCall(oTable);
+		oHookWithoutArguments.invalidCall(oTable);
+
+		assert.ok(true, "Calling hooks with invalid arguments does not throw an error if no hooks are registered");
+
+		Hook.register(oTable, oHookWithArguments.key, function() {
+			oHookWithArguments.assertArguments(assert, arguments);
+		});
+		Hook.register(oTable, oHookWithoutArguments.key, function() {
+			oHookWithoutArguments.assertArguments(assert, arguments);
+		});
+
+		assert.throws(function() {
+			oHookWithArguments.invalidCall(oTable);
+		}, "Calling a hook that expects arguments with invalid arguments throws an error");
+
+		assert.throws(function() {
+			oHookWithoutArguments.invalidCall(oTable);
+		}, "Calling a hook that does not expect arguments with arguments throws an error");
+	});
+
+	QUnit.test("Call order", function(assert) {
+		var oTable = this.oFakeTable;
+		var oObject = {};
+
+		oObject[oHookWithArguments.key] = function() {
+			assert.step("Hook with arguments: Installation");
+		};
+		oObject[oHookWithoutArguments.key] = function() {
+			assert.step("Hook without arguments: Installation");
+		};
+
+		Hook.register(oTable, oHookWithArguments.key, function() {
+			assert.step("Hook with arguments: Registration 1");
+		});
+		Hook.register(oTable, oHookWithoutArguments.key, function() {
+			assert.step("Hook without arguments: Registration 1");
+		});
+		Hook.install(oTable, oObject);
+		Hook.register(oTable, oHookWithArguments.key, function() {
+			assert.step("Hook with arguments: Registration 2");
+		});
+		Hook.register(oTable, oHookWithoutArguments.key, function() {
+			assert.step("Hook without arguments: Registration 2");
+		});
+
+		oHookWithArguments.validCall(oTable);
+		oHookWithoutArguments.validCall(oTable);
+
+		assert.verifySteps([
+			"Hook with arguments: Registration 1",
+			"Hook with arguments: Installation",
+			"Hook with arguments: Registration 2",
+			"Hook without arguments: Registration 1",
+			"Hook without arguments: Installation",
+			"Hook without arguments: Registration 2"
+		], "Hooks were called in the correct order");
+	});
+
+	QUnit.test("Context", function(assert) {
+		var oTable = this.oFakeTable;
+		var oInstallationSpy = sinon.spy();
+		var oRegistrationSpy = sinon.spy();
+		var oObject = {};
+		var oContext = {context: "My Context"};
+
+		oObject[oHookWithArguments.key] = oInstallationSpy;
+
+		Hook.install(oTable, oObject);
+		Hook.register(oTable, oHookWithArguments.key, oRegistrationSpy);
+		Hook.register(oTable, oHookWithArguments.key, oRegistrationSpy, oContext);
+		oHookWithArguments.validCall(oTable);
+
+		assert.ok(oInstallationSpy.calledOn(oObject), "Installed hook called with the correct context");
+		assert.ok(oRegistrationSpy.firstCall.calledOn(undefined), "Hook that was registered without context was called without context");
+		assert.ok(oRegistrationSpy.secondCall.calledOn(oContext), "Hook that was registered with context was called with that context");
+
+		// Try to change the context of an installation.
+		oInstallationSpy.reset();
+		Hook.install(oTable, oObject, oContext);
+		oHookWithArguments.validCall(oTable);
+
+		assert.ok(oInstallationSpy.calledOn(oObject), "Installing the same hook with another context does not change the context");
+
+		// Uninstall and install with a context.
+		oInstallationSpy.reset();
+		Hook.uninstall(oTable, oObject);
+		Hook.install(oTable, oObject, oContext);
+		oHookWithArguments.validCall(oTable);
+
+		assert.ok(oInstallationSpy.calledOn(oContext), "After uninstall and install with a context, the hook was called with the correct context");
+	});
+
+	QUnit.test("Return value", function(assert) {
+		var oTable = this.oFakeTable;
+		var oObjectA = {};
+		var oObjectB = {};
+		var oObjectC = {};
+
+		assert.deepEqual(oHookWithReturnValue.validCall(oTable), [], "Return values for valid call if nothing returned");
+
+		oObjectA[oHookWithReturnValue.key] = function() {
+			return oHookWithReturnValue.validReturnValue;
+		};
+		oObjectB[oHookWithReturnValue.key] = function() {
+			return oHookWithReturnValue.invalidReturnValue;
+		};
+		oObjectC[oHookWithReturnValue.key] = function() {};
+
+		Hook.register(oTable, oHookWithReturnValue.key, function() {
+			return oHookWithReturnValue.validReturnValue;
+		});
+		Hook.register(oTable, oHookWithReturnValue.key, function() {
+			return oHookWithReturnValue.invalidReturnValue;
+		});
+		Hook.register(oTable, oHookWithReturnValue.key, function() {});
+		Hook.install(oTable, oObjectA);
+		Hook.install(oTable, oObjectB);
+		Hook.install(oTable, oObjectC);
+
+		assert.deepEqual(oHookWithReturnValue.validCall(oTable), [
+			oHookWithReturnValue.validReturnValue,
+			oHookWithReturnValue.validReturnValue
+		], "Return values for valid call");
+	});
+
+	QUnit.module("Registration", {
 		beforeEach: function() {
 			this.oFakeTable = {fakeTable: true};
 			this.oTableUtilsIsAStub = sinon.stub(TableUtils, "isA");
@@ -45,57 +300,18 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("No hooks registered or installed", function(assert) {
-		try {
-			Hook.call(this.oFakeTable, this.aHookKeys[0]);
-			assert.ok(true, "Calling a hook did not cause an error");
-		} catch (e) {
-			assert.ok(false, "Calling a hook should not cause an error");
-		}
-	});
-
-	QUnit.test("Registration", function(assert) {
+	QUnit.test("Register and deregister", function(assert) {
 		var oTable = this.oFakeTable;
-		var aSpies = [];
+		var oSpy = sinon.spy();
 
-		this.aHookKeys.forEach(function(sHookKey) {
-			var oSpy = sinon.spy();
+		Hook.register(oTable, oHookWithArguments.key, oSpy);
+		oHookWithArguments.validCall(oTable);
+		assert.ok(oSpy.calledOnce, "Registered");
+		oSpy.reset();
 
-			aSpies.push(oSpy);
-			Hook.register(oTable, sHookKey, oSpy);
-		});
-
-		this.aHookKeys.forEach(function(sHookKey, iIndex) {
-			Hook.call(oTable, sHookKey, "param", "param" + iIndex);
-		});
-
-		aSpies.forEach(function(oSpy, iIndex) {
-			assert.ok(oSpy.calledOnceWithExactly("param", "param" + iIndex), "The hook was correctly called (" + this.aHookKeys[iIndex] + ")");
-		}.bind(this));
-	});
-
-	QUnit.test("Deregistration", function(assert) {
-		var oTable = this.oFakeTable;
-		var aSpies = [];
-
-		this.aHookKeys.forEach(function(sHookKey) {
-			var oSpy = sinon.spy();
-
-			aSpies.push(oSpy);
-			Hook.register(oTable, sHookKey, oSpy);
-		});
-
-		this.aHookKeys.forEach(function(sHookKey, iIndex) {
-			Hook.deregister(oTable, sHookKey, aSpies[iIndex]);
-		});
-
-		this.aHookKeys.forEach(function(sHookKey, iIndex) {
-			Hook.call(oTable, sHookKey, "param", "param" + iIndex);
-		});
-
-		aSpies.forEach(function(oSpy, iIndex) {
-			assert.ok(oSpy.notCalled, "Deregistered hook was not called (" + this.aHookKeys[iIndex] + ")");
-		}.bind(this));
+		Hook.deregister(oTable, oHookWithArguments.key, oSpy);
+		oHookWithArguments.validCall(oTable);
+		assert.ok(oSpy.notCalled, "Deregistered");
 	});
 
 	QUnit.test("Multiple registrations", function(assert) {
@@ -106,22 +322,21 @@ sap.ui.define([
 		var oSpy3 = sinon.spy();
 		var oSpy4 = sinon.spy();
 		var oSpy5 = sinon.spy();
-		var sHookKey = this.aHookKeys[0];
 
-		Hook.register(oTable, sHookKey, oSpy1);
-		Hook.register(oTable, sHookKey, oSpy1);
-		Hook.register(oTable, sHookKey, oSpy1, oContext);
-		Hook.register(oTable, sHookKey, oSpy1, oContext);
-		Hook.register(oTable, sHookKey, oSpy2);
-		Hook.deregister(oTable, sHookKey, oSpy2);
-		Hook.register(oTable, sHookKey, oSpy3, oContext);
-		Hook.deregister(oTable, sHookKey, oSpy3, oContext);
-		Hook.register(oTable, sHookKey, oSpy4);
-		Hook.deregister(oTable, sHookKey, oSpy4, oContext);
-		Hook.register(oTable, sHookKey, oSpy5, oContext);
-		Hook.deregister(oTable, sHookKey, oSpy5, {});
-		Hook.deregister(oTable, sHookKey, oSpy5);
-		Hook.call(oTable, sHookKey);
+		Hook.register(oTable, oHookWithArguments.key, oSpy1);
+		Hook.register(oTable, oHookWithArguments.key, oSpy1);
+		Hook.register(oTable, oHookWithArguments.key, oSpy1, oContext);
+		Hook.register(oTable, oHookWithArguments.key, oSpy1, oContext);
+		Hook.register(oTable, oHookWithArguments.key, oSpy2);
+		Hook.deregister(oTable, oHookWithArguments.key, oSpy2);
+		Hook.register(oTable, oHookWithArguments.key, oSpy3, oContext);
+		Hook.deregister(oTable, oHookWithArguments.key, oSpy3, oContext);
+		Hook.register(oTable, oHookWithArguments.key, oSpy4);
+		Hook.deregister(oTable, oHookWithArguments.key, oSpy4, oContext);
+		Hook.register(oTable, oHookWithArguments.key, oSpy5, oContext);
+		Hook.deregister(oTable, oHookWithArguments.key, oSpy5, {});
+		Hook.deregister(oTable, oHookWithArguments.key, oSpy5);
+		oHookWithArguments.validCall(oTable);
 
 		assert.equal(oSpy1.callCount, 4, "Hook that is registered twice with and twice without context is called four times");
 		assert.ok(oSpy2.notCalled, "Hook that was deregistered it not called (without context)");
@@ -130,103 +345,67 @@ sap.ui.define([
 		assert.ok(oSpy5.calledOnce, "Hook that was registered with context cannot be deregistered with another context");
 	});
 
-	QUnit.test("Installation", function(assert) {
-		var oTable = this.oFakeTable;
-		var oObject = {hooks: {}};
-		var aSpies = [];
-
-		this.aHookKeys.forEach(function(sHookKey) {
-			var oSpy = sinon.spy();
-
-			aSpies.push(oSpy);
-			oObject.hooks[sHookKey] = oSpy;
-		});
-
-		Hook.install(oTable, oObject);
-
-		this.aHookKeys.forEach(function(sHookKey, iIndex) {
-			Hook.call(oTable, sHookKey, "param", "param" + iIndex);
-		});
-
-		aSpies.forEach(function(oSpy, iIndex) {
-			assert.ok(oSpy.calledOnceWithExactly("param", "param" + iIndex), "The hook was correctly called (" + this.aHookKeys[iIndex] + ")");
-		}.bind(this));
-	});
-
-	QUnit.test("Installation but not implementing hooks", function(assert) {
-		var oTable = this.oFakeTable;
-		var oObject = {};
-
-		Hook.install(oTable, oObject);
-
-		try {
-			Hook.call(oTable, this.aHookKeys[0]);
-			assert.ok(true, "Calling a hook for an incomplete installation did not cause an error");
-		} catch (e) {
-			assert.ok(false, "Calling a hook for an incomplete installation should not cause an error");
+	QUnit.module("Installation", {
+		beforeEach: function() {
+			this.oFakeTable = {fakeTable: true};
+			this.oTableUtilsIsAStub = sinon.stub(TableUtils, "isA");
+			this.oTableUtilsIsAStub.withArgs(this.oFakeTable, "sap.ui.table.Table").returns(true);
+		},
+		afterEach: function() {
+			this.oTableUtilsIsAStub.restore();
 		}
 	});
 
-	QUnit.test("Installation and implementing hooks afterwards", function(assert) {
+	QUnit.test("Install and uninstall", function(assert) {
 		var oTable = this.oFakeTable;
 		var oObject = {};
-		var sHookKey = this.aHookKeys[0];
+		var oSpy = sinon.spy();
 
+		oObject[oHookWithArguments.key] = oSpy;
 		Hook.install(oTable, oObject);
-		oObject.hooks = {};
-		oObject.hooks[sHookKey] = sinon.spy();
-		Hook.call(oTable, sHookKey);
+		oHookWithArguments.validCall(oTable);
+		assert.ok(oSpy.calledOnce, "Installed");
+		oSpy.reset();
 
-		assert.ok(oObject.hooks[sHookKey].calledOnce, "Successfully called a hook that was implemented after installation");
+		Hook.uninstall(oTable, oObject);
+		oHookWithArguments.validCall(oTable);
+		assert.ok(oSpy.notCalled, "Uninstalled");
 	});
 
-	QUnit.test("Uninstallation", function(assert) {
+	QUnit.test("Install but not implement hooks", function(assert) {
 		var oTable = this.oFakeTable;
-		var oObject = {hooks: {}};
-		var aSpies = [];
-
-		this.aHookKeys.forEach(function(sHookKey) {
-			var oSpy = sinon.spy();
-
-			aSpies.push(oSpy);
-			oObject.hooks[sHookKey] = oSpy;
-		});
+		var oObject = {};
 
 		Hook.install(oTable, oObject);
-		Hook.uninstall(oTable, oObject);
+		oHookWithArguments.validCall(oTable);
 
-		this.aHookKeys.forEach(function(sHookKey, iIndex) {
-			Hook.call(oTable, sHookKey, "param", "param" + iIndex);
-		});
+		assert.ok(true, "Calling a hook for an incomplete installation does not cause an error");
+	});
 
-		aSpies.forEach(function(oSpy, iIndex) {
-			assert.ok(oSpy.notCalled, "Uninstalled hook was not called (" + this.aHookKeys[iIndex] + ")");
-		}.bind(this));
+	QUnit.test("Install and implement hooks afterwards", function(assert) {
+		var oTable = this.oFakeTable;
+		var oObject = {};
+
+		Hook.install(oTable, oObject);
+		oObject[oHookWithArguments.key] = sinon.spy();
+		oHookWithArguments.validCall(oTable);
+
+		assert.ok(oObject[oHookWithArguments.key].calledOnce, "Successfully called a hook that was implemented after installation");
 	});
 
 	QUnit.test("Multiple installations", function(assert) {
 		var oTable = this.oFakeTable;
-		var oObject1 = {hooks: {}};
-		var oObject2 = {hooks: {}};
-		var oObject3 = {hooks: {}};
-		var aSpies1 = [];
-		var aSpies2 = [];
-		var aSpies3 = [];
+		var oObject1 = {};
+		var oObject2 = {};
+		var oObject3 = {};
 		var oContext = {};
+		var oSpy1 = sinon.spy();
+		var oSpy2 = sinon.spy();
+		var oSpy3 = sinon.spy();
 
-		this.aHookKeys.forEach(function(sHookKey) {
-			var oSpy1 = sinon.spy();
-			aSpies1.push(oSpy1);
-			oObject1.hooks[sHookKey] = oSpy1;
-
-			var oSpy2 = sinon.spy();
-			aSpies2.push(oSpy2);
-			oObject2.hooks[sHookKey] = oSpy2;
-
-			var oSpy3 = sinon.spy();
-			aSpies3.push(oSpy3);
-			oObject3.hooks[sHookKey] = oSpy3;
-		});
+		oObject1[oHookWithArguments.key] = oSpy1;
+		oObject2[oHookWithArguments.key] = oSpy2;
+		oObject3[oHookWithArguments.key] = oSpy3;
 
 		Hook.install(oTable, oObject1);
 		Hook.install(oTable, oObject1);
@@ -241,131 +420,20 @@ sap.ui.define([
 		Hook.install(oTable, oObject3, oContext);
 		Hook.uninstall(oTable, oObject3, oContext);
 
-		this.aHookKeys.forEach(function(sHookKey, iIndex) {
-			Hook.call(oTable, sHookKey, "param", "param" + iIndex);
-		});
+		oHookWithArguments.validCall(oTable);
 
-		aSpies1.forEach(function(oSpy, iIndex) {
-			if (oSpy.callCount === 2) {
-				assert.ok(oSpy.firstCall.calledWithExactly("param", "param" + iIndex),
-					"1. Installation: First hook was correctly called (" + this.aHookKeys[iIndex] + ")");
-				assert.ok(oSpy.firstCall.calledOn(oObject1),
-					"1. Installation: First hook was called with the default context (" + this.aHookKeys[iIndex] + ")");
-				assert.ok(oSpy.secondCall.calledWithExactly("param", "param" + iIndex),
-					"1. Installation: Second hook was correctly called (" + this.aHookKeys[iIndex] + ")");
-				assert.ok(oSpy.secondCall.calledOn(oContext),
-					"1. Installation: Second hook was called with a custom context (" + this.aHookKeys[iIndex] + ")");
-			} else {
-				assert.ok(false, "1. Installation: Hook should have been called twice (" + this.aHookKeys[iIndex] + ")");
-			}
-		}.bind(this));
+		if (oSpy1.callCount === 2) {
+			assert.ok(oSpy1.calledTwice, "1. Installation: Called twice");
+			assert.ok(oSpy1.firstCall.calledOn(oObject1), "1. Installation: First call with the default context");
+			assert.ok(oSpy1.secondCall.calledOn(oContext), "1. Installation: Second call with a custom context");
+		} else {
+			assert.ok(false, "1. Installation: Should have been called twice");
+		}
 
-		aSpies2.forEach(function(oSpy, iIndex) {
-			assert.ok(oSpy.calledOnceWithExactly("param", "param" + iIndex),
-				"2. Installation: Hook was correctly called (" + this.aHookKeys[iIndex] + ")");
-			assert.ok(oSpy.calledOn(oContext), "2. Installation: Hook was called with the correct context (" + this.aHookKeys[iIndex] + ")");
-		}.bind(this));
+		assert.ok(oSpy2.calledOnce, "2. Installation: Called once");
+		assert.ok(oSpy2.calledOn(oContext), "2. Installation: Called with the correct context");
 
-		aSpies3.forEach(function(oSpy, iIndex) {
-			assert.ok(oSpy.calledOnceWithExactly("param", "param" + iIndex),
-				"3. Installation: Hook was correctly called (" + this.aHookKeys[iIndex] + ")");
-			assert.ok(oSpy.calledOn(oObject3), "3. Installation: Hook was called with the correct context (" + this.aHookKeys[iIndex] + ")");
-		}.bind(this));
-	});
-
-	QUnit.test("Processing arguments", function(assert) {
-		var oTable = this.oFakeTable;
-		var oObject = {hooks: {}};
-		var sHookKey = this.aHookKeys[0];
-		var aHookParam = [];
-
-		oObject.hooks[sHookKey] = function(aParam) {
-			aParam.push("Installation 1");
-		};
-
-		Hook.register(oTable, sHookKey, function(aParam) {
-			aParam.push("Registration 1");
-		});
-		Hook.install(oTable, oObject);
-		Hook.register(oTable, sHookKey, function(aParam) {
-			aParam.push("Registration 2");
-		});
-
-		Hook.call(oTable, sHookKey, aHookParam);
-
-		assert.deepEqual(aHookParam, ["Registration 1", "Installation 1", "Registration 2"]);
-	});
-
-	QUnit.test("Invalid key", function(assert) {
-		var oTable = this.oFakeTable;
-		var sCustomHookKey = "My.Custom.HookKey";
-		var oInstallationSpy = sinon.spy();
-		var oRegistrationSpy = sinon.spy();
-		var oObject = {hooks: {"My.Custom.HookKey": oInstallationSpy}};
-
-		Hook.install(oTable, oObject);
-		Hook.register(oTable, sCustomHookKey, oRegistrationSpy);
-		Hook.call(oTable, sCustomHookKey);
-
-		assert.ok(oInstallationSpy.notCalled, "Custom hooks cannot be called in installations");
-		assert.ok(oRegistrationSpy.notCalled, "Custom hooks cannot be called in registrations");
-	});
-
-	QUnit.test("Foreign scope", function(assert) {
-		var oTable = this.oFakeTable;
-		var oForeignScope = {};
-		var sHookKey = this.aHookKeys[0];
-		var oInstallationSpy = sinon.spy();
-		var oRegistrationSpy = sinon.spy();
-		var oObject = {hooks: {}};
-
-		oObject.hooks[sHookKey] = oInstallationSpy;
-
-		Hook.install(oForeignScope, oObject);
-		Hook.register(oForeignScope, sHookKey, oRegistrationSpy);
-		Hook.call(oTable, sHookKey);
-		assert.ok(oInstallationSpy.notCalled, "Hooks cannot be called in installations for foreign scope");
-		assert.ok(oRegistrationSpy.notCalled, "Hooks cannot be called in registrations for foreign scope");
-
-		Hook.install(oTable, oObject);
-		Hook.register(oTable, sHookKey, oRegistrationSpy);
-		Hook.call(oForeignScope, sHookKey);
-		assert.ok(oInstallationSpy.notCalled, "Hooks cannot be called for foreign scope in installations");
-		assert.ok(oRegistrationSpy.notCalled, "Hooks cannot be called for foreign scope in registrations");
-	});
-
-	QUnit.test("Context", function(assert) {
-		var oTable = this.oFakeTable;
-		var sHookKey = this.aHookKeys[0];
-		var oInstallationSpy = sinon.spy();
-		var oRegistrationSpy = sinon.spy();
-		var oObject = {hooks: {}};
-		var oContext = {context: "My Context"};
-
-		oObject.hooks[sHookKey] = oInstallationSpy;
-
-		Hook.install(oTable, oObject);
-		Hook.register(oTable, sHookKey, oRegistrationSpy);
-		Hook.register(oTable, sHookKey, oRegistrationSpy, oContext);
-		Hook.call(oTable, sHookKey);
-
-		assert.ok(oInstallationSpy.calledOn(oObject), "Installed hook called with the correct context");
-		assert.ok(oRegistrationSpy.firstCall.calledOn(undefined), "Hook that was registered without context was called without context");
-		assert.ok(oRegistrationSpy.secondCall.calledOn(oContext), "Hook that was registered with context was called with that context");
-
-		// Try to change the context of an installation.
-		oInstallationSpy.reset();
-		Hook.install(oTable, oObject, oContext);
-		Hook.call(oTable, sHookKey);
-
-		assert.ok(oInstallationSpy.calledOn(oObject), "Installing the same hook with another context does not change the context");
-
-		// Uninstall and install with a context.
-		oInstallationSpy.reset();
-		Hook.uninstall(oTable, oObject);
-		Hook.install(oTable, oObject, oContext);
-		Hook.call(oTable, sHookKey);
-
-		assert.ok(oInstallationSpy.calledOn(oContext), "After uninstall and install with a context, the hook was called with the correct context");
+		assert.ok(oSpy3.calledOnce, "3. Installation: Called once");
+		assert.ok(oSpy3.calledOn(oObject3), "3. Installation: Called with the correct context");
 	});
 });

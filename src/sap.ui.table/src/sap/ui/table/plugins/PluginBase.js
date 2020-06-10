@@ -11,7 +11,7 @@ sap.ui.define([
 	"use strict";
 
 	var Hook = TableUtils.Hook.Keys;
-	var oHookInstallation = {hooks: {}};
+	var oHookInstallation = {};
 
 	/**
 	 * Constructor for a new table plugin.
@@ -133,7 +133,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	PluginBase.prototype.onTableRowsBound = function(oBinding) {};
-	oHookInstallation.hooks[Hook.Table.RowsBound] = function(oBinding) {
+	oHookInstallation[Hook.Table.RowsBound] = function(oBinding) {
 		this.onTableRowsBound(oBinding); // TODO: rename to onTableBindingCreated ?
 	};
 
@@ -143,7 +143,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	PluginBase.prototype.onTableUnbindRows = function() {};
-	oHookInstallation.hooks[Hook.Table.UnbindRows] = function() {
+	oHookInstallation[Hook.Table.UnbindRows] = function() {
 		this.onTableUnbindRows(); // TODO: rename to onTableBindingRemoved ?
 	};
 

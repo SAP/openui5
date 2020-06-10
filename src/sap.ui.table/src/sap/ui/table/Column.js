@@ -578,25 +578,20 @@ function(
 	Column.prototype._menuHasItems = function() {
 		var oMenu = this.getAggregation("menu");
 		var oTable = this._getTable();
-		var bHasOwnItems = this.isSortableByMenu()
+		var bHasOwnItems = (oMenu ? oMenu.getItems().length > 0 : false)
+						   || (oTable ? oTable.getEnableColumnFreeze() : false)
+						   || (oTable ? oTable.getShowColumnVisibilityMenu() : false)
+						   || this.isSortableByMenu()
 						   || this.isFilterableByMenu()
-						   || this.isGroupable()
-						   || (oTable && oTable.getEnableColumnFreeze())
-						   || (oTable && oTable.getShowColumnVisibilityMenu());
+						   || this.isGroupable();
 
-		var bNotificationExpired = false;
-		var bHooksProvideMenuItems = false;
-		var fnNotifyAboutMenuItems = function() {
-			if (bNotificationExpired) {
-				throw new Error(TableUtils.Hook.Keys.Column.MenuItemNotification + " hook:"
-								+ " The notification function cannot be called asynchronously.");
-			}
-			bHooksProvideMenuItems = true;
-		};
-		TableUtils.Hook.call(oTable, TableUtils.Hook.Keys.Column.MenuItemNotification, this, fnNotifyAboutMenuItems);
-		bNotificationExpired = true;
+		if (bHasOwnItems) {
+			return true;
+		}
 
-		return !!((oMenu && oMenu.getItems().length > 0) || bHasOwnItems || bHooksProvideMenuItems);
+		return TableUtils.Hook.call(oTable, TableUtils.Hook.Keys.Column.MenuItemNotification, this).some(function(bValue) {
+			return bValue;
+		});
 	};
 
 	/**

@@ -3,83 +3,14 @@
  */
 
 // Provides helper sap.ui.table.utils._HookUtils.
-sap.ui.define([], function() {
+sap.ui.define(["sap/ui/base/DataType", "sap/base/Log"], function(DataType, Log) {
 	"use strict";
 
 	var Hooks = new window.WeakMap();
 	var MASTER_HOOK_KEY = {}; // Symbol could be used here, but IE does not support it.
-
-	var mHookKeys = Object.freeze({
-		Table: Object.freeze({
-			/* Called when Table#bindRows or Table#bindAggregation("rows", ...) is called, before Control#bindAggregation.
-			 * Arguments: BindingInfo */
-			BindRows: "Table.BindRows",
-			/* Called when a binding object is created for the rows aggregation.
-			 * Arguments: sap.ui.model.Binding */
-			RowsBound: "Table.RowsBound",
-			/* Called when Table#unbindRows or Table#unbindAggregation("rows", ...) is called, before Control#unbindAggregation.
-			 * Arguments: sap.ui.model.Binding */
-			UnbindRows: "Table.UnbindRows",
-			/* Called after the Table.UnbindRows hook, if the unbind is not caused by rebind or destroy.
-			 * Arguments: none */
-			RowsUnbound: "Table.RowsUnbound",
-			/* Called when Table#refreshRows is called.
-			 * Arguments: none */
-			RefreshRows: "Table.RefreshRows",
-			/* Called when Table#updateRows is called.
-			 * Arguments: none */
-			UpdateRows: "Table.UpdateRows",
-			/* Called when Table#_updateTableSizes is called.
-			 * Arguments: none */
-			UpdateSizes: "Table.UpdateSizes",
-			/* Called when a menu is opened.
-			 * Arguments: sap.ui.unified.Menu */
-			OpenMenu: "Table.OpenMenu"
-		}),
-		Row: Object.freeze({
-			/* Called when the state of a row is updated.
-			 * Arguments: sap.ui.table.Row.State */
-			UpdateState: "Row.UpdateState"
-		}),
-		Column: Object.freeze({
-			/* Called when the table needs to know whether menu items will be added on the Table.OpenMenu hook.
-			 * Arguments: function():boolean */
-			MenuItemNotification: "Column.MenuItemNotification"
-		}),
-
-		// Only for tests!
-		// These hooks can be used to determine when certain processes are completed. Each hook that indicates that a process has started has a
-		// counterpart. For example, 2 hooks that indicate that a process has started require 2 hooks that indicate that this process has ended.
-		// Only then can the process be considered complete.
-		Test: Object.freeze({
-			StartAsyncTableUpdate: "Test.StartAsyncTableUpdate",
-			EndAsyncTableUpdate: "Test.EndAsyncTableUpdate",
-			StartAsyncFocusHandling: "Test.StartAsyncFocusHandling",
-			EndAsyncFocusHandling: "Test.EndAsyncFocusHandling"
-		})
-	});
-
-	var aHookKeys = (function() {
-		function getKeys(mMap) {
-			var aKeys = [];
-
-			Object.keys(mMap).forEach(function(sKey) {
-				if (typeof mMap[sKey] === "string") {
-					aKeys.push(mMap[sKey]);
-				} else {
-					aKeys = aKeys.concat(getKeys(mMap[sKey]));
-				}
-			});
-
-			return aKeys;
-		}
-
-		return getKeys(mHookKeys);
-	})();
-
-	function isValidHookKey(sHookKey) {
-		return aHookKeys.indexOf(sHookKey) >= 0;
-	}
+	var mKeyMapForExternalUsage = {};
+	var mHookMetadataByKey = {};
+	var aForbiddenTypes = ["function"];
 
 	/**
 	 * Static collection of utility functions providing a table internal hook system.
@@ -92,6 +23,7 @@ sap.ui.define([], function() {
 	 * @version ${version}
 	 * @namespace
 	 * @alias sap.ui.table.utils._HookUtils
+	 *
 	 * @example
 	 * MyClass.prototype.init = function() {
 	 *     TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.MyHook, this.myPrivateMethod, this);
@@ -100,6 +32,7 @@ sap.ui.define([], function() {
 	 *     TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.MyHook, this.myPrivateMethod, this);
 	 * };
 	 * MyClass.prototype.myPrivateMethod = function() {...};
+	 *
 	 * @example
 	 * // Note that you need a reference to the handler to be able to deregister it!
 	 * MyClass.prototype.myMethod = function() {
@@ -113,198 +46,413 @@ sap.ui.define([], function() {
 	 *     this.doSomethingThatTriggersHook();
 	 * };
 	 * MyClass.prototype.myProtectedMethod = function() {...};
+	 *
 	 * @example
 	 * MyClass.prototype.init = function() {
-	 *     TableUtils.Hook.install(oTable, this);
-	 * }
+	 *     TableUtils.Hook.install(oTable, MyClass.prototype.hooks, this);
+	 * };
+	 * MyClass.prototype.myMethod = function() {...};
 	 * MyClass.prototype.hooks = {
 	 *     MyHook: function() {this.myMethod();}
 	 * };
 	 * MyClass.prototype.hooks[TableUtils.Hook.Keys.MyOtherHook] = function() {...};
 	 * MyClass.prototype.exit = function() {
-	 *     TableUtils.Hook.uninstall(oTable, this);
-	 * }
+	 *     TableUtils.Hook.uninstall(oTable, MyClass.prototype.hooks, this);
+	 * };
 	 * // Be careful with inheritance!
 	 * MyClassSubclass.prototype.hooks[TableUtils.Hook.Keys.YetAnotherHook] = function() {...};
 	 * oInstanceOfMyClass.hooks.YetAnotherHook === oInstanceOfMyClassSubclass.hooks.YetAnotherHook // equals true
+	 *
 	 * @example
-	 * var oMyHookInstallation = {hooks: {}};
+	 * var oMyHookInstallation = {};
 	 * oMyHookInstallation.myMethod = function() {...};
-	 * oMyHookInstallation.hooks[TableUtils.Hook.Keys.MyHook] = function() {this.myMethod();};
+	 * oMyHookInstallation[TableUtils.Hook.Keys.MyHook] = function() {this.myMethod();};
 	 * TableUtils.Hook.install(oTable, oMyHookInstallation);
-	 * oMyHookInstallation.hooks[TableUtils.Hook.Keys.MyOtherHook] = function() {...};
+	 * oMyHookInstallation[TableUtils.Hook.Keys.MyOtherHook] = function() {this.myMethod();};
 	 * TableUtils.Hook.uninstall(oTable, oMyHookInstallation);
+	 *
 	 * @private
 	 */
-	var HookUtils = {
-		TableUtils: null, // Avoid cyclic dependency. Will be filled by TableUtils.
+	var HookUtils = {};
 
-		/**
-		 * A map of hook keys.
-		 */
-		Keys: mHookKeys,
+	/*
+	 * This table internal hooks system is intended to simplify the communication between table modules. Such modules might need to be decoupled from
+	 * each other, or do not even have a direct relationship.
+	 * From maintainability perspective, hooks need to be consumable without the need for checks and validation. Therefore, a contract must be
+	 * enforced.
+	 *
+	 * Every hook must be defined before it can be used. There can be no dynamic hooks. Calling or registering to an undefined hook has no effect.
+	 *
+	 * Hook metadata:
+	 * - "arguments" (required) - List of types of arguments that have to be provided to a call.
+	 *   Examples: [] | ["any"] | ["string"] | ["int[]", "any", ...] | ["object"] | ["class:sap.ui.table.Table"] | [function():boolean] | ...
+	 *
+	 *   Calls with invalid arguments are ignored. This includes the number of arguments as well as their types.
+	 *   Almost any type that can be used for a property, for example, can also be used here. Classes have to be prefixed with "class:", so the
+	 *   correct method is used to validate arguments.
+	 *
+	 *   If a hook does not allow any values to be passed, an empty array has to be set.
+	 *
+	 *   Type function():boolean -> Custom validation
+	 *   For example for internal types like sap.ui.table.Row.State. It is also possible to use sap.ui.base.DataType#createType to create
+	 *   a type that can be used here. But this is not done to avoid polluting the type registry just for this util.
+	 *
+	 * - "returnValue" (optional) - Type of the return value.
+	 *   Examples: "boolean" | "Promise"
+	 *
+	 *   If a type for the return value is defined, an array of valid return values is returned to the caller. Invalid values that do not match
+	 *   the type are discarded.
+	 *   Any type that can be used in "arguments" can also be used here, plus "Promise".
+	 *
+	 * Forbidden types: "function"
+	 */
 
-		/**
-		 * Calls a hook of a table.
-		 *
-		 * @param {sap.ui.table.Table} oScope The table whose hook is called.
-		 * @param {string} sHookKey The hook to call.
-		 */
-		call: function(oScope, sHookKey) {
-			var aHooks = Hooks.get(oScope);
-			var aArguments;
-
-			if (!HookUtils.TableUtils.isA(oScope, "sap.ui.table.Table") || aHooks == null || !isValidHookKey(sHookKey)) {
-				return;
-			}
-
-			aArguments = Array.prototype.slice.call(arguments, 2);
-
-			aHooks.forEach(function(oHook) {
-				if (oHook.key === MASTER_HOOK_KEY) {
-					var oCall = {};
-					var oHandlerContext = oHook.handlerContext == null ? oHook.target : oHook.handlerContext;
-
-					oCall[sHookKey] = aArguments;
-					HookUtils.TableUtils.dynamicCall(oHook.target.hooks, oCall, oHandlerContext);
-
-				} else if (oHook.key === sHookKey) {
-					oHook.handler.apply(oHook.handlerContext, aArguments);
-				}
-			});
-		},
-
-		/**
-		 * Installs the hooks of a table in an object.
-		 * Installation of hooks is a short way of registering to all hooks. The target object needs to have a <code>hooks</code> map object with hook
-		 * keys as the keys, and functions as the values. For example: <code>oTarget.hooks.My_Hook = function() {...}</code> will be called, if the
-		 * "My_Hook" hook is called.
-		 * There can only be one installation in the target object for each context.
-		 *
-		 * @param {sap.ui.table.Table} oScope The table whose hooks are installed.
-		 * @param {Object} oTarget The object the hooks are installed in.
-		 * @param {Object} [oThis] The context of hook handler calls.
-		 */
-		install: function(oScope, oTarget, oThis) {
-			if (!HookUtils.TableUtils.isA(oScope, "sap.ui.table.Table") || !oTarget) {
-				return;
-			}
-
-			var aHooks = Hooks.get(oScope);
-
-			if (aHooks == null) {
-				aHooks = [];
-			}
-
-			var bMasterHookInstalled = aHooks.some(function(oHook) {
-				return oHook.key === MASTER_HOOK_KEY && oHook.target === oTarget && oHook.handlerContext === oThis;
-			});
-
-			if (bMasterHookInstalled) {
-				return;
-			}
-
-			aHooks.push({
-				key: MASTER_HOOK_KEY,
-				target: oTarget,
-				handlerContext: oThis
-			});
-
-			Hooks.set(oScope, aHooks);
-		},
-
-		/**
-		 * Uninstalls hooks of a table from the target object.
-		 *
-		 * @param {sap.ui.table.Table} oScope The table whose hooks are uninstalled.
-		 * @param {Object} oTarget The object the hooks are uninstalled from.
-		 * @param {Object} [oThis] The context of hook handler calls.
-		 */
-		uninstall: function(oScope, oTarget, oThis) {
-			if (!HookUtils.TableUtils.isA(oScope, "sap.ui.table.Table") || !oTarget) {
-				return;
-			}
-
-			var aHooks = Hooks.get(oScope);
-
-			for (var i = 0; i < aHooks.length; i++) {
-				var oHook = aHooks[i];
-
-				if (oHook.key === MASTER_HOOK_KEY && oHook.target === oTarget && oHook.handlerContext === oThis) {
-					aHooks.splice(i, 1);
-					break;
-				}
-			}
-
-			if (aHooks.length === 0) {
-				Hooks.delete(oScope);
-			} else {
-				Hooks.set(oScope, aHooks);
+	var mHookMetadata = {
+		Table: {
+			// Called when Table#bindRows or Table#bindAggregation("rows", ...) is called, before Control#bindAggregation.
+			BindRows: {
+				arguments: [
+					"object" // BindingInfo
+				]
+			},
+			// Called when a binding object is created for the rows aggregation.
+			RowsBound: {
+				arguments: [
+					"class:sap.ui.model.Binding"
+				]
+			},
+			// Called when Table#unbindRows or Table#unbindAggregation("rows", ...) is called, before Control#unbindAggregation.
+			UnbindRows: {
+				arguments: [
+					"object" // BindingInfo
+				]
+			},
+			// Called after the Table.UnbindRows hook, if the unbind is not caused by rebind or destroy.
+			RowsUnbound: {
+				arguments: []
+			},
+			// Called when Table#refreshRows is called.
+			RefreshRows: {
+				arguments: [
+					function(sReason) { // sap.ui.table.utils.TableUtils.RowsUpdateReason
+						return sReason in HookUtils.TableUtils.RowsUpdateReason || DataType.getType("sap.ui.model.ChangeReason").isValid(sReason);
+					}
+				]
+			},
+			// Called when Table#updateRows is called.
+			UpdateRows: {
+				arguments: [
+					function(sReason) { // sap.ui.table.utils.TableUtils.RowsUpdateReason
+						return sReason in HookUtils.TableUtils.RowsUpdateReason || DataType.getType("sap.ui.model.ChangeReason").isValid(sReason);
+					}
+				]
+			},
+			// Called when Table#_updateTableSizes is called.
+			UpdateSizes: {
+				arguments: [
+					function(sReason) { // sap.ui.table.utils.TableUtils.RowsUpdateReason
+						return sReason in HookUtils.TableUtils.RowsUpdateReason || DataType.getType("sap.ui.model.ChangeReason").isValid(sReason);
+					}
+				]
+			},
+			// Called when a menu is opened.
+			OpenMenu: {
+				arguments: [
+					function(oCellInfo) { // sap.ui.table.utils.TableUtils.CellInfo
+						return oCellInfo ? typeof oCellInfo.isOfType === "function" : false;
+					},
+					"class:sap.ui.unified.Menu"
+				]
 			}
 		},
-
-		/**
-		 * Registers to a hook of a table.
-		 * Multiple registrations with the same <code>fnHandler</code> and <code>oThis</code> are possible.
-		 *
-		 * @param {sap.ui.table.Table} oScope The table to whose hook to register.
-		 * @param {string} sHookKey The hook to register to.
-		 * @param {Function} fnHandler The handler of the hook.
-		 * @param {Object} [oThis] The context of hook handler calls.
-		 */
-		register: function(oScope, sHookKey, fnHandler, oThis) {
-			if (!HookUtils.TableUtils.isA(oScope, "sap.ui.table.Table") || !isValidHookKey(sHookKey)) {
-				return;
+		Row: {
+			// Called when the state of a row is updated.
+			UpdateState: {
+				arguments: [
+					function(oRowState) { // sap.ui.table.Row.State
+						// instanceof check not possible due to missing reference, just check for some properties
+						return oRowState != null
+							   && oRowState.hasOwnProperty("context")
+							   && oRowState.hasOwnProperty("Type")
+							   && oRowState.hasOwnProperty("type")
+							   && oRowState.type in oRowState.Type;
+					}
+				]
 			}
-
-			var aHooks = Hooks.get(oScope);
-
-			if (aHooks == null) {
-				aHooks = [];
-			}
-
-			aHooks.push({
-				key: sHookKey,
-				handler: fnHandler,
-				handlerContext: oThis
-			});
-
-			Hooks.set(oScope, aHooks);
 		},
-
-		/**
-		 * Deregisters from a hook of a table.
-		 * If there are multiple registrations with the same <code>fnHandler</code> and <code>oThis</code>, one deregistration per
-		 * registration is required. The last registration is removed first.
-		 *
-		 * @param {sap.ui.table.Table} oScope The table to whose hook to deregister from.
-		 * @param {string} sHookKey The hook to deregister from.
-		 * @param {Function} fnHandler The handler of the hook.
-		 * @param {Object} [oThis] The context of hook handler calls.
-		 */
-		deregister: function(oScope, sHookKey, fnHandler, oThis) {
-			var aHooks = Hooks.get(oScope);
-
-			if (!HookUtils.TableUtils.isA(oScope, "sap.ui.table.Table") || aHooks == null || !isValidHookKey(sHookKey)) {
-				return;
+		Column: {
+			// Called when the table needs to know whether menu items will be added on the Table.OpenMenu hook. Returning "true" indicates that
+			// the consumer will add menu items on Table.OpenMenu.
+			MenuItemNotification: {
+				arguments: ["class:sap.ui.table.Column"],
+				returnValue: "boolean"
 			}
-
-			for (var i = 0; i < aHooks.length; i++) {
-				var oHook = aHooks[i];
-
-				if (oHook.key === sHookKey && oHook.handler === fnHandler && oHook.handlerContext === oThis) {
-					aHooks.splice(i, 1);
-					break;
-				}
-			}
-
-			if (aHooks.length === 0) {
-				Hooks.delete(oScope);
-			} else {
-				Hooks.set(oScope, aHooks);
-			}
+		},
+		// Can be used to send any signal.
+		Signal: {
+			arguments: ["string"]
 		}
 	};
+
+	HookUtils.TableUtils = null; // Avoid cyclic dependency. Will be filled by TableUtils.
+
+	/**
+	 * A map of keys.
+	 */
+	HookUtils.Keys = mKeyMapForExternalUsage;
+
+	/**
+	 * Calls a hook of a table.
+	 *
+	 * For arguments that are passed by reference, it is the responsibility of the caller to ensure that either immutable objects or copies are
+	 * passed, or that mutating the object cannot cause any issues in the caller.
+	 *
+	 * If the hook allows to return values, an array of valid values is returned. Invalid values that have an incorrect type are discarded.
+	 *
+	 * @param {sap.ui.table.Table} oScope The table whose hook is called.
+	 * @param {string} sKey The hook to call.
+	 * @returns {any[] | undefined} The return values, or <code>undefined</code> if the hook does not allow return values.
+	 */
+	HookUtils.call = function(oScope, sKey) {
+		var aHooks = Hooks.get(oScope);
+
+		if (!isValidScope(oScope) || !isValidKey(sKey)) {
+			return undefined;
+		}
+
+		var mHookMetadata = getHookMetadataByKey(sKey);
+
+		if (aHooks == null) {
+			if (mHookMetadata.returnValue) {
+				return [];
+			}
+			return undefined;
+		}
+
+		var aArguments = Array.prototype.slice.call(arguments, 2);
+		var bArgumentsValid = validateArguments(mHookMetadata, aArguments);
+
+		if (!bArgumentsValid) {
+			throw new Error("Hook with key " + sKey + " was not called. Invalid arguments passed\n" + oScope);
+		}
+
+		var aReturnValues = aHooks.map(function(oHook) {
+			if (oHook.key === MASTER_HOOK_KEY) {
+				var oCall = {};
+				var oHandlerContext = oHook.handlerContext == null ? oHook.target : oHook.handlerContext;
+
+				oCall[sKey] = aArguments;
+				return HookUtils.TableUtils.dynamicCall(oHook.target, oCall, oHandlerContext);
+
+			} else if (oHook.key === sKey) {
+				return oHook.handler.apply(oHook.handlerContext, aArguments);
+			}
+		});
+
+		aReturnValues = getValidReturnValues(mHookMetadata, aReturnValues);
+
+		return aReturnValues;
+	};
+
+	/**
+	 * Installs the hooks of a table in an object.
+	 * Installation of hooks is a short way of registering to all hooks. The target object needs to have hook keys as the keys,
+	 * and functions as the values. For example: <code>oTarget.MyHook = function() {...}</code> will be called, if the
+	 * "MyHook" hook is called.
+	 * There can only be one installation in the target object for every context.
+	 *
+	 * @param {sap.ui.table.Table} oScope The table whose hooks are installed.
+	 * @param {Object} oTarget The object the hooks are installed in.
+	 * @param {Object} [oThis] The context of hook handler calls.
+	 */
+	HookUtils.install = function(oScope, oTarget, oThis) {
+		if (!oTarget || !isValidScope(oScope)) {
+			return;
+		}
+
+		var aHooks = Hooks.get(oScope);
+
+		if (aHooks == null) {
+			aHooks = [];
+		}
+
+		var bMasterHookInstalled = aHooks.some(function(oHook) {
+			return oHook.key === MASTER_HOOK_KEY && oHook.target === oTarget && oHook.handlerContext === oThis;
+		});
+
+		if (bMasterHookInstalled) {
+			return;
+		}
+
+		aHooks.push({
+			key: MASTER_HOOK_KEY,
+			target: oTarget,
+			handlerContext: oThis
+		});
+
+		Hooks.set(oScope, aHooks);
+	};
+
+	/**
+	 * Uninstalls hooks of a table from the target object.
+	 *
+	 * @param {sap.ui.table.Table} oScope The table whose hooks are uninstalled.
+	 * @param {Object} oTarget The object the hooks are uninstalled from.
+	 * @param {Object} [oThis] The context of hook handler calls.
+	 */
+	HookUtils.uninstall = function(oScope, oTarget, oThis) {
+		var aHooks = Hooks.get(oScope);
+
+		if (aHooks == null || !oTarget) {
+			return;
+		}
+
+		for (var i = 0; i < aHooks.length; i++) {
+			var oHook = aHooks[i];
+
+			if (oHook.key === MASTER_HOOK_KEY && oHook.target === oTarget && oHook.handlerContext === oThis) {
+				aHooks.splice(i, 1);
+				break;
+			}
+		}
+
+		if (aHooks.length === 0) {
+			Hooks.delete(oScope);
+		} else {
+			Hooks.set(oScope, aHooks);
+		}
+	};
+
+	/**
+	 * Registers to a hook of a table.
+	 * Multiple registrations with the same <code>fnHandler</code> and <code>oThis</code> are possible.
+	 *
+	 * @param {sap.ui.table.Table} oScope The table to whose hook to register.
+	 * @param {string} sKey The hook to register to.
+	 * @param {Function} fnHandler The handler of the hook.
+	 * @param {Object} [oThis] The context of hook handler calls.
+	 */
+	HookUtils.register = function(oScope, sKey, fnHandler, oThis) {
+		if (typeof fnHandler !== "function" || !isValidScope(oScope) || !isValidKey(sKey)) {
+			return;
+		}
+
+		var aHooks = Hooks.get(oScope);
+
+		if (aHooks == null) {
+			aHooks = [];
+		}
+
+		aHooks.push({
+			key: sKey,
+			handler: fnHandler,
+			handlerContext: oThis
+		});
+
+		Hooks.set(oScope, aHooks);
+	};
+
+	/**
+	 * Deregisters from a hook of a table.
+	 * If there are multiple registrations with the same <code>fnHandler</code> and <code>oThis</code>, one deregistration per
+	 * registration is required. The last registration is removed first.
+	 *
+	 * @param {sap.ui.table.Table} oScope The table from whose hook to deregister from.
+	 * @param {string} sKey The hook to deregister from.
+	 * @param {Function} fnHandler The handler of the hook.
+	 * @param {Object} [oThis] The context of hook handler calls.
+	 */
+	HookUtils.deregister = function(oScope, sKey, fnHandler, oThis) {
+		var aHooks = Hooks.get(oScope);
+
+		if (aHooks == null) {
+			return;
+		}
+
+		for (var i = 0; i < aHooks.length; i++) {
+			var oHook = aHooks[i];
+
+			if (oHook.key === sKey && oHook.handler === fnHandler && oHook.handlerContext === oThis) {
+				aHooks.splice(i, 1);
+				break;
+			}
+		}
+
+		if (aHooks.length === 0) {
+			Hooks.delete(oScope);
+		} else {
+			Hooks.set(oScope, aHooks);
+		}
+	};
+
+	function extractKeys(mKeys, mCurrent, sCurrentKey) {
+		Object.keys(mCurrent).forEach(function(sProperty) {
+			var sKey = sCurrentKey ? sCurrentKey + "." + sProperty : sProperty;
+
+			if ("arguments" in mCurrent[sProperty]) {
+				aForbiddenTypes.forEach(function(sForbiddenType) {
+					if (mCurrent[sProperty].arguments.indexOf(sForbiddenType) > -1 || mCurrent[sProperty].returnValue === sForbiddenType) {
+						throw new Error("Forbidden type found in metadata of hook " + sCurrentKey + ": " + sForbiddenType);
+					}
+				});
+
+				mKeys[sProperty] = sKey;
+				mHookMetadataByKey[sKey] = mCurrent[sProperty];
+			} else {
+				mKeys[sProperty] = {};
+				extractKeys(mKeys[sProperty], mCurrent[sProperty], sKey);
+			}
+		});
+
+		return mKeys;
+	}
+	extractKeys(mKeyMapForExternalUsage, mHookMetadata);
+
+	function isValidKey(sKey) {
+		return sKey in mHookMetadataByKey;
+	}
+
+	function isValidScope(oScope) {
+		return HookUtils.TableUtils.isA(oScope, "sap.ui.table.Table") && !oScope.bIsDestroyed && !oScope._bIsBeingDestroyed;
+	}
+
+	function getHookMetadataByKey(sKey) {
+		return mHookMetadataByKey[sKey];
+	}
+
+	function validateArguments(mHookMetadata, aArguments) {
+		return mHookMetadata.arguments.length === aArguments.length && mHookMetadata.arguments.every(function(vType, iIndex) {
+			if (typeof vType === "function") {
+				return vType(aArguments[iIndex]);
+			} else if (vType.startsWith("class:")) {
+				return HookUtils.TableUtils.isA(aArguments[iIndex], vType.substring(6));
+			} else {
+				return DataType.getType(vType).isValid(aArguments[iIndex]);
+			}
+		});
+	}
+
+	function getValidReturnValues(mHookMetadata, aValues) {
+		if (!mHookMetadata.returnValue) {
+			return undefined;
+		}
+
+		var vType = mHookMetadata.returnValue;
+
+		return aValues.filter(function(vValue) {
+			if (vValue == null) {
+				return false;
+			} else if (typeof vType === "function") {
+				return vType(vValue);
+			} else if (vType === "Promise") {
+				return vValue instanceof Promise;
+			} else if (vType.startsWith("class:")) {
+				return HookUtils.TableUtils.isA(vValue, vType.substring(6));
+			} else {
+				return DataType.getType(vType).isValid(vValue);
+			}
+		});
+	}
 
 	return HookUtils;
 }, /* bExport= */ true);

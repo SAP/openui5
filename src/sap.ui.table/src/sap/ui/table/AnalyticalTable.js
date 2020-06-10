@@ -207,8 +207,6 @@ sap.ui.define([
 	AnalyticalTable.prototype.exit = function() {
 		Table.prototype.exit.apply(this, arguments);
 		this._cleanupGroupHeaderMenuItems();
-		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.UpdateState, this._updateRowState, this);
-		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Table.OpenMenu, this._onOpenTableContextMenu, this);
 	};
 
 	AnalyticalTable.prototype._adaptLocalization = function(bRtlChanged, bLangChanged) {
