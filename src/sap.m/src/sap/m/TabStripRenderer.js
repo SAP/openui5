@@ -99,7 +99,6 @@ sap.ui.define([
 			bModified = oItem.getModified();
 
 		oRm.openStart("div", oItem);
-		oRm.attr("id", oItem.getId());
 		oRm.class(TabStripItem.CSS_CLASS);
 		if (bModified) {
 			oRm.class(TabStripItem.CSS_CLASS_MODIFIED);

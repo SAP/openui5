@@ -43,11 +43,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 			bEnabled = oControl.getEnabled(),
 			bRTL = sap.ui.getCore().getConfiguration().getRTL();
 
-		oRM.openStart("span");
-
-		if (mOptions && (mOptions.id !== undefined)) {
-			oRM.attr("id", mOptions.id);
-		}
+		oRM.openStart("span", mOptions && mOptions.id);
 		if (mOptions && (mOptions.position !== undefined)) {
 			fValue = aRange[mOptions.position === "start" ? 0 : 1];
 

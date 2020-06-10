@@ -103,11 +103,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 		SliderRenderer.renderHandle = function(oRm, oSlider, mOptions) {
 			var bEnabled = oSlider.getEnabled();
 
-			oRm.openStart("span");
-
-			if (mOptions && (mOptions.id !== undefined)) {
-				oRm.attr("id", mOptions.id);
-			}
+			oRm.openStart("span", mOptions && mOptions.id);
 
 			if (oSlider.getShowHandleTooltip() && !oSlider.getShowAdvancedTooltip()) {
 				this.writeHandleTooltip(oRm, oSlider);

@@ -45,7 +45,7 @@ function() {
 				oRm.openStart("div")
 					.class("sapFShellBarOLHB")
 					.openEnd();
-				oControl._aLeftControls.forEach(oRm.renderControl);
+				oControl._aLeftControls.forEach(oRm.renderControl, oRm);
 
 				oRm.close("div");
 
@@ -59,7 +59,7 @@ function() {
 					.class("sapFShellBarORHB")
 					.openEnd();
 
-				oControl._aRightControls.forEach(oRm.renderControl);
+				oControl._aRightControls.forEach(oRm.renderControl, oRm);
 
 				oRm.close("div");
 			}

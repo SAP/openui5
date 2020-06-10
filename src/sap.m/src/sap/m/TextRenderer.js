@@ -109,8 +109,7 @@ sap.ui.define([
 		 * @param {sap.m.Text} oText An object representation of the control that should be rendered
 		 */
 		TextRenderer.renderMaxLines = function(oRm, oText) {
-			oRm.openStart("span");
-			oRm.attr("id", oText.getId() + "-inner");
+			oRm.openStart("span", oText.getId() + "-inner");
 			oRm.class("sapMTextMaxLine");
 
 			// check native line clamp support

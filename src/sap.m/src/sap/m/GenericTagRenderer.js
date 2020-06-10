@@ -81,9 +81,8 @@ sap.ui.define([
 	};
 
 	GenericTagRenderer.renderText = function (oRm, oControl) {
-		oRm.openStart("span");
+		oRm.openStart("span", oControl.getId() + "-text");
 		oRm.class("sapMGenericTagText");
-		oRm.attr("id", oControl.getId() + "-text");
 		oRm.openEnd();
 		oRm.text(oControl.getText());
 		oRm.close("span");
@@ -95,9 +94,8 @@ sap.ui.define([
 			return;
 		}
 
-		oRm.openStart("span");
+		oRm.openStart("span", oControl.getId() + "-status");
 		oRm.class("sapUiInvisibleText");
-		oRm.attr("id", oControl.getId() + "-status");
 		oRm.attr("aria-hidden", "true");
 		oRm.openEnd();
 

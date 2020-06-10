@@ -32,8 +32,7 @@ sap.ui.define(['sap/ui/core/Renderer'],
 			.style("width", oControl.getWidth())
 			.openEnd();
 
-		oRm.openStart("div")
-			.attr("id", oControl.getId() + "-container")
+		oRm.openStart("div", oControl.getId() + "-container")
 			.style("left", "0%")
 			.style("right", "0%")
 			.class(CONSTANTS.MAIN_CLASS);

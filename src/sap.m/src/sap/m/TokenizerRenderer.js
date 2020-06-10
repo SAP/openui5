@@ -81,8 +81,7 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 			oControl._bCopyToClipboardSupport = true;
 		}
 
-		oRm.openStart("div");
-		oRm.attr("id", oControl.getId() + "-scrollContainer");
+		oRm.openStart("div", oControl.getId() + "-scrollContainer");
 		oRm.class("sapMTokenizerScrollContainer");
 		oRm.openEnd();
 
