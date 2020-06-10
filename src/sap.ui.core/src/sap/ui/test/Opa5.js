@@ -556,6 +556,10 @@ sap.ui.define([
 		 *     <li> When autoWait is not used, the default value for options.enabled is false.</li>
 		 * </ul>
 		 * This means that if you use autoWait and you want to find a disabled control, you need to explicitly set options.enabled to false.
+		 * @param {boolean} [options.interactable=false] @since 1.80 If set to true, the {@link sap.ui.test.matchers.Interactable} matcher will be applied.
+		 * If autoWait is true, this option has no effect and interactable will always be true.
+		 * If autoWait is false, which is the default state, the value of the interactable property will have an effect.
+		 * When interactable is true, enabled will also be set to true, unless declared otherwise.
 		 * @param {int} [options.timeout=15] (seconds) Specifies how long the waitFor function polls before it fails.O means it will wait forever.
 		 * @param {int} [options.debugTimeout=0] @since 1.47 (seconds) Specifies how long the waitFor function polls before it fails in debug mode.O means it will wait forever.
 		 * @param {int} [options.pollingInterval=400] (milliseconds) Specifies how often the waitFor function polls.
@@ -644,9 +648,9 @@ sap.ui.define([
 		 * Executing multiple actions will not wait between actions for a control to become "Interactable" again.
 		 * If you need waiting between actions you need to split the actions into multiple 'waitFor' statements.
 		 * @param {boolean} [options.autoWait=false] @since 1.42 Only has an effect if set to true. Since 1.53 it can also be a plain object.
-		 * The waitFor statement will not execute success callbacks as long as there is pending asynchronous work such as for example:
+		 * When autoWait is true, the waitFor statement will not execute success callbacks as long as there is pending asynchronous work such as for example:
 		 * open XMLHTTPRequests (requests to a server), scheduled delayed work and promises, unfinished UI navigation.
-		 * In addition, the control must be {@link sap.ui.test.matchers.Interactable}
+		 * In addition, the control state will be checked with the {@link sap.ui.test.matchers.Interactable} matcher, and the control will have to be enabled.
 		 * So when autoWait is enabled, success behaves like an action in terms of waiting.
 		 * It is recommended to set this value to true for all your waitFor statements using:
 		 * <pre>
@@ -737,12 +741,12 @@ sap.ui.define([
 			oOptionsPassedToOpa = Opa._createFilteredOptions(aPropertiesThatShouldBePassedToOpaWaitFor, options);
 
 			oOptionsPassedToOpa.check = function () {
-				var bInteractable = !!options.actions || options.autoWait;
+				var bApplyAutoWait = !!options.actions || options.autoWait;
 				var oAutoWaiter = Opa5._getAutoWaiter();
 
 				oAutoWaiter.extendConfig(options.autoWait);
 
-				if (bInteractable && oAutoWaiter.hasToWait()) {
+				if (bApplyAutoWait && oAutoWaiter.hasToWait()) {
 					return false;
 				}
 
@@ -750,7 +754,7 @@ sap.ui.define([
 				var oPlugin = Opa5.getPlugin();
 				var oPluginOptions = $.extend({}, options, {
 					// ensure Interactable matcher is applied if autoWait is true or actions are specified
-					interactable: bInteractable
+					interactable: bApplyAutoWait || options.interactable
 				});
 
 				// even if we have no control the matchers may provide a value for vControl
