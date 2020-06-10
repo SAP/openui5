@@ -1386,7 +1386,8 @@ sap.ui.define([
 		if (sId === null) {
 			this.setAssociation("selectedSection", null, true);
 			this._expandHeader(this._bHeaderInTitleArea);
-			this._requestAdjustLayoutAndUxRules(true); // obtains the firstVisible section and scrolls to it if needed
+			this._selectFirstVisibleSection();
+
 			return this;
 		}
 
@@ -1397,6 +1398,24 @@ sap.ui.define([
 		vClosestSection = ObjectPageSection._getClosestSection(sId);
 		sSectionIdToSet = (vClosestSection instanceof ObjectPageSection) ? vClosestSection.getId() : vClosestSection;
 		return this.setAssociation("selectedSection", sSectionIdToSet, true);
+	};
+
+	/**
+	 * Called when setSelectedSection is called with an argument of <code>null</code>.
+	 * Selects the first visible section.
+	 * @private
+	 */
+	ObjectPageLayout.prototype._selectFirstVisibleSection = function () {
+		if (this.getUseIconTabBar()) {
+			this._adjustSelectedSectionByUXRules();
+			this._setCurrentTabSection(this._oFirstVisibleSection);
+			this._bAllContentFitsContainer = this._hasSingleVisibleFullscreenSubSection(this._oFirstVisibleSection);
+			this._preloadSectionsOnBeforeScroll(this._oFirstVisibleSection);
+			this._updateSelectionOnScroll(0);
+			this._checkSubSectionVisibilityChange();
+		} else if (this.$().is(":visible")) {
+			this._scrollTo(0, 0);
+		}
 	};
 
 	/**
@@ -2845,6 +2864,11 @@ sap.ui.define([
 	ObjectPageLayout.prototype._onUpdateContentSize = function (oEvent) {
 		var iScrollTop;
 
+		if (oEvent.size.height === 0 || oEvent.size.width === 0) {
+			Log.info("ObjectPageLayout :: not triggering calculations if height or width is 0");
+			return;
+		}
+
 		if (this._preserveHeaderStateOnScroll()) {
 			this._overridePreserveHeaderStateOnScroll();
 		}
@@ -2928,7 +2952,11 @@ sap.ui.define([
 			// (because changes to scrollTop of a hidden container are ignored by the browser)
 			// => we need to restore the correct scroll position
 			if ((iOldHeight === 0) && bHeightChange && !this._isClosestScrolledSection(sSelectedSectionId)) {
-				this.scrollToSection(sSelectedSectionId, 0);
+				// if setSelectedSection was called with 'null' when the page was hidden,
+				// we need to select the first visible section
+				sSelectedSectionId !== null ?
+					this.scrollToSection(sSelectedSectionId, 0)
+					: this._selectFirstVisibleSection();
 			}
 
 			this._scrollTo(this._$opWrapper.scrollTop(), 0);
