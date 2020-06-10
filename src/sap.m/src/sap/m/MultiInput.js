@@ -1694,13 +1694,15 @@ function(
 	};
 
 	/**
-	 * Returns the <code>SuggestionsPopover</code> Popup instance.
+	 * Returns the <code>sap.m.Popover</code> instance, it can be empty and not visible (rendered)
+	 * if for example the <code>showSuggestions</code> property is set to false or it is true but no suggestion items
+	 * are added.
 	 *
-	 * @returns {sap.m.SuggestionsPopover} A suggestions popover popup instance.
+	 * @returns {sap.m.Popover} A suggestions popover popup instance.
 	 * @private
 	 */
 	MultiInput.prototype._getSuggestionsPopoverPopup = function () {
-		return this._oSuggPopover._oPopover;
+		return this._oSuggestionPopup;
 	};
 
 	/**
