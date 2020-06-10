@@ -811,7 +811,8 @@
 			"name": "test.moduleSystem.loadResource-preload",
 			"version": "2.0",
 			"modules": {
-				"preload/testdata/test.properties": "KEY=VALUE"
+				"preload/testdata/test.properties": "KEY=VALUE",
+				"preload/testdata/test_en.properties": ""
 			}
 		});
 
@@ -822,6 +823,13 @@
 			failOnError: false
 		});
 		assert.equal(sText, "KEY=VALUE", "Resource successfully taken from module preload");
+
+		var sTextEmpty = jQuery.sap.loadResource({
+			url: "./preload/testdata/test_en.properties",
+			dataType: 'text',
+			failOnError: false
+		});
+		assert.equal(sTextEmpty, "", "Empty resource successfully taken from module preload");
 
 		jQuery.sap.registerResourcePath("preload/testdata");
 		jQuery.sap.unloadResources("test.moduleSystem.loadResource-preload", true, true);
