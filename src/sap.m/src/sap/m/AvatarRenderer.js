@@ -107,6 +107,10 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			if (oBadge) {
 				oRm.openStart("div");
 				oRm.class(sAvatarClass + "BadgeIconActiveArea");
+				// we want to make sure icon, used for badge, scales proportionally with the custom size
+				if (sCustomDisplaySize) {
+					oRm.style("font-size", sCustomDisplaySize);
+				}
 				oRm.openEnd();
 					oRm.openStart("span");
 					oRm.class(sAvatarClass + "BadgeIcon");
