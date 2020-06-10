@@ -46,49 +46,6 @@ body {
 	margin-left: 1rem;
 }
 
-.sapUiResponsiveSplitter .sapUiLoSplitterH.sapUiLoSplitter > .sapUiLoSplitterBar,
-.sapUiResponsiveSplitter .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-	width: 0.125rem !important;
-	height: 100%;
-	color: #354a5f;
-	background-color: #dedede;
-}
-
-.sapUiResponsiveSplitter .sapUiLoSplitterV.sapUiLoSplitter > .sapUiLoSplitterBar,
-.sapUiResponsiveSplitter .sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-	width: 100% !important;
-	height: 0.125rem !important;
-	color: #354a5f;
-	background-color: #dedede;
-}
-
-.sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar .sapUiLoSplitterBarIcon,
-.sapUiResponsiveSplitter .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar .sapUiLoSplitterBarIcon {
-	margin-left: -18px !important;
-}
-
-.sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage .sapUiLoSplitter.sapUiLoSplitterV .sapUiLoSplitterBar .sapUiLoSplitterBarIcon,
-.sapUiResponsiveSplitter .sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar .sapUiLoSplitterBarIcon {
-	margin-top: -18px !important;
-}
-
-.sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar .sapUiLoSplitterBarIcon:after,
-.sapUiResponsiveSplitter .sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar .sapUiLoSplitterBarIcon:after,
-.sapUiResponsiveSplitter .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar .sapUiLoSplitterBarIcon:after {
-	border-color: #dedede !important;
-	width: 0.75rem !important;
-	height: 0.75rem !important;
-}
-
-.sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar .sapUiLoSplitterBarIcon:after {
-	border-color: #dedede !important;
-}
-
-.sapUiResponsiveSplitter .sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar .sapUiLoSplitterBarIcon:after,
-.sapUiResponsiveSplitter .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar .sapUiLoSplitterBarIcon:after {
-	border-color: #354a5f !important;
-}
-
 .sapMListInsetBG {
 	padding: 1rem !important;
 }
@@ -106,11 +63,6 @@ body {
 	width: 50%;
 }
 
-.ttInteraction .sapUiHLayoutChildWrapper {
-	width: 30%;
-	height: 100vh;
-}
-
 .ttCommonInfoPanel.sapMPanel {
 	height: 100% !important;
 	overflow: scroll !important;
@@ -124,11 +76,11 @@ body {
 	padding: 1rem 0 !important;
 }
 
-.sapMPanelContent:not(.sapMPanelBGTransparent) {
+/* .sapMPanelContent:not(.sapMPanelBGTransparent) {
 	border-bottom: none !important;
 	transform: none !important;
 }
 
 .sapMPanelContent:not(.sapMPanelBGTransparent) .sapMITBContent {
 	border-bottom: none !important;
-}
+} */
