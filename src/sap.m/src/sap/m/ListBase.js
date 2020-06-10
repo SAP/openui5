@@ -531,7 +531,6 @@ function(
 	ListBase.prototype.onAfterRendering = function() {
 		this._bRendering = false;
 		this._sLastMode = this.getMode();
-
 		// invalidate item navigation for desktop
 		if (Device.system.desktop) {
 			this._startItemNavigation(true);
@@ -1049,6 +1048,15 @@ function(
 	ListBase.prototype.onItemDOMUpdate = function(oListItem) {
 		if (!this._bRendering && this.bOutput) {
 			this._startItemNavigation(true);
+		}
+
+		var bVisibleItems = this.getVisibleItems().length > 0;
+		if (!bVisibleItems && !this._bInvalidatedForNoData) {
+			this.invalidate();
+			this._bInvalidatedForNoData = true;
+		} else if (bVisibleItems && this._bInvalidatedForNoData) {
+			this.invalidate();
+			this._bInvalidatedForNoData = false;
 		}
 	};
 

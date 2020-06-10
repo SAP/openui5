@@ -122,6 +122,61 @@ sap.ui.define([
 		}, 0);
 	});
 
+	QUnit.test("Show noDataText and hide 'Load more' trigger when no item is visible", function(assert) {
+		var data = { // 3 items
+			items: [{
+				Title: "Title1",
+				Description: "Description1"
+			}, {
+				Title: "Title2",
+				Description: "Description2"
+			}, {
+				Title: "Title3",
+				Description: "Description3"
+			}]
+		};
+
+		var oModel = new JSONModel();
+		oModel.setData(data);
+
+		//System under Test
+		var oList = new List({
+			growing: true,
+			growingThreshold: 1,
+			items: {
+				path: "/items",
+				template: new StandardListItem({
+					title: "{Title}",
+					description: "{Description}"
+				})
+			}
+		}).setModel(oModel);
+
+		var oPage = new Page({
+			title: "List Page",
+			content: oList
+		});
+
+		oPage.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var aVisibleItems = oList.getVisibleItems();
+
+		aVisibleItems.forEach(function(oItem) {
+			oItem.setVisible(false);
+		});
+
+		sap.ui.getCore().applyChanges();
+		aVisibleItems = oList.getVisibleItems();
+		assert.strictEqual(aVisibleItems.length, 0, "List has no visible items.");
+
+		assert.ok(oList.$("nodata-text")[0], "NoDataText is visible");
+		assert.ok(oList.$("triggerList").is(":hidden"), "Load more trigger is not visible");
+
+		// cleanup
+		oPage.removeAllContent();
+	});
+
 	QUnit.module("Integration tests");
 	QUnit.test("Should determine if the list is scrollable", function(assert) {
 		//Arrange
