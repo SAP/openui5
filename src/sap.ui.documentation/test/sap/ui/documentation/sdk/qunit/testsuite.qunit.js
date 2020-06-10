@@ -48,6 +48,12 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				coverage: {
 					only : ["sap/ui/documentation/sdk/util/Resources"]
 				}
+			},
+
+			"Formatting": {
+				coverage: {
+					only : ["sap/ui/documentation/sdk/model/formatter"]
+				}
 			}
 
 			// "Forwarding": {

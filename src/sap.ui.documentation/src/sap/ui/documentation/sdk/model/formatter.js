@@ -5,6 +5,10 @@
 sap.ui.define(["sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (JSDocUtil) {
 	"use strict";
 
+	// regexp for an extra route parameter in the format: a single 'p' letter followed by a digit
+	// this is used in the router configuration to declare optional extra parameters
+	var REGEXP_ROUTE_SPECIAL_PARAMETER = /^p\d+$/;
+
 	return {
 		/**
 		 * Formats a library namespace to link to the API reference if it starts with sap.
@@ -181,6 +185,57 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (
 
 				}
 			});
+		},
+
+		/**
+		 * Converts a filePath to a format acceptable as parameters for the <code>codeFile</code> route
+		 *
+		 * The conversion to a parameters map is needed because the filePath contains slashes which are interpreted
+		 * by the router as part of the route structure (as the slash is a special character for the router)
+		 * and we cannot URL encode slashes for backend compliance reasons (Tomcat rejects encoded slashes in the URL)
+		 * @param {string} sFilePath
+		 * @returns {object}
+		 * @private
+		 */
+		filePathToRouteParams: function(sFilePath) {
+			var aFileName, oRouteParams = {};
+			if (!sFilePath) {
+				return {};
+			}
+			aFileName = sFilePath.split("/");
+
+			aFileName.forEach(function(sPart, i) {
+				oRouteParams["p" + ++i] = sPart;
+			});
+			return oRouteParams;
+		},
+
+		/**
+		 * Parses a filePath from the parameters of the <code>codeFile</code> route
+		 *
+		 * see @filePathToRouteParams function documentation for details
+		 * @param {object} oRouteParameters
+		 * @returns {string}
+		 * @private
+		 */
+		routeParamsToFilePath: function(oRouteParameters) {
+			var aKeys = Object.keys(oRouteParameters),
+				bIsFileNameKey,
+				sFileNamePart,
+				aFileName = [];
+			for (var i = 0; i < aKeys.length; i++) {
+				bIsFileNameKey = REGEXP_ROUTE_SPECIAL_PARAMETER.test(aKeys[i]);
+				sFileNamePart = bIsFileNameKey && oRouteParameters[aKeys[i]];
+				if (sFileNamePart) {
+					aFileName.push(sFileNamePart);
+				}
+				if (bIsFileNameKey && !sFileNamePart) {
+					break;
+				}
+			}
+			if (aFileName.length) {
+				return aFileName.join("/");
+			}
 		}
 	};
 });
