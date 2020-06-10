@@ -935,12 +935,13 @@ sap.ui.define([
 			if (!this.oFlexController || !VariantManagementState.getContent(this.sFlexReference)) {
 				return;
 			}
-			var aConfigurationChanges = this.collectModelChanges(oData.variantManagementReference, LayerUtils.getCurrentLayer(true));
-			aConfigurationChanges.forEach(function(oChangeProperties) {
+			var aConfigurationChangesContent = this.collectModelChanges(oData.variantManagementReference, LayerUtils.getCurrentLayer(true));
+			var aChanges = [];
+			aConfigurationChangesContent.forEach(function(oChangeProperties) {
 				oChangeProperties.appComponent = this.oAppComponent;
-				this.setVariantProperties(oData.variantManagementReference, oChangeProperties, true);
+				aChanges.push(this.setVariantProperties(oData.variantManagementReference, oChangeProperties, true));
 			}.bind(this));
-			this.oChangePersistence.saveDirtyChanges();
+			this.oChangePersistence.saveDirtyChanges(false, aChanges);
 		};
 	};
 
