@@ -13,10 +13,9 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/changeHandler/MoveControls",
 	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/fl/write/_internal/Condenser",
+	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/Change",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/library" //we have to ensure to load fl, so that change handler gets registered
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
 	AddFields,
@@ -148,17 +147,18 @@ sap.ui.define([
 			UnhideControl.getCondenserInfo = sandbox.stub().callsFake(function(oChange) {
 				return {
 					affectedControl: oChange.getSelector(),
-					type: sap.ui.fl.ClassificationType.NonIndexRelated,
-					subtype: sap.ui.fl.ClassificationSubtypes.Reverse,
+					type: sap.ui.fl.condenser.ClassificationType.NonIndexRelated,
+					subtype: sap.ui.fl.condenser.ClassificationSubtypes.Reverse,
 					uniqueKey: "visible"
 				};
 			});
 			AddFields.getCondenserInfo = sandbox.stub().callsFake(function(oChange) {
 				return {
 					affectedControl: oChange.getContent().field.selector,
-					type: sap.ui.fl.ClassificationType.IndexRelated,
-					subtype: sap.ui.fl.ClassificationSubtypes.Create,
+					type: sap.ui.fl.condenser.ClassificationType.IndexRelated,
+					subtype: sap.ui.fl.condenser.ClassificationSubtypes.Create,
 					targetContainer: oChange.getSelector(),
+					targetAggregation: "groupElements",
 					setTargetIndex: function (oChange, iNewTargetIndex) {
 						oChange.getContent().field.index = iNewTargetIndex;
 					},
