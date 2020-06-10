@@ -5,7 +5,7 @@
  * See {@link https://lodash.com/docs/4.17.15#toArray}
  *
  * @function
- * @alias sap/base/util/restricted/_toArray
+ * @alias module:sap/base/util/restricted/_toArray
  * @author SAP SE
  * @since 1.80
  * @version ${version}

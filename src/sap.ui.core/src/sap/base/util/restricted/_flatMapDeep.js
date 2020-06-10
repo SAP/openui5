@@ -5,7 +5,7 @@
  * See {@link https://lodash.com/docs/4.17.15#flatMapDeep}
  *
  * @function
- * @alias sap/base/util/restricted/_flatMapDeep
+ * @alias module:sap/base/util/restricted/_flatMapDeep
  * @author SAP SE
  * @since 1.80
  * @version ${version}
