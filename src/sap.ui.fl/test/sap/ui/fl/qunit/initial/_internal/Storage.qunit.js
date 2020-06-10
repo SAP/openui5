@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/initial/_internal/connectors/PersonalizationConnector",
 	"sap/ui/fl/write/_internal/connectors/ObjectPathConnector",
-	"sap/ui/fl/write/_internal/connectors/ObjectStorageUtils",
+	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	"sap/base/util/merge"
 ], function (
 	sinon,

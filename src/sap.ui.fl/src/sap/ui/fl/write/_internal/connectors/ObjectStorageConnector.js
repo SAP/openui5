@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/write/connectors/BaseConnector",
 	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/ui/fl/write/_internal/connectors/ObjectStorageUtils"
+	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"
 ], function(
 	merge,
 	BaseConnector,
