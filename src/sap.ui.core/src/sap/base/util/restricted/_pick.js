@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /**
- * See {@link https://lodash.com/docs/4.17.10#pick}
+ * See {@link https://lodash.com/docs/4.17.15#pick}
  *
  * @function
  * @alias sap/base/util/restricted/_pick
