@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/m/Menu",
 	"sap/ui/core/Core",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/model/json/JSONModel"
 ],
 function (
 	SearchManager,
@@ -26,7 +27,8 @@ function (
 	Menu,
 	Core,
 	Log,
-	jQuery
+	jQuery,
+	JSONModel
 ) {
 	"use strict";
 
@@ -509,7 +511,7 @@ function (
 		// Assert
 		assert.strictEqual(aContent.length, 6, "Expected number of controls added to OverflowToolbar");
 		// Assert
-		assert.strictEqual(aItems.length, 14, "Expected number of controls added to OverflowToolbar");
+		assert.strictEqual(aItems.length, 12, "Expected number of controls added to OverflowToolbar");
 
 		// Assert - Order of controls in aggregation
 		assert.ok(aItems[0] === this.oSB._oNavButton, "Control at index 0 in SB is NavButton");
@@ -524,8 +526,6 @@ function (
 		assert.ok(aItems[9] === this.oSB._oNotifications, "Control at index 10 in SB is Notifications");
 		assert.ok(aItems[10] === oAdditionalButton1, "Control at index 11 in SB is AdditionalButton 1");
 		assert.ok(aItems[11] === oAdditionalButton2, "Control at index 12 in SB is AdditionalButton 2");
-		assert.ok(aItems[12] === this.oSB._oAvatarButton, "Control at index 13 in SB is AvatarButton");
-		assert.ok(aItems[13] === this.oSB._oProductSwitcher, "Control at index 9 in OT is ProductSwitcher");
 
 		// Assert - _aOverflowControls
 		assert.strictEqual(aOverflowControls.length, 6, "Overflow Toolbar has 5 controls in it");
@@ -785,7 +785,7 @@ function (
 	});
 
 	QUnit.test("Avatar attributes", function (assert) {
-		var oAvatar = this.oSB._oAvatarButton,
+		var oAvatar = this.oSB.getProfile(),
 			$oAvatar = oAvatar.$(),
 			sTooltip = this.oRb.getText("SHELLBAR_PROFILE_TOOLTIP");
 
@@ -854,7 +854,7 @@ function (
 
 	QUnit.test("ResponsiveHandler with open search", function (assert) {
 		// Assert
-		assert.strictEqual(_getVisibleControlsCount(this.oSB), 11, "phone mode requirements passed");
+		assert.strictEqual(_getVisibleControlsCount(this.oSB), 10, "phone mode requirements passed");
 		assert.strictEqual(this.oSB.hasStyleClass("sapFShellBarFullSearch"), false,
 			"Full width search class list was added to Shell Bar.");
 
@@ -870,7 +870,7 @@ function (
 		this.oSB._oResponsiveHandler._transformToRegularState();
 
 		// Assert
-		assert.strictEqual(_getVisibleControlsCount(this.oSB), 11, "phone mode requirements passed");
+		assert.strictEqual(_getVisibleControlsCount(this.oSB), 10, "phone mode requirements passed");
 		assert.strictEqual(this.oSB.hasStyleClass("sapFShellBarFullSearch"), false,
 			"Full width search class list was added to Shell Bar.");
 	});
@@ -961,42 +961,44 @@ function (
 
 	QUnit.test("avatarPressed", function (assert) {
 		// Setup
-		var done = assert.async();
+		var done = assert.async(),
+			oAvatar = this.oSB.getProfile();
 
 		assert.expect(2);
 
 		this.oSB.attachAvatarPressed(function(oEvent) {
 			// Assert
 			assert.ok(true, "Event was fired");
-			assert.strictEqual(this.oSB._oAvatarButton.getId(), oEvent.getParameter("avatar").getId(), "Correct parameter was passed");
+			assert.strictEqual(oAvatar.getId(), oEvent.getParameter("avatar").getId(), "Correct parameter was passed");
 
 			// Clean up
 			done();
-		}, this);
+		});
 
 		// Act
-		this.oSB._oAvatarButton.firePress();
+		oAvatar.firePress();
 	});
 
 	QUnit.test("avatar press", function (assert) {
 		// Setup
-		var done = assert.async();
+		var done = assert.async(),
+			oAvatar = this.oSB.getProfile();
 
 		assert.expect(2);
 
-		this.oSB._oAvatarButton.attachPress(function(oEvent) {
+		oAvatar.attachPress(function(oEvent) {
 			var sEventProviderId = oEvent.getSource().getId();
 
 			// Assert
 			assert.ok(true, "Event was fired");
-			assert.strictEqual(this.oSB._oAvatarButton.getId(),	sEventProviderId, "Avatar own event is fired");
+			assert.strictEqual(oAvatar.getId(),	sEventProviderId, "Avatar own event is fired");
 
 			// Clean up
 			done();
-		}, this);
+		});
 
 		// Act
-		this.oSB._oAvatarButton.firePress();
+		oAvatar.firePress();
 	});
 
 
@@ -1286,4 +1288,31 @@ function (
 
 	});
 
+	QUnit.module("Binding", {
+		beforeEach: function () {
+			var oModel = new JSONModel({
+				initials: "KS"
+			});
+
+			this.oSB = new ShellBar();
+			this.oSB.setModel(oModel);
+			this.oSB.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oSB.destroy();
+		}
+	});
+
+	QUnit.test("Profile aggregation", function (assert) {
+		var oAvatar = new Avatar({
+			initials: '{/initials}'
+		});
+
+		this.oSB.setProfile(oAvatar);
+		Core.applyChanges();
+
+		//Assert
+		assert.equal(this.oSB.getProfile().getInitials(), "KS", "Initials are set correctly");
+	});
 });
