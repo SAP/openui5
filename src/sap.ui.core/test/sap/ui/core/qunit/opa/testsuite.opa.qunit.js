@@ -314,6 +314,14 @@ sap.ui.define([
 			},
 			module: "./matchers/_Enabled.qunit"
 		},
+		"matchers/_Editable": {
+			title: "QUnit Page for sap.ui.test.matchers._Editable",
+			sinon: {
+				version: 1,
+				qunitBridge: true
+			},
+			module: "./matchers/_Editable.qunit"
+		},
 		"Opa": {
 			title: "QUnit Page for sap.ui.test.Opa",
 			qunit: {
