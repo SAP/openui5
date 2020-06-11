@@ -195,6 +195,7 @@ sap.ui.define([
 					oEndDate = oEvent.getParameter("endDate"),
 					oCalendarRow = oEvent.getParameter("calendarRow"),
 					bCopy = oEvent.getParameter("copy"),
+					sTitle = oAppointment.getTitle(),
 					oModel = this.getView().getModel(),
 					oAppBindingContext = oAppointment.getBindingContext(),
 					oRowBindingContext = oCalendarRow.getBindingContext(),
@@ -227,7 +228,7 @@ sap.ui.define([
 
 				oModel.refresh(true);
 
-				MessageToast.show(oCalendarRow.getTitle() + "'s '" + "Appointment '" + oAppointment.getTitle() + "' now starts at \n" + oStartDate + "\n and end at \n" + oEndDate + ".");
+				MessageToast.show(oCalendarRow.getTitle() + "'s '" + "Appointment '" + sTitle + "' now starts at \n" + oStartDate + "\n and end at \n" + oEndDate + ".");
 			},
 
 			handleAppointmentResize: function (oEvent) {
