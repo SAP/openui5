@@ -105,15 +105,15 @@ sap.ui.define([
 	 * Filter for the list binding.
 	 *
 	 * @param {object|string|sap.ui.model.Filter[]} vFilterInfo Filter info object or a path or an array of filters
-	 * @param {string} vFilterInfo.path Binding path for this filter
-	 * @param {function} vFilterInfo.test Function which is used to filter the items and which should return a Boolean value to indicate whether the current item passes the filter
-	 * @param {function} vFilterInfo.comparator Function which is used to compare two values, this is used for processing of equal, less than and greater than operators
-	 * @param {sap.ui.model.FilterOperator} vFilterInfo.operator Operator used for the filter
-	 * @param {object} vFilterInfo.value1 First value to use with the given filter operator
+	 * @param {string} [vFilterInfo.path] Binding path for this filter
+	 * @param {function} [vFilterInfo.test] Function which is used to filter the items and which should return a Boolean value to indicate whether the current item passes the filter
+	 * @param {function} [vFilterInfo.comparator] Function which is used to compare two values, this is used for processing of equal, less than and greater than operators
+	 * @param {sap.ui.model.FilterOperator} [vFilterInfo.operator] Operator used for the filter
+	 * @param {object} [vFilterInfo.value1] First value to use with the given filter operator
 	 * @param {object} [vFilterInfo.value2=null] Second value to use with the filter operator (only for some operators)
 	 * @param {string} [vFilterInfo.variable] The variable used in lambda operators (<code>Any</code> and <code>All</code>)
 	 * @param {sap.ui.model.Filter} [vFilterInfo.condition] A <code>Filter</code> instance which will be used as the condition for the lambda operator
-	 * @param {sap.ui.model.Filter[]} vFilterInfo.filters Array of filters on which logical conjunction is applied
+	 * @param {sap.ui.model.Filter[]} [vFilterInfo.filters] Array of filters on which logical conjunction is applied
 	 * @param {boolean} [vFilterInfo.and=false] Indicates whether an "AND" logical conjunction is applied on the filters. If it's not set or set to <code>false</code>, an "OR" conjunction is applied
 	 * @param {boolean} [vFilterInfo.caseSensitive] Indicates whether a string value should be compared case sensitive or not.
 	 * @param {sap.ui.model.FilterOperator|function|boolean} [vOperator] Either a filter operator or a custom filter function or a Boolean flag that defines how to combine multiple filters

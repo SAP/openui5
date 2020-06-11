@@ -61,12 +61,16 @@ sap.ui.define(['./ListItemBase', './library', './ActionListItemRenderer'],
 	};
 
 	/**
-	 * Determines item specific mode
+	 * Determines item specific mode.
 	 *
-	 * ActionListItems are not selectable because they are command controls (like Button or Link) so triggering the associated command, rather than selection is
-	 * appropriate to happen upon user action on these items. By overwriting isSelectable (inherited from ListItemBase) we exclude the item from processing
-	 * specific to selectable list-items.
+	 * ActionListItems are not selectable because they are command controls (like Button or Link),
+	 * so triggering the associated command, rather than selection is appropriate to happen upon
+	 * user action on these items.
 	 *
+	 * By overwriting <code>getMode</code> (inherited from <code>ListItemBase</code>), we
+	 * exclude the item from processing steps that are specific for selectable list-items.
+	 *
+	 * @returns {sap.m.ListMode|""} Mode if the list item.
 	 * @protected
 	 * @overwrite
 	 */

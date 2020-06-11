@@ -131,7 +131,7 @@ sap.ui.define([
 					/**
 					 * Determines the URL of the notification author picture.
 					 */
-					authorPicture: {type: 'sap.ui.core.URI', multiple: false}
+					authorPicture: {type: 'sap.ui.core.URI'}
 
 				},
 				aggregations: {

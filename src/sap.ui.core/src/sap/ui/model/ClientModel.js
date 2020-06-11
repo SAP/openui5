@@ -60,19 +60,16 @@ sap.ui.define([
 
 	/**
 	 * Returns the current data of the model.
+	 *
 	 * Be aware that the returned object is a reference to the model data so all changes to that data will also change the model data.
 	 *
-	 * @return the data object
+	 * @returns {any} the data object
 	 * @public
 	 */
 	ClientModel.prototype.getData = function(){
 		return this.oData;
 	};
 
-	/**
-	 * @see sap.ui.model.Model.prototype.bindElement
-	 *
-	 */
 	/**
 	 * @see sap.ui.model.Model.prototype.createBindingContext
 	 *

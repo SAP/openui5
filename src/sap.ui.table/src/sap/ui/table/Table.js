@@ -3118,8 +3118,13 @@ sap.ui.define([
 	// =============================================================================
 
 	/**
-	 * @inheritDoc
+	 * Retrieves the lead selection index.
+	 *
+	 * @returns {int} Currently Selected Index.
 	 * @throws {Error} If a selection plugin is applied
+	 * @public
+	 * @deprecated As of version 1.69, replaced by {@link sap.ui.table.Table#getSelectedIndices} and
+	 * {@link sap.ui.table.Table#setSelectedIndex}
 	 */
 	Table.prototype.getSelectedIndex = function() {
 		if (this._hasSelectionPlugin()) {

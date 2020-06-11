@@ -2123,7 +2123,7 @@ sap.ui.define([
 	 * @param {string} [vComponent.url] URL to load the component from
 	 * @param {string} [vComponent.id] ID for the component instance
 	 * @param {object} [vComponent.settings] settings object for the component
-	 * @param {string} [vComponent.componentData] user specific data which is available during the whole lifecycle of the component
+	 * @param {any} [vComponent.componentData] user specific data which is available during the whole lifecycle of the component
 	 * @param {string} [sUrl] the URL to load the component from
 	 * @param {string} [sId] the ID for the component instance
 	 * @param {object} [mSettings] the settings object for the component
@@ -3240,13 +3240,14 @@ sap.ui.define([
 	 * Returns the registered element with the given ID, if any.
 	 *
 	 * The ID must be the globally unique ID of an element, the same as returned by <code>oElement.getId()</code>.
+	 *
 	 * When the element has been created from a declarative source (e.g. XMLView), that source might have used
 	 * a shorter, non-unique local ID. A search for such a local ID cannot be executed with this method.
 	 * It can only be executed on the corresponding scope (e.g. on an XMLView instance), by using the
 	 * {@link sap.ui.core.mvc.View#byId View#byId} method of that scope.
 	 *
-	 * @param {string} sId ID of the element to search for
-	 * @return {sap.ui.core.Element} Element with the given ID or <code>undefined</code>
+	 * @param {sap.ui.core.ID|null|undefined} sId ID of the element to search for
+	 * @returns {sap.ui.core.Element|undefined} Element with the given ID or <code>undefined</code>
 	 * @public
 	 * @function
 	 */
@@ -3254,8 +3255,9 @@ sap.ui.define([
 
 	/**
 	 * Returns the registered element for the given ID, if any.
-	 * @param {string} sId
-	 * @return {sap.ui.core.Element} the element for the given id
+	 *
+	 * @param {sap.ui.core.ID|null|undefined} sId ID of the control to retrieve
+	 * @returns {sap.ui.core.Element|undefined} Element for the given ID or <code>undefined</code>
 	 * @deprecated As of version 1.1, use <code>sap.ui.core.Core.byId</code> instead!
 	 * @function
 	 * @public
@@ -3264,8 +3266,9 @@ sap.ui.define([
 
 	/**
 	 * Returns the registered element for the given ID, if any.
-	 * @param {string} sId
-	 * @return {sap.ui.core.Element} the element for the given id
+	 *
+	 * @param {sap.ui.core.ID|null|undefined} sId ID of the element to retrieve
+	 * @returns {sap.ui.core.Element|undefined} Element for the given ID or <code>undefined</code>
 	 * @deprecated As of version 1.1, use <code>sap.ui.core.Core.byId</code> instead!
 	 * @function
 	 * @public
@@ -3274,9 +3277,10 @@ sap.ui.define([
 
 	/**
 	 * Returns the registered object for the given id, if any.
-	 * @param {string} sType
-	 * @param {string} sId
-	 * @return {sap.ui.core.Component} the component for the given id
+	 *
+	 * @param {string} sType Stereotype of the object to retrieve
+	 * @param {sap.ui.core.ID|null|undefined} sId Id of the object to retrieve
+	 * @returns {sap.ui.base.ManagedObject|undefined} Object of the given type and with the given id or undefined
 	 * @private
 	 */
 	Core.prototype.getObject = function(sType, sId) {

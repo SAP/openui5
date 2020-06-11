@@ -143,7 +143,7 @@ sap.ui.define([
 	 *   Note: This parameter should not be used when using enhancements.
 	 *   Terminologies require enhancements with <code>bundleUrl</code>, <code>bundleName</code> and
 	 *   <code>bundleLocale</code> in combination with <code>enhanceWith</code> which contains a
-	 *   list of <code>ResourceBundleConfigurations</code>.
+	 *   list of <code>ResourceBundle.Configurations</code>.
 	 *   Terminologies must be defined in a declarative way, with configurations and not with
 	 *   instances of <code>ResourceBundle</code>.
 	 * @param {string} [oData.bundleLocale]
@@ -161,10 +161,10 @@ sap.ui.define([
 	 * @param {sap.ui.model.BindingMode} [oData.defaultBindingMode=OneWay]
 	 *   The default binding mode to use; it can be <code>OneWay</code> or <code>OneTime</code>
 	 *   (only when synchronous loading is used); the <code>TwoWay</code> mode is not supported
-	 * @param {module:sap/base/i18n/ResourceBundle[]|module:sap/base/i18n/ResourceBundleConfiguration[]} [oData.enhanceWith]
+	 * @param {module:sap/base/i18n/ResourceBundle[]|module:sap/base/i18n/ResourceBundle.Configuration[]} [oData.enhanceWith]
 	 *   A list of resource bundles or resource bundle configurations that enhance the texts from
 	 *   the main bundle; intended for extensibility scenarios; see also the class documentation.
-	 *   ResourceBundles use the ResourceModel's enhance mechanism and ResourceBundleConfigurations
+	 *   ResourceBundles use the ResourceModel's enhance mechanism and <code>ResourceBundle.Configurations</code>
 	 *   get passed to the underlying ResourceBundle (see
 	 *   {@link module:sap/base/i18n/ResourceBundle.create}). Supported since 1.77.0.
 	 * @param {string} [oData.fallbackLocale="en"]
@@ -189,9 +189,9 @@ sap.ui.define([
 	 *   will be used in the URL. This mapping works in both directions. This parameter is passed to
 	 *   the underlying ResourceBundle (see {@link module:sap/base/i18n/ResourceBundle.create}).
 	 *   Supported since 1.77.0.
-	 * @param {Object<string,module:sap/base/i18n/ResourceBundleTerminologyConfiguration>} [oData.terminologies]
+	 * @param {Object<string,module:sap/base/i18n/ResourceBundle.TerminologyConfiguration>} [oData.terminologies]
 	 *   An object, mapping a terminology identifier (e.g. "oil") to a
-	 *   <code>ResourceBundleTerminologyConfiguration</code>. A terminology is a resource bundle
+	 *   <code>ResourceBundle.TerminologyConfiguration</code>. A terminology is a resource bundle
 	 *   configuration for a specific use case (e.g. "oil"). It does neither have a
 	 *   <code>fallbackLocale</code> nor can it be enhanced with <code>enhanceWith</code>. This
 	 *   parameter is passed to the underlying ResourceBundle (see
@@ -252,7 +252,7 @@ sap.ui.define([
 			this.oData = Object.assign({}, oData);
 
 			// the new ResourceBundle's enhance mechanism works only with
-			// ResourceBundleConfigurations; if there is a ResourceBundle in the enhanceWith
+			// ResourceBundle.Configurations; if there is a ResourceBundle in the enhanceWith
 			// parameter, use the ResourceModel's enhance mechanism to be backward compatible.
 			bUseResourceModelEnhanceMechanism = Array.isArray(this.oData.enhanceWith)
 				&& this.oData.enhanceWith.some(function (oEnhanceWith) {
@@ -329,10 +329,10 @@ sap.ui.define([
 	 *   UI5 module name in dot notation referring to the base ".properties" file
 	 * @param {string} [oData.bundleUrl]
 	 *   URL pointing to the base ".properties" file of a bundle
-	 * @param {module:sap/base/i18n/ResourceBundle[]|module:sap/base/i18n/ResourceBundleConfiguration[]} [oData.enhanceWith]
+	 * @param {module:sap/base/i18n/ResourceBundle[]|module:sap/base/i18n/ResourceBundle.Configuration[]} [oData.enhanceWith]
 	 *   A list of resource bundles or resource bundle configurations that enhance the texts from
 	 *   the main bundle; intended for extensibility scenarios; see also the class documentation.
-	 *   ResourceBundles use the ResourceModel's enhance mechanism and ResourceBundleConfigurations
+	 *   ResourceBundles use the ResourceModel's enhance mechanism and ResourceBundle.Configurations
 	 *   get passed to the underlying ResourceBundle (see
 	 *   {@link module:sap/base/i18n/ResourceBundle.create}). Supported since 1.77.0.
 	 * @param {string} [oData.fallbackLocale="en"]
@@ -354,9 +354,9 @@ sap.ui.define([
 	 *   language code like "sh" and the <code>supportedLocales</code> contains [...,"sr",...], "sr"
 	 *   will be used in the URL. This mapping works in both directions. This parameter is passed
 	 *   to the underlying ResourceBundle (see {@link module:sap/base/i18n/ResourceBundle.create}).
-	 * @param {Object<string,module:sap/base/i18n/ResourceBundleTerminologyConfiguration>} [oData.terminologies]
+	 * @param {Object<string,module:sap/base/i18n/ResourceBundle.TerminologyConfiguration>} [oData.terminologies]
 	 *   An object mapping a terminology identifier (e.g. "oil") to a
-	 *   <code>ResourceBundleTerminologyConfiguration</code>. A terminology is a resource bundle
+	 *   <code>ResourceBundle.TerminologyConfiguration</code>. A terminology is a resource bundle
 	 *   configuration for a specific use case (e.g. "oil"). It does neither have a
 	 *   <code>fallbackLocale</code> nor can it be enhanced with <code>enhanceWith</code>. This
 	 *   parameter is passed to the underlying ResourceBundle (see

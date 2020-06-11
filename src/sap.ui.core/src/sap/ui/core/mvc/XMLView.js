@@ -156,13 +156,13 @@ sap.ui.define([
 		 * @param {object} [vView.cache] Cache configuration, only for <code>async</code> views; caching gets active
 		 * when this object is provided with vView.cache.keys array; keys are used to store data in the cache and for
 		 * invalidation of the cache
-		 * @param {Array.<(string|Promise)>} [vView.cache.keys] Array with strings or Promises resolving with strings
+		 * @param {Array<(string|Promise<string>)>} [vView.cache.keys] Array with strings or Promises resolving with strings
 		 * @param {object} [vView.preprocessors] Preprocessors configuration, see {@link sap.ui.core.mvc.View}
 		 * @param {sap.ui.core.mvc.Controller} [vView.controller] Controller instance to be used for this view
 		 * @public
 		 * @static
 		 * @deprecated since 1.56: Use {@link sap.ui.core.mvc.XMLView.create XMLView.create} instead
-		 * @return {sap.ui.core.mvc.XMLView} the created XMLView instance
+		 * @returns {sap.ui.core.mvc.XMLView} the created XMLView instance
 		 */
 		sap.ui.xmlview = function(sId, vView) {
 			return sap.ui.view(sId, vView, ViewType.XML);
@@ -202,13 +202,13 @@ sap.ui.define([
 		 * @param {object} [oOptions.cache] - Cache configuration; caching gets active when this object is provided
 		 *                     with vView.cache.keys array; keys are used to store data in the cache and for invalidation
 		 *                     of the cache.
-		 * @param {Array.<(string|Promise)>} [oOptions.cache.keys] - Array with strings or Promises resolving with strings
+		 * @param {Array<(string|Promise<string>)>} [oOptions.cache.keys] - Array with strings or Promises resolving with strings
 		 * @param {object} [oOptions.preprocessors] Preprocessors configuration, see {@link sap.ui.core.mvc.View}
 		 *                     <strong>Note</strong>: These preprocessors are only available to this instance.
 		 *                     For global or on-demand availability use {@link sap.ui.core.mvc.XMLView.registerPreprocessor}.
 		 * @public
 		 * @static
-		 * @return {Promise<sap.ui.core.mvc.XMLView>} A Promise that resolves with the view instance or rejects with any thrown error.
+		 * @returns {Promise<sap.ui.core.mvc.XMLView>} A Promise that resolves with the view instance or rejects with any thrown error.
 		 */
 		XMLView.create = function (oOptions) {
 			var mParameters = deepExtend({}, oOptions);
@@ -291,7 +291,7 @@ sap.ui.define([
 		 *
 		 * @param oView
 		 * @param mSettings
-		 * @return {undefined|Promise} will return a Promise if ResourceModel is instantiated asynchronously, otherwise undefined
+		 * @returns {undefined|Promise} will return a Promise if ResourceModel is instantiated asynchronously, otherwise undefined
 		 */
 		function setResourceModel(oView, mSettings) {
 			if ((oView._resourceBundleName || oView._resourceBundleUrl) && (!mSettings.models || !mSettings.models[oView._resourceBundleAlias])) {
@@ -463,7 +463,7 @@ sap.ui.define([
  		* This function initialized the view settings.
  		*
  		* @param {object} mSettings with view settings
- 		* @return {Promise|null} will be returned if running in async mode
+ 		* @returns {Promise|null} will be returned if running in async mode
  		*/
 		XMLView.prototype.initViewSettings = function(mSettings) {
 			var that = this, _xContent;
