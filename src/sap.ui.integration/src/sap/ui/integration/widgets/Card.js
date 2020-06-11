@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/integration/util/DataProviderFactory",
 	"sap/ui/integration/cards/BaseContent",
 	"sap/m/HBox",
-	"sap/m/VBox",
 	"sap/ui/core/Icon",
 	"sap/m/Text",
 	"sap/ui/model/json/JSONModel",
@@ -40,13 +39,12 @@ sap.ui.define([
 	DataProviderFactory,
 	BaseContent,
 	HBox,
-	VBox,
 	Icon,
 	Text,
 	JSONModel,
 	ResourceModel,
 	LoaderExtensions,
-	CardRenderer,
+	FCardRenderer,
 	fLibrary,
 	library,
 	InvisibleText,
@@ -322,7 +320,7 @@ sap.ui.define([
 				host: {}
 			}
 		},
-		renderer: CardRenderer
+		renderer: FCardRenderer
 	});
 
 	/**
@@ -1094,7 +1092,7 @@ sap.ui.define([
 		}
 
 		if (sCardType === "analytical") {
-			this.$().addClass("sapFCardAnalytical");
+			this.addStyleClass("sapFCardAnalytical");
 		}
 	};
 
@@ -1187,7 +1185,7 @@ sap.ui.define([
 				}
 				var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
 					oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
-					sHeight = BaseContent.getMinHeight(sType, oContent, oError);
+					sHeight = BaseContent.getMetadata().getRenderer().getMinHeight(sType, oContent, oError);
 
 				if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
 					oError.$().css({ "min-height": sHeight });
@@ -1211,7 +1209,7 @@ sap.ui.define([
 
 					var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
 						oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
-						sHeight = BaseContent.getMinHeight(sType, oContent, this._oTemporaryContent);
+						sHeight = BaseContent.getMetadata().getRenderer().getMinHeight(sType, oContent, this._oTemporaryContent);
 
 					if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
 						this._oTemporaryContent.$().css({ "min-height": sHeight });
