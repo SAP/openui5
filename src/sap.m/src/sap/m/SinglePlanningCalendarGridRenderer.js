@@ -377,7 +377,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			oRm.openStart("div");
 			oRm.class("sapMSinglePCOverlay");
 			oRm.openEnd(); // span element
-			aPlaceholders.forEach(oRm.renderControl);
+			aPlaceholders.forEach(oRm.renderControl, oRm);
 			oRm.close("div");
 		};
 

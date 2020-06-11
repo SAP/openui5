@@ -384,8 +384,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.close("div");
 
 		if (TableUtils.hasRowActions(oTable)) {
-			rm.openStart("div");
-			rm.attr("id", oTable.getId() + "-rowacthdr");
+			rm.openStart("div", oTable.getId() + "-rowacthdr");
 			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROWACTIONHEADER");
 
 			rm.class("sapUiTableCell");
@@ -543,9 +542,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		}
 		rm.openEnd();
 
-		rm.openStart("div");
+		rm.openStart("div", sHeaderId + "-inner");
 		rm.class("sapUiTableCellInner");
-		rm.attr("id", sHeaderId + "-inner");
 
 		var sHAlign = oColumn.getHAlign();
 		var sTextAlign = Renderer.getTextAlign(sHAlign);
@@ -695,8 +693,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 	TableRenderer.renderTableCtrl = function(rm, oTable) {
 		if (oTable.getComputedFixedColumnCount() > 0) {
-			rm.openStart("div");
-			rm.attr("id", oTable.getId() + "-sapUiTableCtrlScrFixed");
+			rm.openStart("div", oTable.getId() + "-sapUiTableCtrlScrFixed");
 			rm.class("sapUiTableCtrlScrFixed");
 			rm.openEnd();
 

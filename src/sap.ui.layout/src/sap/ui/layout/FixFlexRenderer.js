@@ -67,7 +67,7 @@ sap.ui.define([
 
 		oRM.openEnd();
 
-		oControl.getFixContent().forEach(oRM.renderControl);
+		oControl.getFixContent().forEach(oRM.renderControl, oRM);
 
 		oRM.close("div");
 	};

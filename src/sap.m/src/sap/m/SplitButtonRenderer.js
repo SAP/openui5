@@ -83,8 +83,7 @@ sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText"],
 
 			if (sTitleAttribute) {
 				sTooltipId = oButton.getId() + "-tooltip";
-				oRm.openStart("span");
-				oRm.attr("id", sTooltipId);
+				oRm.openStart("span", sTooltipId);
 				oRm.class("sapUiInvisibleText");
 				oRm.openEnd();
 				oRm.text(sTitleAttribute);
