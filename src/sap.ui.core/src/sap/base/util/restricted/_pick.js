@@ -5,7 +5,7 @@
  * See {@link https://lodash.com/docs/4.17.15#pick}
  *
  * @function
- * @alias sap/base/util/restricted/_pick
+ * @alias module:sap/base/util/restricted/_pick
  * @author SAP SE
  * @since 1.71
  * @version ${version}

@@ -5,7 +5,7 @@
  * See {@link https://lodash.com/docs/4.17.15#xor}
  *
  * @function
- * @alias sap/base/util/restricted/_xor
+ * @alias module:sap/base/util/restricted/_xor
  * @author SAP SE
  * @since 1.80
  * @version ${version}

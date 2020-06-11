@@ -5,7 +5,7 @@
  * See {@link https://lodash.com/docs/4.17.15#xorBy}
  *
  * @function
- * @alias sap/base/util/restricted/_xorBy
+ * @alias module:sap/base/util/restricted/_xorBy
  * @author SAP SE
  * @since 1.80
  * @version ${version}
