@@ -104,14 +104,8 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 			tokens = oControl.getTokens(),
 			length = tokens.length;
 
-		if (oControl.getReverseTokens()) {
-			for (i = length - 1; i > -1; i--) {
-				oRm.renderControl(tokens[i]);
-			}
-		} else {
-			for (i = 0; i < length; i++) {
-				oRm.renderControl(tokens[i]);
-			}
+		for (i = 0; i < length; i++) {
+			oRm.renderControl(tokens[i]);
 		}
 	};
 
