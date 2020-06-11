@@ -196,4 +196,60 @@ sap.ui.define([
 
 		}.bind(this), 250);
 	});
+
+	QUnit.module("Drag between two Grid containers", {
+		beforeEach: function () {
+			this.oGridDragOver = new GridDragOver();
+
+			var oDragItem = new Text({text: "Drag item content"});
+			var oDropItem = new Text({text: "Item content"});
+
+			this.oGrid1 = new GridContainer("dragContainer", {
+				layout: new GridContainerSettings({rowSize: "80px", columnSize: "80px", gap: "10px"}),
+				items: [oDragItem]
+			});
+
+			this.oGrid2 = new GridContainer({
+				layout: new GridContainerSettings({rowSize: "80px", columnSize: "80px", gap: "10px"}),
+				items: [oDropItem]
+			});
+
+			this.oGrid1.placeAt("content");
+			this.oGrid2.placeAt("content");
+			Core.applyChanges();
+
+			this.oGridDragOver.setCurrentContext(
+				this.oGrid1.getItems()[0],
+				this.oGrid2,
+				"items"
+			);
+		},
+		afterEach: function () {
+			this.oGridDragOver.destroy();
+			this.oGrid1.destroy();
+			this.oGrid2.destroy();
+		}
+	});
+
+	QUnit.test("Check if the dragged keeps its original place", function(assert) {
+		// Arrange
+		var done = assert.async(),
+			oTargetControl = this.oGrid2.getItems()[0],
+			oFakeEvent = createFakeDragOverEvent(oTargetControl);
+
+		// Act
+		this.oGridDragOver.handleDragOver(oFakeEvent);
+
+		// wait 250ms and handle drag over again on same place
+		setTimeout(function () {
+			this.oGridDragOver.handleDragOver(oFakeEvent);
+
+			setTimeout(function() {
+				assert.strictEqual(jQuery("#dragContainer").outerHeight(), 80, "The drag container has the expected height.");
+				assert.strictEqual(jQuery("#dragContainer .sapMText")[0].style.display, "none", "The drag element is hidden.");
+				done();
+			}, 100); // for IE it takes a moment to resize, so we need a timeout
+
+		}.bind(this), 250);
+	});
 });

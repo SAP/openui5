@@ -290,11 +290,12 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 	 * Hides the control that is currently dragged.
 	 */
 	GridDragOver.prototype._hideDraggedItem = function() {
-		this._oDragControl.$().hide();
+			this._oDragControl.$().hide();
+
 		// this._oDragControl.setVisible(false); // todo, this brakes the drag session
 
 		var $gridItem = this._findContainingGridItem(this._oDragControl);
-		if ($gridItem) {
+		if ($gridItem && this._bIsInSameContainer) {
 			$gridItem.hide();
 		}
 	};
@@ -307,6 +308,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 		if (this._oDragControl.getDomRef()) {
 			this._oDragControl.$().show();
 		}
+
 		// this._oDragControl.setVisible(false); // todo, this brakes the drag session
 
 		var $gridItem = this._findContainingGridItem(this._oDragControl);
