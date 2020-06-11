@@ -1200,8 +1200,10 @@ sap.ui.define([
 	 * @private
 	 */
 	Month.prototype._areMouseEventCoordinatesInThreshold = function (clientX, clientY, iThreshold) {
-		return this._isValueInThreshold(this._oMousedownPosition.clientX, clientX, iThreshold)
-			&& this._isValueInThreshold(this._oMousedownPosition.clientY, clientY, iThreshold);
+		return this._oMousedownPosition // because of BCP 2080183678 - check for this._oMousedownPosition
+			&& this._isValueInThreshold(this._oMousedownPosition.clientX, clientX, iThreshold)
+			&& this._isValueInThreshold(this._oMousedownPosition.clientY, clientY, iThreshold)
+			? true : false;
 	};
 
 	/*
