@@ -520,6 +520,8 @@ sap.ui.define([
 		onSchemaValidationCheck: function (oEvent) {
 			if (oEvent.getParameter("selected")) {
 				this.validateManifest();
+			} else {
+				this._fileEditor.hideSchemaErrors();
 			}
 		}
 	});

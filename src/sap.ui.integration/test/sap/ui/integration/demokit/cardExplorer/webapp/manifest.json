@@ -4,11 +4,11 @@
 		"id": "sap.ui.demo.cardExplorer",
 		"type": "application",
 		"i18n": {
-		  "bundleUrl": "i18n/i18n.properties",
-		  "supportedLocales": [
-		    ""
-		  ],
-		  "fallbackLocale": ""
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
 		},
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
@@ -42,22 +42,20 @@
 		"dependencies": {
 			"minUI5Version": "1.60.0",
 			"libs": {
-				"sap.ui.core": {
-				},
-				"sap.m": {
-				},
-				"sap.f": {
-				},
-				"sap.ui.layout": {
-				},
-				"sap.tnt": {
-				}
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.f": {},
+				"sap.ui.layout": {},
+				"sap.tnt": {}
 			}
 		},
 		"resources": {
 			"css": [
 				{
 					"uri": "css/style.css"
+				},
+				{
+					"uri": "css/FileEditor.css"
 				}
 			]
 		},
@@ -71,7 +69,7 @@
 				"settings": {
 					"bundleName": "sap.ui.demo.cardExplorer.i18n.i18n",
 					"supportedLocales": [
-					  ""
+						""
 					],
 					"fallbackLocale": ""
 				}
