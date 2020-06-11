@@ -105,6 +105,19 @@ sap.ui.define([
 	});
 	app.placeAt("content");
 
+	// helper function
+	function fnWaitToRender (oControl) {
+		return new Promise(function(resolve) {
+			oControl.addEventDelegate({
+				onAfterRendering: function() {
+					window.requestAnimationFrame(function() {
+						resolve();
+					});
+				}
+			});
+		});
+	}
+
 
 	jQuery(document).ready(function() {
 
@@ -292,6 +305,70 @@ sap.ui.define([
 
 		});
 
+
+		QUnit.module("scrollTo with scrollEndCallback", {
+			beforeEach: function () {
+				this.oScrollContainer = new ScrollContainer();
+				this.fnScrollEndSpy = sinon.spy();
+			},
+			afterEach: function () {
+				this.oScrollContainer.destroy();
+				this.fnScrollEndSpy = null;
+			}
+		});
+
+		QUnit.test("animated scroll", function(assert) {
+			var sContainerHeight = "200px",
+				sContainerContentHeight = "2000px", // content overflows container
+				oDelegate = this.oScrollContainer.getScrollDelegate(),
+				oStub,
+				done = assert.async();
+
+			// Setup
+			this.oScrollContainer.setHeight(sContainerHeight);
+			this.oScrollContainer.addContent(new HTML({
+				content: '<div style="height: ' + sContainerContentHeight + ';"></div>'
+			}));
+
+			fnWaitToRender(this.oScrollContainer).then(function() {
+				oStub = sinon.stub(oDelegate._$Container, "animate", function(oOptions, iTime, fnCallback) {
+					fnCallback();
+				});
+				oDelegate.scrollTo(10, 0, 60, this.fnScrollEndSpy);
+				assert.strictEqual(this.fnScrollEndSpy.callCount, 1, "scrollEnd callback fired");
+				done();
+				oStub.restore();
+			}.bind(this));
+
+			this.oScrollContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		});
+
+		QUnit.test("non-animated scroll", function(assert) {
+			var sContainerHeight = "200px",
+				sContainerContentHeight = "2000px", // content overflows container
+				oDelegate = this.oScrollContainer.getScrollDelegate(),
+				done = assert.async();
+
+			// Setup
+			this.oScrollContainer.setHeight(sContainerHeight);
+			this.oScrollContainer.addContent(new HTML({
+				content: '<div style="height: ' + sContainerContentHeight + ';"></div>'
+			}));
+
+			fnWaitToRender(this.oScrollContainer).then(function() {
+				oDelegate.scrollTo(10, 0, 0, this.fnScrollEndSpy);
+				assert.strictEqual(this.fnScrollEndSpy.callCount, 1, "scrollEnd callback fired");
+				done();
+			}.bind(this));
+
+			this.oScrollContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		});
+
+
+		QUnit.module("Keyboard Handling");
+
 		QUnit.test("Press [CTRL] + [DOWN]", function(assert) {
 			intEqual(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled to position 0");
 
@@ -358,6 +435,8 @@ sap.ui.define([
 
 			intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled to position 0");
 		});
+
+		QUnit.module("Styling");
 
 		QUnit.test("Container Padding Classes", function (assert) {
 			// System under Test + Act
