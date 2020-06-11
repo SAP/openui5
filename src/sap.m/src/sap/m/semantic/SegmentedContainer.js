@@ -10,7 +10,7 @@
  */
 
 // Provides class sap.m.semantic.SegmentedContainer
-sap.ui.define(['sap/m/semantic/Segment', 'sap/ui/base/Metadata', "sap/base/Log"], function(Segment, Metadata, Log) {
+sap.ui.define(['sap/m/semantic/Segment', 'sap/ui/base/Object', "sap/base/Log"], function(Segment, BaseObject, Log) {
 	"use strict";
 
 
@@ -23,7 +23,7 @@ sap.ui.define(['sap/m/semantic/Segment', 'sap/ui/base/Metadata', "sap/base/Log"]
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.SegmentedContainer
 	 */
-	var SegmentedContainer = Metadata.createClass("sap.m.semantic.SegmentedContainer", {
+	var SegmentedContainer = BaseObject.extend("sap.m.semantic.SegmentedContainer", {
 
 		constructor : function(oContainer, sContainerAggregationName) {
 			if (!oContainer) {
@@ -38,7 +38,12 @@ sap.ui.define(['sap/m/semantic/Segment', 'sap/ui/base/Metadata', "sap/base/Log"]
 			this._sContainerAggregationName = sContainerAggregationName;
 
 			this._aSegments = [];
+		},
+
+		getInterface: function() {
+			return this; // no facade
 		}
+
 	});
 
 	SegmentedContainer.prototype.addSection = function (options) {

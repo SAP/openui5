@@ -8,16 +8,20 @@
  */
 
 sap.ui.define([
-	"sap/ui/base/Metadata",
+	"sap/ui/base/Object",
 	"sap/m/library",
 	"sap/base/security/URLWhitelist"
-], function(Metadata, library, URLWhitelist) {
+], function(BaseObject, library, URLWhitelist) {
 	"use strict";
 
 	// shortcut for sap.m.LinkConversion
 	var LinkConversion = library.LinkConversion;
 
-	var AnchorGenerator = Metadata.createClass("sap.m.FormattedTextAnchorGenerator", {});
+	var AnchorGenerator = BaseObject.extend("sap.m.FormattedTextAnchorGenerator", {
+		getInterface: function() {
+			return this; // no facade
+		}
+	});
 
 	var LINK_SEARCH_PATTERN = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;()$]*[-A-Z0-9+&@#\/%=~_|])/gim;
 	var WWW_DETECTION_PATTERN = /(www\.[^\s><]+(\b|$))/gim;

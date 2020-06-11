@@ -11,19 +11,23 @@
  * where CONTROL is a camel-cased version of the getMetadata().getName() value, f.e. "sap.m.Button" becomes "sapMButton"
  */
 
-sap.ui.define(['sap/ui/base/Metadata', './OverflowToolbarButton', './OverflowToolbarToggleButton', './ToggleButton', './Button', 'sap/m/library', "sap/base/Log"],
-	function(Metadata, OverflowToolbarButton, OverflowToolbarToggleButton, ToggleButton, Button, library, Log) {
+sap.ui.define(['sap/ui/base/Object', './OverflowToolbarButton', './OverflowToolbarToggleButton', './ToggleButton', './Button', 'sap/m/library', "sap/base/Log"],
+	function(BaseObject, OverflowToolbarButton, OverflowToolbarToggleButton, ToggleButton, Button, library, Log) {
 		"use strict";
 
 		// shortcut for sap.m.ButtonType
 		var ButtonType = library.ButtonType;
 
-		var OverflowToolbarAssociativePopoverControls = Metadata.createClass("sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopoverControls", {
+		var OverflowToolbarAssociativePopoverControls = BaseObject.extend("sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopoverControls", {
 			/**
 			 * @private
 			 */
 			constructor: function() {
 				this._mControlsCache = {};
+			},
+
+			getInterface: function() {
+				return this; // no facade
 			}
 		});
 
