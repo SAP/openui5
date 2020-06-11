@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/less",
-	"sap/base/Log"
+	"sap/base/Log",
+	"jquery.sap.global"
 ], function (
 	Less,
-	Log
+	Log,
+	jQuery
 ) {
 	"use strict";
 	//Parameter definitions

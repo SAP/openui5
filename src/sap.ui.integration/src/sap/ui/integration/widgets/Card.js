@@ -333,6 +333,7 @@ sap.ui.define([
 		this.setModel(new JSONModel(), "parameters");
 		this._busyStates = new Map();
 		this._oExtension = null;
+		this._oContentFactory = new ContentFactory(this);
 
 		/**
 		 * Facade of the {@link sap.ui.integration.widgets.Card} control.
@@ -630,6 +631,7 @@ sap.ui.define([
 		this._busyStates = null;
 		this._oRb = null;
 		this._oExtension = null;
+		this._oContentFactory = null;
 
 		if (this._ariaText) {
 			this._ariaText.destroy();
@@ -1074,11 +1076,9 @@ sap.ui.define([
 	};
 
 	Card.prototype.createContent = function (mContentConfig) {
-		var oContentFactory = new ContentFactory(this);
-
 		mContentConfig.cardManifest = this._oCardManifest;
 
-		return oContentFactory.create(mContentConfig);
+		return this._oContentFactory.create(mContentConfig);
 	};
 
 	/**
@@ -1183,9 +1183,9 @@ sap.ui.define([
 				if (!this._oCardManifest) {
 					return;
 				}
-				var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
-					oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
-					sHeight = BaseContent.getMetadata().getRenderer().getMinHeight(sType, oContent, oError);
+				var sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE),
+					oContentManifest = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
+					sHeight = this._oContentFactory.getClass(sCardType).getMetadata().getRenderer().getMinHeight(oContentManifest, oError);
 
 				if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
 					oError.$().css({ "min-height": sHeight });
@@ -1207,9 +1207,7 @@ sap.ui.define([
 						return;
 					}
 
-					var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
-						oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
-						sHeight = BaseContent.getMetadata().getRenderer().getMinHeight(sType, oContent, this._oTemporaryContent);
+					var sHeight = this._oContentFactory.getClass(sCardType).getMetadata().getRenderer().getMinHeight(oContentManifest, this._oTemporaryContent);
 
 					if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
 						this._oTemporaryContent.$().css({ "min-height": sHeight });

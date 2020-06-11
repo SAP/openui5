@@ -60,30 +60,14 @@ sap.ui.define([
 			sType = mConfig.cardType;
 
 		return new Promise(function (resolve, reject) {
-			var oContent = null;
+			var Content = this.getClass(sType);
 
-			switch (sType.toLowerCase()) {
-				case "adaptivecard":
-					oContent = new AdaptiveContent(); break;
-				case "analytical":
-					oContent = new AnalyticalContent(); break;
-				case "analyticscloud":
-					oContent = new AnalyticsCloudContent(); break;
-				case "calendar":
-					oContent = new CalendarContent(); break;
-				case "component":
-					oContent = new ComponentContent(); break;
-				case "list":
-					oContent = new ListContent(); break;
-				case "object":
-					oContent = new ObjectContent(); break;
-				case "table":
-					oContent = new TableContent(); break;
-				case "timeline":
-					oContent = new TimelineContent(); break;
-				default:
-					reject(sType.toUpperCase() + " content type is not supported.");
+			if (!Content) {
+				reject(sType.toUpperCase() + " content type is not supported.");
+				return;
 			}
+
+			var oContent = new Content();
 
 			oContent.loadDependencies(mConfig.contentManifest)
 				.then(function () {
@@ -114,7 +98,35 @@ sap.ui.define([
 				.catch(function (sError) {
 					reject(sError);
 				});
-		});
+		}.bind(this));
+	};
+
+	/**
+	 * Returns the class that represents the content of the given type.
+	 * @param {string} sType The type.
+	 * @returns {sap.ui.integration.cards.BaseContent} The corresponding class.
+	 */
+	ContentFactory.prototype.getClass = function (sType) {
+		switch (sType.toLowerCase()) {
+			case "adaptivecard":
+				return AdaptiveContent;
+			case "analytical":
+				return AnalyticalContent;
+			case "calendar":
+				return CalendarContent;
+			case "component":
+				return ComponentContent;
+			case "list":
+				return ListContent;
+			case "object":
+				return ObjectContent;
+			case "table":
+				return TableContent;
+			case "timeline":
+				return TimelineContent;
+			default:
+				return null;
+		}
 	};
 
 	return ContentFactory;

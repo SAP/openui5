@@ -2,17 +2,22 @@
  * ${copyright}
  */
 
-sap.ui.define([], function () {
+sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
 	"use strict";
 
 	/**
-	 *  BaseContent renderer.
+	 * BaseContent renderer.
 	 * @author SAP SE
 	 * @namespace
 	 */
-	var BaseContentRenderer = {
-		apiVersion: 2
-	};
+	var BaseContentRenderer = Renderer.extend("sap.ui.integration.cards.BaseContentRenderer", {
+			apiVersion: 2
+		});
+
+	/**
+	 * Default min height for all content types.
+	 */
+	BaseContentRenderer.DEFAULT_MIN_HEIGHT = "5rem";
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -41,7 +46,7 @@ sap.ui.define([], function () {
 		}
 
 		if (bIsCardValid && oCard.getHeight() === "auto") { // if there is no height specified the default value is "auto"
-			var sHeight = this.getMinHeight(sType, oCardContent.getConfiguration(), oCardContent);
+			var sHeight = this.getMinHeight(oCardContent.getConfiguration(), oCardContent);
 			oRm.style("min-height", sHeight);
 		}
 
@@ -60,11 +65,18 @@ sap.ui.define([], function () {
 		oRm.close("div");
 	};
 
-	BaseContentRenderer.getMinHeight = function (sType, oConfiguration, oContent) {
+	/**
+	 * @protected
+	 * @param {object} oConfiguration The manifest configuration of the content
+	 * @param {sap.ui.core.Control} oContent The content
+	 * @returns {string} Min height in Rems.
+	 */
+	BaseContentRenderer.getMinHeight = function (oConfiguration, oContent) {
+		return this.DEFAULT_MIN_HEIGHT;
+	};
 
-		var MIN_HEIGHT = 5,
-			iHeight,
-			oReferenceElement = oContent,
+	BaseContentRenderer.isCompact = function (oContent) {
+		var oReferenceElement = oContent,
 			oParent = oContent.getParent();
 
 		if (!oContent.getDomRef() && oParent && oParent.isA("sap.f.ICard")) {
@@ -72,67 +84,7 @@ sap.ui.define([], function () {
 		}
 
 		// check if there is an element up the DOM which enables compact density
-		var isCompact = oReferenceElement.$().closest(".sapUiSizeCompact").hasClass("sapUiSizeCompact");
-
-		if (jQuery.isEmptyObject(oConfiguration)) {
-			return "0rem";
-		}
-
-		switch (sType) {
-			case "ListContent":
-				iHeight = this._getMinListHeight(oConfiguration, isCompact);
-				break;
-			case "TableContent":
-				iHeight = this._getMinTableHeight(oConfiguration, isCompact);
-				break;
-			case "TimelineContent":
-				iHeight = this._getMinTimelineHeight(oConfiguration, isCompact);
-				break;
-			case "AnalyticalContent":
-				iHeight = 14;
-				break;
-			case "AnalyticsCloudContent":
-				iHeight = 14;
-				break;
-			case "ObjectContent":
-				iHeight = 0;
-				break;
-			default:
-				iHeight = 0;
-		}
-
-		return (iHeight !== 0 ? iHeight : MIN_HEIGHT) + "rem";
-	};
-
-	BaseContentRenderer._getMinListHeight = function (oConfiguration, isCompact) {
-		var iCount = parseInt(oConfiguration.maxItems) || 0,
-			oTemplate = oConfiguration.item,
-			iItemHeight = isCompact ? 2 : 2.75; // list item height in "rem"
-
-		if (!oTemplate) {
-			return 0;
-		}
-
-		if (oTemplate.description) {
-			iItemHeight = 5; // list item height with description in "rem"
-		}
-
-		return iCount * iItemHeight;
-	};
-
-	BaseContentRenderer._getMinTableHeight = function (oConfiguration, isCompact) {
-		var iCount = parseInt(oConfiguration.maxItems) || 0,
-			iRowHeight = isCompact ? 2 : 2.75, // table row height in "rem"
-			iTableHeaderHeight = isCompact ? 2 : 2.75; // table header height in "rem"
-
-		return iCount * iRowHeight + iTableHeaderHeight;
-	};
-
-	BaseContentRenderer._getMinTimelineHeight = function (oConfiguration, isCompact) {
-		var iCount = parseInt(oConfiguration.maxItems) || 0,
-			iItemHeight = isCompact ? 4 : 5; // timeline item height in "rem"
-
-		return iCount * iItemHeight;
+		return oReferenceElement.$().closest(".sapUiSizeCompact").hasClass("sapUiSizeCompact");
 	};
 
 	return BaseContentRenderer;
