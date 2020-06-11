@@ -161,4 +161,24 @@ sap.ui.define([
 		assert.equal(oItem._getFileNameEdit().$().length, 1, "File name edit should be rendered.");
 		assert.equal(oItem._getFileNameLink().$().length, 0, "File name link should be ignored.");
 	});
+
+	QUnit.test("Allow Curly bracees in the fileName property", function (assert) {
+        //Arrange
+		this.oUploadSet.attachEventOnce("beforeItemAdded", function (oEvent) {
+			assert.ok(true, "beforeItemAdded event should have been called.");
+			assert.equal(oEvent.getParameter("item").getFileName(), "{newFile}.txt", "File name should be correct.");
+		});
+		this.oUploadSet.attachEventOnce("afterItemAdded", function (oEvent) {
+			assert.ok(true, "afterItemAdded event should have been called.");
+			assert.equal(oEvent.getParameter("item").getFileName(), "{newFile}.txt", "File name should be correct.");
+		});
+		this.oUploadSet._onFileUploaderChange({
+			getParameter: function () {
+				return {
+					length: 1,
+					0: {name: "{newFile}.txt"}
+				};
+			}
+		});
+    });
 });
