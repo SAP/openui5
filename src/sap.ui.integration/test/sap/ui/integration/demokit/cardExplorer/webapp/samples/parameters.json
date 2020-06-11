@@ -97,7 +97,6 @@
 			"row": {
 				"columns": [{
 						"title": "City",
-						"subTitile": "date",
 						"value": "{ShipCity}",
 						"identifier": true
 					},
