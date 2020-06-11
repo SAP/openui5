@@ -18,9 +18,6 @@ sap.ui.define([
 ], function (jQuery, BaseObject, Core, CustomData, Configuration, ManagedObjectObserver, AnchorBar, Button, MenuButton, Menu, MenuItem, IconPool) {
 	"use strict";
 
-	// animation modes that support animation upon scroll to section
-	var SCROLL_ANIMATION_MODES = [Configuration.AnimationMode.full, Configuration.AnimationMode.basic];
-
 	var ABHelper = BaseObject.extend("sap.uxap._helpers.AB", {
 		/**
 		 * @private
@@ -28,8 +25,6 @@ sap.ui.define([
 		 */
 		constructor: function (oObjectPageLayout) {
 			this._oObjectPageLayout = oObjectPageLayout;
-			this._iScrollDuration = oObjectPageLayout._iScrollToSectionDuration;
-			this._iFocusMoveDelay = this._iScrollDuration - 100;
 			this._oObserver = new ManagedObjectObserver(this._proxyStateChanges.bind(this));
 			this._aMenusWithAttachPressHandler = [];
 		},
@@ -37,6 +32,22 @@ sap.ui.define([
 			return this; // no facade
 		}
 	});
+
+	/** STATIC MEMBERS **/
+
+	/**
+	 * @static
+	 * @param {sap.uxap.ObjectPageSectionBase} oSection the section or subsection to be focused
+	 * @param {object} oParams a params object to be passed to the focus call
+	 * @private
+	 */
+	ABHelper._focusSection = function (oSection, oParams) {
+		var oSectionDomRef = oSection.getDomRef();
+
+		if (oSectionDomRef) {
+			oSectionDomRef.focus(oParams);
+		}
+	};
 
 	ABHelper.prototype.getObjectPageLayout = function () {
 		return this._oObjectPageLayout;
@@ -227,31 +238,25 @@ sap.ui.define([
 	 */
 	ABHelper.prototype._moveFocusOnSection = function (oSourceControl) {
 		var oSourceData = oSourceControl.data(),
-			oSection = sap.ui.getCore().byId(oSourceData.sectionId),
-			oObjectPage = this.getObjectPageLayout(),
-			bIsSubSection = oSection.isA("sap.uxap.ObjectPageSubSection"),
-			bAllowFocusMove = (oSection && !oObjectPage.getUseIconTabBar()) || (oObjectPage.getUseIconTabBar() && bIsSubSection),
-			iFocusMoveDelay = this._iFocusMoveDelay;
+			oSectionBase = sap.ui.getCore().byId(oSourceData.sectionId),
+			oFocusParams = { preventScroll: true },
+			oDelegate;
 
-		if (bAllowFocusMove && this._isScrollAnimationEnabled()) {
-			setTimeout(oSection.$()["focus"].bind(oSection.$()), iFocusMoveDelay);
-		} else if (bAllowFocusMove) {
-			oSection.$().trigger("focus");
+		if (oSectionBase) {
+			if (oSectionBase.isActive()) {
+				ABHelper._focusSection(oSectionBase, oFocusParams);
+			} else {
+				// with IconTabBar section may not be rendered
+				oDelegate = {
+					"onAfterRendering": function () {
+						oSectionBase.removeEventDelegate(oDelegate);
+						ABHelper._focusSection(oSectionBase, oFocusParams);
+					}
+				};
+
+				oSectionBase.addEventDelegate(oDelegate);
+			}
 		}
-
-		// Handle the case of SubSection first rendering in IconTabBar mode
-		if (oObjectPage.getUseIconTabBar() && bIsSubSection) {
-			var oDelegate = {"onAfterRendering": function () {
-				this.removeEventDelegate(oDelegate);
-				setTimeout(this.$()["focus"].bind(this.$()), iFocusMoveDelay);
-			}.bind(oSection)};
-
-			oSection.addEventDelegate(oDelegate);
-		}
-	};
-
-	ABHelper.prototype._isScrollAnimationEnabled = function () {
-		return SCROLL_ANIMATION_MODES.indexOf(Core.getConfiguration().getAnimationMode()) >= 0;
 	};
 
 	ABHelper.prototype._instantiateAnchorBarButton = function (bIsMenuButton, sAriaDescribedBy, sId) {
