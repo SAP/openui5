@@ -43,7 +43,6 @@
 		</headerTitle>
 
 		<headerContent>
-        <layout:VerticalLayout>
             <m:FlexBox wrap="Wrap" fitContainer="true">
                 <m:Avatar src="./test-resources/sap/uxap/images/imageID_275314.png" class="sapUiMediumMarginEnd sapUiSmallMarginBottom" displaySize="L"/>
 
@@ -141,7 +140,6 @@
                     </m:VBox>
                 </m:VBox>
             </m:FlexBox>
-            </layout:VerticalLayout>
         </headerContent>
 
         <sections>
