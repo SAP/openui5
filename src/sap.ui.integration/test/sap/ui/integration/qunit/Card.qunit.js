@@ -2770,5 +2770,60 @@ sap.ui.define([
 			]);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
+
+		QUnit.module("Style classes", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					width: "400px",
+					height: "600px"
+				});
+
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+				Core.applyChanges();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("sapFCardAnalytical is added only when the type is 'Analytical'", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oAnalyticalManifest = {
+					"sap.app": {
+						"id": "someId"
+					},
+					"sap.card": {
+						"type": "Analytical"
+					}
+				},
+				oTableManifest = {
+					"sap.app": {
+						"id": "someId"
+					},
+					"sap.card": {
+						"type": "Table"
+					}
+				};
+
+			// Act
+			this.oCard.attachEventOnce("_ready", function () {
+				// Assert
+				assert.ok(this.oCard.hasStyleClass("sapFCardAnalytical"), "'sapFCardAnalytical' class should be set.");
+
+				this.oCard.attachEventOnce("_ready", function () {
+					// Assert
+					assert.notOk(this.oCard.hasStyleClass("sapFCardAnalytical"), "'sapFCardAnalytical' class should NOT be set.");
+					done();
+				}.bind(this));
+
+				// Act
+				this.oCard.setManifest(oTableManifest);
+
+			}.bind(this));
+
+			this.oCard.setManifest(oAnalyticalManifest);
+		});
 	}
 );
