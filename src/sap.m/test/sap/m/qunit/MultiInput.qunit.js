@@ -2332,6 +2332,35 @@ sap.ui.define([
 		oMI.destroy();
 	});
 
+	QUnit.test('N-more is showed after focusing item from the picker and closing the picker', function(assert) {
+		// arrange
+		var oMI = new MultiInput().placeAt("qunit-fixture");
+
+		oMI.setTokens([
+			new Token("tokenToClick", {text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"})
+		]);
+		oMI.setWidth("200px");
+
+		// act
+		sap.ui.getCore().applyChanges();
+		var oSpy = sinon.spy(oMI.getAggregation('tokenizer'), "_useCollapsedMode");
+
+		oMI._toggleSelectedItemsPicker();
+		this.clock.tick(300);
+		oMI._toggleSelectedItemsPicker();
+		this.clock.tick(300);
+
+		// Assert
+		assert.ok(oSpy.calledWith(true), "The collapse mode is set to true in order to show n-more label");
+
+		// clean up
+		oSpy.restore();
+		oMI.destroy();
+	});
+
 	QUnit.test("Token's list + token deletion", function(assert) {
 		var aListItems,
 			oToken = new Token({text: "XXXX"});
