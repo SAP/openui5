@@ -1615,6 +1615,36 @@ function (
 		Core.applyChanges();
 	});
 
+	QUnit.test("test AnchorBar focus section synchronously and immediate after anchor press to prevent loss of focus when header is snapping", function (assert) {
+		assert.expect(1);
+		// Arrange
+		var done = assert.async(),
+			iSectionCount = 3,
+			iSubSectionCount = 1,
+			oPage = helpers.generateObjectPageWithSubSectionContent(oFactory, iSectionCount, iSubSectionCount),
+			oABHelper = oPage._oABHelper,
+			oAnchorBar = oABHelper._getAnchorBar(),
+			oLastSectionButton,
+			oLastSection = oPage.getSections()[iSectionCount - 1],
+			fnOnDomReady = function () {
+				// Arrange
+				oLastSectionButton = oAnchorBar.getContent()[iSectionCount - 1];
+				// Act
+				oLastSectionButton.firePress();
+
+				// Assert
+				assert.strictEqual(document.activeElement, oLastSection.getDomRef(), "Section is focused synchronously");
+
+				// Clean
+				oPage.destroy();
+				done();
+			};
+
+		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
+		oPage.placeAt('qunit-fixture');
+		Core.applyChanges();
+	});
+
 	QUnit.module("ObjectPage API: ObjectPageHeader", {
 		beforeEach: function (assert) {
 			var done = assert.async();
