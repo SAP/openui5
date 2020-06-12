@@ -744,6 +744,50 @@ function (
 		helpers.renderObject(oObjectPage);
 	});
 
+
+	QUnit.test("call setSelectedSection(null) when the first visible section is already selected", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oFirstSection = this.oObjectPage.getSections()[0],
+			oSecondSection = this.oObjectPage.getSections()[1],
+			oExpected,
+			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
+
+		// add header content
+		oObjectPage.setUseIconTabBar(false);
+		oObjectPage.setHeaderTitle(oFactory.getHeaderTitle());
+		oObjectPage.addHeaderContent(oFactory.getHeaderContent());
+
+		oFirstSection.setVisible(false);
+
+		var oDelegate = {
+			onAfterRendering: function () {
+				oObjectPage.removeEventDelegate(oDelegate);
+
+				setTimeout(function() {
+					// Act: change first section to *make it the first visible* AND unset selectedSection
+					oObjectPage.setSelectedSection(null);
+
+					setTimeout(function() {
+						// Check: the selection moved to the first visible section
+						oExpected = {
+							oSelectedSection: oSecondSection,
+							sSelectedTitle: oSecondSection.getSubSections()[0].getTitle() //subsection is promoted
+						};
+						sectionIsSelected(oObjectPage, assert, oExpected);
+						assert.equal(oObjectPage._bHeaderExpanded, true, "Header is expanded");
+						assert.equal(oObjectPage._$opWrapper.scrollTop(), 0, "page is scrolled to top");
+						done();
+					}, 500);
+				}, 500);
+			}
+		};
+
+		oObjectPage.addEventDelegate(oDelegate);
+
+		helpers.renderObject(oObjectPage);
+	});
+
+
 	QUnit.test("scroll to selected section on rerender", function (assert) {
 		var oObjectPage = this.oObjectPage,
 			oSecondSection = this.oObjectPage.getSections()[1],
