@@ -5,6 +5,7 @@
 // Provides control sap.f.DynamicPageTitle.
 sap.ui.define([
 	"./library",
+	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/m/library",
@@ -18,9 +19,11 @@ sap.ui.define([
 	"sap/ui/core/HTML",
 	"sap/ui/core/Icon",
 	"sap/ui/Device",
-    "sap/ui/events/KeyCodes"
+    "sap/ui/events/KeyCodes",
+	"sap/ui/core/InvisibleMessage"
 ], function(
 	library,
+	CoreLibrary,
 	Control,
 	ManagedObjectObserver,
 	mobileLibrary,
@@ -34,13 +37,15 @@ sap.ui.define([
 	HTML,
 	Icon,
 	Device,
-	KeyCodes
+	KeyCodes,
+	InvisibleMessage
 ) {
 	"use strict";
 
 	// shortcut for sap.f.DynamicPageTitleArea
 	var DynamicPageTitleArea = library.DynamicPageTitleArea,
-		ToolbarStyle = mobileLibrary.ToolbarStyle;
+		ToolbarStyle = mobileLibrary.ToolbarStyle,
+		InvisibleMessageMode = CoreLibrary.InvisibleMessageMode;
 	var oCore = sap.ui.getCore();
 
 	/**
@@ -411,6 +416,7 @@ sap.ui.define([
 		});
 
 		this._oRB = sap.ui.getCore().getLibraryResourceBundle("sap.f");
+		this.oInvisibleMessage = InvisibleMessage.getInstance();
 	};
 
 	DynamicPageTitle.prototype.onBeforeRendering = function () {
@@ -1178,6 +1184,7 @@ sap.ui.define([
 	 */
 	DynamicPageTitle.prototype._focusExpandButton = function () {
 		this._getExpandButton().$().trigger("focus");
+		this.oInvisibleMessage.announce(this._getExpandButton().getTooltip(), InvisibleMessageMode.Polite);
 	};
 
 	/**
