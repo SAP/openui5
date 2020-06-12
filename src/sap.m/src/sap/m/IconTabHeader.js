@@ -1271,6 +1271,10 @@ sap.ui.define([
 
 		IconTabBarDragAndDropUtil.handleDrop(oContext, oEventDropPosition, oDraggedControl._getRealTab(), oDroppedControl, false, allowedNestingLevel);
 
+		if (oDraggedControl._getNestedLevel() > 1) {
+			oDraggedControl._getRootTab()._closePopover();
+		}
+
 		this._setItemsForStrip();
 		this._initItemNavigation();
 		this._getOverflow()._setSelectListItems();

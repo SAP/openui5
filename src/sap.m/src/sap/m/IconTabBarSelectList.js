@@ -287,14 +287,22 @@ sap.ui.define([
 
 		var oTabToBeMoved = oEvent.srcControl,
 			iKeyCode = oEvent.keyCode,
-			iIndexBeforeMove = this.indexOfItem(oTabToBeMoved);
+			iIndexBeforeMove = this.indexOfItem(oTabToBeMoved),
+			oContext = this;
 
-		IconTabBarDragAndDropUtil.moveItem.call(this, oTabToBeMoved, iKeyCode, this.getItems().length - 1);
+		IconTabBarDragAndDropUtil.moveItem.call(oContext, oTabToBeMoved, iKeyCode, oContext.getItems().length - 1);
+
 		this._initItemNavigation();
 		oTabToBeMoved.$().trigger("focus");
 
-		if (iIndexBeforeMove !== this.indexOfItem(oTabToBeMoved)) {
+		if (iIndexBeforeMove === this.indexOfItem(oTabToBeMoved)) {
+			return;
+		}
+		oContext = oTabToBeMoved._getRealTab().getParent();
+		if (this._oTabFilter._bIsOverflow && oTabToBeMoved._getRealTab()._getNestedLevel() === 1) {
 			this._oIconTabHeader._moveTab(oTabToBeMoved._getRealTab(), iKeyCode, this._oIconTabHeader.getItems().length - 1);
+		} else {
+			IconTabBarDragAndDropUtil.moveItem.call(oContext, oTabToBeMoved._getRealTab(), iKeyCode, oContext.getItems().length - 1);
 		}
 	};
 
