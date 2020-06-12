@@ -339,7 +339,7 @@ sap.ui.define([
 			});
 		}
 
-		oButton = new Button({
+		oButton = new Button(this.getId() + "-expandButton", {
 			icon: sIconURI,
 			tooltip: sTooltipBundleText,
 			type: ButtonType.Transparent,
