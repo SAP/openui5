@@ -258,7 +258,8 @@ function (jQuery, ManagedObject, Element, Component, Analyzer, CoreFacade,
 		CommunicationBus.subscribe(channelNames.ON_INIT_ANALYSIS_CTRL, function () {
 			RuleSetLoader.updateRuleSets(function () {
 				CommunicationBus.publish(channelNames.POST_APPLICATION_INFORMATION, {
-					// Use deprecated function to ensure this would work for older versions.
+					// Sends info about the application under test
+					// Using deprecated function to ensure this would work for older versions.
 					versionInfo: sap.ui.getVersionInfo()
 				});
 				this.fireEvent("ready");
