@@ -707,7 +707,8 @@ sap.ui.define([
 				'combine': 0xe285,
 				'split': 0xe286,
 				'megamenu': 0xe287,
-				"feedback": 0xe288
+				'feedback': 0xe288,
+				'information': 0xe289
 			}
 		};
 

@@ -6432,5 +6432,16 @@
 			"callout",
 			"speech"
 		]
+	},
+	"information": {
+		"tags": [
+			"information",
+			"info",
+			"message",
+			"message-information",
+			"i",
+			"filled",
+			"notification"
+		]
 	}
 }

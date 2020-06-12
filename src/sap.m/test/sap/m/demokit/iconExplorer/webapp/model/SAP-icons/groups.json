@@ -857,7 +857,8 @@
 				{ "name" : "away" },
 				{ "name" : "busy" },
 				{ "name" : "appear-offline" },
-				{ "name" : "validate" }
+				{ "name" : "validate" },
+				{ "name" : "information" }
 			]
 		},
 		{
