@@ -2261,6 +2261,70 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
+	QUnit.test("aria-activedescendant attribute should removed on focusleave", function (assert) {
+		var oComboBox = new ComboBox({
+			items: [
+				new Item("focusedItem", {
+					key: "GER",
+					text: "Germany"
+				})
+			]
+		});
+
+		// Arrange
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oComboBox.open();
+		this.clock.tick();
+		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick();
+
+		// Assert
+		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), oComboBox.getListItem(oComboBox.getSelectedItem()).getId(), 'The "aria-activedescendant" attribute is set to the focused item');
+
+		// Act
+		oComboBox.getFocusDomRef().blur();
+		this.clock.tick();
+
+		// Assert
+		assert.notOk(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), 'The "aria-activedescendant" attribute is not set after focus out(when the active descendant list item is not focused)');
+
+		// Cleanup
+		oComboBox.destroy();
+	});
+
+		QUnit.test("aria-activedescendant attribute should not be set if an item is selected but the picker is not opened", function (assert) {
+		var oComboBox = new ComboBox({
+			items: [
+				new Item("focusedItem", {
+					key: "GER",
+					text: "Germany"
+				})
+			]
+		});
+
+		// Arrange
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oComboBox.focus();
+		this.clock.tick();
+		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		sap.ui.getCore().applyChanges();
+
+		this.clock.tick(300);
+
+		// Assert
+		assert.notOk(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), 'The "aria-activedescendant" attribute is notif an item is selected but te picker is not opened');
+
+		// Cleanup
+		oComboBox.destroy();
+	});
+
+
 	QUnit.test("setSelectedKey() on unbindObject call", function (assert) {
 		var oComboBox = new ComboBox({
 			selectedKey: "{value}",
@@ -8135,16 +8199,13 @@ sap.ui.define([
 	QUnit.module("oninput");
 
 	QUnit.test("oninput the ComboBox's picker pop-up should open", function (assert) {
-
 		// system under test
-
-		var oExpectedItem;
 		var oComboBox = new ComboBox({
 			items: [
 				new Item({
 					text: "Egypt"
 				}),
-				oExpectedItem = new Item({
+				new Item({
 					text: "Germany"
 				}),
 				new Item({
@@ -8168,13 +8229,13 @@ sap.ui.define([
 		oComboBox.getFocusDomRef().value = "G";
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
 		this.clock.tick(1000);	// wait 1s after the open animation is completed
-		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// assert
 		assert.strictEqual(fnOpenSpy.callCount, 1, "open() method was called exactly once");
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
 		assert.strictEqual(oComboBox.getVisibleItems().length, 3, "Three items are visible");
-		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId, "The 'aria-activedescendant' attribute is set when the active descendant is rendered and visible");
+		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), null, "The 'aria-activedescendant' attribute is not set if the visual focus is not on the item");
+
 		// cleanup
 		oComboBox.destroy();
 	});
@@ -9046,10 +9107,9 @@ sap.ui.define([
 	QUnit.test("onAfterOpen test case 2", function (assert) {
 
 		// system under test
-		var oExpectedItem;
 		var oComboBox = new ComboBox({
 			items: [
-				oExpectedItem = new Item({
+				new Item({
 					key: "GER",
 					text: "Germany"
 				})
@@ -9065,12 +9125,9 @@ sap.ui.define([
 		// act
 		oComboBox.syncPickerContent();
 		oComboBox.open();
-		sap.ui.getCore().applyChanges();
-
-		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
 
 		// assert
-		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId, "The 'aria-activedescendant' attribute is set when the active descendant is rendered and visible");
+		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), null, "The 'aria-activedescendant' attribute is not set when a suggested item is not focused");
 
 		oComboBox.destroy();
 	});
