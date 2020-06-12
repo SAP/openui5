@@ -43,6 +43,7 @@ sap.ui.require([
 		// "sap/ui/core/qunit/MasterDetail.qunit",
 		"sap/ui/core/qunit/StaticBinding.qunit",
 		"sap/ui/core/qunit/model/Context.qunit",
+		"sap/ui/core/qunit/model/ContextBinding.qunit",
 		"sap/ui/core/qunit/model/Model.qunit",
 
 		// ***************************************************************************************

@@ -33,10 +33,10 @@ sap.ui.define(['./Binding'],
 		},
 
 		metadata : {
-			 publicMethods : [
-			 // methods
-				"getElementContext"
-			 ]
+			publicMethods : [
+				// methods
+				"getBoundContext"
+			]
 		}
 	});
 
