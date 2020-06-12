@@ -316,6 +316,17 @@ sap.ui.define([
 			assert.equal(this.oM._isValueInThreshold(248, 259, 10), false, "value is upper"); // (reference value, actual value, threshold)
 		});
 
+		// BCP 2080183678
+		QUnit.test("_areMouseEventCoordinatesInThreshold works properly", function (assert) {
+			this.oM._oMousedownPosition = { clientX: 20, clientY: 20 };
+			assert.equal(this.oM._areMouseEventCoordinatesInThreshold(27, 27, 10), true, "both distances between mousedown and mouseup clientX, clientY are within the threshold");
+			assert.equal(this.oM._areMouseEventCoordinatesInThreshold(27, 37, 10), false, "the distance between mousedown and mouseup clientY is not within the threshold");
+			assert.equal(this.oM._areMouseEventCoordinatesInThreshold(37, 27, 10), false, "the distance between mousedown and mouseup clientX is not within the threshold");
+			assert.equal(this.oM._areMouseEventCoordinatesInThreshold(37, 37, 10), false, "both distances between mousedown and mouseup clientX, clientY are not within the threshold");
+			delete this.oM._oMousedownPosition;
+			assert.equal(this.oM._areMouseEventCoordinatesInThreshold(27, 27, 10), false, "there is no mousedown data stored, cannot check, return false");
+		});
+
 		// BCP: 1880151681
 		QUnit.test("Selecting a weeknumber does not throw an error", function (assert) {
 			// Arrange
