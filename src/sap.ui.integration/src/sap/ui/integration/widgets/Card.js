@@ -1091,9 +1091,7 @@ sap.ui.define([
 			sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE).toLowerCase();
 		}
 
-		if (sCardType === "analytical") {
-			this.addStyleClass("sapFCardAnalytical");
-		}
+		this.toggleStyleClass("sapFCardAnalytical", sCardType === "analytical");
 	};
 
 	/**
