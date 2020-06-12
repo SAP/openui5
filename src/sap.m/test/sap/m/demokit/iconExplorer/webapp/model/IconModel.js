@@ -283,6 +283,13 @@ sap.ui.define([
 				sIconPath = (sFontName === "SAP-icons" ? "" : sFontName + "/"),
 				sDelivery = (["SAP-icons", "SAP-icons-TNT"].indexOf(sFontName) >= 0 ? "OpenUI5" : "SAPUI5");
 
+			// Remove icons starting with capitol character from the "SAP-icons-TNT" font, because they are deprecated.
+			if (sFontName === "SAP-icons-TNT") {
+				aIconNames = aIconNames.filter(function (sIconName) {
+					return sIconName[0] !== sIconName[0].toUpperCase();
+				});
+			}
+
 			// add all icons from icon pool and append tag info
 			var aIcons = aIconNames.map(function (sIconName) {
 				var oIconMetadata = oTags[sIconName],
