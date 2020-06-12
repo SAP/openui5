@@ -48,10 +48,14 @@ sap.ui.define([
 					text: 'Root 1',
 					key: 'rootChild1',
 					icon: 'sap-icon://employee',
+					href: '#/rootChild1',
+					target: '_blank',
 					items: [
 						new NavigationListItem({
 							text: 'Child 1',
-							key: 'child1'
+							key: 'child1',
+							href: '#/child1',
+							target: '_self'
 						}),
 						new NavigationListItem({
 							text: 'Disabled Child',
@@ -59,7 +63,8 @@ sap.ui.define([
 						}),
 						new NavigationListItem({
 							text: 'Child 3',
-							key: 'child3'
+							key: 'child3',
+							href: '#/child1'
 						})
 					]
 				}),
@@ -83,6 +88,7 @@ sap.ui.define([
 				new NavigationListItem("groupItem3", {
 					text: 'Root 2',
 					key: 'root1',
+					href: '#/root1',
 					icon: 'sap-icon://employee',
 					items: [
 						new NavigationListItem({
@@ -243,6 +249,14 @@ sap.ui.define([
 		assert.ok(this.navigationList.$().hasClass('sapTntNavLI'), "sapTntNavLI class is set");
 		assert.strictEqual(this.navigationList.$().children().length, 5, "groups number is correct");
 		assert.strictEqual(this.navigationList.$().children()[0].children[1].children.length, 3, "first group children are ok");
+
+		var aLinks = this.navigationList.$().find('a');
+
+		assert.strictEqual(aLinks[0].getAttribute('href'), '#/rootChild1', 'href attr is correct');
+		assert.strictEqual(aLinks[0].getAttribute('target'), '_blank', 'target attr is correct');
+
+		assert.strictEqual(aLinks[1].getAttribute('href'), '#/child1', 'href attr is correct');
+		assert.strictEqual(aLinks[1].getAttribute('target'), '_self', 'target attr is correct');
 	});
 
 	QUnit.test("list.setExpanded(false)", function (assert) {
@@ -515,6 +529,8 @@ sap.ui.define([
 	QUnit.test('interaction', function (assert) {
 		this.navigationList = getNavigationList();
 
+		var oStub = sinon.stub(NavigationListItem.prototype, "_openUrl", function () { });
+
 		oPage.addContent(this.navigationList);
 		sap.ui.getCore().applyChanges();
 
@@ -523,6 +539,10 @@ sap.ui.define([
 		this.navigationList.getItems()[0].getItems()[0]._selectItem();
 
 		assert.strictEqual(this.navigationList.getSelectedKey(), 'child1', 'selection is correct');
+
+		assert.ok(oStub.calledOnce, 'url is open');
+
+		oStub.restore();
 	});
 
 	QUnit.module("Interaction", {
@@ -594,7 +614,8 @@ sap.ui.define([
 		var bPassedArg,
 			fnEventSpy = sinon.spy(function (oEvent) {
 				bPassedArg = oEvent.getParameter('item');
-			});
+			}),
+			oStub = sinon.stub(NavigationListItem.prototype, "_openUrl", function () { });
 
 		this.navigationList.attachItemSelect(fnEventSpy);
 
@@ -613,6 +634,10 @@ sap.ui.define([
 
 		assert.strictEqual(fnEventSpy.callCount, 1, "should fire select event once");
 		assert.strictEqual(bPassedArg.getText(), 'Root 1', "should pass the first item as argument");
+
+		assert.ok(oStub.calledOnce, 'url is open');
+
+		oStub.restore();
 	});
 
 	QUnit.test("select group item", function (assert) {
@@ -620,7 +645,8 @@ sap.ui.define([
 		var bPassedArg,
 			fnEventSpy = sinon.spy(function (oEvent) {
 				bPassedArg = oEvent.getParameter('item');
-			});
+			}),
+			oStub = sinon.stub(NavigationListItem.prototype, "_openUrl", function () { });
 
 		this.navigationList.attachItemSelect(fnEventSpy);
 
@@ -639,12 +665,18 @@ sap.ui.define([
 
 		assert.strictEqual(fnEventSpy.callCount, 1, "should fire select event once");
 		assert.strictEqual(bPassedArg.getText(), 'Child 1', "should pass the first group item as argument");
+
+		assert.ok(oStub.calledOnce, 'url is open');
+
+		oStub.restore();
 	});
 
 	QUnit.test("popup list", function (assert) {
 
 		assert.notOk(jQuery('.sapTntNavLIPopup').length, "popup list is not shown");
 		assert.ok(!this.navigationList._popover, "should have no popover reference");
+
+		var oStub = sinon.stub(NavigationListItem.prototype, "_openUrl", function () { });
 
 		this.navigationList.setExpanded(false);
 		sap.ui.getCore().applyChanges();
@@ -683,6 +715,10 @@ sap.ui.define([
 
 		assert.ok(popover.bIsDestroyed, "popover should be destroyed");
 		assert.ok(!this.navigationList._popover, "should clean popover reference");
+
+		assert.ok(oStub.calledTwice, '2 urls are open');
+
+		oStub.restore();
 	});
 
 	return waitForThemeApplied();
