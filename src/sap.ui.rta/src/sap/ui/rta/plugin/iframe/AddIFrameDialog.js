@@ -41,7 +41,9 @@ sap.ui.define([
 		cancelText: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_BUTTON_CANCEL"),
 		previewUrlLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_PREVIEW_URL_LABEL"),
 		previewUrlMessage: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_BUTTON_PREVIEW_MESSAGE"),
+		previewButtonText: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_BUTTON_SHOW_PREVIEW"),
 		showPreviewButton: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_BUTTON_SHOW_PREVIEW"),
+		updatePreviewButton: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_BUTTON_UPDATE_PREVIEW"),
 		previewFrameLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_PREVIEW_FRAME_LABEL"),
 		parameterSearchLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_PARAMETER_SEARCH_LABEL"),
 		editUrlLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_EDIT_URL_LABEL"),
@@ -70,14 +72,16 @@ sap.ui.define([
 			},
 			frameWidth: {
 				value: 100,
-				valueState: ValueState.None
+				valueState: ValueState.None,
+				id: "sapUiRtaAddIFrameDialog_WidthInput"
 			},
 			frameWidthUnit: {
 				value: "%"
 			},
 			frameHeight: {
 				value: 100,
-				valueState: ValueState.None
+				valueState: ValueState.None,
+				id: "sapUiRtaAddIFrameDialog_HeightInput"
 			},
 			frameHeightUnit: {
 				value: "%"
