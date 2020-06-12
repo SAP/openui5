@@ -887,6 +887,10 @@ sap.ui.define([
 				//sRequestUrl += sUriQuery ? "?" + sUriQuery : "";
 				var sRequestUrl = that._createRequestUrl(sPath, null, sUriQuery, that.bUseBatch);
 				oRequest = that._createRequest(sRequestUrl, "GET", true);
+				// Make sure requests not requiring a CSRF token don't send one.
+				if (that.bTokenHandling) {
+					delete oRequest.headers["x-csrf-token"];
+				}
 				var oBatchRequest = that._createBatchRequest([oRequest],true);
 				oRequestHandle = that._request(oBatchRequest, _handleSuccess, _handleError, OData.batchHandler, undefined, that.getServiceMetadata());
 			} else {
@@ -910,6 +914,10 @@ sap.ui.define([
 		var aResults = [];
 		var sUrl = this._createRequestUrl(sPath, null, aParams, null, bCache || this.bCache);
 		oRequest = this._createRequest(sUrl, "GET", true);
+		// Make sure requests not requiring a CSRF token don't send one.
+		if (that.bTokenHandling) {
+			delete oRequest.headers["x-csrf-token"];
+		}
 		this.fireRequestSent({url : oRequest.requestUri, type : "GET", async : oRequest.async,
 			info: "Accept headers:" + this.oHeaders["Accept"], infoObject : {acceptHeaders: this.oHeaders["Accept"]}});
 		_submit();
