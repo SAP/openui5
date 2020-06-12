@@ -353,7 +353,7 @@ sap.ui.define([
 		}
 
 		for (sKey in mParameters) {
-			if (sKey.indexOf("$$") === 0) {
+			if (sKey.startsWith("$$")) {
 				throw new Error("Unsupported parameter: " + sKey);
 			}
 			if (mParameters[sKey] === undefined && mBindingParameters[sKey] !== undefined) {

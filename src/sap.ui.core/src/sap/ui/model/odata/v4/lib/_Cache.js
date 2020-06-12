@@ -46,7 +46,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if it is a sub-path
 	 */
 	function isSubPath(sRequestPath, sPath) {
-		return sPath === "" || sRequestPath === sPath || sRequestPath.indexOf(sPath + "/") === 0;
+		return sPath === "" || sRequestPath === sPath || sRequestPath.startsWith(sPath + "/");
 	}
 
 	/**
@@ -1424,7 +1424,7 @@ sap.ui.define([
 				if (sTransientGroup === true) {
 					throw new Error("No 'update' allowed while waiting for server response");
 				}
-				if (sTransientGroup.indexOf("$parked.") === 0) {
+				if (sTransientGroup.startsWith("$parked.")) {
 					sParkedGroup = sTransientGroup;
 					sTransientGroup = sTransientGroup.slice(8);
 				}

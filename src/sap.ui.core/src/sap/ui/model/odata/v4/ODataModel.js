@@ -791,7 +791,7 @@ sap.ui.define([
 
 		if (mParameters) {
 			for (sParameterName in mParameters) {
-				if (sParameterName.indexOf("$$") === 0) { // binding-specific parameter
+				if (sParameterName.startsWith("$$")) { // binding-specific parameter
 					delete mTransformedOptions[sParameterName];
 				} else if (sParameterName[0] === "@") { // OData parameter alias
 					throw new Error("Parameter " + sParameterName + " is not supported");
@@ -799,7 +799,7 @@ sap.ui.define([
 					parseAndValidateSystemQueryOption(mTransformedOptions, sParameterName,
 						aSystemQueryOptions);
 				// OData custom query option
-				} else if (!bSapAllowed && sParameterName.indexOf("sap-") === 0) {
+				} else if (!bSapAllowed && sParameterName.startsWith("sap-")) {
 					throw new Error("Custom query option " + sParameterName + " is not supported");
 				}
 			}
