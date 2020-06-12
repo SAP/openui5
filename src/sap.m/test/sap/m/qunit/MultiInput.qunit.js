@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/MultiInput",
 	"sap/m/Token",
+	"sap/m/Popover",
 	"sap/m/Tokenizer",
 	"sap/m/ColumnListItem",
 	"sap/m/Label",
@@ -32,6 +33,7 @@ sap.ui.define([
 	createAndAppendDiv,
 	MultiInput,
 	Token,
+	Popover,
 	Tokenizer,
 	ColumnListItem,
 	Label,
@@ -3155,6 +3157,43 @@ sap.ui.define([
 
 		assert.ok(oMultiInput._getSuggestionsPopoverInstance()._oList.getVisible(), true, "List should be visible");
 
+		oMultiInput.destroy();
+	});
+
+
+	QUnit.test("a popover instance should always be present, but onsapfocusleave should not throw error even if not", function (assert) {
+		// Arrange
+		var oMultiInput = new MultiInput({
+			showSuggestion: false
+		});
+		var oGetPopoverSpy = this.spy(oMultiInput, "_getSuggestionsPopoverPopup");
+		var oEventMock = {};
+		oMultiInput.placeAt("content");
+		Core.applyChanges();
+
+		// Act
+		oMultiInput.focus();
+		oMultiInput.onsapfocusleave(oEventMock);
+
+		// Assert
+		assert.strictEqual(oGetPopoverSpy.returned(oMultiInput._oSuggestionPopup), true, "A popover instance exists even if no suggestions are present");
+
+		// Cleanup
+		oGetPopoverSpy.restore();
+
+		// Arrange
+		this.stub(oMultiInput, "_getSuggestionsPopoverPopup", function() {
+			return null;
+		});
+
+		// Act
+		oMultiInput.focus();
+		oMultiInput.onsapfocusleave(oEventMock);
+
+		// Assert
+		assert.ok(true, "No exception is thrown if popover instance is not present on focusleave");
+
+		// Cleanup
 		oMultiInput.destroy();
 	});
 });
