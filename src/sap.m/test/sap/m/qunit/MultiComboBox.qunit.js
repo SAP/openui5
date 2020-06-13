@@ -7298,6 +7298,7 @@ sap.ui.define([
 	QUnit.module("Width calculations");
 
 	QUnit.test("_syncInputWidth", function(assert) {
+		// Arrange
 		var oMultiComboBox = new MultiComboBox({
 			items: [
 				new Item({
@@ -7310,24 +7311,48 @@ sap.ui.define([
 				})
 			]
 		}),
+		iInputWidthDecimalPlaces, oTokenizerDOM, oTokenizerWidthStub,
 		oSyncInput = this.spy(oMultiComboBox, "_syncInputWidth");
 
+
+
+		// Act
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
-		this.clock.tick(1000);
+		this.clock.tick();
 
+		// Arrange
+		oTokenizerDOM = oMultiComboBox.getAggregation("tokenizer").getDomRef();
+		oTokenizerWidthStub = sinon.stub(oTokenizerDOM, "getBoundingClientRect", function() {
+			return { width:
+				 86.13
+			};
+		});
+
+		// Assert
 		assert.strictEqual(oSyncInput.callCount, 2);
 
+		// Act
 		oMultiComboBox.setSelectedKeys(["0"]);
-		this.clock.tick(1000);
+		this.clock.tick();
 
+		// Make sure the input's width is rounded to 2 decimal places
+		// Extract only the numbers after the decimal separator from a width string with the following format: "calc(100% - 124.13px)""
+		iInputWidthDecimalPlaces = oMultiComboBox.getFocusDomRef().getAttribute("style").split('width: calc(100% - ')[1].replace("px);", "").split('.')[1].length;
+
+		// Assert
+		assert.strictEqual(iInputWidthDecimalPlaces, 2, "The width of the input is rounded to 2 decimal places");
 		assert.strictEqual(oSyncInput.callCount, 3);
 
+		// Act
 		oMultiComboBox.setSelectedKeys([]);
-		this.clock.tick(1000);
+		this.clock.tick();
 
+		// Assert
 		assert.strictEqual(oSyncInput.callCount, 4);
 
+		// Clean
+		oTokenizerWidthStub.restore();
 		oSyncInput.restore();
 		oMultiComboBox.destroy();
 	});
