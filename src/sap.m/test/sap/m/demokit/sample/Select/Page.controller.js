@@ -9,6 +9,8 @@ sap.ui.define([
 		onInit: function () {
 			var oData = {
 				"SelectedProduct": "HT-1001",
+				"SelectedProduct2": "HT-1001",
+				"SelectedProduct3": "HT-1001",
 				"ProductCollection": [
 					{
 						"ProductId": "HT-1000",
@@ -29,30 +31,50 @@ sap.ui.define([
 					{
 						"ProductId": "HT-1007",
 						"Name": "ITelO Vault"
+					}
+				],
+				"ProductCollection2": [
+					{
+						"ProductId": "HT-1000",
+						"Name": "Notebook Basic 15"
 					},
 					{
-						"ProductId": "HT-1010",
-						"Name": "Notebook Professional 15"
+						"ProductId": "HT-1001",
+						"Name": "Notebook Basic 17"
 					},
 					{
-						"ProductId": "HT-1011",
-						"Name": "Notebook Professional 17"
+						"ProductId": "HT-1002",
+						"Name": "Notebook Basic 18"
 					},
 					{
-						"ProductId": "HT-1020",
-						"Name": "ITelO Vault Net"
+						"ProductId": "HT-1003",
+						"Name": "Notebook Basic 19"
 					},
 					{
-						"ProductId": "HT-1021",
-						"Name": "ITelO Vault SAT"
+						"ProductId": "HT-1007",
+						"Name": "ITelO Vault"
+					}
+				],
+				"ProductCollection3": [
+					{
+						"ProductId": "HT-1000",
+						"Name": "Notebook Basic 15"
 					},
 					{
-						"ProductId": "HT-1022",
-						"Name": "Comfort Easy"
+						"ProductId": "HT-1001",
+						"Name": "Notebook Basic 17"
 					},
 					{
-						"ProductId": "HT-1023",
-						"Name": "Comfort Senior"
+						"ProductId": "HT-1002",
+						"Name": "Notebook Basic 18"
+					},
+					{
+						"ProductId": "HT-1003",
+						"Name": "Notebook Basic 19"
+					},
+					{
+						"ProductId": "HT-1007",
+						"Name": "ITelO Vault"
 					}
 				],
 				"Editable": true,
