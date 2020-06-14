@@ -1058,7 +1058,7 @@ function(
 				offsetY: 0,
 				initialFocus: this,
 				bounce: false,
-				ariaLabelledBy: [this.getPickerValueStateContentId(), this._getPickerHiddenLabelId()]
+				ariaLabelledBy: this._getPickerHiddenLabelId()
 			});
 
 			// detect when the scrollbar or an item is pressed
@@ -1119,7 +1119,7 @@ function(
 				oHeader = this._getPickerHeader(),
 				oDialog = new Dialog({
 					stretch: true,
-					ariaLabelledBy: [this.getPickerValueStateContentId(), this._getPickerHiddenLabelId()],
+					ariaLabelledBy: this._getPickerHiddenLabelId(),
 					customHeader: oHeader,
 					beforeOpen: function() {
 						that.updatePickerHeaderTitle();
@@ -2312,6 +2312,17 @@ function(
 			}
 		};
 
+		Select.prototype._updatePickerAriaLabelledBy = function (sValueState) {
+			var oPicker = this.getPicker(),
+				sPickerValueStateContentId = this.getPickerValueStateContentId();
+
+			if (sValueState === ValueState.None) {
+				oPicker.removeAriaLabelledBy(sPickerValueStateContentId);
+			} else {
+				oPicker.addAriaLabelledBy(sPickerValueStateContentId);
+			}
+		};
+
 		Select.prototype.updateAriaLabelledBy = function(sValueState, sOldValueState) {
 			var $this = this.$(),
 				sAttr = $this.attr("aria-labelledby"),
@@ -2635,6 +2646,8 @@ function(
 			if (sValueState === sOldValueState) {
 				return this;
 			}
+
+			this._updatePickerAriaLabelledBy(sValueState);
 
 			var oDomRef = this.getDomRefForValueState();
 
