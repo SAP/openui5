@@ -94,7 +94,7 @@ sap.ui.define([
 			assert.strictEqual(AppVariantUtils.getNewAppVariantId(), sGeneratedId, "then the id is correct");
 		});
 
-		QUnit.test("When getInlinePropertyChange() method is called", function (assert) {
+		QUnit.test("When prepareTextsChange() method is called", function (assert) {
 			var oPropertyChange = {
 				type: "XTIT",
 				maxLength: 50,
@@ -103,18 +103,22 @@ sap.ui.define([
 					"": "TestTitle"
 				}
 			};
-			assert.deepEqual(AppVariantUtils.getInlinePropertyChange("title", "TestTitle"), oPropertyChange, "then the inline property change is correct");
+			assert.deepEqual(AppVariantUtils.prepareTextsChange("title", "TestTitle"), oPropertyChange, "then the inline property change is correct");
 		});
 
 		QUnit.test("When getInlineChangeInputIcon() method is called", function (assert) {
-			assert.deepEqual(AppVariantUtils.getInlineChangeInputIcon("testIcon"), {icon: "testIcon"}, "then the content of icon inline change is correct");
+			assert.deepEqual(AppVariantUtils.getInlineChangeInputIcon("testIcon"), {content: {icon: "testIcon"}}, "then the content of icon inline change is correct");
 		});
 
-		QUnit.test("When getInlineChangeRemoveInbounds() method is called", function (assert) {
-			assert.deepEqual(AppVariantUtils.getInlineChangeRemoveInbounds("testInbound"), {inboundId: "testInbound"}, "then the content of remove inbound inline change is correct");
+		QUnit.test("When prepareRemoveAllInboundsExceptOneChange() method is called", function (assert) {
+			assert.deepEqual(AppVariantUtils.prepareRemoveAllInboundsExceptOneChange("testInbound"), {content: {inboundId: "testInbound"}}, "then the content of remove inbound inline change is correct");
 		});
 
-		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound does not match with all possible inbounds", function (assert) {
+		QUnit.test("When getInboundInfo() is called, the running app has no inbounds present in the descriptor of an application", function (assert) {
+			assert.deepEqual(AppVariantUtils.getInboundInfo(), {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the current inbound info is correct");
+		});
+
+		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound does not match with inbounds present in the descriptor of an application", function (assert) {
 			var oInbounds = {
 				inbound1: {
 					semanticObject: "semanticObject1",
@@ -131,6 +135,17 @@ sap.ui.define([
 			};
 
 			assert.deepEqual(AppVariantUtils.getInboundInfo(oInbounds), {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the current inbound info is correct");
+		});
+
+		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound does match with an inbound present in the descriptor of an application", function (assert) {
+			var oInbounds = {
+				"customer.savedAsAppVariant": {
+					semanticObject: "testSemanticObject",
+					action: "testAction"
+				}
+			};
+
+			assert.deepEqual(AppVariantUtils.getInboundInfo(oInbounds), {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: false}, "then the existing inbound will be reused");
 		});
 
 		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound match with 1 inbounds' SO and action", function (assert) {
@@ -168,42 +183,112 @@ sap.ui.define([
 				}
 			};
 
-			assert.strictEqual(AppVariantUtils.getInboundInfo(oInbounds), undefined, "then the current inbound info is correct");
+			assert.deepEqual(AppVariantUtils.getInboundInfo(oInbounds), {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the current inbound info is correct");
 		});
 
-		QUnit.test("When getInlineChangesForInboundProperties() method is called for title inline change of inbound", function (assert) {
+		QUnit.test("When prepareAddNewInboundChange() method is called", function (assert) {
 			var oInboundPropertyChange = {
-				inboundId: "testInbound",
-				entityPropertyChange: {
-					propertyPath: "title",
-					operation: "UPSERT",
-					propertyValue: "{{appVariantId_sap.app.crossNavigation.inbounds.testInbound.title}}"
+				content: {
+					inbound: {
+						"customer.savedAsAppVariant": {
+							semanticObject: "testSemanticObject",
+							action: "testAction",
+							title: "{{referenceId_sap.app.crossNavigation.inbounds.customer.savedAsAppVariant.title}}",
+							subTitle: "{{referenceId_sap.app.crossNavigation.inbounds.customer.savedAsAppVariant.subTitle}}",
+							icon: "Test icon",
+							signature: {
+								parameters: {
+									"sap-appvar-id": {
+										required: true,
+										filter: {
+											value: "appVariantId",
+											format: "plain"
+										},
+										launcherValue: {
+											value: "appVariantId"
+										}
+									}
+								},
+								additionalParameters: "ignored"
+							}
+						}
+					}
 				},
 				texts: {
-					"appVariantId_sap.app.crossNavigation.inbounds.testInbound.title": {
+					"referenceId_sap.app.crossNavigation.inbounds.customer.savedAsAppVariant.title": {
 						type: "XTIT",
 						maxLength: 50,
 						comment: "New title entered by a key user via RTA tool",
 						value: {
 							"": "Test Title"
 						}
+					},
+					"referenceId_sap.app.crossNavigation.inbounds.customer.savedAsAppVariant.subTitle": {
+						type: "XTIT",
+						maxLength: 50,
+						comment: "New subTitle entered by a key user via RTA tool",
+						value: {
+							"": "Test Subtitle"
+						}
 					}
 				}
 			};
-			assert.deepEqual(AppVariantUtils.getInlineChangesForInboundProperties("testInbound", "appVariantId", "title", "Test Title"), oInboundPropertyChange, "then the inbound property change is correct");
+
+			assert.deepEqual(AppVariantUtils.prepareAddNewInboundChange("customer.savedAsAppVariant", "appVariantId", {title: "Test Title", subTitle: "Test Subtitle", icon: "Test icon", referenceAppId: "referenceId"}), oInboundPropertyChange, "then the addNewInbound change structure is correct");
 		});
 
-		QUnit.test("When getInlineChangesForInboundProperties() method is called for icon inline change of inbound", function (assert) {
+		QUnit.test("When prepareChangeInboundChange() method is called", function (assert) {
 			var oInboundPropertyChange = {
-				inboundId: "testInbound",
-				entityPropertyChange: {
-					propertyPath: "icon",
-					operation: "UPSERT",
-					propertyValue: "Test icon"
+				content: {
+					inboundId: "customer.savedAsAppVariant",
+					entityPropertyChange: [{
+						propertyPath: "signature/parameters/sap-appvar-id",
+						operation: "UPSERT",
+						propertyValue: {
+							required: true,
+							filter: {
+								value: "appVariantId",
+								format: "plain"
+							},
+							launcherValue: {
+								value: "appVariantId"
+							}
+						}
+					}, {
+						propertyPath: "title",
+						operation: "UPSERT",
+						propertyValue: "{{referenceId_sap.app.crossNavigation.inbounds.customer.savedAsAppVariant.title}}"
+					}, {
+						propertyPath: "subTitle",
+						operation: "UPSERT",
+						propertyValue: "{{referenceId_sap.app.crossNavigation.inbounds.customer.savedAsAppVariant.subTitle}}"
+					}, {
+						propertyPath: "icon",
+						operation: "UPSERT",
+						propertyValue: "Test icon"
+					}]
 				},
-				texts: {}
+				texts: {
+					"referenceId_sap.app.crossNavigation.inbounds.customer.savedAsAppVariant.title": {
+						type: "XTIT",
+						maxLength: 50,
+						comment: "New title entered by a key user via RTA tool",
+						value: {
+							"": "Test Title"
+						}
+					},
+					"referenceId_sap.app.crossNavigation.inbounds.customer.savedAsAppVariant.subTitle": {
+						type: "XTIT",
+						maxLength: 50,
+						comment: "New subTitle entered by a key user via RTA tool",
+						value: {
+							"": "Test Subtitle"
+						}
+					}
+				}
 			};
-			assert.deepEqual(AppVariantUtils.getInlineChangesForInboundProperties("testInbound", "appVariantId", "icon", "Test icon"), oInboundPropertyChange, "then the inbound property change is correct");
+
+			assert.deepEqual(AppVariantUtils.prepareChangeInboundChange("customer.savedAsAppVariant", "appVariantId", {title: "Test Title", subTitle: "Test Subtitle", icon: "Test icon", referenceAppId: "referenceId"}), oInboundPropertyChange, "then the addNewInbound change structure is correct");
 		});
 
 		QUnit.test("When getInlineChangeForInboundPropertySaveAs() method is called", function (assert) {
@@ -225,24 +310,6 @@ sap.ui.define([
 				}
 			};
 			assert.deepEqual(AppVariantUtils.getInlineChangeForInboundPropertySaveAs("testInbound", "customer.appvar.id"), oInboundPropertyChange, "then the inbound property change is correct");
-		});
-
-		QUnit.test("When getInlineChangeCreateInbound() method is called", function (assert) {
-			var oInboundPropertyChange = {
-				inbound: {}
-			};
-			oInboundPropertyChange.inbound["testInbound"] = {
-				semanticObject: "testSemanticObject",
-				action: "testAction"
-			};
-
-			var oParsedHash = {
-				semanticObject: "testSemanticObject",
-				action: "testAction"
-			};
-			sandbox.stub(FlUtils, "getParsedURLHash").returns(oParsedHash);
-
-			assert.deepEqual(AppVariantUtils.getInlineChangeCreateInbound("testInbound"), oInboundPropertyChange, "then the inbound property change is correct");
 		});
 
 		var fnCreateAppComponent = function() {
@@ -337,7 +404,9 @@ sap.ui.define([
 
 		QUnit.test("When createInlineChange() method is called for propertyChange 'icon'", function (assert) {
 			var oPropertyChange = {
-				icon: "testIcon"
+				content: {
+					icon: "testIcon"
+				}
 			};
 
 			var oAppComponent = fnCreateAppComponent();
@@ -356,18 +425,20 @@ sap.ui.define([
 		QUnit.test("When createInlineChange() method is called for propertyChange 'inbound'", function (assert) {
 			var oGeneratedID = AppVariantUtils.getId("testId");
 			var oPropertyChange = {
-				inboundId: "testInbound",
-				entityPropertyChange: {
-					propertyPath: "signature/parameters/sap-appvar-id",
-					operation: "UPSERT",
-					propertyValue: {
-						required: true,
-						filter: {
-							value: oGeneratedID,
-							format: "plain"
-						},
-						launcherValue: {
-							value: oGeneratedID
+				content: {
+					inboundId: "testInbound",
+					entityPropertyChange: {
+						propertyPath: "signature/parameters/sap-appvar-id",
+						operation: "UPSERT",
+						propertyValue: {
+							required: true,
+							filter: {
+								value: oGeneratedID,
+								format: "plain"
+							},
+							launcherValue: {
+								value: oGeneratedID
+							}
 						}
 					}
 				}
@@ -388,10 +459,12 @@ sap.ui.define([
 
 		QUnit.test("When createInlineChange() method is called for propertyChange 'createInbound'", function (assert) {
 			var oPropertyChange = {
-				inbound: {
-					testInbound: {
-						semanticObject: "testSemanticObject",
-						action: "testAction"
+				content: {
+					inbound: {
+						testInbound: {
+							semanticObject: "testSemanticObject",
+							action: "testAction"
+						}
 					}
 				}
 			};
@@ -411,11 +484,13 @@ sap.ui.define([
 
 		QUnit.test("When createInlineChange() method is called for propertyChange 'inboundTitle'", function (assert) {
 			var oPropertyChange = {
-				inboundId: "testInbound",
-				entityPropertyChange: {
-					propertyPath: "title",
-					operation: "UPSERT",
-					propertyValue: "{{appVariantId_sap.app.crossNavigation.inbounds.testInbound.title}}"
+				content: {
+					inboundId: "testInbound",
+					entityPropertyChange: {
+						propertyPath: "title",
+						operation: "UPSERT",
+						propertyValue: "{{appVariantId_sap.app.crossNavigation.inbounds.testInbound.title}}"
+					}
 				},
 				texts: {
 					"appVariantId_sap.app.crossNavigation.inbounds.testInbound.title": {
@@ -444,11 +519,13 @@ sap.ui.define([
 
 		QUnit.test("When createInlineChange() method is called for propertyChange 'inboundSubtitle'", function (assert) {
 			var oPropertyChange = {
-				inboundId: "testInbound",
-				entityPropertyChange: {
-					propertyPath: "subTitle",
-					operation: "UPSERT",
-					propertyValue: "{{appVariantId_sap.app.crossNavigation.inbounds.testInbound.subtitle}}"
+				content: {
+					inboundId: "testInbound",
+					entityPropertyChange: {
+						propertyPath: "subTitle",
+						operation: "UPSERT",
+						propertyValue: "{{appVariantId_sap.app.crossNavigation.inbounds.testInbound.subtitle}}"
+					}
 				},
 				texts: {
 					"appVariantId_sap.app.crossNavigation.inbounds.testInbound.subtitle": {
@@ -477,13 +554,14 @@ sap.ui.define([
 
 		QUnit.test("When createInlineChange() method is called for propertyChange 'inboundIcon'", function (assert) {
 			var oPropertyChange = {
-				inboundId: "testInbound",
-				entityPropertyChange: {
-					propertyPath: "icon",
-					operation: "UPSERT",
-					propertyValue: "testIcon"
-				},
-				texts: {}
+				content: {
+					inboundId: "testInbound",
+					entityPropertyChange: {
+						propertyPath: "icon",
+						operation: "UPSERT",
+						propertyValue: "testIcon"
+					}
+				}
 			};
 
 			var oAppComponent = fnCreateAppComponent();
@@ -501,7 +579,9 @@ sap.ui.define([
 
 		QUnit.test("When createInlineChange() method is called for propertyChange 'removeInbound'", function (assert) {
 			var oPropertyChange = {
-				inboundId: "testInbound"
+				content: {
+					inboundId: "testInbound"
+				}
 			};
 
 			var oAppComponent = fnCreateAppComponent();
@@ -559,10 +639,6 @@ sap.ui.define([
 
 		QUnit.test("When isStandAloneApp() method is called", function (assert) {
 			assert.equal(AppVariantUtils.isStandAloneApp(), true, "then the app is a stand alone application");
-		});
-
-		QUnit.test("When getInboundInfo() is called with no inbounds passed as a parameter", function (assert) {
-			assert.deepEqual(AppVariantUtils.getInboundInfo(), {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the correct inbound info is returned");
 		});
 
 		QUnit.test("When copyId() is called", function (assert) {
