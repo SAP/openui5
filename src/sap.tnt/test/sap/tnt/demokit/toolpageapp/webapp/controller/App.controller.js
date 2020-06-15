@@ -59,6 +59,7 @@ sap.ui.define([
 			if (Device.resize.width <= 1024) {
 				this.onSideNavButtonPress();
 			}
+
 			Device.media.attachHandler(function (oDevice) {
 				if ((oDevice.name === "Tablet" && this._bExpanded) || oDevice.name === "Desktop") {
 					this.onSideNavButtonPress();
@@ -68,27 +69,15 @@ sap.ui.define([
 					this._bExpanded = (oDevice.name === "Desktop");
 				}
 			}.bind(this));
+
+			this.getRouter().attachRouteMatched(this.onRouteChange.bind(this));
 		},
 
-		/**
-		 * Convenience method for accessing the router.
-		 * @public
-		 * @param {sap.ui.base.Event} oEvent The item select event
-		 */
-		onItemSelect: function(oEvent) {
-			var oItem = oEvent.getParameter('item');
-			var sKey = oItem.getKey();
-			// if you click on home, settings or statistics button, call the navTo function
-			if ((sKey === "home" || sKey === "masterSettings" || sKey === "statistics")) {
-				// if the device is phone, collaps the navigation side of the app to give more space
-				if (Device.system.phone) {
-					this.onSideNavButtonPress();
-				}
-				this.getRouter().navTo(sKey);
-			} else {
-				this.getBundleText("clickHandlerMessage", [oItem.getText()]).then(function(sMessageText){
-					MessageToast.show(sMessageText);
-				});
+		onRouteChange: function (oEvent) {
+			this.getModel('side').setProperty('/selectedKey', oEvent.getParameter('name'));
+
+			if (Device.system.phone) {
+				this.onSideNavButtonPress();
 			}
 		},
 
