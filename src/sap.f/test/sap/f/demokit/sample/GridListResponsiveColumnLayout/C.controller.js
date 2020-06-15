@@ -4,7 +4,7 @@ sap.ui.define([
 ], function (Controller, RevealGrid) {
 	"use strict";
 
-	return Controller.extend("sap.f.sample.GridListResponsiveColumnLayout.GridListResponsiveColumnLayout", {
+	return Controller.extend("sap.f.sample.GridListResponsiveColumnLayout.C", {
 
 		onRevealGrid: function () {
 			RevealGrid.toggle("grid1", this.getView());

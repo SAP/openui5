@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.f.sample.GridListBoxContainerReal.GridListBoxContainerReal",
+			"viewName": "sap.f.sample.GridListBoxContainerReal.V",
 			"type": "XML",
 			"async": true
 		},
@@ -28,8 +28,8 @@
 		"config": {
 			"sample": {
 				"files": [
-					"GridListBoxContainerReal.view.xml",
-					"GridListBoxContainerReal.controller.js",
+					"V.view.xml",
+					"C.controller.js",
 					"manifest.json",
 					"RevealGrid/RevealGrid.js",
 					"RevealGrid/RevealGrid.css"

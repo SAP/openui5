@@ -3,8 +3,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/dnd/DragInfo",
 	"sap/f/dnd/GridDropInfo",
+	"sap/ui/core/dnd/DropPosition",
+	"sap/ui/core/dnd/DropLayout",
 	"sap/f/sample/GridContainerDragAndDrop/RevealGrid/RevealGrid"
-], function (Controller, JSONModel, DragInfo, GridDropInfo, RevealGrid) {
+], function (Controller, JSONModel, DragInfo, GridDropInfo, DropPosition, DropLayout, RevealGrid) {
 	"use strict";
 
 	return Controller.extend("sap.f.sample.GridContainerDragAndDrop.C", {
@@ -21,8 +23,8 @@ sap.ui.define([
 
 			oGrid.addDragDropConfig(new GridDropInfo({
 				targetAggregation: "items",
-				dropPosition: "Between",
-				dropLayout: "Horizontal",
+				dropPosition: DropPosition.Between,
+				dropLayout: DropLayout.Horizontal,
 				drop: function (oInfo) {
 					var oDragged = oInfo.getParameter("draggedControl"),
 						oDropped = oInfo.getParameter("droppedControl"),
