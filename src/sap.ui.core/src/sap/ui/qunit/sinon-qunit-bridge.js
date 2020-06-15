@@ -69,10 +69,26 @@
 
 		oSinonHooks = {
 			beforeEach : function (assert) {
-				this._oSandbox = sinon.sandbox.create({
-					injectInto : this,
-					properties : ["mock", "spy", "stub"]
-				});
+				var aProperties = ["mock", "spy", "stub"],
+					bUseFakeTimers = sinon.config && sinon.config.useFakeTimers,
+					oSandboxConfig;
+
+				if (bUseFakeTimers) {
+					aProperties.push("clock");
+				}
+
+				oSandboxConfig = {
+					injectInto: this,
+					properties: aProperties,
+					useFakeTimers: bUseFakeTimers
+				};
+
+				if (sinon.createSandBox) {
+					this._oSandbox = sinon.createSandbox(oSandboxConfig);
+				} else {
+					this._oSandbox = sinon.sandbox.create(oSandboxConfig);
+				}
+
 
 				sinon.assert.fail = function (sMessage) {
 					assert.ok(false, sMessage);

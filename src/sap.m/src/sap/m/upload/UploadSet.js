@@ -955,10 +955,10 @@ sap.ui.define([
 
 		aFiles.forEach(function (oFile) {
 			oItem = new UploadSetItem({
-				fileName: oFile.name,
 				uploadState: UploadState.Ready
 			});
 			oItem._setFileObject(oFile);
+			oItem.setFileName(oFile.name);//For handling curly braces in file name we have to use setter.Otherwise it will be treated as binding.
 
 			if (!this.fireBeforeItemAdded({item: oItem})) {
 				return;

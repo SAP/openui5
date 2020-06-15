@@ -295,20 +295,6 @@ sap.ui.define([
 			assert.deepEqual(mChangesMap, mExpectedChangesMap, "the map was updated correctly");
 		});
 
-		QUnit.test("addChangeAndUpdateDependencies: selectors with idIsLocal missing", function(assert) {
-			var oChange = createChange({
-				selector: {
-					id: "notThere---idIsLocalMissing"
-				},
-				fileName: "fileNameIdIsLocalMissing"
-			});
-			DependencyHandler.addChangeAndUpdateDependencies(oChange, this.oAppComponent, this.mChangesMap);
-			assert.equal(this.mChangesMap.mChanges["appComponent---idIsLocalMissing"].length, 1, "the key 'appComponent---idIsLocalMissing' is in the mChanges map");
-			assert.deepEqual(this.mChangesMap.mChanges["appComponent---idIsLocalMissing"][0], oChange, "the change in the mChanges map is correct");
-			assert.equal(this.mChangesMap.mChanges["notThere---idIsLocalMissing"].length, 1, "the key 'notThere---idIsLocalMissing' is in the mChanges map");
-			assert.deepEqual(this.mChangesMap.mChanges["notThere---idIsLocalMissing"][0], oChange, "the change in the mChanges map is correct");
-		});
-
 		QUnit.test("addRuntimeChangeAndUpdateDependencies", function(assert) {
 			var mChangesMap = getInitialChangesMap();
 			var mChangesMap2 = getInitialChangesMap();

@@ -2,10 +2,10 @@
  * ${copyright}
  */
 /**
- * See {@link https://lodash.com/docs/4.17.10#intersectionWith}
+ * See {@link https://lodash.com/docs/4.17.15#intersectionWith}
  *
  * @function
- * @alias sap/base/util/restricted/_intersectionWith
+ * @alias module:sap/base/util/restricted/_intersectionWith
  * @author SAP SE
  * @since 1.71
  * @version ${version}

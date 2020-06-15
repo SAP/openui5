@@ -35,9 +35,8 @@ sap.ui.define([], function () {
 	};
 
 	WizardRenderer.renderWizardSteps = function (oRm, oWizard) {
-		oRm.openStart("section")
+		oRm.openStart("section", oWizard.getId() + "-step-container")
 			.class("sapMWizardStepContainer")
-			.attr("id", oWizard.getId() + "-step-container")
 			.openEnd();
 
 		var aRenderingOrder = this._getStepsRenderingOrder(oWizard);

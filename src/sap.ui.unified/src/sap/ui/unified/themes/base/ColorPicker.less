@@ -640,14 +640,18 @@ html[data-sap-ui-browser^="ie"] .sapMPopover .sapUiColorPicker-ColorPickerMatrix
 		}
 	}
 	.sapUiCPHSLVText {
-		padding-left: 2.4rem;
+		padding-left: 2.375rem;
 		& span:nth-child(7) {
 			//move the A text higher
 			margin-top: -2rem;
 		}
 	}
-	.sapUiCPRGBText{
-		padding-left: 2.4rem;
+
+	.sapMRbG :last-child {
+			top: calc(@sapUiDesktopFontSize * 1.38);
+	}
+	.sapMRbG {
+		display: block;
 	}
 	.sapUiColorPicker-ColorPickerHexField {
 		float: right;
@@ -754,12 +758,11 @@ html[data-sap-ui-browser^="ie"] .sapMPopover .sapUiColorPicker-ColorPickerMatrix
 		.sapUiCPRGBA > div:last-child:not(.ColorPickerInputFieldsLeft) {
 			top: 1.563rem;
 		}
-		.sapUiCPHSLVText,
-		.sapUiCPRGBText {
-			padding-left: 1.625rem;
-		}
 		.sapUiCPHSLVText span:nth-child(7) {
 			margin-top: -1.5rem; //move 'A' to the top
+		}
+		.sapUiCPHSLVText {
+			padding-left: 1.6875rem;
 		}
 		.sapUiColorPicker-ColorPickerNewColor,
 		.sapUiColorPicker-ColorPickerOldColor {

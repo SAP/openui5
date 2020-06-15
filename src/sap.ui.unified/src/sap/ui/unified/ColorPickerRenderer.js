@@ -143,11 +143,10 @@ sap.ui.define(['./ColorPickerDisplayMode', "sap/ui/Device"],
 		oRm.renderControl(oControl.getAggregation("_oSlider"));
 		oRm.renderControl(oControl.getAggregation("_oAlphaSlider"));
 		this.renderDesktopSwatchesAndHexFields(oRm, oControl);
-
+		oRm.renderControl(oControl.oRGBorHSLRBUnifiedGroup);
 		oRm.openStart("div");
 		oRm.class("sapUiCPRGBA");
 		oRm.openEnd();
-		oRm.renderControl(oControl.oRbRGB);
 		oRm.renderControl(oControl.getAggregation("_oRedField"));
 		this.renderEmptyDiv(oRm);
 		oRm.renderControl(oControl.getAggregation("_oGreenField"));
@@ -160,7 +159,6 @@ sap.ui.define(['./ColorPickerDisplayMode', "sap/ui/Device"],
 		oRm.openStart("div");
 		oRm.class("sapUiCPHSLV");
 		oRm.openEnd();
-		oRm.renderControl(oControl.oRbHSLV);
 		oRm.renderControl(oControl.getAggregation("_oHueField"));
 		this.renderEmptyDiv(oRm);
 		oRm.renderControl(oControl.getAggregation("_oSatField"));

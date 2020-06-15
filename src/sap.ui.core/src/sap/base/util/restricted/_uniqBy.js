@@ -2,10 +2,10 @@
  * ${copyright}
  */
 /**
- * See {@link https://lodash.com/docs/4.17.10#uniqBy}
+ * See {@link https://lodash.com/docs/4.17.15#uniqBy}
  *
  * @function
- * @alias sap/base/util/restricted/_uniqBy
+ * @alias module:sap/base/util/restricted/_uniqBy
  * @author SAP SE
  * @since 1.71
  * @version ${version}

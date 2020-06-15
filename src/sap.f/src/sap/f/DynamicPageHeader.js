@@ -7,19 +7,24 @@ sap.ui.define([
     "./library",
     "sap/ui/Device",
     "sap/ui/core/Control",
+	"sap/ui/core/library",
     "sap/m/ToggleButton",
     "sap/m/Button",
-    "./DynamicPageHeaderRenderer"
+    "./DynamicPageHeaderRenderer",
+	"sap/ui/core/InvisibleMessage"
 ], function(
     library,
 	Device,
 	Control,
+	CoreLibrary,
 	ToggleButton,
 	Button,
-	DynamicPageHeaderRenderer
+	DynamicPageHeaderRenderer,
+	InvisibleMessage
 ) {
 		"use strict";
 
+		var InvisibleMessageMode = CoreLibrary.InvisibleMessageMode;
 		/**
 		 * Constructor for a new <code>DynamicPageHeader</code>.
 		 *
@@ -126,6 +131,7 @@ sap.ui.define([
 		/*************************************** Lifecycle members ******************************************/
 		DynamicPageHeader.prototype.init = function() {
 			this._bShowCollapseButton = true;
+			this.oInvisibleMessage = InvisibleMessage.getInstance();
 		};
 
 		DynamicPageHeader.prototype.onAfterRendering = function () {
@@ -317,6 +323,7 @@ sap.ui.define([
 		 */
 		DynamicPageHeader.prototype._focusCollapseButton = function () {
 			this._getCollapseButton().$().trigger("focus");
+			this.oInvisibleMessage.announce(this._getCollapseButton().getTooltip(), InvisibleMessageMode.Polite);
 		};
 
 		/**

@@ -24,16 +24,17 @@ sap.ui.define([
 			}
 		},
 
-		renderer: function(oRm, oControl) {
-			oRm.write("<div");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sampleListener");
-			oRm.writeClasses();
-			oRm.write(">");
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl) {
+				oRm.openStart("div", oControl);
+				oRm.class("sampleListener");
+				oRm.openEnd();
 
-			oRm.write("Lorem Ipsum");
+				oRm.text("Lorem Ipsum");
 
-			oRm.write("</div>");
+				oRm.close("div");
+			}
 		},
 
 		onclick: function(oEvent) {

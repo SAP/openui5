@@ -224,7 +224,8 @@
 		beforeEach: function() {
 			this.EXPECTED_VIEW_CONTENT = '<mvc:View xmlns:mvc="sap.ui.core.mvc"></mvc:View>';
 			sap.ui.require.preload({
-				'fixture/resource-preload/Main.view.xml': this.EXPECTED_VIEW_CONTENT
+				'fixture/resource-preload/Main.view.xml': this.EXPECTED_VIEW_CONTENT,
+				'fixture/resource-preload/i18n.properties': ""
 			});
 		}
 	});
@@ -261,6 +262,12 @@
 			"reading a preloaded non-JS resource by a name-mapped module ID should return the expected text result");
 	});
 
+	QUnit.test("Access empty resource via url", function(assert) {
+		assert.strictEqual(
+			sap.ui.loader._.getModuleContent(undefined, sap.ui.require.toUrl('fixture/resource-preload/i18n.properties')),
+			"",
+			"reading a preloaded empty resource via url should return the expected text result");
+	});
 
 
 	// ========================================================================================

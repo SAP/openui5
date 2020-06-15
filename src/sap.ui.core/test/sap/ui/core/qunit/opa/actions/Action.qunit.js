@@ -6,28 +6,26 @@ sap.ui.define([
 	"use strict";
 
 	var MyControl = Control.extend("my.Control", {
-		renderer: function (rm, oControl) {
-			rm.write("<div");
-			rm.writeControlData(oControl);
-			rm.write(">");
+		renderer: {
+			apiVersion: 2,
+			render: function (rm, oControl) {
+				rm.openStart("div", oControl).openEnd();
 
-			rm.write("<div");
-			rm.writeAttribute('id', oControl.getId() + "-one");
-			rm.writeAttribute("tabindex", "0");
-			rm.write(">");
-			rm.write("</div>");
+					rm.openStart("div", oControl.getId() + "-one");
+					rm.attr("tabindex", "0");
+					rm.openEnd();
+					rm.close("div");
 
-			rm.write("<div");
-			rm.writeAttribute('id', oControl.getId() + "-two");
-			rm.write(">");
-			rm.write("</div>");
+					rm.openStart("div", oControl.getId() + "-two");
+					rm.openEnd();
+					rm.close("div");
 
-			rm.write("<div");
-			rm.writeAttribute('id', oControl.getId() + "-three");
-			rm.write(">");
-			rm.write("</div>");
+					rm.openStart("div", oControl.getId() + "-three");
+					rm.openEnd();
+					rm.close("div");
 
-			rm.write("</div>");
+				rm.close("div");
+			}
 		},
 
 		getFocusDomRef: function () {

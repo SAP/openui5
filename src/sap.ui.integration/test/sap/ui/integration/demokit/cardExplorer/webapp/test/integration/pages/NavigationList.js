@@ -12,12 +12,31 @@ sap.ui.define([
 
 			actions: {
 				iSwitchToSample: function (sKey) {
+					var bIsExpanded,
+						oNavigation;
+
 					return this.waitFor({
 						viewName: sViewName,
-						controlType: "sap.tnt.NavigationListItem",
-						matchers: new Properties({ key: sKey }),
-						actions: new Press(),
-						errorMessage: "Could not NavigationListItem with key: " + sKey
+						controlType: "sap.tnt.SideNavigation",
+						actions: function (oControl) {
+							oNavigation = oControl;
+							bIsExpanded = oNavigation.getExpanded();
+
+							oNavigation.setExpanded(true);
+						},
+						success: function () {
+							this.waitFor({
+								viewName: sViewName,
+								controlType: "sap.tnt.NavigationListItem",
+								matchers: new Properties({ key: sKey }),
+								actions: new Press(),
+								success: function () {
+									oNavigation.setExpanded(bIsExpanded);
+								},
+								errorMessage: "Could not NavigationListItem with key: " + sKey
+							});
+						},
+						errorMessage: "Could not expand side navigation"
 					});
 				}
 			}

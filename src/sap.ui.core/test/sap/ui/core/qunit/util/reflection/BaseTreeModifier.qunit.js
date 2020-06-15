@@ -85,16 +85,6 @@ function(
 			assert.ok(oControl);
 		});
 
-		QUnit.test("can determine a targeted control for legacy changes with a global ID containing a flp prefix", function (assert) {
-			var oSelector = {
-				id: "application-LeaveRequest-create-component---myView--myGroupElement"
-			};
-
-			var oControl = XmlTreeModifier.bySelector(oSelector, this.oComponent, this.oXmlView);
-
-			assert.ok(oControl);
-		});
-
 		QUnit.test("can determine a targeted control for changes with local IDs", function (assert) {
 			var oSelector = {
 				id: "myView--myGroupElement",
@@ -188,16 +178,6 @@ function(
 			};
 
 			var oControl = JsControlTreeModifier.bySelector(oSelector, this.oComponent);
-			assert.ok(oControl);
-		});
-
-		QUnit.test("can determine a targeted control for legacy changes with a global ID containing a flp prefix", function (assert) {
-			var oSelector = {
-				id: "application-LeaveRequest-create-component---myView--myGroupElement"
-			};
-
-			var oControl = JsControlTreeModifier.bySelector(oSelector, this.oComponent);
-
 			assert.ok(oControl);
 		});
 

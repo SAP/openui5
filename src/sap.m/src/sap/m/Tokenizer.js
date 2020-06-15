@@ -1757,24 +1757,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns if tokens should be rendered in reverse order.
-	 * @private
-	 * @returns {boolean} true if tokens should be rendered in reverse order
-	 */
-	Tokenizer.prototype.getReverseTokens = function() {
-		return !!this._reverseTokens;
-	};
-
-	/**
-	 * Sets internal property defining if tokens should be rendered in reverse order.
-	 * @param {boolean} bReverseTokens Whether tokens should be rendered in reverse
-	 * @private
-	 */
-	Tokenizer.prototype.setReverseTokens = function(bReverseTokens) {
-		this._reverseTokens = bReverseTokens;
-	};
-
-	/**
 	 * Sets the editable property of the <code>sap.m.Tokenizer</code> and propagates it to its internal <code>sap.m.Token</code> controls.
 	 * The value should be set to true, if tokens shall be editable; otherwise it should be set as false.
 	 * When called with a value of null or undefined, the default value of the property will be restored.

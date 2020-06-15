@@ -23,7 +23,7 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
-	"sap/ui/fl/write/_internal/Condenser"
+	"sap/ui/fl/write/_internal/condenser/Condenser"
 ], function(
 	DependencyHandler,
 	StorageUtils,

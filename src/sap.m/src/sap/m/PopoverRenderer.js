@@ -128,8 +128,7 @@ sap.ui.define([
 			}
 
 			// content container
-			oRm.openStart("div");
-			oRm.attr("id", sId + "-cont");
+			oRm.openStart("div", sId + "-cont");
 			if (sContentWidth) {
 				oRm.style("width", sContentWidth);
 			}
@@ -154,9 +153,8 @@ sap.ui.define([
 			oRm.openEnd();
 
 			// scroll area
-			oRm.openStart("div")
-				.class("sapMPopoverScroll")
-				.attr("id", oControl.getId() + "-scroll");
+			oRm.openStart("div", oControl.getId() + "-scroll")
+				.class("sapMPopoverScroll");
 
 			if (!oControl.getHorizontalScrolling()) {
 				oRm.style(sap.ui.getCore().getConfiguration().getRTL() ? "margin-left" : "margin-right", getScrollbarSize().width + "px");

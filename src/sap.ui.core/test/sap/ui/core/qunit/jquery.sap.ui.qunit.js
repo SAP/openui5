@@ -1,47 +1,42 @@
 /* global QUnit */
 sap.ui.define(["sap/ui/core/Control"], function(Control){
 	"use strict";
+
 	var TestControl = Control.extend("sap.jsunittest.Test", {
 		metadata:{
-			publicMethods : [
-											// properties
-											"getMarker", "setMarker"
-											],
-			// ---- object ----
-			baseType : "sap.ui.core.Control",
 			properties : {
 					marker : {name : "marker", type : "string", group : "Misc", defaultValue : ''}
-			},
-
-			// ---- control specific ----
-			library : "sap.jsunittest"
+			}
 		},
 		renderer: {
+			apiVersion: 2,
 			render: function(oRM, oCtrl) {
-				oRM.write("<span");
-				oRM.writeControlData(oCtrl);
+				oRM.openStart("span", oCtrl);
 				if (oCtrl.getMarker()) {
-					oRM.writeAttribute("class", oCtrl.getMarker());
+					oRM.class(oCtrl.getMarker());
 				}
-				oRM.write(">Test Control<span class=\"inner\">Inner Stuff</span></span>");
+				oRM.openEnd();
+				oRM.text("Test Control");
+				oRM.openStart("span").class("inner").openEnd().text("Inner Stuff").close("span");
+				oRM.close("span");
 			}
 		}
 	});
 
 	/*
-		* JSUNIT:
-			*     create your test fixture here, e.g. create SAPUI5 control tree and add it to
-			*     "uiArea1".
-		*/
-		var oTestPlugin = jQuery.sap.newObject({startPlugin: function(oCore){
-			this.oCore = oCore;
-		}, stopPlugin: function(oCore){
-			this.oCore = null;
-		}, getNoOfUIAreas: function(){
-			var length = 0;
-			jQuery.each(this.oCore.mUIAreas, function(){length++;});
-			return length;
-		}});
+	 * JSUNIT:
+	 *     create your test fixture here, e.g. create SAPUI5 control tree and add it to
+	 *     "uiArea1".
+	 */
+	var oTestPlugin = jQuery.sap.newObject({startPlugin: function(oCore){
+		this.oCore = oCore;
+	}, stopPlugin: function(oCore){
+		this.oCore = null;
+	}, getNoOfUIAreas: function(){
+		var length = 0;
+		jQuery.each(this.oCore.mUIAreas, function(){length++;});
+		return length;
+	}});
 
 
 	sap.ui.setRoot("uiAreaPreSetup1", new TestControl("preSetupCtrl1", {marker: "presetup"}));

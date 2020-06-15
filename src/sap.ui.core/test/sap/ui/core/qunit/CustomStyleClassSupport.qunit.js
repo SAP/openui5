@@ -22,11 +22,14 @@ sap.ui.define([
 			this._assert = assert;
 		},
 
-		renderer: function(rm, ctrl) {
-			ctrl._assert.ok(true, "Renderer was called");
-			rm.write("<span tabindex='0'");
-			rm.writeControlData(ctrl);
-			rm.write(">test</span>");
+		renderer: {
+			apiVersion: 2,
+			render: function(rm, ctrl) {
+				ctrl._assert.ok(true, "Renderer was called");
+				rm.openStart("span", ctrl).attr("tabindex", "0").openEnd();
+					rm.text("test");
+				rm.close("span");
+			}
 		}
 	});
 

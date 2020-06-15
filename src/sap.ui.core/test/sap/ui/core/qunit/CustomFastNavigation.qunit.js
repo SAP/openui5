@@ -33,20 +33,31 @@ sap.ui.define([
 		metadata: {},
 
 		renderer: {
+
+			apiVersion: 2,
+
 			render: function(rm, oCtrl) {
 				var id = oCtrl.getId();
 
-				rm.write("<div");
-				rm.writeControlData(oCtrl);
-				rm.writeAttribute("data-sap-ui-customfastnavgroup", "true");
-				rm.writeAttribute("class", "TestControl");
-				rm.write(">");
+				rm.openStart("div", oCtrl);
+				rm.attr("data-sap-ui-customfastnavgroup", "true");
+				rm.class("TestControl");
+				rm.openEnd();
 
-				rm.write("<div><input value='2' id='", id, "-input-2'><input id='", id, "-input-2a'></div>");
-				rm.write("<div><input value='1' id='", id, "-input-1'><input id='", id, "-input-1a'></div>");
-				rm.write("<div><input value='3' id='", id, "-input-3'><input id='", id, "-input-3a'></div>");
+					rm.openStart("div").openEnd();
+						rm.voidStart("input", id + "-input-2").attr("value", "2").voidEnd();
+						rm.voidStart("input", id + "-input-2a").voidEnd();
+					rm.close("div");
+					rm.openStart("div").openEnd();
+						rm.voidStart("input", id + "-input-1").attr("value", "1").voidEnd();
+						rm.voidStart("input", id + "-input-1a").voidEnd();
+					rm.close("div");
+					rm.openStart("div").openEnd();
+						rm.voidStart("input", id + "-input-3").attr("value", "3").voidEnd();
+						rm.voidStart("input", id + "-input-3a").voidEnd();
+					rm.close("div");
 
-				rm.write("</div>");
+				rm.close("div");
 			}
 		},
 

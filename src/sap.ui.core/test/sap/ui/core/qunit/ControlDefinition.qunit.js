@@ -78,13 +78,19 @@
 					this._state = "hadFocus";
 				},
 
-				renderer : function(rm, c) {
-					if (c._assert) {
-						c._assert.ok(true, "Renderer was called");
+				renderer : {
+
+					apiVersion: 2,
+
+					render: function(rm, c) {
+						if (c._assert) {
+							c._assert.ok(true, "Renderer was called");
+						}
+						rm.openStart("span", c).attr("tabindex", "0").openEnd();
+							rm.text(c.getText());
+						rm.close("span");
 					}
-					rm.write("<span tabindex='0'");
-					rm.writeControlData(c);
-					rm.write(">", c.getText(), "</span>");
+
 				}
 			});
 
@@ -348,8 +354,9 @@
 				},
 
 				renderer: {
+					apiVersion: 2,
 					prependInnerContent : function(rm, c) {
-						rm.write(htmlFragment);
+						rm.unsafeHtml(htmlFragment);
 					}
 				}
 			});

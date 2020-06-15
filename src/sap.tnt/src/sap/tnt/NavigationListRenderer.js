@@ -62,6 +62,10 @@ sap.ui.define([],
 			role = !expanded || control.hasStyleClass("sapTntNavLIPopup") ? 'menubar' : 'tree';
 
 			rm.attr("role", role);
+
+			if (role === 'menubar') {
+				rm.attr("aria-orientation", "vertical");
+			}
 			rm.openEnd();
 
 			// Rendering visible groups

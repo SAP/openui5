@@ -80,16 +80,16 @@ describe("sap.m.InputVisualTests", function() {
 		var oInput = element(by.id("inputWithStickySuggestions"));
 		browser.executeScript("document.getElementById('inputWithStickySuggestions').scrollIntoView()").then(function() {
 			oInput.click();
-			expect(takeScreenshot(oInput)).toLookAs("input_with_sticky_suggestions_focused");
+			expect(takeScreenshot(oInput)).toLookAs("sticky_suggestions_focused");
 
 			browser.actions().sendKeys("A").perform();
-			expect(takeScreenshot(oInput)).toLookAs("input_with_sticky_suggestions_text_inserted");
+			expect(takeScreenshot(oInput)).toLookAs("sticky_suggestions_text_inserted");
 
 			for (var index = 0; index < 25; index++) {
 				browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
 			}
 
-			expect(takeScreenshot()).toLookAs("input_with_sticky_suggestions_visible");
+			expect(takeScreenshot()).toLookAs("sticky_suggestions_visible");
 		});
 	});
 });

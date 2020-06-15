@@ -116,8 +116,8 @@ sap.ui.define([
 				getCondenserInfo: function(oChange) {
 					return {
 						affectedControl: oChange.getSelector(),
-						type: sap.ui.fl.ClassificationType.NonIndexRelated,
-						subtype: sap.ui.fl.ClassificationSubtypes.LastOneWins,
+						type: sap.ui.fl.condenser.ClassificationType.NonIndexRelated,
+						subtype: sap.ui.fl.condenser.ClassificationSubtypes.LastOneWins,
 						uniqueKey: mRenameSettings.propertyName || mRenameSettings.changePropertyName
 					};
 				}

@@ -1,11 +1,13 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor",
 	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
+	Core,
 	JsonEditor,
 	EditorQunitUtils,
 	QUnitUtils,
@@ -17,6 +19,7 @@ sap.ui.define([
 
 	function setCodeEditorValue (oCodeEditor, sInput) {
 		oCodeEditor.setValue(sInput);
+		Core.applyChanges();
 	}
 
 	QUnit.module("JSON Data Editor: Given an editor config", {
@@ -192,6 +195,7 @@ sap.ui.define([
 				name: "John Foo",
 				age: 48
 			}]));
+			Core.applyChanges();
 		});
 
 		QUnit.test("When a value is incorrectly changed in the editor dialog", function (assert) {

@@ -22,19 +22,24 @@ sap.ui.define([
 			}
 		},
 		renderer: {
+			apiVersion: 2,
 			render: function(oRm, oControl) {
-				oRm.write("<div");
-				oRm.writeClasses();
-				oRm.writeControlData(oControl);
-				oRm.writeStyles();
-				oRm.write(">");
+				oRm.openStart("div", oControl).openEnd();
 
-				oRm.write("<div id='" + oControl.getId() + "-the-first' class='sapMFirstElement' style='width: 100%; height: 20px;'>");
-				oRm.write("</div>");
-				oRm.write("<div id='" + oControl.getId() + "-the-second' style='width: 100%; height: 20px;'>");
-				oRm.write("</div>");
+					oRm.openStart("div", oControl.getId() + "-the-first")
+						.class("sapMFirstElement")
+						.style("width", "100%")
+						.style("height", "20px")
+						.openEnd()
+						.close("div");
 
-				oRm.write("</div>");
+					oRm.openStart("div", oControl.getId() + "-the-second")
+						.style("width", "100%")
+						.style("height", "20px")
+						.openEnd()
+						.close("div");
+
+				oRm.close("div");
 			}
 		}
 	});

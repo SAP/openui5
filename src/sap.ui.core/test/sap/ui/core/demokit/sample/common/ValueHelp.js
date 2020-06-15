@@ -48,13 +48,11 @@ sap.ui.define([
 		},
 
 		renderer : {
+			apiVersion: 2,
 			render : function(oRm, oValueHelp) {
-				oRm.write("<div");
-				oRm.writeControlData(oValueHelp);
-				oRm.writeClasses();
-				oRm.write(">");
+				oRm.openStart("div", oValueHelp).openEnd();
 				oRm.renderControl(oValueHelp.getAggregation("field"));
-				oRm.write("</div>");
+				oRm.close("div");
 			}
 		},
 

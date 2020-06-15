@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/base/Metadata",
+	"sap/ui/base/Object",
 	"sap/ui/core/Core",
 	"sap/ui/core/CustomData",
 	"sap/ui/core/Configuration",
@@ -15,13 +15,13 @@ sap.ui.define([
 	"sap/m/Menu",
 	"sap/m/MenuItem",
 	"sap/ui/core/IconPool"
-], function (jQuery, Metadata, Core, CustomData, Configuration, ManagedObjectObserver, AnchorBar, Button, MenuButton, Menu, MenuItem, IconPool) {
+], function (jQuery, BaseObject, Core, CustomData, Configuration, ManagedObjectObserver, AnchorBar, Button, MenuButton, Menu, MenuItem, IconPool) {
 	"use strict";
 
 	// animation modes that support animation upon scroll to section
 	var SCROLL_ANIMATION_MODES = [Configuration.AnimationMode.full, Configuration.AnimationMode.basic];
 
-	var ABHelper = Metadata.createClass("sap.uxap._helpers.AB", {
+	var ABHelper = BaseObject.extend("sap.uxap._helpers.AB", {
 		/**
 		 * @private
 		 * @param {sap.uxap.ObjectPageLayout} oObjectPageLayout Object Page layout instance
@@ -32,6 +32,9 @@ sap.ui.define([
 			this._iFocusMoveDelay = this._iScrollDuration - 100;
 			this._oObserver = new ManagedObjectObserver(this._proxyStateChanges.bind(this));
 			this._aMenusWithAttachPressHandler = [];
+		},
+		getInterface: function() {
+			return this; // no facade
 		}
 	});
 

@@ -12,7 +12,7 @@
 
 // Provides class sap.m.semantic.ShareMenu
 sap.ui.define([
-	'sap/ui/base/Metadata',
+	'sap/ui/base/Object',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/m/library',
 	'sap/m/Button',
@@ -20,7 +20,7 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/m/OverflowToolbarButton',
 	"sap/base/Log"],
-	function(Metadata,
+	function(BaseObject,
 			 ManagedObjectObserver,
 			 library,
 			 Button,
@@ -47,7 +47,7 @@ sap.ui.define([
 	 * @alias sap.m.semantic.ShareMenu
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ShareMenu = Metadata.createClass("sap.m.semantic.ShareMenu", {
+	var ShareMenu = BaseObject.extend("sap.m.semantic.ShareMenu", {
 
 		constructor : function(oActionSheet) {
 			if (!oActionSheet) {
@@ -59,6 +59,10 @@ sap.ui.define([
 			this._oContentObserver = new ManagedObjectObserver(this._updateShareBtnVisibility.bind(this));
 
 			this._setMode(ShareMenu._Mode.initial);
+		},
+
+		getInterface: function() {
+			return this; // no facade
 		}
 
 	});

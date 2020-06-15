@@ -36,11 +36,13 @@ sap.ui.define([
 			}
 		},
 
-		renderer: function(oRm, oCtrl) {
-			oRm.write("<label");
-			oRm.writeControlData(oCtrl);
-			LabelEnablement.writeLabelForAttribute(oRm, oCtrl);
-			oRm.write("></label>");
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oCtrl) {
+				oRm.openStart("label", oCtrl);
+				LabelEnablement.writeLabelForAttribute(oRm, oCtrl);
+				oRm.openEnd().close("label");
+			}
 		}
 	});
 
@@ -57,11 +59,13 @@ sap.ui.define([
 			}
 		},
 
-		renderer: function(oRm, oCtrl) {
-			oRm.write("<label");
-			oRm.writeControlData(oCtrl);
-			LabelEnablement.writeLabelForAttribute(oRm, oCtrl);
-			oRm.write("></label>");
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oCtrl) {
+				oRm.openStart("label", oCtrl);
+				LabelEnablement.writeLabelForAttribute(oRm, oCtrl);
+				oRm.openEnd().close("label");
+			}
 		}
 	});
 
@@ -77,11 +81,17 @@ sap.ui.define([
 			}
 		},
 
-		renderer: function(oRm, oCtrl) {
-			oRm.write("<div");
-			oRm.writeControlData(oCtrl);
-			oRm.writeAccessibilityState(oCtrl, {labelledby : {value: oCtrl.getId() + "-additionalLabel", append: true}});
-			oRm.write("><label id='", oCtrl.getId(), "-additionalLabel'></label></div>");
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oCtrl) {
+				oRm.openStart("div", oCtrl)
+					.accessibilityState(oCtrl, {labelledby : {value: oCtrl.getId() + "-additionalLabel", append: true}})
+					.openEnd();
+					oRm.openStart("label", oCtrl.getId() + "-additionalLabel")
+						.openEnd()
+						.close("label");
+				oRm.close("div");
+			}
 		}
 	});
 

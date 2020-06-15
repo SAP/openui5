@@ -480,7 +480,8 @@ function(
 				this._getSuggestionsList().destroyItems();
 			}
 
-			var oScroll = this._getSuggestionsPopoverPopup().getScrollDelegate();
+			var oScroll = this.getAggregation("tokenizer").getScrollDelegate();
+
 			if (oScroll) {
 				oScroll.scrollTo(0, 0, 0);
 			}
@@ -518,11 +519,6 @@ function(
 		}
 	};
 
-	MultiInput.prototype._openMultiLineOnDesktop = function() {
-		// the multiline functionality is deprecated
-		// the method is left for backwards compatibility
-	};
-
 	/**
 	 * Expand multi-line MultiInput in multi-line mode
 	 *
@@ -552,15 +548,6 @@ function(
 
 		// All items list should always be visible when calling showItems
 		this._manageListsVisibility(false);
-	};
-
-	/**
-	 * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
-	 * @returns {sap.ui.core.ScrollEnablement} The scroll delegate
-	 * @private
-	 */
-	MultiInput.prototype.getScrollDelegate = function () {
-		return this.getAggregation("tokenizer")._oScroller;
 	};
 
 	/**
@@ -1068,15 +1055,6 @@ function(
 
 		this._handleInnerVisibility();
 	};
-
-	MultiInput.prototype._onDialogClose = function () {
-		var oTokenizer = this.getAggregation("tokenizer");
-
-		this.setAggregation("tokenizer", oTokenizer);
-		oTokenizer.setReverseTokens(false);
-		oTokenizer.invalidate();
-	};
-
 
 	/**
 	 * When tap on text field, deselect all tokens
@@ -1694,13 +1672,15 @@ function(
 	};
 
 	/**
-	 * Returns the <code>SuggestionsPopover</code> Popup instance.
+	 * Returns the <code>sap.m.Popover</code> instance, it can be empty and not visible (rendered)
+	 * if for example the <code>showSuggestions</code> property is set to false or it is true but no suggestion items
+	 * are added.
 	 *
-	 * @returns {sap.m.SuggestionsPopover} A suggestions popover popup instance.
+	 * @returns {sap.m.Popover} A suggestions popover popup instance.
 	 * @private
 	 */
 	MultiInput.prototype._getSuggestionsPopoverPopup = function () {
-		return this._oSuggPopover._oPopover;
+		return this._oSuggestionPopup;
 	};
 
 	/**
@@ -1812,6 +1792,13 @@ function(
 
 		if (oTokenToDelete && oTokenToDelete.getEditable()) {
 			oTokenToDelete = this.removeToken(oTokenToDelete);
+
+			this.fireTokenUpdate({
+				addedTokens : [],
+				removedTokens : [oTokenToDelete],
+				type: Tokenizer.TokenUpdateType.Removed
+			});
+
 			oTokenToDelete.destroy();
 			this._getTokensList().removeItem(oListItem);
 		}

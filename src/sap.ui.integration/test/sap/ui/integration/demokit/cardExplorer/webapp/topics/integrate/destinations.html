@@ -21,10 +21,10 @@
 			<h2 id="overview">
 				Overview
 			</h2>
-	
+
 			<p>
 				Destinations that are listed in the <code>configuration</code> part of the <code>manifest</code>
-				should be resolved by the application with the help of <a id="linkToHostAPIRef" target="_blank"><code>sap.ui.integration.Host</code></a>.
+				should be resolved by the application with the help of <a data-demokit-href="/api/sap.ui.integration.Host" target="_blank"><code>sap.ui.integration.Host</code></a>.
 				The host application developer should use the <code>resolveDestination</code> property in the constructor
 				to pass a callback function to resolve a destination name to the corresponding URL.
 				The card calls this function when it needs to send a request to the destination.
@@ -70,15 +70,7 @@ XML View
 			<div><a href="#example">Example</a></div>
 		</div>
 	</div>
-	<script>
-		var sPathToDemoKitLocal = "../../../../../../../../../documentation.html#";
-		var sPathToDemoKit = "../../../../../../../../../#";
 
-		if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-			document.getElementById("linkToHostAPIRef").href = sPathToDemoKitLocal + "/api/sap.ui.integration.Host";
-		} else {
-			document.getElementById("linkToHostAPIRef").href = sPathToDemoKit + "/api/sap.ui.integration.Host";
-		}
-	</script>
+	<script src="../../scripts/topic.js"></script>
 </body>
 </html>

@@ -3,8 +3,8 @@
 describe("sap.m.DateTimePicker", function() {
 	"use strict";
 
-	// verify DateTimePicker is opened and the right date is initially selected and focused
-	it("should open second DateTimePicker and 13th of June 2017 should be selected and focused", function() {
+	// verify DateTimePicker is opened and the right date is initially focused
+	it("should open second DateTimePicker and 13th of June 2017 should be focused", function() {
 		element(by.id("DTP1_v0-icon")).click();
 		_takeScreenshot("initial_focused_and_selected");
 	});

@@ -90,9 +90,13 @@ sap.ui.define([
 			render: function (oRm, oFileEditor) {
 
 			oRm.openStart("div", oFileEditor)
+				.class("sapUiCardExplorerFileEditor")
 				.style("height", "100%")
 				.openEnd();
 
+			oRm.openStart("div")
+				.class("sapUiCardExplorerFileEditorHeader")
+				.openEnd();
 			oRm.renderControl(oFileEditor._getErrorsStrip());
 			oRm.renderControl(oFileEditor._getSchemaErrorsStrip());
 			oRm.renderControl(oFileEditor._getReadOnlyWarningStrip());
@@ -101,8 +105,14 @@ sap.ui.define([
 				oRm.renderControl(oFileEditor._getHeader());
 			}
 
+			oRm.close("div");
+
+			oRm.openStart("div")
+				.class("sapUiCardExplorerFileEditorContent")
+				.openEnd();
 			oRm.renderControl(oFileEditor._getImage());
 			oRm.renderControl(oFileEditor._getEditor());
+			oRm.close("div");
 
 			oRm.close("div");
 		}
@@ -363,6 +373,10 @@ sap.ui.define([
 					.setText(formatter.formatSchemaErrors(vErrors))
 					.setVisible(true);
 			}.bind(this));
+	};
+
+	FileEditor.prototype.hideSchemaErrors = function () {
+		this._getSchemaErrorsStrip().setVisible(false);
 	};
 
 	/**

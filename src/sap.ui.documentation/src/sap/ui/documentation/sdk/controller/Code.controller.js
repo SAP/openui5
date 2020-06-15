@@ -7,8 +7,10 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/documentation/sdk/controller/SampleBaseController",
 	"sap/ui/documentation/sdk/controller/util/ControlsInfo",
-	"sap/ui/model/json/JSONModel"
-], function(jQuery, SampleBaseController, ControlsInfo, JSONModel) {
+	"sap/ui/documentation/sdk/model/formatter",
+	"sap/ui/model/json/JSONModel",
+	"sap/base/util/merge"
+], function(jQuery, SampleBaseController, ControlsInfo, formatter, JSONModel, merge) {
 		"use strict";
 
 		return SampleBaseController.extend("sap.ui.documentation.sdk.controller.Code", {
@@ -39,7 +41,7 @@ sap.ui.define([
 
 				this._sId = oArguments.sampleId;
 				this._sEntityId = oArguments.entityId;
-				this._sFileName = decodeURIComponent(oArguments.fileName);
+				this._sFileName = formatter.routeParamsToFilePath(oArguments);
 
 				ControlsInfo.loadData().then(this._loadCode.bind(this));
 			},
@@ -109,7 +111,7 @@ sap.ui.define([
 				// set model data
 				this.oModel.setData(this._oData);
 
-				if (sFileName === "undefined") {
+				if (sFileName === undefined) {
 					sFileName = this._getInitialFileName();
 				}
 
@@ -173,14 +175,14 @@ sap.ui.define([
 			},
 
 			handleTabSelectEvent: function(oEvent) {
-				var sFileName = oEvent.getParameter("selectedKey");
+				var sFileName = oEvent.getParameter("selectedKey"),
+					oRouteParams = merge(formatter.filePathToRouteParams(sFileName), {
+					entityId: this._sEntityId,
+					sampleId: this._sId
+				});
 
 				this._bFirstLoad = false;
-				this.router.navTo("codeFile", {
-					entityId: this._sEntityId,
-					sampleId: this._sId,
-					fileName: encodeURIComponent(sFileName)
-				}, false);
+				this.router.navTo("codeFile", oRouteParams, false);
 			},
 
 			_updateCodeEditor : function(sFileName) {

@@ -3,15 +3,18 @@
  */
 
 sap.ui.define([
+	"./BaseContentRenderer",
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/integration/util/LoadingProvider"
-], function (Control,
-			JSONModel,
-			ManagedObjectObserver,
-			LoadingProvider
-			){
+], function (
+	BaseContentRenderer,
+	Control,
+	JSONModel,
+	ManagedObjectObserver,
+	LoadingProvider
+) {
 	"use strict";
 
 	/**
@@ -53,48 +56,7 @@ sap.ui.define([
 				press: {}
 			}
 		},
-		renderer: {
-			render: function (oRm, oCardContent) {
-				// Add class the simple way. Add renderer hooks only if needed.
-				var sClass = "sapFCard";
-
-				var sLibrary = oCardContent.getMetadata().getLibraryName();
-				var sName = oCardContent.getMetadata().getName();
-				var sType = sName.slice(sLibrary.length + 1, sName.length);
-				var oCard = oCardContent.getParent(),
-					bIsCardValid = oCard && oCard.isA("sap.f.ICard"),
-					oContent = oCardContent.getAggregation("_content");
-				sClass += sType;
-
-				oRm.write("<div");
-				oRm.writeElementData(oCardContent);
-				oRm.addClass(sClass);
-				oRm.addClass("sapFCardBaseContent");
-
-				if (oCardContent.hasListeners("press")) {
-					oRm.addClass("sapFCardClickable");
-				}
-
-				oRm.writeClasses();
-
-				if (bIsCardValid && oCard.getHeight() === "auto") { // if there is no height specified the default value is "auto"
-					var sHeight = BaseContent.getMinHeight(sType, oCardContent.getConfiguration(), oCardContent);
-					oRm.addStyle("min-height", sHeight);
-				}
-
-				oRm.writeStyles();
-				oRm.write(">");
-				if (sType !== 'AdaptiveContent' && bIsCardValid && oCardContent.isLoading()) {
-					oRm.renderControl(oCardContent._oLoadingPlaceholder);
-					//Removing content from the tab chain
-					if (sType !== 'AnalyticalContent' && sType !== 'TimelineContent') {
-						oContent.addStyleClass("sapFCardContentHidden");
-					}
-				}
-				oRm.renderControl(oContent);
-				oRm.write("</div>");
-			}
-		}
+		renderer: BaseContentRenderer
 	});
 
 	/**
@@ -150,6 +112,15 @@ sap.ui.define([
 			this._oLoadingPlaceholder.destroy();
 			this._oLoadingPlaceholder = null;
 		}
+	};
+
+	/**
+	 * Can be used in subclasses to load lazy dependencies.
+	 * @param {object} oConfiguration The manifest configuration for the content.
+	 * @returns {Promise} A promise that would be resolved in case of successful loading or rejected with error message.
+	 */
+	BaseContent.prototype.loadDependencies = function (oConfiguration) {
+		return Promise.resolve();
 	};
 
 	BaseContent.prototype.getActions = function () {
@@ -379,81 +350,6 @@ sap.ui.define([
 		return this;
 	};
 
-	BaseContent.getMinHeight = function (sType, oConfiguration, oContent) {
-
-		var MIN_HEIGHT = 5,
-			iHeight,
-			oReferenceElement = oContent,
-			oParent = oContent.getParent();
-
-		if (!oContent.getDomRef() && oParent && oParent.isA("sap.f.ICard")) {
-			oReferenceElement = oParent;
-		}
-
-		// check if there is an element up the DOM which enables compact density
-		var isCompact = oReferenceElement.$().closest(".sapUiSizeCompact").hasClass("sapUiSizeCompact");
-
-		if (jQuery.isEmptyObject(oConfiguration)) {
-			return "0rem";
-		}
-
-		switch (sType) {
-			case "ListContent":
-				iHeight = BaseContent._getMinListHeight(oConfiguration, isCompact);
-				break;
-			case "TableContent":
-				iHeight = BaseContent._getMinTableHeight(oConfiguration, isCompact);
-				break;
-			case "TimelineContent":
-				iHeight = BaseContent._getMinTimelineHeight(oConfiguration, isCompact);
-				break;
-			case "AnalyticalContent":
-				iHeight = 14;
-				break;
-			case "AnalyticsCloudContent":
-				iHeight = 14;
-				break;
-			case "ObjectContent":
-				iHeight = 0;
-				break;
-			default:
-				iHeight = 0;
-		}
-
-		return (iHeight !== 0 ? iHeight : MIN_HEIGHT) + "rem";
-	};
-
-	BaseContent._getMinListHeight = function (oConfiguration, isCompact) {
-		var iCount = parseInt(oConfiguration.maxItems) || 0,
-			oTemplate = oConfiguration.item,
-			iItemHeight = isCompact ? 2 : 2.75; // list item height in "rem"
-
-		if (!oTemplate) {
-			return 0;
-		}
-
-		if (oTemplate.description) {
-			iItemHeight = 5; // list item height with description in "rem"
-		}
-
-		return iCount * iItemHeight;
-	};
-
-	BaseContent._getMinTableHeight = function (oConfiguration, isCompact) {
-		var iCount = parseInt(oConfiguration.maxItems) || 0,
-			iRowHeight = isCompact ? 2 : 2.75, // table row height in "rem"
-			iTableHeaderHeight = isCompact ? 2 : 2.75; // table header height in "rem"
-
-		return iCount * iRowHeight + iTableHeaderHeight;
-	};
-
-	BaseContent._getMinTimelineHeight = function (oConfiguration, isCompact) {
-		var iCount = parseInt(oConfiguration.maxItems) || 0,
-			iItemHeight = isCompact ? 4 : 5; // timeline item height in "rem"
-
-		return iCount * iItemHeight;
-	};
-
 	BaseContent.prototype.isLoading  = function () {
 		var oLoadingProvider,
 			oCard = this.getParent();
@@ -505,7 +401,6 @@ sap.ui.define([
 	 */
 	BaseContent.prototype.onActionSubmitEnd = function (oResponse, oError) {
 	};
-
 
 	BaseContent.prototype.onDataRequested = function () {
 		if (this._oLoadingProvider) {

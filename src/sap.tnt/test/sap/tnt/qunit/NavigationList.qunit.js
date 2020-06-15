@@ -671,7 +671,7 @@ sap.ui.define([
 
 
 		assert.strictEqual($list[0].getAttribute("role"), "menubar", "Role of the popup ul should be menubar");
-		assert.strictEqual($InnerListItem.getAttribute("role"), "menuitem", "Role of the popup li should be menuitem");
+		assert.strictEqual($InnerListItem.getAttribute("role"), "menuitemradio", "Role of the popup li should be menuitem");
 		assert.ok(popover.oPopup.getOpenState() === sap.ui.core.OpenState.OPEN, "should change popover status to OPEN");
 
 		$groupItem.trigger('tap');

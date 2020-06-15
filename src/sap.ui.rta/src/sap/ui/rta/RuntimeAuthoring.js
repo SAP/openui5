@@ -812,7 +812,7 @@ function(
 		BusyIndicator.hide();
 		var sErrorMessage = vError.userMessage || vError.stack || vError.message || vError.status || vError;
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-		Log.error("Failed to transfer runtime adaptation changes to layered repository", sErrorMessage);
+		Log.error("Failed to transfer changes", sErrorMessage);
 		var sMsg = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
 				+ oTextResources.getText("MSG_ERROR_REASON", sErrorMessage);
 		MessageBox.error(sMsg, {
@@ -1584,7 +1584,7 @@ function(
 	 */
 	RuntimeAuthoring.prototype._handleUrlParameterOnExit = function(oReloadInfo) {
 		if (!FlexUtils.getUshellContainer()) {
-			this._triggerHardReload(oReloadInfo);
+			return this._triggerHardReload(oReloadInfo);
 		}
 
 		var mParsedHash = FlexUtils.getParsedURLHash();

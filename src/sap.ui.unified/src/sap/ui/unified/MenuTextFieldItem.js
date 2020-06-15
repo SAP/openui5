@@ -166,7 +166,7 @@ sap.ui.define([
 
 	MenuTextFieldItem.prototype.focus = function(oMenu){
 		if (this.getEnabled() && this.getVisible()) {
-			this.$("tf").trigger("focus");
+			this.$("tf").get(0).focus();
 		} else {
 			oMenu.focus();
 		}
@@ -182,20 +182,17 @@ sap.ui.define([
 
 
 	MenuTextFieldItem.prototype.onsapup = function(oEvent){
-		this.getParent().focus();
 		this.getParent().onsapprevious(oEvent);
 	};
 
 
 	MenuTextFieldItem.prototype.onsapdown = function(oEvent){
-		this.getParent().focus();
 		this.getParent().onsapnext(oEvent);
 	};
 
 
 	MenuTextFieldItem.prototype.onsaphome = function(oEvent){
 		if (this._checkCursorPosForNav(false)) {
-			this.getParent().focus();
 			this.getParent().onsaphome(oEvent);
 		}
 	};
@@ -203,20 +200,17 @@ sap.ui.define([
 
 	MenuTextFieldItem.prototype.onsapend = function(oEvent){
 		if (this._checkCursorPosForNav(true)) {
-			this.getParent().focus();
 			this.getParent().onsapend(oEvent);
 		}
 	};
 
 
 	MenuTextFieldItem.prototype.onsappageup = function(oEvent){
-		this.getParent().focus();
 		this.getParent().onsappageup(oEvent);
 	};
 
 
 	MenuTextFieldItem.prototype.onsappagedown = function(oEvent){
-		this.getParent().focus();
 		this.getParent().onsappagedown(oEvent);
 	};
 

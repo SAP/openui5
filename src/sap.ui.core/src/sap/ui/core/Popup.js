@@ -1035,7 +1035,7 @@ sap.ui.define([
 
 			bContains = aChildPopups.some(function(sChildID) {
 				// sChildID can either be the popup id or the DOM id
-				// therefore we need to try with jQuery.sap.domById to check the DOM id case first
+				// therefore we need to try with document.getElementById to check the DOM id case first
 				// only when it doesn't contain the given DOM, we publish an event to the event bus
 				var oContainDomRef = (sChildID ? window.document.getElementById(sChildID) : null);
 				var bContains = containsOrEquals(oContainDomRef, oDomRef);
@@ -3278,7 +3278,7 @@ sap.ui.define([
 	 *  </ul>
 	 *
 	 * @param {string[]|string} vSelectors One query selector or an array of query selectors to be added
-	 * @param {boolean} [bMarkAsSelectable] Whether the external content should be marked instantly as user selectable.
+	 * @param {boolean} [bMarkAsSelectable=false] Whether the external content should be marked instantly as user selectable.
 	 * 	If the external content which matches the given or default selector is added after a modal popup is opened,
 	 *  this parameter needs to be set to <code>true</code> to make the external content user selectable.
 	 * @public
@@ -3302,7 +3302,7 @@ sap.ui.define([
 	 * The default query selector <code>[data-sap-ui-integration-popup-content]</code> can't be deleted.
 	 *
 	 * @param {string[]|string} vSelectors One query selector or an array of query selectors to be deleted
-	 * @param {boolean} [bMarkAsNotSelectable] Whether the external content should be marked instantly as not user selectable.
+	 * @param {boolean} [bMarkAsNotSelectable=false] Whether the external content should be marked instantly as not user selectable.
 	 * 	If the selector is removed while a modal popup is still open, this parameter needs to be set to <code>true</code>
 	 *  to make the external content not user selectable.
 	 * @public

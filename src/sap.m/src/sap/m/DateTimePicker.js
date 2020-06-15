@@ -505,11 +505,16 @@ sap.ui.define([
 			this._oPopupContent = new PopupContent(this.getId() + "-PC");
 			this._oPopupContent._oDateTimePicker = this;
 
+			this._oOKButton = new Button(this.getId() + "-OK", {
+				text: sOKButtonText,
+				type: ButtonType.Emphasized,
+				press: _handleOkPress.bind(this)
+			});
 			this._oPopup = new ResponsivePopover(this.getId() + "-RP", {
 				showCloseButton: false,
 				showHeader: false,
 				placement: PlacementType.VerticalPreferedBottom,
-				beginButton: new Button(this.getId() + "-OK", { text: sOKButtonText,type: ButtonType.Emphasized, press: jQuery.proxy(_handleOkPress, this) }),
+				beginButton: this._oOKButton,
 				endButton: new Button(this.getId() + "-Cancel", { text: sCancelButtonText, press: jQuery.proxy(_handleCancelPress, this) }),
 				content: this._oPopupContent
 			});
@@ -580,28 +585,6 @@ sap.ui.define([
 		if (bNoCalendar) {
 			this._oPopupContent.setCalendar(this._oCalendar);
 			this._oCalendar.attachSelect(_handleCalendarSelect, this);
-
-			var that = this,
-				oHideMonthPicker = this._oCalendar._hideMonthPicker,
-				oHideYearPicker = this._oCalendar._hideYearPicker;
-
-			this._oCalendar._hideMonthPicker = function (bSkipFocus) {
-				oHideMonthPicker.apply(this, arguments);
-
-				if (!bSkipFocus) {
-					that._selectFocusedDateValue(new DateRange().setStartDate(this._getFocusedDate().toLocalJSDate()));
-
-				}
-			};
-
-			this._oCalendar._hideYearPicker = function (bSkipFocus) {
-				oHideYearPicker.apply(this, arguments);
-
-				if (!bSkipFocus) {
-					that._selectFocusedDateValue(new DateRange().setStartDate(this._getFocusedDate().toLocalJSDate()));
-
-				}
-			};
 		}
 
 		if (!this._oSliders) {
@@ -627,22 +610,33 @@ sap.ui.define([
 
 	DateTimePicker.prototype._fillDateRange = function(){
 
-		var oDate = this.getDateValue();
+		var oDate = this.getDateValue(),
+			bDateFound = true;
 
 		if (oDate) {
 			oDate = new Date(oDate.getTime());
+			this._oOKButton.setEnabled(true);
 		} else {
-			oDate = this._getInitialFocusedDateValue();
+			bDateFound = false;
+			oDate = this.getInitialFocusedDateValue();
+			if (!oDate) {
+				oDate = new Date();
+				this._oCalendar.removeAllSelectedDates();
+			}
 			var iMaxTimeMillis = this._oMaxDate.getTime();
 
 			if (oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > iMaxTimeMillis) {
 				oDate = this._oMinDate;
 			}
+			this._oOKButton.setEnabled(false);
 		}
 
 		this._oCalendar.focusDate(oDate);
-		if (!this._oDateRange.getStartDate() || this._oDateRange.getStartDate().getTime() != oDate.getTime()) {
-			this._oDateRange.setStartDate(oDate);
+
+		if (bDateFound) {
+			if (!this._oDateRange.getStartDate() || this._oDateRange.getStartDate().getTime() != oDate.getTime()) {
+				this._oDateRange.setStartDate(oDate);
+			}
 		}
 
 		this._oSliders._setTimeValues(oDate);
@@ -677,10 +671,6 @@ sap.ui.define([
 
 	};
 
-	DateTimePicker.prototype._getInitialFocusedDateValue = function () {
-		return this.getInitialFocusedDateValue() || new Date();
-	};
-
 	DateTimePicker.prototype.getLocaleId = function(){
 
 		return sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
@@ -699,16 +689,14 @@ sap.ui.define([
 	};
 
 	function _handleOkPress(oEvent){
-
 		this._handleCalendarSelect();
-
 	}
 
 	function _handleCancelPress(oEvent){
-
 		this.onsaphide(oEvent);
-		this._oCalendar.removeAllSelectedDates();
-		this._oCalendar.addSelectedDate(new DateRange().setStartDate(this._getInitialFocusedDateValue()));
+		if (!this.getDateValue()) {
+			this._oCalendar.removeAllSelectedDates();
+		}
 	}
 
 	/**
@@ -783,9 +771,8 @@ sap.ui.define([
 	}
 
 	function _handleCalendarSelect(oEvent) {
-
+		this._oOKButton.setEnabled(true);
 		this._oPopupContent.switchToTime();
-
 	}
 
 	return DateTimePicker;

@@ -46,13 +46,16 @@
 					text : {type : "string", defaultValue : ""},
 				}
 			},
-			renderer: function (oRm, oControl) {
-				oRm.write("<div class='sapCoreSampleControl'");
-				oRm.writeControlData(oControl);
-				oRm.write(">");
-				var sText = oControl.getText().replace(/\\t/g,"\t");
-				oRm.writeEscaped(sText);
-				oRm.write("</div>");
+			renderer: {
+				apiVersion: 2,
+				render: function (oRm, oControl) {
+					oRm.openStart("div", oControl);
+					oRm.class("sapCoreSampleControl");
+					oRm.openEnd();
+					var sText = oControl.getText().replace(/\\t/g,"\t");
+					oRm.text(sText);
+					oRm.close("div");
+				}
 			}
 		});
 

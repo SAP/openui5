@@ -2,21 +2,19 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/Control',
-	'sap/m/NumericContent',
-	'sap/m/Text',
-	"sap/f/cards/NumericSideIndicator",
+	"sap/ui/core/Control",
+	"sap/m/NumericContent",
+	"sap/m/Text",
 	"sap/f/cards/NumericHeaderRenderer",
 	"sap/ui/core/Core"
 ], function (
-		Control,
-		NumericContent,
-		Text,
-		NumericSideIndicator,
-		NumericHeaderRenderer,
-		Core
-	) {
-		"use strict";
+	Control,
+	NumericContent,
+	Text,
+	NumericHeaderRenderer,
+	Core
+) {
+	"use strict";
 
 	/**
 	 * Constructor for a new <code>NumericHeader</code>.
@@ -151,7 +149,8 @@ sap.ui.define([
 				 */
 				press: {}
 			}
-		}
+		},
+		renderer: NumericHeaderRenderer
 	});
 
 	/**
@@ -390,7 +389,7 @@ sap.ui.define([
 	 */
 	NumericHeader.prototype.ontap = function (oEvent) {
 		var srcControl = oEvent.srcControl;
-		if (srcControl && srcControl.getId().indexOf('overflowButton') > -1) { // better way?
+		if (srcControl && srcControl.getId().indexOf("overflowButton") > -1) { // better way?
 			return;
 		}
 
@@ -429,12 +428,12 @@ sap.ui.define([
 	 */
 	NumericHeader.prototype._setAccessibilityAttributes = function () {
 		if (this.hasListeners("press")) {
-			this._sAriaRole = 'button';
+			this._sAriaRole = "button";
 			this._sAriaHeadingLevel = undefined;
 			this._sAriaRoleDescritoion = this._oRb.getText("ARIA_ROLEDESCRIPTION_INTERACTIVE_CARD_HEADER");
 		} else {
-			this._sAriaRole = 'heading';
-			this._sAriaHeadingLevel = '3';
+			this._sAriaRole = "heading";
+			this._sAriaHeadingLevel = "3";
 			this._sAriaRoleDescritoion = this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER");
 		}
 	};

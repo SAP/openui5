@@ -298,7 +298,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Control.prototype.isActive = function() {
-		return ((this.sId ? window.document.getElementById(this.sId) : null)) != null;
+		return document.getElementById(this.sId) != null;
 	};
 
 	/**

@@ -2,10 +2,10 @@
  * ${copyright}
  */
 /**
- * See {@link https://lodash.com/docs/4.17.10#castArray}
+ * See {@link https://lodash.com/docs/4.17.15#castArray}
  *
  * @function
- * @alias sap/base/util/restricted/_castArray
+ * @alias module:sap/base/util/restricted/_castArray
  * @author SAP SE
  * @since 1.71
  * @version ${version}

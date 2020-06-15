@@ -5,15 +5,15 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
-	"sap/ui/base/Metadata",
+	"sap/ui/base/Object",
 	"./ObjectPageSubSection",
 	"./library",
 	"sap/base/Log"
 ],
-	function(jQuery, Device, Metadata, ObjectPageSubSection, library, Log) {
+	function(jQuery, Device, BaseObject, ObjectPageSubSection, library, Log) {
 		"use strict";
 
-		var LazyLoading = Metadata.createClass("sap.uxap._helpers.LazyLoading", {
+		var LazyLoading = BaseObject.extend("sap.uxap._helpers.LazyLoading", {
 			/**
 			 * @private
 			 * @param {*} oObjectPageLayout Object Layout instance
@@ -32,6 +32,9 @@ sap.ui.define([
 
 				this._oPrevSubSectionsInView = {};
 				this.setLazyLoadingParameters();
+			},
+			getInterface: function() {
+				return this; // no facade
 			}
 		});
 

@@ -430,7 +430,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Element.prototype.getDomRef = function(sSuffix) {
-		return (((sSuffix ? this.getId() + "-" + sSuffix : this.getId())) ? window.document.getElementById(sSuffix ? this.getId() + "-" + sSuffix : this.getId()) : null);
+		return document.getElementById(sSuffix ? this.getId() + "-" + sSuffix : this.getId());
 	};
 
 	/**
