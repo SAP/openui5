@@ -390,7 +390,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				invalid: (oSelect.getValueState() === ValueState.Error) ? true : undefined,
 				labelledby: bIconOnly ? undefined : oAriaLabelledBy,
 				activedescendant: sActiveDescendant,
-				haspopup: bIconOnly ? true : undefined
+				haspopup: "listbox"
 			});
 		};
 

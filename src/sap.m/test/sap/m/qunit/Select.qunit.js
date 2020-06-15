@@ -9801,6 +9801,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// assert
+			assert.strictEqual(oSelect.$().attr("aria-haspopup"), "listbox", "aria-haspopup is correct");
 			assert.ok(oSelect.$().attr("aria-roledescription") !== undefined, "aria-roledescription is correct");
 
 			// clean
