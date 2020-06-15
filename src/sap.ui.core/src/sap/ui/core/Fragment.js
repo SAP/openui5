@@ -186,10 +186,10 @@ function(
 	/**
 	 * Returns an Element/Control by its ID in the context of the Fragment with the given ID
 	 *
-	 * @param {string} sFragmentId
-	 * @param {string} sId
+	 * @param {string} sFragmentId ID of the Fragment from which to retrieve the Control
+	 * @param {string} sId ID of the Element/Control to retrieve
 	 *
-	 * @return Element by its ID and Fragment ID
+	 * @returns {sap.ui.core.Element|undefined} Element by its ID and Fragment ID
 	 * @public
 	 * @static
 	 */
@@ -202,12 +202,12 @@ function(
 	};
 
 	/**
-	 * Returns the ID which a Control with the given ID in the context of the Fragment with the given ID would have
+	 * Returns the ID which a Control with the given ID in the context of the Fragment with the given ID would have.
 	 *
-	 * @param {string} sFragmentId
-	 * @param {string} sId
+	 * @param {string} sFragmentId ID of the Fragment for which to calculate the Control ID
+	 * @param {string} sId Fragment-local ID of the Control to calculate the ID for
 	 *
-	 * @return the prefixed ID
+	 * @returns {string} the prefixed ID
 	 * @public
 	 * @static
 	 */

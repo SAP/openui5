@@ -1115,7 +1115,7 @@ sap.ui.define([
 		 * @name sap.ui.test.Opa5.assert
 		 * @public
 		 * @static
-		 * @type map
+		 * @type QUnit.Assert
 		 */
 
 		/**

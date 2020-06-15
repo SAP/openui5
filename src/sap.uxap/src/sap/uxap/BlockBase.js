@@ -460,10 +460,11 @@ sap.ui.define([
 		};
 
 		/**
-		 * Create view
-		 * @param {*} mParameter - the view metadata
-		 * @param {string} sMode - the mode associated with the view
-		 * @returns {*} Promise
+		 * Creates a view.
+		 *
+		 * @param {object} mParameter - View metadata
+		 * @param {string} sMode - Mode associated with the view
+		 * @returns {Promise<sap.ui.core.mvc.View>} A promise on the created view.
 		 * @protected
 		 */
 		BlockBase.prototype.createView = function (mParameter, sMode) {
@@ -720,9 +721,8 @@ sap.ui.define([
 			return library.Utilities.getClosestOPL(this);
 		};
 
-		/**
+		/*
 		 * Setter for the visibility of the block.
-		 * @public
 		 */
 		BlockBase.prototype.setVisible = function (bValue, bSuppressInvalidate) {
 			var oParentObjectPageLayout = this._getObjectPageLayout();

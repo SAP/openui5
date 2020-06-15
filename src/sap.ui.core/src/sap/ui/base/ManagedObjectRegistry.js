@@ -90,7 +90,8 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/base/assert"],
 			/*
 			 * Retrieves an object by its ID.
 			 *
-			 * @returns {sap.ui.core.Element} Object with the given ID or <code>undefined</code>
+			 * @param {sap.ui.core.ID|null|undefined} ID of the object to retrieve.
+			 * @returns {sap.ui.core.Element|undefined} Object with the given ID or <code>undefined</code>
 			 */
 			get: function(id) {
 				assert(id == null || typeof id === "string", "id must be a string when defined");

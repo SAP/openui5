@@ -647,18 +647,21 @@ function(
 		};
 
 		/**
-		 * The method checks if the Dialog is open. It returns <code>true</code> when the Dialog is currently open (this includes opening and closing animations), otherwise it returns <code>false</code>.
+		 * The method checks if the Dialog is open.
 		 *
-		 * @returns boolean
+		 * It returns <code>true</code> when the Dialog is currently open (this includes opening and closing animations),
+		 * otherwise it returns <code>false</code>.
+		 *
+		 * @returns {boolean} Whether the dialog is open.
 		 * @public
 		 * @since 1.9.1
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Dialog.prototype.isOpen = function () {
-			return this.oPopup && this.oPopup.isOpen();
+			return !!this.oPopup && this.oPopup.isOpen();
 		};
 
-		/**
+		/*
 		 * @inheritdoc
 		 */
 		Dialog.prototype.setIcon = function (sIcon) {
@@ -666,7 +669,7 @@ function(
 			return this.setProperty("icon", sIcon);
 		};
 
-		/**
+		/*
 		 * @inheritdoc
 		 */
 		Dialog.prototype.setState = function (sState) {

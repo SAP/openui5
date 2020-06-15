@@ -477,7 +477,7 @@ sap.ui.define([
 	 * @name sap.ui.test.Opa.assert
 	 * @public
 	 * @static
-	 * @type map
+	 * @type QUnit.Assert
 	*/
 
 	Opa.prototype = {

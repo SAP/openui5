@@ -26,7 +26,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/core/mvc/View
 	 * 			if not given, but an oTargetControl is still present, the function will attempt to add the extension point to the default aggregation of oTargetControl.
 	 * 			If no oTargetControl is provided, sAggregationName will also be ignored.
 	 *
-	 * @return {sap.ui.core.Control[]|Promise} An array with 0..n controls created from an ExtensionPoint or
+	 * @returns {sap.ui.core.Control[]|Promise<sap.ui.core.Control[]>} An array with 0..n controls created from an ExtensionPoint or
 	 * 			if fnCreateDefaultContent is called and returns a Promise, a Promise with the controls is returned instead
 	 * @deprecated since 1.56, Use {@link sap.ui.core.ExtensionPoint.load} instead
 	 * @public
@@ -242,7 +242,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/core/mvc/View
 	 * @param {function} [mOptions.createDefaultContent] Optional callback function creating default content, returning an array of controls. It is executed
 	 *        when there's no customizing, if not provided, no default content will be rendered.
 	 *        <code>mOptions.createDefaultContent</code> might also return a Promise, which resolves with an array of controls.
-	 * @return {Promise<sap.ui.core.Control[]>} a Promise, which resolves with an array of 0..n controls created from an <code>ExtensionPoint</code>.
+	 * @returns {Promise<sap.ui.core.Control[]>} a Promise, which resolves with an array of 0..n controls created from an <code>ExtensionPoint</code>.
 	 *        If <code>mOptions.createDefaultContent</code> is called and returns a Promise, that Promise is returned by <code>ExtensionPoint.load</code>.
 	 * @since 1.56.0
 	 * @public

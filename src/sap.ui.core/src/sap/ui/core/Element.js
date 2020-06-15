@@ -1671,7 +1671,7 @@ sap.ui.define([
 	 * the given ID, then <code>undefined</code> is returned.
 	 *
 	 * @param {sap.ui.core.ID} id ID of the element to retrieve
-	 * @returns {sap.ui.core.Element} Element with the given ID or <code>undefined</code>
+	 * @returns {sap.ui.core.Element|undefined} Element with the given ID or <code>undefined</code>
 	 * @name sap.ui.core.Element.registry.get
 	 * @function
 	 * @public
