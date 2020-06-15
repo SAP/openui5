@@ -205,6 +205,25 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/controlVariants/URLHandler"]
 				}
 			},
+			"apply/_internal/connectors/ObjectStorageConnector": {
+				group: "Apply Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/apply/_internal/connectors/ObjectStorageConnector",
+						"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
+						"sap/ui/fl/write/_internal/connectors/SessionStorageConnector"
+					]
+				},
+				ui5: {
+					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
+				}
+			},
+			"apply/_internal/connectors/ObjectStorageUtils": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"]
+				}
+			},
 			"apply/_internal/controlVariants/Utils": {
 				group: "Apply Internal",
 				coverage: {
@@ -392,12 +411,6 @@ sap.ui.define([
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/connectors/Utils"]
-				}
-			},
-			"write/_internal/connectors/ObjectStorageUtils": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/write/_internal/connectors/ObjectStorageUtils"]
 				}
 			},
 			"write/_internal/connectors/PersonalizationConnector": {

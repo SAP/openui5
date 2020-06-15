@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/write/_internal/connectors/ObjectStorageUtils",
+	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	"sap/ui/thirdparty/jquery"
 ], function (
 	Layer,
