@@ -25056,7 +25056,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: A property binding with a path using a collection navigation property must not
 	// cause an invalid late property request.
-	QUnit.test("BCP 1970517588: invalid property path", function (assert) {
+	QUnit.test("BCP: 1970517588 - invalid property path", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/TEAMS(\'TEAM_01\')}">\
@@ -26226,6 +26226,89 @@ sap.ui.define([
 					}),
 				that.waitForChanges(assert, "*")
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Use grouping with a list binding, -then change a group key value dynamically-.
+	// Grouping changes after a refresh, but is not properly reflected with E.C.D.
+	//
+	// BCP: 2080132822
+	QUnit.test("BCP: 2080132822 - grouping", function (assert) {
+		var that = this,
+			oController = {
+				getGroupHeader : function (oGroupInfo) {
+					that.checkValue(assert, oGroupInfo.key, "groupHeader");
+					// Note: no need to really return an instance here
+//					return new CustomListItem({content : [
+//						new Text({text : oGroupInfo.key})
+//					]});
+				}
+			},
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table growing="true" id="table" items="{\
+		groupHeaderFactory : \'.getGroupHeader\',\
+		path : \'/EMPLOYEES\',\
+		sorter : {group : true, path : \'AGE\'}\
+	}">\
+	<ColumnListItem>\
+		<Text id="age" text="{AGE}" />\
+		<Text id="name" text="{Name}" />\
+	</ColumnListItem>\
+</Table>';
+		//TODO <Text id="age" text="{AGE}" /> should not be needed for auto-$expand/$select here!
+
+		this.expectChange("groupHeader", undefined) // caused by virtual context
+			.expectRequest("EMPLOYEES?$orderby=AGE&$select=AGE,ID,Name&$skip=0&$top=20", {
+				value : [{
+					AGE : 23,
+					ID : "2",
+					Name : "Frederic Fall"
+				}, {
+					AGE : 42,
+					ID : "3",
+					Name : "Jonathan Smith"
+				}, {
+					AGE : 42,
+					ID : "4",
+					Name : "Peter Burke"
+				}]
+			})
+			.expectChange("age", ["23", "42", "42"])
+			.expectChange("groupHeader", 23)
+			.expectChange("groupHeader", 42)
+			.expectChange("name", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
+
+		return this.createView(assert, sView, oModel, oController).then(function () {
+			var oItemsBinding = that.oView.byId("table").getBinding("items");
+
+			//TODO how could changes to a property affect the list's grouping?
+			// @see v2.ODataListBinding#checkUpdate
+//			oItemsBinding.getCurrentContexts()[0].setProperty("AGE", 42, null);
+
+			that.expectRequest("EMPLOYEES?$orderby=AGE&$select=AGE,ID,Name&$skip=0&$top=20", {
+					value : [{
+						AGE : 42, // surprise!
+						ID : "2",
+						Name : "Frederic Fall"
+					}, {
+						AGE : 42,
+						ID : "3",
+						Name : "Jonathan Smith"
+					}, {
+						AGE : 42,
+						ID : "4",
+						Name : "Peter Burke"
+					}]
+				})
+				.expectChange("age", ["42", "42", "42"]) // Note: no real E.C.D. with grouping
+				.expectChange("groupHeader", 42)
+				.expectChange("name", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
+
+			oItemsBinding.refresh();
+
+			return that.waitForChanges(assert);
 		});
 	});
 
