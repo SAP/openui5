@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
-	"sap/ui/fl/write/_internal/Condenser",
+	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/base/Log",
 	"sap/ui/fl/Layer"
@@ -282,14 +282,19 @@ sap.ui.define([
 	 	 * @ui5-restricted sap.ui.rta.test
 		 */
 		_condense: function(mPropertyBag) {
-			if (!mPropertyBag.selector) {
-				throw Error("An invalid selector was passed so change could not be removed with id: " + mPropertyBag.change.getId());
-			}
-			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
-			if (!oAppComponent) {
-				throw Error("Invalid application component for selector, change could not be removed with id: " + mPropertyBag.change.getId());
-			}
-			return Condenser.condense(oAppComponent, mPropertyBag.changes);
+			return Promise.resolve().then(function() {
+				if (!mPropertyBag.selector) {
+					throw Error("An invalid selector was passed");
+				}
+				var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
+				if (!oAppComponent) {
+					throw Error("Invalid application component for selector");
+				}
+				if (!mPropertyBag.changes || mPropertyBag.changes && !Array.isArray(mPropertyBag.changes)) {
+					throw Error("Invalid array of changes");
+				}
+				return Condenser.condense(oAppComponent, mPropertyBag.changes);
+			});
 		},
 
 		/**
