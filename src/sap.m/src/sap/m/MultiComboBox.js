@@ -164,6 +164,12 @@ function(
 			 */
 			selectedItems: { type: "sap.ui.core.Item", multiple: true, singularName: "selectedItem" }
 		},
+		aggregations: {
+			/**
+			 * The tokenizer which displays the tokens
+			 */
+			tokenizer: {type: "sap.m.Tokenizer", multiple: false, visibility: "hidden"}
+		},
 		events: {
 
 			/**
@@ -266,7 +272,7 @@ function(
 		// if the caret is already moved to the start of the input text
 		// execute tokenizer's onsaphome handler
 		if (!this.getFocusDomRef().selectionStart) {
-			Tokenizer.prototype.onsaphome.apply(this._oTokenizer, arguments);
+			Tokenizer.prototype.onsaphome.apply(this.getAggregation("tokenizer"), arguments);
 		}
 
 		oEvent.setMarked();
@@ -368,7 +374,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.isFocusInTokenizer = function () {
-		return jQuery.contains(this._oTokenizer.getFocusDomRef(), document.activeElement);
+		return jQuery.contains(this.getAggregation("tokenizer").getFocusDomRef(), document.activeElement);
 	};
 
 	/**
@@ -617,7 +623,7 @@ function(
 		}
 
 		//Open popover with items if in readonly mode and has Nmore indicator
-		if (!this.getEditable() && this._oTokenizer._hasMoreIndicator() && oEvent.target === this.getFocusDomRef()) {
+		if (!this.getEditable() && this.getAggregation("tokenizer")._hasMoreIndicator() && oEvent.target === this.getFocusDomRef()) {
 			this._handleIndicatorPress(oEvent);
 		}
 
@@ -658,7 +664,8 @@ function(
 			oControl = core.byId(oEvent.relatedControlId),
 			oFocusDomRef = oControl && oControl.getFocusDomRef(),
 			sOldValue = this.getValue(),
-			oPicker = this.getPicker();
+			oPicker = this.getPicker(),
+			oTokenizer = this.getAggregation("tokenizer");
 
 		// If focus target is outside of picker and the picker is fully opened
 		if (!this._bPickerIsOpening && (!oPicker || !oPicker.getFocusDomRef() || !oFocusDomRef || !jQuery.contains(oPicker.getFocusDomRef(), oFocusDomRef))) {
@@ -671,12 +678,12 @@ function(
 
 			// If focus is outside of the MultiComboBox
 			if (!(oControl instanceof Token || oEvent.srcControl instanceof Token)) {
-				this._oTokenizer.scrollToEnd();
+				oTokenizer.scrollToEnd();
 			}
 
 			// if the focus is outside the MultiComboBox, the tokenizer should be collapsed
 			if (!jQuery.contains(this.getDomRef(), document.activeElement)) {
-				this._oTokenizer._useCollapsedMode(true);
+				oTokenizer._useCollapsedMode(true);
 			}
 		}
 
@@ -703,18 +710,19 @@ function(
 		var sCurrentState = (oPicker && oPicker.oPopup.getOpenState()) || OpenState.CLOSED;
 		var bPickerClosedOrClosing = sCurrentState === OpenState.CLOSING || sCurrentState === OpenState.CLOSED;
 		var bDropdownPickerType = this.getPickerType() === "Dropdown";
+		var oTokenizer = this.getAggregation("tokenizer");
 
 		if (bDropdownPickerType) {
 			bPreviousFocusInDropdown = oPickerDomRef && jQuery.contains(oPickerDomRef, oEvent.relatedTarget);
 		}
 
 		if (this.getEditable() && oEvent.target === this.getDomRef("inner")) {
-			this._oTokenizer._useCollapsedMode(false);
-			this._oTokenizer.scrollToEnd();
+			oTokenizer._useCollapsedMode(false);
+			oTokenizer.scrollToEnd();
 		}
 
 		if (oEvent.target === this.getFocusDomRef()) {
-			this._oTokenizer.hasOneTruncatedToken() && this._oTokenizer.setFirstTokenTruncated(false);
+			oTokenizer.hasOneTruncatedToken() && oTokenizer.setFirstTokenTruncated(false);
 			this.getEnabled() && this.addStyleClass("sapMFocus");
 			// enable type ahead when switching focus from the dropdown to the input field
 			// we need to check whether the focus has been triggered by the popover's closing or just a manual focusin
@@ -838,7 +846,8 @@ function(
 	 */
 	MultiComboBox.prototype.onkeydown = function(oEvent) {
 		var bEditable = this.getEditable(),
-			iTokensCount = this._oTokenizer.getTokens().length;
+			oTokenizer = this.getAggregation("tokenizer"),
+			iTokensCount = oTokenizer.getTokens().length;
 		ComboBoxBase.prototype.onkeydown.apply(this, arguments);
 
 		if (!this.getEnabled()) {
@@ -861,8 +870,8 @@ function(
 		if (this.getValue().length === 0 && (oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === KeyCodes.A)
 			&& this._hasTokens()) {
 
-			this._oTokenizer.focus();
-			this._oTokenizer.selectAllTokens(true);
+			oTokenizer.focus();
+			oTokenizer.selectAllTokens(true);
 			oEvent.preventDefault();
 		}
 
@@ -1021,7 +1030,7 @@ function(
 			setTimeout(this["setValueState"].bind(this, sInitialValueState || ValueState.Error), 1000);
 		}
 
-		this._syncInputWidth(this._oTokenizer);
+		this._syncInputWidth(this.getAggregation("tokenizer"));
 	};
 
 	/**
@@ -1188,7 +1197,7 @@ function(
 	MultiComboBox.prototype.onBeforeRendering = function() {
 		ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
 		this._bInitialSelectedKeysSettersCompleted = true;
-		this._oTokenizer.setEnabled(this.getEnabled());
+		this.getAggregation("tokenizer").setEnabled(this.getEnabled());
 		if (this._getList()) {
 			this.syncPickerContent(true);
 		}
@@ -1270,8 +1279,9 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._onResize = function () {
-		this._oTokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
-		this._syncInputWidth(this._oTokenizer);
+		var oTokenizer = this.getAggregation("tokenizer");
+		oTokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
+		this._syncInputWidth(oTokenizer);
 		this._handleNMoreAccessibility();
 	};
 
@@ -1400,7 +1410,7 @@ function(
 			selectedItems: this.getSelectedItems()
 		});
 
-		this._oTokenizer._useCollapsedMode(bUseCollapsed);
+		this.getAggregation("tokenizer")._useCollapsedMode(bUseCollapsed);
 
 		// show value state message when focus is in the input field
 		if (this.getValueState() == ValueState.Error && document.activeElement === this.getFocusDomRef()) {
@@ -1528,7 +1538,7 @@ function(
 
 		mOptions.item.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Token", oToken);
 
-		this._oTokenizer.addToken(oToken);
+		this.getAggregation("tokenizer").addToken(oToken);
 		this.$().toggleClass("sapMMultiComboBoxHasToken", this._hasTokens());
 		this.setValue('');
 
@@ -1599,7 +1609,7 @@ function(
 		if (!mOptions.tokenUpdated) {
 			var oToken = this._getTokenByItem(mOptions.item);
 			mOptions.item.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Token", null);
-			this._oTokenizer.removeToken(oToken);
+			this.getAggregation("tokenizer").removeToken(oToken);
 		}
 
 		this.$().toggleClass("sapMMultiComboBoxHasToken", this._hasTokens());
@@ -1730,7 +1740,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._getLastSelectedItem = function() {
-		var aTokens = this._oTokenizer.getTokens();
+		var aTokens = this.getAggregation("tokenizer").getTokens();
 		var oToken = aTokens.length ? aTokens[aTokens.length - 1] : null;
 
 		if (!oToken) {
@@ -1748,7 +1758,7 @@ function(
 	MultiComboBox.prototype._getOrderedSelectedItems = function() {
 		var aItems = [];
 
-		for (var i = 0, aTokens = this._oTokenizer.getTokens(), iLength = aTokens.length; i < iLength; i++) {
+		for (var i = 0, aTokens = this.getAggregation("tokenizer").getTokens(), iLength = aTokens.length; i < iLength; i++) {
 			aItems[i] = this._getItemByToken(aTokens[i]);
 		}
 
@@ -1804,7 +1814,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._hasTokens = function() {
-		return this._oTokenizer.getTokens().length > 0;
+		return this.getAggregation("tokenizer").getTokens().length > 0;
 	};
 
 	/**
@@ -2123,12 +2133,13 @@ function(
 	 */
 	MultiComboBox.prototype._handleIndicatorPress = function(oEvent) {
 		var oPicker,
-			aTokens = this._oTokenizer.getTokens();
+			oTokenizer = this.getAggregation("tokenizer"),
+			aTokens = oTokenizer.getTokens();
 
 		if (aTokens.length === 1 && aTokens[0].getTruncated()) {
 			// this is needed as upon syncing and opening the picker new token is created
 			// and the width of its text should be calculated properly.
-			this._oTokenizer.setFirstTokenTruncated(false);
+			oTokenizer.setFirstTokenTruncated(false);
 		}
 
 		this.syncPickerContent();
@@ -2139,14 +2150,14 @@ function(
 			oPicker = this.getPicker();
 			oPicker.open();
 		} else {
-			this._toggleReadonlyPopover(this._oTokenizer);
+			this._toggleReadonlyPopover(oTokenizer);
 		}
 
 		if (this.isPickerDialog()) {
 			this.getFilterSelectedButton().setPressed(true);
 			this.bOpenedByKeyboardOrButton = true;
 		} else {
-			setTimeout(this._oTokenizer["scrollToEnd"].bind(this._oTokenizer), 0);
+			setTimeout(oTokenizer["scrollToEnd"].bind(oTokenizer), 0);
 		}
 	};
 
@@ -2201,10 +2212,6 @@ function(
 
 		oTokenizer._handleNMoreIndicatorPress(this._handleIndicatorPress.bind(this));
 
-		// Set parent of Tokenizer, otherwise the Tokenizer renderer is not called.
-		// Control.prototype.invalidate -> this.getUIArea() is null
-		oTokenizer.setParent(this);
-
 		oTokenizer.addEventDelegate({
 			onAfterRendering: this._onAfterRenderingTokenizer,
 			onfocusin: function (oEvent) {
@@ -2225,9 +2232,10 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._onAfterRenderingTokenizer = function() {
-		setTimeout(this._syncInputWidth.bind(this, this._oTokenizer), 0);
+		var oTokenizer = this.getAggregation("tokenizer");
+		setTimeout(this._syncInputWidth.bind(this, oTokenizer), 0);
 		setTimeout(this._handleNMoreAccessibility.bind(this), 0);
-		setTimeout(this._oTokenizer["scrollToEnd"].bind(this._oTokenizer), 0);
+		setTimeout(oTokenizer["scrollToEnd"].bind(oTokenizer), 0);
 	};
 
 	/**
@@ -2301,7 +2309,7 @@ function(
 	 */
 	MultiComboBox.prototype.onAfterRendering = function() {
 		ComboBoxBase.prototype.onAfterRendering.apply(this, arguments);
-		this._oTokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
+		this.getAggregation("tokenizer").setMaxWidth(this._calculateSpaceForTokenizer());
 		this._registerResizeHandler();
 	};
 
@@ -2347,7 +2355,7 @@ function(
 			sOriginalText =  oEvent.originalEvent.clipboardData.getData('text/plain');
 		}
 
-		var aSeparatedText = this._oTokenizer._parseString(sOriginalText);
+		var aSeparatedText = sOriginalText.split(/\r\n|\r|\n/g);
 
 		if (aSeparatedText && aSeparatedText.length > 0) {
 			this.getSelectableItems().forEach(function(oItem) {
@@ -2387,7 +2395,7 @@ function(
 		}
 
 		if (!oEvent.isMarked()) {
-			Tokenizer.prototype.onsapbackspace.apply(this._oTokenizer, arguments);
+			Tokenizer.prototype.onsapbackspace.apply(this.getAggregation("tokenizer"), arguments);
 		}
 
 		if (oEvent.isMarked("forwardFocusToParent")) {
@@ -2415,7 +2423,7 @@ function(
 		}
 
 		if (!oEvent.isMarked()) {
-			Tokenizer.prototype.onsapbackspace.apply(this._oTokenizer, arguments);
+			Tokenizer.prototype.onsapbackspace.apply(this.getAggregation("tokenizer"), arguments);
 		}
 
 		if (oEvent.isMarked("forwardFocusToParent")) {
@@ -2430,6 +2438,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onsapnext = function(oEvent) {
+		var oTokenizer = this.getAggregation("tokenizer");
 
 		if (oEvent.isMarked()) {
 			return;
@@ -2445,7 +2454,7 @@ function(
 			return;
 		}
 
-		if (oFocusedElement === this._oTokenizer || this._oTokenizer.$().find(oFocusedElement.$()).length > 0
+		if (oFocusedElement === oTokenizer || oTokenizer.$().find(oFocusedElement.$()).length > 0
 			&& this.getEditable()) {
 
 			// focus is on the tokenizer or on some descendant of the tokenizer and the event was not handled ->
@@ -2465,7 +2474,7 @@ function(
 		if (this.getCursorPosition() === 0 && !this._isCompleteTextSelected()) {
 
 			if (oEvent.srcControl === this) {
-				Tokenizer.prototype.onsapprevious.apply(this._oTokenizer, arguments);
+				Tokenizer.prototype.onsapprevious.apply(this.getAggregation("tokenizer"), arguments);
 			}
 		}
 	};
@@ -3043,7 +3052,7 @@ function(
 		var oList = this._getList();
 
 		ComboBoxBase.prototype.setEditable.apply(this, arguments);
-		this._oTokenizer.setEditable(bEditable);
+		this.getAggregation("tokenizer").setEditable(bEditable);
 
 		if (oList) {
 			this.syncPickerContent(true);
@@ -3127,7 +3136,7 @@ function(
 
 			oItem.data(oRenderer.CSS_CLASS_COMBOBOXBASE + "Token", oToken);
 			// TODO: Check this invalidation
-			this._oTokenizer.addToken(oToken, true);
+			this.getAggregation("tokenizer").addToken(oToken, true);
 		}
 
 		this.setSelectable(oItem, oItem.getEnabled());
@@ -3341,7 +3350,9 @@ function(
 
 		// determines if value of the combobox should be empty string after popup's close
 		this._bPreventValueRemove = false;
+		// ToDo: Remove. Just for backwards compatibility with the runtime layer. When this change merges, we'd need to adjust the code in the runtime
 		this._oTokenizer = this._createTokenizer();
+		this.setAggregation("tokenizer", this._oTokenizer);
 		this._aInitiallySelectedItems = [];
 
 		this._oRbM = core.getLibraryResourceBundle("sap.m");
@@ -3431,12 +3442,11 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._clearTokenizer = function() {
-		this._oTokenizer.destroyAggregation("tokens");
+		this.getAggregation("tokenizer").destroyTokens();
 	};
 
 	MultiComboBox.prototype.exit = function() {
 		var sInternalControls = [
-				"_oTokenizer",
 				"_oSuggestionPopover",
 				"_oToggleButton",
 				"_oPickerCustomHeader",
@@ -3472,7 +3482,7 @@ function(
 			this._getList().destroyItems();
 		}
 
-		this._oTokenizer.destroyTokens();
+		this.getAggregation("tokenizer").destroyTokens();
 		return this;
 	};
 
@@ -3635,9 +3645,10 @@ function(
 	MultiComboBox.prototype._handleNMoreAccessibility = function () {
 		var sInvisibleTextId = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER"),
 			bHasAriaLabelledBy = this.getAriaLabelledBy().indexOf(sInvisibleTextId) !== -1,
-			bEnabled = this.getEnabled();
+			bEnabled = this.getEnabled(),
+			oTokenizer = this.getAggregation("tokenizer");
 
-		if (!this.getEditable() && this._oTokenizer && this._oTokenizer._hasMoreIndicator()) {
+		if (!this.getEditable() && oTokenizer && oTokenizer._hasMoreIndicator()) {
 			!bHasAriaLabelledBy && this.addAriaLabelledBy(sInvisibleTextId);
 			bEnabled && this.getFocusDomRef().setAttribute("aria-keyshortcuts", "Enter");
 		} else {
