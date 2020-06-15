@@ -368,6 +368,26 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 		assert.ok(pickerBeforeCloseSpy.calledOnce, "Popover after before close event is handled");
 	});
 
+	QUnit.test("No invalidation when creating the select", function (assert) {
+		var createSelectSpy = this.spy(Breadcrumbs.prototype, "_getSelect"),
+			afterRenderingSpy = this.spy(Breadcrumbs.prototype, "onAfterRendering"),
+			invalidateSpy = this.spy(Breadcrumbs.prototype, "invalidate");
+		this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(15, "Current location text");
+
+		this.oStandardBreadCrumbsControl.addEventDelegate({
+			onBeforeRendering: function() {
+				invalidateSpy.reset();
+			}
+		});
+
+		// Act
+		helpers.renderObject(this.oStandardBreadCrumbsControl);
+
+		// Check if invalidation upon select creation during rendering
+		assert.ok(createSelectSpy.calledBefore(afterRenderingSpy), "select is created during rendering");
+		assert.ok(invalidateSpy.notCalled, "breadcrumb is not invalidated during rendering");
+	});
+
 	QUnit.module("Breadcrumbs - private functions", {
 		afterEach: function () {
 			this.oStandardBreadCrumbsControl.destroy();
