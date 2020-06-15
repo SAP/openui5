@@ -70,7 +70,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 
 		var sState = oControl.getState();
 		if (sState !== LoadState.Disabled) {
-			oRm.addClass("sapMPointer");
+			if (!oControl.isInActionRemoveScope()) {
+				oRm.addClass("sapMPointer");
+			}
 			oRm.writeAttribute("tabindex", "0");
 		} else {
 			oRm.addClass("sapMGTDisabled");

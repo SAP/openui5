@@ -71,7 +71,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		}
 		oRm.writeAttributeEscaped("aria-label", sAriaText);
 		if (sState !== LoadState.Disabled) {
-			oRm.addClass("sapMPointer");
+			if (!oControl.isInActionRemoveScope()) {
+				oRm.addClass("sapMPointer");
+			}
 			oRm.writeAttribute("tabindex", "0");
 		}
 		if (oControl.getWidth()) {

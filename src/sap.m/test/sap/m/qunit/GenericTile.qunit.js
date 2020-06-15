@@ -2656,6 +2656,20 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Press event on 'tap' with correct parameters in Remove Actions scope", function(assert) {
+		//Arrange
+		this.oGenericTile.setScope(GenericTileScope.ActionRemove);
+		sap.ui.getCore().applyChanges();
+		var oHandlePressSpy = sinon.spy();
+		this.oGenericTile.attachEvent("press", oHandlePressSpy);
+
+		//Act
+		this.oGenericTile.$().trigger("tap");
+
+		//Assert
+		assert.strictEqual(oHandlePressSpy.callCount, 0, "On tile press, remove is not triggered.");
+	});
+
 	QUnit.test("ENTER key down event in Display scope", function(assert) {
 		//Arrange
 		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
