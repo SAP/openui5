@@ -3479,10 +3479,10 @@ sap.ui.define([
 		}
 
 		// set only one formatter function if any
-		// because the formatter gets the context of the element we have to set the context via proxy to ensure compatibility
+		// because the formatter gets the context of the element, we have to set the context via proxy to ensure compatibility
 		// for formatter function which is now called by the property binding
 		// proxy formatter here because "this" is the correct cloned object
-		if (oBindingInfo.formatter) {
+		if (typeof oBindingInfo.formatter === "function") {
 			oBinding.setFormatter(oBindingInfo.formatter.bind(this));
 		}
 
