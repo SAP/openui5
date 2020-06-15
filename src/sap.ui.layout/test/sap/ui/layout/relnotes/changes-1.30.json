@@ -1,93 +1,180 @@
 {
-	"1.30.0": {
-		"date": "April 2015",
-		"notes": [
-			{
-				"id": "05fa3cbcff58095cee85f90fd1241b3456a5cdcd",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.FixFlex: Added scrolling option",
-				"references": []
-			},
-			{
-				"id": "133882094e565056ca4a029920127995b2b121f9",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.form.Form: Added function to get DOM representation of FormConatiner and FormElement",
-				"references": []
-			},
-			{
-				"id": "3091a5245e3fa2097a56d577b9d8951c051a8ea9",
-				"type": "FIX",
-				"text": "Ensure exiatence of namespace during Core.initLibrary()",
-				"references": []
-			},
-			{
-				"id": "be70b418050fa0f9fb1a0bf5704826b34b451c58",
-				"type": "FIX",
-				"text": "SimpleForm: Fixes problem with empty form containers on removeContent",
-				"references": []
-			},
-			{
-				"id": "3bffba21fc70c54384dcbfb1b498e2c32ef037d9",
-				"type": "FIX",
-				"text": "Splitter: Enable autoresize on bar move end",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570022300"
-					}
-				]
-			},
-			{
-				"id": "9d470d9ad55075783219f6fa7444370a964ef863",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.Form: Keyboard navigation issues",
-				"references": []
-			},
-			{
-				"id": "17d7a6280708b3340f56d4c4b1c1ed52228e5c9a",
-				"type": "FEATURE",
-				"text": "sap.layout.Grid: Added new XL breakpoint",
-				"references": []
-			},
-			{
-				"id": "d632d7a5649729bc7cd69d8fc0600c89d7597b14",
-				"type": "FIX",
-				"text": "sap.ui.layout.for.Form: Fixed changing order of FormContainer",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570306723"
-					}
-				]
-			},
-			{
-				"id": "8ccdb3d0119cf91bff89b6cffbf61814cced86da",
-				"type": "FIX",
-				"text": "sap.ui.layout.Form: RadioButton in compact mode fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570150393"
-					}
-				]
-			},
-			{
-				"id": "95760e3c740f95a163e3dd9db5ffad3553d08302",
-				"type": "FIX",
-				"text": "VerticalLayout: Vertical alignment issue in Safari resolved",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570153584"
-					}
-				]
-			},
-			{
-				"id": "3dc1ac652605c469e1f38ac67b12f838cf9bab52",
-				"type": "FEATURE",
-				"text": "DynamicSideContent: New control implemented",
-				"references": []
-			}
-		]
-	}
+  "1.30.0": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "05fa3cbcff58095cee85f90fd1241b3456a5cdcd",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.FixFlex: Added scrolling option",
+        "references": []
+      },
+      {
+        "id": "133882094e565056ca4a029920127995b2b121f9",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.form.Form: Added function to get DOM representation of FormConatiner and FormElement",
+        "references": []
+      },
+      {
+        "id": "3091a5245e3fa2097a56d577b9d8951c051a8ea9",
+        "type": "FIX",
+        "text": "Ensure exiatence of namespace during Core.initLibrary()",
+        "references": []
+      },
+      {
+        "id": "be70b418050fa0f9fb1a0bf5704826b34b451c58",
+        "type": "FIX",
+        "text": "SimpleForm: Fixes problem with empty form containers on removeContent",
+        "references": []
+      },
+      {
+        "id": "3bffba21fc70c54384dcbfb1b498e2c32ef037d9",
+        "type": "FIX",
+        "text": "Splitter: Enable autoresize on bar move end",
+        "references": []
+      },
+      {
+        "id": "9d470d9ad55075783219f6fa7444370a964ef863",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: Keyboard navigation issues",
+        "references": []
+      },
+      {
+        "id": "17d7a6280708b3340f56d4c4b1c1ed52228e5c9a",
+        "type": "FEATURE",
+        "text": "sap.layout.Grid: Added new XL breakpoint",
+        "references": []
+      },
+      {
+        "id": "d632d7a5649729bc7cd69d8fc0600c89d7597b14",
+        "type": "FIX",
+        "text": "sap.ui.layout.for.Form: Fixed changing order of FormContainer",
+        "references": []
+      },
+      {
+        "id": "8ccdb3d0119cf91bff89b6cffbf61814cced86da",
+        "type": "FIX",
+        "text": "sap.ui.layout.Form: RadioButton in compact mode fixed",
+        "references": []
+      },
+      {
+        "id": "95760e3c740f95a163e3dd9db5ffad3553d08302",
+        "type": "FIX",
+        "text": "VerticalLayout: Vertical alignment issue in Safari resolved",
+        "references": []
+      },
+      {
+        "id": "3dc1ac652605c469e1f38ac67b12f838cf9bab52",
+        "type": "FEATURE",
+        "text": "DynamicSideContent: New control implemented",
+        "references": []
+      }
+    ]
+  },
+  "1.30.3": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "25605728396dbef80d7df8f639995e9631057872",
+        "type": "FIX",
+        "text": "layout.Splitter: Correctly resize Splitter bars",
+        "references": []
+      }
+    ]
+  },
+  "1.30.4": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "1a1e12e530326b98a6ffa6dfffb506ad09d3b800",
+        "type": "FIX",
+        "text": "layout.Splitter: Added Splitter Bar Accessibility Information",
+        "references": []
+      },
+      {
+        "id": "2dcce75a95ca28862a699d7b24635dce1e734eff",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout: full size labels",
+        "references": []
+      }
+    ]
+  },
+  "1.30.5": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "81aeb1fa0b798a7d8f02f184792dd0b959c0bf3d",
+        "type": "FIX",
+        "text": "sap.ui.layout.DynamicSideContent - Fixed layout issue",
+        "references": []
+      },
+      {
+        "id": "509dcb91dba81f2c4c6b2c64dfae3cd64ef0033c",
+        "type": "FIX",
+        "text": "sap.ui.layout.form: adapt documentation for form controls",
+        "references": []
+      }
+    ]
+  },
+  "1.30.7": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "864a32250cf76e897111e45b6dfb2a471ec23068",
+        "type": "FIX",
+        "text": "Microsoft Edge Support: Fix CSS text-align statements in libraries: sap.m, sap.ui.layout and sap.ui.unified",
+        "references": []
+      }
+    ]
+  },
+  "1.30.8": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "1f16a72434740b89851939c0b5c78fd44132be33",
+        "type": "FIX",
+        "text": "Respect \"themeroots\" when resolving img URLs in Controls",
+        "references": []
+      },
+      {
+        "id": "6a1a7f1859d0ab36eb21402498a2f253fb4348e6",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveFlowLayout - Cyclic re-rendering when the width is small solved",
+        "references": []
+      },
+      {
+        "id": "339ed4f1ae302656c2e1ad05dfe691e8f4213ed2",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: wrong tab sequence in RTL",
+        "references": []
+      }
+    ]
+  },
+  "1.30.10": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "d3f25d2b4d5b93a86cd2a6d7dcc6c6988d5350be",
+        "type": "FIX",
+        "text": "layout.Splitter: Don\u0027t Attempt Resize on Preserved DOM",
+        "references": []
+      }
+    ]
+  },
+  "1.30.11": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "269a7a108b4ec5a01810aaaf9e5bf6bcbd7113a7",
+        "type": "FIX",
+        "text": "sap.ui.core.layout.VerticalLayout: fix vertical-align in IE",
+        "references": []
+      },
+      {
+        "id": "763d5eb8f0db76eeed73882139ef8b4d7f38b325",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: use Label style only for direct labels",
+        "references": []
+      }
+    ]
+  }
 }

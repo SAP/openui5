@@ -33,5 +33,21 @@
         "references": []
       }
     ]
+  },
+  "1.44.42": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "f695cffb31c66dc276b71193662814b8708ec437",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fixed lost focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "71670"
+          }
+        ]
+      }
+    ]
   }
 }

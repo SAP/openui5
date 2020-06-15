@@ -122,5 +122,96 @@
         ]
       }
     ]
+  },
+  "1.58.1": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "bba913cac81d97fb527eb22fd015358d60fc7ee3",
+        "type": "FIX",
+        "text": "Case sensitive view name validation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880499133"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.2": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "eab5758690fc31219c10c6438e5b42dd15b34f6f",
+        "type": "FIX",
+        "text": "sap.ui.fl - MoveControls change handler RevertData with id",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880499383"
+          }
+        ]
+      },
+      {
+        "id": "f9b99e1967287a48ccf50a4561b46a7723d0d4bd",
+        "type": "FIX",
+        "text": "sap.ui.fl : Caching of flex/settings request",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870362666"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.3": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "30a125299f23b15557b2313c69efd127a85ba872",
+        "type": "FIX",
+        "text": "Prevent encoding of URL before hashing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870428480"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.5": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "a719c645f5a317a1e79e3e1956e8bab6b16a94b9",
+        "type": "FIX",
+        "text": "sap.ui.fl.FlexController: On control re-creation, initial dependencies from change persistence map are not copied for failing changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005198692018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.6": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "26d790d580005ae12cbbba78a129e35046c5f69b",
+        "type": "FIX",
+        "text": "sap.ui.fl: Changes for VariantManagement are stored as instance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880596129"
+          }
+        ]
+      }
+    ]
   }
 }

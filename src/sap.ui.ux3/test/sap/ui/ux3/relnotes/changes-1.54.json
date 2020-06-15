@@ -5,18 +5,13 @@
       {
         "id": "d521f198392b49dbda4e85258056901425c2d4f6",
         "type": "FIX",
-        "text": "sap.ui.ux3.DataSetSimpleView: fix failing unit tests",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770507954"
-          }
-        ]
+        "text": " sap.ui.ux3.DataSetSimpleView: fix failing unit tests",
+        "references": []
       },
       {
         "id": "689a818c2583b300739affd752157b52603a7117",
         "type": "FEATURE",
-        "text": "ManagedObject(-Metadata): aggregation forwarding",
+        "text": " ManagedObject(-Metadata): aggregation forwarding",
         "references": []
       }
     ]

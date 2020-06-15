@@ -114,5 +114,102 @@
         ]
       }
     ]
+  },
+  "1.58.1": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "0f2cbd2ba396904b8f0d362b5cc3911eea5d098e",
+        "type": "FIX",
+        "text": "Table: Avoid horizontal scrolling of cell content on focus in rtl",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880453585"
+          }
+        ]
+      },
+      {
+        "id": "74ec77e6133c2e6e1cc894763b76c43986457ca1",
+        "type": "FIX",
+        "text": "Table: Clicking on the column resizer no longer causes scrolling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880305886"
+          }
+        ]
+      },
+      {
+        "id": "2fa6d09a2476a684f076f36bacd948c0a3141143",
+        "type": "FIX",
+        "text": "Table: Scrolling to last row with mouse wheel",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870303491"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.3": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "564e76cddde746bc2ac8fd11bc1153cbf95ecd44",
+        "type": "FIX",
+        "text": "TableUtils: Update OpenSource usage documentation",
+        "references": []
+      }
+    ]
+  },
+  "1.58.4": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "785555b937a30d91c6d94a64cf25da97e287c18d",
+        "type": "FIX",
+        "text": "Table: Avoid infinite requests if no count is provided",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880537465"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.5": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "ea94193c38dda40c9ea9e985159a56cc8be3fe3e",
+        "type": "FIX",
+        "text": "Table: Update the scroll position when setting firstVisibleRow",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880583236"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.6": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "2a1844fc6b63b117da67eca72487a97e4aeed909",
+        "type": "FIX",
+        "text": "Table: Horizontal scroll position on focus in RTL with Unit Tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880609454"
+          }
+        ]
+      }
+    ]
   }
 }

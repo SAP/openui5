@@ -1,0 +1,52 @@
+{
+  "1.34.4": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "229509a7e5a8c4dd10ffce0acb61a25627564e73",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: Focus is now styled correctly",
+        "references": []
+      }
+    ]
+  },
+  "1.34.10": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "d7b638444989c9f281403a0d3cfc1e0bf8c23808",
+        "type": "FIX",
+        "text": "sap.tnt.SideNavigation: Blinking effect on collapse is not visible anymore",
+        "references": []
+      }
+    ]
+  },
+  "1.34.12": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "a22190bb1fc921b11f2263af0b2ba0875edb9ee8",
+        "type": "FEATURE",
+        "text": "sap.m.NavigationListItem: Added one click navigation",
+        "references": []
+      },
+      {
+        "id": "8e210acf0914758eddd0f4a7c63fbc1bcf991598",
+        "type": "FIX",
+        "text": "sap.tnt.SideNavigation: Window scrolling in iOS is now prevented",
+        "references": []
+      }
+    ]
+  },
+  "1.34.13": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "f428cfc9618876f5cd087d60fae24badddfd9acb",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: Icon rendering issue solved",
+        "references": []
+      }
+    ]
+  }
+}

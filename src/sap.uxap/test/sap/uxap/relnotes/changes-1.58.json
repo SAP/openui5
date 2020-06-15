@@ -190,5 +190,102 @@
         ]
       }
     ]
+  },
+  "1.58.1": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "75f84a26723270b5ee71e36b9a6f4230650de136",
+        "type": "FIX",
+        "text": "uxap.AnchorBar: Custom button in sub-section behavior fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880524015"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.4": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "e2290323d803433074123cefe5e297e1042b1ce0",
+        "type": "FIX",
+        "text": "ObjectPageSubSection: Aligned SimpleForm Toolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870425815"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.5": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "cec4ea742360b560cc6ffee66a808fc0a91842de",
+        "type": "FIX",
+        "text": "sap.uxap.AnchorBar: Fixed tab focusable state",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870391330"
+          }
+        ]
+      },
+      {
+        "id": "c8c4080900f73a20df1f3fb39aabdcc4cd9fe040",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Corrected content height calculation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880555126"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.6": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "58be787943235d4f54173c8a3428a55eb4522fb2",
+        "type": "FIX",
+        "text": "AnchorBar: Overlapping MenuButton's text is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880465502"
+          }
+        ]
+      },
+      {
+        "id": "d9524f941fbdb91bd40aaae45c11d72c187cc310",
+        "type": "FIX",
+        "text": "ObjectPageHeader - Fixed styles of navigationBar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880457387"
+          }
+        ]
+      },
+      {
+        "id": "9e32fea6de17572989aef83466c37a749b7261d9",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader: Rectangle header image layout fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880620769"
+          }
+        ]
+      }
+    ]
   }
 }

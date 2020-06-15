@@ -5,69 +5,71 @@
       {
         "id": "2984a94ad722bab5414f11490bb4dba62e8bae0e",
         "type": "FIX",
-        "text": "Link in Form: focus outline too large",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780131982"
-          }
-        ]
+        "text": " Link in Form: focus outline too large",
+        "references": []
       },
       {
         "id": "cd11a37880c1e40485093aff016695d20c0ec748",
         "type": "FIX",
-        "text": "commons.MessageRenderer: write control Id",
+        "text": " commons.MessageRenderer: write control Id",
         "references": []
       },
       {
         "id": "36f99344a394ac7278aa5098273066ba424cd6c8",
         "type": "FIX",
-        "text": "sap.ui.commons.Callout: Prevent standard tooltip from showing on click",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780041849"
-          }
-        ]
+        "text": " sap.ui.commons.Callout: Prevent standard tooltip from showing on click",
+        "references": []
       },
       {
         "id": "4fa8894d2a66d7c52582b2feb79e72b0e951dbc4",
         "type": "FIX",
-        "text": "sap.ui.commons.ComboBox: hover and active state fixed for sap_hcb",
+        "text": " sap.ui.commons.ComboBox: hover and active state fixed for sap_hcb",
         "references": []
       },
       {
         "id": "a1197ad0e98c2a3e0f8b2f69ce1f5cb5a2215d7d",
         "type": "FIX",
-        "text": "sap.ui.commons.ComboBox: hover and active state fixed for sap_hcb",
+        "text": " sap.ui.commons.ComboBox: hover and active state fixed for sap_hcb",
         "references": []
       },
       {
         "id": "b438905d8efae24a031ccb617c02094fa3bc2cee",
         "type": "FIX",
-        "text": "sap.ui.commons.RadioButtonGroup: Layout issue when colums are set fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780046507"
-          }
-        ]
+        "text": " sap.ui.commons.RadioButtonGroup: Layout issue when colums are set fixed",
+        "references": []
       },
       {
         "id": "508841d987beefccbb3508a57d150ee83c3c8017",
         "type": "FIX",
-        "text": "sap.ui.commons.Slider: Setting of limit values work correctly",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780124586"
-          }
-        ]
+        "text": " sap.ui.commons.Slider: Setting of limit values work correctly",
+        "references": []
       },
       {
         "id": "2413bdc2392876524ea5136e41b1ead2d87482bb",
         "type": "FIX",
-        "text": "sap.ui.commons.ValueHelpField: hover and active state fixed for sap_hcb",
+        "text": " sap.ui.commons.ValueHelpField: hover and active state fixed for sap_hcb",
+        "references": []
+      }
+    ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "3a7965bea2de5675ecc46bf0a163335482d13adc",
+        "type": "FIX",
+        "text": " sap.ui.commons.RichTooltip: Remove randomly failing qunit test.",
+        "references": []
+      }
+    ]
+  },
+  "1.48.9": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "4396e3b7b08e660212aa87ab51999bf83f14d3b8",
+        "type": "FIX",
+        "text": " sap.ui.commons.TextField - paste of text with line endings on IE works.",
         "references": []
       }
     ]

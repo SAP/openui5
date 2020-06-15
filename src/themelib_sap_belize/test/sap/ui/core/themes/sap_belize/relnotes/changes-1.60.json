@@ -5,7 +5,7 @@
       {
         "id": "341f097a5fa58597c26c6c3f22b6664c192c66cc",
         "type": "FIX",
-        "text": "sap.m.ComboBox: Items' loading indicator returned back",
+        "text": "sap.m.ComboBox: Items\u0027 loading indicator returned back",
         "references": [
           {
             "type": "BCP",
@@ -38,7 +38,7 @@
       {
         "id": "9420f87a91bc80aa2ccede39f175d5dd039e43a2",
         "type": "FIX",
-        "text": "Calendar: Picker's selected month/year style overriding focus in HC fixed",
+        "text": "Calendar: Picker\u0027s selected month/year style overriding focus in HC fixed",
         "references": [
           {
             "type": "BCP",
@@ -111,6 +111,104 @@
           {
             "type": "BCP",
             "reference": "1870158382"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "212c84bde90fccc28dfccef244873d82f85670ae",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Title focus outline fixed in HC themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880705922"
+          }
+        ]
+      },
+      {
+        "id": "cb73b49a028e52af9fa702b88e0d5cfb99e1fd61",
+        "type": "FIX",
+        "text": "sap.f.DynamicPageHeader: Fixed background in Shell",
+        "references": []
+      },
+      {
+        "id": "b820fbb6427109ad7f4dcd16b60a11963c3510be",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: fix border CSS for BC, HCB and HCW themes",
+        "references": []
+      }
+    ]
+  },
+  "1.60.4": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "1b6caf1ca860e22346d9065b3e17b79f220a42e9",
+        "type": "FIX",
+        "text": "Font 72 loading issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003419012018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.6": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "d6cff3038530a6c64308982eef91942d45c848a1",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: duplicated focus outline, spec implemented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880494664"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.14": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "c7af7063d2b9641fe3ce2bb055c338edfa039461",
+        "type": "FIX",
+        "text": " sap.m.Label: Color for displayOnly property is changed",
+        "references": []
+      }
+    ]
+  },
+  "1.60.15": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "ff9958f5b9aa5157ebef4b8b0a0d763ad36539c8",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Text selection in Firefox is fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.60.19": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "92a323f57783a69c4cd64798e77138429223c12b",
+        "type": "FIX",
+        "text": " sap.m.Button: icon shown correctly in belize deep",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880460732"
           }
         ]
       }

@@ -1,160 +1,239 @@
 {
-	"1.38.0": {
-		"date": "April 2016",
-		"notes": [
-			{
-				"id": "2f8e07b1aade5941660e9898643cfbd514e32e02",
-				"type": "FIX",
-				"text": "sap.ui.ux3.Shell: When there's a table inside, the shell is displaying scrollbar consistently accross browsers\"",
-				"references": []
-			},
-			{
-				"id": "2ac227ffa8729e119821d8ac327acf7e5cfffd68",
-				"type": "FIX",
-				"text": "NavigationBar - navigation was moving when adding new items",
-				"references": []
-			},
-			{
-				"id": "e6066550d225e52d6b93a742c4a446b7b93cc929",
-				"type": "FIX",
-				"text": "NavigationBar arrows were missing in HCB",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680008669"
-					}
-				]
-			},
-			{
-				"id": "2629b588f28d1b58e708fa96823308a84794225d",
-				"type": "FIX",
-				"text": "[m/commons].Dialog, ux3.ToolPopup: Preserve DOM only if rendered",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670100799"
-					}
-				]
-			},
-			{
-				"id": "8bab239018250b75a084000a61851384e7a097d5",
-				"type": "FIX",
-				"text": "m.Dialog,commons.Dialog,ux3.ToolPopup: Preserve Content on Remove",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670033924"
-					}
-				]
-			},
-			{
-				"id": "f55f113a6baf14d6c671cb8657eabd3eca31a3c7",
-				"type": "FIX",
-				"text": "sap.m.ActionBar: Aligned updatePost arrow position",
-				"references": []
-			},
-			{
-				"id": "93fccb5f22a8cf3bf679297a83f652c9b3814820",
-				"type": "FIX",
-				"text": "sap.m.RadioButtonGroup: setEnabled behaviour corrected",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680010754"
-					}
-				]
-			},
-			{
-				"id": "9fb664e46a040f213f01d5d95caaba7e7517bf68",
-				"type": "FIX",
-				"text": "sap.ui.ux3.ActionBar: fix css img urls",
-				"references": []
-			},
-			{
-				"id": "5f6a679b96d7f349c89dc48fa89b5129b6db5a45",
-				"type": "FIX",
-				"text": "sap.ui.ux3.ExactList: fix css img urls",
-				"references": []
-			},
-			{
-				"id": "a87da8f0b3d4279918e7160f8c84947165c84f5a",
-				"type": "FIX",
-				"text": "sap.ui.ux3.Feeder: support edge browser",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670071390"
-					}
-				]
-			},
-			{
-				"id": "be71e7100b3c13dd7f47184b3fffdb9cea6a6cec",
-				"type": "FIX",
-				"text": "sap.ui.ux3.NotificationBar: Minimized bar hovering is now consistent across all desktop browsers",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570896877"
-					}
-				]
-			},
-			{
-				"id": "cf1f4cd39fc52306f798e2e031ac1c2a24c49e8a",
-				"type": "FIX",
-				"text": "sap.ui.ux3.Shell: Align text selection behavior across browsers",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100001917542016"
-					}
-				]
-			},
-			{
-				"id": "768900d197d32a5535c39a48985ac227e231a0af",
-				"type": "FIX",
-				"text": "sap.ui.ux3.Shell: When there's a table inside, the shell is displaying scrollbar consistently accross browsers",
-				"references": []
-			},
-			{
-				"id": "d1d5fec0824b8034d9cbe5ccfbdfe668d7f7eaea",
-				"type": "FIX",
-				"text": "sap.ui.ux3.Shell: fix css img urls",
-				"references": []
-			},
-			{
-				"id": "28a0c6da31d14b930bbcfd309f1f6e7fe3b79870",
-				"type": "FIX",
-				"text": "sap.ui.ux3.ToolPopup: fix css img urls",
-				"references": []
-			},
-			{
-				"id": "d42ebff914fe1a1a4f1f508512196d7043e6fd1e",
-				"type": "FIX",
-				"text": "sap.ui.ux3.ToolPopup: fix css img urls (again)",
-				"references": []
-			},
-			{
-				"id": "6673fb0b39d27ffb8fcf71460bed18611656b07e",
-				"type": "FIX",
-				"text": "ux3.NavigationBar was announcing its navigation arrows",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670066798"
-					}
-				]
-			},
-			{
-				"id": "2f71510bb09973df6129fb9b75269e45745b96f2",
-				"type": "FIX",
-				"text": "ux3.Shell: Left and right part of the header do not overlap",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580210084"
-					}
-				]
-			}
-		]
-	}
+  "1.38.0": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "2f8e07b1aade5941660e9898643cfbd514e32e02",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Shell: When there's a table inside, the shell is displaying scrollbar consistently accross browsers\"",
+        "references": []
+      },
+      {
+        "id": "2ac227ffa8729e119821d8ac327acf7e5cfffd68",
+        "type": "FIX",
+        "text": "NavigationBar - navigation was moving when adding new items",
+        "references": []
+      },
+      {
+        "id": "e6066550d225e52d6b93a742c4a446b7b93cc929",
+        "type": "FIX",
+        "text": "NavigationBar arrows were missing in HCB",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680008669"
+          }
+        ]
+      },
+      {
+        "id": "2629b588f28d1b58e708fa96823308a84794225d",
+        "type": "FIX",
+        "text": "[m/commons].Dialog, ux3.ToolPopup: Preserve DOM only if rendered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670100799"
+          }
+        ]
+      },
+      {
+        "id": "8bab239018250b75a084000a61851384e7a097d5",
+        "type": "FIX",
+        "text": "m.Dialog,commons.Dialog,ux3.ToolPopup: Preserve Content on Remove",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670033924"
+          }
+        ]
+      },
+      {
+        "id": "f55f113a6baf14d6c671cb8657eabd3eca31a3c7",
+        "type": "FIX",
+        "text": "sap.m.ActionBar: Aligned updatePost arrow position",
+        "references": []
+      },
+      {
+        "id": "93fccb5f22a8cf3bf679297a83f652c9b3814820",
+        "type": "FIX",
+        "text": "sap.m.RadioButtonGroup: setEnabled behaviour corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680010754"
+          }
+        ]
+      },
+      {
+        "id": "9fb664e46a040f213f01d5d95caaba7e7517bf68",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ActionBar: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "5f6a679b96d7f349c89dc48fa89b5129b6db5a45",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ExactList: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "a87da8f0b3d4279918e7160f8c84947165c84f5a",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Feeder: support edge browser",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670071390"
+          }
+        ]
+      },
+      {
+        "id": "be71e7100b3c13dd7f47184b3fffdb9cea6a6cec",
+        "type": "FIX",
+        "text": "sap.ui.ux3.NotificationBar: Minimized bar hovering is now consistent across all desktop browsers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570896877"
+          }
+        ]
+      },
+      {
+        "id": "cf1f4cd39fc52306f798e2e031ac1c2a24c49e8a",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Shell: Align text selection behavior across browsers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012002523100001917542016"
+          }
+        ]
+      },
+      {
+        "id": "768900d197d32a5535c39a48985ac227e231a0af",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Shell: When there's a table inside, the shell is displaying scrollbar consistently accross browsers",
+        "references": []
+      },
+      {
+        "id": "d1d5fec0824b8034d9cbe5ccfbdfe668d7f7eaea",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Shell: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "28a0c6da31d14b930bbcfd309f1f6e7fe3b79870",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "d42ebff914fe1a1a4f1f508512196d7043e6fd1e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: fix css img urls (again)",
+        "references": []
+      },
+      {
+        "id": "6673fb0b39d27ffb8fcf71460bed18611656b07e",
+        "type": "FIX",
+        "text": "ux3.NavigationBar was announcing its navigation arrows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670066798"
+          }
+        ]
+      },
+      {
+        "id": "2f71510bb09973df6129fb9b75269e45745b96f2",
+        "type": "FIX",
+        "text": "ux3.Shell: Left and right part of the header do not overlap",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580210084"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.9": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "ad96f88c9bb5a5c3e45bad2eebb6d1eea9e8bfcc",
+        "type": "FIX",
+        "text": "Theme image URLs in commons/ux3/layout libraries",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670427408"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670427766"
+          }
+        ]
+      },
+      {
+        "id": "11d12d659312e47dcc2814e65ce1443e8ad688e9",
+        "type": "FIX",
+        "text": "sap.ui.ux3.DataSetSimpleView: correctly destroy items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680215892"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.15": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "9dcbc1b7b10645fa40995d90d469a93664672a01",
+        "type": "FIX",
+        "text": "sap.ui.ux3.FeedChunk: tools button icon missing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680314587"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.17": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "2a79e28dd3119cfc83cdbb0ea1176f467fe91f79",
+        "type": "FIX",
+        "text": "sap.ui.ux3.OverlayDialog: Corrected positioning values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680283946"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.37": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "10dc5cd37dad0ca55f0b56fc99b557a9e61324d4",
+        "type": "FIX",
+        "text": "sap.ui.ux3.DataSetSimpleView: fix failing unit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770507954"
+          }
+        ]
+      }
+    ]
+  }
 }

@@ -5,25 +5,59 @@
       {
         "id": "23959d181f477d89f79c8638010b9f2897bfd255",
         "type": "FEATURE",
-        "text": "new demo apps landing page",
+        "text": " new demo apps landing page",
         "references": []
       },
       {
         "id": "512325029f1d4ddc3df257a7767f4d2c66605b87",
         "type": "FIX",
-        "text": "sap.tnt.ToolPage: Issue with resizing in combi devices now corrected",
+        "text": " sap.tnt.ToolPage: Issue with resizing in combi devices now corrected",
         "references": []
       },
       {
         "id": "64ffb1aef46d7e506a93de5e45b1a62f21940622",
         "type": "FIX",
-        "text": "sap.tnt.ToolPage: SideNavigation overlapping the content in combi devices now corrected",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670554554"
-          }
-        ]
+        "text": " sap.tnt.ToolPage: SideNavigation overlapping the content in combi devices now corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "6f4fcc1a823d6f870006d175fa26eb2c2367332c",
+        "type": "FIX",
+        "text": "  Add Improvements to Run sap.tnt.demokit.toolpageapp on Mobile Devices",
+        "references": []
+      }
+    ]
+  },
+  "1.46.7": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "e38774f578cd7bb2f5fb1e3fed48bf5c350ed15c",
+        "type": "FIX",
+        "text": " sap.tnt.ToolPage: Hidden footer when XmlView\u0027s height is 100% now corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.46.11": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "31c3b1818bbd996f32bbcec0c6337415b97aa6c9",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Item navigation is now correct",
+        "references": []
+      },
+      {
+        "id": "890d4264ce046d68a8c25eb13cceecd4fe01dc11",
+        "type": "FIX",
+        "text": " sap.tnt.ToolPage: Tool page is now correctly displayed, when there is no header",
+        "references": []
       }
     ]
   }

@@ -295,7 +295,7 @@
       {
         "id": "6473fa8c4769877e5175c11f764dc44442ba992e",
         "type": "FIX",
-        "text": "sap.m.TabContainer: example doesn't throw error",
+        "text": "sap.m.TabContainer: example doesn\u0027t throw error",
         "references": [
           {
             "type": "BCP",
@@ -452,7 +452,7 @@
       {
         "id": "34d271c415484b9a110e36998fdd3e62c6736c35",
         "type": "FIX",
-        "text": "sap.m.MultiComboBox: Better synchronisation between selected keys & items",
+        "text": "sap.m.MultiComboBox: Better synchronisation between selected keys \u0026 items",
         "references": [
           {
             "type": "BCP",
@@ -639,78 +639,44 @@
       {
         "id": "2bc1d196eb373f90352a218960bdd12fec450a1d",
         "type": "FEATURE",
-        "text": "sap.m.DatePicker: Picker type now depends on display format",
+        "text": " sap.m.DatePicker: Picker type now depends on display format",
         "references": []
       },
       {
         "id": "685f5b9a2713d7eeee37f88eb6f3105f094cff5b",
         "type": "FIX",
-        "text": "PdfViewer: Add link to URL Whitelist Filtering and PDF Viewer dev guide article",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970277341"
-          }
-        ]
+        "text": " PdfViewer: Add link to URL Whitelist Filtering and PDF Viewer dev guide article",
+        "references": []
       },
       {
         "id": "bf071dda2681b0c42cdad34f8cb4bfcd99be1d55",
         "type": "FIX",
-        "text": "m.Button: Text is always read by screen readers",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970225991"
-          }
-        ]
+        "text": " m.Button: Text is always read by screen readers",
+        "references": []
       },
       {
         "id": "eab3a7236791992368826438005a6e209f4de943",
         "type": "FIX",
-        "text": "sap.m.Input: change event is now fired only once",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970220864"
-          },
-          {
-            "type": "BCP",
-            "reference": "002075129500003028982019"
-          }
-        ]
+        "text": " sap.m.Input: change event is now fired only once",
+        "references": []
       },
       {
         "id": "09122fa5e363a2dd3f9c499446f9e8f50a884017",
         "type": "FIX",
-        "text": "sap.m.ObjectAttribute: Not truncated now when used outside of ObjectList",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970267395"
-          }
-        ]
+        "text": " sap.m.ObjectAttribute: Not truncated now when used outside of ObjectList",
+        "references": []
       },
       {
         "id": "4f6eb4127bb2bacf7759dfc28bb766b7760ecd04",
         "type": "FIX",
-        "text": "sap.m.QuickView: Content can now be scrolled with the keyboard",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980265832"
-          }
-        ]
+        "text": " sap.m.QuickView: Content can now be scrolled with the keyboard",
+        "references": []
       },
       {
         "id": "1e426c7e66e8998c88054a40982ecd53820d2a7f",
         "type": "FIX",
-        "text": "uploadSet: Item File url is clickable even if the url is not set at all",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970217401"
-          }
-        ]
+        "text": " uploadSet: Item File url is clickable even if the url is not set at all",
+        "references": []
       }
     ]
   }

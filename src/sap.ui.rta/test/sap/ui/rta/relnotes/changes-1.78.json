@@ -31,5 +31,32 @@
         "references": []
       }
     ]
+  },
+  "1.78.1": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "cf8ffe083f2d3b60f531ba682f20ecbdcf5ba435",
+        "type": "FIX",
+        "text": " sap.ui.rta: SaveAs button from RTA toolbar did not work.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002855222020"
+          }
+        ]
+      },
+      {
+        "id": "11396b3d249fbddbd7db63ad8516f51f4e0c9710",
+        "type": "FIX",
+        "text": " Fixing the creation of app variants on top of app",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2030285522"
+          }
+        ]
+      }
+    ]
   }
 }

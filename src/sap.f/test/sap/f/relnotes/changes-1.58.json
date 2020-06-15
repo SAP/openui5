@@ -249,5 +249,75 @@
         "references": []
       }
     ]
+  },
+  "1.58.2": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "ace82a4088f6cb51678a20416e357f0a9a39b9c6",
+        "type": "FIX",
+        "text": "DynamicPage: Initially snapped header excluded from tab chain",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880276579"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.3": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "b2570821b4fba5a814ea568dfe6d8ceab3470e35",
+        "type": "FIX",
+        "text": "FlexibleColumnLayout: Fixed disappearing of navigation actions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880300169"
+          }
+        ]
+      },
+      {
+        "id": "7d4dc0960992fc2925852029dafd083b133c3ccf",
+        "type": "FIX",
+        "text": "FlexibleColumnLayout: LocalBusyIndicator's z-index is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880527737"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.6": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "04f6a3262901728d74771e20873d4b859c23063b",
+        "type": "FIX",
+        "text": "sap.f.DynamicPageTitle: Fixed CSS styles in snapped/expanded content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880687150"
+          }
+        ]
+      },
+      {
+        "id": "40e8765b1d1a5e047cbb001780d65d143e007822",
+        "type": "FIX",
+        "text": "sap.f.FlexibleColumnLayout: Fixed Fiori 2.0 tutorial",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880673013"
+          }
+        ]
+      }
+    ]
   }
 }

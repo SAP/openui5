@@ -23,7 +23,7 @@
       {
         "id": "b26b5cfc8ada2c0f5bcfe86a1f04f1d50b72cb8e",
         "type": "FIX",
-        "text": "sap.ui.core: Remove circular dependency Component <-> Core",
+        "text": "sap.ui.core: Remove circular dependency Component \u003c-\u003e Core",
         "references": []
       },
       {
@@ -299,25 +299,20 @@
       {
         "id": "24b02e63c461062f2711b641a75ad835f80e158e",
         "type": "FEATURE",
-        "text": "Expose UI5 events as custom browser events.",
+        "text": " Expose UI5 events as custom browser events.",
         "references": []
       },
       {
         "id": "7cc7f3a1a0ba4b21c2f77963128f897205f50cb6",
         "type": "FIX",
-        "text": "es6-shim: include es6-promise polyfill for Edge (17)",
+        "text": " es6-shim: include es6-promise polyfill for Edge (17)",
         "references": []
       },
       {
         "id": "43fa45c97cc45ff06deefdb9aff8e12c71c2305c",
         "type": "FIX",
-        "text": "jQuery.sap.history: make the qUnit tests stable",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980043386"
-          }
-        ]
+        "text": " jQuery.sap.history: make the qUnit tests stable",
+        "references": []
       }
     ]
   }
