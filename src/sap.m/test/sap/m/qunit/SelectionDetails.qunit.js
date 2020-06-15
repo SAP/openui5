@@ -99,6 +99,11 @@ sap.ui.define([
 		assert.equal(this.oSelectionDetails.getAggregation("_button").getEnabled(), true, "The button enabled");
 	});
 
+	QUnit.test("Button has tooltip defined", function(assert) {
+		//Assert
+		assert.equal(this.oSelectionDetails.getAggregation("_button").getAggregation("tooltip"), "Details", "The button tooltip text is 'Details'");
+	});
+
 	QUnit.module("API methods", {
 		beforeEach : function() {
 			this.oResponsivePopover = new ResponsivePopover();
