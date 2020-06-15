@@ -92,7 +92,7 @@ sap.ui.define([
 		Object.keys(mParameters).forEach(function (sKey) {
 			var vValue = mParameters[sKey];
 
-			if (sKey.indexOf("$$") !== 0) {
+			if (!sKey.startsWith("$$")) {
 				return;
 			}
 			if (aAllowed.indexOf(sKey) < 0) {

@@ -242,7 +242,7 @@ sap.ui.define([
 		if (sTerm === sExpectedTerm) {
 			return "";
 		}
-		if (sTerm.indexOf(sExpectedTerm) === 0 && sTerm[sExpectedTerm.length] === "#"
+		if (sTerm.startsWith(sExpectedTerm) && sTerm[sExpectedTerm.length] === "#"
 				&& sTerm.indexOf("@", sExpectedTerm.length) < 0) {
 			return sTerm.slice(sExpectedTerm.length + 1);
 		}

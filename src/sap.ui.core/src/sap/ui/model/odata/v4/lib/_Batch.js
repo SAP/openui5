@@ -73,7 +73,7 @@ sap.ui.define([
 	 */
 	function getChangeSetContentType(sMimeTypeHeaders) {
 		var sContentType = getHeaderValue(sMimeTypeHeaders, "content-type");
-		return sContentType.indexOf("multipart/mixed;") === 0 ? sContentType : undefined;
+		return sContentType.startsWith("multipart/mixed;") ? sContentType : undefined;
 	}
 
 	/**
