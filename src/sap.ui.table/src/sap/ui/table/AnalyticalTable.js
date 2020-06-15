@@ -181,6 +181,7 @@ sap.ui.define([
 	};
 
 	AnalyticalTable.prototype._getContexts = TreeTable.prototype._getContexts;
+	AnalyticalTable.prototype._getRowContexts = TreeTable.prototype._getRowContexts;
 
 	/**
 	 * Initialization of the AnalyticalTable control

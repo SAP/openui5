@@ -278,6 +278,18 @@ sap.ui.define([
 		}
 	};
 
+	TreeTable.prototype._getRowContexts = function() {
+		var iOldTotalRowCount = this._getTotalRowCount();
+		var aRowContexts = Table.prototype._getRowContexts.apply(this, arguments);
+		var iNewTotalRowCount = this._getTotalRowCount();
+
+		if (TableUtils.isVariableRowHeightEnabled(this) && iOldTotalRowCount !== iNewTotalRowCount) {
+			return Table.prototype._getRowContexts.apply(this, arguments);
+		}
+
+		return aRowContexts;
+	};
+
 	TreeTable.prototype._onGroupHeaderChanged = function(iRowIndex, bExpanded) {
 		this.fireToggleOpenState({
 			rowIndex: iRowIndex,
