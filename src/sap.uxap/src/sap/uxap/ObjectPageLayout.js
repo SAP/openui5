@@ -1053,6 +1053,8 @@ sap.ui.define([
 			sFooterAriaLabel,
 			iWidth = this._getWidth(this);
 
+		this._bInvalidatedAndNotRerendered = false;
+
 		this._iResizeId = ResizeHandler.register(this, this._onUpdateScreenSize.bind(this));
 
 		this._ensureCorrectParentHeight();
@@ -1415,6 +1417,11 @@ sap.ui.define([
 			this._checkSubSectionVisibilityChange();
 		} else if (this.$().is(":visible")) {
 			this._scrollTo(0, 0);
+
+			if (!this._bInvalidatedAndNotRerendered) {
+				this._sScrolledSectionId = null;
+				this._updateSelectionOnScroll(0);
+			}
 		}
 	};
 
@@ -3482,6 +3489,8 @@ sap.ui.define([
 	 * @protected
 	 */
 	ObjectPageLayout.prototype.invalidate = function (oOrigin) {
+		this._bInvalidatedAndNotRerendered = true;
+
 		if (this.getUseIconTabBar() && oOrigin && (oOrigin instanceof ObjectPageSection) && !oOrigin.isActive() && this._oSectionInfo[oOrigin.getId()]) {
 			return; // no need to invalidate when an inactive tab is changed
 		}
