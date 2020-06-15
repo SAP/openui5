@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
+	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
@@ -20,6 +21,7 @@ sap.ui.define([
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	FlexCustomData,
+	Condenser,
 	Layer,
 	jQuery,
 	sinon,
@@ -27,7 +29,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	jQuery('#qunit-fixture').hide();
+	jQuery("#qunit-fixture").hide();
 	var sandbox = sinon.sandbox.create();
 	var sReturnValue = "returnValue";
 
@@ -56,12 +58,13 @@ sap.ui.define([
 
 	QUnit.module("Given PersistenceWriteAPI", {
 		beforeEach: function () {
+			this.oAppComponent = {
+				getId: function() {return "appComponent";}
+			};
 			this.vSelector = {
 				elementId: "selector",
 				elementType: "sap.ui.core.Control",
-				appComponent: {
-					getId: function() {return "appComponent";}
-				}
+				appComponent: this.oAppComponent
 			};
 
 			this.aObjectsToDestroy = [];
@@ -608,6 +611,66 @@ sap.ui.define([
 				assert.equal(fnPersistenceStub.calledOnce, false, "flex/info not called once");
 				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
 				assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "flex/info isPublishEnabled is true");
+			});
+		});
+
+		QUnit.test("when _condense is called", function(assert) {
+			var oCondenserStub = sandbox.stub(Condenser, "condense").returns("foo");
+			var mPropertyBag = {
+				selector: this.vSelector,
+				changes: ["a", "b", "c"]
+			};
+			return PersistenceWriteAPI._condense(mPropertyBag).then(function(oReturn) {
+				assert.equal(oCondenserStub.callCount, 1, "the condenser was called");
+				assert.deepEqual(oCondenserStub.lastCall.args[0], this.oAppComponent, "the passed arguments are correct");
+				assert.deepEqual(oCondenserStub.lastCall.args[1], ["a", "b", "c"], "the passed arguments are correct");
+				assert.equal(oReturn, "foo", "the function returns what the Condenser returns");
+			}.bind(this));
+		});
+
+		QUnit.test("when _condense is called  with wrong selector", function(assert) {
+			var oCondenserStub = sandbox.stub(Condenser, "condense").returns("foo");
+			var mPropertyBag = {
+				selector: "notExisting",
+				changes: ["a", "b", "c"]
+			};
+			return PersistenceWriteAPI._condense(mPropertyBag).catch(function(oError) {
+				assert.equal(oCondenserStub.callCount, 0, "the condenser was not called");
+				assert.equal(oError.message, "Invalid application component for selector");
+			});
+		});
+
+		QUnit.test("when _condense is called without selector", function(assert) {
+			var oCondenserStub = sandbox.stub(Condenser, "condense").returns("foo");
+			var mPropertyBag = {
+				changes: ["a", "b", "c"]
+			};
+			return PersistenceWriteAPI._condense(mPropertyBag).catch(function(oError) {
+				assert.equal(oCondenserStub.callCount, 0, "the condenser was not called");
+				assert.equal(oError.message, "An invalid selector was passed");
+			});
+		});
+
+		QUnit.test("when _condense is called without proper changes array", function(assert) {
+			var oCondenserStub = sandbox.stub(Condenser, "condense").returns("foo");
+			var mPropertyBag = {
+				selector: this.vSelector,
+				changes: "a"
+			};
+			return PersistenceWriteAPI._condense(mPropertyBag).catch(function(oError) {
+				assert.equal(oCondenserStub.callCount, 0, "the condenser was not called");
+				assert.equal(oError.message, "Invalid array of changes");
+			});
+		});
+
+		QUnit.test("when _condense is called without changes array", function(assert) {
+			var oCondenserStub = sandbox.stub(Condenser, "condense").returns("foo");
+			var mPropertyBag = {
+				selector: this.vSelector
+			};
+			return PersistenceWriteAPI._condense(mPropertyBag).catch(function(oError) {
+				assert.equal(oCondenserStub.callCount, 0, "the condenser was not called");
+				assert.equal(oError.message, "Invalid array of changes");
 			});
 		});
 	});
