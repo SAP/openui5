@@ -1008,7 +1008,7 @@ function(
 			oTokenizer = this.getAggregation("tokenizer");
 
 
-		if (oPopup.isA("sap.m.Popover")) {
+		if (oPopup && oPopup.isA("sap.m.Popover")) {
 			if (oEvent.relatedControlId) {
 				oRelatedControlDomRef = sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef();
 				bNewFocusIsInSuggestionPopup = containsOrEquals(oPopup.getFocusDomRef(), oRelatedControlDomRef);
