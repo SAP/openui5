@@ -1,0 +1,18 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "69caf943376a1c9b31e76e294938741a8d39eda2",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: IE Polyfill now considers needed columns when calculating how many rows to expand with",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070233031"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -62,6 +62,133 @@
             "reference": "2080158380"
           }
         ]
+      },
+      {
+        "id": "b42f4ac9b8cbe9145581b088f6fb5abecb2bd307",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font",
+        "references": []
+      },
+      {
+        "id": "826ad5cd2de021339a7a20b11f0559b28a161437",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Badge affordance position fixed in custom size",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080149132"
+          }
+        ]
+      },
+      {
+        "id": "e3b947a9e76cc96f6cd74de18019ff295b8d95a6",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Badge icon size adjusted with custom Avatar size",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080150950"
+          }
+        ]
+      },
+      {
+        "id": "0082667d379d4c676efcbb92b8fd865fdc831b8c",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Aria-activedescendant is set on focus change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070259359"
+          }
+        ]
+      },
+      {
+        "id": "63090c6078e651d4c1988c47387019f748bcee8b",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: control doesn\u0027t select a date if there is no initial date/time",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080150667"
+          }
+        ]
+      },
+      {
+        "id": "8434cac6680a6b4665c4bfd8eb58359d53ab74ba",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: _getSuggestionsPopoverPopup method now always returns a popover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080177545"
+          }
+        ]
+      },
+      {
+        "id": "a70e4d7d9ec6d84dda2637156a7feafda01ba50f",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: fixed sample in Demokit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080178544"
+          }
+        ]
+      },
+      {
+        "id": "071feba4866e9f6d4773e0b3e1fb7ee24485253b",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Added GenericTags are not cut in DT title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070257184"
+          }
+        ]
+      },
+      {
+        "id": "9534a7c7e8d44cd7180b624ca6a1f42a92ee2a6c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Appointment name fixed in Drag and Drop Sample in Demokit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080178312"
+          }
+        ]
+      },
+      {
+        "id": "c4140cab661c3126b39a83789b3642649e47618a",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendarHeader: Popover\u0027s hidden label changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070198541"
+          }
+        ]
+      },
+      {
+        "id": "0e283376fe9a26075d00c6d02aff5c343844cf10",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: qunit tests are optimized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080175896"
+          }
+        ]
+      },
+      {
+        "id": "875ff41175ce126d365df298ceb9cf1805373b06",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: tokenUpdate now always fired after token deletion",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080172416"
+          }
+        ]
       }
     ]
   }
