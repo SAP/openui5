@@ -229,5 +229,21 @@
         ]
       }
     ]
+  },
+  "1.71.18": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "9c4c9d8112700ea088ab402dc666791f10199a1b",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: No lazyLoading during animation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970593988"
+          }
+        ]
+      }
+    ]
   }
 }

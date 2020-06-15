@@ -646,5 +646,43 @@
         ]
       }
     ]
+  },
+  "1.71.18": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "739825a7f148667709065f9d3e8ee91004abea5a",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataModel#_loadData: Do not use x-csrf-token for GET requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002585962020"
+          }
+        ]
+      },
+      {
+        "id": "ad2eafe211c8709e618cf0b2514912ab87f51733",
+        "type": "FIX",
+        "text": " Configuration: normalize Theme to sap_fiori_3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002689182020"
+          }
+        ]
+      },
+      {
+        "id": "4dfcafc0844e1639421b434bd52c35997d382280",
+        "type": "FIX",
+        "text": " hasher.js: replace hash should not affect the path in href",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070234256"
+          }
+        ]
+      }
+    ]
   }
 }

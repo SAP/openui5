@@ -1660,5 +1660,36 @@
         ]
       }
     ]
+  },
+  "1.71.18": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "46b4ae88fdd3315541bef5520b307496271b1e0e",
+        "type": "FIX",
+        "text": " sap.m.Button: Press event fires once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006778252019"
+          }
+        ]
+      },
+      {
+        "id": "4ff5a7707227ad70d50be22099b592d3ffd9e6e8",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Control is now rendered correctly on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003368802020"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080072543"
+          }
+        ]
+      }
+    ]
   }
 }
