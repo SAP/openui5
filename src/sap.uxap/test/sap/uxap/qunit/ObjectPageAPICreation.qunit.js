@@ -637,15 +637,16 @@ function (
 
 			// Act
 			oObjectPage.getDomRef().style.display = "none";
+			oSpy.reset();
 			oObjectPage.setSelectedSection(null);
 
-			// Restore the page visibility
-			oSpy.reset();
-			oObjectPage.getDomRef().style.display = sOrigDisplay;
-			oObjectPage._onUpdateScreenSize({ // mock resize handler call after size restored
+			setTimeout(function() {
+				oObjectPage.getDomRef().style.display = sOrigDisplay;
+				oObjectPage._onUpdateScreenSize({ // mock resize handler call after size restored
 				size: { width: 1000, height: 1000 },
 				oldSize: { width: 0, height: 0 }
 			});
+
 			setTimeout(function() {
 				// Check: the selection moved to the first visible section
 				oExpected = {
@@ -660,6 +661,10 @@ function (
 				oObjectPage.destroy();
 				done();
 			}, oObjectPage._getDOMCalculationDelay());
+
+		}, 50);
+
+
 		});
 
 		helpers.renderObject(oObjectPage);
@@ -3066,6 +3071,39 @@ function (
 
 			// Cleanup
 			oObjectPage.destroy();
+		});
+
+		helpers.renderObject(oObjectPage);
+	});
+
+	QUnit.test("Snapping Header with ObjectPageDynamicHeaderTitle when expandedHeading has bigger height than snappedHeading",
+	function (assert) {
+
+		// Arrange
+		var oObjectPage = oFactory.getObjectPageLayoutWithOneVisibleSection(),
+			oHeader = oFactory.getObjectPageDynamicHeaderTitle(),
+			fnDone = assert.async();
+
+		assert.expect(1);
+
+		oHeader.setSnappedHeading(new Button({text: "Heading Button"}));
+		oHeader.setExpandedHeading(new Button({text: "Heading Button"}));
+		oObjectPage.setShowAnchorBar(false);
+		oObjectPage.addHeaderContent(new Button());
+		oObjectPage.setHeaderTitle(oFactory.getObjectPageDynamicHeaderTitle());
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			// Act - Snap header
+			oObjectPage._handleDynamicTitlePress();
+
+			setTimeout(function() {
+				// Assert
+				assert.strictEqual(oObjectPage._bHeaderExpanded, false, "Header is collapsed");
+
+				// Cleanup
+				oObjectPage.destroy();
+				fnDone();
+			}, 100);
 		});
 
 		helpers.renderObject(oObjectPage);
