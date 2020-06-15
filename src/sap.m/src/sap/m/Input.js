@@ -1464,6 +1464,16 @@ function(
 		};
 
 		/**
+		 * Checks if suggest should be triggered.
+		 *
+		 * @private
+		 * @returns {boolean} Determines if suggest should be triggered.
+		 */
+		Input.prototype._shouldTriggerSuggest = function() {
+			return !this._bPopupHasFocus && !this.getStartSuggestion() && !this.getValue() && this.getShowSuggestion();
+		};
+
+		/**
 		 * Shows value help suggestions in table.
 		 *
 		 * @public
@@ -2150,7 +2160,7 @@ function(
 		}
 
 		// fires suggest event when startSuggestion is set to 0 and input has no text
-		if (!this._bPopupHasFocus && !this.getStartSuggestion() && !this.getValue() && this.getShowSuggestion()) {
+		if (this._shouldTriggerSuggest()) {
 			this._triggerSuggest(this.getValue());
 		}
 		this._bPopupHasFocus = undefined;

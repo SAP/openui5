@@ -1320,6 +1320,81 @@ sap.ui.define([
 		oMultiInput1.destroy();
 	});
 
+	QUnit.test("Picker should be correctly updated according to the interaction",  function(assert) {
+		// Arrange
+		var oIndicator, oSpy,
+			oModel = new JSONModel(),
+			aData = [
+				{
+					name: "A Item 1", key: "a-item-1"
+				}, {
+					name: "A Item 2", key: "a-item-2"
+				},{
+					name: "B Item 1", key: "a-item-1"
+				},{
+					name: "B Item 2", key: "a-item-2"
+				},{
+					name: "Other Item", key: "ab-item-1"
+				}
+			],
+			oMultiInput = new MultiInput({
+				width: "100px",
+				filterSuggests: false,
+				showSuggestion: true,
+				startSuggestion: 0
+			});
+
+		oMultiInput.placeAt("content");
+
+		// Act
+		oModel.setData(aData);
+		oMultiInput.setModel(oModel);
+
+		oMultiInput.bindAggregation("suggestionItems", {
+			path: "/",
+			template: new Item({text: "{name}", key: "{key}"})
+		});
+		sap.ui.getCore().applyChanges();
+
+		oMultiInput._$input.trigger("focus");
+		this.clock.tick(400);
+
+		// Assert
+		assert.ok(oMultiInput._oSuggestionPopup.isOpen(), "Suggestions should be visible");
+
+		// Act
+		oMultiInput.setSelectionItem(oMultiInput.getSuggestionItems()[0], true);
+		oMultiInput.setSelectionItem(oMultiInput.getSuggestionItems()[1], true);
+		this.clock.tick(1000);
+
+		oIndicator = oMultiInput.$().find(".sapMTokenizerIndicator");
+
+		// Assert
+		assert.ok(oIndicator[0], "A n-more label is rendered");
+
+		// Act
+		oMultiInput._handleIndicatorPress();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(oMultiInput._oSuggestionPopup.isOpen(), "Suggestions should not be visible");
+		assert.ok(oMultiInput._oSelectedItemPicker.isOpen(), "Suggestions should be visible");
+
+		// Act
+		oMultiInput._oSelectedItemPicker.close();
+		sap.ui.getCore().applyChanges();
+
+		oSpy = sinon.spy(oMultiInput, "_manageListsVisibility");
+		oMultiInput.onfocusin({target: oMultiInput.getDomRef("inner")});
+		this.clock.tick(1000);
+
+		// Assert
+		assert.ok(oSpy.calledWith(false), "Suggestions are visible");
+
+		// Clean up
+		oMultiInput.destroy();
+	});
+
 	QUnit.test("Add tokens on mobile", function(assert) {
 		// system under test
 		this.stub(Device, "system", {
