@@ -86,6 +86,7 @@ sap.ui.define([
 			});
 
 			When.onTheMessagePopover.back();
+			When.onTheMessagePopover.selectMessageTitle(sNoteBoundWarning, /-Note-/, 1);
 
 			When.onTheMessagePopover.close();
 			Then.onTheMainPage.checkMessagesButtonCount(1);

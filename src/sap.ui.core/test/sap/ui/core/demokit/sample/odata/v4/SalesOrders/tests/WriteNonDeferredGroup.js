@@ -50,6 +50,7 @@ sap.ui.define([
 						message : sRaiseErrorMessage
 					}
 				});
+				When.onTheMessagePopover.selectMessageTitle(sRaiseErrorMessage, /-Note-/, 0);
 				When.onTheMessagePopover.close();
 				When.onTheMainPage.changeNoteInSalesOrders(0, "My patched Note");
 				Then.onTheMainPage.checkNote(0, "My patched Note");
