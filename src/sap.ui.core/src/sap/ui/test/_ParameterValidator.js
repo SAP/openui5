@@ -144,14 +144,14 @@ sap.ui.define([
 				+ oValue + "' was passed";
 		},
 		string: function (sValue, sPropertyName) {
-			if (jQueryDOM.type(sValue) === "string") {
+			if (typeof sValue === "string" || sValue instanceof String) {
 				return "";
 			}
 			return "the '" + sPropertyName + "' parameter needs to be a string but '"
 				+ sValue + "' was passed";
 		},
 		bool: function (bValue, sPropertyName) {
-			if (jQueryDOM.type(bValue) === "boolean") {
+			if (typeof bValue === "boolean") {
 				return "";
 			}
 			return "the '" + sPropertyName + "' parameter needs to be a boolean value but '"

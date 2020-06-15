@@ -96,19 +96,19 @@ sap.ui.define([
     constructor : function(vFeature, fnStepDefsConstructor, fnAlternateTestStepGenerator) {
       UI5Object.apply(this, arguments);
 
-      if (jQueryDOM.type(vFeature) === "string") {
+      if (typeof vFeature === "string" || vFeature instanceof String) {
         vFeature = simpleGherkinParser.parseFile(vFeature);
 
-      // else if the type is not a String and not a Feature object
-      } else if ((jQueryDOM.type(vFeature) !== "object") || !vFeature.scenarios) {
+      // else if the type is not a String and not a Feature object (or not given)
+      } else if (!vFeature || (typeof vFeature !== "object") || !vFeature.scenarios) {
         throw new Error("GherkinTestGenerator constructor: parameter 'vFeature' must be a valid String or a valid Feature object");
       }
 
-      if ((jQueryDOM.type(fnStepDefsConstructor) !== "function") || !((new fnStepDefsConstructor())._generateTestStep)) {
+      if ((typeof fnStepDefsConstructor !== "function") || !((new fnStepDefsConstructor())._generateTestStep)) {
         throw new Error("GherkinTestGenerator constructor: parameter 'fnStepDefsConstructor' must be a valid StepDefinitions constructor");
       }
 
-      if (fnAlternateTestStepGenerator && jQueryDOM.type(fnAlternateTestStepGenerator) !== "function") {
+      if (fnAlternateTestStepGenerator && typeof fnAlternateTestStepGenerator !== "function") {
         throw new Error("GherkinTestGenerator constructor: if specified, parameter 'fnAlternateTestStepGenerator' must be a valid Function");
       }
 
@@ -202,7 +202,7 @@ sap.ui.define([
         throw new Error("Run 'generate' before calling 'execute'");
       }
       if (!oTestStep ||
-        (!oTestStep.skip && ((jQueryDOM.type(oTestStep.func) !== "function") || (jQueryDOM.type(oTestStep.parameters) !== "array"))))  {
+        (!oTestStep.skip && ((typeof oTestStep.func !== "function") || !Array.isArray(oTestStep.parameters))))  {
         throw new Error("Input parameter 'oTestStep' is not a valid TestStep object.");
       }
 
@@ -385,7 +385,7 @@ sap.ui.define([
      */
     _convertScenarioExamplesToListOfObjects: function(aExamples) {
       // if aExamples is a simple list then convert from simple list to list-of-lists before executing toTable
-      aExamples = aExamples.map(function(i){return jQueryDOM.type(i) === "string" ? [i] : i;});
+      aExamples = aExamples.map(function(i){return (typeof i === "string" || i instanceof String) ? [i] : i;});
       return dataTableUtils.toTable(aExamples);
     },
 

@@ -62,7 +62,7 @@ sap.ui.define(["jquery.sap.sjax",
      */
     parse: function(sText) {
 
-      if (jQueryDOM.type(sText) !== "string") {
+      if (typeof sText !== "string" && !(sText instanceof String)) {
         throw new Error("simpleGherkinParser.parse: parameter 'sText' must be a valid string");
       }
 
@@ -150,7 +150,7 @@ sap.ui.define(["jquery.sap.sjax",
       oFeature.scenarios.forEach(function(oScenario) {
         oScenario.steps.forEach(function(oStep) {
           // if the data table has only one row
-          if (jQueryDOM.isArray(oStep.data) && (oStep.data.length === 1) && (jQueryDOM.type(oStep.data[0]) === "array")) {
+          if (Array.isArray(oStep.data) && (oStep.data.length === 1) && Array.isArray(oStep.data[0])) {
             // then convert into a 1D array
             oStep.data = oStep.data[0];
           }
@@ -175,7 +175,7 @@ sap.ui.define(["jquery.sap.sjax",
      */
     parseFile: function(sPath) {
 
-      if (jQueryDOM.type(sPath) !== "string") {
+      if (typeof sPath !== "string" && !(sPath instanceof String)) {
         throw new Error("simpleGherkinParser.parseFile: parameter 'sPath' must be a valid string");
       }
 
