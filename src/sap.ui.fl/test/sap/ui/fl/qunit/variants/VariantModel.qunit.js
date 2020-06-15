@@ -1341,8 +1341,9 @@ sap.ui.define([
 			assert.equal(aArgs[1], false, "the second parameter is false");
 			assert.deepEqual(aArgs[2].length, 4, "an array with 4 changes was passed");
 			aArgs[2].forEach(function(oChange) {
-				assert.ok(oChange instanceof sap.ui.fl.Change);
+				assert.ok(oChange instanceof Change);
 			});
+			oVariantManagement.destroy();
 		});
 
 		QUnit.test("when calling '_initializeManageVariantsEvents'", function(assert) {
