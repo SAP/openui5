@@ -1,0 +1,18 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "67a166c9f0e287d367ecfb04689f0af404e4c35a",
+        "type": "FIX",
+        "text": " sap.m.ObjectPageLayout: Header Facet Sample fixed under IE11",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080178143"
+          }
+        ]
+      }
+    ]
+  }
+}

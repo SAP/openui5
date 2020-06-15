@@ -23,6 +23,28 @@
             "reference": "2080144970"
           }
         ]
+      },
+      {
+        "id": "1c8d653a1ddfabfcfba02125a6640b503c839734",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Expand button text correctly conveyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070171844"
+          }
+        ]
+      },
+      {
+        "id": "3ed13e0a3dcfdc1b90b8fd0858398820e2e585f8",
+        "type": "FIX",
+        "text": " sap.f.PlanningCalendarInCard: fixed appointments misalignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080185880"
+          }
+        ]
       }
     ]
   }

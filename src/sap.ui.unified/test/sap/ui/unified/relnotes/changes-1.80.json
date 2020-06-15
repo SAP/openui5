@@ -1,0 +1,40 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "6499fd3bded85507eb8dec09e3fa50df76ff64fa",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Structure fix for accessibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070244871"
+          }
+        ]
+      },
+      {
+        "id": "b5b18765a768649a3b3db274f95153e677a97e4e",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Menu with sub-menues opened now can\u0027t have more than one item, marked as hovered.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070231884"
+          }
+        ]
+      },
+      {
+        "id": "81b05f6171d156c62e3e67f9bbd2b47d7d953df8",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: fixed console error when click on Calendar Card\u0027s Header",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080183678"
+          }
+        ]
+      }
+    ]
+  }
+}

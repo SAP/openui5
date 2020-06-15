@@ -12,6 +12,17 @@
             "reference": "2080139817"
           }
         ]
+      },
+      {
+        "id": "d9013ef6f665e6ad91ae233c0db08a88cfd9b1b6",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Fixed binding of type email",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080131506"
+          }
+        ]
       }
     ]
   }

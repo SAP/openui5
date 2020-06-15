@@ -1,0 +1,18 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "6499fd3bded85507eb8dec09e3fa50df76ff64fa",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Structure fix for accessibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070244871"
+          }
+        ]
+      }
+    ]
+  }
+}

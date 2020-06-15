@@ -46,6 +46,18 @@
             "reference": "2080164604"
           }
         ]
+      },
+      {
+        "id": "b42f4ac9b8cbe9145581b088f6fb5abecb2bd307",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font",
+        "references": []
+      },
+      {
+        "id": "aae73698a41f8b7a5c479a9144085b0248d22201",
+        "type": "FIX",
+        "text": " ui5loader: properly handle empty preloaded resources",
+        "references": []
       }
     ]
   }
