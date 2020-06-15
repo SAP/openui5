@@ -78,7 +78,8 @@
 		  "sap.uxap.sample.ObjectPageSubSection",
 		  "sap.uxap.sample.ObjectPageSubSectionMultiView",
 		  "sap.uxap.sample.ObjectPageSubSectionSized",
-		  "sap.uxap.sample.ObjectPageSubSectionWithActions"
+		  "sap.uxap.sample.ObjectPageSubSectionWithActions",
+		  "sap.uxap.sample.ObjectPageSubSectionHiddenTitle"
 		]
 	  },
 	  {
@@ -134,6 +135,11 @@
 		"id": "sap.uxap.sample.ObjectPageSubSectionWithActions",
 		"name": "Subsection with Action buttons sample",
 		"description": "Example of a subsection displaying action buttons."
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageSubSectionHiddenTitle",
+		"name": "Subsection with hidden title",
+		"description": "Example of a subsection with showTitle property set to false."
 	  },
 	  {
 		"id": "sap.uxap.sample.ObjectPageSection",
