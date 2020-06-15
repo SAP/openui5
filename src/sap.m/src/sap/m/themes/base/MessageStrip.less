@@ -63,6 +63,10 @@ html[data-sap-ui-browser='ie11'] .sapMMsgStripMessage {
 
 	& > .sapMLnk {
 		margin-left: 0.25rem;
+
+		&:not(.sapMLnkDsbl) {
+			text-shadow: @sapUiContentTextShadow;
+		}
 	}
 
 	& > .sapMText {
