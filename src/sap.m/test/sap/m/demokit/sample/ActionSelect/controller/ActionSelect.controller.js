@@ -1,9 +1,8 @@
 sap.ui.define([
-		'sap/m/Button',
-		'sap/m/MessageToast',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(Button, MessageToast, Controller, JSONModel) {
+		"sap/ui/core/mvc/Controller",
+		"sap/ui/model/json/JSONModel",
+		"sap/m/MessageToast"
+	], function(Controller, JSONModel, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.ActionSelect.controller.ActionSelect", {
@@ -19,25 +18,11 @@ sap.ui.define([
 				oData.ProductCollection.length = 10;
 				oModel.setData(oData);
 			});
+		},
 
-			// add buttons with javaScript (yet not possible with XML views)
-			var oHeaderSelect = this.byId("select");
-			var fnOnPress = function (oEvt) {
-				MessageToast.show("Executed " + oEvt.getSource().getText());
-				oHeaderSelect.close();
-			};
-			oHeaderSelect.addButton(
-				new Button({
-					text: "Action 1",
-					press: fnOnPress
-				})
-			);
-			oHeaderSelect.addButton(
-				new Button({
-					text: "Action 2",
-					press: fnOnPress
-				})
-			);
+		onButtonPress: function (oEvt) {
+			MessageToast.show("Executed " + oEvt.getSource().getText());
+			this.byId("select").close();
 		}
 	});
 });
