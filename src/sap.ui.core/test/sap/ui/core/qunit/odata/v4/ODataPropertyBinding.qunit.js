@@ -56,11 +56,11 @@ sap.ui.define([
 		},
 
 		/**
-		 * Creates a Sinon mock for a cache object with read and refresh method.
+		 * Creates a cache object with read and refresh method.
 		 * @returns {object}
 		 *   a Sinon mock for the created cache object
 		 */
-		getPropertyCacheMock : function () {
+		getPropertyCache : function () {
 			var oCache = {
 					fetchValue : function () {},
 					setActive : function () {},
@@ -68,7 +68,16 @@ sap.ui.define([
 			};
 
 			this.mock(_Cache).expects("createProperty").returns(oCache);
-			return this.mock(oCache);
+			return oCache;
+		},
+
+		/**
+		 * Creates a Sinon mock for a cache object with read and refresh method.
+		 * @returns {object}
+		 *   a Sinon mock for the created cache object
+		 */
+		getPropertyCacheMock : function () {
+			return this.mock(this.getPropertyCache());
 		},
 
 		/**
@@ -510,13 +519,15 @@ sap.ui.define([
 	}].forEach(function (oFixture, i) {
 		QUnit.test("checkUpdateInternal with object value, error, " + i, function (assert) {
 			var bAbsolute = oFixture.path[0] === "/",
-				oCacheMock = bAbsolute && this.getPropertyCacheMock(),
+				oCache = bAbsolute && this.getPropertyCache(),
+				oCacheMock = oCache && this.mock(oCache),
 				oContext = Context.create(this.oModel, {}, "/EntitySet('foo')"),
 				oBinding = this.oModel.bindProperty(oFixture.path, oContext),
 				oGroupLock = {},
 				oMetaContext = {},
 				sResolvedPath = this.oModel.resolve(oFixture.path, oContext),
-				vValue = {/* non-primitive */};
+				vValue = {/* non-primitive */},
+				that = this;
 
 			oBinding.setBindingMode(oFixture.mode);
 			oBinding.setType(null, oFixture.internalType);
@@ -526,7 +537,11 @@ sap.ui.define([
 				oCacheMock.expects("fetchValue")
 					.withExactArgs(sinon.match.same(oGroupLock), undefined, sinon.match.func,
 						sinon.match.same(oBinding))
-					.returns(SyncPromise.resolve(vValue));
+					.returns(SyncPromise.resolve(Promise.resolve().then(function () {
+						that.mock(oBinding).expects("assertSameCache")
+							.withExactArgs(sinon.match.same(oCache));
+						return vValue;
+					})));
 			} else if (oFixture.path.startsWith("##")) { // meta binding
 				this.mock(this.oModel.getMetaModel()).expects("getMetaContext")
 					.withExactArgs("/EntitySet('foo')")

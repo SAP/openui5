@@ -1794,7 +1794,7 @@ sap.ui.define([
 			var oResult = oPayload;
 			if (oResult) {
 				Object.keys(oResult).forEach(function (sKey) {
-					if (sKey.indexOf("@$ui5.") === 0) {
+					if (sKey.startsWith("@$ui5.")) {
 						if (oResult === oPayload) {
 							oResult = Object.assign({}, oPayload);
 						}

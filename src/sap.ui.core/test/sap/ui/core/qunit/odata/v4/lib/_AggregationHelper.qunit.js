@@ -48,9 +48,9 @@ sap.ui.define([
 				Amount : {}
 			},
 			// group is optional
-			groupLevels : ["TransactionCurrency"]
+			groupLevels : ["TransactionCurrency", "Region"]
 		},
-		sApply : "groupby((TransactionCurrency),aggregate(Amount))"
+		sApply : "groupby((TransactionCurrency,Region),aggregate(Amount))"
 	}, {
 		oAggregation : {
 			aggregate : { // Note: intentionally not sorted
@@ -113,8 +113,8 @@ sap.ui.define([
 			$top : Infinity // special case
 		},
 		sApply : "groupby((Region),aggregate(SalesNumber))/concat(aggregate(SalesNumber),identity)",
-		sFollowUpApply // Note: follow-up request not needed in this case
-			: "groupby((Region),aggregate(SalesNumber))/concat(aggregate(SalesNumber),identity)"
+		sFollowUpApply : // Note: follow-up request not needed in this case
+			"groupby((Region),aggregate(SalesNumber))/concat(aggregate(SalesNumber),identity)"
 	}, {
 		oAggregation : {
 			aggregate : {
@@ -395,9 +395,9 @@ sap.ui.define([
 		oAggregation : {
 			aggregate : {},
 			group : {A : {}, B : {}},
-			groupLevels : ["A", "B"]
+			groupLevels : ["A", "B", "C"]
 		},
-		sError : "More than one group level: A,B"
+		sError : "More than two group levels: A,B,C"
 	}, {
 		oAggregation : {
 			aggregate : {},

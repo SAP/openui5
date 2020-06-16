@@ -59,6 +59,25 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Throws an Error that the response is discarded if the current cache not the expected one.
+	 * The error has the property <code>canceled : true</code>
+	 *
+	 * @param {sap.ui.model.odata.v4.lib_Cache} oExpectedCache - The expected cache
+	 * @throws {Error} If the cache has changed
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.assertSameCache = function (oExpectedCache) {
+		var oError;
+
+		if (this.oCache !== oExpectedCache) {
+			oError = new Error("Response discarded: cache is inactive");
+			oError.canceled = true;
+			throw oError;
+		}
+	};
+
+	/**
 	 * Checks binding-specific parameters from the given map. "Binding-specific" parameters are
 	 * those with a key starting with '$$', i.e. OData query options provided as binding parameters
 	 * are ignored. The following parameters are supported, if the parameter name is contained in
@@ -92,7 +111,7 @@ sap.ui.define([
 		Object.keys(mParameters).forEach(function (sKey) {
 			var vValue = mParameters[sKey];
 
-			if (sKey.indexOf("$$") !== 0) {
+			if (!sKey.startsWith("$$")) {
 				return;
 			}
 			if (aAllowed.indexOf(sKey) < 0) {
@@ -131,6 +150,7 @@ sap.ui.define([
 				case "$$noPatch":
 				case "$$ownRequest":
 				case "$$patchWithoutSideEffects":
+				case "$$sharedRequest":
 					if (vValue !== true) {
 						throw new Error("Unsupported value for binding parameter '" + sKey + "': "
 							+ vValue);
@@ -199,6 +219,52 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Creates and sets the cache, handles mCacheByResourcePath and adds some cache-relevant
+	 * properties.
+	 *
+	 * @param {object} mQueryOptions
+	 *   The cache query options; the options of oModel.mUriParameters are added
+	 * @param {string} sResourcePath
+	 *   The resource path
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context instance to be used, undefined for absolute bindings
+	 * @returns {sap.ui.model.odata.lib._Cache}
+	 *   The cache
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.createAndSetCache = function (mQueryOptions, sResourcePath, oContext) {
+		var oCache, sDeepResourcePath, iReturnValueContextId;
+
+		this.mCacheQueryOptions = Object.assign({}, this.oModel.mUriParameters, mQueryOptions);
+		if (this.bRelative) { // quasi-absolute or relative binding
+			// mCacheByResourcePath has to be reset if parameters are changing
+			oCache = this.mCacheByResourcePath && this.mCacheByResourcePath[sResourcePath];
+			iReturnValueContextId = oContext.getReturnValueContextId
+				&& oContext.getReturnValueContextId();
+			if (oCache && oCache.$returnValueContextId === iReturnValueContextId) {
+				oCache.setActive(true);
+			} else {
+				sDeepResourcePath = _Helper.buildPath(oContext.getPath(), this.sPath).slice(1);
+				oCache = this.doCreateCache(sResourcePath, this.mCacheQueryOptions, oContext,
+					sDeepResourcePath);
+				if (!(this.mParameters && this.mParameters.$$sharedRequest)) {
+					this.mCacheByResourcePath = this.mCacheByResourcePath || {};
+					this.mCacheByResourcePath[sResourcePath] = oCache;
+				}
+				oCache.$deepResourcePath = sDeepResourcePath;
+				oCache.$resourcePath = sResourcePath;
+				oCache.$returnValueContextId = iReturnValueContextId;
+			}
+		} else { // absolute binding
+			oCache = this.doCreateCache(sResourcePath, this.mCacheQueryOptions);
+		}
+		this.oCache = oCache;
+
+		return oCache;
+	};
+
+	/**
 	 * Destroys the object. The object must not be used anymore after this function was called.
 	 *
 	 * @public
@@ -219,7 +285,6 @@ sap.ui.define([
 		this.oContext = undefined;
 		this.oFetchCacheCallToken = undefined;
 	};
-
 
 	/**
 	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchCache} to create a cache for
@@ -297,41 +362,15 @@ sap.ui.define([
 			// Note: do not create a cache for a virtual context
 			if (mQueryOptions && !(oContext && oContext.iIndex === Context.VIRTUAL)) {
 				return that.fetchResourcePath(oContext).then(function (sResourcePath) {
-					var oCache, sDeepResourcePath, oError, iReturnValueContextId;
+					var oError;
 
 					// create cache only for the latest call to fetchCache
-					if (!oCachePromise || that.oFetchCacheCallToken === oCallToken) {
-						that.mCacheQueryOptions = Object.assign({},
-							that.oModel.mUriParameters, mQueryOptions);
-						if (that.bRelative) { // quasi-absolute or relative binding
-							// mCacheByResourcePath has to be reset if parameters are changing
-							that.mCacheByResourcePath = that.mCacheByResourcePath || {};
-							oCache = that.mCacheByResourcePath[sResourcePath];
-							iReturnValueContextId = oContext.getReturnValueContextId
-								&& oContext.getReturnValueContextId();
-							if (oCache && oCache.$returnValueContextId === iReturnValueContextId) {
-								oCache.setActive(true);
-							} else {
-								sDeepResourcePath
-									= _Helper.buildPath(oContext.getPath(), that.sPath).slice(1);
-								oCache = that.doCreateCache(sResourcePath, that.mCacheQueryOptions,
-									oContext, sDeepResourcePath);
-								that.mCacheByResourcePath[sResourcePath] = oCache;
-								oCache.$deepResourcePath = sDeepResourcePath;
-								oCache.$resourcePath = sResourcePath;
-								oCache.$returnValueContextId = iReturnValueContextId;
-							}
-						} else { // absolute binding
-							oCache = that.doCreateCache(sResourcePath, that.mCacheQueryOptions,
-								oContext);
-						}
-						that.oCache = oCache;
-						return oCache;
-					} else {
+					if (oCachePromise && that.oFetchCacheCallToken !== oCallToken) {
 						oError = new Error("Cache discarded as a new cache has been created");
 						oError.canceled = true;
 						throw oError;
 					}
+					return that.createAndSetCache(mQueryOptions, sResourcePath, oContext);
 				});
 			}
 			that.oCache = null;

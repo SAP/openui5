@@ -207,7 +207,8 @@ sap.ui.define([
 	 *   The new value obtained from the cache, see {@link #onChange}
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving without a defined result when the check is finished, or rejecting in
-	 *   case of an error (e.g. thrown by the change event handler of a control)
+	 *   case of an error (e.g. thrown by the change event handler of a control), or if the cache is
+	 *   no longer the active cache when the response arrives
 	 *
 	 * @private
 	 * @see sap.ui.model.Binding#checkUpdate
@@ -248,10 +249,15 @@ sap.ui.define([
 
 				if (oCache) {
 					return oCache.fetchValue(that.lockGroup(sGroupId || that.getGroupId()),
-						/*sPath*/undefined, function () {
-							bDataRequested = true;
-							that.fireDataRequested();
-						}, that);
+							/*sPath*/undefined, function () {
+								bDataRequested = true;
+								that.fireDataRequested();
+							}, that)
+						.then(function (vResult) {
+							that.assertSameCache(oCache);
+
+							return vResult;
+						});
 				}
 				if (!that.sReducedPath || !that.isResolved()) {
 					// binding is unresolved or context was reset by another call to

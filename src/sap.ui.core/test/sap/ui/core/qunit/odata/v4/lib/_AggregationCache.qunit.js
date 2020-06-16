@@ -1191,13 +1191,17 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read: with visual grouping", function (assert) {
+[0, 10].forEach(function (iReadIndex) {
+	QUnit.test("read: with visual grouping - read index: " + iReadIndex, function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group : {},
 				groupLevels : ["group"]
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oGroupLock = {
+				unlock : function () {}
+			},
 			iLength = 3,
 			iPrefetchLength = 100,
 			oReadResult = {
@@ -1207,35 +1211,438 @@ sap.ui.define([
 		function checkResult(oResult) {
 			assert.strictEqual(oResult.value.length, 3);
 			assert.strictEqual(oResult.value.$count, 42);
-			assert.strictEqual(oResult.value[0], oCache.aElements[0]);
-			assert.strictEqual(oResult.value[1], oCache.aElements[1]);
-			assert.strictEqual(oResult.value[2], oCache.aElements[2]);
+			assert.strictEqual(oResult.value[0], oCache.aElements[iReadIndex + 0]);
+			assert.strictEqual(oResult.value[1], oCache.aElements[iReadIndex + 1]);
+			assert.strictEqual(oResult.value[2], oCache.aElements[iReadIndex + 2]);
 		}
 
 		oReadResult.value.$count = 42;
 
-		this.mock(oCache.oFirstLevel).expects("read").twice()
-			.withExactArgs(0, iLength, iPrefetchLength, "~oGroupLock~", "~fnDataRequested~")
-			.returns(Promise.resolve(oReadResult));
-		this.mock(oCache).expects("addElements").twice()
-			.withExactArgs(sinon.match.same(oReadResult.value), 0)
+		this.mock(oCache.oFirstLevel).expects("read")
+			.withExactArgs(iReadIndex, iLength, iPrefetchLength, sinon.match.same(oGroupLock),
+				"~fnDataRequested~")
+			.returns(SyncPromise.resolve(Promise.resolve(oReadResult)));
+		this.mock(oCache).expects("addElements")
+			.withExactArgs(sinon.match.same(oReadResult.value), iReadIndex)
 			.callThrough(); // so that oCache.aElements is actually filled
 
 		// code under test
-		return oCache.read(0, iLength, iPrefetchLength, "~oGroupLock~", "~fnDataRequested~")
+		return oCache.read(iReadIndex, iLength, iPrefetchLength, oGroupLock,
+				"~fnDataRequested~")
 			.then(function (oResult1) {
+				var i;
+
 				assert.strictEqual(oCache.aElements.$count, oReadResult.value.$count);
 				assert.strictEqual(oCache.iReadLength, iLength + iPrefetchLength);
 
 				checkResult(oResult1);
 
+				// check placeholder before iReadIndex
+				for (i = 0; i < iReadIndex; i += 1) {
+					assert.strictEqual(oCache.aElements[i]["@$ui5.node.level"], 1);
+					assert.strictEqual(
+						_Helper.getPrivateAnnotation(oCache.aElements[i], "index"), i);
+					assert.strictEqual(
+						_Helper.getPrivateAnnotation(oCache.aElements[i], "parent"),
+						oCache.oFirstLevel
+					);
+				}
+				// check placeholder after iReadIndex + result length
+				for (i = iReadIndex + 3; i < oCache.aElements.length; i += 1) {
+					assert.strictEqual(oCache.aElements[i]["@$ui5.node.level"], 1);
+					assert.strictEqual(
+						_Helper.getPrivateAnnotation(oCache.aElements[i], "index"), i);
+					assert.strictEqual(
+						_Helper.getPrivateAnnotation(oCache.aElements[i], "parent"),
+						oCache.oFirstLevel
+					);
+				}
+
 				// code under test
-				return oCache.read(0, iLength, iPrefetchLength, "~oGroupLock~",
+				return oCache.read(iReadIndex, iLength, iPrefetchLength, oGroupLock,
 					"~fnDataRequested~"
 				).then(function (oResult2) {
 					checkResult(oResult2);
 				});
 			});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("read: with visual grouping - read from group level cache", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group : {},
+				groupLevels : ["group"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oGroupLevelCache = {
+				read : function () {}
+			},
+			oGroupLevelCacheMock = this.mock(oGroupLevelCache),
+			oGroupLock = {
+				getUnlockedCopy : function () {},
+				unlock : function () {}
+			},
+			oGroupLockCopy0 = {},
+			oGroupLockCopy1 = {},
+			oGroupLockMock = this.mock(oGroupLock),
+			oCacheMock = this.mock(oCache),
+			oReadResult0 = {value : [{}]},
+			oReadResult1 = {value : [{},{},{}]};
+
+
+		oCache.aElements = [
+			{/* expanded node */},
+			{/* first leaf */},
+			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 1}},
+			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 2}},
+			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 3}},
+			{/* other node */}
+		];
+		oCache.aElements.$byPredicate = {};
+		oCache.aElements.$count = 42;
+
+		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy0);
+
+		oGroupLevelCacheMock.expects("read")
+			.withExactArgs(1, 1, 0, sinon.match.same(oGroupLockCopy0), "~fnDataRequested~")
+			.returns(SyncPromise.resolve(Promise.resolve(oReadResult0)));
+
+		oCacheMock.expects("addElements")
+			.withExactArgs(sinon.match.same(oReadResult0.value), 2)
+			.callThrough(); // so that oCache.aElements is actually filled
+
+		// code under test
+		return oCache.read(2, 1, 0, oGroupLock, "~fnDataRequested~").then(function (oResult1) {
+			assert.strictEqual(oResult1.value[0], oReadResult0.value[0]);
+
+			oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy1);
+
+			oGroupLevelCacheMock.expects("read")
+				.withExactArgs(2, 2, 0, sinon.match.same(oGroupLockCopy1), "~fnDataRequested~")
+				.returns(SyncPromise.resolve(Promise.resolve(oReadResult1)));
+
+			oCacheMock.expects("addElements")
+				.withExactArgs(sinon.match.same(oReadResult1.value), 3)
+				.callThrough(); // so that oCache.aElements is actually filled
+
+			// code under test
+			return oCache.read(3, 3, 0, oGroupLock, "~fnDataRequested~");
+		}).then(function (oResult2) {
+			assert.strictEqual(oResult2.value[0], oReadResult1.value[0]);
+			assert.strictEqual(oResult2.value[1], oReadResult1.value[1]);
+			assert.strictEqual(oResult2.value[2], oReadResult1.value[2]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("read: with visual grouping - first and group level cache", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group : {},
+				groupLevels : ["group"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oFirstLeaf = {},
+			oGroupLevelCache = {read : function () {}},
+			oGroupLock = {
+				getUnlockedCopy : function () {},
+				unlock : function () {}
+			},
+			oGroupLockCopy0 = {},
+			oGroupLockCopy1 = {},
+			oGroupLockMock = this.mock(oGroupLock),
+			oReadResult0 = {value : [{}, {}]},
+			oReadResult1 = {value : [{}]},
+			oCacheMock = this.mock(oCache);
+
+		oCache.aElements = [
+			{/* expanded node */},
+			oFirstLeaf,
+			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 1}},
+			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 2}},
+			{"@$ui5._": {"parent" : oCache.oFirstLevel, "index" : 1}}
+		];
+
+		oCache.aElements.$byPredicate = {};
+		oCache.aElements.$count = 42;
+
+		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy0);
+		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy1);
+
+		this.mock(oGroupLevelCache).expects("read")
+			.withExactArgs(1, 2, 0, sinon.match.same(oGroupLockCopy0),	"~fnDataRequested~")
+			.returns(SyncPromise.resolve(Promise.resolve(oReadResult0)));
+
+		this.mock(oCache.oFirstLevel).expects("read")
+			.withExactArgs(1, 1, 0, sinon.match.same(oGroupLockCopy1),	"~fnDataRequested~")
+			.returns(SyncPromise.resolve(Promise.resolve(oReadResult1)));
+
+		oCacheMock.expects("addElements")
+			.withExactArgs(sinon.match.same(oReadResult0.value), 2)
+			.callThrough(); // so that oCache.aElements is actually filled
+
+		oCacheMock.expects("addElements")
+			.withExactArgs(sinon.match.same(oReadResult1.value), 4)
+			.callThrough(); // so that oCache.aElements is actually filled
+
+		// code under test
+		return oCache.read(1, 4, 0, oGroupLock, "~fnDataRequested~").then(function (oResult) {
+			assert.strictEqual(oResult.value[0], oFirstLeaf);
+			assert.strictEqual(oResult.value[1], oReadResult0.value[0]);
+			assert.strictEqual(oResult.value[2], oReadResult0.value[1]);
+			assert.strictEqual(oResult.value[3], oReadResult1.value[0]);
+
+			assert.strictEqual(oCache.aElements[1], oFirstLeaf);
+			assert.strictEqual(oCache.aElements[2], oReadResult0.value[0]);
+			assert.strictEqual(oCache.aElements[3], oReadResult0.value[1]);
+			assert.strictEqual(oCache.aElements[4], oReadResult1.value[0]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("read: with visual grouping - intersecting reads", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group : {},
+				groupLevels : ["group"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCacheMock = this.mock(oCache),
+			oFirstLeaf = {},
+			oGroupLevelCache = {
+				read : function () {}
+			},
+			oGroupLevelCacheMock = this.mock(oGroupLevelCache),
+			oGroupLock = {
+				getUnlockedCopy : function () {},
+				unlock : function () {}
+			},
+			oGroupLockCopy0 = {},
+			oGroupLockCopy1 = {},
+			oGroupLockMock = this.mock(oGroupLock),
+			oReadResult0 = {value : [{}, {}, {}, {}]},
+			oReadResult1 = {value : [{}]};
+
+		oCache.aElements = [
+			{/* expanded node */},
+			oFirstLeaf,
+			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 1}},
+			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 2}},
+			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 3}},
+			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 4}},
+			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 5}},
+			{"@$ui5._": {"parent" : oGroupLevelCache, "index" : 6}}
+		];
+
+		oCache.aElements.$byPredicate = {};
+		oCache.aElements.$count = 42;
+
+		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy0);
+		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy1);
+		oGroupLockMock.expects("unlock").withExactArgs().twice();
+
+		oGroupLevelCacheMock.expects("read")
+			.withExactArgs(1, 3, 0, sinon.match.same(oGroupLockCopy0), "~fnDataRequested~")
+			.callsFake(function () {
+				return new Promise(function (resolve) {
+					setTimeout(resolve(oReadResult0), 500);
+				});
+			});
+
+		oGroupLevelCacheMock.expects("read")
+			.withExactArgs(2, 1, 0, sinon.match.same(oGroupLockCopy1), "~fnDataRequested~")
+			.returns(SyncPromise.resolve(Promise.resolve(oReadResult1)));
+
+		oCacheMock.expects("addElements")
+			.withExactArgs(sinon.match.same(oReadResult0.value), 2)
+			.callThrough(); // so that oCache.aElements is actually filled
+
+		oCacheMock.expects("addElements")
+			.withExactArgs(sinon.match.same(oReadResult1.value), 3)
+			.callThrough(); // so that oCache.aElements is actually filled
+
+		// code under test
+		return Promise.all([
+			oCache.read(1, 4, 0, oGroupLock, "~fnDataRequested~"),
+			oCache.read(3, 1, 0, oGroupLock, "~fnDataRequested~")
+		]).then(function() {
+			assert.strictEqual(oCache.aElements[1], oFirstLeaf);
+			assert.strictEqual(oCache.aElements[2], oReadResult0.value[0]);
+			assert.strictEqual(oCache.aElements[4], oReadResult0.value[2]);
+			assert.strictEqual(oCache.aElements[5], oReadResult0.value[3]);
+
+			assert.strictEqual(oCache.aElements[3], oReadResult1.value[0]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("read: with visual grouping - two different group level caches", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group : {},
+				groupLevels : ["group"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oCacheMock = this.mock(oCache),
+			oFirstLeaf0 = {},
+			oFirstLeaf1 = {},
+			oGroupLevelCache0 = {
+				read : function () {}
+			},
+			oGroupLevelCache1 = {
+				read : function () {}
+			},
+			oGroupLock = {
+				getUnlockedCopy : function () {},
+				unlock : function () {}
+			},
+			oGroupLockCopy0 = {},
+			oGroupLockCopy1 = {},
+			oGroupLockMock = this.mock(oGroupLock),
+			oReadPromise,
+			oReadResult0 = {value : [{}, {}]},
+			oReadResult1 = {value : [{}, {}]};
+
+		oCache.aElements = [
+			{/* expanded node */},
+			oFirstLeaf0,
+			{"@$ui5._" : {"parent" : oGroupLevelCache0, "index" : 1}},
+			{"@$ui5._" : {"parent" : oGroupLevelCache0, "index" : 2}},
+			{/* expanded node */},
+			oFirstLeaf1,
+			{"@$ui5._" : {"parent" : oGroupLevelCache1, "index" : 1}},
+			{"@$ui5._" : {"parent" : oGroupLevelCache1, "index" : 2}}
+		];
+
+		oCache.aElements.$byPredicate = {};
+		oCache.aElements.$count = 42;
+
+		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy0);
+		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy1);
+		var oUnlockCall = oGroupLockMock.expects("unlock").withExactArgs();
+
+		this.mock(oGroupLevelCache0).expects("read")
+			.withExactArgs(1, 2, 0, sinon.match.same(oGroupLockCopy0), "~fnDataRequested~")
+			.returns(SyncPromise.resolve(Promise.resolve(oReadResult0)));
+
+		this.mock(oGroupLevelCache1).expects("read")
+			.withExactArgs(1, 2, 0, sinon.match.same(oGroupLockCopy1), "~fnDataRequested~")
+			.returns(SyncPromise.resolve(Promise.resolve(oReadResult1)));
+
+		oCacheMock.expects("addElements")
+			.withExactArgs(sinon.match.same(oReadResult0.value), 2)
+			.callThrough(); // so that oCache.aElements is actually filled
+
+		oCacheMock.expects("addElements")
+			.withExactArgs(sinon.match.same(oReadResult1.value), 6)
+			.callThrough(); // so that oCache.aElements is actually filled
+
+		// code under test
+		oReadPromise = oCache.read(1, 7, 0, oGroupLock, "~fnDataRequested~").then(function (oResult) {
+				assert.strictEqual(oResult.value[0], oFirstLeaf0);
+				assert.strictEqual(oResult.value[1], oReadResult0.value[0]);
+				assert.strictEqual(oResult.value[2], oReadResult0.value[1]);
+
+				assert.strictEqual(oResult.value[4], oFirstLeaf1);
+				assert.strictEqual(oResult.value[5], oReadResult1.value[0]);
+				assert.strictEqual(oResult.value[6], oReadResult1.value[1]);
+
+				assert.strictEqual(oCache.aElements[1], oFirstLeaf0);
+				assert.strictEqual(oCache.aElements[2], oReadResult0.value[0]);
+				assert.strictEqual(oCache.aElements[3], oReadResult0.value[1]);
+
+				assert.strictEqual(oCache.aElements[5], oFirstLeaf1);
+				assert.strictEqual(oCache.aElements[6], oReadResult1.value[0]);
+				assert.strictEqual(oCache.aElements[7], oReadResult1.value[1]);
+			});
+
+		sinon.assert.called(oUnlockCall);
+
+		return oReadPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("read: with visual grouping - only placeholder", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group : {},
+				groupLevels : ["group"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oGroupLock = {
+				getUnlockedCopy : function () {},
+				unlock : function () {}
+			},
+			oGroupLockCopy = {},
+			oReadResult = {value : [{}, {}, {}]};
+
+		oCache.aElements = [
+			{},
+			{"@$ui5._" : {"parent" : oCache.oFirstLevel, "index" : 1}},
+			{"@$ui5._" : {"parent" : oCache.oFirstLevel, "index" : 2}},
+			{"@$ui5._" : {"parent" : oCache.oFirstLevel, "index" : 3}},
+			{"@$ui5._" : {"parent" : oCache.oFirstLevel, "index" : 4}},
+			{"@$ui5._" : {"parent" : oCache.oFirstLevel, "index" : 5}},
+			{"@$ui5._" : {"parent" : oCache.oFirstLevel, "index" : 6}},
+			{"@$ui5._" : {"parent" : oCache.oFirstLevel, "index" : 7}}
+		];
+		oCache.aElements.$byPredicate = {};
+		oCache.aElements.$count = 8;
+
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy);
+
+		this.mock(oCache.oFirstLevel).expects("read")
+			.withExactArgs(3, 3, 0, sinon.match.same(oGroupLockCopy),	"~fnDataRequested~")
+			.returns(SyncPromise.resolve(Promise.resolve(oReadResult)));
+
+		this.mock(oCache).expects("addElements")
+			.withExactArgs(sinon.match.same(oReadResult.value), 3)
+			.callThrough(); // so that oCache.aElements is actually filled
+
+		// code under test
+		return oCache.read(3, 3, 0, oGroupLock, "~fnDataRequested~").then(function (oResult) {
+			assert.strictEqual(oResult.value[0], oReadResult.value[0]);
+			assert.strictEqual(oResult.value[1], oReadResult.value[1]);
+			assert.strictEqual(oResult.value[2], oReadResult.value[2]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("read: with visual grouping - read more elements than existing", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group : {},
+				groupLevels : ["group"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", oAggregation, {}),
+			oGroupLock = {
+				getUnlockedCopy : function () {},
+				unlock : function () {}
+			},
+			oGroupLockCopy = {},
+			oReadResult = {value : [{}]};
+
+		oCache.aElements = [
+			{},
+			{"@$ui5._" : {"parent" : oCache.oFirstLevel, "index" : 1}}
+		];
+		oCache.aElements.$byPredicate = {};
+		oCache.aElements.$count = 2;
+
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy);
+
+		this.mock(oCache.oFirstLevel).expects("read")
+			.withExactArgs(1, 1, 0, sinon.match.same(oGroupLockCopy), "~fnDataRequested~")
+			.returns(SyncPromise.resolve(Promise.resolve(oReadResult)));
+
+		this.mock(oCache).expects("addElements")
+			.withExactArgs(sinon.match.same(oReadResult.value), 1)
+			.callThrough(); // so that oCache.aElements is actually filled
+
+		// code under test
+		return oCache.read(0, 100, 0, oGroupLock, "~fnDataRequested~");
 	});
 
 	//*********************************************************************************************
@@ -1255,10 +1662,13 @@ sap.ui.define([
 			oGroupLevelCache = {
 				read : function () {}
 			},
+			oGroupLock = {
+				unlock : function () {}
+			},
 			oPromise,
 			that = this;
 
-		oExpandResult.value.$count = 5;
+		oExpandResult.value.$count = 7;
 
 		// simulate a read
 		oCache.iReadLength = 42;
@@ -1279,32 +1689,47 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same((oCache.aElements[0])))
 			.returns(oGroupLevelCache);
 		this.mock(oGroupLevelCache).expects("read")
-			.withExactArgs(0, oCache.iReadLength, 0, "~oGroupLock~")
+			.withExactArgs(0, oCache.iReadLength, 0, sinon.match.same(oGroupLock))
 			.returns(SyncPromise.resolve(Promise.resolve(oExpandResult)));
 		this.mock(oCache).expects("addElements")
 			.withExactArgs(sinon.match.same(oExpandResult.value), 1)
 			.callThrough(); // so that oCache.aElements is actually filled
 
 		// code under test
-		oPromise = oCache.expand("~oGroupLock~", "~path~").then(function (iResult) {
-			assert.strictEqual(oCache.aElements.length, 8);
-			assert.strictEqual(oCache.aElements.$count, 8);
+		oPromise = oCache.expand(oGroupLock, "~path~").then(function (iResult) {
+			assert.strictEqual(oCache.aElements.length, 10, ".length");
+			assert.strictEqual(oCache.aElements.$count, 10, ".$count");
+			// check parent node
 			assert.strictEqual(oCache.aElements[0], aElements[0]);
+
+			// check expanded nodes
 			assert.strictEqual(oCache.aElements[1], oExpandResult.value[0]);
 			assert.strictEqual(oCache.aElements[2], oExpandResult.value[1]);
 			assert.strictEqual(oCache.aElements[3], oExpandResult.value[2]);
 			assert.strictEqual(oCache.aElements[4], oExpandResult.value[3]);
 			assert.strictEqual(oCache.aElements[5], oExpandResult.value[4]);
-			assert.strictEqual(oCache.aElements[6], aElements[1]);
-			assert.strictEqual(oCache.aElements[7], aElements[2]);
+
+			// check placeholder
+			assert.strictEqual(oCache.aElements[6]["@$ui5.node.level"], 2);
+			assert.strictEqual(_Helper.getPrivateAnnotation(oCache.aElements[6], "index"), 5);
+			assert.strictEqual(
+				_Helper.getPrivateAnnotation(oCache.aElements[6], "parent"), oGroupLevelCache);
+			assert.strictEqual(oCache.aElements[7]["@$ui5.node.level"], 2);
+			assert.strictEqual(_Helper.getPrivateAnnotation(oCache.aElements[7], "index"), 6);
+			assert.strictEqual(
+				_Helper.getPrivateAnnotation(oCache.aElements[7], "parent"), oGroupLevelCache);
+
+			// check moved nodes
+			assert.strictEqual(oCache.aElements[8], aElements[1]);
+			assert.strictEqual(oCache.aElements[9], aElements[2]);
 
 			assert.strictEqual(iResult, oExpandResult.value.$count);
 
 			that.mock(oCache.oFirstLevel).expects("read").never();
 
-			return oCache.read(1, 4, 0).then(function (oResult) {
+			return oCache.read(1, 4, 0, oGroupLock).then(function (oResult) {
 				assert.strictEqual(oResult.value.length, 4);
-				assert.strictEqual(oResult.value.$count, 8);
+				assert.strictEqual(oResult.value.$count, 10);
 				oResult.value.forEach(function (oElement, i) {
 					assert.strictEqual(oElement, oCache.aElements[i + 1], "index " + (i + 1));
 				});

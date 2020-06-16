@@ -1002,6 +1002,213 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("finally: resolve as fast as then", function (assert) {
+		var oPromise1,
+			oPromise2,
+			fnResolve1,
+			fnResolve2,
+			aResults = [];
+
+		function done(vResult) {
+			aResults.push(vResult);
+		}
+
+		oPromise1 = new SyncPromise(function (fnResolve, fnReject) {
+				fnResolve1 = fnResolve;
+			})
+			// code under test
+			.finally(function () {
+				return SyncPromise.resolve();
+			})
+			.then(done);
+		oPromise1 = new SyncPromise(function (fnResolve, fnReject) {
+				fnResolve2 = fnResolve;
+			})
+			.then(function (o) { return o; })
+			.then(done);
+
+		fnResolve1("1");
+		fnResolve2("2");
+
+		return SyncPromise.all([oPromise1, oPromise2]).then(function () {
+			assert.deepEqual(aResults, ["1", "2"]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("finally: reject as fast as catch", function (assert) {
+		var oPromise1,
+			oPromise2,
+			fnReject1,
+			fnReject2,
+			aResults = [];
+
+		function done(vResult) {
+			aResults.push(vResult);
+		}
+
+		oPromise1 = new SyncPromise(function (fnResolve, fnReject) {
+				fnReject1 = fnReject;
+			})
+			// code under test
+			.finally(function () {
+				return SyncPromise.resolve();
+			})
+			.catch(done);
+		oPromise2 = new SyncPromise(function (fnResolve, fnReject) {
+				fnReject2 = fnReject;
+			})
+			.catch(function (o) { throw o; })
+			.catch(done);
+
+		fnReject1("1");
+		fnReject2("2");
+
+		return SyncPromise.all([oPromise1, oPromise2]).then(function () {
+			assert.deepEqual(aResults, ["1", "2"]);
+		});
+	});
+
+	//*********************************************************************************************
+[
+	function (oPromise, fnDone) {
+		SyncPromise.resolve(oPromise).then(fnDone);
+	},
+	function (oPromise, fnDone) {
+		SyncPromise.resolve(oPromise).then(function (o) { return o; }).then(fnDone);
+	},
+	function (oPromise, fnDone) {
+		SyncPromise.resolve(oPromise).catch(function () {}).then(fnDone);
+	},
+	function (oPromise, fnDone) {
+		SyncPromise.resolve(oPromise).finally(function () {}).then(fnDone);
+	},
+	function (oPromise, fnDone) {
+		SyncPromise.all([oPromise]).then(fnDone);
+	},
+	function (oPromise, fnDone) {
+		SyncPromise.all([oPromise]).then(function (o) { return o; }).then(fnDone);
+	},
+	function (oPromise, fnDone) {
+		SyncPromise.all([oPromise]).catch(function () {}).then(fnDone);
+	},
+	function (oPromise, fnDone) {
+		SyncPromise.all([oPromise]).finally(function () {}).then(fnDone);
+	}
+].forEach(function (fnAct, i) {
+	QUnit.test("finally: timing, " + i, function (assert) {
+		var fnResolve1,
+			oPromise1 = new Promise(function (fnResolve, fnReject) {
+				fnResolve1 = fnResolve;
+			}),
+			fnResolve2,
+			oPromise2 = new Promise(function (fnResolve, fnReject) {
+				fnResolve2 = fnResolve;
+			}),
+			aResults = [];
+
+		function done(vResult) {
+			if (Array.isArray(vResult)) {
+				aResults.push.apply(aResults, vResult);
+			} else {
+				aResults.push(vResult);
+			}
+		}
+
+		// Note: #then, #catch: 1 micro task
+		//   SyncPromise.resolve of native promise is "common baseline": 0
+		//   SyncPromise.all: 1
+		//   #finally: 1
+		fnAct(oPromise1, done);
+		SyncPromise.resolve(oPromise2)
+			.then(function (o) { return o; })
+			.then(function (o) { return o; })
+			.then(done);
+
+		fnResolve1("1");
+		fnResolve2("2");
+
+		return new Promise(function (resolve, reject) {
+			setTimeout(function () {
+				assert.deepEqual(aResults, ["1", "2"]);
+				resolve();
+			}, 0);
+		});
+	});
+});
+
+	//*********************************************************************************************
+[
+	function (oPromise, fnDone) {
+		Promise.resolve(oPromise).then(fnDone);
+	},
+	function (oPromise, fnDone) {
+		Promise.resolve(oPromise).then(function (o) { return o; }).then(fnDone);
+	},
+	function (oPromise, fnDone) {
+		Promise.resolve(oPromise).catch(function () {}).then(fnDone);
+	},
+	function (oPromise, fnDone) {
+		Promise.resolve(oPromise).finally(function () {}).then(fnDone);
+	},
+	function (oPromise, fnDone) {
+		Promise.all([oPromise]).then(fnDone);
+	},
+	function (oPromise, fnDone) {
+		Promise.all([oPromise]).then(function (o) { return o; }).then(fnDone);
+	},
+	function (oPromise, fnDone) {
+		Promise.all([oPromise]).catch(function () {}).then(fnDone);
+	},
+	function (oPromise, fnDone) {
+		Promise.all([oPromise]).finally(function () {}).then(fnDone);
+	}
+].forEach(function (fnAct, i) {
+	QUnit.test("finally: native timing, " + i, function (assert) {
+		var fnResolve1,
+			oPromise1 = new Promise(function (fnResolve, fnReject) {
+				fnResolve1 = fnResolve;
+			}),
+			fnResolve2,
+			oPromise2 = new Promise(function (fnResolve, fnReject) {
+				fnResolve2 = fnResolve;
+			}),
+			aResults = [];
+
+		function done(vResult) {
+			if (Array.isArray(vResult)) {
+				aResults.push.apply(aResults, vResult);
+			} else {
+				aResults.push(vResult);
+			}
+		}
+
+		// Note: #then, #catch: 1 micro task
+		//   Promise.resolve of native promise is "no op": 0
+		//   Promise.all: 1 (IE/es6-promise: 2)
+		//   #finally: 3(!)
+		fnAct(oPromise1, done);
+		Promise.resolve(oPromise2)
+			.then(function (o) { return o; })
+			.then(function (o) { return o; })
+			.then(function (o) { return o; })
+			.then(function (o) { return o; })
+			.then(function (o) { return o; })
+			.then(done);
+
+		fnResolve1("1");
+		fnResolve2("2");
+
+		return new Promise(function (resolve, reject) {
+			setTimeout(function () {
+				assert.deepEqual(aResults, ["1", "2"]);
+				resolve();
+			}, 0);
+		});
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("resolve() re-uses the same instance", function (assert) {
 		// code under test
 		assert.strictEqual(SyncPromise.resolve(), SyncPromise.resolve(undefined));

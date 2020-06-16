@@ -28,6 +28,8 @@
   use this option. When testing with multiple browsers at once, it is better to run only one frame
   in each browser. When "frames=n" is given, all tests are run invisible.
 
+  With "keepResults" the results for successful QUnit tests are NOT destroyed.
+
   BeforePush expects all tests to use QUnit 2.
 */
 (function () {
@@ -189,7 +191,8 @@
 					if (oDetails.status === "failed") {
 						oTest.element.firstChild.classList.add("failed");
 						oFirstFailedTest = oFirstFailedTest || oTest;
-					} else {
+					} else if (!/keepResults/i.test(location.href)) {
+						// remove iframe in order to free memory
 						document.body.removeChild(oTest.frame);
 						oTest.frame = undefined;
 					}

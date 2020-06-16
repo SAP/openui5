@@ -22,7 +22,7 @@
 				},
 				$count : false,
 				$orderby : 'Region desc,AccountResponsible'
-			}}" selectionMode="None">
+			}}" selectionMode="None" threshold="5" visibleRowCount="5">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" text="Sales Amount by Region"/>

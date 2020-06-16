@@ -264,11 +264,11 @@ sap.ui.define([], function () {
 			return this.then(function (vResult) {
 				return SyncPromise.resolve(fnOnFinally()).then(function () {
 					return vResult;
-				});
+				}).unwrap(); // Note: avoids unnecessary micro task
 			}, function (vReason) {
 				return SyncPromise.resolve(fnOnFinally()).then(function () {
 					throw vReason;
-				});
+				}).unwrap(); // Note: avoids unnecessary micro task
 			});
 		}
 

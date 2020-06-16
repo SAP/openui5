@@ -33,7 +33,8 @@ sap.ui.define([
 	"use strict";
 
 	var aAllowedBindingParameters = ["$$aggregation", "$$canonicalPath", "$$groupId",
-			"$$operationMode", "$$ownRequest", "$$patchWithoutSideEffects", "$$updateGroupId"],
+			"$$operationMode", "$$ownRequest", "$$patchWithoutSideEffects", "$$sharedRequest",
+			"$$updateGroupId"],
 		sClassName = "sap.ui.model.odata.v4.ODataListBinding",
 		rTransientPredicate = /^\(\$uid=.+\)$/;
 
@@ -298,6 +299,7 @@ sap.ui.define([
 			mParametersClone = {
 				$$groupId : "group",
 				$$operationMode : OperationMode.Server,
+				$$sharedRequest : "sharedRequest",
 				$$updateGroupId : "update group"
 			},
 			aSorters = [],
@@ -328,6 +330,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.sOperationMode, OperationMode.Server);
 		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
 		assert.deepEqual(oBinding.aPreviousData, []);
+		assert.strictEqual(oBinding.bSharedRequest, "sharedRequest");
 		assert.strictEqual(oBinding.aSorters, aSorters);
 		assert.strictEqual(oBinding.sUpdateGroupId, "update group");
 	});
@@ -850,7 +853,7 @@ sap.ui.define([
 			.returns(mQueryOptions.$orderby);
 		oCacheMock.expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-				{"$orderby" : "bar", "sap-client" : "111"}, false, undefined)
+				{"$orderby" : "bar", "sap-client" : "111"}, false, undefined, undefined)
 			.returns({});
 		this.spy(ODataListBinding.prototype, "reset");
 
@@ -872,7 +875,7 @@ sap.ui.define([
 
 		oCacheMock.expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-				{"$orderby" : "bar", "sap-client" : "111"}, false, "EMPLOYEES")
+				{"$orderby" : "bar", "sap-client" : "111"}, false, "EMPLOYEES", undefined)
 			.returns({});
 
 		// code under test
@@ -972,7 +975,8 @@ sap.ui.define([
 			oData = {},
 			fnDataRequested = {/*function*/},
 			oGroupLock = {},
-			oPromise;
+			oPromise,
+			that = this;
 
 		this.mock(ODataListBinding.prototype).expects("fetchCache").callsFake(function () {
 			this.oCachePromise = SyncPromise.resolve(Promise.resolve(oCache));
@@ -981,7 +985,11 @@ sap.ui.define([
 		this.mock(oCache).expects("read")
 			.withExactArgs(1, 2, 3, sinon.match.same(oGroupLock),
 				sinon.match.same(fnDataRequested))
-			.returns(SyncPromise.resolve(Promise.resolve(oData)));
+			.returns(SyncPromise.resolve(Promise.resolve().then(function () {
+				that.mock(oBinding).expects("assertSameCache")
+					.withExactArgs(sinon.match.same(oCache));
+				return oData;
+			})));
 
 		// code under test
 		oPromise = oBinding.fetchData(1, 2, 3, oGroupLock, fnDataRequested);
@@ -1027,7 +1035,7 @@ sap.ui.define([
 	// This tests simulates the data access for a virtual context which may be removed from the
 	// binding while fetchData still is waiting for the cache
 [false, true].forEach(function (bHasCache) {
-	QUnit.test("fetchData: context lost", function (assert) {
+	QUnit.test("fetchData: context lost, cache=" + bHasCache, function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
 			oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')"),
@@ -4761,9 +4769,11 @@ sap.ui.define([
 			oContext = {},
 			sDeepResourcePath = "deep/resource/path",
 			mQueryOptions = {},
-			sResourcePath = "EMPLOYEES('42')/TEAM_2_EMPLOYEES";
+			sResourcePath = "EMPLOYEES('42')/TEAM_2_EMPLOYEES",
+			bSharedRequest = {/*false, true*/};
 
 		this.oModel.bAutoExpandSelect = bAutoExpandSelect;
+		oBinding.bSharedRequest = bSharedRequest;
 
 		this.mock(oBinding).expects("inheritQueryOptions")
 			.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(oContext))
@@ -4771,7 +4781,7 @@ sap.ui.define([
 		this.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mMergedQueryOptions), sinon.match.same(bAutoExpandSelect),
-				sDeepResourcePath)
+				sDeepResourcePath, sinon.match.same(bSharedRequest))
 			.returns(oCache);
 
 		// code under test
@@ -6271,9 +6281,9 @@ sap.ui.define([
 			assert.ok(bSuccess);
 			assert.strictEqual(oBinding.aContexts[0], aContextsBefore[0], "0");
 			assert.strictEqual(oBinding.aContexts[1], aContextsBefore[1], "1");
-			assert.strictEqual(oBinding.aContexts[2], undefined, "2");
-			assert.strictEqual(oBinding.aContexts[3], undefined, "3");
-			assert.strictEqual(oBinding.aContexts[4], undefined, "4");
+			assert.notOk(2 in oBinding.aContexts, "2");
+			assert.notOk(3 in oBinding.aContexts, "3");
+			assert.notOk(4 in oBinding.aContexts, "4");
 			assert.strictEqual(oBinding.aContexts[5], aContextsBefore[2], "5");
 			assert.strictEqual(oBinding.aContexts[6], aContextsBefore[3], "6");
 			assert.strictEqual(oBinding.aContexts[7], aContextsBefore[4], "7");
