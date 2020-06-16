@@ -389,6 +389,9 @@ sap.ui.define([
 		var oType = ObjectMarker.M_PREDEFINED_TYPES[this.getType()],
 			oInnerControl = this._getInnerControl(),
 			sAdditionalInfo = this.getAdditionalInfo(),
+			bIsIconVisible = this._isIconVisible(),
+			bIsTextVisible = this._isTextVisible(),
+			bIsIconOnly = bIsIconVisible && !bIsTextVisible,
 			sType = this.getType(),
 			sText;
 
@@ -401,15 +404,16 @@ sap.ui.define([
 			sText = this._getMarkerText(oType, sType, sAdditionalInfo);
 		}
 
-		if (this._isIconVisible()) {
+		if (bIsIconVisible) {
 			oInnerControl.setIcon(oType.icon.src, bSuppressInvalidate);
+			oInnerControl._getIconAggregation().setDecorative(!bIsIconOnly); // icon should be decorative if we have text
 			this.addStyleClass("sapMObjectMarkerIcon");
 		} else {
 			oInnerControl.setIcon(null, bSuppressInvalidate);
 			this.removeStyleClass("sapMObjectMarkerIcon");
 		}
 
-		if (this._isTextVisible()) {
+		if (bIsTextVisible) {
 			oInnerControl.setAggregation("tooltip", null, bSuppressInvalidate);
 			oInnerControl.setText(sText, bSuppressInvalidate);
 			this.addStyleClass("sapMObjectMarkerText");
