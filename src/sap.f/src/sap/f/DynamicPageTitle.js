@@ -416,7 +416,7 @@ sap.ui.define([
 		});
 
 		this._oRB = sap.ui.getCore().getLibraryResourceBundle("sap.f");
-		this.oInvisibleMessage = InvisibleMessage.getInstance();
+		this._oInvisibleMessage = null;
 	};
 
 	DynamicPageTitle.prototype.onBeforeRendering = function () {
@@ -433,6 +433,10 @@ sap.ui.define([
 		this._doNavigationActionsLayout();
 		// Needs update in order to determine its visibility by visibility of its content.
 		this._updateTopAreaVisibility();
+
+		if (!this._oInvisibleMessage) {
+			this._oInvisibleMessage = InvisibleMessage.getInstance();
+		}
 	};
 
 	DynamicPageTitle.prototype.exit = function () {
@@ -1184,7 +1188,7 @@ sap.ui.define([
 	 */
 	DynamicPageTitle.prototype._focusExpandButton = function () {
 		this._getExpandButton().$().trigger("focus");
-		this.oInvisibleMessage.announce(this._getExpandButton().getTooltip(), InvisibleMessageMode.Polite);
+		this._oInvisibleMessage.announce(this._getExpandButton().getTooltip(), InvisibleMessageMode.Polite);
 	};
 
 	/**
