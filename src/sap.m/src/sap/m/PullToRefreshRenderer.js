@@ -18,6 +18,24 @@ sap.ui.define(['sap/ui/core/IconPool'],
 	};
 
 	/**
+	 * Writes the accessibility state to the control's root element.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	PullToRefreshRenderer.writeAccessibilityState = function(oRm, oControl) {
+
+		var oAccAttributes = {
+			role: "button",
+			controls: oControl.getParent().sId + "-cont",
+			keyshortcuts: "F5",
+			describedby: oControl._sAriaF5Text
+		};
+
+		oRm.accessibilityState(oControl, oAccAttributes);
+	};
+
+	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
@@ -43,8 +61,8 @@ sap.ui.define(['sap/ui/core/IconPool'],
 		}
 
 		oRm.attr("tabindex", 0);
-		oRm.attr("role", "button");
-		oRm.attr("aria-controls", oControl.getParent().sId + "-cont"); // aria attribute
+
+		this.writeAccessibilityState(oRm, oControl);
 
 		oRm.openEnd();
 
