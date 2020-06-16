@@ -5257,6 +5257,37 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Opening picker via dropdown icon on mobile devices should not throw error", function(assert) {
+		// Arrange
+		var oDeviceStub = this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		}),
+			aItems = [new Item({key: "Item1", text: "Item1"})],
+			oEventMock = {
+				setMarked: function() {
+					return false;
+				}
+			},
+			oMultiComboBox = new MultiComboBox({items: aItems}).placeAt("MultiComboBox-content");
+
+		sap.ui.getCore().applyChanges();
+		oMultiComboBox.onsapshow(oEventMock);
+		this.clock.tick(300);
+
+		// Assert
+		assert.ok(true, "The picker is opening without throwing an error on mobile devices");
+
+		// Act
+		oMultiComboBox.close();
+		this.clock.tick(300);
+
+		// Clean
+		oDeviceStub.restore();
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.module("Accessibility");
 
 	QUnit.test("getAccessibilityInfo", function(assert) {

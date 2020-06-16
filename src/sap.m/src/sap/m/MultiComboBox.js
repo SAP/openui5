@@ -2296,7 +2296,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onFocusinList = function() {
-		if (this._bListItemNavigationInvalidated) {
+		if (this._bListItemNavigationInvalidated && this._getList().getItemNavigation()) {
 			this._getList().getItemNavigation().setSelectedIndex(this._iInitialItemFocus);
 			this._bListItemNavigationInvalidated = false;
 		}
