@@ -378,6 +378,7 @@ sap.ui.define([
 						this._aEditorWrappers = this._aEditorWrappers.filter(function (oEditorWrapper) {
 							return oEditorWrapper !== oObservedWrapper;
 						});
+						this._checkReadyState();
 						break;
 					case 'parent':
 						if (!isTemplate(oObservedWrapper, this)) {

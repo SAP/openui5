@@ -19,6 +19,7 @@ sap.ui.define([
 			items: oEditor.getContent().getItems()[0].getItems().map(function (oItem) {
 				var oNestedEditors = oItem.getContent()[0]._getPropertyEditors();
 				return {
+					item: oItem,
 					key: oNestedEditors[0],
 					type: oNestedEditors[1],
 					value: oNestedEditors[2],
@@ -288,6 +289,50 @@ sap.ui.define([
 				oExpectedItemConfig,
 				"Then configurations for the nested editors are returned"
 			);
+		});
+
+		QUnit.test("Auto Expand - When a prefilled item is added", function (assert) {
+			var iLastItemIndex = this.aItems.length - 1;
+			assert.strictEqual(
+				this.aItems[iLastItemIndex].item.getExpanded(),
+				false,
+				"Then the item is initially collapsed"
+			);
+		});
+
+		QUnit.test("Auto Expand - When an empty item is added", function (assert) {
+			var iLastItemIndex = this.aItems.length - 1;
+			QUnitUtils.triggerEvent("tap", this.oAddButton.getDomRef());
+
+			return this.oMapEditor.ready().then(function () {
+				var aEditorItems = getMapEditorContent(this.oMapEditor).items;
+				assert.strictEqual(
+					aEditorItems[(iLastItemIndex + 1)].item.getExpanded(),
+					true,
+					"Then the newly added item is expanded"
+				);
+			}.bind(this));
+		});
+
+		QUnit.test("Auto Expand - When an empty item is manually collapsed", function (assert) {
+			var iLastItemIndex = this.aItems.length - 1;
+			QUnitUtils.triggerEvent("tap", this.oAddButton.getDomRef());
+
+			return this.oMapEditor.ready().then(function () {
+				var aEditorItems = getMapEditorContent(this.oMapEditor).items;
+				aEditorItems[iLastItemIndex + 1].item.setExpanded(false);
+
+				// Trigger config change by removing a different element
+				QUnitUtils.triggerEvent("tap", aEditorItems[iLastItemIndex].deleteButton.getDomRef());
+
+				return this.oMapEditor.ready().then(function () {
+					assert.strictEqual(
+						getMapEditorContent(this.oMapEditor).items[iLastItemIndex].item.getExpanded(),
+						false,
+						"Then the item stays collapsed"
+					);
+				}.bind(this));
+			}.bind(this));
 		});
 	});
 
