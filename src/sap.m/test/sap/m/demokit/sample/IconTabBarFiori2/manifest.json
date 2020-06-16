@@ -7,19 +7,20 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.IconTabBarFiori2.IconTabBar",
+			"viewName": "sap.m.sample.IconTabBarFiori2.V",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.ui.core": {},
 				"sap.m": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"IconTabBar.view.xml",
+					"V.view.xml",
 					"manifest.json"
 				]
 			}

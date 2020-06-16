@@ -7,19 +7,20 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.IconTabSeparator.IconTab",
+			"viewName": "sap.m.sample.IconTabSeparator.V",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.layout": {}
+				"sap.ui.core": {},
+				"sap.m": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"IconTab.view.xml",
+					"V.view.xml",
 					"manifest.json"
 				]
 			}

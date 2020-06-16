@@ -1,40 +1,42 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core"
-], function(Controller, Filter, JSONModel, Core) {
+	"sap/ui/core/Core",
+	"sap/ui/model/Filter"
+], function (Controller, JSONModel, Core, Filter) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.IconTabBarResponsivePadding.C", {
 
 		onInit: function () {
-			// set explored app's demo model on this sample
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
 
 			// reuse table sample component
 			var oComp = Core.createComponent({
-				name : 'sap.m.sample.Table'
+				name: "sap.m.sample.Table"
 			});
 			oComp.setModel(this.getView().getModel());
+
 			this._oTable = oComp.getTable();
+			this._oTable.setWidth("auto");
 			this._oTable.addStyleClass("sapUiSmallNegativeMarginBeginEnd");
-			this.byId("idIconTabBar").insertContent(this._oTable);
+			this.byId("idIconTabBar").addContent(this._oTable);
 
 			// update table
 			this._oTable.setHeaderText(null);
 			this._oTable.setShowSeparators("Inner");
 		},
 
-		handleIconTabBarSelect: function (oEvent) {
+		onFilterSelect: function (oEvent) {
 			var oBinding = this._oTable.getBinding("items"),
 				sKey = oEvent.getParameter("key"),
 				// Array to combine filters
 				aFilters = [],
 				oCombinedFilterG,
 				oCombinedFilterKG,
-				// Boarder values for Filter
+
+				// Values for Filter
 				fMaxOkWeightKG = 1,
 				fMaxOkWeightG = fMaxOkWeightKG * 1000,
 				fMaxHeavyWeightKG = 5,
@@ -53,6 +55,7 @@ sap.ui.define([
 				oCombinedFilterG = new Filter([new Filter("WeightMeasure", "GT", fMaxHeavyWeightG), new Filter("WeightUnit", "EQ", "G")], true);
 				aFilters.push(new Filter([oCombinedFilterKG, oCombinedFilterG], false));
 			}
+
 			oBinding.filter(aFilters);
 		}
 

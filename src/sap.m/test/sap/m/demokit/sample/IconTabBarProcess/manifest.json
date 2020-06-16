@@ -7,13 +7,14 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.IconTabBarProcess.IconTabBar",
+			"viewName": "sap.m.sample.IconTabBarProcess.V",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.layout": {}
+				"sap.ui.core": {},
+				"sap.m": {}
 			},
 			"components": {
 				"sap.m.sample.Table": {}
@@ -22,8 +23,8 @@
 		"config": {
 			"sample": {
 				"files": [
-					"IconTabBar.view.xml",
-					"IconTabBar.controller.js",
+					"V.view.xml",
+					"C.controller.js",
 					"manifest.json"
 				]
 			}

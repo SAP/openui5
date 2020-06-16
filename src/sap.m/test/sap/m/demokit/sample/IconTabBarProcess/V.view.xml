@@ -1,0 +1,35 @@
+<mvc:View
+	controllerName="sap.m.sample.IconTabBarProcess.C"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<IconTabBar
+		id="idIconTabBar"
+		select=".onFilterSelect"
+		class="sapUiResponsiveContentPadding">
+		<items>
+			<IconTabFilter
+				icon="sap-icon://begin"
+				iconColor="Positive"
+				design="Horizontal"
+				count="{/ProductCollectionStats/Counts/Weight/Ok} of {/ProductCollectionStats/Counts/Total}"
+				text="Confirm Ok"
+				key="Ok" />
+			<IconTabSeparator icon="sap-icon://open-command-field" />
+			<IconTabFilter
+				icon="sap-icon://compare"
+				iconColor="Critical"
+				design="Horizontal"
+				count="{/ProductCollectionStats/Counts/Weight/Heavy} of {/ProductCollectionStats/Counts/Total}"
+				text="Check Heavys"
+				key="Heavy" />
+			<IconTabSeparator icon="sap-icon://open-command-field" />
+			<IconTabFilter
+				icon="sap-icon://inventory"
+				iconColor="Negative"
+				design="Horizontal"
+				count="{/ProductCollectionStats/Counts/Weight/Overweight} of {/ProductCollectionStats/Counts/Total}"
+				text="Claim Overweights"
+				key="Overweight" />
+		</items>
+	</IconTabBar>
+</mvc:View>

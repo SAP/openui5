@@ -1,9 +1,0 @@
-<mvc:View
-	controllerName="sap.m.sample.IconTabBarOverflowSelectList.IconTabBarOverflowSelectList"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
-	<IconTabBar
-		id="idIconTabBar"
-		class="sapUiResponsiveContentPadding">
-	</IconTabBar>
-</mvc:View>
