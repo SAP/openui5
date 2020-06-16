@@ -54,7 +54,6 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Icon", "sap/ui/core/IconPool"
 			}
 
 			oRm.style("width", oList.getWidth());
-			oRm.style("max-width", oList.getMaxWidth());
 			this.writeAccessibilityState(oRm, oList);
 			oRm.openEnd();
 		};
@@ -154,7 +153,6 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Icon", "sap/ui/core/IconPool"
 				}
 			}
 
-			oRm.style("max-width", oList.getMaxWidth());
 
 			if (sTooltip) {
 				oRm.attr("title", sTooltip);
