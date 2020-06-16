@@ -29,8 +29,12 @@ sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
 			oTemplate = oConfiguration.item,
 			iItemHeight = bIsCompact ? 2 : 2.75; // list item height in "rem"
 
-		if (oTemplate.description) {
-			iItemHeight = 5; // list item height with description in "rem"
+		if (oTemplate.description || oTemplate.chart) {
+			iItemHeight = 5; // list item height with description or chart in "rem"
+		}
+
+		if (oTemplate.description && oTemplate.chart) {
+			iItemHeight = 6; // list item height with description and chart in "rem"
 		}
 
 		return (iCount * iItemHeight) + "rem";

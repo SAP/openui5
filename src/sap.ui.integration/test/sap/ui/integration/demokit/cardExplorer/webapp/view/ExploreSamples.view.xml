@@ -32,7 +32,7 @@
 					</customHeader>
 					<MessageStrip
 						text="This type of card is in a beta state - incompatible API changes in the manifest may be done before its official public release."
-						visible="{= !!${/sample/experimental}}"
+						visible="{= !!${/sample/experimental} || !!${/subSample/experimental} }"
 						showIcon="true"
 						type="Warning"
 						class="sapUiSmallMargin"/>

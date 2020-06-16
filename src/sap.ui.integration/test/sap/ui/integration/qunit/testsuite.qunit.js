@@ -204,6 +204,7 @@ sap.ui.define(function () {
 			"cards/AdaptiveCard": { },
 			"cards/AnalyticalCard": { },
 			"cards/CalendarCard": { },
+			"cards/ListCard": { },
 			"CardFiltering": {
 				coverage: {
 					only: [
@@ -212,6 +213,8 @@ sap.ui.define(function () {
 					]
 				}
 			},
+			"controls/ListContentItem": {},
+			"controls/Microchart": {},
 			"customElements/CustomElements": {
 				ui5: {
 					libs: ["sap.ui.integration"]
