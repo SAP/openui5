@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/controls/Microchart",
+	"sap/ui/integration/controls/MicrochartLegend",
 	"sap/ui/integration/controls/ListContentItem"
 ], function (
 	BaseListContent,
@@ -16,6 +17,7 @@ sap.ui.define([
 	library,
 	BindingHelper,
 	Microchart,
+	MicrochartLegend,
 	ListContentItem
 ) {
 	"use strict";
@@ -42,35 +44,20 @@ sap.ui.define([
 	 * @alias sap.ui.integration.cards.ListContent
 	 */
 	var ListContent = BaseListContent.extend("sap.ui.integration.cards.ListContent", {
+		metadata: {
+			aggregations: {
+
+				/**
+				 * Legend for some Microcharts.
+				 */
+				_legend: {
+					multiple: false,
+					visibility: "hidden"
+				}
+			}
+		},
 		renderer: ListContentRenderer
 	});
-
-	/**
-	 * Lazily get a configured <code>sap.m.List</code>.
-	 *
-	 * @private
-	 * @returns {sap.m.List} The inner list
-	 */
-	ListContent.prototype._getList = function () {
-
-		if (this._bIsBeingDestroyed) {
-			return null;
-		}
-
-		var oList = this.getAggregation("_content");
-
-		if (!oList) {
-			oList = new List({
-				id: this.getId() + "-list",
-				growing: false,
-				showNoData: false,
-				showSeparators: "None"
-			});
-			this.setAggregation("_content", oList);
-		}
-
-		return oList;
-	};
 
 	/**
 	 * Called when control is initialized.
@@ -80,6 +67,8 @@ sap.ui.define([
 
 		var oList = this._getList();
 		var that = this;
+
+		this.setAggregation("_content", oList);
 
 		oList.attachUpdateFinished(function () {
 			if (that._iVisibleItems) {
@@ -119,6 +108,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 */
+	ListContent.prototype.destroyPlaceholder = function () {
+		var oLegend = this.getAggregation("_legend");
+
+		if (oLegend) {
+			oLegend.removeStyleClass("sapFCardContentHidden");
+		}
+
+		BaseListContent.prototype.destroyPlaceholder.apply(this, arguments);
+	};
+
+	/**
 	 * Setter for configuring a <code>sap.ui.integration.cards.ListContent</code>.
 	 *
 	 * @public
@@ -152,6 +154,29 @@ sap.ui.define([
 	};
 
 	/**
+	 * Lazily get a configured <code>sap.m.List</code>.
+	 *
+	 * @private
+	 * @returns {sap.m.List} The inner list
+	 */
+	ListContent.prototype._getList = function () {
+		if (this._bIsBeingDestroyed) {
+			return null;
+		}
+
+		if (!this._oList) {
+			this._oList = new List({
+				id: this.getId() + "-list",
+				growing: false,
+				showNoData: false,
+				showSeparators: "None"
+			});
+		}
+
+		return this._oList;
+	};
+
+	/**
 	 * Binds/Sets properties to the inner item template based on the configuration object item template which is already parsed.
 	 * Attaches all required actions.
 	 *
@@ -175,7 +200,7 @@ sap.ui.define([
 		}
 
 		if (mItem.chart) {
-			mSettings.microchart = Microchart.create(mItem.chart);
+			mSettings.microchart = this._createChartAndAddLegend(mItem.chart);
 		}
 
 		this._oItemTemplate = new ListContentItem(mSettings);
@@ -187,6 +212,25 @@ sap.ui.define([
 		};
 		this._filterHiddenNavigationItems(mItem, oBindingInfo);
 		this._bindAggregation("items", this._getList(), oBindingInfo);
+	};
+
+	ListContent.prototype._createChartAndAddLegend = function (oChartSettings) {
+		var oChart = Microchart.create(oChartSettings);
+
+		// destroy previously created legend
+		this.destroyAggregation("_legend");
+
+		if (oChartSettings.type === "StackedBar") {
+			var oLegend = new MicrochartLegend({
+				chart: oChart.getChart()
+			});
+
+			oLegend.initItemsTitles(oChartSettings.bars, this.getBindingContext().getPath());
+
+			this.setAggregation("_legend", oLegend);
+		}
+
+		return oChart;
 	};
 
 	/**

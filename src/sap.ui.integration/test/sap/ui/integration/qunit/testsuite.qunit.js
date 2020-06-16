@@ -216,6 +216,7 @@ sap.ui.define(function () {
 			},
 			"controls/ListContentItem": {},
 			"controls/Microchart": {},
+			"controls/MicrochartLegend": {},
 			"customElements/CustomElements": {
 				ui5: {
 					libs: ["sap.ui.integration"]

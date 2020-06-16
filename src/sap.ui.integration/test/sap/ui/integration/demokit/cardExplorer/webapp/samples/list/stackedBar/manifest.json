@@ -52,11 +52,13 @@
 					"bars": [
 						{
 							"value": "{Notebook13}",
-							"displayValue": "Notebook 13: {Notebook13}K"
+							"displayValue": "{/legend/items/Notebook13}: {Notebook13}K",
+							"legendTitle": "{/legend/items/Notebook13}"
 						},
 						{
 							"value": "{Notebook17}",
-							"displayValue": "Notebook 17: {Notebook17}K"
+							"displayValue": "{/legend/items/Notebook17}: {Notebook17}K",
+							"legendTitle": "{/legend/items/Notebook17}"
 						}
 					]
 				}

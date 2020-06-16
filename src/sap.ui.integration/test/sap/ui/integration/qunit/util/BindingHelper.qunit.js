@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/integration/util/BindingHelper"
@@ -225,4 +225,69 @@ function (
 		assert.ok(vOutput.parts, "The output is binding info.");
 		assert.strictEqual(vOutput.formatter.textFragments.join(""), "{{parameters.something}}/0", "The card placeholder is unchanged.");
 	});
+
+	QUnit.module("Static method #prependRelativePaths'");
+
+	QUnit.test("#prependRelativePaths doesn't change primitive types", function (assert) {
+		// arrange
+		var sInput = "should not get modified";
+
+		// assert
+		assert.strictEqual(BindingHelper.prependRelativePaths(sInput, ""), sInput, "Parameter should not be modified.");
+	});
+
+	QUnit.test("#prependRelativePath returns copy of the object", function (assert) {
+		// arrange
+		var oBindingInfo = {};
+
+		// assert
+		assert.notStrictEqual(BindingHelper.prependRelativePaths(oBindingInfo, ""), oBindingInfo, "Parameter should be cloned.");
+	});
+
+	QUnit.test("Absolute paths are NOT be prepended", function (assert) {
+		// arrange
+		var oBindingInfo = {
+			path: "/absolute"
+		};
+
+		// act
+		var oRes = BindingHelper.prependRelativePaths(oBindingInfo, "/root");
+
+		// assert
+		assert.strictEqual(oRes.path, oBindingInfo.path, "Absolute path should NOT be prepended.");
+	});
+
+	QUnit.test("Relative paths are prepended", function (assert) {
+		// arrange
+		var oBindingInfo = {
+			path: "relative"
+		};
+
+		// act
+		var oRes = BindingHelper.prependRelativePaths(oBindingInfo, "/root");
+
+		// assert
+		assert.strictEqual(oRes.path, "/root/" + oBindingInfo.path, "Relative path should be prepended.");
+	});
+
+	QUnit.test("'parts' of the binding info are also processed", function (assert) {
+		// arrange
+		var oSpy = sinon.spy(BindingHelper, "prependRelativePaths");
+		var oBindingInfo = {
+			parts: [
+				{ path: "path1" },
+				{ path: "path2" }
+			]
+		};
+
+		// act
+		BindingHelper.prependRelativePaths(oBindingInfo, "/root");
+
+		// assert
+		assert.strictEqual(oSpy.callCount, 3, "The binding info and all 'parts' inside it should be processed.");
+
+		// clean up
+		oSpy.restore();
+	});
+
 });
