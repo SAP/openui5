@@ -2759,8 +2759,9 @@ sap.ui.define([
 	 *
 	 * Applications should call this method if they don't need the object any longer.
 	 *
-	 * @param {boolean}
-	 *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
+	 * @param {boolean} [bSuppressInvalidate=false] If <code>true</code>, this ManagedObject and all its ancestors won't be invalidated.
+	 *      <br>This flag should be used only during control development to optimize invalidation procedures.
+	 *      It should not be used by any application code.
 	 * @public
 	 */
 	ManagedObject.prototype.destroy = function(bSuppressInvalidate) {
