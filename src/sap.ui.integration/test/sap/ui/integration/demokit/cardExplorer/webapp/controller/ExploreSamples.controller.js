@@ -287,6 +287,10 @@ sap.ui.define([
 				content: ''
 			}]);
 
+			if (oSubSampleOrSample.isApplication) {
+				exploreSettingsModel.setProperty("/editorType", "text");
+			}
+
 			exploreSettingsModel.setProperty("/isApplication", !!oSubSampleOrSample.isApplication);
 			this._showSample(oSample, oSubSample);
 		},
