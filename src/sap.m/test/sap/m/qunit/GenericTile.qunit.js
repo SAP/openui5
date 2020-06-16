@@ -306,6 +306,19 @@ sap.ui.define([
 		assert.notStrictEqual(oTileElements[0].tagName, "A", "The node is not a link.");
 	});
 
+	QUnit.test("GenericTile not rendered with link when in disabled state", function(assert) {
+		//Arrange
+		var sLink = "http://localhost/myLink";
+		this.oGenericTile.setUrl(sLink);
+		this.oGenericTile.setState("Disabled");
+		sap.ui.getCore().applyChanges();
+
+		var oTileElements = document.getElementById("generic-tile").childNodes;
+
+		this.fnWithRenderAsserts(assert);
+		assert.notStrictEqual(oTileElements[0].tagName, "A", "The node is not a link.");
+	});
+
 	QUnit.test("GenericTile rendered with link when not in action mode", function(assert) {
 		//Arrange
 		var sLink = "http://localhost/myLink";
@@ -317,9 +330,11 @@ sap.ui.define([
 
 		//Assert
 		var oTileElement = document.getElementById("generic-tile");
-
+		var sDraggableAttr = oTileElement.attributes["draggable"];
 		this.fnWithRenderAsserts(assert);
 		assert.strictEqual(oTileElement.tagName, "A", "The node is a link.");
+		assert.strictEqual(sDraggableAttr && sDraggableAttr.value, "false", "The draggable attribute is set to false.");
+		assert.strictEqual(oTileElement.attributes["role"], undefined, "The role attribute for the link element is not set.");
 		assert.strictEqual(oTileElement.href, sLink, "The link is correctly set.");
 		assert.strictEqual(document.getElementById("generic-tile-content").parentNode, oTileElement, "The tile content is a child of the link.");
 		assert.strictEqual(document.getElementById("generic-tile-hover-overlay").parentNode, oTileElement, "The tile overlay is a child of the link.");
