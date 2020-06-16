@@ -444,7 +444,7 @@ sap.ui.define([
 
 			return RtaAppVariantFeature.onSaveAs(false, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
-				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called 10 times");
+				assert.equal(oCreateChangesSpy.callCount, 6, "then ChangesWriteAPI.create method is called 6 times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
 				assert.equal(oGetOverviewSpy.callCount, 1, "then the overview loads only once after the new app variant has been saved to LREP");
 				assert.strictEqual(oCatchErrorDialog.getCall(0).args[1], "MSG_SAVE_APP_VARIANT_FAILED", "then the oCatchErrorDialog method is called with correct message key");
@@ -503,7 +503,7 @@ sap.ui.define([
 
 			return RtaAppVariantFeature.onSaveAs(false, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
-				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
+				assert.equal(oCreateChangesSpy.callCount, 6, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.save method is called once");
 				assert.equal(oClearRTACommandStack.callCount, 1, "then the clearRTACommandStack method is called once");
 				assert.equal(oShowSuccessMessage.callCount, 1, "then the showSuccessMessage method is called once");
@@ -569,7 +569,7 @@ sap.ui.define([
 
 			return RtaAppVariantFeature.onSaveAs(false, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
-				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
+				assert.equal(oCreateChangesSpy.callCount, 6, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
 				assert.equal(oClearRTACommandStack.callCount, 1, "then the clearRTACommandStack method is called once");
 				assert.equal(oShowSuccessMessage.callCount, 2, "then the showSuccessMessage method is called twice");
@@ -633,7 +633,7 @@ sap.ui.define([
 
 			return RtaAppVariantFeature.onSaveAs(false, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
-				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
+				assert.equal(oCreateChangesSpy.callCount, 6, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
 				assert.equal(oClearRTACommandStack.callCount, 1, "then the clearRTACommandStack method is called once");
 				assert.equal(oShowSuccessMessage.callCount, 2, "then the showSuccessMessage method is called twice");
@@ -724,7 +724,7 @@ sap.ui.define([
 
 			return fnTriggerSaveAs().then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
-				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
+				assert.equal(oCreateChangesSpy.callCount, 6, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
 				assert.equal(oClearRTACommandStack.callCount, 1, "then the clearRTACommandStack method is called once");
 				assert.equal(oShowSuccessMessage.callCount, 1, "then the showSuccessMessage method is called once");
@@ -790,7 +790,7 @@ sap.ui.define([
 
 			return RtaAppVariantFeature.onSaveAs(true, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
-				assert.equal(oCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
+				assert.equal(oCreateChangesSpy.callCount, 6, "then ChangesWriteAPI.create method is called " + oCreateChangesSpy.callCount + " times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
 				assert.equal(oClearRTACommandStack.callCount, 1, "then the clearRTACommandStack method is called once");
 				assert.equal(oShowSuccessMessageStub.callCount, 2, "then the showSuccessMessage method is called twice");

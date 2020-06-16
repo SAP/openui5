@@ -146,20 +146,24 @@ function(
 		};
 	};
 
-	AppVariantUtils.getInlinePropertyChange = function(sPropertyName, sPropertyValue) {
+	AppVariantUtils.prepareTextsChange = function(sPropertyName, sPropertyValue) {
 		var sComment = "New " + sPropertyName + " entered by a key user via RTA tool";
 		return this.getInlineChangeInput(sPropertyValue, sComment);
 	};
 
 	AppVariantUtils.getInlineChangeInputIcon = function(sIconValue) {
 		return {
-			icon: sIconValue
+			content: {
+				icon: sIconValue
+			}
 		};
 	};
 
-	AppVariantUtils.getInlineChangeRemoveInbounds = function(sInboundValue) {
+	AppVariantUtils.prepareRemoveAllInboundsExceptOneChange = function(sInboundValue) {
 		return {
-			inboundId: sInboundValue
+			content: {
+				inboundId: sInboundValue
+			}
 		};
 	};
 
@@ -174,6 +178,14 @@ function(
 		var oParsedHash = FlexUtils.getParsedURLHash();
 		var aInbounds = Object.keys(oInbounds);
 		var aInboundsFound = [];
+
+		// This will only happen if app variants are created on top of app variants
+		if (aInbounds.length === 1 && aInbounds[0] === "customer.savedAsAppVariant") {
+			return {
+				currentRunningInbound: "customer.savedAsAppVariant",
+				addNewInboundRequired: false
+			};
+		}
 
 		aInbounds.forEach(function(sInboundId) {
 			if ((oInbounds[sInboundId].action === oParsedHash.action) && (oInbounds[sInboundId].semanticObject === oParsedHash.semanticObject)) {
@@ -191,7 +203,8 @@ function(
 				oInboundInfo.addNewInboundRequired = false;
 				break;
 			default:
-				oInboundInfo = undefined;
+				oInboundInfo.currentRunningInbound = "customer.savedAsAppVariant";
+				oInboundInfo.addNewInboundRequired = true;
 				break;
 		}
 
@@ -200,28 +213,6 @@ function(
 
 	AppVariantUtils.getInboundPropertiesKey = function(sAppVariantId, sCurrentRunningInboundId, sPropertyName) {
 		return sAppVariantId + "_sap.app.crossNavigation.inbounds." + sCurrentRunningInboundId + "." + sPropertyName;
-	};
-
-	AppVariantUtils.getInlineChangesForInboundProperties = function(sCurrentRunningInboundId, sReferenceAppId, sPropertyName, sPropertyValue) {
-		var oChangeInput = {
-			inboundId: sCurrentRunningInboundId,
-			entityPropertyChange: {
-				propertyPath: sPropertyName,
-				operation: "UPSERT",
-				propertyValue: {}
-			},
-			texts: {}
-		};
-
-		if (sPropertyName === "title" || sPropertyName === "subTitle") {
-			var sKey = this.getInboundPropertiesKey(sReferenceAppId, sCurrentRunningInboundId, sPropertyName);
-			oChangeInput.entityPropertyChange.propertyValue = "{{" + sKey + "}}";
-			oChangeInput.texts[sKey] = this.getInlinePropertyChange(sPropertyName, sPropertyValue);
-		} else if (sPropertyName === "icon") {
-			oChangeInput.entityPropertyChange.propertyValue = sPropertyValue;
-		}
-
-		return oChangeInput;
 	};
 
 	AppVariantUtils.getInlineChangeForInboundPropertySaveAs = function(sCurrentRunningInboundId, sAppVariantId) {
@@ -244,30 +235,106 @@ function(
 		};
 	};
 
-	AppVariantUtils.getInlineChangeCreateInbound = function(sCurrentRunningInboundId) {
+	AppVariantUtils.prepareAddNewInboundChange = function(sCurrentRunningInboundId, sAppVariantId, oAppVariantSpecificData) {
 		var oParsedHash = FlexUtils.getParsedURLHash();
 		var oProperty = {
-			inbound: {}
+			content: {
+				inbound: {}
+			},
+			texts: {}
 		};
 
-		oProperty.inbound[sCurrentRunningInboundId] = {
+		var sInboundTitleKey = this.getInboundPropertiesKey(oAppVariantSpecificData.referenceAppId, sCurrentRunningInboundId, "title");
+		var sInboundSubTitleKey = this.getInboundPropertiesKey(oAppVariantSpecificData.referenceAppId, sCurrentRunningInboundId, "subTitle");
+
+		// Filling change content
+		oProperty.content.inbound[sCurrentRunningInboundId] = {
 			semanticObject: oParsedHash.semanticObject,
-			action: oParsedHash.action
+			action: oParsedHash.action,
+			title: "{{" + sInboundTitleKey + "}}",
+			subTitle: "{{" + sInboundSubTitleKey + "}}",
+			icon: oAppVariantSpecificData.icon,
+			signature: {
+				parameters: {
+					"sap-appvar-id": {
+						required: true,
+						filter: {
+							value: sAppVariantId,
+							format: "plain"
+						},
+						launcherValue: {
+							value: sAppVariantId
+						}
+					}
+				},
+				additionalParameters: "ignored"
+			}
 		};
+
+		// Filling change texts
+		oProperty.texts[sInboundTitleKey] = this.prepareTextsChange("title", oAppVariantSpecificData.title);
+		oProperty.texts[sInboundSubTitleKey] = this.prepareTextsChange("subTitle", oAppVariantSpecificData.subTitle);
 
 		return oProperty;
 	};
 
-	AppVariantUtils.createInlineChange = function(oContent, sInlineChangeType, vSelector) {
+	AppVariantUtils.prepareChangeInboundChange = function(sCurrentRunningInboundId, sAppVariantId, oAppVariantSpecificData) {
+		var oProperty = {
+			content: {},
+			texts: {}
+		};
+
+		var sInboundTitleKey = this.getInboundPropertiesKey(oAppVariantSpecificData.referenceAppId, sCurrentRunningInboundId, "title");
+		var sInboundSubTitleKey = this.getInboundPropertiesKey(oAppVariantSpecificData.referenceAppId, sCurrentRunningInboundId, "subTitle");
+
+		// Filling change content
+		oProperty.content = {
+			inboundId: sCurrentRunningInboundId,
+			entityPropertyChange: [{
+				propertyPath: "signature/parameters/sap-appvar-id",
+				operation: "UPSERT",
+				propertyValue: {
+					required: true,
+					filter: {
+						value: sAppVariantId,
+						format: "plain"
+					},
+					launcherValue: {
+						value: sAppVariantId
+					}
+				}
+			}, {
+				propertyPath: "title",
+				operation: "UPSERT",
+				propertyValue: "{{" + sInboundTitleKey + "}}"
+			}, {
+				propertyPath: "subTitle",
+				operation: "UPSERT",
+				propertyValue: "{{" + sInboundSubTitleKey + "}}"
+			}, {
+				propertyPath: "icon",
+				operation: "UPSERT",
+				propertyValue: oAppVariantSpecificData.icon
+			}]
+		};
+
+		// Filling change texts
+		oProperty.texts[sInboundTitleKey] = this.prepareTextsChange("title", oAppVariantSpecificData.title);
+		oProperty.texts[sInboundSubTitleKey] = this.prepareTextsChange("subTitle", oAppVariantSpecificData.subTitle);
+
+		return oProperty;
+	};
+
+	AppVariantUtils.createInlineChange = function(oPropertyChange, sInlineChangeType, vSelector) {
 		var oChangeSpecificData = {
 			changeType: sInlineChangeType,
-			content: oContent
+			content: oPropertyChange.content
 		};
-		//This API is not standard and content has to be adjusted
-		if (oChangeSpecificData.content.texts) {
-			oChangeSpecificData.texts = oChangeSpecificData.content.texts;
-			delete oChangeSpecificData.content.texts;
+
+		if (oPropertyChange.texts) {
+			oChangeSpecificData.texts = oPropertyChange.texts;
 		}
+
 		return ChangesWriteAPI.create({changeSpecificData: oChangeSpecificData, selector: vSelector});
 	};
 
