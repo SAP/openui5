@@ -1,4 +1,5 @@
 <mvc:View
+	controllerName="sap.m.sample.PanelExpanded.controller.PanelExpanded"
 	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
@@ -10,8 +11,21 @@
 	</Panel>
 	<Panel expandable="true" width="auto" class="sapUiResponsiveMargin">
 		<headerToolbar>
-			<OverflowToolbar height="3rem" style="Clear">
+			<OverflowToolbar style="Clear">
 				<Title text="Custom Toolbar with a header text" />
+				<ToolbarSpacer />
+				<Button icon="sap-icon://settings" />
+				<Button icon="sap-icon://drop-down-list" />
+			</OverflowToolbar>
+		</headerToolbar>
+		<content>
+			<Text text="Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" />
+		</content>
+	</Panel>
+	<Panel id="expandablePanel" expandable="true" expand="onExpand" width="auto" class="sapUiResponsiveMargin">
+		<headerToolbar>
+			<OverflowToolbar active="true" press="onOverflowToolbarPress">
+				<Title text="Clickable Custom Toolbar with a header text" />
 				<ToolbarSpacer />
 				<Button icon="sap-icon://settings" />
 				<Button icon="sap-icon://drop-down-list" />
