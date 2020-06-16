@@ -742,6 +742,42 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchValue: cache has changed", function (assert) {
+		var oBinding,
+			oCache,
+			oCacheMock,
+			oError = new Error(),
+			oGroupLock = {unlock : function () {}},
+			oODataContextBindingMock = this.mock(ODataContextBinding.prototype),
+			that = this;
+
+		oODataContextBindingMock.expects("lockGroup").withExactArgs("$direct", true)
+			.returns(oGroupLock);
+		oBinding = this.bindContext("/absolute", undefined, {$$groupId : "$direct"});
+		oCache = oBinding.oCachePromise.getResult();
+		oCacheMock = this.mock(oCache);
+		oCacheMock.expects("fetchValue")
+			.withExactArgs(sinon.match.same(oGroupLock), "foo", sinon.match.func, undefined)
+			.callsArg(2)
+			.returns(SyncPromise.resolve(Promise.resolve()).then(function () {
+				that.mock(oBinding).expects("assertSameCache")
+					.withExactArgs(sinon.match.same(oCache))
+					.throws(oError);
+				return {};
+			}));
+		this.mock(oBinding).expects("fireDataReceived").withExactArgs({error : oError});
+		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
+		this.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to read path /absolute", sClassName, sinon.match.same(oError));
+
+		return oBinding.fetchValue("/absolute/foo").then(function () {
+			assert.ok(false, "unexpected success");
+		}, function (oResult) {
+			assert.strictEqual(oResult, oError);
+		});
+	});
+
+	//*********************************************************************************************
 [
 	{path : "name", value : "value"},
 	{path : "name/complex", value : {complex : "value"}}
@@ -963,6 +999,7 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "bar", sinon.match.func, null)
 			.returns(SyncPromise.resolve(42));
+		this.mock(oBinding).expects("assertSameCache").withExactArgs(oCache);
 
 		// code under test
 		return oBinding.fetchValue("/absolute/bar", null, true).then(function (vResult) {
@@ -1001,6 +1038,7 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(oGroupLock), "bar", sinon.match.func, undefined)
 			.returns(SyncPromise.resolve(42));
+		this.mock(oBinding).expects("assertSameCache").withExactArgs(oCache);
 
 		// code under test
 		return oBinding.fetchValue("/absolute/bar").then(function (vResult) {

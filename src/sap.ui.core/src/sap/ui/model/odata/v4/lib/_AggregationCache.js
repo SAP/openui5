@@ -213,6 +213,12 @@ sap.ui.define([
 			// fill in the results
 			that.addElements(oResult.value, iIndex);
 			that.aElements.$count += iCount;
+			// create placeholder
+			for (i = iIndex + oResult.value.length; i < iIndex + iCount; i += 1) {
+				that.aElements[i] = {"@$ui5.node.level" : 2};
+				_Helper.setPrivateAnnotation(that.aElements[i], "index", i - iIndex);
+				_Helper.setPrivateAnnotation(that.aElements[i], "parent", oCache);
+			}
 
 			return iCount;
 		}, function (oError) {
@@ -322,25 +328,77 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.read = function (iIndex, iLength, iPrefetchLength, oGroupLock,
 			fnDataRequested) {
-		var bHasGroupLevels = this.oAggregation.groupLevels.length,
-			oResult,
+		var i, n,
+			oCurrentParent,
+			oGapParent,
+			iGapStart,
+			bHasGroupLevels = this.oAggregation.groupLevels.length,
+			aReadPromises = [],
 			that = this;
 
-		if (bHasGroupLevels && this.aElements[0] && this.aElements[0]["@$ui5.node.isExpanded"]) {
-			oResult = {
-				value : this.aElements.slice(iIndex, iIndex + iLength)
-			};
-			oResult.value.$count = this.aElements.$count;
+		/**
+		 * Reads the given range of the current gap, saves the promise, and replaces the gap with
+		 * the read's result.
+		 *
+		 * @param {number} iGapStart start of gap, inclusive
+		 * @param {number} iGapEnd end of gap, exclusive
+		 */
+		function readGap(iGapStart, iGapEnd) {
+			var iStart = _Helper.getPrivateAnnotation(that.aElements[iGapStart], "index");
 
-			return SyncPromise.resolve(oResult);
+			aReadPromises.push(
+				oGapParent.read(iStart, iGapEnd - iGapStart, 0, oGroupLock.getUnlockedCopy(),
+					fnDataRequested)
+				.then(function (oReadResult) {
+					// Note: iGapStart needs to be a local variable, the closure has changed by now!
+					that.addElements(oReadResult.value, iGapStart);
+				})
+			);
 		}
 
-		return this.oFirstLevel.read(iIndex, iLength, iPrefetchLength, oGroupLock,
-			fnDataRequested
-		).then(function (oResult) {
+		if (bHasGroupLevels && this.aElements.length) {
+			for (i = iIndex, n = Math.min(iIndex + iLength, this.aElements.length); i < n; i += 1) {
+				oCurrentParent = _Helper.getPrivateAnnotation(this.aElements[i], "parent");
+				if (oCurrentParent !== oGapParent) {
+					if (iGapStart) { // end of gap
+						readGap(iGapStart, i);
+						oGapParent = iGapStart = undefined;
+					}
+					if (oCurrentParent) { // start of new gap
+						iGapStart = i;
+						oGapParent = oCurrentParent;
+					}
+				}
+			}
+			if (iGapStart) { // gap at end
+				readGap(iGapStart, i);
+			}
+			oGroupLock.unlock();
+
+			return SyncPromise.all(aReadPromises).then(function () {
+				var aElements = that.aElements.slice(iIndex, iIndex + iLength);
+
+				aElements.$count = that.aElements.$count;
+
+				return {value : aElements};
+			});
+		}
+
+		return this.oFirstLevel.read(iIndex, iLength, iPrefetchLength, oGroupLock, fnDataRequested)
+		.then(function (oResult) {
+			var j;
+
 			if (bHasGroupLevels) {
 				that.addElements(oResult.value, iIndex);
 				that.aElements.$count = oResult.value.$count;
+				// create placeholders
+				for (j = 0; j < that.aElements.$count; j += 1) {
+					if (!that.aElements[j]) {
+						that.aElements[j] = {"@$ui5.node.level" : 1};
+						_Helper.setPrivateAnnotation(that.aElements[j], "index", j);
+						_Helper.setPrivateAnnotation(that.aElements[j], "parent", that.oFirstLevel);
+					}
+				}
 				that.iReadLength = iLength + iPrefetchLength;
 			} else if (!that.oMeasureRangePromise) {
 				oResult.value.forEach(function (oElement) {

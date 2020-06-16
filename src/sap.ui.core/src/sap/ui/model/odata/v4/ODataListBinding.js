@@ -101,7 +101,7 @@ sap.ui.define([
 				mParameters = _Helper.clone(mParameters) || {};
 				this.checkBindingParameters(mParameters, ["$$aggregation", "$$canonicalPath",
 					"$$groupId", "$$operationMode", "$$ownRequest", "$$patchWithoutSideEffects",
-					"$$updateGroupId"]);
+					"$$sharedRequest", "$$updateGroupId"]);
 				this.aApplicationFilters = _Helper.toArray(vFilters);
 				this.sChangeReason = oModel.bAutoExpandSelect ? "AddVirtualContext" : undefined;
 				this.oDiff = undefined;
@@ -114,6 +114,7 @@ sap.ui.define([
 				this.sOperationMode = mParameters.$$operationMode || oModel.sOperationMode;
 				this.mPreviousContextsByPath = {};
 				this.aPreviousData = [];
+				this.bSharedRequest = mParameters.$$sharedRequest;
 				this.aSorters = _Helper.toArray(vSorters);
 				this.sUpdateGroupId = mParameters.$$updateGroupId;
 				// Note: $$operationMode is validated before, oModel.sOperationMode also
@@ -895,7 +896,7 @@ sap.ui.define([
 			? _AggregationCache.create(this.oModel.oRequestor, sResourcePath, oAggregation,
 				mQueryOptions)
 			: _Cache.create(this.oModel.oRequestor, sResourcePath, mQueryOptions,
-				this.oModel.bAutoExpandSelect, sDeepResourcePath);
+				this.oModel.bAutoExpandSelect, sDeepResourcePath, this.bSharedRequest);
 	};
 
 	/**
@@ -970,7 +971,7 @@ sap.ui.define([
 				oMovingContext = aContexts[i];
 				oMovingContext.iIndex += iCount;
 				aContexts[i + iCount] = oMovingContext;
-				aContexts[i] = undefined;
+				delete aContexts[i];
 			}
 			that.iMaxLength += iCount;
 			that._fireChange({reason : ChangeReason.Change});
@@ -1050,8 +1051,10 @@ sap.ui.define([
 	 *   The function is called just before a back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise to be resolved with the requested range as described in _Cache#read, or
-	 *   <code>undefined</code> w/o reading if the result is irrelevant because the context changed
+	 *   A promise to be resolved with the requested range as described in _Cache#read or with
+	 *   <code>undefined</code> if the context changed before reading; it is rejected to discard a
+	 *   response because the cache is no longer active, in this case the error has the property
+	 *   <code>canceled</code> with value <code>true</code>.
 	 *
 	 * @private
 	 */
@@ -1068,7 +1071,12 @@ sap.ui.define([
 
 			if (oCache) {
 				return oCache.read(iIndex, iLength, iMaximumPrefetchSize, oGroupLock,
-					fnDataRequested);
+					fnDataRequested
+				).then(function (oResult) {
+					that.assertSameCache(oCache);
+
+					return oResult;
+				});
 			}
 
 			oGroupLock.unlock();
@@ -2416,7 +2424,7 @@ sap.ui.define([
 	 *   A list of groupable property names used to determine group levels. They may, but don't need
 	 *   to, be repeated in <code>oAggregation.group</code>. Group levels cannot be combined with
 	 *   filtering, with the system query option <code>$count</code>, or with an aggregatable
-	 *   property for which a grand total is needed; only a single group level is supported.
+	 *   property for which a grand total is needed; two group levels are supported at most.
 	 * @throws {Error}
 	 *   If the given data aggregation object is unsupported, if the system query option
 	 *   <code>$apply</code> has been specified explicitly before, or if there are pending changes

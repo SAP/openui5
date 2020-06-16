@@ -214,15 +214,22 @@ sap.ui.define([
 			oCache;
 
 		this.mock(_Cache.prototype).expects("setQueryOptions")
-			.withExactArgs(sinon.match.same(mQueryOptions));
+			.withExactArgs(sinon.match.same(mQueryOptions))
+			.callsFake(function () {
+				assert.strictEqual(this.bSortExpandSelect, "bSortExpandSelect");
+				assert.notOk(this.bSharedRequest);
+			});
 		this.mock(_Cache.prototype).expects("setResourcePath")
-			.withExactArgs(sResourcePath);
+			.withExactArgs(sResourcePath)
+			.callsFake(function () {
+				assert.notOk(this.bSharedRequest);
+			});
 
 		// code under test
 		oCache = new _Cache(this.oRequestor, sResourcePath, mQueryOptions,
-			"bSortExpandSelect", fnGetOriginalResourcePath);
+			"bSortExpandSelect", fnGetOriginalResourcePath, "bSharedRequest");
 
-		assert.strictEqual(oCache.bActive, true);
+		assert.strictEqual(oCache.iActiveUsages, 1);
 		assert.deepEqual(oCache.mChangeListeners, {});
 		assert.strictEqual(oCache.fnGetOriginalResourcePath, fnGetOriginalResourcePath);
 		assert.deepEqual(oCache.mPatchRequests, {});
@@ -231,6 +238,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.oRequestor, this.oRequestor);
 		assert.strictEqual(oCache.bSortExpandSelect, "bSortExpandSelect");
 		assert.strictEqual(oCache.bSentRequest, false);
+		assert.strictEqual(oCache.bSharedRequest, "bSharedRequest");
 		assert.strictEqual(oCache.oTypePromise, undefined);
 
 		// code under test
@@ -249,6 +257,7 @@ sap.ui.define([
 		oCache.mLateQueryOptions = {};
 		oCache.mPropertyRequestByPath = {};
 		oCache.oTypePromise = {};
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		this.mock(_Helper).expects("getMetaPath").withExactArgs("/TEAMS('23')").returns("/TEAMS");
 
 		// code under test
@@ -270,6 +279,7 @@ sap.ui.define([
 			that = this;
 
 		oCache.fetchValue = function () {};
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to/entity", null, null, true)
 			.returns(SyncPromise.resolve(oEntityPromise));
@@ -303,6 +313,8 @@ sap.ui.define([
 
 		oCache = new _Cache(this.oRequestor, "TEAMS('42')", mQueryOptions, "bSortExpandSelect");
 		assert.strictEqual(oCache.sQueryString, "?foo=bar");
+
+		this.mock(oCache).expects("checkSharedRequest").twice().withExactArgs();
 
 		// code under test
 		oCache.setQueryOptions(mNewQueryOptions);
@@ -373,6 +385,7 @@ sap.ui.define([
 				})
 				: Promise.reject(oError);
 
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		this.mock(oCache).expects("addPendingRequest").withExactArgs();
 		oRequestPromise = oRequestPromise.finally(function () {
 			that.mock(oCache).expects("removePendingRequest").withExactArgs();
@@ -569,9 +582,17 @@ sap.ui.define([
 	QUnit.test("_Cache#registerChange", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS");
 
-		this.mock(oCache).expects("checkActive");
 		this.mock(_Helper).expects("addByPath")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path", "listener");
+
+		oCache.registerChange("path", "listener");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#registerChange: $$sharedRequst", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS", undefined, false, undefined, true);
+
+		this.mock(_Helper).expects("addByPath").never();
 
 		oCache.registerChange("path", "listener");
 	});
@@ -582,6 +603,15 @@ sap.ui.define([
 
 		this.mock(_Helper).expects("removeByPath")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path", "listener");
+
+		oCache.deregisterChange("path", "listener");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#deregisterChange: $$sharedRequst", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS", undefined, false, undefined, true);
+
+		this.mock(_Helper).expects("removeByPath").never();
 
 		oCache.deregisterChange("path", "listener");
 	});
@@ -702,33 +732,39 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache: setActive & checkActive", function (assert) {
+	QUnit.test("_Cache#setActive", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS");
 
+		oCache.iActiveUsages = 99;
 		oCache.mPatchRequests = {"path" : {}};
 
 		// code under test
 		oCache.setActive(true);
 
+		assert.strictEqual(oCache.iActiveUsages, 100);
 		assert.strictEqual(oCache.hasPendingChangesForPath("path"), true);
-
-		// code under test
-		oCache.checkActive();
 
 		// code under test
 		oCache.setActive(false);
 
+		assert.strictEqual(oCache.iActiveUsages, 99);
 		assert.strictEqual(oCache.hasPendingChangesForPath(), false);
+	});
 
-		try {
-			// code under test
-			oCache.checkActive();
+	//*********************************************************************************************
+	QUnit.test("_Cache#checkSharedRequest: not shared", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS");
 
-			assert.ok(false);
-		} catch (e) {
-			assert.strictEqual(e.message, "Response discarded: cache is inactive");
-			assert.ok(e.canceled);
-		}
+		oCache.checkSharedRequest();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#checkSharedRequest: shared", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS", undefined, false, undefined, true);
+
+		assert.throws(function () {
+			oCache.checkSharedRequest();
+		}, new Error(oCache + " has $$sharedRequest, modification is not allowed"));
 	});
 
 	//*********************************************************************************************
@@ -1857,6 +1893,7 @@ sap.ui.define([
 			oGroupLock = {getGroupId : function () {}};
 
 		oCache.fetchValue = function () {};
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to/entity")
 			.returns(SyncPromise.resolve(undefined));
@@ -2835,6 +2872,7 @@ sap.ui.define([
 			sPath = "path/to/Entity";
 
 		oCache.fetchValue = function () {};
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), sPath)
 			.returns(SyncPromise.resolve(oCacheValue));
@@ -2970,6 +3008,7 @@ sap.ui.define([
 
 		aElements.$byPredicate = {};
 		oCache.fetchValue = function () {};
+		oCacheMock.expects("checkSharedRequest").withExactArgs();
 		oCacheMock.expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EMPLOYEE_2_EQUIPMENTS")
 			// Note: CollectionCache#fetchValue may be async, $cached just sends no new request!
@@ -3086,6 +3125,7 @@ sap.ui.define([
 			_Helper.setPrivateAnnotation(oElement, "transientPredicate", sTransientPredicate);
 		}
 		oCache.fetchValue = function () {};
+		oCacheMock.expects("checkSharedRequest").withExactArgs();
 		oCacheMock.expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EMPLOYEE_2_EQUIPMENTS")
 			// Note: CollectionCache#fetchValue may be async, $cached just sends no new request!
@@ -3761,6 +3801,29 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("CollectionCache", function (assert) {
+		var oCache;
+
+		this.mock(_Cache.prototype).expects("setQueryOptions")
+			.withExactArgs(sinon.match.same("resource/path"));
+		this.mock(_Cache.prototype).expects("setResourcePath")
+			.withExactArgs("resource/path")
+			.callsFake(function () {
+				assert.notOk(this.bSharedRequest, "must not have been set yet");
+			});
+
+		// code under test
+		oCache = _Cache.create(this.oRequestor, "resource/path", "resource/path",
+			"bSortExpandSelect", "deep/resource/path", "bSharedRequest");
+
+		assert.strictEqual(oCache.oRequestor, this.oRequestor);
+		assert.strictEqual(oCache.bSortExpandSelect, "bSortExpandSelect");
+		assert.ok(typeof oCache.fnGetOriginalResourcePath, "function");
+		assert.strictEqual(oCache.fnGetOriginalResourcePath(), "deep/resource/path");
+		assert.strictEqual(oCache.bSharedRequest, "bSharedRequest");
+	});
+
+	//*********************************************************************************************
 	[
 		{index : 1, length : 1, result : [{key : "b"}], types : true},
 		{index : 0, length : 2, result : [{key : "a"}, {key : "b"}], types : true},
@@ -3804,10 +3867,7 @@ sap.ui.define([
 				.withExactArgs("GET", sResourcePath + "?$skip=" + oFixture.index + "&$top="
 					+ oFixture.length, sinon.match.same(oRequestGroupLock), undefined, undefined,
 					undefined)
-				.returns(Promise.resolve().then(function () {
-						oCacheMock.expects("checkActive").twice();
-						return oMockResult;
-					}));
+				.resolves(oMockResult);
 			this.spy(_Helper, "updateExisting");
 
 			oCache = this.createCache(sResourcePath, mQueryParams);
@@ -3940,6 +4000,7 @@ sap.ui.define([
 			oCreatePromise,
 			oReadPromise;
 
+		oCacheMock.expects("checkSharedRequest").withExactArgs();
 		oCacheMock.expects("addPendingRequest").never();
 		oCacheMock.expects("removePendingRequest").never();
 		this.mock(oCreateGroupLock).expects("getGroupId").withExactArgs().returns("group");
@@ -5138,7 +5199,6 @@ sap.ui.define([
 		that.mock(oGroupLock0).expects("unlock").withExactArgs();
 
 		// This may only happen when the read is finished
-		oCacheMock.expects("checkActive"); // from read
 		oCacheMock.expects("registerChange")
 			.withExactArgs("('c')/key", sinon.match.same(oListener));
 		oCacheMock.expects("drillDown")
@@ -7025,6 +7085,7 @@ sap.ui.define([
 					iExpectedByPredicateLength = iLength === undefined
 						? Object.keys(oCache.aElements.$byPredicate).length
 						: iReceivedLength + (oCreatedElement ? 1 : 0);
+					that.mock(oCache).expects("checkSharedRequest").withExactArgs();
 					that.mock(_Helper).expects("intersectQueryOptions")
 						.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 							sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
@@ -7638,6 +7699,9 @@ sap.ui.define([
 			oCache = this.createSingle(sResourcePath, undefined, true),
 			oGroupLock = {};
 
+		assert.strictEqual(oCache.bSharedRequest, undefined);
+
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		this.oRequestorMock.expects("isActionBodyOptional").never();
 		this.oRequestorMock.expects("relocateAll").never();
 		this.oRequestorMock.expects("request")
@@ -8021,6 +8085,7 @@ sap.ui.define([
 			mTypeForMetaPath = {};
 
 		oCache.oPromise = {/*from previous #fetchValue*/};
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		this.mock(_Helper).expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
@@ -8064,6 +8129,7 @@ sap.ui.define([
 		var oCache = this.createSingle("Employees('42')");
 
 		assert.strictEqual(oCache.oPromise, null);
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		this.mock(_Helper).expects("intersectQueryOptions").never();
 		this.mock(oCache).expects("fetchValue").never();
 		this.oRequestorMock.expects("buildQueryString").never();
@@ -8663,6 +8729,58 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oCache.getOriginalResourcePath(oEntity), "TEAMS('77')/TEAM_2_MANAGER");
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bExists) {
+	QUnit.test("create: bSharedRequest, created, bExists=" + bExists, function (assert) {
+		var oCache;
+
+		if (bExists) {
+			this.oRequestor.$mSharedCollectionCacheByPath = {foo : "anotherCache"};
+		}
+		this.mock(_Helper).expects("getMetaPath").twice() // from _Cache.create and the constructor
+			.withExactArgs("/resource/path").returns("/resource/metapath");
+		this.oRequestorMock.expects("buildQueryString").twice()
+			.withExactArgs("/resource/metapath", "mQueryOptions", false, "bSortExpandSelect")
+			.returns("?~");
+
+		// code under test
+		oCache = _Cache.create(this.oRequestor, "resource/path", "mQueryOptions",
+			"bSortExpandSelect", "deep/resource/path", true);
+
+		assert.ok(oCache instanceof _Cache);
+		assert.strictEqual(oCache.iActiveUsages, 1);
+		assert.strictEqual(oCache.bSharedRequest, true);
+		assert.strictEqual(this.oRequestor.$mSharedCollectionCacheByPath["resource/path?~"],
+			oCache);
+		if (bExists) {
+			assert.strictEqual(this.oRequestor.$mSharedCollectionCacheByPath.foo, "anotherCache");
+		}
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("create: bSharedRequest, shared", function (assert) {
+		var oCache = {
+				setActive : function () {}
+			};
+
+		this.oRequestor.$mSharedCollectionCacheByPath = {
+			"resource/path?~" : oCache
+		};
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("/resource/path")
+			.returns("/resource/metapath");
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs("/resource/metapath", "mQueryOptions", false, "bSortExpandSelect")
+			.returns("?~");
+		this.mock(oCache).expects("setActive").withExactArgs(true);
+
+		// code under test
+		assert.strictEqual(
+			_Cache.create(this.oRequestor, "resource/path", "mQueryOptions", "bSortExpandSelect",
+				"deep/resource/path", true),
+			oCache);
 	});
 });
 //TODO: resetCache if error in update?

@@ -1066,8 +1066,12 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[false, true].forEach(function (bOperation) {
-	var sTitle = "fetchIfChildCanUseCache, mutable cache, operation=" + bOperation;
+[
+	{operation : false, shared : false},
+	{operation : true, shared : false},
+	{operation : false, shared : true}
+].forEach(function (oFixture) {
+	var sTitle = "fetchIfChildCanUseCache, mutable cache, " + JSON.stringify(oFixture);
 
 	QUnit.test(sTitle, function (assert) {
 		var oMetaModel = {
@@ -1075,16 +1079,21 @@ sap.ui.define([
 				getMetaPath : function () {},
 				getReducedPath : function () {}
 			},
-			oCache = {
+			oCache0 = {
 				bSentRequest : false,
-				setQueryOptions : function () {}
+				bSharedRequest : oFixture.shared,
+				setActive : function () {},
+				setQueryOptions : function () {},
+				sResourcePath : "resource/path"
 			},
-			oCachePromise = SyncPromise.resolve(oCache),
+			oCache0Mock = this.mock(oCache0),
+			oCache1,
+			oCachePromise = SyncPromise.resolve(oCache0),
 			fnFetchMetadata = {/*function*/},
 			oBinding = new ODataParentBinding({
 				mAggregatedQueryOptions : {$select : "foo"},
 				bAggregatedQueryOptionsInitial : false,
-				oCache : oCache,
+				oCache : oCache0,
 				oCachePromise : oCachePromise,
 				doFetchQueryOptions : function () {},
 				oModel : {
@@ -1106,7 +1115,7 @@ sap.ui.define([
 			mNewQueryOptions = {},
 			oPromise;
 
-		if (bOperation) {
+		if (oFixture.operation) {
 			oBinding.oOperation = {};
 		}
 		oModelMock.expects("resolve")
@@ -1146,12 +1155,22 @@ sap.ui.define([
 		oBindingMock.expects("aggregateQueryOptions")
 			.withExactArgs({}, "/Set", /*bIsCacheImmutable*/false)
 			.returns(false);
-		this.mock(_Helper).expects("merge").exactly(bOperation ? 0 : 1)
-			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
-				sinon.match.same(oBinding.mAggregatedQueryOptions))
-			.returns(mNewQueryOptions);
-		this.mock(oCache).expects("setQueryOptions").exactly(bOperation ? 0 : 1)
-			.withExactArgs(mNewQueryOptions);
+		oHelperMock.expects("merge").never();
+		oCache0Mock.expects("setQueryOptions").never();
+		oCache0Mock.expects("setActive").never();
+		oBindingMock.expects("createAndSetCache").never();
+		if (oFixture.shared) {
+			oCache0Mock.expects("setActive").withExactArgs(false);
+			oBindingMock.expects("createAndSetCache")
+				.withExactArgs(sinon.match.same(oBinding.mAggregatedQueryOptions),
+					oCache0.sResourcePath, sinon.match.same(oContext))
+				.returns(oCache1);
+		} else if (!oFixture.operation) {
+			oHelperMock.expects("merge").withExactArgs({},
+				sinon.match.same(oBinding.oModel.mUriParameters),
+				sinon.match.same(oBinding.mAggregatedQueryOptions)).returns(mNewQueryOptions);
+			oCache0Mock.expects("setQueryOptions").withExactArgs(mNewQueryOptions);
+		}
 
 		// code under test
 		oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath",
@@ -1159,11 +1178,11 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
 		assert.notStrictEqual(oBinding.oCachePromise, oCachePromise);
-		return oBinding.oCachePromise.then(function (oCache0) {
+		return oBinding.oCachePromise.then(function (oResultingCache) {
 			var bUseCache = oPromise.getResult();
 
 			assert.strictEqual(bUseCache, undefined);
-			assert.strictEqual(oCache0, oCache);
+			assert.strictEqual(oResultingCache, oFixture.shared ? oCache1 : oCache0);
 		});
 	});
 });
