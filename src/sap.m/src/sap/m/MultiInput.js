@@ -1565,6 +1565,14 @@ function(
 	};
 
 	/**
+	 * This event handler will be called after the control's picker popover is closed.
+	 * @private
+	 */
+	MultiInput.prototype._onAfterCloseTokensPicker = function () {
+		this.getAggregation("tokenizer")._useCollapsedMode(true);
+	};
+
+	/**
 	 * Gets the picker header title.
 	 *
 	 * @returns {sap.m.Title | null} The title instance of the Picker
@@ -1852,6 +1860,7 @@ function(
 			// configuration
 			this._oSelectedItemPicker.setHorizontalScrolling(false)
 				.attachBeforeOpen(this._onBeforeOpenTokensPicker, this)
+				.attachAfterClose(this._onAfterCloseTokensPicker, this)
 				.addContent(this._getTokensList());
 		}
 		return this._oSelectedItemPicker;
