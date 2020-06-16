@@ -53,9 +53,7 @@ function(
 ) {
 		"use strict";
 
-	var PlacementType = library.PlacementType,
-		ListMode = library.ListMode,
-		TokenizerRenderMode = library.TokenizerRenderMode;
+	var TokenizerRenderMode = library.TokenizerRenderMode;
 
 
 	/**
@@ -237,22 +235,30 @@ function(
 	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	MultiInput.prototype.init = function () {
+		var that = this;
 		this._bShowListWithTokens = false;
 		Input.prototype.init.call(this);
 
 		this._bIsValidating = false;
-		this.setAggregation("tokenizer", new Tokenizer({
+		var oTokenizer = new Tokenizer({
 			renderMode: TokenizerRenderMode.Narrow
-		}));
-		var oTokenizer = this.getAggregation("tokenizer");
+		});
+		this.setAggregation("tokenizer", oTokenizer);
 
 		oTokenizer.attachTokenChange(this._onTokenChange, this);
 		oTokenizer.attachTokenUpdate(this._onTokenUpdate, this);
-		// oTokenizer._handleNMoreIndicatorPress(this._handleIndicatorPress.bind(this));
+		oTokenizer.getTokensPopup()
+			.setInitialFocus(this)
+			.attachBeforeOpen(this._onBeforeOpenTokensPicker.bind(this));
 
 		oTokenizer.addEventDelegate({
 			onThemeChanged: this._handleInnerVisibility.bind(this),
 			onAfterRendering: function () {
+				if (this.isMobileDevice() && this.getEditable()) {
+					oTokenizer.addStyleClass("sapMTokenizerIndicatorDisabled");
+				} else {
+					oTokenizer.removeStyleClass("sapMTokenizerIndicatorDisabled");
+				}
 				this._syncInputWidth(oTokenizer);
 				this._handleInnerVisibility();
 				this._handleNMoreAccessibility();
@@ -263,6 +269,18 @@ function(
 
 		this.setShowValueHelp(true);
 		this.setShowSuggestion(true);
+		this._getSuggestionsPopoverInstance()._oPopover
+			.attachBeforeOpen(function () {
+				if (that.isMobileDevice() !== true) {
+					return;
+				}
+
+				var oTokensList = oTokenizer._getTokensList();
+				oTokenizer._fillTokensList(oTokensList);
+				this.addContent(oTokensList);
+
+				that._manageListsVisibility(!!oTokenizer.getTokens().length);
+			});
 
 		this.attachSuggestionItemSelected(this._onSuggestionItemSelected, this);
 
@@ -271,7 +289,7 @@ function(
 		this.attachValueHelpRequest(this._onValueHelpRequested, this);
 
 		this._getValueHelpIcon().setProperty("visible", true, true);
-		this._modifySuggestionPicker();
+
 		this._onResize = this._onResize.bind(this);
 	};
 
@@ -284,23 +302,6 @@ function(
 		this._deregisterResizeHandler();
 		this._deregisterTokenizerResizeHandler();
 		Input.prototype.exit.call(this);
-
-		if (this._oSelectedItemPicker) {
-			this._oSelectedItemPicker.destroy();
-			this._oSelectedItemPicker = null;
-		}
-
-		if (this._oSelectedItemsList) {
-			this._oSelectedItemsList.destroy();
-			this._oSelectedItemsList = null;
-		}
-
-		if (this._getReadOnlyPopover()) {
-			var oReadOnlyPopover = this._getReadOnlyPopover();
-			oReadOnlyPopover.destroy();
-			oReadOnlyPopover = null;
-		}
-
 	};
 
 
@@ -348,7 +349,7 @@ function(
 
 		this._setValueVisible(true);
 		this._manageListsVisibility(false);
-		this._getSelectedItemsPicker().close();
+		this.getAggregation("tokenizer").getTokensPopup().close();
 	};
 
 	/**
@@ -412,10 +413,6 @@ function(
 
 		if (args.getParameter("type") === "removed") {
 			this.getAggregation("tokenizer").setRenderMode(TokenizerRenderMode.Loose);
-		}
-
-		if ((this._getIsSuggestionPopupOpen()) || this.isMobileDevice()) {
-			this._fillList();
 		}
 
 		// on mobile the list with the tokens should be updated and shown
@@ -664,12 +661,7 @@ function(
 
 		// ctrl/meta + I -> Open suggestions
 		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === KeyCodes.I && oTokenizer.getTokens().length) {
-			this._manageListsVisibility(true);
-			if (this.getEditable()) {
-				this._toggleSelectedItemsPicker();
-			} else {
-				this._toggleReadonlyPopover(this.getDomRef());
-			}
+			oTokenizer._togglePopup(oTokenizer.getTokensPopup());
 			oEvent.preventDefault();
 		}
 	};
@@ -744,44 +736,6 @@ function(
 			}
 		}.bind(this), 0);
 
-	};
-
-	/**
-	 * Close or open the suggestion popover depending on the current state
-	 *
-	 * @private
-	 */
-	MultiInput.prototype._toggleSelectedItemsPicker = function () {
-		var oPicker = this._getSelectedItemsPicker();
-
-		// In case we have one token in the MultiInput, with truncated text,
-		// tapping on the token will open the selected items picker.
-		// With the focus, we ensure that the last focused element before opening the popover is
-		// the MultiInput itself, as otherwise the focus will be returned to the token.
-		this.focus();
-		if (oPicker.isOpen()) {
-			this._setValueVisible(true);
-			oPicker.close();
-		} else {
-			this._openSelectedItemsPicker();
-		}
-	};
-
-	/**
-	 * Close or open the read-only popover
-	 *
-	 * @private
-	 */
-	MultiInput.prototype._toggleReadonlyPopover = function (oOpenByDom) {
-		var oPopover = this._getReadOnlyPopover(),
-			oPopoverIsOpen = oPopover.isOpen();
-
-		if (oPopoverIsOpen) {
-			oPopover.close();
-		} else {
-			this._fillList();
-			oPopover.openBy(oOpenByDom);
-		}
 	};
 
 	/**
@@ -866,7 +820,8 @@ function(
 			Input.prototype.onsapenter.apply(this, arguments);
 		}
 
-		var bValidateFreeText = true;
+		var bValidateFreeText = true,
+			oTokenizer = this.getAggregation("tokenizer");
 
 		if (this._getIsSuggestionPopupOpen()) {
 			if (this._hasTabularSuggestions()) {
@@ -886,9 +841,9 @@ function(
 
 		// Open popover with items if in readonly mode and has Nmore indicator
 		if (!this.getEditable()
-			&& this.getAggregation("tokenizer").getHiddenTokensCount()
+			&& oTokenizer.getHiddenTokensCount()
 			&& oEvent.target === this.getFocusDomRef()) {
-			this._handleIndicatorPress();
+			oTokenizer._togglePopup(oTokenizer.getTokensPopup());
 		}
 
 		this.focus();
@@ -902,13 +857,13 @@ function(
 	 */
 	MultiInput.prototype.onsapfocusleave = function (oEvent) {
 		var oPopup = this._getSuggestionsPopoverPopup(),
-			oSelectedItemsPopup = this._oSelectedItemPicker,
+			oTokenizer = this.getAggregation("tokenizer"),
+			oSelectedItemsPopup = oTokenizer.getTokensPopup(),
 			bNewFocusIsInSuggestionPopup = false,
 			bNewFocusIsInTokenizer = false,
 			bNewFocusIsInMultiInput = this.getDomRef() && containsOrEquals(this.getDomRef(), document.activeElement),
 			oRelatedControlDomRef,
-			bFocusIsInSelectedItemPopup,
-			oTokenizer = this.getAggregation("tokenizer");
+			bFocusIsInSelectedItemPopup;
 
 
 		if (oPopup && oPopup.isA("sap.m.Popover")) {
@@ -948,6 +903,7 @@ function(
 		}
 
 		if (!bFocusIsInSelectedItemPopup && !bNewFocusIsInTokenizer) {
+			oSelectedItemsPopup.isOpen() && !this.isMobileDevice() && oTokenizer._togglePopup(oSelectedItemsPopup);
 			oTokenizer.setRenderMode(TokenizerRenderMode.Narrow);
 		}
 
@@ -988,7 +944,11 @@ function(
 
 		if (oEvent.target === this.getFocusDomRef()) {
 			Input.prototype.onfocusin.apply(this, arguments);
-			oTokenizer.hasOneTruncatedToken() && oTokenizer.setFirstTokenTruncated(false);
+
+			if (oTokenizer.hasOneTruncatedToken()) {
+				oTokenizer.getTokens()[0].setSelected(false);
+				!this.isMobileDevice() && oTokenizer.setFirstTokenTruncated(false);
+			}
 		}
 
 		if (!this.isMobileDevice() &&
@@ -1009,10 +969,16 @@ function(
 	 * @param {jQuery.Event} oEvent The event object
 	 */
 	MultiInput.prototype.onsapescape = function (oEvent) {
+		var oTokenizer = this.getAggregation("tokenizer"),
+			oPopup = oTokenizer.getTokensPopup();
 
 		//deselect everything
 		this.getAggregation("tokenizer").selectAllTokens(false);
 		this.selectText(0, 0);
+
+		if (oPopup.isOpen()) {
+			oTokenizer._togglePopup(oPopup);
+		}
 
 		Input.prototype.onsapescape.apply(this, arguments);
 	};
@@ -1049,9 +1015,8 @@ function(
 	};
 
 	MultiInput.prototype.setEditable = function (bEditable) {
+		var oTokenizer = this.getAggregation("tokenizer");
 		bEditable = this.validateProperty("editable", bEditable);
-
-		var oTokensList = this._getTokensList(true);
 
 		if (bEditable === this.getEditable()) {
 			return this;
@@ -1061,19 +1026,7 @@ function(
 			Input.prototype.setEditable.apply(this, arguments);
 		}
 
-		this.getAggregation("tokenizer").setEditable(bEditable);
-
-		if (bEditable) {
-			if (this.isMobileDevice()) {
-				this._getSuggestionsPopoverPopup().addContent(oTokensList);
-			} else {
-				this._getSelectedItemsPicker().addContent(oTokensList);
-			}
-			oTokensList.setMode(ListMode.Delete);
-		} else {
-			oTokensList.setMode(ListMode.None);
-			this._getReadOnlyPopover().addContent(oTokensList);
-		}
+		oTokenizer.setEditable(bEditable);
 
 		return this;
 	};
@@ -1316,38 +1269,6 @@ function(
 		return oInfo;
 	};
 
-
-	/**
-	 * Modifies the suggestions dialog input
-	 * @param {sap.m.Input} oInput The input
-	 *
-	 * @returns {sap.m.Input} The modified input control
-	 * @private
-	 */
-	MultiInput.prototype._modifySuggestionPicker = function () {
-		var that = this,
-			aTokens, bShowListWithTokens,
-			oSuggestionsPopoverPopup = this._getSuggestionsPopoverPopup();
-		// on mobile the Input's suggestionList is used for displaying
-		// any suggestions or tokens related information
-		if (!this.isMobileDevice()) {
-			return;
-		}
-		oSuggestionsPopoverPopup.addContent(this._getTokensList());
-		oSuggestionsPopoverPopup
-			.attachBeforeOpen(function(){
-				aTokens = that.getTokens();
-				bShowListWithTokens =  aTokens.length ? true : false;
-				that._manageListsVisibility(bShowListWithTokens);
-				that._fillList();
-				that._updatePickerHeaderTitle();
-			})
-			.attachAfterClose(function() {
-				that.getAggregation("tokenizer").setRenderMode(TokenizerRenderMode.Loose);
-				that._bShowListWithTokens = false;
-			});
-	};
-
 	MultiInput.prototype._modifyPopupInput = function (oPopupInput) {
 		var that = this;
 
@@ -1385,23 +1306,27 @@ function(
 		this._manageListsVisibility(this._bShowListWithTokens);
 	};
 
-
 	/**
 	 * This event handler will be called before the control's picker popover is opened.
 	 *
 	 * @private
 	 */
-	MultiInput.prototype._onBeforeOpenTokensPicker = function() {
-		var oPopover = this._getSelectedItemsPicker(),
+	MultiInput.prototype._onBeforeOpenTokensPicker = function () {
+		var oTokenizer = this.getAggregation("tokenizer"),
+			oPopover = oTokenizer.getTokensPopup(),
 			oDomRef = this.getDomRef(),
+			bEditable = this.getEditable(),
 			sWidth;
 
 		this._setValueVisible(false);
-		this._fillList();
+		this._manageListsVisibility(true);
 
 		if (oDomRef && oPopover) {
-			sWidth = (oDomRef.offsetWidth / parseFloat(library.BaseFontSize)) + "rem";
-			oPopover.setContentMinWidth(sWidth);
+			sWidth = (oTokenizer.getTokens().length === 1) ?
+				"auto" :
+				(oDomRef.offsetWidth / parseFloat(library.BaseFontSize)) + "rem";
+
+			oPopover.setContentWidth(bEditable ? sWidth : "auto");
 		}
 	};
 
@@ -1444,53 +1369,6 @@ function(
 	};
 
 	/**
-	 * Handles the opening of a device specific picker
-	 *
-	 * @returns {sap.m.MultiInput} Pointer to the control instance for chaining
-	 * @private
-	 */
-	MultiInput.prototype._openSelectedItemsPicker = function () {
-		// on mobile reuse the input's suggestion popup
-		if (this.isMobileDevice()) {
-			this._getSuggestionsPopoverPopup().open();
-		} else {
-			// on desktop create separate popover for tokens
-			var oPicker = this._getSelectedItemsPicker();
-			if (oPicker) {
-				oPicker.openBy(this);
-			}
-		}
-
-		this._manageListsVisibility(true);
-		this._setValueVisible(true);
-
-		return this;
-	};
-
-	/**
-	 * Getter for the list containing tokens
-	 *
-	 * @param {boolean} bRefresh If true, the tokens list should be recreated
-	 * @returns {sap.m.List} The list
-	 * @private
-	 */
-	MultiInput.prototype._getTokensList = function(bRefresh) {
-		if (bRefresh && this._oSelectedItemsList) {
-			this._oSelectedItemsList.destroy();
-			this._oSelectedItemsList = null;
-		}
-
-		if (!this._oSelectedItemsList) {
-			this._oSelectedItemsList = new List({
-				width: "auto",
-				mode: ListMode.Delete
-			}).attachDelete(this._handleNMoreItemDelete, this);
-		}
-
-		return this._oSelectedItemsList;
-	};
-
-	/**
 	 * Getter for the suggestion list provided from sap.m.Input
 	 *
 	 * @returns {sap.m.List} The suggestion list
@@ -1525,127 +1403,19 @@ function(
 	};
 
 	/**
-	 * Filters the items inside the token's list
-	 *
-	 * @param {String} sValue The filtering value
-	 * @private
-	 */
-	MultiInput.prototype._filterTokens = function (sValue) {
-		this._getTokensList().getItems().forEach(function(oItem){
-			if (oItem.getTitle().toLowerCase().indexOf(sValue) > -1) {
-				oItem.setVisible(true);
-			} else {
-				oItem.setVisible(false);
-			}
-		});
-	};
-
-	/**
-	 * Manages the visibility of the suggestion list and the selected items list
+	 * Manages the visibility of the suggestion list and the selected items list on mobile devices
 	 *
 	 * @param {boolean} bShowListWithTokens True if the selected items list should be shown
 	 * @private
 	 */
 	MultiInput.prototype._manageListsVisibility = function (bShowListWithTokens) {
-		this._getTokensList().setVisible(bShowListWithTokens);
-		this._getSuggestionsList() && this._getSuggestionsList().setVisible(!bShowListWithTokens);
-
-		if (this.isMobileDevice()) {
-			this._getSuggestionsPopover().getFilterSelectedButton().setPressed(bShowListWithTokens);
-		}
-	};
-
-	/**
-	 * Generates a StandardListItem from token
-	 *
-	 * @param {sap.m.Token} oToken The token
-	 * @private
-	 * @returns {sap.m.StandardListItem | null} The generated ListItem
-	 */
-	MultiInput.prototype._mapTokenToListItem = function (oToken) {
-		if (!oToken) {
-			return null;
-		}
-
-		var oListItem = new StandardListItem({
-			selected: true
-		});
-		oListItem.setTitle(oToken.getText());
-
-		oListItem.data("tokenId", oToken.getId());
-		return oListItem;
-	};
-
-	/**
-	 * Updates the content of the list with tokens
-	 *
-	 * @private
-	 */
-	MultiInput.prototype._fillList = function() {
-		var aTokens = this.getTokens(),
-			oListItem;
-		if (!aTokens) {
+		if (!this.isMobileDevice()) {
 			return;
 		}
 
-		this._getTokensList().removeAllItems();
-		for ( var i = 0, aItemsLength = aTokens.length; i < aItemsLength; i++) {
-			var oToken = aTokens[i],
-			oListItem = this._mapTokenToListItem(oToken);
-			// add the mapped item type of sap.m.StandardListItem to the list
-			this._getTokensList().addItem(oListItem);
-		}
-	};
-
-	/**
-	 * Handler for the press event on the N-more label
-	 *
-	 * @private
-	 */
-	MultiInput.prototype._handleIndicatorPress = function() {
-		var oTokenizer = this.getAggregation("tokenizer"),
-			bNMoreIndicatorVisible = oTokenizer._oIndicator && !oTokenizer._oIndicator[0].classList.contains("sapUiHidden"),
-			oOpenByDom = bNMoreIndicatorVisible ? oTokenizer._oIndicator[0] : this.getDomRef();
-
-		this._bShowListWithTokens = true;
-		if (this.getEditable()) {
-			// The selected items picker
-			this.focus();
-			this._openSelectedItemsPicker();
-		} else {
-			this._toggleReadonlyPopover(oOpenByDom);
-		}
-	};
-
-	/**
-	 * Called when the user deletes a list item from the token's popover
-	 * @param {jQuery.Event} oEvent The event triggered by the user
-	 * @private
-	 */
-	MultiInput.prototype._handleNMoreItemDelete = function(oEvent) {
-		var oListItem = oEvent.getParameter("listItem"),
-			sSelectedId = oListItem && oListItem.data("tokenId"),
-			oTokenToDelete;
-
-		oTokenToDelete = this.getTokens().filter(function(oToken){
-			return oToken.getId() === sSelectedId;
-		})[0];
-
-		if (oTokenToDelete && oTokenToDelete.getEditable()) {
-			this.fireTokenUpdate({
-				addedTokens : [],
-				removedTokens : [oTokenToDelete],
-				type: Tokenizer.TokenUpdateType.Removed
-			});
-
-			oTokenToDelete.destroy();
-			this._getTokensList().removeItem(oListItem);
-		}
-
-		this._getTokensList().destroyItems();
-		this._fillList();
-
-		this.focus();
+		this.getAggregation("tokenizer")._getTokensList().setVisible(bShowListWithTokens);
+		this._getSuggestionsList() && this._getSuggestionsList().setVisible(!bShowListWithTokens);
+		this._getSuggestionsPopover().getFilterSelectedButton().setPressed(bShowListWithTokens);
 	};
 
 	/**
@@ -1676,69 +1446,6 @@ function(
 		if (oFocusDomRef && aAriaLabeledBy.length) {
 			oFocusDomRef.setAttribute("aria-labelledby", aAriaLabeledBy.join(" ").trim());
 		}
-	};
-
-	/**
-	 * Returns a modified instance type of <code>sap.m.Popover</code>.
-	 *
-	 * @returns {sap.m.Popover} The Popover instance
-	 * @private
-	 */
-	MultiInput.prototype._getSelectedItemsPicker = function() {
-
-		if (this._oSelectedItemPicker) {
-			return this._oSelectedItemPicker;
-		}
-
-		this._oSelectedItemPicker = new Popover(this._getDropdownSettings()).setInitialFocus(this);
-
-		if (!this.isMobileDevice()) {
-			// configuration
-			this._oSelectedItemPicker.setHorizontalScrolling(false)
-				.attachBeforeOpen(this._onBeforeOpenTokensPicker, this)
-				.attachAfterClose(function() {
-					this._manageListsVisibility(false);
-					this._bShowListWithTokens = false;
-				}, this)
-				.addContent(this._getTokensList());
-		}
-		return this._oSelectedItemPicker;
-	};
-
-	/**
-	 * Returns a modified instance type of <code>sap.m.Popover</code> used in read-only mode.
-	 *
-	 * @returns {sap.m.Popover} The Popover instance
-	 * @private
-	 */
-	MultiInput.prototype._getReadOnlyPopover = function() {
-		if (!this._oReadOnlyPopover) {
-			this._oReadOnlyPopover = new Popover({
-				showArrow: true,
-				placement: PlacementType.Auto,
-				showHeader: false,
-				contentMinWidth: "auto"
-			}).addStyleClass("sapMMultiInputReadOnlyPopover");
-		}
-
-		return this._oReadOnlyPopover;
-	};
-
-	/*
-	 * Gets the dropdown default settings.
-	 * @returns {object} A map object with the default settings
-	 * @protected
-	 * @since 1.58
-	 */
-	MultiInput.prototype._getDropdownSettings = function() {
-		return {
-			showArrow: false,
-			showHeader: false,
-			placement: PlacementType.VerticalPreferredBottom,
-			offsetX: 0,
-			offsetY: 0,
-			bounce: false
-		};
 	};
 
 	/**
