@@ -140,7 +140,7 @@ function (
 			var aMenuItems = this.oAddXmlAtExtensionPointPlugin.getMenuItems([this.oPanelOverlay]);
 			assert.strictEqual(aMenuItems[0].id, "CTX_ADDXML_AT_EXTENSIONPOINT", "'getMenuItems' returns the context menu item for the plugin with the correct id");
 			assert.strictEqual(aMenuItems[0].rank, 110, "'getMenuItems' returns the context menu item with the correct rank");
-			assert.strictEqual(aMenuItems[0].icon, "sap-icon://less", "'getMenuItems' returns the context menu item with the correct icon");
+			assert.strictEqual(aMenuItems[0].icon, "sap-icon://add-equipment", "'getMenuItems' returns the context menu item with the correct icon");
 		});
 
 		QUnit.test("when handler function is called without valid fragmentHandler function defined", function(assert) {
