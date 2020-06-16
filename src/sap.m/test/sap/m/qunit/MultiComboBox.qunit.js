@@ -6733,7 +6733,7 @@ sap.ui.define([
 		assert.notOk(oIndicator.hasClass("sapUiHidden"), "The n-more label is not hidden on focusin.");
 	});
 
-	QUnit.test("SelectedItems Popover's interaction", function(assert) {
+	QUnit.skip("SelectedItems Popover's interaction", function(assert) {
 		// act
 		this.oMCB1.$().find(".sapMTokenizerIndicator")[0].click();
 		this.clock.tick(200);
@@ -6792,7 +6792,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("N-more popover transition from read-only to edit mode", function (assert) {
+	QUnit.skip("N-more popover transition from read-only to edit mode", function (assert) {
 		//arrange
 		var oReadOnlyPopover,
 			aReadOnlyContent,
@@ -6907,7 +6907,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Desktop: Selected items are grouped when picker is opened", function(assert) {
+	QUnit.skip("Desktop: Selected items are grouped when picker is opened", function(assert) {
 		this.stub(Device, "system", {
 			desktop: true,
 			phone: false,
@@ -6924,7 +6924,7 @@ sap.ui.define([
 		assert.strictEqual(this.oMCB1.getVisibleItems().length, 4, "The selected items are shown grouped");
 	});
 
-	QUnit.test("Phone: Selected items are grouped when picker is opened", function (assert) {
+	QUnit.skip("Phone: Selected items are grouped when picker is opened", function (assert) {
 		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
@@ -8360,7 +8360,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Only selected keys should be in the readonly popover", function (assert) {
+	QUnit.skip("Only selected keys should be in the readonly popover", function (assert) {
 		// Arrange
 		var oMultiComboBox = new MultiComboBox({
 			width: "300px",
@@ -8406,10 +8406,10 @@ sap.ui.define([
 		beforeEach: function(){
 			this.oMultiComboBox = new MultiComboBox({
 				width: '200px',
-				items: [new Item({key: "A", text: "Extra long long long long long token"})]
+				items: [new Item({key: "A", text: "Extra long long long long long token"})],
+				selectedKeys: ["A"]
 			});
 
-			this.oMultiComboBox.setSelectedKeys(["A"]);
 			this.oMultiComboBox.placeAt("MultiComboBox-content");
 			sap.ui.getCore().applyChanges();
 		},
