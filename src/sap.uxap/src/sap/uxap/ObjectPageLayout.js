@@ -3162,7 +3162,7 @@ sap.ui.define([
 		var iSnapPosition = this.iHeaderContentHeight,
 			iTitleHeightDelta = this.iHeaderTitleHeightStickied - this.iHeaderTitleHeight;
 
-		if (iTitleHeightDelta < ObjectPageLayout.MAX_SNAP_POSITION_OFFSET) {
+		if (iTitleHeightDelta < ObjectPageLayout.MAX_SNAP_POSITION_OFFSET && iTitleHeightDelta > 0) {
 			iSnapPosition -= iTitleHeightDelta;
 		}
 
