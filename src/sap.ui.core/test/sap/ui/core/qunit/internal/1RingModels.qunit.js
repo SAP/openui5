@@ -57,6 +57,23 @@ sap.ui.require([
 		// "sap/ui/table/qunit/AnalyticalTable.qunit",
 
 		// ***************************************************************************************
+		// sap.ui.model.ClientModel
+		// ***************************************************************************************
+		"sap/ui/core/qunit/ClientModel.qunit",
+
+		// ***************************************************************************************
+		// sap.ui.model.json.* - tests are contained in testsuite.json.qunit.js
+		// ***************************************************************************************
+		"sap/ui/core/qunit/json/JSONBinding.qunit",
+		"sap/ui/core/qunit/json/JSONListBinding.qunit",
+		//TODO uses a fake service and does not got together with odata4analytics.qunit
+//		"sap/ui/core/qunit/json/JSONModel.qunit",
+		//TODO enable test once SyncPromise is fixed BCP 2080194122
+//		"sap/ui/core/qunit/json/JSONPropertyBinding.qunit",
+		"sap/ui/core/qunit/json/JSONTreeBinding.qunit",
+		"sap/ui/core/qunit/json/JSONTwoWay.qunit",
+
+		// ***************************************************************************************
 		// sap.ui.model.message.*
 		// ***************************************************************************************
 		// contained in testsuite.app.qunit.js

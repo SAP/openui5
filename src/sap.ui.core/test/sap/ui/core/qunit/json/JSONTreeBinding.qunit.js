@@ -180,6 +180,8 @@ sap.ui.define([
 		bindings[0] = oModel.bindTree(sPath, oContext, aFilters || [], mParameters, aSorters);
 	}
 
+	QUnit.module("sap.ui.model.json.JSONTreebinding", {});
+
 	QUnit.test("TreeBinding getRootContexts getNodeContexts", function(assert) {
 		setup();
 		createTreeBinding("/orgStructure");
@@ -920,7 +922,7 @@ sap.ui.define([
 		assert.equal(oBinding.getChildCount(oContext), 200, "getChildCount(oContext) returns the correct number of child nodes (200)");
 	});
 
-	QUnit.module("Unsupported Filters", {
+	QUnit.module("sap.ui.model.json.JSONTreebinding: Unsupported Filters", {
 		beforeEach: function () {
 			setup();
 		},

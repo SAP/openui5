@@ -8,69 +8,83 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/thirdparty/jquery"
-], function(
-	fakeService,
-	JSONModel,
-	Context,
-	Label,
-	List,
-	ListItem,
-	VerticalLayout,
-	jQuery
-) {
+], function(fakeService, JSONModel, Context, Label, List, ListItem, VerticalLayout, jQuery) {
 	"use strict";
 
-	// add divs for control tests
-	var oTarget1 = document.createElement("div");
-	oTarget1.id = "target1";
-	document.body.appendChild(oTarget1);
-	var oTarget2 = document.createElement("div");
-	oTarget2.id = "target2";
-	document.body.appendChild(oTarget2);
+	var oLabel,
+		oLayout,
+		oModel,
+		oModelChild,
+		oTarget1,
+		oTarget2,
+		aTestData,
+		aTestDataChild;
 
-	var testdata = {
-		teamMembers:[
-			{firstName:"Andreas", lastName:"Klark"},
-			{firstName:"Peter", lastName:"Miller"},
-			{firstName:"Gina", lastName:"Rush"},
-			{firstName:"Steave", lastName:"Ander"},
-			{firstName:"Michael", lastName:"Spring"},
-			{firstName:"Marc", lastName:"Green"},
-			{firstName:"Frank", lastName:"Wallace"}
-		],
-		additionalData:{
-			level1:{
-				text:"level1",
-				level2: {
-					text:"level2"
+	function cleanUp(){
+		document.body.removeChild(oTarget1);
+		document.body.removeChild(oTarget2);
+		oLabel.destroy();
+	}
+
+	function setup(){
+		// add divs for control tests
+		oTarget1 = document.createElement("div");
+		oTarget1.id = "target1";
+		document.body.appendChild(oTarget1);
+		oTarget2 = document.createElement("div");
+		oTarget2.id = "target2";
+		document.body.appendChild(oTarget2);
+
+		aTestData = {
+			teamMembers:[
+				{firstName:"Andreas", lastName:"Klark"},
+				{firstName:"Peter", lastName:"Miller"},
+				{firstName:"Gina", lastName:"Rush"},
+				{firstName:"Steave", lastName:"Ander"},
+				{firstName:"Michael", lastName:"Spring"},
+				{firstName:"Marc", lastName:"Green"},
+				{firstName:"Frank", lastName:"Wallace"}
+			],
+			additionalData:{
+				level1:{
+					text:"level1",
+					level2: {
+						text:"level2"
+					}
 				}
-			}
+			},
+			rootproperty: "test1"
+		};
+
+		aTestDataChild = {
+			pets:[
+				{type:"ape", age:"1"},
+				{type:"bird", age:"2"},
+				{type:"cat", age:"3"},
+				{type:"fish", age:"4"},
+				{type:"dog", age:"5"}
+			]
+		};
+
+		oModel = new JSONModel();
+		oModel.setData(aTestData);
+		sap.ui.getCore().setModel(oModel);
+		oModelChild = new JSONModel();
+		oModelChild.setData(aTestDataChild);
+		oLayout = new VerticalLayout();
+		oLabel = new Label("myLabel");
+		oLabel.setText("testText");
+		oLabel.placeAt("target1");
+	}
+
+	QUnit.module("sap.ui.model.json.JSONModel", {
+		afterEach: function() {
+			cleanUp();
 		},
-		rootproperty: "test1"
-	};
-
-	var testdataChild = {
-		pets:[
-			{type:"ape", age:"1"},
-			{type:"bird", age:"2"},
-			{type:"cat", age:"3"},
-			{type:"fish", age:"4"},
-			{type:"dog", age:"5"}
-		]
-	};
-
-	var oModel = new JSONModel();
-	oModel.setData(testdata);
-	sap.ui.getCore().setModel(oModel);
-
-	var oModelChild = new JSONModel();
-	oModelChild.setData(testdataChild);
-
-	var oLayout = new VerticalLayout();
-
-	var oLabel = new Label("myLabel");
-	oLabel.setText("testText");
-	oLabel.placeAt("target1");
+		beforeEach: function() {
+			setup();
+		}
+	});
 
 	QUnit.test("test model setData", function(assert) {
 		var obj1 = {a:true, b:false, c:false},
@@ -256,7 +270,7 @@ sap.ui.define([
 		var oContext = oModel.createBindingContext("/teamMembers");
 		oLabel.setBindingContext(oContext);
 		oLabel.bindProperty("text", "1/firstName");
-		assert.equal(oLabel.getText(), "Petre", "text value from model");
+		assert.equal(oLabel.getText(), "Peter", "text value from model");
 		// modify model value
 		oModel.setProperty("1/firstName", "Petri", oLabel.getBindingContext());
 		assert.equal(oLabel.getText(), "Petri", "new text value from model");
@@ -267,7 +281,7 @@ sap.ui.define([
 		var oContext = oModel.createBindingContext("/teamMembers");
 		oLabel.setBindingContext(oContext);
 		oLabel.bindProperty("text", "1/firstName");
-		assert.equal(oLabel.getText(), "Petri", "text value from model");
+		assert.equal(oLabel.getText(), "Peter", "text value from model");
 		// modify model value
 		oModel.setProperty("1/firstName", "Petro", oLabel.getBindingContext());
 		assert.equal(oLabel.getText(), "Petro", "new text value from model");
@@ -278,7 +292,7 @@ sap.ui.define([
 		oModel.setLegacySyntax(true);
 		oLabel.setBindingContext(undefined);
 		oLabel.bindProperty("text", "teamMembers/1/firstName");
-		assert.equal(oLabel.getText(), "Petro", "text value from model");
+		assert.equal(oLabel.getText(), "Peter", "text value from model");
 		// modify model value
 		oModel.setProperty("teamMembers/1/firstName", "Petre", oLabel.getBindingContext());
 		assert.equal(oLabel.getText(), "Petre", "new text value from model");
@@ -290,7 +304,7 @@ sap.ui.define([
 		var oContext = oModel.createBindingContext("/teamMembers/HorstDerGrosse");
 		oLabel.setBindingContext(oContext);
 		oLabel.bindProperty("text", "/teamMembers/1/firstName");
-		assert.equal(oLabel.getText(), "Petre", "text value from model");
+		assert.equal(oLabel.getText(), "Peter", "text value from model");
 		// modify model value
 		oModel.setProperty("/teamMembers/1/firstName", "Petra", oLabel.getBindingContext());
 		assert.equal(oLabel.getText(), "Petra", "new text value from model");
@@ -301,10 +315,10 @@ sap.ui.define([
 		var oContext = oModel.createBindingContext("/teamMembers/HorstDerGrosse");
 		oLabel.setBindingContext(oContext);
 		oLabel.bindProperty("text", "/teamMembers/1/firstName");
-		assert.equal(oLabel.getText(), "Petra", "text value from model");
+		assert.equal(oLabel.getText(), "Peter", "text value from model");
 		// modify model value
-		oModel.setProperty("/teamMembers/1/firstName", "Peter");
-		assert.equal(oLabel.getText(), "Peter", "new text value from model");
+		oModel.setProperty("/teamMembers/1/firstName", "Petra");
+		assert.equal(oLabel.getText(), "Petra", "new text value from model");
 	});
 
 	QUnit.test("test model getProperty with bindingContext and path = null", function(assert) {
@@ -338,8 +352,8 @@ sap.ui.define([
 		assert.equal(listItems.length, 7, "length of items");
 
 		listItems.forEach( function(item, i) {
-			assert.equal(item.getTitle(), testdata.teamMembers[i].firstName, "firstName");
-			assert.equal(item.getDescription(), testdata.teamMembers[i].lastName, "lastName");
+			assert.equal(item.getTitle(), aTestData.teamMembers[i].firstName, "firstName");
+			assert.equal(item.getDescription(), aTestData.teamMembers[i].lastName, "lastName");
 		});
 
 		oLB.destroy();
@@ -852,7 +866,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("test JSON compatible syntax", function(assert) {
-		var oModel = new JSONModel(testdata);
+		var oModel = new JSONModel(aTestData);
 		oModel.setLegacySyntax(true);
 		var value = oModel.getProperty("teamMembers/6/lastName");
 		assert.equal(value, "Wallace", "model value");
@@ -865,7 +879,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("test JSON compatible syntax fail", function(assert) {
-		var oModel = new JSONModel(testdata);
+		var oModel = new JSONModel(aTestData);
 		oModel.setLegacySyntax(false);
 		var value = oModel.getProperty("teamMembers/6/lastName");
 		assert.equal(value, undefined, "model value");

@@ -20,7 +20,7 @@ sap.ui.define([
 		]
 	};
 
-	QUnit.module("Binding", {
+	QUnit.module("sap.ui.model.json.JSONModel: Bindings", {
 		beforeEach: function() {
 			this.oModel = new JSONModel();
 			this.oModel.setData(testData);

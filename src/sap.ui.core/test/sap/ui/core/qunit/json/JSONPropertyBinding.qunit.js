@@ -104,7 +104,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.module("Basic functionality", {
+	QUnit.module("sap.ui.model.json.JSONPropertyBinding: Basic functionality", {
 		beforeEach: function() {
 			// Note: some tests modify the model data, therefore we clone it
 			this.currentTestData = clone(constTestData);
@@ -291,7 +291,7 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
-	QUnit.module("Async Type", {
+	QUnit.module("sap.ui.model.json.JSONPropertyBinding: Async Type", {
 		beforeEach: function() {
 			// Note: some tests modify the model data, therefore we clone it
 			this.currentTestData = clone(constTestData);
@@ -397,7 +397,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Suspend/Resume", {
+	QUnit.module("sap.ui.model.json.JSONPropertyBinding: Suspend/Resume", {
 		beforeEach: function() {
 			// Note: some tests modify the model data, therefore we clone it
 			this.currentTestData = clone(constTestData);
@@ -554,7 +554,7 @@ sap.ui.define([
 		oBinding.resume();
 	});
 
-	QUnit.module("PropertyChange event", {
+	QUnit.module("sap.ui.model.json.JSONPropertyBinding: PropertyChange event", {
 		beforeEach: function() {
 			// Note: some tests modify the model data, therefore we clone it
 			this.currentTestData = clone(constTestData);

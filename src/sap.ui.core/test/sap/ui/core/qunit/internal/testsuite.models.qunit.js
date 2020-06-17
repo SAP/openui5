@@ -108,6 +108,20 @@ sap.ui.define(function() {
 				}
 			},
 			// *************************************************************************
+			// Tests considering JSONModel and JSONPropertyBinding
+			// *************************************************************************
+			// contained in testsuite.json.qunit.js
+			JSONModel : {
+				// not in 1RingModels.qunit because of fake service usage
+				title : "sap.ui.model.json.JSONModel",
+				module : ["test-resources/sap/ui/core/qunit/json/JSONModel.qunit"]
+			},
+			JSONPropertyBinding : {
+				// not in 1RingModels.qunit because of bug in SyncPromise
+				title : "sap.ui.model.json.JSONPropertyBinding",
+				module : ["test-resources/sap/ui/core/qunit/json/JSONPropertyBinding.qunit"]
+			},
+			// *************************************************************************
 			// Tests considering messages
 			// *************************************************************************
 			// messages in combination with OData V2 - contained in testsuite.odatav2.qunit.js
