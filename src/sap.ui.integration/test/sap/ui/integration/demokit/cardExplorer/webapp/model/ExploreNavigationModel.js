@@ -65,6 +65,11 @@ sap.ui.define([
 								title: 'Submit Action',
 								key: 'adaptive-action-submit',
 								manifestUrl: '/samples/adaptive/action-submit.json'
+							},
+							{
+								title: 'Open URL Action',
+								key: 'adaptive-action-openurl',
+								manifestUrl: '/samples/adaptive/action-openurl.json'
 							}
 						]
 					},
@@ -561,6 +566,45 @@ sap.ui.define([
 				target: 'exploreOverview',
 				hasExpander: false,
 				items: [
+					{
+						key: 'adaptiveCustomizedActions',
+						target: 'exploreSamples',
+						title: 'Adaptive - Custom Actions',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/adaptiveCustomizedActions/indexTemplate.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/adaptiveCustomizedActions/cardManifest.json',
+								name: 'cardManifest.json',
+								key: 'cardManifest.json'
+							},
+							{
+								url: '/samples/adaptiveCustomizedActions/AdaptiveCustomizedActions.view.xml',
+								name: 'AdaptiveCustomizedActions.view.xml',
+								key: 'AdaptiveCustomizedActions.view.xml'
+							},
+							{
+								url: '/samples/adaptiveCustomizedActions/AdaptiveCustomizedActions.controller.js',
+								name: 'AdaptiveCustomizedActions.controller.js',
+								key: 'AdaptiveCustomizedActions.controller.js'
+							},
+							{
+								url: '/samples/adaptiveCustomizedActions/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							},
+							{
+								url: '/samples/adaptiveCustomizedActions/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							}
+						]
+					},
 					{
 						key: 'htmlConsumption',
 						target: 'exploreSamples',
