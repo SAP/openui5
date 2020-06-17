@@ -2,8 +2,10 @@
 sap.ui.define([
     "sap/ui/test/selectors/_Selector",
     "sap/ui/core/mvc/View",
-    "sap/ui/core/library"
-], function (_Selector, View, library) {
+    "sap/ui/core/library",
+    "sap/m/Button",
+    "sap/m/Dialog"
+], function (_Selector, View, library, Button, Dialog) {
     "use strict";
 
     // shortcut for sap.ui.core.mvc.ViewType
@@ -45,6 +47,7 @@ sap.ui.define([
         assert.strictEqual(mSelector.property, "value", "Should add _generate result");
         assert.strictEqual(mSelector.controlType, "sap.m.Input", "Should add controlType");
         assert.strictEqual(mSelector.viewName, "myView", "Should add viewName");
+        assert.ok(!mSelector.searchOpenDialogs, "Should not add searchOpenDialogs by default");
     });
 
     QUnit.test("Should skip basic matchers when requested", function (assert) {
@@ -100,5 +103,32 @@ sap.ui.define([
         assert.ok(!oSelector._isValidationRootRequired());
         assert.strictEqual(oSelector._getAncestor(), null);
         assert.strictEqual(oSelector._getValidationRoot(), null);
+    });
+
+    QUnit.test("Should add searchOpenDialogs flag when control is in static area", function (assert) {
+        this.oDialogButton = new Button({
+            text: "Close",
+            press: function () {
+                this.oDialog.close();
+            }.bind(this)
+        });
+        this.oDialog = new Dialog({
+            title: "static area test",
+            beginButton: this.oDialogButton
+        });
+        singleStub.returns({
+            property: "value"
+        });
+        var oSelector = new SingleSelector();
+        var mSelector = oSelector.generate(this.oDialogButton);
+        assert.strictEqual(mSelector.property, "value", "Should add _generate result");
+        assert.ok(!mSelector.searchOpenDialogs, "Should not add searchOpenDialogs when dialog is not open");
+
+        this.oDialog.open();
+        mSelector = oSelector.generate(this.oDialogButton);
+        assert.strictEqual(mSelector.property, "value", "Should add _generate result");
+        assert.ok(mSelector.searchOpenDialogs, "Should add searchOpenDialogs when dialog is open");
+
+        this.oDialog.destroy();
     });
 });
