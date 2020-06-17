@@ -3789,8 +3789,12 @@ sap.ui.define([
 				this._moveHeaderToContentArea();
 				this._toggleHeaderTitle(false /* snap */);
 			}
-			this.setProperty("showHeaderContent", bShow);
+
+			this.setProperty("showHeaderContent", bShow, true);
+
 			oHeaderContent = this._getHeaderContent();
+			this.$().toggleClass("sapUxAPObjectPageLayoutNoHeaderContent", !bShow || !oHeaderContent);
+
 			if (oHeaderContent) {
 				oHeaderContent.setProperty("visible", bShow);
 			}
