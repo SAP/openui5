@@ -34,15 +34,19 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		var sStateClass = encodeCSS("sapMGTState" + sState);
 		var sScopeClass;
 
+		// Render a link when URL is provided, not in action scope and the state is enabled
+		var bRenderLink = oControl.getUrl() && !oControl._isInActionScope() && sState !== LoadState.Disabled;
+
 		if (oControl._isInActionScope()) {
 			sScopeClass = encodeCSS("sapMGTScopeActions");
 		} else {
 			sScopeClass = encodeCSS("sapMGTScopeDisplay");
 		}
 
-		if (oControl.getUrl() && !oControl._isInActionScope()) {
+		if (bRenderLink) {
 			oRm.write("<a");
 			oRm.writeAttributeEscaped("href", oControl.getUrl());
+			oRm.writeAttribute("draggable", "false"); // <a> elements are draggable per default, use UI5 DnD instead
 		} else {
 			oRm.write("<div");
 		}
@@ -60,14 +64,8 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			oRm.addClass("sapMGTScopeActions");
 		}
 		oRm.addClass(oControl.getFrameType());
-		if (bHasPress) {
-			if (oControl.getUrl() && !oControl._isInActionScope()) {
-				oRm.writeAttribute("role", "link");
-			} else {
-				oRm.writeAttribute("role", "button");
-			}
-		} else {
-			oRm.writeAttribute("role", "presentation");
+		if (!bRenderLink) { // buttons only; <a> elements always have the default role
+			oRm.writeAttribute("role", bHasPress ? "button" : "presentation");
 		}
 		oRm.writeAttributeEscaped("aria-label", sAriaText);
 		if (sState !== LoadState.Disabled) {
@@ -134,7 +132,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		if (oControl._isInActionScope()) {
 			this._renderActionsScope(oRm, oControl);
 		}
-		if (oControl.getUrl() && !oControl._isInActionScope()) {
+		if (bRenderLink) {
 			oRm.write("</a>");
 		} else {
 			oRm.write("</div>");

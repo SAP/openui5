@@ -31,7 +31,12 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 			sScope = oControl.getScope(),
 			sScopeClass,
 			bIsSingleAction = false,
-			bHasPress = oControl.hasListeners("press");
+			bHasPress = oControl.hasListeners("press"),
+			sState = oControl.getState();
+
+		// Render a link when URL is provided, not in action scope and the state is enabled
+		var bRenderLink = oControl.getUrl() && !oControl._isInActionScope() && sState !== LoadState.Disabled;
+
 		this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 		if (sScope === GenericTileScope.Actions) {
@@ -43,22 +48,17 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 			sScopeClass = encodeCSS("sapMGTScopeDisplay");
 		}
 
-		if (oControl.getUrl() && !oControl._isInActionScope()) {
+		if (bRenderLink) {
 			oRm.write("<a");
 			oRm.writeAttributeEscaped("href", oControl.getUrl());
+			oRm.writeAttribute("draggable", "false"); // <a> elements are draggable per default, use UI5 DnD instead
 		} else {
 			oRm.write("<span");
 		}
 		oRm.writeControlData(oControl);
 		oRm.writeAttributeEscaped("aria-label", sAriaText);
-		if (bHasPress) {
-			if (oControl.getUrl() && !oControl._isInActionScope()) {
-				oRm.writeAttribute("role", "link");
-			} else {
-				oRm.writeAttribute("role", "button");
-			}
-		} else {
-			oRm.writeAttribute("role", "presentation");
+		if (!bRenderLink) { // buttons only; <a> elements always have the default role
+			oRm.writeAttribute("role", bHasPress ? "button" : "presentation");
 		}
 		oRm.addClass("sapMGT");
 		oRm.addClass(sScopeClass);
@@ -68,7 +68,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 			oRm.writeAttributeEscaped("title", sTooltipText);
 		}
 
-		var sState = oControl.getState();
 		if (sState !== LoadState.Disabled) {
 			oRm.addClass("sapMPointer");
 			oRm.writeAttribute("tabindex", "0");
@@ -148,7 +147,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 			oRm.write("</div>"); //.sapMGTTouchArea
 		}
 
-		if (oControl.getUrl() && !oControl._isInActionScope()) {
+		if (bRenderLink) {
 			oRm.write("</a>");
 		} else {
 			oRm.write("</span>"); //.sapMGT
