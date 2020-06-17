@@ -1860,7 +1860,11 @@ function(
 			// configuration
 			this._oSelectedItemPicker.setHorizontalScrolling(false)
 				.attachBeforeOpen(this._onBeforeOpenTokensPicker, this)
-				.attachAfterClose(this._onAfterCloseTokensPicker, this)
+				.attachAfterClose(function() {
+					this._onAfterCloseTokensPicker();
+					this._manageListsVisibility(false);
+					this._bShowListWithTokens = false;
+				}, this)
 				.addContent(this._getTokensList());
 		}
 		return this._oSelectedItemPicker;
@@ -1963,6 +1967,17 @@ function(
 	 */
 	MultiInput.prototype.isValueHelpOnlyOpener = function (oTarget) {
 		return [this._$input[0], this._getValueHelpIcon().getDomRef()].indexOf(oTarget) > -1;
+	};
+
+	/**
+	 * Checks if suggest should be triggered.
+	 *
+	 * @private
+	 * @returns {boolean} Determines if suggest should be triggered.
+	 */
+	MultiInput.prototype._shouldTriggerSuggest = function() {
+		var bShouldSuggest = Input.prototype._shouldTriggerSuggest.apply(this, arguments);
+		return bShouldSuggest && !this._bShowListWithTokens;
 	};
 
 
