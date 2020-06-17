@@ -881,6 +881,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("unwrap: Uncaught (in promise) - BCP: 2080194122", function (assert) {
+		return SyncPromise.resolve(Promise.reject(2080194122))
+			.unwrap() // code under test
+			.catch(function (vReason) {
+				assert.strictEqual(vReason, 2080194122);
+			});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("finally", function (assert) {
 		var oNewReason = new Error("new"),
 			oOldReason = new Error("old");

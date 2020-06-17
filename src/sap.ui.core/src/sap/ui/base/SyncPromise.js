@@ -167,7 +167,8 @@ sap.ui.define([], function () {
 		 * Marks this {@link sap.ui.base.SyncPromise} as caught and informs the optional
 		 * {@link sap.ui.base.SyncPromise.listener}. Basically, it has the same effect as
 		 * {@link #catch}, but with less overhead. Use it together with {@link #isRejected} and
-		 * {@link #getResult} in cases where the rejection is turned into <code>throw</code>.
+		 * {@link #getResult} in cases where the rejection is turned into <code>throw</code>; or
+		 * simply use {@link #unwrap} instead.
 		 */
 		this.caught = function () {
 			if (!bCaught) {
@@ -327,7 +328,8 @@ sap.ui.define([], function () {
 	/**
 	 * Unwraps this {@link sap.ui.base.SyncPromise} by returning the current result if this promise
 	 * is already fulfilled, returning the wrapped thenable if this promise is still pending, or
-	 * throwing the reason if this promise is already rejected.
+	 * throwing the reason if this promise is already rejected. This {@link sap.ui.base.SyncPromise}
+	 * is marked as {@link #caught}.
 	 *
 	 * @returns {any|Promise}
 	 *   The result in case this {@link sap.ui.base.SyncPromise} is already fulfilled, or the
@@ -338,8 +340,8 @@ sap.ui.define([], function () {
 	 * @see #getResult
 	 */
 	SyncPromise.prototype.unwrap = function () {
+		this.caught(); // make sure it will never count as uncaught
 		if (this.isRejected()) {
-			this.caught();
 			throw this.getResult();
 		}
 		return this.getResult();
