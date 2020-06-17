@@ -238,7 +238,7 @@ sap.ui.define([
 		assert.ok(sap.ui.getCore().byId(oTablePersoDialog.getId() + "-Dialog"), "Columns dialog exists after open() called");
 		assert.ok(jQuery.sap.domById(oTablePersoDialog.getId() + "-Dialog-title"), "Columns dialog has a title rendered");
 		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		var sTitle = sap.ui.getCore().byId(oTablePersoDialog.getId() + "-Dialog").getCustomHeader().getContent()[0].getText();
+		var sTitle = sap.ui.getCore().byId(oTablePersoDialog.getId() + "-Dialog").getTitle();
 		assert.strictEqual(sTitle, oRb.getText("PERSODIALOG_COLUMNS_TITLE"), "Columns dialog title is 'Columns'");
 		//Check if Reset ALL Button is invisible
 		assert.ok(jQuery('#' + oTPC.getAggregation("_tablePersoDialog")._oDialog.getId() + '-header-BarRight').children().length == 0, 'Reset All button should be hidden');
@@ -249,7 +249,7 @@ sap.ui.define([
 		oTPC.setShowSelectAll(true);
 		sap.ui.getCore().applyChanges();
 		//Check if Reset ALL Button is visible
-		assert.ok(oTPC.getAggregation("_tablePersoDialog")._oDialog.getCustomHeader().getContent()[2].$().length  > 0, 'Reset All should be shown');
+		assert.ok(oTPC.getAggregation("_tablePersoDialog")._oDialog.getCustomHeader().getContentRight()[0].$().length  > 0, 'Reset All should be shown');
 		//Check if Select All is visible
 		assert.ok(oTPC.getAggregation("_tablePersoDialog")._oDialog.getContent()[0].getMode(), "MultiSelect", 'Select All Checkbox should be shown');
 	});
@@ -532,7 +532,7 @@ sap.ui.define([
 		oTPC4.openDialog();
 		sap.ui.getCore().applyChanges();
 		var oTablePersoDialog4 = oTPC4.getTablePersoDialog(),
-			oResetButton = oTablePersoDialog4._oDialog.getCustomHeader().getContent()[2],
+			oResetButton = oTablePersoDialog4._oDialog.getCustomHeader().getContentRight()[0],
 			oButtonDown = oTablePersoDialog4._oButtonDown,
 			oList = oTablePersoDialog4._oInnerTable;
 
