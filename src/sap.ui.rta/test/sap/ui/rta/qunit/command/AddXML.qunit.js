@@ -82,11 +82,10 @@ function (
 		}
 	}, function() {
 		QUnit.test("when getting an AddXML command for the change ...", function(assert) {
-			var sPath = "abc.test";
+			var sPath = "someName/Component/changes/pathToFragment";
 			var sFragment = "fragment";
 			var oApplyChangeStub = sandbox.stub(AddXML, "applyChange");
 			var oCompleteChangeContentSpy = sandbox.spy(AddXML, "completeChangeContent");
-			sandbox.stub(Change.prototype, "getModuleName").returns(sPath);
 			var oPreloadSpy = sandbox.spy(sap.ui.require, "preload");
 
 			var oCommandFactory = new CommandFactory({

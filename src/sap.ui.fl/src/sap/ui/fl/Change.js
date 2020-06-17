@@ -51,16 +51,12 @@ sap.ui.define([
 			this._aUndoOperations = null;
 			this._oExtensionPointInfo = null;
 			this.setState(Change.states.NEW);
-			this.setModuleName(oFile.moduleName);
 			this.setInitialApplyState();
 			this._oChangeProcessingPromises = {};
 		},
 		metadata : {
 			properties : {
 				state : {
-					type: "string"
-				},
-				moduleName: {
 					type: "string"
 				},
 				/**
@@ -377,6 +373,28 @@ sap.ui.define([
 	 */
 	Change.prototype.setNamespace = function (sNamespace) {
 		this._oDefinition.namespace = sNamespace;
+	};
+
+	/**
+	 * Returns the name of module which this change refers to (XML or JS).
+	 *
+	 * @returns {String} Module name
+	 *
+	 * @public
+	 */
+	Change.prototype.getModuleName = function () {
+		return this._oDefinition.moduleName;
+	};
+
+	/**
+	 * Sets the module name.
+	 *
+	 * @param {string} sModuleName - Module name of the change file
+	 *
+	 * @public
+	 */
+	Change.prototype.setModuleName = function (sModuleName) {
+		this._oDefinition.moduleName = sModuleName;
 	};
 
 	/**
