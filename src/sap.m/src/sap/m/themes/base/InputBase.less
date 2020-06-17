@@ -161,7 +161,7 @@
 
 .sapMFocus {
 	& .sapMInputBaseContentWrapper {
-		outline: 1px dotted @sapUiContentFocusColor;
+		outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 		outline-offset: -3px;
 	}
 	&.sapMInputBaseState .sapMInputBaseContentWrapper:not(.sapMInputBaseContentWrapperSuccess) {
@@ -284,7 +284,7 @@ html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMFocus .sapMInputBaseContentWrapper:not(.sapMInputBaseDisabledWrapper) {
 		&::before {
-			border: 1px dashed @sapUiContentFocusColor;
+			border: @sapUiContentFocusWidth dashed @sapUiContentFocusColor;
 		}
 	}
 }
