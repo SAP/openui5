@@ -329,7 +329,7 @@ sap.ui.define([
 			//Arrange
 			this.oCP.setDisplayMode(ColorPickerDisplayMode.Large);
 			applyChanges();
-			var oRadioButtonsGroup = sap.ui.getCore().byId("__group3");
+			var oRadioButtonsGroup = this.oCP.getAggregation("_oRGBorHSLRBUnifiedGroup");
 
 			//Act
 			oRadioButtonsGroup.getButtons()[0].focus();
