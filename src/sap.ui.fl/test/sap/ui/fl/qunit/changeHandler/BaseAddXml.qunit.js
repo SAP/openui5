@@ -21,23 +21,23 @@ sap.ui.define([
 
 	var mPreloadedModules = {};
 
-	var sFragmentPath = "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/Fragment";
+	var sFragmentPath = "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/Fragment.fragment.xml";
 	mPreloadedModules[sFragmentPath] = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core"><Button xmlns="sap.m" id="button" text="Hello World"></Button></core:FragmentDefinition>';
-	var sFragmentInvalidTypePath = "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/FragmentInvalidType";
+	var sFragmentInvalidTypePath = "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/FragmentInvalidType.fragment.xml";
 	mPreloadedModules[sFragmentInvalidTypePath] = '<ManagedObject xmlns="sap.ui.base" id="managedObject"></ManagedObject>';
-	var sFragmentMultiplePath = "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/FragmentMultiple";
+	var sFragmentMultiplePath = "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/FragmentMultiple.fragment.xml";
 	mPreloadedModules[sFragmentMultiplePath] = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">' +
 		'<Button xmlns="sap.m" id="button1" text="Hello World"></Button>' +
 		'<Button xmlns="sap.m" id="button2" text="Hello World"></Button>' +
 		'<Button xmlns="sap.m" id="button3" text="Hello World"></Button>' +
 		'</core:FragmentDefinition>';
-	var sFragmentMultipleInvalidTypesPath = "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/FragmentMultipleInvalidTypes";
+	var sFragmentMultipleInvalidTypesPath = "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/FragmentMultipleInvalidTypes.fragment.xml";
 	mPreloadedModules[sFragmentMultipleInvalidTypesPath] = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:base="sap.ui.base">' +
 		'<Button xmlns="sap.m" id="button" text="Hello World"></Button>' +
 		'<Button xmlns="sap.m" id="button2" text="Hello World"></Button>' +
 		'<base:ManagedObject id="managedObject"></base:ManagedObject>' +
 		'</core:FragmentDefinition>';
-	var sFragmentInvalidPath = "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/FragmentInvalid";
+	var sFragmentInvalidPath = "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/FragmentInvalid.fragment.xml";
 	mPreloadedModules[sFragmentInvalidPath] = 'invalidFragment';
 	var sNonExistingPath = "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/NonExisting";
 
@@ -59,7 +59,7 @@ sap.ui.define([
 			});
 
 			var oChangeJson = {
-				reference: "sap.ui.fl.qunit.changeHander.BaseAddXml",
+				reference: "sap.ui.fl.qunit.changeHander.BaseAddXml.Component",
 				validAppVersions: {
 					creation: "1.0.0"
 				},
@@ -73,7 +73,7 @@ sap.ui.define([
 			};
 
 			this.oChangeSpecificContent = {
-				fragmentPath: "fragments/Fragment",
+				fragmentPath: "fragments/Fragment.fragment.xml",
 				targetAggregation: "items",
 				index: 1
 			};
@@ -88,14 +88,14 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("When calling 'completeChangeContent' with complete information", function(assert) {
 			var oExpectedChangeContent = {
-				fragmentPath: "fragments/Fragment"
+				fragmentPath: "fragments/Fragment.fragment.xml"
 			};
 
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent, this.oChangeDefinition);
 			var oChangeDefinition = this.oChange.getDefinition();
 			var oSpecificContent = oChangeDefinition.content;
 			assert.deepEqual(oSpecificContent, oExpectedChangeContent, "then the change specific content is in the change, but the fragment not");
-			assert.equal(oChangeDefinition.moduleName, "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/Fragment", "and the module name is set correct in oChangeDefinition");
+			assert.equal(oChangeDefinition.moduleName, "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/Fragment.fragment.xml", "and the module name is set correct in oChangeDefinition");
 		});
 
 		QUnit.test("When calling 'completeChangeContent' without complete information", function(assert) {
@@ -131,7 +131,7 @@ sap.ui.define([
 			};
 
 			this.oChangeSpecificContent = {
-				fragmentPath: "fragments/Fragment",
+				fragmentPath: "fragments/Fragment.fragment.xml",
 				targetAggregation: "items",
 				index: 1
 			};
@@ -250,7 +250,7 @@ sap.ui.define([
 			};
 
 			this.oChangeSpecificContent = {
-				fragmentPath: "fragments/Fragment",
+				fragmentPath: "fragments/Fragment.fragment.xml",
 				targetAggregation: "items",
 				index: 1
 			};

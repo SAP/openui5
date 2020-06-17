@@ -82,7 +82,7 @@ function (
 		}
 	}, function() {
 		QUnit.test("when getting an AddXML command for the change ...", function(assert) {
-			var sPath = "someName/Component/changes/pathToFragment";
+			var sPath = "someName/changes/pathToFragment";
 			var sFragment = "fragment";
 			var oApplyChangeStub = sandbox.stub(AddXML, "applyChange");
 			var oCompleteChangeContentSpy = sandbox.spy(AddXML, "completeChangeContent");
