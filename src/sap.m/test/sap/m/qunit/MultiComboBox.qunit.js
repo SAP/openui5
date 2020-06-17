@@ -24,7 +24,8 @@ sap.ui.define([
 	"sap/m/ComboBoxBase",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/core/SeparatorItem",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/m/library"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -49,7 +50,8 @@ sap.ui.define([
 	ComboBoxBase,
 	containsOrEquals,
 	SeparatorItem,
-	InvisibleText
+	InvisibleText,
+	mLibrary
 ) {
 	// shortcut for sap.ui.core.OpenState
 	var OpenState = coreLibrary.OpenState;
@@ -58,6 +60,8 @@ sap.ui.define([
 	var ValueState = coreLibrary.ValueState;
 
 	var nPopoverAnimationTick = 300;
+
+	var TokenizerRenderMode = mLibrary.TokenizerRenderMode;
 
 	createAndAppendDiv("MultiComboBox-content").setAttribute("class", "select-content");
 
@@ -4983,6 +4987,7 @@ sap.ui.define([
 		oMultiComboBox.onsapfocusleave(oFakeEvent);
 
 		// assert
+		this.clock.tick();
 		assert.ok(oSpy.called, "Tokenizer's scrollToEnd should be called when focus is outside MCB");
 
 		// cleanup
@@ -6711,6 +6716,8 @@ sap.ui.define([
 
 		//close and open the picker
 		this.oMCB1.onfocusin(oEventMock);
+		sap.ui.getCore().applyChanges();
+
 		// assert
 		assert.ok(oIndicator.hasClass("sapUiHidden"), "The n-more label is hidden on focusin.");
 	});
@@ -6834,7 +6841,12 @@ sap.ui.define([
 
 	QUnit.test("tokenizer's adjustTokensVisibility is called on initial rendering", function (assert) {
 		//arrange
-		var oMCB = new MultiComboBox();
+		var oMCB = new MultiComboBox({
+			items: [
+				new Item({key: "key", text: "text"})
+			],
+			selectedKeys: ["key"]
+		});
 		var oTokenizer = oMCB.getAggregation("tokenizer");
 		var oTokenizerSpy = this.spy(oTokenizer, "_adjustTokensVisibility");
 
@@ -6843,7 +6855,7 @@ sap.ui.define([
 		this.clock.tick(100);
 
 		// assert
-		assert.ok(oTokenizer._getAdjustable(), "the tokenizer is adjustable");
+		assert.strictEqual(oTokenizer.getRenderMode(), TokenizerRenderMode.Narrow, "the tokenizer is in Narrow mode");
 		assert.ok(oTokenizerSpy.called, "tokenizer's _adjustTokensVisibility is called");
 
 		// clean up
@@ -7304,17 +7316,17 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(1000);
 
-		assert.strictEqual(oSyncInput.callCount, 1);
+		assert.strictEqual(oSyncInput.callCount, 2);
 
 		oMultiComboBox.setSelectedKeys(["0"]);
 		this.clock.tick(1000);
 
-		assert.strictEqual(oSyncInput.callCount, 2);
+		assert.strictEqual(oSyncInput.callCount, 3);
 
 		oMultiComboBox.setSelectedKeys([]);
 		this.clock.tick(1000);
 
-		assert.strictEqual(oSyncInput.callCount, 3);
+		assert.strictEqual(oSyncInput.callCount, 4);
 
 		oSyncInput.restore();
 		oMultiComboBox.destroy();
@@ -8399,14 +8411,14 @@ sap.ui.define([
 		this.clock.tick(nPopoverAnimationTick);
 
 		// Assert
-		assert.ok(oSpy.calledWith(false), "_useCollapsedMode should be called with 'false'.");
+		assert.ok(oSpy.calledWith(TokenizerRenderMode.Loose), "_useCollapsedMode should be called with 'Narrow'.");
 		assert.ok(!oTokenizer.hasOneTruncatedToken(), "Truncation was removed from the token");
 
 		// Act
 		this.oMultiComboBox.onsapfocusleave(oMockEvent);
 		this.clock.tick(nPopoverAnimationTick);
 
-		assert.ok(oSpy.calledWith(true), "_useCollapsedMode should be called with 'true'.");
+		assert.ok(oSpy.calledWith(TokenizerRenderMode.Narrow), "_useCollapsedMode should be called with 'Loose'.");
 		assert.ok(oTokenizer.hasOneTruncatedToken(), "Truncation was set on the token");
 	});
 

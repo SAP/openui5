@@ -106,6 +106,7 @@
 			press : function() {
 				oTokenizer5.setEditable(!oTokenizer5.getEditable());
 			}
+
 		});
 
 		var oTokenizer7 = new sap.m.Tokenizer("tokenizerLongToken", {
@@ -114,7 +115,7 @@
 				new sap.m.Token({text:"Veru long long long long long long long text"})
 			],
 		});
-		oTokenizer7._setAdjustable(true);
+		oTokenizer7.setRenderMode(sap.m.TokenizerRenderMode.Narrow);
 
 		var oTokenizer8 = new sap.m.Tokenizer("tokenizerReadOnlyLongToken", {
 			width: "200px",
@@ -123,7 +124,7 @@
 				new sap.m.Token({text:"Veru long long long long long long long text"})
 			],
 		});
-		oTokenizer8._setAdjustable(true);
+		oTokenizer8.setRenderMode(sap.m.TokenizerRenderMode.Narrow);
 
 		var app = new sap.m.App("myApp");
 

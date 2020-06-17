@@ -45,6 +45,7 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 		}
 
 		oRm.style("max-width", oControl.getMaxWidth());
+
 		var sPixelWdth = oControl.getWidth();
 		if (sPixelWdth) {
 			oRm.style("width", sPixelWdth);
@@ -117,7 +118,9 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 	TokenizerRenderer._renderIndicator = function(oRm, oControl){
 		oRm.openStart("span");
 		oRm.class("sapMTokenizerIndicator");
-		oRm.class("sapUiHidden");
+		if (oControl.getHiddenTokensCount() === 0) {
+			oRm.class("sapUiHidden");
+		}
 		oRm.openEnd().close("span");
 	};
 

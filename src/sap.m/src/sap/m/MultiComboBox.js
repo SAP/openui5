@@ -78,6 +78,9 @@ function(
 
 	var PlacementType = library.PlacementType;
 
+	// shortcut for sap.m.TokenizerRenderMode
+	var TokenizerRenderMode = library.TokenizerRenderMode;
+
 	/**
 	 * Constructor for a new MultiComboBox.
 	 *
@@ -623,7 +626,7 @@ function(
 		}
 
 		//Open popover with items if in readonly mode and has Nmore indicator
-		if (!this.getEditable() && this.getAggregation("tokenizer")._hasMoreIndicator() && oEvent.target === this.getFocusDomRef()) {
+		if (!this.getEditable() && this.getAggregation("tokenizer").getHiddenTokensCount() && oEvent.target === this.getFocusDomRef()) {
 			this._handleIndicatorPress(oEvent);
 		}
 
@@ -676,14 +679,9 @@ function(
 				this.fireChangeEvent("", { value: sOldValue });
 			}
 
-			// If focus is outside of the MultiComboBox
-			if (!(oControl instanceof Token || oEvent.srcControl instanceof Token)) {
-				oTokenizer.scrollToEnd();
-			}
-
 			// if the focus is outside the MultiComboBox, the tokenizer should be collapsed
 			if (!jQuery.contains(this.getDomRef(), document.activeElement)) {
-				oTokenizer._useCollapsedMode(true);
+				oTokenizer.setRenderMode(TokenizerRenderMode.Narrow);
 			}
 		}
 
@@ -717,8 +715,7 @@ function(
 		}
 
 		if (this.getEditable() && oEvent.target === this.getDomRef("inner")) {
-			oTokenizer._useCollapsedMode(false);
-			oTokenizer.scrollToEnd();
+			oTokenizer.setRenderMode(TokenizerRenderMode.Loose);
 		}
 
 		if (oEvent.target === this.getFocusDomRef()) {
@@ -1378,7 +1375,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onAfterClose = function() {
-		var bUseCollapsed = !jQuery.contains(this.getDomRef(), document.activeElement) || this.isPickerDialog(),
+		var bUseNarrow = !jQuery.contains(this.getDomRef(), document.activeElement) || this.isPickerDialog(),
 			oDomRef = this.getFocusDomRef();
 
 		oDomRef && this.getFocusDomRef().setAttribute("aria-expanded", "false");
@@ -1410,7 +1407,7 @@ function(
 			selectedItems: this.getSelectedItems()
 		});
 
-		this.getAggregation("tokenizer")._useCollapsedMode(bUseCollapsed);
+		this.getAggregation("tokenizer").setRenderMode(bUseNarrow ? TokenizerRenderMode.Narrow : TokenizerRenderMode.Loose);
 
 		// show value state message when focus is in the input field
 		if (this.getValueState() == ValueState.Error && document.activeElement === this.getFocusDomRef()) {
@@ -2156,8 +2153,6 @@ function(
 		if (this.isPickerDialog()) {
 			this.getFilterSelectedButton().setPressed(true);
 			this.bOpenedByKeyboardOrButton = true;
-		} else {
-			setTimeout(oTokenizer["scrollToEnd"].bind(oTokenizer), 0);
 		}
 	};
 
@@ -2206,9 +2201,8 @@ function(
 	 */
 	MultiComboBox.prototype._createTokenizer = function() {
 		var oTokenizer = new Tokenizer({
-			tokens: []
+			renderMode: TokenizerRenderMode.Narrow
 		}).attachTokenChange(this._handleTokenChange, this);
-		oTokenizer._setAdjustable(true);
 
 		oTokenizer._handleNMoreIndicatorPress(this._handleIndicatorPress.bind(this));
 
@@ -2218,7 +2212,7 @@ function(
 
 				// if a token is selected, the tokenizer should not scroll
 				if (this.getEditable() && (!oEvent.target.classList.contains("sapMToken"))) {
-					oTokenizer._useCollapsedMode(false);
+					oTokenizer.setRenderMode(TokenizerRenderMode.Loose);
 				}
 			}
 		}, this);
@@ -3644,15 +3638,27 @@ function(
 	 */
 	MultiComboBox.prototype._handleNMoreAccessibility = function () {
 		var sInvisibleTextId = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER"),
-			bHasAriaLabelledBy = this.getAriaLabelledBy().indexOf(sInvisibleTextId) !== -1,
+			oTokenizer = this.getAggregation("tokenizer"),
+			oFocusDomRef = this.getFocusDomRef(),
+			sAriaLabeledBy = (oFocusDomRef && oFocusDomRef.getAttribute("aria-labelledby")),
+			aAriaLabeledBy = sAriaLabeledBy ? sAriaLabeledBy.split(" ") : [],
+			iNMoreIndex = aAriaLabeledBy.indexOf(sInvisibleTextId),
 			bEnabled = this.getEnabled(),
-			oTokenizer = this.getAggregation("tokenizer");
+			bNMoreAriaRequirements = !this.getEditable() && oTokenizer && oTokenizer.getHiddenTokensCount();
 
-		if (!this.getEditable() && oTokenizer && oTokenizer._hasMoreIndicator()) {
-			!bHasAriaLabelledBy && this.addAriaLabelledBy(sInvisibleTextId);
+		// if the control is readonly and has a visible n-more, provide the respective aria attributes
+		if (bNMoreAriaRequirements && iNMoreIndex === -1) {
+			aAriaLabeledBy.push(sInvisibleTextId);
 			bEnabled && this.getFocusDomRef().setAttribute("aria-keyshortcuts", "Enter");
-		} else {
-			bHasAriaLabelledBy && this.removeAriaLabelledBy(sInvisibleTextId);
+		// if the control is no longer readonly or the n-more is not visible, make sure to clear out the attributes
+		} else if (iNMoreIndex !== -1 && !bNMoreAriaRequirements) {
+			aAriaLabeledBy.splice(iNMoreIndex, 1);
+			this.getFocusDomRef().removeAttribute("aria-keyshortcuts");
+		}
+
+		// set the aria-labelledby with the updated array
+		if (oFocusDomRef && aAriaLabeledBy.length) {
+			oFocusDomRef.setAttribute("aria-labelledby", aAriaLabeledBy.join(" ").trim());
 		}
 	};
 

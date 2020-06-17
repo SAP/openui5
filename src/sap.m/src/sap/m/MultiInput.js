@@ -53,8 +53,9 @@ function(
 ) {
 		"use strict";
 
-    var PlacementType = library.PlacementType,
-		ListMode = library.ListMode;
+	var PlacementType = library.PlacementType,
+		ListMode = library.ListMode,
+		TokenizerRenderMode = library.TokenizerRenderMode;
 
 
 	/**
@@ -243,16 +244,23 @@ function(
 		Input.prototype.init.call(this);
 
 		this._bIsValidating = false;
-		this.setAggregation("tokenizer", new Tokenizer());
+		this.setAggregation("tokenizer", new Tokenizer({
+			renderMode: TokenizerRenderMode.Narrow
+		}));
 		var oTokenizer = this.getAggregation("tokenizer");
 
-		oTokenizer._setAdjustable(true);
 		oTokenizer.attachTokenChange(this._onTokenChange, this);
 		oTokenizer.attachTokenUpdate(this._onTokenUpdate, this);
 		oTokenizer._handleNMoreIndicatorPress(this._handleIndicatorPress.bind(this));
 
 		oTokenizer.addEventDelegate({
-			onThemeChanged: this._handleInnerVisibility.bind(this)
+			onThemeChanged: this._handleInnerVisibility.bind(this),
+			onAfterRendering: function () {
+				this._syncInputWidth(oTokenizer);
+				this._handleInnerVisibility();
+				this._handleNMoreAccessibility();
+				this._registerTokenizerResizeHandler();
+			}.bind(this)
 		}, this);
 
 		this.setShowValueHelp(true);
@@ -307,18 +315,16 @@ function(
 		var oTokenizer = this.getAggregation("tokenizer");
 		this._bTokenIsValidated = false;
 
-		oTokenizer.scrollToEnd();
-		this._registerResizeHandler();
-		this._registerTokenizerResizeHandler();
 		oTokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
-		this._handleNMoreAccessibility();
-		this._handleInnerVisibility();
-		this._syncInputWidth(oTokenizer);
+		oTokenizer.scrollToEnd();
+
+		this._registerResizeHandler();
+
 		Input.prototype.onAfterRendering.apply(this, arguments);
 	};
 
 	MultiInput.prototype._handleInnerVisibility = function () {
-		var bHideInnerInput = this.getAggregation("tokenizer")._hasMoreIndicator();
+		var bHideInnerInput = !!this.getAggregation("tokenizer").getHiddenTokensCount();
 		this._setValueVisible(!bHideInnerInput);
 	};
 
@@ -393,12 +399,7 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._onResize = function () {
-		var oTokenizer = this.getAggregation("tokenizer");
-
-		oTokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
-		this._handleInnerVisibility();
-		this._syncInputWidth(oTokenizer);
-		this._handleNMoreAccessibility();
+		this.getAggregation("tokenizer").setMaxWidth(this._calculateSpaceForTokenizer());
 	};
 
 	MultiInput.prototype._onTokenChange = function (args) {
@@ -406,7 +407,7 @@ function(
 		this.invalidate();
 
 		if (args.getParameter("type") === "removed") {
-			this.getAggregation("tokenizer")._useCollapsedMode(false);
+			this.getAggregation("tokenizer").setRenderMode(TokenizerRenderMode.Loose);
 		}
 
 		if ((this._getIsSuggestionPopupOpen()) || this.isMobileDevice()) {
@@ -558,8 +559,6 @@ function(
 	MultiInput.prototype.onBeforeRendering = function () {
 		Input.prototype.onBeforeRendering.apply(this, arguments);
 		this.getAggregation("tokenizer").setProperty("enabled", this.getEnabled(), true);
-		this._deregisterResizeHandler();
-		this._deregisterTokenizerResizeHandler();
 	};
 
 	/**
@@ -984,7 +983,9 @@ function(
 		}
 
 		// Open popover with items if in readonly mode and has Nmore indicator
-		if (!this.getEditable() && this.getAggregation("tokenizer")._hasMoreIndicator() && oEvent.target === this.getFocusDomRef()) {
+		if (!this.getEditable()
+			&& this.getAggregation("tokenizer").getHiddenTokensCount()
+			&& oEvent.target === this.getFocusDomRef()) {
 			this._handleIndicatorPress();
 		}
 
@@ -1020,11 +1021,6 @@ function(
 			}
 		}
 
-		// setContainerSize of multi-line mode in the end
-		if (!bNewFocusIsInTokenizer && !bNewFocusIsInSuggestionPopup) {
-			oTokenizer.scrollToEnd();
-		}
-
 		Input.prototype.onsapfocusleave.apply(this, arguments);
 
 		// an asynchronous validation is running, no need to trigger validation again
@@ -1050,7 +1046,7 @@ function(
 		}
 
 		if (!bFocusIsInSelectedItemPopup && !bNewFocusIsInTokenizer) {
-			oTokenizer._useCollapsedMode(true);
+			oTokenizer.setRenderMode(TokenizerRenderMode.Narrow);
 		}
 
 		this._handleInnerVisibility();
@@ -1098,9 +1094,8 @@ function(
 			oEvent.target === this.getDomRef("inner") &&
 			!(this._getIsSuggestionPopupOpen())
 		) {
-			oTokenizer._useCollapsedMode(false);
+			oTokenizer.setRenderMode(TokenizerRenderMode.Loose);
 			this._setValueVisible(true);
-			oTokenizer.scrollToEnd();
 		}
 
 		this._registerResizeHandler();
@@ -1429,7 +1424,7 @@ function(
 	 * In case of added token it will not reset the value.
 	 *
 	 * @protected
-	 * @param {object} oEvent
+	 * @param {object} oEvent Event object
 	 * @param {object} [mParameters] Additional event parameters to be passed in to the change event handler if * the value has changed
 	 * @param {string} sNewValue Passed value on change
 	 * @returns {boolean|undefined} true when change event is fired
@@ -1502,7 +1497,7 @@ function(
 				that._updatePickerHeaderTitle();
 			})
 			.attachAfterClose(function() {
-				that.getAggregation("tokenizer")._useCollapsedMode(true);
+				that.getAggregation("tokenizer").setRenderMode(TokenizerRenderMode.Loose);
 				that._bShowListWithTokens = false;
 			});
 	};
@@ -1569,7 +1564,7 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._onAfterCloseTokensPicker = function () {
-		this.getAggregation("tokenizer")._useCollapsedMode(true);
+		this.getAggregation("tokenizer").setRenderMode(TokenizerRenderMode.Narrow);
 	};
 
 	/**
@@ -1825,20 +1820,25 @@ function(
 	MultiInput.prototype._handleNMoreAccessibility = function () {
 		var sInvisibleTextId = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER"),
 			oFocusDomRef = this.getFocusDomRef(),
-			sAriaLabeledBy = (oFocusDomRef && oFocusDomRef.getAttribute("aria-labelledby")) || "",
-			aAriaLabeledBy = sAriaLabeledBy.split(" "),
+			sAriaLabeledBy = (oFocusDomRef && oFocusDomRef.getAttribute("aria-labelledby")),
+			aAriaLabeledBy = sAriaLabeledBy ? sAriaLabeledBy.split(" ") : [],
 			iNMoreIndex = aAriaLabeledBy.indexOf(sInvisibleTextId),
-			bEnabled = this.getEnabled();
+			bEnabled = this.getEnabled(),
+			bNMoreAriaRequirements = !this.getEditable() && this.getAggregation("tokenizer").getHiddenTokensCount();
 
-		if (!this.getEditable() && this.getAggregation("tokenizer")._hasMoreIndicator() && iNMoreIndex === -1) {
+		// if the control is readonly and has a visible n-more, provide the respective aria attributes
+		if (bNMoreAriaRequirements && iNMoreIndex === -1) {
 			aAriaLabeledBy.push(sInvisibleTextId);
 			bEnabled && this.getFocusDomRef().setAttribute("aria-keyshortcuts", "Enter");
-		} else if (iNMoreIndex !== -1) {
+		// if the control is no longer readonly or the n-more is not visible, make sure to clear out the attributes
+		} else if (iNMoreIndex !== -1 && !bNMoreAriaRequirements) {
 			aAriaLabeledBy.splice(iNMoreIndex, 1);
+			this.getFocusDomRef().removeAttribute("aria-keyshortcuts");
 		}
 
-		if (oFocusDomRef) {
-			oFocusDomRef.setAttribute("aria-labelledby", aAriaLabeledBy.join(" "));
+		// set the aria-labelledby with the updated array
+		if (oFocusDomRef && aAriaLabeledBy.length) {
+			oFocusDomRef.setAttribute("aria-labelledby", aAriaLabeledBy.join(" ").trim());
 		}
 	};
 
@@ -1888,7 +1888,6 @@ function(
 
 		return this._oReadOnlyPopover;
 	};
-
 
 	/*
 	 * Gets the dropdown default settings.
