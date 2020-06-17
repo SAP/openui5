@@ -1,0 +1,12 @@
+<mvc:View
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<BusyIndicator text="... something is happening" class="sapUiTinyMarginBottom" />
+		<HBox justifyContent="Start" alignItems="Center">
+			<BusyIndicator size="3em" />
+		</HBox>
+		<BusyIndicator size="1.6rem" class="sapUiMediumMarginBegin" />
+	</l:VerticalLayout>
+</mvc:View>

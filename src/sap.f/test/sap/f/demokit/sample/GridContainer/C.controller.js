@@ -51,7 +51,8 @@ sap.ui.define([
 		},
 
 		onPress: function (oEvent) {
-			MessageToast.show("Press was fired on - " + oEvent.getSource().getMetadata()._sClassName);
+			MessageToast.show("Press was fired on - " + oEvent.getSource().getMetadata().getName());
 		}
+
 	});
 });

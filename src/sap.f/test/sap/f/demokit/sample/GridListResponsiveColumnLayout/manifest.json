@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.f.sample.GridListResponsiveColumnLayout.GridListResponsiveColumnLayout",
+			"viewName": "sap.f.sample.GridListResponsiveColumnLayout.V",
 			"type": "XML",
 			"async": true
 		},
@@ -28,8 +28,8 @@
 		"config": {
 			"sample": {
 				"files": [
-					"GridListResponsiveColumnLayout.view.xml",
-					"GridListResponsiveColumnLayout.controller.js",
+					"V.view.xml",
+					"C.controller.js",
 					"manifest.json",
 					"RevealGrid/RevealGrid.js",
 					"RevealGrid/RevealGrid.css"

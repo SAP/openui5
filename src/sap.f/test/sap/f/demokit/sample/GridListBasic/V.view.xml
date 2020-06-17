@@ -1,36 +1,35 @@
 <mvc:View
-		xmlns="sap.m"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:grid="sap.ui.layout.cssgrid"
-		xmlns:f="sap.f"
-		controllerName="sap.f.sample.GridListBasic.C">
+	controllerName="sap.f.sample.GridListBasic.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:f="sap.f">
 	<MessageStrip
-				class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"
-				type="Information"
-				text="Note: This layout is not supported by Microsoft Internet Explorer and Microsoft Edge 15 and older versions."/>
+		class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"
+		type="Information"
+		text="Note: This layout is not supported by Microsoft Internet Explorer and Microsoft Edge 15 and older versions." />
 	<Slider value="100" liveChange="onSliderMoved" />
 	<Panel id="panelForGridList">
 		<headerToolbar>
 			<Toolbar height="3rem">
-				<Title text="GridList with default grid layout"/>
+				<Title text="GridList with default grid layout" />
 			</Toolbar>
 		</headerToolbar>
-		<content>
-			<f:GridList id="gridList"
-						headerText="GridList header"
-						items="{ path: '/' }">
-				<f:GridListItem>
-					<VBox height="100%">
-						<VBox class="sapUiSmallMargin">
-							<layoutData>
-								<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
-							</layoutData>
-							<Title text="{title}" wrapping="true" />
-							<Label text="{subtitle}" wrapping="true" />
-						</VBox>
-					</VBox>
-				</f:GridListItem>
-			</f:GridList>
-		</content>
+
+		<f:GridList
+			id="gridList"
+			headerText="GridList header"
+			items="{/items}">
+			<f:GridListItem>
+				<VBox class="sapUiSmallMargin">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" /> <!-- Don't shrink below minimum size. Fill space if available. -->
+					</layoutData>
+
+					<Title text="{title}" wrapping="true" />
+					<Label text="{subtitle}" wrapping="true" />
+				</VBox>
+			</f:GridListItem>
+		</f:GridList>
 	</Panel>
 </mvc:View>

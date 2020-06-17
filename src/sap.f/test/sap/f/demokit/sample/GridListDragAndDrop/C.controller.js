@@ -5,23 +5,25 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.f.sample.GridListDragAndDrop.C", {
+
 		onInit: function () {
-			var sDataUrl = sap.ui.require.toUrl("sap/f/sample/GridListDragAndDrop/data.json");
-			this.model = new JSONModel(sDataUrl);
-			this.getView().setModel(this.model);
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/f/sample/GridListDragAndDrop/model/data.json"));
+			this.getView().setModel(oModel);
 		},
+
 		onDrop: function (oInfo) {
 			var oDragged = oInfo.getParameter("draggedControl"),
 				oDropped = oInfo.getParameter("droppedControl"),
 				sInsertPosition = oInfo.getParameter("dropPosition"),
 				oGrid = oDragged.getParent(),
-				oData = this.model.getData(),
+				oModel = this.getView().getModel(),
+				aItems = oModel.getProperty("/items"),
 				iDragPosition = oGrid.indexOfItem(oDragged),
 				iDropPosition = oGrid.indexOfItem(oDropped);
 
 			// remove the item
-			var oItem = oData[iDragPosition];
-			oData.splice(iDragPosition, 1);
+			var oItem = aItems[iDragPosition];
+			aItems.splice(iDragPosition, 1);
 
 			if (iDragPosition < iDropPosition) {
 				iDropPosition--;
@@ -29,14 +31,13 @@ sap.ui.define([
 
 			// insert the control in target aggregation
 			if (sInsertPosition === "Before") {
-				oData.splice(iDropPosition, 0, oItem);
+				aItems.splice(iDropPosition, 0, oItem);
 			} else {
-				oData.splice(iDropPosition + 1, 0, oItem);
+				aItems.splice(iDropPosition + 1, 0, oItem);
 			}
 
-			this.model.setData(oData);
+			oModel.setProperty("/items", aItems);
 		}
+
 	});
-
 });
-

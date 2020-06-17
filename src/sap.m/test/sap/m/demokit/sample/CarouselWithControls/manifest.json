@@ -7,21 +7,23 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.CarouselWithControls.Carousel",
+			"viewName": "sap.m.sample.CarouselWithControls.V",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.layout": {}
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
-					"Carousel.view.xml",
-					"Carousel.controller.js",
+					"V.view.xml",
+					"C.controller.js",
 					"manifest.json"
 				]
 			}

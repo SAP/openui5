@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.f.sample.GridListResponsiveColumnLayout.GridListResponsiveColumnLayout"
+	controllerName="sap.f.sample.GridListResponsiveColumnLayout.C"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:grid="sap.ui.layout.cssgrid"
@@ -9,7 +9,7 @@
 		text="Reveal Grid"
 		press="onRevealGrid"
 		class="sapUiSmallMargin" />
-	<Slider value="100" liveChange="onSliderMoved"/>
+	<Slider value="100" liveChange="onSliderMoved" />
 	<Panel id="panelForGridList">
 		<headerToolbar>
 			<Toolbar height="3rem">
@@ -21,10 +21,12 @@
 			<f:customLayout>
 				<grid:ResponsiveColumnLayout />
 			</f:customLayout>
+
 			<f:GridListItem>
 				<f:layoutData>
 					<grid:ResponsiveColumnItemLayoutData columns="4" rows="4" />
 				</f:layoutData>
+
 				<VBox class="sapUiSmallMargin">
 					<Title text="4 / 4" wrapping="true" />
 					<Label text="Subtitle" wrapping="true" />
@@ -34,6 +36,7 @@
 				<f:layoutData>
 					<grid:ResponsiveColumnItemLayoutData columns="3" rows="2" />
 				</f:layoutData>
+
 				<VBox class="sapUiSmallMargin">
 					<Title text="3 / 2" wrapping="true" />
 					<Label text="Subtitle" wrapping="true" />
@@ -45,6 +48,7 @@
 				<f:layoutData>
 					<grid:ResponsiveColumnItemLayoutData columns="3" rows="2" />
 				</f:layoutData>
+
 				<VBox class="sapUiSmallMargin">
 					<Title text="3 / 2" wrapping="true" />
 					<Label text="Subtitle" wrapping="true" />
@@ -56,6 +60,7 @@
 				<f:layoutData>
 					<grid:ResponsiveColumnItemLayoutData columns="1" rows="1" />
 				</f:layoutData>
+
 				<VBox class="sapUiSmallMargin">
 					<Title text="1 / 1" wrapping="true" />
 					<Label text="Subtitle" wrapping="true" />
@@ -65,6 +70,7 @@
 				<f:layoutData>
 					<grid:ResponsiveColumnItemLayoutData columns="1" rows="1" />
 				</f:layoutData>
+
 				<VBox class="sapUiSmallMargin">
 					<Title text="1 / 1" wrapping="true" />
 					<Label text="Subtitle" wrapping="true" />

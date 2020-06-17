@@ -5,7 +5,7 @@ sap.ui.define([
 ], function (MessageToast, Controller, JSONModel) {
 	"use strict";
 
-	return Controller.extend("sap.f.sample.Card.Card", {
+	return Controller.extend("sap.f.sample.Card.C", {
 		onInit: function () {
 			var oCitiesModel = new JSONModel(sap.ui.require.toUrl("sap/f/sample/Card/model/cities.json")),
 				oProductsModel =  new JSONModel(sap.ui.require.toUrl("sap/f/sample/Card/model/products.json"));
@@ -14,14 +14,7 @@ sap.ui.define([
 			this.getView().setModel(oProductsModel, "products");
 		},
 		onBookPress: function() {
-			MessageToast.show(
-				"By pressing the 'Book' button a new application can be opened where the actual booking happens. This can be in the same window, in a new tab or in a dialog.",
-				{
-					my: "center",
-					at: "center",
-					width: "50rem"
-				}
-			);
+			MessageToast.show("By pressing the 'Book' button a new application can be opened where the actual booking happens. This can be in the same window, in a new tab or in a dialog.");
 		}
 	});
 });

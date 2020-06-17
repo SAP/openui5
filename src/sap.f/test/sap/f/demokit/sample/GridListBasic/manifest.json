@@ -13,6 +13,7 @@
 		},
 		"dependencies": {
 			"libs": {
+				"sap.ui.core": {},
 				"sap.m": {},
 				"sap.f": {}
 			}
@@ -22,6 +23,7 @@
 				"files": [
 					"V.view.xml",
 					"C.controller.js",
+					"model/items.json",
 					"manifest.json"
 				]
 			}

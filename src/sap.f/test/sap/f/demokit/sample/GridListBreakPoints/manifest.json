@@ -13,23 +13,17 @@
 		},
 		"dependencies": {
 			"libs": {
+				"sap.ui.core": {},
 				"sap.m": {},
 				"sap.f": {}
 			}
-		},
-		"resources": {
-			"css": [
-				{
-					"uri": "main.css"
-				}
-			]
 		},
 		"config": {
 			"sample": {
 				"files": [
 					"V.view.xml",
 					"C.controller.js",
-					"main.css",
+					"model/items.json",
 					"manifest.json"
 				]
 			}

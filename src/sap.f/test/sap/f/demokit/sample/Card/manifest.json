@@ -7,20 +7,22 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.f.sample.Card.Card",
+			"viewName": "sap.f.sample.Card.V",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.f": {}
+				"sap.ui.core": {},
+				"sap.f": {},
+				"sap.m": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"Card.view.xml",
-					"Card.controller.js",
+					"V.view.xml",
+					"C.controller.js",
 					"manifest.json",
 					"model/cities.json",
 					"model/products.json"
