@@ -294,7 +294,6 @@ sap.ui.define([
 
 			/**
 			 * Find a control matching the provided options
-			 * autowait and Interactable matcher will be enforced if neccessary
 			 * @param {object} [oOptions] a map of options used to describe the control you are looking for.
 			 * @param {string} [oOptions.viewName] Controls will only be searched inside this view (ie: the view (as a control) has to be an ancestor of the control)
 			 * If a control ID is given, the control will be found using the byId function of the view.
@@ -302,8 +301,10 @@ sap.ui.define([
 			 * If a control ID is given, the control will be found using the byId function of the view.
 			 * @param {string|string[]} [oOptions.id] The ID of one or multiple controls. This can be a global ID or an ID used together with viewName. See the documentation of this parameter.
 			 * @param {boolean} [oOptions.visible=true] should the control have a visible DOM reference
-			 * @param {boolean} [oOptions.interactable=false] @since 1.34 should the control match the interactable matcher {@link sap.ui.test.matchers.Interactable}.
+			 * @param {boolean} [oOptions.interactable=false] @since 1.34 should the control be interactable and enabled.
+			 * When true, only interactable and enabled controls will be matched. For details, see the {@link sap.ui.test.matchers.Interactable} matcher.
 			 * @param {boolean} [oOptions.enabled=false] @since 1.66 should the control be enabled.
+			 * If interactable is true, enabled will also be true, unless declared otherwise.
 			 * @param {boolean} [oOptions.searchOpenDialogs] Only controls in the static UI area of UI5 are searched.
 			 * @param {string|function} [oOptions.controlType] @since 1.40 match all controls of a certain type
 			 * It is usually combined with viewName or searchOpenDialogs. If no control matches the type, an empty array will be returned. Examples:
