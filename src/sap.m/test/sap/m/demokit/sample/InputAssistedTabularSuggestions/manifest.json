@@ -11,15 +11,18 @@
 			"type": "XML",
 			"async": true
 		},
+		"dependencies": {
+			"sap.ui.core": {},
+			"sap.ui.layout": {},
+			"sap.m": {}
+		},
 		"config": {
 			"sample": {
 				"files": [
 					"V.view.xml",
 					"C.controller.js",
-					"Dialog.fragment.xml",
 					"manifest.json"
-				],
-				"description": "In this example assisted input is provided with table-like suggestions where several columns can display more details."
+				]
 			}
 		}
 	}
