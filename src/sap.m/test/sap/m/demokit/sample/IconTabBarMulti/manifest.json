@@ -7,19 +7,20 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.IconTabBarMulti.IconTabBar",
+			"viewName": "sap.m.sample.IconTabBarMulti.V",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.layout": {}
+				"sap.ui.core": {},
+				"sap.m": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"IconTabBar.view.xml",
+					"V.view.xml",
 					"manifest.json"
 				]
 			}

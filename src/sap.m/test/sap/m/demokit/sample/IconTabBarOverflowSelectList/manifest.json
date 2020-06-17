@@ -7,20 +7,21 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.IconTabBarOverflowSelectList.IconTabBarOverflowSelectList",
+			"viewName": "sap.m.sample.IconTabBarOverflowSelectList.V",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.ui.core": {},
 				"sap.m": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"IconTabBarOverflowSelectList.view.xml",
-					"IconTabBarOverflowSelectList.controller.js",
+					"V.view.xml",
+					"C.controller.js",
 					"manifest.json"
 				]
 			}

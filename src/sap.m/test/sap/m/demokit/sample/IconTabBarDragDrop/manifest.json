@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.IconTabBarDragDrop.IconTabBarDragDrop",
+			"viewName": "sap.m.sample.IconTabBarDragDrop.V",
 			"type": "XML",
 			"async": true
 		},
@@ -21,8 +21,8 @@
 		"config": {
 			"sample": {
 				"files": [
-					"IconTabBarDragDrop.view.xml",
-					"IconTabBarDragDrop.controller.js",
+					"V.view.xml",
+					"C.controller.js",
 					"manifest.json"
 				]
 			}

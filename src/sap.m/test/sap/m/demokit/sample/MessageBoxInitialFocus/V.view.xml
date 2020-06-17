@@ -1,0 +1,19 @@
+<mvc:View
+	controllerName="sap.m.sample.MessageBoxInitialFocus.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Text text="Different approaches to set Initial focus" />
+		<Button
+			text="Action"
+			class="sapUiSmallMarginBottom"
+			press=".onInitialFocusOnAction"
+			width="250px" />
+		<Button
+			text="Custom action"
+			class="sapUiSmallMarginBottom"
+			press=".onInitialFocusOnCustomAction"
+			width="250px" />
+	</l:VerticalLayout>
+</mvc:View>

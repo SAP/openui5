@@ -1,0 +1,131 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+	<Label
+		wrapping="true"
+		text="No icon(='') used as separator, the separator will be a vertical line."
+		class="sapUiSmallMargin" />
+	<IconTabBar
+		id="idIconTabBarSeparatorNoIcon"
+		expanded="false"
+		class="sapUiResponsiveContentPadding">
+		<items>
+			<IconTabFilter
+				key="info"
+				icon="sap-icon://hint"
+				iconColor="Positive">
+				<Text text="Info content goes here ..." />
+			</IconTabFilter>
+			<IconTabSeparator icon=""/>
+			<IconTabFilter
+				key="attachments"
+				icon="sap-icon://attachment"
+				iconColor="Neutral"
+				count="3">
+				<Text text="Attachments go here ..." />
+			</IconTabFilter>
+			<IconTabFilter
+				key="notes"
+				icon="sap-icon://notes"
+				count="12">
+				<Text text="Notes go here ..." />
+			</IconTabFilter>
+			<IconTabSeparator icon=""/>
+			<IconTabFilter
+				key="people"
+				icon="sap-icon://group"
+				iconColor="Negative">
+				<Text text="People content goes here ..." />
+			</IconTabFilter>
+		</items>
+	</IconTabBar>
+
+	<Label
+		wrapping="true"
+		text="Icon used as separator, you are free to choose an icon you want."
+		class="sapUiSmallMargin" />
+	<IconTabBar
+		id="idIconTabBarSeparatorIcon"
+		expanded="false"
+		class="sapUiResponsiveContentPadding">
+		<items>
+			<IconTabFilter
+				key="info"
+				icon="sap-icon://hint"
+				iconColor="Neutral">
+				<Text text="Info content goes here ..." />
+			</IconTabFilter>
+			<IconTabFilter
+				key="attachments"
+				icon="sap-icon://attachment"
+				iconColor="Neutral"
+				count="3">
+				<Text text="Attachments go here ..." />
+			</IconTabFilter>
+
+			<IconTabSeparator icon="sap-icon://process"/>
+
+			<IconTabFilter
+				key="notes"
+				icon="sap-icon://notes"
+				iconColor="Positive"
+				count="12">
+				<Text text="Notes go here ..." />
+			</IconTabFilter>
+
+			<IconTabSeparator icon="sap-icon://process"/>
+
+			<IconTabFilter
+				key="people"
+				icon="sap-icon://group"
+				iconColor="Negative">
+				<Text text="People content goes here ..." />
+			</IconTabFilter>
+		</items>
+	</IconTabBar>
+
+	<Label
+		wrapping="true"
+		text="Different separators used."
+		class="sapUiSmallMargin" />
+	<IconTabBar
+		id="idIconTabBarSeparatorMixed"
+		expanded="false"
+		class="sapUiResponsiveContentPadding">
+		<items>
+			<IconTabFilter
+				key="info"
+				icon="sap-icon://hint"
+				iconColor="Critical">
+				<Text text="Info content goes here ..." />
+			</IconTabFilter>
+
+			<IconTabSeparator icon=""/>
+
+			<IconTabFilter
+				key="attachments"
+				icon="sap-icon://attachment"
+				iconColor="Neutral"
+				count="3">
+				<Text text="Attachments go here ..." />
+			</IconTabFilter>
+
+			<IconTabSeparator icon="sap-icon://vertical-grip"/>
+
+			<IconTabFilter
+				key="notes"
+				icon="sap-icon://notes"
+				iconColor="Positive"
+				count="12">
+				<Text text="Notes go here ..." />
+			</IconTabFilter>
+
+			<IconTabSeparator icon="sap-icon://process"/>
+
+			<IconTabFilter
+				key="people"
+				icon="sap-icon://group"
+				iconColor="Negative">
+				<Text text="People content goes here ..." />
+			</IconTabFilter>
+		</items>
+	</IconTabBar>
+</mvc:View>

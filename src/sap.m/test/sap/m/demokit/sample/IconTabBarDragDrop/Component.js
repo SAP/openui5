@@ -5,7 +5,7 @@ sap.ui.define([
 
 	return UIComponent.extend("sap.m.sample.IconTabBarDragDrop.Component", {
 
-		metadata : {
+		metadata: {
 			manifest: "json"
 		}
 

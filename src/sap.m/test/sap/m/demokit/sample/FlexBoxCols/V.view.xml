@@ -2,24 +2,26 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<l:VerticalLayout
-		class="sapUiContentPadding equalColumns"
-		width="100%" >
-		<l:content>
-
-			<FlexBox class="columns">
-					<Text  text="Although they have different amounts of text, both columns are of equal height.">
-						<layoutData>
-							<FlexItemData growFactor="1" baseSize="0" backgroundDesign="Solid" styleClass="sapUiTinyMargin"/>
-						</layoutData>
-					</Text>
-					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo hey nonny no duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.">
-						<layoutData>
-							<FlexItemData growFactor="1" baseSize="0" backgroundDesign="Solid" styleClass="sapUiTinyMargin"/>
-						</layoutData>
-					</Text>
-			</FlexBox>
-
-		</l:content>
+	<l:VerticalLayout class="sapUiContentPadding equalColumns" width="100%">
+		<FlexBox class="columns">
+			<Text text="Although they have different amounts of text, both columns are of equal height.">
+				<layoutData>
+					<FlexItemData
+						growFactor="1"
+						baseSize="0"
+						backgroundDesign="Solid"
+						styleClass="sapUiTinyMargin" />
+				</layoutData>
+			</Text>
+			<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo hey nonny no duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.">
+				<layoutData>
+					<FlexItemData
+						growFactor="1"
+						baseSize="0"
+						backgroundDesign="Solid"
+						styleClass="sapUiTinyMargin" />
+				</layoutData>
+			</Text>
+		</FlexBox>
 	</l:VerticalLayout>
 </mvc:View>

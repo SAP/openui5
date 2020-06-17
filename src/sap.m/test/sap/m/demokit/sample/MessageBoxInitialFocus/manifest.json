@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.MessageBoxInitialFocus.view.MessageBoxInitialFocus",
+			"viewName": "sap.m.sample.MessageBoxInitialFocus.V",
 			"type": "XML",
 			"async": true
 		},
@@ -21,8 +21,8 @@
 		"config": {
 			"sample": {
 				"files": [
-					"view/MessageBoxInitialFocus.view.xml",
-					"controller/MessageBoxInitialFocus.controller.js",
+					"V.view.xml",
+					"C.controller.js",
 					"manifest.json"
 				]
 			}
