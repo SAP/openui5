@@ -155,6 +155,13 @@ sap.ui.define([
 						topicTitle: 'Integration Card Features'
 					},
 					{
+						title: 'Microcharts',
+						target: 'learnDetail',
+						key: 'microcharts',
+						topicTitle: 'Card Microcharts',
+						experimental: true
+					},
+					{
 						title: 'Translation',
 						target: 'learnDetail',
 						key: 'translation',
