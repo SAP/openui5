@@ -87,7 +87,11 @@ function (
 					var oView = sap.ui.getCore().byId(sViewId);
 					var oAppComponent = FlexUtils.getAppComponentForControl(oView);
 					var sControllerName = oView.getControllerName && oView.getControllerName() || oView.getController() && oView.getController().getMetadata().getName();
-
+					//Calculate moduleName for code extension
+					var sReference = FlexUtils.getComponentClassName(oAppComponent);
+					var sModuleName = sReference.replace(/\.Component/g, "").replace(/\./g, "/");
+					sModuleName += "/changes/";
+					sModuleName += sCodeRef.replace(/\.js/g, "");
 					var oChangeSpecificData = {
 						content: {
 							codeRef: sCodeRef
@@ -98,7 +102,8 @@ function (
 						changeType: "codeExt",
 						namespace: oFlexSettings.namespace,
 						developerMode: oFlexSettings.developerMode,
-						scenario: oFlexSettings.scenario
+						scenario: oFlexSettings.scenario,
+						moduleName: sModuleName
 					};
 
 					var oPreparedChange = ChangesWriteAPI.create({changeSpecificData: oChangeSpecificData, selector: oAppComponent});

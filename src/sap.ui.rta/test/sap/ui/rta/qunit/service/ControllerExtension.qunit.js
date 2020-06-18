@@ -82,6 +82,7 @@ function(
 				this.iAddChangeCounter ++;
 			}.bind(this));
 			sandbox.stub(FlexUtils, "getAppComponentForControl");
+			sandbox.stub(FlexUtils, "getComponentClassName").returns("sap.ui.rta.service.controllerExtension.Component");
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
 				isResetEnabled: true,
 				isPublishEnabled: true
@@ -114,15 +115,16 @@ function(
 				scenario: "scenario"
 			});
 
-			return this.oControllerExtension.add("foo.js", this.oView.getId()).then(function (oDefinition) {
+			return this.oControllerExtension.add("coding/foo.js", this.oView.getId()).then(function (oDefinition) {
 				assert.deepEqual(oDefinition, {definition: "definition"}, "the function returns the definition of the change");
 				assert.equal(this.iCreateChangeCounter, 1, "and ChangesWriteAPI.create was called once");
 				assert.equal(this.iAddChangeCounter, 1, "and PersistenceWriteAPI.add was called once");
 				assert.equal(this.oCreateChangeParameter.changeType, "codeExt", "the changeType was set correctly");
 				assert.equal(this.oCreateChangeParameter.selector.controllerName, "controllerName", "the controllerName was set correctly");
-				assert.equal(this.oCreateChangeParameter.content.codeRef, "foo.js", "the codeRef was set correctly");
+				assert.equal(this.oCreateChangeParameter.content.codeRef, "coding/foo.js", "the codeRef was set correctly");
 				assert.equal(this.oCreateChangeParameter.developerMode, true, "the developerMode was set correctly");
 				assert.equal(this.oCreateChangeParameter.scenario, "scenario", "the scenario was set correctly");
+				assert.equal(this.oCreateChangeParameter.moduleName, "sap/ui/rta/service/controllerExtension/changes/coding/foo", "the scenario was set correctly");
 			}.bind(this));
 		});
 
