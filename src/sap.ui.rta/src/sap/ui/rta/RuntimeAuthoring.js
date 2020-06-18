@@ -883,7 +883,7 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._checkToolbarAndExecuteFunction = function (sName, vValue) {
-		if (this.getShowToolbars() && this.getToolbar) {
+		if (this.getShowToolbars() && this.getToolbar && this.getToolbar()) {
 			return this.getToolbar()[sName](vValue);
 		}
 	};
