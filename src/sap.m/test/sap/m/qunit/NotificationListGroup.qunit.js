@@ -1,8 +1,6 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
-	"sap/m/NotificationListBase",
 	"sap/m/NotificationListGroup",
 	"sap/m/NotificationListItem",
 	"sap/m/Button",
@@ -11,8 +9,6 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/library"
 ], function(
-	qutils,
-	NotificationListBase,
 	NotificationListGroup,
 	NotificationListItem,
 	Button,
@@ -256,7 +252,7 @@ sap.ui.define([
 	QUnit.test('action and close buttons', function(assert) {
 		var buttons = this.notificationListGroup.getButtons(),
 			closeButton = this.notificationListGroup._getCloseButton(),
-			toolbarSeparator = this.notificationListGroup._toolbarSeparator;
+			toolbarSeparator = this.notificationListGroup._getToolbarSeparator();
 
 		assert.strictEqual(buttons[0].getLayoutData().getPriority(), OverflowToolbarPriority.AlwaysOverflow, 'button overflow priority is ok');
 		assert.strictEqual(buttons[1].getLayoutData().getPriority(), OverflowToolbarPriority.AlwaysOverflow, 'button overflow priority is ok');
