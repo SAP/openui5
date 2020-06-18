@@ -2123,9 +2123,9 @@ sap.ui.define([
 			assert.ok(oEvent.getParameter("getHeaderParameter"), "Correct method 'getHeaderParameter' in parameters of beforeUploadStarts event");
 			assert.equal(oEvent.getParameters().getHeaderParameter(sSlugName).getValue(), sSlugValueBefore, "Value of the header parameter1 retrieved correctly");
 			assert.equal(oEvent.getParameters().getHeaderParameter(sSecurityTokenName).getValue(), sSecurityTokenValueBefore, "Value of the header parameter2 retrieved correctly");
-			assert.equal(oEvent.getParameters().getHeaderParameter()[2].getName(), sSlugName, "Name of the first header parameter should be slug.");
+			assert.equal(oEvent.getParameters().getHeaderParameter()[3].getName(), sSlugName, "Name of the first header parameter should be slug.");
 
-			var oSlugParameter = oEvent.getParameters().getHeaderParameter()[2];
+			var oSlugParameter = oEvent.getParameters().getHeaderParameter()[3];
 			oSlugParameter.setValue("ChangedSlugValue");
 		}
 

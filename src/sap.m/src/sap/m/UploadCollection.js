@@ -632,7 +632,8 @@ sap.ui.define([
 		UploadCollection.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._headerParamConst = {
 			requestIdName: "requestId" + jQuery.now(),
-			fileNameRequestIdName: "fileNameRequestId" + jQuery.now()
+			fileNameRequestIdName: "fileNameRequestId" + jQuery.now(),
+			acceptLanguage: "accept-language"
 		};
 		this._requestIdValue = 0;
 		this._iFUCounter = 0; // it is necessary to count FileUploader instances in case of 'instantUpload' = false
@@ -2865,7 +2866,7 @@ sap.ui.define([
 	 * @private
 	 */
 	UploadCollection.prototype._onUploadStart = function(event) {
-		var oRequestHeaders, i, sRequestIdValue, iParamCounter, sFileName, oGetHeaderParameterResult;
+		var oRequestHeaders, i, sRequestIdValue, oLangRequestHeader, iParamCounter, sFileName, oGetHeaderParameterResult;
 		this._iUploadStartCallCounter++;
 		iParamCounter = event.getParameter("requestHeaders").length;
 		for (i = 0; i < iParamCounter; i++) {
@@ -2880,6 +2881,13 @@ sap.ui.define([
 			value: this._encodeToAscii(sFileName) + sRequestIdValue
 		};
 		event.getParameter("requestHeaders").push(oRequestHeaders);
+
+		// set application language to request headers
+		oLangRequestHeader = {
+			name: this._headerParamConst.acceptLanguage,
+			value: sap.ui.getCore().getConfiguration().getLanguage()
+		};
+		event.getParameter("requestHeaders").push(oLangRequestHeader);
 
 		for (i = 0; i < this._aDeletedItemForPendingUpload.length; i++) {
 			if (this._aDeletedItemForPendingUpload[i].getAssociation("fileUploader") === event.oSource.sId &&
