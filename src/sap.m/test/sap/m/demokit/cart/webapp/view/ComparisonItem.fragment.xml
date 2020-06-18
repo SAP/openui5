@@ -21,7 +21,7 @@
 						path : 'PictureUrl',
 						formatter : '.formatter.pictureUrl'
 					}"
-					decorative="true"
+					alt="{i18n>comparisonAlternativeImageText}"
 					densityAware="false"
 					class="sapUiSmallMarginTop"
 					width="100%"
