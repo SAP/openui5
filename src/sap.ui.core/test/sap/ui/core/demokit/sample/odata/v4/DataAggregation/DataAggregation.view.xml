@@ -25,7 +25,7 @@
 			}}" selectionMode="None" threshold="5" visibleRowCount="5">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
-				<m:Title id="title" text="Sales Amount by Region"/>
+				<m:Title id="title" text="Sales Amount by Region" level="H1"/>
 				<m:ToolbarSpacer />
 				<m:Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
 					press="onToggleMessagePopover" text="{ui>/iMessages}"
@@ -35,7 +35,8 @@
 		<Column hAlign="End" width="5em">
 			<m:Label text="Level"/>
 			<template>
-				<m:Text text="{= %{@$ui5.node.level} }"/><!-- Note: type not really useful here -->
+				<m:Text wrapping="false" text="{= %{@$ui5.node.level} }"/><!-- Note: type not
+				really useful here -->
 			</template>
 		</Column>
 		<Column width="4em">

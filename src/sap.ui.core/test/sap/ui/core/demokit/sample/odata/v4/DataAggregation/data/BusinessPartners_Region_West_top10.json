@@ -1,0 +1,47 @@
+{
+	"@odata.context" : "$metadata#BusinessPartners(AccountResponsible,SalesAmount,SalesNumber)",
+	"@odata.metadataEtag" : "W/\"Duc//nz26REDKz1VewX3aHn97ENagrS7a7IXM958u4s=\"",
+	"@odata.count" : 5,
+	"value" : [
+		{
+			"@odata.id" : null,
+			"AccountResponsible" : "Alexander Fischer",
+			"SalesAmount@odata.type" : "#Decimal",
+			"SalesAmount" : 2921206,
+			"SalesNumber@odata.type" : "#Int32",
+			"SalesNumber" : 19161
+		},
+		{
+			"@odata.id" : null,
+			"AccountResponsible" : "George Meier",
+			"SalesAmount@odata.type" : "#Decimal",
+			"SalesAmount" : 3171192,
+			"SalesNumber@odata.type" : "#Int32",
+			"SalesNumber" : 14907
+		},
+		{
+			"@odata.id" : null,
+			"AccountResponsible" : "Jacky Woo",
+			"SalesAmount@odata.type" : "#Decimal",
+			"SalesAmount" : 3420443,
+			"SalesNumber@odata.type" : "#Int32",
+			"SalesNumber" : 15291
+		},
+		{
+			"@odata.id" : null,
+			"AccountResponsible" : "Lindsey Wang",
+			"SalesAmount@odata.type" : "#Decimal",
+			"SalesAmount" : 3074642,
+			"SalesNumber@odata.type" : "#Int32",
+			"SalesNumber" : 13974
+		},
+		{
+			"@odata.id" : null,
+			"AccountResponsible" : "Samantha Smith",
+			"SalesAmount@odata.type" : "#Decimal",
+			"SalesAmount" : 3287475,
+			"SalesNumber@odata.type" : "#Int32",
+			"SalesNumber" : 12699
+		}
+	]
+}

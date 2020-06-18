@@ -21,11 +21,6 @@ sap.ui.getCore().attachInit(function () {
 		//*****************************************************************************
 		opaTest("Start data aggregation app, expand a subtotal node", function (Given, When, Then) {
 
-			if (!TestUtils.isRealOData()) {
-				Opa5.assert.ok(false, "Test runs only with realOData=true");
-				return;
-			}
-
 			When.onAnyPage.applySupportAssistant();
 			Given.iStartMyUIComponent({
 				autoWait : true,
@@ -36,17 +31,156 @@ sap.ui.getCore().attachInit(function () {
 
 			// TODO $count
 
-			Then.onTheMainPage.checkRow(0, 1, false, true, "West", "");
-			Then.onTheMainPage.checkRow(1, 1, false, true, "Wales", "");
+			Then.onTheMainPage.checkTable([{
+					level : 1,
+					expanded : false,
+					subtotal : true,
+					region : "West",
+					accountResponsible : ""
+				}, {
+					level : 1,
+					expanded : false,
+					subtotal : true,
+					region : "Wales",
+					accountResponsible : ""
+			}]);
 
+			// expand the first row
 			When.onTheMainPage.pressExpandInRow(0);
-			Then.onTheMainPage.checkRow(0, 1, true, true, "West", "");
-			Then.onTheMainPage.checkRow(1, 2, undefined, false, "West", "Alexander Fischer");
-			Then.onTheMainPage.checkRow(2, 2, undefined, false, "West", "George Meier");
-			Then.onTheMainPage.checkRow(3, 2, undefined, false, "West", "Jacky Woo");
-			Then.onTheMainPage.checkRow(4, 2, undefined, false, "West", "Lindsey Wang");
-			Then.onTheMainPage.checkRow(5, 2, undefined, false, "West", "Samantha Smith");
-			Then.onTheMainPage.checkRow(6, 1, false, true, "Wales", "");
+			Then.onTheMainPage.checkTable([{
+					level : 1,
+					expanded : true,
+					subtotal : true,
+					region : "West",
+					accountResponsible : ""
+				}, {
+					level : 2,
+					expanded : undefined,
+					subtotal : false,
+					region : "West",
+					accountResponsible : "Alexander Fischer"
+				}, {
+					level : 2,
+					expanded : undefined,
+					subtotal : false,
+					region : "West",
+					accountResponsible : "George Meier"
+				}, {
+					level : 2,
+					expanded : undefined,
+					subtotal : false,
+					region : "West",
+					accountResponsible : "Jacky Woo"
+				}, {
+					level : 2,
+					expanded : undefined,
+					subtotal : false,
+					region : "West",
+					accountResponsible : "Lindsey Wang"
+			}]);
+
+			// scroll 2 rows down
+			When.onTheMainPage.scrollToRow(2);
+			Then.onTheMainPage.checkTable([{
+					level : 2,
+					expanded : undefined,
+					subtotal : false,
+					region : "West",
+					accountResponsible : "George Meier"
+				}, {
+					level : 2,
+					expanded : undefined,
+					subtotal : false,
+					region : "West",
+					accountResponsible : "Jacky Woo"
+				}, {
+					level : 2,
+					expanded : undefined,
+					subtotal : false,
+					region : "West",
+					accountResponsible : "Lindsey Wang"
+				}, {
+					level : 2,
+					expanded : undefined,
+					subtotal : false,
+					region : "West",
+					accountResponsible : "Samantha Smith"
+				}, {
+					level : 1,
+					expanded : false,
+					subtotal : true,
+					region : "Wales",
+					accountResponsible : ""
+			}]);
+
+			// scroll to the end of the table
+			When.onTheMainPage.scrollToRow(14);
+			Then.onTheMainPage.checkTable([{
+					level : 1,
+					expanded : false,
+					subtotal : true,
+					region : "Greater Manchester",
+					accountResponsible : ""
+				}, {
+					level : 1,
+					expanded : false,
+					subtotal : true,
+					region : "East",
+					accountResponsible : ""
+				}, {
+					level : 1,
+					expanded : false,
+					subtotal : true,
+					region : "Berlin",
+					accountResponsible : ""
+				}, {
+					level : 1,
+					expanded : false,
+					subtotal : true,
+					region : "Bavaria",
+					accountResponsible : ""
+				}, {
+					level : 1,
+					expanded : false,
+					subtotal : true,
+					region : "Baden-Württemberg",
+					accountResponsible : ""
+			}]);
+
+			// expand the second visible node
+			When.onTheMainPage.pressExpandInRow(15);
+			Then.onTheMainPage.checkTable([{
+					level : 1,
+					expanded : false,
+					subtotal : true,
+					region : "Greater Manchester",
+					accountResponsible : ""
+				}, {
+					level : 1,
+					expanded : true,
+					subtotal : true,
+					region : "East",
+					accountResponsible : ""
+				}, {
+					level : 2,
+					expanded : undefined,
+					subtotal : false,
+					region : "East",
+					accountResponsible : "Evelyn Kim"
+				}, {
+					level : 2,
+					expanded : undefined,
+					subtotal : false,
+					region : "East",
+					accountResponsible : "LeeAn Smith"
+				}, {
+					level : 2,
+					expanded : undefined,
+					subtotal : false,
+					region : "East",
+					accountResponsible : "Miles David"
+			}]);
+
 
 			Then.onAnyPage.checkLog();
 			Then.onAnyPage.analyzeSupportAssistant();

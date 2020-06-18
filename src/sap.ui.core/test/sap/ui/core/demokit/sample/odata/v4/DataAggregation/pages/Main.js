@@ -31,37 +31,57 @@ sap.ui.define([
 						},
 						viewName : sViewName
 					});
+				},
+				scrollToRow : function (iRow) {
+					return this.waitFor({
+						actions : function (oTable) {
+							oTable.setFirstVisibleRow(iRow);
+						},
+						controlType : "sap.ui.table.Table",
+						errorMessage : "Could not select row: " + iRow,
+						id : "table",
+						success : function (oTable) {
+							Opa5.assert.strictEqual(oTable.getFirstVisibleRow(), iRow,
+								"Scrolled table to row: " + iRow);
+						},
+						viewName : sViewName
+					});
 				}
 			},
 			assertions : {
-				checkRow : function (iRow, iLevel, bExpanded, bSubTotal, sRegion,
-						sAccountResponsible) {
+				checkTable : function (aExpected) {
 					return this.waitFor({
 						controlType : "sap.ui.table.Table",
 						id : "table",
 						success : function (oTable) {
-							var aRows = oTable.getRows(),
-								aRowCells;
+							var aCells,	aRows = oTable.getRows();
 
-							if (aRows.length < iRow) {
-								Opa5.assert.ok(false, "Row " + iRow + " is missing");
-								return;
-							}
+							aExpected.forEach(function(oExpected, iRowIndex) {
+								if (iRowIndex >= aRows.length) {
+									Opa5.assert.ok(false, "Row " + iRowIndex + " is missing");
+									return;
+								}
 
-							aRowCells = aRows[iRow].getCells();
+								aCells = aRows[iRowIndex].getCells();
 
-							Opa5.assert.strictEqual(aRowCells[0].getText(), iLevel.toString(),
-								"Row " + iRow + ": Level is " + aRowCells[0].getText());
-							Opa5.assert.strictEqual(aRowCells[1].getIcon(),
-								mIconForExpand[bExpanded],
-								"Row " + iRow + ": Expanded is " + aRowCells[1].getIcon());
-							Opa5.assert.strictEqual(aRowCells[2].getText(), sRegion,
-								"Row " + iRow + ": Region is " + aRowCells[2].getText());
-							Opa5.assert.strictEqual(aRowCells[3].getText(), sAccountResponsible,
-								"Row " + iRow + ": Account Responsible is "
-								+ aRowCells[3].getText());
-							Opa5.assert.strictEqual(aRowCells[6].getSelected(), bSubTotal,
-								"Row " + iRow + ": Subtotal is " + aRowCells[6].getSelected());
+								Opa5.assert.strictEqual(aCells[0].getText(),
+									oExpected.level.toString(),
+									"Row " + iRowIndex + ": Level is " + aCells[0].getText());
+								Opa5.assert.strictEqual(aCells[1].getIcon(),
+									mIconForExpand[oExpected.expanded],
+									"Row " + iRowIndex + ": Expanded is " + aCells[1].getIcon());
+								Opa5.assert.strictEqual(aCells[2].getText(),
+									oExpected.region,
+									"Row " + iRowIndex + ": Region is " + aCells[2].getText());
+								Opa5.assert.strictEqual(aCells[3].getText(),
+									oExpected.accountResponsible,
+									"Row " + iRowIndex + ": Account Responsible is "
+										+ aCells[3].getText());
+								Opa5.assert.strictEqual(aCells[6].getSelected(),
+									oExpected.subtotal,
+									"Row " + iRowIndex + ": Subtotal is "
+										+ aCells[6].getSelected());
+							});
 						},
 						viewName : sViewName
 					});
