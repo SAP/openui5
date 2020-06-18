@@ -19,6 +19,8 @@ sap.ui.define([
 	"./DynamicPageRenderer",
 	"sap/base/Log",
 	"sap/ui/dom/getScrollbarSize",
+	"sap/ui/core/theming/Parameters",
+	'sap/ui/dom/units/Rem',
 	"sap/ui/core/library"
 ], function(
 	library,
@@ -36,6 +38,8 @@ sap.ui.define([
 	DynamicPageRenderer,
 	Log,
 	getScrollbarSize,
+	Parameters,
+	DomUnitsRem,
 	coreLibrary
 ) {
 	"use strict";
@@ -365,6 +369,7 @@ sap.ui.define([
 			}};
 
 		this._setAriaRoleDescription(Core.getLibraryResourceBundle("sap.f").getText(DynamicPage.ARIA_ROLE_DESCRIPTION));
+		this._iHeaderContentPaddingBottom = DomUnitsRem.toPx(Parameters.get("_sap_f_DynamicPageHeader_PaddingBottom"));
 	};
 
 	DynamicPage.prototype.onBeforeRendering = function () {
@@ -1062,7 +1067,7 @@ sap.ui.define([
 			iScrollPosition;
 
 		iScrollPosition = this._getScrollPosition();
-		bIsInSnappingHeight = iScrollPosition <= Math.ceil(this._getHeaderHeight()) && !this._bPinned && !this.getPreserveHeaderStateOnScroll();
+		bIsInSnappingHeight = iScrollPosition < Math.ceil(this._getHeaderHeight() - this._iHeaderContentPaddingBottom) && !this._bPinned && !this.getPreserveHeaderStateOnScroll();
 
 		// If the scroll position is 0, the sticky content should be always in the DOM of content provider.
 		// If the scroll position is <= header height and at all we can use the snapping height (bIsInSnappingHeight)
@@ -1118,7 +1123,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._getSnappingHeight = function () {
-			return Math.ceil(this._getHeaderHeight() || this._getTitleHeight());
+			return Math.ceil(this._getHeaderHeight() || this._getTitleHeight()) - this._iHeaderContentPaddingBottom;
 	};
 
 	/**
@@ -2000,7 +2005,7 @@ sap.ui.define([
 			var bMoveHeaderToContent = this._bHeaderInTitleArea;
 			this._snapHeader(bMoveHeaderToContent, bUserInteraction);
 			if (!bMoveHeaderToContent) {
-				this._setScrollPosition(this._getSnappingHeight());
+				this._setScrollPosition(this._getSnappingHeight() + this._iHeaderContentPaddingBottom);
 			}
 		}
 	};
