@@ -5,10 +5,16 @@ sap.ui.define([
 ], function (Fragment, Controller, JSONModel) {
 	"use strict";
 
-	return Controller.extend("sap.m.sample.QuickViewFallbackIcon.QuickViewFallbackIcon", {
+	return Controller.extend("sap.m.sample.QuickViewFallbackIcon.C", {
 
 		onInit: function () {
 			this.oModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/QuickViewFallbackIcon/model/data.json"));
+		},
+
+		onExit: function () {
+			if (this._oQuickView) {
+				this._oQuickView.destroy();
+			}
 		},
 
 		onAfterRendering: function () {
@@ -30,12 +36,6 @@ sap.ui.define([
 				}.bind(this));
 			} else {
 				this._oQuickView.openBy(oButton);
-			}
-		},
-
-		onExit: function () {
-			if (this._oQuickView) {
-				this._oQuickView.destroy();
 			}
 		}
 

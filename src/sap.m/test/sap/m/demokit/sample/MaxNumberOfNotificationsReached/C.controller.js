@@ -1,59 +1,54 @@
 sap.ui.define([
-	'sap/ui/core/mvc/Controller',
-	'sap/m/NotificationListItem',
-	'sap/m/MessageToast',
-	'sap/ui/core/library',
-	'sap/ui/Device'
-], function (Controller, NotificationListItem, MessageToast, coreLibrary, Device) {
-	'use strict';
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/Priority",
+	"sap/ui/Device",
+	"sap/m/NotificationListItem",
+	"sap/m/MessageToast"
+], function (Controller, Priority, Device, NotificationListItem, MessageToast) {
+	"use strict";
 
-	var Priority = coreLibrary.Priority;
+	return Controller.extend("sap.m.sample.MaxNumberOfNotificationsReached.C", {
 
-	var CController = Controller.extend('sap.m.sample.MaxNumberOfNotificationsReached.C', {
+		onItemClose: function (oEvent) {
+			var oNotification = oEvent.getSource();
+			var oNotificationListGroup = oNotification.getParent();
 
-		onLoadNotifications: function (event) {
-			/** @type {sap.m.NotificationListGroup} */
-			var notificationGroup = event.getSource().getParent().getParent();
-			var maxNumberOfNotifications = (Device.system.desktop ? 400 : 100) + 2;
+			oNotificationListGroup.removeItem(oNotification);
+			MessageToast.show("Item Closed: " + oNotification.getTitle());
+		},
 
-			if (!notificationGroup.getItems().length) {
-				for (var index = 0; index < maxNumberOfNotifications; index++) {
-					notificationGroup.addItem(this._createItem(notificationGroup, index));
+		onLoadNotificationsPress: function (oEvent) {
+			var oNotificationListGroup = oEvent.getSource().getParent().getParent();
+			var iMaxNotifications = Device.system.desktop ? 400 : 100;
+
+			if (!oNotificationListGroup.getItems().length) {
+				for (var i = 1; i <= iMaxNotifications; i++) {
+					oNotificationListGroup.addItem(this._createNotification(i));
 				}
 			}
 		},
 
-		onItemClose: function (event) {
-			var notification = event.getSource();
-			var notificationGroup = notification.getParent();
+		_createNotification: function (iIndex) {
+			function randomIndex(iMax) {
+				return Math.floor(Math.random() * iMax);
+			}
 
-			notificationGroup.removeItem(notification);
-
-			MessageToast.show('Item Closed: ' + event.getSource().getTitle());
-		},
-
-		_createItem: function(notificationGroup, index) {
-			var priorities = Object.keys(Priority);
-			var times = ['3 days', '5 minutes', '1 hour'];
-			var titles = ['New order request', 'Your vacation has been approved', 'New transaction in queue', 'An new request await your action'];
-			var notificationPriority = priorities[randomIndex(priorities.length)];
+			var aPriorities = Object.keys(Priority);
+			var aTimes = ["3 days", "5 minutes", "1 hour"];
+			var aTitles = ["New order request", "Your vacation has been approved", "New transaction in queue", "An new request await your action"];
+			var sPriority = aPriorities[randomIndex(aPriorities.length)];
 
 			return new NotificationListItem({
-				title: titles[randomIndex(titles.length)] + ' ' + index,
+				title: aTitles[randomIndex(aTitles.length)] + " " + iIndex,
 				showCloseButton: true,
-				datetime: times[randomIndex(times.length)],
+				datetime: aTimes[randomIndex(aTimes.length)],
 				unread: true,
-				priority: Priority[notificationPriority],
+				priority: Priority[sPriority],
 				close: function() {
 					this.destroy();
 				}
 			});
-
-			function randomIndex(max) {
-				return Math.floor(Math.random() * max);
-			}
 		}
-	});
 
-	return CController;
+	});
 });

@@ -7,14 +7,13 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.QuickViewNavOrigin.QuickViewNavOrigin",
+			"viewName": "sap.m.sample.QuickViewNavOrigin.V",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
 				"sap.ui.core": {},
-				"sap.ui.layout": {},
 				"sap.m": {}
 			}
 		},
@@ -22,8 +21,8 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"QuickViewNavOrigin.view.xml",
-					"QuickViewNavOrigin.controller.js",
+					"V.view.xml",
+					"C.controller.js",
 					"QuickViewNavOrigin.fragment.xml",
 					"model/CardData.json",
 					"model/EmployeeData.json",

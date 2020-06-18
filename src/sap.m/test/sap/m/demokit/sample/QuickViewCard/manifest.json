@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.QuickViewCard.QuickViewCard",
+			"viewName": "sap.m.sample.QuickViewCard.V",
 			"type": "XML",
 			"async": true
 		},
@@ -21,8 +21,8 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"QuickViewCard.view.xml",
-					"QuickViewCard.controller.js",
+					"V.view.xml",
+					"C.controller.js",
 					"QuickViewCard.fragment.xml",
 					"model/data.json",
 					"manifest.json"

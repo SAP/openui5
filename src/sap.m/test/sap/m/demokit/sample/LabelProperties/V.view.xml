@@ -1,0 +1,64 @@
+<mvc:View
+	controllerName="sap.m.sample.LabelProperties.C"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:form="sap.ui.layout.form">
+	<form:SimpleForm
+		layout="ResponsiveGridLayout"
+		editable="true"
+		title="Properties"
+		adjustLabelSpan="false"
+		labelSpanXL="2"
+		labelSpanL="2"
+		labelSpanM="2"
+		labelSpanS="5">
+		<Label text="Display Only" />
+		<Switch state="true" change=".onDisplayOnlyChange" />
+
+		<Label text="Wrapping" />
+		<Switch id="wrappingSwitch" state="true" change=".onWrappingChange" />
+
+		<Label text="Enable Hyphenation" />
+		<Switch state="false" change=".onHyphenationChange" />
+
+		<Label text="Container Width" />
+		<Slider value="100" liveChange=".onWidthChange" />
+	</form:SimpleForm>
+
+	<ScrollContainer
+		id="containerForm"
+		width="100%"
+		horizontal="false"
+		vertical="false">
+		<form:SimpleForm
+			layout="ResponsiveGridLayout"
+			editable="true"
+			title="Result in a Form">
+			<Label
+				id="labelInForm"
+				displayOnly="true"
+				wrapping="true"
+				text="Labels are used as titles [long test word] forsinglecontrolsorgroups of controls. Label appearance can be influenced by properties" />
+			<Input />
+		</form:SimpleForm>
+	</ScrollContainer>
+
+	<Panel
+		id="containerLayout"
+		headerText="Result in a Container"
+		width="100%">
+		<Label
+			id="label"
+			labelFor="containerInput"
+			displayOnly="true"
+			wrapping="true"
+			text="Labels are used as titles [long test word] forsinglecontrolsorgroups of controls. Label appearance can be influenced by properties" />
+		<Input />
+	</Panel>
+
+	<MessageStrip
+		type="Warning"
+		text="Note: Hyphenation is not possible when Wrapping is set to 'false'"
+		class="sapUiSmallMarginBeginEnd sapUiSmallMarginTopBottom" />
+</mvc:View>

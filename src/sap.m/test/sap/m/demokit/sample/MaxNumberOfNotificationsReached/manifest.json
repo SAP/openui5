@@ -13,23 +13,16 @@
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.layout": {}
+				"sap.ui.core": {},
+				"sap.m": {}
 			}
-		},
-		"resources": {
-			"css": [
-				{
-					"uri": "styles.css"
-				}
-			]
 		},
 		"config": {
 			"sample": {
 				"files": [
 					"V.view.xml",
 					"C.controller.js",
-					"manifest.json",
-					"styles.css"
+					"manifest.json"
 				]
 			}
 		}

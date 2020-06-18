@@ -5,7 +5,7 @@
 			path: '/pages',
 			templateShareable: false
 			}"
-			navigate=".onNavigate">
+		navigate=".onNavigate">
 		<QuickViewPage
 			pageId="{pageId}"
 			header="{header}"

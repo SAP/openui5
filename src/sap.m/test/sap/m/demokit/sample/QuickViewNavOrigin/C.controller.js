@@ -5,10 +5,9 @@ sap.ui.define([
 ], function (Controller, JSONModel, Fragment) {
 	"use strict";
 
-	return Controller.extend("sap.m.sample.QuickViewNavOrigin.QuickViewNavOrigin", {
+	return Controller.extend("sap.m.sample.QuickViewNavOrigin.C", {
 
 		onInit: function () {
-			// load JSON sample data
 			var oCardData = new JSONModel(sap.ui.require.toUrl("sap/m/sample/QuickViewNavOrigin/model/CardData.json")),
 				oEmployeeData = new JSONModel(sap.ui.require.toUrl("sap/m/sample/QuickViewNavOrigin/model/EmployeeData.json"));
 
@@ -17,9 +16,15 @@ sap.ui.define([
 				.setModel(oEmployeeData, "EmployeeModel");
 		},
 
+		onExit: function () {
+			if (this._oQuickView) {
+				this._oQuickView.destroy();
+			}
+		},
+
 		onAfterRendering: function () {
-			var oButton = this.byId('quickViewBtn');
-			oButton.$().attr('aria-haspopup', true);
+			var oButton = this.byId("quickViewBtn");
+			oButton.$().attr("aria-haspopup", true);
 		},
 
 		openQuickView: function (oEvent, oModel) {
@@ -29,8 +34,8 @@ sap.ui.define([
 				Fragment.load({
 					name: "sap.m.sample.QuickViewNavOrigin.QuickViewNavOrigin",
 					controller: this
-				}).then(function (oQuickView) {
-					this._oQuickView = oQuickView;
+				}).then(function (oFragment) {
+					this._oQuickView = oFragment;
 					this.getView().addDependent(this._oQuickView);
 					this._oQuickView.setModel(oModel);
 					this._oQuickView.openBy(oButton);
@@ -56,13 +61,6 @@ sap.ui.define([
 
 				aPages.splice(1, 1, oEmployee);
 				oCardModel.setProperty("/pages", aPages);
-				// this.getView().setModel(oCardModel, "CardModel");
-			}
-		},
-
-		onExit: function () {
-			if (this._oQuickView) {
-				this._oQuickView.destroy();
 			}
 		}
 
