@@ -21,8 +21,7 @@
 			"sap/ui/unified/MenuTextFieldItem"
 		], function(Menu, MenuItem, MenuTextFieldItem) {
 
-			var fnMenuItemOnAfterRendering = MenuTextFieldItem.prototype.onAfterRendering,
-				oTestMenu = new Menu("mainMenu"),
+			var oTestMenu = new Menu("mainMenu"),
 				oFirstMenuItem = new MenuItem("I221"),
 				oSecondMenuItem = new MenuTextFieldItem("I222", {}),
 				oButton1,
@@ -30,14 +29,6 @@
 				oApp,
 				oPage,
 				eDock = sap.ui.core.Popup.Dock;
-
-			// Styling the internal menu item input elment caret to be transparent,
-			// in order not to blink and affect the visiaul tests.
-			MenuTextFieldItem.prototype.onAfterRendering = function() {
-				fnMenuItemOnAfterRendering.call(this);
-				var oInput = this.getDomRef().querySelector(".sapUiMnuTfItemTf");
-				oInput && oInput.setAttribute("style", "color: transparent");
-			};
 
 			oTestMenu.addItem(oFirstMenuItem);
 			oTestMenu.addItem(oSecondMenuItem);
