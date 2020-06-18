@@ -499,6 +499,11 @@ function(
 				} else {
 					// check if Formatter changed the value (it corrects some wrong inputs or known patterns)
 					sValue = this._formatValue(oDate);
+					// reset the mask as the value might be changed without firing focus out event,
+					// which is unexpected behavior in regards to the MaskEnabler temporary value storage
+					if (this.getMask()) {
+						this._setupMaskVariables();
+					}
 				}
 			}
 			sThatValue = this.getSupport2400() && bThatValue2400 ? "24:" + sValue.replace(/[0-9]/g, "0").slice(0, -3) : sValue;
