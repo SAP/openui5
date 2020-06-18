@@ -121,5 +121,21 @@
         ]
       }
     ]
+  },
+  "1.78.2": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "4d8ef124f08fd591fe234000920796bd2d9f8b70",
+        "type": "FIX",
+        "text": " \"72\" font: fix Vietnamese characters with misplaced dot below",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002309352020"
+          }
+        ]
+      }
+    ]
   }
 }

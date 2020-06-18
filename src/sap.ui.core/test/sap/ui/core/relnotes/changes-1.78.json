@@ -31,7 +31,7 @@
       {
         "id": "26d59b54863cac9efbdc3e9d78fe20bc1f885605",
         "type": "FIX",
-        "text": " TreeBindingAdapter: Fix getSelectedIndex return value if node can\u0027t be found",
+        "text": " TreeBindingAdapter: Fix getSelectedIndex return value if node can't be found",
         "references": [
           {
             "type": "BCP",
@@ -101,7 +101,7 @@
       {
         "id": "0d3943e0f8ca0ce6128cce23187f9aef3c4b3c5c",
         "type": "FIX",
-        "text": " MessageProcessor: make \u0027messageChange\u0027 event visible in API Ref",
+        "text": " MessageProcessor: make 'messageChange' event visible in API Ref",
         "references": []
       },
       {
@@ -142,6 +142,22 @@
         "type": "FIX",
         "text": " sap/base/strings/toHex: Module JSDoc alias fixed",
         "references": []
+      }
+    ]
+  },
+  "1.78.2": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "ef29a3420d5e5eef6fd1b377e89d436262436652",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataModel#_loadData: Do not use x-csrf-token for GET requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002585962020"
+          }
+        ]
       }
     ]
   }

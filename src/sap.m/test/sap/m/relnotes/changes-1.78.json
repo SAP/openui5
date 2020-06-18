@@ -116,5 +116,32 @@
         ]
       }
     ]
+  },
+  "1.78.2": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "134fdcf04bf5bb79639cb2aac994ff315155a86c",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Group header is now announced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080158380"
+          }
+        ]
+      },
+      {
+        "id": "6fdb2fc15060b27202b90c017b1a966745809a9e",
+        "type": "FIX",
+        "text": " sap.m.StepInput: setValueState is now synchronised",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080131034"
+          }
+        ]
+      }
+    ]
   }
 }
