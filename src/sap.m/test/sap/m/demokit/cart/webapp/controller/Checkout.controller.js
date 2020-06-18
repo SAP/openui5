@@ -62,8 +62,8 @@ sap.ui.define([
 						SecurityCode: "",
 						Expire: ""
 					}
-				}
-			);
+				}),
+				oReturnToShopButton = this.byId("returnToShopButton");
 
 			this.setModel(oModel);
 
@@ -80,6 +80,14 @@ sap.ui.define([
 			this.getRouter().getRoute("checkout").attachMatched(function () {
 				this._setLayout("One");
 			}.bind(this));
+
+			// set focus to the "Return to Shop" button each time the view is shown to avoid losing
+			// the focus after changing the layout to one column
+			this.getView().addEventDelegate({
+				onAfterShow : function () {
+					oReturnToShopButton.focus();
+				}
+			});
 		},
 
 		/**
