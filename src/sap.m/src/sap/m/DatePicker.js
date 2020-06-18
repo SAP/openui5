@@ -1178,6 +1178,8 @@ sap.ui.define([
 			this._oDateRange = new DateRange();
 			this._getCalendar().addSelectedDate(this._oDateRange);
 			this._getCalendar()._setSpecialDatesControlOrigin(this);
+			this._getCalendar().attachCancel(_cancel, this);
+			this._getCalendar().setPopupMode(true);
 
 			if (this.$().closest(".sapUiSizeCompact").length > 0) {
 				this._getCalendar().addStyleClass("sapUiSizeCompact");
@@ -1187,9 +1189,7 @@ sap.ui.define([
 			}
 			if (this._bOnlyCalendar) {
 				this._getCalendar().attachSelect(this._handleCalendarSelect, this);
-				this._getCalendar().attachCancel(_cancel, this);
 				this._getCalendar().attachEvent("_renderMonth", _resizeCalendar, this);
-				this._oCalendar.setPopupMode(true);
 
 				this._oPopup._getButtonFooter().setVisible(this.getShowFooter());
 				this._getCalendar()._bSkipCancelButtonRendering = true;
