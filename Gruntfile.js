@@ -228,6 +228,10 @@ module.exports = function(grunt) {
 				path: 'src/sap.ui.fl'
 			},
 			{
+				name: 'sap.ui.mdc',
+				path: 'src/sap.ui.mdc'
+			},
+			{
 				name: 'sap.ui.codeeditor',
 				path: 'src/sap.ui.codeeditor',
 				preload: {

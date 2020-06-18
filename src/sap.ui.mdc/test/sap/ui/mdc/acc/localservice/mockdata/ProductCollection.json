@@ -1,0 +1,26 @@
+[
+  {
+	"ProductId": "38094020.0",
+	"Name": "Power Projector 4713",
+	"Category": "Projector",
+	"SupplierId": "1234567890.0",
+	"Description": "Projector...",
+	"ProductPicUrl": "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-6100.jpg"
+  },
+  {
+	"ProductId": "38094020.1",
+	"Name": "Webcam",
+	"Category": "Accessory",
+	"SupplierId": "1234567890.1",
+	"Description": "Webcam...",
+	"ProductPicUrl": "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-1112.jpg"
+  },
+  {
+	"ProductId": "38094020.2",
+	"Name": "Flat X-large II",
+	"Category": "Monitor",
+	"SupplierId": "1234567890.2",
+	"Description": "Monitor...",
+	"ProductPicUrl": "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-1138.jpg"
+  }
+]

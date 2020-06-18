@@ -1,0 +1,13 @@
+<FragmentDefinition xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+                    xmlns:m="sap.m" xmlns="sap.ui.core">
+    <m:HBox class="IDLabelButtonsTemplate">
+        <template:with path="myFC>items" var="items" helper="composites.Helper.listMetaContext">
+            <template:repeat list="{items>}" var="item">
+                <template:if test="{= ${myFC>labelFirst} === true}">
+                    <m:Label text="{item>text}"/>
+                    <m:Button text="click me"/>
+                </template:if>
+            </template:repeat>
+        </template:with>
+    </m:HBox>
+</FragmentDefinition>

@@ -1,0 +1,52 @@
+{
+  "1.68.0": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "37aa88d699c85e3b22f18c24eca3334978fe6dc7",
+        "type": "FIX",
+        "text": "ValueHelpPanel: SearchField no placeholder",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970250138"
+          }
+        ]
+      },
+      {
+        "id": "65b35b7340592297386482d707907ae49a9b6229",
+        "type": "FIX",
+        "text": "mdc:odataV4:Filterfield Supporting fieldpaths with 1-n navigation properties",
+        "references": []
+      },
+      {
+        "id": "263b46cb1c0df4c11f30777485971867db2e9bad",
+        "type": "FIX",
+        "text": "Field: if only description is entered set as additionalValue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970264432"
+          }
+        ]
+      },
+      {
+        "id": "81ea0b407e5ad272377358ccb0003e1d8b5bfeaa",
+        "type": "FIX",
+        "text": "Field: updates binding with \"\" if initialized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970290448"
+          }
+        ]
+      },
+      {
+        "id": "41217208459f6fb5bffc31cb4771129d1091b04a",
+        "type": "FIX",
+        "text": "DefineConditionPanel: add button get lost if condition removed",
+        "references": []
+      }
+    ]
+  }
+}

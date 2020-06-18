@@ -1,0 +1,67 @@
+<core:View height="100%" controllerName="appUnderTest.Test" xmlns:m="sap.m" xmlns:flp="sap.ui.mdc.flp.info" xmlns:mdc="sap.ui.mdc" xmlns:mdcField="sap.ui.mdc.field" xmlns:mdcLink="sap.ui.mdc.link" xmlns:core="sap.ui.core">
+	<m:App id="MyApp" defaultTransitionName="show">
+		<m:Page>
+			<m:headerContent>
+				<m:Button icon="sap-icon://wrench" press="onPressRTA" />
+			</m:headerContent>
+			<m:content>
+				<m:Table id="idTable" items="{path: '/ProductCollection'}">
+					<m:columns>
+						<m:Column>
+							<m:Text text="Name" />
+						</m:Column>
+						<m:Column>
+							<m:Text text="Product ID" />
+						</m:Column>
+						<m:Column>
+							<m:Text text="Category" />
+						</m:Column>
+					</m:columns>
+					<m:items>
+						<m:ColumnListItem>
+							<m:cells>
+								<mdc:Field id="IDField_N" value="{Name}" editMode="Display">
+									<mdc:fieldInfo>
+										<mdcField:FieldInfo>
+											<mdcLink:ContentHandler sourceControl="IDField_N">
+												<mdcLink:linkHandler>
+													<mdcLink:FlpLinkHandler sourceControl="IDField_N" textOfMainItem="{Name}" mainSemanticObject="appUnderTest_SemanticObjectName" semanticObjects="appUnderTest_SemanticObjectName"></mdcLink:FlpLinkHandler>
+												</mdcLink:linkHandler>
+											</mdcLink:ContentHandler>
+										</mdcField:FieldInfo>
+									</mdc:fieldInfo>
+								</mdc:Field>
+								<mdc:Field id="IDField_P" value="{ProductId}" editMode="Display">
+									<mdc:fieldInfo>
+										<mdcField:FieldInfo>
+											<mdcLink:ContentHandler enablePersonalization="true" sourceControl="IDField_P">
+												<mdcLink:linkHandler>
+													<mdcLink:LinkHandler sourceControl="IDField_P">
+														<mdcLink:LinkItem key="IDLinkItem00" isMain="true" text="{ProductId}" description="{Name}" icon="{Image}" href="#link00" />
+														<mdcLink:LinkItem key="IDLinkItem01" text="Review Description" description="Transaction code DR" icon="sap-icon://to-be-reviewed" href="#link01" />
+														<mdcLink:LinkItem key="IDLinkItem02" text="Edit Description" description="Transaction code DE" icon="sap-icon://user-edit" href="#link02" />
+													</mdcLink:LinkHandler>
+												</mdcLink:linkHandler>
+											</mdcLink:ContentHandler>
+										</mdcField:FieldInfo>
+									</mdc:fieldInfo>
+								</mdc:Field>
+								<mdc:Field id="IDField_C" value="{Category}" editMode="Display">
+									<mdc:fieldInfo>
+										<mdcField:FieldInfo>
+											<mdcLink:ContentHandler sourceControl="IDField_C">
+												<mdcLink:linkHandler>
+													<mdcLink:FlpLinkHandler sourceControl="IDField_C" textOfMainItem="{Category}" mainSemanticObject="appUnderTest_SemanticObjectCategory" semanticObjects="appUnderTest_SemanticObjectCategory"></mdcLink:FlpLinkHandler>
+												</mdcLink:linkHandler>
+											</mdcLink:ContentHandler>
+										</mdcField:FieldInfo>
+									</mdc:fieldInfo>
+								</mdc:Field>
+							</m:cells>
+						</m:ColumnListItem>
+					</m:items>
+				</m:Table>
+			</m:content>
+		</m:Page>
+	</m:App>
+</core:View>

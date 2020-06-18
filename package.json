@@ -28,6 +28,7 @@
     "karma:sap.ui.documentation": "npm run karma -- --lib=sap.ui.documentation",
     "karma:sap.ui.dt": "npm run karma -- --lib=sap.ui.dt",
     "karma:sap.ui.fl": "npm run karma -- --lib=sap.ui.fl",
+    "karma:sap.ui.mdc": "npm run karma -- --lib=sap.ui.mdc",
     "karma:sap.ui.integration": "npm run karma -- --lib=sap.ui.integration",
     "karma:sap.ui.layout": "npm run karma -- --lib=sap.ui.layout",
     "karma:sap.ui.rta": "npm run karma -- --lib=sap.ui.rta",

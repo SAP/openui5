@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="EPM_DEVELOPER_SCENARIO_SRV" sap:schema-version="0" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="Product">
+				<Key>
+					<PropertyRef Name="ProductId" />
+				</Key>
+				<Property Name="ProductId" Type="Edm.String" sap:label="Product ID" sap:text="Category" />
+				<Property Name="Name" Type="Edm.String" sap:label="Product" />
+				<Property Name="Category" Type="Edm.String" sap:label="Product Category" />
+				<Property Name="ProductPicUrl" Type="Edm.String" sap:label="Image" />
+				<Property Name="Description" Type="Edm.String" sap:label="Description" />
+				<Property Name="SupplierId" Type="Edm.String" />
+				<NavigationProperty Name="to_Supplier" Relationship="EPM_DEVELOPER_SCENARIO_SRV.FK_Products_Suppliers" FromRole="Products" ToRole="Suppliers" />
+			</EntityType>
+			<EntityType Name="Supplier">
+				<Key>
+					<PropertyRef Name="SupplierId" />
+				</Key>
+				<Property Name="SupplierId" Type="Edm.String" sap:label="Supplier ID" />
+				<Property Name="FormattedName" Type="Edm.String" sap:label="Name" />
+				<Property Name="Photo" Type="Edm.String" sap:label="Photo" />
+				<Property Name="Title" Type="Edm.String" sap:label="Title" />
+				<Property Name="CompanyName" Type="Edm.String" sap:label="Company" />
+				<Property Name="OrganizationRole" Type="Edm.String" sap:label="Role" />
+
+				<Property Name="EmailAddress" Type="Edm.String" sap:label="E-Mail" />
+				<Property Name="FaxNumber" Type="Edm.String" sap:label="Fax" />
+				<Property Name="PhoneNumber" Type="Edm.String" sap:label="Phone" />
+				<Property Name="MobileNumber" Type="Edm.String" sap:label="Phone" />
+				<Property Name="URL" Type="Edm.String" sap:label="URI" />
+
+				<Property Name="Street" Type="Edm.String" />
+				<Property Name="PostalCode" Type="Edm.String" />
+				<Property Name="City" Type="Edm.String" />
+				<Property Name="State" Type="Edm.String" />
+				<Property Name="Country" Type="Edm.String" />
+				<NavigationProperty Name="to_Products" Relationship="EPM_DEVELOPER_SCENARIO_SRV.FK_Products_Suppliers" FromRole="Suppliers" ToRole="Products" />
+			</EntityType>
+			<Association Name="FK_Products_Suppliers">
+				<End Role="Suppliers" Type="EPM_DEVELOPER_SCENARIO_SRV.Supplier" Multiplicity="0..1" />
+				<End Role="Products" Type="EPM_DEVELOPER_SCENARIO_SRV.Product" Multiplicity="*" />
+				<ReferentialConstraint>
+					<Principal Role="Suppliers">
+						<PropertyRef Name="SupplierId" />
+					</Principal>
+					<Dependent Role="Products">
+						<PropertyRef Name="SupplierId" />
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<EntityContainer Name="EPM_DEVELOPER_SCENARIO_SRV" m:IsDefaultEntityContainer="true">
+				<EntitySet Name="ProductCollection" EntityType="EPM_DEVELOPER_SCENARIO_SRV.Product" sap:updatable="false" />
+				<EntitySet Name="SupplierCollection" EntityType="EPM_DEVELOPER_SCENARIO_SRV.Supplier" sap:updatable="false" />
+				<AssociationSet Name="FK_Products_Suppliers" Association="EPM_DEVELOPER_SCENARIO_SRV.FK_Products_Suppliers">
+					<End Role="Suppliers" EntitySet="SupplierCollection" />
+					<End Role="Products" EntitySet="ProductCollection" />
+				</AssociationSet>
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

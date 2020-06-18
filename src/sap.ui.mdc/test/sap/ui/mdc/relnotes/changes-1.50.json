@@ -1,0 +1,25 @@
+{
+  "1.50.0": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "497f142277c49dd84a4bded0e11bf341b7c78034",
+        "type": "FEATURE",
+        "text": "Field: add ListFieldHelp",
+        "references": []
+      },
+      {
+        "id": "c6f8470acd3f8902b4ab7f22afd23fc737001bf1",
+        "type": "FIX",
+        "text": "MDC Experimental Field: _formatText struggles with non-strings",
+        "references": []
+      },
+      {
+        "id": "73b94ed8e23c00cbb221f513d3e59b5eca25a60d",
+        "type": "FEATURE",
+        "text": "Field: enhance FieldHelp functionality",
+        "references": []
+      }
+    ]
+  }
+}

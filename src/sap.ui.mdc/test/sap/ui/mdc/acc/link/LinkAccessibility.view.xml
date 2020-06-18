@@ -1,0 +1,92 @@
+<core:View xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:l="sap.ui.layout"
+		   xmlns:mdc="sap.ui.mdc" xmlns:mdcField="sap.ui.mdc.field" xmlns:mdcLink="sap.ui.mdc.link" 
+		   controllerName="sap.ui.mdc.acc.link.LinkAccessibility">
+
+	<App defaultTransitionName="show">
+		<ScrollContainer height="100%" width="100%" horizontal="false" vertical="true" focusable="true">
+			<l:VerticalLayout class="sapUiContentPadding" width="100%">
+				<l:content>
+					<mdc:Field id="IDField_MNACI" value="{Name}" editMode="Display">
+						<mdc:fieldInfo>
+							<mdcField:FieldInfo>
+								<mdcLink:ContentHandler sourceControl="IDField_MNACI">
+									<mdcLink:linkHandler>
+										<mdcLink:LinkHandler sourceControl="IDField_MNACI">
+											<mdcLink:LinkItem
+													key="IDLinkItem00"
+													isMain="true"
+													text="{Name}"
+													description="{Category}"
+													icon="/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-1031.jpg"
+													href="?testsuite_mdc_acc_link_MainNavigationAction_00#link"/>
+											<mdcLink:LinkItem
+													key="IDLinkItem01"
+													text="Display Description"
+													description="Transaction code DD"
+													href="?testsuite_mdc_acc_link_Actions_01#link"/>
+											<mdcLink:LinkItem
+													key="IDLinkItem02"
+													text="Review Description"
+													description="Transaction code DR"
+													icon="sap-icon://to-be-reviewed"
+													href="?testsuite_mdc_acc_link_Actions_02#link"/>
+											<mdcLink:LinkItem
+													key="IDLinkItem03"
+													text="Edit Description"
+													description="Transaction code DE"
+													icon="sap-icon://user-edit"
+													href="?testsuite_mdc_acc_link_Actions_03#link"/>
+											<mdcLink:LinkItem
+													key="IDLinkItem04"
+													isSuperior="true"
+													text="Superior"
+													description="Transaction SHELL"
+													icon="sap-icon://mileage"
+													href="?testsuite_mdc_acc_link_Actions_04#link"/>
+											<mdcLink:LinkItem
+													key="IDLinkItem05"
+													text="Edit Description (Additional)"
+													icon="sap-icon://edit"
+													href="?testsuite_mdc_acc_link_AdditionalActions_01#link"/>
+											<mdcLink:LinkItem
+													key="IDLinkItem06"
+													text="Review Description (Additional)"
+													icon="sap-icon://pixelate"
+													href="?testsuite_mdc_acc_link_AdditionalActions_02#link"/>
+										</mdcLink:LinkHandler>
+									</mdcLink:linkHandler>
+									<mdcLink:additionalContent>
+										<mdcLink:ContactDetails>
+											<mdcLink:ContactDetailsItem
+													photo="/testsuite/test-resources/sap/ui/documentation/sdk/images/johnDoe.png"
+													formattedName="John Doe"
+													title="Developer"
+													role="Research &amp; Development"
+													org="New Economy">
+												<mdcLink:phones>
+													<mdcLink:ContactDetailsPhoneItem uri="+0049 175 123456"
+																					types="cell,preferred"/>
+													<mdcLink:ContactDetailsPhoneItem uri="+001 6101 34869-9" types="fax"/>
+													<mdcLink:ContactDetailsPhoneItem uri="+001 6101 34869-0" types="work"/>
+												</mdcLink:phones>
+												<mdcLink:emails>
+													<mdcLink:ContactDetailsEmailItem uri="john.doe@neweconomy.com"
+																					types="preferred,work"/>
+												</mdcLink:emails>
+												<mdcLink:addresses>
+													<mdcLink:ContactDetailsAddressItem street="800 E 3rd St." code="90013"
+																					locality="Los Angeles" region="CA"
+																					country="USA" types="work"/>
+												</mdcLink:addresses>
+											</mdcLink:ContactDetailsItem>
+										</mdcLink:ContactDetails>
+									</mdcLink:additionalContent>
+								</mdcLink:ContentHandler>
+							</mdcField:FieldInfo>
+						</mdc:fieldInfo>
+					</mdc:Field>
+				</l:content>
+			</l:VerticalLayout>
+		</ScrollContainer>
+	</App>
+</core:View>

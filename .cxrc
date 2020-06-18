@@ -33,7 +33,10 @@
             "src/sap.ui.dt/**/*",
             "src/sap.ui.fl/**/*",
             "src/sap.ui.rta/**/*"
-        ]
+        ],
+        "smart-controls": [
+			"src/sap.ui.mdc/**/*"
+		],
     },
     "excludes": [
         "docs/**/*",
