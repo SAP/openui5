@@ -450,13 +450,11 @@ sap.ui.define([
 	};
 
 	DynamicPage.prototype.setHeader = function (oHeader) {
-		var oOldHeader;
+		var oOldHeader = this.getHeader();
 
 		if (oHeader === oOldHeader) {
-			return;
+			return this;
 		}
-
-		oOldHeader = this.getHeader();
 
 		if (oOldHeader) {
 			if (this._oStickyHeaderObserver) {
