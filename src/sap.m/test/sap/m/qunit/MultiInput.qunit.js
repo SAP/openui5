@@ -2012,7 +2012,7 @@ sap.ui.define([
 
 		sap.ui.getCore().applyChanges();
 
-		qutils.triggerEvent("keydown", this.multiInput1.getFocusDomRef(), {
+		qutils.triggerEvent("keydown", this.multiInput1.getAggregation("tokenizer").getFocusDomRef(), {
 			which: KeyCodes.X,
 			ctrlKey: true
 		});
@@ -2034,7 +2034,7 @@ sap.ui.define([
 
 		sap.ui.getCore().applyChanges();
 
-		qutils.triggerEvent("keydown", this.multiInput1.getFocusDomRef(), {
+		qutils.triggerEvent("keydown", this.multiInput1.getAggregation("tokenizer").getFocusDomRef(), {
 			which: KeyCodes.C,
 			ctrlKey: true
 		});
