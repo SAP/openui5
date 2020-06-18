@@ -341,7 +341,7 @@ sap.ui.define([
 				var oUriParams = UriParameters.fromQuery(window.location.search);
 				this._aConfiguration = [];
 
-				if (!oUriParams.has('sap-ui-language')) {
+				if (!(oUriParams.has('sap-ui-language') || oUriParams.has('sap-language'))) {
 					this._aConfiguration.push(DEMOKIT_CONFIGURATION_LANGUAGE);
 				}
 			},
@@ -453,17 +453,17 @@ sap.ui.define([
 			 */
 			settingsDialogOpen: function () {
 				if (!this._oSettingsDialog) {
-                    Fragment.load({
-                        name: "sap.ui.documentation.sdk.view.globalSettingsDialog",
-                        controller: this
-                    }).then(function (oDialog) {
-                        // connect dialog to the root view of this component (models, lifecycle)
-                        this._oView.addDependent(oDialog);
-                        this._oSettingsDialog = oDialog;
-                        Core.byId("LanguageSelect").setSelectedKey(this._getSelectedLanguage());
-                        this._oSettingsDialog.open();
-                    }.bind(this));
-                } else {
+					Fragment.load({
+						name: "sap.ui.documentation.sdk.view.globalSettingsDialog",
+						controller: this
+					}).then(function (oDialog) {
+						// connect dialog to the root view of this component (models, lifecycle)
+						this._oView.addDependent(oDialog);
+						this._oSettingsDialog = oDialog;
+						Core.byId("LanguageSelect").setSelectedKey(this._getSelectedLanguage());
+						this._oSettingsDialog.open();
+					}.bind(this));
+				} else {
 					this._oSettingsDialog.open();
 				}
 			},
