@@ -325,22 +325,6 @@ sap.ui.define([
 				"The radio button for HSL color mode has correct tooltip text.");
 		});
 
-		QUnit.test("Radio buttons keyboard handling", function (oAssert) {
-			//Arrange
-			this.oCP.setDisplayMode(ColorPickerDisplayMode.Large);
-			applyChanges();
-			var oRadioButtonsGroup = this.oCP.getAggregation("_oRGBorHSLRBUnifiedGroup");
-
-			//Act
-			oRadioButtonsGroup.getButtons()[0].focus();
-			applyChanges();
-			qutils.triggerKeyboardEvent(oRadioButtonsGroup.getButtons()[0].sId, "ARROW_DOWN");
-
-			//Assert
-			oAssert.strictEqual(oRadioButtonsGroup.getButtons()[1].getDomRef(), document.activeElement,
-				"The second radio button was focused");
-		});
-
 		QUnit.module("Private methods", {
 			beforeEach: function () {
 				this.oCP = new ColorPicker();
