@@ -1,56 +1,73 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/m/Label",
+	"sap/m/List",
+	"sap/m/StandardListItem",
+	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/xml/XMLModel",
 	"sap/ui/model/Context",
-	"sap/ui/layout/VerticalLayout",
-	"sap/ui/commons/Label",
-	"sap/ui/commons/ListBox",
-	"sap/ui/core/ListItem",
 	"sap/ui/thirdparty/jquery"
-], function(XMLModel, Context, VerticalLayout, CommonsLabel, CommonsListBox, ListItem, jQuery) {
+], function(Label, List, ListItem, VerticalLayout, XMLModel, Context, jQuery) {
 	"use strict";
 
-	var testdata =
-		"<teamMembers>" +
-			"<member firstName=\"Andreas\" lastName=\"Klark\"></member>" +
-			"<member firstName=\"Peter\" lastName=\"Miller\"></member>" +
-			"<member firstName=\"Gina\" lastName=\"Rush\"></member>" +
-			"<member firstName=\"Steave\" lastName=\"Ander\"></member>" +
-			"<member firstName=\"Michael\" lastName=\"Spring\"></member>" +
-			"<member firstName=\"Marc\" lastName=\"Green\"></member>" +
-			"<member firstName=\"Frank\" lastName=\"Wallace\"></member>" +
-		"</teamMembers>";
+	var oLabel, oLayout, oModel, oModelChild, oTarget1, oTarget2, aTestData, aTestDataChild;
 
-	var testdataChild =
-		"<pets>" +
-			"<pet type=\"ape\" age=\"1\"></pet>" +
-			"<pet type=\"bird\" age=\"2\"></pet>" +
-			"<pet type=\"cat\" age=\"3\"></pet>" +
-			"<pet type=\"fish\" age=\"4\"></pet>" +
-			"<pet type=\"dog\" age=\"5\"></pet>" +
-		"</pets>";
+	function cleanUp(){
+		document.body.removeChild(oTarget1);
+		document.body.removeChild(oTarget2);
+		oLabel.destroy();
+	}
 
-	var oModel = new XMLModel();
-	oModel.setXML(testdata);
-	sap.ui.getCore().setModel(oModel);
+	function setup(){
+		// add divs for control tests
+		oTarget1 = document.createElement("div");
+		oTarget1.id = "target1";
+		document.body.appendChild(oTarget1);
+		oTarget2 = document.createElement("div");
+		oTarget2.id = "target2";
+		document.body.appendChild(oTarget2);
 
-	var oModelChild = new XMLModel();
-	oModelChild.setXML(testdataChild);
+		aTestData =
+			"<teamMembers>" +
+				"<member firstName=\"Andreas\" lastName=\"Klark\"></member>" +
+				"<member firstName=\"Peter\" lastName=\"Miller\"></member>" +
+				"<member firstName=\"Gina\" lastName=\"Rush\"></member>" +
+				"<member firstName=\"Steave\" lastName=\"Ander\"></member>" +
+				"<member firstName=\"Michael\" lastName=\"Spring\"></member>" +
+				"<member firstName=\"Marc\" lastName=\"Green\"></member>" +
+				"<member firstName=\"Frank\" lastName=\"Wallace\"></member>" +
+			"</teamMembers>";
 
-	// add divs for control tests
-	var oContentDIV = document.createElement("div");
-	oContentDIV.id = "target1";
-	document.body.appendChild(oContentDIV);
-	oContentDIV = document.createElement("div");
-	oContentDIV.id = "target2";
-	document.body.appendChild(oContentDIV);
+		aTestDataChild =
+			"<pets>" +
+				"<pet type=\"ape\" age=\"1\"></pet>" +
+				"<pet type=\"bird\" age=\"2\"></pet>" +
+				"<pet type=\"cat\" age=\"3\"></pet>" +
+				"<pet type=\"fish\" age=\"4\"></pet>" +
+				"<pet type=\"dog\" age=\"5\"></pet>" +
+			"</pets>";
 
-	var oLayout = new VerticalLayout();
-	var oLabel = new CommonsLabel("myLabel");
-	oLabel.setText("testText");
-	oLabel.placeAt("target1");
+		oModel = new XMLModel();
+		oModel.setXML(aTestData);
+		sap.ui.getCore().setModel(oModel);
 
-	QUnit.module("XMLModel");
+		oModelChild = new XMLModel();
+		oModelChild.setXML(aTestDataChild);
+
+		oLayout = new VerticalLayout();
+		oLabel = new Label("myLabel");
+		oLabel.setText("testText");
+		oLabel.placeAt("target1");
+	}
+
+	QUnit.module("sap.ui.model.xml.XMLModel", {
+		afterEach: function() {
+			cleanUp();
+		},
+		beforeEach: function() {
+			setup();
+		}
+	});
 
 	QUnit.test("test model getProperty with context", function(assert) {
 		var oContext = oModel.createBindingContext("/member/6");
@@ -97,7 +114,7 @@ sap.ui.define([
 		var oContext = oModel.createBindingContext("/member");
 		oLabel.setBindingContext(oContext);
 		oLabel.bindProperty("text", "1/@firstName");
-		assert.equal(oLabel.getText(), "Petre", "text value from model");
+		assert.equal(oLabel.getText(), "Peter", "text value from model");
 		// modify model value
 		oModel.setProperty("1/@firstName", "Petri", oLabel.getBindingContext());
 		assert.equal(oLabel.getText(), "Petri", "new text value from model");
@@ -107,7 +124,7 @@ sap.ui.define([
 		var oContext = oModel.createBindingContext("/member/HorstDerGrosse");
 		oLabel.setBindingContext(oContext);
 		oLabel.bindProperty("text", "/member/1/@firstName");
-		assert.equal(oLabel.getText(), "Petri", "text value from model");
+		assert.equal(oLabel.getText(), "Peter", "text value from model");
 		// modify model value
 		oModel.setProperty("/member/1/@firstName", "Petre");
 		assert.equal(oLabel.getText(), "Petre", "new text value from model");
@@ -117,7 +134,7 @@ sap.ui.define([
 	QUnit.test("test model setProperty onlabel without bindingContext and relative path (legacySyntax = true)", function(assert) {
 		oModel.setLegacySyntax(true);
 		oLabel.bindProperty("text", "member/1/@firstName");
-		assert.equal(oLabel.getText(), "Petre", "text value from model");
+		assert.equal(oLabel.getText(), "Peter", "text value from model");
 		// modify model value
 		oModel.setProperty("member/1/@firstName", "Petro", oLabel.getBindingContext());
 		assert.equal(oLabel.getText(), "Petro", "new text value from model");
@@ -129,7 +146,7 @@ sap.ui.define([
 		var oContext = oModel.createBindingContext("/member");
 		oLabel.setBindingContext(oContext);
 		oLabel.bindProperty("text", "1/@firstName");
-		assert.equal(oLabel.getText(), "Petro", "text value from model");
+		assert.equal(oLabel.getText(), "Peter", "text value from model");
 		// modify model value
 		oModel.setProperty("1/@firstName", "Petri", oLabel.getBindingContext());
 		assert.equal(oLabel.getText(), "Petri", "new text value from model");
@@ -141,7 +158,7 @@ sap.ui.define([
 		var oContext = oModel.createBindingContext("/member/HorstDerGrosse");
 		oLabel.setBindingContext(oContext);
 		oLabel.bindProperty("text", "/member/1/@firstName");
-		assert.equal(oLabel.getText(), "Petri", "text value from model");
+		assert.equal(oLabel.getText(), "Peter", "text value from model");
 		// modify model value
 		oModel.setProperty("/member/1/@firstName", "Petre", oLabel.getBindingContext());
 		assert.equal(oLabel.getText(), "Petre", "new text value from model");
@@ -165,13 +182,12 @@ sap.ui.define([
 		assert.equal(oLabel.getText(), "hamster", "new text value from model");
 	});
 
-	var oLB = new CommonsListBox("myLb", {displaySecondaryValues:true, height:"200px"});
-	var oItemTemplate = new ListItem();
-	oLB.placeAt("target2");
-
 	QUnit.test("test model bindAggregation on Listbox", function(assert) {
+		var oLB = new List("myLb", {displaySecondaryValues:true, height:"200px"}),
+			oItemTemplate = new ListItem();
 
-		oItemTemplate.bindProperty("text", "@firstName").bindProperty("additionalText", "@lastName");
+		oLB.placeAt("target2");
+		oItemTemplate.bindProperty("title", "@firstName").bindProperty("description", "@lastName");
 		oLB.bindAggregation("items", "/member", oItemTemplate);
 
 		var listItems = oLB.getItems();
@@ -182,8 +198,10 @@ sap.ui.define([
 		assert.equal(oBinding.getLength(), 7, "oBinding length");
 
 		listItems.forEach(function(item, i) {
-			assert.equal(item.getText(), oModel.getProperty("/member/" + i + "/@firstName"), "firstname check");
-			assert.equal(item.getAdditionalText(), oModel.getProperty("/member/" + i + "/@lastName"), "lastname check");
+			assert.equal(item.getTitle(), oModel.getProperty("/member/" + i + "/@firstName"),
+				"firstname check");
+			assert.equal(item.getDescription(), oModel.getProperty("/member/" + i + "/@lastName"),
+				"lastname check");
 		});
 
 	});
@@ -316,7 +334,7 @@ sap.ui.define([
 			value, oContext;
 
 		oModel.setLegacySyntax(true);
-		oModel.setXML(testdata);
+		oModel.setXML(aTestData);
 		value = oModel.getProperty("member/6/@lastName");
 		assert.equal(value, "Wallace", "model value");
 		oModel.setProperty("member/4/@lastName", "Jackson");
@@ -331,7 +349,7 @@ sap.ui.define([
 		var oModel = new XMLModel(),
 			value, oContext;
 		oModel.setLegacySyntax(false);
-		oModel.setXML(testdata);
+		oModel.setXML(aTestData);
 		value = oModel.getProperty("member/6/@lastName");
 		assert.equal(value, undefined, "model value");
 		oModel.setProperty("/member/4/@lastName", "Ander");
@@ -348,7 +366,7 @@ sap.ui.define([
 
 	QUnit.test("text XML getObject", function(assert) {
 		var oModel = new XMLModel();
-		oModel.setXML(testdata);
+		oModel.setXML(aTestData);
 		var oNode = oModel.getObject("/member/4/@lastName"); // direkt attribute access
 		assert.ok(oNode);
 		assert.equal(oNode, "Spring", "node attribute value");

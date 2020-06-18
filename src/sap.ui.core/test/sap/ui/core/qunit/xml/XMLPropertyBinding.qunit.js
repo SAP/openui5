@@ -32,7 +32,7 @@ sap.ui.define([
 	oContentDIV.id = "target1";
 	document.body.appendChild(oContentDIV);
 
-	QUnit.module("PropertyBinding", {
+	QUnit.module("sap.ui.model.xml.XMLPropertyBinding", {
 		beforeEach: function() {
 			// reset bindings
 			this.oModel = new XMLModel();

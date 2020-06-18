@@ -68,8 +68,7 @@ sap.ui.require([
 		"sap/ui/core/qunit/json/JSONListBinding.qunit",
 		//TODO uses a fake service and does not got together with odata4analytics.qunit
 //		"sap/ui/core/qunit/json/JSONModel.qunit",
-		//TODO enable test once SyncPromise is fixed BCP 2080194122
-//		"sap/ui/core/qunit/json/JSONPropertyBinding.qunit",
+		"sap/ui/core/qunit/json/JSONPropertyBinding.qunit",
 		"sap/ui/core/qunit/json/JSONTreeBinding.qunit",
 		"sap/ui/core/qunit/json/JSONTwoWay.qunit",
 
@@ -174,7 +173,18 @@ sap.ui.require([
 		// ***************************************************************************************
 		// sap.ui.model.type.* - tests are contained in testsuite.types.qunit.js
 		// ***************************************************************************************
-		"sap/ui/core/qunit/types/Types.qunit"
+		"sap/ui/core/qunit/types/Types.qunit",
+
+		// ***************************************************************************************
+		// sap.ui.model.xml.* - tests are contained in testsuite.xml.qunit.js
+		// ***************************************************************************************
+		"sap/ui/core/qunit/xml/XMLBinding.qunit",
+		"sap/ui/core/qunit/xml/XMLListBinding.qunit",
+		"sap/ui/core/qunit/xml/XMLModel.qunit",
+		"sap/ui/core/qunit/xml/XMLModelNS.qunit",
+		"sap/ui/core/qunit/xml/XMLPropertyBinding.qunit",
+		"sap/ui/core/qunit/xml/XMLTreeBinding.qunit",
+		"sap/ui/core/qunit/xml/XMLTwoWay.qunit"
 	], function () {
 		function start() {
 			Core.detachThemeChanged(start);

@@ -107,6 +107,7 @@ sap.ui.define(function() {
 					libs : ["sap.ui.table", "sap.m"]
 				}
 			},
+
 			// *************************************************************************
 			// Tests considering JSONModel and JSONPropertyBinding
 			// *************************************************************************
@@ -116,11 +117,7 @@ sap.ui.define(function() {
 				title : "sap.ui.model.json.JSONModel",
 				module : ["test-resources/sap/ui/core/qunit/json/JSONModel.qunit"]
 			},
-			JSONPropertyBinding : {
-				// not in 1RingModels.qunit because of bug in SyncPromise
-				title : "sap.ui.model.json.JSONPropertyBinding",
-				module : ["test-resources/sap/ui/core/qunit/json/JSONPropertyBinding.qunit"]
-			},
+
 			// *************************************************************************
 			// Tests considering messages
 			// *************************************************************************

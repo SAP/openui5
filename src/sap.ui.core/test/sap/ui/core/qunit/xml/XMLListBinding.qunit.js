@@ -60,7 +60,7 @@ sap.ui.define([
 			"<changingArray><entry>1</entry><entry>2</entry><entry>3</entry><entry>4</entry></changingArray>" +
 		"</root>";
 
-	QUnit.module("ListBinding", {
+	QUnit.module("sap.ui.model.xml.XMLListBinding", {
 		beforeEach: function() {
 			this.oModel = new XMLModel();
 			this.oModel.setXML(testData);
