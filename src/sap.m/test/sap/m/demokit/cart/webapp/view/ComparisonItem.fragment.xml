@@ -10,7 +10,8 @@
 				<ToolbarSpacer/>
 				<Button
 					icon="sap-icon://sys-cancel"
-					press=".onRemoveComparison"/>
+					press=".onRemoveComparison"
+					tooltip="{i18n>removeFromComparisonTooltip}"/>
 			</Toolbar>
 		</headerToolbar>
 		<HBox class="comparebox">
