@@ -125,6 +125,7 @@ sap.ui.define(function () {
 				]
 			},
 			"CardExtension": {},
+			"CardHostAndExtension": {},
 			"CardHost": {
 				coverage: {
 					only: [
