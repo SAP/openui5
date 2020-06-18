@@ -17,7 +17,7 @@ sap.ui.define([
 		"</teamMembers>" +
 		"</root>";
 
-	QUnit.module("Binding", {
+	QUnit.module("sap.ui.model.xml.*: Bindings", {
 		beforeEach: function() {
 			// reset bindings
 			this.bindings = [];
