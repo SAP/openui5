@@ -50,7 +50,6 @@
 									<f:fields>
 										<Input editable="{ui-op>/bEditMode}"
 											value="{RegionOfOrigin}" />
-										<Input editable="false" value="{RegionOfOrigin_Text}" />
 									</f:fields>
 								</f:FormElement>
 								<f:FormElement label="Founding Year">
