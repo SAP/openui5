@@ -413,38 +413,41 @@ span.sapMBtnInner.sapMBtnEmphasized {
 
 .sapMBtn .sapMBtnCritical,
 .sapContrast span.sapMBtnInner.sapMBtnCritical{
-	background: @sapUiCriticalElement;
-	border-color: @sapUiCriticalElement;
+	background: @sapUiButtonCriticalBackground;
+	border-color: @sapUiButtonCriticalBorderColor;
+	.sapMBtnContent,
+	.sapMBtnIcon {
+		color: @sapUiButtonCriticalTextColor;
+	}
 }
 
 .sapMBtn .sapMBtnNegative,
 .sapContrast span.sapMBtnInner.sapMBtnNegative{
-	background: @sapUiNegativeElement;
-	border-color: @sapUiNegativeElement;
+	background: @sapUiButtonNegativeBackground;
+	border-color: @sapUiButtonNegativeBorderColor;
+	.sapMBtnContent,
+	.sapMBtnIcon {
+		color: @sapUiButtonNegativeTextColor;
+	}
 }
 
 .sapMBtn .sapMBtnSuccess,
 .sapContrast span.sapMBtnInner.sapMBtnSuccess{
-	background: @sapUiPositiveElement;
-	border-color: @sapUiPositiveElement;
+	background: @sapUiButtonSuccessBackground;
+	border-color: @sapUiButtonSuccessBorderColor;
+	.sapMBtnContent,
+	.sapMBtnIcon {
+		color: @sapUiButtonSuccessTextColor;
+	}
 }
 
 .sapMBtn .sapMBtnNeutral,
 .sapContrast span.sapMBtnInner.sapMBtnNeutral{
-	background: @sapUiNeutralElement;
-	border-color: @sapUiNeutralElement;
-}
-
-.sapMBtn .sapMBtnCritical,
-.sapMBtn .sapMBtnNegative,
-.sapMBtn .sapMBtnSuccess,
-.sapMBtn .sapMBtnNeutral,
-.sapContrast span.sapMBtnInner.sapMBtnCritical,
-.sapContrast span.sapMBtnInner.sapMBtnNegative,
-.sapContrast span.sapMBtnInner.sapMBtnSuccess,
-.sapContrast span.sapMBtnInner.sapMBtnNeutral{
-	.sapMBtnContent{
-		color: @sapUiContentContrastIconColor;
+	background: @sapUiButtonNeutralBackground;
+	border-color: @sapUiButtonNeutralBorderColor;
+	.sapMBtnContent,
+	.sapMBtnIcon {
+		color: @sapUiButtonNeutralTextColor;
 	}
 }
 
@@ -455,57 +458,76 @@ span.sapMBtnInner.sapMBtnEmphasized {
 		text-shadow: none;
 }
 
-.sapMBtn .sapMBtnCritical,
-.sapMBtn .sapMBtnNegative,
-.sapMBtn .sapMBtnSuccess,
-.sapMBtn .sapMBtnNeutral,
-.sapContrast span.sapMBtnInner.sapMBtnCritical,
-.sapContrast span.sapMBtnInner.sapMBtnNegative,
-.sapContrast span.sapMBtnInner.sapMBtnSuccess,
-.sapContrast span.sapMBtnInner.sapMBtnNeutral{
-	.sapMBtnIcon{
-		color: @sapUiContentContrastIconColor;
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnCritical{
+	background: @sapUiButtonCriticalHoverBackground;
+	border-color: @sapUiButtonCriticalHoverBorderColor;
+	.sapMBtnContent,
+	.sapMBtnIcon {
+		color: @sapUiButtonCriticalHoverTextColor;
 	}
 }
 
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnCritical{
-	background: darken(@sapUiCriticalElement, 7);
-	border-color: darken(@sapUiCriticalElement, 7);
-}
-
 .sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnNegative{
-	background: darken(@sapUiNegativeElement, 7);
-	border-color: darken(@sapUiNegativeElement, 7);
+	background: @sapUiButtonNegativeHoverBackground;
+	border-color: @sapUiButtonNegativeHoverBorderColor;
+	.sapMBtnContent,
+	.sapMBtnIcon {
+		color: @sapUiButtonNegativeHoverTextColor;
+	}
 }
 
 .sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnSuccess{
-	background: darken(@sapUiPositiveElement, 7);
-	border-color: darken(@sapUiPositiveElement, 7);
+	background: @sapUiButtonSuccessHoverBackground;
+	border-color: @sapUiButtonSuccessHoverBorderColor;
+	.sapMBtnContent,
+	.sapMBtnIcon {
+		color: @sapUiButtonSuccessHoverTextColor;
+	}
 }
 
 .sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnNeutral{
-	background: darken(@sapUiNeutralElement, 7);
-	border-color: darken(@sapUiNeutralElement, 7);
+	background: @sapUiButtonNeutralHoverBackground;
+	border-color: @sapUiButtonNeutralHoverBorderColor;
+	.sapMBtnContent,
+	.sapMBtnIcon {
+		color: @sapUiButtonNeutralHoverTextColor;
+	}
 }
 
 .sapMBtn:not(.sapMBtnDisabled) .sapMBtnCritical.sapMBtnActive{
-	background: darken(@sapUiCriticalElement, 10);
-	border-color: darken(@sapUiCriticalElement, 10);
+	background: @sapUiButtonCriticalActiveBackground;
+	border-color: @sapUiButtonCriticalActiveBorderColor;
+	.sapMBtnContent,
+	.sapMBtnIcon {
+		color: @sapUiButtonCriticalTextColor;
+	}
 }
 
 .sapMBtn:not(.sapMBtnDisabled) .sapMBtnNegative.sapMBtnActive{
-	background: darken(@sapUiNegativeElement, 10);
-	border-color: darken(@sapUiNegativeElement, 10);
+	background: @sapUiButtonNegativeActiveBackground;
+	border-color: @sapUiButtonNegativeActiveBorderColor;
+	.sapMBtnContent,
+	.sapMBtnIcon {
+		color: @sapUiButtonNegativeTextColor;
+	}
 }
 
 .sapMBtn:not(.sapMBtnDisabled) .sapMBtnSuccess.sapMBtnActive{
-	background: darken(@sapUiPositiveElement, 10);
-	border-color: darken(@sapUiPositiveElement, 10);
+	background: @sapUiButtonSuccessActiveBackground;
+	border-color: @sapUiButtonSuccessActiveBorderColor;
+	.sapMBtnContent,
+	.sapMBtnIcon {
+		color: @sapUiButtonSuccessTextColor;
+	}
 }
 
 .sapMBtn:not(.sapMBtnDisabled) .sapMBtnNeutral.sapMBtnActive{
-	background: darken(@sapUiNeutralElement, 10);
-	border-color: darken(@sapUiNeutralElement, 10);
+	background: @sapUiButtonNeutralActiveBackground;
+	border-color: @sapUiButtonNeutralActiveBorderColor;
+	.sapMBtnContent,
+	.sapMBtnIcon {
+		color: @sapUiButtonNeutralTextColor;
+	}
 }
 
 /* ---------------------------------------------------------------------*/
