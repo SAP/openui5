@@ -2164,7 +2164,7 @@ QUnit.module("Misc");
 		oCalendar.destroy();
 	});
 
-	QUnit.test("onkeydown handler when F4 is pressed, but the there is a picker popup", function(assert) {
+	QUnit.test("onkeydown handler when F4 is pressed, but there is a picker popup", function(assert) {
 		// Prepare
 		var oSpyEventPreventDefault = this.spy(),
 			oEvent = { keyCode: KeyCodes.F4, preventDefault: oSpyEventPreventDefault, shiftKey: true },
@@ -2325,6 +2325,32 @@ QUnit.module("Misc");
 		oCalendar.destroy();
 		oSpy.restore();
 		oYRFirstDateStub.restore();
+	});
+
+	QUnit.test("F4 doesnt open month picker, when year picker is already opened", function(assert) {
+		// prepare
+		var oCalendar = new Calendar().placeAt("content"),
+			oFakeEvent = {
+				which: 115,
+				defaultPrevented: false,
+				preventDefault: function() {
+					this.defaultPrevented = true;
+				}
+			}, oShowMonthPickerSpy;
+
+		sap.ui.getCore().applyChanges();
+		oCalendar._showYearPicker();
+
+		// act
+		oShowMonthPickerSpy = this.spy(oCalendar, "_showMonthPicker");
+		oCalendar.onkeydown(oFakeEvent);
+
+		// assert
+		assert.ok(oShowMonthPickerSpy.notCalled, "the month picker is not opened");
+
+		// clean
+		oCalendar.destroy();
+		oShowMonthPickerSpy.restore();
 	});
 
 	//================================================================================
