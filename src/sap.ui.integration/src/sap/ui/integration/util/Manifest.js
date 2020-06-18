@@ -227,6 +227,11 @@ sap.ui.define([
 			}
 		});
 
+		if (this.get("/sap.app/i18n")) {
+			// if an i18n file is explicitly specified in the manifest
+			bHasTranslatable = true;
+		}
+
 		if (!bHasTranslatable) {
 			return Promise.resolve();
 		}

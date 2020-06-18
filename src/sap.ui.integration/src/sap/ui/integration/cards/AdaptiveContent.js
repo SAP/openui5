@@ -224,7 +224,9 @@ sap.ui.define([
 					};
 					sType = library.CardActionType.Navigation;
 				} else if (oAction instanceof AdaptiveCards.SubmitAction) {
-					oPayload = oAction.data;
+					oPayload = {
+						data: oAction.data
+					};
 					sType = library.CardActionType.Submit;
 				} else {
 					// The other types of actions are entirely internal
@@ -248,15 +250,27 @@ sap.ui.define([
 			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
 				sMessage = oError ? oResourceBundle.getText("CARDS_ADAPTIVE_ACTION_SUBMIT_ERROR") :
 					oResourceBundle.getText("CARDS_ADAPTIVE_ACTION_SUBMIT_SUCCESS"),
-				sMessageType = oError ? MessageType.Error : MessageType.Success,
-				oMessage = this.getAggregation("_content").getItems()[0];
+				sMessageType = oError ? MessageType.Error : MessageType.Success;
 
-			oMessage
-				.setType(sMessageType)
-				.setText(sMessage)
-				.setVisible(true);
+			this.showMessage(sMessage, sMessageType);
 
 			this.getParent().setBusy(false); // Loading indicator
+		};
+
+		/**
+		 * Displays a message strip on top of the content with the given text.
+		 *
+		 * @param {string} sMessage The message.
+		 * @param {sap.m.MessageType} sType Type of the message.
+		 */
+		AdaptiveContent.prototype.showMessage = function (sMessage, sType) {
+			var oMessage = this.getAggregation("_content").getItems()[0];
+
+			oMessage.applySettings({
+				"type": sType,
+				"text": sMessage,
+				"visible": true
+			});
 		};
 
 		/**
@@ -293,6 +307,17 @@ sap.ui.define([
 		};
 
 		/**
+		 * Sets data provider on a card level
+		 *
+		 * @param {Object} oDataProvider Data provider object for generating card content
+		 *
+		 * @public
+		 */
+		AdaptiveContent.prototype.setCardDataProvider = function (oDataProvider) {
+			this._oCardDataProvider = oDataProvider;
+		};
+
+		/**
 		 * Setup of the card content.
 		 *
 		 * @private
@@ -300,15 +325,11 @@ sap.ui.define([
 		AdaptiveContent.prototype._setupMSCardContent = function () {
 			var oDom = this.getAggregation("_content").getItems()[1].getDomRef(),
 				oConfiguration = this._oCardConfig,
-				oContentTemplateData, oCardDataProvider;
+				oContentTemplateData,
+				oCardDataProvider = this._oCardDataProvider;
 
 			if (!this.adaptiveCardInstance || !oConfiguration || !oDom) {
 				return;
-			}
-
-			// check if there is a data provider on card level
-			if (this._oDataProviderFactory && this._oDataProviderFactory._aDataProviders && this._oDataProviderFactory._aDataProviders.length) {
-				oCardDataProvider = this._oDataProviderFactory._aDataProviders[0];
 			}
 
 			// check if a data object is present in the card content
