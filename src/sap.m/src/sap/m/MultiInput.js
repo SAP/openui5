@@ -1853,7 +1853,6 @@ function(
 			this._oSelectedItemPicker.setHorizontalScrolling(false)
 				.attachBeforeOpen(this._onBeforeOpenTokensPicker, this)
 				.attachAfterClose(function() {
-					this.getAggregation("tokenizer").setRenderMode(TokenizerRenderMode.Narrow);
 					this._manageListsVisibility(false);
 					this._bShowListWithTokens = false;
 				}, this)
