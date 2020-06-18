@@ -544,7 +544,10 @@ sap.ui.define([
 	};
 
 	BasePropertyEditor.prototype.getI18nProperty = function(sName) {
-		return this.getModel("i18n").getProperty(sName);
+		if (this.getModel("i18n")) {
+			return this.getModel("i18n").getProperty(sName);
+		}
+		return sName;
 	};
 
 	BasePropertyEditor.prototype.getLabel = function() {
