@@ -54,7 +54,7 @@ function(
 						//default content
 						oExtensionPoint.createDefault().then(function (aControls) {
 							aControls.forEach(function(oNewControl, iIterator) {
-								mExtensionPointInfo.defaultContent.push(oNewControl.getId());
+								mExtensionPointInfo.defaultContent.push(oNewControl);
 								JsControlTreeModifier.insertAggregation(oExtensionPoint.targetControl, oExtensionPoint.aggregationName, oNewControl, oExtensionPoint.index + iIterator, oExtensionPoint.view);
 							});
 							oExtensionPoint.ready(aControls);

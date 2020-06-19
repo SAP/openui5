@@ -387,7 +387,7 @@ sap.ui.define([
 					view: oXmlView,
 					appComponent: this.oComponent
 				};
-				this.oHBox = oXmlView.getContent()[0];
+				this.oPanel = oXmlView.getContent()[1];
 				fnDone();
 			}.bind(this));
 		},
@@ -398,29 +398,28 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("When create and apply change with extension point information", function(assert) {
-			var oChange1 = _createAndCompleteAddXmlAtExtensionPointChange.call(this, sFragmentPath, "fragments/Fragment", "ExtensionPoint1");
+			var oChange1 = _createAndCompleteAddXmlAtExtensionPointChange.call(this, sFragmentPath, "fragments/Fragment", "ExtensionPoint4");
 			var oReadyStub = sandbox.stub();
-			var oCreateDefaultStub = sandbox.stub();
 			var oGetExtensionPointInfoSpy = sandbox.spy(JsControlTreeModifier, "getExtensionPointInfo");
 			oChange1.getExtensionPointInfo = function () {
 				return {
 					view: this.oXmlView,
-					name: "ExtensionPoint1",
-					targetControl: this.oHBox,
-					aggregationName: "items",
-					index: 0,
+					name: "ExtensionPoint4",
+					targetControl: this.oPanel,
+					aggregationName: "content",
+					index: 1,
 					ready: oReadyStub,
-					createDefault: oCreateDefaultStub
+					defaultContent: [this.oPanel.getContent()[1], this.oPanel.getContent()[2]]
 				};
 			}.bind(this);
-			this.oChangeHandler.applyChange(oChange1, this.oHBox, this.oPropertyBag);
-			var aHBoxItems = this.oHBox.getItems();
-			assert.equal(aHBoxItems.length, 2, "then there are two children of the HBox");
-			assert.equal(aHBoxItems[0].getId(), "myView--projectId.button", "then the control added to the first extension point is on the first position.");
-			assert.equal(aHBoxItems[1].getId(), "myView--label1", "then the control label positioned second.");
+			this.oChangeHandler.applyChange(oChange1, this.oPanel, this.oPropertyBag);
+			var aPanelContent = this.oPanel.getContent();
+			assert.equal(aPanelContent.length, 2, "then there are now two instead of three children in the Panel content. Default content musst be destroyed.");
+			assert.equal(aPanelContent[0].getId(), "myView--label2", "then the control label positioned first.");
+			assert.equal(aPanelContent[1].getId(), "myView--projectId.button", "then the control added to the fourth extension point is on the second position.");
 			assert.notOk(oGetExtensionPointInfoSpy.called, "then the modifier.getExtensionPointInfo function is not called");
 			assert.ok(oReadyStub.called, "then the ready function of extension point is called.");
-			assert.equal(oReadyStub.firstCall.args[0][0].getId(), aHBoxItems[0].getId(), "then the added button is passed to the ready function.");
+			assert.equal(oReadyStub.firstCall.args[0][0].getId(), aPanelContent[1].getId(), "then the added button is passed to the ready function.");
 		});
 	});
 

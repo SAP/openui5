@@ -141,7 +141,9 @@ sap.ui.define([
 				type: "extensionPoint",
 				icon: this.mExtensionPointMetadata.palette.icons.svg,
 				extensionPointInfo: {
-					defaultContent: mExtensionPoint.defaultContent
+					defaultContent: mExtensionPoint.defaultContent.map(function (oControl) {
+						return oControl.getId();
+					})
 				}
 			};
 		};
