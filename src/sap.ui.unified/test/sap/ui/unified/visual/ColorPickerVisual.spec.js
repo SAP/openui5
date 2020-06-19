@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,browser,expect*/
+/*global describe,it,element,by,takeScreenshot,browser,expect,protractor*/
 
 describe("sap.ui.unified.ColorPickerVisual", function() {
 	"use strict";
@@ -39,6 +39,13 @@ describe("sap.ui.unified.ColorPickerVisual", function() {
 		expect(takeScreenshot(element(by.id("cp")))).toLookAs("Large_ColorPicker_HSL_RGB");
 	});
 
+	it("should move navigate from first radio button to second from radio group", function() {
+		element(by.id("select_mode-label")).click();
+		element(by.id("large_mode")).click();
+		element(by.css(".sapMRb")).click();
+		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+		expect(takeScreenshot(element(by.id("cp")))).toLookAs("Large_ColorPicker_radio_butto_group");
+	});
 
 	// Simplified mode
 	it("should render simplified mode HSL color picker with RGB output", function() {
