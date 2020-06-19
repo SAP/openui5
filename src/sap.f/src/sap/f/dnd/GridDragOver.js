@@ -73,11 +73,12 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 		}
 
 		this._oDragControl = oDragControl;
+		this._oDragContainer = oDragControl.getParent();
 		this._oDropContainer = oDropContainer;
 		this._sTargetAggregation = sTargetAggregation;
 
 		this._mDragItemDimensions = this._getDimensions(oDragControl);
-		this._bIsInSameContainer = oDragControl.getParent() === oDropContainer;
+		this._bIsInSameContainer = this._oDragContainer === this._oDropContainer;
 
 		if (this._bIsInSameContainer) {
 			this._iDragFromIndex = oDropContainer.indexOfAggregation(sTargetAggregation, oDragControl);
@@ -290,13 +291,16 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 	 * Hides the control that is currently dragged.
 	 */
 	GridDragOver.prototype._hideDraggedItem = function() {
-			this._oDragControl.$().hide();
+		this._oDragControl.$().hide();
 
 		// this._oDragControl.setVisible(false); // todo, this brakes the drag session
 
 		var $gridItem = this._findContainingGridItem(this._oDragControl);
+
 		if ($gridItem && this._bIsInSameContainer) {
 			$gridItem.hide();
+		} else {
+			this._oDragContainer.fireEvent("_gridPolyfillDraggingInAnotherContainer");
 		}
 	};
 

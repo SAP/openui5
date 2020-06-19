@@ -746,7 +746,12 @@ sap.ui.define([
 	 */
 	GridContainer.prototype._resizeItem = function (oEvent) {
 		if (!isGridSupportedByBrowser()) {
-			this._scheduleIEPolyfill();
+			// don't re-arrange the items if currently dragging one of the items from this container in another container
+			if (!this._bDraggingInAnotherContainer) {
+				this._scheduleIEPolyfill();
+			}
+
+			this._bDraggingInAnotherContainer = false;
 			return;
 		}
 
@@ -1077,12 +1082,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Implements polyfill for IE after the item is dragged to another container.
+	 * @private
+	 */
+	GridContainer.prototype._polyfillDraggingInAnotherContainer = function () {
+		this._bDraggingInAnotherContainer = true;
+	};
+
+	/**
 	 * Attaches polyfill methods for drag and drop for IE.
 	 * @private
 	 */
 	GridContainer.prototype._attachDndPolyfill = function () {
 		this.attachEvent("_gridPolyfillAfterDragOver", this._polyfillAfterDragOver, this);
 		this.attachEvent("_gridPolyfillAfterDragEnd", this._polyfillAfterDragEnd, this);
+		this.attachEvent("_gridPolyfillDraggingInAnotherContainer", this._polyfillDraggingInAnotherContainer, this);
 	};
 
 	/**
@@ -1092,6 +1106,7 @@ sap.ui.define([
 	GridContainer.prototype._detachDndPolyfill = function () {
 		this.detachEvent("_gridPolyfillAfterDragOver", this._polyfillAfterDragOver, this);
 		this.detachEvent("_gridPolyfillAfterDragEnd", this._polyfillAfterDragEnd, this);
+		this.detachEvent("_gridPolyfillDraggingInAnotherContainer", this._polyfillDraggingInAnotherContainer, this);
 	};
 
 	/**
