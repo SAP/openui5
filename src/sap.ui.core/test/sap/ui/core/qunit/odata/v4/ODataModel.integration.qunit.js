@@ -13719,7 +13719,7 @@ sap.ui.define([
 				.expectChange("role", ["01", "02"]);
 
 			oBinding.attachEventOnce("change", function (oEvent) {
-				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Change);
+				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Filter);
 			});
 
 			// code under test
@@ -14528,18 +14528,18 @@ sap.ui.define([
 
 			return that.waitForChanges(assert).then(function () {
 				that.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus))"
-						+ "/orderby(LifecycleStatus desc)&$count=true&$skip=7&$top=3", {
+						+ "/orderby(LifecycleStatus desc)&$count=true&$skip=0&$top=3", {
 						"@odata.count" : "26",
 						value : [
-							{LifecycleStatus : "T"},
-							{LifecycleStatus : "S"},
-							{LifecycleStatus : "R"}
+							{LifecycleStatus : "Z"},
+							{LifecycleStatus : "Y"},
+							{LifecycleStatus : "X"}
 						]
 					})
-					.expectChange("isExpanded", [,,,,,,, false, false, false])
-					.expectChange("isTotal", [,,,,,,, false, false, false])
-					.expectChange("level", [,,,,,,, 1, 1, 1])
-					.expectChange("lifecycleStatus", [,,,,,,, "T", "S", "R"]);
+					.expectChange("isExpanded", [false, false, false])
+					.expectChange("isTotal", [false, false, false])
+					.expectChange("level", [1, 1, 1])
+					.expectChange("lifecycleStatus", ["Z", "Y", "X"]);
 
 				oTable.removeColumn(4).destroy(); // GrossAmount
 				oListBinding.setAggregation({groupLevels : ["LifecycleStatus"]});
