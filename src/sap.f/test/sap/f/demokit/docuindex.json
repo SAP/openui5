@@ -263,7 +263,8 @@
 		{
 		  "id": "sap.f.sample.ShellBarWithSearch",
 		  "name": "Shell Bar with search",
-		  "description": "Shell Bar example with configured search functionality."
+		  "description": "Shell Bar example with configured search functionality.",
+		  "details": "To observe the search bar functionality, choose the search icon."
 		},
 		{
 		  "id": "sap.f.sample.ShellBarWithFlexibleColumnLayout",
