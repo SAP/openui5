@@ -596,9 +596,9 @@ sap.ui.define([
 		},
 
 		_initRowHoveringForArea: function(oTable, $Table, sArea) {
-			$Table.find(sArea).hover(function() {
+			$Table.find(sArea).on("mouseenter", function() {
 				RowHoverHandler._onHover(oTable, $Table, sArea, this);
-			}, function() {
+			}).on("mouseleave", function() {
 				RowHoverHandler._onUnhover(oTable, $Table, sArea, this);
 			});
 		},

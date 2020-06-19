@@ -2814,7 +2814,7 @@ sap.ui.define([
 				"-webkit-user-select": "none",
 				"user-select": "none"
 			}).
-			bind("selectstart", function(oEvent) {
+			on("selectstart", function(oEvent) {
 				oEvent.preventDefault();
 				return false;
 			});
@@ -2832,7 +2832,7 @@ sap.ui.define([
 				"-webkit-user-select": "",
 				"user-select": ""
 			}).
-			unbind("selectstart");
+			off("selectstart");
 	};
 
 	/**
