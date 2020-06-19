@@ -10,7 +10,7 @@ sap.ui.define(['sap/base/assert'], function(assert) {
 	 * Uses Array#sort()
 	 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
 	 *
-	 * Note: In IE11 a stable sorting is not supported.
+	 * Note: Array#sort is used for sorting which means that there is no stable sorting for IE11 and the old edge.
 	 *
 	 * Use <code>jQuery.uniqueSort()</code> for arrays of DOMElements.
 	 *
@@ -22,7 +22,7 @@ sap.ui.define(['sap/base/assert'], function(assert) {
 	 * @public
 	 */
 	var fnUniqueSort = function(aArray) {
-		assert(aArray instanceof Array, "uniqueSort: input parameter must be an Array");
+		assert(Array.isArray(aArray), "uniqueSort: input parameter must be an Array");
 		var iLength = aArray.length;
 		if ( iLength > 1 ) {
 			aArray.sort();
