@@ -184,17 +184,17 @@ sap.ui.define(["sap/ui/Device"],
 			}
 			oRm.close("section");
 
-			oRm.openStart("span", oControl.getId() + "-skipFastGroupAnchor")
-				.class("sapUiPseudoInvisibleText")
-				.openEnd()
-				.close("span");
-
 			// run hook method
 			this.renderFooterContent(oRm, oControl);
 
 			oRm.openStart("div", oControl.getId() + "-spacer")
 				.openEnd()
 				.close("div");
+
+			oRm.openStart("span", oControl.getId() + "-skipFastGroupAnchor")
+				.class("sapUiPseudoInvisibleText")
+				.openEnd()
+				.close("span");
 
 			oRm.close("div"); // END scroll
 
