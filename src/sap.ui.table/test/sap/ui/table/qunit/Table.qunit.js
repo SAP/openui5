@@ -499,20 +499,32 @@ sap.ui.define([
 	});
 
 	QUnit.test("FirstVisibleRow", function(assert) {
-		assert.equal(oTable.getFirstVisibleRow(), 5, "FirstVisibleRow row is: 5");
-
-		oTable.setFirstVisibleRow(4, false);
-		sap.ui.getCore().applyChanges();
-		assert.equal(oTable.getFirstVisibleRow(), 4, "FirstVisibleRow has been set to: 4");
-
-		oTable.setFirstVisibleRow(-1, false);
-		sap.ui.getCore().applyChanges();
-		assert.equal(oTable.getFirstVisibleRow(), 0, "FirstVisibleRow has been set to: 0");
-
 		var iMaxRowIndex = aData.length - oTable.getVisibleRowCount();
-		oTable.setFirstVisibleRow(iMaxRowIndex + 1, false);
-		sap.ui.getCore().applyChanges();
-		assert.equal(oTable.getFirstVisibleRow(), iMaxRowIndex, "FirstVisibleRow has been set to: " + iMaxRowIndex);
+
+		assert.equal(oTable.getFirstVisibleRow(), 5, "FirstVisibleRow is: 5");
+
+		oTable.setFirstVisibleRow(4);
+		assert.equal(oTable.getFirstVisibleRow(), 4, "FirstVisibleRow is: 4");
+
+		oTable.setFirstVisibleRow(-1);
+		assert.equal(oTable.getFirstVisibleRow(), 0, "FirstVisibleRow is: 0");
+
+		oTable.getBinding("rows").fireEvent("refresh");
+		oTable.setFirstVisibleRow(iMaxRowIndex + 1);
+		assert.equal(oTable.getFirstVisibleRow(), iMaxRowIndex + 1, "FirstVisibleRow is: " + (iMaxRowIndex + 1));
+
+		oTable.getBinding("rows").fireEvent("change");
+		oTable.setFirstVisibleRow(iMaxRowIndex + 1);
+		assert.equal(oTable.getFirstVisibleRow(), iMaxRowIndex, "FirstVisibleRow is: " + iMaxRowIndex);
+
+		var oBindingInfo = oTable.getBindingInfo("rows");
+		oTable.unbindRows();
+		oTable.setFirstVisibleRow(iMaxRowIndex + 1);
+		assert.equal(oTable.getFirstVisibleRow(), iMaxRowIndex + 1, "FirstVisibleRow is: " + (iMaxRowIndex + 1));
+
+		oTable.bindRows(oBindingInfo);
+		oTable.setFirstVisibleRow(iMaxRowIndex + 1);
+		assert.equal(oTable.getFirstVisibleRow(), iMaxRowIndex, "FirstVisibleRow is: " + iMaxRowIndex);
 	});
 
 	QUnit.test("ColumnHeaderVisible", function(assert) {
