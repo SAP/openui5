@@ -387,7 +387,7 @@ sap.ui.define([
 			sText = this.getText(),
 			oIcon = this.getIcon(),
 			oIconColor = this.getIconColor(),
-			bShouldReadIconColor = oIconColor === 'Positive' || oIconColor === 'Critical' || oIconColor === 'Negative',
+			bShouldReadIconColor = oIconColor === 'Positive' || oIconColor === 'Critical' || oIconColor === 'Negative' || oIconColor === 'Neutral',
 			bHorizontalDesign = this.getDesign() === IconTabFilterDesign.Horizontal,
 			bTextOnly = oIconTabHeader._bTextOnly,
 			bInLine = oIconTabHeader._bInLine || oIconTabHeader.isInlineMode();
@@ -639,7 +639,7 @@ sap.ui.define([
 
 
 		var sItemId = this.getId(),
-			bShouldReadIconColor = oIconColor == 'Positive' || oIconColor == 'Critical' || oIconColor == 'Negative',
+			bShouldReadIconColor = oIconColor == 'Positive' || oIconColor == 'Critical' || oIconColor == 'Negative' || oIconColor == 'Neutral',
 			aLabelledByIds = [];
 
 		if (!bIconOnly) {

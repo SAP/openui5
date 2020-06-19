@@ -846,6 +846,7 @@ sap.ui.define([
 		assert.ok(!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
 		assert.ok(!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
 		assert.ok(!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
+		assert.strictEqual($itbf.text(), "", "icon color text is not set for type 'Default'");
 
 		// Clean up
 		oIconTabBar.destroy();
@@ -864,6 +865,8 @@ sap.ui.define([
 			]
 		});
 
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -875,6 +878,7 @@ sap.ui.define([
 		assert.ok(!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
 		assert.ok(!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
 		assert.ok(!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
+		assert.strictEqual($itbf.text(), oResourceBundle.getText('ICONTABBAR_ICONCOLOR_POSITIVE'), "icon color text is correct");
 
 		// Clean up
 		oIconTabBar.destroy();
@@ -893,6 +897,8 @@ sap.ui.define([
 			]
 		});
 
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -904,6 +910,7 @@ sap.ui.define([
 		assert.ok(!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
 		assert.ok(!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
 		assert.ok(!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
+		assert.strictEqual($itbf.text(), oResourceBundle.getText('ICONTABBAR_ICONCOLOR_NEGATIVE'), "icon color text is correct");
 
 		// Clean up
 		oIconTabBar.destroy();
@@ -922,6 +929,8 @@ sap.ui.define([
 			]
 		});
 
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -933,6 +942,7 @@ sap.ui.define([
 		assert.ok(!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
 		assert.ok(!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
 		assert.ok(!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical");
+		assert.strictEqual($itbf.text(), oResourceBundle.getText('ICONTABBAR_ICONCOLOR_NEUTRAL'), "icon color text is correct");
 
 		// Clean up
 		oIconTabBar.destroy();
@@ -951,6 +961,8 @@ sap.ui.define([
 			]
 		});
 
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+
 		// System under test
 		oIconTabBar.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -962,6 +974,7 @@ sap.ui.define([
 		assert.ok(!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
 		assert.ok(!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
 		assert.ok(!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
+		assert.strictEqual($itbf.text(), oResourceBundle.getText('ICONTABBAR_ICONCOLOR_CRITICAL'), "icon color text is correct");
 
 		// Clean up
 		oIconTabBar.destroy();
