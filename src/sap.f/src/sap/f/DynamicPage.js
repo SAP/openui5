@@ -1700,7 +1700,7 @@ sap.ui.define([
 			this._cacheTitleDom();
 			this._deRegisterResizeHandler(DynamicPage.RESIZE_HANDLER_ID.TITLE);
 			this._registerResizeHandler(DynamicPage.RESIZE_HANDLER_ID.TITLE, this.$title[0], this._onChildControlsHeightChange.bind(this));
-		} else if (oSourceControl instanceof DynamicPageHeader) {
+		} else if (oSourceControl instanceof DynamicPageHeader && oSourceControl.getDomRef() !== this.$header.get(0)) {
 			this._cacheHeaderDom();
 			this._deRegisterResizeHandler(DynamicPage.RESIZE_HANDLER_ID.HEADER);
 			this._registerResizeHandler(DynamicPage.RESIZE_HANDLER_ID.HEADER, this.$header[0], this._onChildControlsHeightChange.bind(this));
@@ -1714,8 +1714,9 @@ sap.ui.define([
 	 * in order to adjust the update the <code>ScrollBar</code>.
 	 * @private
 	 */
-	DynamicPage.prototype._onChildControlsHeightChange = function () {
-		var bNeedsVerticalScrollBar = this._needsVerticalScrollBar();
+	DynamicPage.prototype._onChildControlsHeightChange = function (oEvent) {
+		var bNeedsVerticalScrollBar = this._needsVerticalScrollBar(),
+			oHeader = this.getHeader();
 
 		// FitContainer needs to be updated, when height is changed and scroll bar appear, to enable calc of original height
 		if (bNeedsVerticalScrollBar) {
@@ -1729,6 +1730,10 @@ sap.ui.define([
 		}
 
 		this._bExpandingWithAClick = false;
+
+		if (oHeader && oEvent.target.id === oHeader.getId()) {
+			this._adaptScrollPositionOnHeaderChange(oEvent.size.height, oEvent.oldSize.height);
+		}
 	};
 
 	/**
@@ -1869,6 +1874,24 @@ sap.ui.define([
 
 		this.allowCustomScroll = true;
 		this._setScrollPosition(this._getScrollBar().getScrollPosition());
+	};
+
+	/**
+	 * When the header is in the overflow of the scroll container, it still takes space and whenever its height changes,
+	 * it affects the scroll position of the scrollable content bellow it. Whenever its height increases/decreases,
+	 * the content bellow it is pushed down or up, respectively.
+	 * To avoid a visual jump of the visible content upon change in the header height, we adjust the scroll position
+	 * accordingly, to compensate the increase/decrease of header height.
+	 * @param iNewHeight
+	 * @param iOldHeigh
+	 * @private
+	 */
+	DynamicPage.prototype._adaptScrollPositionOnHeaderChange = function (iNewHeight, iOldHeigh) {
+		var iHeightChange =  iNewHeight - iOldHeigh;
+		// check if the header is in the scroll overflow (i.e. is snapped by being scrolled out of view)
+		if (iHeightChange && !this.getHeaderExpanded() && !this._bHeaderInTitleArea && this._needsVerticalScrollBar()) {
+			this._setScrollPosition(this._getScrollPosition() + iHeightChange);
+		}
 	};
 
 	/**

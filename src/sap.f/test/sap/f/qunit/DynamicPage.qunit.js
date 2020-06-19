@@ -984,10 +984,33 @@ function (
 		$oDynamicPage = this.oDynamicPage.$();
 		$oDynamicPage.find('.sapMPanel').get(0).style.height = "300px";
 		// explicitly call to avoid waiting for resize handler to detect change
-		this.oDynamicPage._onChildControlsHeightChange();
+		this.oDynamicPage._onChildControlsHeightChange({target: oHeader.getDomRef(), size: {}, oldSize: {}});
 
 		// Check
 		assert.ok(isHeaderSnappedWithScroll(), "header is still snapped with scroll");
+	});
+
+	QUnit.test("DynamicPage header resize with invalidation", function (assert) {
+		var oHeader = this.oDynamicPage.getHeader(),
+			oDeregisterSpy = this.spy(this.oDynamicPage, "_deRegisterResizeHandler"),
+			oAdaptScrollPositionSpy = this.spy(this.oDynamicPage, "_adaptScrollPositionOnHeaderChange");
+
+		oHeader.addContent(new sap.m.Panel({height: "100px"}));
+
+		// setup
+		oUtil.renderObject(this.oDynamicPage);
+		this.oDynamicPage.setHeaderExpanded(false);
+
+		//Act
+		oDeregisterSpy.reset();
+		oHeader.removeAllContent();
+		Core.applyChanges();
+
+		// Check
+		assert.ok(oDeregisterSpy.notCalled, "resize handler is not deregistered");
+		// explicitly call to avoid waiting for resize handler to detect change
+		this.oDynamicPage._onChildControlsHeightChange({target: oHeader.getDomRef(), size: {}, oldSize: {}});
+		assert.ok(oAdaptScrollPositionSpy.called, "scroll position is adaptation is called");
 	});
 
 	/* --------------------------- DynamicPage Private functions ---------------------------------- */
