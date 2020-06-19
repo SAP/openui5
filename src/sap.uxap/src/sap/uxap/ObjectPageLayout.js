@@ -4575,13 +4575,17 @@ sap.ui.define([
 	};
 
 
-	ObjectPageLayout.prototype._getAriaLabelText = function (sElement) {
+	ObjectPageLayout.prototype._getAriaLabelText = function (sElement, bAddResourceBundleText) {
 		var oHeader = this.getHeaderTitle(),
 			sTitleText = oHeader ? oHeader.getTitleText() : null,
 			sAriaLabelText;
 
 		if (oHeader && sTitleText) {
-			sAriaLabelText = sTitleText + " " + ObjectPageLayout._getLibraryResourceBundle().getText(sElement + "_ARIA_LABEL_WITH_TITLE");
+			sAriaLabelText = sTitleText;
+
+			if (bAddResourceBundleText) {
+				sAriaLabelText += " " + ObjectPageLayout._getLibraryResourceBundle().getText(sElement + "_ARIA_LABEL_WITH_TITLE");
+			}
 		} else {
 			sAriaLabelText = ObjectPageLayout._getLibraryResourceBundle().getText(sElement + "_ARIA_LABEL_WITHOUT_TITLE");
 		}
@@ -4616,10 +4620,10 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._updateAriaLabels = function () {
 		var oLandmarkInfo = this.getLandmarkInfo(),
-			sRootText = this._getAriaLabelText("ROOT"),
-			sHeaderText = this._getAriaLabelText("HEADER"),
-			sNavigationText = this._getAriaLabelText("NAVIGATION"),
-			sToolbarText = this._getAriaLabelText("NAVTOOLBAR"),
+			sRootText = this._getAriaLabelText("ROOT", true),
+			sHeaderText = this._getAriaLabelText("HEADER", true),
+			sNavigationText = this._getAriaLabelText("NAVIGATION", false),
+			sToolbarText = this._getAriaLabelText("NAVTOOLBAR", true),
 			bHeaderLabelSet = oLandmarkInfo && oLandmarkInfo.getHeaderLabel(),
 			bRootLabelSet = oLandmarkInfo && oLandmarkInfo.getRootLabel(),
 			bNavigationLabelSet = oLandmarkInfo && oLandmarkInfo.getNavigationLabel();

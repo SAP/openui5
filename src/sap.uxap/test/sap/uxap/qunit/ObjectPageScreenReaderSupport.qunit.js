@@ -112,14 +112,12 @@ function (jQuery, Core, ObjectPageLayout, ObjectPageSection, XMLView) {
 	QUnit.test("AnchorBar element aria-label", function (assert) {
 		var oHeader = this.objectPageView.byId("objectPageHeader"),
 			sTitleText = "Updated title",
-			sBundleTextWithTitle = getResourceBundleText("NAVIGATION_ARIA_LABEL_WITH_TITLE"),
 			sBundleTextWithoutTitle = getResourceBundleText("NAVIGATION_ARIA_LABEL_WITHOUT_TITLE");
 
 		// Update title's text
 		oHeader.setObjectTitle(sTitleText);
 
-		assert.strictEqual(this.oObjectPage.$("anchorBar").attr("aria-label"), sTitleText + " "
-				+ sBundleTextWithTitle, "The AnchorBar element has correctly updated it's aria-label");
+		assert.strictEqual(this.oObjectPage.$("anchorBar").attr("aria-label"), sTitleText, "The AnchorBar element has correctly updated it's aria-label");
 
 		// Remove title's text
 		sTitleText = "";
