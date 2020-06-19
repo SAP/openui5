@@ -1644,6 +1644,7 @@ sap.ui.define([
 		//prepare
 		var oTP = new TimePicker({
 			displayFormat: "HH:mm:ss",
+			valueFormat: "HH:mm:ss",
 			dateValue: new Date(2000, 1, 2, 23, 35, 54)
 		}),
 			oSliders,
@@ -1681,6 +1682,12 @@ sap.ui.define([
 		assert.equal(oSliderSeconds.getSelectedValue(), "0", "When hours are set to 24, seconds are set to 0");
 		assert.ok(oSliderSeconds.$().hasClass("sapMTPDisabled"),
 				"When hours are set to 24, seconds have 'sapMTPDisabled' class");
+
+		oTP._handleOkPress();
+		assert.equal(oTP.getValue(), "24:00:00", "The value in the input filed is ok");
+
+		oTP._openPicker();
+		this.clock.tick(1000); //wait the initial focus of the first slider
 
 		//act
 		//scroll hours to their previous state
