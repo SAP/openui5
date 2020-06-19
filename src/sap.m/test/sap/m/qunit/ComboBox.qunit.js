@@ -10935,7 +10935,7 @@ sap.ui.define([
 		oCB.destroy();
 	});
 
-	QUnit.test("Changing models resets the selection if item is not there", function (assert) {
+	QUnit.test("Changing models should not resets the selection if item is not there", function (assert) {
 		//Setup
 		var oData = {list: [{id: "1", text: "1"}]},
 			oModel = new JSONModel(oData),
@@ -10971,8 +10971,46 @@ sap.ui.define([
 		this.clock.tick(100);
 
 		//Assert
-		assert.ok(!oComboBox.getSelectedItem(), "No item is currently selected");
-		assert.ok(!oComboBox.getSelectedKey(), "No item is currently selected");
+		assert.ok(oComboBox.getSelectedItem(), "Item remains selected");
+		assert.ok(oComboBox.getSelectedKey(), "selectedKey is not reset");
+
+		//Cleanup
+		oComboBox.destroy();
+	});
+
+	QUnit.test("Changing models keeps the value", function (assert) {
+		//Setup
+		var oData = {list: [{id: "1", text: "1"}, {id: "2", text: "2"}]},
+			oModel = new JSONModel(oData),
+			oItemsTemplate = new Item({key: "{id}", text: "{text}"}),
+			oComboBox = new ComboBox({
+				items: {
+					path: "/list",
+					template: oItemsTemplate
+				}
+			});
+
+		//Act
+		oComboBox.setModel(oModel);
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(100);
+
+		//Assert
+		assert.ok(!oComboBox.getSelectedKey(), "There is no selected item.");
+		assert.ok(!oComboBox.getSelectedItem(), "There is no selected key.");
+
+		oComboBox.setValue("test");
+
+		//Act
+		oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}, {id: "33", text: "33"}]);
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(100);
+
+		//Assert
+		assert.ok(!oComboBox.getSelectedKey(), "There is no selected item.");
+		assert.ok(!oComboBox.getSelectedItem(), "There is no selected key.");
+		assert.strictEqual(oComboBox.getValue(), "test", "Value is not reset.");
 
 		//Cleanup
 		oComboBox.destroy();
