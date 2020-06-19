@@ -1,25 +1,25 @@
 <mvc:View
-		controllerName="sap.m.sample.MaxNumberOfNotificationsReached.C"
-		xmlns:l="sap.ui.layout"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns="sap.m">
-	<l:VerticalLayout
-			class="sapUiContentPadding"
-			width="100%">
-		<l:content>
-			<List id="notificationList2" class="sapContrast sapContrastPlus">
-				<NotificationListGroup
-						title="Notification Group"
-						showCloseButton="true"
-						collapsed="false"
-						close="onItemClose"
-						showEmptyGroup="true"
-						enableCollapseButtonWhenEmpty="true">
-					<buttons>
-						<Button text="Load notifications" press="onLoadNotifications"/>
-					</buttons>
-				</NotificationListGroup>
-			</List>
-		</l:content>
-	</l:VerticalLayout>
+	controllerName="sap.m.sample.MaxNumberOfNotificationsReached.C"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	class="sapContrastPlus sapContrast">
+	<VBox class="sapUiSmallMargin">
+		<List>
+			<layoutData>
+				<FlexItemData maxWidth="600px" />
+			</layoutData>
+
+			<NotificationListGroup
+				title="Notification Group"
+				showCloseButton="true"
+				collapsed="false"
+				close=".onItemClose"
+				showEmptyGroup="true"
+				enableCollapseButtonWhenEmpty="true">
+				<buttons>
+					<Button text="Load notifications" press=".onLoadNotificationsPress" />
+				</buttons>
+			</NotificationListGroup>
+		</List>
+	</VBox>
 </mvc:View>

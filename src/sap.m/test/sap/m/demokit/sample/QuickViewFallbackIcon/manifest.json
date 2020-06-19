@@ -7,14 +7,13 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.QuickViewFallbackIcon.QuickViewFallbackIcon",
+			"viewName": "sap.m.sample.QuickViewFallbackIcon.V",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
 				"sap.ui.core": {},
-				"sap.ui.layout": {},
 				"sap.m": {}
 			}
 		},
@@ -22,8 +21,8 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"QuickViewFallbackIcon.view.xml",
-					"QuickViewFallbackIcon.controller.js",
+					"V.view.xml",
+					"C.controller.js",
 					"QuickViewFallbackIcon.fragment.xml",
 					"model/data.json",
 					"manifest.json"

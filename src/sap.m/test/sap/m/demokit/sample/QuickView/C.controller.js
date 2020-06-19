@@ -6,10 +6,9 @@ sap.ui.define([
 ], function (Controller, JSONModel, Fragment, MessageToast) {
 	"use strict";
 
-	return Controller.extend("sap.m.sample.QuickView.QuickView", {
+	return Controller.extend("sap.m.sample.QuickView.C", {
 
 		onInit: function () {
-			// load JSON sample data
 			var oCompanyModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/QuickView/model/CompanyData.json")),
 				oEmployeeModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/QuickView/model/EmployeeData.json")),
 				oGenericModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/QuickView/model/GenericData.json")),
@@ -22,15 +21,21 @@ sap.ui.define([
 				.setModel(oGenericModelNoHeader, "GenericModelNoHeader");
 		},
 
+		onExit: function () {
+			if (this._oQuickView) {
+				this._oQuickView.destroy();
+			}
+		},
+
 		onAfterRendering: function () {
-			var oButton = this.byId('showQuickView');
-			oButton.$().attr('aria-haspopup', true);
+			var oButton = this.byId("showQuickView");
+			oButton.$().attr("aria-haspopup", true);
 
-			oButton = this.byId('employeeQuickView');
-			oButton.$().attr('aria-haspopup', true);
+			oButton = this.byId("employeeQuickView");
+			oButton.$().attr("aria-haspopup", true);
 
-			oButton = this.byId('genericQuickView');
-			oButton.$().attr('aria-haspopup', true);
+			oButton = this.byId("genericQuickView");
+			oButton.$().attr("aria-haspopup", true);
 		},
 
 		openQuickView: function (oEvent, oModel) {
@@ -80,15 +85,9 @@ sap.ui.define([
 		onNavigate: function (oEvent) {
 			var oNavOrigin = oEvent.getParameter("navOrigin");
 			if (oNavOrigin) {
-				MessageToast.show('Link "' + oNavOrigin.getText() + '" was clicked');
+				MessageToast.show("Link '" + oNavOrigin.getText() + "' was clicked");
 			} else {
-				MessageToast.show('Back button was clicked');
-			}
-		},
-
-		onExit: function () {
-			if (this._oQuickView) {
-				this._oQuickView.destroy();
+				MessageToast.show("Back button was clicked");
 			}
 		}
 

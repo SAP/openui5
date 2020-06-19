@@ -6,17 +6,23 @@
 		}
 	},
 	"sap.ui5": {
-		"rootView": "sap.m.sample.LabelProperties.LabelProperties",
+		"rootView": {
+			"viewName": "sap.m.sample.LabelProperties.V",
+			"type": "XML",
+			"async": true
+		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.layout": {}
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"LabelProperties.view.xml",
-					"LabelProperties.controller.js",
+					"V.view.xml",
+					"C.controller.js",
 					"manifest.json"
 				]
 			}

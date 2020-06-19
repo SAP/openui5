@@ -4,10 +4,9 @@ sap.ui.define([
 ], function (Controller, JSONModel) {
 	"use strict";
 
-	return Controller.extend("sap.m.sample.QuickViewCardScrollBar.QuickViewCardScrollBar", {
+	return Controller.extend("sap.m.sample.QuickViewCardScrollBar.C", {
 
 		onInit: function () {
-			// load JSON sample data
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/QuickViewCardScrollBar/model/data.json"));
 			this.getView().setModel(oModel);
 		},

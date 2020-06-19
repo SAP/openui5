@@ -13,15 +13,9 @@
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.layout": {}
+				"sap.ui.core": {},
+				"sap.m": {}
 			}
-		},
-		"resources": {
-			"css": [
-				{
-					"uri": "styles.css"
-				}
-			]
 		},
 		"config": {
 			"sample": {
@@ -29,7 +23,7 @@
 					"V.view.xml",
 					"C.controller.js",
 					"manifest.json",
-					"styles.css"
+					"model/notifications.json"
 				]
 			}
 		}

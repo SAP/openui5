@@ -5,10 +5,9 @@ sap.ui.define([
 ], function (Controller, JSONModel, MessageToast) {
 	"use strict";
 
-	return Controller.extend("sap.m.sample.QuickViewCard.QuickViewCard", {
+	return Controller.extend("sap.m.sample.QuickViewCard.C", {
 
 		onInit: function () {
-			// load JSON sample data
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/QuickViewCard/model/data.json"));
 			this.getView().setModel(oModel);
 		},
@@ -31,7 +30,7 @@ sap.ui.define([
 			var oNavOrigin = oEvent.getParameter("navOrigin");
 
 			if (oNavOrigin) {
-				MessageToast.show('Link "' + oNavOrigin.getText() + '" was clicked');
+				MessageToast.show("Link '" + oNavOrigin.getText() + "' was clicked");
 			} else {
 				MessageToast.show("Back button was clicked");
 			}

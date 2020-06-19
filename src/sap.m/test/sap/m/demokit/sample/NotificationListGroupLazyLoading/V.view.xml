@@ -1,45 +1,45 @@
 <mvc:View
-		controllerName="sap.m.sample.NotificationListGroupLazyLoading.C"
-		class="sapUiBodyBackground sapContrastPlus"
-		xmlns:l="sap.ui.layout"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns="sap.m">
-	<l:VerticalLayout
-			class="sapUiContentPadding"
-			width="100%">
-		<l:content>
-			<List id="notificationList"  class="sapContrast sapContrastPlus">
-				<NotificationListGroup
-						title="3 messages. They will be lazy loaded when 'Expand' button is pressed."
-						showCloseButton="true"
-						showItemsCounter="false"
-						collapsed="true"
-						onCollapse="loadNotifications"
-						close="onItemClose"
-						showEmptyGroup="true"
-						enableCollapseButtonWhenEmpty="true">
-					<buttons>
-						<Button text="Accept All" press="onAcceptPress"/>
-						<Button text="Reject All" press="onRejectPress"/>
-						<Button text="Get items count" press="onGetItemsCount"/>
-					</buttons>
-				</NotificationListGroup>
-				<NotificationListGroup
-						title="3 messages. They will be lazy loaded when 'Expand' button is pressed."
-						showCloseButton="true"
-						showItemsCounter="false"
-						collapsed="true"
-						onCollapse="loadNotifications"
-						close="onItemClose"
-						showEmptyGroup="true"
-						enableCollapseButtonWhenEmpty="true">
-					<buttons>
-						<Button text="Accept All" press="onAcceptPress"/>
-						<Button text="Reject All" press="onRejectPress"/>
-						<Button text="Get items count" press="onGetItemsCount"/>
-					</buttons>
-				</NotificationListGroup>
-			</List>
-		</l:content>
-	</l:VerticalLayout>
+	controllerName="sap.m.sample.NotificationListGroupLazyLoading.C"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	class="sapUiBodyBackground sapContrastPlus">
+	<VBox class="sapUiSmallMargin">
+		<List class="sapContrast sapContrastPlus">
+			<layoutData>
+				<FlexItemData maxWidth="600px" />
+			</layoutData>
+
+			<NotificationListGroup
+				title="3 messages. They will be lazy loaded when 'Expand' button is pressed."
+				showCloseButton="true"
+				showItemsCounter="false"
+				collapsed="true"
+				onCollapse=".onToggleCollapse"
+				close=".onItemClose"
+				showEmptyGroup="true"
+				enableCollapseButtonWhenEmpty="true">
+				<buttons>
+					<Button text="Accept All" press=".onAcceptPress" />
+					<Button text="Reject All" press=".onRejectPress" />
+					<Button text="Get items count" press=".onGetItemsCount" />
+				</buttons>
+			</NotificationListGroup>
+
+			<NotificationListGroup
+				title="3 messages. They will be lazy loaded when 'Expand' button is pressed."
+				showCloseButton="true"
+				showItemsCounter="false"
+				collapsed="true"
+				onCollapse=".onToggleCollapse"
+				close=".onItemClose"
+				showEmptyGroup="true"
+				enableCollapseButtonWhenEmpty="true">
+				<buttons>
+					<Button text="Accept All" press=".onAcceptPress" />
+					<Button text="Reject All" press=".onRejectPress" />
+					<Button text="Get items count" press=".onGetItemsCount" />
+				</buttons>
+			</NotificationListGroup>
+		</List>
+	</VBox>
 </mvc:View>
