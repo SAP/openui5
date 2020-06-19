@@ -8782,6 +8782,51 @@ sap.ui.define([
 				"deep/resource/path", true),
 			oCache);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("create: bSharedRequest, cache size", function (assert) {
+		var i, mSharedCollectionCacheByPath;
+
+		// the first cache is inactive, but remains until the limit is reached
+		_Cache.create(this.oRequestor, "/0", {}, false, undefined, true).setActive(false);
+		for (i = 1; i <= 100; i += 1) {
+			_Cache.create(this.oRequestor, "/" + i, {}, false, undefined, true);
+		}
+		mSharedCollectionCacheByPath = this.oRequestor.$mSharedCollectionCacheByPath;
+		assert.strictEqual(Object.keys(mSharedCollectionCacheByPath).length, 101);
+		assert.ok("/0" in this.oRequestor.$mSharedCollectionCacheByPath);
+
+		// code under test - one inactive cache while another one is reused
+		_Cache.create(this.oRequestor, "/42", {}, false, undefined, true);
+
+		assert.strictEqual(Object.keys(mSharedCollectionCacheByPath).length, 101,
+			"no change when reusing a cache");
+
+		// code under test
+		_Cache.create(this.oRequestor, "/102", {}, false, undefined, true);
+
+		assert.strictEqual(Object.keys(mSharedCollectionCacheByPath).length, 101,
+			"one added, one removed");
+		assert.notOk("/0" in mSharedCollectionCacheByPath);
+
+		// code under test
+		_Cache.create(this.oRequestor, "/0", {}, false, undefined, true);
+
+		assert.strictEqual(Object.keys(mSharedCollectionCacheByPath).length, 102,
+			"all caches active, nothing removed");
+
+		mSharedCollectionCacheByPath["/0"].setActive(false);
+		mSharedCollectionCacheByPath["/1"].setActive(false);
+		mSharedCollectionCacheByPath["/2"].setActive(false);
+		mSharedCollectionCacheByPath["/3"].setActive(false);
+		_Cache.create(this.oRequestor, "/103", {}, false, undefined, true);
+
+		assert.strictEqual(Object.keys(mSharedCollectionCacheByPath).length, 101);
+		assert.ok("/0" in this.oRequestor.$mSharedCollectionCacheByPath, "added later -> remains");
+		assert.notOk("/1" in this.oRequestor.$mSharedCollectionCacheByPath);
+		assert.notOk("/2" in this.oRequestor.$mSharedCollectionCacheByPath);
+		assert.ok("/3" in this.oRequestor.$mSharedCollectionCacheByPath);
+	});
 });
 //TODO: resetCache if error in update?
 // TODO we cannot update a single property with value null, because the read delivers "204 No

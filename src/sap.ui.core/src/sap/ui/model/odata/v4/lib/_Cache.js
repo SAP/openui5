@@ -2706,7 +2706,7 @@ sap.ui.define([
 	 */
 	Cache.create = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 			sDeepResourcePath, bSharedRequest) {
-		var sPath, oSharedCollectionCache, mSharedCollectionCacheByPath;
+		var iCount, aKeys, sPath, oSharedCollectionCache, mSharedCollectionCacheByPath;
 
 		if (bSharedRequest) {
 			sPath = sResourcePath
@@ -2720,6 +2720,19 @@ sap.ui.define([
 			if (oSharedCollectionCache) {
 				oSharedCollectionCache.setActive(true);
 			} else {
+				// remove inactive caches when there are already more than 100 caches in the map
+				aKeys = Object.keys(oRequestor.$mSharedCollectionCacheByPath);
+				iCount = aKeys.length;
+				if (iCount > 100) {
+					aKeys.every(function (sKey) {
+						if (!oRequestor.$mSharedCollectionCacheByPath[sKey].iActiveUsages) {
+							delete oRequestor.$mSharedCollectionCacheByPath[sKey];
+							iCount -= 1;
+						}
+						return iCount > 100;
+					});
+				}
+
 				oSharedCollectionCache = mSharedCollectionCacheByPath[sPath]
 					= new CollectionCache(oRequestor, sResourcePath, mQueryOptions,
 						bSortExpandSelect, sDeepResourcePath, bSharedRequest);
