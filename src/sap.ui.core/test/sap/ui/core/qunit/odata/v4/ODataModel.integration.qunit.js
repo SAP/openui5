@@ -15277,9 +15277,12 @@ sap.ui.define([
 	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
 	// but a grand total row (CPOUI5UISERVICESV3-1418) which is fixed at the top; first visible
 	// row starts at 1 and then we scroll up; headerContext>$count is also used
+	//
+	// JIRA: CPOUI5ODATAV4-297, CPOUI5ODATAV4-320 avoid virtual context for $$aggregation
+[false, true].forEach(function (bAutoExpandSelect) {
 	[false, true].forEach(function (bCount) {
 		var sTitle = "Data Aggregation: $$aggregation grandTotal w/o groupLevels; $count : "
-				+ bCount;
+				+ bCount + "; autoExpandSelect : " + bAutoExpandSelect;
 
 		QUnit.test(sTitle, function (assert) {
 			var sBasicPath
@@ -15290,9 +15293,7 @@ sap.ui.define([
 					"SalesNumber@odata.type" : "#Decimal"
 				},
 				oListBinding,
-				// TODO does not work with fixed row count because this causes two parallel requests
-				// -> JIRA: CPOUI5ODATAV4-297
-				oModel = createBusinessPartnerTestModel({autoExpandSelect : false}),
+				oModel = createBusinessPartnerTestModel({autoExpandSelect : bAutoExpandSelect}),
 				oTable,
 				sView = '\
 <Text id="count" text="{$count}"/>\
@@ -15395,6 +15396,7 @@ sap.ui.define([
 			});
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,

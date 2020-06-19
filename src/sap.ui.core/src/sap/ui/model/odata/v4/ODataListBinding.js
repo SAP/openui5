@@ -103,7 +103,9 @@ sap.ui.define([
 					"$$groupId", "$$operationMode", "$$ownRequest", "$$patchWithoutSideEffects",
 					"$$sharedRequest", "$$updateGroupId"]);
 				this.aApplicationFilters = _Helper.toArray(vFilters);
-				this.sChangeReason = oModel.bAutoExpandSelect ? "AddVirtualContext" : undefined;
+				this.sChangeReason = oModel.bAutoExpandSelect && !mParameters.$$aggregation
+					? "AddVirtualContext"
+					: undefined;
 				this.oDiff = undefined;
 				this.aFilters = [];
 				this.sGroupId = mParameters.$$groupId;
@@ -332,8 +334,7 @@ sap.ui.define([
 		if (sChangeReason === "") { // called from #setAggregation
 			if (this.mQueryOptions.$apply === sOldApply
 				&& (!this.mParameters.$$aggregation || !oOldAggregation
-					|| _Helper.deepEqual(this.mParameters.$$aggregation, oOldAggregation))
-					) {
+					|| _Helper.deepEqual(this.mParameters.$$aggregation, oOldAggregation))) {
 				return; // unchanged $apply derived from $$aggregation
 			}
 			sChangeReason = ChangeReason.Change;
@@ -1976,7 +1977,7 @@ sap.ui.define([
 	// @override sap.ui.model.Binding#initialize
 	ODataListBinding.prototype.initialize = function () {
 		if (this.isResolved() && !this.getRootBinding().isSuspended()) {
-			if (this.oModel.bAutoExpandSelect) {
+			if (this.sChangeReason === "AddVirtualContext") {
 				this._fireChange({
 					detailedReason : this.sChangeReason,
 					reason : ChangeReason.Change

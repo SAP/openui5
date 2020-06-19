@@ -233,11 +233,9 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("initialize: resolved, refresh", function (assert) {
 		var oBinding = this.bindList("n/a"),
-			sChangeReason = {},
 			oRootBinding = {isSuspended : function () {}};
 
-		oBinding.sChangeReason = sChangeReason;
-		assert.strictEqual(this.oModel.bAutoExpandSelect, false);
+		oBinding.sChangeReason = undefined;
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
 		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(false);
@@ -253,23 +251,21 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("initialize: resolved, with change reason", function (assert) {
 		var oBinding = this.bindList("n/a"),
-			sChangeReason = {},
 			oRootBinding = {isSuspended : function () {}};
 
-		oBinding.sChangeReason = sChangeReason;
-		this.oModel.bAutoExpandSelect = true;
+		oBinding.sChangeReason = "AddVirtualContext";
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
 		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(false);
 		this.mock(oBinding).expects("_fireChange").withExactArgs({
-			detailedReason : sinon.match.same(sChangeReason),
+			detailedReason : "AddVirtualContext",
 			reason : ChangeReason.Change
 		});
 
 		// code under test
 		oBinding.initialize();
 
-		assert.strictEqual(oBinding.sChangeReason, sChangeReason);
+		assert.strictEqual(oBinding.sChangeReason, "AddVirtualContext");
 	});
 
 	//*********************************************************************************************
@@ -348,6 +344,20 @@ sap.ui.define([
 			assert.strictEqual(oBinding.sChangeReason,
 				bAutoExpandSelect ? "AddVirtualContext" : undefined);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("c'tor: no AddVirtualContext w/ $$aggregation", function (assert) {
+		var oBinding;
+
+		this.oModel.bAutoExpandSelect = true;
+
+		// code under test
+		oBinding = this.bindList("/EMPLOYEES", null, [], [], {
+			$$aggregation : {aggregate : {"n/a" : {}}}
+		});
+
+		assert.strictEqual(oBinding.sChangeReason, undefined);
 	});
 
 	//*********************************************************************************************
