@@ -3186,25 +3186,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("enableExtendedChangeDetection", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES"),
-			bDetectUpdates = true;
-
-		assert.throws(function () {
-			// code under test : disallow key
-			oBinding.enableExtendedChangeDetection(bDetectUpdates, "ID");
-		}, new Error("Unsupported property 'key' with value 'ID' in binding info for "
-				+ "sap.ui.model.odata.v4.ODataListBinding: /EMPLOYEES"));
-
-		this.mock(ListBinding.prototype).expects("enableExtendedChangeDetection").on(oBinding)
-			.withExactArgs(bDetectUpdates)
-			.returns("foo");
-
-		// code under test
-		assert.strictEqual(oBinding.enableExtendedChangeDetection(bDetectUpdates), "foo");
-	});
-
-	//*********************************************************************************************
 	[false, true].forEach(function (bKeyPredicates) {
 		QUnit.test("_delete: success, use key predicates: " + bKeyPredicates, function (assert) {
 			var oBinding = this.bindList("/EMPLOYEES"),
