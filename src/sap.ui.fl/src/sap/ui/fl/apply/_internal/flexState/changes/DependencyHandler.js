@@ -168,7 +168,7 @@ sap.ui.define([
 	 * Iterating over <code>mDependencies</code> once, executing relevant dependencies, and clearing dependencies queue.
 	 *
 	 * @param {object} mChangesMap - Changes map
-	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
+	 * @param {string} sControlId - ID of the control
 	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise for asynchronous or FakePromise for synchronous processing scenario
 	 * @private
 	 */
@@ -180,7 +180,8 @@ sap.ui.define([
 			mChangesMap.dependencyRemovedInLastBatch[sControlId].forEach(function(sDependencyKey) {
 				var oDependency = mChangesMap.mDependencies[sDependencyKey];
 				if (
-					oDependency.dependencies.length === 0
+					oDependency
+					&& oDependency.dependencies.length === 0
 					&& !(oDependency.controlsDependencies && oDependency.controlsDependencies.length)
 				) {
 					aDependenciesToBeDeleted.push(sDependencyKey);
@@ -269,6 +270,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mChangesMap - Changes map
 	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
+	 * @param {string} sControlId - ID of the control
 	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all dependencies were processed for asynchronous or FakePromise for the synchronous processing scenario
 	 */
 	DependencyHandler.processDependentQueue = function(mChangesMap, oAppComponent, sControlId) {
@@ -328,6 +330,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mChangesMap - Changes Map
 	 * @param {string} sChangeKey - Key of the change which dependencies have to be resolved
+	 * @param {string} sControlId - ID of the control
 	 */
 	DependencyHandler.resolveDependenciesForChange = function(mChangesMap, sChangeKey, sControlId) {
 		var mDependentChangesOnMe = mChangesMap.mDependentChangesOnMe[sChangeKey];
@@ -384,9 +387,10 @@ sap.ui.define([
 	 *
 	 * @param {object} mChangesMap - Changes Map
 	 * @param {string} sChangeKey - Key of the change which dependencies have to be resolved
+	 * @param {string} sControlId - ID of the control
 	 */
-	DependencyHandler.removeChangeFromDependencies = function(mChangesMap, sChangeKey) {
-		DependencyHandler.resolveDependenciesForChange(mChangesMap, sChangeKey);
+	DependencyHandler.removeChangeFromDependencies = function(mChangesMap, sChangeKey, sControlId) {
+		DependencyHandler.resolveDependenciesForChange(mChangesMap, sChangeKey, sControlId);
 		delete mChangesMap.mDependencies[sChangeKey];
 	};
 
@@ -395,16 +399,61 @@ sap.ui.define([
 	 * Returns <code>true</code> as soon as the first dependency is found, otherwise <code>false</code>
 	 *
 	 * @param {object} mChangesMap - Map with changes and dependencies
-	 * @param {object} sId - ID of the control
+	 * @param {object} sControlId - ID of the control
 	 * @param {sap.ui.core.Component} oAppComponent - Application component instance that is currently loading
 	 * @returns {boolean} <code>true</code> if there are open dependencies
 	 */
-	DependencyHandler.checkForOpenDependenciesForControl = function(mChangesMap, sId, oAppComponent) {
+	DependencyHandler.checkForOpenDependenciesForControl = function(mChangesMap, sControlId, oAppComponent) {
 		return Object.keys(mChangesMap.mDependencies).some(function(sKey) {
 			return mChangesMap.mDependencies[sKey].changeObject.getDependentSelectorList().some(function(oDependendSelector) {
-				return JsControlTreeModifier.getControlIdBySelector(oDependendSelector, oAppComponent) === sId;
+				return JsControlTreeModifier.getControlIdBySelector(oDependendSelector, oAppComponent) === sControlId;
 			});
 		});
+	};
+
+	/**
+	 * Checks the dependencies map for any unresolved dependencies belonging to the given control and returns the
+	 * the file name of the unresolved changes.
+	 *
+	 * @param {object} mChangesMap - Map with changes and dependencies
+	 * @param {object} sControlId - ID of the control
+	 * @param {sap.ui.core.Component} oAppComponent - Application component instance that is currently loading
+	 * @returns {string[]} file names of unresolved changes
+	 */
+	DependencyHandler.getOpenDependenciesForControl = function(mChangesMap, sControlId, oAppComponent) {
+		var aOpenDependencies = [];
+		Object.keys(mChangesMap.mDependencies).forEach(function(sKey) {
+			mChangesMap.mDependencies[sKey].changeObject.getDependentSelectorList().some(function(oDependendSelector) {
+				if (JsControlTreeModifier.getControlIdBySelector(oDependendSelector, oAppComponent) === sControlId) {
+					aOpenDependencies.push(sKey);
+					return true;
+				}
+			});
+		});
+
+		return aOpenDependencies;
+	};
+
+	/**
+	 * Removes the dependencies from the map with changes and dependencies for any unresolved dependencies belonging to the given control.
+	 *
+	 * @param {object} mChangesMap - Map with changes and dependencies
+	 * @param {sap.ui.core.Component} oAppComponent - Application component instance that is currently loading
+	 * @param {object} sControlId - ID of the control whose open dependencies should be removed.
+	 * @param {object} sEmbeddingControlId - ID of the control that contains the control with sControlId and for which the dependencies are going to be resolved.
+	 * @returns {sap.ui.fl.Change[]} Change instances that are removed from dependencies
+	 */
+	DependencyHandler.removeOpenDependentChanges = function(mChangesMap, oAppComponent, sControlId, sEmbeddingControlId) {
+		var aOpenDependencies = DependencyHandler.getOpenDependenciesForControl(mChangesMap, sControlId, oAppComponent);
+		var aChangesToBeDeleted = [];
+		aOpenDependencies.forEach(function(sChangeKey) {
+			if (mChangesMap.mDependencies[sChangeKey].controlsDependencies.length) {
+				aChangesToBeDeleted.push(mChangesMap.mDependencies[sChangeKey].changeObject);
+				DependencyHandler.removeChangeFromDependencies(mChangesMap, sChangeKey, sEmbeddingControlId);
+			}
+		});
+
+		return aChangesToBeDeleted;
 	};
 
 	return DependencyHandler;
