@@ -1780,19 +1780,28 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("clone", function (assert) {
 		var vClone = {},
-			oJsonMock = this.mock(JSON),
+			oJSONMock = this.mock(JSON),
+			fnReplacer = function () {},
 			sStringified = "{}",
 			vValue = {};
 
 		// code under test
 		assert.strictEqual(_Helper.clone(null), null);
 
-		oJsonMock.expects("stringify").withExactArgs(sinon.match.same(vValue))
+		oJSONMock.expects("stringify").withExactArgs(sinon.match.same(vValue), undefined)
 			.returns(sStringified);
-		oJsonMock.expects("parse").withExactArgs(sStringified).returns(vClone);
+		oJSONMock.expects("parse").withExactArgs(sStringified).returns(vClone);
 
 		// code under test
 		assert.strictEqual(_Helper.clone(vValue), vClone);
+
+		oJSONMock.expects("stringify")
+			.withExactArgs(sinon.match.same(vValue), sinon.match.same(fnReplacer))
+			.returns(sStringified);
+		oJSONMock.expects("parse").withExactArgs(sStringified).returns(vClone);
+
+		// code under test
+		assert.strictEqual(_Helper.clone(vValue, fnReplacer), vClone);
 
 		// code under test
 		assert.strictEqual(_Helper.clone(undefined), undefined);
@@ -1869,20 +1878,26 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[undefined, null, {"@$ui5._" : {}}].forEach(function (vClone, i) {
-		QUnit.test("publicClone: " + i, function (assert) {
-			var vValue = {};
+	QUnit.test("publicClone:", function (assert) {
+		var fnCloneMock = this.mock(_Helper).expects("clone")
+				.withExactArgs("~value~", sinon.match.func),
+			fnReplacer;
 
-			this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(vValue))
-				.returns(vClone);
+		fnCloneMock.returns("~clone~");
 
-			// code under test
-			assert.strictEqual(_Helper.publicClone(vValue), vClone);
+		// code under test
+		assert.strictEqual(_Helper.publicClone("~value~"), "~clone~");
 
-			if (vClone) {
-				assert.notOk("@$ui5._" in vClone, "private namespace object deleted from clone");
-			}
-		});
+		fnReplacer = fnCloneMock.getCall(0).args[1];
+
+		// Check:
+		//   - sKey === "@$ui5._" => fnReplacer(sKey, vValue) === undefined for each vValue
+		//   - sKey !== "@$ui5._" => fnReplacer(sKey, vValue) === vValue for each vValue
+		// code under test
+		assert.strictEqual(fnReplacer("@$ui5._", 42), undefined);
+		assert.strictEqual(fnReplacer("@$ui5.node.level", 2), 2);
+		assert.strictEqual(fnReplacer("@$ui5.transient", true), true);
+		assert.strictEqual(fnReplacer("ui5._", "bar"), "bar");
 	});
 
 	//*********************************************************************************************

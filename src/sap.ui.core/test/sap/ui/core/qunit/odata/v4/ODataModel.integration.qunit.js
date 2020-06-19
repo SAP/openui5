@@ -16057,42 +16057,76 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Application tries to read private client-side instance annotations.
+	//
+	// Note: Private annotations of navigation properties are also read protected.
+	// BCP: 2080181343
 	QUnit.test("@$ui5._ is read-protected", function (assert) {
 		var oModel = createTeaBusiModel(),
 			sView = '\
-<FlexBox binding="{/MANAGERS(\'1\')}" id="form">\
+<FlexBox binding="{path: \'/MANAGERS(\\\'1\\\')\', \
+		parameters: {$expand : {Manager_to_Team : true}}}" id="form">\
 	<Text id="predicate" text="{= %{@$ui5._/predicate} }" />\
 	<Text id="id" text="{ID}" />\
+	<FlexBox binding="{Manager_to_Team}" >\
+		<Text id="teamPredicate" text="{= %{@$ui5._/predicate} }" />\
+		<Text id="teamId" text="{Team_Id}" />\
+	</FlexBox>\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("MANAGERS('1')", {ID : "1"})
+		function expectFailedToDrillDown(sPrefix) {
+			that.oLogMock.expects("error").withExactArgs("Failed to drill-down into "
+						+ sPrefix + "@$ui5._/predicate, invalid segment: @$ui5._",
+					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/MANAGERS('1')"
+						+ "?$expand=Manager_to_Team",
+					"sap.ui.model.odata.v4.lib._Cache")
+				.thrice(); // binding, getProperty, requestProperty
+		}
+
+		this.expectRequest("MANAGERS('1')?$expand=Manager_to_Team",
+			{
+				ID : "1",
+				Manager_to_Team : {
+					Team_Id : "42"
+				}
+			})
 			.expectChange("predicate", undefined) // binding itself is "code under test"
-			.expectChange("id", "1");
-		this.oLogMock.expects("error").withExactArgs(
-				"Failed to drill-down into @$ui5._/predicate, invalid segment: @$ui5._",
-				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/MANAGERS('1')",
-				"sap.ui.model.odata.v4.lib._Cache")
-			.thrice(); // binding, getProperty, requestProperty
+			.expectChange("id", "1")
+			.expectChange("teamPredicate", undefined)
+			.expectChange("teamId", "42");
+
+		expectFailedToDrillDown("");
+		expectFailedToDrillDown("Manager_to_Team/");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oContext = that.oView.byId("form").getBindingContext();
+			var oContext = that.oView.byId("form").getBindingContext(),
+				oManager = oContext.getObject();
 
 			// code under test
-			assert.notOk("@$ui5._" in oContext.getObject());
+			assert.notOk("@$ui5._" in oManager);
+			assert.notOk("@$ui5._" in oManager.Manager_to_Team);
 
 			// code under test
 			assert.strictEqual(oContext.getProperty("@$ui5._/predicate"), undefined);
+			assert.strictEqual(
+				oContext.getProperty("Manager_to_Team/@$ui5._/predicate"),
+				undefined
+			);
 
 			// code under test
-			return oContext.requestProperty("@$ui5._/predicate").then(function (vResult) {
-				assert.strictEqual(vResult, undefined);
+			return  Promise.all([
+					oContext.requestProperty("@$ui5._/predicate"),
+					oContext.requestProperty("Manager_to_Team/@$ui5._/predicate")
+				]).then(function (aResult) {
+					assert.strictEqual(aResult[0], undefined);
+					assert.strictEqual(aResult[1], undefined);
 
-				// code under test
-				return oContext.requestObject().then(function (oParent) {
-					assert.notOk("@$ui5._" in oParent);
+					// code under test
+					return oContext.requestObject().then(function (oParent) {
+						assert.notOk("@$ui5._" in oParent);
+						assert.notOk("@$ui5._" in oParent.Manager_to_Team);
+					});
 				});
-			});
 		});
 	});
 
