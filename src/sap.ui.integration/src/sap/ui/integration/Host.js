@@ -132,7 +132,7 @@ sap.ui.define([
 			vReturn = fnResolveDestination(sDestinationName);
 
 			if (!vReturn) {
-				return Promise.reject("Destination '" + sDestinationName + "' could not be resolved.");
+				return Promise.reject("Destination '" + sDestinationName + "' could not be resolved by the host.");
 			}
 
 			if (vReturn instanceof Promise) {

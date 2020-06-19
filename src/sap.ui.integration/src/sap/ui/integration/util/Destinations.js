@@ -1,10 +1,13 @@
 /*!
  * ${copyright}
  */
+
 sap.ui.define([
-	"sap/ui/base/Object"
+	"sap/ui/base/Object",
+	"sap/base/Log"
 ], function (
-	BaseObject
+	BaseObject,
+	Log
 ) {
 	"use strict";
 	/* global Map */
@@ -101,7 +104,8 @@ sap.ui.define([
 	Destinations.prototype._resolveUrl = function (sKey) {
 		var oConfig = this._oConfiguration ? this._oConfiguration[sKey] : null,
 			sName,
-			sDefaultUrl;
+			sDefaultUrl,
+			pResult;
 
 		if (!oConfig) {
 			return Promise.reject("Configuration for destination '" + sKey + "' was not found in the manifest.");
@@ -110,8 +114,12 @@ sap.ui.define([
 		sName = oConfig.name;
 		sDefaultUrl = oConfig.defaultUrl;
 
-		if (!sName) {
-			return Promise.reject("Can not resolve destination '" + sKey + "'. There is no 'name' property.");
+		if (!sName && !sDefaultUrl) {
+			return Promise.reject("Can not resolve destination '" + sKey + "'. Neither 'name' nor 'defaultUrl' is configured.");
+		}
+
+		if (!sName && sDefaultUrl) {
+			return Promise.resolve(sDefaultUrl);
 		}
 
 		if (!this._oHost && !sDefaultUrl) {
@@ -122,7 +130,16 @@ sap.ui.define([
 			return Promise.resolve(sDefaultUrl);
 		}
 
-		return this._oHost.getDestination(sName);
+		pResult = this._oHost.getDestination(sName);
+
+		if (sDefaultUrl) {
+			return pResult.catch(function (sMessage) {
+				Log.error(sMessage + " Fallback to default url.");
+				return sDefaultUrl;
+			});
+		}
+
+		return pResult;
 	};
 
 	/**

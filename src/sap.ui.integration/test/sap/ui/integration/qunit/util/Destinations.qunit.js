@@ -128,6 +128,27 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_DefaultUrl = {
+			"sap.app": {
+				"id": "test1"
+			},
+			"sap.card": {
+				"type": "List",
+				"configuration": {
+					"destinations": {
+						"test1": {
+							"name": "Test1Name",
+							"defaultUrl": "test1/url"
+						},
+						"test2": {
+							"defaultUrl": "test2/url"
+						},
+						"test3": { }
+					}
+				}
+			}
+		};
+
 		function checkValidDestinations(assert) {
 			// Arrange
 			var done = assert.async();
@@ -386,6 +407,83 @@ sap.ui.define([
 
 		QUnit.test("Card.resolveDestination method", function (assert) {
 			checkInvalidResolveDestinationMethod.call(this, assert);
+		});
+
+		QUnit.module("Default Url", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					"manifest": oManifest_DefaultUrl,
+					"host": this.oHost
+				});
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Resolve destinations to default url", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard,
+				oHost = new Host({
+					resolveDestination: function() {
+						return null;
+					}
+				});
+
+			this.oCard.setHost(oHost);
+
+			this.oCard.attachEvent("_ready", function () {
+				var pTest1 = oCard.resolveDestination("test1"),
+					pTest2 = oCard.resolveDestination("test2");
+
+				Promise.all([pTest1, pTest2])
+					.then(function (aResult) {
+						assert.strictEqual(aResult[0], "test1/url", "Default url for test1 is correct.");
+						assert.strictEqual(aResult[1], "test2/url", "Default url for test1 is correct.");
+
+						done();
+					});
+			});
+
+			// Act
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		});
+
+		QUnit.test("Resolves default url without host", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			this.oCard.attachEvent("_ready", function () {
+				oCard.resolveDestination("test1").then(function (sUrl) {
+					assert.strictEqual(sUrl, "test1/url", "Default url for test1 is correct.");
+					done();
+				});
+			});
+
+			// Act
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		});
+
+		QUnit.test("Missing default url and name", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			this.oCard.attachEvent("_ready", function () {
+				oCard.resolveDestination("test3").catch(function () {
+					assert.ok(true, "Fails to resolve destination without name or defaultUrl.");
+					done();
+				});
+			});
+
+			// Act
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 		});
 	}
 );
