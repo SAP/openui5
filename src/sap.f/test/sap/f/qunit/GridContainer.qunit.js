@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"jquery.sap.global",
 	"sap/m/Button",
 	"sap/ui/integration/cards/Header",
 	"sap/ui/integration/widgets/Card"
@@ -29,7 +28,6 @@ function (
 	Log,
 	qutils,
 	KeyCodes,
-	jQuery,
 	Button,
 	Header,
 	IntegrationCard

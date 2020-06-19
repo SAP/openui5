@@ -9,7 +9,16 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/Core",
 	"sap/base/Log"
-], function(jQuery, createAndAppendDiv, GridDragOver, GridContainer, GridContainerSettings, Text, Core, Log) {
+], function(
+	jQuery,
+	createAndAppendDiv,
+	GridDragOver,
+	GridContainer,
+	GridContainerSettings,
+	Text,
+	Core,
+	Log
+) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -201,12 +210,14 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oGridDragOver = new GridDragOver();
 
-			var oDragItem = new Text({text: "Drag item content"});
 			var oDropItem = new Text({text: "Item content"});
 
 			this.oGrid1 = new GridContainer("dragContainer", {
 				layout: new GridContainerSettings({rowSize: "80px", columnSize: "80px", gap: "10px"}),
-				items: [oDragItem]
+				items: [
+					new Text({text: "Drag container - item 1"}),
+					new Text("dragContainer_item2", {text: "Drag container - item 2"})
+				]
 			});
 
 			this.oGrid2 = new GridContainer({
@@ -249,6 +260,31 @@ sap.ui.define([
 				assert.strictEqual(jQuery("#dragContainer .sapMText")[0].style.display, "none", "The drag element is hidden.");
 				done();
 			}, 100); // for IE it takes a moment to resize, so we need a timeout
+
+		}.bind(this), 250);
+	});
+
+	QUnit.test("Check if the dragged keeps its original place when polyfill is used", function(assert) {
+		// Arrange
+		var done = assert.async(),
+			oTargetControl = this.oGrid2.getItems()[0],
+			oFakeEvent = createFakeDragOverEvent(oTargetControl);
+
+		// Act
+		this.oGridDragOver.handleDragOver(oFakeEvent);
+		var oSecondItemWrapper = jQuery("#dragContainer_item2").parent(),
+			sSecondItemLeftPosition = oSecondItemWrapper.css("left");
+
+		// wait 250ms and handle drag over again on same place
+		setTimeout(function () {
+			this.oGridDragOver.handleDragOver(oFakeEvent);
+
+			setTimeout(function() {
+				var sSecondItemLeftPositionAfterDrag = oSecondItemWrapper.css("left");
+
+				assert.strictEqual(sSecondItemLeftPositionAfterDrag, sSecondItemLeftPosition, "The second item wrapper didn't shrink while dragging the item to the other container.");
+				done();
+			}, 500); // for IE it takes a moment to resize, so we need a timeout
 
 		}.bind(this), 250);
 	});
