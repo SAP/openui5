@@ -15,7 +15,7 @@ sap.ui.define([
     "sap/ui/core/HTML",
     "sap/m/library",
     "sap/base/Log",
-	"sap/ui/Core/Fragment"
+	"sap/ui/core/Fragment"
 ], function(
     jQuery,
 	SampleBaseController,
