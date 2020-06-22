@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"jquery.sap.global",
 	"sap/m/library",
@@ -11,10 +12,12 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/ComboBox",
 	"sap/m/MultiComboBox",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/thirdparty/sinon",
+	"sap/ui/core/Item"
 ], function (
 	Device,
 	qutils,
+	KeyCodes,
 	createAndAppendDiv,
 	jQuery,
 	mobileLibrary,
@@ -23,7 +26,8 @@ sap.ui.define([
 	Input,
 	ComboBox,
 	MultiComboBox,
-	sinon
+	sinon,
+	Item
 ) {
 	"use strict";
 
@@ -346,6 +350,35 @@ sap.ui.define([
 		//Assert
 		assert.strictEqual(this.oSuggestionsPopover._bHasTabularSuggestions, false, "The value is updated correctly");
 		assert.ok(this.oSuggestionsPopover._oList instanceof List, "The suggestions type is ListItem");
+	});
+
+	QUnit.test("_onsaparrowkey should not be called when we have composition characters", function (assert) {
+		// Arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionItems: [
+				new Item({ text: "test" })
+			]
+		}),
+			oSuggPopover = oInput._getSuggestionsPopover(),
+			oSpy = sinon.spy(oSuggPopover, "_onsaparrowkey");
+
+		// Act
+		oInput._bIsComposingCharacter = true;
+		oInput.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oInput._$input.trigger("focus").val("te").trigger("input");
+
+		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_UP);
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 0, "_onsaparrowkey is not called.");
+
+		//Cleanup
+		oInput.destroy();
+		oSpy.restore();
 	});
 
 	QUnit.module("mobile");
