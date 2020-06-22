@@ -3957,70 +3957,59 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getDiff, bDetectUpdates=false", function (assert) {
-		var oBinding = this.bindList("EMPLOYEE_2_EQUIPMENTS",
-				Context.create(this.oModel, {}, "/EMPLOYEES/0")),
-			oContext0 = {
-				getPath : function () {}
-			},
-			oContext1 = {
-				getPath : function () {}
-			},
-			aContexts = [oContext0, oContext1],
-			aDiff = [],
-			aPreviousData = [],
-			aResult;
-
-		oBinding.aPreviousData = aPreviousData;
-		oBinding.bDetectUpdates = false;
-		this.mock(oBinding).expects("getContextsInViewOrder")
-			.withExactArgs(0, 50).returns(aContexts);
-		this.mock(oContext0).expects("getPath").withExactArgs().returns("~path~0");
-		this.mock(oContext1).expects("getPath").withExactArgs().returns("~path~1");
-		this.mock(oBinding).expects("diffData")
-			.withExactArgs(sinon.match.same(aPreviousData), ["~path~0", "~path~1"])
-			.returns(aDiff);
+	QUnit.test("getEntryKey", function (assert) {
+		var oContext = {
+				getPath : function () {
+					return "/some/path";
+				}
+			};
 
 		// code under test
-		aResult = oBinding.getDiff(50);
-
-		assert.strictEqual(aResult, aDiff);
-		assert.deepEqual(oBinding.aPreviousData, ["~path~0", "~path~1"]);
+		// Note: not really an instance method
+		assert.strictEqual(ODataListBinding.prototype.getEntryKey(oContext), "/some/path");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getDiff, bDetectUpdates=true", function (assert) {
+	QUnit.test("getEntryData", function (assert) {
+		var oValue = {},
+			oContext = {
+				getValue : function () {
+					return oValue;
+				}
+			};
+
+		this.mock(JSON).expects("stringify").withExactArgs(sinon.match.same(oValue))
+			.returns("~json~");
+
+		// code under test
+		// Note: not really an instance method
+		assert.strictEqual(ODataListBinding.prototype.getEntryData(oContext), "~json~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDiff", function (assert) {
 		var oBinding = this.bindList("EMPLOYEE_2_EQUIPMENTS",
-			Context.create(this.oModel, {}, "/EMPLOYEES/0")),
-			oContext0 = {
-				getValue : function () {}
-			},
-			oContext1 = {
-				getValue : function () {}
-			},
-			aContexts = [oContext0, oContext1],
+				Context.create(this.oModel, {}, "/EMPLOYEES/0")),
+			oBindingMock = this.mock(oBinding),
+			aContexts = [{}, {}],
 			aDiff = [],
-			oJSONMock = this.mock(JSON),
-			aPreviousData = [],
-			aResult;
+			aPreviousData = [];
 
 		oBinding.aPreviousData = aPreviousData;
-		oBinding.bDetectUpdates = true;
-		this.mock(oBinding).expects("getContextsInViewOrder")
+		oBindingMock.expects("getContextsInViewOrder")
 			.withExactArgs(0, 50).returns(aContexts);
-		this.mock(oContext0).expects("getValue").withExactArgs().returns("~value~0");
-		oJSONMock.expects("stringify").withExactArgs("~value~0").returns("~json~0");
-		this.mock(oContext1).expects("getValue").withExactArgs().returns("~value~1");
-		oJSONMock.expects("stringify").withExactArgs("~value~1").returns("~json~1");
-		this.mock(oBinding).expects("diffData")
-			.withExactArgs(sinon.match.same(aPreviousData), ["~json~0", "~json~1"])
+		oBindingMock.expects("getContextData").withExactArgs(sinon.match.same(aContexts[0]))
+			.returns("~data~0");
+		oBindingMock.expects("getContextData").withExactArgs(sinon.match.same(aContexts[1]))
+			.returns("~data~1");
+		oBindingMock.expects("diffData")
+			.withExactArgs(sinon.match.same(aPreviousData), ["~data~0", "~data~1"])
 			.returns(aDiff);
 
 		// code under test
-		aResult = oBinding.getDiff(50);
+		assert.strictEqual(oBinding.getDiff(50), aDiff);
 
-		assert.strictEqual(aResult, aDiff);
-		assert.deepEqual(oBinding.aPreviousData, ["~json~0", "~json~1"]);
+		assert.deepEqual(oBinding.aPreviousData, ["~data~0", "~data~1"]);
 	});
 
 	//*********************************************************************************************

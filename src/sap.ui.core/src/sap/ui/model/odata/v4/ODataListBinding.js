@@ -1651,31 +1651,20 @@ sap.ui.define([
 	 * @param {number} iLength
 	 *   The length of the range requested in getContexts
 	 * @returns {object}
-	 *   The array of differences which is
-	 *   <ul>
-	 *   <li>the comparison of aResult with the data retrieved in the previous request, in case of
-	 *   <code>this.bDetectUpdates === true</code></li>
-	 *   <li>the comparison of current context paths with the context paths of the previous request,
-	 *   in case of <code>this.bDetectUpdates === false</code></li>
-	 *   </ul>
+	 *   The array of differences which is the comparison of current versus previous data as given
+	 *   by {@link #getContextData}.
 	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.getDiff = function (iLength) {
-		var aDiff,
-			aNewData,
+		var aPreviousData = this.aPreviousData,
 			that = this;
 
-		aNewData = this.getContextsInViewOrder(0, iLength).map(function (oContext) {
-			return that.bDetectUpdates
-				? JSON.stringify(oContext.getValue())
-				: oContext.getPath();
+		this.aPreviousData = this.getContextsInViewOrder(0, iLength).map(function (oContext) {
+			return that.getContextData(oContext);
 		});
 
-		aDiff = this.diffData(this.aPreviousData, aNewData);
-		this.aPreviousData = aNewData;
-
-		return aDiff;
+		return this.diffData(aPreviousData, this.aPreviousData);
 	};
 
 	/**
@@ -1691,7 +1680,6 @@ sap.ui.define([
 	ODataListBinding.prototype.getDistinctValues = function () {
 		throw new Error("Unsupported operation: v4.ODataListBinding#getDistinctValues");
 	};
-
 
 	/**
 	 * Returns a URL by which the complete content of the list can be downloaded in JSON format. The
@@ -1717,6 +1705,30 @@ sap.ui.define([
 	 * @since 1.74.0
 	 */
 	ODataListBinding.prototype.getDownloadUrl = _Helper.createGetMethod("fetchDownloadUrl", true);
+
+	/**
+	 * @override
+	 * @see sap.ui.model.ListBinding#getEntryData
+	 */
+	ODataListBinding.prototype.getEntryData = function(oContext) {
+		return JSON.stringify(oContext.getValue()); // Note: avoids _Helper.publicClone
+	};
+
+	/**
+	 * Returns the "entry key" for the given context needed for extended change detection.
+	 *
+	 * @param {sap.ui.model.Context} oContext
+	 *   The context instance
+	 * @returns {string}
+	 *   A key for the given context which is unique across all contexts of this list binding
+	 *
+	 * @private
+	 * @see sap.ui.model.ListBinding#enableExtendedChangeDetection
+	 * @see sap.ui.model.ListBinding#getContextData
+	 */
+	ODataListBinding.prototype.getEntryKey = function (oContext) {
+		return oContext.getPath();
+	};
 
 	/**
 	 * Returns the filter information as an abstract syntax tree.
