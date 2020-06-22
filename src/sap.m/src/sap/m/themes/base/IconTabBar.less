@@ -770,6 +770,26 @@
 	}
 }
 
+/* Custom focus outline */
+html.sap-desktop {
+
+	.sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBFilterIcon,
+	.sapMITBTextOnly .sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBText,
+	.sapMITBItem:not(.sapUiDnDDragging):focus.sapMITBAll,
+	.sapMITHOverflow .sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBText {
+		&::after {
+			content: "";
+			position: absolute;
+			top: -1px;
+			bottom: -1px;
+			right: -1px;
+			left: -1px;
+			border: @sapUiContentFocusWidth dotted @sapUiContentFocusColor;
+			pointer-events: none;
+		}
+	}
+}
+
 /* ------------------------------------------------ */
 /* Phone device                                     */
 /* ------------------------------------------------ */
