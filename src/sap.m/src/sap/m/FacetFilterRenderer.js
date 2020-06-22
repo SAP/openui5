@@ -75,7 +75,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 		FacetFilterRenderer.renderFacetFilterListButtons(oControl, oRm);
 
 		if (oControl.getShowPersonalization()) {
-			oRm.renderControl(oControl.getAggregation("addFacetButton"));
+			FacetFilterRenderer.renderAddFilterButton(oControl, oRm);
 		}
 
 		oRm.close("div"); // Close carousel div
@@ -130,51 +130,12 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 		return InvisibleText.getStaticId("sap.m", sBundleText || "FACETFILTER_" + sKey.toUpperCase());
 	};
 
-
-
-	/**
-	 * Returns the inner aria describedby IDs for the accessibility.
-	 *
-	 * @param {sap.ui.core.Control} oControl an object representation of the control
-	 * @returns {String|undefined} The aria of the inner aria describedby IDs
-	 * @protected
-	 */
-	FacetFilterRenderer.getAriaDescribedBy = function(oControl) {
-		var aDescribedBy = [];
-
-		if (oControl.getShowPersonalization()) {
-			aDescribedBy.push(this.getAriaAnnouncement("ARIA_REMOVE"));
-		}
-		aDescribedBy = aDescribedBy.concat(oControl._aAriaPositionTextIds);
-
-		return aDescribedBy.join(" ");
-	};
-
-
-	/**
-	 * Returns the accessibility state of the control.
-	 *
-	 * @param {sap.ui.core.Control} oControl an object representation of the control
-	 * @returns {object} The accessibility state of the control
-	 * @protected
-	 */
-	FacetFilterRenderer.getAccessibilityState = function(oControl) {
-		return {
-			describedby : {
-				value : this.getAriaDescribedBy(oControl),
-				append : true
-			}
-		};
-	};
-
 	FacetFilterRenderer.renderFacetFilterListButtons = function(oControl, oRm) {
 		var aLists = oControl._getSequencedLists(),
-			iLength = aLists.length, oButton,
-			i, sPosition, oAccText,
-			aOldAriaDescribedBy = [], aNewAriaDescribedBy = [],
-			sFacetFilterText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FACETFILTER_ARIA_FACET_FILTER"),
-			sRemoveFilterTextId = this.getAriaAnnouncement("ARIA_REMOVE");
-
+			iLength = aLists.length,
+			bShowPersonalization = oControl.getShowPersonalization(),
+			oButton,
+			i;
 
 		for (i = 0; i < iLength; i++) {
 			// add button only if the list is not empty or is active
@@ -185,37 +146,100 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 			if (!oControl._bCheckForAddListBtn || bAddButton) {
 				oButton = oControl._getButtonForList(aLists[i]);
 
-				//remove all previous InvisibleText(s) related to the positioning
-				aOldAriaDescribedBy = oButton.removeAllAriaDescribedBy();
-				aOldAriaDescribedBy.forEach(destroyItem);
+				FacetFilterRenderer.addPositionInfoForButton(oControl, oButton, i + 1, iLength + 1);
 
-				//get current position
-				sPosition = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FACETFILTERLIST_ARIA_POSITION", [(i + 1), iLength]);
-				oAccText = new InvisibleText( {text: sFacetFilterText + " " + sPosition}).toStatic();
-				oControl._aOwnedLabels.push(oAccText.getId());
-				oButton.addAriaDescribedBy(oAccText);
-				aNewAriaDescribedBy.push(oAccText.getId());
-
-				if (oControl.getShowPersonalization()) {
+				if (bShowPersonalization) {
 					oButton.addAriaDescribedBy(FacetFilterRenderer.getAriaAnnouncement("ARIA_REMOVE"));
 				}
 				oRm.renderControl(oButton);
-				if (oControl.getShowPersonalization()) {
+				if (bShowPersonalization) {
 					oRm.renderControl(oControl._getFacetRemoveIcon(aLists[i]));
 				}
 			}
 		}
-		//needed because of FacetFilterRenderer.getAriaDescribedBy
-		oControl._aAriaPositionTextIds = aNewAriaDescribedBy;
 
-		function destroyItem (sItemId) {
-			if (sRemoveFilterTextId !== sItemId) {//exclude the acc text for removable facet, because it does not need change.
-				var oItem = sap.ui.getCore().byId(sItemId);
-				if (oItem) {
-					oItem.destroy();
-				}
+		return this;
+	};
+
+	/**
+	 * Prepares the "Add Filter" button by adding positioning information and then renders it.
+	 *
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 *
+	 * @returns {FacetFilterRenderer} <code>this</code> to allow method chaining
+	 */
+	FacetFilterRenderer.renderAddFilterButton = function (oControl, oRm) {
+		var oAddFacetButton = oControl.getAggregation("addFacetButton"),
+			iButtonsCount = oControl._getSequencedLists().length + 1;
+
+		FacetFilterRenderer.addPositionInfoForButton(oControl, oAddFacetButton, iButtonsCount, iButtonsCount);
+		oRm.renderControl(oAddFacetButton);
+
+		return this;
+	};
+
+	/**
+	 * Replaces the old positioning information with updated one.
+	 *
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 * @param {sap.m.Button} oButton The button on which positioning information will be added
+	 * @param {int} iPosInSet Button's position in the set
+	 * @param {int} iSetSize Set's total size
+	 * @returns {FacetFilterRenderer} <code>this</code> to allow method chaining
+	 */
+	FacetFilterRenderer.addPositionInfoForButton = function (oControl, oButton, iPosInSet, iSetSize) {
+		var oStaticLabel = FacetFilterRenderer.createStaticPositioningLabel(oControl, iPosInSet, iSetSize);
+
+		FacetFilterRenderer.clearOldPositioningLabels(oControl, oButton);
+		oButton.addAriaDescribedBy(oStaticLabel);
+
+		return this;
+	};
+
+	/**
+	 * Removes the old positioning information.
+	 *
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 * @param {sap.m.Button} oButton The button from which old positioning information will be removed
+	 * @returns {FacetFilterRenderer} <code>this</code> to allow method chaining
+	 */
+	FacetFilterRenderer.clearOldPositioningLabels = function (oControl, oButton) {
+		var aOldAriaDescribedBy = oButton.removeAllAriaDescribedBy(),
+			sRemoveFilterTextId = this.getAriaAnnouncement("ARIA_REMOVE"),
+			oItem;
+
+		// Destroy the labels after removal as well.
+		aOldAriaDescribedBy.forEach(function(sItemId) {
+			// Exclude the invisible label for removable facet, because it doesn't need change.
+			if (sRemoveFilterTextId === sItemId) {
+				return;
 			}
-		}
+
+			// Destroy the item itself
+			oItem = sap.ui.getCore().byId(sItemId);
+			oItem && oItem.destroy();
+		});
+
+		return this;
+	};
+
+	/**
+	 * Creates a label in the static area, which contains positioning information.
+	 *
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 * @param {int} iPosInSet Position in the set
+	 * @param {int} iSetSize Set's total size
+	 * @returns {sap.ui.core.InvisibleText} oStaticLabel The newly created label
+	 */
+	FacetFilterRenderer.createStaticPositioningLabel = function (oControl, iPosInSet, iSetSize) {
+		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sFacetFilterText = oRB.getText("FACETFILTER_ARIA_FACET_FILTER"),
+			sPositioningText = oRB.getText("FACETFILTERLIST_ARIA_POSITION", [iPosInSet, iSetSize]),
+			oStaticLabel = new InvisibleText({ text: sFacetFilterText + " " + sPositioningText }).toStatic();
+
+		oControl._aOwnedLabels.push(oStaticLabel.getId());
+		return oStaticLabel;
 	};
 
 	return FacetFilterRenderer;

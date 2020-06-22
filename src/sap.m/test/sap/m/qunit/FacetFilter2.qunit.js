@@ -1969,29 +1969,33 @@ sap.ui.define([
 		 * @param {int} iListCount the number of expected ff lists
 		 */
 		testFacetFilterList: function (iListCount) {
-			var aExpectedDescribedBy = [],
-					bAriaRemoveFacetFound = false;
+			var iTotalSize = iListCount + 1, // Make sure to include the Add Filter button
+				$currentlyTestedButton,
+				aAriaDescribedByIds,
+				$positioningLabel,
+				sExpectedLabelText;
 
+			// First check each list's button
 			for (var i = 0; i < iListCount; i++) {
-				var sAriaDescribedByList = getButtonCtrl(this.oFF, i).$().attr("aria-describedby");
-				assert.ok(sAriaDescribedByList, "There must be attribute 'aria-describedby' for List" + (i + 1));
+				$currentlyTestedButton = getButtonCtrl(this.oFF, i).$();
+				aAriaDescribedByIds = $currentlyTestedButton.attr("aria-describedby").split(" ");
+				assert.equal(aAriaDescribedByIds.length, 2,
+					"There should be 2 IDs (positioning & removal labels) in aria-describedby for List" + (i + 1));
 
-				var aAriaDescribedByList = sAriaDescribedByList.split(" ");
-				assert.equal(aAriaDescribedByList.length, 2, "There must be attribute 'aria-describedby' for List" + (i + 1));
-
-				var $InvisibleText0 = jQuery("#" + aAriaDescribedByList[0]);
-				assert.ok($InvisibleText0.length, "'aria-describedby' must point to an existing static text");
-				var sExpectedText = "Facet Filter " + (i + 1) + " of " + iListCount;
-				assert.equal($InvisibleText0.text(), sExpectedText, "Positioning info");
-
-				if (!bAriaRemoveFacetFound) {
-					bAriaRemoveFacetFound = true;
-					aExpectedDescribedBy.push(aAriaDescribedByList[1]);
-				}
-				aExpectedDescribedBy.push(aAriaDescribedByList[0]);
+				$positioningLabel = jQuery("#" + aAriaDescribedByIds[0]); // Positioning label should be the first reference
+				sExpectedLabelText = "Facet Filter " + (i + 1) + " of " + iTotalSize;
+				assert.equal($positioningLabel.text(), sExpectedLabelText, "Correct positioning info for that List");
 			}
 
-			assert.equal(this.oFF.getRenderer().getAriaDescribedBy(this.oFF), aExpectedDescribedBy.join(" "), "FacetFilterRenderer.getAriaDescribedBy array check");
+			// Then the Add Filter button
+			$currentlyTestedButton = this.oFF.getAggregation("addFacetButton").$();
+			aAriaDescribedByIds = $currentlyTestedButton.attr("aria-describedby").split(" ");
+			assert.equal(aAriaDescribedByIds.length, 2,
+				"There should be 2 IDs (positioning label & tooltip) in aria-describedby for the Add Filter button");
+
+			$positioningLabel = jQuery("#" + aAriaDescribedByIds[0]); // Positioning label should be the first reference
+			sExpectedLabelText = "Facet Filter " + iTotalSize + " of " + iTotalSize;
+			assert.equal($positioningLabel.text(), sExpectedLabelText, "Correct positioning info for it too");
 		}
 	});
 
