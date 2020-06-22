@@ -232,6 +232,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.iActiveUsages, 1);
 		assert.deepEqual(oCache.mChangeListeners, {});
 		assert.strictEqual(oCache.fnGetOriginalResourcePath, fnGetOriginalResourcePath);
+		assert.strictEqual(oCache.iInactiveSince, Infinity);
 		assert.deepEqual(oCache.mPatchRequests, {});
 		assert.deepEqual(oCache.mPostRequests, {});
 		assert.strictEqual(oCache.oPendingRequestsPromise, null);
@@ -743,12 +744,30 @@ sap.ui.define([
 
 		assert.strictEqual(oCache.iActiveUsages, 100);
 		assert.strictEqual(oCache.hasPendingChangesForPath("path"), true);
+		assert.strictEqual(oCache.iInactiveSince, Infinity);
 
 		// code under test
 		oCache.setActive(false);
 
 		assert.strictEqual(oCache.iActiveUsages, 99);
 		assert.strictEqual(oCache.hasPendingChangesForPath(), false);
+		assert.strictEqual(oCache.iInactiveSince, Infinity);
+
+		oCache.iActiveUsages = 1;
+
+		this.mock(Date).expects("now").withExactArgs().returns(42);
+
+		// code under test
+		oCache.setActive(false);
+
+		assert.strictEqual(oCache.iActiveUsages, 0);
+		assert.strictEqual(oCache.iInactiveSince, 42);
+
+		// code under test
+		oCache.setActive(true);
+
+		assert.strictEqual(oCache.iActiveUsages, 1);
+		assert.strictEqual(oCache.iInactiveSince, Infinity);
 	});
 
 	//*********************************************************************************************
@@ -8785,7 +8804,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("create: bSharedRequest, cache size", function (assert) {
-		var i, mSharedCollectionCacheByPath;
+		var i, iTimerValue = 0, mSharedCollectionCacheByPath;
+
+		// avoid that two caches get the same iInactiveSince so that we get a well-defined LRU order
+		this.stub(Date, "now").callsFake(function () {
+			iTimerValue += 1;
+			return iTimerValue;
+		});
 
 		// the first cache is inactive, but remains until the limit is reached
 		_Cache.create(this.oRequestor, "/0", {}, false, undefined, true).setActive(false);
@@ -8815,17 +8840,23 @@ sap.ui.define([
 		assert.strictEqual(Object.keys(mSharedCollectionCacheByPath).length, 102,
 			"all caches active, nothing removed");
 
+		mSharedCollectionCacheByPath["/10"].setActive(false);
+		mSharedCollectionCacheByPath["/20"].setActive(false);
+		mSharedCollectionCacheByPath["/30"].setActive(false);
 		mSharedCollectionCacheByPath["/0"].setActive(false);
-		mSharedCollectionCacheByPath["/1"].setActive(false);
-		mSharedCollectionCacheByPath["/2"].setActive(false);
-		mSharedCollectionCacheByPath["/3"].setActive(false);
 		_Cache.create(this.oRequestor, "/103", {}, false, undefined, true);
 
 		assert.strictEqual(Object.keys(mSharedCollectionCacheByPath).length, 101);
-		assert.ok("/0" in this.oRequestor.$mSharedCollectionCacheByPath, "added later -> remains");
-		assert.notOk("/1" in this.oRequestor.$mSharedCollectionCacheByPath);
-		assert.notOk("/2" in this.oRequestor.$mSharedCollectionCacheByPath);
-		assert.ok("/3" in this.oRequestor.$mSharedCollectionCacheByPath);
+		assert.ok("/0" in this.oRequestor.$mSharedCollectionCacheByPath);
+		assert.notOk("/10" in this.oRequestor.$mSharedCollectionCacheByPath);
+		assert.notOk("/20" in this.oRequestor.$mSharedCollectionCacheByPath);
+		assert.ok("/30" in this.oRequestor.$mSharedCollectionCacheByPath);
+
+		// code under test
+		_Cache.create(this.oRequestor, "/104", {}, false, undefined, true);
+
+		assert.strictEqual(Object.keys(mSharedCollectionCacheByPath).length, 101);
+		assert.notOk("/30" in mSharedCollectionCacheByPath);
 	});
 });
 //TODO: resetCache if error in update?
