@@ -1,0 +1,18 @@
+{
+  "1.80.0": {
+    "date": "June 2020",
+    "notes": [
+      {
+        "id": "580651c6f43bf9fa5b9c32df069f92ca186d68c9",
+        "type": "FIX",
+        "text": " \"72\" font: fix Vietnamese characters with misplaced dot below",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002309352020"
+          }
+        ]
+      }
+    ]
+  }
+}

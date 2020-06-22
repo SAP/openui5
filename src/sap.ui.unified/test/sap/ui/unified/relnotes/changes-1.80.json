@@ -34,6 +34,28 @@
             "reference": "2080183678"
           }
         ]
+      },
+      {
+        "id": "c9fb2b989887ea37aeeaaa7a74e204b645cff626",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: non-working dates now pronounced by screen reader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070133429"
+          }
+        ]
+      },
+      {
+        "id": "85392eb95eed197855e371216d52d2f46fa7597a",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: request headers values are now URL encoded",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080146235"
+          }
+        ]
       }
     ]
   }

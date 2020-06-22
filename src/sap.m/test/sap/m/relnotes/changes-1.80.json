@@ -189,6 +189,155 @@
             "reference": "2080172416"
           }
         ]
+      },
+      {
+        "id": "ec9c8232316735228fba9bc67f601d685991c236",
+        "type": "FEATURE",
+        "text": " sap.m.BadgeEnabler: New Badge API introduced",
+        "references": []
+      },
+      {
+        "id": "31c691b1294956b6f47a710c9b3d4df1ff3244d2",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumb: Prevented redundant invalidation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080143818"
+          }
+        ]
+      },
+      {
+        "id": "74be33d6263471493e3ee40045a4c14734ed7fcb",
+        "type": "FIX",
+        "text": " sap.m.Button: uses correct color parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080189988"
+          }
+        ]
+      },
+      {
+        "id": "f00068d580cbdeaf41d7a82ced394d42dcb80695",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: keyboard interactions are now aligned with the specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080166852"
+          }
+        ]
+      },
+      {
+        "id": "6b59752774d0f7b0e23fb5ae19d3cb9d9f32f327",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Neutral filter trype is now read out by the screen reader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080193849"
+          }
+        ]
+      },
+      {
+        "id": "f2e7c6b1f2c6de405dc39f85d9b01dffff7eb15d",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Focus outline in SAP Quartz HCB/HCW themes adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080195107"
+          }
+        ]
+      },
+      {
+        "id": "fd82c220f3c43219232e7a0cbd36380f9551ed9c",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Contast ratio satisfied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070260049"
+          }
+        ]
+      },
+      {
+        "id": "59da47953ce84ba9ece049c737b4e4f9a69d269d",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Opening the dialog on mobile  error fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080188410"
+          }
+        ]
+      },
+      {
+        "id": "2a3f8e033468fc0b2eb3fe68dc46427e7e7c1143",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Prevent opening SuggestionsPopover when selected items are shown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080185684"
+          }
+        ]
+      },
+      {
+        "id": "0591f2064746521cc2b310ea4ea13678577c2966",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Remove unnecessary z-index from the tokenizer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080187051"
+          }
+        ]
+      },
+      {
+        "id": "f87509ad6f3b600c4705df732a2aff565c8fbf79",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: failing QUnit IE11 is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080138475"
+          }
+        ]
+      },
+      {
+        "id": "2d54bee34ed768509b9a02e18e9d8cfd311bf4c5",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: Icon\u0027s decorative state adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980411313"
+          }
+        ]
+      },
+      {
+        "id": "3f3134987473927df7ef6d5856aeb356b7ac0b17",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Samples edit appointment fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080178147"
+          }
+        ]
+      },
+      {
+        "id": "632ff6c0f462335c1e92b45e140756590146999f",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: on focus in behavior over the input is now consistent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003307462020"
+          }
+        ]
       }
     ]
   }
