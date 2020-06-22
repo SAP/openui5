@@ -26920,7 +26920,15 @@ sap.ui.define([
 	// Grouping changes after a refresh, but is not properly reflected with E.C.D.
 	//
 	// BCP: 2080132822
-	QUnit.test("BCP: 2080132822 - grouping", function (assert) {
+[
+	undefined,
+	"AGE",
+	function (oContext) {
+		return oContext.getProperty("AGE");
+	}
+].forEach(function (vKey, i) {
+
+	QUnit.test("BCP: 2080132822 - grouping, #" + i, function (assert) {
 		var that = this,
 			oController = {
 				getGroupHeader : function (oGroupInfo) {
@@ -26932,6 +26940,7 @@ sap.ui.define([
 				}
 			},
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oTable,
 			sView = '\
 <Table growing="true" id="table" items="{\
 		groupHeaderFactory : \'.getGroupHeader\',\
@@ -26944,6 +26953,19 @@ sap.ui.define([
 	</ColumnListItem>\
 </Table>';
 		//TODO <Text id="age" text="{AGE}" /> should not be needed for auto-$expand/$select here!
+
+		function checkItems(aItems, aExpectedMetadataNames, aExpectedContent) {
+			assert.deepEqual(aItems.map(function (oItem) {
+				return oItem.getMetadata().getName();
+			}), aExpectedMetadataNames);
+			assert.deepEqual(aItems.map(function (oItem) {
+				return oItem.getTitle
+					? oItem.getTitle() // GroupHeaderListItem
+					: oItem.getCells().map(function (oCell) {
+						return oCell.getText();
+					}).join();
+			}), aExpectedContent);
+		}
 
 		this.expectChange("groupHeader", undefined) // caused by virtual context
 			.expectRequest("EMPLOYEES?$orderby=AGE&$select=AGE,ID,Name&$skip=0&$top=20", {
@@ -26967,11 +26989,24 @@ sap.ui.define([
 			.expectChange("name", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
 
 		return this.createView(assert, sView, oModel, oController).then(function () {
-			var oItemsBinding = that.oView.byId("table").getBinding("items");
+			var oItemsBinding;
+
+			oTable = that.oView.byId("table");
+			oItemsBinding = oTable.getBinding("items");
+			checkItems(oTable.getItems(), [
+				"sap.m.GroupHeaderListItem",
+				"sap.m.ColumnListItem",
+				"sap.m.GroupHeaderListItem",
+				"sap.m.ColumnListItem",
+				"sap.m.ColumnListItem"
+			], ["23", "23,Frederic Fall", "42", "42,Jonathan Smith", "42,Peter Burke"]);
 
 			//TODO how could changes to a property affect the list's grouping?
 			// @see v2.ODataListBinding#checkUpdate
 //			oItemsBinding.getCurrentContexts()[0].setProperty("AGE", 42, null);
+
+			// code under test
+			oItemsBinding.enableExtendedChangeDetection(false, vKey);
 
 			that.expectRequest("EMPLOYEES?$orderby=AGE&$select=AGE,ID,Name&$skip=0&$top=20", {
 					value : [{
@@ -26992,11 +27027,20 @@ sap.ui.define([
 				.expectChange("groupHeader", 42)
 				.expectChange("name", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
 
+			// code under test
 			oItemsBinding.refresh();
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			checkItems(oTable.getItems(), [
+				"sap.m.GroupHeaderListItem",
+				"sap.m.ColumnListItem",
+				"sap.m.ColumnListItem",
+				"sap.m.ColumnListItem"
+			], ["42", "42,Frederic Fall", "42,Jonathan Smith", "42,Peter Burke"]);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: create at end w/o $count, but after everything has been read

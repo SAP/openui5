@@ -927,20 +927,6 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.doSetProperty = function () {};
 
-	/*
-	 * Delegates to {@link sap.ui.model.ListBinding#enableExtendedChangeDetection} while disallowing
-	 * the <code>vKey</code> parameter.
-	 */
-	// @override
-	ODataListBinding.prototype.enableExtendedChangeDetection = function (bDetectUpdates, vKey) {
-		if (vKey !== undefined) {
-			throw new Error("Unsupported property 'key' with value '" + vKey
-				+ "' in binding info for " + this);
-		}
-
-		return ListBinding.prototype.enableExtendedChangeDetection.apply(this, arguments);
-	};
-
 	/**
 	 * Expands the group node that the given context points to.
 	 *
