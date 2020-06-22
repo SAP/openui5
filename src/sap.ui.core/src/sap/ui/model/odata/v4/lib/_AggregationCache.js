@@ -215,7 +215,7 @@ sap.ui.define([
 			that.aElements.$count += iCount;
 			// create placeholder
 			for (i = iIndex + oResult.value.length; i < iIndex + iCount; i += 1) {
-				that.aElements[i] = {"@$ui5.node.level" : 2};
+				that.aElements[i] = {};
 				_Helper.setPrivateAnnotation(that.aElements[i], "index", i - iIndex);
 				_Helper.setPrivateAnnotation(that.aElements[i], "parent", oCache);
 			}
@@ -394,7 +394,7 @@ sap.ui.define([
 				// create placeholders
 				for (j = 0; j < that.aElements.$count; j += 1) {
 					if (!that.aElements[j]) {
-						that.aElements[j] = {"@$ui5.node.level" : 1};
+						that.aElements[j] = {};
 						_Helper.setPrivateAnnotation(that.aElements[j], "index", j);
 						_Helper.setPrivateAnnotation(that.aElements[j], "parent", that.oFirstLevel);
 					}

@@ -6246,7 +6246,8 @@ sap.ui.define([
 		oBinding.oCache = { // simulate an aggregation cache
 			expand : function () {}
 		};
-		oBinding.createContexts(0, 5, createData(5, 0, true, 5));
+		oBinding.createContexts(0, 2, createData(2, 0, true, 5));
+		oBinding.createContexts(3, 2, createData(2, 3, true, 5));
 		aContextsBefore = oBinding.aContexts.slice();
 
 		this.mock(oBinding).expects("lockGroup").withExactArgs().returns(oGroupLock);
@@ -6284,13 +6285,12 @@ sap.ui.define([
 			assert.notOk(2 in oBinding.aContexts, "2");
 			assert.notOk(3 in oBinding.aContexts, "3");
 			assert.notOk(4 in oBinding.aContexts, "4");
-			assert.strictEqual(oBinding.aContexts[5], aContextsBefore[2], "5");
+			assert.notOk(5 in oBinding.aContexts, "5");
 			assert.strictEqual(oBinding.aContexts[6], aContextsBefore[3], "6");
 			assert.strictEqual(oBinding.aContexts[7], aContextsBefore[4], "7");
 
 			assert.strictEqual(oBinding.aContexts[0].iIndex, 0);
 			assert.strictEqual(oBinding.aContexts[1].iIndex, 1);
-			assert.strictEqual(oBinding.aContexts[5].iIndex, 5);
 			assert.strictEqual(oBinding.aContexts[6].iIndex, 6);
 			assert.strictEqual(oBinding.aContexts[7].iIndex, 7);
 

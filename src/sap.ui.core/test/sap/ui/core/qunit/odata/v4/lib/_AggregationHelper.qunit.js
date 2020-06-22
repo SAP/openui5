@@ -53,6 +53,15 @@ sap.ui.define([
 		sApply : "groupby((TransactionCurrency,Region),aggregate(Amount))"
 	}, {
 		oAggregation : {
+			aggregate : {
+				Amount : {}
+			},
+			// group is optional
+			groupLevels : ["TransactionCurrency", "Region", "Country"]
+		},
+		sApply : "groupby((TransactionCurrency,Region,Country),aggregate(Amount))"
+	}, {
+		oAggregation : {
 			aggregate : { // Note: intentionally not sorted
 				Amount : {
 					"with" : "average" // Note: allowed, as long as no totals are requested
@@ -392,13 +401,6 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
-		oAggregation : {
-			aggregate : {},
-			group : {A : {}, B : {}},
-			groupLevels : ["A", "B", "C"]
-		},
-		sError : "More than two group levels: A,B,C"
-	}, {
 		oAggregation : {
 			aggregate : {},
 			group : {A : {foo : "bar"}}
