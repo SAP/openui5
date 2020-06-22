@@ -82,10 +82,10 @@ sap.ui.define(["sap/ui/base/Object", "sap/ui/thirdparty/jquery"], function(BaseO
          * @static
          */
         register : function(rRegex, fnFunc) {
-          if (jQueryDOM.type(rRegex) !== "regexp") {
+          if (!(rRegex instanceof RegExp)) {
             throw new Error("StepDefinitions.register: parameter 'rRegex' must be a valid RegExp object");
           }
-          if (jQueryDOM.type(fnFunc) !== "function") {
+          if (typeof fnFunc !== "function") {
             throw new Error("StepDefinitions.register: parameter 'fnFunc' must be a valid Function");
           }
 

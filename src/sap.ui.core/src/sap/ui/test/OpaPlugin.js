@@ -181,7 +181,7 @@ sap.ui.define([
 				}
 
 				var aAllControlsOfTheView = this.getAllControlsWithTheParent(oView, oOptions.controlType, oOptions.sOriginalControlType);
-				var bMatchById = $.type(oOptions.id) === "regexp";
+				var bMatchById = this._isRegExp(oOptions.id);
 
 				if (bMatchById) {
 					aAllControlsOfTheView = aAllControlsOfTheView.filter(function (oControl) {
@@ -236,7 +236,7 @@ sap.ui.define([
 						if (typeof oOptions.id === "string") {
 							bIdMatches = sUnprefixedControlId === oOptions.id;
 						}
-						if ($.type(oOptions.id) === "regexp") {
+						if (this._isRegExp(oOptions.id)) {
 							bIdMatches = oOptions.id.test(sUnprefixedControlId);
 						}
 						if ($.isArray(oOptions.id)) {
@@ -290,6 +290,11 @@ sap.ui.define([
 				} else {
 					return this._isControlInView(oControl.getParent(), sViewName);
 				}
+			},
+
+			_isRegExp: function (rRegExp) {
+				// can't use instanceof because the regexp may be created in the parent frame
+				return Object.prototype.toString.call(rRegExp) === "[object RegExp]";
 			},
 
 			/**
@@ -423,7 +428,7 @@ sap.ui.define([
 				// conditions in which no control was found and return value should be the special marker FILTER_FOUND_NO_CONTROLS
 				var aControlsNotFoundConditions = [
 					typeof oOptions.id === "string" && !vControl, // search for single control by string ID
-					$.type(oOptions.id) === "regexp" && !vControl.length, // search by regex ID
+					this._isRegExp(oOptions.id) && !vControl.length, // search by regex ID
 					$.isArray(oOptions.id) && (!vControl || vControl.length !== oOptions.id.length), // search by array of IDs
 					oOptions.controlType && $.isArray(vControl) && !vControl.length, // search by control type globally
 					!oOptions.id && (oOptions.viewName || oOptions.viewId || oOptions.searchOpenDialogs) && !vControl.length // search by control type in view or staic area
@@ -496,7 +501,7 @@ sap.ui.define([
 				}
 
 				var aMatchIds = [];
-				var bMatchById = $.type(oOptions.id) === "regexp";
+				var bMatchById = this._isRegExp(oOptions.id);
 
 				if (bMatchById) {
 					//Performance critical
