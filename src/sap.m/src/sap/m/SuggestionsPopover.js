@@ -126,10 +126,14 @@ sap.ui.define([
 			// adds event delegate for the arrow keys
 			this._oInput.addEventDelegate({
 				onsapup: function(oEvent) {
-					this._onsaparrowkey(oEvent, "up", 1);
+					if (!this._oInput.isComposingCharacter()){
+						this._onsaparrowkey(oEvent, "up", 1);
+					}
 				},
 				onsapdown: function(oEvent) {
-					this._onsaparrowkey(oEvent, "down", 1);
+					if (!this._oInput.isComposingCharacter()){
+						this._onsaparrowkey(oEvent, "down", 1);
+					}
 				},
 				onsappageup: function(oEvent) {
 					this._onsaparrowkey(oEvent, "up", 5);
