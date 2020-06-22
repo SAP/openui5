@@ -1,9 +1,11 @@
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/integration/widgets/Card"
+	"sap/ui/integration/widgets/Card",
+	"sap/ui/integration/Extension"
 ], function (
-	Card
+	Card,
+	Extension
 ) {
 	"use strict";
 
@@ -202,4 +204,55 @@ sap.ui.define([
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
+	QUnit.module("Life-cycle method onCardReady", {
+		beforeEach: function () {
+			this.fnOnCardReadyStub = sinon.stub(Extension.prototype, "onCardReady");
+
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/",
+				manifest: {
+					"sap.app": {
+						"id": "test"
+					},
+					"sap.card": {
+						"type": "List",
+						"extension": "./extensions/Extension1"
+					}
+				}
+			});
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+			this.fnOnCardReadyStub.restore();
+		}
+	});
+
+	QUnit.test("Method onCardReady is called once on card initialization", function (assert) {
+		// arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			assert.ok(this.fnOnCardReadyStub.calledOnce, "The onCardReady event is called once.");
+			done();
+		}.bind(this));
+
+		// act
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.test("Method resolveDestination inside onCardReady does not throw an error", function (assert) {
+		// arrange
+		var done = assert.async();
+
+		this.fnOnCardReadyStub.callsFake(function (oCard) {
+			oCard.resolveDestination("test");
+
+			assert.ok(true, "There is no error when calling resolveDestination.");
+			done();
+		});
+
+		// act
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
 });

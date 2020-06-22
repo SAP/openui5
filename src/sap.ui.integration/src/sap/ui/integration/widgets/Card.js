@@ -520,7 +520,7 @@ sap.ui.define([
 		return new Promise(function (resolve, reject) {
 			sap.ui.require([sFullExtensionPath], function (oExtension) {
 				this._oExtension = oExtension;
-				oExtension.onCardReady(this._oLimitedInterface);
+
 				BindingHelper.addNamespace("extension", {
 					formatters: oExtension.getFormatters()
 				});
@@ -544,6 +544,8 @@ sap.ui.define([
 		}
 
 		oCardManifest.processParameters(oParameters);
+
+		this._prepareToApplyManifestSettings();
 
 		this._applyManifestSettings();
 	};
@@ -804,12 +806,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Apply all manifest settings after the manifest is fully ready.
-	 * This includes service registration, header and content creation, data requests.
+	 * Initializes internal classes needed for the card, based on the ready manifest.
 	 *
 	 * @private
 	 */
-	Card.prototype._applyManifestSettings = function () {
+	Card.prototype._prepareToApplyManifestSettings = function () {
 		var sAppType = this._oCardManifest.get(MANIFEST_PATHS.APP_TYPE);
 		if (sAppType && sAppType !== "card") {
 			Log.error("sap.app/type entry in manifest is not 'card'");
@@ -824,6 +825,18 @@ sap.ui.define([
 		this._oDataProviderFactory = new DataProviderFactory(this._oDestinations, this._oExtension);
 		this._oLoadingProvider = new LoadingProvider();
 
+		if (this._oExtension) {
+			this._oExtension.onCardReady(this._oLimitedInterface);
+		}
+	};
+
+	/**
+	 * Apply all manifest settings after the manifest is fully ready.
+	 * This includes service registration, header and content creation, data requests.
+	 *
+	 * @private
+	 */
+	Card.prototype._applyManifestSettings = function () {
 		this._applyServiceManifestSettings();
 		this._applyDataManifestSettings();
 		this._applyHeaderManifestSettings();
