@@ -45,6 +45,36 @@
             "reference": "2080185880"
           }
         ]
+      },
+      {
+        "id": "aa968a2202180b93bc0b86a4296bbbce03beeadc",
+        "type": "FEATURE",
+        "text": " Demo Kit: Additional info visualization to samples shown",
+        "references": []
+      },
+      {
+        "id": "ec9c8232316735228fba9bc67f601d685991c236",
+        "type": "FEATURE",
+        "text": " sap.m.BadgeEnabler: New Badge API introduced",
+        "references": []
+      },
+      {
+        "id": "636832c64939b0c5243ed8bae61aac17510ee26b",
+        "type": "FIX",
+        "text": " GridContainer: Drag and Drop between two containers is enhanced",
+        "references": []
+      },
+      {
+        "id": "57da5d5011e89c1027d22d835146a1f5e0db4c0a",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Corrected header value check",
+        "references": []
+      },
+      {
+        "id": "cc28d67106471dbcbab81d0041ba86f1edb6aafe",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Drag and Drop between two containers enhanced for IE11",
+        "references": []
       }
     ]
   }

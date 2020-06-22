@@ -58,6 +58,40 @@
         "type": "FIX",
         "text": " ui5loader: properly handle empty preloaded resources",
         "references": []
+      },
+      {
+        "id": "60550a61509397c63369edf94803515e59186242",
+        "type": "FEATURE",
+        "text": " Opa: add interactable option in waitFor",
+        "references": []
+      },
+      {
+        "id": "1ce1509cedbfaf27151dbf9e67d085b9902dc676",
+        "type": "FEATURE",
+        "text": " testrecorder: add searchOpenDialogs flag when needed",
+        "references": []
+      },
+      {
+        "id": "012028c1971de56a00b7e448bccee84f763debf3",
+        "type": "FIX",
+        "text": " ManagedObject: set (+ bind) a formatter only when it\u0027s a function",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080181010"
+          }
+        ]
+      },
+      {
+        "id": "5255b9755ae1a21e107db3a66d371b402a1e47bb",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataModel#_loadData: Do not use x-csrf-token for GET requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002585962020"
+          }
+        ]
       }
     ]
   }
