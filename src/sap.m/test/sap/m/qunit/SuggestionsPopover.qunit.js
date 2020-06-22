@@ -2,18 +2,24 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"jquery.sap.global",
 	"sap/m/library",
 	"sap/m/SuggestionsPopover",
-	"sap/m/Input"
+	"sap/m/Input",
+	"sap/ui/thirdparty/sinon",
+	"sap/ui/core/Item"
 ], function (
 	qutils,
+	KeyCodes,
 	createAndAppendDiv,
 	jQuery,
 	mobileLibrary,
 	SuggestionsPopover,
-	Input
+	Input,
+	sinon,
+	Item
 ) {
 	"use strict";
 
@@ -277,5 +283,34 @@ sap.ui.define([
 		assert.strictEqual(oDivDomRef.innerHTML,
 			"<span class=\"sapMInputHighlight\">서비스</span> ID 유헝 <span class=\"sapMInputHighlight\">서비스</span> 성별",
 			"Double highlight with unicode characters");
+	});
+
+	QUnit.test("_onsaparrowkey should not be called when we have composition characters", function (assert) {
+		// Arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionItems: [
+				new Item({ text: "test" })
+			]
+		}),
+			oSuggPopover = oInput._getSuggestionsPopover(),
+			oSpy = sinon.spy(oSuggPopover, "_onsaparrowkey");
+
+		// Act
+		oInput._bIsComposingCharacter = true;
+		oInput.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oInput._$input.trigger("focus").val("te").trigger("input");
+
+		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_UP);
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 0, "_onsaparrowkey is not called.");
+
+		//Cleanup
+		oInput.destroy();
+		oSpy.restore();
 	});
 });
