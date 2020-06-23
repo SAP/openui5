@@ -386,6 +386,55 @@ sap.ui.define([
 		notification.destroy();
 	});
 
+	QUnit.test('cloning with bindings - on mobile. When"showCloseButton" is false the separator and the "close" button should not be visible', function(assert) {
+		// arrange
+		this.isPhone = Device.system.phone;
+		Device.system.phone = true;
+
+		var model = new JSONModel({
+			actions: [
+				{
+					text: "accept",
+					type: "Accept"
+				}
+			]
+		});
+
+		var list = new List();
+
+		list.setModel(model);
+		list.bindObject("/");
+
+		list.bindAggregation("items", {
+			path : "actions",
+			templateShareable: true,
+			template : new NotificationListItem("notList", {
+				showCloseButton: false,
+				title: "Title",
+				description: "Some description",
+				buttons: [
+					new Button({
+						text: "{text}",
+						type: "{type}"
+					})
+				]
+			})
+		});
+
+		// act
+		list.placeAt(RENDER_LOCATION);
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(list.getItems()[0]._getOverflowToolbar().getContent()[0].getVisible(), true, "The button is visible on mobile");
+		assert.strictEqual(list.getItems()[0]._getOverflowToolbar().getContent()[1].getVisible(), false, "The separator is not visible on mobile");
+		assert.strictEqual(list.getItems()[0]._getOverflowToolbar().getContent()[2].getVisible(), false, "The close button is not visible on mobile");
+
+		// cleanup
+		list.destroy();
+		Device.system.phone = this.isPhone;
+	});
+
 	QUnit.module('Action and close buttons - non mobile', {
 		beforeEach: function() {
 
@@ -450,7 +499,7 @@ sap.ui.define([
 	QUnit.test('action and close buttons', function(assert) {
 		var buttons = this.notificationListItem.getButtons(),
 			closeButton = this.notificationListItem._getCloseButton(),
-			toolbarSeparator = this.notificationListItem._toolbarSeparator;
+			toolbarSeparator = this.notificationListItem._getToolbarSeparator();
 
 		assert.strictEqual(buttons[0].getLayoutData().getPriority(), OverflowToolbarPriority.AlwaysOverflow, 'button overflow priority is ok');
 		assert.strictEqual(buttons[1].getLayoutData().getPriority(), OverflowToolbarPriority.AlwaysOverflow, 'button overflow priority is ok');
