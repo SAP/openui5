@@ -4,12 +4,14 @@
 sap.ui.define([
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/changeHandler/ChangeHandlerMediator",
+	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath"
 ], function (
 	Base,
 	ChangeHandlerMediator,
+	DelegateMediatorAPI,
 	Log,
 	merge,
 	ObjectPath
@@ -59,16 +61,11 @@ sap.ui.define([
 	function getControlsFromDelegate(mDelegate, mPropertyBag) {
 		var mDelegatePropertyBag = merge({
 			aggregationName: "formElements",
-			payload: mDelegate.payload
+			payload: mDelegate.payload || {}
 		}, mPropertyBag);
-		var oDelegate;
+		var oDelegate = mDelegate.instance;
 
-		return new Promise(function (resolve) {
-			sap.ui.require([mDelegate.name], resolve);
-		})
-			.then(function (oDelegateModule) {
-				oDelegate = oDelegateModule;
-			})
+		return Promise.resolve()
 			.then(function() {
 				if (oDelegate.createLayout) {
 					return oDelegate.createLayout(mDelegatePropertyBag);
@@ -140,12 +137,11 @@ sap.ui.define([
 		var oAppComponent = mPropertyBag.appComponent;
 		var oChangeContent = oChangeDefinition.content;
 		var mFieldSelector = oChangeContent.newFieldSelector;
-		var sBindingPath = oChangeContent.bindingPath;
 		var mCreateProperties = {
 			appComponent: mPropertyBag.appComponent,
 			view: mPropertyBag.view,
 			fieldSelector: mFieldSelector,
-			bindingPath: sBindingPath,
+			bindingPath: oChangeContent.bindingPath,
 			modifier: mPropertyBag.modifier,
 			element: oForm
 		};
@@ -157,37 +153,43 @@ sap.ui.define([
 			newFieldSelector: mFieldSelector
 		};
 
-		var mDelegate = mPropertyBag.modifier.getFlexDelegate(oForm);
+		return DelegateMediatorAPI.getDelegateForControl({
+			control: oForm,
+			modifier: mPropertyBag.modifier,
+			modelType: oChangeContent.modelType,
+			supportsDefault: true
+		}).then(function (mDelegate) {
+			var oWaitForInnerControls = mDelegate
+				? getControlsFromDelegate(mDelegate, mCreateProperties)
+				: getControlsFromChangeHandlerCreateFunction(oChangeDefinition, mCreateProperties);
 
-		var oWaitForInnerControls = mDelegate
-			? getControlsFromDelegate(mDelegate, mCreateProperties)
-			: getControlsFromChangeHandlerCreateFunction(oChangeDefinition, mCreateProperties);
+			return oWaitForInnerControls
+				.then(function(mInnerControls) {
+					var oCreatedFormElement;
 
-		return oWaitForInnerControls
-			.then(function(mInnerControls) {
-				var oCreatedFormElement;
+					// "layoutControl" property is present only when the control is returned from Delegate.createLayout()
+					if (!mInnerControls.layoutControl) {
+						oCreatedFormElement = mPropertyBag.modifier.createControl("sap.ui.layout.form.FormElement", oAppComponent, oView, mFieldSelector);
+						mPropertyBag.modifier.insertAggregation(oCreatedFormElement, "label", mInnerControls.label, 0, oView);
+						mPropertyBag.modifier.insertAggregation(oCreatedFormElement, "fields", mInnerControls.control, 0, oView);
+					} else {
+						oCreatedFormElement = mInnerControls.control;
+					}
 
-				// "layoutControl" property is present only when the control is returned from Delegate.createLayout()
-				if (!mInnerControls.layoutControl) {
-					oCreatedFormElement = mPropertyBag.modifier.createControl("sap.ui.layout.form.FormElement", oAppComponent, oView, mFieldSelector);
-					mPropertyBag.modifier.insertAggregation(oCreatedFormElement, "label", mInnerControls.label, 0, oView);
-					mPropertyBag.modifier.insertAggregation(oCreatedFormElement, "fields", mInnerControls.control, 0, oView);
-				} else {
-					oCreatedFormElement = mInnerControls.control;
-				}
+					var oParentFormContainer = oChange.getDependentControl("parentFormContainer", mPropertyBag);
+					mPropertyBag.modifier.insertAggregation(oParentFormContainer, "formElements", oCreatedFormElement, iIndex, oView);
 
-				var oParentFormContainer = oChange.getDependentControl("parentFormContainer", mPropertyBag);
-				mPropertyBag.modifier.insertAggregation(oParentFormContainer, "formElements", oCreatedFormElement, iIndex, oView);
+					if (mInnerControls.valueHelp) {
+						mPropertyBag.modifier.insertAggregation(oParentFormContainer, "dependents", mInnerControls.valueHelp, 0, oView);
+						var oValueHelpSelector = mPropertyBag.modifier.getSelector(mPropertyBag.modifier.getId(mInnerControls.valueHelp), oAppComponent);
+						oRevertData.valueHelpSelector = oValueHelpSelector;
+					}
 
-				if (mInnerControls.valueHelp) {
-					mPropertyBag.modifier.insertAggregation(oParentFormContainer, "dependents", mInnerControls.valueHelp, 0, oView);
-					var oValueHelpSelector = mPropertyBag.modifier.getSelector(mPropertyBag.modifier.getId(mInnerControls.valueHelp), oAppComponent);
-					oRevertData.valueHelpSelector = oValueHelpSelector;
-				}
+					oChange.setRevertData(oRevertData);
+					return true;
+				});
 
-				oChange.setRevertData(oRevertData);
-				return true;
-			});
+		});
 	};
 	/**
 	 * Completes the change by adding change handler specific content
@@ -232,7 +234,12 @@ sap.ui.define([
 			oChangeDefinition.content.newFieldIndex = oSpecificChangeInfo.index;
 		}
 		if (oSpecificChangeInfo.oDataServiceVersion) {
+			//used to connect to change handler mediator
 			oChangeDefinition.content.oDataServiceVersion = oSpecificChangeInfo.oDataServiceVersion;
+		}
+		if (oSpecificChangeInfo.modelType) {
+			//used to connect to default delegate
+			oChangeDefinition.content.modelType = oSpecificChangeInfo.modelType;
 		}
 	};
 	/**

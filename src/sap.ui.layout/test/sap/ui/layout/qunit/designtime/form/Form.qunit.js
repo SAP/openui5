@@ -8,7 +8,9 @@ sap.ui.define([
 	"sap/ui/layout/form/ResponsiveGridLayout",
 	"sap/m/Toolbar",
 	"sap/m/Title",
-	"sap/ui/core/util/reflection/JsControlTreeModifier"
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/fl/apply/api/DelegateMediatorAPI"
 ], function (
 	elementDesigntimeTest,
 	elementActionTest,
@@ -19,7 +21,9 @@ sap.ui.define([
 	ResponsiveGridLayout,
 	Toolbar,
 	Title,
-	JsControlTreeModifier
+	JsControlTreeModifier,
+	JSONModel,
+	DelegateMediatorAPI
 ) {
 	"use strict";
 
@@ -193,10 +197,6 @@ sap.ui.define([
 		});
 
 		// Add delegate tests
-		function getValueHelpId(oControl) {
-			return JsControlTreeModifier.getFlexDelegate(oControl).payload.valueHelpId;
-		}
-
 		function buildViewContentForAddDelegate(sDelegate) {
 			return '<mvc:View id="view" xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns="sap.m" xmlns:fl="sap.ui.fl">' +
 					sDelegate +
@@ -223,7 +223,7 @@ sap.ui.define([
 				'</mvc:View>';
 		}
 
-		function confirmFieldIsAdded(oAppComponent, oView, assert) {
+		function confirmFieldIsAdded(sValueHelpId, oAppComponent, oView, assert) {
 			var oFormContainer = oView.byId("group");
 			var aFormElements = oFormContainer.getFormElements();
 			assert.equal(aFormElements.length, 3, "then a new form element exists");
@@ -233,7 +233,6 @@ sap.ui.define([
 			assert.equal(oField.getId().indexOf(oNewFormElement.getId()), 0, "then the field was assigned a stable id as suffix of the provided id");
 			assert.equal(oField.getBindingPath("text"), "binding/path", "and the field inside is bound correctly");
 
-			var sValueHelpId = getValueHelpId(oView.byId("idForm"));
 			var aDependents = oFormContainer.getDependents();
 			if (sValueHelpId) {
 				assert.equal(aDependents.length, 1, "then one dependent was added");
@@ -244,14 +243,13 @@ sap.ui.define([
 			}
 		}
 
-		function confirmFieldIsRemoved(oAppComponent, oView, assert) {
+		function confirmFieldIsRemoved(sValueHelpId, oAppComponent, oView, assert) {
 			var oFormContainer = oView.byId("group");
 			var aFormElements = oFormContainer.getFormElements();
 			assert.equal(aFormElements.length, 2, "then only the old form elements exists");
 			var oNewFormElement = oView.byId("my_new_control");
 			assert.notOk(oNewFormElement, "then the new control was removed");
 
-			var sValueHelpId = getValueHelpId(oView.byId("idForm"));
 			if (sValueHelpId) {
 				var aDependents = oFormContainer.getDependents();
 				assert.equal(aDependents.length, 0, "then the dependent was removed");
@@ -284,9 +282,9 @@ sap.ui.define([
 					};
 				}
 			},
-			afterAction: confirmFieldIsAdded,
-			afterUndo: confirmFieldIsRemoved,
-			afterRedo : confirmFieldIsAdded
+			afterAction: confirmFieldIsAdded.bind(null, "valueHelp"),
+			afterUndo: confirmFieldIsRemoved.bind(null, "valueHelp"),
+			afterRedo : confirmFieldIsAdded.bind(null, "valueHelp")
 		});
 
 		elementActionTest("Checking the add action via delegate for a form container, where Delegate.createLayout() is not responsible for controls", {
@@ -309,9 +307,9 @@ sap.ui.define([
 					};
 				}
 			},
-			afterAction: confirmFieldIsAdded,
-			afterUndo: confirmFieldIsRemoved,
-			afterRedo : confirmFieldIsAdded
+			afterAction: confirmFieldIsAdded.bind(null, null),
+			afterUndo: confirmFieldIsRemoved.bind(null, null),
+			afterRedo : confirmFieldIsAdded.bind(null, null)
 		});
 
 		elementActionTest("Checking the add action via delegate, returning a value help from payload, where Delegate.createLayout() is responsible for controls", {
@@ -341,9 +339,9 @@ sap.ui.define([
 					};
 				}
 			},
-			afterAction: confirmFieldIsAdded,
-			afterUndo: confirmFieldIsRemoved,
-			afterRedo : confirmFieldIsAdded
+			afterAction: confirmFieldIsAdded.bind(null, "valueHelp"),
+			afterUndo: confirmFieldIsRemoved.bind(null, "valueHelp"),
+			afterRedo : confirmFieldIsAdded.bind(null, "valueHelp")
 		});
 
 		elementActionTest("Checking the add action via delegate with a payload (add form element) for a form container, returning a value help, where Delegate.createLayout() is not responsible for delegate controls", {
@@ -369,9 +367,38 @@ sap.ui.define([
 					};
 				}
 			},
-			afterAction: confirmFieldIsAdded,
-			afterUndo: confirmFieldIsRemoved,
-			afterRedo : confirmFieldIsAdded
+			afterAction: confirmFieldIsAdded.bind(null, "valueHelp"),
+			afterUndo: confirmFieldIsRemoved.bind(null, "valueHelp"),
+			afterRedo : confirmFieldIsAdded.bind(null, "valueHelp")
+		});
+
+		//ensure a default delegate exists for a model not used anywhere else
+		var SomeModel = JSONModel.extend("sap.ui.layout.qunit.test.Model");
+		DelegateMediatorAPI.registerDefaultDelegate({
+			modelType: SomeModel.getMetadata().getName(),
+			delegate: sTestDelegatePath
+		});
+		elementActionTest("Checking the add action via delegate with a default delegate", {
+			xmlView: buildViewContentForAddDelegate(
+				'<f:Form id="idForm" >'
+			),
+			model : new SomeModel(),
+			action: {
+				name: ["add", "delegate"],
+				controlId: "group",
+				parameter: function (oView) {
+					return {
+						index: 0,
+						newControlId: oView.createId("my_new_control"),
+						bindingString: "binding/path",
+						modelType: SomeModel.getMetadata().getName(),
+						parentId: oView.createId("group")
+					};
+				}
+			},
+			afterAction: confirmFieldIsAdded.bind(null, null),
+			afterUndo: confirmFieldIsRemoved.bind(null, null),
+			afterRedo : confirmFieldIsAdded.bind(null, null)
 		});
 	});
 

@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/CustomData",
-	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/json/JSONModel",
 	"sap/m/Panel",
 	"sap/ui/rta/enablement/TestDelegate",
 	"sap/ui/thirdparty/sinon-4"
@@ -16,7 +16,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	CustomData,
-	ODataV2Model,
+	JSONModel,
 	Panel,
 	TestDelegate,
 	sinon
@@ -62,11 +62,13 @@ sap.ui.define([
 			}.bind(this), /is already defined!/, "then an exception is thrown");
 		});
 	});
+	//ensure a default delegate exists for a model not used anywhere else
+	var SomeModel = JSONModel.extend("sap.ui.fl.qunit.test.Model");
 
 	QUnit.module("Given 'getDelegateForControl' function is called", {
 		beforeEach: function () {
 			this.mPropertyBag = {
-				modelType: "sap.ui.model.odata.v2.ODataModel",
+				modelType: SomeModel.getMetadata().getName(),
 				delegate: "sap/ui/rta/enablement/TestDelegate"
 			};
 			this.oPanel = new Panel("test_panel");
@@ -85,11 +87,12 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		function createPropertyBag(oControl, oModifier, sModelType) {
+		function createPropertyBag(oControl, oModifier, sModelType, bSupportsDefault) {
 			return {
 				control: oControl,
 				modifier: oModifier,
-				modelType: sModelType
+				modelType: sModelType,
+				supportsDefault: bSupportsDefault
 			};
 		}
 
@@ -121,24 +124,54 @@ sap.ui.define([
 				});
 		});
 
+		QUnit.test("When it is called without delegate specified (XML Case)", function (assert) {
+			var vDomNode = jQuery("#qunit-fixture").get(0);
+			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(vDomNode, XmlTreeModifier))
+				.then(function (vReturnValue) {
+					assert.notOk(vReturnValue, "then an 'undefined' is returned");
+				});
+		});
+
 		QUnit.test("When it is called with delegate specified as default delegate (XML Case)", function (assert) {
 			var vDomNode = jQuery("#qunit-fixture").get(0);
 			DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
-			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(vDomNode, XmlTreeModifier, this.mPropertyBag.modelType))
+			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(vDomNode, XmlTreeModifier, this.mPropertyBag.modelType, true))
 				.then(function (mDelegateInfo) {
 					assert.deepEqual(mDelegateInfo.instance, TestDelegate, "then the default delegate info is returned");
 					assert.strictEqual(mDelegateInfo.name, this.mPropertyBag.delegate, "then the default delegate info is returned");
+					assert.deepEqual(mDelegateInfo.payload, {}, "then the default delegate info contains an empty payload");
+					assert.deepEqual(mDelegateInfo.modelType, this.mPropertyBag.modelType, "then the default delegate info contains the modelType");
 				}.bind(this));
 		});
 
 		QUnit.test("When it is called with delegate specified as default delegate (JS Case)", function (assert) {
-			this.oPanel.setModel(ODataV2Model);
+			this.oPanel.setModel(new SomeModel());
 			DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
-			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier))
+			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier, undefined, true))
 				.then(function (mDelegateInfo) {
 					assert.deepEqual(mDelegateInfo.instance, TestDelegate, "then the default delegate info is returned");
 					assert.strictEqual(mDelegateInfo.name, this.mPropertyBag.delegate, "then the default delegate info is returned");
+					assert.deepEqual(mDelegateInfo.payload, {}, "then the default delegate info contains an empty payload");
+					assert.deepEqual(mDelegateInfo.modelType, SomeModel.getMetadata().getName(), "then the default delegate info contains the modelType");
 				}.bind(this));
+		});
+
+		QUnit.test("When default delegate is available, but default delegate should be ignored (XML Case)", function (assert) {
+			var vDomNode = jQuery("#qunit-fixture").get(0);
+			DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
+			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(vDomNode, XmlTreeModifier, this.mPropertyBag.modelType))
+				.then(function (mDelegateInfo) {
+					assert.notOk(mDelegateInfo, "then an 'undefined' is returned");
+				});
+		});
+
+		QUnit.test("When default delegate is available, but default delegate should be ignored (XML Case)", function (assert) {
+			this.oPanel.setModel(new SomeModel());
+			DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
+			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier))
+				.then(function (mDelegateInfo) {
+					assert.notOk(mDelegateInfo, "then an 'undefined' is returned");
+				});
 		});
 
 		QUnit.test("When it is called with delegate specified into the control custom data and without default delegate registration", function (assert) {
@@ -146,19 +179,23 @@ sap.ui.define([
 			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier))
 				.then(function (mDelegateInfo) {
 					assert.deepEqual(mDelegateInfo.instance, TestDelegate, "then the specific delegate info is returned");
+					assert.deepEqual(mDelegateInfo.payload, {}, "then the specific delegate info contains an empty payload");
+					assert.notOk(mDelegateInfo.modelType, "then modelType 'undefined' is returned");
 				});
 		});
 
 		QUnit.test("When it is called with delegate specified into the control custom data and default delegate registration is available", function (assert) {
 			this.oPanel.addCustomData(new CustomData(this.oDelegateCustomData));
-			this.oPanel.setModel(ODataV2Model);
+			this.oPanel.setModel(new SomeModel());
 			DelegateMediatorAPI.registerDefaultDelegate({
-				modelType: "sap.ui.model.odata.v2.ODataModel",
+				modelType: SomeModel.getMetadata().getName(),
 				delegate: "notExistingDelegate/WouldBreakIfDefaultDelegateGetLoaded"
 			});
 			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier))
 				.then(function (mDelegateInfo) {
 					assert.deepEqual(mDelegateInfo.instance, TestDelegate, "then the specific delegate info is returned");
+					assert.deepEqual(mDelegateInfo.payload, {}, "then the specific delegate info contains an empty payload");
+					assert.notOk(mDelegateInfo.modelType, "then modelType 'undefined' is returned");
 				});
 		});
 	});
