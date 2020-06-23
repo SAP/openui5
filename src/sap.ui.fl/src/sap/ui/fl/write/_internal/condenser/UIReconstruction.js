@@ -235,8 +235,8 @@ sap.ui.define([
 		forEveryMapInMap(mUIReconstructions, function(mUIStates, sContainerId, mUIAggregationState) {
 			mUIAggregationState[Utils.TARGET_UI].forEach(function(sTargetElementId, iIndex) {
 				if (!Utils.isUnknown(sTargetElementId)) {
-					var mClassificationTypes = mReducedChanges[sTargetElementId];
-					var mSubtypes = mClassificationTypes[Utils.INDEX_RELEVANT];
+					var mTypes = mReducedChanges[sTargetElementId];
+					var mSubtypes = mTypes[Utils.INDEX_RELEVANT];
 					each(mSubtypes, function(sSubtypeKey, aCondenserChanges) {
 						if (sSubtypeKey !== sap.ui.fl.condenser.Classification.Destroy) {
 							aCondenserChanges.forEach(function(oCondenserChange) {
@@ -262,9 +262,9 @@ sap.ui.define([
 			var aTargetElementIds = mUIAggregationState[Utils.TARGET_UI];
 			if (isEqual(aInitialElementIds, aTargetElementIds)) {
 				aTargetElementIds.forEach(function(sTargetElementId) {
-					var mClassificationTypes = mReducedChanges[sTargetElementId];
-					if (mClassificationTypes !== undefined) {
-						delete mClassificationTypes[Utils.INDEX_RELEVANT];
+					var mTypes = mReducedChanges[sTargetElementId];
+					if (mTypes !== undefined) {
+						delete mTypes[Utils.INDEX_RELEVANT];
 					}
 				});
 				delete mUIStates[sKey];
@@ -284,8 +284,8 @@ sap.ui.define([
 			var aInitialElementIds = mUIAggregationState[Utils.INITIAL_UI];
 			var aTargetElementIds = mUIAggregationState[Utils.TARGET_UI];
 			aInitialElementIds.forEach(function(initialElementId, index) {
-				var mClassificationTypes = mReducedChanges[initialElementId];
-				if (mClassificationTypes === undefined) {
+				var mTypes = mReducedChanges[initialElementId];
+				if (!mTypes || !mTypes[Utils.INDEX_RELEVANT]) {
 					var sPlaceholder = Utils.PLACEHOLDER + index;
 					var iTargetIndex = aTargetElementIds.indexOf(initialElementId);
 					if (iTargetIndex >= 0) {

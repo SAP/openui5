@@ -200,6 +200,10 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("hide unhide on the same control and move on another control", function(assert) {
+			return loadApplyCondenseChanges.call(this, "hideUnhideMoveDifferentControls.json", 3, 1, assert);
+		});
+
 		QUnit.test("multiple reveal changes on the same control", function(assert) {
 			return loadApplyCondenseChanges.call(this, "unhideChanges.json", 4, 1, assert).then(function(aRemainingChanges) {
 				assert.equal(aRemainingChanges[0].getChangeType(), "unhideControl", sChangeTypeMsg + "unhideControl");
