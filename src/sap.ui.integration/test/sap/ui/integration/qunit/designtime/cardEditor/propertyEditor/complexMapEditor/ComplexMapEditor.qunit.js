@@ -47,23 +47,23 @@ sap.ui.define([
 						},
 						"type": {
 							"label": "Type",
-							"type": "enum",
-							"enum": [
-								"OData",
-								"ODataAnnotation",
-								"INA",
-								"XML",
-								"JSON"
+							"type": "select",
+							"items": [
+								{ "key": "OData" },
+								{ "key": "ODataAnnotation" },
+								{ "key": "INA" },
+								{ "key": "XML" },
+								{ "key": "JSON" }
 							],
 							"defaultValue": "OData",
 							"path": "type"
 						},
 						"odataVersion": {
 							"label": "OData Version",
-							"type": "enum",
-							"enum": [
-								"2.0",
-								"4.0"
+							"type": "select",
+							"items": [
+								{ "key": "2.0" },
+								{ "key": "4.0" }
 							],
 							"defaultValue": "2.0",
 							"path": "settings/odataVersion"
@@ -75,7 +75,7 @@ sap.ui.define([
 				"complexMap": "sap/ui/integration/designtime/cardEditor/propertyEditor/complexMapEditor/ComplexMapEditor",
 				"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
 				"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-				"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
+				"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
 			}
 		};
 	}

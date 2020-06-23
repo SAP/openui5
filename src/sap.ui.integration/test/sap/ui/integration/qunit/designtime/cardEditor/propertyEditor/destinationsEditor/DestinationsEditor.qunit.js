@@ -42,7 +42,7 @@ sap.ui.define([
 				"destinations": "sap/ui/integration/designtime/cardEditor/propertyEditor/destinationsEditor/DestinationsEditor",
 				"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
 				"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-				"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
+				"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor"
 			}
 		};
 	}
@@ -148,8 +148,8 @@ sap.ui.define([
 					assert.deepEqual(Object.keys(oComplexEditors), ["name"], "Then only the name field is editable");
 
 					assert.deepEqual(
-						oComplexEditors.name.getConfig().enum,
-						mConfig.properties.sampleDestination.allowedValues,
+						oComplexEditors.name.getConfig().items,
+						mConfig.properties.sampleDestination.allowedValues.map(function(sKey){ return { key: sKey }; }),
 						"Then only the allowed destinations are available in the name selection"
 					);
 				});

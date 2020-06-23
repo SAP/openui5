@@ -20,11 +20,11 @@ sap.ui.define(function () {
 			"DataRequestMode": {
 				"tags": aTags.concat(["data"]),
 				"label": "{i18n>CARD_EDITOR.DATA.REQUEST.MODE}",
-				"type": "enum",
-				"enum": [
-					"no-cors",
-					"same-origin",
-					"cors"
+				"type": "select",
+				"items": [
+					{ "key": "no-cors" },
+					{ "key": "same-origin" },
+					{ "key": "cors" }
 				],
 				"defaultValue": "cors",
 				"path": sRelativePath + "data/request/mode",
@@ -33,10 +33,10 @@ sap.ui.define(function () {
 			"DataRequestMethod": {
 				"tags": aTags.concat(["data"]),
 				"label": "{i18n>CARD_EDITOR.DATA.REQUEST.METHOD}",
-				"type": "enum",
-				"enum": [
-					"GET",
-					"POST"
+				"type": "select",
+				"items": [
+					{ "key": "GET" },
+					{ "key": "POST" }
 				],
 				"defaultValue": "GET",
 				"path": sRelativePath + "data/request/method",

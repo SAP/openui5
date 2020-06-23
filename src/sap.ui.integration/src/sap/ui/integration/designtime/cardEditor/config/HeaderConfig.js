@@ -16,10 +16,16 @@ sap.ui.define([
 			"tags": ["header"],
 			"label": "{i18n>CARD_EDITOR.HEADERTYPE}",
 			"path": "header/type",
-			"type": "enum",
-			"enum": [
-				"Default",
-				"Numeric"
+			"type": "select",
+			"items": [
+				{
+					"key": "Default",
+					"title": "{i18n>CARD_EDITOR.HEADERTYPE.DEFAULT}"
+				},
+				{
+					"key": "Numeric",
+					"title": "{i18n>CARD_EDITOR.HEADERTYPE.NUMERIC}"
+				}
 			],
 			"defaultValue": "Default"
 		},
@@ -27,10 +33,16 @@ sap.ui.define([
 			"tags": ["header"],
 			"label": "{i18n>CARD_EDITOR.HEADERPOSITION}",
 			"path": "headerPosition",
-			"type": "enum",
-			"enum": [
-				"Top",
-				"Bottom"
+			"type": "select",
+			"items": [
+				{
+					"key": "Top",
+					"title": "{i18n>CARD_EDITOR.HEADERPOSITION.TOP}"
+				},
+				{
+					"key": "Bottom",
+					"title": "{i18n>CARD_EDITOR.HEADERPOSITION.BOTTOM}"
+				}
 			],
 			"defaultValue": "Top"
 		},
@@ -77,7 +89,7 @@ sap.ui.define([
 		},
 		"mainIndicatorNumber": {
 			"tags": ["header", "numericHeader", "mainIndicator"],
-			"label": "{i18n>CARD_EDITOR.MAIN_INDICATOR.NUMBER}",
+			"label": "{i18n>CARD_EDITOR.NUMBER}",
 			"type": "number",
 			"path": "header/mainIndicator/number",
 			"visible": "{= ${context>header/type} === 'Numeric' }"
@@ -92,11 +104,20 @@ sap.ui.define([
 		"mainIndicatorTrend": {
 			"tags": ["header", "numericHeader", "mainIndicator"],
 			"label": "{i18n>CARD_EDITOR.MAIN_INDICATOR.TREND}",
-			"type": "enum",
-			"enum": [
-				"Down",
-				"None",
-				"Up"
+			"type": "select",
+			"items": [
+				{
+					"key": "Down",
+					"title": "{i18n>CARD_EDITOR.MAIN_INDICATOR.TREND.DOWN}"
+				},
+				{
+					"key": "None",
+					"title": "{i18n>CARD_EDITOR.MAIN_INDICATOR.TREND.NONE}"
+				},
+				{
+					"key": "Up",
+					"title": "{i18n>CARD_EDITOR.MAIN_INDICATOR.TREND.UP}"
+				}
 			],
 			"allowBinding": true,
 			"path": "header/mainIndicator/trend",
@@ -105,12 +126,24 @@ sap.ui.define([
 		"mainIndicatorState": {
 			"tags": ["header", "numericHeader", "mainIndicator"],
 			"label": "{i18n>CARD_EDITOR.MAIN_INDICATOR.STATE}",
-			"type": "enum",
-			"enum": [
-				"Critical",
-				"Error",
-				"Good",
-				"Neutral"
+			"type": "select",
+			"items": [
+				{
+					"key": "Critical",
+					"title": "{i18n>CARD_EDITOR.MAIN_INDICATOR.STATE.CRITICAL}"
+				},
+				{
+					"key": "Error",
+					"title": "{i18n>CARD_EDITOR.MAIN_INDICATOR.STATE.ERROR}"
+				},
+				{
+					"key": "Good",
+					"title": "{i18n>CARD_EDITOR.MAIN_INDICATOR.STATE.GOOD}"
+				},
+				{
+					"key": "Neutral",
+					"title": "{i18n>CARD_EDITOR.MAIN_INDICATOR.STATE.NEUTRAL}"
+				}
 			],
 			"allowBinding": true,
 			"path": "header/mainIndicator/state",
@@ -133,12 +166,12 @@ sap.ui.define([
 			"addItemLabel": "{i18n>CARD_EDITOR.SIDE_INDICATOR}",
 			"template": {
 				"title" : {
-					"label": "{i18n>CARD_EDITOR.SIDE_INDICATOR.TITLE}",
+					"label": "{i18n>CARD_EDITOR.TITLE}",
 					"type": "string",
 					"path": "title"
 				},
 				"number" : {
-					"label": "{i18n>CARD_EDITOR.SIDE_INDICATOR.NUMBER}",
+					"label": "{i18n>CARD_EDITOR.NUMBER}",
 					"type": "number",
 					"path": "number"
 				},

@@ -69,7 +69,7 @@ sap.ui.define([
 		var sLabel = oConfigValue.value.label;
 
 		oMapItemConfig.splice(1, 0, {
-			label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.LABEL"),
+			label: this.getI18nProperty("CARD_EDITOR.LABEL"),
 			path: "label",
 			value: sLabel,
 			placeholder: sLabel ? undefined : sKey,
