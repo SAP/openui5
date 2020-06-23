@@ -11,7 +11,9 @@ sap.ui.define([
 	"sap/m/semantic/CancelAction",
 	"sap/m/semantic/FlagAction",
 	"sap/m/semantic/MultiSelectAction",
+	"sap/m/semantic/SemanticOverflowToolbarButton",
 	"sap/ui/model/json/JSONModel",
+	"sap/m/Button",
 	"sap/m/Popover",
 	"sap/m/Label",
 	"sap/m/semantic/DetailPage",
@@ -30,7 +32,9 @@ sap.ui.define([
 	CancelAction,
 	FlagAction,
 	MultiSelectAction,
+	SemanticOverflowToolbarButton,
 	JSONModel,
+	Button,
 	Popover,
 	Label,
 	DetailPage,
@@ -544,7 +548,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		//Act
-		qutils.triggerKeydown(oMultiSelectAction.getDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeyup(oMultiSelectAction.getDomRef(), KeyCodes.SPACE);
 
 		// Assert
 		assert.strictEqual(oMultiSelectAction.getPressed(), true, "multiselect on after press");
@@ -569,8 +573,8 @@ sap.ui.define([
 		Core.applyChanges();
 
 		//Act
-		qutils.triggerKeydown(oMultiSelectAction.getDomRef(), KeyCodes.SPACE);
-		qutils.triggerKeydown(oMultiSelectAction.getDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeyup(oMultiSelectAction.getDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeyup(oMultiSelectAction.getDomRef(), KeyCodes.SPACE);
 
 		// Assert
 		assert.strictEqual(oMultiSelectAction.getPressed(), false, "multiselect on after unpress");
@@ -711,5 +715,27 @@ sap.ui.define([
 		assert.strictEqual(oResult.getId(), "multiAction");
 
 		oSemanticPage.destroy();
+	});
+
+	QUnit.module("private members", {
+		beforeEach: function () {
+			this.oSemanticButton = new AddAction(); // using AddAction for configuration
+		},
+		afterEach: function () {
+			this.oSemanticButton.destroy();
+			this.oSemanticButton = null;
+		}
+	});
+
+	QUnit.test("_getClass", function (assert) {
+		// Arrange
+		var oClassIconOnly = this.oSemanticButton._getClass({constraints: "IconOnly"}),
+			oClass = this.oSemanticButton._getClass();
+
+		// Assert
+		assert.strictEqual(oClassIconOnly === SemanticOverflowToolbarButton, true,
+			"Should return SemanticOverflowButton constructor");
+		assert.strictEqual(oClass === Button, true,
+			"Should return Button constructor");
 	});
 });

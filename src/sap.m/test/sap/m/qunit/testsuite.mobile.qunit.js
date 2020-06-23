@@ -2180,6 +2180,13 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			"semantic/SemanticToggleButton": {
+				title: "Test Page for sap.m.semantic.SemanticToggleButton",
+				_alternativeTitle: "QUnit tests: sap.m.semantic.SemanticToggleButton",
+				sinon: {
+					useFakeTimers: true
+				}
+			},
 			"semantic/SemanticPage": {
 				title: "Test Page for sap.m.SemanticPage",
 				_alternativeTitle: "QUnit tests: sap.m.SemanticPage"
