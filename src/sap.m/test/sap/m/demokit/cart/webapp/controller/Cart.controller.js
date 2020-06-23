@@ -3,13 +3,15 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
 	"../model/formatter",
-	"sap/m/MessageBox"
+	"sap/m/MessageBox",
+	"sap/m/MessageToast"
 ], function(
 	BaseController,
 	JSONModel,
 	Device,
 	formatter,
-	MessageBox
+	MessageBox,
+	MessageToast
 ) {
 	"use strict";
 
@@ -175,9 +177,10 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent Event object
 		 */
 		_deleteProduct: function (sCollection, oEvent) {
-			var oBindingContext = oEvent.getParameter("listItem").getBindingContext(sCartModelName);
-			var sEntryId = oBindingContext.getObject().ProductId;
-			var oBundle = this.getResourceBundle();
+			var oBindingContext = oEvent.getParameter("listItem").getBindingContext(sCartModelName),
+				oBundle = this.getResourceBundle(),
+				sEntryId = oBindingContext.getProperty("ProductId"),
+				sEntryName = oBindingContext.getProperty("Name");
 
 			// show confirmation dialog
 			MessageBox.show(oBundle.getText("cartDeleteDialogMsg"), {
@@ -197,6 +200,9 @@ sap.ui.define([
 
 					// update model
 					oCartModel.setProperty("/" + sCollection, Object.assign({}, oCollectionEntries));
+
+					MessageToast.show(oBundle.getText("cartDeleteDialogConfirmDeleteMsg",
+						[sEntryName]));
 				}
 			});
 		},
