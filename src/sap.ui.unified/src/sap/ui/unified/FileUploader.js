@@ -679,16 +679,22 @@ sap.ui.define([
 	FileUploader.prototype.setFileType = function(vTypes) {
 		// Compatibility issue: converting the given types to an array in case it is a string
 		var aTypes = this._convertTypesToArray(vTypes);
-		this._bShouldBeRebuilded = true;
 		this.setProperty("fileType", aTypes, false);
+		if (this.oFileUpload) {
+			this.oFileUpload = undefined;
+			this._prepareFileUpload();
+		}
 		return this;
 	};
 
 	FileUploader.prototype.setMimeType = function(vTypes) {
 		// Compatibility issue: converting the given types to an array in case it is a string
 		var aTypes = this._convertTypesToArray(vTypes);
-		this._bShouldBeRebuilded = true;
 		this.setProperty("mimeType", aTypes, false);
+		if (this.oFileUpload) {
+			this.oFileUpload = undefined;
+			this._prepareFileUpload();
+		}
 		return this;
 	};
 
@@ -846,6 +852,11 @@ sap.ui.define([
 			this.oIFrameRef = null;
 		}
 
+		if (this.oFileUpload) {
+			jQuery(this.oFileUpload).off();
+			this.oFileUpload.parentElement.removeChild(this.oFileUpload);
+			this.oFileUpload = null;
+		}
 	};
 
 	/**
@@ -869,6 +880,7 @@ sap.ui.define([
 	 * @private
 	 */
 	FileUploader.prototype.onAfterRendering = function() {
+
 		// prepare the file upload control and the upload iframe
 		this.prepareFileUploadAndIFrame();
 
@@ -876,7 +888,7 @@ sap.ui.define([
 		this._addLabelFeaturesToBrowse();
 
 		// event listener registration for change event
-		jQuery(this.oFileUpload).on("change", jQuery.proxy(this.handlechange, this));
+		jQuery(this.oFileUpload).on("change", this.handlechange.bind(this));
 
 		if (!this.bMobileLib) {
 			this.oFilePath.$().attr("tabindex", "-1");
@@ -1834,7 +1846,44 @@ sap.ui.define([
 	 */
 	FileUploader.prototype.prepareFileUploadAndIFrame = function() {
 
-		if (!this.oFileUpload || this._bShouldBeRebuilded) {
+		this._prepareFileUpload();
+
+		if (!this.oIFrameRef) {
+
+			// create the upload iframe
+			var oIFrameRef = document.createElement("iframe");
+			oIFrameRef.style.display = "none";
+			/*eslint-enable no-script-url */
+			oIFrameRef.id = this.sId + "-frame";
+			sap.ui.getCore().getStaticAreaRef().appendChild(oIFrameRef);
+			oIFrameRef.contentWindow.name = this.sId + "-frame";
+
+			// sink the load event of the upload iframe
+			var that = this;
+			this._bUploading = false; // flag for uploading
+			jQuery(oIFrameRef).on( "load", function(oEvent) {
+				if (that._bUploading) {
+					Log.info("File uploaded to " + that.getUploadUrl());
+					var sResponse;
+					try {
+						sResponse = that.oIFrameRef.contentWindow.document.body.innerHTML;
+					} catch (ex) {
+						// in case of cross-domain submit we get a permission denied exception
+						// when we try to access the body of the IFrame document
+					}
+					that.fireUploadComplete({"response": sResponse});
+					that._bUploading = false;
+				}
+			});
+
+			// keep the reference
+			this.oIFrameRef = oIFrameRef;
+
+		}
+	};
+
+	FileUploader.prototype._prepareFileUpload = function() {
+		if (!this.oFileUpload) {
 
 			// create the file uploader markup
 			var aFileUpload = [];
@@ -1893,44 +1942,10 @@ sap.ui.define([
 
 			// add it into the control markup
 			this.oFileUpload = jQuery(aFileUpload.join("")).prependTo(this.$().find(".sapUiFupInputMask")).get(0);
-			this._bShouldBeRebuilded = false;
 		} else {
 
 			// move the file uploader from the static area to the control markup
 			jQuery(this.oFileUpload).prependTo(this.$().find(".sapUiFupInputMask"));
-
-		}
-
-		if (!this.oIFrameRef) {
-
-			// create the upload iframe
-			var oIFrameRef = document.createElement("iframe");
-			oIFrameRef.style.display = "none";
-			/*eslint-enable no-script-url */
-			oIFrameRef.id = this.sId + "-frame";
-			sap.ui.getCore().getStaticAreaRef().appendChild(oIFrameRef);
-			oIFrameRef.contentWindow.name = this.sId + "-frame";
-
-			// sink the load event of the upload iframe
-			var that = this;
-			this._bUploading = false; // flag for uploading
-			jQuery(oIFrameRef).on( "load", function(oEvent) {
-				if (that._bUploading) {
-					Log.info("File uploaded to " + that.getUploadUrl());
-					var sResponse;
-					try {
-						sResponse = that.oIFrameRef.contentWindow.document.body.innerHTML;
-					} catch (ex) {
-						// in case of cross-domain submit we get a permission denied exception
-						// when we try to access the body of the IFrame document
-					}
-					that.fireUploadComplete({"response": sResponse});
-					that._bUploading = false;
-				}
-			});
-
-			// keep the reference
-			this.oIFrameRef = oIFrameRef;
 
 		}
 	};
