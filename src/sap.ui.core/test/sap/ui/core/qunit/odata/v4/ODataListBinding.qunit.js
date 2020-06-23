@@ -5917,6 +5917,63 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[false, true].forEach(function (bRefresh) {
+	[false, true].forEach(function (bHeaderContext) {
+		var sTitle = "requestSideEffects: $$aggregation, refresh=" + bRefresh + ", headerContext="
+				+ bHeaderContext;
+
+		QUnit.test(sTitle, function (assert) {
+		var oBinding = this.bindList("/Set", undefined, undefined, undefined, {
+				$$aggregation : {}
+			}),
+			oContext = bHeaderContext ? oBinding.getHeaderContext() : undefined,
+			aFilters = [],
+			aPaths = [],
+			oPromise,
+			oRefreshPromise = {};
+
+		this.mock(oBinding.oCache).expects("requestSideEffects").never();
+		this.mock(oBinding.aFilters).expects("concat").withExactArgs(oBinding.aApplicationFilters)
+			.returns(aFilters);
+		this.mock(_AggregationHelper).expects("isAffected")
+			.withExactArgs(sinon.match.same(oBinding.mParameters.$$aggregation),
+				sinon.match.same(aFilters), sinon.match.same(aPaths))
+			.returns(bRefresh);
+		this.mock(oBinding).expects("refreshInternal").exactly(bRefresh ? 1 : 0)
+			.withExactArgs("", "group", false, true)
+			.returns(oRefreshPromise);
+
+		// code under test
+		oPromise = oBinding.requestSideEffects("group", aPaths, oContext);
+
+		if (bRefresh) {
+			assert.strictEqual(oPromise, oRefreshPromise);
+		} else {
+			assert.strictEqual(oPromise, SyncPromise.resolve());
+		}
+	});
+
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects with $$aggregation and row context", function (assert) {
+		var oBinding = this.bindList("/Set", undefined, undefined, undefined, {
+				$$aggregation : {}
+			});
+
+		this.mock(oBinding.oCache).expects("requestSideEffects").never();
+		this.mock(oBinding).expects("refreshInternal").never();
+		this.mock(_AggregationHelper).expects("isAffected").never();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.requestSideEffects("group", [/*aPaths*/], {/*oContext*/});
+		}, new Error(
+			"Must not request side effects for a context of a binding with $$aggregation"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getQueryOptions: with system query options", function (assert) {
 		var oBinding = this.bindList("/Set");
 

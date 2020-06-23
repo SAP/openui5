@@ -2284,6 +2284,20 @@ sap.ui.define([
 			});
 		}
 
+		if (this.mParameters.$$aggregation) {
+			if (bSingle) {
+				throw new Error(
+					"Must not request side effects for a context of a binding with $$aggregation");
+			}
+
+			if (_AggregationHelper.isAffected(this.mParameters.$$aggregation,
+					this.aFilters.concat(this.aApplicationFilters), aPaths)) {
+				return this.refreshInternal("", sGroupId, false, true);
+			}
+
+			return SyncPromise.resolve();
+		}
+
 		if (aPaths.indexOf("") < 0) {
 			oPromise = this.oCache.requestSideEffects(this.lockGroup(sGroupId), aPaths,
 				mNavigationPropertyPaths,
