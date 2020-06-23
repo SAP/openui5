@@ -233,7 +233,7 @@ sap.ui.define([
 			_addIconToExternalUrl: function (aDomRef, sHref) {
 				// Check if the external domain is SAP hosted
 				var bSAPHosted = /^https?:\/\/(?:www.)?[\w.]*(?:sap|hana\.ondemand|sapfioritrial)\.com/.test(sHref),
-					sTitle = 'Information published on ' + bSAPHosted ? '' : 'non ' + 'SAP site',
+					sTitle = 'Information published on ' + (bSAPHosted ? '' : 'non ') + 'SAP site',
 					newImage = new Image(),
 					sIconName = bSAPHosted ? 'link-sap' : 'link-external';
 
