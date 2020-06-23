@@ -237,6 +237,32 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("Test mimeType property - setter used on after rendering", function (assert) {
+		//prepare
+		var done = assert.async(),
+			oFileUploader = new FileUploader();
+
+		oFileUploader.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oFileUploader.oAfterRenderingDelegate = {
+			onAfterRendering: function() {
+				//assert
+				assert.equal(document.querySelectorAll("[type='file']").length, 1, "There is only one upload input element");
+
+				//clean
+				oFileUploader.removeDelegate(oFileUploader.oAfterRenderingDelegate);
+				oFileUploader.destroy();
+				done();
+			}
+		};
+
+		oFileUploader.addDelegate(oFileUploader.oAfterRenderingDelegate);
+
+		//act
+		oFileUploader.setMimeType(["audio"]);
+	});
+
 	//BCP: 1970125350
 	//https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#accept
 	QUnit.test("input has the correct accept attribute", function(assert) {
