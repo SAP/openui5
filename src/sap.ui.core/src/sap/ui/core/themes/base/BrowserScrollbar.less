@@ -1,6 +1,6 @@
 /* ============================================= */
 /* CSS for control sap.ui.core/BrowserScrollbar  */
-/* Belize theme                                  */
+/* Base theme                                    */
 /* ============================================= */
 
 /****** IE ******/
@@ -15,11 +15,11 @@ html[data-sap-ui-browser*="ie"] .sapUiBody {
 /****** Safari + Chrome on Desktop ******/
 
 html.sap-desktop ::-webkit-scrollbar:horizontal {
-	height: 0.75rem;
+	height: @sapUiScrollBarDimension;
 }
 
 html.sap-desktop ::-webkit-scrollbar:vertical {
-	width: 0.75rem;
+	width: @sapUiScrollBarDimension;
 }
 
 html.sap-desktop ::-webkit-scrollbar {
