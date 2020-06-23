@@ -3,21 +3,21 @@
  */
 
 sap.ui.define([
+	"sap/base/util/each"
 ], function(
-
+	each
 ) {
 	"use strict";
 
 	return {
 		addToChangesMap: function(mProperties, sUniqueKey, oChange) {
-			if (!mProperties.has(sUniqueKey)) {
-				mProperties.set(sUniqueKey, []);
+			if (!mProperties[sUniqueKey]) {
+				mProperties[sUniqueKey] = [];
 			}
-			var aChanges = mProperties.get(sUniqueKey);
-			aChanges.push(oChange);
+			mProperties[sUniqueKey].push(oChange);
 		},
 		getChangesFromMap: function(mObjects, aChanges, sKey) {
-			mObjects.get(sKey).forEach(function(aReverseChanges) {
+			each(mObjects[sKey], function(sKey, aReverseChanges) {
 				aReverseChanges.reverse();
 				var oChange;
 				aReverseChanges.forEach(function(oCurrentChange) {

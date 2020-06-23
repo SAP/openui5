@@ -4,11 +4,13 @@
 
 /* global Map */
 sap.ui.define([
+	"sap/base/util/each",
 	"sap/ui/fl/write/_internal/condenser/classifications/Create",
 	"sap/ui/fl/write/_internal/condenser/classifications/Destroy",
 	"sap/ui/fl/write/_internal/condenser/classifications/Move",
 	"sap/ui/fl/write/_internal/condenser/Utils"
 ], function(
+	each,
 	Create,
 	Destroy,
 	Move,
@@ -36,8 +38,8 @@ sap.ui.define([
 	};
 
 	function forEveryMapInMap(mMap, fnCallback) {
-		mMap.forEach(function(mOuterMap, sOuterKey) {
-			mOuterMap.forEach(function(mInnerMap, sInnerKey) {
+		each(mMap, function(sOuterKey, mOuterMap) {
+			each(mOuterMap, function(sInnerKey, mInnerMap) {
 				fnCallback(mOuterMap, sOuterKey, mInnerMap, sInnerKey);
 			});
 		});
@@ -58,25 +60,25 @@ sap.ui.define([
 	 * Defines the data structures that contain a container with an array of condenser info objects.
 	 *
 	 * @param {Map} mUIReconstructions - Map of UI reconstructions that holds key-value pairs. A key is a selector ID of the container. A value is a nested map which contains initial and target UI reconstructions
-	 * @param  {object[]} aCondenserInfos - Array of condenser info objects
+	 * @param {object[]} aCondenserInfos - Array of condenser info objects
 	 * @returns {Map} Simulation of the UI reconstruction
 	 */
 	function defineContainersMap(mUIReconstructions, aCondenserInfos) {
-		var mContainers = new Map();
+		var mContainers = {};
 		forEveryMapInMap(mUIReconstructions, function(mUIState, sContainerKey, mUIAggregationState, sAggregationName) {
-			var aTargetElementIds = mUIAggregationState.get(TARGET_UI);
+			var aTargetElementIds = mUIAggregationState[TARGET_UI];
 
 			aTargetElementIds.forEach(function(sTargetElementId) {
 				aCondenserInfos.forEach(function(oCondenserInfo) {
 					if (sTargetElementId === oCondenserInfo.affectedControl) {
-						if (!mContainers.has(sContainerKey)) {
-							mContainers.set(sContainerKey, new Map());
+						if (!mContainers[sContainerKey]) {
+							mContainers[sContainerKey] = {};
 						}
-						var mAggregations = mContainers.get(sContainerKey);
-						if (!mAggregations.has(sAggregationName)) {
-							mAggregations.set(sAggregationName, []);
+						var mAggregations = mContainers[sContainerKey];
+						if (!mAggregations[sAggregationName]) {
+							mAggregations[sAggregationName] = [];
 						}
-						var aContainerElements = mAggregations.get(sAggregationName);
+						var aContainerElements = mAggregations[sAggregationName];
 						aContainerElements.push(oCondenserInfo);
 					}
 				});
@@ -154,7 +156,7 @@ sap.ui.define([
 		var sContainerKey = oCondenserInfo.targetContainer;
 		var sAffectedControlId = oCondenserInfo.affectedControl;
 		var iTargetIndex = oCondenserInfo.getTargetIndex(oCondenserInfo.change);
-		var aContainerElements = mUIReconstructions.get(sContainerKey).get(oCondenserInfo.targetAggregation);
+		var aContainerElements = mUIReconstructions[sContainerKey][oCondenserInfo.targetAggregation];
 		CondenserUtils.extendArrayWithPlaceholders(aContainerElements, undefined, iTargetIndex);
 		var iSourceIndex = aContainerElements.indexOf(sAffectedControlId);
 		shiftElement(aContainerElements, iSourceIndex, iTargetIndex);
@@ -198,19 +200,19 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the simulated and the target UI reconstructions are equal
 	 */
 	function isEqualReconstructedUI(sContainerKey, sAggregationName, aInitialUIElementIds, aTargetUIElementIds, aCondenserInfos) {
-		var mUISimulatedStates = new Map();
+		var mUISimulatedStates = {};
 
 		aCondenserInfos.forEach(function(oCondenserInfo) {
 			var sContainerKey = oCondenserInfo.targetContainer;
-			if (!mUISimulatedStates.has(sContainerKey)) {
-				mUISimulatedStates.set(sContainerKey, new Map());
+			if (!mUISimulatedStates[sContainerKey]) {
+				mUISimulatedStates[sContainerKey] = {};
 			}
-			var mUIAggregationState = mUISimulatedStates.get(sContainerKey);
-			if (!mUIAggregationState.get(sAggregationName)) {
-				mUIAggregationState.set(sAggregationName, CondenserUtils.initializeArrayWithPlaceholders(0, aInitialUIElementIds.length - 1));
+			var mUIAggregationState = mUISimulatedStates[sContainerKey];
+			if (!mUIAggregationState[sAggregationName]) {
+				mUIAggregationState[sAggregationName] = CondenserUtils.initializeArrayWithPlaceholders(0, aInitialUIElementIds.length - 1);
 			}
 
-			INDEX_RELATED[oCondenserInfo.subtype].simulate(mUIAggregationState.get(sAggregationName), oCondenserInfo, aInitialUIElementIds);
+			INDEX_RELATED[oCondenserInfo.subtype].simulate(mUIAggregationState[sAggregationName], oCondenserInfo, aInitialUIElementIds);
 		});
 
 		aCondenserInfos.forEach(function(oCondenserInfo) {
@@ -219,7 +221,7 @@ sap.ui.define([
 			}
 		});
 
-		var aSortedUIElementIds = mUISimulatedStates.get(sContainerKey).get(sAggregationName);
+		var aSortedUIElementIds = mUISimulatedStates[sContainerKey][sAggregationName];
 		if (isEqual(aTargetUIElementIds, aSortedUIElementIds)) {
 			return true;
 		}
@@ -234,11 +236,11 @@ sap.ui.define([
 	 */
 	function updateTargetIndex(mReducedChanges, mUIReconstructions) {
 		forEveryMapInMap(mUIReconstructions, function(mUIStates, sContainerId, mUIAggregationState) {
-			mUIAggregationState.get(TARGET_UI).forEach(function(sTargetElementId, iIndex) {
+			mUIAggregationState[TARGET_UI].forEach(function(sTargetElementId, iIndex) {
 				if (!CondenserUtils.isUnknown(sTargetElementId)) {
-					var mClassificationTypes = mReducedChanges.get(sTargetElementId);
-					var mSubtypes = mClassificationTypes.get(sap.ui.fl.condenser.ClassificationType.IndexRelated);
-					mSubtypes.forEach(function(aCondenserChanges, sSubtypeKey) {
+					var mClassificationTypes = mReducedChanges[sTargetElementId];
+					var mSubtypes = mClassificationTypes[sap.ui.fl.condenser.ClassificationType.IndexRelated];
+					each(mSubtypes, function(sSubtypeKey, aCondenserChanges) {
 						if (sSubtypeKey !== sap.ui.fl.condenser.ClassificationSubtypes.Destroy) {
 							aCondenserChanges.forEach(function(oCondenserChange) {
 								oCondenserChange.setTargetIndex(oCondenserChange.change, iIndex);
@@ -259,16 +261,16 @@ sap.ui.define([
 	 */
 	function compareUIReconstructions(mReducedChanges, mUIReconstructions) {
 		forEveryMapInMap(mUIReconstructions, function(mUIStates, sContainerId, mUIAggregationState, sKey) {
-			var aInitialElementIds = mUIAggregationState.get(INITIAL_UI);
-			var aTargetElementIds = mUIAggregationState.get(TARGET_UI);
+			var aInitialElementIds = mUIAggregationState[INITIAL_UI];
+			var aTargetElementIds = mUIAggregationState[TARGET_UI];
 			if (isEqual(aInitialElementIds, aTargetElementIds)) {
 				aTargetElementIds.forEach(function(sTargetElementId) {
-					var mClassificationTypes = mReducedChanges.get(sTargetElementId);
+					var mClassificationTypes = mReducedChanges[sTargetElementId];
 					if (mClassificationTypes !== undefined) {
-						mClassificationTypes.delete(sap.ui.fl.condenser.ClassificationType.IndexRelated);
+						delete mClassificationTypes[sap.ui.fl.condenser.ClassificationType.IndexRelated];
 					}
 				});
-				mUIStates.delete(sKey);
+				delete mUIStates[sKey];
 			}
 		});
 	}
@@ -282,10 +284,10 @@ sap.ui.define([
 	 */
 	function updateTargetUIReconstructions(mReducedChanges, mUIReconstructions) {
 		forEveryMapInMap(mUIReconstructions, function(mUIStates, sContainerId, mUIAggregationState) {
-			var aInitialElementIds = mUIAggregationState.get(INITIAL_UI);
-			var aTargetElementIds = mUIAggregationState.get(TARGET_UI);
+			var aInitialElementIds = mUIAggregationState[INITIAL_UI];
+			var aTargetElementIds = mUIAggregationState[TARGET_UI];
 			aInitialElementIds.forEach(function(initialElementId, index) {
-				var mClassificationTypes = mReducedChanges.get(initialElementId);
+				var mClassificationTypes = mReducedChanges[initialElementId];
 				if (mClassificationTypes === undefined) {
 					var sPlaceholder = PLACEHOLDER + index;
 					var iTargetIndex = aTargetElementIds.indexOf(initialElementId);
@@ -325,8 +327,8 @@ sap.ui.define([
 		var mContainers = defineContainersMap(mUIReconstructions, aCondenserInfos);
 
 		forEveryMapInMap(mContainers, function(mAggregations, sContainerKey, aCondenserInfos, sAggregationName) {
-			var aTargetElementIds = mUIReconstructions.get(sContainerKey).get(sAggregationName).get(TARGET_UI);
-			var aInitialElementIds = mUIReconstructions.get(sContainerKey).get(sAggregationName).get(INITIAL_UI);
+			var aTargetElementIds = mUIReconstructions[sContainerKey][sAggregationName][TARGET_UI];
+			var aInitialElementIds = mUIReconstructions[sContainerKey][sAggregationName][INITIAL_UI];
 
 			// Verify whether the algorithm should be ready before ;)
 			if (

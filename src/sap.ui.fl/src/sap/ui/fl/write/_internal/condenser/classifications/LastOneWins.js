@@ -10,10 +10,8 @@ sap.ui.define([
 
 	return {
 		addToChangesMap: function(mProperties, sUniqueKey, oChange) {
-			if (!mProperties.has(sUniqueKey)) {
-				var aChanges = [];
-				aChanges.push(oChange);
-				mProperties.set(sUniqueKey, aChanges);
+			if (!mProperties[sUniqueKey]) {
+				mProperties[sUniqueKey] = [oChange];
 			}
 		}
 	};
