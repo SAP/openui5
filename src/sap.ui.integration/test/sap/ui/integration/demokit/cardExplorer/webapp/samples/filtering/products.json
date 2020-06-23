@@ -18,40 +18,40 @@
 					"type": "integer",
 					"label": "Number of products",
 					"description": "How many products to show in the list."
-				},
+				}
+			},
+			"filters": {
 				"category": {
 					"value": "Notebooks",
 					"type": "string",
 					"label": "Category",
 					"description": "Filter the products by category.",
-					"filter": {
-						"items":  [
-						    {
-								"title": "All",
-								"key": "all"
-							},
-							{
-								"title": "Flat Screen Monitors",
-								"key": "Flat Screen Monitors"
-							},
-							{
-								"title": "Notebooks",
-								"key": "Notebooks"
-							}
-						]
-					}
+					"items":  [
+						{
+							"title": "All",
+							"key": "all"
+						},
+						{
+							"title": "Flat Screen Monitors",
+							"key": "Flat Screen Monitors"
+						},
+						{
+							"title": "Notebooks",
+							"key": "Notebooks"
+						}
+					]
 				}
 			}
 		},
 		"data": {
 			"request": {
-				"url": "{{dataSources.products.uri}}/SEPMRA_C_PD_Product?$filter={= '{{parameters.category}}' !== 'all' ? 'ProductCategory eq \\'{{parameters.category}}\\' and ' : ''}AverageRatingValue gt 3&$orderby=AverageRatingValue desc&$inlinecount=allpages"
+				"url": "{{dataSources.products.uri}}/SEPMRA_C_PD_Product?$filter={= '{{filters.category}}' !== 'all' ? 'ProductCategory eq \\'{{filters.category}}\\' and ' : ''}AverageRatingValue gt 3&$orderby=AverageRatingValue desc&$inlinecount=allpages"
 			}
 		},
 		"type": "List",
 		"header": {
 			"title": "Products by category",
-			"subTitle": "Category {{parameters.category}}",
+			"subTitle": "Category {{filters.category}}",
 			"icon": {
 				"src": "sap-icon://product"
 			},
