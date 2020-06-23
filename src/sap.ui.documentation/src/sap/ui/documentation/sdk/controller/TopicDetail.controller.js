@@ -14,8 +14,10 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/util/Resources",
 		"sap/ui/documentation/sdk/controller/util/ResponsiveImageMap",
 		"sap/ui/core/HTML",
-		"sap/base/Log"
-	], function (jQuery, ResizeHandler, BaseController, JSONModel, XML2JSONUtils, Device, ToggleFullScreenHandler, ResourcesUtil, ResponsiveImageMap, HTML, Log) {
+		"sap/base/Log",
+		"sap/m/LightBox",
+		"sap/m/LightBoxItem"
+	], function (jQuery, ResizeHandler, BaseController, JSONModel, XML2JSONUtils, Device, ToggleFullScreenHandler, ResourcesUtil, ResponsiveImageMap, HTML, Log, LightBox, LightBoxItem) {
 		"use strict";
 
 		var GIT_HUB_DOCS_URL = "https://sap.github.io/openui5-docs/#/",
@@ -56,7 +58,7 @@ sap.ui.define([
 			onBeforeRendering: function() {
 				var oViewDom = this.getView().getDomRef();
 				if (oViewDom)  {
-					oViewDom.removeEventListener('click', this._onPageClick);
+					oViewDom.removeEventListener('click', this._onPageClick.bind(this));
 				}
 
 				ResizeHandler.deregister(this._onResize.bind(this));
@@ -66,7 +68,7 @@ sap.ui.define([
 			onAfterRendering: function() {
 				var oViewDom = this.getView().getDomRef();
 				if (oViewDom)  {
-					oViewDom.addEventListener('click', this._onPageClick);
+					oViewDom.addEventListener('click', this._onPageClick.bind(this));
 				}
 
 				ResizeHandler.register(this.getView().getDomRef(), this._onResize.bind(this));
@@ -90,14 +92,44 @@ sap.ui.define([
 
 			_onPageClick: function (oEvent) {
 				var oTarget = oEvent.target,
-					bCollapsible = oTarget.classList.contains('collapsible-icon'),
+					oClassList = oTarget.classList,
+					bCollapsible = oClassList.contains('collapsible-icon'),
+					bThumbnail = oClassList.contains('lightbox-img'),
 					oSection;
+
+				if (bThumbnail) {
+					this._onThumbnailClicked(oTarget);
+				}
 
 				if (bCollapsible) {
 					// collapsible sections
 					oSection = oTarget.parentNode;
 					oSection.classList.toggle("expanded");
 				}
+			},
+
+			_onThumbnailClicked: function (oTarget) {
+				var oLightBox = this._getLightBox(),
+					oLightBoxItem = oLightBox.getImageContent()[0],
+					sSourceUrl = oTarget.getAttribute('src'),
+					sTitle = oTarget.getAttribute('title'),
+					sAlt = oTarget.getAttribute('alt');
+
+				oLightBoxItem.setImageSrc(sSourceUrl);
+				oLightBoxItem.setTitle(sTitle);
+				oLightBoxItem.setAlt(sAlt);
+
+				oLightBox.open();
+			},
+
+			_getLightBox: function () {
+				if (!this._oLightBox) {
+					this._oLightBox = new LightBox({
+						imageContent: new LightBoxItem()
+					});
+				}
+
+				return this._oLightBox;
 			},
 
 			_onHtmlResourceLoaded: function (htmlContent) {
