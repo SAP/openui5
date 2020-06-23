@@ -80,6 +80,12 @@ sap.ui.define([
 		 * </ul>
 		 * <h3>Responsive Behavior</h3>
 		 * <ul>
+		 * <li>As the <code>sap.m.ComboBox</code> control allows free text, as well as has <code>selectedKey</code> / <code>selectedItem</code> properties, here is brief explanation of how they are updated during model change:</li>
+		 * <ul>
+		 * <li>If the ComboBox has <code>selectedKey</code> and <code>selectedItem</code> set, the model changes and the item key is no longer amongst the newly added items, the value of the ComboBox will remain the same and the <code>selectedKey</code> and <code>selectedItem</code> properties <strong>will not</strong> be changed.</li>
+		 * <li>If the ComboBox has <code>selectedKey</code> and <code>selectedItem</code> set, the model changes and the item key corresponds to newly added item, with different text, the value of the ComboBox <strong>will</strong> be updated with the text of the newly corresponding item.</li>
+		 * <li>If the ComboBox has only value, but no <code>selectedKey</code> and <code>selectedItem</code> set, the model changes, the value <strong>will</strong> remain the same and the <code>selectedKey</code> and <code>selectedItem</code> properties <strong>will not</strong> be changed.</li>
+		 * </ul>
 		 * <li>The width of the option list adapts to its content. The minimum width is the input field plus the drop-down arrow.</li>
 		 * <li>There is no horizontal scrolling in the option list. Entries in the list that are too long will be truncated.</li>
 		 * <li>On phone devices the combo box option list opens a dialog.</li>
@@ -2286,52 +2292,6 @@ sap.ui.define([
 		ComboBox.prototype.getSelectedItem = function() {
 			var vSelectedItem = this.getAssociation("selectedItem");
 			return (vSelectedItem === null) ? null : core.byId(vSelectedItem) || null;
-		};
-
-		/**
-		 * Called whenever the binding of the aggregation named <code>items</code> is changed.
-		 *
-		 * @returns {undefined}
-		 * @private
-		 */
-		ComboBox.prototype.updateItems = function () {
-			var vResult,
-				oSelectedItem = this.getSelectedItem(), //Get selected item before model update
-				vResult = ComboBoxBase.prototype.updateItems.apply(this, arguments); //Update
-
-			//Debounce & emulate onBeforeRendering- all setters are done
-			clearTimeout(this._debounceItemsUpdate);
-			this._debounceItemsUpdate = setTimeout(this["_syncItemsSelection"].bind(this, oSelectedItem), 0);
-
-			return vResult;
-		};
-
-		/**
-		 * Synchronizes combobox's model update with selected key.
-		 *
-		 * @param {sap.ui.core.Item} oSelectedItem The item
-		 * @private
-		 */
-		ComboBox.prototype._syncItemsSelection = function (oSelectedItem) {
-			var bHasMatchingElement, aNewItems,
-				sSelectedKey  = this.getSelectedKey();
-
-			// The method should be executed only when there's previous selection
-			// and that previous selection differs from the current one.
-			if (!oSelectedItem || oSelectedItem === this.getSelectedItem()) {
-				return;
-			}
-
-			// Get the items after model update
-			aNewItems = this.getItems();
-
-			// Find out if there's an item with the same key, to select it
-			bHasMatchingElement = aNewItems.some(function (oItem) {
-				return sSelectedKey === oItem.getKey();
-			});
-
-			// Select the item or set null if there's no record with that key
-			this.setSelectedItem(bHasMatchingElement && sSelectedKey ? this.getItemByKey(sSelectedKey) : null);
 		};
 
 		/**
