@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/StandardListItem",
+	"sap/m/GroupHeaderListItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
@@ -24,6 +25,7 @@ sap.ui.define([
 		Filter,
 		FilterOperator,
 		StandardListItem,
+		GroupHeaderListItem,
 		JSONModel,
 		qutils,
 		KeyCodes,
@@ -897,6 +899,29 @@ sap.ui.define([
 
 			// Cleanup
 			oDialogAttachSpy.restore();
+			oDialogCloseSpy.restore();
+		});
+
+		QUnit.test("Clicking on a group heder should not close the select dialog", function (assert) {
+			// Arrange
+			bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
+			this.oSelectDialog.insertItem(new GroupHeaderListItem({title: "Group header"}), 0);
+			sap.ui.getCore().applyChanges();
+
+			// Act
+			this.oSelectDialog.open();
+			this.clock.tick(350);
+
+			var oDialogCloseSpy = this.spy(this.oSelectDialog._oDialog, "close");
+
+			this.oSelectDialog.getItems()[0].$().trigger("tap");
+			this.clock.tick(350);
+
+			// Assert
+			assert.strictEqual(oDialogCloseSpy.callCount, 0, "Dialog close method was not called.");
+
+			// Cleanup
+			this.oSelectDialog.destroyItems();
 			oDialogCloseSpy.restore();
 		});
 

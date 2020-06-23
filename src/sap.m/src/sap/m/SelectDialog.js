@@ -1327,6 +1327,10 @@ function(
 				return;
 			}
 
+			if (oEvent && oEvent.srcControl.isA("sap.m.GroupHeaderListItem")){
+				return;
+			}
+
 			this._selectionChange(oEvent); // Mouse and Touch events
 		}.bind(this);
 
