@@ -74,9 +74,9 @@ sap.ui.define(["sap/ui/core/Element", "sap/base/Log", "sap/base/util/isPlainObje
 	SelectionDetailsItemLine.prototype._getValueToRender = function() {
 		var sValue = "",
 			oValue = this.getValue();
-		if (jQuery.type(oValue) === "string") {
+		if (typeof oValue === "string" || oValue instanceof String) {
 			sValue = oValue;
-		} else if (jQuery.type(oValue) === "number") {
+		} else if (typeof oValue === "number") {
 			sValue = oValue.toString();
 		} else if (isPlainObject(oValue)) {
 			if (oValue.day && oValue.day.length > 0) {

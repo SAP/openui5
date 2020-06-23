@@ -405,8 +405,8 @@ sap.ui.define([
 		//if (!mParameters.ODataService) {
 		//	Log.error("sap.ui.fl.Persistence.addChange : ODataService is not defined");
 		//}
-		var sContentType = jQuery.type(mParameters.content);
-		if (sContentType !== 'object' && sContentType !== 'array') {
+		var sContentType = typeof mParameters.content;
+		if (!mParameters.content || (sContentType !== 'object' && !Array.isArray(mParameters.content))) {
 			Log.error("mParameters.content is not of expected type object or array, but is: " + sContentType, "sap.ui.fl.Persistence#addChange");
 		}
 		// convert the text object to the internal structure
