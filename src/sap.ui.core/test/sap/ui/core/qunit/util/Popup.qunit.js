@@ -9,7 +9,9 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/ui/base/EventProvider",
-	"sap/ui/qunit/QUnitUtils"
+	"sap/ui/qunit/QUnitUtils",
+	"sap/m/Panel",
+	"sap/base/Log"
 ], function(
 	Popup,
 	Button,
@@ -19,7 +21,9 @@ sap.ui.define([
 	Control,
 	Core,
 	EventProvider,
-	QUnitUtils
+	QUnitUtils,
+	Panel,
+	Log
 ){
 	"use strict";
 
@@ -134,6 +138,31 @@ sap.ui.define([
 		assert.equal(this.$Ref.css("visibility"), "hidden", "Popup should be 'visibility:hidden' initially");
 		this.oPopup.setFollowOf(true);
 		this.oPopup.open(0, undefined, undefined, window);
+	});
+
+	QUnit.test("Open Popup with a control which already has a not rendered parent", function(assert) {
+		var oPanel = new sap.m.Panel(),
+			oButton = new sap.m.Button(),
+			done = assert.async(),
+			oLogSpy = this.spy(Log, "error"),
+			fnOpened = function() {
+				this.oPopup.detachOpened(fnOpened, this);
+				assert.equal(oLogSpy.callCount, 1, "Error is logged");
+				assert.ok(oLogSpy.getCall(0).args[0].indexOf("is NOT connected with any UIArea and further invalidation may not work properly") !== -1, "error message is correct");
+				assert.ok(oButton.getDomRef(), "The button is rendered");
+				assert.ok(!oButton.getUIArea(), "The button is not attached to any UIArea");
+
+				done();
+
+				oPanel.destroy();
+			};
+
+		oPanel.addContent(oButton);
+
+		this.oPopup.setContent(oButton);
+		this.oPopup.attachOpened(fnOpened, this);
+
+		this.oPopup.open();
 	});
 
 	QUnit.test("Close Popup", function(assert) {
