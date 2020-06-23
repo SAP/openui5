@@ -482,12 +482,12 @@ sap.ui.define([
 						]
 					},
 					{
-						key: 'filtering',
+						key: 'filters',
 						target: 'exploreSamples',
-						title: 'Filtering',
+						title: 'Filters',
 						experimental: true,
 						mockServer: true,
-						manifestUrl: '/samples/filtering/products.json'
+						manifestUrl: '/samples/filters/products.json'
 					},
 					{
 						key: 'parameters',

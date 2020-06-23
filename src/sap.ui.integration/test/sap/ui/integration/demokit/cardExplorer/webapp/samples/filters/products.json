@@ -21,7 +21,7 @@
 				}
 			},
 			"filters": {
-				"category": {
+				"productCategory": {
 					"value": "Notebooks",
 					"type": "string",
 					"label": "Category",
@@ -45,13 +45,13 @@
 		},
 		"data": {
 			"request": {
-				"url": "{{dataSources.products.uri}}/SEPMRA_C_PD_Product?$filter={= '{{filters.category}}' !== 'all' ? 'ProductCategory eq \\'{{filters.category}}\\' and ' : ''}AverageRatingValue gt 3&$orderby=AverageRatingValue desc&$inlinecount=allpages"
+				"url": "{{dataSources.products.uri}}/SEPMRA_C_PD_Product?$filter={= '{{filters.productCategory}}' !== 'all' ? 'ProductCategory eq \\'{{filters.productCategory}}\\' and ' : ''}AverageRatingValue gt 3&$orderby=AverageRatingValue desc&$inlinecount=allpages"
 			}
 		},
 		"type": "List",
 		"header": {
 			"title": "Products by category",
-			"subTitle": "Category {{filters.category}}",
+			"subTitle": "Category {{filters.productCategory}}",
 			"icon": {
 				"src": "sap-icon://product"
 			},
