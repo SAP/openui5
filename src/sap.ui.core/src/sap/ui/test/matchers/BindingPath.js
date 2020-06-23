@@ -90,7 +90,7 @@ sap.ui.define([
 
 			if (sContextPath) {
 				if (oObjectBindingInfo) {
-					var sContextPathToMatch = _getFormattedPath(sContextPath, sModelName);
+					var sContextPathToMatch = _getFormattedPath(sContextPath);
 					bContextMatches = oObjectBindingInfo.path === sContextPathToMatch;
 
 					if (bContextMatches) {
@@ -117,7 +117,7 @@ sap.ui.define([
 			}
 
 			if (sPropertyPath) {
-				var sPropertyPathToMatch = _getFormattedPath(sPropertyPath, sModelName, oBindingContext);
+				var sPropertyPathToMatch = _getFormattedPath(sPropertyPath, oBindingContext);
 				var aActualPathsForModel = [];
 
 				var aMatchingBindingInfos = Object.keys(oControl.mBindingInfos).filter(function (sBinding) {
@@ -157,11 +157,11 @@ sap.ui.define([
 		}
 	});
 
-	function _getFormattedPath(sPath, bWithNamedModel, bWithContext) {
+	function _getFormattedPath(sPath, bWithContext) {
 		var sPropertyPathDelimiter = "/";
 		var sFormattedPath = sPath;
 
-		if (bWithNamedModel || bWithContext) {
+		if (bWithContext) {
 			if (sPath.charAt(0) === sPropertyPathDelimiter) {
 				sFormattedPath = sPath.substring(1);
 			}
