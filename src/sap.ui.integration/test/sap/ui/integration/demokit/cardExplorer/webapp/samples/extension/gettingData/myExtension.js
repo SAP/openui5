@@ -43,7 +43,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 			oParameters = oCard.getCombinedParameters();
 
 		return oCard.request({
-			"url": oParameters.northwindServiceUrl + "/Employees",
+			"url": "{{destinations.NorthwindDestination}}/Employees",
 			"parameters": {
 				"$format": "json",
 				"$top": oParameters.maxItems
