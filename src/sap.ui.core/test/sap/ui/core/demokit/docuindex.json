@@ -6,7 +6,7 @@
 				"icon": "map-2",
 				"text": "Employee Directory",
 				"desc": "This app is an employee directory and shows the final result of the 'Navigation Tutorial'",
-				"ref": "test-resources/sap/ui/core/demokit/tutorial/navigation/09/webapp/index.html#/employees",
+				"ref": "test-resources/sap/ui/core/demokit/tutorial/navigation/17/webapp/index.html",
 				"links": {
 					"View Tutorial": "#/topic/1b6dcd39a6a74f528b27ddb22f15af0d"
 				},
