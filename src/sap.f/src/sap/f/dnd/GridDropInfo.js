@@ -140,7 +140,8 @@ sap.ui.define([
 			target: mDropPosition ? mDropPosition.targetControl : null
 		}, true);
 
-		if (eventResult) {
+		// don't handle drag over when performing keyboard dnd
+		if (eventResult && oEvent.originalEvent.type !== "keydown") {
 			gridDragOver.handleDragOver(oEvent);
 		}
 
@@ -175,6 +176,9 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * @override
+	 */
 	GridDropInfo.prototype.fireDrop = function(oEvent) {
 		if (!this._shouldEnhance()) {
 			return DropInfo.prototype.fireDrop.apply(this, arguments);
@@ -196,15 +200,34 @@ sap.ui.define([
 
 		mDropPosition = gridDragOver.getSuggestedDropPosition();
 
-		this.fireEvent("drop", {
-			dragSession: oEvent.dragSession,
-			browserEvent: oEvent.originalEvent,
-			dropPosition: mDropPosition ? mDropPosition.position : null,
-			draggedControl: oDragSession.getDragControl(),
-			droppedControl: mDropPosition ? mDropPosition.targetControl : null
-		});
+		this.fireDropEvent(
+			oEvent.dragSession,
+			oEvent.originalEvent,
+			mDropPosition ? mDropPosition.position : null,
+			oDragSession.getDragControl(),
+			mDropPosition ? mDropPosition.targetControl : null
+		);
 
 		gridDragOver.scheduleEndDrag();
+	};
+
+	/**
+	 * Fires "drop" event.
+	 *
+	 * @param {sap.ui.core.dnd.DragSession} oDragSession The drag session.
+	 * @param {object} oBrowserEvent The browser event.
+	 * @param {string} sDropPosition "Before" or "After".
+	 * @param {object} oDraggedControl The dragged control.
+	 * @param {object} oDroppedControl The control around which the drop happened.
+	 */
+	GridDropInfo.prototype.fireDropEvent = function(oDragSession, oBrowserEvent, sDropPosition, oDraggedControl, oDroppedControl) {
+		this.fireEvent("drop", {
+			dragSession: oDragSession,
+			browserEvent: oBrowserEvent,
+			dropPosition: sDropPosition,
+			draggedControl: oDraggedControl,
+			droppedControl: oDroppedControl
+		});
 	};
 
 	/**

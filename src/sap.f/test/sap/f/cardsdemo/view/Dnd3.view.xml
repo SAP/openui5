@@ -33,16 +33,40 @@
 				</f:GridContainer>
 			</Panel>
 
-			<Panel headerText="Tiles Group 2">
-				<f:GridContainer id="grid2" items="{
+			<HBox>
+				<Panel headerText="Tiles Group 2">
+					<f:GridContainer id="grid2" items="{
+							path: '/',
+							factory: '.createItem'
+						}">
+					</f:GridContainer>
+					<layoutData>
+						<FlexItemData growFactor="1" styleClass="sapUiMediumMarginEnd"></FlexItemData>
+					</layoutData>
+				</Panel>
+	
+				<Panel headerText="Tiles Group 3">
+					<f:GridContainer id="grid3" items="{
+							path: '/',
+							factory: '.createItem'
+						}">
+					</f:GridContainer>
+					<layoutData>
+						<FlexItemData growFactor="1"></FlexItemData>
+					</layoutData>
+				</Panel>
+			</HBox>
+
+			<Panel headerText="Card Group 1">
+				<f:GridContainer id="grid4" snapToRow="true" items="{
 						path: '/',
 						factory: '.createItem'
 					}">
 				</f:GridContainer>
 			</Panel>
 
-			<Panel headerText="Card Group 1">
-				<f:GridContainer id="grid3" snapToRow="true" items="{
+			<Panel headerText="Card Group 2">
+				<f:GridContainer id="grid5" snapToRow="true" items="{
 						path: '/',
 						factory: '.createItem'
 					}">
