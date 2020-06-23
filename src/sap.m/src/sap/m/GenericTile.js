@@ -840,7 +840,9 @@ sap.ui.define([
 		if (this._bTilePress && this.getState() !== library.LoadState.Disabled) {
 			this.$().trigger("focus");
 			oParams = this._getEventParams(event);
-			this.firePress(oParams);
+			if (!(this.isInActionRemoveScope() && oParams.action === GenericTile._Action.Press)) {
+				this.firePress(oParams);
+			}
 			event.preventDefault();
 		}
 	};
@@ -1133,6 +1135,15 @@ sap.ui.define([
 		return this.getScope() === library.GenericTileScope.Actions
 			|| this.getScope() === library.GenericTileScope.ActionMore
 			|| this.getScope() === library.GenericTileScope.ActionRemove;
+	};
+
+	/**
+	 * Shows if the scope is set to the remove action
+	 *
+	 * @return {boolean} True if the scope is set to the remove action
+	 */
+	GenericTile.prototype.isInActionRemoveScope = function () {
+		return this.getScope() === library.GenericTileScope.ActionRemove;
 	};
 
 	/**
