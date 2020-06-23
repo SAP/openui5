@@ -203,8 +203,7 @@ sap.ui.define([
 	 * @returns {Document} The view as XML document
 	 */
 	function xml(sViewXML) {
-		var oChildNode, aChildNodes, iColumnCount, aColumnNodes, oColumnsElement, oDocument,
-			oElement, bHasColumns, i, j, k, aTableElements;
+		var oDocument;
 
 		oDocument = XMLHelper.parse(
 			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.ui.table"'
@@ -213,6 +212,55 @@ sap.ui.define([
 			+ '</mvc:View>',
 			"application/xml"
 		);
+		xmlConvertMTables(oDocument);
+		xmlConvertGridTables(oDocument);
+
+		return oDocument;
+	}
+
+	/**
+	 * Converts the sap.ui.table.Table controls within the document. Embeds all inner controls into
+	 * a <t:Column> with template. <t:Column> may still be used however.
+	 *
+	 * @param {Document} oDocument The view as XML document
+	 */
+	function xmlConvertGridTables(oDocument) {
+		var oChildNode, aChildNodes, oColumn, oElement, i, j, aTableElements, oTemplate;
+
+		aTableElements = oDocument.getElementsByTagNameNS("sap.ui.table", "Table");
+		for (i = aTableElements.length - 1; i >= 0; i -= 1) {
+			oElement = aTableElements[i];
+
+			aChildNodes = oElement.childNodes;
+			for (j = aChildNodes.length - 1; j >= 0; j -= 1) {
+				oChildNode = aChildNodes[j];
+				if (oChildNode.nodeType === Node.ELEMENT_NODE
+						&& oChildNode.localName !== "Column") {
+					oColumn = document.createElementNS("sap.ui.table", "Column");
+					oElement.insertBefore(oColumn, oChildNode);
+					oElement.removeChild(oChildNode);
+					oTemplate = document.createElementNS("sap.ui.table", "template");
+					oColumn.appendChild(oTemplate);
+					oTemplate.appendChild(oChildNode);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Converts the sap.m.Table controls within the document. Verifies that they do not use <items>,
+	 * because this is the default aggregation and may be omitted. (This ensures that
+	 * <ColumnListItem> is a direct child.)
+	 *
+	 * If a binding uses <ColumnListItem>, <columns> is not allowed. The columns are automatically
+	 * determined from the number of the elements in <ColumnListItem>.
+	 *
+	 * @param {Document} oDocument The view as XML document
+	 */
+	function xmlConvertMTables(oDocument) {
+		var oChildNode, aChildNodes, iColumnCount, aColumnNodes, oColumnsElement, oElement,
+			bHasColumns, i, j, k, aTableElements;
+
 		aTableElements = oDocument.getElementsByTagNameNS("sap.m", "Table");
 		iColumnCount = 0;
 		for (i = aTableElements.length - 1; i >= 0; i -= 1) {
@@ -231,7 +279,7 @@ sap.ui.define([
 						aColumnNodes = oChildNode.childNodes;
 
 						for (k = aColumnNodes.length - 1; k >= 0; k -= 1) {
-							if (aColumnNodes[k].nodeType === 1) { // Node.ELEMENT_NODE
+							if (aColumnNodes[k].nodeType === Node.ELEMENT_NODE) {
 								iColumnCount += 1;
 							}
 						}
@@ -251,8 +299,6 @@ sap.ui.define([
 				oElement.appendChild(oColumnsElement);
 			}
 		}
-
-		return oDocument;
 	}
 
 	//*********************************************************************************************
@@ -1941,9 +1987,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" threshold="0" visibleRowCount="3">\
-	<t:Column>\
-		<t:template><Text id="note" text="{Note}" /></t:template>\
-	</t:Column>\
+	<Text id="note" text="{Note}" />\
 </t:Table>',
 			that = this;
 
@@ -3592,11 +3636,7 @@ sap.ui.define([
 			path : \'/EMPLOYEES\',\
 			parameters : {$select : \'Name,__CT__FAKE__Message/__FAKE__Messages\'}\
 		}"\ threshold="0" visibleRowCount="2">\
-	<t:Column>\
-		<t:template>\
-			<Input id="name" value="{Name}" />\
-		</t:template>\
-	</t:Column>\
+	<Input id="name" value="{Name}" />\
 </t:Table>',
 			that = this;
 
@@ -5995,16 +6035,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
-	<t:Column>\
-		<t:template>\
-			<Text id="id" text="{SalesOrderID}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Input id="note" value="{Note}" />\
-		</t:template>\
-	</t:Column>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Input id="note" value="{Note}" />\
 </t:Table>',
 			that = this;
 
@@ -6143,16 +6175,8 @@ sap.ui.define([
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<t:Table id="table" rows="{path : \'BP_2_SO\', parameters : {$$ownRequest : true}}"\
 			threshold="0" visibleRowCount="2">\
-		<t:Column>\
-			<t:template>\
-				<Text id="id" text="{SalesOrderID}" />\
-			</t:template>\
-		</t:Column>\
-		<t:Column>\
-			<t:template>\
-				<Text id="note" text="{Note}" />\
-			</t:template>\
-		</t:Column>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Text id="note" text="{Note}" />\
 	</t:Table>\
 </FlexBox>',
 			that = this;
@@ -6558,16 +6582,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
-	<t:Column>\
-		<t:template>\
-			<Text id="id" text="{SalesOrderID}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="note" text="{Note}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="note" text="{Note}" />\
 </t:Table>',
 			that = this;
 
@@ -6687,16 +6703,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<t:Table id="table" rows="{BP_2_SO}" visibleRowCount="2">\
-		<t:Column>\
-			<t:template>\
-				<Text id="id" text="{SalesOrderID}" />\
-			</t:template>\
-		</t:Column>\
-		<t:Column>\
-			<t:template>\
-				<Text id="note" text="{Note}" />\
-			</t:template>\
-		</t:Column>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Text id="note" text="{Note}" />\
 	</t:Table>\
 </FlexBox>',
 			that = this;
@@ -6946,16 +6954,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
-	<t:Column>\
-		<t:template>\
-			<Text id="id" text="{SalesOrderID}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="note" text="{Note}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="note" text="{Note}" />\
 </t:Table>',
 			that = this;
 
@@ -7199,16 +7199,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
-	<t:Column>\
-		<t:template>\
-			<Text id="id" text="{SalesOrderID}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="note" text="{Note}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="note" text="{Note}" />\
 </t:Table>',
 			that = this;
 
@@ -7302,16 +7294,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<t:Table id="table" rows="{BP_2_SO}" visibleRowCount="2">\
-		<t:Column>\
-			<t:template>\
-				<Text id="id" text="{SalesOrderID}" />\
-			</t:template>\
-		</t:Column>\
-		<t:Column>\
-			<t:template>\
-				<Text id="note" text="{Note}" />\
-			</t:template>\
-		</t:Column>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Text id="note" text="{Note}" />\
 	</t:Table>\
 </FlexBox>',
 			that = this;
@@ -7554,16 +7538,8 @@ sap.ui.define([
 			sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\', parameters : {$count : true}}"\
 		visibleRowCount="3">\
-	<t:Column>\
-		<t:template>\
-			<Text id="id" text="{SalesOrderID}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="note" text="{Note}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="note" text="{Note}" />\
 </t:Table>',
 			that = this;
 
@@ -7938,16 +7914,8 @@ sap.ui.define([
 			sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\', parameters : {$count : true}}"\
 		visibleRowCount="2">\
-	<t:Column>\
-		<t:template>\
-			<Text id="id" text="{SalesOrderID}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="note" text="{Note}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="note" text="{Note}" />\
 </t:Table>',
 			that = this;
 
@@ -14027,11 +13995,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}">\
-	<t:Column>\
-		<t:template>\
-			<Text id="note" text="{Note}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="note" text="{Note}" />\
 </t:Table>\
 <FlexBox binding="{path : \'\', parameters: {$$ownRequest : true}}" id="form">\
 	<Text id="netAmount" text="{NetAmount}" />\
@@ -14106,11 +14070,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form">\
 	<t:Table rows="{path : \'SO_2_SOITEM\', parameters : {$$updateGroupId : \'update\'}}">\
-		<t:Column>\
-			<t:template>\
-				<Text id="position" text="{ItemPosition}" />\
-			</t:template>\
-		</t:Column>\
+		<Text id="position" text="{ItemPosition}" />\
 	</t:Table>\
 </FlexBox>',
 			that = this;
@@ -14448,31 +14408,11 @@ sap.ui.define([
 			},\
 			$orderby : \'LifecycleStatus desc,ItemPosition asc\'\
 		}}" threshold="0" visibleRowCount="3">\
-	<t:Column>\
-		<t:template>\
-			<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="level" text="{= %{@$ui5.node.level} }" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="grossAmount" text="{= %{GrossAmount}}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }" />\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }" />\
+	<Text id="level" text="{= %{@$ui5.node.level} }" />\
+	<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
+	<Text id="grossAmount" text="{= %{GrossAmount}}" />\
 </t:Table>',
 			that = this;
 
@@ -14747,41 +14687,13 @@ sap.ui.define([
 			groupLevels : [\'Region\']\
 		}\
 	}}" threshold="0" visibleRowCount="3">\
-	<t:Column>\
-		<t:template>\
-			<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="level" text="{= %{@$ui5.node.level} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="region" text="{Region}"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="accountResponsible" text="{AccountResponsible}"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesNumber" text="{SalesNumber}"/>\
-		</t:template>\
-	</t:Column>\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="region" text="{Region}"/>\
+	<Text id="accountResponsible" text="{AccountResponsible}"/>\
+	<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
+	<Text id="salesNumber" text="{SalesNumber}"/>\
 </t:Table>',
 			that = this;
 
@@ -14990,41 +14902,13 @@ sap.ui.define([
 			groupLevels : [\'Region\']\
 		}\
 	}}" threshold="0" visibleRowCount="3">\
-	<t:Column>\
-		<t:template>\
-			<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="level" text="{= %{@$ui5.node.level} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="region" text="{Region}"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="accountResponsible" text="{AccountResponsible}"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesNumber" text="{SalesNumber}"/>\
-		</t:template>\
-	</t:Column>\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="region" text="{Region}"/>\
+	<Text id="accountResponsible" text="{AccountResponsible}"/>\
+	<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
+	<Text id="salesNumber" text="{SalesNumber}"/>\
 </t:Table>',
 			that = this;
 
@@ -15147,41 +15031,13 @@ sap.ui.define([
 			groupLevels : [\'Region\']\
 		}\
 	}}" threshold="0" visibleRowCount="3">\
-	<t:Column>\
-		<t:template>\
-			<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="level" text="{= %{@$ui5.node.level} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="region" text="{Region}"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="accountResponsible" text="{AccountResponsible}"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesNumber" text="{SalesNumber}"/>\
-		</t:template>\
-	</t:Column>\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="region" text="{Region}"/>\
+	<Text id="accountResponsible" text="{AccountResponsible}"/>\
+	<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
+	<Text id="salesNumber" text="{SalesNumber}"/>\
 </t:Table>',
 			that = this;
 
@@ -15311,21 +15167,9 @@ sap.ui.define([
 			$filter : \'SalesNumber gt 0\',\
 			$orderby : \'Region desc\'\
 		}}" threshold="0" visibleRowCount="5">\
-	<t:Column>\
-		<t:template>\
-			<Text id="country" text="{Country}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="region" text="{Region}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesNumber" text="{SalesNumber}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="country" text="{Country}" />\
+	<Text id="region" text="{Region}" />\
+	<Text id="salesNumber" text="{SalesNumber}" />\
 </t:Table>',
 				that = this;
 
@@ -15435,21 +15279,9 @@ sap.ui.define([
 			$filter : \'SalesNumber gt 0\',\
 			$orderby : \'Region desc\'\
 		}}" threshold="0" visibleRowCount="5">\
-	<t:Column>\
-		<t:template>\
-			<Text id="country" text="{Country}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="region" text="{Region}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesNumber" text="{SalesNumber}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="country" text="{Country}" />\
+	<Text id="region" text="{Region}" />\
+	<Text id="salesNumber" text="{SalesNumber}" />\
 </t:Table>',
 				that = this;
 
@@ -15538,27 +15370,11 @@ sap.ui.define([
 			$filter : \'SalesAmountSum gt 0\',\
 			$orderby : \'SalesAmountSum asc\'\
 		}}" threshold="0" visibleRowCount="5">\
-	<t:Column>\
-		<t:template>\
-			<Text id="region" text="{Region}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesNumber" text="{SalesNumber}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesAmountSum" text="{= %{SalesAmountSum} }" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesAmountCurrency"\
-				text="{= %{SalesAmountSum@Analytics.AggregatedAmountCurrency} }" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="region" text="{Region}" />\
+	<Text id="salesNumber" text="{SalesNumber}" />\
+	<Text id="salesAmountSum" text="{= %{SalesAmountSum} }" />\
+	<Text id="salesAmountCurrency"\
+		text="{= %{SalesAmountSum@Analytics.AggregatedAmountCurrency} }" />\
 </t:Table>';
 
 		this.expectRequest("BusinessPartners?$apply=groupby((Region)"
@@ -15754,11 +15570,7 @@ sap.ui.define([
 			},\
 			$count : ' + bCount + '\
 		}}" threshold="0" visibleRowCount="1">\
-	<t:Column>\
-		<t:template>\
-			<Text id="grossAmount" text="{= %{GrossAmount}}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="grossAmount" text="{= %{GrossAmount}}" />\
 </t:Table>',
 				that = this;
 
@@ -16126,16 +15938,8 @@ sap.ui.define([
 			$orderby : \'LifecycleStatus desc\'\
 ' + (i === 0 ? ",$apply : 'groupby((LifecycleStatus),aggregate(GrossAmount))'" : "") + '\
 		}}" threshold="0" visibleRowCount="4">\
-	<t:Column>\
-		<t:template>\
-			<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="grossAmount" text="{GrossAmount}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
+	<Text id="grossAmount" text="{GrossAmount}" />\
 </t:Table>',
 				that = this;
 
@@ -16226,16 +16030,8 @@ sap.ui.define([
 			filters : {path : \'AGE\', operator : \'GE\', value1 : 30},\
 			sorter : {path : \'AGE\'}\
 		}" threshold="0" visibleRowCount="3">\
-	<t:Column>\
-		<t:template>\
-			<Text id="text" text="{Name}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="age" text="{AGE}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="text" text="{Name}" />\
+	<Text id="age" text="{AGE}" />\
 </t:Table>',
 			that = this;
 
@@ -20291,22 +20087,10 @@ sap.ui.define([
 				rows="{path : \'_Publication\', parameters : {$count : true,\
 					$filter : \'CurrencyCode eq \\\'EUR\\\'\', $orderby : \'PublicationID\',\
 					$$ownRequest : true}}"\
-			threshold="0" visibleRowCount="2">\
-			<t:Column>\
-				<t:template>\
-					<Input id="price" value="{Price}" />\
-				</t:template>\
-			</t:Column>\
-			<t:Column>\
-				<t:template>\
-					<Text id="currency" text="{CurrencyCode}" />\
-				</t:template>\
-			</t:Column>\
-			<t:Column>\
-				<t:template>\
-					<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
-				</t:template>\
-			</t:Column>\
+				threshold="0" visibleRowCount="2">\
+			<Input id="price" value="{Price}" />\
+			<Text id="currency" text="{CurrencyCode}" />\
+			<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
 		</t:Table>\
 	</FlexBox>\
 </FlexBox>',
@@ -20708,16 +20492,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{/Artists(\'42\')/_Publication}" threshold="0" visibleRowCount="2">\
-	<t:Column>\
-		<t:template>\
-			<Text id="id" text="{PublicationID}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="price" text="{Price}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="id" text="{PublicationID}" />\
+	<Text id="price" text="{Price}" />\
 </t:Table>',
 			that = this;
 
@@ -22378,11 +22154,7 @@ sap.ui.define([
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}">\
 	<Text id="id" text="{ArtistID}" />\
 	<t:Table rows="{_Publication}">\
-		<t:Column>\
-			<t:template>\
-				<Text id="price" text="{Price}" />\
-			</t:template>\
-		</t:Column>\
+		<Text id="price" text="{Price}" />\
 	</t:Table>\
 </FlexBox>';
 
@@ -24468,12 +24240,8 @@ sap.ui.define([
 			oTableBinding,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" threshold="0" visibleRowCount="2">\
-	<t:Column>\
-		<t:template><Text id="id" text="{SalesOrderID}" /></t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template><Text id="note" text="{Note}" /></t:template>\
-	</t:Column>\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="note" text="{Note}" />\
 </t:Table>',
 			that = this;
 
@@ -25469,9 +25237,7 @@ sap.ui.define([
 	QUnit.test("Server-driven paging with table.Table: no remove behind gap", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{/EMPLOYEES}" threshold="0" visibleRowCount="3">\
-	<t:Column>\
-		<t:template><Text id="text" text="{Name}" /></t:template>\
-	</t:Column>\
+	<Text id="text" text="{Name}" />\
 </t:Table>',
 			that = this;
 
@@ -25548,9 +25314,7 @@ sap.ui.define([
 	QUnit.test("Server-driven paging with table.Table: do not read prefetch", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{/EMPLOYEES}" visibleRowCount="3">\
-	<t:Column>\
-		<t:template><Text id="text" text="{Name}" /></t:template>\
-	</t:Column>\
+	<Text id="text" text="{Name}" />\
 </t:Table>';
 
 		this.expectRequest("EMPLOYEES?$skip=0&$top=103", {
@@ -26814,20 +26578,12 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table rows="{/EMPLOYEES}">\
-	<t:Column>\
-		<t:template>\
-			<Text id="name" text="{Name}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<List items="{path : \'EMPLOYEE_2_EQUIPMENTS\', templateShareable : false}">\
-				<CustomListItem>\
-					<Text id="category" text="{Category}" />\
-				</CustomListItem>\
-			</List>\
-		</t:template>\
-	</t:Column>\
+	<Text id="name" text="{Name}" />\
+	<List items="{path : \'EMPLOYEE_2_EQUIPMENTS\', templateShareable : false}">\
+		<CustomListItem>\
+			<Text id="category" text="{Category}" />\
+		</CustomListItem>\
+	</List>\
 </t:Table>';
 
 		this.expectRequest("EMPLOYEES?$select=ID,Name"
