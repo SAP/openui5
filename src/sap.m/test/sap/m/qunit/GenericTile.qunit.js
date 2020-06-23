@@ -526,32 +526,6 @@ sap.ui.define([
 		assert.notOk(this.oGenericTile.hasStyleClass("sapMGTPressActive"), "Press state from Generic Tile is removed.");
 	});
 
-	QUnit.test("GenericTile rendered with large header should be displayed with elipsis in IE", function(assert) {
-		//Set browser to IE
-		Device.browser.msie = true;
-		this.oGenericTile._oTitle.canUseNativeLineClamp = function() {
-			return false;
-		};
-		this.oGenericTile.setHeader("Large header to be truncated with ellipses in IE Browser");
-		sap.ui.getCore().applyChanges();
-
-		assert.strictEqual(this.oGenericTile._oTitle.$("inner").hasClass("sapMTextMaxLine"), true, "Text has correct class for synthetic MaxLine");
-		assert.ok(this.oGenericTile._oTitle.$("inner").css("max-height") && this.oGenericTile._oTitle.$("inner").css("max-height") != "none", "Text has max-height");
-		assert.ok(this.oGenericTile._oTitle.getDomRef("inner").textContent.indexOf(this.oGenericTile._oTitle.ellipsis) > -1, "Text includes ellipsis(" + this.oGenericTile._oTitle.ellipsis + ")");
-		this.fnWithRenderAsserts(assert);
-	});
-
-	QUnit.test("GenericTile rendered with large header should be displayed with elipsis in different browsers", function(assert) {
-		Device.browser.msie = false;
-		this.oGenericTile.setHeader("Large header to be truncated with ellipses different browsers");
-		sap.ui.getCore().applyChanges();
-
-		assert.strictEqual(this.oGenericTile._oTitle.$("inner").hasClass("sapMTextLineClamp"), true, "Text has correct class for native MaxLine");
-		assert.strictEqual(this.oGenericTile._oTitle.$("inner").hasClass("sapMTextMaxLine"), true, "Text has correct class for synthetic MaxLine");
-		assert.equal(this.oGenericTile._oTitle.$("inner").css("-webkit-line-clamp"), this.oGenericTile._oTitle.getMaxLines(), "Text has correct line clamp value in CSS");
-		this.fnWithRenderAsserts(assert);
-	});
-
 	QUnit.module("FrameType rendering tests", {
 		beforeEach: function() {
 			this.oGenericTile = new GenericTile({

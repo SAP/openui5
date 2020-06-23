@@ -455,11 +455,6 @@ sap.ui.define([
 		}
 
 		this.onDragComplete();
-
-		//Trigger ClampText for IE Browser
-		if (Device.browser.msie && this._oTitle) {
-			this._oTitle.clampText();
-		}
 	};
 
 	/**
