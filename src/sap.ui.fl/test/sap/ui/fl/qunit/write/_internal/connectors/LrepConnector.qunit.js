@@ -32,6 +32,58 @@ sap.ui.define([
 	}
 
 	QUnit.module("LrepConnector", {
+		before: function() {
+			this.oMockNewChange = {
+				packageName : "$TMP",
+				fileType : "change",
+				id : "changeId2",
+				namespace : "namespace",
+				getDefinition : function() {
+					return {
+						packageName : this.packageName,
+						fileType : this.fileType
+					};
+				},
+				getId : function() {
+					return this.id;
+				},
+				getNamespace : function() {
+					return this.namespace;
+				},
+				setResponse : function(oDefinition) {
+					this.packageName = oDefinition.packageName;
+				},
+				getPackage : function() {
+					return this.packageName;
+				}
+			};
+
+			this.oAppVariantDescriptor = {
+				packageName : "$TMP",
+				fileType : "appdescr_variant",
+				fileName : "manifest",
+				id : "customer.app.var.id",
+				namespace : "namespace",
+				getDefinition : function() {
+					return {
+						fileType : this.fileType,
+						fileName : this.fileName
+					};
+				},
+				getNamespace : function() {
+					return this.namespace;
+				},
+				getPackage : function() {
+					return this.packageName;
+				}
+			};
+
+			this.sLayer = Layer.CUSTOMER;
+			this.sReference = "sampleComponent";
+			this.sAppVersion = "1.0.0";
+			this.aMockLocalChanges = [this.oMockNewChange];
+			this.aAppVariantDescriptors = [this.oAppVariantDescriptor];
+		},
 		beforeEach : function () {
 			sandbox.useFakeServer();
 			sandbox.server.autoRespond = true;
@@ -84,81 +136,67 @@ sap.ui.define([
 				packageName : "PackageName",
 				transport : "transportId"
 			};
-			var oMockNewChange = {
-				packageName : "$TMP",
-				fileType : "change",
-				id : "changeId2",
-				namespace : "namespace",
-				getDefinition : function() {
-					return {
-						packageName : this.packageName,
-						fileType : this.fileType
-					};
-				},
-				getId : function() {
-					return this.id;
-				},
-				getNamespace : function() {
-					return this.namespace;
-				},
-				setResponse : function(oDefinition) {
-					this.packageName = oDefinition.packageName;
-				},
-				getPackage : function() {
-					return this.packageName;
-				}
-			};
-
-			var oAppVariantDescriptor = {
-				packageName : "$TMP",
-				fileType : "appdescr_variant",
-				fileName : "manifest",
-				id : "customer.app.var.id",
-				namespace : "namespace",
-				getDefinition : function() {
-					return {
-						fileType : this.fileType,
-						fileName : this.fileName
-					};
-				},
-				getNamespace : function() {
-					return this.namespace;
-				},
-				getPackage : function() {
-					return this.packageName;
-				}
-			};
-
-			var sLayer = Layer.CUSTOMER;
-			var sReference = "sampleComponent";
-			var sAppVersion = "1.0.0";
-			var aMockLocalChanges = [oMockNewChange];
-			var aAppVariantDescriptors = [oAppVariantDescriptor];
 
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var fnCheckTransportInfoStub = sandbox.stub(TransportSelection.prototype, "checkTransportInfo").returns(true);
 			var fnPrepareChangesForTransportStub = sandbox.stub(TransportSelection.prototype, "_prepareChangesForTransport").returns(Promise.resolve());
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 
 			return WriteLrepConnector.publish({
 				transportDialogSettings: {
 					rootControl: null,
 					styleClass: null
 				},
-				layer: sLayer,
-				reference: sReference,
-				appVersion: sAppVersion,
-				localChanges: aMockLocalChanges,
-				appVariantDescriptors: aAppVariantDescriptors
-			}).then(function() {
+				layer: this.sLayer,
+				reference: this.sReference,
+				appVersion: this.sAppVersion,
+				localChanges: this.aMockLocalChanges,
+				appVariantDescriptors: this.aAppVariantDescriptors
+			}).then(function(sMessage) {
+				assert.equal(sMessage, oResourceBundle.getText("MSG_TRANSPORT_SUCCESS"), "the correct message was returned");
 				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
 				assert.ok(fnCheckTransportInfoStub.calledOnce, "then checkTransportInfo called once");
 				assert.ok(fnPrepareChangesForTransportStub.calledOnce, "then _prepareChangesForTransport called once");
-				assert.ok(fnPrepareChangesForTransportStub.calledWith(oMockTransportInfo, aMockLocalChanges, aAppVariantDescriptors, {
-					reference: sReference,
-					appVersion: sAppVersion,
-					layer: sLayer
+				assert.ok(fnPrepareChangesForTransportStub.calledWith(oMockTransportInfo, this.aMockLocalChanges, this.aAppVariantDescriptors, {
+					reference: this.sReference,
+					appVersion: this.sAppVersion,
+					layer: this.sLayer
 				}), "then _prepareChangesForTransport called with the transport info and changes array");
-			});
+			}.bind(this));
+		});
+
+		QUnit.test("when calling publish successfully in S/4 Hana Cloud", function(assert) {
+			var oMockTransportInfo = {
+				packageName : "PackageName",
+				transport : "ATO_NOTIFICATION"
+			};
+
+			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
+			var fnCheckTransportInfoStub = sandbox.stub(TransportSelection.prototype, "checkTransportInfo").returns(true);
+			var fnPrepareChangesForTransportStub = sandbox.stub(TransportSelection.prototype, "_prepareChangesForTransport").resolves();
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+
+			return WriteLrepConnector.publish({
+				transportDialogSettings: {
+					rootControl: null,
+					styleClass: null
+				},
+				layer: this.sLayer,
+				reference: this.sReference,
+				appVersion: this.sAppVersion,
+				localChanges: this.aMockLocalChanges,
+				appVariantDescriptors: this.aAppVariantDescriptors
+			}).then(function(sMessage) {
+				assert.equal(sMessage, oResourceBundle.getText("MSG_ATO_NOTIFICATION"), "the correct message was returned");
+				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
+				assert.ok(fnCheckTransportInfoStub.calledOnce, "then checkTransportInfo called once");
+				assert.ok(fnPrepareChangesForTransportStub.calledOnce, "then _prepareChangesForTransport called once");
+				assert.ok(fnPrepareChangesForTransportStub.calledWith(oMockTransportInfo, this.aMockLocalChanges, this.aAppVariantDescriptors, {
+					reference: this.sReference,
+					appVersion: this.sAppVersion,
+					layer: this.sLayer
+				}), "then _prepareChangesForTransport called with the transport info and changes array");
+			}.bind(this));
 		});
 
 		QUnit.test("when calling publish unsuccessfully", function(assert) {

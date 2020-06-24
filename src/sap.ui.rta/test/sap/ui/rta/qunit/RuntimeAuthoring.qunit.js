@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/m/MessageBox",
+	"sap/m/MessageToast",
 	"sap/ui/comp/smartform/Group",
 	"sap/ui/comp/smartform/GroupElement",
 	"sap/ui/comp/smartform/SmartForm",
@@ -36,6 +37,7 @@ sap.ui.define([
 ],
 function(
 	MessageBox,
+	MessageToast,
 	Group,
 	GroupElement,
 	SmartForm,
@@ -1082,7 +1084,7 @@ function(
 				isPublishEnabled: false,
 				isResetEnabled: true
 			});
-			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			var oMessageToastStub = sandbox.stub(MessageToast, "show");
 			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
 			return this.oRta.transport().then(function() {
 				assert.equal(oMessageToastStub.callCount, 1, "then the messageToast was shown");
@@ -1214,7 +1216,7 @@ function(
 	}, function() {
 		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() when the running application is not an application variant", function(assert) {
 			var fnPublishStub = sandbox.stub(PersistenceWriteAPI, "publish").resolves();
-			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			var oMessageToastStub = sandbox.stub(MessageToast, "show");
 			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
 			return this.oRta.transport().then(function() {
 				assert.equal(oMessageToastStub.callCount, 1, "then the messageToast was shown");
@@ -1230,7 +1232,7 @@ function(
 
 		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() when the running application is an application variant by navigation parameters", function(assert) {
 			sandbox.stub(PersistenceWriteAPI, "publish").resolves();
-			sandbox.stub(this.oRta, "_showMessageToast");
+			sandbox.stub(MessageToast, "show");
 			sandbox.stub(Utils, "isApplicationVariant").returns(true);
 			sandbox.stub(Utils, "isVariantByStartupParameter").returns(true);
 			var oRtaAppVariantFeatureStub = sandbox.stub(RtaAppVariantFeature, "getAppVariantDescriptor");
@@ -1241,7 +1243,7 @@ function(
 
 		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() when the running application is an application variant", function(assert) {
 			var fnPublishStub = sandbox.stub(PersistenceWriteAPI, "publish").resolves();
-			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			var oMessageToastStub = sandbox.stub(MessageToast, "show");
 			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(true);
 			var oDummyObject = {
 				foo: "hugo"
@@ -1262,7 +1264,7 @@ function(
 
 		QUnit.test("When transport function is called and Promise.reject() is returned from the flex persistence", function(assert) {
 			sandbox.stub(PersistenceWriteAPI, "publish").rejects(new Error("Error"));
-			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			var oMessageToastStub = sandbox.stub(MessageToast, "show");
 			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
 			var oShowErrorStub = sandbox.stub(Log, "error");
 			var oErrorBoxStub = sandbox.stub(MessageBox, "error");
@@ -1311,7 +1313,7 @@ function(
 					+ oTextResources.getText("MSG_ERROR_REASON", oErrorResponse.errorText);
 				sandbox.stub(PersistenceWriteAPI, "publish").rejects(oErrorResponse.error);
 				var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
-				var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+				var oMessageToastStub = sandbox.stub(MessageToast, "show");
 				var oShowErrorStub = sandbox.stub(Log, "error");
 				var oErrorBoxStub = sandbox.stub(MessageBox, "error");
 				return this.oRta.transport().then(function () {
@@ -1326,7 +1328,7 @@ function(
 
 		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() with 'Error' as parameter", function(assert) {
 			sandbox.stub(PersistenceWriteAPI, "publish").resolves('Error');
-			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			var oMessageToastStub = sandbox.stub(MessageToast, "show");
 			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
 			return this.oRta.transport().then(function() {
 				assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");
@@ -1336,7 +1338,7 @@ function(
 
 		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() with 'Cancel' as parameter", function(assert) {
 			sandbox.stub(PersistenceWriteAPI, "publish").resolves('Cancel');
-			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			var oMessageToastStub = sandbox.stub(MessageToast, "show");
 			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
 			return this.oRta.transport().then(function() {
 				assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");

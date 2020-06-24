@@ -218,7 +218,10 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.appVersion - Version of the application for which the reset takes place
 	 * @param {sap.ui.fl.Change[]} mPropertyBag.localChanges - Local changes to be published
 	 * @param {object[]} [mPropertyBag.appVariantDescriptors] - An array of app variant descriptors which needs to be transported
-	 * @returns {Promise} Promise that resolves when all the artifacts are successfully transported
+	 * @returns {Promise<string>} Promise that can resolve to the following strings:
+	 * - "Cancel" if publish process was canceled
+	 * - <sMessage> when all the artifacts are successfully transported fl will return the message to show
+	 * - "Error" in case of a problem
 	 */
 	Storage.publish = function(mPropertyBag) {
 		return _executeActionByName("publish", mPropertyBag);
