@@ -21,8 +21,10 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Title",
 	"sap/m/ScrollContainer",
-	"sap/m/library"
-], function(Core, qutils, TablePersoDialog, KeyCodes, JSONModel, Device, Filter, Sorter, PasteHelper, InvisibleText, Table, Column, Label, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library) {
+	"sap/m/library",
+	"sap/ui/layout/VerticalLayout"
+], function(Core, qutils, TablePersoDialog, KeyCodes, JSONModel, Device, Filter, Sorter, PasteHelper, InvisibleText, Table, Column,
+	 Label, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout) {
 	"use strict";
 
 	var oTable;
@@ -702,6 +704,19 @@ sap.ui.define([
 		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("LIST_NO_DATA"), "Text correctly assinged for screen reader announcement");
 
 		sut.destroy();
+	});
+
+	QUnit.test("Internal SelectAll checkbox should not be disabled by the EnabledPropagator",function(assert) {
+		var sut = createSUT("idTableSelectAll", true, false, "MultiSelect"),
+			oVerticalLayout = new VerticalLayout({
+				enabled: false,
+				content: [sut]
+			});
+
+		oVerticalLayout.placeAt("qunit-fixture");
+		Core.applyChanges();
+		assert.strictEqual(sut._getSelectAllCheckbox().getEnabled(), true, "SelectAll checkbox control was not disabled by the EnabledPropagator");
+		oVerticalLayout.destroy();
 	});
 
 	QUnit.test("ARIA Roles, Attributes, ...", function(assert) {
