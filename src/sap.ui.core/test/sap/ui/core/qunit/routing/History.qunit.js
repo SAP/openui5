@@ -190,10 +190,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("The new direction method should return undefined if hashChanged event is fired without browser hash change", function(assert) {
+	QUnit.test("The new direction method should return the same direction if hashChanged event is fired without browser hash change", function(assert) {
 		assert.expect(Device.browser.msie ? 6 : 7);
-		var oSpy, that = this;
+		var oSpy, that = this, sLastDirection;
 		return this.setup().then(function() {
+			sLastDirection = that.oHistory.getDirection();
 			return that.checkDirection(function() {
 				oSpy = sinon.spy(that.oHistory, "_getDirectionWithState");
 				that.oExtendedHashChanger.fireHashChanged("");
@@ -205,9 +206,11 @@ sap.ui.define([
 						assert.equal(oSpy.callCount, 1, "function is called once");
 					}
 					if (!Device.browser.msie) {
-						assert.equal(oSpy.getCall(0).returnValue, undefined, "the function should return undefined");
+						assert.equal(oSpy.getCall(0).returnValue, "Direction_Unchanged", "the function should detect that the direction shouldn't be updated");
+						assert.strictEqual(that.oHistory.getDirection(), sLastDirection, "the direction isn't changed");
+					} else {
+						assert.strictEqual(that.oHistory.getDirection(), "Unknown", "the direction should be Unknown");
 					}
-					assert.strictEqual(that.oHistory.getDirection(), "Unknown", "the direction should be Unknown");
 					oSpy.restore();
 				}
 			});
