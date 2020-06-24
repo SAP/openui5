@@ -318,6 +318,15 @@ sap.ui.define([
 					}
 				}
 			},
+			"apply/api/DelegateMediatorAPI": {
+				group: "Apply Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/apply/api/DelegateMediatorAPI",
+						"sap/ui/fl/apply/_internal/DelegateMediator"
+					]
+				}
+			},
 			"write/api/ChangesWriteAPI": {
 				group: "Write API",
 				coverage: {
