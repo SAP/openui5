@@ -519,8 +519,11 @@
         padding: 2px 4px;
     }
 
-    span.keyWrap:not(:first-child):before {
-        content: '+';
+    .keys {
+        .keyWrap:not(:first-child):before {
+            content: '+';
+            margin-right: 0.25rem;
+        }
     }
 
     span.menucascade .uicontrol:after {
