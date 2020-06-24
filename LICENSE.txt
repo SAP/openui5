@@ -609,11 +609,11 @@ License: MIT License
 <year> = 2018
 <copyright holders> = Michael Mclaughlin
 
-Component: lodash 4.17.10
+Component: lodash 4.17.15
 Licensor: JS Foundation and other contributors
 Website: https://github.com/lodash/lodash
 License: MIT License
-<year> = 2018
+<year> = 2019
 <copyright holders> = JS Foundation and other contributors
 
 Component: mnater/Hyphenopoly 2.4.0
