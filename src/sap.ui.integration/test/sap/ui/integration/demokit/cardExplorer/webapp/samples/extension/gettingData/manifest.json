@@ -6,13 +6,14 @@
 	"sap.card": {
 		"extension": "./myExtension",
 		"configuration": {
-			"parameters": {
-				"northwindServiceUrl": {
-					"value": "https://services.odata.org/V3/Northwind/Northwind.svc",
-					"type": "string",
+			"destinations": {
+				"NorthwindDestination": {
+					"name": "Northwind",
 					"label": "Northwind Service URL",
-					"description": "The URL of the web service."
-				},
+					"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
+				}
+			},
+			"parameters": {
 				"maxItems": {
 					"value": 4,
 					"type": "integer",
