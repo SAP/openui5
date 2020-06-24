@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /**
- * See {@link https://lodash.com/docs/4.17.10#mergeWith}
+ * See {@link https://lodash.com/docs/4.17.15#mergeWith}
  *
  * @function
  * @alias sap/base/util/restricted/_mergeWith

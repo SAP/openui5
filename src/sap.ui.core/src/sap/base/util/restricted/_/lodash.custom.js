@@ -2,7 +2,7 @@
  * @license
  * Lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash strict include="omit,uniq,uniqBy,uniqWith,intersection,intersectionBy,intersectionWith,pick,pickBy,debounce,throttle,max,min,castArray,curry,merge,mergeWith"`
- * Copyright JS Foundation and other contributors <https://js.foundation/>
+ * Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -19,7 +19,7 @@ sap.ui.define(function() {
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.10';
+  var VERSION = '4.17.15';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -588,20 +588,6 @@ sap.ui.define(function() {
       }
     }
     return result;
-  }
-
-  /**
-   * Gets the value at `key`, unless `key` is "__proto__".
-   *
-   * @private
-   * @param {Object} object The object to query.
-   * @param {string} key The key of the property to get.
-   * @returns {*} Returns the property value.
-   */
-  function safeGet(object, key) {
-    return key == '__proto__'
-      ? undefined
-      : object[key];
   }
 
   /**
@@ -1599,16 +1585,10 @@ sap.ui.define(function() {
       value.forEach(function(subValue) {
         result.add(baseClone(subValue, bitmask, customizer, subValue, value, stack));
       });
-
-      return result;
-    }
-
-    if (isMap(value)) {
+    } else if (isMap(value)) {
       value.forEach(function(subValue, key) {
         result.set(key, baseClone(subValue, bitmask, customizer, key, value, stack));
       });
-
-      return result;
     }
 
     var keysFunc = isFull
@@ -2173,8 +2153,8 @@ sap.ui.define(function() {
       return;
     }
     baseFor(source, function(srcValue, key) {
+      stack || (stack = new Stack);
       if (isObject(srcValue)) {
-        stack || (stack = new Stack);
         baseMergeDeep(object, source, key, srcIndex, baseMerge, customizer, stack);
       }
       else {
@@ -2250,7 +2230,7 @@ sap.ui.define(function() {
         if (isArguments(objValue)) {
           newValue = toPlainObject(objValue);
         }
-        else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
+        else if (!isObject(objValue) || isFunction(objValue)) {
           newValue = initCloneObject(srcValue);
         }
       }
@@ -4158,6 +4138,26 @@ sap.ui.define(function() {
   }
 
   /**
+   * Gets the value at `key`, unless `key` is "__proto__" or "constructor".
+   *
+   * @private
+   * @param {Object} object The object to query.
+   * @param {string} key The key of the property to get.
+   * @returns {*} Returns the property value.
+   */
+  function safeGet(object, key) {
+    if (key === 'constructor' && typeof object[key] === 'function') {
+      return;
+    }
+
+    if (key == '__proto__') {
+      return;
+    }
+
+    return object[key];
+  }
+
+  /**
    * Sets metadata for `func`.
    *
    * **Note:** If this function becomes hot, i.e. is invoked a lot in a short
@@ -4742,6 +4742,7 @@ sap.ui.define(function() {
         }
         if (maxing) {
           // Handle invocations in a tight loop.
+          clearTimeout(timerId);
           timerId = setTimeout(timerExpired, wait);
           return invokeFunc(lastCallTime);
         }
@@ -6075,8 +6076,8 @@ sap.ui.define(function() {
 
   /*--------------------------------------------------------------------------*/
 
+  // Some AMD build optimizers, like r.js, check for condition patterns like:
   // ##### BEGIN: MODIFIED BY SAP
-  // // Some AMD build optimizers, like r.js, check for condition patterns like:
   // if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
   //   // Expose Lodash on the global object to prevent errors when Lodash is
   //   // loaded by a script tag in the presence of an AMD loader.
