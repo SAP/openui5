@@ -30,6 +30,10 @@ sap.ui.define([
 			// so that the recorder will also be started when the browser tab isn't active
 			this.waitFor({
 				check: function () {
+					Opa5.getContext()._getRecorderControls = function () {
+						Opa5.assert.ok(false, "Could not get recorder utils. Maybe the recorder is not loaded?");
+						return [];
+					};
 					// wait for the recorder to load
 					if (Opa5.getWindow().sap.ui.require("sap/ui/testrecorder/Recorder")) {
 						return true;
@@ -70,8 +74,10 @@ sap.ui.define([
 						],
 						success: function () {
 							// save the plugin for later (to check recorder's controls)
-							Opa5.getContext().recorderOpaPlugin = new (Opa5.getContext().recorderWindow.sap.ui.test.OpaPlugin)();
-							Opa5.assert.ok(Opa5.getContext().recorderOpaPlugin, "Should load Opa plugin instance in recorder frame");
+							var oRecorderOpaPlugin = new (Opa5.getContext().recorderWindow.sap.ui.test.OpaPlugin)();
+							Opa5.assert.ok(oRecorderOpaPlugin, "Should load Opa plugin instance in recorder frame");
+							Opa5.getContext().recorderOpaPlugin = oRecorderOpaPlugin;
+							Opa5.getContext()._getRecorderControls = oRecorderOpaPlugin._getFilteredControls.bind(oRecorderOpaPlugin);
 						}
 					});
 				},

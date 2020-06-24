@@ -53,7 +53,13 @@ sap.ui.define([
 							var oControl = jQuery.isArray(aControl) ? aControl[0] : aControl;
 							var mControlRect = oControl.$()[0].getBoundingClientRect();
 							var mHighlightRect = Opa5.getJQuery()("#ui5-test-recorder-highlighter > div")[0].getBoundingClientRect();
-							Opa5.assert.deepEqual(mControlRect, mHighlightRect, "Should highlight the root element");
+							var bMatch = true;
+							["left", "top", "right", "bottom", "x", "y", "width", "height"].forEach(function (sSide) {
+								if (mControlRect[sSide] && mHighlightRect[sSide] && bMatch) {
+									bMatch = Math.round(mControlRect[sSide]) === Math.round(mHighlightRect[sSide]);
+								}
+							});
+							Opa5.assert.ok(bMatch, "Should highlight the root element");
 						}
 					}));
 				}

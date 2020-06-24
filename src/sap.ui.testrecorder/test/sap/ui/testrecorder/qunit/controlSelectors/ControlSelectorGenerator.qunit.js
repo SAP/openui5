@@ -11,7 +11,7 @@ sap.ui.define([
 			this.fnGetSelector = sinon.stub(RecordReplay, "findControlSelectorByDOMElement");
 			var testElement = document.createElement("div");
 			testElement.id = "DomElement";
-			document.getElementById("qunit-fixture").append(testElement);
+			document.getElementById("qunit-fixture").appendChild(testElement);
 		},
 		afterEach: function () {
 			this.fnGetSelector.restore();
