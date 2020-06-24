@@ -3,35 +3,13 @@
 /* Quartz High Contrast White theme              */
 /* ============================================= */
 
-.sapUiBody {
-	scrollbar-base-color: @sapUiHcStandardBackground;
-	scrollbar-face-color: @sapUiHcStandardForeground;
-	scrollbar-3dlight-color: @sapUiHcStandardForeground;
-	scrollbar-arrow-color: @sapUiHcStandardForeground;
-	scrollbar-darkshadow-color:@sapUiHcStandardBackground;
-	scrollbar-shadow-color: @sapUiHcStandardForeground;
-	scrollbar-track-color: @sapUiHcReducedBackground;
-	scrollbar-highlight-color: @sapUiHcStandardBackground;
-}
+/****** Safari + Chrome on Desktop ******/
 
 html.sap-desktop ::-webkit-scrollbar {
-	background-color: @sapUiHcStandardBackground;
-	border: 1px solid @sapUiHcReducedAltForeground;
-}
-
-html.sap-desktop ::-webkit-scrollbar:horizontal {
-	height: 0.75rem;
-}
-
-html.sap-desktop ::-webkit-scrollbar:vertical {
-	width: 0.75rem;
+	border: 1px solid @sapUiScrollBarFaceColor;
 }
 
 html.sap-desktop ::-webkit-scrollbar-thumb {
-	background-color: @sapUiHcReducedAltForeground;
-	border: 1px solid @sapUiHcReducedAltForeground;
-}
-
-html.sap-desktop ::-webkit-scrollbar-thumb:hover {
-	background-color: @sapUiHcStandardForeground;
+	border-radius: @sapUiElementBorderCornerRadius;
+	border: 1px solid @sapUiScrollBarFaceColor;
 }
