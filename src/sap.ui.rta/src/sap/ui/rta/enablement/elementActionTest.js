@@ -70,7 +70,7 @@ sap.ui.define([
 	 * @param {function} [mOptions.before] - Function(assert) hook before test execution is started
 	 * @param {function} [mOptions.after] - Function(assert) hook after test execution is finished
 	 * @param {number} [mOptions.changesAfterCondensing] - Amount of Changes that remain after condensing
-	 * @param {object[]} [mOptions.additionalActions] - Additional Action objects (see mOptions.action) that get executed first
+	 * @param {object[]} [mOptions.previousActions] - Additional Action objects (see mOptions.action) that get executed first
 	 * @param {function} mOptions.afterAction - Function(oUiComponent, oView, assert) which checks the outcome of the action
 	 * @param {function} mOptions.afterUndo - Function(oUiComponent, oView, assert) which checks the execution of the action and an immediate undo
 	 * @param {function} mOptions.afterRedo - Function(oUiComponent, oView, assert) which checks the outcome of action with immediate undo and redo
@@ -169,8 +169,8 @@ sap.ui.define([
 
 		function buildCommands(assert) {
 			var aActions = [];
-			if (mOptions.additionalActions) {
-				aActions = aActions.concat(mOptions.additionalActions);
+			if (mOptions.previousActions) {
+				aActions = aActions.concat(mOptions.previousActions);
 			}
 			aActions.push(mOptions.action);
 			var aCommands = [];
@@ -300,7 +300,7 @@ sap.ui.define([
 				deletedCommands: []
 			};
 
-			// only if mOptions.additionalActions is set the length can be > 1
+			// only if mOptions.previousActions is set the length can be > 1
 			if (aCommands.length === 1) {
 				oReturn.remainingCommands.push(aCommands[0]);
 				return Promise.resolve(oReturn);
