@@ -29,6 +29,7 @@
 
 	new sap.ui.table.Table({
 		visibleRowCount: 1,
+		rowHeight: 40,
 		selectionMode: "None",
 		columns: [
 			new sap.ui.table.Column({
@@ -398,10 +399,16 @@
 		models: new sap.ui.model.json.JSONModel([{}])
 	}).placeAt("body");
 
-	new sap.ui.table.Table({
+	new sap.ui.table.TreeTable({
 		visibleRowCount: 1,
 		selectionMode: "None",
 		columns: [
+			new sap.ui.table.Column({
+				hAlign: "Begin",
+				label: new sap.m.Text({text: "Col-Begin"}),
+				template: new sap.m.Text({text: "Col-Begin"}),
+				width: sColumnWidth
+			}),
 			new sap.ui.table.Column({
 				hAlign: "Begin",
 				label: new sap.m.Text({text: "Col-Begin" + sLongTextSuffix}),
@@ -476,13 +483,19 @@
 		rows: {
 			path: "/"
 		},
-		models: new sap.ui.model.json.JSONModel([{}])
+		models: new sap.ui.model.json.JSONModel([{o: {}}])
 	}).placeAt("body");
 
-	new sap.ui.table.Table({
+	new sap.ui.table.TreeTable({
 		visibleRowCount: 1,
 		selectionMode: "None",
 		columns: [
+			new sap.ui.table.Column({
+				hAlign: "End",
+				label: new sap.m.Text({text: "Col-End"}),
+				template: new sap.m.Text({text: "Col-End"}),
+				width: sColumnWidth
+			}),
 			new sap.ui.table.Column({
 				label: new sap.m.Text({text: "Cell-Begin" + sLongTextSuffix, textAlign: "Begin"}),
 				template: new sap.m.Text({text: "Cell-Begin" + sLongTextSuffix, textAlign: "Begin"}),
@@ -547,13 +560,19 @@
 		rows: {
 			path: "/"
 		},
-		models: new sap.ui.model.json.JSONModel([{}])
+		models: new sap.ui.model.json.JSONModel([{o: {}}])
 	}).placeAt("body");
 
-	new sap.ui.table.Table({
+	new sap.ui.table.TreeTable({
 		visibleRowCount: 1,
 		selectionMode: "None",
 		columns: [
+			new sap.ui.table.Column({
+				hAlign: "End",
+				label: new sap.m.Text({text: "Col-End", width: "100%"}),
+				template: new sap.m.Text({text: "Col-End", width: "100%"}),
+				width: sColumnWidth
+			}),
 			new sap.ui.table.Column({
 				label: new sap.m.Text({text: "Cell-Begin" + sLongTextSuffix, textAlign: "Begin", width: "100%"}),
 				template: new sap.m.Text({text: "Cell-Begin" + sLongTextSuffix, textAlign: "Begin", width: "100%"}),
@@ -622,13 +641,19 @@
 		rows: {
 			path: "/"
 		},
-		models: new sap.ui.model.json.JSONModel([{}])
+		models: new sap.ui.model.json.JSONModel([{o: {}}])
 	}).placeAt("body");
 
-	new sap.ui.table.Table({
+	new sap.ui.table.TreeTable({
 		visibleRowCount: 1,
 		selectionMode: "None",
 		columns: [
+			new sap.ui.table.Column({
+				hAlign: "Begin",
+				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})]}),
+				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-Begin\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})]}),
+				width: sColumnWidth
+			}),
 			new sap.ui.table.Column({
 				hAlign: "End",
 				label: new sap.m.Text({text: "Col-End\nCell-Begin" + sLongTextSuffix, textAlign: "Begin"}),
@@ -695,13 +720,19 @@
 		rows: {
 			path: "/"
 		},
-		models: new sap.ui.model.json.JSONModel([{}])
+		models: new sap.ui.model.json.JSONModel([{o: {}}])
 	}).placeAt("body");
 
-	new sap.ui.table.Table({
+	new sap.ui.table.TreeTable({
 		visibleRowCount: 1,
 		selectionMode: "None",
 		columns: [
+			new sap.ui.table.Column({
+				hAlign: "End",
+				label: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})], width: "100%"}),
+				template: new sap.m.VBox({items: [new sap.m.Text({text: "Col-End\nVBox", wrapping: false}), new sap.m.Text({text: sLongTextWithoutSpaces, wrapping: false})], width: "100%"}),
+				width: sColumnWidth
+			}),
 			new sap.ui.table.Column({
 				hAlign: "End",
 				label: new sap.m.Text({text: "Col-End\nCell-Begin" + sLongTextSuffix, textAlign: "Begin", width: "100%"}),
@@ -772,7 +803,7 @@
 		rows: {
 			path: "/"
 		},
-		models: new sap.ui.model.json.JSONModel([{}])
+		models: new sap.ui.model.json.JSONModel([{o: {}}])
 	}).placeAt("body");
 
 </script>
