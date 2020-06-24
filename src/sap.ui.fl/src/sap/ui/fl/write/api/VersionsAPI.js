@@ -205,9 +205,10 @@ sap.ui.define([
 		}
 
 		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
+		var sReference;
 		if (oAppComponent) {
 			var oManifest = oAppComponent.getManifest();
-			var sReference = ManifestUtils.getFlexReference({
+			sReference = ManifestUtils.getFlexReference({
 				manifest: oManifest,
 				componentData: oAppComponent.getComponentData()
 			});
@@ -223,6 +224,16 @@ sap.ui.define([
 			reference: Utils.normalizeReference(sReference),
 			layer: mPropertyBag.layer,
 			appVersion: sAppVersion
+		}).then(function(oDiscardInfo) {
+			if (oDiscardInfo.backendChangesDiscarded) {
+				//invalidate flexState to trigger getFlexData after discard
+				FlexState.clearAndInitialize({
+					componentId: oAppComponent.getId(),
+					reference: sReference,
+					draftLayer: mPropertyBag.layer
+				});
+			}
+			return oDiscardInfo;
 		});
 	};
 

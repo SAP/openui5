@@ -362,11 +362,13 @@ sap.ui.define([
 
 			var sReference = "com.sap.app";
 			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
-			var oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves(true);
+			var oClearAndInitStub = sandbox.stub(FlexState, "clearAndInitialize");
+			var oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves({backendChangesDiscarded: true, dirtyChangesDiscarded: true});
 			return VersionsAPI.discardDraft(mPropertyBag)
-				.then(function(oResult) {
-					assert.equal(oResult, true, "then result was returned");
-					var oCallingPropertyBag = oDiscardStub.getCall(0).args[0];
+				.then(function(oDiscardInfo) {
+					assert.equal(oClearAndInitStub.calledOnce, true, "then the FlexState was cleared and initialized");
+					assert.equal(oDiscardInfo.backendChangesDiscarded, true, "then the discard outcome was returned");
+					assert.equal(oDiscardInfo.dirtyChangesDiscarded, true, "then the discard outcome was returned");					var oCallingPropertyBag = oDiscardStub.getCall(0).args[0];
 					assert.equal(oCallingPropertyBag.reference, sReference, "the reference was passed");
 					assert.equal(oCallingPropertyBag.layer, mPropertyBag.layer, "the layer was passed");
 				});
@@ -382,10 +384,13 @@ sap.ui.define([
 
 			var sReference = "com.sap.app";
 			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
-			var oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves(true);
+			var oClearAndInitStub = sandbox.stub(FlexState, "clearAndInitialize");
+			var oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves({backendChangesDiscarded: true, dirtyChangesDiscarded: true});
 			return VersionsAPI.discardDraft(mPropertyBag)
-				.then(function(oResult) {
-					assert.equal(oResult, true, "then result was returned");
+				.then(function(oDiscardInfo) {
+					assert.equal(oClearAndInitStub.calledOnce, true, "then the FlexState was cleared and initialized");
+					assert.equal(oDiscardInfo.backendChangesDiscarded, true, "then the discard outcome was returned");
+					assert.equal(oDiscardInfo.dirtyChangesDiscarded, true, "then the discard outcome was returned");
 					assert.deepEqual(oDiscardStub.getCall(0).args[0].appVersion, sAppVersion, "the app version was passed");
 					assert.deepEqual(oDiscardStub.getCall(0).args[0].reference, sReference, "the reference was passed");
 					assert.deepEqual(oDiscardStub.getCall(0).args[0].layer, Layer.CUSTOMER, "the layer was passed");
