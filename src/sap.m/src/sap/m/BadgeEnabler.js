@@ -48,18 +48,14 @@ sap.ui.define(
 		 */
 		var BadgeEnabler = function () {
 
-			// Ensure only Controls are enhanced
-			if (typeof this.isA !== "function" || !this.isA("sap.ui.core.Control")) {
-				Log.error("Badge enablement could be applied over controls only");
-				return;
-			}
-
 			// Attaching configuration and eventDelegate
-			this.initBadgeEnablement = function (oConfig) {
-				this._oBadgeConfig = oConfig;
-				this.addEventDelegate({
+			this.initBadgeEnablement = function (oConfig, customControl) {
+				var oDelegator = customControl ? customControl : this;
+				this._oBadgeConfig = oConfig || {};
+				oDelegator.addEventDelegate({
 					onAfterRendering: _renderBadgeDom
 				}, this);
+
 			};
 
 			//Selects specific DOM element, for the badge to be applied in
@@ -81,18 +77,9 @@ sap.ui.define(
 					return false;
 				}
 
-				this._oBadgeContainer = this._oBadgeConfig && this._oBadgeConfig.selector ?
-					_getContainerDomElement(this._oBadgeConfig.selector, this) :
-					this.$();
-				var _oNode = jQuery('<div></div>').addClass(IBADGE_CSS_CLASS + "Indicator");
-				_oNode.attr("id", this.getId() + IBADGE_CSS_CLASS);
-				_oNode.attr("data-badge", this._oBadgeCustomData.getValue());
-				_oNode.appendTo(this._oBadgeContainer);
-				this._oBadgeContainer.addClass(IBADGE_CSS_CLASS);
+				_createBadgeDom.call(this);
 
-				this._isBadgeAttached = true;
-
-				if (!this._oBadgeConfig) {
+				if (!Object.keys(this._oBadgeConfig).length) {
 					return this;
 				}
 
@@ -109,20 +96,49 @@ sap.ui.define(
 
 			//removing badge DOM element
 			function _removeBadgeDom() {
-				this._oBadgeContainer.removeClass(IBADGE_CSS_CLASS);
-				jQuery("#" + this.getId() + IBADGE_CSS_CLASS).remove();
+				var oBadgeElement = jQuery("#" + this.getId() + IBADGE_CSS_CLASS);
+
 				this._isBadgeAttached = false;
 
+				oBadgeElement.removeClass("sapMBadgeAnimationAdd");
+				oBadgeElement.width();
+				oBadgeElement.addClass("sapMBadgeAnimationRemove");
+				oBadgeElement.attr("data-badge", "");
 				return this;
+			}
+
+			//removing badge DOM element
+			function _createBadgeDom() {
+				var _oNode,
+					oBadgeElement = jQuery('#' + this.getId() + IBADGE_CSS_CLASS);
+				this._oBadgeContainer = this._oBadgeConfig && this._oBadgeConfig.selector ?
+					_getContainerDomElement(this._oBadgeConfig.selector, this) :
+					this.$();
+				if (oBadgeElement.length) {
+					oBadgeElement.remove();
+				}
+
+				_oNode = jQuery('<div></div>').addClass(IBADGE_CSS_CLASS + "Indicator");
+				_oNode.attr("id", this.getId() + IBADGE_CSS_CLASS);
+				_oNode.attr("data-badge", this._oBadgeCustomData.getValue());
+				_oNode.appendTo(this._oBadgeContainer);
+				_oNode.addClass("sapMBadgeAnimationAdd");
+
+				this._isBadgeAttached = true;
+				this._oBadgeContainer.addClass(IBADGE_CSS_CLASS);
 			}
 
 			//Manually updating the 'span', containing badge
 			this.updateBadge = function (sValue) {
+				var oBadgeElement = jQuery('#' + this.getId() + IBADGE_CSS_CLASS);
+				oBadgeElement.removeClass("sapMBadgeAnimationUpdate");
 				if (isValidValue(sValue)) {
 					if (this._isBadgeAttached) {
-						jQuery('#' + this.getId() + IBADGE_CSS_CLASS).attr("data-badge", sValue);
+						oBadgeElement.attr("data-badge", sValue);
+						oBadgeElement.width();
+						oBadgeElement.addClass("sapMBadgeAnimationUpdate");
 					} else {
-						_renderBadgeDom.call(this);
+						_createBadgeDom.call(this);
 
 					}
 				} else if (this._isBadgeAttached) {
@@ -175,10 +191,27 @@ sap.ui.define(
 				var oBadgeCustomData;
 				oBadgeCustomData = this._oBadgeCustomData;
 				this._oBadgeCustomData = null;
-				this.updateBadge();
+				this.updateBadge("");
 				return this.removeAggregation("customData", oBadgeCustomData, true);
 			};
 
+			this.setBadgeAccentColor = function (sValue) {
+				if (!this._oBadgeContainer) { return false; }
+
+				this._oBadgeContainer.removeClass(IBADGE_CSS_CLASS + this._oBadgeConfig.accentColor);
+
+				this._oBadgeContainer.addClass(IBADGE_CSS_CLASS + sValue);
+				this._oBadgeConfig.accentColor = sValue;
+			};
+
+			this.setBadgePosition = function (sValue) {
+				if (!this._oBadgeContainer) { return false; }
+
+				this._oBadgeContainer.removeClass(IBADGE_CSS_CLASS + this._oBadgeConfig.position);
+
+				this._oBadgeContainer.addClass(IBADGE_POSITION_CLASSES[sValue]);
+				this._oBadgeConfig.position = sValue;
+			};
 		};
 	return BadgeEnabler;
 });

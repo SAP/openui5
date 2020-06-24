@@ -40,9 +40,10 @@ sap.ui.define([
 
 	QUnit.module("API", {
 		beforeEach: function() {
-			this.oCustomControl = new MyCustomControl();
+			this.oCustomControl = new MyCustomControl({id: "CustomControl"});
 			this.oCustomControl.addCustomData(new BadgeCustomData({value: "10"}));
 			this.oCustomControl.placeAt('qunit-fixture');
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCustomControl.destroy();
@@ -87,5 +88,14 @@ sap.ui.define([
 		//Assert
 		assert.equal(this.oCustomControl._isBadgeAttached, false, "Badge Disappears when badgeCustomData is detached");
 
+		this.oCustomControl.setBadgeAccentColor("AccentColor6");
+
+		assert.equal(this.oCustomControl._oBadgeConfig.accentColor, "AccentColor6", "API for configuration change works correctly - color");
+		assert.equal(this.oCustomControl._oBadgeContainer.hasClass("sapMBadgeAccentColor6"), true, "API for configuration change works correctly - color");
+
+		this.oCustomControl.setBadgePosition("topRight");
+
+		assert.equal(this.oCustomControl._oBadgeConfig.position, "topRight", "API for configuration change works correctly - position");
+		assert.equal(this.oCustomControl._oBadgeContainer.hasClass("sapMBadgeTopRight"), true, "API for configuration change works correctly - position");
 	});
 });
