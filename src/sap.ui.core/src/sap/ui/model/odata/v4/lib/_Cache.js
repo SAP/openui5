@@ -2731,14 +2731,14 @@ sap.ui.define([
 				aKeys = Object.keys(mSharedCollectionCacheByPath);
 				iCount = aKeys.length;
 				if (iCount > 100) {
-					aKeys.sort(function (sKey1, sKey2) {
+					aKeys.filter(function (sKey) {
+						return !mSharedCollectionCacheByPath[sKey].iActiveUsages;
+					}).sort(function (sKey1, sKey2) {
 						return mSharedCollectionCacheByPath[sKey1].iInactiveSince
 							- mSharedCollectionCacheByPath[sKey2].iInactiveSince;
 					}).every(function (sKey) {
-						if (!mSharedCollectionCacheByPath[sKey].iActiveUsages) {
-							delete mSharedCollectionCacheByPath[sKey];
-							iCount -= 1;
-						}
+						delete mSharedCollectionCacheByPath[sKey];
+						iCount -= 1;
 						return iCount > 100;
 					});
 				}
