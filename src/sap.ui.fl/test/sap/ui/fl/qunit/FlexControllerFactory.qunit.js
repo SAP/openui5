@@ -55,7 +55,7 @@ sap.ui.define([
 			assert.strictEqual(oFlexController1, oFlexController2);
 		});
 
-		QUnit.test("propagates even if there are no changes for the component", function(assert) {
+		QUnit.test("Obtains the componentId from component instance and propagates even if there are no changes for the component", function(assert) {
 			sandbox.stub(ChangePersistence.prototype, "loadChangesMapForComponent").resolves({});
 			sandbox.stub(Utils, "isApplicationComponent").returns(true);
 
@@ -79,7 +79,7 @@ sap.ui.define([
 				.withArgs(oComponent)
 				.returns("mockName");
 
-			return FlexControllerFactory.getChangesAndPropagate(oComponent, {asyncHints: true})
+			return FlexControllerFactory.getChangesAndPropagate(oComponent, {asyncHints: true, id: "differentComponentId"})
 				.then(function() {
 					assert.equal(oAddPropagationListenerStub.callCount, 1, "propagation was triggered");
 					assert.equal(this.oInitializeStub.callCount, 1, "FlexState was initialized");
