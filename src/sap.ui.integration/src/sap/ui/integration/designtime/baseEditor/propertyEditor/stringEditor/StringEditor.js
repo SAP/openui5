@@ -38,6 +38,12 @@ sap.ui.define([
 	 * 	<td>Whether the underlying control should be enabled</td>
 	 * </tr>
 	 * <tr>
+	 * 	<td><code>allowBindings</code></td>
+	 *  <td><code>boolean</code></td>
+	 * 	<td><code>true</code></td>
+	 * 	<td>Whether binding strings can be set instead of selecting items</td>
+	 * </tr>
+	 * <tr>
 	 * 	<td><code>placeholder</code></td>
 	 *  <td><code>string</code></td>
 	 * 	<td></td>
@@ -60,6 +66,21 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
+	StringEditor.prototype.getConfigMetadata = function () {
+		return Object.assign(
+			{},
+			BasePropertyEditor.prototype.getConfigMetadata.call(this),
+			{
+				enabled: {
+					defaultValue: true
+				},
+				allowBindings: {
+					defaultValue: true
+				}
+			}
+		);
+	};
+
 	StringEditor.prototype.setValue = function (vValue) {
 		if (!_isNil(vValue) && !isPlainObject(vValue)) {
 			vValue = vValue.toString();
@@ -79,7 +100,7 @@ sap.ui.define([
 		var sValue = oInput.getValue();
 		var oConfig = this.getConfig();
 
-		if (oConfig["allowBindings"] === false && isValidBindingString(sValue, false)) {
+		if (!oConfig["allowBindings"] && isValidBindingString(sValue, false)) {
 			oInput.setValueState("Error");
 			oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.PROPERTY.BINDING_NOT_ALLOWED"));
 			return false;

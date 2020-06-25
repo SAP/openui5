@@ -90,6 +90,30 @@ sap.ui.define([
 	var MapEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.mapEditor.MapEditor", {
 		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.mapEditor.MapEditor",
 
+		getConfigMetadata: function() {
+			return Object.assign(
+				{},
+				BasePropertyEditor.prototype.getConfigMetadata.call(this),
+				{
+					allowKeyChange: {
+						defaultValue: true
+					},
+					allowTypeChange: {
+						defaultValue: true
+					},
+					allowAddAndRemove: {
+						defaultValue: true
+					},
+					allowedTypes: {
+						defaultValue: ["string"]
+					},
+					includeInvalidEntries: {
+						defaultValue: true
+					}
+				}
+			);
+		},
+
 		init: function() {
 			BasePropertyEditor.prototype.init.apply(this, arguments);
 			this._itemsModel = new JSONModel();
@@ -132,7 +156,7 @@ sap.ui.define([
 					value: mFormattedValue
 				};
 
-				return this.getConfig().includeInvalidEntries !== false || this._isValidItem(oItem, deepClone(mValue[sKey])) ? oItem : undefined;
+				return this.getConfig().includeInvalidEntries || this._isValidItem(oItem, deepClone(mValue[sKey])) ? oItem : undefined;
 			}, this).filter(Boolean);
 		},
 
@@ -167,8 +191,7 @@ sap.ui.define([
 		},
 
 		_getAllowedTypes: function () {
-			var oConfig = this.getConfig();
-			return oConfig && oConfig["allowedTypes"] || ["string"];
+			return (this.getConfig() || this.getConfigMetadata())["allowedTypes"];
 		},
 
 		_setSupportedTypesModel: function () {
@@ -191,6 +214,7 @@ sap.ui.define([
 			var sKey = oConfigValue.key;
 			var sType = oConfigValue.value.type;
 			var vValue = oConfigValue.value.value;
+			var oConfig = this.getConfig();
 
 			return [
 				{
@@ -198,7 +222,7 @@ sap.ui.define([
 					path: "key",
 					value: sKey,
 					type: "string",
-					enabled: this.getConfig().allowKeyChange !== false,
+					enabled: oConfig.allowKeyChange,
 					itemKey: sKey,
 					allowBindings: false
 				},
@@ -208,7 +232,7 @@ sap.ui.define([
 					value: sType,
 					type: "enum",
 					"enum": this._getAllowedTypes(),
-					visible: this.getConfig().allowTypeChange !== false,
+					visible: oConfig.allowTypeChange,
 					itemKey: sKey,
 					allowBindings: false
 				},

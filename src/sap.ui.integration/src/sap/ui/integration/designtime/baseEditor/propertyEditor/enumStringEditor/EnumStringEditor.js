@@ -56,6 +56,21 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
+	EnumStringEditor.prototype.getConfigMetadata = function () {
+		return Object.assign(
+			{},
+			BasePropertyEditor.prototype.getConfigMetadata.call(this),
+			{
+				allowBindings: {
+					defaultValue: true
+				},
+				allowCustomValues: {
+					defaultValue: false
+				}
+			}
+		);
+	};
+
 	EnumStringEditor.prototype._onChange = function () {
 		var oComboBox = this.getContent();
 		var sSelectedKey = oComboBox.getSelectedKey();
@@ -71,7 +86,7 @@ sap.ui.define([
 
 	EnumStringEditor.prototype._validate = function (sSelectedKey, sValue) {
 		var oConfig = this.getConfig();
-		if (oConfig["allowBindings"] === false && isValidBindingString(sValue, false)) {
+		if (!oConfig["allowBindings"] && isValidBindingString(sValue, false)) {
 			return "BASE_EDITOR.PROPERTY.BINDING_NOT_ALLOWED";
 		}
 		if (!oConfig["allowCustomValues"] && sValue && !sSelectedKey && !isValidBindingString(sValue, false)) {
