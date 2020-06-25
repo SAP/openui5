@@ -13,7 +13,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Delegator Mediator to manage default delegators.
+	 * Delegator mediator to manage default delegators.
 	 *
 	 * @alias sap.ui.fl.apply._internal.DelegateMediator
 	 *
@@ -30,7 +30,7 @@ sap.ui.define([
 	DelegateMediator._mDefaultDelegateItems = {};
 
 	function getDefaultDelegateInfo(oControl, sModelType) {
-		if (!sModelType) {
+		if (!sModelType && oControl.getModel) {
 			// get the default model
 			var oModel = oControl.getModel();
 			if (!oModel) {
@@ -39,12 +39,16 @@ sap.ui.define([
 			sModelType = oModel.getMetadata().getName();
 		}
 		return {
-			name: DelegateMediator._mDefaultDelegateItems[sModelType]
+			name: DelegateMediator._mDefaultDelegateItems[sModelType],
+			payload: {}, //default is empty payload
+			modelType: sModelType //only added for default delegate as this has to be stored when creating a change
 		};
 	}
 
 	function loadDelegate(oModifier, oControl, mDelegate) {
 		if (!mDelegate) {
+			//it is a valid case to ask for a delegate and there is none
+			//a broken delegate is logged below
 			return Promise.resolve();
 		}
 		return flUtils.requireAsync(mDelegate.name)
@@ -82,8 +86,8 @@ sap.ui.define([
 	/**
 	 * Checks if there is already a registered delegate available for the given model type.
 	 *
-	 * @param {string} sModelType - delegate model type
-	 * @returns {boolean} <true> if a delegate is already registered for the modelType
+	 * @param {string} sModelType - Delegate model type
+	 * @returns {boolean} <code>true</code> if a delegate is already registered for the model type
 	 */
 	DelegateMediator.isDelegateRegistered = function (sModelType) {
 		return !!DelegateMediator._mDefaultDelegateItems[sModelType];
@@ -93,8 +97,8 @@ sap.ui.define([
 	 * Register default delegate by the model type.
 	 *
 	 * @param {object} mPropertyBag - Property bag for default delegate
-	 * @param {object} mPropertyBag.modelType - default delegate model type
-	 * @param {object} mPropertyBag.delegate - path to default delegate
+	 * @param {object} mPropertyBag.modelType - Default delegate model type
+	 * @param {object} mPropertyBag.delegate - Path to default delegate
 	 */
 	DelegateMediator.registerDefaultDelegate = function (mPropertyBag) {
 		if (!(mPropertyBag.modelType && mPropertyBag.delegate)) {
@@ -109,18 +113,23 @@ sap.ui.define([
 	/**
 	 * Returns the delegate object for the requested control.
 	 *
-	 * @param {sap.ui.core.Element} oControl - The control for which the corresponding delegate should be returned
-	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - The control tree modifier
-	 * @param {string} sModelType - The model type is required in case you passed the XmlTreeModifier
-	 * @returns {Promise.<object>} Returns the delegate information including the lazy loaded instance of the delegate
+	 * @param {sap.ui.core.Element} oControl - Control for which the corresponding delegate should be returned
+	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - Control tree modifier
+	 * @param {string} sModelType - Model type; required in case you passed the <code>XmlTreeModifier</code>
+	 * @param {boolean} [bSupportsDefault] - Include default delegate if no instance specific delegate is available
+	 * @returns {Promise.<sap.ui.core.util.reflection.FlexDelegateInfo>} Delegate information including the lazy loaded instance of the delegate
 	 */
-	DelegateMediator.getDelegateForControl = function (oControl, oModifier, sModelType) {
+	DelegateMediator.getDelegateForControl = function (oControl, oModifier, sModelType, bSupportsDefault) {
 		return validateInputParameters(oControl, oModifier)
 			.then(function () {
 				return oModifier.getFlexDelegate(oControl);
 			})
-			.then(function (mInstancespecificDelegate) {
-				return mInstancespecificDelegate || getDefaultDelegateInfo(oControl, sModelType);
+			.then(function (mInstanceSpecificDelegate) {
+				if (mInstanceSpecificDelegate) {
+					//instance specific delegate always takes over
+					return mInstanceSpecificDelegate;
+				}
+				return bSupportsDefault && getDefaultDelegateInfo(oControl, sModelType);
 			})
 			.then(loadDelegate.bind(this, oModifier, oControl));
 	};
