@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/base/Event",
-	"sap/ui/core/UIComponent"
+	"sap/ui/core/UIComponent",
+	"sap/m/BadgeCustomData"
 ],
 	function (
 		Card,
@@ -16,7 +17,8 @@ sap.ui.define([
 		Log,
 		ComponentContainer,
 		Event,
-		UIComponent
+		UIComponent,
+		BadgeCustomData
 	) {
 		"use strict";
 
@@ -2441,6 +2443,44 @@ sap.ui.define([
 			}.bind(this));
 
 			this.oCard.setManifest(oAnalyticalManifest);
+		});
+
+
+		QUnit.module("Badge", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					customData: [
+						new BadgeCustomData({
+							value: "10"
+						})
+					],
+					width: "400px",
+					height: "600px"
+				});
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Rendering", function (assert) {
+			var done = assert.async();
+
+			// Arrange
+			this.oCard.attachEventOnce("_ready", function () {
+
+				Core.applyChanges();
+
+				// Assert
+				assert.strictEqual(this.oCard.$().find(".sapMBadgeIndicator").attr("data-badge"), "10", "Badge indicator is correctly rendered");
+
+				done();
+
+			}.bind(this));
+
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 	}
 );
