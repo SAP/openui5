@@ -229,8 +229,7 @@ sap.ui.define([
 	 * @returns {Document} The view as XML document
 	 */
 	function xml(sViewXML) {
-		var oChildNode, aChildNodes, iColumnCount, aColumnNodes, oColumnsElement, oDocument,
-			oElement, bHasColumns, i, j, k, aTableElements;
+		var oDocument;
 
 		oDocument = XMLHelper.parse(
 			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.ui.table">'
@@ -238,10 +237,28 @@ sap.ui.define([
 			+ '</mvc:View>',
 			"application/xml"
 		);
+		xmlConvertMTables(oDocument);
+
+		return oDocument;
+	}
+
+	/**
+	 * Converts the sap.m.Table controls within the document. Embeds all inner controls into a
+	 * <ColumnListItem>. <ColumnListItem> may still be used however. Do not use <items>, it breaks
+	 * this automatic conversion (and is unnecessary anyway). Do not use <columns>, they are added
+	 * automatically.
+	 *
+	 * @param {Document} oDocument The view as XML document
+	 */
+	function xmlConvertMTables(oDocument) {
+		var aControls, oChildNode, aChildNodes, iColumnCount, aColumnNodes, oColumnsElement,
+			oElement, bHasColumns, bHasListItem, i, j, k, aTableElements;
+
 		aTableElements = oDocument.getElementsByTagNameNS("sap.m", "Table");
 		iColumnCount = 0;
 		for (i = aTableElements.length - 1; i >= 0; i -= 1) {
 			oElement = aTableElements[i];
+			aControls = [];
 
 			aChildNodes = oElement.childNodes;
 			for (j = aChildNodes.length - 1; j >= 0; j -= 1) {
@@ -255,18 +272,35 @@ sap.ui.define([
 					case "ColumnListItem":
 						aColumnNodes = oChildNode.childNodes;
 
+						bHasListItem = true;
 						for (k = aColumnNodes.length - 1; k >= 0; k -= 1) {
-							if (aColumnNodes[k].nodeType === 1) { // Node.ELEMENT_NODE
+							if (aColumnNodes[k].nodeType === Node.ELEMENT_NODE) {
 								iColumnCount += 1;
 							}
 						}
 						break;
-					// no default
+					default:
+						if (oChildNode.nodeType === Node.ELEMENT_NODE) {
+							oElement.removeChild(oChildNode);
+							aControls.unshift(oChildNode);
+							iColumnCount += 1;
+						}
 				}
 			}
 			if (iColumnCount) {
 				if (bHasColumns) {
 					throw new Error("Do not use <columns> in sap.m.Table");
+				}
+				if (aControls.length) {
+					if (bHasListItem) {
+						throw new Error("Do not use controls w/ and w/o <ColumnListItem>"
+							+ " in sap.m.Table");
+					}
+					oColumnsElement = document.createElementNS("sap.m", "ColumnListItem");
+					for (j = 0; j < aControls.length; j += 1) {
+						oColumnsElement.appendChild(aControls[j]);
+					}
+					oElement.appendChild(oColumnsElement);
 				}
 				oColumnsElement = oDocument.createElementNS("sap.m", "columns");
 				while (iColumnCount > 0) {
@@ -276,8 +310,6 @@ sap.ui.define([
 				oElement.appendChild(oColumnsElement);
 			}
 		}
-
-		return oDocument;
 	}
 
 	//*********************************************************************************************
@@ -1338,9 +1370,7 @@ sap.ui.define([
 	QUnit.test("Minimal integration test with collection data", function (assert) {
 		var sView = '\
 <Table id="table" items="{/SalesOrderSet}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
 </Table>';
 
 		this.expectRequest("SalesOrderSet?$skip=0&$top=100", {
@@ -1362,9 +1392,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({useBatch : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderSet}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
 </Table>';
 
 		this.expectHeadRequest()
@@ -1399,9 +1427,7 @@ sap.ui.define([
 	<Text id="id" text="{SalesOrderID}" />\
 </FlexBox>\
 <Table id="table" items="{/SalesOrderSet}">\
-	<ColumnListItem>\
-		<Text text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text text="{SalesOrderID}" />\
 </Table>';
 
 		this.expectHeadRequest()
@@ -1459,9 +1485,7 @@ sap.ui.define([
 			oModel = createSalesOrdersModel({useBatch : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderSet}">\
-	<ColumnListItem>\
-		<Text text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text text="{SalesOrderID}" />\
 </Table>\
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="id" text="{SalesOrderID}" />\
@@ -1513,9 +1537,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModelMessageScope({useBatch : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderSet}">\
-	<ColumnListItem>\
-		<Text text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text text="{SalesOrderID}" />\
 </Table>';
 
 		this.mock(sap.ui.getCore().getLibraryResourceBundle()).expects("getText")
@@ -1684,9 +1706,7 @@ sap.ui.define([
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="salesOrderId" text="{SalesOrderID}" />\
 	<Table id="table" items="{ToLineItems}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
 	</Table>\
 </FlexBox>\
 <FlexBox id="detailProduct" binding="{ToProduct}">\
@@ -1924,9 +1944,7 @@ sap.ui.define([
 <FlexBox binding="{/SalesOrderSet(\'1\')}">\
 	<Text id="id" text="{SalesOrderID}" />\
 	<Table id="table" items="{ToLineItems}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -2046,9 +2064,7 @@ sap.ui.define([
 			sView = '\
 <Table growing="true" growingThreshold="2" id="table"\
 		items="{/SalesOrderSet(\'1\')/ToLineItems}">\
-	<ColumnListItem>\
-		<Text id="itemPosition" text="{ItemPosition}" />\
-	</ColumnListItem>\
+	<Text id="itemPosition" text="{ItemPosition}" />\
 </Table>',
 			that = this;
 
@@ -2256,11 +2272,9 @@ usePreliminaryContext : false}}">\
 	<Text id="salesOrderID" text="{SalesOrderID}" />\
 	<Input id="grossAmount" value="{GrossAmount}" />\
 	<Table id="table" items="{ToLineItems}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="grossAmount::item" value="{GrossAmount}" />\
-			<Input id="currencyCode" value="{CurrencyCode}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="grossAmount::item" value="{GrossAmount}" />\
+		<Input id="currencyCode" value="{CurrencyCode}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -2352,10 +2366,8 @@ usePreliminaryContext : false}}">\
 	<Input id="note" value="{Note}" />\
 	<Table id="table" items="{path : \'ToLineItems\',\
 			parameters : {select : \'ItemPosition,Note,SalesOrderID\'}}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="note::item" value="{Note}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="note::item" value="{Note}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -2558,10 +2570,8 @@ usePreliminaryContext : false}}">\
 			path : \'ToLineItems\',\
 			parameters : {transitionMessagesOnly : true}\
 		}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="note::item" value="{Note}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="note::item" value="{Note}" />\
 	</Table>\
 </FlexBox>',
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject;
@@ -2652,10 +2662,8 @@ usePreliminaryContext : false}}">\
 			path : \'ToLineItems\',\
 			parameters : {transitionMessagesOnly : true}\
 		}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="note::item" value="{Note}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="note::item" value="{Note}" />\
 	</Table>\
 </FlexBox>',
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
@@ -2796,10 +2804,8 @@ usePreliminaryContext : false}}">\
 			path : \'ToLineItems\',\
 			parameters : {transitionMessagesOnly : true}\
 		}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="grossAmount" value="{GrossAmount}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="grossAmount" value="{GrossAmount}" />\
 	</Table>\
 </FlexBox>',
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
@@ -2947,19 +2953,15 @@ usePreliminaryContext : false}}">\
 		parameters : {transitionMessagesOnly : true},\
 		filters : {path : \'GrossAmount\', operator : \'GT\', value1 : \'100.0\'}\
 	}">\
-		<ColumnListItem>\
-			<Text id="itemPosition1" text="{ItemPosition}" />\
-			<Input id="grossAmount1" value="{GrossAmount}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition1" text="{ItemPosition}" />\
+		<Input id="grossAmount1" value="{GrossAmount}" />\
 	</Table>\
 	<Table id="table2" items="{path : \'ToLineItems\', \
 		parameters : {transitionMessagesOnly : true},\
 		filters : {path : \'GrossAmount\', operator : \'LE\', value1 : \'100.0\'}\
 	}">\
-		<ColumnListItem>\
-			<Text id="itemPosition2" text="{ItemPosition}" />\
-			<Input id="grossAmount2" value="{GrossAmount}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition2" text="{ItemPosition}" />\
+		<Input id="grossAmount2" value="{GrossAmount}" />\
 	</Table>\
 </FlexBox>',
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
@@ -3156,10 +3158,8 @@ usePreliminaryContext : false}}">\
 			path : \'ToLineItems\',\
 			parameters : {transitionMessagesOnly : true}\
 		}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="note::item" value="{Note}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="note::item" value="{Note}" />\
 	</Table>\
 </FlexBox>',
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
@@ -3303,10 +3303,8 @@ usePreliminaryContext : false}}">\
 			path : \'ToLineItems\',\
 			parameters : {transitionMessagesOnly : true}\
 		}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="note::item" value="{Note}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="note::item" value="{Note}" />\
 	</Table>\
 </FlexBox>',
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
@@ -3488,10 +3486,8 @@ usePreliminaryContext : false}}">\
 			path : \'ToLineItems\',\
 			parameters : {transitionMessagesOnly : true}\
 		}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="note::item" value="{Note}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="note::item" value="{Note}" />\
 	</Table>\
 </FlexBox>',
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
@@ -3616,9 +3612,7 @@ usePreliminaryContext : false}}">\
 				= this.createResponseMessage("('2~1~')/ToBusinessPartner/Address"),
 			sView = '\
 <Table growing="true" growingThreshold="2" id="table" items="{/SalesOrderSet}">\
-	<ColumnListItem>\
-		<Input id="note" value="{Note}" />\
-	</ColumnListItem>\
+	<Input id="note" value="{Note}" />\
 </Table>',
 			bWithMessageScope = sMessageScope === MessageScope.BusinessObject,
 			that = this;
@@ -3811,10 +3805,8 @@ usePreliminaryContext : false}}">\
 			path : \'ToLineItems\',\
 			parameters : {transitionMessagesOnly : true}\
 		}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="note::item" value="{Note}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="note::item" value="{Note}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -3955,14 +3947,12 @@ usePreliminaryContext : false}}">\
 			path : \'carrierFlights\',\
 			parameters : {transitionMessagesOnly : true}\
 		}">\
-		<ColumnListItem>\
-			<Text id="connectionID" text="{connid}" />\
-			<Text id="flightDate" text="{\
-				path:\'fldate\',\
-				type: \'sap.ui.model.odata.type.DateTime\',\
-				formatOptions: {style : \'short\', UTC : true}\
-			}" />\
-		</ColumnListItem>\
+		<Text id="connectionID" text="{connid}" />\
+		<Text id="flightDate" text="{\
+			path:\'fldate\',\
+			type: \'sap.ui.model.odata.type.DateTime\',\
+			formatOptions: {style : \'short\', UTC : true}\
+		}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -4054,10 +4044,8 @@ usePreliminaryContext : false}}">\
 			parameters : {transitionMessagesOnly : true},\
 			templateShareable : true\
 		}">\
-		<ColumnListItem>\
-			<Text id="itemPosition" text="{ItemPosition}" />\
-			<Input id="note::item" value="{Note}" />\
-		</ColumnListItem>\
+		<Text id="itemPosition" text="{ItemPosition}" />\
+		<Input id="note::item" value="{Note}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
