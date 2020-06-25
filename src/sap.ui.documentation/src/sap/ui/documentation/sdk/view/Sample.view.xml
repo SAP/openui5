@@ -21,7 +21,7 @@
 					<Button type="Back" press="onNavBack" tooltip="{i18n>SAMPLE_BACK_BTN_TOOLTIP}" enabled="{= ${/disableNavBack} === undefined }"/>
 				</contentLeft>
 				<contentMiddle>
-					<Title text="{/title}" tooltip="{/title}"/>
+					<Title level="H1" text="{/title}" tooltip="{/title}"/>
 				</contentMiddle>
 				<contentRight>
 					<Button
