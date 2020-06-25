@@ -77,7 +77,7 @@ sap.ui.define(
 
 				this._isBadgeAttached = false;
 
-				if (!this.getBadgeCustomData()) {
+				if (!this.getBadgeCustomData() || !isValidValue(this.getBadgeCustomData().getValue())) {
 					return false;
 				}
 
