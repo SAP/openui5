@@ -4,6 +4,8 @@
 
 /* global Map */
 sap.ui.define([
+	"sap/base/util/each",
+	"sap/base/util/isPlainObject",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Core",
 	"sap/ui/fl/apply/_internal/changes/Utils",
@@ -14,6 +16,8 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/performance/Measurement"
 ], function(
+	each,
+	isPlainObject,
 	JsControlTreeModifier,
 	Core,
 	Utils,
@@ -56,7 +60,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the 'move' subtype has been added to the data structure before 'create' subtype
 	 */
 	function isCreateAfterMoveSubtype(mSubtypes, oCondenserInfo) {
-		return oCondenserInfo.subtype === sap.ui.fl.condenser.ClassificationSubtypes.Create && mSubtypes.has(sap.ui.fl.condenser.ClassificationSubtypes.Move);
+		return oCondenserInfo.subtype === sap.ui.fl.condenser.ClassificationSubtypes.Create && mSubtypes[sap.ui.fl.condenser.ClassificationSubtypes.Move];
 	}
 
 	/**
@@ -67,7 +71,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the 'destroy' subtype has been added to the data structure before 'move' subtype
 	 */
 	function isMoveAfterDestroySubtype(mSubtypes, oCondenserInfo) {
-		return oCondenserInfo.subtype === sap.ui.fl.condenser.ClassificationSubtypes.Move && mSubtypes.has(sap.ui.fl.condenser.ClassificationSubtypes.Destroy);
+		return oCondenserInfo.subtype === sap.ui.fl.condenser.ClassificationSubtypes.Move && mSubtypes[sap.ui.fl.condenser.ClassificationSubtypes.Destroy];
 	}
 
 	/**
@@ -78,7 +82,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the 'move' subtype has been added to the data structure before 'create' subtype
 	 */
 	function isCreateAfterDestroySubtype(mSubtypes, oCondenserInfo) {
-		return oCondenserInfo.subtype === sap.ui.fl.condenser.ClassificationSubtypes.Create && mSubtypes.has(sap.ui.fl.condenser.ClassificationSubtypes.Destroy);
+		return oCondenserInfo.subtype === sap.ui.fl.condenser.ClassificationSubtypes.Create && mSubtypes[sap.ui.fl.condenser.ClassificationSubtypes.Destroy];
 	}
 
 	/**
@@ -95,11 +99,9 @@ sap.ui.define([
 			&& !isCreateAfterDestroySubtype(mSubtypes, oCondenserInfo)
 		) {
 			var sSubtype = oCondenserInfo.subtype;
-			if (!mSubtypes.has(sSubtype)) {
-				var aChanges = [];
+			if (!mSubtypes[sSubtype]) {
 				oCondenserInfo.change = oChange;
-				aChanges.push(oCondenserInfo);
-				mSubtypes.set(sSubtype, aChanges);
+				mSubtypes[sSubtype] = [oCondenserInfo];
 			}
 		}
 
@@ -107,8 +109,8 @@ sap.ui.define([
 			isCreateAfterMoveSubtype(mSubtypes, oCondenserInfo)
 			|| isCreateAfterDestroySubtype(mSubtypes, oCondenserInfo)
 		) {
-			mSubtypes.delete(sap.ui.fl.condenser.ClassificationSubtypes.Move);
-			mSubtypes.delete(sap.ui.fl.condenser.ClassificationSubtypes.Destroy);
+			delete mSubtypes[sap.ui.fl.condenser.ClassificationSubtypes.Move];
+			delete mSubtypes[sap.ui.fl.condenser.ClassificationSubtypes.Destroy];
 		}
 
 		UIReconstruction.addChange(mUIReconstructions, oCondenserInfo);
@@ -124,16 +126,16 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Change} oChange - Change instance that will be added to the array
 	 */
 	function addClassifiedChange(mClassificationTypes, mUIReconstructions, aIndexRelatedChanges, oCondenserInfo, oChange) {
-		if (!mClassificationTypes.has(oCondenserInfo.type)) {
-			mClassificationTypes.set(oCondenserInfo.type, new Map());
+		if (!mClassificationTypes[oCondenserInfo.type]) {
+			mClassificationTypes[oCondenserInfo.type] = {};
 		}
-		var mSubtypes = mClassificationTypes.get(oCondenserInfo.type);
+		var mSubtypes = mClassificationTypes[oCondenserInfo.type];
 
 		if (oCondenserInfo.type === sap.ui.fl.condenser.ClassificationType.NonIndexRelated) {
-			if (!mSubtypes.has(oCondenserInfo.subtype)) {
-				mSubtypes.set(oCondenserInfo.subtype, new Map());
+			if (!mSubtypes[oCondenserInfo.subtype]) {
+				mSubtypes[oCondenserInfo.subtype] = {};
 			}
-			var mProperties = mSubtypes.get(oCondenserInfo.subtype);
+			var mProperties = mSubtypes[oCondenserInfo.subtype];
 			NON_INDEX_RELATED[oCondenserInfo.subtype].addToChangesMap(mProperties, oCondenserInfo.uniqueKey, oChange);
 		} else {
 			aIndexRelatedChanges.push(oChange);
@@ -149,10 +151,10 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Change} oChange - Change instance
 	 */
 	function addUnclassifiedChange(mClassificationTypes, sKey, oChange) {
-		if (!mClassificationTypes.has(sKey)) {
-			mClassificationTypes.set(sKey, []);
+		if (!mClassificationTypes[sKey]) {
+			mClassificationTypes[sKey] = [];
 		}
-		mClassificationTypes.get(sKey).push(oChange);
+		mClassificationTypes[sKey].push(oChange);
 	}
 
 	/**
@@ -194,10 +196,10 @@ sap.ui.define([
 	 */
 	function getClassificationTypesMap(mReducedChanges, oCondenserInfo, oChange, oAppComponent) {
 		var sAffectedControlId = oCondenserInfo !== undefined ? oCondenserInfo.affectedControl : JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), oAppComponent);
-		if (!mReducedChanges.has(sAffectedControlId)) {
-			mReducedChanges.set(sAffectedControlId, new Map());
+		if (!mReducedChanges[sAffectedControlId]) {
+			mReducedChanges[sAffectedControlId] = {};
 		}
-		return mReducedChanges.get(sAffectedControlId);
+		return mReducedChanges[sAffectedControlId];
 	}
 
 	/**
@@ -259,7 +261,7 @@ sap.ui.define([
 				addClassifiedChange(mClassificationTypes, mUIReconstructions, aIndexRelatedChanges, oCondenserInfo, oChange);
 			} else {
 				addUnclassifiedChange(mClassificationTypes, UNCLASSIFIED, oChange);
-				mReducedChanges.set(UNCLASSIFIED, true);
+				mReducedChanges[UNCLASSIFIED] = true;
 			}
 		});
 	}
@@ -281,13 +283,13 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Change[]} aChanges - Array of changes
 	 */
 	 function getChanges(mObjects, aChanges) {
-		mObjects.forEach(function(mSubObjects, sKey) {
+		each(mObjects, function(sKey, vSubObjects) {
 			if (NON_INDEX_RELATED[sKey] && NON_INDEX_RELATED[sKey].getChangesFromMap) {
 				NON_INDEX_RELATED[sKey].getChangesFromMap(mObjects, aChanges, sKey);
-			} else if (mSubObjects instanceof Map) {
-				getChanges(mSubObjects, aChanges);
-			} else if (Array.isArray(mSubObjects)) {
-				mSubObjects.forEach(function(oObject) {
+			} else if (isPlainObject(vSubObjects)) {
+				getChanges(vSubObjects, aChanges);
+			} else if (Array.isArray(vSubObjects)) {
+				vSubObjects.forEach(function(oObject) {
 					if (oObject instanceof Change) {
 						aChanges.push(oObject);
 					} else {
@@ -319,12 +321,12 @@ sap.ui.define([
 	 * @returns {object[]} Array of objects that contain condenser-specific information and change instance
 	 */
 	function getCondenserInfos(mReducedChanges, aCondenserInfos) {
-		mReducedChanges.forEach(function(mSubObjects) {
-			if (mSubObjects !== null) {
-				if (mSubObjects instanceof Map) {
-					getCondenserInfos(mSubObjects, aCondenserInfos);
-				} else if (Array.isArray(mSubObjects)) {
-					mSubObjects.forEach(function(oObject) {
+		each(mReducedChanges, function(sKey, vSubObjects) {
+			if (vSubObjects !== null) {
+				if (isPlainObject(vSubObjects)) {
+					getCondenserInfos(vSubObjects, aCondenserInfos);
+				} else if (Array.isArray(vSubObjects)) {
+					vSubObjects.forEach(function(oObject) {
 						if (!(oObject instanceof Change)) {
 							aCondenserInfos.push(oObject);
 						}
@@ -380,8 +382,8 @@ sap.ui.define([
 	 */
 	Condenser.condense = function(oAppComponent, aChanges) {
 		Measurement.start("Condenser_overall", "Condenser overall - CondenserClass", ["sap.ui.fl", "Condenser"]);
-		var mReducedChanges = new Map();
-		var mUIReconstructions = new Map();
+		var mReducedChanges = {};
+		var mUIReconstructions = {};
 		var aCopyChanges = aChanges.slice(0).reverse();
 		var aAllIndexRelatedChanges = [];
 
@@ -399,7 +401,7 @@ sap.ui.define([
 
 		.then(function() {
 			Measurement.end("Condenser_defineMaps");
-			var bUnclassifiedChanges = mReducedChanges.get(UNCLASSIFIED);
+			var bUnclassifiedChanges = mReducedChanges[UNCLASSIFIED];
 			if (!bUnclassifiedChanges) {
 				UIReconstruction.compareAndUpdate(mReducedChanges, mUIReconstructions);
 			}
