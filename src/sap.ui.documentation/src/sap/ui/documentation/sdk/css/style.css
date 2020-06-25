@@ -1,9 +1,9 @@
-a.sapLogo {
+.sapMImg.sapMBarChild.sapLogo {
 	margin-left: 1rem;
 }
 
-.sapUiMedia-Std-Phone a.sapLogo,
-.sap-phone a.sapLogo {
+.sapUiMedia-Std-Phone .sapMImg.sapMBarChild.sapLogo,
+.sap-phone .sapMImg.sapMBarChild.sapLogo {
 	display: none;
 }
 

@@ -641,6 +641,10 @@ sap.ui.define([
 				oBinding.filter([oFilter]);
 			},
 
+			onLogoIconPress: function () {
+				this.oRouter.navTo("welcome", {});
+			},
+
 			onVersionItemPress: function (oEvent) {
 				var oSelectedItem = oEvent.getParameter("listItem"),
 					oCustomData = oSelectedItem.getCustomData()[0];
