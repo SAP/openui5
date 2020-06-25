@@ -215,6 +215,7 @@ sap.ui.define([
 		assert.ok(!_ControlFinder._isControlInStaticArea(this.oDialogButton), "Should return false for controls in static area that are not rendered");
 		this.oDialog.open();
 		assert.ok(_ControlFinder._isControlInStaticArea(this.oDialogButton), "Should return true for controls in open static area");
+		this.oDialog.destroy();
 		$("#sap-ui-static").remove();
 		assert.ok(!_ControlFinder._isControlInStaticArea(this.oDialogButton), "Should return false if there is no static area");
 	});

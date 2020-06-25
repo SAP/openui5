@@ -26,6 +26,10 @@ sap.ui.define([
 								return Opa5.getContext().recorderWindow.jQuery("tag:contains(" + sText + ")");
 							},
 							function ($item) {
+								var mOffset = $item.offset();
+								if (!mOffset) {
+									Opa5.assert.ok(mOffset, "Cannot get offset of item " + $item + ". Maybe the recorder is not loaded?");
+								}
 								// workaround for limitations for right click in iframe
 								Opa5.getContext().recorderWindow.sap.ui.testrecorder.interaction.ContextMenu.show({
 									domElementId: $item.parent().attr("data-id"),

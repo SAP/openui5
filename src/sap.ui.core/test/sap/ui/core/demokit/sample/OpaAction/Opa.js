@@ -29,6 +29,8 @@ sap.ui.require([
 			 Drop) {
 	"use strict";
 
+	var bIsIE11 = Device.browser.msie && Device.browser.version < 12;
+
 	Opa5.extendConfig({
 		viewNamespace: "appUnderTest.view.",
 		// we only have one view, so it makes sense to set its name globally
@@ -225,7 +227,7 @@ sap.ui.require([
 
 	QUnit.module("Drag and drop");
 
-	if (Device.browser.msie && Device.browser.version < 12) {
+	if (bIsIE11) {
 		opaTest("Should not execute drag and drop tests in IE11", function (Given, When, Then) {
 			Opa5.assert.ok(true, "Should not execute drag and drop tests in IE11");
 			Then.iTeardownMyApp();
@@ -340,6 +342,10 @@ sap.ui.require([
 		Then.iShouldCheckTheResult("Always Visible");
 
 		// press the toggle button to show the overflowing content
+		if (bIsIE11) {
+			// press button twice to workaround issue with focus in popovers in IE11
+			When.pressToggleButton("toolbar-overflow");
+		}
 		When.pressToggleButton("toolbar-overflow");
 		// press a button that is in the overflow popover
 		When.iPressToolbarButton("toolbar-overflow", "Overflowing");
