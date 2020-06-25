@@ -147,16 +147,14 @@ sap.ui.define([
 			UnhideControl.getCondenserInfo = sandbox.stub().callsFake(function(oChange) {
 				return {
 					affectedControl: oChange.getSelector(),
-					type: sap.ui.fl.condenser.ClassificationType.NonIndexRelated,
-					subtype: sap.ui.fl.condenser.ClassificationSubtypes.Reverse,
+					classification: sap.ui.fl.condenser.Classification.Reverse,
 					uniqueKey: "visible"
 				};
 			});
 			AddFields.getCondenserInfo = sandbox.stub().callsFake(function(oChange) {
 				return {
 					affectedControl: oChange.getContent().field.selector,
-					type: sap.ui.fl.condenser.ClassificationType.IndexRelated,
-					subtype: sap.ui.fl.condenser.ClassificationSubtypes.Create,
+					classification: sap.ui.fl.condenser.Classification.Create,
 					targetContainer: oChange.getSelector(),
 					targetAggregation: "groupElements",
 					setTargetIndex: function (oChange, iNewTargetIndex) {

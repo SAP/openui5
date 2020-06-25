@@ -10,6 +10,12 @@ sap.ui.define([
 	"use strict";
 
 	return {
+		/**
+		 * Adds a move change to the UI Reconstruction Map by moving the element to the source location.
+		 *
+		 * @param {Map} mUIReconstructions - Map of UI reconstructions
+		 * @param {object} oCondenserInfo - Condenser specific information
+		 */
 		addToReconstructionMap: function(mUIReconstructions, oCondenserInfo) {
 			var aSourceContainerElementIds = CondenserUtils.getContainerElementIds(oCondenserInfo.sourceContainer, oCondenserInfo.sourceAggregation);
 			var aTargetContainerElementIds = CondenserUtils.getContainerElementIds(oCondenserInfo.targetContainer, oCondenserInfo.targetAggregation);
@@ -31,6 +37,14 @@ sap.ui.define([
 				aContainerElementIds.splice(oCondenserInfo.sourceIndex, 0, oCondenserInfo.affectedControl);
 			}
 		},
+
+		/**
+		 * Simulates the move change by moving the element to the target location.
+		 *
+		 * @param {string[]} aContainerElements - Array with the Ids of the current elements in the container
+		 * @param {object} oCondenserInfo - Condenser specific information
+		 * @param {string[]} aInitialUIElementIds - Array with the Ids of the initial elements in the container
+		 */
 		simulate: function(aContainerElements, oCondenserInfo, aInitialUIElementIds) {
 			var sAffectedControlId = oCondenserInfo.affectedControl;
 			var iSourceIndex = aInitialUIElementIds.indexOf(sAffectedControlId);

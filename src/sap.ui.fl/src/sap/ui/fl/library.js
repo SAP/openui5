@@ -186,11 +186,7 @@ sap.ui.define([
 	 * @enum {string}
 	 */
 	sap.ui.fl.condenser = {
-		ClassificationType: {
-			IndexRelated :"indexRelated",
-			NonIndexRelated: "nonIndexRelated"
-		},
-		ClassificationSubtypes: {
+		Classification: {
 			LastOneWins: "lastOneWins",
 			Reverse: "reverse",
 			Move: "move",

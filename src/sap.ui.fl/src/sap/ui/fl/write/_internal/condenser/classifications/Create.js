@@ -12,6 +12,12 @@ sap.ui.define([
 	"use strict";
 
 	return {
+		/**
+		 * Adds a create change to the UI Reconstruction Map by removing the element from the container.
+		 *
+		 * @param {Map} mUIReconstructions - Map of UI reconstructions
+		 * @param {object} oCondenserInfo - Condenser specific information
+		 */
 		addToReconstructionMap: function(mUIReconstructions, oCondenserInfo) {
 			var oAffectedControl = Core.byId(oCondenserInfo.affectedControl);
 			var sAggregationName = oAffectedControl && oAffectedControl.sParentAggregationName || oCondenserInfo.targetAggregation;
@@ -24,6 +30,13 @@ sap.ui.define([
 				aContainerElementIds.splice(iIndex, 1);
 			}
 		},
+
+		/**
+		 * Simulates the create change by adding the element at the correct index.
+		 *
+		 * @param {string[]} aContainerElements - Array with the Ids of the current elements in the container
+		 * @param {object} oCondenserInfo - Condenser specific information
+		 */
 		simulate: function(aContainerElements, oCondenserInfo) {
 			aContainerElements.splice(oCondenserInfo.getTargetIndex(oCondenserInfo.change), 0, oCondenserInfo.affectedControl);
 		}
