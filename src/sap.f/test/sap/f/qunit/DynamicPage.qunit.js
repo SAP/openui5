@@ -622,13 +622,28 @@ function (
 		this.oDynamicPage.setShowFooter(true);
 
 		// Check
-		assert.ok(!$footerWrapper.hasClass("sapUiHidden"), "footer is shown");
+		assert.ok(!$footerWrapper.hasClass("sapUiHidden"), "footer is shown when the Animation mode is 'none'");
 
 		// Act: toggle to 'false'
 		this.oDynamicPage.setShowFooter(false);
 
 		// Check
-		assert.ok($footerWrapper.hasClass("sapUiHidden"), "footer is hidden");
+		assert.ok($footerWrapper.hasClass("sapUiHidden"), "footer is hidden when the Animation mode is 'none'");
+
+		//setup
+		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.minimal);
+
+		// Act: toggle to 'true'
+		this.oDynamicPage.setShowFooter(true);
+
+		// Check
+		assert.ok(!$footerWrapper.hasClass("sapUiHidden"), "footer is shown when the Animation mode is 'minimal'");
+
+		// Act: toggle to 'false'
+		this.oDynamicPage.setShowFooter(false);
+
+		// Check
+		assert.ok($footerWrapper.hasClass("sapUiHidden"), "footer is hidden when the Animation mode is 'minimal'");
 
 		// Clean up
 		Core.getConfiguration().setAnimationMode(sOriginalMode);

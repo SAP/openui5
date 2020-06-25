@@ -594,13 +594,14 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._toggleFooter = function (bShow) {
 		var oFooter = this.getFooter(),
-			bUseAnimations;
+			bUseAnimations, sAnimationMode;
 
 		if (!exists(this.$()) || !exists(oFooter) || !exists(this.$footerWrapper)) {
 			return;
 		}
 
-		bUseAnimations = Core.getConfiguration().getAnimationMode() !== Configuration.AnimationMode.none;
+		sAnimationMode = Core.getConfiguration().getAnimationMode();
+		bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
 		this._toggleFooterSpacer(bShow);
 
 		if (bUseAnimations) {
