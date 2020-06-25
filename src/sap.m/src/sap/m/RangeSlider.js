@@ -943,7 +943,8 @@ sap.ui.define([
             if (fRangeMax + fOffset > fMax) {
                 fOffset = iOffsetSign * (Math.abs(fMax) - Math.abs(fRangeMax));
             } else if (fRangeMin + fOffset < fMin) {
-                fOffset = iOffsetSign * (Math.abs(fRangeMin) - Math.abs(fMin));
+                fOffset = Math.abs(fRangeMin) - Math.abs(fMin);
+                fOffset = fOffset < 0 ? fOffset : iOffsetSign * fOffset;
             }
 
             aHandles.map(function (oCurHandle) {
