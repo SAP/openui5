@@ -90,7 +90,7 @@ sap.ui.define(["sap/ui/Device"],
 			}
 
 			// Sticky Header Content
-			this._renderHeaderContentDOM(oRm, oControl, bRenderHeaderContent && oControl._bHeaderInTitleArea, "-stickyHeaderContent");
+			this._renderHeaderContentDOM(oRm, oControl, oControl._bHeaderInTitleArea, "-stickyHeaderContent");
 
 			// Sticky anchorBar placeholder
 			oRm.openStart("div", oControl.getId() + "-stickyAnchorBar");
@@ -137,7 +137,7 @@ sap.ui.define(["sap/ui/Device"],
 				.openEnd();
 
 			// Header Content
-			this._renderHeaderContentDOM(oRm, oControl, bRenderHeaderContent && !oControl._bHeaderInTitleArea, "-headerContent",  true);
+			this._renderHeaderContentDOM(oRm, oControl, !oControl._bHeaderInTitleArea, "-headerContent",  true);
 
 			// Anchor Bar
 			oRm.openStart("section", oControl.getId() + "-anchorBar");

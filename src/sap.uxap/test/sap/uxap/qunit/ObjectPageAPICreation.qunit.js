@@ -2234,6 +2234,58 @@ function (
 		oObjectPage.placeAt("qunit-fixture");
 	});
 
+	QUnit.test("setShowHeaderContent does not invalidate the objectPage", function (assert) {
+		// Arrange
+		var oObjectPage = new ObjectPageLayout({
+			headerTitle: new ObjectPageDynamicHeaderTitle({
+				backgroundDesign: "Solid"
+			}),
+			headerContent: new Button({
+				text: "Button"
+			}),
+			sections:
+						oFactory.getSection(1, null, [
+							oFactory.getSubSection(1, [oFactory.getBlocks(), oFactory.getBlocks()], null),
+							oFactory.getSubSection(2, [oFactory.getBlocks(), oFactory.getBlocks()], null),
+							oFactory.getSubSection(3, [oFactory.getBlocks(), oFactory.getBlocks()], null),
+							oFactory.getSubSection(4, [oFactory.getBlocks(), oFactory.getBlocks()], null)
+						])
+			}),
+			oObjectPageRenderSpy = sinon.spy(),
+			oAdjustHeaderHeightsSpy,
+			oRequestAdjustLayoutSpy,
+			oHeaderContentRenderSpy,
+			done = assert.async();
+
+		assert.expect(4);
+		helpers.renderObject(oObjectPage);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			oObjectPage.addEventDelegate({
+				onAfterRendering: oObjectPageRenderSpy
+			});
+
+			oAdjustHeaderHeightsSpy = sinon.spy(oObjectPage, "_adjustHeaderHeights");
+			oRequestAdjustLayoutSpy = sinon.spy(oObjectPage, "_requestAdjustLayout");
+			oHeaderContentRenderSpy = sinon.spy(oObjectPage._getHeaderContent(), "invalidate");
+
+			// Act
+			oObjectPage.setShowHeaderContent(false);
+
+			setTimeout(function() {
+				// Assert
+				assert.equal(oObjectPageRenderSpy.callCount, 0, "OPL is not rerendered");
+				assert.equal(oHeaderContentRenderSpy.callCount, 1, "headerContent is rerendered");
+				assert.equal(oAdjustHeaderHeightsSpy.callCount, 1, "_adjustHeaderHeights is called once");
+				assert.equal(oRequestAdjustLayoutSpy.callCount, 1, "_requestAdjustLayout is called once");
+
+				// Clean up
+				oObjectPage.destroy();
+				done();
+			}, 500);
+		});
+	});
+
 	QUnit.module("ObjectPage API: Header", {
 		beforeEach: function () {
 			this.oObjectPageLayout = new ObjectPageLayout();
