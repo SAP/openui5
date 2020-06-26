@@ -557,12 +557,12 @@ sap.ui.define([
 	 *   The binding path in the model; must not be empty or end with a slash
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
-	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
+	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [vSorters]
 	 *   The dynamic sorters to be used initially. Call
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#sort} to replace them. Static sorters, as
 	 *   defined in the '$orderby' binding parameter, are always executed after the dynamic sorters.
 	 *   Supported since 1.39.0.
-	 * @param {sap.ui.model.Filter | sap.ui.model.Filter[]} [vFilters]
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [vFilters]
 	 *   The dynamic application filters to be used initially. Call
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#filter} to replace them. Static filters, as
 	 *   defined in the '$filter' binding parameter, are always combined with the dynamic filters
@@ -611,6 +611,11 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.$$ownRequest]
 	 *   Whether the binding always uses an own service request to read its data; only the value
 	 *   <code>true</code> is allowed.
+	 * @param {boolean} [mParameters.$$sharedRequest]
+	 *   Whether multiple bindings for the same resource path share the data, so that it is
+	 *   requested only once; only the value <code>true</code> is allowed.
+	 *   Note: These bindings are read-only and cannot be refreshed, so they may typically be useful
+	 *   for value lists. Supported since 1.80.0
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
 	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
@@ -672,7 +677,7 @@ sap.ui.define([
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @param {boolean} [mParameters.$$noPatch]
-	 *   Whether changing the value of this property binding is not causing a PATCH request. Only
+	 *   Whether changing the value of this property binding is not causing a PATCH request; only
 	 *   the value <code>true</code> is allowed.
 	 * @returns {sap.ui.model.odata.v4.ODataPropertyBinding}
 	 *   The property binding
