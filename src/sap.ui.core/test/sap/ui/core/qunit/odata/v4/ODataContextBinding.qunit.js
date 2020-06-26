@@ -38,6 +38,7 @@ sap.ui.define([
 				serviceUrl : "/service/?sap-client=111",
 				synchronizationMode : "None"
 			});
+			this.oModel.bSharedRequests = {/*false,true*/};
 			this.oRequestorMock = this.mock(this.oModel.oRequestor);
 			// ensure that the requestor does not trigger requests
 			this.oRequestorMock.expects("request").never();
@@ -513,7 +514,8 @@ sap.ui.define([
 
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor),
-				"TEAMS('TEAM_01')/TEAM_2_MANAGER", {"sap-client": "111"}, false, sinon.match.func)
+				"TEAMS('TEAM_01')/TEAM_2_MANAGER", {"sap-client": "111"}, false,
+				sinon.match.same(this.oModel.bSharedRequests), sinon.match.func)
 			.returns({});
 
 		// code under test
@@ -2018,7 +2020,8 @@ sap.ui.define([
 		oExpectation = this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect),
-				sinon.match.func, false, "/FunctionImport/@$ui5.overload/0/$ReturnType")
+				sinon.match.same(this.oModel.bSharedRequests), sinon.match.func, false,
+				"/FunctionImport/@$ui5.overload/0/$ReturnType")
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(oGroupLock)).returns(oPromise);
@@ -2033,7 +2036,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oOperation.mRefreshParameters, mParameters);
 
 		// code under test
-		assert.strictEqual(oExpectation.args[0][4](), sPath.slice(1));
+		assert.strictEqual(oExpectation.args[0][5](), sPath.slice(1));
 	});
 
 	//*********************************************************************************************
@@ -2067,7 +2070,7 @@ sap.ui.define([
 		oExpectation = this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect),
-				sinon.match.func, false,
+				sinon.match.same(this.oModel.bSharedRequests), sinon.match.func, false,
 				"/Entity/navigation/bound.Function/@$ui5.overload/0/$ReturnType/$Type")
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("fetchValue")
@@ -2084,7 +2087,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oOperation.mRefreshParameters, mParameters);
 
 		// code under test
-		assert.strictEqual(oExpectation.args[0][4](), sPath.slice(1));
+		assert.strictEqual(oExpectation.args[0][5](), sPath.slice(1));
 	});
 
 	//*********************************************************************************************
@@ -2117,7 +2120,8 @@ sap.ui.define([
 		oExpectation = this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect),
-				sinon.match.func, true, "/ActionImport/@$ui5.overload/0/$ReturnType")
+				sinon.match.same(this.oModel.bSharedRequests), sinon.match.func, true,
+				"/ActionImport/@$ui5.overload/0/$ReturnType")
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("post")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParametersCopy),
@@ -2134,7 +2138,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oOperation.mRefreshParameters, mParameters);
 
 		// code under test
-		assert.strictEqual(oExpectation.args[0][4](), sPath.slice(1));
+		assert.strictEqual(oExpectation.args[0][5](), sPath.slice(1));
 	});
 
 	//*********************************************************************************************
@@ -2179,7 +2183,7 @@ sap.ui.define([
 			oExpectation = this.mock(_Cache).expects("createSingle")
 				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 					sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect),
-					sinon.match.func, true,
+					sinon.match.same(this.oModel.bSharedRequests), sinon.match.func, true,
 					"/Entity/navigation/bound.Action/@$ui5.overload/0/$ReturnType/$Type")
 				.returns(oSingleCache);
 			this.mock(oSingleCache).expects("post")
@@ -2198,7 +2202,7 @@ sap.ui.define([
 			assert.strictEqual(oBinding.oOperation.mRefreshParameters, mParameters);
 			assert.strictEqual(fnGetEntity.callCount, 1);
 
-			fnGetOriginalResourcePath = oExpectation.args[0][4];
+			fnGetOriginalResourcePath = oExpectation.args[0][5];
 			switch (sCase) {
 				case "return value context":
 					this.mock(oBinding).expects("hasReturnValueContext")
@@ -2304,7 +2308,7 @@ sap.ui.define([
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mExpectedQueryOptions), sinon.match.same(bAutoExpandSelect),
-				sinon.match.func, false,
+				sinon.match.same(this.oModel.bSharedRequests), sinon.match.func, false,
 				"/Entity/navigation/bound.Function/@$ui5.overload/0/$ReturnType/$Type")
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("fetchValue")
@@ -3145,7 +3149,8 @@ sap.ui.define([
 
 			oCreateSingleExpectation = this.mock(_Cache).expects("createSingle")
 				.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES('1')",
-					sinon.match.same(mCacheQueryOptions), bAutoExpandSelect, sinon.match.func)
+					sinon.match.same(mCacheQueryOptions), bAutoExpandSelect,
+					sinon.match.same(this.oModel.bSharedRequests), sinon.match.func)
 				.returns(oCache);
 
 			// code under test
@@ -3154,7 +3159,7 @@ sap.ui.define([
 					sDeepResourcePath),
 				oCache);
 
-			fnGetOriginalResourcePath = oCreateSingleExpectation.args[0][4];
+			fnGetOriginalResourcePath = oCreateSingleExpectation.args[0][5];
 
 			// code under test
 			assert.strictEqual(fnGetOriginalResourcePath(), sDeepResourcePath);
@@ -3620,7 +3625,8 @@ sap.ui.define([
 			.returns(mQueryOptions);
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "SalesOrderList('77')",
-				sinon.match.same(mQueryOptions), true)
+				sinon.match.same(mQueryOptions), true,
+				sinon.match.same(this.oModel.bSharedRequests))
 			.returns(oCache);
 		this.mock(oBinding).expects("createReadGroupLock")
 			.withExactArgs("group", true);

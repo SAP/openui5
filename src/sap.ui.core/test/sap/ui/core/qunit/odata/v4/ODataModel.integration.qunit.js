@@ -348,6 +348,8 @@ sap.ui.define([
 					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
 				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata?sap-client=123"
 					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
+				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TYPE_CODE%27/$metadata"
+					: {source : "odata/v4/data/VH_ProductTypeCode.xml"},
 				"/serviceroot.svc/$metadata"
 					: {source : "odata/v4/data/BusinessPartnerTest.metadata.xml"},
 				"/special/cases/$metadata"
@@ -26470,6 +26472,95 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: A value list model is used multiple times, but the request is shared.
+	// JIRA: CPOUI5ODATAV4-344
+[false, true].forEach(function (bAutoExpandSelect) {
+	var sTitle = "$$sharedRequest and ODMM#getOrCreateSharedModel, bAutoExpandSelect = "
+			+ bAutoExpandSelect;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox binding="{/ProductList(\'1\')}">\
+	<Text id="typeCode1" text="{TypeCode}" />\
+	<List id="list1"\
+		items="{path: \'/D_PR_TYPE_FV_SET\', suspended : true, templateShareable: false}">\
+		<CustomListItem>\
+			<Text id="description1" text="{DESCRIPTION}" />\
+		</CustomListItem>\
+	</List>\
+</FlexBox>\
+<FlexBox binding="{/ProductList(\'2\')}">\
+	<Text id="typeCode2" text="{TypeCode}" />\
+	<List id="list2"\
+		items="{path: \'/D_PR_TYPE_FV_SET\', suspended : true, templateShareable: false}">\
+		<CustomListItem>\
+			<Text id="description2" text="{DESCRIPTION}" />\
+		</CustomListItem>\
+	</List>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("ProductList('1')", {ProductID : "1", TypeCode : "AD"})
+			.expectChange("description1", [])
+			.expectChange("typeCode1", "AD")
+			.expectRequest("ProductList('2')", {ProductID : "2", TypeCode : "PR"})
+			.expectChange("description2", [])
+			.expectChange("typeCode2", "PR");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			return that.oView.byId("typeCode1").getBinding("text")
+				.requestValueListInfo(bAutoExpandSelect);
+		}).then(function (mValueListInfo) {
+			var oValueListModel = mValueListInfo[""].$model;
+
+			that.expectRequest("D_PR_TYPE_FV_SET?"
+					+ (bAutoExpandSelect ? "$select=DESCRIPTION,FIELD_VALUE&" : "")
+					+ "$skip=0&$top=100", {
+				value : [{
+					DESCRIPTION : "Anno Domini",
+					FIELD_VALUE : "AD"
+				}, {
+					DESCRIPTION : "Public Relations",
+					FIELD_VALUE : "PR"
+				}]})
+				.expectChange("description1", ["Anno Domini", "Public Relations"])
+				.expectChange("description2", ["Anno Domini", "Public Relations"]);
+
+			// code under test
+			that.oView.byId("list1").setModel(oValueListModel).getBinding("items").resume();
+			that.oView.byId("list2").setModel(oValueListModel).getBinding("items").resume();
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Executing an action is forbidden for models with shared requests.
+	// JIRA: CPOUI5ODATAV4-344
+	QUnit.test("sharedRequests forbids action execute", function (assert) {
+		var oModel = createTeaBusiModel({sharedRequests : true}),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			var oAction = oModel.bindContext("/ChangeTeamBudgetByID(...)"),
+				sMessage = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001"
+					+ "/ChangeTeamBudgetByID is read-only";
+
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to execute /ChangeTeamBudgetByID(...)",
+					sinon.match(sMessage), "sap.ui.model.odata.v4.ODataContextBinding");
+
+			oAction.execute().then(function () {
+				assert.ok(false, "Unexpected success");
+			}, function (oError) {
+				assert.strictEqual(oError.message, sMessage);
+			});
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: create at end w/o $count, but after everything has been read

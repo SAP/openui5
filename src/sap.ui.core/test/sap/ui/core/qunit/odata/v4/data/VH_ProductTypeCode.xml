@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures" />
+	</edmx:Reference>
+	<edmx:Reference Uri="../../../../default/sap/zui5_epm_sample/0002/$metadata">
+		<edmx:Include Namespace="com.sap.gateway.default.zui5_epm_sample.v0002" Alias="ParentService" />
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.f4.d_pr_type-fv.v0001" Alias="SAP__self">
+			<EntityType Name="D_PR_TYPE_FV">
+				<Key>
+					<PropertyRef Name="FIELD_VALUE" />
+				</Key>
+				<Property Name="FIELD_VALUE" Type="Edm.String" Nullable="false" MaxLength="2" />
+				<Property Name="DESCRIPTION" Type="Edm.String" Nullable="false" />
+			</EntityType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="D_PR_TYPE_FV_SET" EntityType="com.sap.gateway.f4.d_pr_type-fv.v0001.D_PR_TYPE_FV" />
+			</EntityContainer>
+			<Annotations Target="ParentService.Product/TypeCode">
+				<Annotation Term="SAP__common.ValueListMapping">
+					<Record>
+						<PropertyValue Property="CollectionPath" String="D_PR_TYPE_FV_SET" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="SAP__common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="TypeCode" />
+									<PropertyValue Property="ValueListProperty" String="FIELD_VALUE" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

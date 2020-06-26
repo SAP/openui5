@@ -2651,7 +2651,7 @@ sap.ui.define([
 		var oBinding = new ODataParentBinding();
 
 		// implemented in base classes, returns at least a empty array
-		this.mock(oBinding).expects("getDependentBindings").withExactArgs().exactly(4).returns([]);
+		this.mock(oBinding).expects("getDependentBindings").withExactArgs().exactly(5).returns([]);
 
 		// initial state after creation
 		assert.strictEqual(oBinding.oCache, null);
@@ -2679,6 +2679,12 @@ sap.ui.define([
 		oBinding.suspendInternal();
 
 		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
+
+		oBinding.oCache.bSharedRequest = true;
+		// code under test
+		oBinding.suspendInternal();
+
+		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
 	});
 
 	//*********************************************************************************************

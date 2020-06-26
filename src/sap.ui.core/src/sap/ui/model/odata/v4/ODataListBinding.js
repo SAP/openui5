@@ -114,7 +114,7 @@ sap.ui.define([
 				this.sOperationMode = mParameters.$$operationMode || oModel.sOperationMode;
 				this.mPreviousContextsByPath = {};
 				this.aPreviousData = [];
-				this.bSharedRequest = mParameters.$$sharedRequest;
+				this.bSharedRequest = mParameters.$$sharedRequest || oModel.bSharedRequests;
 				this.aSorters = _Helper.toArray(vSorters);
 				this.sUpdateGroupId = mParameters.$$updateGroupId;
 				// Note: $$operationMode is validated before, oModel.sOperationMode also

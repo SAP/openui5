@@ -336,6 +336,19 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("constructor: $$sharedRequest from model", function (assert) {
+		var oBinding,
+			bSharedRequests = {/*false,true*/};
+
+		this.oModel.bSharedRequests = bSharedRequests;
+
+		// code under test
+		oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES");
+
+		assert.strictEqual(oBinding.bSharedRequest, bSharedRequests);
+	});
+
+	//*********************************************************************************************
 	[false, true].forEach(function (bAutoExpandSelect) {
 		QUnit.test("c'tor: AddVirtualContext = " + bAutoExpandSelect, function (assert) {
 			var oBinding;
@@ -853,7 +866,7 @@ sap.ui.define([
 			.returns(mQueryOptions.$orderby);
 		oCacheMock.expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-				{"$orderby" : "bar", "sap-client" : "111"}, false, undefined, undefined)
+				{"$orderby" : "bar", "sap-client" : "111"}, false, undefined, false)
 			.returns({});
 		this.spy(ODataListBinding.prototype, "reset");
 
@@ -875,7 +888,7 @@ sap.ui.define([
 
 		oCacheMock.expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-				{"$orderby" : "bar", "sap-client" : "111"}, false, "EMPLOYEES", undefined)
+				{"$orderby" : "bar", "sap-client" : "111"}, false, "EMPLOYEES", false)
 			.returns({});
 
 		// code under test

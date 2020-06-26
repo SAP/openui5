@@ -657,7 +657,8 @@ sap.ui.define([
 			sMetaPath += "/$Type";
 		}
 		oCache = _Cache.createSingle(oRequestor, sPath, this.mCacheQueryOptions,
-			oModel.bAutoExpandSelect, getOriginalResourcePath, bAction, sMetaPath);
+			oModel.bAutoExpandSelect, oModel.bSharedRequests, getOriginalResourcePath, bAction,
+			sMetaPath);
 		this.oCache = oCache;
 		this.oCachePromise = SyncPromise.resolve(oCache);
 		return bAction
@@ -702,7 +703,7 @@ sap.ui.define([
 	ODataContextBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext,
 			sDeepResourcePath) {
 		return _Cache.createSingle(this.oModel.oRequestor, sResourcePath, mQueryOptions,
-			this.oModel.bAutoExpandSelect, function () {
+			this.oModel.bAutoExpandSelect, this.oModel.bSharedRequests, function () {
 				return sDeepResourcePath;
 			});
 	};
@@ -1191,7 +1192,8 @@ sap.ui.define([
 
 		this.mCacheQueryOptions = this.computeOperationQueryOptions();
 		oCache = _Cache.createSingle(oModel.oRequestor,
-			this.oReturnValueContext.getPath().slice(1), this.mCacheQueryOptions, true);
+			this.oReturnValueContext.getPath().slice(1), this.mCacheQueryOptions, true,
+			oModel.bSharedRequests);
 		this.oCache = oCache;
 		this.oCachePromise = SyncPromise.resolve(oCache);
 		this.createReadGroupLock(sGroupId, true);

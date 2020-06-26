@@ -150,6 +150,7 @@ sap.ui.define([
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneTime), true);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneWay), true);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.TwoWay), true);
+		assert.strictEqual(oModel.bSharedRequests, false);
 		assert.deepEqual(oModel.aAllBindings, []);
 		assert.strictEqual(oModel.aPrerenderingTasks, null);
 		oMetaModel = oModel.getMetaModel();
@@ -157,6 +158,26 @@ sap.ui.define([
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
 		assert.strictEqual(oMetaModel.sUrl, getServiceUrl() + "$metadata");
 		assert.deepEqual(oMetaModel.aAnnotationUris, ["my/annotations.xml"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("sharedRequests", function (assert) {
+		var oModel;
+
+		// code under test
+		oModel = createModel("", {sharedRequests : true});
+
+		assert.strictEqual(oModel.getDefaultBindingMode(), BindingMode.OneTime);
+		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneTime), true);
+		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneWay), false);
+		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.TwoWay), false);
+		assert.strictEqual(oModel.bSharedRequests, true);
+
+		[false, 0, "", undefined, 1, "X"].forEach(function (vSharedRequests) {
+			assert.throws(function () {
+				createModel("", {sharedRequests : vSharedRequests});
+			}, new Error("Value for sharedRequests must be true"));
+		});
 	});
 
 	//*********************************************************************************************
