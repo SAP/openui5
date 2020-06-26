@@ -17,6 +17,8 @@ sap.ui.define([
 	Utils.TARGET_UI = "targetUI";
 	Utils.INITIAL_UI = "initialUI";
 	Utils.PLACEHOLDER = "X";
+	Utils.INDEX_RELEVANT = "indexRelevant";
+	Utils.NOT_INDEX_RELEVANT = "notIndexRelevant";
 
 	/**
 	 * Retrieves the length of the array.

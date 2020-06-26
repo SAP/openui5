@@ -14,7 +14,7 @@ sap.ui.define([
 	Create,
 	Destroy,
 	Move,
-	CondenserUtils
+	Utils
 ) {
 	"use strict";
 
@@ -28,9 +28,6 @@ sap.ui.define([
 	 */
 	var UIReconstruction = {};
 
-	var TARGET_UI = CondenserUtils.TARGET_UI;
-	var INITIAL_UI = CondenserUtils.INITIAL_UI;
-	var PLACEHOLDER = CondenserUtils.PLACEHOLDER;
 	var INDEX_RELATED = {
 		create: Create,
 		destroy: Destroy,
@@ -66,7 +63,7 @@ sap.ui.define([
 	function defineContainersMap(mUIReconstructions, aCondenserInfos) {
 		var mContainers = {};
 		forEveryMapInMap(mUIReconstructions, function(mUIState, sContainerKey, mUIAggregationState, sAggregationName) {
-			var aTargetElementIds = mUIAggregationState[TARGET_UI];
+			var aTargetElementIds = mUIAggregationState[Utils.TARGET_UI];
 
 			aTargetElementIds.forEach(function(sTargetElementId) {
 				aCondenserInfos.forEach(function(oCondenserInfo) {
@@ -95,7 +92,7 @@ sap.ui.define([
 	 */
 	function containsOnlyAddChanges(aCondenserInfos) {
 		return !aCondenserInfos.some(function(vElement) {
-			return vElement.subtype.indexOf(sap.ui.fl.condenser.ClassificationSubtypes.Create) !== 0;
+			return vElement.classification.indexOf(sap.ui.fl.condenser.Classification.Create) !== 0;
 		});
 	}
 
@@ -107,7 +104,7 @@ sap.ui.define([
 	 */
 	function containsNoPlaceholder(aElements) {
 		return !aElements.some(function(vElement) {
-			return CondenserUtils.isUnknown(vElement);
+			return Utils.isUnknown(vElement);
 		});
 	}
 
@@ -142,7 +139,7 @@ sap.ui.define([
 	 */
 	function containsOnlyPlaceholder(aElements) {
 		return !aElements.some(function(vElement) {
-			return !CondenserUtils.isUnknown(vElement);
+			return !Utils.isUnknown(vElement);
 		});
 	}
 
@@ -157,7 +154,7 @@ sap.ui.define([
 		var sAffectedControlId = oCondenserInfo.affectedControl;
 		var iTargetIndex = oCondenserInfo.getTargetIndex(oCondenserInfo.change);
 		var aContainerElements = mUIReconstructions[sContainerKey][oCondenserInfo.targetAggregation];
-		CondenserUtils.extendArrayWithPlaceholders(aContainerElements, undefined, iTargetIndex);
+		Utils.extendArrayWithPlaceholders(aContainerElements, undefined, iTargetIndex);
 		var iSourceIndex = aContainerElements.indexOf(sAffectedControlId);
 		shiftElement(aContainerElements, iSourceIndex, iTargetIndex);
 	}
@@ -209,14 +206,14 @@ sap.ui.define([
 			}
 			var mUIAggregationState = mUISimulatedStates[sContainerKey];
 			if (!mUIAggregationState[sAggregationName]) {
-				mUIAggregationState[sAggregationName] = CondenserUtils.initializeArrayWithPlaceholders(0, aInitialUIElementIds.length - 1);
+				mUIAggregationState[sAggregationName] = Utils.initializeArrayWithPlaceholders(0, aInitialUIElementIds.length - 1);
 			}
 
-			INDEX_RELATED[oCondenserInfo.subtype].simulate(mUIAggregationState[sAggregationName], oCondenserInfo, aInitialUIElementIds);
+			INDEX_RELATED[oCondenserInfo.classification].simulate(mUIAggregationState[sAggregationName], oCondenserInfo, aInitialUIElementIds);
 		});
 
 		aCondenserInfos.forEach(function(oCondenserInfo) {
-			if (oCondenserInfo.subtype === sap.ui.fl.condenser.ClassificationSubtypes.Move) {
+			if (oCondenserInfo.classification === sap.ui.fl.condenser.Classification.Move) {
 				shiftToTargetIndex(mUISimulatedStates, oCondenserInfo);
 			}
 		});
@@ -236,12 +233,12 @@ sap.ui.define([
 	 */
 	function updateTargetIndex(mReducedChanges, mUIReconstructions) {
 		forEveryMapInMap(mUIReconstructions, function(mUIStates, sContainerId, mUIAggregationState) {
-			mUIAggregationState[TARGET_UI].forEach(function(sTargetElementId, iIndex) {
-				if (!CondenserUtils.isUnknown(sTargetElementId)) {
+			mUIAggregationState[Utils.TARGET_UI].forEach(function(sTargetElementId, iIndex) {
+				if (!Utils.isUnknown(sTargetElementId)) {
 					var mClassificationTypes = mReducedChanges[sTargetElementId];
-					var mSubtypes = mClassificationTypes[sap.ui.fl.condenser.ClassificationType.IndexRelated];
+					var mSubtypes = mClassificationTypes[Utils.INDEX_RELEVANT];
 					each(mSubtypes, function(sSubtypeKey, aCondenserChanges) {
-						if (sSubtypeKey !== sap.ui.fl.condenser.ClassificationSubtypes.Destroy) {
+						if (sSubtypeKey !== sap.ui.fl.condenser.Classification.Destroy) {
 							aCondenserChanges.forEach(function(oCondenserChange) {
 								oCondenserChange.setTargetIndex(oCondenserChange.change, iIndex);
 							});
@@ -261,13 +258,13 @@ sap.ui.define([
 	 */
 	function compareUIReconstructions(mReducedChanges, mUIReconstructions) {
 		forEveryMapInMap(mUIReconstructions, function(mUIStates, sContainerId, mUIAggregationState, sKey) {
-			var aInitialElementIds = mUIAggregationState[INITIAL_UI];
-			var aTargetElementIds = mUIAggregationState[TARGET_UI];
+			var aInitialElementIds = mUIAggregationState[Utils.INITIAL_UI];
+			var aTargetElementIds = mUIAggregationState[Utils.TARGET_UI];
 			if (isEqual(aInitialElementIds, aTargetElementIds)) {
 				aTargetElementIds.forEach(function(sTargetElementId) {
 					var mClassificationTypes = mReducedChanges[sTargetElementId];
 					if (mClassificationTypes !== undefined) {
-						delete mClassificationTypes[sap.ui.fl.condenser.ClassificationType.IndexRelated];
+						delete mClassificationTypes[Utils.INDEX_RELEVANT];
 					}
 				});
 				delete mUIStates[sKey];
@@ -284,12 +281,12 @@ sap.ui.define([
 	 */
 	function updateTargetUIReconstructions(mReducedChanges, mUIReconstructions) {
 		forEveryMapInMap(mUIReconstructions, function(mUIStates, sContainerId, mUIAggregationState) {
-			var aInitialElementIds = mUIAggregationState[INITIAL_UI];
-			var aTargetElementIds = mUIAggregationState[TARGET_UI];
+			var aInitialElementIds = mUIAggregationState[Utils.INITIAL_UI];
+			var aTargetElementIds = mUIAggregationState[Utils.TARGET_UI];
 			aInitialElementIds.forEach(function(initialElementId, index) {
 				var mClassificationTypes = mReducedChanges[initialElementId];
 				if (mClassificationTypes === undefined) {
-					var sPlaceholder = PLACEHOLDER + index;
+					var sPlaceholder = Utils.PLACEHOLDER + index;
 					var iTargetIndex = aTargetElementIds.indexOf(initialElementId);
 					if (iTargetIndex >= 0) {
 						aTargetElementIds[iTargetIndex] = sPlaceholder;
@@ -327,8 +324,8 @@ sap.ui.define([
 		var mContainers = defineContainersMap(mUIReconstructions, aCondenserInfos);
 
 		forEveryMapInMap(mContainers, function(mAggregations, sContainerKey, aCondenserInfos, sAggregationName) {
-			var aTargetElementIds = mUIReconstructions[sContainerKey][sAggregationName][TARGET_UI];
-			var aInitialElementIds = mUIReconstructions[sContainerKey][sAggregationName][INITIAL_UI];
+			var aTargetElementIds = mUIReconstructions[sContainerKey][sAggregationName][Utils.TARGET_UI];
+			var aInitialElementIds = mUIReconstructions[sContainerKey][sAggregationName][Utils.INITIAL_UI];
 
 			// Verify whether the algorithm should be ready before ;)
 			if (
@@ -361,7 +358,7 @@ sap.ui.define([
 	};
 
 	UIReconstruction.addChange = function(mUIReconstructions, oCondenserInfo) {
-		INDEX_RELATED[oCondenserInfo.subtype].addToReconstructionMap(mUIReconstructions, oCondenserInfo);
+		INDEX_RELATED[oCondenserInfo.classification].addToReconstructionMap(mUIReconstructions, oCondenserInfo);
 	};
 
 	UIReconstruction.compareAndUpdate = function(mReducedChanges, mUIReconstructions) {
