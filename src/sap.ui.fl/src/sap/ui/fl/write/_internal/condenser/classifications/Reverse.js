@@ -25,12 +25,14 @@ sap.ui.define([
 		},
 
 		/**
+		 * Iterates the changes of classification 'reverse' and returns only the necessary changes.
 		 *
 		 * @param {Map} mObjects - Map with all reduced changes
-		 * @param {sap.ui.fl.Change[]} aChanges - Changes instances
 		 * @param {string} sUniqueKey - Unique key defined in the condenser information
+		 * @returns {sap.ui.fl.Change[]} All necessary reverse changes
 		 */
-		getChangesFromMap: function(mObjects, aChanges, sUniqueKey) {
+		getChangesFromMap: function(mObjects, sUniqueKey) {
+			var aChanges = [];
 			each(mObjects[sUniqueKey], function(sKey, aReverseChanges) {
 				aReverseChanges.reverse();
 				var oChange;
@@ -46,6 +48,7 @@ sap.ui.define([
 					aChanges.push(oChange);
 				}
 			});
+			return aChanges;
 		}
 	};
 });
