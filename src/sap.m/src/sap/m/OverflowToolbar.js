@@ -424,10 +424,21 @@ sap.ui.define([
 
 	// Resize Handler
 	OverflowToolbar.prototype._handleResize = function() {
+		var bHasFlexibleControl;
+
 		// fully executing _doLayout at this point poses risk of
 		// measuring the wrong DOM, since the control is invalidated
 		// but not yet rerendered
 		if (this._bInvalidatedAndNotRendered) {
+			return;
+		}
+
+		bHasFlexibleControl = this._aMovableControls && this._aMovableControls.some(function (oControl) {
+			return oControl.isA("sap.m.IOverflowToolbarFlexibleContent");
+		});
+
+		if (bHasFlexibleControl) {
+			this._resetAndInvalidateToolbar(true);
 			return;
 		}
 
