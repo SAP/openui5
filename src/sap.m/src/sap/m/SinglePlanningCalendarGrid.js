@@ -591,11 +591,11 @@ sap.ui.define([
 						$DraggedControl = oDragSession.getDragControl().$();
 
 					if (this._isResizeHandleBottomMouseDownTarget) {
-						oDragSession.setData("bottomHandle", "true");
+						oDragSession.setComplexData("bottomHandle", "true");
 					}
 
 					if (this._isResizeHandleTopMouseDownTarget) {
-						oDragSession.setData("topHandle", "true");
+						oDragSession.setComplexData("topHandle", "true");
 					}
 
 					$Indicator.addClass("sapUiDnDIndicatorHide");
@@ -663,7 +663,6 @@ sap.ui.define([
 					};
 
 					oDragSession.getDragControl().$().css(mDraggedControlConfig);
-
 					if (!oDragSession.getIndicator()) {
 						setTimeout(fnHideIndicator, 0);
 					} else {
@@ -685,7 +684,7 @@ sap.ui.define([
 						oAppointment.getStartDate(),
 						oAppointment.getEndDate(),
 						iIndex,
-						oDragSession.getData("bottomHandle")
+						oDragSession.getComplexData("bottomHandle")
 					);
 
 					this.$().find(".sapMSinglePCOverlay").removeClass("sapMSinglePCOverlayDragging");
