@@ -165,10 +165,10 @@ sap.ui.define([
 		var oDefineConditions = new DefineConditionPanel("DCP");
 		oValueHelpPanel.setDefineConditions(oDefineConditions);
 		oValueHelpPanel.setConditions([
-		                               Condition.createCondition("BT", ["A", "Z"]),
-		                               Condition.createCondition("GE", ["B"]),
-		                               Condition.createItemCondition("X", "Test")
-		                               ]);
+									   Condition.createCondition("BT", ["A", "Z"]),
+									   Condition.createCondition("GE", ["B"]),
+									   Condition.createItemCondition("X", "Test")
+									   ]);
 		sap.ui.getCore().applyChanges();
 
 		var oIconTabBar = oValueHelpPanel.byId("iconTabBar");

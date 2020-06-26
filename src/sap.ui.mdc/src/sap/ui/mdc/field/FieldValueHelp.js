@@ -1827,7 +1827,7 @@ sap.ui.define([
 			ManagedObjectModel = sap.ui.require("sap/ui/model/base/ManagedObjectModel");
 			if (!Dialog || !Button || !ValueHelpPanel || !DefineConditionPanel || !ManagedObjectModel) {
 				sap.ui.require(["sap/m/Dialog", "sap/m/Button", "sap/ui/mdc/field/ValueHelpPanel",
-				                "sap/ui/mdc/field/DefineConditionPanel", "sap/ui/model/base/ManagedObjectModel"], _DialogLoaded.bind(this));
+								"sap/ui/mdc/field/DefineConditionPanel", "sap/ui/model/base/ManagedObjectModel"], _DialogLoaded.bind(this));
 				this._bDialogRequested = true;
 			}
 		}

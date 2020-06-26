@@ -58,7 +58,7 @@ sap.ui.define([
 	 */
 	return function loadModules(vModulePaths) {
 		assert(typeof vModulePaths === "string" || Array.isArray(vModulePaths), "vModulePaths" +
-        " param either must be a single string or an array of strings. - sap.ui.mdc.util.loadModules");
+		" param either must be a single string or an array of strings. - sap.ui.mdc.util.loadModules");
 
 		var aModulesPaths;
 

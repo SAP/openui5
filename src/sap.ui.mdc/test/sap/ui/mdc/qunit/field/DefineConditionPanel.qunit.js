@@ -151,18 +151,18 @@ sap.ui.define([
 		oModel.setData({
 			conditions: {
 				Name: [
-				       Condition.createCondition("EQ", ["Peter"], undefined, undefined, ConditionValidated.NotValidated)
-				       ]
+					   Condition.createCondition("EQ", ["Peter"], undefined, undefined, ConditionValidated.NotValidated)
+					   ]
 			}
 		});
 
 		oModel.setData({
 			conditions: {
 				Name: [
-				       Condition.createCondition("EQ", ["Andreas"], undefined, undefined, ConditionValidated.NotValidated),
-				       Condition.createCondition("EQ", ["Martin"], undefined, undefined, ConditionValidated.NotValidated),
-				       Condition.createCondition("EQ", ["Peter"], undefined, undefined, ConditionValidated.NotValidated)
-				       ]
+					   Condition.createCondition("EQ", ["Andreas"], undefined, undefined, ConditionValidated.NotValidated),
+					   Condition.createCondition("EQ", ["Martin"], undefined, undefined, ConditionValidated.NotValidated),
+					   Condition.createCondition("EQ", ["Peter"], undefined, undefined, ConditionValidated.NotValidated)
+					   ]
 			}
 		});
 
@@ -198,8 +198,8 @@ sap.ui.define([
 		oModel.setData({
 			conditions: {
 				Name: [
-				       Condition.createCondition("EQ", ["Andreas"], undefined, undefined, ConditionValidated.NotValidated)
-				       ]
+					   Condition.createCondition("EQ", ["Andreas"], undefined, undefined, ConditionValidated.NotValidated)
+					   ]
 			}
 		});
 
@@ -235,8 +235,8 @@ sap.ui.define([
 		oModel.setData({
 			conditions: {
 				Name: [
-				       Condition.createCondition("EQ", ["Andreas"], undefined, undefined, ConditionValidated.NotValidated)
-				       ]
+					   Condition.createCondition("EQ", ["Andreas"], undefined, undefined, ConditionValidated.NotValidated)
+					   ]
 			}
 		});
 
@@ -281,8 +281,8 @@ sap.ui.define([
 		oModel.setData({
 			conditions: {
 				Name: [
-				       Condition.createCondition("MyOperator", ["Test"], undefined, undefined, ConditionValidated.NotValidated)
-				       ]
+					   Condition.createCondition("MyOperator", ["Test"], undefined, undefined, ConditionValidated.NotValidated)
+					   ]
 			}
 		});
 		oFormatOptions = {
@@ -330,8 +330,8 @@ sap.ui.define([
 		oModel.setData({
 			conditions: {
 				Name: [
-				       oCondition
-				       ]
+					   oCondition
+					   ]
 			}
 		});
 		oFormatOptions = {
@@ -568,8 +568,8 @@ sap.ui.define([
 		oModel.setData({
 			conditions: {
 				Name: [
-				       Condition.createCondition("EQ", ["x"], undefined, undefined, ConditionValidated.NotValidated)
-				       ]
+					   Condition.createCondition("EQ", ["x"], undefined, undefined, ConditionValidated.NotValidated)
+					   ]
 			}
 		});
 		oFormatOptions = {

@@ -1277,11 +1277,11 @@ sap.ui.define([
 	QUnit.test("checkConditionsEmpty", function(assert) {
 
 		var aConditions = [
-		                   Condition.createCondition("EQ", ["X"]),
-		                   Condition.createCondition("EQ", []),
-		                   Condition.createCondition("BT", ["X", "Y"]),
-		                   Condition.createCondition("BT", [])
-		                   ];
+						   Condition.createCondition("EQ", ["X"]),
+						   Condition.createCondition("EQ", []),
+						   Condition.createCondition("BT", ["X", "Y"]),
+						   Condition.createCondition("BT", [])
+						   ];
 
 		FilterOperatorUtil.checkConditionsEmpty(aConditions);
 
@@ -1302,17 +1302,17 @@ sap.ui.define([
 	QUnit.test("updateConditionsValues", function(assert) {
 
 		var aConditions = [
-		                   Condition.createCondition("EQ", ["X"]),
-		                   Condition.createCondition("EQ", []),
-		                   Condition.createCondition("EQ", ["X", undefined]),
-		                   Condition.createCondition("EQ", ["X", "Y"]),
-		                   Condition.createCondition("EQ", ["X", "Y"], undefined, undefined, ConditionValidated.Validated), // validated
-		                   Condition.createCondition("EQ", ["X", undefined], undefined, undefined, ConditionValidated.Validated), // validated
-		                   Condition.createCondition("BT", ["X", "Y"]),
-		                   Condition.createCondition("BT", []),
-		                   Condition.createCondition("BT", ["X"]),
-		                   Condition.createCondition("TODAY", [null])
-		                   ];
+						   Condition.createCondition("EQ", ["X"]),
+						   Condition.createCondition("EQ", []),
+						   Condition.createCondition("EQ", ["X", undefined]),
+						   Condition.createCondition("EQ", ["X", "Y"]),
+						   Condition.createCondition("EQ", ["X", "Y"], undefined, undefined, ConditionValidated.Validated), // validated
+						   Condition.createCondition("EQ", ["X", undefined], undefined, undefined, ConditionValidated.Validated), // validated
+						   Condition.createCondition("BT", ["X", "Y"]),
+						   Condition.createCondition("BT", []),
+						   Condition.createCondition("BT", ["X"]),
+						   Condition.createCondition("TODAY", [null])
+						   ];
 
 		FilterOperatorUtil.updateConditionsValues(aConditions);
 
@@ -1339,12 +1339,12 @@ sap.ui.define([
 	QUnit.test("indexOfCondition", function(assert) {
 
 		var aConditions = [
-		                   Condition.createCondition("EQ", ["X", "Y"], undefined, undefined, ConditionValidated.Validated),
-		                   Condition.createCondition("EQ", ["Y"], undefined, undefined, ConditionValidated.NotValidated),
-		                   Condition.createCondition("EQ", ["Z"]),
-		                   Condition.createCondition("BT", ["X", "Y"]),
-		                   Condition.createCondition("TODAY", [null])
-		                   ];
+						   Condition.createCondition("EQ", ["X", "Y"], undefined, undefined, ConditionValidated.Validated),
+						   Condition.createCondition("EQ", ["Y"], undefined, undefined, ConditionValidated.NotValidated),
+						   Condition.createCondition("EQ", ["Z"]),
+						   Condition.createCondition("BT", ["X", "Y"]),
+						   Condition.createCondition("TODAY", [null])
+						   ];
 
 		// same validated condition
 		var oCondition = Condition.createCondition("EQ", ["X", "Z"], undefined, undefined, ConditionValidated.Validated);

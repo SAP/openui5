@@ -152,11 +152,11 @@ sap.ui.define([
 		});
 	};
 
-    /**
-     * Retrieves the relevant metadata for the panel and returns a property info array.
-     * @param {sap.ui.mdc.link.Panel} oPanel Instance of a <code>Panel</code> control
-     * @returns {object[]} Array of copied property info
-     */
+	/**
+	 * Retrieves the relevant metadata for the panel and returns a property info array.
+	 * @param {sap.ui.mdc.link.Panel} oPanel Instance of a <code>Panel</code> control
+	 * @returns {object[]} Array of copied property info
+	 */
 	Link.retrieveAllMetadata = function(oPanel) {
 		if (!oPanel.getModel || !oPanel.getModel("$sapuimdcLink")) {
 			return [];
@@ -192,11 +192,11 @@ sap.ui.define([
 		});
 	};
 
-    /**
-     * Returns a <code>Promise</code> resolving a Boolean if the <code>Link</code> control has any content (<code>additionalContent</code> or <code>linkItems</code>).
-     * This is mainly used to check if the <code>Link</code> control is clickable.
-     * @returns {Promise} Resolves a Boolean value
-     */
+	/**
+	 * Returns a <code>Promise</code> resolving a Boolean if the <code>Link</code> control has any content (<code>additionalContent</code> or <code>linkItems</code>).
+	 * This is mainly used to check if the <code>Link</code> control is clickable.
+	 * @returns {Promise} Resolves a Boolean value
+	 */
 	Link.prototype.hasPotentialContent = function() {
 		// Additional content should be shown always
 		return this.retrieveAdditionalContent().then(function(aAdditionalContent) {
@@ -283,11 +283,11 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-    /**
-     * Returns a <code>Promise</code> that resolves and returns a Boolean value if the <code>Link</code> control has any potential <code>LinkItem</code> objects.
-     * This is mainly used to check if the <code>Link</code> control  is clickable.
-     * @returns {Promise} Resolves a Boolean value
-     */
+	/**
+	 * Returns a <code>Promise</code> that resolves and returns a Boolean value if the <code>Link</code> control has any potential <code>LinkItem</code> objects.
+	 * This is mainly used to check if the <code>Link</code> control  is clickable.
+	 * @returns {Promise} Resolves a Boolean value
+	 */
 	Link.prototype.hasPotentialLinks = function() {
 		return this._retrieveUnmodifiedLinkItems().then(function(aLinkItems) {
 			return !!aLinkItems.length;
@@ -308,9 +308,9 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-    /**
-     * @returns {Promise} Resolves an array of type {@link sap.ui.mdc.link.LinkItem}
-     */
+	/**
+	 * @returns {Promise} Resolves an array of type {@link sap.ui.mdc.link.LinkItem}
+	 */
 	Link.prototype._retrieveUnmodifiedLinkItems = function() {
 		if (this._bLinkItemsFetched) {
 			return Promise.resolve(this._aLinkItems);
@@ -322,9 +322,9 @@ sap.ui.define([
 		}
 	};
 
-    /**
-     * @returns {Promise} Resolves an array of type {@link sap.ui.base.Control}
-     */
+	/**
+	 * @returns {Promise} Resolves an array of type {@link sap.ui.base.Control}
+	 */
 	Link.prototype.retrieveAdditionalContent = function() {
 		if (this.awaitControlDelegate()) {
 			return this.awaitControlDelegate().then(function() {
@@ -358,16 +358,16 @@ sap.ui.define([
 		return Promise.resolve(null);
 	};
 
-    /**
-     * @returns {String} ID of the SourceControl
-     */
+	/**
+	 * @returns {String} ID of the SourceControl
+	 */
 	Link.prototype.getSourceControl = function() {
 		return this.getAssociation("sourceControl");
 	};
 
-    /**
-     * Removes all link items.
-     */
+	/**
+	 * Removes all link items.
+	 */
 	Link.prototype.removeAllLinkItems = function() {
 		this._retrieveUnmodifiedLinkItems().then(function(aLinkItems) {
 			aLinkItems.forEach(function(oLinkItem) {
@@ -379,10 +379,10 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-    /**
-     * @private
-     * @returns {String} Content title saved in the internal model
-     */
+	/**
+	 * @private
+	 * @returns {String} Content title saved in the internal model
+	 */
 	Link.prototype._getContentTitle = function() {
 		return this._getInternalModel().getProperty("/contentTitle");
 	};
@@ -397,21 +397,21 @@ sap.ui.define([
 		return oControl && oControl.getBindingContext() || this.getBindingContext();
 	};
 
-    /**
+	/**
 	 * Returns the object of a given binding context.
-     * @private
+	 * @private
 	 * @param {Object} oBindingContext The given binding context
-     * @returns {Object | undefined} Object of the binding context
-     */
+	 * @returns {Object | undefined} Object of the binding context
+	 */
 	Link.prototype._getContextObject = function(oBindingContext) {
 		return oBindingContext ? oBindingContext.getObject(oBindingContext.getPath()) : undefined;
 	};
 
-    /**
-     * Generates a new <code>sap.bas.log</code> if the payload contains semantic objects (this log is required for <code>sap.ui.mdc.flp.FlpLinkDelegate</code>).
-     * @private
-     * @returns {sap.base.Log | undefined} A generated <code>InfoLog</code> for the control | undefined
-     */
+	/**
+	 * Generates a new <code>sap.bas.log</code> if the payload contains semantic objects (this log is required for <code>sap.ui.mdc.flp.FlpLinkDelegate</code>).
+	 * @private
+	 * @returns {sap.base.Log | undefined} A generated <code>InfoLog</code> for the control | undefined
+	 */
 	Link.prototype._getInfoLog = function() {
 		if (this.getPayload() && this.getPayload().semanticObjects) {
 			if (this._oInfoLog) {
@@ -426,26 +426,26 @@ sap.ui.define([
 		return undefined;
 	};
 
-    /**
-     * @private
+	/**
+	 * @private
 	 * @returns {sap.ui.model.json.JSONModel} Internal model of the link
-     */
+	 */
 	Link.prototype._getInternalModel = function() {
 		return this.getModel("$sapuimdcLink");
 	};
 
-    /**
-     * @private
-     * @returns {String} Contains information of the InfoLog | "No logging data available"
-     */
+	/**
+	 * @private
+	 * @returns {String} Contains information of the InfoLog | "No logging data available"
+	 */
 	Link.prototype._getLogFormattedText = function() {
 		return (this._oInfoLog && !this._oInfoLog.isEmpty()) ? "---------------------------------------------\nsap.ui.mdc.Link:\nBelow you can see detailed information regarding semantic attributes which have been calculated for one or more semantic objects defined in a Link control. Semantic attributes are used to create the URL parameters. Additionally you can see all links containing the URL parameters.\n" + this._oInfoLog.getFormattedText() : "No logging data available";
 	};
 
-    /**
-     * @private
-     * @returns {sap.ui.layout.form.SimpleForm} Form containing a title which notices the user that there is no content for this link
-     */
+	/**
+	 * @private
+	 * @returns {sap.ui.layout.form.SimpleForm} Form containing a title which notices the user that there is no content for this link
+	 */
 	Link._getNoContent = function() {
 		var oSimpleForm = new SimpleForm({
 			layout: ResponsiveGridLayout,
@@ -459,11 +459,11 @@ sap.ui.define([
 		return oSimpleForm;
 	};
 
-    /**
-     * @private
-     * @param {sap.ui.fl.Utils} Utils flexibility utility class
-     * @returns {Object} View of the sourceControl / sourceControl of the parent
-     */
+	/**
+	 * @private
+	 * @param {sap.ui.fl.Utils} Utils flexibility utility class
+	 * @returns {Object} View of the sourceControl / sourceControl of the parent
+	 */
 	Link.prototype._getView = function(Utils) {
 		var oField;
 		if (this.getParent()) {
@@ -477,19 +477,19 @@ sap.ui.define([
 		return Utils.getViewForControl(oControl) || Utils.getViewForControl(oField);
 	};
 
-    /**
-     * @private
-     * @param {String} sTitle The given title
+	/**
+	 * @private
+	 * @param {String} sTitle The given title
 	 * @return {undefined}
-     */
+	 */
 	Link.prototype._setContentTitle = function(sTitle) {
 		return this._getInternalModel().setProperty("/contentTitle", sTitle);
 	};
 
-    /**
-     * @private
-     * @param {sap.ui.mdc.link.LinkItem[]} aLinkItems The given <code>LinkItem</code> objects
-     */
+	/**
+	 * @private
+	 * @param {sap.ui.mdc.link.LinkItem[]} aLinkItems The given <code>LinkItem</code> objects
+	 */
 	Link.prototype._setConvertedLinkItems = function(aLinkItems) {
 		var oModel = this._getInternalModel();
 		var aMLinkItems = aLinkItems.map(function(oLinkItem) {
@@ -515,10 +515,10 @@ sap.ui.define([
 		oModel.setProperty("/baselineLinkItems/", aMBaselineLinkItems);
 	};
 
-    /**
-     * @private
-     * @param {sap.ui.mdc.link.LinkItem[]} aLinkItems The given <code>LinkItem</code> objects
-     */
+	/**
+	 * @private
+	 * @param {sap.ui.mdc.link.LinkItem[]} aLinkItems The given <code>LinkItem</code> objects
+	 */
 	Link.prototype._setLinkItems = function(aLinkItems) {
 		var aLinkItemsMissingParent = aLinkItems.filter(function(oLinkItem) {
 			return oLinkItem.getParent() === null;
@@ -529,13 +529,13 @@ sap.ui.define([
 		this._aLinkItems = aLinkItems;
 	};
 
-    /**
-     * Generates an ID for the panel of the <code>Link</code> control. The result depends on whether the <code>Link</code> control supports flexibility.
-     * @private
-     * @param {sap.ui.fl.Utils} Utils Flexibility utility class
-     * @param {sap.ui.fl.apply.api.FlexRuntimeInfoAPI} FlexRuntimeInfoAPI Flexibility runtime info API
-     * @returns {String} Generated ID of the panel
-     */
+	/**
+	 * Generates an ID for the panel of the <code>Link</code> control. The result depends on whether the <code>Link</code> control supports flexibility.
+	 * @private
+	 * @param {sap.ui.fl.Utils} Utils Flexibility utility class
+	 * @param {sap.ui.fl.apply.api.FlexRuntimeInfoAPI} FlexRuntimeInfoAPI Flexibility runtime info API
+	 * @returns {String} Generated ID of the panel
+	 */
 	Link.prototype._createPanelId = function(Utils, FlexRuntimeInfoAPI) {
 		var oField;
 		if (this.getParent()) {
@@ -570,11 +570,11 @@ sap.ui.define([
 		this.fireDataUpdate();
 	};
 
-    /**
-     * Determines the <code>LinkItem</code> objects depending on the given <code>LinkDelegate</code>.
-     * @private
-     * @returns {Promise} Resolves once the <code>LinkItem</code> objects have been retrieved by the delegate. This also sets this._aLinkItems.
-     */
+	/**
+	 * Determines the <code>LinkItem</code> objects depending on the given <code>LinkDelegate</code>.
+	 * @private
+	 * @returns {Promise} Resolves once the <code>LinkItem</code> objects have been retrieved by the delegate. This also sets this._aLinkItems.
+	 */
 	Link.prototype._useDelegateItems = function() {
 		if (this.awaitControlDelegate()) {
 			return this.awaitControlDelegate().then(function() {

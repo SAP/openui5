@@ -9,9 +9,9 @@
  * @experimental This module is only for internal/experimental use!
  */
 sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
-    "use strict";
+	"use strict";
 
-    var isSapUI5 = false;
+	var isSapUI5 = false;
 
 	jQuery.ajax({
 		type: "HEAD",
@@ -22,11 +22,11 @@ sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
 		}
 	});
 
-    return {
-        isSapUI5: isSapUI5,
-        isOpenUI5: !isSapUI5,
-        skipOpenUI5: !isSapUI5 ? "skip" : "test",
-        skipSapUI5: isSapUI5 ? "skip" : "test"
-    };
+	return {
+		isSapUI5: isSapUI5,
+		isOpenUI5: !isSapUI5,
+		skipOpenUI5: !isSapUI5 ? "skip" : "test",
+		skipSapUI5: isSapUI5 ? "skip" : "test"
+	};
 
 }, /* bExport= */false);

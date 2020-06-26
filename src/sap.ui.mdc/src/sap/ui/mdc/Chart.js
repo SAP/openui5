@@ -1015,23 +1015,23 @@ sap.ui.define([
 
 		Chart.prototype._getSorters = function () {
 			var aSorters;
-            var aSorterProperties = this.getSortConditions() ? this.getSortConditions().sorters : [];
+			var aSorterProperties = this.getSortConditions() ? this.getSortConditions().sorters : [];
 
-            aSorterProperties.forEach(function(oSortProp){
-                if (this._aInResultProperties.indexOf(oSortProp.name) != -1) {
-                    var oSorter = new Sorter(oSortProp.name, oSortProp.descending);
+			aSorterProperties.forEach(function(oSortProp){
+				if (this._aInResultProperties.indexOf(oSortProp.name) != -1) {
+					var oSorter = new Sorter(oSortProp.name, oSortProp.descending);
 
-                    if (aSorters) {
-                        aSorters.push(oSorter);
-                    } else {
-                        aSorters = [
-                            oSorter
-                        ];//[] has special meaning in sorting
-                    }
-                }
-            }.bind(this));
+					if (aSorters) {
+						aSorters.push(oSorter);
+					} else {
+						aSorters = [
+							oSorter
+						];//[] has special meaning in sorting
+					}
+				}
+			}.bind(this));
 
-            return aSorters;
+			return aSorters;
 
 		};
 

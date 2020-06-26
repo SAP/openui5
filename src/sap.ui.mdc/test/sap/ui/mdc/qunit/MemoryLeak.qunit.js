@@ -90,8 +90,8 @@ sap.ui.define([
 
 	var oModel = new JSONModel({
 		items:[{text: "Item 1", key: "I1", additionalText: "Text 1", filter: "XXX"},
-		       {text: "Item 2", key: "I2", additionalText: "Text 2", filter: "XXX"},
-		       {text: "X-Item 3", key: "I3", additionalText: "Text 3", filter: "YYY"}]
+			   {text: "Item 2", key: "I2", additionalText: "Text 2", filter: "XXX"},
+			   {text: "X-Item 3", key: "I3", additionalText: "Text 3", filter: "YYY"}]
 		});
 	sap.ui.getCore().setModel(oModel);
 
@@ -100,8 +100,8 @@ sap.ui.define([
 		var oItemTemplate = new ColumnListItem({
 			type: "Active",
 			cells: [new Text({text: "{key}"}),
-			        new Text({text: "{text}"}),
-			        new Text({text: "{additionalText}"})]
+					new Text({text: "{text}"}),
+					new Text({text: "{additionalText}"})]
 		});
 
 		var oFieldHelp = new FieldValueHelp("FH1", {
@@ -109,8 +109,8 @@ sap.ui.define([
 				table: new Table({
 					width: "26rem",
 					columns: [ new Column({header: new Label({text: "Id"})}),
-					           new Column({header: new Label({text: "Text"})}),
-					           new Column({header: new Label({text: "Info"})})],
+							   new Column({header: new Label({text: "Text"})}),
+							   new Column({header: new Label({text: "Info"})})],
 					items: {path: "/items", template: oItemTemplate}
 				})
 			}),
@@ -135,8 +135,8 @@ sap.ui.define([
 		var oItemTemplate = new ColumnListItem({
 			type: "Active",
 			cells: [new Text({text: "{key}"}),
-			        new Text({text: "{text}"}),
-			        new Text({text: "{additionalText}"})]
+					new Text({text: "{text}"}),
+					new Text({text: "{additionalText}"})]
 		});
 
 		var oFieldHelp = new FieldValueHelp("FH1", {
@@ -144,8 +144,8 @@ sap.ui.define([
 				table: new Table({
 					width: "26rem",
 					columns: [ new Column({header: new Label({text: "Id"})}),
-					           new Column({header: new Label({text: "Text"})}),
-					           new Column({header: new Label({text: "Info"})})],
+							   new Column({header: new Label({text: "Text"})}),
+							   new Column({header: new Label({text: "Info"})})],
 					items: {path: "/items", template: oItemTemplate}
 				})
 			}),
@@ -158,7 +158,7 @@ sap.ui.define([
 		var oField = new FilterField("F1", {
 			dataType: 'sap.ui.model.type.String', // set to prevent test to set dummy value
 			conditions: [Condition.createItemCondition("I1"),
-			             Condition.createCondition("BT", ["A", "Z"])],
+						 Condition.createCondition("BT", ["A", "Z"])],
 			fieldHelp: "FH1",
 			dependents: [oFieldHelp, oItemTemplate]
 		});
@@ -178,7 +178,7 @@ sap.ui.define([
 
 		var oDCP = new DefineConditionPanel("DCP1", {
 			conditions: [Condition.createCondition("EQ", ["Test1"]),
-			             Condition.createCondition("BT", ["A", "Z"])],
+						 Condition.createCondition("BT", ["A", "Z"])],
 			formatOptions: oFormatOptions
 		});
 		// configure the Field

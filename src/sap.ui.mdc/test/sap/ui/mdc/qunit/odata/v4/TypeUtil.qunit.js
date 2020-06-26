@@ -59,7 +59,7 @@ sap.ui.define([
 
 		var mEdmTypes = {
 			"Edm.Date": "sap.ui.model.odata.type.Date", // V4 Date
-            "Edm.TimeOfDay": "sap.ui.model.odata.type.TimeOfDay" // V4 constraints: {precision}
+			"Edm.TimeOfDay": "sap.ui.model.odata.type.TimeOfDay" // V4 constraints: {precision}
 		};
 
 		Object.keys(mEdmTypes).forEach(function (sKey) {

@@ -2,11 +2,11 @@
  * ! ${copyright}
  */
 sap.ui.define([
-    "sap/ui/mdc/LinkDelegate"
+	"sap/ui/mdc/LinkDelegate"
 ], function(LinkDelegate) {
-    "use strict";
+	"use strict";
 
-    var SampleLinkDelegate = Object.assign({}, LinkDelegate);
+	var SampleLinkDelegate = Object.assign({}, LinkDelegate);
 
 	SampleLinkDelegate.modifyLinkItems = function(oPayload, oBindingContext, aLinkItems) {
 		if (oPayload.modfiedLinkItemTexts) {
@@ -19,12 +19,12 @@ sap.ui.define([
 		return Promise.resolve(aLinkItems);
 	};
 
-    SampleLinkDelegate.fetchLinkItems = function(oPayload) {
+	SampleLinkDelegate.fetchLinkItems = function(oPayload) {
 		if (oPayload.items) {
 			return Promise.resolve(oPayload.items);
 		}
-        return Promise.resolve([]);
-    };
+		return Promise.resolve([]);
+	};
 
 	SampleLinkDelegate.beforeNavigationCallback = function (oPayload, oEvent) {
 		if (oPayload.fn) {
@@ -34,5 +34,5 @@ sap.ui.define([
 	};
 
 
-    return SampleLinkDelegate;
+	return SampleLinkDelegate;
 }, /* bExport= */ true);

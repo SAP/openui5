@@ -13,27 +13,27 @@ sap.ui.define([
 	"sap/ui/mdc/link/SemanticObjectUnavailableAction"
 ], function(LinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, SemanticObjectMapping, SemanticObjectMappingItem, SemanticObjectUnavailableAction) {
 	"use strict";
-    /**
-     * Extension of the Delegate for {@link sap.ui.mdc.Link}. This extension provides all historical featurs of the FlpLinkHandler.
-     * This class will determine NavigationTargets depending on the semanticObjects given by a payload
-     * <b>Note:</b>
-     * The class is experimental and the API/behaviour is not finalized and hence this should not be used for productive usage.
-     * @author SAP SE
-     * @private
-     * @experimental
-     * @since 1.74
-     * @alias sap.ui.mdc.flp.FlpLinkDelegate
-     */
+	/**
+	 * Extension of the Delegate for {@link sap.ui.mdc.Link}. This extension provides all historical featurs of the FlpLinkHandler.
+	 * This class will determine NavigationTargets depending on the semanticObjects given by a payload
+	 * <b>Note:</b>
+	 * The class is experimental and the API/behaviour is not finalized and hence this should not be used for productive usage.
+	 * @author SAP SE
+	 * @private
+	 * @experimental
+	 * @since 1.74
+	 * @alias sap.ui.mdc.flp.FlpLinkDelegate
+	 */
 	var FlpLinkDelegate = Object.assign({}, LinkDelegate);
 
-    /**
-     * Fetches the relevant {@link sap.ui.mdc.link.LinkItem} for the Link and returns them.
-     * @public
-     * @param {Object} oPayload - The Payload of the Link given by the application
-     * @param {Object} oBindingContext - The binding context of the Link
-     * @param {Object} oInfoLog - The InfoLog of the Link
-     * @returns {Promise} once resolved an array of {@link sap.ui.mdc.link.LinkItem} is returned
-     */
+	/**
+	 * Fetches the relevant {@link sap.ui.mdc.link.LinkItem} for the Link and returns them.
+	 * @public
+	 * @param {Object} oPayload - The Payload of the Link given by the application
+	 * @param {Object} oBindingContext - The binding context of the Link
+	 * @param {Object} oInfoLog - The InfoLog of the Link
+	 * @returns {Promise} once resolved an array of {@link sap.ui.mdc.link.LinkItem} is returned
+	 */
 	FlpLinkDelegate.fetchLinkItems = function(oPayload, oBindingContext, oInfoLog) {
 		var oContextObject = oBindingContext ? oBindingContext.getObject(oBindingContext.getPath()) : undefined;
 		var aItemsToReturn = [];
@@ -121,14 +121,14 @@ sap.ui.define([
 		}
 	};
 
-    /**
-     * Checks which attributes of the ContextObject belong to which SemanticObject and maps them into a two dimensional array.
-     * @private
-     * @param {Object} oContextObject the BindingContext of the SourceControl of the Link / of the Link itself if not set
-     * @param {Object} oPayload given by the application
-     * @param {Object} oInfoLog of type {@link sap.ui.mdc.link.Log} - the corresponding InfoLog of the Link
-     * @returns {Object} two dimensional array which maps a given SemanticObject name together with a given attribute name to the value of that given attribute
-     */
+	/**
+	 * Checks which attributes of the ContextObject belong to which SemanticObject and maps them into a two dimensional array.
+	 * @private
+	 * @param {Object} oContextObject the BindingContext of the SourceControl of the Link / of the Link itself if not set
+	 * @param {Object} oPayload given by the application
+	 * @param {Object} oInfoLog of type {@link sap.ui.mdc.link.Log} - the corresponding InfoLog of the Link
+	 * @returns {Object} two dimensional array which maps a given SemanticObject name together with a given attribute name to the value of that given attribute
+	 */
 	FlpLinkDelegate._calculateSemanticAttributes = function(oContextObject, oPayload, oInfoLog) {
 		var aSemanticObjects = FlpLinkDelegate._getSemanticObjects(oPayload);
 		var mSemanticObjectMappings = FlpLinkDelegate._convertSemanticObjectMapping(FlpLinkDelegate._getSemanticObjectMappings(oPayload));
@@ -209,16 +209,16 @@ sap.ui.define([
 		return oResults;
 	};
 
-    /**
-     * Retrieves the actual targets for the navigation of the link. This uses the UShell loaded by the {@link sap.ui.mdc.link.Factory} to retrieve
-     * the navigation targets from the FLP service.
-     * @private
-     * @param {String} sAppStateKey key of the appstate (not used yet)
-     * @param {Object} oSemanticAttributes calculated by _calculateSemanticAttributes
-     * @param {Object} oPayload given by the application
-     * @param {Object} oInfoLog of type {@link sap.ui.mdc.link.Log} - the corresponding InfoLog of the Link
-     * @returns {Promise} resolving into availableAtions and ownNavigation containing an array of {@link sap.ui.mdc.link.LinkItem}
-     */
+	/**
+	 * Retrieves the actual targets for the navigation of the link. This uses the UShell loaded by the {@link sap.ui.mdc.link.Factory} to retrieve
+	 * the navigation targets from the FLP service.
+	 * @private
+	 * @param {String} sAppStateKey key of the appstate (not used yet)
+	 * @param {Object} oSemanticAttributes calculated by _calculateSemanticAttributes
+	 * @param {Object} oPayload given by the application
+	 * @param {Object} oInfoLog of type {@link sap.ui.mdc.link.Log} - the corresponding InfoLog of the Link
+	 * @returns {Promise} resolving into availableAtions and ownNavigation containing an array of {@link sap.ui.mdc.link.LinkItem}
+	 */
 	FlpLinkDelegate._retrieveNavigationTargets = function(sAppStateKey, oSemanticAttributes, oPayload, oInfoLog) {
 		if (!oPayload.semanticObjects) {
 			return new Promise(function(resolve) {
@@ -338,22 +338,22 @@ sap.ui.define([
 		});
 	};
 
-    /**
-     * This will return an array of the SemanticObjects as strings given by the payload.
-     * @private
-     * @param {Object} oPayload defined by the application
-     * @returns {String[]} containing SemanticObjects based of the payload
-     */
+	/**
+	 * This will return an array of the SemanticObjects as strings given by the payload.
+	 * @private
+	 * @param {Object} oPayload defined by the application
+	 * @returns {String[]} containing SemanticObjects based of the payload
+	 */
 	FlpLinkDelegate._getSemanticObjects = function(oPayload) {
 		return oPayload.semanticObjects ? oPayload.semanticObjects : [];
 	};
 
-    /**
-     * This will return an array of {@link sap.ui.mdc.link.SemanticObjectUnavailableAction} depending on the given payload.
-     * @private
-     * @param {Object} oPayload defined by the application
-     * @returns {Object[]} of type {@link sap.ui.mdc.link.SemanticObjectUnavailableAction}
-     */
+	/**
+	 * This will return an array of {@link sap.ui.mdc.link.SemanticObjectUnavailableAction} depending on the given payload.
+	 * @private
+	 * @param {Object} oPayload defined by the application
+	 * @returns {Object[]} of type {@link sap.ui.mdc.link.SemanticObjectUnavailableAction}
+	 */
 	FlpLinkDelegate._getSemanticObjectUnavailableActions = function(oPayload) {
 		var aSemanticObjectUnavailableActions = [];
 		if (oPayload.semanticObjectUnavailableActions) {
@@ -367,12 +367,12 @@ sap.ui.define([
 		return aSemanticObjectUnavailableActions;
 	};
 
-    /**
-     * This will return an array of {@link sap.ui.mdc.link.SemanticObjectMapping} depending on the given payload.
-     * @private
-     * @param {Object} oPayload defined by the application
-     * @returns {Object[]} of type {@link sap.ui.mdc.link.SemanticObjectMapping}
-     */
+	/**
+	 * This will return an array of {@link sap.ui.mdc.link.SemanticObjectMapping} depending on the given payload.
+	 * @private
+	 * @param {Object} oPayload defined by the application
+	 * @returns {Object[]} of type {@link sap.ui.mdc.link.SemanticObjectMapping}
+	 */
 	FlpLinkDelegate._getSemanticObjectMappings = function(oPayload) {
 		var aSemanticObjectMappings = [];
 		var aSemanticObjectMappingItems = [];
@@ -396,12 +396,12 @@ sap.ui.define([
 		return aSemanticObjectMappings;
 	};
 
-    /**
-     * Converts a given array of SemanticObjectMapping into a Map containing SemanticObjects as Keys and a Map of it's corresponding SemanticObjectMappings as values.
-     * @private
-     * @param {Object[]} aSemanticObjectMappings of type {@link sap.ui.mdc.link.SemanticObjectMapping}
-     * @returns {Map<String, Map<String, String>>} mSemanticObjectMappings
-     */
+	/**
+	 * Converts a given array of SemanticObjectMapping into a Map containing SemanticObjects as Keys and a Map of it's corresponding SemanticObjectMappings as values.
+	 * @private
+	 * @param {Object[]} aSemanticObjectMappings of type {@link sap.ui.mdc.link.SemanticObjectMapping}
+	 * @returns {Map<String, Map<String, String>>} mSemanticObjectMappings
+	 */
 	FlpLinkDelegate._convertSemanticObjectMapping = function(aSemanticObjectMappings) {
 		if (!aSemanticObjectMappings.length) {
 			return undefined;
@@ -419,12 +419,12 @@ sap.ui.define([
 		return mSemanticObjectMappings;
 	};
 
-    /**
-     * Converts a given array of SemanticObjectUnavailableActions into a Map containing SemanticObjects as Keys and a Map of it's corresponding SemanticObjectUnavailableActions as values.
-     * @private
-     * @param {Object[]} aSemanticObjectUnavailableActions of type {@link sap.ui.mdc.link.SemanticObjectUnavailableAction}
-     * @returns {Map<String, Map<String, String>>} mSemanticObjectUnavailableActions
-     */
+	/**
+	 * Converts a given array of SemanticObjectUnavailableActions into a Map containing SemanticObjects as Keys and a Map of it's corresponding SemanticObjectUnavailableActions as values.
+	 * @private
+	 * @param {Object[]} aSemanticObjectUnavailableActions of type {@link sap.ui.mdc.link.SemanticObjectUnavailableAction}
+	 * @returns {Map<String, Map<String, String>>} mSemanticObjectUnavailableActions
+	 */
 	FlpLinkDelegate._convertSemanticObjectUnavailableAction = function(aSemanticObjectUnavailableActions) {
 		if (!aSemanticObjectUnavailableActions.length) {
 			return undefined;

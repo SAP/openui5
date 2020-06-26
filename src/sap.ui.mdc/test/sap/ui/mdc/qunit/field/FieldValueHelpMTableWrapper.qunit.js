@@ -166,23 +166,23 @@ sap.ui.define([
 	var _initWrapper = function(bFVH) {
 		oModel = new JSONModel({
 			items:[{text: "Item 1", key: "I1", additionalText: "Text 1"},
-			       {text: "Item 2", key: "I2", additionalText: "Text 2"},
-			       {text: "X-Item 3", key: "I3", additionalText: "Text 3"}]
+				   {text: "Item 2", key: "I2", additionalText: "Text 2"},
+				   {text: "X-Item 3", key: "I3", additionalText: "Text 3"}]
 			});
 		sap.ui.getCore().setModel(oModel);
 
 		var oItemTemplate = new ColumnListItem({
 			type: "Active",
 			cells: [new Text({text: "{key}"}),
-			        new Text({text: "{text}"}),
-			        new Text({text: "{additionalText}"})]
+					new Text({text: "{text}"}),
+					new Text({text: "{additionalText}"})]
 		});
 
 		oTable = new Table("T1", {
 			width: "26rem",
 			columns: [ new Column({header: new Label({text: "Id"})}),
-			           new Column({header: new Label({text: "Text"})}),
-			           new Column({header: new Label({text: "Info"})})],
+					   new Column({header: new Label({text: "Text"})}),
+					   new Column({header: new Label({text: "Info"})})],
 			items: {path: "/items", template: oItemTemplate}
 		});
 
@@ -306,10 +306,10 @@ sap.ui.define([
 
 		var oNewModel = new JSONModel({
 			items:[{text: "Item 1", key: "I1", additionalText: "Text 1"},
-			       {text: "Item 2", key: "I2", additionalText: "Text 2"},
-			       {text: "X-Item 3", key: "I3", additionalText: "Text 3"},
-			       {text: "Item A1", key: "IA", additionalText: "Text 1"},
-			       {text: "Item A2", key: "IA", additionalText: "Text 2"}]
+				   {text: "Item 2", key: "I2", additionalText: "Text 2"},
+				   {text: "X-Item 3", key: "I3", additionalText: "Text 3"},
+				   {text: "Item A1", key: "IA", additionalText: "Text 1"},
+				   {text: "Item A2", key: "IA", additionalText: "Text 2"}]
 			});
 		oTable.setModel(oNewModel); // to test OutParameters
 
@@ -545,8 +545,8 @@ sap.ui.define([
 
 		oModel.setData({
 			items:[{text: "New Item 1", key: "I1", additionalText: "Text 1"},
-			       {text: "New Item 2", key: "I2", additionalText: "Text 2"},
-			       {text: "New X-Item 3", key: "I3", additionalText: "Text 3"}]
+				   {text: "New Item 2", key: "I2", additionalText: "Text 2"},
+				   {text: "New X-Item 3", key: "I3", additionalText: "Text 3"}]
 			});
 		oBinding.resume();
 
@@ -619,7 +619,7 @@ sap.ui.define([
 				var oData = oModel.getData();
 				oModel.setData({
 					items:[{text: "XXX", key: "X", additionalText: "XX"},
-					       {text: "YYY", key: "Y", additionalText: "YY"}]
+						   {text: "YYY", key: "Y", additionalText: "YY"}]
 				});
 
 				oResult.then(function(oResult) {
@@ -635,7 +635,7 @@ sap.ui.define([
 					assert.ok(oResult instanceof Promise, "Promise returned as model is asked");
 					oModel.setData({
 						items:[{text: "Z1", key: "Z", additionalText: "ZZ1"},
-						       {text: "Z2", key: "Z", additionalText: "ZZ2"}]
+							   {text: "Z2", key: "Z", additionalText: "ZZ2"}]
 					});
 
 					oResult.then(function(oResult) {

@@ -2,14 +2,14 @@
  * ! ${copyright}
  */
 sap.ui.define([
-    "sap/ui/mdc/flp/FlpLinkDelegate",
-    "sap/ui/mdc/link/ContactDetails"
+	"sap/ui/mdc/flp/FlpLinkDelegate",
+	"sap/ui/mdc/link/ContactDetails"
 ], function (FlpLinkDelegate, ContactDetails) {
-    "use strict";
+	"use strict";
 
 	var SampleLinkDelegate = Object.assign({}, FlpLinkDelegate);
 
-    SampleLinkDelegate.fetchAdditionalContent = function (oPayload) {
+	SampleLinkDelegate.fetchAdditionalContent = function (oPayload) {
 		if (oPayload.loadAdditionalContent) {
 			var aAdditionalContent = [
 				new ContactDetails()
@@ -39,5 +39,5 @@ sap.ui.define([
 		});
 	};
 
-    return SampleLinkDelegate;
+	return SampleLinkDelegate;
 }, /* bExport= */ true);

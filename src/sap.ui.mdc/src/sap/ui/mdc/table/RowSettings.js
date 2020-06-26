@@ -84,5 +84,5 @@ sap.ui.define([
 		return mSettings;
 	};
 
-    return RowSettings;
+	return RowSettings;
 });

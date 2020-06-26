@@ -19,8 +19,8 @@ sap.ui.define([
 			// }
 			if (typeof oBindingInfo === "object") {
 				oBindingInfo = ManagedObject.bindingParser("{" + oBindingInfo.path + "}");
-                var oVisitor = oContext.getModel().getVisitor();
-                var oJSONModel = oVisitor.getSettings().models[oBindingInfo.model];
+				var oVisitor = oContext.getModel().getVisitor();
+				var oJSONModel = oVisitor.getSettings().models[oBindingInfo.model];
 				return oJSONModel.getContext(oBindingInfo.path);
 			}
 		}

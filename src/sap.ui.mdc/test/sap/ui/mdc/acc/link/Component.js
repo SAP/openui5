@@ -5,10 +5,10 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/fl/FakeLrepConnectorLocalStorage"
 ], function(jQuery, UIComponent, ODataModel, MockServer, FakeLrepConnectorLocalStorage) {
-    "use strict";
+	"use strict";
 
-    return UIComponent.extend("sap.ui.mdc.acc.link.Component", {
-        metadata: {
+	return UIComponent.extend("sap.ui.mdc.acc.link.Component", {
+		metadata: {
 			manifest: "json"
 		},
 
@@ -45,5 +45,5 @@ sap.ui.define([
 		exit: function() {
 			FakeLrepConnectorLocalStorage.disableFakeConnector();
 		}
-    });
+	});
 });

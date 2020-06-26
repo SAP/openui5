@@ -208,8 +208,8 @@ function(
 						valueTypes: [Operator.ValueType.Self, Operator.ValueType.Self],
 						getModelFilter: function(oCondition, sFieldPath, oType) {
 							return new Filter({ filters: [new Filter(sFieldPath, ModelOperator.GT, oCondition.values[0]),
-							                              new Filter(sFieldPath, ModelOperator.LT, oCondition.values[1])],
-							                              and: true});
+														  new Filter(sFieldPath, ModelOperator.LT, oCondition.values[1])],
+														  and: true});
 						},
 						validate: function(aValues, oType) {
 							// in Between 2 Values must be defined
@@ -253,8 +253,8 @@ function(
 						exclude: true,
 						getModelFilter: function(oCondition, sFieldPath, oType) {
 							return new Filter({ filters: [new Filter(sFieldPath, ModelOperator.LE, oCondition.values[0]),
-							                              new Filter(sFieldPath, ModelOperator.GE, oCondition.values[1])],
-							                              and: false});
+														  new Filter(sFieldPath, ModelOperator.GE, oCondition.values[1])],
+														  and: false});
 						},
 						validate: function(aValues, oType) {
 							// in Between 2 Values must be defined

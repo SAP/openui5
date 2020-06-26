@@ -8,11 +8,11 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/library"
 ], function(LinkDelegate, Button, Dialog, MessageToast, mobileLibrary) {
-    "use strict";
+	"use strict";
 
 	var ButtonType = mobileLibrary.ButtonType;
 
-    var SampleLinkDelegate = Object.assign({}, LinkDelegate);
+	var SampleLinkDelegate = Object.assign({}, LinkDelegate);
 
 	SampleLinkDelegate.beforeNavigationCallback = function(oPayload, oEvent) {
 		return new Promise(function(resolve) {
@@ -44,5 +44,5 @@ sap.ui.define([
 		});
 	};
 
-    return SampleLinkDelegate;
+	return SampleLinkDelegate;
 }, /* bExport= */ true);

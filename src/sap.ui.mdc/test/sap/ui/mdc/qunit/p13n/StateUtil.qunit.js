@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/mdc/TableDelegate","sap/ui/mdc/p13n/StateUtil","sap/ui/mdc/FilterBar", "sap/ui/mdc/FilterBarDelegate", "sap/ui/core/UIComponent", "sap/ui/core/ComponentContainer", "sap/ui/mdc/FilterField"
 ], function (TableDelegate, StateUtil, FilterBar, FilterBarDelegate, UIComponent, ComponentContainer, FilterField) {
-    "use strict";
+	"use strict";
 
 	sap.ui.getCore().loadLibrary("sap.ui.fl");
 	var UIComp = UIComponent.extend("test", {
@@ -85,7 +85,7 @@ sap.ui.define([
 		return Promise.resolve(aProperties);
 	}
 
-    QUnit.module("API tests for FilterBar", {
+	QUnit.module("API tests for FilterBar", {
 		before: function(){
 			FilterBarDelegate.fetchProperties = fetchProperties;
 			FilterBarDelegate.beforeAddFilterFlex = createFilterItem;
@@ -101,14 +101,14 @@ sap.ui.define([
 
 			this.oView = this.oUiComponent.getRootControl();
 		},
-        beforeEach: function(){
+		beforeEach: function(){
 			this.oFilterBar = this.oView.byId('myFilterBar');
 			this.oFilterBar.removeAllFilterItems([]);
 			sinon.stub(this.oFilterBar, "_toInternal").callsFake(function(oProperty, oXCondition) {
 				return oXCondition;
 			});
-        },
-        afterEach: function(){
+		},
+		afterEach: function(){
 			this.oFilterBar.setFilterConditions({});
 			this.oFilterBar._toInternal.restore();
 		},
@@ -592,11 +592,11 @@ sap.ui.define([
 
 			this.oView = this.oUiComponent.getRootControl();
 		},
-        beforeEach: function(){
+		beforeEach: function(){
 			this.oTable = this.oView.byId('mdcTable');
 			this.oTable.removeAllColumns();
-        },
-        afterEach: function(){
+		},
+		afterEach: function(){
 			this.oTable.setSortConditions(undefined);
 		},
 		after: function(){

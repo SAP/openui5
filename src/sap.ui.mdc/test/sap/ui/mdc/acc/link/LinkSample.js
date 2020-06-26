@@ -4,13 +4,13 @@ sap.ui.require([
 ], function (
 		ComponentContainer
 	) {
-    "use strict";
+	"use strict";
 
 	new ComponentContainer({
-        name : "sap.ui.mdc.acc.link",
-        settings: {
-            id : "LinkAccessibility"
-        },
-        height: "100%"
-    }).placeAt("content");
+		name : "sap.ui.mdc.acc.link",
+		settings: {
+			id : "LinkAccessibility"
+		},
+		height: "100%"
+	}).placeAt("content");
 });

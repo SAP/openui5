@@ -157,7 +157,7 @@ sap.ui.define([
 			case "MultiRange":  sOperators = "EQ,LE,LT,GE,GT,BT,MULTI_RANGE_BTEX"; this._ensureMultiRangeBTEXOperator(); break;
 
 			case "SearchExpression":             sOperators = "StartsWith,EndsWith,Contains"; break;
-		    case "MultiRangeOrSearchExpression": sOperators = "StartsWith,EndsWith,Contains,EQ,LE,LT,GE,GT,BT,MULTI_RANGE_BTEX"; this._ensureMultiRangeBTEXOperator(); break;
+			case "MultiRangeOrSearchExpression": sOperators = "StartsWith,EndsWith,Contains,EQ,LE,LT,GE,GT,BT,MULTI_RANGE_BTEX"; this._ensureMultiRangeBTEXOperator(); break;
 			default: break;
 		}
 

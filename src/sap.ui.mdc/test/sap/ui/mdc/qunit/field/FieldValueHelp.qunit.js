@@ -62,12 +62,12 @@ sap.ui.define([
 
 	var oModel = new JSONModel({
 		items:[{text: "Item 1", key: "I1", additionalText: "Text 1", filter: "XXX"},
-		       {text: "Item 2", key: "I2", additionalText: "Text 2", filter: "XXX"},
-		       {text: "X-Item 3", key: "I3", additionalText: "Text 3", filter: "YYY"}],
+			   {text: "Item 2", key: "I2", additionalText: "Text 2", filter: "XXX"},
+			   {text: "X-Item 3", key: "I3", additionalText: "Text 3", filter: "YYY"}],
 		test: "Hello",
 		contexts: [{icon: "sap-icon://sap-ui5", inParameter: "in1", inParameter2: "in1-2", outParameter: "out1"},
-		           {icon: "sap-icon://lightbulb", inParameter: "in2", inParameter2: "in2-2", outParameter: "out2"},
-		           {icon: "sap-icon://camera", inParameter: "in3", inParameter2: "in3-2", outParameter: "out3"}]
+				   {icon: "sap-icon://lightbulb", inParameter: "in2", inParameter2: "in2-2", outParameter: "out2"},
+				   {icon: "sap-icon://camera", inParameter: "in3", inParameter2: "in3-2", outParameter: "out3"}]
 		});
 	sap.ui.getCore().setModel(oModel);
 
@@ -2012,8 +2012,8 @@ sap.ui.define([
 
 		oFieldHelp.connect(oField2);
 		oFieldHelp.setConditions([Condition.createItemCondition("I1", "Item 1"),
-		                          Condition.createCondition("EQ", ["I2"], undefined, undefined, ConditionValidated.Validated),
-		                          Condition.createCondition("StartsWith", ["X"])]);
+								  Condition.createCondition("EQ", ["I2"], undefined, undefined, ConditionValidated.Validated),
+								  Condition.createCondition("StartsWith", ["X"])]);
 		oFieldHelp.open(false);
 		oClock.tick(iDialogDuration); // fake opening time
 

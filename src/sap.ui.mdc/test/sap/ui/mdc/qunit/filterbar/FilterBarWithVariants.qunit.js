@@ -35,558 +35,558 @@ sap.ui.define([
 
 var oVariantMap = {
 		  "VMId": {
-			    "variantManagementChanges": {
-			      "setDefault": [
-			        {
-			          "fileName": "id_1589358940494_34_setDefault",
-			          "fileType": "ctrl_variant_management_change",
-			          "changeType": "setDefault",
-			          "moduleName": "",
-			          "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
-			          "packageName": "$TMP",
-			          "content": {
-			            "defaultVariant": "id_1589358930278_29"
-			          },
-			          "selector": {
-			            "id": "VMId",
-			            "idIsLocal": false
-			          },
-			          "layer": "USER",
-			          "texts": {},
-			          "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
-			          "projectId": "sap.ui.mdc.sample.filterbar.sample1",
-			          "creation": "2020-05-13T08:35:40.526Z",
-			          "originalLanguage": "EN",
-			          "support": {
-			            "generator": "Change.createInitialFileContent",
-			            "service": "",
-			            "user": "",
-			            "sapui5Version": "1.78.0-SNAPSHOT",
-			            "sourceChangeFileName": "",
-			            "compositeCommand": ""
-			          },
-			          "oDataInformation": {},
-			          "dependentSelector": {},
-			          "validAppVersions": {
-			            "creation": "1.0.0",
-			            "from": "1.0.0"
-			          },
-			          "jsOnly": false,
-			          "variantReference": "",
-			          "appDescriptorChange": false
-			        },
-			        {
-			          "fileName": "id_1589360653047_29_setDefault",
-			          "fileType": "ctrl_variant_management_change",
-			          "changeType": "setDefault",
-			          "moduleName": "",
-			          "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
-			          "packageName": "$TMP",
-			          "content": {
-			            "defaultVariant": "id_1589359343056_37"
-			          },
-			          "selector": {
-			            "id": "VMId",
-			            "idIsLocal": false
-			          },
-			          "layer": "USER",
-			          "texts": {},
-			          "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
-			          "projectId": "sap.ui.mdc.sample.filterbar.sample1",
-			          "creation": "2020-05-13T09:04:13.081Z",
-			          "originalLanguage": "EN",
-			          "support": {
-			            "generator": "Change.createInitialFileContent",
-			            "service": "",
-			            "user": "",
-			            "sapui5Version": "1.78.0-SNAPSHOT",
-			            "sourceChangeFileName": "",
-			            "compositeCommand": ""
-			          },
-			          "oDataInformation": {},
-			          "dependentSelector": {},
-			          "validAppVersions": {
-			            "creation": "1.0.0",
-			            "from": "1.0.0"
-			          },
-			          "jsOnly": false,
-			          "variantReference": "",
-			          "appDescriptorChange": false
-			        },
-			        {
-			          "fileName": "id_1589364271621_33_setDefault",
-			          "fileType": "ctrl_variant_management_change",
-			          "changeType": "setDefault",
-			          "moduleName": "",
-			          "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
-			          "packageName": "$TMP",
-			          "content": {
-			            "defaultVariant": "VMId"
-			          },
-			          "selector": {
-			            "id": "VMId",
-			            "idIsLocal": false
-			          },
-			          "layer": "USER",
-			          "texts": {},
-			          "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
-			          "projectId": "sap.ui.mdc.sample.filterbar.sample1",
-			          "creation": "2020-05-13T10:04:31.647Z",
-			          "originalLanguage": "EN",
-			          "support": {
-			            "generator": "Change.createInitialFileContent",
-			            "service": "",
-			            "user": "",
-			            "sapui5Version": "1.78.0-SNAPSHOT",
-			            "sourceChangeFileName": "",
-			            "compositeCommand": ""
-			          },
-			          "oDataInformation": {},
-			          "dependentSelector": {},
-			          "validAppVersions": {
-			            "creation": "1.0.0",
-			            "from": "1.0.0"
-			          },
-			          "jsOnly": false,
-			          "variantReference": "",
-			          "appDescriptorChange": false
-			        }
-			      ]
-			    },
-			    "variants": [
-			      {
-			        "content": {
-			          "fileName": "VMId",
-			          "variantManagementReference": "VMId",
-			          "content": {
-			            "title": "Standard",
-			            "favorite": true,
-			            "visible": true,
-			            "executeOnSelect": true
-			          },
-			          "support": {
-			            "user": "SAP"
-			          }
-			        },
-			        "variantChanges": {
-			          "setExecuteOnSelect": [
-			            {
-			              "fileName": "id_1589364271571_32_setExecuteOnSelect",
-			              "fileType": "ctrl_variant_change",
-			              "changeType": "setExecuteOnSelect",
-			              "moduleName": "",
-			              "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
-			              "packageName": "$TMP",
-			              "content": {
-			                "executeOnSelect": true
-			              },
-			              "selector": {
-			                "id": "VMId",
-			                "idIsLocal": false
-			              },
-			              "layer": "USER",
-			              "texts": {},
-			              "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
-			              "projectId": "sap.ui.mdc.sample.filterbar.sample1",
-			              "creation": "2020-05-13T10:04:31.646Z",
-			              "originalLanguage": "EN",
-			              "support": {
-			                "generator": "Change.createInitialFileContent",
-			                "service": "",
-			                "user": "",
-			                "sapui5Version": "1.78.0-SNAPSHOT",
-			                "sourceChangeFileName": "",
-			                "compositeCommand": ""
-			              },
-			              "oDataInformation": {},
-			              "dependentSelector": {},
-			              "validAppVersions": {
-			                "creation": "1.0.0",
-			                "from": "1.0.0"
-			              },
-			              "jsOnly": false,
-			              "variantReference": "",
-			              "appDescriptorChange": false
-			            }
-			          ]
-			        },
-			        "controlChanges": []
-			      },
-			      {
-			        "content": {
-			          "fileName": "id_1589358930278_29",
-			          "fileType": "ctrl_variant",
-			          "variantManagementReference": "VMId",
-			          "variantReference": "VMId",
-			          "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
-			          "packageName": "$TMP",
-			          "content": {
-			            "title": "Standard.1",
-			            "favorite": true,
-			            "visible": true,
-			            "executeOnSelect": true
-			          },
-			          "self": "apps/sap.ui.mdc.sample.filterbar.sample1/variants/id_1589358930278_29.ctrl_variant",
-			          "layer": "USER",
-			          "texts": {},
-			          "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/variants/",
-			          "creation": "2020-05-13T08:35:30.309Z",
-			          "originalLanguage": "EN",
-			          "conditions": {},
-			          "support": {
-			            "generator": "Change.createInitialFileContent",
-			            "service": "",
-			            "user": "",
-			            "sapui5Version": "1.78.0-SNAPSHOT"
-			          },
-			          "validAppVersions": {}
-			        },
-			        "controlChanges": [
-			          {
-			            "fileName": "id_1589436772046_35_addCondition",
-			            "fileType": "change",
-			            "changeType": "addCondition",
-			            "moduleName": "",
-			            "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
-			            "packageName": "$TMP",
-			            "content": {
-			              "name": "Category",
-			              "condition": {
-			                "operator": "EQ",
-			                "values": [
-			                  "sss"
-			                ],
-			                "validated": "NotValidated"
-			              }
-			            },
-			            "selector": {
-			              "id": "IDView--testFilterBar",
-			              "idIsLocal": true
-			            },
-			            "layer": "USER",
-			            "texts": {},
-			            "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
-			            "projectId": "sap.ui.mdc.sample.filterbar.sample1",
-			            "creation": "2020-05-14T06:12:57.954Z",
-			            "originalLanguage": "EN",
-			            "support": {
-			              "generator": "Change.createInitialFileContent",
-			              "service": "",
-			              "user": "",
-			              "sapui5Version": "1.78.0-SNAPSHOT",
-			              "sourceChangeFileName": "",
-			              "compositeCommand": ""
-			            },
-			            "oDataInformation": {},
-			            "dependentSelector": {},
-			            "validAppVersions": {
-			              "creation": "1.0.0",
-			              "from": "1.0.0"
-			            },
-			            "jsOnly": false,
-			            "variantReference": "id_1589358930278_29",
-			            "appDescriptorChange": false
-			          },
-			          {
-			            "fileName": "id_1589436775460_36_addCondition",
-			            "fileType": "change",
-			            "changeType": "addCondition",
-			            "moduleName": "",
-			            "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
-			            "packageName": "$TMP",
-			            "content": {
-			              "name": "Name",
-			              "condition": {
-			                "operator": "EQ",
-			                "values": [
-			                  "one"
-			                ],
-			                "validated": "NotValidated"
-			              }
-			            },
-			            "selector": {
-			              "id": "IDView--testFilterBar",
-			              "idIsLocal": true
-			            },
-			            "layer": "USER",
-			            "texts": {},
-			            "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
-			            "projectId": "sap.ui.mdc.sample.filterbar.sample1",
-			            "creation": "2020-05-14T06:12:57.955Z",
-			            "originalLanguage": "EN",
-			            "support": {
-			              "generator": "Change.createInitialFileContent",
-			              "service": "",
-			              "user": "",
-			              "sapui5Version": "1.78.0-SNAPSHOT",
-			              "sourceChangeFileName": "",
-			              "compositeCommand": ""
-			            },
-			            "oDataInformation": {},
-			            "dependentSelector": {},
-			            "validAppVersions": {
-			              "creation": "1.0.0",
-			              "from": "1.0.0"
-			            },
-			            "jsOnly": false,
-			            "variantReference": "id_1589358930278_29",
-			            "appDescriptorChange": false
-			          }
-			        ],
-			        "variantChanges": {
-			          "setExecuteOnSelect": [
-			            {
-			              "fileName": "id_1589358930285_30_setExecuteOnSelect",
-			              "fileType": "ctrl_variant_change",
-			              "changeType": "setExecuteOnSelect",
-			              "moduleName": "",
-			              "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
-			              "packageName": "$TMP",
-			              "content": {
-			                "executeOnSelect": true
-			              },
-			              "selector": {
-			                "id": "id_1589358930278_29",
-			                "idIsLocal": false
-			              },
-			              "layer": "USER",
-			              "texts": {},
-			              "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
-			              "projectId": "sap.ui.mdc.sample.filterbar.sample1",
-			              "creation": "2020-05-13T08:35:30.310Z",
-			              "originalLanguage": "EN",
-			              "support": {
-			                "generator": "Change.createInitialFileContent",
-			                "service": "",
-			                "user": "",
-			                "sapui5Version": "1.78.0-SNAPSHOT",
-			                "sourceChangeFileName": "",
-			                "compositeCommand": ""
-			              },
-			              "oDataInformation": {},
-			              "dependentSelector": {},
-			              "validAppVersions": {
-			                "creation": "1.0.0",
-			                "from": "1.0.0"
-			              },
-			              "jsOnly": false,
-			              "variantReference": "",
-			              "appDescriptorChange": false
-			            }
-			          ]
-			        }
-			      },
-			      {
-			        "content": {
-			          "fileName": "id_1589359343056_37",
-			          "fileType": "ctrl_variant",
-			          "variantManagementReference": "VMId",
-			          "variantReference": "VMId",
-			          "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
-			          "packageName": "$TMP",
-			          "content": {
-			            "title": "Standard.1.1",
-			            "favorite": true,
-			            "visible": true,
-			            "executeOnSelect": false
-			          },
-			          "self": "apps/sap.ui.mdc.sample.filterbar.sample1/variants/id_1589359343056_37.ctrl_variant",
-			          "layer": "USER",
-			          "texts": {},
-			          "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/variants/",
-			          "creation": "2020-05-13T08:42:23.102Z",
-			          "originalLanguage": "EN",
-			          "conditions": {},
-			          "support": {
-			            "generator": "Change.createInitialFileContent",
-			            "service": "",
-			            "user": "",
-			            "sapui5Version": "1.78.0-SNAPSHOT"
-			          },
-			          "validAppVersions": {}
-			        },
-			        "controlChanges": [
-			          {
-			            "fileName": "id_1589359343056_38_addCondition",
-			            "fileType": "change",
-			            "changeType": "addCondition",
-			            "moduleName": "",
-			            "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
-			            "packageName": "$TMP",
-			            "content": {
-			              "name": "Category",
-			              "condition": {
-			                "operator": "EQ",
-			                "values": [
-			                  "111"
-			                ],
-			                "validated": "NotValidated"
-			              }
-			            },
-			            "selector": {
-			              "id": "IDView--testFilterBar",
-			              "idIsLocal": true
-			            },
-			            "layer": "USER",
-			            "texts": {},
-			            "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
-			            "projectId": "sap.ui.mdc.sample.filterbar.sample1",
-			            "creation": "2020-05-13T08:42:23.103Z",
-			            "originalLanguage": "EN",
-			            "support": {
-			              "generator": "Change.createInitialFileContent",
-			              "service": "",
-			              "user": "",
-			              "sapui5Version": "1.78.0-SNAPSHOT",
-			              "sourceChangeFileName": "id_1589359328880_33_addCondition",
-			              "compositeCommand": ""
-			            },
-			            "oDataInformation": {},
-			            "dependentSelector": {},
-			            "validAppVersions": {
-			              "creation": "1.0.0",
-			              "from": "1.0.0"
-			            },
-			            "jsOnly": false,
-			            "variantReference": "id_1589359343056_37",
-			            "appDescriptorChange": false
-			          },
-			          {
-			            "fileName": "id_1589363538618_31_removeCondition",
-			            "fileType": "change",
-			            "changeType": "removeCondition",
-			            "moduleName": "",
-			            "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
-			            "packageName": "$TMP",
-			            "content": {
-			              "name": "Category",
-			              "condition": {
-			                "operator": "EQ",
-			                "values": [
-			                  "111"
-			                ],
-			                "validated": "NotValidated"
-			              }
-			            },
-			            "selector": {
-			              "id": "IDView--testFilterBar",
-			              "idIsLocal": true
-			            },
-			            "layer": "USER",
-			            "texts": {},
-			            "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
-			            "projectId": "sap.ui.mdc.sample.filterbar.sample1",
-			            "creation": "2020-05-13T09:52:42.232Z",
-			            "originalLanguage": "EN",
-			            "support": {
-			              "generator": "Change.createInitialFileContent",
-			              "service": "",
-			              "user": "",
-			              "sapui5Version": "1.78.0-SNAPSHOT",
-			              "sourceChangeFileName": "",
-			              "compositeCommand": ""
-			            },
-			            "oDataInformation": {},
-			            "dependentSelector": {},
-			            "validAppVersions": {
-			              "creation": "1.0.0",
-			              "from": "1.0.0"
-			            },
-			            "jsOnly": false,
-			            "variantReference": "id_1589359343056_37",
-			            "appDescriptorChange": false
-			          },
-			          {
-			            "fileName": "id_1589363548834_32_addCondition",
-			            "fileType": "change",
-			            "changeType": "addCondition",
-			            "moduleName": "",
-			            "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
-			            "packageName": "$TMP",
-			            "content": {
-			              "name": "Name",
-			              "condition": {
-			                "operator": "EQ",
-			                "values": [
-			                  "name"
-			                ],
-			                "validated": "NotValidated"
-			              }
-			            },
-			            "selector": {
-			              "id": "IDView--testFilterBar",
-			              "idIsLocal": true
-			            },
-			            "layer": "USER",
-			            "texts": {},
-			            "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
-			            "projectId": "sap.ui.mdc.sample.filterbar.sample1",
-			            "creation": "2020-05-13T09:52:42.233Z",
-			            "originalLanguage": "EN",
-			            "support": {
-			              "generator": "Change.createInitialFileContent",
-			              "service": "",
-			              "user": "",
-			              "sapui5Version": "1.78.0-SNAPSHOT",
-			              "sourceChangeFileName": "",
-			              "compositeCommand": ""
-			            },
-			            "oDataInformation": {},
-			            "dependentSelector": {},
-			            "validAppVersions": {
-			              "creation": "1.0.0",
-			              "from": "1.0.0"
-			            },
-			            "jsOnly": false,
-			            "variantReference": "id_1589359343056_37",
-			            "appDescriptorChange": false
-			          }
-			        ],
-			        "variantChanges": {
-			          "setExecuteOnSelect": [
-			            {
-			              "fileName": "id_1589359343065_39_setExecuteOnSelect",
-			              "fileType": "ctrl_variant_change",
-			              "changeType": "setExecuteOnSelect",
-			              "moduleName": "",
-			              "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
-			              "packageName": "$TMP",
-			              "content": {
-			                "executeOnSelect": true
-			              },
-			              "selector": {
-			                "id": "id_1589359343056_37",
-			                "idIsLocal": false
-			              },
-			              "layer": "USER",
-			              "texts": {},
-			              "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
-			              "projectId": "sap.ui.mdc.sample.filterbar.sample1",
-			              "creation": "2020-05-13T08:42:23.104Z",
-			              "originalLanguage": "EN",
-			              "support": {
-			                "generator": "Change.createInitialFileContent",
-			                "service": "",
-			                "user": "",
-			                "sapui5Version": "1.78.0-SNAPSHOT",
-			                "sourceChangeFileName": "",
-			                "compositeCommand": ""
-			              },
-			              "oDataInformation": {},
-			              "dependentSelector": {},
-			              "validAppVersions": {
-			                "creation": "1.0.0",
-			                "from": "1.0.0"
-			              },
-			              "jsOnly": false,
-			              "variantReference": "",
-			              "appDescriptorChange": false
-			            }
-			          ]
-			        }
-			      }
-			    ],
-			    "defaultVariant": "VMId"
+				"variantManagementChanges": {
+				  "setDefault": [
+					{
+					  "fileName": "id_1589358940494_34_setDefault",
+					  "fileType": "ctrl_variant_management_change",
+					  "changeType": "setDefault",
+					  "moduleName": "",
+					  "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
+					  "packageName": "$TMP",
+					  "content": {
+						"defaultVariant": "id_1589358930278_29"
+					  },
+					  "selector": {
+						"id": "VMId",
+						"idIsLocal": false
+					  },
+					  "layer": "USER",
+					  "texts": {},
+					  "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
+					  "projectId": "sap.ui.mdc.sample.filterbar.sample1",
+					  "creation": "2020-05-13T08:35:40.526Z",
+					  "originalLanguage": "EN",
+					  "support": {
+						"generator": "Change.createInitialFileContent",
+						"service": "",
+						"user": "",
+						"sapui5Version": "1.78.0-SNAPSHOT",
+						"sourceChangeFileName": "",
+						"compositeCommand": ""
+					  },
+					  "oDataInformation": {},
+					  "dependentSelector": {},
+					  "validAppVersions": {
+						"creation": "1.0.0",
+						"from": "1.0.0"
+					  },
+					  "jsOnly": false,
+					  "variantReference": "",
+					  "appDescriptorChange": false
+					},
+					{
+					  "fileName": "id_1589360653047_29_setDefault",
+					  "fileType": "ctrl_variant_management_change",
+					  "changeType": "setDefault",
+					  "moduleName": "",
+					  "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
+					  "packageName": "$TMP",
+					  "content": {
+						"defaultVariant": "id_1589359343056_37"
+					  },
+					  "selector": {
+						"id": "VMId",
+						"idIsLocal": false
+					  },
+					  "layer": "USER",
+					  "texts": {},
+					  "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
+					  "projectId": "sap.ui.mdc.sample.filterbar.sample1",
+					  "creation": "2020-05-13T09:04:13.081Z",
+					  "originalLanguage": "EN",
+					  "support": {
+						"generator": "Change.createInitialFileContent",
+						"service": "",
+						"user": "",
+						"sapui5Version": "1.78.0-SNAPSHOT",
+						"sourceChangeFileName": "",
+						"compositeCommand": ""
+					  },
+					  "oDataInformation": {},
+					  "dependentSelector": {},
+					  "validAppVersions": {
+						"creation": "1.0.0",
+						"from": "1.0.0"
+					  },
+					  "jsOnly": false,
+					  "variantReference": "",
+					  "appDescriptorChange": false
+					},
+					{
+					  "fileName": "id_1589364271621_33_setDefault",
+					  "fileType": "ctrl_variant_management_change",
+					  "changeType": "setDefault",
+					  "moduleName": "",
+					  "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
+					  "packageName": "$TMP",
+					  "content": {
+						"defaultVariant": "VMId"
+					  },
+					  "selector": {
+						"id": "VMId",
+						"idIsLocal": false
+					  },
+					  "layer": "USER",
+					  "texts": {},
+					  "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
+					  "projectId": "sap.ui.mdc.sample.filterbar.sample1",
+					  "creation": "2020-05-13T10:04:31.647Z",
+					  "originalLanguage": "EN",
+					  "support": {
+						"generator": "Change.createInitialFileContent",
+						"service": "",
+						"user": "",
+						"sapui5Version": "1.78.0-SNAPSHOT",
+						"sourceChangeFileName": "",
+						"compositeCommand": ""
+					  },
+					  "oDataInformation": {},
+					  "dependentSelector": {},
+					  "validAppVersions": {
+						"creation": "1.0.0",
+						"from": "1.0.0"
+					  },
+					  "jsOnly": false,
+					  "variantReference": "",
+					  "appDescriptorChange": false
+					}
+				  ]
+				},
+				"variants": [
+				  {
+					"content": {
+					  "fileName": "VMId",
+					  "variantManagementReference": "VMId",
+					  "content": {
+						"title": "Standard",
+						"favorite": true,
+						"visible": true,
+						"executeOnSelect": true
+					  },
+					  "support": {
+						"user": "SAP"
+					  }
+					},
+					"variantChanges": {
+					  "setExecuteOnSelect": [
+						{
+						  "fileName": "id_1589364271571_32_setExecuteOnSelect",
+						  "fileType": "ctrl_variant_change",
+						  "changeType": "setExecuteOnSelect",
+						  "moduleName": "",
+						  "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
+						  "packageName": "$TMP",
+						  "content": {
+							"executeOnSelect": true
+						  },
+						  "selector": {
+							"id": "VMId",
+							"idIsLocal": false
+						  },
+						  "layer": "USER",
+						  "texts": {},
+						  "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
+						  "projectId": "sap.ui.mdc.sample.filterbar.sample1",
+						  "creation": "2020-05-13T10:04:31.646Z",
+						  "originalLanguage": "EN",
+						  "support": {
+							"generator": "Change.createInitialFileContent",
+							"service": "",
+							"user": "",
+							"sapui5Version": "1.78.0-SNAPSHOT",
+							"sourceChangeFileName": "",
+							"compositeCommand": ""
+						  },
+						  "oDataInformation": {},
+						  "dependentSelector": {},
+						  "validAppVersions": {
+							"creation": "1.0.0",
+							"from": "1.0.0"
+						  },
+						  "jsOnly": false,
+						  "variantReference": "",
+						  "appDescriptorChange": false
+						}
+					  ]
+					},
+					"controlChanges": []
+				  },
+				  {
+					"content": {
+					  "fileName": "id_1589358930278_29",
+					  "fileType": "ctrl_variant",
+					  "variantManagementReference": "VMId",
+					  "variantReference": "VMId",
+					  "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
+					  "packageName": "$TMP",
+					  "content": {
+						"title": "Standard.1",
+						"favorite": true,
+						"visible": true,
+						"executeOnSelect": true
+					  },
+					  "self": "apps/sap.ui.mdc.sample.filterbar.sample1/variants/id_1589358930278_29.ctrl_variant",
+					  "layer": "USER",
+					  "texts": {},
+					  "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/variants/",
+					  "creation": "2020-05-13T08:35:30.309Z",
+					  "originalLanguage": "EN",
+					  "conditions": {},
+					  "support": {
+						"generator": "Change.createInitialFileContent",
+						"service": "",
+						"user": "",
+						"sapui5Version": "1.78.0-SNAPSHOT"
+					  },
+					  "validAppVersions": {}
+					},
+					"controlChanges": [
+					  {
+						"fileName": "id_1589436772046_35_addCondition",
+						"fileType": "change",
+						"changeType": "addCondition",
+						"moduleName": "",
+						"reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
+						"packageName": "$TMP",
+						"content": {
+						  "name": "Category",
+						  "condition": {
+							"operator": "EQ",
+							"values": [
+							  "sss"
+							],
+							"validated": "NotValidated"
+						  }
+						},
+						"selector": {
+						  "id": "IDView--testFilterBar",
+						  "idIsLocal": true
+						},
+						"layer": "USER",
+						"texts": {},
+						"namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
+						"projectId": "sap.ui.mdc.sample.filterbar.sample1",
+						"creation": "2020-05-14T06:12:57.954Z",
+						"originalLanguage": "EN",
+						"support": {
+						  "generator": "Change.createInitialFileContent",
+						  "service": "",
+						  "user": "",
+						  "sapui5Version": "1.78.0-SNAPSHOT",
+						  "sourceChangeFileName": "",
+						  "compositeCommand": ""
+						},
+						"oDataInformation": {},
+						"dependentSelector": {},
+						"validAppVersions": {
+						  "creation": "1.0.0",
+						  "from": "1.0.0"
+						},
+						"jsOnly": false,
+						"variantReference": "id_1589358930278_29",
+						"appDescriptorChange": false
+					  },
+					  {
+						"fileName": "id_1589436775460_36_addCondition",
+						"fileType": "change",
+						"changeType": "addCondition",
+						"moduleName": "",
+						"reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
+						"packageName": "$TMP",
+						"content": {
+						  "name": "Name",
+						  "condition": {
+							"operator": "EQ",
+							"values": [
+							  "one"
+							],
+							"validated": "NotValidated"
+						  }
+						},
+						"selector": {
+						  "id": "IDView--testFilterBar",
+						  "idIsLocal": true
+						},
+						"layer": "USER",
+						"texts": {},
+						"namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
+						"projectId": "sap.ui.mdc.sample.filterbar.sample1",
+						"creation": "2020-05-14T06:12:57.955Z",
+						"originalLanguage": "EN",
+						"support": {
+						  "generator": "Change.createInitialFileContent",
+						  "service": "",
+						  "user": "",
+						  "sapui5Version": "1.78.0-SNAPSHOT",
+						  "sourceChangeFileName": "",
+						  "compositeCommand": ""
+						},
+						"oDataInformation": {},
+						"dependentSelector": {},
+						"validAppVersions": {
+						  "creation": "1.0.0",
+						  "from": "1.0.0"
+						},
+						"jsOnly": false,
+						"variantReference": "id_1589358930278_29",
+						"appDescriptorChange": false
+					  }
+					],
+					"variantChanges": {
+					  "setExecuteOnSelect": [
+						{
+						  "fileName": "id_1589358930285_30_setExecuteOnSelect",
+						  "fileType": "ctrl_variant_change",
+						  "changeType": "setExecuteOnSelect",
+						  "moduleName": "",
+						  "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
+						  "packageName": "$TMP",
+						  "content": {
+							"executeOnSelect": true
+						  },
+						  "selector": {
+							"id": "id_1589358930278_29",
+							"idIsLocal": false
+						  },
+						  "layer": "USER",
+						  "texts": {},
+						  "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
+						  "projectId": "sap.ui.mdc.sample.filterbar.sample1",
+						  "creation": "2020-05-13T08:35:30.310Z",
+						  "originalLanguage": "EN",
+						  "support": {
+							"generator": "Change.createInitialFileContent",
+							"service": "",
+							"user": "",
+							"sapui5Version": "1.78.0-SNAPSHOT",
+							"sourceChangeFileName": "",
+							"compositeCommand": ""
+						  },
+						  "oDataInformation": {},
+						  "dependentSelector": {},
+						  "validAppVersions": {
+							"creation": "1.0.0",
+							"from": "1.0.0"
+						  },
+						  "jsOnly": false,
+						  "variantReference": "",
+						  "appDescriptorChange": false
+						}
+					  ]
+					}
+				  },
+				  {
+					"content": {
+					  "fileName": "id_1589359343056_37",
+					  "fileType": "ctrl_variant",
+					  "variantManagementReference": "VMId",
+					  "variantReference": "VMId",
+					  "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
+					  "packageName": "$TMP",
+					  "content": {
+						"title": "Standard.1.1",
+						"favorite": true,
+						"visible": true,
+						"executeOnSelect": false
+					  },
+					  "self": "apps/sap.ui.mdc.sample.filterbar.sample1/variants/id_1589359343056_37.ctrl_variant",
+					  "layer": "USER",
+					  "texts": {},
+					  "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/variants/",
+					  "creation": "2020-05-13T08:42:23.102Z",
+					  "originalLanguage": "EN",
+					  "conditions": {},
+					  "support": {
+						"generator": "Change.createInitialFileContent",
+						"service": "",
+						"user": "",
+						"sapui5Version": "1.78.0-SNAPSHOT"
+					  },
+					  "validAppVersions": {}
+					},
+					"controlChanges": [
+					  {
+						"fileName": "id_1589359343056_38_addCondition",
+						"fileType": "change",
+						"changeType": "addCondition",
+						"moduleName": "",
+						"reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
+						"packageName": "$TMP",
+						"content": {
+						  "name": "Category",
+						  "condition": {
+							"operator": "EQ",
+							"values": [
+							  "111"
+							],
+							"validated": "NotValidated"
+						  }
+						},
+						"selector": {
+						  "id": "IDView--testFilterBar",
+						  "idIsLocal": true
+						},
+						"layer": "USER",
+						"texts": {},
+						"namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
+						"projectId": "sap.ui.mdc.sample.filterbar.sample1",
+						"creation": "2020-05-13T08:42:23.103Z",
+						"originalLanguage": "EN",
+						"support": {
+						  "generator": "Change.createInitialFileContent",
+						  "service": "",
+						  "user": "",
+						  "sapui5Version": "1.78.0-SNAPSHOT",
+						  "sourceChangeFileName": "id_1589359328880_33_addCondition",
+						  "compositeCommand": ""
+						},
+						"oDataInformation": {},
+						"dependentSelector": {},
+						"validAppVersions": {
+						  "creation": "1.0.0",
+						  "from": "1.0.0"
+						},
+						"jsOnly": false,
+						"variantReference": "id_1589359343056_37",
+						"appDescriptorChange": false
+					  },
+					  {
+						"fileName": "id_1589363538618_31_removeCondition",
+						"fileType": "change",
+						"changeType": "removeCondition",
+						"moduleName": "",
+						"reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
+						"packageName": "$TMP",
+						"content": {
+						  "name": "Category",
+						  "condition": {
+							"operator": "EQ",
+							"values": [
+							  "111"
+							],
+							"validated": "NotValidated"
+						  }
+						},
+						"selector": {
+						  "id": "IDView--testFilterBar",
+						  "idIsLocal": true
+						},
+						"layer": "USER",
+						"texts": {},
+						"namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
+						"projectId": "sap.ui.mdc.sample.filterbar.sample1",
+						"creation": "2020-05-13T09:52:42.232Z",
+						"originalLanguage": "EN",
+						"support": {
+						  "generator": "Change.createInitialFileContent",
+						  "service": "",
+						  "user": "",
+						  "sapui5Version": "1.78.0-SNAPSHOT",
+						  "sourceChangeFileName": "",
+						  "compositeCommand": ""
+						},
+						"oDataInformation": {},
+						"dependentSelector": {},
+						"validAppVersions": {
+						  "creation": "1.0.0",
+						  "from": "1.0.0"
+						},
+						"jsOnly": false,
+						"variantReference": "id_1589359343056_37",
+						"appDescriptorChange": false
+					  },
+					  {
+						"fileName": "id_1589363548834_32_addCondition",
+						"fileType": "change",
+						"changeType": "addCondition",
+						"moduleName": "",
+						"reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
+						"packageName": "$TMP",
+						"content": {
+						  "name": "Name",
+						  "condition": {
+							"operator": "EQ",
+							"values": [
+							  "name"
+							],
+							"validated": "NotValidated"
+						  }
+						},
+						"selector": {
+						  "id": "IDView--testFilterBar",
+						  "idIsLocal": true
+						},
+						"layer": "USER",
+						"texts": {},
+						"namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
+						"projectId": "sap.ui.mdc.sample.filterbar.sample1",
+						"creation": "2020-05-13T09:52:42.233Z",
+						"originalLanguage": "EN",
+						"support": {
+						  "generator": "Change.createInitialFileContent",
+						  "service": "",
+						  "user": "",
+						  "sapui5Version": "1.78.0-SNAPSHOT",
+						  "sourceChangeFileName": "",
+						  "compositeCommand": ""
+						},
+						"oDataInformation": {},
+						"dependentSelector": {},
+						"validAppVersions": {
+						  "creation": "1.0.0",
+						  "from": "1.0.0"
+						},
+						"jsOnly": false,
+						"variantReference": "id_1589359343056_37",
+						"appDescriptorChange": false
+					  }
+					],
+					"variantChanges": {
+					  "setExecuteOnSelect": [
+						{
+						  "fileName": "id_1589359343065_39_setExecuteOnSelect",
+						  "fileType": "ctrl_variant_change",
+						  "changeType": "setExecuteOnSelect",
+						  "moduleName": "",
+						  "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
+						  "packageName": "$TMP",
+						  "content": {
+							"executeOnSelect": true
+						  },
+						  "selector": {
+							"id": "id_1589359343056_37",
+							"idIsLocal": false
+						  },
+						  "layer": "USER",
+						  "texts": {},
+						  "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/changes/",
+						  "projectId": "sap.ui.mdc.sample.filterbar.sample1",
+						  "creation": "2020-05-13T08:42:23.104Z",
+						  "originalLanguage": "EN",
+						  "support": {
+							"generator": "Change.createInitialFileContent",
+							"service": "",
+							"user": "",
+							"sapui5Version": "1.78.0-SNAPSHOT",
+							"sourceChangeFileName": "",
+							"compositeCommand": ""
+						  },
+						  "oDataInformation": {},
+						  "dependentSelector": {},
+						  "validAppVersions": {
+							"creation": "1.0.0",
+							"from": "1.0.0"
+						  },
+						  "jsOnly": false,
+						  "variantReference": "",
+						  "appDescriptorChange": false
+						}
+					  ]
+					}
+				  }
+				],
+				"defaultVariant": "VMId"
 			  }
 			};
 

@@ -1,5 +1,5 @@
 <core:View xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:l="sap.ui.layout"
-		   xmlns:mdc="sap.ui.mdc" xmlns:mdcField="sap.ui.mdc.field" xmlns:mdcLink="sap.ui.mdc.link" 
+		   xmlns:mdc="sap.ui.mdc" xmlns:mdcField="sap.ui.mdc.field" xmlns:mdcLink="sap.ui.mdc.link"
 		   controllerName="sap.ui.mdc.acc.link.LinkAccessibility">
 
 	<App defaultTransitionName="show">

@@ -117,9 +117,9 @@ sap.ui.define([
 		beforeEach: function() {
 			oFieldHelp = new ListFieldHelp("F1-H", {
 				items: [new ListItem({text: "Item1", additionalText: "Text1", key: "I1"}),
-				        new ListItem({text: "Item2", additionalText: "Text2", key: "I2"}),
-				        new ListItem({text: "X-Item3", additionalText: "Text3", key: "I3"})
-				       ],
+						new ListItem({text: "Item2", additionalText: "Text2", key: "I2"}),
+						new ListItem({text: "X-Item3", additionalText: "Text3", key: "I3"})
+					   ],
 				disconnect: _myDisconnectHandler,
 				select: _mySelectHandler,
 				navigate: _myNavigateHandler,

@@ -595,7 +595,7 @@ sap.ui.define([
 
 		this._oObserver.observe(this, {
 			properties: ["display", "editMode", "dataType", "dataTypeFormatOptions", "dataTypeConstraints",
-			             "multipleLines", "maxConditions", "conditions", "delegate"],
+						 "multipleLines", "maxConditions", "conditions", "delegate"],
 			aggregations: ["fieldInfo", "content", "contentEdit", "contentDisplay"],
 			associations: ["fieldHelp", "ariaLabelledBy"]
 		});

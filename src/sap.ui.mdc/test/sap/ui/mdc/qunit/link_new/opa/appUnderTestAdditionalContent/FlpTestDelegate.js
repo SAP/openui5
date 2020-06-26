@@ -2,11 +2,11 @@
  * ! ${copyright}
  */
 sap.ui.define([
-    "sap/ui/mdc/flp/FlpLinkDelegate"
+	"sap/ui/mdc/flp/FlpLinkDelegate"
 ], function(LinkDelegate) {
-    "use strict";
+	"use strict";
 
-    var SampleLinkDelegate = Object.assign({}, LinkDelegate);
+	var SampleLinkDelegate = Object.assign({}, LinkDelegate);
 
 	SampleLinkDelegate.beforeNavigationCallback = function(oPayload, oEvent) {
 		return new Promise(function(resolve) {
@@ -16,5 +16,5 @@ sap.ui.define([
 		});
 	};
 
-    return SampleLinkDelegate;
+	return SampleLinkDelegate;
 }, /* bExport= */ true);

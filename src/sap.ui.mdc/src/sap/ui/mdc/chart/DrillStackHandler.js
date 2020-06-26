@@ -165,7 +165,7 @@ sap.ui.define([
 				//TODO: Check if still valid
 				// If dimension is not filterable and datapoints are selected then skip
 				/*if (!oViewField.filterable && this._oChart.getSelectedDataPoints().count > 0) {
-					    continue;
+						continue;
 				}*/
 
 				oListItem = new StandardListItem({
@@ -240,7 +240,7 @@ sap.ui.define([
 					if (dim.dimension.length > 0 && typeof oInnerChart.getDimensionByName(dim.dimension[dim.dimension.length - 1]) != 'undefined') {
 						// show breadcrumbs
 						/*if (this.getShowDrillBreadcrumbs()) {
-						    this._oDrillBreadcrumbs.setVisible(true);
+							this._oDrillBreadcrumbs.setVisible(true);
 						}*/
 						// use the last entry of each drill-stack entry to built
 						// up the drill-path

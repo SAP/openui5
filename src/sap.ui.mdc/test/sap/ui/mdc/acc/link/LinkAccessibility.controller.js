@@ -3,7 +3,7 @@ sap.ui.define([
 ], function(Controller, RuntimeAuthoring) {
 	"use strict";
 
-    var LinkAccessibility = Controller.extend("sap.ui.mdc.acc.link.LinkAccessibility", {
+	var LinkAccessibility = Controller.extend("sap.ui.mdc.acc.link.LinkAccessibility", {
 		onInit: function() {
 			this.getView().bindElement("/ProductCollection('38094020.2')");
 		},
