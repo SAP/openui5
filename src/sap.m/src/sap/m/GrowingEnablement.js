@@ -671,6 +671,14 @@ sap.ui.define([
 
 					oTrigger.$().removeClass("sapMGrowingListBusyIndicatorVisible");
 					oControl.$("triggerList").css("display", "");
+
+					// adapt trigger button width if dummy col is rendered
+					if (oControl.isA("sap.m.Table") && !oControl.hasPopin() && oControl.shouldRenderDummyColumn()) {
+						var oDummyColDomRef = oControl.getDomRef("tblHeadDummyCol");
+						var iWidth = oControl.getDomRef().clientWidth - oDummyColDomRef.clientWidth;
+						oTriggerDomRef.style.width = iWidth + "px";
+
+					}
 				}
 
 				// store the last item count to be able to focus to the newly added item when the growing button is pressed

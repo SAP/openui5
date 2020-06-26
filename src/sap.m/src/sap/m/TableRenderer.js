@@ -49,6 +49,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 			cellTag = (type == "Head") ? "th" : "td",
 			groupTag = "t" + type.toLowerCase(),
 			aColumns = oTable.getColumns(),
+			bShouldRenderDummyColumn = oTable.shouldRenderDummyColumn(),
 			bHeaderHidden,
 			createBlankCell = function(cls, id, bAriaHidden) {
 				rm.openStart(cellTag, id && idPrefix + id);
@@ -61,6 +62,15 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 				}
 				bAriaHidden && rm.attr("aria-hidden", "true");
 				rm.class(clsPrefix + cls);
+
+				if (type === "Foot") {
+					if (cls === "HighlightCol") {
+						rm.class("sapMTableHighlightFooterCell");
+					} else if (cls === "NavigatedCol") {
+						rm.class("sapMTableNavigatedFooterCell");
+					}
+				}
+
 				rm.openEnd();
 				rm.close(cellTag);
 				index++;
@@ -94,9 +104,22 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 			});
 		}
 
-		rm.openStart(groupTag).openEnd();
+		rm.openStart(groupTag);
+
+		if (oTable._hasFooter && type === "Foot") {
+			rm.class("sapMTableTFoot");
+
+			if (oTable.hasPopin()) {
+				rm.class("sapMListTblHasPopin");
+			}
+		}
+
+		rm.openEnd();
 
 		rm.openStart("tr", oTable.addNavSection(idPrefix + type + "er"));
+		if (type !== "Head" && bShouldRenderDummyColumn) {
+			rm.class("sapMListTblRowHasDummyCell");
+		}
 		rm.attr("tabindex", -1);
 
 		if (bHeaderHidden) {
@@ -209,6 +232,10 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 			oColumn.setIndex(index++);
 		});
 
+		if (hasPopin && bShouldRenderDummyColumn) {
+			createBlankCell("DummyCol", type + "DummyCol", true);
+		}
+
 		createBlankCell("NavCol", type + "Nav", !oTable._iItemNeedsColumn);
 
 		if (iModeOrder == 1) {
@@ -216,6 +243,10 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 		}
 
 		createBlankCell("NavigatedCol", type + "Navigated", true);
+
+		if (!hasPopin && bShouldRenderDummyColumn) {
+			createBlankCell("DummyCol", type + "DummyCol", true);
+		}
 
 		rm.close("tr");
 		rm.close(groupTag);

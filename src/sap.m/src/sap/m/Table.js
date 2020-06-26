@@ -340,6 +340,10 @@ sap.ui.define([
 	Table.prototype.onBeforeRendering = function() {
 		ListBase.prototype.onBeforeRendering.call(this);
 
+		if (this.getFixedLayout()) {
+			this._bHasDynamicWidthCol = this._hasDynamicWidthColumn();
+		}
+
 		if (this.getAutoPopinMode()) {
 			this._configureAutoPopin();
 			this._bAutoPopinMode = true;
@@ -352,6 +356,23 @@ sap.ui.define([
 
 		this._ensureColumnsMedia();
 		this._notifyColumns("ItemsRemoved");
+	};
+
+	/*
+	 * Returns whether a visible column has dynamic width or not
+	 * @protected
+	 */
+	Table.prototype._hasDynamicWidthColumn = function(oColumn, sColumnWidth) {
+		if (!this.bRenderDummyColumn || !this.getFixedLayout()) {
+			return true;
+		}
+
+		return this.getColumns().some(function(oCurrentColumn) {
+			if (oCurrentColumn.getVisible()) {
+				var sWidth = oColumn && oColumn.getId() === oCurrentColumn.getId() ? sColumnWidth : oCurrentColumn.getWidth();
+				return !sWidth || sWidth === "auto";
+			}
+		});
 	};
 
 	Table.prototype._ensureColumnsMedia = function() {
@@ -629,7 +650,7 @@ sap.ui.define([
 
 		// update the visible column count and colspan
 		// highlight, navigation and navigated indicator columns are getting rendered always
-		this._colCount = aVisibleColumns.length + 3 + !!ListBaseRenderer.ModeOrder[this.getMode()];
+		this._colCount = aVisibleColumns.length + !!ListBaseRenderer.ModeOrder[this.getMode()];
 		this.$("tblBody").find(".sapMGHLICell").attr("colspan", this.getColSpan());
 		this.$("nodata-text").attr("colspan", this.getColCount());
 
@@ -660,6 +681,10 @@ sap.ui.define([
 	// updates the type column visibility and sets the aria flag
 	Table.prototype._setTypeColumnVisibility = function(bVisible) {
 		jQuery(this.getTableDomRef()).toggleClass("sapMListTblHasNav", bVisible);
+
+		if (this.getAutoPopinMode()) {
+			this._configureAutoPopin(true);
+		}
 	};
 
 	// notify all columns with given action and param
@@ -745,7 +770,8 @@ sap.ui.define([
 	 * @protected
 	 */
 	Table.prototype.getColSpan = function() {
-		return (this._colCount || 1 ) - 2;
+		var iInternalTDs = this.shouldRenderDummyColumn() ? 3 : 2;
+		return (this._colCount || 1 ) - iInternalTDs;
 	};
 
 	/*
@@ -754,6 +780,14 @@ sap.ui.define([
 	 */
 	Table.prototype.getColCount = function() {
 		return (this._colCount || 0);
+	};
+
+	/*
+	 * Returns whether the dummy column should be rendered.
+	 * @protected
+	 */
+	Table.prototype.shouldRenderDummyColumn = function() {
+		return this.bRenderDummyColumn && this.getFixedLayout() && !this._bHasDynamicWidthCol;
 	};
 
 	/*
@@ -972,6 +1006,10 @@ sap.ui.define([
 		});
 	};
 
+	Table.prototype.onColumnWidthChanged = function(oColumn, sWidth) {
+		this._bHasDynamicWidthCol = this._hasDynamicWidthColumn(oColumn, sWidth);
+	};
+
 	Table.prototype.onColumnRecalculateAutoPopin = function(oColumn, bRecalculate) {
 		if (this.getAutoPopinMode()) {
 			this._configureAutoPopin(bRecalculate);
@@ -1003,7 +1041,7 @@ sap.ui.define([
 			}
 		}
 
-		return false;
+		return this.shouldRenderDummyColumn();
 	};
 
 	/**
@@ -1051,6 +1089,7 @@ sap.ui.define([
 			// 6.5 is a fallback in case items are not found initially
 			// selectionControl + navCol + HighlightCol + NavigatedIndicatorCol = ~6.5rem
 			var fAccumulatedWidth = this._getInitialAccumulatedWidth(aItems) || 6.5;
+			fAccumulatedWidth += this.shouldRenderDummyColumn() ? 1 : 0;
 			fAccumulatedWidth = Table._updateAccumulatedWidth(aHighCols, aHighCols.length > 0, fAccumulatedWidth);
 			fAccumulatedWidth = Table._updateAccumulatedWidth(aMedCols, aHighCols.length === 0 && aMedCols.length > 0, fAccumulatedWidth);
 			Table._updateAccumulatedWidth(aLowCols, aHighCols.length === 0 && aMedCols.length === 0 && aLowCols.length > 0, fAccumulatedWidth);
@@ -1077,7 +1116,8 @@ sap.ui.define([
 		var iHighlightWidth = oItemWithHighlight ? 0.375 : 0;
 
 		// check if selection control is available
-		var iSelectionWidth = this.getMode() === "MultiSelect" || this.getMode() === "Delete" ? 3 : 0;
+		var sMode = this.getMode(),
+			iSelectionWidth = sMode === "MultiSelect" || sMode === "Delete" || sMode === "SingleSelect" || sMode === "SingleSelectLeft" ? 3 : 0;
 
 		// check if actions are available on the item
 		var oItemIsActionable = aItems.find(function(oItem) {
@@ -1131,6 +1171,8 @@ sap.ui.define([
 			// overwrite column minScreenWidth property only if demandPopin is set to true
 			if (aCols[i].getDemandPopin()) {
 				aCols[i].setMinScreenWidth(fAutoPopinWidth + "rem");
+			} else {
+				aCols[i].setMinScreenWidth();
 			}
 		}
 		return fAutoPopinWidth;

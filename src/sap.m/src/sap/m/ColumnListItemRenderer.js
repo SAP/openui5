@@ -132,6 +132,10 @@ sap.ui.define([
 				rm.class("sapMListTblRowAlternate");
 			}
 		}
+
+		if (oTable && oTable.shouldRenderDummyColumn()) {
+			rm.class("sapMListTblRowHasDummyCell");
+		}
 	};
 
 
@@ -226,6 +230,15 @@ sap.ui.define([
 		}, this);
 	};
 
+	ColumnListItemRenderer.renderDummyCell = function(rm, oLI) {
+		rm.openStart("td");
+		rm.class("sapMListTblDummyCell");
+		rm.attr("role", "presentation");
+		rm.attr("aria-hidden", "true");
+		rm.openEnd();
+		rm.close("td");
+	};
+
 	ColumnListItemRenderer.applyAriaLabelledBy = function(oHeader, oCell) {
 		/* add the header as an aria-labelled by association for the cells if it does not already exists */
 		/* only set the header text to the aria-labelledby association if the header is a textual control and visible */
@@ -266,7 +279,7 @@ sap.ui.define([
 
 		// cell
 		rm.openStart("td", oLI.getId() + "-subcell");
-		rm.attr("colspan", oTable.getColSpan());
+		rm.attr("colspan", oTable.shouldRenderDummyColumn() ? oTable.getColSpan() + 1 : oTable.getColSpan());
 
 		var sPopinLayout = oTable.getPopinLayout();
 		// overwrite sPopinLayout=Block to avoid additional margin-top in IE and Edge
@@ -350,6 +363,22 @@ sap.ui.define([
 	 * @param {sap.m.ListItemBase} [oLI] List item
 	 */
 	ColumnListItemRenderer.addLegacyOutlineClass = function(rm, oLI) {
+	};
+
+	ColumnListItemRenderer.renderContentLatter = function(rm, oLI) {
+		var oTable = oLI.getTable();
+
+		if (oTable && oTable.shouldRenderDummyColumn()) {
+			if (!oTable.hasPopin()) {
+				ListItemBaseRenderer.renderContentLatter.apply(this, arguments);
+				this.renderDummyCell(rm, oLI);
+			} else {
+				this.renderDummyCell(rm, oLI);
+				ListItemBaseRenderer.renderContentLatter.apply(this, arguments);
+			}
+		} else {
+			ListItemBaseRenderer.renderContentLatter.apply(this, arguments);
+		}
 	};
 
 	return ColumnListItemRenderer;

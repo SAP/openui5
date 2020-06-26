@@ -293,6 +293,11 @@ html[data-sap-ui-browser^="sf"] .sapMSticky > .sapMListTbl {
 	font-weight: bold;
 }
 
+.sapMTableTFoot:not(.sapMListTblHasPopin) .sapMListTblDummyCol {
+	background-color: @sapUiBaseBG;
+	border-color: @sapUiBaseBG;
+}
+
 /* grid layout for popin row */
 .sapMListTblSubCntGridSmall {
 	display: grid;
@@ -390,6 +395,100 @@ html[data-sap-ui-browser^="sf"] .sapMSticky > .sapMListTbl {
 
 [aria-sort=descending] > .sapMColumnHeader::after {
 	content: "\e1fc";
+}
+
+/* Focus border workaround for dummy column */
+.sapMTableTBody:not(.sapMListTblHasPopin) .sapMListTblDummyCell,
+.sapMTableTFoot:not(.sapMListTblHasPopin) .sapMListTblDummyCol {
+	pointer-events: none;
+}
+
+.sapMTableTBody:not(.sapMListTblHasPopin) > .sapMListTblRowHasDummyCell.sapMLIBFocusable:focus,
+.sapMTableTFoot:not(.sapMListTblHasPopin) > .sapMListTblRowHasDummyCell.sapMLIBFocusable:focus {
+	outline: none;
+
+	.sapMListTblSelCol,
+	.sapMListTblCell,
+	.sapMListTblNavCol,
+	.sapMGHLICell,
+	.sapMTableHighlightFooterCell,
+	.sapMTableNavigatedFooterCell {
+		position: relative;
+	}
+
+	.sapMListTblHighlightCell::after,
+	.sapMListTblSelCol::after,
+	.sapMListTblCell::after,
+	.sapMListTblNavCol::after,
+	.sapMListTblNavigatedCell::after,
+	.sapMGHLICell::after,
+	.sapMTableHighlightFooterCell::after,
+	.sapMTableNavigatedFooterCell::after {
+		content: "";
+		position: absolute;
+		// ~ is used to escape "-" else the calc does not result in correct value
+		// -1px height is done so that the focus border is clear visible on all sides
+		height: calc(100% ~"-" 1px);
+		width: calc(100% ~"-" 1px);
+		top: 0;
+		left: 0;
+		border-top: 1px dotted @sapUiContentFocusColor;
+		border-bottom: 1px dotted @sapUiContentFocusColor;
+		box-sizing: border-box;
+	}
+
+	td:not(.sapMGHLICell):nth-child(2)::after {
+		border-left: 1px dotted @sapUiContentFocusColor;
+	}
+
+	td:not(.sapMGHLICell):nth-last-child(4)::after {
+		border-right: 1px dotted @sapUiContentFocusColor;
+	}
+
+	.sapMGHLICell::after {
+		border-left: 1px dotted @sapUiContentFocusColor;
+		border-right: 1px dotted @sapUiContentFocusColor;
+	}
+}
+
+.sapMListHighlight > .sapMTableTBody:not(.sapMListTblHasPopin) > .sapMListTblRowHasDummyCell.sapMLIBFocusable:focus,
+.sapMListHighlight > .sapMTableTFoot:not(.sapMListTblHasPopin) > .sapMListTblRowHasDummyCell.sapMLIBFocusable:focus {
+	td:first-child::after {
+		border-left: 1px dotted @sapUiContentFocusColor;
+	}
+
+	td:nth-child(2)::after {
+		border-left: none;
+	}
+}
+
+.sapMListTblHasNav:not(.sapMListNavigated):not(.sapMListModeDelete) > .sapMTableTBody:not(.sapMListTblHasPopin) > .sapMListTblRowHasDummyCell.sapMLIBFocusable:focus,
+.sapMListTblHasNav:not(.sapMListNavigated):not(.sapMListModeDelete) > .sapMTableTFoot:not(.sapMListTblHasPopin) > .sapMListTblRowHasDummyCell.sapMLIBFocusable:focus,
+.sapMListModeDelete:not(.sapMListNavigated) > .sapMTableTBody:not(.sapMListTblHasPopin) > .sapMListTblRowHasDummyCell.sapMLIBFocusable:focus,
+.sapMListModeDelete:not(.sapMListNavigated) > .sapMTableTFoot:not(.sapMListTblHasPopin) > .sapMListTblRowHasDummyCell.sapMLIBFocusable:focus {
+	td:not(.sapMGHLICell):nth-last-child(3)::after,
+	.sapMGHLICell + .sapMListTblNavCol::after {
+		border-right: 1px dotted @sapUiContentFocusColor;
+	}
+
+	td:not(.sapMGHLICell):nth-last-child(4)::after,
+	.sapMGHLICell::after {
+		border-right: none;
+	}
+}
+
+.sapMListNavigated > .sapMTableTBody:not(.sapMListTblHasPopin) > .sapMListTblRowHasDummyCell.sapMLIBFocusable:focus,
+.sapMListNavigated > .sapMTableTFoot:not(.sapMListTblHasPopin) > .sapMListTblRowHasDummyCell.sapMLIBFocusable:focus {
+	td:not(.sapMGHLICell):nth-last-child(2)::after,
+	.sapMGHLICell + .sapMListTblNavigatedCol::after {
+		border-right: 1px dotted @sapUiContentFocusColor;
+	}
+
+	td:not(.sapMGHLICell):nth-last-child(4)::after,
+	.sapMGHLICell::after,
+	.sapMGHLICell + .sapMListTblNavCol::after {
+		border-right: none;
+	}
 }
 
 /********** COMPACT DESIGN ************/

@@ -1,8 +1,8 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/util/MockServer",
-	"sap/ui/core/Core",
 	"sap/m/List",
 	"sap/m/GrowingEnablement",
 	"sap/m/Table",
@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/m/CustomListItem",
 	"sap/ui/core/HTML",
 	"sap/m/Page"
-], function(createAndAppendDiv, MockServer, Core, List, GrowingEnablement, Table, Column, ColumnListItem, Text, ODataModel, JSONModel, Sorter, StandardListItem, CustomListItem, HTML, Page) {
+], function(Core, createAndAppendDiv, MockServer, List, GrowingEnablement, Table, Column, ColumnListItem, Text, ODataModel, JSONModel, Sorter, StandardListItem, CustomListItem, HTML, Page) {
 	"use strict";
 	createAndAppendDiv("growing1");
 	createAndAppendDiv("growing2");
@@ -529,6 +529,75 @@ sap.ui.define([
 		assert.notOk(oTable._oGrowingDelegate._aChunk.length, "chunk is cleared as expected, which updates the items as expected in the DOM");
 
 		oTable.destroy();
+	});
+
+	QUnit.module("Dummy Column", {
+		beforeEach: function() {
+			var data = [
+				{firstName: "Peter", lastName: "Mueller"},
+				{firstName: "Petra", lastName: "Maier"},
+				{firstName: "Thomas", lastName: "Smith"},
+				{firstName: "John", lastName: "Williams"},
+				{firstName: "Maria", lastName: "Jones"}
+			];
+
+			var oModel = new JSONModel();
+			oModel.setData(data);
+
+			this.oTable = new Table({
+				growing: true,
+				growingThreshold: 2,
+				columns: [
+					new Column({width: "20rem"}),
+					new Column({width: "30rem"})
+				]
+			});
+
+			this.oTable.setModel(oModel);
+
+			this.oTable.bindItems({
+				path: "/",
+				template : new ColumnListItem({
+					cells: [
+						new Text({text: "{lastName}"}),
+						new Text({text: "{firstName}"})
+					]
+				})
+			});
+
+			// enable dummy column rendering
+			this.oTable.bRenderDummyColumn = true;
+
+			this.oPage = new Page({
+				title: "Table Page",
+				content: this.oTable
+			});
+
+			this.oPage.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oPage.destroy();
+		}
+	});
+
+	QUnit.test("Trigger button size should be adapted with dummy column is rendered", function(assert) {
+		var oTableDomRef = this.oTable.getDomRef(),
+			oTriggerDomRef = this.oTable.getDomRef("trigger"),
+			oDummyColDomRef = this.oTable.getDomRef("tblHeadDummyCol");
+		assert.equal(oTriggerDomRef.clientWidth, oTableDomRef.clientWidth - oDummyColDomRef.clientWidth, "Trigger button width correctly adapted");
+	});
+
+	QUnit.test("Trigger button size should take the full table width when table has popins and dummy column", function(assert) {
+		var oColumn = this.oTable.getColumns()[1];
+
+		oColumn.setMinScreenWidth("48000px");
+		oColumn.setDemandPopin(true);
+		Core.applyChanges();
+
+		var oTableDomRef = this.oTable.getDomRef(),
+			oTriggerDomRef = this.oTable.getDomRef("trigger");
+		assert.equal(oTableDomRef.clientWidth, oTriggerDomRef.clientWidth, "Table width === Trigger button width");
 	});
 
 });
