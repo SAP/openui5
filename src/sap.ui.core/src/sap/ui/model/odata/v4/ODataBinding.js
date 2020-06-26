@@ -54,6 +54,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.Context} [oContext] - The only context that changed
 	 *
 	 * @abstract
+	 * @function
 	 * @name sap.ui.model.odata.v4.ODataBinding#adjustPredicate
 	 * @private
 	 */
@@ -214,6 +215,7 @@ sap.ui.define([
 	 * @throws {Error} If called with illegal parameters
 	 *
 	 * @abstract
+	 * @function
 	 * @name sap.ui.model.odata.v4.ODataBinding#checkUpdateInternal
 	 * @private
 	 */
