@@ -810,6 +810,23 @@ sap.ui.define([
 		assert.ok(oEventSpySetMarked.callCount === 0, "The method is skipped and the event went to the global KH");
 	});
 
+	QUnit.test("KH: The range should be adjusted correctly when is decreased to go out of the boundaries by pressing SHIFT + ARROW LEFT", function (assert) {
+		// Arrange
+		var oSlider = new RangeSlider({range: [-181, 19], min: -200, max: 200}).placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		qutils.triggerKeydown(oSlider.getDomRef("progress"), KeyCodes.ARROW_LEFT, true, false, false);
+
+		// Assert
+		assert.strictEqual(oSlider.getRange()[0], -200, "first range value should be equal to the start min value");
+		assert.strictEqual(oSlider.getRange()[1], 0, "second range value should be correct");
+
+		// Cleanup
+		oSlider.destroy();
+		oSlider = null;
+	});
+
 	QUnit.module("Events");
 
 	QUnit.test("liveChange trigger should be fired only when the range is actually changed.", function (assert) {
