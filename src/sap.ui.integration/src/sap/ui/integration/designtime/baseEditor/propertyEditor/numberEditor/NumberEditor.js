@@ -4,12 +4,12 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString",
-	"sap/ui/integration/designtime/baseEditor/util/isNil",
+	"sap/base/util/restricted/_isNil",
 	"sap/ui/core/format/NumberFormat"
 ], function (
 	BasePropertyEditor,
 	isValidBindingString,
-	isNil,
+	_isNil,
 	NumberFormat
 ) {
 	"use strict";
@@ -39,7 +39,7 @@ sap.ui.define([
 	});
 
 	NumberEditor.prototype.formatValue = function (sValue) {
-		if (isNil(sValue) || isValidBindingString(sValue, false)) {
+		if (_isNil(sValue) || isValidBindingString(sValue, false)) {
 			return sValue;
 		}
 
