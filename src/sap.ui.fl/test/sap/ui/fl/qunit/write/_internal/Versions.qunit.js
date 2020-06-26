@@ -365,8 +365,9 @@ sap.ui.define([
 
 			return Versions.initialize(mPropertyBag)
 				.then(Versions.discardDraft.bind(undefined, mPropertyBag))
-				.then(function (bDiscardingTookPlace) {
-					assert.equal(bDiscardingTookPlace, false, "no discarding took place");
+				.then(function (oDiscardInfo) {
+					assert.equal(oDiscardInfo.backendChangesDiscarded, false, "no discarding took place");
+					assert.equal(oDiscardInfo.dirtyChangesDiscarded, false, "no discarding took place");
 				});
 		});
 
@@ -394,8 +395,8 @@ sap.ui.define([
 
 			return Versions.initialize(mPropertyBag)
 				.then(Versions.discardDraft.bind(undefined, mPropertyBag))
-				.then(function (bDiscardingTookPlace) {
-					assert.equal(bDiscardingTookPlace, true, "some discarding took place");
+				.then(function (oDiscardInfo) {
+					assert.equal(oDiscardInfo.dirtyChangesDiscarded, true, "some discarding took place");
 					assert.equal(oDeleteStub.callCount, 2, "two changes were deleted");
 				});
 		});
@@ -424,8 +425,8 @@ sap.ui.define([
 
 			return Versions.initialize(mPropertyBag)
 				.then(Versions.discardDraft.bind(undefined, mPropertyBag))
-				.then(function (bDiscardingTookPlace) {
-					assert.equal(bDiscardingTookPlace, true, "discarding took place");
+				.then(function (oDiscardInfo) {
+					assert.equal(oDiscardInfo.dirtyChangesDiscarded, true, "discarding took place");
 					assert.equal(oDeleteStub.callCount, 2, "two changes were deleted");
 				});
 		});
@@ -456,8 +457,9 @@ sap.ui.define([
 
 			return Versions.initialize(mPropertyBag)
 				.then(Versions.discardDraft.bind(undefined, mPropertyBag))
-				.then(function (bDiscardingTookPlace) {
-					assert.equal(bDiscardingTookPlace, true, "some discarding took place");
+				.then(function (oDiscardInfo) {
+					assert.equal(oDiscardInfo.backendChangesDiscarded, true, "some discarding took place");
+					assert.equal(oDiscardInfo.dirtyChangesDiscarded, true, "some discarding took place");
 					assert.equal(oDiscardStub.callCount, 1, "discarding the draft was called");
 					assert.equal(oDeleteStub.callCount, 2, "two changes were deleted");
 				});
