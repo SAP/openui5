@@ -32,7 +32,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The Panel control is used to show <code>items</code> and <code>additionalContent</code>. After providing of the <code>items</code> it is
 	 * supposed that the properties of the item structure is not changed.
-	 * @extends sap.ui.mdc.XMLComposite
+	 * @extends sap.ui.core.XMLComposite
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor

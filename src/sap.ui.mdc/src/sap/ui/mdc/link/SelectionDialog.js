@@ -13,7 +13,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The SelectionDialog control is used to show <code>items</code>.
-	 * @extends sap.ui.mdc.XMLComposite
+	 * @extends sap.ui.core.XMLComposite
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor

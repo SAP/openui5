@@ -13,7 +13,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class Type for <code>items</code> aggregation in <code>Panel</code> control.
-	 * @extends sap.ui.mdc.XMLComposite
+	 * @extends sap.ui.core.XMLComposite
 	 * @version ${version}
 	 * @constructor
 	 * @private

@@ -11,7 +11,7 @@ sap.ui.define(['sap/ui/core/XMLComposite', 'sap/m/Text', 'sap/m/Link', 'sap/m/La
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The ContactDetails control is used to show additional information like for example 'contact details'.
-	 * @extends sap.ui.mdc.XMLComposite
+	 * @extends sap.ui.core.XMLComposite
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor

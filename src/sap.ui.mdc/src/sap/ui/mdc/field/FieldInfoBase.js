@@ -17,7 +17,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 * @class A <code>FieldInfoBase</code> element is a base class that shows any kind of information related to the <code>Field</code> control, for example, navigation targets or contact details.
-	 * @extends sap.ui.core.Element
+	 * @extends sap.ui.mdc.Element
 	 * @version ${version}
 	 * @constructor
 	 * @private

@@ -16,7 +16,7 @@ sap.ui.define([
 	 * The Go button triggers the search event, and the Advanced Filters button shows the filter dialog.<br>
 	 * The <code>FilterBar</code> control creates and handles the filters based on the provided metadata information.
 	 * The metadata information is provided via the {@link sap.ui.mdc.FilterBarDelegate FilterBarDelegate} implementation. This implementation has to be provided by the application.
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.mdc.filterbar.FilterBarBase
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor

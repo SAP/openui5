@@ -12,7 +12,7 @@ sap.ui.define(['sap/m/ColumnListItem', 'sap/m/ColumnListItemRenderer', 'sap/m/La
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 * @class Represents a filter item on the UI.
-	 * @extends sap.ui.layout.VerticalLayout
+	 * @extends sap.m.ColumnListItem
 	 * @constructor
 	 * @private
 	 * @since 1.80.0
