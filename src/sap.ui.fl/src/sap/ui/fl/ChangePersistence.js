@@ -815,24 +815,27 @@ sap.ui.define([
 		if (aPendingActions.length === 1 && aRequests.length === 1 && aPendingActions[0] === "NEW") {
 			var oUriParameters = new UriParameters(window.location.href);
 			var sCondenserEnabled = oUriParameters.get("sap-ui-xx-condense-changes");
-			var oPromise = Promise.resolve(aChangesClone);
-			if (oAppComponent && sCondenserEnabled === "true") {
-				oPromise = Condenser.condense(oAppComponent, aChangesClone);
+			var oCondensedChangesPromise = Promise.resolve(aChangesClone);
+			if (oAppComponent && sCondenserEnabled === "true" && aChangesClone.length > 1) {
+				oCondensedChangesPromise = Condenser.condense(oAppComponent, aChangesClone);
 			}
-			return oPromise.then(function(aCondensedChanges) {
-				var sRequest = aRequests[0];
-				var aPreparedDirtyChangesBulk = this._prepareDirtyChanges(aCondensedChanges);
-				return Storage.write({
-					layer: aPreparedDirtyChangesBulk[0].layer,
-					flexObjects: aPreparedDirtyChangesBulk,
-					transport: sRequest,
-					isLegacyVariant: false,
-					draft: bDraft
-				}).then(function(oResponse) {
-					this._massUpdateCacheAndDirtyState(aCondensedChanges, bSkipUpdateCache);
-					this._deleteNotSavedChanges(aChanges, aCondensedChanges);
-					return oResponse;
-				}.bind(this));
+			return oCondensedChangesPromise.then(function(aCondensedChanges) {
+				if (aCondensedChanges.length) {
+					var sRequest = aRequests[0];
+					var aPreparedDirtyChangesBulk = this._prepareDirtyChanges(aCondensedChanges);
+					return Storage.write({
+						layer: aPreparedDirtyChangesBulk[0].layer,
+						flexObjects: aPreparedDirtyChangesBulk,
+						transport: sRequest,
+						isLegacyVariant: false,
+						draft: bDraft
+					}).then(function(oResponse) {
+						this._massUpdateCacheAndDirtyState(aCondensedChanges, bSkipUpdateCache);
+						this._deleteNotSavedChanges(aChanges, aCondensedChanges);
+						return oResponse;
+					}.bind(this));
+				}
+				this._deleteNotSavedChanges(aChanges, aCondensedChanges);
 			}.bind(this));
 		}
 		return this.saveSequenceOfDirtyChanges(aChangesClone, bSkipUpdateCache, bDraft);
