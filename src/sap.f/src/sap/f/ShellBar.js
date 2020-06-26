@@ -553,15 +553,20 @@ function(
 		// which we will later read in ResponsiveHandler
 		this._oTitleControl = null;
 		//depends on the given configuration we either show MenuButton with MegaMenu, or Title
-		if (this.getShowMenuButton() && this._oPrimaryTitle){
-
-			this.addControlToCollection(this._oPrimaryTitle, this._oAdditionalBox);
-			this._oTitleControl = this._oPrimaryTitle;
+		if (this.getShowMenuButton() ){
+			if (this._oPrimaryTitle) {
+				this.addControlToCollection(this._oPrimaryTitle, this._oAdditionalBox);
+				this._oTitleControl = this._oPrimaryTitle;
+			}
 
 		} else if (this._oMegaMenu) {
-
-			this.addControlToCollection(this._oMegaMenu, this._oAdditionalBox);
-			this._oTitleControl = this._oMegaMenu;
+			if (this._oMegaMenu.getMenu() && this._oMegaMenu.getMenu().getItems().length) {
+				this.addControlToCollection(this._oMegaMenu, this._oAdditionalBox);
+				this._oTitleControl = this._oMegaMenu;
+			} else if (this._oPrimaryTitle) {
+				this.addControlToCollection(this._oPrimaryTitle, this._oAdditionalBox);
+				this._oTitleControl = this._oPrimaryTitle;
+			}
 		}
 
 		if (this._oSecondTitle) {
