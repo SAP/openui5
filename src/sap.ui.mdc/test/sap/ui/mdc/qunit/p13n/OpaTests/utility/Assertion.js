@@ -128,9 +128,9 @@ sap.ui.define([
 				}
 			});
 		},
-		thePersonalizationDialogOpens: function (bLiveMode) {
+		thePersonalizationDialogOpens: function () {
 			return this.waitFor({
-				controlType: bLiveMode ? "sap.m.Popover" : "sap.m.Dialog",
+				controlType: "sap.m.Popover",
 				check: function (aDialogs) {
 					return aDialogs.length > 0;
 				},
@@ -138,7 +138,7 @@ sap.ui.define([
 					//TODO: remove the line below once there is apossibility to set the tolerance on the
 					//popover and handle this issue via the personalization logic itself
 					aDialogs[0]._followOfTolerance = 96;
-					Opa5.assert.equal(aDialogs.length, 1, 'Personalization Dialog should be open');
+					Opa5.assert.ok(aDialogs.length, 'Personalization Dialog should be open');
 				}
 			});
 		},

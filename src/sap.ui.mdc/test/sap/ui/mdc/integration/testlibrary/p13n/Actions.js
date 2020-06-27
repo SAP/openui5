@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/ui/mdc/integration/testlibrary/Util",
 	"sap/ui/mdc/integration/testlibrary/filterbar/waitForFilterBar",
 	"./waitForP13nDialog",
-	"./waitForColumnListItemInDialogWithLabel",
-	"./waitForButtonInDialog"
+	"./waitForColumnListItemInDialogWithLabel"
 ], function(
 	Opa5,
 	Ancestor,
@@ -24,16 +23,14 @@ sap.ui.define([
 	TestUtil,
 	waitForFilterBar,
 	waitForP13nDialog,
-	waitForColumnListItemInDialogWithLabel,
-	waitForButtonInDialog
+	waitForColumnListItemInDialogWithLabel
 ) {
 	"use strict";
 
-	function toggleSelect(sText, bSelectionAction, bLiveMode) {
+	function toggleSelect(sText, bSelectionAction) {
 		return waitForFilterBar.call(this, {
 			success: function(oFilterBar) {
-				waitForP13nDialog.call(this, TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_TITLE"), {
-					liveMode: bLiveMode,
+				waitForP13nDialog.call(this, oFilterBar, TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_TITLE"), {
 					success: function(oDialog) {
 						waitForColumnListItemInDialogWithLabel.call(this, oDialog, sText, {
 							success: function(oColumnListItem) {
@@ -87,13 +84,16 @@ sap.ui.define([
 		},
 
 		iPressOnTheAdaptFiltersP13nItem: function(sText) {
-			waitForP13nDialog.call(this, TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_TITLE"), {
-				liveMode: true,
-				success: function(oDialog) {
-					waitForColumnListItemInDialogWithLabel.call(this, oDialog, sText, {
-						actions: new Press(),
-						success: function onColumnListItemPressed(oColumnListItem) {
-							Opa5.assert.ok(true, 'The "' + sText + '" column list item was pressed');
+			return waitForFilterBar.call(this, {
+				success: function(oFilterBar) {
+					waitForP13nDialog.call(this, oFilterBar, TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_TITLE"), {
+						success: function(oDialog) {
+							waitForColumnListItemInDialogWithLabel.call(this, oDialog, sText, {
+								actions: new Press(),
+								success: function onColumnListItemPressed(oColumnListItem) {
+									Opa5.assert.ok(true, 'The "' + sText + '" column list item was pressed');
+								}
+							});
 						}
 					});
 				}
@@ -101,11 +101,11 @@ sap.ui.define([
 		},
 
 		iSelectTheAdaptFiltersP13nItem: function(sText) {
-			return toggleSelect.call(this, sText, true, true);
+			return toggleSelect.call(this, sText, true);
 		},
 
 		iDeselectTheAdaptFiltersP13nItem: function(sText) {
-			return toggleSelect.call(this, sText, false, true);
+			return toggleSelect.call(this, sText, false);
 		},
 
 		iPressOnTheAdaptFiltersP13nReorderButton: function() {
@@ -191,26 +191,6 @@ sap.ui.define([
 						}
 					});
 				}
-			});
-		},
-
-		iPressDialogOk: function(sTitle) {
-			return waitForButtonInDialog.call(this, sTitle, true, {
-				actions: new Press(),
-				success: function(oButton){
-					Opa5.assert.ok(true, 'The Button "Ok" was pressed');
-				},
-				errorMessage: 'The button "Ok" could not be pressed'
-			});
-		},
-
-		iPressDialogCancel: function(sTitle) {
-			return waitForButtonInDialog.call(this, sTitle, false, {
-				actions: new Press(),
-				success: function(oButton){
-					Opa5.assert.ok(true, 'The Button "Cancel" was pressed');
-				},
-				errorMessage: 'The button "Cancel" could not be pressed'
 			});
 		}
     };

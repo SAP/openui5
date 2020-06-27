@@ -3,20 +3,16 @@
  */
 
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/mdc/p13n/FlexUtil",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/merge",
 	"sap/m/Button",
 	"sap/base/Log"
-], function (SAPUriParameters, ManagedObject, FlexUtil, JSONModel, merge, Button, Log) {
+], function (ManagedObject, FlexUtil, JSONModel, merge, Button, Log) {
 	"use strict";
 
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-
-	//EXPERIMENTAL API -- only for internal testing purposes
-	var oURLParams = new SAPUriParameters(window.location.search);
 
 	var AdaptationController = ManagedObject.extend("sap.ui.mdc.AdaptationController", {
 		library: "sap.ui.mdc",
@@ -124,12 +120,6 @@ sap.ui.define([
 	 *
 	 */
 	AdaptationController.prototype.showP13n = function(oSource, sP13nType) {
-
-		//TODO: experimental and only for testing purposes
-		if (oURLParams.getAll("sap-ui-xx-p13nLiveMode")[0] === "true"){
-			this.setLiveMode(true);
-			Log.warning("Please note that the p13n liveMode is experimental");
-		}
 
 		if (!this.bIsDialogOpen){
 			return this._retrievePropertyInfo().then(function(aPropertyInfo){

@@ -79,7 +79,7 @@ sap.ui.define([
 
 	opaTest("Open the filter personalization dialog", function (Given, When, Then) {
 		//close popover
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : When.iPressDialogOk();
+		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : Given.closeAllPopovers();
 
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
 
@@ -93,7 +93,10 @@ sap.ui.define([
 	});
 
 	opaTest("When I close the 'Add/Remove Columns' button, the table has not been changed", function (Given, When, Then) {
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeAllPopovers();
+
+		//close p13n dialog
+		Then.thePersonalizationDialogShouldBeClosed();
 
 		//check initially visible columns
 		Then.iShouldSeeVisibleColumnsInOrder("sap.ui.mdc.table.Column", [
@@ -115,7 +118,7 @@ sap.ui.define([
 	});
 
 	opaTest("When I close the 'Define Sort Properties' button, the table has not been changed", function (Given, When, Then) {
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : Given.closeAllPopovers();
 
 		//close p13n dialog
 		Then.thePersonalizationDialogShouldBeClosed();
@@ -143,7 +146,7 @@ sap.ui.define([
 	});
 
 	opaTest("When I close the 'Selected Columns' button, the table has been changed", function (Given, When, Then) {
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : Given.closeAllPopovers();
 
 		//close p13n dialog
 		Then.thePersonalizationDialogShouldBeClosed();
@@ -178,40 +181,10 @@ sap.ui.define([
 	});
 
 	// ----------------------------------------------------------------
-	// Select two columns and 'Cancel'
-	// ----------------------------------------------------------------
-	opaTest("When I do some changes and press 'Cancel', the changes should be discarded", function (Given, When, Then) {
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		Then.thePersonalizationDialogOpens();
-
-		When.iSelectColumn("Breakout Year", Arrangement.P13nDialog.Titles.columns, aTableItems);
-		When.iSelectColumn("Created By", Arrangement.P13nDialog.Titles.columns, aTableItems);
-
-		When.iPressButtonWithText("Reorder");
-		When.iClickOnTableItem("Breakout Year").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
-		When.iClickOnTableItem("Created By").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
-
-		//Cancel selection
-		When.iPressDialogCancel();
-
-		//Reopen Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-
-		//check that Table is unchanged
-		Then.iShouldSeeP13nItem("Country", 0);
-		Then.iShouldSeeP13nItem("Name", 1);
-		Then.iShouldSeeP13nItem("Founding Year", 2);
-		Then.iShouldSeeP13nItem("Changed By", 3);
-		Then.iShouldSeeP13nItem("Created On", 4);
-
-	});
-
-	// ----------------------------------------------------------------
-	// Select two columns and 'Confirm'
+	// Select two columns
 	// ----------------------------------------------------------------
 	opaTest("When I select two additional columns and move them one up, the table should be changed", function (Given, When, Then) {
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : Given.closeAllPopovers();
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 		Then.thePersonalizationDialogOpens();
 
@@ -236,7 +209,7 @@ sap.ui.define([
 	// Close the dialog
 	// ----------------------------------------------------------------
 	opaTest("Close the dialog", function (Given, When, Then) {
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeAllPopovers();
 
 		//close p13n dialog
 		Then.thePersonalizationDialogShouldBeClosed();
@@ -292,7 +265,7 @@ sap.ui.define([
 
 	opaTest("check column header sort functionality: all previous sorters are deleted", function (Given, When, Then) {
 		//close popover
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : Given.closeAllPopovers();
 
 		When.iClickOnColumn("Founding Year");
 		When.iSortCurrentOpenColumnContextMenu();
@@ -320,7 +293,7 @@ sap.ui.define([
 
 	opaTest("sort another column via context menu: only new column should be sorted", function (Given, When, Then) {
 		//close popover
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : Given.closeAllPopovers();
 
 		When.iClickOnColumn("Name");
 		When.iSortCurrentOpenColumnContextMenu();
@@ -348,7 +321,7 @@ sap.ui.define([
 
 	opaTest("Open the filter personalization dialog", function (Given, When, Then) {
 		//close popover
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : When.iPressDialogOk();
+		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : Given.closeAllPopovers();
 
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
 
@@ -366,7 +339,7 @@ sap.ui.define([
 
 	opaTest("Open the filter personalization dialog and enter a value", function (Given, When, Then) {
 		//close popover
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : When.iPressDialogOk();
+		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : Given.closeAllPopovers();
 
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
 
@@ -387,7 +360,7 @@ sap.ui.define([
 
 	opaTest("Close and open the filter dialog to check if the value is still there", function (Given, When, Then) {
 		//close popover
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : When.iPressDialogOk();
+		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : Given.closeAllPopovers();
 
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
 

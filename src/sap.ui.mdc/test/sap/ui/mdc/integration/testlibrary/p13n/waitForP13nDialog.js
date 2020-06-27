@@ -3,21 +3,23 @@
  */
 sap.ui.define([
 	"sap/ui/test/Opa5",
+	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Properties"
 ], function(
 	Opa5,
+	Ancestor,
 	Properties
 ) {
 	"use strict";
 
-	return function waitForP13nDialog(sTitle, oSettings) {
+	return function waitForP13nDialog(oParent, sTitle, oSettings) {
 		return this.waitFor({
-			//FilterBar p13n uses live mode which is why we need to distinguish in some cases
-			controlType: oSettings && oSettings.liveMode ? "sap.m.Popover" : "sap.m.Dialog",
+			controlType: "sap.m.ResponsivePopover",
 			matchers: [
 				new Properties({
 					title: sTitle
-				})
+				}),
+				new Ancestor(oParent)
 			],
 			actions: oSettings.actions,
 			success: function(aP13nDialogs) {

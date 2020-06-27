@@ -33,6 +33,7 @@ sap.ui.define([
 							intent: "?testsuite_mdc_internal_LinkInTable_MainNavigationAction_00#link",
 							text: "{title}",
 							icon: "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-1031.jpg",
+							isMain: true,
 							description: "{author/name}"
 						},
 						{
@@ -61,27 +62,21 @@ sap.ui.define([
 							description: "Transaction SHELL",
 							icon: "sap-icon://mileage",
 							intent: "?testsuite_mdc_internal_LinkInTable_Actions_04#link",
-							tags: [
-								"superiorAction"
-							]
+							isSuperior: true
 						},
 						{
 							action: "action_06",
 							text: "Edit Description (Additional)",
 							icon: "sap-icon://edit",
 							intent: "?testsuite_mdc_internal_LinkInTable_AdditionalActions_01#link",
-							tags: [
-								"superiorAction"
-							]
+							isSuperior: true
 						},
 						{
 							action: "action_07",
 							text: "Review Description (Additional)",
 							icon: "sap-icon://pixelate",
 							intent: "?testsuite_mdc_internal_LinkInTable_AdditionalActions_02#link",
-							tags: [
-								"superiorAction"
-							]
+							isSuperior: true
 						}
 					]
 				}

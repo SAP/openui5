@@ -65,7 +65,6 @@ sap.ui.define([
 	QUnit.test("liveMode true", function (assert) {
 		var done = assert.async();
 		var oBtn = new Button();
-		this.oAdaptationController.setLiveMode(true);
 
 		this.oAdaptationController.showP13n(oBtn, "Item").then(function(oP13nControl){
 
@@ -116,7 +115,7 @@ sap.ui.define([
 
 					//check container
 					assert.ok(oP13nControl, "Container has been created");
-					assert.ok(oP13nControl.isA("sap.m.Dialog"));
+					assert.ok(oP13nControl.isA("sap.m.ResponsivePopover"));
 					assert.equal(oP13nControl.getTitle(), oResourceBundle.getText("filter.PERSONALIZATION_DIALOG_TITLE"), "Correct title has been set");
 					assert.ok(this.oAdaptationController.bIsDialogOpen,"dialog is open");
 
@@ -137,7 +136,7 @@ sap.ui.define([
 		this.oAdaptationController.createP13n("Item", [this.aPropertyInfo[0]]).then(function(oP13nControl){
 			//check container
 			assert.ok(oP13nControl, "Container has been created");
-			assert.ok(oP13nControl.isA("sap.m.Dialog"));
+			assert.ok(oP13nControl.isA("sap.m.ResponsivePopover"));
 
 			//check inner panel
 			var oInnerTable = oP13nControl.getContent()[0]._oMTable;
@@ -397,7 +396,7 @@ sap.ui.define([
 	QUnit.test("use ChartItemPanel", function (assert) {
 		var done = assert.async();
 		var oBtn = new Button();
-		this.oAdaptationController.setLiveMode(true);
+
 		this.oAdaptationController.showP13n(oBtn, "Item").then(function(oP13nControl){
 
 			//check container

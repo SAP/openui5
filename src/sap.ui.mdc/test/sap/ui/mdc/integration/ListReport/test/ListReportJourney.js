@@ -99,7 +99,7 @@ sap.ui.define([
 			When.onTheBooksListReportPage.iClickOnTheSortButton();
 			Then.onTheBooksListReportPage.iShouldSeeTheSortDialog();
 			When.onTheBooksListReportPage.iSelectAColumnToBeSorted(sSortBy);
-			When.onTheBooksListReportPage.iPressSortDialogOk();
+			When.onTheBooksListReportPage.iCloseAllPopovers();
 			Then.onTheBooksListReportPage.iShouldSeeARowWithData(0, ListReport.books[sResultBookKey]);
 		};
 
@@ -107,7 +107,7 @@ sap.ui.define([
 			When.onTheBooksListReportPage.iClickOnTheSortButton();
 			Then.onTheBooksListReportPage.iShouldSeeTheSortDialog();
 			When.onTheBooksListReportPage.iChangeASelectedColumnSortDirection(sSortBy, bDescending);
-			When.onTheBooksListReportPage.iPressSortDialogOk();
+			When.onTheBooksListReportPage.iCloseAllPopovers();
 
 			if (bDescending) {
 				Then.onTheBooksListReportPage.iShouldSeeADescendingSortedColumn(sColumnTitle);
@@ -128,7 +128,7 @@ sap.ui.define([
 		Then.onTheBooksListReportPage.iShouldSeeTheSortDialog();
 		When.onTheBooksListReportPage.iClickOnTheSortReorderButton();
 		When.onTheBooksListReportPage.iMoveSortOrderOfColumnToTheTop("Author ID");
-		When.onTheBooksListReportPage.iPressSortDialogOk();
+		When.onTheBooksListReportPage.iCloseAllPopovers();
 
 		Then.onTheBooksListReportPage.iShouldSeeARowWithData(0, ListReport.books["The Complete Project Gutenberg Works of Jane Austen: A Linked Index of all PG Editions of Jane Austen"]);
 
