@@ -490,9 +490,7 @@ function(
 			this._bValid = true;
 			if (sValue !== "") {
 				//keep the oDate not changed by the 24 hrs
-				oDate = this._parseValue(
-					TimePickerSliders._isHoursValue24(sValue, iIndexOfHH, iIndexOfH) ?
-						TimePickerSliders._replace24HoursWithZero(sValue, iIndexOfHH, iIndexOfH) : sValue, true);
+				oDate = this._parseValue(bThatValue2400 ? TimePickerSliders._replace24HoursWithZero(sValue, iIndexOfHH, iIndexOfH) : sValue, true);
 				if (!oDate) {
 					this._bValid = false;
 				} else {
@@ -1138,10 +1136,6 @@ function(
 			var oDate = this._getSliders().getTimeValues(),
 				sValue = this._formatValue(oDate);
 
-			//if 24 is selected for hours, it should also go to the input after pressing the OK button
-			if (this.getSupport2400()) {
-				sValue = this._getSliders().getValue();
-			}
 			this.updateDomValue(sValue);
 			this._handleInputChange();
 
@@ -1216,9 +1210,8 @@ function(
 
 			//2400 scenario - be sure that the correct value will be set in all cases - when binding,
 			//setting the value by sliders or only via setValue
-			if (this.getSupport2400() && TimePickerSliders._isHoursValue24(this.getValue(), iIndexOfHH, iIndexOfH)
-				&& TimePickerSliders._replaceZeroHoursWith24(sValue, iIndexOfHH, iIndexOfH) === this.getValue()) {
-				sValue = this.getValue();
+			if (this.getSupport2400() && this._getSliders() && this._getSliders()._getHoursSlider().getSelectedValue() === "24") {
+				sValue = TimePickerSliders._replaceZeroHoursWith24(sValue, iIndexOfHH, iIndexOfH);
 			}
 
 			return sValue;
