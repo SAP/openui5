@@ -1,0 +1,54 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "v4server.integration.app",
+		"type": "application",
+		"title": "",
+		"description": "",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"dataSources": {
+			"mainService": {
+				"uri": "/tenant(v4server.integration.app)/catalog/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "4.0"
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "v4server.integration.app.view.Main",
+			"type": "XML",
+			"async": true,
+			"id": "main"
+		},
+		"dependencies": {
+			"minUI5Version": "1.73.0",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"models": {
+			"": {
+				"dataSource": "mainService",
+				"preload": true,
+				"settings": {
+					"operationMode": "Server",
+					"synchronizationMode": "None"
+				}
+			}
+		}
+	}
+}

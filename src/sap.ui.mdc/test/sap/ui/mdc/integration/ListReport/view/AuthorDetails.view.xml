@@ -1,0 +1,176 @@
+<mvc:View displayBlock="true"
+	xmlns:uxap="sap.uxap"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:mdcf="sap.ui.mdc.field"
+	xmlns:mdcl="sap.ui.mdc.link"
+	xmlns:ui="sap.ui"
+	xmlns:variants="sap.ui.fl.variants"
+	xmlns="sap.m" controllerName="sap.ui.v4demo.controller.AuthorDetails">
+	<uxap:ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true" alwaysShowContentHeader="false" preserveHeaderStateOnScroll="false" headerContentPinnable="true" isChildPage="true" upperCaseAnchorBar="false">
+		<uxap:headerTitle>
+			<uxap:ObjectPageDynamicHeaderTitle>
+				<uxap:expandedHeading>
+					<Title text="Author: {name}" wrapping="true" class="sapUiSmallMarginEnd" />
+				</uxap:expandedHeading>
+				<uxap:snappedHeading>
+					<FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
+						<FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
+							<Title text="Author: {name}" wrapping="true" class="sapUiTinyMarginEnd" />
+						</FlexBox>
+					</FlexBox>
+				</uxap:snappedHeading>
+				<uxap:actions>
+					<ToggleButton text="Edit" type="Emphasized" press="onEditButtonPress" visible="{=!${view>/editMode}}" />
+					<Button text="Delete" type="Transparent" press="onDeleteButtonPress" visible="{=!${view>/editMode}}" />
+
+					<Button id="save" text="Save" type="Emphasized" visible="{view>/editMode}" press="onSavePress" />
+					<Button id="cancel" text="Cancel" visible="{view>/editMode}" press="onCancelPress" />
+
+				</uxap:actions>
+			</uxap:ObjectPageDynamicHeaderTitle>
+		</uxap:headerTitle>
+		<uxap:sections>
+			<uxap:ObjectPageSection title="General information">
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection>
+						<uxap:blocks>
+							<f:SimpleForm layout="ColumnLayout" editable="true" labelSpanXL="5" labelSpanL="5" labelSpanM="4" columnsXL="2" columnsL="2" columnsM="1" singleContainerFullSize="false" adjustLabelSpan="false">
+								<f:content>
+									<core:Title text="Author Details"></core:Title>
+									<Label text="name"></Label>
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{name}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
+									<Label text="dateOfBirth"></Label>
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{dateOfBirth}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
+									<Label text="dateOfDeath"></Label>
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{dateOfDeath}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
+									<Label text="countryOfOrigin_code"></Label>
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{countryOfOrigin_code}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHCountry">
+										<mdc:dependents>
+											<mdcf:FieldValueHelp id="IOFFVHCountry" title="Countries" showConditionPanel="true" filterFields="*code,descr*" keyPath="code" descriptionPath="text" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+												<mdcf:FieldValueHelpMTableWrapper>
+													<Table items="{path: '/Countries'}" width="26rem">
+														<columns>
+															<Column>
+																<Label text="Country"></Label>
+															</Column>
+															<Column>
+																<Label text="Name"></Label>
+															</Column>
+														</columns>
+														<items>
+															<ColumnListItem type="Active">
+																<Text text="{code}"></Text>
+																<Text text="{descr}"></Text>
+															</ColumnListItem>
+														</items>
+													</Table>
+												</mdcf:FieldValueHelpMTableWrapper>
+											</mdcf:FieldValueHelp>
+										</mdc:dependents>
+									</mdc:Field>
+									<Label text="regionOfOrigin_code"></Label>
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{regionOfOrigin_code}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHRegion">
+										<mdc:dependents>
+											<mdcf:FieldValueHelp id="IOFFVHRegion" title="Regions" showConditionPanel="true" filterFields="*code,country_code,text*" keyPath="code" descriptionPath="text" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+												<mdcf:inParameters>
+													<mdcf:InParameter id="IOFFVHRegion-In-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" />
+												</mdcf:inParameters>
+												<mdcf:outParameters>
+													<mdcf:OutParameter id="IOFFVHRegion-Out-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" />
+												</mdcf:outParameters>
+												<mdcf:filterBar>
+													<mdc:FilterBar liveMode= "true">
+														<mdc:FilterField id="VHFFBTextFFCountry" label= "Country" editMode= "Editable" display= "ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/countryOfOrigin_code}" operators="EQ,EEQ,NE" valueState="{ path: '$filters>/fieldPath/countryOfOrigin_code/valueState'}" valueStateText="{ path: '$filters>/fieldPath/countryOfOrigin_code/valueStateText'}">
+														</mdc:FilterField>
+													</mdc:FilterBar>
+												</mdcf:filterBar>
+												<mdcf:FieldValueHelpMTableWrapper>
+													<Table items="{path: '/Regions'}" width="26rem">
+														<columns>
+															<Column>
+																<Label text="Region"></Label>
+															</Column>
+															<Column>
+																<Label text="Name"></Label>
+															</Column>
+															<Column>
+																<Label text="Country"></Label>
+															</Column>
+														</columns>
+														<items>
+															<ColumnListItem type="Active">
+																<Text text="{code}"></Text>
+																<Text text="{text}"></Text>
+																<Text text="{country_code}"></Text>
+															</ColumnListItem>
+														</items>
+													</Table>
+												</mdcf:FieldValueHelpMTableWrapper>
+											</mdcf:FieldValueHelp>
+										</mdc:dependents>
+
+									</mdc:Field>
+									<Label text="cityOfOrigin_city"></Label>
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{cityOfOrigin_city}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHCity">
+										<mdc:dependents>
+											<mdcf:FieldValueHelp id="IOFFVHCity" title="Cities" showConditionPanel="true" filterFields="*country_code,region_code,city,text*" keyPath="city" descriptionPath="text" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+												<mdcf:inParameters>
+													<mdcf:InParameter id="IOFFVHCity_In-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" />
+													<mdcf:InParameter id="IOFFVHCity_In-Region" value="{$filters>/conditions/regionOfOrigin_code}" helpPath="region_code" />
+												</mdcf:inParameters>
+												<mdcf:outParameters>
+													<mdcf:OutParameter id="IOFFVHCity_Out-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" mode="Always" />
+													<mdcf:OutParameter id="IOFFVHCity_Out-Region" value="{$filters>/conditions/regionOfOrigin_code}" helpPath="region_code" mode="Always" />
+												</mdcf:outParameters>
+												<mdcf:filterBar>
+													<mdc:FilterBar liveMode= "false">
+														<mdc:FilterField id="VHFFBTextFFCountry2" label= "Country" editMode= "Editable" display= "ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/country_code}" operators="EQ,EEQ,NE" valueState="{ path: '$filters>/fieldPath/country_code/valueState'}" valueStateText="{ path: '$filters>/fieldPath/country_code/valueStateText'}">
+														</mdc:FilterField>
+														<mdc:FilterField id="VHFFBTextFFRegion2" label= "Region" editMode= "Editable" display= "ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/region_code}" valueState="{ path: '$filters>/fieldPath/region_code/valueState'}" valueStateText="{ path: '$filters>/fieldPath/region_code/valueStateText'}">
+														</mdc:FilterField>
+													</mdc:FilterBar>
+												</mdcf:filterBar>
+												<mdcf:FieldValueHelpMTableWrapper>
+													<Table items="{path: '/Cities'}" width="26rem">
+														<columns>
+															<Column>
+																<Label text="City"></Label>
+															</Column>
+															<Column>
+																<Label text="Name"></Label>
+															</Column>
+															<Column>
+																<Label text="Country"></Label>
+															</Column>
+															<Column>
+																<Label text="Region"></Label>
+															</Column>
+														</columns>
+														<items>
+															<ColumnListItem type="Active">
+																<Text text="{city}"></Text>
+																<Text text="{text}"></Text>
+																<Text text="{country_code}"></Text>
+																<Text text="{region_code}"></Text>
+															</ColumnListItem>
+														</items>
+													</Table>
+												</mdcf:FieldValueHelpMTableWrapper>
+											</mdcf:FieldValueHelp>
+										</mdc:dependents>
+
+									</mdc:Field>
+
+								</f:content>
+							</f:SimpleForm>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+		</uxap:sections>
+	</uxap:ObjectPageLayout>
+</mvc:View>
