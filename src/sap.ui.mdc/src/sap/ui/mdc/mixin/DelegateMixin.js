@@ -58,8 +58,9 @@
 	 * @alias sap.ui.mdc.mixin.DelegateMixin
 	 * @namespace
 	 * @since 1.76.0
-	 * @protected
+	 * @private
 	 * @experimental
+	 * @sap-restricted
 	*/
 	var DelegateMixin = {};
 
