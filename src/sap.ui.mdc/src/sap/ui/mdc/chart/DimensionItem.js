@@ -23,7 +23,7 @@ sap.ui.define([
 	 *        behavior.
 	 *        <h3><b>Note:</b></h3>
 	 *        The control is experimental and the API/behaviour is not finalised and hence this should not be used for productive usage.
-	 * @extends sap.ui.core.ManagedObject
+	 * @extends sap.ui.mdc.chart.Item
 	 * @author SAP SE
 	 * @constructor The API/behaviour is not finalised and hence this control should not be used for productive usage.
 	 * @private

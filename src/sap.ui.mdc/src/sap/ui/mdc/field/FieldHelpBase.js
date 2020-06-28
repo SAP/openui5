@@ -28,7 +28,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 * @class Base type for the <code>FieldHelp</code> association in the <code>FieldBase</code> controls.
-	 * @extends sap.ui.core.Element
+	 * @extends sap.ui.mdc.Element
 	 * @implements sap.ui.core.PopupInterface
 	 * @version ${version}
 	 * @constructor

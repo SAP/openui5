@@ -36,7 +36,7 @@ sap.ui.define([
 	 *        The <code>columns</code> aggregation must be specified with the columns you require, along with with the template for the cell. The
 	 *        cell template can also be created lazily via the {@link #getDelegate table delegate}.<br>
 	 *        <b>Note:</b> The control is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.mdc.Control
 	 * @author SAP SE
 	 * @constructor The API/behavior is not finalized and hence this control should not be used for productive usage.
 	 * @private

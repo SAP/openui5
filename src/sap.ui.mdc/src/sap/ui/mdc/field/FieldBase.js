@@ -81,7 +81,7 @@ sap.ui.define([
 	 * A <code>FieldBase</code> control is the basic control to be used within the <code>Field</code> and <code>FilterField</code> controls.
 	 * It must not be used stand-alone.
 	 *
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.mdc.Control
 	 * @implements sap.ui.core.IFormContent
 	 *
 	 * @author SAP SE

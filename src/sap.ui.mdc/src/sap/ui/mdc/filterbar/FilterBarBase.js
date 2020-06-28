@@ -13,7 +13,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The <code>FilterBarBase</code> control is used as a faceless base class for common functionality of any MDC FilterBar derivation.
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.mdc.Control
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor

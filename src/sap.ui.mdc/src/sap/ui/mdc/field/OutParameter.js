@@ -19,7 +19,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 * @class Base type for <code>OutParameter</code> control.
-	 * @extends sap.ui.core.Element
+	 * @extends sap.ui.mdc.field.InParameter
 	 * @version ${version}
 	 * @constructor
 	 * @abstract

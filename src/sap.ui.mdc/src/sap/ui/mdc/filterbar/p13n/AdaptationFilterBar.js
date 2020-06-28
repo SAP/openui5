@@ -11,7 +11,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The <code>AdaptationFilterBar</code> control is used for a lightweight FilterBar implementation in p13n panels
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.mdc.filterbar.FilterBarBase
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
