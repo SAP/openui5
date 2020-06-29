@@ -669,29 +669,33 @@ sap.ui.define([
 		};
 
 		/**
-		 * Retrieve items from aggregation items by name
-		 * @param aItemNames The item names
-		 * @returns {Array} Array containing the matching items
+		 * Gets the item from the aggregation named <code>items</code> that
+		 * matches the given <code>aItemKeys</code>.
+		 *
+		 * @param {array} aItemKeys The item keys that specify the item to be retrieved
+		 * @returns {array} Array containing the matching items
 		 */
-		Chart.prototype.getItemsByName = function (aItemNames) {
-			var aItems = [];
+		Chart.prototype.getItemsByKeys = function(aItemKeys) {
+			var aFilteredItems = [],
+				aItems = this.getItems();
 
-			aItemNames.forEach(function (sItemName) {
-				for (var i = this.getItems().length - 1; i >= 0; i--) {
-					if (this.getItems()[i].getKey() == sItemName /*&& is of type DimensionItem*/) {
-						aItems.push(this.getItems()[i]);
+			aItemKeys.forEach(function(sItemName) {
+				for (var i = aItems.length - 1; i >= 0; i--) {
+					if (aItems[i].getKey() == sItemName /*&& is of type DimensionItem*/) {
+						aFilteredItems.push(aItems[i]);
 						break;
 					}
 				}
-			}.bind(this));
-			return aItems;
+			});
+
+			return aFilteredItems;
 		};
 
 		/**
 		 * shows the drill-down popover for selection a dimension to drill down to.
 		 * @private
 		 */
-		Chart.prototype._showDrillDown = function () {
+		Chart.prototype._showDrillDown = function() {
 
 			if (DrillStackHandler) {
 
@@ -699,37 +703,48 @@ sap.ui.define([
 					DrillStackHandler.createDrillDownPopover(this);
 				}
 
-				DrillStackHandler.showDrillDownPopover(this);
-			} else {
+				return DrillStackHandler.showDrillDownPopover(this);
+			}
+
+			return new Promise(function(resolve, reject) {
 				sap.ui.require([
 					"sap/ui/mdc/chart/DrillStackHandler"
-				], function (DrillStackHandlerLoaded) {
+				], function(DrillStackHandlerLoaded) {
 					DrillStackHandler = DrillStackHandlerLoaded;
 					DrillStackHandler.createDrillDownPopover(this);
-					DrillStackHandler.showDrillDownPopover(this, this.getDelegate().name);
+					DrillStackHandler.showDrillDownPopover(this)
+					.then(function(oDrillDownPopover) {
+						resolve(oDrillDownPopover);
+					});
 				}.bind(this));
-			}
+			}.bind(this));
 		};
 
 		/**
 		 * shows the Breadcrumbs for current drill-path and drilling up.
 		 * @private
 		 */
-		Chart.prototype._createDrillBreadcrumbs = function () {
+		Chart.prototype._createDrillBreadcrumbs = function() {
 
 			if (DrillStackHandler) {
 
 				if (!this._oDrillBreadcrumbs) {
-					DrillStackHandler.createDrillBreadcrumbs(this);
+					return DrillStackHandler.createDrillBreadcrumbs(this);
 				}
-			} else {
+
+				return Promise.resolve(this._oDrillBreadcrumbs);
+			}
+
+			return new Promise(function(resolve, reject) {
 				sap.ui.require([
 					"sap/ui/mdc/chart/DrillStackHandler"
-				], function (DrillStackHandlerLoaded) {
+				], function(DrillStackHandlerLoaded) {
 					DrillStackHandler = DrillStackHandlerLoaded;
-					DrillStackHandler.createDrillBreadcrumbs(this);
+					DrillStackHandler.createDrillBreadcrumbs(this).then(function() {
+						resolve();
+					});
 				}.bind(this));
-			}
+			}.bind(this));
 		};
 
 		Chart.prototype._getPropertyData = function () {
@@ -1015,23 +1030,23 @@ sap.ui.define([
 
 		Chart.prototype._getSorters = function () {
 			var aSorters;
-			var aSorterProperties = this.getSortConditions() ? this.getSortConditions().sorters : [];
+            var aSorterProperties = this.getSortConditions() ? this.getSortConditions().sorters : [];
 
-			aSorterProperties.forEach(function(oSortProp){
-				if (this._aInResultProperties.indexOf(oSortProp.name) != -1) {
-					var oSorter = new Sorter(oSortProp.name, oSortProp.descending);
+            aSorterProperties.forEach(function(oSortProp){
+                if (this._aInResultProperties.indexOf(oSortProp.name) != -1) {
+                    var oSorter = new Sorter(oSortProp.name, oSortProp.descending);
 
-					if (aSorters) {
-						aSorters.push(oSorter);
-					} else {
-						aSorters = [
-							oSorter
-						];//[] has special meaning in sorting
-					}
-				}
-			}.bind(this));
+                    if (aSorters) {
+                        aSorters.push(oSorter);
+                    } else {
+                        aSorters = [
+                            oSorter
+                        ];//[] has special meaning in sorting
+                    }
+                }
+            }.bind(this));
 
-			return aSorters;
+            return aSorters;
 
 		};
 
