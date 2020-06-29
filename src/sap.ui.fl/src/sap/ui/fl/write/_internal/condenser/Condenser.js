@@ -288,17 +288,18 @@ sap.ui.define([
 	/**
 	 * Retrieves an array of changes from the delivered data structure.
 	 *
-	 * TODO: Turn into a proper getter
-	 *
 	 * @param {Map} mObjects - Delivered data structure
 	 * @param {sap.ui.fl.Change[]} aChanges - Array of changes
+	 * @returns {sap.ui.fl.Change[]} All necessary changes in the map of reduced changes
 	 */
 	 function getChanges(mObjects, aChanges) {
 		each(mObjects, function(sKey, vSubObjects) {
 			if (NON_INDEX_RELEVANT[sKey] && NON_INDEX_RELEVANT[sKey].getChangesFromMap) {
-				NON_INDEX_RELEVANT[sKey].getChangesFromMap(mObjects, aChanges, sKey);
+				NON_INDEX_RELEVANT[sKey].getChangesFromMap(mObjects, sKey).forEach(function(oChange) {
+					aChanges.push(oChange);
+				});
 			} else if (isPlainObject(vSubObjects)) {
-				getChanges(vSubObjects, aChanges);
+				return getChanges(vSubObjects, aChanges);
 			} else if (Array.isArray(vSubObjects)) {
 				vSubObjects.forEach(function(oObject) {
 					if (oObject instanceof Change) {
@@ -309,19 +310,17 @@ sap.ui.define([
 				});
 			}
 		});
+		return aChanges;
 	}
 
 	/**
 	 * Retrieves an array of changes from the reduced changes map.
 	 *
 	 * @param {Map} mReducedChanges - Map of reduced changes
-	 * @param {boolean} bUnclassifiedChanges - Indicates if there are unclassified changes
 	 * @returns {sap.ui.fl.Change[]} Array of the reduced changes
 	 */
 	function getAllReducedChanges(mReducedChanges) {
-		var aReducedChanges = [];
-		getChanges(mReducedChanges, aReducedChanges);
-		return aReducedChanges;
+		return getChanges(mReducedChanges, []);
 	}
 
 	/**
@@ -333,16 +332,14 @@ sap.ui.define([
 	 */
 	function getCondenserInfos(mReducedChanges, aCondenserInfos) {
 		each(mReducedChanges, function(sKey, vSubObjects) {
-			if (vSubObjects !== null) {
-				if (isPlainObject(vSubObjects)) {
-					getCondenserInfos(vSubObjects, aCondenserInfos);
-				} else if (Array.isArray(vSubObjects)) {
-					vSubObjects.forEach(function(oObject) {
-						if (!(oObject instanceof Change)) {
-							aCondenserInfos.push(oObject);
-						}
-					});
-				}
+			if (isPlainObject(vSubObjects)) {
+				getCondenserInfos(vSubObjects, aCondenserInfos);
+			} else if (Array.isArray(vSubObjects)) {
+				vSubObjects.forEach(function(oObject) {
+					if (!(oObject instanceof Change)) {
+						aCondenserInfos.push(oObject);
+					}
+				});
 			}
 		});
 		return aCondenserInfos;
@@ -416,7 +413,7 @@ sap.ui.define([
 			if (!bUnclassifiedChanges) {
 				UIReconstruction.compareAndUpdate(mReducedChanges, mUIReconstructions);
 			}
-			var aReducedChanges = getAllReducedChanges(mReducedChanges, bUnclassifiedChanges);
+			var aReducedChanges = getAllReducedChanges(mReducedChanges);
 
 			// with unclassified changes no index relevant changes can be reduced
 			if (bUnclassifiedChanges) {

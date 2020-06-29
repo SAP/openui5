@@ -4,12 +4,14 @@
 
 /* global Map */
 sap.ui.define([
+	"sap/base/util/restricted/_isEqual",
 	"sap/base/util/each",
 	"sap/ui/fl/write/_internal/condenser/classifications/Create",
 	"sap/ui/fl/write/_internal/condenser/classifications/Destroy",
 	"sap/ui/fl/write/_internal/condenser/classifications/Move",
 	"sap/ui/fl/write/_internal/condenser/Utils"
 ], function(
+	_isEqual,
 	each,
 	Create,
 	Destroy,
@@ -85,14 +87,14 @@ sap.ui.define([
 	}
 
 	/**
-	 * Verifies whether the array of changes contains only changes of type 'add'.
+	 * Verifies whether the array of changes contains only changes of type 'create'.
 	 *
 	 * @param {object[]} aCondenserInfos - Array of condenser info objects
-	 * @returns {boolean} <code>true</code> if the array of condenser info objects contains only changes of type 'add'
+	 * @returns {boolean} <code>true</code> if the array of condenser info objects contains only changes of type 'create'
 	 */
-	function containsOnlyAddChanges(aCondenserInfos) {
+	function containsOnlyCreateChanges(aCondenserInfos) {
 		return !aCondenserInfos.some(function(vElement) {
-			return vElement.classification.indexOf(sap.ui.fl.condenser.Classification.Create) !== 0;
+			return vElement.classification !== sap.ui.fl.condenser.Classification.Create;
 		});
 	}
 
@@ -181,9 +183,7 @@ sap.ui.define([
 			}
 			a = a.slice(0, b.length);
 		}
-		return !a.some(function(vElement, iIndex) {
-			return vElement !== b[iIndex];
-		});
+		return _isEqual(a, b);
 	}
 
 	/**
@@ -330,7 +330,7 @@ sap.ui.define([
 			// Verify whether the algorithm should be ready before ;)
 			if (
 				containsNoPlaceholder(aTargetElementIds)
-				|| containsOnlyAddChanges(aCondenserInfos)
+				|| containsOnlyCreateChanges(aCondenserInfos)
 			) {
 				sortAscendingByTargetIndex(aCondenserInfos);
 			} else if (!isEqualReconstructedUI(sContainerKey, sAggregationName, aInitialElementIds, aTargetElementIds, aCondenserInfos)) {
