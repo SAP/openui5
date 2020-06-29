@@ -92,6 +92,45 @@
             "reference": "002075129500002585962020"
           }
         ]
+      },
+      {
+        "id": "79ee1c507119d1fc477908fc8c0a03498bab9d26",
+        "type": "FEATURE",
+        "text": " testrecorder: change window placement",
+        "references": []
+      },
+      {
+        "id": "c2d5ba6f9b6b2c51f2d6aa222dac46da1b87f250",
+        "type": "FIX",
+        "text": " core.Popup: log an error when popup content isn\u0027t connected to any UIArea",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080140527"
+          }
+        ]
+      },
+      {
+        "id": "f02c4f78333d40092fd0c1464acc8e932c19b025",
+        "type": "FIX",
+        "text": " routing.history: keep history direction in case the browser hash isn\u0027t changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003521542020"
+          }
+        ]
+      },
+      {
+        "id": "f82fccf72177832131fbf313cbc59a283f7dee2e",
+        "type": "FIX",
+        "text": " sap.ui.core.util.ExportTypeCSV - Cell overflow injection fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080220914"
+          }
+        ]
       }
     ]
   }

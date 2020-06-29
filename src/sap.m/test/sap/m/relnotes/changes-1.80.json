@@ -338,6 +338,154 @@
             "reference": "002075129500003307462020"
           }
         ]
+      },
+      {
+        "id": "ae739f2f6422408a61fdf93b68f7f75692956c39",
+        "type": "FEATURE",
+        "text": " P13nFilterPanel: allow to set a MessageStrip",
+        "references": []
+      },
+      {
+        "id": "e02e666d29bebd150d9d93500452aff8394e62b9",
+        "type": "FIX",
+        "text": " m.ObjectNumber: Rendering of state\u0027s element adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080174188"
+          }
+        ]
+      },
+      {
+        "id": "92d4da252803f920923008c61f1b62d53bc6a148",
+        "type": "FIX",
+        "text": " sap.m.BadgeEnabler: Redundant show of empty badge fixed",
+        "references": []
+      },
+      {
+        "id": "1c1c3f895fe4dac35cb6eb0c964ae9280b4c85a1",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Properly updating item\u0027s selection on model change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751294 0000324415 2020"
+          }
+        ]
+      },
+      {
+        "id": "abca51ff4239524a85dc401e35b21d803b382a4c",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Buttons\u0027 positioning fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980411290"
+          }
+        ]
+      },
+      {
+        "id": "d7d2dd9b14b01282d3cd37461f24a2eb474561af",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: TabFilter focus is correct now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070204567"
+          }
+        ]
+      },
+      {
+        "id": "bc1f51e81b6dcb7035022da3cc056ca417dd1440",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Belize theme aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080205466"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080207010"
+          }
+        ]
+      },
+      {
+        "id": "532cf7ebd94ac51e9ff86c0a1436d0de9449586d",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Inner text width fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080209672"
+          }
+        ]
+      },
+      {
+        "id": "cd421ffcd4ca7fe7a0ae1ab67234425e69f8e198",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Buttons are now working correctly on Phone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080160271"
+          }
+        ]
+      },
+      {
+        "id": "d42dfc5bac81a03127ee25dcda719936a882a156",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Min boundary validation fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080219090"
+          }
+        ]
+      },
+      {
+        "id": "0718b6355e7b4ec97a895ae76acd81cfe8e8199a",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Clicking on a group header list item doesn\u0027t close the dialog anymore",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080139511"
+          }
+        ]
+      },
+      {
+        "id": "144a4a3ea716d347386e2ae3fb2bd5d40fee6019",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Drag and drop resize now works on internet explorer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080178226"
+          }
+        ]
+      },
+      {
+        "id": "7c9605c6b6c4e9f051728dfe384f26ee25446308",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Navigating through the IME popover via arrow keys fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080200423"
+          }
+        ]
+      },
+      {
+        "id": "73ad96fde75639d1241f400833800aa78b0fbfbf",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: changes its value when support2400 property is used",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000396451 2020"
+          }
+        ]
       }
     ]
   }

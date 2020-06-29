@@ -56,6 +56,17 @@
             "reference": "2080146235"
           }
         ]
+      },
+      {
+        "id": "2792d72b6cb41c3110631920f0fd3e71bd7e9647",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: request header values are not encoded now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080210540"
+          }
+        ]
       }
     ]
   }
