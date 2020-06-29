@@ -166,7 +166,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("When I select the default variant and restart the application, it should load the default variant", function(Given, When, Then){
 		//simulate restart
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
+		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?sap-ui-xx-p13nFilter=true');
 
 		//check if the correct variant is selected
 		Then.iShouldSeeSelectedVariant("TestVariant");
@@ -211,6 +211,66 @@ sap.ui.define([
 			"sap.ui.mdc.table.Column", [
 			"name", "foundingYear", "modifiedBy", "createdAt"
 		]);
+	});
+
+	var oTableConditions = {
+		foundingYear:[
+			{operator:"EQ",values:["1989"],validated:"NotValidated"},
+			{operator:"EQ",values:["1904"],validated:"NotValidated"}
+		],
+		name:[
+			{operator:"Contains",values:["S"],validated:"NotValidated"}
+		]
+	};
+
+	opaTest("Open the filter personalization dialog and save some conditions as variant 'FilterVariantTest'", function (Given, When, Then) {
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
+
+		Then.thePersonalizationDialogOpens();
+		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.filter);
+
+		//check filter field creation
+		Then.iShouldSeeP13nFilterItem("Changed By", 0);
+		Then.iShouldSeeP13nFilterItem("Created On", 1);
+		Then.iShouldSeeP13nFilterItem("Founding Year", 2);
+		Then.iShouldSeeP13nFilterItem("Name", 3);
+
+		//enter some filter values
+		When.iEnterTextInFilterDialog("Founding Year", "1989");
+		When.iEnterTextInFilterDialog("Founding Year", "1904");
+		When.iEnterTextInFilterDialog("Name", "*S*");
+
+		When.iPressDialogOk();
+
+		//create a new variant 'FilterVariantTest'
+		When.iSaveVariantAs("Standard", "FilterVariantTest");
+		Then.iShouldSeeSelectedVariant("FilterVariantTest");
+
+		//select a default variant
+		When.iSelectDefaultVariant("FilterVariantTest");
+		Then.iShouldSeeSelectedVariant("FilterVariantTest");
+
+		//Check Table conditions
+		Then.iShouldSeeTableConditions(oTableConditions);
+
+		//restart app
+		Then.iTeardownMyAppFrame();
+
+	});
+
+	opaTest("Close 'FilterVariantTest' appliance after restart", function (Given, When, Then) {
+		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?sap-ui-xx-p13nFilter=true');
+
+		//check default variant appliance
+		Then.iShouldSeeSelectedVariant("FilterVariantTest");
+
+		//Recheck default variant appliance
+		Then.iShouldSeeTableConditions(oTableConditions);
+
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
+
+		//shut down app frame for next test
+		Then.iTeardownMyAppFrame();
 	});
 
 	// ----------------------------------------------------------------
