@@ -1,4 +1,10 @@
 {
+	"legend": {
+		"items": {
+			"Notebook13": "Notebook 13",
+			"Notebook17": "Notebook 17"
+		}
+	},
 	"maxOverYears": 700,
 	"Notebooks": [
 		{

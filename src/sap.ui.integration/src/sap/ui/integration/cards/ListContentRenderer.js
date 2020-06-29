@@ -15,6 +15,28 @@ sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
 	/**
 	 * @override
 	 */
+	ListContentRenderer.renderContent = function (oRm, oListContent) {
+		oRm.renderControl(oListContent.getAggregation("_content"));
+
+		if (oListContent.getAggregation("_legend")) {
+			oRm.renderControl(oListContent.getAggregation("_legend"));
+		}
+	};
+
+	/**
+	 * @override
+	 */
+	ListContentRenderer.hideContent = function (oListContent) {
+		oListContent.getAggregation("_content").addStyleClass("sapFCardContentHidden");
+
+		if (oListContent.getAggregation("_legend")) {
+			oListContent.getAggregation("_legend").addStyleClass("sapFCardContentHidden");
+		}
+	};
+
+	/**
+	 * @override
+	 */
 	ListContentRenderer.getMinHeight = function (oConfiguration, oContent) {
 		if (!oConfiguration) {
 			return this.DEFAULT_MIN_HEIGHT;

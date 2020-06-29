@@ -23,7 +23,7 @@ sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.integration.card.BaseContent} oCardContent an object representation of the control that should be rendered
+	 * @param {sap.ui.integration.cards.BaseContent} oCardContent an object representation of the control that should be rendered
 	 */
 	BaseContentRenderer.render = function (oRm, oCardContent) {
 		// Add class the simple way. Add renderer hooks only if needed.
@@ -32,8 +32,7 @@ sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
 			sName = oCardContent.getMetadata().getName(),
 			sType = sName.slice(sLibrary.length + 1, sName.length),
 			oCard = oCardContent.getParent(),
-			bIsCardValid = oCard && oCard.isA("sap.f.ICard"),
-			oContent = oCardContent.getAggregation("_content");
+			bIsCardValid = oCard && oCard.isA("sap.f.ICard");
 
 		sClass += sType;
 
@@ -52,17 +51,36 @@ sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
 
 		oRm.openEnd();
 
+		// render placeholder and hide content
 		if (sType !== "AdaptiveContent" && bIsCardValid && oCardContent.isLoading()) {
 			oRm.renderControl(oCardContent._oLoadingPlaceholder);
 
 			//Removing content from the tab chain
 			if (sType !== "AnalyticalContent" && sType !== "TimelineContent") {
-				oContent.addStyleClass("sapFCardContentHidden");
+				this.hideContent(oCardContent);
 			}
 		}
 
-		oRm.renderControl(oContent);
+		this.renderContent(oRm, oCardContent);
+
 		oRm.close("div");
+	};
+
+	/**
+	 * @protected
+	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.integration.cards.BaseContent} oCardContent an object representation of the control that should be rendered
+	 */
+	BaseContentRenderer.renderContent = function (oRm, oCardContent) {
+		oRm.renderControl(oCardContent.getAggregation("_content"));
+	};
+
+	/**
+	 * @protected
+	 * @param {sap.ui.integration.cards.BaseContent} oCardContent an object representation of the control that should be rendered
+	 */
+	BaseContentRenderer.hideContent = function (oCardContent) {
+		oCardContent.getAggregation("_content").addStyleClass("sapFCardContentHidden");
 	};
 
 	/**

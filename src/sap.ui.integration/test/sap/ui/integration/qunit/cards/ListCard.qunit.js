@@ -1,17 +1,35 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Core",
+	"sap/ui/integration/cards/BaseListContent",
 	"sap/ui/integration/util/ContentFactory",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function (
+	Core,
+	BaseListContent,
 	ContentFactory,
 	Card,
-	Core
+	waitForThemeApplied
 ) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
+
+	var pIfMicrochartsAvailable = new Promise(function (resolve, reject) {
+		var oContentFactory = new ContentFactory();
+		return oContentFactory.create({
+				cardType: "List",
+				contentManifest: {
+					item: {
+						chart: {}
+					}
+				}
+			})
+			.then(resolve)
+			.catch(reject);
+	});
 
 	var oManifest_ListCard = {
 		"sap.card": {
@@ -499,6 +517,26 @@ sap.ui.define([
 		}
 	};
 
+	var oManifest_ListCard_ExternalData = {
+		"sap.app": {
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "List",
+			"content": {
+				"data": {
+					"request": {
+						"url": "test-resources/sap/ui/integration/qunit/manifests/items.json"
+					}
+				},
+				"item": {
+					"title": "{Name}",
+					"description": "{Description}"
+				}
+			}
+		}
+	};
+
 	var oManifest_ListCard_BulletMicrochart = {
 		"sap.app": {
 			"id": "oManifest_ListCard_BulletMicrochart"
@@ -564,18 +602,18 @@ sap.ui.define([
 								"Year": 2017,
 								"Category": "Computer system accessories",
 								"Notebook13": 200,
-								"Notebook13Label": "Notebook 13 label",
+								"Notebook13Title": "Notebook 13 title",
 								"Notebook13Color": "Good",
-								"Notebook17Label": "Notebook 17 label",
+								"Notebook17Title": "Notebook 17 title",
 								"Notebook17": 500
 							},
 							{
 								"Year": 2018,
 								"Category": "Computer system accessories",
 								"Notebook13": 300,
-								"Notebook13Label": "Notebook 13 label",
+								"Notebook13Title": "Notebook 13 title",
 								"Notebook13Color": "Success",
-								"Notebook17Label": "Notebook 17 label",
+								"Notebook17Title": "Notebook 17 title",
 								"Notebook17": 320
 							}
 						]
@@ -592,12 +630,116 @@ sap.ui.define([
 						"bars": [
 							{
 								"value": "{Notebook13}",
-								"displayValue": "{Notebook13Label}",
+								"displayValue": "{Notebook13Title}",
+								"color": "{Notebook13Color}",
+								"legendTitle": "{Notebook13Title}"
+							},
+							{
+								"value": "{Notebook17}",
+								"displayValue": "{Notebook17Title}",
+								"legendTitle": "{Notebook17Title}"
+							}
+						]
+					}
+				}
+			}
+		}
+	};
+
+	var oManifest_ListCard_StackedBarMicrochart_AbsoluteBinding = {
+		"sap.app": {
+			"id": "oManifest_ListCard_StackedBarMicrochart"
+		},
+		"sap.card": {
+			"type": "List",
+			"content": {
+				"data": {
+					"json": {
+						"maxOverYears": 700,
+						"titles": {
+							"Notebook13": "Notebook 13 title",
+							"Notebook17": "Notebook 17 title"
+						},
+						"Notebooks": [
+							{
+								"Year": 2017,
+								"Category": "Computer system accessories",
+								"Notebook13": 200,
+								"Notebook17": 500
+							},
+							{
+								"Year": 2018,
+								"Category": "Computer system accessories",
+								"Notebook13": 300,
+								"Notebook13Color": "Success",
+								"Notebook17": 320
+							}
+						]
+					},
+					"path": "/Notebooks"
+				},
+				"item": {
+					"title": "{Year}",
+					"description": "{Category}",
+					"chart": {
+						"type": "StackedBar",
+						"displayValue": "{= ${Notebook13} + ${Notebook17}}K",
+						"maxValue": "{/maxOverYears}",
+						"bars": [
+							{
+								"value": "{Notebook13}",
+								"legendTitle": "{/titles/Notebook13}"
+							},
+							{
+								"value": "{Notebook17}",
+								"legendTitle": "{/titles/Notebook17}"
+							}
+						]
+					}
+				}
+			}
+		}
+	};
+
+	var oManifest_ListCard_StackedBarMicrochart_NoBinding = {
+		"sap.app": {
+			"id": "oManifest_ListCard_StackedBarMicrochart"
+		},
+		"sap.card": {
+			"type": "List",
+			"content": {
+				"data": {
+					"json": {
+						"maxOverYears": 700,
+						"Notebooks": [
+							{
+								"Year": 2017,
+								"Notebook13": 200,
+								"Notebook17": 500
+							},
+							{
+								"Year": 2018,
+								"Notebook13": 300,
+								"Notebook17": 320
+							}
+						]
+					},
+					"path": "/Notebooks"
+				},
+				"item": {
+					"chart": {
+						"type": "StackedBar",
+						"displayValue": "{= ${Notebook13} + ${Notebook17}}K",
+						"maxValue": "{/maxOverYears}",
+						"bars": [
+							{
+								"value": "{Notebook13}",
+								"legendTitle": "Notebook 13 title",
 								"color": "{Notebook13Color}"
 							},
 							{
 								"value": "{Notebook17}",
-								"displayValue": "{Notebook17Label}"
+								"legendTitle":"Notebook 17 title"
 							}
 						]
 					}
@@ -723,6 +865,36 @@ sap.ui.define([
 		this.oCard.setManifest(oManifest_ListCard_maxItems_Parameters);
 	});
 
+	QUnit.module("Overridden methods", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				width: "400px",
+				height: "600px"
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("#destroyPlaceholder - Placeholder is destroyed after loading has completed", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			spy = sinon.spy(BaseListContent.prototype, "destroyPlaceholder");
+
+		this.oCard.attachEvent("_ready", function () {
+			assert.ok(spy.called, "The method in the base class for destroying placeholder is called.");
+			done();
+		});
+
+		// Act
+		this.oCard.setManifest(oManifest_ListCard_ExternalData);
+	});
+
 	QUnit.module("Loading of the Microchart library", {
 		beforeEach: function () {
 			this.oCard = new Card({
@@ -806,26 +978,12 @@ sap.ui.define([
 		}
 	});
 
-	var pIfMicrochartsAvailable = new Promise(function (resolve, reject) {
-		var oContentFactory = new ContentFactory();
-		return oContentFactory.create({
-				cardType: "List",
-				contentManifest: {
-					item: {
-						chart: {}
-					}
-				}
-			})
-			.then(resolve)
-			.catch(reject);
-	});
-
 	function testMicrochartCreation(assert, oCard, oManifest, fnTest) {
 		var done = assert.async();
 
 		pIfMicrochartsAvailable
 			.then(function () {
-				oCard.attachEvent("_ready", function () {
+				oCard.attachEventOnce("_ready", function () {
 					fnTest(done);
 				});
 				oCard.setManifest(oManifest);
@@ -863,11 +1021,105 @@ sap.ui.define([
 			assert.strictEqual(aBars.length, oExpectedSettings["Notebooks"].length, "Should have created 2 bars.");
 			assert.strictEqual(oChart.getMaxValue(), oExpectedSettings.maxOverYears, "'maxValue' property from the manifest should be set to the chart.");
 			assert.strictEqual(aBars[0].getValue(), oExpectedSettings["Notebooks"][0]["Notebook13"], "'value' property from the bar in the manifest should be set to the chart.");
-			assert.strictEqual(aBars[0].getDisplayValue(), oExpectedSettings["Notebooks"][0]["Notebook13Label"], "'displayValue' property from the bar in the manifest should be set to the chart.");
+			assert.strictEqual(aBars[0].getDisplayValue(), oExpectedSettings["Notebooks"][0]["Notebook13Title"], "'displayValue' property from the bar in the manifest should be set to the chart.");
 			assert.strictEqual(aBars[0].getValueColor(), oExpectedSettings["Notebooks"][0]["Notebook13Color"], "'color' property from the bar in the manifest should be set to the chart.");
 
 			done();
 		}.bind(this));
 	});
 
+	QUnit.module("Legend", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				width: "400px",
+				height: "600px"
+			});
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	function testLegend(assert, oCard, oManifest, fnTest) {
+		var done = assert.async();
+
+		pIfMicrochartsAvailable
+			.then(function () {
+				oCard.attachEventOnce("_ready", function () {
+					fnTest(done);
+				});
+				oCard.setManifest(oManifest);
+			})
+			.catch(function (sErr) {
+				assert.strictEqual(sErr, "The usage of Microcharts is not available with this distribution.");
+				done();
+			});
+	}
+
+	QUnit.test("There should be a legend when chart type is 'StackedBar'", function (assert) {
+		testLegend(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart, function (done) {
+			assert.ok(this.oCard.getCardContent().getAggregation("_legend"), "Legend is created.");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Relative binding - the legend items should have correct titles", function (assert) {
+		testLegend(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart, function (done) {
+			// Arrange
+			Core.applyChanges();
+			var aExpectedTitles = oManifest_ListCard_StackedBarMicrochart["sap.card"]["content"]["data"]["json"]["Notebooks"],
+				aActualTitles = this.oCard.getCardContent().getAggregation("_legend").getAggregation("_titles");
+
+			// Assert
+			assert.strictEqual(aActualTitles[0].getText(), aExpectedTitles[0].Notebook13Title, "Relative binding to the item is resolved correctly.");
+			assert.strictEqual(aActualTitles[1].getText(), aExpectedTitles[1].Notebook17Title, "Relative binding to the item is resolved correctly.");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Absolute binding- the legend items should have correct titles", function (assert) {
+		testLegend(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart_AbsoluteBinding, function (done) {
+			// Arrange
+			Core.applyChanges();
+			var oTitles = oManifest_ListCard_StackedBarMicrochart_AbsoluteBinding["sap.card"]["content"]["data"]["json"]["titles"],
+				aActualTitles = this.oCard.getCardContent().getAggregation("_legend").getAggregation("_titles");
+
+			// Assert
+			assert.strictEqual(aActualTitles[0].getText(), oTitles.Notebook13, "Absolute binding is resolved correctly.");
+			assert.strictEqual(aActualTitles[1].getText(), oTitles.Notebook17, "Absolute binding is resolved correctly.");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("No binding- the legend items should have the same titles as the chart bars", function (assert) {
+		testLegend(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart_NoBinding, function (done) {
+			// Arrange
+			Core.applyChanges();
+			var aExpectedTitles = oManifest_ListCard_StackedBarMicrochart_NoBinding["sap.card"]["content"]["item"]["chart"]["bars"],
+				aActualTitles = this.oCard.getCardContent().getAggregation("_legend").getAggregation("_titles");
+
+			// Assert
+			assert.strictEqual(aActualTitles[0].getText(), aExpectedTitles[0].legendTitle, "Title is set correctly.");
+			assert.strictEqual(aActualTitles[1].getText(), aExpectedTitles[1].legendTitle, "Title is set correctly.");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Legend is destroyed when the card type has changed", function (assert) {
+		testLegend(assert, this.oCard, oManifest_ListCard_StackedBarMicrochart, function (done) {
+			assert.ok(this.oCard.getCardContent().getAggregation("_legend"), "Legend is created when it is needed.");
+
+			this.oCard.attachEvent("_ready", function () {
+				assert.notOk(this.oCard.getCardContent().getAggregation("_legend"), "Legend is destroyed when it is NO longer needed.");
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest(oManifest_ListCard);
+		}.bind(this));
+	});
+
+	return waitForThemeApplied();
 });
