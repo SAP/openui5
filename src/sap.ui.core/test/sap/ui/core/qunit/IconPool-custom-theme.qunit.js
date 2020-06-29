@@ -4,13 +4,12 @@ sap.ui.define(["sap/ui/core/IconPool"],function(IconPool) {
 
 	QUnit.test("insertFontFaceStyle", function(assert) {
 
-		assert.equal(jQuery("head > style[type='text/css']").get(0), null, "Style should not have been inserted.");
+		assert.equal(jQuery("head > link[type='text/css']").get(0), null, "Style should not have been inserted.");
 
 		IconPool.insertFontFaceStyle();
 
-		var sCss = jQuery("head > style[type='text/css']").text();
-		assert.ok(sCss.indexOf("url('test-resources/sap/ui/core/qunit/testdata/customcss/sap/ui/core/themes/base/fonts/SAP-icons") !== -1,
-			"Font should have been include from custom theme folder.");
+		var oLinkElement = jQuery("head > link[type='text/css']");
+		assert.ok(oLinkElement.length === 0, "Link element isn't created because the font-face declaration is done in library.css");
 	});
 
 });
