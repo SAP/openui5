@@ -58,6 +58,7 @@ sap.ui.define([
 			aConfigValuesForWaitFor = [
 				"visible",
 				"enabled",
+				"editable",
 				"viewNamespace",
 				"viewName",
 				"viewId",
@@ -560,6 +561,8 @@ sap.ui.define([
 		 * If autoWait is true, this option has no effect and interactable will always be true.
 		 * If autoWait is false, which is the default state, the value of the interactable property will have an effect.
 		 * When interactable is true, enabled will also be set to true, unless declared otherwise.
+		 * @param {boolean} [options.editable=false] @since 1.80 If set to true, Opa5 will match only editable controls.
+		 * If set to false, Opa5 will match both editable and non-editable controls.
 		 * @param {int} [options.timeout=15] (seconds) Specifies how long the waitFor function polls before it fails.O means it will wait forever.
 		 * @param {int} [options.debugTimeout=0] @since 1.47 (seconds) Specifies how long the waitFor function polls before it fails in debug mode.O means it will wait forever.
 		 * @param {int} [options.pollingInterval=400] (milliseconds) Specifies how often the waitFor function polls.
@@ -607,7 +610,7 @@ sap.ui.define([
 		 * That means actions will only be executed if:
 		 * <ul>
 		 *     <li>
-		 *         Controls and their parents are visible, enabled and not busy
+		 *         Controls and their parents are visible, not busy and not hidden behind a blocking layer
 		 *     </li>
 		 *     <li>
 		 *         The controls are not hidden behind static elements such as dialogs
@@ -1018,6 +1021,7 @@ sap.ui.define([
 		 * 	<li>assertions: instance of OPA5</li>
 		 * 	<li>visible: true</li>
 		 * 	<li>enabled: false</li>
+		 * 	<li>editable: false</li>
 		 * 	<li>timeout : 15 seconds, 0 for infinite timeout</li>
 		 * 	<li>pollingInterval: 400 milliseconds</li>
 		 * 	<li>debugTimeout: 0 seconds, infinite timeout by default. This will be used instead of timeout if running in debug mode.</li>
@@ -1036,6 +1040,7 @@ sap.ui.define([
 				assertions: new Opa5(),
 				visible: true,
 				enabled: undefined,
+				editable: undefined,
 				autoWait: false,
 				_stackDropCount: 1
 			});

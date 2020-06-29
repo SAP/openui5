@@ -8,11 +8,12 @@ sap.ui.define([
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Visible",
 	"sap/ui/test/matchers/_Enabled",
+	"sap/ui/test/matchers/_Editable",
 	"sap/base/strings/capitalize",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/test/_ValidationParameters",
 	"sap/ui/test/matchers/matchers"
-], function (UI5Object, Interactable, Visible, _Enabled, capitalize, jQueryDOM, _ValidationParameters) {
+], function (UI5Object, Interactable, Visible, _Enabled, _Editable, capitalize, jQueryDOM, _ValidationParameters) {
 	"use strict";
 
 	/**
@@ -23,7 +24,7 @@ sap.ui.define([
 
 		/**
 		 * Retrieve an array of matchers. Each matcher ensures a control is in a desired state.
-		 * Valid states are: enabled, visible, interactable
+		 * Valid states are: visible, interactable, enabled, editable
 		 *
 		 * @param {object} oOptions a plain object of waitFor-style options. fo a full list see {@link sap.ui.test.OpaPlugin#getMatchingControls}
 		 * @return {array} an array of {@link sap.ui.test.matchers.Matcher} instances
@@ -37,6 +38,9 @@ sap.ui.define([
 				// enabled has priority over interactable
 				if (oOptions.enabled) {
 					aMatchers.push(new _Enabled());
+				}
+				if (oOptions.editable) {
+					aMatchers.push(new _Editable());
 				}
 
 				// Interactable uses Visible
