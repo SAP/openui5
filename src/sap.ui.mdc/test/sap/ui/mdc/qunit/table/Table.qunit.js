@@ -767,6 +767,9 @@ sap.ui.define([
 				assert.deepEqual(this.oTable.getP13nMode(), [
 					"Column"
 				]);
+				assert.ok(this.oTable.getCurrentState().items);
+				assert.ok(!this.oTable.getCurrentState().sorters);
+				assert.ok(!this.oTable.getCurrentState().filter);
 				assert.ok(fP13nModeSpy.calledOnce);
 				assert.equal(this.oTable._oToolbar.getEnd().length, 1, "Column has Add/Remove and Reorder");
 				assert.ok(this.oTable._oTemplate.isA("sap.m.ColumnListItem"));
@@ -782,6 +785,9 @@ sap.ui.define([
 					"Column", "Sort"
 				]);
 
+				assert.ok(this.oTable.getCurrentState().items);
+				assert.ok(this.oTable.getCurrentState().sorters);
+				assert.ok(!this.oTable.getCurrentState().filter);
 				assert.ok(fInnerTableDestroySpy.notCalled);
 				assert.ok(fInnerTemplateDestroySpy.notCalled);
 
@@ -1279,6 +1285,8 @@ sap.ui.define([
 
 	QUnit.test("Sort Change triggered", function(assert) {
 		var done = assert.async();
+
+		this.oTable.setP13nMode(["Sort"]);
 
 		this.oTable.addColumn(new Column({
 			template: new Text(),

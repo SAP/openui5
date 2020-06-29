@@ -47,9 +47,7 @@ sap.ui.define([
 
 				//needs to be done to create remove changes --> AdaptationController should generally provide an absolute appliance as already done for sorting
 				mConditions = merge(this._getConditionModel().getAllConditions(), mConditions);
-				this._getAdaptationController().createConditionChanges(mConditions).then(function(){
-					this.triggerSearch();
-				}.bind(this));
+				this._getAdaptationController().createConditionChanges(mConditions);
 			}.bind(this));
 
 			//TODO: do not rely on parent control structure (e.g. Dialog)
@@ -72,6 +70,11 @@ sap.ui.define([
 			FlexUtil.handleChanges(aChanges);
 		}.bind(this));
 		return this._oAdaptationController;
+	};
+
+	AdaptationFilterBar.prototype.applyConditionsAfterChangesApplied = function() {
+		FilterBarBase.prototype.applyConditionsAfterChangesApplied.apply(this, arguments);
+		this.triggerSearch();
 	};
 
 	AdaptationFilterBar.prototype.rerouteChangesBeforeAppliance = function(aChanges){

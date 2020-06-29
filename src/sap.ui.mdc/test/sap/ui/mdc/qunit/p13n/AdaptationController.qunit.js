@@ -418,6 +418,7 @@ sap.ui.define([
 	QUnit.module("AdaptationController API tests showP13n FilterBar", {
 		beforeEach: function () {
 			this.oFilterBar = new FilterBar("TestFB", {
+				p13nMode: ["Item","Value"],
 				filterItems: [
 					new FilterField("item1",{
 						label:"item1",

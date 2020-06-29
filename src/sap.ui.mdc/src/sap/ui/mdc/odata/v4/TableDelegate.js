@@ -128,5 +128,20 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Set the <code>delegate</code> property for the inner <code>FilterBar</code>
+	 *
+	 * @param {Object} oPayload The payload configuration for the current Table instance
+	 * @returns {Object} Object for the inner FilterBar <code>delegate</code> property
+	 *
+	 * @public
+	 */
+	ODataTableDelegate.getFilterDelegate = function(oPayload) {
+		return {
+			name: "sap/ui/mdc/odata/v4/FilterBarDelegate",
+			payload: oPayload
+		};
+	};
+
 	return ODataTableDelegate;
 });

@@ -185,6 +185,23 @@ sap.ui.define([
 		}
 	};
 
+	FilterBar.prototype.onAdaptFilters = function(oEvent) {
+		return this._oMetadataAppliedPromise.then(function() {
+			return this._getAdaptationController().showP13n(this._btnAdapt, "Item");
+		}.bind(this));
+	};
+
+	FilterBar.prototype.getCurrentState = function() {
+
+		var oState = FilterBarBase.prototype.getCurrentState.apply(this, arguments);
+
+		if (!this.getProperty("_p13nModeItem")) {
+			delete oState.items;
+		}
+
+		return oState;
+	};
+
 	return FilterBar;
 
 });

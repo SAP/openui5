@@ -43,6 +43,10 @@ sap.ui.define([
 				group: "FilterBar",
 				module: "./FilterBar.qunit"
 			},
+			"FilterBarBase": {
+				group: "FilterBarBase",
+				module: "./FilterBarBase.qunit"
+			},
 			"AdaptationFilterBar": {
 				group: "FilterBar",
 				module: "./AdaptationFilterBar.qunit"
