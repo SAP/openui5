@@ -139,11 +139,11 @@ sap.ui.define([
 		},
 		// Sort Dialog Assertions
 		iShouldSeeTheSortDialog: function() {
-			return waitForTable.call(this, {
-				success: function(oTable) {
-					waitForP13nDialog.call(this, oTable, TableUtil.SortDialogTitle, {});
-				}
+
+			waitForP13nDialog.call(this, TableUtil.SortDialogTitle, {
+				liveMode: false
 			});
+
 		},
 		iShouldSeeASortedColumn: function(sColumn, sSortDirection) {
 			return waitForTable.call(this, {
@@ -183,7 +183,9 @@ sap.ui.define([
 		iShouldSeeTheColumnSettingsDialog: function() {
 			return waitForTable.call(this, {
 				success: function(oTable) {
-					waitForP13nDialog.call(this, oTable, TableUtil.ColumnDialogTitle, {});
+					waitForP13nDialog.call(this, oTable, TableUtil.ColumnDialogTitle, {
+						liveMode: false
+					});
 				}
 			});
 		}

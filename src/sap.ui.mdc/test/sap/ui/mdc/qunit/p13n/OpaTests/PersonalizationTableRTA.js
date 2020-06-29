@@ -85,7 +85,7 @@ sap.ui.define([
 	opaTest("When I close the 'Add/Remove Columns' button, the table has not been changed", function (Given, When, Then) {
 
 		//close dialog
-		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeModalDialog("OK");
+		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeModalDialog("OK");
 
 		//check initially visible columns
 		Then.iShouldSeeVisibleColumnsInOrder("sap.ui.mdc.table.Column", [
@@ -110,7 +110,7 @@ sap.ui.define([
 
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.columns);
 
-		When.iSelectColumn("Country", Arrangement.P13nDialog.Titles.columns, aTableItems, true);
+		When.iSelectColumn("Country", Arrangement.P13nDialog.Titles.columns, aTableItems, false);
 
 		When.iPressButtonWithText("Reorder");
 		When.iClickOnTableItem("Country").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
@@ -128,7 +128,7 @@ sap.ui.define([
 	opaTest("When I close the 'Add/Remove Columns' button, the table has not been changed", function (Given, When, Then) {
 
 		//close dialog
-		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeModalDialog("OK");
+		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeModalDialog("OK");
 
 		//check initially visible columns
 		Then.iShouldSeeVisibleColumnsInOrderInTable("sap.ui.mdc.Table", "sap.ui.mdc.table.Column", [
@@ -149,8 +149,8 @@ sap.ui.define([
 
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.columns);
 
-		When.iSelectColumn("Breakout Year", Arrangement.P13nDialog.Titles.columns, aTableItems,true);
-		When.iSelectColumn("regionOfOrigin_code", Arrangement.P13nDialog.Titles.columns, aTableItems,true);
+		When.iSelectColumn("Breakout Year", Arrangement.P13nDialog.Titles.columns, aTableItems,false);
+		When.iSelectColumn("regionOfOrigin_code", Arrangement.P13nDialog.Titles.columns, aTableItems,false);
 
 		When.iPressButtonWithText("Reorder");
 		When.iClickOnTableItem("Breakout Year").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
@@ -165,7 +165,7 @@ sap.ui.define([
 		Then.iShouldSeeP13nItem("Created On", 6);
 
 		//close dialog
-		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeModalDialog("Cancel");
+		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeModalDialog("Cancel");
 
 		//check initially visible columns
 		Then.iShouldSeeVisibleColumnsInOrderInTable("sap.ui.mdc.Table", "sap.ui.mdc.table.Column", [
@@ -187,8 +187,8 @@ sap.ui.define([
 
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.columns);
 
-		When.iSelectColumn("Breakout Year", Arrangement.P13nDialog.Titles.columns, aTableItems,true);
-		When.iSelectColumn("regionOfOrigin_code", Arrangement.P13nDialog.Titles.columns, aTableItems,true);
+		When.iSelectColumn("Breakout Year", Arrangement.P13nDialog.Titles.columns, aTableItems,false);
+		When.iSelectColumn("regionOfOrigin_code", Arrangement.P13nDialog.Titles.columns, aTableItems,false);
 
 		When.iPressButtonWithText("Reorder");
 		When.iClickOnTableItem("Breakout Year").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
@@ -210,7 +210,7 @@ sap.ui.define([
 	opaTest("When I close the 'Add/Remove Columns' button, the table has not been changed", function (Given, When, Then) {
 
 		//close dialog
-		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeModalDialog("OK");
+		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeModalDialog("OK");
 
 		//check initially visible columns
 		Then.iShouldSeeVisibleColumnsInOrderInTable("sap.ui.mdc.Table", "sap.ui.mdc.table.Column", [

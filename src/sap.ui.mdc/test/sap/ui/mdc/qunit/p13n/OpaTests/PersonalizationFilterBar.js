@@ -65,14 +65,14 @@ sap.ui.define([
 	opaTest("When I press on 'Adapt Filters' button, the 'Adapt Filters' popover opens", function (Given, When, Then) {
 		When.iPressButtonWithText("Adapt Filters");//TODO
 
-		Then.thePersonalizationDialogOpens();
+		Then.thePersonalizationDialogOpens(true);
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.adaptFilter);
 
 		Then.iShouldSeeP13nItems(aFilterItems);
 	});
 
 	opaTest("When I close the 'Adapt Filters' button, the FilterBar has not been changed", function (Given, When, Then) {
-		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeAllPopovers();
+		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeAllPopovers();
 
 		//close p13n dialog
 		Then.thePersonalizationDialogShouldBeClosed();
@@ -90,13 +90,13 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("When I press on 'Adapt Filters' button, I change the FilterField selection", function (Given, When, Then) {
 		When.iPressButtonWithText("Adapt Filters");//TODO
-		Then.thePersonalizationDialogOpens();
+		Then.thePersonalizationDialogOpens(true);
 
 		// --> FilterBar needs to handle multiple clicks without crashing
 		When.iPressButtonWithText("Adapt Filters");
 
-		When.iSelectColumn("Country", Arrangement.P13nDialog.Titles.adaptFilter, aFilterItems);
-		When.iSelectColumn("cityOfOrigin_city", Arrangement.P13nDialog.Titles.adaptFilter, aFilterItems);
+		When.iSelectColumn("Country", Arrangement.P13nDialog.Titles.adaptFilter, aFilterItems, true);
+		When.iSelectColumn("cityOfOrigin_city", Arrangement.P13nDialog.Titles.adaptFilter, aFilterItems, true);
 
 		When.iPressButtonWithText("Adapt Filters");//TODO
 

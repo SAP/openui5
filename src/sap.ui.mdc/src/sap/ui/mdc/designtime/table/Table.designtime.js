@@ -17,7 +17,6 @@ sap.ui.define([
 						return new Promise(function (resolve, reject) {
 
 							var oAdaptationController = TableSettings._getAdaptationController(oControl);
-							oAdaptationController.setLiveMode(false);
 							var fnRuntimeHandling = oAdaptationController.getAfterChangesCreated();
 
 							var fnEnhanceDialog = function (oEvt) {
@@ -44,7 +43,6 @@ sap.ui.define([
 
 								//cleanup (detach events)
 								oAdaptationController.setAfterChangesCreated(fnRuntimeHandling);
-								oAdaptationController.setLiveMode(true);
 								oAdaptationController.detachEvent("beforeP13nContainerOpens", fnEnhanceDialog);
 								oAdaptationController.detachEvent("afterP13nContainerCloses", fnResolveAndCleanup);
 							};

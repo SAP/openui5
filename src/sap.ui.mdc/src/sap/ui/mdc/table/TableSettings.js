@@ -116,7 +116,6 @@ sap.ui.define([
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 			if (!oControl._oAdaptationController) {
 				oControl._oAdaptationController = new AdaptationController({
-					liveMode: true,
 					adaptationControl: oControl,
 					stateRetriever: function(){
 						return oControl.getCurrentState();
