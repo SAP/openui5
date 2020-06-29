@@ -114,24 +114,10 @@ sap.ui.define([
 							if (fnIsLayoutSupported(oFormContainer)) {
 								return {
 									changeType: "addFormField",
-									changeOnRelevantContainer: true
-								};
-							}
-						}
-					},
-					addODataProperty: function (oFormContainer) {
-						if (fnIsLayoutSupported(oFormContainer)) {
-							var mChangeHandlerSettings = ChangeHandlerMediator.getAddODataFieldWithLabelSettings(oFormContainer);
-
-							if (mChangeHandlerSettings) {
-								return {
-									changeType: "addFormField",
 									changeOnRelevantContainer: true,
-									changeHandlerSettings: mChangeHandlerSettings
+									supportsDefaultDelegate: true
 								};
 							}
-						} else {
-							return null;
 						}
 					}
 				}

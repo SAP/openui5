@@ -117,7 +117,12 @@ sap.ui.define([
 				group: "Designtime",
 				title: "QUnit Page for sap.ui.layout.form.AddODataFormField design time and rta enabling",
 				ui5: {
-					libs: ["sap.ui.layout", "sap.ui.rta", "sap.ui.comp"]
+					libs: ["sap.ui.layout", "sap.ui.rta", "sap.ui.comp"],
+					language: "en"
+				},
+				coverage: {
+					only: "[sap/ui/layout/changeHandlers, sap/ui/layout/form]",	// Which files to show in the coverage report, if null, no files are excluded from coverage
+					branchCoverage: true		// Whether to enable standard branch coverage
 				},
 				module: "./../designtime/form/AddODataFormField.qunit",
 				sinon: false
@@ -126,7 +131,12 @@ sap.ui.define([
 				group: "Designtime",
 				title: "QUnit Page for sap.ui.layout.form.Form design time and rta enabling",
 				ui5: {
-					libs: ["sap.ui.layout", "sap.ui.rta"]
+					libs: ["sap.ui.layout", "sap.ui.rta"],
+					language: "en"
+				},
+				coverage: {
+					only: "[sap/ui/layout/changeHandlers, sap/ui/layout/form]",	// Which files to show in the coverage report, if null, no files are excluded from coverage
+					branchCoverage: true		// Whether to enable standard branch coverage
 				},
 				module: "./../designtime/form/Form.qunit",
 				sinon: false
@@ -137,6 +147,10 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.ui.layout", "sap.ui.rta"]
 				},
+				coverage: {
+					only: "[sap/ui/layout/changeHandlers, sap/ui/layout/form]",	// Which files to show in the coverage report, if null, no files are excluded from coverage
+					branchCoverage: true		// Whether to enable standard branch coverage
+				},
 				module: "./../designtime/form/FormContainer.qunit",
 				sinon: false
 			},
@@ -146,6 +160,10 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.ui.layout", "sap.ui.rta"]
 				},
+				coverage: {
+					only: "[sap/ui/layout/changeHandlers, sap/ui/layout/form]",	// Which files to show in the coverage report, if null, no files are excluded from coverage
+					branchCoverage: true		// Whether to enable standard branch coverage
+				},
 				module: "./../designtime/form/FormElement.qunit",
 				sinon: false
 			},
@@ -153,7 +171,12 @@ sap.ui.define([
 				group: "Designtime",
 				title: "QUnit Page for sap.ui.layout.form.SimpleForm design time",
 				ui5: {
-					libs: ["sap.ui.layout", "sap.ui.rta"]
+					libs: ["sap.ui.layout", "sap.ui.rta"],
+					language: "en"
+				},
+				coverage: {
+					only: "[sap/ui/layout/changeHandlers, sap/ui/layout/form]",	// Which files to show in the coverage report, if null, no files are excluded from coverage
+					branchCoverage: true		// Whether to enable standard branch coverage
 				},
 				module: "./../designtime/form/SimpleForm.qunit",
 				sinon: false
@@ -165,10 +188,12 @@ sap.ui.define([
 				group: "Change Handler",
 				title: "Test Page for sap.ui.layout.qunit.form.changes.AddSimpleFormField",
 				ui5: {
-					libs: ["sap.ui.layout", "sap.m", "sap.ui.dt", "sap.ui.rta", "sap.ui.comp"]
+					libs: ["sap.ui.layout", "sap.m", "sap.ui.dt", "sap.ui.rta", "sap.ui.comp"],
+					language: "en"
 				},
 				coverage: {
-					only: "[sap/ui/layout]"
+					only: "[sap/ui/layout/changeHandlers, sap/ui/layout/form]",	// Which files to show in the coverage report, if null, no files are excluded from coverage
+					branchCoverage: true		// Whether to enable standard branch coverage
 				},
 				module: "./changes/AddSimpleFormField.qunit"
 			},
@@ -178,6 +203,10 @@ sap.ui.define([
 				title: "QUnit - sap.ui.layout.changes.AddSimpleFormGroup",
 				ui5: {
 					libs: ["sap.ui.layout", "sap.m"]
+				},
+				coverage: {
+					only: "[sap/ui/layout/changeHandlers, sap/ui/layout/form]",	// Which files to show in the coverage report, if null, no files are excluded from coverage
+					branchCoverage: true		// Whether to enable standard branch coverage
 				},
 				module: "./changes/AddSimpleFormGroup.qunit"
 			},
@@ -197,6 +226,10 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.ui.layout", "sap.m"]
 				},
+				coverage: {
+					only: "[sap/ui/layout/changeHandlers, sap/ui/layout/form]",	// Which files to show in the coverage report, if null, no files are excluded from coverage
+					branchCoverage: true		// Whether to enable standard branch coverage
+				},
 				module: "./changes/RenameSimpleForm.qunit"
 			},
 
@@ -205,6 +238,10 @@ sap.ui.define([
 				title: "QUnit - sap.ui.layout.changes.UnhideSimpleForm",
 				ui5: {
 					libs: ["sap.ui.layout", "sap.m"]
+				},
+				coverage: {
+					only: "[sap/ui/layout/changeHandlers, sap/ui/layout/form]",	// Which files to show in the coverage report, if null, no files are excluded from coverage
+					branchCoverage: true		// Whether to enable standard branch coverage
 				},
 				module: "./changes/UnhideSimpleForm.qunit"
 			},
@@ -215,6 +252,10 @@ sap.ui.define([
 				title: "QUnit - sap.ui.layout.changes.AddFormContainer",
 				ui5: {
 					libs: ["sap.ui.layout", "sap.ui.rta", "sap.ui.comp"]
+				},
+				coverage: {
+					only: "[sap/ui/layout/changeHandlers, sap/ui/layout/form]",	// Which files to show in the coverage report, if null, no files are excluded from coverage
+					branchCoverage: true		// Whether to enable standard branch coverage
 				},
 				module: "./../designtime/form/AddFormContainer.qunit",
 				sinon: false

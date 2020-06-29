@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv"
 ], function(
 	AddTableColumnChangeHandler,
@@ -17,13 +16,10 @@ sap.ui.define([
 	UIComponent,
 	ComponentContainer,
 	JSONModel,
-	qutils,
 	createAndAppendDiv
 ) {
 	'use strict';
 	createAndAppendDiv("content");
-
-
 
 	var oXmlString = [
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">',
@@ -49,10 +45,10 @@ sap.ui.define([
 	function createChangeDefinition(mDefinition) {
 		return jQuery.extend(true, {}, {
 			"changeType": "addTableColumn",
+			"oDataInformation": {
+				"entityType": "EntityTypeNav"
+			},
 			"content": {
-				"oDataInformation": {
-					"entityType": "EntityTypeNav"
-				},
 				"bindingPath": "EntityTypeNav_Property04",
 				"newFieldSelector": {
 					"id": "view--table_EntityTypeNav_EntityTypeNav_Property04",
@@ -84,8 +80,13 @@ sap.ui.define([
 		}
 	});
 
+	function getEntityType(oChange){
+		return oChange.getDefinition().oDataInformation.entityType;
+	}
+
 	QUnit.test('applyChange on a xml control tree', function(assert) {
 		var mContent = this.oChange.getContent();
+
 		return this.oChangeHandler.applyChange(this.oChange, this.oTable, {
 			modifier: XmlTreeModifier,
 			appComponent: {
@@ -96,56 +97,23 @@ sap.ui.define([
 			view: this.oXmlView
 		})
 		.then(function() {
+			var sNewFieldId = mContent.newFieldSelector.id;
 			assert.strictEqual(
 				this.oTable.childNodes[0].childNodes[1].getAttribute('id'),
-				this.oChange.getContent().newFieldSelector.id,
+				sNewFieldId,
 				"column has been created successfully"
 			);
+			var oLabel = this.oTable.childNodes[0].childNodes[1].childNodes[0];
 			assert.strictEqual(
-				this.oTable.childNodes[0].childNodes[1].childNodes[0].getAttribute('text'),
-				"{/#" + mContent.entityType + "/" + mContent.bindingPath + "/@sap:label}",
+				oLabel.getAttribute('text'),
+				"{/#" + getEntityType(this.oChange) + "/" + mContent.bindingPath + "/@sap:label}",
 				"column has correct binding"
 			);
+			var oCell = this.oTable.childNodes[1].childNodes[1].childNodes[0].childNodes[1];
 			assert.ok(
-				this.oTable.childNodes[1].childNodes[1].childNodes[0].childNodes[1].getAttribute('id').indexOf(this.oChange.getContent().newFieldSelector.id) !== -1,
+				oCell.getAttribute('id')
+				.indexOf(sNewFieldId) !== -1,
 				"template has been modified successfully"
-			);
-		}.bind(this));
-	});
-
-	QUnit.test('revertChange on a xml control tree', function(assert) {
-		var sColumn1Id = this.oTable.childNodes[0].childNodes[1].getAttribute('id');
-		var sTemplateForColumn1Id = this.oTable.childNodes[1].childNodes[1].childNodes[0].childNodes[1].getAttribute('id');
-		return this.oChangeHandler.applyChange(this.oChange, this.oTable, {
-			modifier: XmlTreeModifier,
-			appComponent: {
-				createId: function (sControlId) {
-					return sControlId;
-				}
-			},
-			view: this.oXmlView
-		})
-		.then(function() {
-			return this.oChangeHandler.revertChange(this.oChange, this.oTable, {
-				modifier: XmlTreeModifier,
-				appComponent: {
-					createId: function (sControlId) {
-						return sControlId;
-					}
-				},
-				view: this.oXmlView
-			});
-		}.bind(this))
-		.then(function() {
-			assert.strictEqual(
-				this.oTable.childNodes[0].childNodes[1].getAttribute('id'),
-				sColumn1Id,
-				"column has been restored successfully"
-			);
-			assert.strictEqual(
-				this.oTable.childNodes[1].childNodes[1].childNodes[0].childNodes[1].getAttribute('id'),
-				sTemplateForColumn1Id,
-				"template has been restored successfully"
 			);
 		}.bind(this));
 	});
@@ -239,7 +207,7 @@ sap.ui.define([
 			);
 			assert.strictEqual(
 				"{" + this.oTable.getColumns()[1].getHeader().getBindingInfo('text').binding.getPath() + "}",
-				"{/#" + mContent.entityType + "/" + mContent.bindingPath + "/@sap:label}",
+				"{/#" + getEntityType(this.oChange) + "/" + mContent.bindingPath + "/@sap:label}",
 				"column has been created successfully"
 			);
 			assert.ok(

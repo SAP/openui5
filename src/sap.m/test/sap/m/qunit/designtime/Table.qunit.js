@@ -4,16 +4,10 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/ColumnListItem",
 	"sap/m/Toolbar",
-	"sap/m/changeHandler/MoveTableColumns",
 	"sap/ui/dt/enablement/elementDesigntimeTest",
 	"sap/ui/rta/enablement/elementActionTest",
-	"sap/ui/core/UIComponent",
-	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/mvc/XMLView",
-	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/dt/ElementUtil",
-	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	// We have to ensure to load fl, so that change handler gets registered
 	"sap/ui/fl/library"
 ], function (
@@ -22,16 +16,10 @@ sap.ui.define([
 	Text,
 	ColumnListItem,
 	Toolbar,
-	MoveTableColumns,
 	elementDesigntimeTest,
 	elementActionTest,
-	UIComponent,
-	ComponentContainer,
-	XMLView,
-	CommandFactory,
-	ElementUtil,
-	ElementDesignTimeMetadata,
-	JSONModel
+	JSONModel,
+	DelegateMediatorAPI
 ) {
 	"use strict";
 
@@ -208,6 +196,22 @@ sap.ui.define([
 			};
 		};
 
+		var oJSONModelWithSampleData = new JSONModel({
+			"records": [{
+				"column1": "test1_1",
+				"column2": "test2_1",
+				"column3": "test3_1"
+			},{
+				"column1": "test1_2",
+				"column2": "test2_2",
+				"column3": "test3_2"
+			},{
+				"column1": "test1_3",
+				"column2": "test2_3",
+				"column3": "test3_3"
+			}]
+		});
+
 		elementActionTest("Checking the move action for Table control with template", {
 			xmlView: '\
 				<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">\
@@ -229,21 +233,7 @@ sap.ui.define([
 					</Table>\
 				</mvc:View>\
 			',
-			model: new JSONModel({
-				"records": [{
-					"column1": "test1_1",
-					"column2": "test2_1",
-					"column3": "test3_1"
-				},{
-					"column1": "test1_2",
-					"column2": "test2_2",
-					"column3": "test3_2"
-				},{
-					"column1": "test1_3",
-					"column2": "test2_3",
-					"column3": "test3_3"
-				}]
-			}),
+			model: oJSONModelWithSampleData,
 			action: {
 				name: "move",
 				controlId: "myTable",
@@ -273,5 +263,184 @@ sap.ui.define([
 			afterUndo: fnAssertFactory(0),
 			afterRedo: fnAssertFactory(1)
 		});
+
+		// Add delegate tests
+
+		var TEST_DELEGATE_PATH = "sap/ui/rta/enablement/TestDelegate";
+		function buildViewContentForAddDelegate(sDelegate) {
+			return '\
+				<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:fl="sap.ui.fl">\
+					<Table id="myTable" items="{path: \'/records\'}"\
+						' + sDelegate + '\
+					>\
+						<columns>\
+							<Column id="column1"><Text text="column1" /></Column>\
+							<Column id="column2"><Text text="column2" /></Column>\
+						</columns>\
+						<items>\
+							<ColumnListItem>\
+								<cells>\
+									<Text text="{column1}" id="text1" />\
+									<Text text="{column2}" id="text2" />\
+								</cells>\
+							</ColumnListItem>\
+						</items>\
+					</Table>\
+				</mvc:View>\
+			';
+		}
+		var ENTITY_TYPE_EXISTS = true;
+		var NO_ENTITY_TYPE = false;
+		var ENTITY_TYPE_NAME = "SomeEntityName";
+
+		function confirmColumnIsAdded(bEntityTypeExists, oAppComponent, oView, assert) {
+			var oTable = oView.byId("myTable");
+			var aColumns = oTable.getColumns();
+			assert.equal(aColumns.length, 3, "then a new column exists");
+			var oNewColumn = oView.byId("my_new_control");
+			assert.equal(aColumns.indexOf(oNewColumn), 0, "then the new column is inserted at the correct position");
+			var oFirstColumn = oTable.getColumns()[0];
+			assert.equal(oFirstColumn.getId().indexOf(oNewColumn.getId()), 0, "then the column was added as at the correct index");
+
+			if (bEntityTypeExists) {
+				assert.strictEqual(
+					"{" + oNewColumn.getHeader().getBindingInfo('text').binding.getPath() + "}",
+					"{/#" + ENTITY_TYPE_NAME + "/" + "binding/path" + "/@sap:label}",
+					"label has been created successfully"
+				);
+			} else {
+				assert.equal(oNewColumn.getHeader().getText(), "binding/path", "and the label is added correctly");
+			}
+
+			var oNewCell = oTable.getBindingInfo('items').template.getCells()[0];
+			assert.strictEqual(
+				oView.byId("my_new_control--field").getId(),
+				oNewCell.getId(),
+				"then the new column in binding template is inserted at the correct position with the right ID"
+			);
+			assert.strictEqual(
+				oNewCell.getBindingInfo("text").parts[0].path,
+				"binding/path",
+				"then the new column in binding template is bound"
+			);
+		}
+
+		function confirmColumnIsRemoved(oAppComponent, oView, assert) {
+			var oTable = oView.byId("myTable");
+			var aColumns = oTable.getColumns();
+			assert.equal(aColumns.length, 2, "then only the old columns exists");
+			var oNewColumn = oView.byId("my_new_control");
+			assert.notOk(oNewColumn, "then the new column was removed");
+			var oNewLabel = oView.byId("my_new_control--field-label");
+			assert.notOk(oNewLabel, "then the new label was removed");
+			var oNewCell = oView.byId("my_new_control--field");
+			assert.notOk(oNewCell, "then the new cell was removed");
+		}
+
+		elementActionTest("Checking the add action via delegate for a table, where Delegate.createLayout() is not responsible for controls and no entity type is given", {
+			xmlView: buildViewContentForAddDelegate(
+				"fl:delegate='{" +
+					'"name":"' + TEST_DELEGATE_PATH + '"' +
+				"}'"
+			),
+			model: oJSONModelWithSampleData,
+			action: {
+				name: ["add", "delegate"],
+				controlId: "myTable",
+				parameter: function (oView) {
+					return {
+						index: 0,
+						newControlId: oView.createId("my_new_control"),
+						bindingString: "binding/path",
+						parentId: oView.createId("myTable")
+					};
+				}
+			},
+			afterAction: confirmColumnIsAdded.bind(null, NO_ENTITY_TYPE),
+			afterUndo: confirmColumnIsRemoved,
+			afterRedo : confirmColumnIsAdded.bind(null, NO_ENTITY_TYPE)
+		});
+
+		elementActionTest("Checking the add action via delegate for a table, where Delegate.createLayout() is not responsible for controls and an entity type is given", {
+			xmlView: buildViewContentForAddDelegate(
+				"fl:delegate='{" +
+					'"name":"' + TEST_DELEGATE_PATH + '"' +
+				"}'"
+			),
+			model: oJSONModelWithSampleData,
+			action: {
+				name: ["add", "delegate"],
+				controlId: "myTable",
+				parameter: function (oView) {
+					return {
+						index: 0,
+						newControlId: oView.createId("my_new_control"),
+						bindingString: "binding/path",
+						parentId: oView.createId("myTable"),
+						entityType: ENTITY_TYPE_NAME
+					};
+				}
+			},
+			afterAction: confirmColumnIsAdded.bind(null, ENTITY_TYPE_EXISTS),
+			afterUndo: confirmColumnIsRemoved,
+			afterRedo : confirmColumnIsAdded.bind(null, ENTITY_TYPE_EXISTS)
+		});
+
+		elementActionTest("Checking the add action via delegate for a table, where Delegate.createLayout() is possible, but not used for controls", {
+			xmlView: buildViewContentForAddDelegate(
+				"fl:delegate='{" +
+					'"name":"' + TEST_DELEGATE_PATH + '",' +
+					'"payload":{' +
+						'"useCreateLayout":"true",' + //enforce availability of createLayout in the test delegate
+						'"layoutType":"enforce.breaking.to.ensure.it.is.not.called"' +
+					'}' +
+				"}'"
+			),
+			model: oJSONModelWithSampleData,
+			action: {
+				name: ["add", "delegate"],
+				controlId: "myTable",
+				parameter: function (oView) {
+					return {
+						index: 0,
+						newControlId: oView.createId("my_new_control"),
+						bindingString: "binding/path",
+						parentId: oView.createId("myTable"),
+						entityType: ENTITY_TYPE_NAME
+					};
+				}
+			},
+			afterAction: confirmColumnIsAdded.bind(null, ENTITY_TYPE_EXISTS),
+			afterUndo: confirmColumnIsRemoved,
+			afterRedo : confirmColumnIsAdded.bind(null, ENTITY_TYPE_EXISTS)
+		});
+
+		//ensure a default delegate exists for a model not used anywhere else
+		var SomeModel = JSONModel.extend("sap.ui.layout.form.qunit.test.Model");
+		DelegateMediatorAPI.registerDefaultDelegate({
+			modelType: SomeModel.getMetadata().getName(),
+			delegate: TEST_DELEGATE_PATH
+		});
+		elementActionTest("Checking the add action via delegate for a table with default delegate", {
+			xmlView: buildViewContentForAddDelegate(""),
+			model: oJSONModelWithSampleData,
+			action: {
+				name: ["add", "delegate"],
+				controlId: "myTable",
+				parameter: function (oView) {
+					return {
+						index: 0,
+						newControlId: oView.createId("my_new_control"),
+						bindingString: "binding/path",
+						parentId: oView.createId("myTable"),
+						modelType: SomeModel.getMetadata().getName()
+					};
+				}
+			},
+			afterAction: confirmColumnIsAdded.bind(null, NO_ENTITY_TYPE),
+			afterUndo: confirmColumnIsRemoved,
+			afterRedo : confirmColumnIsAdded.bind(null, NO_ENTITY_TYPE)
+		});
+
 	});
 });

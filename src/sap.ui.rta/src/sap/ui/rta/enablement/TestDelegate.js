@@ -111,13 +111,15 @@ function(
 							)
 						];
 						if (mPropertyBag.payload.valueHelpId) {
+							var mValueHelpSelector = merge(
+								{},
+								mPropertyBag.fieldSelector,
+								{ id: mPropertyBag.fieldSelector.id + "-" + mPropertyBag.payload.valueHelpId }
+							);
 							aPromises.push(mPropertyBag.modifier.createControl("sap.ui.core.Element",
 								mPropertyBag.appComponent,
 								mPropertyBag.view,
-								{
-									id: mPropertyBag.modifier.getId(mPropertyBag.view) + "--" + mPropertyBag.payload.valueHelpId,
-									idIsLocal: true
-								},
+								mValueHelpSelector,
 								true
 							));
 						}
