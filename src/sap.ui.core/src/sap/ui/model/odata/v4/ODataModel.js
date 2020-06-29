@@ -613,9 +613,33 @@ sap.ui.define([
 	 *   <code>true</code> is allowed.
 	 * @param {boolean} [mParameters.$$sharedRequest]
 	 *   Whether multiple bindings for the same resource path share the data, so that it is
-	 *   requested only once; only the value <code>true</code> is allowed.
-	 *   Note: These bindings are read-only and cannot be refreshed, so they may typically be useful
-	 *   for value lists. Supported since 1.80.0
+	 *   requested only once; only the value <code>true</code> is allowed. Supported since 1.80.0
+	 *
+	 *   <b>Note</b>: These bindings are immutable, which means that the following APIs are NOT
+	 *   allowed
+	 *   <ul>
+	 *   <li> for the list binding itself:
+	 *   <ul>
+	 *   <li> {@link sap.ui.model.odata.v4.ODataListBinding#create}
+	 *   </ul>
+	 *   <li> for the {@link sap.ui.model.odata.v4.ODataListBinding#getHeaderContext header context}
+	 *   of a list binding:
+	 *   <ul>
+	 *   <li> {@link sap.ui.model.odata.v4.Context#requestSideEffects}
+	 *   </ul>
+	 *   <li> for the context of a list binding representing a single entity:
+	 *   <ul>
+	 *   <li> {@link sap.ui.model.odata.v4.Context#delete}
+	 *   <li> {@link sap.ui.model.odata.v4.Context#refresh}
+	 *   <li> {@link sap.ui.model.odata.v4.Context#requestSideEffects}
+	 *   <li> {@link sap.ui.model.odata.v4.Context#setProperty}
+	 *   </ul>
+	 *   <li> for a dependent property binding of the list binding:
+	 *   <ul>
+	 *   <li> {@link sap.ui.model.odata.v4.ODataPropertyBinding#setValue}
+	 *   </ul>
+	 *   </ul>
+	 *   Such bindings may typically be useful for value lists.
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
 	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
