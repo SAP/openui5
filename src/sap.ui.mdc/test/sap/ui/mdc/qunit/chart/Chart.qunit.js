@@ -1,8 +1,29 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/core/Core", "sap/ui/mdc/Chart", "sap/ui/mdc/chart/MeasureItem", "sap/ui/mdc/chart/DimensionItem", "sap/m/Button", "sap/ui/core/UIComponent", "sap/ui/core/ComponentContainer", "sap/ui/mdc/chart/ToolbarHandler", "sap/ui/model/Sorter", "sap/ui/model/Filter"
-], function(Core, Chart, MeasureItem, DimensionItem, Button, UIComponent, ComponentContainer, ToolbarHandler, Sorter, Filter) {
+	"sap/ui/core/Core",
+	"sap/ui/mdc/Chart",
+	"sap/ui/mdc/chart/MeasureItem",
+	"sap/ui/mdc/chart/DimensionItem",
+	"sap/m/Button",
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/mdc/chart/ToolbarHandler",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/Filter"
+],
+function(
+	Core,
+	Chart,
+	MeasureItem,
+	DimensionItem,
+	Button,
+	UIComponent,
+	ComponentContainer,
+	ToolbarHandler,
+	Sorter,
+	Filter
+) {
 	"use strict";
 
 	QUnit.module("sap.ui.mdc.Chart: Simple Properties", {
@@ -38,6 +59,28 @@ sap.ui.define([
 
 	QUnit.test("Instantiate", function(assert) {
 		assert.ok(this.oChart);
+	});
+
+	QUnit.test("invoking the .getItemsByKeys() method should return the matching items", function(assert) {
+
+		// arrange
+		this.oChart.addItem(new DimensionItem({
+			key: "lorem"
+		}));
+		this.oChart.addItem(new DimensionItem({
+			key: "ipsum"
+		}));
+		this.oChart.addItem(new MeasureItem({
+			key: "sunt"
+		}));
+
+		// act
+		var aItems = this.oChart.getItemsByKeys(["lorem", "ipsum"]);
+
+		// assert
+		assert.strictEqual(aItems.length, 2);
+		assert.strictEqual(aItems[0].getKey(), "lorem");
+		assert.strictEqual(aItems[1].getKey(), "ipsum");
 	});
 
 	QUnit.test("Create MDC Chart (default) after initialise", function(assert) {
@@ -634,6 +677,5 @@ sap.ui.define([
 			done();
 		}.bind(this));
 	});
-
 
 	});

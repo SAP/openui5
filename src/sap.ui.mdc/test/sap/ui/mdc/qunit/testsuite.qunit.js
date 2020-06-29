@@ -311,6 +311,25 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 				},
 				sinon: false
 			},
+			"DrillStackHandler": {
+				group: "Chart",
+				module: "./chart/DrillStackHandler.qunit",
+				loader: {
+					paths: {
+						"sap/ui/mdc/qunit/chart/Helper": "test-resources/sap/ui/mdc/qunit/chart/Helper"
+					}
+				},
+				ui5: {
+					libs: [
+						"sap.ui.fl", "sap.ui.mdc"
+					]
+				},
+				coverage: {
+					only: "[sap/ui/mdc]",
+					never: "[sap/ui/mdc/qunit]"
+				},
+				sinon: true
+			},
 			"loadModules": {
 				group: "Util",
 				module: "./util/loadModules.qunit",

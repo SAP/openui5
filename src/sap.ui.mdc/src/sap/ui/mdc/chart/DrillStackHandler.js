@@ -28,6 +28,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var Link;
+
 	// shortcut for sap.m.PlacementType
 	var PlacementType = MLibrary.PlacementType;
 
@@ -85,17 +87,17 @@ sap.ui.define([
 
 		var oList = new List({
 			mode: ListMode.SingleSelectMaster,
-			selectionChange: function(oEvent) {
+			selectionChange: function(oControlEvent) {
+				var oListItem = oControlEvent.getParameter("listItem");
 
-				if (oEvent && oEvent.mParameters && oEvent.mParameters.listItem) {
+				if (oListItem) {
 					//Call flex to capture current state before adding an item to the chart aggregation
 
 					var oAdaptationController = ChartSettings._getAdaptationController(oChart);
 					oAdaptationController.createItemChanges([{
-						name: oEvent.mParameters.listItem.data("dim").name,
+						name: oListItem.data("dim").name,
 						position: oChart.getItems().length
 					}]);
-
 				}
 
 				oPopover.close();
@@ -137,6 +139,7 @@ sap.ui.define([
 
 		oPopover.addContent(oList);
 		oChart._oDrillDownPopover = oPopover;
+		return oPopover;
 	};
 
 	/**
@@ -144,12 +147,14 @@ sap.ui.define([
 	 * @param oChart
 	 */
 	DrillStackHandler.showDrillDownPopover = function(oChart) {
-		oChart.getControlDelegate().fetchProperties(oChart).then(function(aProperties) {
+		var oFetchPropertiesPromise = oChart.getControlDelegate().fetchProperties(oChart);
+		return oFetchPropertiesPromise.then(function(aProperties) {
 			//Remove all prior items from drill-down list
-			var oDrillDownList = oChart._oDrillDownPopover.getContent()[1];
+			var oDrillDownPopover = oChart._oDrillDownPopover;
+			var oDrillDownList = oDrillDownPopover.getContent()[1];
 			var aIgnoreDimensions, aSortedDimensions, oDimension, oListItem;
 
-			oDrillDownList.removeAllItems();
+			oDrillDownList.destroyItems();
 
 			// Ignore currently applied dimensions from drill-stack for selection
 			aIgnoreDimensions = _getDrillStackDimensions(oChart);
@@ -165,7 +170,7 @@ sap.ui.define([
 				//TODO: Check if still valid
 				// If dimension is not filterable and datapoints are selected then skip
 				/*if (!oViewField.filterable && this._oChart.getSelectedDataPoints().count > 0) {
-						continue;
+					    continue;
 				}*/
 
 				oListItem = new StandardListItem({
@@ -183,152 +188,176 @@ sap.ui.define([
 				//Add item to list within popover
 				oDrillDownList.addItem(oListItem);
 			}
-			//Open popover at drill-down button
-			oChart._oDrillDownPopover.openBy(oChart._oDrillDownBtn);
+
+			return new Promise(function(resolve, reject) {
+				oDrillDownPopover.attachEventOnce("afterOpen", function onAfterDrillDownPopoverOpen(oControlEvent) {
+					resolve(oDrillDownPopover);
+				});
+
+				oDrillDownPopover.openBy(oChart._oDrillDownBtn);
+			});
 		});
 	};
 
 	DrillStackHandler.createDrillBreadcrumbs = function(oChart) {
 
-		sap.ui.require([
-			"sap/m/Breadcrumbs"
-		], function(Breadcrumbs) {
+		return new Promise(function(resolve, reject) {
 
-			var oInnerChart = oChart.getAggregation("_chart");
+			sap.ui.require([
+				"sap/m/Breadcrumbs"
+			], function(Breadcrumbs) {
+				var oInnerChart = oChart.getAggregation("_chart");
 
-			if (oInnerChart) {
-				var oDrillBreadcrumbs = new Breadcrumbs(/*{currentLocationText:"Current", links:[new Link({text:"Link1"}), new Link({text:"Link2"})]}*/);
+				if (oInnerChart) {
+					var oDrillBreadcrumbs = new Breadcrumbs();
+					oChart.setAggregation("_breadcrumbs", oDrillBreadcrumbs);
 
-				oChart.setAggregation("_breadcrumbs", oDrillBreadcrumbs);
-
-				//initial update of current drill-path
-				this._updateDrillBreadcrumbs(oChart, oDrillBreadcrumbs);
-			}
+					//initial update of current drill-path
+					this._updateDrillBreadcrumbs(oChart, oDrillBreadcrumbs).then(function() {
+						resolve(oDrillBreadcrumbs);
+					});
+				}
+			}.bind(this));
 		}.bind(this));
+	};
+
+	DrillStackHandler.createCrumb = function(oChart, oCrumbSettings) {
+		var oInnerChart = oChart.getAggregation("_chart");
+
+		var oCrumb = new Link({
+			text: oCrumbSettings.dimensionText,
+			press: function onCrumbPressed(oControlEvent) {
+				var oDrillBreadcrumbs = oChart.getAggregation("_breadcrumbs"),
+					iLinkIndex = oDrillBreadcrumbs.indexOfLink(oControlEvent.getSource());
+
+				// get drill-path which was drilled-up and needs to be removed from mdc chart
+				var aCurrentDrillStack = oInnerChart.getDrillStack()[oInnerChart.getDrillStack().length - 1].dimension,
+					aDrilledPath = aCurrentDrillStack.slice(iLinkIndex + 1);
+
+				oInnerChart.fireDeselectData();
+
+				// retrieve the actual items and remove them from mdc chart items aggregation
+				var aDrilledItems = oChart.getItemsByKeys(aDrilledPath);
+
+				// call flex to capture the current state before removing item(s) of the chart aggregation
+				var aFlexItemChanges = aDrilledItems.map(function(oDrillItem) {
+					return {
+						name: oDrillItem.getKey(),
+						visible: false
+					};
+				});
+
+				ChartSettings._getAdaptationController(oChart).createItemChanges(aFlexItemChanges);
+
+				// don't forget to update the bread crumbs control itself
+				this._updateDrillBreadcrumbs(oChart, oDrillBreadcrumbs);
+			}.bind(this)
+		});
+
+		// unique dimension key is needed to remove the item from the mdc chart aggregation on drilling up
+		oCrumb.data("key", oCrumbSettings.dimensionKey);
+		return oCrumb;
 	};
 
 	DrillStackHandler._updateDrillBreadcrumbs = function(oChart, oDrillBreadcrumbs) {
 
-		sap.ui.require([
-			"sap/m/Link"
-		], function(Link) {
+		return new Promise(function(resolve, reject) {
 
-			if (!oDrillBreadcrumbs) {
-				return;
-			}
+			sap.ui.require([
+				"sap/m/Link"
+			], function(LinkClass) {
+				Link = LinkClass;
 
-			// Get access to drill history
-			var oInnerChart = oChart.getAggregation("_chart");
+				if (!oDrillBreadcrumbs) {
+					return;
+				}
 
-			if (!oInnerChart) {
-				return;
-			}
+				// Get access to drill history
+				var oInnerChart = oChart.getAggregation("_chart");
 
-			var aVisibleDimensionsRev = oInnerChart.getDrillStack();
-			var newLinks = [];
+				if (!oInnerChart) {
+					return;
+				}
 
-			// When chart is bound to non-aggregated entity there is no drill-stack
-			// existing
-			if (aVisibleDimensionsRev) {
+				var aVisibleDimensionsRev = oInnerChart.getDrillStack();
+				var newLinks = [];
 
-				// Reverse array to display right order of crumbs
-				aVisibleDimensionsRev.reverse();
-				aVisibleDimensionsRev.forEach(function(dim, index, array) {
+				// When chart is bound to non-aggregated entity there is no drill-stack
+				// existing
+				if (aVisibleDimensionsRev) {
 
-					// Check if stack entry has dimension names and if a
-					// dimension is existing for this name
-					if (dim.dimension.length > 0 && typeof oInnerChart.getDimensionByName(dim.dimension[dim.dimension.length - 1]) != 'undefined') {
-						// show breadcrumbs
-						/*if (this.getShowDrillBreadcrumbs()) {
-							this._oDrillBreadcrumbs.setVisible(true);
-						}*/
-						// use the last entry of each drill-stack entry to built
-						// up the drill-path
-						var sDimLabel = oInnerChart.getDimensionByName(dim.dimension[dim.dimension.length - 1]).getLabel();
-						var sDimKey = oInnerChart.getDimensionByName(dim.dimension[dim.dimension.length - 1]).getName();
+					// Reverse array to display right order of crumbs
+					aVisibleDimensionsRev.reverse();
+					aVisibleDimensionsRev.forEach(function(dim, index, array) {
 
-						// Set current drill position in breadcrumb control
-						if (index == 0) {
+						// Check if stack entry has dimension names and if a
+						// dimension is existing for this name
+						if (dim.dimension.length > 0 && typeof oInnerChart.getDimensionByName(dim.dimension[dim.dimension.length - 1]) != 'undefined') {
+							// show breadcrumbs
+							/*if (this.getShowDrillBreadcrumbs()) {
+								this._oDrillBreadcrumbs.setVisible(true);
+							}*/
+							// use the last entry of each drill-stack entry to built
+							// up the drill-path
+							var sDimText = oInnerChart.getDimensionByName(dim.dimension[dim.dimension.length - 1]).getLabel();
+							var sDimKey = oInnerChart.getDimensionByName(dim.dimension[dim.dimension.length - 1]).getName();
 
-							oDrillBreadcrumbs.setCurrentLocationText(sDimLabel);
+							// Set current drill position in breadcrumb control
+							if (index == 0) {
+
+								oDrillBreadcrumbs.setCurrentLocationText(sDimText);
+							} else {
+
+								var oCrumbSettings = {
+									dimensionKey: sDimKey,
+									dimensionText: sDimText
+								};
+
+								var oCrumb = this.createCrumb(oChart, oCrumbSettings);
+								newLinks.push(oCrumb);//note the links are added in an incorrect order need to reverse
+							}
 						} else {
 
-							var oCrumb = new Link({
-								text: sDimLabel,
-								press: function(oEvent) {
-									var iLinkIndex = oDrillBreadcrumbs.indexOfLink(oEvent.getSource());
-
-									// get drill-path which was drilled-up and needs to be removed from mdc chart
-									var aCurrentDrillStack = oInnerChart.getDrillStack()[oInnerChart.getDrillStack().length - 1].dimension;
-									var aDrilledPath = aCurrentDrillStack.slice(iLinkIndex + 1);
-
-									oInnerChart.fireDeselectData(oEvent);
-
-									// retrieve the actual items and remove them from mdc chart items aggregation
-									var aNewItems = [];
-									var aDrilledItems = oChart.getItemsByName(aDrilledPath);
-
-									//Call flex to capture current state before removing item(s) of the chart aggregation
-									aDrilledItems.forEach(function(oItem) {
-										aNewItems.push({
-											name: oItem.getKey(),
-											visible: false
-										});
-									});
-
-									ChartSettings._getAdaptationController(oChart).createItemChanges(aNewItems);
-
-									// don't forget to update the bread crumbs
-									// control itself
-									this._updateDrillBreadcrumbs(oChart, oDrillBreadcrumbs);
-
-								}.bind(this)
-							});
-
-							//unique dimension key is needed to remove item from mdc chart aggregation on drilling up
-							oCrumb.data("key", sDimKey);
-
-							newLinks.push(oCrumb);//note the links are added in an incorrect order need to reverse
+							// Show no text on breadcrumb if stack contains only one
+							// entry with no dimension at all (all dims are shown)
+							if (index == 0) {
+								// hide breadcrumbs
+								oDrillBreadcrumbs.setVisible(false);
+							}
 						}
-					} else {
+					}, this);
+				}
 
-						// Show no text on breadcrumb if stack contains only one
-						// entry with no dimension at all (all dims are shown)
-						if (index == 0) {
-							// hide breadcrumbs
-							oDrillBreadcrumbs.setVisible(false);
+				var currLinks = oDrillBreadcrumbs.getLinks();
+				newLinks.reverse();
+				var diff = false;
+
+				if (currLinks.length !== newLinks.length) {
+					diff = true;
+				} else {
+
+					for (var i = 0; i < newLinks.length; i++) {
+						if (newLinks[i].getText() != currLinks[i].getText()) {
+							diff = true;
+							break;
 						}
 					}
-				}.bind(this));
-			}
+				}
 
-			var currLinks = oDrillBreadcrumbs.getLinks();
-			newLinks.reverse();
-			var diff = false;
+				if (diff) {
 
-			if (currLinks.length !== newLinks.length) {
-				diff = true;
-			} else {
+					// Clear aggregation before we rebuild it
+					if (oDrillBreadcrumbs.getLinks()) {
+						oDrillBreadcrumbs.destroyLinks();
+					}
 
-				for (var i = 0; i < newLinks.length; i++) {
-					if (newLinks[i].getText() != currLinks[i].getText()) {
-						diff = true;
-						break;
+					for (var i = 0; i < newLinks.length; i++) {
+						oDrillBreadcrumbs.addLink(newLinks[i]);
 					}
 				}
-			}
 
-			if (diff) {
-
-				// Clear aggregation before we rebuild it
-				if (oDrillBreadcrumbs.getLinks()) {
-					oDrillBreadcrumbs.removeAllLinks();
-				}
-
-				for (var i = 0; i < newLinks.length; i++) {
-					oDrillBreadcrumbs.addLink(newLinks[i]);
-				}
-			}
+				resolve(oDrillBreadcrumbs);
+			}.bind(this));
 		}.bind(this));
 	};
 
