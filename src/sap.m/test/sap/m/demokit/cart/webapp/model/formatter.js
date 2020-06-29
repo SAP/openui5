@@ -83,20 +83,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the footer text for the cart based on the amount of products
-		 * @param {object} oSavedForLaterEntries the entries in the cart
-		 * @return {string} "" for no products, the i18n text for >0 products
-		 */
-		footerTextForCart: function (oSavedForLaterEntries) {
-			var oBundle = this.getResourceBundle();
-
-			if (Object.keys(oSavedForLaterEntries).length === 0) {
-				return "";
-			}
-			return oBundle.getText("cartSavedForLaterFooterText");
-		},
-
-		/**
 		 * Checks if one of the collections contains items.
 		 * @param {object} oCollection1 First array or object to check
 		 * @param {object} oCollection2 Second array or object to check
