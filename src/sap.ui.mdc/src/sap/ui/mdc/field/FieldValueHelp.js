@@ -868,7 +868,7 @@ sap.ui.define([
 			 * is created for the BindingContext. (Only if the inParameter is bound to the same BindingContext as the whole FieldValueHelp.
 			 * Otherwise the original Binding is used.)
 			 */
-			var oMyBindingContext = this.getBindingContext();
+			var oMyBindingContext = this.oBindingContexts[undefined]; // as getBindingContext returns propagated Context if own context don't fit to model
 			var aInParameters = this.getInParameters();
 			var bBindingChanged = false;
 
@@ -908,18 +908,23 @@ sap.ui.define([
 			var oParameter = aParameters[i];
 			var oBinding = oParameter.getBinding("value");
 			if (oBinding) {
-				if (bNewBinding && oBinding.getContext() === oMyBindingContext) {
-					// InParameter is bound and used the same BindingContext like the FieldHelp
-					// If InParameter is bound to a different BindingContect just use this one
-					var sPath = oBinding.getPath();
+				var sPath = oBinding.getPath();
+				var oParameterBindingContext = oBinding.getContext();
 
+				if (bNewBinding && (oParameterBindingContext === oMyBindingContext || (!oParameterBindingContext && oMyBindingContext))) {
+					// InParameter is bound and uses the same BindingContext like the FieldHelp or has no BindingContext right now.
+					// If InParameter is bound to a different BindingContext just use this one.
 					if (oBindingContext.getProperty(sPath) === undefined) {
 						// if value is already known in BindingContext from other existing Binding, don't request again.
 						var oModel = oBinding.getModel();
 						aBindings.push(oModel.bindProperty(sPath, oBindingContext));
 					}
 				} else {
-					aBindings.push(oBinding);
+					if (!oParameterBindingContext || oParameterBindingContext.getProperty(sPath) === undefined ||
+							oParameterBindingContext.getProperty(sPath) !== oParameter.getValue()) {
+						// Property not already known on BindingContext or not already updated in Parameter value
+						aBindings.push(oBinding);
+					}
 				}
 			}
 		}
@@ -1383,100 +1388,110 @@ sap.ui.define([
 
 		// apply out-parameters
 		var aOutParameters = this.getOutParameters();
-		var aConditions = this.getConditions();
 
 		// as BindingContext of Field might change (happens if fast typed and FieldHelp not opened) update if needed
 		_updateBindingContext.call(this);
 
-		for (var i = 0; i < aConditions.length; i++) {
-			var oCondition = aConditions[i];
-			if (oCondition.outParameters) {
-				for ( var sPath in oCondition.outParameters) {
-					for (var j = 0; j < aOutParameters.length; j++) {
-						var oOutParameter = aOutParameters[j];
-						var vValue = oOutParameter.getValue();
-						var bUseConditions = oOutParameter.getUseConditions();
-						var bUpdate = true;
-						if (oOutParameter.getMode() === OutParameterMode.WhenEmpty) {
-							if (bUseConditions) {
-								bUpdate = !vValue || (Array.isArray(vValue) && vValue.length === 0);
-							} else {
-								bUpdate = !vValue;
-							}
-						}
-						if (bUpdate) {
-							if (bUseConditions) {
-								var oNewCondition;
-								if (!oOutParameter.getHelpPath()) {
-									oNewCondition = Condition.createCondition("EQ", [oOutParameter.getFixedValue()], undefined, undefined, ConditionValidated.NotValidated);
-								} else if (oOutParameter.getFieldPath() === sPath) { // in Conditions fieldPath is used
-									oNewCondition = Condition.createCondition("EQ", [oCondition.outParameters[sPath]], undefined, undefined, ConditionValidated.Validated); // as choosen from help -> validated
 
-									// TODO: handle in/out Parameters in ConditionModel (to let the condition know it's out-Parameters)
-//									var oBinding = oOutParameter.getBinding("value");
-//									var oCM = oBinding && oBinding.getModel();
-//
-//									if (oCM && oCM.isA("sap.ui.mdc.condition.ConditionModel")) {
+		// if OutParameters are bound and binding is pending, wait until finished
+		var aOutBindings = _getParameterBinding.call(this, aOutParameters, false);
+		SyncPromise.resolve().then(function() {
+			return _checkBindingsPending.call(this, aOutBindings);
+		}.bind(this)).then(function() {
+			if (this.bIsDestroyed) {
+				return; // id festroyed meanwhile, don't update
+			}
+			var aConditions = this.getConditions();
+			for (var i = 0; i < aConditions.length; i++) {
+				var oCondition = aConditions[i];
+				if (oCondition.outParameters) {
+					for ( var sPath in oCondition.outParameters) {
+						for (var j = 0; j < aOutParameters.length; j++) {
+							var oOutParameter = aOutParameters[j];
+							var vValue = oOutParameter.getValue();
+							var bUseConditions = oOutParameter.getUseConditions();
+							var bUpdate = true;
+							if (oOutParameter.getMode() === OutParameterMode.WhenEmpty) {
+								if (bUseConditions) {
+									bUpdate = !vValue || (Array.isArray(vValue) && vValue.length === 0);
+								} else {
+									bUpdate = !vValue;
+								}
+							}
+							if (bUpdate) {
+								if (bUseConditions) {
+									var oNewCondition;
+									if (!oOutParameter.getHelpPath()) {
+										oNewCondition = Condition.createCondition("EQ", [oOutParameter.getFixedValue()], undefined, undefined, ConditionValidated.NotValidated);
+									} else if (oOutParameter.getFieldPath() === sPath) { // in Conditions fieldPath is used
+										oNewCondition = Condition.createCondition("EQ", [oCondition.outParameters[sPath]], undefined, undefined, ConditionValidated.Validated); // as choosen from help -> validated
+
+										// TODO: handle in/out Parameters in ConditionModel (to let the condition know it's out-Parameters)
+//										var oBinding = oOutParameter.getBinding("value");
+//										var oCM = oBinding && oBinding.getModel();
+
+//										if (oCM && oCM.isA("sap.ui.mdc.condition.ConditionModel")) {
 //										// TODO: what if In-parameters are set late (by open) ?
 //										var oFilterField = oCM.getFilterField(sPath);
 //										var sFieldHelpID = oFilterField && oFilterField.getFieldHelp();
 //										var oFieldHelp = sFieldHelpID && sap.ui.getCore().byId(sFieldHelpID);
-//
+
 //										if (oFieldHelp) {
-//											// set in/out parameter to new condition.
-//											var aParameters = oFieldHelp.getInParameters();
-//											var k = 0;
-//											var sFieldPath;
-//											var oFilterFieldParameter;
-//											for (k = 0; k < aParameters.length; k++) {
-//												oFilterFieldParameter = aParameters[k];
-//												sFieldPath = oFilterFieldParameter.getFieldPath();
-//												if (oCondition.outParameters[sFieldPath]) {
-//													if (!oNewCondition.inParameters) {
-//														oNewCondition.inParameters = {};
-//													}
-//													oNewCondition.inParameters[sFieldPath] = oCondition.outParameters[sFieldPath];
-//												}
-//											}
-//											aParameters = oFieldHelp.getOutParameters();
-//											for (k = 0; k < aParameters.length; k++) {
-//												oFilterFieldParameter = aParameters[k];
-//												sFieldPath = oFilterFieldParameter.getFieldPath();
-//												if (oCondition.outParameters[sFieldPath]) {
-//													if (!oNewCondition.outParameters) {
-//														oNewCondition.outParameters = {};
-//													}
-//													oNewCondition.outParameters[sFieldPath] = oCondition.outParameters[sFieldPath];
-//												}
-//											}
+//										// set in/out parameter to new condition.
+//										var aParameters = oFieldHelp.getInParameters();
+//										var k = 0;
+//										var sFieldPath;
+//										var oFilterFieldParameter;
+//										for (k = 0; k < aParameters.length; k++) {
+//										oFilterFieldParameter = aParameters[k];
+//										sFieldPath = oFilterFieldParameter.getFieldPath();
+//										if (oCondition.outParameters[sFieldPath]) {
+//										if (!oNewCondition.inParameters) {
+//										oNewCondition.inParameters = {};
 //										}
-//									}
+//										oNewCondition.inParameters[sFieldPath] = oCondition.outParameters[sFieldPath];
+//										}
+//										}
+//										aParameters = oFieldHelp.getOutParameters();
+//										for (k = 0; k < aParameters.length; k++) {
+//										oFilterFieldParameter = aParameters[k];
+//										sFieldPath = oFilterFieldParameter.getFieldPath();
+//										if (oCondition.outParameters[sFieldPath]) {
+//										if (!oNewCondition.outParameters) {
+//										oNewCondition.outParameters = {};
+//										}
+//										oNewCondition.outParameters[sFieldPath] = oCondition.outParameters[sFieldPath];
+//										}
+//										}
+//										}
+//										}
+									} else {
+										continue;
+									}
+									if (!vValue) {
+										vValue = [];
+									}
+									if (!Array.isArray(vValue)) {
+										throw new Error("Value on OutParameter must be an array " + oOutParameter);
+									}
+									if (FilterOperatorUtil.indexOfCondition(oNewCondition, vValue) < 0) {
+										oNewCondition.validated = ConditionValidated.Validated; // out-parameters are validated
+										vValue.push(oNewCondition);
+										oOutParameter.setValue(vValue);
+									}
 								} else {
-									continue;
-								}
-								if (!vValue) {
-									vValue = [];
-								}
-								if (!Array.isArray(vValue)) {
-									throw new Error("Value on OutParameter must be an array " + oOutParameter);
-								}
-								if (FilterOperatorUtil.indexOfCondition(oNewCondition, vValue) < 0) {
-									oNewCondition.validated = ConditionValidated.Validated; // out-parameters are validated
-									vValue.push(oNewCondition);
-									oOutParameter.setValue(vValue);
-								}
-							} else {
-								if (!oOutParameter.getHelpPath()) {
-									oOutParameter.setValue(oOutParameter.getFixedValue());
-								} else if (oOutParameter.getFieldPath() === sPath) { // in Conditions fieldPath is used
-									oOutParameter.setValue(oCondition.outParameters[sPath]);
+									if (!oOutParameter.getHelpPath()) {
+										oOutParameter.setValue(oOutParameter.getFixedValue());
+									} else if (oOutParameter.getFieldPath() === sPath) { // in Conditions fieldPath is used
+										oOutParameter.setValue(oCondition.outParameters[sPath]);
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-		}
+		}.bind(this)).unwrap();
 
 	};
 
@@ -1548,6 +1563,7 @@ sap.ui.define([
 					// in case of getTextForKey only out-parameters set by condition are from interest (To find manual selected entry again if no in-paramters are used)
 					// in this case only provided parameters are from interest.
 					// If Bindings are provided (from different BindingContext) use the value of this Binding
+					var oMyBindingContext = this.getBindingContext();
 					for (i = 0; i < aParameters.length; i++) {
 						oParameter = aParameters[i];
 						sHelpPath = oParameter.getHelpPath();
@@ -1563,7 +1579,7 @@ sap.ui.define([
 										break;
 									}
 								}
-								if (!bFound && oBinding.getContext() !== oBindingContext) {
+								if (!bFound && oBindingContext && oBinding.getContext() !== oBindingContext && oBinding.getContext() === oMyBindingContext) {
 									// no new binding created and different BindingContext -> use propery from BindingConext (was already read before)
 									vValue = oBindingContext.getProperty(oBinding.getPath());
 								}
@@ -1611,6 +1627,26 @@ sap.ui.define([
 		if (!this._oFilterConditionModel || (!this.isOpen() && !this._bNavigateRunning && !this._bOpen) || this._bClosing || !this._bApplyFilter) {
 			// apply filters only if open (no request on closed FieldHelp)
 			this._bPendingFilterUpdate = true;
+			return;
+		}
+
+		if (this._bFilterWaitingForBinding) {
+			// there is already a pending request, this will use the current filters. Don't rigger an additional request.
+			return;
+		}
+
+		// if InParameter value is pending -> wait until it is set
+		var aInParameters = this.getInParameters();
+		var aInBindings = _getParameterBinding.call(this, aInParameters, false);
+		var oBindingPendingPromise = _checkBindingsPending.call(this, aInBindings); // If curently resolved do not check again
+
+		if (oBindingPendingPromise instanceof Promise) {
+			oBindingPendingPromise.then(function() {
+				// promise on binding is resolved before property updated on InParameter or update triggered in ConditionModel
+				this._bFilterWaitingForBinding = false;
+				this._oFilterConditionModel.checkUpdate(true, true); // to trigger _applyFilters ofter the InParameter "value" property was updated and even if InParameter is empty
+			}.bind(this));
+			this._bFilterWaitingForBinding = true;
 			return;
 		}
 
@@ -1827,7 +1863,7 @@ sap.ui.define([
 			ManagedObjectModel = sap.ui.require("sap/ui/model/base/ManagedObjectModel");
 			if (!Dialog || !Button || !ValueHelpPanel || !DefineConditionPanel || !ManagedObjectModel) {
 				sap.ui.require(["sap/m/Dialog", "sap/m/Button", "sap/ui/mdc/field/ValueHelpPanel",
-								"sap/ui/mdc/field/DefineConditionPanel", "sap/ui/model/base/ManagedObjectModel"], _DialogLoaded.bind(this));
+				                "sap/ui/mdc/field/DefineConditionPanel", "sap/ui/model/base/ManagedObjectModel"], _DialogLoaded.bind(this));
 				this._bDialogRequested = true;
 			}
 		}

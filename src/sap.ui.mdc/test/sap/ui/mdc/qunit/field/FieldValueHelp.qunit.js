@@ -25,6 +25,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/String",
 	"sap/ui/Device",
+	"sap/base/util/merge",
 	"sap/m/library",
 	"sap/m/Popover",
 	"sap/m/Dialog",
@@ -50,6 +51,7 @@ sap.ui.define([
 		JSONModel,
 		StringType,
 		Device,
+		merge,
 		mLibrary,
 		Popover,
 		Dialog,
@@ -60,15 +62,17 @@ sap.ui.define([
 	var iDialogDuration = sap.ui.getCore().getConfiguration().getAnimationMode() === "none" ? 15 : 500;
 	var iPopoverDuration = Device.browser.firefox ? 410 : 355;
 
-	var oModel = new JSONModel({
-		items:[{text: "Item 1", key: "I1", additionalText: "Text 1", filter: "XXX"},
-			   {text: "Item 2", key: "I2", additionalText: "Text 2", filter: "XXX"},
-			   {text: "X-Item 3", key: "I3", additionalText: "Text 3", filter: "YYY"}],
-		test: "Hello",
-		contexts: [{icon: "sap-icon://sap-ui5", inParameter: "in1", inParameter2: "in1-2", outParameter: "out1"},
-				   {icon: "sap-icon://lightbulb", inParameter: "in2", inParameter2: "in2-2", outParameter: "out2"},
-				   {icon: "sap-icon://camera", inParameter: "in3", inParameter2: "in3-2", outParameter: "out3"}]
-		});
+	var oModelData = {
+			items:[{text: "Item 1", key: "I1", additionalText: "Text 1", filter: "XXX"},
+			       {text: "Item 2", key: "I2", additionalText: "Text 2", filter: "XXX"},
+			       {text: "X-Item 3", key: "I3", additionalText: "Text 3", filter: "YYY"}],
+			test: "Hello",
+			contexts: [{icon: "sap-icon://sap-ui5", inParameter: "in1", inParameter2: "in1-2", outParameter: "out1"},
+			           {icon: "sap-icon://lightbulb", inParameter: "in2", inParameter2: "in2-2", outParameter: "out2"},
+			           {icon: "sap-icon://camera", inParameter: "in3", inParameter2: "in3-2", outParameter: "out3"}]
+			};
+
+	var oModel = new JSONModel(merge({}, oModelData));
 	sap.ui.getCore().setModel(oModel);
 
 	var oDialogContent;
@@ -299,6 +303,7 @@ sap.ui.define([
 		sSearch = undefined;
 		sWrapperId = undefined;
 		FieldValueHelp._init();
+		oModel.setData(merge({}, oModelData));
 	};
 
 	QUnit.module("ValueHelp", {
@@ -1045,6 +1050,46 @@ sap.ui.define([
 		oFieldHelp.close();
 		oClock.tick(iPopoverDuration); // fake closing time
 		assert.ok(oWrapper.fieldHelpClose.called, "fieldHelpClose of Wrapper called");
+
+	});
+
+	QUnit.test("FilterValue in suggestion with pending InParameters", function(assert) {
+
+		var fnResolve;
+		var oPromise = new Promise(function(fnMyResolve, fnMyReject) {
+			fnResolve = fnMyResolve;
+		});
+		sinon.stub(FieldValueHelpDelegate, "checkBindingsPending").returns(oPromise);
+
+		var oInParameter = new InParameter({value: "{/test}", helpPath: "filter"});
+		oFieldHelp.addInParameter(oInParameter);
+		oFieldHelp.setFilterValue("I");
+		var oCheckFilters = {
+				text: [{operator: "StartsWith", value: "It", value2: undefined}],
+				additionalText: [{operator: "StartsWith", value: "It", value2: undefined}],
+				filter: [{operator: "EQ", value: "Hello", value2: undefined}]};
+
+		oFieldHelp.open(true);
+		oClock.tick(iPopoverDuration); // fake opening time
+		assert.notOk(oFilters, "no Filter request right now");
+
+		oFieldHelp.setFilterValue("It");
+		oClock.tick(1); // fake model update time
+
+		FieldValueHelpDelegate.checkBindingsPending.restore();
+		fnResolve();
+		var fnDone = assert.async();
+
+		oPromise.then(function() {
+			oClock.tick(1); // fake model update time
+			assert.deepEqual(oFilters, oCheckFilters, "Filters used");
+			assert.ok(oWrapper.applyFilters.calledOnce, "only one filter request triggered");
+
+			oFieldHelp.close();
+			oClock.tick(iPopoverDuration); // fake closing time
+			assert.ok(oWrapper.fieldHelpClose.called, "fieldHelpClose of Wrapper called");
+			fnDone();
+		});
 
 	});
 
@@ -2012,8 +2057,8 @@ sap.ui.define([
 
 		oFieldHelp.connect(oField2);
 		oFieldHelp.setConditions([Condition.createItemCondition("I1", "Item 1"),
-								  Condition.createCondition("EQ", ["I2"], undefined, undefined, ConditionValidated.Validated),
-								  Condition.createCondition("StartsWith", ["X"])]);
+		                          Condition.createCondition("EQ", ["I2"], undefined, undefined, ConditionValidated.Validated),
+		                          Condition.createCondition("StartsWith", ["X"])]);
 		oFieldHelp.open(false);
 		oClock.tick(iDialogDuration); // fake opening time
 
@@ -2564,6 +2609,7 @@ sap.ui.define([
 		oField.bindProperty("src", {path: "icon"});
 		var oBindingContext = oModel.getContext("/contexts/0/");
 		oField.setBindingContext(oBindingContext);
+		oFieldHelp.connect(oField); // to update BindingConext
 		oField2.bindProperty("src", {path: "icon"});
 		oBindingContext = oModel.getContext("/contexts/1/");
 		oField2.setBindingContext(oBindingContext);
@@ -2749,6 +2795,40 @@ sap.ui.define([
 		assert.equal(oOutParameter.getValue(), "Test2", "Out-parameter updated");
 		oData = oModel.getData();
 		assert.equal(oData.contexts[1].outParameter, "Test2", "Out-parameter updated in Model");
+
+	});
+
+	QUnit.test("onFieldChange with async loading of OutParameters", function(assert) {
+
+		var fnResolve;
+		var oPromise = new Promise(function(fnMyResolve, fnMyReject) {
+			fnResolve = fnMyResolve;
+		});
+		sinon.stub(FieldValueHelpDelegate, "checkBindingsPending").returns(oPromise);
+
+		var oBindingContext = oField.getBindingContext();
+		sinon.stub(oBindingContext, "getProperty");
+		oBindingContext.getProperty.withArgs("outParameter").onFirstCall().returns(undefined); // simulate loading needed
+		oBindingContext.getProperty.callThrough();
+
+		var oOutParameter = new OutParameter({value: "{outParameter}", helpPath: "myTestOut"});
+		oFieldHelp.addOutParameter(oOutParameter);
+		var oCondition = Condition.createItemCondition("Test", "Test Text", undefined, {"outParameter": "Test"});
+		oFieldHelp.setConditions([oCondition]);
+
+		oFieldHelp.onFieldChange();
+		assert.equal(oOutParameter.getValue(), "out1", "Out-parameter not updated");
+
+		oBindingContext.getProperty.restore();
+		fnResolve();
+		var fnDone = assert.async();
+
+		setTimeout( function(){ // as promise is resolves async
+			assert.equal(oOutParameter.getValue(), "Test", "Out-parameter updated");
+			var oData = oModel.getData();
+			assert.equal(oData.contexts[0].outParameter, "Test", "Out-parameter updated in Model");
+			fnDone();
+		}, 0);
 
 	});
 
