@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/Core', './Control', './library', 'sap/m/library', 'sap/ui/events/KeyCodes', './ActionToolbar', 'sap/m/Title', 'sap/ui/core/format/NumberFormat', 'sap/ui/model/Sorter', 'sap/ui/core/dnd/DragDropInfo', "./table/TableSettings", "./table/GridTableType", "./table/ResponsiveTableType", "sap/m/ColumnHeaderPopover", "sap/ui/core/Item", "sap/m/ColumnPopoverSortItem", 'sap/ui/dom/containsOrEquals', 'sap/base/strings/capitalize'
-], function(Core, Control, library, MLibrary, KeyCodes, ActionToolbar, Title, NumberFormat, Sorter, DragDropInfo, TableSettings, GridTableType, ResponsiveTableType, ColumnHeaderPopover, Item, ColumnPopoverSortItem, containsOrEquals, capitalize) {
+	'sap/ui/core/Core', './Control', './library', 'sap/m/library', 'sap/ui/events/KeyCodes', './ActionToolbar', 'sap/m/Title', 'sap/ui/core/format/NumberFormat', 'sap/ui/model/Sorter', 'sap/ui/core/dnd/DragDropInfo', "./table/TableSettings", "./table/GridTableType", "./table/ResponsiveTableType", "sap/m/ColumnHeaderPopover", "sap/ui/core/Item", "sap/m/ColumnPopoverSortItem", 'sap/ui/dom/containsOrEquals', 'sap/base/strings/capitalize', 'sap/base/util/UriParameters'
+], function(Core, Control, library, MLibrary, KeyCodes, ActionToolbar, Title, NumberFormat, Sorter, DragDropInfo, TableSettings, GridTableType, ResponsiveTableType, ColumnHeaderPopover, Item, ColumnPopoverSortItem, containsOrEquals, capitalize, SAPUriParameters) {
 	"use strict";
 
 	var SelectionMode = library.SelectionMode;
@@ -879,8 +879,8 @@ sap.ui.define([
 	//TODO: remove method once 'filter' personalization is public --> use only p13nMode instead
 	//URL param is only meant for experimental testing
 	Table.prototype._getFilterEnabled = function(){
-		var oURLParams = new window.URLSearchParams(window.location.search);
-		var bExperimentalFilterEnabled = oURLParams.get("sap-ui-xx-p13nFilter") === "true";
+		var oURLParams = new SAPUriParameters(window.location.search);
+		var bExperimentalFilterEnabled = oURLParams.getAll("sap-ui-xx-p13nFilter")[0] === "true";
 		if (this._bFilterEnabled || ( this.getP13nMode() && this.getP13nMode().indexOf("Filter") > -1 && bExperimentalFilterEnabled)) {
 			return true;
 		} else {
