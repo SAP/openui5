@@ -258,7 +258,7 @@ sap.ui.define([
 		/**
 		 * Creates a filter object for a condition.
 		 *
-		 * @param {object} oCondition Condition
+		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition
 		 * @param {string} sFieldPath Path of filter
  		 * @param {sap.ui.model.Type} oType Data type of the used filter field
 		 * @returns {sap.ui.model.Filter} filter object
@@ -312,7 +312,7 @@ sap.ui.define([
 		/**
 		 * Checks if a condition is empty.
 		 *
-		 * @param {object} oCondition Condition
+		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition
 		 * @param {sap.ui.model.Type} oType Data type
 		 * @returns {boolean} true if empty
 		 *
@@ -342,7 +342,7 @@ sap.ui.define([
 		/**
 		 * Formats a condition.
 		 *
-		 * @param {object} oCondition Condition
+		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition
 		 * @param {sap.ui.model.Type} oType Data type
 		 * @param {string} sDisplay Display mode
 		 * @returns {string} formatted text
@@ -574,7 +574,7 @@ sap.ui.define([
 		 * @param {sap.ui.model.Type} oType Data type
 		 * @param {string} sDisplayFormat Display format
 		 * @param {boolean} bDefaultOperator If true, operator is used as default. In this case parsing without operator also works
-		 * @returns {object} condition
+		 * @returns {sap.ui.mdc.condition.ConditionObject} The condition for the text
 		 * @throws {sap.ui.model.ParseException} if the text cannot be parsed
 		 *
 		 * @private
@@ -602,7 +602,7 @@ sap.ui.define([
 		 *
 		 * For example, an equal Operator has only one value, a between operator two.
 		 *
-		 * @returns {object} True if only one value is used.
+		 * @returns {boolean} <code>true</code> if only one value is used.
 		 * @since 1.75.0
 		 * @private
 		 * @ui5-restricted sap.ui.mdc.field.FieldBase
@@ -621,7 +621,7 @@ sap.ui.define([
 		/**
 		 * Creates an object containing information to compare conditions.
 		 *
-		 * @param {object} oCondition Condition to check
+		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition to check
 		 * @returns {object} Object with check information
 		 * @private
 		 * @since: 1.76.0
@@ -642,9 +642,9 @@ sap.ui.define([
 		 * For EQ conditions, only the key part of the values is compared as the text part
 		 * might be different (if the translation is missing, for example).
 		 *
-		 * @param {object} oCondition1 Condition to check
-		 * @param {object} oCondition2 Condition to check
-		 * @returns {boolean} True if conditions are equal
+		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition1 Condition to check
+		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition2 Condition to check
+		 * @returns {boolean} <code>true</code> if conditions are equal
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 * @since: 1.76.0
@@ -691,7 +691,7 @@ sap.ui.define([
 		 *
 		 * For EQ set <code>validated</code> flag if a description is given.
 		 *
-		 * @param {object} oCondition condition to check
+		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition to check
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 * @since: 1.78.0

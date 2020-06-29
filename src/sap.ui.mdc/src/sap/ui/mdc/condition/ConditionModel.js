@@ -157,7 +157,7 @@ sap.ui.define([
 		 * Returns conditions for a specified FieldPath.
 		 *
 		 * @param {string} sFieldPath fieldPath of the condition
-		 * @returns {object[]} array of conditions
+		 * @returns {sap.ui.mdc.condition.ConditionObject[]} array of conditions
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
@@ -217,9 +217,9 @@ sap.ui.define([
 		 * Determines the index of a condition for a specified FieldPath.
 		 *
 		 * @param {string} sFieldPath fieldPath of the condition
-		 * @param {object} oCondition condition to be searched
+		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition condition to be searched
 		 * @param {function(Object): Object} [fnNormalizeCondition] normalization method for condition comparison
-		 * @returns {object} index of condition (-1 if not found)
+		 * @returns {int} index of condition (-1 if not found)
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
@@ -283,7 +283,7 @@ sap.ui.define([
 		 * Adds a condition for a specified FieldPath.
 		 *
 		 * @param {string} sFieldPath fieldPath of the condition
-		 * @param {object} oCondition condition to be added
+		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition condition to be added
 		 * @param {boolean} bForce if set the condition will be added even if it already exist
 		 * @returns {sap.ui.mdc.condition.ConditionModel} Reference to <code>this</code> to allow method chaining.
 		 * @private
@@ -303,7 +303,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sFieldPath fieldPath of the condition
 		 * @param {int} iIndex index where the condition should be inserted
-		 * @param {object} oCondition condition to be inserted
+		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition condition to be inserted
 		 * @param {boolean} bForce if set the condition will be inserted even if it already exist
 		 * @returns {sap.ui.mdc.condition.ConditionModel} Reference to <code>this</code> to allow method chaining.
 		 * @private
@@ -354,7 +354,7 @@ sap.ui.define([
 		 * @param {string} sFieldPath the fieldPath name of the condition
 		 * @param {string} sKey the operator for the condition
 		 * @param {string} sDescription the description of the operator
-		 * @returns {object} the new condition object with the given fieldPath, the operator EQ and the sKey and sDescription as aValues.
+		 * @returns {sap.ui.mdc.condition.ConditionObject} the new condition object with the given fieldPath, the operator EQ and the sKey and sDescription as aValues.
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 * @deprecated use the sap.ui.mdc.condition.Condition.createItemCondition
@@ -370,7 +370,7 @@ sap.ui.define([
 		 * @param {string} sFieldPath the fieldPath name of the condition
 		 * @param {string} sOperator the operator for the condition
 		 * @param {any[]} aValues the array of values for the condition
-		 * @returns {object} the new condition object with the given fieldPath, operator and values.
+		 * @returns {sap.ui.mdc.condition.ConditionObject} the new condition object with the given fieldPath, operator and values.
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 * @deprecated use the sap.ui.mdc.condition.Condition.createCondition
@@ -384,7 +384,7 @@ sap.ui.define([
 		 * Removes a condition for a specified FieldPath.
 		 *
 		 * @param {string} sFieldPath fieldPath of the condition
-		 * @param {int | object} vCondition condition or index of the condition
+		 * @param {int | {sap.ui.mdc.condition.ConditionObject} vCondition condition or index of the condition
 		 * @returns {boolean} flag if condition was removed.
 		 * @private
 		 * @ui5-restricted sap.ui.mdc

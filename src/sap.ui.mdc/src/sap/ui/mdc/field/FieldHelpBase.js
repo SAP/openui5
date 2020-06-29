@@ -50,6 +50,8 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> This property must only be set by the control the <code>FieldHelp</code> element
 				 * belongs to, not by the application.
+				 *
+				 * <b>Note:</b> A condition must have the structure of <code>sap.ui.mdc.condition.ConditionObject</code>.
 				 */
 				conditions: {
 					type: "object[]",
@@ -118,6 +120,8 @@ sap.ui.define([
 
 						/**
 						 * The selected <code>conditions</code>
+						 *
+						 * <b>Note:</b> A condition has the structure of <code>sap.ui.mdc.condition.ConditionObject</code>.
 						 */
 						conditions: { type: "object[]" },
 
@@ -156,6 +160,8 @@ sap.ui.define([
 
 						/**
 						 * The navigated <code>condition</code>
+						 *
+						 * <b>Note</b> A condition has the structure of <code>sap.ui.mdc.condition.ConditionObject</code>.
 						 *
 						 * @since 1.66.0
 						 */

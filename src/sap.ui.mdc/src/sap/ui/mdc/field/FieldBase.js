@@ -281,6 +281,8 @@ sap.ui.define([
 				 * <li><code>propertyPath</code> as the property name</li>
 				 * </ul>
 				 * Between <code>navPath</code> and <code>propertyPath</code>, <b>&#42;/</b> is required.
+				 *
+				 * <b>Note</b> A condition must have the structure of <code>sap.ui.mdc.condition.ConditionObject</code>.
 				 */
 				conditions: {
 					type: "object[]",
