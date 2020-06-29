@@ -1205,6 +1205,38 @@ sap.ui.define([
 		this.forwardTab(false);
 	};
 
+
+	/**
+	 * Handles the <code>onmousedown</code> event.
+	 *
+	 */
+	GridContainer.prototype.onmousedown = function(oEvent) {
+		this._bIsMouseDown = true;
+	};
+
+	/**
+	 * Handles the <code>mouseup</code> event.
+	 *
+	 */
+	GridContainer.prototype.onmouseup = function(oEvent) {
+
+		var $listItem = jQuery(oEvent.target).closest('.sapFGridContainerItemWrapperNoVisualFocus'),
+			oControl;
+
+		if ($listItem.length) {
+			oControl = $listItem.children().eq(0).control()[0];
+
+			// if the list item visual focus is displayed by the currently focused control,
+			// move the focus to the list item
+			if (oControl && oControl.getFocusDomRef() === document.activeElement) {
+				this._lastFocusedElement = null;
+				$listItem.focus();
+			}
+		}
+
+		this._bIsMouseDown = false;
+	};
+
 	/**
 	 * Handles the <code>focusin</code> event.
 	 *
@@ -1217,7 +1249,7 @@ sap.ui.define([
 			aNavigationDomRefs,
 			lastFocusedIndex;
 
-		if ($listItem.length) {
+		if (!this._bIsMouseDown && $listItem.length) {
 			oControl = $listItem.children().eq(0).control()[0];
 
 			// if the list item visual focus is displayed by the currently focused control,
