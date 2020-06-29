@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
- sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadModules, Log) {
+sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadModules, Log) {
 	"use strict";
 
 	var _validateDelegateConfig = function (oConfig) {
@@ -27,14 +27,16 @@
 	};
 
 	/**
-	 * Applying the <code>DelegateMixin</code> to the prototype of a control augments the following methods to provide consolidated asynchronous handling for delegate modules:
+	 * Enhances a given control prototype with consolidated asynchronous handling for delegate modules and their initialization.
+	 *
+	 * The following methods are available:
 	 *
 	 * <ul>
-	 * <li><code>awaitControlDelegate</code></li>
-	 * <li><code>getControlDelegate</code></li>
-	 * <li><code>getPayload</code></li>
-	 * <li><code>getTypeUtil</code></li>
-	 * <li><code>initControlDelegate</code></li>
+	 * <li><code>awaitControlDelegate</code> - Provides access to the delegate initialization <code>Promise</code>.</li>
+	 * <li><code>getControlDelegate</code> - Returns the delegate instance, if available.</li>
+	 * <li><code>getPayload</code> - Returns the payload object set for the delegate property.</li>
+	 * <li><code>getTypeUtil</code> - Returns the <code>typeUtil</code> made available by the delegate module</li>
+	 * <li><code>initControlDelegate</code> - Loads and initializes the delegate module related to the enhanced control.</li>
 	 * </ul>
 	 *
 	 * Additionally, the following methods are wrapped:
@@ -46,7 +48,7 @@
 	 * <li><code>setDelegate</code></li>
 	 * </ul>
 	 *
-	 * The <code>prototype.init</code> wrapper also makes several instance fields available:
+	 * The <code>prototype.init</code> wrapper creates the following instance fields:
 	 *
 	 * <ul>
 	 * <li><code>bDelegateInitialized</code> - Indicator for the availability of delegates</li>
@@ -60,7 +62,7 @@
 	 * @since 1.76.0
 	 * @private
 	 * @experimental
-	 * @sap-restricted
+	 * @ui5-restricted
 	*/
 	var DelegateMixin = {};
 
@@ -101,10 +103,10 @@
 	};
 
 	/**
-	 * Loads and initializes the accompanying delegate module for the augmented control and initializes member variables for the delegate typeutil.
+	 * Loads and initializes the delegate module related to the enhanced control.
 	 *
 	 * @protected
-	 * @param {object} [oPreloadedModule] Preloaded delegate module.
+	 * @param {object} [oPreloadedModule] Preloaded delegate module
 	 * @returns {Promise<sap.ui.mdc.BaseDelegate>} Returns a <code>Promise</code> that resolves the delegate module, if available
 	 */
 	DelegateMixin.initControlDelegate = function (oPreloadedModule) {
@@ -128,10 +130,10 @@
 	};
 
 	/**
-	 * Gets the payload object set on the delegate property
+	 * Returns the payload object set for the delegate property.
 	 *
 	 * @protected
-	 * @returns {object} Returns a payload set on the delegate property
+	 * @returns {object} Payload set for delegate property
 	 */
 	DelegateMixin.getPayload = function () {
 		if (!this._oPayload) {
@@ -143,10 +145,10 @@
 	};
 
 	/**
-	 * Gets the <code>typeUtil</code> made available by a delegate module.
+	 * Returns the <code>typeUtil</code> made available by a delegate module.
 	 *
 	 * @protected
-	 * @returns {sap.ui.mdc.util.TypeUtil} Returns the <code>typeUtil</code> made available by a delegate module
+	 * @returns {sap.ui.mdc.util.TypeUtil} <code>typeUtil</code> made available by the delegate module
 	 * @throws Throws an error if the delegate module is not available
 	 */
 	DelegateMixin.getTypeUtil = function () {
@@ -161,10 +163,10 @@
 	};
 
 	/**
-	 * Gets the delegate instance, if available.
+	 * Returns the delegate instance, if available.
 	 *
 	 * @protected
-	 * @returns {sap.ui.mdc.BaseDelegate} Returns the <code>typeUtil</code> made available by a delegate module
+	 * @returns {sap.ui.mdc.BaseDelegate} <code>typeUtil</code> made available by a delegate module
 	 * @throws Throws an error if the delegate module is not available
 	 */
 	DelegateMixin.getControlDelegate = function () {
