@@ -1583,6 +1583,7 @@ sap.ui.define([
 	function _createInternalContent() {
 
 		_setUsedConditionType.call(this); // if external content use it's conditionType
+		_checkFieldHelpExist.call(this, this.getFieldHelp()); // as FieldHelp might be greated after ID is assigned to Field
 
 		var sEditMode = this.getEditMode();
 		if (this.getContent() || this._bIsBeingDestroyed ||
@@ -2717,9 +2718,8 @@ sap.ui.define([
 
 	function _fieldHelpChanged(sId, sMutation) {
 
-		var oFieldHelp = sap.ui.getCore().byId(sId);
-
 		if (sMutation === "remove") {
+			var oFieldHelp = sap.ui.getCore().byId(sId);
 			if (oFieldHelp) {
 				oFieldHelp.detachEvent("select", _handleFieldHelpSelect, this);
 				oFieldHelp.detachEvent("navigate", _handleFieldHelpNavigate, this);
@@ -2729,13 +2729,22 @@ sap.ui.define([
 			}
 			this.setProperty("_fieldHelpEnabled", false, true);
 		} else if (sMutation === "insert") {
+			_checkFieldHelpExist.call(this, sId);
+		}
+
+		_handleConditionsChange.call(this, this.getConditions()); // to update descriptions
+
+	}
+
+	function _checkFieldHelpExist(sId) {
+
+		if (sId && !this.getProperty("_fieldHelpEnabled")) {
+			var oFieldHelp = sap.ui.getCore().byId(sId);
 			if (oFieldHelp) {
 				oFieldHelp.attachEvent("dataUpdate", _handleHelpDataUpdate, this);
 				this.setProperty("_fieldHelpEnabled", true, true);
 			}
 		}
-
-		_handleConditionsChange.call(this, this.getConditions()); // to update descriptions
 
 	}
 
