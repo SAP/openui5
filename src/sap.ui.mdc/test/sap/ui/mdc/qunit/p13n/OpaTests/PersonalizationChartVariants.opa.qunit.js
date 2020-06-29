@@ -115,7 +115,7 @@ sap.ui.define([
 		Then.iShouldSeeItemWithSelection("Year", false);
 	});
 	opaTest("When I close the 'Define Chart Properties', the chart has not been changed", function(Given, When, Then) {
-		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeAllPopovers();
+		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
 
 		Then.thePersonalizationDialogShouldBeClosed();
 		Then.iShouldSeeVisibleDimensionsInOrder([
@@ -210,7 +210,7 @@ sap.ui.define([
 		Then.iShouldSeeItemWithSelection("Year", false);
 	});
 	opaTest("When I close the 'Define Chart Properties', the chart has not been changed", function(Given, When, Then) {
-		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeAllPopovers();
+		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
 
 		Then.thePersonalizationDialogShouldBeClosed();
 		Then.iShouldSeeVisibleDimensionsInOrder([
@@ -305,7 +305,7 @@ sap.ui.define([
 		Then.iShouldSeeItemWithSelection("Year", false);
 	});
 	opaTest("When I close the 'Define Chart Properties', the chart has not been changed", function(Given, When, Then) {
-		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeAllPopovers();
+		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
 
 		Then.thePersonalizationDialogShouldBeClosed();
 		Then.iShouldSeeVisibleDimensionsInOrder([
@@ -470,6 +470,8 @@ sap.ui.define([
 		Then.iShouldSeeItemOnPosition("Year", 19);
 		Then.iShouldSeeItemWithSelection("Year", false);
 
+		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+
 		Then.iShouldSeeVisibleDimensionsInOrder([
 			"Product Name"
 		]);
@@ -481,7 +483,6 @@ sap.ui.define([
 		Then.theVariantManagementIsDirty(true);
 	});
 	opaTest("When I close the 'Define Chart Properties', the dialog should close", function(Given, When, Then) {
-		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeAllPopovers();
 
 		Then.thePersonalizationDialogShouldBeClosed();
 	});
@@ -500,12 +501,14 @@ sap.ui.define([
 		Then.iShouldSeeVisibleMeasuresInOrder([
 			"Custom Aggregate (Forecast)"
 		]);
+
+		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+
 		Then.iShouldSeeChartOfType("column");
 		Then.iShouldSeeButtonWithIcon("sap-icon://vertical-bar-chart");
 		Then.theVariantManagementIsDirty(true);
 	});
 	opaTest("When I close the 'Define Sort Properties', the dialog should close", function(Given, When, Then) {
-		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : Given.closeAllPopovers();
 
 		Then.thePersonalizationDialogShouldBeClosed();
 	});

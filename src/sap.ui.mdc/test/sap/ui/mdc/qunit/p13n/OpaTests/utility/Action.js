@@ -35,7 +35,7 @@ sap.ui.define([
 			var sColumnName = oSettings.columnName;
 			var fSuccess = oSettings.success;
 			return this.waitFor({
-				controlType: bModal ? "sap.m.Dialog" : "sap.m.ResponsivePopover",
+				controlType: bModal ? "sap.m.ResponsivePopover" : "sap.m.Dialog" ,
 				matchers: new PropertyStrictEquals({
 					name: "title",
 					value: sPopoverTitle
@@ -216,6 +216,22 @@ sap.ui.define([
 					value: sText
 				}),
 				actions: new Press()
+			});
+		},
+		iPressDialogOk: function() {
+			return this.waitFor({
+				controlType: "sap.m.Dialog",
+				success: function() {
+					this.iPressButtonWithText(TestUtil.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.OK"));
+				}
+			});
+		},
+		iPressDialogCancel: function(){
+			return this.waitFor({
+				controlType: "sap.m.Dialog",
+				success: function() {
+					this.iPressButtonWithText(TestUtil.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.CANCEL"));
+				}
 			});
 		},
 		iSelectVariant: function (sVariantName) {

@@ -28,17 +28,40 @@ sap.ui.define([
 	"use strict";
 
 	var clickOnTheReorderButtonOfDialog = function(sDialogTitle) {
-		return waitForTable.call(this, {
-			success: function(oTable) {
-				waitForP13nDialog.call(this, oTable, sDialogTitle, {
-					success: function(oDialog) {
+
+		waitForP13nDialog.call(this, sDialogTitle, {
+			liveMode: false,
+			success: function(oDialog) {
+				this.waitFor({
+					controlType: "sap.m.Button",
+					matchers: [
+						new Properties({
+							text: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.REORDER")
+						}),
+						new Ancestor(oDialog)
+					],
+					actions: new Press()
+				});
+			}
+		});
+
+	};
+
+	var moveColumnListItemInDialogToTop = function(sColumnName, sDialogTitle) {
+
+		waitForP13nDialog.call(this, sDialogTitle, {
+			liveMode: false,
+			success: function(oColumnDialog) {
+				waitForColumnListItemInDialogWithLabel.call(this, oColumnDialog, sColumnName, {
+					success: function(oColumnListItem) {
+						oColumnListItem.$().trigger("tap");
 						this.waitFor({
-							controlType: "sap.m.Button",
+							controlType: "sap.m.OverflowToolbarButton",
 							matchers: [
+								new Ancestor(oColumnDialog),
 								new Properties({
-									text: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.REORDER")
-								}),
-								new Ancestor(oDialog)
+									icon: TableUtil.MoveToTopIcon
+								})
 							],
 							actions: new Press()
 						});
@@ -46,51 +69,25 @@ sap.ui.define([
 				});
 			}
 		});
-	};
 
-	var moveColumnListItemInDialogToTop = function(sColumnName, sDialogTitle) {
-		return waitForTable.call(this, {
-			success: function(oTable) {
-				waitForP13nDialog.call(this, oTable, sDialogTitle, {
-					success: function(oColumnDialog) {
-						waitForColumnListItemInDialogWithLabel.call(this, oColumnDialog, sColumnName, {
-							success: function(oColumnListItem) {
-								oColumnListItem.$().trigger("tap");
-								this.waitFor({
-									controlType: "sap.m.OverflowToolbarButton",
-									matchers: [
-										new Ancestor(oColumnDialog),
-										new Properties({
-											icon: TableUtil.MoveToTopIcon
-										})
-									],
-									actions: new Press()
-								});
-							}
-						});
-					}
-				});
-			}
-		});
 	};
 
 	var changeColumnListItemSelectedState = function(sColumnName, bSelected, sDialogTitle) {
-		return waitForTable.call(this, {
-			success: function(oTable) {
-				waitForP13nDialog.call(this, oTable, sDialogTitle, {
-					success: function(oSortDialog) {
-						waitForColumnListItemInDialogWithLabel.call(this, oSortDialog, sColumnName, {
-							success: function(oColumnListItem) {
-								var oCheckBox = oColumnListItem.getMultiSelectControl();
-								if (oCheckBox.getSelected() !== bSelected) {
-									oCheckBox.$().trigger("tap");
-								}
-							}
-						});
+
+		waitForP13nDialog.call(this, sDialogTitle, {
+			liveMode: false,
+			success: function(oSortDialog) {
+				waitForColumnListItemInDialogWithLabel.call(this, oSortDialog, sColumnName, {
+					success: function(oColumnListItem) {
+						var oCheckBox = oColumnListItem.getMultiSelectControl();
+						if (oCheckBox.getSelected() !== bSelected) {
+							oCheckBox.$().trigger("tap");
+						}
 					}
 				});
 			}
 		});
+
 	};
 
 	return {
@@ -109,30 +106,29 @@ sap.ui.define([
 			return changeColumnListItemSelectedState.call(this, sColumnName, bSelected, TableUtil.SortDialogTitle);
 		},
 		iChangeASelectedColumnSortDirection: function(sColumnName, bDescending) {
-			return waitForTable.call(this, {
-				success: function(oTable) {
-					waitForP13nDialog.call(this, oTable, TableUtil.SortDialogTitle, {
-						success: function(oSortDialog) {
-							waitForColumnListItemInDialogWithLabel.call(this, oSortDialog, sColumnName, {
-								success: function(oColumnListItem) {
-									this.waitFor({
-										controlType: "sap.m.Select",
-										matchers: new Ancestor(oColumnListItem),
-										actions: new Press(),
-										success: function(aSelect) {
-											if (bDescending) {
-												aSelect[0].getItems()[1].$().trigger("tap");
-											} else {
-												aSelect[0].getItems()[0].$().trigger("tap");
-											}
-										}
-									});
+
+			waitForP13nDialog.call(this, TableUtil.SortDialogTitle, {
+				liveMode: false,
+				success: function(oSortDialog) {
+					waitForColumnListItemInDialogWithLabel.call(this, oSortDialog, sColumnName, {
+						success: function(oColumnListItem) {
+							this.waitFor({
+								controlType: "sap.m.Select",
+								matchers: new Ancestor(oColumnListItem),
+								actions: new Press(),
+								success: function(aSelect) {
+									if (bDescending) {
+										aSelect[0].getItems()[1].$().trigger("tap");
+									} else {
+										aSelect[0].getItems()[0].$().trigger("tap");
+									}
 								}
 							});
 						}
 					});
 				}
 			});
+
 		},
 		iClickOnTheSortReorderButton: function() {
 			return clickOnTheReorderButtonOfDialog.call(this, TableUtil.SortDialogTitle);

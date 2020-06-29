@@ -135,7 +135,7 @@ sap.ui.define([
 		Then.iShouldSeeEnabledSelectControl("Year", false);
 	});
 	opaTest("When I close the 'Define Chart Properties', the chart has not been changed", function(Given, When, Then) {
-		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeAllPopovers();
+		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
 
 		Then.thePersonalizationDialogShouldBeClosed();
 		Then.iShouldSeeVisibleDimensionsInOrder([
@@ -164,7 +164,7 @@ sap.ui.define([
 		Then.iShouldSeeEnabledSelectControl("ProductName", false);
 	});
 	opaTest("When I close the 'Define Sort Properties', the chart has not been changed", function(Given, When, Then) {
-		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back) : Given.closeAllPopovers();
+		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
 
 		Then.thePersonalizationDialogShouldBeClosed();
 		Then.iShouldSeeVisibleDimensionsInOrder([
@@ -179,8 +179,6 @@ sap.ui.define([
 	});
 	opaTest("When I press on 'Define Chart Type' button, a dialog should open", function(Given, When, Then) {
 		When.iPressOnButtonWithIcon("sap-icon://vertical-bar-chart");
-
-		Then.thePersonalizationDialogOpens();
 
 		Then.iShouldSeeListItemOnPosition(TestUtil.getTextOfChartType("bar"), 0);
 		Then.iShouldSeeListItemOnPosition(TestUtil.getTextOfChartType("column"), 1);
@@ -198,7 +196,7 @@ sap.ui.define([
 		Then.iShouldSeeListItemOnPosition(TestUtil.getTextOfChartType("horizontal_waterfall"), 13);
 	});
 	opaTest("When I close the 'Define Chart Type', the chart has not been changed", function(Given, When, Then) {
-		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Back) : Given.closeAllPopovers();
+		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Back) : Given.closeAllPopovers();
 
 		Then.thePersonalizationDialogShouldBeClosed();
 		Then.iShouldSeeVisibleDimensionsInOrder([
@@ -235,8 +233,6 @@ sap.ui.define([
 		Then.theVariantManagementIsDirty(false);
 
 		When.iPressOnButtonWithIcon("sap-icon://vertical-bar-chart");
-
-		Then.thePersonalizationDialogOpens();
 
 		Then.iShouldSeeListItemOnPosition(TestUtil.getTextOfChartType("bar"), 0);
 		Then.iShouldSeeListItemOnPosition(TestUtil.getTextOfChartType("column"), 1);
@@ -461,6 +457,8 @@ sap.ui.define([
 		Then.iShouldSeeItemWithSelection("Year", false);
 		Then.iShouldSeeEnabledSelectControl("Year", false);
 
+		When.iPressDialogOk();
+
 		Then.iShouldSeeVisibleDimensionsInOrder([
 			"Product Name", "Date"
 		]);
@@ -472,8 +470,6 @@ sap.ui.define([
 		Then.theVariantManagementIsDirty(true);
 	});
 	opaTest("When I close the 'Define Chart Properties', the dialog should close", function(Given, When, Then) {
-		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeAllPopovers();
-
 		Then.thePersonalizationDialogShouldBeClosed();
 
 		Then.iTeardownMyAppFrame();
@@ -671,6 +667,8 @@ sap.ui.define([
 		Then.iShouldSeeItemWithSelection("Year", false);
 		Then.iShouldSeeEnabledSelectControl("Year", false);
 
+		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+
 		Then.iShouldSeeVisibleDimensionsInOrder([
 			"Country", "Product Name", "Date"
 		]);
@@ -682,8 +680,6 @@ sap.ui.define([
 		Then.theVariantManagementIsDirty(true);
 	});
 	opaTest("When I close the 'Define Chart Properties', the dialog should close", function(Given, When, Then) {
-		sap.ui.Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : Given.closeAllPopovers();
-
 		Then.thePersonalizationDialogShouldBeClosed();
 
 		Then.iTeardownMyAppFrame();

@@ -77,7 +77,7 @@ sap.ui.define([
 		if (sap.ui.Device.system.phone) {
 			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back);
 		} else {
-			Given.closeAllPopovers();
+			When.iPressDialogOk();
 		}
 
 		//close p13n dialog
@@ -105,7 +105,7 @@ sap.ui.define([
 		if (sap.ui.Device.system.phone) {
 			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Back);
 		} else {
-			Given.closeAllPopovers();
+			When.iPressDialogOk();
 		}
 
 		//close p13n dialog
@@ -137,7 +137,7 @@ sap.ui.define([
 		if (sap.ui.Device.system.phone) {
 			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back);
 		} else {
-			Given.closeAllPopovers();
+			When.iPressDialogOk();
 		}
 
 		//close p13n dialog
@@ -200,7 +200,7 @@ sap.ui.define([
 		if (sap.ui.Device.system.phone) {
 			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back);
 		} else {
-			Given.closeAllPopovers();
+			When.iPressDialogOk();
 		}
 
 		//close p13n dialog
