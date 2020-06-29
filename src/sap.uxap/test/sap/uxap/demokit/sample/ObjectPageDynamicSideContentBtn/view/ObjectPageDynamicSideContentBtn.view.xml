@@ -62,7 +62,7 @@
 					<sections>
 						<ObjectPageSection title="2014 Goals Plan">
 							<subSections>
-								<ObjectPageSubSection>
+								<ObjectPageSubSection titleUppercase="true">
 									<m:Text width="200px"
 								text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
 
@@ -72,13 +72,13 @@
 
 						<ObjectPageSection title="Personal">
 							<subSections>
-								<ObjectPageSubSection title="Connect">
+								<ObjectPageSubSection title="Connect" titleUppercase="true">
 									<m:Text width="200px"
 								text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
 
 								</ObjectPageSubSection>
 
-								<ObjectPageSubSection id="paymentSubSection" title="Payment information">
+								<ObjectPageSubSection id="paymentSubSection" title="Payment information" titleUppercase="true">
 									<blocks>
 
 									</blocks>

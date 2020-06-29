@@ -75,38 +75,38 @@
 
 		<sections>
 			<ObjectPageSection title="Personal 1">
-				<ObjectPageSubSection>
+				<ObjectPageSubSection titleUppercase="true">
 					<blockcolor:BlockBlue/>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection title="Personal 2">
-				<ObjectPageSubSection>
+				<ObjectPageSubSection titleUppercase="true">
 					<blockcolor:BlockBlue/>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection title="Personal 3">
-				<ObjectPageSubSection>
+				<ObjectPageSubSection titleUppercase="true">
 					<blockcolor:BlockBlue/>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection title="Personal 4">
-				<ObjectPageSubSection>
+				<ObjectPageSubSection titleUppercase="true">
 					<blockcolor:BlockBlue/>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection title="Personal 5">
-				<ObjectPageSubSection>
+				<ObjectPageSubSection titleUppercase="true">
 					<blockcolor:BlockBlue/>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection title="Personal 6">
-				<ObjectPageSubSection>
+				<ObjectPageSubSection titleUppercase="true">
 					<blockcolor:BlockBlue/>
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 			<ObjectPageSection id="Employment" title="Employment">
 				<subSections>
-					<ObjectPageSubSection>
+					<ObjectPageSubSection titleUppercase="true">
 						<f:SimpleForm editable="true" layout="ColumnLayout" columnsM="2" columnsL="3" columnsXL="4">
 							<f:content>
 								<m:Label text="Name"/>

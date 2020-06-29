@@ -11,14 +11,16 @@
 				<subSections>
 
 					<ObjectPageSubSection title="No Expand/Collapse"
-										  mode="Expanded">
+										  mode="Expanded"
+										  titleUppercase="true">
 						<blocks>
 							<sample:MultiViewBlock id="multiview21"/>
 							<sample:MultiViewBlock id="multiview22"/>
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Collapsed by default">
+					<ObjectPageSubSection title="Collapsed by default"
+										  titleUppercase="true">
 						<blocks>
 							<sample:MultiViewBlock id="multiview11"/>
 							<sample:MultiViewBlock id="multiview12"/>
@@ -30,7 +32,8 @@
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="Expanded by default"
-										  mode="Expanded">
+										  mode="Expanded"
+										  titleUppercase="true">
 						<blocks>
 							<sample:MultiViewBlock id="multiview31"/>
 							<sample:MultiViewBlock id="multiview32"/>

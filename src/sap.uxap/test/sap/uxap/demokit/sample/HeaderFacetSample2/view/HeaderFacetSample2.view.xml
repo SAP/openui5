@@ -145,7 +145,7 @@
         <sections>
 			<ObjectPageSection id="goalsSection" title="2014 Goals Plan">
 				<subSections>
-					<ObjectPageSubSection id="goalsSectionSS1">
+					<ObjectPageSubSection id="goalsSectionSS1" titleUppercase="true">
 						<blocks>
 							<goals:GoalsBlock id="goalsblock"/>
 						</blocks>
@@ -155,7 +155,7 @@
 
 			<ObjectPageSection id="personalSection" title="Personal" importance="Medium">
 				<subSections>
-					<ObjectPageSubSection id="personalSectionSS1" title="Connect">
+					<ObjectPageSubSection id="personalSectionSS1" title="Connect" titleUppercase="true">
 						<blocks>
 							<personal:BlockPhoneNumber id="phone"/>
 							<personal:BlockSocial id="social"/>
@@ -164,7 +164,7 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection id="personalSectionSS2" title="Payment information">
+					<ObjectPageSubSection id="personalSectionSS2" title="Payment information" titleUppercase="true">
 						<blocks>
 							<personal:PersonalBlockPart1 id="part1" columnLayout="1"/>
 						</blocks>
@@ -177,7 +177,7 @@
 
 			<ObjectPageSection id="employmentSection" title="Employment">
 				<subSections>
-					<ObjectPageSubSection id="employmentSectionSS1" title="Job information">
+					<ObjectPageSubSection id="employmentSectionSS1" title="Job information" titleUppercase="true">
 						<blocks>
 							<employment:BlockJobInfoPart1 id="jobinfopart1"/>
 							<employment:BlockJobInfoPart2 id="jobinfopart2"/>
@@ -185,7 +185,7 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection id="employmentSectionSS2" title="Employee Details" importance="Medium">
+					<ObjectPageSubSection id="employmentSectionSS2" title="Employee Details" importance="Medium" titleUppercase="true">
 						<blocks>
 							<employment:BlockEmpDetailPart1 id="empdetailpart1" columnLayout="1"/>
 						</blocks>

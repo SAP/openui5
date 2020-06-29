@@ -58,12 +58,12 @@
 		<sections>
 			<ObjectPageSection id="section1" title="Section 1">
 				<subSections>
-					<ObjectPageSubSection id="section1_SS1" title="Subsection 1.1 ">
+					<ObjectPageSubSection id="section1_SS1" title="Subsection 1.1" titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="bbt1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection id="section1_SS2" title="Subsection 1.2 ">
+					<ObjectPageSubSection id="section1_SS2" title="Subsection 1.2" titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="bbt2"/>
 						</blocks>
@@ -76,7 +76,7 @@
 
 			<ObjectPageSection id="section3" title="Section 3">
 				<subSections>
-					<ObjectPageSubSection id="section3_SS1">
+					<ObjectPageSubSection id="section3_SS1" titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="bbt3"/>
 						</blocks>
@@ -86,7 +86,7 @@
 
 			<ObjectPageSection id="section4" title="Section 4">
 				<subSections>
-					<ObjectPageSubSection id="section4_SS1" title="Subsection 4.1 ">
+					<ObjectPageSubSection id="section4_SS1" title="Subsection 4.1" titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="bbt4"/>
 						</blocks>
@@ -96,7 +96,7 @@
 
 			<ObjectPageSection id="section5" title="Section 5">
 				<subSections>
-					<ObjectPageSubSection id="section5_SS1">
+					<ObjectPageSubSection id="section5_SS1" titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="bbt5"/>
 						</blocks>

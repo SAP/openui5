@@ -16,12 +16,12 @@
 		<sections>
 			<ObjectPageSection title="Section 1">
 				<subSections>
-					<ObjectPageSubSection title="Subsection 1.1 ">
+					<ObjectPageSubSection title="Subsection 1.1" titleUppercase="true">
 						<blocks>
 							<blockcolor:BlockBlueT1 id="bbt1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="Subsection 1.2 ">
+					<ObjectPageSubSection title="Subsection 1.2" titleUppercase="true">
 						<blocks>
 							<blockcolor:BlockBlueT2 id="bbt2"/>
 						</blocks>
@@ -34,7 +34,7 @@
 
 			<ObjectPageSection title="Section 3">
 				<subSections>
-					<ObjectPageSubSection>
+					<ObjectPageSubSection titleUppercase="true">
 						<blocks>
 							<blockcolor:BlockBlueT3 id="bbt3"/>
 						</blocks>
@@ -44,7 +44,7 @@
 
 			<ObjectPageSection>
 				<subSections>
-					<ObjectPageSubSection>
+					<ObjectPageSubSection titleUppercase="true">
 						<blocks>
 							<blockcolor:BlockBlueT4 id="bbt4"/>
 						</blocks>
@@ -54,7 +54,7 @@
 
 			<ObjectPageSection title="Section 5">
 				<subSections>
-					<ObjectPageSubSection>
+					<ObjectPageSubSection titleUppercase="true">
 						<blocks>
 							<blockcolor:BlockBlueT5 id="bbt5"/>
 						</blocks>

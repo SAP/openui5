@@ -69,12 +69,12 @@
 		<sections>
 			<ObjectPageSection id="section1" title="Section 1">
 				<subSections>
-					<ObjectPageSubSection id="section1_SS1" title="Subsection 1.1 ">
+					<ObjectPageSubSection id="section1_SS1" title="Subsection 1.1" titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="bbt1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection id="section1_SS2" title="Subsection 1.2 ">
+					<ObjectPageSubSection id="section1_SS2" title="Subsection 1.2" titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="bbt2"/>
 						</blocks>
@@ -87,7 +87,7 @@
 
 			<ObjectPageSection id="section3" title="Section 3">
 				<subSections>
-					<ObjectPageSubSection id="section3_SS1" title=" ">
+					<ObjectPageSubSection id="section3_SS1" title=" " titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="bbt3"/>
 						</blocks>
@@ -97,7 +97,7 @@
 
 			<ObjectPageSection id="section4" title="Section 4">
 				<subSections>
-					<ObjectPageSubSection id="section4_SS1" title="Subsection 4.1 ">
+					<ObjectPageSubSection id="section4_SS1" title="Subsection 4.1" titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="bbt4"/>
 						</blocks>
@@ -107,7 +107,7 @@
 
 			<ObjectPageSection id="section5" title="Section 5">
 				<subSections>
-					<ObjectPageSubSection id="section5_SS1" title=" ">
+					<ObjectPageSubSection id="section5_SS1" title=" " titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="bbt5"/>
 						</blocks>
@@ -117,7 +117,7 @@
 
 			<ObjectPageSection id="section6" title="Section 6">
 				<subSections>
-					<ObjectPageSubSection id="section6_SS1" title=" ">
+					<ObjectPageSubSection id="section6_SS1" title=" " titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="b1"/>
 						</blocks>
@@ -127,7 +127,7 @@
 
 			<ObjectPageSection id="section7" title="Section 7">
 				<subSections>
-					<ObjectPageSubSection id="section7_SS1" title=" ">
+					<ObjectPageSubSection id="section7_SS1" title=" " titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="b2"/>
 						</blocks>
@@ -137,7 +137,7 @@
 
 			<ObjectPageSection title="Section 8">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection title=" " titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="b3"/>
 						</blocks>
@@ -147,7 +147,7 @@
 
 			<ObjectPageSection title="Section 9">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection title=" " titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="b4"/>
 						</blocks>
@@ -157,7 +157,7 @@
 
 			<ObjectPageSection title="Section 10">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection title=" " titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="b5"/>
 						</blocks>
@@ -167,7 +167,7 @@
 
 			<ObjectPageSection title="Section 11">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection title=" " titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="b6"/>
 						</blocks>
@@ -177,7 +177,7 @@
 
 			<ObjectPageSection title="Section 12">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection title=" " titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="b7"/>
 						</blocks>
@@ -187,7 +187,7 @@
 
 			<ObjectPageSection title="Section 13">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection title=" " titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="b8"/>
 						</blocks>
@@ -197,7 +197,7 @@
 
 			<ObjectPageSection title="Section 14">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection title=" " titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="b9"/>
 						</blocks>
@@ -207,7 +207,7 @@
 
 			<ObjectPageSection title="Section 15">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection title=" " titleUppercase="true">
 						<blocks>
 							<sample:mySimpleBlock id="b10"/>
 						</blocks>

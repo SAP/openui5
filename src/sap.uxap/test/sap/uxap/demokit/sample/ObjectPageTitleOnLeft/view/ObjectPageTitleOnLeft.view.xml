@@ -70,7 +70,7 @@
 		<sections>
 			<ObjectPageSection title="2014 Goals Plan">
 				<subSections>
-					<ObjectPageSubSection title="Goal summary">
+					<ObjectPageSubSection title="Goal summary" titleUppercase="true">
 						<blocks>
 							<goals:GoalsBlock id="goalsblock"/>
 						</blocks>
@@ -80,14 +80,14 @@
 
 			<ObjectPageSection title="Personal">
 				<subSections>
-					<ObjectPageSubSection title="Connect">
+					<ObjectPageSubSection title="Connect" titleUppercase="true">
 						<personal:BlockAdresses id="adresses"/>
 						<personal:BlockPhoneNumber id="phone"/>
 						<personal:BlockSocial id="social"/>
 						<personal:BlockMailing id="mailing"/>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Payment information">
+					<ObjectPageSubSection title="Payment information" titleUppercase="true">
 						<blocks>
 							<personal:PersonalBlockPart1 id="part1"/>
 						</blocks>
@@ -100,7 +100,7 @@
 
 			<ObjectPageSection title="Employment">
 				<subSections>
-					<ObjectPageSubSection title="Job information">
+					<ObjectPageSubSection title="Job information" titleUppercase="true">
 						<blocks>
 							<employment:BlockJobInfoPart1 id="jobinfopart1"/>
 							<employment:BlockJobInfoPart2 id="jobinfopart2"/>
@@ -108,7 +108,7 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Employee Details">
+					<ObjectPageSubSection title="Employee Details" titleUppercase="true">
 						<blocks>
 							<employment:BlockEmpDetailPart1 id="empdetailpart1" columnLayout="1"/>
 						</blocks>
@@ -118,7 +118,7 @@
 						</moreBlocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Job Relationship">
+					<ObjectPageSubSection title="Job Relationship" titleUppercase="true">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob" showSubSectionMore="true">
 								<employment:mappings>

@@ -12,7 +12,7 @@
 			<ObjectPageSection title="example">
 				<subSections>
 
-					<ObjectPageSubSection title="Example">
+					<ObjectPageSubSection title="Example" titleUppercase="true">
 						<blocks>
 							<blockinblock:Block id="block" mode="Collapsed">
 								<ModelMapping externalModelName="jsonModel"

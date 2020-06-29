@@ -66,7 +66,7 @@
 		<sections>
 			<ObjectPageSection title="JS View">
 				<subSections>
-					<ObjectPageSubSection>
+					<ObjectPageSubSection titleUppercase="true">
 						<blocks>
 							<goals:GoalsBlockJS id="goalsblock2"/>
 						</blocks>
@@ -75,7 +75,7 @@
 			</ObjectPageSection>
 			<ObjectPageSection title="JSON View">
 				<subSections>
-					<ObjectPageSubSection>
+					<ObjectPageSubSection titleUppercase="true">
 						<blocks>
 							<goals:GoalsBlockJSON id="goalsblock3"/>
 						</blocks>
@@ -84,7 +84,7 @@
 			</ObjectPageSection>
 			<ObjectPageSection title="HTML View">
 				<subSections>
-					<ObjectPageSubSection>
+					<ObjectPageSubSection titleUppercase="true">
 						<blocks>
 							<goals:GoalsBlockHTML id="goalsblock4"/>
 						</blocks>
@@ -93,7 +93,7 @@
 			</ObjectPageSection>
 			<ObjectPageSection title="XML View">
 				<subSections>
-					<ObjectPageSubSection>
+					<ObjectPageSubSection titleUppercase="true">
 						<blocks>
 							<goals:GoalsBlock id="goalsblock1"/>
 						</blocks>
