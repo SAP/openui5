@@ -194,6 +194,16 @@ sap.ui.define([
 		assert.strictEqual(o.formatter, undefined, "parse should return no formatter");
 	});
 
+	QUnit.test("Single Binding with non-existing type", function (assert) {
+		this.oLogMock.expects("error").once().withExactArgs("Failed to resolve type 'does.not.exist'. Maybe not loaded or a typo?");
+		var o = parse("{path:'something', type: 'does.not.exist'}", oController);
+		assert.strictEqual(typeof o, "object", "parse should return an object");
+		assert.strictEqual(o.parts, undefined, "binding info should not be a composite binding info");
+		assert.strictEqual(o.path, "something", "path should be as specified");
+		assert.strictEqual(o.type, undefined, "parse should set type to undefined");
+		assert.strictEqual(o.formatter, undefined, "parse should return no formatter");
+	});
+
 	QUnit.test("Single Binding with global event", function (assert) {
 		var o = parse("{path:'something', events: {event: 'Global.eventHandler'}}");
 		assert.strictEqual(typeof o, "object", "parse should return an object");
