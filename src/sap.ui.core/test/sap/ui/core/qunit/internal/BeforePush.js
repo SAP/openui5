@@ -42,6 +42,7 @@
 		'qunit/internal/AnnotationParser.qunit.html?hidepassed&coverage' : 'full',
 		'qunit/internal/1Ring.qunit.html?hidepassed&coverage&realOData=true' : 'full',
 		'qunit/internal/1Ring.qunit.html?hidepassed&coverage&realOData=true&module=sap.ui.model.odata.v4.ODataModel.integration' : 'integration',
+		'demokit/sample/odata/v4/DataAggregation/Opa.qunit.html?supportAssistant=true' : 'both',
 		'demokit/sample/odata/v4/LateProperties/Opa.qunit.html?supportAssistant=true' : 'both',
 		'demokit/sample/odata/v4/LateProperties/Opa.qunit.html?realOData=true' : 'both',
 		'demokit/sample/odata/v4/ListBinding/Opa.qunit.html?supportAssistant=true' : 'both',
