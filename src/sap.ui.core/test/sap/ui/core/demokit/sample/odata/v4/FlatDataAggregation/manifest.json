@@ -59,7 +59,6 @@
 				"settings" : {
 					"autoExpandSelect" : false,
 					"earlyRequests": true,
-					"groupId" : "$direct",
 					"operationMode" : "Server",
 					"synchronizationMode" : "None"
 				},
