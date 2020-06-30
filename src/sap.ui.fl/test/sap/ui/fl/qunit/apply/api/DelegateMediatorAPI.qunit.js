@@ -165,15 +165,29 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("When default delegate is available, but default delegate should be ignored (XML Case)", function (assert) {
+		QUnit.test("When default delegate is available, but default delegate should be ignored (JS Case)", function (assert) {
 			this.oPanel.setModel(new SomeModel());
-			DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
 			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier))
 				.then(function (mDelegateInfo) {
 					assert.notOk(mDelegateInfo, "then an 'undefined' is returned");
 				});
 		});
 
+		QUnit.test("When no default delegate is available, but default delegate is asked (XML Case)", function (assert) {
+			var vDomNode = jQuery("#qunit-fixture").get(0);
+			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(vDomNode, XmlTreeModifier, "some.not.existing.model", true))
+				.then(function (mDelegateInfo) {
+					assert.notOk(mDelegateInfo, "then an 'undefined' is returned");
+				});
+		});
+
+		QUnit.test("When no default delegate is available, but default delegate is asked (JS Case)", function (assert) {
+			this.oPanel.setModel(new SomeModel());
+			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier, "some.not.existing.model", true))
+				.then(function (mDelegateInfo) {
+					assert.notOk(mDelegateInfo, "then an 'undefined' is returned");
+				});
+		});
 		QUnit.test("When it is called with delegate specified into the control custom data and without default delegate registration", function (assert) {
 			this.oPanel.addCustomData(new CustomData(this.oDelegateCustomData));
 			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier))
