@@ -18,11 +18,11 @@
 					group : {
 						AccountResponsible : {}
 					},
-					groupLevels : ['Region']
+					groupLevels : ['Country', 'Region', 'Segment']
 				},
 				$count : false,
-				$orderby : 'Region desc,AccountResponsible'
-			}}" selectionMode="None" threshold="5" visibleRowCount="5">
+				$orderby : 'Country desc,Region desc,Segment,AccountResponsible'
+			}}" selectionMode="None" threshold="0" visibleRowCount="5">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" text="Sales Amount by Region" level="H1"/>
@@ -52,8 +52,14 @@
 					/>
 			</template>
 		</Column>
+		<Column template="Country">
+			<m:Label text="Country"/>
+		</Column>
 		<Column template="Region">
 			<m:Label text="Region"/>
+		</Column>
+		<Column template="Segment">
+			<m:Label text="Segment"/>
 		</Column>
 		<Column template="AccountResponsible">
 			<m:Label text="Account Responsible"/>
