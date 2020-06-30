@@ -474,12 +474,14 @@ sap.ui.define([
 			//
 			// Note: This feature detection relies on the assumption that there's the full bundle
 			// and the ui5-button is present everywhere
-			window.customElements.whenDefined("ui5-button").then(function () {
-				if (!this.getComponentsReady()) {
-					this.setComponentsReady(true);
-					this._fireCardReadyEvent();
-				}
-			}.bind(this));
+			if (window.customElements) {
+				window.customElements.whenDefined("ui5-button").then(function () {
+					if (!this.getComponentsReady()) {
+						this.setComponentsReady(true);
+						this._fireCardReadyEvent();
+					}
+				}.bind(this));
+			}
 
 			// The feature detection and the loader would run in parallel.
 			// Whichever comes first, it would take precedence over the other.
