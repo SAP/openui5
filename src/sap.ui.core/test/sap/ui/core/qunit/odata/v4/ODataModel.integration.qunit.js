@@ -157,10 +157,8 @@ sap.ui.define([
 <FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\',\
 	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID,Name\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<ColumnListItem>\
-			<Text id="id" text="{ID}" />\
-			<Text id="text" text="{Name}" />\
-		</ColumnListItem>\
+		<Text id="id" text="{ID}" />\
+		<Text id="text" text="{Name}" />\
 	</Table>\
 </FlexBox>';
 
@@ -203,8 +201,7 @@ sap.ui.define([
 	 * @returns {Document} The view as XML document
 	 */
 	function xml(sViewXML) {
-		var oChildNode, aChildNodes, iColumnCount, aColumnNodes, oColumnsElement, oDocument,
-			oElement, bHasColumns, i, j, k, aTableElements;
+		var oDocument;
 
 		oDocument = XMLHelper.parse(
 			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.ui.table"'
@@ -213,10 +210,59 @@ sap.ui.define([
 			+ '</mvc:View>',
 			"application/xml"
 		);
+		xmlConvertMTables(oDocument);
+		xmlConvertGridTables(oDocument);
+
+		return oDocument;
+	}
+
+	/**
+	 * Converts the sap.ui.table.Table controls within the document. Embeds all inner controls into
+	 * a <t:Column> with <t:template> each. <t:Column> may still be used however. Do not use <rows>,
+	 * it breaks this automatic conversion (and is unnecessary anyway).
+	 *
+	 * @param {Document} oDocument The view as XML document
+	 */
+	function xmlConvertGridTables(oDocument) {
+		var oChildNode, aChildNodes, oColumn, oElement, i, j, aTableElements, oTemplate;
+
+		aTableElements = oDocument.getElementsByTagNameNS("sap.ui.table", "Table");
+		for (i = aTableElements.length - 1; i >= 0; i -= 1) {
+			oElement = aTableElements[i];
+
+			aChildNodes = oElement.childNodes;
+			for (j = aChildNodes.length - 1; j >= 0; j -= 1) {
+				oChildNode = aChildNodes[j];
+				if (oChildNode.nodeType === Node.ELEMENT_NODE
+						&& oChildNode.localName !== "Column") {
+					oColumn = document.createElementNS("sap.ui.table", "Column");
+					oElement.insertBefore(oColumn, oChildNode);
+					oElement.removeChild(oChildNode);
+					oTemplate = document.createElementNS("sap.ui.table", "template");
+					oColumn.appendChild(oTemplate);
+					oTemplate.appendChild(oChildNode);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Converts the sap.m.Table controls within the document. Embeds all inner controls into a
+	 * <ColumnListItem>. <ColumnListItem> may still be used however. Do not use <items>, it breaks
+	 * this automatic conversion (and is unnecessary anyway). Do not use <columns>, they are added
+	 * automatically.
+	 *
+	 * @param {Document} oDocument The view as XML document
+	 */
+	function xmlConvertMTables(oDocument) {
+		var aControls, oChildNode, aChildNodes, iColumnCount, aColumnNodes, oColumnsElement,
+			oElement, bHasColumns, bHasListItem, i, j, k, aTableElements;
+
 		aTableElements = oDocument.getElementsByTagNameNS("sap.m", "Table");
 		iColumnCount = 0;
 		for (i = aTableElements.length - 1; i >= 0; i -= 1) {
 			oElement = aTableElements[i];
+			aControls = [];
 
 			aChildNodes = oElement.childNodes;
 			for (j = aChildNodes.length - 1; j >= 0; j -= 1) {
@@ -230,18 +276,35 @@ sap.ui.define([
 					case "ColumnListItem":
 						aColumnNodes = oChildNode.childNodes;
 
+						bHasListItem = true;
 						for (k = aColumnNodes.length - 1; k >= 0; k -= 1) {
-							if (aColumnNodes[k].nodeType === 1) { // Node.ELEMENT_NODE
+							if (aColumnNodes[k].nodeType === Node.ELEMENT_NODE) {
 								iColumnCount += 1;
 							}
 						}
 						break;
-					// no default
+					default:
+						if (oChildNode.nodeType === Node.ELEMENT_NODE) {
+							oElement.removeChild(oChildNode);
+							aControls.unshift(oChildNode);
+							iColumnCount += 1;
+						}
 				}
 			}
 			if (iColumnCount) {
 				if (bHasColumns) {
 					throw new Error("Do not use <columns> in sap.m.Table");
+				}
+				if (aControls.length) {
+					if (bHasListItem) {
+						throw new Error("Do not use controls w/ and w/o <ColumnListItem>"
+							+ " in sap.m.Table");
+					}
+					oColumnsElement = document.createElementNS("sap.m", "ColumnListItem");
+					for (j = 0; j < aControls.length; j += 1) {
+						oColumnsElement.appendChild(aControls[j]);
+					}
+					oElement.appendChild(oColumnsElement);
 				}
 				oColumnsElement = oDocument.createElementNS("sap.m", "columns");
 				while (iColumnCount > 0) {
@@ -251,8 +314,6 @@ sap.ui.define([
 				oElement.appendChild(oColumnsElement);
 			}
 		}
-
-		return oDocument;
 	}
 
 	//*********************************************************************************************
@@ -287,6 +348,8 @@ sap.ui.define([
 					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
 				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata?sap-client=123"
 					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
+				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TYPE_CODE%27/$metadata"
+					: {source : "odata/v4/data/VH_ProductTypeCode.xml"},
 				"/serviceroot.svc/$metadata"
 					: {source : "odata/v4/data/BusinessPartnerTest.metadata.xml"},
 				"/special/cases/$metadata"
@@ -735,10 +798,8 @@ sap.ui.define([
 				sView = '\
 <Text id="count" text="{$count}"/>\
 <Table id="table" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Text id="note" text="{Note}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="note" text="{Note}" />\
 </Table>',
 				that = this;
 
@@ -816,6 +877,12 @@ sap.ui.define([
 		 * Creates the view and attaches it to the model. Checks that the expected requests (see
 		 * {@link #expectRequest} are fired and the controls got the expected changes (see
 		 * {@link #expectChange}).
+		 *
+		 * The given XML is embedded into a sap.ui.core.mvc.View with sap.m as the default namespace
+		 * and aliases "mvc" for sap.ui.core.mvc and "t" for sap.ui.table. Both sap.m.Table and
+		 * sap.ui.table.Table can (and should) be simplified. Simply add the dependent controls as
+		 * direct children of the table. The function takes care to properly embed them into columns
+		 * (one column per control).
 		 *
 		 * @param {object} assert The QUnit assert object
 		 * @param {string} sViewXML The view content as XML
@@ -1558,10 +1625,8 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({groupId : "$auto"}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}" >\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Input id="note" value="{Note}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Input id="note" value="{Note}" />\
 </Table>\
 <Text id="name" text="{/BusinessPartnerList(\'1\')/CompanyName}" />',
 			that = this;
@@ -1661,9 +1726,7 @@ sap.ui.define([
 	// * Open the suggestion list for the "Buyer ID"
 	testViewStart("Absolute ODLB w/o parameters and relative ODPB", '\
 <Table items="{/EMPLOYEES}">\
-	<ColumnListItem>\
-		<Text id="text" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="text" text="{Name}" />\
 </Table>',
 		{"EMPLOYEES?$skip=0&$top=100" :
 			{value : [{Name : "Frederic Fall"}, {Name : "Jonathan Smith"}]}},
@@ -1676,9 +1739,7 @@ sap.ui.define([
 	// the SalesOrders application.
 	testViewStart("Absolute ODLB with parameters and relative ODPB", '\
 <Table items="{path : \'/EMPLOYEES\', parameters : {$select : \'Name\'}}">\
-	<ColumnListItem>\
-		<Text id="text" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="text" text="{Name}" />\
 </Table>',
 		{"EMPLOYEES?$select=Name&$skip=0&$top=100" :
 			{value : [{Name : "Frederic Fall"}, {Name : "Jonathan Smith"}]}},
@@ -1702,9 +1763,7 @@ sap.ui.define([
 		filters : {path : \'AGE\', operator : \'GT\', value1 : 21},\
 		sorter : {path : \'AGE\'}\
 	}">\
-	<ColumnListItem>\
-		<Text id="text" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="text" text="{Name}" />\
 </Table>',
 		{"EMPLOYEES?$select=Name&$filter=AGE gt 21 and (TEAM_ID eq 42)&$orderby=AGE,Name desc&$skip=0&$top=100" :
 			{value : [{Name : "Frederic Fall"}, {Name : "Jonathan Smith"}]}},
@@ -1718,9 +1777,7 @@ sap.ui.define([
 <FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'Name\'}}">\
 	<Text id="name" text="{Name}" />\
 	<Table items="{path : \'EMPLOYEE_2_EQUIPMENTS\', parameters : {$select : \'Category\'}}">\
-		<ColumnListItem>\
-			<Text id="category" text="{Category}" />\
-		</ColumnListItem>\
+		<Text id="category" text="{Category}" />\
 	</Table>\
 </FlexBox>',
 		{
@@ -1741,9 +1798,7 @@ sap.ui.define([
 <FlexBox id="form"\
 		binding="{path : \'/TEAMS(\\\'1\\\')\', parameters : {$expand : \'TEAM_2_EMPLOYEES\'}}">\
 	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', templateShareable : true}">\
-		<ColumnListItem>\
-			<Text id="name" text="{Name}"/>\
-		</ColumnListItem>\
+		<Text id="name" text="{Name}"/>\
 	</Table>\
 </FlexBox>',
 			oTable,
@@ -1881,9 +1936,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" growing="' + bGrowing + '" growingThreshold="3" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Text id="note" text="{Note}" />\
-	</ColumnListItem>\
+	<Text id="note" text="{Note}" />\
 </Table>',
 			that = this;
 
@@ -1941,9 +1994,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" threshold="0" visibleRowCount="3">\
-	<t:Column>\
-		<t:template><Text id="note" text="{Note}" /></t:template>\
-	</t:Column>\
+	<Text id="note" text="{Note}" />\
 </t:Table>',
 			that = this;
 
@@ -2271,9 +2322,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'1\')}">\
 	<Table id="table" items="{SO_2_SOITEM}">\
-		<ColumnListItem>\
-			<Text id="position" text="{ItemPosition}"/>\
-		</ColumnListItem>\
+		<Text id="position" text="{ItemPosition}"/>\
 	</Table>\
 </FlexBox>\
 <Text id="quantity" text="{Quantity}" />',
@@ -2324,9 +2373,7 @@ sap.ui.define([
 		parameters : {$select : \'Messages,SO_2_SOITEM/Messages\'}}">\
 	<Text id="id1" text="{SalesOrderID}"/>\
 	<Table items="{SO_2_SOITEM}">\
-		<ColumnListItem>\
-			<Text text="{ItemPosition}"/>\
-		</ColumnListItem>\
+		<Text text="{ItemPosition}"/>\
 	</Table>\
 	<FlexBox id="action" binding="{\
 			path : \'' + sAction + '(...)\',\
@@ -2337,9 +2384,7 @@ sap.ui.define([
 	<Text id="id2" text="{SalesOrderID}"/>\
 	<Text id="note" text="{Note}" />\
 	<Table id="table" items="{SO_2_SOITEM}">\
-		<ColumnListItem>\
-			<Text text="{ItemPosition}"/>\
-		</ColumnListItem>\
+		<Text text="{ItemPosition}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -2440,9 +2485,7 @@ sap.ui.define([
 	<Table id="table" growing="true" growingThreshold="2"\
 			items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true,\
 				$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
-		<ColumnListItem>\
-			<Text id="name" text="{Name}" />\
-		</ColumnListItem>\
+		<Text id="name" text="{Name}" />\
 	</Table>\
 </FlexBox>\
 <Input id="age1" value="{AGE}" />\
@@ -2634,9 +2677,7 @@ sap.ui.define([
 		var oModel = createModel(sSalesOrderService + "?sap-client=123", {autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList(\'1\')/SO_2_SOITEM}">\
-	<ColumnListItem>\
-		<Text id="product" text="{SOITEM_2_PRODUCT/Name}"/>\
-	</ColumnListItem>\
+	<Text id="product" text="{SOITEM_2_PRODUCT/Name}"/>\
 </Table>\
 <Text id="businessPartner" text="{SOITEM_2_PRODUCT/PRODUCT_2_BP/CompanyName}"/>',
 			that = this;
@@ -2967,9 +3008,7 @@ sap.ui.define([
 <FlexBox binding="{path : \'/EMPLOYEES(\\\'42\\\')\',\
 	parameters : {$expand : {EMPLOYEE_2_EQUIPMENTS : {$orderby : \'ID\', $select : \'Name\'}}}}">\
 	<Table id="table" items="{EMPLOYEE_2_EQUIPMENTS}">\
-		<ColumnListItem>\
-			<Text id="text" text="{Name}" />\
-		</ColumnListItem>\
+		<Text id="text" text="{Name}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -3034,10 +3073,8 @@ sap.ui.define([
 			sorter : {path : \'AGE\'},\
 			parameters : {foo : \'bar\'}\
 		}">\
-	<ColumnListItem>\
-		<Text id="text" text="{Name}" />\
-		<Input id="age" value="{AGE}" />\
-	</ColumnListItem>\
+	<Text id="text" text="{Name}" />\
+	<Input id="age" value="{AGE}" />\
 </Table>',
 			that = this;
 
@@ -3110,9 +3147,7 @@ sap.ui.define([
 			path : \'/EMPLOYEES\',\
 			parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}\
 		}">\
-	<ColumnListItem>\
-		<Input id="id" value="{ID}" />\
-	</ColumnListItem>\
+	<Input id="id" value="{ID}" />\
 </Table>',
 			oMessage1 = {
 				code : "2",
@@ -3224,9 +3259,7 @@ sap.ui.define([
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
-	<ColumnListItem>\
-		<Input value="{ID}" />\
-	</ColumnListItem>\
+	<Input value="{ID}" />\
 </Table>',
 			that = this;
 
@@ -3274,9 +3307,7 @@ sap.ui.define([
 </FlexBox>\
 <FlexBox id="rvc">\
 	<Table id="table" items="{SO_2_SOITEM}">\
-		<ColumnListItem>\
-			<Input id="name" value="{SOITEM_2_PRODUCT/Name}"/>\
-		</ColumnListItem>\
+		<Input id="name" value="{SOITEM_2_PRODUCT/Name}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -3381,16 +3412,12 @@ sap.ui.define([
 		QUnit.test("refresh: No drill-down error for deleted data #" + i, function (assert) {
 			var sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', templateShareable : false}">\
-	<ColumnListItem>\
-		<Text id="text" text="{Name}" />\
-		<Text id="age" text="{AGE}" />\
-	</ColumnListItem>\
+	<Text id="text" text="{Name}" />\
+	<Text id="age" text="{AGE}" />\
 </Table>\
 <Table id="detailTable" items="{path : \'EMPLOYEE_2_EQUIPMENTS\',\
 		parameters : {$$ownRequest : true}}">\
-	<ColumnListItem>\
-		<Text id="equipmentName" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="equipmentName" text="{Name}" />\
 </Table>',
 				that = this;
 
@@ -3443,9 +3470,7 @@ sap.ui.define([
 	QUnit.test("Absolute ODLB with sort, relative ODCB resolved on selection", function (assert) {
 		var sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$expand : \'EMPLOYEE_2_MANAGER\'}}">\
-	<ColumnListItem>\
-		<Text id="name" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="name" text="{Name}" />\
 </Table>\
 <FlexBox id="form" binding="{EMPLOYEE_2_MANAGER}">\
 	<Text id="id" text="{ID}" />\
@@ -3505,9 +3530,7 @@ sap.ui.define([
 			sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', \
 		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
-	<ColumnListItem>\
-		<Input id="name" value="{Name}" />\
-	</ColumnListItem>\
+	<Input id="name" value="{Name}" />\
 </Table>',
 			that = this;
 
@@ -3592,11 +3615,7 @@ sap.ui.define([
 			path : \'/EMPLOYEES\',\
 			parameters : {$select : \'Name,__CT__FAKE__Message/__FAKE__Messages\'}\
 		}"\ threshold="0" visibleRowCount="2">\
-	<t:Column>\
-		<t:template>\
-			<Input id="name" value="{Name}" />\
-		</t:template>\
-	</t:Column>\
+	<Input id="name" value="{Name}" />\
 </t:Table>',
 			that = this;
 
@@ -4346,9 +4365,7 @@ sap.ui.define([
 	QUnit.test("Absolute ODLB changing parameters", function (assert) {
 		var sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$select : \'Name\'}}">\
-	<ColumnListItem>\
-		<Text id="name" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="name" text="{Name}" />\
 </Table>',
 			that = this;
 
@@ -4408,9 +4425,7 @@ sap.ui.define([
 		// Note: The key property of the EMPLOYEES set is 'ID'
 		var sView = '\
 <Table growing="true" items="{path : \'/EMPLOYEES\', parameters : {$select : \'Name\'}}">\
-	<ColumnListItem>\
-		<Text id="name" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="name" text="{Name}" />\
 </Table>';
 
 		this.expectRequest("EMPLOYEES?$select=Name&$skip=0&$top=20", {
@@ -4434,9 +4449,7 @@ sap.ui.define([
 		var sView = '\
 <Text id="count" text="{$count}"/>\
 <Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'SalesOrderID\'}}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
 </Table>',
 			that = this;
 
@@ -4481,9 +4494,7 @@ sap.ui.define([
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/ProductList\'}">\
-	<ColumnListItem>\
-		<Text id="name" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="name" text="{Name}" />\
 </Table>',
 			that = this;
 
@@ -4536,9 +4547,7 @@ sap.ui.define([
 		var sView = '\
 <Text id="count" text="{$count}"/>\
 <Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'SalesOrderID\'}}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
 </Table>',
 		that = this;
 
@@ -4597,9 +4606,7 @@ sap.ui.define([
 		var sView = '\
 <Text id="count" text="{$count}"/>\
 <Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'SalesOrderID\'}}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
 </Table>',
 			that = this;
 
@@ -4645,9 +4652,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" growing="true" growingThreshold="3" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
 </Table>',
 			that = this;
 
@@ -4695,9 +4700,7 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="table" growing="true" growingThreshold="3" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
 </Table>',
 			that = this;
 
@@ -4754,9 +4757,7 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
 </Table>',
 			that = this;
 
@@ -4804,15 +4805,11 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="master" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}"/>\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}"/>\
 </Table>\
 <Table id="detail" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}" \
 		growing="true"> <!-- ensures that the rows and child bindings are kept alive -->\
-	<ColumnListItem>\
-		<Text id="note" text="{Note}"/>\
-	</ColumnListItem>\
+	<Text id="note" text="{Note}"/>\
 </Table>',
 			that = this;
 
@@ -4877,9 +4874,7 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="table" growing="true" growingThreshold="3" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
 </Table>',
 			that = this;
 
@@ -4933,9 +4928,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'1\')}" id="form">\
 	<Table id="table" items="{SO_2_SOITEM}">\
-		<ColumnListItem>\
-			<Text id="position" text="{ItemPosition}" />\
-		</ColumnListItem>\
+		<Text id="position" text="{ItemPosition}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -4986,9 +4979,7 @@ sap.ui.define([
 		parameters : {$expand : {SO_2_SOITEM : {$select : \'ItemPosition\'}}}}">\
 	<Text id="count" text="{headerContext>$count}"/>\
 	<Table id="table" items="{SO_2_SOITEM}">\
-		<ColumnListItem>\
-			<Text id="item" text="{ItemPosition}" />\
-		</ColumnListItem>\
+		<Text id="item" text="{ItemPosition}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -5051,9 +5042,7 @@ sap.ui.define([
 	<Text id="note" text="{Note}"/>\
 	<Text id="count" text="{headerContext>$count}"/>\
 	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
-		<ColumnListItem>\
-			<Text id="item" text="{ItemPosition}" />\
-		</ColumnListItem>\
+		<Text id="item" text="{ItemPosition}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -5136,9 +5125,7 @@ sap.ui.define([
 	QUnit.test("Modify a foreign property", function (assert) {
 		var sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Input id="item" value="{SO_2_BP/CompanyName}" />\
-	</ColumnListItem>\
+	<Input id="item" value="{SO_2_BP/CompanyName}" />\
 </Table>',
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			that = this;
@@ -5204,9 +5191,7 @@ sap.ui.define([
 	QUnit.test("Entity with key aliases", function (assert) {
 		var sView = '\
 <Table id="table" items="{/EntitiesWithComplexKey}">\
-	<ColumnListItem>\
-		<Input id="item" value="{Value}" />\
-	</ColumnListItem>\
+	<Input id="item" value="{Value}" />\
 </Table>',
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			that = this;
@@ -5304,10 +5289,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Text id="salesOrderID" text="{SalesOrderID}" />\
-		<Input id="note" value="{Note}" />\
-	</ColumnListItem>\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Input id="note" value="{Note}" />\
 </Table>',
 			that = this;
 
@@ -5460,10 +5443,8 @@ sap.ui.define([
 				}),
 				sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Input id="note" value="{Note}" />\
-		<Text id="companyName" binding="{SO_2_BP}" text="{CompanyName}"/>\
-	</ColumnListItem>\
+	<Input id="note" value="{Note}" />\
+	<Text id="companyName" binding="{SO_2_BP}" text="{CompanyName}"/>\
 </Table>',
 				that = this;
 
@@ -5542,10 +5523,8 @@ sap.ui.define([
 			sView = '\
 <Text id="count" text="{$count}"/>\
 <Table id="table" items="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Text id="note" text="{Note}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="note" text="{Note}" />\
 </Table>',
 			that = this;
 
@@ -5767,10 +5746,8 @@ sap.ui.define([
 <Text id="count" text="{$count}"/>\
 <Table id="table" growing="true" growingThreshold="2"\
 		items="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Text id="note" text="{Note}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="note" text="{Note}" />\
 </Table>',
 			that = this;
 
@@ -5891,10 +5868,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" growing="true" items="{BP_2_SO}">\
-	<ColumnListItem>\
 		<Text id="id" text="{SalesOrderID}" />\
 		<Text id="note" text="{Note}" />\
-	</ColumnListItem>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -5995,16 +5970,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
-	<t:Column>\
-		<t:template>\
-			<Text id="id" text="{SalesOrderID}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Input id="note" value="{Note}" />\
-		</t:template>\
-	</t:Column>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Input id="note" value="{Note}" />\
 </t:Table>',
 			that = this;
 
@@ -6143,16 +6110,8 @@ sap.ui.define([
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<t:Table id="table" rows="{path : \'BP_2_SO\', parameters : {$$ownRequest : true}}"\
 			threshold="0" visibleRowCount="2">\
-		<t:Column>\
-			<t:template>\
-				<Text id="id" text="{SalesOrderID}" />\
-			</t:template>\
-		</t:Column>\
-		<t:Column>\
-			<t:template>\
-				<Text id="note" text="{Note}" />\
-			</t:template>\
-		</t:Column>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Text id="note" text="{Note}" />\
 	</t:Table>\
 </FlexBox>',
 			that = this;
@@ -6292,11 +6251,9 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" growing="true"\
-		items="{path : \'BP_2_SO\', parameters : {$$ownRequest : true}}">\
-	<ColumnListItem>\
+			items="{path : \'BP_2_SO\', parameters : {$$ownRequest : true}}">\
 		<Text id="id" text="{SalesOrderID}" />\
 		<Text id="note" text="{Note}" />\
-	</ColumnListItem>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -6397,12 +6354,10 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="table" growing="true" growingThreshold="2"\
-	items="{parameters : {$filter : \'contains(Note,\\\'SalesOrder\\\')\'},\
-		path : \'/SalesOrderList\'}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Input id="note" value="{Note}" />\
-	</ColumnListItem>\
+		items="{parameters : {$filter : \'contains(Note,\\\'SalesOrder\\\')\'},\
+			path : \'/SalesOrderList\'}">\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Input id="note" value="{Note}" />\
 </Table>',
 			that = this;
 
@@ -6558,16 +6513,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
-	<t:Column>\
-		<t:template>\
-			<Text id="id" text="{SalesOrderID}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="note" text="{Note}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="note" text="{Note}" />\
 </t:Table>',
 			that = this;
 
@@ -6687,16 +6634,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<t:Table id="table" rows="{BP_2_SO}" visibleRowCount="2">\
-		<t:Column>\
-			<t:template>\
-				<Text id="id" text="{SalesOrderID}" />\
-			</t:template>\
-		</t:Column>\
-		<t:Column>\
-			<t:template>\
-				<Text id="note" text="{Note}" />\
-			</t:template>\
-		</t:Column>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Text id="note" text="{Note}" />\
 	</t:Table>\
 </FlexBox>',
 			that = this;
@@ -6772,11 +6711,9 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" growing="true"\
-		items="{path : \'BP_2_SO\', parameters : {$$ownRequest : true}}">\
-	<ColumnListItem>\
+			items="{path : \'BP_2_SO\', parameters : {$$ownRequest : true}}">\
 		<Text id="id" text="{SalesOrderID}" />\
 		<Text id="note" text="{Note}" />\
-	</ColumnListItem>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -6874,10 +6811,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" growing="true" items="{BP_2_SO}">\
-		<ColumnListItem>\
-			<Text id="id" text="{SalesOrderID}" />\
-			<Text id="note" text="{Note}" />\
-		</ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Text id="note" text="{Note}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -6946,16 +6881,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
-	<t:Column>\
-		<t:template>\
-			<Text id="id" text="{SalesOrderID}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="note" text="{Note}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="note" text="{Note}" />\
 </t:Table>',
 			that = this;
 
@@ -7030,10 +6957,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" growing="true" items="{BP_2_SO}">\
-	<ColumnListItem>\
 		<Text id="id" text="{SalesOrderID}" />\
 		<Text id="note" text="{Note}" />\
-	</ColumnListItem>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -7121,11 +7046,9 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" growing="true"\
-		items="{path : \'BP_2_SO\', parameters : {$$ownRequest : true}}">\
-	<ColumnListItem>\
+			items="{path : \'BP_2_SO\', parameters : {$$ownRequest : true}}">\
 		<Text id="id" text="{SalesOrderID}" />\
 		<Text id="note" text="{Note}" />\
-	</ColumnListItem>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -7199,16 +7122,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" visibleRowCount="2">\
-	<t:Column>\
-		<t:template>\
-			<Text id="id" text="{SalesOrderID}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="note" text="{Note}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="note" text="{Note}" />\
 </t:Table>',
 			that = this;
 
@@ -7302,16 +7217,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<t:Table id="table" rows="{BP_2_SO}" visibleRowCount="2">\
-		<t:Column>\
-			<t:template>\
-				<Text id="id" text="{SalesOrderID}" />\
-			</t:template>\
-		</t:Column>\
-		<t:Column>\
-			<t:template>\
-				<Text id="note" text="{Note}" />\
-			</t:template>\
-		</t:Column>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Text id="note" text="{Note}" />\
 	</t:Table>\
 </FlexBox>',
 			that = this;
@@ -7444,10 +7351,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="table" growing="true" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Text id="note" text="{Note}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="note" text="{Note}" />\
 </Table>',
 			that = this;
 
@@ -7554,16 +7459,8 @@ sap.ui.define([
 			sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\', parameters : {$count : true}}"\
 		visibleRowCount="3">\
-	<t:Column>\
-		<t:template>\
-			<Text id="id" text="{SalesOrderID}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="note" text="{Note}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="note" text="{Note}" />\
 </t:Table>',
 			that = this;
 
@@ -7630,10 +7527,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" growing="true" items="{path : \'BP_2_SO\', parameters : {$count : true}}">\
-	<ColumnListItem>\
 		<Text id="id" text="{SalesOrderID}" />\
 		<Text id="note" text="{Note}" />\
-	</ColumnListItem>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -7722,10 +7617,8 @@ sap.ui.define([
 			sView = '\
 <Table id="table" growing="true" items="{path : \'/SalesOrderList\',\
 		parameters : {$count : true}}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Text id="note" text="{Note}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="note" text="{Note}" />\
 </Table>',
 			that = this;
 
@@ -7835,10 +7728,8 @@ sap.ui.define([
 <FlexBox binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" growing="true"\
 		items="{path : \'BP_2_SO\', parameters : {$$ownRequest : true, $count : true}}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-		<Text id="note" text="{Note}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="note" text="{Note}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -7938,16 +7829,8 @@ sap.ui.define([
 			sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\', parameters : {$count : true}}"\
 		visibleRowCount="2">\
-	<t:Column>\
-		<t:template>\
-			<Text id="id" text="{SalesOrderID}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="note" text="{Note}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="note" text="{Note}" />\
 </t:Table>',
 			that = this;
 
@@ -8053,10 +7936,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="table" items="{/BusinessPartnerList}">\
-	<ColumnListItem>\
-		<Input id="city" value="{Address/City}" />\
-		<Input id="longitude" value="{Address/GeoLocation/Longitude}" />\
-	</ColumnListItem>\
+	<Input id="city" value="{Address/City}" />\
+	<Input id="longitude" value="{Address/GeoLocation/Longitude}" />\
 </Table>',
 
 			that = this;
@@ -8131,10 +8012,8 @@ sap.ui.define([
 	QUnit.test("Create with default value in a currency/unit", function (assert) {
 		var sView = '\
 <Table id="table" items="{/SalesOrderList(\'42\')/SO_2_SOITEM}">\
-	<ColumnListItem>\
-		<Input id="quantity" value="{Quantity}" />\
-		<Text id="unit" text="{QuantityUnit}" />\
-	</ColumnListItem>\
+	<Input id="quantity" value="{Quantity}" />\
+	<Text id="unit" text="{QuantityUnit}" />\
 </Table>',
 			oModel = createSalesOrdersModel({
 				autoExpandSelect : true,
@@ -8207,10 +8086,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'42\')}">\
 	<Table id="table" items="{SO_2_SOITEM}">\
-		<ColumnListItem>\
-			<Text text="{ItemPosition}" />\
-			<Input value="{ProductID}" />\
-		</ColumnListItem>\
+		<Text text="{ItemPosition}" />\
+		<Input value="{ProductID}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -8455,10 +8332,8 @@ sap.ui.define([
 			}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Input id="amount" value="{GrossAmount}"/>\
-		<Input id="note" value="{Note}"/>\
-	</ColumnListItem>\
+	<Input id="amount" value="{GrossAmount}"/>\
+	<Input id="note" value="{Note}"/>\
 </Table>',
 			that = this;
 
@@ -8544,9 +8419,7 @@ sap.ui.define([
 			}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Input id="amount" value="{GrossAmount}"/>\
-	</ColumnListItem>\
+	<Input id="amount" value="{GrossAmount}"/>\
 </Table>',
 			that = this;
 
@@ -9214,9 +9087,7 @@ sap.ui.define([
 <Table id="table" items="{path : \'/EMPLOYEES\',\
 		parameters : {$select : \'EMPLOYEE_2_TEAM/Name\'},\
 		filters : {path : \'AGE\', operator : \'GT\', value1 : 42}}">\
-	<ColumnListItem>\
-		<Text text="{ID}" />\
-	</ColumnListItem>\
+	<Text text="{ID}" />\
 </Table>',
 			that = this;
 
@@ -9304,9 +9175,7 @@ sap.ui.define([
 	QUnit.test("Metadata access to MANAGERS which is not loaded yet", function (assert) {
 		var sView = '\
 <Table id="table" items="{/MANAGERS}">\
-	<ColumnListItem>\
-		<Text id="item" text="{@sapui.name}" />\
-	</ColumnListItem>\
+	<Text id="item" text="{@sapui.name}" />\
 </Table>',
 			oModel = createTeaBusiModel().getMetaModel();
 
@@ -9352,9 +9221,7 @@ sap.ui.define([
 	QUnit.test("Metadata: Manager -> Product", function (assert) {
 		var sView = '\
 <Table id="table" items="{}">\
-	<ColumnListItem>\
-		<Text id="item" text="{@sapui.name}" />\
-	</ColumnListItem>\
+	<Text id="item" text="{@sapui.name}" />\
 </Table>',
 			oModel = createTeaBusiModel().getMetaModel(),
 			that = this;
@@ -9763,9 +9630,7 @@ sap.ui.define([
 			oReturnValueContext,
 			sView = '\
 <Table id="table" items="{path : \'/Artists\', parameters : {$select : \'Messages\'}}">\
-	<ColumnListItem>\
-		<Text id="name" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="name" text="{Name}" />\
 </Table>\
 <Input id="nameCreated" value="{Name}" />',
 			that = this;
@@ -9927,9 +9792,7 @@ sap.ui.define([
 <FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\',\
 	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<ColumnListItem>\
-			<Text id="id" text="{ID}" />\
-		</ColumnListItem>\
+		<Text id="id" text="{ID}" />\
 	</Table>\
 </FlexBox>';
 
@@ -9977,10 +9840,8 @@ sap.ui.define([
 			filters : {path : \'TEAM_ID\', operator : \'EQ\', value1 : \'77\'},\
 			parameters : {$count : true}\
 		}">\
-	<ColumnListItem>\
-		<Text id="text" text="{Name}" />\
-		<Text id="teamId" text="{TEAM_ID}" />\
-	</ColumnListItem>\
+	<Text id="text" text="{Name}" />\
+	<Text id="teamId" text="{TEAM_ID}" />\
 </Table>',
 			that = this;
 
@@ -10180,9 +10041,7 @@ sap.ui.define([
 			filters : {path : \'AGE\', operator : \'LT\', value1 : \'77\'},\
 			parameters : {$orderby : \'Name\', $select : \'AGE\'}\
 		}">\
-	<ColumnListItem>\
-		<Text id="text" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="text" text="{Name}" />\
 </Table>',
 			that = this;
 
@@ -10240,9 +10099,7 @@ sap.ui.define([
 		var sView = '\
 <FlexBox binding="{/TEAMS(\'2\')}">\
 	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$orderby : \'Name\'}}">\
-		<ColumnListItem>\
-			<Text id="text" text="{Name}" />\
-		</ColumnListItem>\
+		<Text id="text" text="{Name}" />\
 	</Table>\
 	<Text id="name" text="{Name}" />\
 </FlexBox>',
@@ -10290,9 +10147,7 @@ sap.ui.define([
 	testViewStart("Auto-$expand/$select: no $apply inside $expand", '\
 <FlexBox binding="{/TEAMS(\'42\')}">\
 	<Table items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$apply : \'filter(AGE lt 42)\'}}">\
-		<ColumnListItem>\
-			<Text id="text" text="{Name}" />\
-		</ColumnListItem>\
+		<Text id="text" text="{Name}" />\
 	</Table>\
 </FlexBox>', {
 		"TEAMS('42')/TEAM_2_EMPLOYEES?$apply=filter(AGE lt 42)&$select=ID,Name&$skip=0&$top=100" : {
@@ -10310,14 +10165,12 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table items="{/TEAMS}">\
-	<ColumnListItem>\
-		<List items="{path : \'TEAM_2_EMPLOYEES\',\
-			parameters : {$apply : \'filter(AGE lt 42)\'}, templateShareable : false}">\
-			<CustomListItem>\
-				<Text id="text" text="{Name}" />\
-			</CustomListItem>\
-		</List>\
-	</ColumnListItem>\
+	<List items="{path : \'TEAM_2_EMPLOYEES\',\
+		parameters : {$apply : \'filter(AGE lt 42)\'}, templateShareable : false}">\
+		<CustomListItem>\
+			<Text id="text" text="{Name}" />\
+		</CustomListItem>\
+	</List>\
 </Table>';
 
 		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
@@ -10342,9 +10195,7 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="master" items="{/TEAMS}">\
-	<ColumnListItem>\
-		<Text id="text0" text="{Team_Id}" />\
-	</ColumnListItem>\
+	<Text id="text0" text="{Team_Id}" />\
 </Table>\
 <FlexBox id="detail" binding="{}">\
 	<Text id="text1" text="{Team_Id}" />\
@@ -10377,9 +10228,7 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true, groupId : "$auto"}),
 			sView = '\
 <Table id="master" items="{/TEAMS}">\
-	<ColumnListItem>\
-		<Text id="text0" text="{Team_Id}" />\
-	</ColumnListItem>\
+	<Text id="text0" text="{Team_Id}" />\
 </Table>\
 <FlexBox id="detail" binding="{}">\
 	<Text id="text1" text="{Name}" />\
@@ -10511,9 +10360,7 @@ sap.ui.define([
 					: "EMPLOYEES?",
 				sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$$groupId : \'group\'}}">\
-	<ColumnListItem>\
-		<Text id="text" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="text" text="{Name}" />\
 </Table>',
 				that = this;
 
@@ -10556,9 +10403,7 @@ sap.ui.define([
 			sView = '\
 <Table id="table"\
 		items="{path : \'/EMPLOYEES\', parameters : {$$groupId : \'group\'}, suspended : true}">\
-	<ColumnListItem>\
-		<Text id="text" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="text" text="{Name}" />\
 </Table>',
 			that = this;
 
@@ -10595,14 +10440,10 @@ sap.ui.define([
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="teamSet" items="{/TEAMS}">\
-	<ColumnListItem>\
-		<Text id="teamId" text="{Team_Id}" />\
-	</ColumnListItem>\
+	<Text id="teamId" text="{Team_Id}" />\
 </Table>\
 <Table id="employeeSet" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$orderby : \'Name\'}}">\
-	<ColumnListItem>\
-		<Text id="employeeId" text="{ID}" />\
-	</ColumnListItem>\
+	<Text id="employeeId" text="{ID}" />\
 </Table>\
 <FlexBox id="objectPage" binding="{path : \'\', parameters : {$$updateGroupId : \'update\'}}">\
 	<Input id="employeeName" value="{Name}"/>\
@@ -10793,9 +10634,7 @@ sap.ui.define([
 		QUnit.test("filter all/any on list binding " + oFixture.request, function (assert) {
 			var sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Text id="text" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="text" text="{SalesOrderID}" />\
 </Table>',
 				that = this;
 
@@ -10834,9 +10673,7 @@ sap.ui.define([
 <Table id="table" items="{path : \'/EMPLOYEES\',\
 		parameters : {$expand : {\'LOCATION/City/EmployeesInCity\' : {$select : [\'Name\']}}, \
 		$select : [\'ID\', \'Name\']}}">\
-	<ColumnListItem>\
-		<Text id="text" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="text" text="{Name}" />\
 </Table>',
 			that = this;
 
@@ -10963,9 +10800,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'1\')}">\
 	<Table id="table" items="{LOCATION/City/EmployeesInCity}">\
-		<ColumnListItem>\
-			<Input id="room" value="{ROOM_ID}"/>\
-		</ColumnListItem>\
+		<Input id="room" value="{ROOM_ID}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -11013,10 +10848,8 @@ sap.ui.define([
 		}}">\
 	<Text id="id" text="{path : \'SalesOrderID\', type : \'sap.ui.model.odata.type.String\'}" />\
 	<Table id="table" items="{ToLineItems}">\
-		<ColumnListItem>\
-			<Text id="item" text="{path : \'ItemPosition\',\
-				type : \'sap.ui.model.odata.type.String\'}" />\
-		</ColumnListItem>\
+		<Text id="item" text="{path : \'ItemPosition\',\
+			type : \'sap.ui.model.odata.type.String\'}" />\
 	</Table>\
 </FlexBox>',
 			oModel = this.createModelForV2SalesOrderService({
@@ -11064,9 +10897,7 @@ sap.ui.define([
 			$select : \'SalesOrderID\',\
 			$orderby : \'SalesOrderID\'\
 		}}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
 </Table>',
 			oModel = this.createModelForV2SalesOrderService({
 				annotationURI : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
@@ -11122,9 +10953,7 @@ sap.ui.define([
 			$select : \'SalesOrderID\',\
 			$filter : \'' + oFixture.binding + '\'\
 		}}">\
-	<ColumnListItem>\
-		<Text id="id" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{SalesOrderID}" />\
 </Table>';
 
 			this.expectRequest("SalesOrderSet?$filter=" + oFixture.request + "&$select=SalesOrderID"
@@ -11308,9 +11137,7 @@ sap.ui.define([
 			oText = new Text(),
 			sView = '\
 <Table items="{/Equipments}">\
-	<ColumnListItem>\
-		<Text binding="{EQUIPMENT_2_PRODUCT}" id="text" text="{SupplierIdentifier}" />\
-	</ColumnListItem>\
+	<Text binding="{EQUIPMENT_2_PRODUCT}" id="text" text="{SupplierIdentifier}" />\
 </Table>';
 
 		this.expectRequest("Equipments?$select=Category,ID"
@@ -11340,9 +11167,7 @@ sap.ui.define([
 			oText = new Text(),
 			sView = '\
 <Table items="{/Equipments}">\
-	<ColumnListItem>\
-		<Text binding="{EQUIPMENT_2_EMPLOYEE}" id="text" text="{AGE}" />\
-	</ColumnListItem>\
+	<Text binding="{EQUIPMENT_2_EMPLOYEE}" id="text" text="{AGE}" />\
 </Table>';
 
 		this.expectRequest("Equipments?$select=Category,ID"
@@ -11371,9 +11196,7 @@ sap.ui.define([
 		var oText = new Text(),
 			sView = '\
 <Table items="{/Equipments}">\
-	<ColumnListItem>\
-		<Text binding="{EQUIPMENT_2_EMPLOYEE}" id="text" text="{AGE}" />\
-	</ColumnListItem>\
+	<Text binding="{EQUIPMENT_2_EMPLOYEE}" id="text" text="{AGE}" />\
 </Table>';
 
 		this.expectRequest("Equipments?$skip=0&$top=100", {
@@ -11400,9 +11223,7 @@ sap.ui.define([
 <FlexBox id="form" binding="{parameters : {$expand : \'TEAM_2_EMPLOYEES\'},\
 		path : \'/TEAMS(\\\'42\\\')\'}">\
 	<Table items="{TEAM_2_EMPLOYEES}">\
-		<ColumnListItem>\
-			<Text id="id" text="{ID}" />\
-		</ColumnListItem>\
+		<Text id="id" text="{ID}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -11613,9 +11434,7 @@ sap.ui.define([
 		var fnGetContexts = ODataListBinding.prototype.getContexts,
 			sView = '\
 <Table id="table" items="{/TEAMS}">\
-	<ColumnListItem>\
-		<Text id="id" text="{Team_Id}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{Team_Id}" />\
 </Table>';
 
 		this.mock(ODataListBinding.prototype).expects("getContexts").atLeast(1).callsFake(
@@ -11726,9 +11545,7 @@ sap.ui.define([
 				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=100",
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Input binding="{SO_2_BP}" value="{CompanyName}"/>\
-	</ColumnListItem>\
+	<Input binding="{SO_2_BP}" value="{CompanyName}"/>\
 </Table>',
 			that = this;
 
@@ -11775,9 +11592,7 @@ sap.ui.define([
 	// Note: Use "$\{Name}" to avoid that Maven replaces "${Name}"
 	testViewStart("Expression binding in a list", '\
 <Table items="{/EMPLOYEES}">\
-	<ColumnListItem>\
-		<Text id="text" text="{= \'Hello, \' + $\{Name} }" />\
-	</ColumnListItem>\
+	<Text id="text" text="{= \'Hello, \' + $\{Name} }" />\
 </Table>',
 		{"EMPLOYEES?$skip=0&$top=100" :
 			{value : [{Name : "Frederic Fall"}, {Name : "Jonathan Smith"}]}},
@@ -12046,9 +11861,7 @@ sap.ui.define([
 		var oModel = this.createModelForV2FlightService({autoExpandSelect : true}),
 			sView = '\
 <Table id="master" items="{/FlightCollection}">\
-	<ColumnListItem>\
-		<Text id="carrid" text="{carrid}" />\
-	</ColumnListItem>\
+	<Text id="carrid" text="{carrid}" />\
 </Table>\
 <FlexBox id="detail" binding="{}">\
 	<Text id="cityFrom" text="{flightDetails/cityFrom}" />\
@@ -12654,10 +12467,8 @@ sap.ui.define([
 			var oModel = createTeaBusiModel({autoExpandSelect : true}),
 				sView = '\
 <Table id="table" items="{path : \'/Equipments\', suspended : true, templateShareable : false}">\
-	<ColumnListItem>\
-		<Text id="idCategory" text="{Category}" />\
-		<Text id="idEmployeeId" text="{EmployeeId}" />\
-	</ColumnListItem>\
+	<Text id="idCategory" text="{Category}" />\
+	<Text id="idEmployeeId" text="{EmployeeId}" />\
 </Table>',
 				that = this;
 
@@ -12769,10 +12580,8 @@ sap.ui.define([
 			var oModel = createTeaBusiModel({autoExpandSelect : true}),
 				sView = '\
 <Table id="table" items="{path : \'/Equipments\', templateShareable : false}">\
-	<ColumnListItem>\
-		<Text id="idCategory" text="{Category}" />\
-		<Text id="idEmployeeId" text="{EmployeeId}" />\
-	</ColumnListItem>\
+	<Text id="idCategory" text="{Category}" />\
+	<Text id="idEmployeeId" text="{EmployeeId}" />\
 </Table>',
 				that = this;
 
@@ -12991,10 +12800,8 @@ sap.ui.define([
 		<Text id="managerID" text="{ID}"/>\
 	</FlexBox>\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<ColumnListItem>\
-			<Text id="age" text="{AGE}" />\
-			<Text id="name" text="{Name}" />\
-		</ColumnListItem>\
+		<Text id="age" text="{AGE}" />\
+		<Text id="name" text="{Name}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -13275,10 +13082,8 @@ sap.ui.define([
 		}">\
 	<Text id="memberCount" text="{MEMBER_COUNT}" />\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<ColumnListItem>\
-			<Text id="age" text="{AGE}" />\
-			<Text id="name" text="{Name}" />\
-		</ColumnListItem>\
+		<Text id="age" text="{AGE}" />\
+		<Text id="name" text="{Name}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -13350,10 +13155,8 @@ sap.ui.define([
 <FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
 	<Text id="memberCount" text="{MEMBER_COUNT}" />\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<ColumnListItem>\
-			<Text id="age" text="{AGE}" />\
-			<Text id="name" text="{Name}" />\
-		</ColumnListItem>\
+		<Text id="age" text="{AGE}" />\
+		<Text id="name" text="{Name}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -13425,10 +13228,8 @@ sap.ui.define([
 	<Text id="memberCount" text="{MEMBER_COUNT}" />\
 	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', templateShareable : false,\
 			parameters : {$$ownRequest : true}}">\
-		<ColumnListItem>\
-			<Text id="age" text="{AGE}" />\
-			<Text id="name" text="{Name}" />\
-		</ColumnListItem>\
+		<Text id="age" text="{AGE}" />\
+		<Text id="name" text="{Name}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -13545,9 +13346,7 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/Equipments\', templateShareable : false}">\
-	<ColumnListItem>\
-		<Text id="idEquipmentName" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="idEquipmentName" text="{Name}" />\
 </Table>\
 <FlexBox id="form" binding="{path : \'EQUIPMENT_2_EMPLOYEE\', parameters : {$$ownRequest : true}}">\
 	<Text id="name" text="{Name}" />\
@@ -13618,9 +13417,7 @@ sap.ui.define([
 			}),
 			sView = '\
 <Table id="table" items="{path : \'/BusinessPartnerList\', suspended : true}">\
-	<ColumnListItem>\
-		<Text id="id" text="{BusinessPartnerID}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{BusinessPartnerID}" />\
 </Table>',
 			that = this;
 
@@ -13669,9 +13466,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/BusinessPartnerList\', suspended : true}">\
-	<ColumnListItem>\
-		<Text id="id" text="{BusinessPartnerID}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{BusinessPartnerID}" />\
 </Table>',
 			that = this;
 
@@ -13695,9 +13490,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/BusinessPartnerList\', suspended : true}">\
-	<ColumnListItem>\
-		<Text id="role" text="{BusinessPartnerRole}" />\
-	</ColumnListItem>\
+	<Text id="role" text="{BusinessPartnerRole}" />\
 </Table>',
 			that = this;
 
@@ -13737,9 +13530,7 @@ sap.ui.define([
 <FlexBox id="form" binding="{/SalesOrderList(\'42\')}">\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Table id="table" items="{SO_2_SOITEM}">\
-		<ColumnListItem>\
-			<Text id="pos" text="{ItemPosition}" />\
-		</ColumnListItem>\
+		<Text id="pos" text="{ItemPosition}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -13786,9 +13577,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/GetSOContactList(...)}" id="function">\
 	<Table items="{value}">\
-		<ColumnListItem>\
-			<Text id="nickname" text="{Nickname}" />\
-		</ColumnListItem>\
+		<Text id="nickname" text="{Nickname}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -13822,9 +13611,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table items="{/GetSOContactList(SalesOrderID=\'0500000001\')}">\
-	<ColumnListItem>\
-		<Text id="nickname" text="{Nickname}" />\
-	</ColumnListItem>\
+	<Text id="nickname" text="{Nickname}" />\
 </Table>';
 
 		this.expectRequest("GetSOContactList(SalesOrderID='0500000001')"
@@ -13849,9 +13636,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/GetSOContactList(SalesOrderID=\'0500000001\')}" id="function">\
 	<Table items="{value}">\
-		<ColumnListItem>\
-			<Text id="nickname" text="{Nickname}" />\
-		</ColumnListItem>\
+		<Text id="nickname" text="{Nickname}" />\
 	</Table>\
 </FlexBox>';
 
@@ -13883,10 +13668,8 @@ sap.ui.define([
 	<Text id="TEAM_ID" text="{TEAM_ID}" />\
 	<FlexBox binding="{' + sFunctionName + '()}" id="function">\
 		<Table items="{value}">\
-			<ColumnListItem>\
-				<Text id="id" text="{ID}" />\
-				<Text id="name" text="{Name}" />\
-			</ColumnListItem>\
+			<Text id="id" text="{ID}" />\
+			<Text id="name" text="{Name}" />\
 		</Table>\
 	</FlexBox>\
 </FlexBox>';
@@ -14027,11 +13810,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}">\
-	<t:Column>\
-		<t:template>\
-			<Text id="note" text="{Note}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="note" text="{Note}" />\
 </t:Table>\
 <FlexBox binding="{path : \'\', parameters: {$$ownRequest : true}}" id="form">\
 	<Text id="netAmount" text="{NetAmount}" />\
@@ -14106,11 +13885,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form">\
 	<t:Table rows="{path : \'SO_2_SOITEM\', parameters : {$$updateGroupId : \'update\'}}">\
-		<t:Column>\
-			<t:template>\
-				<Text id="position" text="{ItemPosition}" />\
-			</t:template>\
-		</t:Column>\
+		<Text id="position" text="{ItemPosition}" />\
 	</t:Table>\
 </FlexBox>',
 			that = this;
@@ -14248,9 +14023,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Text id="note" text="{Note}"/>\
-	</ColumnListItem>\
+	<Text id="note" text="{Note}"/>\
 </Table>',
 			that = this;
 
@@ -14291,9 +14064,7 @@ sap.ui.define([
 	QUnit.test("ODLB: delayed filter", function (assert) {
 		var sView = '\
 <Table id="table" items="{path : \'/Equipments\', parameters : {$$groupId : \'api\'}}">\
-	<ColumnListItem>\
-		<Text id="name" text="{Name}"/>\
-	</ColumnListItem>\
+	<Text id="name" text="{Name}"/>\
 </Table>',
 			that = this;
 
@@ -14448,31 +14219,11 @@ sap.ui.define([
 			},\
 			$orderby : \'LifecycleStatus desc,ItemPosition asc\'\
 		}}" threshold="0" visibleRowCount="3">\
-	<t:Column>\
-		<t:template>\
-			<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="level" text="{= %{@$ui5.node.level} }" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="grossAmount" text="{= %{GrossAmount}}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }" />\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }" />\
+	<Text id="level" text="{= %{@$ui5.node.level} }" />\
+	<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
+	<Text id="grossAmount" text="{= %{GrossAmount}}" />\
 </t:Table>',
 			that = this;
 
@@ -14579,13 +14330,11 @@ sap.ui.define([
 				}\
 			}\
 		}}">\
-	<ColumnListItem>\
-		<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }" />\
-		<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }" />\
-		<Text id="level" text="{= %{@$ui5.node.level} }" />\
-		<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
-		<Text id="grossAmount" text="{= %{GrossAmount}}" />\
-	</ColumnListItem>\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }" />\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }" />\
+	<Text id="level" text="{= %{@$ui5.node.level} }" />\
+	<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
+	<Text id="grossAmount" text="{= %{GrossAmount}}" />\
 </Table>';
 
 		this.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
@@ -14630,15 +14379,13 @@ sap.ui.define([
 			$count : false,\
 			$orderby : \'Region desc,AccountResponsible\'\
 		}}">\
-	<ColumnListItem>\
-		<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }" />\
-		<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }" />\
-		<Text id="level" text="{= %{@$ui5.node.level} }" />\
-		<Text id="region" text="{Region}" />\
-		<Text id="accountResponsible" text="{AccountResponsible}" />\
-		<Text id="salesAmount" text="{= %{SalesAmount} }" />\
-		<Text id="salesNumber" text="{SalesNumber}" />\
-	</ColumnListItem>\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }" />\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }" />\
+	<Text id="level" text="{= %{@$ui5.node.level} }" />\
+	<Text id="region" text="{Region}" />\
+	<Text id="accountResponsible" text="{AccountResponsible}" />\
+	<Text id="salesAmount" text="{= %{SalesAmount} }" />\
+	<Text id="salesNumber" text="{SalesNumber}" />\
 </Table>',
 			oTable,
 			that = this;
@@ -14684,7 +14431,7 @@ sap.ui.define([
 			// code under test
 			oTable.getItems()[0].getBindingContext().expand();
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "expand 'Z'");
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Z')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
@@ -14747,41 +14494,13 @@ sap.ui.define([
 			groupLevels : [\'Region\']\
 		}\
 	}}" threshold="0" visibleRowCount="3">\
-	<t:Column>\
-		<t:template>\
-			<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="level" text="{= %{@$ui5.node.level} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="region" text="{Region}"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="accountResponsible" text="{AccountResponsible}"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesNumber" text="{SalesNumber}"/>\
-		</t:template>\
-	</t:Column>\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="region" text="{Region}"/>\
+	<Text id="accountResponsible" text="{AccountResponsible}"/>\
+	<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
+	<Text id="salesNumber" text="{SalesNumber}"/>\
 </t:Table>',
 			that = this;
 
@@ -14834,10 +14553,10 @@ sap.ui.define([
 				.expectChange("salesAmount", [/*"100"*/, "10", "20"])
 				.expectChange("salesNumber", [/*null*/, "1", "2"]);
 
-			// code under test - expand node "Z"
+			// code under test
 			that.oView.byId("table").getRows()[0].getBindingContext().expand();
 
-			return that.waitForChanges(assert, "expanding node 'Z'");
+			return that.waitForChanges(assert, "expand node 'Z'");
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Z')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
@@ -14859,10 +14578,10 @@ sap.ui.define([
 				.expectChange("salesAmount", [,,, "30", "40", "280"])
 				.expectChange("salesNumber", [,,, "3", "4", null]);
 
-			// code under test - scroll so that "Z-c" is in first row
+			// code under test
 			that.oView.byId("table").setFirstVisibleRow(3);
 
-			return that.waitForChanges(assert, "scrolling to node 'Z-c'");
+			return that.waitForChanges(assert, "scroll so that 'Z-c' is in first row");
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Y')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
@@ -14877,10 +14596,10 @@ sap.ui.define([
 				// no other changes because "Y" is the last visible row
 				.expectChange("isExpanded", [,,,,, true]);
 
-			// code under test - expand "Y"
+			// code under test
 			that.oView.byId("table").getRows()[2].getBindingContext().expand();
 
-			return that.waitForChanges(assert, "expanding node 'Y'");
+			return that.waitForChanges(assert, "expand node 'Y'");
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Y')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
@@ -14907,11 +14626,11 @@ sap.ui.define([
 				.expectChange("salesAmount", [,,,,,,,,,,,,, "80", "300", "400"])
 				.expectChange("salesNumber", [,,,,,,,,,,,,, "8", null, null]);
 
-			// code under test - scroll to "Y-h" so that "Y-h", "X" and "W" will be visible
+			// code under test
 			// creates a gap to show that we are not requesting unnecessary data
 			that.oView.byId("table").setFirstVisibleRow(13);
 
-			return that.waitForChanges(assert, "scrolling to node 'Y-h'");
+			return that.waitForChanges(assert, "scroll to 'Y-h': 'Y-h', 'X' and 'W' visible");
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Y')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
@@ -14934,10 +14653,11 @@ sap.ui.define([
 				.expectChange("salesAmount", [,,,,,,,,, "40", "50", "60"])
 				.expectChange("salesNumber", [,,,,,,,,, "4", "5", "6"]);
 
-			// code under test - scroll to the middle of "Y": "Y-d", "Y-e", "Y-f" will be visible
+			// code under test
 			that.oView.byId("table").setFirstVisibleRow(9);
 
-			return that.waitForChanges(assert, "scrolling to node 'Y-d'");
+			return that.waitForChanges(assert, "scroll to the middle of 'Y': "
+				+ "'Y-d', 'Y-e', 'Y-f' visible");
 		}).then(function () {
 			that.expectChange("isExpanded", [true, /*undefined*/, /*undefined*/])
 				.expectChange("isTotal", [true, /*false*/, /*false*/])
@@ -14947,10 +14667,11 @@ sap.ui.define([
 				.expectChange("salesAmount", ["100", "10", "20"])
 				.expectChange("salesNumber", [null, "1", "2"]);
 
-			// code under test - scroll back to the first row. "Z", "Z-a" and "Z-b" will be visible
+			// code under test
 			that.oView.byId("table").setFirstVisibleRow(0);
 
-			return that.waitForChanges(assert, "scrolling to node 'Z'");
+			return that.waitForChanges(assert, "scroll back to the first row: "
+				+ "'Z', 'Z-a' and 'Z-b' visible");
 		}).then(function () {
 			var oListBinding = that.oView.byId("table").getBinding("rows");
 
@@ -14990,41 +14711,13 @@ sap.ui.define([
 			groupLevels : [\'Region\']\
 		}\
 	}}" threshold="0" visibleRowCount="3">\
-	<t:Column>\
-		<t:template>\
-			<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="level" text="{= %{@$ui5.node.level} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="region" text="{Region}"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="accountResponsible" text="{AccountResponsible}"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesNumber" text="{SalesNumber}"/>\
-		</t:template>\
-	</t:Column>\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="region" text="{Region}"/>\
+	<Text id="accountResponsible" text="{AccountResponsible}"/>\
+	<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
+	<Text id="salesNumber" text="{SalesNumber}"/>\
 </t:Table>',
 			that = this;
 
@@ -15072,7 +14765,7 @@ sap.ui.define([
 
 			that.oView.byId("table").setFirstVisibleRow(3);
 
-			return that.waitForChanges(assert, "first scroll");
+			return that.waitForChanges(assert, "first scroll to node 'W'");
 		}).then(function () {
 
 			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
@@ -15082,7 +14775,7 @@ sap.ui.define([
 
 			that.oView.byId("table").setFirstVisibleRow(4);
 
-			return that.waitForChanges(assert, "second scroll");
+			return that.waitForChanges(assert, "second scroll to node 'V'");
 		}).then(function () {
 
 			that.expectChange("isExpanded", [,,,, false, false, false])
@@ -15147,41 +14840,13 @@ sap.ui.define([
 			groupLevels : [\'Region\']\
 		}\
 	}}" threshold="0" visibleRowCount="3">\
-	<t:Column>\
-		<t:template>\
-			<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="level" text="{= %{@$ui5.node.level} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="region" text="{Region}"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="accountResponsible" text="{AccountResponsible}"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesNumber" text="{SalesNumber}"/>\
-		</t:template>\
-	</t:Column>\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="region" text="{Region}"/>\
+	<Text id="accountResponsible" text="{AccountResponsible}"/>\
+	<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
+	<Text id="salesNumber" text="{SalesNumber}"/>\
 </t:Table>',
 			that = this;
 
@@ -15230,10 +14895,9 @@ sap.ui.define([
 				.expectChange("isExpanded", [,, true]);
 
 			// code under test
-			// expand X (no changes are visible)
 			that.oView.byId("table").getRows()[2].getBindingContext().expand();
 
-			return that.waitForChanges(assert, "first expand");
+			return that.waitForChanges(assert, "expand node 'X'");
 		}).then(function () {
 
 			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
@@ -15266,10 +14930,176 @@ sap.ui.define([
 				.expectChange("salesNumber", [,,,,, "3", "4", null]);
 
 			// code under test
-			// scroll to "X-c"
 			that.oView.byId("table").setFirstVisibleRow(5);
 
-			return that.waitForChanges(assert, "then scroll");
+			return that.waitForChanges(assert, "scroll to 'X-c'");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: table.Table with aggregation and visual grouping.
+	// Expand three levels
+	//
+	// JIRA: CPOUI5ODATAV4-178
+	QUnit.test("Data Aggregation: expand three levels", function (assert) {
+		var oModel = createAggregationModel(),
+			sView = '\
+<t:Table id="table" rows="{path : \'/BusinessPartners\',\
+	parameters : {\
+		$$aggregation : {\
+			aggregate : {\
+				SalesAmount : {subtotals : true},\
+				SalesNumber : {}\
+			},\
+			group : {\
+				AccountResponsible : {}\
+			},\
+			groupLevels : [\'Country\', \'Region\', \'Segment\']\
+		}\
+	}}" threshold="0" visibleRowCount="4">\
+	<t:Column>\
+		<t:template>\
+			<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="country" text="{Country}"/>\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="region" text="{Region}"/>\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="segment" text="{Segment}"/>\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="accountResponsible" text="{AccountResponsible}"/>\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="salesNumber" text="{SalesNumber}"/>\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("BusinessPartners?$apply=groupby((Country),aggregate(SalesAmount))"
+				+ "&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "26",
+				value : [
+					{Country : "US", SalesAmount : "100"},
+					{Country : "UK", SalesAmount : "200"},
+					{Country : "DE", SalesAmount : "300"}
+				]
+			})
+			.expectChange("isExpanded", [false, false, false])
+			.expectChange("isTotal", [true, true, true])
+			.expectChange("level", [1, 1, 1])
+			.expectChange("country", ["US", "UK", "DE"])
+			.expectChange("region", ["", "", ""])
+			.expectChange("segment", ["", "", ""])
+			.expectChange("accountResponsible", ["", "", ""])
+			.expectChange("salesAmount", ["100", "200", "300"])
+			.expectChange("salesNumber", [null, null, null]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
+					+ "/groupby((Region),aggregate(SalesAmount))"
+					+ "&$count=true&$skip=0&$top=4", {
+					"@odata.count" : "4",
+					value : [
+						{Region : "Z", SalesAmount : "10"},
+						{Region : "Y", SalesAmount : "20"},
+						{Region : "X", SalesAmount : "30"}
+					]
+				})
+				.expectChange("isExpanded", [true,,, false])
+				.expectChange("isTotal", [,,, true])
+				.expectChange("level", [, 2, 2, 2])
+				.expectChange("country", [, "US", "US", "US"])
+				.expectChange("region", [, "Z", "Y", "X"])
+				.expectChange("segment", [,,, ""])
+				.expectChange("accountResponsible", [,,, ""])
+				.expectChange("salesAmount", [, "10", "20", "30"])
+				.expectChange("salesNumber", [,,, null]);
+
+			// code under test
+			that.oView.byId("table").getRows()[0].getBindingContext().expand();
+
+			return that.waitForChanges(assert, "first expand 'US'");
+		}).then(function () {
+			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US' and Region eq 'Z')"
+					+ "/groupby((Segment),aggregate(SalesAmount))"
+					+ "&$count=true&$skip=0&$top=4", {
+					"@odata.count" : "4",
+					value : [
+						{Region: "Z", Segment: "z", SalesAmount : "10"},
+						{Region: "Z", Segment: "y", SalesAmount : "20"},
+						{Region: "Z", Segment: "x", SalesAmount : "30"}
+					]
+				})
+				.expectChange("isExpanded", [, true,,])
+				.expectChange("isTotal", [,,,])
+				.expectChange("level", [,, 3, 3])
+				.expectChange("country", [,,,])
+				.expectChange("region", [,, "Z", "Z"])
+				.expectChange("segment", [,, "z", "y"])
+				.expectChange("accountResponsible", [,,,])
+				.expectChange("salesAmount", [,, "10", "20"])
+				.expectChange("salesNumber", [,,,]);
+
+			// code under test
+			that.oView.byId("table").getRows()[1].getBindingContext().expand();
+
+			return that.waitForChanges(assert, "second expand 'US-Z'");
+		}).then(function () {
+			that.expectRequest("BusinessPartners?$apply="
+					+ "filter(Country eq 'US' and Region eq 'Z' and Segment eq 'z')"
+					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
+					+ "&$count=true&$skip=0&$top=4", {
+					"@odata.count" : "4",
+					value : [
+						{AccountResponsible : "a", SalesNumber: 1, SalesAmount : "10"},
+						{AccountResponsible : "b", SalesNumber: 2, SalesAmount : "20"},
+						{AccountResponsible : "c", SalesNumber: 3, SalesAmount : "30"}
+					]
+				})
+				.expectChange("isExpanded", [,, true, undefined])
+				.expectChange("isTotal", [,,, false])
+				.expectChange("level", [,,, 4])
+				.expectChange("country", [,,,])
+				.expectChange("region", [,,,])
+				.expectChange("segment", [,,, "z"])
+				.expectChange("accountResponsible", [,,, "a"])
+				.expectChange("salesAmount", [,,, "10"])
+				.expectChange("salesNumber", [,,, "1"]);
+
+			// code under test
+			that.oView.byId("table").getRows()[2].getBindingContext().expand();
+
+			return that.waitForChanges(assert, "third expand 'US-Z-z'");
 		});
 	});
 
@@ -15277,9 +15107,12 @@ sap.ui.define([
 	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
 	// but a grand total row (CPOUI5UISERVICESV3-1418) which is fixed at the top; first visible
 	// row starts at 1 and then we scroll up; headerContext>$count is also used
+	//
+	// JIRA: CPOUI5ODATAV4-297, CPOUI5ODATAV4-320 avoid virtual context for $$aggregation
+[false, true].forEach(function (bAutoExpandSelect) {
 	[false, true].forEach(function (bCount) {
 		var sTitle = "Data Aggregation: $$aggregation grandTotal w/o groupLevels; $count : "
-				+ bCount;
+				+ bCount + "; autoExpandSelect : " + bAutoExpandSelect;
 
 		QUnit.test(sTitle, function (assert) {
 			var sBasicPath
@@ -15290,9 +15123,7 @@ sap.ui.define([
 					"SalesNumber@odata.type" : "#Decimal"
 				},
 				oListBinding,
-				// TODO does not work with fixed row count because this causes two parallel requests
-				// -> JIRA: CPOUI5ODATAV4-297
-				oModel = createBusinessPartnerTestModel({autoExpandSelect : false}),
+				oModel = createBusinessPartnerTestModel({autoExpandSelect : bAutoExpandSelect}),
 				oTable,
 				sView = '\
 <Text id="count" text="{$count}"/>\
@@ -15311,21 +15142,9 @@ sap.ui.define([
 			$filter : \'SalesNumber gt 0\',\
 			$orderby : \'Region desc\'\
 		}}" threshold="0" visibleRowCount="5">\
-	<t:Column>\
-		<t:template>\
-			<Text id="country" text="{Country}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="region" text="{Region}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesNumber" text="{SalesNumber}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="country" text="{Country}" />\
+	<Text id="region" text="{Region}" />\
+	<Text id="salesNumber" text="{SalesNumber}" />\
 </t:Table>',
 				that = this;
 
@@ -15395,6 +15214,7 @@ sap.ui.define([
 			});
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
@@ -15435,21 +15255,9 @@ sap.ui.define([
 			$filter : \'SalesNumber gt 0\',\
 			$orderby : \'Region desc\'\
 		}}" threshold="0" visibleRowCount="5">\
-	<t:Column>\
-		<t:template>\
-			<Text id="country" text="{Country}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="region" text="{Region}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesNumber" text="{SalesNumber}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="country" text="{Country}" />\
+	<Text id="region" text="{Region}" />\
+	<Text id="salesNumber" text="{SalesNumber}" />\
 </t:Table>',
 				that = this;
 
@@ -15538,27 +15346,11 @@ sap.ui.define([
 			$filter : \'SalesAmountSum gt 0\',\
 			$orderby : \'SalesAmountSum asc\'\
 		}}" threshold="0" visibleRowCount="5">\
-	<t:Column>\
-		<t:template>\
-			<Text id="region" text="{Region}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesNumber" text="{SalesNumber}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesAmountSum" text="{= %{SalesAmountSum} }" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="salesAmountCurrency"\
-				text="{= %{SalesAmountSum@Analytics.AggregatedAmountCurrency} }" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="region" text="{Region}" />\
+	<Text id="salesNumber" text="{SalesNumber}" />\
+	<Text id="salesAmountSum" text="{= %{SalesAmountSum} }" />\
+	<Text id="salesAmountCurrency"\
+		text="{= %{SalesAmountSum@Analytics.AggregatedAmountCurrency} }" />\
 </t:Table>';
 
 		this.expectRequest("BusinessPartners?$apply=groupby((Region)"
@@ -15754,11 +15546,7 @@ sap.ui.define([
 			},\
 			$count : ' + bCount + '\
 		}}" threshold="0" visibleRowCount="1">\
-	<t:Column>\
-		<t:template>\
-			<Text id="grossAmount" text="{= %{GrossAmount}}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="grossAmount" text="{= %{GrossAmount}}" />\
 </t:Table>',
 				that = this;
 
@@ -15802,9 +15590,7 @@ sap.ui.define([
 			oModel = createSalesOrdersModel(),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Text id="grossAmount" text="{= %{GrossAmount}}" />\
-	</ColumnListItem>\
+	<Text id="grossAmount" text="{= %{GrossAmount}}" />\
 </Table>',
 			that = this;
 
@@ -15902,10 +15688,8 @@ sap.ui.define([
 			oModel = createSalesOrdersModel(),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
-		<Text id="grossAmount" text="{= %{GrossAmount}}" />\
-	</ColumnListItem>\
+	<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
+	<Text id="grossAmount" text="{= %{GrossAmount}}" />\
 </Table>',
 			that = this;
 
@@ -16022,9 +15806,7 @@ sap.ui.define([
 	QUnit.test("@$ui5.* is write-protected for ODLB#create", function (assert) {
 		var sView = '\
 <Table id="table" items="{path : \'/Equipments\', parameters : {$$updateGroupId : \'never\'}}">\
-	<ColumnListItem>\
-		<Text id="name" text="{Name}"/>\
-	</ColumnListItem>\
+	<Text id="name" text="{Name}"/>\
 </Table>',
 			that = this;
 
@@ -16160,16 +15942,8 @@ sap.ui.define([
 			$orderby : \'LifecycleStatus desc\'\
 ' + (i === 0 ? ",$apply : 'groupby((LifecycleStatus),aggregate(GrossAmount))'" : "") + '\
 		}}" threshold="0" visibleRowCount="4">\
-	<t:Column>\
-		<t:template>\
-			<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="grossAmount" text="{GrossAmount}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
+	<Text id="grossAmount" text="{GrossAmount}" />\
 </t:Table>',
 				that = this;
 
@@ -16260,16 +16034,8 @@ sap.ui.define([
 			filters : {path : \'AGE\', operator : \'GE\', value1 : 30},\
 			sorter : {path : \'AGE\'}\
 		}" threshold="0" visibleRowCount="3">\
-	<t:Column>\
-		<t:template>\
-			<Text id="text" text="{Name}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="age" text="{AGE}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="text" text="{Name}" />\
+	<Text id="age" text="{AGE}" />\
 </t:Table>',
 			that = this;
 
@@ -16368,10 +16134,8 @@ sap.ui.define([
 			}],
 			sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', suspended : true}">\
-	<ColumnListItem>\
-		<Text id="text" text="{Name}" />\
-		<Text id="age" text="{AGE}" />\
-	</ColumnListItem>\
+	<Text id="text" text="{Name}" />\
+	<Text id="age" text="{AGE}" />\
 </Table>',
 			that = this;
 
@@ -16434,9 +16198,7 @@ sap.ui.define([
 			// Note: table must be "growing" otherwise it does not use ECD
 			sView = '\
 <Table id="table" items="{TEAM_2_EMPLOYEES}" growing="true">\
-	<ColumnListItem>\
-		<Text id="name" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="name" text="{Name}" />\
 </Table>',
 			that = this;
 
@@ -16688,18 +16450,14 @@ sap.ui.define([
 			oObjectPage,
 			sView = '\
 <Table id="table" items="{path : \'/Artists\', parameters : {$filter : \'IsActiveEntity\'}}">\
-	<ColumnListItem>\
-		<Text id="listId" text="{ArtistID}"/>\
-	</ColumnListItem>\
+	<Text id="listId" text="{ArtistID}"/>\
 </Table>\
 <FlexBox id="objectPage" binding="{}">\
 	<Text id="id" text="{ArtistID}" />\
 	<Text id="isActive" text="{IsActiveEntity}" />\
 	<Input id="name" value="{Name}" />\
 	<Table items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
-		<ColumnListItem>\
-			<Input id="price" value="{Price}" />\
-		</ColumnListItem>\
+		<Input id="price" value="{Price}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -16923,9 +16681,7 @@ sap.ui.define([
 			oReturnValueContext,
 			sTable = '\
 <Table id="table" items="{/Artists}">\
-	<ColumnListItem>\
-		<Text id="listId" text="{ArtistID}"/>\
-	</ColumnListItem>\
+	<Text id="listId" text="{ArtistID}"/>\
 </Table>',
 			sView = '\
 <FlexBox id="objectPage" >\
@@ -17337,12 +17093,10 @@ sap.ui.define([
 	<Text id="isActive" text="{IsActiveEntity}" />\
 	<Input id="name" value="{Name}" />\
 	<Table id="table" items="{\
-			path : \'_Publication\',\
-			parameters : {$$ownRequest : true}\
-		}">\
-		<ColumnListItem>\
-			<Input id="price" value="{Price}" />\
-		</ColumnListItem>\
+				path : \'_Publication\',\
+				parameters : {$$ownRequest : true}\
+			}">\
+		<Input id="price" value="{Price}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -17492,16 +17246,12 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
-	<ColumnListItem>\
-		<Text id="name" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="name" text="{Name}" />\
 </Table>\
 <FlexBox id="form" binding="{path : \'\', parameters : {$$ownRequest : true}}">\
 	<Text id="managerId" text="{EMPLOYEE_2_MANAGER/ID}" />\
 	<Table items="{path : \'EMPLOYEE_2_EQUIPMENTS\', parameters : {$$ownRequest : true}}">\
-		<ColumnListItem>\
-			<Text id="equipmentId" text="{ID}" />\
-		</ColumnListItem>\
+		<Text id="equipmentId" text="{ID}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -17928,9 +17678,7 @@ sap.ui.define([
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/SalesOrderList\', parameters : {$select : \'Messages\'}}">\
-	<ColumnListItem>\
-		<Text id="listId" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="listId" text="{SalesOrderID}" />\
 </Table>\
 <FlexBox id="objectPage" binding="{}">\
 	<Text id="objectId" text="{SalesOrderID}" />\
@@ -17980,10 +17728,8 @@ sap.ui.define([
 			sView = '\
 <Table id="table" items="{path : \'/Artists\',\
 		parameters : {$select : \'BestFriend/Messages\'}}">\
-	<ColumnListItem>\
-		<Text id="artists" text="{ArtistID}" />\
-		<Text id="bestFriends" text="{BestFriend/ArtistID}" />\
-	</ColumnListItem>\
+	<Text id="artists" text="{ArtistID}" />\
+	<Text id="bestFriends" text="{BestFriend/ArtistID}" />\
 </Table>\
 <FlexBox id="objectPage" binding="{BestFriend}">\
 	<Text id="bestFriend" text="{ArtistID}" />\
@@ -18047,9 +17793,7 @@ sap.ui.define([
 			that = this,
 			sView = '\
 <Table id="table" items="{/TEAMS}">\
-	<ColumnListItem>\
-		<Text id="Team_Id" text="{Team_Id}" />\
-	</ColumnListItem>\
+	<Text id="Team_Id" text="{Team_Id}" />\
 </Table>';
 
 		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
@@ -18107,9 +17851,7 @@ sap.ui.define([
 <FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\',\
 	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<ColumnListItem>\
-			<Text id="id" text="{ID}" />\
-		</ColumnListItem>\
+		<Text id="id" text="{ID}" />\
 	</Table>\
 </FlexBox>';
 
@@ -18169,15 +17911,11 @@ sap.ui.define([
 			that = this,
 			sView = '\
 <Table id="SalesOrders" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Text id="SalesOrderID" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="SalesOrderID" text="{SalesOrderID}" />\
 </Table>\
 <Table id="LineItems" items="{SO_2_SOITEM}">\
-	<ColumnListItem>\
-		<Text id="ItemSalesOrderID" text="{SalesOrderID}" />\
-		<Text id="ItemPosition" text="{ItemPosition}" />\
-	</ColumnListItem>\
+	<Text id="ItemSalesOrderID" text="{SalesOrderID}" />\
+	<Text id="ItemPosition" text="{ItemPosition}" />\
 </Table>';
 
 		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
@@ -18335,9 +18073,7 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/TEAMS\', templateShareable : false}">\
-	<ColumnListItem>\
-		<Text id="text" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="text" text="{Name}" />\
 </Table>\
 <Table id="detailTable" items="{\
 			path : \'TEAM_2_EMPLOYEES\',\
@@ -18345,9 +18081,7 @@ sap.ui.define([
 				$select : \'__CT__FAKE__Message/__FAKE__Messages\'\
 			}\
 		}">\
-	<ColumnListItem>\
-		<Input id="Name" value="{Name}" />\
-	</ColumnListItem>\
+	<Input id="Name" value="{Name}" />\
 </Table>',
 			that = this;
 
@@ -18432,9 +18166,7 @@ sap.ui.define([
 	QUnit.test("sap.ui.model.odata.v4.Context#refresh: caches and messages", function (assert) {
 		var sView = '\
 <Table id="tableSalesOrder" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Text id="salesOrder" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="salesOrder" text="{SalesOrderID}" />\
 </Table>\
 <Table id="tableSOItems" items="{\
 			path : \'SO_2_SOITEM\',\
@@ -18442,21 +18174,15 @@ sap.ui.define([
 				$$ownRequest : true,\
 				$select : \'Messages\'\
 			}}">\
-	<ColumnListItem>\
-		<Input id="note" value="{Note}" />\
-	</ColumnListItem>\
+	<Input id="note" value="{Note}" />\
 </Table>\
 <!-- same paths in different control hierarchies -->\
 <Table id="tableSalesOrder2" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Text id="salesOrder2" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="salesOrder2" text="{SalesOrderID}" />\
 </Table>\
 <!-- to determine which request is fired the second table requests only 5 entries -->\
 <Table id="tableSOItems2" growing="true" growingThreshold="5" items="{SO_2_SOITEM}">\
-	<ColumnListItem>\
-		<Input id="note2" value="{Note}" />\
-	</ColumnListItem>\
+	<Input id="note2" value="{Note}" />\
 </Table>',
 			oExpectedMessage0 = {
 				code : "1",
@@ -18785,9 +18511,7 @@ sap.ui.define([
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="equipments" items="{/Equipments}">\
-	<ColumnListItem>\
-		<Text id="id" text="{ID}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{ID}" />\
 </Table>\
 <FlexBox id="employeeDetails"\
 		binding="{path : \'EQUIPMENT_2_EMPLOYEE\', parameters : {$$updateGroupId : \'foo\'\}}">\
@@ -18908,10 +18632,8 @@ sap.ui.define([
 			sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', \
 		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
-	<ColumnListItem>\
-		<Input id="name" value="{Name}" />\
-		<Input id="status" value="{STATUS}" />\
-	</ColumnListItem>\
+	<Input id="name" value="{Name}" />\
+	<Input id="status" value="{STATUS}" />\
 </Table>',
 			that = this;
 
@@ -19049,9 +18771,7 @@ sap.ui.define([
 	<Text id="Team_Id" text="{Team_Id}" />\
 	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', \
 			parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
-		<ColumnListItem>\
-			<Input id="name" value="{Name}" />\
-		</ColumnListItem>\
+		<Input id="name" value="{Name}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -19119,9 +18839,7 @@ sap.ui.define([
 <FlexBox id="detail" binding="{/TEAMS(\'TEAM_01\')}">\
 	<Text id="Team_Id" text="{Team_Id}"/>\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<ColumnListItem>\
-			<Text id="name" text="{Name}"/>\
-		</ColumnListItem>\
+		<Text id="name" text="{Name}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -19173,9 +18891,7 @@ sap.ui.define([
 <FlexBox id="detail" binding="">\
 	<Text id="Team_Id" text="{Team_Id}"/>\
 	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
-		<ColumnListItem>\
-			<Text id="name" text="{Name}"/>\
-		</ColumnListItem>\
+		<Text id="name" text="{Name}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -19435,9 +19151,7 @@ sap.ui.define([
 		}}" id="form">\
 	<Text id="teamId" text="{Team_Id}" />\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<ColumnListItem>\
-			<Input id="name" value="{Name}" />\
-		</ColumnListItem>\
+		<Input id="name" value="{Name}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -19524,9 +19238,7 @@ sap.ui.define([
 			$select : \'__CT__FAKE__Message/__FAKE__Messages\',\
 			$$updateGroupId : \'foo\'\
 		}}">\
-	<ColumnListItem>\
-		<Input id="name" value="{Name}" />\
-	</ColumnListItem>\
+	<Input id="name" value="{Name}" />\
 </Table>',
 			that = this;
 
@@ -19780,9 +19492,7 @@ sap.ui.define([
 			sView = '\
 <Table id="table" items="{path : \'/SalesOrderList\',\
 		parameters : {$$patchWithoutSideEffects : true}}">\
-	<ColumnListItem>\
-		<Input id="listNote" value="{Note}" />\
-	</ColumnListItem>\
+	<Input id="listNote" value="{Note}" />\
 </Table>\
 <FlexBox id="form" binding="{path : \'\', parameters : {$$ownRequest : true}}">\
 	<Input id="formNote" value="{Note}"/>\
@@ -20258,9 +19968,7 @@ sap.ui.define([
 	<Text id="id" text="{ArtistID}" />\
 	<FlexBox binding="{BestFriend}" id="section">\
 		<Table growing="' + bGrowing + '" id="table" items="{_Publication}">\
-			<ColumnListItem>\
-				<Text id="price" text="{Price}" />\
-			</ColumnListItem>\
+			<Text id="price" text="{Price}" />\
 		</Table>\
 	</FlexBox>\
 </FlexBox>',
@@ -20325,22 +20033,10 @@ sap.ui.define([
 				rows="{path : \'_Publication\', parameters : {$count : true,\
 					$filter : \'CurrencyCode eq \\\'EUR\\\'\', $orderby : \'PublicationID\',\
 					$$ownRequest : true}}"\
-			threshold="0" visibleRowCount="2">\
-			<t:Column>\
-				<t:template>\
-					<Input id="price" value="{Price}" />\
-				</t:template>\
-			</t:Column>\
-			<t:Column>\
-				<t:template>\
-					<Text id="currency" text="{CurrencyCode}" />\
-				</t:template>\
-			</t:Column>\
-			<t:Column>\
-				<t:template>\
-					<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
-				</t:template>\
-			</t:Column>\
+				threshold="0" visibleRowCount="2">\
+			<Input id="price" value="{Price}" />\
+			<Text id="currency" text="{CurrencyCode}" />\
+			<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
 		</t:Table>\
 	</FlexBox>\
 </FlexBox>',
@@ -20550,10 +20246,8 @@ sap.ui.define([
 	<Text id="id" text="{ArtistID}" />\
 	<FlexBox binding="{BestFriend}" id="section">\
 		<Table id="table" items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
-			<ColumnListItem>\
-				<Text id="price" text="{Price}" />\
-				<Text id="currency" text="{CurrencyCode}" />\
-			</ColumnListItem>\
+			<Text id="price" text="{Price}" />\
+			<Text id="currency" text="{CurrencyCode}" />\
 		</Table>\
 	</FlexBox>\
 </FlexBox>\
@@ -20563,10 +20257,8 @@ sap.ui.define([
 	<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
 </FlexBox>\
 <Table id="detailTable" items="{_Artist/_Friend}">\
-	<ColumnListItem>\
-		<Text id="idDetail" text="{ArtistID}" />\
-		<Text id="nameDetail" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="idDetail" text="{ArtistID}" />\
+	<Text id="nameDetail" text="{Name}" />\
 </Table>',
 			that = this;
 
@@ -20742,16 +20434,8 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <t:Table id="table" rows="{/Artists(\'42\')/_Publication}" threshold="0" visibleRowCount="2">\
-	<t:Column>\
-		<t:template>\
-			<Text id="id" text="{PublicationID}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="price" text="{Price}" />\
-		</t:template>\
-	</t:Column>\
+	<Text id="id" text="{PublicationID}" />\
+	<Text id="price" text="{Price}" />\
 </t:Table>',
 			that = this;
 
@@ -20881,9 +20565,7 @@ sap.ui.define([
 		</FlexBox>\
 		<Table id="publication" \
 				items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
-			<ColumnListItem>\
-				<Text id="currency" text="{CurrencyCode}" />\
-			</ColumnListItem>\
+			<Text id="currency" text="{CurrencyCode}" />\
 		</Table>\
 	</FlexBox>\
 </FlexBox>',
@@ -20992,14 +20674,12 @@ sap.ui.define([
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/Artists}">\
-	<ColumnListItem>\
-		<FlexBox binding="{BestFriend}"> \
-			<Text id="name" text="{Name}" />\
-			<FlexBox binding="{BestPublication}" id="bestPublication">\
-				<Text id="currency" text="{CurrencyCode}" />\
-			</FlexBox>\
+	<FlexBox binding="{BestFriend}"> \
+		<Text id="name" text="{Name}" />\
+		<FlexBox binding="{BestPublication}" id="bestPublication">\
+			<Text id="currency" text="{CurrencyCode}" />\
 		</FlexBox>\
-	</ColumnListItem>\
+	</FlexBox>\
 </Table>',
 			that = this;
 
@@ -21167,9 +20847,7 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="master" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Text id="salesOrderID" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
 </Table>',
 			that = this;
 
@@ -21224,9 +20902,7 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="master" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Text id="salesOrderID" text="{SalesOrderID}" />\
-	</ColumnListItem>\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
 </Table>\
 <FlexBox id="detail" binding="{path : \'\', parameters : {$$ownRequest : true}}">\
 	<Text id="note" text="{Note}" />\
@@ -21300,9 +20976,7 @@ sap.ui.define([
 	<Text id="salesOrderID" text="{SalesOrderID}" />\
 	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}, \
 			templateShareable : false}">\
-		<ColumnListItem>\
-			<Text id="position" text="{ItemPosition}" />\
-		</ColumnListItem>\
+		<Text id="position" text="{ItemPosition}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -21873,9 +21547,7 @@ sap.ui.define([
 			}\
 		}}" id="form">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<ColumnListItem>\
-			<Input id="id" value="{ID}" />\
-		</ColumnListItem>\
+		<Input id="id" value="{ID}" />\
 	</Table>\
 </FlexBox>',
 				that = this;
@@ -22004,13 +21676,9 @@ sap.ui.define([
 		<layoutData><FlexItemData/></layoutData>\
 		<Text id="street" text="{Address/Street}" />\
 	</FlexBox>\
-	<Table id="table" items="{path : \'BP_2_PRODUCT\',\
-		' + sParameters + '\
-		}">\
-		<ColumnListItem>\
-			<Text text="{ProductID}" />\
-			<Input value="{Name}" />\
-		</ColumnListItem>\
+	<Table id="table" items="{path : \'BP_2_PRODUCT\', ' + sParameters + '\ }">\
+		<Text text="{ProductID}" />\
+		<Input value="{Name}" />\
 	</Table>\
 </FlexBox>',
 				that = this;
@@ -22178,17 +21846,13 @@ sap.ui.define([
 			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "update"}),
 			sView = '\
 <Table id="businessPartnerList" items="{/BusinessPartnerList}">\
-	<ColumnListItem>\
-		<Text id="businessPartnerID" text="{BusinessPartnerID}" />\
-	</ColumnListItem>\
+	<Text id="businessPartnerID" text="{BusinessPartnerID}" />\
 </Table>\
 <FlexBox id="form" binding="{BP_2_SO(\'42\')}">\
 	<Text id="salesOrderID" text="{SalesOrderID}" />\
 	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$canonicalPath : true}}">\
-		<ColumnListItem>\
-			<Text id="productID" text="{ProductID}" />\
-			<Input id="note" value="{Note}" />\
-		</ColumnListItem>\
+		<Text id="productID" text="{ProductID}" />\
+		<Input id="note" value="{Note}" />\
 	</Table>\
 	<FlexBox binding="{path : \'SO_2_BP/BP_2_SO(\\\'23\\\')\',\
 			parameters : {$$canonicalPath : true}}">\
@@ -22412,11 +22076,7 @@ sap.ui.define([
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}">\
 	<Text id="id" text="{ArtistID}" />\
 	<t:Table rows="{_Publication}">\
-		<t:Column>\
-			<t:template>\
-				<Text id="price" text="{Price}" />\
-			</t:template>\
-		</t:Column>\
+		<Text id="price" text="{Price}" />\
 	</t:Table>\
 </FlexBox>';
 
@@ -22491,9 +22151,7 @@ sap.ui.define([
 			sView = '\
 <Table items="{path : \'/Artists\', \
 		filters : {path : \'IsActiveEntity\', operator : \'EQ\', value1 : \'true\'}}">\
-	<ColumnListItem>\
-		<Text id="id" text="{path : \'ID\', type : \'sap.ui.model.odata.type.String\'}"/>\
-	</ColumnListItem>\
+	<Text id="id" text="{path : \'ID\', type : \'sap.ui.model.odata.type.String\'}"/>\
 </Table>';
 
 		this.oLogMock.restore();
@@ -22953,9 +22611,7 @@ sap.ui.define([
 		var fnRespond,
 			sView = '\
 <Table items="{/EMPLOYEES}">\
-	<ColumnListItem>\
-		<Text text="{ID}" />\
-	</ColumnListItem>\
+	<Text text="{ID}" />\
 </Table>',
 			that = this;
 
@@ -23019,10 +22675,8 @@ sap.ui.define([
 			oSubmitBatchPromise,
 			sView = '\
 <Table growing="true" growingThreshold="2" id="table" items="{/BusinessPartnerList}">\
-	<ColumnListItem>\
-		<Text id="id" text="{BusinessPartnerID}" />\
-		<Text id="name" text="{CompanyName}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{BusinessPartnerID}" />\
+	<Text id="name" text="{CompanyName}" />\
 </Table>',
 			that = this;
 
@@ -23085,9 +22739,7 @@ sap.ui.define([
 <Text id="count" text="{$count}"/>\
 <Table growing="true" growingThreshold="2" id="table"\
 		items="{path : \'/BusinessPartnerList\', parameters : {$count : true}}">\
-	<ColumnListItem>\
-		<Text id="id" text="{BusinessPartnerID}" />\
-	</ColumnListItem>\
+	<Text id="id" text="{BusinessPartnerID}" />\
 </Table>',
 			that = this;
 
@@ -23186,11 +22838,9 @@ sap.ui.define([
 <FlexBox binding="{/SalesOrderList(\'1\')}">\
 	<Text id="count" text="{headerContext>$count}"/>\
 	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$select : \'Messages\'}}">\
-		<ColumnListItem>\
-			<Text id="position" text="{ItemPosition}"/>\
-			<Input id="quantity" value="{Quantity}"/>\
-			<Input id="product" value="{SOITEM_2_PRODUCT/ProductID}"/>\
-		</ColumnListItem>\
+		<Text id="position" text="{ItemPosition}"/>\
+		<Input id="quantity" value="{Quantity}"/>\
+		<Input id="product" value="{SOITEM_2_PRODUCT/ProductID}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -23505,10 +23155,8 @@ sap.ui.define([
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Button id="button" press=".onPress(${path : \'NetAmount\', targetType : \'string\'})"\
-			text="{NetAmount}" />\
-	</ColumnListItem>\
+	<Button id="button" press=".onPress(${path : \'NetAmount\', targetType : \'string\'})"\
+		text="{NetAmount}" />\
 </Table>',
 			that = this;
 
@@ -23574,10 +23222,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'1\')}">\
 	<Table id="table" items="{SO_2_SOITEM}">\
-		<ColumnListItem>\
-			<Text id="note" text="{Note}"/>\
-			<Input id="soCurrencyCode" value="{SOITEM_2_SO/CurrencyCode}"/>\
-		</ColumnListItem>\
+		<Text id="note" text="{Note}"/>\
+		<Input id="soCurrencyCode" value="{SOITEM_2_SO/CurrencyCode}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -23629,9 +23275,7 @@ sap.ui.define([
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Text id="soCurrencyCode" text="{CurrencyCode}"/>\
 	<Table id="table" items="{path: \'SO_2_SOITEM\', parameters: {$$ownRequest: true}}">\
-		<ColumnListItem>\
-			<Text id="note" text="{Note}"/>\
-		</ColumnListItem>\
+		<Text id="note" text="{Note}"/>\
 	</Table>\
 </FlexBox>\
 <FlexBox id="creationRow">\
@@ -23716,9 +23360,7 @@ sap.ui.define([
 <FlexBox binding="{/As(1)}">\
 	<FlexBox binding="{AtoB}">\
 		<Table id="table" items="{BtoDs}">\
-			<ColumnListItem>\
-				<Text id="aValue" text="{DtoB/BtoA/AValue}"/>\
-			</ColumnListItem>\
+			<Text id="aValue" text="{DtoB/BtoA/AValue}"/>\
 		</Table>\
 	</FlexBox>\
 </FlexBox>';
@@ -23750,10 +23392,8 @@ sap.ui.define([
 	<FlexBox binding="{path : \'AtoB\', parameters : {$$ownRequest : true}}">\
 		<Text text="{BValue}"/>\
 		<Table id="table" items="{path : \'BtoDs\', parameters : {$$ownRequest : true}}">\
-			<ColumnListItem>\
-				<Text text="{DValue}"/>\
-				<Text id="aValue" text="{DtoB/BtoA/AValue}"/>\
-			</ColumnListItem>\
+			<Text text="{DValue}"/>\
+			<Text id="aValue" text="{DtoB/BtoA/AValue}"/>\
 		</Table>\
 	</FlexBox>\
 </FlexBox>';
@@ -23786,9 +23426,7 @@ sap.ui.define([
 <FlexBox binding="{/As(1)/AtoB}">\
 	<Text id="aValue" text="{BtoA/AValue}"/>\
 	<Table id="table" items="{BtoDs}">\
-		<ColumnListItem>\
-			<Text id="table::aValue" text="{DtoB/BtoA/AValue}"/>\
-		</ColumnListItem>\
+		<Text id="table::aValue" text="{DtoB/BtoA/AValue}"/>\
 	</Table>\
 </FlexBox>';
 
@@ -23819,9 +23457,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'1\')}">\
 	<Table id="table" items="{SO_2_SOITEM}">\
-		<ColumnListItem>\
-			<Text id="note" text="{Note}"/>\
-		</ColumnListItem>\
+		<Text id="note" text="{Note}"/>\
 	</Table>\
 </FlexBox>\
 <FlexBox id="form" binding="{SOITEM_2_SO/' + sAction + '(...)}">\
@@ -23877,10 +23513,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/Bs(1)}">\
 	<Table id="table" items="{BtoA/AtoB/BtoDs}">\
-		<ColumnListItem>\
-			<Text id="bValue" text="{DtoB/BValue}"/>\
-			<Text id="dValue" text="{DValue}"/>\
-		</ColumnListItem>\
+		<Text id="bValue" text="{DtoB/BValue}"/>\
+		<Text id="dValue" text="{DValue}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -23935,14 +23569,10 @@ sap.ui.define([
 <FlexBox binding="{/Bs(1)}">\
 	<Text id="bValue" text="{BValue}"/>\
 	<Table items="{BtoDs}">\
-		<ColumnListItem>\
-			<Text id="bValue::table1" text="{DtoB/BValue}"/>\
-		</ColumnListItem>\
+		<Text id="bValue::table1" text="{DtoB/BValue}"/>\
 	</Table>\
 	<Table items="{path : \'BtoDs\', parameters : {$$updateGroupId : \'$auto\'}}">\
-		<ColumnListItem>\
-			<Text id="bValue::table2" text="{DtoB/BValue}"/>\
-		</ColumnListItem>\
+		<Text id="bValue::table2" text="{DtoB/BValue}"/>\
 	</Table>\
 </FlexBox>';
 
@@ -24029,9 +23659,7 @@ sap.ui.define([
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Input id="soCurrencyCode" value="{CurrencyCode}"/>\
 	<Table id="table" items="{path: \'SO_2_SOITEM\', parameters: {$$ownRequest: true}}">\
-		<ColumnListItem>\
-			<Text id="note" text="{Note}"/>\
-		</ColumnListItem>\
+		<Text id="note" text="{Note}"/>\
 	</Table>\
 </FlexBox>\
 <FlexBox id="creationRow">\
@@ -24129,9 +23757,7 @@ sap.ui.define([
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Input id="soCurrencyCode" value="{CurrencyCode}"/>\
 	<Table id="table" items="{path: \'SO_2_SOITEM\', parameters: {$$ownRequest: true}}">\
-		<ColumnListItem>\
-			<Text id="note" text="{Note}"/>\
-		</ColumnListItem>\
+		<Text id="note" text="{Note}"/>\
 	</Table>\
 </FlexBox>\
 <FlexBox id="creationRow">\
@@ -24266,11 +23892,9 @@ sap.ui.define([
 			}),
 			sView = '\
 <Table id="table" items="{/BusinessPartnerList}">\
-	<ColumnListItem>\
-		<Text id="city" text="{Address/City}"/>\
-		<Text id="type" text="{Address/AddressType}"/>\
-		<Text id="company" text="{CompanyName}"/>\
-	</ColumnListItem>\
+	<Text id="city" text="{Address/City}"/>\
+	<Text id="type" text="{Address/AddressType}"/>\
+	<Text id="company" text="{CompanyName}"/>\
 </Table>',
 			that = this;
 
@@ -24413,10 +24037,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form" binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" items="{BP_2_SO}">\
-		<ColumnListItem>\
-			<Text id="id" text="{SalesOrderID}" />\
-			<Text id="note" text="{Note}" />\
-		</ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Text id="note" text="{Note}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -24502,12 +24124,8 @@ sap.ui.define([
 			oTableBinding,
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}" threshold="0" visibleRowCount="2">\
-	<t:Column>\
-		<t:template><Text id="id" text="{SalesOrderID}" /></t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template><Text id="note" text="{Note}" /></t:template>\
-	</t:Column>\
+	<Text id="id" text="{SalesOrderID}" />\
+	<Text id="note" text="{Note}" />\
 </t:Table>',
 			that = this;
 
@@ -24630,10 +24248,8 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form" binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" items="{BP_2_SO}">\
-		<ColumnListItem>\
-			<Text id="id" text="{SalesOrderID}" />\
-			<Text id="note" text="{Note}" />\
-		</ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Text id="note" text="{Note}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -24851,15 +24467,11 @@ sap.ui.define([
 	<FlexBox binding="{}">\
 		<Text id="note" text="{Note}" />\
 		<Table id="items" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
-			<ColumnListItem>\
-				<Text id="position" text="{ItemPosition}" />\
-				<Text id="amount" text="{GrossAmount}" />\
-			</ColumnListItem>\
+			<Text id="position" text="{ItemPosition}" />\
+			<Text id="amount" text="{GrossAmount}" />\
 		</Table>\
 		<Table id="schedules" items="{path : \'SO_2_SCHDL\', parameters : {$$ownRequest : true}}">\
-			<ColumnListItem>\
-				<Text id="key" text="{ScheduleKey}" />\
-			</ColumnListItem>\
+			<Text id="key" text="{ScheduleKey}" />\
 		</Table>\
 	</FlexBox>\
 </FlexBox>',
@@ -24973,10 +24585,8 @@ sap.ui.define([
 <FlexBox binding="{/As(1)}">\
 	<Text id="avalue::form" text="{AValue}"/>\
 	<Table id="table" items="{path : \'AtoCs\', parameters : {$$updateGroupId : \'update2\'}}">\
-		<ColumnListItem>\
-			<Text id="cid" text="{CID}"/>\
-			<Text id="avalue::table" text="{CtoA/AValue}"/>\
-		</ColumnListItem>\
+		<Text id="cid" text="{CID}"/>\
+		<Text id="avalue::table" text="{CtoA/AValue}"/>\
 	</Table>\
 </FlexBox>\
 <FlexBox id="form" binding="{CtoD}">\
@@ -25115,14 +24725,10 @@ sap.ui.define([
 		},\
 		$select : \'Note\'\
 	}}">\
-	<ColumnListItem>\
-		<Input id="note" value="{Note}"/>\
-	</ColumnListItem>\
+	<Input id="note" value="{Note}"/>\
 </Table>\
 <Table id="items" items="{SO_2_SOITEM}">\
-	<ColumnListItem>\
-		<Text id="itemNote" text="{Note}"/>\
-	</ColumnListItem>\
+	<Text id="itemNote" text="{Note}"/>\
 </Table>',
 			that = this;
 
@@ -25238,9 +24844,7 @@ sap.ui.define([
 <FlexBox id="form">\
 	<Text id="note" text="{Note}"/>\
 	<Table id="items" items="{SO_2_SOITEM}">\
-		<ColumnListItem>\
-			<Text id="itemNote" text="{Note}"/>\
-		</ColumnListItem>\
+		<Text id="itemNote" text="{Note}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -25319,9 +24923,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Table id="table" items="{SO_2_SOITEM}">\
-		<ColumnListItem>\
-			<Text id="note" text="{Note}"/>\
-		</ColumnListItem>\
+		<Text id="note" text="{Note}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -25465,9 +25067,7 @@ sap.ui.define([
 	QUnit.test("Server-driven paging with sap.m.Table", function (assert) {
 		var sView = '\
 <Table id="table" items="{/EMPLOYEES}" growing="true" growingThreshold="10">\
-	<ColumnListItem>\
-		<Text id="text" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="text" text="{Name}" />\
 </Table>',
 			that = this;
 
@@ -25503,9 +25103,7 @@ sap.ui.define([
 	QUnit.test("Server-driven paging with table.Table: no remove behind gap", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{/EMPLOYEES}" threshold="0" visibleRowCount="3">\
-	<t:Column>\
-		<t:template><Text id="text" text="{Name}" /></t:template>\
-	</t:Column>\
+	<Text id="text" text="{Name}" />\
 </t:Table>',
 			that = this;
 
@@ -25582,9 +25180,7 @@ sap.ui.define([
 	QUnit.test("Server-driven paging with table.Table: do not read prefetch", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{/EMPLOYEES}" visibleRowCount="3">\
-	<t:Column>\
-		<t:template><Text id="text" text="{Name}" /></t:template>\
-	</t:Column>\
+	<Text id="text" text="{Name}" />\
 </t:Table>';
 
 		this.expectRequest("EMPLOYEES?$skip=0&$top=103", {
@@ -25689,15 +25285,11 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/TEAMS}">\
-	<ColumnListItem>\
-		<Text id="teamId" text="{Team_Id}"/>\
-	</ColumnListItem>\
+	<Text id="teamId" text="{Team_Id}"/>\
 </Table>\
 <FlexBox id="detail">\
 	<Table id="employees" items="{TEAM_2_EMPLOYEES}">\
-		<ColumnListItem>\
-			<Text id="name" text="{Name}"/>\
-		</ColumnListItem>\
+		<Text id="name" text="{Name}"/>\
 	</Table>\
 	<Text id="managerId" text="{MANAGER_ID}" />\
 </FlexBox>',
@@ -25742,9 +25334,7 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{TEAMS}">\
-	<ColumnListItem>\
-		<Text id="teamId" text="{Team_Id}"/>\
-	</ColumnListItem>\
+	<Text id="teamId" text="{Team_Id}"/>\
 </Table>',
 			that = this;
 
@@ -26025,9 +25615,7 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
-	<ColumnListItem>\
-		<Input id="name" value="{Name}"/>\
-	</ColumnListItem>\
+	<Input id="name" value="{Name}"/>\
 </Table>',
 			that = this;
 
@@ -26103,9 +25691,7 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
-	<ColumnListItem>\
-		<Input id="name" value="{Name}"/>\
-	</ColumnListItem>\
+	<Input id="name" value="{Name}"/>\
 </Table>',
 			that = this;
 
@@ -26175,9 +25761,7 @@ sap.ui.define([
 			oNewContext,
 			sView = '\
 <Table id="table" items="{/TEAMS}">\
-	<ColumnListItem>\
-		<Input id="name" value="{Name}"/>\
-	</ColumnListItem>\
+	<Input id="name" value="{Name}"/>\
 </Table>',
 			that = this;
 
@@ -26290,9 +25874,7 @@ sap.ui.define([
 			id="inProcessByUser" text="{InProcessByUser}" />\
 	</FlexBox>\
 	<Table id="table" items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
-		<ColumnListItem>\
-			<Text id="price2" text="{Price}" />\
-		</ColumnListItem>\
+		<Text id="price2" text="{Price}" />\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -26487,9 +26069,7 @@ sap.ui.define([
 		sView = '\
 <Table id="table" growing="true" growingThreshold="1"\
 		items="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
-	<ColumnListItem>\
-		<Text id="note" text="{Note}" />\
-	</ColumnListItem>\
+	<Text id="note" text="{Note}" />\
 </Table>';
 
 	QUnit.test(sTitle, function (assert) {
@@ -26638,16 +26218,14 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
-	<ColumnListItem>\
-		<Text id="name" text="{Name}" />\
-		<List growing="true" growingThreshold="3" \
-				items="{parameters : {$$sharedRequest : true}, path: \'/MANAGERS\',\
-				templateShareable: false}">\
-			<CustomListItem>\
-				<Text id="id" text="{ID}" />\
-			</CustomListItem>\
-		</List>\
-	</ColumnListItem>\
+	<Text id="name" text="{Name}" />\
+	<List growing="true" growingThreshold="3" \
+			items="{parameters : {$$sharedRequest : true}, path: \'/MANAGERS\',\
+			templateShareable: false}">\
+		<CustomListItem>\
+			<Text id="id" text="{ID}" />\
+		</CustomListItem>\
+	</List>\
 </Table>',
 			that = this;
 
@@ -26704,9 +26282,7 @@ sap.ui.define([
 			fnRespond,
 			sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', parameters : {' + sParameters + '}}">\
-	<ColumnListItem>\
-		<Text id="name" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="name" text="{Name}" />\
 </Table>',
 			that = this;
 
@@ -26848,20 +26424,12 @@ sap.ui.define([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table rows="{/EMPLOYEES}">\
-	<t:Column>\
-		<t:template>\
-			<Text id="name" text="{Name}" />\
-		</t:template>\
-	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<List items="{path : \'EMPLOYEE_2_EQUIPMENTS\', templateShareable : false}">\
-				<CustomListItem>\
-					<Text id="category" text="{Category}" />\
-				</CustomListItem>\
-			</List>\
-		</t:template>\
-	</t:Column>\
+	<Text id="name" text="{Name}" />\
+	<List items="{path : \'EMPLOYEE_2_EQUIPMENTS\', templateShareable : false}">\
+		<CustomListItem>\
+			<Text id="category" text="{Category}" />\
+		</CustomListItem>\
+	</List>\
 </t:Table>';
 
 		this.expectRequest("EMPLOYEES?$select=ID,Name"
@@ -26891,10 +26459,8 @@ sap.ui.define([
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/Artists}">\
-	<ColumnListItem>\
-		<Text id="friend" text="{BestFriend/Name}" />\
-		<Text id="name" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="friend" text="{BestFriend/Name}" />\
+	<Text id="name" text="{Name}" />\
 </Table>',
 			that = this;
 
@@ -27077,13 +26643,100 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: A value list model is used multiple times, but the request is shared.
+	// JIRA: CPOUI5ODATAV4-344
+[false, true].forEach(function (bAutoExpandSelect) {
+	var sTitle = "$$sharedRequest and ODMM#getOrCreateSharedModel, bAutoExpandSelect = "
+			+ bAutoExpandSelect;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox binding="{/ProductList(\'1\')}">\
+	<Text id="typeCode1" text="{TypeCode}" />\
+	<List id="list1"\
+		items="{path: \'/D_PR_TYPE_FV_SET\', suspended : true, templateShareable: false}">\
+		<CustomListItem>\
+			<Text id="description1" text="{DESCRIPTION}" />\
+		</CustomListItem>\
+	</List>\
+</FlexBox>\
+<FlexBox binding="{/ProductList(\'2\')}">\
+	<Text id="typeCode2" text="{TypeCode}" />\
+	<List id="list2"\
+		items="{path: \'/D_PR_TYPE_FV_SET\', suspended : true, templateShareable: false}">\
+		<CustomListItem>\
+			<Text id="description2" text="{DESCRIPTION}" />\
+		</CustomListItem>\
+	</List>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("ProductList('1')", {ProductID : "1", TypeCode : "AD"})
+			.expectChange("description1", [])
+			.expectChange("typeCode1", "AD")
+			.expectRequest("ProductList('2')", {ProductID : "2", TypeCode : "PR"})
+			.expectChange("description2", [])
+			.expectChange("typeCode2", "PR");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			return that.oView.byId("typeCode1").getBinding("text")
+				.requestValueListInfo(bAutoExpandSelect);
+		}).then(function (mValueListInfo) {
+			var oValueListModel = mValueListInfo[""].$model;
+
+			that.expectRequest("D_PR_TYPE_FV_SET?"
+					+ (bAutoExpandSelect ? "$select=DESCRIPTION,FIELD_VALUE&" : "")
+					+ "$skip=0&$top=100", {
+				value : [{
+					DESCRIPTION : "Anno Domini",
+					FIELD_VALUE : "AD"
+				}, {
+					DESCRIPTION : "Public Relations",
+					FIELD_VALUE : "PR"
+				}]})
+				.expectChange("description1", ["Anno Domini", "Public Relations"])
+				.expectChange("description2", ["Anno Domini", "Public Relations"]);
+
+			// code under test
+			that.oView.byId("list1").setModel(oValueListModel).getBinding("items").resume();
+			that.oView.byId("list2").setModel(oValueListModel).getBinding("items").resume();
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Executing an action is forbidden for models with shared requests.
+	// JIRA: CPOUI5ODATAV4-344
+	QUnit.test("sharedRequests forbids action execute", function (assert) {
+		var oModel = createTeaBusiModel({sharedRequests : true}),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			var oAction = oModel.bindContext("/ChangeTeamBudgetByID(...)"),
+				sMessage = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001"
+					+ "/ChangeTeamBudgetByID is read-only";
+
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to execute /ChangeTeamBudgetByID(...)",
+					sinon.match(sMessage), "sap.ui.model.odata.v4.ODataContextBinding");
+
+			oAction.execute().then(function () {
+				assert.ok(false, "Unexpected success");
+			}, function (oError) {
+				assert.strictEqual(oError.message, sMessage);
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: create at end w/o $count, but after everything has been read
 	QUnit.test("ODLB: create at end w/o $count", function (assert) {
 		var sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
-	<ColumnListItem>\
-		<Text id="name" text="{Name}" />\
-	</ColumnListItem>\
+	<Text id="name" text="{Name}" />\
 </Table>',
 			that = this;
 

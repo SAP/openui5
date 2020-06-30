@@ -233,11 +233,9 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("initialize: resolved, refresh", function (assert) {
 		var oBinding = this.bindList("n/a"),
-			sChangeReason = {},
 			oRootBinding = {isSuspended : function () {}};
 
-		oBinding.sChangeReason = sChangeReason;
-		assert.strictEqual(this.oModel.bAutoExpandSelect, false);
+		oBinding.sChangeReason = undefined;
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
 		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(false);
@@ -253,23 +251,21 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("initialize: resolved, with change reason", function (assert) {
 		var oBinding = this.bindList("n/a"),
-			sChangeReason = {},
 			oRootBinding = {isSuspended : function () {}};
 
-		oBinding.sChangeReason = sChangeReason;
-		this.oModel.bAutoExpandSelect = true;
+		oBinding.sChangeReason = "AddVirtualContext";
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
 		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(false);
 		this.mock(oBinding).expects("_fireChange").withExactArgs({
-			detailedReason : sinon.match.same(sChangeReason),
+			detailedReason : "AddVirtualContext",
 			reason : ChangeReason.Change
 		});
 
 		// code under test
 		oBinding.initialize();
 
-		assert.strictEqual(oBinding.sChangeReason, sChangeReason);
+		assert.strictEqual(oBinding.sChangeReason, "AddVirtualContext");
 	});
 
 	//*********************************************************************************************
@@ -336,6 +332,19 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("constructor: $$sharedRequest from model", function (assert) {
+		var oBinding,
+			bSharedRequests = {/*false,true*/};
+
+		this.oModel.bSharedRequests = bSharedRequests;
+
+		// code under test
+		oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES");
+
+		assert.strictEqual(oBinding.bSharedRequest, bSharedRequests);
+	});
+
+	//*********************************************************************************************
 	[false, true].forEach(function (bAutoExpandSelect) {
 		QUnit.test("c'tor: AddVirtualContext = " + bAutoExpandSelect, function (assert) {
 			var oBinding;
@@ -348,6 +357,20 @@ sap.ui.define([
 			assert.strictEqual(oBinding.sChangeReason,
 				bAutoExpandSelect ? "AddVirtualContext" : undefined);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("c'tor: no AddVirtualContext w/ $$aggregation", function (assert) {
+		var oBinding;
+
+		this.oModel.bAutoExpandSelect = true;
+
+		// code under test
+		oBinding = this.bindList("/EMPLOYEES", null, [], [], {
+			$$aggregation : {aggregate : {"n/a" : {}}}
+		});
+
+		assert.strictEqual(oBinding.sChangeReason, undefined);
 	});
 
 	//*********************************************************************************************
@@ -853,7 +876,7 @@ sap.ui.define([
 			.returns(mQueryOptions.$orderby);
 		oCacheMock.expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-				{"$orderby" : "bar", "sap-client" : "111"}, false, undefined, undefined)
+				{"$orderby" : "bar", "sap-client" : "111"}, false, undefined, false)
 			.returns({});
 		this.spy(ODataListBinding.prototype, "reset");
 
@@ -875,7 +898,7 @@ sap.ui.define([
 
 		oCacheMock.expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-				{"$orderby" : "bar", "sap-client" : "111"}, false, "EMPLOYEES", undefined)
+				{"$orderby" : "bar", "sap-client" : "111"}, false, "EMPLOYEES", false)
 			.returns({});
 
 		// code under test
@@ -6216,7 +6239,8 @@ sap.ui.define([
 		oBinding.oCache = { // simulate an aggregation cache
 			expand : function () {}
 		};
-		oBinding.createContexts(0, 5, createData(5, 0, true, 5));
+		oBinding.createContexts(0, 2, createData(2, 0, true, 5));
+		oBinding.createContexts(3, 2, createData(2, 3, true, 5));
 		aContextsBefore = oBinding.aContexts.slice();
 
 		this.mock(oBinding).expects("lockGroup").withExactArgs().returns(oGroupLock);
@@ -6254,13 +6278,12 @@ sap.ui.define([
 			assert.notOk(2 in oBinding.aContexts, "2");
 			assert.notOk(3 in oBinding.aContexts, "3");
 			assert.notOk(4 in oBinding.aContexts, "4");
-			assert.strictEqual(oBinding.aContexts[5], aContextsBefore[2], "5");
+			assert.notOk(5 in oBinding.aContexts, "5");
 			assert.strictEqual(oBinding.aContexts[6], aContextsBefore[3], "6");
 			assert.strictEqual(oBinding.aContexts[7], aContextsBefore[4], "7");
 
 			assert.strictEqual(oBinding.aContexts[0].iIndex, 0);
 			assert.strictEqual(oBinding.aContexts[1].iIndex, 1);
-			assert.strictEqual(oBinding.aContexts[5].iIndex, 5);
 			assert.strictEqual(oBinding.aContexts[6].iIndex, 6);
 			assert.strictEqual(oBinding.aContexts[7].iIndex, 7);
 

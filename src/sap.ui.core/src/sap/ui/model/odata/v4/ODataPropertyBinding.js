@@ -504,29 +504,7 @@ sap.ui.define([
 	 *   this method. If the value list model is this binding's model, this flag has no effect.
 	 *   Supported since 1.68.0
 	 * @returns {Promise}
-	 *   A promise which is resolved with a map of qualifier to value list mapping objects
-	 *   structured as defined by <code>com.sap.vocabularies.Common.v1.ValueListMappingType</code>;
-	 *   the map entry with key "" represents the mapping without qualifier. Each entry has an
-	 *   additional property "$model" which is the {@link sap.ui.model.odata.v4.ODataModel} instance
-	 *   to read value list data via this mapping.
-	 *
-	 *   For fixed values, only one mapping is expected and the qualifier is ignored. The mapping
-	 *   is available with key "".
-	 *
-	 *   The promise is rejected with an error if there is no value list information available
-	 *   for this property. Use {@link #getValueListType} to determine if value list information
-	 *   exists. It is also rejected with an error if the value list metadata is inconsistent.
-	 *
-	 *   An inconsistency can result from one of the following reasons:
-	 *   <ul>
-	 *    <li> There is a reference, but the referenced service does not contain mappings for the
-	 *     property.
-	 *    <li> The referenced service contains annotation targets in the namespace of the data
-	 *     service that are not mappings for the property.
-	 *    <li> Two different referenced services contain a mapping using the same qualifier.
-	 *    <li> A service is referenced twice.
-	 *    <li> No mappings have been found.
-	 *   </ul>
+	 *   See {@link sap.ui.model.odata.v4.ODataMetaModel#requestValueListInfo}
 	 * @throws {Error}
 	 *   If the binding is unresolved (see {@link sap.ui.model.Binding#isResolved})
 	 *

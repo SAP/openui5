@@ -1,0 +1,25 @@
+{
+	"@odata.context": "$metadata#BusinessPartners(Country,SalesAmount)",
+	"@odata.metadataEtag": "W/\"Duc//nz26REDKz1VewX3aHn97ENagrS7a7IXM958u4s=\"",
+	"@odata.count": 3,
+	"value": [
+		{
+			"@odata.id": null,
+			"Country": "United Kingdom",
+			"SalesAmount@odata.type": "#Decimal",
+			"SalesAmount": 16165258
+		},
+		{
+			"@odata.id": null,
+			"Country": "USA",
+			"SalesAmount@odata.type": "#Decimal",
+			"SalesAmount": 35135431
+		},
+		{
+			"@odata.id": null,
+			"Country": "Germany",
+			"SalesAmount@odata.type": "#Decimal",
+			"SalesAmount": 24489638
+		}
+	]
+}

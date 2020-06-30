@@ -19,13 +19,7 @@ sap.ui.getCore().attachInit(function () {
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.DataAggregation");
 
 		//*****************************************************************************
-		opaTest("Start data aggregation app, expand a subtotal node", function (Given, When, Then) {
-
-			if (!TestUtils.isRealOData()) {
-				Opa5.assert.ok(false, "Test runs only with realOData=true");
-				return;
-			}
-
+		opaTest("Start data aggregation app, expand to node level 4 with paging", function (Given, When, Then) {
 			When.onAnyPage.applySupportAssistant();
 			Given.iStartMyUIComponent({
 				autoWait : true,
@@ -34,19 +28,205 @@ sap.ui.getCore().attachInit(function () {
 				}
 			});
 
-			// TODO $count
+			Then.onTheMainPage.checkTable([{
+					level : 1,
+					expanded : false,
+					subtotal : true,
+					country : "United Kingdom",
+					region : "",
+					segment : "",
+					accountResponsible : ""
+				}, {
+					level : 1,
+					expanded : false,
+					subtotal : true,
+					country : "USA",
+					region : "",
+					segment : "",
+					accountResponsible : ""
+				}, {
+					level : 1,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "",
+					segment : "",
+					accountResponsible : ""
+				}]);
 
-			Then.onTheMainPage.checkRow(0, 1, false, true, "West", "");
-			Then.onTheMainPage.checkRow(1, 1, false, true, "Wales", "");
+			When.onTheMainPage.pressExpandInRow(2,"Expand Germany.");
+			Then.onTheMainPage.checkTable([{
+					level : 1,
+					expanded : false,
+					subtotal : true,
+					country : "United Kingdom",
+					region : "",
+					segment : "",
+					accountResponsible : ""
+				}, {
+					level : 1,
+					expanded : false,
+					subtotal : true,
+					country : "USA",
+					region : "",
+					segment : "",
+					accountResponsible : ""
+				}, {
+					level : 1,
+					expanded : true,
+					subtotal : true,
+					country : "Germany",
+					region : "",
+					segment : "",
+					accountResponsible : ""
+				}, {
+					level : 2,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Saxony",
+					segment : "",
+					accountResponsible : ""
+				}, {
+					level : 2,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Lower Saxony",
+					segment : "",
+					accountResponsible : ""
+				}]);
 
-			When.onTheMainPage.pressExpandInRow(0);
-			Then.onTheMainPage.checkRow(0, 1, true, true, "West", "");
-			Then.onTheMainPage.checkRow(1, 2, undefined, false, "West", "Alexander Fischer");
-			Then.onTheMainPage.checkRow(2, 2, undefined, false, "West", "George Meier");
-			Then.onTheMainPage.checkRow(3, 2, undefined, false, "West", "Jacky Woo");
-			Then.onTheMainPage.checkRow(4, 2, undefined, false, "West", "Lindsey Wang");
-			Then.onTheMainPage.checkRow(5, 2, undefined, false, "West", "Samantha Smith");
-			Then.onTheMainPage.checkRow(6, 1, false, true, "Wales", "");
+			When.onTheMainPage.scrollToRow(5, "Scroll to BW with paging.");
+			Then.onTheMainPage.checkTable([{
+					level : 2,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Hessia",
+					segment : "",
+					accountResponsible : ""
+				}, {
+					level : 2,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Hamburg",
+					segment : "",
+					accountResponsible : ""
+				}, {
+					level : 2,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Berlin",
+					segment : "",
+					accountResponsible : ""
+				}, {
+					level : 2,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Bavaria",
+					segment : "",
+					accountResponsible : ""
+				}, {
+					level : 2,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Baden-Württemberg",
+					segment : "",
+					accountResponsible : ""
+				}]);
+
+			When.onTheMainPage.pressExpandInRow(9, "Expand BW.");
+			When.onTheMainPage.scrollToRow(8, "Scroll to BW.");
+			Then.onTheMainPage.checkTable([{
+					level : 2,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Bavaria",
+					segment : "",
+					accountResponsible : ""
+				}, {
+					level : 2,
+					expanded : true,
+					subtotal : true,
+					country : "Germany",
+					region : "Baden-Württemberg",
+					segment : "",
+					accountResponsible : ""
+				}, {
+					level : 3,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Baden-Württemberg",
+					segment : "Large",
+					accountResponsible : ""
+				}, {
+					level : 3,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Baden-Württemberg",
+					segment : "Mid-size",
+					accountResponsible : ""
+				}, {
+					level : 3,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Baden-Württemberg",
+					segment : "Small",
+					accountResponsible : ""
+				}]);
+
+			When.onTheMainPage.pressExpandInRow(11, "Expand BW-Small.");
+			When.onTheMainPage.scrollToRow(10, "Scroll to BW-Small.");
+			Then.onTheMainPage.checkTable([{
+					level : 3,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Baden-Württemberg",
+					segment : "Large",
+					accountResponsible : ""
+				}, {
+					level : 3,
+					expanded : true,
+					subtotal : true,
+					country : "Germany",
+					region : "Baden-Württemberg",
+					segment : "Mid-size",
+					accountResponsible : ""
+				}, {
+					level : 4,
+					expanded : undefined,
+					subtotal : false,
+					country : "Germany",
+					region : "Baden-Württemberg",
+					segment : "Mid-size",
+					accountResponsible : "Erwin Fischer"
+				}, {
+					level : 4,
+					expanded : undefined,
+					subtotal : false,
+					country : "Germany",
+					region : "Baden-Württemberg",
+					segment : "Mid-size",
+					accountResponsible : "Winfried Maier"
+				}, {
+					level : 3,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Baden-Württemberg",
+					segment : "Small",
+					accountResponsible : ""
+				}]);
 
 			Then.onAnyPage.checkLog();
 			Then.onAnyPage.analyzeSupportAssistant();

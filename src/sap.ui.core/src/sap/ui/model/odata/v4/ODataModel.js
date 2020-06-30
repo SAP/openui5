@@ -66,6 +66,7 @@ sap.ui.define([
 			odataVersion : true,
 			operationMode : true,
 			serviceUrl : true,
+			sharedRequests : true,
 			supportReferences : true,
 			synchronizationMode : true,
 			updateGroupId : true
@@ -128,6 +129,13 @@ sap.ui.define([
 	 *   "/MyService/?custom=foo".
 	 *   See specification "OData Version 4.0 Part 2: URL Conventions", "5.2 Custom Query Options".
 	 *   OData system query options and OData parameter aliases lead to an error.
+	 * @param {boolean} [mParameters.sharedRequests]
+	 *   Whether all list bindings for the same resource path share their data, so that it is
+	 *   requested only once; only the value <code>true</code> is allowed; see parameter
+	 *   "$$sharedRequest" of {@link #bindList}. Additionally,
+	 *   {@link sap.ui.model.BindingMode.OneTime} becomes the only supported binding mode. Note:
+	 *   This makes all bindings read-only, so it may especially be useful for value list models.
+	 *   Supported since 1.80.0
 	 * @param {boolean} [mParameters.supportReferences=true]
 	 *   Whether <code>&lt;edmx:Reference></code> and <code>&lt;edmx:Include></code> directives are
 	 *   supported in order to load schemas on demand from other $metadata documents and include
@@ -264,6 +272,10 @@ sap.ui.define([
 						throw new Error("Value for autoExpandSelect must be true or false");
 					}
 					this.bAutoExpandSelect = mParameters.autoExpandSelect === true;
+					if ("sharedRequests" in mParameters && mParameters.sharedRequests !== true) {
+						throw new Error("Value for sharedRequests must be true");
+					}
+					this.bSharedRequests = mParameters.sharedRequests === true;
 
 					this.mHeaders = {"Accept-Language" : sLanguageTag};
 					this.mMetadataHeaders = {"Accept-Language" : sLanguageTag};
@@ -300,13 +312,15 @@ sap.ui.define([
 					}
 
 					this.aAllBindings = [];
-					this.sDefaultBindingMode = BindingMode.TwoWay;
+					this.sDefaultBindingMode = mParameters.sharedRequests
+						? BindingMode.OneTime
+						: BindingMode.TwoWay;
 					this.aPrerenderingTasks = null; // @see #addPrerenderingTask
-					this.mSupportedBindingModes = {
-						OneTime : true,
-						OneWay : true,
-						TwoWay : true
-					};
+					this.mSupportedBindingModes = {OneTime : true};
+					if (!mParameters.sharedRequests) {
+						this.mSupportedBindingModes.OneWay = true;
+						this.mSupportedBindingModes.TwoWay = true;
+					}
 				}
 			});
 
@@ -557,12 +571,12 @@ sap.ui.define([
 	 *   The binding path in the model; must not be empty or end with a slash
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
-	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
+	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [vSorters]
 	 *   The dynamic sorters to be used initially. Call
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#sort} to replace them. Static sorters, as
 	 *   defined in the '$orderby' binding parameter, are always executed after the dynamic sorters.
 	 *   Supported since 1.39.0.
-	 * @param {sap.ui.model.Filter | sap.ui.model.Filter[]} [vFilters]
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [vFilters]
 	 *   The dynamic application filters to be used initially. Call
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#filter} to replace them. Static filters, as
 	 *   defined in the '$filter' binding parameter, are always combined with the dynamic filters
@@ -611,6 +625,35 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.$$ownRequest]
 	 *   Whether the binding always uses an own service request to read its data; only the value
 	 *   <code>true</code> is allowed.
+	 * @param {boolean} [mParameters.$$sharedRequest]
+	 *   Whether multiple bindings for the same resource path share the data, so that it is
+	 *   requested only once; only the value <code>true</code> is allowed. This parameter can be
+	 *   inherited from the model's parameter "sharedRequests", see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}. Supported since 1.80.0
+	 *   <b>Note:</b> These bindings are read-only, so they may especially be useful for value
+	 *   lists; the following APIs are <b>not</b> allowed
+	 *   <ul>
+	 *   <li> for the list binding itself:
+	 *   <ul>
+	 *   <li> {@link sap.ui.model.odata.v4.ODataListBinding#create}
+	 *   </ul>
+	 *   <li> for the {@link sap.ui.model.odata.v4.ODataListBinding#getHeaderContext header context}
+	 *   of a list binding:
+	 *   <ul>
+	 *   <li> {@link sap.ui.model.odata.v4.Context#requestSideEffects}
+	 *   </ul>
+	 *   <li> for the context of a list binding representing a single entity:
+	 *   <ul>
+	 *   <li> {@link sap.ui.model.odata.v4.Context#delete}
+	 *   <li> {@link sap.ui.model.odata.v4.Context#refresh}
+	 *   <li> {@link sap.ui.model.odata.v4.Context#requestSideEffects}
+	 *   <li> {@link sap.ui.model.odata.v4.Context#setProperty}
+	 *   </ul>
+	 *   <li> for a dependent property binding of the list binding:
+	 *   <ul>
+	 *   <li> {@link sap.ui.model.odata.v4.ODataPropertyBinding#setValue}
+	 *   </ul>
+	 *   </ul>
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
 	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
@@ -672,7 +715,7 @@ sap.ui.define([
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @param {boolean} [mParameters.$$noPatch]
-	 *   Whether changing the value of this property binding is not causing a PATCH request. Only
+	 *   Whether changing the value of this property binding is not causing a PATCH request; only
 	 *   the value <code>true</code> is allowed.
 	 * @returns {sap.ui.model.odata.v4.ODataPropertyBinding}
 	 *   The property binding

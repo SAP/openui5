@@ -103,7 +103,9 @@ sap.ui.define([
 					"$$groupId", "$$operationMode", "$$ownRequest", "$$patchWithoutSideEffects",
 					"$$sharedRequest", "$$updateGroupId"]);
 				this.aApplicationFilters = _Helper.toArray(vFilters);
-				this.sChangeReason = oModel.bAutoExpandSelect ? "AddVirtualContext" : undefined;
+				this.sChangeReason = oModel.bAutoExpandSelect && !mParameters.$$aggregation
+					? "AddVirtualContext"
+					: undefined;
 				this.oDiff = undefined;
 				this.aFilters = [];
 				this.sGroupId = mParameters.$$groupId;
@@ -114,7 +116,7 @@ sap.ui.define([
 				this.sOperationMode = mParameters.$$operationMode || oModel.sOperationMode;
 				this.mPreviousContextsByPath = {};
 				this.aPreviousData = [];
-				this.bSharedRequest = mParameters.$$sharedRequest;
+				this.bSharedRequest = mParameters.$$sharedRequest || oModel.bSharedRequests;
 				this.aSorters = _Helper.toArray(vSorters);
 				this.sUpdateGroupId = mParameters.$$updateGroupId;
 				// Note: $$operationMode is validated before, oModel.sOperationMode also
@@ -332,8 +334,7 @@ sap.ui.define([
 		if (sChangeReason === "") { // called from #setAggregation
 			if (this.mQueryOptions.$apply === sOldApply
 				&& (!this.mParameters.$$aggregation || !oOldAggregation
-					|| _Helper.deepEqual(this.mParameters.$$aggregation, oOldAggregation))
-					) {
+					|| _Helper.deepEqual(this.mParameters.$$aggregation, oOldAggregation))) {
 				return; // unchanged $apply derived from $$aggregation
 			}
 			sChangeReason = ChangeReason.Change;
@@ -955,9 +956,13 @@ sap.ui.define([
 
 			for (i = aContexts.length - 1; i > iModelIndex; i -= 1) {
 				oMovingContext = aContexts[i];
-				oMovingContext.iIndex += iCount;
-				aContexts[i + iCount] = oMovingContext;
-				delete aContexts[i];
+				if (oMovingContext) {
+					oMovingContext.iIndex += iCount;
+					aContexts[i + iCount] = oMovingContext;
+					delete aContexts[i];
+				}
+				// else: nothing to do because !(i in aContexts) and aContexts[i + iCount]
+				// has been deleted before (loop works backwards)
 			}
 			that.iMaxLength += iCount;
 			that._fireChange({reason : ChangeReason.Change});
@@ -1974,7 +1979,7 @@ sap.ui.define([
 	// @override sap.ui.model.Binding#initialize
 	ODataListBinding.prototype.initialize = function () {
 		if (this.isResolved() && !this.getRootBinding().isSuspended()) {
-			if (this.oModel.bAutoExpandSelect) {
+			if (this.sChangeReason === "AddVirtualContext") {
 				this._fireChange({
 					detailedReason : this.sChangeReason,
 					reason : ChangeReason.Change
@@ -2422,7 +2427,7 @@ sap.ui.define([
 	 *   A list of groupable property names used to determine group levels. They may, but don't need
 	 *   to, be repeated in <code>oAggregation.group</code>. Group levels cannot be combined with
 	 *   filtering, with the system query option <code>$count</code>, or with an aggregatable
-	 *   property for which a grand total is needed; two group levels are supported at most.
+	 *   property for which a grand total is needed.
 	 * @throws {Error}
 	 *   If the given data aggregation object is unsupported, if the system query option
 	 *   <code>$apply</code> has been specified explicitly before, or if there are pending changes
