@@ -143,7 +143,7 @@ sap.ui.define([
 			oView.setBusy(true);
 			// remember the active version to restore it on discard
 			this.oActiveArtistContext = oView.getBindingContext();
-			oView.getModel().bindContext(sNamespace + "EditAction(...)", this.oActiveArtistContext,
+			oView.getModel().bindContext(sNamespace + "Edit(...)", this.oActiveArtistContext,
 					{$$inheritExpandSelect : true, $$patchWithoutSideEffects : true})
 				.setParameter("PreserveChanges", false)
 				.execute()
@@ -188,7 +188,7 @@ sap.ui.define([
 
 			oView.setBusy(true);
 			this.byId("draftIndicator").clearDraftState();
-			oView.getModel().bindContext(sNamespace + "ActivationAction(...)", oOldBindingContext,
+			oView.getModel().bindContext(sNamespace + "Activation(...)", oOldBindingContext,
 					{$$inheritExpandSelect : true, $$patchWithoutSideEffects : true})
 				.execute()
 				.then(function (oActiveArtistContext) {

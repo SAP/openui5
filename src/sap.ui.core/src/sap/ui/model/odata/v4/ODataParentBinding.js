@@ -907,6 +907,7 @@ sap.ui.define([
 	 * @returns {object} The query options
 	 *
 	 * @abstract
+	 * @function
 	 * @name sap.ui.model.odata.v4.ODataParentBinding.getQueryOptionsFromParameters
 	 * @private
 	 * @see sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache

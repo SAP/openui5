@@ -102,6 +102,9 @@ sap.ui.define([
 		this.iActiveUsages = 1;
 		this.mChangeListeners = {}; // map from path to an array of change listeners
 		this.fnGetOriginalResourcePath = fnGetOriginalResourcePath;
+		// the point in time when the cache became inactive; active caches have Infinity so that
+		// they are always "newer"
+		this.iInactiveSince = Infinity;
 		this.mPatchRequests = {}; // map from path to an array of (PATCH) promises
 		// a promise with attached properties $count, $resolve existing while DELETEs or POSTs are
 		// being sent
@@ -1184,8 +1187,12 @@ sap.ui.define([
 	Cache.prototype.setActive = function (bActive) {
 		if (bActive) {
 			this.iActiveUsages += 1;
+			this.iInactiveSince = Infinity;
 		} else {
 			this.iActiveUsages -= 1;
+			if (!this.iActiveUsages) {
+				this.iInactiveSince = Date.now();
+			}
 			this.mChangeListeners = {}; // Note: shared caches have no listeners anyway
 		}
 	};
@@ -2706,7 +2713,7 @@ sap.ui.define([
 	 */
 	Cache.create = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 			sDeepResourcePath, bSharedRequest) {
-		var sPath, oSharedCollectionCache, mSharedCollectionCacheByPath;
+		var iCount, aKeys, sPath, oSharedCollectionCache, mSharedCollectionCacheByPath;
 
 		if (bSharedRequest) {
 			sPath = sResourcePath
@@ -2720,6 +2727,22 @@ sap.ui.define([
 			if (oSharedCollectionCache) {
 				oSharedCollectionCache.setActive(true);
 			} else {
+				// remove inactive caches when there are already more than 100 caches in the map
+				aKeys = Object.keys(mSharedCollectionCacheByPath);
+				iCount = aKeys.length;
+				if (iCount > 100) {
+					aKeys.filter(function (sKey) {
+						return !mSharedCollectionCacheByPath[sKey].iActiveUsages;
+					}).sort(function (sKey1, sKey2) {
+						return mSharedCollectionCacheByPath[sKey1].iInactiveSince
+							- mSharedCollectionCacheByPath[sKey2].iInactiveSince;
+					}).every(function (sKey) {
+						delete mSharedCollectionCacheByPath[sKey];
+						iCount -= 1;
+						return iCount > 100;
+					});
+				}
+
 				oSharedCollectionCache = mSharedCollectionCacheByPath[sPath]
 					= new CollectionCache(oRequestor, sResourcePath, mQueryOptions,
 						bSortExpandSelect, sDeepResourcePath, bSharedRequest);
