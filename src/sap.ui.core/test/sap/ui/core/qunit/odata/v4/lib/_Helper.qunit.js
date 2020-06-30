@@ -1879,16 +1879,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("publicClone:", function (assert) {
-		var fnCloneMock = this.mock(_Helper).expects("clone")
+		var oCloneMock = this.mock(_Helper).expects("clone")
 				.withExactArgs("~value~", sinon.match.func),
 			fnReplacer;
 
-		fnCloneMock.returns("~clone~");
+		oCloneMock.returns("~clone~");
 
 		// code under test
 		assert.strictEqual(_Helper.publicClone("~value~"), "~clone~");
 
-		fnReplacer = fnCloneMock.getCall(0).args[1];
+		fnReplacer = oCloneMock.getCall(0).args[1];
 
 		// Check:
 		//   - sKey === "@$ui5._" => fnReplacer(sKey, vValue) === undefined for each vValue
