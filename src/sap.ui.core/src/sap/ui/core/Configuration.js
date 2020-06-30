@@ -288,18 +288,12 @@ sap.ui.define([
 				}
 			}
 
-			// 1. collect the defaults
+			// collect the defaults
 			for ( var n in M_SETTINGS ) {
 				config[n] = M_SETTINGS[n].defaultValue;
 			}
 
-			// 2. read server wide sapui5 configuration
-			/* TODO: RETHINK server wide sapui5 configuration to make it optional
-					 currently it is forcing a request which is annoying customers :
-					   - Think about an option which enables loading of server wide config!
-			 */
-
-			// 3.-5. apply settings from global config object (already merged with script tag attributes)
+			// apply settings from global config object (already merged with script tag attributes)
 			var oCfg = window["sap-ui-config"] || {};
 			oCfg.oninit = oCfg.oninit || oCfg["evt-oninit"];
 			for (var n in M_SETTINGS) {
@@ -335,7 +329,7 @@ sap.ui.define([
 				this._compatversion[n] = _getCVers(n);
 			}
 
-			// 6. apply the settings from the url (only if not blocked by app configuration)
+			// apply the settings from the url (only if not blocked by app configuration)
 			if ( !config.ignoreUrlParams ) {
 				var sUrlPrefix = "sap-ui-";
 				var oUriParams = UriParameters.fromQuery(window.location.search);
