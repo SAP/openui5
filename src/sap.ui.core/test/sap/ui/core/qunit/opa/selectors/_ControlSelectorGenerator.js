@@ -2,7 +2,6 @@
 sap.ui.define([
     "sap/ui/test/selectors/_ControlSelectorGenerator",
     "sap/ui/test/selectors/_ControlSelectorValidator",
-    "sap/ui/thirdparty/jquery",
     "sap/m/Text",
     "sap/m/App",
     "sap/m/ToggleButton",
@@ -21,7 +20,7 @@ sap.ui.define([
     "sap/ui/test/selectors/_BindingPath",
     "sap/ui/test/selectors/_Properties",
     "sap/ui/test/selectors/_DropdownItem"
-], function (_ControlSelectorGenerator, _ControlSelectorValidator, $, Text, App, ToggleButton, Bar, Page,
+], function (_ControlSelectorGenerator, _ControlSelectorValidator, Text, App, ToggleButton, Bar, Page,
         JSONModel, List, CustomListItem, HBox, Link, _ControlFinder) {
     "use strict";
 

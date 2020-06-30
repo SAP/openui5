@@ -1,13 +1,12 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	'sap/ui/test/matchers/Interactable',
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'sap/m/Button',
 	'sap/m/NavContainer',
 	'sap/m/App',
 	'sap/m/Page',
 	'sap/m/Dialog',
-	'sap/m/Toolbar',
 	'sap/ui/test/opaQunit',
 	'sap/ui/test/Opa5',
 	'sap/ui/test/_LogCollector',
@@ -19,15 +18,14 @@ sap.ui.define([
 			 App,
 			 Page,
 			 Dialog,
-			 Toolbar,
 			 opaTest,
 			 Opa5,
 			 _LogCollector) {
 	"use strict";
 
-	[NavContainer, App].forEach(function (fnConstructor) {
+	[NavContainer, App].forEach(function (FnConstructor) {
 
-		QUnit.module("Matching in a :" + fnConstructor.getMetadata().getName(), {
+		QUnit.module("Matching in a :" + FnConstructor.getMetadata().getName(), {
 			beforeEach: function () {
 				this.oInitialPageButton = new Button();
 				this.oSecondPageButton = new Button();
@@ -37,7 +35,7 @@ sap.ui.define([
 				this.oSecondPage = new Page({
 					content: this.oSecondPageButton
 				});
-				this.oNavContainer = new fnConstructor({
+				this.oNavContainer = new FnConstructor({
 					pages: [oInitialPage, this.oSecondPage]
 				}).placeAt("qunit-fixture");
 
@@ -166,6 +164,7 @@ sap.ui.define([
 		// Arrange
 		var fnStart = assert.async();
 		var bResultAfterOpenEvent;
+		var bResultAfterClosingImmediately;
 
 		// Act
 		var bResultBeforeOpening = this.oInteractable.isMatching(this.oButtonInPage);
@@ -191,7 +190,7 @@ sap.ui.define([
 		// close immediately
 		// sometimes opa tests close and open dialogs very fast so we need this check here
 		this.oDialog.close();
-		var bResultAfterClosingImmediately = this.oInteractable.isMatching(this.oButtonInPage);
+		bResultAfterClosingImmediately = this.oInteractable.isMatching(this.oButtonInPage);
 
 	});
 
@@ -264,7 +263,7 @@ sap.ui.define([
 		});
 	});
 
-	jQuery(function () {
+	$(function () {
 		// open a dialog and destroy it because it introduces a singleton global in IE
 		new Dialog().open().destroy();
 		// start after dom is ready

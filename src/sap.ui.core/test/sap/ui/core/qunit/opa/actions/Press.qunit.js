@@ -137,7 +137,6 @@ function(Press,
 			var oControl = oTestCase.control;
 			aControlsToClean.push(oControl);
 			oControl.placeAt("qunit-fixture");
-
 			//Make sure that the control is rendered
 			sap.ui.getCore().applyChanges();
 

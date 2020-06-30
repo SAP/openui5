@@ -188,11 +188,19 @@ sap.ui.define([
 					"samples" : "test-resources/sap/ui/core/samples/"
 				}
 			},
-			sinon: {
-				version: 1,
-				qunitBridge: true
-			},
 			module: "./launchers/componentLauncher.qunit"
+		},
+		"launchers/iFrameLauncher": {
+			title: "QUnit Page for sap.ui.test.launchers.iFrameLauncher",
+			loader: {
+				paths: {
+					"fixture": "test-resources/sap/ui/core/qunit/opa/fixture/"
+				}
+			},
+			qunit: {
+				noglobals: false
+			},
+			module: "./launchers/iFrameLauncher.qunit"
 		},
 		"matchers/AggregationContainsPropertyEquals": {
 			title: "QUnit Page for sap.ui.test.matchers.AggregationContainsPropertyEqual",

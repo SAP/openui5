@@ -1,12 +1,11 @@
 sap.ui.define([
-    'sap/ui/test/matchers/BindingPath',
     'sap/m/List',
     'sap/m/StandardListItem',
     'sap/m/Text',
     'sap/m/Input',
     'sap/ui/layout/VerticalLayout',
     'sap/ui/model/json/JSONModel'
-], function (BindingPath, List, StandardListItem, Text, Input, VerticalLayout, JSONModel) {
+], function (List, StandardListItem, Text, Input, VerticalLayout, JSONModel) {
     "use strict";
 
     var mPropertyData = {

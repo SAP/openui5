@@ -124,8 +124,6 @@ sap.ui.define([
 		 */
 		isMatching: function (oControl) {
 			var bIsMatching;
-			// depend on globally defined Opa5, to avoid circular dependency: opa5 > plugin > matcherfactory > labelfor > opa5
-			var oPlugin = this._getOpaPlugin();
 			var sModelName = this.getModelName();
 			var sLabelText = this.getText();
 			var aParameters = this.getParameters();
@@ -146,9 +144,9 @@ sap.ui.define([
 				return false;
 			}
 
-			var aLabelsInPage = oPlugin.getMatchingControls({
-				controlType: "sap.m.Label",
-				visible: false
+
+			var aLabelsInPage = this._getApplicationWindow().sap.ui.core.Element.registry.filter(function (oElement) {
+				return oElement.getMetadata().getName() === "sap.m.Label";
 			});
 
 			oI18nMatcher.applySettings({

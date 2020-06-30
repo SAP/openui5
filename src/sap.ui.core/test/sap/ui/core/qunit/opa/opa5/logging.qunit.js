@@ -1,25 +1,16 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/test/Opa5",
-	"../utils/loggerInterceptor"
-], function (jQuery, Opa5, loggerInterceptor) {
+	"sap/ui/test/Opa",
+	"sap/ui/test/_LogCollector"
+], function (Opa5, Opa, _LogCollector) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
 		assert.ok(!window["sap-ui-debug"], "Starting the OPA tests in debug mode is not supported since it changes timeouts");
 	});
 
-	// Opa5 needs to be unloaded because we want to intercept the logger
-	jQuery.sap.unloadResources("sap/ui/test/Opa5.js", false, true, true);
-	// Opa has a config inside remembering state
-	jQuery.sap.unloadResources("sap/ui/test/Opa.js", false, true, true);
-	// all modules that save Opa5 inside their closure and modify it need to be unlaoded too!
-	jQuery.sap.unloadResources("sap/ui/test/opaQunit.js", false, true, true);
-
-	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.Opa5")[1]; // [0] is logger for OpaPlugin
-	var Opa5 = sap.ui.test.Opa5;
-	var Opa = sap.ui.test.Opa;
+	var oLogCollector = _LogCollector.getInstance();
 
 	QUnit.module("Logging", {
 		beforeEach: function () {
@@ -46,41 +37,32 @@ sap.ui.define([
 					oOptions.check.apply(this, oOptions);
 				}.bind(this);
 			});
-
-			this.debugSpy = sinon.spy(oLogger, "debug");
 		},
 		afterEach: function () {
 			this.waitForStub.restore();
-			this.debugSpy.restore();
 			this.oView.destroy();
 		}
 	});
 
 	QUnit.test("Should log if a control is not found inside a view", function(assert) {
-		// Arrange
 		new Opa5().waitFor({
 			viewName: "bar",
 			id: "notExistingId"
 		});
 
-		// Act
 		this.check();
 
-		// Assert
-		sinon.assert.calledWith(this.debugSpy, "Found no control with ID 'notExistingId' in view 'bar'");
+		assert.ok(oLogCollector.getAndClearLog().match("Found no control with ID 'notExistingId' in view 'bar'"));
 	});
 
 	QUnit.test("Should log if a view is not found", function(assert) {
-		// Arrange
 		new Opa5().waitFor({
 			viewName: "notExistingView"
 		});
 
-		// Act
 		this.check();
 
-		// Assert
-		sinon.assert.calledWith(this.debugSpy, "Found 0 views with viewName 'notExistingView'");
+		assert.ok(oLogCollector.getAndClearLog().match("Found 0 views with viewName 'notExistingView'"));
 	});
 
 });

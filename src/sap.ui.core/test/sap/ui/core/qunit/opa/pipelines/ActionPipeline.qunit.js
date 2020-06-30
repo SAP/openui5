@@ -1,9 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/test/pipelines/ActionPipeline"
-],
-function($, ActionPipeline){
+], function (ActionPipeline) {
 	"use strict";
 
 	QUnit.module("processing");

@@ -2,9 +2,8 @@
 sap.ui.define([
     "sap/ui/test/selectors/_ControlSelectorGenerator",
     "sap/m/Label",
-    "sap/m/Input",
-    "sap/ui/thirdparty/jquery"
-], function (_ControlSelectorGenerator, Label, Input, $) {
+    "sap/m/Input"
+], function (_ControlSelectorGenerator, Label, Input) {
     "use strict";
 
     QUnit.module("_LabelFor", {
