@@ -3937,7 +3937,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.iCreatedContexts, 1);
 		assert.strictEqual(oBinding.getLength(), 4);
 
-		// avoid "pause on uncaught exception"
+		// avoid "Uncaught (in promise)"
 		oContext.created().catch(function (oError) {
 			assert.ok(oError.canceled, "create promise rejected with 'canceled'");
 		});
