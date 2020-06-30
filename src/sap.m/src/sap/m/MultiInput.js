@@ -1772,8 +1772,6 @@ function(
 		})[0];
 
 		if (oTokenToDelete && oTokenToDelete.getEditable()) {
-			oTokenToDelete = this.removeToken(oTokenToDelete);
-
 			this.fireTokenUpdate({
 				addedTokens : [],
 				removedTokens : [oTokenToDelete],
