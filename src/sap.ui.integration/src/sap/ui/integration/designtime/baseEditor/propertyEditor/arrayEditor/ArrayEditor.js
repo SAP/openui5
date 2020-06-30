@@ -68,6 +68,12 @@ sap.ui.define([
 	 * 	<td><code>true</code></td>
 	 * 	<td>Whether to show the item label in the plain array editor</td>
 	 * </tr>
+	 * <tr>
+	 * 	<td><code>template</code></td>
+	 *  <td><code>object</code></td>
+	 * 	<td><code>{}</code></td>
+	 * 	<td>Editor configurations for the nested editors of each item</td>
+	 * </tr>
 	 * </table>
 	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
@@ -92,6 +98,30 @@ sap.ui.define([
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
+	ArrayEditor.prototype.getConfigMetadata = function () {
+		return Object.assign(
+			{},
+			BasePropertyEditor.prototype.getConfigMetadata.call(this),
+			{
+				allowAddAndRemove: {
+					defaultValue: true
+				},
+				allowSorting: {
+					defaultValue: true
+				},
+				collapsibleItems: {
+					defaultValue: true
+				},
+				showItemLabel: {
+					defaultValue: true
+				},
+				template: {
+					defaultValue: {}
+				}
+			}
+		);
+	};
+
 	ArrayEditor.prototype.init = function () {
 		BasePropertyEditor.prototype.init.apply(this, arguments);
 		this._itemsModel = new JSONModel();
@@ -101,61 +131,59 @@ sap.ui.define([
 			var aValue = oEvent.getParameter("value");
 			var oConfig = this.getConfig();
 
-			if (oConfig.template) {
-				var aItems = [];
-				aValue.forEach(function(oValue, iIndex) {
-					var oValueCopy = deepClone(oValue);
-					var mItem = {
-						itemLabel: oConfig.itemLabel || this.getI18nProperty("BASE_EDITOR.ARRAY.ITEM_LABEL"),
-						index: iIndex,
-						total: aValue.length,
-						properties: Object.keys(oConfig.template).map(function (sKey) {
-							var mTemplate = oConfig.template[sKey];
-							var sPath = iIndex + "/" + mTemplate.path;
-							var vValue = ObjectPath.get(sPath.split("/"), aValue);
+			var aItems = [];
+			aValue.forEach(function(oValue, iIndex) {
+				var oValueCopy = deepClone(oValue);
+				var mItem = {
+					itemLabel: oConfig.itemLabel || this.getI18nProperty("BASE_EDITOR.ARRAY.ITEM_LABEL"),
+					index: iIndex,
+					total: aValue.length,
+					properties: Object.keys(oConfig.template).map(function (sKey) {
+						var mTemplate = oConfig.template[sKey];
+						var sPath = iIndex + "/" + mTemplate.path;
+						var vValue = ObjectPath.get(sPath.split("/"), aValue);
 
-							if (typeof vValue === "undefined") {
-								ObjectPath.set(mTemplate.path.split('/'), deepClone(mTemplate.defaultValue), oValueCopy);
-							}
-
-							return _merge({}, mTemplate, {
-								path: sPath,
-								value: vValue
-							});
-						}, this)
-					};
-
-					var oProxyModel = new JSONModel(oValueCopy);
-					mItem.properties = resolveBinding(
-						mItem.properties,
-						{
-							"": oProxyModel
-						},
-						{
-							"": oProxyModel.getContext("/")
-						},
-						["template", "value", "itemLabel"]
-					);
-					mItem.itemLabel = resolveBinding(
-						{
-							itemLabel: mItem.itemLabel
-						},
-						{
-							"": oProxyModel
-						},
-						{
-							"": oProxyModel.getContext("/")
+						if (typeof vValue === "undefined") {
+							ObjectPath.set(mTemplate.path.split('/'), deepClone(mTemplate.defaultValue), oValueCopy);
 						}
-					).itemLabel || formatMessage(
-						this.getI18nProperty("BASE_EDITOR.ARRAY.NEW_ITEM_LABEL"),
-						[oConfig.addItemLabel || this.getI18nProperty("BASE_EDITOR.ARRAY.ITEM_LABEL")]
-					);
-					oProxyModel.destroy();
-					aItems.push(mItem);
-				}, this);
 
-				this._itemsModel.setData(aItems);
-			}
+						return _merge({}, mTemplate, {
+							path: sPath,
+							value: vValue
+						});
+					}, this)
+				};
+
+				var oProxyModel = new JSONModel(oValueCopy);
+				mItem.properties = resolveBinding(
+					mItem.properties,
+					{
+						"": oProxyModel
+					},
+					{
+						"": oProxyModel.getContext("/")
+					},
+					["template", "value", "itemLabel"]
+				);
+				mItem.itemLabel = resolveBinding(
+					{
+						itemLabel: mItem.itemLabel
+					},
+					{
+						"": oProxyModel
+					},
+					{
+						"": oProxyModel.getContext("/")
+					}
+				).itemLabel || formatMessage(
+					this.getI18nProperty("BASE_EDITOR.ARRAY.NEW_ITEM_LABEL"),
+					[oConfig.addItemLabel || this.getI18nProperty("BASE_EDITOR.ARRAY.ITEM_LABEL")]
+				);
+				oProxyModel.destroy();
+				aItems.push(mItem);
+			}, this);
+
+			this._itemsModel.setData(aItems);
 		}, this);
 	};
 
@@ -164,11 +192,11 @@ sap.ui.define([
 		BasePropertyEditor.prototype.setValue.call(this, aValue);
 	};
 
-	ArrayEditor.prototype.setConfig = function (oConfig) {
-		if (oConfig.collapsibleItems === false) {
+	ArrayEditor.prototype.onBeforeConfigChange = function (oConfig) {
+		if (!oConfig.collapsibleItems) {
 			this.setFragment("sap.ui.integration.designtime.baseEditor.propertyEditor.arrayEditor.ArrayEditorPlain");
 		}
-		BasePropertyEditor.prototype.setConfig.apply(this, arguments);
+		return oConfig;
 	};
 
 	ArrayEditor.prototype.getExpectedWrapperCount = function (aValue) {

@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/integration/designtime/baseEditor/util/createPromise",
 	"sap/base/util/deepClone",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/base/util/each"
 ], function (
 	Control,
 	isTemplate,
@@ -22,7 +23,8 @@ sap.ui.define([
 	ManagedObjectObserver,
 	createPromise,
 	deepClone,
-	deepEqual
+	deepEqual,
+	each
 ) {
 	"use strict";
 
@@ -530,17 +532,59 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * @typedef {object} EditorDefaultConfiguration
+	 * @property {any} defaultValue - The default value
+	 */
+
+	/**
+	 * Method which can be overridden to define the default configuration of a property editor.
+	 * Default config options will be overridden by the property config.
+	 *
+	 * @returns {Object<string, EditorDefaultConfiguration>} Editor config
+	 */
+	BasePropertyEditor.prototype.getConfigMetadata = function () {
+		return {
+			visible: {
+				defaultValue: true
+			}
+		};
+	};
+
 	BasePropertyEditor.prototype.setConfig = function (oConfig) {
 		var oPreviousConfig = this.getConfig();
 
-		if (!deepEqual(oPreviousConfig, oConfig)) {
-			var oNextConfig = _merge({}, oConfig);
+		var oDefaultConfig = {};
+		each(this.getConfigMetadata(), function (sConfigKey, mConfigValue) {
+			oDefaultConfig[sConfigKey] = mConfigValue.defaultValue;
+		});
+
+		var oNextConfig = Object.assign(
+			{},
+			oDefaultConfig,
+			oConfig
+		);
+
+		oNextConfig = this.onBeforeConfigChange(oNextConfig);
+
+		if (!deepEqual(oPreviousConfig, oNextConfig)) {
 			this.setProperty("config", oNextConfig);
 			this.fireConfigChange({
 				previousConfig: oPreviousConfig,
 				config: oNextConfig
 			});
 		}
+	};
+
+	/**
+	 * Hook which is called with the config, merged from editor default config and the property config.
+	 * Can be used to react on the final config or modify it.
+	 *
+	 * @param {object} oConfig - Original config
+	 * @returns {object} Modified config
+	 */
+	BasePropertyEditor.prototype.onBeforeConfigChange = function (oConfig) {
+		return oConfig;
 	};
 
 	BasePropertyEditor.prototype.getI18nProperty = function(sName) {
