@@ -2,32 +2,24 @@
 
 sap.ui.define([
 	"rta/qunit/RtaQunitUtils",
-	"sap/ui/comp/smartform/flexibility/changes/AddFields",
-	"sap/ui/comp/smartform/flexibility/changes/MoveFields",
-	"sap/ui/comp/smartform/flexibility/changes/UnhideControl",
 	// "sap/ui/core/ComponentContainer",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	// "sap/ui/core/UIComponent",
 	// "sap/ui/mdc/TableDelegate",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
-	"sap/ui/fl/changeHandler/MoveControls",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/Change",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
-	AddFields,
-	MoveFields,
-	UnhideControl,
 	// ComponentContainer,
 	JsControlTreeModifier,
 	// UIComponent,
 	// TableDelegate,
 	Applier,
 	Reverter,
-	MoveControls,
 	ChangeRegistry,
 	Condenser,
 	Change,
@@ -144,32 +136,6 @@ sap.ui.define([
 
 	QUnit.module("Condenser with default and smartform changes", {
 		before: function() {
-			UnhideControl.getCondenserInfo = sandbox.stub().callsFake(function(oChange) {
-				return {
-					affectedControl: oChange.getSelector(),
-					classification: sap.ui.fl.condenser.Classification.Reverse,
-					uniqueKey: "visible"
-				};
-			});
-			AddFields.getCondenserInfo = sandbox.stub().callsFake(function(oChange) {
-				return {
-					affectedControl: oChange.getContent().field.selector,
-					classification: sap.ui.fl.condenser.Classification.Create,
-					targetContainer: oChange.getSelector(),
-					targetAggregation: "groupElements",
-					setTargetIndex: function (oChange, iNewTargetIndex) {
-						oChange.getContent().field.index = iNewTargetIndex;
-					},
-					getTargetIndex: function(oChange) {
-						return oChange.getContent().field.index;
-					}
-				};
-			});
-			MoveFields.getCondenserInfo = sandbox.stub().callsFake(function(oChange) {
-				var oCondenserInfo = MoveControls.getCondenserInfo.call(this, oChange);
-				oCondenserInfo.targetAggregation = "groupElements";
-				return oCondenserInfo;
-			});
 			return RtaQunitUtils.renderTestAppAtAsync("qunit-fixture").then(function(oComp) {
 				oAppComponent = oComp.getComponentInstance();
 			});
