@@ -305,7 +305,7 @@ function(
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
 			sandbox.stub(this.oRta, "canUndo").returns(true);
 
-			assert.equal(this.oRta._isDraftAvailable(), true, "then the 'isDraftAvailable' is true");
+			assert.equal(this.oRta._isDraftAvailable(), false, "then the 'isDraftAvailable' is false");
 		});
 
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the manifest of an app is not supported", function(assert) {
@@ -1643,12 +1643,13 @@ function(
 
 		QUnit.test("when versioning is enabled and a draft is present", function(assert) {
 			this.oRta._bVersioningEnabled = true;
-			this.oRta.bInitialDraftAvailable = true;
+			var oIsDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 			var oSetDraftEnabledSpy = sandbox.spy(this.oRta.getToolbar(), "setDraftEnabled");
 			var oSetVersionLabelAccentColorSpy = sandbox.spy(this.oRta.getToolbar(), "setVersionLabelAccentColor");
 			var oSetVersionLabelSpy = sandbox.spy(this.oRta, "_setVersionLabel");
 			var oHandleVersionToolbarSpy = sandbox.spy(this.oRta, "_handleVersionToolbar");
 			this.oRta._onStackModified(this.oRta.getFlexSettings());
+			assert.equal(oIsDraftAvailableStub.callCount, 1, "isDraftAvailable was called");
 			assert.equal(oSetDraftEnabledSpy.callCount, 1, "the draft visibility was set");
 			assert.equal(oSetDraftEnabledSpy.getCall(0).args[0], true, "to true");
 			assert.equal(oSetVersionLabelAccentColorSpy.callCount, 1, "setVersionLabelAccentColor was set");
@@ -1698,25 +1699,6 @@ function(
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when the draft is activated success", function (assert) {
-			var done = assert.async();
-			var sVersionTitle = "VersionTitle";
-			var oEvent = {
-				versionTitle: sVersionTitle
-			};
-			sandbox.stub(VersionsAPI, "activateDraft").callsFake(function (mPropertyBag) {
-				assert.equal(Object.keys(mPropertyBag).length, 3, "three parameters were passed");
-				assert.equal(mPropertyBag.selector, this.oRootControl, "the selector was passed correctly");
-				assert.equal(mPropertyBag.layer, Layer.CUSTOMER, "the layer was passed correctly");
-				assert.equal(mPropertyBag.title, sVersionTitle, "the title was passed correctly");
-
-				done();
-			}.bind(this));
-			sandbox.stub(this.oRta, "_handleVersionToolbar").returns(true);
-
-			this.oRta.getToolbar().fireEvent("activateDraft", oEvent);
-		});
-
 		QUnit.test("when the draft is activated failed", function (assert) {
 			var done = assert.async();
 			var oEvent = {

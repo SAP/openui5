@@ -748,19 +748,19 @@ function(
 	 */
 	RuntimeAuthoring.prototype._getToolbarButtonsVisibility = function() {
 		return FeaturesAPI.isPublishAvailable().then(function(bIsPublishAvailable) {
-			this.bInitialDraftAvailable = this._isDraftAvailable();
 			var bIsAppVariantSupported = RtaAppVariantFeature.isPlatFormEnabled(this.getRootControlInstance(), this.getLayer(), this._oSerializer);
 			var bPublishAppVariantSupported = bIsPublishAvailable && bIsAppVariantSupported;
 			return {
 				publishAvailable: bIsPublishAvailable,
 				publishAppVariantSupported: bPublishAppVariantSupported,
-				draftAvailable: this.bInitialDraftAvailable
+				draftAvailable: this._isDraftAvailable()
 			};
 		}.bind(this));
 	};
 
 	RuntimeAuthoring.prototype._handleVersionToolbar = function(bCanUndo) {
-		var bDraftEnabled = this.bInitialDraftAvailable || bCanUndo; // ask FL if there is a draft
+		//TODO Find out how to check for dirtyChanges on FL side on creation because they are not yet in the ChangePersistence (async)
+		var bDraftEnabled = bCanUndo || this._isDraftAvailable();
 		this.getToolbar().setDraftEnabled(bDraftEnabled);
 		return this._setVersionLabel(bDraftEnabled);
 	};
@@ -796,15 +796,13 @@ function(
 		return this.getToolbar().setVersionLabel(sLabel);
 	};
 
-	RuntimeAuthoring.prototype._isDraftAvailable = function() { // TODO VersionsAPI
+	RuntimeAuthoring.prototype._isDraftAvailable = function() {
 		if (this._bVersioningEnabled) {
-			var bDraftAvailable = VersionsAPI.isDraftAvailable({
+			return VersionsAPI.isDraftAvailable({
 				selector: this.getRootControlInstance(),
 				layer: this.getLayer()
 			});
-			return bDraftAvailable || this.canUndo(); // TODO Versions.getVersions needs to know if a dirty change was made
 		}
-
 		return false;
 	};
 
@@ -875,7 +873,7 @@ function(
 			this.getToolbar().setUndoRedoEnabled(bCanUndo, bCanRedo);
 			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled || bCanUndo);
 			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled || bCanUndo);
-			if (this._bVersioningEnabled) { // TODO move to fl
+			if (this._bVersioningEnabled) {
 				this._handleVersionToolbar(bCanUndo);
 			}
 		}
@@ -1041,18 +1039,17 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._onActivateDraft = function(oEvent) {
-		return this._serializeAndSave()
-		.then(
-			VersionsAPI.activateDraft.bind(undefined, {
-				layer: this.getLayer(),
-				selector: this.getRootControlInstance(),
-				title: oEvent.getParameter("versionTitle")
-			})
-		).then(function () {
+		var sLayer = this.getLayer();
+		var oSelector = this.getRootControlInstance();
+		return VersionsAPI.activateDraft({
+			layer: sLayer,
+			selector: oSelector,
+			title: oEvent.getParameter("versionTitle")
+		}).then(function () {
 			this._showMessageToast("MSG_DRAFT_ACTIVATION_SUCCESS");
-			this.bInitialDraftAvailable = false;
 			this.bInitialResetEnabled = true;
 			this.getToolbar().setRestoreEnabled(true);
+			this.getCommandStack().removeAllCommands();
 			return this._handleVersionToolbar(false);
 		}.bind(this))
 		.catch(function (oError) {
@@ -1072,7 +1069,8 @@ function(
 			this.getCommandStack().removeAllCommands();
 			return this._triggerHardReload(oReloadInfo);
 		}
-		var mParsedHash = this._removeVersionParameterForFLP(FlexUtils.getParsedURLHash());
+		var bTriggerReload = true;
+		var mParsedHash = this._removeVersionParameterForFLP(FlexUtils.getParsedURLHash(), bTriggerReload);
 		this.getCommandStack().removeAllCommands();
 		this._triggerCrossAppNavigation(mParsedHash);
 		return this.stop(true, true);
@@ -1542,7 +1540,7 @@ function(
 		}
 	};
 
-	RuntimeAuthoring.prototype._removeVersionParameterForFLP = function(mParsedHash) {
+	RuntimeAuthoring.prototype._removeVersionParameterForFLP = function(mParsedHash, bTriggerReload) {
 		var sLayer = this.getLayer();
 		if (sLayer === Layer.USER) {
 			return mParsedHash;
@@ -1556,10 +1554,12 @@ function(
 			remove it on exit again to trigger the CrossAppNavigation
 			*/
 			delete mParsedHash.params[LayerUtils.FL_VERSION_PARAM];
-		} else if (this._isDraftAvailable()) { // only add the version = false flag when versioning and draft is available
+		} else if (this._isDraftAvailable() || bTriggerReload /* for discard of dirty changes */) {
 			/*
 			In case we entered RTA without a draft and created dirty changes,
-			we need to add sap-ui-fl-version=false, to trigger the CrossAppNavigation on exit.
+			we need to add sap-ui-fl-version=false, to trigger the CrossAppNavigation on
+			Reason 1: Exit
+			Reason 2: Discard
 			*/
 			mParsedHash.params[LayerUtils.FL_VERSION_PARAM] = ["false"];
 		}

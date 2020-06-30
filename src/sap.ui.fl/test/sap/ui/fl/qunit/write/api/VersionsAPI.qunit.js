@@ -26,6 +26,21 @@ sap.ui.define([
 
 
 	QUnit.module("Given VersionsAPI.isDraftAvailable is called", {
+		before: function() {
+			this.oAppComponent = {
+				getManifest: function () {
+					return {};
+				},
+				getId: function () {
+					return "sComponentId";
+				},
+				getComponentData: function () {
+					return {
+						startupParameters: ["sap-app-id"]
+					};
+				}
+			};
+		},
 		afterEach: function() {
 			sandbox.restore();
 		}
@@ -73,7 +88,8 @@ sap.ui.define([
 				selector: new Control()
 			};
 
-			sandbox.stub(Utils, "getComponentClassName").returns("com.sap.app");
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var aReturnedVersions = [
 				{versionNumber: 1},
 				{versionNumber: 2},
@@ -90,7 +106,8 @@ sap.ui.define([
 				selector: new Control()
 			};
 
-			sandbox.stub(Utils, "getComponentClassName").returns("com.sap.app");
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var aReturnedVersions = [
 				{versionNumber: 1},
 				{versionNumber: 2}
@@ -102,6 +119,21 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given VersionsAPI.getVersions is called", {
+		before: function() {
+			this.oAppComponent = {
+				getManifest: function () {
+					return {};
+				},
+				getId: function () {
+					return "sComponentId";
+				},
+				getComponentData: function () {
+					return {
+						startupParameters: ["sap-app-id"]
+					};
+				}
+			};
+		},
 		afterEach: function() {
 			sandbox.restore();
 		}
@@ -147,7 +179,8 @@ sap.ui.define([
 				selector: new Control()
 			};
 
-			sandbox.stub(Utils, "getComponentClassName").returns("com.sap.app");
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var aReturnedVersions = [];
 			sandbox.stub(Versions, "getVersions").returns(aReturnedVersions);
 
@@ -156,6 +189,21 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given VersionsAPI.loadDraftForApplication is called", {
+		before: function() {
+			this.oAppComponent = {
+				getManifest: function () {
+					return {};
+				},
+				getId: function () {
+					return "sComponentId";
+				},
+				getComponentData: function () {
+					return {
+						startupParameters: ["sap-app-id"]
+					};
+				}
+			};
+		},
 		afterEach: function() {
 			sandbox.restore();
 		}
@@ -191,7 +239,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a selector and a layer were provided and the request returns a list of versions", function (assert) {
-			var sComponentId = "comSapApp";
+			var sComponentId = "sComponentId";
 			var sLayer = Layer.CUSTOMER;
 			var mPropertyBag = {
 				layer : sLayer,
@@ -201,12 +249,8 @@ sap.ui.define([
 			};
 
 			var sReference = "com.sap.app";
-			sandbox.stub(Utils, "getComponentClassName").returns(sReference);
-			sandbox.stub(Utils, "getAppComponentForControl").returns({
-				getId: function () {
-					return sComponentId;
-				}
-			});
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
 			var aReturnedVersions = [];
 			var oClearAndInitializeStub = sandbox.stub(FlexState, "clearAndInitialize").resolves(aReturnedVersions);
 
@@ -278,7 +322,7 @@ sap.ui.define([
 				selector: new Control(),
 				title: "new Title"
 			};
-			sandbox.stub(ManifestUtils, "getFlexReference").returns(undefined);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(undefined);
 
 			return VersionsAPI.activateDraft(mPropertyBag).catch(function (sErrorMessage) {
 				assert.equal(sErrorMessage, "The application ID could not be determined", "then an Error is thrown");
