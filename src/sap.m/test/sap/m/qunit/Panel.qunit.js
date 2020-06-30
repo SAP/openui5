@@ -726,6 +726,11 @@ sap.ui.define([
 			sPanelHeaderId = this.oPanel.getId() + '-header';
 
 		assert.strictEqual($panel.attr("aria-labelledby"), sPanelHeaderId, "should have a labelledby reference to the header");
+
+		this.oPanel.setExpandable(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk($panel.attr("aria-labelledby"), "should not have a labelledby reference to the header, when there is no headerToolbar");
 	});
 
 	QUnit.test("Panel with header text and header toolbar", function(assert) {
@@ -742,13 +747,10 @@ sap.ui.define([
 				expandable: true,
 				accessibleRole: PanelAccessibleRole.Region
 			}),
-			sPanelHeaderId = oPanel.getId() + '-header',
 			sHeaderToolbarTitleId, sNewHeaderToolbarTitleId;
 
 		oPanel.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-
-		assert.strictEqual(oPanel.$().attr("aria-labelledby"), sPanelHeaderId, "should have a labelledby reference to the header");
 
 		oPanel.setAggregation("headerToolbar", this.createToolbar());
 		sap.ui.getCore().applyChanges();

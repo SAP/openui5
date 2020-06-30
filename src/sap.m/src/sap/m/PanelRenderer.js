@@ -35,7 +35,10 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 	};
 
 	PanelRenderer.startPanel = function (oRm, oControl) {
-		var bIsExpandable = oControl.getExpandable();
+		var bIsExpandable = oControl.getExpandable(),
+			oAccAttributes = {
+				role: oControl.getAccessibleRole().toLowerCase()
+			};
 
 		oRm.openStart("div", oControl);
 		oRm.class("sapMPanel");
@@ -46,10 +49,16 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 
 		oRm.style("width", oControl.getWidth());
 		oRm.style("height", oControl.getHeight());
-		oRm.accessibilityState(oControl, {
-			role: oControl.getAccessibleRole().toLowerCase(),
-			labelledby: oControl._getLabellingElementId()
-		});
+
+		// add an aria-labelledby refence to the header, only when a headerToolbar is provided
+		// or the control is not expandable
+		// since in the default case, the focus is on the header
+		// and the header would be read out twice
+		if (oControl.getHeaderToolbar() || !bIsExpandable) {
+			oAccAttributes.labelledby = oControl._getLabellingElementId();
+		}
+
+		oRm.accessibilityState(oControl, oAccAttributes);
 		oRm.openEnd();
 	};
 
