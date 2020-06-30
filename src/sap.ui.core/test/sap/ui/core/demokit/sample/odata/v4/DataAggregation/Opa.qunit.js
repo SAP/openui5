@@ -19,8 +19,7 @@ sap.ui.getCore().attachInit(function () {
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.DataAggregation");
 
 		//*****************************************************************************
-		opaTest("Start data aggregation app, expand a subtotal node", function (Given, When, Then) {
-
+		opaTest("Start data aggregation app, expand to node level 4 with paging", function (Given, When, Then) {
 			When.onAnyPage.applySupportAssistant();
 			Given.iStartMyUIComponent({
 				autoWait : true,
@@ -29,158 +28,205 @@ sap.ui.getCore().attachInit(function () {
 				}
 			});
 
-			// TODO $count
-
 			Then.onTheMainPage.checkTable([{
 					level : 1,
 					expanded : false,
 					subtotal : true,
-					region : "West",
+					country : "United Kingdom",
+					region : "",
+					segment : "",
 					accountResponsible : ""
 				}, {
 					level : 1,
 					expanded : false,
 					subtotal : true,
-					region : "Wales",
+					country : "USA",
+					region : "",
+					segment : "",
 					accountResponsible : ""
-			}]);
+				}, {
+					level : 1,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "",
+					segment : "",
+					accountResponsible : ""
+				}]);
 
-			// expand the first row
-			When.onTheMainPage.pressExpandInRow(0);
+			When.onTheMainPage.pressExpandInRow(2,"Expand Germany.");
 			Then.onTheMainPage.checkTable([{
+					level : 1,
+					expanded : false,
+					subtotal : true,
+					country : "United Kingdom",
+					region : "",
+					segment : "",
+					accountResponsible : ""
+				}, {
+					level : 1,
+					expanded : false,
+					subtotal : true,
+					country : "USA",
+					region : "",
+					segment : "",
+					accountResponsible : ""
+				}, {
 					level : 1,
 					expanded : true,
 					subtotal : true,
-					region : "West",
+					country : "Germany",
+					region : "",
+					segment : "",
 					accountResponsible : ""
 				}, {
 					level : 2,
-					expanded : undefined,
-					subtotal : false,
-					region : "West",
-					accountResponsible : "Alexander Fischer"
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Saxony",
+					segment : "",
+					accountResponsible : ""
 				}, {
 					level : 2,
-					expanded : undefined,
-					subtotal : false,
-					region : "West",
-					accountResponsible : "George Meier"
-				}, {
-					level : 2,
-					expanded : undefined,
-					subtotal : false,
-					region : "West",
-					accountResponsible : "Jacky Woo"
-				}, {
-					level : 2,
-					expanded : undefined,
-					subtotal : false,
-					region : "West",
-					accountResponsible : "Lindsey Wang"
-			}]);
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Lower Saxony",
+					segment : "",
+					accountResponsible : ""
+				}]);
 
-			// scroll 2 rows down
-			When.onTheMainPage.scrollToRow(2);
+			When.onTheMainPage.scrollToRow(5, "Scroll to BW with paging.");
 			Then.onTheMainPage.checkTable([{
 					level : 2,
-					expanded : undefined,
-					subtotal : false,
-					region : "West",
-					accountResponsible : "George Meier"
-				}, {
-					level : 2,
-					expanded : undefined,
-					subtotal : false,
-					region : "West",
-					accountResponsible : "Jacky Woo"
-				}, {
-					level : 2,
-					expanded : undefined,
-					subtotal : false,
-					region : "West",
-					accountResponsible : "Lindsey Wang"
-				}, {
-					level : 2,
-					expanded : undefined,
-					subtotal : false,
-					region : "West",
-					accountResponsible : "Samantha Smith"
-				}, {
-					level : 1,
 					expanded : false,
 					subtotal : true,
-					region : "Wales",
-					accountResponsible : ""
-			}]);
-
-			// scroll to the end of the table
-			When.onTheMainPage.scrollToRow(14);
-			Then.onTheMainPage.checkTable([{
-					level : 1,
-					expanded : false,
-					subtotal : true,
-					region : "Greater Manchester",
+					country : "Germany",
+					region : "Hessia",
+					segment : "",
 					accountResponsible : ""
 				}, {
-					level : 1,
+					level : 2,
 					expanded : false,
 					subtotal : true,
-					region : "East",
+					country : "Germany",
+					region : "Hamburg",
+					segment : "",
 					accountResponsible : ""
 				}, {
-					level : 1,
+					level : 2,
 					expanded : false,
 					subtotal : true,
+					country : "Germany",
 					region : "Berlin",
+					segment : "",
 					accountResponsible : ""
 				}, {
-					level : 1,
+					level : 2,
 					expanded : false,
 					subtotal : true,
+					country : "Germany",
 					region : "Bavaria",
+					segment : "",
 					accountResponsible : ""
 				}, {
-					level : 1,
+					level : 2,
 					expanded : false,
 					subtotal : true,
+					country : "Germany",
 					region : "Baden-Württemberg",
+					segment : "",
 					accountResponsible : ""
-			}]);
+				}]);
 
-			// expand the second visible node
-			When.onTheMainPage.pressExpandInRow(15);
+			When.onTheMainPage.pressExpandInRow(9, "Expand BW.");
+			When.onTheMainPage.scrollToRow(8, "Scroll to BW.");
 			Then.onTheMainPage.checkTable([{
-					level : 1,
+					level : 2,
 					expanded : false,
 					subtotal : true,
-					region : "Greater Manchester",
+					country : "Germany",
+					region : "Bavaria",
+					segment : "",
 					accountResponsible : ""
 				}, {
-					level : 1,
+					level : 2,
 					expanded : true,
 					subtotal : true,
-					region : "East",
+					country : "Germany",
+					region : "Baden-Württemberg",
+					segment : "",
 					accountResponsible : ""
 				}, {
-					level : 2,
-					expanded : undefined,
-					subtotal : false,
-					region : "East",
-					accountResponsible : "Evelyn Kim"
+					level : 3,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Baden-Württemberg",
+					segment : "Large",
+					accountResponsible : ""
 				}, {
-					level : 2,
-					expanded : undefined,
-					subtotal : false,
-					region : "East",
-					accountResponsible : "LeeAn Smith"
+					level : 3,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Baden-Württemberg",
+					segment : "Mid-size",
+					accountResponsible : ""
 				}, {
-					level : 2,
-					expanded : undefined,
-					subtotal : false,
-					region : "East",
-					accountResponsible : "Miles David"
-			}]);
+					level : 3,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Baden-Württemberg",
+					segment : "Small",
+					accountResponsible : ""
+				}]);
 
+			When.onTheMainPage.pressExpandInRow(11, "Expand BW-Small.");
+			When.onTheMainPage.scrollToRow(10, "Scroll to BW-Small.");
+			Then.onTheMainPage.checkTable([{
+					level : 3,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Baden-Württemberg",
+					segment : "Large",
+					accountResponsible : ""
+				}, {
+					level : 3,
+					expanded : true,
+					subtotal : true,
+					country : "Germany",
+					region : "Baden-Württemberg",
+					segment : "Mid-size",
+					accountResponsible : ""
+				}, {
+					level : 4,
+					expanded : undefined,
+					subtotal : false,
+					country : "Germany",
+					region : "Baden-Württemberg",
+					segment : "Mid-size",
+					accountResponsible : "Erwin Fischer"
+				}, {
+					level : 4,
+					expanded : undefined,
+					subtotal : false,
+					country : "Germany",
+					region : "Baden-Württemberg",
+					segment : "Mid-size",
+					accountResponsible : "Winfried Maier"
+				}, {
+					level : 3,
+					expanded : false,
+					subtotal : true,
+					country : "Germany",
+					region : "Baden-Württemberg",
+					segment : "Small",
+					accountResponsible : ""
+				}]);
 
 			Then.onAnyPage.checkLog();
 			Then.onAnyPage.analyzeSupportAssistant();

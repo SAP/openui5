@@ -1,0 +1,25 @@
+{
+	"@odata.context": "$metadata#BusinessPartners(Segment,SalesAmount)",
+	"@odata.metadataEtag": "W/\"Duc//nz26REDKz1VewX3aHn97ENagrS7a7IXM958u4s=\"",
+	"@odata.count": 3,
+	"value": [
+		{
+			"@odata.id": null,
+			"Segment": "Large",
+			"SalesAmount@odata.type": "#Decimal",
+			"SalesAmount": 3765323
+		},
+		{
+			"@odata.id": null,
+			"Segment": "Mid-size",
+			"SalesAmount@odata.type": "#Decimal",
+			"SalesAmount": 526122
+		},
+		{
+			"@odata.id": null,
+			"Segment": "Small",
+			"SalesAmount@odata.type": "#Decimal",
+			"SalesAmount": 125093
+		}
+	]
+}

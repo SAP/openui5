@@ -1,0 +1,23 @@
+{
+	"@odata.context": "$metadata#BusinessPartners(AccountResponsible,SalesAmount,SalesNumber)",
+	"@odata.metadataEtag": "W/\"Duc//nz26REDKz1VewX3aHn97ENagrS7a7IXM958u4s=\"",
+	"@odata.count": 2,
+	"value": [
+		{
+			"@odata.id": null,
+			"AccountResponsible": "Erwin Fischer",
+			"SalesAmount@odata.type": "#Decimal",
+			"SalesAmount": 264023,
+			"SalesNumber@odata.type": "#Int32",
+			"SalesNumber": 1822
+		},
+		{
+			"@odata.id": null,
+			"AccountResponsible": "Winfried Maier",
+			"SalesAmount@odata.type": "#Decimal",
+			"SalesAmount": 262099,
+			"SalesNumber@odata.type": "#Int32",
+			"SalesNumber": 1870
+		}
+	]
+}
