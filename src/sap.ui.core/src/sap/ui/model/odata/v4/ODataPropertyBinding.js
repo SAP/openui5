@@ -293,7 +293,7 @@ sap.ui.define([
 				Log.error("Accessed value is not primitive", sResolvedPath, sClassName);
 			}, function (oError) {
 				// do not rethrow, ManagedObject doesn't react on this either
-				// throwing an exception would cause "Uncaught (in promise)" in Chrome
+				// throwing an error would cause "Uncaught (in promise)" in Chrome
 				that.oModel.reportError("Failed to read path " + sResolvedPath, sClassName, oError);
 				if (oError.canceled) { // canceled -> value remains unchanged
 					oCallToken.forceUpdate = false;

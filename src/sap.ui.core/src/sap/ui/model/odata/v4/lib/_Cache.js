@@ -91,7 +91,7 @@ sap.ui.define([
 	 *   path for bound messages; if it is not given or returns nothing, <code>sResourcePath</code>
 	 *   is used instead. See {@link #getOriginalResourcePath}.
 	 * @param {boolean} [bSharedRequest=false]
-	 *   If this parameter is set, the cache is read-only and modifying calls lead to an exception.
+	 *   If this parameter is set, the cache is read-only and modifying calls lead to an error.
 	 *
 	 * @private
 	 */
@@ -1705,7 +1705,7 @@ sap.ui.define([
 	 * @param {string} [sDeepResourcePath=sResourcePath]
 	 *   The deep resource path to be used to build the target path for bound messages
 	 * @param {boolean} [bSharedRequest=false]
-	 *   If this parameter is set, the cache is read-only and modifying calls lead to an exception.
+	 *   If this parameter is set, the cache is read-only and modifying calls lead to an error.
 	 */
 	function CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 			sDeepResourcePath, bSharedRequest) {
@@ -2448,7 +2448,7 @@ sap.ui.define([
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @param {boolean} [bSharedRequest=false]
-	 *   If this parameter is set, the cache is read-only and modifying calls lead to an exception.
+	 *   If this parameter is set, the cache is read-only and modifying calls lead to an error.
 	 * @param {function} [fnGetOriginalResourcePath]
 	 *   A function that returns the cache's original resource path to be used to build the target
 	 *   path for bound messages; if it is not given or returns nothing, <code>sResourcePath</code>
@@ -2708,7 +2708,7 @@ sap.ui.define([
 	 * @param {boolean} [bSharedRequest=false]
 	 *   If this parameter is set, multiple requests for a cache using the same resource path will
 	 *   always return the same, shared cache. This cache is read-only, modifying calls lead to an
-	 *   exception.
+	 *   error.
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 *
@@ -2802,7 +2802,7 @@ sap.ui.define([
 	 * @param {boolean} [bSharedRequest=false]
 	 *   If this parameter is set, multiple requests for a cache using the same resource path might
 	 *   always return the same, shared cache. This cache is read-only, modifying calls lead to an
-	 *   exception.
+	 *   error.
 	 * @param {function} [fnGetOriginalResourcePath]
 	 *   A function that returns the cache's original resource path to be used to build the target
 	 *   path for bound messages; if it is not given or returns nothing, <code>sResourcePath</code>

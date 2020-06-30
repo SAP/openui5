@@ -3849,7 +3849,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestSideEffects: do not stifle exceptions", function (assert) {
+	QUnit.test("requestSideEffects: do not stifle errors", function (assert) {
 		var oBinding = this.bindContext("/Me/name.space.Operation(...)"),
 			oCache = {
 				requestSideEffects : function () {}
