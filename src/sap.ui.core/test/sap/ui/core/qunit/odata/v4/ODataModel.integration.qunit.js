@@ -39,16 +39,15 @@ sap.ui.define([
 		rTransientPredicate = /\(\$uid=[-\w]+\)/g;
 
 	/**
-	 * Creates a V4 OData model for <code>serviceroot.svc</code>
-	 * (com.odata.v4.mathias.BusinessPartnerTest).
+	 * Creates a V4 OData model for data aggregation tests.
 	 *
 	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
 	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
 	 *   synchronizationMode which are set by default
 	 * @returns {ODataModel} The model
 	 */
-	function createBusinessPartnerTestModel(mModelParameters) {
-		return createModel("/serviceroot.svc/", mModelParameters);
+	function createAggregationModel(mModelParameters) {
+		return createModel("/aggregation/", mModelParameters);
 	}
 
 	/**
@@ -96,18 +95,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Creates a V4 OData model for <code>TEA_BUSI</code>.
-	 *
-	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
-	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
-	 *   synchronizationMode which are set by default
-	 * @returns {sap.ui.model.odata.v4.ODataModel} The model
-	 */
-	function createTeaBusiModel(mModelParameters) {
-		return createModel(sTeaBusi, mModelParameters);
-	}
-
-	/**
 	 * Creates a V4 OData model for <code>zui5_epm_sample</code>.
 	 *
 	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
@@ -132,15 +119,15 @@ sap.ui.define([
 	}
 
 	/**
-	 * Creates a V4 OData model for data aggregation tests.
+	 * Creates a V4 OData model for <code>TEA_BUSI</code>.
 	 *
 	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
 	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
 	 *   synchronizationMode which are set by default
-	 * @returns {ODataModel} The model
+	 * @returns {sap.ui.model.odata.v4.ODataModel} The model
 	 */
-	function createAggregationModel(mModelParameters) {
-		return createModel("/aggregation/", mModelParameters);
+	function createTeaBusiModel(mModelParameters) {
+		return createModel(sTeaBusi, mModelParameters);
 	}
 
 	/**
@@ -326,6 +313,8 @@ sap.ui.define([
 
 			// These metadata files are _always_ faked, the query option "realOData" is ignored
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit", {
+				"/aggregation/$metadata"
+					: {source : "odata/v4/data/metadata_aggregation.xml"},
 				"/invalid/model/" : {code : 500},
 				"/invalid/model/$metadata" : {code : 500},
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
@@ -350,8 +339,6 @@ sap.ui.define([
 					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
 				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TYPE_CODE%27/$metadata"
 					: {source : "odata/v4/data/VH_ProductTypeCode.xml"},
-				"/serviceroot.svc/$metadata"
-					: {source : "odata/v4/data/BusinessPartnerTest.metadata.xml"},
 				"/special/cases/$metadata"
 					: {source : "odata/v4/data/metadata_special_cases.xml"},
 				"/special/cases/$metadata?sap-client=123"
@@ -361,9 +348,7 @@ sap.ui.define([
 				"/special/CurrencyCode/$metadata"
 					: {source : "odata/v4/data/metadata_CurrencyCode.xml"},
 				"/special/Price/$metadata"
-					: {source : "odata/v4/data/metadata_Price.xml"},
-				"/aggregation/$metadata"
-					: {source : "odata/v4/data/metadata_aggregation.xml"}
+					: {source : "odata/v4/data/metadata_Price.xml"}
 			});
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
@@ -15123,7 +15108,7 @@ sap.ui.define([
 					"SalesNumber@odata.type" : "#Decimal"
 				},
 				oListBinding,
-				oModel = createBusinessPartnerTestModel({autoExpandSelect : bAutoExpandSelect}),
+				oModel = createAggregationModel({autoExpandSelect : bAutoExpandSelect}),
 				oTable,
 				sView = '\
 <Text id="count" text="{$count}"/>\
@@ -15187,7 +15172,7 @@ sap.ui.define([
 					that.oLogMock.expects("error").withExactArgs(
 						"Failed to drill-down into $count, invalid segment: $count",
 						// Note: toString() shows realistic (first) request w/o skip/top
-						"/serviceroot.svc/" + sBasicPath + "/concat(aggregate(SalesNumber"
+						"/aggregation/" + sBasicPath + "/concat(aggregate(SalesNumber"
 							+ (bCount ? ",$count%20as%20UI5__count" : "") + "),identity)",
 						"sap.ui.model.odata.v4.lib._Cache");
 				}
@@ -15229,7 +15214,7 @@ sap.ui.define([
 					= "BusinessPartners?$apply=groupby((Country,Region),aggregate(SalesNumber))"
 					+ "/filter(SalesNumber%20gt%200)/orderby(Region%20desc)",
 				oListBinding,
-				oModel = createBusinessPartnerTestModel({autoExpandSelect : true}),
+				oModel = createAggregationModel({autoExpandSelect : true}),
 				oTable,
 				aValues = [
 					{Country : "a", Region : "Z", SalesNumber : 1},
@@ -15292,7 +15277,7 @@ sap.ui.define([
 					that.oLogMock.expects("error").withExactArgs(
 						"Failed to drill-down into $count, invalid segment: $count",
 						// Note: toString() shows realistic (first) request w/o skip/top
-						"/serviceroot.svc/" + sBasicPath + "/concat(aggregate(SalesNumber"
+						"/aggregation/" + sBasicPath + "/concat(aggregate(SalesNumber"
 							+ (bCount ? ",$count%20as%20UI5__count" : "") + "),identity)",
 						"sap.ui.model.odata.v4.lib._Cache");
 				}
@@ -15326,7 +15311,7 @@ sap.ui.define([
 	// but a grand total row using with/as (CPOUI5UISERVICESV3-1418)
 	QUnit.test("Data Aggregation: $$aggregation grandTotal w/o groupLevels using with/as",
 			function (assert) {
-		var oModel = createBusinessPartnerTestModel({autoExpandSelect : true}),
+		var oModel = createAggregationModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table rows="{path : \'/BusinessPartners\',\
 		parameters : {\
@@ -15402,7 +15387,7 @@ sap.ui.define([
 	QUnit.test("API calls before binding is resolved", function (assert) {
 		var that = this;
 
-		return this.createView(assert, "", createBusinessPartnerTestModel()).then(function () {
+		return this.createView(assert, "", createAggregationModel()).then(function () {
 			var oListBinding = that.oModel.bindList("BusinessPartners");
 
 			// code under test
@@ -15448,7 +15433,7 @@ sap.ui.define([
 	// - those filters that must be applied after aggregating
 	// JIRA: CPOUI5ODATAV4-119
 	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _AggregationCache", function (assert) {
-		var oModel = createBusinessPartnerTestModel({autoExpandSelect : true}),
+		var oModel = createAggregationModel({autoExpandSelect : true}),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
@@ -15487,7 +15472,7 @@ sap.ui.define([
 	// - those filters that must be applied after aggregating
 	// JIRA: CPOUI5ODATAV4-119
 	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _Cache.CollectionCache", function (assert) {
-		var oModel = createBusinessPartnerTestModel({autoExpandSelect : true}),
+		var oModel = createAggregationModel({autoExpandSelect : true}),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
