@@ -3823,10 +3823,8 @@ sap.ui.define([
 	QUnit.test("CollectionCache", function (assert) {
 		var oCache;
 
-		this.mock(_Cache.prototype).expects("setQueryOptions")
-			.withExactArgs(sinon.match.same("resource/path"));
-		this.mock(_Cache.prototype).expects("setResourcePath")
-			.withExactArgs("resource/path")
+		this.mock(_Cache.prototype).expects("setQueryOptions").withExactArgs("resource/path");
+		this.mock(_Cache.prototype).expects("setResourcePath").withExactArgs("resource/path")
 			.callsFake(function () {
 				assert.notOk(this.bSharedRequest, "must not have been set yet");
 			});
