@@ -4165,7 +4165,6 @@ sap.ui.define([
 							<FlexBox id="valueHelp">\
 								<SearchField \
 									value="{vh>Parameters/0/LocalDataProperty@@format}" />\
-								<Table />\
 							</FlexBox>\
 					</template:with>\
 			</template:with>\
@@ -4182,7 +4181,6 @@ sap.ui.define([
 			<SearchField value="{path:\'_it/lastUsedChannel\'\
 				,type:\'sap.ui.model.odata.type.String\'\
 				,formatOptions:{\'parseKeepsEmptyString\':true}}" />\
-			<Table />\
 		</FlexBox>\
 	</FlexBox>\
 </FlexBox>');
@@ -5649,7 +5647,7 @@ sap.ui.define([
 			} else if (i === 1) {
 				that.oModel.resetChanges();
 			} else if (i === 2) {
-				return oCreatedContext.delete("$auto");
+				return oCreatedContext.delete();
 			}
 		}
 
@@ -5790,7 +5788,7 @@ sap.ui.define([
 
 			return Promise.all([
 				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
-				oCreatedContext1.delete("$auto"),
+				oCreatedContext1.delete(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -6018,7 +6016,7 @@ sap.ui.define([
 
 			return Promise.all([
 				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
-				oCreatedContext1.delete("$auto"),
+				oCreatedContext1.delete(),
 				that.waitForChanges(assert, "", true)
 			]);
 		}).then(function () {
@@ -6832,7 +6830,7 @@ sap.ui.define([
 
 			return Promise.all([
 				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
-				oCreatedContext1.delete("$auto"),
+				oCreatedContext1.delete(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -7478,7 +7476,7 @@ sap.ui.define([
 			return Promise.all([
 				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */
 				}),
-				oCreatedContext1.delete("$auto"),
+				oCreatedContext1.delete(),
 				that.waitForChanges(assert, "", true)
 			]);
 		}).then(function () {
@@ -9438,7 +9436,7 @@ sap.ui.define([
 				// code under test
 				oPromise = bUseReset
 					? oTeam2EmployeesBinding.resetChanges()
-					: oNewContext.delete("$direct");
+					: oNewContext.delete();
 
 				assert.notOk(oTeam2EmployeesBinding.hasPendingChanges(), "no pending changes");
 				assert.notOk(oTeamBinding.hasPendingChanges(), "parent has no pending changes");
@@ -23332,7 +23330,7 @@ sap.ui.define([
 
 			// delete creation row to avoid errors in destroy
 			oCreationRowContext.created().catch(function () {/* avoid "Uncaught (in promise)" */});
-			oCreationRowContext.delete("$auto");
+			oCreationRowContext.delete();
 		});
 	});
 
@@ -23713,7 +23711,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// cleanup: delete creation row to avoid error on view destruction
-				oCreationRowContext.delete("$auto"),
+				oCreationRowContext.delete(),
 				oCreationRowContext.created()
 					.catch(function () {/* avoid "Uncaught (in promise)" */}),
 				that.waitForChanges(assert)
@@ -23848,7 +23846,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// cleanup: delete creation row to avoid error on view destruction
-				oCreationRowContext.delete("$auto"),
+				oCreationRowContext.delete(),
 				oCreationRowContext.created()
 					.catch(function () {/* avoid "Uncaught (in promise)" */}),
 				that.waitForChanges(assert)

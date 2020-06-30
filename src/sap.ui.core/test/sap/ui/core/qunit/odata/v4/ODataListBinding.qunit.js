@@ -3365,7 +3365,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("create: callbacks and eventing", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES", null, null, null, {$$updateGroupId : "update"}),
+		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
 			oContext0,
 			oContext1,
@@ -3380,7 +3380,7 @@ sap.ui.define([
 			oPromise;
 
 		oLockGroupExpectation = oBindingMock.expects("lockGroup")
-			.withExactArgs("update", true, true, sinon.match.func)
+			.withExactArgs(undefined, true, true, sinon.match.func)
 			.returns(oGroupLock0);
 		oBindingMock.expects("fetchResourcePath").withExactArgs().returns(oCreatePathPromise);
 		oCreateInCacheExpectation = oBindingMock.expects("createInCache")
@@ -3398,7 +3398,7 @@ sap.ui.define([
 		assert.strictEqual(oContext0.iIndex, -1);
 
 		oBindingMock.expects("lockGroup")
-			.withExactArgs("update", true, true, sinon.match.func)
+			.withExactArgs(undefined, true, true, sinon.match.func)
 			.returns(oGroupLock1);
 		oBindingMock.expects("fetchResourcePath").withExactArgs().returns(oCreatePathPromise);
 		oBindingMock.expects("createInCache")
@@ -3460,22 +3460,18 @@ sap.ui.define([
 	//*********************************************************************************************
 	[{
 		sGroupId : "$auto",
-		sTitle : "create: absolute",
-		sUpdateGroupId : "update"
+		sTitle : "create: absolute"
 	}, {
 		sGroupId : "$auto",
 		oInitialData : {},
-		sTitle : "create: absolute, with initial data",
-		sUpdateGroupId : "$direct"
+		sTitle : "create: absolute, with initial data"
 	}, {
 		sGroupId : "deferred",
 		bRelative : true,
-		sTitle : "create: relative with base context",
-		sUpdateGroupId : "$auto"
+		sTitle : "create: relative with base context"
 	}, {
 		sGroupId : "$direct",
-		sTitle : "create: absolute with groupId=$direct",
-		sUpdateGroupId : "$auto"
+		sTitle : "create: absolute with groupId=$direct"
 	}].forEach(function (oFixture) {
 		QUnit.test(oFixture.sTitle, function (assert) {
 			var oBinding,
@@ -3527,9 +3523,8 @@ sap.ui.define([
 				oModelMock.expects("isAutoGroup")
 					.exactly(oFixture.sGroupId === "$direct" ? 0 : 1)
 					.returns(oFixture.sGroupId === "$auto");
-				oBindingMock.expects("getUpdateGroupId").returns(oFixture.sUpdateGroupId);
 				oBindingMock.expects("lockGroup")
-					.withExactArgs(oFixture.sUpdateGroupId, true, true, sinon.match.func)
+					.withExactArgs(undefined, true, true, sinon.match.func)
 					.returns(oGroupLock);
 				oBindingMock.expects("fetchResourcePath").withExactArgs()
 					.returns(oCreatePathPromise);
@@ -3627,7 +3622,8 @@ sap.ui.define([
 				oRefreshedEntity = {},
 				that = this;
 
-			oBindingMock.expects("lockGroup").withExactArgs("$auto", true, true,  sinon.match.func)
+			oBindingMock.expects("lockGroup")
+				.withExactArgs(undefined, true, true,  sinon.match.func)
 				.returns(oGroupLock0);
 			oBindingMock.expects("fetchResourcePath").withExactArgs().returns(oCreatePathPromise);
 			oBindingMock.expects("createInCache")
@@ -3702,9 +3698,8 @@ sap.ui.define([
 				.withExactArgs()
 				.returns(oCreatePathPromise);
 			oBindingMock.expects("checkSuspended").withExactArgs().twice();
-			oBindingMock.expects("getUpdateGroupId").returns("updateGroup");
 			oBindingMock.expects("lockGroup")
-				.withExactArgs("updateGroup", true, true, sinon.match.func)
+				.withExactArgs(undefined, true, true, sinon.match.func)
 				.returns(oCreateGroupLock);
 			oBindingMock.expects("createInCache")
 				.withExactArgs(sinon.match.same(oCreateGroupLock),
@@ -3791,8 +3786,7 @@ sap.ui.define([
 			oGroupLock = {unlock : function () {}},
 			oInitialData = {};
 
-		oBindingMock.expects("getUpdateGroupId").returns("update");
-		oBindingMock.expects("lockGroup").withExactArgs("update", true, true, sinon.match.func)
+		oBindingMock.expects("lockGroup").withExactArgs(undefined, true, true, sinon.match.func)
 			.returns(oGroupLock);
 		oBindingMock.expects("fetchResourcePath").withExactArgs().returns(oCreatePathPromise);
 		oBindingMock.expects("createInCache")
@@ -3822,15 +3816,13 @@ sap.ui.define([
 		[true, undefined]
 	].forEach(function (aAtEnd, i) {
 		QUnit.test("create: bAtEnd #" + i, function (assert) {
-			var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
-					$$updateGroupId : "update"
-				}),
+			var oBinding = this.bindList("/EMPLOYEES"),
 				oGroupLock = {};
 
 			oBinding.bLengthFinal = true;
 			oBinding.iMaxLength = 0;
 			this.mock(oBinding).expects("lockGroup")
-				.withExactArgs("update", true, true, sinon.match.func)
+				.withExactArgs(undefined, true, true, sinon.match.func)
 				.returns(oGroupLock);
 			this.mock(oBinding.oCachePromise.getResult()).expects("create")
 				.withExactArgs(sinon.match.same(oGroupLock), sinon.match(function (oPromise) {
@@ -3891,9 +3883,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("create and delete with bAtEnd varying", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
-				$$updateGroupId : "update"
-			}),
+		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
 			oContext1,
 			oContext2,

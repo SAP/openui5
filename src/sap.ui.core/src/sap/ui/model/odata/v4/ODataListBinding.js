@@ -635,7 +635,7 @@ sap.ui.define([
 		this.checkSuspended();
 
 		// only for createInCache
-		oGroupLock = this.lockGroup(this.getUpdateGroupId(), true, true, function () {
+		oGroupLock = this.lockGroup(undefined, true, true, function () {
 			that.destroyCreated(oContext, true);
 			return Promise.resolve().then(function () {
 				// Fire the change asynchronously so that Cache#delete is finished and #getContexts

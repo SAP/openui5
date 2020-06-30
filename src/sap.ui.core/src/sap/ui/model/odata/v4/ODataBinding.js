@@ -806,7 +806,7 @@ sap.ui.define([
 	 * Creates a lock for a group with this binding as owner.
 	 *
 	 * @param {string} [sGroupId]
-	 *   The group ID; defaults to this binding's group ID
+	 *   The group ID; defaults to this binding's (update) group ID
 	 * @param {boolean} [bLocked]
 	 *   Whether the created lock is locked
 	 * @param {boolean} [bModifying]
@@ -820,8 +820,8 @@ sap.ui.define([
 	 * @see {sap.ui.model.odata.v4.ODataModel#lockGroup}
 	 */
 	ODataBinding.prototype.lockGroup = function (sGroupId, bLocked, bModifying, fnCancel) {
-		return this.oModel.lockGroup(sGroupId || this.getGroupId(), this, bLocked, bModifying,
-			fnCancel);
+		sGroupId = sGroupId || (bModifying ? this.getUpdateGroupId() : this.getGroupId());
+		return this.oModel.lockGroup(sGroupId, this, bLocked, bModifying, fnCancel);
 	};
 
 	/**
