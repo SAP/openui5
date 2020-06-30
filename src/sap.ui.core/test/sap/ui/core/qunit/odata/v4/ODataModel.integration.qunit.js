@@ -14429,7 +14429,7 @@ sap.ui.define([
 			// code under test
 			oTable.getItems()[0].getBindingContext().expand();
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "expand 'Z'");
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Z')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
@@ -14551,10 +14551,10 @@ sap.ui.define([
 				.expectChange("salesAmount", [/*"100"*/, "10", "20"])
 				.expectChange("salesNumber", [/*null*/, "1", "2"]);
 
-			// code under test - expand node "Z"
+			// code under test
 			that.oView.byId("table").getRows()[0].getBindingContext().expand();
 
-			return that.waitForChanges(assert, "expanding node 'Z'");
+			return that.waitForChanges(assert, "expand node 'Z'");
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Z')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
@@ -14576,10 +14576,10 @@ sap.ui.define([
 				.expectChange("salesAmount", [,,, "30", "40", "280"])
 				.expectChange("salesNumber", [,,, "3", "4", null]);
 
-			// code under test - scroll so that "Z-c" is in first row
+			// code under test
 			that.oView.byId("table").setFirstVisibleRow(3);
 
-			return that.waitForChanges(assert, "scrolling to node 'Z-c'");
+			return that.waitForChanges(assert, "scroll so that 'Z-c' is in first row");
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Y')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
@@ -14594,10 +14594,10 @@ sap.ui.define([
 				// no other changes because "Y" is the last visible row
 				.expectChange("isExpanded", [,,,,, true]);
 
-			// code under test - expand "Y"
+			// code under test
 			that.oView.byId("table").getRows()[2].getBindingContext().expand();
 
-			return that.waitForChanges(assert, "expanding node 'Y'");
+			return that.waitForChanges(assert, "expand node 'Y'");
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Y')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
@@ -14624,11 +14624,11 @@ sap.ui.define([
 				.expectChange("salesAmount", [,,,,,,,,,,,,, "80", "300", "400"])
 				.expectChange("salesNumber", [,,,,,,,,,,,,, "8", null, null]);
 
-			// code under test - scroll to "Y-h" so that "Y-h", "X" and "W" will be visible
+			// code under test
 			// creates a gap to show that we are not requesting unnecessary data
 			that.oView.byId("table").setFirstVisibleRow(13);
 
-			return that.waitForChanges(assert, "scrolling to node 'Y-h'");
+			return that.waitForChanges(assert, "scroll to 'Y-h': 'Y-h', 'X' and 'W' visible");
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Y')"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
@@ -14651,10 +14651,11 @@ sap.ui.define([
 				.expectChange("salesAmount", [,,,,,,,,, "40", "50", "60"])
 				.expectChange("salesNumber", [,,,,,,,,, "4", "5", "6"]);
 
-			// code under test - scroll to the middle of "Y": "Y-d", "Y-e", "Y-f" will be visible
+			// code under test
 			that.oView.byId("table").setFirstVisibleRow(9);
 
-			return that.waitForChanges(assert, "scrolling to node 'Y-d'");
+			return that.waitForChanges(assert, "scroll to the middle of 'Y': "
+				+ "'Y-d', 'Y-e', 'Y-f' visible");
 		}).then(function () {
 			that.expectChange("isExpanded", [true, /*undefined*/, /*undefined*/])
 				.expectChange("isTotal", [true, /*false*/, /*false*/])
@@ -14664,10 +14665,11 @@ sap.ui.define([
 				.expectChange("salesAmount", ["100", "10", "20"])
 				.expectChange("salesNumber", [null, "1", "2"]);
 
-			// code under test - scroll back to the first row. "Z", "Z-a" and "Z-b" will be visible
+			// code under test
 			that.oView.byId("table").setFirstVisibleRow(0);
 
-			return that.waitForChanges(assert, "scrolling to node 'Z'");
+			return that.waitForChanges(assert, "scroll back to the first row: "
+				+ "'Z', 'Z-a' and 'Z-b' visible");
 		}).then(function () {
 			var oListBinding = that.oView.byId("table").getBinding("rows");
 
@@ -14761,7 +14763,7 @@ sap.ui.define([
 
 			that.oView.byId("table").setFirstVisibleRow(3);
 
-			return that.waitForChanges(assert, "first scroll");
+			return that.waitForChanges(assert, "first scroll to node 'W'");
 		}).then(function () {
 
 			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
@@ -14771,7 +14773,7 @@ sap.ui.define([
 
 			that.oView.byId("table").setFirstVisibleRow(4);
 
-			return that.waitForChanges(assert, "second scroll");
+			return that.waitForChanges(assert, "second scroll to node 'V'");
 		}).then(function () {
 
 			that.expectChange("isExpanded", [,,,, false, false, false])
@@ -14891,10 +14893,9 @@ sap.ui.define([
 				.expectChange("isExpanded", [,, true]);
 
 			// code under test
-			// expand X (no changes are visible)
 			that.oView.byId("table").getRows()[2].getBindingContext().expand();
 
-			return that.waitForChanges(assert, "first expand");
+			return that.waitForChanges(assert, "expand node 'X'");
 		}).then(function () {
 
 			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
@@ -14927,10 +14928,176 @@ sap.ui.define([
 				.expectChange("salesNumber", [,,,,, "3", "4", null]);
 
 			// code under test
-			// scroll to "X-c"
 			that.oView.byId("table").setFirstVisibleRow(5);
 
-			return that.waitForChanges(assert, "then scroll");
+			return that.waitForChanges(assert, "scroll to 'X-c'");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: table.Table with aggregation and visual grouping.
+	// Expand three levels
+	//
+	// JIRA: CPOUI5ODATAV4-178
+	QUnit.test("Data Aggregation: expand three levels", function (assert) {
+		var oModel = createAggregationModel(),
+			sView = '\
+<t:Table id="table" rows="{path : \'/BusinessPartners\',\
+	parameters : {\
+		$$aggregation : {\
+			aggregate : {\
+				SalesAmount : {subtotals : true},\
+				SalesNumber : {}\
+			},\
+			group : {\
+				AccountResponsible : {}\
+			},\
+			groupLevels : [\'Country\', \'Region\', \'Segment\']\
+		}\
+	}}" threshold="0" visibleRowCount="4">\
+	<t:Column>\
+		<t:template>\
+			<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="country" text="{Country}"/>\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="region" text="{Region}"/>\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="segment" text="{Segment}"/>\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="accountResponsible" text="{AccountResponsible}"/>\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="salesNumber" text="{SalesNumber}"/>\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("BusinessPartners?$apply=groupby((Country),aggregate(SalesAmount))"
+				+ "&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "26",
+				value : [
+					{Country : "US", SalesAmount : "100"},
+					{Country : "UK", SalesAmount : "200"},
+					{Country : "DE", SalesAmount : "300"}
+				]
+			})
+			.expectChange("isExpanded", [false, false, false])
+			.expectChange("isTotal", [true, true, true])
+			.expectChange("level", [1, 1, 1])
+			.expectChange("country", ["US", "UK", "DE"])
+			.expectChange("region", ["", "", ""])
+			.expectChange("segment", ["", "", ""])
+			.expectChange("accountResponsible", ["", "", ""])
+			.expectChange("salesAmount", ["100", "200", "300"])
+			.expectChange("salesNumber", [null, null, null]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
+					+ "/groupby((Region),aggregate(SalesAmount))"
+					+ "&$count=true&$skip=0&$top=4", {
+					"@odata.count" : "4",
+					value : [
+						{Region : "Z", SalesAmount : "10"},
+						{Region : "Y", SalesAmount : "20"},
+						{Region : "X", SalesAmount : "30"}
+					]
+				})
+				.expectChange("isExpanded", [true,,, false])
+				.expectChange("isTotal", [,,, true])
+				.expectChange("level", [, 2, 2, 2])
+				.expectChange("country", [, "US", "US", "US"])
+				.expectChange("region", [, "Z", "Y", "X"])
+				.expectChange("segment", [,,, ""])
+				.expectChange("accountResponsible", [,,, ""])
+				.expectChange("salesAmount", [, "10", "20", "30"])
+				.expectChange("salesNumber", [,,, null]);
+
+			// code under test
+			that.oView.byId("table").getRows()[0].getBindingContext().expand();
+
+			return that.waitForChanges(assert, "first expand 'US'");
+		}).then(function () {
+			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US' and Region eq 'Z')"
+					+ "/groupby((Segment),aggregate(SalesAmount))"
+					+ "&$count=true&$skip=0&$top=4", {
+					"@odata.count" : "4",
+					value : [
+						{Region: "Z", Segment: "z", SalesAmount : "10"},
+						{Region: "Z", Segment: "y", SalesAmount : "20"},
+						{Region: "Z", Segment: "x", SalesAmount : "30"}
+					]
+				})
+				.expectChange("isExpanded", [, true,,])
+				.expectChange("isTotal", [,,,])
+				.expectChange("level", [,, 3, 3])
+				.expectChange("country", [,,,])
+				.expectChange("region", [,, "Z", "Z"])
+				.expectChange("segment", [,, "z", "y"])
+				.expectChange("accountResponsible", [,,,])
+				.expectChange("salesAmount", [,, "10", "20"])
+				.expectChange("salesNumber", [,,,]);
+
+			// code under test
+			that.oView.byId("table").getRows()[1].getBindingContext().expand();
+
+			return that.waitForChanges(assert, "second expand 'US-Z'");
+		}).then(function () {
+			that.expectRequest("BusinessPartners?$apply="
+					+ "filter(Country eq 'US' and Region eq 'Z' and Segment eq 'z')"
+					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
+					+ "&$count=true&$skip=0&$top=4", {
+					"@odata.count" : "4",
+					value : [
+						{AccountResponsible : "a", SalesNumber: 1, SalesAmount : "10"},
+						{AccountResponsible : "b", SalesNumber: 2, SalesAmount : "20"},
+						{AccountResponsible : "c", SalesNumber: 3, SalesAmount : "30"}
+					]
+				})
+				.expectChange("isExpanded", [,, true, undefined])
+				.expectChange("isTotal", [,,, false])
+				.expectChange("level", [,,, 4])
+				.expectChange("country", [,,,])
+				.expectChange("region", [,,,])
+				.expectChange("segment", [,,, "z"])
+				.expectChange("accountResponsible", [,,, "a"])
+				.expectChange("salesAmount", [,,, "10"])
+				.expectChange("salesNumber", [,,, "1"]);
+
+			// code under test
+			that.oView.byId("table").getRows()[2].getBindingContext().expand();
+
+			return that.waitForChanges(assert, "third expand 'US-Z-z'");
 		});
 	});
 

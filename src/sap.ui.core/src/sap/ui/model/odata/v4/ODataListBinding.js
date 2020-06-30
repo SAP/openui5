@@ -955,9 +955,13 @@ sap.ui.define([
 
 			for (i = aContexts.length - 1; i > iModelIndex; i -= 1) {
 				oMovingContext = aContexts[i];
-				oMovingContext.iIndex += iCount;
-				aContexts[i + iCount] = oMovingContext;
-				delete aContexts[i];
+				if (oMovingContext) {
+					oMovingContext.iIndex += iCount;
+					aContexts[i + iCount] = oMovingContext;
+					delete aContexts[i];
+				}
+				// else: nothing to do because !(i in aContexts) and aContexts[i + iCount]
+				// has been deleted before (loop works backwards)
 			}
 			that.iMaxLength += iCount;
 			that._fireChange({reason : ChangeReason.Change});
@@ -2422,7 +2426,7 @@ sap.ui.define([
 	 *   A list of groupable property names used to determine group levels. They may, but don't need
 	 *   to, be repeated in <code>oAggregation.group</code>. Group levels cannot be combined with
 	 *   filtering, with the system query option <code>$count</code>, or with an aggregatable
-	 *   property for which a grand total is needed; two group levels are supported at most.
+	 *   property for which a grand total is needed.
 	 * @throws {Error}
 	 *   If the given data aggregation object is unsupported, if the system query option
 	 *   <code>$apply</code> has been specified explicitly before, or if there are pending changes

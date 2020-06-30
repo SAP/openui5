@@ -1239,7 +1239,6 @@ sap.ui.define([
 
 				// check placeholder before iReadIndex
 				for (i = 0; i < iReadIndex; i += 1) {
-					assert.strictEqual(oCache.aElements[i]["@$ui5.node.level"], 1);
 					assert.strictEqual(
 						_Helper.getPrivateAnnotation(oCache.aElements[i], "index"), i);
 					assert.strictEqual(
@@ -1249,7 +1248,6 @@ sap.ui.define([
 				}
 				// check placeholder after iReadIndex + result length
 				for (i = iReadIndex + 3; i < oCache.aElements.length; i += 1) {
-					assert.strictEqual(oCache.aElements[i]["@$ui5.node.level"], 1);
 					assert.strictEqual(
 						_Helper.getPrivateAnnotation(oCache.aElements[i], "index"), i);
 					assert.strictEqual(
@@ -1686,7 +1684,7 @@ sap.ui.define([
 				oCache.aElements[0]["@$ui5.node.isExpanded"] = true;
 			});
 		this.mock(oCache).expects("createGroupLevelCache")
-			.withExactArgs(sinon.match.same((oCache.aElements[0])))
+			.withExactArgs(sinon.match.same(oCache.aElements[0]))
 			.returns(oGroupLevelCache);
 		this.mock(oGroupLevelCache).expects("read")
 			.withExactArgs(0, oCache.iReadLength, 0, sinon.match.same(oGroupLock))
@@ -1710,11 +1708,9 @@ sap.ui.define([
 			assert.strictEqual(oCache.aElements[5], oExpandResult.value[4]);
 
 			// check placeholder
-			assert.strictEqual(oCache.aElements[6]["@$ui5.node.level"], 2);
 			assert.strictEqual(_Helper.getPrivateAnnotation(oCache.aElements[6], "index"), 5);
 			assert.strictEqual(
 				_Helper.getPrivateAnnotation(oCache.aElements[6], "parent"), oGroupLevelCache);
-			assert.strictEqual(oCache.aElements[7]["@$ui5.node.level"], 2);
 			assert.strictEqual(_Helper.getPrivateAnnotation(oCache.aElements[7], "index"), 6);
 			assert.strictEqual(
 				_Helper.getPrivateAnnotation(oCache.aElements[7], "parent"), oGroupLevelCache);
