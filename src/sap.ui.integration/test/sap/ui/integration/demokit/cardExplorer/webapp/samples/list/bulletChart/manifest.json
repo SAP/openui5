@@ -52,8 +52,8 @@
 				},
 				"chart": {
 					"type": "Bullet",
-					"min": 0,
-					"max": "{Expected}",
+					"minValue": 0,
+					"maxValue": "{Expected}",
 					"target": "{Target}",
 					"value": "{Actual}",
 					"scale": "€",

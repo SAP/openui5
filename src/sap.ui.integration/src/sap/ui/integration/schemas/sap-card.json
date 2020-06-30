@@ -19,7 +19,10 @@
 				"1.6.0",
 				"1.7.0",
 				"1.8.0",
-				"1.9.0"
+				"1.9.0",
+				"1.10.0",
+				"1.11.0",
+				"1.12.0"
 			]
 		},
 		"configuration": {
@@ -305,14 +308,7 @@
 					"oneOf": [
 						{
 							"description": "The state color of the main indicator",
-							"type": "string",
-							"enum": [
-								"Critical",
-								"Error",
-								"Good",
-								"Neutral"
-							],
-							"default": "Neutral"
+							"$ref": "#/definitions/Enums.ValueColor"
 						},
 						{
 							"$ref": "#/definitions/simpleBinding"
@@ -427,6 +423,9 @@
 					"items": {
 						"$ref": "#/definitions/action"
 					}
+				},
+				"chart": {
+					"$ref": "#/definitions/Microchart"
 				}
 			}
 		},
@@ -1772,6 +1771,169 @@
 					"type": "string"
 				}
 			}
+		},
+		"Microchart": {
+			"description": "[Experimental] Describes Microchart attributes",
+			"oneOf": [
+				{ "$ref": "#/definitions/Microchart.Bullet" },
+				{ "$ref": "#/definitions/Microchart.StackedBar" }
+			]
+		},
+		"Microchart.Bullet": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"type"
+			],
+			"properties": {
+				"type": {
+					"description": "Represents the type of the Microchart.",
+					"type": "string",
+					"const": "Bullet"
+				},
+				"value": {
+					"description": "The actual value shown as a colored horizontal bar",
+					"oneOf": [
+						{ "type": "number" },
+						{ "$ref": "#/definitions/simpleBinding" }
+					]
+				},
+				"minValue": {
+					"description": "The minimum scale value for the bar chart",
+					"oneOf": [
+						{ "type": "number" },
+						{ "$ref": "#/definitions/simpleBinding" }
+					]
+				},
+				"maxValue": {
+					"description": "The maximum scale value for the bar chart",
+					"oneOf": [
+						{ "type": "number" },
+						{ "$ref": "#/definitions/simpleBinding" }
+					]
+				},
+				"displayValue": {
+					"description": "The actual value, which will be displayed as a text next to the bar",
+					"type": "string"
+				},
+				"target": {
+					"description": "The target value - displayed as a vertical line (marker)",
+					"oneOf": [
+						{ "type": "number" },
+						{ "$ref": "#/definitions/simpleBinding" }
+					]
+				},
+				"scale": {
+					"description": "The scaling suffix that is appended to all values",
+					"type": "string"
+				},
+				"color": {
+					"description": "The state color of the bar",
+					"type": "string",
+					"oneOf": [
+						{ "$ref": "#/definitions/Enums.ValueColor"},
+						{ "$ref": "#/definitions/simpleBinding" }
+					]
+				},
+				"thresholds": {
+					"description": "The thresholds indicators of the bar",
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Microchart.Bullet.Threshold" 
+					}
+				}
+			}
+		},
+		"Microchart.Bullet.Threshold": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"value": {
+					"description": "The value of the threshold",
+					"oneOf": [
+						{ "type": "number" },
+						{ "$ref": "#/definitions/simpleBinding" }
+					]
+				},
+				"color": {
+					"description": "The state color of the threshold",
+					"type": "string",
+					"oneOf": [
+						{ "$ref": "#/definitions/Enums.ValueColor"},
+						{ "$ref": "#/definitions/simpleBinding" }
+					]
+				}
+			}
+		},
+		"Microchart.StackedBar": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"type"
+			],
+			"properties": {
+				"type": {
+					"description": "Represents the type of the Microchart.",
+					"type": "string",
+					"const": "StackedBar"
+				},
+				"maxValue": {
+					"description": "The maximum scale value for the bar chart",
+					"oneOf": [
+						{ "type": "number" },
+						{ "$ref": "#/definitions/simpleBinding" }
+					]
+				},
+				"displayValue": {
+					"description": "The value, which will be displayed as a text next to the bar",
+					"type": "string"
+				},
+				"bars": {
+					"description": "The bars of the chart.",
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Microchart.StackedBar.Bar" 
+					}
+				}
+			}
+		},
+		"Microchart.StackedBar.Bar": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"value": {
+					"description": "The actual value shown as a colored horizontal bar",
+					"oneOf": [
+						{ "type": "number" },
+						{ "$ref": "#/definitions/simpleBinding" }
+					]
+				},
+				"displayValue": {
+					"description": "The value, which will be displayed as a text in the tooltip of the bar",
+					"type": "string"
+				},
+				"legendTitle": {
+					"description": "Title, which will be displayed in the legend",
+					"type": "string"
+				},
+				"color": {
+					"description": "The color of the bar",
+					"type": "string",
+					"oneOf": [
+						{ "$ref": "#/definitions/Enums.ValueColor"},
+						{ "type": "string" }
+					]
+				}
+			}
+		},
+		"Enums.ValueColor": {
+			"enum": [
+				"Critical",
+				"Error",
+				"Good",
+				"Neutral"
+			],
+			"default": "Neutral"
 		}
 	}
 }

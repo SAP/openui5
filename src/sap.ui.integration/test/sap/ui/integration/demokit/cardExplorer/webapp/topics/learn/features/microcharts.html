@@ -214,6 +214,14 @@
 					<td>1.24</td>
 					<td>1.80</td>
 				</tr>
+				<tr>
+					<td>legendTitle</td>
+					<td>string</td>
+					<td>No</td>
+					<td>Title, which will be displayed in the legend.</td>
+					<td>1.24</td>
+					<td>1.80</td>
+				</tr>
 			</table>
 		</div>
 
@@ -258,8 +266,8 @@
 				"description": "{Description}",
 				"chart": {
 					"type": "Bullet",
-					"min": 0,
-					"max": "{Expected}",
+					"minValue": 0,
+					"maxValue": "{Expected}",
 					"target": "{Target}",
 					"value": "{Actual}",
 					"color": "{ChartColor}"
@@ -307,15 +315,17 @@
 				"chart": {
 					"type": "StackedBar",
 					"displayValue": "{= ${Notebook13} + ${Notebook17}}K",
-					"max": "{/maxOverYears}",
+					"maxValue": "{/maxOverYears}",
 					"bars": [
 						{
 							"value": "{Notebook13}",
-							"displayValue": "Notebook 13: {Notebook13}K"
+							"displayValue": "Notebook 13: {Notebook13}K",
+							"legendTitle": "Notebook13"
 						},
 						{
 							"value": "{Notebook17}",
-							"displayValue": "Notebook 17: {Notebook17}K"
+							"displayValue": "Notebook 17: {Notebook17}K",
+							"legendTitle": "Notebook17"
 						}
 					]
 				}
