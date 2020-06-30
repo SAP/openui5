@@ -706,9 +706,7 @@ sap.ui.define([
 					+ " to a sap.ui.model.odata.v4.Context"));
 				return; // do not update this.vValue!
 			}
-			oGroupLock = this.bNoPatch
-				? null
-				: this.lockGroup(sGroupId || this.getUpdateGroupId(), true, true);
+			oGroupLock = this.bNoPatch ? null : this.lockGroup(sGroupId, true, true);
 			this.oContext.doSetProperty(this.sPath, vValue, oGroupLock).catch(function (oError) {
 				if (oGroupLock) {
 					oGroupLock.unlock(true);

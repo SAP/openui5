@@ -1605,14 +1605,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{
-	updateGroupId : undefined,
-	value : "foo"
-}, {
-	updateGroupId : "up",
-	value : null
-}].forEach(function (oFixture) {
-	var sTitle = "setValue (relative binding) via control, updateGroupId=" + oFixture.updateGroupId;
+["foo", null].forEach(function (vValue) {
+	var sTitle = "setValue (relative binding) via control, value : " + vValue;
 
 	QUnit.test(sTitle, function (assert) {
 		var oParentBinding = this.oModel.bindContext("/BusinessPartnerList('0100000000')"),
@@ -1623,24 +1617,15 @@ sap.ui.define([
 		oBinding.vValue = ""; // simulate a read - intentionally use a falsy value
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(this.oModel).expects("checkGroupId")
-			.withExactArgs(oFixture.updateGroupId);
-		if (oFixture.updateGroupId) {
-			this.mock(oBinding).expects("lockGroup")
-				.withExactArgs(oFixture.updateGroupId, true, true)
-				.returns(oGroupLock);
-		} else {
-			this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("update");
-			this.mock(oBinding).expects("lockGroup").withExactArgs("update", true, true)
-				.returns(oGroupLock);
-		}
+		this.mock(this.oModel).expects("checkGroupId").withExactArgs("up");
+		this.mock(oBinding).expects("lockGroup").withExactArgs("up", true, true)
+			.returns(oGroupLock);
 		this.mock(oContext).expects("doSetProperty")
-			.withExactArgs("Address/City", sinon.match.same(oFixture.value),
-				sinon.match.same(oGroupLock))
+			.withExactArgs("Address/City", sinon.match.same(vValue), sinon.match.same(oGroupLock))
 			.returns(SyncPromise.resolve());
 
 		// code under test
-		oBinding.setValue(oFixture.value, oFixture.updateGroupId);
+		oBinding.setValue(vValue, "up");
 	});
 });
 

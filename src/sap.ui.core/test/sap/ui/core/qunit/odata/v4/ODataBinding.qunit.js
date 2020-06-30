@@ -1972,16 +1972,20 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [undefined, "group"].forEach(function (sGroupId) {
-	QUnit.test("lockGroup: groupId=" + sGroupId, function (assert) {
+	[false, true].forEach(function (bModifying) {
+		var sTitle = "lockGroup: groupId=" + sGroupId + ", bModifying=" + bModifying;
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = new ODataBinding({
 				oModel : {lockGroup : function () {}}
 			}),
 			fnCancel = {},
 			oGroupLock = {},
-			bLocked = {/*boolean*/},
-			bModifying = {/*boolean*/};
+			bLocked = {/*boolean*/};
 
-		this.mock(oBinding).expects("getGroupId").exactly(sGroupId ? 0 : 1)
+		this.mock(oBinding).expects("getGroupId").exactly(sGroupId || bModifying ? 0 : 1)
+			.withExactArgs().returns("group");
+		this.mock(oBinding).expects("getUpdateGroupId").exactly(bModifying && !sGroupId ? 1 : 0)
 			.withExactArgs().returns("group");
 		this.mock(oBinding.oModel).expects("lockGroup")
 			.withExactArgs("group", sinon.match.same(oBinding), sinon.match.same(bLocked),
@@ -1990,6 +1994,8 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oBinding.lockGroup(sGroupId, bLocked, bModifying, fnCancel), oGroupLock);
+	});
+
 	});
 });
 
