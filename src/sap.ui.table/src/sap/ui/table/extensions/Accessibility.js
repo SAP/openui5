@@ -424,7 +424,7 @@ sap.ui.define([
 					if ((bContainsTreeIcon || bIsGroupHeader) && (bRowChange || bColChange)) {
 						aDescriptions.push(oTable.getId() + (!oRow.isExpanded() ? "-rowexpandtext" : "-rowcollapsetext"));
 					} else if (!bHidden && !bIsGroupHeader && !bIsSummary && TableUtils.isRowSelectionAllowed(oTable) && bRowChange) {
-						aDescriptions.push(oRow.getId() + "-rowselecttext");
+						aLabels.push(oRow.getId() + "-rowselecttext");
 					}
 				}
 			);
