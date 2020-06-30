@@ -21,12 +21,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	});
 	aSupportedEnv.push({
 		system: Device.system.SYSTEMTYPE.DESKTOP,
-		os: Device.os.OS.WINDOWS,
-		browserName: Device.browser.BROWSER.FIREFOX,
-		browserVersion: 74
-	});
-	aSupportedEnv.push({
-		system: Device.system.SYSTEMTYPE.DESKTOP,
 		browserName: Device.browser.BROWSER.SAFARI,
 		browserVersion: 13
 	});
